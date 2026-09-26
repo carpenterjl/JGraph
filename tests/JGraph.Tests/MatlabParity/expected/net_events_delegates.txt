@@ -1,0 +1,41 @@
+RUN|pending I5|'dotnetenv' is not recognized as a variable or a function.
+CHK|events|Fired,Custom,NonStandard,StaticFired,ObjectBeingDestroyed|exact
+CHK|listener_class|event.listener|exact
+CHK|listener_EventName|Fired|exact
+CHK|listener_Source_class|JGTest.Publisher|exact
+CHK|listener_Enabled|logical:1|exact
+CHK|net_handler_count|int32:1|exact
+CHK|sync|Fired JGTest.Publisher:JGTest.Publisher System.EventArgs:System.EventArgs|exact
+CHK|two_listeners_order|Fired2 ; Fired JGTest.Publisher:JGTest.Publisher System.EventArgs:System.EventArgs|exact
+CHK|net_handler_count_two|int32:1|exact
+CHK|after_delete|Fired JGTest.Publisher:JGTest.Publisher System.EventArgs:System.EventArgs|exact
+CHK|disabled|none|exact
+CHK|addlistener_survives_clear|Fired JGTest.Publisher:JGTest.Publisher System.EventArgs:System.EventArgs|exact
+CHK|listener_fires|viaListener|exact
+CHK|listener_cleared|none|exact
+CHK|custom_args|Custom double:2.5 System.String:tag|exact
+CHK|nonstandard_refused|.NET events with nonstandard delegate definition are not supported in MATLAB.|exact
+CHK|static_event_refused|MATLAB:addlistener:invalidinput|exact
+CHK|bad_event|MATLAB:class:invalidEvent|exact
+CHK|callback_error_is_warning|logical:1|exact
+CHK|callback_error_not_thrown|none|exact
+CHK|pool_not_during_busy_loop|none|exact
+CHK|pool_at_pause|Pool double:1 ; Pool double:2 ; Pool double:3|exact
+CHK|pool_at_drawnow|Pool double:1 ; Pool double:2 ; Pool double:3|exact
+CHK|Func_from_handle|double:6|exact
+CHK|Func2_from_handle|double:7|exact
+CHK|custom_delegate_ctor|double:102|exact
+CHK|custom_delegate_handle|double:102|exact
+CHK|Func_createGeneric_class|System.Func<System*Double,System*Double>|exact
+CHK|Func_createGeneric_apply|double:10|exact
+CHK|Func_Invoke|double:15|exact
+CHK|Action_ran|Action|exact
+CHK|Action_output_refused|MATLAB:UndefinedFunction|exact
+CHK|Describe_delegate|System.String:n3|exact
+CHK|refout_delegate|double:3007|exact
+CHK|returned_delegate_class|JGTest.Unary|exact
+CHK|returned_delegate_Invoke|double:42|exact
+CHK|returned_delegate_paren|double:42|exact
+CHK|delegate_error|MATLAB:maxlhs|exact
+CHK|delegate_wrong_return|MATLAB:class:RequireScalar|exact
+CHK|BeginInvoke_core|MATLAB:NET:CLRException:MethodInvoke|exact

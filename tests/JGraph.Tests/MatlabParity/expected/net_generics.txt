@@ -1,0 +1,43 @@
+RUN|pending I4|'dotnetenv' is not recognized as a variable or a function.
+CHK|box_class|JGTest.Box<System*Double>|exact
+CHK|box_Value|double:2.5|exact
+CHK|box_TypeName|System.String:System.Double|exact
+CHK|box_echo|b = / <a href="matlab:helpPopup('JGTest.Box<System*Double>')" style="font-weight:bold">Box<System*Double></a> with properties: / Value: 2.5000 / TypeName: [1×1 System.String]|exact
+CHK|box_null_Value|double:[] [0 0]|exact
+CHK|box_set_char|System.String:hi|exact
+CHK|pair_class|JGTest.Pair<System*Int32,System*String>|exact
+CHK|pair_First|int32:1|exact
+CHK|pair_Second|System.String:one|exact
+CHK|typearg_string_form_refused|MATLAB:NET:InvalidClassName|exact
+CHK|typearg_GenericClass|JGTest.Box<System*Collections*Generic*List<System*Double>>|exact
+CHK|GenericClass_class|NET.GenericClass|exact
+CHK|constraint_refused|MATLAB:NET:CLRException|exact
+CHK|constraint_ok|JGTest.Constrained<System*Int32>|exact
+CHK|open_generic_name_refused|MATLAB:undefinedVarOrClass|exact
+CHK|invokeGenericMethod|int32:5|exact
+CHK|invokeGenericMethod_noargs|System.String:System.String|exact
+CHK|generic_method_direct_refused|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
+CHK|list_class|System.Collections.Generic.List<System*Double>|exact
+CHK|list_Count|int32:2|exact
+CHK|list_Capacity|int32:3|exact
+CHK|list_Item|double:6|exact
+CHK|list_ToArray|double:[5 6]|exact
+CHK|list_paren_refused|MATLAB:NET:UnsupportedIndexingCustom|exact
+CHK|list_echo|l = / <a href="matlab:helpPopup('System.Collections.Generic.List<System*Double>')" style="font-weight:bold">List<System*Double></a> with properties: / Capacity: 3 / Count: 2|exact
+CHK|list_Add_char_refused|MATLAB:class:UndefinedMethod|exact
+CHK|list_returned_class|System.Collections.Generic.List<System*Double>|exact
+CHK|list_to_IEnumerable|double:3|exact
+CHK|double_to_IEnumerable_refused|MATLAB:UndefinedFunction|exact
+CHK|nested_class|JGTest.Box<System*Collections*Generic*List<System*Double>>|exact
+CHK|nested_Value_class|System.Collections.Generic.List<System*Double>|exact
+CHK|dict_class|System.Collections.Generic.Dictionary<System*String,System*Double>|exact
+CHK|dict_Item|double:2|exact
+CHK|dict_ContainsKey|logical:1|exact
+CHK|dict_Keys_class|System.Collections.Generic.Dictionary*KeyCollection<System*String,System*Double>|exact
+CHK|dict_Count|int32:2|exact
+CHK|dict_to_dictionary_class|dictionary|exact
+CHK|dict_to_dictionary_numEntries|double:2|exact
+CHK|dict_to_dictionary_values|double:[1 2]|exact
+CHK|dictionary_to_object_refused|MATLAB:NET:NetConversion:ObjectConversion|exact
+CHK|hashtable_Item|double:1|exact
+CHK|hashtable_Count|int32:1|exact

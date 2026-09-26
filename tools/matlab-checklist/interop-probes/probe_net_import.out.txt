@@ -1,0 +1,46 @@
+dotnetenv.status	OUT     notloaded |
+case.wild.list	cell [1 1] {char [1 8] 'System.*'}
+case.wild.Math	double [1 1] 2
+case.wild.String	char [1 13] 'System.String'
+case.wild.nested.ns	char [1 28] 'System.Collections.ArrayList'
+case.wild.DayOfWeek	System.DayOfWeek [1 1] Monday
+case.type.Math	double [1 1] 2
+case.type.bare	ERR MATLAB:UndefinedFunction Undefined function 'Max' for input arguments of type 'double'.
+case.typewild.Max	double [1 1] 2
+case.typewild.PI	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'PI'.
+case.member.Max	double [1 1] 2
+case.user.Members	double [1 1] 3
+case.user.Statics	System.String [1 1] hello
+case.user.plot	char [1 11] 'JGTest.plot'
+case.user.Sum.Of	double [1 1] 3
+case.user.sum	double [1 1] 3
+case.user.max.Thing	System.String [1 1] JGTest.max.Thing
+case.user.max.fn	double [1 1] 3
+case.user.type.plot	char [1 11] 'JGTest.plot'
+case.nosuch.wild.list	cell [1 1] {char [1 9] 'No.Such.*'}
+case.nosuch.type	FILE ERR MATLAB:mir_illegal_import_argument Error: <a href="matlab: opentoline('C:\Users\Carpe\AppData\Local\Temp\tpce781343_df24_4c40_b3e2_e53fc4c021db\ip_case_nosuch_type.m',1,8)">File: ip_case_nosuch_type.m Line: 1 Column: 8</a> | Unable to find or import 'System.NoSuchType'. Imported names must end with '.*' or be fully qualified.
+case.conflict.wild.Timer	ERR MATLAB:dispatcher:noMatchingConstructor No constructor 'System.Threading.Timer' with matching signature found.
+case.conflict.wild.list	cell [2 1] {char [1 15] 'System.Timers.*'; char [1 18] 'System.Threading.*'}
+case.conflict.explicit	FILE ERR MATLAB:mir_illegal_import_argument Error: <a href="matlab: opentoline('C:\Users\Carpe\AppData\Local\Temp\tpce781343_df24_4c40_b3e2_e53fc4c021db\ip_case_conflict_explicit.m',1,8)">File: ip_case_conflict_explicit.m Line: 1 Column: 8</a> | Unable to find or import 'System.Timers.Timer'. Imported names must end with '.*' or be fully qualified.
+case.vs.string.fn.string	char [1 6] 'string'
+case.vs.string.fn.String	char [1 13] 'System.String'
+case.function.form.Math	double [1 1] 2
+case.function.form.list	cell [1 1] {char [1 11] 'System.Math'}
+case.return.value.L	cell [1 1] {char [1 11] 'System.Math'}
+case.return.value.Math	double [1 1] 2
+case.clear.in.script	FILE ERR MATLAB:cannotClear Invalid use of CLEAR IMPORT. Call CLEAR IMPORT only from the command prompt.
+case.var.over.import	FILE ERR MATLAB:lang:ImportedFunctionAndVariableHaveSameName Error: <a href="matlab: opentoline('C:\Users\Carpe\AppData\Local\Temp\tpce781343_df24_4c40_b3e2_e53fc4c021db\ip_case_var_over_import.m',2,1)">File: ip_case_var_over_import.m Line: 2 Column: 1</a> | Declaring a variable with the same name as the imported function "Math" is not supported.
+case.evalin.eval	double [1 1] 2
+case.evalin.evalc.list	char [1 21] '    {'System.Math'} | '
+fn.wild	double [1 1] 5
+fn.list	cell [2 1] {char [1 14] 'JGTest.Members'; char [1 8] 'System.*'}
+fn.clear	ERR MATLAB:cannotClear Invalid use of CLEAR IMPORT. Call CLEAR IMPORT only from the command prompt.
+fn.late	double [1 1] 5
+fn.branch.true	double [1 1] 5
+fn.branch.false	double [1 1] 5
+fn.local	ERR MATLAB:UndefinedFunction Undefined function 'Max' for input arguments of type 'double'.
+fn.nested	double [1 1] 5
+fn.anon	double [1 1] 5
+fn.caller.callee	cell [0 1] {}
+fn.calls.script	ERR MATLAB:UndefinedFunction Undefined function 'Max' for input arguments of type 'double'.
+fn.after.script.imports	cell [0 1] {}

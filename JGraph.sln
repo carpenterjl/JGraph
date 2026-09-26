@@ -53,6 +53,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JGraph.Cli", "src\JGraph.Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JGraph.Reporting", "src\JGraph.Reporting\JGraph.Reporting.csproj", "{561717DC-7B5A-45B3-802D-4EDA0D4F6C2D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JGraph.Interop.TestAssembly", "tests\Interop\JGraph.Interop.TestAssembly\JGraph.Interop.TestAssembly.csproj", "{18BB6815-BD55-4717-9C7C-55FE689D7D09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -351,6 +355,18 @@ Global
 		{561717DC-7B5A-45B3-802D-4EDA0D4F6C2D}.Release|x64.Build.0 = Release|Any CPU
 		{561717DC-7B5A-45B3-802D-4EDA0D4F6C2D}.Release|x86.ActiveCfg = Release|Any CPU
 		{561717DC-7B5A-45B3-802D-4EDA0D4F6C2D}.Release|x86.Build.0 = Release|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Debug|x64.Build.0 = Debug|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Debug|x86.Build.0 = Debug|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Release|x64.ActiveCfg = Release|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Release|x64.Build.0 = Release|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Release|x86.ActiveCfg = Release|Any CPU
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -380,5 +396,6 @@ Global
 		{6566B667-3E75-42AB-9B2D-5BA1ECCF723E} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{FAA6F2B7-0FCC-419E-BAE4-FA9F157A1105} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{561717DC-7B5A-45B3-802D-4EDA0D4F6C2D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{18BB6815-BD55-4717-9C7C-55FE689D7D09} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,3 @@
+# The interop plan's stage that completes this fixture (docs/plans/net-and-shared-library-interop-plan.md).
+RUN	I8	# JGraph has no .NET or shared-library interface before I8
+*	I8	# loadlibrary through a prototype file, libfunctions, unloadlibrary

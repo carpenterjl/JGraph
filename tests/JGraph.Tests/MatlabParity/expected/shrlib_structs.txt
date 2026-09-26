@@ -1,0 +1,57 @@
+RUN|pending I9|'libisloaded' is not recognized as a variable or a function.
+CHK|byval_struct|double:5|exact
+CHK|byval_libstruct|double:5|exact
+CHK|byval_partial_struct|double:3|exact
+CHK|byval_extra_field|MATLAB:libstruct:FieldMismatch|exact
+CHK|byval_extra_field_message|A field does not match one in the struct.|exact
+CHK|byval_wrong_case|MATLAB:libstruct:FieldMismatch|exact
+CHK|byptr_struct_output|struct:x,y|exact
+CHK|byptr_struct_output_values|double:[10 20]|exact
+CHK|libstruct_class|lib.jg_point|exact
+CHK|libstruct_isa_handle|logical:1|exact
+CHK|libstruct_echo|ls = / jg_point with properties: / x: 0 / y: 0|exact
+CHK|libstruct_default|double:[0 0]|exact
+CHK|libstruct_written_by_call|double:[3 6]|exact
+CHK|libstruct_structsize|double:16|exact
+CHK|libstruct_fieldnames|x,y|exact
+CHK|libstruct_bad_field|MATLAB:noPublicFieldForClass|exact
+CHK|libstruct_set_char|MATLAB:class:MustBeNumeric|exact
+CHK|libstruct_set_vector|MATLAB:class:MustBeScalar|exact
+CHK|libstruct_nosuch|MATLAB:UndefinedFunction|exact
+CHK|libstruct_initializer|double:[9 0]|exact
+CHK|libstruct_is_a_handle_copy|double:5|exact
+CHK|mixed_structsize|double:40|exact
+CHK|mixed_default_d|double:[] [0 0]|exact
+CHK|mixed_default_name|double:[] [0 0]|exact
+CHK|mixed_fill_libstruct|double:0|exact
+CHK|mixed_sum_libstruct|double:NaN|exact
+CHK|mixed_sum_struct|double:14|exact
+CHK|mixed_name_char_refused|MATLAB:libstruct:InvalidFieldValue|exact
+CHK|nested_p_class|struct|exact
+CHK|nested_sum_struct|double:15|exact
+CHK|packed_structsize|double:11|exact
+CHK|packed_fill_libstruct|double:[0 0 0]|exact
+CHK|packed_sum_libstruct|double:NaN|exact
+CHK|packed_sum_struct|double:6.5|exact
+CHK|struct_out_ptr|double:[3 4]|exact
+CHK|struct_out_ptrptr_refused|MATLAB:nonExistentField|exact
+CHK|layout|double:[16 40 0 8 16 20 32 40 16 32 11 0 1 9]|exact
+CHK|enum_by_name|green|exact
+CHK|enum_by_value|blue|exact
+CHK|enum_by_int32|red|exact
+CHK|enum_by_string|blue|exact
+CHK|enum_bad_name|MATLAB:class:InvalidEnumValue|exact
+CHK|enum_bad_name_message|There is no enumerated value named 'JG_PURPLE'.|exact
+CHK|enum_undeclared_value|unknown|exact
+CHK|enum_return|JG_GREEN|exact
+CHK|enum_return_class|char|exact
+CHK|enum_return_from_value|JG_BLUE|exact
+CHK|enum_to_int|double:4|exact
+CHK|union|MATLAB:invalidConversion|exact
+CHK|union_message|Conversion to unknown from double is not possible.|exact
+CHK|bitfield_libstruct|MATLAB:UndefinedFunction|exact
+CHK|bitfield_struct|MATLAB:libpointer:IllegalConversion|exact
+CHK|fnptr_handle|MATLAB:invalidConversion|exact
+CHK|fnptr_null|MATLAB:invalidConversion|exact
+CHK|varargs|MATLAB:calllib:NoMatchingSignatureFound|exact
+CHK|triple_pointer|MATLAB:invalidConversion|exact

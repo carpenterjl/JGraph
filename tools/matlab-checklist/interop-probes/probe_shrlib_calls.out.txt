@@ -1,0 +1,400 @@
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_calls (line 6)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_calls (line 6)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_calls (line 6)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_calls (line 6)] 
+prim.jg_int8.double	double [1 1] 6
+prim.jg_int8.frac	double [1 1] 4
+prim.jg_int8.neg	double [1 1] -2
+prim.jg_int8.big	double [1 1] -128
+prim.jg_int8.int8	double [1 1] 6
+prim.jg_int8.logical	double [1 1] 2
+prim.jg_int8.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_int8.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int8.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int8.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_uint8.double	double [1 1] 6
+prim.jg_uint8.frac	double [1 1] 4
+prim.jg_uint8.neg	double [1 1] 1
+prim.jg_uint8.big	double [1 1] 0
+prim.jg_uint8.int8	double [1 1] 6
+prim.jg_uint8.logical	double [1 1] 2
+prim.jg_uint8.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_uint8.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint8.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint8.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_int16.double	double [1 1] 6
+prim.jg_int16.frac	double [1 1] 4
+prim.jg_int16.neg	double [1 1] -2
+prim.jg_int16.big	double [1 1] -32768
+prim.jg_int16.int8	double [1 1] 6
+prim.jg_int16.logical	double [1 1] 2
+prim.jg_int16.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_int16.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int16.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int16.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_uint16.double	double [1 1] 6
+prim.jg_uint16.frac	double [1 1] 4
+prim.jg_uint16.neg	double [1 1] 1
+prim.jg_uint16.big	double [1 1] 0
+prim.jg_uint16.int8	double [1 1] 6
+prim.jg_uint16.logical	double [1 1] 2
+prim.jg_uint16.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_uint16.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint16.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint16.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_int32.double	double [1 1] 6
+prim.jg_int32.frac	double [1 1] 4
+prim.jg_int32.neg	double [1 1] -2
+prim.jg_int32.big	double [1 1] -2147483648
+prim.jg_int32.int8	double [1 1] 6
+prim.jg_int32.logical	double [1 1] 2
+prim.jg_int32.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_int32.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int32.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int32.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_uint32.double	double [1 1] 6
+prim.jg_uint32.frac	double [1 1] 4
+prim.jg_uint32.neg	double [1 1] 1
+prim.jg_uint32.big	double [1 1] 0
+prim.jg_uint32.int8	double [1 1] 6
+prim.jg_uint32.logical	double [1 1] 2
+prim.jg_uint32.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_uint32.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint32.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint32.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_int64.double	double [1 1] 6
+prim.jg_int64.frac	double [1 1] 4
+prim.jg_int64.neg	double [1 1] -2
+prim.jg_int64.big	double [1 1] 10000000001
+prim.jg_int64.int8	double [1 1] 6
+prim.jg_int64.logical	double [1 1] 2
+prim.jg_int64.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_int64.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int64.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int64.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_uint64.double	double [1 1] 6
+prim.jg_uint64.frac	double [1 1] 4
+prim.jg_uint64.neg	double [1 1] 1
+prim.jg_uint64.big	double [1 1] 10000000001
+prim.jg_uint64.int8	double [1 1] 6
+prim.jg_uint64.logical	double [1 1] 2
+prim.jg_uint64.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_uint64.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint64.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint64.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_float.double	double [1 1] 6
+prim.jg_float.frac	double [1 1] 3.7000000476837158
+prim.jg_float.neg	double [1 1] -2
+prim.jg_float.big	double [1 1] 10000000000
+prim.jg_float.int8	double [1 1] 6
+prim.jg_float.logical	double [1 1] 2
+prim.jg_float.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_float.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_float.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_float.nan	double [1 1] NaN
+prim.jg_double.double	double [1 1] 6
+prim.jg_double.frac	double [1 1] 3.7000000000000002
+prim.jg_double.neg	double [1 1] -2
+prim.jg_double.big	double [1 1] 10000000001
+prim.jg_double.int8	double [1 1] 6
+prim.jg_double.logical	double [1 1] 2
+prim.jg_double.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_double.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_double.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_double.nan	double [1 1] NaN
+prim.jg_char.double	double [1 1] 6
+prim.jg_char.frac	double [1 1] 4
+prim.jg_char.neg	double [1 1] -2
+prim.jg_char.big	double [1 1] -128
+prim.jg_char.int8	double [1 1] 6
+prim.jg_char.logical	double [1 1] 2
+prim.jg_char.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_char.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_char.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_char.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_schar.double	double [1 1] 6
+prim.jg_schar.frac	double [1 1] 4
+prim.jg_schar.neg	double [1 1] -2
+prim.jg_schar.big	double [1 1] -128
+prim.jg_schar.int8	double [1 1] 6
+prim.jg_schar.logical	double [1 1] 2
+prim.jg_schar.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_schar.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_schar.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_schar.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_uchar.double	double [1 1] 6
+prim.jg_uchar.frac	double [1 1] 4
+prim.jg_uchar.neg	double [1 1] 1
+prim.jg_uchar.big	double [1 1] 0
+prim.jg_uchar.int8	double [1 1] 6
+prim.jg_uchar.logical	double [1 1] 2
+prim.jg_uchar.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_uchar.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uchar.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uchar.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_short.double	double [1 1] 6
+prim.jg_short.frac	double [1 1] 4
+prim.jg_short.neg	double [1 1] -2
+prim.jg_short.big	double [1 1] -32768
+prim.jg_short.int8	double [1 1] 6
+prim.jg_short.logical	double [1 1] 2
+prim.jg_short.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_short.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_short.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_short.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_ushort.double	double [1 1] 6
+prim.jg_ushort.frac	double [1 1] 4
+prim.jg_ushort.neg	double [1 1] 1
+prim.jg_ushort.big	double [1 1] 0
+prim.jg_ushort.int8	double [1 1] 6
+prim.jg_ushort.logical	double [1 1] 2
+prim.jg_ushort.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_ushort.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_ushort.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_ushort.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_int.double	double [1 1] 6
+prim.jg_int.frac	double [1 1] 4
+prim.jg_int.neg	double [1 1] -2
+prim.jg_int.big	double [1 1] -2147483648
+prim.jg_int.int8	double [1 1] 6
+prim.jg_int.logical	double [1 1] 2
+prim.jg_int.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_int.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_int.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_uint.double	double [1 1] 6
+prim.jg_uint.frac	double [1 1] 4
+prim.jg_uint.neg	double [1 1] 1
+prim.jg_uint.big	double [1 1] 0
+prim.jg_uint.int8	double [1 1] 6
+prim.jg_uint.logical	double [1 1] 2
+prim.jg_uint.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_uint.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_uint.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_long.double	double [1 1] 6
+prim.jg_long.frac	double [1 1] 4
+prim.jg_long.neg	double [1 1] -2
+prim.jg_long.big	double [1 1] -2147483648
+prim.jg_long.int8	double [1 1] 6
+prim.jg_long.logical	double [1 1] 2
+prim.jg_long.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_long.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_long.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_long.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_ulong.double	double [1 1] 6
+prim.jg_ulong.frac	double [1 1] 4
+prim.jg_ulong.neg	double [1 1] 1
+prim.jg_ulong.big	double [1 1] 0
+prim.jg_ulong.int8	double [1 1] 6
+prim.jg_ulong.logical	double [1 1] 2
+prim.jg_ulong.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_ulong.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_ulong.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_ulong.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_longlong.double	double [1 1] 6
+prim.jg_longlong.frac	double [1 1] 4
+prim.jg_longlong.neg	double [1 1] -2
+prim.jg_longlong.big	double [1 1] 10000000001
+prim.jg_longlong.int8	double [1 1] 6
+prim.jg_longlong.logical	double [1 1] 2
+prim.jg_longlong.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_longlong.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_longlong.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_longlong.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_ulonglong.double	double [1 1] 6
+prim.jg_ulonglong.frac	double [1 1] 4
+prim.jg_ulonglong.neg	double [1 1] 1
+prim.jg_ulonglong.big	double [1 1] 10000000001
+prim.jg_ulonglong.int8	double [1 1] 6
+prim.jg_ulonglong.logical	double [1 1] 2
+prim.jg_ulonglong.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_ulonglong.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_ulonglong.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_ulonglong.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_size.double	double [1 1] 6
+prim.jg_size.frac	double [1 1] 4
+prim.jg_size.neg	double [1 1] 1
+prim.jg_size.big	double [1 1] 10000000001
+prim.jg_size.int8	double [1 1] 6
+prim.jg_size.logical	double [1 1] 2
+prim.jg_size.char	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+prim.jg_size.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_size.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_size.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+prim.jg_bool.double	logical [1 1] false
+prim.jg_bool.frac	logical [1 1] false
+prim.jg_bool.neg	logical [1 1] false
+prim.jg_bool.big	logical [1 1] false
+prim.jg_bool.int8	logical [1 1] false
+prim.jg_bool.logical	logical [1 1] false
+prim.jg_bool.char	ERR MATLAB:class:RequireLogical Value must be logical (true or false).
+prim.jg_bool.empty	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_bool.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+prim.jg_bool.nan	ERR MATLAB:nologicalnan NaN values cannot be converted to logicals.
+prim.int8.max	double [1 1] -128
+prim.uint64.max	double [1 1] 0
+prim.int64.big	double [1 1] 9007199254740992
+prim.int64.big.sprintf	char [1 16] '9007199254740992'
+prim.uint64.max.ret	char [1 2] '-1'
+prim.mixed	double [1 1] 15
+prim.void.output	ERR MATLAB:calllib:NoMatchingSignatureFound No method with matching signature.
+prim.void.call	OUT
+prim.too.few	ERR MATLAB:calllib:NoMatchingSignatureFound No method with matching signature.
+prim.too.many	ERR MATLAB:calllib:NoMatchingSignatureFound No method with matching signature.
+prim.nosuch	ERR MATLAB:calllib:MethodNotFound Method was not found.
+prim.notfound	ERR MATLAB:calllib:MethodNotFound Method was not found.
+prim.string.name	double [1 1] 2
+prim.version	double [1 1] 3
+ptr.double.array	ERR MATLAB:calllib:NoMatchingSignatureFound No method with matching signature.
+ptr.double.one.output	OUT | r = | 2     4     6 |
+ptr.double.col	OUT | r1 = | 2 | 4 | 6 |
+ptr.double.mat	OUT | r1 = | 2     4 | 6     8 |
+ptr.int32.from.double	OUT | r1 = | 1×3 int32 row vector | 2   4   6 |
+ptr.int16.native	OUT | r1 = | 1×3 int16 row vector | 2   4   6 |
+ptr.uint8.char	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+ptr.int64	OUT | r1 = | 1×3 int64 row vector | 2   4   6 |
+ptr.float	OUT | r1 = | 1×3 single row vector | 2     4     6 |
+ptr.bool	ERR MATLAB:class:RequireScalar Value must be a scalar.
+ptr.short.n	OUT | r1 = | 2     4     3 |
+ptr.sum	double [1 1] 6
+ptr.sum.scalar	double [1 1] 5
+ptr.sum.empty	double [1 1] 0
+ptr.add_ref	OUT | r = | 8 | b = | 3.5000 |
+ptr.sum2d	OUT | r = | 184 |
+ptr.sum2d.t	OUT | r = | 196 |
+lp.class	char [1 11] 'lib.pointer'
+lp.disp	OUT | p = | libpointer |
+lp.DataType	char [1 9] 'doublePtr'
+lp.Value	double [1 3] [1 2 3]
+lp.isNull	logical [1 1] false
+lp.after.call	double [1 3] [10 20 30]
+lp.get	struct [1 1] struct(Value,DataType)
+lp.methods	OUT | Methods for class lib.pointer: | get          isNull       plus         reshape      set          setdatatype | Methods of lib.pointer inherited from handle. |
+lp.plus	char [1 11] 'lib.pointer'
+lp.plus.value	double [1 2] [20 30]
+lp.plus.DataType	char [1 9] 'doublePtr'
+lp.plus.setdatatype	double [1 2] [20 30]
+lp.set.Value.shorter	double [1 2] [7 8]
+lp.set.Value.class	OUT double |
+lp.null	lib.pointer [1 1] DataType= isNull=1 Value=<Value: MATLAB:libpointer:ValueNotDefined>
+lp.null.isNull	logical [1 1] true
+lp.null.typed	logical [1 1] true
+lp.null.typed.Value	ERR MATLAB:libpointer:ValueNotDefined The datatype and size of the value must be defined before the value can be retrieved.
+lp.voidPtr	lib.pointer [1 1] DataType=voidPtr isNull=0 Value=double [1 2] [1 2]
+lp.bad.type	ERR MATLAB:libpointer:InvalidType Type was not found.
+lp.is_null.null	double [1 1] 1
+lp.is_null.empty	double [1 1] 1
+lp.is_null.zero	double [1 1] 0
+lp.is_null.value	double [1 1] 0
+own.alloc_doubles	OUT | n = | 4 | pp = | libpointer |
+own.pp.Value	ERR MATLAB:libpointer:ValueNotDefined The datatype and size of the value must be defined before the value can be retrieved.
+own.pp.inner.ptr	OUT lib.pointer | doublePtr | 1     2     3     4 | doublePtr |
+own.pp.wrapped	ERR MATLAB:libpointer:ValueNotDefined The datatype and size of the value must be defined before the value can be retrieved.
+own.pp.inner.after	OUT      1     2     3     4 | ans = | libpointer |
+own.ret.class	char [1 11] 'lib.pointer'
+own.ret.Value.before	ERR MATLAB:libpointer:ValueNotDefined The datatype and size of the value must be defined before the value can be retrieved.
+own.ret.setdatatype	double [1 3] [1 2 3]
+own.ret.reshape	double [1 2] [3 1]
+static.block	double [2 3] [1 3 5;2 4 6]
+static.block.plus2	double [1 2] [3 4]
+static.ints.DataType	char [1 8] 'int32Ptr'
+static.ints	int32 [1 4] [10 20 30 40]
+kept.after.write	double [1 3] [4.5 4.5 4.5]
+kept.plain.array	OUT
+str.greeting	char [1 20] 'hello from jgtestlib'
+str.strlen.char	double [1 1] 5
+str.strlen.string	ERR MATLAB:libpointer:MustBeString Parameter can not be converted to a character vector
+str.strlen.empty	double [1 1] 0
+str.strlen.null	double [1 1] -1
+str.strlen.number	ERR MATLAB:libpointer:MustBeString Parameter can not be converted to a character vector
+str.upper	OUT | r1 = | 'ABC' |
+str.upper.ret	OUT | r1 = | 'ABC' | r2 = | 'ABC' |
+str.fill.name	OUT | r1 = | 'jgtestlib' |
+str.fill.name.short	OUT | r1 = | 'jgt' |
+str.fill.name.libpointer	ERR MATLAB:libpointer:PointerTypeMustMatch Pointer type must match data type
+str.total_len.cellstr	OUT | r = | 5 |
+str.total_len.string	ERR MATLAB:class:MustBeCellStringsParameter Parameter must be a cell array of character vectors.
+str.words	OUT lib.pointer | stringPtrPtr |
+str.words.setdatatype	ERR MATLAB:libpointer:reshape:InvalidType Only numericPtr data types may have their dimensions set.
+str.words.Value	OUT cell | {'alpha'} |
+str.words.plus	OUT     {'beta'} |
+str.pick_word	OUT | r = | 1×1 cell array | {'beta'} |
+str.pick_word.bad	OUT | r = | 1×1 cell array | {0×0 double} |
+str.pick_word.cell	OUT | r = | 1×1 cell array | {'beta'} |
+void.class	OUT lib.pointer | voidPtr |
+void.get	OUT     2.5000 | ans = | libpointer |
+void.Value	ERR MATLAB:libpointer:ValueNotDefined The datatype and size of the value must be defined before the value can be retrieved.
+void.null	OUT    NaN |
+st.point.len.struct	double [1 1] 5
+st.point.len.libstruct	double [1 1] 5
+st.point.len.partial	double [1 1] 3
+st.point.len.extra.field	ERR MATLAB:libstruct:FieldMismatch A field does not match one in the struct.
+st.point.len.wrong.case	ERR MATLAB:libstruct:FieldMismatch A field does not match one in the struct.
+st.point.scale.struct	OUT | r = | struct with fields: | x: 10 | y: 20 |
+st.libstruct.class	OUT lib.jg_point |
+st.libstruct.disp	OUT | ls = | jg_point with properties: | x: 0 | y: 0 |
+st.libstruct.default	OUT     x: 0 | y: 0 |
+st.libstruct.after.call	OUT     x: 3 | y: 6 |
+st.libstruct.structsize	OUT     16 |
+st.libstruct.fields	OUT     {'x'} | {'y'} |
+st.libstruct.bad.field	ERR MATLAB:noPublicFieldForClass Unrecognized property 'z' for class 'lib.jg_point'.
+st.libstruct.set.char	ERR MATLAB:class:MustBeNumeric Array must be numeric or logical.
+st.libstruct.set.vector	ERR MATLAB:class:MustBeScalar Parameter must be scalar.
+st.libstruct.nosuch	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'lib.jg_nosuch'.
+st.libstruct.init	OUT     x: 9 | y: 0 |
+st.libstruct.copy	OUT      5 |
+st.mixed.get	OUT        a: 0 | b: 0 | c: 0 | d: [] | name: [] |
+st.mixed.name	OUT double |
+st.mixed.d	OUT double |
+st.mixed.structsize	OUT     40 |
+st.mixed.sum	OUT    NaN |
+st.mixed.sum.struct	double [1 1] 14
+st.mixed.name.char	ERR MATLAB:libstruct:InvalidFieldValue Cannot convert data value for field name due to error: | Array must be numeric or logical or a pointer to one
+st.nested.default	OUT      p: [0×1 struct] | q: [0×1 struct] | id: 0 |
+st.nested.p.class	OUT struct |
+st.nested.sum	double [1 1] 15
+st.packed.structsize	OUT     11 |
+st.packed.fill	OUT     a: 0 | b: 0 | c: 0 | NaN |
+st.point.alloc	ERR MATLAB:nonExistentField Unrecognized field name "Value".
+st.point.alloc.ptr	OUT struct | x: 3 | y: 4 |
+st.point.make	ERR MATLAB:calllib:MethodNotFound Method was not found.
+layout	double [1 14] [16 40 0 8 16 20 32 40 16 32 11 0 1 9]
+enum.name.char	char [1 5] 'green'
+enum.name.value	char [1 4] 'blue'
+enum.name.int32	char [1 3] 'red'
+enum.name.bad.char	ERR MATLAB:class:InvalidEnumValue There is no enumerated value named 'JG_PURPLE'.
+enum.name.bad.value	char [1 7] 'unknown'
+enum.name.string	char [1 4] 'blue'
+enum.next	char [1 8] 'JG_GREEN'
+enum.next.value	char [1 7] 'JG_BLUE'
+enum.value	double [1 1] 4
+bad.union	ERR MATLAB:invalidConversion Conversion to unknown from double is not possible.
+bad.bits	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'lib.jg_bits'.
+bad.bits.struct	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+bad.fnptr	ERR MATLAB:invalidConversion Conversion to unknown from function_handle is not possible.
+bad.fnptr.null	ERR MATLAB:invalidConversion Conversion to unknown from lib.pointer is not possible.
+bad.varargs	ERR MATLAB:calllib:NoMatchingSignatureFound No method with matching signature.
+bad.triple	ERR MATLAB:invalidConversion Conversion to unknown from lib.pointer is not possible.
+exported.value	double [1 1] 0
+to stdout
+proc.printf	OUT | n = | 10 |
+proc.getenv	char [1 10] 'fromMATLAB'
+proc.getenv.unset	char [0 0] ''
+proc.getcwd	logical [1 1] true
+proc.getcwd.after.cd	logical [1 1] true
+proc.sleep	OUT
+proc.sleep.seconds	0.3
+life.unload.with.live	ERR MATLAB:unloadlibrary:IsInUse Cannot unload a library that has outstanding objects.
+life.pointer.after.unload	double [1 2] [1 2]
+life.struct.after.unload	struct [1 1] struct(x,y)
+life.libstruct.unloaded	lib.jg_point [1 1] libstruct struct [1 1] struct(x,y)
+life.libpointer.unloaded	char [1 11] 'lib.pointer'

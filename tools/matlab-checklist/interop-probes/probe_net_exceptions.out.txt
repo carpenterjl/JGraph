@@ -1,0 +1,130 @@
+method.class	NET.NetException
+method.identifier	MATLAB:NET:CLRException:MethodInvoke
+method.message	Message: boom | Source: JGraph.Interop.TestAssembly | HelpLink: None
+method.ExceptionObject	System.InvalidOperationException
+method.Message	boom
+method.inner	[]
+method.cause	0
+method.stack.n	1
+method.report.basic	Error using probe_net_exceptions (line 24) | Message: boom | Source: JGraph.Interop.TestAssembly | HelpLink: None
+method.report.extended	Error using probe_net_exceptions (line 24) | Message: boom | Source: JGraph.Interop.TestAssembly | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+static.class	NET.NetException
+static.identifier	MATLAB:NET:CLRException:MethodInvoke
+static.message	Message: static refused | Source: JGraph.Interop.TestAssembly | HelpLink: None
+static.ExceptionObject	System.NotSupportedException
+static.Message	static refused
+static.inner	[]
+static.cause	0
+static.stack.n	1
+static.report.basic	Error using probe_net_exceptions (line 24) | Message: static refused | Source: JGraph.Interop.TestAssembly | HelpLink: None
+static.report.extended	Error using probe_net_exceptions (line 24) | Message: static refused | Source: JGraph.Interop.TestAssembly | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ctor.class	NET.NetException
+ctor.identifier	MATLAB:NET:CLRException:CreateObject
+ctor.message	Message: constructor refused (Parameter 'fail') | Source: JGraph.Interop.TestAssembly | HelpLink: None
+ctor.ExceptionObject	System.ArgumentException
+ctor.Message	constructor refused (Parameter 'fail')
+ctor.inner	[]
+ctor.cause	0
+ctor.stack.n	1
+ctor.report.basic	Error using probe_net_exceptions (line 24) | Message: constructor refused (Parameter 'fail') | Source: JGraph.Interop.TestAssembly | HelpLink: None
+ctor.report.extended	Error using probe_net_exceptions (line 24) | Message: constructor refused (Parameter 'fail') | Source: JGraph.Interop.TestAssembly | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+getter.class	NET.NetException
+getter.identifier	MATLAB:NET:CLRException:PropertyGet
+getter.message	Message: getter refused | Source: JGraph.Interop.TestAssembly | HelpLink: None
+getter.ExceptionObject	System.InvalidOperationException
+getter.Message	getter refused
+getter.inner	[]
+getter.cause	0
+getter.stack.n	1
+getter.report.basic	Error using probe_net_exceptions (line 24) | Message: getter refused | Source: JGraph.Interop.TestAssembly | HelpLink: None
+getter.report.extended	Error using probe_net_exceptions (line 24) | Message: getter refused | Source: JGraph.Interop.TestAssembly | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+setter.class	NET.NetException
+setter.identifier	MATLAB:NET:CLRException:PropertySet
+setter.message	Message: setter refused (Parameter 'value') | Source: JGraph.Interop.TestAssembly | HelpLink: None
+setter.ExceptionObject	System.ArgumentOutOfRangeException
+setter.Message	setter refused (Parameter 'value')
+setter.inner	[]
+setter.cause	0
+setter.stack.n	1
+setter.report.basic	Error using probe_net_exceptions (line 24) | Message: setter refused (Parameter 'value') | Source: JGraph.Interop.TestAssembly | HelpLink: None
+setter.report.extended	Error using probe_net_exceptions (line 24) | Message: setter refused (Parameter 'value') | Source: JGraph.Interop.TestAssembly | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+custom.class	NET.NetException
+custom.identifier	MATLAB:NET:CLRException:MethodInvoke
+custom.message	Message: outer failure | Source: JGraph.Interop.TestAssembly | HelpLink: None
+custom.ExceptionObject	JGTest.JGTestException
+custom.Message	outer failure
+custom.inner	System.FormatException inner cause
+custom.cause	0
+custom.stack.n	1
+custom.report.basic	Error using probe_net_exceptions (line 24) | Message: outer failure | Source: JGraph.Interop.TestAssembly | HelpLink: None
+custom.report.extended	Error using probe_net_exceptions (line 24) | Message: outer failure | Source: JGraph.Interop.TestAssembly | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+divzero.class	NET.NetException
+divzero.identifier	MATLAB:NET:CLRException:MethodInvoke
+divzero.message	Message: Attempted to divide by zero. | Source: JGraph.Interop.TestAssembly | HelpLink: None
+divzero.ExceptionObject	System.DivideByZeroException
+divzero.Message	Attempted to divide by zero.
+divzero.inner	[]
+divzero.cause	0
+divzero.stack.n	1
+divzero.report.basic	Error using probe_net_exceptions (line 24) | Message: Attempted to divide by zero. | Source: JGraph.Interop.TestAssembly | HelpLink: None
+divzero.report.extended	Error using probe_net_exceptions (line 24) | Message: Attempted to divide by zero. | Source: JGraph.Interop.TestAssembly | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+nullref.class	NET.NetException
+nullref.identifier	MATLAB:NET:CLRException:MethodInvoke
+nullref.message	Message: Object reference not set to an instance of an object. | Source: JGraph.Interop.TestAssembly | HelpLink: None
+nullref.ExceptionObject	System.NullReferenceException
+nullref.Message	Object reference not set to an instance of an object.
+nullref.inner	[]
+nullref.cause	0
+nullref.stack.n	1
+nullref.report.basic	Error using probe_net_exceptions (line 24) | Message: Object reference not set to an instance of an object. | Source: JGraph.Interop.TestAssembly | HelpLink: None
+nullref.report.extended	Error using probe_net_exceptions (line 24) | Message: Object reference not set to an instance of an object. | Source: JGraph.Interop.TestAssembly | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+bcl.class	NET.NetException
+bcl.identifier	MATLAB:NET:CLRException:MethodInvoke
+bcl.message	Message: Could not find a part of the path 'Z:\no\such\file.txt'. | Source: System.Private.CoreLib | HelpLink: None
+bcl.ExceptionObject	System.IO.DirectoryNotFoundException
+bcl.Message	Could not find a part of the path 'Z:\no\such\file.txt'.
+bcl.inner	[]
+bcl.cause	0
+bcl.stack.n	1
+bcl.report.basic	Error using probe_net_exceptions (line 24) | Message: Could not find a part of the path 'Z:\no\such\file.txt'. | Source: System.Private.CoreLib | HelpLink: None
+bcl.report.extended	Error using probe_net_exceptions (line 24) | Message: Could not find a part of the path 'Z:\no\such\file.txt'. | Source: System.Private.CoreLib | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+bcl.ctor.class	NET.NetException
+bcl.ctor.identifier	MATLAB:NET:CLRException:CreateObject
+bcl.ctor.message	Message: Invalid URI: The format of the URI could not be determined. | Source: System.Private.Uri | HelpLink: None
+bcl.ctor.ExceptionObject	System.UriFormatException
+bcl.ctor.Message	Invalid URI: The format of the URI could not be determined.
+bcl.ctor.inner	[]
+bcl.ctor.cause	0
+bcl.ctor.stack.n	1
+bcl.ctor.report.basic	Error using probe_net_exceptions (line 24) | Message: Invalid URI: The format of the URI could not be determined. | Source: System.Private.Uri | HelpLink: None
+bcl.ctor.report.extended	Error using probe_net_exceptions (line 24) | Message: Invalid URI: The format of the URI could not be determined. | Source: System.Private.Uri | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+bcl.static.class	NET.NetException
+bcl.static.identifier	MATLAB:NET:CLRException:MethodInvoke
+bcl.static.message	Message: The input string 'x' was not in a correct format. | Source: System.Private.CoreLib | HelpLink: None
+bcl.static.ExceptionObject	System.FormatException
+bcl.static.Message	The input string 'x' was not in a correct format.
+bcl.static.inner	[]
+bcl.static.cause	0
+bcl.static.stack.n	1
+bcl.static.report.basic	Error using probe_net_exceptions (line 24) | Message: The input string 'x' was not in a correct format. | Source: System.Private.CoreLib | HelpLink: None
+bcl.static.report.extended	Error using probe_net_exceptions (line 24) | Message: The input string 'x' was not in a correct format. | Source: System.Private.CoreLib | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+createGeneric.class	NET.NetException
+createGeneric.identifier	MATLAB:NET:CLRException
+createGeneric.message	Message: GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type 'T'. | Source: System.Private.CoreLib | HelpLink: None
+createGeneric.ExceptionObject	System.ArgumentException
+createGeneric.Message	GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type 'T'.
+createGeneric.inner	System.TypeLoadException GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type parameter 'T'.
+createGeneric.cause	0
+createGeneric.stack.n	1
+createGeneric.report.basic	Error using probe_net_exceptions (line 24) | Message: GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type 'T'. | Source: System.Private.CoreLib | HelpLink: None
+createGeneric.report.extended	Error using probe_net_exceptions (line 24) | Message: GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type 'T'. | Source: System.Private.CoreLib | HelpLink: None |  | Error in probe_net_exceptions (line 24) |         evalin('base', [cases{k, 2} ';']); |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+custom.Code	int32 [1 1] 17
+custom.isa	logical [1 1] true
+custom.fields	cell [6 1] {char [1 15] 'ExceptionObject'; char [1 10] 'identifier'; char [1 7] 'message'; char [1 5] 'cause'; char [1 5] 'stack'; char [1 10] 'Correction'}
+custom.methods	cell [11 1] {char [1 12] 'NetException'; char [1 8] 'addCause'; char [1 13] 'addCorrection'; char [1 2] 'eq'; char [1 9] 'getReport'; char [1 7] 'isequal'; char [1 4] 'last'; char [1 2] 'ne'; char [1 7] 'rethrow'; char [1 5] 'throw'; char [1 13] 'throwAsCaller'}
+custom.disp	OUT | e = | NetException with properties: | ExceptionObject: [1×1 JGTest.JGTestException] | identifier: 'MATLAB:NET:CLRException:MethodInvoke' | message: 'Message: outer failure↵Source: JGraph.Interop.TestAssembly↵HelpLink: None' | cause: {} | stack: [1×1 struct] | Correction: [] |
+custom.rethrow	ERR MATLAB:NET:CLRException:MethodInvoke Message: outer failure | Source: JGraph.Interop.TestAssembly | HelpLink: None
+custom.throw	ERR MATLAB:NET:CLRException:MethodInvoke Message: outer failure | Source: JGraph.Interop.TestAssembly | HelpLink: None
+uncaught.evalc	ERR MATLAB:NET:CLRException:MethodInvoke Message: static refused | Source: JGraph.Interop.TestAssembly | HelpLink: None
+lasterr	char [0 0] ''
+MException.last	ERR MATLAB:MException:MustCallLastFromCommandLine last() method can only be called from command prompt.

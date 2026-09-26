@@ -1,0 +1,49 @@
+RUN|pending I3|'dotnetenv' is not recognized as a variable or a function.
+CHK|env_before_runtime|framework|exact
+CHK|env_before_status|notloaded|exact
+CHK|env_bad_runtime|MATLAB:netenv:InvalidRuntime|exact
+CHK|env_core_status|notloaded|exact
+CHK|env_core_again|none|exact
+CHK|env_after_load|loaded|exact
+CHK|env_switch_after_load|MATLAB:netenv:NETLoaded|exact
+CHK|env_switch_after_load_message|.NET is loaded. To change the environment, restart MATLAB then call dotnetenv.|exact
+CHK|runtime_version_major|int32:8|exact
+CHK|assembly_class|NET.Assembly|exact
+CHK|assembly_isa_handle|logical:1|exact
+CHK|AssemblyHandle|System.Reflection.RuntimeAssembly|exact
+CHK|Classes_count|double:24|exact
+CHK|Classes_first|JGTest.ArrayMaker|exact
+CHK|Enums|cell:{char:JGTest.Color;char:JGTest.Access;char:JGTest.Small;char:JGTest.Big;char:JGTest.Huge}|exact
+CHK|Structures|cell:{char:JGTest.Point}|exact
+CHK|Delegates|cell:{char:JGTest.Unary;char:JGTest.RefOut;char:JGTest.Describe;char:JGTest.NonStandardHandler}|exact
+CHK|GenericTypes|cell:{char:JGTest.Box`1[T];char:JGTest.Pair`2[TFirst,TSecond];char:JGTest.Constrained`1[T]}|exact
+CHK|Interfaces|cell:{char:JGTest.IGreeter}|exact
+CHK|properties|AssemblyHandle,Classes,Structures,Enums,GenericTypes,Interfaces,Delegates|exact
+CHK|reload_same|logical:1|exact
+CHK|path_string|NET.Assembly|exact
+CHK|name_System_Xml|NET.Assembly|exact
+CHK|name_System_Xml_type|System.Xml.XmlDocument|exact
+CHK|name_full|NET.Assembly|exact
+CHK|name_CoreLib|NET.Assembly|exact
+CHK|name_nosuch|MATLAB:NET:AddAssembly:NetCoreShortNameLoadError|exact
+CHK|name_nosuch_message|'No.Such.Assembly' could not be found by .NET Core probing logic.|exact
+CHK|path_missing|MATLAB:NET:CLRException:AddAssembly|exact
+CHK|path_relative_is_a_name|MATLAB:NET:AddAssembly:NetCoreShortNameLoadError|exact
+CHK|native_dll|MATLAB:NET:CLRException:AddAssembly|exact
+CHK|native_dll_message|Message: PE image does not have metadata. / Source: System.Reflection.Metadata / HelpLink: None|exact
+CHK|not_a_dll|Message: Image is too small. / Source: System.Reflection.Metadata / HelpLink: None|exact
+CHK|numeric|MATLAB:NET:AddAssembly:InvalidAssemblyName|exact
+CHK|numeric_message|Input to NET.addAssembly must be a character vector or an instance of 'System.Reflection.AssemblyName' class.|exact
+CHK|no_args|MATLAB:UndefinedFunction|exact
+CHK|two_args|MATLAB:UndefinedFunction|exact
+CHK|isNETSupported|logical:1|exact
+CHK|which_addAssembly|addAssembly is a built-in method|exact
+CHK|exist_NetException|double:8|exact
+CHK|exist_Assembly|double:8|exact
+CHK|exist_addAssembly|double:0|exact
+CHK|disableAutoRelease_not_com|MATLAB:badargs|exact
+CHK|cwd_shared|logical:1|exact
+CHK|cwd_follows_cd|logical:1|exact
+CHK|env_setenv_seen|System.String:abc|exact
+CHK|env_net_set_seen|xyz|exact
+CHK|Is64BitProcess|logical:1|exact

@@ -54,3 +54,9 @@ __pycache__/
 ## `git worktree remove`; `git worktree list` shows what is still there.
 .claude/worktrees/
 docs/plans/
+
+## Interop test assets staged for recording (tools/interop/stage-assets.ps1)
+tests/JGraph.Tests/MatlabParity/fixtures/interop/
+
+## MATLAB's loadlibrary build products (thunk libraries) wherever a probe leaves them
+*_thunk_pcwin64.*

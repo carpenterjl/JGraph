@@ -1,0 +1,51 @@
+events	cell [5 1] {char [1 5] 'Fired'; char [1 6] 'Custom'; char [1 11] 'NonStandard'; char [1 11] 'StaticFired'; char [1 20] 'ObjectBeingDestroyed'}
+events.disp	OUT | Events for class JGTest.Publisher: | Fired | Custom | NonStandard | StaticFired | ObjectBeingDestroyed |
+lh.class	char [1 14] 'event.listener'
+lh.disp	OUT | lh = | listener with properties: | Source: {[1×1 JGTest.Publisher]} | EventName: 'Fired' | Callback: @(src,evt)logit('Fired',src,evt) | Enabled: 1 | Recursive: 0 |
+count.after.add	int32 [1 1] 1
+log.sync	char [1 89] 'Fired ; JGTest.Publisher [1 1] JGTest.Publisher ; System.EventArgs [1 1] System.EventArgs'
+log.two.listeners	char [1 99] 'Fired2 || Fired ; JGTest.Publisher [1 1] JGTest.Publisher ; System.EventArgs [1 1] System.EventArgs'
+count.two	int32 [1 1] 1
+count.after.delete	int32 [1 1] 1
+log.after.delete	char [1 89] 'Fired ; JGTest.Publisher [1 1] JGTest.Publisher ; System.EventArgs [1 1] System.EventArgs'
+log.disabled	char [1 6] '(none)'
+log.after.clear.lh	char [1 89] 'Fired ; JGTest.Publisher [1 1] JGTest.Publisher ; System.EventArgs [1 1] System.EventArgs'
+count.after.clear.lh	int32 [1 1] 1
+log.listener	char [1 104] 'viaListener || Fired ; JGTest.Publisher [1 1] JGTest.Publisher ; System.EventArgs [1 1] System.EventArgs'
+log.listener.cleared	char [1 89] 'Fired ; JGTest.Publisher [1 1] JGTest.Publisher ; System.EventArgs [1 1] System.EventArgs'
+log.custom	char [1 92] 'Custom ; JGTest.Publisher [1 1] JGTest.Publisher ; JGTest.CustomArgs [1 1] JGTest.CustomArgs'
+nonstandard.addlistener	ERR MATLAB:NET:UnsupportedDelegateType .NET events with nonstandard delegate definition are not supported in MATLAB.
+nonstandard.raise	OUT
+log.nonstandard	char [1 6] '(none)'
+static.addlistener	ERR MATLAB:addlistener:invalidinput First argument provided is not valid for addlistener. (Check its type or validity)
+log.static	char [1 6] '(none)'
+bad.event	ERR MATLAB:class:invalidEvent Event 'NoSuchEvent' is not defined for class 'JGTest.Publisher'.
+bad.callback.nargin	OUT [Warning: Error occurred while executing the listener callback for event Fired defined for class JGTest.Publisher: | Error using @()ip_evlog(''zeroArgs'')')" style="font-weight:bold">ip_px>@()ip_evlog('zeroArgs') | Too many input arguments. | Error in ip_px (line 5) | out = evalin('caller', ['evalc(' ip_quote(stmt) ')']); | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | Error in probe_net_events (line 63) | ip_px('bad.callback.nargin', 'lb = addlistener(p, ''Fired'', @() ip_evlog(''zeroArgs'')); p.RaiseSync(); delete(lb);'); | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] | [> In ip_px (line 5) | In probe_net_events (line 63)] |
+log.bad.callback	char [1 89] 'Fired ; JGTest.Publisher [1 1] JGTest.Publisher ; System.EventArgs [1 1] System.EventArgs'
+callback.errors	OUT [Warning: Error occurred while executing the listener callback for event Fired defined for class JGTest.Publisher: | Error using @(s,e)error(''my:id'',''callback failed'')')" style="font-weight:bold">ip_px>@(s,e)error('my:id','callback failed') | callback failed | Error in ip_px (line 5) | out = evalin('caller', ['evalc(' ip_quote(stmt) ')']); | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | Error in probe_net_events (line 65) | ip_px('callback.errors', 'lb = addlistener(p, ''Fired'', @(s, e) error(''my:id'', ''callback failed'')); p.RaiseSync(); delete(lb);'); | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] | [> In ip_px (line 5) | In probe_net_events (line 65)] |
+callback.errors.after	OUT still running |
+log.pool.busy.loop	char [1 89] 'Fired ; JGTest.Publisher [1 1] JGTest.Publisher ; System.EventArgs [1 1] System.EventArgs'
+log.pool.after.pause	char [1 71] 'Pool ; double [1 1] 1 || Pool ; double [1 1] 2 || Pool ; double [1 1] 3'
+log.pool.during.pause	char [1 71] 'Pool ; double [1 1] 1 || Pool ; double [1 1] 2 || Pool ; double [1 1] 3'
+log.pool.java.sleep	char [1 6] '(none)'
+log.pool.after.drawnow	char [1 71] 'Pool ; double [1 1] 1 || Pool ; double [1 1] 2 || Pool ; double [1 1] 3'
+del.Func	double [1 1] 6
+del.Unary	double [1 1] 102
+del.Unary.handle	double [1 1] 102
+del.Func2	double [1 1] 7
+del.Func.class	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'System.Func'.
+del.Func.createGeneric	char [1 40] 'System.Func<System*Double,System*Double>'
+del.Func.generic.apply	double [1 1] 10
+del.Func.Invoke	double [1 1] 15
+del.Action	ERR MATLAB:UndefinedFunction No method 'JGTest.Invoker.Run' with matching signature found.
+del.Action.call	OUT
+log.action	char [1 6] 'Action'
+del.Describe	System.String [1 1] n3
+del.RefOut	double [1 1] 3007
+del.returned	char [1 12] 'JGTest.Unary'
+del.returned.Invoke	double [1 1] 42
+del.returned.paren	double [1 1] 42
+del.error	ERR MATLAB:maxlhs Too many output arguments.
+del.wrong.return	ERR MATLAB:class:RequireScalar Value must be a scalar.
+del.methods	cell [37 1] {char [1 11] 'BeginInvoke'; char [1 5] 'Clone'; char [1 7] 'Combine'; char [1 13] 'DynamicInvoke'; char [1 9] 'EndInvoke'; char [1 6] 'Equals'; char [1 11] 'GetHashCode'; char [1 17] 'GetInvocationList'; char [1 13] 'GetObjectData'; char [1 7] 'GetType'; char [1 6] 'Invoke'; char [1 6] 'Remove'; char [1 9] 'RemoveAll'; char [1 8] 'ToString'; char [1 5] 'Unary'; char [1 11] 'addlistener'; char [1 6] 'delete'; char [1 3] 'end'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 2] 'ge'; char [1 10] 'get_Method'; char [1 10] 'get_Target'; char [1 2] 'gt'; char [1 7] 'isempty'; char [1 8] 'isscalar'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 6] 'length'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 5] 'ndims'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 5] 'numel'; char [1 4] 'size'}
+del.BeginInvoke	ERR MATLAB:NET:CLRException:MethodInvoke Message: Operation is not supported on this platform. | Source: JGraph.Interop.TestAssembly | HelpLink: None | .NET Core is selected. Some .NET Core APIs behave differently from respective .NET Framework APIs.

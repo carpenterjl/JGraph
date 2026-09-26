@@ -1,0 +1,3 @@
+# The interop plan's stage that completes this fixture (docs/plans/net-and-shared-library-interop-plan.md).
+RUN	I9	# JGraph has no .NET or shared-library interface before I9
+*	I9	# calllib, lib.pointer, libstruct and enums

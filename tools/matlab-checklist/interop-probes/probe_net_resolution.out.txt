@@ -1,0 +1,49 @@
+which.String	char [1 34] 'System.String is a built-in method'
+which.String.disp	OUT System.String is a built-in method  % System.String constructor |
+which.Members	char [1 35] 'JGTest.Members is a built-in method'
+which.method	char [1 24] 'Max is a built-in method'
+exist.String	double [1 1] 8
+exist.String.class	double [1 1] 8
+exist.System	double [1 1] 7
+exist.Members	double [1 1] 8
+exist.nosuch	double [1 1] 0
+metaclass.q	char [1 31] 'NET.NETInterfaceCustomMetaClass'
+metaclass.fromName	char [1 31] 'NET.NETInterfaceCustomMetaClass'
+metaclass.Name	char [1 14] 'JGTest.Members'
+metaclass.Superclasses	double [1 1] 3
+metapackage.System	char [1 25] 'matlab.metadata.Namespace'
+namespace.alone	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'System'.
+namespace.partial	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'System.Collections'.
+namespace.class	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'System.Collections'.
+func2str	char [1 15] 'System.Math.Max'
+handle.static	double [1 1] 4
+handle.ctor	char [1 13] 'System.String'
+feval.string	double [1 1] 4
+str2func	double [1 1] 4
+help.nonempty	logical [1 1] true
+doc.exists	double [1 1] 2
+var.System.call	ERR MATLAB:structRefFromNonStruct Dot indexing is not supported for variables of this type.
+var.System.Math	ERR MATLAB:structRefFromNonStruct Dot indexing is not supported for variables of this type.
+var.cleared	char [1 13] 'System.String'
+var.JGTest.field	double [1 1] 7
+file.System.bare	char [1 17] 'System.m function'
+file.System.dotted	char [1 13] 'System.String'
+file.System.Math	double [1 1] 2
+file.JGTest.bare	char [1 17] 'JGTest.m function'
+file.JGTest.dotted	char [1 14] 'JGTest.Members'
+pkg.JGTest.Members	JGTest.Members [1 1] Members(0, none)
+pkg.JGTest.OnlyInPackage	char [1 12] 'package only'
+pkg.JGTest.Statics	System.String [1 1] hello
+file.NET.bare	char [1 14] 'NET.m function'
+file.NET.isNETSupported	logical [1 1] true
+coll.Sum.Of	double [1 1] 6
+coll.plot	System.String [1 1] JGTest.plot
+coll.max.Thing	System.String [1 1] JGTest.max.Thing
+coll.max.fn	double [1 1] 5
+coll.sum.fn	double [1 1] 6
+direct.nested.plus	char [1 18] 'JGTest.Outer+Inner'
+direct.generic.name	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'System.Collections.Generic.List'.
+direct.generic.static	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'System.Collections.Generic.Comparer'.
+bare.Max	ERR MATLAB:UndefinedFunction Undefined function 'Max' for input arguments of type 'double'.
+fn.uses.net	double [1 1] 9
+fn.local.var	ERR MATLAB:structRefFromNonStruct Dot indexing is not supported for variables of this type.

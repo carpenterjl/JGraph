@@ -1,0 +1,4 @@
+dotnetenv.fresh	OUT | ans = | NETEnvironment with properties: | Runtime: framework | Status: notloaded | Version: "" | RuntimeLocation: "" |
+isNETSupported	logical [1 1] true
+dotnetenv.after.isNETSupported	OUT | ans = | NETEnvironment with properties: | Runtime: framework | Status: loaded | Version: ".NET Framework 4.8.9345.0" | RuntimeLocation: "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\" |
+dotnetenv.core.after	ERR MATLAB:netenv:NETLoaded .NET is loaded. To change the environment, restart MATLAB then call dotnetenv.

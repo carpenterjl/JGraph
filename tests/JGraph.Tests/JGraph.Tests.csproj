@@ -41,6 +41,30 @@
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!--
+    Interop parity assets (interop plan, step 0). The net_* and shrlib_* fixtures load them from
+    fixtures\interop\ next to themselves (helpers\interop_paths.m), the folder
+    tools\interop\stage-assets.ps1 fills in the source tree for MATLAB. Here the same files come
+    from where they are committed: the MSVC build of jgtestlib.dll, its headers, and the prototype
+    file R2025b wrote. The .NET test assembly is built through the project reference below and
+    copied after the build, since its output does not exist when this project is evaluated.
+  -->
+  <ItemGroup>
+    <Content Include="..\Interop\native\win-x64\jgtestlib.dll;..\Interop\native\jgtestlib.h;..\Interop\native\jgtestlib_win.h;..\Interop\native\jgtestlib_proto.m"
+             Link="MatlabParity\fixtures\interop\%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+    <ProjectReference Include="..\Interop\JGraph.Interop.TestAssembly\JGraph.Interop.TestAssembly.csproj"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <Target Name="CopyInteropTestAssembly" AfterTargets="Build">
+    <MSBuild Projects="..\Interop\JGraph.Interop.TestAssembly\JGraph.Interop.TestAssembly.csproj"
+             Targets="GetTargetPath" Properties="Configuration=$(Configuration)">
+      <Output TaskParameter="TargetOutputs" ItemName="_InteropTestAssembly" />
+    </MSBuild>
+    <Copy SourceFiles="@(_InteropTestAssembly)" DestinationFolder="$(OutDir)MatlabParity\fixtures\interop"
+          SkipUnchangedFiles="true" />
+  </Target>
+
   <!-- The 30-digit cosine-transform reference tools/transforms/dct_reference.py writes (ADR 0153). -->
   <ItemGroup>
     <Content Include="Numerics\dct_reference.json" CopyToOutputDirectory="PreserveNewest" />

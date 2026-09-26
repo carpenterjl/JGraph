@@ -1,0 +1,55 @@
+dotnetenv.disp.before	OUT | ans = | NETEnvironment with properties: | Runtime: framework | Status: notloaded | Version: "" | RuntimeLocation: "" |
+dotnetenv.bad.runtime	ERR MATLAB:netenv:InvalidRuntime Command option must be framework or core.
+dotnetenv.core	OUT | ans = | NETEnvironment with properties: | Runtime: core | Status: notloaded | Version: "" | RuntimeLocation: "" |
+dotnetenv.again.same	OUT | ans = | NETEnvironment with properties: | Runtime: core | Status: notloaded | Version: "" | RuntimeLocation: "" |
+dotnetenv.core.noversion	OUT | ans = | NETEnvironment with properties: | Runtime: core | Status: notloaded | Version: "" | RuntimeLocation: "" |
+isNETSupported.first	logical [1 1] true
+add.path	char [1 12] 'NET.Assembly'
+dotnetenv.after.load	OUT | ans = | NETEnvironment with properties: | Runtime: core | Status: loaded | Version: ".NET 10.0.12" | RuntimeLocation: "C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.12\" |
+dotnetenv.switch.after.load	ERR MATLAB:netenv:NETLoaded .NET is loaded. To change the environment, restart MATLAB then call dotnetenv.
+add.path.again	char [1 17] 'JGTest.ArrayMaker'
+add.path.string	char [1 12] 'NET.Assembly'
+add.name.System.Xml	char [1 12] 'NET.Assembly'
+add.name.System.Xml.class	char [1 22] 'System.Xml.XmlDocument'
+add.name.core	char [1 59] 'Microsoft.Win32.SafeHandles.CriticalHandleMinusOneIsInvalid'
+add.name.full	char [1 12] 'NET.Assembly'
+add.name.forms	char [1 12] 'NET.Assembly'
+add.name.nosuch	ERR MATLAB:NET:AddAssembly:NetCoreShortNameLoadError 'No.Such.Assembly' could not be found by .NET Core probing logic.
+add.path.missing	ERR MATLAB:NET:CLRException:AddAssembly Message: Could not find a part of the path 'C:\no\such\file.dll'. | Source: System.Private.CoreLib | HelpLink: None
+add.path.relative	ERR MATLAB:NET:AddAssembly:NetCoreShortNameLoadError 'JGraph.Interop.TestAssembly.dll' could not be found by .NET Core probing logic.
+add.native.dll	ERR MATLAB:NET:CLRException:AddAssembly Message: PE image does not have metadata. | Source: System.Reflection.Metadata | HelpLink: None
+add.not.dll	ERR MATLAB:NET:CLRException:AddAssembly Message: Unknown file format. | Source: System.Reflection.Metadata | HelpLink: None
+add.numeric	ERR MATLAB:NET:AddAssembly:InvalidAssemblyName Input to NET.addAssembly must be a character vector or an instance of 'System.Reflection.AssemblyName' class.
+add.noargs	ERR MATLAB:UndefinedFunction No method 'NET.addAssembly' with matching signature found.
+add.twoargs	ERR MATLAB:UndefinedFunction No method 'NET.addAssembly' with matching signature found.
+add.reflection	ERR MATLAB:NET:AddAssembly:InvalidAssemblyName Input to NET.addAssembly must be a character vector or an instance of 'System.Reflection.AssemblyName' class.
+unload.exists	double [1 1] 0
+isNETSupported.after	logical [1 1] true
+NET.methods	double [0 0] []
+NET.what	struct [1 1] struct(path,m,mlapp,mlx,mat,mex,mdl,slx,sfx,p,classes,packages)
+NET.help	logical [1 1] true
+disableAutoRelease	ERR MATLAB:badargs Mismatched arguments.
+enableAutoRelease	ERR MATLAB:badargs Mismatched arguments.
+setStaticProperty	OUT
+setStaticProperty.after	double [1 1] 8
+setStaticProperty.prop	OUT
+setStaticProperty.prop.after	int32 [1 1] 9
+setStaticProperty.readonly	ERR MATLAB:NET:InvalidStaticPropertyAccess Static property 'StaticReadOnly' is not accessible for class 'JGTest.Members'.
+setStaticProperty.nosuch	ERR MATLAB:NET:InvalidStaticPropName Could not find static property or field 'NoSuch' for class 'JGTest.Members'.
+NetException.class	double [1 1] 8
+Assembly.class	double [1 1] 8
+GenericClass.class	double [1 1] 8
+explicitCast.exists	double [1 1] 0
+invokeGenericMethod.exists	double [1 1] 0
+createGeneric.exists	double [1 1] 0
+convertArray.exists	double [1 1] 0
+createArray.exists	double [1 1] 0
+addAssembly.exists	double [1 1] 0
+which.addAssembly	char [1 32] 'addAssembly is a built-in method'
+env.Version	char [1 7] '10.0.12'
+env.CurrentDirectory	logical [1 1] true
+env.CurrentDirectory.after.cd	logical [1 1] true
+env.GetEnvironmentVariable	System.String [1 1] abc
+env.getenv.after.net.set	char [1 3] 'xyz'
+env.Is64Bit	logical [1 1] true
+env.RuntimeDirectory	char [1 61] 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.12\'

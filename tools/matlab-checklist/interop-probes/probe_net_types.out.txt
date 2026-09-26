@@ -1,0 +1,186 @@
+ref.double	double [1 1] 4
+ref.double.two	ERR MATLAB:UndefinedFunction No method 'JGTest.Modifiers.Double' with matching signature found.
+ref.nooutput	OUT | ans = | 4 |
+out.split	OUT | w = | 2 | f = | 0.7500 |
+out.split.one	OUT | w = | 2 |
+out.tryhalf	OUT | ok = | logical | 1 | h = | int32 | 4 |
+out.tryhalf.odd	OUT | ok = | logical | 0 | h = | int32 | 3 |
+refoutret	OUT | r = | 20 | a1 = | 2 | lbl = | a=2 |
+ref.array	OUT | v = | Double[] with properties: | Length: 4 | LongLength: 4 | Rank: 1 | SyncRoot: [1×1 System.Double[]] | IsReadOnly: 0 | IsFixedSize: 1 | IsSynchronized: 0 |
+out.name	OUT | n = | made |
+out.name.nooutput	OUT | ans = | made |
+methods.modifiers	OUT | Methods for class JGTest.Modifiers: | Static double scalar x Double(double scalar x) | Static logical scalar RetVal Equals(System.Object objA, System.Object objB) | Static System.Double[] values Grow(System.Double[] values) | Static System.String RetVal Join(System.String separator, System.String[] parts) | Static System.String name MakeName | Static System.Nullable<System*Int32> RetVal MaybeNull(logical scalar give) | Static System.String RetVal Nullable(System.Nullable<System*Int32> x) | Static int32 scalar RetVal Optional(int32 scalar a, optional<int32 scalar> b, optional<int32 scalar> c) | Static [double scalar RetVal, double scalar a, System.String label] RefOutReturn(double scalar a) | Static logical scalar RetVal ReferenceEquals(System.Object objA, System.Object objB) | Static [double scalar whole, double scalar frac] Split(double scalar x) | Static double scalar RetVal Sum(System.Double[] values) | Static [logical scalar RetVal, int32 scalar half] TryHalf(int32 scalar x) | Static double scalar RetVal Value | Static Void | event.proplistener L addlistener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.listener L addlistener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | delete(handle obj)  % Inherited from handle | ind end(~, ~, ~)  % Inherited from matlab.mixin.Scalar | logical TF eq(A, B)  % Inherited from handle | handle HM findobj(handle H, varargin)  % Inherited from handle | matlab.metadata.Property prop findprop(handle scalar object, asciiString propname)  % Inherited from handle | logical TF ge(A, B)  % Inherited from handle | logical TF gt(A, B)  % Inherited from handle | TF isempty(~)  % Inherited from matlab.mixin.Scalar | TF isscalar(~)  % Inherited from matlab.mixin.Scalar | logical validity isvalid(handle obj)  % Inherited from handle | logical TF le(A, B)  % Inherited from handle | L length(~)  % Inherited from matlab.mixin.Scalar | event.proplistener L listener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.listener L listener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | logical TF lt(A, B)  % Inherited from handle | N ndims(~)  % Inherited from matlab.mixin.Scalar | logical TF ne(A, B)  % Inherited from handle | notify(handle sources, asciiString eventname, event.EventData scalar eventdata)  % Inherited from handle | notify(handle sources, asciiString eventname)  % Inherited from handle | n numel(~)  % Inherited from matlab.mixin.Scalar | varargout size(~, varargin)  % Inherited from matlab.mixin.Scalar |
+params.none	ERR MATLAB:UndefinedFunction No method 'JGTest.Modifiers.Sum' with matching signature found.
+params.scalars	ERR MATLAB:UndefinedFunction No method 'JGTest.Modifiers.Sum' with matching signature found.
+params.array	double [1 1] 6
+params.netarray	double [1 1] 6
+params.join	ERR MATLAB:UndefinedFunction No method 'JGTest.Modifiers.Join' with matching signature found.
+params.join.cell	System.String [1 1] a-b
+optional.one	int32 [1 1] 157
+optional.two	int32 [1 1] 127
+optional.three	int32 [1 1] 123
+optional.missing	int32 [1 1] 153
+void.output	ERR MATLAB:UndefinedFunction No method 'JGTest.Modifiers.Void' with matching signature found.
+void.call	OUT
+value.echo	OUT | ans = | 1 |
+arr.Ramp	System.Double[] [1 1] System.Double[]
+arr.Ramp.disp	OUT | r = | Double[] with properties: | Length: 3 | LongLength: 3 | Rank: 1 | SyncRoot: [1×1 System.Double[]] | IsReadOnly: 0 | IsFixedSize: 1 | IsSynchronized: 0 |
+arr.class	char [1 15] 'System.Double[]'
+arr.size	double [1 2] [1 1]
+arr.Length	int32 [1 1] 3
+arr.Rank	int32 [1 1] 1
+arr.index1	double [1 1] 1
+arr.index0	ERR MATLAB:NET:InvalidArrayIndex Array index must be a positive integer.
+arr.index.end	ERR MATLAB:NET:UnsupportedEndIndexingArray 'end' index is not supported for .NET objects.
+arr.index.range	ERR MATLAB:NET:InvalidArrayIndex Array index must be a positive integer.
+arr.index.colon	ERR MATLAB:NET:InvalidArrayIndex Array index must be a positive integer.
+arr.GetValue	double [1 1] 1
+arr.set	double [1 1] 50
+arr.set.oob	ERR MATLAB:NET:CLRException:MethodInvoke Message: Index was outside the bounds of the array. | Source: System.Private.CoreLib | HelpLink: None
+arr.double	double [1 3] [50 2 3]
+arr.plus	ERR MATLAB:math:mustBeNumericCharOrLogical Invalid data type. Argument must be numeric, char, or logical.
+arr.sum	ERR MATLAB:sum:wrongInput Invalid data type. First argument must be numeric or logical.
+arr.numel	double [1 1] 1
+arr.isempty.empty	logical [1 1] false
+arr.Empty.double	double [1 0] []
+arr2d.class	char [1 16] 'System.Double[,]'
+arr2d.size	double [1 2] [1 1]
+arr2d.index	double [1 1] 12
+arr2d.linear	ERR MATLAB:class:UndefinedMethod No method '()' with matching signature found for class 'System.Double[,]'.
+arr2d.double	double [2 3] [0 1 2;10 11 12]
+arr2d.GetLength	int32 [1 1] 3
+jagged.class	char [1 17] 'System.Double[][]'
+jagged.outer	System.Double[] [1 1] System.Double[]
+jagged.inner	ERR MATLAB:mir_paren_index_must_be_last Error:  Invalid array indexing.
+jagged.double	double [1 3] [4 5 6]
+jagged.cell	cell [1 3] {double [1 1] 1; double [1 2] [2 3]; double [1 3] [4 5 6]}
+jagged.double.all	ERR MATLAB:NET:NetConversion:NonRectJaggedArray Error converting input type to double.  The input must be a jagged array of rectangular shape.  Consider calling <a href="matlab: helpview([docroot '/techdoc/ref/ref.map'],'cell_ref_page')">Cell</a>.
+ints	int32 [1 3] [1 -2 3]
+ints.raw	System.Int32[] [1 1] System.Int32[]
+bools	logical [1 3] [true false true]
+chars	ERR MATLAB:invalidConversion Conversion to char from System.Char[] is not possible.
+bytes	uint8 [1 3] [0 127 255]
+words.class	char [1 15] 'System.String[]'
+words.index	System.String [1 1] beta
+words.string	string [1 3] "alpha" "beta" "gamma"
+words.cellstr	ERR MATLAB:invalidConversion Conversion to cellstr from System.String[] is not possible.
+words.cell	cell [1 3] {char [1 5] 'alpha'; char [1 4] 'beta'; char [1 5] 'gamma'}
+words.char	ERR MATLAB:invalidConversion Conversion to char from System.String[] is not possible.
+mixed.class	char [1 15] 'System.Object[]'
+mixed.cell	cell [1 5] {double [1 1] 1.5; System.String [1 1] two; int32 [1 1] 3; logical [1 1] true; double [0 0] []}
+mixed.index1	double [1 1] 1.5
+mixed.index5	double [0 0] []
+sum.double	double [1 1] 6
+sum.col	double [1 1] 6
+sum.int32	double [1 1] 6
+sum.scalar	double [1 1] 5
+sum.empty	ERR MATLAB:NET:CLRException:MethodInvoke Message: Object reference not set to an instance of an object. | Source: JGraph.Interop.TestAssembly | HelpLink: None
+sum2.mat	double [1 1] 21
+shape.mat	System.String [1 1] 2x3
+shape.row	System.String [1 1] 1x3
+count.cellstr	int32 [1 1] 2
+count.string	int32 [1 1] 3
+count.charmat	ERR MATLAB:UndefinedFunction No method 'JGTest.ArrayMaker.Count' with matching signature found.
+kinds.cell	System.String [1 1] System.Double,System.Char,System.SByte,System.Boolean,System.String,System.Double[],System.Object[]
+kinds.cell.empty	System.String [1 1] null
+createArray.1d	System.Double[] [1 1] System.Double[]
+createArray.2d	double [1 2] [1 1]
+createArray.class	char [1 15] 'System.String[]'
+createArray.jagged	char [1 17] 'System.Double[][]'
+createArray.typeobj	char [1 15] 'System.Double[]'
+createArray.bad	ERR MATLAB:NET:CLRException:TypeError Message: Could not resolve type 'No.Such.Type' in assembly 'MathWorks.MATLAB.Interface, Version=25.2.0.0, Culture=neutral, PublicKeyToken=null'. | Source: MathWorks.MATLAB.Interface | HelpLink: None
+convertArray.row	char [1 15] 'System.Double[]'
+convertArray.mat	double [1 2] [1 1]
+convertArray.type	char [1 14] 'System.Int32[]'
+convertArray.dims	double [1 2] [1 1]
+convertArray.col	double [1 2] [1 1]
+convertArray.char	System.Char[] [1 1] System.Char[]
+gen.class	char [1 25] 'JGTest.Box<System*Double>'
+gen.value	double [1 1] 2.5
+gen.typename	System.String [1 1] System.Double
+gen.disp	OUT | b = | <a href="matlab:helpPopup('JGTest.Box<System*Double>')" style="font-weight:bold">Box<System*Double></a> with properties: | Value: 2.5000 | TypeName: [1×1 System.String] |
+gen.nothing	double [0 0] []
+gen.string.value	System.String [1 1] hi
+gen.pair.class	char [1 39] 'JGTest.Pair<System*Int32,System*String>'
+gen.pair.first	int32 [1 1] 1
+gen.pair.second	System.String [1 1] one
+gen.nested.typearg	ERR MATLAB:NET:InvalidClassName Could not find class 'System.Collections.Generic.List<System.Double>'.
+gen.nested.createGeneric	char [1 58] 'JGTest.Box<System*Collections*Generic*List<System*Double>>'
+gen.constraint.bad	ERR MATLAB:NET:CLRException Message: GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type 'T'. | Source: System.Private.CoreLib | HelpLink: None
+gen.constraint.ok	char [1 32] 'JGTest.Constrained<System*Int32>'
+gen.method.Echo	int32 [1 1] 5
+gen.method.TypeOf	System.String [1 1] System.String
+gen.method.direct	ERR MATLAB:subscripting:classHasNoPropertyOrMethod The class JGTest.GenericTools has no Constant property or Static method named 'Echo'.
+gen.GenericClass	NET.GenericClass [1 1] <a href="matlab:helpPopup('NET.GenericClass')" style="font-weight:bold">GenericClass</a> with no properties. |
+list.class	char [1 46] 'System.Collections.Generic.List<System*Double>'
+list.Count	int32 [1 1] 3
+list.Item	double [1 1] 1
+list.ToArray	double [1 3] [0 1 2]
+list.disp	OUT | lst = | <a href="matlab:helpPopup('System.Collections.Generic.List<System*Double>')" style="font-weight:bold">List<System*Double></a> with properties: | Capacity: 4 | Count: 3 |
+list.index	ERR MATLAB:NET:UnsupportedIndexingCustom Array formation and indexing are not allowed on .NET objects.  Use the Item method to index into this object.
+nested.class	char [1 58] 'JGTest.Box<System*Collections*Generic*List<System*Double>>'
+nested.value.class	char [1 46] 'System.Collections.Generic.List<System*Double>'
+dict.class	char [1 66] 'System.Collections.Generic.Dictionary<System*String,System*Double>'
+dict.Item	double [1 1] 2
+dict.ContainsKey	logical [1 1] true
+dict.Keys	char [1 80] 'System.Collections.Generic.Dictionary*KeyCollection<System*String,System*Double>'
+dict.disp	OUT | t = | <a href="matlab:helpPopup('System.Collections.Generic.Dictionary<System*String,System*Double>')" style="font-weight:bold">Dictionary<System*String,System*Double></a> with properties: | Comparer: [1×1 System.Collections.Generic.GenericEqualityComparer<System*String>] | Count: 2 | Keys: [1×1 System.Collections.Generic.Dictionary*KeyCollection<System*String,System*Double>] | Values: [1×1 System.Collections.Generic.Dictionary*ValueCollection<System*String,System*Double>] |
+ienumerable.list	double [1 1] 3
+ienumerable.double	ERR MATLAB:UndefinedFunction No method 'JGTest.GenericTools.Total' with matching signature found.
+dictionary.convert	dictionary [1 1] <a href="matlab:helpPopup('dictionary')" style="font-weight:bold">dictionary</a> (<strong>System.String</strong> ⟼ <strong>double</strong>) with 2 entries: | 1×1 System.String ⟼ 1 | 1×1 System.String ⟼ 2 |
+enum.class	char [1 12] 'JGTest.Color'
+enum.disp	OUT | c = | Color enumeration | Green |
+enum.char	char [1 5] 'Green'
+enum.string	string [1 1] "Green"
+enum.int32	int32 [1 1] 1
+enum.double	double [1 1] 1
+enum.eq	logical [1 1] true
+enum.eq.char	logical [1 1] false
+enum.isa	logical [1 1] true
+enum.Next	JGTest.Color [1 1] Blue
+enum.Name	System.String [1 1] Green
+enum.Name.char	ERR MATLAB:UndefinedFunction No method 'JGTest.EnumTools.Name' with matching signature found.
+enum.Name.int	ERR MATLAB:UndefinedFunction No method 'JGTest.EnumTools.Name' with matching signature found.
+enum.Name.double	ERR MATLAB:UndefinedFunction No method 'JGTest.EnumTools.Name' with matching signature found.
+enum.bad.name	ERR MATLAB:subscripting:classHasNoPropertyOrMethod The class JGTest.Color has no Constant property or Static method named 'Purple'.
+enum.enumeration	ERR MATLAB:class:concatenationScalar Concatenating 'JGTest.Color' objects is not supported because 'JGTest.Color' objects can only be scalar.
+enum.enumeration.disp	OUT | Enumeration members for class 'JGTest.Color': | Red | Green | Blue |
+enum.GetNames	string [1 3] "Red" "Green" "Blue"
+enum.methods	cell [48 1] {char [1 5] 'Color'; char [1 9] 'CompareTo'; char [1 6] 'Equals'; char [1 6] 'Format'; char [1 11] 'GetHashCode'; char [1 7] 'GetName'; char [1 8] 'GetNames'; char [1 7] 'GetType'; char [1 11] 'GetTypeCode'; char [1 17] 'GetUnderlyingType'; char [1 9] 'GetValues'; char [1 25] 'GetValuesAsUnderlyingType'; char [1 7] 'HasFlag'; char [1 9] 'IsDefined'; char [1 5] 'Parse'; char [1 15] 'ReferenceEquals'; char [1 8] 'ToObject'; char [1 8] 'ToString'; char [1 8] 'TryParse'; char [1 7] 'cellstr'; char [1 4] 'char'; char [1 6] 'double'; char [1 3] 'end'; char [1 2] 'eq'; char [1 2] 'ge'; char [1 2] 'gt'; char [1 5] 'int32'; char [1 9] 'intersect'; char [1 7] 'isempty'; char [1 7] 'isequal'; char [1 8] 'isequaln'; char [1 8] 'ismember'; char [1 8] 'isscalar'; char [1 2] 'le'; char [1 6] 'length'; char [1 2] 'lt'; char [1 5] 'ndims'; char [1 2] 'ne'; char [1 5] 'numel'; char [1 7] 'setdiff'; char [1 6] 'setxor'; char [1 4] 'size'; char [1 6] 'strcmp'; char [1 7] 'strcmpi'; char [1 6] 'string'; char [1 7] 'strncmp'; char [1 8] 'strncmpi'; char [1 5] 'union'}
+flags.disp	OUT | f1 = | Read, Write |
+flags.char	char [1 11] 'Read, Write'
+flags.int32	int32 [1 1] 3
+flags.bitor	JGTest.Access [1 1] Read, Execute
+flags.or	ERR MATLAB:math:mustBeNumericCharOrLogical Invalid data type. Argument must be numeric, char, or logical.
+flags.HasFlag	logical [1 1] true
+flags.CanWrite	logical [1 1] true
+flags.bitand	JGTest.Access [1 1] Write
+enum.byte.value	uint8 [1 1] 250
+enum.byte.int32	ERR MATLAB:invalidConversion Conversion to int32 from JGTest.Small is not possible.
+enum.long.value	int64 [1 1] 4000000000
+enum.long.double	double [1 1] -5
+enum.ulong.value	char [1 12] '9.223372e+18'
+enum.ulong.HugeValue	char [1 12] '9.223372e+18'
+enum.ulong.disp	OUT | h = | Huge enumeration | High |
+enum.dow	System.DayOfWeek [1 1] Friday
+disposable	logical [1 1] true
+disposable.after	int32 [1 1] 1
+disposable.delete	int32 [1 1] 1
+op.plus	JGTest.Vector2 [1 1] <4, 6>
+op.minus	JGTest.Vector2 [1 1] <-2, -2>
+op.times	JGTest.Vector2 [1 1] <2, 4>
+op.mtimes.scalar.first	ERR MATLAB:UndefinedFunction Operator 'mtimes' is not supported for operands of type 'Vector2'.
+op.eq	logical [1 1] true
+op.ne	logical [1 1] true
+op.op_Addition	JGTest.Vector2 [1 1] <4, 6>
+iface.public	System.String [1 1] hi
+iface.explicit	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'Greet' for class 'JGTest.Greeter'.
+iface.cast	System.String [1 1] hi from the interface
+iface.cast.class	char [1 24] 'NET.view.JGTest.IGreeter'
+nested.class.name	char [1 18] 'JGTest.Outer+Inner'
+nested.class.call	System.String [1 1] inner
+nested.ctor.plus	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'Inner'.
+nested.ctor.dot	ERR MATLAB:subscripting:classHasNoPropertyOrMethod The class JGTest.Outer has no Constant property or Static method named 'Inner'.
+ienum.class	char [1 15] 'JGTest.Sequence'
+ienum.loop	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'MoveNext' for class 'JGTest.Sequence+<GetEnumerator>d__2'.
+ienum.for	ERR MATLAB:class:parenReferenceScalar Indexing using parentheses to access elements of 'JGTest.Sequence' objects is not supported.

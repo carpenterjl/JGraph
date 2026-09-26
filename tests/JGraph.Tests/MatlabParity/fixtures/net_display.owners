@@ -1,0 +1,3 @@
+# The interop plan's stage that completes this fixture (docs/plans/net-and-shared-library-interop-plan.md).
+RUN	I1	# JGraph has no .NET or shared-library interface before I1
+*	I1	# the external value kind, the BCL, static and instance members, the converter, NetException and display

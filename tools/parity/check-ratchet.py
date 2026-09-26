@@ -37,6 +37,9 @@ REPO = Path(__file__).resolve().parents[2]
 STAGE_ADR = {
     "V1": "0162", "V2": "0163", "V3": "0164", "V4": "0165", "V5": "0166", "V6": "0167",
     "V7": "0168", "V8": "0169", "V9": "0170", "V10": "0171", "V11": "0172", "Z2": "0173",
+    # The .NET and shared-library interop plan (docs/plans/net-and-shared-library-interop-plan.md).
+    "I1": "0174", "I2": "0175", "I3": "0176", "I4": "0177", "I5": "0178", "I6": "0179",
+    "I7": "0180", "I8": "0181", "I9": "0182", "I10": "0183",
 }
 
 OVERLAY_SUFFIX = ".boxed.txt"

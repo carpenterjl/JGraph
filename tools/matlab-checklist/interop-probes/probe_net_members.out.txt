@@ -1,0 +1,129 @@
+asm.class	NET.Assembly [1 1] <a href="matlab:helpPopup('NET.Assembly')" style="font-weight:bold">NET.Assembly</a> <a href="matlab:helpPopup('handle')">handle</a> with properties: | AssemblyHandle | Classes | Structures | Enums | GenericTypes | Interfaces | Delegates |
+asm.disp	OUT   NET.Assembly handle with properties: | AssemblyHandle | Classes | Structures | Enums | GenericTypes | Interfaces | Delegates |
+asm.AssemblyHandle	char [1 33] 'System.Reflection.RuntimeAssembly'
+asm.Classes.n	double [1 1] 24
+asm.Classes.first	cell [1 1] {char [1 17] 'JGTest.ArrayMaker'}
+asm.Enums	cell [5 1] {char [1 12] 'JGTest.Color'; char [1 13] 'JGTest.Access'; char [1 12] 'JGTest.Small'; char [1 10] 'JGTest.Big'; char [1 11] 'JGTest.Huge'}
+asm.Structures	cell [1 1] {char [1 12] 'JGTest.Point'}
+asm.Delegates	cell [4 1] {char [1 12] 'JGTest.Unary'; char [1 13] 'JGTest.RefOut'; char [1 15] 'JGTest.Describe'; char [1 25] 'JGTest.NonStandardHandler'}
+asm.GenericTypes	cell [3 1] {char [1 15] 'JGTest.Box`1[T]'; char [1 29] 'JGTest.Pair`2[TFirst,TSecond]'; char [1 23] 'JGTest.Constrained`1[T]'}
+asm.Interfaces	cell [1 1] {char [1 15] 'JGTest.IGreeter'}
+asm.again	logical [1 1] true
+ctor.none	JGTest.Members [1 1] Members(0, none)
+ctor.none.noparens	JGTest.Members [1 1] Members(0, none)
+ctor.double	double [1 1] 3
+ctor.double.int32	double [1 1] 3
+ctor.two	System.String [1 1] abc
+ctor.two.string	System.String [1 1] abc
+ctor.params.int32x3	ERR MATLAB:dispatcher:noMatchingConstructor No constructor 'JGTest.Members' with matching signature found.
+ctor.params.array	System.String [1 1] params:3
+ctor.wrongcount	ERR MATLAB:dispatcher:noMatchingConstructor No constructor 'JGTest.Members' with matching signature found.
+ctor.optional.one	int32 [1 1] 5
+ctor.optional.two	int32 [1 1] 9
+ctor.private	ERR MATLAB:TooManyInputs Too many input arguments.
+ctor.factory	System.String [1 1] x
+ctor.static.class	ERR MATLAB:class:abstract Abstract classes cannot be instantiated. Class 'JGTest.Statics' is declared as Abstract.
+ctor.unknown.type	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'JGTest.NoSuchType'.
+ctor.unknown.ns	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'NoSuchNamespace.Thing'.
+prop.get	double [1 1] 2
+prop.name	System.String [1 1] m
+prop.readonly	double [1 1] 4
+prop.set	double [1 1] 5
+prop.set.int8	double [1 1] 6
+prop.set.readonly	ERR MATLAB:class:SetProhibited Unable to set the 'ReadOnly' property of class '<a href="matlab:doc JGTest.Members">Members</a>' because it is read-only.
+prop.set.wrongtype	ERR MATLAB:class:RequireScalar Error setting property 'Value' of class '<a href="matlab:doc JGTest.Members">Members</a>': | Value must be a scalar.
+prop.set.string2double	ERR MATLAB:class:RequireNumeric Error setting property 'Value' of class '<a href="matlab:doc JGTest.Members">Members</a>': | Value must be numeric or logical.
+prop.get.writeonly	ERR MATLAB:class:GetProhibited No public property 'WriteOnly' for class '<a href="matlab:doc JGTest.Members">Members</a>'.
+prop.writeonly.effect	double [1 1] 11
+field.get	double [1 1] 1.5
+field.set	double [1 1] 9
+field.readonly	System.String [1 1] fixed
+field.set.readonly	ERR MATLAB:class:SetProhibited Unable to set the 'ReadOnlyField' property of class '<a href="matlab:doc JGTest.Members">Members</a>' because it is read-only.
+field.const	int32 [1 1] 42
+field.const.instance	int32 [1 1] 42
+prop.nosuch	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'NoSuch' for class 'JGTest.Members'.
+prop.set.nosuch	ERR MATLAB:noPublicFieldForClass Unrecognized property 'NoSuch' for class 'JGTest.Members'.
+static.field	double [1 1] 2.5
+static.prop	int32 [1 1] 0
+static.method	int32 [1 1] 1
+static.method.noparens	int32 [1 1] 2
+static.via.instance	int32 [1 1] 3
+static.readonly	System.String [1 1] static
+static.class.prop	System.String [1 1] jgtest-1
+static.class.method.int	int32 [1 1] 8
+static.class.method.double	double [1 1] 8
+static.void.output	ERR MATLAB:UndefinedFunction No method 'JGTest.Statics.Nothing' with matching signature found.
+static.void.call	OUT
+static.nosuch	ERR MATLAB:subscripting:classHasNoPropertyOrMethod The class JGTest.Statics has no Constant property or Static method named 'NoSuch'.
+static.fn.syntax	ERR MATLAB:class:abstract Abstract classes cannot be instantiated. Class 'JGTest.Statics' is declared as Abstract.
+index.item	double [1 1] 10
+index.item.int32	double [1 1] 20
+index.item.oob	ERR MATLAB:NET:CLRException:MethodInvoke Message: Index was outside the bounds of the array. | Source: JGraph.Interop.TestAssembly | HelpLink: None
+index.paren	ERR MATLAB:NET:UnsupportedIndexingCustom Array formation and indexing are not allowed on .NET objects.  Use the Item method to index into this object.
+index.set.item	ERR MATLAB:index:assignmentToTemporary Assignment not supported because the result of method 'Item' is a temporary value.
+index.after.set	double [1 1] 10
+index.set.paren	ERR MATLAB:NET:UnsupportedIndexingCustom Array formation and indexing are not allowed on .NET objects.  Use the Item method to index into this object.
+method.describe	System.String [1 1] Members(11, m)
+method.describe.noparens	System.String [1 1] Members(11, m)
+method.fn.syntax	System.String [1 1] Members(11, m)
+method.add1	double [1 1] 12
+method.add2	double [1 1] 14
+method.add.wrongcount	ERR MATLAB:class:UndefinedMethod No method 'Add' with matching signature found for class 'JGTest.Members'.
+method.add.char	ERR MATLAB:class:UndefinedMethod No method 'Add' with matching signature found for class 'JGTest.Members'.
+method.void.call	OUT
+method.void.output	ERR MATLAB:class:UndefinedMethod No method 'Bump' with matching signature found for class 'JGTest.Members'.
+method.tostring	System.String [1 1] Members(12, m)
+method.char	ERR MATLAB:invalidConversion Conversion to char from JGTest.Members is not possible.
+method.string	ERR MATLAB:invalidConversion Conversion to string from JGTest.Members is not possible.
+method.gettype	System.String [1 1] JGTest.Members
+method.equals	logical [1 1] true
+method.hash	char [1 5] 'int32'
+class	char [1 14] 'JGTest.Members'
+isa.self	logical [1 1] true
+isa.object	logical [1 1] true
+isa.handle	logical [1 1] true
+isobject	logical [1 1] true
+isjava	logical [1 1] false
+isstruct	logical [1 1] false
+size	double [1 2] [1 1]
+numel	double [1 1] 1
+isempty	logical [1 1] false
+isprop.Value	logical [1 1] true
+isprop.Field	logical [1 1] true
+isprop.nosuch	logical [1 1] false
+ismethod.Describe	logical [1 1] true
+ismethod.Increment	logical [1 1] true
+properties	cell [9 1] {char [1 5] 'Value'; char [1 4] 'Name'; char [1 8] 'ReadOnly'; char [1 7] 'Counter'; char [1 14] 'StaticReadOnly'; char [1 5] 'Field'; char [1 13] 'ReadOnlyField'; char [1 11] 'StaticField'; char [1 8] 'Constant'}
+fieldnames	cell [9 1] {char [1 5] 'Value'; char [1 4] 'Name'; char [1 8] 'ReadOnly'; char [1 7] 'Counter'; char [1 14] 'StaticReadOnly'; char [1 5] 'Field'; char [1 13] 'ReadOnlyField'; char [1 11] 'StaticField'; char [1 8] 'Constant'}
+methods	cell [32 1] {char [1 3] 'Add'; char [1 4] 'Bump'; char [1 8] 'Describe'; char [1 6] 'Equals'; char [1 11] 'GetHashCode'; char [1 7] 'GetType'; char [1 9] 'Increment'; char [1 4] 'Item'; char [1 7] 'Members'; char [1 15] 'ReferenceEquals'; char [1 5] 'Reset'; char [1 8] 'ToString'; char [1 11] 'addlistener'; char [1 6] 'delete'; char [1 3] 'end'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 2] 'ge'; char [1 2] 'gt'; char [1 7] 'isempty'; char [1 8] 'isscalar'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 6] 'length'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 5] 'ndims'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 5] 'numel'; char [1 4] 'size'}
+methods.class	cell [32 1] {char [1 3] 'Add'; char [1 4] 'Bump'; char [1 8] 'Describe'; char [1 6] 'Equals'; char [1 11] 'GetHashCode'; char [1 7] 'GetType'; char [1 9] 'Increment'; char [1 4] 'Item'; char [1 7] 'Members'; char [1 15] 'ReferenceEquals'; char [1 5] 'Reset'; char [1 8] 'ToString'; char [1 11] 'addlistener'; char [1 6] 'delete'; char [1 3] 'end'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 2] 'ge'; char [1 2] 'gt'; char [1 7] 'isempty'; char [1 8] 'isscalar'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 6] 'length'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 5] 'ndims'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 5] 'numel'; char [1 4] 'size'}
+methods.full	OUT | Methods for class JGTest.Members: | double scalar RetVal Add(JGTest.Members this, double scalar x) | double scalar RetVal Add(JGTest.Members this, double scalar x, double scalar y) | Bump(JGTest.Members this) | System.String RetVal Describe(JGTest.Members this) | logical scalar RetVal Equals(JGTest.Members this, System.Object obj) | Static logical scalar RetVal Equals(System.Object objA, System.Object objB) | int32 scalar RetVal GetHashCode(JGTest.Members this) | System.Type RetVal GetType(JGTest.Members this) | Static int32 scalar RetVal Increment | double scalar RetVal Item(JGTest.Members this, int32 scalar index) | Item(JGTest.Members this, int32 scalar index, double scalar value) | JGTest.Members RetVal Members(System.Int32[] parts) | JGTest.Members RetVal Members(double scalar value, System.String name) | JGTest.Members RetVal Members(double scalar value) | JGTest.Members RetVal Members | Static logical scalar RetVal ReferenceEquals(System.Object objA, System.Object objB) | Static Reset | System.String RetVal ToString(JGTest.Members this) | event.proplistener L addlistener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.listener L addlistener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | delete(handle obj)  % Inherited from handle | ind end(~, ~, ~)  % Inherited from matlab.mixin.Scalar | logical TF eq(A, B)  % Inherited from handle | handle HM findobj(handle H, varargin)  % Inherited from handle | matlab.metadata.Property prop findprop(handle scalar object, asciiString propname)  % Inherited from handle | logical TF ge(A, B)  % Inherited from handle | logical TF gt(A, B)  % Inherited from handle | TF isempty(~)  % Inherited from matlab.mixin.Scalar | TF isscalar(~)  % Inherited from matlab.mixin.Scalar | logical validity isvalid(handle obj)  % Inherited from handle | logical TF le(A, B)  % Inherited from handle | L length(~)  % Inherited from matlab.mixin.Scalar | event.listener L listener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | logical TF lt(A, B)  % Inherited from handle | N ndims(~)  % Inherited from matlab.mixin.Scalar | logical TF ne(A, B)  % Inherited from handle | notify(handle sources, asciiString eventname)  % Inherited from handle | notify(handle sources, asciiString eventname, event.EventData scalar eventdata)  % Inherited from handle | n numel(~)  % Inherited from matlab.mixin.Scalar | varargout size(~, varargin)  % Inherited from matlab.mixin.Scalar |
+methods.statics	OUT | Methods for class JGTest.Statics: | Static logical scalar RetVal Equals(System.Object objA, System.Object objB) | Static System.String RetVal Hello | Static Nothing | Static logical scalar RetVal ReferenceEquals(System.Object objA, System.Object objB) | Static double scalar RetVal Twice(double scalar x) | Static int32 scalar RetVal Twice(int32 scalar x) | event.listener L addlistener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | delete(handle obj)  % Inherited from handle | ind end(~, ~, ~)  % Inherited from matlab.mixin.Scalar | logical TF eq(A, B)  % Inherited from handle | handle HM findobj(handle H, varargin)  % Inherited from handle | matlab.metadata.Property prop findprop(handle scalar object, asciiString propname)  % Inherited from handle | logical TF ge(A, B)  % Inherited from handle | logical TF gt(A, B)  % Inherited from handle | TF isempty(~)  % Inherited from matlab.mixin.Scalar | TF isscalar(~)  % Inherited from matlab.mixin.Scalar | logical validity isvalid(handle obj)  % Inherited from handle | logical TF le(A, B)  % Inherited from handle | L length(~)  % Inherited from matlab.mixin.Scalar | event.listener L listener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | logical TF lt(A, B)  % Inherited from handle | N ndims(~)  % Inherited from matlab.mixin.Scalar | logical TF ne(A, B)  % Inherited from handle | notify(handle sources, asciiString eventname)  % Inherited from handle | notify(handle sources, asciiString eventname, event.EventData scalar eventdata)  % Inherited from handle | n numel(~)  % Inherited from matlab.mixin.Scalar | varargout size(~, varargin)  % Inherited from matlab.mixin.Scalar |
+eq.same	logical [1 1] true
+eq.other	logical [1 1] false
+isequal.same	logical [1 1] true
+isequal.other	logical [1 1] true
+ne	logical [1 1] false
+concat	ERR MATLAB:class:concatenationScalar Concatenating 'JGTest.Members' objects is not supported because 'JGTest.Members' objects can only be scalar.
+cell.hold	cell [1 2] {JGTest.Members [1 1] Members(12, m); double [1 1] 1}
+struct.hold	struct [1 1] struct(a)
+ref.shared	double [1 1] 123
+disp.echo	OUT | m = | Members with properties: | Value: 123 | Name: [1×1 System.String] | ReadOnly: 246 | Counter: 3 | StaticReadOnly: [1×1 System.String] | Field: 9 | ReadOnlyField: [1×1 System.String] | StaticField: 2.5000 | Constant: 42 |
+disp.disp	OUT   Members with properties: | Value: 123 | Name: [1×1 System.String] | ReadOnly: 246 | Counter: 3 | StaticReadOnly: [1×1 System.String] | Field: 9 | ReadOnlyField: [1×1 System.String] | StaticField: 2.5000 | Constant: 42 |
+disp.display	OUT | m = | Members with properties: | Value: 123 | Name: [1×1 System.String] | ReadOnly: 246 | Counter: 3 | StaticReadOnly: [1×1 System.String] | Field: 9 | ReadOnlyField: [1×1 System.String] | StaticField: 2.5000 | Constant: 42 |
+disp.static.class	ERR MATLAB:class:abstract Abstract classes cannot be instantiated. Class 'JGTest.Statics' is declared as Abstract.
+disp.string	OUT | s = | abc |
+disp.int32.return	OUT | x = | int32 | 8 |
+disp.factory	OUT | f = | Factory with properties: | Tag: [1×1 System.String] |
+save	OUT
+load	OUT JGTest.Members |
+delete	OUT      1 |
+clear	OUT      0 |
+static.field.set	OUT
+static.field.set.var	double [1 1] 1
+static.field.set.class	char [1 6] 'struct'
+static.field.after	double [1 1] 4
+static.field.after.clear	double [1 1] 2.5
+static.field.set.fn	OUT | JGTest = | struct with fields: | Members: [1×1 struct] |
+static.prop.set	OUT
+static.prop.after	int32 [1 1] 3

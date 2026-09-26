@@ -1,0 +1,86 @@
+RUN|pending I1|'dotnetenv' is not recognized as a variable or a function.
+CHK|method_class|NET.NetException|exact
+CHK|method_identifier|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|method_message|Message: boom / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|method_ExceptionObject|System.InvalidOperationException|exact
+CHK|method_Message|boom|exact
+CHK|method_inner|none|exact
+CHK|method_cause|double:0|exact
+CHK|static_class|NET.NetException|exact
+CHK|static_identifier|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|static_message|Message: static refused / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|static_ExceptionObject|System.NotSupportedException|exact
+CHK|static_Message|static refused|exact
+CHK|static_inner|none|exact
+CHK|static_cause|double:0|exact
+CHK|ctor_class|NET.NetException|exact
+CHK|ctor_identifier|MATLAB:NET:CLRException:CreateObject|exact
+CHK|ctor_message|Message: constructor refused (Parameter 'fail') / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|ctor_ExceptionObject|System.ArgumentException|exact
+CHK|ctor_Message|constructor refused (Parameter 'fail')|exact
+CHK|ctor_inner|none|exact
+CHK|ctor_cause|double:0|exact
+CHK|getter_class|NET.NetException|exact
+CHK|getter_identifier|MATLAB:NET:CLRException:PropertyGet|exact
+CHK|getter_message|Message: getter refused / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|getter_ExceptionObject|System.InvalidOperationException|exact
+CHK|getter_Message|getter refused|exact
+CHK|getter_inner|none|exact
+CHK|getter_cause|double:0|exact
+CHK|custom_class|NET.NetException|exact
+CHK|custom_identifier|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|custom_message|Message: outer failure / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|custom_ExceptionObject|JGTest.JGTestException|exact
+CHK|custom_Message|outer failure|exact
+CHK|custom_inner|System.FormatException: inner cause|exact
+CHK|custom_cause|double:0|exact
+CHK|divzero_class|NET.NetException|exact
+CHK|divzero_identifier|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|divzero_message|Message: Attempted to divide by zero. / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|divzero_ExceptionObject|System.DivideByZeroException|exact
+CHK|divzero_Message|Attempted to divide by zero.|exact
+CHK|divzero_inner|none|exact
+CHK|divzero_cause|double:0|exact
+CHK|nullref_class|NET.NetException|exact
+CHK|nullref_identifier|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|nullref_message|Message: Object reference not set to an instance of an object. / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|nullref_ExceptionObject|System.NullReferenceException|exact
+CHK|nullref_Message|Object reference not set to an instance of an object.|exact
+CHK|nullref_inner|none|exact
+CHK|nullref_cause|double:0|exact
+CHK|bcl_class|NET.NetException|exact
+CHK|bcl_identifier|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|bcl_message|Message: Could not find a part of the path 'Z:\no\such\file.txt'. / Source: System.Private.CoreLib / HelpLink: None|exact
+CHK|bcl_ExceptionObject|System.IO.DirectoryNotFoundException|exact
+CHK|bcl_Message|Could not find a part of the path 'Z:\no\such\file.txt'.|exact
+CHK|bcl_inner|none|exact
+CHK|bcl_cause|double:0|exact
+CHK|bcl_ctor_class|NET.NetException|exact
+CHK|bcl_ctor_identifier|MATLAB:NET:CLRException:CreateObject|exact
+CHK|bcl_ctor_message|Message: Invalid URI: The format of the URI could not be determined. / Source: System.Private.Uri / HelpLink: None|exact
+CHK|bcl_ctor_ExceptionObject|System.UriFormatException|exact
+CHK|bcl_ctor_Message|Invalid URI: The format of the URI could not be determined.|exact
+CHK|bcl_ctor_inner|none|exact
+CHK|bcl_ctor_cause|double:0|exact
+CHK|bcl_static_class|NET.NetException|exact
+CHK|bcl_static_identifier|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|bcl_static_message|Message: The input string 'x' was not in a correct format. / Source: System.Private.CoreLib / HelpLink: None|exact
+CHK|bcl_static_ExceptionObject|System.FormatException|exact
+CHK|bcl_static_Message|The input string 'x' was not in a correct format.|exact
+CHK|bcl_static_inner|none|exact
+CHK|bcl_static_cause|double:0|exact
+CHK|createGeneric_class|NET.NetException|exact
+CHK|createGeneric_identifier|MATLAB:NET:CLRException|exact
+CHK|createGeneric_message|Message: GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type 'T'. / Source: System.Private.CoreLib / HelpLink: None|exact
+CHK|createGeneric_ExceptionObject|System.ArgumentException|exact
+CHK|createGeneric_Message|GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type 'T'.|exact
+CHK|createGeneric_inner|System.TypeLoadException: GenericArguments[0], 'System.String', on 'JGTest.Constrained`1[T]' violates the constraint of type parameter 'T'.|exact
+CHK|createGeneric_cause|double:0|exact
+CHK|setter_identifier|MATLAB:NET:CLRException:PropertySet|exact
+CHK|setter_message|Message: setter refused (Parameter 'value') / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|custom_Code|int32:17|exact
+CHK|custom_isa_Exception|logical:1|exact
+CHK|custom_isa_MException|logical:1|exact
+CHK|custom_properties|ExceptionObject,identifier,message,cause,stack,Correction|exact
+CHK|custom_rethrow|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|custom_report_basic|Error using net_exceptions (line 52) / Message: outer failure / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact

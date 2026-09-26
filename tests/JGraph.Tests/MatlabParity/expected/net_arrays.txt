@@ -1,0 +1,73 @@
+RUN|pending I4|'dotnetenv' is not recognized as a variable or a function.
+CHK|class|System.Double[]|exact
+CHK|size|double:[1 1]|exact
+CHK|numel|double:1|exact
+CHK|Length|int32:3|exact
+CHK|Rank|int32:1|exact
+CHK|index_1|double:1|exact
+CHK|index_0_refused|MATLAB:NET:InvalidArrayIndex|exact
+CHK|index_end_refused|MATLAB:NET:UnsupportedEndIndexingArray|exact
+CHK|index_range_refused|MATLAB:NET:InvalidArrayIndex|exact
+CHK|index_colon_refused|MATLAB:NET:InvalidArrayIndex|exact
+CHK|GetValue|double:1|exact
+CHK|set_index|double:50|exact
+CHK|set_out_of_range|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|double|double:[50 2 3]|exact
+CHK|plus_refused|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|sum_refused|MATLAB:sum:wrongInput|exact
+CHK|echo|r = / Double[] with properties: / Length: 3 / LongLength: 3 / Rank: 1 / SyncRoot: [1×1 System.Double[]] / IsReadOnly: 0 / IsFixedSize: 1 / IsSynchronized: 0|exact
+CHK|empty_isempty|logical:0|exact
+CHK|empty_double|double:[] [1 0]|exact
+CHK|grid_class|System.Double[,]|exact
+CHK|grid_size|double:[1 1]|exact
+CHK|grid_index|double:12|exact
+CHK|grid_linear_refused|MATLAB:class:UndefinedMethod|exact
+CHK|grid_double|double:[0 1 2;10 11 12]|exact
+CHK|grid_GetLength|int32:3|exact
+CHK|jagged_class|System.Double[][]|exact
+CHK|jagged_outer|System.Double[]|exact
+CHK|jagged_double_row|double:[4 5 6]|exact
+CHK|jagged_cell|cell:{double:1;double:[2 3];double:[4 5 6]}|exact
+CHK|jagged_double_refused|MATLAB:NET:NetConversion:NonRectJaggedArray|exact
+CHK|ints|int32:[1 -2 3]|exact
+CHK|ints_class|System.Int32[]|exact
+CHK|bools|logical:[true false true]|exact
+CHK|chars_refused|MATLAB:invalidConversion|exact
+CHK|bytes|uint8:[0 127 255]|exact
+CHK|words_class|System.String[]|exact
+CHK|words_index|System.String:beta|exact
+CHK|words_string|string:alpha,beta,gamma|exact
+CHK|words_cell|cell:{char:alpha;char:beta;char:gamma}|exact
+CHK|words_cellstr_refused|MATLAB:invalidConversion|exact
+CHK|words_char_refused|MATLAB:invalidConversion|exact
+CHK|mixed_class|System.Object[]|exact
+CHK|mixed_cell|cell:{double:1.5;System.String:two;int32:3;logical:1;double:[] [0 0]}|exact
+CHK|mixed_index_1|double:1.5|exact
+CHK|mixed_index_null|double:[] [0 0]|exact
+CHK|pass_row|double:6|exact
+CHK|pass_col|double:6|exact
+CHK|pass_int32|double:6|exact
+CHK|pass_scalar|double:5|exact
+CHK|pass_empty_is_null|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|pass_matrix_2d|double:21|exact
+CHK|pass_matrix_shape|System.String:2x3|exact
+CHK|pass_row_shape|System.String:1x3|exact
+CHK|pass_cellstr|int32:2|exact
+CHK|pass_string_array|int32:3|exact
+CHK|pass_char_matrix_refused|MATLAB:UndefinedFunction|exact
+CHK|pass_cell_kinds|System.String:System.Double,System.Char,System.SByte,System.Boolean,System.String,System.Double[],System.Object[]|exact
+CHK|pass_cell_empty_is_null|System.String:null|exact
+CHK|createArray_class|System.Double[]|exact
+CHK|createArray_Length|int32:3|exact
+CHK|createArray_zeros|double:[0 0 0]|exact
+CHK|createArray_2d|System.Int32[,]|exact
+CHK|createArray_2d_Rank|int32:2|exact
+CHK|createArray_jagged|System.Double[][]|exact
+CHK|createArray_String|System.String[]|exact
+CHK|createArray_bad_type|MATLAB:NET:CLRException:TypeError|exact
+CHK|convertArray_row|System.Double[]|exact
+CHK|convertArray_mat_Rank|int32:2|exact
+CHK|convertArray_col_Rank|int32:1|exact
+CHK|convertArray_type|System.Int32[]|exact
+CHK|convertArray_dims|int32:2|exact
+CHK|convertArray_char|System.Char[]|exact

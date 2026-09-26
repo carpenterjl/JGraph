@@ -1,0 +1,72 @@
+RUN|pending I2|'dotnetenv' is not recognized as a variable or a function.
+CHK|ref_one_output|double:4|exact
+CHK|ref_two_outputs|MATLAB:UndefinedFunction|exact
+CHK|out_split|double:[2 0.75]|exact
+CHK|out_split_one|double:2|exact
+CHK|out_tryhalf_ok|logical:1|exact
+CHK|out_tryhalf_half|int32:4|exact
+CHK|out_tryhalf_odd|cell:{logical:0;int32:3}|exact
+CHK|refoutret|cell:{double:20;double:2;System.String:a=2}|exact
+CHK|ref_array_class|System.Double[]|exact
+CHK|ref_array_values|double:[1 2 3 3]|exact
+CHK|out_only|System.String:made|exact
+CHK|params_array|double:6|exact
+CHK|params_netarray|double:6|exact
+CHK|params_scalars_refused|MATLAB:UndefinedFunction|exact
+CHK|params_none_refused|MATLAB:UndefinedFunction|exact
+CHK|params_cellstr|System.String:a-b|exact
+CHK|params_loose_strings_refused|MATLAB:UndefinedFunction|exact
+CHK|params_ctor_array|System.String:params:3|exact
+CHK|params_ctor_loose_refused|MATLAB:dispatcher:noMatchingConstructor|exact
+CHK|optional_1|int32:157|exact
+CHK|optional_2|int32:127|exact
+CHK|optional_3|int32:123|exact
+CHK|optional_Missing|int32:153|exact
+CHK|optional_ctor_1|int32:5|exact
+CHK|optional_ctor_2|int32:9|exact
+CHK|void_output_refused|MATLAB:UndefinedFunction|exact
+CHK|void_call|none|exact
+CHK|void_instance_output_refused|MATLAB:class:UndefinedMethod|exact
+CHK|Item_get|double:10|exact
+CHK|Item_int32|double:20|exact
+CHK|Item_out_of_range|MATLAB:NET:CLRException:MethodInvoke|exact
+CHK|Item_set_refused|Assignment not supported because the result of method 'Item' is a temporary value.|exact
+CHK|set_readonly_prop|MATLAB:class:SetProhibited|exact
+CHK|set_readonly_prop_message|Unable to set the 'ReadOnly' property of class ''Members'' because it is read-only.|exact
+CHK|set_readonly_field|MATLAB:class:SetProhibited|exact
+CHK|set_wrong_type_char|MATLAB:class:RequireScalar|exact
+CHK|set_wrong_type_string|MATLAB:class:RequireNumeric|exact
+CHK|get_writeonly|MATLAB:class:GetProhibited|exact
+CHK|writeonly_effect|double:11|exact
+CHK|set_nosuch|MATLAB:noPublicFieldForClass|exact
+CHK|set_field|double:9|exact
+CHK|static_read|int32:0|exact
+CHK|static_call|int32:1|exact
+CHK|static_call_noparens|int32:2|exact
+CHK|static_via_instance|int32:3|exact
+CHK|setStaticProperty_field|double:8|exact
+CHK|setStaticProperty_prop|int32:9|exact
+CHK|setStaticProperty_readonly|MATLAB:NET:InvalidStaticPropertyAccess|exact
+CHK|setStaticProperty_nosuch|MATLAB:NET:InvalidStaticPropName|exact
+CHK|static_void_output_refused|MATLAB:UndefinedFunction|exact
+CHK|static_fn_syntax_refused|MATLAB:class:abstract|exact
+CHK|static_display_refused|MATLAB:class:abstract|exact
+CHK|static_assign_makes_struct|struct:Members|exact
+CHK|iface_public|System.String:hi|exact
+CHK|iface_explicit_hidden|MATLAB:noSuchMethodOrField|exact
+CHK|iface_cast|System.String:hi from the interface|exact
+CHK|iface_cast_class|NET.view.JGTest.IGreeter|exact
+CHK|nested_class|JGTest.Outer+Inner|exact
+CHK|nested_call|System.String:inner|exact
+CHK|nested_ctor_refused|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
+CHK|op_plus|JGTest.Vector2:<4, 6>|exact
+CHK|op_minus|JGTest.Vector2:<-2, -2>|exact
+CHK|op_times|JGTest.Vector2:<2, 4>|exact
+CHK|op_times_reversed_refused|MATLAB:UndefinedFunction|exact
+CHK|op_eq|logical:1|exact
+CHK|op_ne|logical:1|exact
+CHK|op_Addition|JGTest.Vector2:<4, 6>|exact
+CHK|dispose_explicit|int32:1|exact
+CHK|delete_does_not_dispose|int32:1|exact
+CHK|delete_keeps_variable|double:1|exact
+CHK|ienumerable_for_refused|MATLAB:class:parenReferenceScalar|exact

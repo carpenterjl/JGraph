@@ -1,0 +1,3 @@
+# The interop plan's stage that completes this fixture (docs/plans/net-and-shared-library-interop-plan.md).
+RUN	I5	# JGraph has no .NET or shared-library interface before I5
+*	I5	# .NET events and delegates
