@@ -279,6 +279,15 @@ internal sealed class FunctionHandleExpr(string name) : Expr
 }
 
 /// <summary>
+/// A MATLAB metaclass literal <c>?ClassName</c> — a user class or a .NET type, dotted names allowed
+/// (<c>?System.String</c>; interop plan, stage 1, ADR 0174).
+/// </summary>
+internal sealed class MetaClassExpr(string name) : Expr
+{
+    public string Name { get; } = name;
+}
+
+/// <summary>
 /// A value the interpreter has already computed, wrapped so it can be handed to the ordinary
 /// assignment machinery. Never produced by the parser — it exists so a multiple-output call can reuse
 /// one assignment path for every target shape instead of duplicating it.

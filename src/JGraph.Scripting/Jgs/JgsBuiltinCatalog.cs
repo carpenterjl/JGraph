@@ -2123,6 +2123,13 @@ public static class JgsBuiltinCatalog
         Add("methods", "The method names of an object, or of a class named by its name, as a cell column.", P("x"));
         Add("isprop", "Whether an object, a built-in object or a graphics handle has a property of that name: isprop(obj, 'Radius').", P("obj"), P("name"));
         Add("metaclass", "A description of a value's class: its name, its properties, and its methods.", P("x"));
+        Add("ismethod", "Whether an object's class has a method of that name, a .NET object's static methods included.", P("obj"), P("name"));
+
+        // --- .NET (interop plan, stage 1, ADR 0174) -------------------------------------------------
+        Add("isjava", "Whether a value is a Java object: never, since JGraph hosts no Java.", P("x"));
+        Add("dotnetenv", "The .NET runtime JGraph runs on; asking for that runtime is accepted and any other refused.", Opt("runtime"), Opt("Version"));
+        Add("NET", "The namespace of the .NET interface: NET.isNETSupported, NET.addAssembly (by path or assembly name), NET.createArray and NET.createGeneric.");
+        Add("meta", "The namespace holding meta.class.fromName: the metaclass of a class or a .NET type named by text, or an empty for neither.");
         Add("throwAsCaller", "Raises an MException, reported against the caller.", P("exception"));
         Add("mustBePositive", "Errors unless every element is greater than zero.", P("value"));
         Add("mustBeNonnegative", "Errors unless every element is zero or greater.", P("value"));

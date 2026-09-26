@@ -1393,6 +1393,9 @@ internal sealed class Parser
                 return ParseCellLiteral(token);
             case TokenType.At when _matlab:
                 return ParseFunctionHandle(token);
+            case TokenType.Question when _matlab:
+                Advance(); // '?'
+                return new MetaClassExpr(ParseDottedName()) { Line = token.Line, Column = token.Column };
             default:
                 throw Error(token, $"Expected an expression, but found {token.Describe()}.");
         }
@@ -1575,8 +1578,8 @@ internal sealed class Parser
         // '@name' refers to an existing function; '@(args) expr' defines one inline.
         if (!Match(TokenType.LParen))
         {
-            Token name = Expect(TokenType.Identifier, "a function name");
-            return new FunctionHandleExpr(name.Text) { Line = start.Line, Column = start.Column };
+            // A dotted name is one name: @System.Math.Max names a .NET static method (ADR 0174).
+            return new FunctionHandleExpr(ParseDottedName()) { Line = start.Line, Column = start.Column };
         }
 
         var parameters = new List<string>();
@@ -1592,6 +1595,21 @@ internal sealed class Parser
         Expect(TokenType.RParen, "')'");
         Expr body = ParseExpression();
         return new AnonymousFnExpr(parameters, body) { Line = start.Line, Column = start.Column, Dialect = Dialect };
+    }
+
+    /// <summary>An identifier and any <c>.identifier</c> parts written against it: <c>System.Math.Max</c>.</summary>
+    private string ParseDottedName()
+    {
+        string name = Expect(TokenType.Identifier, "a name").Text;
+        while (Check(TokenType.Dot) && !Current.PrecededByWhitespace
+            && _pos + 1 < _tokens.Count && _tokens[_pos + 1].Type == TokenType.Identifier
+            && !_tokens[_pos + 1].PrecededByWhitespace)
+        {
+            Advance(); // '.'
+            name += "." + Advance().Text;
+        }
+
+        return name;
     }
 
     // --- Token helpers ------------------------------------------------------------------------

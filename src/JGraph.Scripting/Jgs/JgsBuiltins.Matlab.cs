@@ -259,6 +259,10 @@ internal static partial class JgsBuiltins
         Define("cell", (args, line, col) =>
         {
             ArityRange("cell", args, 1, 2, line, col);
+            if (args.Count == 1 && args[0].Type == JgsType.External)
+            {
+                return Net.NetBuiltinConversions.Cell(args[0], line, col); // a .NET array's elements (ADR 0174)
+            }
 
             // cell(n) is an n-element row; cell(r, c) carries its grid shape (M41), so C{r, c}
             // addresses the element MATLAB means — column-major over the flat storage, like arrays.
@@ -321,9 +325,12 @@ internal static partial class JgsBuiltins
 
             // A column, as MATLAB's is (measured): fieldnames(s)' is the row a script compares with.
             // On an object it is the property names, Dependent ones included, and runs no getter (V6, #28).
+            // A .NET object's are its properties and fields, as properties lists them (ADR 0174).
             JgsValue names = args[0].Type == JgsType.Object
                 ? JgsValue.Cell(args[0].AsObject.Class.Properties.Select(static p => JgsValue.Str(p.Spec.Name)).ToArray())
-                : JgsValue.Cell(StructOf("fieldnames", args[0], line, col).Keys.Select(JgsValue.Str).ToArray());
+                : args[0].AsExternalOrNull() is NetObject net
+                    ? JgsValue.Cell(Net.NetDisplay.MemberNames(net).Select(JgsValue.Str).ToArray())
+                    : JgsValue.Cell(StructOf("fieldnames", args[0], line, col).Keys.Select(JgsValue.Str).ToArray());
             names.Reshape(names.AsCell.Length, 1);
             return names;
         });

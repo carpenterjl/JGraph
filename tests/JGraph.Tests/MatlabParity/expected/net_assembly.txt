@@ -1,8 +1,7 @@
-RUN|pending I3|'dotnetenv' is not recognized as a variable or a function.
-CHK|env_before_runtime|framework|exact
-CHK|env_before_status|notloaded|exact
+CHK|env_before_runtime|framework|exact|pending I3|core
+CHK|env_before_status|notloaded|exact|pending I3|loaded
 CHK|env_bad_runtime|MATLAB:netenv:InvalidRuntime|exact
-CHK|env_core_status|notloaded|exact
+CHK|env_core_status|notloaded|exact|pending I3|loaded
 CHK|env_core_again|none|exact
 CHK|env_after_load|loaded|exact
 CHK|env_switch_after_load|MATLAB:netenv:NETLoaded|exact
@@ -11,7 +10,7 @@ CHK|runtime_version_major|int32:8|exact
 CHK|assembly_class|NET.Assembly|exact
 CHK|assembly_isa_handle|logical:1|exact
 CHK|AssemblyHandle|System.Reflection.RuntimeAssembly|exact
-CHK|Classes_count|double:24|exact
+CHK|Classes_count|double:24|exact|pending I3|double:23
 CHK|Classes_first|JGTest.ArrayMaker|exact
 CHK|Enums|cell:{char:JGTest.Color;char:JGTest.Access;char:JGTest.Small;char:JGTest.Big;char:JGTest.Huge}|exact
 CHK|Structures|cell:{char:JGTest.Point}|exact
@@ -19,7 +18,7 @@ CHK|Delegates|cell:{char:JGTest.Unary;char:JGTest.RefOut;char:JGTest.Describe;ch
 CHK|GenericTypes|cell:{char:JGTest.Box`1[T];char:JGTest.Pair`2[TFirst,TSecond];char:JGTest.Constrained`1[T]}|exact
 CHK|Interfaces|cell:{char:JGTest.IGreeter}|exact
 CHK|properties|AssemblyHandle,Classes,Structures,Enums,GenericTypes,Interfaces,Delegates|exact
-CHK|reload_same|logical:1|exact
+CHK|reload_same|logical:1|exact|pending I3|logical:0
 CHK|path_string|NET.Assembly|exact
 CHK|name_System_Xml|NET.Assembly|exact
 CHK|name_System_Xml_type|System.Xml.XmlDocument|exact
@@ -37,13 +36,13 @@ CHK|numeric_message|Input to NET.addAssembly must be a character vector or an in
 CHK|no_args|MATLAB:UndefinedFunction|exact
 CHK|two_args|MATLAB:UndefinedFunction|exact
 CHK|isNETSupported|logical:1|exact
-CHK|which_addAssembly|addAssembly is a built-in method|exact
-CHK|exist_NetException|double:8|exact
-CHK|exist_Assembly|double:8|exact
+CHK|which_addAssembly|addAssembly is a built-in method|exact|pending I3|
+CHK|exist_NetException|double:8|exact|pending I3|double:0
+CHK|exist_Assembly|double:8|exact|pending I3|double:0
 CHK|exist_addAssembly|double:0|exact
-CHK|disableAutoRelease_not_com|MATLAB:badargs|exact
-CHK|cwd_shared|logical:1|exact
-CHK|cwd_follows_cd|logical:1|exact
+CHK|disableAutoRelease_not_com|MATLAB:badargs|exact|pending I3|
+CHK|cwd_shared|logical:1|exact|pending I3|logical:0
+CHK|cwd_follows_cd|logical:1|exact|pending I3|logical:0
 CHK|env_setenv_seen|System.String:abc|exact
 CHK|env_net_set_seen|xyz|exact
 CHK|Is64BitProcess|logical:1|exact

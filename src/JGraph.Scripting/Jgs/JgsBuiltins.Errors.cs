@@ -36,6 +36,9 @@ internal static partial class JgsBuiltins
         MakeException(identifier, message, StackValue([]));
 
     /// <summary>The causes a new exception has: none, as the 0-by-0 cell R2025b's <c>cause</c> is.</summary>
+    internal static JgsValue NoCausesValue() => NoCauses();
+
+    /// <summary>The causes a new exception has: none, as the 0-by-0 cell R2025b's <c>cause</c> is.</summary>
     private static JgsValue NoCauses()
     {
         JgsValue none = JgsValue.Cell([]);
@@ -84,7 +87,7 @@ internal static partial class JgsBuiltins
         }
 
         JgsValue caught = JgsValue.Struct(fields);
-        caught.SetClassName(ExceptionClass);
+        caught.SetClassName(thrown.ClassName ?? ExceptionClass); // a NET.NetException stays one (ADR 0174)
         return caught;
     }
 
@@ -197,7 +200,7 @@ internal static partial class JgsBuiltins
             {
                 Arity(name, args, 1, line, col);
                 (string identifier, string message) = ReadErrorValue(name, args[0], line, col);
-                bool whole = args[0].ClassName == ExceptionClass;
+                bool whole = args[0].ClassName is ExceptionClass or Net.NetInvoke.NetExceptionClass;
                 throw new JgsRuntimeException(line, col, identifier, message)
                 {
                     Carried = whole ? args[0] : null,
@@ -219,6 +222,10 @@ internal static partial class JgsBuiltins
             bool basic = args.Count > 1 && args[1].Type == JgsType.String
                 && string.Equals(args[1].AsString, "basic", StringComparison.OrdinalIgnoreCase);
             JgsValue? stack = Field(args[0], "stack");
+
+            // A NET.NetException keeps its "Error using" line under 'basic' too (R2025b,
+            // net_exceptions; ADR 0174): the .NET message is three lines of its own below it.
+            basic &= args[0].ClassName != Net.NetInvoke.NetExceptionClass;
             if (basic || stack is not { Type: JgsType.Struct } || stack.AsStructArray.Length == 0)
             {
                 return JgsValue.Str(message);

@@ -1,0 +1,16 @@
+# net_jgs_smoke.jgs -- the .NET interface from the JGS dialect (interop plan, stage 1, ADR 0174).
+# A JGraph-only fixture: R2025b cannot run JGS, so expected/net_jgs_smoke.txt is written from the
+# rule. JGS has no dotted names, so a JGS script reaches .NET through feval with a dotted name and
+# through a MATLAB helper file (V11's dialect crossing); what comes back is the .NET value a MATLAB
+# script holds, and the ordinary verbs answer for it in JGS as they do in MATLAB.
+
+print("CHK|feval_static|" + feval("System.Math.Max", 3, 4) + "|exact");
+print("CHK|feval_static_int32|" + class(feval("System.Math.Max", int32(3), int32(4))) + "|exact");
+let s = ix_net_string("abc");
+print("CHK|class|" + class(s) + "|exact");
+print("CHK|char|" + char(s) + "|exact");
+print("CHK|isa_Object|" + isa(s, "System.Object") + "|exact");
+print("CHK|isobject|" + isobject(s) + "|exact");
+print("CHK|numel|" + numel(s) + "|exact");
+let h = str2func("System.String.Concat");
+print("CHK|handle_call|" + char(h("x", "y")) + "|exact");

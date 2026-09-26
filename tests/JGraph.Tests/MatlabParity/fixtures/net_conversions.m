@@ -81,7 +81,11 @@ names = {'Bool','Byte','SByte','Int16','UInt16','Int32','UInt32','Int64','Single
     'Char','String','NullString','NullObject','Decimal','Pointer','Span','BoxedDouble', ...
     'BoxedString','Id'};
 for k = 1:numel(names)
-    ix_chk(['ret_' names{k}], ix_try(@() JGTest.Returns.(names{k})()));
+    rule = 'exact';
+    if strcmp(names{k}, 'Int64')
+        rule = 'div=ADR0174'; % 2^53 + 1, which JGraph holds to a double's precision
+    end
+    ix_chk(['ret_' names{k}], ix_try(@() JGTest.Returns.(names{k})()), rule);
 end
 ix_chk('ret_Int64_exact', sprintf('%d', JGTest.Returns.Int64()));
 ix_chk('ret_UInt64_class', class(JGTest.Returns.UInt64()));

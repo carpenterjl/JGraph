@@ -178,6 +178,10 @@ internal static class AstPrinter
                 text.Append('@').Append(handle.Name);
                 break;
 
+            case MetaClassExpr meta:
+                text.Append('?').Append(meta.Name);
+                break;
+
             case PreEvaluated evaluated:
                 // Only the interpreter makes these, and only around a value it has already computed.
                 text.Append(evaluated.Value.Display());

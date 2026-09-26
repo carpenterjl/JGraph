@@ -60,6 +60,13 @@ internal static partial class JgsBuiltins
                 return JgsValue.Str(string.Empty);
             }
 
+            // char of a System.String is its text, of a char[] its characters, of an enum member its
+            // name; char of any other .NET object is refused (ADR 0174).
+            if (args.Count == 1 && args[0].Type == JgsType.External)
+            {
+                return Net.NetBuiltinConversions.Char(args[0], line, col);
+            }
+
             // char of an inline function is its formula, which is the one subject whose text is not
             // in the value itself but in what the caller wrote (M131).
             if (args.Count == 1 && args[0].Type == JgsType.Function && args[0].AsCallable is InlineFunction inlined)
@@ -388,6 +395,14 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 bool wasString = args.Count > 0 && args[0].IsStringArray;
+
+                // strjoin of one string is that string: the body would see it demoted to a char row,
+                // which strjoin refuses as MATLAB does (ADR 0174 met it in ix_flat's one-line case).
+                if (name == "strjoin" && wasString && args[0].ArrayLength == 1)
+                {
+                    return JgsValue.StringScalar(args[0].ElementAt(0).AsString);
+                }
+
                 JgsValue answer = inner.Call(args, line, col);
                 return wasString ? PromoteText(answer) : answer;
             })

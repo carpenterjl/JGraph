@@ -104,6 +104,25 @@ internal sealed class JgsFileIndex
         }
     }
 
+    /// <summary>
+    /// Whether some search folder holds <c><paramref name="stem"/>.m</c>, answered from the index:
+    /// the question a dotted name asks of its head before reading it as a .NET namespace (ADR 0174),
+    /// on every mention, which a disk probe per folder made cost more than the call it named.
+    /// </summary>
+    public bool Holds(string stem)
+    {
+        Refresh();
+        foreach (string folder in _lastSearched)
+        {
+            if (_folders.TryGetValue(folder, out Folder? entry) && entry.Stems.Contains(stem))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /// <summary>The <c>.m</c> stems <paramref name="folder"/> holds, read now if it has not been.</summary>
     public IReadOnlySet<string> StemsOf(string folder) => StemsOfFullPath(Path.GetFullPath(folder));
 

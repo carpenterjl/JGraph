@@ -1784,9 +1784,9 @@ internal sealed partial class Interpreter
 
         // A name nothing holds errors before its arguments are evaluated, unless a user class is
         // loaded, in which case an object among the arguments could still answer with a method.
-        if (!resolved.Found && !AnyClasses)
+        if (!resolved.Found && !AnyClasses && !AnyNet)
         {
-            throw new JgsRuntimeException(call.Callee.Line, call.Callee.Column, Undefined(name));
+            throw UndefinedError(name, call.Callee);
         }
 
         // A user function asked for more outputs than it declares is refused here, before its
@@ -1801,7 +1801,7 @@ internal sealed partial class Interpreter
         resolved = _resolver.Invoke(name, resolved, given);
         if (!resolved.Found)
         {
-            throw new JgsRuntimeException(call.Callee.Line, call.Callee.Column, Undefined(name));
+            throw UndefinedError(name, call.Callee);
         }
 
         return true;
@@ -1833,8 +1833,8 @@ internal sealed partial class Interpreter
         Resolution referenced = _resolver.Handle(name, env);
         if (!referenced.Found || referenced.Value.Type != JgsType.Function)
         {
-            handle = JgsValue.Null;
-            return false;
+            // @System.Math.Max: a .NET static method group, or a type's constructor (ADR 0174).
+            return TryNetHandle(name, env, out handle);
         }
 
         handle = Dialect.IsMatlab
@@ -2039,11 +2039,21 @@ internal sealed partial class Interpreter
         }
     }
 
+    /// <summary>The error for a name that resolves to nothing (see <see cref="Undefined"/>).</summary>
+    private JgsRuntimeException UndefinedError(string name, Node at) =>
+        Dialect.IsMatlab
+            ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:UndefinedFunction", Undefined(name))
+            : new JgsRuntimeException(at.Line, at.Column, Undefined(name));
+
     /// <summary>
     /// The message for a name that resolves to nothing, in the dialect's own vocabulary. A MATLAB
     /// function JGraph knows about but does not implement says so by name, which is a far better
     /// answer than "not recognized" when a script reaches for a toolbox that is not here.
     /// </summary>
+    /// <remarks>
+    /// The MATLAB dialect's error carries R2025b's identifier, <c>MATLAB:UndefinedFunction</c>, which
+    /// a script can branch on (the .NET fixtures of ADR 0174 ask for it).
+    /// </remarks>
     private string Undefined(string name)
     {
         if (!Dialect.IsMatlab)
@@ -2876,7 +2886,7 @@ internal sealed partial class Interpreter
                     // was taken by 'clear global' (#158): R2025b says so, rather than "unknown".
                     throw env.IsGlobal(variable.Name)
                         ? ClearedVariable(variable.Name, variable)
-                        : new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
+                        : UndefinedError(variable.Name, variable);
                 }
 
                 if (!AutoCallsBare(resolved))
@@ -2932,6 +2942,9 @@ internal sealed partial class Interpreter
             case AnonymousFnExpr anonymous:
                 return JgsValue.Function(AnonymousFunction.Create(anonymous, env, this));
 
+            case MetaClassExpr meta:
+                return EvaluateMetaClass(meta, env);
+
             case FunctionHandleExpr handle:
                 // Handle mode: never a variable, and a file as readily as a function in scope, or a
                 // path function could be called but never passed to cellfun.
@@ -2939,6 +2952,7 @@ internal sealed partial class Interpreter
                 {
                     return made;
                 }
+
 
                 throw new JgsRuntimeException(handle.Line, handle.Column,
                     $"'@{handle.Name}': there is no function called '{handle.Name}'.");
@@ -3124,6 +3138,8 @@ internal sealed partial class Interpreter
 
     private JgsValue AssembleMatrix(Node matrix, List<JgsValue[]> rows)
     {
+        RefuseExternalJoin(rows.SelectMany(static row => row).ToArray(), matrix);
+
         // A table joins as a table (V6, #121): [T; U] stacks rows, [T U] puts variables side by
         // side, and a cell beside or below a table is read as a table first. Asked before every
         // other kind, because a cell in the bracket would otherwise take it.
@@ -3298,6 +3314,7 @@ internal sealed partial class Interpreter
 
     private JgsValue BuildArrayLiteral(ArrayLiteral array, JgsValue[] elements, JgsEnvironment env)
     {
+        RefuseExternalJoin(elements, array);
         bool concatenating = false;
         foreach (JgsValue element in elements)
         {
@@ -4205,6 +4222,13 @@ internal sealed partial class Interpreter
     private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at,
                                  JgsReuse.Operands reuse = JgsReuse.Operands.None)
     {
+        // An operator with a .NET value on either side is the type's own (ADR 0174): == and ~=
+        // through op_Equality where the type defines one, reference identity otherwise.
+        if (left.Type == JgsType.External || right.Type == JgsType.External)
+        {
+            return Net.NetOperators.Apply(op, left, right, at.Line, at.Column);
+        }
+
         // A string array joins text under + and answers a string whatever class the other side wears
         // ("abc" + int8(5) is "abc5", measured), and refuses every other arithmetic operator in
         // MATLAB's words. Deciding here keeps the class machinery below from stamping int8 on text.
@@ -4253,6 +4277,20 @@ internal sealed partial class Interpreter
         // back exactly what is already there.
         answer.SetNumericClass(numericClass);
         return answer;
+    }
+
+    /// <summary>
+    /// A .NET object joins nothing, itself included: <c>[m m]</c> and <c>[s 'x']</c> are R2025b's
+    /// <c>MATLAB:class:concatenationScalar</c> (ADR 0174). A bracket around one value is that value.
+    /// </summary>
+    private static void RefuseExternalJoin(JgsValue[] pieces, Node at)
+    {
+        if (pieces.Length > 1 && Array.Exists(pieces, static p => p.Type == JgsType.External))
+        {
+            JgsValue first = Array.Find(pieces, static p => p.Type == JgsType.External)!;
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:class:concatenationScalar",
+                $"Concatenation of objects of class '{first.AsExternal.ClassName}' is not allowed.");
+        }
     }
 
     /// <summary>The operators whose result carries a numeric class; everything else answers logical.</summary>
@@ -4524,6 +4562,13 @@ internal sealed partial class Interpreter
     /// </summary>
     public JgsValue CopyForBinding(JgsValue value)
     {
+        // A .NET value type is a copy in both dialects, a reference type the same object (ADR 0174).
+        if (value.Type == JgsType.External)
+        {
+            IJgsExternal copy = value.AsExternal.CopyForBinding();
+            return ReferenceEquals(copy, value.AsExternal) ? value : JgsValue.External(copy);
+        }
+
         if (!Dialect.CopyOnAssign
             || value.Type is not (JgsType.Array or JgsType.Cell or JgsType.Struct or JgsType.Object))
         {
@@ -6607,6 +6652,19 @@ internal sealed partial class Interpreter
             return JgsBuiltins.SparseSubscript(callee, indices, Dialect, call.Line, call.Column);
         }
 
+        // m(1) on a .NET object: R2025b refuses a paren index on one that has no indexer of its own,
+        // and m() is the object itself (ADR 0174).
+        if (callee.Type == JgsType.External)
+        {
+            if (call.Arguments.Count == 0)
+            {
+                return callee;
+            }
+
+            throw new JgsRuntimeException(call.Line, call.Column, "MATLAB:NET:UnsupportedIndexingCustom",
+                $"Array indexing is not supported for objects of class '{callee.AsExternal.ClassName}'.");
+        }
+
         if (callee.Type != JgsType.Function)
         {
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
@@ -7322,7 +7380,12 @@ internal sealed partial class Interpreter
         _indexContext.Add(context);
         try
         {
-            return Evaluate(argument, env);
+            // A lone true or false is a one-element mask, as MATLAB reads it: x(true) is x(1) and
+            // x(false) is empty (ADR 0174 met it in ix_flat, whose filter of one line is a scalar).
+            JgsValue index = Evaluate(argument, env);
+            return index.Type == JgsType.Bool && Dialect.IsMatlab
+                ? JgsValue.Shaped([index], 1, 1, JgsPackedKind.Bool)
+                : index;
         }
         finally
         {
@@ -8402,6 +8465,14 @@ internal sealed partial class Interpreter
             return onClass;
         }
 
+        // System.Math.PI, JGTest.Members(2, 'm'): a dotted name whose head is a .NET namespace and
+        // nothing else (ADR 0174). Asked before the target is evaluated, for the same reason a class
+        // name is: evaluating a type's name would construct it.
+        if (TryNetInFront(member, env, autoCall, out JgsValue onNet))
+        {
+            return onNet;
+        }
+
         string field = FieldName(member, env);
         // A constructor's static member must be resolved before evaluating its bare name.
         // Otherwise uint8.empty invokes uint8() and VideoWriter.getProfiles invokes VideoWriter().
@@ -8437,6 +8508,13 @@ internal sealed partial class Interpreter
         if (target.Type == JgsType.Object)
         {
             return ObjectMember(target, field, member, autoCall);
+        }
+
+        // m.Value, s.Length, m.Describe on a .NET object; a metaclass's Name; an assembly's lists
+        // (ADR 0174).
+        if (target.Type == JgsType.External)
+        {
+            return ExternalMember(target, field, member, autoCall);
         }
 
         // A handle on a figure object is a number (M51), so a dot on one reads that object's
@@ -8566,6 +8644,12 @@ internal sealed partial class Interpreter
         // A dotted write onto an instance of a user class sets a declared property, checked against
         // its declaration (M68). Asked before the struct path for the same reason the handle write is.
         if (TryAssignToObject(member, value, env))
+        {
+            return value;
+        }
+
+        // m.Value = 5 on a .NET object (ADR 0174), asked before the struct path for the same reason.
+        if (TryAssignToNet(member, value, env))
         {
             return value;
         }

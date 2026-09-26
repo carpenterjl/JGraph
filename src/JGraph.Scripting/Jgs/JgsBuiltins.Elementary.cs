@@ -317,6 +317,20 @@ internal static partial class JgsBuiltins
         {
             Arity("isa", args, 2, line, col);
             string wanted = Str("isa", args, 1, line, col);
+
+            // A .NET value is its type, each base and interface, and a handle when it is a reference
+            // type (ADR 0174); a NET.NetException is an MException (measured).
+            if (args[0].Type == JgsType.External)
+            {
+                return JgsValue.Bool(args[0].AsExternal.IsA(wanted));
+            }
+
+            if (args[0].ClassName == Net.NetInvoke.NetExceptionClass
+                && wanted is "MException" or "matlab.exception.ExternalException")
+            {
+                return JgsValue.True;
+            }
+
             string actual = ClassOf(args[0], dialect);
             JgsNumericClass? numericClass = JgsNumericClasses.Parse(actual);
             return JgsValue.Bool(wanted switch
@@ -339,6 +353,11 @@ internal static partial class JgsBuiltins
         Define("logical", (args, line, col) =>
         {
             Arity("logical", args, 1, line, col);
+            if (args[0].Type == JgsType.External)
+            {
+                return Net.NetBuiltinConversions.Logical(args[0], line, col);
+            }
+
             if (args[0].Type == JgsType.Array && args[0].ArrayLength == 0 && !args[0].IsStringArray)
             {
                 return EmptyLogical(args[0].Rows, args[0].Cols); // an empty's kind is all that can say logical (V6)
@@ -426,6 +445,11 @@ internal static partial class JgsBuiltins
     private static JgsValue ToNumericClass(
         string name, JgsNumericClass numericClass, JgsValue value, int line, int col)
     {
+        if (value.Type == JgsType.External)
+        {
+            return Net.NetBuiltinConversions.Numeric(name, numericClass, value, line, col);
+        }
+
         // A char array converts through its codes, which is what makes double('A') 65. A string
         // is read as the number it spells — double("5") is 5 and double("abc") is NaN — which is
         // MATLAB's rule and the reason these constructors are string-aware: demoted to a char row
@@ -608,6 +632,7 @@ internal static partial class JgsBuiltins
         // An instance of a user class answers with its own class name (M68). It reads the same
         // property a tagged struct does, which is why this line is the whole of the change.
         JgsType.Object => value.ClassName ?? "object",
+        JgsType.External => value.AsExternal.ClassName, // a .NET object, a metaclass, an assembly (ADR 0174)
         _ => "double",
     };
 

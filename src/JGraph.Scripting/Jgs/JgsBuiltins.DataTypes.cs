@@ -68,6 +68,11 @@ internal static partial class JgsBuiltins
                 return input;
             }
 
+            if (input.Type == JgsType.External)
+            {
+                return Net.NetBuiltinConversions.String(input, line, col); // ADR 0174
+            }
+
             // A time answers with how it displays, not with its milliseconds (M64). Asked first,
             // because a datetime is an array underneath and the Array arm below would otherwise turn
             // each moment into the number it is stored as.

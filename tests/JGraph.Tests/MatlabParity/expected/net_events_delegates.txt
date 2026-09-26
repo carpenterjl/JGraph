@@ -1,4 +1,4 @@
-RUN|pending I5|'dotnetenv' is not recognized as a variable or a function.
+RUN|pending I5|First argument provided is not valid for addlistener. (Check its type or validity)
 CHK|events|Fired,Custom,NonStandard,StaticFired,ObjectBeingDestroyed|exact
 CHK|listener_class|event.listener|exact
 CHK|listener_EventName|Fired|exact

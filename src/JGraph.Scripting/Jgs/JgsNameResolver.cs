@@ -459,14 +459,15 @@ internal sealed class JgsNameResolver
     /// <summary>The leftmost user object among the arguments — the one a user method dispatches on — or null.</summary>
     private JgsValue? DominantObject(IReadOnlyList<JgsValue> arguments)
     {
-        if (!_interpreter.AnyClasses)
+        if (!_interpreter.AnyClasses && !_interpreter.AnyNet)
         {
             return null;
         }
 
         for (int i = 0; i < arguments.Count; i++)
         {
-            if (arguments[i].Type == JgsType.Object)
+            // A .NET object is dominant too (ADR 0174): Describe(m) calls its method.
+            if (arguments[i].Type is JgsType.Object or JgsType.External)
             {
                 return arguments[i];
             }

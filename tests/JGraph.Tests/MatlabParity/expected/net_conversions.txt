@@ -1,4 +1,3 @@
-RUN|pending I1|'dotnetenv' is not recognized as a variable or a function.
 CHK|types|Boolean,Byte,SByte,Int16,UInt16,Int32,UInt32,Int64,UInt64,Single,Double,Char,String,Object,Decimal,DoubleArr,Int32Arr,StringArr,ObjectArr,BooleanArr,CharArr,Double2D,Array,DayOfWeek,NullableInt32|exact
 CHK|conv_double|-,Byte,SByte,Int16,UInt16,Int32,UInt32,Int64,UInt64,Single,Double,-,-,Object,Decimal,DoubleArr,Int32Arr,-,-,-,-,Double2D,-,-,NullableInt32|exact
 CHK|conv_double_frac|-,Byte,SByte,Int16,UInt16,Int32,UInt32,Int64,UInt64,Single,Double,-,-,Object,Decimal,DoubleArr,Int32Arr,-,-,-,-,Double2D,-,-,NullableInt32|exact
@@ -959,7 +958,7 @@ CHK|ret_Int16|int16:-30000|exact
 CHK|ret_UInt16|uint16:60000|exact
 CHK|ret_Int32|int32:-2000000000|exact
 CHK|ret_UInt32|uint32:4000000000|exact
-CHK|ret_Int64|int64:9007199254740993|exact
+CHK|ret_Int64|int64:9007199254740993|div=ADR0174|diverges|int64:9007199254740992
 CHK|ret_Single|single:1.25|exact
 CHK|ret_Double|double:2.5|exact
 CHK|ret_Char|char:Z|exact

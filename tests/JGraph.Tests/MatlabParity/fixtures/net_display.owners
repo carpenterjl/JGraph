@@ -1,3 +1,8 @@
 # The interop plan's stage that completes this fixture (docs/plans/net-and-shared-library-interop-plan.md).
 RUN	I1	# JGraph has no .NET or shared-library interface before I1
 *	I1	# the external value kind, the BCL, static and instance members, the converter, NetException and display
+methods_list	I2	# methods' listing layout is stage 2's, with -full's signatures
+methods_full_statics	I2	# the signature text of methods -full
+methods_full_members	I2	# the signature text of methods -full
+methods_full_modifiers	I2	# the signature text of methods -full
+events_disp	I5	# the events listing comes with .NET events

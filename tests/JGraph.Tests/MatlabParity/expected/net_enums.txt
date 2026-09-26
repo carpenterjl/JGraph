@@ -1,7 +1,7 @@
-RUN|pending I4|'dotnetenv' is not recognized as a variable or a function.
+RUN|pending I4|'enumeration' is not recognized as a variable or a function.
 CHK|class|JGTest.Color|exact
 CHK|show|JGTest.Color:Green|exact
-CHK|echo|c = / Color enumeration / Green|exact
+CHK|echo|c = / Color enumeration / Green|exact|pending I4|c = Color enumeration: Green
 CHK|char|Green|exact
 CHK|string|string:Green|exact
 CHK|int32|int32:1|exact
@@ -12,8 +12,8 @@ CHK|eq_char|logical:0|exact
 CHK|isa_Enum|logical:1|exact
 CHK|isa_handle|logical:0|exact
 CHK|bad_member|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
-CHK|enumeration_no_output|none|exact
-CHK|enumeration_output_refused|ERR:MATLAB:class:concatenationScalar|exact
+CHK|enumeration_no_output|none|exact|pending I4|MATLAB:UndefinedFunction
+CHK|enumeration_output_refused|ERR:MATLAB:class:concatenationScalar|exact|pending I4|ERR:MATLAB:UndefinedFunction
 CHK|enumeration_disp|Enumeration members for class 'JGTest.Color': / Red / Green / Blue|exact
 CHK|GetNames|string:Red,Green,Blue|exact
 CHK|ToString|System.String:Green|exact

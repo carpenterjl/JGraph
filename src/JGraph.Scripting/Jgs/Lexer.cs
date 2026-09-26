@@ -284,6 +284,7 @@ internal static class Lexer
                 case '.' when matlab && Peek(source, i) == '\'': type = TokenType.DotTranspose; lexeme = ".'"; break;
                 case '.' when matlab: type = TokenType.Dot; lexeme = "."; break;
                 case '@' when matlab: type = TokenType.At; lexeme = "@"; break;
+                case '?' when matlab: type = TokenType.Question; lexeme = "?"; break;
                 case '+' when Peek(source, i) == '+': type = TokenType.PlusPlus; lexeme = "++"; break;
                 case '+' when Peek(source, i) == '=': type = TokenType.PlusAssign; lexeme = "+="; break;
                 case '+': type = TokenType.Plus; lexeme = "+"; break;

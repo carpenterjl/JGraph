@@ -1,4 +1,3 @@
-RUN|pending I1|'dotnetenv' is not recognized as a variable or a function.
 CHK|method_class|NET.NetException|exact
 CHK|method_identifier|MATLAB:NET:CLRException:MethodInvoke|exact
 CHK|method_message|Message: boom / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
@@ -83,4 +82,4 @@ CHK|custom_isa_Exception|logical:1|exact
 CHK|custom_isa_MException|logical:1|exact
 CHK|custom_properties|ExceptionObject,identifier,message,cause,stack,Correction|exact
 CHK|custom_rethrow|MATLAB:NET:CLRException:MethodInvoke|exact
-CHK|custom_report_basic|Error using net_exceptions (line 52) / Message: outer failure / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact
+CHK|custom_report_basic|Error using net_exceptions (line 52) / Message: outer failure / Source: JGraph.Interop.TestAssembly / HelpLink: None|div=ADR0174|diverges|Message: outer failure / Source: JGraph.Interop.TestAssembly / HelpLink: None

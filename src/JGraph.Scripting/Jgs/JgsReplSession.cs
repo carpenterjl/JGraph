@@ -266,8 +266,11 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
 
         // The interpreter's token is replaced per statement by BeginStatement; the one it is
         // constructed with only covers the (impossible) window before the first statement.
+        // The echo goes where disp's text goes, so evalc captures it and the diary records it, as
+        // MATLAB's do (ADR 0174 found evalc('x') answering '' while x's echo reached the console).
+        JGraphScriptGlobals globals = _globals;
         _interpreter = new Interpreter(_environment, CancellationToken.None, hook: null,
-            echo: line => _context.Output.WriteLine(line), _dialect);
+            echo: line => globals.print(line), _dialect);
         _interpreter.Host = _globals;
         JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals);
         JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, _globals);

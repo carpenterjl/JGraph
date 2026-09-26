@@ -1,0 +1,212 @@
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Loader;
+
+namespace JGraph.Scripting.Jgs.Net;
+
+/// <summary>
+/// The .NET types a MATLAB-dialect script can name (interop plan, stage 1): the base class library
+/// of the runtime JGraph runs on, and every assembly the session added with <c>NET.addAssembly</c>.
+/// A dotted name whose head nothing else claims is looked up here, namespace by namespace, until a
+/// type answers.
+/// </summary>
+/// <remarks>
+/// <para>
+/// The base class library is one process-wide index, built on first use: every managed assembly of
+/// the shared framework folder (<c>Microsoft.NETCore.App</c>) and every assembly the process has
+/// already loaded, so a WPF host sees <c>System.Windows.*</c> and the CLI does not. MATLAB says the
+/// same of <c>mscorlib</c> and <c>system</c>: they need no <c>NET.addAssembly</c>.
+/// </para>
+/// <para>
+/// An added assembly is visible to the session that added it, because assemblies cannot be unloaded
+/// and a later session (a test, a fresh run in the app) must not see a type it never asked for. The
+/// assembly itself is loaded once per path per process, into one non-collectible load context.
+/// </para>
+/// </remarks>
+internal sealed class NetCatalog
+{
+    private static readonly object Gate = new();
+    private static Index? _framework;
+    private static readonly Dictionary<string, Assembly> LoadedByPath = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly AssemblyLoadContext Context = new("JGraph.NET", isCollectible: false);
+
+    private readonly List<Assembly> _added = [];
+    private Index? _session;
+
+    /// <summary>Where this session's .NET warnings go: its <c>warning</c> state and its console.</summary>
+    public Action<string, string>? Warn { get; set; }
+
+    /// <summary>The assemblies this session added, in the order it added them.</summary>
+    public IReadOnlyList<Assembly> Added => _added;
+
+    /// <summary>Whether a dotted name is a namespace: <c>System</c>, <c>System.IO</c>, <c>JGTest</c>.</summary>
+    public bool IsNamespace(string name) =>
+        Framework.Namespaces.Contains(name) || (_session?.Namespaces.Contains(name) ?? false);
+
+    /// <summary>The public type a full name names, or null. Generic definitions answer to <c>List`1</c>.</summary>
+    public Type? TypeNamed(string fullName) =>
+        _session is { } session && session.Types.TryGetValue(fullName, out Type? own) ? own
+        : Framework.Types.TryGetValue(fullName, out Type? found) ? found
+        : null;
+
+    /// <summary>The generic definitions a name without its arity names: <c>System.Collections.Generic.List</c>.</summary>
+    public IEnumerable<Type> GenericDefinitions(string fullName)
+    {
+        for (int arity = 1; arity <= 8; arity++)
+        {
+            if (TypeNamed($"{fullName}`{arity}") is { } definition)
+            {
+                yield return definition;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Loads an assembly by path (once per process) and makes its types visible to this session.
+    /// Answers the assembly; adding it again answers the same one.
+    /// </summary>
+    public Assembly AddFromPath(string path)
+    {
+        string full = Path.GetFullPath(path);
+        Assembly assembly;
+        lock (Gate)
+        {
+            if (!LoadedByPath.TryGetValue(full, out assembly!))
+            {
+                // The file is read as a PE image first, which is where R2025b's refusals of a native
+                // DLL and of a file that is not an image come from ("PE image does not have
+                // metadata.", "Image is too small.", source System.Reflection.Metadata: net_assembly).
+                using (FileStream stream = File.OpenRead(full))
+                using (var image = new System.Reflection.PortableExecutable.PEReader(stream))
+                {
+                    _ = System.Reflection.Metadata.PEReaderExtensions.GetMetadataReader(image);
+                }
+
+                assembly = Context.LoadFromAssemblyPath(full);
+                LoadedByPath[full] = assembly;
+            }
+        }
+
+        Add(assembly);
+        return assembly;
+    }
+
+    /// <summary>Makes an already-loaded assembly's types visible to this session.</summary>
+    public void Add(Assembly assembly)
+    {
+        if (_added.Contains(assembly))
+        {
+            return;
+        }
+
+        _added.Add(assembly);
+        _session ??= new Index();
+        _session.Take(assembly);
+    }
+
+    /// <summary>The process-wide index of the framework's types, built on first use.</summary>
+    private static Index Framework
+    {
+        get
+        {
+            if (_framework is { } built)
+            {
+                return built;
+            }
+
+            lock (Gate)
+            {
+                return _framework ??= BuildFramework();
+            }
+        }
+    }
+
+    private static Index BuildFramework()
+    {
+        var index = new Index();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (Assembly loaded in AssemblyLoadContext.Default.Assemblies)
+        {
+            if (IsFrameworkAssembly(loaded))
+            {
+                seen.Add(loaded.GetName().Name ?? "");
+                index.Take(loaded);
+            }
+        }
+
+        string folder = RuntimeEnvironment.GetRuntimeDirectory();
+        foreach (string file in Directory.EnumerateFiles(folder, "*.dll"))
+        {
+            string name = Path.GetFileNameWithoutExtension(file);
+            if (seen.Contains(name) || !(name.StartsWith("System", StringComparison.Ordinal)
+                || name.StartsWith("Microsoft.", StringComparison.Ordinal) || name is "mscorlib" or "netstandard"))
+            {
+                continue;
+            }
+
+            try
+            {
+                index.Take(AssemblyLoadContext.Default.LoadFromAssemblyName(AssemblyName.GetAssemblyName(file)));
+            }
+            catch (Exception fault) when (fault is BadImageFormatException or FileLoadException or FileNotFoundException)
+            {
+                // A native image in the folder (clrjit, the host) has no metadata to index.
+            }
+        }
+
+        return index;
+    }
+
+    /// <summary>
+    /// Whether a loaded assembly belongs to a framework (its file sits under the shared framework
+    /// root), rather than to JGraph or to a package it brought.
+    /// </summary>
+    private static bool IsFrameworkAssembly(Assembly assembly)
+    {
+        if (assembly.IsDynamic || string.IsNullOrEmpty(assembly.Location))
+        {
+            return false;
+        }
+
+        string shared = Path.GetDirectoryName(Path.GetDirectoryName(RuntimeEnvironment.GetRuntimeDirectory().TrimEnd('\\', '/'))!)!;
+        return assembly.Location.StartsWith(shared, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>Namespaces and public top-level types, by full name.</summary>
+    private sealed class Index
+    {
+        public HashSet<string> Namespaces { get; } = new(StringComparer.Ordinal);
+
+        public Dictionary<string, Type> Types { get; } = new(StringComparer.Ordinal);
+
+        public void Take(Assembly assembly)
+        {
+            Type[] exported;
+            try
+            {
+                exported = assembly.GetExportedTypes();
+            }
+            catch (Exception fault) when (fault is ReflectionTypeLoadException or NotSupportedException or FileNotFoundException)
+            {
+                return;
+            }
+
+            foreach (Type type in exported)
+            {
+                if (type.IsNested || type.FullName is not { } fullName || type.Namespace is not { } space)
+                {
+                    continue;
+                }
+
+                Types.TryAdd(fullName, type);
+                for (int dot = space.Length; dot > 0; dot = space.LastIndexOf('.', dot - 1))
+                {
+                    if (!Namespaces.Add(space[..dot]))
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -422,6 +422,11 @@ internal sealed partial class Interpreter
     internal bool TryUserMethod(string name, JgsValue dominant, [NotNullWhen(true)] out IJgsCallable? callable)
     {
         callable = null;
+        if (dominant.Type == JgsType.External)
+        {
+            return TryNetMethod(name, dominant, out callable);
+        }
+
         if (dominant.Type != JgsType.Object)
         {
             return false;

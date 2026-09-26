@@ -1,4 +1,3 @@
-RUN|pending I1|Unexpected character '?'.
 CHK|isNETSupported|logical:1|exact
 CHK|runtime_major|int32:8|exact
 CHK|dotnetenv_runtime|core|exact
@@ -19,8 +18,8 @@ CHK|string_IsNullOrEmpty_empty|logical:1|exact
 CHK|Max_int32|int32:7|exact
 CHK|Max_double|double:7|exact
 CHK|Max_mixed|double:7|exact
-CHK|Sqrt|double:1.4142135623730951|rel=1e-15
-CHK|PI|double:3.1415926535897931|rel=1e-15
+CHK|Sqrt|double:1.4142135623730951|exact
+CHK|PI|double:3.1415926535897931|exact
 CHK|Int32_MaxValue|int32:2147483647|exact
 CHK|Int32_Parse|int32:42|exact
 CHK|handle_static|double:4|exact

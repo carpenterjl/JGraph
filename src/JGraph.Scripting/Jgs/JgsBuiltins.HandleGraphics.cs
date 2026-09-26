@@ -585,6 +585,13 @@ internal static partial class JgsBuiltins
     {
         Arity("isvalid", args, 1, line, col);
         JgsValue asked = args[0];
+
+        // A .NET reference object is a handle that stays valid while it is held (ADR 0174).
+        if (asked.Type == JgsType.External && asked.AsExternal.IsHandle)
+        {
+            return JgsValue.True;
+        }
+
         if (asked.Type == JgsType.Object)
         {
             JgsObject instance = asked.AsObject;

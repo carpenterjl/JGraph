@@ -51,6 +51,9 @@ EXTRA_IMPLEMENTED = {
     "classdef", "persistent", "arguments",
     "+", "-", "*", "/", "\\", "^", ".*", "./", ".\\", ".^", "'", ".'",
     "==", "~=", "<", "<=", ">", ">=", "&", "|", "&&", "||", "~", ":",
+    # The members of a dotted namespace the catalog lists by its head (NET, meta), as it lists
+    # containers: interop stage I1 (ADR 0174) implemented these.
+    "NET.isNETSupported", "NET.addAssembly", "NET.createArray", "NET.createGeneric", "meta.class.fromName",
 }
 
 

@@ -254,9 +254,15 @@ public class MatlabParityFixtureTests : IDisposable
             searchFolders: [Path.Combine(fixtures, "helpers")]);
 
         // A run that fails is not an assertion failure here: the recording may say it fails
-        // (RUN|pending), and the comparer holds it to exactly that.
-        return (output.NormalText, result.Success ? null : result.Message ?? "the run failed with no message");
+        // (RUN|pending), and the comparer holds it to exactly that. The message is one line, its
+        // lines joined as ix_flat joins a display's, because a recording line cannot hold a break:
+        // a .NET exception's message is three lines, and a parse error names its file on a line
+        // of its own (ADR 0174).
+        return (output.NormalText, result.Success ? null : OneLine(result.Message ?? "the run failed with no message"));
     }
+
+    private static string OneLine(string message) => string.Join(" / ",
+        message.ReplaceLineEndings("\n").Split('\n').Select(static l => l.Trim()).Where(static l => l.Length > 0));
 
     private static string RunMatlabDialect(string code)
     {

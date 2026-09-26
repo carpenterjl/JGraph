@@ -125,6 +125,7 @@ internal static class AstEquals
                 x.Parameters.SequenceEqual(y.Parameters, StringComparer.Ordinal)
                 && ExpressionsEqual(x.Body, y.Body),
             (FunctionHandleExpr x, FunctionHandleExpr y) => string.Equals(x.Name, y.Name, StringComparison.Ordinal),
+            (MetaClassExpr x, MetaClassExpr y) => string.Equals(x.Name, y.Name, StringComparison.Ordinal),
             _ => false,
         };
     }

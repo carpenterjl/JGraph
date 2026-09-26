@@ -501,6 +501,11 @@ internal static partial class JgsBuiltins
     {
         Arity("events", args, 1, line, col);
         JgsValue asked = args[0];
+        if (asked.AsExternalOrNull() is NetObject net)
+        {
+            return EventColumn(Net.NetInvoke.EventNames(net.Type)); // a .NET object's events (ADR 0174)
+        }
+
         JgsClass? definition = asked.Type == JgsType.Object ? asked.AsObject.Class : NamedClass(asked, interpreter);
         if (definition is null)
         {

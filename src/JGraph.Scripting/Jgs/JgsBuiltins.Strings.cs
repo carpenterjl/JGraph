@@ -625,6 +625,12 @@ internal static partial class JgsBuiltins
     {
         ArityRange("num2str", args, 1, 2, line, col);
         JgsValue subject = args[0];
+        if (subject.Type == JgsType.External)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"num2str takes numeric, logical or char input, not a {subject.AsExternal.ClassName}."); // ADR 0174
+        }
+
         if (subject.Type == JgsType.String)
         {
             return subject; // MATLAB hands char straight back rather than describing it

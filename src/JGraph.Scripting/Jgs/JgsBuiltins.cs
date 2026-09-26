@@ -874,6 +874,7 @@ internal static partial class JgsBuiltins
                 JgsType.Array => JgsValue.Number(JgsMatrix.DimsOf(args[0]).Max()),
                 JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
+                JgsType.External => JgsValue.Number(1), // a .NET object is 1-by-1 (ADR 0174)
                 // length(m) on a containers.Map is its Count, as a double (V6.17, measured).
                 JgsType.Struct when args[0].ClassName == MapClassName => JgsValue.Number(EntryCount(args[0])),
                 // A struct is a 1-by-1 struct array (M65), so it has a length like anything else.
@@ -941,6 +942,7 @@ internal static partial class JgsBuiltins
                 JgsType.Sparse => JgsValue.Number((double)args[0].AsSparse.Rows * args[0].AsSparse.Cols),
                 JgsType.Struct => JgsValue.Number(args[0].AsStructArray.Length), // a struct is 1-by-1 (M65)
                 JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1), // a scalar is one element
+                JgsType.External => JgsValue.Number(1), // a .NET object, a .NET array included, is 1-by-1 (ADR 0174)
                 _ => throw new JgsRuntimeException(line, col, $"numel expects an array, cell, or string, but got a {args[0].TypeName}."),
             };
         });

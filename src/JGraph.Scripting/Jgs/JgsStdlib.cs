@@ -154,6 +154,14 @@ internal static class JgsStdlib
     /// </summary>
     public static bool DeepEquals(JgsValue left, JgsValue right, bool nanEqual = false)
     {
+        // Two .NET objects are equal when they are one object, or of one class with equal public
+        // properties and fields (R2025b: two JGTest.Members built alike are isequal); a .NET value
+        // and a MATLAB one never are (ADR 0174).
+        if (left.Type == JgsType.External || right.Type == JgsType.External)
+        {
+            return Net.NetEquality.DeepEquals(left, right, nanEqual);
+        }
+
         left = JgsBuiltins.ImageNumbers(left);
         right = JgsBuiltins.ImageNumbers(right);
         if (left.Type == JgsType.Sparse) left = JgsBuiltins.SparseAsDense(left.AsSparse);

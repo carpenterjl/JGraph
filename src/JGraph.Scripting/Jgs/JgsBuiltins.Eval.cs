@@ -37,7 +37,10 @@ internal static partial class JgsBuiltins
 
         // M68: the class questions need the interpreter, because what classes exist is interpreter
         // state — a class is defined by loading a file, exactly as a function is.
-        "addCause", "isobject", "properties", "methods", "metaclass",
+        "addCause", "isobject", "properties", "methods", "metaclass", "ismethod",
+
+        // ADR 0174: the .NET names need the session's type catalog and its warning state.
+        "NET", "meta", "dotnetenv", "isjava",
 
         // V6 (#28): isprop asks a user object's class, a built-in object or a graphics handle.
         "isprop",
@@ -91,6 +94,7 @@ internal static partial class JgsBuiltins
         RegisterEventBuiltins(env, interpreter, host);
         RegisterMatFileBuiltins(env, interpreter, host);
         RegisterTableFormBuiltins(env, interpreter);
+        RegisterNetBuiltins(env, interpreter);
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.
@@ -211,6 +215,7 @@ internal static partial class JgsBuiltins
         return value.AsCallable switch
         {
             AnonymousFunction anonymous => AstPrinter.Print(anonymous.Declaration),
+            Net.NetCallable net => net.Name, // R2025b writes a .NET method's handle without its @ (ADR 0174)
             { } callable => "@" + callable.Name,
             _ => throw new JgsRuntimeException(line, col, $"{name} expects a function handle."),
         };
@@ -507,6 +512,12 @@ internal static partial class JgsBuiltins
                 return found.Value.AsCallable;
             }
 
+            // feval('System.Math.Max', 3, 4): a .NET static method named by text (ADR 0174).
+            if (name.Contains('.', StringComparison.Ordinal) && interpreter.TryMakeHandle(name, interpreter.CurrentFrame, out JgsValue net))
+            {
+                return net.AsCallable;
+            }
+
             throw new JgsRuntimeException(line, col, $"feval: '{name}' is not a function.");
         }
 
@@ -577,6 +588,21 @@ internal static partial class JgsBuiltins
                 return JgsValue.Number(1);
             }
 
+            // A .NET type is a class (8) and a .NET namespace a folder (7), as R2025b answers
+            // (ADR 0174); a static member named in full is not a thing exist knows.
+            if (name.Contains('.', StringComparison.Ordinal) && kind is null or "class" or "dir")
+            {
+                if (kind != "dir" && interpreter.TryNetName(name, interpreter.CurrentFrame, out _, out string? member) && member is null)
+                {
+                    return JgsValue.Number(8);
+                }
+
+                if (kind != "class" && interpreter.IsNetNamespace(name, interpreter.CurrentFrame))
+                {
+                    return JgsValue.Number(7);
+                }
+            }
+
             // A built-in is 5 whether or not a file shadows it — R2025b answers 5 for exist('max')
             // beside a max.m that takes every call — and it outranks a file or a folder of the same
             // name when nothing said which kind was meant: exist('fix') beside a folder called fix
@@ -602,6 +628,14 @@ internal static partial class JgsBuiltins
             }
 
             if (wantFolder && Directory.Exists(resolved))
+            {
+                return JgsValue.Number(7);
+            }
+
+            // exist('System'): a top-level .NET namespace is a folder too. Asked last, so a name
+            // anything else answers never builds the framework's type index.
+            if (kind is null or "dir" && !name.Contains('.', StringComparison.Ordinal)
+                && interpreter.IsNetNamespace(name, interpreter.CurrentFrame))
             {
                 return JgsValue.Number(7);
             }
@@ -658,6 +692,13 @@ internal static partial class JgsBuiltins
                 {
                     break;
                 }
+            }
+
+            // A .NET type: R2025b calls its constructor a built-in method (ADR 0174).
+            if (where.Count == 0 && name.Contains('.', StringComparison.Ordinal)
+                && interpreter.TryNetName(name, interpreter.CurrentFrame, out _, out string? member) && member is null)
+            {
+                where.Add($"{name} is a built-in method");
             }
 
             // Not a function at all: a data file the name spells out, when there is one.

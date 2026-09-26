@@ -31,6 +31,13 @@ internal enum JgsType
 
     /// <summary>An instance of a user class (M68), defined by a <c>classdef</c> file.</summary>
     Object,
+
+    /// <summary>
+    /// A value that lives outside the language (interop plan, stage 1, ADR 0174): a .NET object, a
+    /// .NET metaclass, a <c>NET.Assembly</c>. Its payload is an <see cref="IJgsExternal"/>, which
+    /// says what class it is, whether it is a handle, and how it displays.
+    /// </summary>
+    External,
 }
 
 /// <summary>The element kind of a packed array: MATLAB doubles or a MATLAB-style logical mask.</summary>
@@ -306,6 +313,15 @@ internal sealed class JgsValue
 
     /// <summary>The object payload (valid only for <see cref="JgsType.Object"/>).</summary>
     public JgsObject AsObject => (JgsObject)_reference!;
+
+    /// <summary>Wraps a value that lives outside the language (ADR 0174). The payload is held, not copied.</summary>
+    public static JgsValue External(IJgsExternal payload) => new(JgsType.External, 0, payload);
+
+    /// <summary>The external payload (valid only for <see cref="JgsType.External"/>).</summary>
+    public IJgsExternal AsExternal => (IJgsExternal)_reference!;
+
+    /// <summary>The external payload, or null for any other kind of value.</summary>
+    public IJgsExternal? AsExternalOrNull() => _reference as IJgsExternal;
 
     /// <summary>
     /// Wraps a struct array as a <paramref name="rows"/>-by-<paramref name="cols"/> value (M65). The
@@ -934,7 +950,12 @@ internal sealed class JgsValue
     /// property — <c>class</c>, <c>isa</c>, the handle-class rule, the error messages — learnt about
     /// user classes the moment the type existed, without any of them being edited (M68).
     /// </remarks>
-    public string? ClassName => _reference is JgsObject instance ? instance.Class.Name : _className;
+    public string? ClassName => _reference switch
+    {
+        JgsObject instance => instance.Class.Name,
+        IJgsExternal external => external.ClassName,
+        _ => _className,
+    };
 
     /// <summary>Records the class name of a freshly-minted struct. Mint-time only, like <see cref="SetNumericClass"/>.</summary>
     public void SetClassName(string? className) => _className = className;
@@ -1276,6 +1297,11 @@ internal sealed class JgsValue
             JgsPackedComplex complex => AllComplexNonZero(complex),
             _ => AllTruthy(AsArray),
         },
+
+        // A .NET object is no condition: `if obj` refuses as R2025b's conversion to logical does,
+        // rather than reading true as a value of unknown kind would (ADR 0174).
+        JgsType.External => throw new JgsRuntimeException(0, 0, "MATLAB:invalidConversion",
+            $"Conversion to logical from {AsExternal.ClassName} is not possible."),
         _ => true,
     };
 
@@ -1374,6 +1400,7 @@ internal sealed class JgsValue
         JgsType.Struct => "struct",
         JgsType.Sparse => "sparse",
         JgsType.Object => AsObject.Class.Name,
+        JgsType.External => AsExternal.ClassName,
         _ => "value",
     };
 
@@ -1399,6 +1426,7 @@ internal sealed class JgsValue
         JgsType.Struct => FormatStructValue(this),
         JgsType.Sparse => FormatSparse(AsSparse),
         JgsType.Object => FormatObject(AsObject),
+        JgsType.External => AsExternal.Display(),
         _ => "value",
     };
 

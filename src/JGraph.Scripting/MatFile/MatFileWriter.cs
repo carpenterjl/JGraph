@@ -106,6 +106,13 @@ internal static class MatFileWriter
     /// </summary>
     private static string? WhyNotWritable(JgsValue value, HashSet<JgsObject> asking)
     {
+        // A .NET value lives in the process that made it; there is nothing a file could keep of it
+        // that would come back as the same object (ADR 0174).
+        if (value.Type == JgsType.External)
+        {
+            return $"a {value.AsExternal.ClassName}, a .NET value, which a MAT-file cannot hold";
+        }
+
         if (value.IsStringArray)
         {
             return "a string array, which only version 7.3 MAT-files can hold — convert it with cellstr or char";

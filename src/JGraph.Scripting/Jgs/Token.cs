@@ -79,6 +79,7 @@ internal enum TokenType
     DotTranspose, // .' — plain transpose
     Dot,          // . — struct field access
     At,           // @ — function handle / anonymous function
+    Question,     // ? — a metaclass literal, ?ClassName (MATLAB)
 
     /// <summary>A statement separator (a significant newline).</summary>
     Newline,

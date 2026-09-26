@@ -56,5 +56,5 @@ catch e
     ix_chk('custom_isa_MException', isa(e, 'MException'));
     ix_chk('custom_properties', strjoin(properties(e)', ','));
     ix_chk('custom_rethrow', ix_id(@() rethrow(e)));
-    ix_chk('custom_report_basic', ix_flat(getReport(e, 'basic', 'hyperlinks', 'off')));
+    ix_chk('custom_report_basic', ix_flat(getReport(e, 'basic', 'hyperlinks', 'off')), 'div=ADR0174');
 end

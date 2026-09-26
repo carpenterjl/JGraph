@@ -46,9 +46,16 @@ internal static partial class JgsBuiltins
             return CellColumn(PropertyNames("properties", args[0], interpreter, line, col));
         });
 
+        // methods(x, '-full') is accepted and lists the names alone until the signatures are
+        // written (interop stage 2 owns R2025b's signature text).
         Define("methods", (args, line, col) =>
         {
-            Arity("methods", args, 1, line, col);
+            ArityRange("methods", args, 1, 2, line, col);
+            if (args.Count == 2 && TextOf(args[1]) != "-full")
+            {
+                throw new JgsRuntimeException(line, col, $"methods: '{TextOf(args[1])}' is not an option; only '-full' is.");
+            }
+
             return CellColumn(MethodNames("methods", args[0], interpreter, line, col));
         });
 
@@ -62,6 +69,11 @@ internal static partial class JgsBuiltins
             if (target.Type == JgsType.Object)
             {
                 return JgsValue.Bool(target.AsObject.Class.Property(name) is not null);
+            }
+
+            if (target.Type == JgsType.External)
+            {
+                return JgsValue.Bool(PropertyNames("isprop", target, interpreter, line, col).Contains(name, StringComparer.Ordinal));
             }
 
             if (target.Type == JgsType.Struct && target.ClassName is not null)
@@ -83,6 +95,21 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.Bool(false);
+        });
+
+        // ismethod(obj, name): whether the object's class has a method of that name — a classdef
+        // method, or a .NET method, static ones included (R2025b, net_basics; ADR 0174).
+        Define("ismethod", (args, line, col) =>
+        {
+            Arity("ismethod", args, 2, line, col);
+            string name = TextOf(args[1]);
+            return JgsValue.Bool(args[0].Type switch
+            {
+                JgsType.Object => args[0].AsObject.Class.TryMethod(name, out _),
+                JgsType.External when args[0].AsExternal is NetObject net =>
+                    Net.NetInvoke.Methods(net.Type, name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Static).Length > 0,
+                _ => false,
+            });
         });
 
         Define("metaclass", (args, line, col) =>
@@ -123,6 +150,20 @@ internal static partial class JgsBuiltins
         });
     }
 
+    /// <summary>The <c>meta.class</c> of a user class named rather than instantiated: <c>?Circle</c>.</summary>
+    internal static JgsValue MetaClassOf(JgsClass definition)
+    {
+        JgsValue described = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Name"] = JgsValue.Str(definition.Name),
+            ["PropertyList"] = CellColumn(definition.Properties.Select(static p => p.Spec.Name)),
+            ["MethodList"] = CellColumn(definition.MethodNames),
+        });
+
+        described.SetClassName(MetaClassName);
+        return described;
+    }
+
     /// <summary>The causes an exception already carries, or none.</summary>
     private static JgsValue[] ExistingCauses(JgsValue exception) =>
         Field(exception, "cause") is { Type: JgsType.Cell } held ? held.AsCell : [];
@@ -138,7 +179,7 @@ internal static partial class JgsBuiltins
     /// round, which is why the two read one property between them.
     /// </summary>
     internal static bool IsObjectValue(JgsValue value) =>
-        value.Type == JgsType.Object
+        value.Type is JgsType.Object or JgsType.External
         || (value.Type == JgsType.Struct && value.ClassName is not null);
 
     /// <summary>
@@ -159,6 +200,23 @@ internal static partial class JgsBuiltins
         if (value.Type == JgsType.Object)
         {
             return value.AsObject.Class.Properties.Select(static p => p.Spec.Name);
+        }
+
+        // A .NET object's readable properties and fields (ADR 0174); an assembly's seven lists; a
+        // NET.NetException's ExceptionObject ahead of MException's own (measured, net_exceptions).
+        switch (value.AsExternalOrNull())
+        {
+            case NetObject net:
+                return Net.NetDisplay.MemberNames(net);
+            case NetAssemblyValue:
+                return NetAssemblyValue.PropertyNames;
+            case NetMetaClass:
+                return ["Name"];
+        }
+
+        if (value.ClassName == Net.NetInvoke.NetExceptionClass)
+        {
+            return ["ExceptionObject", "identifier", "message", "cause", "stack", "Correction"];
         }
 
         if (NamedClass(value, interpreter) is { } definition)
@@ -187,6 +245,18 @@ internal static partial class JgsBuiltins
         if (value.Type == JgsType.Object)
         {
             return value.AsObject.Class.MethodNames;
+        }
+
+        // A .NET object's, or a .NET type's named as text: methods('JGTest.Members') (ADR 0174).
+        if (value.AsExternalOrNull() is NetObject net)
+        {
+            return Net.NetInvoke.MethodNames(net.Type);
+        }
+
+        if (value.Type == JgsType.String && value.AsString.Contains('.', StringComparison.Ordinal)
+            && interpreter.TryNetName(value.AsString, interpreter.CurrentFrame, out Type? type, out string? member) && member is null)
+        {
+            return Net.NetInvoke.MethodNames(type!);
         }
 
         if (NamedClass(value, interpreter) is { } definition)

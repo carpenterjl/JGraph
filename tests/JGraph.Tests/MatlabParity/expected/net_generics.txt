@@ -1,14 +1,14 @@
-RUN|pending I4|'dotnetenv' is not recognized as a variable or a function.
+RUN|pending I4|This struct has no field 'GenericClass'.
 CHK|box_class|JGTest.Box<System*Double>|exact
 CHK|box_Value|double:2.5|exact
 CHK|box_TypeName|System.String:System.Double|exact
-CHK|box_echo|b = / <a href="matlab:helpPopup('JGTest.Box<System*Double>')" style="font-weight:bold">Box<System*Double></a> with properties: / Value: 2.5000 / TypeName: [1×1 System.String]|exact
+CHK|box_echo|b = / <a href="matlab:helpPopup('JGTest.Box<System*Double>')" style="font-weight:bold">Box<System*Double></a> with properties: / Value: 2.5000 / TypeName: [1×1 System.String]|exact|pending I4|b = Box<System*Double> with properties: / Value: 2.5 / TypeName: [1x1 System.String]
 CHK|box_null_Value|double:[] [0 0]|exact
 CHK|box_set_char|System.String:hi|exact
 CHK|pair_class|JGTest.Pair<System*Int32,System*String>|exact
 CHK|pair_First|int32:1|exact
 CHK|pair_Second|System.String:one|exact
-CHK|typearg_string_form_refused|MATLAB:NET:InvalidClassName|exact
+CHK|typearg_string_form_refused|MATLAB:NET:InvalidClassName|exact|pending I4|MATLAB:undefinedVarOrClass
 CHK|typearg_GenericClass|JGTest.Box<System*Collections*Generic*List<System*Double>>|exact
 CHK|GenericClass_class|NET.GenericClass|exact
 CHK|constraint_refused|MATLAB:NET:CLRException|exact

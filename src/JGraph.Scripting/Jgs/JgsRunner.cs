@@ -95,8 +95,10 @@ internal static class JgsRunner
         {
             IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, dialect);
             JgsEnvironment environment = JgsBuiltins.CreateGlobals(globals, cancellationToken, dialect);
+            // The echo goes where disp's text goes, so evalc captures it and the diary records it,
+            // as MATLAB's do (ADR 0174).
             var interpreter = new Interpreter(environment, cancellationToken, hook,
-                echo: line => context.Output.WriteLine(line), dialect);
+                echo: line => globals.print(line), dialect);
 
             // ME.stack names the file a frame ran in (V6). A -batch run hands its code over with no
             // source id so its diagnostics stay bare; the stack still has the run's file to name.

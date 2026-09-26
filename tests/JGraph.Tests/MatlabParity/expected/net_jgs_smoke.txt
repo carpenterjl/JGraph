@@ -1,0 +1,8 @@
+CHK|feval_static|4|exact
+CHK|feval_static_int32|int32|exact
+CHK|class|System.String|exact
+CHK|char|abc|exact
+CHK|isa_Object|true|exact
+CHK|isobject|true|exact
+CHK|numel|1|exact
+CHK|handle_call|xy|exact

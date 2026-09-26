@@ -1,4 +1,4 @@
-RUN|pending I4|'dotnetenv' is not recognized as a variable or a function.
+RUN|pending I4|Array indexing is not supported for objects of class 'System.Double[]'.
 CHK|class|System.Double[]|exact
 CHK|size|double:[1 1]|exact
 CHK|numel|double:1|exact
