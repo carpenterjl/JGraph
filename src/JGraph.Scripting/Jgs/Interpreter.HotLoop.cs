@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -46,6 +47,13 @@ internal sealed class HotLoopVectors(RegisterProgram program)
 
     /// <summary>Whether the slot holds a wrapper the environment does not yet — a spill must bind it.</summary>
     public readonly bool[] Dirty = new bool[program.VectorSlots.Length];
+
+    /// <summary>
+    /// Z2a (ADR 0173): whether temporary register i holds an answer this loop alone holds — the
+    /// walk's <c>OwnsFreshResult</c> said so when the op that wrote it answered — so the op that
+    /// reads it may write its own answer into it. Never set for a slot register.
+    /// </summary>
+    public readonly bool[] Fresh = new bool[program.VectorRegisterCount];
 
     /// <summary>The builtin each unary kernel index names, as resolved at entry.</summary>
     public readonly BuiltinFunction?[] Kernels = new BuiltinFunction?[program.UnaryNames.Length];
@@ -769,10 +777,17 @@ internal sealed partial class Interpreter
                         var node = (BinaryExpr)program.Nodes[op.C];
                         JgsValue left = op.Code == LoopOp.VArithSV ? JgsValue.Number(TAccess.At(regs, op.A)) : vregs[op.A]!;
                         JgsValue right = op.Code == LoopOp.VArithVS ? JgsValue.Number(TAccess.At(regs, op.B)) : vregs[op.B]!;
-                        JgsValue answer = ApplyBinary(node.Op, left, right, node);
+
+                        // Z2a: a temporary register holding an owned answer is written into, as the
+                        // walk writes into a fresh operand; a slot register never is.
+                        JgsReuse.Operands reuse = JgsReuse.Candidates(
+                            op.Code != LoopOp.VArithSV && op.A >= vectors.SlotCount && vectors.Fresh[op.A],
+                            op.Code != LoopOp.VArithVS && op.B >= vectors.SlotCount && vectors.Fresh[op.B]);
+                        JgsValue answer = ApplyBinary(node.Op, left, right, node, reuse);
                         if (IsVectorValue(answer))
                         {
                             vregs[op.Dest] = answer;
+                            vectors.Fresh[op.Dest] = OwnsAnswer(answer, left, right, reuse);
                             ip++;
                             break;
                         }
@@ -790,10 +805,12 @@ internal sealed partial class Interpreter
                     case LoopOp.VNeg:
                     {
                         var node = (UnaryExpr)program.Nodes[op.C];
-                        JgsValue answer = ApplyUnary(node, vregs[op.A]!);
+                        JgsValue operand = vregs[op.A]!;
+                        JgsValue answer = ApplyUnary(node, operand);
                         if (IsVectorValue(answer))
                         {
                             vregs[op.Dest] = answer;
+                            vectors.Fresh[op.Dest] = OwnsFreshResult(answer, operand, null);
                             ip++;
                             break;
                         }
@@ -813,10 +830,15 @@ internal sealed partial class Interpreter
                         // The builtin itself, as the walk would call it, on the evaluated vector.
                         var call = (CallExpr)program.Nodes[op.C];
                         _pendingCall = call;
-                        JgsValue answer = vectors.Kernels[op.B]!.Call([vregs[op.A]!], call.Line, call.Column);
+                        JgsValue argument = vregs[op.A]!;
+                        JgsValue answer = vectors.Kernels[op.B]!.Call([argument], call.Line, call.Column);
                         if (IsVectorValue(answer))
                         {
                             vregs[op.Dest] = answer;
+
+                            // A builtin's answer is its own to give only when it is a new wrapper
+                            // over new storage; one that hands its argument back is not fresh.
+                            vectors.Fresh[op.Dest] = OwnsFreshResult(answer, argument, null);
                             ip++;
                             break;
                         }
@@ -840,7 +862,64 @@ internal sealed partial class Interpreter
                         vregs[op.Dest] = op.A < vectors.SlotCount ? CopyForBinding(source) : source;
                         vectors.Written[op.Dest] = true;
                         vectors.Dirty[op.Dest] = true;
+                        if (op.A >= vectors.SlotCount)
+                        {
+                            vectors.Fresh[op.A] = false; // the slot holds it now
+                        }
+
                         ip++;
+                        break;
+                    }
+
+                    case LoopOp.VUpdate:
+                    {
+                        // Z2b: v = v op E over v's own storage when nothing else can see it; the
+                        // walk's operator into a fresh vector the slot adopts otherwise. The
+                        // refusals are the walk's (CanUpdateInPlace), less the binding question,
+                        // which the register file answers: a slot register is the binding.
+                        var node = (BinaryExpr)program.Nodes[op.C];
+                        bool targetOnLeft = (op.B & 1) != 0;
+                        bool otherVector = (op.B & 2) != 0;
+                        JgsValue entry = vregs[op.Dest]!;
+                        JgsValue other = otherVector ? vregs[op.A]! : JgsValue.Number(TAccess.At(regs, op.A));
+                        if (_hook is null && !entry.IsShared
+                            && CanUpdateInPlace(entry, other, targetOnLeft, node.Op, out PackedMath.BinaryOp kernel)
+                            && IsMatlabWorkspace(env))
+                        {
+                            UpdateInPlace(kernel, entry, other, targetOnLeft);
+                            vectors.Written[op.Dest] = true;
+                            ip++;
+                            break;
+                        }
+
+                        bool otherFresh = otherVector && op.A >= vectors.SlotCount && vectors.Fresh[op.A];
+                        JgsReuse.Operands reuse = JgsReuse.Candidates(!targetOnLeft && otherFresh, targetOnLeft && otherFresh);
+                        JgsValue left = targetOnLeft ? entry : other;
+                        JgsValue right = targetOnLeft ? other : entry;
+                        JgsValue answer = ApplyBinary(node.Op, left, right, node, reuse);
+                        if (IsVectorValue(answer) && OwnsAnswer(answer, left, right, reuse))
+                        {
+                            vregs[op.Dest] = answer;
+                            vectors.Written[op.Dest] = true;
+                            vectors.Dirty[op.Dest] = true;
+                            if (otherVector && op.A >= vectors.SlotCount)
+                            {
+                                vectors.Fresh[op.A] = false;
+                            }
+
+                            ip++;
+                            break;
+                        }
+
+                        // An answer outside the class, or one the walk would share rather than
+                        // adopt: the walk runs the statement and the slot reloads from the workspace.
+                        ip = HotLoopBail(program, op.Arg, env, regs, written, logical, vectors,
+                                         ref steps, ref regsAuthoritative, out Completion? updateLeft);
+                        if (updateLeft is { } updateFinished)
+                        {
+                            return updateFinished;
+                        }
+
                         break;
                     }
 

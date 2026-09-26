@@ -14,7 +14,7 @@ namespace JGraph.Tests.Numerics;
 public class ParallelKernelsM93Tests
 {
     /// <summary>Long enough to be cut into three grains and to be over the threading threshold.</summary>
-    private const int Threaded = ParallelKernels.MemoryBoundThreshold + 12_345;
+    private const int Threaded = ParallelKernels.DefaultMemoryBoundThreshold + 12_345;
 
     /// <summary>Every kernel that M93 sweeps in grains, named so a failure says which one moved.</summary>
     public static TheoryData<string> Kernels() =>

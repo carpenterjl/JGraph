@@ -272,6 +272,17 @@ internal enum LoopOp : byte
     VBind,
 
     /// <summary>
+    /// Z2b (ADR 0173): <c>v = v op E</c> or <c>v = E op v</c> for vector slot Dest, the binary
+    /// operator of node C. The other operand is vector register A when bit 2 of B is set and
+    /// scalar register A otherwise; bit 1 of B says the slot is the left operand. When the slot's
+    /// wrapper has one holder, no exposed mark, the answer's shape and no growth slack, the kernel
+    /// writes the answer over it and the slot is marked written; otherwise the walk's own
+    /// <c>ApplyBinary</c> answers a fresh vector that the slot adopts as <see cref="VBind"/> would.
+    /// An answer outside the class bails <c>Arg</c>.
+    /// </summary>
+    VUpdate,
+
+    /// <summary>
     /// ADR 0160 (12d): a statement outside the whitelist, handed to the walk every time — bail
     /// <c>Arg</c> unconditionally, then resume.
     /// </summary>

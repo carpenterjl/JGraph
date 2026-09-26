@@ -917,8 +917,26 @@ internal sealed partial class LoopCompiler
                     Statement = statement,
                     Labels = labels,
                 };
-                int value = EmitVectorExpr(assign.Value, scope);
-                EmitOp(LoopOp.VBind, dest: vslot, a: value);
+
+                // Z2b (ADR 0173): `v = v op E` / `v = E op v` with the other side a vector or a
+                // scalar is one op that may write over v's own storage; anything else is the
+                // expression into a temporary and a bind.
+                if (JgsReuse.Enabled && assign.Value is BinaryExpr update && JgsReuse.IsUpdateShape(update, target.Name)
+                    && _vectorNames.Contains(target.Name))
+                {
+                    bool targetOnLeft = update.Left is VariableExpr { } leftName && leftName.Name == target.Name;
+                    Expr other = targetOnLeft ? update.Right : update.Left;
+                    bool otherVector = IsVectorExpr(other);
+                    int operand = otherVector ? EmitVectorExpr(other, scope) : EmitExpr(other, scope).Reg;
+                    int flags = (targetOnLeft ? 1 : 0) | (otherVector ? 2 : 0);
+                    EmitOp(LoopOp.VUpdate, dest: vslot, a: operand, b: flags, arg: EnsureBail(scope), c: NodeIndex(update));
+                }
+                else
+                {
+                    int value = EmitVectorExpr(assign.Value, scope);
+                    EmitOp(LoopOp.VBind, dest: vslot, a: value);
+                }
+
                 int resume = NewLabel();
                 MarkLabel(resume);
                 FinishStatementBail(scope, resume, targetSlot: -1, targetVector: vslot);

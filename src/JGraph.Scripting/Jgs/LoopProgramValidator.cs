@@ -177,6 +177,12 @@ internal static class LoopProgramValidator
                     if (!Reg(op.Dest, vectorSlots) || !Reg(op.A, vectors)) return false;
                     break;
 
+                case LoopOp.VUpdate:
+                    // Z2b: Dest a vector slot; A a vector register or a scalar register by bit 2 of B.
+                    if (!Reg(op.Dest, vectorSlots) || !Reg(op.Arg, bails) || !Node<BinaryExpr>(program, op.C)) return false;
+                    if (!Reg(op.A, (op.B & 2) != 0 ? vectors : registers)) return false;
+                    break;
+
                 case LoopOp.Walk:
                     if (!Reg(op.Arg, bails)) return false;
                     break;

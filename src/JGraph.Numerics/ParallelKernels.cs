@@ -40,11 +40,20 @@ public static class ParallelKernels
     public const int GrainElements = 1 << 16;
 
     /// <summary>
-    /// Length at or above which an operation that spends its time moving memory is worth splitting
-    /// (2M ≈ 16 MB): below it the array is close enough to the cores that the whole operation is
-    /// tens of microseconds and there is nothing to win.
+    /// The default of <see cref="MemoryBoundThreshold"/> (2M ≈ 16 MB): below it the array is
+    /// close enough to the cores that the whole operation is tens of microseconds and there is
+    /// nothing to win.
     /// </summary>
-    public const int MemoryBoundThreshold = 1 << 21;
+    public const int DefaultMemoryBoundThreshold = 1 << 21;
+
+    /// <summary>
+    /// Length at or above which an operation that spends its time moving memory is worth splitting:
+    /// <c>JGRAPH_MEMORY_THRESHOLD</c> (elements) when set, else
+    /// <see cref="DefaultMemoryBoundThreshold"/>. A knob so the threshold can be swept on a
+    /// benchmark (Z2c, ADR 0173); it changes how a sweep is cut, never what it answers, because the
+    /// grains are fixed and every kernel that takes it is per element.
+    /// </summary>
+    public static int MemoryBoundThreshold { get; set; } = ResolveMemoryBoundThreshold();
 
     /// <summary>
     /// Length at or above which an operation that spends its time computing is worth splitting
@@ -257,6 +266,11 @@ public static class ParallelKernels
 
         return Math.Clamp(Environment.ProcessorCount, 1, 16);
     }
+
+    private static int ResolveMemoryBoundThreshold() =>
+        int.TryParse(Environment.GetEnvironmentVariable("JGRAPH_MEMORY_THRESHOLD"), out int asked) && asked > 0
+            ? asked
+            : DefaultMemoryBoundThreshold;
 
     private static int ResolveCostlyGrain() =>
         int.TryParse(Environment.GetEnvironmentVariable("JGRAPH_COSTLY_GRAIN"), out int asked) && asked > 0

@@ -133,6 +133,16 @@ public static class PackedMath
         DeterminismOf(op) == Determinism.Exact || length >= ApproximateThreshold;
 
     /// <summary>dest[i] = a[i] op b[i]. All three buffers must share a length; dest may alias a source.</summary>
+    /// <remarks>
+    /// <b>The alias contract</b> (Z2, ADR 0173): every elementwise kernel here — the three binary
+    /// arrangements, with or without a <see cref="Rounding"/> — may be handed a destination that
+    /// <em>is</em> one of its operands (the same buffer, the same span per grain), and answers what
+    /// it answers into a fresh destination, bit for bit. Each element is read before it is written
+    /// and no element is read twice, and a threaded run cuts every buffer at the same grains. A
+    /// destination that <em>overlaps</em> an operand without being it is not part of the contract
+    /// (<see cref="TensorPrimitives"/> refuses such spans). <c>PackedMathAliasTests</c> holds every
+    /// operation, arrangement and aliasing to it.
+    /// </remarks>
     public static void Binary(BinaryOp op, NumericBuffer a, NumericBuffer b, NumericBuffer dest,
                               Action? betweenChunks = null)
     {
@@ -169,6 +179,52 @@ public static class PackedMath
         GC.KeepAlive(b);
         GC.KeepAlive(dest);
     }
+
+    /// <summary>
+    /// dest[i] = a[i] - b[i]·scalar, or a[i] + b[i]·scalar when <paramref name="subtract"/> is false:
+    /// the two operators of <c>zz = zz - Z * k</c> in one sweep, never materializing <c>Z * k</c>
+    /// (Z2d, ADR 0173). Two roundings per element exactly as the two operators round — the product
+    /// first, then the sum — so the bits are the unfused statement's; no fused multiply-add. dest
+    /// may alias <paramref name="a"/> or <paramref name="b"/> (the alias contract).
+    /// <paramref name="threshold"/> is the length from which the sweep is threaded, or 0 for
+    /// <see cref="ParallelKernels.MemoryBoundThreshold"/>; the grains are fixed either way, so the
+    /// bits do not depend on it.
+    /// </summary>
+    public static void ScaleAccumulate(NumericBuffer a, NumericBuffer b, double scalar, bool subtract,
+                                       NumericBuffer dest, Action? betweenChunks = null, int threshold = 0)
+    {
+        RequireSameLength(a.Length, dest.Length);
+        RequireSameLength(b.Length, dest.Length);
+        ParallelKernels.For(dest.Length, threshold > 0 ? threshold : ParallelKernels.MemoryBoundThreshold, betweenChunks, (start, len) =>
+        {
+            // The product lives in a cache-resident tile between its rounding and the sum's.
+            Span<double> tile = stackalloc double[ScaleTileElements];
+            Span<double> x = a.AsSpan(start, len);
+            Span<double> y = b.AsSpan(start, len);
+            Span<double> d = dest.AsSpan(start, len);
+            for (int at = 0; at < len; at += ScaleTileElements)
+            {
+                int n = Math.Min(ScaleTileElements, len - at);
+                Span<double> product = tile[..n];
+                TensorPrimitives.Multiply<double>(y.Slice(at, n), scalar, product);
+                if (subtract)
+                {
+                    TensorPrimitives.Subtract<double>(x.Slice(at, n), product, d.Slice(at, n));
+                }
+                else
+                {
+                    TensorPrimitives.Add<double>(x.Slice(at, n), product, d.Slice(at, n));
+                }
+            }
+        });
+
+        GC.KeepAlive(a);
+        GC.KeepAlive(b);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>Elements per tile of <see cref="ScaleAccumulate"/> (1K = 8 KB on the stack).</summary>
+    private const int ScaleTileElements = 1 << 10;
 
     /// <summary>dest[i] = op(source[i]). dest may alias source.</summary>
     public static void Unary(UnaryOp op, NumericBuffer source, NumericBuffer dest,
@@ -397,11 +453,11 @@ public static class PackedMath
     /// <see cref="TensorPrimitives"/> kernel is then paid eight times over.
     /// </remarks>
     public static void Binary(BinaryOp op, NumericBuffer a, NumericBuffer b, NumericBuffer dest,
-                              Rounding into, Action? betweenChunks = null)
+                              Rounding into, Action? betweenChunks = null, int threshold = 0)
     {
         RequireSameLength(a.Length, dest.Length);
         RequireSameLength(b.Length, dest.Length);
-        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+        ParallelKernels.For(dest.Length, threshold > 0 ? threshold : ThresholdOf(op), betweenChunks, (start, len) =>
         {
             Span<double> x = a.AsSpan(start, len);
             Span<double> y = b.AsSpan(start, len);
@@ -426,12 +482,12 @@ public static class PackedMath
         GC.KeepAlive(dest);
     }
 
-    /// <summary>dest[i] = the rule's answer for (a[i] op scalar) — the fused form of <see cref="Binary(BinaryOp, NumericBuffer, NumericBuffer, NumericBuffer, Rounding, Action)"/>.</summary>
+    /// <summary>dest[i] = the rule's answer for (a[i] op scalar) — the fused form of <see cref="Binary(BinaryOp, NumericBuffer, NumericBuffer, NumericBuffer, Rounding, Action, int)"/>.</summary>
     public static void BinaryScalarRight(BinaryOp op, NumericBuffer a, double scalar, NumericBuffer dest,
-                                         Rounding into, Action? betweenChunks = null)
+                                         Rounding into, Action? betweenChunks = null, int threshold = 0)
     {
         RequireSameLength(a.Length, dest.Length);
-        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+        ParallelKernels.For(dest.Length, threshold > 0 ? threshold : ThresholdOf(op), betweenChunks, (start, len) =>
         {
             Span<double> x = a.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
@@ -456,10 +512,10 @@ public static class PackedMath
 
     /// <summary>dest[i] = the rule's answer for (scalar op b[i]).</summary>
     public static void BinaryScalarLeft(BinaryOp op, double scalar, NumericBuffer b, NumericBuffer dest,
-                                        Rounding into, Action? betweenChunks = null)
+                                        Rounding into, Action? betweenChunks = null, int threshold = 0)
     {
         RequireSameLength(b.Length, dest.Length);
-        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+        ParallelKernels.For(dest.Length, threshold > 0 ? threshold : ThresholdOf(op), betweenChunks, (start, len) =>
         {
             Span<double> y = b.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
@@ -1251,23 +1307,23 @@ public static class PackedMath
         }
     }
 
-    /// <summary>One span of <see cref="BinaryScalarLeft(BinaryOp, double, NumericBuffer, NumericBuffer, Action)"/>.</summary>
+    /// <summary>
+    /// One span of <see cref="BinaryScalarLeft(BinaryOp, double, NumericBuffer, NumericBuffer, Action)"/>.
+    /// Every case may be given <paramref name="d"/> aliasing <paramref name="y"/> (Z2, ADR 0173):
+    /// subtract and divide used to fill <c>d</c> with the scalar and then read <c>y</c>, which on
+    /// an aliased destination computed <c>s - s</c> and <c>s / s</c>; the scalar-left kernels
+    /// compute <c>scalar op y[i]</c> in one pass, the same IEEE operation, bit for bit
+    /// (<c>PackedMathAliasTests</c>).
+    /// </summary>
     private static void BinaryScalarLeftChunk(BinaryOp op, double scalar, Span<double> y, Span<double> d)
     {
         int len = d.Length;
         switch (op)
         {
             case BinaryOp.Add: TensorPrimitives.Add<double>(y, scalar, d); break;
-            case BinaryOp.Subtract:
-                // scalar - y, vectorized in two passes: d = scalar; d -= y.
-                d.Fill(scalar);
-                TensorPrimitives.Subtract<double>(d, y, d);
-                break;
+            case BinaryOp.Subtract: TensorPrimitives.Subtract<double>(scalar, y, d); break;
             case BinaryOp.Multiply: TensorPrimitives.Multiply<double>(y, scalar, d); break;
-            case BinaryOp.Divide:
-                d.Fill(scalar);
-                TensorPrimitives.Divide<double>(d, y, d);
-                break;
+            case BinaryOp.Divide: TensorPrimitives.Divide<double>(scalar, y, d); break;
             case BinaryOp.Remainder:
                 for (int i = 0; i < len; i++) { d[i] = scalar % y[i]; }
                 break;

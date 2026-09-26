@@ -47,6 +47,33 @@ internal static class JgsPacking
         }
     }
 
+    /// <summary>
+    /// Allocates a packed buffer a kernel will write in full before anything reads it (Z2e, ADR
+    /// 0173): the contents are unspecified when <see cref="JgsReuse.UninitializedDestinations"/> is
+    /// on, zero otherwise. Counted like <see cref="Allocate"/>.
+    /// </summary>
+    public static NumericBuffer AllocateForOverwrite(long elementCount)
+    {
+        if (!JgsReuse.UninitializedDestinations)
+        {
+            return Allocate(elementCount);
+        }
+
+        if (Counter.Value is { } counted)
+        {
+            Interlocked.Increment(ref counted.Value);
+        }
+
+        try
+        {
+            return (Chosen.Value ?? BufferAllocator.Shared).AllocateForOverwrite(elementCount);
+        }
+        catch (OutOfMemoryException refused)
+        {
+            throw new JgsRuntimeException(0, 0, "MATLAB:nomem", refused.Message);
+        }
+    }
+
     /// <summary>How many packed buffers this scope has allocated, or zero outside one.</summary>
     internal static long Allocations => Counter.Value?.Value ?? 0;
 

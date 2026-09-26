@@ -20,7 +20,7 @@ namespace JGraph.Tests.Scripting;
 public class MatlabThreadedKernelsM93Tests : IDisposable
 {
     /// <summary>Over the threading threshold and not a multiple of the grain — a partial last grain.</summary>
-    private const int Split = ParallelKernels.MemoryBoundThreshold + 4_321;
+    private const int Split = ParallelKernels.DefaultMemoryBoundThreshold + 4_321;
 
     private readonly List<FigureModel> _figures = new();
     private readonly RecordingScriptOutput _output = new();

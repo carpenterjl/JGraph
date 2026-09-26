@@ -746,6 +746,12 @@ internal sealed class JgsValue
     /// <summary>Whether this array value is backed by a packed real-number buffer.</summary>
     public bool IsPacked => _reference is NumericBuffer;
 
+    /// <summary>
+    /// Whether the packed buffer holds growth slack (a column stride), so its storage is not the
+    /// logical elements in order — the one thing an in-place kernel sweep must never be handed (Z2).
+    /// </summary>
+    internal bool HasGrowthCapacity => _strideRows > 0;
+
     /// <summary>Whether this array value is backed by a packed planar complex payload.</summary>
     public bool IsPackedComplex => _reference is JgsPackedComplex;
 

@@ -630,6 +630,47 @@ internal sealed class JgsEnvironment
     }
 
     /// <summary>
+    /// Z2b (ADR 0173): whether <see cref="TryAssign"/> of <paramref name="name"/> would replace the
+    /// binding that holds <paramref name="current"/> — the same walk <see cref="TryAssign"/> takes,
+    /// asking whether the scope it would store into holds <paramref name="current"/> under the name
+    /// now. False for every road that declares or shares rather than replaces: a nested function's
+    /// own output, a name a call boundary would hand to a shared workspace, the built-in layer, and a
+    /// binding that is no longer the wrapper the caller read (the right-hand side rebound it).
+    /// </summary>
+    internal bool WouldReplace(string name, JgsValue current)
+    {
+        if (Function is not null && !IsCallBoundary && !_values.ContainsKey(name) && Function.Outputs.Contains(name))
+        {
+            return false;
+        }
+
+        for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
+        {
+            if (scope.IsBuiltinLayer)
+            {
+                return false;
+            }
+
+            if (scope._persistentSlots is not null && scope._persistentSlots.TryGetValue(name, out JgsEnvironment? slots))
+            {
+                return slots._values.TryGetValue(name, out JgsValue? slot) && ReferenceEquals(slot, current);
+            }
+
+            if (scope._values.TryGetValue(name, out JgsValue? held))
+            {
+                return ReferenceEquals(held, current);
+            }
+
+            if (scope.IsCallBoundary)
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Assigns to an existing variable, updating the nearest scope that declares it. Returns false when the
     /// variable is not declared anywhere (the caller reports the error with a source location).
     /// </summary>

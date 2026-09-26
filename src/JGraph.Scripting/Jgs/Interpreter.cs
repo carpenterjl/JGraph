@@ -1350,6 +1350,14 @@ internal sealed partial class Interpreter
         {
             case LetStmt let:
                 JgsValue letValue = Evaluate(let.Value, env);
+                if (letValue.ScopePayload is not null)
+                {
+                    // M6/M17: a JGS binding keeps the wrapper itself and takes no counted share, so
+                    // the payload is exposed — the count cannot say who can still read it (Z2 found
+                    // `let` missing the mark CopyForBinding's JGS road sets).
+                    letValue.MarkExposed();
+                }
+
                 env.Declare(let.Name, letValue);
                 EchoBinding(let, let.Name, letValue);
                 return Completion.Normal;
@@ -3883,7 +3891,7 @@ internal sealed partial class Interpreter
             return EvaluatePlusChain(binary, spine, env, out owned);
         }
 
-        JgsValue left = Evaluate(binary.Left, env);
+        JgsValue left = EvaluateOperand(binary.Left, env, out bool leftFresh);
 
         // M5's operand scope: `gv + bump()` holds its left operand as a share while the right one
         // runs script code, so bump's write to gv detaches gv and the sum reads what gv was.
@@ -3892,11 +3900,13 @@ internal sealed partial class Interpreter
             var holds = new ScopeHolds();
             try
             {
-                left = Hold(left, ref holds);
-                JgsValue heldRight = Evaluate(binary.Right, env);
-                JgsValue heldAnswer = ApplyBinary(binary.Op, left, heldRight, binary);
+                JgsValue held = Hold(left, ref holds);
+                bool heldFresh = leftFresh && ReferenceEquals(held, left); // a share is a second holder
+                JgsValue heldRight = EvaluateOperand(binary.Right, env, out bool heldRightFresh);
+                JgsReuse.Operands heldReuse = JgsReuse.Candidates(heldFresh, heldRightFresh);
+                JgsValue heldAnswer = ApplyBinary(binary.Op, held, heldRight, binary, heldReuse);
                 holds.Keep(heldAnswer); // an operator overload may hand its operand back
-                owned = OwnsFreshResult(heldAnswer, left, heldRight);
+                owned = OwnsAnswer(heldAnswer, held, heldRight, heldReuse);
                 return heldAnswer;
             }
             finally
@@ -3905,9 +3915,10 @@ internal sealed partial class Interpreter
             }
         }
 
-        JgsValue right = Evaluate(binary.Right, env);
-        JgsValue answer = ApplyBinary(binary.Op, left, right, binary);
-        owned = OwnsFreshResult(answer, left, right);
+        JgsValue right = EvaluateOperand(binary.Right, env, out bool rightFresh);
+        JgsReuse.Operands reuse = JgsReuse.Candidates(leftFresh, rightFresh);
+        JgsValue answer = ApplyBinary(binary.Op, left, right, binary, reuse);
+        owned = OwnsAnswer(answer, left, right, reuse);
         return answer;
     }
 
@@ -3943,13 +3954,15 @@ internal sealed partial class Interpreter
         var holds = new ScopeHolds(); // M5: each pair's left side, while its right side runs
         try
         {
-            JgsValue? left = FoldPlus(spine, env, ref chain, ref holds);
+            JgsValue? left = FoldPlus(spine, env, ref chain, ref holds, out bool leftFresh);
             if (left is not null)
             {
-                left = HoldAcross(left, outer.Right, env, ref holds);
+                JgsValue heldLeft = HoldAcross(left, outer.Right, env, ref holds);
+                leftFresh &= ReferenceEquals(heldLeft, left); // a share is a second holder (Z2a)
+                left = heldLeft;
             }
 
-            JgsValue right = Evaluate(outer.Right, env);
+            JgsValue right = EvaluateOperand(outer.Right, env, out bool rightFresh);
             if (chain is not null)
             {
                 if (JoinsAsText(right))
@@ -3960,11 +3973,13 @@ internal sealed partial class Interpreter
                 }
 
                 left = chain.Build();
+                leftFresh = false;
             }
 
-            JgsValue answer = ApplyBinary(outer.Op, left!, right, outer);
+            JgsReuse.Operands reuse = JgsReuse.Candidates(leftFresh, rightFresh);
+            JgsValue answer = ApplyBinary(outer.Op, left!, right, outer, reuse);
             holds.Keep(answer);
-            owned = OwnsFreshResult(answer, left!, right);
+            owned = OwnsAnswer(answer, left!, right, reuse);
             return answer;
         }
         finally
@@ -3989,36 +4004,46 @@ internal sealed partial class Interpreter
     /// <paramref name="chain"/>.
     /// </summary>
     private JgsValue? FoldPlus(
-        BinaryExpr node, JgsEnvironment env, ref JgsBuiltins.StringConcatChain? chain, ref ScopeHolds holds)
+        BinaryExpr node, JgsEnvironment env, ref JgsBuiltins.StringConcatChain? chain, ref ScopeHolds holds,
+        out bool fresh)
     {
+        bool leftFresh;
         JgsValue? left = node.Left is BinaryExpr { Op: TokenType.Plus } inner
-            ? FoldPlus(inner, env, ref chain, ref holds)
-            : Evaluate(node.Left, env);
+            ? FoldPlus(inner, env, ref chain, ref holds, out leftFresh)
+            : EvaluateOperand(node.Left, env, out leftFresh);
         if (left is not null)
         {
-            left = HoldAcross(left, node.Right, env, ref holds);
+            JgsValue heldLeft = HoldAcross(left, node.Right, env, ref holds);
+            leftFresh &= ReferenceEquals(heldLeft, left); // a share is a second holder (Z2a)
+            left = heldLeft;
         }
 
-        JgsValue right = Evaluate(node.Right, env);
+        JgsValue right = EvaluateOperand(node.Right, env, out bool rightFresh);
 
         if (chain is not null)
         {
             if (JoinsAsText(right))
             {
                 chain.Append(right, node.Line, node.Column);
+                fresh = false;
                 return null;
             }
 
             left = chain.Build();
+            leftFresh = false;
             chain = null;
         }
         else if ((left!.IsStringArray || right.IsStringArray) && JoinsAsText(left) && JoinsAsText(right))
         {
             chain = new JgsBuiltins.StringConcatChain(left, right, node.Line, node.Column);
+            fresh = false;
             return null;
         }
 
-        return ApplyBinary(node.Op, left!, right, node);
+        JgsReuse.Operands reuse = JgsReuse.Candidates(leftFresh, rightFresh);
+        JgsValue answer = ApplyBinary(node.Op, left!, right, node, reuse);
+        fresh = OwnsAnswer(answer, left!, right, reuse);
+        return answer;
     }
 
     /// <summary>
@@ -4108,6 +4133,64 @@ internal sealed partial class Interpreter
         && value.TimeTag is null
         && !value.IsStringArray;
 
+    // --- Reusing a fresh temporary as the answer's storage (Z2a, ADR 0173) ----------------------
+
+    /// <summary>
+    /// An operand of an operator, saying whether its value is storage this evaluation alone holds:
+    /// a nested operator's answer that was owned (<see cref="OwnsFreshResult"/>, or a reuse
+    /// decided by this rule one level down). Such a temporary is dropped the moment the enclosing
+    /// operator answers, so the enclosing operator may write its answer into it
+    /// (<see cref="PackedOps.TryArithmetic"/>). A call, an index read and a bare name are never
+    /// fresh here, for the reason <see cref="EvaluateForBinding"/> gives.
+    /// </summary>
+    private JgsValue EvaluateOperand(Expr expr, JgsEnvironment env, out bool fresh)
+    {
+        switch (expr)
+        {
+            case BinaryExpr binary:
+                return EvaluateBinary(binary, env, out fresh);
+            case UnaryExpr unary:
+                return EvaluateUnary(unary, env, out fresh);
+            case TransposeExpr transpose:
+                return EvaluateTranspose(transpose, env, out fresh);
+            default:
+                fresh = false;
+                return Evaluate(expr, env);
+        }
+    }
+
+    /// <summary>
+    /// Whether an operator's answer is this evaluation's own, when the answer may have been written
+    /// into a fresh operand: a reused answer shares its storage with that operand by construction,
+    /// so ownership is decided from the <em>other</em> operand alone (ownership transfer); an
+    /// answer that reused nothing is <see cref="OwnsFreshResult"/>'s question as before.
+    /// </summary>
+    private static bool OwnsAnswer(JgsValue answer, JgsValue left, JgsValue right, JgsReuse.Operands reuse)
+    {
+        if (reuse != JgsReuse.Operands.None && answer.IsPacked)
+        {
+            if ((reuse & JgsReuse.Operands.Left) != 0 && ReusedInto(answer, left))
+            {
+                return OwnsFreshResult(answer, right, null);
+            }
+
+            if ((reuse & JgsReuse.Operands.Right) != 0 && ReusedInto(answer, right))
+            {
+                return OwnsFreshResult(answer, left, null);
+            }
+        }
+
+        return OwnsFreshResult(answer, left, right);
+    }
+
+    /// <summary>
+    /// Whether <paramref name="answer"/> is a new wrapper over a fresh <paramref name="operand"/>'s
+    /// storage. The operand was this evaluation's own, so whichever road put the answer there,
+    /// nobody else holds that storage.
+    /// </summary>
+    private static bool ReusedInto(JgsValue answer, JgsValue operand) =>
+        !ReferenceEquals(answer, operand) && IsOrdinaryOperand(operand) && answer.SharesStorageWith(operand);
+
     /// <summary>Applies a binary operator to already-evaluated operands (shared with compound assignment).</summary>
     /// <summary>
     /// Applies a binary operator, then puts the answer back into the numeric class its operands
@@ -4119,7 +4202,8 @@ internal sealed partial class Interpreter
     /// <see cref="JgsNumericClasses.Combine"/>, and it is what makes <c>uint8(200) + uint8(100)</c>
     /// saturate at 255 instead of quietly becoming 300.
     /// </remarks>
-    private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at)
+    private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at,
+                                 JgsReuse.Operands reuse = JgsReuse.Operands.None)
     {
         // A string array joins text under + and answers a string whatever class the other side wears
         // ("abc" + int8(5) is "abc5", measured), and refuses every other arithmetic operator in
@@ -4137,7 +4221,7 @@ internal sealed partial class Interpreter
 
         if (left.NumericClass == JgsNumericClass.Double && right.NumericClass == JgsNumericClass.Double)
         {
-            return ApplyBinaryCore(op, left, right, at);
+            return ApplyBinaryCore(op, left, right, at, JgsNumericClass.Double, out _, reuse);
         }
 
         if (!IsArithmetic(op))
@@ -4190,7 +4274,8 @@ internal sealed partial class Interpreter
     /// false and is converted afterwards exactly as it always was.
     /// </remarks>
     private JgsValue ApplyBinaryCore(TokenType op, JgsValue left, JgsValue right, Node at,
-                                     JgsNumericClass into, out bool alreadyInClass)
+                                     JgsNumericClass into, out bool alreadyInClass,
+                                     JgsReuse.Operands reuse = JgsReuse.Operands.None)
     {
         alreadyInClass = false;
 
@@ -4257,6 +4342,7 @@ internal sealed partial class Interpreter
                 // './' (not '/') keeps the swapped operands off the matrix-division branch below.
                 (left, right) = (right, left);
                 (leftScalar, rightScalar) = (rightScalar, leftScalar);
+                reuse = JgsReuse.Swapped(reuse);
                 op = TokenType.DotSlash;
             }
 
@@ -4281,6 +4367,7 @@ internal sealed partial class Interpreter
                 // scalar \ x is x / scalar.
                 (left, right) = (right, left);
                 (leftScalar, rightScalar) = (rightScalar, leftScalar);
+                reuse = JgsReuse.Swapped(reuse);
                 op = TokenType.Slash;
             }
 
@@ -4372,7 +4459,7 @@ internal sealed partial class Interpreter
             if (PackedOps.MapArithmetic(op) is PackedMath.BinaryOp arithmetic
                 && PackedOps.TryArithmetic(arithmetic, OperatorSymbol(op), left, right,
                                            JgsNumericClasses.RoundingFor(into), _cancelCheck,
-                                           at.Line, at.Column, out JgsValue fast))
+                                           at.Line, at.Column, out JgsValue fast, reuse))
             {
                 alreadyInClass = into != JgsNumericClass.Double;
                 return fast;
@@ -4831,6 +4918,281 @@ internal sealed partial class Interpreter
     /// <summary>The last answer a call road returned from a callee whose answer a binding may adopt.</summary>
     private JgsValue? _adoptableAnswer;
 
+    // --- v = v op E in place (Z2b, ADR 0173) ----------------------------------------------------
+
+    /// <summary>
+    /// <c>v = v op E</c>: the right-hand side runs exactly as <see cref="EvaluateBinary(BinaryExpr, JgsEnvironment, out bool)"/> runs it —
+    /// the operands in order, the left one held while the right one may run script (M5) — and then,
+    /// when <c>v</c>'s payload is the answer's shape and nobody else can see it, the kernel writes
+    /// the answer over it and the binding stands; otherwise the answer is allocated and bound as
+    /// <see cref="EvaluateAssign"/> binds every other answer. Every refusal is decided before the
+    /// sweep, and the sweep takes no cancellation poll (<see cref="JgsReuse.InPlaceNoPollElements"/>).
+    /// </summary>
+    /// <remarks>
+    /// What "nobody else can see it" is: the payload has one holder (M1), so no second name, cell
+    /// slot, field, capture or scope shares it — the hold this road itself took is released first
+    /// and the count read after; it carries no exposed mark (M6), so no JGS binding or retained
+    /// store reads it uncounted; the other operand is not the same storage; the wrapper is still the
+    /// binding the assignment would replace (<see cref="JgsEnvironment.WouldReplace"/>), so a
+    /// right-hand side that rebound <c>v</c> sends the write to the allocating road; and no
+    /// debugger hook is attached, so no paused prompt holds a view of it.
+    /// </remarks>
+    private JgsValue AssignUpdateToVariable(VariableExpr variable, BinaryExpr update, JgsEnvironment env)
+    {
+        bool targetOnLeft = update.Left is VariableExpr { } leftName && leftName.Name == variable.Name;
+        JgsValue left = EvaluateOperand(update.Left, env, out bool leftFresh);
+        var holds = new ScopeHolds();
+        try
+        {
+            JgsValue heldLeft = left;
+            if (IsHoldable(left) && !IsInert(update.Right, env))
+            {
+                heldLeft = Hold(left, ref holds);
+                leftFresh &= ReferenceEquals(heldLeft, left);
+            }
+
+            JgsEnvironment scope = env.IsGlobal(variable.Name) ? _globalWorkspace : env;
+            JgsValue right;
+            bool rightFresh;
+            if (targetOnLeft && update.Op is TokenType.Plus or TokenType.Minus
+                && update.Right is BinaryExpr { Op: TokenType.Star or TokenType.DotStar } product)
+            {
+                // Z2d: `v = v ∓ X * Y`. The product's operands are evaluated as the product would
+                // evaluate them (its left held while its right may run script); when one is a
+                // scalar and the other an array of v's shape, one fused sweep writes v and the
+                // product is never materialized. Otherwise the product is the operator's answer as
+                // ever, and the update goes on below with it as the other operand.
+                JgsValue x = EvaluateOperand(product.Left, env, out bool xFresh);
+                JgsValue heldX = x;
+                if (IsHoldable(x) && !IsInert(product.Right, env))
+                {
+                    heldX = Hold(x, ref holds);
+                    xFresh &= ReferenceEquals(heldX, x);
+                }
+
+                JgsValue y = EvaluateOperand(product.Right, env, out bool yFresh);
+                if (TryFusedUpdate(left, heldX, y, update.Op == TokenType.Minus, scope, variable.Name, ref holds))
+                {
+                    return left;
+                }
+
+                JgsReuse.Operands productReuse = JgsReuse.Candidates(xFresh, yFresh);
+                right = ApplyBinary(product.Op, heldX, y, product, productReuse);
+                holds.Keep(right);
+                rightFresh = OwnsAnswer(right, heldX, y, productReuse);
+            }
+            else
+            {
+                right = EvaluateOperand(update.Right, env, out rightFresh);
+            }
+
+            JgsValue entry = targetOnLeft ? left : right;
+            JgsValue other = targetOnLeft ? right : left;
+            if (CanUpdateInPlace(entry, other, targetOnLeft, update.Op, out PackedMath.BinaryOp kernel)
+                && IsMatlabWorkspace(scope) && scope.WouldReplace(variable.Name, entry))
+            {
+                // The hold was this road's own view of the payload; with it released, the count says
+                // whether anything else still holds it (a capture, a slot, a scope further out).
+                holds.Release();
+                if (!entry.IsShared)
+                {
+                    UpdateInPlace(kernel, entry, other, targetOnLeft);
+                    return entry;
+                }
+            }
+
+            JgsReuse.Operands reuse = JgsReuse.Candidates(leftFresh, rightFresh);
+            JgsValue answer = ApplyBinary(update.Op, heldLeft, right, update, reuse);
+            holds.Keep(answer);
+            JgsValue stored = OwnsAnswer(answer, heldLeft, right, reuse) ? answer : CopyForBinding(answer);
+            if (!scope.TryAssign(variable.Name, stored))
+            {
+                if (Dialect.RequireLet)
+                {
+                    throw NotDefined(variable.Name, update);
+                }
+
+                scope.Declare(variable.Name, stored);
+            }
+
+            return stored;
+        }
+        finally
+        {
+            holds.Release();
+        }
+    }
+
+    /// <summary>
+    /// Z2d: <c>v ∓ X * Y</c> in one sweep over <c>v</c>'s own buffer, under Z2b's conditions on
+    /// <c>v</c> and on the array operand, with the scalar operand a plain double. False, and nothing
+    /// written, otherwise — the caller then computes the product as the operator does.
+    /// </summary>
+    private bool TryFusedUpdate(JgsValue entry, JgsValue x, JgsValue y, bool subtract,
+                                JgsEnvironment scope, string name, ref ScopeHolds holds)
+    {
+        JgsValue array;
+        double scalar;
+        if (IsPlainDoubleScalar(y) && x.Type == JgsType.Array)
+        {
+            (array, scalar) = (x, y.AsNumber);
+        }
+        else if (IsPlainDoubleScalar(x) && y.Type == JgsType.Array)
+        {
+            (array, scalar) = (y, x.AsNumber);
+        }
+        else
+        {
+            return false;
+        }
+
+        if (!IsPlainDoubleArray(entry) || entry.IsExposed || !IsPlainDoubleArray(array)
+            || array.SharesStorageWith(entry) || !JgsBroadcast.SameShape(entry, array))
+        {
+            return false;
+        }
+
+        int length = entry.ArrayLength;
+        if (length < JgsReuse.MinElements || length > JgsReuse.InPlaceNoPollElements
+            || !IsMatlabWorkspace(scope) || !scope.WouldReplace(name, entry))
+        {
+            return false;
+        }
+
+        // Every operand is a plain array or number now, so nothing between here and the end of the
+        // statement can run script: the holds have done their work and the count may be read.
+        holds.Release();
+        if (entry.IsShared)
+        {
+            return false;
+        }
+
+        NumericBuffer dest = entry.WritableBuffer();
+        PackedMath.ScaleAccumulate(dest, array.AsBuffer, scalar, subtract, dest, null, JgsReuse.InPlaceThreadElements);
+        return true;
+    }
+
+    /// <summary>A number with no numeric class but double: an <c>int32(1)</c> scalar takes the classed road.</summary>
+    private static bool IsPlainDoubleScalar(JgsValue value) =>
+        value.Type == JgsType.Number && value.NumericClass == JgsNumericClass.Double;
+
+    /// <summary>
+    /// Z2b's refusals on the storage, every one decided before anything is written; whether the
+    /// wrapper is still the binding the assignment replaces is the caller's (the walk asks
+    /// <see cref="JgsEnvironment.WouldReplace"/>; a compiled loop's slot register is the binding).
+    /// </summary>
+    private static bool CanUpdateInPlace(JgsValue entry, JgsValue other, bool targetOnLeft, TokenType op,
+                                         out PackedMath.BinaryOp kernel)
+    {
+        kernel = default;
+        if (!IsPlainDoubleArray(entry) || entry.IsExposed)
+        {
+            return false; // the holder count is the caller's to read, after any hold of its own is released
+        }
+
+        int length = entry.ArrayLength;
+        if (length < JgsReuse.MinElements || length > JgsReuse.InPlaceNoPollElements)
+        {
+            return false;
+        }
+
+        bool scalar = IsPlainDoubleScalar(other);
+        if (!scalar && !(IsPlainDoubleArray(other) && !other.SharesStorageWith(entry) && JgsBroadcast.SameShape(entry, other)))
+        {
+            return false; // a classed scalar (int32(1)) or logical takes the classed road
+        }
+
+        switch (op)
+        {
+            case TokenType.Plus:
+                kernel = PackedMath.BinaryOp.Add;
+                break;
+            case TokenType.Minus:
+                kernel = PackedMath.BinaryOp.Subtract;
+                break;
+            case TokenType.DotStar:
+            case TokenType.Star when scalar:
+                kernel = PackedMath.BinaryOp.Multiply;
+                break;
+            case TokenType.DotSlash:
+            case TokenType.Slash when scalar && targetOnLeft: // v / s; s / v is a matrix division
+                kernel = PackedMath.BinaryOp.Divide;
+                break;
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Z2b: whether no JGS code can hold an entry of <paramref name="scope"/> uncounted. A JGS
+    /// binding keeps the wrapper itself (M17), a JGS list or field stores it, and a `run` from JGS
+    /// writes a `.m` script's variables into the JGS caller's workspace — none of which the holder
+    /// count sees. Every workspace of a MATLAB session is clean (a `.jgs` file run from MATLAB is
+    /// parsed as MATLAB, ADR 0172), and so is a MATLAB function's own frame whoever called it: its
+    /// locals are made by MATLAB code, its parameters are counted shares, and what it hands to JGS
+    /// goes through a binding road that marks the payload exposed.
+    /// </summary>
+    private bool IsMatlabWorkspace(JgsEnvironment scope)
+    {
+        if (SessionDialect.IsMatlab)
+        {
+            return true;
+        }
+
+        for (JgsEnvironment? frame = scope; frame is not null; frame = frame.Parent)
+        {
+            if (frame.Function is { } function)
+            {
+                return function.Dialect.IsMatlab;
+            }
+
+            if (frame.IsCallBoundary)
+            {
+                return false;
+            }
+        }
+
+        return false; // the base workspace of a JGS session, or the global one
+    }
+
+    /// <summary>A packed real double array with no tag of any kind and no growth slack.</summary>
+    private static bool IsPlainDoubleArray(JgsValue value) =>
+        value.Type == JgsType.Array && value.IsPacked && value.PackedKind == JgsPackedKind.Number
+        && value.NumericClass == JgsNumericClass.Double && value.TimeTag is null
+        && !value.IsStringArray && !value.IsCharMatrix && !value.HasGrowthCapacity;
+
+    /// <summary>The sweep itself, into <paramref name="entry"/>'s own buffer, no poll, threaded from <see cref="JgsReuse.InPlaceThreadElements"/>.</summary>
+    private static void UpdateInPlace(PackedMath.BinaryOp kernel, JgsValue entry, JgsValue other, bool targetOnLeft)
+    {
+        NumericBuffer dest = entry.WritableBuffer(); // M7's road; one holder, so this is the payload itself
+        int threads = JgsReuse.InPlaceThreadElements;
+        if (other.Type == JgsType.Number)
+        {
+            if (targetOnLeft)
+            {
+                PackedMath.BinaryScalarRight(kernel, dest, other.AsNumber, dest, PackedMath.Rounding.None, null, threads);
+            }
+            else
+            {
+                PackedMath.BinaryScalarLeft(kernel, other.AsNumber, dest, dest, PackedMath.Rounding.None, null, threads);
+            }
+
+            return;
+        }
+
+        NumericBuffer operand = other.AsBuffer;
+        if (targetOnLeft)
+        {
+            PackedMath.Binary(kernel, dest, operand, dest, PackedMath.Rounding.None, null, threads);
+        }
+        else
+        {
+            PackedMath.Binary(kernel, operand, dest, dest, PackedMath.Rounding.None, null, threads);
+        }
+    }
+
     private JgsValue EvaluateAssign(AssignExpr assign, JgsEnvironment env)
     {
         // M16: the target's shape decides the order of the write's parts. A paren index directly on
@@ -4844,6 +5206,13 @@ internal sealed partial class Interpreter
             && !(IsInert(assign.Value, env) && TargetIsInert(target, env)))
         {
             target = PrepareTarget(target, env);
+        }
+
+        // Z2b (ADR 0173): a plain `v = v op E` or `v = E op v` may write into v's own payload.
+        if (assign.Op == TokenType.Assign && target is VariableExpr updated && assign.Value is BinaryExpr update
+            && JgsReuse.Enabled && Dialect.CopyOnAssign && _hook is null && JgsReuse.IsUpdateShape(update, updated.Name))
+        {
+            return AssignUpdateToVariable(updated, update, env);
         }
 
         // A plain assignment may take an operator's freshly minted buffer rather than copy it; every
@@ -4891,6 +5260,11 @@ internal sealed partial class Interpreter
             else
             {
                 stored = owned ? stored : CopyForBinding(stored);
+            }
+
+            if (!Dialect.CopyOnAssign && stored.ScopePayload is not null)
+            {
+                stored.MarkExposed(); // M6: every JGS binding, an owned answer's included
             }
 
             if (!scope.TryAssign(variable.Name, stored))

@@ -15,13 +15,17 @@ public sealed unsafe class NativeBuffer : NumericBuffer
     private readonly Action? _onFreed;
 
     /// <summary>
-    /// Allocates a zero-filled native buffer. <paramref name="onFreed"/> lets the allocator track
-    /// outstanding native bytes; it runs exactly once, when the memory is actually freed.
+    /// Allocates a zero-filled native buffer — or, when <paramref name="zeroed"/> is false, one
+    /// whose contents are unspecified, for a destination written in full before it is read (Z2e).
+    /// <paramref name="onFreed"/> lets the allocator track outstanding native bytes; it runs
+    /// exactly once, when the memory is actually freed.
     /// </summary>
-    public NativeBuffer(int length, Action? onFreed = null)
+    public NativeBuffer(int length, Action? onFreed = null, bool zeroed = true)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(length);
-        _ptr = NativeMemory.AllocZeroed((nuint)length, sizeof(double));
+        _ptr = zeroed
+            ? NativeMemory.AllocZeroed((nuint)length, sizeof(double))
+            : NativeMemory.Alloc((nuint)length, sizeof(double));
         GC.AddMemoryPressure((long)length * sizeof(double));
         Length = length;
         _onFreed = onFreed;

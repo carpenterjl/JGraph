@@ -23,7 +23,7 @@ public class LoopBuiltinsM158Tests : IDisposable
 
     public void Dispose() => JG.Reset();
 
-    private const int Large = ParallelKernels.MemoryBoundThreshold + 54_321;
+    private const int Large = ParallelKernels.DefaultMemoryBoundThreshold + 54_321;
 
     [Fact]
     public void HistogramTallyIsTheSameOnOneThreadAndSixteen()

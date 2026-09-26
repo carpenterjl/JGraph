@@ -174,6 +174,50 @@ public sealed class BufferAllocator
         };
     }
 
+    /// <summary>
+    /// Allocates a buffer of <paramref name="elementCount"/> doubles whose contents are
+    /// <em>unspecified</em>: for a destination a kernel writes in full before anything can read it
+    /// (Z2e, ADR 0173), where zeroing is a whole extra pass over the memory. A managed request skips
+    /// the runtime's clearing, a native one the zeroing allocation; a mapped file is zero anyway.
+    /// The caller owns the promise that every element is written before it is read.
+    /// </summary>
+    public NumericBuffer AllocateForOverwrite(long elementCount)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(elementCount);
+        if (elementCount > int.MaxValue)
+        {
+            throw new ArgumentOutOfRangeException(nameof(elementCount), elementCount,
+                $"array of {elementCount} elements exceeds the supported maximum of {int.MaxValue}");
+        }
+
+        int count = (int)elementCount;
+        switch (Mode)
+        {
+            case BufferMode.Managed:
+                return UninitializedManaged(count);
+            case BufferMode.Native when count > 0:
+                return AllocateNative(count, zeroed: false);
+            case BufferMode.Mapped when count > 0:
+                return AllocateMapped(count);
+        }
+
+        if (count <= ManagedMaxElements)
+        {
+            return UninitializedManaged(count);
+        }
+
+        long bytes = (long)count * sizeof(double);
+        if (!FitsNative(bytes))
+        {
+            CollectOnce();
+        }
+
+        return FitsNative(bytes) ? AllocateNative(count, zeroed: false) : AllocateMapped(count);
+    }
+
+    private static ManagedBuffer UninitializedManaged(int count) =>
+        count == 0 ? new ManagedBuffer(0) : ManagedBuffer.Adopt(GC.AllocateUninitializedArray<double>(count));
+
     private NumericBuffer AllocateAutomatic(int count)
     {
         if (count <= ManagedMaxElements)
@@ -199,13 +243,13 @@ public sealed class BufferAllocator
         return bytes <= NativeHeadroomFraction * headroom;
     }
 
-    private NativeBuffer AllocateNative(int count)
+    private NativeBuffer AllocateNative(int count, bool zeroed = true)
     {
         long bytes = (long)count * sizeof(double);
         Interlocked.Add(ref _outstandingNativeBytes, bytes);
         try
         {
-            return new NativeBuffer(count, onFreed: () => Interlocked.Add(ref _outstandingNativeBytes, -bytes));
+            return new NativeBuffer(count, onFreed: () => Interlocked.Add(ref _outstandingNativeBytes, -bytes), zeroed);
         }
         catch
         {

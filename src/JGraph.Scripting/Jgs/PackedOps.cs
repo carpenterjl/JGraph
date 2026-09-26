@@ -30,14 +30,25 @@ internal static class PackedOps
     /// scalar (bools read as 0/1, as in the boxed paths). Results are packed number arrays.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// <paramref name="into"/> is the numeric class the answer is owed, applied inside the same
     /// sweep that computed each element (M97). It is <see cref="PackedMath.Rounding.None"/> for the
     /// ordinary double case, which is what makes this the same kernel it has always been; when it is
     /// not, the caller must not convert the answer a second time, because it is already converted.
+    /// </para>
+    /// <para>
+    /// <paramref name="reuse"/> names the operands that are fresh temporaries — storage the calling
+    /// evaluation alone holds (Z2a, ADR 0173). The answer is written into one of them instead of
+    /// a new buffer when the answer is a plain double of the same length, from
+    /// <see cref="JgsReuse.MinElements"/> up, and the temporary is held by nobody and carries no
+    /// exposed mark; the kernel alias contract (<see cref="PackedMath.Binary(PackedMath.BinaryOp, NumericBuffer, NumericBuffer, NumericBuffer, Action)"/>)
+    /// is what makes the answer the same bits. The caller learns which happened from the answer's
+    /// storage (<see cref="JgsValue.SharesStorageWith"/>) and decides ownership from the other operand.
+    /// </para>
     /// </remarks>
     public static bool TryArithmetic(PackedMath.BinaryOp op, string symbol, JgsValue left, JgsValue right,
                                      PackedMath.Rounding into, Action? cancelCheck, int line, int column,
-                                     out JgsValue result)
+                                     out JgsValue result, JgsReuse.Operands reuse = JgsReuse.Operands.None)
     {
         // A negative base raised to a fractional power leaves the reals, and this kernel writes
         // doubles (M81). Declining the fast path is exactly what the class contract is for: the boxed
@@ -51,24 +62,30 @@ internal static class PackedOps
         if (IsPackedArray(left) && IsPackedArray(right))
         {
             RequireSameLengths(symbol, left.ArrayLength, right.ArrayLength, line, column);
-            NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
-            PackedMath.Binary(op, left.AsBuffer, right.AsBuffer, dest, into, cancelCheck);
+            NumericBuffer a = left.AsBuffer;
+            NumericBuffer b = right.AsBuffer;
+            NumericBuffer dest = ReferenceEquals(a, b)
+                ? JgsPacking.AllocateForOverwrite(a.Length) // x op x: one storage on both sides, never a temporary
+                : Destination(reuse, left, a, right, b, into);
+            PackedMath.Binary(op, a, b, dest, into, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }
 
         if (IsPackedArray(left) && IsNumericScalar(right))
         {
-            NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
-            PackedMath.BinaryScalarRight(op, left.AsBuffer, right.AsNumber, dest, into, cancelCheck);
+            NumericBuffer a = left.AsBuffer;
+            NumericBuffer dest = Destination(reuse, left, a, null, null, into);
+            PackedMath.BinaryScalarRight(op, a, right.AsNumber, dest, into, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }
 
         if (IsPackedArray(right) && IsNumericScalar(left))
         {
-            NumericBuffer dest = JgsPacking.Allocate(right.ArrayLength);
-            PackedMath.BinaryScalarLeft(op, left.AsNumber, right.AsBuffer, dest, into, cancelCheck);
+            NumericBuffer b = right.AsBuffer;
+            NumericBuffer dest = Destination(reuse, null, null, right, b, into);
+            PackedMath.BinaryScalarLeft(op, left.AsNumber, b, dest, into, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }
@@ -76,6 +93,41 @@ internal static class PackedOps
         result = JgsValue.Null;
         return false;
     }
+
+    /// <summary>
+    /// The buffer an arithmetic answer is written into: a fresh temporary operand the caller named
+    /// in <paramref name="reuse"/> when Z2a's conditions hold, a new buffer otherwise. The length is
+    /// the operands' (the packed arrangements above require it), so a reused buffer fits exactly.
+    /// </summary>
+    private static NumericBuffer Destination(JgsReuse.Operands reuse, JgsValue? left, NumericBuffer? a,
+                                             JgsValue? right, NumericBuffer? b, PackedMath.Rounding into)
+    {
+        int length = (a ?? b)!.Length;
+        if (reuse != JgsReuse.Operands.None && JgsReuse.Enabled && !into.Moves && length >= JgsReuse.MinElements)
+        {
+            if ((reuse & JgsReuse.Operands.Left) != 0 && left is not null && a is not null && Reusable(left, a))
+            {
+                return left.WritableBuffer(); // M7's road; a fresh temporary is nobody else's, so it is `a`
+            }
+
+            if ((reuse & JgsReuse.Operands.Right) != 0 && right is not null && b is not null && Reusable(right, b))
+            {
+                return right.WritableBuffer();
+            }
+        }
+
+        // Every element of an arithmetic destination is written by the kernel before the wrapper
+        // exists, so the zeroing is a pass over memory nothing reads (Z2e).
+        return JgsPacking.AllocateForOverwrite(length);
+    }
+
+    /// <summary>
+    /// Whether a temporary the caller says is fresh may take the answer: one holder (M1), no
+    /// exposed mark (M6), no growth slack. A fresh operator answer satisfies all three; the checks
+    /// are cheap and make a wrong claim of freshness fail loudly rather than write through an alias.
+    /// </summary>
+    private static bool Reusable(JgsValue temporary, NumericBuffer buffer) =>
+        !JgsHolders.IsShared(buffer) && !temporary.IsExposed && !temporary.HasGrowthCapacity;
 
     /// <summary>The <see cref="PackedMath.CompareOp"/> for an ordering token, or null.</summary>
     public static PackedMath.CompareOp? MapComparison(TokenType op) => op switch
