@@ -11,3 +11,8 @@ CHK|addAssembly_same|true|exact
 CHK|import_list|0|exact
 CHK|array_brackets|12 0|exact
 CHK|GenericClass|NET.GenericClass|exact
+CHK|shrlib_loaded|true|exact
+CHK|shrlib_call|3|exact
+CHK|shrlib_functions|86|exact
+CHK|shrlib_unloaded|false|exact
+CHK|mexext|mexw64|exact

@@ -28,3 +28,13 @@ a[0] = 5;
 a[2] = 7;
 print("CHK|array_brackets|" + (a[0] + a[2]) + " " + a[1] + "|exact");
 print("CHK|GenericClass|" + class(feval("NET.GenericClass", "System.Collections.Generic.List", "System.Double")) + "|exact");
+# Stage 8 (ADR 0181): the shared-library names answer in JGS, a prototype function named by text.
+let p = interop_paths();
+addpath(getfield(p, "root"));
+loadlibrary(getfield(p, "lib"), "jgtestlib_proto", "alias", "jgs8");
+print("CHK|shrlib_loaded|" + libisloaded("jgs8") + "|exact");
+print("CHK|shrlib_call|" + calllib("jgs8", "jg_version") + "|exact");
+print("CHK|shrlib_functions|" + numel(libfunctions("jgs8")) + "|exact");
+unloadlibrary("jgs8");
+print("CHK|shrlib_unloaded|" + libisloaded("jgs8") + "|exact");
+print("CHK|mexext|" + mexext() + "|exact");

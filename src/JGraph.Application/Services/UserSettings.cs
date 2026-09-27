@@ -38,6 +38,9 @@ public sealed class UserSettings
     /// <summary>The reply-to email the user last typed into the bug-report dialog, or null.</summary>
     public string? BugReportReplyTo { get; set; }
 
+    /// <summary>The C compiler <c>loadlibrary</c> uses, by its discovery id, or null for automatic (ADR 0181).</summary>
+    public string? CCompiler { get; set; }
+
     /// <summary>The JGS language options these settings imply (sanitized against a hand-edited index base).</summary>
     public JgsLanguageOptions ToJgsOptions() =>
         new JgsLanguageOptions(RequireLet: !JgsOptionalLet, IndexBase: JgsIndexBase).Sanitized();
@@ -65,6 +68,7 @@ public sealed class UserSettings
             AppTheme = dto.AppTheme,
             LinkFigureThemeToAppTheme = dto.LinkFigureThemeToAppTheme,
             BugReportReplyTo = dto.BugReportReplyTo,
+            CCompiler = dto.CCompiler,
         };
     }
 
@@ -80,6 +84,7 @@ public sealed class UserSettings
         AppTheme = AppTheme,
         LinkFigureThemeToAppTheme = LinkFigureThemeToAppTheme,
         BugReportReplyTo = BugReportReplyTo,
+        CCompiler = CCompiler,
     };
 
     /// <summary>A copy, so the Options dialog can edit a draft and discard it on Cancel.</summary>

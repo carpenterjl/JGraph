@@ -1,7 +1,7 @@
 <Window x:Class="JGraph.Application.OptionsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Options" Height="560" Width="520"
+        Title="Options" Height="640" Width="520"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
     <DockPanel Margin="12">
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
@@ -64,6 +64,18 @@
                         <TextBox Grid.Row="2" Grid.Column="1" x:Name="DirectoryBox" Margin="0,4" VerticalContentAlignment="Center" />
                         <Button Grid.Row="2" Grid.Column="2" Content="Browse…" Margin="6,4,0,4" Padding="8,0" Click="OnBrowse" />
                     </Grid>
+                </GroupBox>
+
+                <!-- Shared libraries -->
+                <GroupBox Header="C shared libraries" Padding="8" Margin="0,0,0,10">
+                    <StackPanel>
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="C compiler for loadlibrary" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <ComboBox x:Name="CompilerCombo" DisplayMemberPath="Display" />
+                        </DockPanel>
+                        <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Foreground="{DynamicResource JG.Brush.TextSecondary}"
+                                   Text="loadlibrary(lib, header) runs this compiler's preprocessor over the header, as MATLAB does. Automatic uses MinGW-w64 named by MW_MINGW64_LOC, then Visual Studio's C++ tools, then a cl or gcc on PATH. A prototype file (loadlibrary(lib, @protofile)) needs no compiler." />
+                    </StackPanel>
                 </GroupBox>
 
                 <!-- Plugins -->

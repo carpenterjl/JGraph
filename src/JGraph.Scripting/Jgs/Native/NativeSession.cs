@@ -24,11 +24,42 @@ internal sealed class NativeSession
 
             _host?.Dispose();
             _host = null;
-            Modules.Clear();
-            Symbols.Clear();
+            Forget();
             _host = NativeHostProcess.Start();
             return _host;
         }
+    }
+
+    /// <summary>
+    /// The libraries <c>loadlibrary</c> has loaded, by the name a script knows each by (its file's
+    /// name, or its alias), case-sensitively as MATLAB's <c>lib.&lt;name&gt;</c> classes are (ADR 0181).
+    /// Emptied when the host dies: its libraries died with it.
+    /// </summary>
+    public Dictionary<string, SharedLibrary> Libraries { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>The library loaded as <paramref name="name"/>, or null — also when its host has since died.</summary>
+    public SharedLibrary? Library(string name)
+    {
+        if (!Libraries.TryGetValue(name, out SharedLibrary? library))
+        {
+            return null;
+        }
+
+        if (library.Host.IsAlive)
+        {
+            return library;
+        }
+
+        Forget();
+        return null;
+    }
+
+    /// <summary>Forgets every module, export and library of the host, which has died or is being stopped.</summary>
+    public void Forget()
+    {
+        Modules.Clear();
+        Symbols.Clear();
+        Libraries.Clear();
     }
 
     /// <summary>The live host, or null when there is none; never starts one.</summary>
@@ -48,8 +79,7 @@ internal sealed class NativeSession
     {
         NativeHostProcess? host = _host;
         _host = null;
-        Modules.Clear();
-        Symbols.Clear();
+        Forget();
         host?.Dispose();
     }
 

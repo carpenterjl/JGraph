@@ -179,8 +179,7 @@ internal static partial class JgsBuiltins
         catch (NativeHostExitedException exited)
         {
             temporaries.Clear(); // they died with the host
-            session.Modules.Clear();
-            session.Symbols.Clear();
+            session.Forget();
             string sentence = exited.Sentence(during);
             if (exited.Cancelled)
             {

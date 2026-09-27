@@ -60,7 +60,14 @@ EXTRA_IMPLEMENTED = {
     "NET.disableAutoRelease", "NET.enableAutoRelease",
     # Interop stage I4 (ADR 0177).
     "NET.GenericClass", "NET.invokeGenericMethod", "NET.interfaceView",
+    # Interop stage I8 (ADR 0181).
+    "mex.getCompilerConfigurations",
 }
+
+# Heads the catalog registers only as the namespace of a member, which are not the MATLAB name of
+# the same spelling: interop stage I8 (ADR 0181) registers `mex` to reach
+# mex.getCompilerConfigurations, and MATLAB's `mex` command, which builds MEX files, stays out of scope.
+NAMESPACE_ONLY = {"mex"}
 
 
 def catalog_names() -> set[str]:
@@ -74,7 +81,7 @@ def catalog_names() -> set[str]:
     table = re.search(r"ColormapGenerators\s*=\s*\[(.*?)\];", GRAPHICS3D.read_text(encoding="utf-8"), re.S)
     if table:
         names |= set(re.findall(r'\("([^"]+)"', table.group(1)))
-    return names | EXTRA_IMPLEMENTED
+    return (names - NAMESPACE_ONLY) | EXTRA_IMPLEMENTED
 
 
 def documented() -> dict[str, dict[str, str]]:

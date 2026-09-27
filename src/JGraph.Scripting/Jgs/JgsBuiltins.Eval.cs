@@ -45,6 +45,9 @@ internal static partial class JgsBuiltins
         // ADR 0179: jgraph.net.compile loads what it builds into the session's catalog.
         "jgraph",
 
+        // ADR 0181: the shared-library names load into, and list, the session's native host.
+        "loadlibrary", "unloadlibrary", "libisloaded", "libfunctions", "calllib", "mexext", "mex",
+
         // ADR 0176: import reads and adds to the running scope's imports.
         "import", "enumeration",
 
@@ -102,6 +105,7 @@ internal static partial class JgsBuiltins
         RegisterTableFormBuiltins(env, interpreter);
         RegisterNetBuiltins(env, interpreter);
         RegisterNetCompile(env, interpreter);
+        RegisterSharedLibraryBuiltins(env, interpreter);
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.

@@ -49,12 +49,14 @@ public sealed class OptionsViewModel
     /// <param name="appThemes">The application chrome themes to choose between.</param>
     /// <param name="languages">The script languages a new document can start in.</param>
     /// <param name="pluginDirectory">The folder to discover toggleable plugins in, or null for none.</param>
+    /// <param name="compilers">The C compilers <c>loadlibrary</c> can use (ADR 0181), or null for none found.</param>
     public OptionsViewModel(
         ISettingsService settings,
         IReadOnlyList<ITheme> themes,
         IAppThemeCatalog appThemes,
         IReadOnlyList<string> languages,
-        string? pluginDirectory)
+        string? pluginDirectory,
+        IReadOnlyList<LoadLibraryCompiler>? compilers = null)
     {
         ArgumentNullException.ThrowIfNull(settings);
         ArgumentNullException.ThrowIfNull(themes);
@@ -84,7 +86,20 @@ public sealed class OptionsViewModel
             : NewScriptLanguages.FirstOrDefault() ?? "JGS";
 
         Plugins = new ObservableCollection<PluginToggle>(DiscoverToggles(pluginDirectory, current));
+
+        // Automatic first, naming what it would pick; a stored choice no longer found shows as automatic.
+        IReadOnlyList<LoadLibraryCompiler> found = compilers ?? [];
+        string automatic = found.Count > 0 ? $"Automatic ({found[0].Display})" : "Automatic (no compiler found)";
+        Compilers = [new LoadLibraryCompiler("", automatic), .. found];
+        SelectedCompiler = Compilers.FirstOrDefault(c => c.Id.Length > 0 && string.Equals(c.Id, current.CCompiler, StringComparison.OrdinalIgnoreCase))
+            ?? Compilers[0];
     }
+
+    /// <summary>The C compilers <c>loadlibrary</c> can preprocess headers with, "Automatic" first (id empty).</summary>
+    public IReadOnlyList<LoadLibraryCompiler> Compilers { get; }
+
+    /// <summary>The chosen compiler, or the automatic entry.</summary>
+    public LoadLibraryCompiler SelectedCompiler { get; set; }
 
     /// <summary>Whether a first assignment in JGS may omit <c>let</c>.</summary>
     public bool OptionalLet { get; set; }
@@ -145,6 +160,8 @@ public sealed class OptionsViewModel
                 : [.. before.DisabledPlugins],
             AppTheme = SelectedAppTheme.Id,
             LinkFigureThemeToAppTheme = LinkFigureThemeToAppTheme,
+            BugReportReplyTo = before.BugReportReplyTo, // not edited here, and not to be lost by an OK
+            CCompiler = SelectedCompiler.Id.Length > 0 ? SelectedCompiler.Id : null,
         };
 
         PluginsChanged = !updated.DisabledPlugins.ToHashSet(StringComparer.Ordinal)

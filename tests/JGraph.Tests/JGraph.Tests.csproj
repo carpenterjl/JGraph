@@ -55,6 +55,13 @@
     <Content Include="..\Interop\native\win-x64\jgtestlib.dll;..\Interop\native\jgtestlib.h;..\Interop\native\jgtestlib_win.h;..\Interop\native\jgtestlib_proto.m"
              Link="MatlabParity\fixtures\interop\%(Filename)%(Extension)"
              CopyToOutputDirectory="PreserveNewest" />
+    <!-- The header parser's tests (ADR 0181): the preprocessed headers and R2025b's prototype files for them. -->
+    <Content Include="..\Interop\native\jgtestlib.msvc.i"
+             Link="MatlabParity\fixtures\interop\%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Interop\native\parse\*"
+             Link="MatlabParity\fixtures\interop\parse\%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
     <ProjectReference Include="..\Interop\JGraph.Interop.TestAssembly\JGraph.Interop.TestAssembly.csproj"
                       ReferenceOutputAssembly="false" />
   </ItemGroup>

@@ -24,6 +24,7 @@ public class UserSettingsFormatTests
             AppTheme = "dark",
             LinkFigureThemeToAppTheme = true,
             BugReportReplyTo = "user@example.com",
+            CCompiler = @"msvc:C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools",
         };
 
         UserSettingsDto? loaded = UserSettingsFormat.Deserialize(UserSettingsFormat.Serialize(settings));
@@ -38,6 +39,7 @@ public class UserSettingsFormatTests
         Assert.Equal("dark", loaded.AppTheme);
         Assert.True(loaded.LinkFigureThemeToAppTheme);
         Assert.Equal("user@example.com", loaded.BugReportReplyTo);
+        Assert.Equal(@"msvc:C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools", loaded.CCompiler);
     }
 
     [Fact]

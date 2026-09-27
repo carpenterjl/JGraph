@@ -1,0 +1,23 @@
+pw_error	MATLAB:loadlibrary:TypeNotFound	The data type 'error' used by function jg_union_in does not exist.	[Warning: The data type 'error' used by function jg_union_in does not exist.] | [> In loadlibrary | In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('probe_shrlib_warnids', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m', 43)" style="font-weight:bold">probe_shrlib_warnids</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m',43,0)">line 43</a>)] |
+pw_structret	MATLAB:loadlibrary:InvalidFunctionReturnType	The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.	[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] | [> In loadlibrary | In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('probe_shrlib_warnids', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m', 43)" style="font-weight:bold">probe_shrlib_warnids</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m',43,0)">line 43</a>)] |
+pw_member	MATLAB:loadlibrary:TypeNotFoundForStructure	The data type 'FcnPtr' used by structure pw_s does not exist.  The structure may not be usable.	[Warning: The data type 'FcnPtr' used by structure pw_s does not exist.  The structure may not be usable.] | [> In loadlibrary | In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('probe_shrlib_warnids', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m', 43)" style="font-weight:bold">probe_shrlib_warnids</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m',43,0)">line 43</a>)] |
+pw_nofunctions	MATLAB:loadlibrary:FunctionNotFound	The function 'pw_absent' was not found in the library	[Warning: The function 'pw_absent' was not found in the library] | [> In loadlibrary | In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('probe_shrlib_warnids', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m', 43)" style="font-weight:bold">probe_shrlib_warnids</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m',43,0)">line 43</a>)] |
+pw_unknowntype			
+pw_unknownret			
+pw_enum			
+pw_struct			
+enum.exists	MATLAB:loadlibrary:EnumExists	The enumeration 'lib.pw_e' already exists and will not be created	[Warning: The enumeration 'lib.pw_e' already exists and will not be created] | [> In loadlibrary | In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('probe_shrlib_warnids', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m', 55)" style="font-weight:bold">probe_shrlib_warnids</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m',55,0)">line 55</a>)] |
+struct.exists	MATLAB:loadlibrary:StructTypeExists	The structure type 'pw_t' already exists. | The existing type will be reused.	[Warning: The structure type 'pw_t' already exists. | The existing type will be reused.] | [> In loadlibrary | In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('probe_shrlib_warnids', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m', 61)" style="font-weight:bold">probe_shrlib_warnids</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_warnids.m',61,0)">line 61</a>)] |
+struct.exists.after.unload	logical [1 1] false
+parse.notice			
+parse.notice.full	OUT | Functions in library pw_parse: | [int32 lhs1, pw_qPtr lhs2] jg_is_null(pw_qPtr rhs1) |
+parse.notice.with.outputs		
+parse.notice.warnings.begin
+pw_parse.h
+pw_parse2_thunk_pcwin64.c
+   Creating library pw_parse2_thunk_pcwin64.lib and object pw_parse2_thunk_pcwin64.exp
+
+parse.notice.warnings.end
+parse.notice.warnings.escaped	pw_parse.h\npw_parse2_thunk_pcwin64.c\n   Creating library pw_parse2_thunk_pcwin64.lib and object pw_parse2_thunk_pcwin64.exp\n
+parse.notice.nf	cell [0 0] {}
+cpp.failure	ERR MATLAB:loadlibrary:cppfailure Failed to preprocess the input file. | Output from preprocessor is:pw_bad.h | C:\Users\Carpe\AppData\Local\Temp\tpad8b1abc_82f1_4d83_8205_b831baad0d5d\pw_bad.h(1): fatal error C1083: Cannot open include file: 'no_such_include.h': No such file or directory |

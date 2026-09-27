@@ -1,0 +1,31 @@
+rb_as_written.load	OK notfound=jg_not_exported,jg_point_make
+rb_as_written.n	double [1 1] 85
+rb_as_written.version	double [1 1] 3
+rb_as_written.double	double [1 1] 3.5
+rb_as_written.greeting	char [1 20] 'hello from jgtestlib'
+rb_as_written.strlen	cell [1 1] {double [1 1] 4}
+rb_as_written.color	char [1 8] 'JG_GREEN'
+rb_empty_thunk.load	OK notfound=jg_add_ref,jg_alloc_doubles,jg_alloc_ret,jg_apply,jg_bits_in,jg_bool,jg_char,jg_color_name,jg_color_next,jg_color_value,jg_crash,jg_double,jg_fill_name,jg_float,jg_free,jg_getcwd,jg_getenv,jg_greeting,jg_int,jg_int16,jg_int32,jg_int64,jg_int64_big,jg_int8,jg_is_null,jg_keep,jg_layout,jg_long,jg_longlong,jg_mixed_args,jg_mixed_fill,jg_mixed_sum,jg_negate_bool,jg_nested_sum,jg_not_exported,jg_opaque_free,jg_opaque_get,jg_opaque_new,jg_packed_fill,jg_packed_sum,jg_pick_word,jg_point_alloc,jg_point_len,jg_point_make,jg_point_scale,jg_printf,jg_release_kept,jg_scale_double,jg_scale_float,jg_scale_int16,jg_scale_int32,jg_scale_int64,jg_scale_int8,jg_scale_uint16,jg_scale_uint32,jg_scale_uint64,jg_scale_uint8,jg_schar,jg_short,jg_size,jg_sleep,jg_static_block,jg_static_ints,jg_strlen,jg_sum,jg_sum2d,jg_total_len,jg_triple,jg_uchar,jg_uint,jg_uint16,jg_uint32,jg_uint64,jg_uint64_max,jg_uint8,jg_ulong,jg_ulonglong,jg_union_in,jg_upper,jg_upper_ret,jg_ushort,jg_version,jg_void,jg_words,jg_write_kept
+rb_empty_thunk.n	double [1 1] 2
+rb_empty_thunk.version	ERR MATLAB:calllib:MethodNotFound Method was not found.
+rb_empty_thunk.double	ERR MATLAB:calllib:MethodNotFound Method was not found.
+rb_empty_thunk.greeting	ERR MATLAB:calllib:MethodNotFound Method was not found.
+rb_empty_thunk.strlen	ERR MATLAB:calllib:MethodNotFound Method was not found.
+rb_empty_thunk.color	ERR MATLAB:calllib:MethodNotFound Method was not found.
+rb_cdecl.load	OK notfound=jg_not_exported,jg_point_make
+rb_cdecl.n	double [1 1] 85
+rb_cdecl.version	double [1 1] 3
+rb_cdecl.double	double [1 1] 1
+rb_cdecl.greeting	char [1 20] 'hello from jgtestlib'
+rb_cdecl.strlen	cell [1 1] {double [1 1] 4}
+rb_cdecl.color	char [1 8] 'JG_GREEN'
+rb_with_thunk.load	OK notfound=jg_not_exported,jg_point_make
+rb_with_thunk.n	double [1 1] 85
+rb_with_thunk.version	double [1 1] 3
+rb_with_thunk.double	double [1 1] 3.5
+rb_with_thunk.greeting	char [1 20] 'hello from jgtestlib'
+rb_with_thunk.strlen	cell [1 1] {double [1 1] 4}
+rb_with_thunk.color	char [1 8] 'JG_GREEN'
+notice	MATLAB:loadlibrary:parsewarnings	Warnings messages were produced while parsing.  Check the functions you intend to use for correctness.  Warning text can be viewed using: |  [notfound,warnings]=loadlibrary(...)	[Warning: Warnings messages were produced while parsing.  Check the functions you intend to use for correctness.  Warning text can be viewed using: | [notfound,warnings]=loadlibrary(...)] | [> In loadlibrary | In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('probe_shrlib_readback', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_readback.m', 57)" style="font-weight:bold">probe_shrlib_readback</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\interop-probes\probe_shrlib_readback.m',57,0)">line 57</a>)] |
+notice.with.outputs		
+notice.warnings.escaped	rb_notice.h\n\nFailed to parse type 'union rb_u { int i ; float f ; } rb_u' original input 'union rb_u { int i ; float f ; } rb_u'\nFound on line 2 of input from line 1 of file C:\\Users\\Carpe\\AppData\\Local\\Temp\\tpf0f21497_04f7_4356_a2d6_33331595cce8\\rb_notice.h\nrbn2_thunk_pcwin64.c\n   Creating library rbn2_thunk_pcwin64.lib and object rbn2_thunk_pcwin64.exp\n

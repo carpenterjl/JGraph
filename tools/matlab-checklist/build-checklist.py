@@ -50,7 +50,14 @@ EXTRA_IMPLEMENTED = {
     "NET.disableAutoRelease", "NET.enableAutoRelease",
     # Interop stage I4 (ADR 0177).
     "NET.GenericClass", "NET.invokeGenericMethod", "NET.interfaceView",
+    # Interop stage I8 (ADR 0181).
+    "mex.getCompilerConfigurations",
 }
+
+# Heads the catalog registers only as the namespace of a member, which are not the MATLAB name of
+# the same spelling: interop stage I8 (ADR 0181) registers `mex` to reach
+# mex.getCompilerConfigurations, and MATLAB's `mex` command, which builds MEX files, stays out of scope.
+NAMESPACE_ONLY = {"mex"}
 
 
 def catalog_names(repo: Path) -> set[str]:
@@ -105,7 +112,7 @@ def main() -> int:
         "tiers": {"1": len(rows)},
     }
 
-    implemented = catalog_names(args.repo) | EXTRA_IMPLEMENTED
+    implemented = (catalog_names(args.repo) - NAMESPACE_ONLY) | EXTRA_IMPLEMENTED
     preset = sorted({(r[F_ID] or r[F_NAME]) for r in rows if r[F_NAME] in implemented})
 
     seed = (

@@ -38,7 +38,7 @@ ix_chk('too_many', ix_id(@() calllib(lib, 'jg_double', 1, 2)));
 ix_chk('nosuch_function', ix_id(@() calllib(lib, 'jg_nosuch')));
 ix_chk('nosuch_function_message', ix_msg(@() calllib(lib, 'jg_nosuch')));
 ix_chk('notfound_function', ix_id(@() calllib(lib, 'jg_not_exported', 1)));
-ix_chk('struct_return_function', ix_id(@() calllib(lib, 'jg_point_make', 1, 2)));
+ix_chk('struct_return_function', ix_id(@() calllib(lib, 'jg_point_make', 1, 2)), 'div=ADR0181'); % JGraph calls it
 ix_chk('version', calllib(lib, 'jg_version'));
 ix_chk('exported_variable_invisible', exist('jg_exported_value'));
 ix_chk('char_arg_message', ix_msg(@() calllib(lib, 'jg_int8', 'A')));

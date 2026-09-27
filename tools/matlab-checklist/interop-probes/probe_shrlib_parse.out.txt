@@ -1,0 +1,881 @@
+[Warning: The data type 'error' used by function q_ldouble does not exist.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The data type 'FcnPtr' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The data type 'tagA#2' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The data type 'error' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_tag' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_ptrptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_struct' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_bptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_anon' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_enum' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_enumptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_enumf' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_enumret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_wchar' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_wcharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_wcharret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_ucharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_scharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_voidpp' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_charppp' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_ulongptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_longptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_i64ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_ldouble' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_chararr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_constptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_dword' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_dwordptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_std' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_cdecl' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_m' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_mval' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_p2' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_noparams' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_unsigned' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_shortint' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_size' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_boolptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_charret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_ucharret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_charpp_ret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_voidret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_voidppret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_bret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_bptrret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_enumptrret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_cb' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_unnamed' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_floatptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_2d' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_constchar' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_int16ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_data' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_data_struct' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: The function 'q_data_str' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+[Warning: No functions found in library.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 17)] 
+parse.lastwarn	MATLAB:loadlibrary:nofunctions	No functions found in library.
+parse.notfound.size	double [1 2] [1 52]
+parse.notfound	cell [52 1] {char [1 5] 'q_tag'; char [1 5] 'q_ptr'; char [1 8] 'q_ptrptr'; char [1 8] 'q_struct'; char [1 6] 'q_bptr'; char [1 6] 'q_anon'; char [1 6] 'q_enum'; char [1 9] 'q_enumptr'; char [1 7] 'q_enumf'; char [1 9] 'q_enumret'; char [1 7] 'q_wchar'; char [1 10] 'q_wcharptr'; char [1 10] 'q_wcharret'; char [1 10] 'q_ucharptr'; char [1 10] 'q_scharptr'; char [1 8] 'q_voidpp'; char [1 9] 'q_charppp'; char [1 10] 'q_ulongptr'; char [1 9] 'q_longptr'; char [1 8] 'q_i64ptr'; char [1 9] 'q_ldouble'; char [1 9] 'q_chararr'; char [1 10] 'q_constptr'; char [1 7] 'q_dword'; char [1 10] 'q_dwordptr'; char [1 5] 'q_std'; char [1 7] 'q_cdecl'; char [1 3] 'q_m'; char [1 6] 'q_mval'; char [1 4] 'q_p2'; char [1 10] 'q_noparams'; char [1 10] 'q_unsigned'; char [1 10] 'q_shortint'; char [1 6] 'q_size'; char [1 9] 'q_boolptr'; char [1 9] 'q_charret'; char [1 10] 'q_ucharret'; char [1 12] 'q_charpp_ret'; char [1 9] 'q_voidret'; char [1 11] 'q_voidppret'; char [1 6] 'q_bret'; char [1 9] 'q_bptrret'; char [1 12] 'q_enumptrret'; char [1 4] 'q_cb'; char [1 9] 'q_unnamed'; char [1 10] 'q_floatptr'; char [1 4] 'q_2d'; char [1 11] 'q_constchar'; char [1 10] 'q_int16ptr'; char [1 6] 'q_data'; char [1 13] 'q_data_struct'; char [1 10] 'q_data_str'}
+parse.warnings.begin
+probe_shrlib_parse.h
+
+Type '__crt_locale_dataPtr' was not found.  Defaulting to type voidPtr.
+
+Found on line 4638 of input from line 621 of file C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt.h
+
+Type '__crt_multibyte_dataPtr' was not found.  Defaulting to type voidPtr.
+
+Found on line 4638 of input from line 621 of file C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt.h
+
+Failed to parse type 'struct ) _SETJMP_FLOAT128 { unsigned __int64 Part' original input 'struct ) _SETJMP_FLOAT128 { unsigned __int64 Part [ 2 ]'
+Found on line 11983 of input from line 53 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\setjmp.h
+
+Failed to parse type 'union ) __m64 { unsigned __int64 m64_u64 ; float *m64_f32; __int8 *m64_i8; __int16 *m64_i16; __int32 *m64_i32; __int64 m64_i64 ; unsigned __int8 *m64_u8; unsigned __int16 *m64_u16; unsigned __int32 *m64_u32; } __m64' original input 'union ) __m64 { unsigned __int64 m64_u64 ; float m64_f32 [ 2 ]; __int8 m64_i8 [ 8 ]; __int16 m64_i16 [ 4 ]; __int32 m64_i32 [ 2 ]; __int64 m64_i64 ; unsigned __int8 m64_u8 [ 8 ]; unsigned __int16 m64_u16 [ 4 ]; unsigned __int32 m64_u32 [ 2 ]; } __m64'
+Found on line 12432 of input from line 45 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\mmintrin.h
+
+Failed to parse type 'union  __declspec ( align ( 16 )) __m128 { float *m128_f32; unsigned __int64 *m128_u64; __int8 *m128_i8; __int16 *m128_i16; __int32 *m128_i32; __int64 *m128_i64; unsigned __int8 *m128_u8; unsigned __int16 *m128_u16; unsigned __int32 *m128_u32; } __m128' original input 'union  __declspec ( align ( 16 )) __m128 { float m128_f32 [ 4 ]; unsigned __int64 m128_u64 [ 2 ]; __int8 m128_i8 [ 16 ]; __int16 m128_i16 [ 8 ]; __int32 m128_i32 [ 4 ]; __int64 m128_i64 [ 2 ]; unsigned __int8 m128_u8 [ 16 ]; unsigned __int16 m128_u16 [ 8 ]; unsigned __int32 m128_u32 [ 4 ]; } __m128'
+Found on line 12608 of input from line 75 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\xmmintrin.h
+found parens in __static_assert_t [( sizeof ( unsigned int ) <= 16 ) != 0 ]
+Final string:__static_assert_t [( sizeof ( unsigned int ) <= 16 ) != 0 ]
+
+
+No match found for enum value expression sizeof in ( sizeof ( unsigned int ) <= 16 ) != 0  expression ignored.
+Found on line 12933 of input from line 86 of file C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\malloc.h
+
+Failed to parse type 'union  __declspec ( align ( 16 )) __m128i { __int8 *m128i_i8; __int16 *m128i_i16; __int32 *m128i_i32; __int64 *m128i_i64; unsigned __int8 *m128i_u8; unsigned __int16 *m128i_u16; unsigned __int32 *m128i_u32; unsigned __int64 *m128i_u64; } __m128i' original input 'union  __declspec ( align ( 16 )) __m128i { __int8 m128i_i8 [ 16 ]; __int16 m128i_i16 [ 8 ]; __int32 m128i_i32 [ 4 ]; __int64 m128i_i64 [ 2 ]; unsigned __int8 m128i_u8 [ 16 ]; unsigned __int16 m128i_u16 [ 8 ]; unsigned __int32 m128i_u32 [ 4 ]; unsigned __int64 m128i_u64 [ 2 ]; } __m128i'
+Found on line 13498 of input from line 49 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\emmintrin.h
+
+Failed to parse type 'struct  __declspec ( align ( 16 )) __m128d { double *m128d_f64; } __m128d' original input 'struct  __declspec ( align ( 16 )) __m128d { double m128d_f64 [ 2 ]; } __m128d'
+Found on line 13502 of input from line 53 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\emmintrin.h
+
+Failed to parse type 'union  __declspec ( align ( 32 )) __m256 { float *m256_f32; } __m256' original input 'union  __declspec ( align ( 32 )) __m256 { float m256_f32 [ 8 ]; } __m256'
+Found on line 14513 of input from line 41 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\immintrin.h
+
+Failed to parse type 'struct  __declspec ( align ( 32 )) __m256d { double *m256d_f64; } __m256d' original input 'struct  __declspec ( align ( 32 )) __m256d { double m256d_f64 [ 4 ]; } __m256d'
+Found on line 14517 of input from line 45 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\immintrin.h
+
+Failed to parse type 'union  __declspec ( align ( 32 )) __m256i { __int8 *m256i_i8; __int16 *m256i_i16; __int32 *m256i_i32; __int64 *m256i_i64; unsigned __int8 *m256i_u8; unsigned __int16 *m256i_u16; unsigned __int32 *m256i_u32; unsigned __int64 *m256i_u64; } __m256i' original input 'union  __declspec ( align ( 32 )) __m256i { __int8 m256i_i8 [ 32 ]; __int16 m256i_i16 [ 16 ]; __int32 m256i_i32 [ 8 ]; __int64 m256i_i64 [ 4 ]; unsigned __int8 m256i_u8 [ 32 ]; unsigned __int16 m256i_u16 [ 16 ]; unsigned __int32 m256i_u32 [ 8 ]; unsigned __int64 m256i_u64 [ 4 ]; } __m256i'
+Found on line 14528 of input from line 56 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\immintrin.h
+
+Failed to parse type 'union  __declspec ( align ( 64 )) __m512 { float *m512_f32; } __m512' original input 'union  __declspec ( align ( 64 )) __m512 { float m512_f32 [ 16 ]; } __m512'
+Found on line 17059 of input from line 49 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Failed to parse type 'struct  __declspec ( align ( 64 )) __m512d { double *m512d_f64; } __m512d' original input 'struct  __declspec ( align ( 64 )) __m512d { double m512d_f64 [ 8 ]; } __m512d'
+Found on line 17063 of input from line 53 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Failed to parse type 'union  __declspec ( align ( 64 )) __m512i { __int8 *m512i_i8; __int16 *m512i_i16; __int32 *m512i_i32; __int64 *m512i_i64; unsigned __int8 *m512i_u8; unsigned __int16 *m512i_u16; unsigned __int32 *m512i_u32; unsigned __int64 *m512i_u64; } __m512i' original input 'union  __declspec ( align ( 64 )) __m512i { __int8 m512i_i8 [ 64 ]; __int16 m512i_i16 [ 32 ]; __int32 m512i_i32 [ 16 ]; __int64 m512i_i64 [ 8 ]; unsigned __int8 m512i_u8 [ 64 ]; unsigned __int16 m512i_u16 [ 32 ]; unsigned __int32 m512i_u32 [ 16 ]; unsigned __int64 m512i_u64 [ 8 ]; } __m512i'
+Found on line 17074 of input from line 64 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Type '__m128i' was not found.  Defaulting to type error.
+
+Found on line 21918 of input from line 4908 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Type '__m256i' was not found.  Defaulting to type error.
+
+Found on line 21919 of input from line 4909 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Type '__m512i' was not found.  Defaulting to type error.
+
+Found on line 21920 of input from line 4910 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Type '__m128i' was not found.  Defaulting to type error.
+
+Found on line 22235 of input from line 5225 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Type '__m256i' was not found.  Defaulting to type error.
+
+Found on line 22236 of input from line 5226 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Type '__m512i' was not found.  Defaulting to type error.
+
+Found on line 22237 of input from line 5227 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\zmmintrin.h
+
+Type 'unsignedint__int8' was not found.  Defaulting to type error.
+
+Found on line 24736 of input from line 363 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\ammintrin.h
+
+Type 'unsignedint__int8' was not found.  Defaulting to type error.
+
+Found on line 24736 of input from line 363 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\ammintrin.h
+
+Type 'unsignedint__int8' was not found.  Defaulting to type error.
+
+Found on line 24736 of input from line 363 of file C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include\\ammintrin.h
+
+Type 'longdouble' was not found.  Defaulting to type error.
+
+Found on line 26392 of input from line 48 of file C:\\Users\\Carpe\\AppData\\Local\\Temp\\tpf05373e1_fef1_4dae_82a8_abb927c8fe6f\\probe_shrlib_parse.h
+
+Type 'longdouble' was not found.  Defaulting to type error.
+
+Found on line 26414 of input from line 70 of file C:\\Users\\Carpe\\AppData\\Local\\Temp\\tpf05373e1_fef1_4dae_82a8_abb927c8fe6f\\probe_shrlib_parse.h
+qp_thunk_pcwin64.c
+   Creating library qp_thunk_pcwin64.lib and object qp_thunk_pcwin64.exp
+
+parse.warnings.end
+proto.begin
+function [methodinfo,structs,enuminfo,ThunkLibName]=qp_proto
+%QP_PROTO Create structures to define interfaces found in 'probe_shrlib_parse'.
+
+%This function was generated by loadlibrary.m parser version  on Sun Sep 27 11:51:44 2026
+%perl options:'probe_shrlib_parse.i -outfile=qp_proto.m -thunkfile=qp_thunk_pcwin64.c -header=probe_shrlib_parse.h'
+ival={cell(1,0)}; % change 0 to the actual number of functions to preallocate the data.
+structs=[];enuminfo=[];fcnNum=1;
+fcns=struct('name',ival,'calltype',ival,'LHS',ival,'RHS',ival,'alias',ival,'thunkname', ival);
+MfilePath=fileparts(mfilename('fullpath'));
+ThunkLibName=fullfile(MfilePath,'qp_thunk_pcwin64');
+%  void q_tag ( A_T a ); 
+fcns.thunkname{fcnNum}='voidA_TThunk';fcns.name{fcnNum}='q_tag'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'tagA'};fcnNum=fcnNum+1;
+%  void q_ptr ( PA_T p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_ptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'tagAPtr'};fcnNum=fcnNum+1;
+%  void q_ptrptr ( A_T ** pp ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_ptrptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'tagAPtrPtr'};fcnNum=fcnNum+1;
+%  void q_struct ( struct B b ); 
+fcns.thunkname{fcnNum}='voidstructBThunk';fcns.name{fcnNum}='q_struct'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'B'};fcnNum=fcnNum+1;
+%  void q_bptr ( struct B * b ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_bptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'BPtr'};fcnNum=fcnNum+1;
+%  void q_anon ( ANON_T a ); 
+fcns.thunkname{fcnNum}='voidANON_TThunk';fcns.name{fcnNum}='q_anon'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'ANON_T'};fcnNum=fcnNum+1;
+%  void q_enum ( E_T e ); 
+fcns.thunkname{fcnNum}='voidE_TThunk';fcns.name{fcnNum}='q_enum'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'E_T'};fcnNum=fcnNum+1;
+%  void q_enumptr ( E_T * e ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_enumptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'E_TPtr'};fcnNum=fcnNum+1;
+%  void q_enumf ( enum F f ); 
+fcns.thunkname{fcnNum}='voidenumFThunk';fcns.name{fcnNum}='q_enumf'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'F'};fcnNum=fcnNum+1;
+%  enum F q_enumret ( void ); 
+fcns.thunkname{fcnNum}='enumFvoidThunk';fcns.name{fcnNum}='q_enumret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='F'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  void q_wchar ( wchar_t w ); 
+fcns.thunkname{fcnNum}='voiduint16Thunk';fcns.name{fcnNum}='q_wchar'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'uint16'};fcnNum=fcnNum+1;
+%  void q_wcharptr ( wchar_t * s ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_wcharptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'uint16Ptr'};fcnNum=fcnNum+1;
+%  const wchar_t * q_wcharret ( void ); 
+fcns.thunkname{fcnNum}='voidPtrvoidThunk';fcns.name{fcnNum}='q_wcharret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='uint16Ptr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  void q_ucharptr ( unsigned char * p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_ucharptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'uint8Ptr'};fcnNum=fcnNum+1;
+%  void q_scharptr ( signed char * p ); 
+fcns.thunkname{fcnNum}='voidcstringThunk';fcns.name{fcnNum}='q_scharptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'cstring'};fcnNum=fcnNum+1;
+%  void q_voidpp ( void ** p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_voidpp'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'voidPtrPtr'};fcnNum=fcnNum+1;
+%  void q_charppp ( char *** p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_charppp'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'int8PtrPtrPtr'};fcnNum=fcnNum+1;
+%  void q_ulongptr ( unsigned long * p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_ulongptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'ulongPtr'};fcnNum=fcnNum+1;
+%  void q_longptr ( long * p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_longptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'longPtr'};fcnNum=fcnNum+1;
+%  void q_i64ptr ( __int64 * p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_i64ptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'int64Ptr'};fcnNum=fcnNum+1;
+%  void q_ldouble ( long double x ); 
+fcns.thunkname{fcnNum}='voidlongdoubleThunk';fcns.name{fcnNum}='q_ldouble'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'error'};fcnNum=fcnNum+1;
+%  void q_chararr ( char s [ 16 ]); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_chararr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'int8Ptr'};fcnNum=fcnNum+1;
+%  void q_constptr ( double * const p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_constptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'doublePtr'};fcnNum=fcnNum+1;
+%  void q_dword ( DWORD_T d ); 
+fcns.thunkname{fcnNum}='voidulongThunk';fcns.name{fcnNum}='q_dword'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'ulong'};fcnNum=fcnNum+1;
+%  DWORD_T * q_dwordptr ( DWORD_T * d ); 
+fcns.thunkname{fcnNum}='voidPtrvoidPtrThunk';fcns.name{fcnNum}='q_dwordptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='ulongPtr'; fcns.RHS{fcnNum}={'ulongPtr'};fcnNum=fcnNum+1;
+%  int __stdcall q_std ( int x ); 
+fcns.thunkname{fcnNum}='int32int32Thunk';fcns.name{fcnNum}='q_std'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='int32'; fcns.RHS{fcnNum}={'int32'};fcnNum=fcnNum+1;
+%  int __cdecl q_cdecl ( int x ); 
+fcns.thunkname{fcnNum}='int32int32Thunk';fcns.name{fcnNum}='q_cdecl'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='int32'; fcns.RHS{fcnNum}={'int32'};fcnNum=fcnNum+1;
+%  M_T * q_m ( M_T * m ); 
+fcns.thunkname{fcnNum}='voidPtrvoidPtrThunk';fcns.name{fcnNum}='q_m'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='MPtr'; fcns.RHS{fcnNum}={'MPtr'};fcnNum=fcnNum+1;
+%  void q_mval ( M_T m ); 
+fcns.thunkname{fcnNum}='voidM_TThunk';fcns.name{fcnNum}='q_mval'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'M'};fcnNum=fcnNum+1;
+%  void q_p2 ( P2_T * p ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_p2'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'P2Ptr'};fcnNum=fcnNum+1;
+%  void q_noparams (); 
+fcns.thunkname{fcnNum}='voidThunk';fcns.name{fcnNum}='q_noparams'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  unsigned q_unsigned ( unsigned x ); 
+fcns.thunkname{fcnNum}='uint32uint32Thunk';fcns.name{fcnNum}='q_unsigned'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='uint32'; fcns.RHS{fcnNum}={'uint32'};fcnNum=fcnNum+1;
+%  short int q_shortint ( long int a , unsigned short int b , long unsigned c ); 
+fcns.thunkname{fcnNum}='int16longuint16ulongThunk';fcns.name{fcnNum}='q_shortint'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='int16'; fcns.RHS{fcnNum}={'long', 'uint16', 'ulong'};fcnNum=fcnNum+1;
+%  size_t q_size ( ptrdiff_t d , intptr_t i ); 
+fcns.thunkname{fcnNum}='uint64int64int64Thunk';fcns.name{fcnNum}='q_size'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='uint64'; fcns.RHS{fcnNum}={'int64', 'int64'};fcnNum=fcnNum+1;
+%  void q_boolptr ( _Bool * b ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_boolptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'boolPtr'};fcnNum=fcnNum+1;
+%  char q_charret ( void ); 
+fcns.thunkname{fcnNum}='int8voidThunk';fcns.name{fcnNum}='q_charret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='int8'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  unsigned char * q_ucharret ( void ); 
+fcns.thunkname{fcnNum}='voidPtrvoidThunk';fcns.name{fcnNum}='q_ucharret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='uint8Ptr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  char ** q_charpp_ret ( void ); 
+fcns.thunkname{fcnNum}='voidPtrvoidThunk';fcns.name{fcnNum}='q_charpp_ret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='stringPtrPtr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  void * q_voidret ( void ); 
+fcns.thunkname{fcnNum}='voidPtrvoidThunk';fcns.name{fcnNum}='q_voidret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='voidPtr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  void ** q_voidppret ( void ); 
+fcns.thunkname{fcnNum}='voidPtrvoidThunk';fcns.name{fcnNum}='q_voidppret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='voidPtrPtr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  struct B q_bret ( void ); 
+fcns.thunkname{fcnNum}='structBvoidThunk';fcns.name{fcnNum}='q_bret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='B'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  struct B * q_bptrret ( void ); 
+fcns.thunkname{fcnNum}='voidPtrvoidThunk';fcns.name{fcnNum}='q_bptrret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='BPtr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  E_T * q_enumptrret ( void ); 
+fcns.thunkname{fcnNum}='voidPtrvoidThunk';fcns.name{fcnNum}='q_enumptrret'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='E_TPtr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  void q_cb ( cb_t f ); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_cb'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'FcnPtr'};fcnNum=fcnNum+1;
+%  void q_unnamed ( int , double ); 
+fcns.thunkname{fcnNum}='voidint32doubleThunk';fcns.name{fcnNum}='q_unnamed'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'int32', 'double'};fcnNum=fcnNum+1;
+%  float * q_floatptr ( float * f ); 
+fcns.thunkname{fcnNum}='voidPtrvoidPtrThunk';fcns.name{fcnNum}='q_floatptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='singlePtr'; fcns.RHS{fcnNum}={'singlePtr'};fcnNum=fcnNum+1;
+%  void q_2d ( int m [ 2 ][ 3 ]); 
+fcns.thunkname{fcnNum}='voidvoidPtrThunk';fcns.name{fcnNum}='q_2d'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'int32Ptr'};fcnNum=fcnNum+1;
+%  void q_constchar ( const char * const s ); 
+fcns.thunkname{fcnNum}='voidcstringThunk';fcns.name{fcnNum}='q_constchar'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}=[]; fcns.RHS{fcnNum}={'cstring'};fcnNum=fcnNum+1;
+%  int16_t q_int16ptr ( int16_t * p , uint64_t * q ); 
+fcns.thunkname{fcnNum}='int16voidPtrvoidPtrThunk';fcns.name{fcnNum}='q_int16ptr'; fcns.calltype{fcnNum}='Thunk'; fcns.LHS{fcnNum}='int16'; fcns.RHS{fcnNum}={'int16Ptr', 'uint64Ptr'};fcnNum=fcnNum+1;
+%  extern int q_data ; 
+fcns.name{fcnNum}='q_data'; fcns.calltype{fcnNum}='data'; fcns.LHS{fcnNum}='int32Ptr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  extern A_T q_data_struct ; 
+fcns.name{fcnNum}='q_data_struct'; fcns.calltype{fcnNum}='data'; fcns.LHS{fcnNum}='tagAPtr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+%  extern char * q_data_str ; 
+fcns.name{fcnNum}='q_data_str'; fcns.calltype{fcnNum}='data'; fcns.LHS{fcnNum}='cstringPtr'; fcns.RHS{fcnNum}=[];fcnNum=fcnNum+1;
+structs.tagA.members=struct('x', 'int32', 'y', 'double');
+structs.B.members=struct('s', 'int16');
+structs.ANON_T.members=struct('anon', 'int32');
+structs.UNUSED_S.members=struct('never', 'int32');
+structs.P2.packing=2;
+structs.P2.members=struct('c', 'int8', 'd', 'double');
+structs.M.members=struct('s', 'cstring', 'pd', 'doublePtr', 'b', 'B', 'pb', 'BPtr', 'e', 'E_T', 'u', 'uint8#4', 'w', 'uint16#3', 'cb', 'FcnPtr', 'v', 'voidPtr', 'arr2', 'tagA#2', 'l', 'long', 'ul', 'ulong', 'ld', 'error', 'i64', 'int64', 'grid', 'int32#6', 'sp', 'stringPtrPtr');
+enuminfo.F=struct('F0',0,'F1',-2,'F2',-1);
+enuminfo.UNUSED_E=struct('U0',0);
+enuminfo.E_T=struct('E_ONE',1,'E_TWO',8,'E_CHR',97,'E_NEG',-5,'E_HEX',17,'E_NEXT',18);
+methodinfo=fcns;
+proto.end
+parse.libfunctions	double [0 0] []
+[Warning: The data type 'error' used by function q_ldouble does not exist.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The data type 'FcnPtr' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The data type 'tagA#2' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The data type 'error' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_inc_fn' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_inc_ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_tag' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_ptrptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_struct' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_bptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_anon' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_enum' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_enumptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_enumf' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_enumret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_wchar' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_wcharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_wcharret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_ucharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_scharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_voidpp' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_charppp' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_ulongptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_longptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_i64ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_ldouble' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_chararr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_constptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_dword' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_dwordptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_std' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_cdecl' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_m' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_mval' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_p2' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_noparams' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_unsigned' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_shortint' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_size' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_boolptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_charret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_ucharret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_charpp_ret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_voidret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_voidppret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_bret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_bptrret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_enumptrret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_cb' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_unnamed' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_floatptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_2d' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_constchar' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_int16ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_data' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_data_struct' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: The function 'q_data_str' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+[Warning: No functions found in library.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 28)] 
+addheader.noext.has_inc	logical [1 1] true
+addheader.noext.n	double [1 1] 54
+[Warning: The data type 'error' used by function q_ldouble does not exist.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The data type 'FcnPtr' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The data type 'tagA#2' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The data type 'error' used by structure M does not exist.  The structure may not be usable.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_inc_fn' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_inc_ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_tag' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_ptrptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_struct' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_bptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_anon' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_enum' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_enumptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_enumf' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_enumret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_wchar' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_wcharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_wcharret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_ucharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_scharptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_voidpp' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_charppp' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_ulongptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_longptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_i64ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_ldouble' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_chararr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_constptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_dword' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_dwordptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_std' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_cdecl' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_m' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_mval' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_p2' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_noparams' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_unsigned' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_shortint' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_size' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_boolptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_charret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_ucharret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_charpp_ret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_voidret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_voidppret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_bret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_bptrret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_enumptrret' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_cb' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_unnamed' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_floatptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_2d' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_constchar' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_int16ptr' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_data' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_data_struct' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: The function 'q_data_str' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+[Warning: No functions found in library.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 32)] 
+addheader.ext.has_inc	logical [1 1] true
+noaddheader.has_inc	logical [1 1] false
+warnid.header.1	MATLAB:loadlibrary:FunctionNotFound	The function 'q_data_str' was not found in the library
+warnid.header.2	MATLAB:loadlibrary:FunctionNotFound	The function 'q_data_str' was not found in the library
+warnid.header.3	MATLAB:loadlibrary:FunctionNotFound	The function 'q_data_str' was not found in the library
+warnid.header.4	MATLAB:loadlibrary:FunctionNotFound	The function 'q_data_str' was not found in the library
+warnid.header.5	MATLAB:loadlibrary:FunctionNotFound	The function 'q_data_str' was not found in the library
+warnid.header.6	MATLAB:loadlibrary:FunctionNotFound	The function 'q_data_str' was not found in the library
+warnid.header.7	MATLAB:loadlibrary:FunctionNotFound	The function 'q_data_str' was not found in the library
+warnid.header.8	MATLAB:loadlibrary:FunctionNotFound	The function 'q_data_str' was not found in the library
+warnid.proto.1	MATLAB:loadlibrary:FunctionNotFound	The function 'jg_not_exported' was not found in the library
+warnid.proto.2	MATLAB:loadlibrary:FunctionNotFound	The function 'jg_not_exported' was not found in the library
+warnid.proto.3	MATLAB:loadlibrary:FunctionNotFound	The function 'jg_not_exported' was not found in the library
+warnid.proto.4	MATLAB:loadlibrary:FunctionNotFound	The function 'jg_not_exported' was not found in the library
+warnid.proto.5	MATLAB:loadlibrary:FunctionNotFound	The function 'jg_not_exported' was not found in the library
+warnid.proto.6	MATLAB:loadlibrary:FunctionNotFound	The function 'jg_not_exported' was not found in the library
+warnid.proto.7	MATLAB:loadlibrary:FunctionNotFound	The function 'jg_not_exported' was not found in the library
+warnid.proto.8	MATLAB:loadlibrary:FunctionNotFound	The function 'jg_not_exported' was not found in the library
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 66)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 66)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_parse (line 66)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_parse (line 66)] 
+proto.nf.size	double [1 2] [1 2]
+proto.w.class	char [1 4] 'char'
+proto.w.size	double [1 2] [0 0]
+proto.nargout1	OUT [Warning: The data type 'error' used by function jg_union_in does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | [Warning: The data type 'error' used by function jg_varsum does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | [Warning: The enumeration 'lib.jg_color' already exists and will not be created] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | [Warning: The structure type 'jg_point' already exists. | The existing type will be reused.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | [Warning: The structure type 'jg_mixed' already exists. | The existing type will be reused.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | [Warning: The structure type 'jg_nested' already exists. | The existing type will be reused.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | [Warning: The structure type 'jg_packed' already exists. | The existing type will be reused.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | [Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | [Warning: The function 'jg_not_exported' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 70)] | x = | 1×2 cell array | {'jg_not_exported'}    {'jg_point_make'} |
+calllib.notfound.fn	ERR MATLAB:calllib:MethodNotFound Method was not found.
+calllib.pointmake	ERR MATLAB:calllib:MethodNotFound Method was not found.
+calllib.nosuchfn	ERR MATLAB:calllib:MethodNotFound Method was not found.
+calllib.extra.arg	ERR MATLAB:calllib:NoMatchingSignatureFound No method with matching signature.
+calllib.toofew.args	ERR MATLAB:calllib:NoMatchingSignatureFound No method with matching signature.
+calllib.libonly	ERR MATLAB:calllib:NameAndFunctionNeeded To call a function both the library name and function name are needed.
+calllib.none	ERR MATLAB:calllib:NameAndFunctionNeeded To call a function both the library name and function name are needed.
+calllib.numeric.fn	ERR MATLAB:calllib:NameAndFunctionNeeded To call a function both the library name and function name are needed.
+calllib.void.class	char [1 4] 'char'
+calllib.void.out	ERR MATLAB:calllib:NoMatchingSignatureFound No method with matching signature.
+calllib.echo	OUT | ans = | 3 |
+libfunctions.lib.prefix	double [1 1] 85
+methods.lib	OUT | Methods for class lib.z1: | Static methods: | jg_add_ref         jg_crash           jg_int16           jg_mixed_args      jg_pick_word       jg_scale_int64     jg_static_block    jg_uint32          jg_varsum | jg_alloc_doubles   jg_double          jg_int32           jg_mixed_fill      jg_point_alloc     jg_scale_int8      jg_static_ints     jg_uint64          jg_version | jg_alloc_ret       jg_exported_value  jg_int64           jg_mixed_sum       jg_point_len       jg_scale_uint16    jg_strlen          jg_uint64_max      jg_void | jg_apply           jg_fill_name       jg_int64_big       jg_negate_bool     jg_point_scale     jg_scale_uint32    jg_sum             jg_uint8           jg_words | jg_bits_in         jg_float           jg_int8            jg_nested_sum      jg_printf          jg_scale_uint64    jg_sum2d           jg_ulong           jg_write_kept | jg_bool            jg_free            jg_is_null         jg_opaque_free     jg_release_kept    jg_scale_uint8     jg_total_len       jg_ulonglong | jg_char            jg_getcwd          jg_keep            jg_opaque_get      jg_scale_double    jg_schar           jg_triple          jg_union_in | jg_color_name      jg_getenv          jg_layout          jg_opaque_new      jg_scale_float     jg_short           jg_uchar           jg_upper | jg_color_next      jg_greeting        jg_long            jg_packed_fill     jg_scale_int16     jg_size            jg_uint            jg_upper_ret | jg_color_value     jg_int             jg_longlong        jg_packed_sum      jg_scale_int32     jg_sleep           jg_uint16          jg_ushort |
+libfunctions.cmd.full	OUT | Functions in library z1: | [double lhs1, doublePtr lhs2] jg_add_ref(double rhs1, doublePtr rhs2, double rhs3) | [int32 lhs1, doublePtrPtr lhs2] jg_alloc_doubles(doublePtrPtr rhs1, int32 rhs2) | lib.pointer lhs1 jg_alloc_ret(int32 rhs1) | double lhs1 jg_apply(FcnPtr rhs1, double rhs2) | [int32 lhs1, voidPtr lhs2] jg_bits_in(voidPtr rhs1) | bool lhs1 jg_bool(bool rhs1) | int8 lhs1 jg_char(int8 rhs1) | cstring lhs1 jg_color_name(lib.jg_color rhs1) | lib.jg_color lhs1 jg_color_next(lib.jg_color rhs1) | int32 lhs1 jg_color_value(lib.jg_color rhs1) | jg_crash | double lhs1 jg_double(double rhs1) | lib.pointer lhs1 jg_exported_value | cstring lhs1 jg_fill_name(cstring rhs1, int32 rhs2) | single lhs1 jg_float(single rhs1) | voidPtr lhs1 jg_free(voidPtr rhs1) | cstring lhs1 jg_getcwd | [cstring lhs1, cstring lhs2] jg_getenv(cstring rhs1) | cstring lhs1 jg_greeting | int32 lhs1 jg_int(int32 rhs1) | int16 lhs1 jg_int16(int16 rhs1) | int32 lhs1 jg_int32(int32 rhs1) | int64 lhs1 jg_int64(int64 rhs1) | int64 lhs1 jg_int64_big | int8 lhs1 jg_int8(int8 rhs1) | [int32 lhs1, voidPtr lhs2] jg_is_null(voidPtr rhs1) | doublePtr lhs1 jg_keep(doublePtr rhs1, int32 rhs2) | uint64 lhs1 jg_layout(int32 rhs1) | long lhs1 jg_long(long rhs1) | int64 lhs1 jg_longlong(int64 rhs1) | double lhs1 jg_mixed_args(int16 rhs1, int32 rhs2, double rhs3, single rhs4, int64 rhs5) | jg_mixedPtr lhs1 jg_mixed_fill(jg_mixedPtr rhs1) | [double lhs1, jg_mixedPtr lhs2] jg_mixed_sum(jg_mixedPtr rhs1) | boolPtr lhs1 jg_negate_bool(boolPtr rhs1, int32 rhs2) | [double lhs1, jg_nestedPtr lhs2] jg_nested_sum(jg_nestedPtr rhs1) | voidPtr lhs1 jg_opaque_free(voidPtr rhs1) | [double lhs1, voidPtr lhs2] jg_opaque_get(voidPtr rhs1) | lib.pointer lhs1 jg_opaque_new(double rhs1) | jg_packedPtr lhs1 jg_packed_fill(jg_packedPtr rhs1) | [double lhs1, jg_packedPtr lhs2] jg_packed_sum(jg_packedPtr rhs1) | stringPtrPtr lhs1 jg_pick_word(int32 rhs1, stringPtrPtr rhs2) | jg_pointPtrPtr lhs1 jg_point_alloc(jg_pointPtrPtr rhs1) | double lhs1 jg_point_len(jg_point rhs1) | jg_pointPtr lhs1 jg_point_scale(jg_pointPtr rhs1, double rhs2) | [int32 lhs1, cstring lhs2] jg_printf(cstring rhs1) | jg_release_kept | doublePtr lhs1 jg_scale_double(doublePtr rhs1, int32 rhs2, double rhs3) | singlePtr lhs1 jg_scale_float(singlePtr rhs1, int32 rhs2, single rhs3) | int16Ptr lhs1 jg_scale_int16(int16Ptr rhs1, int32 rhs2, int16 rhs3) | int32Ptr lhs1 jg_scale_int32(int32Ptr rhs1, int32 rhs2, int32 rhs3) | int64Ptr lhs1 jg_scale_int64(int64Ptr rhs1, int32 rhs2, int64 rhs3) | int8Ptr lhs1 jg_scale_int8(int8Ptr rhs1, int32 rhs2, int8 rhs3) | uint16Ptr lhs1 jg_scale_uint16(uint16Ptr rhs1, int32 rhs2, uint16 rhs3) | uint32Ptr lhs1 jg_scale_uint32(uint32Ptr rhs1, int32 rhs2, uint32 rhs3) | uint64Ptr lhs1 jg_scale_uint64(uint64Ptr rhs1, int32 rhs2, uint64 rhs3) | uint8Ptr lhs1 jg_scale_uint8(uint8Ptr rhs1, int32 rhs2, uint8 rhs3) | int8 lhs1 jg_schar(int8 rhs1) | int16 lhs1 jg_short(int16 rhs1) | uint64 lhs1 jg_size(uint64 rhs1) | jg_sleep(int32 rhs1) | lib.pointer lhs1 jg_static_block | lib.pointer lhs1 jg_static_ints | [int32 lhs1, cstring lhs2] jg_strlen(cstring rhs1) | [double lhs1, doublePtr lhs2] jg_sum(doublePtr rhs1, int32 rhs2) | [double lhs1, doublePtr lhs2] jg_sum2d(doublePtr rhs1, int32 rhs2) | [int32 lhs1, stringPtrPtr lhs2] jg_total_len(stringPtrPtr rhs1, int32 rhs2) | int32 lhs1 jg_triple(doublePtrPtrPtr rhs1) | uint8 lhs1 jg_uchar(uint8 rhs1) | uint32 lhs1 jg_uint(uint32 rhs1) | uint16 lhs1 jg_uint16(uint16 rhs1) | uint32 lhs1 jg_uint32(uint32 rhs1) | uint64 lhs1 jg_uint64(uint64 rhs1) | uint64 lhs1 jg_uint64_max | uint8 lhs1 jg_uint8(uint8 rhs1) | ulong lhs1 jg_ulong(ulong rhs1) | uint64 lhs1 jg_ulonglong(uint64 rhs1) | int32 lhs1 jg_union_in(error rhs1) | cstring lhs1 jg_upper(cstring rhs1) | [cstring lhs1, cstring lhs2] jg_upper_ret(cstring rhs1) | uint16 lhs1 jg_ushort(uint16 rhs1) | int32 lhs1 jg_varsum(int32 rhs1, error rhs2) | int32 lhs1 jg_version | jg_void | lib.pointer lhs1 jg_words | int32 lhs1 jg_write_kept(double rhs1) |
+libfunctions.bad.flag	ERR MATLAB:badopt Unknown command option.
+load.both.missing	ERR MATLAB:loadlibrary:FileNotFound Could not find file C:\no\h.h.
+load.proto.missing	ERR MATLAB:UndefinedFunction There was an error loading the library "D:\EE Projects\JGraph\JGraph\tests\JGraph.Tests\MatlabParity\fixtures\interop\jgtestlib.dll" | Unrecognized function or variable 'no_such_proto_fn'.
+load.odd.options	ERR MATLAB:badsubscript Index exceeds the number of array elements. Index must not exceed 1.
+load.alias.numeric	ERR MATLAB:libisloaded:LibraryNameRequired Library name must be a string or a character vector.
+load.option.case	ERR MATLAB:loadlibrary:InvalidOption Option ALIAS is not a valid loadlibrary option.
+load.option.case.loaded	logical [1 1] false
+load.option.string	OUT [Warning: The data type 'error' used by function jg_union_in does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 97)] | [Warning: The data type 'error' used by function jg_varsum does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 97)] | [Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 97)] | [Warning: The function 'jg_not_exported' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 97)] |
+load.option.string.loaded	logical [1 1] true
+load.proto.as.char	OUT [Warning: The data type 'error' used by function jg_union_in does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 100)] | [Warning: The data type 'error' used by function jg_varsum does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 100)] | [Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 100)] | [Warning: The function 'jg_not_exported' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 100)] |
+load.proto.mfilename	OUT [Warning: The data type 'error' used by function jg_union_in does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 102)] | [Warning: The data type 'error' used by function jg_varsum does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 102)] | [Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 102)] | [Warning: The function 'jg_not_exported' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 102)] |
+load.proto.mfilename.written	logical [1 1] false
+load.header.cell.addheader	ERR MATLAB:perl:InputsMustBeStrings All arguments must be character vectors or string scalars.
+load.includepath.missing	OUT [Warning: Warnings messages were produced while parsing.  Check the functions you intend to use for correctness.  Warning text can be viewed using: | [notfound,warnings]=loadlibrary(...)] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The data type 'error' used by function q_ldouble does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The data type 'FcnPtr' used by structure M does not exist.  The structure may not be usable.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The data type 'tagA#2' used by structure M does not exist.  The structure may not be usable.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The data type 'error' used by structure M does not exist.  The structure may not be usable.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_tag' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_ptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_ptrptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_struct' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_bptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_anon' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_enum' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_enumptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_enumf' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_enumret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_wchar' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_wcharptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_wcharret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_ucharptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_scharptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_voidpp' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_charppp' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_ulongptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_longptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_i64ptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_ldouble' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_chararr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_constptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_dword' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_dwordptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_std' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_cdecl' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_m' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_mval' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_p2' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_noparams' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_unsigned' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_shortint' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_size' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_boolptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_charret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_ucharret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_charpp_ret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_voidret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_voidppret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_bret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_bptrret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_enumptrret' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_cb' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_unnamed' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_floatptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_2d' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_constchar' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_int16ptr' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_data' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_data_struct' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] | [Warning: The function 'q_data_str' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 107)] |
+load.lib.only.noheader	ERR MATLAB:loadlibrary:FileNotFound Could not find file solo.h.
+load.lib.only.header.on.path	OUT [Warning: Warnings messages were produced while parsing.  Check the functions you intend to use for correctness.  Warning text can be viewed using: | [notfound,warnings]=loadlibrary(...)] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 112)] | [Warning: The data type 'error' used by function jg_union_in does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 112)] | [Warning: The data type 'error' used by function jg_varsum does not exist.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 112)] | [Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 112)] | [Warning: The function 'jg_not_exported' was not found in the library] | [> In loadlibrary | In ip_px (line 5) | In probe_shrlib_parse (line 112)] |
+load.header.dir	ERR MATLAB:loadlibrary:cppfailure Failed to preprocess the input file. | Output from preprocessor is:tpf05373e1_fef1_4dae_82a8_abb927c8fe6f | c1: fatal error C1083: Cannot open source file: 'C:\Users\Carpe\AppData\Local\Temp\tpf05373e1_fef1_4dae_82a8_abb927c8fe6f': No such file or directory |
+libisloaded.numeric	ERR MATLAB:libisloaded:LibraryNameRequired Library name must be a string or a character vector.
+libisloaded.none	ERR MATLAB:libisloaded:LibraryNameRequired Library name must be a string or a character vector.
+libisloaded.two	ERR MATLAB:libisloaded:LibraryNameRequired Library name must be a string or a character vector.
+libisloaded.cell	ERR MATLAB:libisloaded:LibraryNameRequired Library name must be a string or a character vector.
+libisloaded.empty	logical [1 1] false
+libfunctions.none	ERR MATLAB:narginchk:notEnoughInputs Not enough input arguments.
+libfunctions.unloaded.disp	OUT | No class 'lib.nosuchlib'. |
+libfunctions.unloaded.full	OUT | No class 'lib.nosuchlib'. |
+libfunctions.unloaded.full.out	double [0 0] []
+libfunctions.numeric	OUT | Methods for class double: | abs                             clear_model_playbackinfo        fresnelc                        ldl                             qz | accumarray                      colon                           fresnels                        le                              rcond | acos                            complex                         full                            legendreP                       rdivide | acosd                           conj                            gamma                           length                          real | acosh                           conv2                           gammainc                        linsolve                        rectangularPulse | acot                            cos                             gammaincinv                     log                             rem | acotd                           cosd                            gammaln                         log10                           repelem | acoth                           cosh                            ge                              log1p                           repmat | acsc                            coshint                         gegenbauerC                     log2                            reshape | acscd                           cosint                          get_performance_time            logical                         round | acsch                           cospi                           gt                              logint                          set_webscope_testinghook_value | airy                            ctranspose                      harmonic                        lt                              sign | all                             cummax                          hermiteH                        lu                              signIm | allfinite                       cummin                          hess                            max                             sin | amd                             cumprod                         hurwitzZeta                     maxk                            sind | and                             cumsum                          hypot                           min                             single | any                             dawson                          ichol                           mink                            sinh | anymissing                      det                             ifft                            minpoly                         sinhint | anynan                          diag                            ifftn                           minus                           sinint | append                          diff                            igamma                          mldivide                        sinpi | asec                            dilog                           ilu                             mod                             size | asecd                           dirac                           imag                            movmad                          sort | asech                           display                         int16                           movmax                          sortrowsc | asin                            divisors                        int32                           movmean                         sqrt | asind                           dmperm                          int64                           movmedian                       ssinint | asinh                           double                          int8                            movmin                          sum | atan                            ei                              inv                             movprod                         superiorfloat | atan2                           eig                             iscolumn                        movstd                          svd | atan2d                          ellipticCE                      isdiag                          movsum                          symrcm | atand                           ellipticCK                      isempty                         movvar                          tan | atanh                           ellipticCPi                     isequal                         mrdivide                        tand | balance                         ellipticE                       isequaln                        mtimes                          tanh | bernoulli                       ellipticF                       isfinite                        ndims                           times | besselh                         ellipticK                       isfloat                         ne                              transpose | besseli                         ellipticNome                    isinf                           nnz                             triangularPulse | besselj                         ellipticPi                      isinteger                       nonzeros                        tril | besselk                         end                             islogical                       norm                            triu | bessely                         eps                             ismatrix                        not                             uint16 | betainc                         eq                              isnan                           numel                           uint32 | betaincinv                      erf                             isnumeric                       nzmax                           uint64 | bitand                          erfc                            isreal                          or                              uint8 | bitcmp                          erfcinv                         isrow                           ordeig                          uminus | bitget                          erfcx                           isscalar                        ordqz                           underlyingType | bitor                           erfi                            issorted                        ordschur                        uplus | bitset                          erfinv                          issortedrows                    permute                         vecnorm | bitshift                        euler                           issparse                        plus                            whittakerM | bitxor                          exp                             istril                          pochhammer                      whittakerW | bsxfun                          expm1                           istriu                          poly2sym                        wrightOmega | ceil                            fft                             isuniform                       polylog                         xor | charpoly                        fftn                            isvector                        pow2                            zeta | chebyshevT                      filter                          jacobiP                         power | chebyshevU                      find                            jordan                          prod | chol                            fix                             kummerU                         psi | cholupdate                      flip                            laguerreL                       qr | circshift                       floor                           ldivide                         qrupdate |
+unload.none	ERR MATLAB:unloadlibrary:NameMustBeSpecified Library name must be specified.
+unload.numeric	ERR MATLAB:unloadlibrary:NameMustBeSpecified Library name must be specified.
+unload.two	ERR MATLAB:unloadlibrary:NameMustBeSpecified Library name must be specified.
+mexext	char [1 6] 'mexw64'
+mexext.all.class	char [1 6] 'struct'
+mexext.all.size	double [1 2] [1 4]
+mexext.all.fields	cell [1 2] {char [1 3] 'ext'; char [1 4] 'arch'}
+mexext.all.list	OUT glnxa64=mexa64 | maca64=mexmaca64 | maci64=mexmaci64 | win64=mexw64 |
+mexext.bad	ERR MATLAB:mexext:inputType Input must be 'all' or "all".
+mexext.numeric	ERR MATLAB:mexext:inputType Input must be 'all' or "all".
+mexext.two	ERR MATLAB:maxrhs Too many input arguments.
+cc.class	char [1 25] 'mex.CompilerConfiguration'
+cc.size	double [1 2] [1 1]
+cc.props	cell [1 11] {char [1 4] 'Name'; char [1 12] 'Manufacturer'; char [1 8] 'Language'; char [1 7] 'Version'; char [1 8] 'Location'; char [1 9] 'ShortName'; char [1 8] 'Priority'; char [1 7] 'Details'; char [1 10] 'LinkerName'; char [1 13] 'LinkerVersion'; char [1 6] 'MexOpt'}
+cc.Name	char [1 29] 'Microsoft Visual C++ 2022 (C)'
+cc.Manufacturer	char [1 9] 'Microsoft'
+cc.Language	char [1 1] 'C'
+cc.Version	char [1 4] '17.0'
+cc.Location	char [1 63] 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\'
+cc.ShortName	char [1 7] 'MSVC170'
+cc.Priority	char [1 1] 'A'
+cc.Details	mex.CompilerConfigurationDetails [1 1] <a href="matlab:helpPopup('mex.CompilerConfigurationDetails')" style="font-weight:bold">CompilerConfigurationDetails</a> with properties: | CompilerExecutable: 'cl' | CompilerFlags: '/Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD' | OptimizationFlags: '/O2 /Oy- /DNDEBUG' | DebugFlags: '/Z7' | LinkerExecutable: 'link' | LinkerFlags: '/nologo  ' | LinkerOptimizationFlags: '' | LinkerDebugFlags: '/debug /PDB:".mexw64.pdb"' | SetEnv: 'set COMPILER=cl↵                set COMPFLAGS=/c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE↵                set OPTIMFLAGS=/O2 /Oy- /DNDEBUG↵                set DEBUGFLAGS=/Z7↵                set LINKER=link↵                set LINKFLAGS=/nologo   /export:%ENTRYPOINT% /DLL /LIBPATH:"C:\Program Files\MATLAB\R2025b\extern\lib\win64\microsoft" libmx.lib libmex.lib libmat.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /EXPORT:mexFunction↵                set LINKDEBUGFLAGS=/debug /PDB:"%OUTDIR%%MEX_NAME%.mexw64.pdb"↵                set NAME_OUTPUT=/out:"%OUTDIR%%MEX_NAME%%MEX_EXT%"↵set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\VC\vcpackages;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools;C:\Program Files (x86)\Windows Kits\10\\Bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\\Bin\10.0.26100.0\x86;C:\Program Files (x86)\Windows Kits\10\\Bin\x64;C:\Program Files (x86)\Windows Kits\10\\Bin\x86;;%MATLAB_BIN%;%PATH%↵set INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\winrt;C:\Program Files\MATLAB\R2025b\extern\include;%INCLUDE%↵set LIB=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\lib\x64;C:\Program Files (x86)\Windows Kits\10\\Lib\10.0.26100.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\\lib\10.0.26100.0\um\x64;C:\Program Files\MATLAB\R2025b\lib\win64;%LIB%↵set LIBPATH=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\lib\x64;%LIBPATH%↵' | CommandLineShell: 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\VCVARSALL.BAT ' | CommandLineShellArg: 'amd64' |
+cc.LinkerName	char [1 4] 'link'
+cc.LinkerVersion	char [0 0] ''
+cc.MexOpt	char [1 70] 'C:\Users\Carpe\AppData\Roaming\MathWorks\MATLAB\R2025b\mex_C_win64.xml'
+cc.disp	OUT | c = | CompilerConfiguration with properties: | Name: 'Microsoft Visual C++ 2022 (C)' | Manufacturer: 'Microsoft' | Language: 'C' | Version: '17.0' | Location: 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\' | ShortName: 'MSVC170' | Priority: 'A' | Details: [1×1 mex.CompilerConfigurationDetails] | LinkerName: 'link' | LinkerVersion: '' | MexOpt: 'C:\Users\Carpe\AppData\Roaming\MathWorks\MATLAB\R2025b\mex_C_win64.xml' |
+cc.details.class	char [1 32] 'mex.CompilerConfigurationDetails'
+cc.details.CompilerExecutable	char [1 2] 'cl'
+cc.details.CompilerFlags	char [1 45] '/Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD'
+cc.details.OptimizationFlags	char [1 17] '/O2 /Oy- /DNDEBUG'
+cc.details.DebugFlags	char [1 3] '/Z7'
+cc.details.LinkerExecutable	char [1 4] 'link'
+cc.details.LinkerFlags	char [1 9] '/nologo  '
+cc.details.LinkerOptimizationFlags	char [0 0] ''
+cc.details.LinkerDebugFlags	char [1 25] '/debug /PDB:".mexw64.pdb"'
+cc.details.SetEnv	char [1 2532] 'set COMPILER=cl | set COMPFLAGS=/c /Zc:__cplusplus /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE | set OPTIMFLAGS=/O2 /Oy- /DNDEBUG | set DEBUGFLAGS=/Z7 | set LINKER=link | set LINKFLAGS=/nologo   /export:%ENTRYPOINT% /DLL /LIBPATH:"C:\Program Files\MATLAB\R2025b\extern\lib\win64\microsoft" libmx.lib libmex.lib libmat.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /EXPORT:mexFunction | set LINKDEBUGFLAGS=/debug /PDB:"%OUTDIR%%MEX_NAME%.mexw64.pdb" | set NAME_OUTPUT=/out:"%OUTDIR%%MEX_NAME%%MEX_EXT%" | set PATH=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\VC\vcpackages;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools;C:\Program Files (x86)\Windows Kits\10\\Bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\\Bin\10.0.26100.0\x86;C:\Program Files (x86)\Windows Kits\10\\Bin\x64;C:\Program Files (x86)\Windows Kits\10\\Bin\x86;;%MATLAB_BIN%;%PATH% | set INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\winrt;C:\Program Files\MATLAB\R2025b\extern\include;%INCLUDE% | set LIB=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\lib\x64;C:\Program Files (x86)\Windows Kits\10\\Lib\10.0.26100.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\\lib\10.0.26100.0\um\x64;C:\Program Files\MATLAB\R2025b\lib\win64;%LIB% | set LIBPATH=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\lib\x64;%LIBPATH% | '
+cc.details.CommandLineShell	char [1 96] 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\VCVARSALL.BAT '
+cc.details.CommandLineShellArg	char [1 5] 'amd64'
+cc.C.names	cell [1 1] {char [1 29] 'Microsoft Visual C++ 2022 (C)'}
+cc.C.installed.names	cell [1 1] {char [1 29] 'Microsoft Visual C++ 2022 (C)'}
+cc.C.supported.n	double [1 1] 17
+cc.all.names	cell [1 2] {char [1 25] 'Microsoft Visual C++ 2022'; char [1 29] 'Microsoft Visual C++ 2022 (C)'}
+cc.all.langs	cell [1 2] {char [1 3] 'C++'; char [1 1] 'C'}
+cc.any.names	cell [1 2] {char [1 25] 'Microsoft Visual C++ 2022'; char [1 29] 'Microsoft Visual C++ 2022 (C)'}
+cc.cpp.selected	cell [1 1] {char [1 25] 'Microsoft Visual C++ 2022'}
+cc.lower	cell [1 1] {char [1 29] 'Microsoft Visual C++ 2022 (C)'}
+cc.bad.lang	ERR MATLAB:mex:UnknownSwitch Unknown MEX argument 'Cobol'.
+cc.bad.list	ERR MATLAB:mex:UnknownSwitch Unknown MEX argument 'Nope'.
+cc.noarg.class	char [1 25] 'mex.CompilerConfiguration'
+msg.nocompiler.link	char [1 338] 'Supported compiler not detected. You can install the freely available MinGW-w64 C/C++ compiler; see <a href="matlab: helpview([docroot '/matlab/helptargets.map'],'install_mingw')">Install MinGW-w64 Compiler</a>. For more options, visit <a href="https://www.mathworks.com/support/compilers">https://www.mathworks.com/support/compilers</a>.'
+msg.nocompiler	char [1 272] 'Supported compiler not detected. You can install the freely available MinGW-w64 C/C++ compiler; visit https://www.mathworks.com/matlabcentral/fileexchange/52848-matlab-support-for-mingw-w64-c-c-compiler. For more options, visit https://www.mathworks.com/support/compilers.'

@@ -1,32 +1,31 @@
-RUN|pending I9|'libisloaded' is not recognized as a variable or a function.
-CHK|prim_jg_int8|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_uint8|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_int16|double:6,double:4,double:-2,double:-32768,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_uint16|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_int32|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_uint32|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_int64|double:6,double:4,double:-2,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_uint64|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_float|double:6,double:3.7000000476837158,double:-2,double:10000000000,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,double:NaN|exact
-CHK|prim_jg_double|double:6,double:3.7000000000000002,double:-2,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,double:NaN|exact
-CHK|prim_jg_char|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_schar|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_uchar|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_short|double:6,double:4,double:-2,double:-32768,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_ushort|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_int|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_uint|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_long|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_ulong|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_longlong|double:6,double:4,double:-2,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_ulonglong|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_size|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact
-CHK|prim_jg_bool|logical:0,logical:0,logical:0,logical:0,logical:0,logical:0,ERR:MATLAB:class:RequireLogical,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:nologicalnan|exact
+CHK|prim_jg_int8|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_uint8|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:0,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_int16|double:6,double:4,double:-2,double:-32768,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:-32768,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_uint16|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:0,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_int32|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_uint32|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:0,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_int64|double:6,double:4,double:-2,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:10000000001,double:6,double:2,ERR:,ERR:,ERR:,double:-9.2233720368547758e+18
+CHK|prim_jg_uint64|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_float|double:6,double:3.7000000476837158,double:-2,double:10000000000,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,double:NaN|exact|pending I9|double:6,double:3.7000000476837158,double:-2,double:10000000000,double:6,double:2,ERR:,ERR:,ERR:,double:NaN
+CHK|prim_jg_double|double:6,double:3.7000000000000002,double:-2,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,double:NaN|exact|pending I9|double:6,double:3.7000000000000002,double:-2,double:10000000001,double:6,double:2,ERR:,ERR:,ERR:,double:NaN
+CHK|prim_jg_char|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_schar|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:-128,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_uchar|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:0,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_short|double:6,double:4,double:-2,double:-32768,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:-32768,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_ushort|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:0,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_int|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_uint|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:0,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_long|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:-2147483648,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_ulong|double:6,double:4,double:1,double:0,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:0,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_longlong|double:6,double:4,double:-2,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:-2,double:10000000001,double:6,double:2,ERR:,ERR:,ERR:,double:-9.2233720368547758e+18
+CHK|prim_jg_ulonglong|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_size|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:MATLAB:class:RequireNumeric,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireNumber|exact|pending I9|double:6,double:4,double:1,double:10000000001,double:6,double:2,ERR:,ERR:,ERR:,double:1
+CHK|prim_jg_bool|logical:0,logical:0,logical:0,logical:0,logical:0,logical:0,ERR:MATLAB:class:RequireLogical,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:class:RequireScalar,ERR:MATLAB:nologicalnan|exact|pending I9|logical:0,logical:0,logical:1,logical:0,logical:0,logical:0,ERR:,ERR:,ERR:,logical:1
 CHK|int8_max_wraps|double:-128|exact
 CHK|uint64_max_in|double:0|exact
 CHK|int64_big_ret|9007199254740992|exact
 CHK|int64_big_ret_class|double|exact
-CHK|uint64_max_ret|-1|exact
+CHK|uint64_max_ret|-1|exact|pending I9|1.844674e+19
 CHK|mixed_args|double:15|exact
 CHK|mixed_args_classes|double:15|exact
 CHK|void_call|none|exact
@@ -37,10 +36,10 @@ CHK|too_many|MATLAB:calllib:NoMatchingSignatureFound|exact
 CHK|nosuch_function|MATLAB:calllib:MethodNotFound|exact
 CHK|nosuch_function_message|Method was not found.|exact
 CHK|notfound_function|MATLAB:calllib:MethodNotFound|exact
-CHK|struct_return_function|MATLAB:calllib:MethodNotFound|exact
+CHK|struct_return_function|MATLAB:calllib:MethodNotFound|div=ADR0181|diverges|none
 CHK|version|double:3|exact
 CHK|exported_variable_invisible|double:0|exact
-CHK|char_arg_message|Value must be numeric or logical.|exact
-CHK|vector_arg_message|Value must be a scalar.|exact
-CHK|nan_arg_message|Value must be a number.|exact
-CHK|bool_nan_message|NaN values cannot be converted to logicals.|exact
+CHK|char_arg_message|Value must be numeric or logical.|exact|pending I9|calllib expects a number, but got a string.
+CHK|vector_arg_message|Value must be a scalar.|exact|pending I9|calllib expects a number, but got a array.
+CHK|nan_arg_message|Value must be a number.|exact|pending I9|none
+CHK|bool_nan_message|NaN values cannot be converted to logicals.|exact|pending I9|none

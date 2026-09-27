@@ -35,6 +35,9 @@ public partial class OptionsWindow : Window
         ThemeCombo.ItemsSource = model.AvailableThemes;
         ThemeCombo.SelectedItem = model.DefaultTheme;
 
+        CompilerCombo.ItemsSource = model.Compilers;
+        CompilerCombo.SelectedItem = model.SelectedCompiler;
+
         PluginList.ItemsSource = model.Plugins;
         NoPluginsLabel.Visibility = model.Plugins.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -61,6 +64,7 @@ public partial class OptionsWindow : Window
         _model.DefaultTheme = ThemeCombo.SelectedItem as string ?? _model.DefaultTheme;
         _model.SelectedAppTheme = AppThemeCombo.SelectedItem as AppThemeDescriptor ?? _model.SelectedAppTheme;
         _model.LinkFigureThemeToAppTheme = LinkFigureThemeBox.IsChecked == true;
+        _model.SelectedCompiler = CompilerCombo.SelectedItem as JGraph.Scripting.LoadLibraryCompiler ?? _model.SelectedCompiler;
         _model.Apply();
 
         if (_model.PluginsChanged)

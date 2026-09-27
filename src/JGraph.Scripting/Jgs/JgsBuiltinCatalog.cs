@@ -2130,6 +2130,15 @@ public static class JgsBuiltinCatalog
         Add("dotnetenv", "The .NET runtime JGraph runs on, loaded once the script first reaches .NET; asking for that runtime is accepted and any other refused.", Opt("runtime"), Opt("Version"));
         Add("NET", "The namespace of the .NET interface: NET.isNETSupported, NET.addAssembly (by path, by name or by System.Reflection.AssemblyName), NET.createArray, NET.createGeneric, NET.GenericClass, NET.invokeGenericMethod, NET.setStaticProperty, NET.explicitCast, NET.convertArray, NET.disableAutoRelease and NET.enableAutoRelease.");
         Add("jgraph", "JGraph's own extensions: jgraph.net.compile(source, AssemblyName=, References=, Unloadable=, AllowUnsafe=, LanguageVersion=, Optimize=) compiles C# files or text into an assembly and makes its types visible, as NET.addAssembly does; recompiling replaces the earlier build. (jgraph.internal.* is test-only and unsupported.)");
+        // --- C shared libraries (interop plan, stage 8, ADR 0181) -----------------------------------
+        Add("loadlibrary", "Loads a C shared library into the native host from its header (a C compiler preprocesses it; the Options choose which) or from a prototype file (@protofile, no compiler); options addheader, includepath, alias, mfilename and thunkfilename; answers [notfound, warnings].", P("libname"), Opt("hfile"), Opt("options"));
+        Add("unloadlibrary", "Unloads a library loadlibrary loaded, by its name or alias.", P("libname"));
+        Add("libisloaded", "Whether a library is loaded under that name or alias.", P("libname"));
+        Add("libfunctions", "The functions a loaded library exports: printed in columns, or as a cell column when asked; '-full' gives their signatures in MATLAB's notation.", P("libname"), Opt("'-full'"));
+        Add("calllib", "Calls a function of a loaded library: [ret, p1, …] = calllib(lib, fn, args…). Numbers, logicals, C strings, enums, and a struct returned by value (a JGraph extension) cross the call; pointers and libstruct arrive with stage I9.", P("libname"), P("funcname"), Opt("args"));
+        Add("mexext", "The MEX file extension of this platform, 'mexw64'; mexext('all') lists every platform's.", Opt("'all'"));
+        Add("mex", "The namespace holding mex.getCompilerConfigurations(lang, list): the C compilers loadlibrary can preprocess headers with, as mex.CompilerConfiguration values. Building MEX files is out of scope.");
+
         Add("import", "Imports .NET names into the running function: 'import System.IO.*' or 'import System.Math.Max'; with no argument, the list of what is imported.", Opt("names"));
         Add("enumeration", "Prints the members of a .NET enumeration named by text or by a member; asked for an output, answers the member when there is only one.", P("className"));
         Add("meta", "The namespace holding meta.class.fromName: the metaclass of a class or a .NET type named by text, or an empty for neither.");

@@ -39,7 +39,7 @@ public sealed class OptionsService : IOptionsService
     public void ShowOptions()
     {
         string pluginDirectory = Path.Combine(AppContext.BaseDirectory, "plugins");
-        var model = new OptionsViewModel(_settings, _plugins.Themes, _appThemes, _languages, pluginDirectory);
+        var model = new OptionsViewModel(_settings, _plugins.Themes, _appThemes, _languages, pluginDirectory, LoadLibraryCompilers.Available());
         var window = new OptionsWindow(model)
         {
             Owner = System.Windows.Application.Current?.Windows

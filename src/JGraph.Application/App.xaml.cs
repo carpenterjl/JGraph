@@ -70,6 +70,10 @@ public partial class App : System.Windows.Application
         // every Save, and re-applying the theme already in force is a no-op.
         settingsService.Changed += (_, _) => themes.Apply(settingsService.Current.AppTheme);
 
+        // loadlibrary's C compiler (ADR 0181) is the Options choice, read again whenever it is saved.
+        LoadLibraryCompilers.Preferred = settingsService.Current.CCompiler;
+        settingsService.Changed += (_, _) => LoadLibraryCompilers.Preferred = settingsService.Current.CCompiler;
+
         if (options.Mode == StartupMode.Batch)
         {
             RunBatch(options);

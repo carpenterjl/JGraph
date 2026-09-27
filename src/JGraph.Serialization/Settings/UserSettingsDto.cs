@@ -46,4 +46,11 @@ public sealed class UserSettingsDto
 
     /// <summary>The reply-to email the user last typed into the bug-report dialog, or null.</summary>
     public string? BugReportReplyTo { get; set; }
+
+    /// <summary>
+    /// The C compiler <c>loadlibrary</c> preprocesses headers with, by the id discovery gives it
+    /// (<c>msvc:&lt;folder&gt;</c>, <c>mingw:&lt;folder&gt;</c>, <c>cl:&lt;file&gt;</c>, <c>gcc:&lt;file&gt;</c>),
+    /// or null for automatic: the MinGW variable, then MSVC, then <c>PATH</c> (ADR 0181).
+    /// </summary>
+    public string? CCompiler { get; set; }
 }

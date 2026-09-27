@@ -1,4 +1,4 @@
-RUN|pending I9|'libisloaded' is not recognized as a variable or a function.
+RUN|pending I9|calllib cannot yet pass or return 'doublePtr' (function jg_scale_double); pointers, libpointer and libstruct arrive with the next interop stage.
 CHK|void_fn_outputs_are_pointers|double:[2 4 6]|exact
 CHK|void_fn_two_outputs_refused|MATLAB:calllib:NoMatchingSignatureFound|exact
 CHK|col_keeps_shape|double:[2;4;6]|exact

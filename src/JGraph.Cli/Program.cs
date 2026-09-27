@@ -80,6 +80,9 @@ internal static class Program
         // the user's plugin choices and their JGS language options.
         UserSettingsDto settings = LoadUserSettings();
 
+        // The C compiler chosen in the application's Options, for loadlibrary's header route (ADR 0181).
+        LoadLibraryCompilers.Preferred = settings.CCompiler;
+
         // The theme and colormap plugins the application loads (minus any the user disabled), so a
         // batch-rendered figure matches what the same script draws interactively.
         PluginLoader.LoadDefault(
