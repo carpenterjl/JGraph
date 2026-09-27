@@ -9,3 +9,5 @@ CHK|handle_call|xy|exact
 CHK|feval_out_parameter|3 1 int32|exact
 CHK|addAssembly_same|true|exact
 CHK|import_list|0|exact
+CHK|array_brackets|12 0|exact
+CHK|GenericClass|NET.GenericClass|exact

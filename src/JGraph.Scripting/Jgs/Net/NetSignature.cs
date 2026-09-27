@@ -110,6 +110,17 @@ internal sealed class NetSignature
         Groups.GetOrAdd((type, name, instance), static key =>
             [.. All(key.Type, key.Instance).Where(s => s.Name == key.Name)]);
 
+    /// <summary>
+    /// The open generic methods named <paramref name="name"/> a call can reach on <paramref name="type"/>
+    /// (static ones, and instance ones when <paramref name="instance"/>), for <c>NET.invokeGenericMethod</c>.
+    /// </summary>
+    public static MethodInfo[] GenericDefinitions(Type type, string name, bool instance) =>
+        [.. AllMethods(type, Public | BindingFlags.Static | (instance ? BindingFlags.Instance : 0))
+            .Where(m => m.IsGenericMethodDefinition && m.Name == name)];
+
+    /// <summary>A closed generic method's signature, <see cref="GenericDefinitions"/>' made concrete.</summary>
+    public static NetSignature Of(MethodInfo closed) => new(closed, closed.Name);
+
     /// <summary>Every callable method of <paramref name="type"/>, static ones and (when <paramref name="instance"/>) instance ones.</summary>
     public static NetSignature[] All(Type type, bool instance) =>
         Everything.GetOrAdd((type, instance), static key => Build(key.Type, key.Instance));

@@ -10,10 +10,24 @@ internal static class NetEquality
 {
     private const int MaxDepth = 8;
 
+    private static bool IsText(JgsValue value) =>
+        (value.Type == JgsType.String && !value.IsCharMatrix) || (value.IsStringArray && value.ArrayLength == 1);
+
     public static bool DeepEquals(JgsValue left, JgsValue right, bool nanEqual) => Equal(left, right, nanEqual, 0);
 
     private static bool Equal(JgsValue left, JgsValue right, bool nanEqual, int depth)
     {
+        // An enum member equals its own name (R2025b: isequal(c, 'Green'), probe4; ADR 0177).
+        if (NetEnums.NameOf(left) is { } leftName && IsText(right))
+        {
+            return leftName == JgsBuiltins.TextOf(right);
+        }
+
+        if (NetEnums.NameOf(right) is { } rightName && IsText(left))
+        {
+            return rightName == JgsBuiltins.TextOf(left);
+        }
+
         if (left.AsExternalOrNull() is not { } a || right.AsExternalOrNull() is not { } b)
         {
             return left.Type != JgsType.External && right.Type != JgsType.External

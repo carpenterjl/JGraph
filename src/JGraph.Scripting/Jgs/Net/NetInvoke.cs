@@ -382,6 +382,47 @@ internal static class NetInvoke
         return Invoke(chosen, receiver, arguments, wanted, "MethodInvoke", line, col, session);
     }
 
+    /// <summary>
+    /// <c>NET.invokeGenericMethod</c>: the generic methods <paramref name="name"/> of a type (static) or an
+    /// object (either), closed over <paramref name="typeArguments"/>, the overload chosen as any call's is.
+    /// R2025b's refusals (probe4): no generic method of that name is <c>NET:NoGenericMethod</c>; one
+    /// whose arity, constraints or parameters do not fit is <c>NET:NoMatchingGenericMethod</c>.
+    /// </summary>
+    public static JgsValue[] CallGeneric(
+        Type type, string name, NetObject? receiver, Type[] typeArguments, IReadOnlyList<JgsValue> arguments, int wanted,
+        int line, int col, NetCatalog? session = null)
+    {
+        session?.SyncFolder();
+        MethodInfo[] definitions = NetSignature.GenericDefinitions(type, name, receiver is not null);
+        if (definitions.Length == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:NoGenericMethod", $"Could not find generic method '{name}'.");
+        }
+
+        var closed = new List<NetSignature>();
+        foreach (MethodInfo definition in definitions)
+        {
+            if (definition.GetGenericArguments().Length != typeArguments.Length)
+            {
+                continue;
+            }
+
+            try
+            {
+                closed.Add(NetSignature.Of(definition.MakeGenericMethod(typeArguments)));
+            }
+            catch (ArgumentException)
+            {
+                // the type arguments break this definition's constraints
+            }
+        }
+
+        NetSignature chosen = Choose([.. closed], arguments, wanted)
+            ?? throw new JgsRuntimeException(line, col, "MATLAB:NET:NoMatchingGenericMethod",
+                $"Could not find generic method '{name}' with matching signature.");
+        return Invoke(chosen, receiver, arguments, wanted, "MethodInvoke", line, col, session);
+    }
+
     /// <summary>R2025b's refusal when no overload fits (measured, net_members and net_conversions).</summary>
     private static JgsRuntimeException NoMatch(Type type, string name, bool throughObject, int line, int col) =>
         throughObject

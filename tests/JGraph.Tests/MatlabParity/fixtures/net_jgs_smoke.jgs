@@ -22,3 +22,9 @@ print("CHK|feval_out_parameter|" + string(q) + " " + string(r) + " " + class(r) 
 let x1 = feval("NET.addAssembly", "System.Xml");
 print("CHK|addAssembly_same|" + (x1 == feval("NET.addAssembly", "System.Xml")) + "|exact");
 print("CHK|import_list|" + numel(import()) + "|exact");
+# Stage 4 (ADR 0177): a .NET array takes JGS's brackets from 0, and writes into the array itself.
+let a = feval("NET.createArray", "System.Double", 3);
+a[0] = 5;
+a[2] = 7;
+print("CHK|array_brackets|" + (a[0] + a[2]) + " " + a[1] + "|exact");
+print("CHK|GenericClass|" + class(feval("NET.GenericClass", "System.Collections.Generic.List", "System.Double")) + "|exact");

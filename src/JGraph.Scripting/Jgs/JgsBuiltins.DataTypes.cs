@@ -120,6 +120,11 @@ internal static partial class JgsBuiltins
         {
             Arity("cellstr", args, 1, line, col);
             JgsValue input = args[0];
+            if (input.Type == JgsType.External)
+            {
+                return Net.NetBuiltinConversions.CellStr(input, line, col); // ADR 0177
+            }
+
 
             // A char matrix is its rows, one cell each, with the padding taken back off (M105) —
             // MATLAB deblanks here, which is exactly what makes cellstr the usual way back out of a

@@ -24,7 +24,7 @@ ix_chk('set_out_of_range', ix_id(@() setat(r, 10, 1)));
 ix_chk('double', double(r));
 ix_chk('plus_refused', ix_id(@() r + 1));
 ix_chk('sum_refused', ix_id(@() sum(r)));
-ix_chk('echo', ix_flat(evalc('r')));
+ix_chk('echo', ix_flat(evalc('r')), 'div=ADR0174');
 ix_chk('empty_isempty', isempty(JGTest.ArrayMaker.Empty()));
 ix_chk('empty_double', double(JGTest.ArrayMaker.Empty()));
 
@@ -91,6 +91,71 @@ ix_chk('convertArray_col_Rank', NET.convertArray([1; 2; 3]).Rank);
 ix_chk('convertArray_type', class(NET.convertArray([1 2 3], 'System.Int32')));
 ix_chk('convertArray_dims', NET.convertArray([1 2 3], 'System.Double', [1 3]).Rank);
 ix_chk('convertArray_char', class(NET.convertArray('abc')));
+
+% Stage 4's own probes (probe4, probe4b, probe4c): the edges of the rules above.
+jr = NET.createArray('System.Double[]', 2);
+jr(1) = NET.convertArray([1 2 3]);
+jr(2) = NET.convertArray([4 5 6]);
+ix_chk('jagged_rect_double', double(jr));
+ix_chk('jagged_rect_int32', int32(jr));
+ix_chk('jagged_null_double', double(NET.createArray('System.Double[]', 2)));
+ix_chk('index_two_on_1d_refused', ix_id(@() r(1, 1)));
+ix_chk('index_none_refused', ix_id(@() r()));
+ix_chk('index_frac_refused', ix_id(@() r(1.5)));
+ix_chk('index_logical_refused', ix_id(@() r(true)));
+ix_chk('index_char_refused', ix_id(@() r('a')));
+ix_chk('index_int32', r(int32(2)));
+ix_chk('index_out_of_range', ix_id(@() r(10)));
+ix_chk('grid_three_refused', ix_id(@() g(1, 1, 1)));
+ix_chk('grid_out_of_range', ix_id(@() g(3, 1)));
+ix_chk('set_char_refused', ix_id(@() setat(r, 1, 'x')));
+ix_chk('set_vector_refused', ix_id(@() setat(r, 1, [1 2])));
+ix_chk('set_empty_refused', ix_id(@() setat(r, 1, [])));
+setat(r, 2, int8(7));
+ix_chk('set_int8', r(2));
+setat2(g, 2, 1, 99);
+ix_chk('set_grid', g(2, 1));
+ix_chk('set_grid_linear_refused', ix_id(@() setat(g, 2, 99)));
+setat(w, 1, 'zz');
+ix_chk('set_words', w(1));
+ix_chk('set_words_number_refused', ix_id(@() setat(w, 1, 5)));
+ix_chk('brace_refused', ix_id(@() r{1}));
+ix_chk('cell_double_refused', ix_id(@() cell(r)));
+ix_chk('cell_ints_refused', ix_id(@() cell(JGTest.ArrayMaker.Ints())));
+ix_chk('cell_grid_refused', ix_id(@() cell(g)));
+ix_chk('cell_empty_objects', cell(NET.createArray('System.Object', 0)));
+ix_chk('string_double_refused', ix_id(@() string(r)));
+ix_chk('string_mixed_refused', ix_id(@() string(mx)));
+ix_chk('double_words_refused', ix_id(@() double(w)));
+ix_chk('int8', int8(r));
+ix_chk('single', single(r));
+ix_chk('logical', logical(JGTest.ArrayMaker.Ints()));
+ix_chk('double_bools', double(JGTest.ArrayMaker.Bools()));
+ix_chk('minus_refused', ix_id(@() r - 1));
+ix_chk('max_refused', ix_id(@() max(r)));
+ix_chk('mean_refused', ix_id(@() mean(r)));
+ix_chk('concat_refused', ix_id(@() [r r]));
+ix_chk('eq_self', r == r);
+ch = JGTest.ArrayMaker.Chars();
+ix_chk('chars_index', ch(2));
+ix_chk('chars_Get', ch.Get(int32(0)));
+ix_chk('empty_index_refused', ix_id(@() getat(JGTest.ArrayMaker.Empty(), 1)));
+ix_chk('createArray_dims_vector', class(NET.createArray('System.Double', [2 3])));
+ix_chk('createArray_GenericClass', class(NET.createArray(NET.GenericClass('System.Collections.Generic.List', 'System.Double'), 2)));
+ix_chk('createArray_zero', NET.createArray('System.Double', 0).Length);
+ix_chk('createArray_enum', class(NET.createArray('JGTest.Color', 2)));
+ix_chk('enum_array_double_refused', ix_id(@() double(NET.createArray('JGTest.Color', 2))));
+ix_chk('convertArray_cell_refused', ix_id(@() NET.convertArray({1, {2}})));
+ix_chk('convertArray_bad_type', ix_id(@() NET.convertArray([1 2], 'No.Such')));
+ix_chk('properties', strjoin(properties(r)', ','));
+
+function setat2(g, i, j, v)
+g(i, j) = v;
+end
+
+function v = getat(a, k)
+v = a(k);
+end
 
 function setat(r, k, v)
 r(k) = v;

@@ -43,7 +43,7 @@ internal static partial class JgsBuiltins
         "NET", "meta", "dotnetenv", "isjava",
 
         // ADR 0176: import reads and adds to the running scope's imports.
-        "import",
+        "import", "enumeration",
 
         // V6 (#28): isprop asks a user object's class, a built-in object or a graphics handle.
         "isprop",

@@ -59,6 +59,7 @@ internal static class NetConvert
         ["cell.str"] = ["StringArr", "ObjectArr", "Object"],
         ["cell.mixed"] = ["ObjectArr", "Object"],
         ["function"] = ["Object"],
+        ["dictionary"] = ["Object"],
     };
 
     /// <summary>The .NET element type each MATLAB numeric class converts to.</summary>
@@ -175,6 +176,12 @@ internal static class NetConvert
         if (value.Type == JgsType.Function)
         {
             return "function";
+        }
+
+        // A dictionary reaches Object and fails there, as a function handle does (net_generics).
+        if (IsDictionary(value))
+        {
+            return "dictionary";
         }
 
         if (value.Type == JgsType.Cell)
@@ -349,6 +356,8 @@ internal static class NetConvert
                 return ((NetObject)value.AsExternal).Target;
             case JgsType.Function:
                 throw ObjectConversion(value, line, col);
+            case JgsType.Struct when IsDictionary(value):
+                throw ObjectConversion(value, line, col);
             case JgsType.Cell:
                 return value.AsCell.Select(c => ToObject(c, line, col)).ToArray();
         }
@@ -393,6 +402,9 @@ internal static class NetConvert
     private static JgsRuntimeException ObjectConversion(JgsValue value, int line, int col) =>
         new(line, col, "MATLAB:NET:NetConversion:ObjectConversion",
             $"A value of class '{JgsBuiltins.ClassOf(value, JgsDialect.Matlab)}' cannot be converted to 'System.Object'.");
+
+    private static bool IsDictionary(JgsValue value) =>
+        value.Type == JgsType.Struct && value.ClassName == JgsBuiltins.DictionaryClassName;
 
     private static bool IsEmptyNumeric(JgsValue value) =>
         value.Type == JgsType.Array && !value.IsStringArray && !value.IsCharMatrix && value.ArrayLength == 0
@@ -608,37 +620,4 @@ internal static class NetConvert
     private static void WarnPrecision(string exact, NetCatalog? session) =>
         session?.Warn?.Invoke("JGraph:interop:int64Precision",
             $"The 64-bit integer {exact} is past 2^53 and is held to the nearest value a double represents.");
-
-    /// <summary>A .NET value's numbers, for <c>double</c> and the other numeric conversions: null when it has none.</summary>
-    public static JgsValue? NumbersOf(NetObject net, JgsNumericClass wanted)
-    {
-        object? target = net.Target;
-        if (target is Array array && array.Rank <= 2 && IsNumericElement(array.GetType().GetElementType()!))
-        {
-            int rows = array.Rank == 1 ? 1 : array.GetLength(0);
-            int cols = array.Rank == 1 ? array.Length : array.GetLength(1);
-            var flat = new double[array.Length];
-            for (int c = 0; c < cols; c++)
-            {
-                for (int r = 0; r < rows; r++)
-                {
-                    object? held = array.Rank == 1 ? array.GetValue(c) : array.GetValue(r, c);
-                    flat[r + (c * rows)] = System.Convert.ToDouble(held, System.Globalization.CultureInfo.InvariantCulture);
-                }
-            }
-
-            return JgsNumericClasses.Stamp(JgsMatrix.FromColumnMajor(flat, rows, cols), wanted);
-        }
-
-        if (target is not null && target.GetType().IsEnum)
-        {
-            return JgsNumericClasses.Stamp(JgsValue.Number(System.Convert.ToDouble(target, System.Globalization.CultureInfo.InvariantCulture)), wanted);
-        }
-
-        return null;
-    }
-
-    private static bool IsNumericElement(Type element) => Type.GetTypeCode(element) is
-        TypeCode.Boolean or TypeCode.Byte or TypeCode.SByte or TypeCode.Int16 or TypeCode.UInt16 or TypeCode.Int32
-        or TypeCode.UInt32 or TypeCode.Int64 or TypeCode.UInt64 or TypeCode.Single or TypeCode.Double;
 }

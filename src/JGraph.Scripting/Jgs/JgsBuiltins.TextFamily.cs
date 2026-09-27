@@ -236,6 +236,12 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static CompareSide ReadCompareSide(JgsValue value)
     {
+        // A .NET enum member compares as its name (R2025b: strcmp(c, 'Green') is true; ADR 0177).
+        if (Net.NetEnums.NameOf(value) is { } member)
+        {
+            return new([member], 1, 1);
+        }
+
         if (value.IsCharMatrix)
         {
             return new(["" + string.Join("", value.CharMatrixRows())], 1, 1);
@@ -798,6 +804,11 @@ internal static partial class JgsBuiltins
     {
         Arity("cellstr", args, 1, line, col);
         JgsValue input = args[0];
+        if (input.Type == JgsType.External)
+        {
+            return Net.NetBuiltinConversions.CellStr(input, line, col); // ADR 0177
+        }
+
 
         if (input.IsCharMatrix)
         {

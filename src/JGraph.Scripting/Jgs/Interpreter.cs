@@ -2076,6 +2076,21 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// Whether a case matches: a .NET value on either side matches as <c>==</c> answers — an enum member
+    /// its equal member, never its name (R2025b, probe4; ADR 0177) — and anything else as before.
+    /// </summary>
+    private static bool SwitchMatches(JgsValue subject, JgsValue candidate, Node at)
+    {
+        if (subject.Type != JgsType.External && candidate.Type != JgsType.External)
+        {
+            return JgsValue.AreEqual(subject, candidate);
+        }
+
+        JgsValue same = Net.NetOperators.Apply(TokenType.EqualEqual, subject, candidate, at.Line, at.Column);
+        return same.Type == JgsType.Bool && same.AsNumber != 0;
+    }
+
+    /// <summary>
     /// A MATLAB <c>switch</c>: the first arm whose value matches runs, arms never fall through, and
     /// <c>case {a, b}</c> matches any member of the cell.
     /// </summary>
@@ -2086,8 +2101,8 @@ internal sealed partial class Interpreter
         {
             JgsValue candidate = Evaluate(arm.Value, env);
             bool matched = candidate.Type == JgsType.Cell
-                ? System.Array.Exists(candidate.AsCell, alternative => JgsValue.AreEqual(subject, alternative))
-                : JgsValue.AreEqual(subject, candidate);
+                ? System.Array.Exists(candidate.AsCell, alternative => SwitchMatches(subject, alternative, statement))
+                : SwitchMatches(subject, candidate, statement);
 
             if (matched)
             {
@@ -5443,6 +5458,19 @@ internal sealed partial class Interpreter
     private JgsValue IndexWrite(
         Expr container, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
+        // arr(i) = v on a .NET array writes the element in the array every name for it sees (ADR 0177).
+        if (at is not BraceIndexExpr && container is VariableExpr named && LookUp(named.Name, env, out JgsValue bound)
+            && bound.AsExternalOrNull() is NetObject { Target: Array array } netArray)
+        {
+            if (op != TokenType.Assign)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column, "A .NET array element is written with '=' only.");
+            }
+
+            Net.NetArrays.Write(netArray, array, NetSubscripts(subscripts, at, env), Dialect.IndexBase, rhs, at.Line, at.Column);
+            return rhs;
+        }
+
         var holds = new ScopeHolds();
         try
         {
@@ -6473,6 +6501,10 @@ internal sealed partial class Interpreter
         {
             target = OneElementArray(target);
         }
+        else if (target.AsExternalOrNull() is NetObject { Target: Array })
+        {
+            return IndexInto(target, indexExpr.Indices, indexExpr, env); // a .NET array's element (ADR 0177)
+        }
         else if (target.Type is not (JgsType.Array or JgsType.String or JgsType.Image))
         {
             throw new JgsRuntimeException(indexExpr.Line, indexExpr.Column,
@@ -6680,6 +6712,12 @@ internal sealed partial class Interpreter
         // and m() is the object itself (ADR 0174).
         if (callee.Type == JgsType.External)
         {
+            // arr(i) on a .NET array: its element, 1-based, end refused (ADR 0177).
+            if (callee.AsExternal is NetObject { Target: Array array } netArray)
+            {
+                return Net.NetArrays.Read(netArray, array, NetSubscripts(call.Arguments, call, env), Dialect.IndexBase, NetTypes, call.Line, call.Column);
+            }
+
             if (call.Arguments.Count == 0)
             {
                 return callee;
@@ -6743,6 +6781,12 @@ internal sealed partial class Interpreter
 
     private JgsValue IndexInto(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
+        // a[i] on a .NET array in JGS: its element, from the dialect's first index (ADR 0177).
+        if (target.AsExternalOrNull() is NetObject { Target: Array array } netArray)
+        {
+            return Net.NetArrays.Read(netArray, array, NetSubscripts(subscripts, at, env), Dialect.IndexBase, NetTypes, at.Line, at.Column);
+        }
+
         // A selection out of a uint8 array is still uint8 (M47). The samples are already inside the
         // class, so stamping the wrapper the read produced costs nothing but keeps class(x(1)) right.
         if (target.NumericClass != JgsNumericClass.Double)
@@ -8106,6 +8150,13 @@ internal sealed partial class Interpreter
             return inside.IsStringArray && inside.ArrayLength == 1 ? inside.ElementAt(0) : inside;
         }
 
+        // x{i} on a .NET value is R2025b's refusal, in its words (ADR 0177).
+        if (target.Type == JgsType.External)
+        {
+            throw new JgsRuntimeException(brace.Line, brace.Column, "MATLAB:cellRefFromNonCell",
+                "Brace indexing is not supported for variables of this type.");
+        }
+
         if (target.Type != JgsType.Cell)
         {
             throw new JgsRuntimeException(brace.Line, brace.Column,
@@ -9135,7 +9186,7 @@ internal sealed partial class Interpreter
         {
             throw new JgsRuntimeException(brace.Line, brace.Column,
                 Dialect.IsMatlab && target.Type is JgsType.Struct or JgsType.Number or JgsType.Bool or JgsType.Complex
-                        or JgsType.String or JgsType.Array
+                        or JgsType.String or JgsType.Array or JgsType.External
                     ? BraceNotSupported
                     : $"Braces assign into a cell array, but '{variable?.Name ?? "this"}' is a {target.TypeName}.");
         }

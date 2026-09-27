@@ -2128,8 +2128,9 @@ public static class JgsBuiltinCatalog
         // --- .NET (interop plan, stage 1, ADR 0174) -------------------------------------------------
         Add("isjava", "Whether a value is a Java object: never, since JGraph hosts no Java.", P("x"));
         Add("dotnetenv", "The .NET runtime JGraph runs on, loaded once the script first reaches .NET; asking for that runtime is accepted and any other refused.", Opt("runtime"), Opt("Version"));
-        Add("NET", "The namespace of the .NET interface: NET.isNETSupported, NET.addAssembly (by path, by name or by System.Reflection.AssemblyName), NET.createArray, NET.createGeneric, NET.setStaticProperty, NET.explicitCast, NET.convertArray, NET.disableAutoRelease and NET.enableAutoRelease.");
+        Add("NET", "The namespace of the .NET interface: NET.isNETSupported, NET.addAssembly (by path, by name or by System.Reflection.AssemblyName), NET.createArray, NET.createGeneric, NET.GenericClass, NET.invokeGenericMethod, NET.setStaticProperty, NET.explicitCast, NET.convertArray, NET.disableAutoRelease and NET.enableAutoRelease.");
         Add("import", "Imports .NET names into the running function: 'import System.IO.*' or 'import System.Math.Max'; with no argument, the list of what is imported.", Opt("names"));
+        Add("enumeration", "Prints the members of a .NET enumeration named by text or by a member; asked for an output, answers the member when there is only one.", P("className"));
         Add("meta", "The namespace holding meta.class.fromName: the metaclass of a class or a .NET type named by text, or an empty for neither.");
         Add("throwAsCaller", "Raises an MException, reported against the caller.", P("exception"));
         Add("mustBePositive", "Errors unless every element is greater than zero.", P("value"));

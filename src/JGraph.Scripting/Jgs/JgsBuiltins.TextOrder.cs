@@ -614,6 +614,12 @@ internal static partial class JgsBuiltins
             return null;
         }
 
+        // A .NET value is in a set holding its equal or, for an enum member, its name (ADR 0177).
+        if (args.Count == 2 && args[0].Type == JgsType.External)
+        {
+            return [JgsValue.Bool(Net.NetEnums.IsMemberOf(args[0], args[1]))];
+        }
+
         JgsValue a = args[0];
         JgsValue b = args[1];
         bool rows = args.Count == 3 && IsTextScalar(args[2]) && TextOf(args[2]).Equals("rows", StringComparison.OrdinalIgnoreCase);

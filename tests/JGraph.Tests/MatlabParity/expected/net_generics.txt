@@ -1,14 +1,13 @@
-RUN|pending I4|This struct has no field 'GenericClass'.
 CHK|box_class|JGTest.Box<System*Double>|exact
 CHK|box_Value|double:2.5|exact
 CHK|box_TypeName|System.String:System.Double|exact
-CHK|box_echo|b = / <a href="matlab:helpPopup('JGTest.Box<System*Double>')" style="font-weight:bold">Box<System*Double></a> with properties: / Value: 2.5000 / TypeName: [1×1 System.String]|exact|pending I4|b = Box<System*Double> with properties: / Value: 2.5 / TypeName: [1x1 System.String]
+CHK|box_echo|b = / <a href="matlab:helpPopup('JGTest.Box<System*Double>')" style="font-weight:bold">Box<System*Double></a> with properties: / Value: 2.5000 / TypeName: [1×1 System.String]|div=ADR0174|diverges|b = Box<System*Double> with properties: / Value: 2.5 / TypeName: [1x1 System.String]
 CHK|box_null_Value|double:[] [0 0]|exact
 CHK|box_set_char|System.String:hi|exact
 CHK|pair_class|JGTest.Pair<System*Int32,System*String>|exact
 CHK|pair_First|int32:1|exact
 CHK|pair_Second|System.String:one|exact
-CHK|typearg_string_form_refused|MATLAB:NET:InvalidClassName|exact|pending I4|MATLAB:undefinedVarOrClass
+CHK|typearg_string_form_refused|MATLAB:NET:InvalidClassName|exact
 CHK|typearg_GenericClass|JGTest.Box<System*Collections*Generic*List<System*Double>>|exact
 CHK|GenericClass_class|NET.GenericClass|exact
 CHK|constraint_refused|MATLAB:NET:CLRException|exact
@@ -23,7 +22,7 @@ CHK|list_Capacity|int32:3|exact
 CHK|list_Item|double:6|exact
 CHK|list_ToArray|double:[5 6]|exact
 CHK|list_paren_refused|MATLAB:NET:UnsupportedIndexingCustom|exact
-CHK|list_echo|l = / <a href="matlab:helpPopup('System.Collections.Generic.List<System*Double>')" style="font-weight:bold">List<System*Double></a> with properties: / Capacity: 3 / Count: 2|exact
+CHK|list_echo|l = / <a href="matlab:helpPopup('System.Collections.Generic.List<System*Double>')" style="font-weight:bold">List<System*Double></a> with properties: / Capacity: 3 / Count: 2|div=ADR0174|diverges|l = List<System*Double> with properties: / Capacity: 3 / Count: 2
 CHK|list_Add_char_refused|MATLAB:class:UndefinedMethod|exact
 CHK|list_returned_class|System.Collections.Generic.List<System*Double>|exact
 CHK|list_to_IEnumerable|double:3|exact
@@ -41,3 +40,33 @@ CHK|dict_to_dictionary_values|double:[1 2]|exact
 CHK|dictionary_to_object_refused|MATLAB:NET:NetConversion:ObjectConversion|exact
 CHK|hashtable_Item|double:1|exact
 CHK|hashtable_Count|int32:1|exact
+CHK|GenericClass_bad|MATLAB:NET:CLRException:BuildGenericType|exact
+CHK|GenericClass_nonstring|MATLAB:class:RequireString|exact
+CHK|GenericClass_noargs|MATLAB:minrhs|exact
+CHK|GenericClass_properties|double:0|exact
+CHK|GenericClass_nested|System.Collections.Generic.Dictionary<System*String,System*Collections*Generic*List<System*Collections*Generic*List<System*Int32>>>|exact
+CHK|createGeneric_wrong_count|MATLAB:NET:CLRException:BuildGenericType|exact
+CHK|createGeneric_not_generic|MATLAB:NET:CLRException:BuildGenericType|exact
+CHK|createGeneric_typeargs_char|MATLAB:class:RequireClass|exact
+CHK|createGeneric_bad_typearg|MATLAB:NET:CLRException:BuildGenericType|exact
+CHK|createGeneric_Nullable|System.Nullable<System*Int32>|exact
+CHK|invokeGenericMethod_double|double:5|exact
+CHK|invokeGenericMethod_class|System.String|exact
+CHK|invokeGenericMethod_nosuch|MATLAB:NET:NoGenericMethod|exact
+CHK|invokeGenericMethod_nongeneric|MATLAB:NET:NoGenericMethod|exact
+CHK|invokeGenericMethod_badarg|MATLAB:NET:NoMatchingGenericMethod|exact
+CHK|invokeGenericMethod_wrong_count|MATLAB:NET:NoMatchingGenericMethod|exact
+CHK|invokeGenericMethod_GenericClass_refused|MATLAB:NET:InvalidGenericParameterType|exact
+CHK|invokeGenericMethod_noncell|MATLAB:NET:InvalidGenericParameterType|exact
+CHK|invokeGenericMethod_bad_class|MATLAB:NET:CLRException:TypeError|exact
+CHK|invokeGenericMethod_bad_typearg|MATLAB:NET:CLRException:InvokeGenericMethod|exact
+CHK|dict_lookup_char|double:2|exact
+CHK|dict_lookup_string|double:2|exact
+CHK|dict_keys|ERR:MATLAB:dictionary:CannotCombineKeys|div=ADR0177|diverges|string:one,two
+CHK|dict_is_a_copy|double:2|exact
+CHK|dict_int_keys|int32:3|exact
+CHK|dict_int_values|System.String:three|exact
+CHK|dict_empty|double:0|exact
+CHK|dict_sorted|dictionary|exact
+CHK|interfaceView_class|NET.view.JGTest.IGreeter|exact
+CHK|interfaceView_Greet|System.String:hi from the interface|exact

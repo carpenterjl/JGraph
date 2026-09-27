@@ -37,6 +37,11 @@ internal static partial class JgsBuiltins
             Define(name, (args, line, col) =>
             {
                 ArityRange(name, args, 2, 3, line, col);
+                if (args[0].Type == JgsType.External || args[1].Type == JgsType.External)
+                {
+                    return Net.NetEnums.Bitwise(name, args[0], args[1], args.Count == 3, op, line, col); // [Flags] enums (ADR 0177)
+                }
+
                 int bits = AssumedBits(name, args, 2, line, col);
                 return Zip(name, args[0], args[1],
                     (a, b) => Mask(op(BitOperand(name, a, bits, line, col), BitOperand(name, b, bits, line, col)), bits),

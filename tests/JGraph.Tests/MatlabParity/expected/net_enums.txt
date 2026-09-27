@@ -1,7 +1,6 @@
-RUN|pending I4|'enumeration' is not recognized as a variable or a function.
 CHK|class|JGTest.Color|exact
 CHK|show|JGTest.Color:Green|exact
-CHK|echo|c = / Color enumeration / Green|exact|pending I4|c = Color enumeration: Green
+CHK|echo|c = / Color enumeration / Green|div=ADR0174|diverges|c = Color enumeration: Green
 CHK|char|Green|exact
 CHK|string|string:Green|exact
 CHK|int32|int32:1|exact
@@ -12,8 +11,8 @@ CHK|eq_char|logical:0|exact
 CHK|isa_Enum|logical:1|exact
 CHK|isa_handle|logical:0|exact
 CHK|bad_member|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
-CHK|enumeration_no_output|none|exact|pending I4|MATLAB:UndefinedFunction
-CHK|enumeration_output_refused|ERR:MATLAB:class:concatenationScalar|exact|pending I4|ERR:MATLAB:UndefinedFunction
+CHK|enumeration_no_output|none|exact
+CHK|enumeration_output_refused|ERR:MATLAB:class:concatenationScalar|exact
 CHK|enumeration_disp|Enumeration members for class 'JGTest.Color': / Red / Green / Blue|exact
 CHK|GetNames|string:Red,Green,Blue|exact
 CHK|ToString|System.String:Green|exact
@@ -25,7 +24,7 @@ CHK|arg_double_refused|MATLAB:UndefinedFunction|exact
 CHK|return_enum|JGTest.Color:Blue|exact
 CHK|return_enum_class|JGTest.Color|exact
 CHK|flags_show|JGTest.Access:Read, Write|exact
-CHK|flags_echo|f = / Read, Write|exact
+CHK|flags_echo|f = / Read, Write|div=ADR0174|diverges|f = Access enumeration: Read, Write
 CHK|flags_char|Read, Write|exact
 CHK|flags_int32|int32:3|exact
 CHK|flags_bitor|JGTest.Access:Read, Execute|exact
@@ -39,6 +38,56 @@ CHK|long_int64|int64:4000000000|exact
 CHK|long_double|double:-5|exact
 CHK|ulong_uint64|9.223372e+18|exact
 CHK|ulong_value|9.223372e+18|exact
-CHK|ulong_echo|ans = / Huge enumeration / High|exact
+CHK|ulong_echo|ans = / Huge enumeration / High|div=ADR0174|diverges|ans = Huge enumeration: High
 CHK|bcl_DayOfWeek|System.DayOfWeek:Friday|exact
 CHK|bcl_DayOfWeek_int32|int32:5|exact
+CHK|switch_member|hit|exact
+CHK|switch_name|miss|exact
+CHK|strcmp|logical:1|exact
+CHK|strcmp_cell|logical:[true false]|exact
+CHK|strcmpi|logical:1|exact
+CHK|isequal_member|logical:1|exact
+CHK|isequal_name|logical:1|exact
+CHK|isequal_string|logical:1|exact
+CHK|isequal_two_types|logical:0|exact
+CHK|ismember_member|logical:1|exact
+CHK|ismember_other|logical:0|exact
+CHK|ismember_cellstr|logical:1|exact
+CHK|ismember_string|logical:1|exact
+CHK|lt|logical:1|exact
+CHK|ne|logical:1|exact
+CHK|eq_two_types|logical:1|exact
+CHK|lt_two_types|logical:1|exact
+CHK|gt_number|logical:0|exact
+CHK|eq_number|logical:0|exact
+CHK|eq_string|logical:0|exact
+CHK|plus_refused|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|int8_refused|MATLAB:invalidConversion|exact
+CHK|int64_refused|MATLAB:invalidConversion|exact
+CHK|single_refused|MATLAB:invalidConversion|exact
+CHK|logical_refused|MATLAB:invalidConversion|exact
+CHK|cellstr|cell:{char:Green}|exact
+CHK|long_int32_refused|MATLAB:invalidConversion|exact
+CHK|flags_double|double:7|exact
+CHK|bitor_nonflags_refused|MATLAB:Bitor:operandsNotNumeric|exact
+CHK|bitand_nonflags_refused|MATLAB:Bitand:operandsNotNumeric|exact
+CHK|bitxor_nonflags_refused|MATLAB:bitxor:operandsNotNumeric|exact
+CHK|bitor_byte_refused|MATLAB:Bitor:operandsNotNumeric|exact
+CHK|bitor_number_refused|MATLAB:UndefinedFunction|exact
+CHK|bitand_number_refused|MATLAB:UndefinedFunction|exact
+CHK|bitor_number_first_refused|MATLAB:Bitor:operandsNotNumeric|exact
+CHK|bitxor_number_first_refused|MATLAB:bitxor:operandsNotNumeric|exact
+CHK|bitor_two_types_refused|MATLAB:UndefinedFunction|exact
+CHK|bitor_type_refused|MATLAB:UndefinedFunction|exact
+CHK|bitor_same|JGTest.Access:Read|exact
+CHK|bitxor|JGTest.Access:Write, Execute|exact
+CHK|bitand_none|JGTest.Access:None|exact
+CHK|undefined_combination|JGTest.Access:Execute|exact
+CHK|flags_All_char|All|exact
+CHK|enumeration_member|Enumeration members for class 'JGTest.Color': / Red / Green / Blue|exact
+CHK|enumeration_flags|Enumeration members for class 'JGTest.Access': / None / Read / Write / Execute / All|exact
+CHK|enumeration_bcl|Enumeration members for class 'System.DayOfWeek': / Sunday / Monday / Tuesday / Wednesday / Thursday / Friday / Saturday|exact
+CHK|enumeration_command|Enumeration members for class 'JGTest.Color': / Red / Green / Blue|exact
+CHK|enumeration_not_enum|No enumeration members for class System.String.|exact
+CHK|enumeration_no_class|No class 'No.Such.Enum'.|exact
+CHK|enumeration_layout|\nEnumeration_members_for_class_'JGTest.Color':\n\n____Red\n____Green\n____Blue\n\n|exact

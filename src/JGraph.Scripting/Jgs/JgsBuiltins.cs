@@ -5937,7 +5937,8 @@ internal static partial class JgsBuiltins
             return sole;
         }
 
-        throw new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be a number, but got a {value.TypeName}.");
+        throw (index == 0 ? Net.NetBuiltinConversions.NotNumeric(name, value, line, col) : null)
+            ?? new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be a number, but got a {value.TypeName}.");
     }
 
     /// <summary>
@@ -6125,7 +6126,8 @@ internal static partial class JgsBuiltins
         Arity(name, args, 1, line, col);
         if (args[0].Type is not (JgsType.Array or JgsType.Number or JgsType.Bool))
         {
-            throw new JgsRuntimeException(line, col, $"{name} expects an array, but got a {args[0].TypeName}.");
+            throw Net.NetBuiltinConversions.NotNumeric(name, args[0], line, col)
+                ?? new JgsRuntimeException(line, col, $"{name} expects an array, but got a {args[0].TypeName}.");
         }
 
         return ToDoubles(name, args[0], line, col);

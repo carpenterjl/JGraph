@@ -17,14 +17,11 @@ internal static class NetNames
 
         if (type.IsGenericType && !type.IsGenericTypeDefinition)
         {
+            // A generic nested in a generic writes the '+' as '*' and drops each arity
+            // (System.Collections.Generic.Dictionary*KeyCollection<…>, measured in net_generics).
             Type definition = type.GetGenericTypeDefinition();
-            string name = definition.FullName ?? definition.Name;
-            int tick = name.IndexOf('`', StringComparison.Ordinal);
-            if (tick >= 0)
-            {
-                name = name[..tick];
-            }
-
+            string name = System.Text.RegularExpressions.Regex.Replace(definition.FullName ?? definition.Name, "`[0-9]+", "")
+                .Replace('+', '*');
             return name + "<" + string.Join(",", type.GetGenericArguments().Select(a => ClassName(a).Replace('.', '*'))) + ">";
         }
 

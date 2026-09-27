@@ -7,8 +7,9 @@ namespace JGraph.Scripting.Jgs.Net;
 /// the type overloads (<c>op_Equality</c>, <c>op_Addition</c>, …) is called with the other side
 /// converted as any argument is, which is how <c>System.String('Hello') == 'Hello'</c> answers true.
 /// Without an overload, <c>==</c> and <c>~=</c> compare identity for a reference type and
-/// <c>Equals</c> for a value type (R2025b: <c>m == m</c> true, two equal-valued objects false), and
-/// every other operator is refused.
+/// <c>Equals</c> for a value type (R2025b: <c>m == m</c> true, two equal-valued objects false), enum
+/// members compare by value (ADR 0177), and every other operator is refused: as not numeric when
+/// neither type declares an operator, as the missing overload when one does.
 /// </summary>
 internal static class NetOperators
 {
@@ -34,6 +35,12 @@ internal static class NetOperators
             return overload.Call(line, col);
         }
 
+        // Two enum members compare by value; a member and anything else are unequal (ADR 0177).
+        if (NetEnums.Compare(op, left, right) is { } compared)
+        {
+            return compared;
+        }
+
         if (op is TokenType.EqualEqual or TokenType.BangEqual)
         {
             bool same = left.AsExternalOrNull() is NetObject a && right.AsExternalOrNull() is NetObject b
@@ -46,10 +53,23 @@ internal static class NetOperators
             return JgsValue.Bool(op == TokenType.EqualEqual ? same : !same);
         }
 
+        // A type that declares no operator at all is no number to MATLAB's arithmetic: a .NET array, an
+        // enum member, a StringBuilder (R2025b, probe4); one that declares others lacks this one.
+        if (!DeclaresOperators(left) && !DeclaresOperators(right))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:math:mustBeNumericCharOrLogical",
+                "Invalid data type. Argument must be numeric, char, or logical.");
+        }
+
         string named = (left.Type == JgsType.External ? left : right).AsExternal.ClassName;
         throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
             $"Operator '{Symbol(op)}' is not supported for operands of type '{named}'.");
     }
+
+    /// <summary>Whether a .NET operand's type declares any operator overload (<c>op_*</c>).</summary>
+    private static bool DeclaresOperators(JgsValue side) =>
+        side.AsExternalOrNull() is NetObject net
+        && net.Type.GetMethods(BindingFlags.Public | BindingFlags.Static).Any(static m => m.IsSpecialName && m.Name.StartsWith("op_", StringComparison.Ordinal));
 
     /// <summary>The overload of <paramref name="name"/> the operands' types declare that both reach, or null.</summary>
     private static Bound? Overload(string name, JgsValue left, JgsValue right)

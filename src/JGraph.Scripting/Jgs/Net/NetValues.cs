@@ -114,6 +114,27 @@ internal sealed class NetMetaClass(Type type) : IJgsExternal
 }
 
 /// <summary>
+/// What <c>NET.GenericClass('System.Collections.Generic.List', 'System.Double')</c> answers: a closed
+/// generic type held to be a type argument of <c>NET.createGeneric</c> or an element type of
+/// <c>NET.createArray</c>, where a name in text cannot say it (stage 4, ADR 0177). R2025b shows it as
+/// "GenericClass with no properties." (probe4).
+/// </summary>
+internal sealed class NetGenericClass(Type type) : IJgsExternal
+{
+    public Type Type { get; } = type;
+
+    public string ClassName => "NET.GenericClass";
+
+    public bool IsHandle => true;
+
+    public bool IsA(string className) => className is "NET.GenericClass" or "handle";
+
+    public IJgsExternal CopyForBinding() => this;
+
+    public string Display() => "GenericClass with no properties.";
+}
+
+/// <summary>
 /// What <c>NET.addAssembly</c> answers: a handle whose properties list the assembly's public types
 /// by kind (measured in R2025b, net_assembly).
 /// </summary>

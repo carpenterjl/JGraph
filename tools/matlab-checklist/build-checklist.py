@@ -48,6 +48,8 @@ EXTRA_IMPLEMENTED = {
     "NET.setStaticProperty", "NET.convertArray", "NET.explicitCast",
     # Interop stage I3 (ADR 0176).
     "NET.disableAutoRelease", "NET.enableAutoRelease",
+    # Interop stage I4 (ADR 0177).
+    "NET.GenericClass", "NET.invokeGenericMethod", "NET.interfaceView",
 }
 
 

@@ -40,6 +40,21 @@ internal sealed partial class Interpreter
     internal void NoteNet() => AnyNet = true;
 
     /// <summary>
+    /// A .NET array's subscripts, evaluated in order: <c>:</c> as null, and an <c>end</c> anywhere in
+    /// one refused, since a .NET object has no <c>end</c> (ADR 0177).
+    /// </summary>
+    private JgsValue?[] NetSubscripts(IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    {
+        var values = new JgsValue?[subscripts.Count];
+        for (int i = 0; i < values.Length; i++)
+        {
+            values[i] = EvaluateIndexArgument(subscripts[i], () => throw NetArrays.EndRefused(at.Line, at.Column), i, env);
+        }
+
+        return values;
+    }
+
+    /// <summary>
     /// The member expression a statement is made of alone (<c>m.Bump;</c>), whose bare call asks for
     /// no output; every other bare mention asks for one, so <c>x = m.Bump</c> is refused for a
     /// <c>void</c> method as <c>x = m.Bump()</c> is (measured, probe2; ADR 0175).

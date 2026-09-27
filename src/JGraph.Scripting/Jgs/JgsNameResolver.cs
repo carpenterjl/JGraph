@@ -256,6 +256,14 @@ internal sealed class JgsNameResolver
             return lexical;
         }
 
+        // A built-in no file shadows (the index says so) is the answer without a disk probe: an
+        // object's class declined the call above, and the probe cost 60 µs a call with a .NET value
+        // among the arguments (ADR 0177).
+        if (hasBuiltin && !IsShadowed(name))
+        {
+            return new Resolution(ResolutionLayer.Builtin, builtin, null);
+        }
+
         Resolution file = FromFile(name);
         if (file.Found)
         {

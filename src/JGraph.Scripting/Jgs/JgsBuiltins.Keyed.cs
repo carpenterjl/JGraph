@@ -266,6 +266,14 @@ internal static partial class JgsBuiltins
             return map;
         }
 
+        // dictionary(d) of a .NET dictionary: a copy of its entries, each key and value converted as a
+        // member declared with the dictionary's types answers it (ADR 0177).
+        if (className == DictionaryClassName && args.Count == 1
+            && args[0].AsExternalOrNull() is NetObject { Target: System.Collections.IDictionary entries } net)
+        {
+            return FromNetDictionary(map, fields, entries, net.Type, sharesOnStore, line, col);
+        }
+
         // containers.Map('KeyType', 'char', 'ValueType', 'any') declares the types and stays empty.
         if (args.Count == 4 && IsTextScalar(args[0]) && TextOf(args[0]).Equals("KeyType", StringComparison.OrdinalIgnoreCase))
         {
@@ -313,6 +321,43 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
+    /// A MATLAB dictionary holding a copy of a .NET dictionary's entries: a <c>System.String</c> key
+    /// becomes a string (R2025b keeps it a <c>System.String</c>, which its own <c>keys</c> then cannot
+    /// combine — ADR 0177's divergence), any other key and every value what a member declared with the
+    /// dictionary's key and value types answers. An empty one stays unconfigured, as R2025b's does.
+    /// </summary>
+    private static JgsValue FromNetDictionary(
+        JgsValue map, Dictionary<string, JgsValue> fields, System.Collections.IDictionary entries, Type type,
+        bool sharesOnStore, int line, int col)
+    {
+        Type keyType = typeof(object);
+        Type valueType = typeof(object);
+        if (type.GetInterfaces().Append(type).FirstOrDefault(static i => i.IsGenericType
+                && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)) is { } generic)
+        {
+            keyType = generic.GetGenericArguments()[0];
+            valueType = generic.GetGenericArguments()[1];
+        }
+
+        JgsValue? first = null;
+        foreach (System.Collections.DictionaryEntry entry in entries)
+        {
+            JgsValue key = entry.Key is string text ? JgsValue.StringScalar(text) : Net.NetConvert.ToMatlab(entry.Key, keyType, line, col);
+            JgsValue value = Net.NetConvert.ToMatlab(entry.Value, valueType, line, col);
+            first ??= key;
+            Put(map, key, RetainedForEntry(value, sharesOnStore), line, col);
+        }
+
+        if (first is { } firstKey)
+        {
+            fields["KeyType"] = JgsValue.Str(IsTextScalar(firstKey) ? "char" : "double");
+            fields["ValueType"] = JgsValue.Str(ValueKind(ValueCell(map)[0]));
+        }
+
+        return map;
+    }
+
+    /// <summary>
     /// The value type a dictionary takes from its first value (V6.17): what <c>values</c> answers
     /// once every entry is removed still has this kind (measured: a 0-by-1 double).
     /// </summary>
@@ -343,9 +388,19 @@ internal static partial class JgsBuiltins
                 : JgsEmpty.Shaped(0, 1);
         }
 
-        return IsTextScalar(stored[0])
-            ? JgsValue.StringArray(System.Array.ConvertAll(stored, k => JgsValue.Str(TextOf(k))), stored.Length, 1)
-            : JgsMatrix.FromElements([.. stored], stored.Length, 1);
+        if (IsTextScalar(stored[0]))
+        {
+            return JgsValue.StringArray(System.Array.ConvertAll(stored, k => JgsValue.Str(TextOf(k))), stored.Length, 1);
+        }
+
+        // Keys of an integer class stay of it, as values do (a .NET Dictionary<Int32, …>'s: ADR 0177).
+        JgsValue column = JgsMatrix.FromElements([.. stored], stored.Length, 1);
+        if (stored[0].NumericClass != JgsNumericClass.Double)
+        {
+            column.SetNumericClass(stored[0].NumericClass);
+        }
+
+        return column;
     }
 
     /// <summary>
@@ -390,6 +445,12 @@ internal static partial class JgsBuiltins
         if (System.Array.TrueForAll(stored, static v => v.Type == JgsType.Cell && v.AsCell.Length == 1))
         {
             return ShapedCell(System.Array.ConvertAll(stored, static v => JgsValue.Share(v.AsCell[0])), count, 1);
+        }
+
+        // One .NET value is itself, as R2025b's values of a Dictionary<Int32, String> (ADR 0177).
+        if (count == 1 && stored[0].Type == JgsType.External)
+        {
+            return JgsValue.Share(stored[0]);
         }
 
         return ShapedCell(System.Array.ConvertAll(stored, JgsValue.Share), count, 1);

@@ -41,8 +41,16 @@ internal static partial class JgsBuiltins
             ["addAssembly"] = Builtin("NET.addAssembly", (args, line, col) => AddAssembly(interpreter, args, line, col)),
             ["createArray"] = Builtin("NET.createArray", (args, line, col) => CreateNetArray(interpreter, args, line, col)),
             ["createGeneric"] = Builtin("NET.createGeneric", (args, line, col) => CreateGeneric(interpreter, args, line, col)),
+            ["GenericClass"] = Builtin("NET.GenericClass", (args, line, col) => GenericClass(interpreter, args, line, col)),
+            ["invokeGenericMethod"] = JgsValue.Function(new BuiltinFunction("NET.invokeGenericMethod",
+                (args, line, col) => InvokeGenericMethod(interpreter, args, 1, line, col) is [var first, ..] ? first : JgsValue.Null)
+            {
+                KeepsStringArguments = true,
+                MultiOutput = (args, wanted, line, col) => InvokeGenericMethod(interpreter, args, wanted, line, col),
+            }),
             ["setStaticProperty"] = Builtin("NET.setStaticProperty", (args, line, col) => SetStaticProperty(interpreter, args, line, col)),
             ["explicitCast"] = Builtin("NET.explicitCast", (args, line, col) => ExplicitCast(interpreter, args, line, col)),
+            ["interfaceView"] = Builtin("NET.interfaceView", (args, line, col) => ExplicitCast(interpreter, args, line, col)),
             ["convertArray"] = Builtin("NET.convertArray", (args, line, col) => ConvertArray(interpreter, args, line, col)),
             ["disableAutoRelease"] = Builtin("NET.disableAutoRelease", (args, line, col) => AutoRelease("NET.disableAutoRelease", args, line, col)),
             ["enableAutoRelease"] = Builtin("NET.enableAutoRelease", (args, line, col) => AutoRelease("NET.enableAutoRelease", args, line, col)),
@@ -55,6 +63,16 @@ internal static partial class JgsBuiltins
         // (ADR 0176). The statement form 'import System.IO.*' is the parser's ImportStmt.
         env.Builtins.Register("import", Builtin("import", (args, line, col) =>
             args.Count == 0 ? interpreter.ImportList() : interpreter.ImportByCall(args, line, col), bare: true));
+
+        // enumeration(type) prints a .NET enum's members, and answers them only when there is one
+        // (ADR 0177). JGraph's classdef has no enumeration block, so a .NET type is all it can name.
+        env.Builtins.Register("enumeration", JgsValue.Function(new BuiltinFunction("enumeration", (args, line, col) =>
+            Enumeration(interpreter, args, 1, line, col)[0])
+        {
+            KeepsStringArguments = true,
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) => Enumeration(interpreter, args, wanted, line, col),
+        }));
 
         // isjava: JGraph has no Java, so nothing is a Java object — a .NET one included (R2025b: false).
         env.Builtins.Register("isjava", Builtin("isjava", (args, line, col) =>
@@ -166,42 +184,156 @@ internal static partial class JgsBuiltins
         }
     }
 
-    /// <summary><c>NET.createArray(type, dims…)</c>: a .NET array of the named element type, filled with defaults.</summary>
+    /// <summary>
+    /// <c>enumeration(x)</c>: asked for nothing, prints the members of the enum <paramref name="args"/>
+    /// names (by name or by a member), or why there are none; asked for outputs, answers them as
+    /// <see cref="NetEnums.Outputs"/> does (net_enums, probe4).
+    /// </summary>
+    private static JgsValue[] Enumeration(Interpreter interpreter, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        Arity("enumeration", args, 1, line, col);
+        Type? type = NetTypeNamed(args[0], interpreter);
+        if (type is null && args[0].Type is not (JgsType.String or JgsType.External) && !(args[0].IsStringArray && args[0].ArrayLength == 1))
+        {
+            throw new JgsRuntimeException(line, col, "enumeration expects a class name or an enumeration member.");
+        }
+
+        if (wanted == 0)
+        {
+            string text = type is null ? NetEnums.NoClass(TextOf(args[0])) : NetEnums.Listing(type);
+            interpreter.Host?.print(text[..^1]); // print ends the line itself
+            return [];
+        }
+
+        if (type is null)
+        {
+            throw new JgsRuntimeException(line, col, NetEnums.NoClass(TextOf(args[0])).TrimEnd('\n'));
+        }
+
+        return NetEnums.Outputs(type, wanted, line, col);
+    }
+
+    /// <summary>
+    /// <c>NET.createArray(type, dims…)</c>: a .NET array of the element type — named by text
+    /// (<c>'System.Double[]'</c> for a jagged one) or by a <c>NET.GenericClass</c> — with the lengths
+    /// given one by one or as a vector, filled with defaults. A type that does not resolve is R2025b's
+    /// <c>CLRException:TypeError</c> (net_arrays, probe4).
+    /// </summary>
     private static JgsValue CreateNetArray(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("NET.createArray", args, 2, int.MaxValue, line, col);
-        Type element = NetTypeArgument(interpreter, args[0], line, col);
-        var lengths = new int[args.Count - 1];
+        Type element = NetTypeOf(interpreter, args[0])
+            ?? throw NetInvoke.Raise(new TypeLoadException($"Could not resolve type '{TextOf(args[0])}'."), "TypeError", line, col);
+        var lengths = new List<int>();
         for (int i = 1; i < args.Count; i++)
         {
-            lengths[i - 1] = (int)args[i].AsNumber;
+            lengths.AddRange(ToDoubles("NET.createArray", args[i], line, col).Select(static n => (int)n));
         }
 
         interpreter.NoteNet();
-        return NetConvert.ToMatlab(Array.CreateInstance(element, lengths), typeof(Array), line, col);
+        return NetConvert.ToMatlab(Array.CreateInstance(element, lengths.ToArray()), typeof(Array), line, col);
     }
 
     /// <summary><c>NET.createGeneric(definition, {typeArgs}, ctorArgs…)</c>: construct a closed generic type.</summary>
     private static JgsValue CreateGeneric(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("NET.createGeneric", args, 2, int.MaxValue, line, col);
-        string name = TextOf(args[0]);
-        JgsValue[] typeArguments = args[1].Type == JgsType.Cell ? args[1].AsCell : [args[1]];
-        Type definition = interpreter.NetTypes.TypeNamed($"{name}`{typeArguments.Length}")
-            ?? throw new JgsRuntimeException(line, col,
-                $"The generic type '{name}' with {typeArguments.Length} type arguments was not found.");
-        Type closed;
+        if (args[1].Type != JgsType.Cell)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:RequireClass",
+                "Invalid input for argument 2 (paramTypes):\nValue must be 'cell vector'.");
+        }
+
+        Type closed = ClosedGeneric(interpreter, TextOf(args[0]), args[1].AsCell, line, col);
+        interpreter.NoteNet();
+        return NetInvoke.Construct(closed, args.Skip(2).ToArray(), line, col, interpreter.NetTypes);
+    }
+
+    /// <summary>
+    /// <c>NET.GenericClass(definition, typeArg…)</c>: a closed generic type as a value, for a type argument
+    /// that is itself generic (probe4: a definition that is not text, too few arguments and a type that
+    /// does not resolve are refused as R2025b refuses them).
+    /// </summary>
+    private static JgsValue GenericClass(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count == 0 || !(args[0].Type == JgsType.String || (args[0].IsStringArray && args[0].ArrayLength == 1)))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:RequireString",
+                "Invalid input for argument 1 (className):\nValue must be a character vector or a string scalar.");
+        }
+
+        if (args.Count < 2)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        return JgsValue.External(new NetGenericClass(ClosedGeneric(interpreter, TextOf(args[0]), [.. args.Skip(1)], line, col)));
+    }
+
+    /// <summary>
+    /// A generic definition closed over type arguments named by text or by <c>NET.GenericClass</c>. A
+    /// type argument or a definition of that arity that does not resolve is R2025b's
+    /// <c>CLRException:BuildGenericType</c>, a generic argument written in text its
+    /// <c>NET:InvalidClassName</c>; a broken constraint, the runtime's exception (net_generics, probe4, probe4c).
+    /// </summary>
+    private static Type ClosedGeneric(Interpreter interpreter, string name, IReadOnlyList<JgsValue> typeArguments, int line, int col)
+    {
+        var resolved = new Type[typeArguments.Count];
+        for (int i = 0; i < resolved.Length; i++)
+        {
+            resolved[i] = NetTypeOf(interpreter, typeArguments[i]) ?? throw UnresolvedTypeArgument(typeArguments[i], line, col);
+        }
+
+        string arity = $"{name}`{resolved.Length}";
+        Type definition = interpreter.NetTypes.TypeNamed(arity)
+            ?? throw NetInvoke.Raise(new TypeLoadException($"Could not resolve type '{arity}'."), "BuildGenericType", line, col);
         try
         {
-            closed = definition.MakeGenericType([.. typeArguments.Select(a => NetTypeArgument(interpreter, a, line, col))]);
+            return definition.MakeGenericType(resolved);
         }
         catch (Exception fault) when (fault is not JgsException)
         {
             throw NetInvoke.Raise(fault, "", line, col);
         }
+    }
+
+    /// <summary>A type argument no type answers to: a generic one in text is no class name to R2025b.</summary>
+    private static JgsRuntimeException UnresolvedTypeArgument(JgsValue named, int line, int col)
+    {
+        string text = TextOf(named);
+        return text.Contains('<', StringComparison.Ordinal)
+            ? new JgsRuntimeException(line, col, "MATLAB:NET:InvalidClassName", $"Could not find class '{text}'.")
+            : NetInvoke.Raise(new TypeLoadException($"Could not resolve type '{text}'."), "BuildGenericType", line, col);
+    }
+
+    /// <summary>
+    /// <c>NET.invokeGenericMethod(objOrType, name, {typeArgs}, args…)</c>: a generic method of an object
+    /// or of a type named by text, closed over type arguments named by text — R2025b refuses a
+    /// <c>NET.GenericClass</c> there (probe4) — and called.
+    /// </summary>
+    private static JgsValue[] InvokeGenericMethod(Interpreter interpreter, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        ArityRange("NET.invokeGenericMethod", args, 3, int.MaxValue, line, col);
+        NetObject? receiver = args[0].AsExternalOrNull() as NetObject;
+        Type type = receiver?.Type ?? NetTypeOf(interpreter, args[0])
+            ?? throw NetInvoke.Raise(new TypeLoadException($"Could not resolve type '{TextOf(args[0])}'."), "TypeError", line, col);
+
+        // The type arguments are a cell of names: anything else, a NET.GenericClass among them, is
+        // R2025b's InvalidGenericParameterType, and a name no type answers to the runtime's (probe4c).
+        if (args[2].Type != JgsType.Cell || args[2].AsCell.Any(static a => a.Type == JgsType.External))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:InvalidGenericParameterType", "Invalid generic parameter type argument.");
+        }
+
+        var typeArguments = new Type[args[2].AsCell.Length];
+        for (int i = 0; i < typeArguments.Length; i++)
+        {
+            typeArguments[i] = NetTypeOf(interpreter, args[2].AsCell[i])
+                ?? throw NetInvoke.Raise(new TypeLoadException($"Could not resolve type '{TextOf(args[2].AsCell[i])}'."), "InvokeGenericMethod", line, col);
+        }
 
         interpreter.NoteNet();
-        return NetInvoke.Construct(closed, args.Skip(2).ToArray(), line, col, interpreter.NetTypes);
+        return NetInvoke.CallGeneric(type, TextOf(args[1]), receiver, typeArguments, [.. args.Skip(3)], wanted, line, col, interpreter.NetTypes);
     }
 
     /// <summary>
@@ -263,8 +395,15 @@ internal static partial class JgsBuiltins
     {
         ArityRange("NET.convertArray", args, 1, 3, line, col);
         JgsValue value = args[0];
+        if (value.Type == JgsType.Cell)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:UnsupportedInputArrayTypeError", "Conversion from 'cell' array type is not supported.");
+        }
+
         Type element = args.Count > 1
-            ? NetTypeArgument(interpreter, args[1], line, col)
+            ? NetTypeOf(interpreter, args[1])
+                ?? throw new JgsRuntimeException(line, col, "MATLAB:NET:UnsupportedOutputArrayTypeError",
+                    $"Conversion to '{TextOf(args[1])}' array type is not supported.")
             : NetConvert.ElementTypeOf(value)
                 ?? throw new JgsRuntimeException(line, col, $"NET.convertArray: a value of class '{ClassOf(value, JgsDialect.Matlab)}' has no .NET element type.");
         int rank = args.Count > 2
@@ -301,12 +440,32 @@ internal static partial class JgsBuiltins
             "Invalid input for argument 1 (rhs1):\nValue must be 'handle scalar'.");
     }
 
-    /// <summary>A type named by text (<c>'System.Double'</c>) for an array or a generic argument.</summary>
-    private static Type NetTypeArgument(Interpreter interpreter, JgsValue value, int line, int col)
+    /// <summary>
+    /// A type named for an array element or a generic argument: a <c>NET.GenericClass</c>'s, or one
+    /// named by text, an array of one written with its brackets (<c>'System.Double[]'</c>,
+    /// <c>'System.Int32[,]'</c>). Null when the text names no type.
+    /// </summary>
+    private static Type? NetTypeOf(Interpreter interpreter, JgsValue value)
     {
+        if (value.AsExternalOrNull() is NetGenericClass generic)
+        {
+            return generic.Type;
+        }
+
+        if (!(value.Type == JgsType.String || (value.IsStringArray && value.ArrayLength == 1)))
+        {
+            return null;
+        }
+
         string name = TextOf(value);
-        return interpreter.NetTypes.TypeNamed(name)
-            ?? throw new JgsRuntimeException(line, col, "MATLAB:undefinedVarOrClass", $"Unable to resolve the name '{name}'.");
+        if (name.EndsWith(']') && name.LastIndexOf('[') is > 0 and int open && name[(open + 1)..^1].All(static c => c == ','))
+        {
+            int rank = name.Length - open - 1;
+            Type? element = NetTypeOf(interpreter, JgsValue.Str(name[..open]));
+            return element is null ? null : rank == 1 ? element.MakeArrayType() : element.MakeArrayType(rank);
+        }
+
+        return interpreter.NetTypes.TypeNamed(name);
     }
 
     /// <summary>

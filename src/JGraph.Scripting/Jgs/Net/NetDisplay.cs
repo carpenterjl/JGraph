@@ -65,7 +65,7 @@ internal static class NetDisplay
     {
         Type type = net.Type;
         object? target = net.Target;
-        foreach (BindingFlags scope in new[] { BindingFlags.Instance, BindingFlags.Static })
+        foreach (BindingFlags scope in new[] { BindingFlags.Instance, BindingFlags.Static | BindingFlags.DeclaredOnly })
         {
             foreach (PropertyInfo property in type.GetProperties(Public | scope))
             {
@@ -77,7 +77,7 @@ internal static class NetDisplay
             }
         }
 
-        foreach (BindingFlags scope in new[] { BindingFlags.Instance, BindingFlags.Static })
+        foreach (BindingFlags scope in new[] { BindingFlags.Instance, BindingFlags.Static | BindingFlags.DeclaredOnly })
         {
             foreach (FieldInfo field in type.GetFields(Public | scope))
             {

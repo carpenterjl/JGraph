@@ -231,6 +231,8 @@ internal static partial class JgsBuiltins
                 return NetAssemblyValue.PropertyNames;
             case NetMetaClass:
                 return ["Name"];
+            case NetGenericClass:
+                return []; // "GenericClass with no properties." (probe4)
         }
 
         if (value.ClassName == Net.NetInvoke.NetExceptionClass)
@@ -311,8 +313,11 @@ internal static partial class JgsBuiltins
             return net.NullableOf is null ? net.Type : null;
         }
 
-        return value.Type == JgsType.String && value.AsString.Contains('.', StringComparison.Ordinal)
-            && interpreter.TryNetName(value.AsString, interpreter.CurrentFrame, out Type? type, out string? member) && member is null
+        // A command's word arrives as a string scalar (methods JGTest.Access, enumeration JGTest.Color).
+        string? text = value.Type == JgsType.String ? value.AsString
+            : value.IsStringArray && value.ArrayLength == 1 ? TextOf(value) : null;
+        return text is not null && text.Contains('.', StringComparison.Ordinal)
+            && interpreter.TryNetName(text, interpreter.CurrentFrame, out Type? type, out string? member) && member is null
             ? type
             : null;
     }
