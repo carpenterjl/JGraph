@@ -2,7 +2,7 @@
 % and after the runtime loads, NET.addAssembly by path, by name and by full name, its refusals, the
 % NET.Assembly it returns, and the process state .NET and MATLAB share (folder, environment).
 
-ix_chk('env_before_runtime', char(dotnetenv().Runtime));
+ix_chk('env_before_runtime', char(dotnetenv().Runtime), 'div=ADR0176');
 ix_chk('env_before_status', char(dotnetenv().Status));
 ix_chk('env_bad_runtime', ix_id(@() dotnetenv("nope")));
 dotnetenv("core", Version="8");

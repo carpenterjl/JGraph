@@ -1084,6 +1084,9 @@ internal sealed partial class Interpreter
         using DialectContext code = EnterDialect(declaration.Dialect);
         try
         {
+            // The body's imports hold wherever they are written (ADR 0176), so the frame takes them
+            // before the first line runs.
+            EnterImports(declaration, local);
             Completion completion = ExecuteBlock(declaration.Body, local);
             return completion.Kind switch
             {
@@ -1494,6 +1497,10 @@ internal sealed partial class Interpreter
 
             case PersistentStmt persistentStmt:
                 ExecutePersistent(persistentStmt, env);
+                return Completion.Normal;
+
+            case ImportStmt importStmt:
+                ExecuteImport(importStmt);
                 return Completion.Normal;
 
             case ArgumentsStmt arguments:

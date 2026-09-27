@@ -48,6 +48,7 @@ internal static class NetInvoke
     public static JgsValue Member(
         NetObject target, string name, bool autoCall, int line, int col, NetCatalog? session = null, int bareWanted = 1)
     {
+        session?.SyncFolder();
         if (target.NullableOf is { } under)
         {
             return NullableMember(target, under, name, line, col, session);
@@ -89,6 +90,7 @@ internal static class NetInvoke
     public static JgsValue StaticMember(
         Type type, string name, bool autoCall, int line, int col, NetCatalog? session = null, int bareWanted = 1)
     {
+        session?.SyncFolder();
         if (ReadableProperty(type, name, BindingFlags.Static) is { } property)
         {
             return Get(property, null, line, col, session);
@@ -327,6 +329,7 @@ internal static class NetInvoke
     /// <summary>Constructs <paramref name="type"/> from MATLAB arguments.</summary>
     public static JgsValue Construct(Type type, IReadOnlyList<JgsValue> arguments, int line, int col, NetCatalog? session = null)
     {
+        session?.SyncFolder();
         string name = NetNames.ClassName(type);
         if (type.IsAbstract)
         {
@@ -373,6 +376,7 @@ internal static class NetInvoke
         Type type, string name, NetObject? receiver, IReadOnlyList<JgsValue> arguments, int wanted, int line, int col,
         NetCatalog? session = null)
     {
+        session?.SyncFolder();
         NetSignature chosen = Choose(NetSignature.Group(type, name, receiver is not null), arguments, wanted)
             ?? throw NoMatch(type, name, receiver is not null, line, col);
         return Invoke(chosen, receiver, arguments, wanted, "MethodInvoke", line, col, session);

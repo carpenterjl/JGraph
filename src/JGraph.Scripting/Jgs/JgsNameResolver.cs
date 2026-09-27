@@ -13,11 +13,17 @@ internal enum ResolutionLayer
     /// <summary>A variable — in the frame, an enclosing scope, or the global workspace.</summary>
     Bound,
 
+    /// <summary>A .NET type or static method an explicit <c>import</c> named (ADR 0176).</summary>
+    ExplicitImport,
+
     /// <summary>A nested function of the running function.</summary>
     Nested,
 
     /// <summary>A local function of the current file.</summary>
     Local,
+
+    /// <summary>A .NET type or static method a wildcard <c>import</c> reached (ADR 0176).</summary>
+    WildcardImport,
 
     /// <summary>A built-in that the dispatch table gives priority for the arguments' classes.</summary>
     BuiltinMethod,
@@ -65,7 +71,8 @@ internal readonly record struct Resolution(ResolutionLayer Layer, JgsValue Value
     /// Anything else is provisional until phase two of Invoke mode has seen the arguments.
     /// </summary>
     public bool IsLexical =>
-        Layer is ResolutionLayer.Bound or ResolutionLayer.Nested or ResolutionLayer.Local;
+        Layer is ResolutionLayer.Bound or ResolutionLayer.Nested or ResolutionLayer.Local
+            or ResolutionLayer.ExplicitImport or ResolutionLayer.WildcardImport;
 }
 
 /// <summary>
@@ -149,12 +156,23 @@ internal sealed class JgsNameResolver
 
         if (env.TryGetScope(name, out JgsEnvironment? scope, out JgsValue value) && !scope.IsBuiltinLayer)
         {
-            return Classify(name, scope, value);
+            Resolution bound = Classify(name, scope, value);
+            return bound.Layer != ResolutionLayer.Bound && Imported(name, env, explicitOnly: true) is { } over ? over : bound;
+        }
+
+        if (_interpreter.AnyImports && Imported(name, env, explicitOnly: true) is { } explicitly)
+        {
+            return explicitly;
         }
 
         if (_interpreter.TryGetFileFunction(name, out JgsValue held, out string file, out bool isMain))
         {
             return new Resolution(isMain ? ResolutionLayer.CurrentFolder : ResolutionLayer.Local, held, file);
+        }
+
+        if (_interpreter.AnyImports && Imported(name, env, explicitOnly: false) is { } reached)
+        {
+            return reached;
         }
 
         if (scope is not null)
@@ -263,6 +281,11 @@ internal sealed class JgsNameResolver
             return Lookup(name, env);
         }
 
+        if (_interpreter.AnyImports && Imported(name, env, explicitOnly: true) is { } explicitly)
+        {
+            return explicitly;
+        }
+
         if (env.TryGetFunction(name, out JgsEnvironment? scope, out JgsValue value) && !scope.IsBuiltinLayer)
         {
             return Classify(name, scope, value);
@@ -272,6 +295,11 @@ internal sealed class JgsNameResolver
         if (ownFile && !isMain)
         {
             return new Resolution(ResolutionLayer.Local, held, file);
+        }
+
+        if (_interpreter.AnyImports && Imported(name, env, explicitOnly: false) is { } reached)
+        {
+            return reached;
         }
 
         if (TryPrivate(name, out Resolution privately))
@@ -424,7 +452,8 @@ internal sealed class JgsNameResolver
 
     private IJgsCallable HandleTarget(NamedHandle handle, IReadOnlyList<JgsValue> arguments)
     {
-        if (!_interpreter.Dialect.IsMatlab || handle.Layer is ResolutionLayer.Nested or ResolutionLayer.Local)
+        if (!_interpreter.Dialect.IsMatlab || handle.Layer is ResolutionLayer.Nested or ResolutionLayer.Local
+            or ResolutionLayer.ExplicitImport or ResolutionLayer.WildcardImport)
         {
             return handle.Captured;
         }
@@ -454,6 +483,23 @@ internal sealed class JgsNameResolver
         return _interpreter.TryUserMethod(handle.Name, dominant, out IJgsCallable? dispatched)
             ? dispatched
             : handle.Captured;
+    }
+
+    /// <summary>
+    /// What an import gives <paramref name="name"/> as a callable (ADR 0176): the explicit imports
+    /// alone, or whatever the imports reach, an explicit one first. A namespace is not a callable, so
+    /// <c>max([1 3])</c> under <c>import JGTest.*</c> goes on to MATLAB's <c>max</c>.
+    /// </summary>
+    private Resolution? Imported(string name, JgsEnvironment env, bool explicitOnly)
+    {
+        if (_interpreter.ImportFor(name, env, head: false) is not { } imported
+            || (explicitOnly && !imported.Explicit)
+            || _interpreter.ImportedValue(imported) is not { } value)
+        {
+            return null;
+        }
+
+        return new Resolution(imported.Explicit ? ResolutionLayer.ExplicitImport : ResolutionLayer.WildcardImport, value, null);
     }
 
     /// <summary>The leftmost user object among the arguments — the one a user method dispatches on — or null.</summary>

@@ -199,6 +199,7 @@ internal static class AstEquals
             && !x.Cases.Where((c, i) => !ExpressionsEqual(c.Value, y.Cases[i].Value)).Any(),
         (TryStmt x, TryStmt y) => string.Equals(x.ErrorVariable, y.ErrorVariable, StringComparison.Ordinal),
         (GlobalStmt x, GlobalStmt y) => x.Names.SequenceEqual(y.Names, StringComparer.Ordinal),
+        (ImportStmt x, ImportStmt y) => x.Names.SequenceEqual(y.Names, StringComparer.Ordinal),
         _ => false,
     };
 }

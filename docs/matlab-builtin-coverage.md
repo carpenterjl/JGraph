@@ -34,7 +34,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**424 of 514 builtins implemented** (422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**427 of 514 builtins implemented** (424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,134 of
-2,024** as of interop stage I2 (ADR 0175), which added `NET.setStaticProperty` and `NET.convertArray`; 1,132 as of interop stage I1 (ADR 0174), which added `isjava`, `ismethod`, `meta.class.fromName` and the four `NET.*` names the stage's fixtures call (`NET.isNETSupported`, `NET.addAssembly`, `NET.createArray`, `NET.createGeneric`); 1,125 as of V10 (ADR 0171), which added `onCleanup`, the handle whose destructor runs its task when the last holder goes; 1,124 as of V6's property-accessors sub-stage (ADR 0167), which added `isprop`; 1,123 as of V6's table-forms sub-stage, which added `table2array`, `varfun`, `rowfun` and `istable`, beside `addvars`, which the list does not name; 1,119 as of V6's twelfth sub-stage, which added `events`, the list of a class's events, beside `notify`, `addlistener` and `listener`, which the list does not name; 1,118 as of V6's tenth sub-stage, which added `guidata` and `isvalid`, the two verbs the value-ownership probes found missing beside `axes(parent)`; 1,117 as of ADR 0150, which added `hist`, the legacy histogram a folder of user scripts still called; 1,116 as of M145, which added `builtin` — the forwarder that reaches a built-in past the file
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,137 of
+2,024** as of interop stage I3 (ADR 0176), which added `import`, `NET.disableAutoRelease` and
+`NET.enableAutoRelease`; 1,134 as of interop stage I2 (ADR 0175), which added `NET.setStaticProperty` and `NET.convertArray`; 1,132 as of interop stage I1 (ADR 0174), which added `isjava`, `ismethod`, `meta.class.fromName` and the four `NET.*` names the stage's fixtures call (`NET.isNETSupported`, `NET.addAssembly`, `NET.createArray`, `NET.createGeneric`); 1,125 as of V10 (ADR 0171), which added `onCleanup`, the handle whose destructor runs its task when the last holder goes; 1,124 as of V6's property-accessors sub-stage (ADR 0167), which added `isprop`; 1,123 as of V6's table-forms sub-stage, which added `table2array`, `varfun`, `rowfun` and `istable`, beside `addvars`, which the list does not name; 1,119 as of V6's twelfth sub-stage, which added `events`, the list of a class's events, beside `notify`, `addlistener` and `listener`, which the list does not name; 1,118 as of V6's tenth sub-stage, which added `guidata` and `isvalid`, the two verbs the value-ownership probes found missing beside `axes(parent)`; 1,117 as of ADR 0150, which added `hist`, the legacy histogram a folder of user scripts still called; 1,116 as of M145, which added `builtin` — the forwarder that reaches a built-in past the file
 shadowing it, the one name in this table the precedence work needed; 1,115 as of M135, which added `designfilt`, the `digitalFilter` value and the four one-line
 filters. None of the six lands here; the one name that moved the figure is `ss`, the state-space
 reading of a designed filter, which MATLAB keeps in a shared control folder rather than in the
@@ -1030,7 +1031,7 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 90
+## Not implemented — 87
 
 ### Handle graphics and app building — 7
 
@@ -1097,10 +1098,10 @@ support) rather than a builtin, which is why no builtin-coverage milestone had p
 why this file called them the most useful thing left. **M45 built them** (ADR 0048): `PatchPlot`,
 `Line3DPlot`, `Scatter3DPlot`, `QuiverPlot`, and a 3-D anchor on `TextAnnotation`.
 
-### .NET, Java, Python, C++, MEX, and COM interop — 27
+### .NET, Java, Python, C++, MEX, and COM interop — 24
 
 The rest of the `NET.*` family, the `clib*`, `java*` and `py*` families, plus `calllib`
-`libisloaded` `unloadlibrary` `mex` `mexhost` `actxGetRunningServer` `winqueryreg` `import` ~~`isjava`~~
+`libisloaded` `unloadlibrary` `mex` `mexhost` `actxGetRunningServer` `winqueryreg` ~~`import`~~ ~~`isjava`~~
 `jenv`.
 
 **The .NET and C shared-library interface is being built** (the interop plan, stages I1–I10, ADR
@@ -1109,8 +1110,9 @@ The rest of the `NET.*` family, the `clib*`, `java*` and `py*` families, plus `c
 and `isjava`, which answers false for everything because JGraph hosts no Java. Stage I2 moved
 two more: `NET.setStaticProperty`, the one road to a static write, and `NET.convertArray` in the
 forms its fixtures call (stage I4 completes it); it also added `NET.explicitCast`, which the list
-does not name. `import`,
-`calllib`, `libisloaded`, `unloadlibrary` and the rest of `NET.*` follow in their stages. Java,
+does not name. Stage I3 moved three: `import` for .NET names (the statement, the function form and
+the list), `NET.disableAutoRelease` and `NET.enableAutoRelease`. `calllib`, `libisloaded`,
+`unloadlibrary` and the rest of `NET.*` follow in their stages. Java,
 Python and COM, `clib*` and MEX are out of the plan's scope: JGraph does not host those runtimes
 from a script. (It runs Python and C# as *engines* — a whole script in that language — which is a
 different thing from calling into them mid-expression.)

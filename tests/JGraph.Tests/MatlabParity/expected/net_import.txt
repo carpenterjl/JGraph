@@ -1,4 +1,3 @@
-RUN|pending I3|Error: File: ix_imp_system.m Line: 3 Column: 16 / Expected an expression, but found end of line.
 CHK|system_list|cell:{char:System.*}|exact
 CHK|system_Math|double:2|exact
 CHK|system_String|char:System.String|exact

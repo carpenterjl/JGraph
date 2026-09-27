@@ -395,6 +395,12 @@ internal sealed class FnStmt(
     /// time a nested function's write asks where an unbound name belongs (V7, ADR 0168).
     /// </summary>
     internal HashSet<string>? MentionedNames;
+
+    /// <summary>
+    /// The <c>import</c> statements written in this body outside its nested functions, collected
+    /// the first time the function is called (ADR 0176); empty for nearly every function.
+    /// </summary>
+    internal ImportStmt[]? Imports;
 }
 
 /// <summary>
@@ -445,6 +451,17 @@ internal sealed class TryStmt(IReadOnlyList<Stmt> body, string? errorVariable, I
 
 /// <summary>A MATLAB <c>global a b</c> declaration: the named variables refer to the global scope.</summary>
 internal sealed class GlobalStmt(IReadOnlyList<string> names) : Stmt
+{
+    public IReadOnlyList<string> Names { get; } = names;
+}
+
+/// <summary>
+/// A MATLAB <c>import System.IO.* System.Math</c> statement (interop plan, stage 3, ADR 0176): each
+/// name is a type, a type's static method, or a namespace or type followed by <c>.*</c>. In a
+/// function it belongs to the whole body wherever it is written, so the function's frame collects
+/// it on entry; elsewhere it takes effect when it runs.
+/// </summary>
+internal sealed class ImportStmt(IReadOnlyList<string> names) : Stmt
 {
     public IReadOnlyList<string> Names { get; } = names;
 }

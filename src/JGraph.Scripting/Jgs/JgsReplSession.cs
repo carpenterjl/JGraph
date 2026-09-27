@@ -208,6 +208,7 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
         try
         {
             IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, _dialect);
+            _interpreter.AtPrompt = !asFile; // where 'clear import' is allowed (ADR 0176)
             _interpreter.Run(program);
             if (asFile)
             {

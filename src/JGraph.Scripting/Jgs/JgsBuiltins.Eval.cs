@@ -42,6 +42,9 @@ internal static partial class JgsBuiltins
         // ADR 0174: the .NET names need the session's type catalog and its warning state.
         "NET", "meta", "dotnetenv", "isjava",
 
+        // ADR 0176: import reads and adds to the running scope's imports.
+        "import",
+
         // V6 (#28): isprop asks a user object's class, a built-in object or a graphics handle.
         "isprop",
 
@@ -483,6 +486,27 @@ internal static partial class JgsBuiltins
     /// name written as a call would — Invoke mode, from the frame the call is made in — so a path
     /// file answers to it as readily as a builtin (M145; it used to be refused by name).
     /// </remarks>
+    private static IJgsCallable? PackagedFunction(Interpreter interpreter, string dotted)
+    {
+        string[] parts = dotted.Split('.');
+        if (interpreter.Resolver.BuiltinOf(parts[0]) is not { Type: JgsType.Struct } value)
+        {
+            return null;
+        }
+
+        for (int i = 1; i < parts.Length; i++)
+        {
+            if (value.Type != JgsType.Struct || !value.AsStruct.TryGetValue(parts[i], out JgsValue? next))
+            {
+                return null;
+            }
+
+            value = next;
+        }
+
+        return value.Type == JgsType.Function ? value.AsCallable : null;
+    }
+
     private static IJgsCallable FevalTarget(
         Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
     {
@@ -516,6 +540,13 @@ internal static partial class JgsBuiltins
             if (name.Contains('.', StringComparison.Ordinal) && interpreter.TryMakeHandle(name, interpreter.CurrentFrame, out JgsValue net))
             {
                 return net.AsCallable;
+            }
+
+            // feval('NET.addAssembly', …), feval('containers.Map'): a function of a built-in package,
+            // the only road JGS has to one (ADR 0176).
+            if (name.Contains('.', StringComparison.Ordinal) && PackagedFunction(interpreter, name) is { } packaged)
+            {
+                return packaged;
             }
 
             throw new JgsRuntimeException(line, col, $"feval: '{name}' is not a function.");
@@ -600,6 +631,12 @@ internal static partial class JgsBuiltins
                 if (kind != "class" && interpreter.IsNetNamespace(name, interpreter.CurrentFrame))
                 {
                     return JgsValue.Number(7);
+                }
+
+                // The classes of the NET package JGraph answers with (probe3, ADR 0176).
+                if (kind != "dir" && name is "NET.NetException" or "NET.Assembly")
+                {
+                    return JgsValue.Number(8);
                 }
             }
 
@@ -694,9 +731,25 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            // A .NET type: R2025b calls its constructor a built-in method (ADR 0174).
+            // A .NET type: R2025b calls its constructor a built-in method (ADR 0174), and a static
+            // method named in full, a NET.* function and an imported name are built-in methods too,
+            // named by their last piece (probe3, ADR 0176).
             if (where.Count == 0 && name.Contains('.', StringComparison.Ordinal)
-                && interpreter.TryNetName(name, interpreter.CurrentFrame, out _, out string? member) && member is null)
+                && interpreter.TryNetName(name, interpreter.CurrentFrame, out _, out string? member))
+            {
+                where.Add(member is null ? $"{name} is a built-in method" : $"{member} is a built-in method");
+            }
+
+            if (where.Count == 0 && name.StartsWith("NET.", StringComparison.Ordinal)
+                && interpreter.Globals.Builtins.TryGet("NET", out JgsValue netPackage) && netPackage.Type == JgsType.Struct
+                && netPackage.AsStruct.ContainsKey(name[4..]))
+            {
+                where.Add($"{name[4..]} is a built-in method");
+            }
+
+            if (where.Count == 0 && !name.Contains('.', StringComparison.Ordinal)
+                && interpreter.ImportFor(name, interpreter.CurrentFrame, head: false) is { } imported
+                && interpreter.ImportedValue(imported) is not null)
             {
                 where.Add($"{name} is a built-in method");
             }

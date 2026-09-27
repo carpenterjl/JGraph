@@ -35,6 +35,7 @@ internal static partial class JgsBuiltins
             ["isNETSupported"] = Builtin("NET.isNETSupported", (args, line, col) =>
             {
                 Arity("NET.isNETSupported", args, 0, line, col);
+                interpreter.NoteNet(); // R2025b loads the runtime to answer it (net_assembly)
                 return JgsValue.True;
             }, bare: true),
             ["addAssembly"] = Builtin("NET.addAssembly", (args, line, col) => AddAssembly(interpreter, args, line, col)),
@@ -43,10 +44,17 @@ internal static partial class JgsBuiltins
             ["setStaticProperty"] = Builtin("NET.setStaticProperty", (args, line, col) => SetStaticProperty(interpreter, args, line, col)),
             ["explicitCast"] = Builtin("NET.explicitCast", (args, line, col) => ExplicitCast(interpreter, args, line, col)),
             ["convertArray"] = Builtin("NET.convertArray", (args, line, col) => ConvertArray(interpreter, args, line, col)),
+            ["disableAutoRelease"] = Builtin("NET.disableAutoRelease", (args, line, col) => AutoRelease("NET.disableAutoRelease", args, line, col)),
+            ["enableAutoRelease"] = Builtin("NET.enableAutoRelease", (args, line, col) => AutoRelease("NET.enableAutoRelease", args, line, col)),
         };
         env.Builtins.RegisterConstant("NET", JgsValue.Struct(net));
 
-        env.Builtins.Register("dotnetenv", Builtin("dotnetenv", DotNetEnv, bare: true));
+        env.Builtins.Register("dotnetenv", Builtin("dotnetenv", (args, line, col) => DotNetEnv(interpreter, args, line, col), bare: true));
+
+        // import with no argument lists what the running code imported; with names it adds them
+        // (ADR 0176). The statement form 'import System.IO.*' is the parser's ImportStmt.
+        env.Builtins.Register("import", Builtin("import", (args, line, col) =>
+            args.Count == 0 ? interpreter.ImportList() : interpreter.ImportByCall(args, line, col), bare: true));
 
         // isjava: JGraph has no Java, so nothing is a Java object — a .NET one included (R2025b: false).
         env.Builtins.Register("isjava", Builtin("isjava", (args, line, col) =>
@@ -68,6 +76,9 @@ internal static partial class JgsBuiltins
             ["class"] = JgsValue.Struct(metaClass),
         }));
 
+        // A .NET call sees the folder cd moved to (ADR 0176).
+        interpreter.NetTypes.Folder = () => interpreter.Host?.OwnDirectory;
+
         // The int64 precision warning (ADR 0174) goes through this session's warning state.
         interpreter.NetTypes.Warn = (identifier, message) =>
         {
@@ -81,10 +92,30 @@ internal static partial class JgsBuiltins
     /// <summary><c>NET.addAssembly(path)</c>: load and make visible an assembly; answer its <c>NET.Assembly</c>.</summary>
     private static JgsValue AddAssembly(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
     {
+        // Any other count is no overload of R2025b's method, Unloadable=true included: its
+        // name-value pair is two more arguments (probe3).
         if (args.Count != 1)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
-                $"Undefined function 'NET.addAssembly' for {args.Count} input arguments.");
+                "No method 'NET.addAssembly' with matching signature found.");
+        }
+
+        Assembly assembly;
+
+        // A System.Reflection.AssemblyName: loaded by name, and a failure is the loader's exception
+        // (probe3), not the short-name refusal below.
+        if (args[0].AsExternalOrNull() is NetObject { Target: AssemblyName byName })
+        {
+            try
+            {
+                assembly = System.Runtime.Loader.AssemblyLoadContext.Default.LoadFromAssemblyName(byName);
+            }
+            catch (Exception fault) when (fault is not JgsException)
+            {
+                throw NetInvoke.Raise(fault, "AddAssembly", line, col);
+            }
+
+            return Added(assembly);
         }
 
         if (args[0].Type != JgsType.String && !(args[0].IsStringArray && args[0].ArrayLength == 1))
@@ -94,7 +125,10 @@ internal static partial class JgsBuiltins
         }
 
         string path = TextOf(args[0]);
-        Assembly assembly;
+        if (path.Length == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:AddAssembly:EmptyAssemblyName", "Assembly name cannot be empty.");
+        }
 
         // An argument that is not a rooted path is an assembly name, whatever it looks like: R2025b
         // reads 'JGraph.Interop.TestAssembly.dll' as a name and fails to find it (net_assembly).
@@ -110,9 +144,7 @@ internal static partial class JgsBuiltins
                     $"'{path}' could not be found by .NET Core probing logic.");
             }
 
-            interpreter.NetTypes.Add(assembly);
-            interpreter.NoteNet();
-            return JgsValue.External(new NetAssemblyValue(assembly));
+            return Added(assembly);
         }
 
         try
@@ -124,8 +156,14 @@ internal static partial class JgsBuiltins
             throw NetInvoke.Raise(fault, "AddAssembly", line, col);
         }
 
-        interpreter.NoteNet();
-        return JgsValue.External(new NetAssemblyValue(assembly));
+        return Added(assembly);
+
+        JgsValue Added(Assembly loaded)
+        {
+            interpreter.NetTypes.Add(loaded);
+            interpreter.NoteNet();
+            return JgsValue.External(interpreter.NetTypes.HandleOf(loaded));
+        }
     }
 
     /// <summary><c>NET.createArray(type, dims…)</c>: a .NET array of the named element type, filled with defaults.</summary>
@@ -236,6 +274,33 @@ internal static partial class JgsBuiltins
         return NetConvert.ToMatlab(NetConvert.ConvertArray(value, element, rank, line, col), typeof(Array), line, col);
     }
 
+    /// <summary>
+    /// <c>NET.disableAutoRelease(obj)</c> and <c>NET.enableAutoRelease(obj)</c>: lock and unlock a COM
+    /// object's runtime-callable wrapper. JGraph holds every .NET object it hands out until the last
+    /// holder goes, so for a COM object there is nothing to change; any other object is R2025b's
+    /// <c>MATLAB:badargs</c>, and a value that is no handle its <c>RequireClass</c> (probe3).
+    /// </summary>
+    private static JgsValue AutoRelease(string name, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count != 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction", $"No method '{name}' with matching signature found.");
+        }
+
+        if (args[0].AsExternalOrNull() is NetObject { Target: { } held } && Marshal.IsComObject(held))
+        {
+            return JgsValue.Null;
+        }
+
+        if (args[0].Type is JgsType.External or JgsType.Object)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:badargs", "Mismatched arguments.");
+        }
+
+        throw new JgsRuntimeException(line, col, "MATLAB:class:RequireClass",
+            "Invalid input for argument 1 (rhs1):\nValue must be 'handle scalar'.");
+    }
+
     /// <summary>A type named by text (<c>'System.Double'</c>) for an array or a generic argument.</summary>
     private static Type NetTypeArgument(Interpreter interpreter, JgsValue value, int line, int col)
     {
@@ -248,7 +313,14 @@ internal static partial class JgsBuiltins
     /// <c>dotnetenv</c>: the runtime JGraph runs on, as a <c>NETEnvironment</c>-shaped value;
     /// <c>dotnetenv("core", Version=v)</c> accepts the running runtime and refuses any other.
     /// </summary>
-    private static JgsValue DotNetEnv(IReadOnlyList<JgsValue> args, int line, int col)
+    /// <remarks>
+    /// The status is R2025b's: <c>notloaded</c> until the session first reaches .NET (a .NET name, an
+    /// added assembly, <c>NET.isNETSupported</c>), <c>loaded</c> after, and the version and location are
+    /// empty until then (net_assembly, probe3). A request for another runtime is R2025b's
+    /// <c>MATLAB:netenv:NETLoaded</c> once loaded; before, R2025b would switch and JGraph cannot, so it
+    /// says why under its own identifier (ADR 0176).
+    /// </remarks>
+    private static JgsValue DotNetEnv(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
     {
         if (args.Count > 0)
         {
@@ -273,21 +345,28 @@ internal static partial class JgsBuiltins
                 || version == running.Major.ToString(System.Globalization.CultureInfo.InvariantCulture)
                 || version == $"{running.Major}.{running.Minor}"
                 || version == running.ToString());
-            if (!same)
+            if (!same && interpreter.AnyNet)
             {
                 throw new JgsRuntimeException(line, col, "MATLAB:netenv:NETLoaded",
                     ".NET is loaded. To change the environment, restart MATLAB then call dotnetenv.");
             }
 
+            if (!same)
+            {
+                throw new JgsRuntimeException(line, col, "JGraph:netenv:UnsupportedRuntime",
+                    $"JGraph runs on .NET {running} and cannot load another runtime.");
+            }
+
             return JgsValue.Null;
         }
 
+        bool loaded = interpreter.AnyNet;
         JgsValue env = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
-            ["Version"] = JgsValue.StringScalar(Environment.Version.ToString()),
-            ["RuntimeLocation"] = JgsValue.StringScalar(RuntimeEnvironment.GetRuntimeDirectory().TrimEnd('\\', '/')),
+            ["Version"] = JgsValue.StringScalar(loaded ? Environment.Version.ToString() : ""),
+            ["RuntimeLocation"] = JgsValue.StringScalar(loaded ? RuntimeEnvironment.GetRuntimeDirectory().TrimEnd('\\', '/') : ""),
             ["Runtime"] = JgsValue.StringScalar("core"),
-            ["Status"] = JgsValue.StringScalar("loaded"),
+            ["Status"] = JgsValue.StringScalar(loaded ? "loaded" : "notloaded"),
         });
         env.SetClassName("NETEnvironment");
         return env;

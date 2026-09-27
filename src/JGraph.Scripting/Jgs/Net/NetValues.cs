@@ -138,7 +138,10 @@ internal sealed class NetAssemblyValue(Assembly assembly) : IJgsExternal
     /// <summary>One property's value: the assembly as a .NET object, or a column of type names.</summary>
     public JgsValue Property(string name)
     {
-        Type[] types = Assembly.GetExportedTypes().Where(static t => !t.IsNested).ToArray();
+        // The top-level types in the assembly's order, then the nested ones: R2025b lists
+        // JGTest.Outer+Inner last among the classes (probe3, ADR 0176).
+        Type[] exported = Assembly.GetExportedTypes();
+        Type[] types = [.. exported.Where(static t => !t.IsNested), .. exported.Where(static t => t.IsNested)];
         IEnumerable<Type> picked = name switch
         {
             "AssemblyHandle" => [],

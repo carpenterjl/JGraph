@@ -476,7 +476,7 @@ internal sealed partial class LoopCompiler
     {
         switch (node)
         {
-            case GlobalStmt or PersistentStmt or FnStmt or ClassdefStmt or ArgumentsStmt:
+            case GlobalStmt or PersistentStmt or FnStmt or ClassdefStmt or ArgumentsStmt or ImportStmt:
                 return true;
             case CallExpr { Callee: VariableExpr callee } when ForbiddenInWalk.Contains(callee.Name):
                 return true;

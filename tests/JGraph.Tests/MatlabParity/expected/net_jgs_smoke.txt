@@ -7,3 +7,5 @@ CHK|isobject|true|exact
 CHK|numel|1|exact
 CHK|handle_call|xy|exact
 CHK|feval_out_parameter|3 1 int32|exact
+CHK|addAssembly_same|true|exact
+CHK|import_list|0|exact

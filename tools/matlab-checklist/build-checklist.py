@@ -46,6 +46,8 @@ EXTRA_IMPLEMENTED = {
     "NET.isNETSupported", "NET.addAssembly", "NET.createArray", "NET.createGeneric", "meta.class.fromName",
     # Interop stage I2 (ADR 0175).
     "NET.setStaticProperty", "NET.convertArray", "NET.explicitCast",
+    # Interop stage I3 (ADR 0176).
+    "NET.disableAutoRelease", "NET.enableAutoRelease",
 }
 
 

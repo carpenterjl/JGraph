@@ -31,7 +31,57 @@ internal sealed class NetCatalog
     private static readonly AssemblyLoadContext Context = new("JGraph.NET", isCollectible: false);
 
     private readonly List<Assembly> _added = [];
+    private readonly Dictionary<Assembly, NetAssemblyValue> _handles = [];
     private Index? _session;
+
+    /// <summary>
+    /// The one <c>NET.Assembly</c> this session answers for <paramref name="assembly"/>: adding an
+    /// assembly again, by path or by name, answers the handle the first add made (R2025b:
+    /// <c>NET.addAssembly(p) == a</c> is true; net_assembly, ADR 0176).
+    /// </summary>
+    public NetAssemblyValue HandleOf(Assembly assembly)
+    {
+        if (!_handles.TryGetValue(assembly, out NetAssemblyValue? handle))
+        {
+            handle = new NetAssemblyValue(assembly);
+            _handles[assembly] = handle;
+        }
+
+        return handle;
+    }
+
+    /// <summary>The folder the process was last moved to by any session, so an unmoved call costs a compare.</summary>
+    private static string? _processFolder;
+
+    /// <summary>
+    /// The session's own working folder — where <c>cd</c> went, the script's folder, the configured
+    /// one — or null when it has none and <c>pwd</c> is the process's folder already.
+    /// </summary>
+    public Func<string?>? Folder { get; set; }
+
+    /// <summary>
+    /// Moves the process's working folder to the session's before a .NET member runs: R2025b's
+    /// <c>cd</c> is the process's, so <c>System.Environment.CurrentDirectory</c> and a relative path
+    /// given to .NET follow it (net_assembly <c>cwd_follows_cd</c>, ADR 0176). The folder is left
+    /// there, as MATLAB leaves it; a folder that cannot be entered leaves the process where it was.
+    /// </summary>
+    public void SyncFolder()
+    {
+        if (Folder?.Invoke() is not { } folder || string.Equals(folder, _processFolder, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        try
+        {
+            Environment.CurrentDirectory = folder;
+            _processFolder = folder;
+        }
+        catch (Exception fault) when (fault is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            // The session's folder is gone or unreachable; .NET keeps the process's.
+        }
+    }
 
     /// <summary>Where this session's .NET warnings go: its <c>warning</c> state and its console.</summary>
     public Action<string, string>? Warn { get; set; }

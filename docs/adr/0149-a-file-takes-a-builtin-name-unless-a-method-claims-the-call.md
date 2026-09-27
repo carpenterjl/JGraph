@@ -267,7 +267,9 @@ added to the catalogue; the count across every callable kind is 1,116 of 2,024.
   workspace root are searched after the working directory, as ADR 0062 chose; a `max.m` beside a
   script shadows here without a `cd`.
 - **Imports, packages, `@Class` folders and old-style class objects are not implemented**;
-  `import` is refused by name. File types other than `.m` are not read: a folder holding `x.m`
+  `import` is refused by name. (~~Imports~~ — **lifted for .NET names; see
+  [0176](0176-dotnet-names-are-imported-and-assemblies-added-once.md)**, which put the two import
+  layers into the resolver; a package import still reaches nothing.) File types other than `.m` are not read: a folder holding `x.m`
   and `x.mlx` answers `x.m` where MATLAB answers the `.mlx`.
 - **`which` prints no annotation.** MATLAB's `% Shadowed`, `% Private to cur` and `(loc) % Local
   function of main` suffixes and its `built-in (path)` phrasing are not reproduced; `exist(name,

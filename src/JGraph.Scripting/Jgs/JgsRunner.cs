@@ -417,6 +417,13 @@ internal static class JgsRunner
                 // 'clear global' / 'clear global a b' takes the globals out of the global workspace
                 // (V3b, #158); a frame that declared one keeps a cleared name, which reads as
                 // "Reference to a cleared variable" and is created afresh by a write.
+                // 'clear import' forgets the prompt's imports, and is refused anywhere else (ADR 0176).
+                if (builtin == "clear" && names.Count == 1 && names[0] == "import")
+                {
+                    interpreter.ClearImports(line, column);
+                    return JgsValue.Null;
+                }
+
                 if (builtin == "clear" && names.Count > 0 && names[0] == "global")
                 {
                     interpreter.ClearGlobals(names.GetRange(1, names.Count - 1));

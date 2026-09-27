@@ -183,6 +183,12 @@ public sealed class JGraphScriptGlobals
     internal string CurrentDirectory =>
         _currentDirectory ?? _runScriptDirectory ?? _context.WorkingDirectory ?? Directory.GetCurrentDirectory();
 
+    /// <summary>
+    /// The working directory when the session has one of its own, or null when <c>pwd</c> is the
+    /// process's — which is what a .NET call moves the process to first (ADR 0176).
+    /// </summary>
+    internal string? OwnDirectory => _currentDirectory ?? _runScriptDirectory ?? _context.WorkingDirectory;
+
     /// <summary>Moves to <paramref name="path"/>, which must already exist.</summary>
     internal void ChangeDirectory(string path)
     {
@@ -192,7 +198,8 @@ public sealed class JGraphScriptGlobals
             throw new DirectoryNotFoundException($"There is no folder '{path}'.");
         }
 
-        _currentDirectory = target;
+        // R2025b's pwd after cd(tempdir) has no trailing separator; only a drive's root keeps one.
+        _currentDirectory = Path.TrimEndingDirectorySeparator(target);
         NoteFileChanging(null); // the search folders have moved, so every cached view of them is suspect
     }
 

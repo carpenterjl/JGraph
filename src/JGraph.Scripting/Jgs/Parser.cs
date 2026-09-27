@@ -248,6 +248,9 @@ internal sealed class Parser
             // being the names of the two builtins that ask an object what it has.
             TokenType.Identifier when _matlab && start.Text == "classdef" && NextType == TokenType.Identifier =>
                 ParseClassdef(start),
+            // 'import System.IO.*': the '.*' would stop command syntax, and the names are not strings.
+            TokenType.Identifier when _matlab && start.Text == "import" && NextType == TokenType.Identifier
+                && _tokens[_pos + 1].PrecededByWhitespace => ParseImport(start),
             TokenType.LBracket when _matlab && LooksLikeMultiAssign() => ParseMultiAssign(start),
             TokenType.Identifier when _matlab && LooksLikeCommandSyntax() => ParseCommandSyntax(start),
             _ => ParseAssignmentOrExpression(start),
@@ -880,6 +883,47 @@ internal sealed class Parser
         while (Match(TokenType.Comma) || Check(TokenType.Identifier)); // 'global a b' or 'global a, b'
 
         return new GlobalStmt(names) { Line = start.Line, Column = start.Column };
+    }
+
+    /// <summary>
+    /// <c>import System.IO.* System.Math.Max</c>: one or more dotted names, each ending in a name or in
+    /// <c>.*</c>, which the lexer reads as the elementwise-multiply token glued to the last dot.
+    /// </summary>
+    private Stmt ParseImport(Token start)
+    {
+        Advance(); // 'import'
+        var names = new List<string>();
+        while (Check(TokenType.Identifier))
+        {
+            var name = new System.Text.StringBuilder(Advance().Text);
+            while (true)
+            {
+                if (Check(TokenType.DotStar) && !Current.PrecededByWhitespace)
+                {
+                    Advance();
+                    name.Append(".*");
+                    break;
+                }
+
+                if (Check(TokenType.Dot) && !Current.PrecededByWhitespace && NextType == TokenType.Identifier)
+                {
+                    Advance();
+                    name.Append('.').Append(Advance().Text);
+                    continue;
+                }
+
+                break;
+            }
+
+            names.Add(name.ToString());
+        }
+
+        if (!(Check(TokenType.Newline) || Check(TokenType.Semicolon) || Check(TokenType.Comma) || IsAtEnd))
+        {
+            throw Error(Current, "An import names a type, a type's static method, or a namespace or type followed by '.*'.");
+        }
+
+        return new ImportStmt(names) { Line = start.Line, Column = start.Column };
     }
 
     private Stmt ParsePersistent(Token start)

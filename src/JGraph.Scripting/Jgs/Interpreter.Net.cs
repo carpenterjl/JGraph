@@ -80,7 +80,25 @@ internal sealed partial class Interpreter
             head = link.Target;
         }
 
-        if (head is not VariableExpr root || !IsUnclaimed(root.Name, env))
+        if (head is not VariableExpr root)
+        {
+            return false;
+        }
+
+        // An imported head (ADR 0176): an explicit import above everything but a variable, a
+        // wildcard's type or namespace below nested and local functions only.
+        NetImported? imported = null;
+        if (AnyImports && ImportFor(root.Name, env, head: true) is { } candidate)
+        {
+            Resolution held = _resolver.Lookup(root.Name, env);
+            if (held.Layer != ResolutionLayer.Bound
+                && (candidate.Explicit || held.Layer is not (ResolutionLayer.Nested or ResolutionLayer.Local)))
+            {
+                imported = candidate;
+            }
+        }
+
+        if (imported is null && !IsUnclaimed(root.Name, env))
         {
             return false;
         }
@@ -92,14 +110,32 @@ internal sealed partial class Interpreter
             names[i] = FieldName(chain[i], env);
         }
 
-        if (!NetTypes.IsNamespace(root.Name))
+        Type type;
+        int next;
+        if (imported is { Type: { } importedType, Method: null })
+        {
+            (type, next) = (importedType, 0);
+        }
+        else if (imported is { Namespace: { } space })
+        {
+            (type, next) = TypeInChain(space, names, member);
+        }
+        else if (imported is not null)
+        {
+            // An imported method in front of a dot: its answer is what the dot reads.
+            return false;
+        }
+        else if (!NetTypes.IsNamespace(root.Name))
         {
             // Nothing claims the head, so the name cannot be resolved; R2025b says so with the whole
             // dotted name (MATLAB:undefinedVarOrClass).
             throw Unresolved(root.Name + "." + string.Join(".", names), member);
         }
+        else
+        {
+            (type, next) = TypeInChain(root.Name, names, member);
+        }
 
-        (Type type, int next) = TypeInChain(root.Name, names, member);
         AnyNet = true;
         if (next == names.Length)
         {

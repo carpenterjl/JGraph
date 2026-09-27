@@ -233,6 +233,13 @@ internal sealed class JgsEnvironment
     internal FnStmt? Function { get; init; }
 
     /// <summary>
+    /// The imports this scope's code made (ADR 0176): a function frame's, collected from its body on
+    /// entry, or the base workspace's and a script's, made as their <c>import</c> statements run.
+    /// Null in nearly every scope.
+    /// </summary>
+    internal Net.NetImports? Imports { get; set; }
+
+    /// <summary>
     /// Whether this scope is an anonymous function's workspace: the snapshot taken when the handle
     /// was made, and the frame a call of it binds its parameters in. MATLAB calls that a static
     /// workspace — a captured name can be changed, a new one cannot be added — and
