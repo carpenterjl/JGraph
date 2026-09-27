@@ -116,6 +116,11 @@ ix_chk('delete_keeps_variable', exist('rs2', 'var'));
 sq = JGTest.Sequence(int32(3));
 ix_chk('ienumerable_for_refused', ix_id(@() forloop(sq)));
 
+% A .NET static lives as long as the process: put back what this fixture changed, so a fixture that
+% runs after it in the same process (net_basics reads StaticField) starts where a fresh one does.
+JGTest.Members.Reset();
+JGTest.Resource.ResetCount();
+
 function two(f)
 [~, ~] = f();
 end

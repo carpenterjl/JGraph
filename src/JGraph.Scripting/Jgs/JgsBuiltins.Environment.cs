@@ -127,6 +127,13 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
+                // A .NET object: R2025b neither calls Dispose nor clears the variable (net_members,
+                // ADR 0175), so there is nothing to do.
+                if (args[i].Type == JgsType.External && args[i].AsExternal is NetObject)
+                {
+                    continue;
+                }
+
                 // A timer is stopped if it was running, then ended for every alias (V6, #105).
                 if (TryDeleteTimer(host, args[i], line, col))
                 {

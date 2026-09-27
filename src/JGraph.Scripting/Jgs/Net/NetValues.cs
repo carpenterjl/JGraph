@@ -39,22 +39,33 @@ internal interface IJgsExternal
 /// </summary>
 internal sealed class NetObject : IJgsExternal
 {
-    public NetObject(object? target, Type type)
+    public NetObject(object? target, Type type, bool isView = false)
     {
         Target = target;
         Type = type;
+        IsView = isView;
     }
 
     /// <summary>The object; for a Nullable, its value or null.</summary>
     public object? Target { get; }
 
-    /// <summary>The type MATLAB reports: the runtime type, or the Nullable a member declared.</summary>
+    /// <summary>
+    /// The type MATLAB reports: the runtime type, the Nullable a member declared, or the interface an
+    /// interface view (<see cref="IsView"/>) sees the object through.
+    /// </summary>
     public Type Type { get; }
+
+    /// <summary>
+    /// Whether this is <c>NET.explicitCast(obj, 'Interface')</c>'s view of an object (stage 2, ADR 0175):
+    /// its members are the interface's, an explicit implementation's included, and its class is
+    /// <c>NET.view.&lt;interface&gt;</c> (measured, net_members).
+    /// </summary>
+    public bool IsView { get; }
 
     /// <summary>The value type a Nullable wraps, or null when this is not a Nullable.</summary>
     public Type? NullableOf => Nullable.GetUnderlyingType(Type);
 
-    public string ClassName => Net.NetNames.ClassName(Type);
+    public string ClassName => IsView ? "NET.view." + Net.NetNames.ClassName(Type) : Net.NetNames.ClassName(Type);
 
     public bool IsHandle => !Type.IsValueType;
 
@@ -77,7 +88,7 @@ internal sealed class NetObject : IJgsExternal
     }
 
     public IJgsExternal CopyForBinding() =>
-        IsHandle || Target is null ? this : new NetObject(RuntimeHelpers.GetObjectValue(Target), Type);
+        IsHandle || Target is null ? this : new NetObject(RuntimeHelpers.GetObjectValue(Target), Type, IsView);
 
     public string Display() => Net.NetDisplay.Of(this);
 }

@@ -44,6 +44,8 @@ EXTRA_IMPLEMENTED = {
     # The members of a dotted namespace the catalog lists by its head (NET, meta), as it lists
     # containers: interop stage I1 (ADR 0174) implemented these.
     "NET.isNETSupported", "NET.addAssembly", "NET.createArray", "NET.createGeneric", "meta.class.fromName",
+    # Interop stage I2 (ADR 0175).
+    "NET.setStaticProperty", "NET.convertArray", "NET.explicitCast",
 }
 
 

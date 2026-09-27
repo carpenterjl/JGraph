@@ -28,7 +28,8 @@ internal static class NetNames
             return name + "<" + string.Join(",", type.GetGenericArguments().Select(a => ClassName(a).Replace('.', '*'))) + ">";
         }
 
-        return (type.FullName ?? type.Name).Replace('+', '.');
+        // A nested type keeps .NET's '+' (JGTest.Outer+Inner, measured in net_members).
+        return type.FullName ?? type.Name;
     }
 
     /// <summary>The short name a display leads with: the class name after its namespace.</summary>

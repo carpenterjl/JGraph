@@ -40,6 +40,31 @@ internal sealed partial class Interpreter
     internal void NoteNet() => AnyNet = true;
 
     /// <summary>
+    /// The member expression a statement is made of alone (<c>m.Bump;</c>), whose bare call asks for
+    /// no output; every other bare mention asks for one, so <c>x = m.Bump</c> is refused for a
+    /// <c>void</c> method as <c>x = m.Bump()</c> is (measured, probe2; ADR 0175).
+    /// </summary>
+    private MemberExpr? _bareStatement;
+
+    /// <summary>How many outputs a bare mention of <paramref name="member"/> asks for.</summary>
+    private int BareWanted(MemberExpr member) => ReferenceEquals(member, _bareStatement) ? 0 : 1;
+
+    /// <summary>Evaluates a statement that is one member expression, its bare call asking for nothing.</summary>
+    private JgsValue EvaluateBareStatement(MemberExpr member, JgsEnvironment env)
+    {
+        MemberExpr? outer = _bareStatement;
+        _bareStatement = member;
+        try
+        {
+            return Evaluate(member, env);
+        }
+        finally
+        {
+            _bareStatement = outer;
+        }
+    }
+
+    /// <summary>
     /// Reads a dotted name whose head is a .NET namespace: the constructor or a static member of the
     /// type it reaches, then any members after that. False when the head is bound to something else,
     /// so the ordinary readings of a dot go ahead.
@@ -84,7 +109,9 @@ internal sealed partial class Interpreter
             return true;
         }
 
-        value = NetInvoke.StaticMember(type, names[next], next == names.Length - 1 ? autoCall : true, member.Line, member.Column, NetTypes);
+        bool last = next == names.Length - 1;
+        value = NetInvoke.StaticMember(type, names[next], !last || autoCall, member.Line, member.Column, NetTypes,
+            last ? BareWanted(member) : 1);
         for (int i = next + 1; i < names.Length; i++)
         {
             value = MemberOf(value, names[i], chain[i], i == names.Length - 1 ? autoCall : true);
@@ -213,7 +240,7 @@ internal sealed partial class Interpreter
         switch (target.AsExternal)
         {
             case NetObject net:
-                return NetInvoke.Member(net, field, autoCall, member.Line, member.Column, NetTypes);
+                return NetInvoke.Member(net, field, autoCall, member.Line, member.Column, NetTypes, BareWanted(member));
             case NetMetaClass meta when field == "Name":
                 return JgsValue.Str(NetNames.ClassName(meta.Type));
             case NetAssemblyValue assembly when NetAssemblyValue.PropertyNames.Contains(field):
@@ -247,6 +274,22 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// Refuses <c>obj.Method(i) = v</c> on a variable holding a .NET object when <c>Method</c> is one of
+    /// its methods — the indexer's <c>Item</c> is the case that matters. R2025b refuses the write
+    /// rather than calling the indexer's setter (measured, net_members).
+    /// </summary>
+    private void RefuseNetTemporary(MemberExpr member, JgsEnvironment env)
+    {
+        if (member.Target is VariableExpr holder && LookUp(holder.Name, env, out JgsValue held)
+            && held.AsExternalOrNull() is NetObject net && FieldName(member, env) is var name
+            && NetInvoke.HasMethod(net.Type, name, instance: true))
+        {
+            throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:index:assignmentToTemporary",
+                $"Assignment not supported because the result of method '{name}' is a temporary value.");
+        }
+    }
+
+    /// <summary>
     /// A .NET method reached by function syntax — <c>Describe(m)</c> — on the .NET object among the
     /// arguments: the object is the receiver, and the rest are the method's arguments.
     /// </summary>
@@ -254,7 +297,7 @@ internal sealed partial class Interpreter
     {
         callable = null;
         if (dominant.Type != JgsType.External || dominant.AsExternal is not NetObject net
-            || NetInvoke.Methods(net.Type, name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Static).Length == 0)
+            || !NetInvoke.HasMethod(net.Type, name, instance: true))
         {
             return false;
         }
@@ -264,11 +307,14 @@ internal sealed partial class Interpreter
     }
 
     /// <summary><c>Method(obj, args…)</c> for a .NET object: the object leaves the argument list and receives the call.</summary>
-    private sealed class NetFunctionSyntax(Type type, string method, JgsValue receiver, NetCatalog session) : IJgsCallable
+    private sealed class NetFunctionSyntax(Type type, string method, JgsValue receiver, NetCatalog session) : IJgsCallable, IJgsMultiCallable
     {
         public string Name => method;
 
-        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
+        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
+            CallMultiple(arguments, 1, line, column)[0];
+
+        public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
         {
             var rest = new List<JgsValue>(arguments.Count);
             bool dropped = false;
@@ -283,7 +329,7 @@ internal sealed partial class Interpreter
                 rest.Add(argument);
             }
 
-            return NetInvoke.Call(type, method, (NetObject)receiver.AsExternal, rest, line, column, session);
+            return NetInvoke.Call(type, method, (NetObject)receiver.AsExternal, rest, wanted, line, column, session);
         }
     }
 }

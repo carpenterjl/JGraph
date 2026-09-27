@@ -1649,7 +1649,9 @@ internal sealed partial class Interpreter
             return;
         }
 
-        JgsValue value = Evaluate(expression, env);
+        JgsValue value = expression is MemberExpr bareMember && Dialect.IsMatlab
+            ? EvaluateBareStatement(bareMember, env)
+            : Evaluate(expression, env);
         switch (expression)
         {
             case AssignExpr assign when RootName(assign.Target) is string assigned:
@@ -2559,6 +2561,15 @@ internal sealed partial class Interpreter
         if (IsIndexableScalar(iterable))
         {
             iterable = OneElementArray(iterable);
+        }
+
+        // A .NET object is a scalar whose elements a loop would index, which R2025b refuses even for
+        // an IEnumerable (measured, net_members; ADR 0175).
+        if (iterable.Type == JgsType.External && Dialect.IsMatlab)
+        {
+            string className = iterable.AsExternal.ClassName;
+            throw new JgsRuntimeException(statement.Line, statement.Column, "MATLAB:class:parenReferenceScalar",
+                $"Indexing using parentheses to access elements of '{className}' objects is not supported.");
         }
 
         if (iterable.Type != JgsType.Array)
@@ -5277,6 +5288,12 @@ internal sealed partial class Interpreter
         if (parenOnVariable && !TargetIsInert(target, env))
         {
             target = PrepareTarget(target, env); // after the right-hand side, before the target is read
+        }
+
+        // obj.Item(0) = v on a .NET object writes into a method's answer (ADR 0175).
+        if (AnyNet && target is CallExpr { Callee: MemberExpr netMember })
+        {
+            RefuseNetTemporary(netMember, env);
         }
 
         // V6: a path through a computed level — a table's variable or its Properties — is get,

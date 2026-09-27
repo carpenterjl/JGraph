@@ -46,18 +46,37 @@ internal static partial class JgsBuiltins
             return CellColumn(PropertyNames("properties", args[0], interpreter, line, col));
         });
 
-        // methods(x, '-full') is accepted and lists the names alone until the signatures are
-        // written (interop stage 2 owns R2025b's signature text).
-        Define("methods", (args, line, col) =>
+        // methods(x) answers the names as a cell column; methods(x, '-full') a .NET type's signatures.
+        // Asked for nothing, a .NET type's listing is printed as R2025b prints it (stage 2, ADR 0175);
+        // anything else still answers its cell, which the statement binds to ans.
+        JgsValue Methods(IReadOnlyList<JgsValue> args, int line, int col)
         {
             ArityRange("methods", args, 1, 2, line, col);
-            if (args.Count == 2 && TextOf(args[1]) != "-full")
-            {
-                throw new JgsRuntimeException(line, col, $"methods: '{TextOf(args[1])}' is not an option; only '-full' is.");
-            }
+            bool full = MethodsFull(args, line, col);
+            return full && NetTypeNamed(args[0], interpreter) is { } type
+                ? CellColumn(Net.NetMethodsListing.FullLines(type))
+                : CellColumn(MethodNames("methods", args[0], interpreter, line, col));
+        }
 
-            return CellColumn(MethodNames("methods", args[0], interpreter, line, col));
-        });
+        env.Builtins.Register("methods", JgsValue.Function(new BuiltinFunction("methods", Methods)
+        {
+            KeepsStringArguments = true,
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                ArityRange("methods", args, 1, 2, line, col);
+                if (wanted == 0 && NetTypeNamed(args[0], interpreter) is { } type && interpreter.Host is { } host)
+                {
+                    string className = args[0].AsExternalOrNull()?.ClassName ?? Net.NetNames.ClassName(type);
+                    host.print(MethodsFull(args, line, col)
+                        ? Net.NetMethodsListing.Full(type, className)
+                        : Net.NetMethodsListing.Names(type, className));
+                    return [];
+                }
+
+                return [Methods(args, line, col)];
+            },
+        }));
 
         // isprop(obj, name): whether the object declares the property (V6, #28: a Dependent one
         // counts), whether a class-named value or a graphics handle answers to it; false otherwise.
@@ -107,7 +126,7 @@ internal static partial class JgsBuiltins
             {
                 JgsType.Object => args[0].AsObject.Class.TryMethod(name, out _),
                 JgsType.External when args[0].AsExternal is NetObject net =>
-                    Net.NetInvoke.Methods(net.Type, name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Static).Length > 0,
+                    Net.NetInvoke.HasMethod(net.Type, name, instance: true),
                 _ => false,
             });
         });
@@ -271,6 +290,31 @@ internal static partial class JgsBuiltins
             ? []
             : throw new JgsRuntimeException(line, col,
                 $"{builtin}: a {value.TypeName} has no methods to list.");
+    }
+
+    /// <summary>Whether a <c>methods</c> call asked for <c>-full</c>; any other option is refused.</summary>
+    private static bool MethodsFull(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count == 2 && TextOf(args[1]) != "-full")
+        {
+            throw new JgsRuntimeException(line, col, $"methods: '{TextOf(args[1])}' is not an option; only '-full' is.");
+        }
+
+        return args.Count == 2;
+    }
+
+    /// <summary>The .NET type a value is, or names by text (<c>'JGTest.Members'</c>); null for anything else.</summary>
+    private static Type? NetTypeNamed(JgsValue value, Interpreter interpreter)
+    {
+        if (value.AsExternalOrNull() is NetObject net)
+        {
+            return net.NullableOf is null ? net.Type : null;
+        }
+
+        return value.Type == JgsType.String && value.AsString.Contains('.', StringComparison.Ordinal)
+            && interpreter.TryNetName(value.AsString, interpreter.CurrentFrame, out Type? type, out string? member) && member is null
+            ? type
+            : null;
     }
 
     /// <summary>

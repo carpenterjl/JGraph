@@ -1,4 +1,3 @@
-RUN|pending I2|No method 'JGTest.Modifiers.Double' with matching signature found.
 CHK|ref_one_output|double:4|exact
 CHK|ref_two_outputs|MATLAB:UndefinedFunction|exact
 CHK|out_split|double:[2 0.75]|exact

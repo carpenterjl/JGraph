@@ -14,3 +14,6 @@ print("CHK|isobject|" + isobject(s) + "|exact");
 print("CHK|numel|" + numel(s) + "|exact");
 let h = str2func("System.String.Concat");
 print("CHK|handle_call|" + char(h("x", "y")) + "|exact");
+# Stage 2 (ADR 0175): an out parameter comes back as a second output, which JGS destructures.
+let [q, r] = feval("System.Math.DivRem", int32(7), int32(2));
+print("CHK|feval_out_parameter|" + string(q) + " " + string(r) + " " + class(r) + "|exact");

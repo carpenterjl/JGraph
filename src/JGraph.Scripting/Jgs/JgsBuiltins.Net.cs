@@ -40,6 +40,9 @@ internal static partial class JgsBuiltins
             ["addAssembly"] = Builtin("NET.addAssembly", (args, line, col) => AddAssembly(interpreter, args, line, col)),
             ["createArray"] = Builtin("NET.createArray", (args, line, col) => CreateNetArray(interpreter, args, line, col)),
             ["createGeneric"] = Builtin("NET.createGeneric", (args, line, col) => CreateGeneric(interpreter, args, line, col)),
+            ["setStaticProperty"] = Builtin("NET.setStaticProperty", (args, line, col) => SetStaticProperty(interpreter, args, line, col)),
+            ["explicitCast"] = Builtin("NET.explicitCast", (args, line, col) => ExplicitCast(interpreter, args, line, col)),
+            ["convertArray"] = Builtin("NET.convertArray", (args, line, col) => ConvertArray(interpreter, args, line, col)),
         };
         env.Builtins.RegisterConstant("NET", JgsValue.Struct(net));
 
@@ -161,6 +164,76 @@ internal static partial class JgsBuiltins
 
         interpreter.NoteNet();
         return NetInvoke.Construct(closed, args.Skip(2).ToArray(), line, col, interpreter.NetTypes);
+    }
+
+    /// <summary>
+    /// <c>NET.setStaticProperty('Type.Name', value)</c>: writes a static property or field, the one road
+    /// to a static write (stage 2, ADR 0175; <c>Type.Name = v</c> assigns a struct, as in R2025b).
+    /// </summary>
+    private static JgsValue SetStaticProperty(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        Arity("NET.setStaticProperty", args, 2, line, col);
+        string dotted = TextOf(args[0]);
+        int dot = dotted.LastIndexOf('.');
+        if (dot <= 0 || !interpreter.TryNetName(dotted[..dot], interpreter.CurrentFrame, out Type? type, out string? member) || member is not null)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:InvalidClassName", $"Could not find class '{(dot <= 0 ? dotted : dotted[..dot])}'.");
+        }
+
+        NetInvoke.SetStatic(type!, dotted[(dot + 1)..], args[1], line, col);
+        return JgsValue.Null;
+    }
+
+    /// <summary>
+    /// <c>NET.explicitCast(obj, 'Interface')</c>: the object seen through one of its interfaces, whose
+    /// explicit implementations it then reaches (class <c>NET.view.Interface</c>, measured in
+    /// net_members). Only an interface: R2025b refuses a cast to a class, to a type the object does not
+    /// implement, and of a value that is not a .NET object, each in its own words (probe2).
+    /// </summary>
+    private static JgsValue ExplicitCast(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        Arity("NET.explicitCast", args, 2, line, col);
+        if (args[0].AsExternalOrNull() is not NetObject { Target: { } held })
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:interfaceView:RequireNetObject", "First argument must be a valid .NET object.");
+        }
+
+        string name = TextOf(args[1]);
+        Type? target = interpreter.NetTypes.TypeNamed(name);
+        if (target is not null && !target.IsInterface)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:interfaceView:UnsupportedClassToClass",
+                "Conversion of objects to objects of another class is not allowed.");
+        }
+
+        if (target is null || !target.IsInstanceOfType(held))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:interfaceView:InvalidCast",
+                $"Unable to convert the object of '{NetNames.ClassName(held.GetType())}' type to object of '{name}' type.\n"
+                + "Please make sure that the input object implements an interface type supplied for conversion.");
+        }
+
+        return JgsValue.External(new NetObject(held, target, isView: true));
+    }
+
+    /// <summary>
+    /// <c>NET.convertArray(A, type, dims)</c>: a MATLAB array as a .NET array — the element type named,
+    /// or the one the array's class maps to; a vector as one dimension and a matrix as two, unless
+    /// the dimensions are named. Stage 2 takes the forms net_members passes; stage 4 completes it.
+    /// </summary>
+    private static JgsValue ConvertArray(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange("NET.convertArray", args, 1, 3, line, col);
+        JgsValue value = args[0];
+        Type element = args.Count > 1
+            ? NetTypeArgument(interpreter, args[1], line, col)
+            : NetConvert.ElementTypeOf(value)
+                ?? throw new JgsRuntimeException(line, col, $"NET.convertArray: a value of class '{ClassOf(value, JgsDialect.Matlab)}' has no .NET element type.");
+        int rank = args.Count > 2
+            ? Math.Max(1, args[2].Type == JgsType.Array ? args[2].ArrayLength : 1)
+            : value.Type == JgsType.Array && value.Rows != 1 && value.Cols != 1 ? 2 : 1;
+        interpreter.NoteNet();
+        return NetConvert.ToMatlab(NetConvert.ConvertArray(value, element, rank, line, col), typeof(Array), line, col);
     }
 
     /// <summary>A type named by text (<c>'System.Double'</c>) for an array or a generic argument.</summary>

@@ -3,18 +3,24 @@ using System.Reflection;
 namespace JGraph.Scripting.Jgs.Net;
 
 /// <summary>
-/// Reading, writing and calling .NET members for a script (interop plan, stage 1, ADR 0174): which
-/// overload a call picks, how the arguments cross, what comes back, and how a .NET exception
-/// becomes a <c>NET.NetException</c>.
+/// Reading, writing and calling .NET members for a script (interop plan, stages 1 and 2, ADRs 0174
+/// and 0175): which overload a call picks, how the arguments cross, what comes back, and how a .NET
+/// exception becomes a <c>NET.NetException</c>.
 /// </summary>
 /// <remarks>
 /// <para>
-/// <b>Overloads.</b> The candidates are the public members of the name that take exactly as many
-/// arguments as were given. Each argument ranks each candidate's parameter by
-/// <see cref="NetConvert.Rank"/>; a candidate some argument cannot reach drops out, and the lowest
-/// total wins, the first declared on a tie. That reproduces every single-argument pair R2025b
-/// recorded and <c>System.Math.Max(int32(3), 7)</c> answering the double overload; stage 2 fits
-/// the several-argument rule, <c>params</c>, optional, <c>ref</c> and <c>out</c> parameters.
+/// <b>Overloads.</b> The candidates are the public members of the name (<see cref="NetSignature"/>)
+/// that take as many inputs as were given — trailing optional ones may be left off — and hand back
+/// at least as many outputs as were asked for (a <c>void</c> method asked for one does not fit,
+/// net_members). Each argument ranks each candidate's parameter by <see cref="NetConvert.Rank"/>; a
+/// candidate some argument cannot reach drops out, and the lowest total wins, the first declared on
+/// a tie. That reproduces every pair R2025b recorded (net_conversions). No candidate is R2025b's
+/// <c>MATLAB:UndefinedFunction</c> for a call through the type and
+/// <c>MATLAB:class:UndefinedMethod</c> for a call through an object, each in its own words.
+/// </para>
+/// <para>
+/// <b>Outputs.</b> The return value, then each <c>ref</c> and <c>out</c> parameter's value after the
+/// call, in declaration order (<see cref="NetSignature"/>).
 /// </para>
 /// <para>
 /// <b>Exceptions.</b> Whatever a member throws is caught here and raised as a <c>NET.NetException</c>:
@@ -39,7 +45,8 @@ internal static class NetInvoke
     /// or a method, called now when the mention is bare (<paramref name="autoCall"/>) and handed back
     /// as a callable otherwise.
     /// </summary>
-    public static JgsValue Member(NetObject target, string name, bool autoCall, int line, int col, NetCatalog? session = null)
+    public static JgsValue Member(
+        NetObject target, string name, bool autoCall, int line, int col, NetCatalog? session = null, int bareWanted = 1)
     {
         if (target.NullableOf is { } under)
         {
@@ -57,18 +64,30 @@ internal static class NetInvoke
             return Read(field, field.IsStatic ? null : target.Target, line, col, session);
         }
 
-        if (Methods(type, name, BindingFlags.Instance | BindingFlags.Static).Length > 0)
+        if (HasMethod(type, name, instance: true))
         {
             var bound = new NetCallable(type, name, target, session);
-            return autoCall ? bound.Call([], line, col) : JgsValue.Function(bound);
+            return autoCall ? bound.CallBare(bareWanted, line, col) : JgsValue.Function(bound);
+        }
+
+        // A property with a setter and no getter (measured, net_members get_writeonly).
+        if (type.GetProperty(name, Public | BindingFlags.Instance | BindingFlags.Static) is { } writeOnly
+            && writeOnly.GetGetMethod() is null)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:GetProhibited",
+                $"No public property '{name}' for class ''{NetNames.ShortName(type)}''.");
         }
 
         throw new JgsRuntimeException(line, col, "MATLAB:noSuchMethodOrField",
             $"Unrecognized method, property, or field '{name}' for class '{target.ClassName}'.");
     }
 
-    /// <summary>Reads <c>Type.name</c>: a static property or field, or a static method.</summary>
-    public static JgsValue StaticMember(Type type, string name, bool autoCall, int line, int col, NetCatalog? session = null)
+    /// <summary>
+    /// Reads <c>Type.name</c>: a static property or field, or a static method, called now when the
+    /// mention is bare (asking for <paramref name="bareWanted"/> outputs: none for a statement).
+    /// </summary>
+    public static JgsValue StaticMember(
+        Type type, string name, bool autoCall, int line, int col, NetCatalog? session = null, int bareWanted = 1)
     {
         if (ReadableProperty(type, name, BindingFlags.Static) is { } property)
         {
@@ -80,10 +99,10 @@ internal static class NetInvoke
             return Read(field, null, line, col, session);
         }
 
-        if (Methods(type, name, BindingFlags.Static).Length > 0)
+        if (HasMethod(type, name, instance: false))
         {
             var group = new NetCallable(type, name, receiver: null, session);
-            return autoCall ? group.Call([], line, col) : JgsValue.Function(group);
+            return autoCall ? group.CallBare(bareWanted, line, col) : JgsValue.Function(group);
         }
 
         throw new JgsRuntimeException(line, col, "MATLAB:subscripting:classHasNoPropertyOrMethod",
@@ -99,7 +118,7 @@ internal static class NetInvoke
         {
             MethodInfo setter = property.GetSetMethod()
                 ?? throw ReadOnly(name, type, line, col);
-            object? converted = Argument(value, property.PropertyType, 1, name, line, col);
+            object? converted = PropertyValue(value, property.PropertyType, name, type, line, col);
             try
             {
                 setter.Invoke(setter.IsStatic ? null : target.Target, [converted]);
@@ -119,7 +138,7 @@ internal static class NetInvoke
                 throw ReadOnly(name, type, line, col);
             }
 
-            field.SetValue(field.IsStatic ? null : target.Target, Argument(value, field.FieldType, 1, name, line, col));
+            field.SetValue(field.IsStatic ? null : target.Target, PropertyValue(value, field.FieldType, name, type, line, col));
             return;
         }
 
@@ -127,10 +146,89 @@ internal static class NetInvoke
             $"Unrecognized property '{name}' for class '{target.ClassName}'.");
     }
 
+    /// <summary>
+    /// <c>NET.setStaticProperty('Type.Name', value)</c>: the one way a script writes a static property or
+    /// field — <c>Type.Name = v</c> is an ordinary assignment that makes a struct (measured, net_members).
+    /// </summary>
+    public static void SetStatic(Type type, string name, JgsValue value, int line, int col)
+    {
+        if (type.GetProperty(name, Public | BindingFlags.Static) is { } property && property.GetIndexParameters().Length == 0)
+        {
+            MethodInfo setter = property.GetSetMethod() ?? throw StaticNotAccessible(name, type, line, col);
+            object? converted = PropertyValue(value, property.PropertyType, name, owner: null, line, col);
+            try
+            {
+                setter.Invoke(null, [converted]);
+            }
+            catch (Exception fault) when (IsNetFault(fault))
+            {
+                throw Raise(fault, "PropertySet", line, col);
+            }
+
+            return;
+        }
+
+        if (type.GetField(name, Public | BindingFlags.Static) is { } field)
+        {
+            if (field.IsLiteral || field.IsInitOnly)
+            {
+                throw StaticNotAccessible(name, type, line, col);
+            }
+
+            field.SetValue(null, PropertyValue(value, field.FieldType, name, owner: null, line, col));
+            return;
+        }
+
+        throw new JgsRuntimeException(line, col, "MATLAB:NET:InvalidStaticPropName",
+            $"Could not find static property or field '{name}' for class '{NetNames.ClassName(type)}'.");
+    }
+
+    private static JgsRuntimeException StaticNotAccessible(string name, Type type, int line, int col) =>
+        new(line, col, "MATLAB:NET:InvalidStaticPropertyAccess",
+            $"Static property '{name}' is not accessible for class '{NetNames.ClassName(type)}'.");
+
     /// <summary>R2025b's refusal of a write to a read-only property or field (net_members), quotes and all.</summary>
     private static JgsRuntimeException ReadOnly(string name, Type type, int line, int col) =>
         new(line, col, "MATLAB:class:SetProhibited",
             $"Unable to set the '{name}' property of class ''{NetNames.ShortName(type)}'' because it is read-only.");
+
+    /// <summary>
+    /// A value converted for a property or field of <paramref name="type"/>. A value the type does not
+    /// take is refused as R2025b refuses a property write (net_members, probe2): a numeric property
+    /// wants a scalar (<c>MATLAB:class:RequireScalar</c>) that is numeric or logical
+    /// (<c>MATLAB:class:RequireNumeric</c>), and a string property text. An instance write's message
+    /// names the property and its class; <c>NET.setStaticProperty</c>'s (no <paramref name="owner"/>)
+    /// is the reason alone.
+    /// </summary>
+    private static object? PropertyValue(JgsValue value, Type type, string name, Type? owner, int line, int col)
+    {
+        string lead = owner is null ? "" : $"Error setting property '{name}' of class ''{NetNames.ShortName(owner)}'':\n";
+        if (NetConvert.Rank(value, type) is null && type == typeof(string))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:NetConversion:StringConversion",
+                lead + "Error converting an input type to the System.String type.");
+        }
+
+        if (NetConvert.Rank(value, type) is null && IsNumericTarget(type))
+        {
+            bool scalar = value.Type is JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.External
+                || (value.Type == JgsType.String && value.AsString.Length == 1)
+                || (value.Type is JgsType.Array or JgsType.Cell && value.ArrayLength == 1);
+            if (!scalar)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:class:RequireScalar", lead + "Value must be a scalar.");
+            }
+
+            throw new JgsRuntimeException(line, col, "MATLAB:class:RequireNumeric", lead + "Value must be numeric or logical.");
+        }
+
+        return Argument(value, type, 1, name, line, col);
+    }
+
+    private static bool IsNumericTarget(Type type) =>
+        !type.IsEnum && Type.GetTypeCode(Nullable.GetUnderlyingType(type) ?? type) is TypeCode.Boolean or TypeCode.Byte
+            or TypeCode.SByte or TypeCode.Int16 or TypeCode.UInt16 or TypeCode.Int32 or TypeCode.UInt32 or TypeCode.Int64
+            or TypeCode.UInt64 or TypeCode.Single or TypeCode.Double or TypeCode.Decimal;
 
     /// <summary>A Nullable's two properties and its methods, read from the value it holds.</summary>
     private static JgsValue NullableMember(NetObject target, Type under, string name, int line, int col, NetCatalog? session) => name switch
@@ -159,43 +257,9 @@ internal static class NetInvoke
         return found;
     }
 
-    /// <summary>
-    /// The public methods of a name MATLAB can call: ordinary methods, and a default indexer's
-    /// accessors under the indexer's name (<c>list.Item(0)</c>). Open generic methods are left out
-    /// (<c>NET.invokeGenericMethod</c> calls them).
-    /// </summary>
-    public static MethodInfo[] Methods(Type type, string name, BindingFlags scope)
-    {
-        var found = new List<MethodInfo>();
-        foreach (MethodInfo method in type.GetMethods(Public | scope))
-        {
-            if (method.Name == name && !method.IsSpecialName && !method.ContainsGenericParameters)
-            {
-                found.Add(method);
-            }
-        }
-
-        if ((scope & BindingFlags.Instance) != 0)
-        {
-            foreach (PropertyInfo indexer in type.GetProperties(Public | BindingFlags.Instance))
-            {
-                if (indexer.Name == name && indexer.GetIndexParameters().Length > 0)
-                {
-                    if (indexer.GetGetMethod() is { } get)
-                    {
-                        found.Add(get);
-                    }
-
-                    if (indexer.GetSetMethod() is { } set)
-                    {
-                        found.Add(set);
-                    }
-                }
-            }
-        }
-
-        return [.. found];
-    }
+    /// <summary>Whether <paramref name="type"/> has a method a call can reach by <paramref name="name"/>.</summary>
+    public static bool HasMethod(Type type, string name, bool instance) =>
+        NetSignature.Group(type, name, instance).Length > 0;
 
     private static JgsValue Get(PropertyInfo property, object? target, int line, int col, NetCatalog? session)
     {
@@ -218,43 +282,38 @@ internal static class NetInvoke
         NetConvert.ToMatlab(field.GetValue(field.IsStatic ? null : target), field.FieldType, line, col, session);
 
     /// <summary>
-    /// What <c>methods</c> lists for a .NET type, sorted as R2025b sorts it: the public methods,
-    /// instance and static, an indexer under its name, the constructor under the type's short name,
-    /// and the methods MATLAB gives every .NET object — <c>matlab.mixin.Scalar</c>'s, and
-    /// <c>handle</c>'s for a reference type (measured, net_display).
+    /// What <c>methods</c> answers for a .NET type, sorted as R2025b sorts it: the public methods,
+    /// instance and static, operators included, an indexer under its name, the constructor under the
+    /// type's short name, the operators' MATLAB names (<c>plus</c> for <c>op_Addition</c>), and the
+    /// methods MATLAB gives every .NET object — <c>matlab.mixin.Scalar</c>'s, and <c>handle</c>'s for
+    /// a reference type (measured, net_display).
     /// </summary>
     public static IEnumerable<string> MethodNames(Type type)
     {
         var names = new HashSet<string>(StringComparer.Ordinal);
-        foreach (MethodInfo method in type.GetMethods(Public | BindingFlags.Instance | BindingFlags.Static))
+        foreach (NetSignature signature in NetSignature.All(type, instance: true))
         {
-            if (!method.IsSpecialName && !method.ContainsGenericParameters)
-            {
-                names.Add(method.Name);
-            }
+            names.Add(signature.Name);
         }
 
-        foreach (PropertyInfo indexer in type.GetProperties(Public | BindingFlags.Instance))
-        {
-            if (indexer.GetIndexParameters().Length > 0)
-            {
-                names.Add(indexer.Name);
-            }
-        }
-
-        if (!type.IsAbstract && (type.IsValueType || type.GetConstructors().Length > 0))
+        if (HasConstructor(type))
         {
             names.Add(NetNames.ShortName(type));
         }
 
-        names.UnionWith(["end", "isempty", "isscalar", "length", "ndims", "numel", "size"]);
+        names.UnionWith(NetMethodsListing.OperatorNames(type));
+        names.UnionWith(NetMethodsListing.ScalarMethods);
         if (!type.IsValueType)
         {
-            names.UnionWith(["addlistener", "delete", "eq", "findobj", "findprop", "ge", "gt", "isvalid", "le", "listener", "lt", "ne", "notify"]);
+            names.UnionWith(NetMethodsListing.HandleMethods);
         }
 
         return names.Order(StringComparer.Ordinal);
     }
+
+    /// <summary>Whether <c>methods</c> lists a constructor for <paramref name="type"/>.</summary>
+    internal static bool HasConstructor(Type type) =>
+        !type.IsAbstract && (type.IsValueType || NetSignature.Constructors(type).Length > 0);
 
     /// <summary>What <c>events</c> lists for a .NET type: its public events, then a handle's ObjectBeingDestroyed.</summary>
     public static IEnumerable<string> EventNames(Type type)
@@ -272,30 +331,29 @@ internal static class NetInvoke
         if (type.IsAbstract)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:class:abstract",
-                $"Abstract classes cannot be instantiated. Class '{name}' is abstract or static.");
+                $"Abstract classes cannot be instantiated. Class '{name}' is declared as Abstract.");
         }
 
-        ConstructorInfo[] constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+        NetSignature[] constructors = NetSignature.Constructors(type);
         if (constructors.Length == 0 && !type.IsValueType)
         {
-            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs",
-                $"'{name}' has no public constructor.");
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
         }
 
         object? made;
-        if (type.IsValueType && arguments.Count == 0 && !constructors.Any(static c => c.GetParameters().Length == 0))
+        if (type.IsValueType && arguments.Count == 0 && !constructors.Any(static c => c.Inputs.Length == 0))
         {
             made = Activator.CreateInstance(type);
         }
         else
         {
-            MethodBase chosen = Choose(constructors, arguments)
+            NetSignature chosen = Choose(constructors, arguments, wanted: 0)
                 ?? throw new JgsRuntimeException(line, col, "MATLAB:dispatcher:noMatchingConstructor",
                     $"No constructor '{name}' with matching signature found.");
             object?[] given = Arguments(chosen, arguments, line, col);
             try
             {
-                made = ((ConstructorInfo)chosen).Invoke(given);
+                made = ((ConstructorInfo)chosen.Method).Invoke(given);
             }
             catch (Exception fault) when (IsNetFault(fault))
             {
@@ -306,25 +364,77 @@ internal static class NetInvoke
         return NetConvert.ToMatlab(made, type, line, col, session);
     }
 
-    /// <summary>Calls the method group <paramref name="name"/> on a type or an object.</summary>
-    public static JgsValue Call(Type type, string name, NetObject? receiver, IReadOnlyList<JgsValue> arguments, int line, int col, NetCatalog? session = null)
+    /// <summary>
+    /// Calls the method group <paramref name="name"/> on a type or an object asking for
+    /// <paramref name="wanted"/> outputs, and answers the outputs the chosen overload handed back (at
+    /// most <paramref name="wanted"/>, and its first even when none were asked for).
+    /// </summary>
+    public static JgsValue[] Call(
+        Type type, string name, NetObject? receiver, IReadOnlyList<JgsValue> arguments, int wanted, int line, int col,
+        NetCatalog? session = null)
     {
-        MethodInfo[] group = Methods(type, name, receiver is null ? BindingFlags.Static : BindingFlags.Instance | BindingFlags.Static);
-        if (Choose(group, arguments) is not MethodInfo chosen)
-        {
-            throw new JgsRuntimeException(line, col, "MATLAB:class:UndefinedMethod",
-                $"No method '{NetNames.ClassName(type)}.{name}' with matching signature found.");
-        }
-
-        return InvokeChosen(chosen, receiver, arguments, "MethodInvoke", line, col, session);
+        NetSignature chosen = Choose(NetSignature.Group(type, name, receiver is not null), arguments, wanted)
+            ?? throw NoMatch(type, name, receiver is not null, line, col);
+        return Invoke(chosen, receiver, arguments, wanted, "MethodInvoke", line, col, session);
     }
 
-    /// <summary>Calls a method already chosen: the arguments converted, the exception wrapped, the answer brought back.</summary>
+    /// <summary>R2025b's refusal when no overload fits (measured, net_members and net_conversions).</summary>
+    private static JgsRuntimeException NoMatch(Type type, string name, bool throughObject, int line, int col) =>
+        throughObject
+            ? new(line, col, "MATLAB:class:UndefinedMethod",
+                $"No method '{name}' with matching signature found for class '{NetNames.ClassName(type)}'.")
+            : new(line, col, "MATLAB:UndefinedFunction",
+                $"No method '{NetNames.ClassName(type)}.{name}' with matching signature found.");
+
+    /// <summary>Calls a signature already chosen: the arguments converted, the exception wrapped, the outputs brought back.</summary>
+    private static JgsValue[] Invoke(
+        NetSignature chosen, NetObject? receiver, IReadOnlyList<JgsValue> arguments, int wanted, string context, int line, int col,
+        NetCatalog? session)
+    {
+        object?[] given = Arguments(chosen, arguments, line, col);
+        object? answer;
+        try
+        {
+            answer = chosen.Method.Invoke(chosen.IsStatic ? null : receiver!.Target, given);
+        }
+        catch (Exception fault) when (IsNetFault(fault))
+        {
+            throw Raise(fault, context, line, col);
+        }
+
+        int count = Math.Min(Math.Max(wanted, 1), chosen.OutputCount);
+        var outputs = new JgsValue[count];
+        int next = 0;
+        if (chosen.Returns && next < count)
+        {
+            outputs[next++] = NetConvert.ToMatlab(answer, ((MethodInfo)chosen.Method).ReturnType, line, col, session);
+        }
+
+        foreach (int position in chosen.ByRef)
+        {
+            if (next == count)
+            {
+                break;
+            }
+
+            outputs[next++] = NetConvert.ToMatlab(given[position], chosen.Parameters[position].ParameterType.GetElementType()!, line, col, session);
+        }
+
+        return outputs;
+    }
+
+    /// <summary>Calls a two-operand operator method already chosen (<see cref="NetOperators"/>).</summary>
     public static JgsValue InvokeChosen(
         MethodInfo chosen, NetObject? receiver, IReadOnlyList<JgsValue> arguments, string context, int line, int col,
         NetCatalog? session = null)
     {
-        object?[] given = Arguments(chosen, arguments, line, col);
+        ParameterInfo[] parameters = chosen.GetParameters();
+        var given = new object?[parameters.Length];
+        for (int i = 0; i < given.Length; i++)
+        {
+            given[i] = Argument(arguments[i], parameters[i].ParameterType, i + 1, parameters[i].Name ?? $"arg{i + 1}", line, col);
+        }
+
         object? answer;
         try
         {
@@ -339,22 +449,24 @@ internal static class NetInvoke
     }
 
     /// <summary>The candidate every argument reaches with the lowest total rank; the first declared on a tie.</summary>
-    private static MethodBase? Choose(IEnumerable<MethodBase> candidates, IReadOnlyList<JgsValue> arguments)
+    private static NetSignature? Choose(NetSignature[] candidates, IReadOnlyList<JgsValue> arguments, int wanted)
     {
-        MethodBase? best = null;
+        NetSignature? best = null;
         double bestScore = double.PositiveInfinity;
-        foreach (MethodBase candidate in candidates)
+        foreach (NetSignature candidate in candidates)
         {
-            ParameterInfo[] parameters = candidate.GetParameters();
-            if (parameters.Length != arguments.Count)
+            if (!candidate.Fits(arguments.Count, wanted))
             {
                 continue;
             }
 
             double score = 0;
-            for (int i = 0; i < parameters.Length && !double.IsNaN(score); i++)
+            for (int i = 0; i < arguments.Count && !double.IsNaN(score); i++)
             {
-                score = NetConvert.Rank(arguments[i], parameters[i].ParameterType) is { } rank ? score + rank : double.NaN;
+                double? rank = IsMissing(arguments[i]) && candidate.Parameters[candidate.Inputs[i]].IsOptional
+                    ? 0
+                    : NetConvert.Rank(arguments[i], candidate.InputType(i));
+                score = rank is { } r ? score + r : double.NaN;
             }
 
             if (!double.IsNaN(score) && score < bestScore)
@@ -367,13 +479,20 @@ internal static class NetInvoke
         return best;
     }
 
-    private static object?[] Arguments(MethodBase chosen, IReadOnlyList<JgsValue> arguments, int line, int col)
+    /// <summary><c>System.Reflection.Missing.Value</c>, which in an optional place stands for the parameter's default.</summary>
+    private static bool IsMissing(JgsValue value) =>
+        value.Type == JgsType.External && value.AsExternal is NetObject { Target: Missing };
+
+    private static object?[] Arguments(NetSignature chosen, IReadOnlyList<JgsValue> arguments, int line, int col)
     {
-        ParameterInfo[] parameters = chosen.GetParameters();
+        ParameterInfo[] parameters = chosen.Parameters;
         var given = new object?[parameters.Length];
-        for (int i = 0; i < given.Length; i++)
+        for (int i = 0; i < chosen.Inputs.Length; i++)
         {
-            given[i] = Argument(arguments[i], parameters[i].ParameterType, i + 1, parameters[i].Name ?? $"arg{i + 1}", line, col);
+            ParameterInfo parameter = parameters[chosen.Inputs[i]];
+            given[chosen.Inputs[i]] = i >= arguments.Count || (IsMissing(arguments[i]) && parameter.IsOptional)
+                ? (parameter.HasDefaultValue ? parameter.DefaultValue : Type.Missing)
+                : Argument(arguments[i], chosen.InputType(i), i + 1, parameter.Name ?? $"arg{i + 1}", line, col);
         }
 
         return given;
@@ -426,9 +545,10 @@ internal static class NetInvoke
 
 /// <summary>
 /// A .NET method group or constructor a script holds as a function: <c>System.Math.Max</c> named in
-/// a call or a handle, <c>obj.Describe</c> read without calling it, a type's constructor.
+/// a call or a handle, <c>obj.Describe</c> read without calling it, a type's constructor. It answers
+/// several outputs — a <c>ref</c> or <c>out</c> parameter's value after the return value (stage 2).
 /// </summary>
-internal sealed class NetCallable : IJgsCallable
+internal sealed class NetCallable : IJgsCallable, IJgsMultiCallable
 {
     private readonly Type _type;
     private readonly NetObject? _receiver;
@@ -465,5 +585,22 @@ internal sealed class NetCallable : IJgsCallable
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
         _constructor
             ? NetInvoke.Construct(_type, arguments, line, column, _session)
-            : NetInvoke.Call(_type, Method, _receiver, arguments, line, column, _session);
+            : NetInvoke.Call(_type, Method, _receiver, arguments, 1, line, column, _session)[0];
+
+    public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column) =>
+        _constructor
+            ? [NetInvoke.Construct(_type, arguments, line, column, _session)]
+            : NetInvoke.Call(_type, Method, _receiver, arguments, wanted, line, column, _session);
+
+    /// <summary>
+    /// A bare mention's call — <c>JGTest.Members.Increment</c>, <c>m.Bump;</c> — asking for
+    /// <paramref name="wanted"/> outputs: none for a statement made of the mention alone, so a
+    /// <c>void</c> method runs, and one anywhere else (measured, probe2). Answers the first output,
+    /// or nothing when there is none.
+    /// </summary>
+    public JgsValue CallBare(int wanted, int line, int column)
+    {
+        JgsValue[] outputs = CallMultiple([], wanted, line, column);
+        return outputs.Length > 0 ? outputs[0] : JgsValue.Null;
+    }
 }

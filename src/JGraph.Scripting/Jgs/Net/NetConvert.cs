@@ -459,6 +459,27 @@ internal static class NetConvert
         return r >= 1.8446744073709552e19 ? ulong.MaxValue : r <= 0 ? 0 : (ulong)r;
     }
 
+    /// <summary><c>NET.convertArray</c>'s array: <paramref name="value"/> as a .NET array of <paramref name="element"/> and <paramref name="rank"/>.</summary>
+    public static Array ConvertArray(JgsValue value, Type element, int rank, int line, int col) =>
+        ToArray(value, element, rank, line, col);
+
+    /// <summary>The .NET element type a MATLAB array's class maps to (<c>double</c> to <c>System.Double</c>, <c>char</c> to <c>System.Char</c>), or null.</summary>
+    public static Type? ElementTypeOf(JgsValue value)
+    {
+        if (value.Type == JgsType.String || value.IsCharMatrix)
+        {
+            return typeof(char);
+        }
+
+        if (value.Type is not (JgsType.Number or JgsType.Bool or JgsType.Array) || value.IsStringArray)
+        {
+            return null;
+        }
+
+        string cls = JgsBuiltins.ClassOf(value, JgsDialect.Matlab);
+        return cls == "logical" ? typeof(bool) : JgsNumericClasses.Parse(cls) is { } numeric ? ElementType(numeric) : null;
+    }
+
     /// <summary>A MATLAB array into a .NET array of <paramref name="element"/>: a vector to rank 1, a matrix to rank 2.</summary>
     private static Array ToArray(JgsValue value, Type element, int rank, int line, int col)
     {
