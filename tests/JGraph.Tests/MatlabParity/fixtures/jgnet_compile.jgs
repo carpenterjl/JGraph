@@ -1,0 +1,26 @@
+# jgnet_compile.jgs -- jgraph.net.compile, the inline C# helper (interop plan, stage 6, ADR 0179).
+# A JGraph extension with no MATLAB counterpart, so this is a JGraph-only fixture and
+# expected/jgnet_compile.txt is written from the rule. The cases are MATLAB code in
+# helpers/ix_compile.m (with the C# file helpers/ix_compile_helper.cs); the last rows reach the
+# helper from JGS itself, which has no dotted names and calls it through feval.
+
+print("CHK|static|" + ix_compile("static") + "|exact");
+print("CHK|file_on_path|" + ix_compile("file") + "|exact");
+print("CHK|same_build_same_assembly|" + ix_compile("same") + "|exact");
+print("CHK|recompile_replaces|" + ix_compile("recompile") + "|exact");
+print("CHK|edited_text_replaces|" + ix_compile("edited_text") + "|exact");
+print("CHK|errors|" + ix_compile("error") + "|exact");
+print("CHK|file_error_has_path|" + ix_compile("file_error") + "|exact");
+print("CHK|warning|" + ix_compile("warning") + "|exact");
+print("CHK|no_namespace|" + ix_compile("no_namespace") + "|exact");
+print("CHK|references|" + ix_compile("references") + "|exact");
+print("CHK|bad_reference|" + ix_compile("bad_reference") + "|exact");
+print("CHK|added_assembly|" + ix_compile("added_assembly") + "|exact");
+print("CHK|delegates_events|" + ix_compile("delegates_events") + "|exact");
+print("CHK|unsafe|" + ix_compile("unsafe") + "|exact");
+print("CHK|bad_option|" + ix_compile("bad_option") + "|exact");
+print("CHK|bad_language|" + ix_compile("bad_language") + "|exact");
+print("CHK|missing_file|" + ix_compile("missing_file") + "|exact");
+print("CHK|which|" + ix_compile("which") + "|exact");
+let asm = feval("jgraph.net.compile", "namespace IxJgs { public static class Z { public static int Nine() { return 9; } } }");
+print("CHK|jgs_feval|" + class(asm) + " " + string(feval("IxJgs.Z.Nine")) + "|exact");

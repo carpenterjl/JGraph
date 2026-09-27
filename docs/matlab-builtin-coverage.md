@@ -1116,7 +1116,10 @@ the list), `NET.disableAutoRelease` and `NET.enableAutoRelease`. Stage I4 moved 
 `NET.invokeGenericMethod`; it completed `NET.createArray`, `NET.createGeneric` and `NET.convertArray`,
 and added `NET.GenericClass` and `NET.interfaceView`, which the list does not name. Stage I5 (ADR
 0178) moved no name: it taught `addlistener`, `listener`, `events` and `delete` .NET objects and
-events, and made a function handle a .NET delegate wherever .NET takes one. `calllib`, `libisloaded`,
+events, and made a function handle a .NET delegate wherever .NET takes one. Stage I6 (ADR 0179)
+moved no name either: it added `jgraph.net.compile`, a JGraph extension outside MATLAB's list, which
+compiles C# files or text into an assembly a script then reaches as it reaches one `NET.addAssembly`
+loaded, and replaces the build when the source is recompiled. `calllib`, `libisloaded`,
 `unloadlibrary` and the rest of `NET.*` follow in their stages. Java,
 Python and COM, `clib*` and MEX are out of the plan's scope: JGraph does not host those runtimes
 from a script. (It runs Python and C# as *engines* — a whole script in that language — which is a

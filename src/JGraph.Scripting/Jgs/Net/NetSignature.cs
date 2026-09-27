@@ -30,6 +30,25 @@ internal sealed class NetSignature
     private static readonly ConcurrentDictionary<Type, NetSignature[]> Ctors = new();
     private static readonly ConcurrentDictionary<(Type Type, bool Instance), NetSignature[]> Everything = new();
 
+    /// <summary>Drops the groups of types a recompilation retired, so their assembly can unload (ADR 0179).</summary>
+    public static void Forget(Func<Type, bool> gone)
+    {
+        foreach (var key in Groups.Keys.Where(k => gone(k.Type)))
+        {
+            Groups.TryRemove(key, out _);
+        }
+
+        foreach (Type key in Ctors.Keys.Where(gone))
+        {
+            Ctors.TryRemove(key, out _);
+        }
+
+        foreach (var key in Everything.Keys.Where(k => gone(k.Type)))
+        {
+            Everything.TryRemove(key, out _);
+        }
+    }
+
     private NetSignature(MethodBase method, string name)
     {
         Method = method;

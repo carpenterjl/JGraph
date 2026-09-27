@@ -48,6 +48,15 @@ internal static class NetDelegates
     /// </summary>
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<Type, Func<Bridge, Delegate>> Factories = new();
 
+    /// <summary>Drops the factories of delegate types a recompilation retired (ADR 0179).</summary>
+    public static void Forget(Func<Type, bool> gone)
+    {
+        foreach (Type key in Factories.Keys.Where(gone))
+        {
+            Factories.TryRemove(key, out _);
+        }
+    }
+
     /// <summary>A delegate of <paramref name="delegateType"/> that calls <paramref name="callback"/>.</summary>
     public static Delegate Create(Type delegateType, IJgsCallable callback)
     {

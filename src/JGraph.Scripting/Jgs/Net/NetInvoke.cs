@@ -359,6 +359,7 @@ internal static class NetInvoke
     public static JgsValue Construct(Type type, IReadOnlyList<JgsValue> arguments, int line, int col, NetCatalog? session = null)
     {
         session?.SyncFolder();
+        NetCompiler.RefuseRetired(arguments, line, col);
         string name = NetNames.ClassName(type);
         if (type.IsAbstract)
         {
@@ -417,6 +418,7 @@ internal static class NetInvoke
     {
         session?.SyncFolder();
         receiver?.Live(line, col);
+        NetCompiler.RefuseRetired(arguments, line, col);
         NetSignature chosen = Choose(NetSignature.Group(type, name, receiver is not null), arguments, wanted)
             ?? throw NoMatch(type, name, receiver is not null, line, col);
         return Invoke(chosen, receiver, arguments, wanted, "MethodInvoke", line, col, session);

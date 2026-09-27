@@ -145,6 +145,15 @@ internal sealed class NetEventSubscription
     /// <summary>One compiled handler factory per delegate type (a compile costs hundreds of microseconds).</summary>
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<Type, Func<NetEventSubscription, Delegate>> HandlerFactories = new();
 
+    /// <summary>Drops the handler factories of event types a recompilation retired (ADR 0179).</summary>
+    public static void Forget(Func<Type, bool> gone)
+    {
+        foreach (Type key in HandlerFactories.Keys.Where(gone))
+        {
+            HandlerFactories.TryRemove(key, out _);
+        }
+    }
+
     private static Func<NetEventSubscription, Delegate> HandlerFactory(Type delegateType)
     {
         ParameterInfo[] parameters = delegateType.GetMethod("Invoke")!.GetParameters();

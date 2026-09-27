@@ -72,10 +72,16 @@ internal sealed class NetObject : IJgsExternal
     /// </summary>
     public bool Deleted { get; set; }
 
-    /// <summary>This object, or R2025b's refusal when it was deleted.</summary>
+    /// <summary>
+    /// This object, or R2025b's refusal when it was deleted, or JGraph's when <c>jgraph.net.compile</c>
+    /// has since replaced the build that defined its type (ADR 0179).
+    /// </summary>
     public NetObject Live(int line, int col) => Deleted
         ? throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.")
-        : this;
+        : Net.NetCompiler.IsRetired(Type, out string assembly)
+            ? throw new JgsRuntimeException(line, col, "JGraph:NET:AssemblyRecompiled",
+                $"This {ClassName} object belongs to an earlier build of assembly '{assembly}', which was recompiled.")
+            : this;
 
     public string ClassName => IsView ? "NET.view." + Net.NetNames.ClassName(Type) : Net.NetNames.ClassName(Type);
 

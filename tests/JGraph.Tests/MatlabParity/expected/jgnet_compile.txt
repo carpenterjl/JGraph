@@ -1,0 +1,19 @@
+CHK|static|NET.Assembly 3|exact
+CHK|file_on_path|5 hello jg ix_compile_helper|exact
+CHK|same_build_same_assembly|1 7|exact
+CHK|recompile_replaces|2 JGraph:NET:AssemblyRecompiled|exact
+CHK|edited_text_replaces|20|exact
+CHK|errors|JGraph:NET:CompileFailed ## C# compilation failed with 2 errors: ## <string>(1,60): error CS1002: ; expected ## <string>(1,86): error CS0103: The name 'q' does not exist in the current context|exact
+CHK|file_error_has_path|<folder>\IxBroken.cs(3,30): error CS0029: Cannot implicitly convert type 'string' to 'int'|exact
+CHK|warning|JGraph:NET:CompileWarning ## <string>(1,55): warning CS0168: The variable 'unused' is declared but never used|exact
+CHK|no_namespace|JGraph:NET:CompileNoNamespace ## Type 'IxOrphan' is in no namespace, so a script cannot name it. Put it in a namespace.|exact
+CHK|references|4|exact
+CHK|bad_reference|JGraph:NET:compile:ReferenceNotFound|exact
+CHK|added_assembly|40|exact
+CHK|delegates_events|18 2 IxK.Bell|exact
+CHK|unsafe|JGraph:NET:CompileFailed 5|exact
+CHK|bad_option|JGraph:NET:compile:UnknownOption|exact
+CHK|bad_language|JGraph:NET:compile:InvalidOption|exact
+CHK|missing_file|JGraph:NET:compile:FileNotFound|exact
+CHK|which|jgraph.net.compile is a built-in function.|exact
+CHK|jgs_feval|NET.Assembly 9|exact

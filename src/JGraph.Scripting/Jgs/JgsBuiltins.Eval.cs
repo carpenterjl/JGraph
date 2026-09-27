@@ -42,6 +42,9 @@ internal static partial class JgsBuiltins
         // ADR 0174: the .NET names need the session's type catalog and its warning state.
         "NET", "meta", "dotnetenv", "isjava",
 
+        // ADR 0179: jgraph.net.compile loads what it builds into the session's catalog.
+        "jgraph",
+
         // ADR 0176: import reads and adds to the running scope's imports.
         "import", "enumeration",
 
@@ -98,6 +101,7 @@ internal static partial class JgsBuiltins
         RegisterMatFileBuiltins(env, interpreter, host);
         RegisterTableFormBuiltins(env, interpreter);
         RegisterNetBuiltins(env, interpreter);
+        RegisterNetCompile(env, interpreter);
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.
@@ -745,6 +749,12 @@ internal static partial class JgsBuiltins
                 && netPackage.AsStruct.ContainsKey(name[4..]))
             {
                 where.Add($"{name[4..]} is a built-in method");
+            }
+
+            // Any other built-in package's function: jgraph.net.compile (ADR 0179).
+            if (where.Count == 0 && name.Contains('.', StringComparison.Ordinal) && PackagedFunction(interpreter, name) is not null)
+            {
+                where.Add($"{name} is a built-in function.");
             }
 
             if (where.Count == 0 && !name.Contains('.', StringComparison.Ordinal)

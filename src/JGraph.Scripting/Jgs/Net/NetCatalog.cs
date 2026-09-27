@@ -31,8 +31,15 @@ internal sealed class NetCatalog
     private static readonly AssemblyLoadContext Context = new("JGraph.NET", isCollectible: false);
 
     private readonly List<Assembly> _added = [];
+    private readonly HashSet<Assembly> _overriding = [];
     private readonly Dictionary<Assembly, NetAssemblyValue> _handles = [];
     private Index? _session;
+
+    /// <summary>
+    /// The assemblies this session compiled with <c>jgraph.net.compile</c>, by assembly name (ADR 0179);
+    /// a build under a name here replaces the one it names.
+    /// </summary>
+    public Dictionary<string, NetCompiledAssembly> Compiled { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// The one <c>NET.Assembly</c> this session answers for <paramref name="assembly"/>: adding an
@@ -117,6 +124,17 @@ internal sealed class NetCatalog
     /// </summary>
     public Assembly AddFromPath(string path)
     {
+        Assembly assembly = LoadShared(path);
+        Add(assembly);
+        return assembly;
+    }
+
+    /// <summary>
+    /// Loads an assembly by path into the process's shared load context, once per path, without making
+    /// it visible to any session: <c>NET.addAssembly</c>'s load, and a compiled build's file reference.
+    /// </summary>
+    public static Assembly LoadShared(string path)
+    {
         string full = Path.GetFullPath(path);
         Assembly assembly;
         lock (Gate)
@@ -137,12 +155,15 @@ internal sealed class NetCatalog
             }
         }
 
-        Add(assembly);
         return assembly;
     }
 
-    /// <summary>Makes an already-loaded assembly's types visible to this session.</summary>
-    public void Add(Assembly assembly)
+    /// <summary>
+    /// Makes an already-loaded assembly's types visible to this session. A compiled build
+    /// (<paramref name="overrides"/>) wins a full name an earlier added assembly also defines, so an
+    /// edited helper answers to its own name; any other assembly leaves the first definition in place.
+    /// </summary>
+    public void Add(Assembly assembly, bool overrides = false)
     {
         if (_added.Contains(assembly))
         {
@@ -150,8 +171,33 @@ internal sealed class NetCatalog
         }
 
         _added.Add(assembly);
+        if (overrides)
+        {
+            _overriding.Add(assembly);
+        }
+
         _session ??= new Index();
-        _session.Take(assembly);
+        _session.Take(assembly, overrides);
+    }
+
+    /// <summary>
+    /// Takes a retired compiled build out of this session (ADR 0179): its types, its handle, and the
+    /// index rebuilt from what is left, so a name it defined answers to whatever else defines it.
+    /// </summary>
+    public void Remove(Assembly assembly)
+    {
+        if (!_added.Remove(assembly))
+        {
+            return;
+        }
+
+        _overriding.Remove(assembly);
+        _handles.Remove(assembly);
+        _session = new Index();
+        foreach (Assembly kept in _added)
+        {
+            _session.Take(kept, _overriding.Contains(kept));
+        }
     }
 
     /// <summary>The process-wide index of the framework's types, built on first use.</summary>
@@ -229,7 +275,7 @@ internal sealed class NetCatalog
 
         public Dictionary<string, Type> Types { get; } = new(StringComparer.Ordinal);
 
-        public void Take(Assembly assembly)
+        public void Take(Assembly assembly, bool overrides = false)
         {
             Type[] exported;
             try
@@ -248,7 +294,15 @@ internal sealed class NetCatalog
                     continue;
                 }
 
-                Types.TryAdd(fullName, type);
+                if (overrides)
+                {
+                    Types[fullName] = type;
+                }
+                else
+                {
+                    Types.TryAdd(fullName, type);
+                }
+
                 for (int dot = space.Length; dot > 0; dot = space.LastIndexOf('.', dot - 1))
                 {
                     if (!Namespaces.Add(space[..dot]))
