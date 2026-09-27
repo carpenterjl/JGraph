@@ -1261,7 +1261,7 @@ internal static partial class JgsBuiltins
         state.Record(under, message);
         if (state.IsOn(under))
         {
-            host.WriteErr("Warning: " + message);
+            host.WriteWarning("Warning: " + message);
         }
 
         return [];

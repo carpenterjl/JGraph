@@ -17,6 +17,12 @@ internal static class NetDisplay
 
     public static string Of(NetObject net)
     {
+        // R2025b's words for a deleted handle (probe5h), under any class.
+        if (net.Deleted)
+        {
+            return "handle to deleted " + NetNames.ShortName(net.Type);
+        }
+
         if (net.Target is string text)
         {
             return text;

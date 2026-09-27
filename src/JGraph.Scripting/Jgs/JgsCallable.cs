@@ -705,15 +705,35 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
         bool variadic = parameters.Count > 0 && parameters[^1] == "varargin";
         int fixedCount = variadic ? parameters.Count - 1 : parameters.Count;
 
-        if (arguments.Count < fixedCount || (!variadic && arguments.Count > fixedCount))
+        // The handle's own dialect binds its parameters and runs its body (V11, ADR 0172): `@(x) x(1)`
+        // made by a .m script and called from JGS answers the first element.
+        JgsDialect code = _declaration.Dialect;
+
+        // MATLAB's anonymous function takes fewer arguments than it names - the rest stay unbound,
+        // an error only where the body reads one - and refuses more in its own words (R2025b,
+        // probe5b: @(a, b) 1 called with one argument answers 1; @() 1 with one is TooManyInputs).
+        if (code.MatlabFunctions && !variadic && arguments.Count > fixedCount)
+        {
+            throw new JgsRuntimeException(line, column, "MATLAB:TooManyInputs", "Too many input arguments.");
+        }
+
+        if (!code.MatlabFunctions && (arguments.Count < fixedCount || (!variadic && arguments.Count > fixedCount)))
         {
             throw new JgsRuntimeException(line, column,
                 $"This anonymous function expects {parameters.Count} argument(s) but got {arguments.Count}.");
         }
 
-        // The handle's own dialect binds its parameters and runs its body (V11, ADR 0172): `@(x) x(1)`
-        // made by a .m script and called from JGS answers the first element.
-        JgsDialect code = _declaration.Dialect;
+        // A missing one the body reads is MATLAB's error; the walk is the one FreeNames takes, kept.
+        for (int i = arguments.Count; i < fixedCount; i++)
+        {
+            if ((_bodyNames ??= BodyNames(_declaration)).Contains(parameters[i]))
+            {
+                throw new JgsRuntimeException(line, column, "MATLAB:minrhs", "Not enough input arguments.");
+            }
+        }
+
+        fixedCount = Math.Min(fixedCount, arguments.Count);
+
         var local = new JgsEnvironment(_captured) { IsStaticWorkspace = true };
         using (_interpreter.EnterDialect(code))
         {
@@ -753,6 +773,16 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
         {
             _interpreter.Lifetimes.FrameExited(local);
         }
+    }
+
+    /// <summary>Every identifier the body mentions, parameters included; made on the first short call.</summary>
+    private HashSet<string>? _bodyNames;
+
+    private static HashSet<string> BodyNames(AnonymousFnExpr declaration)
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        Walk(declaration.Body, names);
+        return names;
     }
 
     /// <summary>Every identifier the body mentions apart from the parameters.</summary>

@@ -1114,7 +1114,9 @@ forms its fixtures call (stage I4 completes it); it also added `NET.explicitCast
 does not name. Stage I3 moved three: `import` for .NET names (the statement, the function form and
 the list), `NET.disableAutoRelease` and `NET.enableAutoRelease`. Stage I4 moved one:
 `NET.invokeGenericMethod`; it completed `NET.createArray`, `NET.createGeneric` and `NET.convertArray`,
-and added `NET.GenericClass` and `NET.interfaceView`, which the list does not name. `calllib`, `libisloaded`,
+and added `NET.GenericClass` and `NET.interfaceView`, which the list does not name. Stage I5 (ADR
+0178) moved no name: it taught `addlistener`, `listener`, `events` and `delete` .NET objects and
+events, and made a function handle a .NET delegate wherever .NET takes one. `calllib`, `libisloaded`,
 `unloadlibrary` and the rest of `NET.*` follow in their stages. Java,
 Python and COM, `clib*` and MEX are out of the plan's scope: JGraph does not host those runtimes
 from a script. (It runs Python and C# as *engines* — a whole script in that language — which is a

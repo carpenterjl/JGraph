@@ -163,7 +163,8 @@ public class MatlabSparseKrylovM128Tests : IDisposable
                 fprintf('%d %d|', flag, iter);
                 """));
 
-        Assert.Contains("2", Refuses(Poisson + "bicg(@(v) A*v, b, 1e-10, 40);"));
+        // A one-argument handle called with the flag as well: MATLAB's own refusal (ADR 0178).
+        Assert.Contains("Too many input arguments.", Refuses(Poisson + "bicg(@(v) A*v, b, 1e-10, 40);"));
     }
 
     [Fact]

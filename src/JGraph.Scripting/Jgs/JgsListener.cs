@@ -18,8 +18,18 @@ internal sealed class JgsListener
     /// <summary>The struct the script holds — <c>lh</c>.</summary>
     public required JgsValue Value { get; init; }
 
-    /// <summary>The object the listener is on.</summary>
-    public required JgsObject Source { get; init; }
+    /// <summary>The object the listener is on; null for a .NET object's (<see cref="NetEvent"/>).</summary>
+    public JgsObject? Source { get; init; }
+
+    /// <summary>The .NET event the listener is on, with the listeners beside it (ADR 0178); null for a classdef object's.</summary>
+    public Net.NetEventSubscription? NetEvent { get; init; }
+
+    /// <summary>Takes the listener off its source's list, whichever kind of source it has.</summary>
+    public void Detach()
+    {
+        Source?.Listeners?.Remove(this);
+        NetEvent?.Remove(this);
+    }
 
     /// <summary>The source as a value, which is what every callback is handed first (a handle: the one object).</summary>
     public required JgsValue SourceValue { get; init; }

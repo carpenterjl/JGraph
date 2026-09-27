@@ -86,6 +86,7 @@ internal static partial class JgsBuiltins
     {
         JgsCallbackDispatcher.Current?.Drain();
         host.Timers?.Drain(); // a due timer fires here too (V6, #105)
+        Net.NetCallbackQueue.DrainCurrent(); // and .NET's work from other threads (ADR 0178)
     }
 
     /// <summary>
@@ -117,6 +118,7 @@ internal static partial class JgsBuiltins
             token.ThrowIfCancellationRequested();
             dispatcher?.Drain();
             timers?.Drain();
+            Net.NetCallbackQueue.DrainCurrent(); // .NET's events and delegates from other threads (ADR 0178)
         }
     }
 
@@ -589,7 +591,7 @@ internal static partial class JgsBuiltins
         // A .NET reference object is a handle that stays valid while it is held (ADR 0174).
         if (asked.Type == JgsType.External && asked.AsExternal.IsHandle)
         {
-            return JgsValue.True;
+            return JgsValue.Bool(asked.AsExternal is not NetObject { Deleted: true }); // delete(obj) ends it (ADR 0178)
         }
 
         if (asked.Type == JgsType.Object)

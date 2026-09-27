@@ -14,6 +14,7 @@ internal static class NetBuiltinConversions
 {
     public static JgsValue Numeric(string name, JgsNumericClass numericClass, JgsValue value, int line, int col)
     {
+        Alive(value, line, col);
         if (value.AsExternal is NetObject { Target: not null } enumNet && enumNet.Type.IsEnum
             && numericClass != JgsNumericClass.Double && numericClass != UnderlyingClass(enumNet.Type))
         {
@@ -27,6 +28,7 @@ internal static class NetBuiltinConversions
 
     public static JgsValue Logical(JgsValue value, int line, int col)
     {
+        Alive(value, line, col);
         if (value.AsExternal is NetObject { Target: bool[] flags })
         {
             JgsValue[] cells = flags.Select(JgsValue.Bool).ToArray();
@@ -44,7 +46,7 @@ internal static class NetBuiltinConversions
         throw Refused("logical", value, line, col);
     }
 
-    public static JgsValue Char(JgsValue value, int line, int col) => value.AsExternal switch
+    public static JgsValue Char(JgsValue value, int line, int col) => Alive(value, line, col).AsExternal switch
     {
         NetObject { Target: string text } => JgsValue.Str(text),
         NetObject { Target: { } member } net when net.Type.IsEnum => JgsValue.Str(member.ToString()!),
@@ -53,7 +55,7 @@ internal static class NetBuiltinConversions
 
     public static JgsValue String(JgsValue value, int line, int col)
     {
-        switch (value.AsExternal)
+        switch (Alive(value, line, col).AsExternal)
         {
             case NetObject { Target: string text }:
                 return JgsValue.StringScalar(text);
@@ -71,7 +73,7 @@ internal static class NetBuiltinConversions
     /// <c>cellstr</c> of a .NET value: an enum member's name in a cell (probe4 <c>enum.cellstr</c>) or a
     /// <c>System.String</c>'s text; a <c>String[]</c> and everything else refused (net_arrays).
     /// </summary>
-    public static JgsValue CellStr(JgsValue value, int line, int col) => value.AsExternal switch
+    public static JgsValue CellStr(JgsValue value, int line, int col) => Alive(value, line, col).AsExternal switch
     {
         NetObject { Target: string text } => JgsValue.Cell([JgsValue.Str(text)]),
         NetObject { Target: { } member } net when net.Type.IsEnum => JgsValue.Cell([JgsValue.Str(member.ToString()!)]),
@@ -86,6 +88,7 @@ internal static class NetBuiltinConversions
     /// </summary>
     public static JgsValue Cell(JgsValue value, int line, int col)
     {
+        Alive(value, line, col);
         if (value.AsExternal is NetObject { Target: Array array } net && array.Rank == 1
             && net.Type.GetElementType() is { IsPrimitive: false, IsEnum: false } element)
         {
@@ -243,6 +246,13 @@ internal static class NetBuiltinConversions
         : builtin is "sum" or "mean" ? new(line, col, "MATLAB:sum:wrongInput", "Invalid data type. First argument must be numeric or logical.")
         : builtin is "max" ? new(line, col, "MATLAB:max:wrongInput", "First input array is an invalid data type.")
         : null;
+
+    /// <summary>The value, or R2025b's refusal of a deleted handle (probe5h: <c>char</c> of a deleted <c>System.String</c>).</summary>
+    private static JgsValue Alive(JgsValue value, int line, int col)
+    {
+        (value.AsExternalOrNull() as NetObject)?.Live(line, col);
+        return value;
+    }
 
     private static JgsRuntimeException Refused(string name, JgsValue value, int line, int col) =>
         new(line, col, "MATLAB:invalidConversion",

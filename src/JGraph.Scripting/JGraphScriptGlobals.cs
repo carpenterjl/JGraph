@@ -282,6 +282,21 @@ public sealed class JGraphScriptGlobals
     /// <summary>Writes raw text (no newline) to the error console. Backs Python's redirected stderr.</summary>
     public void WriteErr(string text) => _context.Output.WriteError(text);
 
+    /// <summary>
+    /// Writes a warning line: to the error console, or into <c>evalc</c>'s capture while one runs —
+    /// R2025b's <c>evalc</c> answers the warnings its code raised (probe5w, ADR 0178).
+    /// </summary>
+    internal void WriteWarning(string text)
+    {
+        if (_capture is { } buffer)
+        {
+            buffer.Append(text).Append('\n');
+            return;
+        }
+
+        WriteErr(text);
+    }
+
     // --- Table readers ----------------------------------------------------------------------------
 
     /// <summary>Reads a delimited-text (CSV/TSV) table, resolving a relative path against the working directory.</summary>

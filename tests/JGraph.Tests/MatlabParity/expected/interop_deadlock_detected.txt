@@ -1,0 +1,3 @@
+CHK|method_waits_on_thread|JGraph:NET:DelegateDeadlock|exact
+CHK|property_waits_on_thread|JGraph:NET:DelegateDeadlock|exact
+CHK|next_call_runs|10|exact

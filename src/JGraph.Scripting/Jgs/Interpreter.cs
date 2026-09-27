@@ -1166,7 +1166,7 @@ internal sealed partial class Interpreter
                 host.Warnings.Record(DestructorWarningId, text);
                 if (host.Warnings.IsOn(DestructorWarningId))
                 {
-                    host.WriteErr("Warning: " + text);
+                    host.WriteWarning("Warning: " + text);
                 }
             }
         }
@@ -1592,6 +1592,20 @@ internal sealed partial class Interpreter
             {
                 // A variable holding a handle, called as a statement - h(x); g(); - asks for zero
                 // outputs like a written call (V9.1); a variable holding data is indexed below.
+                // A .NET delegate called as a statement, a1(); - its Invoke asked for nothing (ADR 0178).
+                if (Dialect.IsMatlab && resolvedCall.Layer == ResolutionLayer.Bound
+                    && resolvedCall.Value.AsExternalOrNull() is NetObject { Target: Delegate } netDelegate)
+                {
+                    JgsValue[] invoked = Net.NetInvoke.Call(netDelegate.Type, "Invoke", netDelegate, EvaluateAll(named.Arguments, env), 0,
+                        named.Line, named.Column, NetTypes);
+                    if (invoked.Length > 0)
+                    {
+                        BindAns(statement, invoked[0], env, owned: false);
+                    }
+
+                    return;
+                }
+
                 if (Dialect.IsMatlab && resolvedCall.Layer == ResolutionLayer.Bound && resolvedCall.Value.Type == JgsType.Function)
                 {
                     JgsValue[] outputs = InvokeFunctionValue(resolvedCall.Value, named, env, wanted: 0);
@@ -6716,6 +6730,13 @@ internal sealed partial class Interpreter
             if (callee.AsExternal is NetObject { Target: Array array } netArray)
             {
                 return Net.NetArrays.Read(netArray, array, NetSubscripts(call.Arguments, call, env), Dialect.IndexBase, NetTypes, call.Line, call.Column);
+            }
+
+            // d(x) on a .NET delegate: its Invoke, u() included (ADR 0178, probe5b).
+            if (callee.AsExternal is NetObject { Target: Delegate } netDelegate)
+            {
+                return Net.NetInvoke.Call(netDelegate.Type, "Invoke", netDelegate, EvaluateAll(call.Arguments, env), 1,
+                    call.Line, call.Column, NetTypes)[0];
             }
 
             if (call.Arguments.Count == 0)

@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace JGTest
 {
@@ -30,17 +29,23 @@ namespace JGTest
         public void RaiseNonStandard(int code, string text) => NonStandard?.Invoke(code, text);
         public static void RaiseStatic() => StaticFired?.Invoke(null, EventArgs.Empty);
 
-        /// <summary>Raises Custom count times from a thread-pool thread, delayMs apart, and returns at once.</summary>
+        /// <summary>
+        /// Raises Custom count times from another thread, delayMs apart, and returns at once. A thread
+        /// of its own rather than the pool's, so a busy pool (a parallel test run) cannot hold the
+        /// events back past the point a script waits for them.
+        /// </summary>
         public void RaiseOnThreadPool(int count, int delayMs)
         {
-            Task.Run(() =>
+            var thread = new Thread(() =>
             {
                 for (int i = 0; i < count; i++)
                 {
                     Thread.Sleep(delayMs);
                     Custom?.Invoke(this, new CustomArgs(i + 1, "pool"));
                 }
-            });
+            })
+            { IsBackground = true };
+            thread.Start();
         }
     }
 }

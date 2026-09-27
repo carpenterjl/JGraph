@@ -91,7 +91,13 @@ internal static partial class JgsBuiltins
         Define("addlistener", (args, line, col) => AddListener("addlistener", host, args, line, col));
         Define("listener", (args, line, col) => AddListener("listener", host, args, line, col));
         Define("notify", (args, line, col) => Notify(args, line, col), bindsAns: false);
-        Define("events", (args, line, col) => EventNames(interpreter, args, line, col));
+        env.Builtins.Register("events", JgsValue.Function(new BuiltinFunction("events", (args, line, col) => EventNames(interpreter, args, line, col))
+        {
+            KeepsStringArguments = true,
+            BindsAnsAsStatement = true,
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) => EventsCall(interpreter, host, args, wanted, line, col),
+        }));
     }
 
     // --- addlistener ----------------------------------------------------------------------------
@@ -106,12 +112,12 @@ internal static partial class JgsBuiltins
     {
         if (args.Count < 3)
         {
-            throw new JgsRuntimeException(line, col, "Not enough input arguments.");
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
         }
 
         if (args.Count > 4)
         {
-            throw new JgsRuntimeException(line, col, "Too many input arguments.");
+            throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
         }
 
         JgsValue sourceValue = args[0];
@@ -120,16 +126,21 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "Double input must be an HG handle");
         }
 
+        if (sourceValue.AsExternalOrNull() is NetObject { IsHandle: true } net)
+        {
+            return AddNetListener(verb, host, net, sourceValue, args, line, col);
+        }
+
         if (sourceValue.Type != JgsType.Object || !sourceValue.AsObject.Class.IsHandle)
         {
-            throw new JgsRuntimeException(line, col,
+            throw new JgsRuntimeException(line, col, "MATLAB:addlistener:invalidinput",
                 $"First argument provided is not valid for {verb}. (Check its type or validity)");
         }
 
         JgsObject source = sourceValue.AsObject;
         if (source.Deleted)
         {
-            throw new JgsRuntimeException(line, col, "Invalid or deleted object.");
+            throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.");
         }
 
         JgsValue callback = args[^1];
@@ -256,7 +267,7 @@ internal static partial class JgsBuiltins
     {
         if (!definition.HasEvent(eventName))
         {
-            throw new JgsRuntimeException(line, col,
+            throw new JgsRuntimeException(line, col, "MATLAB:class:invalidEvent",
                 $"Event '{eventName}' is not defined for class '{definition.Name}'.");
         }
     }
@@ -313,7 +324,7 @@ internal static partial class JgsBuiltins
         JgsObject source = sourceValue.AsObject;
         if (source.Deleted)
         {
-            throw new JgsRuntimeException(line, col, "Invalid or deleted object.");
+            throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.");
         }
 
         if (!IsTextScalar(args[1]))
@@ -490,11 +501,38 @@ internal static partial class JgsBuiltins
         host.Warnings.Record(CallbackWarningId, text);
         if (host.Warnings.IsOn(CallbackWarningId))
         {
-            host.WriteErr("Warning: " + text);
+            host.WriteWarning("Warning: " + text);
         }
     }
 
     // --- events ---------------------------------------------------------------------------------
+
+    /// <summary>
+    /// <c>events(x)</c> asked for its answer, or as a statement: for a .NET object or type, a statement
+    /// prints R2025b's listing — "Events for class T:" and the names (net_display, ADR 0178) — and
+    /// answers nothing; anything else answers the cell as before.
+    /// </summary>
+    private static JgsValue[] EventsCall(
+        Interpreter interpreter, JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        JgsValue names = EventNames(interpreter, args, line, col);
+        Type? netType = args[0].AsExternalOrNull() is NetObject net ? net.Type
+            : IsTextScalar(args[0]) && interpreter.TryNetName(TextOf(args[0]), interpreter.CurrentFrame, out Type? named, out string? member) && member is null ? named
+            : null;
+        if (wanted > 0 || netType is null)
+        {
+            return [names];
+        }
+
+        var text = new System.Text.StringBuilder("\nEvents for class ").Append(Net.NetNames.ClassName(netType)).Append(":\n\n");
+        foreach (JgsValue name in names.AsCell)
+        {
+            text.Append("    ").Append(name.AsString).Append('\n');
+        }
+
+        host.print(text.ToString()); // print ends the listing's last blank line itself
+        return [];
+    }
 
     /// <summary><c>events(obj)</c> or <c>events('Name')</c>: the class's events as a cell column, <c>ObjectBeingDestroyed</c> last for a handle.</summary>
     private static JgsValue EventNames(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
@@ -504,6 +542,13 @@ internal static partial class JgsBuiltins
         if (asked.AsExternalOrNull() is NetObject net)
         {
             return EventColumn(Net.NetInvoke.EventNames(net.Type)); // a .NET object's events (ADR 0174)
+        }
+
+        // events('JGTest.Publisher'): a .NET type named as text (ADR 0178, probe5a).
+        if (IsTextScalar(asked) && interpreter.TryNetName(TextOf(asked), interpreter.CurrentFrame, out Type? netType, out string? member)
+            && member is null)
+        {
+            return EventColumn(Net.NetInvoke.EventNames(netType!));
         }
 
         JgsClass? definition = asked.Type == JgsType.Object ? asked.AsObject.Class : NamedClass(asked, interpreter);
@@ -560,7 +605,7 @@ internal static partial class JgsBuiltins
         if (state.FromListenerFunction && !state.Deleted)
         {
             state.Deleted = true;
-            state.Source.Listeners?.Remove(state);
+            state.Detach();
         }
 
         return true;
@@ -572,7 +617,7 @@ internal static partial class JgsBuiltins
         JgsListener state = ListenerStateOf(listener, line, col);
         if (state.Deleted)
         {
-            throw new JgsRuntimeException(line, col, "Invalid or deleted object.");
+            throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.");
         }
 
         if (listener.AsStruct.TryGetValue(field, out JgsValue? held))
@@ -594,7 +639,7 @@ internal static partial class JgsBuiltins
         JgsListener state = ListenerStateOf(listener, line, col);
         if (state.Deleted)
         {
-            throw new JgsRuntimeException(line, col, "Invalid or deleted object.");
+            throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.");
         }
 
         if (!listener.AsStruct.ContainsKey(field))
@@ -677,7 +722,7 @@ internal static partial class JgsBuiltins
         }
 
         state.Deleted = true;
-        state.Source.Listeners?.Remove(state);
+        state.Detach();
         return true;
     }
 }

@@ -246,7 +246,16 @@ internal static partial class JgsBuiltins
 
         Type closed = ClosedGeneric(interpreter, TextOf(args[0]), args[1].AsCell, line, col);
         interpreter.NoteNet();
-        return NetInvoke.Construct(closed, args.Skip(2).ToArray(), line, col, interpreter.NetTypes);
+        try
+        {
+            return NetInvoke.Construct(closed, args.Skip(2).ToArray(), line, col, interpreter.NetTypes);
+        }
+        catch (JgsRuntimeException refused) when (refused.Identifier == "MATLAB:dispatcher:noMatchingConstructor")
+        {
+            // R2025b names the definition, arity and all (probe5b: 'System.Func`2').
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:GenericObjectCreationError",
+                $"No constructor '{closed.GetGenericTypeDefinition().FullName}' with matching signature found.");
+        }
     }
 
     /// <summary>

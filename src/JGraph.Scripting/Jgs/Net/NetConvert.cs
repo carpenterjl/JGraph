@@ -101,11 +101,20 @@ internal static class NetConvert
             return null;
         }
 
+        // A function handle reaches a delegate parameter first, as the delegate it becomes (ADR 0178,
+        // probe5b).
+        if (category == "function" && NetDelegates.IsDelegateType(parameter))
+        {
+            return 0;
+        }
+
         string[] order = Orders.TryGetValue(category, out string[]? known) ? known : GenericOrder(category);
         string? key = Key(parameter);
         if (key is null)
         {
-            return null;
+            // [] reaches any other reference type as null — a delegate, an interface
+            // (u.EndInvoke([]) calls, probe5b) — after everything the recorded row lists.
+            return category == "empty" && !parameter.IsValueType ? order.Length : null;
         }
 
         int at = Array.IndexOf(order, key);
@@ -284,7 +293,12 @@ internal static class NetConvert
     {
         if (value.Type == JgsType.External)
         {
-            return ((NetObject)value.AsExternal).Target;
+            return ((NetObject)value.AsExternal).Live(line, col).Target;
+        }
+
+        if (value.Type == JgsType.Function && NetDelegates.IsDelegateType(parameter))
+        {
+            return NetDelegates.Create(parameter, value.AsCallable);
         }
 
         if (Nullable.GetUnderlyingType(parameter) is { } under)
@@ -325,7 +339,8 @@ internal static class NetConvert
             return value.AsString[0];
         }
 
-        if (parameter == typeof(Array) || (parameter.IsArray && IsEmptyNumeric(value)))
+        if (parameter == typeof(Array)
+            || ((parameter.IsArray || (!parameter.IsValueType && Key(parameter) is null)) && IsEmptyNumeric(value)))
         {
             return null;
         }
@@ -353,7 +368,7 @@ internal static class NetConvert
         switch (value.Type)
         {
             case JgsType.External:
-                return ((NetObject)value.AsExternal).Target;
+                return ((NetObject)value.AsExternal).Live(line, col).Target;
             case JgsType.Function:
                 throw ObjectConversion(value, line, col);
             case JgsType.Struct when IsDictionary(value):

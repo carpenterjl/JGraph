@@ -350,8 +350,10 @@ public class MatlabCellStructTests : IDisposable
             n();
             """);
 
+        // R2025b: a fixed parameter the body reads and the call left out is "Not enough input
+        // arguments." (ADR 0178); one the body never reads may be left out.
         Assert.False(result.Success);
-        Assert.Contains("expects 2 argument(s) but got 0", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("Not enough input arguments.", result.Message!, StringComparison.Ordinal);
     }
 
     // --- global ---------------------------------------------------------------------------------

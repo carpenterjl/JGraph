@@ -120,6 +120,15 @@ public static class ScriptEventQueue
     /// </summary>
     public static void InstallPump(Action? pump) => _pump = pump;
 
+    /// <summary>
+    /// Whether anything waits for the script thread: an interface event, or .NET work — an event a
+    /// thread-pool thread raised, a delegate it invoked (ADR 0178). What an idle host asks.
+    /// </summary>
+    public static bool HasWork => Count > 0 || Jgs.Net.NetCallbackQueue.AnyPending;
+
+    /// <summary>Tells the host that work arrived from elsewhere than this queue (.NET's, ADR 0178).</summary>
+    internal static void PokePump() => _pump?.Invoke();
+
     /// <summary>How many events are waiting.</summary>
     public static int Count
     {

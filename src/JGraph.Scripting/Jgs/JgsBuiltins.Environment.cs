@@ -128,9 +128,10 @@ internal static partial class JgsBuiltins
                 }
 
                 // A .NET object: R2025b neither calls Dispose nor clears the variable (net_members,
-                // ADR 0175), so there is nothing to do.
-                if (args[i].Type == JgsType.External && args[i].AsExternal is NetObject)
+                // ADR 0175), but the handle is ended and ObjectBeingDestroyed raised (ADR 0178).
+                if (args[i].Type == JgsType.External && args[i].AsExternal is NetObject net)
                 {
+                    DeleteNetObject(net, args[i]);
                     continue;
                 }
 

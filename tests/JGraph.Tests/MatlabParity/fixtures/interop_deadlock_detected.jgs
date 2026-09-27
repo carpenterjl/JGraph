@@ -1,0 +1,10 @@
+# interop_deadlock_detected.jgs -- a function handle .NET invokes on another thread while the script
+# waits inside a .NET call for that thread (interop plan, stage 5, ADR 0178). R2025b hangs for good
+# (net_events_delegates' header; killed after 60 s in step 0), so this is a JGraph-only fixture and
+# expected/interop_deadlock_detected.txt is written from the rule: the waiting delegate gives up after
+# its timeout, and the .NET call the script is blocked in fails with JGraph:NET:DelegateDeadlock. The
+# cases are MATLAB code in helpers/ix_deadlock.m, which JGS reaches as it reaches any .m helper.
+
+print("CHK|method_waits_on_thread|" + ix_deadlock("apply") + "|exact");
+print("CHK|property_waits_on_thread|" + ix_deadlock("result") + "|exact");
+print("CHK|next_call_runs|" + ix_deadlock("after") + "|exact");

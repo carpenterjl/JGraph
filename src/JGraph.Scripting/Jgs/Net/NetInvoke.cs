@@ -49,6 +49,7 @@ internal static class NetInvoke
         NetObject target, string name, bool autoCall, int line, int col, NetCatalog? session = null, int bareWanted = 1)
     {
         session?.SyncFolder();
+        target.Live(line, col);
         if (target.NullableOf is { } under)
         {
             return NullableMember(target, under, name, line, col, session);
@@ -114,13 +115,14 @@ internal static class NetInvoke
     /// <summary>Writes <c>target.name = value</c> on a property or field the object has.</summary>
     public static void SetMember(NetObject target, string name, JgsValue value, int line, int col)
     {
-        Type type = target.Type;
+        Type type = target.Live(line, col).Type;
         if (type.GetProperty(name, Public | BindingFlags.Instance | BindingFlags.Static) is { } property
             && property.GetIndexParameters().Length == 0)
         {
             MethodInfo setter = property.GetSetMethod()
                 ?? throw ReadOnly(name, type, line, col);
             object? converted = PropertyValue(value, property.PropertyType, name, type, line, col);
+            using NetCallbackQueue.NetCallScope inNet = NetCallbackQueue.ForCurrentThread().EnterNetCall();
             try
             {
                 setter.Invoke(setter.IsStatic ? null : target.Target, [converted]);
@@ -158,6 +160,7 @@ internal static class NetInvoke
         {
             MethodInfo setter = property.GetSetMethod() ?? throw StaticNotAccessible(name, type, line, col);
             object? converted = PropertyValue(value, property.PropertyType, name, owner: null, line, col);
+            using NetCallbackQueue.NetCallScope inNet = NetCallbackQueue.ForCurrentThread().EnterNetCall();
             try
             {
                 setter.Invoke(null, [converted]);
@@ -215,7 +218,8 @@ internal static class NetInvoke
         {
             bool scalar = value.Type is JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.External
                 || (value.Type == JgsType.String && value.AsString.Length == 1)
-                || (value.Type is JgsType.Array or JgsType.Cell && value.ArrayLength == 1);
+                || (value.Type is JgsType.Array or JgsType.Cell && value.ArrayLength == 1)
+                || (value.Type == JgsType.Struct && value.AsStructArray.Length == 1); // probe5b: a 1x1 struct is not numeric
             if (!scalar)
             {
                 throw new JgsRuntimeException(line, col, "MATLAB:class:RequireScalar", lead + "Value must be a scalar.");
@@ -225,6 +229,30 @@ internal static class NetInvoke
         }
 
         return Argument(value, type, 1, name, line, col);
+    }
+
+    /// <summary>
+    /// What a function handle answered, as the value its delegate returns (or leaves in a <c>ref</c> or
+    /// <c>out</c> parameter): refused as R2025b refuses it (probe5b) — as a property write refuses a
+    /// value, with the reason alone, and besides that a complex number as not real and an empty as no
+    /// conversion at all.
+    /// </summary>
+    internal static object? DelegateResult(JgsValue value, Type type, int line, int col)
+    {
+        if (value.Type == JgsType.Complex || (value.Type == JgsType.Array && value.IsPackedComplex))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:RequireReal", "Value must be real.");
+        }
+
+        if (IsNumericTarget(type) && value.Type == JgsType.Array && value.ArrayLength == 0 && !value.IsCharMatrix && !value.IsStringArray)
+        {
+            Type plain = Nullable.GetUnderlyingType(type) ?? type;
+            string wanted = JgsBuiltins.ClassOf(NetConvert.ToMatlab(Activator.CreateInstance(plain), plain), JgsDialect.Matlab);
+            throw new JgsRuntimeException(line, col, "MATLAB:NET:NetConversion:UndefinedConversion",
+                $"Conversion to {wanted} from double scalar is not possible.");
+        }
+
+        return PropertyValue(value, type, "", owner: null, line, col);
     }
 
     private static bool IsNumericTarget(Type type) =>
@@ -266,6 +294,7 @@ internal static class NetInvoke
     private static JgsValue Get(PropertyInfo property, object? target, int line, int col, NetCatalog? session)
     {
         object? read;
+        using NetCallbackQueue.NetCallScope inNet = NetCallbackQueue.ForCurrentThread().EnterNetCall();
         try
         {
             read = property.GetValue(target);
@@ -337,6 +366,15 @@ internal static class NetInvoke
                 $"Abstract classes cannot be instantiated. Class '{name}' is declared as Abstract.");
         }
 
+        // A delegate type is made from one function handle and nothing else (ADR 0178, probe5b).
+        if (NetDelegates.IsDelegateType(type))
+        {
+            return arguments is [{ Type: JgsType.Function } handle]
+                ? NetConvert.ToMatlab(NetDelegates.Create(type, handle.AsCallable), type, line, col, session)
+                : throw new JgsRuntimeException(line, col, "MATLAB:dispatcher:noMatchingConstructor",
+                    $"No constructor '{name}' with matching signature found.");
+        }
+
         NetSignature[] constructors = NetSignature.Constructors(type);
         if (constructors.Length == 0 && !type.IsValueType)
         {
@@ -354,6 +392,7 @@ internal static class NetInvoke
                 ?? throw new JgsRuntimeException(line, col, "MATLAB:dispatcher:noMatchingConstructor",
                     $"No constructor '{name}' with matching signature found.");
             object?[] given = Arguments(chosen, arguments, line, col);
+            using NetCallbackQueue.NetCallScope inNet = NetCallbackQueue.ForCurrentThread().EnterNetCall();
             try
             {
                 made = ((ConstructorInfo)chosen.Method).Invoke(given);
@@ -377,6 +416,7 @@ internal static class NetInvoke
         NetCatalog? session = null)
     {
         session?.SyncFolder();
+        receiver?.Live(line, col);
         NetSignature chosen = Choose(NetSignature.Group(type, name, receiver is not null), arguments, wanted)
             ?? throw NoMatch(type, name, receiver is not null, line, col);
         return Invoke(chosen, receiver, arguments, wanted, "MethodInvoke", line, col, session);
@@ -438,6 +478,7 @@ internal static class NetInvoke
     {
         object?[] given = Arguments(chosen, arguments, line, col);
         object? answer;
+        using NetCallbackQueue.NetCallScope inNet = NetCallbackQueue.ForCurrentThread().EnterNetCall();
         try
         {
             answer = chosen.Method.Invoke(chosen.IsStatic ? null : receiver!.Target, given);
@@ -481,6 +522,7 @@ internal static class NetInvoke
         }
 
         object? answer;
+        using NetCallbackQueue.NetCallScope inNet = NetCallbackQueue.ForCurrentThread().EnterNetCall();
         try
         {
             answer = chosen.Invoke(chosen.IsStatic ? null : receiver!.Target, given);
@@ -572,6 +614,21 @@ internal static class NetInvoke
     /// </summary>
     public static JgsRuntimeException Raise(Exception fault, string context, int line, int col)
     {
+        // A script's own error, Stop or exit, thrown by a function handle .NET called back through
+        // a delegate, comes out as itself (probe5c: the callback's MException, not a NET.NetException).
+        for (Exception? link = fault; link is not null; link = link is AggregateException { InnerExceptions.Count: 1 } one ? one.InnerExceptions[0] : link.InnerException)
+        {
+            if (link is NetScriptFault { InnerException: { } script })
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(script).Throw();
+            }
+
+            if (link is NetDelegateDeadlockException deadlock)
+            {
+                return new JgsRuntimeException(line, col, NetDelegateDeadlockException.Identifier, deadlock.Message);
+            }
+        }
+
         Exception thrown = fault is TargetInvocationException { InnerException: { } inner } ? inner : fault;
         string identifier = context.Length == 0 ? "MATLAB:NET:CLRException" : "MATLAB:NET:CLRException:" + context;
         string message = $"Message: {thrown.Message}\nSource: {thrown.Source ?? "None"}\nHelpLink: {thrown.HelpLink ?? "None"}";

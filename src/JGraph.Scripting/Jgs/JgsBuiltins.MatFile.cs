@@ -64,7 +64,7 @@ internal static partial class JgsBuiltins
         host.Warnings.Record(identifier, text);
         if (host.Warnings.IsOn(identifier))
         {
-            host.WriteErr("Warning: " + text);
+            host.WriteWarning("Warning: " + text);
         }
     }
 

@@ -485,7 +485,7 @@ internal static partial class JgsBuiltins
             host.Warnings.Record("MATLAB:timer:deleterunning", warning);
             if (host.Warnings.IsOn("MATLAB:timer:deleterunning"))
             {
-                host.WriteErr("Warning: " + warning);
+                host.WriteWarning("Warning: " + warning);
             }
 
             StopTimer(state, runStopFcn: true, line, col);

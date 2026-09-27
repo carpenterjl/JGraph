@@ -65,6 +65,18 @@ internal sealed class NetObject : IJgsExternal
     /// <summary>The value type a Nullable wraps, or null when this is not a Nullable.</summary>
     public Type? NullableOf => Nullable.GetUnderlyingType(Type);
 
+    /// <summary>
+    /// <c>delete(obj)</c> ran on this handle (ADR 0178): every name for it — the one wrapper — is
+    /// invalid, and its members, conversions and passing it to .NET refuse, while the .NET object
+    /// itself is untouched and a new wrapper of it, handed back by .NET, is valid (probe5h).
+    /// </summary>
+    public bool Deleted { get; set; }
+
+    /// <summary>This object, or R2025b's refusal when it was deleted.</summary>
+    public NetObject Live(int line, int col) => Deleted
+        ? throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.")
+        : this;
+
     public string ClassName => IsView ? "NET.view." + Net.NetNames.ClassName(Type) : Net.NetNames.ClassName(Type);
 
     public bool IsHandle => !Type.IsValueType;

@@ -41,7 +41,7 @@ public partial class ScriptWorkspaceWindow
     /// </summary>
     private void PumpGraphicsEventsWhenIdle()
     {
-        if (ScriptEventQueue.Count == 0 || _session.State != ScriptSessionState.Idle)
+        if (!ScriptEventQueue.HasWork || _session.State != ScriptSessionState.Idle)
         {
             return;
         }
