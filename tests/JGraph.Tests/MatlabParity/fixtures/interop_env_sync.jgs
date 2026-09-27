@@ -1,0 +1,8 @@
+# interop_env_sync.jgs -- the native host sees MATLAB's environment and folder (interop plan, stage 7,
+# ADR 0180). In R2025b native code runs in MATLAB's own process, so setenv, cd and a variable .NET sets
+# are simply there (step 0, finding 14); JGraph's host is another process and is brought up to date
+# before each call. JGraph-only, written from that rule; the cases are in helpers/ix_native.m.
+
+print("CHK|setenv|" + ix_native("setenv") + "|exact");
+print("CHK|dotnet_env|" + ix_native("dotnet_env") + "|exact");
+print("CHK|cd|" + ix_native("cd") + "|exact");

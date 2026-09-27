@@ -312,6 +312,7 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
     private void ReleaseWorkspace()
     {
         _globals.CloseAllFiles();
+        _globals.StopNativeHost(); // the console session's host ends with it (ADR 0180)
         JgsRunner.DisposeBuffers(UserVariables().Select(static pair => pair.Value));
     }
 

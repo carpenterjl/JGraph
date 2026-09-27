@@ -74,6 +74,10 @@ internal sealed class NetCatalog
     /// </summary>
     public void SyncFolder()
     {
+        // The member about to run may change the environment, which the native host must then be
+        // sent before its next call (ADR 0180); a counter makes that a compare when nothing ran.
+        Native.EnvironmentBlock.NoteChange();
+
         if (Folder?.Invoke() is not { } folder || string.Equals(folder, _processFolder, StringComparison.OrdinalIgnoreCase))
         {
             return;

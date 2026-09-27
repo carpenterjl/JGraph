@@ -57,7 +57,12 @@ $anchors = @(
     # The bug-report assembly (ADR 0116). Referenced by JGraph.Application, so the publish
     # carries it - this line is here so a removed reference fails the build loudly instead of
     # shipping a product whose Report a Bug button cannot load its types.
-    "JGraph.Reporting.dll"
+    "JGraph.Reporting.dll",
+    # The native library host (ADR 0180): loadlibrary and calllib run native code in this child
+    # process. JGraph.Scripting references it, which carries the executable and its runtimeconfig
+    # into the publish; without them every native call fails on a missing host.
+    "JGraph.NativeHost.exe",
+    "JGraph.NativeHost.runtimeconfig.json"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

@@ -1,0 +1,11 @@
+CHK|call|42 2.5 1|exact
+CHK|crash|JGraph:loadlibrary:HostExited ## The native library host stopped (exception 0xC0000005, access violation) during calllib('jgtestlib', 'jg_crash'). Every library it had loaded is unloaded, and every lib.pointer into it is invalid.|exact
+CHK|after_crash|0 10 1|exact
+CHK|stop|0 3 1|exact
+CHK|strings|hello from jgtestlib 6|exact
+CHK|printf|7|exact
+CHK|find|jgtestlib.dll kernel32|exact
+CHK|load_failed|MATLAB:loadlibrary:LoadFailed ## There was an error loading the library "jg_no_such_library" ## The specified module could not be found.|exact
+CHK|not_a_dll|MATLAB:loadlibrary:LoadFailed ## There was an error loading the library "<file>" ## <file> is not a valid Win32 application.|exact
+CHK|no_export|MATLAB:calllib:MethodNotFound ## Method was not found.|exact
+CHK|jgs_feval|double|exact

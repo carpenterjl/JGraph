@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>JGraph.Scripting</RootNamespace>
+    <!-- The native host's client compares the process environment block in place (ADR 0180). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Description>Scripting hosts for JGraph: a language-agnostic IScriptEngine seam with a Roslyn C# engine and a pythonnet (CPython) engine that drive the JG API and the tabular data readers.</Description>
   </PropertyGroup>
 
@@ -42,6 +44,10 @@
     <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
     <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />
     <ProjectReference Include="..\JGraph.Api\JGraph.Api.csproj" />
+
+    <!-- The native library host (ADR 0180): its protocol types are shared from its assembly, and the
+         reference carries the executable, its runtimeconfig and deps into every host's output. -->
+    <ProjectReference Include="..\JGraph.NativeHost\JGraph.NativeHost.csproj" />
 
     <!-- copyobj copies a figure object by writing it out and reading it back, so the one description
          of what a plot is made of stays the document format's rather than becoming a second one. -->

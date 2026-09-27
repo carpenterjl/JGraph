@@ -1,0 +1,130 @@
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s1_cwd_and_path	LOADED <top>\A\s1.dll
+s1_cwd_and_path.call	5
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s2_path_only	LOADED <top>\B\s2.dll
+s2_path_only.call	5
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s3_mexw64_only	LOADED <top>\A\s3.mexw64
+s3_mexw64_only.call	5
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s4_dll_and_mexw64	LOADED <top>\A\s4.mexw64
+s4_dll_and_mexw64.call	5
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s5_with_extension	LOADED <top>\A\s5.dll
+s5_with_extension.call	5
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s9_absolute_no_ext	LOADED <top>\B\s9.dll
+s9_absolute_no_ext.call	5
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s11_relative_sub	LOADED <top>\A\sub\s11.dll
+s11_relative_sub.call	5
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s12_other_ext	LOADED <top>\A\s12.lib
+s12_other_ext.call	5
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_search (line 46)] 
+s13_mexw64_path	LOADED <top>\B\s13.mexw64
+s13_mexw64_path.call	5
+missing	ERR MATLAB:loadlibrary:LoadFailed There was an error loading the library "nosuchlib_zz" | The specified module could not be found. | 
+missing_abs	ERR MATLAB:loadlibrary:LoadFailed There was an error loading the library "<top>\A\nosuchlib_zz.dll" | The specified module could not be found. | 
+not_a_dll	ERR MATLAB:loadlibrary:LoadFailed There was an error loading the library "<top>\A\bad.dll" | <top>\A\bad.dll is not a valid Win32 application. | 
+x32	ERR MATLAB:loadlibrary:LoadFailed There was an error loading the library "<top>\A\x32.dll" | <top>\A\x32.dll is not a valid Win32 application. | 

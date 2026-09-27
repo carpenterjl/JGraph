@@ -1,0 +1,3 @@
+CHK|setenv|first second []|exact
+CHK|dotnet_env|from .NET|exact
+CHK|cd|1 1|exact

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The native library host (interop plan, stage 7, ADR 0180): a child process that loads every C
+    library a session's loadlibrary names and makes every call, so a crash in native code ends this
+    process and not JGraph. It knows only raw memory, exports and calls through a signature of
+    primitive slots; every C semantic stays in JGraph.Scripting, which references this project for
+    the protocol and so carries the executable into every host's output folder.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.NativeHost</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- One build for every consumer: without this, a publish with -r win-x64 builds the host once
+         with the runtime identifier (as a transitive reference of the launcher) and once without (as
+         JGraph.Scripting's), and the two copies collide in the publish folder (NETSDK1152). -->
+    <IsRidAgnostic>true</IsRidAgnostic>
+    <Description>The out-of-process host JGraph's loadlibrary and calllib run native code in: loads libraries, resolves exports, allocates, reads and writes memory, and calls function pointers.</Description>
+  </PropertyGroup>
+
+</Project>

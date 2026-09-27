@@ -565,6 +565,7 @@ internal static partial class JgsBuiltins
             Environment.SetEnvironmentVariable(
                 Str("setenv", args, 0, line, col),
                 args.Count == 2 ? Str("setenv", args, 1, line, col) : string.Empty);
+            Native.EnvironmentBlock.NoteChange(); // the native host is sent it before its next call (ADR 0180)
             return JgsValue.Null;
         });
 

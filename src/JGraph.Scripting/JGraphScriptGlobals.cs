@@ -701,6 +701,26 @@ public sealed class JGraphScriptGlobals
         _videoWriters.Clear();
     }
 
+    // --- The native host --------------------------------------------------------------------------
+
+    private Jgs.Native.NativeSession? _native;
+
+    /// <summary>
+    /// The session's native library host (ADR 0180): made on the first native call, kept through
+    /// <c>clear all</c>, and ended with the run or the console session by <see cref="StopNativeHost"/>.
+    /// </summary>
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    internal Jgs.Native.NativeSession Native => _native ??= new Jgs.Native.NativeSession();
+
+    /// <summary>Ends the native host, if the session started one; every library it loaded goes with it.</summary>
+    internal void StopNativeHost()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            _native?.Stop();
+        }
+    }
+
     /// <summary>Clears the output sink's display — the <c>clc</c> builtin. Sinks without a display ignore it.</summary>
     internal void ClearOutput() => _context.Output.Clear();
 

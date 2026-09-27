@@ -861,6 +861,12 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// The token that stops the statement running now: a builtin that waits on something outside the
+    /// interpreter — a native call in the host (ADR 0180) — cancels its wait with it.
+    /// </summary>
+    internal CancellationToken Cancellation => _cancellationToken;
+
+    /// <summary>
     /// The debug hook in force, attachable after construction so a long-lived session can run one
     /// file under the debugger and go back to full speed for the next prompt. Set only between
     /// statements: the block executor reads it on entry, and a hook that appears halfway through a

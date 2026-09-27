@@ -36,6 +36,12 @@ internal static partial class JgsBuiltins
         env.Builtins.RegisterConstant("jgraph", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
             ["net"] = JgsValue.Struct(net),
+
+            // Test-only and undocumented (ADR 0180): the native host's door for the JGraph-only fixtures.
+            ["internal"] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                ["nativehost"] = NativeHostFunction(interpreter),
+            }),
         }));
     }
 

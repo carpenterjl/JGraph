@@ -1,0 +1,19 @@
+# interop_host_crash.jgs -- the native host (interop plan, stage 7, ADR 0180): the child process that
+# loadlibrary and calllib will run native code in, driven through JGraph's test-only door
+# jgraph.internal.nativehost, since the MATLAB surface arrives in stages 8 and 9. R2025b runs native
+# code in its own process, where a crash ends MATLAB, so this is a JGraph-only fixture and
+# expected/interop_host_crash.txt is written from the rule. The cases are MATLAB code in
+# helpers/ix_native.m. A cancel cannot be pressed from inside a fixture: NativeHostM180Tests stops a
+# run during jg_sleep(60000) instead.
+
+print("CHK|call|" + ix_native("call") + "|exact");
+print("CHK|crash|" + ix_native("crash") + "|exact");
+print("CHK|after_crash|" + ix_native("after_crash") + "|exact");
+print("CHK|stop|" + ix_native("stop") + "|exact");
+print("CHK|strings|" + ix_native("strings") + "|exact");
+print("CHK|printf|" + ix_native("printf") + "|exact");
+print("CHK|find|" + ix_native("find") + "|exact");
+print("CHK|load_failed|" + ix_native("load_failed") + "|exact");
+print("CHK|not_a_dll|" + ix_native("not_a_dll") + "|exact");
+print("CHK|no_export|" + ix_native("no_export") + "|exact");
+print("CHK|jgs_feval|" + class(feval("jgraph.internal.nativehost", "pid")) + "|exact");
