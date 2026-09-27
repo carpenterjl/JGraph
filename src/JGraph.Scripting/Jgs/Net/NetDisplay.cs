@@ -98,7 +98,7 @@ internal static class NetDisplay
     public static IEnumerable<string> MemberNames(NetObject net) =>
         net.NullableOf is not null ? ["HasValue", "Value"] : Members(net).Select(static m => m.Name);
 
-    private static string Shown(JgsValue value)
+    internal static string Shown(JgsValue value)
     {
         if (value.Type == JgsType.External)
         {

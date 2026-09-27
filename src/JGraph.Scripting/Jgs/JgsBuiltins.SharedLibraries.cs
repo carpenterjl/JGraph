@@ -10,9 +10,9 @@ namespace JGraph.Scripting.Jgs;
 /// MATLAB's shared-library interface (interop plan, stage 8, ADR 0181): <c>loadlibrary</c> by header
 /// (a C compiler preprocesses it and <see cref="CHeaderParser"/> reads it) or by prototype file,
 /// <c>unloadlibrary</c>, <c>libisloaded</c>, <c>libfunctions</c>, <c>mexext</c>,
-/// <c>mex.getCompilerConfigurations</c>, and <c>calllib</c> for scalars, C strings and structs
-/// returned by value. Pointers, <c>libpointer</c> and <c>libstruct</c> are stage 9's. Every
-/// sentence and identifier is R2025b's (probe_shrlib_load, probe_shrlib_parse, probe_shrlib_warnids).
+/// <c>mex.getCompilerConfigurations</c>, and <c>calllib</c>, whose arguments, pointers and structs
+/// are stage 9's (ADR 0182, <c>JgsBuiltins.LibPointers.cs</c>). Every sentence and identifier is
+/// R2025b's (probe_shrlib_load, probe_shrlib_parse, probe_shrlib_warnids).
 /// </summary>
 /// <remarks>
 /// A struct returned by value is a JGraph extension: R2025b cannot build a thunk for it, lists the
@@ -64,6 +64,7 @@ internal static partial class JgsBuiltins
             TakesOutputCount = true,
             MultiOutput = (args, wanted, line, col) => OperatingSystem.IsWindows() ? CallLib(interpreter, SessionHost(interpreter, line, col), args, wanted, line, col) : throw NotOnWindows(line, col),
         }));
+        RegisterLibPointerBuiltins(env, interpreter);
         env.Builtins.Register("mexext", JgsValue.Function(new BuiltinFunction("mexext", (args, line, col) => MexExt(args, line, col))
         {
             KeepsStringArguments = true,
@@ -317,6 +318,7 @@ internal static partial class JgsBuiltins
         }
 
         session.Libraries[name] = loaded;
+        interpreter.NoteNet(); // its pointers and libstructs dispatch methods (ADR 0182)
         JgsValue notFoundValue;
         if (notFound.Count == 0)
         {
@@ -479,6 +481,13 @@ internal static partial class JgsBuiltins
 
         SharedLibrary library = LoadedLibrary(host, TextOf(args[0]))
             ?? throw new JgsRuntimeException(line, col, "MATLAB:unloadlibrary:ClassNotFound", "Could not find library class to unload it.");
+
+        // A libstruct holds its library; a plain lib.pointer does not (R2025b, shrlib_pointers).
+        if (library.HasLiveStructs())
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:unloadlibrary:IsInUse", "Cannot unload a library that has outstanding objects.");
+        }
+
         host.Native.Libraries.Remove(library.Name);
         if (library.Host.IsAlive)
         {
@@ -599,8 +608,8 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// <c>[x1, …, xN] = calllib(lib, fn, args…)</c>: the return value, then each pointer argument's
-    /// value after the call. Stage 8 converts scalars, C strings, enums by value and structs returned
-    /// by value; the pointer types are stage 9's.
+    /// value after the call (stage 9, ADR 0182; <see cref="Argument"/> converts each argument). An
+    /// exported variable answers a <c>lib.pointer</c> to itself.
     /// </summary>
     [SupportedOSPlatform("windows")]
     private static JgsValue[] CallLib(Interpreter interpreter, JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
@@ -615,14 +624,20 @@ internal static partial class JgsBuiltins
         string functionName = TextOf(args[1]);
         SharedLibrary library = LoadedLibrary(host, libraryName)
             ?? throw new JgsRuntimeException(line, col, "MATLAB:calllib:NotFound", "Library was not found");
-        if (!library.Functions.TryGetValue(functionName, out LibFunction? function) || function.IsData)
+        if (!library.Functions.TryGetValue(functionName, out LibFunction? function))
         {
-            if (function is { IsData: true })
+            throw new JgsRuntimeException(line, col, "MATLAB:calllib:MethodNotFound", "Method was not found.");
+        }
+
+        if (function.IsData)
+        {
+            // The variable itself, through a pointer (R2025b, probe_shrlib_pointers2 msg.data.export).
+            if (args.Count != 2)
             {
-                throw Unconverted(line, col, "lib.pointer", functionName);
+                throw new JgsRuntimeException(line, col, "MATLAB:calllib:NoMatchingSignatureFound", "No method with matching signature.");
             }
 
-            throw new JgsRuntimeException(line, col, "MATLAB:calllib:MethodNotFound", "Method was not found.");
+            return [ReturnedPointer(library.Host, library.Model, function.Lhs ?? "voidPtr", library.Addresses[functionName])];
         }
 
         IReadOnlyList<string> parameters = function.Rhs;
@@ -635,56 +650,42 @@ internal static partial class JgsBuiltins
         LibraryModel model = library.Model;
         NativeHostProcess process = library.Host;
         var slots = new Slot[parameters.Count];
-        byte[] cells = new byte[parameters.Sum(p => SlotOf(model, p, line, col, functionName).WireSize)];
-        var strings = new List<(int Parameter, long Buffer)>();
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i] = ParameterSlot(model, parameters[i]);
+        }
+
+        byte[] cells = new byte[slots.Sum(s => s.WireSize)];
+        var call = new LibCall(library, interpreter.Dialect, line, col);
         string during = $"calllib('{libraryName}', '{functionName}')";
         try
         {
             int offset = 0;
             for (int i = 0; i < parameters.Count; i++)
             {
-                string type = parameters[i];
-                slots[i] = SlotOf(model, type, line, col, functionName);
-                Span<byte> cell = cells.AsSpan(offset, slots[i].WireSize);
+                Argument(call, parameters[i], args[i + 2], cells.AsSpan(offset, slots[i].WireSize));
                 offset += slots[i].WireSize;
-                JgsValue value = args[i + 2];
-                if (type == "cstring")
-                {
-                    if (!IsTextScalar(value))
-                    {
-                        throw Unconverted(line, col, type, functionName);
-                    }
-
-                    byte[] text = Encoding.UTF8.GetBytes(TextOf(value) + "\0");
-                    long buffer = process.Alloc(text.Length);
-                    strings.Add((i, buffer));
-                    process.Write(buffer, text);
-                    BinaryPrimitives.WriteInt64LittleEndian(cell, buffer);
-                    continue;
-                }
-
-                WriteScalar(cell, slots[i].Kind, ScalarArgument(model, type, value, line, col, functionName));
             }
 
-            Slot result = function.Lhs is { } returns ? SlotOf(model, returns, line, col, functionName) : new Slot(SlotKind.Void);
+            Slot result = function.Lhs is { } returns ? ReturnSlot(model, returns, functionName, line, col) : new Slot(SlotKind.Void);
             process.Sync(host.CurrentDirectory);
             byte[] answer = process.Call(library.Addresses[functionName], result, slots, cells, interpreter.Cancellation);
             var values = new List<JgsValue>();
             if (function.Lhs is { } lhs)
             {
-                values.Add(ReturnValue(process, model, lhs, answer));
+                values.Add(ReturnValue(host, process, model, lhs, answer));
             }
 
-            foreach ((int _, long buffer) in strings)
+            foreach (Func<JgsValue> output in call.Outputs)
             {
-                values.Add(JgsValue.Str(ReadNativeString(process, buffer)));
+                values.Add(output());
             }
 
             return [.. values];
         }
         catch (NativeHostExitedException exited)
         {
-            strings.Clear();
+            call.Temporaries.Clear();
             host.Native.Forget();
             string sentence = exited.Sentence(during);
             if (exited.Cancelled)
@@ -699,7 +700,7 @@ internal static partial class JgsBuiltins
         {
             if (process.IsAlive)
             {
-                foreach ((int _, long buffer) in strings)
+                foreach (long buffer in call.Temporaries)
                 {
                     process.Release(buffer);
                 }
@@ -707,75 +708,43 @@ internal static partial class JgsBuiltins
         }
     }
 
-    private static JgsRuntimeException Unconverted(int line, int col, string type, string function) =>
-        new(line, col, "JGraph:calllib:UnsupportedType",
-            $"calllib cannot yet pass or return '{type}' (function {function}); pointers, libpointer and libstruct arrive with the next interop stage.");
-
-    /// <summary>The host slot a MATLAB type travels in.</summary>
-    private static Slot SlotOf(LibraryModel model, string type, int line, int col, string function)
+    /// <summary>The host slot a scalar or an enum travels in.</summary>
+    private static Slot ScalarSlot(LibraryModel model, string type) => type switch
     {
-        switch (type)
+        "int8" => new Slot(SlotKind.Int8),
+        "uint8" or "bool" => new Slot(SlotKind.UInt8),
+        "int16" => new Slot(SlotKind.Int16),
+        "uint16" => new Slot(SlotKind.UInt16),
+        "int32" or "long" => new Slot(SlotKind.Int32),
+        "uint32" or "ulong" => new Slot(SlotKind.UInt32),
+        "int64" => new Slot(SlotKind.Int64),
+        "uint64" => new Slot(SlotKind.UInt64),
+        "single" => new Slot(SlotKind.Single),
+        "double" => new Slot(SlotKind.Double),
+        _ when model.Enum(type) is not null => new Slot(SlotKind.Int32),
+        _ => throw new ArgumentException($"'{type}' is not a scalar type.", nameof(type)),
+    };
+
+    /// <summary>The host slot a return of <paramref name="type"/> comes back in.</summary>
+    private static Slot ReturnSlot(LibraryModel model, string type, string function, int line, int col)
+    {
+        if (LibTypes.IsScalar(type) || model.Enum(type) is not null)
         {
-            case "int8":
-                return new Slot(SlotKind.Int8);
-            case "uint8" or "bool":
-                return new Slot(SlotKind.UInt8);
-            case "int16":
-                return new Slot(SlotKind.Int16);
-            case "uint16":
-                return new Slot(SlotKind.UInt16);
-            case "int32" or "long":
-                return new Slot(SlotKind.Int32);
-            case "uint32" or "ulong":
-                return new Slot(SlotKind.UInt32);
-            case "int64":
-                return new Slot(SlotKind.Int64);
-            case "uint64":
-                return new Slot(SlotKind.UInt64);
-            case "single":
-                return new Slot(SlotKind.Single);
-            case "double":
-                return new Slot(SlotKind.Double);
-            case "cstring":
-                return new Slot(SlotKind.Pointer);
+            return ScalarSlot(model, type);
         }
 
-        if (model.Enum(type) is not null)
+        if (LibTypes.IsPointer(type))
         {
-            return new Slot(SlotKind.Int32);
+            return new Slot(SlotKind.Pointer);
         }
 
-        if (model.Struct(type) is { } structure && model.StructLayout(structure) is { } layout && StructReadable(model, structure))
+        if (model.Struct(type) is { } structure && model.StructLayout(structure) is { } layout)
         {
             return new Slot(SlotKind.Struct, layout.Size);
         }
 
-        throw Unconverted(line, col, type, function);
-    }
-
-    /// <summary>A scalar argument's value: a number (rounded and saturated into the type by the host's cell), or an enum member's name.</summary>
-    private static double ScalarArgument(LibraryModel model, string type, JgsValue value, int line, int col, string function)
-    {
-        if (model.Enum(type) is { } enumeration && IsTextScalar(value))
-        {
-            string member = TextOf(value);
-            foreach ((string name, long number) in enumeration.Members)
-            {
-                if (name == member)
-                {
-                    return number;
-                }
-            }
-
-            throw new JgsRuntimeException(line, col, "JGraph:calllib:UnknownEnumMember", $"'{member}' is not a member of enumeration {type}.");
-        }
-
-        if (model.Struct(type) is not null)
-        {
-            throw Unconverted(line, col, type, function);
-        }
-
-        return NumOf("calllib", value, line, col);
+        throw new JgsRuntimeException(line, col, "JGraph:calllib:UnsupportedReturn",
+            $"calllib cannot return the type '{type}' that function {function} returns.");
     }
 
     private static void WriteScalar(Span<byte> cell, SlotKind kind, double number)
@@ -818,15 +787,22 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// A return value as R2025b answers it (plan step 0, finding 8): every number as double,
-    /// <c>bool</c> as logical, a <c>cstring</c> as char, an enum as its member's name, and — JGraph's
-    /// own — a struct by value as a MATLAB struct of its members.
+    /// <c>bool</c> as logical, a <c>cstring</c> as char, an enum as its member's name, a pointer as a
+    /// <c>lib.pointer</c>, and — JGraph's own — a struct by value as a MATLAB struct of its members.
+    /// A 64-bit integer past 2^53 is held to a double's precision with the interop warning (plan,
+    /// question 2); UINT64_MAX is 1.8447e19, where R2025b answers -1 (ADR 0182).
     /// </summary>
     [SupportedOSPlatform("windows")]
-    private static JgsValue ReturnValue(NativeHostProcess process, LibraryModel model, string type, byte[] answer)
+    private static JgsValue ReturnValue(JGraphScriptGlobals host, NativeHostProcess process, LibraryModel model, string type, byte[] answer)
     {
         if (type == "cstring")
         {
             return JgsValue.Str(ReadNativeString(process, BinaryPrimitives.ReadInt64LittleEndian(answer)));
+        }
+
+        if (LibTypes.IsPointer(type))
+        {
+            return ReturnedPointer(process, model, type, BinaryPrimitives.ReadInt64LittleEndian(answer));
         }
 
         if (model.Enum(type) is { } enumeration)
@@ -845,82 +821,24 @@ internal static partial class JgsBuiltins
 
         if (model.Struct(type) is { } structure)
         {
-            return StructValue(model, structure, answer);
+            return StructOfBytes(process, model, structure, answer);
         }
 
-        return ScalarValue(type, answer);
-    }
-
-    private static JgsValue ScalarValue(string type, ReadOnlySpan<byte> bytes) => type switch
-    {
-        "bool" => JgsValue.Bool(bytes[0] != 0),
-        "int8" => JgsValue.Number((sbyte)bytes[0]),
-        "uint8" => JgsValue.Number(bytes[0]),
-        "int16" => JgsValue.Number(BinaryPrimitives.ReadInt16LittleEndian(bytes)),
-        "uint16" => JgsValue.Number(BinaryPrimitives.ReadUInt16LittleEndian(bytes)),
-        "int32" or "long" => JgsValue.Number(BinaryPrimitives.ReadInt32LittleEndian(bytes)),
-        "uint32" or "ulong" => JgsValue.Number(BinaryPrimitives.ReadUInt32LittleEndian(bytes)),
-        "int64" => JgsValue.Number(BinaryPrimitives.ReadInt64LittleEndian(bytes)),
-        "uint64" => JgsValue.Number(BinaryPrimitives.ReadUInt64LittleEndian(bytes)),
-        "single" => JgsValue.Number(BinaryPrimitives.ReadSingleLittleEndian(bytes)),
-        _ => JgsValue.Number(BinaryPrimitives.ReadDoubleLittleEndian(bytes)),
-    };
-
-    /// <summary>Whether every member of a struct is one <see cref="StructValue"/> can read: numbers, arrays of numbers, enums and such structs.</summary>
-    private static bool StructReadable(LibraryModel model, LibStruct structure, int depth = 0) =>
-        depth < 16 && structure.Members.All(m =>
+        if (type is "int64" or "uint64")
         {
-            string type = m.Type;
-            int hash = type.LastIndexOf('#');
-            if (hash > 0)
+            string exact = type == "int64"
+                ? BinaryPrimitives.ReadInt64LittleEndian(answer).ToString(System.Globalization.CultureInfo.InvariantCulture)
+                : BinaryPrimitives.ReadUInt64LittleEndian(answer).ToString(System.Globalization.CultureInfo.InvariantCulture);
+            double held = GetElement(answer, type);
+            if (Math.Abs(held) > 9007199254740992.0)
             {
-                type = type[..hash];
+                Warn(host, "JGraph:interop:int64Precision",
+                    $"The 64-bit integer {exact} is past 2^53 and is held to the nearest value a double represents.");
             }
-
-            return LibTypes.IsScalar(type) || model.Enum(type) is not null
-                || (model.Struct(type) is { } inner && StructReadable(model, inner, depth + 1));
-        });
-
-    /// <summary>A struct's bytes as a MATLAB struct: numbers as double, arrays as rows, enums by name, nested structs as structs.</summary>
-    private static JgsValue StructValue(LibraryModel model, LibStruct structure, ReadOnlySpan<byte> bytes)
-    {
-        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-        int[] offsets = model.StructLayout(structure)!.Value.Offsets;
-        for (int i = 0; i < structure.Members.Count; i++)
-        {
-            string type = structure.Members[i].Type;
-            int count = 1;
-            int hash = type.LastIndexOf('#');
-            if (hash > 0)
-            {
-                count = int.Parse(type.AsSpan(hash + 1), System.Globalization.CultureInfo.InvariantCulture);
-                type = type[..hash];
-            }
-
-            int size = model.Layout(type)!.Value.Size;
-            var elements = new JgsValue[count];
-            for (int k = 0; k < count; k++)
-            {
-                ReadOnlySpan<byte> at = bytes.Slice(offsets[i] + (k * size), size);
-                elements[k] = model.Struct(type) is { } inner ? StructValue(model, inner, at)
-                    : model.Enum(type) is not null ? JgsValue.Number(BinaryPrimitives.ReadInt32LittleEndian(at))
-                    : ScalarValue(type, at);
-            }
-
-            fields[structure.Members[i].Name] = count == 1 ? elements[0] : RowOf(elements);
         }
 
-        return JgsValue.Struct(fields);
-    }
-
-    private static JgsValue RowOf(JgsValue[] elements)
-    {
-        if (elements.All(e => e.Type is JgsType.Number or JgsType.Bool))
-        {
-            return JgsValue.Shaped([.. elements], 1, elements.Length);
-        }
-
-        return JgsValue.StructArray([.. elements.Select(e => e.AsStruct)]);
+        double x = GetElement(answer, type);
+        return type == "bool" ? JgsValue.Bool(x != 0) : JgsValue.Number(x);
     }
 
     // ------------------------------------------------------------------------------------------

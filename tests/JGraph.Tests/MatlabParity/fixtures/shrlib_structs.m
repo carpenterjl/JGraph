@@ -5,7 +5,8 @@
 %
 % R2025b passes NULL for a libstruct whose type has an array field (jg_mixed) or non-default packing
 % (jg_packed); the test library answers NaN or leaves the struct untouched for NULL rather than
-% crash. Those rows are the pre-registered divergence the stage 9 ADR decides.
+% crash. JGraph passes the struct and reads its array fields in their own class (ADR 0182): those
+% rows are div=ADR0182, and so is the echo, whose layout is JGraph's.
 
 p = interop_paths();
 addpath(p.root);
@@ -28,7 +29,7 @@ ix_chk('byptr_struct_output_values', [r.x r.y]);
 ls = libstruct('jg_point');
 ix_chk('libstruct_class', class(ls));
 ix_chk('libstruct_isa_handle', isa(ls, 'handle'));
-ix_chk('libstruct_echo', ix_flat(evalc('ls')));
+ix_chk('libstruct_echo', ix_flat(evalc('ls')), 'div=ADR0182'); % JGraph's display layout
 g = get(ls);
 ix_chk('libstruct_default', [g.x g.y]);
 ls.x = 1;
@@ -51,11 +52,11 @@ ix_chk('libstruct_is_a_handle_copy', l1.x);
 % ---- array fields, nesting, packing
 m = libstruct('jg_mixed');
 ix_chk('mixed_structsize', m.structsize);
-ix_chk('mixed_default_d', ix_show(m.d));
-ix_chk('mixed_default_name', ix_show(m.name));
+ix_chk('mixed_default_d', ix_show(m.d), 'div=ADR0182'); % JGraph: int32 [0 0 0]
+ix_chk('mixed_default_name', ix_show(m.name), 'div=ADR0182'); % JGraph: int8 zeros(1, 8)
 calllib(lib, 'jg_mixed_fill', m);
-ix_chk('mixed_fill_libstruct', ix_show(m.b));
-ix_chk('mixed_sum_libstruct', calllib(lib, 'jg_mixed_sum', m));
+ix_chk('mixed_fill_libstruct', ix_show(m.b), 'div=ADR0182'); % JGraph passes the struct
+ix_chk('mixed_sum_libstruct', calllib(lib, 'jg_mixed_sum', m), 'div=ADR0182');
 ix_chk('mixed_sum_struct', calllib(lib, 'jg_mixed_sum', struct('a', 1, 'b', 2, 'c', 3, 'd', [1 2 3], 'name', int8('ab'))));
 ix_chk('mixed_name_char_refused', ix_id(@() calllib(lib, 'jg_mixed_sum', struct('a', 1, 'b', 2, 'c', 3, 'd', [1 2 3], 'name', 'ab'))));
 n = libstruct('jg_nested');
@@ -65,8 +66,8 @@ pk = libstruct('jg_packed');
 ix_chk('packed_structsize', pk.structsize);
 calllib(lib, 'jg_packed_fill', pk);
 gp = get(pk);
-ix_chk('packed_fill_libstruct', [gp.a gp.b gp.c]);
-ix_chk('packed_sum_libstruct', calllib(lib, 'jg_packed_sum', pk));
+ix_chk('packed_fill_libstruct', [gp.a gp.b gp.c], 'div=ADR0182'); % JGraph passes the struct
+ix_chk('packed_sum_libstruct', calllib(lib, 'jg_packed_sum', pk), 'div=ADR0182');
 ix_chk('packed_sum_struct', calllib(lib, 'jg_packed_sum', struct('a', 1, 'b', 2.5, 'c', 3)));
 ppt = libpointer('jg_pointPtr');
 calllib(lib, 'jg_point_alloc', ppt);

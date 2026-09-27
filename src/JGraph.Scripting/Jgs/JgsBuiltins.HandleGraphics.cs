@@ -133,8 +133,8 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        Define("get", Get);
-        DefineSilent("set", Set);
+        Define("get", (args, line, col) => TryLibBuiltin("get", host, args, line, col, out JgsValue got) ? got : Get(args, line, col));
+        DefineSilent("set", (args, line, col) => TryLibBuiltin("set", host, args, line, col, out JgsValue none) ? none : Set(args, line, col));
 
         // Both answer a question with no arguments — every object there is — so the bare name has to
         // be that answer rather than the function itself, or numel(findobj) counts a function.
@@ -151,7 +151,7 @@ internal static partial class JgsBuiltins
         Define("ishandle", (args, line, col) => IsHandle("ishandle", args, line, col));
         Define("ishghandle", (args, line, col) => IsHandle("ishghandle", args, line, col));
         Define("isgraphics", IsGraphics);
-        Define("isvalid", IsValid);
+        Define("isvalid", (args, line, col) => TryLibBuiltin("isvalid", host, args, line, col, out JgsValue valid) ? valid : IsValid(args, line, col));
 
         Define("ancestor", Ancestor);
         DefineSilent("copyobj", Copy);

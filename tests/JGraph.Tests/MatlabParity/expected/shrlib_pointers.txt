@@ -1,4 +1,3 @@
-RUN|pending I9|calllib cannot yet pass or return 'doublePtr' (function jg_scale_double); pointers, libpointer and libstruct arrive with the next interop stage.
 CHK|void_fn_outputs_are_pointers|double:[2 4 6]|exact
 CHK|void_fn_two_outputs_refused|MATLAB:calllib:NoMatchingSignatureFound|exact
 CHK|col_keeps_shape|double:[2;4;6]|exact
@@ -18,7 +17,7 @@ CHK|array_2d_param|double:184|exact
 CHK|array_2d_param_transposed|double:196|exact
 CHK|lp_class|lib.pointer|exact
 CHK|lp_isa_handle|logical:1|exact
-CHK|lp_echo|lp = / libpointer|exact
+CHK|lp_echo|lp = / libpointer|div=ADR0182|diverges|lp = libpointer
 CHK|lp_DataType|doublePtr|exact
 CHK|lp_Value|double:[1 2 3]|exact
 CHK|lp_isNull|logical:0|exact

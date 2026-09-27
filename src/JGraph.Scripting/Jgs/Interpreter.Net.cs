@@ -292,6 +292,8 @@ internal sealed partial class Interpreter
         {
             case NetObject net:
                 return NetInvoke.Member(net, field, autoCall, member.Line, member.Column, NetTypes, BareWanted(member));
+            case var lib when JgsBuiltins.IsLibValue(lib):
+                return JgsBuiltins.LibMember(lib, field, member.Line, member.Column); // lib.pointer, libstruct (ADR 0182)
             case NetMetaClass meta when field == "Name":
                 return JgsValue.Str(NetNames.ClassName(meta.Type));
             case NetAssemblyValue assembly when NetAssemblyValue.PropertyNames.Contains(field):
@@ -312,6 +314,13 @@ internal sealed partial class Interpreter
             || held.Type != JgsType.External)
         {
             return false;
+        }
+
+        // p.Value = v on a lib.pointer, s.x = v on a libstruct (ADR 0182).
+        if (JgsBuiltins.IsLibValue(held.AsExternal))
+        {
+            JgsBuiltins.LibAssign(Host, held.AsExternal, FieldName(member, env), value, member.Line, member.Column);
+            return true;
         }
 
         if (held.AsExternal is not NetObject net)

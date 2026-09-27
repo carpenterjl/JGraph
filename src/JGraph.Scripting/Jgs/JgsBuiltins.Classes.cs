@@ -233,6 +233,8 @@ internal static partial class JgsBuiltins
                 return ["Name"];
             case NetGenericClass:
                 return []; // "GenericClass with no properties." (probe4)
+            case var lib when IsLibValue(lib):
+                return LibPropertyNames(lib!); // Value, DataType; a libstruct's fields (ADR 0182)
         }
 
         if (value.ClassName == Net.NetInvoke.NetExceptionClass)
@@ -272,6 +274,11 @@ internal static partial class JgsBuiltins
         if (value.AsExternalOrNull() is NetObject net)
         {
             return Net.NetInvoke.MethodNames(net.Type);
+        }
+
+        if (IsLibValue(value.AsExternalOrNull()))
+        {
+            return LibMethodNames(value.AsExternal); // ADR 0182
         }
 
         if (value.Type == JgsType.String && value.AsString.Contains('.', StringComparison.Ordinal)

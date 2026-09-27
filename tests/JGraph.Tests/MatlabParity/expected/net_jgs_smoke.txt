@@ -14,5 +14,8 @@ CHK|GenericClass|NET.GenericClass|exact
 CHK|shrlib_loaded|true|exact
 CHK|shrlib_call|3|exact
 CHK|shrlib_functions|86|exact
+CHK|libpointer_written|12|exact
+CHK|libpointer_plus|10|exact
+CHK|libstruct_by_value|5|exact
 CHK|shrlib_unloaded|false|exact
 CHK|mexext|mexw64|exact

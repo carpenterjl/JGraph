@@ -165,6 +165,7 @@ internal sealed unsafe partial class NativeHostProcess : IDisposable
     /// <summary>Allocates <paramref name="size"/> zeroed bytes in the host.</summary>
     public long Alloc(long size)
     {
+        ReleaseDropped();
         using MemoryStream request = Request(HostOp.Alloc, out BinaryWriter writer);
         writer.Write(size);
         return Exchange(request, default).ReadInt64();
@@ -176,6 +177,33 @@ internal sealed unsafe partial class NativeHostProcess : IDisposable
         using MemoryStream request = Request(HostOp.Release, out BinaryWriter writer);
         writer.Write(address);
         Exchange(request, default);
+    }
+
+    private readonly System.Collections.Concurrent.ConcurrentQueue<long> _dropped = new();
+
+    /// <summary>
+    /// Queues memory <see cref="Alloc"/> answered to be freed by the next <see cref="Call"/>
+    /// (stage 9, ADR 0182). A finalizer calls this: it runs on the finalizer thread, which must not
+    /// touch the pipe, so the free waits for the script thread's next call into native code.
+    /// </summary>
+    public void ReleaseLater(long address)
+    {
+        if (address != 0 && IsAlive)
+        {
+            _dropped.Enqueue(address);
+        }
+    }
+
+    /// <summary>How many frees <see cref="ReleaseLater"/> has queued that no call has made yet.</summary>
+    public int PendingReleases => _dropped.Count;
+
+    /// <summary>Frees what <see cref="ReleaseLater"/> queued.</summary>
+    private void ReleaseDropped()
+    {
+        while (IsAlive && _dropped.TryDequeue(out long address))
+        {
+            Release(address);
+        }
     }
 
     /// <summary>Reads <paramref name="count"/> bytes at <paramref name="address"/>.</summary>
@@ -254,6 +282,7 @@ internal sealed unsafe partial class NativeHostProcess : IDisposable
     /// </summary>
     public byte[] Call(long function, Slot result, IReadOnlyList<Slot> parameters, ReadOnlySpan<byte> arguments, CancellationToken cancel)
     {
+        ReleaseDropped();
         using MemoryStream request = Request(HostOp.Call, out BinaryWriter writer);
         writer.Write(function);
         HostProtocol.WriteSlot(writer, result);

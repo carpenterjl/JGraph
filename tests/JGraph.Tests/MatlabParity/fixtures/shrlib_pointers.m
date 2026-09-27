@@ -34,7 +34,7 @@ ix_chk('array_2d_param_transposed', calllib(lib, 'jg_sum2d', [1 2 3; 4 5 6]', 2)
 lp = libpointer('doublePtr', [1 2 3]);
 ix_chk('lp_class', class(lp));
 ix_chk('lp_isa_handle', isa(lp, 'handle'));
-ix_chk('lp_echo', ix_flat(evalc('lp')));
+ix_chk('lp_echo', ix_flat(evalc('lp')), 'div=ADR0182'); % JGraph's display layout
 ix_chk('lp_DataType', lp.DataType);
 ix_chk('lp_Value', lp.Value);
 ix_chk('lp_isNull', isNull(lp));

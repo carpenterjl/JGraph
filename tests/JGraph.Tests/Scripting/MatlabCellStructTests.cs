@@ -113,7 +113,7 @@ public class MatlabCellStructTests : IDisposable
         ScriptRunResult result = RunMatlab("s.a = 1;\ndisp(s.b)");
 
         Assert.False(result.Success);
-        Assert.Contains("no field 'b'", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("Unrecognized field name \"b\".", result.Message!, StringComparison.Ordinal); // R2025b's (ADR 0182)
     }
 
     [Fact]

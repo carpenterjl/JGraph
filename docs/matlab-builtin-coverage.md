@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,146 of
-2,024** as of interop stage I8 (ADR 0181), which added `loadlibrary`, `unloadlibrary`,
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,148 of
+2,024** as of interop stage I9 (ADR 0182), which added `libpointer` and `libstruct`; 1,146 as of
+interop stage I8 (ADR 0181), which added `loadlibrary`, `unloadlibrary`,
 `libisloaded`, `libfunctions`, `calllib`, `mexext` and `mex.getCompilerConfigurations`; 1,139 as of
 interop stage I4 (ADR 0177), which added `enumeration` (for .NET enums: JGraph's
 `classdef` has no enumeration block) and `NET.invokeGenericMethod`; 1,137 as of interop stage I3 (ADR 0176), which added `import`, `NET.disableAutoRelease` and
@@ -1125,11 +1126,13 @@ loaded, and replaces the build when the source is recompiled. Stage I7 (ADR 0180
 it built the native host, the child process `loadlibrary` and `calllib` will run C code in, so that
 a crash in a library ends the host and not JGraph; its only script door is the test-only
 `jgraph.internal.nativehost`. Stage I8 (ADR 0181) moved three: `libisloaded`, `unloadlibrary`
-and `calllib` for numbers, logicals, C strings and enums (stage I9 adds pointers, `libpointer` and
-`libstruct`); it also added `loadlibrary` (by header, through a C compiler's preprocessor and
+and `calllib` for numbers, logicals, C strings and enums; it also added `loadlibrary` (by header, through a C compiler's preprocessor and
 JGraph's own C declaration parser, or by prototype file), `libfunctions`, `mexext` and
 `mex.getCompilerConfigurations`, which the list does not name, and a struct returned by value,
-which R2025b cannot call. `mex` itself, which builds MEX files, stays out of scope. The rest of
+which R2025b cannot call. Stage I9 (ADR 0182) moved no builtin: it completed `calllib` (arrays,
+C strings and string arrays, structs by value and by pointer, pointers to pointers, the outputs) and
+added `libpointer` and `libstruct`, which MATLAB ships as function files, with the `lib.pointer` and
+`lib.<struct>` objects. `mex` itself, which builds MEX files, stays out of scope. The rest of
 `NET.*` follows in its stages. Java,
 Python and COM, `clib*` and MEX are out of the plan's scope: JGraph does not host those runtimes
 from a script. (It runs Python and C# as *engines* — a whole script in that language — which is a

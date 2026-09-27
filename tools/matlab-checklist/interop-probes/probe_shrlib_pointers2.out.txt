@@ -1,0 +1,172 @@
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_shrlib_pointers2 (line 8)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_shrlib_pointers2 (line 8)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_shrlib_pointers2 (line 8)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_shrlib_pointers2 (line 8)] 
+out.lp.double	OUT double | 0   0   0 |
+out.lp.double.value	OUT     10    20    30 |
+out.ls	OUT struct | 0 |
+out.lp.struct	OUT struct |
+out.void.lp	OUT lib.pointer | 0 |
+out.void.array	OUT double | 1     3 | 1     2     3 |
+out.void.int8	OUT int8 | 1   2   3 |
+out.void.empty	OUT double | 0     0 |
+out.cstring.null	OUT char | 0     0 |
+out.cstring.value	OUT char | abc |
+out.double.empty	OUT double | 0     0 |
+out.ptrptr.same	OUT    0 | 0 |
+out.ptrptr.fresh	OUT    0 | doublePtr | doublePtrPtr | 1 |
+out.ptrptr.array	OUT double |
+out.ptrptr.empty	OUT      4 | lib.pointer |
+out.bool.scalar	OUT logical | 0 |
+out.stringptrptr.lp	OUT cell | {'gamma'} |
+out.struct.lp.ptrptr	OUT struct | 0 | 3 |
+msg.bool.char	ERR MATLAB:class:RequireLogical Value must be logical (true or false).
+msg.bool.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+msg.lp.bad.type	ERR MATLAB:libpointer:InvalidType Type was not found.
+msg.lp.scalar.type	lib.pointer [1 1] DataType=double isNull=0 Value=double [1 1] 5
+msg.lp.cstring.type	lib.pointer [1 1] DataType=cstring isNull=0 Value=char [1 3] 'abc'
+msg.lp.char.to.int32	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+msg.lp.cell.to.double	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+msg.lp.struct.to.double	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+msg.lp.string.to.stringptrptr	ERR MATLAB:class:MustBeCellStringsParameter Parameter must be a cell array of character vectors.
+msg.lp.char.to.stringptrptr	ERR MATLAB:class:MustBeCellStringsParameter Parameter must be a cell array of character vectors.
+msg.lp.ptrptr.Value	double [0 0] []
+msg.ls.nosuch	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'lib.jg_nosuch'.
+msg.ls.extra	ERR MATLAB:libstruct:FieldMismatch A field does not match one in the struct.
+msg.ls.bad.arg	ERR MATLAB:libstruct:RequireStruct A structure is required.
+msg.ls.no.args	ERR MATLAB:minrhs Not enough input arguments.
+msg.lp.too.many	ERR MATLAB:dispatcher:noMatchingConstructor No constructor 'lib.pointer' with matching signature found.
+msg.str.array.to.voidptr	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+msg.struct.to.voidptr	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+msg.cell.to.doubleptr	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+msg.int8ptr.to.doubleptr	ERR MATLAB:libpointer:PointerTypesMustMatch Pointer types must match data type.
+msg.voidptr.to.doubleptr	double [1 1] 3
+msg.int32ptr.to.voidptr	double [1 1] 0
+msg.struct.to.doubleptr	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+msg.libstruct.to.doubleptr	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+msg.double.to.structptr	ERR MATLAB:libstruct:RequireStruct A structure is required.
+msg.double.to.struct	ERR MATLAB:libstruct:RequireStruct A structure is required.
+msg.lp.to.struct	ERR MATLAB:libstruct:RequireStruct A structure is required.
+msg.lp.to.scalar	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+msg.cell.to.scalar	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+msg.struct.to.scalar	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+msg.string.to.scalar	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+msg.complex.to.scalar	ERR MATLAB:class:RequireReal Value must be real.
+msg.enum.vector	ERR MATLAB:class:RequireScalar Value must be a scalar.
+msg.enum.fraction	char [1 7] 'unknown'
+msg.enum.logical	char [1 3] 'red'
+msg.enum.cell	ERR MATLAB:class:RequireNumeric Value must be numeric or logical.
+msg.enum.nan	ERR MATLAB:class:RequireNumber Value must be a number.
+msg.data.export	lib.pointer [1 1] DataType=doublePtr isNull=0 Value=<Value: MATLAB:libpointer:ValueNotDefined>
+msg.mixed.long.array	ERR MATLAB:libstruct:InvalidFieldValue Cannot convert data value for field d due to error: | The variable can not hold the number of elements assigned.
+msg.mixed.short.array	double [1 1] 3
+msg.mixed.long.name	ERR MATLAB:libstruct:InvalidFieldValue Cannot convert data value for field name due to error: | The variable can not hold the number of elements assigned.
+msg.mixed.vector.scalar	ERR MATLAB:libstruct:InvalidFieldValue Cannot convert data value for field a due to error: | Parameter must be scalar.
+msg.mixed.char.scalar	ERR MATLAB:libstruct:InvalidFieldValue Cannot convert data value for field a due to error: | Array must be numeric or logical.
+msg.nested.bad	ERR MATLAB:libstruct:InvalidFieldValue Cannot convert data value for field p due to error: | A structure is required.
+msg.nested.extra	ERR MATLAB:libstruct:InvalidFieldValue Cannot convert data value for field p due to error: | A field does not match one in the struct.
+msg.struct.array	double [1 1] 1
+lp.disp	OUT libpointer |
+lp.display	OUT | lp = | libpointer |
+lp.set.char	ERR MATLAB:UndefinedFunction Undefined function 'setv' for input arguments of type 'lib.pointer'.
+lp.set.cell	ERR MATLAB:UndefinedFunction Undefined function 'setv' for input arguments of type 'lib.pointer'.
+lp.set.DataType	ERR MATLAB:UndefinedFunction Undefined function 'setp' for input arguments of type 'lib.pointer'.
+lp.read.nope	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'Nope' for class 'lib.pointer'.
+lp.set.nope	ERR MATLAB:UndefinedFunction Undefined function 'setp' for input arguments of type 'lib.pointer'.
+lp.get.Value	double [1 3] [1 2 3]
+lp.get.DataType	char [1 9] 'doublePtr'
+lp.set.fn	OUT      4     5 |
+lp.plus.fn	double [1 1] 5
+lp.plus.left	ERR MATLAB:m_missing_variable_or_function Invalid use of operator.
+lp.plus.frac	ERR MATLAB:m_missing_variable_or_function Invalid use of operator.
+lp.plus.neg	ERR MATLAB:m_missing_variable_or_function Invalid use of operator.
+lp.plus.past.end	ERR MATLAB:m_missing_variable_or_function Invalid use of operator.
+lp.plus.two	ERR MATLAB:m_missing_variable_or_function Invalid use of operator.
+lp.minus	ERR MATLAB:math:mustBeNumericCharOrLogical Invalid data type. Argument must be numeric, char, or logical.
+lp.times	ERR MATLAB:math:mustBeNumericCharOrLogical Invalid data type. Argument must be numeric, char, or logical.
+lp.plus.vector	ERR MATLAB:class:RequireScalar Invalid input for argument 2 (rhs2): | Value must be a scalar.
+lp.plus.lp	ERR MATLAB:class:RequireNumeric Invalid input for argument 2 (rhs2): | Value must be numeric or logical.
+lp.reshape	OUT      1     4 | 2     5 | 3     6 |
+lp.reshape.bigger	ERR MATLAB:maxlhs Too many output arguments.
+lp.reshape.bigger.value	OUT      4     4 |
+lp.reshape.one.arg	ERR MATLAB:maxlhs Too many output arguments.
+lp.reshape.three.args	ERR MATLAB:maxlhs Too many output arguments.
+lp.reshape.out	ERR MATLAB:maxlhs Too many output arguments.
+lp.setdatatype.int32	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+lp.setdatatype.bad	ERR MATLAB:maxlhs Too many output arguments.
+lp.setdatatype.nosize	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+lp.setdatatype.void	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+lp.setdatatype.struct	ERR MATLAB:libpointer:IllegalConversion Array must be numeric or logical or a pointer to one
+lp.setdatatype.scalar	ERR MATLAB:maxlhs Too many output arguments.
+lp.setdatatype.null	ERR MATLAB:maxlhs Too many output arguments.
+lp.null.typed.set	OUT      5     6 | 0 |
+lp.null.untyped.set	OUT | q = | libpointer |
+lp.alias	OUT      9     9     9 |
+lp.set.longer	OUT      1     2     3     4     5 |
+lp.set.matrix	OUT      1     2 | 3     4 |
+lp.set.empty	ERR MATLAB:libpointer:ValueNotDefined The datatype and size of the value must be defined before the value can be retrieved.
+lp.int32.round	OUT              2            -2   -2147483648 |
+lp.matrix.shape	OUT      1     2 | 3     4 |
+lp.bool	ERR MATLAB:class:MustBeScalar Parameter must be scalar.
+lp.int8.from.char	OUT    97   98 |
+lp.uint16.from.logical	OUT uint16 | 1   0 |
+lp.voidPtr.int16	OUT int16 | 1   2 |
+lp.voidPtr.empty	OUT    1 | voidPtr |
+lp.struct	OUT struct | 1     2 |
+lp.struct.null	OUT    1 | v = | struct with fields: | x: 0 | y: 0 |
+lp.struct.from.libstruct	OUT      7 |
+lp.stringptrptr	OUT      2     1 | {'ab' } | {'cde'} |
+lp.stringptrptr.col	OUT      2     1 |
+lp.ptrptr.isNull	OUT    1 |
+lp.ptrptr.init	OUT    0 |
+lp.isvalid	OUT    1 | 0 |
+lp.after.delete	ERR MATLAB:class:InvalidHandle Invalid or deleted object.
+lp.size	OUT      1     1 |
+lp.isequal	OUT    1 | 1 | 0 |
+lp.ret.reshape.only	OUT      1     2     3 | ans = | libpointer |
+lp.ret.plus	OUT      2     3 |
+lp.ret.write	OUT      9     8     3     4     5     6 | 9     8     3     4     5     6 | r = | libpointer |
+lp.methods	OUT     {'addlistener'} | {'delete'     } | {'eq'         } | {'findobj'    } | {'findprop'   } | {'ge'         } | {'get'        } | {'gt'         } | {'isNull'     } | {'isvalid'    } | {'le'         } | {'listener'   } | {'lt'         } | {'ne'         } | {'notify'     } | {'plus'       } | {'reshape'    } | {'set'        } | {'setdatatype'} |
+lp.fieldnames	OUT     {'Value'   } | {'DataType'} |
+lp.properties	OUT     {'Value'   } | {'DataType'} |
+lp.struct.of	OUT [Warning: Calling STRUCT on an object prevents the object from hiding its implementation details and should thus be avoided. Use DISP or DISPLAY to see the visible public details | of an object. See 'help struct' for more information.] | [> In ip_px (line 5) | In probe_shrlib_pointers2 (line 144)] | s = | struct with fields: | Value: [4×4 double] | DataType: 'doublePtr' |
+lp.numel	OUT      1 |
+lp.double	ERR MATLAB:invalidConversion Conversion to double from lib.pointer is not possible.
+lp.in.cell	OUT lib.pointer |
+lp.isNull.fn.name	OUT    1 |
+ls.disp	OUT   jg_point with properties: | x: 0 | y: 0 |
+ls.read.nope	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'nope' for class 'lib.jg_point'.
+ls.get.x	double [1 1] 0
+ls.set.fn	OUT      5 |
+ls.set.int8	OUT double | 3 |
+ls.set.true	OUT double | 1 |
+ls.set.nan	OUT    NaN |
+ls.set.empty	ERR MATLAB:UndefinedFunction Undefined function 'setp' for input arguments of type 'lib.jg_point'.
+ls.set.struct	ERR MATLAB:UndefinedFunction Undefined function 'setp' for input arguments of type 'lib.jg_point'.
+ls.methods	OUT     {'addlistener'} | {'delete'     } | {'eq'         } | {'findobj'    } | {'findprop'   } | {'ge'         } | {'get'        } | {'gt'         } | {'isvalid'    } | {'jg_point'   } | {'le'         } | {'listener'   } | {'lt'         } | {'ne'         } | {'notify'     } | {'set'        } | {'structsize' } |
+ls.properties	OUT     {'x'} | {'y'} |
+ls.isNull	ERR MATLAB:UndefinedFunction Undefined function 'isNull' for input arguments of type 'lib.jg_point'.
+ls.size	OUT      1     1 |
+ls.structsize.fn	OUT     16 |
+ls.isvalid	OUT    1 |
+ls.eq	OUT    1 | 0 |
+ls.int.fields	OUT    127 | 3 | double |
+ls.array.set	OUT int32 | 1   2   3 |
+ls.nested.set	OUT struct | 1     1 |
+ls.nested.read	OUT struct | 1     1 |
+ls.echo.mixed	OUT | m = | jg_mixed with properties: | a: 0 | b: 0 | c: 0 | d: [] | name: [] |
+ls.echo.nested	OUT | n = | jg_nested with properties: | p: [0×1 struct] | q: [0×1 struct] | id: 0 |
+ls.struct.of	OUT [Warning: Calling STRUCT on an object prevents the object from hiding its implementation details and should thus be avoided. Use DISP or DISPLAY to see the visible public details | of an object. See 'help struct' for more information.] | [> In ip_px (line 5) | In probe_shrlib_pointers2 (line 174)] | struct |
+ls.class.packed	OUT lib.jg_packed |
+ls.pass.twice	OUT      5 | 5 |
+sprintf.2p64	char [1 12] '1.844674e+19'
+sprintf.uint64max.double	char [1 12] '1.844674e+19'
+sprintf.1e20	char [1 12] '1.000000e+20'

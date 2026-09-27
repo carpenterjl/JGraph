@@ -330,6 +330,8 @@ internal static partial class JgsBuiltins
                 ? JgsValue.Cell(args[0].AsObject.Class.Properties.Select(static p => JgsValue.Str(p.Spec.Name)).ToArray())
                 : args[0].AsExternalOrNull() is NetObject net
                     ? JgsValue.Cell(Net.NetDisplay.MemberNames(net).Select(JgsValue.Str).ToArray())
+                    : IsLibValue(args[0].AsExternalOrNull())
+                    ? JgsValue.Cell(LibPropertyNames(args[0].AsExternal).Select(JgsValue.Str).ToArray())
                     : JgsValue.Cell(StructOf("fieldnames", args[0], line, col).Keys.Select(JgsValue.Str).ToArray());
             names.Reshape(names.AsCell.Length, 1);
             return names;

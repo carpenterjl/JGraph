@@ -4279,6 +4279,12 @@ internal sealed partial class Interpreter
         // through op_Equality where the type defines one, reference identity otherwise.
         if (left.Type == JgsType.External || right.Type == JgsType.External)
         {
+            // p + n on a lib.pointer, identity for == (ADR 0182).
+            if (JgsBuiltins.IsLibValue(left.AsExternalOrNull()) || JgsBuiltins.IsLibValue(right.AsExternalOrNull()))
+            {
+                return JgsBuiltins.LibOperator(op, left, right, at.Line, at.Column);
+            }
+
             return Net.NetOperators.Apply(op, left, right, at.Line, at.Column);
         }
 
@@ -8698,8 +8704,16 @@ internal sealed partial class Interpreter
             return value;
         }
 
-        throw new JgsRuntimeException(member.Line, member.Column, $"This struct has no field '{field}'.");
+        throw NoSuchField(field, member);
     }
+
+    /// <summary>
+    /// A dot that names no field: R2025b's identifier and sentence in the MATLAB dialect (measured,
+    /// shrlib_structs, ADR 0182), JGraph's own in JGS.
+    /// </summary>
+    private JgsRuntimeException NoSuchField(string field, Node member) => Dialect.IsMatlab
+        ? new JgsRuntimeException(member.Line, member.Column, "MATLAB:nonExistentField", $"Unrecognized field name \"{field}\".")
+        : new JgsRuntimeException(member.Line, member.Column, $"This struct has no field '{field}'.");
 
     private string FieldName(MemberExpr member, JgsEnvironment env)
     {

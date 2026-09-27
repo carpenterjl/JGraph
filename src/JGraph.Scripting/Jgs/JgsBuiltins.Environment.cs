@@ -110,6 +110,11 @@ internal static partial class JgsBuiltins
 
         Define("delete", (args, line, col) =>
         {
+            if (TryLibBuiltin("delete", host, args, line, col, out JgsValue deleted))
+            {
+                return deleted;
+            }
+
             for (int i = 0; i < args.Count; i++)
             {
                 // MATLAB spells two verbs with one name: deleting a file and deleting a figure

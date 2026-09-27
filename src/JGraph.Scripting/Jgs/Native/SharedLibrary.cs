@@ -31,4 +31,28 @@ internal sealed class SharedLibrary(string name, string path, NativeHostProcess 
 
     /// <summary>The address of each of <see cref="Functions"/> in <see cref="Host"/>.</summary>
     public Dictionary<string, long> Addresses { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// The libstructs made over this library's struct types (ADR 0182), weakly: one that is still
+    /// alive holds the library loaded, as R2025b's outstanding objects do.
+    /// </summary>
+    public List<WeakReference<LibStructValue>> LiveStructs { get; } = [];
+
+    /// <summary>
+    /// Whether a libstruct over this library is alive. A collection runs first when the list holds
+    /// any, so a libstruct nothing names any more does not keep the library.
+    /// </summary>
+    public bool HasLiveStructs()
+    {
+        LiveStructs.RemoveAll(w => !w.TryGetTarget(out LibStructValue? s) || s.Deleted);
+        if (LiveStructs.Count == 0)
+        {
+            return false;
+        }
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        LiveStructs.RemoveAll(w => !w.TryGetTarget(out LibStructValue? s) || s.Deleted);
+        return LiveStructs.Count > 0;
+    }
 }

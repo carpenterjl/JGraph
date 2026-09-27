@@ -2135,7 +2135,9 @@ public static class JgsBuiltinCatalog
         Add("unloadlibrary", "Unloads a library loadlibrary loaded, by its name or alias.", P("libname"));
         Add("libisloaded", "Whether a library is loaded under that name or alias.", P("libname"));
         Add("libfunctions", "The functions a loaded library exports: printed in columns, or as a cell column when asked; '-full' gives their signatures in MATLAB's notation.", P("libname"), Opt("'-full'"));
-        Add("calllib", "Calls a function of a loaded library: [ret, p1, …] = calllib(lib, fn, args…). Numbers, logicals, C strings, enums, and a struct returned by value (a JGraph extension) cross the call; pointers and libstruct arrive with stage I9.", P("libname"), P("funcname"), Opt("args"));
+        Add("calllib", "Calls a function of a loaded library: [ret, p1, …] = calllib(lib, fn, args…), the return value then each pointer argument's value after the call. Numbers, logicals, C strings and their arrays, enums, arrays and structs by pointer, structs by value (returned by value too, a JGraph extension), lib.pointer and libstruct objects.", P("libname"), P("funcname"), Opt("args"));
+        Add("libpointer", "A lib.pointer into the native host: libpointer for NULL, libpointer(type) for a typed NULL, libpointer(type, value) for memory holding the value. Value, DataType, isNull, plus (p + n), reshape and setdatatype.", Opt("type"), Opt("value"));
+        Add("libstruct", "A libstruct: a C struct of a loaded library's type in the native host, lib.<type>, zeros or the fields of a struct; its fields are properties, and structsize is its size in bytes.", P("structtype"), Opt("s"));
         Add("mexext", "The MEX file extension of this platform, 'mexw64'; mexext('all') lists every platform's.", Opt("'all'"));
         Add("mex", "The namespace holding mex.getCompilerConfigurations(lang, list): the C compilers loadlibrary can preprocess headers with, as mex.CompilerConfiguration values. Building MEX files is out of scope.");
 

@@ -35,6 +35,16 @@ loadlibrary(getfield(p, "lib"), "jgtestlib_proto", "alias", "jgs8");
 print("CHK|shrlib_loaded|" + libisloaded("jgs8") + "|exact");
 print("CHK|shrlib_call|" + calllib("jgs8", "jg_version") + "|exact");
 print("CHK|shrlib_functions|" + numel(libfunctions("jgs8")) + "|exact");
+# Stage 9 (ADR 0182): a lib.pointer and a libstruct in JGS, read and written through get and set.
+let lp = libpointer("doublePtr", [1, 2, 3]);
+calllib("jgs8", "jg_scale_double", lp, 3, 2);
+print("CHK|libpointer_written|" + sum(get(lp, "Value")) + "|exact");
+print("CHK|libpointer_plus|" + sum(get(lp + 1, "Value")) + "|exact");
+let st = libstruct("jg_point");
+set(st, "x", 3);
+set(st, "y", 4);
+print("CHK|libstruct_by_value|" + calllib("jgs8", "jg_point_len", st) + "|exact");
+delete(st);
 unloadlibrary("jgs8");
 print("CHK|shrlib_unloaded|" + libisloaded("jgs8") + "|exact");
 print("CHK|mexext|" + mexext() + "|exact");

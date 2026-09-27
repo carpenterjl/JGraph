@@ -27,7 +27,7 @@ ix_chk('int8_max_wraps', calllib(lib, 'jg_int8', int8(127)));
 ix_chk('uint64_max_in', ix_show(calllib(lib, 'jg_uint64', intmax('uint64'))));
 ix_chk('int64_big_ret', sprintf('%d', calllib(lib, 'jg_int64_big')));
 ix_chk('int64_big_ret_class', class(calllib(lib, 'jg_int64_big')));
-ix_chk('uint64_max_ret', sprintf('%d', calllib(lib, 'jg_uint64_max')));
+ix_chk('uint64_max_ret', sprintf('%d', calllib(lib, 'jg_uint64_max')), 'div=ADR0182'); % R2025b answers -1
 ix_chk('mixed_args', calllib(lib, 'jg_mixed_args', 1, 2, 3, 4, 5));
 ix_chk('mixed_args_classes', calllib(lib, 'jg_mixed_args', int16(1), int32(2), 3, single(4), int64(5)));
 ix_chk('void_call', ix_id(@() calllib(lib, 'jg_void')));

@@ -46,7 +46,7 @@ internal static partial class JgsBuiltins
         "jgraph",
 
         // ADR 0181: the shared-library names load into, and list, the session's native host.
-        "loadlibrary", "unloadlibrary", "libisloaded", "libfunctions", "calllib", "mexext", "mex",
+        "loadlibrary", "unloadlibrary", "libisloaded", "libfunctions", "calllib", "libpointer", "libstruct", "mexext", "mex",
 
         // ADR 0176: import reads and adds to the running scope's imports.
         "import", "enumeration",
