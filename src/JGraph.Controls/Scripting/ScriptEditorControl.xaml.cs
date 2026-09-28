@@ -332,6 +332,16 @@ public partial class ScriptEditorControl : UserControl
         set => _completion.WorkspaceFiles = value;
     }
 
+    /// <summary>
+    /// Supplies the names a live session knows, for a MATLAB buffer's completion after a dotted .NET
+    /// name and inside <c>calllib('…'</c> (ADR 0183); null answers from the .NET framework alone.
+    /// </summary>
+    public Func<JGraph.Scripting.Completion.IScriptCompletionSource?>? CompletionLiveNames
+    {
+        get => _completion.LiveNames;
+        set => _completion.LiveNames = value;
+    }
+
     /// <summary>The script source shown in the editor.</summary>
     public string ScriptText
     {

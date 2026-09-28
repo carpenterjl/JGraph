@@ -68,6 +68,12 @@ public sealed class ScriptContext
     /// <summary>Audio playback services, or null when the host offers none.</summary>
     public IScriptAudio? Audio { get; }
 
+    /// <summary>
+    /// The window <c>methodsview</c> and <c>libfunctionsview</c> show their table in, or null when the
+    /// host has none and the table is printed instead (ADR 0183).
+    /// </summary>
+    public IScriptTableViewer? TableViewer { get; init; }
+
     /// <summary>The directory relative file paths resolve against, or null for the process directory.</summary>
     public string? WorkingDirectory { get; }
 

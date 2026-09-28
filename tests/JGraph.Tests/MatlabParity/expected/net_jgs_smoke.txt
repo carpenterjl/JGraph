@@ -17,5 +17,7 @@ CHK|shrlib_functions|86|exact
 CHK|libpointer_written|12|exact
 CHK|libpointer_plus|10|exact
 CHK|libstruct_by_value|5|exact
+CHK|methods_library|86|exact
+CHK|methodsview_noUI|4 86 Qualifiers|exact
 CHK|shrlib_unloaded|false|exact
 CHK|mexext|mexw64|exact

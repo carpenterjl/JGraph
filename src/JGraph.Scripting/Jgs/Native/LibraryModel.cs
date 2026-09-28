@@ -75,12 +75,22 @@ internal sealed class LibraryModel
     /// the name, and the parameters, numbered <c>lhs1…</c> and <c>rhs1…</c>. One output is written
     /// bare and several in brackets; a function without parameters has no parentheses.
     /// </summary>
-    public string Signature(LibFunction function)
+    public string Signature(LibFunction function) => Signature(function, methods: false);
+
+    /// <summary>
+    /// The line <c>methods('lib.&lt;name&gt;', '-full')</c> answers for <paramref name="function"/>
+    /// (probe_views2, ADR 0183): <c>Static</c>, then <see cref="Signature(LibFunction)"/>'s line with a
+    /// numeric parameter written <c>double scalar</c> and an exported variable's output
+    /// <c>lib.pointer scalar</c>. <c>libfunctions -full</c> is the same line without them.
+    /// </summary>
+    public string MethodsSignature(LibFunction function) => "Static " + Signature(function, methods: true);
+
+    private string Signature(LibFunction function, bool methods)
     {
         var outputs = new List<string>();
         if (function.IsData)
         {
-            outputs.Add("lib.pointer");
+            outputs.Add(methods ? "lib.pointer scalar" : "lib.pointer");
         }
         else
         {
@@ -105,7 +115,8 @@ internal sealed class LibraryModel
         text.Append(function.CallName);
         if (!function.IsData && function.Rhs.Count > 0)
         {
-            text.Append('(').AppendJoin(", ", function.Rhs.Select((t, i) => $"{ShowArgument(t)} rhs{i + 1}")).Append(')');
+            text.Append('(').AppendJoin(", ", function.Rhs.Select((t, i) =>
+                $"{ShowArgument(t)}{(methods && LibTypes.IsNumeric(t) ? " scalar" : "")} rhs{i + 1}")).Append(')');
         }
 
         return text.ToString();
@@ -204,6 +215,12 @@ internal static class LibTypes
 
     /// <summary>Whether <paramref name="type"/> is a number, <c>bool</c>, or Windows' 32-bit <c>long</c>.</summary>
     public static bool IsScalar(string type) => ScalarSize(type) is not null;
+
+    /// <summary>
+    /// Whether <paramref name="type"/> is one of MATLAB's numeric classes — a scalar that is neither
+    /// <c>bool</c> nor Windows' <c>long</c>/<c>ulong</c>, which keep their C names in a signature.
+    /// </summary>
+    public static bool IsNumeric(string type) => IsScalar(type) && type is not ("bool" or "long" or "ulong");
 
     /// <summary>Whether <paramref name="type"/> is passed as an address: <c>cstring</c>, or any <c>…Ptr</c>.</summary>
     public static bool IsPointer(string type) => type == "cstring" || type.EndsWith("Ptr", StringComparison.Ordinal);

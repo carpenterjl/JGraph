@@ -110,6 +110,34 @@ internal sealed class NetCatalog
         : Framework.Types.TryGetValue(fullName, out Type? found) ? found
         : null;
 
+    /// <summary>
+    /// The namespaces and types one level under <paramref name="qualifier"/> (<c>System</c> gives
+    /// <c>IO</c>, <c>Math</c>, …), from the framework and this session's assemblies, for the editor's
+    /// completion (ADR 0183). A generic type is named without its arity.
+    /// </summary>
+    public IEnumerable<(string Name, bool IsNamespace)> Children(string qualifier) =>
+        _session is { } session
+            ? Framework.ChildrenOf(qualifier).Concat(session.ChildrenOf(qualifier)).DistinctBy(static c => c.Name)
+            : Framework.ChildrenOf(qualifier);
+
+    /// <summary>Whether the framework's index is built, so asking it costs a lookup rather than a scan of every framework assembly.</summary>
+    public static bool FrameworkReady => _framework is not null;
+
+    /// <summary>Starts building the framework's index on a pool thread, for an editor that must not wait for it.</summary>
+    public static void WarmFramework()
+    {
+        if (_framework is null)
+        {
+            _ = Task.Run(static () => Framework);
+        }
+    }
+
+    /// <summary><see cref="Children"/> of the framework alone, for an editor with no session to ask.</summary>
+    public static IReadOnlyList<(string Name, bool IsNamespace)> FrameworkChildren(string qualifier) => Framework.ChildrenOf(qualifier);
+
+    /// <summary>The framework's public type of that full name, or null; <see cref="TypeNamed"/> without a session.</summary>
+    public static Type? FrameworkType(string fullName) => Framework.Types.GetValueOrDefault(fullName);
+
     /// <summary>The generic definitions a name without its arity names: <c>System.Collections.Generic.List</c>.</summary>
     public IEnumerable<Type> GenericDefinitions(string fullName)
     {
@@ -279,8 +307,60 @@ internal sealed class NetCatalog
 
         public Dictionary<string, Type> Types { get; } = new(StringComparer.Ordinal);
 
+        /// <summary>Children by parent name, built on first ask and dropped when an assembly is taken.</summary>
+        private Dictionary<string, List<(string Name, bool IsNamespace)>>? _children;
+
+        private readonly object _childrenGate = new();
+
+        public IReadOnlyList<(string Name, bool IsNamespace)> ChildrenOf(string qualifier)
+        {
+            lock (_childrenGate)
+            {
+                _children ??= BuildChildren();
+                return _children.TryGetValue(qualifier, out List<(string, bool)>? found) ? found : [];
+            }
+        }
+
+        private Dictionary<string, List<(string Name, bool IsNamespace)>> BuildChildren()
+        {
+            var children = new Dictionary<string, List<(string, bool)>>(StringComparer.Ordinal);
+            var seen = new HashSet<(string, string)>();
+            void Add(string parent, string name, bool isNamespace)
+            {
+                if (seen.Add((parent, name)))
+                {
+                    if (!children.TryGetValue(parent, out List<(string, bool)>? list))
+                    {
+                        children[parent] = list = [];
+                    }
+
+                    list.Add((name, isNamespace));
+                }
+            }
+
+            foreach (string space in Namespaces)
+            {
+                int dot = space.LastIndexOf('.');
+                Add(dot < 0 ? "" : space[..dot], space[(dot + 1)..], true);
+            }
+
+            foreach (Type type in Types.Values)
+            {
+                string name = type.Name;
+                int tick = name.IndexOf('`');
+                Add(type.Namespace ?? "", tick < 0 ? name : name[..tick], false);
+            }
+
+            return children;
+        }
+
         public void Take(Assembly assembly, bool overrides = false)
         {
+            lock (_childrenGate)
+            {
+                _children = null;
+            }
+
             Type[] exported;
             try
             {

@@ -1,0 +1,33 @@
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_views3 (line 8)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_views3 (line 8)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_views3 (line 8)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_views3 (line 8)] 
+mv.nargin	ERR MATLAB:methodsview:nargin Not enough input arguments.
+mv.number	ERR MATLAB:methodsview:InvalidInput Input must be a character vector or object.
+mv.charmatrix	ERR MATLAB:methodsview:InvalidInput Input must be a character vector or object.
+mv.cell	ERR MATLAB:methodsview:InvalidInput Input must be a character vector or object.
+mv.struct	ERR MATLAB:methodsview:InvalidInput Input must be a character vector or object.
+mv.strings	ERR MATLAB:string:MustBeStringScalarOrCharacterVector Argument must be a text scalar.
+mv.badopt.number	ERR MATLAB:methodsview:InvalidInputOption Argument option must be assigned a valid character vector.
+mv.badopt.noUI.case	OUT     28     4 |
+mv.three	ERR MATLAB:TooManyInputs Too many input arguments.
+lfv.nargin	ERR MATLAB:LIBFUNCTIONSVIEW:NumberOfInputArguments Not enough input arguments.
+lfv.number	ERR MATLAB:LIBFUNCTIONSVIEW:InputType Input must be a character vector or object.
+lfv.strings	ERR MATLAB:LIBFUNCTIONSVIEW:InputType Input must be a character vector or object.
+lfv.charmatrix	ERR MATLAB:LIBFUNCTIONSVIEW:InputType Input must be a character vector or object.
+lfv.cell	ERR MATLAB:LIBFUNCTIONSVIEW:InputType Input must be a character vector or object.
+lfv.two	ERR MATLAB:TooManyInputs Too many input arguments.
+methods.unloaded.cell	double [0 0] []
+methods.unloaded.full.cell	double [0 0] []
+methods.unknown.cell	double [0 0] []
+methods.unknown.print	OUT | No class 'No.Such.Klass'. |
+mv.import	OUT    119     5 |
+mv.noui.struct.rows	OUT     "jg_point"    "lib.jg_point lhs1"    ""    "" | "jg_point"    "lib.jg_point lhs1"    "(InitialValue)"    "" |

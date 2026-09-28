@@ -155,6 +155,8 @@
                                                  ToolTip="Enter runs · Shift+Enter adds a line · Up/Down recalls history · Ctrl+C interrupts · while paused, K&gt;&gt; reads and writes the paused frame (dbcont, dbstep, dbquit, dbstack, dbup, dbdown)" />
                                     </DockPanel>
                                     <TextBox x:Name="ConsoleBox" IsReadOnly="True" IsReadOnlyCaretVisible="True"
+                                             MouseDoubleClick="OnConsoleDoubleClick"
+                                             ToolTip="Double-click a line naming file(line,col) to open that place"
                                              FontFamily="{DynamicResource JG.Font.Mono}"
                                              FontSize="{DynamicResource JG.FontSize.Normal}"
                                              Background="{DynamicResource JG.Brush.EditorBackground}"

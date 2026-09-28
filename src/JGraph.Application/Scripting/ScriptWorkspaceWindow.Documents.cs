@@ -166,6 +166,11 @@ public partial class ScriptWorkspaceWindow
         editor.OpenSymbolRequested += (_, name) => OpenSymbol(entry, name);
         editor.DatatipProvider = name => DatatipFor(entry, name);
         editor.CompletionWorkspaceSymbols = () => HarvestWorkspaceSymbols(entry);
+
+        // A MATLAB buffer completes .NET names and calllib's library and function names from the
+        // console's session once it has one (ADR 0183), and from the .NET framework before that.
+        editor.CompletionLiveNames = () =>
+            _sessions.TryGetValue(entry.Model.Language, out IScriptSession? live) ? live as JGraph.Scripting.Completion.IScriptCompletionSource : null;
         editor.CompletionWorkspaceFiles = () => _workspace is null
             ? Array.Empty<JGraph.Scripting.Completion.WorkspaceFileEntry>()
             : JGraph.Scripting.Completion.PathCompletion.Flatten(_workspace.EnumerateAll());

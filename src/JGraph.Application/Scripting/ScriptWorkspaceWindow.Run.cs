@@ -72,7 +72,10 @@ public partial class ScriptWorkspaceWindow
             : path => workspace.Resolve(path, scriptDirectory);
         var context = new ScriptContext(
             _output ??= new ConsoleOutput(this), ShowFigureOnUi, scriptDirectory ?? workspace?.RootPath, resolver,
-            new AppScriptFigureFiles(), _audio, CloseFigureOnUi);
+            new AppScriptFigureFiles(), _audio, CloseFigureOnUi)
+        {
+            TableViewer = _tables,
+        };
 
         _cts = new System.Threading.CancellationTokenSource();
         ScriptRunResult result;

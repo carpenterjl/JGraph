@@ -1,0 +1,3 @@
+# The interop plan's stage that completes this fixture (docs/plans/net-and-shared-library-interop-plan.md).
+RUN	I10	# JGraph has no methodsview or libfunctionsview before I10
+*	I10	# methods of a library, a pointer and a libstruct; methodsview's table and refusals

@@ -222,6 +222,19 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
+        if (variable.RawValue is ScriptExternalValue external)
+        {
+            // A .NET object or a C library value has no cells to show (ADR 0183); say what it is and
+            // where to look instead, as MATLAB's variable editor lists an object's properties.
+            string look = external.Kind == ".NET object"
+                ? $"methods({variable.Name}) and properties({variable.Name}) list its members"
+                : external.ClassName == "lib.pointer"
+                    ? $"{variable.Name}.Value reads what it points at"
+                    : $"get({variable.Name}) lists its fields";
+            SetStatus($"'{variable.Name}' is a {external.Kind} ({external.ClassName}); the data viewer shows arrays and tables — {look}.");
+            return;
+        }
+
         if (variable.RawValue is null && variable.Type is "array" or "cell" or "struct")
         {
             // Oversize values carry no raw copy (JgsRunner.MaxRawValueElements and

@@ -93,6 +93,10 @@ internal sealed class CompletionSupport
     private IReadOnlyList<CompletionItem>? _symbols;
     private long _symbolsHarvestedAt = long.MinValue;
 
+    /// <summary>Supplies the names a live session knows (a MATLAB buffer's <c>System.</c> and
+    /// <c>calllib('…'</c> completion, ADR 0183); null, or a null answer, means the framework alone.</summary>
+    public Func<IScriptCompletionSource?>? LiveNames { get; set; }
+
     /// <summary>Supplies the workspace's files and folders for path completion inside the string
     /// arguments of the file builtins (<c>readcsv("…</c>). Null when no workspace is open.</summary>
     public Func<IReadOnlyList<WorkspaceFileEntry>>? WorkspaceFiles { get; set; }
@@ -153,8 +157,11 @@ internal sealed class CompletionSupport
         // Auto-trigger while an identifier is being typed; once open, AvalonEdit filters as keys arrive.
         // Quotes, '/', and digits also attempt — ShowCompletion's path detection decides whether they
         // mean anything (a quote right after readcsv( opens the file list; elsewhere nothing happens).
+        // In MATLAB a '.' after a name offers what follows it (System. → IO, Math, …; ADR 0183); the
+        // engine answers nothing after anything that is not a .NET namespace or type.
         if (_completionWindow is null
-            && (char.IsLetter(typed) || typed is '_' || typed is '"' or '\'' or '/' || char.IsDigit(typed)))
+            && (char.IsLetter(typed) || typed is '_' || typed is '"' or '\'' or '/' || char.IsDigit(typed)
+                || (typed == '.' && IsMatlab)))
         {
             ShowCompletion();
         }
@@ -178,7 +185,7 @@ internal sealed class CompletionSupport
         else if (UsesOurInterpreter)
         {
             JgsCompletionResult result = JgsCompletionEngine.GetCompletions(
-                _editor.Text, offset, CurrentWorkspaceSymbols(), IsMatlab);
+                _editor.Text, offset, CurrentWorkspaceSymbols(), IsMatlab, IsMatlab ? LiveNames?.Invoke() : null);
             replaceStart = result.ReplaceStart;
             items = result.Items;
         }

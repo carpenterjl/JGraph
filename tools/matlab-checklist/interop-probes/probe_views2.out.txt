@@ -1,0 +1,293 @@
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_views2 (line 7)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_views2 (line 7)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_views2 (line 7)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_views2 (line 7)] 
+print.lib	OUT | Methods for class lib.jgtestlib: | Static methods: | jg_add_ref         jg_crash           jg_int16           jg_mixed_args      jg_pick_word       jg_scale_int64     jg_static_block    jg_uint32          jg_varsum | jg_alloc_doubles   jg_double          jg_int32           jg_mixed_fill      jg_point_alloc     jg_scale_int8      jg_static_ints     jg_uint64          jg_version | jg_alloc_ret       jg_exported_value  jg_int64           jg_mixed_sum       jg_point_len       jg_scale_uint16    jg_strlen          jg_uint64_max      jg_void | jg_apply           jg_fill_name       jg_int64_big       jg_negate_bool     jg_point_scale     jg_scale_uint32    jg_sum             jg_uint8           jg_words | jg_bits_in         jg_float           jg_int8            jg_nested_sum      jg_printf          jg_scale_uint64    jg_sum2d           jg_ulong           jg_write_kept | jg_bool            jg_free            jg_is_null         jg_opaque_free     jg_release_kept    jg_scale_uint8     jg_total_len       jg_ulonglong | jg_char            jg_getcwd          jg_keep            jg_opaque_get      jg_scale_double    jg_schar           jg_triple          jg_union_in | jg_color_name      jg_getenv          jg_layout          jg_opaque_new      jg_scale_float     jg_short           jg_uchar           jg_upper | jg_color_next      jg_greeting        jg_long            jg_packed_fill     jg_scale_int16     jg_size            jg_uint            jg_upper_ret | jg_color_value     jg_int             jg_longlong        jg_packed_sum      jg_scale_int32     jg_sleep           jg_uint16          jg_ushort |
+print.lib.full	OUT | Methods for class lib.jgtestlib: | Static [double lhs1, doublePtr lhs2] jg_add_ref(double scalar rhs1, doublePtr rhs2, double scalar rhs3) | Static [int32 lhs1, doublePtrPtr lhs2] jg_alloc_doubles(doublePtrPtr rhs1, int32 scalar rhs2) | Static lib.pointer lhs1 jg_alloc_ret(int32 scalar rhs1) | Static double lhs1 jg_apply(FcnPtr rhs1, double scalar rhs2) | Static [int32 lhs1, voidPtr lhs2] jg_bits_in(voidPtr rhs1) | Static bool lhs1 jg_bool(bool rhs1) | Static int8 lhs1 jg_char(int8 scalar rhs1) | Static cstring lhs1 jg_color_name(lib.jg_color rhs1) | Static lib.jg_color lhs1 jg_color_next(lib.jg_color rhs1) | Static int32 lhs1 jg_color_value(lib.jg_color rhs1) | Static jg_crash | Static double lhs1 jg_double(double scalar rhs1) | Static lib.pointer scalar lhs1 jg_exported_value | Static cstring lhs1 jg_fill_name(cstring rhs1, int32 scalar rhs2) | Static single lhs1 jg_float(single scalar rhs1) | Static voidPtr lhs1 jg_free(voidPtr rhs1) | Static cstring lhs1 jg_getcwd | Static [cstring lhs1, cstring lhs2] jg_getenv(cstring rhs1) | Static cstring lhs1 jg_greeting | Static int32 lhs1 jg_int(int32 scalar rhs1) | Static int16 lhs1 jg_int16(int16 scalar rhs1) | Static int32 lhs1 jg_int32(int32 scalar rhs1) | Static int64 lhs1 jg_int64(int64 scalar rhs1) | Static int64 lhs1 jg_int64_big | Static int8 lhs1 jg_int8(int8 scalar rhs1) | Static [int32 lhs1, voidPtr lhs2] jg_is_null(voidPtr rhs1) | Static doublePtr lhs1 jg_keep(doublePtr rhs1, int32 scalar rhs2) | Static uint64 lhs1 jg_layout(int32 scalar rhs1) | Static long lhs1 jg_long(long rhs1) | Static int64 lhs1 jg_longlong(int64 scalar rhs1) | Static double lhs1 jg_mixed_args(int16 scalar rhs1, int32 scalar rhs2, double scalar rhs3, single scalar rhs4, int64 scalar rhs5) | Static jg_mixedPtr lhs1 jg_mixed_fill(jg_mixedPtr rhs1) | Static [double lhs1, jg_mixedPtr lhs2] jg_mixed_sum(jg_mixedPtr rhs1) | Static boolPtr lhs1 jg_negate_bool(boolPtr rhs1, int32 scalar rhs2) | Static [double lhs1, jg_nestedPtr lhs2] jg_nested_sum(jg_nestedPtr rhs1) | Static voidPtr lhs1 jg_opaque_free(voidPtr rhs1) | Static [double lhs1, voidPtr lhs2] jg_opaque_get(voidPtr rhs1) | Static lib.pointer lhs1 jg_opaque_new(double scalar rhs1) | Static jg_packedPtr lhs1 jg_packed_fill(jg_packedPtr rhs1) | Static [double lhs1, jg_packedPtr lhs2] jg_packed_sum(jg_packedPtr rhs1) | Static stringPtrPtr lhs1 jg_pick_word(int32 scalar rhs1, stringPtrPtr rhs2) | Static jg_pointPtrPtr lhs1 jg_point_alloc(jg_pointPtrPtr rhs1) | Static double lhs1 jg_point_len(jg_point rhs1) | Static jg_pointPtr lhs1 jg_point_scale(jg_pointPtr rhs1, double scalar rhs2) | Static [int32 lhs1, cstring lhs2] jg_printf(cstring rhs1) | Static jg_release_kept | Static doublePtr lhs1 jg_scale_double(doublePtr rhs1, int32 scalar rhs2, double scalar rhs3) | Static singlePtr lhs1 jg_scale_float(singlePtr rhs1, int32 scalar rhs2, single scalar rhs3) | Static int16Ptr lhs1 jg_scale_int16(int16Ptr rhs1, int32 scalar rhs2, int16 scalar rhs3) | Static int32Ptr lhs1 jg_scale_int32(int32Ptr rhs1, int32 scalar rhs2, int32 scalar rhs3) | Static int64Ptr lhs1 jg_scale_int64(int64Ptr rhs1, int32 scalar rhs2, int64 scalar rhs3) | Static int8Ptr lhs1 jg_scale_int8(int8Ptr rhs1, int32 scalar rhs2, int8 scalar rhs3) | Static uint16Ptr lhs1 jg_scale_uint16(uint16Ptr rhs1, int32 scalar rhs2, uint16 scalar rhs3) | Static uint32Ptr lhs1 jg_scale_uint32(uint32Ptr rhs1, int32 scalar rhs2, uint32 scalar rhs3) | Static uint64Ptr lhs1 jg_scale_uint64(uint64Ptr rhs1, int32 scalar rhs2, uint64 scalar rhs3) | Static uint8Ptr lhs1 jg_scale_uint8(uint8Ptr rhs1, int32 scalar rhs2, uint8 scalar rhs3) | Static int8 lhs1 jg_schar(int8 scalar rhs1) | Static int16 lhs1 jg_short(int16 scalar rhs1) | Static uint64 lhs1 jg_size(uint64 scalar rhs1) | Static jg_sleep(int32 scalar rhs1) | Static lib.pointer lhs1 jg_static_block | Static lib.pointer lhs1 jg_static_ints | Static [int32 lhs1, cstring lhs2] jg_strlen(cstring rhs1) | Static [double lhs1, doublePtr lhs2] jg_sum(doublePtr rhs1, int32 scalar rhs2) | Static [double lhs1, doublePtr lhs2] jg_sum2d(doublePtr rhs1, int32 scalar rhs2) | Static [int32 lhs1, stringPtrPtr lhs2] jg_total_len(stringPtrPtr rhs1, int32 scalar rhs2) | Static int32 lhs1 jg_triple(doublePtrPtrPtr rhs1) | Static uint8 lhs1 jg_uchar(uint8 scalar rhs1) | Static uint32 lhs1 jg_uint(uint32 scalar rhs1) | Static uint16 lhs1 jg_uint16(uint16 scalar rhs1) | Static uint32 lhs1 jg_uint32(uint32 scalar rhs1) | Static uint64 lhs1 jg_uint64(uint64 scalar rhs1) | Static uint64 lhs1 jg_uint64_max | Static uint8 lhs1 jg_uint8(uint8 scalar rhs1) | Static ulong lhs1 jg_ulong(ulong rhs1) | Static uint64 lhs1 jg_ulonglong(uint64 scalar rhs1) | Static int32 lhs1 jg_union_in(error rhs1) | Static cstring lhs1 jg_upper(cstring rhs1) | Static [cstring lhs1, cstring lhs2] jg_upper_ret(cstring rhs1) | Static uint16 lhs1 jg_ushort(uint16 scalar rhs1) | Static int32 lhs1 jg_varsum(int32 scalar rhs1, error rhs2) | Static int32 lhs1 jg_version | Static jg_void | Static lib.pointer lhs1 jg_words | Static int32 lhs1 jg_write_kept(double scalar rhs1) |
+print.pointer	OUT | Methods for class lib.pointer: | get          isNull       plus         reshape      set          setdatatype | Methods of lib.pointer inherited from handle. |
+print.pointer.name	OUT | Methods for class lib.pointer: | get          isNull       plus         reshape      set          setdatatype | Methods of lib.pointer inherited from handle. |
+print.pointer.full	OUT | Methods for class lib.pointer: | event.listener L addlistener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | delete(handle obj)  % Inherited from handle | logical TF eq(A, B)  % Inherited from handle | handle HM findobj(handle H, varargin)  % Inherited from handle | matlab.metadata.Property prop findprop(handle scalar object, asciiString propname)  % Inherited from handle | logical TF ge(A, B)  % Inherited from handle | varargout get(matlab.mixin.SetGet rhs1, rhs2)  % Inherited from matlab.mixin.SetGet | logical TF gt(A, B)  % Inherited from handle | logical scalar lhs1 isNull(lib.pointer scalar rhs1) | logical validity isvalid(handle obj)  % Inherited from handle | logical TF le(A, B)  % Inherited from handle | event.listener L listener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | logical TF lt(A, B)  % Inherited from handle | logical TF ne(A, B)  % Inherited from handle | notify(handle sources, asciiString eventname)  % Inherited from handle | notify(handle sources, asciiString eventname, event.EventData scalar eventdata)  % Inherited from handle | lib.pointer scalar lhs1 plus(lib.pointer scalar rhs1, int64 scalar rhs2) | reshape(lib.pointer scalar rhs1, double scalar rhs2, double scalar rhs3) | varargout set(matlab.mixin.SetGet rhs1, rhs2)  % Inherited from matlab.mixin.SetGet | setdatatype(lib.pointer scalar rhs1, string scalar rhs2, double scalar rhs3) |
+print.struct	OUT | Methods for class lib.jg_point: | get         jg_point    set         structsize | Methods of lib.jg_point inherited from handle. |
+print.struct.name	OUT | Methods for class lib.jg_point: | get         jg_point    set         structsize | Methods of lib.jg_point inherited from handle. |
+print.struct.full	OUT | Methods for class lib.jg_point: | event.listener L addlistener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L addlistener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | delete(handle obj)  % Inherited from handle | logical TF eq(A, B)  % Inherited from handle | handle HM findobj(handle H, varargin)  % Inherited from handle | matlab.metadata.Property prop findprop(handle scalar object, asciiString propname)  % Inherited from handle | logical TF ge(A, B)  % Inherited from handle | varargout get(matlab.mixin.SetGet rhs1, rhs2)  % Inherited from matlab.mixin.SetGet | logical TF gt(A, B)  % Inherited from handle | logical validity isvalid(handle obj)  % Inherited from handle | lib.jg_point lhs1 jg_point | lib.jg_point lhs1 jg_point(InitialValue) | logical TF le(A, B)  % Inherited from handle | event.listener L listener(handle sources, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)  % Inherited from handle | event.proplistener L listener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)  % Inherited from handle | logical TF lt(A, B)  % Inherited from handle | logical TF ne(A, B)  % Inherited from handle | notify(handle sources, asciiString eventname)  % Inherited from handle | notify(handle sources, asciiString eventname, event.EventData scalar eventdata)  % Inherited from handle | varargout set(matlab.mixin.SetGet rhs1, rhs2)  % Inherited from matlab.mixin.SetGet | double lhs1 structsize(lib.jg_point rhs1) |
+print.lib.unloaded	OUT | No class 'lib.nolib'. |
+print.lib.bare	OUT | Methods for class lib.jgtestlib: | Static methods: | jg_add_ref         jg_crash           jg_int16           jg_mixed_args      jg_pick_word       jg_scale_int64     jg_static_block    jg_uint32          jg_varsum | jg_alloc_doubles   jg_double          jg_int32           jg_mixed_fill      jg_point_alloc     jg_scale_int8      jg_static_ints     jg_uint64          jg_version | jg_alloc_ret       jg_exported_value  jg_int64           jg_mixed_sum       jg_point_len       jg_scale_uint16    jg_strlen          jg_uint64_max      jg_void | jg_apply           jg_fill_name       jg_int64_big       jg_negate_bool     jg_point_scale     jg_scale_uint32    jg_sum             jg_uint8           jg_words | jg_bits_in         jg_float           jg_int8            jg_nested_sum      jg_printf          jg_scale_uint64    jg_sum2d           jg_ulong           jg_write_kept | jg_bool            jg_free            jg_is_null         jg_opaque_free     jg_release_kept    jg_scale_uint8     jg_total_len       jg_ulonglong | jg_char            jg_getcwd          jg_keep            jg_opaque_get      jg_scale_double    jg_schar           jg_triple          jg_union_in | jg_color_name      jg_getenv          jg_layout          jg_opaque_new      jg_scale_float     jg_short           jg_uchar           jg_upper | jg_color_next      jg_greeting        jg_long            jg_packed_fill     jg_scale_int16     jg_size            jg_uint            jg_upper_ret | jg_color_value     jg_int             jg_longlong        jg_packed_sum      jg_scale_int32     jg_sleep           jg_uint16          jg_ushort |
+cell.lib.jgtestlib.names.size	85 1
+cell.lib.jgtestlib.names.001	jg_add_ref
+cell.lib.jgtestlib.names.002	jg_alloc_doubles
+cell.lib.jgtestlib.names.003	jg_alloc_ret
+cell.lib.jgtestlib.names.004	jg_apply
+cell.lib.jgtestlib.names.005	jg_bits_in
+cell.lib.jgtestlib.names.006	jg_bool
+cell.lib.jgtestlib.names.007	jg_char
+cell.lib.jgtestlib.names.008	jg_color_name
+cell.lib.jgtestlib.names.009	jg_color_next
+cell.lib.jgtestlib.names.010	jg_color_value
+cell.lib.jgtestlib.names.011	jg_crash
+cell.lib.jgtestlib.names.012	jg_double
+cell.lib.jgtestlib.names.013	jg_exported_value
+cell.lib.jgtestlib.names.014	jg_fill_name
+cell.lib.jgtestlib.names.015	jg_float
+cell.lib.jgtestlib.names.016	jg_free
+cell.lib.jgtestlib.names.017	jg_getcwd
+cell.lib.jgtestlib.names.018	jg_getenv
+cell.lib.jgtestlib.names.019	jg_greeting
+cell.lib.jgtestlib.names.020	jg_int
+cell.lib.jgtestlib.names.021	jg_int16
+cell.lib.jgtestlib.names.022	jg_int32
+cell.lib.jgtestlib.names.023	jg_int64
+cell.lib.jgtestlib.names.024	jg_int64_big
+cell.lib.jgtestlib.names.025	jg_int8
+cell.lib.jgtestlib.names.026	jg_is_null
+cell.lib.jgtestlib.names.027	jg_keep
+cell.lib.jgtestlib.names.028	jg_layout
+cell.lib.jgtestlib.names.029	jg_long
+cell.lib.jgtestlib.names.030	jg_longlong
+cell.lib.jgtestlib.names.031	jg_mixed_args
+cell.lib.jgtestlib.names.032	jg_mixed_fill
+cell.lib.jgtestlib.names.033	jg_mixed_sum
+cell.lib.jgtestlib.names.034	jg_negate_bool
+cell.lib.jgtestlib.names.035	jg_nested_sum
+cell.lib.jgtestlib.names.036	jg_opaque_free
+cell.lib.jgtestlib.names.037	jg_opaque_get
+cell.lib.jgtestlib.names.038	jg_opaque_new
+cell.lib.jgtestlib.names.039	jg_packed_fill
+cell.lib.jgtestlib.names.040	jg_packed_sum
+cell.lib.jgtestlib.names.041	jg_pick_word
+cell.lib.jgtestlib.names.042	jg_point_alloc
+cell.lib.jgtestlib.names.043	jg_point_len
+cell.lib.jgtestlib.names.044	jg_point_scale
+cell.lib.jgtestlib.names.045	jg_printf
+cell.lib.jgtestlib.names.046	jg_release_kept
+cell.lib.jgtestlib.names.047	jg_scale_double
+cell.lib.jgtestlib.names.048	jg_scale_float
+cell.lib.jgtestlib.names.049	jg_scale_int16
+cell.lib.jgtestlib.names.050	jg_scale_int32
+cell.lib.jgtestlib.names.051	jg_scale_int64
+cell.lib.jgtestlib.names.052	jg_scale_int8
+cell.lib.jgtestlib.names.053	jg_scale_uint16
+cell.lib.jgtestlib.names.054	jg_scale_uint32
+cell.lib.jgtestlib.names.055	jg_scale_uint64
+cell.lib.jgtestlib.names.056	jg_scale_uint8
+cell.lib.jgtestlib.names.057	jg_schar
+cell.lib.jgtestlib.names.058	jg_short
+cell.lib.jgtestlib.names.059	jg_size
+cell.lib.jgtestlib.names.060	jg_sleep
+cell.lib.jgtestlib.names.061	jg_static_block
+cell.lib.jgtestlib.names.062	jg_static_ints
+cell.lib.jgtestlib.names.063	jg_strlen
+cell.lib.jgtestlib.names.064	jg_sum
+cell.lib.jgtestlib.names.065	jg_sum2d
+cell.lib.jgtestlib.names.066	jg_total_len
+cell.lib.jgtestlib.names.067	jg_triple
+cell.lib.jgtestlib.names.068	jg_uchar
+cell.lib.jgtestlib.names.069	jg_uint
+cell.lib.jgtestlib.names.070	jg_uint16
+cell.lib.jgtestlib.names.071	jg_uint32
+cell.lib.jgtestlib.names.072	jg_uint64
+cell.lib.jgtestlib.names.073	jg_uint64_max
+cell.lib.jgtestlib.names.074	jg_uint8
+cell.lib.jgtestlib.names.075	jg_ulong
+cell.lib.jgtestlib.names.076	jg_ulonglong
+cell.lib.jgtestlib.names.077	jg_union_in
+cell.lib.jgtestlib.names.078	jg_upper
+cell.lib.jgtestlib.names.079	jg_upper_ret
+cell.lib.jgtestlib.names.080	jg_ushort
+cell.lib.jgtestlib.names.081	jg_varsum
+cell.lib.jgtestlib.names.082	jg_version
+cell.lib.jgtestlib.names.083	jg_void
+cell.lib.jgtestlib.names.084	jg_words
+cell.lib.jgtestlib.names.085	jg_write_kept
+cell.lib.jgtestlib.full.size	85 1
+cell.lib.jgtestlib.full.001	Static [double lhs1, doublePtr lhs2] jg_add_ref(double scalar rhs1, doublePtr rhs2, double scalar rhs3)
+cell.lib.jgtestlib.full.002	Static [int32 lhs1, doublePtrPtr lhs2] jg_alloc_doubles(doublePtrPtr rhs1, int32 scalar rhs2)
+cell.lib.jgtestlib.full.003	Static lib.pointer lhs1 jg_alloc_ret(int32 scalar rhs1)
+cell.lib.jgtestlib.full.004	Static double lhs1 jg_apply(FcnPtr rhs1, double scalar rhs2)
+cell.lib.jgtestlib.full.005	Static [int32 lhs1, voidPtr lhs2] jg_bits_in(voidPtr rhs1)
+cell.lib.jgtestlib.full.006	Static bool lhs1 jg_bool(bool rhs1)
+cell.lib.jgtestlib.full.007	Static int8 lhs1 jg_char(int8 scalar rhs1)
+cell.lib.jgtestlib.full.008	Static cstring lhs1 jg_color_name(lib.jg_color rhs1)
+cell.lib.jgtestlib.full.009	Static lib.jg_color lhs1 jg_color_next(lib.jg_color rhs1)
+cell.lib.jgtestlib.full.010	Static int32 lhs1 jg_color_value(lib.jg_color rhs1)
+cell.lib.jgtestlib.full.011	Static jg_crash
+cell.lib.jgtestlib.full.012	Static double lhs1 jg_double(double scalar rhs1)
+cell.lib.jgtestlib.full.013	Static lib.pointer scalar lhs1 jg_exported_value
+cell.lib.jgtestlib.full.014	Static cstring lhs1 jg_fill_name(cstring rhs1, int32 scalar rhs2)
+cell.lib.jgtestlib.full.015	Static single lhs1 jg_float(single scalar rhs1)
+cell.lib.jgtestlib.full.016	Static voidPtr lhs1 jg_free(voidPtr rhs1)
+cell.lib.jgtestlib.full.017	Static cstring lhs1 jg_getcwd
+cell.lib.jgtestlib.full.018	Static [cstring lhs1, cstring lhs2] jg_getenv(cstring rhs1)
+cell.lib.jgtestlib.full.019	Static cstring lhs1 jg_greeting
+cell.lib.jgtestlib.full.020	Static int32 lhs1 jg_int(int32 scalar rhs1)
+cell.lib.jgtestlib.full.021	Static int16 lhs1 jg_int16(int16 scalar rhs1)
+cell.lib.jgtestlib.full.022	Static int32 lhs1 jg_int32(int32 scalar rhs1)
+cell.lib.jgtestlib.full.023	Static int64 lhs1 jg_int64(int64 scalar rhs1)
+cell.lib.jgtestlib.full.024	Static int64 lhs1 jg_int64_big
+cell.lib.jgtestlib.full.025	Static int8 lhs1 jg_int8(int8 scalar rhs1)
+cell.lib.jgtestlib.full.026	Static [int32 lhs1, voidPtr lhs2] jg_is_null(voidPtr rhs1)
+cell.lib.jgtestlib.full.027	Static doublePtr lhs1 jg_keep(doublePtr rhs1, int32 scalar rhs2)
+cell.lib.jgtestlib.full.028	Static uint64 lhs1 jg_layout(int32 scalar rhs1)
+cell.lib.jgtestlib.full.029	Static long lhs1 jg_long(long rhs1)
+cell.lib.jgtestlib.full.030	Static int64 lhs1 jg_longlong(int64 scalar rhs1)
+cell.lib.jgtestlib.full.031	Static double lhs1 jg_mixed_args(int16 scalar rhs1, int32 scalar rhs2, double scalar rhs3, single scalar rhs4, int64 scalar rhs5)
+cell.lib.jgtestlib.full.032	Static jg_mixedPtr lhs1 jg_mixed_fill(jg_mixedPtr rhs1)
+cell.lib.jgtestlib.full.033	Static [double lhs1, jg_mixedPtr lhs2] jg_mixed_sum(jg_mixedPtr rhs1)
+cell.lib.jgtestlib.full.034	Static boolPtr lhs1 jg_negate_bool(boolPtr rhs1, int32 scalar rhs2)
+cell.lib.jgtestlib.full.035	Static [double lhs1, jg_nestedPtr lhs2] jg_nested_sum(jg_nestedPtr rhs1)
+cell.lib.jgtestlib.full.036	Static voidPtr lhs1 jg_opaque_free(voidPtr rhs1)
+cell.lib.jgtestlib.full.037	Static [double lhs1, voidPtr lhs2] jg_opaque_get(voidPtr rhs1)
+cell.lib.jgtestlib.full.038	Static lib.pointer lhs1 jg_opaque_new(double scalar rhs1)
+cell.lib.jgtestlib.full.039	Static jg_packedPtr lhs1 jg_packed_fill(jg_packedPtr rhs1)
+cell.lib.jgtestlib.full.040	Static [double lhs1, jg_packedPtr lhs2] jg_packed_sum(jg_packedPtr rhs1)
+cell.lib.jgtestlib.full.041	Static stringPtrPtr lhs1 jg_pick_word(int32 scalar rhs1, stringPtrPtr rhs2)
+cell.lib.jgtestlib.full.042	Static jg_pointPtrPtr lhs1 jg_point_alloc(jg_pointPtrPtr rhs1)
+cell.lib.jgtestlib.full.043	Static double lhs1 jg_point_len(jg_point rhs1)
+cell.lib.jgtestlib.full.044	Static jg_pointPtr lhs1 jg_point_scale(jg_pointPtr rhs1, double scalar rhs2)
+cell.lib.jgtestlib.full.045	Static [int32 lhs1, cstring lhs2] jg_printf(cstring rhs1)
+cell.lib.jgtestlib.full.046	Static jg_release_kept
+cell.lib.jgtestlib.full.047	Static doublePtr lhs1 jg_scale_double(doublePtr rhs1, int32 scalar rhs2, double scalar rhs3)
+cell.lib.jgtestlib.full.048	Static singlePtr lhs1 jg_scale_float(singlePtr rhs1, int32 scalar rhs2, single scalar rhs3)
+cell.lib.jgtestlib.full.049	Static int16Ptr lhs1 jg_scale_int16(int16Ptr rhs1, int32 scalar rhs2, int16 scalar rhs3)
+cell.lib.jgtestlib.full.050	Static int32Ptr lhs1 jg_scale_int32(int32Ptr rhs1, int32 scalar rhs2, int32 scalar rhs3)
+cell.lib.jgtestlib.full.051	Static int64Ptr lhs1 jg_scale_int64(int64Ptr rhs1, int32 scalar rhs2, int64 scalar rhs3)
+cell.lib.jgtestlib.full.052	Static int8Ptr lhs1 jg_scale_int8(int8Ptr rhs1, int32 scalar rhs2, int8 scalar rhs3)
+cell.lib.jgtestlib.full.053	Static uint16Ptr lhs1 jg_scale_uint16(uint16Ptr rhs1, int32 scalar rhs2, uint16 scalar rhs3)
+cell.lib.jgtestlib.full.054	Static uint32Ptr lhs1 jg_scale_uint32(uint32Ptr rhs1, int32 scalar rhs2, uint32 scalar rhs3)
+cell.lib.jgtestlib.full.055	Static uint64Ptr lhs1 jg_scale_uint64(uint64Ptr rhs1, int32 scalar rhs2, uint64 scalar rhs3)
+cell.lib.jgtestlib.full.056	Static uint8Ptr lhs1 jg_scale_uint8(uint8Ptr rhs1, int32 scalar rhs2, uint8 scalar rhs3)
+cell.lib.jgtestlib.full.057	Static int8 lhs1 jg_schar(int8 scalar rhs1)
+cell.lib.jgtestlib.full.058	Static int16 lhs1 jg_short(int16 scalar rhs1)
+cell.lib.jgtestlib.full.059	Static uint64 lhs1 jg_size(uint64 scalar rhs1)
+cell.lib.jgtestlib.full.060	Static jg_sleep(int32 scalar rhs1)
+cell.lib.jgtestlib.full.061	Static lib.pointer lhs1 jg_static_block
+cell.lib.jgtestlib.full.062	Static lib.pointer lhs1 jg_static_ints
+cell.lib.jgtestlib.full.063	Static [int32 lhs1, cstring lhs2] jg_strlen(cstring rhs1)
+cell.lib.jgtestlib.full.064	Static [double lhs1, doublePtr lhs2] jg_sum(doublePtr rhs1, int32 scalar rhs2)
+cell.lib.jgtestlib.full.065	Static [double lhs1, doublePtr lhs2] jg_sum2d(doublePtr rhs1, int32 scalar rhs2)
+cell.lib.jgtestlib.full.066	Static [int32 lhs1, stringPtrPtr lhs2] jg_total_len(stringPtrPtr rhs1, int32 scalar rhs2)
+cell.lib.jgtestlib.full.067	Static int32 lhs1 jg_triple(doublePtrPtrPtr rhs1)
+cell.lib.jgtestlib.full.068	Static uint8 lhs1 jg_uchar(uint8 scalar rhs1)
+cell.lib.jgtestlib.full.069	Static uint32 lhs1 jg_uint(uint32 scalar rhs1)
+cell.lib.jgtestlib.full.070	Static uint16 lhs1 jg_uint16(uint16 scalar rhs1)
+cell.lib.jgtestlib.full.071	Static uint32 lhs1 jg_uint32(uint32 scalar rhs1)
+cell.lib.jgtestlib.full.072	Static uint64 lhs1 jg_uint64(uint64 scalar rhs1)
+cell.lib.jgtestlib.full.073	Static uint64 lhs1 jg_uint64_max
+cell.lib.jgtestlib.full.074	Static uint8 lhs1 jg_uint8(uint8 scalar rhs1)
+cell.lib.jgtestlib.full.075	Static ulong lhs1 jg_ulong(ulong rhs1)
+cell.lib.jgtestlib.full.076	Static uint64 lhs1 jg_ulonglong(uint64 scalar rhs1)
+cell.lib.jgtestlib.full.077	Static int32 lhs1 jg_union_in(error rhs1)
+cell.lib.jgtestlib.full.078	Static cstring lhs1 jg_upper(cstring rhs1)
+cell.lib.jgtestlib.full.079	Static [cstring lhs1, cstring lhs2] jg_upper_ret(cstring rhs1)
+cell.lib.jgtestlib.full.080	Static uint16 lhs1 jg_ushort(uint16 scalar rhs1)
+cell.lib.jgtestlib.full.081	Static int32 lhs1 jg_varsum(int32 scalar rhs1, error rhs2)
+cell.lib.jgtestlib.full.082	Static int32 lhs1 jg_version
+cell.lib.jgtestlib.full.083	Static jg_void
+cell.lib.jgtestlib.full.084	Static lib.pointer lhs1 jg_words
+cell.lib.jgtestlib.full.085	Static int32 lhs1 jg_write_kept(double scalar rhs1)
+cell.lib.pointer.names.size	19 1
+cell.lib.pointer.names.001	addlistener
+cell.lib.pointer.names.002	delete
+cell.lib.pointer.names.003	eq
+cell.lib.pointer.names.004	findobj
+cell.lib.pointer.names.005	findprop
+cell.lib.pointer.names.006	ge
+cell.lib.pointer.names.007	get
+cell.lib.pointer.names.008	gt
+cell.lib.pointer.names.009	isNull
+cell.lib.pointer.names.010	isvalid
+cell.lib.pointer.names.011	le
+cell.lib.pointer.names.012	listener
+cell.lib.pointer.names.013	lt
+cell.lib.pointer.names.014	ne
+cell.lib.pointer.names.015	notify
+cell.lib.pointer.names.016	plus
+cell.lib.pointer.names.017	reshape
+cell.lib.pointer.names.018	set
+cell.lib.pointer.names.019	setdatatype
+cell.lib.pointer.full.size	28 1
+cell.lib.pointer.full.001	event.listener L addlistener(handle sources, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.002	event.proplistener L addlistener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.003	event.proplistener L addlistener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.004	event.proplistener L addlistener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.005	event.proplistener L addlistener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.006	delete(handle obj)
+cell.lib.pointer.full.007	logical TF eq(A, B)
+cell.lib.pointer.full.008	handle HM findobj(handle H, varargin)
+cell.lib.pointer.full.009	matlab.metadata.Property prop findprop(handle scalar object, asciiString propname)
+cell.lib.pointer.full.010	logical TF ge(A, B)
+cell.lib.pointer.full.011	varargout get(matlab.mixin.SetGet rhs1, rhs2)
+cell.lib.pointer.full.012	logical TF gt(A, B)
+cell.lib.pointer.full.013	logical scalar lhs1 isNull(lib.pointer scalar rhs1)
+cell.lib.pointer.full.014	logical validity isvalid(handle obj)
+cell.lib.pointer.full.015	logical TF le(A, B)
+cell.lib.pointer.full.016	event.listener L listener(handle sources, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.017	event.proplistener L listener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.018	event.proplistener L listener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.019	event.proplistener L listener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.020	event.proplistener L listener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)
+cell.lib.pointer.full.021	logical TF lt(A, B)
+cell.lib.pointer.full.022	logical TF ne(A, B)
+cell.lib.pointer.full.023	notify(handle sources, asciiString eventname)
+cell.lib.pointer.full.024	notify(handle sources, asciiString eventname, event.EventData scalar eventdata)
+cell.lib.pointer.full.025	lib.pointer scalar lhs1 plus(lib.pointer scalar rhs1, int64 scalar rhs2)
+cell.lib.pointer.full.026	reshape(lib.pointer scalar rhs1, double scalar rhs2, double scalar rhs3)
+cell.lib.pointer.full.027	varargout set(matlab.mixin.SetGet rhs1, rhs2)
+cell.lib.pointer.full.028	setdatatype(lib.pointer scalar rhs1, string scalar rhs2, double scalar rhs3)
+cell.lib.jg_point.names.size	17 1
+cell.lib.jg_point.names.001	addlistener
+cell.lib.jg_point.names.002	delete
+cell.lib.jg_point.names.003	eq
+cell.lib.jg_point.names.004	findobj
+cell.lib.jg_point.names.005	findprop
+cell.lib.jg_point.names.006	ge
+cell.lib.jg_point.names.007	get
+cell.lib.jg_point.names.008	gt
+cell.lib.jg_point.names.009	isvalid
+cell.lib.jg_point.names.010	jg_point
+cell.lib.jg_point.names.011	le
+cell.lib.jg_point.names.012	listener
+cell.lib.jg_point.names.013	lt
+cell.lib.jg_point.names.014	ne
+cell.lib.jg_point.names.015	notify
+cell.lib.jg_point.names.016	set
+cell.lib.jg_point.names.017	structsize
+cell.lib.jg_point.full.size	27 1
+cell.lib.jg_point.full.001	event.listener L addlistener(handle sources, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.002	event.proplistener L addlistener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.003	event.proplistener L addlistener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.004	event.proplistener L addlistener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.005	event.proplistener L addlistener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.006	delete(handle obj)
+cell.lib.jg_point.full.007	logical TF eq(A, B)
+cell.lib.jg_point.full.008	handle HM findobj(handle H, varargin)
+cell.lib.jg_point.full.009	matlab.metadata.Property prop findprop(handle scalar object, asciiString propname)
+cell.lib.jg_point.full.010	logical TF ge(A, B)
+cell.lib.jg_point.full.011	varargout get(matlab.mixin.SetGet rhs1, rhs2)
+cell.lib.jg_point.full.012	logical TF gt(A, B)
+cell.lib.jg_point.full.013	logical validity isvalid(handle obj)
+cell.lib.jg_point.full.014	lib.jg_point lhs1 jg_point
+cell.lib.jg_point.full.015	lib.jg_point lhs1 jg_point(InitialValue)
+cell.lib.jg_point.full.016	logical TF le(A, B)
+cell.lib.jg_point.full.017	event.listener L listener(handle sources, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.018	event.proplistener L listener(handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.019	event.proplistener L listener(handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.020	event.proplistener L listener(handle sources, string propertyname, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.021	event.proplistener L listener(handle sources, cell propertynames, char vector eventname, function_handle scalar callback)
+cell.lib.jg_point.full.022	logical TF lt(A, B)
+cell.lib.jg_point.full.023	logical TF ne(A, B)
+cell.lib.jg_point.full.024	notify(handle sources, asciiString eventname)
+cell.lib.jg_point.full.025	notify(handle sources, asciiString eventname, event.EventData scalar eventdata)
+cell.lib.jg_point.full.026	varargout set(matlab.mixin.SetGet rhs1, rhs2)
+cell.lib.jg_point.full.027	double lhs1 structsize(lib.jg_point rhs1)
+cell.obj.pointer.full.n	double [1 1] 28
+cell.obj.struct.full.n	double [1 1] 27
+ismethod.isNull	logical [1 1] true
+ismethod.structsize	logical [1 1] true

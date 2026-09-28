@@ -53,6 +53,19 @@ internal static partial class JgsBuiltins
         {
             ArityRange("methods", args, 1, 2, line, col);
             bool full = MethodsFull(args, line, col);
+
+            // A library, a lib.pointer or a libstruct (ADR 0183): its names, or its -full lines
+            // without their inheritance notes; a lib. name that names nothing answers [].
+            if (LibListingOf(args[0], interpreter, out bool unknownLib) is { } lib)
+            {
+                return CellColumn(full ? lib.Lines.Select(static l => l.Text) : lib.Names);
+            }
+
+            if (unknownLib)
+            {
+                return JgsEmpty.Zero();
+            }
+
             return full && NetTypeNamed(args[0], interpreter) is { } type
                 ? CellColumn(Net.NetMethodsListing.FullLines(type))
                 : CellColumn(MethodNames("methods", args[0], interpreter, line, col));
@@ -65,6 +78,24 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) =>
             {
                 ArityRange("methods", args, 1, 2, line, col);
+                if (wanted == 0 && interpreter.Host is { } libHost)
+                {
+                    bool full = MethodsFull(args, line, col);
+                    if (LibListingOf(args[0], interpreter, out bool unknownLib) is { } lib)
+                    {
+                        libHost.WriteOut(full
+                            ? Native.LibMethodsListing.Full(lib.ClassName, lib.Lines)
+                            : Native.LibMethodsListing.Names(lib.ClassName, lib.Own, lib.IsLibrary));
+                        return [];
+                    }
+
+                    if (unknownLib)
+                    {
+                        libHost.WriteOut($"\nNo class '{TextOf(args[0])}'.\n\n");
+                        return [];
+                    }
+                }
+
                 if (wanted == 0 && NetTypeNamed(args[0], interpreter) is { } type && interpreter.Host is { } host)
                 {
                     string className = args[0].AsExternalOrNull()?.ClassName ?? Net.NetNames.ClassName(type);

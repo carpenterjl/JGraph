@@ -123,6 +123,15 @@ internal sealed class LibPointer(string dataType) : IJgsExternal
 
     public string Display() => "libpointer";
 
+    /// <summary>The Workspace pane's words for it: its type, and NULL or its size; never its memory.</summary>
+    public string? Summary() =>
+        Deleted ? "deleted"
+        : IsNull ? (DataType.Length == 0 ? "NULL" : DataType + ", NULL")
+        : Sized ? $"{DataType}, {Rows}×{Cols}"
+        : DataType;
+
+    public string Kind => "C library value";
+
     /// <summary>A second pointer to the same place, of the same type and size, holding the same memory.</summary>
     public LibPointer Alias() => new(DataType)
     {
@@ -171,8 +180,16 @@ internal sealed class LibStructValue(SharedLibrary library, LibStruct type, Nati
 
     public string Display() => OperatingSystem.IsWindows() ? JgsBuiltins.LibStructDisplay(this) : ClassName;
 
+    /// <summary>The Workspace pane's words for it: nothing past its class, since its fields live in the host.</summary>
+    public string? Summary() => Deleted ? "deleted" : null;
+
+    public string Kind => "C library value";
+
     /// <summary>What <c>methods</c> lists: handle's, the struct's constructor and <c>structsize</c> (probe_shrlib_pointers2).</summary>
-    public IEnumerable<string> MethodNames =>
-        new[] { "addlistener", "delete", "eq", "findobj", "findprop", "ge", "get", "gt", "isvalid", "le", "listener", "lt", "ne", "notify", "set", "structsize", Type.Name }
-            .Order(StringComparer.OrdinalIgnoreCase);
+    public IEnumerable<string> MethodNames => MethodNamesOf(Type.Name);
+
+    /// <summary>The method names of the libstruct class <c>lib.&lt;name&gt;</c>: its constructor, <c>structsize</c>, and a handle's.</summary>
+    public static IReadOnlyList<string> MethodNamesOf(string name) =>
+        [.. new[] { "addlistener", "delete", "eq", "findobj", "findprop", "ge", "get", "gt", "isvalid", "le", "listener", "lt", "ne", "notify", "set", "structsize", name }
+            .Order(StringComparer.OrdinalIgnoreCase)];
 }

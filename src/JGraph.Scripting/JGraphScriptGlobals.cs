@@ -76,6 +76,9 @@ public sealed class JGraphScriptGlobals
     /// <summary>The file the current run came from, or null when the code came from the prompt.</summary>
     internal string? RunScriptPath => _runScriptPath ?? _context.ScriptPath;
 
+    /// <summary>The host's table window (<c>methodsview</c>), or null when the host prints the table (ADR 0183).</summary>
+    internal IScriptTableViewer? TableViewer => _context.TableViewer;
+
     // --- Output -----------------------------------------------------------------------------------
 
     /// <summary>Writes a value followed by a newline to the output console (C# scripts).</summary>

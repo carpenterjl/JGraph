@@ -29,6 +29,17 @@ internal interface IJgsExternal
 
     /// <summary>How <c>disp</c> and the echo show the value, in JGraph's display layout.</summary>
     string Display();
+
+    /// <summary>
+    /// A few words for the Workspace pane after the size and class (ADR 0183) — a string's text, an
+    /// enum's member, a pointer's type — or null when the class says it all. Unlike
+    /// <see cref="Display"/> it runs none of the object's own code (no property getter, no
+    /// <c>ToString</c>) and reads no native memory, because the pane asks after every statement.
+    /// </summary>
+    string? Summary() => null;
+
+    /// <summary>What family the value is from, for a host that has to say why it cannot open it.</summary>
+    string Kind => ".NET object";
 }
 
 /// <summary>
@@ -109,6 +120,18 @@ internal sealed class NetObject : IJgsExternal
         IsHandle || Target is null ? this : new NetObject(RuntimeHelpers.GetObjectValue(Target), Type, IsView);
 
     public string Display() => Net.NetDisplay.Of(this);
+
+    /// <summary>The Workspace pane's words for it: made from the object's state alone, never by calling it.</summary>
+    public string? Summary() => Deleted ? "deleted" : Target switch
+    {
+        null => NullableOf is not null ? "no value" : "null",
+        string text => text,
+        Enum member => member.ToString(),
+        Array array => string.Join("×", Enumerable.Range(0, array.Rank).Select(array.GetLength)) + " elements",
+        decimal or IntPtr or UIntPtr or char or bool or byte or sbyte or short or ushort or int or uint or long or ulong or float or double =>
+            Convert.ToString(Target, System.Globalization.CultureInfo.InvariantCulture),
+        _ => null,
+    };
 }
 
 /// <summary>

@@ -1,0 +1,663 @@
+[Warning: The data type 'error' used by function jg_union_in does not exist.] 
+[> In loadlibrary
+In probe_views (line 10)] 
+[Warning: The data type 'error' used by function jg_varsum does not exist.] 
+[> In loadlibrary
+In probe_views (line 10)] 
+[Warning: The function return type of 'jg_pointdoubledoubleThunk' for function jg_point_make is not supported.] 
+[> In loadlibrary
+In probe_views (line 10)] 
+[Warning: The function 'jg_not_exported' was not found in the library] 
+[> In loadlibrary
+In probe_views (line 10)] 
+mv.nargin	ERR MATLAB:methodsview:nargin Not enough input arguments.
+mv.number	ERR MATLAB:methodsview:TooManyOutputs There should be no output arguments with only one input argument
+mv.charmatrix	ERR MATLAB:methodsview:TooManyOutputs There should be no output arguments with only one input argument
+mv.cell	ERR MATLAB:methodsview:TooManyOutputs There should be no output arguments with only one input argument
+mv.badopt	ERR MATLAB:methodsview:InvalidInputOption Argument option must be assigned a valid character vector.
+mv.out.ui	ERR MATLAB:methodsview:TooManyOutputs There should be no output arguments with only one input argument
+mv.out.noui1	ERR MATLAB:methodsview:InvalidNumberOfOutputs Number of output arguments with noUI must be equal to 2.
+mv.unknown	ERR MATLAB:methodsview:UnknownClassOrMethod No class No.Such.Klass can be located or no methods for class
+mv.unknown.string	ERR MATLAB:methodsview:UnknownClassOrMethod No class No.Such.Klass can be located or no methods for class
+mv.unknown.lib	ERR MATLAB:methodsview:UnknownClassOrMethod No class lib.nolib can be located or no methods for class
+mv.unknown.noui	OUT string | 0     1 | string | 0     0 |
+lfv.nargin	ERR MATLAB:TooManyOutputs Too many output arguments.
+lfv.number	ERR MATLAB:TooManyOutputs Too many output arguments.
+lfv.strings	ERR MATLAB:TooManyOutputs Too many output arguments.
+lfv.charmatrix	ERR MATLAB:TooManyOutputs Too many output arguments.
+lfv.notloaded	ERR MATLAB:methodsview:UnknownClassOrMethod No library lib.nolib can be located or no methods for library
+lfv.notloaded.string	ERR MATLAB:methodsview:UnknownClassOrMethod No library lib.nolib can be located or no methods for library
+lfv.nargout	ERR MATLAB:TooManyOutputs Too many output arguments.
+rows.System.Math.head	Name | Return Type | Arguments | Qualifiers | Inherited From
+rows.System.Math.size	148 5
+rows.System.Math.001	Abs || int16 scalar RetVal || (int16 scalar value) || Static || 
+rows.System.Math.002	Abs || int32 scalar RetVal || (int32 scalar value) || Static || 
+rows.System.Math.003	Abs || int64 scalar RetVal || (int64 scalar value) || Static || 
+rows.System.Math.004	Abs || System.IntPtr RetVal || (System.IntPtr value) || Static || 
+rows.System.Math.005	Abs || int8 scalar RetVal || (int8 scalar value) || Static || 
+rows.System.Math.006	Abs || System.Decimal RetVal || (System.Decimal value) || Static || 
+rows.System.Math.007	Abs || double scalar RetVal || (double scalar value) || Static || 
+rows.System.Math.008	Abs || single scalar RetVal || (single scalar value) || Static || 
+rows.System.Math.009	Acos || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.010	Acosh || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.011	Asin || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.012	Asinh || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.013	Atan || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.014	Atan2 || double scalar RetVal || (double scalar y, double scalar x) || Static || 
+rows.System.Math.015	Atanh || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.016	BigMul || int64 scalar RetVal || (int32 scalar a, int32 scalar b) || Static || 
+rows.System.Math.017	BigMul || [uint64 scalar RetVal, uint64 scalar low] || (uint64 scalar a, uint64 scalar b) || Static || 
+rows.System.Math.018	BigMul || [int64 scalar RetVal, int64 scalar low] || (int64 scalar a, int64 scalar b) || Static || 
+rows.System.Math.019	BitDecrement || double scalar RetVal || (double scalar x) || Static || 
+rows.System.Math.020	BitIncrement || double scalar RetVal || (double scalar x) || Static || 
+rows.System.Math.021	Cbrt || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.022	Ceiling || double scalar RetVal || (double scalar a) || Static || 
+rows.System.Math.023	Ceiling || System.Decimal RetVal || (System.Decimal d) || Static || 
+rows.System.Math.024	Clamp || uint8 scalar RetVal || (uint8 scalar value, uint8 scalar min, uint8 scalar max) || Static || 
+rows.System.Math.025	Clamp || System.Decimal RetVal || (System.Decimal value, System.Decimal min, System.Decimal max) || Static || 
+rows.System.Math.026	Clamp || double scalar RetVal || (double scalar value, double scalar min, double scalar max) || Static || 
+rows.System.Math.027	Clamp || int16 scalar RetVal || (int16 scalar value, int16 scalar min, int16 scalar max) || Static || 
+rows.System.Math.028	Clamp || int32 scalar RetVal || (int32 scalar value, int32 scalar min, int32 scalar max) || Static || 
+rows.System.Math.029	Clamp || int64 scalar RetVal || (int64 scalar value, int64 scalar min, int64 scalar max) || Static || 
+rows.System.Math.030	Clamp || System.IntPtr RetVal || (System.IntPtr value, System.IntPtr min, System.IntPtr max) || Static || 
+rows.System.Math.031	Clamp || int8 scalar RetVal || (int8 scalar value, int8 scalar min, int8 scalar max) || Static || 
+rows.System.Math.032	Clamp || single scalar RetVal || (single scalar value, single scalar min, single scalar max) || Static || 
+rows.System.Math.033	Clamp || uint16 scalar RetVal || (uint16 scalar value, uint16 scalar min, uint16 scalar max) || Static || 
+rows.System.Math.034	Clamp || uint32 scalar RetVal || (uint32 scalar value, uint32 scalar min, uint32 scalar max) || Static || 
+rows.System.Math.035	Clamp || uint64 scalar RetVal || (uint64 scalar value, uint64 scalar min, uint64 scalar max) || Static || 
+rows.System.Math.036	Clamp || System.UIntPtr RetVal || (System.UIntPtr value, System.UIntPtr min, System.UIntPtr max) || Static || 
+rows.System.Math.037	CopySign || double scalar RetVal || (double scalar x, double scalar y) || Static || 
+rows.System.Math.038	Cos || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.039	Cosh || double scalar RetVal || (double scalar value) || Static || 
+rows.System.Math.040	DivRem || [int32 scalar RetVal, int32 scalar result] || (int32 scalar a, int32 scalar b) || Static || 
+rows.System.Math.041	DivRem || [int64 scalar RetVal, int64 scalar result] || (int64 scalar a, int64 scalar b) || Static || 
+rows.System.Math.042	DivRem || System.ValueTuple<System*SByte,System*SByte> RetVal || (int8 scalar left, int8 scalar right) || Static || 
+rows.System.Math.043	DivRem || System.ValueTuple<System*Byte,System*Byte> RetVal || (uint8 scalar left, uint8 scalar right) || Static || 
+rows.System.Math.044	DivRem || System.ValueTuple<System*Int16,System*Int16> RetVal || (int16 scalar left, int16 scalar right) || Static || 
+rows.System.Math.045	DivRem || System.ValueTuple<System*UInt16,System*UInt16> RetVal || (uint16 scalar left, uint16 scalar right) || Static || 
+rows.System.Math.046	DivRem || System.ValueTuple<System*Int32,System*Int32> RetVal || (int32 scalar left, int32 scalar right) || Static || 
+rows.System.Math.047	DivRem || System.ValueTuple<System*UInt32,System*UInt32> RetVal || (uint32 scalar left, uint32 scalar right) || Static || 
+rows.System.Math.048	DivRem || System.ValueTuple<System*Int64,System*Int64> RetVal || (int64 scalar left, int64 scalar right) || Static || 
+rows.System.Math.049	DivRem || System.ValueTuple<System*UInt64,System*UInt64> RetVal || (uint64 scalar left, uint64 scalar right) || Static || 
+rows.System.Math.050	DivRem || System.ValueTuple<System*IntPtr,System*IntPtr> RetVal || (System.IntPtr left, System.IntPtr right) || Static || 
+rows.System.Math.051	DivRem || System.ValueTuple<System*UIntPtr,System*UIntPtr> RetVal || (System.UIntPtr left, System.UIntPtr right) || Static || 
+rows.System.Math.052	Equals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.System.Math.053	Exp || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.054	Floor || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.055	Floor || System.Decimal RetVal || (System.Decimal d) || Static || 
+rows.System.Math.056	FusedMultiplyAdd || double scalar RetVal || (double scalar x, double scalar y, double scalar z) || Static || 
+rows.System.Math.057	IEEERemainder || double scalar RetVal || (double scalar x, double scalar y) || Static || 
+rows.System.Math.058	ILogB || int32 scalar RetVal || (double scalar x) || Static || 
+rows.System.Math.059	Log || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.060	Log || double scalar RetVal || (double scalar a, double scalar newBase) || Static || 
+rows.System.Math.061	Log10 || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.062	Log2 || double scalar RetVal || (double scalar x) || Static || 
+rows.System.Math.063	Max || uint8 scalar RetVal || (uint8 scalar val1, uint8 scalar val2) || Static || 
+rows.System.Math.064	Max || System.Decimal RetVal || (System.Decimal val1, System.Decimal val2) || Static || 
+rows.System.Math.065	Max || double scalar RetVal || (double scalar val1, double scalar val2) || Static || 
+rows.System.Math.066	Max || int16 scalar RetVal || (int16 scalar val1, int16 scalar val2) || Static || 
+rows.System.Math.067	Max || int32 scalar RetVal || (int32 scalar val1, int32 scalar val2) || Static || 
+rows.System.Math.068	Max || int64 scalar RetVal || (int64 scalar val1, int64 scalar val2) || Static || 
+rows.System.Math.069	Max || System.IntPtr RetVal || (System.IntPtr val1, System.IntPtr val2) || Static || 
+rows.System.Math.070	Max || int8 scalar RetVal || (int8 scalar val1, int8 scalar val2) || Static || 
+rows.System.Math.071	Max || single scalar RetVal || (single scalar val1, single scalar val2) || Static || 
+rows.System.Math.072	Max || uint16 scalar RetVal || (uint16 scalar val1, uint16 scalar val2) || Static || 
+rows.System.Math.073	Max || uint32 scalar RetVal || (uint32 scalar val1, uint32 scalar val2) || Static || 
+rows.System.Math.074	Max || uint64 scalar RetVal || (uint64 scalar val1, uint64 scalar val2) || Static || 
+rows.System.Math.075	Max || System.UIntPtr RetVal || (System.UIntPtr val1, System.UIntPtr val2) || Static || 
+rows.System.Math.076	MaxMagnitude || double scalar RetVal || (double scalar x, double scalar y) || Static || 
+rows.System.Math.077	Min || uint8 scalar RetVal || (uint8 scalar val1, uint8 scalar val2) || Static || 
+rows.System.Math.078	Min || System.Decimal RetVal || (System.Decimal val1, System.Decimal val2) || Static || 
+rows.System.Math.079	Min || double scalar RetVal || (double scalar val1, double scalar val2) || Static || 
+rows.System.Math.080	Min || int16 scalar RetVal || (int16 scalar val1, int16 scalar val2) || Static || 
+rows.System.Math.081	Min || int32 scalar RetVal || (int32 scalar val1, int32 scalar val2) || Static || 
+rows.System.Math.082	Min || int64 scalar RetVal || (int64 scalar val1, int64 scalar val2) || Static || 
+rows.System.Math.083	Min || System.IntPtr RetVal || (System.IntPtr val1, System.IntPtr val2) || Static || 
+rows.System.Math.084	Min || int8 scalar RetVal || (int8 scalar val1, int8 scalar val2) || Static || 
+rows.System.Math.085	Min || single scalar RetVal || (single scalar val1, single scalar val2) || Static || 
+rows.System.Math.086	Min || uint16 scalar RetVal || (uint16 scalar val1, uint16 scalar val2) || Static || 
+rows.System.Math.087	Min || uint32 scalar RetVal || (uint32 scalar val1, uint32 scalar val2) || Static || 
+rows.System.Math.088	Min || uint64 scalar RetVal || (uint64 scalar val1, uint64 scalar val2) || Static || 
+rows.System.Math.089	Min || System.UIntPtr RetVal || (System.UIntPtr val1, System.UIntPtr val2) || Static || 
+rows.System.Math.090	MinMagnitude || double scalar RetVal || (double scalar x, double scalar y) || Static || 
+rows.System.Math.091	Pow || double scalar RetVal || (double scalar x, double scalar y) || Static || 
+rows.System.Math.092	ReciprocalEstimate || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.093	ReciprocalSqrtEstimate || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.094	ReferenceEquals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.System.Math.095	Round || System.Decimal RetVal || (System.Decimal d) || Static || 
+rows.System.Math.096	Round || System.Decimal RetVal || (System.Decimal d, int32 scalar decimals) || Static || 
+rows.System.Math.097	Round || System.Decimal RetVal || (System.Decimal d, System.MidpointRounding mode) || Static || 
+rows.System.Math.098	Round || System.Decimal RetVal || (System.Decimal d, int32 scalar decimals, System.MidpointRounding mode) || Static || 
+rows.System.Math.099	Round || double scalar RetVal || (double scalar a) || Static || 
+rows.System.Math.100	Round || double scalar RetVal || (double scalar value, int32 scalar digits) || Static || 
+rows.System.Math.101	Round || double scalar RetVal || (double scalar value, System.MidpointRounding mode) || Static || 
+rows.System.Math.102	Round || double scalar RetVal || (double scalar value, int32 scalar digits, System.MidpointRounding mode) || Static || 
+rows.System.Math.103	ScaleB || double scalar RetVal || (double scalar x, int32 scalar n) || Static || 
+rows.System.Math.104	Sign || int32 scalar RetVal || (System.Decimal value) || Static || 
+rows.System.Math.105	Sign || int32 scalar RetVal || (double scalar value) || Static || 
+rows.System.Math.106	Sign || int32 scalar RetVal || (int16 scalar value) || Static || 
+rows.System.Math.107	Sign || int32 scalar RetVal || (int32 scalar value) || Static || 
+rows.System.Math.108	Sign || int32 scalar RetVal || (int64 scalar value) || Static || 
+rows.System.Math.109	Sign || int32 scalar RetVal || (System.IntPtr value) || Static || 
+rows.System.Math.110	Sign || int32 scalar RetVal || (int8 scalar value) || Static || 
+rows.System.Math.111	Sign || int32 scalar RetVal || (single scalar value) || Static || 
+rows.System.Math.112	Sin || double scalar RetVal || (double scalar a) || Static || 
+rows.System.Math.113	SinCos || System.ValueTuple<System*Double,System*Double> RetVal || (double scalar x) || Static || 
+rows.System.Math.114	Sinh || double scalar RetVal || (double scalar value) || Static || 
+rows.System.Math.115	Sqrt || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.116	Tan || double scalar RetVal || (double scalar a) || Static || 
+rows.System.Math.117	Tanh || double scalar RetVal || (double scalar value) || Static || 
+rows.System.Math.118	Truncate || System.Decimal RetVal || (System.Decimal d) || Static || 
+rows.System.Math.119	Truncate || double scalar RetVal || (double scalar d) || Static || 
+rows.System.Math.120	addlistener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.121	addlistener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.122	addlistener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.123	addlistener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.124	addlistener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.125	delete ||  || (handle obj) ||  || handle
+rows.System.Math.126	end || ind || (~, ~, ~) ||  || matlab.mixin.Scalar
+rows.System.Math.127	eq || logical TF || (A, B) ||  || handle
+rows.System.Math.128	findobj || handle HM || (handle H, varargin) ||  || handle
+rows.System.Math.129	findprop || matlab.metadata.Property prop || (handle scalar object, asciiString propname) ||  || handle
+rows.System.Math.130	ge || logical TF || (A, B) ||  || handle
+rows.System.Math.131	gt || logical TF || (A, B) ||  || handle
+rows.System.Math.132	isempty || TF || (~) ||  || matlab.mixin.Scalar
+rows.System.Math.133	isscalar || TF || (~) ||  || matlab.mixin.Scalar
+rows.System.Math.134	isvalid || logical validity || (handle obj) ||  || handle
+rows.System.Math.135	le || logical TF || (A, B) ||  || handle
+rows.System.Math.136	length || L || (~) ||  || matlab.mixin.Scalar
+rows.System.Math.137	listener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.138	listener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.139	listener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.140	listener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.141	listener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Math.142	lt || logical TF || (A, B) ||  || handle
+rows.System.Math.143	ndims || N || (~) ||  || matlab.mixin.Scalar
+rows.System.Math.144	ne || logical TF || (A, B) ||  || handle
+rows.System.Math.145	notify ||  || (handle sources, asciiString eventname) ||  || handle
+rows.System.Math.146	notify ||  || (handle sources, asciiString eventname, event.EventData scalar eventdata) ||  || handle
+rows.System.Math.147	numel || n || (~) ||  || matlab.mixin.Scalar
+rows.System.Math.148	size || varargout || (~, varargin) ||  || matlab.mixin.Scalar
+rows.JGTest.Vector2.head	Name | Return Type | Arguments | Qualifiers | Inherited From
+rows.JGTest.Vector2.size	44 5
+rows.JGTest.Vector2.001	Equals || logical scalar RetVal || (JGTest.Vector2 this, System.Object obj) ||  || 
+rows.JGTest.Vector2.002	Equals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.JGTest.Vector2.003	GetHashCode || int32 scalar RetVal || (JGTest.Vector2 this) ||  || 
+rows.JGTest.Vector2.004	GetType || System.Type RetVal || (JGTest.Vector2 this) ||  || 
+rows.JGTest.Vector2.005	ReferenceEquals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.JGTest.Vector2.006	ToString || System.String RetVal || (JGTest.Vector2 this) ||  || 
+rows.JGTest.Vector2.007	Vector2 || JGTest.Vector2 RetVal || (double scalar x, double scalar y) ||  || 
+rows.JGTest.Vector2.008	addlistener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.009	addlistener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.010	addlistener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.011	addlistener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.012	addlistener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.013	delete ||  || (handle obj) ||  || handle
+rows.JGTest.Vector2.014	end || ind || (~, ~, ~) ||  || matlab.mixin.Scalar
+rows.JGTest.Vector2.015	eq || lhs1 || (A, B) ||  || 
+rows.JGTest.Vector2.016	findobj || handle HM || (handle H, varargin) ||  || handle
+rows.JGTest.Vector2.017	findprop || matlab.metadata.Property prop || (handle scalar object, asciiString propname) ||  || handle
+rows.JGTest.Vector2.018	ge || logical TF || (A, B) ||  || handle
+rows.JGTest.Vector2.019	gt || logical TF || (A, B) ||  || handle
+rows.JGTest.Vector2.020	isempty || TF || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Vector2.021	isscalar || TF || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Vector2.022	isvalid || logical validity || (handle obj) ||  || handle
+rows.JGTest.Vector2.023	le || logical TF || (A, B) ||  || handle
+rows.JGTest.Vector2.024	length || L || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Vector2.025	listener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.026	listener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.027	listener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.028	listener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.029	listener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Vector2.030	lt || logical TF || (A, B) ||  || handle
+rows.JGTest.Vector2.031	minus || lhs1 || (A, B) ||  || 
+rows.JGTest.Vector2.032	mtimes || lhs1 || (A, B) ||  || 
+rows.JGTest.Vector2.033	ndims || N || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Vector2.034	ne || lhs1 || (A, B) ||  || 
+rows.JGTest.Vector2.035	notify ||  || (handle sources, asciiString eventname) ||  || handle
+rows.JGTest.Vector2.036	notify ||  || (handle sources, asciiString eventname, event.EventData scalar eventdata) ||  || handle
+rows.JGTest.Vector2.037	numel || n || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Vector2.038	op_Addition || JGTest.Vector2 RetVal || (JGTest.Vector2 a, JGTest.Vector2 b) || Static || 
+rows.JGTest.Vector2.039	op_Equality || logical scalar RetVal || (JGTest.Vector2 a, JGTest.Vector2 b) || Static || 
+rows.JGTest.Vector2.040	op_Inequality || logical scalar RetVal || (JGTest.Vector2 a, JGTest.Vector2 b) || Static || 
+rows.JGTest.Vector2.041	op_Multiply || JGTest.Vector2 RetVal || (JGTest.Vector2 a, double scalar s) || Static || 
+rows.JGTest.Vector2.042	op_Subtraction || JGTest.Vector2 RetVal || (JGTest.Vector2 a, JGTest.Vector2 b) || Static || 
+rows.JGTest.Vector2.043	plus || lhs1 || (A, B) ||  || 
+rows.JGTest.Vector2.044	size || varargout || (~, varargin) ||  || matlab.mixin.Scalar
+rows.JGTest.Modifiers.head	Name | Return Type | Arguments | Qualifiers | Inherited From
+rows.JGTest.Modifiers.size	44 5
+rows.JGTest.Modifiers.001	Double || double scalar x || (double scalar x) || Static || 
+rows.JGTest.Modifiers.002	Equals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.JGTest.Modifiers.003	Grow || System.Double[] values || (System.Double[] values) || Static || 
+rows.JGTest.Modifiers.004	Join || System.String RetVal || (System.String separator, System.String[] parts) || Static || 
+rows.JGTest.Modifiers.005	MakeName || System.String name ||  || Static || 
+rows.JGTest.Modifiers.006	MaybeNull || System.Nullable<System*Int32> RetVal || (logical scalar give) || Static || 
+rows.JGTest.Modifiers.007	Nullable || System.String RetVal || (System.Nullable<System*Int32> x) || Static || 
+rows.JGTest.Modifiers.008	Optional || int32 scalar RetVal || (int32 scalar a, optional<int32 scalar> b, optional<int32 scalar> c) || Static || 
+rows.JGTest.Modifiers.009	RefOutReturn || [double scalar RetVal, double scalar a, System.String label] || (double scalar a) || Static || 
+rows.JGTest.Modifiers.010	ReferenceEquals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.JGTest.Modifiers.011	Split || [double scalar whole, double scalar frac] || (double scalar x) || Static || 
+rows.JGTest.Modifiers.012	Sum || double scalar RetVal || (System.Double[] values) || Static || 
+rows.JGTest.Modifiers.013	TryHalf || [logical scalar RetVal, int32 scalar half] || (int32 scalar x) || Static || 
+rows.JGTest.Modifiers.014	Value || double scalar RetVal ||  || Static || 
+rows.JGTest.Modifiers.015	Void ||  ||  || Static || 
+rows.JGTest.Modifiers.016	addlistener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Modifiers.017	addlistener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Modifiers.018	addlistener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Modifiers.019	addlistener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Modifiers.020	addlistener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Modifiers.021	delete ||  || (handle obj) ||  || handle
+rows.JGTest.Modifiers.022	end || ind || (~, ~, ~) ||  || matlab.mixin.Scalar
+rows.JGTest.Modifiers.023	eq || logical TF || (A, B) ||  || handle
+rows.JGTest.Modifiers.024	findobj || handle HM || (handle H, varargin) ||  || handle
+rows.JGTest.Modifiers.025	findprop || matlab.metadata.Property prop || (handle scalar object, asciiString propname) ||  || handle
+rows.JGTest.Modifiers.026	ge || logical TF || (A, B) ||  || handle
+rows.JGTest.Modifiers.027	gt || logical TF || (A, B) ||  || handle
+rows.JGTest.Modifiers.028	isempty || TF || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Modifiers.029	isscalar || TF || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Modifiers.030	isvalid || logical validity || (handle obj) ||  || handle
+rows.JGTest.Modifiers.031	le || logical TF || (A, B) ||  || handle
+rows.JGTest.Modifiers.032	length || L || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Modifiers.033	listener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Modifiers.034	listener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Modifiers.035	listener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Modifiers.036	listener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Modifiers.037	listener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Modifiers.038	lt || logical TF || (A, B) ||  || handle
+rows.JGTest.Modifiers.039	ndims || N || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Modifiers.040	ne || logical TF || (A, B) ||  || handle
+rows.JGTest.Modifiers.041	notify ||  || (handle sources, asciiString eventname) ||  || handle
+rows.JGTest.Modifiers.042	notify ||  || (handle sources, asciiString eventname, event.EventData scalar eventdata) ||  || handle
+rows.JGTest.Modifiers.043	numel || n || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Modifiers.044	size || varargout || (~, varargin) ||  || matlab.mixin.Scalar
+rows.JGTest.Members.head	Name | Return Type | Arguments | Qualifiers | Inherited From
+rows.JGTest.Members.size	47 5
+rows.JGTest.Members.001	Add || double scalar RetVal || (JGTest.Members this, double scalar x) ||  || 
+rows.JGTest.Members.002	Add || double scalar RetVal || (JGTest.Members this, double scalar x, double scalar y) ||  || 
+rows.JGTest.Members.003	Bump ||  || (JGTest.Members this) ||  || 
+rows.JGTest.Members.004	Describe || System.String RetVal || (JGTest.Members this) ||  || 
+rows.JGTest.Members.005	Equals || logical scalar RetVal || (JGTest.Members this, System.Object obj) ||  || 
+rows.JGTest.Members.006	Equals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.JGTest.Members.007	GetHashCode || int32 scalar RetVal || (JGTest.Members this) ||  || 
+rows.JGTest.Members.008	GetType || System.Type RetVal || (JGTest.Members this) ||  || 
+rows.JGTest.Members.009	Increment || int32 scalar RetVal ||  || Static || 
+rows.JGTest.Members.010	Item || double scalar RetVal || (JGTest.Members this, int32 scalar index) ||  || 
+rows.JGTest.Members.011	Item ||  || (JGTest.Members this, int32 scalar index, double scalar value) ||  || 
+rows.JGTest.Members.012	Members || JGTest.Members RetVal ||  ||  || 
+rows.JGTest.Members.013	Members || JGTest.Members RetVal || (double scalar value) ||  || 
+rows.JGTest.Members.014	Members || JGTest.Members RetVal || (double scalar value, System.String name) ||  || 
+rows.JGTest.Members.015	Members || JGTest.Members RetVal || (System.Int32[] parts) ||  || 
+rows.JGTest.Members.016	ReferenceEquals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.JGTest.Members.017	Reset ||  ||  || Static || 
+rows.JGTest.Members.018	ToString || System.String RetVal || (JGTest.Members this) ||  || 
+rows.JGTest.Members.019	addlistener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Members.020	addlistener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Members.021	addlistener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Members.022	addlistener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Members.023	addlistener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || 
+rows.JGTest.Members.024	delete ||  || (handle obj) ||  || handle
+rows.JGTest.Members.025	end || ind || (~, ~, ~) ||  || matlab.mixin.Scalar
+rows.JGTest.Members.026	eq || logical TF || (A, B) ||  || handle
+rows.JGTest.Members.027	findobj || handle HM || (handle H, varargin) ||  || handle
+rows.JGTest.Members.028	findprop || matlab.metadata.Property prop || (handle scalar object, asciiString propname) ||  || handle
+rows.JGTest.Members.029	ge || logical TF || (A, B) ||  || handle
+rows.JGTest.Members.030	gt || logical TF || (A, B) ||  || handle
+rows.JGTest.Members.031	isempty || TF || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Members.032	isscalar || TF || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Members.033	isvalid || logical validity || (handle obj) ||  || handle
+rows.JGTest.Members.034	le || logical TF || (A, B) ||  || handle
+rows.JGTest.Members.035	length || L || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Members.036	listener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Members.037	listener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Members.038	listener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Members.039	listener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Members.040	listener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || handle
+rows.JGTest.Members.041	lt || logical TF || (A, B) ||  || handle
+rows.JGTest.Members.042	ndims || N || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Members.043	ne || logical TF || (A, B) ||  || handle
+rows.JGTest.Members.044	notify ||  || (handle sources, asciiString eventname) ||  || handle
+rows.JGTest.Members.045	notify ||  || (handle sources, asciiString eventname, event.EventData scalar eventdata) ||  || handle
+rows.JGTest.Members.046	numel || n || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Members.047	size || varargout || (~, varargin) ||  || matlab.mixin.Scalar
+rows.JGTest.Color.head	Name | Return Type | Arguments | Qualifiers | Inherited From
+rows.JGTest.Color.size	66 5
+rows.JGTest.Color.001	Color || JGTest.Color lhs1 ||  ||  || 
+rows.JGTest.Color.002	CompareTo || int32 scalar RetVal || (JGTest.Color this, System.Object target) ||  || 
+rows.JGTest.Color.003	Equals || logical scalar RetVal || (JGTest.Color this, System.Object obj) ||  || 
+rows.JGTest.Color.004	Equals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.JGTest.Color.005	Format || System.String RetVal || (System.Type enumType, System.Object value, System.String format) || Static || 
+rows.JGTest.Color.006	GetHashCode || int32 scalar RetVal || (JGTest.Color this) ||  || 
+rows.JGTest.Color.007	GetName || System.String RetVal || (System.Type enumType, System.Object value) || Static || 
+rows.JGTest.Color.008	GetNames || System.String[] RetVal || (System.Type enumType) || Static || 
+rows.JGTest.Color.009	GetType || System.Type RetVal || (JGTest.Color this) ||  || 
+rows.JGTest.Color.010	GetTypeCode || System.TypeCode RetVal || (JGTest.Color this) ||  || 
+rows.JGTest.Color.011	GetUnderlyingType || System.Type RetVal || (System.Type enumType) || Static || 
+rows.JGTest.Color.012	GetValues || System.Array RetVal || (System.Type enumType) || Static || 
+rows.JGTest.Color.013	GetValuesAsUnderlyingType || System.Array RetVal || (System.Type enumType) || Static || 
+rows.JGTest.Color.014	HasFlag || logical scalar RetVal || (JGTest.Color this, System.Enum flag) ||  || 
+rows.JGTest.Color.015	IsDefined || logical scalar RetVal || (System.Type enumType, System.Object value) || Static || 
+rows.JGTest.Color.016	Parse || System.Object RetVal || (System.Type enumType, System.String value) || Static || 
+rows.JGTest.Color.017	Parse || System.Object RetVal || (System.Type enumType, System.ReadOnlySpan<System*Char> value) || Static || 
+rows.JGTest.Color.018	Parse || System.Object RetVal || (System.Type enumType, System.String value, logical scalar ignoreCase) || Static || 
+rows.JGTest.Color.019	Parse || System.Object RetVal || (System.Type enumType, System.ReadOnlySpan<System*Char> value, logical scalar ignoreCase) || Static || 
+rows.JGTest.Color.020	ReferenceEquals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.JGTest.Color.021	ToObject || System.Object RetVal || (System.Type enumType, System.Object value) || Static || 
+rows.JGTest.Color.022	ToObject || System.Object RetVal || (System.Type enumType, int8 scalar value) || Static || 
+rows.JGTest.Color.023	ToObject || System.Object RetVal || (System.Type enumType, int16 scalar value) || Static || 
+rows.JGTest.Color.024	ToObject || System.Object RetVal || (System.Type enumType, int32 scalar value) || Static || 
+rows.JGTest.Color.025	ToObject || System.Object RetVal || (System.Type enumType, uint8 scalar value) || Static || 
+rows.JGTest.Color.026	ToObject || System.Object RetVal || (System.Type enumType, uint16 scalar value) || Static || 
+rows.JGTest.Color.027	ToObject || System.Object RetVal || (System.Type enumType, uint32 scalar value) || Static || 
+rows.JGTest.Color.028	ToObject || System.Object RetVal || (System.Type enumType, int64 scalar value) || Static || 
+rows.JGTest.Color.029	ToObject || System.Object RetVal || (System.Type enumType, uint64 scalar value) || Static || 
+rows.JGTest.Color.030	ToString || System.String RetVal || (JGTest.Color this) ||  || 
+rows.JGTest.Color.031	ToString || System.String RetVal || (JGTest.Color this, System.String format) ||  || 
+rows.JGTest.Color.032	ToString || System.String RetVal || (JGTest.Color this, System.IFormatProvider provider) ||  || 
+rows.JGTest.Color.033	ToString || System.String RetVal || (JGTest.Color this, System.String format, System.IFormatProvider provider) ||  || 
+rows.JGTest.Color.034	TryParse || [logical scalar RetVal, System.Object result] || (System.Type enumType, System.String value) || Static || 
+rows.JGTest.Color.035	TryParse || [logical scalar RetVal, System.Object result] || (System.Type enumType, System.ReadOnlySpan<System*Char> value) || Static || 
+rows.JGTest.Color.036	TryParse || [logical scalar RetVal, System.Object result] || (System.Type enumType, System.String value, logical scalar ignoreCase) || Static || 
+rows.JGTest.Color.037	TryParse || [logical scalar RetVal, System.Object result] || (System.Type enumType, System.ReadOnlySpan<System*Char> value, logical scalar ignoreCase) || Static || 
+rows.JGTest.Color.038	cellstr || cell scalar lhs1 || (JGTest.Color rhs1) ||  || 
+rows.JGTest.Color.039	char || unicodeString lhs1 || (JGTest.Color rhs1) ||  || 
+rows.JGTest.Color.040	double || double scalar lhs1 || (JGTest.Color rhs1) ||  || 
+rows.JGTest.Color.041	end || ind || (~, ~, ~) ||  || matlab.mixin.Scalar
+rows.JGTest.Color.042	eq || logical scalar lhs1 || (rhs1, rhs2) ||  || 
+rows.JGTest.Color.043	ge || logical scalar lhs1 || (rhs1, rhs2) ||  || 
+rows.JGTest.Color.044	gt || logical scalar lhs1 || (rhs1, rhs2) ||  || 
+rows.JGTest.Color.045	int32 || int32 scalar lhs1 || (JGTest.Color rhs1) ||  || 
+rows.JGTest.Color.046	intersect || varargout || (varargin) ||  || 
+rows.JGTest.Color.047	isempty || TF || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Color.048	isequal || logical scalar lhs1 || (rhs1) ||  || 
+rows.JGTest.Color.049	isequaln || logical scalar lhs1 || (rhs1) ||  || 
+rows.JGTest.Color.050	ismember || varargout || (varargin) ||  || 
+rows.JGTest.Color.051	isscalar || TF || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Color.052	le || logical scalar lhs1 || (rhs1, rhs2) ||  || 
+rows.JGTest.Color.053	length || L || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Color.054	lt || logical scalar lhs1 || (rhs1, rhs2) ||  || 
+rows.JGTest.Color.055	ndims || N || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Color.056	ne || logical scalar lhs1 || (rhs1, rhs2) ||  || 
+rows.JGTest.Color.057	numel || n || (~) ||  || matlab.mixin.Scalar
+rows.JGTest.Color.058	setdiff || varargout || (varargin) ||  || 
+rows.JGTest.Color.059	setxor || varargout || (varargin) ||  || 
+rows.JGTest.Color.060	size || varargout || (~, varargin) ||  || matlab.mixin.Scalar
+rows.JGTest.Color.061	strcmp || logical lhs1 || (rhs1, rhs2) ||  || 
+rows.JGTest.Color.062	strcmpi || logical lhs1 || (rhs1, rhs2) ||  || 
+rows.JGTest.Color.063	string || ustringToString scalar lhs1 || (JGTest.Color rhs1) ||  || 
+rows.JGTest.Color.064	strncmp || logical lhs1 || (rhs1, rhs2, uint32 scalar rhs3) ||  || 
+rows.JGTest.Color.065	strncmpi || logical lhs1 || (rhs1, rhs2, uint32 scalar rhs3) ||  || 
+rows.JGTest.Color.066	union || varargout || (varargin) ||  || 
+rows.System.Text.StringBuilder.head	Name | Return Type | Arguments | Qualifiers | Inherited From
+rows.System.Text.StringBuilder.size	119 5
+rows.System.Text.StringBuilder.001	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, char scalar value, int32 scalar repeatCount) ||  || 
+rows.System.Text.StringBuilder.002	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.Char[] value, int32 scalar startIndex, int32 scalar charCount) ||  || 
+rows.System.Text.StringBuilder.003	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String value) ||  || 
+rows.System.Text.StringBuilder.004	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String value, int32 scalar startIndex, int32 scalar count) ||  || 
+rows.System.Text.StringBuilder.005	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.Text.StringBuilder value) ||  || 
+rows.System.Text.StringBuilder.006	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.Text.StringBuilder value, int32 scalar startIndex, int32 scalar count) ||  || 
+rows.System.Text.StringBuilder.007	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, logical scalar value) ||  || 
+rows.System.Text.StringBuilder.008	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, char scalar value) ||  || 
+rows.System.Text.StringBuilder.009	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int8 scalar value) ||  || 
+rows.System.Text.StringBuilder.010	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, uint8 scalar value) ||  || 
+rows.System.Text.StringBuilder.011	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int16 scalar value) ||  || 
+rows.System.Text.StringBuilder.012	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar value) ||  || 
+rows.System.Text.StringBuilder.013	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int64 scalar value) ||  || 
+rows.System.Text.StringBuilder.014	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, single scalar value) ||  || 
+rows.System.Text.StringBuilder.015	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, double scalar value) ||  || 
+rows.System.Text.StringBuilder.016	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.Decimal value) ||  || 
+rows.System.Text.StringBuilder.017	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, uint16 scalar value) ||  || 
+rows.System.Text.StringBuilder.018	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, uint32 scalar value) ||  || 
+rows.System.Text.StringBuilder.019	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, uint64 scalar value) ||  || 
+rows.System.Text.StringBuilder.020	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.Object value) ||  || 
+rows.System.Text.StringBuilder.021	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.Char[] value) ||  || 
+rows.System.Text.StringBuilder.022	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.ReadOnlySpan<System*Char> value) ||  || 
+rows.System.Text.StringBuilder.023	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.ReadOnlyMemory<System*Char> value) ||  || 
+rows.System.Text.StringBuilder.024	Append || [System.Text.StringBuilder RetVal, System.Text.StringBuilder+AppendInterpolatedStringHandler handler] || (System.Text.StringBuilder this, System.Text.StringBuilder+AppendInterpolatedStringHandler handler) ||  || 
+rows.System.Text.StringBuilder.025	Append || [System.Text.StringBuilder RetVal, System.Text.StringBuilder+AppendInterpolatedStringHandler handler] || (System.Text.StringBuilder this, System.IFormatProvider provider, System.Text.StringBuilder+AppendInterpolatedStringHandler handler) ||  || 
+rows.System.Text.StringBuilder.026	Append || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.Char* value, int32 scalar valueCount) ||  || 
+rows.System.Text.StringBuilder.027	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String format, System.Object arg0) ||  || 
+rows.System.Text.StringBuilder.028	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String format, System.Object arg0, System.Object arg1) ||  || 
+rows.System.Text.StringBuilder.029	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String format, System.Object arg0, System.Object arg1, System.Object arg2) ||  || 
+rows.System.Text.StringBuilder.030	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String format, System.Object[] args) ||  || 
+rows.System.Text.StringBuilder.031	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.IFormatProvider provider, System.String format, System.Object arg0) ||  || 
+rows.System.Text.StringBuilder.032	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.IFormatProvider provider, System.String format, System.Object arg0, System.Object arg1) ||  || 
+rows.System.Text.StringBuilder.033	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.IFormatProvider provider, System.String format, System.Object arg0, System.Object arg1, System.Object arg2) ||  || 
+rows.System.Text.StringBuilder.034	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.IFormatProvider provider, System.String format, System.Object[] args) ||  || 
+rows.System.Text.StringBuilder.035	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.IFormatProvider provider, System.Text.CompositeFormat format, System.Object[] args) ||  || 
+rows.System.Text.StringBuilder.036	AppendFormat || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.IFormatProvider provider, System.Text.CompositeFormat format, System.ReadOnlySpan<System*Object> args) ||  || 
+rows.System.Text.StringBuilder.037	AppendJoin || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String separator, System.Object[] values) ||  || 
+rows.System.Text.StringBuilder.038	AppendJoin || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String separator, System.String[] values) ||  || 
+rows.System.Text.StringBuilder.039	AppendJoin || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, char scalar separator, System.Object[] values) ||  || 
+rows.System.Text.StringBuilder.040	AppendJoin || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, char scalar separator, System.String[] values) ||  || 
+rows.System.Text.StringBuilder.041	AppendLine || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this) ||  || 
+rows.System.Text.StringBuilder.042	AppendLine || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String value) ||  || 
+rows.System.Text.StringBuilder.043	AppendLine || [System.Text.StringBuilder RetVal, System.Text.StringBuilder+AppendInterpolatedStringHandler handler] || (System.Text.StringBuilder this, System.Text.StringBuilder+AppendInterpolatedStringHandler handler) ||  || 
+rows.System.Text.StringBuilder.044	AppendLine || [System.Text.StringBuilder RetVal, System.Text.StringBuilder+AppendInterpolatedStringHandler handler] || (System.Text.StringBuilder this, System.IFormatProvider provider, System.Text.StringBuilder+AppendInterpolatedStringHandler handler) ||  || 
+rows.System.Text.StringBuilder.045	Chars || char scalar RetVal || (System.Text.StringBuilder this, int32 scalar index) ||  || 
+rows.System.Text.StringBuilder.046	Chars ||  || (System.Text.StringBuilder this, int32 scalar index, char scalar value) ||  || 
+rows.System.Text.StringBuilder.047	Clear || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this) ||  || 
+rows.System.Text.StringBuilder.048	CopyTo ||  || (System.Text.StringBuilder this, int32 scalar sourceIndex, System.Char[] destination, int32 scalar destinationIndex, int32 scalar count) ||  || 
+rows.System.Text.StringBuilder.049	CopyTo ||  || (System.Text.StringBuilder this, int32 scalar sourceIndex, System.Span<System*Char> destination, int32 scalar count) ||  || 
+rows.System.Text.StringBuilder.050	EnsureCapacity || int32 scalar RetVal || (System.Text.StringBuilder this, int32 scalar capacity) ||  || 
+rows.System.Text.StringBuilder.051	Equals || logical scalar RetVal || (System.Text.StringBuilder this, System.Text.StringBuilder sb) ||  || 
+rows.System.Text.StringBuilder.052	Equals || logical scalar RetVal || (System.Text.StringBuilder this, System.ReadOnlySpan<System*Char> span) ||  || 
+rows.System.Text.StringBuilder.053	Equals || logical scalar RetVal || (System.Text.StringBuilder this, System.Object obj) ||  || 
+rows.System.Text.StringBuilder.054	Equals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.System.Text.StringBuilder.055	GetChunks || System.Text.StringBuilder+ChunkEnumerator RetVal || (System.Text.StringBuilder this) ||  || 
+rows.System.Text.StringBuilder.056	GetHashCode || int32 scalar RetVal || (System.Text.StringBuilder this) ||  || 
+rows.System.Text.StringBuilder.057	GetType || System.Type RetVal || (System.Text.StringBuilder this) ||  || 
+rows.System.Text.StringBuilder.058	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, System.String value, int32 scalar count) ||  || 
+rows.System.Text.StringBuilder.059	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, System.String value) ||  || 
+rows.System.Text.StringBuilder.060	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, logical scalar value) ||  || 
+rows.System.Text.StringBuilder.061	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, int8 scalar value) ||  || 
+rows.System.Text.StringBuilder.062	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, uint8 scalar value) ||  || 
+rows.System.Text.StringBuilder.063	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, int16 scalar value) ||  || 
+rows.System.Text.StringBuilder.064	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, char scalar value) ||  || 
+rows.System.Text.StringBuilder.065	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, System.Char[] value) ||  || 
+rows.System.Text.StringBuilder.066	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, System.Char[] value, int32 scalar startIndex, int32 scalar charCount) ||  || 
+rows.System.Text.StringBuilder.067	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, int32 scalar value) ||  || 
+rows.System.Text.StringBuilder.068	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, int64 scalar value) ||  || 
+rows.System.Text.StringBuilder.069	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, single scalar value) ||  || 
+rows.System.Text.StringBuilder.070	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, double scalar value) ||  || 
+rows.System.Text.StringBuilder.071	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, System.Decimal value) ||  || 
+rows.System.Text.StringBuilder.072	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, uint16 scalar value) ||  || 
+rows.System.Text.StringBuilder.073	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, uint32 scalar value) ||  || 
+rows.System.Text.StringBuilder.074	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, uint64 scalar value) ||  || 
+rows.System.Text.StringBuilder.075	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, System.Object value) ||  || 
+rows.System.Text.StringBuilder.076	Insert || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar index, System.ReadOnlySpan<System*Char> value) ||  || 
+rows.System.Text.StringBuilder.077	ReferenceEquals || logical scalar RetVal || (System.Object objA, System.Object objB) || Static || 
+rows.System.Text.StringBuilder.078	Remove || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, int32 scalar startIndex, int32 scalar length) ||  || 
+rows.System.Text.StringBuilder.079	Replace || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String oldValue, System.String newValue) ||  || 
+rows.System.Text.StringBuilder.080	Replace || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, System.String oldValue, System.String newValue, int32 scalar startIndex, int32 scalar count) ||  || 
+rows.System.Text.StringBuilder.081	Replace || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, char scalar oldChar, char scalar newChar) ||  || 
+rows.System.Text.StringBuilder.082	Replace || System.Text.StringBuilder RetVal || (System.Text.StringBuilder this, char scalar oldChar, char scalar newChar, int32 scalar startIndex, int32 scalar count) ||  || 
+rows.System.Text.StringBuilder.083	StringBuilder || System.Text.StringBuilder RetVal ||  ||  || 
+rows.System.Text.StringBuilder.084	StringBuilder || System.Text.StringBuilder RetVal || (int32 scalar capacity) ||  || 
+rows.System.Text.StringBuilder.085	StringBuilder || System.Text.StringBuilder RetVal || (System.String value) ||  || 
+rows.System.Text.StringBuilder.086	StringBuilder || System.Text.StringBuilder RetVal || (System.String value, int32 scalar capacity) ||  || 
+rows.System.Text.StringBuilder.087	StringBuilder || System.Text.StringBuilder RetVal || (System.String value, int32 scalar startIndex, int32 scalar length, int32 scalar capacity) ||  || 
+rows.System.Text.StringBuilder.088	StringBuilder || System.Text.StringBuilder RetVal || (int32 scalar capacity, int32 scalar maxCapacity) ||  || 
+rows.System.Text.StringBuilder.089	ToString || System.String RetVal || (System.Text.StringBuilder this) ||  || 
+rows.System.Text.StringBuilder.090	ToString || System.String RetVal || (System.Text.StringBuilder this, int32 scalar startIndex, int32 scalar length) ||  || 
+rows.System.Text.StringBuilder.091	addlistener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || 
+rows.System.Text.StringBuilder.092	addlistener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || 
+rows.System.Text.StringBuilder.093	addlistener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || 
+rows.System.Text.StringBuilder.094	addlistener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || 
+rows.System.Text.StringBuilder.095	addlistener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || 
+rows.System.Text.StringBuilder.096	delete ||  || (handle obj) ||  || handle
+rows.System.Text.StringBuilder.097	end || ind || (~, ~, ~) ||  || matlab.mixin.Scalar
+rows.System.Text.StringBuilder.098	eq || logical TF || (A, B) ||  || handle
+rows.System.Text.StringBuilder.099	findobj || handle HM || (handle H, varargin) ||  || handle
+rows.System.Text.StringBuilder.100	findprop || matlab.metadata.Property prop || (handle scalar object, asciiString propname) ||  || handle
+rows.System.Text.StringBuilder.101	ge || logical TF || (A, B) ||  || handle
+rows.System.Text.StringBuilder.102	gt || logical TF || (A, B) ||  || handle
+rows.System.Text.StringBuilder.103	isempty || TF || (~) ||  || matlab.mixin.Scalar
+rows.System.Text.StringBuilder.104	isscalar || TF || (~) ||  || matlab.mixin.Scalar
+rows.System.Text.StringBuilder.105	isvalid || logical validity || (handle obj) ||  || handle
+rows.System.Text.StringBuilder.106	le || logical TF || (A, B) ||  || handle
+rows.System.Text.StringBuilder.107	length || L || (~) ||  || matlab.mixin.Scalar
+rows.System.Text.StringBuilder.108	listener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Text.StringBuilder.109	listener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Text.StringBuilder.110	listener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Text.StringBuilder.111	listener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Text.StringBuilder.112	listener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) ||  || handle
+rows.System.Text.StringBuilder.113	lt || logical TF || (A, B) ||  || handle
+rows.System.Text.StringBuilder.114	ndims || N || (~) ||  || matlab.mixin.Scalar
+rows.System.Text.StringBuilder.115	ne || logical TF || (A, B) ||  || handle
+rows.System.Text.StringBuilder.116	notify ||  || (handle sources, asciiString eventname) ||  || handle
+rows.System.Text.StringBuilder.117	notify ||  || (handle sources, asciiString eventname, event.EventData scalar eventdata) ||  || handle
+rows.System.Text.StringBuilder.118	numel || n || (~) ||  || matlab.mixin.Scalar
+rows.System.Text.StringBuilder.119	size || varargout || (~, varargin) ||  || matlab.mixin.Scalar
+rows.lib.jgtestlib.head	Name | Return Type | Arguments | Qualifiers
+rows.lib.jgtestlib.size	85 4
+rows.lib.jgtestlib.001	jg_add_ref || [double lhs1, doublePtr lhs2] || (double scalar rhs1, doublePtr rhs2, double scalar rhs3) || Static
+rows.lib.jgtestlib.002	jg_alloc_doubles || [int32 lhs1, doublePtrPtr lhs2] || (doublePtrPtr rhs1, int32 scalar rhs2) || Static
+rows.lib.jgtestlib.003	jg_alloc_ret || lib.pointer lhs1 || (int32 scalar rhs1) || Static
+rows.lib.jgtestlib.004	jg_apply || double lhs1 || (FcnPtr rhs1, double scalar rhs2) || Static
+rows.lib.jgtestlib.005	jg_bits_in || [int32 lhs1, voidPtr lhs2] || (voidPtr rhs1) || Static
+rows.lib.jgtestlib.006	jg_bool || bool lhs1 || (bool rhs1) || Static
+rows.lib.jgtestlib.007	jg_char || int8 lhs1 || (int8 scalar rhs1) || Static
+rows.lib.jgtestlib.008	jg_color_name || cstring lhs1 || (lib.jg_color rhs1) || Static
+rows.lib.jgtestlib.009	jg_color_next || lib.jg_color lhs1 || (lib.jg_color rhs1) || Static
+rows.lib.jgtestlib.010	jg_color_value || int32 lhs1 || (lib.jg_color rhs1) || Static
+rows.lib.jgtestlib.011	jg_crash ||  ||  || Static
+rows.lib.jgtestlib.012	jg_double || double lhs1 || (double scalar rhs1) || Static
+rows.lib.jgtestlib.013	jg_exported_value || lib.pointer scalar lhs1 ||  || Static
+rows.lib.jgtestlib.014	jg_fill_name || cstring lhs1 || (cstring rhs1, int32 scalar rhs2) || Static
+rows.lib.jgtestlib.015	jg_float || single lhs1 || (single scalar rhs1) || Static
+rows.lib.jgtestlib.016	jg_free || voidPtr lhs1 || (voidPtr rhs1) || Static
+rows.lib.jgtestlib.017	jg_getcwd || cstring lhs1 ||  || Static
+rows.lib.jgtestlib.018	jg_getenv || [cstring lhs1, cstring lhs2] || (cstring rhs1) || Static
+rows.lib.jgtestlib.019	jg_greeting || cstring lhs1 ||  || Static
+rows.lib.jgtestlib.020	jg_int || int32 lhs1 || (int32 scalar rhs1) || Static
+rows.lib.jgtestlib.021	jg_int16 || int16 lhs1 || (int16 scalar rhs1) || Static
+rows.lib.jgtestlib.022	jg_int32 || int32 lhs1 || (int32 scalar rhs1) || Static
+rows.lib.jgtestlib.023	jg_int64 || int64 lhs1 || (int64 scalar rhs1) || Static
+rows.lib.jgtestlib.024	jg_int64_big || int64 lhs1 ||  || Static
+rows.lib.jgtestlib.025	jg_int8 || int8 lhs1 || (int8 scalar rhs1) || Static
+rows.lib.jgtestlib.026	jg_is_null || [int32 lhs1, voidPtr lhs2] || (voidPtr rhs1) || Static
+rows.lib.jgtestlib.027	jg_keep || doublePtr lhs1 || (doublePtr rhs1, int32 scalar rhs2) || Static
+rows.lib.jgtestlib.028	jg_layout || uint64 lhs1 || (int32 scalar rhs1) || Static
+rows.lib.jgtestlib.029	jg_long || long lhs1 || (long rhs1) || Static
+rows.lib.jgtestlib.030	jg_longlong || int64 lhs1 || (int64 scalar rhs1) || Static
+rows.lib.jgtestlib.031	jg_mixed_args || double lhs1 || (int16 scalar rhs1, int32 scalar rhs2, double scalar rhs3, single scalar rhs4, int64 scalar rhs5) || Static
+rows.lib.jgtestlib.032	jg_mixed_fill || jg_mixedPtr lhs1 || (jg_mixedPtr rhs1) || Static
+rows.lib.jgtestlib.033	jg_mixed_sum || [double lhs1, jg_mixedPtr lhs2] || (jg_mixedPtr rhs1) || Static
+rows.lib.jgtestlib.034	jg_negate_bool || boolPtr lhs1 || (boolPtr rhs1, int32 scalar rhs2) || Static
+rows.lib.jgtestlib.035	jg_nested_sum || [double lhs1, jg_nestedPtr lhs2] || (jg_nestedPtr rhs1) || Static
+rows.lib.jgtestlib.036	jg_opaque_free || voidPtr lhs1 || (voidPtr rhs1) || Static
+rows.lib.jgtestlib.037	jg_opaque_get || [double lhs1, voidPtr lhs2] || (voidPtr rhs1) || Static
+rows.lib.jgtestlib.038	jg_opaque_new || lib.pointer lhs1 || (double scalar rhs1) || Static
+rows.lib.jgtestlib.039	jg_packed_fill || jg_packedPtr lhs1 || (jg_packedPtr rhs1) || Static
+rows.lib.jgtestlib.040	jg_packed_sum || [double lhs1, jg_packedPtr lhs2] || (jg_packedPtr rhs1) || Static
+rows.lib.jgtestlib.041	jg_pick_word || stringPtrPtr lhs1 || (int32 scalar rhs1, stringPtrPtr rhs2) || Static
+rows.lib.jgtestlib.042	jg_point_alloc || jg_pointPtrPtr lhs1 || (jg_pointPtrPtr rhs1) || Static
+rows.lib.jgtestlib.043	jg_point_len || double lhs1 || (jg_point rhs1) || Static
+rows.lib.jgtestlib.044	jg_point_scale || jg_pointPtr lhs1 || (jg_pointPtr rhs1, double scalar rhs2) || Static
+rows.lib.jgtestlib.045	jg_printf || [int32 lhs1, cstring lhs2] || (cstring rhs1) || Static
+rows.lib.jgtestlib.046	jg_release_kept ||  ||  || Static
+rows.lib.jgtestlib.047	jg_scale_double || doublePtr lhs1 || (doublePtr rhs1, int32 scalar rhs2, double scalar rhs3) || Static
+rows.lib.jgtestlib.048	jg_scale_float || singlePtr lhs1 || (singlePtr rhs1, int32 scalar rhs2, single scalar rhs3) || Static
+rows.lib.jgtestlib.049	jg_scale_int16 || int16Ptr lhs1 || (int16Ptr rhs1, int32 scalar rhs2, int16 scalar rhs3) || Static
+rows.lib.jgtestlib.050	jg_scale_int32 || int32Ptr lhs1 || (int32Ptr rhs1, int32 scalar rhs2, int32 scalar rhs3) || Static
+rows.lib.jgtestlib.051	jg_scale_int64 || int64Ptr lhs1 || (int64Ptr rhs1, int32 scalar rhs2, int64 scalar rhs3) || Static
+rows.lib.jgtestlib.052	jg_scale_int8 || int8Ptr lhs1 || (int8Ptr rhs1, int32 scalar rhs2, int8 scalar rhs3) || Static
+rows.lib.jgtestlib.053	jg_scale_uint16 || uint16Ptr lhs1 || (uint16Ptr rhs1, int32 scalar rhs2, uint16 scalar rhs3) || Static
+rows.lib.jgtestlib.054	jg_scale_uint32 || uint32Ptr lhs1 || (uint32Ptr rhs1, int32 scalar rhs2, uint32 scalar rhs3) || Static
+rows.lib.jgtestlib.055	jg_scale_uint64 || uint64Ptr lhs1 || (uint64Ptr rhs1, int32 scalar rhs2, uint64 scalar rhs3) || Static
+rows.lib.jgtestlib.056	jg_scale_uint8 || uint8Ptr lhs1 || (uint8Ptr rhs1, int32 scalar rhs2, uint8 scalar rhs3) || Static
+rows.lib.jgtestlib.057	jg_schar || int8 lhs1 || (int8 scalar rhs1) || Static
+rows.lib.jgtestlib.058	jg_short || int16 lhs1 || (int16 scalar rhs1) || Static
+rows.lib.jgtestlib.059	jg_size || uint64 lhs1 || (uint64 scalar rhs1) || Static
+rows.lib.jgtestlib.060	jg_sleep ||  || (int32 scalar rhs1) || Static
+rows.lib.jgtestlib.061	jg_static_block || lib.pointer lhs1 ||  || Static
+rows.lib.jgtestlib.062	jg_static_ints || lib.pointer lhs1 ||  || Static
+rows.lib.jgtestlib.063	jg_strlen || [int32 lhs1, cstring lhs2] || (cstring rhs1) || Static
+rows.lib.jgtestlib.064	jg_sum || [double lhs1, doublePtr lhs2] || (doublePtr rhs1, int32 scalar rhs2) || Static
+rows.lib.jgtestlib.065	jg_sum2d || [double lhs1, doublePtr lhs2] || (doublePtr rhs1, int32 scalar rhs2) || Static
+rows.lib.jgtestlib.066	jg_total_len || [int32 lhs1, stringPtrPtr lhs2] || (stringPtrPtr rhs1, int32 scalar rhs2) || Static
+rows.lib.jgtestlib.067	jg_triple || int32 lhs1 || (doublePtrPtrPtr rhs1) || Static
+rows.lib.jgtestlib.068	jg_uchar || uint8 lhs1 || (uint8 scalar rhs1) || Static
+rows.lib.jgtestlib.069	jg_uint || uint32 lhs1 || (uint32 scalar rhs1) || Static
+rows.lib.jgtestlib.070	jg_uint16 || uint16 lhs1 || (uint16 scalar rhs1) || Static
+rows.lib.jgtestlib.071	jg_uint32 || uint32 lhs1 || (uint32 scalar rhs1) || Static
+rows.lib.jgtestlib.072	jg_uint64 || uint64 lhs1 || (uint64 scalar rhs1) || Static
+rows.lib.jgtestlib.073	jg_uint64_max || uint64 lhs1 ||  || Static
+rows.lib.jgtestlib.074	jg_uint8 || uint8 lhs1 || (uint8 scalar rhs1) || Static
+rows.lib.jgtestlib.075	jg_ulong || ulong lhs1 || (ulong rhs1) || Static
+rows.lib.jgtestlib.076	jg_ulonglong || uint64 lhs1 || (uint64 scalar rhs1) || Static
+rows.lib.jgtestlib.077	jg_union_in || int32 lhs1 || (error rhs1) || Static
+rows.lib.jgtestlib.078	jg_upper || cstring lhs1 || (cstring rhs1) || Static
+rows.lib.jgtestlib.079	jg_upper_ret || [cstring lhs1, cstring lhs2] || (cstring rhs1) || Static
+rows.lib.jgtestlib.080	jg_ushort || uint16 lhs1 || (uint16 scalar rhs1) || Static
+rows.lib.jgtestlib.081	jg_varsum || int32 lhs1 || (int32 scalar rhs1, error rhs2) || Static
+rows.lib.jgtestlib.082	jg_version || int32 lhs1 ||  || Static
+rows.lib.jgtestlib.083	jg_void ||  ||  || Static
+rows.lib.jgtestlib.084	jg_words || lib.pointer lhs1 ||  || Static
+rows.lib.jgtestlib.085	jg_write_kept || int32 lhs1 || (double scalar rhs1) || Static
+rows.lib.pointer.head	Name | Return Type | Arguments | Inherited From
+rows.lib.pointer.size	28 4
+rows.lib.pointer.001	addlistener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) || 
+rows.lib.pointer.002	addlistener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) || 
+rows.lib.pointer.003	addlistener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) || 
+rows.lib.pointer.004	addlistener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) || 
+rows.lib.pointer.005	addlistener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) || 
+rows.lib.pointer.006	delete ||  || (handle obj) || handle
+rows.lib.pointer.007	eq || logical TF || (A, B) || handle
+rows.lib.pointer.008	findobj || handle HM || (handle H, varargin) || handle
+rows.lib.pointer.009	findprop || matlab.metadata.Property prop || (handle scalar object, asciiString propname) || handle
+rows.lib.pointer.010	ge || logical TF || (A, B) || handle
+rows.lib.pointer.011	get || varargout || (matlab.mixin.SetGet rhs1, rhs2) || matlab.mixin.SetGet
+rows.lib.pointer.012	gt || logical TF || (A, B) || handle
+rows.lib.pointer.013	isNull || logical scalar lhs1 || (lib.pointer scalar rhs1) || 
+rows.lib.pointer.014	isvalid || logical validity || (handle obj) || handle
+rows.lib.pointer.015	le || logical TF || (A, B) || handle
+rows.lib.pointer.016	listener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) || handle
+rows.lib.pointer.017	listener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) || handle
+rows.lib.pointer.018	listener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) || handle
+rows.lib.pointer.019	listener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) || handle
+rows.lib.pointer.020	listener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) || handle
+rows.lib.pointer.021	lt || logical TF || (A, B) || handle
+rows.lib.pointer.022	ne || logical TF || (A, B) || handle
+rows.lib.pointer.023	notify ||  || (handle sources, asciiString eventname) || handle
+rows.lib.pointer.024	notify ||  || (handle sources, asciiString eventname, event.EventData scalar eventdata) || handle
+rows.lib.pointer.025	plus || lib.pointer scalar lhs1 || (lib.pointer scalar rhs1, int64 scalar rhs2) || 
+rows.lib.pointer.026	reshape ||  || (lib.pointer scalar rhs1, double scalar rhs2, double scalar rhs3) || 
+rows.lib.pointer.027	set || varargout || (matlab.mixin.SetGet rhs1, rhs2) || matlab.mixin.SetGet
+rows.lib.pointer.028	setdatatype ||  || (lib.pointer scalar rhs1, string scalar rhs2, double scalar rhs3) || 
+rows.lib.jg_point.head	Name | Return Type | Arguments | Inherited From
+rows.lib.jg_point.size	27 4
+rows.lib.jg_point.001	addlistener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) || 
+rows.lib.jg_point.002	addlistener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) || 
+rows.lib.jg_point.003	addlistener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) || 
+rows.lib.jg_point.004	addlistener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) || 
+rows.lib.jg_point.005	addlistener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) || 
+rows.lib.jg_point.006	delete ||  || (handle obj) || handle
+rows.lib.jg_point.007	eq || logical TF || (A, B) || handle
+rows.lib.jg_point.008	findobj || handle HM || (handle H, varargin) || handle
+rows.lib.jg_point.009	findprop || matlab.metadata.Property prop || (handle scalar object, asciiString propname) || handle
+rows.lib.jg_point.010	ge || logical TF || (A, B) || handle
+rows.lib.jg_point.011	get || varargout || (matlab.mixin.SetGet rhs1, rhs2) || matlab.mixin.SetGet
+rows.lib.jg_point.012	gt || logical TF || (A, B) || handle
+rows.lib.jg_point.013	isvalid || logical validity || (handle obj) || handle
+rows.lib.jg_point.014	jg_point || lib.jg_point lhs1 ||  || 
+rows.lib.jg_point.015	jg_point || lib.jg_point lhs1 || (InitialValue) || 
+rows.lib.jg_point.016	le || logical TF || (A, B) || handle
+rows.lib.jg_point.017	listener || event.listener L || (handle sources, char vector eventname, function_handle scalar callback) || handle
+rows.lib.jg_point.018	listener || event.proplistener L || (handle sources, matlab.metadata.Property properties, char vector eventname, function_handle scalar callback) || handle
+rows.lib.jg_point.019	listener || event.proplistener L || (handle sources, asciiString propertyname, char vector eventname, function_handle scalar callback) || handle
+rows.lib.jg_point.020	listener || event.proplistener L || (handle sources, string propertyname, char vector eventname, function_handle scalar callback) || handle
+rows.lib.jg_point.021	listener || event.proplistener L || (handle sources, cell propertynames, char vector eventname, function_handle scalar callback) || handle
+rows.lib.jg_point.022	lt || logical TF || (A, B) || handle
+rows.lib.jg_point.023	ne || logical TF || (A, B) || handle
+rows.lib.jg_point.024	notify ||  || (handle sources, asciiString eventname) || handle
+rows.lib.jg_point.025	notify ||  || (handle sources, asciiString eventname, event.EventData scalar eventdata) || handle
+rows.lib.jg_point.026	set || varargout || (matlab.mixin.SetGet rhs1, rhs2) || matlab.mixin.SetGet
+rows.lib.jg_point.027	structsize || double lhs1 || (lib.jg_point rhs1) || 
+rows.obj.sb	OUT    119     5 | "Name"    "Return Type"    "Arguments"    "Qualifiers"    "Inherited From" |
+rows.obj.lp	OUT     28     4 | "Name"    "Return Type"    "Arguments"    "Inherited From" |
+rows.obj.ls	OUT     27     4 | "Name"    "Return Type"    "Arguments"    "Inherited From" |
+methods2.math	OUT cell | 148     1 | cell | 148     6 |
+methods2.vector2.row1	OUT logical scalar RetVal Equals(JGTest.Vector2 this, System.Object obj) | {'Static'}    {'JGTest.Vector2 RetVal'}    {'op_Multiply'}    {'JGTest.Vector2.op_Mu…'}    {'(JGTest.Vector2 a, d…'}    {0×0 double} |
+methods2.lib	OUT     85     1 | 85     6 | Static [double lhs1, doublePtr lhs2] jg_add_ref(double scalar rhs1, doublePtr rhs2, double scalar rhs3) |
+methods2.lib.d1	OUT     {'Static'}    {'int8Ptr lhs1'}    {'jg_scale_int8'}    {'lib.jgtestlib.jg_sca…'}    {'(int8Ptr rhs1, int32…'}    {0×0 double} |

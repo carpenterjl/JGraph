@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using JGraph.Scripting.Completion;
 
 namespace JGraph.Scripting.Jgs.Completion;
@@ -31,8 +32,12 @@ public static class JgsCompletionEngine
     /// <param name="offset">The cursor offset, clamped into the buffer.</param>
     /// <param name="workspaceSymbols">Extra symbols from other workspace scripts (see <see cref="HarvestFunctions"/>).</param>
     /// <param name="matlab">True for a MATLAB buffer, where '%' starts a comment.</param>
+    /// <param name="live">In a MATLAB buffer, the names a session knows (ADR 0183): what follows a dotted
+    /// .NET name, and the libraries and functions inside <c>calllib('…'</c>. Null asks
+    /// <see cref="InteropCompletion.Framework"/>, which knows the .NET framework and no library.</param>
     public static JgsCompletionResult GetCompletions(
-        string code, int offset, IReadOnlyList<CompletionItem>? workspaceSymbols = null, bool matlab = false)
+        string code, int offset, IReadOnlyList<CompletionItem>? workspaceSymbols = null, bool matlab = false,
+        IScriptCompletionSource? live = null)
     {
         ArgumentNullException.ThrowIfNull(code);
         offset = System.Math.Clamp(offset, 0, code.Length);
@@ -41,6 +46,32 @@ public static class JgsCompletionEngine
         while (replaceStart > 0 && IsIdentifierChar(code[replaceStart - 1]))
         {
             replaceStart--;
+        }
+
+        if (matlab)
+        {
+            IScriptCompletionSource names = live ?? InteropCompletion.Framework;
+            if (LibraryArgument(code, offset, names) is { } library)
+            {
+                return library;
+            }
+
+            if (!IsInStringOrComment(code, replaceStart, matlab) && DottedQualifier(code, replaceStart) is { } qualifier)
+            {
+                string typed = code[replaceStart..offset];
+                var members = names.Members(qualifier)
+                    .Where(i => i.Text.StartsWith(typed, StringComparison.OrdinalIgnoreCase))
+                    .DistinctBy(static i => i.Text)
+                    .OrderBy(static i => i.Text, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+                return new JgsCompletionResult(replaceStart, members);
+            }
+
+            // After any other dot — a number's (1.), a field's (s.x.) — the builtins are no answer.
+            if (replaceStart > 0 && code[replaceStart - 1] == '.')
+            {
+                return new JgsCompletionResult(offset, Array.Empty<CompletionItem>());
+            }
         }
 
         // Inside a number ("12|"), a string, or a comment, completion stays quiet.
@@ -301,6 +332,78 @@ public static class JgsCompletionEngine
         }
 
         return signature[(open + 1)..close].Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    // --- Names a session knows (ADR 0183) ------------------------------------------------------------
+
+    /// <summary>The names that take a library as their first argument, whose string gets the libraries offered.</summary>
+    private static readonly Regex LibraryFirst = new(
+        @"\b(?:calllib|libfunctions|libfunctionsview|unloadlibrary|libisloaded)\s*\(\s*['""](\w*)$",
+        RegexOptions.CultureInvariant);
+
+    /// <summary><c>calllib('lib', '</c>: the second argument names a function of the first.</summary>
+    private static readonly Regex LibraryFunction = new(
+        @"\bcalllib\s*\(\s*(['""])(\w+)\1\s*,\s*['""](\w*)$",
+        RegexOptions.CultureInvariant);
+
+    /// <summary>
+    /// Inside the first string argument of <c>calllib</c> and its family, the loaded libraries; inside
+    /// <c>calllib</c>'s second, the named library's functions. Null anywhere else.
+    /// </summary>
+    private static JgsCompletionResult? LibraryArgument(string code, int offset, IScriptCompletionSource names)
+    {
+        int lineStart = offset;
+        while (lineStart > 0 && code[lineStart - 1] != '\n')
+        {
+            lineStart--;
+        }
+
+        string line = code[lineStart..offset];
+        if (LibraryFunction.Match(line) is { Success: true } call)
+        {
+            string typed = call.Groups[3].Value;
+            return new JgsCompletionResult(offset - typed.Length,
+            [
+                .. names.LibraryFunctions(call.Groups[2].Value)
+                    .Where(i => i.Text.StartsWith(typed, StringComparison.OrdinalIgnoreCase)),
+            ]);
+        }
+
+        if (LibraryFirst.Match(line) is { Success: true } first)
+        {
+            string typed = first.Groups[1].Value;
+            return new JgsCompletionResult(offset - typed.Length,
+            [
+                .. names.Libraries()
+                    .Where(n => n.StartsWith(typed, StringComparison.OrdinalIgnoreCase))
+                    .Select(static n => new CompletionItem(n, CompletionItemKind.Library, Description: "loaded library")),
+            ]);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// The dotted name before a dot that ends right before <paramref name="replaceStart"/>
+    /// (<c>System.IO</c> in <c>System.IO.Fi|</c>), or null when there is no dot there or what precedes
+    /// it is not a plain dotted name that starts with a letter.
+    /// </summary>
+    private static string? DottedQualifier(string code, int replaceStart)
+    {
+        if (replaceStart < 2 || code[replaceStart - 1] != '.')
+        {
+            return null;
+        }
+
+        int start = replaceStart - 1;
+        while (start > 0 && (IsIdentifierChar(code[start - 1])
+            || (code[start - 1] == '.' && start >= 2 && IsIdentifierChar(code[start - 2]))))
+        {
+            start--;
+        }
+
+        string qualifier = code[start..(replaceStart - 1)];
+        return qualifier.Length > 0 && char.IsLetter(qualifier[0]) ? qualifier : null;
     }
 
     // --- Text helpers ------------------------------------------------------------------------------

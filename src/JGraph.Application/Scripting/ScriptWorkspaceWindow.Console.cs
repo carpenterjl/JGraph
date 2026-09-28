@@ -101,6 +101,42 @@ public partial class ScriptWorkspaceWindow
         Dispatcher.BeginInvoke(() => ConsoleBox.Clear());
     }
 
+    /// <summary>
+    /// Opens the place a double-clicked console line names (ADR 0183): <c>C:\work\f.m(4,12): …</c> or a
+    /// compiler's <c>Helper.cs(12,5): error …</c> opens that file at that line; a bare <c>(4,12): …</c>
+    /// is a line of the active document, which is the one a run reports that way.
+    /// </summary>
+    private void OnConsoleDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        int index = ConsoleBox.GetCharacterIndexFromPoint(e.GetPosition(ConsoleBox), snapToText: true);
+        if (index < 0 || ScriptLocation.Find(ConsoleBox.GetLineText(ConsoleBox.GetLineIndexFromCharacterIndex(index))) is not { } place)
+        {
+            return;
+        }
+
+        if (place.Path is { } path)
+        {
+            if (!System.IO.File.Exists(path))
+            {
+                SetStatus($"{path} no longer exists.");
+                return;
+            }
+
+            OpenDocumentAt(path, place.Line);
+        }
+        else if (ActiveDocument is { } active)
+        {
+            active.Editor.GoToLine(place.Line);
+            SetStatus($"{active.Model.FileName}, line {place.Line}.");
+        }
+        else
+        {
+            return;
+        }
+
+        e.Handled = true;
+    }
+
     /// <summary>Caps the console TextBox at <see cref="MaxConsoleChars"/>, dropping the oldest lines.</summary>
     private void TrimConsole()
     {

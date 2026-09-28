@@ -406,7 +406,10 @@ public partial class ScriptWorkspaceWindow
         path => _workspace is { } workspace ? workspace.Resolve(path, null) : path,
         new AppScriptFigureFiles(),
         _audio,
-        CloseFigureOnUi);
+        CloseFigureOnUi)
+    {
+        TableViewer = _tables,
+    };
 
     /// <summary>
     /// Reports a finished run or statement in the console, the status bar and the Workspace pane.

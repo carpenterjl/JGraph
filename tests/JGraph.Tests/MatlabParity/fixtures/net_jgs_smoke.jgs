@@ -44,6 +44,10 @@ let st = libstruct("jg_point");
 set(st, "x", 3);
 set(st, "y", 4);
 print("CHK|libstruct_by_value|" + calllib("jgs8", "jg_point_len", st) + "|exact");
+# Stage 10 (ADR 0183): methods of a library, and methodsview's table asked for with 'noUI'.
+print("CHK|methods_library|" + numel(methods("lib.jgs8")) + "|exact");
+let [mh, md] = methodsview("lib.jgs8", "noUI");
+print("CHK|methodsview_noUI|" + numel(mh) + " " + size(md, 1) + " " + mh[3] + "|exact");
 delete(st);
 unloadlibrary("jgs8");
 print("CHK|shrlib_unloaded|" + libisloaded("jgs8") + "|exact");

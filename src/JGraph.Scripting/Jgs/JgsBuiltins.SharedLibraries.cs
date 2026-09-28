@@ -65,6 +65,7 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) => OperatingSystem.IsWindows() ? CallLib(interpreter, SessionHost(interpreter, line, col), args, wanted, line, col) : throw NotOnWindows(line, col),
         }));
         RegisterLibPointerBuiltins(env, interpreter);
+        RegisterMethodsViewBuiltins(env, interpreter);
         env.Builtins.Register("mexext", JgsValue.Function(new BuiltinFunction("mexext", (args, line, col) => MexExt(args, line, col))
         {
             KeepsStringArguments = true,

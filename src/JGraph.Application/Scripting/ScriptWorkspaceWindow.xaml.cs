@@ -34,6 +34,9 @@ public partial class ScriptWorkspaceWindow : Window
     private readonly IBugReportService? _bugReports;
     private readonly ScriptSessionModel _session;
     private readonly AppScriptAudio _audio = new();
+
+    /// <summary>Opens the windows methodsview and libfunctionsview show their tables in (ADR 0183).</summary>
+    private readonly AppScriptTableViewer _tables = new();
     private readonly List<DocumentEntry> _documents = new();
     private readonly Dictionary<string, List<int>> _persistedBreakpoints = new();
     private readonly Dictionary<string, (DateTime WrittenUtc, IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> Items)> _symbolCache =

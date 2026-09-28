@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,148 of
-2,024** as of interop stage I9 (ADR 0182), which added `libpointer` and `libstruct`; 1,146 as of
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,150 of
+2,024** as of interop stage I10 (ADR 0183), which added `methodsview` and `libfunctionsview`; 1,148 as of
+interop stage I9 (ADR 0182), which added `libpointer` and `libstruct`; 1,146 as of
 interop stage I8 (ADR 0181), which added `loadlibrary`, `unloadlibrary`,
 `libisloaded`, `libfunctions`, `calllib`, `mexext` and `mex.getCompilerConfigurations`; 1,139 as of
 interop stage I4 (ADR 0177), which added `enumeration` (for .NET enums: JGraph's
@@ -1104,39 +1105,55 @@ why this file called them the most useful thing left. **M45 built them** (ADR 00
 
 ### .NET, Java, Python, C++, MEX, and COM interop — 20
 
-The rest of the `NET.*` family, the `clib*`, `java*` and `py*` families, plus ~~`calllib`~~
-~~`libisloaded`~~ ~~`unloadlibrary`~~ `mex` `mexhost` `actxGetRunningServer` `winqueryreg` ~~`import`~~ ~~`isjava`~~
-`jenv`.
+`actxGetRunningServer` `clibArray` `clibConvertArray` `clibIsNull`
+`clibIsReadOnly` `clibRelease` `javaArray` `javaMethod` `javaMethodEDT` `javaObject` `javaObjectEDT`
+`jenv` `mex` `mexhost` `pyargs` `pyenv` `pyrun` `pyrunfile` `pyversion` `winqueryreg`
 
-**The .NET and C shared-library interface is being built** (the interop plan, stages I1–I10, ADR
-0174 onward). Stage I1 moved five builtins off this list: `NET.isNETSupported`, `NET.addAssembly`
-(by path and by name), `NET.createArray` and `NET.createGeneric` in the forms its fixtures call,
-and `isjava`, which answers false for everything because JGraph hosts no Java. Stage I2 moved
-two more: `NET.setStaticProperty`, the one road to a static write, and `NET.convertArray` in the
-forms its fixtures call (stage I4 completes it); it also added `NET.explicitCast`, which the list
-does not name. Stage I3 moved three: `import` for .NET names (the statement, the function form and
-the list), `NET.disableAutoRelease` and `NET.enableAutoRelease`. Stage I4 moved one:
-`NET.invokeGenericMethod`; it completed `NET.createArray`, `NET.createGeneric` and `NET.convertArray`,
-and added `NET.GenericClass` and `NET.interfaceView`, which the list does not name. Stage I5 (ADR
-0178) moved no name: it taught `addlistener`, `listener`, `events` and `delete` .NET objects and
-events, and made a function handle a .NET delegate wherever .NET takes one. Stage I6 (ADR 0179)
-moved no name either: it added `jgraph.net.compile`, a JGraph extension outside MATLAB's list, which
-compiles C# files or text into an assembly a script then reaches as it reaches one `NET.addAssembly`
-loaded, and replaces the build when the source is recompiled. Stage I7 (ADR 0180) moved no name:
-it built the native host, the child process `loadlibrary` and `calllib` will run C code in, so that
-a crash in a library ends the host and not JGraph; its only script door is the test-only
-`jgraph.internal.nativehost`. Stage I8 (ADR 0181) moved three: `libisloaded`, `unloadlibrary`
-and `calllib` for numbers, logicals, C strings and enums; it also added `loadlibrary` (by header, through a C compiler's preprocessor and
-JGraph's own C declaration parser, or by prototype file), `libfunctions`, `mexext` and
-`mex.getCompilerConfigurations`, which the list does not name, and a struct returned by value,
-which R2025b cannot call. Stage I9 (ADR 0182) moved no builtin: it completed `calllib` (arrays,
-C strings and string arrays, structs by value and by pointer, pointers to pointers, the outputs) and
-added `libpointer` and `libstruct`, which MATLAB ships as function files, with the `lib.pointer` and
-`lib.<struct>` objects. `mex` itself, which builds MEX files, stays out of scope. The rest of
-`NET.*` follows in its stages. Java,
-Python and COM, `clib*` and MEX are out of the plan's scope: JGraph does not host those runtimes
-from a script. (It runs Python and C# as *engines* — a whole script in that language — which is a
-different thing from calling into them mid-expression.)
+**Done: the .NET and C shared-library interface** (the interop plan, stages I1–I10, ADRs
+0174–0183). Every `NET.*` builtin MATLAB documents is implemented. This section used to list the
+`NET.*` family as a wildcard; now that none of it is missing, its names can be written out one by
+one, so the verifier counts the section for the first time. Fourteen names left the list in these
+stages:
+- Stage I1: `NET.isNETSupported`, `NET.addAssembly`, `NET.createArray`, `NET.createGeneric` and
+  `isjava`, which answers false for everything because JGraph hosts no Java.
+- Stage I2: `NET.setStaticProperty` and `NET.convertArray`.
+- Stage I3: `import`, `NET.disableAutoRelease` and `NET.enableAutoRelease`.
+- Stage I4: `NET.invokeGenericMethod`.
+- Stage I8: `libisloaded`, `unloadlibrary` and `calllib`.
+
+They also added names this list does not carry, because MATLAB ships them as functions rather than
+builtins:
+- `NET.explicitCast`, `NET.GenericClass` and `NET.interfaceView`;
+- `loadlibrary` (by header, through a C compiler's preprocessor and JGraph's own C declaration
+  parser, or by prototype file), `libfunctions`, `libpointer` and `libstruct`, with the `lib.pointer`
+  and `lib.<struct>` objects;
+- `mexext` and `mex.getCompilerConfigurations`;
+- in stage I10, `methodsview` and `libfunctionsview`: the table `methods -full` makes, in a window in
+  the app and printed in the CLI, transcribed from R2025b's `methodsview.m`.
+
+Along the way:
+- `addlistener`, `listener`, `events` and `delete` learned .NET events.
+- A function handle became a .NET delegate wherever .NET takes one.
+- `methods` learned libraries, pointers and libstructs.
+- `jgraph.net.compile` compiles C# from a script, a JGraph extension outside MATLAB's list.
+
+C code runs in a child process, so a crash in a library ends that process and not JGraph. Where JGraph
+departs from R2025b is in the divergence index, under ADRs 0174–0183.
+
+**Out of scope, with the reason for each:**
+- **Java** (`javaArray`, `javaMethod`, `javaMethodEDT`, `javaObject`, `javaObjectEDT`, `jenv`):
+  JGraph hosts no Java virtual machine, and `isjava` says so.
+- **Python** (`pyargs`, `pyenv`, `pyrun`, `pyrunfile`, `pyversion`): calling Python mid-expression
+  would need an embedded interpreter. JGraph runs Python only as an *engine*, a whole script in that
+  language in a child process, which is a different thing.
+- **The C++ interface** (`clibArray`, `clibConvertArray`, `clibIsNull`, `clibIsReadOnly`,
+  `clibRelease`, and the `clibgen` functions): the user left it out of the interop plan, since
+  `loadlibrary` and `calllib` cover C.
+- **MEX** (`mex`, `mexhost`): a MEX file is compiled against MATLAB's C API (`mxArray` and the `mex*`
+  functions), which JGraph would have to re-implement. For the same reason `loadlibrary` refuses a
+  signature that uses `mxArray*`.
+- **COM and the Windows registry** (`actxGetRunningServer`, `winqueryreg`, and the `actx*`
+  functions): these are separate runtimes the interop plan left out.
 
 ### `pattern` objects — 21
 

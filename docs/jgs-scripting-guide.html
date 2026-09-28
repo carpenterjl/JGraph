@@ -169,6 +169,9 @@
       <li><a href="#control">Control flow</a></li>
       <li><a href="#functions">Defining functions</a></li>
       <li><a href="#matlab">Running MATLAB (.m) files</a></li>
+      <li><a href="#dotnet">Calling .NET</a></li>
+      <li><a href="#clib">Calling a C library</a></li>
+      <li><a href="#inlinecs">Inline C#</a></li>
       <div class="grouplabel">Plotting model</div>
       <li><a href="#figmodel">Figures, axes &amp; show</a></li>
       <li><a href="#linespec">Line-spec strings</a></li>
@@ -455,6 +458,57 @@ y = <span class="fn">exp</span>(<span class="num">-3</span>*t) .* <span class="f
 <span class="fn">fprintf</span>(<span class="str">'peak %.3f at sample %d\n'</span>, peak, at);   <span class="com">% escapes decode in the format string</span>
 <span class="fn">plot</span>(t, y);
 <span class="fn">title</span>(<span class="str">'damped sine'</span>);</code></pre>
+
+    <!-- ================= INTEROP ================= -->
+    <h2 id="dotnet">Calling .NET</h2>
+    <p>A <code>.m</code> file calls .NET the way MATLAB does. A dotted name that no variable or function claims is looked up as a .NET namespace, type or static member, so the whole base class library of the .NET 8 runtime JGraph runs on is there without any setup, and <code>NET.addAssembly</code> adds your own assemblies.</p>
+    <ul>
+      <li><strong>Types and members:</strong> <code>sb = System.Text.StringBuilder()</code> constructs; <code>System.Math.Max(3, 7)</code> calls a static method (the overload is chosen by the MATLAB classes of the arguments, as MATLAB chooses it); <code>sb.Append('x')</code> and <code>sb.Length</code> reach instance members; <code>NET.setStaticProperty</code> writes a static. <code>ref</code> and <code>out</code> parameters come back as extra outputs: <code>[q, r] = System.Math.DivRem(int32(7), int32(2))</code>.</li>
+      <li><strong>Conversions</strong> follow MATLAB's tables: numbers and logicals go in as the matching .NET types and come back as MATLAB classes, a <code>System.String</code> stays a .NET object until <code>char</code> or <code>string</code> converts it, and <code>double(arr)</code>, <code>cell(arr)</code> and the like convert a .NET array.</li>
+      <li><strong>Assemblies and imports:</strong> <code>asm = NET.addAssembly('C:\lib\Helpers.dll')</code> (or an assembly name), then <code>import Helpers.*</code> lets a function write <code>Widget()</code> for <code>Helpers.Widget()</code>. Imports belong to the function they are written in, as in MATLAB.</li>
+      <li><strong>Arrays, generics and enums:</strong> <code>NET.createArray('System.Double', 3)</code>, <code>NET.createGeneric('System.Collections.Generic.List', {'System.Double'}, 10)</code>, <code>NET.invokeGenericMethod</code>, <code>System.DayOfWeek.Monday</code>, and <code>bitor</code> on a <code>[Flags]</code> enum.</li>
+      <li><strong>Events and delegates:</strong> <code>addlistener(watcher, 'Changed', @(src, e) disp(e.FullPath))</code> listens to a .NET event. An event raised on another thread waits for the script thread and runs at the next <code>pause</code>, <code>drawnow</code>, or idle console prompt, never in the middle of a statement. A function handle passed where a delegate is expected becomes that delegate.</li>
+      <li><strong>Errors:</strong> a .NET exception arrives as a <code>NET.NetException</code> whose <code>ExceptionObject</code> is the exception itself.</li>
+      <li><strong>Looking around:</strong> <code>methods(obj)</code>, <code>methods(obj, '-full')</code>, <code>properties(obj)</code> and <code>events(obj)</code> list a type's members, and <code>methodsview(obj)</code> opens them in a sortable table. In the editor, typing a dot after <code>System</code> or any other namespace or type offers what follows it.</li>
+    </ul>
+    <div class="note"><strong>Where JGraph differs.</strong> .NET is always .NET 8, the runtime JGraph itself runs on: <code>dotnetenv('framework')</code> is refused, and assemblies that need the .NET Framework do not load. A 64-bit integer past 2<sup>53</sup> cannot be held exactly in a double; it comes back rounded, with a <code>JGraph:interop:int64Precision</code> warning. Each difference is listed in the divergence index (ADRs 0174–0179).</div>
+    <p>A JGS script reaches .NET too, though JGS has no dotted names: <code>feval("System.Math.Max", 3, 4)</code> calls a static member, and the object that comes back answers <code>class</code>, <code>char</code>, <code>isa</code> and the usual verbs.</p>
+    <pre><code><span class="com">% Time a loop with a .NET stopwatch and build the report with a StringBuilder.</span>
+sw = System.Diagnostics.Stopwatch.StartNew();
+sb = System.Text.StringBuilder();
+<span class="kw">for</span> k = <span class="num">1</span>:<span class="num">5</span>
+    sb.AppendLine(<span class="fn">sprintf</span>(<span class="str">'row %d'</span>, k));
+<span class="kw">end</span>
+<span class="fn">fprintf</span>(<span class="str">'%s(%d ms)\n'</span>, <span class="fn">char</span>(sb.ToString()), sw.ElapsedMilliseconds);</code></pre>
+
+    <h2 id="clib">Calling a C library</h2>
+    <p>A <code>.m</code> file loads a C shared library (a <code>.dll</code>) with <code>loadlibrary</code> and calls its functions with <code>calllib</code>, with MATLAB's names, arguments and outputs.</p>
+    <ul>
+      <li><strong>Loading:</strong> <code>loadlibrary('mylib', 'mylib.h')</code> reads the functions, structs and enums the header declares. Like MATLAB, it needs a C compiler to preprocess the header. <strong>Tools → Options → C compiler for loadlibrary</strong> chooses one, and <em>Automatic</em> finds MinGW-w64 through <code>MW_MINGW64_LOC</code>, Visual Studio's C++ tools, or a <code>cl</code> or <code>gcc</code> on <code>PATH</code>. <code>loadlibrary('mylib', @mylib_proto)</code> loads from a prototype file and needs no compiler, and <code>loadlibrary(…, 'mfilename', 'mylib_proto')</code> writes one. <code>libisloaded</code>, <code>libfunctions(lib, '-full')</code> and <code>unloadlibrary</code> do what MATLAB's do.</li>
+      <li><strong>Calling:</strong> <code>[ret, out1, …] = calllib('mylib', 'fn', args…)</code> answers the return value, then the value each pointer argument holds after the call: a MATLAB array passed to a <code>double*</code> comes back changed, and a struct passed to a struct pointer comes back as a struct. Numbers, logicals, C strings, arrays, enums by name or value, and structs by value or by pointer all pass.</li>
+      <li><strong>Pointers and structs:</strong> <code>p = libpointer('doublePtr', [1 2 3])</code> is memory a call can write to and <code>p.Value</code> reads it back. <code>p + 1</code>, <code>reshape</code>, <code>setdatatype</code> and <code>isNull</code> work as in MATLAB. <code>s = libstruct('point_t')</code> is a C struct whose fields are properties; <code>get(s)</code> lists them.</li>
+      <li><strong>Looking around:</strong> <code>methods lib.mylib</code> lists a library's functions, <code>libfunctionsview mylib</code> opens them in a table, and in the editor the text inside <code>calllib('…'</code> offers the loaded libraries and then their functions.</li>
+    </ul>
+    <div class="note"><strong>The library runs in its own process.</strong> JGraph loads every C library into a helper process, <code>JGraph.NativeHost</code>, rather than into itself. A crash in native code ends that process and raises <code>JGraph:loadlibrary:HostExited</code> in the script. JGraph keeps running, and the next call starts a fresh host. <strong>Stop</strong> ends a native call that hangs the same way. Pointer addresses are the host's, and every call crosses a process boundary: a scalar call takes about 15 µs, against MATLAB's 2–3 µs. Signatures that use MATLAB's C API (<code>mxArray*</code>) are refused, and no thunk file is written. The full list is in ADRs 0180–0182.</div>
+    <pre><code><span class="com">% Scale an array in place in C, then read a result through a pointer.</span>
+<span class="fn">loadlibrary</span>(<span class="str">'mylib'</span>, <span class="str">'mylib.h'</span>);
+y = <span class="fn">calllib</span>(<span class="str">'mylib'</span>, <span class="str">'scale'</span>, [<span class="num">1</span> <span class="num">2</span> <span class="num">3</span>], <span class="num">3</span>, <span class="num">10</span>);   <span class="com">% [10 20 30]</span>
+p = <span class="fn">libpointer</span>(<span class="str">'doublePtr'</span>, <span class="num">0</span>);
+<span class="fn">calllib</span>(<span class="str">'mylib'</span>, <span class="str">'mean_into'</span>, y, <span class="num">3</span>, p);
+<span class="fn">disp</span>(p.Value)
+<span class="fn">unloadlibrary</span> mylib</code></pre>
+
+    <h2 id="inlinecs">Inline C#</h2>
+    <p><code>jgraph.net.compile</code> is a JGraph extension with no MATLAB counterpart. It compiles C# into an assembly and makes its types callable like any other .NET type. It takes C# text or <code>.cs</code> files, found the way script files are found, with the options <code>AssemblyName</code>, <code>References</code>, <code>Unloadable</code>, <code>AllowUnsafe</code>, <code>LanguageVersion</code> and <code>Optimize</code>.</p>
+    <ul>
+      <li>Every compiler error comes back as <code>JGraph:NET:CompileFailed</code>, one line per error in the compiler's <code>file(line,col): error CS…</code> layout. Double-click such a line in the console to open the file at that line. Compiler warnings become MATLAB warnings.</li>
+      <li>Compiling again under the same assembly name, or redefining a type an earlier build defined, replaces the earlier build. Objects made from the old build refuse further use with <code>JGraph:NET:AssemblyRecompiled</code>.</li>
+      <li>Builds are cached by the hash of their source and options, so a run that compiles the same text again only loads it.</li>
+    </ul>
+    <pre><code>src = <span class="str">"namespace Demo { public static class Fast { public static double Sum(double[] x) { double s = 0; foreach (var v in x) s += v; return s; } } }"</span>;
+jgraph.net.compile(src, AssemblyName=<span class="str">"FastSum"</span>);
+<span class="fn">disp</span>(Demo.Fast.Sum(<span class="fn">rand</span>(<span class="num">1</span>, <span class="num">1000</span>)))   <span class="com">% a type is reached through its namespace</span></code></pre>
+    <div class="callout"><strong>Trust what you load.</strong> An assembly passed to <code>NET.addAssembly</code>, C# given to <code>jgraph.net.compile</code>, and a library passed to <code>loadlibrary</code> are all code that runs with your permissions: it can read and write your files, reach the network, and start programs, just as in MATLAB. .NET code runs inside JGraph, so an assembly that fails badly can take JGraph down with it. A C library runs in its helper process, which keeps a crash away from JGraph but grants no other protection. Load only code you would run yourself.</div>
 
     <!-- ================= PLOTTING MODEL ================= -->
     <h2 id="figmodel">Figures, axes &amp; show</h2>

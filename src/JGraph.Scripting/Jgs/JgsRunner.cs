@@ -231,8 +231,19 @@ internal static class JgsRunner
             // used to name JGS types ('number', 'string') instead, and a panel that disagrees with
             // class(x) reads as a defect in one of them.
             KindOf(value),
-            ScriptVariable.Truncate(value.Display()),
+            ScriptVariable.Truncate(Brief(value)),
             ToRawValue(value));
+
+    /// <summary>
+    /// The text the Workspace pane and the data viewer's cells show for a value: its display, or for a
+    /// value from outside the language its size, class and summary (ADR 0183). A .NET object's display
+    /// runs every property getter and a libstruct's reads the native host, which the pane must not do
+    /// after every statement.
+    /// </summary>
+    private static string Brief(JgsValue value) =>
+        value.AsExternalOrNull() is { } external
+            ? external.Summary() is { } summary ? $"1×1 {external.ClassName}: {summary}" : $"1×1 {external.ClassName}"
+            : value.Display();
 
     /// <summary>
     /// Defines the <c>run(path)</c> builtin: it resolves the path like the table readers do, parses the
@@ -733,6 +744,7 @@ internal static class JgsRunner
         JgsType.Array when value.AsArray.All(static e => e.Type == JgsType.Number) =>
             value.AsArray.Select(static e => e.AsNumber).ToArray(),
 
+        JgsType.External => new ScriptExternalValue(value.AsExternal.ClassName, value.AsExternal.Summary(), value.AsExternal.Kind),
         JgsType.Cell => CellGrid(value.AsCell),
         JgsType.Struct => StructGrid(value.AsStruct),
         _ => null,
@@ -824,7 +836,7 @@ internal static class JgsRunner
         return new ScriptValueGrid("struct", new[] { "Field", "Type", "Value" }, rows);
     }
 
-    private static string Cell(JgsValue value) => ScriptVariable.Truncate(value.Display());
+    private static string Cell(JgsValue value) => ScriptVariable.Truncate(Brief(value));
 
     private static string[] Numbered(int count) =>
         Enumerable.Range(0, count).Select(static i => i.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToArray();

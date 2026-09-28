@@ -15,7 +15,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>figure(1)</c> at the prompt must keep meaning the window it already opened), releasing packed
 /// buffers (live variables still point at them), and rebuilding the built-in scope. See ADR 0035.
 /// </remarks>
-internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IWorkspaceCellEditor
+internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource
 {
     private readonly ScriptContext _context;
     private readonly JgsDialect _dialect;
@@ -51,6 +51,21 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
 
     /// <inheritdoc />
     public string Language { get; }
+
+    // The editor's completion asks the console session for the names only it knows (ADR 0183): the
+    // .NET types its assemblies added and the libraries it loaded. Clear rebuilds the interpreter
+    // and the globals, so each question reads the current ones.
+    private JGraph.Scripting.Completion.IScriptCompletionSource Names =>
+        JGraph.Scripting.Jgs.Completion.InteropCompletion.For(_interpreter.NetTypes, () => OperatingSystem.IsWindows() ? _globals.Native : null);
+
+    /// <inheritdoc />
+    public IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> Members(string qualifier) => Names.Members(qualifier);
+
+    /// <inheritdoc />
+    public IReadOnlyList<string> Libraries() => Names.Libraries();
+
+    /// <inheritdoc />
+    public IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> LibraryFunctions(string library) => Names.LibraryFunctions(library);
 
     /// <summary>The session's base workspace, for tests that check what it holds.</summary>
     internal JgsEnvironment Workspace => _environment;

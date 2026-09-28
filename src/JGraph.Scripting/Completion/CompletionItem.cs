@@ -20,6 +20,18 @@ public enum CompletionItemKind
 
     /// <summary>A workspace folder offered inside a path-string argument (text ends with <c>/</c>).</summary>
     Folder,
+
+    /// <summary>A .NET namespace offered after a dotted name (<c>System.</c>; ADR 0183).</summary>
+    Namespace,
+
+    /// <summary>A .NET type offered after its namespace (<c>System.Text.</c>).</summary>
+    Type,
+
+    /// <summary>A static member of a .NET type, or an enum's member, offered after the type (<c>System.Math.</c>).</summary>
+    Member,
+
+    /// <summary>A loaded library, or one of its functions, offered inside <c>calllib('…'</c>.</summary>
+    Library,
 }
 
 /// <summary>
