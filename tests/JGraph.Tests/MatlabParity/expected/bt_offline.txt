@@ -1,0 +1,63 @@
+CHK|btlist_short|MATLAB:bluetooth:bluetoothlist:invalidTimeout ## The value of 'Timeout' is invalid. Timeout must be greater than or equal to 5.|exact
+CHK|btlist_str|MATLAB:bluetooth:bluetoothlist:invalidTimeout ## The value of 'Timeout' is invalid. Timeout must be greater than or equal to 5.|exact
+CHK|btlist_num|MATLAB:InputParser:ParamMustBeChar ## Expected a string scalar or character vector for the parameter name.|exact
+CHK|btlist_three|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|btlist_missing|MATLAB:InputParser:ParamMissingValue ## No value was given for 'Timeout'. Name-value pair arguments require a name followed by a value.|exact
+CHK|btlist_bad_name|MATLAB:InputParser:UnmatchedParameter ## 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|btlist_class|table|exact
+CHK|btlist_vars|cell:{char:Name;char:Address;char:Channel;char:Status}|exact
+CHK|btlist_name_class|string|exact
+CHK|btlist_address_class|string|exact
+CHK|btlist_status_class|string|exact
+CHK|btlist_channel_class|categorical|div=ADR0186|diverges|cell
+CHK|btlist_address_form|logical:1|exact
+CHK|btlist_address_hex|logical:1|exact
+CHK|bt_seven|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|bt_num|MATLAB:bluetooth:bluetooth:invalidIdentifierType ## Invalid device identifier. Device name or address must be specified as a string or character vector.|exact
+CHK|bt_cell|MATLAB:bluetooth:bluetooth:invalidIdentifierType ## Invalid device identifier. Device name or address must be specified as a string or character vector.|exact
+CHK|bt_strarr|MATLAB:bluetooth:bluetooth:invalidIdentifierType ## Invalid device identifier. Device name or address must be specified as a string or character vector.|exact
+CHK|bt_unknown|MATLAB:bluetooth:bluetooth:invalidIdentifierValue ## Unable to find paired device with specified name or address "NoSuchJGraphDevice". Run bluetoothlist to check device status and channel number. / See related documentation for troubleshooting steps.|exact
+CHK|bt_unknown_addr|MATLAB:bluetooth:bluetooth:invalidIdentifierValue ## Unable to find paired device with specified name or address "001122334455". Run bluetoothlist to check device status and channel number. / See related documentation for troubleshooting steps.|exact
+CHK|bt_unknown_dash|MATLAB:bluetooth:bluetooth:invalidIdentifierValue ## Unable to find paired device with specified name or address "001122334455". Run bluetoothlist to check device status and channel number. / See related documentation for troubleshooting steps.|exact
+CHK|bt_unknown_plain|MATLAB:bluetooth:bluetooth:invalidIdentifierValue ## Unable to find paired device with specified name or address "001122334455". Run bluetoothlist to check device status and channel number. / See related documentation for troubleshooting steps.|exact
+CHK|bt_unknown_char|MATLAB:bluetooth:bluetooth:invalidIdentifierValue ## Unable to find paired device with specified name or address "NoSuchJGraphDevice". Run bluetoothlist to check device status and channel number. / See related documentation for troubleshooting steps.|exact
+CHK|blelist_badname|MATLAB:ble:ble:invalidNameValue ## Invalid 'name' value specified. Value must be a string or character vector.|exact
+CHK|blelist_emptyname|none|exact
+CHK|blelist_timeout_zero|MATLAB:ble:ble:invalidTimeoutValue ## Invalid 'timeout' value specified. Value must be a numeric between 0 and 10485.|exact
+CHK|blelist_timeout_big|MATLAB:ble:ble:invalidTimeoutValue ## Invalid 'timeout' value specified. Value must be a numeric between 0 and 10485.|exact
+CHK|blelist_timeout_neg|MATLAB:ble:ble:invalidTimeoutValue ## Invalid 'timeout' value specified. Value must be a numeric between 0 and 10485.|exact
+CHK|blelist_timeout_str|MATLAB:ble:ble:invalidTimeoutValue ## Invalid 'timeout' value specified. Value must be a numeric between 0 and 10485.|exact
+CHK|blelist_timeout_vec|MATLAB:ble:ble:invalidTimeoutValue ## Invalid 'timeout' value specified. Value must be a numeric between 0 and 10485.|exact
+CHK|blelist_badnv|MATLAB:ble:ble:invalidNVPair ## Unrecognized parameter. Parameter name must be one of the following: name, services, timeout.|exact
+CHK|blelist_badnv_alone|MATLAB:ble:ble:invalidNVPair ## Unrecognized parameter. Parameter name must be one of the following: name, services, timeout.|exact
+CHK|blelist_missing|MATLAB:InputParser:ParamMissingValue ## No value was given for 'name'. Name-value pair arguments require a name followed by a value.|exact
+CHK|blelist_missing_timeout|MATLAB:InputParser:ParamMissingValue ## No value was given for 'timeout'. Name-value pair arguments require a name followed by a value.|exact
+CHK|blelist_num_key|MATLAB:ble:ble:invalidNameValue ## Invalid 'name' value specified. Value must be a string or character vector.|exact
+CHK|blelist_services_empty|MATLAB:ble:ble:invalidServiceUUIDValue ## Invalid value for service. See Bluetooth SIG webpage for a list of valid services.|exact
+CHK|blelist_services_bad|MATLAB:ble:ble:invalidServiceUUIDValue ## Invalid value for service. See Bluetooth SIG webpage for a list of valid services.|exact
+CHK|blelist_services_frac|MATLAB:ble:ble:invalidServiceUUIDValue ## Invalid value for service. See Bluetooth SIG webpage for a list of valid services.|exact
+CHK|blelist_services_big|MATLAB:ble:ble:invalidServiceUUIDValue ## Invalid value for service. See Bluetooth SIG webpage for a list of valid services.|exact
+CHK|blelist_services_5hex|MATLAB:ble:ble:invalidServiceUUIDValue ## Invalid value for service. See Bluetooth SIG webpage for a list of valid services.|exact
+CHK|blelist_services_8hex|MATLAB:ble:ble:invalidServiceUUIDValue ## Invalid value for service. See Bluetooth SIG webpage for a list of valid services.|exact
+CHK|blelist_services_custom|MATLAB:ble:ble:invalidUUIDNameCustom ## Specify UUID for custom service or characteristic.|exact
+CHK|blelist_services_type|MATLAB:ble:ble:invalidUUIDType ## Invalid data type for UUID. Service value must be a string or hexadecimal.|exact
+CHK|blelist_noname|double:[] [0 0]|exact
+CHK|blelist_noname_warn|MATLAB:ble:ble:noDeviceWithNameFound ## No nearby Bluetooth Low Energy peripheral devices with a name starting with this string detected. Try calling blelist with a larger 'timeout' value.|exact
+CHK|blelist_class|table|exact
+CHK|blelist_vars|cell:{char:Index;char:Name;char:Address;char:RSSI;char:Advertisement}|exact
+CHK|blelist_index_class|double|exact
+CHK|blelist_index_counts|logical:1|exact
+CHK|blelist_name_class|string|exact
+CHK|blelist_address_class|string|exact
+CHK|blelist_rssi_class|double|exact
+CHK|blelist_rssi_sorted|logical:1|exact
+CHK|blelist_adv_class|struct|exact
+CHK|blelist_adv_fields|cell:{char:Type;char:Appearance;char:ShortenedLocalName;char:CompleteLocalName;char:TxPowerLevel;char:SlaveConnectionIntervalRange;char:ManufacturerSpecificData;char:ServiceData;char:CompleteServiceUUIDs;char:IncompleteServiceUUIDs;char:ServiceSolicitationUUIDs}|exact
+CHK|blelist_adv_type_class|string|exact
+CHK|ble_none|MATLAB:ble:ble:bleCalledWithoutInput ## Not enough input arguments. Specify device address or device name as a string or character vector.|exact
+CHK|ble_num|MATLAB:ble:ble:invalidIdentifier ## Invalid device identifier. Device name or address must be specified as a string or character vector.|exact
+CHK|ble_empty|MATLAB:ble:ble:invalidIdentifier ## Invalid device identifier. Device name or address must be specified as a string or character vector.|exact
+CHK|ble_empty_char|MATLAB:ble:ble:invalidIdentifier ## Invalid device identifier. Device name or address must be specified as a string or character vector.|exact
+CHK|ble_cell|MATLAB:ble:ble:invalidIdentifier ## Invalid device identifier. Device name or address must be specified as a string or character vector.|exact
+CHK|ble_two|MATLAB:TooManyInputs ## Too many input arguments.|exact
+CHK|ble_unknown|MATLAB:ble:ble:undiscoveredDevice ## Unable to find device with specified name or address. Check device status and run blelist to find device.|exact

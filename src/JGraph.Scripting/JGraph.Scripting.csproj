@@ -53,9 +53,30 @@
          device simulator, in process; nothing a device object does runs in the native host. -->
     <ProjectReference Include="..\JGraph.Devices\JGraph.Devices.csproj" />
 
+    <!-- Bluetooth (device classes plan, stage D3) targets a Windows SDK framework for the WinRT
+         projection, so it is built but not linked: JGraph.Devices loads it at run time, and the target
+         below copies it and its projection into this project's output and every host's. -->
+    <ProjectReference Include="..\JGraph.Devices.Bluetooth\JGraph.Devices.Bluetooth.csproj"
+                      ReferenceOutputAssembly="false" Private="false"
+                      SkipGetTargetFrameworkProperties="true" />
+
     <!-- copyobj copies a figure object by writing it out and reading it back, so the one description
          of what a plot is made of stays the document format's rather than becoming a second one. -->
     <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />
   </ItemGroup>
+
+  <!-- The Bluetooth backend and its WinRT projection, as copy-to-output items so that every project
+       referencing this one gets them too. Added in a target, after the backend has been built. -->
+  <Target Name="IncludeBluetoothBackend" BeforeTargets="AssignTargetPaths">
+    <PropertyGroup>
+      <_BluetoothOut>$(MSBuildThisFileDirectory)..\JGraph.Devices.Bluetooth\bin\$(Configuration)\net8.0-windows10.0.19041.0\</_BluetoothOut>
+    </PropertyGroup>
+    <ItemGroup>
+      <None Include="$(_BluetoothOut)JGraph.Devices.Bluetooth.dll;$(_BluetoothOut)Microsoft.Windows.SDK.NET.dll;$(_BluetoothOut)WinRT.Runtime.dll"
+            Condition="Exists('$(_BluetoothOut)JGraph.Devices.Bluetooth.dll')"
+            Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"
+            CopyToPublishDirectory="PreserveNewest" Visible="false" />
+    </ItemGroup>
+  </Target>
 
 </Project>

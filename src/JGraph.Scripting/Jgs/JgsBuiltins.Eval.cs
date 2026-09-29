@@ -78,6 +78,9 @@ internal static partial class JgsBuiltins
 
         // Stage D2: the network clients and servers, their finds, the echo servers and resolvehost.
         "tcpclient", "tcpserver", "udpport", "tcpclientfind", "tcpserverfind", "udpportfind", "echotcpip", "echoudp", "resolvehost",
+
+        // Stage D3: Bluetooth classic and Low Energy.
+        "bluetooth", "bluetoothlist", "ble", "blelist",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>

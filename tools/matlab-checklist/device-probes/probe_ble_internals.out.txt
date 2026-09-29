@@ -1,0 +1,59 @@
+const_DefaultScanTimeout	double [1 1] 2
+const_MinScanTimeout	double [1 1] 0
+const_MaxScanTimeout	double [1 1] 10485
+const_WriteTypes	string [1 2] "WithResponse" "WithoutResponse"
+const_WritePrecisions	string [1 4] "uint8" "uint16" "uint32" "uint64"
+const_SupportedReadModesNotifyOnly	string [1 2] "oldest" "latest"
+const_SupportedReadModesReadOnly	string [1 1] "latest"
+const_ClientCharacteristicConfigurationUUID	string [1 1] "2902"
+const_all	cell [1 13] {char [1 18] 'DefaultScanTimeout'; char [1 14] 'MinScanTimeout'; char [1 14] 'MaxScanTimeout'; char [1 23] 'AdvertisingIntervalUnit'; char [1 26] 'MinSlaveConnectionInterval'; char [1 26] 'MaxSlaveConnectionInterval'; char [1 33] 'NoSpecificSlaveConnectionInterval'; char [1 27] 'SlaveConnectionIntervalUnit'; char [1 26] 'SupportedReadModesReadOnly'; char [1 28] 'SupportedReadModesNotifyOnly'; char [1 10] 'WriteTypes'; char [1 15] 'WritePrecisions'; char [1 37] 'ClientCharacteristicConfigurationUUID'}
+svc_short	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_lower	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_num	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_dec	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_name	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_name_lower	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_long	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_long_lower	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_custom	string [1 1] "EF680100-9B35-4933-9B10-52FFA9740042"
+svc_unknown_long	string [1 1] "12345678-1234-1234-1234-123456789ABC"
+svc_unknown_short	string [1 1] "0000FFE0-0000-1000-8000-00805F9B34FB"
+svc_32bit	string [1 1] "0000FFE0-0000-1000-8000-00805F9B34FB"
+svc_bad	ERR MATLAB:ble:ble:invalidServiceUUIDValue Invalid value for service. See <a href="https://www.bluetooth.com/specifications/gatt/services">Bluetooth SIG webpage</a> for a list of valid services.
+svc_badnum	ERR MATLAB:ble:ble:invalidServiceUUIDValue Invalid value for service. See <a href="https://www.bluetooth.com/specifications/gatt/services">Bluetooth SIG webpage</a> for a list of valid services.
+svc_prefix_name	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+shortest_long	string [1 1] "180D"
+shortest_custom	string [1 1] "12345678-1234-1234-1234-123456789ABC"
+shortest_short	string [1 1] "180D"
+info_svc	struct [1 1] struct(UUID,Name)
+info_svc_unknown	struct [1 1] struct(UUID,Name)
+info_svc_long_unknown	struct [1 1] struct(UUID,Name)
+info_chr	struct [1 1] struct(UUID,Name)
+info_chr_unknown	struct [1 1] struct(UUID,Name)
+info_chr_other_svc	struct [1 1] struct(UUID,Name)
+info_desc	struct [1 1] struct(UUID,Name)
+info_desc_unknown	struct [1 1] struct(UUID,Name)
+desc_uuid_name	string [1 1] "00002902-0000-1000-8000-00805F9B34FB"
+desc_uuid_num	string [1 1] "00002902-0000-1000-8000-00805F9B34FB"
+range_ok	uint8 [1 3] [1 2 255]
+range_over	ERR MATLAB:ble:ble:invalidDataRanged Data must be between 0 and 255.
+range_neg	ERR MATLAB:ble:ble:invalidDataRanged Data must be between 0 and 255.
+range_frac	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_int8	uint8 [1 1] 128
+range_uint16	uint8 [1 4] [1 0 2 1]
+range_int16	uint8 [1 2] [254 255]
+range_uint32	uint8 [1 4] [1 0 0 0]
+range_single	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_double	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_char	uint8 [1 2] [65 66]
+range_string	uint8 [1 2] [65 66]
+range_logical	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_cell	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_empty	uint8 [0 0] []
+range_int8data	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_nan	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_matrix	ERR MATLAB:nonLogicalConditional Operands to the logical AND (&&) and OR (||) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.
+range_big	ERR MATLAB:ble:ble:invalidDataRanged Data must be between 0 and 255.
+evt_class	matlabshared.blelib.internal.DataAvailableEventData [1 1] <a href="matlab:helpPopup('matlabshared.blelib.internal.DataAvailableEventData')" style="font-weight:bold">DataAvailableEventData</a> with properties: | Source: [00 handle] | EventName: '' |
+evt_props	cell [2 1] {char [1 6] 'Source'; char [1 9] 'EventName'}
+substatus	matlabshared.blelib.internal.SubscriptionStatus [4 1] [matlabshared.blelib.internal.SubscriptionStatus.Unknown;matlabshared.blelib.internal.SubscriptionStatus.None;matlabshared.blelib.internal.SubscriptionStatus.Notify;matlabshared.blelib.internal.SubscriptionStatus.Indicate]

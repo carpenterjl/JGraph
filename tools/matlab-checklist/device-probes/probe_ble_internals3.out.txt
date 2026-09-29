@@ -1,0 +1,21 @@
+c_name	string [1 1] "00002A37-0000-1000-8000-00805F9B34FB"
+c_name_lower_prefix	string [1 1] "00002A37-0000-1000-8000-00805F9B34FB"
+c_short	string [1 1] "00002A37-0000-1000-8000-00805F9B34FB"
+c_num	string [1 1] "00002A37-0000-1000-8000-00805F9B34FB"
+c_long	string [1 1] "00002A37-0000-1000-8000-00805F9B34FB"
+c_name_other_service	ERR MATLAB:ble:ble:invalidCharacteristicUUIDValue Invalid value for characteristic. See ble object for list of valid characteristic values.
+c_name_custom_service	ERR MATLAB:ble:ble:invalidCharacteristicUUIDValue Invalid value for characteristic. See ble object for list of valid characteristic values.
+c_custom	ERR MATLAB:ble:ble:invalidUUIDNameCustom Specify UUID for custom service or characteristic.
+c_bad	ERR MATLAB:ble:ble:invalidCharacteristicUUIDValue Invalid value for characteristic. See ble object for list of valid characteristic values.
+c_badtype	ERR MATLAB:ble:ble:invalidUUIDType Invalid data type for UUID. Service value must be a string or hexadecimal.
+c_num_bad	ERR MATLAB:ble:ble:invalidCharacteristicUUIDValue Invalid value for characteristic. See ble object for list of valid characteristic values.
+s_custom	ERR MATLAB:ble:ble:invalidUUIDNameCustom Specify UUID for custom service or characteristic.
+s_badtype	ERR MATLAB:ble:ble:invalidUUIDType Invalid data type for UUID. Service value must be a string or hexadecimal.
+s_logical	ERR MATLAB:ble:ble:invalidUUIDType Invalid data type for UUID. Service value must be a string or hexadecimal.
+s_empty	ERR MATLAB:ble:ble:invalidServiceUUIDValue Invalid value for service. See <a href="https://www.bluetooth.com/specifications/gatt/services">Bluetooth SIG webpage</a> for a list of valid services.
+s_vector	ERR MATLAB:nonLogicalConditional Operands to the logical AND (&&) and OR (||) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.
+d_short	string [1 1] "00002902-0000-1000-8000-00805F9B34FB"
+d_custom	ERR MATLAB:ble:ble:invalidUUIDNameCustom Specify UUID for custom service or characteristic.
+d_prefix	string [1 1] "00002902-0000-1000-8000-00805F9B34FB"
+d_badtype	ERR MATLAB:ble:ble:invalidUUIDType Invalid data type for UUID. Service value must be a string or hexadecimal.
+s_ambig_char	ERR MATLAB:ambiguousStringChoice Expected input to match one of these values: | 'Device Name', 'Appearance', 'Peripheral Privacy Flag', 'Reconnection Address', 'Peripheral Preferred Connection Parameters', 'Central Address Resolution' | The input, 'Peripheral', matched more than one valid value.

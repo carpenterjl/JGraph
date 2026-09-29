@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Bluetooth for JGraph scripts (device classes plan, stage D3): the radio, classic discovery and
+    SDP, RFCOMM channels, and Bluetooth Low Energy scanning and GATT, through the Windows Runtime's
+    Windows.Devices.Bluetooth. It targets a Windows SDK framework so the WinRT projection is the
+    SDK's own; JGraph.Scripting stays net8.0 and loads this assembly at run time through
+    JGraph.Devices' IBluetoothBackend, so nothing else takes a dependency on a Windows TFM.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <RootNamespace>JGraph.Devices.Bluetooth</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Bluetooth classic and Low Energy backends for JGraph scripts, over Windows.Devices.Bluetooth.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Devices\JGraph.Devices.csproj" />
+  </ItemGroup>
+
+  <!-- The WinRT projection is part of an app's output only when the app targets a Windows TFM; the
+       net8.0 hosts load this assembly at run time, so it carries the projection beside itself. -->
+  <Target Name="CopyWinRtProjection" AfterTargets="Build">
+    <ItemGroup>
+      <_WinRtProjection Include="@(ReferencePath)" Condition="'%(Filename)' == 'Microsoft.Windows.SDK.NET' Or '%(Filename)' == 'WinRT.Runtime'" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_WinRtProjection)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

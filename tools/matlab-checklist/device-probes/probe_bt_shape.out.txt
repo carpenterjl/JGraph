@@ -1,0 +1,46 @@
+bt_height	double [1 1] 1
+bt_status_raw	string [1 1] "<a href="matlab:helpview(matlab.bluetooth.internal.getDocMap, 'status_unsupported')">Unsupported</a>"
+bt_channel_raw	categorical [1 1] Unknown |
+bt_channel_cats	cell [1 1] {char [1 7] 'Unknown'}
+bt_address_raw	string [1 1] "007C2D247300"
+bt_name_raw	string [1 1] "[TV] SME ATG"
+ble_height_positive	logical [1 1] true
+adv_class	char [1 6] 'struct'
+adv_fields	cell [11 1] {char [1 4] 'Type'; char [1 10] 'Appearance'; char [1 18] 'ShortenedLocalName'; char [1 17] 'CompleteLocalName'; char [1 12] 'TxPowerLevel'; char [1 28] 'SlaveConnectionIntervalRange'; char [1 24] 'ManufacturerSpecificData'; char [1 11] 'ServiceData'; char [1 20] 'CompleteServiceUUIDs'; char [1 22] 'IncompleteServiceUUIDs'; char [1 24] 'ServiceSolicitationUUIDs'}
+adv_Type	char [1 6] 'string'
+adv_Type_val	string [1 1] "Connectable Undirected"
+adv_Appearance	char [1 6] 'double'
+adv_Appearance_val	double [0 0] []
+adv_ShortenedLocalName	char [1 6] 'double'
+adv_ShortenedLocalName_val	double [0 0] []
+adv_CompleteLocalName	char [1 6] 'double'
+adv_CompleteLocalName_val	double [0 0] []
+adv_TxPowerLevel	char [1 6] 'double'
+adv_TxPowerLevel_val	double [1 1] 12
+adv_SlaveConnectionIntervalRange	char [1 6] 'double'
+adv_SlaveConnectionIntervalRange_val	double [0 0] []
+adv_ManufacturerSpecificData	char [1 6] 'double'
+adv_ManufacturerSpecificData_val	double [1 11] [76 0 16 7 59 27 73 121 35 252 120]
+adv_ServiceData	char [1 6] 'double'
+adv_ServiceData_val	double [0 0] []
+adv_CompleteServiceUUIDs	char [1 6] 'double'
+adv_CompleteServiceUUIDs_val	double [0 0] []
+adv_IncompleteServiceUUIDs	char [1 6] 'double'
+adv_IncompleteServiceUUIDs_val	double [0 0] []
+adv_ServiceSolicitationUUIDs	char [1 6] 'double'
+adv_ServiceSolicitationUUIDs_val	double [0 0] []
+ble_index	double [1 3] [1 2 3]
+ble_rssi_class	char [1 6] 'double'
+ble_sorted_by_rssi	logical [1 1] true
+ble_named_first	string [1 1] "MELK-OA10W  6A"
+ble_filter	OUT [Warning: No nearby Bluetooth Low Energy peripheral devices with a name starting with this string detected. Try calling blelist with a | larger 'timeout' value.] | C = | [] |
+ble_services_hr	OUT Run bluetoothlist to search for nearby Bluetooth classic devices. | [Warning: No nearby Bluetooth Low Energy peripheral devices detected. Try a larger 'timeout' value.] | ans = | [] |
+[Warning: No nearby Bluetooth Low Energy peripheral devices detected. Try a larger 'timeout' value.] 
+ble_services_num	char [1 6] 'double'
+ble_services_bad	ERR MATLAB:ble:ble:invalidServiceUUIDValue Invalid value for service. See <a href="https://www.bluetooth.com/specifications/gatt/services">Bluetooth SIG webpage</a> for a list of valid services.
+ble_timeout_neg	ERR MATLAB:ble:ble:invalidTimeoutValue Invalid 'timeout' value specified. Value must be a numeric between 0 and 10485.
+ble_timeout_str	ERR MATLAB:ble:ble:invalidTimeoutValue Invalid 'timeout' value specified. Value must be a numeric between 0 and 10485.
+ble_timeout_vec	ERR MATLAB:ble:ble:invalidTimeoutValue Invalid 'timeout' value specified. Value must be a numeric between 0 and 10485.
+ble_three	ERR MATLAB:InputParser:ParamMissingValue No value was given for 'timeout'. Name-value pair arguments require a name followed by a value.
+ble_connect_tv	OUT | b = | ble with properties: | Name: "[TV] SME ATG" | Address: "007C2D247300" | Connected: 1 | Services: [32 table] | Characteristics: [55 table] | Show >');disp(nobodyknows.Services);clear nobodyknows; else, disp('Variable ''b'' does not exist or is no longer valid ble type.'), end">services and >');disp(nobodyknows.Characteristics);clear nobodyknows; else, disp('Variable ''b'' does not exist or is no longer valid ble type.'), end">characteristics |
+bt_connect_tv	ERR MATLAB:bluetooth:bluetooth:invalidIdentifierValue Unable to find paired device with specified name or address "[TV] SME ATG". Run bluetoothlist to check device status and channel number. | See <a href="matlab: helpview('matlab', 'bluetooth_connectError')">related documentation</a> for troubleshooting steps.

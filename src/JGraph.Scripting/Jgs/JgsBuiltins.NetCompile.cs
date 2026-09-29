@@ -44,6 +44,9 @@ internal static partial class JgsBuiltins
 
                 // Test-only (device classes plan): a simulated serial port for the device fixtures.
                 ["devicesim"] = DeviceSimFunction(interpreter),
+
+                // Test-only (device classes plan, stage D3): the simulated Bluetooth radio and peer.
+                ["btsim"] = BluetoothSimFunction(interpreter),
             }),
         }));
     }

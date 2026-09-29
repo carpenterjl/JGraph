@@ -1,0 +1,50 @@
+info1_uuid	string [1 1] "180D"
+info1_name	string [1 1] "Heart Rate"
+info2_uuid	string [1 1] "FFE0"
+info2_name	string [1 1] "Custom"
+info3_uuid	string [1 1] "12345678-1234-1234-1234-123456789ABC"
+info3_name	string [1 1] "Custom"
+info4_uuid	string [1 1] "EF680100-9B35-4933-9B10-52FFA9740042"
+info4_name	string [1 1] "Thingy Configuration Service"
+info5_uuid	string [1 1] "2A37"
+info5_name	string [1 1] "Heart Rate Measurement"
+info6_uuid	string [1 1] "FFE1"
+info6_name	string [1 1] "Custom"
+info7_uuid	string [1 1] "2A37"
+info7_name	string [1 1] "Custom"
+info8_uuid	string [1 1] "2A00"
+info8_name	string [1 1] "Device Name"
+info9_uuid	string [1 1] "12345678-1234-1234-1234-123456789ABC"
+info9_name	string [1 1] "Custom"
+info10_uuid	string [1 1] "2902"
+info10_name	string [1 1] "Client Characteristic Configuration"
+info11_uuid	string [1 1] "ABCD"
+info11_name	string [1 1] "Custom"
+info12_uuid	string [1 1] "12345678-1234-1234-1234-123456789ABC"
+info12_name	string [1 1] "Custom"
+chr_uuid_name	ERR MATLAB:minrhs Not enough input arguments.
+chr_uuid_num	ERR MATLAB:minrhs Not enough input arguments.
+chr_uuid_bad	ERR MATLAB:minrhs Not enough input arguments.
+desc_uuid_bad	ERR MATLAB:ble:ble:invalidDescriptorUUIDValue Invalid value for descriptor. See characteristic object for list of valid descriptor values.
+svc_ambiguous	string [1 1] "0000180A-0000-1000-8000-00805F9B34FB"
+svc_char_vec	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_17bit	ERR MATLAB:ble:ble:invalidServiceUUIDValue Invalid value for service. See <a href="https://www.bluetooth.com/specifications/gatt/services">Bluetooth SIG webpage</a> for a list of valid services.
+svc_frac	ERR MATLAB:ble:ble:invalidServiceUUIDValue Invalid value for service. See <a href="https://www.bluetooth.com/specifications/gatt/services">Bluetooth SIG webpage</a> for a list of valid services.
+svc_uint16	string [1 1] "0000180D-0000-1000-8000-00805F9B34FB"
+svc_5hex	ERR MATLAB:ble:ble:invalidServiceUUIDValue Invalid value for service. See <a href="https://www.bluetooth.com/specifications/gatt/services">Bluetooth SIG webpage</a> for a list of valid services.
+svc_8hex	ERR MATLAB:ble:ble:invalidServiceUUIDValue Invalid value for service. See <a href="https://www.bluetooth.com/specifications/gatt/services">Bluetooth SIG webpage</a> for a list of valid services.
+range_uint8class	uint8 [1 1] 5
+range_int16class	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_uint16class	uint8 [1 2] [2 1]
+range_uint16over	ERR MATLAB:ble:ble:invalidDataRanged Data must be between 0 and 65535.
+range_uint64	uint8 [1 8] [0 0 0 0 0 0 32 0]
+range_uint64class	uint8 [1 8] [255 255 255 255 255 255 255 255]
+range_column	uint8 [2 1] [1;2]
+range_uint32over	ERR MATLAB:ble:ble:invalidDataRanged Data must be between 0 and 4294967295.
+range_uint16msg	ERR MATLAB:ble:ble:invalidDataRanged Data must be between 0 and 65535.
+range_uint32msg	ERR MATLAB:ble:ble:invalidDataRanged Data must be between 0 and 4294967295.
+range_uint64msg	ERR MATLAB:ble:ble:invalidDataRanged Data must be between 0 and 18446744073709551615.
+range_charhigh	uint8 [1 1] 255
+range_strarr	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_complex	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.
+range_inf	ERR MATLAB:ble:ble:invalidDataType Invalid data type. Data must be a scalar or an array of integers.

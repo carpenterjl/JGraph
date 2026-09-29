@@ -136,8 +136,12 @@ bitxor	1	5
 blackman	1	2
 blackmanharris	1	2
 blanks	1	2
+ble	1	2
+blelist	1	2
 blkdiag	1	2
 blockproc	1	2
+bluetooth	1	2
+bluetoothlist	1	2
 bohmanwin	1	2
 bootci	ERR:MATLAB:narginout:notValidMfile	0
 bootstrp	ERR:MATLAB:narginout:notValidMfile	0

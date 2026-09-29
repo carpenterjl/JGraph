@@ -62,7 +62,13 @@ $anchors = @(
     # process. JGraph.Scripting references it, which carries the executable and its runtimeconfig
     # into the publish; without them every native call fails on a missing host.
     "JGraph.NativeHost.exe",
-    "JGraph.NativeHost.runtimeconfig.json"
+    "JGraph.NativeHost.runtimeconfig.json",
+
+    # Bluetooth (ADR 0186): JGraph.Devices loads its Windows backend and the WinRT projection from
+    # the application folder at run time; without them bluetooth, ble and their lists fail to load.
+    "JGraph.Devices.Bluetooth.dll",
+    "Microsoft.Windows.SDK.NET.dll",
+    "WinRT.Runtime.dll"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

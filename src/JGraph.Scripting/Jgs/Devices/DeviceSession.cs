@@ -52,6 +52,53 @@ internal sealed class DeviceSession
         }
     }
 
+    /// <summary>
+    /// The classic device the last <c>bluetooth</c> object deleted was connected to: what
+    /// <c>bluetooth()</c> with no argument reconnects to (R2025b's LastConnectionInfo).
+    /// </summary>
+    public (string Name, ulong Address, int Channel)? LastBluetooth { get; set; }
+
+    /// <summary>
+    /// Every peripheral a <c>blelist</c> or <c>ble</c> scan has heard, by address: its name and
+    /// whether it accepts connections (blelib's Utility.getDevices), what <c>ble(name)</c> matches.
+    /// </summary>
+    public Dictionary<string, (string Name, bool Connectable)> BleSeen { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The simulated Bluetooth <c>jgraph.internal.btsim('on')</c> installed on this session's thread.</summary>
+    public JGraph.Devices.Simulation.SimulatedBluetooth? BluetoothSimulation { get; private set; }
+
+    /// <summary>Installs the simulated Bluetooth for scripts on the calling thread, or answers the one installed.</summary>
+    public JGraph.Devices.Simulation.SimulatedBluetooth StartBluetoothSimulation()
+    {
+        if (BluetoothSimulation is null)
+        {
+            BluetoothSimulation = new JGraph.Devices.Simulation.SimulatedBluetooth();
+        }
+
+        JGraph.Devices.Bluetooth.BluetoothBackends.Simulate(BluetoothSimulation);
+        return BluetoothSimulation;
+    }
+
+    /// <summary>Removes the simulated Bluetooth: the device objects on it are deleted first.</summary>
+    public void StopBluetoothSimulation()
+    {
+        if (BluetoothSimulation is null)
+        {
+            return;
+        }
+
+        foreach (DeviceObject device in Live.Where(static d => d is BluetoothObject or BleObject))
+        {
+            device.Delete();
+        }
+
+        JGraph.Devices.Bluetooth.BluetoothBackends.Simulate(null);
+        BluetoothSimulation.Dispose();
+        BluetoothSimulation = null;
+        BleSeen.Clear();
+        LastBluetooth = null;
+    }
+
     /// <summary>The TCP echo server <c>echotcpip("on", port)</c> started, until <c>echotcpip("off")</c>.</summary>
     public JGraph.Devices.Network.EchoServer? EchoTcp { get; set; }
 

@@ -50,6 +50,25 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) => NetworkUtilities.ResolveHost(host, args, wanted, line, col),
         }));
 
+        // Stage D3: Bluetooth classic and Low Energy. The lists print their pointer to each other only
+        // when nobody takes their answer, so they are told the output count.
+        Keeping("bluetooth", (args, line, col) => BluetoothObject.Create(host.Devices, interpreter, args, line, col));
+        Keeping("ble", (args, line, col) => BleObject.Create(host.Devices, interpreter, args, line, col));
+        env.Builtins.Register("bluetoothlist", JgsValue.Function(new BuiltinFunction("bluetoothlist",
+            (args, line, col) => BluetoothObject.List(host, interpreter, args, 1, line, col))
+        {
+            KeepsStringArguments = true,
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) => [BluetoothObject.List(host, interpreter, args, wanted, line, col)],
+        }));
+        env.Builtins.Register("blelist", JgsValue.Function(new BuiltinFunction("blelist",
+            (args, line, col) => BleObject.List(host.Devices, interpreter, args, 1, line, col))
+        {
+            KeepsStringArguments = true,
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) => [BleObject.List(host.Devices, interpreter, args, wanted, line, col)],
+        }));
+
         // internal.Serialport.clearPreferences(): the hidden static method R2025b's own tests use.
         env.Builtins.RegisterConstant("internal", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
@@ -99,6 +118,48 @@ internal static partial class JgsBuiltins
             }
 
             host.Devices.Simulate(name, peer);
+            return JgsValue.Null;
+        })
+        {
+            BindsAnsAsStatement = false,
+        });
+
+    /// <summary>
+    /// <c>jgraph.internal.btsim('on')</c>: the simulated Bluetooth for this session (device classes plan,
+    /// stage D3), with the classic peer <c>JGraphPeer</c> on channel 1 and the peripheral of the same
+    /// name; <c>btsim('off')</c> removes it, <c>btsim('radio', 'on'|'off'|'missing')</c> sets its radio,
+    /// <c>btsim('drop')</c> drops every peripheral's link. It ends with the run. Test-only and undocumented.
+    /// </summary>
+    private static JgsValue BluetoothSimFunction(Interpreter interpreter) =>
+        JgsValue.Function(new BuiltinFunction("jgraph.internal.btsim", (args, line, col) =>
+        {
+            JGraphScriptGlobals host = interpreter.Host
+                ?? throw new JgsRuntimeException(line, col, "JGraph:btsim:Arguments", "This session has no host.");
+            string verb = args.Count >= 1 && IsTextScalar(args[0]) ? TextOf(args[0]) : "";
+            switch (verb)
+            {
+                case "on" when args.Count == 1:
+                    host.Devices.StartBluetoothSimulation();
+                    break;
+                case "off" when args.Count == 1:
+                    host.Devices.StopBluetoothSimulation();
+                    break;
+                case "drop" when args.Count == 1:
+                    host.Devices.StartBluetoothSimulation().DisconnectAll();
+                    break;
+                case "radio" when args.Count == 2 && IsTextScalar(args[1]) && TextOf(args[1]) is "on" or "off" or "missing":
+                    host.Devices.StartBluetoothSimulation().Radio = TextOf(args[1]) switch
+                    {
+                        "on" => JGraph.Devices.Bluetooth.BluetoothRadioState.On,
+                        "off" => JGraph.Devices.Bluetooth.BluetoothRadioState.Off,
+                        _ => JGraph.Devices.Bluetooth.BluetoothRadioState.Missing,
+                    };
+                    break;
+                default:
+                    throw new JgsRuntimeException(line, col, "JGraph:btsim:Arguments",
+                        "jgraph.internal.btsim takes 'on', 'off', 'drop', or 'radio' and 'on', 'off' or 'missing'.");
+            }
+
             return JgsValue.Null;
         })
         {
