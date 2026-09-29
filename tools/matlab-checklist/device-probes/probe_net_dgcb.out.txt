@@ -1,0 +1,17 @@
+fresh_3	double [1 1] 1
+fresh_3_nda	double [1 1] 3
+fresh_4	double [1 1] 2
+fresh_8	double [1 1] 4
+fresh_8_nda	double [1 1] 8
+waiting_3_at_set	double [1 1] 0
+waiting_3_after_pause	double [1 1] 0
+waiting_plus_1	double [1 1] 2
+paced_5	double [1 1] 2
+read_between	double [1 1] 1
+read_between_3	double [1 1] 1
+count1_2	double [1 1] 2
+count2_after_count1	double [1 1] 2
+byte_9_by3	double [1 1] 2
+second_client	ERR MATLAB:networklib:tcpclient:cannotCreateObject Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: get_option: The file handle supplied is not valid | See <a href="matlab: helpview('matlab', 'tcpclient_connectError')">related documentation</a> for troubleshooting steps.
+after_first_left	OUT
+after_first_left_connected	logical [1 1] true

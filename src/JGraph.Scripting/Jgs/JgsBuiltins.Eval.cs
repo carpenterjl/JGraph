@@ -75,6 +75,9 @@ internal static partial class JgsBuiltins
 
         // Device classes plan, stage 2: the serial port's objects belong to the session.
         "serialport", "serialportlist", "serialportfind", "internal",
+
+        // Stage D2: the network clients and servers, their finds, the echo servers and resolvehost.
+        "tcpclient", "tcpserver", "udpport", "tcpclientfind", "tcpserverfind", "udpportfind", "echotcpip", "echoudp", "resolvehost",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>

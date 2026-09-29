@@ -103,8 +103,10 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,151 of
-2,024** as of device classes stage D1 (ADR 0184), which added `serialportlist` beside `serialport` and
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,152 of
+2,024** as of device classes stage D2 (ADR 0185), which added `echotcpip` beside `tcpclient`,
+`tcpserver`, `udpport`, `echoudp`, `resolvehost` and the three finds, which the list does not name;
+1,151 as of device classes stage D1 (ADR 0184), which added `serialportlist` beside `serialport` and
 `serialportfind`, which the list does not name; 1,150 as of interop stage I10 (ADR 0183), which added
 `methodsview` and `libfunctionsview`; 1,148 as of
 interop stage I9 (ADR 0182), which added `libpointer` and `libstruct`; 1,146 as of

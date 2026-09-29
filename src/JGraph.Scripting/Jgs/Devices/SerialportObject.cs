@@ -16,27 +16,29 @@ namespace JGraph.Scripting.Jgs.Devices;
 internal sealed class SerialportObject : DeviceObject
 {
     /// <summary>The serialport interface's settings on the shared client (internal.Serialport's registries).</summary>
-    internal static readonly TransportInterface Interface = new(
-        Name: "serialport",
-        ObjectName: "s",
-        CapitalName: "Serialport",
-        PrecisionRequired: true,
-        TransportlibIds: new HashSet<string>(StringComparer.Ordinal)
+    internal static readonly TransportInterface Interface = new()
+    {
+        Name = "serialport",
+        ObjectName = "s",
+        CapitalName = "Serialport",
+        PrecisionRequired = true,
+        TransportlibIds = new HashSet<string>(StringComparer.Ordinal)
         {
             "IncorrectInputArgumentsSingular", "IncorrectInputArgumentsPlural", "IncorrectBytesAvailableModeSyntax",
             "InvalidBytesAvailableFcn", "InvalidTerminator", "NoICTLicense", "InvalidErrorOccurredFcn", "ReadOnlyProperty",
         },
-        GenericClientIds: new HashSet<string>(StringComparer.Ordinal) { "expectedInteger", "expectedNonZero", "invalidType" },
-        WarningIds: new HashSet<string>(StringComparer.Ordinal) { "ReadWarning", "ReadlineWarning", "ReadbinblockWarning" },
-        ReadFailedId: "seriallib:serial:readFailed",
-        ReadFailedLead: "Error reading data from the serial port.",
-        ExtraSyntax: new Dictionary<string, string>(StringComparer.Ordinal)
+        GenericClientIds = new HashSet<string>(StringComparer.Ordinal) { "expectedInteger", "expectedNonZero", "invalidType" },
+        WarningIds = new HashSet<string>(StringComparer.Ordinal) { "ReadWarning", "ReadlineWarning", "ReadbinblockWarning" },
+        ReadFailedId = "seriallib:serial:readFailed",
+        ReadFailedLead = "Error reading data from the serial port.",
+        ExtraSyntax = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["getpinstatus"] = "getpinstatus({0})",
             ["setRTS"] = "setRTS({0},FLAG)",
             ["setDTR"] = "setDTR({0},FLAG)",
             ["serialbreak"] = "serialbreak({0},TIME)",
-        });
+        },
+    };
 
     private const string ConnectionLostText =
         "Unable to detect connection to the serialport device. Ensure that the device is plugged in and create a new serialport object.";

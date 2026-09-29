@@ -1,0 +1,11 @@
+udp_twice_plain	ERR instrument:interface:udpport:ConnectFailed Unable to bind to LOCALHOST and LOCALPORT. Verify that the LOCALPORT is not in use, and that LOCALHOST and LOCALPORT are valid for IPADDRESSVERSION "IPV4". | See <a href="matlab: helpview('instrument', 'udpport_connectError')">related documentation</a> for troubleshooting steps.
+udp_shared_then_plain	ERR instrument:interface:udpport:ConnectFailed Unable to bind to LOCALHOST and LOCALPORT. Verify that the LOCALPORT is not in use, and that LOCALHOST and LOCALPORT are valid for IPADDRESSVERSION "IPV4". | See <a href="matlab: helpview('instrument', 'udpport_connectError')">related documentation</a> for troubleshooting steps.
+udp_shared_then_shared	char [1 20] 'udpport.byte.UDPPort'
+echo_port_udpport_got	double [1 1] 3
+echo_port_sender_got	double [1 1] 0
+udp_then_echo	OUT
+tcp_who_answers_server	logical [1 1] true
+tcp_who_answers_echo	double [1 1] 0
+tcp_server_on_echo	OUT
+tcp_server_twice	ERR instrument:interface:tcpserver:cannotConnect Only one usage of each socket address (protocol/network address/port) is normally permitted | See <a href="matlab: helpview('instrument', 'tcpserver_connectError')">related documentation</a> for troubleshooting steps.
+tcp_server_twice_loop	OUT

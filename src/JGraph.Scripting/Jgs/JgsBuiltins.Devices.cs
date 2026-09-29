@@ -32,6 +32,24 @@ internal static partial class JgsBuiltins
             KeepsStringArguments = true,
         }));
 
+        // Stage D2: the network clients and servers, their finds, the echo servers and resolvehost.
+        void Keeping(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true }));
+        Keeping("tcpclient", (args, line, col) => TcpclientObject.Create(host.Devices, interpreter, args, line, col));
+        Keeping("tcpserver", (args, line, col) => TcpserverObject.Create(host.Devices, interpreter, args, line, col));
+        Keeping("udpport", (args, line, col) => UdpportObject.Create(host.Devices, interpreter, args, line, col));
+        Keeping("tcpclientfind", (args, line, col) => NetworkShared.Find(host.Devices, static d => d is TcpclientObject, args, line, col));
+        Keeping("tcpserverfind", (args, line, col) => NetworkShared.Find(host.Devices, static d => d is TcpserverObject, args, line, col));
+        Keeping("udpportfind", (args, line, col) => NetworkShared.Find(host.Devices, static d => d is UdpportObject, args, line, col));
+        Keeping("echotcpip", (args, line, col) => NetworkUtilities.Echo(host.Devices, tcp: true, args, line, col));
+        Keeping("echoudp", (args, line, col) => NetworkUtilities.Echo(host.Devices, tcp: false, args, line, col));
+        env.Builtins.Register("resolvehost", JgsValue.Function(new BuiltinFunction("resolvehost",
+            (args, line, col) => NetworkUtilities.ResolveHost(host, args, 1, line, col)[0])
+        {
+            KeepsStringArguments = true,
+            MultiOutput = (args, wanted, line, col) => NetworkUtilities.ResolveHost(host, args, wanted, line, col),
+        }));
+
         // internal.Serialport.clearPreferences(): the hidden static method R2025b's own tests use.
         env.Builtins.RegisterConstant("internal", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {

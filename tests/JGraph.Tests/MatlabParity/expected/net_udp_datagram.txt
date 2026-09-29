@@ -1,0 +1,55 @@
+CHK|class|udpport.datagram.UDPPort|exact
+CHK|properties|cell:{char:Timeout;char:ByteOrder;char:OutputDatagramSize;char:UserData;char:EnableBroadcast;char:EnableMulticast;char:EnableMulticastLoopback;char:MulticastGroup;char:EnablePortSharing;char:IPAddressVersion;char:LocalHost;char:LocalPort;char:DatagramsAvailableFcnCount;char:NumDatagramsAvailable;char:NumDatagramsWritten;char:DatagramsAvailableFcnMode;char:DatagramsAvailableFcn;char:ErrorOccurredFcn;char:Tag}|exact
+CHK|methods|cell:{char:UDPPort;char:addlistener;char:configureCallback;char:configureMulticast;char:delete;char:eq;char:findobj;char:findprop;char:flush;char:ge;char:get;char:gt;char:isvalid;char:le;char:listener;char:lt;char:ne;char:notify;char:read;char:set;char:write}|exact
+CHK|prop_NumDatagramsAvailable|double:0|exact
+CHK|prop_NumDatagramsWritten|double:0|exact
+CHK|prop_DatagramsAvailableFcnMode|string:off|exact
+CHK|prop_DatagramsAvailableFcnCount|double:1|exact
+CHK|prop_OutputDatagramSize|double:512|exact
+CHK|prop_IPAddressVersion|string:IPV4|exact
+CHK|prop_LocalHost|string:0.0.0.0|exact
+CHK|prop_ByteOrder|string:little-endian|exact
+CHK|prop_Timeout|double:1|exact
+CHK|prop_Tag|string:|exact
+CHK|prop_fcn_empty|logical:1|exact
+CHK|no_bytes_written|MATLAB:noSuchMethodOrField|exact
+CHK|no_readline|MATLAB:UndefinedFunction|exact
+CHK|write_nodest|instrument:interface:udpport:EmptyRemoteHostAndPort ## Specify destination address and destination port using the write function. Valid syntaxes are / write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) / write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)|exact
+CHK|read_none|instrument:interface:udpport:IncorrectInputArgumentsPlural ## Incorrect number of input arguments for "read". Valid syntaxes are / DATA = read(u,COUNT) / DATA = read(u,COUNT,PRECISION)|exact
+CHK|read_str|MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 2, count, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was string.|exact
+CHK|read_zero|double:[] [0 0]|exact
+CHK|cb_bad_mode|MATLAB:configureCallback:unrecognizedStringChoice ## Expected MODE to match one of these values: / 'datagram', 'off' / The input, 'byte', did not match any of the valid values.|exact
+CHK|cb_nofcn|instrument:interface:udpport:IncorrectInputArgumentsPlural ## Incorrect number of input arguments for "configureCallback". Valid syntaxes are / configureCallback(u,"off") / configureCallback(u,"datagram",COUNT,CALLBACKFCN)|exact
+CHK|cb_zero|instrument:interface:udpport:InvalidEntry ## Expected DatagramsAvailableFcnCount to be a scalar with value > 0.|exact
+CHK|cb_notfcn|instrument:interface:udpport:InvalidEntry ## Expected input to be one of these types: / function_handle / Instead its type was double.|exact
+CHK|flush_bad|MATLAB:flush:unrecognizedStringChoice ## Expected input number 2, BUFFER, to match one of these values: / 'input', 'output' / The input, 'sideways', did not match any of the valid values.|exact
+CHK|set_count|instrument:interface:udpport:ReadOnly ## To set "DatagramsAvailableFcnCount", use the "configureCallback" function.|exact
+CHK|set_mode|instrument:interface:udpport:ReadOnly ## To set "DatagramsAvailableFcnMode", use the "configureCallback" function.|exact
+CHK|nda|double:2|exact
+CHK|ndw|double:2|exact
+CHK|dg_class|udpport.datagram.Datagram|exact
+CHK|dg_size|double:[1 1]|exact
+CHK|dg_data|double:[1 2 3 4 5]|exact
+CHK|dg_sender|string:127.0.0.1|exact
+CHK|dg_senderport|logical:1|exact
+CHK|dg_uint16|double:1798|exact
+CHK|dg_two_size|double:[1 2]|exact
+CHK|dg_two_data1|double:[1 2 3]|exact
+CHK|dg_two_data2|double:[4 5 6]|exact
+CHK|dg_char|char:ABC|exact
+CHK|dg_string|string:ABC|exact
+CHK|dg_odd|network:udp:receiveFailed ## Error receiving data from the remote server. / Additional Information: The first input must contain a multiple of 2 elements to convert from real uint8 (8 bits) to real uint16 (16 bits).|exact
+CHK|dg_odd_consumed|double:0|exact
+CHK|dg_fewer_class|udpport.datagram.Datagram|exact
+CHK|dg_fewer_size|double:[1 1]|exact
+CHK|dg_fewer_warn|instrument:interface:udpport:ReadWarning ## Specified amount of data was not returned within the Timeout period for "read". / 'udpport' unable to read all requested data. For more information on possible reasons, see udpport Read Warnings.|exact
+CHK|dg_timeout|double:[] [0 0]|exact
+CHK|dg_timeout_warn|instrument:interface:udpport:ReadWarning ## Specified amount of data was not returned within the Timeout period for "read". / 'udpport' unable to read any data. For more information on possible reasons, see udpport Read Warnings.|exact
+CHK|dg_badprec_nodata|double:[] [0 0]|exact
+CHK|dg_badprec_warn|instrument:interface:udpport:ReadWarning ## Specified amount of data was not returned within the Timeout period for "read". / 'udpport' unable to read any data. For more information on possible reasons, see udpport Read Warnings.|exact
+CHK|cb_mode|string:datagram|exact
+CHK|cb_calls|double:2|exact
+CHK|cb_first|cell:{char:udpport.datagram.UDPPort;char:udpport.datagram.DatagramAvailableInfo;char:DatagramsAvailableFcnCount,AbsoluteTime;double:1;char:datetime}|exact
+CHK|cb_two_calls|double:2|exact
+CHK|cb_off_mode|string:off|exact
+CHK|flushed|double:0|exact

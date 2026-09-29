@@ -6,20 +6,61 @@ namespace JGraph.Scripting.Jgs.Devices;
 /// <summary>
 /// What one interface (<c>serialport</c>, <c>tcpclient</c>, …) sets on the shared client: its name in
 /// R2025b's sentences, the object name its syntax lines use, whether <c>read</c> and <c>write</c> must
-/// be given a precision, and the identifiers its <c>ErrorRegistry</c> renames.
+/// be given a precision, the identifiers its <c>ErrorRegistry</c> renames, and the ways its own client
+/// class departs from GenericClient (tcpclient's <c>TCPCustomClient</c> reads in the precision's own
+/// class, with no partial reads, and wraps the transport's refusals in its own identifiers).
 /// </summary>
-internal sealed record TransportInterface(
-    string Name,
-    string ObjectName,
-    string CapitalName,
-    bool PrecisionRequired,
-    IReadOnlySet<string> TransportlibIds,
-    IReadOnlySet<string> GenericClientIds,
-    IReadOnlySet<string> WarningIds,
-    string ReadFailedId,
-    string ReadFailedLead,
-    IReadOnlyDictionary<string, string> ExtraSyntax)
+internal sealed class TransportInterface
 {
+    public required string Name { get; init; }
+
+    public required string ObjectName { get; init; }
+
+    /// <summary>The name in <c>MATLAB:&lt;Name&gt;:x</c> identifiers GenericClient's are renamed to.</summary>
+    public string CapitalName { get; init; } = "";
+
+    public bool PrecisionRequired { get; init; }
+
+    /// <summary>The <c>transportlib:client:X</c> identifiers renamed to <see cref="ErrorPrefix"/> + X.</summary>
+    public IReadOnlySet<string> TransportlibIds { get; init; } = new HashSet<string>();
+
+    /// <summary>What a renamed identifier starts with: <c>serialport:serialport:</c>.</summary>
+    public string? ErrorPrefix { get; init; }
+
+    public IReadOnlySet<string> GenericClientIds { get; init; } = new HashSet<string>();
+
+    public IReadOnlySet<string> WarningIds { get; init; } = new HashSet<string>();
+
+    public string ReadFailedId { get; init; } = "transportlib:transport:readFailed";
+
+    public string ReadFailedLead { get; init; } = "Error reading data from the transport.";
+
+    public IReadOnlyDictionary<string, string> ExtraSyntax { get; init; } = new Dictionary<string, string>();
+
+    /// <summary>tcpclient's read: the precision's own class, <c>read(t)</c> reads what is waiting, and a short read is an error.</summary>
+    public bool NativeReads { get; init; }
+
+    /// <summary>The identifier a read's transport refusal is wrapped in, with its message kept (tcpclient's readFailed).</summary>
+    public string? ReadErrorWrap { get; init; }
+
+    /// <summary>The same for a write (tcpclient's writeFailed).</summary>
+    public string? WriteErrorWrap { get; init; }
+
+    /// <summary>Whether <c>write(obj, data)</c> with no precision writes the data's own class (tcpclient) rather than uint8.</summary>
+    public bool WriteInDataClass { get; init; }
+
+    /// <summary>The syntax lines of <c>read</c> when the interface words them itself.</summary>
+    public string? ReadSyntax { get; init; }
+
+    /// <summary>The event class a "byte" callback receives: serialport's DataAvailableInfo, or the shared ByteAvailableInfo.</summary>
+    public bool SharedEventInfo { get; init; }
+
+    /// <summary>What flush's refusal calls its second input: "buffer", or udpport's "BUFFER".</summary>
+    public string FlushBufferWord { get; init; } = "buffer";
+
+    /// <summary>The words of a lost connection (the interface's ConnectionLost message).</summary>
+    public string ConnectionLostText { get; init; } = "Unable to detect connection to the device. Ensure that the device is plugged in and create a new object.";
+
     /// <summary>The identifier a <c>transportlib:client:X</c> or <c>MATLAB:GenericClient:x</c> error surfaces as.</summary>
     public string Translate(string id)
     {
@@ -27,7 +68,7 @@ internal sealed record TransportInterface(
         const string Generic = "MATLAB:GenericClient:";
         if (id.StartsWith(Client, StringComparison.Ordinal) && TransportlibIds.Contains(id[Client.Length..]))
         {
-            return $"{Name}:{Name}:{id[Client.Length..]}";
+            return (ErrorPrefix ?? $"{Name}:{Name}:") + id[Client.Length..];
         }
 
         if (id.StartsWith(Generic, StringComparison.Ordinal) && GenericClientIds.Contains(id[Generic.Length..]))
@@ -39,7 +80,7 @@ internal sealed record TransportInterface(
     }
 
     /// <summary>The identifier a <c>transportlib:client:XWarning</c> warning surfaces as.</summary>
-    public string TranslateWarning(string key) => WarningIds.Contains(key) ? $"{Name}:{Name}:{key}" : $"transportlib:client:{key}";
+    public string TranslateWarning(string key) => WarningIds.Contains(key) ? (ErrorPrefix ?? $"{Name}:{Name}:") + key : $"transportlib:client:{key}";
 
     /// <summary>A method's valid syntax lines (UserNotificationHandler.ValidInputArgsSyntax).</summary>
     public string Syntax(string method)
@@ -47,7 +88,8 @@ internal sealed record TransportInterface(
         string o = ObjectName;
         return method switch
         {
-            "read" => PrecisionRequired ? $"DATA = read({o},COUNT,PRECISION)" : $"DATA = read({o},COUNT)\nDATA = read({o},COUNT,PRECISION)",
+            "read" => ReadSyntax is { } own ? own.Replace("{0}", o, StringComparison.Ordinal)
+                : PrecisionRequired ? $"DATA = read({o},COUNT,PRECISION)" : $"DATA = read({o},COUNT)\nDATA = read({o},COUNT,PRECISION)",
             "readline" => $"DATA = readline({o})",
             "readbinblock" => $"DATA = readbinblock({o})\nDATA = readbinblock({o},PRECISION)",
             "write" => PrecisionRequired ? $"write({o},DATA,PRECISION)" : $"write({o},DATA)\nwrite({o},DATA,PRECISION)",
@@ -156,6 +198,11 @@ internal sealed class TransportClient
     /// <summary><c>data = read(obj, count, precision)</c>.</summary>
     public JgsValue Read(DeviceCall call)
     {
+        if (Spec.NativeReads)
+        {
+            return ReadNative(call);
+        }
+
         IReadOnlyList<JgsValue> args = call.Args;
         JgsValue precisionArg;
         if (Spec.PrecisionRequired)
@@ -224,6 +271,100 @@ internal sealed class TransportClient
         };
     }
 
+    /// <summary>
+    /// tcpclient's read (TCPCustomClient): <c>read(t)</c> takes what is waiting, <c>read(t, n)</c> and
+    /// <c>read(t, n, precision)</c> wait for all of it or fail — no partial reads — and the answer is in
+    /// the precision's own class. The transport's refusals are wrapped in the interface's readFailed.
+    /// </summary>
+    private JgsValue ReadNative(DeviceCall call)
+    {
+        IReadOnlyList<JgsValue> args = call.Args.Select(Str2Char).ToArray();
+        if (args.Count > 2)
+        {
+            throw Spec.NarginPlural("read", call.Line, call.Column);
+        }
+
+        Precision precision;
+        long count;
+        try
+        {
+            precision = args.Count == 2 ? ParsePrecision(args[1], call) : Precision.UInt8;
+            if (args.Count >= 1)
+            {
+                var channel = new DeviceChecks.Subject("AsyncIOTransportChannel", "count", 2);
+                DeviceChecks.Classes(args[0], ["numeric"], channel, call.Line, call.Column);
+                DeviceChecks.Attributes(args[0], ["scalar", "nonnegative", "integer"], channel, call.Line, call.Column);
+                count = (long)DeviceChecks.Numbers(args[0]).First();
+            }
+            else
+            {
+                count = Transport.Input.Count / PrecisionCodec.Size(precision);
+            }
+        }
+        catch (JgsRuntimeException e) when (Spec.ReadErrorWrap is { } wrap)
+        {
+            throw call.Error(wrap, e.Message);
+        }
+
+        LiveTransport(call);
+        if (count == 0)
+        {
+            return JgsEmpty.Zero();
+        }
+
+        long wanted = count * PrecisionCodec.Size(precision);
+        if (!WaitWithTimers(() => Transport.Input.Count >= wanted, call))
+        {
+            ThrowIfLost(call, 0);
+            throw call.Error(Spec.ReadErrorWrap ?? Spec.ReadFailedId,
+                "Error receiving data from the remote server.\nAdditional Information: Operation timed out before requested data was received.");
+        }
+
+        byte[] bytes = Transport.Input.Take((int)wanted);
+        return precision switch
+        {
+            Precision.Char => JgsValue.Str(PrecisionCodec.Latin1(bytes)),
+            Precision.String => JgsValue.StringScalar(PrecisionCodec.Latin1(bytes)),
+            _ => TypedRow(PrecisionCodec.Decode(bytes, precision, BigEndian), precision),
+        };
+    }
+
+    /// <summary>A row in the class a precision names.</summary>
+    public static JgsValue TypedRow(double[] values, Precision precision)
+    {
+        JgsValue row = Row(values);
+        row.SetNumericClass(precision switch
+        {
+            Precision.UInt8 => JgsNumericClass.UInt8,
+            Precision.Int8 => JgsNumericClass.Int8,
+            Precision.UInt16 => JgsNumericClass.UInt16,
+            Precision.Int16 => JgsNumericClass.Int16,
+            Precision.UInt32 => JgsNumericClass.UInt32,
+            Precision.Int32 => JgsNumericClass.Int32,
+            Precision.UInt64 => JgsNumericClass.UInt64,
+            Precision.Int64 => JgsNumericClass.Int64,
+            Precision.Single => JgsNumericClass.Single,
+            _ => JgsNumericClass.Double,
+        });
+        return row;
+    }
+
+    /// <summary>The precision a value's own class writes in, for a write given none (tcpclient).</summary>
+    private static Precision PrecisionOfData(JgsValue data) => DeviceChecks.ClassOf(data) switch
+    {
+        "uint8" => Precision.UInt8,
+        "int8" => Precision.Int8,
+        "uint16" => Precision.UInt16,
+        "int16" => Precision.Int16,
+        "uint32" => Precision.UInt32,
+        "int32" => Precision.Int32,
+        "uint64" => Precision.UInt64,
+        "int64" => Precision.Int64,
+        "single" => Precision.Single,
+        "double" => Precision.Double,
+        _ => Precision.Char,
+    };
+
     /// <summary><c>write(obj, data, precision)</c>.</summary>
     public void Write(DeviceCall call)
     {
@@ -248,8 +389,18 @@ internal sealed class TransportClient
             precisionArg = args.Count == 2 ? args[1] : JgsValue.Str("uint8");
         }
 
-        double[] values = WriteData(args[0], call);
-        Precision precision = ParsePrecision(precisionArg, call);
+        double[] values;
+        Precision precision;
+        try
+        {
+            values = WriteData(args[0], call);
+            precision = args.Count == 1 && Spec.WriteInDataClass ? PrecisionOfData(Str2Char(args[0])) : ParsePrecision(Str2Char(precisionArg), call);
+        }
+        catch (JgsRuntimeException e) when (Spec.WriteErrorWrap is { } wrap)
+        {
+            throw call.Error(wrap, e.Message);
+        }
+
         LiveTransport(call);
         Send(PrecisionCodec.Encode(values, precision, BigEndian), call);
     }
@@ -567,7 +718,7 @@ internal sealed class TransportClient
         bool output = true;
         if (call.Args.Count == 1)
         {
-            var who = new DeviceChecks.Subject("flush", "buffer", 2);
+            var who = new DeviceChecks.Subject("flush", Spec.FlushBufferWord, 2);
             DeviceChecks.Classes(call.Args[0], ["char", "string"], who, call.Line, call.Column);
             DeviceChecks.Attributes(call.Args[0], ["nonempty"], who, call.Line, call.Column);
             string buffer = DeviceChecks.ValidateString(call.Args[0], ["input", "output"], who, call.Line, call.Column);
@@ -728,7 +879,13 @@ internal sealed class TransportClient
             return;
         }
 
-        var info = new DataAvailableInfo(Owner.Session, Owner.Interpreter, count, at);
+        DeviceObject info = !Spec.SharedEventInfo
+            ? new DataAvailableInfo(Owner.Session, Owner.Interpreter, count, at)
+            : BytesAvailableFcnMode == "byte"
+                ? new SharedEventInfo(Owner.Session, Owner.Interpreter, "matlabshared.transportlib.internal.ByteAvailableInfo", "ByteAvailableInfo",
+                    [("BytesAvailableFcnCount", JgsValue.Number(count)), ("AbsoluteTime", JgsBuiltins.DatetimeValue(at))])
+                : new SharedEventInfo(Owner.Session, Owner.Interpreter, "matlabshared.transportlib.internal.TerminatorAvailableInfo", "TerminatorAvailableInfo",
+                    [("AbsoluteTime", JgsBuiltins.DatetimeValue(at))]);
         try
         {
             JgsCallbacks.Invoke(callback.AsCallable, [JgsValue.External(Owner), JgsValue.External(info)], 0, 0);
@@ -788,6 +945,26 @@ internal sealed class TransportClient
     /// <summary>The sentence a lost connection prints (the interface's <c>ConnectionLost</c> message).</summary>
     public string ConnectionLostMessage { get; init; } =
         "Unable to detect connection to the device. Ensure that the device is plugged in and create a new object.";
+
+    /// <summary>The event object of a callback: its class, short name and properties (fixed at the event).</summary>
+    public sealed class SharedEventInfo : DeviceObject
+    {
+        private readonly DeviceClass _class;
+
+        public SharedEventInfo(DeviceSession session, Interpreter interpreter, string className, string shortName, (string Name, JgsValue Value)[] values)
+            : base(session, interpreter)
+        {
+            _class = new DeviceClass(className, shortName, ["handle"],
+                values.Select(static v => new DeviceProperty(v.Name, (_, _) => v.Value)).ToList(),
+                new Dictionary<string, DeviceMethodBody>(StringComparer.Ordinal), [], values.Select(static v => v.Name).ToList());
+        }
+
+        public override DeviceClass Class => _class;
+
+        protected override void OnDelete()
+        {
+        }
+    }
 
     // --- shared pieces -----------------------------------------------------------------------------------
 

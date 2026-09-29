@@ -190,6 +190,7 @@ internal static class JgsRunner
             // debug run) hands the session its dispatcher back rather than leaving none.
             JgsCallbackDispatcher.Install(displaced);
             globals.CloseAllFiles(); // whatever fopen left open dies with the run
+            globals.StopEchoServers(); // and echotcpip's and echoudp's servers
             globals.StopNativeHost(); // and the native host with every library it loaded (ADR 0180)
         }
     }

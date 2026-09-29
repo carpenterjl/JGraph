@@ -13,7 +13,7 @@ internal static class DeviceChecks
     /// <summary>Who is being checked: the function the identifier names, the variable's name, its position.</summary>
     internal readonly record struct Subject(string? Function, string? Name, int Index = 0)
     {
-        public string Words => Index > 0 ? $"input number {Index}, {Name}," : Name ?? "input";
+        public string Words => Index > 0 ? (Name is null ? $"input number {Index}" : $"input number {Index}, {Name},") : Name ?? "input";
 
         public string Id(string key) => Function is null ? $"MATLAB:{key}" : $"MATLAB:{Function}:{key}";
     }
@@ -68,6 +68,29 @@ internal static class DeviceChecks
     {
         foreach (string attribute in attributes)
         {
+            // Bounds are written "ge:1", "le:65535": "a scalar with value >= 1", as validateattributes words them.
+            if (attribute.Length > 3 && attribute[2] == ':' && attribute[..2] is "ge" or "le" or "gt" or "lt")
+            {
+                double bound = double.Parse(attribute[3..], System.Globalization.CultureInfo.InvariantCulture);
+                string op = attribute[..2] switch { "ge" => ">=", "le" => "<=", "gt" => ">", _ => "<" };
+                Func<double, bool> ok = attribute[..2] switch
+                {
+                    "ge" => x => x >= bound,
+                    "le" => x => x <= bound,
+                    "gt" => x => x > bound,
+                    _ => x => x < bound,
+                };
+                if (Any(value, x => !ok(x)))
+                {
+                    string what = Count(value) == 1 ? $"a scalar with value {op} {bound.ToString(System.Globalization.CultureInfo.InvariantCulture)}"
+                        : $"an array with all of the values {op} {bound.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+                    string key = attribute[..2] switch { "ge" => "notGreaterEqual", "le" => "notLessEqual", "gt" => "notGreater", _ => "notLess" };
+                    throw Expected(who, key, what, line, col);
+                }
+
+                continue;
+            }
+
             switch (attribute)
             {
                 case "scalar" when Count(value) != 1:

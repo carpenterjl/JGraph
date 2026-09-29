@@ -1,0 +1,59 @@
+CHK|tcp_none|instrument:echotcpip:invalidSyntaxState ## Incorrect input combination. Valid syntaxes are echotcpip("on",port) and echotcpip("off").|exact
+CHK|tcp_on_only|instrument:echotcpip:invalidSyntaxPort ## Not enough input arguments. Specify port number.|exact
+CHK|tcp_three|instrument:echotcpip:invalidSyntaxArgv ## Incorrect input combination. Valid syntaxes are echotcpip("on",port) and echotcpip("off").|exact
+CHK|tcp_bad_state|instrument:echotcpip:invalidSyntaxStateBool ## State must be either "on" or "off".|exact
+CHK|tcp_num_state|instrument:echotcpip:invalidSyntaxStateBool ## State must be either "on" or "off".|exact
+CHK|tcp_off_port|instrument:echotcpip:invalidSyntaxOff ## Incorrect input combination. Valid syntaxes are echotcpip("on",port) and echotcpip("off").|exact
+CHK|tcp_port_zero|instrument:echotcpip:invalidSyntax ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|tcp_port_big|instrument:echotcpip:invalidSyntax ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|tcp_port_str|instrument:echotcpip:invalidSyntax ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|tcp_port_neg|instrument:echotcpip:invalidSyntax ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|tcp_port_nan|instrument:echotcpip:invalidSyntax ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|tcp_port_vec|instrument:echotcpip:invalidSyntax ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|tcp_port_int|instrument:echotcpip:createError ## Port number must be a positive double that is less than 2^16.|exact
+CHK|tcp_off_idle|none|exact
+CHK|tcp_on|none|exact
+CHK|tcp_on_again|instrument:echotcpip:running ## TCP/IP echo server at port PORT is already on.|exact
+CHK|tcp_on_other|instrument:echotcpip:running ## TCP/IP echo server at port PORT is already on.|exact
+CHK|tcp_echoed|uint8:[1 2 3]|exact
+CHK|tcp_prefix_off|none|exact
+CHK|tcp_off_twice|none|exact
+CHK|tcp_frac_down|none|exact
+CHK|tcp_nargout|MATLAB:TooManyOutputs|exact
+CHK|udp_none|instrument:echoudp:invalidSyntaxState ## Incorrect input combination. Valid syntaxes are echoudp("on",port) and echoudp("off").|exact
+CHK|udp_on_only|instrument:echoudp:invalidSyntaxPort ## Not enough input arguments. Specify port number.|exact
+CHK|udp_three|instrument:echoudp:invalidSyntaxArgv ## Incorrect input combination. Valid syntaxes are echoudp("on",port) and echoudp("off").|exact
+CHK|udp_bad_state|instrument:echoudp:invalidSyntaxBool ## State must be either "on" or "off".|exact
+CHK|udp_off_port|instrument:echoudp:invalidSyntax ## Incorrect input combination. Valid syntaxes are echoudp("on",port) and echoudp("off").|exact
+CHK|udp_port_zero|instrument:echoudp:invalidSyntaxPortRange ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|udp_port_str|instrument:echoudp:invalidSyntaxPortRange ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|udp_port_vec|instrument:echoudp:invalidSyntaxPortRange ## Port number must be an integer between 1 and 65535, inclusive.|exact
+CHK|udp_off_idle|none|exact
+CHK|udp_on|none|exact
+CHK|udp_on_again|instrument:echoudp:running ## UDP echo server at port PORT is already on.|exact
+CHK|udp_echoed|double:[1 2 3]|exact
+CHK|udp_off|none|exact
+CHK|rh_none|instrument:resolvehost:invalidSyntaxHost ## HOST must be specified.|exact
+CHK|rh_three|instrument:resolvehost:invalidSyntaxArgv ## Too many input arguments.|exact
+CHK|rh_num|instrument:resolvehost:invalidSyntaxHostString ## Invalid HOST. HOST must be a character vector or string.|exact
+CHK|rh_flag_num|instrument:resolvehost:invalidSyntaxFlagString ## Invalid FLAG. FLAG must be a character vector or string.|exact
+CHK|rh_flag_bad|instrument:resolvehost:invalidSyntaxFlag ## Invalid FLAG. FLAG must be either 'name' or 'address'.|exact
+CHK|rh_three_out|instrument:resolvehost:invalidSyntaxRetv|exact
+CHK|rh_name|char:localhost|exact
+CHK|rh_char|char:localhost|exact
+CHK|rh_two_name|char:localhost|exact
+CHK|rh_two_addr|char:127.0.0.1|exact
+CHK|rh_flag_addr|char:127.0.0.1|exact
+CHK|rh_flag_prefix|char:localhost|exact
+CHK|rh_empty|char:|exact
+CHK|rh_blank|char:|exact
+CHK|rh_upper|char:localhost|exact
+CHK|rh_badip|char:|exact
+CHK|rh_badip_warn|instrument:resolvehost:invalidIPaddress ## Invalid IP address. A valid IP address has the format x.x.x.x where x ranges between 0 and 255.|exact
+CHK|rh_three_dots|char:|exact
+CHK|rh_ip_addr|char:127.0.0.1|exact
+CHK|rh_bad_name|char:|exact
+CHK|rh_bad_addr|char:|exact
+CHK|rh_ip_is_machine|logical:1|exact
+CHK|rh_ip_two_addr|char:127.0.0.1|exact
+CHK|rh_ip_name|logical:1|exact

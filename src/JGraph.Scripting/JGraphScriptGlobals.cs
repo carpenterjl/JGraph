@@ -720,6 +720,21 @@ public sealed class JGraphScriptGlobals
     /// <summary>The session's device objects and simulated ports (device classes plan).</summary>
     internal Jgs.Devices.DeviceSession Devices => _devices ??= new Jgs.Devices.DeviceSession(this);
 
+    /// <summary>
+    /// Stops the echo servers <c>echotcpip</c> and <c>echoudp</c> started: they end with the run or the
+    /// console session, as fopen's files do (R2025b's end with MATLAB).
+    /// </summary>
+    internal void StopEchoServers()
+    {
+        if (_devices is { } devices)
+        {
+            devices.EchoTcp?.Dispose();
+            devices.EchoTcp = null;
+            devices.EchoUdp?.Dispose();
+            devices.EchoUdp = null;
+        }
+    }
+
     /// <summary>Ends the native host, if the session started one; every library it loaded goes with it.</summary>
     internal void StopNativeHost()
     {

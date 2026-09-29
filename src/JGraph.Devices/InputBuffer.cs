@@ -109,6 +109,15 @@ public sealed class InputBuffer
         }
     }
 
+    /// <summary>Wakes every waiter without adding bytes: something a waiter's condition reads has changed.</summary>
+    public void Pulse()
+    {
+        lock (_gate)
+        {
+            Monitor.PulseAll(_gate);
+        }
+    }
+
     /// <summary>Marks the connection as ended; every waiter wakes and the fault is kept.</summary>
     public void SetFault(Exception fault)
     {

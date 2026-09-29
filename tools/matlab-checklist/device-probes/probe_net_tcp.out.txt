@@ -1,0 +1,125 @@
+echo_on_noport	ERR MATLAB:TooManyOutputs Too many output arguments.
+echo_none	ERR instrument:echotcpip:invalidSyntaxState Incorrect input combination. Valid syntaxes are echotcpip("on",port) and echotcpip("off").
+echo_bad	ERR instrument:echotcpip:invalidSyntaxStateBool State must be either "on" or "off".
+echo_off_port	ERR instrument:echotcpip:invalidSyntaxOff Incorrect input combination. Valid syntaxes are echotcpip("on",port) and echotcpip("off").
+class	char [1 9] 'tcpclient'
+isa_handle	logical [1 1] true
+properties	cell [15 1] {char [1 7] 'Address'; char [1 4] 'Port'; char [1 17] 'NumBytesAvailable'; char [1 15] 'NumBytesWritten'; char [1 14] 'ConnectTimeout'; char [1 19] 'EnableTransferDelay'; char [1 7] 'Timeout'; char [1 8] 'UserData'; char [1 9] 'ByteOrder'; char [1 10] 'Terminator'; char [1 17] 'BytesAvailableFcn'; char [1 22] 'BytesAvailableFcnCount'; char [1 21] 'BytesAvailableFcnMode'; char [1 16] 'ErrorOccurredFcn'; char [1 3] 'Tag'}
+methods	cell [27 1] {char [1 11] 'addlistener'; char [1 17] 'configureCallback'; char [1 19] 'configureTerminator'; char [1 6] 'delete'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 21] 'matlabCodegenRedirect'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 12] 'readbinblock'; char [1 8] 'readline'; char [1 3] 'set'; char [1 9] 'tcpclient'; char [1 5] 'write'; char [1 13] 'writebinblock'; char [1 9] 'writeline'; char [1 9] 'writeread'}
+prop_Address	char [1 9] '127.0.0.1'
+prop_Port	double [1 1] 50231
+prop_NumBytesAvailable	double [1 1] 0
+prop_NumBytesWritten	double [1 1] 0
+prop_ConnectTimeout	double [1 1] Inf
+prop_EnableTransferDelay	logical [1 1] true
+prop_Timeout	double [1 1] 1
+prop_UserData	double [0 0] []
+prop_ByteOrder	string [1 1] "little-endian"
+prop_Terminator	string [1 1] "LF"
+prop_BytesAvailableFcn	function_handle [0 0]
+prop_BytesAvailableFcnCount	double [1 1] 64
+prop_BytesAvailableFcnMode	string [1 1] "off"
+prop_ErrorOccurredFcn	function_handle [0 0]
+prop_Tag	string [1 1] ""
+echo	OUT | t = | tcpclient with properties: | Address: '127.0.0.1' | Port: 50231 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+echoed_nba	double [1 1] 40
+read_all	uint8 [1 40] [0 0 0 0 0 0 240 63 0 0 0 0 0 0 0 64 0 0 0 0 0 0 8 64 0 0 0 0 0 0 16 64 0 0 0 0 0 0 20 64]
+read_count	uint8 [1 2] [1 2]
+read_count_prec	uint16 [1 1] 1027
+read_rest	uint8 [1 1] 5
+read_timeout	ERR MATLAB:networklib:tcpclient:readFailed Error receiving data from the remote server. | Additional Information: Operation timed out before requested data was received.
+read_timeout_took	double [1 1] 1
+read_timeout_warn	char [0 0] ''
+read_partial	uint8 [1 5] [0 0 0 0 0]
+read_partial_left	double [1 1] 11
+read_empty	double [0 0] []
+read_none_arg	double [0 0] []
+read_too_many	ERR transportlib:client:IncorrectInputArgumentsPlural Invalid number of input arguments for 'read'. Valid syntaxes are | DATA = read(t) | DATA = read(t,COUNT) | DATA = read(t,COUNT,PRECISION)
+read_bad_prec	ERR MATLAB:networklib:tcpclient:readFailed Expected input number 3, precision, to match one of these values: | 'uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64', 'single', 'double', 'char', 'string' | The input, 'uint9', did not match any of the valid values.
+write_none	ERR MATLAB:TooManyOutputs Too many output arguments.
+write_logical	ERR MATLAB:networklib:tcpclient:writeFailed Expected input number 2, data, to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, string, char | Instead its type was logical.
+write_char	OUT
+write_char_back	uint8 [1 2] [65 90]
+readline	string [1 1] "hi"
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'tcpclient' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'tcpclient_nodata')"'>tcpclient Read Warnings</a>.] 
+readline_timeout	double [0 0] []
+readline_timeout_warn	char [1 300] 'transportlib:client:ReadlineWarning ## The specified amount of data was not returned within the Timeout period for 'readline'. | 'tcpclient' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument', 'tcpclient_nodata')"'>tcpclient Read Warnings</a>.'
+writeread	string [1 1] "abc"
+binblock_roundtrip	double [1 3] [1 2 3]
+timeout_set	OUT | t = | tcpclient with properties: | Address: '127.0.0.1' | Port: 50231 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+timeout_bad	ERR MATLAB:TCPClient:expectedNonnegative Expected TIMEOUT to be nonnegative.
+timeout_int	ERR Stream:timeout:invalidTime Timeout must be a non-negative scalar double.
+connecttimeout_set	ERR MATLAB:class:SetProhibited Unable to set the 'ConnectTimeout' property of class '<a href="matlab:doc tcpclient">tcpclient</a>' because it is read-only.
+transferdelay_set	ERR MATLAB:class:SetProhibited Unable to set the 'EnableTransferDelay' property of class '<a href="matlab:doc tcpclient">tcpclient</a>' because it is read-only.
+address_set	ERR MATLAB:class:SetProhibited Unable to set the 'Address' property of class '<a href="matlab:doc tcpclient">tcpclient</a>' because it is read-only.
+byteorder_bad	ERR transportlib:client:InvalidType Expected input to match one of these values: | 'little-endian', 'big-endian' | The input, 'x', did not match any of the valid values.
+terminator_set	ERR transportlib:client:ReadOnlyProperty To set "Terminator", use the "configureTerminator" function.
+bafm_set	ERR transportlib:client:ReadOnlyProperty To set "BytesAvailableFcnMode", use the "configureCallback" function.
+bafm_after	string [1 1] "off"
+bafc_set	ERR transportlib:client:ReadOnlyProperty To set "BytesAvailableFcnCount", use the "configureCallback" function.
+baf_set	ERR transportlib:client:ReadOnlyProperty To set "BytesAvailableFcn", use the "configureCallback" function.
+tag_set	OUT | t = | tcpclient with properties: | Address: '127.0.0.1' | Port: 50231 | Tag: "x" | NumBytesAvailable: 0 | Show all properties, functions |
+cb_log	cell [1 80] {char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'; char [1 9] 'tcpclient'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 2; char [1 8] 'datetime'}
+find	char [1 9] 'tcpclient'
+find_tag	tcpclient [1 1] <a href="matlab:helpPopup('tcpclient')" style="font-weight:bold">tcpclient</a> with properties: | Address: '127.0.0.1' | Port: 50231 | Tag: "x" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'tcpclient'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'tcpclient'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+ctor_none	ERR MATLAB:minrhs Not enough input arguments.
+ctor_one	ERR MATLAB:networklib:tcpclient:cannotCreateObject Not enough input arguments.
+ctor_badport	ERR MATLAB:networklib:tcpclient:cannotCreateObject Expected input number 2, PORT, to be a scalar with value >= 1.
+ctor_bigport	ERR MATLAB:networklib:tcpclient:cannotCreateObject Expected input number 2, PORT, to be a scalar with value <= 65535.
+ctor_strport	ERR MATLAB:networklib:tcpclient:cannotCreateObject Expected input number 2, PORT, to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 | Instead its type was string.
+ctor_numaddr	ERR MATLAB:networklib:tcpclient:cannotCreateObject Expected input number 1, ADDRESS, to be one of these types: | char | Instead its type was double.
+ctor_emptyaddr	ERR MATLAB:networklib:tcpclient:cannotCreateObject Expected input number 1, ADDRESS, to be nonempty.
+ctor_refused	ERR MATLAB:networklib:tcpclient:cannotCreateObject Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: No connection could be made because the target machine actively refused it | See <a href="matlab: helpview('matlab', 'tcpclient_connectError')">related documentation</a> for troubleshooting steps.
+ctor_odd	ERR MATLAB:networklib:tcpclient:cannotCreateObject The input arguments contain unmatched set of parameter name-value pairs.
+ctor_bad_nv	ERR MATLAB:networklib:tcpclient:cannotCreateObject 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+ctor_bad_timeout	ERR MATLAB:networklib:tcpclient:cannotCreateObject The value of 'Timeout' is invalid. It must satisfy the function: isnumeric.
+ctor_badhost	ERR MATLAB:networklib:tcpclient:cannotCreateObject Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: resolve: No such host is known | See <a href="matlab: helpview('matlab', 'tcpclient_connectError')">related documentation</a> for troubleshooting steps.
+ctor_partial	double [1 1] 3
+ctor_transferdelay	logical [1 1] false
+ctor_transferdelay_bad	ERR MATLAB:networklib:tcpclient:cannotCreateObject The value of 'EnableTransferDelay' is invalid. It must satisfy the function: @(x)islogical(x)&&isscalar(x).
+ctor_connecttimeout	double [1 1] 5
+ctor_localhost	char [1 9] 'localhost'
+after_echo_off	ERR MATLAB:networklib:tcpclient:cannotCreateObject Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: get_option: The file handle supplied is not valid | See <a href="matlab: helpview('matlab', 'tcpclient_connectError')">related documentation</a> for troubleshooting steps.
+server_none	ERR instrument:interface:tcpserver:cannotCreateObject Invalid number of input arguments for 'tcpserver'. Valid syntaxes are | t = tcpserver(SERVERPORT) | t = tcpserver(SERVERADDRESS,SERVERPORT) | t = tcpserver(SERVERADDRESS,SERVERPORT,NAME,VALUE)
+server_zero	ERR instrument:interface:tcpserver:cannotCreateObject Expected SERVERPORT to be a scalar with value >= 1.
+server_odd	ERR instrument:interface:tcpserver:cannotCreateObject Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.
+server_bad_nv	ERR instrument:interface:tcpserver:cannotCreateObject 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+server_num_str	ERR instrument:interface:tcpserver:cannotCreateObject Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.
+server_class	char [1 28] 'tcpserver.internal.TCPServer'
+server_properties	cell [17 1] {char [1 13] 'ServerAddress'; char [1 10] 'ServerPort'; char [1 9] 'Connected'; char [1 13] 'ClientAddress'; char [1 10] 'ClientPort'; char [1 17] 'NumBytesAvailable'; char [1 15] 'NumBytesWritten'; char [1 7] 'Timeout'; char [1 9] 'ByteOrder'; char [1 10] 'Terminator'; char [1 21] 'BytesAvailableFcnMode'; char [1 22] 'BytesAvailableFcnCount'; char [1 17] 'BytesAvailableFcn'; char [1 16] 'ErrorOccurredFcn'; char [1 8] 'UserData'; char [1 20] 'ConnectionChangedFcn'; char [1 3] 'Tag'}
+server_methods	cell [25 1] {char [1 9] 'TCPServer'; char [1 11] 'addlistener'; char [1 17] 'configureCallback'; char [1 19] 'configureTerminator'; char [1 6] 'delete'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 12] 'readbinblock'; char [1 8] 'readline'; char [1 3] 'set'; char [1 5] 'write'; char [1 13] 'writebinblock'; char [1 9] 'writeline'}
+sprop_ServerAddress	string [1 1] "127.0.0.1"
+sprop_ServerPort	double [1 1] 50231
+sprop_Connected	logical [1 1] false
+sprop_ClientAddress	string [1 1] ""
+sprop_ClientPort	double [0 0] []
+sprop_NumBytesAvailable	double [1 1] 0
+sprop_NumBytesWritten	double [1 1] 0
+sprop_Timeout	double [1 1] 1
+sprop_ByteOrder	string [1 1] "little-endian"
+sprop_Terminator	string [1 1] "LF"
+sprop_BytesAvailableFcnMode	string [1 1] "off"
+sprop_BytesAvailableFcnCount	double [1 1] 64
+sprop_BytesAvailableFcn	function_handle [0 0]
+sprop_ErrorOccurredFcn	function_handle [0 0]
+sprop_UserData	double [0 0] []
+sprop_ConnectionChangedFcn	function_handle [0 0]
+sprop_Tag	string [1 1] ""
+server_write_unconnected	ERR instrument:interface:tcpserver:NotConnectedWrite Failed to write from the server. A TCP/IP client must be connected to the server.
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'tcpserver' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'tcpserver_nodata')"'>tcpserver Read Warnings</a>.] 
+server_read_unconnected	double [0 0] []
+server_connected	logical [1 1] true
+server_clientaddr	string [1 1] "127.0.0.1"
+server_clientport_matches	logical [1 1] false
+server_conn_log	cell [1 9] {char [1 28] 'tcpserver.internal.TCPServer'; char [1 33] 'tcpserver.internal.ConnectionInfo'; char [1 64] 'Connected,ClientAddress,ClientPort,AbsoluteTime,Source,EventName'; logical [1 1] true; char [1 9] '127.0.0.1'; double [1 1] 61273; char [1 8] 'datetime'; char [1 31] 'tcpserver.internal.EventHandler'; char [1 14] 'ConnectionInfo'}
+server_read	double [1 3] [0 0 0]
+client_read	uint8 [1 3] [4 5 6]
+server_second_client	ERR MATLAB:networklib:tcpclient:cannotCreateObject Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: get_option: The file handle supplied is not valid | See <a href="matlab: helpview('matlab', 'tcpclient_connectError')">related documentation</a> for troubleshooting steps.
+server_after_disconnect	logical [1 1] false
+server_disc_log	cell [1 9] {char [1 28] 'tcpserver.internal.TCPServer'; char [1 33] 'tcpserver.internal.ConnectionInfo'; char [1 64] 'Connected,ClientAddress,ClientPort,AbsoluteTime,Source,EventName'; logical [1 1] false; char [0 0] ''; double [0 0] []; char [1 8] 'datetime'; char [1 31] 'tcpserver.internal.EventHandler'; char [1 14] 'ConnectionInfo'}
+server_find	char [1 28] 'tcpserver.internal.TCPServer'
+server_echo	OUT | srv = | TCPServer with properties: | ServerAddress: "127.0.0.1" | ServerPort: 50231 | Connected: 0 | ClientAddress: "" | ClientPort: [] | Tag: "" | NumBytesAvailable: 21 | Show all properties, functions |

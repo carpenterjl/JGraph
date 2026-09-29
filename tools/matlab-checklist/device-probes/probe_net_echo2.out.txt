@@ -1,0 +1,10 @@
+tcp_in_use	OUT
+udp_in_use	OUT
+tcp_frac_up	ERR MATLAB:networklib:tcpclient:cannotCreateObject Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: get_option: The file handle supplied is not valid | See <a href="matlab: helpview('matlab', 'tcpclient_connectError')">related documentation</a> for troubleshooting steps.
+tcp_frac_down	OUT
+tcp_port_neg	ERR instrument:echotcpip:invalidSyntax Port number must be an integer between 1 and 65535, inclusive.
+tcp_port_nan	ERR instrument:echotcpip:invalidSyntax Port number must be an integer between 1 and 65535, inclusive.
+tcp_port_vec	ERR instrument:echotcpip:invalidSyntax Port number must be an integer between 1 and 65535, inclusive.
+tcp_port_int	ERR instrument:echotcpip:createError Port number must be a positive double that is less than 2^16.
+udp_port_str	ERR instrument:echoudp:invalidSyntaxPortRange Port number must be an integer between 1 and 65535, inclusive.
+udp_port_vec	ERR instrument:echoudp:invalidSyntaxPortRange Port number must be an integer between 1 and 65535, inclusive.

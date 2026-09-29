@@ -52,13 +52,24 @@ internal sealed class DeviceSession
         }
     }
 
-    /// <summary>Deletes every live object: the session is ending.</summary>
+    /// <summary>The TCP echo server <c>echotcpip("on", port)</c> started, until <c>echotcpip("off")</c>.</summary>
+    public JGraph.Devices.Network.EchoServer? EchoTcp { get; set; }
+
+    /// <summary>The UDP echo server <c>echoudp("on", port)</c> started, until <c>echoudp("off")</c>.</summary>
+    public JGraph.Devices.Network.EchoServer? EchoUdp { get; set; }
+
+    /// <summary>Deletes every live object and stops the echo servers: the session is ending.</summary>
     public void CloseAll()
     {
         foreach (DeviceObject device in Live)
         {
             device.Delete();
         }
+
+        EchoTcp?.Dispose();
+        EchoTcp = null;
+        EchoUdp?.Dispose();
+        EchoUdp = null;
     }
 
     // --- the simulator's ports ------------------------------------------------------------------------

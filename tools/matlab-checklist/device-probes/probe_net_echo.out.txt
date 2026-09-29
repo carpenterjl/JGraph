@@ -1,0 +1,108 @@
+tcp_on_only	ERR instrument:echotcpip:invalidSyntaxPort Not enough input arguments. Specify port number.
+tcp_three	ERR instrument:echotcpip:invalidSyntaxArgv Incorrect input combination. Valid syntaxes are echotcpip("on",port) and echotcpip("off").
+tcp_port_zero	ERR instrument:echotcpip:invalidSyntax Port number must be an integer between 1 and 65535, inclusive.
+tcp_port_big	ERR instrument:echotcpip:invalidSyntax Port number must be an integer between 1 and 65535, inclusive.
+tcp_port_frac	OUT
+tcp_port_str	ERR instrument:echotcpip:invalidSyntax Port number must be an integer between 1 and 65535, inclusive.
+tcp_state_num	ERR instrument:echotcpip:invalidSyntaxStateBool State must be either "on" or "off".
+tcp_prefix	OUT
+tcp_off_idle	OUT
+tcp_on	OUT
+tcp_on_again	ERR instrument:echotcpip:running TCP/IP echo server at port 50250 is already on.
+tcp_on_other	ERR instrument:echotcpip:running TCP/IP echo server at port 50250 is already on.
+tcp_echoed	uint8 [1 3] [1 2 3]
+tcp_off	OUT
+tcp_off_twice	OUT
+udp_on_only	ERR instrument:echoudp:invalidSyntaxPort Not enough input arguments. Specify port number.
+udp_three	ERR instrument:echoudp:invalidSyntaxArgv Incorrect input combination. Valid syntaxes are echoudp("on",port) and echoudp("off").
+udp_off_port	ERR instrument:echoudp:invalidSyntax Incorrect input combination. Valid syntaxes are echoudp("on",port) and echoudp("off").
+udp_port_zero	ERR instrument:echoudp:invalidSyntaxPortRange Port number must be an integer between 1 and 65535, inclusive.
+udp_port_frac	OUT
+udp_off_idle	OUT
+udp_on	OUT
+udp_on_again	ERR instrument:echoudp:running UDP echo server at port 50252 is already on.
+udp_on_other	ERR instrument:echoudp:running UDP echo server at port 50252 is already on.
+udp_off	OUT
+rh_none	ERR instrument:resolvehost:invalidSyntaxHost HOST must be specified.
+rh_three	ERR instrument:resolvehost:invalidSyntaxArgv Too many input arguments.
+rh_num	ERR instrument:resolvehost:invalidSyntaxHostString Invalid HOST. HOST must be a character vector or string.
+rh_flag_num	ERR instrument:resolvehost:invalidSyntaxFlagString Invalid FLAG. FLAG must be a character vector or string.
+rh_flag_bad	ERR instrument:resolvehost:invalidSyntaxFlag Invalid FLAG. FLAG must be either 'name' or 'address'.
+rh_flag_addr	char [1 9] '127.0.0.1'
+rh_flag_prefix	char [1 9] 'localhost'
+rh_empty	char [0 0] ''
+rh_blank	char [0 0] ''
+rh_upper	char [1 9] 'localhost'
+[Warning: Invalid IP address. A valid IP address has the format x.x.x.x where x ranges between 0 and 255.] 
+rh_badip	char [0 0] ''
+rh_badip_warn	char [1 95] 'Invalid IP address. A valid IP address has the format x.x.x.x where x ranges between 0 and 255.'
+rh_three_dots	char [0 0] ''
+rh_ip_addr	char [1 9] '127.0.0.1'
+rh_bad_two	char [0 0] ''
+rh_ip_two_n	char [1 15] 'LAPTOP-P9HF1B7E'
+rh_ip_two_a	char [1 9] '127.0.0.1'
+rh_three_out	ERR instrument:resolvehost:invalidSyntaxRetv Too many output arguments.
+u_write_nodest	ERR instrument:interface:udpport:EmptyRemoteHostAndPort Specify destination address and destination port using the write function. Valid syntaxes are | write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) | write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)
+u_writeline_nodest	ERR instrument:interface:udpport:EmptyRemoteHostAndPort Specify destination address and destination port using the writeline function. Valid syntax is writeline(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT).
+u_write_badhost	ERR instrument:interface:udpport:InvalidRemoteEndpoint Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: | Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: resolve: No such host is known | Unable to create remote endpoint.
+u_write_portstr	ERR instrument:interface:udpport:InvalidRemoteEndpoint Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: | Comparison between string and double is not supported.
+u_write_portbig	ERR instrument:interface:udpport:InvalidRemoteEndpoint Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: | Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: Remote Port number must be positive and less than 2^16.
+u_write_five	ERR instrument:interface:udpport:IncorrectInputArgumentsPlural Incorrect number of input arguments for "write". Valid syntaxes are | write(u,DATA) | write(u,DATA,PRECISION) | write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) | write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)
+u_write_none	ERR instrument:interface:udpport:IncorrectInputArgumentsPlural Incorrect number of input arguments for "write". Valid syntaxes are | write(u,DATA) | write(u,DATA,PRECISION) | write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) | write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)
+u_writeline_two	ERR instrument:interface:udpport:IncorrectInputArgumentsPlural Incorrect number of input arguments for "writeline". Valid syntaxes are | writeline(u,DATA) | writeline(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT)
+u_nba	double [1 1] 3
+u_read_kept_dest	double [1 5] [1 2 3 4 5]
+u_readline	string [1 1] "abc"
+u_written	double [1 1] 9
+u_mc_bad	ERR instrument:interface:udpport:InvalidMulticastAddressGroup Unable to set the MulticastGroup to 10.0.0.1. set_option: The requested address is not valid in its context
+u_mc_none	ERR instrument:interface:udpport:IncorrectInputArgumentsPlural Incorrect number of input arguments for "configureMulticast". Valid syntaxes are | configureMulticast(u,ADDRESS) | configureMulticast(u,ADDRESS,LOOPBACK) | configureMulticast(u,"off")
+u_mc_num	ERR instrument:interface:udpport:InvalidEntry Expected input number 2, MULTICASTGROUP, to be one of these types: | char, string | Instead its type was double.
+u_mc_loop_num	ERR instrument:interface:udpport:InvalidEntry Expected ENABLEMULTICASTLOOPBACK to be one of these types: | logical | Instead its type was double.
+u_mc_state	cell [1 2] {logical [1 1] true; string [1 1] "239.1.1.1"}
+u_mc_off	OUT
+u_set_group	ERR instrument:interface:udpport:ReadOnly To set "MulticastGroup", use the "configureMulticast" function.
+u_set_enable_mc	ERR instrument:interface:udpport:ReadOnly To set "EnableMulticast", use the "configureMulticast" function.
+u_set_host	ERR instrument:interface:udpport:ReadOnly To set "LocalHost", use name-value pair arguments in the udpport constructor.
+u_set_ver	ERR instrument:interface:udpport:ReadOnly To set "IPAddressVersion", use the udpport constructor.
+u_set_share	ERR instrument:interface:udpport:ReadOnly To set "EnablePortSharing", use name-value pair arguments in the udpport constructor.
+u_set_term	ERR instrument:interface:udpport:ReadOnly To set "Terminator", use the "configureTerminator" function.
+d_show	OUT | d = | UDPPort with properties: | IPAddressVersion: "IPV4" | LocalHost: "0.0.0.0" | LocalPort: 55102 | Tag: "" | NumDatagramsAvailable: 0 | Show all properties, functions |
+d_read_none	ERR instrument:interface:udpport:IncorrectInputArgumentsPlural Incorrect number of input arguments for "read". Valid syntaxes are | DATA = read(u,COUNT) | DATA = read(u,COUNT,PRECISION)
+d_read_zero	OUT | ans = | [] |
+d_read_str	ERR MATLAB:AsyncIOTransportChannel:invalidType Expected input number 2, count, to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 | Instead its type was string.
+d_read_badprec	OUT [Warning: Specified amount of data was not returned within the Timeout period for "read". | 'udpport' unable to read any data. For more information on possible reasons, see udpport Read Warnings.] | ans = | [] |
+d_readline	ERR MATLAB:UndefinedFunction Undefined function 'readline' for input arguments of type 'udpport.datagram.UDPPort'.
+d_write_nodest	ERR instrument:interface:udpport:EmptyRemoteHostAndPort Specify destination address and destination port using the write function. Valid syntaxes are | write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) | write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)
+d_nda	double [1 1] 2
+d_ndw	double [1 1] 2
+d_read_bad_multiple	ERR network:udp:receiveFailed Error receiving data from the remote server. | Additional Information: The first input must contain a multiple of 2 elements to convert from real uint8 (8 bits) to real uint16 (16 bits).
+d_nda_after_bad	double [1 1] 1
+[Warning: Specified amount of data was not returned within the Timeout period for "read".
+'udpport' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'udpport_somedata')"'>udpport Read Warnings</a>.] 
+d_read_class	char [1 25] 'udpport.datagram.Datagram'
+d_read_size	double [1 2] [1 1]
+d_read_data1	double [1 2] [1 2]
+d_read_data2	ERR MATLAB:badsubscript Index exceeds the number of array elements. Index must not exceed 1.
+d_read_addr	string [1 1] "127.0.0.1"
+d_read_port	logical [1 1] true
+d_read_show	OUT | ans = | Datagram with properties: | Data: [1 2] | SenderAddress: "127.0.0.1" | SenderPort: 50254 |
+d_read_fields	cell [3 1] {char [1 4] 'Data'; char [1 13] 'SenderAddress'; char [1 10] 'SenderPort'}
+d_read_char	char [1 3] 'ABC'
+d_read_string	string [1 1] "ABC"
+d_read_odd_err	ERR network:udp:receiveFailed Error receiving data from the remote server. | Additional Information: The first input must contain a multiple of 2 elements to convert from real uint8 (8 bits) to real uint16 (16 bits).
+d_read_odd	OUT | ans = | "ABC" |
+[Warning: Specified amount of data was not returned within the Timeout period for "read".
+'udpport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'udpport_nodata')"'>udpport Read Warnings</a>.] 
+d_read_timeout	double [0 0] []
+d_read_timeout_warn	char [1 247] 'Specified amount of data was not returned within the Timeout period for "read". | 'udpport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument', 'udpport_nodata')"'>udpport Read Warnings</a>.'
+d_cb_bad	ERR MATLAB:configureCallback:unrecognizedStringChoice Expected MODE to match one of these values: | 'datagram', 'off' | The input, 'byte', did not match any of the valid values.
+d_cb_nofcn	ERR instrument:interface:udpport:IncorrectInputArgumentsPlural Incorrect number of input arguments for "configureCallback". Valid syntaxes are | configureCallback(u,"off") | configureCallback(u,"datagram",COUNT,CALLBACKFCN)
+d_cb_zero	ERR instrument:interface:udpport:InvalidEntry Expected DatagramsAvailableFcnCount to be a scalar with value > 0.
+d_cb_notfcn	ERR instrument:interface:udpport:InvalidEntry Expected input to be one of these types: | function_handle | Instead its type was double.
+d_flush_out	OUT
+d_flush_bad	ERR MATLAB:flush:unrecognizedStringChoice Expected input number 2, BUFFER, to match one of these values: | 'input', 'output' | The input, 'sideways', did not match any of the valid values.
+d_set_count	ERR instrument:interface:udpport:ReadOnly To set "DatagramsAvailableFcnCount", use the "configureCallback" function.
+d_methods	cell [21 1] {char [1 7] 'UDPPort'; char [1 11] 'addlistener'; char [1 17] 'configureCallback'; char [1 18] 'configureMulticast'; char [1 6] 'delete'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 3] 'set'; char [1 5] 'write'}
+d_props	cell [19 1] {char [1 7] 'Timeout'; char [1 9] 'ByteOrder'; char [1 18] 'OutputDatagramSize'; char [1 8] 'UserData'; char [1 15] 'EnableBroadcast'; char [1 15] 'EnableMulticast'; char [1 23] 'EnableMulticastLoopback'; char [1 14] 'MulticastGroup'; char [1 17] 'EnablePortSharing'; char [1 16] 'IPAddressVersion'; char [1 9] 'LocalHost'; char [1 9] 'LocalPort'; char [1 26] 'DatagramsAvailableFcnCount'; char [1 21] 'NumDatagramsAvailable'; char [1 19] 'NumDatagramsWritten'; char [1 25] 'DatagramsAvailableFcnMode'; char [1 21] 'DatagramsAvailableFcn'; char [1 16] 'ErrorOccurredFcn'; char [1 3] 'Tag'}

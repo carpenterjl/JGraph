@@ -1,0 +1,94 @@
+CHK|class|udpport.byte.UDPPort|exact
+CHK|properties|cell:{char:Timeout;char:ByteOrder;char:OutputDatagramSize;char:EnableBroadcast;char:EnableMulticast;char:EnableMulticastLoopback;char:MulticastGroup;char:EnablePortSharing;char:IPAddressVersion;char:LocalHost;char:LocalPort;char:ErrorOccurredFcn;char:UserData;char:Terminator;char:BytesAvailableFcnCount;char:BytesAvailableFcnMode;char:BytesAvailableFcn;char:NumBytesAvailable;char:NumBytesWritten;char:Tag}|exact
+CHK|methods|cell:{char:UDPPort;char:addlistener;char:configureCallback;char:configureMulticast;char:configureTerminator;char:delete;char:eq;char:findobj;char:findprop;char:flush;char:ge;char:get;char:gt;char:isvalid;char:le;char:listener;char:lt;char:ne;char:notify;char:read;char:readline;char:set;char:write;char:writeline}|exact
+CHK|prop_IPAddressVersion|string:IPV4|exact
+CHK|prop_LocalHost|string:0.0.0.0|exact
+CHK|prop_Tag|string:|exact
+CHK|prop_NumBytesAvailable|double:0|exact
+CHK|prop_ByteOrder|string:little-endian|exact
+CHK|prop_Timeout|double:1|exact
+CHK|prop_Terminator|string:LF|exact
+CHK|prop_EnablePortSharing|logical:0|exact
+CHK|prop_EnableBroadcast|logical:0|exact
+CHK|prop_EnableMulticast|logical:0|exact
+CHK|prop_EnableMulticastLoopback|logical:1|exact
+CHK|prop_MulticastGroup|string:|exact
+CHK|prop_BytesAvailableFcnMode|string:off|exact
+CHK|prop_BytesAvailableFcnCount|double:64|exact
+CHK|prop_OutputDatagramSize|double:512|exact
+CHK|prop_NumBytesWritten|double:0|exact
+CHK|prop_UserData|double:[] [0 0]|exact
+CHK|prop_BytesAvailableFcn_empty|logical:1|exact
+CHK|prop_ErrorOccurredFcn_empty|logical:1|exact
+CHK|prop_BytesAvailableFcn_class|function_handle|div=ADR0185|diverges|double
+CHK|prop_LocalPort|logical:1|exact
+CHK|write_nodest|instrument:interface:udpport:EmptyRemoteHostAndPort ## Specify destination address and destination port using the write function. Valid syntaxes are / write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) / write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)|exact
+CHK|write_nodest_prec|instrument:interface:udpport:EmptyRemoteHostAndPort ## Specify destination address and destination port using the write function. Valid syntaxes are / write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) / write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)|exact
+CHK|writeline_nodest|instrument:interface:udpport:EmptyRemoteHostAndPort ## Specify destination address and destination port using the writeline function. Valid syntax is writeline(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT).|exact
+CHK|write_none|instrument:interface:udpport:IncorrectInputArgumentsPlural ## Incorrect number of input arguments for "write". Valid syntaxes are / write(u,DATA) / write(u,DATA,PRECISION) / write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) / write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)|exact
+CHK|write_five|instrument:interface:udpport:IncorrectInputArgumentsPlural ## Incorrect number of input arguments for "write". Valid syntaxes are / write(u,DATA) / write(u,DATA,PRECISION) / write(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT) / write(u,DATA,PRECISION,DESTINATIONADDRESS,DESTINATIONPORT)|exact
+CHK|writeline_two|instrument:interface:udpport:IncorrectInputArgumentsPlural ## Incorrect number of input arguments for "writeline". Valid syntaxes are / writeline(u,DATA) / writeline(u,DATA,DESTINATIONADDRESS,DESTINATIONPORT)|exact
+CHK|write_badhost|instrument:interface:udpport:InvalidRemoteEndpoint ## Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: / Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. / Additional Information: resolve: No such host is known / Unable to create remote endpoint.|exact
+CHK|write_prec_as_host|instrument:interface:udpport:InvalidRemoteEndpoint ## Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: / Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. / Additional Information: resolve: No such host is known / Unable to create remote endpoint.|exact
+CHK|write_portstr|instrument:interface:udpport:InvalidRemoteEndpoint ## Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: / Comparison between string and double is not supported.|exact
+CHK|write_portbig|instrument:interface:udpport:InvalidRemoteEndpoint ## Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: / Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. / Additional Information: Remote Port number must be positive and less than 2^16.|exact
+CHK|echoed_nba|double:5|exact
+CHK|read|double:[1 2 3 4 5]|exact
+CHK|read_zero|MATLAB:GenericClient:expectedNonZero ## Expected input number 2, count, to be nonzero.|exact
+CHK|read_none|instrument:interface:udpport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'read'. Valid syntaxes are / DATA = read(u,COUNT) / DATA = read(u,COUNT,PRECISION)|exact
+CHK|read_prec|double:[513 1027]|exact
+CHK|read_rest|double:5|exact
+CHK|read_timeout|double:[] [0 0]|exact
+CHK|read_timeout_warn|transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'udpport' unable to read any data. For more information on possible reasons, see udpport Read Warnings.|exact
+CHK|kept_dest|double:[7 1 2]|exact
+CHK|data_dest|double:[1 2]|exact
+CHK|partial_timeout|double:[] [0 0]|exact
+CHK|partial_timeout_warn|transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'udpport' unable to read any data. For more information on possible reasons, see udpport Read Warnings.|exact
+CHK|partial_some|double:9|exact
+CHK|partial_some_warn|transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'udpport' unable to read all requested data. For more information on possible reasons, see udpport Read Warnings.|exact
+CHK|readline|string:hi|exact
+CHK|readline_kept|string:x|exact
+CHK|written|double:21|exact
+CHK|split_back|double:[1 2 3 4 5]|exact
+CHK|outputsize_bad|instrument:interface:udpport:InvalidEntry ## Expected OUTPUTDATAGRAMSIZE to be a scalar with value <= 65507.|exact
+CHK|localport_set|instrument:interface:udpport:ReadOnly ## To set "LocalPort", use name-value pair arguments in the udpport constructor.|exact
+CHK|localhost_set|instrument:interface:udpport:ReadOnly ## To set "LocalHost", use name-value pair arguments in the udpport constructor.|exact
+CHK|version_set|instrument:interface:udpport:ReadOnly ## To set "IPAddressVersion", use the udpport constructor.|exact
+CHK|sharing_set|instrument:interface:udpport:ReadOnly ## To set "EnablePortSharing", use name-value pair arguments in the udpport constructor.|exact
+CHK|terminator_set|instrument:interface:udpport:ReadOnly ## To set "Terminator", use the "configureTerminator" function.|exact
+CHK|group_set|instrument:interface:udpport:ReadOnly ## To set "MulticastGroup", use the "configureMulticast" function.|exact
+CHK|enable_mc_set|instrument:interface:udpport:ReadOnly ## To set "EnableMulticast", use the "configureMulticast" function.|exact
+CHK|timeout_bad|instrument:interface:udpport:InvalidEntry ## Expected TIMEOUT to be positive.|exact
+CHK|timeout_int|instrument:interface:udpport:InvalidEntry ## Expected TIMEOUT to be one of these types: / double / Instead its type was int32.|exact
+CHK|broadcast_after|logical:1|exact
+CHK|broadcast_bad|instrument:interface:udpport:InvalidEntry ## Expected FLAG to be one of these types: / logical / Instead its type was double.|exact
+CHK|mc_group|string:226.0.0.1|exact
+CHK|mc_enabled|logical:1|exact
+CHK|mc_loop|logical:1|exact
+CHK|mc_loop_off|logical:0|exact
+CHK|mc_group_off|string:|exact
+CHK|mc_enabled_off|logical:0|exact
+CHK|mc_bad|instrument:interface:udpport:InvalidMulticastAddressGroup ## Unable to set the MulticastGroup to 10.0.0.1. set_option: The requested address is not valid in its context|exact
+CHK|mc_none|instrument:interface:udpport:IncorrectInputArgumentsPlural ## Incorrect number of input arguments for "configureMulticast". Valid syntaxes are / configureMulticast(u,ADDRESS) / configureMulticast(u,ADDRESS,LOOPBACK) / configureMulticast(u,"off")|exact
+CHK|mc_num|instrument:interface:udpport:InvalidEntry ## Expected input number 2, MULTICASTGROUP, to be one of these types: / char, string / Instead its type was double.|exact
+CHK|mc_loop_num|instrument:interface:udpport:InvalidEntry ## Expected ENABLEMULTICASTLOOPBACK to be one of these types: / logical / Instead its type was double.|exact
+CHK|cb_calls|double:2|exact
+CHK|cb_first|cell:{char:udpport.byte.UDPPort;char:matlabshared.transportlib.internal.ByteAvailableInfo;char:BytesAvailableFcnCount,AbsoluteTime;double:3;char:datetime}|exact
+CHK|flush_bad|MATLAB:flush:unrecognizedStringChoice ## Expected input number 2, buffer, to match one of these values: / 'input', 'output' / The input, 'sideways', did not match any of the valid values.|exact
+CHK|find_class|udpport.byte.UDPPort|exact
+CHK|find_tag|udpport.byte.UDPPort|exact
+CHK|find_none|double:[] [0 0]|exact
+CHK|ctor_ipv6|string:IPV6|exact
+CHK|ctor_byte_ipv4|udpport.byte.UDPPort|exact
+CHK|ctor_bogus|MATLAB:unrecognizedStringChoice ## Expected input number 1 to match one of these values: / 'byte', 'datagram', 'IPV4', 'IPV6', 'LocalHost', 'LocalPort', 'Timeout', 'ByteOrder', 'OutputDatagramSize', 'EnablePortSharing', 'Tag' / The input, 'bogus', did not match any of the valid values.|exact
+CHK|ctor_second_bad|instrument:interface:udpport:IncorrectSecondArgument ## Invalid second argument.|exact
+CHK|ctor_odd|instrument:interface:udpport:UnmatchedPVPairs ## Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|ctor_bad_nv|MATLAB:InputParser:UnmatchedParameter ## 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|ctor_bad_port|instrument:interface:udpport:ConnectFailed ## Unable to bind to LOCALHOST and LOCALPORT. Verify that the LOCALPORT is not in use, and that LOCALHOST and LOCALPORT are valid for IPADDRESSVERSION "IPV4". / See related documentation for troubleshooting steps.|exact
+CHK|ctor_nv_first|double:3|exact
+CHK|ctor_nv_second|double:3|exact
+CHK|ctor_port_used|udpport.byte.UDPPort|exact
+CHK|ctor_port_shared|logical:1|exact
+CHK|ctor_localhost|string:127.0.0.1|exact
+CHK|ctor_outsize|double:100|exact
+CHK|ctor_tag|string:t|exact

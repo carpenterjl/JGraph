@@ -1,0 +1,110 @@
+echoudp_none	ERR instrument:echoudp:invalidSyntaxState Incorrect input combination. Valid syntaxes are echoudp("on",port) and echoudp("off").
+echoudp_bad	ERR instrument:echoudp:invalidSyntaxBool State must be either "on" or "off".
+class	char [1 20] 'udpport.byte.UDPPort'
+properties	cell [20 1] {char [1 7] 'Timeout'; char [1 9] 'ByteOrder'; char [1 18] 'OutputDatagramSize'; char [1 15] 'EnableBroadcast'; char [1 15] 'EnableMulticast'; char [1 23] 'EnableMulticastLoopback'; char [1 14] 'MulticastGroup'; char [1 17] 'EnablePortSharing'; char [1 16] 'IPAddressVersion'; char [1 9] 'LocalHost'; char [1 9] 'LocalPort'; char [1 16] 'ErrorOccurredFcn'; char [1 8] 'UserData'; char [1 10] 'Terminator'; char [1 22] 'BytesAvailableFcnCount'; char [1 21] 'BytesAvailableFcnMode'; char [1 17] 'BytesAvailableFcn'; char [1 17] 'NumBytesAvailable'; char [1 15] 'NumBytesWritten'; char [1 3] 'Tag'}
+methods	cell [24 1] {char [1 7] 'UDPPort'; char [1 11] 'addlistener'; char [1 17] 'configureCallback'; char [1 18] 'configureMulticast'; char [1 19] 'configureTerminator'; char [1 6] 'delete'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 8] 'readline'; char [1 3] 'set'; char [1 5] 'write'; char [1 9] 'writeline'}
+prop_IPAddressVersion	string [1 1] "IPV4"
+prop_LocalHost	string [1 1] "0.0.0.0"
+prop_LocalPort	double [1 1] 50241
+prop_Tag	string [1 1] ""
+prop_NumBytesAvailable	double [1 1] 0
+prop_ByteOrder	string [1 1] "little-endian"
+prop_Timeout	double [1 1] 1
+prop_Terminator	string [1 1] "LF"
+prop_EnablePortSharing	logical [1 1] false
+prop_EnableBroadcast	logical [1 1] false
+prop_EnableMulticast	logical [1 1] false
+prop_EnableMulticastLoopback	logical [1 1] true
+prop_MulticastGroup	string [1 1] ""
+prop_BytesAvailableFcnMode	string [1 1] "off"
+prop_BytesAvailableFcnCount	double [1 1] 64
+prop_BytesAvailableFcn	function_handle [0 0]
+prop_OutputDatagramSize	double [1 1] 512
+prop_NumBytesWritten	double [1 1] 0
+prop_ErrorOccurredFcn	function_handle [0 0]
+prop_UserData	double [0 0] []
+echo	OUT | u = | UDPPort with properties: | IPAddressVersion: "IPV4" | LocalHost: "0.0.0.0" | LocalPort: 50241 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+echoed_nba	double [1 1] 5
+read	double [1 5] [1 2 3 4 5]
+read_class	ERR MATLAB:GenericClient:expectedNonZero Expected input number 2, count, to be nonzero.
+read_prec	double [1 2] [513 1027]
+read_rest	double [1 1] 5
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'udpport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'udpport_nodata')"'>udpport Read Warnings</a>.] 
+read_timeout	double [0 0] []
+read_timeout_warn	char [1 286] 'transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. | 'udpport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument', 'udpport_nodata')"'>udpport Read Warnings</a>.'
+read_all_none	ERR instrument:interface:udpport:IncorrectInputArgumentsPlural Invalid number of input arguments for 'read'. Valid syntaxes are | DATA = read(u,COUNT) | DATA = read(u,COUNT,PRECISION)
+write_no_dest	OUT
+write_no_dest_prec	OUT
+write_after_dest	OUT
+write_after_dest_back	double [1 7] [1 2 3 1 2 3 7]
+write_bad_port	OUT
+write_bad_host	ERR instrument:interface:udpport:InvalidRemoteEndpoint Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: | Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: resolve: No such host is known | Unable to create remote endpoint.
+write_nargs	ERR instrument:interface:udpport:InvalidRemoteEndpoint Unable to write to the specified DESTINATIONADDRESS and DESTINATIONPORT. Additional information: | Cannot create a communication link with the remote server. Please check the input arguments(ADDRESS and PORT) and make sure the server is running. | Additional Information: resolve: No such host is known | Unable to create remote endpoint.
+write_data_dest	OUT
+write_data_dest_back	double [1 2] [1 2]
+readline	string [1 1] "hi"
+writeline_nodest_ok	OUT
+outputsize	OUT | u = | UDPPort with properties: | IPAddressVersion: "IPV4" | LocalHost: "0.0.0.0" | LocalPort: 50241 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+split_back	double [1 5] [1 2 3 4 5]
+outputsize_bad	ERR instrument:interface:udpport:InvalidEntry Expected OUTPUTDATAGRAMSIZE to be a scalar with value <= 65507.
+localport_set	ERR instrument:interface:udpport:ReadOnly To set "LocalPort", use name-value pair arguments in the udpport constructor.
+timeout_bad	ERR instrument:interface:udpport:InvalidEntry Expected TIMEOUT to be positive.
+timeout_int	ERR instrument:interface:udpport:InvalidEntry Expected TIMEOUT to be one of these types: | double | Instead its type was int32.
+broadcast_set	OUT | u = | UDPPort with properties: | IPAddressVersion: "IPV4" | LocalHost: "0.0.0.0" | LocalPort: 50241 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+broadcast_after	logical [1 1] true
+broadcast_bad	ERR instrument:interface:udpport:InvalidEntry Expected FLAG to be one of these types: | logical | Instead its type was double.
+multicast_on	OUT
+multicast_group	string [1 1] "226.0.0.1"
+multicast_enabled	logical [1 1] true
+multicast_loop	logical [1 1] true
+multicast_loop_off	OUT
+multicast_off	OUT
+multicast_group_off	string [1 1] ""
+multicast_bad	ERR instrument:interface:udpport:InvalidMulticastAddressGroup Unable to set the MulticastGroup to 10.0.0.1. set_option: The requested address is not valid in its context
+cb_log	cell [1 10] {char [1 20] 'udpport.byte.UDPPort'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 3; char [1 8] 'datetime'; char [1 20] 'udpport.byte.UDPPort'; char [1 52] 'matlabshared.transportlib.internal.ByteAvailableInfo'; char [1 35] 'BytesAvailableFcnCount,AbsoluteTime'; double [1 1] 3; char [1 8] 'datetime'}
+find	char [1 20] 'udpport.byte.UDPPort'
+ctor_ipv6	string [1 1] "IPV6"
+ctor_byte_ipv4	char [1 20] 'udpport.byte.UDPPort'
+ctor_bogus	ERR MATLAB:unrecognizedStringChoice Expected input number 1 to match one of these values: | 'byte', 'datagram', 'IPV4', 'IPV6', 'LocalHost', 'LocalPort', 'Timeout', 'ByteOrder', 'OutputDatagramSize', 'EnablePortSharing', 'Tag' | The input, 'bogus', did not match any of the valid values.
+ctor_second_bad	ERR instrument:interface:udpport:IncorrectSecondArgument Invalid second argument.
+ctor_odd	ERR instrument:interface:udpport:UnmatchedPVPairs Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.
+ctor_bad_nv	ERR MATLAB:InputParser:UnmatchedParameter 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+ctor_bad_port	ERR instrument:interface:udpport:ConnectFailed Unable to bind to LOCALHOST and LOCALPORT. Verify that the LOCALPORT is not in use, and that LOCALHOST and LOCALPORT are valid for IPADDRESSVERSION "IPV4". | See <a href="matlab: helpview('instrument', 'udpport_connectError')">related documentation</a> for troubleshooting steps.
+ctor_nv_first	double [1 1] 3
+ctor_nv_second	double [1 1] 3
+ctor_port_used	udpport.byte.UDPPort [1 1] <a href="matlab:helpPopup('udpport.byte.UDPPort')" style="font-weight:bold">UDPPort</a> with properties: | IPAddressVersion: "IPV4" | LocalHost: "0.0.0.0" | LocalPort: 50240 | Tag: "" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'udpport.byte.UDPPort'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'udpport.byte.UDPPort'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+ctor_port_shared	udpport.byte.UDPPort [1 1] <a href="matlab:helpPopup('udpport.byte.UDPPort')" style="font-weight:bold">UDPPort</a> with properties: | IPAddressVersion: "IPV4" | LocalHost: "0.0.0.0" | LocalPort: 50240 | Tag: "" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'udpport.byte.UDPPort'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'udpport.byte.UDPPort'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+dg_class	char [1 24] 'udpport.datagram.UDPPort'
+dg_properties	cell [19 1] {char [1 7] 'Timeout'; char [1 9] 'ByteOrder'; char [1 18] 'OutputDatagramSize'; char [1 8] 'UserData'; char [1 15] 'EnableBroadcast'; char [1 15] 'EnableMulticast'; char [1 23] 'EnableMulticastLoopback'; char [1 14] 'MulticastGroup'; char [1 17] 'EnablePortSharing'; char [1 16] 'IPAddressVersion'; char [1 9] 'LocalHost'; char [1 9] 'LocalPort'; char [1 26] 'DatagramsAvailableFcnCount'; char [1 21] 'NumDatagramsAvailable'; char [1 19] 'NumDatagramsWritten'; char [1 25] 'DatagramsAvailableFcnMode'; char [1 21] 'DatagramsAvailableFcn'; char [1 16] 'ErrorOccurredFcn'; char [1 3] 'Tag'}
+dg_methods	cell [21 1] {char [1 7] 'UDPPort'; char [1 11] 'addlistener'; char [1 17] 'configureCallback'; char [1 18] 'configureMulticast'; char [1 6] 'delete'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 3] 'set'; char [1 5] 'write'}
+dg_prop_NumDatagramsAvailable	double [1 1] 0
+dg_prop_DatagramsAvailableFcnMode	string [1 1] "off"
+dg_prop_DatagramsAvailableFcnCount	double [1 1] 1
+dg_prop_DatagramsAvailableFcn	function_handle [0 0]
+dg_prop_OutputDatagramSize	double [1 1] 512
+dg_prop_NumBytesWritten	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'NumBytesWritten' for class 'udpport.datagram.UDPPort'.
+dg_nda	double [1 1] 2
+dg_read_class	char [1 25] 'udpport.datagram.Datagram'
+dg_read_size	double [1 2] [1 1]
+dg_fields	cell [3 1] {char [1 4] 'Data'; char [1 13] 'SenderAddress'; char [1 10] 'SenderPort'}
+dg_data	double [1 5] [1 2 3 4 5]
+dg_sender	string [1 1] "127.0.0.1"
+dg_senderport	double [1 1] 50240
+dg_disp	OUT | g = | Datagram with properties: | Data: [1 2 3 4 5] | SenderAddress: "127.0.0.1" | SenderPort: 50240 |
+dg_data_uint16	double [1 1] 1798
+dg_two_size	double [1 2] [1 2]
+dg_two_data2	double [1 3] [4 5 6]
+[Warning: Specified amount of data was not returned within the Timeout period for "read".
+'udpport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'udpport_nodata')"'>udpport Read Warnings</a>.] 
+dg_read_timeout	double [0 0] []
+dg_read_timeout_warn	char [1 291] 'instrument:interface:udpport:ReadWarning ## Specified amount of data was not returned within the Timeout period for "read". | 'udpport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument', 'udpport_nodata')"'>udpport Read Warnings</a>.'
+dg_read_none	ERR instrument:interface:udpport:IncorrectInputArgumentsPlural Incorrect number of input arguments for "read". Valid syntaxes are | DATA = read(u,COUNT) | DATA = read(u,COUNT,PRECISION)
+dg_readline	ERR MATLAB:UndefinedFunction Undefined function 'readline' for input arguments of type 'udpport.datagram.UDPPort'.
+dg_cb_log	cell [1 5] {char [1 24] 'udpport.datagram.UDPPort'; char [1 38] 'udpport.datagram.DatagramAvailableInfo'; char [1 39] 'DatagramsAvailableFcnCount,AbsoluteTime'; double [1 1] 1; char [1 8] 'datetime'}
+resolvehost	char [1 9] 'localhost'
+resolvehost_two	char [1 9] '127.0.0.1'
+resolvehost_addr	char [1 15] 'LAPTOP-P9HF1B7E'
+resolvehost_bad	char [0 0] ''

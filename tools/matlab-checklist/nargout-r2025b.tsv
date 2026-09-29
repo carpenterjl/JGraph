@@ -454,6 +454,8 @@ dwtest	ERR:MATLAB:narginout:notValidMfile	0
 ecdf	ERR:MATLAB:narginout:notValidMfile	0
 ecdfhist	ERR:MATLAB:narginout:notValidMfile	0
 echo	0	5
+echotcpip	0	2
+echoudp	0	2
 edge	4	2
 edge3	1	2
 edgetaper	1	2
@@ -1656,6 +1658,7 @@ reset	0	5
 reshape	1	5
 residue	3	2
 residuez	3	2
+resolvehost	-1	2
 rethrow	0	5
 reverse	1	2
 rffreq	ERR:MATLAB:narginout:notValidMfile	0
@@ -1743,6 +1746,9 @@ seconds	1	2
 semilogx	1	5
 semilogy	1	5
 seqperiod	ERR:MATLAB:narginout:doesNotApply	3
+serialport	1	2
+serialportfind	1	2
+serialportlist	1	6
 set	1	5
 setappdata	0	5
 setdiff	-1	2
@@ -1930,6 +1936,10 @@ taylorwin	1	2
 tblread	ERR:MATLAB:narginout:notValidMfile	0
 tblwrite	ERR:MATLAB:narginout:notValidMfile	0
 tcdf	ERR:MATLAB:narginout:notValidMfile	0
+tcpclient	1	2
+tcpclientfind	1	2
+tcpserver	1	2
+tcpserverfind	1	2
 tdfread	ERR:MATLAB:narginout:notValidMfile	0
 tempdir	1	2
 tempname	1	2
@@ -2004,6 +2014,8 @@ type	0	5
 typecast	1	5
 tzoffset	-1	0
 udecode	1	2
+udpport	1	2
+udpportfind	1	2
 uencode	1	2
 uiaxes	1	2
 uicontextmenu	1	5

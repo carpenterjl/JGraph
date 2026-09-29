@@ -1,0 +1,53 @@
+CHK|ctor_none|instrument:interface:tcpserver:cannotCreateObject ## Invalid number of input arguments for 'tcpserver'. Valid syntaxes are / t = tcpserver(SERVERPORT) / t = tcpserver(SERVERADDRESS,SERVERPORT) / t = tcpserver(SERVERADDRESS,SERVERPORT,NAME,VALUE)|exact
+CHK|ctor_zero|instrument:interface:tcpserver:cannotCreateObject ## Expected SERVERPORT to be a scalar with value >= 1.|exact
+CHK|ctor_odd|instrument:interface:tcpserver:cannotCreateObject ## Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|ctor_bad_nv|instrument:interface:tcpserver:cannotCreateObject ## 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|ctor_num_str|instrument:interface:tcpserver:cannotCreateObject ## Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|class|tcpserver.internal.TCPServer|exact
+CHK|properties|cell:{char:ServerAddress;char:ServerPort;char:Connected;char:ClientAddress;char:ClientPort;char:NumBytesAvailable;char:NumBytesWritten;char:Timeout;char:ByteOrder;char:Terminator;char:BytesAvailableFcnMode;char:BytesAvailableFcnCount;char:BytesAvailableFcn;char:ErrorOccurredFcn;char:UserData;char:ConnectionChangedFcn;char:Tag}|exact
+CHK|methods|cell:{char:TCPServer;char:addlistener;char:configureCallback;char:configureTerminator;char:delete;char:eq;char:findobj;char:findprop;char:flush;char:ge;char:get;char:gt;char:isvalid;char:le;char:listener;char:lt;char:ne;char:notify;char:read;char:readbinblock;char:readline;char:set;char:write;char:writebinblock;char:writeline}|exact
+CHK|prop_ServerPort|logical:1|exact
+CHK|prop_ServerAddress|string:127.0.0.1|exact
+CHK|prop_Connected|logical:0|exact
+CHK|prop_ClientAddress|string:|exact
+CHK|prop_ClientPort|double:[] [0 0]|exact
+CHK|prop_NumBytesAvailable|double:0|exact
+CHK|prop_NumBytesWritten|double:0|exact
+CHK|prop_Timeout|double:1|exact
+CHK|prop_ByteOrder|string:little-endian|exact
+CHK|prop_Terminator|string:LF|exact
+CHK|prop_BytesAvailableFcnMode|string:off|exact
+CHK|prop_BytesAvailableFcnCount|double:64|exact
+CHK|prop_UserData|double:[] [0 0]|exact
+CHK|prop_Tag|string:|exact
+CHK|prop_BytesAvailableFcn_empty|logical:1|exact
+CHK|prop_ErrorOccurredFcn_empty|logical:1|exact
+CHK|prop_ConnectionChangedFcn_empty|logical:1|exact
+CHK|prop_BytesAvailableFcn_class|function_handle|div=ADR0185|diverges|double
+CHK|write_unconnected|instrument:interface:tcpserver:NotConnectedWrite ## Failed to write from the server. A TCP/IP client must be connected to the server.|exact
+CHK|writeline_unconnected|instrument:interface:tcpserver:NotConnectedWrite ## Failed to write from the server. A TCP/IP client must be connected to the server.|exact
+CHK|read_unconnected|double:[] [0 0]|exact
+CHK|read_unconnected_warn|transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'tcpserver' unable to read any data. For more information on possible reasons, see tcpserver Read Warnings.|exact
+CHK|server_port_set|MATLAB:class:SetProhibited ## Unable to set the 'ServerPort' property of class ''TCPServer'' because it is read-only.|exact
+CHK|connected_set|MATLAB:class:SetProhibited ## Unable to set the 'Connected' property of class ''TCPServer'' because it is read-only.|exact
+CHK|connected|logical:1|exact
+CHK|client_address|string:127.0.0.1|exact
+CHK|client_port|logical:0|exact
+CHK|conn_log|cell:{char:tcpserver.internal.TCPServer;char:tcpserver.internal.ConnectionInfo;char:Connected,ClientAddress,ClientPort,AbsoluteTime,Source,EventName;logical:1;char:127.0.0.1;logical:0;char:datetime;char:tcpserver.internal.EventHandler;char:ConnectionInfo}|exact
+CHK|server_nba|double:3|exact
+CHK|server_read|double:[1 2 3]|exact
+CHK|server_read_uint8|double:[1 2 3]|exact
+CHK|client_read|uint8:[4 5 6]|exact
+CHK|client_readline|string:hello|exact
+CHK|server_readline|string:back|exact
+CHK|server_written|double:9|exact
+CHK|second_client|MATLAB:networklib:tcpclient:cannotCreateObject|exact
+CHK|after_disconnect|logical:0|exact
+CHK|after_disconnect_addr|string:|exact
+CHK|after_disconnect_port|double:[] [0 0]|exact
+CHK|disc_log|cell:{char:tcpserver.internal.TCPServer;char:tcpserver.internal.ConnectionInfo;char:Connected,ClientAddress,ClientPort,AbsoluteTime,Source,EventName;logical:0;char:;logical:1;char:datetime;char:tcpserver.internal.EventHandler;char:ConnectionInfo}|exact
+CHK|reconnected|logical:1|exact
+CHK|find_class|tcpserver.internal.TCPServer|exact
+CHK|find_tag|tcpserver.internal.TCPServer|exact
+CHK|find_none|double:[] [0 0]|exact
+CHK|find_after_clear|double:[] [0 0]|exact

@@ -1,0 +1,84 @@
+CHK|class|tcpclient|exact
+CHK|isa_handle|logical:1|exact
+CHK|properties|cell:{char:Address;char:Port;char:NumBytesAvailable;char:NumBytesWritten;char:ConnectTimeout;char:EnableTransferDelay;char:Timeout;char:UserData;char:ByteOrder;char:Terminator;char:BytesAvailableFcn;char:BytesAvailableFcnCount;char:BytesAvailableFcnMode;char:ErrorOccurredFcn;char:Tag}|exact
+CHK|methods|cell:{char:addlistener;char:configureCallback;char:configureTerminator;char:delete;char:eq;char:findobj;char:findprop;char:flush;char:ge;char:get;char:gt;char:isvalid;char:le;char:listener;char:lt;char:matlabCodegenRedirect;char:ne;char:notify;char:read;char:readbinblock;char:readline;char:set;char:tcpclient;char:write;char:writebinblock;char:writeline;char:writeread}|exact
+CHK|prop_Address|char:127.0.0.1|exact
+CHK|prop_Port|logical:1|exact
+CHK|prop_NumBytesAvailable|double:0|exact
+CHK|prop_NumBytesWritten|double:0|exact
+CHK|prop_ConnectTimeout|double:Inf|exact
+CHK|prop_EnableTransferDelay|logical:1|exact
+CHK|prop_Timeout|double:1|exact
+CHK|prop_UserData|double:[] [0 0]|exact
+CHK|prop_ByteOrder|string:little-endian|exact
+CHK|prop_Terminator|string:LF|exact
+CHK|prop_BytesAvailableFcnCount|double:64|exact
+CHK|prop_BytesAvailableFcnMode|string:off|exact
+CHK|prop_Tag|string:|exact
+CHK|prop_BytesAvailableFcn_empty|logical:1|exact
+CHK|prop_ErrorOccurredFcn_empty|logical:1|exact
+CHK|prop_BytesAvailableFcn_class|function_handle|div=ADR0185|diverges|double
+CHK|written_double|double:40|exact
+CHK|echoed_nba|double:40|exact
+CHK|read_all|uint8:[0 0 0 0 0 0 240 63 0 0 0 0 0 0 0 64 0 0 0 0 0 0 8 64 0 0 0 0 0 0 16 64 0 0 0 0 0 0 20 64]|exact
+CHK|read_count|uint8:[1 2]|exact
+CHK|read_count_prec|uint16:1027|exact
+CHK|read_rest|uint8:5|exact
+CHK|read_timeout|MATLAB:networklib:tcpclient:readFailed ## Error receiving data from the remote server. / Additional Information: Operation timed out before requested data was received.|exact
+CHK|read_short|MATLAB:networklib:tcpclient:readFailed ## Error receiving data from the remote server. / Additional Information: Operation timed out before requested data was received.|exact
+CHK|read_short_left|double:2|exact
+CHK|read_empty|double:[] [0 0]|exact
+CHK|read_zero|none|exact
+CHK|read_four_args|transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'read'. Valid syntaxes are / DATA = read(t) / DATA = read(t,COUNT) / DATA = read(t,COUNT,PRECISION)|exact
+CHK|read_bad_prec|MATLAB:networklib:tcpclient:readFailed ## Expected input number 3, precision, to match one of these values: / 'uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64', 'single', 'double', 'char', 'string' / The input, 'uint9', did not match any of the valid values.|exact
+CHK|write_none|transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'write'. Valid syntaxes are / write(t,DATA) / write(t,DATA,PRECISION)|exact
+CHK|write_logical|MATLAB:networklib:tcpclient:writeFailed ## Expected input number 2, data, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, string, char / Instead its type was logical.|exact
+CHK|write_classes_back|uint8:[65 90 254 255]|exact
+CHK|read_int32|int32:[1 2]|exact
+CHK|read_be|uint8:[1 2]|exact
+CHK|readline|string:hi|exact
+CHK|readline_timeout|double:[] [0 0]|exact
+CHK|readline_timeout_warn|transportlib:client:ReadlineWarning ## The specified amount of data was not returned within the Timeout period for 'readline'. / 'tcpclient' unable to read any data. For more information on possible reasons, see tcpclient Read Warnings.|exact
+CHK|writeread|string:abc|exact
+CHK|terminator_crlf|string:CR/LF|exact
+CHK|crlf_bytes|uint8:[120 13 10]|exact
+CHK|binblock_roundtrip|double:[1 2 3]|exact
+CHK|binblock_uint16|double:[1 2]|exact
+CHK|timeout_set|double:2|exact
+CHK|timeout_bad|MATLAB:TCPClient:expectedNonnegative ## Expected TIMEOUT to be nonnegative.|exact
+CHK|timeout_int|Stream:timeout:invalidTime ## Timeout must be a non-negative scalar double.|exact
+CHK|connecttimeout_set|MATLAB:class:SetProhibited ## Unable to set the 'ConnectTimeout' property of class ''tcpclient'' because it is read-only.|exact
+CHK|transferdelay_set|MATLAB:class:SetProhibited ## Unable to set the 'EnableTransferDelay' property of class ''tcpclient'' because it is read-only.|exact
+CHK|address_set|MATLAB:class:SetProhibited ## Unable to set the 'Address' property of class ''tcpclient'' because it is read-only.|exact
+CHK|byteorder_bad|transportlib:client:InvalidType ## Expected input to match one of these values: / 'little-endian', 'big-endian' / The input, 'x', did not match any of the valid values.|exact
+CHK|terminator_set|transportlib:client:ReadOnlyProperty ## To set "Terminator", use the "configureTerminator" function.|exact
+CHK|bafm_set|transportlib:client:ReadOnlyProperty ## To set "BytesAvailableFcnMode", use the "configureCallback" function.|exact
+CHK|bafc_set|transportlib:client:ReadOnlyProperty ## To set "BytesAvailableFcnCount", use the "configureCallback" function.|exact
+CHK|baf_set|transportlib:client:ReadOnlyProperty ## To set "BytesAvailableFcn", use the "configureCallback" function.|exact
+CHK|tag_set|string:x|exact
+CHK|userdata_set|cell:{double:1;char:a}|exact
+CHK|cb_calls|double:2|exact
+CHK|cb_first|cell:{char:tcpclient;char:matlabshared.transportlib.internal.ByteAvailableInfo;char:BytesAvailableFcnCount,AbsoluteTime;double:2;char:datetime}|exact
+CHK|cb_term_calls|double:1.6000000000000001|exact
+CHK|cb_term_first|cell:{char:tcpclient;char:matlabshared.transportlib.internal.TerminatorAvailableInfo;char:AbsoluteTime;char:datetime;char:tcpclient}|exact
+CHK|find_class|tcpclient|exact
+CHK|find_tag|tcpclient|exact
+CHK|find_none|double:[] [0 0]|exact
+CHK|find_odd|testmeaslib:ObjectCacher:NVPairsAsPairs ## Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|ctor_none|MATLAB:minrhs ## Not enough input arguments.|exact
+CHK|ctor_one|MATLAB:networklib:tcpclient:cannotCreateObject ## Not enough input arguments.|exact
+CHK|ctor_badport|MATLAB:networklib:tcpclient:cannotCreateObject ## Expected input number 2, PORT, to be a scalar with value >= 1.|exact
+CHK|ctor_bigport|MATLAB:networklib:tcpclient:cannotCreateObject ## Expected input number 2, PORT, to be a scalar with value <= 65535.|exact
+CHK|ctor_strport|MATLAB:networklib:tcpclient:cannotCreateObject ## Expected input number 2, PORT, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was string.|exact
+CHK|ctor_numaddr|MATLAB:networklib:tcpclient:cannotCreateObject ## Expected input number 1, ADDRESS, to be one of these types: / char / Instead its type was double.|exact
+CHK|ctor_emptyaddr|MATLAB:networklib:tcpclient:cannotCreateObject ## Expected input number 1, ADDRESS, to be nonempty.|exact
+CHK|ctor_odd|MATLAB:networklib:tcpclient:cannotCreateObject ## The input arguments contain unmatched set of parameter name-value pairs.|exact
+CHK|ctor_bad_nv|MATLAB:networklib:tcpclient:cannotCreateObject ## 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|ctor_bad_timeout|MATLAB:networklib:tcpclient:cannotCreateObject ## The value of 'Timeout' is invalid. It must satisfy the function: isnumeric.|exact
+CHK|ctor_partial_name|double:3|exact
+CHK|ctor_transferdelay|logical:0|exact
+CHK|ctor_transferdelay_bad|MATLAB:networklib:tcpclient:cannotCreateObject ## The value of 'EnableTransferDelay' is invalid. It must satisfy the function: @(x)islogical(x)&&isscalar(x).|exact
+CHK|ctor_connecttimeout|double:5|exact
+CHK|ctor_byteorder|string:big-endian|exact
+CHK|ctor_localhost|char:localhost|exact
+CHK|after_echo_off|MATLAB:networklib:tcpclient:cannotCreateObject|exact
