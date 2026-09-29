@@ -121,6 +121,11 @@ internal static partial class JgsBuiltins
                 return JgsValue.Bool(target.AsObject.Class.Property(name) is not null);
             }
 
+            if (target.Type == JgsType.External && IsDeviceValue(target.AsExternal))
+            {
+                return JgsValue.Bool(DeviceHasProperty(target.AsExternal, name)); // hidden legacy ones too (probe_sp_object)
+            }
+
             if (target.Type == JgsType.External)
             {
                 return JgsValue.Bool(PropertyNames("isprop", target, interpreter, line, col).Contains(name, StringComparer.Ordinal));
@@ -158,6 +163,8 @@ internal static partial class JgsBuiltins
                 JgsType.Object => args[0].AsObject.Class.TryMethod(name, out _),
                 JgsType.External when args[0].AsExternal is NetObject net =>
                     Net.NetInvoke.HasMethod(net.Type, name, instance: true),
+                JgsType.External when args[0].AsExternal is Devices.DeviceObject device =>
+                    device.Class.MethodListing.Contains(name, StringComparer.Ordinal),
                 _ => false,
             });
         });
@@ -266,6 +273,8 @@ internal static partial class JgsBuiltins
                 return []; // "GenericClass with no properties." (probe4)
             case var lib when IsLibValue(lib):
                 return LibPropertyNames(lib!); // Value, DataType; a libstruct's fields (ADR 0182)
+            case var device when IsDeviceValue(device):
+                return DevicePropertyNames(device!); // a serialport's visible properties (device classes plan)
         }
 
         if (value.ClassName == Net.NetInvoke.NetExceptionClass)
@@ -310,6 +319,11 @@ internal static partial class JgsBuiltins
         if (IsLibValue(value.AsExternalOrNull()))
         {
             return LibMethodNames(value.AsExternal); // ADR 0182
+        }
+
+        if (IsDeviceValue(value.AsExternalOrNull()))
+        {
+            return DeviceMethodNames(value.AsExternal); // device classes plan
         }
 
         if (value.Type == JgsType.String && value.AsString.Contains('.', StringComparison.Ordinal)

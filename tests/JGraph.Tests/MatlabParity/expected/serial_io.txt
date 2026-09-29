@@ -1,0 +1,97 @@
+CHK|wrote_uint8|double:[1 0 255 3]|exact
+CHK|wrote_int8|double:[1 254 127 3]|exact
+CHK|wrote_uint16|double:[1 0 0 0 44 1 3 0]|exact
+CHK|wrote_int16|double:[1 0 254 255 44 1 3 0]|exact
+CHK|wrote_uint32|double:[1 0 0 0 0 0 0 0 44 1 0 0 3 0 0 0]|exact
+CHK|wrote_int32|double:[1 0 0 0 254 255 255 255 44 1 0 0 3 0 0 0]|exact
+CHK|wrote_uint64|double:[1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 44 1 0 0 0 0 0 0 3 0 0 0 0 0 0 0]|exact
+CHK|wrote_int64|double:[1 0 0 0 0 0 0 0 254 255 255 255 255 255 255 255 44 1 0 0 0 0 0 0 3 0 0 0 0 0 0 0]|exact
+CHK|wrote_single|double:[0 0 128 63 0 0 0 192 0 0 150 67 0 0 32 64]|exact
+CHK|wrote_double|double:[0 0 0 0 0 0 240 63 0 0 0 0 0 0 0 192 0 0 0 0 0 192 114 64 0 0 0 0 0 0 4 64]|exact
+CHK|wrote_char|double:[1 0 255 2]|exact
+CHK|wrote_string|double:[1 0 255 2]|exact
+CHK|wrote_char_data|double:[65 90]|exact
+CHK|wrote_string_data|double:[65 90]|exact
+CHK|wrote_string_char|double:[65 90]|exact
+CHK|wrote_nan|double:[0 255 0]|exact
+CHK|wrote_nan_int16|double:[0 0 255 127 0 128 255 127]|exact
+CHK|wrote_int8_data|double:[0 5]|exact
+CHK|wrote_column|double:[1 2 3]|exact
+CHK|wrote_complex|double:1|exact
+CHK|wrote_high_char|double:255|exact
+CHK|wrote_saturated|double:[255 255 255 255 0 0 0 0]|exact
+CHK|wrote_rounded|double:[1 2 255 254]|exact
+CHK|wrote_upper_prec|double:1|exact
+CHK|wrote_be_uint16|double:[0 1 1 2]|exact
+CHK|wrote_be_double|double:[63 248 0 0 0 0 0 0]|exact
+CHK|wrote_be_single|double:[192 0 0 0]|exact
+CHK|wrote_be_char|double:[65 66]|exact
+CHK|write_strarr|MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 2, data, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, string, char|exact
+CHK|write_logical|MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 2, data, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, string, char / Instead its type was logical.|exact
+CHK|write_matrix|transportlib:transport:invalidDataDim ## Input number 2, data, must be either a 1-by-n or n-by-1 array.|exact
+CHK|write_empty|MATLAB:AsyncIOTransportChannel:expectedNonempty ## Expected input number 2, data, to be nonempty.|exact
+CHK|write_cell|MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 2, data, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, string, char / Instead its type was cell.|exact
+CHK|write_struct|MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 2, data, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, string, char / Instead its type was struct.|exact
+CHK|write_no_prec|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'write'. Valid syntax is write(s,DATA,PRECISION).|exact
+CHK|write_bad_prec|MATLAB:AsyncIOTransportChannel:unrecognizedStringChoice ## Expected input number 3, precision, to match one of these values: / 'uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64', 'single', 'double', 'char', 'string' / The input, 'uint9', did not match any of the valid values.|exact
+CHK|write_prec_num|MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 3, precision, to be one of these types: / string, char / Instead its type was double.|exact
+CHK|write_prec_partial|MATLAB:AsyncIOTransportChannel:ambiguousStringChoice ## Expected input number 3, precision, to match one of these values: / 'uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64', 'single', 'double', 'char', 'string' / The input, 'uint', matched more than one valid value.|exact
+CHK|write_too_many|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'write'. Valid syntax is write(s,DATA,PRECISION).|exact
+CHK|write_output|ERR:MATLAB:TooManyOutputs|exact
+CHK|nothing_sent|double:[] [1 0]|exact
+CHK|nba|double:10|exact
+CHK|read_uint8|double:[0 1 2]|exact
+CHK|nba_after|double:7|exact
+CHK|read_char|double:[3 4]|exact
+CHK|read_char_class|char|exact
+CHK|read_string_class|string|exact
+CHK|read_rest|double:[7 8 9]|exact
+CHK|read_uint16|double:[1 65535]|exact
+CHK|read_int16|double:256|exact
+CHK|read_double|double:1.5|exact
+CHK|read_be_uint16|double:1|exact
+CHK|read_be_int16|double:-2|exact
+CHK|read_int8|double:-1|exact
+CHK|read_uint32|double:4294967295|exact
+CHK|read_int32|double:-1|exact
+CHK|read_uint64|double:1.8446744073709552e+19|exact
+CHK|read_int64|double:-1|exact
+CHK|read_single|double:NaN|exact
+CHK|read_single_nan|double:[NaN -Inf]|exact
+CHK|read_char_high|double:[104 233 108 108 111]|exact
+CHK|read_string|string:ab|exact
+CHK|partial|double:[1 2 3]|exact
+CHK|partial_warn|serialport:serialport:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'serialport' unable to read all requested data. For more information on possible reasons, see serialport Read Warnings.|exact
+CHK|none|double:[] [0 0]|exact
+CHK|none_warn|serialport:serialport:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'serialport' unable to read any data. For more information on possible reasons, see serialport Read Warnings.|exact
+CHK|none_char|double:[] [0 0]|exact
+CHK|none_string|double:[] [0 0]|exact
+CHK|partial_string|string:ab|exact
+CHK|partial_string_warn|serialport:serialport:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'serialport' unable to read all requested data. For more information on possible reasons, see serialport Read Warnings.|exact
+CHK|partial_uint16|seriallib:serial:readFailed ## Error reading data from the serial port. / The first input must contain a multiple of 2 elements to convert from real uint8 (8 bits) to real uint16 (16 bits).|exact
+CHK|partial_uint16_left|double:0|exact
+CHK|read_later|double:[7 8 9]|exact
+CHK|read_later_fast|logical:1|exact
+CHK|read_zero|MATLAB:Serialport:expectedNonZero ## Expected input number 2, count, to be nonzero.|exact
+CHK|read_neg|MATLAB:AsyncIOTransportChannel:expectedNonnegative ## Expected input number 2, count, to be nonnegative.|exact
+CHK|read_frac|MATLAB:Serialport:expectedInteger ## Expected input number 2, count, to be integer-valued.|exact
+CHK|read_inf|MATLAB:Serialport:expectedInteger ## Expected input number 2, count, to be integer-valued.|exact
+CHK|read_nan|MATLAB:Serialport:expectedInteger ## Expected input number 2, count, to be integer-valued.|exact
+CHK|read_str_count|MATLAB:Serialport:invalidType ## Expected input number 2, count, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was string.|exact
+CHK|read_vec_count|MATLAB:AsyncIOTransportChannel:expectedScalar ## Expected input number 2, count, to be a scalar.|exact
+CHK|read_no_prec|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'read'. Valid syntax is DATA = read(s,COUNT,PRECISION).|exact
+CHK|read_no_count|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'read'. Valid syntax is DATA = read(s,COUNT,PRECISION).|exact
+CHK|read_bad_prec|MATLAB:AsyncIOTransportChannel:unrecognizedStringChoice ## Expected input number 3, precision, to match one of these values: / 'uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64', 'single', 'double', 'char', 'string' / The input, 'uint9', did not match any of the valid values.|exact
+CHK|read_prec_num|MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 3, precision, to be one of these types: / string, char / Instead its type was double.|exact
+CHK|read_too_many|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'read'. Valid syntax is DATA = read(s,COUNT,PRECISION).|exact
+CHK|flush_input|double:0|exact
+CHK|flush_output_keeps_input|double:4|exact
+CHK|flush_both|double:0|exact
+CHK|flush_bad|MATLAB:flush:unrecognizedStringChoice ## Expected input number 2, buffer, to match one of these values: / 'input', 'output' / The input, 'bogus', did not match any of the valid values.|exact
+CHK|flush_num|MATLAB:flush:invalidType ## Expected input number 2, buffer, to be one of these types: / char, string / Instead its type was double.|exact
+CHK|flush_empty|MATLAB:flush:unrecognizedStringChoice ## Expected input number 2, buffer, to match one of these values: / 'input', 'output' / The input, '', did not match any of the valid values.|exact
+CHK|flush_too_many|serialport:serialport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'flush'. Valid syntaxes are / flush(s) / flush(s,BUFFER)|exact
+CHK|big_write|logical:1|exact
+CHK|big_read|logical:1|exact
+CHK|dot_method|double:[1 2]|exact
+CHK|dot_write|double:5|exact

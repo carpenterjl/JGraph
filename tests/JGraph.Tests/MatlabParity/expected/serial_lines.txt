@@ -1,0 +1,79 @@
+CHK|writeline_lf|double:[97 98 99 10]|exact
+CHK|writeline_char|double:[99 104 97 114 115 10]|exact
+CHK|writeline_num|transportlib:transport:invalidDataType ## Expected input number 2, data, to be a scalar string or a 1-by-n char array.|exact
+CHK|writeline_strarr|transportlib:transport:invalidDataType ## Expected input number 2, data, to be a scalar string or a 1-by-n char array.|exact
+CHK|writeline_cell|transportlib:transport:invalidDataType ## Expected input number 2, data, to be a scalar string or a 1-by-n char array.|exact
+CHK|writeline_none|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'writeline'. Valid syntax is writeline(s,DATA).|exact
+CHK|writeline_two|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'writeline'. Valid syntax is writeline(s,DATA).|exact
+CHK|writeline_empty|transportlib:transport:invalidDataType ## Expected input number 2, data, to be a scalar string or a 1-by-n char array.|exact
+CHK|writeline_charmat|transportlib:transport:invalidDataDim ## Input number 2, data, must be either a 1-by-n or n-by-1 array.|exact
+CHK|nothing_sent|double:[] [1 0]|exact
+CHK|term_cr|string:CR|exact
+CHK|writeline_cr|double:[120 13]|exact
+CHK|term_crlf|string:CR/LF|exact
+CHK|writeline_crlf|double:[120 13 10]|exact
+CHK|term_zero|double:0|exact
+CHK|writeline_zero|double:[120 0]|exact
+CHK|term_pair|cell:{string:LF;string:CR}|exact
+CHK|writeline_pair|double:[120 13]|exact
+CHK|term_pair_num|cell:{double:13;string:LF}|exact
+CHK|term_lower|string:CR|exact
+CHK|term_partial|string:CR|exact
+CHK|term_int8|int8:10|exact
+CHK|term_bad|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|exact
+CHK|term_256|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|exact
+CHK|term_neg|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|exact
+CHK|term_frac|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|exact
+CHK|term_vec|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|exact
+CHK|term_none|serialport:serialport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'configureTerminator'. Valid syntaxes are / configureTerminator(s,TERMINATOR) / configureTerminator(s,READTERMINATOR,WRITETERMINATOR)|exact
+CHK|term_three|serialport:serialport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'configureTerminator'. Valid syntaxes are / configureTerminator(s,TERMINATOR) / configureTerminator(s,READTERMINATOR,WRITETERMINATOR)|exact
+CHK|term_lfcr|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|exact
+CHK|term_char_num|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|exact
+CHK|term_pair_bad|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|exact
+CHK|term_kept|int8:10|exact
+CHK|readline_1|string:one|exact
+CHK|readline_2|string:two|exact
+CHK|readline_partial|double:[] [0 0]|exact
+CHK|readline_partial_warn|serialport:serialport:ReadlineWarning ## The specified amount of data was not returned within the Timeout period for 'readline'. / 'serialport' unable to read any data. For more information on possible reasons, see serialport Read Warnings.|exact
+CHK|readline_partial_left|double:5|exact
+CHK|readline_none|double:[] [0 0]|exact
+CHK|readline_none_warn|serialport:serialport:ReadlineWarning ## The specified amount of data was not returned within the Timeout period for 'readline'. / 'serialport' unable to read any data. For more information on possible reasons, see serialport Read Warnings.|exact
+CHK|readline_arg|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'readline'. Valid syntax is DATA = readline(s).|exact
+CHK|readline_empty_line|string:|exact
+CHK|readline_empty_2|string:|exact
+CHK|readline_cr_kept|double:[97 13]|exact
+CHK|readline_crlf_1|double:[97 10 98 13 99]|exact
+CHK|readline_crlf_2|double:100|exact
+CHK|readline_int_1|double:112|exact
+CHK|readline_int_2|double:[113 10]|exact
+CHK|readline_pair_reads_cr|double:114|exact
+CHK|readline_nul|double:122|exact
+CHK|readline_high|double:[104 233 108 108 111]|exact
+CHK|readline_utf8_bytes|double:[195 169]|exact
+CHK|read_after_readline|char:cd|exact
+CHK|writeread|string:hello|exact
+CHK|writeread_char|char:abc|exact
+CHK|writeread_none|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'writeread'. Valid syntax is RESPONSE = writeread(s,COMMAND).|exact
+CHK|writeread_num|transportlib:transport:invalidDataType ## Expected input number 2, data, to be a scalar string or a 1-by-n char array.|exact
+CHK|writeread_timeout|transportclients:string:timeoutToken ## Error reading String. / Timeout occurred waiting for the String Terminator.|exact
+CHK|wbb_uint8|double:[35 49 53 1 2 3 4 5]|exact
+CHK|wbb_uint16|double:[35 49 52 1 0 2 0]|exact
+CHK|wbb_header|double:[72 68 82 35 50 49 50 1 2 3 4 5 6 7 8 9 10 11 12]|exact
+CHK|wbb_char|double:[35 49 50 104 105]|exact
+CHK|wbb_long_head|#3600|exact
+CHK|wbb_long_len|double:605|exact
+CHK|wbb_empty|MATLAB:BinBlockClient:expectedNonempty ## Expected input number 2, data, to be nonempty.|exact
+CHK|wbb_no_prec|serialport:serialport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'writebinblock'. Valid syntaxes are / writebinblock(s,DATA,PRECISION) / writebinblock(s,DATA,PRECISION,HEADER)|exact
+CHK|wbb_bad_prec|MATLAB:BinBlockClient:unrecognizedStringChoice ## Expected input number 3, precision, to match one of these values: / 'uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64', 'single', 'double', 'char', 'string' / The input, 'uint9', did not match any of the valid values.|exact
+CHK|nothing_sent_bb|double:[] [1 0]|exact
+CHK|rbb_uint8|double:[1 2 3 4 5]|exact
+CHK|rbb_uint16|double:[1 2]|exact
+CHK|rbb_junk_char|char:abc|exact
+CHK|rbb_after_left|double:1|exact
+CHK|rbb_two_digits|double:[0 1 2 3 4 5 6 7 8 9]|exact
+CHK|rbb_string|string:abcde|exact
+CHK|rbb_none|double:[] [0 0]|exact
+CHK|rbb_none_warn|serialport:serialport:ReadbinblockWarning ## The specified amount of data was not returned within the Timeout period for 'readbinblock'. / 'serialport' unable to read any data. For more information on possible reasons, see serialport Read Warnings.|exact
+CHK|rbb_short|double:[97 98]|exact
+CHK|rbb_short_warn|none|exact
+CHK|rbb_too_many|serialport:serialport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'readbinblock'. Valid syntaxes are / DATA = readbinblock(s) / DATA = readbinblock(s,PRECISION)|exact

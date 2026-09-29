@@ -41,6 +41,9 @@ internal static partial class JgsBuiltins
             ["internal"] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
                 ["nativehost"] = NativeHostFunction(interpreter),
+
+                // Test-only (device classes plan): a simulated serial port for the device fixtures.
+                ["devicesim"] = DeviceSimFunction(interpreter),
             }),
         }));
     }

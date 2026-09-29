@@ -1,0 +1,89 @@
+cc_none	ERR serialport:serialport:IncorrectInputArgumentsPlural Invalid number of input arguments for 'configureCallback'. Valid syntaxes are | configureCallback(s,"off") | configureCallback(s,"terminator",CALLBACKFCN) | configureCallback(s,"byte",COUNT,CALLBACKFCN)
+cc_off	OUT
+cc_off_extra	ERR serialport:serialport:IncorrectBytesAvailableModeSyntax Invalid input arguments. Valid syntax is configureCallback(s,"off").
+cc_term_noarg	ERR serialport:serialport:IncorrectBytesAvailableModeSyntax Invalid input arguments. Valid syntax is configureCallback(s,"terminator",@callbackFcn).
+cc_byte_3	ERR serialport:serialport:IncorrectBytesAvailableModeSyntax Invalid input arguments. Valid syntax is configureCallback(s,"byte",count,@callbackFcn).
+cc_term_4	ERR serialport:serialport:IncorrectBytesAvailableModeSyntax Invalid input arguments. Valid syntax is configureCallback(s,"terminator",@callbackFcn).
+cc_bad_mode	ERR MATLAB:configureCallback:unrecognizedStringChoice Expected input number 2, mode, to match one of these values: | 'terminator', 'byte', 'off' | The input, 'bogus', did not match any of the valid values.
+cc_num_mode	ERR MATLAB:configureCallback:invalidType Expected input number 2, mode, to be one of these types: | char | Instead its type was double.
+cc_term_badfcn	ERR serialport:serialport:InvalidBytesAvailableFcn BytesAvailableFcn must be a function handle.
+cc_term_strfcn	ERR serialport:serialport:InvalidBytesAvailableFcn BytesAvailableFcn must be a function handle.
+cc_byte_badcount	ERR MATLAB:serialport:expectedPositive Expected BytesAvailableFcnCount to be positive.
+cc_byte_zero	ERR MATLAB:serialport:expectedNonZero Expected BytesAvailableFcnCount to be nonzero.
+cc_byte_frac	ERR MATLAB:serialport:expectedInteger Expected BytesAvailableFcnCount to be integer-valued.
+cc_byte_str	ERR MATLAB:serialport:invalidType Expected BytesAvailableFcnCount to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64
+cc_five	ERR serialport:serialport:IncorrectInputArgumentsPlural Invalid number of input arguments for 'configureCallback'. Valid syntaxes are | configureCallback(s,"off") | configureCallback(s,"terminator",CALLBACKFCN) | configureCallback(s,"byte",COUNT,CALLBACKFCN)
+cc_partial	OUT
+cc_partial_mode	string [1 1] "terminator"
+cc_partial_fcn	char [1 4] 'disp'
+cc_byte_ok	OUT
+cc_byte_mode	string [1 1] "byte"
+cc_byte_count	double [1 1] 7
+cc_byte_count_class	char [1 6] 'double'
+cc_off_again	OUT
+cc_off_mode	string [1 1] "off"
+cc_off_count	double [1 1] 7
+cc_off_fcn	function_handle [0 0]
+cc_off_upper	OUT
+cc_empty_fcn	OUT
+cc_empty_fcn_mode	string [1 1] "terminator"
+byte_chunk_calls	double [1 1] 3
+byte_chunk_log	cell [1 3] {double [1 1] 10; double [1 1] 10; double [1 1] 10}
+byte_chunk_left	double [1 1] 10
+byte_trickle_calls	double [1 1] 3
+byte_trickle_log	cell [1 3] {double [1 1] 3; double [1 1] 6; double [1 1] 9}
+byte_reading_calls	double [1 1] 3
+byte_reading_log	cell [1 3] {double [1 4] [1 2 3 4]; double [1 4] [5 6 7 8]; double [1 4] [9 10 11 12]}
+busy_loop_calls	double [1 1] 0
+after_statements_calls	double [1 1] 0
+after_pause0_calls	double [1 1] 1
+after_drawnow_calls	double [1 1] 1
+after_pause_calls	double [1 1] 1
+drawnow_first_calls	double [1 1] 1
+before_read_calls	double [1 1] 0
+after_read_calls	double [1 1] 0
+after_read_pause_calls	double [1 1] 1
+evt_log	cell [1 8] {char [1 19] 'internal.Serialport'; char [1 37] 'instrument.internal.DataAvailableInfo'; char [1 30] 'BytesAvailableFcnCount,AbsTime'; char [1 193] '<a href="matlab:helpPopup('instrument.internal.DataAvailableInfo')" style="font-weight:bold">DataAvailableInfo</a> with properties: | BytesAvailableFcnCount: 2 | AbsTime: 28-Sep-2026 19:54:10 |'; double [1 1] 2; char [1 8] 'datetime'; logical [1 1] true; char [1 6] 'handle'}
+evt_term_log	cell [1 8] {char [1 19] 'internal.Serialport'; char [1 37] 'instrument.internal.DataAvailableInfo'; char [1 30] 'BytesAvailableFcnCount,AbsTime'; char [1 193] '<a href="matlab:helpPopup('instrument.internal.DataAvailableInfo')" style="font-weight:bold">DataAvailableInfo</a> with properties: | BytesAvailableFcnCount: 1 | AbsTime: 28-Sep-2026 19:54:11 |'; double [1 1] 1; char [1 8] 'datetime'; logical [1 1] true; char [1 6] 'handle'}
+term_chunk_calls	double [1 1] 3
+term_chunk_left	double [1 1] 6
+term_trickle_calls	double [1 1] 2
+term_reading_log	cell [1 2] {string [1 1] "l1"; string [1 1] "l2"}
+[Warning: Error executing listener callback for PostSet event on TotalBytesWritten dynamic property in object of
+matlabshared.asyncio.internal.Channel class:
+Error using probe_sp_callbacks>@(src,evt)error('probe:cb','boom in callback') (line 130)
+boom in callback
+
+Error in matlabshared.transportlib.internal.client.GenericClient/callbackFunction (line 981)
+            obj.BytesAvailableFcn(obj.CallbackSource, dataAvailableInfo);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in matlabshared.transportlib.internal.client.GenericClient>@(varargin)obj.callbackFunction(varargin{:}) (line 673)
+                        obj.Transport.BytesAvailableFcn = @obj.callbackFunction;
+                                                           ^^^^^^^^^^^^^^^^^^^^
+Error in matlabshared.transportlib.internal.DataReceivedHandlerMixin/valuesWrittenUpdated
+
+Error in matlabshared.transportlib.internal.DataReceivedHandlerMixin>@(src,evt)obj.valuesWrittenUpdated(src,evt)
+
+Error in matlabshared.asyncio.internal.Channel/onPropertyChanged (line 603)
+            obj.(name) = value;
+            ^^^^^^^^^^
+Error in matlabshared.asyncio.internal.Channel>@(source,data)objWeakRef.Handle.onPropertyChanged(data.Name,data.Value) (line 498)
+                                                         @(source, data) objWeakRef.Handle.onPropertyChanged(data.Name, data.Value));
+                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in probe_sp_callbacks (line 132)
+pause(0.5);
+^^^^^^^^^^] 
+[> In matlabshared.asyncio.internal/Channel/onPropertyChanged (line 603)
+In matlabshared.asyncio.internal.Channel>@(source,data)objWeakRef.Handle.onPropertyChanged(data.Name,data.Value) (line 498)
+In probe_sp_callbacks (line 132)] 
+cb_error_survived	logical [1 1] true
+cb_error_lastwarn	char [1 41] 'MATLAB:callback:DynamicPropertyEventError'
+cb_error_lastwarn_msg	char [1 1570] 'Error executing listener callback for PostSet event on TotalBytesWritten dynamic property in object of matlabshared.asyncio.internal.Channel class: | Error using probe_sp_callbacks>@(src,evt)error('probe:cb','boom in callback') (line 130) | boom in callback | Error in matlabshared.transportlib.internal.client.GenericClient/callbackFunction (line 981) | obj.BytesAvailableFcn(obj.CallbackSource, dataAvailableInfo); | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | Error in matlabshared.transportlib.internal.client.GenericClient>@(varargin)obj.callbackFunction(varargin{:}) (line 673) | obj.Transport.BytesAvailableFcn = @obj.callbackFunction; | ^^^^^^^^^^^^^^^^^^^^ | Error in matlabshared.transportlib.internal.DataReceivedHandlerMixin/valuesWrittenUpdated | Error in matlabshared.transportlib.internal.DataReceivedHandlerMixin>@(src,evt)obj.valuesWrittenUpdated(src,evt) | Error in matlabshared.asyncio.internal.Channel/onPropertyChanged (line 603) | obj.(name) = value; | ^^^^^^^^^^ | Error in matlabshared.asyncio.internal.Channel>@(source,data)objWeakRef.Handle.onPropertyChanged(data.Name,data.Value) (line 498) | @(source, data) objWeakRef.Handle.onPropertyChanged(data.Name, data.Value)); | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | Error in probe_sp_callbacks (line 132) | pause(0.5); | ^^^^^^^^^^'
+off_pending_calls	double [1 1] 0
+flush_crossing_calls	double [1 1] 0
+timer_during_read	double [1 1] 8
+timer_after_read	logical [1 1] true
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'serialport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'serialport_nodata')"'>serialport Read Warnings</a>.] 
+errfcn_on_timeout	double [1 1] 0

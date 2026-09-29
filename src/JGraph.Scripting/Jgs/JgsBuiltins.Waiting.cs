@@ -118,6 +118,10 @@ internal static partial class JgsBuiltins
         }
 
         double seconds = Num("pause", args, 0, line, col);
+
+        // A device's callbacks run at every pause, pause(0) included, where .NET's wait for a positive
+        // one (R2025b, probe_sp_callbacks).
+        Devices.DeviceEventQueue.DrainCurrent();
         if (_pausesEnabled && seconds > 0 && !double.IsNaN(seconds))
         {
             // A pause is a drain point for timers as well (V6, #105).

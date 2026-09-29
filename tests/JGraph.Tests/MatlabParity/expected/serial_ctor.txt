@@ -1,0 +1,84 @@
+CHK|class|internal.Serialport|exact
+CHK|isa_handle|logical:1|exact
+CHK|isa_internal|logical:1|exact
+CHK|isa_serialport|logical:0|exact
+CHK|isa_setget|logical:1|exact
+CHK|isobject|logical:1|exact
+CHK|isstruct|logical:0|exact
+CHK|isvalid|logical:1|exact
+CHK|size|double:[1 1]|exact
+CHK|numel|double:1|exact
+CHK|eq_self|logical:1|exact
+CHK|ne_self|logical:0|exact
+CHK|isequal_self|logical:1|exact
+CHK|eq_alias|logical:1|exact
+CHK|handle_shared|string:shared|exact
+CHK|Port|string:COM20|exact
+CHK|BaudRate|double:9600|exact
+CHK|Parity|string:none|exact
+CHK|DataBits|double:8|exact
+CHK|StopBits|double:1|exact
+CHK|FlowControl|string:none|exact
+CHK|ByteOrder|string:little-endian|exact
+CHK|Timeout|double:1|exact
+CHK|Tag|string:shared|exact
+CHK|NumBytesAvailable|double:0|exact
+CHK|Terminator|string:LF|exact
+CHK|BytesAvailableFcnMode|string:off|exact
+CHK|BytesAvailableFcnCount|double:64|exact
+CHK|BytesAvailableFcn_empty|logical:1|exact
+CHK|BytesAvailableFcn_class|function_handle|div=ADR0184|diverges|double
+CHK|ErrorOccurredFcn_empty|logical:1|exact
+CHK|UserData|double:[] [0 0]|exact
+CHK|pins_at_open|11100000|exact
+CHK|held_port|serialport:serialport:ConnectionFailed ## Unable to connect to the serialport device at port 'COM20'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. / See related documentation for troubleshooting steps.|exact
+CHK|peer_port|serialport:serialport:ConnectionFailed ## Unable to connect to the serialport device at port 'COM21'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. / See related documentation for troubleshooting steps.|exact
+CHK|missing_port|serialport:serialport:ConnectionFailed ## Unable to connect to the serialport device at port 'COM99'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. / See related documentation for troubleshooting steps.|exact
+CHK|one_arg|serialport:serialport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)|exact
+CHK|no_saved|serialport:serialport:NoSavedPreferences ## Unable to create the default serialport object. Specify the 'Port' and 'BaudRate' input arguments.|exact
+CHK|neg_baud|MATLAB:Serialport:expectedPositive ## Expected input number 2, BAUDRATE, to be positive.|exact
+CHK|zero_baud|MATLAB:Serialport:expectedPositive ## Expected input number 2, BAUDRATE, to be positive.|exact
+CHK|frac_baud|serialport:serialport:InvalidBaudRate ## BaudRate must be a scalar positive integer.|exact
+CHK|str_baud|MATLAB:Serialport:invalidType ## Expected input number 2, BAUDRATE, to be one of these types: / double / Instead its type was string.|exact
+CHK|int_baud|MATLAB:Serialport:invalidType ## Expected input number 2, BAUDRATE, to be one of these types: / double / Instead its type was int32.|exact
+CHK|vec_baud|MATLAB:Serialport:expectedScalar ## Expected input number 2, BAUDRATE, to be a scalar.|exact
+CHK|empty_baud|MATLAB:Serialport:expectedNonempty ## Expected input number 2, BAUDRATE, to be nonempty.|exact
+CHK|empty_port|MATLAB:Serialport:expectedNonempty ## Expected input number 1, PORT, to be nonempty.|exact
+CHK|num_port|MATLAB:Serialport:invalidType ## Expected input number 1, PORT, to be one of these types: / char / Instead its type was double.|exact
+CHK|cell_port|MATLAB:Serialport:invalidType ## Expected input number 1, PORT, to be one of these types: / char|exact
+CHK|odd_nv|serialport:serialport:UnmatchedPVPairs ## Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|bad_nv|MATLAB:InputParser:UnmatchedParameter ## 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|userdata_nv|MATLAB:InputParser:UnmatchedParameter ## 'UserData' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|terminator_nv|MATLAB:InputParser:UnmatchedParameter ## 'Terminator' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|bad_parity|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'none', 'even', 'odd' / The input, 'bogus', did not match any of the valid values.|exact
+CHK|num_parity|MATLAB:invalidType ## The value of 'Parity' is invalid. Expected input to be one of these types: / char, string / Instead its type was double.|exact
+CHK|empty_parity|MATLAB:expectedNonempty ## The value of 'Parity' is invalid. Expected input to be nonempty.|exact
+CHK|mark_parity|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'none', 'even', 'odd' / The input, 'mark', did not match any of the valid values.|exact
+CHK|bad_databits|serialport:serialport:ConnectionFailed ## Unable to connect to the serialport device at port 'COM20'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. / See related documentation for troubleshooting steps.|exact
+CHK|four_databits|serialport:serialport:ConnectionFailed ## Unable to connect to the serialport device at port 'COM20'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. / See related documentation for troubleshooting steps.|exact
+CHK|vec_databits|MATLAB:InputParser:ArgumentFailedValidation ## The value of 'DataBits' is invalid. It must satisfy the function: isscalar.|exact
+CHK|bad_stopbits|seriallib:serial:invalidStopBits ## StopBits must be one of 1, 1.5, or 2.|exact
+CHK|bad_flow|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'none', 'hardware', 'software' / The input, 'rts', did not match any of the valid values.|exact
+CHK|bad_order|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'little-endian', 'big-endian' / The input, 'middle', did not match any of the valid values.|exact
+CHK|neg_timeout|MATLAB:Serial:expectedNonnegative ## Expected Timeout to be nonnegative.|exact
+CHK|zero_timeout|MATLAB:Serial:expectedNonZero ## Expected Timeout to be nonzero.|exact
+CHK|inf_timeout|MATLAB:Serial:expectedFinite ## Expected Timeout to be finite.|exact
+CHK|vec_timeout|MATLAB:InputParser:ArgumentFailedValidation ## The value of 'Timeout' is invalid. It must satisfy the function: isscalar.|exact
+CHK|bad_tag|MATLAB:InputParser:ArgumentFailedValidation ## The value of 'Tag' is invalid. It must satisfy the function: @(x)isstring(x)//ischar(x).|exact
+CHK|partial_nv|string:even|exact
+CHK|lower_nv|string:odd|exact
+CHK|nv_syntax|cell:{string:odd;double:7}|exact
+CHK|char_nv|string:software|exact
+CHK|stop15|double:1.5|exact
+CHK|databits5|double:5|exact
+CHK|big_endian|string:big-endian|exact
+CHK|timeout_nv|double:2.5|exact
+CHK|tag_nv|string:dev|exact
+CHK|repeat_nv|string:even|exact
+CHK|odd_baud|double:12345|exact
+CHK|lower_port|string:com20|exact
+CHK|reopened|logical:1|exact
+CHK|ans_class|internal.Serialport|exact
+CHK|ans_baud|double:115200|exact
+CHK|ans_holds|serialport:serialport:ConnectionFailed ## Unable to connect to the serialport device at port 'COM20'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. / See related documentation for troubleshooting steps.|exact
+CHK|ans_cleared|logical:1|exact

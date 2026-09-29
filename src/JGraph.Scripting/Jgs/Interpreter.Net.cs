@@ -294,6 +294,8 @@ internal sealed partial class Interpreter
                 return NetInvoke.Member(net, field, autoCall, member.Line, member.Column, NetTypes, BareWanted(member));
             case var lib when JgsBuiltins.IsLibValue(lib):
                 return JgsBuiltins.LibMember(lib, field, member.Line, member.Column); // lib.pointer, libstruct (ADR 0182)
+            case Devices.DeviceObject device:
+                return device.Member(field, autoCall, BareWanted(member), member.Line, member.Column); // serialport (device classes plan)
             case NetMetaClass meta when field == "Name":
                 return JgsValue.Str(NetNames.ClassName(meta.Type));
             case NetAssemblyValue assembly when NetAssemblyValue.PropertyNames.Contains(field):
@@ -314,6 +316,14 @@ internal sealed partial class Interpreter
             || held.Type != JgsType.External)
         {
             return false;
+        }
+
+        // s.BaudRate = v on a serialport (device classes plan).
+        if (held.AsExternal is Devices.DeviceObject device)
+        {
+            device.SetProperty(FieldName(member, env), value,
+                new Devices.DeviceCall { Target = device, Args = [], Line = member.Line, Column = member.Column }, ignoreCase: false);
+            return true;
         }
 
         // p.Value = v on a lib.pointer, s.x = v on a libstruct (ADR 0182).

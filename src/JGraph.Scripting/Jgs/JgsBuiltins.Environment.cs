@@ -110,6 +110,11 @@ internal static partial class JgsBuiltins
 
         Define("delete", (args, line, col) =>
         {
+            if (TryDeviceBuiltin("delete", args, 0, line, col, out JgsValue gone))
+            {
+                return gone;
+            }
+
             if (TryLibBuiltin("delete", host, args, line, col, out JgsValue deleted))
             {
                 return deleted;

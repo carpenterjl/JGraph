@@ -1,0 +1,148 @@
+% probe_sp_legacy: pins and break, then the hidden legacy methods and properties a serialport keeps.
+device_peer();
+s = serialport("COM20", 9600, "Timeout", 1);
+dp(s, 'reset');
+% pins through the null-modem wiring
+dv_pr('status_open', 'dp(s, ''status'')');
+setRTS(s, false);
+dv_pr('status_rts_off', 'dp(s, ''status'')');
+setDTR(s, false);
+dv_pr('status_dtr_off', 'dp(s, ''status'')');
+setRTS(s, true);
+setDTR(s, true);
+dv_pr('status_both_on', 'dp(s, ''status'')');
+dv_px('setrts_num', 'setRTS(s, 0)');
+dv_pr('status_rts_num', 'dp(s, ''status'')');
+setRTS(s, true);
+dv_px('setrts_str', 'setRTS(s, "true")');
+dv_px('setrts_two', 'setRTS(s, 1, 2)');
+dv_px('setrts_none', 'setRTS(s)');
+dv_px('setrts_vec', 'setRTS(s, [1 0])');
+dv_px('setrts_nan', 'setRTS(s, NaN)');
+dv_px('setrts_2', 'setRTS(s, 2)');
+dv_px('setdtr_str', 'setDTR(s, "on")');
+dp(s, 'pins rts=1 dtr=0');
+pause(0.2);
+dv_pr('pins_far_rts', 'getpinstatus(s)');
+p = getpinstatus(s);
+dv_pr('pins_far_rts_v', '[p.ClearToSend p.DataSetReady p.CarrierDetect p.RingIndicator]');
+dp(s, 'pins rts=0 dtr=1');
+pause(0.2);
+p = getpinstatus(s);
+dv_pr('pins_far_dtr_v', '[p.ClearToSend p.DataSetReady p.CarrierDetect p.RingIndicator]');
+dv_px('pins_arg', 'getpinstatus(s, 1)');
+% flow control and RTS (the far end raises its RTS first: with CTS low, a write never finishes)
+dp(s, 'pins rts=1 dtr=0');
+pause(0.2);
+s.FlowControl = "hardware";
+dv_pr('status_hw_flow', 'dp(s, ''status'')');
+dv_px('setrts_hw_flow', 'setRTS(s, false)');
+dv_pr('status_hw_flow_rts_off', 'dp(s, ''status'')');
+s.FlowControl = "none";
+dv_pr('status_after_flow', 'dp(s, ''status'')');
+setRTS(s, true);
+% break
+dv_pr('status_before_break', 'dp(s, ''status'')');
+t0 = tic;
+serialbreak(s, 300);
+dv_pr('break_blocks', 'toc(t0) >= 0.25');
+pause(0.2);
+dv_pr('status_after_break', 'dp(s, ''status'')');
+dv_px('break_none', 'serialbreak(s)');
+dv_px('break_neg', 'serialbreak(s, -1)');
+dv_px('break_frac', 'serialbreak(s, 1.5)');
+dv_px('break_str', 'serialbreak(s, "10")');
+dv_px('break_two', 'serialbreak(s, 10, 20)');
+dv_px('break_zero', 'serialbreak(s, 0)');
+% the legacy surface
+dp(s, 'reset');
+flush(s);
+lastwarn('');
+dv_px('fopen', 'fopen(s)');
+[msg, id] = lastwarn;
+dv_pr('fopen_warn', 'id');
+dv_pr('fopen_msg', 'msg');
+lastwarn('');
+dv_px('fclose', 'fclose(s)');
+[msg, id] = lastwarn;
+dv_pr('fclose_warn', 'id');
+dv_pr('fclose_msg', 'msg');
+dv_pr('fclose_still_valid', 'isvalid(s)');
+dv_px('fprintf', 'fprintf(s, "abc")');
+dv_pr('fprintf_sent', 'dp(s, ''recv'')');
+dv_px('fprintf_fmt', 'fprintf(s, ''%d-%s'', 5)');
+dv_pr('fprintf_fmt_sent', 'dp(s, ''recv'')');
+dv_px('fprintf_fmt2', 'fprintf(s, ''%d'', 42)');
+dv_pr('fprintf_fmt2_sent', 'dp(s, ''recv'')');
+dv_px('fwrite', 'fwrite(s, [1 2 3])');
+dv_pr('fwrite_sent', 'dp(s, ''recv'')');
+dv_px('fwrite_prec', 'fwrite(s, 258, ''uint16'')');
+dv_pr('fwrite_prec_sent', 'dp(s, ''recv'')');
+dv_px('fwrite_mode', 'fwrite(s, 1, ''uint8'', ''async'')');
+dv_pr('fwrite_mode_sent', 'dp(s, ''recv'')');
+dp(s, sprintf('send %s', dp_hex(['line1' 10 'line2' 10 '12 34' 10 'xyz'])));
+pause(0.3);
+dv_pr('bytesavailable', 's.BytesAvailable');
+dv_pr('fgetl', 'fgetl(s)');
+dv_pr('fgets', 'double(fgets(s))');
+dv_pr('fscanf', 'fscanf(s)');
+dv_pr('fscanf_left', 's.NumBytesAvailable');
+flush(s);
+dp(s, sprintf('send %s', dp_hex(['12 34' 10])));
+pause(0.3);
+dv_pr('fscanf_fmt', 'fscanf(s, ''%d'')');
+dp(s, sprintf('send %s', dp_hex(['a,b' 10])));
+pause(0.3);
+dv_pr('scanstr', 'scanstr(s)');
+dp(s, sprintf('send %s', dp_hex(1:4)));
+pause(0.3);
+dv_pr('fread', 'fread(s, 2)');
+dv_pr('fread_prec', 'fread(s, 1, ''uint16'')');
+flush(s);
+dp(s, sprintf('send %s', dp_hex(1:4)));
+pause(0.3);
+dv_pr('fread_all', 'fread(s)');
+dp(s, 'echo on');
+dv_pr('query', 'query(s, "ping")');
+dp(s, 'echo off');
+flush(s);
+dp(s, sprintf('send %s', dp_hex(['#13abc'])));
+pause(0.3);
+dv_pr('binblockread', 'binblockread(s)');
+dv_px('binblockwrite', 'binblockwrite(s, 1:3)');
+dv_pr('binblockwrite_sent', 'char(dp(s, ''recv''))');
+dp(s, sprintf('send %s', dp_hex(1:4)));
+pause(0.3);
+dv_px('flushinput', 'flushinput(s)');
+dv_pr('flushinput_left', 's.NumBytesAvailable');
+dv_px('flushoutput', 'flushoutput(s)');
+% legacy properties
+props = {'BytesAvailable','BytesToOutput','ErrorFcn','PinStatus','ValuesReceived','ValuesSent', ...
+    'InputBufferSize','OutputBufferSize','ReadAsyncMode','RecordDetail','RecordMode','RecordName', ...
+    'RecordStatus','RequestToSend','DataTerminalReady','Status','TransferStatus','Type','Name', ...
+    'BreakInterruptFcn','PinStatusFcn','OutputEmptyFcn','TimerFcn','TimerPeriod','BytesAvailableFcnMode', ...
+    'Terminator','ByteOrder','BaudRate','Port'};
+for k = 1:numel(props)
+    lastwarn('');
+    dv_pr(['legacy_get_' props{k}], ['s.' props{k}]);
+    [msg, id] = lastwarn;
+    if ~isempty(id), dv_pr(['legacy_get_' props{k} '_warn'], 'sprintf(''%s ## %s'', id, msg)'); end
+end
+lastwarn('');
+dv_px('legacy_set_inputbuffer', 's.InputBufferSize = 1024');
+[msg, id] = lastwarn;
+dv_pr('legacy_set_inputbuffer_warn', 'sprintf(''%s ## %s'', id, msg)');
+dv_px('legacy_set_errorfcn', 's.ErrorFcn = @disp');
+dv_px('legacy_set_rts', 's.RequestToSend = ''off''');
+dv_pr('legacy_set_rts_status', 'dp(s, ''status'')');
+dv_px('legacy_set_dtr', 's.DataTerminalReady = ''off''');
+dv_pr('legacy_set_dtr_status', 'dp(s, ''status'')');
+dv_px('legacy_record', 'record(s)');
+dv_px('legacy_readasync', 'readasync(s)');
+dv_px('legacy_stopasync', 'stopasync(s)');
+dv_px('legacy_instrhwinfo', 'instrhwinfo(s)');
+dv_pr('legacy_instrhwinfo_prop', 'instrhwinfo(s, "BaudRate")');
+dv_pr('instrhwinfo_serialport', 'instrhwinfo(''serialport'')');
+dv_px('instrhwinfo_serialport_disp', 'instrhwinfo(''serialport'')');
+dv_px('legacy_fclose_twice', 'fclose(s); fclose(s)');
+dv_pr('methods_all', 'methods(s, ''-all'')');

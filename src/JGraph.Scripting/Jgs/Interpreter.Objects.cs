@@ -424,7 +424,8 @@ internal sealed partial class Interpreter
         callable = null;
         if (dominant.Type == JgsType.External)
         {
-            return JgsBuiltins.TryLibMethod(this, name, dominant, out callable) || TryNetMethod(name, dominant, out callable);
+            return JgsBuiltins.TryDeviceMethod(name, dominant, out callable)
+                || JgsBuiltins.TryLibMethod(this, name, dominant, out callable) || TryNetMethod(name, dominant, out callable);
         }
 
         if (dominant.Type != JgsType.Object)

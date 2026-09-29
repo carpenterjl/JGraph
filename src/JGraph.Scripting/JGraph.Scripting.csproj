@@ -49,6 +49,10 @@
          reference carries the executable, its runtimeconfig and deps into every host's output. -->
     <ProjectReference Include="..\JGraph.NativeHost\JGraph.NativeHost.csproj" />
 
+    <!-- Device I/O (device classes plan, architecture B): the serial, socket and USB backends and the
+         device simulator, in process; nothing a device object does runs in the native host. -->
+    <ProjectReference Include="..\JGraph.Devices\JGraph.Devices.csproj" />
+
     <!-- copyobj copies a figure object by writing it out and reading it back, so the one description
          of what a plot is made of stays the document format's rather than becoming a second one. -->
     <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />

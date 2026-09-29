@@ -1,0 +1,98 @@
+CHK|properties|Port,BaudRate,Timeout,FlowControl,Parity,StopBits,DataBits,ByteOrder,UserData,Terminator,BytesAvailableFcnCount,BytesAvailableFcnMode,BytesAvailableFcn,ErrorOccurredFcn,NumBytesAvailable,NumBytesWritten,Tag|exact
+CHK|fieldnames|Port,BaudRate,Timeout,FlowControl,Parity,StopBits,DataBits,ByteOrder,UserData,Terminator,BytesAvailableFcnCount,BytesAvailableFcnMode,BytesAvailableFcn,ErrorOccurredFcn,NumBytesAvailable,NumBytesWritten,Tag|exact
+CHK|methods|Serialport,addlistener,configureCallback,configureTerminator,delete,eq,findobj,findprop,flush,ge,get,getpinstatus,gt,isvalid,le,listener,lt,ne,notify,read,readbinblock,readline,serialbreak,set,setDTR,setRTS,write,writebinblock,writeline,writeread|exact
+CHK|isprop_baud|logical:1|exact
+CHK|isprop_bogus|logical:0|exact
+CHK|isprop_hidden|logical:1|exact
+CHK|ismethod_read|logical:1|exact
+CHK|ismethod_bogus|logical:0|exact
+CHK|baud_set|double:115200|exact
+CHK|baud_int32|int32:19200|exact
+CHK|baud_neg|serialport:serialport:InvalidBaudRate ## BaudRate must be a scalar positive integer.|exact
+CHK|baud_zero|serialport:serialport:InvalidBaudRate ## BaudRate must be a scalar positive integer.|exact
+CHK|baud_frac|serialport:serialport:InvalidBaudRate ## BaudRate must be a scalar positive integer.|exact
+CHK|baud_str|serialport:serialport:InvalidBaudRate ## BaudRate must be a scalar positive integer.|exact
+CHK|baud_vec|serialport:serialport:InvalidBaudRate ## BaudRate must be a scalar positive integer.|exact
+CHK|baud_inf|serialport:serialport:InvalidBaudRate ## BaudRate must be a scalar positive integer.|exact
+CHK|baud_kept|int32:19200|exact
+CHK|timeout_set|double:2.5|exact
+CHK|timeout_single|single:2|exact
+CHK|timeout_int|Stream:timeout:invalidTime ## Timeout must be a non-negative scalar double.|exact
+CHK|timeout_zero|MATLAB:Serial:expectedNonZero ## Expected Timeout to be nonzero.|exact
+CHK|timeout_inf|MATLAB:Serial:expectedFinite ## Expected Timeout to be finite.|exact
+CHK|timeout_neg|MATLAB:Serial:expectedNonnegative ## Expected Timeout to be nonnegative.|exact
+CHK|timeout_nan|MATLAB:Serial:expectedFinite ## Expected Timeout to be finite.|exact
+CHK|timeout_vec|MATLAB:Serial:expectedScalar ## Expected Timeout to be a scalar.|exact
+CHK|timeout_str|MATLAB:Serial:invalidType ## Expected Timeout to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was string.|exact
+CHK|timeout_empty|MATLAB:Serial:expectedScalar ## Expected Timeout to be a scalar.|exact
+CHK|timeout_logical|MATLAB:Serial:invalidType ## Expected Timeout to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was logical.|exact
+CHK|timeout_kept|single:2|exact
+CHK|parity_char|string:even|exact
+CHK|parity_upper|string:odd|exact
+CHK|parity_partial|string:none|exact
+CHK|parity_bad|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'none', 'even', 'odd' / The input, 'bogus', did not match any of the valid values.|exact
+CHK|parity_num|MATLAB:Serial:invalidType ## Expected Parity to be one of these types: / char, string / Instead its type was double.|exact
+CHK|parity_empty|MATLAB:Serial:expectedNonempty ## Expected Parity to be nonempty.|exact
+CHK|parity_cell|MATLAB:Serial:invalidType ## Expected Parity to be one of these types: / char, string|exact
+CHK|parity_mark|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'none', 'even', 'odd' / The input, 'mark', did not match any of the valid values.|exact
+CHK|flow_partial|string:hardware|exact
+CHK|flow_software|string:software|exact
+CHK|flow_bad|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'none', 'hardware', 'software' / The input, 'rts', did not match any of the valid values.|exact
+CHK|flow_num|MATLAB:Serial:invalidType ## Expected FlowControl to be one of these types: / char, string / Instead its type was double.|exact
+CHK|order_partial|string:big-endian|exact
+CHK|order_bad|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'little-endian', 'big-endian' / The input, 'middle', did not match any of the valid values.|exact
+CHK|order_num|MATLAB:Serial:invalidType ## Expected ByteOrder to be one of these types: / char, string / Instead its type was double.|exact
+CHK|databits_int8|int8:7|exact
+CHK|databits_5|double:5|exact
+CHK|databits_9|seriallib:serial:setDataBitsFailed ## Error setting number of Data Bits. / invalid character_size value|exact
+CHK|databits_4|seriallib:serial:setDataBitsFailed ## Error setting number of Data Bits. / invalid character_size value|exact
+CHK|databits_frac|MATLAB:Serial:expectedInteger ## Expected DataBits to be integer-valued.|exact
+CHK|databits_str|MATLAB:Serial:invalidType ## Expected DataBits to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was string.|exact
+CHK|databits_vec|MATLAB:Serial:expectedScalar ## Expected DataBits to be a scalar.|exact
+CHK|databits_kept|double:8|exact
+CHK|stopbits_2|double:2|exact
+CHK|stopbits_15|double:1.5|exact
+CHK|stopbits_3|seriallib:serial:invalidStopBits ## StopBits must be one of 1, 1.5, or 2.|exact
+CHK|stopbits_0|seriallib:serial:invalidStopBits ## StopBits must be one of 1, 1.5, or 2.|exact
+CHK|stopbits_str|MATLAB:Serial:invalidType ## Expected StopBits to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was string.|exact
+CHK|tag_char|string:charTag|exact
+CHK|tag_num|MATLAB:TagAccessor:invalidType ## Expected TAG to be one of these types: / char, string / Instead its type was double.|exact
+CHK|tag_cell|MATLAB:TagAccessor:expectedScalartext ## Expected TAG to be a non-missing string scalar or character vector.|exact
+CHK|tag_strarr|MATLAB:TagAccessor:expectedScalartext ## Expected TAG to be a non-missing string scalar or character vector.|exact
+CHK|userdata|cell:{double:1;char:two}|exact
+CHK|errfcn_class|function_handle|exact
+CHK|errfcn_empty|logical:1|exact
+CHK|errfcn_bad|serialport:serialport:InvalidErrorOccurredFcn ## ErrorOccurredFcn must be a function handle.|exact
+CHK|errfcn_str|serialport:serialport:InvalidErrorOccurredFcn ## ErrorOccurredFcn must be a function handle.|exact
+CHK|port_set|MATLAB:class:SetProhibited ## Unable to set the 'Port' property of class ''Serialport'' because it is read-only.|exact
+CHK|nba_set|MATLAB:class:SetProhibited ## Unable to set the 'NumBytesAvailable' property of class ''Serialport'' because it is read-only.|exact
+CHK|nbw_set|MATLAB:class:SetProhibited ## Unable to set the 'NumBytesWritten' property of class ''Serialport'' because it is read-only.|exact
+CHK|term_set|serialport:serialport:ReadOnlyProperty ## To set "Terminator", use the "configureTerminator" function.|exact
+CHK|bafm_set|serialport:serialport:ReadOnlyProperty ## To set "BytesAvailableFcnMode", use the "configureCallback" function.|exact
+CHK|bafc_set|serialport:serialport:ReadOnlyProperty ## To set "BytesAvailableFcnCount", use the "configureCallback" function.|exact
+CHK|baf_set|serialport:serialport:ReadOnlyProperty ## To set "BytesAvailableFcn", use the "configureCallback" function.|exact
+CHK|port_dot|MATLAB:class:SetProhibited ## Unable to set the 'Port' property of class ''Serialport'' because it is read-only.|exact
+CHK|term_dot|serialport:serialport:ReadOnlyProperty ## To set "Terminator", use the "configureTerminator" function.|exact
+CHK|bogus_dot_set|MATLAB:noPublicFieldForClass ## Unrecognized property 'Bogus' for class 'internal.Serialport'.|exact
+CHK|bogus_dot_get|MATLAB:noSuchMethodOrField ## Unrecognized method, property, or field 'Bogus' for class 'internal.Serialport'.|exact
+CHK|dot_lower|MATLAB:noSuchMethodOrField ## Unrecognized method, property, or field 'baudrate' for class 'internal.Serialport'.|exact
+CHK|get_class|struct|exact
+CHK|get_fields|Port,BaudRate,Timeout,FlowControl,Parity,StopBits,DataBits,ByteOrder,UserData,Terminator,BytesAvailableFcnCount,BytesAvailableFcnMode,BytesAvailableFcn,ErrorOccurredFcn,NumBytesAvailable,NumBytesWritten,Tag|exact
+CHK|get_one|double:9600|exact
+CHK|get_lower|double:9600|exact
+CHK|get_cell|cell:{double:9600;string:none}|exact
+CHK|get_bogus|MATLAB:class:setgetPropertyNotFound ## Property Bogus not found in class internal.Serialport, or is not present in all elements of the array of class internal.Serialport.|exact
+CHK|set_multi|cell:{string:even;double:7}|exact
+CHK|set_lower|string:odd|exact
+CHK|set_bad|MATLAB:unrecognizedStringChoice ## Expected input to match one of these values: / 'none', 'even', 'odd' / The input, 'bogus', did not match any of the valid values.|exact
+CHK|set_readonly|MATLAB:class:SetProhibited ## Unable to set the 'Port' property of class ''Serialport'' because it is read-only.|exact
+CHK|set_bogus|MATLAB:class:InvalidProperty ## The name 'Bogus' is not an accessible property for an instance of class 'internal.Serialport'.|exact
+CHK|nbw_class|double|exact
+CHK|nbw_delta|double:5|exact
+CHK|deleted_valid|logical:0|exact
+CHK|deleted_prop|MATLAB:class:InvalidHandle ## Invalid or deleted object.|exact
+CHK|deleted_read|MATLAB:class:InvalidHandle ## Invalid or deleted object.|exact
+CHK|deleted_set|MATLAB:class:InvalidHandle ## Invalid or deleted object.|exact
+CHK|deleted_get|MATLAB:class:InvalidHandle ## Invalid or deleted object.|exact
+CHK|deleted_eq|logical:1|exact
+CHK|deleted_reopen|logical:1|exact

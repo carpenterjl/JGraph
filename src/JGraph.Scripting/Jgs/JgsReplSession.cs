@@ -181,6 +181,7 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
                 // .NET's events and delegates from other threads wait for an idle prompt as they do
                 // for pause (ADR 0178).
                 Net.NetCallbackQueue.DrainCurrent();
+                Devices.DeviceEventQueue.DrainCurrent(); // and a device's callbacks (device classes plan)
             }
             catch (OperationCanceledException)
             {

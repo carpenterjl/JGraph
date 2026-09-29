@@ -1,0 +1,147 @@
+status_open	char [1 8] '11100000'
+status_rts_off	char [1 8] '01100000'
+status_dtr_off	char [1 8] '00000000'
+status_both_on	char [1 8] '11100000'
+setrts_num	ERR MATLAB:Serial:invalidType Expected setRTS to be one of these types: | logical | Instead its type was double.
+status_rts_num	char [1 8] '11100000'
+setrts_str	ERR MATLAB:Serial:invalidType Expected setRTS to be one of these types: | logical | Instead its type was string.
+setrts_two	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'setRTS'. Valid syntax is setRTS(s,FLAG).
+setrts_none	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'setRTS'. Valid syntax is setRTS(s,FLAG).
+setrts_vec	ERR MATLAB:Serial:invalidType Expected setRTS to be one of these types: | logical | Instead its type was double.
+setrts_nan	ERR MATLAB:Serial:invalidType Expected setRTS to be one of these types: | logical | Instead its type was double.
+setrts_2	ERR MATLAB:Serial:invalidType Expected setRTS to be one of these types: | logical | Instead its type was double.
+setdtr_str	ERR MATLAB:Serial:invalidType Expected setDTR to be one of these types: | logical | Instead its type was string.
+pins_far_rts	struct [1 1] struct(ClearToSend,DataSetReady,CarrierDetect,RingIndicator)
+pins_far_rts_v	logical [1 4] [true false false false]
+pins_far_dtr_v	logical [1 4] [false true true false]
+pins_arg	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'getpinstatus'. Valid syntax is getpinstatus(s).
+status_hw_flow	char [1 8] '11100000'
+setrts_hw_flow	OUT
+status_hw_flow_rts_off	char [1 8] '11100000'
+status_after_flow	char [1 8] '11100000'
+status_before_break	char [1 8] '11100000'
+break_blocks	logical [1 1] true
+status_after_break	char [1 8] '11100001'
+break_none	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'serialbreak'. Valid syntax is serialbreak(s,TIME).
+break_neg	ERR MATLAB:Serial:expectedNonnegative Expected serialBreak to be nonnegative.
+break_frac	ERR MATLAB:Serial:expectedInteger Expected serialBreak to be integer-valued.
+break_str	ERR MATLAB:Serial:invalidType Expected serialBreak to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 | Instead its type was string.
+break_two	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'serialbreak'. Valid syntax is serialbreak(s,TIME).
+break_zero	ERR MATLAB:Serial:expectedNonZero Expected serialBreak to be nonzero.
+fopen	OUT
+fopen_warn	char [0 0] ''
+fopen_msg	char [0 0] ''
+fclose	OUT [Warning: The fclose method does not close the connection. Instead, clear the interface object to close the connection.] |
+fclose_warn	char [1 42] 'transportlib:legacy:DoesNotCloseConnection'
+fclose_msg	char [1 109] 'The fclose method does not close the connection. Instead, clear the interface object to close the connection.'
+fclose_still_valid	logical [1 1] true
+fprintf	OUT
+fprintf_sent	double [1 4] [97 98 99 10]
+fprintf_fmt	OUT
+fprintf_fmt_sent	double [1 2] [53 45]
+fprintf_fmt2	OUT
+fprintf_fmt2_sent	double [1 2] [52 50]
+fwrite	OUT
+fwrite_sent	double [1 3] [1 2 3]
+fwrite_prec	OUT
+fwrite_prec_sent	double [1 2] [2 1]
+fwrite_mode	OUT [Warning: Setting the mode is not supported. The mode value remains set to 'sync'.] |
+fwrite_mode_sent	double [1 1] 1
+bytesavailable	double [1 1] 21
+fgetl	char [1 5] 'line1'
+fgets	double [1 6] [108 105 110 101 50 10]
+fscanf	char [1 6] '12 34 | '
+fscanf_left	double [1 1] 3
+fscanf_fmt	double [2 1] [12;34]
+scanstr	cell [2 1] {char [1 1] 'a'; char [1 1] 'b'}
+fread	double [2 1] [1;2]
+fread_prec	double [1 1] 1027
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'serialport' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'serialport_somedata')"'>serialport Read Warnings</a>.] 
+fread_all	double [4 1] [1;2;3;4]
+query	char [1 5] 'ping | '
+binblockread	double [3 1] [97;98;99]
+binblockwrite	OUT
+binblockwrite_sent	char [1 11] 'ping | #13'
+flushinput	OUT
+flushinput_left	double [1 1] 0
+flushoutput	OUT
+legacy_get_BytesAvailable	double [1 1] 0
+[Warning: BytesToOutput is not a valid property for this interface.] 
+legacy_get_BytesToOutput	double [0 0] []
+legacy_get_BytesToOutput_warn	char [1 101] 'transportlib:legacy:PropertyNotSupported ## BytesToOutput is not a valid property for this interface.'
+legacy_get_ErrorFcn	function_handle [0 0]
+legacy_get_PinStatus	struct [1 1] struct(ClearToSend,DataSetReady,CarrierDetect,RingIndicator)
+[Warning: ValuesReceived is not a valid property for this interface.] 
+legacy_get_ValuesReceived	double [0 0] []
+legacy_get_ValuesReceived_warn	char [1 102] 'transportlib:legacy:PropertyNotSupported ## ValuesReceived is not a valid property for this interface.'
+[Warning: ValuesSent is not a valid property for this interface.] 
+legacy_get_ValuesSent	double [0 0] []
+legacy_get_ValuesSent_warn	char [1 98] 'transportlib:legacy:PropertyNotSupported ## ValuesSent is not a valid property for this interface.'
+legacy_get_InputBufferSize	double [1 1] 512
+legacy_get_OutputBufferSize	double [1 1] 1024
+[Warning: ReadAsyncMode is not a valid property for this interface.] 
+legacy_get_ReadAsyncMode	double [0 0] []
+legacy_get_ReadAsyncMode_warn	char [1 101] 'transportlib:legacy:PropertyNotSupported ## ReadAsyncMode is not a valid property for this interface.'
+[Warning: RecordDetail is not a valid property for this interface.] 
+legacy_get_RecordDetail	double [0 0] []
+legacy_get_RecordDetail_warn	char [1 100] 'transportlib:legacy:PropertyNotSupported ## RecordDetail is not a valid property for this interface.'
+[Warning: RecordMode is not a valid property for this interface.] 
+legacy_get_RecordMode	double [0 0] []
+legacy_get_RecordMode_warn	char [1 98] 'transportlib:legacy:PropertyNotSupported ## RecordMode is not a valid property for this interface.'
+[Warning: RecordName is not a valid property for this interface.] 
+legacy_get_RecordName	double [0 0] []
+legacy_get_RecordName_warn	char [1 98] 'transportlib:legacy:PropertyNotSupported ## RecordName is not a valid property for this interface.'
+[Warning: RecordStatus is not a valid property for this interface.] 
+legacy_get_RecordStatus	double [0 0] []
+legacy_get_RecordStatus_warn	char [1 100] 'transportlib:legacy:PropertyNotSupported ## RecordStatus is not a valid property for this interface.'
+[Warning: RequestToSend is not a valid property for this interface.] 
+legacy_get_RequestToSend	double [0 0] []
+legacy_get_RequestToSend_warn	char [1 101] 'transportlib:legacy:PropertyNotSupported ## RequestToSend is not a valid property for this interface.'
+[Warning: DataTerminalReady is not a valid property for this interface.] 
+legacy_get_DataTerminalReady	double [0 0] []
+legacy_get_DataTerminalReady_warn	char [1 105] 'transportlib:legacy:PropertyNotSupported ## DataTerminalReady is not a valid property for this interface.'
+legacy_get_Status	char [1 4] 'open'
+[Warning: TransferStatus is not a valid property for this interface.] 
+legacy_get_TransferStatus	double [0 0] []
+legacy_get_TransferStatus_warn	char [1 102] 'transportlib:legacy:PropertyNotSupported ## TransferStatus is not a valid property for this interface.'
+legacy_get_Type	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'Type' for class 'internal.Serialport'.
+legacy_get_Name	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'Name' for class 'internal.Serialport'.
+[Warning: BreakInterruptFcn is not a valid property for this interface.] 
+legacy_get_BreakInterruptFcn	double [0 0] []
+legacy_get_BreakInterruptFcn_warn	char [1 105] 'transportlib:legacy:PropertyNotSupported ## BreakInterruptFcn is not a valid property for this interface.'
+[Warning: PinStatusFcn is not a valid property for this interface.] 
+legacy_get_PinStatusFcn	double [0 0] []
+legacy_get_PinStatusFcn_warn	char [1 100] 'transportlib:legacy:PropertyNotSupported ## PinStatusFcn is not a valid property for this interface.'
+[Warning: OutputEmptyFcn is not a valid property for this interface.] 
+legacy_get_OutputEmptyFcn	double [0 0] []
+legacy_get_OutputEmptyFcn_warn	char [1 102] 'transportlib:legacy:PropertyNotSupported ## OutputEmptyFcn is not a valid property for this interface.'
+[Warning: TimerFcn is not a valid property for this interface.] 
+legacy_get_TimerFcn	double [0 0] []
+legacy_get_TimerFcn_warn	char [1 96] 'transportlib:legacy:PropertyNotSupported ## TimerFcn is not a valid property for this interface.'
+[Warning: TimerPeriod is not a valid property for this interface.] 
+legacy_get_TimerPeriod	double [0 0] []
+legacy_get_TimerPeriod_warn	char [1 99] 'transportlib:legacy:PropertyNotSupported ## TimerPeriod is not a valid property for this interface.'
+legacy_get_BytesAvailableFcnMode	string [1 1] "off"
+legacy_get_Terminator	string [1 1] "LF"
+legacy_get_ByteOrder	string [1 1] "little-endian"
+legacy_get_BaudRate	double [1 1] 9600
+legacy_get_Port	string [1 1] "COM20"
+legacy_set_inputbuffer	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+legacy_set_inputbuffer_warn	char [1 4] ' ## '
+legacy_set_errorfcn	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+legacy_set_rts	OUT [Warning: RequestToSend is not a valid property for this interface.] | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+legacy_set_rts_status	char [1 8] '11100000'
+legacy_set_dtr	OUT [Warning: DataTerminalReady is not a valid property for this interface.] | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+legacy_set_dtr_status	char [1 8] '11100000'
+legacy_record	OUT [Warning: record is not a valid method for this interface.] |
+legacy_readasync	OUT [Warning: readasync is not a valid method for this interface.] |
+legacy_stopasync	OUT [Warning: stopasync is not a valid method for this interface.] |
+legacy_instrhwinfo	ERR MATLAB:minrhs Not enough input arguments.
+legacy_instrhwinfo_prop	double [1 1] 9600
+[Warning: instrhwinfo('serialport') will be removed in a future release. Use serialportlist instead.] 
+instrhwinfo_serialport	instrument.HardwareInfo [1 1] <a href="matlab:helpPopup('instrument.HardwareInfo')" style="font-weight:bold">HardwareInfo</a> with properties: | AllSerialPorts: [21 string] | AvailableSerialPorts: [01 string] | ObjectConstructorName: [21 string] | Access to your hardware may be provided by a support package. Go to the <a href="matlab:instrument.internal.supportPackageInstaller">Support Package Installer</a> to learn more. |
+instrhwinfo_serialport_disp	OUT [Warning: instrhwinfo('serialport') will be removed in a future release. Use serialportlist instead.] | ans = | HardwareInfo with properties: | AllSerialPorts: [21 string] | AvailableSerialPorts: [01 string] | ObjectConstructorName: [21 string] | Access to your hardware may be provided by a support package. Go to the Support Package Installer to learn more. |
+legacy_fclose_twice	OUT [Warning: The fclose method does not close the connection. Instead, clear the interface object to close the connection.] | [Warning: The fclose method does not close the connection. Instead, clear the interface object to close the connection.] |
+methods_all	ERR MATLAB:badopt Unknown command option.

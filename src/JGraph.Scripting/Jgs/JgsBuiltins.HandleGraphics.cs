@@ -87,6 +87,7 @@ internal static partial class JgsBuiltins
         JgsCallbackDispatcher.Current?.Drain();
         host.Timers?.Drain(); // a due timer fires here too (V6, #105)
         Net.NetCallbackQueue.DrainCurrent(); // and .NET's work from other threads (ADR 0178)
+        Devices.DeviceEventQueue.DrainCurrent(); // and a serialport's BytesAvailableFcn (device classes plan)
     }
 
     /// <summary>
@@ -113,12 +114,14 @@ internal static partial class JgsBuiltins
                 return;
             }
 
-            token.WaitHandle.WaitOne(TimeSpan.FromMilliseconds(
+            // A device event wakes the wait at once (device classes plan); the rest wait out the slice.
+            WaitHandle.WaitAny([token.WaitHandle, Devices.DeviceEventQueue.Posted], TimeSpan.FromMilliseconds(
                 System.Math.Min(remaining, PumpSlice.TotalMilliseconds)));
             token.ThrowIfCancellationRequested();
             dispatcher?.Drain();
             timers?.Drain();
             Net.NetCallbackQueue.DrainCurrent(); // .NET's events and delegates from other threads (ADR 0178)
+            Devices.DeviceEventQueue.DrainCurrent(); // device callbacks (device classes plan)
         }
     }
 
@@ -133,8 +136,10 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        Define("get", (args, line, col) => TryLibBuiltin("get", host, args, line, col, out JgsValue got) ? got : Get(args, line, col));
-        DefineSilent("set", (args, line, col) => TryLibBuiltin("set", host, args, line, col, out JgsValue none) ? none : Set(args, line, col));
+        Define("get", (args, line, col) => TryDeviceBuiltin("get", args, 1, line, col, out JgsValue device) ? device
+            : TryLibBuiltin("get", host, args, line, col, out JgsValue got) ? got : Get(args, line, col));
+        DefineSilent("set", (args, line, col) => TryDeviceBuiltin("set", args, 0, line, col, out JgsValue device) ? device
+            : TryLibBuiltin("set", host, args, line, col, out JgsValue none) ? none : Set(args, line, col));
 
         // Both answer a question with no arguments — every object there is — so the bare name has to
         // be that answer rather than the function itself, or numel(findobj) counts a function.
@@ -151,7 +156,8 @@ internal static partial class JgsBuiltins
         Define("ishandle", (args, line, col) => IsHandle("ishandle", args, line, col));
         Define("ishghandle", (args, line, col) => IsHandle("ishghandle", args, line, col));
         Define("isgraphics", IsGraphics);
-        Define("isvalid", (args, line, col) => TryLibBuiltin("isvalid", host, args, line, col, out JgsValue valid) ? valid : IsValid(args, line, col));
+        Define("isvalid", (args, line, col) => TryDeviceBuiltin("isvalid", args, 1, line, col, out JgsValue device) ? device
+            : TryLibBuiltin("isvalid", host, args, line, col, out JgsValue valid) ? valid : IsValid(args, line, col));
 
         Define("ancestor", Ancestor);
         DefineSilent("copyobj", Copy);

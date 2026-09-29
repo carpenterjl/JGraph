@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The far end of a com0com pair for R2025b's device fixtures (device classes plan, step 0): opens a
+    port (COM21) and runs JGraph.Devices' PeerEngine on it, the same engine JGraph's in-process
+    simulated port runs, so a fixture prints the same lines in both engines. A test tool, not product
+    code; the fixtures' helper device_peer.m starts it from this project's Release output.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>peer-sim</AssemblyName>
+    <RootNamespace>JGraph.Tools.PeerSim</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\JGraph.Devices\JGraph.Devices.csproj" />
+  </ItemGroup>
+
+</Project>

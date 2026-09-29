@@ -1,0 +1,47 @@
+CHK|cc_none|serialport:serialport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'configureCallback'. Valid syntaxes are / configureCallback(s,"off") / configureCallback(s,"terminator",CALLBACKFCN) / configureCallback(s,"byte",COUNT,CALLBACKFCN)|exact
+CHK|cc_off_extra|serialport:serialport:IncorrectBytesAvailableModeSyntax ## Invalid input arguments. Valid syntax is configureCallback(s,"off").|exact
+CHK|cc_term_noarg|serialport:serialport:IncorrectBytesAvailableModeSyntax ## Invalid input arguments. Valid syntax is configureCallback(s,"terminator",@callbackFcn).|exact
+CHK|cc_byte_3|serialport:serialport:IncorrectBytesAvailableModeSyntax ## Invalid input arguments. Valid syntax is configureCallback(s,"byte",count,@callbackFcn).|exact
+CHK|cc_term_4|serialport:serialport:IncorrectBytesAvailableModeSyntax ## Invalid input arguments. Valid syntax is configureCallback(s,"terminator",@callbackFcn).|exact
+CHK|cc_bad_mode|MATLAB:configureCallback:unrecognizedStringChoice ## Expected input number 2, mode, to match one of these values: / 'terminator', 'byte', 'off' / The input, 'bogus', did not match any of the valid values.|exact
+CHK|cc_num_mode|MATLAB:configureCallback:invalidType ## Expected input number 2, mode, to be one of these types: / char / Instead its type was double.|exact
+CHK|cc_byte_badcount|MATLAB:serialport:expectedPositive ## Expected BytesAvailableFcnCount to be positive.|exact
+CHK|cc_byte_zero|MATLAB:serialport:expectedNonZero ## Expected BytesAvailableFcnCount to be nonzero.|exact
+CHK|cc_byte_frac|MATLAB:serialport:expectedInteger ## Expected BytesAvailableFcnCount to be integer-valued.|exact
+CHK|cc_byte_str|MATLAB:serialport:invalidType ## Expected BytesAvailableFcnCount to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|cc_five|serialport:serialport:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'configureCallback'. Valid syntaxes are / configureCallback(s,"off") / configureCallback(s,"terminator",CALLBACKFCN) / configureCallback(s,"byte",COUNT,CALLBACKFCN)|exact
+CHK|cc_term_badfcn|serialport:serialport:InvalidBytesAvailableFcn ## BytesAvailableFcn must be a function handle.|exact
+CHK|cc_term_strfcn|serialport:serialport:InvalidBytesAvailableFcn ## BytesAvailableFcn must be a function handle.|exact
+CHK|cc_partial_mode|string:terminator|exact
+CHK|cc_partial_fcn|function_handle|exact
+CHK|cc_byte_mode|string:byte|exact
+CHK|cc_byte_count|double:7|exact
+CHK|cc_off_mode|string:off|exact
+CHK|cc_off_count|double:7|exact
+CHK|cc_off_fcn|logical:1|exact
+CHK|cc_empty_fcn_mode|string:terminator|exact
+CHK|cc_empty_fcn|logical:1|exact
+CHK|byte_chunk_calls|double:3|exact
+CHK|byte_chunk_log|cell:{double:10;double:10;double:10}|exact
+CHK|byte_trickle_calls|double:3|exact
+CHK|byte_trickle_log|cell:{double:3;double:6;double:9}|exact
+CHK|byte_reading_log|cell:{double:[1 2 3 4];double:[5 6 7 8];double:[9 10 11 12]}|exact
+CHK|busy_loop_calls|double:0|exact
+CHK|after_statements_calls|double:0|exact
+CHK|after_pause0_calls|double:1|exact
+CHK|after_drawnow_calls|double:1|exact
+CHK|after_read_calls|double:0|exact
+CHK|after_read_pause_calls|double:1|exact
+CHK|after_read_pause_log|cell:{double:0}|exact
+CHK|evt_log|cell:{char:internal.Serialport;char:instrument.internal.DataAvailableInfo;char:BytesAvailableFcnCount,AbsTime;double:2;char:datetime;logical:1;logical:1}|exact
+CHK|evt_term_log|cell:{char:internal.Serialport;char:instrument.internal.DataAvailableInfo;char:BytesAvailableFcnCount,AbsTime;double:1;char:datetime;logical:1;logical:1}|exact
+CHK|term_chunk_calls|double:3|exact
+CHK|term_trickle_calls|double:2|exact
+CHK|term_reading_log|cell:{string:l1;string:l2}|exact
+CHK|term_crlf_calls|double:2|exact
+CHK|cb_error_id|MATLAB:callback:DynamicPropertyEventError|exact
+CHK|cb_error_text|Error executing listener callback for PostSet event on TotalBytesWritten dynamic property in object of matlabshared.asyncio.internal.Channel class: / Error using serial_callbacks>@(src,evt)error('fixture:cb','boom in callback') (line 141) / boom in callback /  / Error in matlabshared.transportlib.internal.client.GenericClient/callbackFunction (line 981) /             obj.BytesAvailableFcn(obj.CallbackSource, dataAvailableInfo); /             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ / Error in matlabshared.transportlib.internal.client.GenericClient>@(varargin)obj.callbackFunction(varargin{:}) (line 673) /                         obj.Transport.BytesAvailableFcn = @obj.callbackFunction; /                                                            ^^^^^^^^^^^^^^^^^^^^ / Error in matlabshared.transportlib.internal.DataReceivedHandlerMixin/valuesWrittenUpdated /  / Error in matlabshared.transportlib.internal.DataReceivedHandlerMixin>@(src,evt)obj.valuesWrittenUpdated(src,evt) /  / Error in matlabshared.asyncio.internal.Channel/onPropertyChanged (line 603) /             obj.(name) = value; /             ^^^^^^^^^^ / Error in matlabshared.asyncio.internal.Channel>@(source,data)objWeakRef.Handle.onPropertyChanged(data.Name,data.Value) (line 498) /                                                          @(source, data) objWeakRef.Handle.onPropertyChanged(data.Name, data.Value)); /                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ / Error in serial_callbacks (line 144) / pause(0.5); / ^^^^^^^^^^|div=ADR0184|diverges|Error executing the BytesAvailableFcn callback: / boom in callback
+CHK|off_pending_calls|double:0|exact
+CHK|flush_crossing_calls|double:0|exact
+CHK|timer_during_read|logical:1|exact
+CHK|errfcn_on_timeout|double:0|exact

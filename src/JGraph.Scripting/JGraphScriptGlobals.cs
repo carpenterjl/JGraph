@@ -715,6 +715,11 @@ public sealed class JGraphScriptGlobals
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal Jgs.Native.NativeSession Native => _native ??= new Jgs.Native.NativeSession();
 
+    private Jgs.Devices.DeviceSession? _devices;
+
+    /// <summary>The session's device objects and simulated ports (device classes plan).</summary>
+    internal Jgs.Devices.DeviceSession Devices => _devices ??= new Jgs.Devices.DeviceSession(this);
+
     /// <summary>Ends the native host, if the session started one; every library it loaded goes with it.</summary>
     internal void StopNativeHost()
     {

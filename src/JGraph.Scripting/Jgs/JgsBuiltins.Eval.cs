@@ -72,6 +72,9 @@ internal static partial class JgsBuiltins
         // V6 (#121, #122): the table verbs join values by the bracket's rules, addvars reads the
         // call it was written as, and rowfun and varfun run script code.
         "table2array", "addvars", "varfun", "rowfun",
+
+        // Device classes plan, stage 2: the serial port's objects belong to the session.
+        "serialport", "serialportlist", "serialportfind", "internal",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -107,6 +110,7 @@ internal static partial class JgsBuiltins
         RegisterNetBuiltins(env, interpreter);
         RegisterNetCompile(env, interpreter);
         RegisterSharedLibraryBuiltins(env, interpreter);
+        RegisterDeviceBuiltins(env, interpreter, host);
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.
@@ -217,7 +221,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>The source text of a function handle, as func2str prints it.</summary>
-    private static string SourceTextOf(string name, JgsValue value, int line, int col)
+    internal static string SourceTextOf(string name, JgsValue value, int line, int col)
     {
         if (value.Type != JgsType.Function)
         {

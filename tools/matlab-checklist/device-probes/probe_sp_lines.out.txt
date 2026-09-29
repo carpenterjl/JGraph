@@ -1,0 +1,99 @@
+writeline_lf	double [1 4] [97 98 99 10]
+writeline_char	double [1 6] [99 104 97 114 115 10]
+writeline_num	ERR transportlib:transport:invalidDataType Expected input number 2, data, to be a scalar string or a 1-by-n char array.
+writeline_num_sent	double [1 0] []
+writeline_strarr	ERR transportlib:transport:invalidDataType Expected input number 2, data, to be a scalar string or a 1-by-n char array.
+writeline_strarr_sent	double [1 0] []
+writeline_cell	ERR transportlib:transport:invalidDataType Expected input number 2, data, to be a scalar string or a 1-by-n char array.
+writeline_none	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'writeline'. Valid syntax is writeline(s,DATA).
+writeline_two	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'writeline'. Valid syntax is writeline(s,DATA).
+writeline_empty	ERR transportlib:transport:invalidDataType Expected input number 2, data, to be a scalar string or a 1-by-n char array.
+writeline_empty_sent	double [1 0] []
+writeline_charmat	ERR transportlib:transport:invalidDataDim Input number 2, data, must be either a 1-by-n or n-by-1 array.
+writeline_charmat_sent	double [1 0] []
+term_cr	string [1 1] "CR"
+writeline_cr	double [1 2] [120 13]
+term_crlf	string [1 1] "CR/LF"
+writeline_crlf	double [1 3] [120 13 10]
+term_zero	double [1 1] 0
+term_zero_class	char [1 6] 'double'
+writeline_zero	double [1 2] [120 0]
+term_pair	cell [1 2] {string [1 1] "LF"; string [1 1] "CR"}
+writeline_pair	double [1 2] [120 13]
+term_pair_num	cell [1 2] {double [1 1] 13; string [1 1] "LF"}
+term_lower	string [1 1] "CR"
+term_partial	string [1 1] "CR"
+term_bad	ERR serialport:serialport:InvalidTerminator Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.
+term_256	ERR serialport:serialport:InvalidTerminator Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.
+term_neg	ERR serialport:serialport:InvalidTerminator Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.
+term_frac	ERR serialport:serialport:InvalidTerminator Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.
+term_vec	ERR serialport:serialport:InvalidTerminator Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.
+term_none	ERR serialport:serialport:IncorrectInputArgumentsPlural Invalid number of input arguments for 'configureTerminator'. Valid syntaxes are | configureTerminator(s,TERMINATOR) | configureTerminator(s,READTERMINATOR,WRITETERMINATOR)
+term_three	ERR serialport:serialport:IncorrectInputArgumentsPlural Invalid number of input arguments for 'configureTerminator'. Valid syntaxes are | configureTerminator(s,TERMINATOR) | configureTerminator(s,READTERMINATOR,WRITETERMINATOR)
+term_lfcr	ERR serialport:serialport:InvalidTerminator Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.
+term_int8	OUT
+term_int8_value	int8 [1 1] 10
+term_int8_class	char [1 4] 'int8'
+term_char_num	ERR serialport:serialport:InvalidTerminator Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.
+readline_1	string [1 1] "one"
+readline_2	string [1 1] "two"
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'serialport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'serialport_nodata')"'>serialport Read Warnings</a>.] 
+readline_partial	double [0 0] []
+readline_warn_id	char [1 37] 'serialport:serialport:ReadlineWarning'
+readline_warn_msg	char [1 264] 'The specified amount of data was not returned within the Timeout period for 'readline'. | 'serialport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument', 'serialport_nodata')"'>serialport Read Warnings</a>.'
+readline_partial_left	double [1 1] 5
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'serialport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'serialport_nodata')"'>serialport Read Warnings</a>.] 
+readline_none	double [0 0] []
+readline_none_warn_msg	char [1 264] 'The specified amount of data was not returned within the Timeout period for 'readline'. | 'serialport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument', 'serialport_nodata')"'>serialport Read Warnings</a>.'
+readline_none_disp	OUT [Warning: The specified amount of data was not returned within the Timeout period for 'readline'. | 'serialport' unable to read any data. For more information on possible reasons, see serialport Read Warnings.] | x = | [] |
+readline_arg	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'readline'. Valid syntax is DATA = readline(s).
+readline_empty_line	string [1 1] ""
+readline_empty_class	char [1 6] 'string'
+readline_cr_kept	double [1 2] [97 13]
+readline_crlf_1	double [1 5] [97 10 98 13 99]
+readline_crlf_2	double [1 1] 100
+readline_int_1	double [1 1] 112
+readline_int_2	double [1 2] [113 10]
+readline_pair_read_cr	double [1 1] 114
+readline_nul	double [1 1] 122
+readline_high	double [1 5] [104 233 108 108 111]
+readline_utf8	double [1 2] [195 169]
+read_after_readline	char [1 2] 'cd'
+writeread	string [1 1] "hello"
+writeread_char	char [1 3] 'abc'
+writeread_none	ERR serialport:serialport:IncorrectInputArgumentsSingular Invalid number of input arguments for 'writeread'. Valid syntax is RESPONSE = writeread(s,COMMAND).
+writeread_num	ERR transportlib:transport:invalidDataType Expected input number 2, data, to be a scalar string or a 1-by-n char array.
+writeread_timeout	ERR transportclients:string:timeoutToken Error reading String. | Timeout occurred waiting for the String Terminator.
+writeread_timeout_warn	char [0 0] ''
+wbb_uint8	char [1 8] '#15'
+wbb_uint16	double [1 7] [35 49 52 1 0 2 0]
+wbb_header	double [1 19] [72 68 82 35 50 49 50 1 2 3 4 5 6 7 8 9 10 11 12]
+wbb_char	double [1 5] [35 49 50 104 105]
+wbb_empty	ERR MATLAB:BinBlockClient:expectedNonempty Expected input number 2, data, to be nonempty.
+wbb_empty_sent	double [1 0] []
+wbb_long_head	char [1 6] '#3600'
+wbb_no_prec	ERR serialport:serialport:IncorrectInputArgumentsPlural Invalid number of input arguments for 'writebinblock'. Valid syntaxes are | writebinblock(s,DATA,PRECISION) | writebinblock(s,DATA,PRECISION,HEADER)
+wbb_bad_prec	ERR MATLAB:BinBlockClient:unrecognizedStringChoice Expected input number 3, precision, to match one of these values: | 'uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64', 'single', 'double', 'char', 'string' | The input, 'uint9', did not match any of the valid values.
+wbb_num_header	ERR MATLAB:BinBlockClient:invalidType Expected input number 4, header, to be one of these types: | string, char | Instead its type was double.
+rbb_uint8	double [1 5] [1 2 3 4 5]
+rbb_uint16	double [1 2] [1 2]
+rbb_junk_char	char [1 3] 'abc'
+rbb_after_left	double [1 1] 1
+rbb_indefinite	ERR transportclients:binblock:binBlockFormatError Format of received data is not compliant with IEEE 488.2 definite length arbitrary block response data format. | <a href="matlab:helpview('instrument','instrument_binblock_format')">Related documentation</a>
+rbb_short	double [1 2] [97 98]
+rbb_short_warn	char [0 0] ''
+rbb_short_msg	char [0 0] ''
+[Warning: The specified amount of data was not returned within the Timeout period for 'readbinblock'.
+'serialport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'serialport_nodata')"'>serialport Read Warnings</a>.] 
+rbb_none	double [0 0] []
+rbb_none_warn	char [1 41] 'serialport:serialport:ReadbinblockWarning'
+rbb_none_msg	char [1 268] 'The specified amount of data was not returned within the Timeout period for 'readbinblock'. | 'serialport' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument', 'serialport_nodata')"'>serialport Read Warnings</a>.'
+rbb_bad_digit	ERR transportclients:binblock:binBlockFormatError Format of received data is not compliant with IEEE 488.2 definite length arbitrary block response data format. | <a href="matlab:helpview('instrument','instrument_binblock_format')">Related documentation</a>
+rbb_string	string [1 1] "abcde"
+rbb_too_many	ERR serialport:serialport:IncorrectInputArgumentsPlural Invalid number of input arguments for 'readbinblock'. Valid syntaxes are | DATA = readbinblock(s) | DATA = readbinblock(s,PRECISION)
+rbb_two_digits	double [1 10] [0 1 2 3 4 5 6 7 8 9]

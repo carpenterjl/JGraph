@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Device I/O for JGraph (device classes plan, architecture B): every Win32 backend a script's
+    serialport, tcpclient, USB and audio objects stand on, as source-generated P/Invoke over the
+    in-box system libraries, and the device simulator the parity fixtures talk to. It knows bytes,
+    handles and threads; every MATLAB semantic (precisions, terminators, errors in R2025b's words)
+    stays in JGraph.Scripting. No NuGet packages: System.IO.Ports is not part of the shared framework,
+    and its receive model fights a byte-exact input buffer.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Devices</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Serial ports, sockets and USB device classes for JGraph scripts: Win32 comm, SetupAPI, hub, HID and WinUSB backends, and the scriptable device simulator.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="JGraph.Scripting" />
+    <InternalsVisibleTo Include="JGraph.Tests" />
+  </ItemGroup>
+
+</Project>

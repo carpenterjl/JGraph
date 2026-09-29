@@ -96,6 +96,7 @@ internal sealed class JgsLifetime
         JgsType.Cell or JgsType.Array => value.Tracked,
         JgsType.Struct => value.AsStructArray.Scanned,
         JgsType.Function => TracksCallable(value.AsCallable),
+        JgsType.External => value.AsExternal is Devices.DeviceObject, // a serialport closes with its last holder
         _ => false,
     };
 
@@ -111,6 +112,7 @@ internal sealed class JgsLifetime
     /// <summary>A handle: released before the containers beside it (measured order).</summary>
     private static bool IsHandleLike(JgsValue value) =>
         (value.Type == JgsType.Object && value.AsObject.Class.IsHandle)
+        || (value.Type == JgsType.External && value.AsExternal is Devices.DeviceObject)
         || (value.Type == JgsType.Struct && JgsBuiltins.IsHandleClass(value));
 
     /// <summary>Whether a wrapper's payload has a count of its own (a handle's is on its instance).</summary>
@@ -147,6 +149,9 @@ internal sealed class JgsLifetime
 
             case JgsType.Function:
                 RetainCallable(value.AsCallable, env);
+                break;
+            case JgsType.External when value.AsExternal is Devices.DeviceObject device:
+                device.Exact++;
                 break;
         }
 
@@ -223,6 +228,13 @@ internal sealed class JgsLifetime
 
             case JgsType.Function:
                 ReleaseCallable(value.AsCallable, env);
+                break;
+            case JgsType.External when value.AsExternal is Devices.DeviceObject device:
+                if (device.Exact > 0 && --device.Exact == 0)
+                {
+                    Defer(device);
+                }
+
                 break;
         }
     }
@@ -337,6 +349,12 @@ internal sealed class JgsLifetime
                 return;
             }
 
+            case JgsType.External when value.AsExternal is Devices.DeviceObject device:
+                // A device object nobody binds (get(serialport(...), 'Parity')) closes at the end of
+                // its statement, as R2025b destroys the temporary.
+                (tracker ?? device.Interpreter.Lifetimes).Defer(device);
+                return;
+
             case JgsType.Object:
             {
                 JgsObject instance = value.AsObject;
@@ -419,6 +437,11 @@ internal sealed class JgsLifetime
             {
                 return true;
             }
+
+            if (child is { Type: JgsType.External } && child.AsExternal is Devices.DeviceObject)
+            {
+                return true;
+            }
         }
 
         return false;
@@ -429,6 +452,11 @@ internal sealed class JgsLifetime
         foreach (KeyValuePair<string, JgsValue> field in fields)
         {
             if (field.Value is { Type: JgsType.Object } && field.Value.AsObject.Class.IsHandle)
+            {
+                return true;
+            }
+
+            if (field.Value is { Type: JgsType.External } && field.Value.AsExternal is Devices.DeviceObject)
             {
                 return true;
             }
@@ -863,6 +891,13 @@ internal sealed class JgsLifetime
                 }
 
                 break;
+            case Devices.DeviceObject device:
+                if (device.Exact == 0 && !device.Deleted)
+                {
+                    device.Delete(); // closes the port and saves the serialport settings (internal.Serialport.delete)
+                }
+
+                break;
             case AnonymousFunction anonymous:
                 if (anonymous.Exact == 0 && !anonymous.Released)
                 {
@@ -1010,6 +1045,8 @@ internal sealed class JgsLifetime
     {
         switch (value.Type)
         {
+            case JgsType.External when value.AsExternal is Devices.DeviceObject device:
+                return device.Interpreter.Lifetimes;
             case JgsType.Object:
                 return value.AsObject.Class.Interpreter.Lifetimes;
             case JgsType.Function:

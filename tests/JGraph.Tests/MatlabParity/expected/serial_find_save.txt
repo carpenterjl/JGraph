@@ -1,0 +1,41 @@
+CHK|list_class|string|exact
+CHK|list_has_pair|string:COM20,COM21|exact
+CHK|list_default_same|logical:1|exact
+CHK|available_before|string:COM20|exact
+CHK|list_char|logical:1|exact
+CHK|list_partial|logical:1|exact
+CHK|list_upper|logical:1|exact
+CHK|list_bogus|MATLAB:seriallist:unrecognizedStringChoice ## Expected input number 1, ports, to match one of these values: / 'all', 'available' / The input, 'bogus', did not match any of the valid values.|exact
+CHK|list_number|MATLAB:seriallist:unrecognizedStringChoice ## Expected input number 1, ports, to match one of these values: / 'all', 'available' / The input did not match any of the valid values.|exact
+CHK|list_two|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|find_none|double:[] [0 0]|exact
+CHK|find_none_tag|double:[] [0 0]|exact
+CHK|available_held|string:|exact
+CHK|find_all_same|logical:1|exact
+CHK|find_tag|logical:1|exact
+CHK|find_tag_nv|logical:1|exact
+CHK|find_port|logical:1|exact
+CHK|find_port_char|logical:1|exact
+CHK|find_baud|logical:1|exact
+CHK|find_case|logical:1|exact
+CHK|find_two|logical:1|exact
+CHK|find_other|double:[] [0 0]|exact
+CHK|find_bogus|double:[] [0 0]|exact
+CHK|find_odd|testmeaslib:ObjectCacher:NVPairsAsPairs ## Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|find_after_clear|double:[] [0 0]|exact
+CHK|available_after_clear|string:COM20|exact
+CHK|noarg_port|string:COM20|exact
+CHK|noarg_baud|double:19200|exact
+CHK|noarg_parity|string:even|exact
+CHK|noarg_databits|double:7|exact
+CHK|noarg_stopbits|double:2|exact
+CHK|noarg_flow|string:software|exact
+CHK|noarg_order|string:big-endian|exact
+CHK|noarg_timeout|double:2.5|exact
+CHK|noarg_tag|string:probe|exact
+CHK|noarg_term|cell:{string:CR;double:10}|exact
+CHK|find_after_delete|double:[] [0 0]|exact
+CHK|noarg_after_delete_tag|string:second|exact
+CHK|clear_prefs|logical:1|exact
+CHK|noarg_after_clear|serialport:serialport:NoSavedPreferences ## Unable to create the default serialport object. Specify the 'Port' and 'BaudRate' input arguments.|exact
+CHK|clear_prefs_again|logical:1|exact

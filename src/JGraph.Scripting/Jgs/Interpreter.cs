@@ -4285,6 +4285,12 @@ internal sealed partial class Interpreter
                 return JgsBuiltins.LibOperator(op, left, right, at.Line, at.Column);
             }
 
+            // Identity for == on a serialport and the other device objects (device classes plan).
+            if (JgsBuiltins.IsDeviceValue(left.AsExternalOrNull()) || JgsBuiltins.IsDeviceValue(right.AsExternalOrNull()))
+            {
+                return JgsBuiltins.DeviceOperator(op, left, right, at.Line, at.Column);
+            }
+
             return Net.NetOperators.Apply(op, left, right, at.Line, at.Column);
         }
 
@@ -6742,6 +6748,18 @@ internal sealed partial class Interpreter
             if (callee.AsExternal is NetObject { Target: Array array } netArray)
             {
                 return Net.NetArrays.Read(netArray, array, NetSubscripts(call.Arguments, call, env), Dialect.IndexBase, NetTypes, call.Line, call.Column);
+            }
+
+            // f(k) on the row serialportfind answers; s(1) on one device object is itself (device classes plan).
+            if (callee.AsExternal is Devices.DeviceArray devices)
+            {
+                return JgsBuiltins.DeviceArrayIndex(devices, EvaluateAll(call.Arguments, env), call.Line, call.Column);
+            }
+
+            if (callee.AsExternal is Devices.DeviceObject && call.Arguments.Count > 0
+                && EvaluateAll(call.Arguments, env).All(static i => i.Type is JgsType.Number or JgsType.Bool && i.AsNumber == 1))
+            {
+                return callee;
             }
 
             // d(x) on a .NET delegate: its Invoke, u() included (ADR 0178, probe5b).

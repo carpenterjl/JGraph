@@ -1,0 +1,65 @@
+CHK|status_open|11100000|exact
+CHK|status_rts_off|01100000|exact
+CHK|status_dtr_off|00000000|exact
+CHK|status_both_on|11100000|exact
+CHK|setrts_num|MATLAB:Serial:invalidType ## Expected setRTS to be one of these types: / logical / Instead its type was double.|exact
+CHK|setrts_str|MATLAB:Serial:invalidType ## Expected setRTS to be one of these types: / logical / Instead its type was string.|exact
+CHK|setrts_two|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'setRTS'. Valid syntax is setRTS(s,FLAG).|exact
+CHK|setrts_none|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'setRTS'. Valid syntax is setRTS(s,FLAG).|exact
+CHK|setrts_vec|MATLAB:Serial:invalidType ## Expected setRTS to be one of these types: / logical / Instead its type was double.|exact
+CHK|setdtr_str|MATLAB:Serial:invalidType ## Expected setDTR to be one of these types: / logical / Instead its type was string.|exact
+CHK|status_unchanged|11100000|exact
+CHK|pins_class|struct|exact
+CHK|pins_fields|ClearToSend,DataSetReady,CarrierDetect,RingIndicator|exact
+CHK|pins_far_rts|logical:[true false false false]|exact
+CHK|pins_far_dtr|logical:[false true true false]|exact
+CHK|pins_arg|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'getpinstatus'. Valid syntax is getpinstatus(s).|exact
+CHK|status_hw_flow|11100000|exact
+CHK|status_hw_flow_rts_off|11100000|exact
+CHK|break_blocks|logical:1|exact
+CHK|status_after_break|11100001|exact
+CHK|break_none|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'serialbreak'. Valid syntax is serialbreak(s,TIME).|exact
+CHK|break_neg|MATLAB:Serial:expectedNonnegative ## Expected serialBreak to be nonnegative.|exact
+CHK|break_frac|MATLAB:Serial:expectedInteger ## Expected serialBreak to be integer-valued.|exact
+CHK|break_str|MATLAB:Serial:invalidType ## Expected serialBreak to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was string.|exact
+CHK|break_two|serialport:serialport:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'serialbreak'. Valid syntax is serialbreak(s,TIME).|exact
+CHK|break_zero|MATLAB:Serial:expectedNonZero ## Expected serialBreak to be nonzero.|exact
+CHK|fopen|none|exact
+CHK|fclose|transportlib:legacy:DoesNotCloseConnection ## The fclose method does not close the connection. Instead, clear the interface object to close the connection.|exact
+CHK|fclose_still_valid|logical:1|exact
+CHK|fprintf|double:[97 98 99 10]|exact
+CHK|fprintf_fmt|double:[53 45]|exact
+CHK|fprintf_fmt_newline|double:[52 50 10]|exact
+CHK|fwrite|double:[1 2 3]|exact
+CHK|fwrite_prec|double:[2 1]|exact
+CHK|fwrite_short|double:[3 0]|exact
+CHK|fwrite_mode_warn|transportlib:legacy:SyncNotSupported ## Setting the mode is not supported. The mode value remains set to 'sync'.|exact
+CHK|fwrite_mode|double:1|exact
+CHK|bytesavailable|double:21|exact
+CHK|fgetl|char:line1|exact
+CHK|fgets|double:[108 105 110 101 50 10]|exact
+CHK|fgets_count|double:6|exact
+CHK|fscanf|double:[49 50 32 51 52 10]|exact
+CHK|fscanf_left|double:3|exact
+CHK|fscanf_fmt|double:[12;34]|exact
+CHK|scanstr|cell:{char:a;char:b}|exact
+CHK|fread|double:[1;2]|exact
+CHK|fread_prec|double:1027|exact
+CHK|query|double:[112 105 110 103 10]|exact
+CHK|binblockread|double:[97;98;99]|exact
+CHK|binblockread_count|double:6|exact
+CHK|binblockwrite|double:[112 105 110 103 10 35 49 51 1 2 3]|exact
+CHK|flushinput|double:0|exact
+CHK|record_warn|transportlib:legacy:MethodNotSupported ## record is not a valid method for this interface.|exact
+CHK|readasync_warn|transportlib:legacy:MethodNotSupported ## readasync is not a valid method for this interface.|exact
+CHK|legacy_errorfcn|logical:1|exact
+CHK|legacy_pinstatus_fields|ClearToSend,DataSetReady,CarrierDetect,RingIndicator|exact
+CHK|legacy_inputbuffersize|double:512|exact
+CHK|legacy_outputbuffersize|double:1024|exact
+CHK|legacy_status|open|exact
+CHK|legacy_bytestooutput|double:[] [0 0]|exact
+CHK|legacy_bytestooutput_warn|transportlib:legacy:PropertyNotSupported ## BytesToOutput is not a valid property for this interface.|exact
+CHK|legacy_rts_warn|transportlib:legacy:PropertyNotSupported ## RequestToSend is not a valid property for this interface.|exact
+CHK|legacy_type|MATLAB:noSuchMethodOrField ## Unrecognized method, property, or field 'Type' for class 'internal.Serialport'.|exact
+CHK|legacy_hidden_listed|logical:0|exact
+CHK|instrhwinfo_prop|double:9600|exact

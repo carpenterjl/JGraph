@@ -1,0 +1,228 @@
+class	char [1 19] 'internal.Serialport'
+isa_handle	logical [1 1] true
+isa_serialport	logical [1 1] false
+isa_internal	logical [1 1] true
+isobject	logical [1 1] true
+isstruct	logical [1 1] false
+superclasses	cell [13 1] {char [1 37] 'matlabshared.testmeas.internal.SetGet'; char [1 19] 'matlab.mixin.SetGet'; char [1 6] 'handle'; char [1 35] 'matlabshared.testmeas.CustomDisplay'; char [1 26] 'matlab.mixin.CustomDisplay'; char [1 59] 'matlabshared.transportlib.internal.compatibility.LegacyBase'; char [1 66] 'matlabshared.transportlib.internal.compatibility.LegacyBinaryMixin'; char [1 64] 'matlabshared.transportlib.internal.compatibility.LegacyNullMixin'; char [1 65] 'matlabshared.transportlib.internal.compatibility.LegacyASCIIMixin'; char [1 68] 'matlabshared.transportlib.internal.compatibility.LegacyBinblockMixin'; char [1 65] 'matlabshared.transportlib.internal.compatibility.LegacyQueryMixin'; char [1 50] 'matlabshared.testmeas.internal.mixins.CacheEnabler'; char [1 46] 'matlabshared.transportlib.internal.TagAccessor'}
+properties	cell [17 1] {char [1 4] 'Port'; char [1 8] 'BaudRate'; char [1 7] 'Timeout'; char [1 11] 'FlowControl'; char [1 6] 'Parity'; char [1 8] 'StopBits'; char [1 8] 'DataBits'; char [1 9] 'ByteOrder'; char [1 8] 'UserData'; char [1 10] 'Terminator'; char [1 22] 'BytesAvailableFcnCount'; char [1 21] 'BytesAvailableFcnMode'; char [1 17] 'BytesAvailableFcn'; char [1 16] 'ErrorOccurredFcn'; char [1 17] 'NumBytesAvailable'; char [1 15] 'NumBytesWritten'; char [1 3] 'Tag'}
+fieldnames	cell [17 1] {char [1 4] 'Port'; char [1 8] 'BaudRate'; char [1 7] 'Timeout'; char [1 11] 'FlowControl'; char [1 6] 'Parity'; char [1 8] 'StopBits'; char [1 8] 'DataBits'; char [1 9] 'ByteOrder'; char [1 8] 'UserData'; char [1 10] 'Terminator'; char [1 22] 'BytesAvailableFcnCount'; char [1 21] 'BytesAvailableFcnMode'; char [1 17] 'BytesAvailableFcn'; char [1 16] 'ErrorOccurredFcn'; char [1 17] 'NumBytesAvailable'; char [1 15] 'NumBytesWritten'; char [1 3] 'Tag'}
+methods	cell [30 1] {char [1 10] 'Serialport'; char [1 11] 'addlistener'; char [1 17] 'configureCallback'; char [1 19] 'configureTerminator'; char [1 6] 'delete'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 12] 'getpinstatus'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 12] 'readbinblock'; char [1 8] 'readline'; char [1 11] 'serialbreak'; char [1 3] 'set'; char [1 6] 'setDTR'; char [1 6] 'setRTS'; char [1 5] 'write'; char [1 13] 'writebinblock'; char [1 9] 'writeline'; char [1 9] 'writeread'}
+methods_disp	OUT | Methods for class internal.Serialport: | Serialport           delete               getpinstatus         readline             setDTR               writebinblock | configureCallback    flush                read                 serialbreak          setRTS               writeline | configureTerminator  get                  readbinblock         set                  write                writeread | Methods of internal.Serialport inherited from handle. |
+size	double [1 2] [1 1]
+numel	double [1 1] 1
+isvalid	logical [1 1] true
+isequal_self	logical [1 1] true
+eq_self	logical [1 1] true
+prop_Port	string [1 1] "COM20"
+prop_BaudRate	double [1 1] 9600
+prop_Parity	string [1 1] "none"
+prop_DataBits	double [1 1] 8
+prop_StopBits	double [1 1] 1
+prop_FlowControl	string [1 1] "none"
+prop_ByteOrder	string [1 1] "little-endian"
+prop_Timeout	double [1 1] 10
+prop_Tag	string [1 1] ""
+prop_NumBytesAvailable	double [1 1] 0
+prop_NumBytesWritten	double [1 1] 0
+prop_Terminator	string [1 1] "LF"
+prop_BytesAvailableFcnMode	string [1 1] "off"
+prop_BytesAvailableFcnCount	double [1 1] 64
+prop_BytesAvailableFcn	function_handle [0 0]
+prop_ErrorOccurredFcn	function_handle [0 0]
+prop_UserData	double [0 0] []
+echo	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+disp	OUT   Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+display	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "" | NumBytesAvailable: 0 | Show all properties, functions |
+get_all	struct [1 1] struct(Port,BaudRate,Timeout,FlowControl,Parity,StopBits,DataBits,ByteOrder,UserData,Terminator,BytesAvailableFcnCount,BytesAvailableFcnMode,BytesAvailableFcn,ErrorOccurredFcn,NumBytesAvailable,NumBytesWritten,Tag)
+get_disp	OUT                       Port: "COM20" | BaudRate: 9600 | Timeout: 10 | FlowControl: "none" | Parity: "none" | StopBits: 1 | DataBits: 8 | ByteOrder: "little-endian" | UserData: [] | Terminator: "LF" | BytesAvailableFcnCount: 64 | BytesAvailableFcnMode: "off" | BytesAvailableFcn: [] | ErrorOccurredFcn: [] | NumBytesAvailable: 0 | NumBytesWritten: 0 | Tag: "" |
+get_one	double [1 1] 9600
+get_cell	cell [1 2] {double [1 1] 9600; string [1 1] "none"}
+set_disp	OUT                   BaudRate: {} | Timeout: {} | FlowControl: {} | Parity: {} | StopBits: {} | DataBits: {} | ByteOrder: {} | UserData: {} | Terminator: {} | BytesAvailableFcnCount: {} | BytesAvailableFcnMode: {} | BytesAvailableFcn: {} | ErrorOccurredFcn: {} | Tag: {} |
+isprop_baud	logical [1 1] true
+isprop_bogus	logical [1 1] false
+isprop_bytesavailable	logical [1 1] true
+status	char [1 8] '11100000'
+pins	struct [1 1] struct(ClearToSend,DataSetReady,CarrierDetect,RingIndicator)
+pins_values	logical [1 4] [false false false false]
+pins_class	char [1 7] 'logical'
+pins_disp	OUT | ans = | struct with fields: | ClearToSend: 0 | DataSetReady: 0 | CarrierDetect: 0 | RingIndicator: 0 |
+list	string [1 2] "COM20" "COM21"
+list_all	string [1 2] "COM20" "COM21"
+list_available	string [1 0]
+list_char	string [1 0]
+list_partial	string [1 0]
+list_upper	string [1 2] "COM20" "COM21"
+list_two	ERR MATLAB:narginchk:tooManyInputs Too many input arguments.
+list_number	ERR MATLAB:seriallist:unrecognizedStringChoice Expected input number 1, ports, to match one of these values: | 'all', 'available' | The input did not match any of the valid values.
+find_all	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "probe" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+find_isequal	logical [1 1] true
+find_tag	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "probe" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+find_tag_nv	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "probe" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+find_port	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "probe" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+find_port_char	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "probe" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+find_baud	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "probe" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+find_none	double [0 0] []
+find_bogus	double [0 0] []
+find_odd	ERR testmeaslib:ObjectCacher:NVPairsAsPairs Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.
+find_case	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "probe" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+find_two	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "probe" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+second_open	ERR serialport:serialport:ConnectionFailed Unable to connect to the serialport device at port 'COM20'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. | See <a href="matlab: helpview('matlab', 'serialport_connectError')">related documentation</a> for troubleshooting steps.
+handle_tag	string [1 1] "changed"
+eq_alias	logical [1 1] true
+baud_set	double [1 1] 115200
+baud_class	char [1 6] 'double'
+parity_set	string [1 1] "even"
+parity_upper	string [1 1] "odd"
+parity_partial	string [1 1] "none"
+flow_partial	string [1 1] "hardware"
+byteorder_partial	string [1 1] "big-endian"
+stopbits_2	double [1 1] 2
+databits_int8	int8 [1 1] 7
+databits_int8_class	char [1 4] 'int8'
+timeout_set	double [1 1] 2.5
+timeout_int	ERR Stream:timeout:invalidTime Timeout must be a non-negative scalar double.
+timeout_after_int	double [1 1] 2.5
+timeout_zero	ERR MATLAB:Serial:expectedNonZero Expected Timeout to be nonzero.
+timeout_zero_value	double [1 1] 2.5
+timeout_inf	ERR MATLAB:Serial:expectedFinite Expected Timeout to be finite.
+timeout_inf_value	double [1 1] 2.5
+timeout_neg	ERR MATLAB:Serial:expectedNonnegative Expected Timeout to be nonnegative.
+timeout_nan	ERR MATLAB:Serial:expectedFinite Expected Timeout to be finite.
+timeout_vec	ERR MATLAB:Serial:expectedScalar Expected Timeout to be a scalar.
+timeout_str	ERR MATLAB:Serial:invalidType Expected Timeout to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 | Instead its type was string.
+timeout_empty	ERR MATLAB:Serial:expectedScalar Expected Timeout to be a scalar.
+timeout_single	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 115200 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+timeout_logical	ERR MATLAB:Serial:invalidType Expected Timeout to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 | Instead its type was logical.
+baud_neg	ERR serialport:serialport:InvalidBaudRate BaudRate must be a scalar positive integer.
+baud_zero	ERR serialport:serialport:InvalidBaudRate BaudRate must be a scalar positive integer.
+baud_frac	ERR serialport:serialport:InvalidBaudRate BaudRate must be a scalar positive integer.
+baud_str	ERR serialport:serialport:InvalidBaudRate BaudRate must be a scalar positive integer.
+baud_vec	ERR serialport:serialport:InvalidBaudRate BaudRate must be a scalar positive integer.
+baud_int32	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 19200 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+baud_int32_value	int32 [1 1] 19200
+baud_int32_class	char [1 5] 'int32'
+baud_inf	ERR serialport:serialport:InvalidBaudRate BaudRate must be a scalar positive integer.
+baud_huge	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 5.0000e+09 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+baud_huge_value	double [1 1] 5000000000
+parity_bad	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'none', 'even', 'odd' | The input, 'bogus', did not match any of the valid values.
+parity_num	ERR MATLAB:Serial:invalidType Expected Parity to be one of these types: | char, string | Instead its type was double.
+parity_empty	ERR MATLAB:Serial:expectedNonempty Expected Parity to be nonempty.
+parity_mark	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'none', 'even', 'odd' | The input, 'mark', did not match any of the valid values.
+parity_cell	ERR MATLAB:Serial:invalidType Expected Parity to be one of these types: | char, string
+databits_9	ERR seriallib:serial:setDataBitsFailed Error setting number of Data Bits. | invalid character_size value
+databits_4	ERR seriallib:serial:setDataBitsFailed Error setting number of Data Bits. | invalid character_size value
+databits_frac	ERR MATLAB:Serial:expectedInteger Expected DataBits to be integer-valued.
+databits_str	ERR MATLAB:Serial:invalidType Expected DataBits to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 | Instead its type was string.
+databits_vec	ERR MATLAB:Serial:expectedScalar Expected DataBits to be a scalar.
+databits_5	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+databits_5_value	double [1 1] 5
+databits_6	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+databits_7	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+stopbits_3	ERR seriallib:serial:invalidStopBits StopBits must be one of 1, 1.5, or 2.
+stopbits_0	ERR seriallib:serial:invalidStopBits StopBits must be one of 1, 1.5, or 2.
+stopbits_15	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+stopbits_15_value	double [1 1] 1.5
+stopbits_str	ERR MATLAB:Serial:invalidType Expected StopBits to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 | Instead its type was string.
+stopbits_2_again	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+flow_bad	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'none', 'hardware', 'software' | The input, 'rts', did not match any of the valid values.
+flow_num	ERR MATLAB:Serial:invalidType Expected FlowControl to be one of these types: | char, string | Instead its type was double.
+flow_software	OUT | s = | Serialport with properties: | Port: "COM20" | BaudRate: 9600 | Tag: "changed" | NumBytesAvailable: 0 | Show all properties, functions |
+flow_software_value	string [1 1] "software"
+order_bad	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'little-endian', 'big-endian' | The input, 'middle', did not match any of the valid values.
+order_num	ERR MATLAB:Serial:invalidType Expected ByteOrder to be one of these types: | char, string | Instead its type was double.
+tag_num	ERR MATLAB:TagAccessor:invalidType Expected TAG to be one of these types: | char, string | Instead its type was double.
+tag_cell	ERR MATLAB:TagAccessor:expectedScalartext Expected TAG to be a non-missing string scalar or character vector.
+tag_strarr	ERR MATLAB:TagAccessor:expectedScalartext Expected TAG to be a non-missing string scalar or character vector.
+port_set	ERR MATLAB:class:SetProhibited Unable to set the 'Port' property of class '<a href="matlab:doc internal.Serialport">Serialport</a>' because it is read-only.
+nba_set	ERR MATLAB:class:SetProhibited Unable to set the 'NumBytesAvailable' property of class '<a href="matlab:doc internal.Serialport">Serialport</a>' because it is read-only.
+nbw_set	ERR MATLAB:class:SetProhibited Unable to set the 'NumBytesWritten' property of class '<a href="matlab:doc internal.Serialport">Serialport</a>' because it is read-only.
+term_set	ERR serialport:serialport:ReadOnlyProperty To set "Terminator", use the "configureTerminator" function.
+bafm_set	ERR serialport:serialport:ReadOnlyProperty To set "BytesAvailableFcnMode", use the "configureCallback" function.
+bafc_set	ERR serialport:serialport:ReadOnlyProperty To set "BytesAvailableFcnCount", use the "configureCallback" function.
+baf_set	ERR serialport:serialport:ReadOnlyProperty To set "BytesAvailableFcn", use the "configureCallback" function.
+errfcn_bad	ERR serialport:serialport:InvalidErrorOccurredFcn ErrorOccurredFcn must be a function handle.
+errfcn_str	ERR serialport:serialport:InvalidErrorOccurredFcn ErrorOccurredFcn must be a function handle.
+bogus_set	ERR MATLAB:noPublicFieldForClass Unrecognized property 'Bogus' for class 'internal.Serialport'.
+bogus_get	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'Bogus' for class 'internal.Serialport'.
+set_fn_bad	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'none', 'even', 'odd' | The input, 'bogus', did not match any of the valid values.
+set_fn_odd	OUT   00 empty cell array |
+set_fn_multi	OUT
+set_fn_multi_value	cell [1 2] {string [1 1] "even"; double [1 1] 7}
+set_fn_readonly	ERR MATLAB:class:SetProhibited Unable to set the 'Port' property of class '<a href="matlab:doc internal.Serialport">Serialport</a>' because it is read-only.
+set_fn_lower	OUT
+set_fn_lower_value	string [1 1] "odd"
+get_fn_lower	double [1 1] 9600
+get_fn_bogus	ERR MATLAB:class:setgetPropertyNotFound Property Bogus not found in class internal.Serialport, or is not present in all elements of the array of class internal.Serialport.
+dot_lower	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'baudrate' for class 'internal.Serialport'.
+userdata	cell [1 2] {double [1 1] 1; char [1 3] 'two'}
+tag_char	string [1 1] "charTag"
+errfcn	char [1 15] 'function_handle'
+errfcn_empty	function_handle [0 0]
+[Warning: While loading an object of class 'internal.Serialport':
+Unable to connect to the serialport device at port 'COM20'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter
+values are supported by the device.
+See <a href="matlab: helpview('matlab', 'serialport_connectError')">related documentation</a> for troubleshooting steps.] 
+[> In probe_sp_object (line 196)] 
+save_whos_class	char [1 19] 'internal.Serialport'
+after_clear_list	string [1 1] "COM20"
+load_class	char [1 19] 'internal.Serialport'
+load_port	string [1 1] "COM20"
+load_tag	string [1 1] "saved"
+load_baud	double [1 1] 9600
+load_term	cell [1 2] {string [1 1] "CR"; double [1 1] 10}
+load_valid	logical [1 1] true
+deleted_valid	logical [1 1] false
+deleted_prop	ERR MATLAB:class:InvalidHandle Invalid or deleted object.
+deleted_port	ERR MATLAB:class:InvalidHandle Invalid or deleted object.
+deleted_echo	OUT | ans = | handle to deleted Serialport |
+deleted_read	ERR MATLAB:class:InvalidHandle Invalid or deleted object.
+deleted_write	ERR MATLAB:TooManyOutputs Too many output arguments.
+deleted_set	ERR MATLAB:class:InvalidHandle Invalid or deleted object.
+deleted_find	double [0 0] []
+noarg_port	string [1 1] "COM20"
+noarg_baud	double [1 1] 9600
+noarg_tag	string [1 1] "saved"
+noarg_term	cell [1 2] {string [1 1] "CR"; double [1 1] 10}
+noarg_parity	string [1 1] "none"
+noarg_after_clearprefs	ERR serialport:serialport:NoSavedPreferences Unable to create the default serialport object. Specify the 'Port' and 'BaudRate' input arguments.
+ctor_one	ERR serialport:serialport:IncorrectInputArgumentsPlural Invalid number of input arguments for 'serialport'. Valid syntaxes are | s = serialport() | s = serialport(PORT,BAUDRATE) | s = serialport(PORT,BAUDRATE,NAME,VALUE)
+ctor_missing	ERR serialport:serialport:ConnectionFailed Unable to connect to the serialport device at port 'COM99'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. | See <a href="matlab: helpview('matlab', 'serialport_connectError')">related documentation</a> for troubleshooting steps.
+ctor_peer_port	ERR serialport:serialport:ConnectionFailed Unable to connect to the serialport device at port 'COM21'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. | See <a href="matlab: helpview('matlab', 'serialport_connectError')">related documentation</a> for troubleshooting steps.
+ctor_neg_baud	ERR MATLAB:Serialport:expectedPositive Expected input number 2, BAUDRATE, to be positive.
+ctor_zero_baud	ERR MATLAB:Serialport:expectedPositive Expected input number 2, BAUDRATE, to be positive.
+ctor_frac_baud	ERR serialport:serialport:InvalidBaudRate BaudRate must be a scalar positive integer.
+ctor_str_baud	ERR MATLAB:Serialport:invalidType Expected input number 2, BAUDRATE, to be one of these types: | double | Instead its type was string.
+ctor_int_baud	ERR MATLAB:Serialport:invalidType Expected input number 2, BAUDRATE, to be one of these types: | double | Instead its type was int32.
+ctor_vec_baud	ERR MATLAB:Serialport:expectedScalar Expected input number 2, BAUDRATE, to be a scalar.
+ctor_empty_port	ERR MATLAB:Serialport:expectedNonempty Expected input number 1, PORT, to be nonempty.
+ctor_num_port	ERR MATLAB:Serialport:invalidType Expected input number 1, PORT, to be one of these types: | char | Instead its type was double.
+ctor_cell_port	ERR MATLAB:Serialport:invalidType Expected input number 1, PORT, to be one of these types: | char
+ctor_lower_port	internal.Serialport [1 1] <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: | Port: "com20" | BaudRate: 9600 | Tag: "" | NumBytesAvailable: 0 | Show all <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'internal.Serialport'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+ctor_odd_nv	ERR serialport:serialport:UnmatchedPVPairs Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.
+ctor_bad_nv	ERR MATLAB:InputParser:UnmatchedParameter 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+ctor_partial_nv	string [1 1] "even"
+ctor_bad_parity	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'none', 'even', 'odd' | The input, 'bogus', did not match any of the valid values.
+ctor_num_parity	ERR MATLAB:invalidType The value of 'Parity' is invalid. Expected input to be one of these types: | char, string | Instead its type was double.
+ctor_bad_databits	ERR serialport:serialport:ConnectionFailed Unable to connect to the serialport device at port 'COM20'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. | See <a href="matlab: helpview('matlab', 'serialport_connectError')">related documentation</a> for troubleshooting steps.
+ctor_vec_databits	ERR MATLAB:InputParser:ArgumentFailedValidation The value of 'DataBits' is invalid. It must satisfy the function: isscalar.
+ctor_bad_stopbits	ERR seriallib:serial:invalidStopBits StopBits must be one of 1, 1.5, or 2.
+ctor_15_stopbits	double [1 1] 1.5
+ctor_bad_flow	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'none', 'hardware', 'software' | The input, 'rts', did not match any of the valid values.
+ctor_bad_order	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'little-endian', 'big-endian' | The input, 'middle', did not match any of the valid values.
+ctor_bad_timeout	ERR MATLAB:Serial:expectedNonnegative Expected Timeout to be nonnegative.
+ctor_timeout_zero	ERR MATLAB:Serial:expectedNonZero Expected Timeout to be nonzero.
+ctor_timeout_inf	ERR MATLAB:Serial:expectedFinite Expected Timeout to be finite.
+ctor_bad_tag	ERR MATLAB:InputParser:ArgumentFailedValidation The value of 'Tag' is invalid. It must satisfy the function: @(x)isstring(x)||ischar(x).
+ctor_userdata_nv	ERR MATLAB:InputParser:UnmatchedParameter 'UserData' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+ctor_terminator_nv	ERR MATLAB:InputParser:UnmatchedParameter 'Terminator' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+ctor_nv_struct	cell [1 2] {string [1 1] "odd"; double [1 1] 7}
+ctor_parity_mark	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'none', 'even', 'odd' | The input, 'mark', did not match any of the valid values.
+ctor_parity_space	ERR MATLAB:unrecognizedStringChoice Expected input to match one of these values: | 'none', 'even', 'odd' | The input, 'space', did not match any of the valid values.
+ctor_databits_5	double [1 1] 5
+ctor_databits_5_stop15	cell [1 2] {double [1 1] 5; double [1 1] 1.5}
+ctor_databits_4	ERR serialport:serialport:ConnectionFailed Unable to connect to the serialport device at port 'COM20'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. | See <a href="matlab: helpview('matlab', 'serialport_connectError')">related documentation</a> for troubleshooting steps.
+ctor_huge_baud	double [1 1] 1000000000
+ctor_odd_baud	double [1 1] 12345
+ctor_ans	char [1 19] 'internal.Serialport'
+ctor_ans_port	string [1 1] "COM20"
