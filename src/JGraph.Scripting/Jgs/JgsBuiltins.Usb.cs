@@ -37,6 +37,14 @@ internal static partial class JgsBuiltins
             ? UsbDeviceObject.Open((interpreter.Host ?? throw new JgsRuntimeException(line, col, "JGraph:usb:NoHost", "This session has no host.")).Devices, interpreter, args, line, col)
             : JgsValue.Null),
 
+        // Stage D8 (ADR 0191): DFU and DfuSe, and the firmware files they send.
+        ["dfulist"] = UsbFunction("jgraph.usb.dfulist", (args, _, line, col) => OperatingSystem.IsWindows() ? DfuObject.List(args, line, col) : JgsValue.Null),
+        ["dfu"] = UsbFunction("jgraph.usb.dfu", (args, _, line, col) => OperatingSystem.IsWindows()
+            ? DfuObject.Open((interpreter.Host ?? throw new JgsRuntimeException(line, col, "JGraph:usb:NoHost", "This session has no host.")).Devices, interpreter, args, line, col)
+            : JgsValue.Null),
+        ["dfufile"] = UsbFunction("jgraph.usb.dfufile", (args, _, line, col) => OperatingSystem.IsWindows() ? DfuObject.FileInfo(interpreter.Host, args, line, col) : JgsValue.Null),
+        ["dfusuffix"] = UsbFunction("jgraph.usb.dfusuffix", (args, _, line, col) => OperatingSystem.IsWindows() ? DfuObject.Suffix(args, line, col) : JgsValue.Null),
+
         // Stage D6 (ADR 0189): HID collections.
         ["hidlist"] = UsbFunction("jgraph.usb.hidlist", (args, _, line, col) => OperatingSystem.IsWindows() ? HidObject.List(args, line, col) : JgsValue.Null),
         ["hid"] = UsbFunction("jgraph.usb.hid", (args, _, line, col) => OperatingSystem.IsWindows()

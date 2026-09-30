@@ -1,0 +1,45 @@
+# dfu_smoke.jgs -- jgraph.usb.dfulist, dfu, dfufile and dfusuffix (device classes plan, stage D8, ADR 0191).
+# JGraph extensions with no MATLAB counterpart, so this is a JGraph-only fixture and
+# expected/dfu_smoke.txt is written from the rule. The cases are MATLAB code in helpers/dfu_smoke.m:
+# the device cases run on jgraph.internal.dfusim's simulated loaders, and the rest answer the same on
+# any Windows machine with USB. Nothing is sent to a real device.
+print("CHK|list_none|" + dfu_smoke("list_none") + "|exact");
+print("CHK|list_columns|" + dfu_smoke("list_columns") + "|exact");
+print("CHK|open_none|" + dfu_smoke("open_none") + "|exact");
+print("CHK|open_hub|" + dfu_smoke("open_hub") + "|exact");
+print("CHK|se_props|" + dfu_smoke("se_props") + "|exact");
+print("CHK|se_layout|" + dfu_smoke("se_layout") + "|exact");
+print("CHK|se_status|" + dfu_smoke("se_status") + "|exact");
+print("CHK|se_download_verify|" + dfu_smoke("se_download_verify") + "|exact");
+print("CHK|se_progress|" + dfu_smoke("se_progress") + "|exact");
+print("CHK|se_default_address|" + dfu_smoke("se_default_address") + "|exact");
+print("CHK|se_bad_address|" + dfu_smoke("se_bad_address") + "|exact");
+print("CHK|se_past_end|" + dfu_smoke("se_past_end") + "|exact");
+print("CHK|se_option_bytes|" + dfu_smoke("se_option_bytes") + "|exact");
+print("CHK|se_hex_file|" + dfu_smoke("se_hex_file") + "|exact");
+print("CHK|se_hex_with_address|" + dfu_smoke("se_hex_with_address") + "|exact");
+print("CHK|se_wrong_device|" + dfu_smoke("se_wrong_device") + "|exact");
+print("CHK|se_force|" + dfu_smoke("se_force") + "|exact");
+print("CHK|se_any_device|" + dfu_smoke("se_any_device") + "|exact");
+print("CHK|se_crc|" + dfu_smoke("se_crc") + "|exact");
+print("CHK|se_fail|" + dfu_smoke("se_fail") + "|exact");
+print("CHK|se_erase|" + dfu_smoke("se_erase") + "|exact");
+print("CHK|se_erase_options|" + dfu_smoke("se_erase_options") + "|exact");
+print("CHK|se_mass_erase|" + dfu_smoke("se_mass_erase") + "|exact");
+print("CHK|se_leave|" + dfu_smoke("se_leave") + "|exact");
+print("CHK|se_detach|" + dfu_smoke("se_detach") + "|exact");
+print("CHK|se_alternate_range|" + dfu_smoke("se_alternate_range") + "|exact");
+print("CHK|se_bad_option|" + dfu_smoke("se_bad_option") + "|exact");
+print("CHK|se_empty|" + dfu_smoke("se_empty") + "|exact");
+print("CHK|plain_props|" + dfu_smoke("plain_props") + "|exact");
+print("CHK|plain_roundtrip|" + dfu_smoke("plain_roundtrip") + "|exact");
+print("CHK|plain_address|" + dfu_smoke("plain_address") + "|exact");
+print("CHK|plain_mass_erase|" + dfu_smoke("plain_mass_erase") + "|exact");
+print("CHK|plain_leave|" + dfu_smoke("plain_leave") + "|exact");
+print("CHK|rt_download|" + dfu_smoke("rt_download") + "|exact");
+print("CHK|rt_detach|" + dfu_smoke("rt_detach") + "|exact");
+print("CHK|file_hex|" + dfu_smoke("file_hex") + "|exact");
+print("CHK|file_suffix|" + dfu_smoke("file_suffix") + "|exact");
+print("CHK|file_missing|" + dfu_smoke("file_missing") + "|exact");
+print("CHK|suffix_bytes|" + dfu_smoke("suffix_bytes") + "|exact");
+print("CHK|suffix_bad|" + dfu_smoke("suffix_bad") + "|exact");

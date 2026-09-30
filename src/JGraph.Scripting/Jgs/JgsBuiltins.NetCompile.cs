@@ -53,6 +53,9 @@ internal static partial class JgsBuiltins
 
                 // Test-only (device classes plan, stage D4): the simulated VISA and its instruments.
                 ["visasim"] = VisaSimFunction(interpreter),
+
+                // Test-only (device classes plan, stage D8): simulated DFU devices.
+                ["dfusim"] = DfuSimFunction(interpreter),
             }),
         }));
     }

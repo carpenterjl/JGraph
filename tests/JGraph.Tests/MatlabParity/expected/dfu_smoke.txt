@@ -1,0 +1,40 @@
+CHK|list_none|0|exact
+CHK|list_columns|VendorID,ProductID,Manufacturer,Product,SerialNumber,Mode,Version,Interface,Alternates,TransferSize,CanDownload,CanUpload,WinUSB,Memory,Location,InstanceID|exact
+CHK|open_none|JGraph:usb:NoDevice|exact
+CHK|open_hub|JGraph:usb:NoDfu|exact
+CHK|se_props|dfu 1.1a 1 0 2048 2 1|exact
+CHK|se_layout|0x08000000-0x08010000 4*16384 111; 0x08010000-0x08020000 1*65536 111; |exact
+CHK|se_status|OK dfuIDLE|exact
+CHK|se_download_verify|1 255 255 255 255 |exact
+CHK|se_progress|3 5000/5000|exact
+CHK|se_default_address|1 2 3 4 5 6 7 8 9 10 |exact
+CHK|se_bad_address|JGraph:usb:DfuAddress|exact
+CHK|se_past_end|JGraph:usb:DfuAddress|exact
+CHK|se_option_bytes|18 52 85 |exact
+CHK|se_hex_file|1 2 3 4 255 255 |exact
+CHK|se_hex_with_address|JGraph:usb:DfuAddressGiven|exact
+CHK|se_wrong_device|JGraph:usb:DfuWrongDevice|exact
+CHK|se_force|1 2 3 4 |exact
+CHK|se_any_device|5 6 7 8 |exact
+CHK|se_crc|JGraph:usb:DfuCrc|exact
+CHK|se_fail|JGraph:usb:DfuFailed dfuERROR 1|exact
+CHK|se_erase|255 255 255 |exact
+CHK|se_erase_options|JGraph:usb:DfuAddress|exact
+CHK|se_mass_erase|7 255|exact
+CHK|se_leave|1 JGraph:usb:DfuFailed|exact
+CHK|se_detach|JGraph:usb:DfuNotRuntime|exact
+CHK|se_alternate_range|JGraph:usb:DfuAlternate|exact
+CHK|se_bad_option|JGraph:usb:NameValue|exact
+CHK|se_empty|JGraph:usb:DfuEmpty|exact
+CHK|plain_props|dfu 1.10 0 1 0|exact
+CHK|plain_roundtrip|3000 1 dfuIDLE|exact
+CHK|plain_address|JGraph:usb:DfuNoAddress|exact
+CHK|plain_mass_erase|JGraph:usb:DfuNotDfuSe|exact
+CHK|plain_leave|JGraph:usb:DfuNoLeave|exact
+CHK|rt_download|JGraph:usb:DfuRuntime|exact
+CHK|rt_detach|runtime dfu 1|exact
+CHK|file_hex|Intel HEX 0 2 134217744 6|exact
+CHK|file_suffix|DFU 0483:DF11 2200 1.00 1 64|exact
+CHK|file_missing|JGraph:usb:DfuFile|exact
+CHK|suffix_bytes|25 255 255 255 255 255 255 0 1 85 70 68 16 |exact
+CHK|suffix_bad|JGraph:usb:InvalidBytes|exact

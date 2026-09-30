@@ -209,6 +209,62 @@ internal static partial class JgsBuiltins
             BindsAnsAsStatement = false,
         });
 
+    /// <summary>
+    /// <c>d = jgraph.internal.dfusim('dfuse'|'dfu'|'runtime')</c>: a Dfu object on a new simulated device
+    /// (device classes plan, stage D8); <c>dfusim(d, 'peek', address, count)</c> reads its memory past the
+    /// loader, <c>dfusim(d, 'image')</c> the plain loader's firmware, <c>dfusim(d, 'state')</c> its DFU
+    /// state, <c>dfusim(d, 'gone')</c> whether it reset, and <c>dfusim(d, 'fail', n)</c> makes its n-th
+    /// write report errWRITE. Test-only and undocumented.
+    /// </summary>
+    private static JgsValue DfuSimFunction(Interpreter interpreter) =>
+        JgsValue.Function(new BuiltinFunction("jgraph.internal.dfusim", (args, line, col) =>
+        {
+            JGraphScriptGlobals host = interpreter.Host
+                ?? throw new JgsRuntimeException(line, col, "JGraph:dfusim:Arguments", "This session has no host.");
+            if (!OperatingSystem.IsWindows())
+            {
+                throw new JgsRuntimeException(line, col, "JGraph:usb:NotSupported", "jgraph.internal.dfusim runs on Windows only.");
+            }
+
+            if (args.Count == 1 && IsTextScalar(args[0]))
+            {
+                JGraph.Devices.Simulation.SimulatedDfuKind kind = TextOf(args[0]) switch
+                {
+                    "dfuse" => JGraph.Devices.Simulation.SimulatedDfuKind.DfuSe,
+                    "dfu" => JGraph.Devices.Simulation.SimulatedDfuKind.Dfu,
+                    "runtime" => JGraph.Devices.Simulation.SimulatedDfuKind.Runtime,
+                    _ => throw new JgsRuntimeException(line, col, "JGraph:dfusim:Arguments", "jgraph.internal.dfusim makes a 'dfuse', 'dfu' or 'runtime' device."),
+                };
+                return DfuObject.OpenSimulated(host.Devices, interpreter, new JGraph.Devices.Simulation.SimulatedDfu(kind));
+            }
+
+            if (args.Count < 2 || args[0].AsExternalOrNull() is not DfuObject { Simulation: { } sim } || !IsTextScalar(args[1]))
+            {
+                throw new JgsRuntimeException(line, col, "JGraph:dfusim:Arguments", "jgraph.internal.dfusim takes a kind, or a simulated Dfu object and 'peek', 'image', 'state', 'gone' or 'fail'.");
+            }
+
+            double Number(int i) => args.Count > i ? DeviceChecks.Numbers(args[i]).First() : throw new JgsRuntimeException(line, col, "JGraph:dfusim:Arguments", "A number is missing.");
+            switch (TextOf(args[1]))
+            {
+                case "peek":
+                    return HidObject.Bytes(sim.Peek((uint)Number(2), (int)Number(3)));
+                case "image":
+                    return HidObject.Bytes(sim.Image);
+                case "state":
+                    return JgsValue.StringScalar(JGraph.Devices.Dfu.DfuStatus.StateNameOf(sim.State));
+                case "gone":
+                    return JgsValue.Bool(sim.Gone);
+                case "fail":
+                    sim.FailAtWrite = (int)Number(2);
+                    return JgsValue.Null;
+                default:
+                    throw new JgsRuntimeException(line, col, "JGraph:dfusim:Arguments", "jgraph.internal.dfusim takes 'peek', 'image', 'state', 'gone' or 'fail'.");
+            }
+        })
+        {
+            BindsAnsAsStatement = false,
+        });
+
     // --- the generic verbs on a device object ---------------------------------------------------------------
 
     /// <summary>Whether <paramref name="value"/> is a device object or a row of them.</summary>
