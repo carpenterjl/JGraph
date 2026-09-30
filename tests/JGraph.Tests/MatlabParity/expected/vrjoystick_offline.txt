@@ -1,0 +1,14 @@
+CHK|three|MATLAB:TooManyInputs ## Too many input arguments.|exact
+CHK|three_no_warning|[]|exact
+CHK|none|MATLAB:minrhs ## Not enough input arguments.|exact
+CHK|first_warning|sl3d:init:hardwaredeprecationwarning ## 'vrjoystick' will be removed in a future release. Use 'sim3d.io.Joystick' instead.|exact
+CHK|id1|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact
+CHK|id1_no_second_warning|[]|exact
+CHK|id2|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact
+CHK|id_big|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact
+CHK|id_text|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact
+CHK|id_frac|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact
+CHK|id_neg|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact
+CHK|id_vector|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact
+CHK|forcefeedback|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact
+CHK|bad_option|sl3d:vrjoystick:notconnected ## Joystick is not connected.|exact

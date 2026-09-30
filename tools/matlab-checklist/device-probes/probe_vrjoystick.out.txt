@@ -1,0 +1,18 @@
+license_sl3d	double [1 1] 1
+which	char [1 73] 'C:\Program Files\MATLAB\R2025b\toolbox\sl3d\sl3d\@vrjoystick\vrjoystick.p'
+[Warning: 'vrjoystick' will be removed in a future release. Use 'sim3d.io.Joystick' instead.] 
+[> In vrjoystick
+In dv_pr (line 4)
+In probe_vrjoystick (line 6)] 
+ctor1	ERR sl3d:vrjoystick:notconnected Joystick is not connected.
+ctor1_warn	char [1 122] 'sl3d:init:hardwaredeprecationwarning ## 'vrjoystick' will be removed in a future release. Use 'sim3d.io.Joystick' instead.'
+ctor2	ERR sl3d:vrjoystick:notconnected Joystick is not connected.
+ctor_none	ERR MATLAB:minrhs Not enough input arguments.
+ctor_ff	ERR sl3d:vrjoystick:notconnected Joystick is not connected.
+ctor_bad_opt	ERR sl3d:vrjoystick:notconnected Joystick is not connected.
+ctor_str	ERR sl3d:vrjoystick:notconnected Joystick is not connected.
+ctor_frac	ERR sl3d:vrjoystick:notconnected Joystick is not connected.
+ctor_neg	ERR sl3d:vrjoystick:notconnected Joystick is not connected.
+ctor_three	ERR MATLAB:TooManyInputs Too many input arguments.
+methods	cell [8 1] {char [1 4] 'axis'; char [1 6] 'button'; char [1 4] 'caps'; char [1 5] 'close'; char [1 5] 'force'; char [1 3] 'pov'; char [1 4] 'read'; char [1 10] 'vrjoystick'}
+which_sim3d	char [1 79] 'C:\Program Files\MATLAB\R2025b\toolbox\shared\sim3d\sim3d\+sim3d\+io\Joystick.p'

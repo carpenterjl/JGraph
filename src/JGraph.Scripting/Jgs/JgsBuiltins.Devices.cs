@@ -80,6 +80,9 @@ internal static partial class JgsBuiltins
         Keeping("visadevlist", (args, line, col) => VisadevObject.List(host.Devices, args, line, col));
         Keeping("visadevfind", (args, line, col) => NetworkShared.Find(host.Devices, static d => d is VisadevObject, args, line, col));
 
+        // Stage D6: Simulink 3D Animation's joystick.
+        Keeping("vrjoystick", (args, line, col) => VrjoystickObject.Create(host.Devices, interpreter, args, line, col));
+
         // internal.Serialport.clearPreferences(): the hidden static method R2025b's own tests use.
         env.Builtins.RegisterConstant("internal", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {

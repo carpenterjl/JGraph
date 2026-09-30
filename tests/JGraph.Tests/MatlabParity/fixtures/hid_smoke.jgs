@@ -1,0 +1,17 @@
+# hid_smoke.jgs -- jgraph.usb.hidlist and jgraph.usb.hid (device classes plan, stage D6, ADR 0189). A
+# JGraph extension with no MATLAB counterpart, so this is a JGraph-only fixture and
+# expected/hid_smoke.txt is written from the rule. The cases are MATLAB code in helpers/hid_smoke.m,
+# and each answers the same on any Windows machine whatever is plugged in.
+
+print("CHK|empty_list|" + hid_smoke("empty_list") + "|exact");
+print("CHK|empty_classes|" + hid_smoke("empty_classes") + "|exact");
+print("CHK|usage_hex|" + hid_smoke("usage_hex") + "|exact");
+print("CHK|list_bad_name|" + hid_smoke("list_bad_name") + "|exact");
+print("CHK|list_odd|" + hid_smoke("list_odd") + "|exact");
+print("CHK|list_bad_usage|" + hid_smoke("list_bad_usage") + "|exact");
+print("CHK|list_bad_serial|" + hid_smoke("list_bad_serial") + "|exact");
+print("CHK|open_none|" + hid_smoke("open_none") + "|exact");
+print("CHK|open_bad_name|" + hid_smoke("open_bad_name") + "|exact");
+print("CHK|open_odd|" + hid_smoke("open_odd") + "|exact");
+print("CHK|open_bad_path|" + hid_smoke("open_bad_path") + "|exact");
+print("CHK|open_bad_buffers|" + hid_smoke("open_bad_buffers") + "|exact");

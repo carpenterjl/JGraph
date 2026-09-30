@@ -1518,6 +1518,7 @@ internal static class JgsBuiltinOutputCounts
         ["volumebounds"] = (1, true),
         ["voronoi"] = (2, true),
         ["voronoin"] = (2, true),
+        ["vrjoystick"] = (1, true),
         ["vswr"] = (1, true),
         ["waitfor"] = (0, false),
         ["waitforbuttonpress"] = (1, false),

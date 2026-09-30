@@ -137,6 +137,9 @@ internal sealed class DeviceSession
         VisaOpen.Clear();
     }
 
+    /// <summary>Whether vrjoystick has warned it is to be removed: R2025b warns once a session.</summary>
+    public bool VrjoystickWarned { get; set; }
+
     /// <summary>The TCP echo server <c>echotcpip("on", port)</c> started, until <c>echotcpip("off")</c>.</summary>
     public JGraph.Devices.Network.EchoServer? EchoTcp { get; set; }
 

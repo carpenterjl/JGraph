@@ -31,6 +31,12 @@ internal static partial class JgsBuiltins
         ["tree"] = UsbFunction("jgraph.usb.tree", (args, wanted, line, col) => OperatingSystem.IsWindows() ? UsbTree(interpreter, args, wanted, line, col) : JgsValue.Null),
         ["ports"] = UsbFunction("jgraph.usb.ports", (args, _, line, col) => OperatingSystem.IsWindows() ? UsbPorts(args, line, col) : JgsValue.Null),
         ["watch"] = UsbFunction("jgraph.usb.watch", (args, _, line, col) => OperatingSystem.IsWindows() ? UsbWatch(interpreter, args, line, col) : JgsValue.Null),
+
+        // Stage D6 (ADR 0189): HID collections.
+        ["hidlist"] = UsbFunction("jgraph.usb.hidlist", (args, _, line, col) => OperatingSystem.IsWindows() ? HidObject.List(args, line, col) : JgsValue.Null),
+        ["hid"] = UsbFunction("jgraph.usb.hid", (args, _, line, col) => OperatingSystem.IsWindows()
+            ? HidObject.Open((interpreter.Host ?? throw new JgsRuntimeException(line, col, "JGraph:usb:NoHost", "This session has no host.")).Devices, interpreter, args, line, col)
+            : JgsValue.Null),
     };
 
     private static JgsValue UsbFunction(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue> body)
@@ -78,14 +84,14 @@ internal static partial class JgsBuiltins
             {
                 case "VendorID":
                 {
-                    int want = UsbId(value, line, col);
+                    int want = UsbIdOf(value, line, col);
                     tests.Add(d => d.VendorId == want);
                     break;
                 }
 
                 case "ProductID":
                 {
-                    int want = UsbId(value, line, col);
+                    int want = UsbIdOf(value, line, col);
                     tests.Add(d => d.ProductId == want);
                     break;
                 }
@@ -131,7 +137,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>A vendor or product ID given as a number or as hex text ("2E8A", "0x2E8A").</summary>
-    private static int UsbId(JgsValue value, int line, int col)
+    internal static int UsbIdOf(JgsValue value, int line, int col)
     {
         if (IsTextScalar(value))
         {
@@ -188,7 +194,7 @@ internal static partial class JgsBuiltins
         return d.DeviceDescriptor.Length == 0 && d.IsHub ? "Hub" : UsbDescriptors.ClassName(d.Class, d.Subclass, d.Protocol);
     }
 
-    private static string UsbHex(int id) => id.ToString("X4", CultureInfo.InvariantCulture);
+    internal static string UsbHex(int id) => id.ToString("X4", CultureInfo.InvariantCulture);
 
     internal static string UsbSpeedName(UsbSpeed speed) => speed switch
     {
@@ -425,8 +431,8 @@ internal static partial class JgsBuiltins
         JgsValue Strings(Func<(string Hub, UsbHubPort Port), string> pick) => JgsValue.StringArray(rows.Select(r => JgsValue.Str(pick(r))).ToArray(), n, 1);
         JgsValue Logical(Func<(string Hub, UsbHubPort Port), bool> pick)
         {
-            JgsValue column = JgsValue.Array(rows.Select(r => JgsValue.Bool(pick(r))).ToArray());
-            column.Reshape(n, n == 0 ? 0 : 1);
+            JgsValue column = n == 0 ? EmptyLogical(0, 1) : JgsValue.Array(rows.Select(r => JgsValue.Bool(pick(r))).ToArray());
+            column.Reshape(n, 1);
             return column;
         }
 

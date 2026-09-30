@@ -1,0 +1,12 @@
+CHK|empty_list|0 13 VendorID,ProductID,Manufacturer,Product,SerialNumber,UsagePage,Usage,InputReportLength,OutputReportLength,FeatureReportLength,SystemOwned,USBInstanceID,Path|exact
+CHK|empty_classes|string double logical|exact
+CHK|usage_hex|0|exact
+CHK|list_bad_name|JGraph:usb:NameValue|exact
+CHK|list_odd|JGraph:usb:NameValue|exact
+CHK|list_bad_usage|JGraph:usb:BadUsage|exact
+CHK|list_bad_serial|JGraph:usb:BadText|exact
+CHK|open_none|JGraph:usb:NoDevice|exact
+CHK|open_bad_name|JGraph:usb:NameValue|exact
+CHK|open_odd|JGraph:usb:NameValue|exact
+CHK|open_bad_path|JGraph:usb:BadText|exact
+CHK|open_bad_buffers|JGraph:usb:InvalidBuffers|exact

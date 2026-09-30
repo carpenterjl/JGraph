@@ -2076,6 +2076,7 @@ viscircles	1	2
 volumebounds	1	2
 voronoi	2	2
 voronoin	2	2
+vrjoystick	1	6
 vswr	1	2
 wait	ERR:MATLAB:narginout:notValidMfile	0
 waitfor	0	5

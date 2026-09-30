@@ -84,6 +84,9 @@ internal static partial class JgsBuiltins
 
         // Stage D4: VISA instruments.
         "visadev", "visadevlist", "visadevfind",
+
+        // Stage D6: the joystick.
+        "vrjoystick",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
