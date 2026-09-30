@@ -1,0 +1,26 @@
+# usb_enum_smoke.jgs -- jgraph.usb, the USB layer (device classes plan, stage D5, ADR 0188). A
+# JGraph extension with no MATLAB counterpart, so this is a JGraph-only fixture and
+# expected/usb_enum_smoke.txt is written from the rule. The cases are MATLAB code in
+# helpers/usb_smoke.m, and each answers the same on any Windows machine whatever is plugged in: the
+# shapes of the empty and machine-wide answers, and the refusals.
+
+print("CHK|empty_table|" + usb_smoke("empty_table") + "|exact");
+print("CHK|empty_classes|" + usb_smoke("empty_classes") + "|exact");
+print("CHK|partial_name|" + usb_smoke("partial_name") + "|exact");
+print("CHK|bad_name|" + usb_smoke("bad_name") + "|exact");
+print("CHK|odd_pairs|" + usb_smoke("odd_pairs") + "|exact");
+print("CHK|bad_id|" + usb_smoke("bad_id") + "|exact");
+print("CHK|id_too_big|" + usb_smoke("id_too_big") + "|exact");
+print("CHK|bad_class|" + usb_smoke("bad_class") + "|exact");
+print("CHK|bad_driver|" + usb_smoke("bad_driver") + "|exact");
+print("CHK|descriptors_none|" + usb_smoke("descriptors_none") + "|exact");
+print("CHK|descriptors_no_args|" + usb_smoke("descriptors_no_args") + "|exact");
+print("CHK|descriptors_empty_table|" + usb_smoke("descriptors_empty_table") + "|exact");
+print("CHK|descriptors_unknown_id|" + usb_smoke("descriptors_unknown_id") + "|exact");
+print("CHK|ports_vars|" + usb_smoke("ports_vars") + "|exact");
+print("CHK|ports_args|" + usb_smoke("ports_args") + "|exact");
+print("CHK|tree_class|" + usb_smoke("tree_class") + "|exact");
+print("CHK|tree_args|" + usb_smoke("tree_args") + "|exact");
+print("CHK|watch_bad|" + usb_smoke("watch_bad") + "|exact");
+print("CHK|watch_bad_filter|" + usb_smoke("watch_bad_filter") + "|exact");
+print("CHK|watch_object|" + usb_smoke("watch_object") + "|exact");

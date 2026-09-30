@@ -1,0 +1,20 @@
+CHK|empty_table|0 12 VendorID,ProductID,Manufacturer,Product,SerialNumber,Class,Speed,Location,Driver,Ports,HIDCollections,InstanceID|exact
+CHK|empty_classes|string double|exact
+CHK|partial_name|0|exact
+CHK|bad_name|JGraph:usb:NameValue|exact
+CHK|odd_pairs|JGraph:usb:NameValue|exact
+CHK|bad_id|JGraph:usb:BadId|exact
+CHK|id_too_big|JGraph:usb:BadId|exact
+CHK|bad_class|JGraph:usb:BadClass|exact
+CHK|bad_driver|JGraph:usb:BadText|exact
+CHK|descriptors_none|JGraph:usb:NoDevice|exact
+CHK|descriptors_no_args|JGraph:usb:NoArguments|exact
+CHK|descriptors_empty_table|JGraph:usb:OneRow|exact
+CHK|descriptors_unknown_id|JGraph:usb:NoDevice|exact
+CHK|ports_vars|Hub,Port,Connected,UserVisible,Speed,Device double logical|exact
+CHK|ports_args|JGraph:usb:NoArguments|exact
+CHK|tree_class|cell 1|exact
+CHK|tree_args|JGraph:usb:NoArguments|exact
+CHK|watch_bad|JGraph:usb:WatchCallback|exact
+CHK|watch_bad_filter|JGraph:usb:NameValue|exact
+CHK|watch_object|jgraph.usb.Watcher 1 Callback,Events 0 0|exact

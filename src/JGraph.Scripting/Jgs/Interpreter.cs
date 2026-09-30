@@ -8716,6 +8716,13 @@ internal sealed partial class Interpreter
             if (autoCall && value.Type == JgsType.Function
                 && value.AsCallable is BuiltinFunction { AutoCallsBare: true } constructor)
             {
+                // A package function told its output count (jgraph.usb.tree) prints on a bare statement.
+                if (constructor is { TakesOutputCount: true, MultiOutput: { } multi })
+                {
+                    JgsValue[] answers = multi([], BareWanted(member), member.Line, member.Column);
+                    return answers.Length > 0 ? answers[0] : JgsValue.Null;
+                }
+
                 return constructor.Call([], member.Line, member.Column);
             }
 

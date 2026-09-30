@@ -37,6 +37,9 @@ internal static partial class JgsBuiltins
         {
             ["net"] = JgsValue.Struct(net),
 
+            // Device classes stage D5 (ADR 0188): the USB layer, a JGraph extension.
+            ["usb"] = JgsValue.Struct(UsbPackage(interpreter)),
+
             // Test-only and undocumented (ADR 0180): the native host's door for the JGraph-only fixtures.
             ["internal"] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
