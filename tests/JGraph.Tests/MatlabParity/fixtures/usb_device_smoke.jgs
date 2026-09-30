@@ -1,0 +1,14 @@
+# usb_device_smoke.jgs -- jgraph.usb.device, a WinUSB-bound device (device classes plan, stage D7,
+# ADR 0190). A JGraph extension with no MATLAB counterpart, so this is a JGraph-only fixture and
+# expected/usb_device_smoke.txt is written from the rule. The cases are MATLAB code in
+# helpers/usb_device_smoke.m, and each answers the same on any Windows machine with USB: a root hub
+# is never bound to WinUSB.
+
+print("CHK|no_args|" + usb_device_smoke("no_args") + "|exact");
+print("CHK|no_device|" + usb_device_smoke("no_device") + "|exact");
+print("CHK|bad_name|" + usb_device_smoke("bad_name") + "|exact");
+print("CHK|bad_interface|" + usb_device_smoke("bad_interface") + "|exact");
+print("CHK|interface_too_big|" + usb_device_smoke("interface_too_big") + "|exact");
+print("CHK|row_and_filters|" + usb_device_smoke("row_and_filters") + "|exact");
+print("CHK|hub_not_winusb|" + usb_device_smoke("hub_not_winusb") + "|exact");
+print("CHK|hub_not_winusb_interface|" + usb_device_smoke("hub_not_winusb_interface") + "|exact");

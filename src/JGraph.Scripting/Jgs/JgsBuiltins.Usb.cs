@@ -32,6 +32,11 @@ internal static partial class JgsBuiltins
         ["ports"] = UsbFunction("jgraph.usb.ports", (args, _, line, col) => OperatingSystem.IsWindows() ? UsbPorts(args, line, col) : JgsValue.Null),
         ["watch"] = UsbFunction("jgraph.usb.watch", (args, _, line, col) => OperatingSystem.IsWindows() ? UsbWatch(interpreter, args, line, col) : JgsValue.Null),
 
+        // Stage D7 (ADR 0190): a WinUSB-bound device.
+        ["device"] = UsbFunction("jgraph.usb.device", (args, _, line, col) => OperatingSystem.IsWindows()
+            ? UsbDeviceObject.Open((interpreter.Host ?? throw new JgsRuntimeException(line, col, "JGraph:usb:NoHost", "This session has no host.")).Devices, interpreter, args, line, col)
+            : JgsValue.Null),
+
         // Stage D6 (ADR 0189): HID collections.
         ["hidlist"] = UsbFunction("jgraph.usb.hidlist", (args, _, line, col) => OperatingSystem.IsWindows() ? HidObject.List(args, line, col) : JgsValue.Null),
         ["hid"] = UsbFunction("jgraph.usb.hid", (args, _, line, col) => OperatingSystem.IsWindows()
@@ -105,7 +110,8 @@ internal static partial class JgsBuiltins
                     else if (DeviceChecks.NumericClasses.Contains(ClassOf(value, JgsDialect.Matlab)) && DeviceChecks.Count(value) == 1)
                     {
                         int code = (int)DeviceChecks.Numbers(value).First();
-                        tests.Add(d => d.Class == code || UsbDescriptors.Configuration(d.ConfigurationDescriptor).Interfaces.Any(f => f.Class == code));
+                        tests.Add(d => d.Class == code || (code == 9 && d.IsHub)
+                            || UsbDescriptors.Configuration(d.ConfigurationDescriptor).Interfaces.Any(f => f.Class == code));
                     }
                     else
                     {
@@ -168,6 +174,7 @@ internal static partial class JgsBuiltins
     /// <summary>The class names a device answers to: its own, and each interface's.</summary>
     private static IEnumerable<string> UsbClassNames(UsbDeviceInfo device)
     {
+        yield return UsbClassColumn(device);
         yield return UsbDescriptors.ClassName(device.Class, device.Subclass, device.Protocol);
         foreach (UsbInterface f in UsbDescriptors.Configuration(device.ConfigurationDescriptor).Interfaces)
         {
@@ -264,7 +271,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>The one device a call names: a table row of jgraph.usb.devices, an instance ID, or filters that match one.</summary>
     [SupportedOSPlatform("windows")]
-    private static UsbDeviceInfo OneUsbDevice(string function, IReadOnlyList<JgsValue> args, int line, int col)
+    internal static UsbDeviceInfo OneUsbDevice(string function, IReadOnlyList<JgsValue> args, int line, int col)
     {
         if (args.Count == 0)
         {

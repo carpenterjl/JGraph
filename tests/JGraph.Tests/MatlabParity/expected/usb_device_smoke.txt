@@ -1,0 +1,8 @@
+CHK|no_args|JGraph:usb:NoArguments|exact
+CHK|no_device|JGraph:usb:NoDevice|exact
+CHK|bad_name|JGraph:usb:NameValue|exact
+CHK|bad_interface|JGraph:usb:BadInterface|exact
+CHK|interface_too_big|JGraph:usb:BadInterface|exact
+CHK|row_and_filters|JGraph:usb:NameValue|exact
+CHK|hub_not_winusb|JGraph:usb:NotWinUsb|exact
+CHK|hub_not_winusb_interface|JGraph:usb:NotWinUsb|exact
