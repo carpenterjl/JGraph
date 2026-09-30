@@ -1,0 +1,31 @@
+dot_trunc	double [1 1] 8000
+dot_upper	double [1 1] 8000
+dot_ambig	ERR MATLAB:class:AmbiguousProperty Ambiguous audioplayer property: 'S'.
+dot_ambig2	ERR MATLAB:class:AmbiguousProperty Ambiguous audioplayer property: 'St'.
+dot_trunc_t	ERR MATLAB:class:AmbiguousProperty Ambiguous audioplayer property: 'T'.
+get_ambig	ERR MATLAB:class:AmbiguousProperty Ambiguous audioplayer property: 'S'.
+set_dot_trunc	OUT        16000 |
+set_dot_upper	OUT x |
+set_trunc	OUT y |
+set_ambig	ERR MATLAB:class:InvalidProperty Ambiguous audioplayer property: 'S'.
+set_ambig_dot	ERR MATLAB:class:AmbiguousProperty Ambiguous audioplayer property: 'S'.
+method_upper	ERR MATLAB:UndefinedFunction Undefined function 'ISPLAYING' for input arguments of type 'audioplayer'.
+method_dot	logical [1 1] false
+method_dot_call	logical [1 1] false
+hidden_noc	double [1 1] 1
+props	cell [14 1] {char [1 10] 'SampleRate'; char [1 13] 'BitsPerSample'; char [1 11] 'NumChannels'; char [1 8] 'DeviceID'; char [1 13] 'CurrentSample'; char [1 12] 'TotalSamples'; char [1 7] 'Running'; char [1 8] 'StartFcn'; char [1 7] 'StopFcn'; char [1 8] 'TimerFcn'; char [1 11] 'TimerPeriod'; char [1 3] 'Tag'; char [1 8] 'UserData'; char [1 4] 'Type'}
+isprop_trunc	logical [1 1] false
+isprop_upper	logical [1 1] false
+fieldnames	cell [14 1] {char [1 10] 'SampleRate'; char [1 13] 'BitsPerSample'; char [1 11] 'NumChannels'; char [1 8] 'DeviceID'; char [1 13] 'CurrentSample'; char [1 12] 'TotalSamples'; char [1 7] 'Running'; char [1 8] 'StartFcn'; char [1 7] 'StopFcn'; char [1 8] 'TimerFcn'; char [1 11] 'TimerPeriod'; char [1 3] 'Tag'; char [1 8] 'UserData'; char [1 4] 'Type'}
+isa_setget	logical [1 1] true
+isobject	logical [1 1] true
+[Warning: Calling STRUCT on an object prevents the object from hiding its implementation details and should thus be avoided. Use DISP or DISPLAY to see the visible public details
+of an object. See 'help struct' for more information.] 
+[> In dv_pr (line 4)
+In probe_audio_names (line 25)] 
+struct_of	struct [1 1] struct(SampleRate,BitsPerSample,NumChannels,DeviceID,NumberOfChannels,CurrentSample,TotalSamples,Running,StartFcn,StopFcn,TimerFcn,TimerPeriod,Tag,UserData,Type,audioplayerImpl)
+rec_dot_trunc	double [1 1] 8000
+rec_hidden	double [0 0] []
+rec_set_hidden	OUT      5 |
+rec_props	cell [14 1] {char [1 10] 'SampleRate'; char [1 13] 'BitsPerSample'; char [1 11] 'NumChannels'; char [1 8] 'DeviceID'; char [1 13] 'CurrentSample'; char [1 12] 'TotalSamples'; char [1 7] 'Running'; char [1 8] 'StartFcn'; char [1 7] 'StopFcn'; char [1 8] 'TimerFcn'; char [1 11] 'TimerPeriod'; char [1 3] 'Tag'; char [1 8] 'UserData'; char [1 4] 'Type'}
+rec_noc	double [1 1] 1

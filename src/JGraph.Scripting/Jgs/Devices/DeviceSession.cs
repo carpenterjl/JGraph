@@ -137,6 +137,12 @@ internal sealed class DeviceSession
         VisaOpen.Clear();
     }
 
+    /// <summary>The simulated audio devices <c>jgraph.internal.audiosim('on')</c> installed for this session.</summary>
+    public JGraph.Devices.Simulation.SimulatedAudio? AudioSimulation { get; set; }
+
+    /// <summary>The players <c>sound</c> started, kept until they have played (sound.m's persistent list).</summary>
+    public List<DeviceObject> SoundPlayers { get; } = new();
+
     /// <summary>Whether vrjoystick has warned it is to be removed: R2025b warns once a session.</summary>
     public bool VrjoystickWarned { get; set; }
 

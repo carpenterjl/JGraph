@@ -128,6 +128,38 @@ internal sealed class DeviceClass
     /// <summary>A property by its exact name (a dot), or by a case-blind one (<c>get</c> and <c>set</c>).</summary>
     public DeviceProperty? Find(string name, bool ignoreCase = false) =>
         (ignoreCase ? _byNameIgnoringCase : _byName).TryGetValue(name, out DeviceProperty? found) ? found : null;
+
+    /// <summary>
+    /// Whether the class reads property names as a classdef with <c>CaseInsensitiveProperties</c> and
+    /// <c>TruncatedProperties</c> does (audioplayer, audiorecorder): any case, and any prefix that names
+    /// one property, hidden ones counted, on a dot, <c>get</c> and <c>set</c> alike.
+    /// </summary>
+    public bool LooseNames { get; init; }
+
+    /// <summary>What <c>[a b]</c> of this class's objects throws, when it is not R2025b's general refusal.</summary>
+    public (string Identifier, string Message)? ConcatenationRefusal { get; init; }
+
+    /// <summary>
+    /// A property by a loose name (<see cref="LooseNames"/>): the case-blind name, else the one property
+    /// it is a prefix of; <paramref name="ambiguous"/> says a prefix named several.
+    /// </summary>
+    public DeviceProperty? FindLoose(string name, out bool ambiguous)
+    {
+        ambiguous = false;
+        if (Find(name, ignoreCase: true) is { } exact)
+        {
+            return exact;
+        }
+
+        if (name.Length == 0)
+        {
+            return null;
+        }
+
+        DeviceProperty[] prefixed = Properties.Where(p => p.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase)).ToArray();
+        ambiguous = prefixed.Length > 1;
+        return prefixed.Length == 1 ? prefixed[0] : null;
+    }
 }
 
 /// <summary>
@@ -296,15 +328,29 @@ internal abstract class DeviceObject : IJgsExternal
         }
 
         LiveOrThrow(line, col);
+        if (Class.LooseNames && Loose(name, "MATLAB:class:AmbiguousProperty", line, col) is { } loose)
+        {
+            return loose.Get(this, call);
+        }
+
         throw new JgsRuntimeException(line, col, "MATLAB:noSuchMethodOrField",
             $"Unrecognized method, property, or field '{name}' for class '{Class.Name}'.");
+    }
+
+    /// <summary>A loosely named property (<see cref="DeviceClass.LooseNames"/>), or null; a prefix naming several throws <paramref name="ambiguousId"/>.</summary>
+    private DeviceProperty? Loose(string name, string ambiguousId, int line, int col)
+    {
+        DeviceProperty? found = Class.FindLoose(name, out bool ambiguous);
+        return ambiguous
+            ? throw new JgsRuntimeException(line, col, ambiguousId, $"Ambiguous {Class.Name} property: '{name}'.")
+            : found;
     }
 
     /// <summary>A property's value by name for <c>get</c> (case-blind).</summary>
     public JgsValue GetProperty(string name, DeviceCall call)
     {
         LiveOrThrow(call.Line, call.Column);
-        DeviceProperty property = Class.Find(name, ignoreCase: true)
+        DeviceProperty property = (Class.LooseNames ? Loose(name, "MATLAB:class:AmbiguousProperty", call.Line, call.Column) : Class.Find(name, ignoreCase: true))
             ?? throw call.Error("MATLAB:class:setgetPropertyNotFound",
                 $"Property {name} not found in class {Class.Name}, or is not present in all elements of the array of class {Class.Name}.");
         return property.Get(this, call);
@@ -314,7 +360,9 @@ internal abstract class DeviceObject : IJgsExternal
     public void SetProperty(string name, JgsValue value, DeviceCall call, bool ignoreCase)
     {
         LiveOrThrow(call.Line, call.Column);
-        DeviceProperty? property = Class.Find(name, ignoreCase);
+        DeviceProperty? property = Class.LooseNames
+            ? Loose(name, ignoreCase ? "MATLAB:class:InvalidProperty" : "MATLAB:class:AmbiguousProperty", call.Line, call.Column)
+            : Class.Find(name, ignoreCase);
         if (property is null)
         {
             throw ignoreCase

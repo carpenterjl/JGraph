@@ -56,6 +56,9 @@ internal static partial class JgsBuiltins
 
                 // Test-only (device classes plan, stage D8): simulated DFU devices.
                 ["dfusim"] = DfuSimFunction(interpreter),
+
+                // Test-only (device classes plan, stage D10): simulated audio devices.
+                ["audiosim"] = AudioSimFunction(interpreter),
             }),
         }));
     }

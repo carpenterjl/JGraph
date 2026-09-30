@@ -1,0 +1,64 @@
+ver	char [1 23] '25.2.0.2998904 (R2025b)'
+info	struct [1 1] struct(input,output)
+in1	struct [1 1] struct(Name,DriverVersion,ID)
+in1_name	char [1 50] 'Primary Sound Capture Driver (Windows DirectSound)'
+in1_drv	char [1 19] 'Windows DirectSound'
+in1_id	double [1 1] 0
+in2	struct [1 1] struct(Name,DriverVersion,ID)
+in2_name	char [1 57] 'Microphone Array (Realtek(R) Audio) (Windows DirectSound)'
+in2_drv	char [1 19] 'Windows DirectSound'
+in2_id	double [1 1] 1
+in3	struct [1 1] struct(Name,DriverVersion,ID)
+in3_name	char [1 62] 'AI Noise-cancelling Input (ASUS Utility) (Windows DirectSound)'
+in3_drv	char [1 19] 'Windows DirectSound'
+in3_id	double [1 1] 2
+out1_name	char [1 42] 'Primary Sound Driver (Windows DirectSound)'
+out1_drv	char [1 19] 'Windows DirectSound'
+out1_id	double [1 1] 3
+out2_name	char [1 49] 'Speakers (Realtek(R) Audio) (Windows DirectSound)'
+out2_drv	char [1 19] 'Windows DirectSound'
+out2_id	double [1 1] 4
+out3_name	char [1 63] 'AI Noise-cancelling Output (ASUS Utility) (Windows DirectSound)'
+out3_drv	char [1 19] 'Windows DirectSound'
+out3_id	double [1 1] 5
+in_size	double [1 2] [1 3]
+count_in	double [1 1] 3
+count_out	double [1 1] 3
+count_bad	ERR MATLAB:audiovideo:audiodevinfo:invalidDeviceType Device must either be input (1) or output (0)
+count_char	ERR MATLAB:audiovideo:audiodevinfo:invalidDeviceType Device must either be input (1) or output (0)
+name_out	char [1 42] 'Primary Sound Driver (Windows DirectSound)'
+drv_out	char [1 19] 'Windows DirectSound'
+id_out	double [1 1] 3
+id_out_part	double [1 1] 3
+find_out	double [1 1] 3
+supports_out	logical [1 1] true
+name_in	char [1 50] 'Primary Sound Capture Driver (Windows DirectSound)'
+name_in_as_out	ERR MATLAB:audiovideo:audiodevinfo:invalidID Device ID out of range
+name_bad_id	ERR MATLAB:audiovideo:audiodevinfo:invalidID Device ID out of range
+id_bad_name	ERR MATLAB:audiovideo:audiodevinfo:invalidDeviceName Device Name not Found
+six	ERR MATLAB:unassignedOutputs Output argument "devInfo" (and possibly others) not assigned a value in the execution with "audiovideo.internal.audiodevinfoDesktop" function.
+all_devs	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'DeviceInfo.getDevicesForDefaultHostApi'.
+dev1	OUT   DeviceInfo with properties: | Name: 'Primary Sound Capture Driver (Windows DirectSound)' | ID: 0 | HostApiName: 'Windows DirectSound' | HostApiID: 1 | NumberOfInputs: 2 | NumberOfOutputs: 0 |
+dev_props	OUT     {'Name'           } | {'ID'             } | {'HostApiName'    } | {'HostApiID'      } | {'NumberOfInputs' } | {'NumberOfOutputs'} |
+di_methods	OUT     {'addlistener'                } | {'delete'                     } | {'eq'                         } | {'findobj'                    } | {'findprop'                   } | {'ge'                         } | {'getDefaultInputDeviceID'    } | {'getDefaultOutputDeviceID'   } | {'getDeviceInfo'              } | {'getDevices'                 } | {'getDevicesForDefaultHostApi'} | {'gt'                         } | {'isvalid'                    } | {'le'                         } | {'listener'                   } | {'lt'                         } | {'ne'                         } | {'notify'                     } | {'reset'                      } |
+n_devs	double [1 1] 6
+dev1_all	OUT   DeviceInfo with properties: | Name: 'Primary Sound Capture Driver (Windows DirectSound)' | ID: 0 | HostApiName: 'Windows DirectSound' | HostApiID: 1 | NumberOfInputs: 2 | NumberOfOutputs: 0 |
+dev2_all	OUT   DeviceInfo with properties: | Name: 'Microphone Array (Realtek(R) Audio) (Windows DirectSound)' | ID: 1 | HostApiName: 'Windows DirectSound' | HostApiID: 1 | NumberOfInputs: 6 | NumberOfOutputs: 0 |
+dev3_all	OUT   DeviceInfo with properties: | Name: 'AI Noise-cancelling Input (ASUS Utility) (Windows DirectSound)' | ID: 2 | HostApiName: 'Windows DirectSound' | HostApiID: 1 | NumberOfInputs: 2 | NumberOfOutputs: 0 |
+dev4_all	OUT   DeviceInfo with properties: | Name: 'Primary Sound Driver (Windows DirectSound)' | ID: 3 | HostApiName: 'Windows DirectSound' | HostApiID: 1 | NumberOfInputs: 0 | NumberOfOutputs: 2 |
+dev5_all	OUT   DeviceInfo with properties: | Name: 'Speakers (Realtek(R) Audio) (Windows DirectSound)' | ID: 4 | HostApiName: 'Windows DirectSound' | HostApiID: 1 | NumberOfInputs: 0 | NumberOfOutputs: 2 |
+dev6_all	OUT   DeviceInfo with properties: | Name: 'AI Noise-cancelling Output (ASUS Utility) (Windows DirectSound)' | ID: 5 | HostApiName: 'Windows DirectSound' | HostApiID: 1 | NumberOfInputs: 0 | NumberOfOutputs: 2 |
+all_hosts	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'DeviceInfo.getDevices'.
+default_in	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'DeviceInfo.getDefaultInputDeviceID'.
+default_out	ERR MATLAB:undefinedVarOrClass Unable to resolve the name 'DeviceInfo.getDefaultOutputDeviceID'.
+p_disp	OUT | p = | audioplayer with properties: | SampleRate: 8000 | BitsPerSample: 16 | NumChannels: 1 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 1000 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audioplayer' |
+p_get	OUT        SampleRate: 8000 | BitsPerSample: 16 | NumChannels: 1 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 1000 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audioplayer' |
+p_props	OUT     {'SampleRate'   } | {'BitsPerSample'} | {'NumChannels'  } | {'DeviceID'     } | {'CurrentSample'} | {'TotalSamples' } | {'Running'      } | {'StartFcn'     } | {'StopFcn'      } | {'TimerFcn'     } | {'TimerPeriod'  } | {'Tag'          } | {'UserData'     } | {'Type'         } |
+p_methods	OUT     {'addlistener' } | {'delete'      } | {'eq'          } | {'findobj'     } | {'findprop'    } | {'ge'          } | {'get'         } | {'gt'          } | {'horzcat'     } | {'isplaying'   } | {'isvalid'     } | {'le'          } | {'listener'    } | {'lt'          } | {'ne'          } | {'notify'      } | {'pause'       } | {'play'        } | {'playblocking'} | {'resume'      } | {'set'         } | {'stop'        } | {'vertcat'     } |
+p_class	char [1 11] 'audioplayer'
+p_super	cell [3 1] {char [1 19] 'matlab.mixin.SetGet'; char [1 6] 'handle'; char [1 26] 'matlab.mixin.CustomDisplay'}
+r_disp	OUT | r = | audiorecorder with properties: | SampleRate: 8000 | BitsPerSample: 8 | NumChannels: 1 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 0 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audiorecorder' |
+r_get	OUT        SampleRate: 8000 | BitsPerSample: 8 | NumChannels: 1 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 0 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audiorecorder' |
+r_props	OUT     {'SampleRate'   } | {'BitsPerSample'} | {'NumChannels'  } | {'DeviceID'     } | {'CurrentSample'} | {'TotalSamples' } | {'Running'      } | {'StartFcn'     } | {'StopFcn'      } | {'TimerFcn'     } | {'TimerPeriod'  } | {'Tag'          } | {'UserData'     } | {'Type'         } |
+r_methods	OUT     {'addlistener'   } | {'audiorecorder' } | {'delete'        } | {'eq'            } | {'findobj'       } | {'findprop'      } | {'ge'            } | {'get'           } | {'getaudiodata'  } | {'getplayer'     } | {'gt'            } | {'horzcat'       } | {'isrecording'   } | {'isvalid'       } | {'le'            } | {'listener'      } | {'lt'            } | {'ne'            } | {'notify'        } | {'pause'         } | {'play'          } | {'record'        } | {'recordblocking'} | {'resume'        } | {'set'           } | {'stop'          } | {'vertcat'       } |
+r_class	char [1 13] 'audiorecorder'

@@ -83,6 +83,12 @@ internal static partial class JgsBuiltins
         // Stage D6: Simulink 3D Animation's joystick.
         Keeping("vrjoystick", (args, line, col) => VrjoystickObject.Create(host.Devices, interpreter, args, line, col));
 
+        // Stage D10: audio devices, audioplayer, audiorecorder, sound and soundsc.
+        if (OperatingSystem.IsWindows())
+        {
+            RegisterAudioBuiltins(env, interpreter, host);
+        }
+
         // internal.Serialport.clearPreferences(): the hidden static method R2025b's own tests use.
         env.Builtins.RegisterConstant("internal", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {

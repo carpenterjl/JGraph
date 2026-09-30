@@ -1,0 +1,109 @@
+c_none	ERR MATLAB:narginchk:notEnoughInputs Not enough input arguments.
+c_one	ERR MATLAB:audiovideo:audioplayer:mustbeaudiorecorder Input must be an audiorecorder object.
+c_five	ERR MATLAB:narginchk:tooManyInputs Too many input arguments.
+c_char	ERR MATLAB:audiovideo:audioplayer:numericinputs When creating an audioplayer object from an audio signal, all input arguments must be numeric.
+c_fs_char	ERR MATLAB:audiovideo:audioplayer:numericinputs When creating an audioplayer object from an audio signal, all input arguments must be numeric.
+c_empty	ERR MATLAB:audiovideo:audioplayer:nonemptysignal Y must be specified as a non-empty numeric input.
+c_three_ch	ERR MATLAB:audiovideo:audioplayer:invalidnumberofchannels Only one- and two-channel audio supported.
+c_fs_low	ERR MATLAB:audiovideo:audioplayer:invalidSampleRate Sample rate must be a positive number between 80 and 1000000
+c_fs_high	ERR MATLAB:audiovideo:audioplayer:invalidSampleRate Sample rate must be a positive number between 80 and 1000000
+c_fs_vec	ERR MATLAB:audiovideo:audioplayer:nonscalarSampleRate SAMPLERATE must be specified as a finite scalar value.
+c_fs_inf	ERR MATLAB:audiovideo:audioplayer:nonscalarSampleRate SAMPLERATE must be specified as a finite scalar value.
+c_bits	ERR MATLAB:audiovideo:audioplayer:bitsupport Currently only 8, 16, and 24-bit audio is supported.
+c_bits_vec	ERR MATLAB:audiovideo:audioplayer:nonscalarBitsPerSample NBITS must be specified as a finite scalar value.
+c_dev_bad	ERR MATLAB:audiovideo:audioplayer:invaliddeviceID Could not find the specified device
+c_dev_in	ERR MATLAB:audiovideo:audioplayer:invaliddeviceID Could not find the specified device
+c_dev_vec	ERR MATLAB:audiovideo:audioplayer:nonscalarDeviceID ID must be specified as a finite scalar value.
+c_int32	ERR MATLAB:audiovideo:audioplayer:unsupportedtype Unsupported data type.
+c_logical	ERR MATLAB:audiovideo:audioplayer:numericinputs When creating an audioplayer object from an audio signal, all input arguments must be numeric.
+c_cplx	audioplayer [1 1] <a href="matlab:helpPopup('audioplayer')" style="font-weight:bold">audioplayer</a> with properties: | SampleRate: 8000 | BitsPerSample: 16 | NumChannels: 1 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 10 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audioplayer' |
+c_sparse	audioplayer [1 1] <a href="matlab:helpPopup('audioplayer')" style="font-weight:bold">audioplayer</a> with properties: | SampleRate: 8000 | BitsPerSample: 16 | NumChannels: 1 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 10 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audioplayer' |
+c_3d	audioplayer [1 1] <a href="matlab:helpPopup('audioplayer')" style="font-weight:bold">audioplayer</a> with properties: | SampleRate: 8000 | BitsPerSample: 16 | NumChannels: 1 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 10 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audioplayer' |
+c_row	double [1 2] [1 1]
+row_total	double [1 1] 10
+row2_ch	double [1 1] 2
+bits_single	double [1 1] 16
+bits_int16	double [1 1] 16
+bits_uint8	double [1 1] 8
+bits_int8	double [1 1] 8
+bits_24	double [1 1] 24
+bits_8_double	double [1 1] 8
+dev_out	double [1 1] 3
+fs_frac	double [1 1] 8000.5
+fs_int	ERR MATLAB:math:mustBeFloat Invalid data type. Argument must be double or single.
+disp	OUT | p = | audioplayer with properties: | SampleRate: 8000 | BitsPerSample: 16 | NumChannels: 2 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 4000 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audioplayer' |
+disp_get	OUT        SampleRate: 8000 | BitsPerSample: 16 | NumChannels: 2 | DeviceID: -1 | CurrentSample: 1 | TotalSamples: 4000 | Running: 'off' | StartFcn: [] | StopFcn: [] | TimerFcn: [] | TimerPeriod: 0.0500 | Tag: '' | UserData: [] | Type: 'audioplayer' |
+disp_set	OUT      SampleRate: {} | StartFcn: {} | StopFcn: {} | TimerFcn: {} | TimerPeriod: {} | Tag: {} | UserData: {} |
+get_tag	char [0 0] ''
+get_cell	cell [1 2] {char [0 0] ''; double [1 1] 8000}
+get_trunc	double [1 1] 8000
+get_case	double [1 1] 8000
+get_bogus	ERR MATLAB:class:setgetPropertyNotFound Property Bogus not found in class audioplayer, or is not present in all elements of the array of class audioplayer.
+dot_bogus	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'Bogus' for class 'audioplayer'.
+set_tag	OUT string |
+set_tag_num	ERR MATLAB:audiovideo:audioplayer:TagMustBeString TAG must be a character vector or string scalar.
+set_tag_strarr	ERR MATLAB:audiovideo:audioplayer:TagMustBeString TAG must be a character vector or string scalar.
+set_fs	OUT        16000 |
+set_fs_bad	ERR MATLAB:audiovideo:audioplayer:invalidSampleRate Sample rate must be a positive number between 80 and 1000000
+set_fs_char	ERR MATLAB:audiovideo:audioplayer:nonscalarSampleRate SAMPLERATE must be specified as a finite scalar value.
+set_bits	ERR MATLAB:class:SetProhibited Unable to set the 'BitsPerSample' property of class '<a href="matlab:doc audioplayer">audioplayer</a>' because it is read-only.
+set_total	ERR MATLAB:class:SetProhibited Unable to set the 'TotalSamples' property of class '<a href="matlab:doc audioplayer">audioplayer</a>' because it is read-only.
+set_type	ERR MATLAB:class:SetProhibited Unable to set the 'Type' property of class '<a href="matlab:doc audioplayer">audioplayer</a>' because it is read-only.
+set_period	ERR MATLAB:audiovideo:audioplayer:invalidtimerperiod TimerPeriod must be >= 0.001 (one millisecond).
+set_period_neg	ERR MATLAB:expectedPositive Expected input to be positive.
+set_period_vec	ERR MATLAB:expectedScalar Expected input to be a scalar.
+set_fcn_num	ERR MATLAB:audiovideo:audioplayer:invalidfunctionhandle Invalid function handle.
+set_fcn_char	OUT char |
+set_fcn_cell	OUT cell |
+set_fcn_empty	OUT    1 |
+set_ud	OUT cell |
+set_bogus	ERR MATLAB:class:InvalidProperty The name 'Bogus' is not an accessible property for an instance of class 'audioplayer'.
+set_pair_odd	OUT   0×0 empty cell array |
+set_one	cell [0 0] {}
+horz	ERR MATLAB:audiovideo:audioplayer:noconcatenation Audioplayer objects cannot be concatenated.
+horz1	OUT audioplayer |
+isplaying0	logical [1 1] false
+play_bad_idx	ERR MATLAB:audiovideo:audioplayer:invalidIndex The second argument to PLAY must be a numeric scalar or 2 element vector.
+play_char_idx	ERR MATLAB:audiovideo:audioplayer:invalidIndex The second argument to PLAY must be a numeric scalar or 2 element vector.
+play_empty_idx	ERR MATLAB:audiovideo:audioplayer:invalidIndex The second argument to PLAY must be a numeric scalar or 2 element vector.
+play_three	ERR MATLAB:narginchk:tooManyInputs Too many input arguments.
+play_sel	OUT [Warning: Invalid playback selection.  Playback will start at the beginning.] | [> In audiovideo.internal/audioplayerDesktop/play (line 268) | In audioplayer/play (line 348) | In dv_px (line 5) | In probe_audio_player (line 76)] | 1 |
+play_sel0	OUT [Warning: Invalid playback selection.  Playback will start at the beginning.] | [> In audiovideo.internal/audioplayerDesktop/play (line 268) | In audioplayer/play (line 348) | In dv_px (line 5) | In probe_audio_player (line 77)] |
+after_play_running	char [1 2] 'on'
+after_play_log	cell [1 1] {char [1 61] 'start:audiovideo.internal.audioplayerDesktop:off:double empty'}
+after_play_cur	logical [1 1] true
+after_pause_log	cell [1 7] {char [1 61] 'start:audiovideo.internal.audioplayerDesktop:off:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'stop:audiovideo.internal.audioplayerDesktop:off:double empty'}
+after_pause_running	char [1 3] 'off'
+after_pause_cur	double [1 1] 1
+blocking_took	logical [1 1] true
+blocking_log	cell [1 7] {char [1 61] 'start:audiovideo.internal.audioplayerDesktop:off:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'timer:audiovideo.internal.audioplayerDesktop:on:double empty'; char [1 60] 'stop:audiovideo.internal.audioplayerDesktop:off:double empty'}
+blocking_cur	double [1 1] 1
+paused_log	cell [1 2] {char [1 61] 'start:audiovideo.internal.audioplayerDesktop:off:double empty'; char [1 60] 'stop:audiovideo.internal.audioplayerDesktop:off:double empty'}
+paused_cur_mid	logical [1 1] true
+paused_running	char [1 3] 'off'
+resumed_log	cell [1 1] {char [1 61] 'start:audiovideo.internal.audioplayerDesktop:off:double empty'}
+stopped_log	cell [1 2] {char [1 61] 'start:audiovideo.internal.audioplayerDesktop:off:double empty'; char [1 60] 'stop:audiovideo.internal.audioplayerDesktop:off:double empty'}
+stopped_cur	double [1 1] 1
+stop_again_log	cell [0 0] {}
+char_cell_log	cell [1 2] {char [1 9] 'charstart'; char [1 56] 'cellstop:audiovideo.internal.audioplayerDesktop:double:3'}
+start_error	ERR my:id boom
+deleted_valid	logical [1 1] false
+deleted_get	ERR MATLAB:class:InvalidHandle Invalid or deleted object.
+sound_zero	OUT
+sound_int	ERR MATLAB:audiovideo:playsnd:invalidDataType Audio data must be real and floating point.
+sound_cplx	ERR MATLAB:audiovideo:playsnd:invalidDataType Audio data must be real and floating point.
+sound_none	ERR MATLAB:audiovideo:playsnd:invalidInputs Not enough input arguments.
+sound_empty_fs	ERR MATLAB:audiovideo:sound:invalidfrequencyinput Frequency must be a scalar |
+sound_empty_bits	ERR MATLAB:audiovideo:sound:invalidbitdepthinput The Number of bits must be a scalar. |
+sound_empty	OUT
+sound_3d	ERR MATLAB:audiovideo:playsnd:twoDimValuesOnly Requires 2-D values only.
+sound_bad_fs	ERR MATLAB:audiovideo:audioplayer:invalidSampleRate Sample rate must be a positive number between 80 and 1000000
+sound_three_ch	ERR MATLAB:audiovideo:audioplayer:invalidnumberofchannels Only one- and two-channel audio supported.
+soundsc_none	ERR MATLAB:audiovideo:soundsc:invalidInputs Not enough input arguments.
+soundsc_int	ERR MATLAB:audiovideo:playsnd:invalidDataType Audio data must be real and floating point.
+soundsc_slim	ERR MATLAB:audiovideo:soundsc:invalidSLIM YRANGE must be a numeric monotonically increasing vector of length equal to 2.
+soundsc_inf	OUT [Warning: Input contains Inf value which can result in unexpected behavior.] | [> In soundsc (line 29) | In dv_px (line 5) | In probe_audio_player (line 141)] |
+soundsc_nan	OUT [Warning: Input contains NaN value which can result in unexpected behavior.] | [> In soundsc (line 33) | In dv_px (line 5) | In probe_audio_player (line 142)] |
+soundsc_zero	OUT
+reset	OUT
+reset_out	double [1 1] 3

@@ -890,7 +890,7 @@ public static class JgsBuiltinCatalog
         Add("orderwaveform", "The time-domain waveform of named orders, by the Vold-Kalman filter: x = orderwaveform(x, fs, rpm, orderlist).", P("x"), P("fs"), P("rpm"), P("orderlist"), Opt("refidx"), Opt("name"), Opt("value"), Opt("more"));
 
         Add("audioread", "Reads a .wav file: [samples, fs] with samples normalized to [-1, 1] (stereo averaged to mono).", P("path"));
-        Add("sound", "Plays samples through the host's audio output without blocking (fs defaults to 8192).", P("y"), Opt("fs"));
+        Add("sound", "Plays a signal without blocking: values clipped to [-1, 1], a column per channel, fs 8192 and 16 bits unless given; an audioplayer the session keeps until it has played.", P("y"), Opt("fs"), Opt("bits"));
         Add("pause", "Waits: pause(seconds) for a fixed wait (interruptible by Stop), bare pause for a key press, and pause('on'|'off'|'query') to turn every pause in a script on or off, answering the state as it was.", Opt("seconds"));
         Add("exit", "Ends the script and closes the application, with an optional process exit code.", Opt("code"));
         Add("quit", "An alias for exit.", Opt("code"));
@@ -2155,6 +2155,12 @@ public static class JgsBuiltinCatalog
         Add("visadevlist", "The VISA resources the installed VISA finds, as a table of ResourceName, Alias, Vendor, Model, SerialNumber and Type; Timeout (at least 2 s) and Identification (false, or resource/command pairs) control the search.", Opt("Name"), Opt("Value"));
         Add("visadevfind", "The visadev objects of this session whose properties match the name-value pairs given; [] when none does.", Opt("Name"), Opt("Value"));
         Add("vrjoystick", "Simulink 3D Animation's joystick (to be removed in R2025b, which names sim3d.io.Joystick): vrjoystick(id) for the id-th connected game controller; [axes, buttons, povs] = read(joy) with axes in [-1, 1] and points of view in degrees (-1 centred); axis, button, pov, caps and close. Read through WinMM, so with no force feedback.", P("id"), Opt("option"));
+        // Device classes stage D10 (ADR 0193): audio devices, as R2025b's DirectSound host lists them.
+        Add("audiodevinfo", "Audio device information: audiodevinfo for every input and output (Name, DriverVersion, ID), audiodevinfo(io) to count them (1 input, 0 output), audiodevinfo(io, id) for a name, audiodevinfo(io, name) for an ID, and audiodevinfo(io, [id,] rate, bits, channels) for a device that can take those settings.", Opt("io"), Opt("id"), Opt("rate"), Opt("bits"), Opt("channels"));
+        Add("audiodevreset", "Forgets the list of audio devices, so audiodevinfo lists what is connected now.");
+        Add("audioplayer", "An audio player: audioplayer(y, fs, nbits, id) for a signal (a column per channel, one or two), or audioplayer(recorder, id); play, playblocking, pause, resume, stop and isplaying, with StartFcn, StopFcn and TimerFcn callbacks.", P("y"), Opt("fs"), Opt("nbits"), Opt("id"));
+        Add("audiorecorder", "An audio recorder: audiorecorder(fs, nbits, nchannels, id), 8000 Hz, 8 bits and one channel by default; record, recordblocking, pause, resume, stop, getaudiodata(r, type), getplayer and play.", Opt("fs"), Opt("nbits"), Opt("nchannels"), Opt("id"));
+        Add("soundsc", "Scales a signal into [-1, 1] (from its own largest magnitude, or from [low high]) and plays it as sound does.", P("y"), Opt("fs"), Opt("bits"), Opt("range"));
         // --- C shared libraries (interop plan, stage 8, ADR 0181) -----------------------------------
         Add("loadlibrary", "Loads a C shared library into the native host from its header (a C compiler preprocesses it; the Options choose which) or from a prototype file (@protofile, no compiler); options addheader, includepath, alias, mfilename and thunkfilename; answers [notfound, warnings].", P("libname"), Opt("hfile"), Opt("options"));
         Add("unloadlibrary", "Unloads a library loadlibrary loaded, by its name or alias.", P("libname"));

@@ -1,0 +1,37 @@
+CHK|fields|input,output|exact
+CHK|in_size|[1 3]|exact
+CHK|out_size|[1 3]|exact
+CHK|in_fields|Name,DriverVersion,ID|exact
+CHK|in1|0 Primary Sound Capture Driver (Windows DirectSound) / Windows DirectSound|exact
+CHK|in2|1 Microphone Array (Realtek(R) Audio) (Windows DirectSound) / Windows DirectSound|exact
+CHK|in3|2 AI Noise-cancelling Input (ASUS Utility) (Windows DirectSound) / Windows DirectSound|exact
+CHK|out1|3 Primary Sound Driver (Windows DirectSound) / Windows DirectSound|exact
+CHK|out2|4 Speakers (Realtek(R) Audio) (Windows DirectSound) / Windows DirectSound|exact
+CHK|out3|5 AI Noise-cancelling Output (ASUS Utility) (Windows DirectSound) / Windows DirectSound|exact
+CHK|name_class|char|exact
+CHK|id_class|double|exact
+CHK|count_in|3|exact
+CHK|count_out|3|exact
+CHK|count_bad|MATLAB:audiovideo:audiodevinfo:invalidDeviceType ## Device must either be input (1) or output (0)|exact
+CHK|count_char|MATLAB:audiovideo:audiodevinfo:invalidDeviceType ## Device must either be input (1) or output (0)|exact
+CHK|count_empty|MATLAB:audiovideo:audiodevinfo:invalidDeviceType ## Device must either be input (1) or output (0)|exact
+CHK|name_out|Primary Sound Driver (Windows DirectSound)|exact
+CHK|name_in|Primary Sound Capture Driver (Windows DirectSound)|exact
+CHK|driver_out|Windows DirectSound|exact
+CHK|id_by_name|4|exact
+CHK|id_by_part|3|exact
+CHK|name_in_as_out|MATLAB:audiovideo:audiodevinfo:invalidID ## Device ID out of range|exact
+CHK|name_bad_id|MATLAB:audiovideo:audiodevinfo:invalidID ## Device ID out of range|exact
+CHK|name_frac_id|none|exact
+CHK|driver_bad_id|MATLAB:audiovideo:audiodevinfo:invalidID ## Device ID out of range|exact
+CHK|id_bad_name|MATLAB:audiovideo:audiodevinfo:invalidDeviceName ## Device Name not Found|exact
+CHK|id_case|MATLAB:audiovideo:audiodevinfo:invalidDeviceName ## Device Name not Found|exact
+CHK|id_many|MATLAB:audiovideo:audiodevinfo:multipleDevicesWithSameName ## Found multiple devices with name: Windows DirectSound|exact
+CHK|six|MATLAB:unassignedOutputs ## Output argument "devInfo" (and possibly others) not assigned a value in the execution with "audiovideo.internal.audiodevinfoDesktop" function.|exact
+CHK|find_out|3|exact
+CHK|find_out_none|-1|exact
+CHK|supports_out|true|exact
+CHK|supports_bits|false|exact
+CHK|supports_three_ch|false|exact
+CHK|supports_in_id|false|exact
+CHK|after_reset|3 3|exact

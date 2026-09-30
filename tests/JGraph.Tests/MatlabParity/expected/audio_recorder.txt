@@ -1,0 +1,54 @@
+CHK|c_one|MATLAB:audiovideo:audiorecorder:incorrectnumberinputs ## Incorrect number of parameters to audiorecorder.|exact
+CHK|c_two|MATLAB:audiovideo:audiorecorder:incorrectnumberinputs ## Incorrect number of parameters to audiorecorder.|exact
+CHK|c_five|MATLAB:TooManyInputs ## Too many input arguments.|exact
+CHK|c_fs_low|MATLAB:audiovideo:audiorecorder:invalidSampleRate ## Sample rate must be a positive number between 80 and 1000000.|exact
+CHK|c_fs_81|81|exact
+CHK|c_fs_high|MATLAB:audiovideo:audiorecorder:invalidSampleRate ## Sample rate must be a positive number between 80 and 1000000.|exact
+CHK|c_fs_vec|MATLAB:nonLogicalConditional ## Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|c_fs_inf|MATLAB:audiovideo:audiorecorder:invalidSampleRate ## Sample rate must be a positive number between 80 and 1000000.|exact
+CHK|c_fs_char|MATLAB:audiovideo:audiorecorder:DeviceError ## Assertion failed.|exact
+CHK|c_bits|MATLAB:audiovideo:audiorecorder:bitsupport ## Currently only 8, 16, and 24-bit audio is supported.|exact
+CHK|c_bits_vec|MATLAB:nonLogicalConditional ## Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|c_ch3|MATLAB:audiovideo:audiorecorder:numchannelsupport ## Currently only one and two channel audio is supported.|exact
+CHK|c_ch0|MATLAB:audiovideo:audiorecorder:numchannelsupport ## Currently only one and two channel audio is supported.|exact
+CHK|c_ch_vec|MATLAB:audiovideo:audiorecorder:numchannelsupport ## Currently only one and two channel audio is supported.|exact
+CHK|c_dev_bad|MATLAB:audiovideo:audiorecorder:InvalidDeviceID ## Could not find the specified device.|exact
+CHK|c_dev_out|MATLAB:audiovideo:audiorecorder:InvalidDeviceID ## Could not find the specified device.|exact
+CHK|c_dev_vec|MATLAB:audiovideo:audiorecorder:NonscalarDeviceID ## ID must be a positive integer|exact
+CHK|c_dev_in|1|exact
+CHK|c_24|24|exact
+CHK|c_frac|8000.5|exact
+CHK|defaults|8000 8 1 -1 1 0 off 0.05 audiorecorder|exact
+CHK|class|audiorecorder|exact
+CHK|props|SampleRate,BitsPerSample,NumChannels,DeviceID,CurrentSample,TotalSamples,Running,StartFcn,StopFcn,TimerFcn,TimerPeriod,Tag,UserData,Type|exact
+CHK|hidden|1 1|exact
+CHK|hidden_set|5|exact
+CHK|dot_trunc|8000|exact
+CHK|empty_get|MATLAB:audiovideo:audiorecorder:recorderempty ## Recorder is empty.|exact
+CHK|empty_get_type|MATLAB:audiovideo:audiorecorder:unsupportedtype ## Unsupported data type.|exact
+CHK|empty_get_num|MATLAB:audiovideo:audiorecorder:unsupportedtype ## Unsupported data type.|exact
+CHK|empty_get_str|MATLAB:audiovideo:audiorecorder:recorderempty ## Recorder is empty.|exact
+CHK|empty_get_three|MATLAB:TooManyInputs ## Too many input arguments.|exact
+CHK|empty_player|MATLAB:audiovideo:audiorecorder:recorderempty ## Recorder is empty.|exact
+CHK|empty_play|MATLAB:audiovideo:audiorecorder:recorderempty ## Recorder is empty.|exact
+CHK|player_from_rec|MATLAB:audiovideo:audiorecorder:recorderempty ## Recorder is empty.|exact
+CHK|player_from_rec_bad|MATLAB:audiovideo:audiorecorder:recorderempty ## Recorder is empty.|exact
+CHK|player_from_rec3|MATLAB:audiovideo:audioplayer:numericinputs ## When creating an audioplayer object from an audio signal, all input arguments must be numeric.|exact
+CHK|rec_neg|MATLAB:audiovideo:audiorecorder:recordTimeInvalid ## Recording times must be a double value greater than zero.|exact
+CHK|rec_zero|MATLAB:audiovideo:audiorecorder:recordTimeInvalid ## Recording times must be a double value greater than zero.|exact
+CHK|rec_nan|MATLAB:audiovideo:audiorecorder:recordTimeInvalid ## Recording times must be a double value greater than zero.|exact
+CHK|rec_char|MATLAB:audiovideo:audiorecorder:recordTimeInvalid ## Recording times must be a double value greater than zero.|exact
+CHK|rec_empty|MATLAB:audiovideo:audiorecorder:recordTimeInvalid ## Recording times must be a double value greater than zero.|exact
+CHK|rec_three|MATLAB:TooManyInputs ## Too many input arguments.|exact
+CHK|recb_none|MATLAB:narginchk:notEnoughInputs ## Not enough input arguments.|exact
+CHK|recb_neg|MATLAB:audiovideo:audiorecorder:recordTimeInvalid ## Recording times must be a double value greater than zero.|exact
+CHK|state|0 off 1 0|exact
+CHK|stop_idle|off|exact
+CHK|set_fs|MATLAB:class:SetProhibited ## Unable to set the 'SampleRate' property of class ''audiorecorder'' because it is read-only.|exact
+CHK|set_bits|MATLAB:class:SetProhibited ## Unable to set the 'BitsPerSample' property of class ''audiorecorder'' because it is read-only.|exact
+CHK|set_period|MATLAB:audiovideo:audiorecorder:invalidtimerperiod ## TimerPeriod must be >= 0.001 (one millisecond).|exact
+CHK|set_period_ok|0.2|exact
+CHK|set_tag_num|MATLAB:audiovideo:audiorecorder:TagMustBeString ## TAG must be a character vector or string scalar|exact
+CHK|set_fcn_num|MATLAB:audiovideo:audiorecorder:invalidfunctionhandle ## Invalid function handle|exact
+CHK|concat|MATLAB:audiovideo:audiorecorder:noconcatenation ## Audiorecorder objects cannot be concatenated.|exact
+CHK|deleted|0|exact

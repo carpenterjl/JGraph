@@ -68,7 +68,11 @@ atan2	1	5
 atan2d	1	5
 atand	1	5
 atanh	1	5
+audiodevinfo	1	2
+audiodevreset	0	2
+audioplayer	1	2
 audioread	2	2
+audiorecorder	1	2
 axes	1	5
 axis	-1	2
 axtoolbar	2	2
@@ -1799,6 +1803,7 @@ sos2tf	2	2
 sos2zp	3	2
 sosfilt	1	2
 sound	0	2
+soundsc	0	2
 spalloc	1	2
 sparameters	1	2
 sparse	1	5

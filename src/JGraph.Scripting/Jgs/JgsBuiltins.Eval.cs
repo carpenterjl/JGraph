@@ -87,6 +87,10 @@ internal static partial class JgsBuiltins
 
         // Stage D6: the joystick.
         "vrjoystick",
+
+        // Stage D10: audio devices. sound is registered here over the base layer's host-audio sound, so it is
+        // listed there; soundsc plays through it.
+        "audioplayer", "audiorecorder", "audiodevinfo", "audiodevreset", "soundsc",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>

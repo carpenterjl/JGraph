@@ -1,0 +1,26 @@
+# audio_sim.jgs -- audiorecorder's recordings and what audioplayer, sound and soundsc play, on
+# jgraph.internal.audiosim's devices (device classes plan, stage D10, ADR 0193). JGraph-only: R2025b is
+# not asked to record from this machine's microphone, and its outputs keep nothing to read back, so
+# expected/audio_sim.txt is written from the rule. The cases are MATLAB code in helpers/audio_sim_case.m.
+
+print("CHK|list|" + audio_sim_case("list") + "|exact");
+print("CHK|ids|" + audio_sim_case("ids") + "|exact");
+print("CHK|block|" + audio_sim_case("block") + "|exact");
+print("CHK|types|" + audio_sim_case("types") + "|exact");
+print("CHK|eight_bit|" + audio_sim_case("eight_bit") + "|exact");
+print("CHK|stereo|" + audio_sim_case("stereo") + "|exact");
+print("CHK|timed|" + audio_sim_case("timed") + "|exact");
+print("CHK|pause_resume|" + audio_sim_case("pause_resume") + "|exact");
+print("CHK|record_again|" + audio_sim_case("record_again") + "|exact");
+print("CHK|callbacks|" + audio_sim_case("callbacks") + "|exact");
+print("CHK|play_recording|" + audio_sim_case("play_recording") + "|exact");
+print("CHK|getplayer|" + audio_sim_case("getplayer") + "|exact");
+print("CHK|played_player|" + audio_sim_case("played_player") + "|exact");
+print("CHK|played_uint8|" + audio_sim_case("played_uint8") + "|exact");
+print("CHK|played_selection|" + audio_sim_case("played_selection") + "|exact");
+print("CHK|sound_padded|" + audio_sim_case("sound_padded") + "|exact");
+print("CHK|sound_clipped|" + audio_sim_case("sound_clipped") + "|exact");
+print("CHK|sound_row|" + audio_sim_case("sound_row") + "|exact");
+print("CHK|soundsc_scaled|" + audio_sim_case("soundsc_scaled") + "|exact");
+print("CHK|soundsc_slim|" + audio_sim_case("soundsc_slim") + "|exact");
+print("CHK|soundsc_flat|" + audio_sim_case("soundsc_flat") + "|exact");

@@ -1,0 +1,101 @@
+CHK|c_none|MATLAB:narginchk:notEnoughInputs ## Not enough input arguments.|exact
+CHK|c_one|MATLAB:audiovideo:audioplayer:mustbeaudiorecorder ## Input must be an audiorecorder object.|exact
+CHK|c_five|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|c_char|MATLAB:audiovideo:audioplayer:numericinputs ## When creating an audioplayer object from an audio signal, all input arguments must be numeric.|exact
+CHK|c_fs_char|MATLAB:audiovideo:audioplayer:numericinputs ## When creating an audioplayer object from an audio signal, all input arguments must be numeric.|exact
+CHK|c_logical|MATLAB:audiovideo:audioplayer:numericinputs ## When creating an audioplayer object from an audio signal, all input arguments must be numeric.|exact
+CHK|c_empty|MATLAB:audiovideo:audioplayer:nonemptysignal ## Y must be specified as a non-empty numeric input.|exact
+CHK|c_three_ch|MATLAB:audiovideo:audioplayer:invalidnumberofchannels ## Only one- and two-channel audio supported.|exact
+CHK|c_fs_low|MATLAB:audiovideo:audioplayer:invalidSampleRate ## Sample rate must be a positive number between 80 and 1000000|exact
+CHK|c_fs_high|MATLAB:audiovideo:audioplayer:invalidSampleRate ## Sample rate must be a positive number between 80 and 1000000|exact
+CHK|c_fs_vec|MATLAB:audiovideo:audioplayer:nonscalarSampleRate ## SAMPLERATE must be specified as a finite scalar value.|exact
+CHK|c_fs_inf|MATLAB:audiovideo:audioplayer:nonscalarSampleRate ## SAMPLERATE must be specified as a finite scalar value.|exact
+CHK|c_fs_int|MATLAB:math:mustBeFloat ## Invalid data type. Argument must be double or single.|exact
+CHK|c_bits|MATLAB:audiovideo:audioplayer:bitsupport ## Currently only 8, 16, and 24-bit audio is supported.|exact
+CHK|c_bits_vec|MATLAB:audiovideo:audioplayer:nonscalarBitsPerSample ## NBITS must be specified as a finite scalar value.|exact
+CHK|c_dev_bad|MATLAB:audiovideo:audioplayer:invaliddeviceID ## Could not find the specified device|exact
+CHK|c_dev_in|MATLAB:audiovideo:audioplayer:invaliddeviceID ## Could not find the specified device|exact
+CHK|c_dev_vec|MATLAB:audiovideo:audioplayer:nonscalarDeviceID ## ID must be specified as a finite scalar value.|exact
+CHK|c_int32|MATLAB:audiovideo:audioplayer:unsupportedtype ## Unsupported data type.|exact
+CHK|c_cplx|10|exact
+CHK|c_3d|10 1|exact
+CHK|row|10 1|exact
+CHK|two_rows|10 2|exact
+CHK|bits_by_class|16 16 8 8 24 |exact
+CHK|dev_out|3|exact
+CHK|fs_frac|8000.5|exact
+CHK|class|audioplayer|exact
+CHK|isa|1 1 1|exact
+CHK|props|SampleRate,BitsPerSample,NumChannels,DeviceID,CurrentSample,TotalSamples,Running,StartFcn,StopFcn,TimerFcn,TimerPeriod,Tag,UserData,Type|exact
+CHK|defaults|8000 16 2 -1 1 4000 off 0.05 audioplayer char|exact
+CHK|empty_fcns|1 1 1 1|exact
+CHK|hidden_channels|2|exact
+CHK|get_cell|char,double|exact
+CHK|get_trunc|8000|exact
+CHK|dot_trunc|8000|exact
+CHK|dot_upper|8000|exact
+CHK|dot_ambig|MATLAB:class:AmbiguousProperty ## Ambiguous audioplayer property: 'S'.|exact
+CHK|dot_ambig_t|MATLAB:class:AmbiguousProperty ## Ambiguous audioplayer property: 'T'.|exact
+CHK|get_ambig|MATLAB:class:AmbiguousProperty ## Ambiguous audioplayer property: 'St'.|exact
+CHK|get_bogus|MATLAB:class:setgetPropertyNotFound ## Property Bogus not found in class audioplayer, or is not present in all elements of the array of class audioplayer.|exact
+CHK|dot_bogus|MATLAB:noSuchMethodOrField ## Unrecognized method, property, or field 'Bogus' for class 'audioplayer'.|exact
+CHK|method_upper|MATLAB:UndefinedFunction ## Undefined function 'ISPLAYING' for input arguments of type 'audioplayer'.|div=ADR0193|diverges|MATLAB:UndefinedFunction ## 'ISPLAYING' is not recognized as a variable or a function.
+CHK|set_tag|string|exact
+CHK|set_tag_num|MATLAB:audiovideo:audioplayer:TagMustBeString ## TAG must be a character vector or string scalar.|exact
+CHK|set_tag_strarr|MATLAB:audiovideo:audioplayer:TagMustBeString ## TAG must be a character vector or string scalar.|exact
+CHK|set_dot_trunc|16000|exact
+CHK|set_trunc|y|exact
+CHK|set_ambig|MATLAB:class:InvalidProperty ## Ambiguous audioplayer property: 'S'.|exact
+CHK|set_fs_bad|MATLAB:audiovideo:audioplayer:invalidSampleRate ## Sample rate must be a positive number between 80 and 1000000|exact
+CHK|set_fs_char|MATLAB:audiovideo:audioplayer:nonscalarSampleRate ## SAMPLERATE must be specified as a finite scalar value.|exact
+CHK|set_bits|MATLAB:class:SetProhibited ## Unable to set the 'BitsPerSample' property of class ''audioplayer'' because it is read-only.|exact
+CHK|set_total|MATLAB:class:SetProhibited ## Unable to set the 'TotalSamples' property of class ''audioplayer'' because it is read-only.|exact
+CHK|set_period_small|MATLAB:audiovideo:audioplayer:invalidtimerperiod ## TimerPeriod must be >= 0.001 (one millisecond).|exact
+CHK|set_period_neg|MATLAB:expectedPositive ## Expected input to be positive.|exact
+CHK|set_period_vec|MATLAB:expectedScalar ## Expected input to be a scalar.|exact
+CHK|set_period_char|MATLAB:invalidType ## Expected input to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|set_fcn_num|MATLAB:audiovideo:audioplayer:invalidfunctionhandle ## Invalid function handle.|exact
+CHK|set_fcn_text_cell|char cell|exact
+CHK|set_bogus|MATLAB:class:InvalidProperty ## The name 'Bogus' is not an accessible property for an instance of class 'audioplayer'.|exact
+CHK|concat|MATLAB:audiovideo:audioplayer:noconcatenation ## Audioplayer objects cannot be concatenated.|exact
+CHK|concat_one|audioplayer|exact
+CHK|isplaying|false|exact
+CHK|play_bad_idx|MATLAB:audiovideo:audioplayer:invalidIndex ## The second argument to PLAY must be a numeric scalar or 2 element vector.|exact
+CHK|play_char_idx|MATLAB:audiovideo:audioplayer:invalidIndex ## The second argument to PLAY must be a numeric scalar or 2 element vector.|exact
+CHK|play_empty_idx|MATLAB:audiovideo:audioplayer:invalidIndex ## The second argument to PLAY must be a numeric scalar or 2 element vector.|exact
+CHK|play_three|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|play_backwards|MATLAB:audiovideo:audioplayer:invalidselection 1|exact
+CHK|play_zero|MATLAB:audiovideo:audioplayer:invalidselection|exact
+CHK|stopped|off 1|exact
+CHK|play_running|on|exact
+CHK|play_log|start:off:double|exact
+CHK|done_log|start:off:double stop:off:double|exact
+CHK|done_state|off 1|exact
+CHK|blocking_log|start:off:double stop:off:double|exact
+CHK|blocking_state|off 1|exact
+CHK|paused_log|start:off:double stop:off:double|exact
+CHK|paused_state|off 1|exact
+CHK|resumed_log|start:off:double|exact
+CHK|resumed_running|on|exact
+CHK|stopped_log|start:off:double stop:off:double|exact
+CHK|stopped_state|off 1|exact
+CHK|stop_again_log|[]|exact
+CHK|cell_callback|start:off:double cellstop:off:double|exact
+CHK|start_error|my:id ## boom|exact
+CHK|start_error_state|off|exact
+CHK|deleted|0 MATLAB:class:InvalidHandle ## Invalid or deleted object.|exact
+CHK|sound_int|MATLAB:audiovideo:playsnd:invalidDataType ## Audio data must be real and floating point.|exact
+CHK|sound_cplx|MATLAB:audiovideo:playsnd:invalidDataType ## Audio data must be real and floating point.|exact
+CHK|sound_none|MATLAB:audiovideo:playsnd:invalidInputs ## Not enough input arguments.|exact
+CHK|sound_empty_fs|MATLAB:audiovideo:sound:invalidfrequencyinput ## Frequency must be a scalar|exact
+CHK|sound_empty_bits|MATLAB:audiovideo:sound:invalidbitdepthinput ## The Number of bits must be a scalar.|exact
+CHK|sound_3d|MATLAB:audiovideo:playsnd:twoDimValuesOnly ## Requires 2-D values only.|exact
+CHK|sound_bad_fs|MATLAB:audiovideo:audioplayer:invalidSampleRate ## Sample rate must be a positive number between 80 and 1000000|exact
+CHK|sound_three_ch|MATLAB:audiovideo:audioplayer:invalidnumberofchannels ## Only one- and two-channel audio supported.|exact
+CHK|sound_ok|played|exact
+CHK|soundsc_none|MATLAB:audiovideo:soundsc:invalidInputs ## Not enough input arguments.|exact
+CHK|soundsc_int|MATLAB:audiovideo:playsnd:invalidDataType ## Audio data must be real and floating point.|exact
+CHK|soundsc_slim|MATLAB:audiovideo:soundsc:invalidSLIM ## YRANGE must be a numeric monotonically increasing vector of length equal to 2.|exact
+CHK|soundsc_inf|MATLAB:audiovideo:soundsc:infValuesFound|exact
+CHK|soundsc_nan|MATLAB:audiovideo:soundsc:NaNValuesFound|exact
+CHK|soundsc_ok|played|exact

@@ -3223,6 +3223,10 @@ internal sealed partial class Interpreter
     private JgsValue AssembleMatrix(Node matrix, List<JgsValue[]> rows)
     {
         RefuseExternalJoin(rows.SelectMany(static row => row).ToArray(), matrix);
+        if (Dialect.ConcatenatesBrackets && rows.Count == 1 && rows[0] is [{ Type: JgsType.External } only])
+        {
+            return only; // [p] is p, as a bracket around one value is that value
+        }
 
         // A table joins as a table (V6, #121): [T; U] stacks rows, [T U] puts variables side by
         // side, and a cell beside or below a table is read as a table first. Asked before every
@@ -3399,6 +3403,11 @@ internal sealed partial class Interpreter
     private JgsValue BuildArrayLiteral(ArrayLiteral array, JgsValue[] elements, JgsEnvironment env)
     {
         RefuseExternalJoin(elements, array);
+        if (Dialect.ConcatenatesBrackets && elements is [{ Type: JgsType.External } only])
+        {
+            return only; // [p] is p, as a bracket around one value is that value
+        }
+
         bool concatenating = false;
         foreach (JgsValue element in elements)
         {
@@ -4384,6 +4393,11 @@ internal sealed partial class Interpreter
         if (pieces.Length > 1 && Array.Exists(pieces, static p => p.Type == JgsType.External))
         {
             JgsValue first = Array.Find(pieces, static p => p.Type == JgsType.External)!;
+            if (first.AsExternal is Devices.DeviceObject { Class.ConcatenationRefusal: { } refusal })
+            {
+                throw new JgsRuntimeException(at.Line, at.Column, refusal.Identifier, refusal.Message);
+            }
+
             throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:class:concatenationScalar",
                 $"Concatenation of objects of class '{first.AsExternal.ClassName}' is not allowed.");
         }
