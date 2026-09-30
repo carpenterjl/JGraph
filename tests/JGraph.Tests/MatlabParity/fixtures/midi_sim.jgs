@@ -1,0 +1,30 @@
+# midi_sim.jgs -- mididevice, midisend, midireceive and the midicontrols family on
+# jgraph.internal.midisim's devices (device classes plan, stage D10b, ADR 0194). JGraph-only: this
+# machine has no MIDI input for R2025b to receive from, and its outputs keep nothing to read back, so
+# expected/midi_sim.txt is written from the rule. The cases are MATLAB code in helpers/midi_sim_case.m.
+
+print("CHK|list|" + midi_sim_case("list") + "|exact");
+print("CHK|both|" + midi_sim_case("both") + "|exact");
+print("CHK|disp|" + midi_sim_case("disp") + "|exact");
+print("CHK|roundtrip|" + midi_sim_case("roundtrip") + "|exact");
+print("CHK|nothing|" + midi_sim_case("nothing") + "|exact");
+print("CHK|most|" + midi_sim_case("most") + "|exact");
+print("CHK|most_bad|" + midi_sim_case("most_bad") + "|exact");
+print("CHK|order|" + midi_sim_case("order") + "|exact");
+print("CHK|note_pair|" + midi_sim_case("note_pair") + "|exact");
+print("CHK|args|" + midi_sim_case("args") + "|exact");
+print("CHK|sysex|" + midi_sim_case("sysex") + "|exact");
+print("CHK|sink|" + midi_sim_case("sink") + "|exact");
+print("CHK|sink_is_output|" + midi_sim_case("sink_is_output") + "|exact");
+print("CHK|input_only|" + midi_sim_case("input_only") + "|exact");
+print("CHK|four_args|" + midi_sim_case("four_args") + "|exact");
+print("CHK|deleted|" + midi_sim_case("deleted") + "|exact");
+print("CHK|controls|" + midi_sim_case("controls") + "|exact");
+print("CHK|controls_raw|" + midi_sim_case("controls_raw") + "|exact");
+print("CHK|controls_any|" + midi_sim_case("controls_any") + "|exact");
+print("CHK|controls_any_channel|" + midi_sim_case("controls_any_channel") + "|exact");
+print("CHK|sync|" + midi_sim_case("sync") + "|exact");
+print("CHK|sync_any|" + midi_sim_case("sync_any") + "|exact");
+print("CHK|callback|" + midi_sim_case("callback") + "|exact");
+print("CHK|device_name|" + midi_sim_case("device_name") + "|exact");
+print("CHK|midiid|" + midi_sim_case("midiid") + "|exact");

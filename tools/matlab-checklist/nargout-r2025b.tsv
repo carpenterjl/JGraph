@@ -1220,6 +1220,17 @@ microseconds	ERR:MATLAB:narginout:notValidMfile	0
 microstrip	ERR:MATLAB:narginout:notValidMfile	0
 microstripw	ERR:MATLAB:narginout:notValidMfile	0
 midcross	2	2
+midicallback	1	2
+midicontrols	1	2
+mididevice	1	2
+mididevinfo	1	2
+midiid	2	2
+midimsg	1	2
+midimsgtype	1	2
+midiread	1	2
+midireceive	1	2
+midisend	0	2
+midisync	0	2
 milliseconds	1	2
 min	2	5
 mink	2	5

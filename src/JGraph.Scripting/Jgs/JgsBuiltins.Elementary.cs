@@ -681,7 +681,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>Whether a value carries a non-zero imaginary part anywhere inside it.</summary>
-    private static bool HasComplexPart(JgsValue value)
+    internal static bool HasComplexPart(JgsValue value)
     {
         if (value.Type == JgsType.Complex)
         {

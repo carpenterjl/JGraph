@@ -425,6 +425,7 @@ internal sealed partial class Interpreter
         if (dominant.Type == JgsType.External)
         {
             return JgsBuiltins.TryDeviceMethod(name, dominant, out callable)
+                || JgsBuiltins.TryExternalArrayMethod(this, name, dominant, out callable)
                 || JgsBuiltins.TryLibMethod(this, name, dominant, out callable) || TryNetMethod(name, dominant, out callable);
         }
 

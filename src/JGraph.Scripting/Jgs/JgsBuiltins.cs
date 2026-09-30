@@ -598,6 +598,7 @@ internal static partial class JgsBuiltins
             // for a value inside a larger message, not for the whole of what disp was asked to print.
             host.print(args[0].IsCharMatrix
                 ? string.Join(System.Environment.NewLine, args[0].CharMatrixRows())
+                : args[0].AsExternalOrNull() is IJgsOwnDisp own ? own.Disp() // a class's own disp (device classes plan, stage D10b)
                 : args[0].Display());
             return JgsValue.Null;
         });

@@ -140,6 +140,9 @@ internal sealed class DeviceSession
     /// <summary>The simulated audio devices <c>jgraph.internal.audiosim('on')</c> installed for this session.</summary>
     public JGraph.Devices.Simulation.SimulatedAudio? AudioSimulation { get; set; }
 
+    /// <summary>The simulated MIDI devices <c>jgraph.internal.midisim('on')</c> installed for this session.</summary>
+    public JGraph.Devices.Simulation.SimulatedMidi? MidiSimulation { get; set; }
+
     /// <summary>The players <c>sound</c> started, kept until they have played (sound.m's persistent list).</summary>
     public List<DeviceObject> SoundPlayers { get; } = new();
 

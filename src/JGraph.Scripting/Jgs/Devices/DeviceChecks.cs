@@ -29,7 +29,7 @@ internal static class DeviceChecks
     /// admits every numeric class and is listed as them. A cell is refused without the "Instead its
     /// type was" sentence, as R2025b words it.
     /// </summary>
-    public static void Classes(JgsValue value, string[] classes, Subject who, int line, int col)
+    public static void Classes(JgsValue value, string[] classes, Subject who, int line, int col, bool namesCell = false)
     {
         string actual = ClassOf(value);
         bool numeric = Array.IndexOf(classes, "numeric") >= 0;
@@ -38,7 +38,7 @@ internal static class DeviceChecks
             return;
         }
 
-        throw TypeRefusal(who, ListedClasses(classes), actual, line, col);
+        throw TypeRefusal(who, ListedClasses(classes), actual, line, col, namesCell);
     }
 
     /// <summary>
@@ -82,7 +82,9 @@ internal static class DeviceChecks
                 };
                 if (Any(value, x => !ok(x)))
                 {
-                    string what = Count(value) == 1 ? $"a scalar with value {op} {bound.ToString(System.Globalization.CultureInfo.InvariantCulture)}"
+                    // "a scalar with value" when the value is one and scalar is asked for; a lone
+                    // value checked without scalar is "an array with all of the values" (probe_midi_msg).
+                    string what = Count(value) == 1 && Array.IndexOf(attributes, "scalar") >= 0 ? $"a scalar with value {op} {bound.ToString(System.Globalization.CultureInfo.InvariantCulture)}"
                         : $"an array with all of the values {op} {bound.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
                     string key = attribute[..2] switch { "ge" => "notGreaterEqual", "le" => "notLessEqual", "gt" => "notGreater", _ => "notLess" };
                     throw Expected(who, key, what, line, col);
@@ -109,6 +111,8 @@ internal static class DeviceChecks
                     throw Expected(who, "expectedInteger", "integer-valued", line, col);
                 case "finite" when Any(value, static x => !double.IsFinite(x)):
                     throw Expected(who, "expectedFinite", "finite", line, col);
+                case "real" when JgsBuiltins.HasComplexPart(value):
+                    throw Expected(who, "expectedReal", "real", line, col);
                 case "nonnan" when Any(value, double.IsNaN):
                     throw Expected(who, "expectedNonNaN", "non-NaN", line, col);
                 case "row" when !(value.Rows == 1):

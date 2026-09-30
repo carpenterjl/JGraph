@@ -140,6 +140,12 @@ internal sealed class DeviceClass
     public (string Identifier, string Message)? ConcatenationRefusal { get; init; }
 
     /// <summary>
+    /// Whether the class is a plain handle rather than a matlab.mixin.SetGet, so that <c>get</c> and
+    /// <c>set</c> find no method for it (mididevice, midicontrols).
+    /// </summary>
+    public bool NoGetSet { get; init; }
+
+    /// <summary>
     /// A property by a loose name (<see cref="LooseNames"/>): the case-blind name, else the one property
     /// it is a prefix of; <paramref name="ambiguous"/> says a prefix named several.
     /// </summary>

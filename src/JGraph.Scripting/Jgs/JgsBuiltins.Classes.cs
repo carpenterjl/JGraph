@@ -43,7 +43,13 @@ internal static partial class JgsBuiltins
         Define("properties", (args, line, col) =>
         {
             Arity("properties", args, 1, line, col);
-            return CellColumn(PropertyNames("properties", args[0], interpreter, line, col));
+            JgsValue names = CellColumn(PropertyNames("properties", args[0], interpreter, line, col));
+            if (names.AsCell.Length == 0 && IsDeviceValue(args[0].AsExternalOrNull()))
+            {
+                names.Reshape(0, 1); // midicontrols: a 0-by-1 cell (probe_midi_controls)
+            }
+
+            return names;
         });
 
         // methods(x) answers the names as a cell column; methods(x, '-full') a .NET type's signatures.

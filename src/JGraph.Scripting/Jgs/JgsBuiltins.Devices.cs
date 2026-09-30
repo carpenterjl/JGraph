@@ -89,6 +89,9 @@ internal static partial class JgsBuiltins
             RegisterAudioBuiltins(env, interpreter, host);
         }
 
+        // Stage D10b: MIDI.
+        RegisterMidiBuiltins(env, interpreter, host);
+
         // internal.Serialport.clearPreferences(): the hidden static method R2025b's own tests use.
         env.Builtins.RegisterConstant("internal", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
@@ -320,6 +323,12 @@ internal static partial class JgsBuiltins
     internal static JgsValue[] RunDeviceVerb(DeviceObject device, string name, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         var call = new DeviceCall { Target = device, Args = args.Skip(1).ToArray(), Wanted = wanted, Line = line, Column = col };
+        if (device.Class.NoGetSet && name is "get" or "set")
+        {
+            throw call.Error(name == "get" ? "MATLAB:graphics:GetMethodUnknown" : "MATLAB:graphics:SetMethodUnknown",
+                $"Cannot find '{name}' method for {device.Class.Name} class.");
+        }
+
         switch (name)
         {
             case "isvalid":

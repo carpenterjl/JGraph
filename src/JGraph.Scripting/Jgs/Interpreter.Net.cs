@@ -296,6 +296,8 @@ internal sealed partial class Interpreter
                 return JgsBuiltins.LibMember(lib, field, member.Line, member.Column); // lib.pointer, libstruct (ADR 0182)
             case Devices.DeviceObject device:
                 return device.Member(field, autoCall, BareWanted(member), member.Line, member.Column); // serialport (device classes plan)
+            case IJgsExternalArray objects:
+                return ExternalArrayMember(objects, field, member); // midimsg (device classes plan, stage D10b)
             case NetMetaClass meta when field == "Name":
                 return JgsValue.Str(NetNames.ClassName(meta.Type));
             case NetAssemblyValue assembly when NetAssemblyValue.PropertyNames.Contains(field):

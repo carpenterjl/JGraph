@@ -1,0 +1,39 @@
+list	OUT   MIDI devices available: | ID   Direction   Interface   Name | 0    output     MMSystem    'Microsoft MIDI Mapper' | 1    output     MMSystem    'Microsoft GS Wavetable Synth' |
+info	struct [1 1] struct(input,output)
+in	struct [0 0] struct(Name,Interface,ID)
+out	struct [1 2] struct(Name,Interface,ID)
+out1	struct [1 1] struct(Name,Interface,ID)
+out1_name	char [1 21] 'Microsoft MIDI Mapper'
+out1_if	char [1 8] 'MMSystem'
+out1_id	double [1 1] 0
+out2	struct [1 1] struct(Name,Interface,ID)
+out2_name	char [1 28] 'Microsoft GS Wavetable Synth'
+out2_if	char [1 8] 'MMSystem'
+out2_id	double [1 1] 1
+devs	struct [1 2] struct(interf,name,input)
+c_none	ERR audio:midi:MidiDeviceNoArg Missing argument: give the name or ID of an attached MIDI device. Use mididevinfo to identify attached devices.
+c_three	ERR audio:midi:MidiDeviceWrongNumInputs Incorrect number of arguments.
+c_five	ERR MATLAB:narginchk:tooManyInputs Too many input arguments.
+c_bad_name	ERR audio:midi:MidiDeviceNoSuchDevice 'no such device' is not currently attached to this computer. Use mididevinfo to identify attached devices.
+c_bad_id	ERR MATLAB:mididevice:notLessEqual Expected deviceNumber to be a scalar with value <= 1.
+c_neg_id	ERR MATLAB:mididevice:notGreaterEqual Expected deviceNumber to be a scalar with value >= 0.
+c_frac_id	ERR MATLAB:mididevice:expectedInteger Expected deviceNumber to be integer-valued.
+c_bad_io	ERR MATLAB:unrecognizedStringChoice Expected input number 1 to match one of these values: | 'Input', 'Output' | The input, 'Sideways', did not match any of the valid values.
+c_in_out	ERR audio:midi:MidiDeviceIdNotInput Device ID 0 is not a MIDI input.
+c_cell	ERR MATLAB:invalidType Expected input number 1 to be one of these types: | char, string | Instead its type was cell.
+dev_out	OUT   mididevice connected to | Output: 'Microsoft MIDI Mapper' (0) | mididevice | Microsoft MIDI Mapper | 0 | -1 | char | 1     0 |
+dev_props	cell [4 1] {char [1 5] 'Input'; char [1 6] 'Output'; char [1 7] 'InputID'; char [1 8] 'OutputID'}
+dev_methods	cell [14 1] {char [1 11] 'addlistener'; char [1 6] 'delete'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 2] 'ge'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 10] 'mididevice'; char [1 2] 'ne'; char [1 6] 'notify'}
+dev_by_name	ERR MATLAB:graphics:GetMethodUnknown Cannot find 'get' method for mididevice class.
+dev_by_part	ERR audio:midi:MidiDeviceAmbiguousName Multiple device names match 'Micro'. Specify a unique name, or an ID number. Use mididevinfo to identify attached devices.
+dev_output_kw	double [1 1] 0
+dev_input_kw_on_out	ERR audio:midi:MidiDeviceIdNotInput Device ID 0 is not a MIDI input.
+dev_input_name_on_out	ERR audio:midi:MidiDeviceNoSuchInput 'Microsoft MIDI Mapper' is not an input device currently attached to this computer. Use mididevinfo to identify attached devices.
+receive_out	ERR audio:midi:MidiReceiveNotAnInput Device is not a MIDI input.
+hasdata_out	ERR audio:midi:MidiReceiveNotAnInput Device is not a MIDI input.
+send_none	ERR MATLAB:TooManyOutputs Too many output arguments.
+send_bad	ERR MATLAB:TooManyOutputs Too many output arguments.
+set_out	ERR MATLAB:graphics:SetMethodUnknown Cannot find 'set' method for mididevice class.
+dot_set	ERR MATLAB:class:SetProhibited Unable to set the 'OutputID' property of class '<a href="matlab:doc mididevice">mididevice</a>' because it is read-only.
+isa_handle	logical [1 1] true
+callback_bad	ERR MATLAB:UndefinedFunction Undefined function 'callback' for input arguments of type 'double'.

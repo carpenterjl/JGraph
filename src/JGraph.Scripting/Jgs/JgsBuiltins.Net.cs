@@ -192,6 +192,11 @@ internal static partial class JgsBuiltins
     private static JgsValue[] Enumeration(Interpreter interpreter, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         Arity("enumeration", args, 1, line, col);
+        if (MidiTypeEnumeration(interpreter, args[0], wanted) is { } midi)
+        {
+            return midi;
+        }
+
         Type? type = NetTypeNamed(args[0], interpreter);
         if (type is null && args[0].Type is not (JgsType.String or JgsType.External) && !(args[0].IsStringArray && args[0].ArrayLength == 1))
         {

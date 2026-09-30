@@ -427,7 +427,9 @@ internal sealed partial class Interpreter
         ? JgsValue.StringArray(System.Array.Empty<JgsValue>(), 0, 0)
         : rhs.Type == JgsType.Cell
             ? JgsValue.Cell(System.Array.Empty<JgsValue>())
-            : JgsMatrix.FromElements(System.Array.Empty<JgsValue>(), 0, 0);
+            : rhs.AsExternalOrNull() is IJgsExternalArray objects
+                ? JgsValue.External(objects.Build([], 0, 0)) // q(2) = midimsg with no q: a midimsg array (stage D10b)
+                : JgsMatrix.FromElements(System.Array.Empty<JgsValue>(), 0, 0);
 
     /// <summary>
     /// Whether a field write target names a field its struct does not hold yet — or a struct that

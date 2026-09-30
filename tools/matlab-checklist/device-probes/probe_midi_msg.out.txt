@@ -1,0 +1,231 @@
+d_default	OUT   midimsg with properties: | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] |
+d_noteon	OUT   midimsg with properties: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 0  [ 90 3C 40 ] |
+d_noteon_ts	OUT   midimsg with properties: | NoteOn          Channel: 16 Note: 127 Velocity: 0   Timestamp: 1.25  [ 9F 7F 00 ] |
+d_noteoff	OUT   midimsg with properties: | NoteOff         Channel: 2  Note: 61  Velocity: 10  Timestamp: 2  [ 81 3D 0A ] |
+d_note	OUT   2×1 midimsg array: | NoteOn          Channel: 3  Note: 62  Velocity: 70  Timestamp: 1  [ 92 3E 46 ] | NoteOn          Channel: 3  Note: 62  Velocity: 0   Timestamp: 1.5  [ 92 3E 00 ] |
+d_poly	OUT   midimsg with properties: | PolyKeyPressure Channel: 4  Note: 63  KeyPressure: 11  Timestamp: 0  [ A3 3F 0B ] |
+d_cc	OUT   midimsg with properties: | ControlChange   Channel: 5  CCNumber: 7   CCValue: 100 Timestamp: 0  [ B4 07 64 ] |
+d_aso	OUT   midimsg with properties: | AllSoundOff     Channel: 6  Timestamp: 0  [ B5 78 00 ] |
+d_rac	OUT   midimsg with properties: | ResetAllControllers Channel: 7  Timestamp: 3  [ B6 79 00 ] |
+d_local_on	OUT   midimsg with properties: | LocalControl    Channel: 8   Timestamp: 0  [ B7 7A 7F ] |
+d_local_off	OUT   midimsg with properties: | LocalControl    Channel: 8   Timestamp: 0  [ B7 7A 00 ] |
+d_ano	OUT   midimsg with properties: | AllNotesOff     Channel: 9  Timestamp: 0  [ B8 7B 00 ] |
+d_omnioff	OUT   midimsg with properties: | OmniOff         Channel: 10 Timestamp: 0  [ B9 7C 00 ] |
+d_omnion	OUT   midimsg with properties: | OmniOn          Channel: 11 Timestamp: 0  [ BA 7D 00 ] |
+d_monoon	OUT   midimsg with properties: | MonoOn          Channel: 12 MonoChannels: 4  Timestamp: 0  [ BB 7E 04 ] |
+d_polyon	OUT   midimsg with properties: | PolyOn          Channel: 13 Timestamp: 0  [ BC 7F 00 ] |
+d_pc	OUT   midimsg with properties: | ProgramChange   Channel: 14 Program: 19  Timestamp: 0  [ CD 13 ] |
+d_cp	OUT   midimsg with properties: | ChannelPressure Channel: 15 ChannelPressure: 99  Timestamp: 0  [ DE 63 ] |
+d_pb	OUT   midimsg with properties: | PitchBend       Channel: 16 PitchChange: 8192 Timestamp: 0  [ EF 00 40 ] |
+d_pb_hi	OUT   midimsg with properties: | PitchBend       Channel: 1  PitchChange: 16383 Timestamp: 0  [ E0 7F 7F ] |
+d_mtc	OUT   midimsg with properties: | MIDITimeCodeQuarterFrame TimeCodeSequence: 5 TimeCodeValue: 9  Timestamp: 0  [ F1 59 ] |
+d_spp	OUT   midimsg with properties: | SongPositionPointer SongPosition: 300   Timestamp: 0  [ F2 2C 02 ] |
+d_ss	OUT   midimsg with properties: | SongSelect      Song: 12  Timestamp: 0  [ F3 0C ] |
+d_tune	OUT   midimsg with properties: | TuneRequest     Timestamp: 0  [ F6 ] |
+d_clock	OUT   midimsg with properties: | TimingClock     Timestamp: 0.25  [ F8 ] |
+d_start	OUT   midimsg with properties: | Start           Timestamp: 0  [ FA ] |
+d_continue	OUT   midimsg with properties: | Continue        Timestamp: 0  [ FB ] |
+d_stop	OUT   midimsg with properties: | Stop            Timestamp: 0  [ FC ] |
+d_as	OUT   midimsg with properties: | ActiveSensing   Timestamp: 0  [ FE ] |
+d_reset	OUT   midimsg with properties: | SystemReset     Timestamp: 0  [ FF ] |
+d_sysex1	OUT   midimsg with properties: | SystemExclusive Timestamp: 0  [ F0 ] |
+d_sysex	OUT   4×1 midimsg array: | SystemExclusive Timestamp: 0.5  [ F0 ] | Data            Timestamp: 0.5  [ 01 02 03 04 05 06 07 08 ] | Data            Timestamp: 0.5  [ 09 0A ] | EOX             Timestamp: 0.5  [ F7 ] |
+d_sysex8	OUT   3×1 midimsg array: | SystemExclusive Timestamp: 0  [ F0 ] | Data            Timestamp: 0  [ 01 02 03 04 05 06 07 08 ] | EOX             Timestamp: 0  [ F7 ] |
+d_sysex_nots	ERR MATLAB:midimsg:expectedScalar Expected timestamp to be a scalar.
+d_data	OUT   midimsg with properties: | Data            Timestamp: 0  [ 01 02 03 ] |
+d_data9	OUT   2×1 midimsg array: | Data            Timestamp: 2  [ 01 02 03 04 05 06 07 08 ] | Data            Timestamp: 2  [ 09 ] |
+d_eox	OUT   midimsg with properties: | EOX             Timestamp: 0  [ F7 ] |
+d_undef	OUT   midimsg with properties: | Undefined       Timestamp: 0  [ F4 ] |
+d_empty	OUT   0×0 midimsg array. |
+d_size	OUT   2×3 midimsg array: | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] |
+d_three	OUT   3×3 midimsg array: | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] |
+d_zero_rows	OUT   0×3 midimsg array. |
+d_enum	OUT   midimsg with properties: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 0  [ 90 3C 40 ] |
+d_string	OUT   midimsg with properties: | ProgramChange   Channel: 1  Program: 5   Timestamp: 0  [ C0 05 ] |
+d_prefix	OUT   midimsg with properties: | ProgramChange   Channel: 1  Program: 5   Timestamp: 0  [ C0 05 ] |
+d_lower	OUT   midimsg with properties: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 0  [ 90 3C 40 ] |
+echo_scalar	OUT | m = | midimsg with properties: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 0  [ 90 3C 40 ] |
+echo_array	OUT | m = | 2×1 midimsg array: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 0  [ 90 3C 40 ] | NoteOn          Channel: 1  Note: 60  Velocity: 0   Timestamp: 1  [ 90 3C 00 ] |
+echo_empty	OUT | m = | 0×0 midimsg array. |
+d_ts_g	OUT   midimsg with properties: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 1.23457e+06  [ 90 3C 40 ] |
+d_ts_neg	OUT   midimsg with properties: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: -1  [ 90 3C 40 ] |
+d_ts_int	OUT   midimsg with properties: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 3  [ 90 3C 40 ] |
+e_chan0	ERR MATLAB:midimsg:notGreaterEqual Expected channel to be a scalar with value >= 1.
+e_chan17	ERR MATLAB:midimsg:notLessEqual Expected channel to be a scalar with value <= 16.
+e_chan_frac	ERR MATLAB:midimsg:expectedInteger Expected channel to be integer-valued.
+e_note	ERR MATLAB:midimsg:notLessEqual Expected note to be a scalar with value <= 127.
+e_vel	ERR MATLAB:midimsg:notGreaterEqual Expected velocity to be a scalar with value >= 0.
+e_vel_vec	ERR MATLAB:midimsg:expectedScalar Expected velocity to be a scalar.
+e_vel_char	ERR MATLAB:midimsg:invalidType Expected velocity to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64
+e_vel_nan	ERR MATLAB:midimsg:expectedFinite Expected velocity to be finite.
+e_few	ERR MATLAB:narginchk:notEnoughInputs Not enough input arguments.
+e_many	ERR MATLAB:narginchk:tooManyInputs Too many input arguments.
+e_type	ERR MATLAB:midimsg:unrecognizedStringChoice Expected input number 1, msgType, to match one of these values: | 'NoteOn', 'NoteOff', 'PolyKeyPressure', 'AllSoundOff', 'ResetAllControllers', 'LocalControl', 'AllNotesOff', 'OmniOff', 'OmniOn', 'MonoOn', 'PolyOn', 'ControlChange', 'ProgramChange', 'ChannelPressure', 'PitchBend', 'SystemExclusive', 'MIDITimeCodeQuarterFrame', 'SongPositionPointer', 'SongSelect', 'TuneRequest', 'EOX', 'TimingClock', 'Start', 'Continue', 'Stop', 'ActiveSensing', 'SystemReset', 'Data', 'Undefined', 'Note' | The input, 'Bogus', did not match any of the valid values.
+e_ambig	ERR MATLAB:narginchk:notEnoughInputs Not enough input arguments.
+e_cell	ERR MATLAB:midimsg:invalidType Expected input number 1, msgType, to be one of these types: | char, string, midimsgtype | Instead its type was cell.
+e_neg_size	ERR MATLAB:midimsg:expectedNonnegative Expected input number 2, midimsgArraySize, to be nonnegative.
+e_frac_size	ERR MATLAB:midimsg:expectedInteger Expected input number 2, midimsgArraySize, to be integer-valued.
+e_3d	midimsg [1 1] <a href="matlab:helpPopup midimsg">midimsg</a> with properties: | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] |
+e_cc	ERR MATLAB:midimsg:notLessEqual Expected ccnumber to be a scalar with value <= 119.
+e_local	ERR MATLAB:midimsg:invalidType Expected localcontrol to be one of these types: | logical | Instead its type was double.
+e_mono	ERR MATLAB:midimsg:notLessEqual Expected M to be a scalar with value <= 16.
+e_pb	ERR MATLAB:midimsg:notLessEqual Expected change to be a scalar with value <= 16383.
+e_mtc	ERR MATLAB:midimsg:notLessEqual Expected n to be a scalar with value <= 7.
+e_ts	ERR MATLAB:midimsg:expectedScalar Expected timestamp to be a scalar.
+e_ts_char	ERR MATLAB:midimsg:invalidType Expected timestamp to be one of these types: | double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64
+e_ts_cplx	ERR MATLAB:midimsg:expectedReal Expected timestamp to be real.
+e_dur	ERR MATLAB:midimsg:expectedScalar Expected duration to be a scalar.
+e_data_big	ERR MATLAB:notLessEqual Expected input number 2 to be an array with all of the values <= 127.
+e_data_empty	ERR MATLAB:expectedNonempty Expected input number 2 to be nonempty.
+e_sysex_big	ERR MATLAB:notLessEqual Expected input number 2 to be an array with all of the values <= 127.
+e_tune_extra	ERR MATLAB:narginchk:tooManyInputs Too many input arguments.
+props	cell [19 1] {char [1 4] 'Type'; char [1 11] 'NumMsgBytes'; char [1 8] 'MsgBytes'; char [1 9] 'Timestamp'; char [1 7] 'Channel'; char [1 4] 'Note'; char [1 8] 'Velocity'; char [1 11] 'KeyPressure'; char [1 12] 'LocalControl'; char [1 12] 'MonoChannels'; char [1 8] 'CCNumber'; char [1 7] 'CCValue'; char [1 7] 'Program'; char [1 15] 'ChannelPressure'; char [1 11] 'PitchChange'; char [1 16] 'TimeCodeSequence'; char [1 13] 'TimeCodeValue'; char [1 12] 'SongPosition'; char [1 4] 'Song'}
+methods	cell [1 1] {char [1 7] 'midimsg'}
+class	char [1 7] 'midimsg'
+type	midimsgtype [1 1] midimsgtype.NoteOn
+type_disp	OUT     NoteOn |
+type_echo	OUT | t = | midimsgtype enumeration | NoteOn |
+type_class	char [1 11] 'midimsgtype'
+nbytes	double [1 1] 3
+bytes	uint8 [1 3] [145 60 64]
+ts	double [1 1] 0.5
+chan	double [1 1] 2
+note	double [1 1] 60
+vel	double [1 1] 64
+raw	uint8 [1 8] [145 60 64 0 0 0 0 0]
+bad_prop	ERR audio:midi:MidiMsgInvalidPropertyAccess Accessing property CCNumber is not valid for NoteOn MIDI messages. Valid properties are: Channel, Note, Velocity.
+bad_prop2	ERR audio:midi:MidiMsgInvalidPropertyAccess Accessing property Program is not valid for NoteOn MIDI messages. Valid properties are: Channel, Note, Velocity.
+no_prop	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'Bogus' for class 'midimsg'.
+lower_prop	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'channel' for class 'midimsg'.
+isa_handle	logical [1 1] false
+isobject	logical [1 1] true
+isstruct	logical [1 1] false
+isequal_same	logical [1 1] true
+isequal_diff	logical [1 1] false
+eq_op	ERR MATLAB:math:mustBeNumericCharOrLogical Invalid data type. Argument must be numeric, char, or logical.
+[Warning: Calling STRUCT on an object prevents the object from hiding its implementation details and should thus be avoided. Use DISP or DISPLAY to see the visible public details
+of an object. See 'help struct' for more information.] 
+[> In dv_pr (line 4)
+In probe_midi_msg (line 115)] 
+struct_of	struct [1 1] struct(Type,NumMsgBytes,MsgBytes,Timestamp,Channel,Note,Velocity,RawBytes,DecodeMidiByte,DecodeChannelModeByte)
+size	double [1 2] [1 1]
+numel	double [1 1] 1
+double_of	ERR MATLAB:invalidConversion Conversion to double from midimsg is not possible.
+p_poly	double [1 1] 11
+p_cc	double [1 2] [7 100]
+p_local	logical [1 1] true
+p_mono	double [1 1] 4
+p_pc	double [1 1] 19
+p_cp	double [1 1] 99
+p_pb	double [1 1] 8195
+p_mtc	double [1 2] [5 9]
+p_spp	double [1 1] 300
+p_ss	double [1 1] 12
+p_aso_type	midimsgtype [1 1] midimsgtype.AllSoundOff
+p_sysex_chan	ERR audio:midi:MidiMsgInvalidPropertyAccess Accessing property Channel is not valid for SystemExclusive MIDI messages. Valid properties are: .
+p_data_type	midimsgtype [1 1] midimsgtype.Data
+p_data_bytes	uint8 [1 3] [1 2 3]
+p_default_type	midimsgtype [1 1] midimsgtype.Data
+p_default_bytes	uint8 [1 8] [0 0 0 0 0 0 0 0]
+p_default_n	double [1 1] 8
+p_undef_n	double [1 1] 1
+set_chan	uint8 [1 3] [159 60 64]
+set_note_vel	uint8 [1 3] [159 0 127]
+set_ts	double [1 1] 3
+orig_unchanged	uint8 [1 3] [145 60 64]
+set_bad_chan	ERR MATLAB:midimsg:notGreaterEqual Expected channel to be a scalar with value >= 1.
+set_bad_prop	ERR audio:midi:MidiMsgInvalidPropertyAccess Accessing property Program is not valid for NoteOn MIDI messages. Valid properties are: Channel, Note, Velocity.
+set_type	ERR MATLAB:class:SetProhibited Unable to set the 'Type' property of class '<a href="matlab:doc midimsg">midimsg</a>' because it is read-only.
+set_bytes	ERR MATLAB:class:SetProhibited Unable to set the 'MsgBytes' property of class '<a href="matlab:doc midimsg">midimsg</a>' because it is read-only.
+set_raw	ERR MATLAB:class:SetProhibited Unable to set the 'RawBytes' property of class '<a href="matlab:doc midimsg">midimsg</a>' because it is read-only.
+set_ts_char	OUT
+set_ts_vec	ERR MATLAB:validation:IncompatibleSize Error setting property 'Timestamp' of class '<a href="matlab:helpPopup midimsg">midimsg</a>'. Value must be a scalar.
+set_ts_int	OUT double | 4 |
+set_ts_true	OUT double |
+set_new	ERR MATLAB:noPublicFieldForClass Unrecognized property 'Bogus' for class 'midimsg'.
+set_pb	uint8 [1 3] [224 0 125]
+set_mtc	uint8 [1 2] [241 127]
+set_local	uint8 [1 3] [176 122 127]
+set_local_num	ERR MATLAB:midimsg:invalidType Expected localcontrol to be one of these types: | logical | Instead its type was double.
+a_size	double [1 2] [2 1]
+a_class	char [1 7] 'midimsg'
+a_disp	OUT   2×1 midimsg array: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 1  [ 90 3C 40 ] | NoteOn          Channel: 1  Note: 60  Velocity: 0   Timestamp: 1.5  [ 90 3C 00 ] |
+a1	uint8 [1 3] [144 60 64]
+a2_ts	double [1 1] 1.5
+a_ts_list	double [1 2] [1 1.5]
+a_ts_cs	OUT | ans = | 1 | ans = | 1.5000 |
+a_nbytes	double [1 1] 3
+a_bytes	uint8 [1 3] [144 60 64]
+a_type	midimsgtype [1 1] midimsgtype.NoteOn
+a_type_cs	OUT | ans = | midimsgtype enumeration | NoteOn | ans = | midimsgtype enumeration | NoteOn |
+a_chan	double [1 1] 1
+a_chan_cs	OUT | ans = | 1 | ans = | 1 |
+a_end	double [1 1] 1.5
+a_colon	double [1 2] [2 1]
+a_rev	double [1 2] [1.5 1]
+a_logical	double [1 2] [1 1]
+a_bad_idx	ERR MATLAB:badsubscript Index exceeds the number of array elements. Index must not exceed 2.
+a_zero_idx	ERR MATLAB:badsubscript Array indices must be positive integers or logical values.
+a_two_idx	double [1 2] [1 1]
+a_empty_idx	double [1 2] [0 0]
+a_isempty	logical [1 1] false
+a_numel	double [1 1] 2
+a_length	double [1 1] 2
+a_transpose	double [1 2] [1 2]
+a_isequal	logical [1 1] true
+cat_v	double [1 2] [3 1]
+cat_h	double [1 2] [1 3]
+cat_mix	midimsg [3 1] 3×1 <a href="matlab:helpPopup midimsg">midimsg</a> array: | NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 1  [ 90 3C 40 ] | NoteOn          Channel: 1  Note: 60  Velocity: 0   Timestamp: 1.5  [ 90 3C 00 ] | Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] |
+cat_empty	double [1 2] [2 1]
+cat_dbl_empty	double [1 2] [2 1]
+cat_cell	char [1 4] 'cell'
+cat_bad	ERR MATLAB:catenate:dimensionMismatch Dimensions of arrays being concatenated are not consistent.
+ix_set	double [1 2] [1 9]
+ix_set_orig	double [1 2] [1 1.5]
+grow	double [1 2] [4 1]
+grow_fill	uint8 [1 8] [0 0 0 0 0 0 0 0]
+grow_end	double [1 2] [5 1]
+delete	double [1 2] [4 1]
+ix_set_bad	ERR MATLAB:matrix:singleSubscriptNumelMismatch Unable to perform assignment because the left and right sides have a different number of elements.
+dot_set_array	ERR MATLAB:index:expected_one_output_for_assignment Assigning to 4 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.
+dot_set_array_cs	OUT      7     7     7     7 |
+e_size	double [1 2] [0 0]
+e_grow	double [1 2] [1 1]
+rep	double [1 2] [2 2]
+rs	double [1 2] [3 2]
+for_loop	OUT midimsg | 2     1 |
+for_loop_row	OUT      1 | 1.5000 |
+arrayfun	OUT     1.0000 | 1.5000 |
+cellfun	double [1 2] [60 60]
+z_bytes	uint8 [1 8] [0 0 0 0 0 0 0 0]
+z_ts	double [1 6] [0 0 0 0 0 0]
+z_type	midimsgtype [1 1] midimsgtype.Data
+z_nb	double [1 1] 8
+t_disp	OUT     NoteOn |
+t_echo	OUT | t = | midimsgtype enumeration | PitchBend |
+t_class	char [1 11] 'midimsgtype'
+t_double	double [1 1] 15
+t_int32	int32 [1 1] -1
+t_char	char [1 6] 'NoteOn'
+t_string	string [1 1] "NoteOn"
+t_eq	logical [1 1] true
+t_ne	logical [1 1] true
+t_eq_char	logical [1 1] true
+t_eq_num	logical [1 1] true
+t_plus	int32 [1 1] 2
+t_lt	logical [1 1] true
+t_isequal_char	logical [1 1] true
+t_isa	logical [1 1] true
+t_isenum	logical [1 1] true
+t_isnumeric	logical [1 1] true
+t_enumeration	OUT | Enumeration members for class 'midimsgtype': | NoteOn | NoteOff | PolyKeyPressure | AllSoundOff | ResetAllControllers | LocalControl | AllNotesOff | OmniOff | OmniOn | MonoOn | PolyOn | ControlChange | ProgramChange | ChannelPressure | PitchBend | SystemExclusive | MIDITimeCodeQuarterFrame | SongPositionPointer | SongSelect | TuneRequest | EOX | TimingClock | Start | Continue | Stop | ActiveSensing | SystemReset | Data | Undefined |
+t_enum_out	ERR MATLAB:m_invalid_lhs_of_assignment Incorrect use of '=' operator. Assign a value to a variable using '=' and compare values for equality using '=='.
+t_ctor	midimsgtype [1 1] midimsgtype.NoteOn
+t_ctor_name	midimsgtype [1 1] midimsgtype.NoteOn
+t_bad	ERR MATLAB:subscripting:classHasNoPropertyOrMethod The class midimsgtype has no Constant property or Static method named 'Bogus'.
+t_switch	OUT      2 |
+t_switch_char	OUT      2 |
+t_arr	double [1 2] [1 2]
+t_arr_disp	OUT     NoteOn    Stop |
+t_ismember	logical [1 1] true
+t_cellstr	cell [1 1] {char [1 6] 'NoteOn'}

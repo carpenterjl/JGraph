@@ -91,6 +91,10 @@ internal static partial class JgsBuiltins
         // Stage D10: audio devices. sound is registered here over the base layer's host-audio sound, so it is
         // listed there; soundsc plays through it.
         "audioplayer", "audiorecorder", "audiodevinfo", "audiodevreset", "soundsc",
+
+        // Stage D10b: MIDI.
+        "mididevinfo", "mididevice", "midimsg", "midimsgtype", "midisend", "midireceive",
+        "midicontrols", "midiread", "midisync", "midicallback", "midiid",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>

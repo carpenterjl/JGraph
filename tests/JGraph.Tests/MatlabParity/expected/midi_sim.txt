@@ -1,0 +1,25 @@
+CHK|list|JGraph Loopback 0; JGraph Loopback 1; JGraph Sink 2; |exact
+CHK|both|JGraph Loopback 0 JGraph Loopback 1|exact
+CHK|disp|mididevice connected to / Input: 'JGraph Loopback' (0) / Output: 'JGraph Loopback' (1)|exact
+CHK|roundtrip|0 1 0 / midimsg 1 1 / NoteOn [146 60 64] 3 60 64 / 1|exact
+CHK|nothing|midimsg 0 0|exact
+CHK|most|2 1 0 / Start Continue Stop|exact
+CHK|most_bad|MATLAB:expectedNonnegative ## Expected input to be nonnegative. // MATLAB:expectedInteger ## Expected input to be integer-valued. // MATLAB:expectedScalar ## Expected input to be a scalar. // MATLAB:invalidType ## Expected input to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 // MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|order|60 61 62 / 1|exact
+CHK|note_pair|2 / [145 64 90] [145 64 0] / 90 0 / 1|exact
+CHK|args|ProgramChange PitchBend TuneRequest ActiveSensing / ProgramChange;PitchBend;TuneRequest;ActiveSensing;|exact
+CHK|sysex|SystemExclusive 240; Data [1 2 3 4 5 6 7 8]; Data [9 10]; EOX 247|exact
+CHK|sink|90 3C 64; BF 07 7F; F0 43 10 F7; FC|exact
+CHK|sink_is_output|-1 2 JGraph Sink/audio:midi:MidiReceiveNotAnInput ## Device is not a MIDI input. // audio:midi:MidiReceiveNotAnInput ## Device is not a MIDI input.|exact
+CHK|input_only|0 -1/audio:midi:MidiSendNotAnOutput ## Device is not a MIDI output.|exact
+CHK|four_args|0 2 JGraph Loopback JGraph Sink|exact
+CHK|deleted|0/MATLAB:class:InvalidHandle ## Invalid or deleted object. // MATLAB:class:InvalidHandle ## Invalid or deleted object.|exact
+CHK|controls|0.785714 1007 / midicontrols object: control 1007 on 'JGraph Loopback'|exact
+CHK|controls_raw|[1 99]|exact
+CHK|controls_any|0.5 2010|exact
+CHK|controls_any_channel|1|exact
+CHK|sync|[0.253968 1] [0 0] / B0 03 20; B0 04 7F; B0 03 00; B0 04 00|exact
+CHK|sync_any|0|exact
+CHK|callback|1 0.5 1|exact
+CHK|device_name|/JGraph Loopback/midicontrols object: control 7 on 'JGraph Loopback'|exact
+CHK|midiid|3021 JGraph Loopback / Move the control you wish to identify. Type ^C to abort. / Waiting for control message... done|exact

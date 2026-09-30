@@ -1,0 +1,22 @@
+% PROBE_MIDI_CS  A dot on a midimsg array where one value is wanted, in R2025b (device classes plan,
+%   stage D10b). Pure values.
+a = midimsg('Note', 1, 60, 64, 0.5, 1);
+dv_px('assign', 'v = a.Timestamp; disp(v)')
+dv_px('assign_type', 'v = a.Type; disp(v)')
+dv_px('disp_arg', 'disp(a.Timestamp)')
+dv_px('plus', 'disp(a.Timestamp + 1)')
+dv_px('struct_assign', 's = struct(''f'', {1, 2}); v = s.f; disp(v)')
+dv_px('bytes_cell', 'c = {a.MsgBytes}; disp(size(c))')
+dv_px('empty_dot', 'e = midimsg(0); c = {e.Timestamp}; disp(size(c))')
+dv_px('empty_assign', 'e = midimsg(0); v = e.Timestamp;')
+dv_px('isobject_t', 'disp(isobject(midimsgtype.NoteOn))')
+dv_px('class_row', 'm = [midimsg, midimsg]; disp(class(m(2)))')
+dv_px('arrayfun_uo', 'c = arrayfun(@(x) x.MsgBytes, midimsg(''Note'', 1, 60, 64, 1), ''UniformOutput'', false); disp(size(c)); disp(class(c{1}))')
+dv_px('num2cell', 'c = num2cell(midimsg(''Note'', 1, 60, 64, 1)); disp(size(c)); disp(class(c{2}))')
+dv_px('grow_2d', 'z = midimsg; z(2, 3) = midimsg(''Start''); disp(size(z))')
+dv_px('elem_grow', 'z = midimsg; z(3).Timestamp = 4; disp(size(z)); disp([z.Timestamp])')
+dv_px('store_cell_dot', 'c = {midimsg(''Start'')}; c{1}.Timestamp = 2; disp(c{1}.Timestamp)')
+dv_px('fn_value', 'f = @(m) m.Channel; disp(f(midimsg(''NoteOn'', 5, 60, 64)))')
+dv_px('sort_ts', 'msgs = [midimsg(''Start'', 2); midimsg(''Stop'', 1)]; [~, i] = sort([msgs.Timestamp]); disp(i)')
+dv_px('receive_none', 'disp(class(midimsg.fromStruct(struct(''RawBytes'', {}, ''Timestamp'', {}))))')
+dv_px('receive_none_size', 'disp(size(midimsg.fromStruct(struct(''RawBytes'', {}, ''Timestamp'', {}))))')

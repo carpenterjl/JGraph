@@ -1,0 +1,217 @@
+CHK|d_default|midimsg with properties: / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ]|exact
+CHK|d_noteon|midimsg with properties: / NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 0  [ 90 3C 40 ]|exact
+CHK|d_noteon_ts|midimsg with properties: / NoteOn          Channel: 16 Note: 127 Velocity: 0   Timestamp: 1.25  [ 9F 7F 00 ]|exact
+CHK|d_noteoff|midimsg with properties: / NoteOff         Channel: 2  Note: 61  Velocity: 10  Timestamp: 2  [ 81 3D 0A ]|exact
+CHK|d_note|2x1 midimsg array: / NoteOn          Channel: 3  Note: 62  Velocity: 70  Timestamp: 1  [ 92 3E 46 ] / NoteOn          Channel: 3  Note: 62  Velocity: 0   Timestamp: 1.5  [ 92 3E 00 ]|exact
+CHK|d_poly|midimsg with properties: / PolyKeyPressure Channel: 4  Note: 63  KeyPressure: 11  Timestamp: 0  [ A3 3F 0B ]|exact
+CHK|d_cc|midimsg with properties: / ControlChange   Channel: 5  CCNumber: 7   CCValue: 100 Timestamp: 0  [ B4 07 64 ]|exact
+CHK|d_aso|midimsg with properties: / AllSoundOff     Channel: 6  Timestamp: 0  [ B5 78 00 ]|exact
+CHK|d_rac|midimsg with properties: / ResetAllControllers Channel: 7  Timestamp: 3  [ B6 79 00 ]|exact
+CHK|d_local_on|midimsg with properties: / LocalControl    Channel: 8   Timestamp: 0  [ B7 7A 7F ]|exact
+CHK|d_local_off|midimsg with properties: / LocalControl    Channel: 8   Timestamp: 0  [ B7 7A 00 ]|exact
+CHK|d_ano|midimsg with properties: / AllNotesOff     Channel: 9  Timestamp: 0  [ B8 7B 00 ]|exact
+CHK|d_omni|midimsg with properties: / OmniOff         Channel: 10 Timestamp: 0  [ B9 7C 00 ] // midimsg with properties: / OmniOn          Channel: 11 Timestamp: 0  [ BA 7D 00 ]|exact
+CHK|d_mono|midimsg with properties: / MonoOn          Channel: 12 MonoChannels: 4  Timestamp: 0  [ BB 7E 04 ] // midimsg with properties: / PolyOn          Channel: 13 Timestamp: 0  [ BC 7F 00 ]|exact
+CHK|d_pc|midimsg with properties: / ProgramChange   Channel: 14 Program: 19  Timestamp: 0  [ CD 13 ]|exact
+CHK|d_cp|midimsg with properties: / ChannelPressure Channel: 15 ChannelPressure: 99  Timestamp: 0  [ DE 63 ]|exact
+CHK|d_pb|midimsg with properties: / PitchBend       Channel: 16 PitchChange: 8192 Timestamp: 0  [ EF 00 40 ] // midimsg with properties: / PitchBend       Channel: 1  PitchChange: 16383 Timestamp: 0  [ E0 7F 7F ]|exact
+CHK|d_mtc|midimsg with properties: / MIDITimeCodeQuarterFrame TimeCodeSequence: 5 TimeCodeValue: 9  Timestamp: 0  [ F1 59 ]|exact
+CHK|d_spp|midimsg with properties: / SongPositionPointer SongPosition: 300   Timestamp: 0  [ F2 2C 02 ]|exact
+CHK|d_ss|midimsg with properties: / SongSelect      Song: 12  Timestamp: 0  [ F3 0C ]|exact
+CHK|d_system|midimsg with properties: / TuneRequest     Timestamp: 0  [ F6 ] // midimsg with properties: / TimingClock     Timestamp: 0.25  [ F8 ] // midimsg with properties: / Start           Timestamp: 0  [ FA ] // midimsg with properties: / Continue        Timestamp: 0  [ FB ] // midimsg with properties: / Stop            Timestamp: 0  [ FC ] // midimsg with properties: / ActiveSensing   Timestamp: 0  [ FE ] // midimsg with properties: / SystemReset     Timestamp: 0  [ FF ]|exact
+CHK|d_sysex1|midimsg with properties: / SystemExclusive Timestamp: 0  [ F0 ]|exact
+CHK|d_sysex|4x1 midimsg array: / SystemExclusive Timestamp: 0.5  [ F0 ] / Data            Timestamp: 0.5  [ 01 02 03 04 05 06 07 08 ] / Data            Timestamp: 0.5  [ 09 0A ] / EOX             Timestamp: 0.5  [ F7 ]|exact
+CHK|d_sysex8|3x1 midimsg array: / SystemExclusive Timestamp: 0  [ F0 ] / Data            Timestamp: 0  [ 01 02 03 04 05 06 07 08 ] / EOX             Timestamp: 0  [ F7 ]|exact
+CHK|d_data|midimsg with properties: / Data            Timestamp: 0  [ 01 02 03 ]|exact
+CHK|d_data9|2x1 midimsg array: / Data            Timestamp: 2  [ 01 02 03 04 05 06 07 08 ] / Data            Timestamp: 2  [ 09 ]|exact
+CHK|d_eox_undef|midimsg with properties: / EOX             Timestamp: 0  [ F7 ] // midimsg with properties: / Undefined       Timestamp: 0  [ F4 ]|exact
+CHK|d_empty|0x0 midimsg array.|exact
+CHK|d_size|2x3 midimsg array: / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ]|exact
+CHK|d_three|3x3 midimsg array: / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ]|exact
+CHK|d_zero_rows|0x3 midimsg array.|exact
+CHK|d_ones|midimsg with properties: / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ]|exact
+CHK|d_enum|midimsg with properties: / NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 0  [ 90 3C 40 ]|exact
+CHK|d_string|midimsg with properties: / ProgramChange   Channel: 1  Program: 5   Timestamp: 0  [ C0 05 ]|exact
+CHK|d_prefix|midimsg with properties: / ProgramChange   Channel: 1  Program: 5   Timestamp: 0  [ C0 05 ]|exact
+CHK|d_lower|midimsg with properties: / NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 0  [ 90 3C 40 ]|exact
+CHK|d_ts_g|midimsg with properties: / NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 1.23457e+06  [ 90 3C 40 ]|exact
+CHK|d_ts_neg|midimsg with properties: / NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: -1  [ 90 3C 40 ]|exact
+CHK|d_ts_int|midimsg with properties: / NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 3  [ 90 3C 40 ]|exact
+CHK|e_chan0|MATLAB:midimsg:notGreaterEqual ## Expected channel to be a scalar with value >= 1.|exact
+CHK|e_chan17|MATLAB:midimsg:notLessEqual ## Expected channel to be a scalar with value <= 16.|exact
+CHK|e_chan_frac|MATLAB:midimsg:expectedInteger ## Expected channel to be integer-valued.|exact
+CHK|e_note|MATLAB:midimsg:notLessEqual ## Expected note to be a scalar with value <= 127.|exact
+CHK|e_vel|MATLAB:midimsg:notGreaterEqual ## Expected velocity to be a scalar with value >= 0.|exact
+CHK|e_vel_vec|MATLAB:midimsg:expectedScalar ## Expected velocity to be a scalar.|exact
+CHK|e_vel_char|MATLAB:midimsg:invalidType ## Expected velocity to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|e_vel_nan|MATLAB:midimsg:expectedFinite ## Expected velocity to be finite.|exact
+CHK|e_vel_cplx|MATLAB:midimsg:expectedReal ## Expected velocity to be real.|exact
+CHK|e_few|MATLAB:narginchk:notEnoughInputs ## Not enough input arguments.|exact
+CHK|e_many|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|e_type|MATLAB:midimsg:unrecognizedStringChoice ## Expected input number 1, msgType, to match one of these values: / 'NoteOn', 'NoteOff', 'PolyKeyPressure', 'AllSoundOff', 'ResetAllControllers', 'LocalControl', 'AllNotesOff', 'OmniOff', 'OmniOn', 'MonoOn', 'PolyOn', 'ControlChange', 'ProgramChange', 'ChannelPressure', 'PitchBend', 'SystemExclusive', 'MIDITimeCodeQuarterFrame', 'SongPositionPointer', 'SongSelect', 'TuneRequest', 'EOX', 'TimingClock', 'Start', 'Continue', 'Stop', 'ActiveSensing', 'SystemReset', 'Data', 'Undefined', 'Note' / The input, 'Bogus', did not match any of the valid values.|exact
+CHK|e_note_prefix|MATLAB:narginchk:notEnoughInputs ## Not enough input arguments.|exact
+CHK|e_cell|MATLAB:midimsg:invalidType ## Expected input number 1, msgType, to be one of these types: / char, string, midimsgtype / Instead its type was cell.|exact
+CHK|e_num_type|MATLAB:midimsg:invalidType ## Expected input number 1, msgType, to be one of these types: / char, string, midimsgtype / Instead its type was double.|exact
+CHK|e_neg_size|MATLAB:midimsg:expectedNonnegative ## Expected input number 2, midimsgArraySize, to be nonnegative.|exact
+CHK|e_frac_size|MATLAB:midimsg:expectedInteger ## Expected input number 2, midimsgArraySize, to be integer-valued.|exact
+CHK|e_cc|MATLAB:midimsg:notLessEqual ## Expected ccnumber to be a scalar with value <= 119.|exact
+CHK|e_local|MATLAB:midimsg:invalidType ## Expected localcontrol to be one of these types: / logical / Instead its type was double.|exact
+CHK|e_mono|MATLAB:midimsg:notLessEqual ## Expected M to be a scalar with value <= 16.|exact
+CHK|e_pb|MATLAB:midimsg:notLessEqual ## Expected change to be a scalar with value <= 16383.|exact
+CHK|e_mtc|MATLAB:midimsg:notLessEqual ## Expected n to be a scalar with value <= 7.|exact
+CHK|e_mtc_value|MATLAB:midimsg:notLessEqual ## Expected d to be a scalar with value <= 15.|exact
+CHK|e_spp|MATLAB:midimsg:notGreaterEqual ## Expected position to be a scalar with value >= 0.|exact
+CHK|e_ts|MATLAB:midimsg:expectedScalar ## Expected timestamp to be a scalar.|exact
+CHK|e_ts_char|MATLAB:midimsg:invalidType ## Expected timestamp to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|e_ts_cplx|MATLAB:midimsg:expectedReal ## Expected timestamp to be real.|exact
+CHK|e_dur|MATLAB:midimsg:expectedScalar ## Expected duration to be a scalar.|exact
+CHK|e_data_big|MATLAB:notLessEqual ## Expected input number 2 to be an array with all of the values <= 127.|exact
+CHK|e_data_empty|MATLAB:expectedNonempty ## Expected input number 2 to be nonempty.|exact
+CHK|e_data_frac|MATLAB:expectedInteger ## Expected input number 2 to be integer-valued.|exact
+CHK|e_sysex_big|MATLAB:notLessEqual ## Expected input number 2 to be an array with all of the values <= 127.|exact
+CHK|e_sysex_nots|MATLAB:midimsg:expectedScalar ## Expected timestamp to be a scalar.|exact
+CHK|e_sysex_many|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|e_tune_extra|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|props|cell:{char:Type;char:NumMsgBytes;char:MsgBytes;char:Timestamp;char:Channel;char:Note;char:Velocity;char:KeyPressure;char:LocalControl;char:MonoChannels;char:CCNumber;char:CCValue;char:Program;char:ChannelPressure;char:PitchChange;char:TimeCodeSequence;char:TimeCodeValue;char:SongPosition;char:Song}|exact
+CHK|methods|cell:{char:midimsg}|exact
+CHK|class|midimsg|exact
+CHK|type|NoteOn|exact
+CHK|type_class|midimsgtype|exact
+CHK|nbytes|double:3|exact
+CHK|bytes|uint8:[145 60 64]|exact
+CHK|ts|double:0.5|exact
+CHK|note_props|double:[2 60 64]|exact
+CHK|raw|uint8:[145 60 64 0 0 0 0 0]|exact
+CHK|bad_prop|audio:midi:MidiMsgInvalidPropertyAccess ## Accessing property CCNumber is not valid for NoteOn MIDI messages. Valid properties are: Channel, Note, Velocity.|exact
+CHK|bad_prop2|audio:midi:MidiMsgInvalidPropertyAccess ## Accessing property Program is not valid for NoteOn MIDI messages. Valid properties are: Channel, Note, Velocity.|exact
+CHK|no_prop|MATLAB:noSuchMethodOrField ## Unrecognized method, property, or field 'Bogus' for class 'midimsg'.|exact
+CHK|lower_prop|MATLAB:noSuchMethodOrField ## Unrecognized method, property, or field 'channel' for class 'midimsg'.|exact
+CHK|kinds|0 1 0 1|exact
+CHK|isequal|1 0|exact
+CHK|eq_op|MATLAB:math:mustBeNumericCharOrLogical ## Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|shape|double:[1 1 1]|exact
+CHK|double_of|MATLAB:invalidConversion ## Conversion to double from midimsg is not possible.|exact
+CHK|p_poly|double:11|exact
+CHK|p_cc|double:[7 100]|exact
+CHK|p_local|logical:1|exact
+CHK|p_mono|double:4|exact
+CHK|p_pc|double:19|exact
+CHK|p_cp|double:99|exact
+CHK|p_pb|double:8195|exact
+CHK|p_mtc|double:[5 9]|exact
+CHK|p_spp|double:300|exact
+CHK|p_ss|double:12|exact
+CHK|p_types|AllSoundOff ControlChange Data Data EOX Undefined |exact
+CHK|p_sysex_chan|audio:midi:MidiMsgInvalidPropertyAccess ## Accessing property Channel is not valid for SystemExclusive MIDI messages. Valid properties are: .|exact
+CHK|p_cc_mode_chan|double:9|exact
+CHK|p_cc_mode_ccnumber|audio:midi:MidiMsgInvalidPropertyAccess ## Accessing property CCNumber is not valid for AllNotesOff MIDI messages. Valid properties are: Channel.|exact
+CHK|p_data_bytes|uint8:[1 2 3]|exact
+CHK|p_default|8 8|exact
+CHK|p_undef_n|double:1|exact
+CHK|p_sysex_n|double:1|exact
+CHK|set_chan|uint8:[159 60 64]|exact
+CHK|set_note_vel|uint8:[159 0 127]|exact
+CHK|set_ts|double:3|exact
+CHK|orig_unchanged|uint8:[145 60 64]|exact
+CHK|set_bad_chan|MATLAB:midimsg:notGreaterEqual ## Expected channel to be a scalar with value >= 1.|exact
+CHK|set_bad_prop|audio:midi:MidiMsgInvalidPropertyAccess ## Accessing property Program is not valid for NoteOn MIDI messages. Valid properties are: Channel, Note, Velocity.|exact
+CHK|set_type|MATLAB:class:SetProhibited ## Unable to set the 'Type' property of class ''midimsg'' because it is read-only.|exact
+CHK|set_bytes|MATLAB:class:SetProhibited ## Unable to set the 'MsgBytes' property of class ''midimsg'' because it is read-only.|exact
+CHK|set_raw|MATLAB:class:SetProhibited ## Unable to set the 'RawBytes' property of class ''midimsg'' because it is read-only.|exact
+CHK|set_ts_vec|MATLAB:validation:IncompatibleSize ## Error setting property 'Timestamp' of class 'midimsg'. Value must be a scalar.|exact
+CHK|set_new|MATLAB:noPublicFieldForClass ## Unrecognized property 'Bogus' for class 'midimsg'.|exact
+CHK|set_ts_char|double:97|exact
+CHK|set_ts_int|double|exact
+CHK|set_ts_true|double:1|exact
+CHK|set_pb|uint8:[224 0 125]|exact
+CHK|set_mtc|uint8:[241 127]|exact
+CHK|set_local|uint8:[176 122 127]|exact
+CHK|set_local_num|MATLAB:midimsg:invalidType ## Expected localcontrol to be one of these types: / logical / Instead its type was double.|exact
+CHK|set_spp|uint8:[242 104 7]|exact
+CHK|set_cc|uint8:[177 10 64]|exact
+CHK|set_cc_high|MATLAB:midimsg:notLessEqual ## Expected CCNumber to be a scalar with value <= 119.|exact
+CHK|a_size|double:[2 1]|exact
+CHK|a_class|midimsg|exact
+CHK|a1|uint8:[144 60 64]|exact
+CHK|a2_ts|double:1.5|exact
+CHK|a_ts_list|double:[1 1.5]|exact
+CHK|a_first|double:1|exact
+CHK|a_nbytes|double:[3 3]|exact
+CHK|a_bytes|cell:{uint8:[144 60 64];uint8:[144 60 0]}|exact
+CHK|a_end|double:1.5|exact
+CHK|a_colon|double:[2 1]|exact
+CHK|a_rev|double:[1.5 1]|exact
+CHK|a_logical|double:[1 1]|exact
+CHK|a_two_idx|double:[1 1]|exact
+CHK|a_empty_idx|double:[0 0]|exact
+CHK|a_shape|0 2 2 0 1 1|exact
+CHK|a_transpose|double:[1 2]|exact
+CHK|a_isequal|logical:1|exact
+CHK|a_isequal_rev|logical:0|exact
+CHK|cat_v|double:[3 1]|exact
+CHK|cat_v_disp|3x1 midimsg array: / NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 1  [ 90 3C 40 ] / NoteOn          Channel: 1  Note: 60  Velocity: 0   Timestamp: 1.5  [ 90 3C 00 ] / ProgramChange   Channel: 1  Program: 5   Timestamp: 0  [ C0 05 ]|exact
+CHK|cat_h|double:[1 3]|exact
+CHK|cat_mix|3x1 midimsg array: / NoteOn          Channel: 1  Note: 60  Velocity: 64  Timestamp: 1  [ 90 3C 40 ] / NoteOn          Channel: 1  Note: 60  Velocity: 0   Timestamp: 1.5  [ 90 3C 00 ] / Data            Timestamp: 0  [ 00 00 00 00 00 00 00 00 ]|exact
+CHK|cat_empty|double:[2 1]|exact
+CHK|cat_dbl_empty|double:[2 1]|exact
+CHK|cat_cell|cell|exact
+CHK|cat_bad|MATLAB:catenate:dimensionMismatch ## Dimensions of arrays being concatenated are not consistent.|exact
+CHK|cat_fn|double:[4 1]|exact
+CHK|cat_horz_fn|double:[1 4]|exact
+CHK|ix_set|double:[1 9]|exact
+CHK|ix_set_orig|double:[1 1.5]|exact
+CHK|grow|double:[4 1]|exact
+CHK|grow_fill|uint8:[0 0 0 0 0 0 0 0]|exact
+CHK|grow_end|double:[5 1]|exact
+CHK|delete|NoteOn Data Start Stop |exact
+CHK|ix_set_bad|MATLAB:matrix:singleSubscriptNumelMismatch ## Unable to perform assignment because the left and right sides have a different number of elements.|exact
+CHK|dot_set_array|MATLAB:index:expected_one_output_for_assignment ## Assigning to 4 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|dot_set_array_cs|double:[7 7 7 7]|exact
+CHK|e_size|double:[0 0]|exact
+CHK|e_grow|double:[1 1]|exact
+CHK|grow_2d|double:[2 3]|exact
+CHK|elem_grow|double:[0 0 4]|exact
+CHK|into_empty_double|MATLAB:UnableToConvert ## Unable to perform assignment because value of type 'midimsg' is not convertible to 'double'.|exact
+CHK|into_new_variable|midimsg 1 3 Data Stop|exact
+CHK|rep|double:[2 2]|exact
+CHK|rep_vec|double:[1 3]|exact
+CHK|rs|double:[3 2]|exact
+CHK|rs_auto|double:[6 1]|exact
+CHK|for_col|midimsg 2 1;|exact
+CHK|for_row|1;1.5;|exact
+CHK|arrayfun|double:[1;1.5]|exact
+CHK|arrayfun_uo|cell:{uint8:[144 60 64];uint8:[144 60 0]}|exact
+CHK|cellfun|double:[60 60]|exact
+CHK|num2cell|cell 2 1|exact
+CHK|z_first|uint8:[0 0 0 0 0 0 0 0]|exact
+CHK|z_ts|double:[0 0 0 0 0 0]|exact
+CHK|z_nb|double:[8 8 8 8 8 8]|exact
+CHK|cell_dot|double:2|exact
+CHK|fn_value|double:5|exact
+CHK|sorted|Stop Continue Start |exact
+CHK|t_disp|NoteOn|exact
+CHK|t_class|midimsgtype|exact
+CHK|t_numbers|double:[1 15 0 -1]|exact
+CHK|t_int32|int32:-1|exact
+CHK|t_char|NoteOn|exact
+CHK|t_string|string:NoteOn|exact
+CHK|t_cellstr|cell:{char:NoteOn}|exact
+CHK|t_compare|logical:[true true true false true true]|exact
+CHK|t_plus|int32:2|exact
+CHK|t_kinds|1 1 1 1 1|exact
+CHK|t_enumeration|Enumerationmembersforclass'midimsgtype':/NoteOn/NoteOff/PolyKeyPressure/AllSoundOff/ResetAllControllers/LocalControl/AllNotesOff/OmniOff/OmniOn/MonoOn/PolyOn/ControlChange/ProgramChange/ChannelPressure/PitchBend/SystemExclusive/MIDITimeCodeQuarterFrame/SongPositionPointer/SongSelect/TuneRequest/EOX/TimingClock/Start/Continue/Stop/ActiveSensing/SystemReset/Data/Undefined|exact
+CHK|t_enum_names|cell:{char:NoteOn;char:NoteOff;char:PolyKeyPressure;char:AllSoundOff;char:ResetAllControllers;char:LocalControl;char:AllNotesOff;char:OmniOff;char:OmniOn;char:MonoOn;char:PolyOn;char:ControlChange;char:ProgramChange;char:ChannelPressure;char:PitchBend;char:SystemExclusive;char:MIDITimeCodeQuarterFrame;char:SongPositionPointer;char:SongSelect;char:TuneRequest;char:EOX;char:TimingClock;char:Start;char:Continue;char:Stop;char:ActiveSensing;char:SystemReset;char:Data;char:Undefined}|exact
+CHK|t_ctor|NoteOn|exact
+CHK|t_ctor_name|NoteOn|exact
+CHK|t_bad|MATLAB:subscripting:classHasNoPropertyOrMethod ## The class midimsgtype has no Constant property or Static method named 'Bogus'.|exact
+CHK|t_switch|2|exact
+CHK|t_switch_char|2|exact
+CHK|t_arr|double:[1 2]|exact
+CHK|t_arr_disp|NoteOn    Stop|exact
+CHK|t_arr_double|double:[1 25]|exact
+CHK|t_ismember|logical:1|exact
+CHK|types_size|double:[1 4]|exact
+CHK|types_mask|logical:[true false true false]|exact
+CHK|types_mask_char|logical:[true false true false]|exact
+CHK|types_pick|double:[60 62]|exact
+CHK|types_string|string:NoteOn,ProgramChange,NoteOn,Stop|exact

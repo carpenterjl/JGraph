@@ -1961,6 +1961,14 @@ internal sealed partial class Interpreter
             return;
         }
 
+        // A value with a disp of its own echoes as a class that defines disp does (device classes plan, stage D10b).
+        if (value.AsExternalOrNull() is IJgsOwnDisp own)
+        {
+            _echo($"{name} =");
+            _echo(own.Disp());
+            return;
+        }
+
         _echo($"{name} = {EchoDisplay(value)}");
     }
 
@@ -2104,6 +2112,12 @@ internal sealed partial class Interpreter
         if (subject.Type != JgsType.External && candidate.Type != JgsType.External)
         {
             return JgsValue.AreEqual(subject, candidate);
+        }
+
+        // case midimsgtype.NoteOn, and case 'NoteOn', on a member (device classes plan, stage D10b).
+        if (subject.AsExternalOrNull() is Devices.MidiTypeValue { IsScalar: true } member)
+        {
+            return member.Matches(candidate);
         }
 
         JgsValue same = Net.NetOperators.Apply(TokenType.EqualEqual, subject, candidate, at.Line, at.Column);
@@ -2338,7 +2352,8 @@ internal sealed partial class Interpreter
         }
 
         bool exists = LookUp(root, env, out JgsValue rootValue);
-        if (exists && rootValue.Type is not (JgsType.Struct or JgsType.Cell) && !IsHandleArrayValue(rootValue))
+        if (exists && rootValue.Type is not (JgsType.Struct or JgsType.Cell) && !IsHandleArrayValue(rootValue)
+            && rootValue.AsExternalOrNull() is not IJgsExternalArray)
         {
             return false;
         }
@@ -2363,6 +2378,10 @@ internal sealed partial class Interpreter
             else if (IsHandleArrayValue(owner))
             {
                 length = owner.ArrayLength;
+            }
+            else if (owner.AsExternalOrNull() is IJgsExternalArray objects)
+            {
+                length = ExternalArrays.Count(objects); // [msgs.Timestamp] = deal(0) (stage D10b)
             }
             else
             {
@@ -2634,6 +2653,12 @@ internal sealed partial class Interpreter
         if (IsIndexableScalar(iterable))
         {
             iterable = OneElementArray(iterable);
+        }
+
+        // A midimsg array walks its columns, as a matrix does (device classes plan, stage D10b).
+        if (iterable.AsExternalOrNull() is IJgsExternalArray objects && Dialect.IsMatlab)
+        {
+            return ExecuteForOverExternalArray(statement, objects, env);
         }
 
         // A .NET object is a scalar whose elements a loop would index, which R2025b refuses even for
@@ -3222,6 +3247,11 @@ internal sealed partial class Interpreter
 
     private JgsValue AssembleMatrix(Node matrix, List<JgsValue[]> rows)
     {
+        if (JoinExternalArrays(rows, matrix) is { } joined)
+        {
+            return joined; // [a; b] of midimsgs (device classes plan, stage D10b)
+        }
+
         RefuseExternalJoin(rows.SelectMany(static row => row).ToArray(), matrix);
         if (Dialect.ConcatenatesBrackets && rows.Count == 1 && rows[0] is [{ Type: JgsType.External } only])
         {
@@ -3402,6 +3432,11 @@ internal sealed partial class Interpreter
 
     private JgsValue BuildArrayLiteral(ArrayLiteral array, JgsValue[] elements, JgsEnvironment env)
     {
+        if (JoinExternalArrays([elements], array) is { } joined)
+        {
+            return joined;
+        }
+
         RefuseExternalJoin(elements, array);
         if (Dialect.ConcatenatesBrackets && elements is [{ Type: JgsType.External } only])
         {
@@ -4319,6 +4354,12 @@ internal sealed partial class Interpreter
         // through op_Equality where the type defines one, reference identity otherwise.
         if (left.Type == JgsType.External || right.Type == JgsType.External)
         {
+            // A midimsgtype member is an int32 with a name; a midimsg has no operators (stage D10b).
+            if (JgsBuiltins.TryMidiOperator(op, left, right, at.Line, at.Column, (o, l, r) => ApplyBinary(o, l, r, at), out JgsValue midi))
+            {
+                return midi;
+            }
+
             // p + n on a lib.pointer, identity for == (ADR 0182).
             if (JgsBuiltins.IsLibValue(left.AsExternalOrNull()) || JgsBuiltins.IsLibValue(right.AsExternalOrNull()))
             {
@@ -5548,6 +5589,12 @@ internal sealed partial class Interpreter
             return rhs;
         }
 
+        // a(i) = b on a midimsg array, a growth or a deletion included (device classes plan, stage D10b).
+        if (IsExternalArrayWrite(container, rhs, at, env, out VariableExpr? arrayName, out JgsValue arrayBound))
+        {
+            return ExternalArrayWrite(arrayName!, arrayBound, subscripts, op, rhs, at, env);
+        }
+
         var holds = new ScopeHolds();
         try
         {
@@ -6212,7 +6259,7 @@ internal sealed partial class Interpreter
                 {
                     if (rhs.ArrayLength != 1)
                     {
-                        throw new JgsRuntimeException(at.Line, at.Column, CountMismatch);
+                        throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:matrix:singleSubscriptNumelMismatch", CountMismatch);
                     }
 
                     rhs = rhs.ElementAt(0);
@@ -6789,6 +6836,12 @@ internal sealed partial class Interpreter
         // and m() is the object itself (ADR 0174).
         if (callee.Type == JgsType.External)
         {
+            // a(i, …) on a midimsg array: the elements picked (device classes plan, stage D10b).
+            if (callee.AsExternal is IJgsExternalArray objects)
+            {
+                return ExternalArrayRead(objects, callee, call.Arguments, call, env);
+            }
+
             // arr(i) on a .NET array: its element, 1-based, end refused (ADR 0177).
             if (callee.AsExternal is NetObject { Target: Array array } netArray)
             {
@@ -8365,6 +8418,12 @@ internal sealed partial class Interpreter
                 : [MemberOf(owner, field, member, autoCall: true)];
         }
 
+        // [msgs.Timestamp] over a midimsg array (device classes plan, stage D10b).
+        if (Dialect.IsMatlab && expr is MemberExpr objectsMember && ExternalArraySpread(objectsMember, env) is { } spreadValues)
+        {
+            return spreadValues;
+        }
+
         return [Evaluate(expr, env)];
     }
 
@@ -8645,6 +8704,15 @@ internal sealed partial class Interpreter
         }
 
         string field = FieldName(member, env);
+
+        // midimsgtype.NoteOn and midicontrols.trace name the class, for the same reason (stage D10b).
+        if (member.Target is VariableExpr { Name: "midimsgtype" or "midicontrols" } midiClass
+            && LookUp(midiClass.Name, env, out JgsValue midiValue)
+            && midiValue.Type == JgsType.Function && midiValue.AsCallable is BuiltinFunction { Name: "midimsgtype" or "midicontrols" })
+        {
+            return JgsBuiltins.MidiClassStatic(this, midiClass.Name, field, autoCall, member.Line, member.Column);
+        }
+
         // A constructor's static member must be resolved before evaluating its bare name.
         // Otherwise uint8.empty invokes uint8() and VideoWriter.getProfiles invokes VideoWriter().
         if (member.Target is VariableExpr constructorName
@@ -8818,6 +8886,12 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue AssignToMember(MemberExpr member, JgsValue value, JgsEnvironment env)
     {
+        // m.Channel = 3 and m(2).Timestamp = 1 on a midimsg array (device classes plan, stage D10b).
+        if (TryAssignToExternalElement(member, value, env))
+        {
+            return value;
+        }
+
         // A dotted write onto a handle sets a figure object's property (M51). This has to be asked
         // before the struct path, which would otherwise refuse the number or, worse, overwrite the
         // variable with a fresh struct.
@@ -9473,6 +9547,11 @@ internal sealed partial class Interpreter
     /// <summary>The transpose itself, on an already-evaluated operand.</summary>
     private JgsValue ApplyTranspose(TransposeExpr transpose, JgsValue value)
     {
+        if (value.AsExternalOrNull() is IJgsExternalArray objects)
+        {
+            return JgsValue.External(ExternalArrays.Transposed(objects)); // a' on a midimsg array (stage D10b)
+        }
+
         if (value.Type == JgsType.Struct && JgsBuiltins.TryDecompositionUnary(
             transpose.Conjugate ? "ctranspose" : "transpose",
             value, transpose.Line, transpose.Column, out JgsValue turned))

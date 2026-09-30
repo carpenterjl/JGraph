@@ -2161,6 +2161,18 @@ public static class JgsBuiltinCatalog
         Add("audioplayer", "An audio player: audioplayer(y, fs, nbits, id) for a signal (a column per channel, one or two), or audioplayer(recorder, id); play, playblocking, pause, resume, stop and isplaying, with StartFcn, StopFcn and TimerFcn callbacks.", P("y"), Opt("fs"), Opt("nbits"), Opt("id"));
         Add("audiorecorder", "An audio recorder: audiorecorder(fs, nbits, nchannels, id), 8000 Hz, 8 bits and one channel by default; record, recordblocking, pause, resume, stop, getaudiodata(r, type), getplayer and play.", Opt("fs"), Opt("nbits"), Opt("nchannels"), Opt("id"));
         Add("soundsc", "Scales a signal into [-1, 1] (from its own largest magnitude, or from [low high]) and plays it as sound does.", P("y"), Opt("fs"), Opt("bits"), Opt("range"));
+        // Device classes stage D10b (ADR 0194): MIDI, as R2025b's PortMidi over WinMM lists it.
+        Add("mididevinfo", "MIDI devices: a struct of input and output lists (Name, Interface, ID), or the table printed when no output is asked for.");
+        Add("mididevice", "A MIDI device: mididevice(nameOrId) for an input, an output or both of one name, or mididevice('Input', a, 'Output', b); read-only Input, Output, InputID and OutputID.", P("device"), Opt("device2"), Opt("name3"), Opt("device4"));
+        Add("midimsg", "A MIDI message or an array of them: midimsg('NoteOn', channel, note, velocity, timestamp) and every other type, midimsg('Note', ...) for an on-off pair, midimsg('SystemExclusive', bytes, timestamp), midimsg(size) for all-zero messages. Type, MsgBytes, Timestamp and the type's own properties.", Opt("type"), Opt("args"));
+        Add("midimsgtype", "The MIDI message types as an enumeration over int32: midimsgtype.NoteOn, midimsgtype(1).", Opt("value"));
+        Add("midisend", "Sends midimsgs to a mididevice's output, each after its Timestamp in seconds; midisend(device, type, ...) builds one message first. Returns at once.", P("device"), P("msgs"));
+        Add("midireceive", "The midimsgs a mididevice's input has received, oldest first, timestamped in seconds; midireceive(device, maxmsgs) for at most that many.", P("device"), Opt("maxmsgs"));
+        Add("midicontrols", "Follows MIDI control changes: midicontrols(controlNumbers, initialValues, 'MIDIDevice', name, 'OutputMode', 'normalized' or 'rawmidi'), control numbers as channel*1000 + control.", Opt("controls"), Opt("initial"), Opt("name"), Opt("value"));
+        Add("midiread", "The latest values of a midicontrols object's controls, in [0, 1] or raw 0 to 127.", P("mc"));
+        Add("midisync", "Sends values (or the initial ones) to a midicontrols object's controls on the output of the same name.", P("mc"), Opt("values"));
+        Add("midicallback", "Gets or sets the function a midicontrols object calls when its controls' values change: oldfh = midicallback(mc, newfh).", P("mc"), Opt("fh"));
+        Add("midiid", "Waits for a control to move on any MIDI input and answers its number (channel*1000 + control) and the device's name.");
         // --- C shared libraries (interop plan, stage 8, ADR 0181) -----------------------------------
         Add("loadlibrary", "Loads a C shared library into the native host from its header (a C compiler preprocesses it; the Options choose which) or from a prototype file (@protofile, no compiler); options addheader, includepath, alias, mfilename and thunkfilename; answers [notfound, warnings].", P("libname"), Opt("hfile"), Opt("options"));
         Add("unloadlibrary", "Unloads a library loadlibrary loaded, by its name or alias.", P("libname"));
