@@ -23,6 +23,19 @@ public interface IPeerLink
 }
 
 /// <summary>
+/// A link to a message-based instrument (a HiSLIP or USBTMC session, or the simulated VISA
+/// instrument): what the engine's <c>stb</c> command sets is the status byte a status query reads.
+/// </summary>
+public interface IInstrumentLink
+{
+    /// <summary>The status byte a service-request status query answers.</summary>
+    byte StatusByte { get; set; }
+
+    /// <summary>Signals a service request (HiSLIP's AsyncServiceRequest, USBTMC's SRQ interrupt).</summary>
+    void RequestService();
+}
+
+/// <summary>
 /// The scriptable device on the far end of a serial line (device classes plan, test strategy): the
 /// same engine behind <c>peer-sim.exe</c> on a com0com port for R2025b and behind JGraph's in-process
 /// simulated port, so a fixture prints the same lines in both.
@@ -43,7 +56,10 @@ public interface IPeerLink
 /// <item><term><c>pins rts=0|1 dtr=0|1</c></term><description>set the far end's output pins</description></item>
 /// <item><term><c>break MS</c></term><description>send a break MS milliseconds long</description></item>
 /// <item><term><c>on HEX HEX</c></term><description>whenever the data received ends with the first bytes, send the second</description></item>
-/// <item><term><c>reset</c></term><description>forget the log, the rules and echo, lower the pins</description></item>
+/// <item><term><c>stb HEX</c></term><description>set the status byte a status query reads (instrument links only)</description></item>
+/// <item><term><c>srq</c></term><description>signal a service request (instrument links only)</description></item>
+/// <item><term><c>inst</c></term><description>answer eight hex digits: the triggers, then the device clears, received since the reset</description></item>
+/// <item><term><c>reset</c></term><description>forget the log, the rules and echo, lower the pins, zero the status byte and the counts</description></item>
 /// <item><term><c>quit</c></term><description>raise <see cref="QuitRequested"/></description></item>
 /// </list>
 /// <para>An unknown or malformed command is answered with <c>?</c> and nothing else happens.</para>
@@ -57,12 +73,15 @@ public sealed class PeerEngine : IDisposable
     private readonly List<byte> _log = new();
     private readonly List<byte> _window = new();
     private readonly List<(byte[] Match, byte[] Reply)> _rules = new();
+    private readonly List<(byte[] Match, byte[] Reply)> _standing = new();
     private readonly List<Timer> _timers = new();
     private readonly List<byte> _held = new();
     private readonly StringBuilder _command = new();
     private bool _inCommand;
     private bool _echo;
     private int _breaks;
+    private int _triggers;
+    private int _clears;
     private bool _disposed;
 
     public PeerEngine(IPeerLink link)
@@ -82,6 +101,36 @@ public sealed class PeerEngine : IDisposable
         lock (_gate)
         {
             _breaks++;
+        }
+    }
+
+    /// <summary>The instrument was triggered (a GET, a HiSLIP Trigger message; called by the link's owner).</summary>
+    public void TriggerReceived()
+    {
+        lock (_gate)
+        {
+            _triggers++;
+        }
+    }
+
+    /// <summary>The instrument was cleared (a device clear; called by the link's owner).</summary>
+    public void ClearReceived()
+    {
+        lock (_gate)
+        {
+            _clears++;
+        }
+    }
+
+    /// <summary>
+    /// Adds a reply rule that <c>reset</c> keeps: an instrument's answer to <c>*IDN?</c>, which a
+    /// connection may ask before a fixture can speak to the engine.
+    /// </summary>
+    public void AddStandingRule(ReadOnlySpan<byte> match, ReadOnlySpan<byte> reply)
+    {
+        lock (_gate)
+        {
+            _standing.Add((match.ToArray(), reply.ToArray()));
         }
     }
 
@@ -160,7 +209,7 @@ public sealed class PeerEngine : IDisposable
             _link.Send([b]);
         }
 
-        foreach ((byte[] match, byte[] reply) in _rules)
+        foreach ((byte[] match, byte[] reply) in _standing.Concat(_rules))
         {
             if (EndsWith(_window, match))
             {
@@ -266,6 +315,29 @@ public sealed class PeerEngine : IDisposable
                 case "on":
                     _rules.Add((Hex(words, 1), Hex(words, 2)));
                     break;
+                case "stb":
+                {
+                    byte[] stb = Hex(words, 1);
+                    if (stb.Length != 1 || _link is not IInstrumentLink instrument)
+                    {
+                        throw new FormatException();
+                    }
+
+                    instrument.StatusByte = stb[0];
+                    break;
+                }
+
+                case "srq":
+                    if (_link is not IInstrumentLink requester)
+                    {
+                        throw new FormatException();
+                    }
+
+                    requester.RequestService();
+                    break;
+                case "inst":
+                    _link.Send(Encoding.ASCII.GetBytes($"{Math.Min(_triggers, 0xFFFF):X4}{Math.Min(_clears, 0xFFFF):X4}"));
+                    break;
                 case "reset":
                     ResetLocked();
                     break;
@@ -290,6 +362,13 @@ public sealed class PeerEngine : IDisposable
         _rules.Clear();
         _echo = false;
         _breaks = 0;
+        _triggers = 0;
+        _clears = 0;
+        if (_link is IInstrumentLink instrument)
+        {
+            instrument.StatusByte = 0;
+        }
+
         foreach (Timer timer in _timers)
         {
             timer.Dispose();

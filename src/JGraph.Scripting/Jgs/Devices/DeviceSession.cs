@@ -99,6 +99,44 @@ internal sealed class DeviceSession
         LastBluetooth = null;
     }
 
+    /// <summary>
+    /// The resources visadev objects hold, by upper-cased name (R2025b's ResourceFactory list): a second
+    /// object for one is refused, and <c>visadev("reset")</c> forgets them.
+    /// </summary>
+    public HashSet<string> VisaOpen { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>What the last <c>visadevlist</c> listed, which <c>visadev</c> looks a name up in first.</summary>
+    public List<VisaResourceInfo> VisaCache { get; set; } = new();
+
+    /// <summary>The simulated VISA <c>jgraph.internal.visasim('on')</c> installed for this session.</summary>
+    public JGraph.Devices.Simulation.SimulatedVisa? VisaSimulation { get; private set; }
+
+    /// <summary>Installs the simulated VISA, over this session's simulated serial ports, or answers the one installed.</summary>
+    public JGraph.Devices.Simulation.SimulatedVisa StartVisaSimulation() =>
+        VisaSimulation ??= new JGraph.Devices.Simulation.SimulatedVisa(
+            SimulatedFor,
+            () => SimulatedPorts().Select(static p => p.Name).ToList(),
+            IsSimulatedPeer);
+
+    /// <summary>Removes the simulated VISA: the visadev objects on it are deleted first.</summary>
+    public void StopVisaSimulation()
+    {
+        if (VisaSimulation is null)
+        {
+            return;
+        }
+
+        foreach (DeviceObject device in Live.Where(static d => d is VisadevObject))
+        {
+            device.Delete();
+        }
+
+        VisaSimulation.Dispose();
+        VisaSimulation = null;
+        VisaCache = new();
+        VisaOpen.Clear();
+    }
+
     /// <summary>The TCP echo server <c>echotcpip("on", port)</c> started, until <c>echotcpip("off")</c>.</summary>
     public JGraph.Devices.Network.EchoServer? EchoTcp { get; set; }
 
@@ -117,6 +155,10 @@ internal sealed class DeviceSession
         EchoTcp = null;
         EchoUdp?.Dispose();
         EchoUdp = null;
+        VisaSimulation?.Dispose();
+        VisaSimulation = null;
+        VisaCache = new();
+        VisaOpen.Clear();
     }
 
     // --- the simulator's ports ------------------------------------------------------------------------

@@ -1,0 +1,143 @@
+ctor_took	double [1 1] 2.1000000000000001
+ctor_sent	double [1 6] [42 73 68 78 63 10]
+class	char [1 13] 'visalib.TCPIP'
+superclasses	cell [16 1] {char [1 16] 'visalib.Resource'; char [1 37] 'matlabshared.testmeas.internal.SetGet'; char [1 19] 'matlab.mixin.SetGet'; char [1 6] 'handle'; char [1 26] 'matlab.mixin.Heterogeneous'; char [1 35] 'matlabshared.testmeas.CustomDisplay'; char [1 26] 'matlab.mixin.CustomDisplay'; char [1 59] 'matlabshared.transportlib.internal.compatibility.LegacyBase'; char [1 66] 'matlabshared.transportlib.internal.compatibility.LegacyBinaryMixin'; char [1 64] 'matlabshared.transportlib.internal.compatibility.LegacyNullMixin'; char [1 65] 'matlabshared.transportlib.internal.compatibility.LegacyASCIIMixin'; char [1 68] 'matlabshared.transportlib.internal.compatibility.LegacyBinblockMixin'; char [1 65] 'matlabshared.transportlib.internal.compatibility.LegacyQueryMixin'; char [1 50] 'matlabshared.testmeas.internal.mixins.CacheEnabler'; char [1 46] 'matlabshared.transportlib.internal.TagAccessor'; char [1 22] 'visalib.EOIModeSupport'}
+properties	cell [18 1] {char [1 10] 'BoardIndex'; char [1 7] 'LANName'; char [1 17] 'InstrumentAddress'; char [1 9] 'ByteOrder'; char [1 10] 'Terminator'; char [1 7] 'Timeout'; char [1 16] 'ErrorOccurredFcn'; char [1 8] 'UserData'; char [1 15] 'NumBytesWritten'; char [1 13] 'PreferredVisa'; char [1 12] 'ResourceName'; char [1 5] 'Alias'; char [1 6] 'Vendor'; char [1 5] 'Model'; char [1 12] 'SerialNumber'; char [1 4] 'Type'; char [1 3] 'Tag'; char [1 7] 'EOIMode'}
+methods	cell [24 1] {char [1 11] 'addlistener'; char [1 19] 'configureTerminator'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 12] 'readbinblock'; char [1 8] 'readline'; char [1 3] 'set'; char [1 10] 'visastatus'; char [1 5] 'write'; char [1 13] 'writebinblock'; char [1 9] 'writeline'; char [1 9] 'writeread'}
+echo	OUT | v = | TCPIP with properties: | ResourceName: "TCPIP0::127.0.0.1::hislip0::INSTR" | Alias: "" | Vendor: "JGraph" | Model: "PeerSim" | LANName: "hislip0" | InstrumentAddress: "127.0.0.1" | Tag: "" | Show all properties, functions |
+get	OUT            BoardIndex: 0 | LANName: "hislip0" | InstrumentAddress: "127.0.0.1" | ByteOrder: "little-endian" | Terminator: {["off"]  ["LF"]} | Timeout: 10 | ErrorOccurredFcn: [] | UserData: [] | NumBytesWritten: 8 | PreferredVisa: "National Instruments VISA" | ResourceName: "TCPIP0::127.0.0.1::hislip0::INSTR" | Alias: "" | Vendor: "JGraph" | Model: "PeerSim" | SerialNumber: "SN0001" | Type: tcpip | Tag: "" | EOIMode: on |
+prop_ResourceName	string [1 1] "TCPIP0::127.0.0.1::hislip0::INSTR"
+prop_Alias	string [1 1] ""
+prop_Vendor	string [1 1] "JGraph"
+prop_Model	string [1 1] "PeerSim"
+prop_SerialNumber	string [1 1] "SN0001"
+prop_Type	visalib.InterfaceType [1 1] tcpip |
+prop_PreferredVisa	string [1 1] "National Instruments VISA"
+prop_LANName	string [1 1] "hislip0"
+prop_InstrumentAddress	string [1 1] "127.0.0.1"
+prop_BoardIndex	double [1 1] 0
+prop_ByteOrder	string [1 1] "little-endian"
+prop_Timeout	double [1 1] 10
+prop_Terminator	cell [1 2] {string [1 1] "off"; string [1 1] "LF"}
+prop_EOIMode	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+prop_NumBytesWritten	double [1 1] 8
+prop_ErrorOccurredFcn	function_handle [0 0]
+prop_UserData	double [0 0] []
+prop_Tag	string [1 1] ""
+class_EOIMode	char [1 28] 'matlab.lang.OnOffSwitchState'
+hidden_KeepAlive	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.off
+hidden_NoDelay	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+hidden_Connected	logical [1 1] true
+hidden_ResourceClass	string [1 1] "INSTR"
+hidden_EOSMode	char [1 10] 'read&write'
+[Warning: EOSCharCode returned is not meaningful because read/write-terminators differ.
+Read-terminator is set to off  and write-terminator is set to LF.] 
+hidden_EOSCharCode	string [1 1] "off"
+hidden_RsrcName	char [1 33] 'TCPIP0::127.0.0.1::hislip0::INSTR'
+hidden_TransferSize	double [1 1] 1024
+attr	char [1 218] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=10000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_end	string [1 1] "hi"
+readline_end_lf	string [1 1] "ab | cd"
+read2	double [1 2] [1 2]
+read_rest3	double [1 3] [3 4 5]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_somedata')"'>visadev Read Warnings</a>.] 
+read_short	double [1 2] [1 2]
+read_short_took	double [1 1] 10.1
+read_short_warn	char [1 31] 'transportlib:client:ReadWarning'
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+read_nothing	double [0 0] []
+read_nothing_took	double [1 1] 2.1000000000000001
+read_nothing_warn	char [1 31] 'transportlib:client:ReadWarning'
+readline_nothing	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_nothing_took	double [1 1] 1
+readline_nothing_warn	char [0 0] ''
+attr_after	char [1 217] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+writeread_idn	string [1 1] "JGraph,PeerSim,SN0001,1.0 | "
+readline_idn	string [1 1] "JGraph,PeerSim,SN0001,1.0 | "
+read_idn	char [1 5] 'JGrap'
+read_idn_rest	string [1 1] "h,PeerSim,SN0001,1.0 | "
+write_recv	double [1 3] [1 2 3]
+writeline_recv	double [1 4] [97 98 99 10]
+term_cr	string [1 1] "CR"
+attr_cr	char [1 217] 'TERMCHAR_EN=1 TERMCHAR=13 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_cr	string [1 1] "A"
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+readline_cr2	double [0 0] []
+term_off	cell [1 2] {string [1 1] "off"; string [1 1] "LF"}
+attr_off	char [1 217] 'TERMCHAR_EN=0 TERMCHAR=13 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_off	string [1 1] "BA | B"
+attr_lf	char [1 217] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+eoi_off	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.off
+attr_eoi_off	char [1 217] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=0 SUPPRESS_END_EN=0'
+eoi_off_recv	double [1 2] [120 10]
+eoi_false	char [1 3] 'off'
+eoi_one	char [1 2] 'on'
+eoi_bad	char [1 153] 'MATLAB:validation:UnableToConvert ## Error setting property 'EOIMode' of class 'visalib.EOIModeSupport'. 'maybe' is invalid. Value must be 'off' or 'on'.'
+attr_eoi_on	char [1 217] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+keepalive_on	char [1 1] ''
+nodelay_off	char [1 1] ' '
+visastatus1	logical [1 1] false
+visastatus_ready	logical [1 1] false
+visastatus_status	double [1 1] 64
+visastatus_ready0	logical [1 1] false
+visastatus_status0	double [1 1] 0
+inst_after_flush	double [0 0] []
+inst_after_flush_input	double [0 0] []
+clrdevice	char [1 4] 'none'
+inst_after_clrdevice	double [0 0] []
+visatrigger	char [1 105] 'MATLAB:UndefinedFunction ## Undefined function 'visatrigger' for input arguments of type 'visalib.TCPIP'.'
+trigger_legacy	char [1 101] 'MATLAB:UndefinedFunction ## Undefined function 'trigger' for input arguments of type 'visalib.TCPIP'.'
+inst_after_trigger	double [0 0] []
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+after_flush_read	char [1 4] 'none'
+binblock_recv	double [1 6] [35 49 51 1 2 3]
+readbinblock	double [1 3] [1 2 3]
+readbinblock_after	double [1 1] 65
+second	ERR instrument:interface:visa:multipleIdenticalResources Creating a second device for the TCPIP0::127.0.0.1::HISLIP0::INSTR resource is not supported. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+attr_t35	char [1 217] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=3500 SEND_END_EN=1 SUPPRESS_END_EN=0'
+timeout_t35	double [1 1] 3.5
+sock_ctor_sent	double [1 6] [42 73 68 78 63 10]
+sock_class	char [1 14] 'visalib.Socket'
+sock_properties	cell [17 1] {char [1 9] 'IPAddress'; char [1 4] 'Port'; char [1 9] 'ByteOrder'; char [1 10] 'Terminator'; char [1 7] 'Timeout'; char [1 16] 'ErrorOccurredFcn'; char [1 8] 'UserData'; char [1 15] 'NumBytesWritten'; char [1 13] 'PreferredVisa'; char [1 12] 'ResourceName'; char [1 5] 'Alias'; char [1 6] 'Vendor'; char [1 5] 'Model'; char [1 12] 'SerialNumber'; char [1 4] 'Type'; char [1 3] 'Tag'; char [1 7] 'EOIMode'}
+sock_methods	cell [24 1] {char [1 11] 'addlistener'; char [1 19] 'configureTerminator'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 12] 'readbinblock'; char [1 8] 'readline'; char [1 3] 'set'; char [1 10] 'visastatus'; char [1 5] 'write'; char [1 13] 'writebinblock'; char [1 9] 'writeline'; char [1 9] 'writeread'}
+sock_echo	OUT | s = | Socket with properties: | ResourceName: "TCPIP0::127.0.0.1::5025::SOCKET" | Alias: "" | Vendor: "" | Model: "" | IPAddress: "127.0.0.1" | Port: 5025 | Tag: "" | Show all properties, functions |
+sock_get	OUT            IPAddress: "127.0.0.1" | Port: 5025 | ByteOrder: "little-endian" | Terminator: "LF" | Timeout: 10 | ErrorOccurredFcn: [] | UserData: [] | NumBytesWritten: 8 | PreferredVisa: "National Instruments VISA" | ResourceName: "TCPIP0::127.0.0.1::5025::SOCKET" | Alias: "" | Vendor: "" | Model: "" | SerialNumber: "" | Type: socket | Tag: "" | EOIMode: on |
+sock_prop_ResourceName	string [1 1] "TCPIP0::127.0.0.1::5025::SOCKET"
+sock_prop_Alias	string [1 1] ""
+sock_prop_Vendor	string [1 1] ""
+sock_prop_Model	string [1 1] ""
+sock_prop_SerialNumber	string [1 1] ""
+sock_prop_Type	visalib.InterfaceType [1 1] socket |
+sock_prop_IPAddress	string [1 1] "127.0.0.1"
+sock_prop_Port	double [1 1] 5025
+sock_prop_Terminator	string [1 1] "LF"
+sock_prop_EOIMode	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+sock_prop_Timeout	double [1 1] 10
+sock_class_Port	char [1 6] 'double'
+sock_attr	char [1 218] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=10000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+sock_writeread	string [1 1] "JGraph,PeerSim,SN0001,1.0"
+sock_readline	string [1 1] "ab"
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+sock_readline_partial	char [1 4] 'none'
+sock_readline_partial_took	double [1 1] 1.1000000000000001
+sock_visastatus	char [1 164] 'instrument:interface:visa:visaStatusUnavailableAsConfigured ## Unable to determine status for TCPIP0::127.0.0.1::5025::SOCKET resource in the current configuration.'
+sock_flush	char [1 4] 'none'
+sock_inst	double [0 0] []
+sock_keepalive	char [1 3] 'off'
+list	table [1 6] <strong>ResourceName</strong>       <strong>Alias</strong>     <strong>Vendor</strong>    <strong>Model</strong>    <strong>SerialNumber</strong>     <strong>Type</strong> | <strong>_______________</strong>    <strong>_______</strong>    <strong>______</strong>    <strong>_____</strong>    <strong>____________</strong>    <strong>______</strong> | <strong>1</strong>    "ASRL20::INSTR"    "COM20"      ""       ""           ""         serial |
+list_id	ERR instrument:interface:visa:invalidResourceName Invalid resource name TCPIP0::127.0.0.1::hislip0::INSTR.
+list_after_open	table [1 6] <strong>ResourceName</strong>       <strong>Alias</strong>     <strong>Vendor</strong>    <strong>Model</strong>    <strong>SerialNumber</strong>     <strong>Type</strong> | <strong>_______________</strong>    <strong>_______</strong>    <strong>______</strong>    <strong>_____</strong>    <strong>____________</strong>    <strong>______</strong> | <strong>1</strong>    "ASRL20::INSTR"    "COM20"      ""       ""           ""         serial |
+find_type	double [1 2] [1 1]
+ctor_bad_port	char [1 168] 'instrument:interface:visa:unableToDetermineInterfaceType ## Resource string is invalid or resource was not found. / See related documentation for troubleshooting steps.'
+ctor_lower	char [1 13] 'visalib.TCPIP'
+ctor_no_board	char [1 13] 'visalib.TCPIP'

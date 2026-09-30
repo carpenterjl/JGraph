@@ -1,0 +1,217 @@
+class	char [1 14] 'visalib.Serial'
+superclasses	cell [15 1] {char [1 16] 'visalib.Resource'; char [1 37] 'matlabshared.testmeas.internal.SetGet'; char [1 19] 'matlab.mixin.SetGet'; char [1 6] 'handle'; char [1 26] 'matlab.mixin.Heterogeneous'; char [1 35] 'matlabshared.testmeas.CustomDisplay'; char [1 26] 'matlab.mixin.CustomDisplay'; char [1 59] 'matlabshared.transportlib.internal.compatibility.LegacyBase'; char [1 66] 'matlabshared.transportlib.internal.compatibility.LegacyBinaryMixin'; char [1 64] 'matlabshared.transportlib.internal.compatibility.LegacyNullMixin'; char [1 65] 'matlabshared.transportlib.internal.compatibility.LegacyASCIIMixin'; char [1 68] 'matlabshared.transportlib.internal.compatibility.LegacyBinblockMixin'; char [1 65] 'matlabshared.transportlib.internal.compatibility.LegacyQueryMixin'; char [1 50] 'matlabshared.testmeas.internal.mixins.CacheEnabler'; char [1 46] 'matlabshared.transportlib.internal.TagAccessor'}
+isa_handle	logical [1 1] true
+isa_resource	logical [1 1] true
+properties	cell [20 1] {char [1 8] 'BaudRate'; char [1 8] 'DataBits'; char [1 8] 'StopBits'; char [1 6] 'Parity'; char [1 11] 'FlowControl'; char [1 4] 'Port'; char [1 9] 'ByteOrder'; char [1 10] 'Terminator'; char [1 7] 'Timeout'; char [1 16] 'ErrorOccurredFcn'; char [1 8] 'UserData'; char [1 15] 'NumBytesWritten'; char [1 13] 'PreferredVisa'; char [1 12] 'ResourceName'; char [1 5] 'Alias'; char [1 6] 'Vendor'; char [1 5] 'Model'; char [1 12] 'SerialNumber'; char [1 4] 'Type'; char [1 3] 'Tag'}
+methods	cell [27 1] {char [1 11] 'addlistener'; char [1 19] 'configureTerminator'; char [1 2] 'eq'; char [1 7] 'findobj'; char [1 8] 'findprop'; char [1 5] 'flush'; char [1 2] 'ge'; char [1 3] 'get'; char [1 12] 'getpinstatus'; char [1 2] 'gt'; char [1 7] 'isvalid'; char [1 2] 'le'; char [1 8] 'listener'; char [1 2] 'lt'; char [1 2] 'ne'; char [1 6] 'notify'; char [1 4] 'read'; char [1 12] 'readbinblock'; char [1 8] 'readline'; char [1 3] 'set'; char [1 6] 'setDTR'; char [1 6] 'setRTS'; char [1 10] 'visastatus'; char [1 5] 'write'; char [1 13] 'writebinblock'; char [1 9] 'writeline'; char [1 9] 'writeread'}
+echo	OUT | v = | Serial with properties: | ResourceName: "ASRL20::INSTR" | Alias: "COM20" | Port: "ASRL20" | BaudRate: 9600 | Tag: "" | Show all properties, functions |
+disp	OUT   Serial with properties: | ResourceName: "ASRL20::INSTR" | Alias: "COM20" | Port: "ASRL20" | BaudRate: 9600 | Tag: "" | Show all properties, functions |
+get	OUT             BaudRate: 9600 | DataBits: 8 | StopBits: 1 | Parity: none | FlowControl: none | Port: "ASRL20" | ByteOrder: "little-endian" | Terminator: "LF" | Timeout: 10 | ErrorOccurredFcn: [] | UserData: [] | NumBytesWritten: 0 | PreferredVisa: "National Instruments VISA" | ResourceName: "ASRL20::INSTR" | Alias: "COM20" | Vendor: "" | Model: "" | SerialNumber: "" | Type: serial | Tag: "" |
+prop_ResourceName	string [1 1] "ASRL20::INSTR"
+prop_Alias	string [1 1] "COM20"
+prop_Vendor	string [1 1] ""
+prop_Model	string [1 1] ""
+prop_SerialNumber	string [1 1] ""
+prop_Type	visalib.InterfaceType [1 1] serial |
+prop_PreferredVisa	string [1 1] "National Instruments VISA"
+prop_Port	string [1 1] "ASRL20"
+prop_BaudRate	double [1 1] 9600
+prop_DataBits	double [1 1] 8
+prop_StopBits	double [1 1] 1
+prop_Parity	visalib.Parity [1 1] none |
+prop_FlowControl	visalib.FlowControl [1 1] none |
+prop_ByteOrder	string [1 1] "little-endian"
+prop_Timeout	double [1 1] 10
+prop_Terminator	string [1 1] "LF"
+prop_NumBytesWritten	double [1 1] 0
+prop_ErrorOccurredFcn	function_handle [0 0]
+prop_UserData	double [0 0] []
+prop_Tag	string [1 1] ""
+class_Type	char [1 21] 'visalib.InterfaceType'
+class_Parity	char [1 14] 'visalib.Parity'
+class_FlowControl	char [1 19] 'visalib.FlowControl'
+hidden_NumBytesAvailable	ERR instrument:interface:visa:PropertyNotSupportedForVISA The NumBytesAvailable property is no longer supported for visadev objects.
+hidden_BytesAvailableFcn	ERR instrument:interface:visa:PropertyNotSupportedForVISA The BytesAvailableFcn property is no longer supported for visadev objects.
+hidden_BytesAvailableFcnMode	ERR instrument:interface:visa:PropertyNotSupportedForVISA The BytesAvailableFcnMode property is no longer supported for visadev objects.
+hidden_BytesAvailableFcnCount	ERR instrument:interface:visa:PropertyNotSupportedForVISA The BytesAvailableFcnCount property is no longer supported for visadev objects.
+hidden_TransferPeriod	double [1 1] 0.01
+hidden_TransferSize	double [1 1] 1024
+hidden_Connected	logical [1 1] true
+hidden_ResourceClass	string [1 1] "INSTR"
+hidden_EOSMode	char [1 10] 'read&write'
+hidden_EOSCharCode	string [1 1] "LF"
+hidden_RsrcName	char [1 13] 'ASRL20::INSTR'
+hidden_ObjectType	string [1 1] "visadev"
+hidden_KeepAlive	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'KeepAlive' for class 'visalib.Serial'.
+hidden_EOIMode	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'EOIMode' for class 'visalib.Serial'.
+set_nba	ERR MATLAB:class:SetProhibited Unable to set the 'NumBytesAvailable' property of class ''Serial'' because it is read-only.
+set_bafcn	ERR instrument:interface:visa:PropertyNotSupportedForVISA The BytesAvailableFcn property is no longer supported for visadev objects.
+configureCallback	ERR MATLAB:TooManyOutputs Too many output arguments.
+isprop_nba	logical [1 1] true
+ismethod_cc	logical [1 1] false
+set_baud	OUT       115200 |
+set_baud_neg	ERR MATLAB:validators:mustBePositive Error setting property 'BaudRate' of class 'visalib.Serial'. Value must be positive.
+set_baud_frac	ERR MATLAB:validators:mustBeInteger Error setting property 'BaudRate' of class 'visalib.Serial'. Value must be integer.
+set_baud_str	ERR MATLAB:validators:mustBePositive Error setting property 'BaudRate' of class 'visalib.Serial'. Value must be positive.
+set_baud_vec	ERR MATLAB:validation:IncompatibleSize Error setting property 'BaudRate' of class 'visalib.Serial'. Value must be a scalar.
+set_baud_odd	OUT        12345 |
+set_baud_huge	OUT     50000000 |
+set_databits	OUT      7 |
+set_databits_bad	ERR MATLAB:validators:mustBeMember Error setting property 'DataBits' of class 'visalib.Serial'. Value must be a member of this set: | 5 | 6 | 7 | 8 |
+set_databits_5	OUT      5 |
+set_stopbits	OUT      2 |
+set_stopbits_15	ERR instrument:interface:visa:inconsistentAttributeState Unable to set this attribute because this value puts the instrument in an invalid state.
+set_stopbits_bad	ERR MATLAB:validators:mustBeMember Error setting property 'StopBits' of class 'visalib.Serial'. Value must be a member of this set: | 1 | 1.5 | 2 |
+set_parity	OUT     even |
+set_parity_char	OUT     odd |
+set_parity_bad	ERR MATLAB:validation:UnableToConvert Error setting property 'Parity' of class 'visalib.Serial'. 'mark' is invalid. Value must be 'none', 'even', or 'odd'.
+set_parity_num	ERR MATLAB:validation:UnableToConvert Error setting property 'Parity' of class 'visalib.Serial'. Value must be 'none', 'even', or 'odd'.
+set_parity_partial	double [0 0] []
+set_flow	OUT     hardware |
+set_flow_sw	OUT     software |
+set_flow_bad	ERR MATLAB:validation:UnableToConvert Error setting property 'FlowControl' of class 'visalib.Serial'. 'both' is invalid. Value must be 'none', 'hardware', or 'software'.
+set_timeout	OUT      2 |
+set_timeout_frac	OUT     0.2500 |
+set_timeout_tiny	ERR transportlib:client:InvalidType Expected Timeout to be nonzero.
+set_timeout_neg	ERR transportlib:client:InvalidType Expected Timeout to be nonnegative.
+set_timeout_zero	ERR transportlib:client:InvalidType Expected Timeout to be nonzero.
+set_timeout_inf	ERR transportlib:client:InvalidType Expected Timeout to be finite.
+set_timeout_str	ERR transportlib:client:InvalidType Expected Timeout to be one of these types: | double | Instead its type was string.
+set_byteorder	OUT big-endian |
+set_byteorder_bad	ERR transportlib:client:InvalidType Expected ByteOrder to match one of these values: | 'little-endian', 'big-endian' | The input, 'middle', did not match any of the valid values.
+set_terminator	ERR transportlib:client:ReadOnlyProperty To set "Terminator", use the "configureTerminator" function.
+set_port	ERR MATLAB:class:SetProhibited Unable to set the 'Port' property of class ''Serial'' because it is read-only.
+set_resname	ERR MATLAB:class:SetProhibited Unable to set the 'ResourceName' property of class ''Serial'' because it is read-only.
+set_type	ERR MATLAB:class:SetProhibited Unable to set the 'Type' property of class ''Serial'' because it is read-only.
+set_tag	OUT dev1 |
+set_tag_num	ERR MATLAB:TagAccessor:invalidType Expected TAG to be one of these types: | char, string | Instead its type was double.
+set_userdata	OUT cell |
+set_eofcn	OUT function_handle |
+set_eofcn_bad	ERR transportlib:client:InvalidErrorOccurredFcn ErrorOccurredFcn must be a function handle.
+find_tag	char [1 14] 'visalib.Serial'
+find_all	double [1 2] [1 1]
+find_type	double [1 2] [1 1]
+written	double [1 1] 13
+recv	double [1 5] [0 1 2 3 4]
+recv_default	double [1 2] [1 2]
+recv_u16	double [1 2] [2 1]
+recv_string	double [1 2] [65 66]
+recv_char	double [1 2] [67 68]
+recv_neg	double [1 1] 255
+write_300	ERR MATLAB:TooManyOutputs Too many output arguments.
+write_none	ERR MATLAB:TooManyOutputs Too many output arguments.
+write_cell	ERR MATLAB:TooManyOutputs Too many output arguments.
+write_prec_bad	ERR MATLAB:TooManyOutputs Too many output arguments.
+read2	double [1 2] [1 2]
+read_u16	double [1 1] 1027
+read_rest	double [1 1] 5
+read_through_lf	char [1 5] 'AB | CD'
+read_string	string [1 1] "AB | CD"
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+read_timeout	double [0 0] []
+read_timeout_took	double [1 1] 2.1000000000000001
+read_timeout_warn	char [1 286] 'transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. | 'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument', 'visadev_nodata')"'>visadev Read Warnings</a>.'
+read_partial	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+read_partial_warn	char [1 4] ' ## '
+read_none	ERR transportlib:client:IncorrectInputArgumentsPlural Invalid number of input arguments for 'read'. Valid syntaxes are | DATA = read(v,COUNT) | DATA = read(v,COUNT,PRECISION)
+read_zero	ERR MATLAB:GenericClient:expectedNonZero Expected input number 2, count, to be nonzero.
+read_neg	ERR MATLAB:AsyncIOTransportChannel:expectedNonnegative Expected input number 2, count, to be nonnegative.
+read_frac	ERR MATLAB:GenericClient:expectedInteger Expected input number 2, count, to be integer-valued.
+read_bad_prec	ERR transportlib:transport:unknownPrecision Invalid precision specified.
+read_too_many	ERR transportlib:client:IncorrectInputArgumentsPlural Invalid number of input arguments for 'read'. Valid syntaxes are | DATA = read(v,COUNT) | DATA = read(v,COUNT,PRECISION)
+readline	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_1	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_2	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_timeout	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_timeout_took	double [1 1] 1
+readline_timeout_warn	char [1 4] ' ## '
+readline_partial	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_partial_warn	char [1 4] ' ## '
+writeline_recv	double [1 6] [104 101 108 108 111 10]
+writeline_none	ERR MATLAB:TooManyOutputs Too many output arguments.
+writeline_num	ERR MATLAB:TooManyOutputs Too many output arguments.
+term_cr	string [1 1] "CR"
+readline_cr	string [1 1] "A"
+readline_cr2	string [1 1] "B"
+writeline_cr	double [1 2] [120 13]
+term_crlf	string [1 1] "CR/LF"
+readline_crlf	string [1 1] "A"
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+readline_crlf_lone_lf	double [0 0] []
+writeline_crlf	double [1 3] [121 13 10]
+term_pair	cell [1 2] {string [1 1] "CR"; double [1 1] 10}
+term_num	double [1 1] 35
+readline_num	string [1 1] "A"
+term_off	cell [1 2] {string [1 1] "off"; double [1 1] 35}
+readline_off	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_off_warn	char [1 4] ' ## '
+term_off_cr	cell [1 2] {string [1 1] "off"; string [1 1] "CR"}
+term_lf	string [1 1] "LF"
+term_bad	ERR MATLAB:TooManyOutputs Too many output arguments.
+term_256	ERR MATLAB:TooManyOutputs Too many output arguments.
+term_none	ERR MATLAB:TooManyOutputs Too many output arguments.
+term_four	ERR MATLAB:TooManyOutputs Too many output arguments.
+term_off_off	ERR MATLAB:TooManyOutputs Too many output arguments.
+term_after_offoff	string [1 1] "LF"
+writeread	string [1 1] "OK"
+writeread_timeout	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+writeread_timeout_took	double [1 1] 1
+writeread_none	ERR MATLAB:minrhs Not enough input arguments.
+binblock_recv	double [1 6] [35 49 51 1 2 3]
+binblock_hdr_recv	double [1 10] [72 68 82 35 49 52 1 0 2 0]
+readbinblock	double [1 3] [1 2 3]
+readbinblock_u16	double [1 2] [1 2]
+readbinblock_after	double [1 1] 10
+readbinblock_timeout	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+peer_status1	char [1 8] '01100000'
+peer_status2	char [1 8] '11100000'
+pinstatus	struct [1 1] struct(ClearToSend,DataSendReady,CarrierDetect,RingIndicator)
+pinstatus_class	char [1 28] 'matlab.lang.OnOffSwitchState'
+pinstatus_cts	char [1 2] 'on'
+pinstatus_dsr	char [1 3] 'off'
+setdtr_bad	ERR MATLAB:TooManyOutputs Too many output arguments.
+setdtr_none	ERR MATLAB:TooManyOutputs Too many output arguments.
+setrts_num	ERR MATLAB:TooManyOutputs Too many output arguments.
+serialbreak	ERR MATLAB:UndefinedFunction Undefined function 'serialbreak' for input arguments of type 'visalib.Serial'.
+visastatus	ERR instrument:interface:visa:visaStatusUnavailableAsConfigured Unable to determine status for ASRL20::INSTR resource in the current configuration.
+visastatus2	ERR MATLAB:m_invalid_lhs_of_assignment Incorrect use of '=' operator. Assign a value to a variable using '=' and compare values for equality using '=='.
+visatrigger	ERR MATLAB:UndefinedFunction Undefined function 'visatrigger' for input arguments of type 'visalib.Serial'.
+after_flush_input	double [1 1] 1
+flush_bad	ERR MATLAB:TooManyOutputs Too many output arguments.
+flush_output	ERR MATLAB:TooManyOutputs Too many output arguments.
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+after_flush	double [0 0] []
+fprintf	OUT
+fprintf_recv	double [1 4] [0 65 66 10]
+fscanf	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+fgetl	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+query	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+clrdevice	ERR MATLAB:TooManyOutputs Too many output arguments.
+fopen	ERR MATLAB:TooManyOutputs Too many output arguments.
+fclose	ERR MATLAB:TooManyOutputs Too many output arguments.
+eoscharcode	string [1 1] "LF"
+[Warning: EOSCharCode returned is not meaningful because read/write-terminators differ.
+Read-terminator is set to CR  and write-terminator is set to LF.] 
+eoscharcode_mismatch	string [1 1] "CR"
+eoscharcode_warn	char [1 185] 'transportlib:legacy:EOSCharCodeMismatch ## EOSCharCode returned is not meaningful because read/write-terminators differ. | Read-terminator is set to CR  and write-terminator is set to LF.'
+bytesavailable	ERR instrument:interface:visa:PropertyNotSupportedForVISA The NumBytesAvailable property is no longer supported for visadev objects.
+status_legacy	char [1 4] 'open'
+second	ERR instrument:interface:visa:multipleIdenticalResources Creating a second device for the ASRL20::INSTR resource is not supported. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+second_alias	ERR instrument:interface:visa:multipleIdenticalResources Creating a second device for the ASRL20::INSTR resource is not supported. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+save	OUT [Warning: Saving VISA resource objects to a MAT-file is not supported.] |
+save_warn	char [1 96] 'instrument:interface:visa:noSave ## Saving VISA resource objects to a MAT-file is not supported.'
+load	OUT [Warning: Loading VISA resource objects from a MAT-file is not supported.] | visalib.Serial | 1     1 |
+isvalid	logical [1 1] false
+after_delete_prop	ERR MATLAB:class:InvalidHandle Invalid or deleted object.
+after_delete_read	ERR MATLAB:class:InvalidHandle Invalid or deleted object.
+after_delete_disp	OUT   handle to deleted Serial |
+by_alias	string [1 1] "ASRL20::INSTR"
+by_alias_tag	string [1 1] "again"
+by_lower	ERR instrument:interface:visa:unableToDetermineInterfaceType Resource string is invalid or resource was not found. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+by_partial	ERR instrument:interface:visa:unableToDetermineInterfaceType Resource string is invalid or resource was not found. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.

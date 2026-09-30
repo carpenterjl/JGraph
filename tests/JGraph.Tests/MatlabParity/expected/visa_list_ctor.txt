@@ -1,0 +1,70 @@
+CHK|list_class|table|exact
+CHK|list_vars|cell:{char:ResourceName;char:Alias;char:Vendor;char:Model;char:SerialNumber;char:Type}|exact
+CHK|list_rows|cell:{char:1}|exact
+CHK|list_names|string:ASRL20::INSTR|exact
+CHK|list_alias|string:COM20|exact
+CHK|list_vendor|string:|exact
+CHK|list_model|string:|exact
+CHK|list_serial|string:|exact
+CHK|list_type|string:serial|exact
+CHK|list_type_class|visalib.InterfaceType|div=ADR0187|diverges|string
+CHK|list_type_eq|logical:1|exact
+CHK|list_noid_alias|string:,|exact
+CHK|list_noid_type|string:unset,unset|exact
+CHK|list_default|double:[1 6]|exact
+CHK|list_duration|double:[1 6]|exact
+CHK|list_case|double:[1 6]|exact
+CHK|list_partial|double:[1 6]|exact
+CHK|list_pair|double:[1 6]|exact
+CHK|list_t1|instrument:interface:visa:invalidTimeout ## The value of 'Timeout' is invalid. Timeout must be greater than or equal to 2.|exact
+CHK|list_tstr|instrument:interface:visa:invalidTimeout ## The value of 'Timeout' is invalid. Timeout must be greater than or equal to 2.|exact
+CHK|list_tinf|instrument:interface:visa:invalidTimeout ## The value of 'Timeout' is invalid. Timeout must be greater than or equal to 2.|exact
+CHK|list_tvec|instrument:interface:visa:invalidTimeout ## The value of 'Timeout' is invalid. Timeout must be greater than or equal to 2.|exact
+CHK|list_bogus|MATLAB:InputParser:UnmatchedParameter ## 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|list_odd|MATLAB:InputParser:ParamMissingValue ## No value was given for 'Timeout'. Name-value pair arguments require a name followed by a value.|exact
+CHK|list_five|MATLAB:narginchk:tooManyInputs ## Too many input arguments.|exact
+CHK|list_id_num|instrument:interface:visa:invalidNVPairValue ## The value of 'Identification' is invalid. Value must be true, false, or a string array of resource names and identification commands.|exact
+CHK|list_id_vec|instrument:interface:visa:invalidNVPairValue ## The value of 'Identification' is invalid. Value must be true, false, or a string array of resource names and identification commands.|exact
+CHK|list_id_1d|instrument:interface:visa:unexpectedOneDimensionalArrayFormat ## The value of 'Identification' is invalid. Expected a logical or an N-by-2 string array, where each row contains a resource name and its corresponding identification command.|exact
+CHK|list_id_dup|instrument:interface:visa:duplicateResourceName ## Repeated resource name ASRL20::INSTR. Ensure all resource names are unique.|exact
+CHK|list_id_badname|instrument:interface:visa:invalidResourceName ## Invalid resource name NOPE.|exact
+CHK|list_id_instr|instrument:interface:visa:invalidResourceName ## Invalid resource name TCPIP0::127.0.0.1::hislip0::INSTR.|exact
+CHK|ctor_none|MATLAB:narginchk:notEnoughInputs ## Not enough input arguments.|exact
+CHK|ctor_empty|MATLAB:validators:mustBeNonzeroLengthText ## Invalid argument at position 1. Value must be text with one or more characters.|exact
+CHK|ctor_emptychar|MATLAB:validators:mustBeNonzeroLengthText ## Invalid argument at position 1. Value must be text with one or more characters.|exact
+CHK|ctor_num|MATLAB:validators:mustBeNonzeroLengthText ## Invalid argument at position 1. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|ctor_strvec|MATLAB:validation:IncompatibleSize ## Invalid argument at position 1. Value must be a scalar.|exact
+CHK|ctor_bad|instrument:interface:visa:unableToDetermineInterfaceType ## Resource string is invalid or resource was not found. / See related documentation for troubleshooting steps.|exact
+CHK|ctor_gpib|instrument:interface:visa:unableToDetermineInterfaceType ## Resource string is invalid or resource was not found. / See related documentation for troubleshooting steps.|exact
+CHK|ctor_usb|instrument:interface:visa:unableToDetermineInterfaceType ## Resource string is invalid or resource was not found. / See related documentation for troubleshooting steps.|exact
+CHK|ctor_asrl99|instrument:interface:visa:unableToDetermineInterfaceType ## Resource string is invalid or resource was not found. / See related documentation for troubleshooting steps.|exact
+CHK|ctor_peer_port|instrument:interface:visa:unableToDetermineInterfaceType ## Resource string is invalid or resource was not found. / See related documentation for troubleshooting steps.|exact
+CHK|ctor_sock_closed|instrument:interface:visa:unableToDetermineInterfaceType ## Resource string is invalid or resource was not found. / See related documentation for troubleshooting steps.|exact
+CHK|ctor_vxi11|instrument:interface:visa:unableToDetermineInterfaceType ## Resource string is invalid or resource was not found. / See related documentation for troubleshooting steps.|exact
+CHK|ctor_tag_bad|MATLAB:InputParser:ArgumentFailedValidation ## The value of 'Tag' is invalid. It must satisfy the function: @(x)isstring(x)//ischar(x).|exact
+CHK|ctor_bogus_nv|MATLAB:InputParser:ArgumentFailedValidation ## The value of 'SynchronousRead' is invalid. It must satisfy the function: @(x)isempty(x)//islogical(x).|exact
+CHK|ctor_odd_nv|MATLAB:InputParser:ArgumentFailedValidation ## The value of 'SynchronousRead' is invalid. It must satisfy the function: @(x)isempty(x)//islogical(x).|exact
+CHK|ctor_sync_num|MATLAB:InputParser:ArgumentFailedValidation ## The value of 'SynchronousRead' is invalid. It must satisfy the function: @(x)isempty(x)//islogical(x).|exact
+CHK|ctor_sync_two|MATLAB:InputParser:ParamMustBeChar ## Expected a string scalar or character vector for the parameter name.|exact
+CHK|ctor_reset_output|MATLAB:unassignedOutputs ## Output argument "v" (and possibly others) not assigned a value in the execution with "visadev" function.|exact
+CHK|ctor_reset_statement|none|exact
+CHK|ctor_cell|visalib.Serial|exact
+CHK|alias_name|string:ASRL20::INSTR|exact
+CHK|alias_alias|string:COM20|exact
+CHK|alias_tag|string:dev1|exact
+CHK|sync_true|visalib.Socket|exact
+CHK|second|instrument:interface:visa:multipleIdenticalResources ## Creating a second device for the ASRL20::INSTR resource is not supported. / See related documentation for troubleshooting steps.|exact
+CHK|second_alias|instrument:interface:visa:multipleIdenticalResources ## Creating a second device for the ASRL20::INSTR resource is not supported. / See related documentation for troubleshooting steps.|exact
+CHK|find_tag|visalib.Serial|exact
+CHK|find_tag_same|logical:1|exact
+CHK|find_type|double:[1 1]|exact
+CHK|find_all|double:[1 1]|exact
+CHK|find_none|double:[] [0 0]|exact
+CHK|find_bogus|double:[] [0 0]|exact
+CHK|find_odd|testmeaslib:ObjectCacher:NVPairsAsPairs ## Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|find_after_clear|double:[] [0 0]|exact
+CHK|lower_name|string:ASRL20::INSTR|exact
+CHK|lower_port|string:ASRL20|exact
+CHK|noboard_name|string:TCPIP0::127.0.0.1::hislip0::INSTR|exact
+CHK|lower_tcpip_name|string:TCPIP0::127.0.0.1::hislip0::INSTR|exact
+CHK|second_upper|instrument:interface:visa:multipleIdenticalResources ## Creating a second device for the TCPIP0::127.0.0.1::HISLIP0::INSTR resource is not supported. / See related documentation for troubleshooting steps.|exact

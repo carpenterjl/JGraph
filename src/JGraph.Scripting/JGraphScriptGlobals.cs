@@ -733,6 +733,7 @@ public sealed class JGraphScriptGlobals
             devices.EchoUdp?.Dispose();
             devices.EchoUdp = null;
             devices.StopBluetoothSimulation(); // and jgraph.internal.btsim's radio, the test door's
+            devices.StopVisaSimulation(); // and jgraph.internal.visasim's instruments
         }
     }
 

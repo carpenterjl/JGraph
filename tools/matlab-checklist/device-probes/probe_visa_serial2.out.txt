@@ -1,0 +1,130 @@
+attr_fresh	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+attr_after_dp	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_fresh	string [1 1] "hi"
+readline_fresh_took	double [1 1] 0
+attr_after_readline	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+read_leftover	double [0 0] []
+read_all3	double [1 3] [104 105 10]
+attr_after_read	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_after_read	string [1 1] "hi"
+attr_after_cfg_lf	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_after_cfg	string [1 1] "hi"
+readline_two_1	string [1 1] "a b"
+readline_two_2	string [1 1] "c d"
+read_across_lf	double [1 5] [1 2 10 3 4]
+attr_after_read2	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_after_read2	string [1 1] "zz"
+read_partial	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+read_partial_took	double [1 1] 1
+read_after_partial	double [1 1] 3
+readline_partial	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_partial_took	double [1 1] 1
+readline_after_partial	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_after_partial_warn	char [0 0] ''
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+read_nothing	double [0 0] []
+read_nothing_took	double [1 1] 2
+read_nothing_warn	char [1 31] 'transportlib:client:ReadWarning'
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+read_nothing_t2	double [0 0] []
+read_nothing_t2_took	double [1 1] 4
+readline_nothing_t2	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_nothing_t2_took	double [1 1] 2
+attr_t1	char [1 101] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_late	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+readline_late_took	double [1 1] 1
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+read_late	double [0 0] []
+read_late_took	double [1 1] 2
+read_soon	double [1 2] [1 2]
+read_soon_took	double [1 1] 0.29999999999999999
+attr_off	char [1 101] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+attr_crlf	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+attr_cr_lf	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+attr_lf_cr	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=13 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+attr_zero	char [1 100] 'TERMCHAR_EN=1 TERMCHAR=0 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+attr_t35	char [1 101] 'TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=3500 SEND_END_EN=1 SUPPRESS_END_EN=0'
+write_300	char [1 4] 'none'
+write_neg	char [1 4] 'none'
+write_frac	char [1 4] 'none'
+write_none	char [1 160] 'transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'write'. Valid syntaxes are / write(v,DATA) / write(v,DATA,PRECISION)'
+write_cell	char [1 220] 'MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 2, data, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, string, char / Instead its type was cell.'
+write_prec_bad	char [1 298] 'MATLAB:AsyncIOTransportChannel:unrecognizedStringChoice ## Expected input number 3, precision, to match one of these values: / 'uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64', 'int64', 'single', 'double', 'char', 'string' / The input, 'uint9', did not match any of the valid values.'
+write_four	char [1 160] 'transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'write'. Valid syntaxes are / write(v,DATA) / write(v,DATA,PRECISION)'
+write_logical	char [1 223] 'MATLAB:AsyncIOTransportChannel:invalidType ## Expected input number 2, data, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, string, char / Instead its type was logical.'
+write_empty	char [1 97] 'MATLAB:AsyncIOTransportChannel:expectedNonempty ## Expected input number 2, data, to be nonempty.'
+write_matrix	char [1 103] 'transportlib:transport:invalidDataDim ## Input number 2, data, must be either a 1-by-n or n-by-1 array.'
+writeline_none	char [1 140] 'transportlib:client:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'writeline'. Valid syntax is writeline(v,DATA).'
+writeline_num	char [1 118] 'transportlib:transport:invalidDataType ## Expected input number 2, data, to be a scalar string or a 1-by-n char array.'
+writeline_two	char [1 140] 'transportlib:client:IncorrectInputArgumentsSingular ## Invalid number of input arguments for 'writeline'. Valid syntax is writeline(v,DATA).'
+term_bad	char [1 126] 'transportlib:client:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.'
+term_256	char [1 126] 'transportlib:client:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.'
+term_none	char [1 224] 'transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'configureTerminator'. Valid syntaxes are / configureTerminator(v,TERMINATOR) / configureTerminator(v,READTERMINATOR,WRITETERMINATOR)'
+term_four	char [1 224] 'transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'configureTerminator'. Valid syntaxes are / configureTerminator(v,TERMINATOR) / configureTerminator(v,READTERMINATOR,WRITETERMINATOR)'
+term_off_off	char [1 126] 'transportlib:client:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.'
+term_lower_off	char [1 4] 'none'
+term_after	cell [1 2] {string [1 1] "off"; string [1 1] "LF"}
+term_empty	char [1 126] 'transportlib:client:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.'
+term_after_empty	string [1 1] "LF"
+term_lower	char [1 4] 'none'
+term_after_lower	string [1 1] "LF"
+cc_off	char [1 127] 'instrument:interface:visa:MethodNotSupportedForVISA ## The configureCallback method is no longer supported for visadev objects.'
+cc_none	char [1 127] 'instrument:interface:visa:MethodNotSupportedForVISA ## The configureCallback method is no longer supported for visadev objects.'
+setdtr_bad	char [1 128] 'MATLAB:validation:UnableToConvert ## Invalid argument at position 2. Value must be of type logical or be convertible to logical.'
+setdtr_none	char [1 74] 'MATLAB:minrhs ## Invalid argument list. Function requires 1 more input(s).'
+setrts_num	char [1 4] 'none'
+setrts_two	char [1 49] 'MATLAB:TooManyInputs ## Too many input arguments.'
+setrts_vec	char [1 93] 'MATLAB:validation:IncompatibleSize ## Invalid argument at position 2. Value must be a scalar.'
+flush_bad	char [1 183] 'MATLAB:flush:unrecognizedStringChoice ## Expected input number 2, buffer, to match one of these values: / 'input', 'output' / The input, 'both', did not match any of the valid values.'
+flush_output	char [1 4] 'none'
+flush_three	char [1 147] 'transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'flush'. Valid syntaxes are / flush(v) / flush(v,BUFFER)'
+flush_partial	char [1 4] 'none'
+clrdevice	char [1 4] 'none'
+fopen	char [1 4] 'none'
+[Warning: The fclose method does not close the connection. Instead, clear the interface object to close the connection.] 
+fclose	char [1 4] 'none'
+fwrite	char [1 4] 'none'
+fwrite_recv	double [1 8] [0 0 255 0 2 0 1 2]
+binblockwrite	char [1 4] 'none'
+binblockwrite_recv	double [1 5] [35 49 50 1 2]
+flushinput	char [1 4] 'none'
+flushoutput	char [1 4] 'none'
+[Warning: record is not a valid method for this interface.] 
+record	char [1 4] 'none'
+[Warning: readasync is not a valid method for this interface.] 
+readasync	char [1 4] 'none'
+[Warning: stopasync is not a valid method for this interface.] 
+stopasync	char [1 4] 'none'
+wbb_none	char [1 201] 'transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'writebinblock'. Valid syntaxes are / writebinblock(v,DATA,PRECISION) / writebinblock(v,DATA,PRECISION,HEADER)'
+wbb_one	char [1 201] 'transportlib:client:IncorrectInputArgumentsPlural ## Invalid number of input arguments for 'writebinblock'. Valid syntaxes are / writebinblock(v,DATA,PRECISION) / writebinblock(v,DATA,PRECISION,HEADER)'
+wbb_hdr_num	char [1 141] 'MATLAB:BinBlockClient:invalidType ## Expected input number 4, header, to be one of these types: / string, char / Instead its type was double.'
+visastatus_none	char [1 49] 'MATLAB:TooManyInputs ## Too many input arguments.'
+set_errfcn_empty	char [1 4] 'none'
+errfcn_after_empty	char [1 15] 'function_handle'
+set_userdata	char [1 4] 'none'
+fscanf	char [1 3] '12 | '
+fgetl	char [1 1] 'z'
+fgets	char [1 2] 'z | '
+query	char [1 2] 'A | '
+fread	double [3 1] [1;2;3]
+binblockread	double [3 1] [1;2;3]
+fread_none	ERR instrument:interface:visa:operationTimedOut Timeout expired before the operation completed.
+[Warning: ValuesReceived is not a valid property for this interface.] 
+props_legacy_ValuesReceived	double [0 0] []
+props_legacy_warn	char [1 102] 'transportlib:legacy:PropertyNotSupported ## ValuesReceived is not a valid property for this interface.'
+props_legacy_InputBufferSize	double [1 1] 512
+props_legacy_Name	ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'Name' for class 'visalib.Serial'.
+props_legacy_Type	visalib.InterfaceType [1 1] serial |
+[Warning: TimerFcn is not a valid property for this interface.] 
+props_legacy_TimerFcn	double [0 0] []
+[Warning: ReadAsyncMode is not a valid property for this interface.] 
+props_legacy_ReadAsyncMode	double [0 0] []

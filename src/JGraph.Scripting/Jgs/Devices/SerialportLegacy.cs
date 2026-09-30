@@ -1,6 +1,32 @@
 namespace JGraph.Scripting.Jgs.Devices;
 
 /// <summary>
+/// What the legacy mixins call on their object: the object's own read, write and line methods, which
+/// for a serialport are the client's and for a visadev start a VISA read first (LegacyVisa's mixins
+/// call <c>readline(obj)</c>, and so reach visalib.Resource's).
+/// </summary>
+internal interface ILegacyTransport
+{
+    TransportClient Live(DeviceCall call);
+
+    JgsValue GetProperty(string name, DeviceCall call);
+
+    JgsValue LegacyRead(DeviceCall call);
+
+    JgsValue LegacyReadLine(DeviceCall call);
+
+    JgsValue LegacyWriteRead(DeviceCall call);
+
+    JgsValue LegacyReadBinblock(DeviceCall call);
+
+    void LegacyWrite(DeviceCall call);
+
+    void LegacyWriteLine(DeviceCall call);
+
+    void LegacyWriteBinblock(DeviceCall call);
+}
+
+/// <summary>
 /// The hidden legacy methods a <c>serialport</c> keeps from the <c>serial</c> object it replaced,
 /// transcribed from R2025b's <c>LegacyASCIIMixin</c>, <c>LegacyBinaryMixin</c>,
 /// <c>LegacyBinblockMixin</c> and <c>LegacyQueryMixin</c>: each is written in terms of the modern
@@ -31,7 +57,7 @@ internal static class SerialportLegacy
         JgsBuiltins.Warn(call.Host, "transportlib:legacy:SyncNotSupported", "Setting the mode is not supported. The mode value remains set to 'sync'.");
 
     /// <summary><c>fprintf(s, cmd)</c>, <c>fprintf(s, format, cmd)</c>, and a trailing mode, which is refused with a warning.</summary>
-    public static void Fprintf(SerialportObject serial, DeviceCall call)
+    public static void Fprintf(ILegacyTransport serial, DeviceCall call)
     {
         TransportClient client = serial.Live(call);
         IReadOnlyList<JgsValue> args = call.Args.Select(TransportClient.Str2Char).ToArray();
@@ -89,16 +115,16 @@ internal static class SerialportLegacy
         string formatted = Sprintf(call, format, cmd);
         if (format.EndsWith("\\n", StringComparison.Ordinal))
         {
-            client.WriteLine(SerialportObject.Retarget(call, [JgsValue.Str(formatted[..^1])]));
+            serial.LegacyWriteLine(SerialportObject.Retarget(call, [JgsValue.Str(formatted[..^1])]));
         }
         else
         {
-            client.Write(SerialportObject.Retarget(call, [JgsValue.Str(formatted), JgsValue.Str("char")]));
+            serial.LegacyWrite(SerialportObject.Retarget(call, [JgsValue.Str(formatted), JgsValue.Str("char")]));
         }
     }
 
     /// <summary><c>fwrite(s, data)</c>, <c>(s, data, precision)</c>, and a trailing mode.</summary>
-    public static void Fwrite(SerialportObject serial, DeviceCall call)
+    public static void Fwrite(ILegacyTransport serial, DeviceCall call)
     {
         TransportClient client = serial.Live(call);
         IReadOnlyList<JgsValue> args = call.Args.Select(TransportClient.Str2Char).ToArray();
@@ -132,11 +158,11 @@ internal static class SerialportLegacy
         }
 
         (string name, _) = LegacyPrecision(precision, call);
-        client.Write(SerialportObject.Retarget(call, [data, JgsValue.Str(name)]));
+        serial.LegacyWrite(SerialportObject.Retarget(call, [data, JgsValue.Str(name)]));
     }
 
     /// <summary><c>[data, count, msg] = fread(s, size, precision)</c>: a column (or the size's matrix) of doubles.</summary>
-    public static JgsValue[] Fread(SerialportObject serial, DeviceCall call)
+    public static JgsValue[] Fread(ILegacyTransport serial, DeviceCall call)
     {
         TransportClient client = serial.Live(call);
         IReadOnlyList<JgsValue> args = call.Args.Select(TransportClient.Str2Char).ToArray();
@@ -162,7 +188,7 @@ internal static class SerialportLegacy
             throw call.Error("instrument:fread:opfailed", "\"SIZE * PRECISION must be less than or equal to InputBufferSize.\"");
         }
 
-        JgsValue data = client.Read(SerialportObject.Retarget(call, [JgsValue.Number(count), JgsValue.Str(precision)]));
+        JgsValue data = serial.LegacyRead(SerialportObject.Retarget(call, [JgsValue.Number(count), JgsValue.Str(precision)]));
         string warning = "";
         if (DeviceChecks.Count(data) == 0)
         {
@@ -180,10 +206,10 @@ internal static class SerialportLegacy
     }
 
     /// <summary><c>[tline, count, msg] = fgetl(s)</c> and <c>fgets(s)</c> (which keeps the terminator).</summary>
-    public static JgsValue[] Fgetl(SerialportObject serial, DeviceCall call, bool keepTerminator)
+    public static JgsValue[] Fgetl(ILegacyTransport serial, DeviceCall call, bool keepTerminator)
     {
         TransportClient client = serial.Live(call);
-        JgsValue line = client.ReadLine(SerialportObject.Retarget(call, []));
+        JgsValue line = serial.LegacyReadLine(SerialportObject.Retarget(call, []));
         if (DeviceChecks.Count(line) == 0 || !line.IsStringArray)
         {
             return [JgsValue.Str(""), JgsValue.Number(0), JgsValue.Str(call.Host.Warnings.LastMessage)];
@@ -204,7 +230,7 @@ internal static class SerialportLegacy
         string.Concat(terminator.Bytes.Select(static b => (char)b));
 
     /// <summary><c>[A, count, msg] = fscanf(s)</c>, <c>(s, format)</c>, <c>(s, format, size)</c>.</summary>
-    public static JgsValue[] Fscanf(SerialportObject serial, DeviceCall call)
+    public static JgsValue[] Fscanf(ILegacyTransport serial, DeviceCall call)
     {
         TransportClient client = serial.Live(call);
         IReadOnlyList<JgsValue> args = call.Args.Select(TransportClient.Str2Char).ToArray();
@@ -232,12 +258,13 @@ internal static class SerialportLegacy
     }
 
     /// <summary>What fscanf scans: a line with its terminator put back, or else what arrives in the timeout.</summary>
-    private static string ScanSource(SerialportObject serial, TransportClient client, DeviceCall call, bool counted)
+    private static string ScanSource(ILegacyTransport serial, TransportClient client, DeviceCall call, bool counted)
     {
         JgsWarningState warnings = call.Host.Warnings;
-        bool lineOn = warnings.IsOn("serialport:serialport:ReadlineWarning");
+        string lineWarning = client.Spec.TranslateWarning("ReadlineWarning");
+        bool lineOn = warnings.IsOn(lineWarning);
         JgsValue timeout = client.Timeout;
-        warnings.Set("serialport:serialport:ReadlineWarning", false);
+        warnings.Set(lineWarning, false);
         try
         {
             if (counted)
@@ -245,25 +272,25 @@ internal static class SerialportLegacy
                 client.Timeout = JgsValue.Number(0.1);
             }
 
-            JgsValue line = client.ReadLine(SerialportObject.Retarget(call, []));
+            JgsValue line = serial.LegacyReadLine(SerialportObject.Retarget(call, []));
             if (line.IsStringArray && DeviceChecks.Count(line) > 0)
             {
                 return line.ElementAt(0).AsString + TerminatorText(client.ReadTerminator);
             }
 
             double bufferSize = DeviceChecks.Numbers(serial.GetProperty("InputBufferSize", call)).First();
-            JgsValue rest = client.Read(SerialportObject.Retarget(call, [JgsValue.Number(bufferSize), JgsValue.Str("char")]));
+            JgsValue rest = serial.LegacyRead(SerialportObject.Retarget(call, [JgsValue.Number(bufferSize), JgsValue.Str("char")]));
             return rest.Type == JgsType.String ? rest.AsString : "";
         }
         finally
         {
             client.Timeout = timeout;
-            warnings.Set("serialport:serialport:ReadlineWarning", lineOn);
+            warnings.Set(lineWarning, lineOn);
         }
     }
 
     /// <summary><c>[A, count, msg] = scanstr(s)</c>, <c>(s, delimiter)</c>, <c>(s, delimiter, format)</c>.</summary>
-    public static JgsValue[] Scanstr(SerialportObject serial, DeviceCall call)
+    public static JgsValue[] Scanstr(ILegacyTransport serial, DeviceCall call)
     {
         TransportClient client = serial.Live(call);
         IReadOnlyList<JgsValue> args = call.Args.Select(TransportClient.Str2Char).ToArray();
@@ -294,7 +321,7 @@ internal static class SerialportLegacy
     }
 
     /// <summary><c>[out, count, msg] = query(s, cmd)</c>, <c>(s, cmd, wformat, rformat)</c>.</summary>
-    public static JgsValue[] Query(SerialportObject serial, DeviceCall call)
+    public static JgsValue[] Query(ILegacyTransport serial, DeviceCall call)
     {
         TransportClient client = serial.Live(call);
         IReadOnlyList<JgsValue> args = call.Args.Select(TransportClient.Str2Char).ToArray();
@@ -310,7 +337,7 @@ internal static class SerialportLegacy
         }
 
         string rformat = args.Count == 3 && DeviceChecks.IsText(args[2]) ? DeviceChecks.Text(args[2]) : "%c";
-        JgsValue answer = client.WriteRead(SerialportObject.Retarget(call, [args[0]]));
+        JgsValue answer = serial.LegacyWriteRead(SerialportObject.Retarget(call, [args[0]]));
         string data = DeviceChecks.Text(answer) + TerminatorText(client.ReadTerminator);
         JgsValue[] scanned = Scan(call, data, rformat, null);
         string error = scanned.Length > 2 && DeviceChecks.IsText(scanned[2]) ? DeviceChecks.Text(scanned[2]) : "";
@@ -328,12 +355,12 @@ internal static class SerialportLegacy
     }
 
     /// <summary><c>[data, count, msg] = binblockread(s)</c>, <c>(s, precision)</c>: a column, and the block's length with its header.</summary>
-    public static JgsValue[] BinblockRead(SerialportObject serial, DeviceCall call)
+    public static JgsValue[] BinblockRead(ILegacyTransport serial, DeviceCall call)
     {
         TransportClient client = serial.Live(call);
         IReadOnlyList<JgsValue> args = call.Args.Select(TransportClient.Str2Char).ToArray();
         (string precision, _) = LegacyPrecision(args.Count >= 1 ? args[0] : JgsValue.Str("uchar"), call);
-        JgsValue data = client.ReadBinblock(SerialportObject.Retarget(call, [JgsValue.Str(precision)]));
+        JgsValue data = serial.LegacyReadBinblock(SerialportObject.Retarget(call, [JgsValue.Str(precision)]));
         double[] values = DeviceChecks.Numbers(data).ToArray();
         int bytes = values.Length;
         static int Digits(double n) => (int)Math.Ceiling(Math.Log10(Math.Max(n + 1, 1)));
@@ -344,7 +371,7 @@ internal static class SerialportLegacy
     }
 
     /// <summary><c>binblockwrite(s, data)</c>, <c>(s, data, precision)</c>, <c>(s, data, precision, header)</c>.</summary>
-    public static void BinblockWrite(SerialportObject serial, DeviceCall call)
+    public static void BinblockWrite(ILegacyTransport serial, DeviceCall call)
     {
         TransportClient client = serial.Live(call);
         IReadOnlyList<JgsValue> args = call.Args.Select(TransportClient.Str2Char).ToArray();
@@ -379,7 +406,7 @@ internal static class SerialportLegacy
             }
         }
 
-        client.WriteBinblock(SerialportObject.Retarget(call, [data, JgsValue.Str(precision), JgsValue.Str(header)]));
+        serial.LegacyWriteBinblock(SerialportObject.Retarget(call, [data, JgsValue.Str(precision), JgsValue.Str(header)]));
     }
 
     // --- the text functions the mixins call ----------------------------------------------------------------

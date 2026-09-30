@@ -69,6 +69,17 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) => [BleObject.List(host.Devices, interpreter, args, wanted, line, col)],
         }));
 
+        // Stage D4: VISA instruments. visadev("reset") answers nothing, so it is told the output count.
+        env.Builtins.Register("visadev", JgsValue.Function(new BuiltinFunction("visadev",
+            (args, line, col) => VisadevObject.Create(host.Devices, interpreter, args, 1, line, col) is [var made, ..] ? made : JgsValue.Null)
+        {
+            KeepsStringArguments = true,
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) => VisadevObject.Create(host.Devices, interpreter, args, wanted, line, col),
+        }));
+        Keeping("visadevlist", (args, line, col) => VisadevObject.List(host.Devices, args, line, col));
+        Keeping("visadevfind", (args, line, col) => NetworkShared.Find(host.Devices, static d => d is VisadevObject, args, line, col));
+
         // internal.Serialport.clearPreferences(): the hidden static method R2025b's own tests use.
         env.Builtins.RegisterConstant("internal", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
@@ -158,6 +169,35 @@ internal static partial class JgsBuiltins
                 default:
                     throw new JgsRuntimeException(line, col, "JGraph:btsim:Arguments",
                         "jgraph.internal.btsim takes 'on', 'off', 'drop', or 'radio' and 'on', 'off' or 'missing'.");
+            }
+
+            return JgsValue.Null;
+        })
+        {
+            BindsAnsAsStatement = false,
+        });
+
+    /// <summary>
+    /// <c>jgraph.internal.visasim('on')</c>: the simulated VISA for this session (device classes plan,
+    /// stage D4) — the simulated serial ports as ASRL resources, and the socket and HiSLIP instruments of
+    /// visa_peer.m — ending with the run; <c>visasim('off')</c> removes it. Test-only and undocumented.
+    /// </summary>
+    private static JgsValue VisaSimFunction(Interpreter interpreter) =>
+        JgsValue.Function(new BuiltinFunction("jgraph.internal.visasim", (args, line, col) =>
+        {
+            JGraphScriptGlobals host = interpreter.Host
+                ?? throw new JgsRuntimeException(line, col, "JGraph:visasim:Arguments", "This session has no host.");
+            string verb = args.Count == 1 && IsTextScalar(args[0]) ? TextOf(args[0]) : "";
+            switch (verb)
+            {
+                case "on":
+                    host.Devices.StartVisaSimulation();
+                    break;
+                case "off":
+                    host.Devices.StopVisaSimulation();
+                    break;
+                default:
+                    throw new JgsRuntimeException(line, col, "JGraph:visasim:Arguments", "jgraph.internal.visasim takes 'on' or 'off'.");
             }
 
             return JgsValue.Null;
@@ -353,7 +393,23 @@ internal static partial class JgsBuiltins
             return true;
         }
 
+        if (DeviceClass.IsSomeClassMethod(name) && !device.Interpreter.Globals.Builtins.TryGet(name, out _))
+        {
+            callable = new UndefinedForClass(name, device.ClassName);
+            return true;
+        }
+
         return false;
+    }
+
+    /// <summary>A method some other device class has, called on one whose class has none.</summary>
+    private sealed class UndefinedForClass(string name, string className) : IJgsCallable
+    {
+        public string Name => name;
+
+        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
+            throw new JgsRuntimeException(line, column, "MATLAB:UndefinedFunction",
+                $"Undefined function '{name}' for input arguments of type '{className}'.");
     }
 
     /// <summary><c>get(obj, …)</c>, <c>set(obj, …)</c>, <c>delete(obj)</c>, <c>isvalid(obj)</c> reached as methods.</summary>
@@ -388,7 +444,9 @@ internal static partial class JgsBuiltins
     {
         if (op is TokenType.EqualEqual or TokenType.BangEqual)
         {
-            bool same = left.AsExternalOrNull() is { } a && ReferenceEquals(a, right.AsExternalOrNull());
+            bool same = left.AsExternalOrNull() is DeviceEnumValue leftMember ? leftMember.Matches(right)
+                : right.AsExternalOrNull() is DeviceEnumValue rightMember ? rightMember.Matches(left)
+                : left.AsExternalOrNull() is { } a && ReferenceEquals(a, right.AsExternalOrNull());
             return JgsValue.Bool(op == TokenType.EqualEqual ? same : !same);
         }
 

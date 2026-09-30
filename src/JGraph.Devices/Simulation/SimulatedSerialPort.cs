@@ -223,6 +223,9 @@ public sealed class SimulatedSerialPort : ISerialTransport
         cancel.WaitHandle.WaitOne(Math.Max(0, milliseconds));
         cancel.ThrowIfCancellationRequested();
         _line.Engine.BreakReceived();
+
+        // A break reaches the far end's driver as a NUL, which com0com delivers as data (probe_visa_misc).
+        _line.Engine.Receive([0]);
     }
 
     /// <summary>Ends the connection as an unplugged adapter does, for tests of the lost-connection path.</summary>

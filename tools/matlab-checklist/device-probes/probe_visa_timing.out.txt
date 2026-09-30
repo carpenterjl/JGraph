@@ -1,0 +1,104 @@
+asrl_rl_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rl_partial	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rl_late_in	string [1 1] "cd"	warn=	took=0.3	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rl_late_out	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=10
+asrl_rl_full	string [1 1] "cd"	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rl_two	string [1 1] "a"	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[98 10]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+asrl_rd_none	double [0 0] []	warn=transportlib:client:ReadWarning	took=2.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=2 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rd_partial	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rd_late_in	double [1 5] [1 2 3 4 5]	warn=	took=0.2	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rd_late_out	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[3 4 5]
+asrl_rd_more	double [1 5] [1 2 3 4 5]	warn=	took=0.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[6 7]
+asrl_rd_lf	double [1 5] [1 10 2 3 4]	warn=	took=0.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rd_u16_odd	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rbb_short	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rbb_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rbb_bad	ERR instrument:interface:visa:unableToCompleteOperation	warn=	took=0.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_rbb_lead	double [1 3] [65 66 67]	warn=	took=0.2	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=10
+asrl_wr_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.1	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+asrl_wr_partial	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+sock_rl_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+sock_rl_partial	double [0 0] []	warn=transportlib:client:ReadlineWarning	took=1.1	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[99 100]
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+sock_rl_late_in	double [0 0] []	warn=transportlib:client:ReadlineWarning	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[99 100 10]
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+sock_rl_late_out	double [0 0] []	warn=transportlib:client:ReadlineWarning	took=1.1	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[99 100 10]
+sock_rl_full	string [1 1] "cd"	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+sock_rl_two	string [1 1] "a"	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[98 10]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+sock_rd_none	double [0 0] []	warn=transportlib:client:ReadWarning	took=2.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_somedata')"'>visadev Read Warnings</a>.] 
+sock_rd_partial	double [1 2] [1 2]	warn=transportlib:client:ReadWarning	took=1.1	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_somedata')"'>visadev Read Warnings</a>.] 
+sock_rd_late_in	double [1 2] [1 2]	warn=transportlib:client:ReadWarning	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[3 4 5]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_somedata')"'>visadev Read Warnings</a>.] 
+sock_rd_late_out	double [1 2] [1 2]	warn=transportlib:client:ReadWarning	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[3 4 5]
+sock_rd_more	double [1 5] [1 2 3 4 5]	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[6 7]
+sock_rd_lf	double [1 5] [1 10 2 3 4]	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+sock_rd_u16_odd	ERR transportlib:generic:ReadFailed	warn=	took=1.1	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+sock_rbb_short	double [1 2] [65 66]	warn=	took=1.1	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+sock_rbb_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+sock_rbb_bad	ERR instrument:interface:visa:unableToCompleteOperation	warn=	took=0.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+sock_rbb_lead	double [1 3] [65 66 67]	warn=	took=0.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=10
+sock_wr_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+sock_wr_partial	string [1 1] "cd"	warn=	took=0.1	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_rl_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+[Warning: The specified amount of data was not returned within the Timeout period for 'readline'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+hislip_rl_partial	double [0 0] []	warn=transportlib:client:ReadlineWarning	took=1.1	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[99 100]
+hislip_rl_late_in	string [1 1] ""	warn=	took=0.2	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_rl_late_out	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=10
+hislip_rl_full	string [1 1] "cd"	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_rl_two	string [1 1] "a"	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[98 10]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+hislip_rd_none	double [0 0] []	warn=transportlib:client:ReadWarning	took=2.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_somedata')"'>visadev Read Warnings</a>.] 
+hislip_rd_partial	double [1 2] [1 2]	warn=transportlib:client:ReadWarning	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_somedata')"'>visadev Read Warnings</a>.] 
+hislip_rd_late_in	double [1 3] [3 4 5]	warn=transportlib:client:ReadWarning	took=1.2	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read any data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_nodata')"'>visadev Read Warnings</a>.] 
+hislip_rd_late_out	double [0 0] []	warn=transportlib:client:ReadWarning	took=2.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[3 4 5]
+hislip_rd_more	double [1 5] [1 2 3 4 5]	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[6 7]
+hislip_rd_lf	double [1 5] [1 10 2 3 4]	warn=	took=0.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_rd_u16_odd	ERR transportlib:generic:ReadFailed	warn=	took=1.1	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_rbb_short	double [1 2] [65 66]	warn=	took=1.0	TERMCHAR_EN=1 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_rbb_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_rbb_bad	ERR instrument:interface:visa:unableToCompleteOperation	warn=	took=0.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_rbb_lead	double [1 3] [65 66 67]	warn=	took=0.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=10
+hislip_wr_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_wr_partial	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_off_rl_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_off_rl_msg	string [1 1] "ab | cd"	warn=	took=0.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_off_rl_late	string [1 1] "ab"	warn=	took=0.2	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+hislip_off_wr_none	ERR instrument:interface:visa:operationTimedOut	warn=	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]
+[Warning: The specified amount of data was not returned within the Timeout period for 'read'.
+'visadev' unable to read all requested data. For more information on possible reasons, see <a href="matlab: helpview('instrument',
+'visadev_somedata')"'>visadev Read Warnings</a>.] 
+hislip_off_rd_partial	double [1 2] [1 2]	warn=transportlib:client:ReadWarning	took=1.0	TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0	left=[]

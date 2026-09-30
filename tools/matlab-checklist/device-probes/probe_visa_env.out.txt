@@ -1,0 +1,55 @@
+which_visadev	char [1 77] 'C:\Program Files\MATLAB\R2025b\toolbox\instrument\interface\visalib\visadev.m'
+list	table [2 6] <strong>ResourceName</strong>       <strong>Alias</strong>     <strong>Vendor</strong>    <strong>Model</strong>    <strong>SerialNumber</strong>     <strong>Type</strong> | <strong>_______________</strong>    <strong>_______</strong>    <strong>______</strong>    <strong>_____</strong>    <strong>____________</strong>    <strong>______</strong> | <strong>1</strong>    "ASRL20::INSTR"    "COM20"      ""       ""           ""         serial | <strong>2</strong>    "ASRL21::INSTR"    "COM21"      ""       ""           ""         serial |
+list_took	double [1 1] 2
+list_class	char [1 5] 'table'
+list_vars	cell [1 6] {char [1 12] 'ResourceName'; char [1 5] 'Alias'; char [1 6] 'Vendor'; char [1 5] 'Model'; char [1 12] 'SerialNumber'; char [1 4] 'Type'}
+list_rownames	cell [2 1] {char [1 1] '1'; char [1 1] '2'}
+list_names	string [2 1] "ASRL20::INSTR" "ASRL21::INSTR"
+list_alias	string [2 1] "COM20" "COM21"
+list_vendor	string [2 1] "" ""
+list_model	string [2 1] "" ""
+list_serial	string [2 1] "" ""
+list_type	visalib.InterfaceType [2 1] serial | serial |
+list_type_class	char [1 21] 'visalib.InterfaceType'
+list_disp	OUT           <strong>ResourceName</strong>       <strong>Alias</strong>     <strong>Vendor</strong>    <strong>Model</strong>    <strong>SerialNumber</strong>     <strong>Type</strong> | <strong>_______________</strong>    <strong>_______</strong>    <strong>______</strong>    <strong>_____</strong>    <strong>____________</strong>    <strong>______</strong> | <strong>1</strong>    "ASRL20::INSTR"    "COM20"      ""       ""           ""         serial | <strong>2</strong>    "ASRL21::INSTR"    "COM21"      ""       ""           ""         serial |
+list_noid	table [2 6] <strong>ResourceName</strong>      <strong>Alias</strong>    <strong>Vendor</strong>    <strong>Model</strong>    <strong>SerialNumber</strong>    <strong>Type</strong> | <strong>_______________</strong>    <strong>_____</strong>    <strong>______</strong>    <strong>_____</strong>    <strong>____________</strong>    <strong>_____</strong> | <strong>1</strong>    "ASRL20::INSTR"     ""        ""       ""           ""         unset | <strong>2</strong>    "ASRL21::INSTR"     ""        ""       ""           ""         unset |
+list_t1	ERR instrument:interface:visa:invalidTimeout The value of 'Timeout' is invalid. Timeout must be greater than or equal to 2.
+list_tstr	ERR instrument:interface:visa:invalidTimeout The value of 'Timeout' is invalid. Timeout must be greater than or equal to 2.
+list_tinf	ERR instrument:interface:visa:invalidTimeout The value of 'Timeout' is invalid. Timeout must be greater than or equal to 2.
+list_tvec	ERR instrument:interface:visa:invalidTimeout The value of 'Timeout' is invalid. Timeout must be greater than or equal to 2.
+list_tdur	double [1 2] [2 6]
+list_case	double [1 2] [2 6]
+list_partial	table [2 6] <strong>ResourceName</strong>       <strong>Alias</strong>     <strong>Vendor</strong>    <strong>Model</strong>    <strong>SerialNumber</strong>     <strong>Type</strong> | <strong>_______________</strong>    <strong>_______</strong>    <strong>______</strong>    <strong>_____</strong>    <strong>____________</strong>    <strong>______</strong> | <strong>1</strong>    "ASRL20::INSTR"    "COM20"      ""       ""           ""         serial | <strong>2</strong>    "ASRL21::INSTR"    "COM21"      ""       ""           ""         serial |
+list_bogus	ERR MATLAB:InputParser:UnmatchedParameter 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+list_odd	ERR MATLAB:InputParser:ParamMissingValue No value was given for 'Timeout'. Name-value pair arguments require a name followed by a value.
+list_five	ERR MATLAB:narginchk:tooManyInputs Too many input arguments.
+list_id_num	ERR instrument:interface:visa:invalidNVPairValue The value of 'Identification' is invalid. Value must be true, false, or a string array of resource names and identification commands.
+list_id_vec	ERR instrument:interface:visa:invalidNVPairValue The value of 'Identification' is invalid. Value must be true, false, or a string array of resource names and identification commands.
+list_id_1d	ERR instrument:interface:visa:unexpectedOneDimensionalArrayFormat The value of 'Identification' is invalid. Expected a logical or an N-by-2 string array, where each row contains a resource name and its corresponding identification command.
+list_id_pair	double [1 2] [2 6]
+list_id_dup	ERR instrument:interface:visa:duplicateResourceName Repeated resource name ASRL20::INSTR. Ensure all resource names are unique.
+list_id_badname	ERR instrument:interface:visa:invalidResourceName Invalid resource name NOPE.
+list_nargout0	char [1 650] ' | ans = | 2×6 <a href="matlab:helpPopup('table')" style="font-weight:bold">table</a> | <strong>ResourceName</strong>       <strong>Alias</strong>     <strong>Vendor</strong>    <strong>Model</strong>    <strong>SerialNumber</strong>     <strong>Type</strong> | <strong>_______________</strong>    <strong>_______</strong>    <strong>______</strong>    <strong>_____</strong>    <strong>____________</strong>    <strong>______</strong> | <strong>1</strong>    "ASRL20::INSTR"    "COM20"      ""       ""           ""         serial | <strong>2</strong>    "ASRL21::INSTR"    "COM21"      ""       ""           ""         serial | '
+ctor_none	ERR MATLAB:narginchk:notEnoughInputs Not enough input arguments.
+ctor_empty	ERR MATLAB:validators:mustBeNonzeroLengthText Invalid argument at position 1. Value must be text with one or more characters.
+ctor_emptychar	ERR MATLAB:validators:mustBeNonzeroLengthText Invalid argument at position 1. Value must be text with one or more characters.
+ctor_num	ERR MATLAB:validators:mustBeNonzeroLengthText Invalid argument at position 1. Value must be a character vector, string array, or cell array of character vectors.
+ctor_cell	visalib.Serial [1 1] <a href="matlab:helpPopup('visalib.Serial')" style="font-weight:bold">Serial</a> with properties: | ResourceName: "ASRL20::INSTR" | Alias: "COM20" | Port: "ASRL20" | BaudRate: 9600 | Tag: "" | Show all <a href="matlab:if exist('v','var')&&isa(v, 'visalib.Serial'), obj = v; displayAllProperties(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all properties')); end">properties</a>, <a href="matlab:if exist('v','var')&&isa(v, 'visalib.Serial'), obj = v; methods(obj); clear obj; else, error(message('testmeaslib:CustomDisplay:InvalidObject', 'all functions')); end">functions</a> |
+ctor_strvec	ERR MATLAB:validation:IncompatibleSize Invalid argument at position 1. Value must be a scalar.
+ctor_bad	ERR instrument:interface:visa:unableToDetermineInterfaceType Resource string is invalid or resource was not found. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+ctor_bad2	ERR instrument:interface:visa:unableToDetermineInterfaceType Resource string is invalid or resource was not found. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+ctor_usb	ERR instrument:interface:visa:unableToDetermineInterfaceType Resource string is invalid or resource was not found. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+ctor_asrl99	ERR instrument:interface:visa:unableToDetermineInterfaceType Resource string is invalid or resource was not found. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+ctor_sock_closed	ERR instrument:interface:visa:unableToDetermineInterfaceType Resource string is invalid or resource was not found. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+ctor_tcpip_instr	ERR instrument:interface:visa:unableToDetermineInterfaceType Resource string is invalid or resource was not found. | See <a href="matlab: helpview('instrument', 'visadev_connectError')">related documentation</a> for troubleshooting steps.
+ctor_tag_bad	ERR MATLAB:InputParser:ArgumentFailedValidation The value of 'Tag' is invalid. It must satisfy the function: @(x)isstring(x)||ischar(x).
+ctor_bogus_nv	ERR MATLAB:InputParser:ArgumentFailedValidation The value of 'SynchronousRead' is invalid. It must satisfy the function: @(x)isempty(x)||islogical(x).
+ctor_odd_nv	ERR MATLAB:InputParser:ArgumentFailedValidation The value of 'SynchronousRead' is invalid. It must satisfy the function: @(x)isempty(x)||islogical(x).
+ctor_sync_num	ERR MATLAB:InputParser:ArgumentFailedValidation The value of 'SynchronousRead' is invalid. It must satisfy the function: @(x)isempty(x)||islogical(x).
+ctor_sync_two	ERR MATLAB:InputParser:ParamMustBeChar Expected a string scalar or character vector for the parameter name.
+ctor_reset	ERR MATLAB:unassignedOutputs Output argument "v" (and possibly others) not assigned a value in the execution with "visadev" function.
+find_none	double [0 0] []
+find_tag	double [0 0] []
+find_bogus	double [0 0] []
+preferred	string [1 1] "National Instruments VISA"
+installs	struct [1 1] struct(Index,ID,Preferred,GUID,Name)

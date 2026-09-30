@@ -1,0 +1,104 @@
+CHK|ctor_sent|double:[42 73 68 78 63 10]|exact
+CHK|class|visalib.TCPIP|exact
+CHK|properties|cell:{char:BoardIndex;char:LANName;char:InstrumentAddress;char:ByteOrder;char:Terminator;char:Timeout;char:ErrorOccurredFcn;char:UserData;char:NumBytesWritten;char:PreferredVisa;char:ResourceName;char:Alias;char:Vendor;char:Model;char:SerialNumber;char:Type;char:Tag;char:EOIMode}|exact
+CHK|methods|cell:{char:addlistener;char:configureTerminator;char:eq;char:findobj;char:findprop;char:flush;char:ge;char:get;char:gt;char:isvalid;char:le;char:listener;char:lt;char:ne;char:notify;char:read;char:readbinblock;char:readline;char:set;char:visastatus;char:write;char:writebinblock;char:writeline;char:writeread}|exact
+CHK|prop_ResourceName|string:TCPIP0::127.0.0.1::hislip0::INSTR|exact
+CHK|prop_Alias|string:|exact
+CHK|prop_Vendor|string:JGraph|exact
+CHK|prop_Model|string:PeerSim|exact
+CHK|prop_SerialNumber|string:SN0001|exact
+CHK|prop_PreferredVisa|string:National Instruments VISA|exact
+CHK|prop_LANName|string:hislip0|exact
+CHK|prop_InstrumentAddress|string:127.0.0.1|exact
+CHK|prop_BoardIndex|double:0|exact
+CHK|prop_ByteOrder|string:little-endian|exact
+CHK|prop_Timeout|double:1|exact
+CHK|prop_Terminator|cell:{string:off;string:LF}|exact
+CHK|prop_Tag|string:|exact
+CHK|prop_Type|tcpip|exact
+CHK|prop_EOIMode|on|exact
+CHK|prop_EOIMode_class|matlab.lang.OnOffSwitchState|exact
+CHK|eoi_logical|logical:1|exact
+CHK|eoi_eq|logical:1|exact
+CHK|eoi_eq_true|logical:1|exact
+CHK|hidden_KeepAlive|off|exact
+CHK|hidden_NoDelay|on|exact
+CHK|hidden_ResourceClass|string:INSTR|exact
+CHK|hidden_EOSCharCode|string:off|exact
+CHK|hidden_EOSCharCode_warn|transportlib:legacy:EOSCharCodeMismatch ## EOSCharCode returned is not meaningful because read/write-terminators differ. / Read-terminator is set to off  and write-terminator is set to LF.|exact
+CHK|readline_end|string:hi|exact
+CHK|readline_whole_message|string:ab / cd|exact
+CHK|read2|double:[1 2]|exact
+CHK|read_rest3|double:[3 4 5]|exact
+CHK|read_short|double:[1 2]|exact
+CHK|read_short_warn|transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'visadev' unable to read all requested data. For more information on possible reasons, see visadev Read Warnings.|exact
+CHK|read_nothing|double:[] [0 0]|exact
+CHK|read_nothing_warn|transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'visadev' unable to read any data. For more information on possible reasons, see visadev Read Warnings.|exact
+CHK|readline_nothing|instrument:interface:visa:operationTimedOut ## Timeout expired before the operation completed.|exact
+CHK|writeread_idn|string:JGraph,PeerSim,SN0001,1.0 / |exact
+CHK|read_idn_head|char:JGrap|exact
+CHK|read_idn_rest|string:h,PeerSim,SN0001,1.0 / |exact
+CHK|read_after_new_message|double:[3 4 5]|exact
+CHK|read_odd_u16|transportlib:generic:ReadFailed ## Error reading data from the transport: / The first input must contain a multiple of 2 elements to convert from real uint8 (8 bits) to real uint16 (16 bits).|exact
+CHK|write_recv|double:[1 2 3]|exact
+CHK|writeline_recv|double:[97 98 99 10]|exact
+CHK|term_cr|string:CR|exact
+CHK|readline_cr|string:A|exact
+CHK|readline_cr_rest|double:[] [0 0]|exact
+CHK|readline_cr_rest_warn|transportlib:client:ReadlineWarning ## The specified amount of data was not returned within the Timeout period for 'readline'. / 'visadev' unable to read any data. For more information on possible reasons, see visadev Read Warnings.|exact
+CHK|term_off|cell:{string:off;string:LF}|exact
+CHK|readline_off_with_leftover|string:BA / B|exact
+CHK|readline_lf|string:A|exact
+CHK|readline_lf2|string:B|exact
+CHK|eoi_off|off|exact
+CHK|eoi_off_recv|double:[120 10]|exact
+CHK|eoi_partial|off|exact
+CHK|eoi_two|on|exact
+CHK|eoi_false|off|exact
+CHK|eoi_bad|MATLAB:validation:UnableToConvert ## Error setting property 'EOIMode' of class 'visalib.EOIModeSupport'. 'maybe' is invalid. Value must be 'off' or 'on'.|exact
+CHK|visastatus_ready|logical:0|exact
+CHK|visastatus_status|double:65|exact
+CHK|visastatus_one|logical:0|exact
+CHK|visastatus_status0|double:0|exact
+CHK|visastatus_args|MATLAB:TooManyInputs ## Too many input arguments.|exact
+CHK|clear_after_flush|char:00000001|exact
+CHK|clear_after_flush_input|char:00000001|exact
+CHK|clear_after_clrdevice|char:00000002|exact
+CHK|read_after_clear|double:[] [0 0]|exact
+CHK|visatrigger|MATLAB:UndefinedFunction ## Undefined function 'visatrigger' for input arguments of type 'visalib.TCPIP'.|exact
+CHK|binblock_recv|double:[35 49 51 1 2 3]|exact
+CHK|readbinblock|double:[1 2 3]|exact
+CHK|readbinblock_after|double:65|exact
+CHK|readbinblock_short|double:[65 66]|exact
+CHK|readbinblock_short_warn|none|exact
+CHK|second|instrument:interface:visa:multipleIdenticalResources ## Creating a second device for the TCPIP0::127.0.0.1::HISLIP0::INSTR resource is not supported. / See related documentation for troubleshooting steps.|exact
+CHK|timeout|double:3.5|exact
+CHK|sock_ctor_sent|double:[42 73 68 78 63 10]|exact
+CHK|sock_class|visalib.Socket|exact
+CHK|sock_properties|cell:{char:IPAddress;char:Port;char:ByteOrder;char:Terminator;char:Timeout;char:ErrorOccurredFcn;char:UserData;char:NumBytesWritten;char:PreferredVisa;char:ResourceName;char:Alias;char:Vendor;char:Model;char:SerialNumber;char:Type;char:Tag;char:EOIMode}|exact
+CHK|sock_methods|cell:{char:addlistener;char:configureTerminator;char:eq;char:findobj;char:findprop;char:flush;char:ge;char:get;char:gt;char:isvalid;char:le;char:listener;char:lt;char:ne;char:notify;char:read;char:readbinblock;char:readline;char:set;char:visastatus;char:write;char:writebinblock;char:writeline;char:writeread}|exact
+CHK|sock_prop_ResourceName|string:TCPIP0::127.0.0.1::5025::SOCKET|exact
+CHK|sock_prop_Alias|string:|exact
+CHK|sock_prop_Vendor|string:|exact
+CHK|sock_prop_Model|string:|exact
+CHK|sock_prop_SerialNumber|string:|exact
+CHK|sock_prop_IPAddress|string:127.0.0.1|exact
+CHK|sock_prop_Port|double:5025|exact
+CHK|sock_prop_Terminator|string:LF|exact
+CHK|sock_prop_Timeout|double:1|exact
+CHK|sock_prop_Type|socket|exact
+CHK|sock_prop_EOIMode|on|exact
+CHK|sock_writeread|string:JGraph,PeerSim,SN0001,1.0|exact
+CHK|sock_readline|string:ab|exact
+CHK|sock_readline_partial|double:[] [0 0]|exact
+CHK|sock_readline_partial_warn|transportlib:client:ReadlineWarning ## The specified amount of data was not returned within the Timeout period for 'readline'. / 'visadev' unable to read any data. For more information on possible reasons, see visadev Read Warnings.|exact
+CHK|sock_readline_partial_kept|double:[99 100]|exact
+CHK|sock_read_short|double:[1 2]|exact
+CHK|sock_read_short_warn|transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'visadev' unable to read all requested data. For more information on possible reasons, see visadev Read Warnings.|exact
+CHK|sock_read_nothing|double:[] [0 0]|exact
+CHK|sock_read_nothing_warn|transportlib:client:ReadWarning ## The specified amount of data was not returned within the Timeout period for 'read'. / 'visadev' unable to read any data. For more information on possible reasons, see visadev Read Warnings.|exact
+CHK|sock_readline_nothing|instrument:interface:visa:operationTimedOut ## Timeout expired before the operation completed.|exact
+CHK|sock_visastatus|instrument:interface:visa:visaStatusUnavailableAsConfigured ## Unable to determine status for TCPIP0::127.0.0.1::5025::SOCKET resource in the current configuration.|exact
+CHK|sock_flush|none|exact
+CHK|sock_second|instrument:interface:visa:multipleIdenticalResources ## Creating a second device for the TCPIP0::127.0.0.1::5025::SOCKET resource is not supported. / See related documentation for troubleshooting steps.|exact
+CHK|sock_localhost_address|string:127.0.0.1|exact

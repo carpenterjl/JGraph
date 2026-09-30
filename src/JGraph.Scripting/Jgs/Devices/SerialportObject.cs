@@ -13,7 +13,7 @@ namespace JGraph.Scripting.Jgs.Devices;
 /// setter raises, the methods of the shared client, pins and break, the preferences the no-argument
 /// constructor reads, and the hidden legacy methods and properties of its <c>Legacy*</c> mixins.
 /// </summary>
-internal sealed class SerialportObject : DeviceObject
+internal sealed class SerialportObject : DeviceObject, ILegacyTransport
 {
     /// <summary>The serialport interface's settings on the shared client (internal.Serialport's registries).</summary>
     internal static readonly TransportInterface Interface = new()
@@ -46,7 +46,7 @@ internal sealed class SerialportObject : DeviceObject
     private const string DocLink = "See <a href=\"matlab: helpview('matlab', 'serialport_connectError')\">related documentation</a> for troubleshooting steps.";
 
     /// <summary>The legacy properties R2025b answers with [] and a warning (LegacyBase).</summary>
-    private static readonly string[] UnsupportedProperties =
+    internal static readonly string[] UnsupportedProperties =
     [
         "BreakInterruptFcn", "BusManagementStatus", "BytesToOutput", "CompareBits", "ConfirmationFcn", "DatagramAddress",
         "DatagramPort", "DataTerminalReady", "DriverName", "DriverSessions", "DriverType", "HandshakeStatus",
@@ -57,7 +57,7 @@ internal sealed class SerialportObject : DeviceObject
         "TriggerLine", "TriggerType", "ValuesReceived", "ValuesSent",
     ];
 
-    private static readonly string[] UnsupportedMethods =
+    internal static readonly string[] UnsupportedMethods =
         ["instrhelp", "readasync", "stopasync", "propinfo", "record", "instrid", "instrsupport", "instrcallback", "instrnotify", "instrfind", "instrfindall"];
 
     private static readonly DeviceClass Declaration = Declare();
@@ -94,7 +94,8 @@ internal sealed class SerialportObject : DeviceObject
 
     /// <summary>isequal as serialportfind compares: text by its characters (a char row equals a string), the rest by value.</summary>
     internal static bool SameValue(JgsValue a, JgsValue b) =>
-        DeviceChecks.IsText(a) && DeviceChecks.IsText(b)
+        a.AsExternalOrNull() is DeviceEnumValue member ? member.Matches(b)
+        : DeviceChecks.IsText(a) && DeviceChecks.IsText(b)
             ? DeviceChecks.Text(a) == DeviceChecks.Text(b)
             : JgsStdlib.DeepEquals(a, b);
 
@@ -610,6 +611,23 @@ internal sealed class SerialportObject : DeviceObject
         LiveOrThrow(call.Line, call.Column);
         return Client;
     }
+
+    // What the legacy mixins reach: the client's own methods.
+    TransportClient ILegacyTransport.Live(DeviceCall call) => Live(call);
+
+    JgsValue ILegacyTransport.LegacyRead(DeviceCall call) => Live(call).Read(call);
+
+    JgsValue ILegacyTransport.LegacyReadLine(DeviceCall call) => Live(call).ReadLine(call);
+
+    JgsValue ILegacyTransport.LegacyWriteRead(DeviceCall call) => Live(call).WriteRead(call);
+
+    JgsValue ILegacyTransport.LegacyReadBinblock(DeviceCall call) => Live(call).ReadBinblock(call);
+
+    void ILegacyTransport.LegacyWrite(DeviceCall call) => Live(call).Write(call);
+
+    void ILegacyTransport.LegacyWriteLine(DeviceCall call) => Live(call).WriteLine(call);
+
+    void ILegacyTransport.LegacyWriteBinblock(DeviceCall call) => Live(call).WriteBinblock(call);
 
     private static void Unsupported(DeviceCall call, string key, string name) =>
         JgsBuiltins.Warn(call.Host, "transportlib:legacy:" + key,

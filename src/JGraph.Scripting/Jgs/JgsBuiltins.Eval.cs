@@ -81,6 +81,9 @@ internal static partial class JgsBuiltins
 
         // Stage D3: Bluetooth classic and Low Energy.
         "bluetooth", "bluetoothlist", "ble", "blelist",
+
+        // Stage D4: VISA instruments.
+        "visadev", "visadevlist", "visadevfind",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>

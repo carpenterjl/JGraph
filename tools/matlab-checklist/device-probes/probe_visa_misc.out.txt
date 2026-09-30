@@ -1,0 +1,92 @@
+list_sent_to_serial	double [1 0] []
+list_custom_vendor	string [1 1] ""
+list_custom_sent	double [1 0] []
+list_id_true	string [1 1] "COM20"
+srq_ready	logical [1 1] false
+srq_status	double [1 1] 65
+srq_ready_again	logical [1 1] false
+srq_status_again	double [1 1] 65
+visastatus_class	char [1 7] 'logical'
+inst_after_flush	char [1 8] '00000001'
+clrdevice	char [1 4] 'none'
+inst_after_clrdevice	char [1 8] '00000002'
+inst_after_flush_input	char [1 8] '00000002'
+readfailed	char [1 191] 'transportlib:generic:ReadFailed ## Error reading data from the transport: / The first input must contain a multiple of 2 elements to convert from real uint8 (8 bits) to real uint16 (16 bits).'
+rbb_bad	char [1 143] 'instrument:interface:visa:unableToCompleteOperation ## Unable to fully execute command 'readbinblock: Bad input: std::invalid_argument thrown'.'
+rbb_zero	char [1 143] 'instrument:interface:visa:unableToCompleteOperation ## Unable to fully execute command 'readbinblock: Bad input: std::invalid_argument thrown'.'
+read_vec	char [1 93] 'MATLAB:validation:IncompatibleSize ## Invalid argument at position 1. Value must be a scalar.'
+read_str_count	char [1 199] 'MATLAB:GenericClient:invalidType ## Expected input number 2, count, to be one of these types: / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / Instead its type was string.'
+read_prec_num	char [1 71] 'transportlib:transport:unknownPrecision ## Invalid precision specified.'
+read_prec_upper	char [1 71] 'transportlib:transport:unknownPrecision ## Invalid precision specified.'
+rbb_prec_bad	char [1 94] 'instrument:interface:visa:operationTimedOut ## Timeout expired before the operation completed.'
+writeread_num	char [1 118] 'transportlib:transport:invalidDataType ## Expected input number 2, data, to be a scalar string or a 1-by-n char array.'
+writeread_two	char [1 49] 'MATLAB:TooManyInputs ## Too many input arguments.'
+eoi_of	char [1 4] 'none'
+eoi_after_of	char [1 3] 'off'
+eoi_two	char [1 4] 'none'
+eoi_after_two	char [1 2] 'on'
+[Warning: Unable to set the timeout value to 0.0004. Setting timeout to 0 instead.] 
+timeout_warn	char [1 66] 'transportlib:client:InvalidType ## Expected Timeout to be nonzero.'
+timeout_warn_text	char [1 125] 'instrument:interface:visa:unableToSetTimeoutValue ## Unable to set the timeout value to 0.0004. Setting timeout to 0 instead.'
+timeout_after_warn	double [1 1] 0
+attr_after_warn	char [1 214] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=0 SEND_END_EN=1 SUPPRESS_END_EN=0'
+timeout_single	char [1 117] 'transportlib:client:InvalidType ## Expected Timeout to be one of these types: / double / Instead its type was single.'
+timeout_int	char [1 115] 'transportlib:client:InvalidType ## Expected Timeout to be one of these types: / double / Instead its type was int8.'
+timeout_nan	char [1 65] 'transportlib:client:InvalidType ## Expected Timeout to be finite.'
+timeout_vec	char [1 67] 'transportlib:client:InvalidType ## Expected Timeout to be a scalar.'
+[Warning: Unable to set the timeout value to 1.2345. Setting timeout to 1.235 instead.] 
+timeout_1_2345	char [1 4] 'none'
+timeout_after	double [1 1] 1.2350000000000001
+attr_1_2345	char [1 217] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=ERR(instrument:interface:visa:standardAdaptorCommandFailed) ASRL_END_OUT=ERR(instrument:interface:visa:standardAdaptorCommandFailed) TMO_VALUE=1235 SEND_END_EN=1 SUPPRESS_END_EN=0'
+byteorder_partial	char [1 4] 'none'
+byteorder_after	string [1 1] "big-endian"
+tag_char	char [1 4] 'none'
+tag_after	string [1 1] "abc"
+tag_class	char [1 6] 'string'
+tag_cell	char [1 108] 'MATLAB:TagAccessor:expectedScalartext ## Expected TAG to be a non-missing string scalar or character vector.'
+userdata_after	char [1 6] 'double'
+type_eq	logical [1 1] true
+type_eq_char	logical [1 1] true
+type_char	char [1 5] 'tcpip'
+type_string	string [1 1] "tcpip"
+type_isequal	logical [1 1] true
+type_disp	OUT     tcpip |
+type_echo	OUT | t = | InterfaceType enumeration | tcpip |
+eoi_echo	OUT | e = | OnOffSwitchState enumeration | on |
+eoi_logical	logical [1 1] true
+eoi_eq	logical [1 1] true
+eoi_if	double [1 1] 1
+parity_partial	char [1 4] 'none'
+parity_after	char [1 4] 'even'
+parity_upper	char [1 4] 'none'
+parity_after_upper	char [1 3] 'odd'
+flow_partial	char [1 4] 'none'
+flow_after	char [1 8] 'hardware'
+baud_char	char [1 4] 'none'
+baud_after_char	double [1 1] 120
+databits_str	char [1 4] 'none'
+databits_after	double [1 1] 7
+stopbits_15_msg	char [1 144] 'instrument:interface:visa:inconsistentAttributeState ## Unable to set this attribute because this value puts the instrument in an invalid state.'
+stopbits_after	double [1 1] 1
+stopbits_15_db5	char [1 4] 'none'
+stopbits_after_db5	double [1 1] 1.5
+peer_breaks_after_flush	char [1 8] '11100001'
+peer_recv_after_flush	double [1 1] 0
+partial_read	char [1 94] 'instrument:interface:visa:operationTimedOut ## Timeout expired before the operation completed.'
+readline_after_failed_read	char [1 94] 'instrument:interface:visa:operationTimedOut ## Timeout expired before the operation completed.'
+attr_after_failed	char [1 101] 'TERMCHAR_EN=0 TERMCHAR=10 ASRL_END_IN=0 ASRL_END_OUT=0 TMO_VALUE=1000 SEND_END_EN=1 SUPPRESS_END_EN=0'
+readline_after_reconfig	string [1 1] "hi"
+readline_cr_lf	char [1 4] 'none'
+ps_class	char [1 6] 'struct'
+ps_fields	cell [4 1] {char [1 11] 'ClearToSend'; char [1 13] 'DataSendReady'; char [1 13] 'CarrierDetect'; char [1 13] 'RingIndicator'}
+ps_cts_eq	logical [1 1] true
+ctor_lower	char [1 4] 'none'
+ctor_lower_name	string [1 1] "ASRL20::INSTR"
+ctor_lower_port	string [1 1] "ASRL20"
+ctor_lower_tcpip	string [1 1] "TCPIP0::127.0.0.1::hislip0::INSTR"
+ctor_noboard_tcpip	string [1 1] "TCPIP0::127.0.0.1::hislip0::INSTR"
+sock_intf	string [1 1] "TCPIP0::127.0.0.1::5025::SOCKET"
+sock_localhost	string [1 1] "127.0.0.1"
+ctor_took_hislip	double [1 1] 0.20000000000000001
+ctor_took_sock	double [1 1] 0.10000000000000001
+ctor_took_asrl	double [1 1] 0.10000000000000001

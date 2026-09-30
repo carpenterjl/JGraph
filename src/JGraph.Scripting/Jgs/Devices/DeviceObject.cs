@@ -66,11 +66,39 @@ internal sealed class DeviceClass
         MethodListing = methodListing;
         DisplayProperties = displayProperties;
         _byName = properties.ToDictionary(static p => p.Name, StringComparer.Ordinal);
+        foreach (string method in methods.Keys)
+        {
+            AllMethodNames.TryAdd(method, 0);
+        }
+
         _byNameIgnoringCase = new Dictionary<string, DeviceProperty>(StringComparer.OrdinalIgnoreCase);
         foreach (DeviceProperty property in properties)
         {
             _byNameIgnoringCase.TryAdd(property.Name, property);
         }
+    }
+
+    /// <summary>Every method name any device class declares, filled as each class is declared.</summary>
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> AllMethodNames = new(StringComparer.Ordinal);
+
+    private static int s_allDeclared;
+
+    /// <summary>
+    /// Whether some device class has a method <paramref name="name"/> (serialport's serialbreak, a GPIB
+    /// visadev's visatrigger): a call of it on an object whose class has none is R2025b's
+    /// "Undefined function … for input arguments of type …", not an unknown name.
+    /// </summary>
+    public static bool IsSomeClassMethod(string name)
+    {
+        if (Interlocked.Exchange(ref s_allDeclared, 1) == 0)
+        {
+            foreach (Type type in typeof(DeviceClass).Assembly.GetTypes().Where(static t => t.IsSubclassOf(typeof(DeviceObject)) && !t.IsAbstract))
+            {
+                System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+            }
+        }
+
+        return AllMethodNames.ContainsKey(name);
     }
 
     /// <summary>What <c>class</c> answers: <c>internal.Serialport</c>.</summary>
@@ -229,6 +257,11 @@ internal abstract class DeviceObject : IJgsExternal
         if (value.Type == JgsType.Function)
         {
             return JgsBuiltins.SourceTextOf("disp", value, 0, 0);
+        }
+
+        if (value.AsExternalOrNull() is DeviceEnumValue member)
+        {
+            return member.Choice;
         }
 
         if (value.Type == JgsType.Array && value.ArrayLength == 0 && !value.IsStringArray)

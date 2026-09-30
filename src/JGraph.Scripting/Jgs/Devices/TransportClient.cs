@@ -471,6 +471,16 @@ internal sealed class TransportClient
         return JgsValue.StringScalar(line);
     }
 
+    /// <summary>
+    /// <c>readline</c> with the client's error on read (visadev's writeread): the line, or null when the
+    /// terminator did not come in the timeout, and no warning.
+    /// </summary>
+    public JgsValue? TryReadLine(DeviceCall call)
+    {
+        LiveTransport(call);
+        return TakeLine(call) is { } line ? JgsValue.StringScalar(line) : null;
+    }
+
     /// <summary>Waits up to the timeout for a whole line and takes it; null when none came.</summary>
     private string? TakeLine(DeviceCall call)
     {

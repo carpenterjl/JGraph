@@ -195,11 +195,11 @@ internal sealed class TcpclientObject : DeviceObject
     }
 
     /// <summary>ByteOrder through the client's setProperty: validatestring's words under transportlib:client:InvalidType.</summary>
-    internal static string ByteOrderOf(JgsValue value, DeviceCall call)
+    internal static string ByteOrderOf(JgsValue value, DeviceCall call, string? name = null)
     {
         try
         {
-            return DeviceChecks.ValidateString(TransportClient.Str2Char(value), ["little-endian", "big-endian"], new DeviceChecks.Subject(null, null), call.Line, call.Column);
+            return DeviceChecks.ValidateString(TransportClient.Str2Char(value), ["little-endian", "big-endian"], new DeviceChecks.Subject(null, name), call.Line, call.Column);
         }
         catch (JgsRuntimeException e)
         {

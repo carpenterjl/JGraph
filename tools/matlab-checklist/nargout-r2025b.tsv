@@ -2068,6 +2068,9 @@ vertcat	1	5
 VideoWriter	1	2
 view	-1	2
 viewmtx	1	2
+visadev	1	2
+visadevfind	1	2
+visadevlist	1	2
 visboundaries	1	2
 viscircles	1	2
 volumebounds	1	2

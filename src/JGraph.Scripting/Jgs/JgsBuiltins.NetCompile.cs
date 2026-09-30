@@ -47,6 +47,9 @@ internal static partial class JgsBuiltins
 
                 // Test-only (device classes plan, stage D3): the simulated Bluetooth radio and peer.
                 ["btsim"] = BluetoothSimFunction(interpreter),
+
+                // Test-only (device classes plan, stage D4): the simulated VISA and its instruments.
+                ["visasim"] = VisaSimFunction(interpreter),
             }),
         }));
     }

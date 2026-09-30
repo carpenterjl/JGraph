@@ -1,12 +1,13 @@
 function out = dp(s, cmd)
 % DP  Send one command to the device on the far end of serialport s (see device_peer) and answer its
 %   reply: 'recv' answers the data bytes it received since the last recv as a double row, 'status'
-%   the eight characters of its pin and break status; every other command answers [].
+%   the eight characters of its pin and break status, 'inst' the eight of its trigger and clear
+%   counts; every other command answers [].
 %   The command travels in band (ESC ESC { text }), so it is never data. Reply commands flush the
 %   input first, so a stray byte cannot shift the reply.
 cmd = char(cmd);
 verb = strtok(cmd);
-if any(strcmp(verb, {'recv', 'status'}))
+if any(strcmp(verb, {'recv', 'status', 'inst'}))
     flush(s, "input");
 end
 write(s, [27 27 double('{') double(cmd) double('}')], "uint8");
@@ -18,7 +19,7 @@ switch verb
         else
             out = hex2dec(reshape(read(s, 2 * n, "char"), 2, [])')';
         end
-    case 'status'
+    case {'status', 'inst'}
         out = read(s, 8, "char");
     otherwise
         out = [];

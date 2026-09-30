@@ -1,0 +1,62 @@
+% probe_visa_env: visadev with NI-VISA installed and nothing but the com0com pair attached -- the
+% list, its shape and refusals, the constructor's refusals before and after the resource is found,
+% visadevfind, and the preferred VISA.
+dv_pr('which_visadev', 'which(''visadev'')');
+t0 = tic;
+dv_pr('list', 'visadevlist');
+dv_pr('list_took', 'round(toc(t0))');
+L = visadevlist("Timeout", 2);
+dv_pr('list_class', 'class(L)');
+dv_pr('list_vars', 'L.Properties.VariableNames');
+dv_pr('list_rownames', 'L.Properties.RowNames');
+dv_pr('list_names', 'L.ResourceName');
+dv_pr('list_alias', 'L.Alias');
+dv_pr('list_vendor', 'L.Vendor');
+dv_pr('list_model', 'L.Model');
+dv_pr('list_serial', 'L.SerialNumber');
+dv_pr('list_type', 'L.Type');
+dv_pr('list_type_class', 'class(L.Type)');
+dv_px('list_disp', 'disp(L)');
+dv_pr('list_noid', 'visadevlist("Timeout", 2, "Identification", false)');
+dv_pr('list_t1', 'visadevlist("Timeout", 1)');
+dv_pr('list_tstr', 'visadevlist("Timeout", "5")');
+dv_pr('list_tinf', 'visadevlist("Timeout", Inf)');
+dv_pr('list_tvec', 'visadevlist("Timeout", [3 4])');
+dv_pr('list_tdur', 'size(visadevlist("Timeout", seconds(3)))');
+dv_pr('list_case', 'size(visadevlist("timeout", 3))');
+dv_pr('list_partial', 'visadevlist("Time", 3)');
+dv_pr('list_bogus', 'visadevlist("Bogus", 3)');
+dv_pr('list_odd', 'visadevlist("Timeout")');
+dv_pr('list_five', 'visadevlist("Timeout", 3, "Identification", true, 4)');
+dv_pr('list_id_num', 'visadevlist("Timeout", 3, "Identification", 1)');
+dv_pr('list_id_vec', 'visadevlist("Timeout", 3, "Identification", [true false])');
+dv_pr('list_id_1d', 'visadevlist("Timeout", 3, "Identification", ["ASRL20::INSTR" "*IDN?" "x"])');
+dv_pr('list_id_pair', 'size(visadevlist("Timeout", 3, "Identification", ["ASRL20::INSTR" "*IDN?"]))');
+dv_pr('list_id_dup', 'visadevlist("Timeout", 3, "Identification", ["ASRL20::INSTR" "*IDN?"; "ASRL20::INSTR" "*IDN?"])');
+dv_pr('list_id_badname', 'visadevlist("Timeout", 3, "Identification", ["NOPE" "*IDN?"])');
+dv_pr('list_nargout0', 'evalc(''visadevlist("Timeout", 2)'')');
+
+% the constructor's refusals
+dv_pr('ctor_none', 'visadev');
+dv_pr('ctor_empty', 'visadev("")');
+dv_pr('ctor_emptychar', 'visadev('''')');
+dv_pr('ctor_num', 'visadev(5)');
+dv_pr('ctor_cell', 'visadev({''ASRL20::INSTR''})');
+dv_pr('ctor_strvec', 'visadev(["a" "b"])');
+dv_pr('ctor_bad', 'visadev("NOPE")');
+dv_pr('ctor_bad2', 'visadev("GPIB0::5::INSTR")');
+dv_pr('ctor_usb', 'visadev("USB0::0x1234::0x5678::SN1::INSTR")');
+dv_pr('ctor_asrl99', 'visadev("ASRL99::INSTR")');
+dv_pr('ctor_sock_closed', 'visadev("TCPIP0::127.0.0.1::1::SOCKET")');
+dv_pr('ctor_tcpip_instr', 'visadev("TCPIP0::127.0.0.1::inst0::INSTR")');
+dv_pr('ctor_tag_bad', 'visadev("ASRL20::INSTR", "Tag", 5)');
+dv_pr('ctor_bogus_nv', 'visadev("ASRL20::INSTR", "Bogus", 5)');
+dv_pr('ctor_odd_nv', 'visadev("ASRL20::INSTR", "Tag")');
+dv_pr('ctor_sync_num', 'visadev("ASRL20::INSTR", 1)');
+dv_pr('ctor_sync_two', 'visadev("ASRL20::INSTR", true, false)');
+dv_pr('ctor_reset', 'visadev("reset")');
+dv_pr('find_none', 'visadevfind');
+dv_pr('find_tag', 'visadevfind("Tag", "x")');
+dv_pr('find_bogus', 'visadevfind("Bogus", "x")');
+dv_pr('preferred', 'visalib.internal.ConflictManager.getPreferredVisa');
+dv_pr('installs', 'visalib.internal.ConflictManager.getVisaInstallationInfo');
