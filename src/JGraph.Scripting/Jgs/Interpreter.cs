@@ -2494,6 +2494,17 @@ internal sealed partial class Interpreter
             return zeroArgument.CallMultiple(System.Array.Empty<JgsValue>(), wanted, bare.Line, bare.Column);
         }
 
+        // The same for a package function named bare, `[disks, volumes] = jgraph.usb.storage`: the
+        // dotted name is the call, asked for every output. The chain is walked through struct fields
+        // alone, so nothing on the way is called or evaluated twice.
+        if (call is MemberExpr dotted && PackageMember(dotted, env) is { Type: JgsType.Function } member
+            && member.AsCallable is BuiltinFunction { AutoCallsBare: true, MultiOutput: not null } packaged)
+        {
+            callee = packaged;
+            JgsOutputDemand.Refuse(callee, wanted, dotted.Line, dotted.Column);
+            return packaged.CallMultiple(System.Array.Empty<JgsValue>(), wanted, dotted.Line, dotted.Column);
+        }
+
         // [a, b] = c{1:2} distributes a comma-separated list across the targets. It is not a call at
         // all, which is why it reaches this far: the list is the several values, already in order.
         if (call is BraceIndexExpr or MemberExpr)
@@ -2502,6 +2513,26 @@ internal sealed partial class Interpreter
         }
 
         return [Evaluate(call, env)];
+    }
+
+    /// <summary>
+    /// What a dotted chain of literal names (<c>jgraph.usb.storage</c>) names when every link but the
+    /// last is a scalar struct, read field by field with nothing called; null for anything else.
+    /// </summary>
+    private JgsValue? PackageMember(MemberExpr dotted, JgsEnvironment env)
+    {
+        if (dotted.Field is not { } field)
+        {
+            return null;
+        }
+
+        JgsValue? owner = dotted.Target switch
+        {
+            VariableExpr root => _resolver.Value(root.Name, env) is { Found: true } named ? named.Value : null,
+            MemberExpr inner => PackageMember(inner, env),
+            _ => null,
+        };
+        return owner is { Type: JgsType.Struct, IsStructArray: false } && owner.AsStruct.TryGetValue(field, out JgsValue? value) ? value : null;
     }
 
     /// <summary>

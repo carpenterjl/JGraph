@@ -1,0 +1,15 @@
+# storage_smoke.jgs -- jgraph.usb.storage and jgraph.usb.eject (device classes plan, stage D9, ADR 0192).
+# JGraph extensions with no MATLAB counterpart, so this is a JGraph-only fixture and
+# expected/storage_smoke.txt is written from the rule. The cases are MATLAB code in
+# helpers/storage_smoke.m and answer the same on any Windows machine: the filters match no device, and
+# nothing is ejected.
+
+print("CHK|disk_columns|" + storage_smoke("disk_columns") + "|exact");
+print("CHK|volume_columns|" + storage_smoke("volume_columns") + "|exact");
+print("CHK|none|" + storage_smoke("none") + "|exact");
+print("CHK|bare_two|" + storage_smoke("bare_two") + "|exact");
+print("CHK|bad_filter|" + storage_smoke("bad_filter") + "|exact");
+print("CHK|eject_none|" + storage_smoke("eject_none") + "|exact");
+print("CHK|eject_number|" + storage_smoke("eject_number") + "|exact");
+print("CHK|eject_not_usb_drive|" + storage_smoke("eject_not_usb_drive") + "|exact");
+print("CHK|eject_no_device|" + storage_smoke("eject_no_device") + "|exact");

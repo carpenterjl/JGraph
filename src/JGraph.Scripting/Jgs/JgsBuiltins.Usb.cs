@@ -45,6 +45,10 @@ internal static partial class JgsBuiltins
         ["dfufile"] = UsbFunction("jgraph.usb.dfufile", (args, _, line, col) => OperatingSystem.IsWindows() ? DfuObject.FileInfo(interpreter.Host, args, line, col) : JgsValue.Null),
         ["dfusuffix"] = UsbFunction("jgraph.usb.dfusuffix", (args, _, line, col) => OperatingSystem.IsWindows() ? DfuObject.Suffix(args, line, col) : JgsValue.Null),
 
+        // Stage D9 (ADR 0192): USB disks and their volumes, and ejecting a device.
+        ["storage"] = UsbMultiFunction("jgraph.usb.storage", (args, wanted, line, col) => OperatingSystem.IsWindows() ? UsbStorageTables(args, wanted, line, col) : [JgsValue.Null]),
+        ["eject"] = UsbFunction("jgraph.usb.eject", (args, _, line, col) => OperatingSystem.IsWindows() ? UsbEject(args, line, col) : JgsValue.Null),
+
         // Stage D6 (ADR 0189): HID collections.
         ["hidlist"] = UsbFunction("jgraph.usb.hidlist", (args, _, line, col) => OperatingSystem.IsWindows() ? HidObject.List(args, line, col) : JgsValue.Null),
         ["hid"] = UsbFunction("jgraph.usb.hid", (args, _, line, col) => OperatingSystem.IsWindows()

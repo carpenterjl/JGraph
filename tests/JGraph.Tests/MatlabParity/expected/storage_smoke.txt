@@ -1,0 +1,9 @@
+CHK|disk_columns|DiskNumber,VendorID,ProductID,Vendor,Product,Revision,SerialNumber,BusType,Removable,Size,BytesPerSector,Drives,Location,InstanceID|exact
+CHK|volume_columns|DiskNumber,Drive,Label,FileSystem,Capacity,Free,VolumeName|exact
+CHK|none|0 0 logical|exact
+CHK|bare_two|14 7|exact
+CHK|bad_filter|JGraph:usb:NameValue|exact
+CHK|eject_none|JGraph:usb:Nargin|exact
+CHK|eject_number|JGraph:usb:Nargin|exact
+CHK|eject_not_usb_drive|JGraph:usb:NotUsbDrive|exact
+CHK|eject_no_device|JGraph:usb:NoDevice|exact
