@@ -1293,6 +1293,7 @@ internal static class JgsBuiltinOutputCounts
         ["seconds"] = (1, true),
         ["semilogx"] = (1, false),
         ["semilogy"] = (1, false),
+        ["serialExplorer"] = (0, true),
         ["serialport"] = (1, true),
         ["serialportfind"] = (1, true),
         ["serialportlist"] = (1, true),

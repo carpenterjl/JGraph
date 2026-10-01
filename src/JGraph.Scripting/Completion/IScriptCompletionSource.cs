@@ -26,4 +26,12 @@ public interface IScriptCompletionSource
 
     /// <summary>The functions of a loaded library, each with its <c>libfunctions -full</c> signature.</summary>
     IReadOnlyList<CompletionItem> LibraryFunctions(string library);
+
+    /// <summary>
+    /// The device names <paramref name="function"/>'s first argument can take (ADR 0197): for
+    /// <c>serialport</c>, the serial ports. The default answers the machine's; a session adds the
+    /// ports only it has. Opens no device.
+    /// </summary>
+    IReadOnlyList<CompletionItem> DeviceNames(string function) =>
+        JGraph.Scripting.Jgs.Completion.DeviceCompletion.MachineNames(function);
 }

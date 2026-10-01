@@ -124,6 +124,9 @@
                                           MouseDoubleClick="OnFilesTreeDoubleClick" />
                             </DockPanel>
                         </dock:LayoutAnchorable>
+                        <dock:LayoutAnchorable Title="Devices" ContentId="devices" CanClose="False">
+                            <local:DevicesPane x:Name="DevicesPanel" />
+                        </dock:LayoutAnchorable>
                     </dock:LayoutAnchorablePane>
 
                     <dock:LayoutPanel Orientation="Vertical">
@@ -169,6 +172,9 @@
                             </dock:LayoutAnchorable>
                             <dock:LayoutAnchorable Title="Data Viewer" ContentId="dataviewer" CanClose="False">
                                 <controls:DataGridTableControl x:Name="DataViewer" CellEdited="OnDataViewerCellEdited" />
+                            </dock:LayoutAnchorable>
+                            <dock:LayoutAnchorable Title="Serial Explorer" ContentId="serialexplorer" CanClose="False">
+                                <local:SerialExplorerPane x:Name="SerialExplorerPanel" />
                             </dock:LayoutAnchorable>
                         </dock:LayoutAnchorablePane>
                     </dock:LayoutPanel>

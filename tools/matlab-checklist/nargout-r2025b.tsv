@@ -1765,6 +1765,7 @@ seconds	1	2
 semilogx	1	5
 semilogy	1	5
 seqperiod	ERR:MATLAB:narginout:doesNotApply	3
+serialExplorer	0	2
 serialport	1	2
 serialportfind	1	2
 serialportlist	1	6

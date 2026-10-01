@@ -32,6 +32,9 @@ public enum CompletionItemKind
 
     /// <summary>A loaded library, or one of its functions, offered inside <c>calllib('…'</c>.</summary>
     Library,
+
+    /// <summary>A device's name offered inside the string that opens it: a port in <c>serialport("…</c> (ADR 0197).</summary>
+    Device,
 }
 
 /// <summary>

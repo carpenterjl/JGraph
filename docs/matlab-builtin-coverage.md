@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,157 of
-2,024** as of device classes stage D10 (ADR 0193), which added `audiodevinfo`, `audiodevreset` and
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,158 of
+2,024** as of device classes stage D13 (ADR 0197), which added `serialExplorer`; 1,157 as of device
+classes stage D10 (ADR 0193), which added `audiodevinfo`, `audiodevreset` and
 `soundsc`, beside the classes `audioplayer` and `audiorecorder`, which the list does not name; 1,154
 as of device classes stage D6 (ADR 0189), whose `vrjoystick` is Simulink 3D Animation's and so not on the list; the same as of device classes stage D4 (ADR 0187), whose `visadev`, `visadevlist` and `visadevfind` are the
 Instrument Control Toolbox's and so not on the list; the same as of device classes stage D3 (ADR 0186), which added `bluetoothlist` and `blelist` beside

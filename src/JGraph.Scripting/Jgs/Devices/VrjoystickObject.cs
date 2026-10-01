@@ -24,11 +24,15 @@ internal sealed class VrjoystickObject : DeviceObject
     {
         _backend = backend;
         _id = id;
+        _name = backend.Caps(id)?.Name ?? "";
     }
+
+    /// <summary>The controller's name as it was when the object was made: what the Workspace pane shows without asking the device.</summary>
+    private readonly string _name;
 
     public override DeviceClass Class => Declaration;
 
-    public override string? Summary() => Deleted ? "closed" : _backend.Caps(_id)?.Name ?? "not connected";
+    public override string? Summary() => Deleted ? "closed" : _name.Length > 0 ? _name : $"joystick {_id + 1}";
 
     /// <summary>The constructor: its argument count, the deprecation warning, then the joystick or notconnected.</summary>
     public static JgsValue Create(DeviceSession session, Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)

@@ -241,9 +241,29 @@ internal static class DeviceChecks
 
                 break;
             case JgsType.Array:
+                // A packed real array is its buffer (ADR 0197): a megabyte written to a socket spent
+                // a quarter of a second being walked an element and an iterator at a time.
+                if (value.IsPacked && !value.IsPackedComplex && value.PackedKind == JgsPackedKind.Number)
+                {
+                    double[] raw = value.AsBuffer.AsSpan().ToArray();
+                    foreach (double x in raw)
+                    {
+                        yield return x;
+                    }
+
+                    break;
+                }
+
                 for (int i = 0; i < value.ArrayLength; i++)
                 {
-                    foreach (double x in Numbers(value.ElementAt(i)))
+                    JgsValue element = value.ElementAt(i);
+                    if (element.Type is JgsType.Number or JgsType.Bool)
+                    {
+                        yield return element.AsNumber;
+                        continue;
+                    }
+
+                    foreach (double x in Numbers(element))
                     {
                         yield return x;
                     }
@@ -252,6 +272,12 @@ internal static class DeviceChecks
                 break;
         }
     }
+
+    /// <summary><see cref="Numbers"/> as an array: a packed real array's buffer copied once, anything else walked.</summary>
+    public static double[] NumberArray(JgsValue value) =>
+        value.Type == JgsType.Array && value.IsPacked && !value.IsPackedComplex && value.PackedKind == JgsPackedKind.Number
+            ? value.AsBuffer.AsSpan().ToArray()
+            : Numbers(value).ToArray();
 
     /// <summary>Whether a value is a scalar string or a char row: the text the device functions take.</summary>
     public static bool IsText(JgsValue value) => JgsBuiltins.IsTextScalar(value);

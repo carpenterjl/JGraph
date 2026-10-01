@@ -56,10 +56,20 @@ public static class JgsCompletionEngine
                 return library;
             }
 
+            // serialport("…: the serial ports (ADR 0197).
+            if (DeviceCompletion.NameArgument(code, offset, names) is { } device)
+            {
+                return device;
+            }
+
             if (!IsInStringOrComment(code, replaceStart, matlab) && DottedQualifier(code, replaceStart) is { } qualifier)
             {
                 string typed = code[replaceStart..offset];
-                var members = names.Members(qualifier)
+                // jgraph and its packages are JGraph's own (ADR 0197); every other dotted name is .NET's.
+                IEnumerable<CompletionItem> offered = DeviceCompletion.PackageMembers(qualifier) is { } package
+                    ? package.Concat(names.Members(qualifier))
+                    : names.Members(qualifier);
+                var members = offered
                     .Where(i => i.Text.StartsWith(typed, StringComparison.OrdinalIgnoreCase))
                     .DistinctBy(static i => i.Text)
                     .OrderBy(static i => i.Text, StringComparer.OrdinalIgnoreCase)
@@ -98,7 +108,10 @@ public static class JgsCompletionEngine
 
         foreach (JgsBuiltinInfo builtin in JgsBuiltinCatalog.All)
         {
-            Offer(new CompletionItem(builtin.Name, CompletionItemKind.Builtin, builtin.Signature, builtin.Summary));
+            // A package root is completed to its name, for the dot that follows, not to a call.
+            Offer(PackageRoots.Contains(builtin.Name)
+                ? new CompletionItem(builtin.Name, CompletionItemKind.Namespace, Signature: null, builtin.Summary)
+                : new CompletionItem(builtin.Name, CompletionItemKind.Builtin, builtin.Signature, builtin.Summary));
         }
 
         foreach (HarvestedSymbol symbol in Harvest(code))
@@ -156,8 +169,9 @@ public static class JgsCompletionEngine
         Token prev1 = default; // the token before the current one
         Token prev2 = default; // the token before that ('fn name(' is a declaration, not a call)
 
-        foreach (Token token in tokens)
+        for (int t = 0; t < tokens.Count; t++)
         {
+            Token token = tokens[t];
             if (token.Type == TokenType.Eof || Offset(token, lineStarts) >= offset)
             {
                 break;
@@ -167,7 +181,7 @@ public static class JgsCompletionEngine
             {
                 case TokenType.LParen:
                     bool isCall = prev1.Type == TokenType.Identifier && prev2.Type != TokenType.Fn;
-                    stack.Add((isCall ? prev1.Text : null, 0));
+                    stack.Add((isCall ? DottedCallee(tokens, t - 1) : null, 0));
                     break;
                 case TokenType.LBracket:
                     stack.Add((null, 0)); // array literal / indexing — anonymous
@@ -284,8 +298,38 @@ public static class JgsCompletionEngine
         ? new CompletionItem(symbol.Name, CompletionItemKind.Variable, Signature: null, description)
         : new CompletionItem(symbol.Name, CompletionItemKind.Function, $"{symbol.Name}({string.Join(", ", symbol.Parameters)})", description);
 
+    /// <summary>
+    /// The name a call is made by: the identifier at <paramref name="index"/> with the dotted names
+    /// before it (<c>jgraph.usb.hid</c>), so a package function is found by its whole name.
+    /// </summary>
+    private static string DottedCallee(IReadOnlyList<Token> tokens, int index)
+    {
+        string name = tokens[index].Text;
+        while (index >= 2 && tokens[index - 1].Type == TokenType.Dot && tokens[index - 2].Type == TokenType.Identifier)
+        {
+            index -= 2;
+            name = tokens[index].Text + "." + name;
+        }
+
+        return name;
+    }
+
+    /// <summary>The names that are packages, not functions: completed bare, for the dot that follows.</summary>
+    private static readonly HashSet<string> PackageRoots = new(StringComparer.Ordinal) { "jgraph", "NET" };
+
     private static JgsSignatureHelp? Resolve(string name, string code, IReadOnlyList<CompletionItem>? workspaceSymbols)
     {
+        if (name.Contains('.', StringComparison.Ordinal))
+        {
+            // A package function (ADR 0197), or a method called with a dot, whose last name is the callee.
+            if (DeviceCompletion.Find(name) is { Signature: { } packaged } item)
+            {
+                return new JgsSignatureHelp(name, packaged, ParameterLabels(packaged), 0, item.Description);
+            }
+
+            name = name[(name.LastIndexOf('.') + 1)..];
+        }
+
         if (JgsBuiltinCatalog.Find(name) is JgsBuiltinInfo builtin)
         {
             return new JgsSignatureHelp(

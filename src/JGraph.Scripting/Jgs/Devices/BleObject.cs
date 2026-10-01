@@ -1098,6 +1098,8 @@ internal sealed class BleDescriptorObject : DeviceObject
 
     public int Index { get; }
 
+    public override string? Summary() => Deleted ? "deleted" : $"{_name} ({_uuid})";
+
     public override DeviceClass Class => Declaration;
 
     private JgsValue Read(DeviceCall call)

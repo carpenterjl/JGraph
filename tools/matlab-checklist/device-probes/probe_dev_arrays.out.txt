@@ -1,0 +1,58 @@
+find	internal.Serialport [1 2]
+hcat	internal.Serialport [1 2]
+vcat	internal.Serialport [2 1]
+hcat3	internal.Serialport [1 3]
+hcat_row_scalar	internal.Serialport [1 3]
+vcat_rows	internal.Serialport [2 2]
+transpose	internal.Serialport [2 1]
+empty_join	internal.Serialport [1 1] / internal.Serialport [1 1]
+shape	0 0 1 1 0 1 2 2
+index_scalar	COM21 COM21 internal.Serialport [1 1]
+index_vector	internal.Serialport [1 2] COM21
+index_range	internal.Serialport [1 1]
+index_colon	internal.Serialport [2 1]
+index_logical	internal.Serialport [1 1]
+index_two	internal.Serialport [1 1]
+index_out	ERR MATLAB:badsubscript | Index exceeds the number of array elements. Index must not exceed 2.
+index_zero	ERR MATLAB:badsubscript | Array indices must be positive integers or logical values.
+index_empty	internal.Serialport [0 0]
+loop	[internal.Serialport [1 1] COM20][internal.Serialport [1 1] COM21]
+loop_column	[internal.Serialport [2 1] COM20+COM21]
+dot_on_row	COM20
+dot_list	double
+method_on_row	ERR MATLAB:TooManyOutputs | Too many output arguments.
+isvalid	[true true]
+eq	[true false]
+eq_rows	[true true]
+isequal	1 1 0
+join_number	ERR MATLAB:UnableToConvert | The following error occurred converting from double to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)
+join_text	ERR MATLAB:UnableToConvert | The following error occurred converting from char to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)
+join_struct	ERR MATLAB:UnableToConvert | The following error occurred converting from struct to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)
+join_cell	cell [1 2]
+same_twice	internal.Serialport [1 2]
+class	internal.Serialport 1 1
+numel_find_one	internal.Serialport [1 1]
+get_on_row	cell
+set_on_row	double
+timeouts	5 5
+assign_grow	ERR serialport:serialport:ConnectionFailed | Unable to connect to the serialport device at port 'COM21'. Verify that a device is connected to the port, the port is not in use, and all serialport input arguments and parameter values are supported by the device. / See <a href="matlab: helpview('matlab', 'serialport_connectError')">related documentation</a> for troubleshooting steps.
+assign_delete	internal.Serialport [1 1] COM21
+end_arith	COM20
+cellfun	COM20,COM21
+num2cell	cell [1 2]
+repmat	internal.Serialport [1 3]
+horzcat_fn	internal.Serialport [1 2]
+vertcat_fn	internal.Serialport [2 1]
+cat_fn	internal.Serialport [1 2]
+reshape	internal.Serialport [2 1]
+numel_fn	2 [1 2]
+size_dims	1 2
+size_two_out	1 2
+tcp_hcat	tcpclient [1 2]
+tcp_find	tcpclient [1 2]
+udp_hcat	udpport.byte.UDPPort [1 2]
+mixed	ERR MATLAB:UnableToConvert | The following error occurred converting from tcpclient to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)
+mixed_udp	ERR MATLAB:UnableToConvert | The following error occurred converting from udpport.byte.UDPPort to tcpclient: / Expected input number 1, ADDRESS, to be one of these types: /  / char /  / Instead its type was udpport.byte.UDPPort.
+isvalid_after_delete	[true false]
+delete_row	ERR MATLAB:maxlhs | Too many output arguments.
+isvalid_after	1 0

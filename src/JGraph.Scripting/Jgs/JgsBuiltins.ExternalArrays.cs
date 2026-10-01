@@ -42,7 +42,40 @@ internal static partial class JgsBuiltins
             return true;
         }
 
+        if (dominant.AsExternalOrNull() is DeviceArray && DeviceRowMethods.Contains(name))
+        {
+            callable = new DeviceRowMethod(interpreter, name);
+            return true;
+        }
+
         return false;
+    }
+
+    /// <summary>
+    /// The questions about its shape that the row <c>serialportfind</c> answers takes (ADR 0197): R2025b's
+    /// is a 1-by-N object array (probe_dev_arrays), so <c>numel</c> is N where an external value's is 1.
+    /// </summary>
+    private static readonly HashSet<string> DeviceRowMethods =
+        ["size", "numel", "length", "isempty", "ndims", "isscalar", "isvector", "isrow", "iscolumn", "ismatrix"];
+
+    /// <summary>Answers a shape question about a row of device objects by asking it of a 1-by-N row of numbers.</summary>
+    private sealed class DeviceRowMethod(Interpreter interpreter, string name) : IJgsCallable, IJgsMultiCallable
+    {
+        public string Name => name;
+
+        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
+            CallMultiple(arguments, 1, line, column) is [var first, ..] ? first : JgsValue.Null;
+
+        public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
+        {
+            JgsValue[] shaped =
+            [
+                .. arguments.Select(static v => v.AsExternalOrNull() is DeviceArray row
+                    ? JgsMatrix.FromColumnMajor(new double[row.Items.Count], 1, row.Items.Count)
+                    : v),
+            ];
+            return CallBuiltinNamed(interpreter, name, shaped, wanted, line, column);
+        }
     }
 
     private sealed class ArrayMethod(Interpreter interpreter, string name) : IJgsCallable, IJgsMultiCallable

@@ -74,6 +74,12 @@ public sealed class ScriptContext
     /// </summary>
     public IScriptTableViewer? TableViewer { get; init; }
 
+    /// <summary>
+    /// The host's device panes, which <c>serialExplorer</c> opens, or null when the host has no
+    /// windows and the call is refused (ADR 0197).
+    /// </summary>
+    public IScriptDeviceWindows? DeviceWindows { get; init; }
+
     /// <summary>The directory relative file paths resolve against, or null for the process directory.</summary>
     public string? WorkingDirectory { get; }
 

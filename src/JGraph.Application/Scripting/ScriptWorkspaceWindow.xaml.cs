@@ -22,7 +22,8 @@ namespace JGraph.Application.Scripting;
 /// <c>.Files.cs</c> (workspace tree and folder navigation), <c>.Documents.cs</c> (script tabs and
 /// saving), <c>.Run.cs</c> (running, startup statements, debugging), <c>.DataViewer.cs</c>
 /// (variables drill-in and figures), <c>.Console.cs</c> (the coalesced output console), and
-/// <c>.Layout.cs</c> (dock panes and session persistence).
+/// <c>.Layout.cs</c> (dock panes and session persistence), and <c>.Devices.cs</c> (the Devices and
+/// Serial Explorer panes).
 /// </remarks>
 public partial class ScriptWorkspaceWindow : Window
 {
@@ -99,6 +100,7 @@ public partial class ScriptWorkspaceWindow : Window
         BuildNewScriptMenu(engines);
         BuildConsoleLanguages(engines);
         BuildViewMenu();
+        InitializeDevicePanes();
         UpdateCommandStates();
 
         // What makes comet, movie and streamparticles move rather than merely finish. The seam is a
@@ -122,6 +124,8 @@ public partial class ScriptWorkspaceWindow : Window
             ScriptAnimation.SetPlayer(null);
             ScriptEventQueue.InstallPump(null);
             ScriptRenderPump.SetFlusher(null);
+            DevicesPanel.Dispose();
+            SerialExplorerPanel.Dispose();
         };
 
         // The previous session is restored by RestoreSession(), not here: construction must stay

@@ -1,0 +1,16 @@
+<UserControl x:Class="JGraph.Application.Scripting.DevicesPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="2">
+            <Button x:Name="RefreshButton" DockPanel.Dock="Right" Content="⟳" Width="24" Margin="2,0,0,0"
+                    Click="OnRefreshClick" ToolTip="Read the devices again" />
+            <TextBlock x:Name="StateText" VerticalAlignment="Center" Margin="2,0"
+                       Foreground="{DynamicResource JG.Brush.TextSecondary}"
+                       TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+        <TreeView x:Name="Tree" BorderThickness="0" MouseDoubleClick="OnTreeDoubleClick"
+                  PreviewMouseRightButtonDown="OnTreeRightButtonDown"
+                  ToolTip="Right-click a device for the code that opens it; double-click runs the first choice" />
+    </DockPanel>
+</UserControl>

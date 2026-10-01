@@ -174,6 +174,10 @@ internal sealed class AudioPlayerObject : DeviceObject
 
     private bool IsPlaying => _open;
 
+    public override string? Summary() => Deleted
+        ? "deleted"
+        : $"{_total} samples, {DeviceObject.Shown(_sampleRate)} Hz, {(IsPlaying ? "playing" : "stopped")}";
+
     /// <summary>Whether the player is playing: what sound checks before it lets a player go.</summary>
     internal bool Playing => _open;
 
@@ -752,6 +756,10 @@ internal sealed class AudioRecorderObject : DeviceObject
     private double SampleRate => DeviceChecks.Numbers(_sampleRate).First();
 
     private bool IsRecording => _open;
+
+    public override string? Summary() => Deleted
+        ? "deleted"
+        : $"{DeviceObject.Shown(_sampleRate)} Hz, {_bits} bits, {(_channels == 1 ? "mono" : _channels == 2 ? "stereo" : _channels + " channels")}, {(IsRecording ? "recording" : "stopped")}";
 
     // --- construction ----------------------------------------------------------------------------------
 

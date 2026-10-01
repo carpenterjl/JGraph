@@ -409,6 +409,7 @@ public partial class ScriptWorkspaceWindow
         CloseFigureOnUi)
     {
         TableViewer = _tables,
+        DeviceWindows = _deviceWindows,
     };
 
     /// <summary>

@@ -198,7 +198,7 @@ internal static partial class JgsBuiltins
     /// What the Class column says: the device's class, or for a composite (class 0, or a Miscellaneous
     /// device of interface associations) its interfaces' classes.
     /// </summary>
-    private static string UsbClassColumn(UsbDeviceInfo d)
+    internal static string UsbClassColumn(UsbDeviceInfo d)
     {
         if (d.Class is 0x00 or 0xEF && d.ConfigurationDescriptor.Length > 0)
         {

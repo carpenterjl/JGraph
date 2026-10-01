@@ -1,0 +1,61 @@
+<UserControl x:Class="JGraph.Application.Scripting.SerialExplorerPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel>
+        <!-- The connection: what serialport(port, baudrate, Name=Value) takes. -->
+        <WrapPanel DockPanel.Dock="Top" Margin="2" Orientation="Horizontal">
+            <ComboBox x:Name="PortBox" Width="92" Margin="0,0,4,2" IsEditable="True"
+                      DropDownOpened="OnPortDropDownOpened"
+                      ToolTip="The serial port; the list is serialportlist's, read again each time it opens" />
+            <ComboBox x:Name="BaudBox" Width="84" Margin="0,0,4,2" IsEditable="True"
+                      ToolTip="Baud rate" />
+            <ComboBox x:Name="DataBitsBox" Width="44" Margin="0,0,4,2" ToolTip="Data bits" />
+            <ComboBox x:Name="ParityBox" Width="64" Margin="0,0,4,2" ToolTip="Parity" />
+            <ComboBox x:Name="StopBitsBox" Width="48" Margin="0,0,4,2" ToolTip="Stop bits" />
+            <ComboBox x:Name="FlowBox" Width="86" Margin="0,0,8,2" ToolTip="Flow control" />
+            <CheckBox x:Name="DtrBox" Content="DTR" IsChecked="True" VerticalAlignment="Center" Margin="0,0,8,2"
+                      Click="OnPinClick"
+                      ToolTip="Data Terminal Ready. serialport raises it on opening, which resets many development boards; clear it first to open without" />
+            <CheckBox x:Name="RtsBox" Content="RTS" IsChecked="True" VerticalAlignment="Center" Margin="0,0,8,2"
+                      Click="OnPinClick" ToolTip="Request To Send" />
+            <Button x:Name="ConnectButton" Content="Connect" Padding="10,2" Margin="0,0,4,2" Click="OnConnectClick" />
+        </WrapPanel>
+
+        <!-- The line to send. -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="2">
+            <Button x:Name="SendButton" DockPanel.Dock="Right" Content="Send" Padding="10,2" Margin="4,0,0,0"
+                    Click="OnSendClick" IsEnabled="False" />
+            <ComboBox x:Name="EndingBox" DockPanel.Dock="Right" Width="74" Margin="4,0,0,0"
+                      ToolTip="What is sent after the line: the terminator writeline would add" />
+            <CheckBox x:Name="SendHexBox" DockPanel.Dock="Right" Content="hex" VerticalAlignment="Center" Margin="6,0,0,0"
+                      ToolTip="Send the line as hex bytes (48 65 6C), with no terminator" />
+            <TextBox x:Name="SendBox"
+                     FontFamily="{DynamicResource JG.Font.Mono}"
+                     FontSize="{DynamicResource JG.FontSize.Normal}"
+                     Background="{DynamicResource JG.Brush.EditorBackground}"
+                     Foreground="{DynamicResource JG.Brush.EditorForeground}"
+                     VerticalContentAlignment="Center" PreviewKeyDown="OnSendBoxKeyDown"
+                     ToolTip="Enter sends · Up/Down recalls what was sent" />
+        </DockPanel>
+
+        <!-- What is shown, and the way out to a script. -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="2,2,2,0">
+            <Button DockPanel.Dock="Right" Content="Code → prompt" Padding="8,1" Margin="4,0,0,0" Click="OnCodeClick"
+                    ToolTip="Write the serialport line with these settings at the console prompt" />
+            <Button DockPanel.Dock="Right" Content="Clear" Padding="8,1" Margin="4,0,0,0" Click="OnClearClick"
+                    ToolTip="Empty the display" />
+            <CheckBox x:Name="ShowHexBox" DockPanel.Dock="Right" Content="show hex" VerticalAlignment="Center" Margin="6,0,0,0"
+                      Click="OnShowHexClick" ToolTip="Show received bytes as hex, sixteen to a line" />
+            <TextBlock x:Name="StateText" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                       Foreground="{DynamicResource JG.Brush.TextSecondary}" Text="Not connected" />
+        </DockPanel>
+
+        <TextBox x:Name="ReceivedBox" IsReadOnly="True" IsReadOnlyCaretVisible="True"
+                 FontFamily="{DynamicResource JG.Font.Mono}"
+                 FontSize="{DynamicResource JG.FontSize.Normal}"
+                 Background="{DynamicResource JG.Brush.EditorBackground}"
+                 Foreground="{DynamicResource JG.Brush.EditorForeground}"
+                 Padding="4,2" TextWrapping="NoWrap" BorderThickness="0"
+                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+    </DockPanel>
+</UserControl>

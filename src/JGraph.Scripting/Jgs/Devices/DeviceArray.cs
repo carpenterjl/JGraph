@@ -5,9 +5,14 @@ namespace JGraph.Scripting.Jgs.Devices;
 /// <summary>
 /// A row of device objects of one class: what <c>serialportfind</c> answers when several objects match,
 /// where R2025b answers an object array. It indexes with parentheses to one object and answers
-/// <c>numel</c> and <c>size</c>; a dot or a method on the row itself is refused, as R2025b refuses most
-/// of them on an array.
+/// <c>numel</c>, <c>size</c> and the other questions about its shape as a 1-by-N array does (ADR 0197);
+/// a dot or a method on the row itself is refused.
 /// </summary>
+/// <remarks>
+/// It is not R2025b's object array (probe_dev_arrays records what that does): brackets do not make
+/// one, it has no other shape, a vector of subscripts does not index it, a loop does not walk it,
+/// and it does not hold its objects open. Those wait on the open-items file.
+/// </remarks>
 internal sealed class DeviceArray(IReadOnlyList<DeviceObject> items) : IJgsExternal
 {
     public IReadOnlyList<DeviceObject> Items { get; } = items;

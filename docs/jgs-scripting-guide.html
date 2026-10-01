@@ -172,6 +172,12 @@
       <li><a href="#dotnet">Calling .NET</a></li>
       <li><a href="#clib">Calling a C library</a></li>
       <li><a href="#inlinecs">Inline C#</a></li>
+      <div class="grouplabel">Devices</div>
+      <li><a href="#dev-serial">Serial ports</a></li>
+      <li><a href="#dev-network">Network &amp; Bluetooth</a></li>
+      <li><a href="#dev-instruments">Instruments</a></li>
+      <li><a href="#dev-usb">USB devices</a></li>
+      <li><a href="#dev-audio-video">Audio &amp; video</a></li>
       <div class="grouplabel">Plotting model</div>
       <li><a href="#figmodel">Figures, axes &amp; show</a></li>
       <li><a href="#linespec">Line-spec strings</a></li>
@@ -509,6 +515,100 @@ p = <span class="fn">libpointer</span>(<span class="str">'doublePtr'</span>, <sp
 jgraph.net.compile(src, AssemblyName=<span class="str">"FastSum"</span>);
 <span class="fn">disp</span>(Demo.Fast.Sum(<span class="fn">rand</span>(<span class="num">1</span>, <span class="num">1000</span>)))   <span class="com">% a type is reached through its namespace</span></code></pre>
     <div class="callout"><strong>Trust what you load.</strong> An assembly passed to <code>NET.addAssembly</code>, C# given to <code>jgraph.net.compile</code>, and a library passed to <code>loadlibrary</code> are all code that runs with your permissions: it can read and write your files, reach the network, and start programs, just as in MATLAB. .NET code runs inside JGraph, so an assembly that fails badly can take JGraph down with it. A C library runs in its helper process, which keeps a crash away from JGraph but grants no other protection. Load only code you would run yourself.</div>
+
+    <!-- ================= DEVICES ================= -->
+    <h2 id="dev-serial">Serial ports</h2>
+    <p>A <code>.m</code> file talks to a serial port with MATLAB's <code>serialport</code>: the same constructor, properties, methods, warnings and errors as R2025b. It covers every port Windows lists, whatever is behind it: a USB adapter or a board's USB-serial bridge, a motherboard UART, a Bluetooth serial link or a virtual pair.</p>
+    <ul>
+      <li><strong>Finding and opening:</strong> <code>serialportlist</code> lists the ports and <code>serialportlist("available")</code> those no program holds. <code>s = serialport("COM3", 115200)</code> opens one, with <code>DataBits</code>, <code>Parity</code>, <code>StopBits</code>, <code>FlowControl</code>, <code>ByteOrder</code>, <code>Timeout</code> and <code>Tag</code> as name-value pairs. <code>serialportfind</code> answers the objects a session already has.</li>
+      <li><strong>Reading and writing:</strong> <code>read(s, count, "uint8")</code> and <code>write(s, data, "uint16")</code> move binary data in any numeric precision; <code>readline</code>, <code>writeline</code> and <code>writeread</code> move text a line at a time, with the terminator <code>configureTerminator</code> sets; <code>readbinblock</code> and <code>writebinblock</code> move IEEE 488.2 binary blocks. <code>flush</code> empties the buffers.</li>
+      <li><strong>Callbacks:</strong> <code>configureCallback(s, "terminator", @fcn)</code> calls <code>fcn(s, evt)</code> for each line that arrives, and <code>"byte"</code> mode for each run of bytes. A callback runs at the next <code>pause</code>, <code>drawnow</code> or idle console prompt, never in the middle of a statement.</li>
+      <li><strong>Pins:</strong> <code>getpinstatus</code> reads CTS, DSR, DCD and RI; <code>setRTS</code>, <code>setDTR</code> and <code>serialbreak</code> drive the line.</li>
+      <li><strong>Closing:</strong> the port closes when the last variable holding the object goes: <code>clear s</code>, or the end of the function that made it. There is no <code>fclose</code>.</li>
+    </ul>
+    <pre><code><span class="com">% Ask a device for its identity, then log ten readings.</span>
+s = <span class="fn">serialport</span>(<span class="str">"COM3"</span>, <span class="num">115200</span>, Timeout=<span class="num">2</span>);
+<span class="fn">configureTerminator</span>(s, <span class="str">"CR/LF"</span>);
+<span class="fn">disp</span>(<span class="fn">writeread</span>(s, <span class="str">"*IDN?"</span>))
+v = <span class="fn">zeros</span>(<span class="num">1</span>, <span class="num">10</span>);
+<span class="kw">for</span> k = <span class="num">1</span>:<span class="num">10</span>
+    v(k) = <span class="fn">str2double</span>(<span class="fn">readline</span>(s));
+<span class="kw">end</span>
+<span class="fn">clear</span> s   <span class="com">% closes the port</span></code></pre>
+    <p><strong>In the app.</strong> The <strong>Devices</strong> pane (View → Devices) lists the serial ports and the USB tree and keeps itself current as devices are plugged in and removed. Right-click a port or a device for the line of code that opens it; the line is written at the console prompt for you to edit and run, and nothing is opened by the click. The <strong>Serial Explorer</strong> pane, which <code>serialExplorer</code> also shows, is a terminal on one port: choose the port and settings, connect, type lines to send, and watch what comes back as text or hex. Its <em>Code → prompt</em> button writes the <code>serialport</code> line with the same settings. In the editor, the text inside <code>serialport("…</code> offers the port names.</p>
+    <div class="note"><strong>One port, one owner.</strong> Windows lets one program hold a serial port. While the Serial Explorer is connected, <code>serialport</code> on the same port is refused as in use, and the other way round; disconnect one first. Opening a port raises DTR and RTS, as MATLAB does, which resets many development boards (an ESP32 or Arduino restarts). The Serial Explorer's DTR and RTS boxes choose how it opens.</div>
+
+    <h2 id="dev-network">Network and Bluetooth</h2>
+    <p>The network and Bluetooth interfaces share <code>serialport</code>'s reading and writing verbs, so code written for one carries to the others.</p>
+    <ul>
+      <li><strong>TCP/IP:</strong> <code>t = tcpclient("192.168.1.20", 5025)</code> connects to a server, with <code>Timeout</code>, <code>ConnectTimeout</code> and <code>EnableTransferDelay</code>. <code>srv = tcpserver(4000)</code> listens for one client at a time; its <code>ConnectionChangedFcn</code> runs when a client arrives or leaves.</li>
+      <li><strong>UDP:</strong> <code>u = udpport</code> opens a byte-mode socket and <code>udpport("datagram")</code> one that keeps each datagram whole with its sender. <code>write(u, data, "uint8", "192.168.1.20", 9000)</code> names the destination; <code>configureMulticast</code> joins a group.</li>
+      <li><strong>Helpers:</strong> <code>echotcpip("on", 4000)</code> and <code>echoudp("on", 4000)</code> start loopback echo servers for trying code out, and <code>resolvehost</code> looks up a name or an address.</li>
+      <li><strong>Bluetooth classic:</strong> <code>bluetoothlist</code> lists paired and nearby devices and <code>b = bluetooth("HC-05", 1)</code> opens a serial (RFCOMM) channel to one.</li>
+      <li><strong>Bluetooth Low Energy:</strong> <code>blelist</code> scans for peripherals, <code>p = ble("Name")</code> connects, <code>c = characteristic(p, service, name)</code> picks a characteristic, and <code>read(c)</code>, <code>write(c, data)</code> and <code>subscribe(c)</code> use it. A notification runs <code>c.DataAvailableFcn</code>.</li>
+    </ul>
+    <div class="note"><strong>Where JGraph differs.</strong> MATLAB puts <code>tcpserver</code>, <code>udpport</code>, <code>readbinblock</code>, <code>writebinblock</code> and <code>writeread</code> behind an Instrument Control Toolbox licence; JGraph has no licence gate. Bluetooth needs the machine's radio switched on, and a classic device must be paired in Windows first.</div>
+
+    <h2 id="dev-instruments">Instruments</h2>
+    <p><code>visadev</code> talks to test instruments through VISA, as MATLAB's does: serial (ASRL), TCP/IP sockets, VXI-11 and HiSLIP, USB (USBTMC) and GPIB resources, by resource name or alias.</p>
+    <ul>
+      <li><code>visadevlist</code> lists the resources VISA finds, with each instrument's vendor, model and serial number from <code>*IDN?</code>.</li>
+      <li><code>v = visadev("TCPIP0::192.168.1.20::inst0::INSTR")</code> opens one. <code>writeline</code>, <code>readline</code>, <code>writeread</code>, <code>read</code>, <code>write</code>, <code>readbinblock</code> and <code>writebinblock</code> are the shared verbs; <code>visastatus</code> reads the status byte and <code>visatrigger</code> sends a trigger.</li>
+      <li><code>visadevfind</code> answers the objects a session already has.</li>
+    </ul>
+    <pre><code>v = <span class="fn">visadev</span>(<span class="str">"TCPIP0::192.168.1.20::hislip0::INSTR"</span>);
+<span class="fn">disp</span>(<span class="fn">writeread</span>(v, <span class="str">"*IDN?"</span>))
+<span class="fn">writeline</span>(v, <span class="str">":WAV:DATA?"</span>);
+trace = <span class="fn">readbinblock</span>(v, <span class="str">"int16"</span>);
+<span class="fn">plot</span>(trace)</code></pre>
+    <div class="note"><strong>A VISA must be installed.</strong> <code>visadev</code> uses the machine's VISA library (NI-VISA or another vendor's <code>visa64.dll</code>), as MATLAB does. Without one, <code>visadev</code> alone refuses, saying so; every other device class still works. An instrument that speaks plain text over a socket or a serial port needs no VISA: use <code>tcpclient</code> or <code>serialport</code>.</div>
+
+    <h2 id="dev-usb">USB devices</h2>
+    <p>MATLAB has no general USB interface. <code>jgraph.usb</code> and <code>jgraph.pcsc</code> are JGraph extensions: each USB class is reached through the part of Windows that owns it. In the editor, a dot after <code>jgraph.usb</code> offers the functions below with their arguments.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>To</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>See what is attached</td><td><code>jgraph.usb.devices</code> is a table of every USB device: IDs, names, class, speed, driver, COM ports and location. <code>VendorID=</code>, <code>ProductID=</code>, <code>Class=</code> and the other columns filter it. <code>jgraph.usb.tree</code> prints the hub topology and <code>jgraph.usb.ports</code> lists every hub port. <code>jgraph.usb.descriptors(dev)</code> decodes one device's descriptors.</td></tr>
+        <tr><td>React to plugging and unplugging</td><td><code>w = jgraph.usb.watch(@fcn, VendorID="0483")</code> calls <code>fcn(w, evt)</code> when a matching device arrives or leaves.</td></tr>
+        <tr><td>Talk to a HID device</td><td><code>jgraph.usb.hidlist</code> lists HID collections; <code>h = jgraph.usb.hid(VendorID=…, ProductID=…)</code> opens one. <code>read</code> and <code>write</code> move input and output reports, <code>getFeature</code> and <code>setFeature</code> feature reports, and <code>caps</code>, <code>getValue</code> and <code>getButtons</code> decode them by usage. <code>vrjoystick(1)</code> reads a game controller's axes, buttons and hats.</td></tr>
+        <tr><td>Talk to a vendor-specific device</td><td><code>d = jgraph.usb.device(VendorID=…, ProductID=…)</code> opens a device WinUSB is bound to. <code>control</code> sends a control transfer; <code>read(d, endpoint, count)</code> and <code>write(d, endpoint, data)</code> use bulk and interrupt endpoints; <code>configureCallback</code> reads an endpoint continuously.</td></tr>
+        <tr><td>Update firmware</td><td><code>jgraph.usb.dfulist</code> lists devices with a DFU interface; <code>d = jgraph.usb.dfu</code> opens one. <code>download(d, file)</code> writes a <code>.dfu</code>, Intel HEX or raw image, <code>upload(d)</code> reads one back, and <code>leave(d)</code> starts the new firmware. ST's DfuSe (the STM32 ROM bootloader) is supported with its memory layout.</td></tr>
+        <tr><td>Find and eject USB disks</td><td><code>[disks, volumes] = jgraph.usb.storage</code> lists USB disks and their volumes; ordinary file functions read and write them. <code>jgraph.usb.eject("E:")</code> ejects one safely.</td></tr>
+        <tr><td>Print raw bytes</td><td><code>jgraph.usb.printers</code> lists the printer queues; <code>jgraph.usb.printraw(printer, data)</code> sends bytes the driver does not touch (ESC/POS, ZPL, PCL).</td></tr>
+        <tr><td>Reach a phone or camera</td><td><code>jgraph.usb.mtplist</code> lists MTP and PTP devices; <code>m = jgraph.usb.mtp</code> opens one for <code>dir</code>, <code>download</code>, <code>upload</code>, <code>mkdir</code>, <code>deleteObject</code> and <code>capture</code>. A path names its storage and folders: <code>"Internal storage/DCIM/Camera"</code>.</td></tr>
+        <tr><td>Find a USB network adapter</td><td><code>jgraph.usb.netadapter</code> lists the adapters that are USB devices with their addresses; <code>tcpclient</code> and <code>udpport</code> do the talking.</td></tr>
+        <tr><td>Use a smart card</td><td><code>jgraph.pcsc.readers</code> lists readers; <code>c = jgraph.pcsc.connect</code> connects to a card. <code>[resp, sw] = transmit(c, "00 A4 04 00")</code> sends a command and answers the data and the status word. <code>jgraph.pcsc.watch(@fcn)</code> reports cards going in and out.</td></tr>
+      </tbody>
+    </table></div>
+    <pre><code><span class="com">% Find a board by its IDs and read its vendor interface.</span>
+T = jgraph.usb.devices(VendorID=<span class="str">"0483"</span>);
+<span class="fn">disp</span>(T(:, [<span class="str">"Product"</span> <span class="str">"Class"</span> <span class="str">"Driver"</span> <span class="str">"Ports"</span>]))
+d = jgraph.usb.device(VendorID=<span class="str">"0483"</span>, ProductID=<span class="str">"5740"</span>);
+<span class="fn">write</span>(d, <span class="num">1</span>, <span class="fn">uint8</span>([<span class="num">1</span> <span class="num">2</span> <span class="num">3</span>]));          <span class="com">% endpoint 1 OUT</span>
+reply = <span class="fn">read</span>(d, <span class="num">129</span>, <span class="num">64</span>);            <span class="com">% endpoint 0x81 IN</span></code></pre>
+    <div class="note"><strong>Which driver a device has decides which function reaches it.</strong> Windows binds one driver to each interface. A HID interface answers <code>jgraph.usb.hid</code>, a serial one <code>serialport</code>, and <code>jgraph.usb.device</code> and <code>jgraph.usb.dfu</code> need WinUSB bound. When it is not, the error names the driver that is bound and how to change it (Zadig, an INF, or MS OS 2.0 descriptors in the firmware, which make Windows bind WinUSB by itself). Windows keeps keyboards and mice to itself: they are listed and cannot be opened. JGraph never needs administrator rights, so it cannot reset a port or disable a device.</div>
+    <div class="callout"><strong>Three operations change a device and are not undone.</strong>
+      <ul>
+        <li><strong>Firmware download</strong> (<code>download(d, file)</code> on a DFU device) erases and rewrites the device's program. A wrong image can leave a device that no longer starts until its bootloader is reached another way. JGraph refuses a file whose checksum fails, a file whose IDs name another device (unless <code>Force=true</code>), and an address outside writeable memory, as <code>dfu-util</code> does; past those checks it writes what the script gave it, without asking again. <code>massErase</code> and <code>readUnprotect</code> erase everything.</li>
+        <li><strong><code>deleteObject(m, path)</code> on a phone or camera deletes for good.</strong> A portable device has no recycle bin. A folder is deleted only when empty, or with <code>Recursive=true</code>.</li>
+        <li><strong><code>jgraph.usb.eject</code> removes the disk from Windows</strong> until it is plugged in again. It is refused, with the reason and the program holding the disk, while a file on it is open. Unplugging a disk without ejecting it can lose data still being written.</li>
+      </ul>
+      <code>jgraph.usb.printraw</code> prints on paper, and <code>transmit</code> to a smart card can use up PIN attempts: a card blocks itself after a few wrong ones.
+    </div>
+
+    <h2 id="dev-audio-video">Audio and video</h2>
+    <p>Sound cards, MIDI devices and cameras are reached under their MATLAB names, USB or not.</p>
+    <ul>
+      <li><strong>Audio devices:</strong> <code>audiodevinfo</code> lists inputs and outputs with their IDs. <code>p = audioplayer(y, Fs)</code> plays samples with <code>play</code>, <code>playblocking</code>, <code>pause</code>, <code>resume</code> and <code>stop</code>; <code>r = audiorecorder(Fs, bits, channels)</code> records with <code>record</code> or <code>recordblocking</code>, and <code>getaudiodata(r)</code> answers what it heard. <code>sound(y, Fs)</code> and <code>soundsc</code> play in one line. <code>audioplayer</code> and <code>audiorecorder</code> take a device ID from <code>audiodevinfo</code> as their last argument.</li>
+      <li><strong>MIDI:</strong> <code>mididevinfo</code> lists the ports and <code>d = mididevice("name")</code> opens one. <code>midisend(d, midimsg("Note", 1, 60, 100, 0.5))</code> plays a note and <code>msgs = midireceive(d)</code> answers what came in. <code>midicontrols</code>, <code>midiread</code> and <code>midicallback</code> follow a control surface's knobs and sliders.</li>
+      <li><strong>Cameras:</strong> <code>webcamlist</code> names the cameras and <code>cam = webcam</code> opens one. <code>img = snapshot(cam)</code> takes a frame as an image array, <code>preview(cam)</code> shows live video in a figure, and <code>cam.Resolution</code> and the camera's own controls (<code>Brightness</code>, <code>Exposure</code>, and so on) are properties.</li>
+    </ul>
+    <pre><code>cam = <span class="fn">webcam</span>;
+cam.Resolution = <span class="str">"1280x720"</span>;
+img = <span class="fn">snapshot</span>(cam);
+<span class="fn">imshow</span>(img)
+<span class="fn">clear</span> cam   <span class="com">% releases the camera; its light goes out</span></code></pre>
+    <div class="note"><strong>Where JGraph differs.</strong> MATLAB needs the Audio Toolbox for MIDI and a support package for <code>webcam</code>; JGraph has both built in. Audio devices are listed in MATLAB's order and with its names, and played through Windows' shared mode, so other programs keep their sound. A camera or microphone in use shows Windows' own indicator; a script that opens one holds it until the variable is cleared.</div>
 
     <!-- ================= PLOTTING MODEL ================= -->
     <h2 id="figmodel">Figures, axes &amp; show</h2>

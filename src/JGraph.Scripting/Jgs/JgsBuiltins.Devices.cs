@@ -95,6 +95,15 @@ internal static partial class JgsBuiltins
         // Stage D11: cameras.
         RegisterWebcamBuiltins(env, interpreter, host);
 
+        // Stage D13 (ADR 0197): R2025b's serialExplorer opens its Serial Explorer app and takes and
+        // answers nothing; here it shows the app's Serial Explorer pane.
+        env.Builtins.Register("serialExplorer", JgsValue.Function(new BuiltinFunction("serialExplorer",
+            (args, line, col) => FirstOf(SerialExplorer(host, args, line, col)))
+        {
+            KeepsStringArguments = true,
+            MultiOutput = (args, _, line, col) => SerialExplorer(host, args, line, col),
+        }));
+
         // internal.Serialport.clearPreferences(): the hidden static method R2025b's own tests use.
         env.Builtins.RegisterConstant("internal", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
@@ -104,6 +113,28 @@ internal static partial class JgsBuiltins
                     (_, _, _) => SerialportObject.ClearPreferences())),
             }),
         }));
+    }
+
+    /// <summary>
+    /// <c>serialExplorer</c>: shows the host's Serial Explorer pane. A host with no windows (the CLI, a
+    /// batch run) has no pane to show and says so, where R2025b would open its app's window.
+    /// </summary>
+    private static JgsValue[] SerialExplorer(JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count > 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+        }
+
+        if (host.DeviceWindows is not { } windows)
+        {
+            throw new JgsRuntimeException(line, col, "JGraph:serialExplorer:NoWindow",
+                "serialExplorer opens the Serial Explorer pane of the JGraph app, and this session has no window. "
+                + "In a script, serialport(port, baudrate) reads and writes the port.");
+        }
+
+        windows.ShowSerialExplorer();
+        return [];
     }
 
     /// <summary>

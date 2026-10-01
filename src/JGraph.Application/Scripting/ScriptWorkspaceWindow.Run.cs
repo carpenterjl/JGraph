@@ -75,6 +75,7 @@ public partial class ScriptWorkspaceWindow
             new AppScriptFigureFiles(), _audio, CloseFigureOnUi)
         {
             TableViewer = _tables,
+            DeviceWindows = _deviceWindows,
         };
 
         _cts = new System.Threading.CancellationTokenSource();

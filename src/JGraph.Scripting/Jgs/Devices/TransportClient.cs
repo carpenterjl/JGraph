@@ -436,7 +436,7 @@ internal sealed class TransportClient
             data = data.ElementAt(0);
         }
 
-        return DeviceChecks.Numbers(data).ToArray();
+        return DeviceChecks.NumberArray(data);
     }
 
     private static Precision ParsePrecision(JgsValue value, DeviceCall call, string checker = "AsyncIOTransportChannel")

@@ -79,6 +79,9 @@ public sealed class JGraphScriptGlobals
     /// <summary>The host's table window (<c>methodsview</c>), or null when the host prints the table (ADR 0183).</summary>
     internal IScriptTableViewer? TableViewer => _context.TableViewer;
 
+    /// <summary>The host's device panes, or null when it has none (ADR 0197).</summary>
+    internal IScriptDeviceWindows? DeviceWindows => _context.DeviceWindows;
+
     // --- Output -----------------------------------------------------------------------------------
 
     /// <summary>Writes a value followed by a newline to the output console (C# scripts).</summary>
@@ -719,6 +722,9 @@ public sealed class JGraphScriptGlobals
 
     /// <summary>The session's device objects and simulated ports (device classes plan).</summary>
     internal Jgs.Devices.DeviceSession Devices => _devices ??= new Jgs.Devices.DeviceSession(this);
+
+    /// <summary>The device session if the script has made one: what another thread reads, since it must not make it.</summary>
+    internal Jgs.Devices.DeviceSession? DevicesOrNull => _devices;
 
     /// <summary>
     /// Stops the echo servers <c>echotcpip</c> and <c>echoudp</c> started: they end with the run or the

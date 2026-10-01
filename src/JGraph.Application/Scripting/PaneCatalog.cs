@@ -37,6 +37,8 @@ public static class PaneCatalog
             new("dataviewer", "Data Viewer", AnchorableShowStrategy.Bottom, window.DataViewer),
             new("variables", "Workspace", AnchorableShowStrategy.Right, window.VariablesList),
             new("callstack", "Call Stack", AnchorableShowStrategy.Right, window.CallStackList),
+            new("devices", "Devices", AnchorableShowStrategy.Left, window.DevicesPanel),
+            new("serialexplorer", "Serial Explorer", AnchorableShowStrategy.Bottom, window.SerialExplorerPanel),
         ];
     }
 }

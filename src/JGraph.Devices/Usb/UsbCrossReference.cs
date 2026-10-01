@@ -61,6 +61,27 @@ public static unsafe partial class UsbCrossReference
         return result;
     }
 
+    /// <summary>
+    /// COM port name → what Windows calls the port, without the "(COM3)" it ends with: "USB Serial
+    /// Device", "Standard Serial over Bluetooth link". Read from the registry; no port is opened. A
+    /// port whose driver does not register the COM port interface (a com0com pair) is absent.
+    /// </summary>
+    public static Dictionary<string, string> ComPortDescriptions()
+    {
+        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach ((string _, uint devInst) in UsbEnumerator.DeviceInstances(GUID_DEVINTERFACE_COMPORT))
+        {
+            string friendly = UsbEnumerator.RegistryString(devInst, SPDRP_FRIENDLYNAME);
+            Match m = ComName().Match(friendly);
+            if (m.Success)
+            {
+                result[m.Groups[1].Value] = friendly.Remove(m.Index, m.Length).Trim();
+            }
+        }
+
+        return result;
+    }
+
     /// <summary>The nearest ancestor (or the devnode itself) that is a USB device, not one of its interfaces.</summary>
     public static string? UsbAncestor(uint devInst)
     {

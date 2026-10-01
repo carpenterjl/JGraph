@@ -67,6 +67,30 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
     /// <inheritdoc />
     public IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> LibraryFunctions(string library) => Names.LibraryFunctions(library);
 
+    /// <inheritdoc />
+    /// <remarks>The machine's serial ports and the session's simulated ones, as <c>serialportlist</c> answers them.</remarks>
+    public IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> DeviceNames(string function)
+    {
+        IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> machine = JGraph.Scripting.Jgs.Completion.DeviceCompletion.MachineNames(function);
+        if (function != "serialport" || _globals.DevicesOrNull is not { } devices)
+        {
+            return machine;
+        }
+
+        var simulated = devices.SimulatedPorts().Select(static p => p.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (simulated.Count == 0)
+        {
+            return machine;
+        }
+
+        return
+        [
+            .. machine.Where(m => !simulated.Contains(m.Text))
+                .Concat(simulated.Select(static name => JGraph.Scripting.Jgs.Completion.DeviceCompletion.PortItem(name, "simulated serial port")))
+                .OrderBy(static i => i.Text, JGraph.Devices.Serial.NaturalOrder.Instance),
+        ];
+    }
+
     /// <summary>The session's base workspace, for tests that check what it holds.</summary>
     internal JgsEnvironment Workspace => _environment;
 
