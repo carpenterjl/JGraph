@@ -95,6 +95,9 @@ internal static partial class JgsBuiltins
         // Stage D10b: MIDI.
         "mididevinfo", "mididevice", "midimsg", "midimsgtype", "midisend", "midireceive",
         "midicontrols", "midiread", "midisync", "midicallback", "midiid",
+
+        // Stage D11: cameras.
+        "webcamlist", "webcam",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>

@@ -62,6 +62,9 @@ internal static partial class JgsBuiltins
 
                 // Test-only (device classes plan, stage D10b): simulated MIDI devices.
                 ["midisim"] = MidiSimFunction(interpreter),
+
+                // Test-only (device classes plan, stage D11): simulated cameras.
+                ["camsim"] = CameraSimFunction(interpreter),
             }),
         }));
     }

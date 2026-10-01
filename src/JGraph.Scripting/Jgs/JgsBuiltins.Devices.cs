@@ -92,6 +92,9 @@ internal static partial class JgsBuiltins
         // Stage D10b: MIDI.
         RegisterMidiBuiltins(env, interpreter, host);
 
+        // Stage D11: cameras.
+        RegisterWebcamBuiltins(env, interpreter, host);
+
         // internal.Serialport.clearPreferences(): the hidden static method R2025b's own tests use.
         env.Builtins.RegisterConstant("internal", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {

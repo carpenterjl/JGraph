@@ -1917,7 +1917,7 @@ internal static partial class JgsBuiltins
     private static uint ByteOf(double value) => (uint)Math.Clamp((int)Math.Round(value * 255.0), 0, 255);
 
     /// <summary>Applies MATLAB <c>imshow</c> axes styling: equal aspect, no frame, no ticks or labels.</summary>
-    private static void StyleImageAxes(AxesModel axes)
+    internal static void StyleImageAxes(AxesModel axes)
     {
         axes.EqualAspect = true;
         axes.FrameVisible = false;

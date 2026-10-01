@@ -1,0 +1,39 @@
+which_webcam	char [0 0] ''
+which_webcamlist	char [0 0] ''
+exist_webcam	double [1 1] 0
+exist_webcamlist	double [1 1] 0
+webcamlist	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'webcamlist'.
+webcam	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'webcam'.
+webcam_1	ERR MATLAB:UndefinedFunction Undefined function 'webcam' for input arguments of type 'double'.
+webcam_name	ERR MATLAB:UndefinedFunction Undefined function 'webcam' for input arguments of type 'char'.
+webcamlist_px	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'webcamlist'.
+webcam_px	ERR MATLAB:UndefinedFunction Unrecognized function or variable 'webcam'.
+lic_imaq	double [1 1] 1
+which_videoinput	char [1 73] 'C:\Program Files\MATLAB\R2025b\toolbox\imaq\imaq\@videoinput\videoinput.m'
+which_imaqhwinfo	char [1 61] 'C:\Program Files\MATLAB\R2025b\toolbox\imaq\imaq\imaqhwinfo.m'
+which_snapshot	char [1 72] 'C:\Program Files\MATLAB\R2025b\toolbox\mbc\mbcexpr\@cgmodexpr\snapshot.m'
+which_preview	char [1 76] 'C:\Program Files\MATLAB\R2025b\toolbox\audio\audio\@audioDatastore\preview.m'
+which_closePreview	char [1 63] 'C:\Program Files\MATLAB\R2025b\toolbox\imaq\imaq\closepreview.m'
+which_ipcam	char [0 0] ''
+which_imaqreset	char [1 60] 'C:\Program Files\MATLAB\R2025b\toolbox\imaq\imaq\imaqreset.m'
+which_imaqfind	char [1 59] 'C:\Program Files\MATLAB\R2025b\toolbox\imaq\imaq\imaqfind.m'
+imaqhwinfo_px	OUT [Warning: No Image Acquisition adaptors found. To install Hardware Support Packages, use Add-On Explorer. | For more information on which support packages to install, click here.] | ans = | struct with fields: | InstalledAdaptors: {} | MATLABVersion: '25.2 (R2025b)' | ToolboxName: 'Image Acquisition Toolbox' | ToolboxVersion: '25.2 (R2025b)' |
+[Warning: No Image Acquisition adaptors found. To install Hardware Support Packages, use <a href="matlab: imaq.internal.Utility.supportPackageInstaller">Add-On Explorer</a>.
+For more information on which support packages to install, click <a href="matlab: helpview('imaq','suppkgs');">here</a>.] 
+imaqhwinfo	struct [1 1] struct(InstalledAdaptors,MATLABVersion,ToolboxName,ToolboxVersion)
+[Warning: No Image Acquisition adaptors found. To install Hardware Support Packages, use <a href="matlab: imaq.internal.Utility.supportPackageInstaller">Add-On Explorer</a>.
+For more information on which support packages to install, click <a href="matlab: helpview('imaq','suppkgs');">here</a>.] 
+adaptors	cell [0 0] {}
+adaptors_class	char [1 4] 'cell'
+adaptors_size	double [1 2] [0 0]
+tb_name	char [1 25] 'Image Acquisition Toolbox'
+tb_version	char [1 13] '25.2 (R2025b)'
+ml_version	char [1 13] '25.2 (R2025b)'
+hw_winvideo	ERR imaq:imaqhwinfo:mwAdaptorNoSpkg To use the 'winvideo' adaptor, install the OS Generic support package via <a href="matlab: matlab.addons.supportpackage.internal.explorer.showSupportPackages('OSVIDEO','tripwire')">Add-On Explorer</a>.
+hw_bogus	ERR imaq:imaqhwinfo:invalidAdaptor Invalid adaptor or third-party custom adaptor specified. Type 'imaqhwinfo' for a list of installed adaptors. Open <a href="matlab: imaq.internal.Utility.supportPackageInstaller">Add-On Explorer</a> to install additional adaptors or contact the author for third-party custom adaptor.
+vi_none	ERR imaq:videoinput:adaptorID ADAPTORNAME and DEVICEID must be specified.
+vi_winvideo	ERR imaq:videoinput:invalidAdaptorName Invalid ADAPTORNAME specified. Type 'imaqhwinfo' for a list of available ADAPTORNAMEs. Image acquisition adaptors may be available as downloadable support packages. Open <a href="matlab: imaq.internal.Utility.supportPackageInstaller">Add-On Explorer</a> to install additional adaptors.
+vi_bogus	ERR imaq:videoinput:invalidAdaptorName Invalid ADAPTORNAME specified. Type 'imaqhwinfo' for a list of available ADAPTORNAMEs. Image acquisition adaptors may be available as downloadable support packages. Open <a href="matlab: imaq.internal.Utility.supportPackageInstaller">Add-On Explorer</a> to install additional adaptors.
+sp_count	double [1 1] 0
+root_webcam	double [1 1] 0
+dir_imaq	double [1 1] 7

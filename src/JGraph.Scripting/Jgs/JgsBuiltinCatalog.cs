@@ -2173,6 +2173,9 @@ public static class JgsBuiltinCatalog
         Add("midisync", "Sends values (or the initial ones) to a midicontrols object's controls on the output of the same name.", P("mc"), Opt("values"));
         Add("midicallback", "Gets or sets the function a midicontrols object calls when its controls' values change: oldfh = midicallback(mc, newfh).", P("mc"), Opt("fh"));
         Add("midiid", "Waits for a control to move on any MIDI input and answers its number (channel*1000 + control) and the device's name.");
+        // Device classes stage D11 (ADR 0195): cameras, as the MATLAB Support Package for USB Webcams names them.
+        Add("webcamlist", "The names of the cameras connected to this computer, as a cell column in the order webcam numbers them.");
+        Add("webcam", "A camera: webcam for the first, webcam(index) or webcam(name) for another, then name-value pairs. Name, Resolution ('640x480') and AvailableResolutions, and the camera's own controls (Brightness, Exposure, Focus ...) with a Mode of 'auto' or 'manual' where the camera can drive one. [img, time] = snapshot(cam) takes the next frame as height-by-width-by-3 uint8; preview(cam) shows the frames in a figure until closePreview(cam). The camera runs until the object is cleared.", Opt("camera"), Opt("Name"), Opt("Value"));
         // --- C shared libraries (interop plan, stage 8, ADR 0181) -----------------------------------
         Add("loadlibrary", "Loads a C shared library into the native host from its header (a C compiler preprocesses it; the Options choose which) or from a prototype file (@protofile, no compiler); options addheader, includepath, alias, mfilename and thunkfilename; answers [notfound, warnings].", P("libname"), Opt("hfile"), Opt("options"));
         Add("unloadlibrary", "Unloads a library loadlibrary loaded, by its name or alias.", P("libname"));

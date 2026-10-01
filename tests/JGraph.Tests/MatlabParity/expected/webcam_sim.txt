@@ -1,0 +1,34 @@
+CHK|list|cell 2 1; JGraph Test Camera; JGraph Second Camera|exact
+CHK|first|webcam; JGraph Test Camera; 640x480; 1 1|exact
+CHK|disp|webcam with properties: / Name: JGraph Test Camera / Resolution: 640x480 / AvailableResolutions: {'640x480', '320x240', '160x120', '1280x720'} / Brightness: 128 / Contrast: 32 / Exposure: -5 / ExposureMode: auto / Focus: 0 / FocusMode: auto / WhiteBalance: 4600 / WhiteBalanceMode: auto / Zoom: 100|exact
+CHK|properties|Name Resolution AvailableResolutions Brightness Contrast Exposure ExposureMode Focus FocusMode WhiteBalance WhiteBalanceMode Zoom|exact
+CHK|methods|closePreview delete preview snapshot webcam|exact
+CHK|resolutions|cell 1 4: 640x480 320x240 160x120 1280x720|exact
+CHK|by_index|JGraph Second Camera; Name Resolution AvailableResolutions Brightness|exact
+CHK|by_name|JGraph Second Camera; JGraph Second Camera; JGraph Test Camera|exact
+CHK|name_value|320x240 100 manual [240 320 3]|exact
+CHK|pairs_only|JGraph Test Camera 160x120|exact
+CHK|bad_index|MATLAB:webcam:invalidIndex ## The webcam must be a name or an index from 1 to 2: webcamlist lists 2 webcams. // MATLAB:webcam:invalidIndex ## The webcam must be a name or an index from 1 to 2: webcamlist lists 2 webcams. // MATLAB:webcam:invalidIndex ## The webcam must be a name or an index from 1 to 2: webcamlist lists 2 webcams. // MATLAB:webcam:invalidIndex ## The webcam must be a name or an index from 1 to 2: webcamlist lists 2 webcams.|exact
+CHK|bad_name|MATLAB:webcam:invalidName ## No webcam is named 'nope'. The webcams are: 'JGraph Test Camera', 'JGraph Second Camera'. // MATLAB:webcam:ambiguousName ## 'JGraph' matches more than one webcam: 'JGraph Test Camera', 'JGraph Second Camera'. Give more of the name, or the index from webcamlist. // MATLAB:webcam:invalidName ## No webcam is named ''. The webcams are: 'JGraph Test Camera', 'JGraph Second Camera'.|exact
+CHK|bad_pairs|MATLAB:class:InvalidProperty ## The name 'NoSuch' is not an accessible property for an instance of class 'webcam'. // MATLAB:webcam:invalidNameValue ## Property names in webcam's name-value pairs must be text. // MATLAB:webcam:invalidResolution ## '1x1' is not a resolution of 'JGraph Test Camera'. Its resolutions are: '640x480', '320x240', '160x120', '1280x720'. // MATLAB:class:SetProhibited ## Unable to set the 'Name' property of class ''webcam'' because it is read-only.|exact
+CHK|bad_pairs_free|0 JGraph Test Camera|exact
+CHK|one_object|MATLAB:webcam:connectionExists ## A webcam object for 'JGraph Test Camera' already exists. Clear it before creating another for the same camera. // JGraph Second Camera JGraph Test Camera|exact
+CHK|snapshot|uint8 [480 640 3] / [0 0 8] [255 255 8] [127 127 8]|exact
+CHK|frames|8 16 24|exact
+CHK|timestamp|datetime 1 1 [480 640 3]|exact
+CHK|snapshot_args|MATLAB:TooManyInputs ## Too many input arguments. // MATLAB:TooManyOutputs ## Too many output arguments.|exact
+CHK|resolution|[240 320 3] [720 1280 3] [120 160 3] 160x120|exact
+CHK|resolution_bad|MATLAB:webcam:invalidResolution ## '1x1' is not a resolution of 'JGraph Test Camera'. Its resolutions are: '640x480', '320x240', '160x120', '1280x720'. // MATLAB:webcam:invalidResolution ## Resolution must be text, one of: '640x480', '320x240', '160x120', '1280x720'. // MATLAB:class:SetProhibited ## Unable to set the 'AvailableResolutions' property of class ''webcam'' because it is read-only. // 640x480|exact
+CHK|brightness|[10 10 18] [255 255] / [0 0 6] [245 245]|exact
+CHK|control_values|0 500 7 double|exact
+CHK|control_bad|MATLAB:webcam:invalidValue ## Brightness must be a whole number from 0 to 255. // MATLAB:webcam:invalidValue ## Brightness must be a whole number from 0 to 255. // MATLAB:webcam:invalidValue ## Brightness must be a whole number from 0 to 255. // MATLAB:webcam:invalidValue ## Brightness must be a whole number from 0 to 255. // MATLAB:webcam:invalidValue ## Brightness must be a whole number from 0 to 255. // MATLAB:webcam:invalidValue ## Zoom must be a whole number from 100 to 500. // MATLAB:noPublicFieldForClass ## Unrecognized property 'NoSuch' for class 'webcam'. // MATLAB:noSuchMethodOrField ## Unrecognized method, property, or field 'NoSuch' for class 'webcam'. // 128|exact
+CHK|modes|auto auto auto // MATLAB:webcam:controlIsAuto ## Exposure is driven by the camera while ExposureMode is 'auto'. Set ExposureMode to 'manual' first. // -3 auto MATLAB:webcam:controlIsAuto ## Exposure is driven by the camera while ExposureMode is 'auto'. Set ExposureMode to 'manual' first.|exact
+CHK|mode_bad|manual // MATLAB:webcam:unrecognizedStringChoice ## Expected FocusMode to match one of these values: / 'auto', 'manual' / The input, 'sideways', did not match any of the valid values. // MATLAB:webcam:unrecognizedStringChoice ## Expected FocusMode to match one of these values: / 'auto', 'manual' / The input did not match any of the valid values. // MATLAB:noPublicFieldForClass ## Unrecognized property 'BrightnessMode' for class 'webcam'.|exact
+CHK|get_set|9 JGraph Test Camera MATLAB:class:setgetPropertyNotFound ## Property NoSuch not found in class webcam, or is not present in all elements of the array of class webcam.|exact
+CHK|deleted|0 0 JGraph Test Camera/MATLAB:class:InvalidHandle ## Invalid or deleted object. // MATLAB:class:InvalidHandle ## Invalid or deleted object. // handle to deleted webcam|exact
+CHK|clear|2 1 0 5|exact
+CHK|unplug|1 JGraph Second Camera // MATLAB:webcam:deviceLost ## Reading from the camera 'JGraph Test Camera' failed: it was disconnected or stopped sending. // MATLAB:webcam:invalidName ## No webcam is named 'JGraph Test Camera'. The webcams are: 'JGraph Second Camera'. // JGraph Second Camera 2|exact
+CHK|none|cell 0 0/MATLAB:webcam:noWebcams ## No webcams have been detected. Verify that a webcam is connected to this computer and that Windows lists it. // MATLAB:webcam:noWebcams ## No webcams have been detected. Verify that a webcam is connected to this computer and that Windows lists it.|exact
+CHK|list_args|MATLAB:TooManyInputs ## Too many input arguments.|exact
+CHK|preview|1 1 1 0 1|exact
+CHK|preview_delete|1 2 1 1 [240 320 3] MATLAB:TooManyInputs ## Too many input arguments.|exact

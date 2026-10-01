@@ -1,0 +1,40 @@
+# webcam_sim.jgs -- webcamlist, webcam, snapshot, preview and closePreview on
+# jgraph.internal.camsim's cameras (device classes plan, stage D11, ADR 0195). JGraph-only: R2025b on
+# the recording machine has no USB Webcams support package, and a real camera's frames are not
+# reproducible, so expected/webcam_sim.txt is written from the rule. The cases are MATLAB code in
+# helpers/webcam_sim_case.m.
+
+print("CHK|list|" + webcam_sim_case("list") + "|exact");
+print("CHK|first|" + webcam_sim_case("first") + "|exact");
+print("CHK|disp|" + webcam_sim_case("disp") + "|exact");
+print("CHK|properties|" + webcam_sim_case("properties") + "|exact");
+print("CHK|methods|" + webcam_sim_case("methods") + "|exact");
+print("CHK|resolutions|" + webcam_sim_case("resolutions") + "|exact");
+print("CHK|by_index|" + webcam_sim_case("by_index") + "|exact");
+print("CHK|by_name|" + webcam_sim_case("by_name") + "|exact");
+print("CHK|name_value|" + webcam_sim_case("name_value") + "|exact");
+print("CHK|pairs_only|" + webcam_sim_case("pairs_only") + "|exact");
+print("CHK|bad_index|" + webcam_sim_case("bad_index") + "|exact");
+print("CHK|bad_name|" + webcam_sim_case("bad_name") + "|exact");
+print("CHK|bad_pairs|" + webcam_sim_case("bad_pairs") + "|exact");
+print("CHK|bad_pairs_free|" + webcam_sim_case("bad_pairs_free") + "|exact");
+print("CHK|one_object|" + webcam_sim_case("one_object") + "|exact");
+print("CHK|snapshot|" + webcam_sim_case("snapshot") + "|exact");
+print("CHK|frames|" + webcam_sim_case("frames") + "|exact");
+print("CHK|timestamp|" + webcam_sim_case("timestamp") + "|exact");
+print("CHK|snapshot_args|" + webcam_sim_case("snapshot_args") + "|exact");
+print("CHK|resolution|" + webcam_sim_case("resolution") + "|exact");
+print("CHK|resolution_bad|" + webcam_sim_case("resolution_bad") + "|exact");
+print("CHK|brightness|" + webcam_sim_case("brightness") + "|exact");
+print("CHK|control_values|" + webcam_sim_case("control_values") + "|exact");
+print("CHK|control_bad|" + webcam_sim_case("control_bad") + "|exact");
+print("CHK|modes|" + webcam_sim_case("modes") + "|exact");
+print("CHK|mode_bad|" + webcam_sim_case("mode_bad") + "|exact");
+print("CHK|get_set|" + webcam_sim_case("get_set") + "|exact");
+print("CHK|deleted|" + webcam_sim_case("deleted") + "|exact");
+print("CHK|clear|" + webcam_sim_case("clear") + "|exact");
+print("CHK|unplug|" + webcam_sim_case("unplug") + "|exact");
+print("CHK|none|" + webcam_sim_case("none") + "|exact");
+print("CHK|list_args|" + webcam_sim_case("list_args") + "|exact");
+print("CHK|preview|" + webcam_sim_case("preview") + "|exact");
+print("CHK|preview_delete|" + webcam_sim_case("preview_delete") + "|exact");

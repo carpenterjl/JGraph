@@ -50,6 +50,24 @@ public static class JG
         }
     }
 
+    /// <summary>The current figure's number, or 0 when no figure is current; it never creates one.</summary>
+    public static int CurrentFigureNumberOrZero => _currentFigure is null ? 0 : _currentNumber;
+
+    /// <summary>
+    /// Leaves no figure current, so that the next figure verb selects or opens figure 1 as it does at
+    /// the start of a run. A figure a verb opened for its own use (a camera's preview) calls this when
+    /// no figure was current before it, so that a script's next plot does not land in that figure.
+    /// </summary>
+    public static void ClearCurrentFigure()
+    {
+        lock (Registry)
+        {
+            _currentFigure = null;
+            _currentNumber = 0;
+            _currentAxes = null;
+        }
+    }
+
     /// <summary>Creates a new figure under the next unused number, makes it current, and returns it.</summary>
     public static FigureModel Figure()
     {
