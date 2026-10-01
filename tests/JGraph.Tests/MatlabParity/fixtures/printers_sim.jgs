@@ -1,0 +1,20 @@
+# printers_sim.jgs -- jgraph.usb.printers and jgraph.usb.printraw on jgraph.internal.printsim's queues,
+# and the shape of jgraph.usb.netadapter (device classes plan, stage D12, ADR 0196). JGraph-only: these
+# are JGraph extensions with no MATLAB counterpart, so expected/printers_sim.txt is written from the
+# rule. The cases are MATLAB code in helpers/printers_sim_case.m.
+
+print("CHK|table|" + printers_sim_case("table") + "|exact");
+print("CHK|usb_row|" + printers_sim_case("usb_row") + "|exact");
+print("CHK|other_row|" + printers_sim_case("other_row") + "|exact");
+print("CHK|table_args|" + printers_sim_case("table_args") + "|exact");
+print("CHK|print_bytes|" + printers_sim_case("print_bytes") + "|exact");
+print("CHK|print_forms|" + printers_sim_case("print_forms") + "|exact");
+print("CHK|document_name|" + printers_sim_case("document_name") + "|exact");
+print("CHK|output_file|" + printers_sim_case("output_file") + "|exact");
+print("CHK|bad_printer|" + printers_sim_case("bad_printer") + "|exact");
+print("CHK|bad_data|" + printers_sim_case("bad_data") + "|exact");
+print("CHK|bad_pairs|" + printers_sim_case("bad_pairs") + "|exact");
+print("CHK|offline|" + printers_sim_case("offline") + "|exact");
+print("CHK|output_file_bad|" + printers_sim_case("output_file_bad") + "|exact");
+print("CHK|netadapter|" + printers_sim_case("netadapter") + "|exact");
+print("CHK|netadapter_filter|" + printers_sim_case("netadapter_filter") + "|exact");

@@ -33,12 +33,18 @@ internal static partial class JgsBuiltins
                 KeepsStringArguments = true,
             }),
         };
+        Dictionary<string, JgsValue> usb = UsbPackage(interpreter);
+        AddLongTail(usb, interpreter);
         env.Builtins.RegisterConstant("jgraph", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
             ["net"] = JgsValue.Struct(net),
 
-            // Device classes stage D5 (ADR 0188): the USB layer, a JGraph extension.
-            ["usb"] = JgsValue.Struct(UsbPackage(interpreter)),
+            // Device classes stage D5 (ADR 0188): the USB layer, a JGraph extension; D12 (ADR 0196) adds
+            // printers, network adapters and MTP to it.
+            ["usb"] = JgsValue.Struct(usb),
+
+            // Device classes stage D12 (ADR 0196): smart cards through PC/SC.
+            ["pcsc"] = JgsValue.Struct(PcscPackage(interpreter)),
 
             // Test-only and undocumented (ADR 0180): the native host's door for the JGraph-only fixtures.
             ["internal"] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
@@ -65,6 +71,11 @@ internal static partial class JgsBuiltins
 
                 // Test-only (device classes plan, stage D11): simulated cameras.
                 ["camsim"] = CameraSimFunction(interpreter),
+
+                // Test-only (device classes plan, stage D12): simulated smart cards, printers and MTP devices.
+                ["pcscsim"] = PcscSimFunction(interpreter),
+                ["printsim"] = PrintSimFunction(interpreter),
+                ["mtpsim"] = MtpSimFunction(interpreter),
             }),
         }));
     }

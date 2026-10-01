@@ -1,0 +1,38 @@
+# pcsc_sim.jgs -- jgraph.pcsc.readers, connect, transmit, control, status, the transaction calls,
+# reconnect, disconnect and watch on jgraph.internal.pcscsim's readers (device classes plan, stage D12,
+# ADR 0196). JGraph-only: jgraph.pcsc is a JGraph extension with no MATLAB counterpart, so
+# expected/pcsc_sim.txt is written from the rule. The cases are MATLAB code in helpers/pcsc_sim_case.m.
+
+print("CHK|readers|" + pcsc_sim_case("readers") + "|exact");
+print("CHK|readers_args|" + pcsc_sim_case("readers_args") + "|exact");
+print("CHK|connect|" + pcsc_sim_case("connect") + "|exact");
+print("CHK|disp|" + pcsc_sim_case("disp") + "|exact");
+print("CHK|properties|" + pcsc_sim_case("properties") + "|exact");
+print("CHK|select|" + pcsc_sim_case("select") + "|exact");
+print("CHK|get_data|" + pcsc_sim_case("get_data") + "|exact");
+print("CHK|echo|" + pcsc_sim_case("echo") + "|exact");
+print("CHK|status_word|" + pcsc_sim_case("status_word") + "|exact");
+print("CHK|pin|" + pcsc_sim_case("pin") + "|exact");
+print("CHK|bad_apdu|" + pcsc_sim_case("bad_apdu") + "|exact");
+print("CHK|control|" + pcsc_sim_case("control") + "|exact");
+print("CHK|control_bad|" + pcsc_sim_case("control_bad") + "|exact");
+print("CHK|ctlcode|" + pcsc_sim_case("ctlcode") + "|exact");
+print("CHK|status|" + pcsc_sim_case("status") + "|exact");
+print("CHK|by_name|" + pcsc_sim_case("by_name") + "|exact");
+print("CHK|bad_reader|" + pcsc_sim_case("bad_reader") + "|exact");
+print("CHK|options|" + pcsc_sim_case("options") + "|exact");
+print("CHK|options_bad|" + pcsc_sim_case("options_bad") + "|exact");
+print("CHK|sharing|" + pcsc_sim_case("sharing") + "|exact");
+print("CHK|direct|" + pcsc_sim_case("direct") + "|exact");
+print("CHK|no_reader_named|" + pcsc_sim_case("no_reader_named") + "|exact");
+print("CHK|transaction|" + pcsc_sim_case("transaction") + "|exact");
+print("CHK|reset|" + pcsc_sim_case("reset") + "|exact");
+print("CHK|removed|" + pcsc_sim_case("removed") + "|exact");
+print("CHK|disconnect|" + pcsc_sim_case("disconnect") + "|exact");
+print("CHK|disconnect_bad|" + pcsc_sim_case("disconnect_bad") + "|exact");
+print("CHK|clear|" + pcsc_sim_case("clear") + "|exact");
+print("CHK|set_get|" + pcsc_sim_case("set_get") + "|exact");
+print("CHK|watch|" + pcsc_sim_case("watch") + "|exact");
+print("CHK|watch_event|" + pcsc_sim_case("watch_event") + "|exact");
+print("CHK|watch_args|" + pcsc_sim_case("watch_args") + "|exact");
+print("CHK|watch_error|" + pcsc_sim_case("watch_error") + "|exact");

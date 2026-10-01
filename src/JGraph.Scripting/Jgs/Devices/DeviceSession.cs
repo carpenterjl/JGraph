@@ -146,6 +146,15 @@ internal sealed class DeviceSession
     /// <summary>The simulated cameras <c>jgraph.internal.camsim('on')</c> installed for this session.</summary>
     public JGraph.Devices.Simulation.SimulatedCameras? CameraSimulation { get; set; }
 
+    /// <summary>The simulated smart-card readers <c>jgraph.internal.pcscsim('on')</c> installed for this session.</summary>
+    public JGraph.Devices.Simulation.SimulatedSmartCards? SmartCardSimulation { get; set; }
+
+    /// <summary>The simulated printer queues <c>jgraph.internal.printsim('on')</c> installed for this session.</summary>
+    public JGraph.Devices.Simulation.SimulatedPrinters? PrinterSimulation { get; set; }
+
+    /// <summary>The simulated portable devices <c>jgraph.internal.mtpsim('on')</c> installed for this session.</summary>
+    public JGraph.Devices.Simulation.SimulatedMtp? MtpSimulation { get; set; }
+
     /// <summary>The players <c>sound</c> started, kept until they have played (sound.m's persistent list).</summary>
     public List<DeviceObject> SoundPlayers { get; } = new();
 

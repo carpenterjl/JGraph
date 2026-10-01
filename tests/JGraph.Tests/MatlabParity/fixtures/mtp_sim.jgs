@@ -1,0 +1,31 @@
+# mtp_sim.jgs -- jgraph.usb.mtplist, jgraph.usb.mtp, dir, download, upload, mkdir, deleteObject and
+# capture on jgraph.internal.mtpsim's devices (device classes plan, stage D12, ADR 0196). JGraph-only:
+# jgraph.usb.mtp is a JGraph extension with no MATLAB counterpart, so expected/mtp_sim.txt is written
+# from the rule. The cases are MATLAB code in helpers/mtp_sim_case.m.
+
+print("CHK|list|" + mtp_sim_case("list") + "|exact");
+print("CHK|list_args|" + mtp_sim_case("list_args") + "|exact");
+print("CHK|open|" + mtp_sim_case("open") + "|exact");
+print("CHK|disp|" + mtp_sim_case("disp") + "|exact");
+print("CHK|properties|" + mtp_sim_case("properties") + "|exact");
+print("CHK|by_name|" + mtp_sim_case("by_name") + "|exact");
+print("CHK|bad_device|" + mtp_sim_case("bad_device") + "|exact");
+print("CHK|storage|" + mtp_sim_case("storage") + "|exact");
+print("CHK|dir_root|" + mtp_sim_case("dir_root") + "|exact");
+print("CHK|dir_folder|" + mtp_sim_case("dir_folder") + "|exact");
+print("CHK|dir_file|" + mtp_sim_case("dir_file") + "|exact");
+print("CHK|dir_print|" + mtp_sim_case("dir_print") + "|exact");
+print("CHK|dir_bad|" + mtp_sim_case("dir_bad") + "|exact");
+print("CHK|download|" + mtp_sim_case("download") + "|exact");
+print("CHK|download_replace|" + mtp_sim_case("download_replace") + "|exact");
+print("CHK|download_bad|" + mtp_sim_case("download_bad") + "|exact");
+print("CHK|upload|" + mtp_sim_case("upload") + "|exact");
+print("CHK|upload_bad|" + mtp_sim_case("upload_bad") + "|exact");
+print("CHK|mkdir|" + mtp_sim_case("mkdir") + "|exact");
+print("CHK|mkdir_bad|" + mtp_sim_case("mkdir_bad") + "|exact");
+print("CHK|delete|" + mtp_sim_case("delete") + "|exact");
+print("CHK|delete_bad|" + mtp_sim_case("delete_bad") + "|exact");
+print("CHK|capture|" + mtp_sim_case("capture") + "|exact");
+print("CHK|unplug|" + mtp_sim_case("unplug") + "|exact");
+print("CHK|clear|" + mtp_sim_case("clear") + "|exact");
+print("CHK|set_get|" + mtp_sim_case("set_get") + "|exact");
