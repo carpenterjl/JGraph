@@ -1,0 +1,127 @@
+44 shipped .mlapp files
+  bertool.mlapp                            fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,AppTypeData
+  bertool.mlapp: EditableSection at lines 109-1909; line before: ""; line after: ""
+  DataExport.mlapp                         fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  DataExport.mlapp: EditableSection at lines 22-115; line before: ""; line after: ""
+  DataImport.mlapp                         fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  DataImport.mlapp: EditableSection at lines 14-22; line before: ""; line after: ""
+  MetadataUI.mlapp                         fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,SingletonMode,AppTypeData
+  MetadataUI.mlapp                         fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,SingletonMode,AppTypeData
+  addRuleDialog.mlapp                      fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  rowTimesDialog.mlapp                     fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  ImportDataUI.mlapp                       fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  CustomFunctionDialog.mlapp               fields: ClassName,EditableSectionCode,Callbacks,StartupCallback
+  EditCustomFunctionsDialog.mlapp          fields: ClassName,EditableSectionCode,Callbacks,StartupCallback
+  ColumnTransformationDialog.mlapp         fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters
+  GUIDEAppMaintenanceOptions.mlapp         fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  borrowLicenses.mlapp                     fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,SingletonMode,AppTypeData
+  TestSuitesManager.mlapp                  fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,SingletonMode,AppTypeData
+  app1.mlapp                               fields: ClassName,Callbacks,AppTypeData
+  reportDlgBox.mlapp                       fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  mlexpdlg.mlapp                           fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  AddEditParameterDialog.mlapp             fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  AddEditTapsDialog.mlapp                  fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  DCOffsetDialog.mlapp                     fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  IbisAmiManager.mlapp                     fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  ModulationDialog.mlapp                   fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  RxJitter.mlapp                           fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  SignalIntegrityLink.mlapp                fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,SingletonMode,AppTypeData
+  TreePanel.mlapp                          fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  TxJitter.mlapp                           fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  CTLEFitter.mlapp                         fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  sParameterFitter.mlapp                   fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  InstrumentationVisualizer.mlapp          fields: ClassName,Callbacks
+  slCustomizedCrashWindowApp.mlapp         fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  ClassContainer.mlapp                     fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  SiToolBoxConsole.mlapp                   fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  ClockDomainEditor.mlapp                  fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  ASAP2CDFGen.mlapp                        fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  ModelDiscViewer.mlapp                    fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  ReportDialog.mlapp                       fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,SingletonMode,AppTypeData
+  template.mlapp                           fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,AppTypeData
+  SLSimApp2.mlapp                          fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters
+  SimAppTemplate.mlapp                     fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters
+  MultiPaneSimApp.mlapp                    fields: ClassName,EditableSectionCode,Callbacks,StartupCallback
+  aurora.mlapp                             fields: ClassName,EditableSectionCode,Callbacks,StartupCallback
+  slrtInstrumentPanelTemplate.mlapp        fields: ClassName,EditableSectionCode,StartupCallback,AppTypeData,Callbacks
+  ApplicationInspector.mlapp               fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,AppTypeData
+  SystemLogViewer.mlapp                    fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,AppTypeData
+43 of 44 map exactly
+SystemLogViewer.mlapp: callback updateAppLayout body differs; callback updateAppLayout not followed by end
+--- DataExport.mlapp skeleton (lines with keywords or comments) ---
+   1: classdef DataExport < matlab.apps.AppBase
+   3:   % Properties that correspond to app components
+   4:   properties (Access = public)
+  20:   end
+  22:     properties (Access = public)
+  25:     end
+  27:   properties (Access = private)
+  29:   end
+  31:     methods (Access = private)
+  32:         function showVarName(app)
+  37:         function hideVarName(app)
+  42:         function showEbN0Field(app)
+  50:         function hideEbN0Field(app)
+  58:         function showBERField(app)
+  66:         function hideBERField(app)
+  74:         function showStructNameWrkSpc(app)
+  82:         function hideStructNameWrkSpc(app)
+  90:         function showStructNameMat(app)
+  98:         function hideStructNameMat(app)
+ 106:         function showOverwriteXheckBox(app)
+ 111:         function hideOverwriteXheckBox(app)
+ 117:   % Callbacks that handle component events
+ 118:   methods (Access = private)
+ 120:     % Code that executes after component creation
+ 121:     function startupFcn(app, parentApp, BERTableData, berStructSelected)
+ 134:       % WARNING: Changing the text in the App Designer UI won't have any
+ 135:       % effect since these following lines will overwrite those values with
+ 136:       % message catalogue values
+ 152:     end
+ 154:     % Value changed function: ExporttoDropDown
+ 155:     function ExporttoDropDownValueChanged(app, event)
+ 183:     end
+ 185:     % Button pushed function: ExportButton
+ 186:     function ExportButtonPushed(app, event)
+ 248:     end
+ 250:     % Button pushed function: CancelButton
+ 251:     function CancelButtonPushed(app, event)
+ 253:     end
+ 254:   end
+ 256:   % Component initialization
+ 257:   methods (Access = private)
+ 259:     % Create UIFigure and components
+ 260:     function createComponents(app)
+ 262:       % Create DataExportUIFigure and hide until all components are created
+ 269:       % Create ExporttoDropDownLabel
+ 274:       % Create ExporttoDropDown
+ 281:       % Create VariablenamesLabel
+ 286:       % Create EbNoEditFieldLabel
+ 291:       % Create EbNoEditField
+ 296:       % Create BEREditFieldLabel
+ 301:       % Create BEREditField
+ 306:       % Create OverwritevariablesCheckBox
+ 312:       % Create ExportButton
+ 318:       % Create CancelButton
+ 324:       % Create StructurenameEditFieldLabel
+ 330:       % Create StructurenameEditField
+ 336:       % Create StructurenameinfileEditFieldLabel
+ 342:       % Create StructurenameinfileEditField
+ 348:       % Show the figure after all components are created
+ 350:     end
+ 351:   end
+ 353:   % App creation and deletion
+ 354:   methods (Access = public)
+ 356:     % Construct app
+ 357:     function app = DataExport(varargin)
+ 359:       % Create UIFigure and components
+ 362:       % Register the app with App Designer
+ 365:       % Execute the startup function
+ 371:     end
+ 373:     % Code that executes before app deletion
+ 374:     function delete(app)
+ 376:       % Delete UIFigure when app is deleted
+ 378:     end
+ 379:   end
+ 380: end
+AppTypeData: {}

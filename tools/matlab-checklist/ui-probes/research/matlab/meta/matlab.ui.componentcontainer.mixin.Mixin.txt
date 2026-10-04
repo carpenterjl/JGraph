@@ -1,0 +1,17 @@
+CLASS matlab.ui.componentcontainer.mixin.Mixin
+Superclasses: matlab.graphics.mixin.Mixin
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (3)
+Mixin(matlab.ui.componentcontainer.mixin.Mixin)
+isprop(matlab.graphics.internal.ReferenceObject)
+loadobj(matlab.ui.componentcontainer.mixin.Mixin)

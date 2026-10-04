@@ -1,0 +1,57 @@
+CLASS matlab.ui.container.GridLayout
+Superclasses: matlab.ui.container.internal.model.LayoutContainer, matlab.ui.control.internal.model.mixin.VisibleComponent, matlab.ui.control.internal.model.mixin.TooltipComponent, matlab.ui.control.internal.model.mixin.Layoutable, matlab.ui.internal.mixin.Scrollable, matlab.graphics.mixin.internal.GraphicsDataTypeContainer, matlab.ui.container.internal.model.mixin.BackgroundColorableContainer
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BackgroundColor | public | 1 | [0.94 0.94 0.94] | matlab.ui.container.internal.model.mixin.BackgroundColorableContainer
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Children | public | 1 | - | matlab.ui.container.Container
+ColumnSpacing | public | 1 | - | matlab.ui.container.GridLayout
+ColumnWidth | public | 1 | - | matlab.ui.container.GridLayout
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | private | 1 | - | matlab.ui.container.GridLayout
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Layout | public | 0 | - | matlab.graphics.mixin.Layoutable
+OuterPosition | private | 1 | - | matlab.ui.container.GridLayout
+Padding | public | 1 | - | matlab.ui.container.GridLayout
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | restricted | 0 | [1 1 100 100] | matlab.ui.container.GridLayout
+RowHeight | public | 1 | - | matlab.ui.container.GridLayout
+RowSpacing | public | 1 | - | matlab.ui.container.GridLayout
+Scrollable | public | 0 | - | matlab.ui.internal.mixin.Scrollable
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 1 | '' | matlab.ui.control.internal.model.mixin.TooltipComponent
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | 'on' (OnOffSwitchState) | matlab.ui.control.internal.model.mixin.VisibleComponent
+
+-- HIDDEN PUBLIC-GET PROPERTIES (32)
+ApplicationData BackgroundColorMode BackgroundColor_I ChildrenMode Children_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I HandleVisibilityMode HandleVisibility_I Internal NodeChildren NodeParent ParentMode Parent_I ScrollTarget ScrollableViewportLocation ScrollableViewportLocationChangedFcn ScrollableViewportLocationChangedFcnMode ScrollableViewportLocationChangedFcn_I ScrollableViewportLocationChangingFcn ScrollableViewportLocationChangingFcnMode ScrollableViewportLocationChangingFcn_I Serializable TagMode Tag_I UIContextMenu ValidateChildFcnMode
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (18)
+GridLayout(matlab.ui.container.GridLayout)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+createController(matlab.ui.container.internal.model.CanvasContainerModel)
+delete(appdesservices.internal.interfaces.model.AbstractModel)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isInScrollView(matlab.ui.internal.mixin.Scrollable)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.GridLayout)
+ne(matlab.graphics.Graphics)
+postSetBackgroundColor(matlab.ui.container.GridLayout)
+reset(matlab.ui.container.internal.model.ContainerModel)
+scroll(matlab.ui.container.GridLayout)
+set(matlab.graphics.Graphics)

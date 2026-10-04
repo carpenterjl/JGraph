@@ -1,0 +1,20 @@
+CLASS matlab.ui.eventdata.ChildData
+Superclasses: handle, event.EventData
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Child | private | 0 | matlab.graphics.GraphicsPlaceholder.empty | matlab.ui.eventdata.ChildData
+EventName | private | 0 | - | event.EventData
+Parent | private | 0 | matlab.graphics.GraphicsPlaceholder.empty | matlab.ui.eventdata.ChildData
+Source | private | 0 | - | event.EventData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (2)
+delete(event.EventData)
+loadobj(matlab.ui.eventdata.ChildData)

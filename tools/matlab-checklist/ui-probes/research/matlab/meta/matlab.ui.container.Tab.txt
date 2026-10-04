@@ -1,0 +1,53 @@
+CLASS matlab.ui.container.Tab
+Superclasses: matlab.ui.container.CanvasContainer, matlab.graphics.internal.GraphicsUIProperties, matlab.ui.internal.mixin.ReadOnlyPositionable, matlab.ui.internal.mixin.AutoResizable, matlab.ui.internal.mixin.Scrollable
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+AutoResizeChildren | public | 1 | - | matlab.ui.internal.mixin.AutoResizable
+BackgroundColor | public | 1 | - | matlab.ui.container.Tab
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+Children | public | 1 | - | matlab.ui.container.Container
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+ForegroundColor | public | 1 | - | matlab.ui.container.Tab
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | protected | 0 | - | matlab.ui.internal.mixin.ReadOnlyPositionable
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+OuterPosition | protected | 0 | - | matlab.ui.internal.mixin.ReadOnlyPositionable
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | protected | 0 | [0 0 0 0] | matlab.ui.internal.mixin.ReadOnlyPositionable
+Scrollable | public | 0 | - | matlab.ui.internal.mixin.Scrollable
+SizeChangedFcn | public | 1 | - | matlab.ui.container.Tab
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Title | public | 1 | - | matlab.ui.container.Tab
+Tooltip | public | 1 | - | matlab.ui.container.Tab
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.internal.mixin.ReadOnlyPositionable
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+
+-- HIDDEN PUBLIC-GET PROPERTIES (65)
+ApplicationData AutoResizeChildrenMode AutoResizeChildren_I BackgroundColorMode BackgroundColor_I ButtonDownFcnMode ButtonDownFcn_I ChildrenMode Children_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I FontAngle FontAngleMode FontAngle_I FontColor FontColor_I FontName FontNameMode FontName_I FontWeight FontWeightMode FontWeight_I ForegroundColorMode ForegroundColor_I HandleVisibilityMode HandleVisibility_I Internal NodeChildren NodeParent ParentMode Parent_I ResizeFcn ScrollTarget ScrollableViewportLocation ScrollableViewportLocationChangedFcn ScrollableViewportLocationChangedFcnMode ScrollableViewportLocationChangedFcn_I ScrollableViewportLocationChangingFcn ScrollableViewportLocationChangingFcnMode ScrollableViewportLocationChangingFcn_I Serializable SerializableMode Serializable_I SizeChangedFcnMode SizeChangedFcn_I TagMode Tag_I TitleMode Title_I TooltipMode TooltipStr TooltipString TooltipStringMode TooltipString_I Tooltip_I Tooltips UIContextMenu UnitsMode Units_I ValidateChildFcnMode
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (15)
+Tab(matlab.ui.container.Tab)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isInScrollView(matlab.ui.internal.mixin.Scrollable)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.Tab)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+scroll(matlab.ui.internal.mixin.Scrollable)
+set(matlab.graphics.Graphics)

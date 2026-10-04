@@ -1,0 +1,51 @@
+CLASS matlab.ui.container.Menu
+Superclasses: matlab.ui.container.Container, matlab.graphics.internal.GraphicsUIProperties, matlab.ui.internal.mixin.Selectable, matlab.ui.internal.mixin.Legacy, matlab.ui.internal.mixin.AxesLimits
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Accelerator | public | 1 | - | matlab.ui.container.Menu
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+Checked | public | 1 | - | matlab.ui.container.Menu
+Children | public | 1 | - | matlab.ui.container.Container
+Clipping | public | 0 | - | matlab.ui.internal.mixin.Legacy
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Enable | public | 1 | - | matlab.ui.container.Menu
+ForegroundColor | public | 1 | - | matlab.ui.container.Menu
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+MenuSelectedFcn | public | 1 | - | matlab.ui.container.Menu
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | - | matlab.ui.container.Menu
+Separator | public | 1 | - | matlab.ui.container.Menu
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Text | public | 0 | - | matlab.ui.container.Menu
+Tooltip | public | 1 | - | matlab.ui.container.Menu
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.ui.container.Menu
+
+-- HIDDEN PUBLIC-GET PROPERTIES (60)
+ALimInclude AcceleratorMode Accelerator_I ApplicationData Behavior ButtonDownFcnMode ButtonDownFcn_I CLimInclude Callback CallbackMode Callback_I CheckedMode Checked_I ChildrenMode Children_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I EnableMode Enable_I ForegroundColorMode ForegroundColor_I HandleVisibilityMode HandleVisibility_I HelpTopicKey HitTest IncludeRenderer Internal IsDefault Label LabelMode Label_I NodeChildren NodeParent ParentMode Parent_I PositionMode Position_I Selected SelectionHighlight SeparatorMode Separator_I Serializable SerializableMode Serializable_I TagMode Tag_I TooltipMode Tooltip_I UIContextMenu ValidateChildFcnMode VisibleMode Visible_I XLimInclude YLimInclude ZLimInclude
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (13)
+Menu(matlab.ui.container.Menu)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.Menu)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

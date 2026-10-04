@@ -1,0 +1,26 @@
+CLASS matlab.ui.container.GridLayout
+ColumnWidth = {'1x', '1x'} size 1  2
+RowHeight = {'1x', '1x'} size 1  2
+ColumnSpacing = 10
+RowSpacing = 10
+Padding = [10 10 10 10]
+Position = [1 1 100 100]
+OuterPosition = [1 1 100 100]
+InnerPosition = [11 11 80 80]
+Children = matlab.graphics.GraphicsPlaceholder.empty
+Parent = <matlab.ui.Figure> size 1  1
+HandleVisibility = 'on'
+ContextMenu = matlab.graphics.GraphicsPlaceholder.empty
+BusyAction = 'queue'
+BeingDeleted = 'off' (OnOffSwitchState)
+Interruptible = 'on' (OnOffSwitchState)
+CreateFcn = ''
+DeleteFcn = ''
+Type = 'uigridlayout'
+Tag = ''
+UserData = double[] size 0  0
+Visible = 'on' (OnOffSwitchState)
+Tooltip = ''
+Layout = matlab.ui.layout.LayoutOptions.empty
+Scrollable = 'off' (OnOffSwitchState)
+BackgroundColor = [0.960784 0.960784 0.960784]

@@ -1,0 +1,45 @@
+CLASS matlab.graphics.controls.AxesToolbar
+Superclasses: matlab.graphics.primitive.world.Group, matlab.graphics.mixin.SceneNodeGroup, matlab.graphics.mixin.AxesParentable, matlab.graphics.mixin.PolarAxesParentable, matlab.graphics.mixin.GeographicAxesParentable, matlab.graphics.mixin.MapAxesParentable, matlab.graphics.mixin.CustomChildrenContainer, matlab.graphics.internal.Legacy
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+Children | public | 1 | - | matlab.graphics.primitive.world.Group
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+HandleVisibility | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Parent | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+SelectionChangedFcn | public | 0 | '' | matlab.graphics.controls.AxesToolbar
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+
+-- HIDDEN PUBLIC-GET PROPERTIES (42)
+ApplicationData Behavior BehaviorMode Behavior_I ButtonDownFcnMode ButtonDownFcn_I ChildrenMode Children_I Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I Description DescriptionMode Description_I EraseMode ErrorCallback ErrorCallbackMode ErrorCallback_I HG1Erase HG1EraseMode HG1Erase_I HandleVisibilityMode HandleVisibility_I HelpTopicKey HelpTopicKeyMode HelpTopicKey_I Internal NodeChildren NodeParent ParentMode Parent_I Serializable SerializableMode Serializable_I TagMode Tag_I UIContextMenu VisibleMode Visible_I
+
+-- PUBLIC EVENTS (4)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved SelectionChanged
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (16)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+createOverflowButton(matlab.graphics.controls.AxesToolbar)
+delete(matlab.graphics.controls.AxesToolbar)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isMobileToolbar(matlab.graphics.controls.AxesToolbar)
+isprop(matlab.graphics.internal.ReferenceObject)
+loadobj(matlab.graphics.controls.AxesToolbar)
+ne(matlab.graphics.Graphics)
+registerToolbarInteraction(matlab.graphics.controls.AxesToolbar)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)
+setToolbarAnchorPosition(matlab.graphics.controls.AxesToolbar)

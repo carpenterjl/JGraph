@@ -1,0 +1,29 @@
+CLASS matlab.ui.control.Component
+Superclasses: matlab.graphics.Graphics, matlab.graphics.mixin.NodeParent, matlab.graphics.internal.GraphicsJavaVisible, matlab.graphics.mixin.Themeable
+Sealed=0 Abstract=1 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+Parent | public | 1 | - | matlab.ui.control.Component
+
+-- HIDDEN PUBLIC-GET PROPERTIES (9)
+ApplicationData Copyable DefaultPropMap_Internal HandleVisibilityMode HandleVisibility_I Internal NodeParent ParentMode Parent_I
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (13)
+Component(matlab.ui.control.Component)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.control.Component)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

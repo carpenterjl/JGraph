@@ -1,0 +1,20 @@
+CLASS matlab.ui.eventdata.ScrollWheelData
+Superclasses: handle, event.EventData
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+EventName | private | 0 | - | event.EventData
+Source | private | 0 | - | event.EventData
+VerticalScrollAmount | private | 0 | 0 | matlab.ui.eventdata.ScrollWheelData
+VerticalScrollCount | private | 0 | 0 | matlab.ui.eventdata.ScrollWheelData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (2)
+delete(event.EventData)
+loadobj(matlab.ui.eventdata.ScrollWheelData)

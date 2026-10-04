@@ -1,0 +1,141 @@
+matlab.apps.App : 0 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.apps.AppBase : 0 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.graphics.axis.Axes : 156 public props, 384 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.AxesToolbar : 15 public props, 42 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn SelectionChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved SelectionChanged
+matlab.graphics.controls.AxesToolbarButton : 15 public props, 45 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.BrushButton : 19 public props, 50 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.CanvasPlugin : 1 public props, 0 hidden; callbacks: ; events: 
+matlab.graphics.controls.DataCursorButton : 19 public props, 50 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.DesktopToolbarController : 7 public props, 1 hidden; callbacks: ; events: ObjectBeingDestroyed ProcessInteractions
+matlab.graphics.controls.FadeTimer : 5 public props, 0 hidden; callbacks: ; events: Fade ObjectBeingDestroyed
+matlab.graphics.controls.HTMLCanvasPlugin : 1 public props, 0 hidden; callbacks: ; events: 
+matlab.graphics.controls.ModeButton : 19 public props, 50 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.PanButton : 19 public props, 50 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.PushButton : 17 public props, 46 hidden; callbacks: ButtonDownFcn ButtonPushedFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.ResetButton : 17 public props, 46 hidden; callbacks: ButtonDownFcn ButtonPushedFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.RestoreButton : 17 public props, 46 hidden; callbacks: ButtonDownFcn ButtonPushedFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.RotateButton : 19 public props, 51 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.ToggleButton : 18 public props, 50 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.ToolbarController : 7 public props, 1 hidden; callbacks: ; events: ObjectBeingDestroyed ProcessInteractions
+matlab.graphics.controls.WebToolbarController : 7 public props, 1 hidden; callbacks: ; events: ObjectBeingDestroyed ProcessInteractions
+matlab.graphics.controls.ZoomInButton : 19 public props, 50 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.graphics.controls.ZoomOutButton : 19 public props, 50 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.Figure : 68 public props, 172 hidden; callbacks: ButtonDownFcn CloseRequestFcn CreateFcn DeleteFcn KeyPressFcn KeyReleaseFcn SizeChangedFcn ThemeChangedFcn WindowButtonDownFcn WindowButtonMotionFcn WindowButtonUpFcn WindowKeyPressFcn WindowKeyReleaseFcn WindowScrollWheelFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.Root : 16 public props, 31 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.componentcontainer.ComponentContainer : 22 public props, 51 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn SizeChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.componentcontainer.mixin.Mixin : 0 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.container.ButtonGroup : 41 public props, 98 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn SelectionChangedFcn SizeChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.ButtonGroupSelectable : 0 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.container.CanvasContainer : 3 public props, 14 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.CheckBoxTree : 36 public props, 27 hidden; callbacks: CheckedNodesChangedFcn ClickedFcn CreateFcn DeleteFcn DoubleClickedFcn NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn SelectionChangedFcn; events: CheckedNodesChanged Clicked DoubleClicked NodeCollapsed NodeExpanded NodeTextChanged ObjectBeingDestroyed PropertyAdded PropertyRemoved SelectionChanged
+matlab.ui.container.Container : 3 public props, 14 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.ContextMenu : 15 public props, 47 hidden; callbacks: ButtonDownFcn ContextMenuOpeningFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.FIFOContainer : 3 public props, 14 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.GridLayout : 25 public props, 32 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.Menu : 24 public props, 60 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn MenuSelectedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.Panel : 38 public props, 94 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn SizeChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.Tab : 24 public props, 65 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn SizeChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.TabGroup : 25 public props, 58 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn SelectionChangedFcn SizeChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.Toolbar : 16 public props, 43 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.Tree : 35 public props, 27 hidden; callbacks: ClickedFcn CreateFcn DeleteFcn DoubleClickedFcn NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn SelectionChangedFcn; events: Clicked DoubleClicked NodeCollapsed NodeExpanded NodeTextChanged ObjectBeingDestroyed PropertyAdded PropertyRemoved SelectionChanged
+matlab.ui.container.TreeNode : 15 public props, 23 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.toolbar.PushTool : 21 public props, 53 hidden; callbacks: ButtonDownFcn ClickedCallback CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.toolbar.SplitTool : 22 public props, 59 hidden; callbacks: ButtonDownFcn Callback ClickedCallback CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.toolbar.ToggleSplitTool : 25 public props, 65 hidden; callbacks: ButtonDownFcn Callback ClickedCallback CreateFcn DeleteFcn OffCallback OnCallback; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.container.toolbar.ToggleTool : 24 public props, 59 hidden; callbacks: ButtonDownFcn ClickedCallback CreateFcn DeleteFcn OffCallback OnCallback; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.Button : 32 public props, 23 hidden; callbacks: ButtonPushedFcn CreateFcn DeleteFcn; events: ButtonPushed ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.CheckBox : 27 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.ClientComponent : 26 public props, 52 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn KeyPressFcn KeyReleaseFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.ColorPicker : 22 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.Component : 2 public props, 9 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.DatePicker : 32 public props, 23 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.DiscreteKnob : 28 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.DropDown : 34 public props, 22 hidden; callbacks: ClickedFcn CreateFcn DeleteFcn DropDownOpeningFcn ValueChangedFcn; events: Clicked DropDownOpening ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.EditField : 32 public props, 22 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn ValueChangingFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged ValueChanging
+matlab.ui.control.Gauge : 35 public props, 22 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.HTML : 21 public props, 18 hidden; callbacks: CreateFcn DataChangedFcn DeleteFcn HTMLEventReceivedFcn; events: DataChanged HTMLEventReceived ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.Hyperlink : 31 public props, 25 hidden; callbacks: CreateFcn DeleteFcn HyperlinkClickedFcn; events: HyperlinkClicked ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.Image : 26 public props, 21 hidden; callbacks: CreateFcn DeleteFcn ImageClickedFcn; events: ImageClicked ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.Knob : 33 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn ValueChangingFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged ValueChanging
+matlab.ui.control.Label : 29 public props, 23 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.Lamp : 19 public props, 18 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.LinearGauge : 35 public props, 22 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.ListBox : 33 public props, 22 hidden; callbacks: ClickedFcn CreateFcn DeleteFcn DoubleClickedFcn ValueChangedFcn; events: Clicked DoubleClicked ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.NinetyDegreeGauge : 36 public props, 22 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.NumericEditField : 35 public props, 22 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.RadioButton : 26 public props, 20 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.RangeSlider : 36 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn ValueChangingFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged ValueChanging
+matlab.ui.control.RockerSwitch : 29 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.SemicircularGauge : 36 public props, 22 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.Slider : 36 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn ValueChangingFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged ValueChanging
+matlab.ui.control.Spinner : 37 public props, 22 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn ValueChangingFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged ValueChanging
+matlab.ui.control.StateButton : 33 public props, 23 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.Switch : 29 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.Table : 51 public props, 112 hidden; callbacks: ButtonDownFcn CellEditCallback CellSelectionCallback ClickedFcn CreateFcn DeleteFcn DisplayDataChangedFcn DoubleClickedFcn KeyPressFcn KeyReleaseFcn SelectionChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.TextArea : 31 public props, 22 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn ValueChangingFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged ValueChanging
+matlab.ui.control.ToggleButton : 31 public props, 23 hidden; callbacks: CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.ToggleSwitch : 29 public props, 20 hidden; callbacks: CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+matlab.ui.control.UIAxes : 156 public props, 387 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.UIControl : 40 public props, 76 hidden; callbacks: ButtonDownFcn Callback CreateFcn DeleteFcn KeyPressFcn KeyReleaseFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.control.WebComponent : 2 public props, 10 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.controls.AxesToolbar : 15 public props, 42 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn SelectionChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved SelectionChanged
+matlab.ui.controls.ToolbarDropdown : 15 public props, 45 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn; events: ChildClicked ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.controls.ToolbarPushButton : 17 public props, 45 hidden; callbacks: ButtonDownFcn ButtonPushedFcn CreateFcn DeleteFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.controls.ToolbarStateButton : 18 public props, 45 hidden; callbacks: ButtonDownFcn CreateFcn DeleteFcn ValueChangedFcn; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.dialog.ProgressDialog : 10 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.ActionData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.BindablePropertyChangedData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.ButtonPushedData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.CellDoubleClickedData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.CellEditData : 8 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.CellSelectionChangeData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.CheckedNodesChangedData : 10 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.ChildData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.ClickedData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.CloseRequestData : <no metaclass>
+matlab.ui.eventdata.CollapsedChangedData : 5 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.ComponentInteraction : 2 public props, 0 hidden; callbacks: ; events: 
+matlab.ui.eventdata.ContextMenuOpeningData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.DataChangedData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.DisplayDataChangedData : 10 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.DoubleClickedData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.DropDownInteraction : 3 public props, 0 hidden; callbacks: ; events: 
+matlab.ui.eventdata.DropDownOpeningData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.FigureActivatedData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.FigureDeactivatedData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.FigureInteraction : 2 public props, 0 hidden; callbacks: ; events: 
+matlab.ui.eventdata.HTMLEventReceivedData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.HelpRequestData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.HyperlinkClickedData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.ImageClickedData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.KeyData : 5 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.ListBoxInteraction : 3 public props, 0 hidden; callbacks: ; events: 
+matlab.ui.eventdata.LocationChangedData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.MenuSelectedData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.MouseData : 2 public props, 1 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.MutualExclusiveComponentSelectionChangeData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.NodeCollapsedData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.NodeExpandedData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.NodeTextChangedData : 5 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.PasswordEnteredData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.ScrollWheelData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.ScrollableViewportLocationChangedData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.ScrollableViewportLocationChangingData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.SelectedNodesChangedData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.SelectionChangedData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.SizeChangedData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.SplitToolMenuActionEvent : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.TableInteraction : 8 public props, 0 hidden; callbacks: ; events: 
+matlab.ui.eventdata.TableSelectionChangedData : 7 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.TreeInteraction : 4 public props, 0 hidden; callbacks: ; events: 
+matlab.ui.eventdata.UIClientComponentKeyEvent : 5 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.UicontrolUpdateViewData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.ValueChangeData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.ValueChangedData : 4 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.ValueChangingData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed PropertyAdded PropertyRemoved
+matlab.ui.eventdata.ViewReadyData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.WindowCloseRequestData : 2 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.WindowMouseData : 2 public props, 4 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.eventdata.WindowStateChangedData : 3 public props, 0 hidden; callbacks: ; events: ObjectBeingDestroyed
+matlab.ui.style.Behavior : 1 public props, 0 hidden; callbacks: ; events: 
+matlab.ui.style.Style : 10 public props, 0 hidden; callbacks: ; events: 

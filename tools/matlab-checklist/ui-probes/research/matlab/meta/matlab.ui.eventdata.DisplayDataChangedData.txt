@@ -1,0 +1,26 @@
+CLASS matlab.ui.eventdata.DisplayDataChangedData
+Superclasses: handle, event.EventData
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+DisplayColumnName | private | 0 | '' | matlab.ui.eventdata.DisplayDataChangedData
+DisplayRowName | private | 0 | '' | matlab.ui.eventdata.DisplayDataChangedData
+DisplaySelection | private | 0 | double[] size 0  0 | matlab.ui.eventdata.DisplayDataChangedData
+EventName | private | 0 | - | event.EventData
+Interaction | private | 0 | '' | matlab.ui.eventdata.DisplayDataChangedData
+InteractionColumn | private | 0 | int32 0 | matlab.ui.eventdata.DisplayDataChangedData
+InteractionDisplayColumn | private | 0 | int32 0 | matlab.ui.eventdata.DisplayDataChangedData
+InteractionVariable | private | 0 | '' | matlab.ui.eventdata.DisplayDataChangedData
+PreviousDisplaySelection | private | 0 | double[] size 0  0 | matlab.ui.eventdata.DisplayDataChangedData
+Source | private | 0 | - | event.EventData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (2)
+delete(event.EventData)
+loadobj(matlab.ui.eventdata.DisplayDataChangedData)

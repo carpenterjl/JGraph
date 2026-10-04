@@ -1,0 +1,6 @@
+scripts: sub=sub-js-loaded outside=no
+f_txt: status=404 url=https://127.0.0.1:31515/static/TW8C5Y3V/268692fd-0993-47bf-b650-187b46159194/sub/inside.txt body=<!doctype html> <html> <head> <title>Error</title> <link href="/css/connector.css" rel="stylesheet" type="text/css" /> </head> <body> <h1>Page not found.</h1> </body> </html> 
+f_json: status=200 url=https://127.0.0.1:31515/static/TW8C5Y3V/268692fd-0993-47bf-b650-187b46159194/sub/inside.json body=inside 
+f_js: status=200 url=https://127.0.0.1:31515/static/TW8C5Y3V/268692fd-0993-47bf-b650-187b46159194/sub/inside.js body=window.subjs = 'sub-js-loaded'; 
+f_out: status=404 url=https://127.0.0.1:31515/static/TW8C5Y3V/outside.js body=<!doctype html> <html> <head> <title>Error</title> <link href="/css/connector.css" rel="stylesheet" type="text/css" /> </head> <body> <h1>Page not found.</h1> </body> </html> 
+done: 1

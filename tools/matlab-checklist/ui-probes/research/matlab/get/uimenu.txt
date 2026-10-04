@@ -1,0 +1,25 @@
+CLASS matlab.ui.container.Menu
+MenuSelectedFcn = ''
+Tooltip = ''
+Visible = 'on' (OnOffSwitchState)
+ForegroundColor = [0.129412 0.129412 0.129412]
+Enable = 'on' (OnOffSwitchState)
+Separator = 'off' (OnOffSwitchState)
+Accelerator = ''
+Checked = 'off' (OnOffSwitchState)
+Text = ''
+Position = 7
+Children = matlab.graphics.GraphicsPlaceholder.empty
+Parent = <matlab.ui.Figure> size 1  1
+HandleVisibility = 'on'
+ButtonDownFcn = ''
+ContextMenu = matlab.graphics.GraphicsPlaceholder.empty
+BusyAction = 'queue'
+BeingDeleted = 'off' (OnOffSwitchState)
+Interruptible = 'on' (OnOffSwitchState)
+CreateFcn = ''
+DeleteFcn = ''
+Type = 'uimenu'
+Tag = ''
+UserData = double[] size 0  0
+Clipping = 'on' (OnOffSwitchState)

@@ -1,0 +1,34 @@
+<research>\apps\scan2.py:5: SyntaxWarning: invalid escape sequence '\m'
+  if "\mcr\\" in d: continue
+figs 43 guide pairs 3
+C:\Program Files\MATLAB\R2025b\toolbox\lte\lte\saLteDLConformanceTestBenchGUI.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\winfun\actxcontrolcreateproperty.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\winfun\actxcontrolselect.m
+ComponentContainer subclasses 29
+C:\Program Files\MATLAB\R2025b\toolbox\audio\audioapps\audioapps\+audio\+ui\+control\en\Meter.m
+C:\Program Files\MATLAB\R2025b\toolbox\control\ctrlguis\+ctrlguis\+uicomponent\OpenLoopEditor.m
+C:\Program Files\MATLAB\R2025b\toolbox\control\ctrlguis\+ctrlguis\+uicomponent\+loopeditor\+internal\CompensatorEditorComponent.m
+C:\Program Files\MATLAB\R2025b\toolbox\images\imuitools\MagComboBox.m
+C:\Program Files\MATLAB\R2025b\toolbox\images\imuitools\+images\+internal\+app\+utilities\MagComboBox.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\datatools\inspector\matlab\+internal\+matlab\+inspector\+editors\UserRichEditorUI.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\datatools\media_widgets\matlab\+matlab\+internal\+datatools\+uicomponents\+uiaudioplayer\UIAudioPlayer.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\datatools\media_widgets\matlab\+matlab\+internal\+datatools\+uicomponents\+uiimageviewer\UIImageViewer.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\datatools\media_widgets\matlab\+matlab\+internal\+datatools\+uicomponents\+uivideopreviewer\UIVideoPreviewer.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\datatools\widgets\matlab\+matlab\+internal\+datatools\+uicomponents\+uivariableeditor\UIVariableEditor.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\datatools\widgets\matlab\+matlab\+internal\+datatools\+uicomponents\+uiworkspacebrowser\UIWorkspaceBrowser.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\dataui\+matlab\+internal\+dataui\FunctionSelector.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\dataui\+matlab\+internal\+dataui\VectorSelector.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\mathui\+matlab\+internal\+mathui\EventOptions.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\mathui\+matlab\+internal\+mathui\JacobianOptions.m
+AppBase .m 17
+C:\Program Files\MATLAB\R2025b\toolbox\bioinfo\bioinfo\proteins\proteinplot.m
+C:\Program Files\MATLAB\R2025b\toolbox\bioinfo\bioinfo\proteins\proteinplotExportApp.m
+C:\Program Files\MATLAB\R2025b\toolbox\bioinfo\bioinfo\proteins\proteinplotImportApp.m
+C:\Program Files\MATLAB\R2025b\toolbox\bioinfo\bioinfo\proteins\proteinplotPropApp.m
+C:\Program Files\MATLAB\R2025b\toolbox\compiler\ui\package_dialog\+matlab\+internal\+compiler\+ui\PackagingDialog.m
+C:\Program Files\MATLAB\R2025b\toolbox\fixedpoint\ui\nedDataTypeAgent\+DataTypeAgent\+view\@EmbeddedQRMatrixSolveDTAnalysisView\EmbeddedQRMatrixSolveDTAnalysisView.m
+C:\Program Files\MATLAB\R2025b\toolbox\map\graphics\+map\+graphics\+internal\utmgui.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\appdesigner\appdesigner\+appdesigner\+internal\+usercomponent\+metadata\MetadataUI_exported.m
+C:\Program Files\MATLAB\R2025b\toolbox\matlab\guide\+guide\+internal\GUIDEAppMaintenanceOptions_exported.m
+C:\Program Files\MATLAB\R2025b\toolbox\ros\utilities\+ros\+slros\+internal\+dlg\ROSControlSpecifier.m
+uicontrol files 805 uifigure files 221 guidata files 25

@@ -1,0 +1,54 @@
+{Error using fprintf
+Function is not defined for 'struct' inputs.
+
+Error in probe_fig2 (line 10)
+    fprintf('== %s\n   meta_data: release=%s\n', files{i}, m.meta_data.matlab_release);
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+== <research>\apps\guide_pair\myguide.fig
+   meta_data: {"matlab_release":{"Release":"R2025b","Stage":"release","Update":0,"Date":"21-Aug-2025"},"uuid":"f310f98c-9d00-43ca-9971-34fbee94d195"}
+    uicontrol.Callback (function_handle) = @(hObject,eventdata)myguide('pushbutton1_Callback',hObject,eventdata,guidata(hObject))
+    uicontrol.Callback (function_handle) = @(hObject,eventdata)myguide('edit1_Callback',hObject,eventdata,guidata(hObject))
+    uicontrol.CreateFcn (function_handle) = @(hObject,eventdata)myguide('edit1_CreateFcn',hObject,eventdata,guidata(hObject))
+== C:\Program Files\MATLAB\R2025b\toolbox\lte\lte\saLteDLConformanceTestBenchGUI.fig
+   meta_data: {"matlab_release":{"Release":"R2024a","Stage":"release","Update":3,"Date":"09-May-2024"},"uuid":"369b6980-4a17-4756-9d25-66597d86dedf"}
+     text.CreateFcn (char) = 
+     text.DeleteFcn (char) = 
+     text.ButtonDownFcn (char) = 
+     text.CreateFcn (char) = 
+     text.DeleteFcn (char) = 
+     text.ButtonDownFcn (char) = 
+     text.CreateFcn (char) = 
+     text.DeleteFcn (char) = 
+--- version of fig format written by savefig
+savefig vars: hgM_080000, hgS_080000, meta_data
+[Warning: The 'compact' argument will be removed in a future release and currently has no effect. The 'compact' behavior is always enabled.] 
+[> In savefig>localGetHandleAndFile (line 69)
+In savefig (line 12)
+In probe_fig2 (line 19)] 
+savefig compact vars: hgM_080000, hgS_080000, meta_data
+--- checkcode on examples
+SpinnerGauge.m: 0 messages
+   mtree kinds ok, parse error count = 1
+ex1_uicontrol_nested.m: 0 messages
+   mtree kinds ok, parse error count = 1
+ex2_guidata_modal.m: 0 messages
+   mtree kinds ok, parse error count = 1
+ex3_uifigure_grid.m: 0 messages
+   mtree kinds ok, parse error count = 1
+ex4_timer_live.m: 0 messages
+   mtree kinds ok, parse error count = 1
+ex5_waitfor_value.m: 0 messages
+   mtree kinds ok, parse error count = 1
+myguide.m: 9 messages
+--- ComponentContainer
+superclasses: matlab.ui.container.internal.ComponentContainerProxy, matlab.graphics.chartcontainer.mixin.internal.GeneratedCallbackSaveLoadMixin, matlab.graphics.mixin.CustomThemeable
+abstract: 1
+abstract methods: update, setup
+public properties (22): BackgroundColor, BeingDeleted, BusyAction, ButtonDownFcn, Children, Clipping, ContextMenu, CreateFcn, DeleteFcn, HandleVisibility, InnerPosition, Interruptible, Layout, OuterPosition, Parent, Position, SizeChangedFcn, Tag, Type, Units, UserData, Visible
+after construct: SetupCalls=1 UpdateCalls=0
+after drawnow: SetupCalls=1 UpdateCalls=1
+after 2 sets (no drawnow): UpdateCalls=1
+after drawnow: UpdateCalls=2
+has ValueChangedFcn prop: 1, class SpinnerGauge, isa ComponentContainer 1, Type=spinnergauge
+component valid after fig delete: 0

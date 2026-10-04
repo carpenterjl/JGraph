@@ -1,0 +1,16 @@
+which -all Same:
+   <research>\apps\built\dup\Same.mlapp
+   <research>\apps\built\dup\Same.m
+Same.Src = mlapp
+exist Plain = 2, which = <research>\apps\built\dup\Plain.mlapp
+Plain constructed from mlapp
+class = Plain
+getCode(Plain.mlapp) chars = 141
+
+classdef Plain < handle
+    methods
+        function obj = Plain()
+            disp('Plain constructed from mlapp');
+        end
+    end
+end

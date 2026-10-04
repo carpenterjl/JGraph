@@ -1,0 +1,30 @@
+CLASS matlab.ui.container.CanvasContainer
+Superclasses: matlab.ui.container.Container, matlab.ui.internal.mixin.CanvasHostMixin
+Sealed=0 Abstract=1 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Children | public | 1 | - | matlab.ui.container.Container
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+Parent | public | 1 | - | matlab.ui.control.Component
+
+-- HIDDEN PUBLIC-GET PROPERTIES (14)
+ApplicationData ChildrenMode Children_I ControllerMode Copyable DefaultPropMap_Internal HandleVisibilityMode HandleVisibility_I Internal NodeChildren NodeParent ParentMode Parent_I ValidateChildFcnMode
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (13)
+CanvasContainer(matlab.ui.container.CanvasContainer)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.CanvasContainer)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

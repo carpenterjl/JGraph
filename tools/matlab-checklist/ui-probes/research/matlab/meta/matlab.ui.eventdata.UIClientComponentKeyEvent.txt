@@ -1,0 +1,21 @@
+CLASS matlab.ui.eventdata.UIClientComponentKeyEvent
+Superclasses: handle, event.EventData
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Character | private | 0 | '' | matlab.ui.eventdata.UIClientComponentKeyEvent
+EventName | private | 0 | - | event.EventData
+Key | private | 0 | '0' | matlab.ui.eventdata.UIClientComponentKeyEvent
+Modifier | private | 0 | {} size 1  0 | matlab.ui.eventdata.UIClientComponentKeyEvent
+Source | private | 0 | - | event.EventData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (2)
+delete(event.EventData)
+loadobj(matlab.ui.eventdata.UIClientComponentKeyEvent)

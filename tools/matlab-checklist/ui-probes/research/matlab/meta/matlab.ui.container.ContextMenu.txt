@@ -1,0 +1,43 @@
+CLASS matlab.ui.container.ContextMenu
+Superclasses: matlab.ui.container.Container, matlab.graphics.internal.GraphicsUIProperties, matlab.ui.internal.mixin.Selectable, matlab.ui.internal.mixin.Legacy, matlab.ui.internal.mixin.AxesLimits
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+Children | public | 1 | - | matlab.ui.container.Container
+Clipping | public | 0 | - | matlab.ui.internal.mixin.Legacy
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ContextMenuOpeningFcn | public | 1 | - | matlab.ui.container.ContextMenu
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Parent | public | 1 | - | matlab.ui.control.Component
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+
+-- HIDDEN PUBLIC-GET PROPERTIES (47)
+ALimInclude ApplicationData Behavior ButtonDownFcnMode ButtonDownFcn_I CLimInclude Callback CallbackMode Callback_I ChildrenMode Children_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I HandleVisibilityMode HandleVisibility_I HelpTopicKey HitTest IncludeRenderer Internal NodeChildren NodeParent ObjectID ParentMode Parent_I Position PositionMode Position_I Selected SelectionHighlight Serializable SerializableMode Serializable_I TagMode Tag_I UIContextMenu ValidateChildFcnMode Visible VisibleMode Visible_I XLimInclude YLimInclude ZLimInclude
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (14)
+ContextMenu(matlab.ui.container.ContextMenu)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.ContextMenu)
+ne(matlab.graphics.Graphics)
+open(matlab.ui.container.ContextMenu)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

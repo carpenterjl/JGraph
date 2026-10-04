@@ -1,0 +1,56 @@
+CLASS matlab.graphics.controls.ToolbarController
+Superclasses: handle, matlab.graphics.controls.internal.PointerMixin
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+ASSUMED_SCROLLBAR_WIDTH | none | 0 | 9 | matlab.graphics.controls.ToolbarController
+CacheInvisibleAxes | public | 0 | - | matlab.graphics.controls.internal.PointerMixin
+EDGE_PADDING | none | 0 | 5 | matlab.graphics.controls.ToolbarController
+FigureModeChangeListener | public | 0 | - | matlab.graphics.controls.internal.PointerMixin
+ModeStrategy | public | 0 | - | matlab.graphics.controls.ToolbarController
+OriginalPointer | public | 0 | - | matlab.graphics.controls.internal.PointerMixin
+PointerModeChangeStrategy | public | 0 | - | matlab.graphics.controls.internal.PointerMixin
+
+-- HIDDEN PUBLIC-GET PROPERTIES (1)
+ToolTipTimer
+
+-- PUBLIC EVENTS (2)
+ObjectBeingDestroyed ProcessInteractions
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (35)
+axesHandleVisibleOff(matlab.graphics.controls.ToolbarController)
+canShowToolbar(matlab.graphics.controls.ToolbarController)
+checkIfHWCallbacksExist(matlab.graphics.controls.ToolbarController)
+createListeners(matlab.graphics.controls.ToolbarController)
+createToolbarButton(matlab.graphics.controls.ToolbarController)
+delete(matlab.graphics.controls.ToolbarController)
+doButtonHover(matlab.graphics.controls.ToolbarController)
+doButtonUnhover(matlab.graphics.controls.ToolbarController)
+getCanvasFigure(matlab.graphics.controls.ToolbarController)
+getDefaultToolbar(matlab.graphics.controls.ToolbarController)
+getHitAxes(matlab.graphics.controls.ToolbarController)
+getLayoutInformation(matlab.graphics.controls.ToolbarController)
+handleDeletedPrimitive(matlab.graphics.controls.ToolbarController)
+handleFigureDelete(matlab.graphics.controls.ToolbarController)
+handleMouseDown(matlab.graphics.controls.ToolbarController)
+handleMouseExited(matlab.graphics.controls.ToolbarController)
+handleMouseMotion(matlab.graphics.controls.ToolbarController)
+handleMouseUp(matlab.graphics.controls.ToolbarController)
+handleResize(matlab.graphics.controls.ToolbarController)
+hideToolbar(matlab.graphics.controls.ToolbarController)
+inActiveArea(matlab.graphics.controls.ToolbarController)
+isDifferentAxesLayout(matlab.graphics.controls.ToolbarController)
+isDifferentLayout(matlab.graphics.controls.ToolbarController)
+isInLayout(matlab.graphics.controls.ToolbarController)
+isOverToolbar(matlab.graphics.controls.ToolbarController)
+isPlotEditMode(matlab.graphics.controls.ToolbarController)
+isPublishing(matlab.graphics.controls.ToolbarController)
+setCurrentToolbar(matlab.graphics.controls.ToolbarController)
+setToolbarBackgroundColor(matlab.graphics.controls.ToolbarController)
+setToolbarModeState(matlab.graphics.controls.ToolbarController)
+showToolTip(matlab.graphics.controls.ToolbarController)
+showToolbar(matlab.graphics.controls.ToolbarController)
+translateEvent(matlab.graphics.controls.ToolbarController)
+updatePointer(matlab.graphics.controls.internal.PointerMixin)
+useInteractionFramework(matlab.graphics.controls.ToolbarController)

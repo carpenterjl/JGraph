@@ -1,0 +1,243 @@
+uifigure HandleVisibility=off Units=pixels Position=[680 578 560 420] Color=[0.9608 0.9608 0.9608] Theme=<matlab.graphics.theme.GraphicsTheme> size 1  1
+after uifigure: groot.CurrentFigure isempty=1, numel(findobj(groot,'type','figure'))=0, numel(findall(groot,'type','figure'))=1
+gcf with only a uifigure -> new figure? 1 (isequal(g,uf)=0) class matlab.ui.Figure HandleVisibility=on
+figure HandleVisibility=on Units=pixels Position=[363 278 1194 719] Color=[0.9608 0.9608 0.9608]
+isequal(gcf,f)=1
+matlab.ui.internal.isUIFigure(uf)=logical true isUIFigure(f)=logical true
+
+== uibutton defaults: Position=[100 100 100 22] FontName=Helvetica FontSize=12 FontWeight=normal FontColor=[0.1294 0.1294 0.1294] BackgroundColor=[0.9608 0.9608 0.9608] Enable=on Visible=on Tooltip='' Tag='' UserData=double[] size 0  0 Text='Button'
+== uicontrol defaults: Style=pushbutton Units=pixels Position=[20 20 60 20] FontName=MS Sans Serif FontSize=8 FontUnits=points BackgroundColor=[0.9608 0.9608 0.9608] Enable=on Visible=on Tooltip='' String='' Value=0 Min=0 Max=1
+groot DefaultUicontrolFontName=MS Sans Serif DefaultUicontrolFontSize=8 FixedWidthFontName=Courier New
+
+== ERROR CAPTURES
+[numeric edit Value='abc']
+   id=MATLAB:ui:NumericEditField:invalidValue
+   msg='Value' must be a double scalar.
+[numeric edit Value=200 with Limits [0 100]]
+   id=MATLAB:ui:NumericEditField:invalidValue
+   msg='Value' must be a double scalar within the range of 'Limits'.
+[numeric edit Limits=[5 1]]
+   id=MATLAB:ui:NumericEditField:notIncreasingLimits
+   msg='Limits' must be a 1-by-2 array of non-decreasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+[numeric edit Value=[1 2]]
+   id=MATLAB:ui:NumericEditField:invalidValue
+   msg='Value' must be a double scalar.
+[numeric edit Value=NaN]
+   id=MATLAB:ui:NumericEditField:invalidValue
+   msg='Value' must be a double scalar within the range of 'Limits'.
+[text edit Value=5]
+   id=MATLAB:ui:EditField:invalidText
+   msg='Value' must be a character vector or a string scalar.
+[dropdown Value not in Items]
+   id=MATLAB:ui:DropDown:valueNotInText
+   msg='Value' must be an element defined in the 'Items' property.
+[dropdown ItemsData Value not in ItemsData]
+   id=MATLAB:ui:DropDown:valueNotInItemsData
+   msg='Value' must be an element defined in the 'ItemsData' property.
+[listbox Value not in Items]
+   id=MATLAB:ui:ListBox:valueNotInText
+   msg='Value' must be an element defined in the 'Items' property.
+[slider Value=500]
+   id=MATLAB:ui:Slider:invalidValue
+   msg='Value' must be a double scalar within the range of 'Limits'.
+[slider Limits=[1 1]]
+   id=MATLAB:ui:Slider:invalidFiniteScaleLimits
+   msg='Limits' must be a 1-by-2 array of finite, increasing double values.
+[spinner Value=1.5 RoundFractionalValues on] NO ERROR
+[checkbox Value=2]
+   id=MATLAB:ui:CheckBox:invalidSelected
+   msg='Value' must be true or false.
+[checkbox Value='yes']
+   id=MATLAB:ui:CheckBox:invalidSelected
+   msg='Value' must be true or false.
+[switch Value='Maybe']
+   id=MATLAB:ui:Switch:valueNotInText
+   msg='Value' must be an element defined in the 'Items' property.
+[button Text=5]
+   id=MATLAB:ui:Button:invalidMultilineTextValue
+   msg='Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+[button Position=[1 2 3]]
+   id=MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector
+   msg=Error setting property 'Position' of class 'Button': / Value must be a 4 element vector
+[button Position width -5]
+   id=MATLAB:hg:set_chck:DimensionsOutsideRange
+   msg=Error setting property 'Position' of class 'Button': / Width and height must be greater than or equal to 0
+[button FontSize=-1]
+   id=MATLAB:ui:Button:invalidFontSize
+   msg='FontSize' must be a positive double.
+[button Enable='maybe']
+   id=MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue
+   msg=Error setting property 'Enable' of class 'Button': / Invalid enum value. Use one of these values: 'on' | 'off'.
+[button ButtonPushedFcn=5]
+   id=MATLAB:datatypes:callback:CreateCallback
+   msg=Error setting property 'ButtonPushedFcn' of class 'Button': / Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+[button ButtonPushedFcn={5}]
+   id=MATLAB:datatypes:callback:CreateCallback
+   msg=Error setting property 'ButtonPushedFcn' of class 'Button': / Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+[button Bogus property]
+   id=MATLAB:hg:InvalidProperty
+   msg=Unrecognized property Bogus for class Button.
+[uibutton(uf,'Bogus',1) ctor]
+   id=MATLAB:ui:Button:unknownInput
+   msg=Unrecognized property Bogus for class Button.
+[uibutton(uf,'sideways') style]
+   id=MATLAB:ui:Button:unknownInput
+   msg='sideways' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.
+[button Units='normalized']
+   id=MATLAB:hg:InvalidProperty
+   msg=Unrecognized property Units for class Button.
+[gridlayout RowHeight={'2x','fit',50,'bogus'}]
+   id=MATLAB:ui:GridLayout:InvalidRowHeight
+   msg='RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters.  /  You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. /  If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+[gridlayout RowHeight=-5]
+   id=MATLAB:ui:GridLayout:InvalidRowHeight
+   msg='RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters.  /  You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. /  If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+[gridlayout child Layout.Row=5 out of range]
+   id=MATLAB:TooManyOutputs
+   msg=Too many output arguments.
+[knob discrete Value not in Items]
+   id=MATLAB:ui:DiscreteKnob:valueNotInText
+   msg='Value' must be an element defined in the 'Items' property.
+[gauge Value=1000 (out of Limits)] NO ERROR
+[datepicker Value='notadate']
+   id=MATLAB:ui:DatePicker:valueNotValid
+   msg='Value' must be a finite datetime object within the range of 'Limits' or NaT.
+[colorpicker Value='notacolor']
+   id=MATLAB:datatypes:RGBColor:ParseError
+   msg=Error setting property 'Value' of class 'ColorPicker': / Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+[lamp Color='zz']
+   id=MATLAB:datatypes:RGBColor:ParseError
+   msg=Error setting property 'Color' of class 'Lamp': / Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+[uicontrol Style=bogus]
+   id=MATLAB:datatypes:InvalidEnumValue
+   msg='bogus' is not a valid value. Use one of these values: 'pushbutton' | 'togglebutton' | 'radiobutton' | 'checkbox' | 'edit' | 'text' | 'slider' | 'frame' | 'listbox' | 'popupmenu'.
+[uicontrol Value='x']
+   id=MATLAB:hg:UIControlValueCharArrayString
+   msg=Error setting property 'Value' of class 'UIControl': / This is not a valid UIControlValue value. Value must be numeric.
+[uicontrol Callback=5]
+   id=MATLAB:datatypes:callback:CreateCallback
+   msg=Error setting property 'Callback' of class 'UIControl': / Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+[uicontrol Units='bogus']
+   id=MATLAB:datatypes:InvalidEnumValue
+   msg=Error setting property 'Units' of class 'UIControl': / 'bogus' is not a valid value. Use one of these values: 'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels'.
+[uitable Data=struct]
+   id=MATLAB:hg:uitable:BadDataType
+   msg=Error setting property 'Data' of class 'Table': / Data must be a numeric, logical, string, cell, or table array
+[uibutton parent = axes]
+   id=MATLAB:ui:Button:unknownInput
+   msg=Axes cannot be a parent.
+[uiradiobutton parent = uifigure]
+   id=MATLAB:ui:RadioButton:unknownInput
+   msg='Parent' value must be specified as a ButtonGroup object.
+[uitab parent = uifigure]
+   id=MATLAB:uitab:InvalidParent
+   msg=Parent must be a TabGroup
+[uitreenode parent = uifigure]
+   id=MATLAB:ui:TreeNode:unknownInput
+   msg='Parent' must be a valid Tree object or TreeNode object.
+[uifigure Units='normalized'] NO ERROR
+[uifigure HandleVisibility='on'] NO ERROR
+
+== COERCIONS / VALUE TYPES
+numeric edit default Value=0 class double Limits=[-Inf Inf] RoundFractionalValues=off ValueDisplayFormat=%11.4g AllowEmpty='off' (OnOffSwitchState) LowerLimitInclusive=on
+RoundFractionalValues on, set 2.6 -> 3
+LINE 97 ERR: MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+LINE 98 ERR: MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+AllowEmpty on, set [] -> double[] size 0  0
+text edit set string "str" -> 'str' class char
+textarea default Value={''} size 1  1
+textarea set char -> {'one line'} size 1  1
+textarea set string col -> {'a', 'b'} size 2  1
+textarea set char with newline -> {'x', 'y'} size 2  1
+dropdown default Items={'Option 1', 'Option 2', 'Option 3', 'Option 4'} size 1  4 Value='Option 1' ItemsData=double[] size 0  0 Editable=off Placeholder=''
+after Items={x,y,z} Value='x'
+after ItemsData=[1 2 3] Value=1
+Items set as string array -> Items={'p', 'q'} size 1  2 Value=1
+dropdown Items={} Value={} size 0  0
+editable dropdown set free text -> 'free text'
+listbox default Items={'Item 1', 'Item 2', 'Item 3', 'Item 4'} size 1  4 Value='Item 1' Multiselect=off
+listbox Multiselect on -> Value={'Item 1'} size 1  1
+listbox multi set -> {'Item 1', 'Item 3'} size 1  2
+checkbox set 1 -> logical true class logical
+slider Value=0 Limits=[0 100] MajorTicks=[0 20 40 60 80 100] Orientation=horizontal Step=0.1
+spinner Value=0 Limits=[-Inf Inf] Step=1
+discrete knob Items={'Off', 'Low', 'Medium', 'High'} size 1  4 Value='Off'
+switch Items={'Off', 'On'} size 1  2 Value='Off'
+state button Value=logical false class logical
+datepicker Value=<datetime: unprintable Conversion of element 1 from <missing> to character vector is not supported.> DisplayFormat=dd-MMM-uuuu Limits=datetime 01-Jan-0000
+colorpicker Value=[1 0 0]
+colorpicker set 'red' -> [1 0 0]
+colorpicker set hex -> [0 1 0]
+lamp set 'g' -> [0 1 0]
+button BackgroundColor set red -> [1 0 0]
+button BackgroundColor set hex -> [1 0.533333 0]
+button Enable=true -> 'on' (OnOffSwitchState) class matlab.lang.OnOffSwitchState
+Enable stored: 'off' (OnOffSwitchState) isequal(b.Enable,'off')=1 logical=0
+button Text string row -> {'line1', 'line2'} size 2  1
+button Tooltip set char -> 'tip'
+callback char accepted -> 'disp(1)'
+callback cell accepted -> {@disp, 3} size 2  1
+callback handle accepted -> @(s,e)disp(e)
+callback '' accepted -> ''
+callback [] accepted -> ''
+uitable(uifigure) Data=double[] size 0  0 ColumnName='numbered' ColumnEditable=logical.empty[0  0] ColumnWidth='auto' RowName='numbered'
+uitable table Data -> ColumnName={'Var1', 'Var2'} size 2  1 DisplayData=table[2  2]
+uitable magic(3) -> ColumnName={'Var1', 'Var2'} size 2  1
+
+== GRID: default RowHeight={'1x', '1x'} size 1  2 ColumnWidth={'1x', '1x'} size 1  2 Padding=[10 10 10 10] RowSpacing=10 ColumnSpacing=10 Scrollable=off
+set mixed -> {'1x', 'fit', 40, '2x'} size 1  4
+set numeric [30 40] -> {30, 40} size 1  2
+set string array -> {'1x', 'fit'} size 1  2
+uigridlayout(uf,[3 4]) RowHeight={'1x', '1x', '1x'} size 1  3 ColumnWidth={'1x', '1x', '1x', '1x'} size 1  4
+child auto-placed Layout.Row=1 Column=1 class(Layout)=matlab.ui.layout.GridLayoutOptions
+second child Layout.Row=1 Column=2
+span set Row=[1 2] -> [1 2]
+button Position in grid (no drawnow) = [100 100 100 22]
+set Position in grid: no error, Position now [100 100 100 22]
+uipanel(uifigure) Scrollable=off Units=pixels Position=[20 20 260 221] BorderType=line Title='' FontSize=12
+uifigure Scrollable=off AutoResizeChildren=on
+uipanel(figure) Units=normalized Position=[0 0 1 1]
+uifigure WindowStyle=normal Resize=on
+
+== UICONTROL value semantics
+popupmenu Value=1
+listbox Value=1 ListboxTop=1 Max=1
+slider Value=0 Min=0 Max=1 SliderStep=[0.01 0.1]
+checkbox Value=0 Min=0 Max=1
+edit String='hi' Value=0 HorizontalAlignment=center
+text HorizontalAlignment=center BackgroundColor=[0.9608 0.9608 0.9608]
+slider Value=5 out of [0 1]: no error, Value=5
+lastwarn after slider out of range: Unable to set 'Position', 'InnerPosition', or 'OuterPosition' for components in 'GridLayout'.
+popup Value=7 out of range: Value=7 lastwarn=Unable to set 'Position', 'InnerPosition', or 'OuterPosition' for components in 'GridLayout'.
+uicontrol normalized Position=[0.01591 0.02643 0.05025 0.02782]
+-> pixels [20 20 60 20]
+uicontrol Callback stored @(s,e)disp(class(e))
+uicontrol ButtonDownFcn/KeyPressFcn present: 1 1
+
+== appdata: isappdata=1 getappdata=5 keys={'k'} size 1  1
+guidata via child -> struct(x); stored in appdata UsedByGUIData_m: 1
+after rmappdata isappdata=0
+guihandles fields: goBtn FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay figMenuHelpPatents figMenuHelpTerms figMenuHelpPrintingExport figMenuHelpAnnotatingGraphs figMenuHelpPlottingTools figMenuHelpGraphics figMenuToolsDS figMenuToolsBF figMenuToolsAlignDistrib figMenuToolsAlign figMenuToolsAlignDistributeSmart figMenuViewGrid figMenuSnapToGrid figMenuEditPinning figDataManagerBrushTools figLinked figMenuToolsPlotedit figMenuInsertLight figMenuInsertAxes figMenuInsertEllipse figMenuInsertRectangle figMenuInsertTextbox figMenuInsertArrow2 figMenuInsertTextArrow figMenuInsertArrow figMenuInsertLine figMenuInsertColorbar figMenuInsertLegend figMenuInsertTitle figMenuInsertZLabel figMenuInsertYLabel figMenuInsertXLabel figMenuObjectBrowser figMenuPropertyInspector figMenuPloteditToolbar figMenuCameraToolbar figMenuFigureToolbar figMenuEditColormap figMenuEditGCO figMenuEditGCA figMenuEditGCF figMenuEditCopyOptions figMenuEditCopyFigure figMenuEditSelectAll figMenuEditDelete figMenuEditClear figMenuEditPaste figMenuEditCopy figMenuEditCut figMenuEditRedo figMenuEditUndo printMenu figMenuFilePrintPreview figMenuFileExportSetup figMenuGenerateCode figMenuFileSaveAs figMenuFileSave figMenuFileClose figMenuOpen figMenuNewFigure figMenuToolsDistributeHRight figMenuToolsDistributeHCent figMenuToolsDistributeHLeft figMenuToolsDistributeHAdj figMenuToolsDistributeVBot figMenuToolsDistributeVMid figMenuToolsDistributeVTop figMenuToolsDistributeVAdj figMenuToolsAlignBottom figMenuToolsAlignMiddle figMenuToolsAlignTop figMenuToolsAlignRight figMenuToolsAlignCenter figMenuToolsAlignLeft figDataManagerCopy figDataManagerPaste figDataManagerNewVar figDataManagerRemoveUnbr figDataManagerRemove figDataManagerColor figDataManagerBrush figDataManagerReplaceConst figDataManagerReplaceNaN
+guidata on uifigure child -> struct(y)
+
+== uistyle class matlab.ui.style.Style
+addStyle(table,cell) OK StyleConfigurations=table[1  3]
+removeStyle OK
+addStyle(listbox,item) OK
+addStyle(dropdown,item) OK
+addStyle(button): MATLAB:UndefinedFunction | Undefined function 'addStyle' for input arguments of type 'matlab.ui.control.Button'.
+scroll(uf,bottom): no error
+isInScrollView: MATLAB:UndefinedFunction | Undefined function 'isInScrollView' for input arguments of type 'matlab.ui.control.Button'.
+uifigure Visible still off after scroll: off
+uiwait(uf,0.5) returned after 1.43 s
+programmatic Value set fired ValueChangedFcn? 0
+
+== nargin checks
+nargin uialert=-4 uiconfirm=-4 uiprogressdlg=-2 uigetfile=-1 inputdlg=5 questdlg=6 listdlg=-1 msgbox=-1 waitbar=-3
+
+== uifigure callbacks:
+CloseRequestFcn SizeChangedFcn WindowButtonDownFcn WindowButtonUpFcn WindowButtonMotionFcn WindowScrollWheelFcn WindowKeyPressFcn WindowKeyReleaseFcn ButtonDownFcn CreateFcn DeleteFcn KeyPressFcn KeyReleaseFcn ThemeChangedFcn
+figure callbacks:
+CloseRequestFcn SizeChangedFcn WindowButtonDownFcn WindowButtonUpFcn WindowButtonMotionFcn WindowScrollWheelFcn WindowKeyPressFcn WindowKeyReleaseFcn ButtonDownFcn CreateFcn DeleteFcn KeyPressFcn KeyReleaseFcn ThemeChangedFcn
+uifigure-only props vs figure: 
+figure-only props vs uifigure: 

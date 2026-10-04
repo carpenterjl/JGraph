@@ -1,0 +1,24 @@
+CLASS matlab.ui.eventdata.CellEditData
+Superclasses: handle, event.EventData
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+DisplayIndices | private | 0 | double[] size 0  0 | matlab.ui.eventdata.CellEditData
+EditData | private | 0 | double[] size 0  0 | matlab.ui.eventdata.CellEditData
+Error | private | 0 | double[] size 0  0 | matlab.ui.eventdata.CellEditData
+EventName | private | 0 | - | event.EventData
+Indices | private | 0 | double[] size 0  0 | matlab.ui.eventdata.CellEditData
+NewData | private | 0 | double[] size 0  0 | matlab.ui.eventdata.CellEditData
+PreviousData | private | 0 | double[] size 0  0 | matlab.ui.eventdata.CellEditData
+Source | private | 0 | - | event.EventData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (2)
+delete(event.EventData)
+loadobj(matlab.ui.eventdata.CellEditData)

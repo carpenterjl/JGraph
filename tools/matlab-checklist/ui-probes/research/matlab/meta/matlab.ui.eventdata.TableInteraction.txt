@@ -1,0 +1,23 @@
+CLASS matlab.ui.eventdata.TableInteraction
+Superclasses: matlab.mixin.CustomDisplay, matlab.ui.eventdata.internal.Interaction
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=0
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Column | immutable | 0 | - | matlab.ui.eventdata.TableInteraction
+ColumnHeader | immutable | 0 | - | matlab.ui.eventdata.TableInteraction
+DisplayColumn | immutable | 0 | - | matlab.ui.eventdata.TableInteraction
+DisplayRow | immutable | 0 | - | matlab.ui.eventdata.TableInteraction
+Location | public | 1 | - | matlab.ui.eventdata.internal.Interaction
+Row | immutable | 0 | - | matlab.ui.eventdata.TableInteraction
+RowHeader | immutable | 0 | - | matlab.ui.eventdata.TableInteraction
+ScreenLocation | public | 1 | - | matlab.ui.eventdata.internal.Interaction
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (0)
+
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (1)
+TableInteraction(matlab.ui.eventdata.TableInteraction)

@@ -1,0 +1,87 @@
+batch=1
+plain figure Visible=on
+== msgbox: returned class=matlab.ui.Figure size=[1 1] in 3.16s
+   figure: Name=Title WindowStyle=normal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=Msgbox_Title HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] String="Hello there" FontSize=8 FontName=MS Sans Serif HAlign=left TextString="Hello there"
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== msgbox_modal: returned class=matlab.ui.Figure size=[1 1] in 0.29s
+   figure: Name=Title WindowStyle=modal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=Msgbox_Title HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] String="Hello there" FontSize=8 FontName=MS Sans Serif HAlign=left TextString="Hello there"
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== msgbox_icon: returned class=matlab.ui.Figure size=[1 1] in 0.49s
+   figure: Name=Title WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=Msgbox_Title HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] String="Hello there" FontSize=8 FontName=MS Sans Serif HAlign=left TextString="Hello there"
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] Visible=off
+     - image CData=[32 32 3]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== errordlg: returned class=matlab.ui.Figure size=[1 1] in 0.36s
+   figure: Name=Error WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=Msgbox_Error HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] String="Bad value" FontSize=8 FontName=MS Sans Serif HAlign=left TextString="Bad value"
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] Visible=off
+     - image CData=[32 32 3]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== errordlg_modal: returned class=matlab.ui.Figure size=[1 1] in 0.64s
+   figure: Name=Error WindowStyle=modal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=Msgbox_Error HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] String="Bad value" FontSize=8 FontName=MS Sans Serif HAlign=left TextString="Bad value"
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] Visible=off
+     - image CData=[32 32 3]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== warndlg: returned class=matlab.ui.Figure size=[1 1] in 0.21s
+   figure: Name=Warn WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=Msgbox_Warn HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] String="Careful" FontSize=8 FontName=MS Sans Serif HAlign=left TextString="Careful"
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] Visible=off
+     - image CData=[32 32 3]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== helpdlg: returned class=matlab.ui.Figure size=[1 1] in 0.29s
+   figure: Name=Help WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=Msgbox_Help HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] String="Help text" FontSize=8 FontName=MS Sans Serif HAlign=left TextString="Help text"
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] Visible=off
+     - image CData=[32 32 3]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== waitbar: returned class=matlab.ui.Figure size=[1 1] in 0.62s
+   figure: Name= WindowStyle=normal Resize=off Units=points Position=[585 421.875 270 56.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=TMWWaitbar HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=auto
+   appdata: TMWWaitbar_handles, TMWWaitbar_value
+   - axes Units=points Position=[13.5 16.875 243 11.25] FontSize=8 FontName=Helvetica XLim=[0 100] Visible=off
+   - annotationpane Tag=scribeOverlay
+   - uiprogressindicator Position=[19 23.5 324 6]
+== waitbar: ERROR MATLAB:hg:InvalidProperty | Unrecognized property Children for class matlab.ui.control.internal.ProgressIndicator. (0.65s)
+== dialog: returned class=matlab.ui.Figure size=[1 1] in 0.05s
+   figure: Name=Dlg WindowStyle=modal Resize=off Units=pixels Position=[363 278 1194 719] Color=[0.9608 0.9608 0.9608] Visible=on Tag= HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=auto
+== questdlg: ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display. (0.05s)
+== inputdlg: ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display. (0.02s)
+== listdlg: ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display. (0.01s)
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.] 
+[> In warnfiguredialog (line 15)
+In uiwait (line 40)
+In u0_dialogs (line 37)] 
+uiwait(f,2) returned after 2.16s, WaitStatus=inactive
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.] 
+[> In warnfiguredialog (line 15)
+In uiwait (line 40)
+In u0_dialogs (line 39)] 
+uiwait(f) + timer uiresume returned after 1.52s
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.] 
+[> In warnfiguredialog (line 15)
+In uiwait (line 40)
+In u0_dialogs (line 41)] 
+uiwait(f) + timer delete returned after 1.54s, valid=0
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.] 
+[> In warnfiguredialog (line 15)
+In uiwait (line 40)
+In u0_dialogs (line 46)] 
+watchdog fired at 20.0s, deleting
+dead uiwait returned after 25.05s

@@ -1,0 +1,18 @@
+CLASS matlab.ui.eventdata.DropDownInteraction
+Superclasses: matlab.ui.eventdata.internal.Interaction
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=0
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Item | immutable | 0 | - | matlab.ui.eventdata.DropDownInteraction
+Location | public | 1 | - | matlab.ui.eventdata.internal.Interaction
+ScreenLocation | public | 1 | - | matlab.ui.eventdata.internal.Interaction
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (0)
+
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (1)
+DropDownInteraction(matlab.ui.eventdata.DropDownInteraction)

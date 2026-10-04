@@ -1,0 +1,10 @@
+callback edit present: 1
+editable-section edit present: 1
+startup edit present: 1
+runnable text has all three edits: 1
+readAppDesignerData ok: fields components,code,appData
+readAppMetadata ok: struct
+deserializer: appdesigner.internal.serialization.MLAPPDeserializer
+getAppData ok: struct
+which DataExport: <u0>\rt\out\DataExport.mlapp
+meta.class has JGraphEdited: 1

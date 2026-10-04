@@ -1,0 +1,22 @@
+CLASS matlab.ui.eventdata.NodeTextChangedData
+Superclasses: matlab.ui.eventdata.internal.AbstractEventData
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+EventName | private | 0 | - | event.EventData
+Node | private | 0 | - | matlab.ui.eventdata.NodeTextChangedData
+PreviousText | private | 0 | - | matlab.ui.eventdata.NodeTextChangedData
+Source | private | 0 | - | event.EventData
+Text | private | 0 | - | matlab.ui.eventdata.NodeTextChangedData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (3)
+NodeTextChangedData(matlab.ui.eventdata.NodeTextChangedData)
+addprop(dynamicprops)
+delete(event.EventData)

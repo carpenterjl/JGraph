@@ -1,0 +1,84 @@
+--- GUIDE runtime presence
+gui_mainfcn: C:\Program Files\MATLAB\R2025b\toolbox\matlab\guide\gui_mainfcn.m
+guide: C:\Program Files\MATLAB\R2025b\toolbox\matlab\guide\guide.m
+openfigLegacy exists: 0
+guide() -> MATLAB:guide:GUIDEHasBeenRemoved: The GUIDE interactive design environment has been removed. You can continue to run and edit your GUIDE app from the MATLAB Editor by opening the app code file. To continue developing your apps interactively, use the <a href="matlab:guide.internal.launchGUIDEAppMaintenanceOptions()">GUIDE to App Designer Migration Tool</a>.
+--- build myguide.fig (figure + 3 uicontrols)
+{Unrecognized function or variable 'myguide'.
+
+Error in probe_guide>@(hObject,eventdata)myguide('edit1_CreateFcn',hObject,eventdata,guidata(hObject)) (line 24)
+    'CreateFcn', @(hObject,eventdata)myguide('edit1_CreateFcn',hObject,eventdata,guidata(hObject)));
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+Error using probe_guide (line 21)
+Error while evaluating UIControl CreateFcn.
+
+[Warning: hgsave will be removed in a future release. Use savefig instead.] 
+[> In hgsave (line 25)
+In probe_guide (line 30)] 
+--- .fig as a MAT-file
+{Unrecognized function or variable 'myguide'.
+
+Error in probe_guide>@(hObject,eventdata)myguide('edit1_CreateFcn',hObject,eventdata,guidata(hObject)) (line 24)
+    'CreateFcn', @(hObject,eventdata)myguide('edit1_CreateFcn',hObject,eventdata,guidata(hObject)));
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+  var hgM_070000 class struct size [1 1]
+  var hgS_070000 class struct size [1 1]
+  var meta_data class struct size [1 1]
+{Unrecognized function or variable 'myguide'.
+
+Error in probe_guide>@(hObject,eventdata)myguide('edit1_CreateFcn',hObject,eventdata,guidata(hObject)) (line 24)
+    'CreateFcn', @(hObject,eventdata)myguide('edit1_CreateFcn',hObject,eventdata,guidata(hObject)));
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+  hgS_070000 fields: type, handle, properties, children, special
+    type=figure, #children=3
+    child(1) type=uicontrol fields=type, handle, properties, children, special
+    child(1) properties: Units, String, Style, Position, BackgroundColor, BackgroundColorMode, Callback, Children, ForegroundColor, ForegroundColorMode, Tag
+    children types: uicontrol
+    figure properties (15): Units, Position, Visible, Color, IntegerHandle, Colormap, MenuBar, Name, NumberTitle, HandleVisibility, ApplicationData, Tag, PaperPosition, PaperPositionMode, ScreenPixelsPerInchMode
+    ApplicationData: GUIDEOptions
+  hgM_070000 fields: GraphicsObjects
+  meta_data fields: matlab_release, uuid
+shipped GUIDE fig: C:\Program Files\MATLAB\R2025b\toolbox\lte\lte\saLteDLConformanceTestBenchGUI.fig
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In probe_guide>inspectFig (line 81)
+In probe_guide (line 38)] 
+  var hgM_070000 class struct size [1 1]
+  var hgS_070000 class struct size [1 1]
+  var meta_data class struct size [1 1]
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In probe_guide>inspectFig (line 83)
+In probe_guide (line 38)] 
+  hgS_070000 fields: type, handle, properties, children, special
+    type=figure, #children=40
+    child(1) type=axes fields=type, handle, properties, children, special
+    child(1) properties: FontUnits, Units, CameraPosition, CameraPositionMode, CameraTarget, CameraTargetMode, CameraViewAngle, CameraViewAngleMode, PlotBoxAspectRatio, PlotBoxAspectRatioMode, XTick, XTickMode, XTickLabel, XTickLabelMode, YTick, YTickMode, YTickLabel, YTickLabelMode, Color, CameraMode, DataSpaceMode, ColorSpaceMode, DecorationContainerMode, ChildContainerMode, BoxFrame
+    children types: axes,uicontrol,uipanel
+    figure properties (21): PaperUnits, Units, Position, Visible, Color, FileName, IntegerHandle, Colormap, MenuBar, Name, NumberTitle, HandleVisibility, ApplicationData, Tag, UserData, Resize, PaperPosition, PaperSize, PaperType, InvertHardcopy, ScreenPixelsPerInchMode
+    ApplicationData: GUIDEOptions, lastValidTag, ctb200jaz
+  hgM_070000 fields: GraphicsObjects
+  meta_data fields: matlab_release, uuid
+--- run the GUIDE pair invisibly
+returned matlab.ui.Figure, Tag=figure1, Visible=off
+handles fields: figure1, text1, edit1, pushbutton1, output, count, openingArgs
+edit1 BackgroundColor after CreateFcn: [1 1 1]
+stored Callback: @(hObject,eventdata)myguide('pushbutton1_Callback',hObject,eventdata,guidata(hObject))
+after callback count=2 text=Count: 2
+singleton reuse same figure = 1
+--- openfig / hgload of the shipped fig without its code
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In matlab.graphics.internal.figfile.FigFile/read (line 28)
+In matlab.graphics.internal.figfile/FigFile
+In loadFigure (line 28)
+In openfig>localOpenFigure (line 75)
+In openfig (line 40)
+In probe_guide (line 67)] 
+openfig ok: matlab.ui.Figure, 59 objects, types: annotationpane,axes,figure,text,uicontrol,uipanel
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In matlab.graphics.internal.figfile.FigFile/read (line 28)
+In matlab.graphics.internal.figfile/FigFile
+In hgload (line 56)
+In probe_guide (line 73)] 
+hgload ok: matlab.ui.Figure

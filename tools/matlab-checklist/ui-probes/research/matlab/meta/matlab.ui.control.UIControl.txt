@@ -1,0 +1,67 @@
+CLASS matlab.ui.control.UIControl
+Superclasses: matlab.ui.control.ClientComponent
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BackgroundColor | public | 1 | - | matlab.ui.control.UIControl
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+CData | public | 1 | - | matlab.ui.control.UIControl
+Callback | public | 1 | - | matlab.ui.control.UIControl
+Children | public | 0 | - | matlab.ui.control.UIControl
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Enable | public | 1 | - | matlab.ui.control.ClientComponent
+Extent | private | 0 | - | matlab.ui.control.UIControl
+FontAngle | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontName | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontSize | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontUnits | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontWeight | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+ForegroundColor | public | 1 | - | matlab.ui.control.ClientComponent
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+HorizontalAlignment | public | 1 | - | matlab.ui.control.UIControl
+InnerPosition | public | 0 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+KeyPressFcn | public | 1 | - | matlab.ui.internal.mixin.KeyInvokable
+KeyReleaseFcn | public | 1 | - | matlab.ui.internal.mixin.KeyInvokable
+ListboxTop | public | 1 | - | matlab.ui.control.UIControl
+Max | public | 1 | - | matlab.ui.control.UIControl
+Min | public | 1 | - | matlab.ui.control.UIControl
+OuterPosition | public | 0 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | - | matlab.ui.control.UIControl
+SliderStep | public | 1 | - | matlab.ui.control.UIControl
+String | public | 1 | - | matlab.ui.control.UIControl
+Style | public | 1 | - | matlab.ui.control.UIControl
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 1 | - | matlab.ui.control.ClientComponent
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Value | public | 1 | - | matlab.ui.control.UIControl
+Visible | public | 1 | - | matlab.ui.control.ClientComponent
+
+-- HIDDEN PUBLIC-GET PROPERTIES (76)
+ApplicationData BackgroundColorMode BackgroundColor_I ButtonDownFcnMode ButtonDownFcn_I CDataMode CData_I CallbackMode Callback_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I EnableMode Enable_I FontAngleMode FontAngle_I FontNameMode FontName_I FontSizeMode FontSize_I FontUnitsMode FontUnits_I FontWeightMode FontWeight_I ForegroundColorMode ForegroundColor_I HandleVisibilityMode HandleVisibility_I HitTest HorizontalAlignmentMode HorizontalAlignment_I Internal KeyPressFcnMode KeyPressFcn_I KeyReleaseFcnMode KeyReleaseFcn_I ListboxTopMode ListboxTop_I MaxMode Max_I MinMode Min_I NodeParent ParentMode Parent_I PositionMode Position_I Selected SelectionHighlight Serializable SliderStepMode SliderStep_I StringMode String_I StyleMode Style_I TagMode Tag_I TooltipMode TooltipStr TooltipString TooltipStringMode TooltipString_I Tooltip_I Tooltips UIContextMenu UnitsMode Units_I ValueMode Value_I VisibleMode Visible_I
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (13)
+UIControl(matlab.ui.control.UIControl)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.control.UIControl)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

@@ -1,0 +1,184 @@
+CLASS matlab.graphics.axis.Axes
+Superclasses: matlab.graphics.axis.AbstractAxes, matlab.graphics.internal.Legacy, matlab.graphics.mixin.Selectable, matlab.graphics.mixin.UIParentable, matlab.graphics.mixin.LegendTarget, matlab.graphics.internal.GraphicsJavaVisible
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+ALim | public | 1 | - | matlab.graphics.axis.Axes
+ALimMode | public | 1 | - | matlab.graphics.axis.Axes
+AlphaScale | public | 1 | - | matlab.graphics.axis.Axes
+Alphamap | public | 1 | - | matlab.graphics.axis.AbstractAxes
+AmbientLightColor | public | 1 | - | matlab.graphics.axis.Axes
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Box | public | 1 | - | matlab.graphics.axis.Axes
+BoxStyle | public | 1 | - | matlab.graphics.axis.Axes
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+CLim | public | 1 | - | matlab.graphics.axis.Axes
+CLimMode | public | 1 | - | matlab.graphics.axis.Axes
+CameraPosition | public | 1 | - | matlab.graphics.axis.Axes
+CameraPositionMode | public | 0 | - | matlab.graphics.axis.Axes
+CameraTarget | public | 1 | - | matlab.graphics.axis.Axes
+CameraTargetMode | public | 0 | - | matlab.graphics.axis.Axes
+CameraUpVector | public | 1 | - | matlab.graphics.axis.Axes
+CameraUpVectorMode | public | 0 | - | matlab.graphics.axis.Axes
+CameraViewAngle | public | 1 | - | matlab.graphics.axis.Axes
+CameraViewAngleMode | public | 0 | - | matlab.graphics.axis.Axes
+Children | public | 1 | - | matlab.graphics.primitive.world.Group
+Clipping | public | 1 | - | matlab.graphics.axis.AbstractAxes
+ClippingStyle | public | 1 | - | matlab.graphics.axis.Axes
+Color | public | 1 | - | matlab.graphics.axis.Axes
+ColorOrder | public | 1 | - | matlab.graphics.axis.AbstractAxes
+ColorOrderIndex | public | 1 | - | matlab.graphics.axis.AbstractAxes
+ColorScale | public | 1 | - | matlab.graphics.axis.Axes
+Colormap | public | 1 | - | matlab.graphics.axis.AbstractAxes
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+CurrentPoint | protected | 0 | - | matlab.graphics.axis.Axes
+DataAspectRatio | public | 1 | - | matlab.graphics.axis.Axes
+DataAspectRatioMode | public | 0 | - | matlab.graphics.axis.Axes
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+FontAngle | public | 1 | - | matlab.graphics.axis.Axes
+FontName | public | 1 | - | matlab.graphics.axis.Axes
+FontSize | public | 1 | - | matlab.graphics.axis.AbstractAxes
+FontSizeMode | public | 0 | - | matlab.graphics.axis.AbstractAxes
+FontSmoothing | public | 1 | - | matlab.graphics.axis.Axes
+FontUnits | public | 1 | - | matlab.graphics.axis.AbstractAxes
+FontWeight | public | 1 | - | matlab.graphics.axis.Axes
+GridAlpha | public | 1 | - | matlab.graphics.axis.Axes
+GridAlphaMode | public | 0 | - | matlab.graphics.axis.Axes
+GridColor | public | 1 | - | matlab.graphics.axis.Axes
+GridColorMode | public | 0 | - | matlab.graphics.axis.Axes
+GridLineStyle | public | 1 | - | matlab.graphics.axis.Axes
+GridLineWidth | public | 1 | - | matlab.graphics.axis.Axes
+GridLineWidthMode | public | 0 | - | matlab.graphics.axis.Axes
+HandleVisibility | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+HitTest | public | 1 | - | matlab.graphics.mixin.GraphicsPickable
+InnerPosition | public | 1 | - | matlab.graphics.axis.AbstractAxes
+InteractionOptions | public | 1 | - | matlab.graphics.axis.AbstractAxes
+Interactions | public | 1 | - | matlab.graphics.axis.AbstractAxes
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+LabelFontSizeMultiplier | public | 1 | - | matlab.graphics.axis.Axes
+Layer | public | 1 | - | matlab.graphics.axis.Axes
+Layout | public | 0 | - | matlab.graphics.mixin.Layoutable
+Legend | private | 0 | - | matlab.graphics.mixin.LegendTarget
+LineStyleCyclingMethod | public | 1 | - | matlab.graphics.axis.AbstractAxes
+LineStyleOrder | public | 1 | - | matlab.graphics.axis.AbstractAxes
+LineStyleOrderIndex | public | 1 | - | matlab.graphics.axis.AbstractAxes
+LineWidth | public | 1 | - | matlab.graphics.axis.Axes
+MinorGridAlpha | public | 1 | - | matlab.graphics.axis.Axes
+MinorGridAlphaMode | public | 0 | - | matlab.graphics.axis.Axes
+MinorGridColor | public | 1 | - | matlab.graphics.axis.Axes
+MinorGridColorMode | public | 0 | - | matlab.graphics.axis.Axes
+MinorGridLineStyle | public | 1 | - | matlab.graphics.axis.Axes
+MinorGridLineWidth | public | 1 | - | matlab.graphics.axis.Axes
+MinorGridLineWidthMode | public | 0 | - | matlab.graphics.axis.Axes
+NextPlot | public | 1 | - | matlab.graphics.axis.AbstractAxes
+NextSeriesIndex | protected | 1 | - | matlab.graphics.mixin.NextSeriesIndexProvider
+OuterPosition | public | 1 | - | matlab.graphics.axis.AbstractAxes
+Parent | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+PickableParts | public | 1 | - | matlab.graphics.mixin.GraphicsPickable
+PlotBoxAspectRatio | public | 1 | - | matlab.graphics.axis.Axes
+PlotBoxAspectRatioMode | public | 0 | - | matlab.graphics.axis.Axes
+Position | public | 1 | - | matlab.graphics.axis.AbstractAxes
+PositionConstraint | public | 1 | - | matlab.graphics.axis.AbstractAxes
+Projection | public | 1 | - | matlab.graphics.axis.Axes
+Selected | public | 1 | - | matlab.graphics.mixin.Selectable
+SelectionHighlight | public | 1 | - | matlab.graphics.mixin.Selectable
+SortMethod | public | 1 | - | matlab.graphics.axis.AbstractAxes
+Subtitle | public | 1 | - | matlab.graphics.axis.Axes
+SubtitleFontWeight | public | 1 | - | matlab.graphics.axis.AbstractAxes
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+TickDir | public | 1 | - | matlab.graphics.axis.Axes
+TickDirMode | public | 0 | - | matlab.graphics.axis.Axes
+TickLabelInterpreter | public | 1 | - | matlab.graphics.axis.Axes
+TickLength | public | 1 | - | matlab.graphics.axis.Axes
+TightInset | protected | 0 | - | matlab.graphics.axis.AbstractAxes
+Title | public | 1 | - | matlab.graphics.axis.Axes
+TitleFontSizeMultiplier | public | 1 | - | matlab.graphics.axis.AbstractAxes
+TitleFontWeight | public | 1 | - | matlab.graphics.axis.AbstractAxes
+TitleHorizontalAlignment | public | 1 | - | matlab.graphics.axis.Axes
+Toolbar | public | 1 | - | matlab.graphics.axis.AbstractAxes
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.graphics.axis.AbstractAxes
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+View | public | 1 | - | matlab.graphics.axis.Axes
+Visible | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+XAxis | public | 1 | - | matlab.graphics.axis.Axes
+XAxisLocation | public | 1 | - | matlab.graphics.axis.Axes
+XColor | public | 1 | - | matlab.graphics.axis.Axes
+XColorMode | public | 1 | - | matlab.graphics.axis.Axes
+XDir | public | 1 | - | matlab.graphics.axis.Axes
+XGrid | public | 1 | - | matlab.graphics.axis.Axes
+XLabel | public | 1 | - | matlab.graphics.axis.Axes
+XLim | public | 1 | - | matlab.graphics.axis.Axes
+XLimMode | public | 1 | - | matlab.graphics.axis.Axes
+XLimitMethod | public | 1 | - | matlab.graphics.axis.Axes
+XMinorGrid | public | 1 | - | matlab.graphics.axis.Axes
+XMinorTick | public | 1 | - | matlab.graphics.axis.Axes
+XScale | public | 1 | - | matlab.graphics.axis.Axes
+XTick | public | 1 | - | matlab.graphics.axis.Axes
+XTickLabel | public | 1 | - | matlab.graphics.axis.Axes
+XTickLabelMode | public | 1 | - | matlab.graphics.axis.Axes
+XTickLabelRotation | public | 1 | - | matlab.graphics.axis.Axes
+XTickLabelRotationMode | public | 1 | - | matlab.graphics.axis.Axes
+XTickMode | public | 1 | - | matlab.graphics.axis.Axes
+YAxis | private | 0 | - | matlab.graphics.axis.Axes
+YAxisLocation | public | 1 | - | matlab.graphics.axis.Axes
+YColor | public | 1 | - | matlab.graphics.axis.Axes
+YColorMode | public | 1 | - | matlab.graphics.axis.Axes
+YDir | public | 1 | - | matlab.graphics.axis.Axes
+YGrid | public | 1 | - | matlab.graphics.axis.Axes
+YLabel | public | 1 | - | matlab.graphics.axis.Axes
+YLim | public | 1 | - | matlab.graphics.axis.Axes
+YLimMode | public | 1 | - | matlab.graphics.axis.Axes
+YLimitMethod | public | 1 | - | matlab.graphics.axis.Axes
+YMinorGrid | public | 1 | - | matlab.graphics.axis.Axes
+YMinorTick | public | 1 | - | matlab.graphics.axis.Axes
+YScale | public | 1 | - | matlab.graphics.axis.Axes
+YTick | public | 1 | - | matlab.graphics.axis.Axes
+YTickLabel | public | 1 | - | matlab.graphics.axis.Axes
+YTickLabelMode | public | 1 | - | matlab.graphics.axis.Axes
+YTickLabelRotation | public | 1 | - | matlab.graphics.axis.Axes
+YTickLabelRotationMode | public | 1 | - | matlab.graphics.axis.Axes
+YTickMode | public | 1 | - | matlab.graphics.axis.Axes
+ZAxis | public | 1 | - | matlab.graphics.axis.Axes
+ZColor | public | 1 | - | matlab.graphics.axis.Axes
+ZColorMode | public | 1 | - | matlab.graphics.axis.Axes
+ZDir | public | 1 | - | matlab.graphics.axis.Axes
+ZGrid | public | 1 | - | matlab.graphics.axis.Axes
+ZLabel | public | 1 | - | matlab.graphics.axis.Axes
+ZLim | public | 1 | - | matlab.graphics.axis.Axes
+ZLimMode | public | 1 | - | matlab.graphics.axis.Axes
+ZLimitMethod | public | 1 | - | matlab.graphics.axis.Axes
+ZMinorGrid | public | 1 | - | matlab.graphics.axis.Axes
+ZMinorTick | public | 1 | - | matlab.graphics.axis.Axes
+ZScale | public | 1 | - | matlab.graphics.axis.Axes
+ZTick | public | 1 | - | matlab.graphics.axis.Axes
+ZTickLabel | public | 1 | - | matlab.graphics.axis.Axes
+ZTickLabelMode | public | 1 | - | matlab.graphics.axis.Axes
+ZTickLabelRotation | public | 1 | - | matlab.graphics.axis.Axes
+ZTickLabelRotationMode | public | 1 | - | matlab.graphics.axis.Axes
+ZTickMode | public | 1 | - | matlab.graphics.axis.Axes
+
+-- HIDDEN PUBLIC-GET PROPERTIES (384)
+ALim_I ActiveChildContainer ActiveChildContainerMode ActiveChildContainer_I ActiveColorSpace ActiveColorSpaceMode ActiveColorSpace_I ActiveDataSpace ActiveDataSpaceIndex ActiveDataSpaceMode ActiveDataSpace_I ActiveDecorationContainer ActiveDecorationContainerMode ActiveDecorationContainer_I ActivePositionProperty ActivePositionPropertyMode ActivePositionProperty_I ActiveXBaseline ActiveXBaselineMode ActiveXBaseline_I ActiveXRuler ActiveXRulerMode ActiveXRuler_I ActiveYBaseline ActiveYBaselineMode ActiveYBaseline_I ActiveYRuler ActiveYRulerMode ActiveYRuler_I ActiveZBaseline ActiveZBaselineMode ActiveZBaseline_I ActiveZRuler ActiveZRulerMode ActiveZRuler_I AlphaScaleMode AlphaScale_I AlphamapMode Alphamap_I AmbientLightColorMode AmbientLightColor_I AmbientLightSource AmbientLightSourceMode AmbientLightSource_I ApplicationData Backdrop BackdropMode Backdrop_I Behavior BehaviorMode Behavior_I BoxFrame BoxFrameMode BoxFrame_I BoxMode BoxStyleMode BoxStyle_I Box_I BubbleLegend ButtonDownFcnMode ButtonDownFcn_I CLim_I Camera CameraMode CameraPosition_I CameraTarget_I CameraUpVector_I CameraViewAngle_I Camera_I CausesLayoutUpdate ChildContainer ChildContainerMode ChildContainer_I ChildrenMode Children_I ClippingMode ClippingStyleMode ClippingStyle_I Clipping_I CollectLegendableObjects CollectLegendableObjectsMode CollectLegendableObjects_I ColorMode ColorOrderIndexMode ColorOrderIndex_I ColorOrderMode ColorOrder_I ColorScaleMode ColorScale_I ColorSpace ColorSpaceMode ColorSpace_I Color_I Colorbar ColormapMode Colormap_I ContentsVisible ContentsVisibleMode ContentsVisible_I Copyable CreateFcnMode CreateFcn_I DataAspectRatio_I DataSpace DataSpaceMode DataSpace_I DecorationContainer DecorationContainerMode DecorationContainer_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I Description DescriptionMode Description_I DimensionNames DrawMode EraseMode ErrorCallback ErrorCallbackMode ErrorCallback_I FontAngleMode FontAngle_I FontNameMode FontName_I FontSize_I FontSmoothingMode FontSmoothing_I FontUnitsMode FontUnits_I FontWeightMode FontWeight_I GridAlpha_I GridColor_I GridLineStyleMode GridLineStyle_I GridLineWidth_I HG1DrawStyle HG1DrawStyleMode HG1DrawStyle_I HG1Erase HG1EraseMode HG1Erase_I HandleVisibilityMode HandleVisibility_I HasNonNumericData HelpTopicKey HelpTopicKeyMode HelpTopicKey_I HintConsumer HintConsumerMode HintConsumer_I HitTestMode HitTest_I InnerPositionMode InnerPosition_I InteractionContainer InteractionContainerMode InteractionContainer_I InteractionOptionsMode InteractionOptions_I InteractionsMode Interactions_I Internal LabelFontSizeMultiplierMode LabelFontSizeMultiplier_I LayerMode Layer_I LineStyleCyclingMethodMode LineStyleCyclingMethod_I LineStyleOrderIndexMode LineStyleOrderIndex_I LineStyleOrderMode LineStyleOrder_I LineWidthMode LineWidth_I LooseInset LooseInsetMode LooseInset_I MaxResponsiveSize MaxResponsiveSizeMode MaxResponsiveSize_I MinResponsiveSize MinResponsiveSizeMode MinResponsiveSize_I MinorGridAlpha_I MinorGridColor_I MinorGridLineStyleMode MinorGridLineStyle_I MinorGridLineWidth_I NextPlotMode NextPlot_I NextSeriesIndexMode NextSeriesIndex_I NodeChildren NodeParent OuterPositionMode OuterPosition_I Padding PaddingMode Padding_I ParentMode Parent_I PickablePartsMode PickableParts_I PlotBoxAspectRatio_I PositionConstraintMode PositionConstraint_I PositionMode Position_I ProjectionMode Projection_I ResponsiveArea ResponsiveAreaManaged ResponsiveAreaManagedMode ResponsiveAreaManaged_I ResponsiveAreaMode ResponsiveArea_I SelectedMode Selected_I SelectionHandle SelectionHighlightMode SelectionHighlight_I Serializable SerializableMode Serializable_I SortMethodMode SortMethod_I SubtitleFontWeightMode SubtitleFontWeight_I SubtitleMode Subtitle_I Subtitle_IS TagMode Tag_I TargetManager TickDir_I TickLabelInterpreterMode TickLabelInterpreter_I TickLengthMode TickLength_I TitleFontSizeMultiplierMode TitleFontSizeMultiplier_I TitleFontWeightMode TitleFontWeight_I TitleHorizontalAlignmentMode TitleHorizontalAlignment_I TitleMode Title_I Title_IS ToolbarMode ToolbarProxy ToolbarProxyMode ToolbarProxy_I Toolbar_I Toolbar_IS UIContextMenu UnitsMode Units_I ViewMode View_I VisibleMode Visible_I WarpToFill WarpToFillMode WarpToFill_I XAxisLocationMode XAxisLocation_I XAxisMode XAxis_I XBaseline XBaselineMode XBaseline_I XBaseline_IS XColor_I XDirMode XDir_I XGridHandle XGridHandleMode XGridHandle_I XGridMode XGrid_I XLabelMode XLabel_I XLabel_IS XLimSpec XLimSpecMode XLimSpec_I XLim_I XLimitMethodMode XLimitMethod_I XMinorGridMode XMinorGrid_I XMinorTickMode XMinorTick_I XRuler XRulerMode XRuler_I XScaleMode XScale_I XTickLabelRotation_I XTickLabel_I XTickLabels XTickLabelsMode XTickLabels_I XTick_I YAxisLocationMode YAxisLocation_I YAxisMode YAxis_I YBaseline YBaselineMode YBaseline_I YBaseline_IS YColor_I YDirMode YDir_I YGridHandle YGridHandleMode YGridHandle_I YGridMode YGrid_I YLabelMode YLabel_I YLabel_IS YLimSpec YLimSpecMode YLimSpec_I YLim_I YLimitMethodMode YLimitMethod_I YMinorGridMode YMinorGrid_I YMinorTickMode YMinorTick_I YRuler YRulerMode YRuler_I YScaleMode YScale_I YTickLabelRotation_I YTickLabel_I YTickLabels YTickLabelsMode YTickLabels_I YTick_I ZAxisMode ZAxis_I ZBaseline ZBaselineMode ZBaseline_I ZBaseline_IS ZColor_I ZDirMode ZDir_I ZGridHandle ZGridHandleMode ZGridHandle_I ZGridMode ZGrid_I ZLabelMode ZLabel_I ZLabel_IS ZLimSpec ZLimSpecMode ZLimSpec_I ZLim_I ZLimitMethodMode ZLimitMethod_I ZMinorGridMode ZMinorGrid_I ZMinorTickMode ZMinorTick_I ZRuler ZRulerMode ZRuler_I ZScaleMode ZScale_I ZTickLabelRotation_I ZTickLabel_I ZTickLabels ZTickLabelsMode ZTickLabels_I ZTick_I
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (14)
+Axes(matlab.graphics.axis.Axes)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.graphics.axis.Axes)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)
+tightPosition(matlab.graphics.axis.AbstractAxes)

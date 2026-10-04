@@ -1,0 +1,16 @@
+CLASS matlab.ui.style.Behavior
+Superclasses: matlab.ui.style.internal.ComponentStyle
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=0
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Editable | public | 0 | '' | matlab.ui.style.Behavior
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (0)
+
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (1)
+Behavior(matlab.ui.style.Behavior)

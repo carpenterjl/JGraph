@@ -1,0 +1,18 @@
+CLASS matlab.apps.App
+Superclasses: handle
+Sealed=0 Abstract=1 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (4)
+App(matlab.apps.App)
+delete(matlab.apps.App)
+loadobj(matlab.apps.App)
+saveobj(matlab.apps.App)

@@ -1,0 +1,57 @@
+CLASS matlab.ui.control.DiscreteKnob
+Superclasses: matlab.ui.control.internal.model.AbstractStateComponent, matlab.ui.control.internal.model.mixin.FontStyledComponent, matlab.ui.control.internal.model.mixin.PositionableComponent, matlab.ui.control.internal.model.mixin.Layoutable, matlab.ui.control.internal.model.mixin.FocusableComponent
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Enable | public | 1 | 'on' (OnOffSwitchState) | matlab.ui.control.internal.model.mixin.EnableableComponent
+FontAngle | public | 1 | 'normal' | matlab.ui.control.internal.model.mixin.FontStyledComponent
+FontColor | public | 1 | [0 0 0] | matlab.ui.control.internal.model.mixin.FontStyledComponent
+FontName | public | 1 | 'Helvetica' | matlab.ui.control.internal.model.mixin.FontStyledComponent
+FontSize | public | 1 | 12 | matlab.ui.control.internal.model.mixin.FontStyledComponent
+FontWeight | public | 1 | 'normal' | matlab.ui.control.internal.model.mixin.FontStyledComponent
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | public | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Items | public | 1 | - | matlab.ui.control.internal.model.AbstractStateComponent
+ItemsData | public | 1 | double[] size 0  0 | matlab.ui.control.internal.model.AbstractStateComponent
+Layout | public | 0 | - | matlab.graphics.mixin.Layoutable
+OuterPosition | private | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 1 | '' | matlab.ui.control.internal.model.mixin.TooltipComponent
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Value | public | 1 | - | matlab.ui.control.internal.model.AbstractStateComponent
+ValueChangedFcn | public | 1 | '' | matlab.ui.control.internal.model.AbstractStateComponent
+ValueIndex | public | 1 | - | matlab.ui.control.internal.model.AbstractStateComponent
+Visible | public | 1 | 'on' (OnOffSwitchState) | matlab.ui.control.internal.model.mixin.VisibleComponent
+
+-- HIDDEN PUBLIC-GET PROPERTIES (20)
+ApplicationData ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I FontColorMode FontColor_I HandleVisibilityMode HandleVisibility_I Internal NodeParent ParentMode Parent_I Serializable TagMode Tag_I UIContextMenu
+
+-- PUBLIC EVENTS (4)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved ValueChanged
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (15)
+DiscreteKnob(matlab.ui.control.DiscreteKnob)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+delete(appdesservices.internal.interfaces.model.AbstractModel)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+focus(matlab.ui.control.internal.model.mixin.FocusableComponent)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.control.DiscreteKnob)
+ne(matlab.graphics.Graphics)
+reset(matlab.ui.control.internal.model.ComponentModel)
+set(matlab.graphics.Graphics)

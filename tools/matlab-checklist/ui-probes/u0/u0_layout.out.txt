@@ -1,0 +1,75 @@
+ScreenSize=[1 1 1920 1200] ScreenPixelsPerInch=96 MonitorPositions=[1 1 1920 1200] Units=pixels
+  root ScreenSize in pixels = [1 1 1920 1200]
+  root ScreenSize in points = [0 0 1440 900]
+  root ScreenSize in inches = [0 0 20 12.5]
+  root ScreenSize in centimeters = [0 0 50.8 31.75]
+  root ScreenSize in normalized = [0 0 1 1]
+  root ScreenSize in characters = [0 0 342.85714 80]
+uicontrol Position in pixels      = [20 30 100 40]
+figure    Position in pixels      = [100 100 560 420]
+uicontrol Position in points      = [14.25 21.75 75 30]
+figure    Position in points      = [74.25 74.25 420 315]
+uicontrol Position in inches      = [0.19791667 0.30208333 1.0416667 0.41666667]
+figure    Position in inches      = [1.03125 1.03125 5.8333333 4.375]
+uicontrol Position in centimeters = [0.50270833 0.76729167 2.6458333 1.0583333]
+figure    Position in centimeters = [2.619375 2.619375 14.816667 11.1125]
+uicontrol Position in normalized  = [0.033928571 0.069047619 0.17857143 0.095238095]
+figure    Position in normalized  = [0.0515625 0.0825 0.29166667 0.35]
+uicontrol Position in characters  = [3.3928571 1.9333333 17.857143 2.6666667]
+figure    Position in characters  = [17.678571 6.6 100 28]
+1x1 characters in pixels = [6.6 16 5.6 15]
+normalized [0 0 1 1] in a 200x150 titled panel = [1 1 198 138]
+normalized [0 0 1 1] in a 200x150 untitled borderless panel = [1 1 200 150]
+Extent text "a" = [0 0 10.666667 22.666667]
+Extent text "abc" = [0 0 22.666667 22.666667]
+Extent text "Hello World" = [0 0 58.666667 22.666667]
+Extent text "MMMMMMMMMM" = [0 0 93.333333 22.666667]
+Extent pushbutton "OK" = [0 0 20 22.666667]
+fit uilabel            Position=[100 100 31 22] (default Position when unparented-to-grid: see get dumps)
+fit uibutton           Position=[100 100 100 22] (default Position when unparented-to-grid: see get dumps)
+fit uibutton_state     Position=[100 100 100 22] (default Position when unparented-to-grid: see get dumps)
+fit uieditfield        Position=[100 100 100 22] (default Position when unparented-to-grid: see get dumps)
+fit uieditfield_num    Position=[100 100 100 22] (default Position when unparented-to-grid: see get dumps)
+fit uitextarea         Position=[100 100 150 60] (default Position when unparented-to-grid: see get dumps)
+fit uidropdown         Position=[100 100 100 22] (default Position when unparented-to-grid: see get dumps)
+fit uilistbox          Position=[100 100 100 74] (default Position when unparented-to-grid: see get dumps)
+fit uicheckbox         Position=[100 100 84 22] (default Position when unparented-to-grid: see get dumps)
+fit uislider           Position=[100 100 150 3] (default Position when unparented-to-grid: see get dumps)
+fit uispinner          Position=[100 100 100 22] (default Position when unparented-to-grid: see get dumps)
+fit uiswitch           Position=[100 100 45 20] (default Position when unparented-to-grid: see get dumps)
+fit uiknob             Position=[100 100 60 60] (default Position when unparented-to-grid: see get dumps)
+fit uigauge            Position=[100 100 120 120] (default Position when unparented-to-grid: see get dumps)
+fit uilamp             Position=[100 100 20 20] (default Position when unparented-to-grid: see get dumps)
+fit uidatepicker       Position=[100 100 150 22] (default Position when unparented-to-grid: see get dumps)
+fit uiimage            Position=[100 100 100 100] (default Position when unparented-to-grid: see get dumps)
+fit uihyperlink        Position=[100 100 70 22] (default Position when unparented-to-grid: see get dumps)
+fit uitable            Position=[20 20 300 300] (default Position when unparented-to-grid: see get dumps)
+fit uitree             Position=[20 20 150 300] (default Position when unparented-to-grid: see get dumps)
+fit uipanel            Position=[20 20 260 221] (default Position when unparented-to-grid: see get dumps)
+fit uiaxes             Position=[10 10 400 300] (default Position when unparented-to-grid: see get dumps)
+fit uicolorpicker      Position=[100 100 38 22] (default Position when unparented-to-grid: see get dumps)
+fit uispinner_long     Position=[100 100 100 22] (default Position when unparented-to-grid: see get dumps)
+fit uilabel_long       Position=[100 100 31 22] (default Position when unparented-to-grid: see get dumps)
+fit uibutton_long      Position=[100 100 100 22] (default Position when unparented-to-grid: see get dumps)
+grid child matlab.ui.control.Label Row=1 Col=1 Position=[100 100 31 22]
+grid child matlab.ui.control.Button Row=1 Col=2 Position=[100 100 100 22]
+grid child matlab.ui.control.EditField Row=2 Col=1 Position=[100 100 100 22]
+grid child matlab.ui.control.Button Row=2 Col=2 Position=[100 100 100 22]
+grid child matlab.ui.control.Label Row=3 Col=1 Position=[100 100 31 22]
+grid child matlab.ui.control.Button Row=3 Col=2 Position=[100 100 100 22]
+Layout.Row=5 in a 3-row grid: ok, RowHeight now fit,100,1x,1x,1x, Position=[100 100 100 22]
+Column span [1 2]: Position=[11 868 256.666666666667 23]
+auto-placed 3 into 1x1: rows=3 cols=1, x3 Row=3 Col=1
+[Warning: Focusing this component is not supported when the 'Visible' value of the figure is 'off'.] 
+focus on invisible: ok
+uialert on invisible: MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+uiprogressdlg on invisible: MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+uiconfirm on invisible: MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+waitbar child uiprogressindicator class=matlab.ui.control.internal.ProgressIndicator
+waitbar child annotationpane class=matlab.graphics.shape.internal.AnnotationPane
+waitbar child axes class=matlab.graphics.axis.Axes
+uiprogressindicator Value=0.25 Position=[19 23.5 324 6] Units? 0
+findobj(w,'Type','patch') count=0
+waitbar axes Title="Working..."
+after update: indicator Value=0.6, title="Later"
+uiprogressindicator props: Value Indeterminate ProgressColor Parent HandleVisibility ContextMenu BusyAction BeingDeleted Interruptible CreateFcn DeleteFcn Type Tag UserData InnerPosition Position OuterPosition Enable Visible Tooltip Layout

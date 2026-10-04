@@ -1,0 +1,52 @@
+CLASS matlab.ui.container.TabGroup
+Superclasses: matlab.ui.container.Container, matlab.graphics.internal.GraphicsUIProperties, matlab.ui.internal.mixin.UIOuterPositionable, matlab.ui.internal.mixin.AutoResizable, matlab.ui.internal.mixin.ComponentLayoutable
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+AutoResizeChildren | public | 1 | - | matlab.ui.internal.mixin.AutoResizable
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+Children | public | 1 | - | matlab.ui.container.Container
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | protected | 0 | [0 0 0 0] | matlab.ui.internal.mixin.UIOuterPositionable
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Layout | public | 0 | - | matlab.graphics.mixin.Layoutable
+OuterPosition | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+SelectedTab | public | 0 | - | matlab.ui.container.TabGroup
+SelectionChangedFcn | public | 1 | - | matlab.ui.container.TabGroup
+SizeChangedFcn | public | 1 | - | matlab.ui.container.TabGroup
+TabLocation | public | 1 | - | matlab.ui.container.TabGroup
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 1 | - | matlab.ui.container.TabGroup
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.ui.container.TabGroup
+
+-- HIDDEN PUBLIC-GET PROPERTIES (58)
+ApplicationData AutoResizeChildrenMode AutoResizeChildren_I ButtonDownFcnMode ButtonDownFcn_I ChildrenMode Children_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I FontAngle FontAngleMode FontAngle_I FontColor FontColorMode FontColor_I FontName FontNameMode FontName_I FontSize FontSizeMode FontSize_I FontWeight FontWeightMode FontWeight_I HandleVisibilityMode HandleVisibility_I Internal NodeChildren NodeParent ParentMode Parent_I PositionMode Position_I ResizeFcn SelectionChangedFcnMode SelectionChangedFcn_I Serializable SerializableMode Serializable_I SizeChangedFcnMode SizeChangedFcn_I TabLocationMode TabLocation_I TagMode Tag_I TooltipMode Tooltip_I UIContextMenu UnitsMode Units_I ValidateChildFcnMode VisibleMode Visible_I
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (13)
+TabGroup(matlab.ui.container.TabGroup)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.TabGroup)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

@@ -1,0 +1,18 @@
+CLASS matlab.graphics.controls.HTMLCanvasPlugin
+Superclasses: 
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=0
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Factory | public | 0 | - | matlab.graphics.controls.HTMLCanvasPlugin
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (0)
+
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (3)
+HTMLCanvasPlugin(matlab.graphics.controls.HTMLCanvasPlugin)
+createCanvas(matlab.graphics.controls.HTMLCanvasPlugin)
+getInstance(matlab.graphics.controls.HTMLCanvasPlugin)

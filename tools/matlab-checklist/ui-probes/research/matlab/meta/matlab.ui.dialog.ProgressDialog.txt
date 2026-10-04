@@ -1,0 +1,27 @@
+CLASS matlab.ui.dialog.ProgressDialog
+Superclasses: handle, matlab.mixin.CustomDisplay, matlab.mixin.SetGet
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+CancelRequested | public | 1 | - | matlab.ui.dialog.ProgressDialog
+CancelText | public | 0 | 'Cancel' | matlab.ui.dialog.ProgressDialog
+Cancelable | public | 0 | 'off' (OnOffSwitchState) | matlab.ui.dialog.ProgressDialog
+Icon | public | 0 | '' | matlab.ui.dialog.ProgressDialog
+Indeterminate | public | 0 | 'off' (OnOffSwitchState) | matlab.ui.dialog.ProgressDialog
+Interpreter | public | 0 | 'none' | matlab.ui.dialog.ProgressDialog
+Message | public | 0 | '' | matlab.ui.dialog.ProgressDialog
+ShowPercentage | public | 0 | 'off' (OnOffSwitchState) | matlab.ui.dialog.ProgressDialog
+Title | public | 0 | '' | matlab.ui.dialog.ProgressDialog
+Value | public | 0 | 0 | matlab.ui.dialog.ProgressDialog
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (3)
+ProgressDialog(matlab.ui.dialog.ProgressDialog)
+close(matlab.ui.dialog.ProgressDialog)
+delete(matlab.ui.dialog.ProgressDialog)

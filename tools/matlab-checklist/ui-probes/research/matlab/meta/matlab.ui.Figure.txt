@@ -1,0 +1,98 @@
+CLASS matlab.ui.Figure
+Superclasses: matlab.ui.container.CanvasContainer, matlab.graphics.internal.GraphicsUIProperties, matlab.ui.internal.mixin.Selectable, matlab.ui.internal.mixin.Legacy, matlab.ui.internal.mixin.Positionable, matlab.ui.internal.mixin.Scrollable, matlab.ui.internal.mixin.AxesLimits, matlab.ui.internal.mixin.Windowable, matlab.ui.internal.mixin.Printable, matlab.graphics.internal.Exportable, matlab.ui.internal.mixin.KeyInvokable, matlab.graphics.mixin.ThemeContainer, matlab.ui.internal.mixin.AutoResizable, matlab.mixin.CustomElementSerialization
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Alphamap | public | 1 | - | matlab.ui.Figure
+AutoResizeChildren | public | 1 | - | matlab.ui.internal.mixin.AutoResizable
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+Children | public | 1 | - | matlab.ui.container.Container
+Clipping | public | 0 | - | matlab.ui.internal.mixin.Legacy
+CloseRequestFcn | public | 1 | - | matlab.ui.Figure
+Color | public | 1 | - | matlab.ui.Figure
+Colormap | public | 1 | - | matlab.ui.Figure
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+CurrentAxes | public | 1 | - | matlab.ui.Figure
+CurrentCharacter | public | 1 | - | matlab.ui.Figure
+CurrentObject | public | 1 | - | matlab.ui.Figure
+CurrentPoint | public | 1 | - | matlab.ui.Figure
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DockControls | public | 1 | - | matlab.ui.internal.mixin.Windowable
+FileName | public | 1 | - | matlab.ui.Figure
+GraphicsSmoothing | public | 0 | - | matlab.ui.Figure
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+Icon | public | 1 | - | matlab.ui.Figure
+InnerPosition | public | 1 | - | matlab.ui.Figure
+IntegerHandle | public | 1 | - | matlab.ui.Figure
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+InvertHardcopy | public | 1 | - | matlab.ui.internal.mixin.Printable
+KeyPressFcn | public | 1 | - | matlab.ui.internal.mixin.KeyInvokable
+KeyReleaseFcn | public | 1 | - | matlab.ui.internal.mixin.KeyInvokable
+MenuBar | public | 1 | - | matlab.ui.Figure
+Name | public | 1 | - | matlab.ui.Figure
+NextPlot | public | 1 | - | matlab.ui.Figure
+Number | protected | 1 | - | matlab.ui.Figure
+NumberTitle | public | 1 | - | matlab.ui.Figure
+OuterPosition | public | 1 | - | matlab.ui.Figure
+PaperOrientation | public | 1 | - | matlab.ui.internal.mixin.Printable
+PaperPosition | public | 1 | - | matlab.ui.internal.mixin.Printable
+PaperPositionMode | public | 0 | - | matlab.ui.internal.mixin.Printable
+PaperSize | public | 1 | - | matlab.ui.internal.mixin.Printable
+PaperType | public | 1 | - | matlab.ui.internal.mixin.Printable
+PaperUnits | public | 1 | - | matlab.ui.internal.mixin.Printable
+Parent | public | 1 | - | matlab.ui.control.Component
+Pointer | public | 1 | - | matlab.ui.Figure
+PointerShapeCData | public | 1 | - | matlab.ui.Figure
+PointerShapeHotSpot | public | 1 | - | matlab.ui.Figure
+Position | public | 1 | - | matlab.ui.Figure
+Renderer | public | 1 | - | matlab.ui.Figure
+RendererMode | public | 0 | - | matlab.ui.Figure
+Resize | public | 1 | - | matlab.ui.internal.mixin.Windowable
+Scrollable | public | 0 | - | matlab.ui.internal.mixin.Scrollable
+SelectionType | public | 1 | - | matlab.ui.Figure
+SizeChangedFcn | public | 1 | - | matlab.ui.Figure
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Theme | public | 1 | - | matlab.graphics.mixin.ThemeContainer
+ThemeChangedFcn | public | 1 | - | matlab.graphics.mixin.ThemeContainer
+ThemeMode | public | 0 | - | matlab.graphics.mixin.ThemeContainer
+ToolBar | public | 1 | - | matlab.ui.Figure
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.Figure
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.ui.Figure
+WindowButtonDownFcn | public | 1 | - | matlab.ui.Figure
+WindowButtonMotionFcn | public | 1 | - | matlab.ui.Figure
+WindowButtonUpFcn | public | 1 | - | matlab.ui.Figure
+WindowKeyPressFcn | public | 1 | - | matlab.ui.Figure
+WindowKeyReleaseFcn | public | 1 | - | matlab.ui.Figure
+WindowScrollWheelFcn | public | 1 | - | matlab.ui.Figure
+WindowState | public | 0 | - | matlab.ui.internal.mixin.Windowable
+WindowStyle | public | 1 | - | matlab.ui.internal.mixin.Windowable
+
+-- HIDDEN PUBLIC-GET PROPERTIES (172)
+ALimInclude AlphamapMode Alphamap_I ApplicationData AutoResizeChildrenMode AutoResizeChildren_I BackingStore BaselinePixelsPerInch Behavior ButtonDownFcnMode ButtonDownFcn_I CLimInclude ChildrenMode Children_I CloseRequestFcnMode CloseRequestFcn_I ColorMode Color_I ColormapMode Colormap_I ControllerMode Copyable CreateFcnMode CreateFcn_I CurrentAxesMode CurrentAxes_I CurrentCharacterMode CurrentCharacter_I CurrentKey CurrentModifier CurrentObjectMode CurrentObject_I CurrentPointMode CurrentPoint_I DefaultPropMap_Internal DefaultTools DefaultToolsMode DefaultTools_I DeleteFcnMode DeleteFcn_I DockControlsMode DockControls_I DoubleBuffer FigureViewReady FileNameMode FileName_I HandleVisibilityMode HandleVisibility_I HasAppBuildingDefaults HelpFcn HelpFcnMode HelpFcn_I HelpTopicKey HelpTopicMap HelpTopicMapMode HelpTopicMap_I HitTest IconMode Icon_I InPrint InSaveFig IncludeRenderer IntegerHandleMode IntegerHandle_I Internal InvertHardcopyMode InvertHardcopy_I JavaFrame JavaFrame_I KeyPressFcnMode KeyPressFcn_I KeyReleaseFcnMode KeyReleaseFcn_I LoadData MenuBarMode MenuBar_I NameMode Name_I NextPlotMode NextPlot_I NodeChildren NodeParent NumToolBarsForView NumberMode NumberTitleMode NumberTitle_I Number_I OuterPositionMode OuterPosition_I PaperOrientationMode PaperOrientation_I PaperPosition_I PaperSizeMode PaperSize_I PaperTypeMode PaperType_I PaperUnitsMode PaperUnits_I ParentMode Parent_I PointerMode PointerShapeCDataMode PointerShapeCData_I PointerShapeHotSpotMode PointerShapeHotSpot_I Pointer_I PositionMode Position_I PrintTemplate PrintTemplateMode PrintTemplate_I Renderer_I ResizeFcn ResizeMode Resize_I ScreenPixelsPerInch ScreenPixelsPerInchMode ScreenPixelsPerInch_I ScrollTarget ScrollableViewportLocation ScrollableViewportLocationChangedFcn ScrollableViewportLocationChangedFcnMode ScrollableViewportLocationChangedFcn_I ScrollableViewportLocationChangingFcn ScrollableViewportLocationChangingFcnMode ScrollableViewportLocationChangingFcn_I Selected SelectionHighlight SelectionTypeMode SelectionType_I Serializable SerializableMode Serializable_I ShowMenuBarForView SizeChangedFcnMode SizeChangedFcn_I TagMode Tag_I ThemeChangedFcnMode ThemeChangedFcn_I Theme_I ToolBarMode ToolBar_I UIContextMenu UIModeEnabled UnitsMode Units_I UpdateToken Uuid ValidateChildFcnMode VisibleMode Visible_I WaitStatus WaitStatusMode WaitStatus_I WindowButtonDownFcnMode WindowButtonDownFcn_I WindowButtonMotionFcnMode WindowButtonMotionFcn_I WindowButtonUpFcnMode WindowButtonUpFcn_I WindowKeyPressFcnMode WindowKeyPressFcn_I WindowKeyReleaseFcnMode WindowKeyReleaseFcn_I WindowScrollWheelFcnMode WindowScrollWheelFcn_I WindowStyleMode WindowStyle_I XLimInclude YLimInclude ZLimInclude
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (16)
+Figure(matlab.ui.Figure)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+focus(matlab.ui.Figure)
+get(matlab.graphics.Graphics)
+isInScrollView(matlab.ui.internal.mixin.Scrollable)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.Figure)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+scroll(matlab.ui.internal.mixin.Scrollable)
+set(matlab.graphics.Graphics)

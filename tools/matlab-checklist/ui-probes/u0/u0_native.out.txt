@@ -1,0 +1,9 @@
+uigetfile  ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiputfile  ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uigetdir   ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisetcolor ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisetfont  ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiopen     ERROR MATLAB:TooManyOutputs | Too many output arguments.
+uisave     ERROR MATLAB:TooManyOutputs | Too many output arguments.
+uiload     ERROR MATLAB:TooManyOutputs | Too many output arguments.
+inputdlg   ERROR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.

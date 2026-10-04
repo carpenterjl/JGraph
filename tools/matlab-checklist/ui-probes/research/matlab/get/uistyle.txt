@@ -1,0 +1,11 @@
+CLASS matlab.ui.style.Style
+BackgroundColor = double[] size 0  0
+FontColor = double[] size 0  0
+FontWeight = ''
+FontAngle = ''
+FontName = ''
+HorizontalAlignment = ''
+HorizontalClipping = ''
+IconAlignment = ''
+Interpreter = ''
+Icon = ''

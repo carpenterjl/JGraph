@@ -1,0 +1,23 @@
+CLASS matlab.ui.eventdata.TableSelectionChangedData
+Superclasses: handle, event.EventData
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+DisplaySelection | private | 0 | double[] size 0  0 | matlab.ui.eventdata.TableSelectionChangedData
+EventName | private | 0 | - | event.EventData
+PreviousDisplaySelection | private | 0 | double[] size 0  0 | matlab.ui.eventdata.TableSelectionChangedData
+PreviousSelection | private | 0 | double[] size 0  0 | matlab.ui.eventdata.TableSelectionChangedData
+Selection | private | 0 | double[] size 0  0 | matlab.ui.eventdata.TableSelectionChangedData
+SelectionType | private | 0 | 'cell' | matlab.ui.eventdata.TableSelectionChangedData
+Source | private | 0 | - | event.EventData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (2)
+delete(event.EventData)
+loadobj(matlab.ui.eventdata.TableSelectionChangedData)

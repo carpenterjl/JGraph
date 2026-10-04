@@ -1,0 +1,43 @@
+CLASS matlab.ui.controls.ToolbarPushButton
+Superclasses: matlab.graphics.controls.AxesToolbarButton, matlab.graphics.controls.internal.ToolTipMixin
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+ButtonPushedFcn | public | 0 | '' | matlab.ui.controls.ToolbarPushButton
+Children | public | 1 | - | matlab.graphics.primitive.world.Group
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+HandleVisibility | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+Icon | public | 0 | - | matlab.graphics.controls.AxesToolbarButton
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Parent | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 0 | '' | matlab.graphics.controls.internal.ToolTipMixin
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.graphics.primitive.world.SceneNode
+
+-- HIDDEN PUBLIC-GET PROPERTIES (45)
+ApplicationData BackgroundColor Behavior BehaviorMode Behavior_I ButtonDownFcnMode ButtonDownFcn_I ChildrenMode Children_I Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I Description DescriptionMode Description_I EraseMode ErrorCallback ErrorCallbackMode ErrorCallback_I HG1Erase HG1EraseMode HG1Erase_I HandleVisibilityMode HandleVisibility_I HelpTopicKey HelpTopicKeyMode HelpTopicKey_I Hovering Image Internal NodeChildren NodeParent ParentMode Parent_I Serializable SerializableMode Serializable_I TagMode Tag_I UIContextMenu VisibleMode Visible_I
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (12)
+ToolbarPushButton(matlab.ui.controls.ToolbarPushButton)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+loadobj(matlab.ui.controls.ToolbarPushButton)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

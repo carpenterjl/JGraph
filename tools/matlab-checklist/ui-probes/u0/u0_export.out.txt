@@ -1,0 +1,21 @@
+[Warning: UI components will not be included in the output. To include UI components, use the 'exportapp' function.] 
+fig           exportgraphics     size=[348 351] red=0 green=0 blue=3456
+fig           exportgraphics_ax  size=[348 351] red=0 green=0 blue=3456
+fig           print              ERROR MATLAB:print:ExportappForPrintFigureWithUIControl | UI components are not supported. To include UI components, use the 'exportapp' function.
+fig           saveas             ERROR MATLAB:print:ExportappForPrintFigureWithUIControl | UI components are not supported. To include UI components, use the 'exportapp' function.
+fig           exportapp          ERROR MATLAB:print:HeadlessFigureUnsupported | Running using -nodisplay or other startup options that prevent figures from displaying is not supported.
+fig           getframe           ERROR MATLAB:hg:NoDisplayNoFigureSupport | exportToPngBase64 is not supported because MATLAB was started with the -nodisplay or -noFigureWindows option or there is no display.
+[Warning: UI components will not be included in the output. To include UI components, use the 'exportapp' function.] 
+uifig         exportgraphics     size=[342 358] red=0 green=0 blue=3500
+uifig         exportgraphics_ax  size=[342 358] red=0 green=0 blue=3500
+uifig         print              ERROR MATLAB:print:ExportappForPrintFigureWithUIControl | UI components are not supported. To include UI components, use the 'exportapp' function.
+uifig         saveas             ERROR MATLAB:print:ExportappForPrintFigureWithUIControl | UI components are not supported. To include UI components, use the 'exportapp' function.
+uifig         exportapp          ERROR MATLAB:print:HeadlessFigureUnsupported | Running using -nodisplay or other startup options that prevent figures from displaying is not supported.
+uifig         getframe           ERROR MATLAB:hg:NoDisplayNoFigureSupport | exportToPngBase64 is not supported because MATLAB was started with the -nodisplay or -noFigureWindows option or there is no display.
+[Warning: UI components will not be included in the output. To include UI components, use the 'exportapp' function.] 
+fig_uibutton  exportgraphics     size=[473 629] red=0 green=0 blue=0
+fig_uibutton  exportgraphics_ax  ERROR MATLAB:print:GraphicsHandleMustBeFirst | First parameter must specify the axes or chart object.
+fig_uibutton  print              ERROR MATLAB:print:ExportappForPrintFigureWithUIControl | UI components are not supported. To include UI components, use the 'exportapp' function.
+fig_uibutton  saveas             ERROR MATLAB:print:ExportappForPrintFigureWithUIControl | UI components are not supported. To include UI components, use the 'exportapp' function.
+fig_uibutton  exportapp          ERROR MATLAB:print:HeadlessFigureUnsupported | Running using -nodisplay or other startup options that prevent figures from displaying is not supported.
+fig_uibutton  getframe           ERROR MATLAB:hg:NoDisplayNoFigureSupport | exportToPngBase64 is not supported because MATLAB was started with the -nodisplay or -noFigureWindows option or there is no display.

@@ -1,0 +1,22 @@
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In matlab.graphics.internal.figfile.FigFile/read (line 28)
+In matlab.graphics.internal.figfile/FigFile
+In loadFigure (line 28)
+In openfig>localOpenFigure (line 75)
+In openfig (line 40)
+In probe_export2 (line 10)] 
+[Warning: hgsave will be removed in a future release. Use savefig instead.] 
+[> In hgsave (line 25)
+In probe_export2 (line 11)] 
+copy saved Visible = off
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In matlab.graphics.internal.figfile.FigFile/read (line 28)
+In matlab.graphics.internal.figfile/FigFile
+In loadFigure (line 28)
+In openfig>localOpenFigure (line 75)
+In openfig (line 40)
+In export.internal.exportGUIDEApp>prepareForExport (line 84)
+In export.internal.exportGUIDEApp (line 37)
+In probe_export2 (line 18)] 
+export ok: 128386 bytes, has LayoutFcn = 1
+uicontrol( calls: 43

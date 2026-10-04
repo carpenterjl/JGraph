@@ -1,0 +1,21 @@
+CLASS matlab.ui.eventdata.DataChangedData
+Superclasses: matlab.ui.eventdata.internal.AbstractEventData
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+Data | private | 0 | - | matlab.ui.eventdata.DataChangedData
+EventName | private | 0 | - | event.EventData
+PreviousData | private | 0 | - | matlab.ui.eventdata.DataChangedData
+Source | private | 0 | - | event.EventData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (3)
+DataChangedData(matlab.ui.eventdata.DataChangedData)
+addprop(dynamicprops)
+delete(event.EventData)

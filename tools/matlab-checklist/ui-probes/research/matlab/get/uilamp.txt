@@ -1,0 +1,20 @@
+CLASS matlab.ui.control.Lamp
+Color = [0 1 0]
+Parent = <matlab.ui.Figure> size 1  1
+HandleVisibility = 'on'
+ContextMenu = matlab.graphics.GraphicsPlaceholder.empty
+BusyAction = 'queue'
+BeingDeleted = 'off' (OnOffSwitchState)
+Interruptible = 'on' (OnOffSwitchState)
+CreateFcn = ''
+DeleteFcn = ''
+Type = 'uilamp'
+Tag = ''
+UserData = double[] size 0  0
+InnerPosition = [100 100 20 20]
+Position = [100 100 20 20]
+OuterPosition = [100 100 20 20]
+Enable = 'on' (OnOffSwitchState)
+Visible = 'on' (OnOffSwitchState)
+Tooltip = ''
+Layout = matlab.ui.layout.LayoutOptions.empty

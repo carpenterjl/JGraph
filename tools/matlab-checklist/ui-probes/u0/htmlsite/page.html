@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><script>
+function setup(htmlComponent) {
+  const send = (n, d) => htmlComponent.sendEventToMATLAB(n, d);
+  send('loaded', {href: String(location.href), origin: String(location.origin), ua: navigator.userAgent});
+  send('initialData', JSON.stringify(htmlComponent.Data === undefined ? '__undefined__' : htmlComponent.Data));
+  htmlComponent.addEventListener('DataChanged', function () {
+    send('echo', JSON.stringify(htmlComponent.Data === undefined ? '__undefined__' : htmlComponent.Data));
+  });
+  htmlComponent.addEventListener('ping', function (event) {
+    send('pong', JSON.stringify(event.Data === undefined ? '__undefined__' : event.Data));
+  });
+  htmlComponent.addEventListener('jsset', function (event) {
+    // set Data from JavaScript to each test value in turn
+    const vals = [1.5, [1,2,3], [[1,2],[3,4]], [], {a:1,b:'x'}, [{a:1},{a:2}], [1,'x',true], true, null, 'text', ['a','b'], {}, [[1,2],[3]], 1e308*10];
+    let i = 0;
+    const next = () => { if (i < vals.length) { htmlComponent.Data = vals[i++]; setTimeout(next, 300); } else { send('jsdone', i); } };
+    next();
+  });
+  htmlComponent.addEventListener('evtypes', function () {
+    send('ev_num', 2.5); send('ev_arr', [1,2,3]); send('ev_obj', {k:'v', n:[1,2]}); send('ev_null', null); send('ev_none');
+  });
+  const probe = (name, url) => fetch(url).then(r => r.text()).then(t => send(name, 'ok:' + t.trim().slice(0, 40))).catch(e => send(name, 'fail:' + e));
+  probe('f_sub', 'sub/inside.txt');
+  probe('f_sibling', 'sibling.txt');
+  probe('f_outside', '../outside.txt');
+  fetch('https://www.mathworks.com/favicon.ico', {mode: 'no-cors'}).then(() => send('net', 'ok')).catch(e => send('net', 'fail:' + e));
+}
+</script></head><body><p>probe</p></body></html>

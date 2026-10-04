@@ -1,0 +1,17 @@
+CLASS matlab.ui.Root
+CurrentFigure = matlab.graphics.GraphicsPlaceholder.empty
+Units = 'pixels'
+ScreenDepth = 32
+PointerLocation = [1 1190]
+CallbackObject = matlab.graphics.GraphicsPlaceholder.empty
+FixedWidthFontName = 'Courier New'
+ShowHiddenHandles = 'off' (OnOffSwitchState)
+ScreenPixelsPerInch = 96
+MonitorPositions = [1 1 1920 1200]
+ScreenSize = [1 1 1920 1200]
+Children = matlab.graphics.GraphicsPlaceholder.empty
+Parent = matlab.graphics.GraphicsPlaceholder.empty
+HandleVisibility = 'on'
+Type = 'root'
+Tag = ''
+UserData = double[] size 0  0

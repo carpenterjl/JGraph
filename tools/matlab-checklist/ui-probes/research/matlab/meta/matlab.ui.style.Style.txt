@@ -1,0 +1,25 @@
+CLASS matlab.ui.style.Style
+Superclasses: matlab.ui.style.internal.Stylable
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=0
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BackgroundColor | public | 0 | double[] size 0  0 | matlab.ui.style.internal.Stylable
+FontAngle | public | 0 | '' | matlab.ui.style.internal.Stylable
+FontColor | public | 0 | double[] size 0  0 | matlab.ui.style.internal.Stylable
+FontName | public | 0 | '' | matlab.ui.style.internal.Stylable
+FontWeight | public | 0 | '' | matlab.ui.style.internal.Stylable
+HorizontalAlignment | public | 0 | '' | matlab.ui.style.internal.Stylable
+HorizontalClipping | public | 0 | '' | matlab.ui.style.internal.Stylable
+Icon | public | 0 | '' | matlab.ui.style.internal.mixin.IconableStyle
+IconAlignment | public | 0 | '' | matlab.ui.style.internal.Stylable
+Interpreter | public | 0 | '' | matlab.ui.style.internal.Stylable
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (0)
+
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (1)
+Style(matlab.ui.style.Style)

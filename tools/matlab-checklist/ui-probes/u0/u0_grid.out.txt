@@ -1,0 +1,37 @@
+fit uilabel           [11 874.23438 31.375 16.765625]  (from [100 100 31 22], settled=1 after 0.5s)
+fit uilabel_long      [11 874.23438 130.07812 16.765625]  (from [100 100 31 22], settled=1 after 0.5s)
+fit uilabel_2line     [11 859.46875 26.6875 31.53125]  (from [100 100 31 22], settled=1 after 0.4s)
+fit uibutton          [11 868 45 23]  (from [100 100 100 22], settled=1 after 0.5s)
+fit uibutton_long     [11 868 147 23]  (from [100 100 100 22], settled=1 after 0.4s)
+fit uibutton_state    [11 868 77 23]  (from [100 100 100 22], settled=1 after 0.5s)
+fit uieditfield       [11 868.23438 123.26562 22.765625]  (from [100 100 100 22], settled=1 after 0.5s)
+fit uieditfield_num   [11 868.23438 76.75 22.765625]  (from [100 100 100 22], settled=1 after 0.5s)
+fit uitextarea        [11 825.9375 179.90625 65.0625]  (from [100 100 150 60], settled=1 after 0.5s)
+fit uidropdown        [11 868.23438 78.375 22.765625]  (from [100 100 100 22], settled=1 after 0.5s)
+fit uidropdown_long   [11 868.23438 158.39062 22.765625]  (from [100 100 100 22], settled=1 after 0.4s)
+fit uilistbox         [11 817 44 74]  (from [100 100 100 74], settled=1 after 0.5s)
+fit uicheckbox        [11 874.23438 77.03125 16.765625]  (from [100 100 84 22], settled=1 after 0.5s)
+fit uicheckbox_long   [11 874.23438 153.07812 16.765625]  (from [100 100 84 22], settled=1 after 0.4s)
+fit uislider          [18.5 881 148 3]  (from [100 100 150 3], settled=1 after 0.5s)
+fit uispinner         [11 869 98.75 22]  (from [100 100 100 22], settled=1 after 0.5s)
+fit uiswitch          [34.703125 872 40.5 18]  (from [100 100 45 20], settled=1 after 0.5s)
+fit uiknob            [46.879606 801.60316 56.530804 56.530804]  (from [100 100 60 60], settled=1 after 0.5s)
+fit uigauge           [11 771 120 120]  (from [100 100 120 120], settled=1 after 0.5s)
+fit uilamp            [11 871 20 20]  (from [100 100 20 20], settled=1 after 0.5s)
+fit uidatepicker      [11 868.23438 134.01562 22.765625]  (from [100 100 150 22], settled=1 after 0.5s)
+fit uiimage           [11 791 100 100]  (from [100 100 100 100], settled=1 after 0.5s)
+fit uihyperlink       [11 874.23438 56.6875 16.765625]  (from [100 100 70 22], settled=1 after 0.5s)
+fit uicolorpicker     [11 869 38 22]  (from [100 100 38 22], settled=1 after 0.5s)
+fit uitable           [11 861 2 30]  (from [20 20 300 300], settled=1 after 0.9s)
+fit uitree            [11 679 189.90625 212]  (from [20 20 150 300], settled=1 after 0.5s)
+fit uipanel           [11 669 262 222]  (from [20 20 260 221], settled=1 after 0.5s)
+fit uiaxes            [11 591 400 300]  (from [10 10 400 300], settled=1 after 2.4s)
+grid matlab.ui.control.Label Row=1 Col=1 Position=[11 868 256.66667 23]
+grid matlab.ui.control.Button Row=1 Col=2 Position=[277.66667 868 513.33333 23]
+grid matlab.ui.control.EditField Row=2 Col=1 Position=[11 758 256.66667 100]
+grid matlab.ui.control.Button Row=2 Col=2 Position=[277.66667 758 513.33333 100]
+grid matlab.ui.control.Label Row=3 Col=1 Position=[11 11 256.66667 737]
+grid matlab.ui.control.Button Row=3 Col=2 Position=[277.66667 11 513.33333 737]
+after Padding [5 6 7 8], spacing 3/4: matlab.ui.control.Label Position=[6 870 261.33333 23]
+after Padding [5 6 7 8], spacing 3/4: matlab.ui.control.Button Position=[271.33333 7 522.66667 757]
+Layout.Row=5: RowHeight=fit,100,1x,1x,1x, b Position=[271.33333 7 522.66667 252.41146]

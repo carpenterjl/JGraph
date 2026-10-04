@@ -1,0 +1,255 @@
+== matlab.ui : 2 classes
+   matlab.ui.Figure
+   matlab.ui.Root
+   [subpackages] matlab.ui.componentcontainer matlab.ui.container matlab.ui.control matlab.ui.controls matlab.ui.datatype matlab.ui.dialog matlab.ui.eventdata matlab.ui.internal matlab.ui.layout matlab.ui.scope matlab.ui.style
+== matlab.ui.control : 35 classes
+   matlab.ui.control.Button
+   matlab.ui.control.CheckBox
+   matlab.ui.control.ClientComponent
+   matlab.ui.control.ColorPicker
+   matlab.ui.control.Component
+   matlab.ui.control.DatePicker
+   matlab.ui.control.DiscreteKnob
+   matlab.ui.control.DropDown
+   matlab.ui.control.EditField
+   matlab.ui.control.Gauge
+   matlab.ui.control.HTML
+   matlab.ui.control.Hyperlink
+   matlab.ui.control.Image
+   matlab.ui.control.Knob
+   matlab.ui.control.Label
+   matlab.ui.control.Lamp
+   matlab.ui.control.LinearGauge
+   matlab.ui.control.ListBox
+   matlab.ui.control.NinetyDegreeGauge
+   matlab.ui.control.NumericEditField
+   matlab.ui.control.RadioButton
+   matlab.ui.control.RangeSlider
+   matlab.ui.control.RockerSwitch
+   matlab.ui.control.SemicircularGauge
+   matlab.ui.control.Slider
+   matlab.ui.control.Spinner
+   matlab.ui.control.StateButton
+   matlab.ui.control.Switch
+   matlab.ui.control.Table
+   matlab.ui.control.TextArea
+   matlab.ui.control.ToggleButton
+   matlab.ui.control.ToggleSwitch
+   matlab.ui.control.UIAxes
+   matlab.ui.control.UIControl
+   matlab.ui.control.WebComponent
+   [subpackages] matlab.ui.control.internal
+== matlab.ui.container : 15 classes
+   matlab.ui.container.ButtonGroup
+   matlab.ui.container.ButtonGroupSelectable
+   matlab.ui.container.CanvasContainer
+   matlab.ui.container.CheckBoxTree
+   matlab.ui.container.Container
+   matlab.ui.container.ContextMenu
+   matlab.ui.container.FIFOContainer
+   matlab.ui.container.GridLayout
+   matlab.ui.container.Menu
+   matlab.ui.container.Panel
+   matlab.ui.container.Tab
+   matlab.ui.container.TabGroup
+   matlab.ui.container.Toolbar
+   matlab.ui.container.Tree
+   matlab.ui.container.TreeNode
+   [subpackages] matlab.ui.container.internal matlab.ui.container.toolbar
+== matlab.ui.container.toolbar : 4 classes
+   matlab.ui.container.toolbar.PushTool
+   matlab.ui.container.toolbar.SplitTool
+   matlab.ui.container.toolbar.ToggleSplitTool
+   matlab.ui.container.toolbar.ToggleTool
+== matlab.ui.container.internal : 12 classes
+   matlab.ui.container.internal.Accordion
+   matlab.ui.container.internal.AccordionPanel
+   matlab.ui.container.internal.AppContainer
+   matlab.ui.container.internal.AppContainer_Debug
+   matlab.ui.container.internal.ComponentContainerProxy
+   matlab.ui.container.internal.JavaWrapper
+   matlab.ui.container.internal.Popout
+   matlab.ui.container.internal.PopoutController
+   matlab.ui.container.internal.RootApp
+   matlab.ui.container.internal.UIContainer
+   matlab.ui.container.internal.UIFlowContainer
+   matlab.ui.container.internal.UIGridContainer
+   [subpackages] matlab.ui.container.internal.appcontainer matlab.ui.container.internal.controller matlab.ui.container.internal.events matlab.ui.container.internal.model matlab.ui.container.internal.root matlab.ui.container.internal.utils
+== matlab.ui.eventdata : 53 classes
+   matlab.ui.eventdata.ActionData
+   matlab.ui.eventdata.BindablePropertyChangedData
+   matlab.ui.eventdata.ButtonPushedData
+   matlab.ui.eventdata.CellDoubleClickedData
+   matlab.ui.eventdata.CellEditData
+   matlab.ui.eventdata.CellSelectionChangeData
+   matlab.ui.eventdata.CheckedNodesChangedData
+   matlab.ui.eventdata.ChildData
+   matlab.ui.eventdata.ClickedData
+   matlab.ui.eventdata.CollapsedChangedData
+   matlab.ui.eventdata.ComponentInteraction
+   matlab.ui.eventdata.ContextMenuOpeningData
+   matlab.ui.eventdata.DataChangedData
+   matlab.ui.eventdata.DisplayDataChangedData
+   matlab.ui.eventdata.DoubleClickedData
+   matlab.ui.eventdata.DropDownInteraction
+   matlab.ui.eventdata.DropDownOpeningData
+   matlab.ui.eventdata.FigureActivatedData
+   matlab.ui.eventdata.FigureDeactivatedData
+   matlab.ui.eventdata.FigureInteraction
+   matlab.ui.eventdata.HTMLEventReceivedData
+   matlab.ui.eventdata.HelpRequestData
+   matlab.ui.eventdata.HyperlinkClickedData
+   matlab.ui.eventdata.ImageClickedData
+   matlab.ui.eventdata.KeyData
+   matlab.ui.eventdata.ListBoxInteraction
+   matlab.ui.eventdata.LocationChangedData
+   matlab.ui.eventdata.MenuSelectedData
+   matlab.ui.eventdata.MouseData
+   matlab.ui.eventdata.MutualExclusiveComponentSelectionChangeData
+   matlab.ui.eventdata.NodeCollapsedData
+   matlab.ui.eventdata.NodeExpandedData
+   matlab.ui.eventdata.NodeTextChangedData
+   matlab.ui.eventdata.PasswordEnteredData
+   matlab.ui.eventdata.ScrollWheelData
+   matlab.ui.eventdata.ScrollableViewportLocationChangedData
+   matlab.ui.eventdata.ScrollableViewportLocationChangingData
+   matlab.ui.eventdata.SelectedNodesChangedData
+   matlab.ui.eventdata.SelectionChangedData
+   matlab.ui.eventdata.SizeChangedData
+   matlab.ui.eventdata.SplitToolMenuActionEvent
+   matlab.ui.eventdata.TableInteraction
+   matlab.ui.eventdata.TableSelectionChangedData
+   matlab.ui.eventdata.TreeInteraction
+   matlab.ui.eventdata.UIClientComponentKeyEvent
+   matlab.ui.eventdata.UicontrolUpdateViewData
+   matlab.ui.eventdata.ValueChangeData
+   matlab.ui.eventdata.ValueChangedData
+   matlab.ui.eventdata.ValueChangingData
+   matlab.ui.eventdata.ViewReadyData
+   matlab.ui.eventdata.WindowCloseRequestData
+   matlab.ui.eventdata.WindowMouseData
+   matlab.ui.eventdata.WindowStateChangedData
+   [subpackages] matlab.ui.eventdata.internal
+== matlab.ui.dialog : 1 classes
+   matlab.ui.dialog.ProgressDialog
+== matlab.ui.style : 2 classes
+   matlab.ui.style.Behavior
+   matlab.ui.style.Style
+   [subpackages] matlab.ui.style.internal
+== matlab.ui.componentcontainer : 1 classes
+   matlab.ui.componentcontainer.ComponentContainer
+   [subpackages] matlab.ui.componentcontainer.mixin
+== matlab.ui.componentcontainer.mixin : 1 classes
+   matlab.ui.componentcontainer.mixin.Mixin
+== matlab.apps : 2 classes
+   matlab.apps.App
+   matlab.apps.AppBase
+   [functions] createCallbackFcn validateCallback
+== matlab.ui.controls : 4 classes
+   matlab.ui.controls.AxesToolbar
+   matlab.ui.controls.ToolbarDropdown
+   matlab.ui.controls.ToolbarPushButton
+   matlab.ui.controls.ToolbarStateButton
+== matlab.ui.control.internal : 10 classes
+   matlab.ui.control.internal.CircularProgressIndicator
+   matlab.ui.control.internal.Inspector
+   matlab.ui.control.internal.InspectorController
+   matlab.ui.control.internal.PasswordField
+   matlab.ui.control.internal.ProgressIndicator
+   matlab.ui.control.internal.ScrollbarSlider
+   matlab.ui.control.internal.VariableEditor
+   matlab.ui.control.internal.VariableEditorController
+   matlab.ui.control.internal.WorkspaceBrowser
+   matlab.ui.control.internal.WorkspaceBrowserController
+   [subpackages] matlab.ui.control.internal.controller matlab.ui.control.internal.model
+   [functions] specifyIconID
+== matlab.ui.eventdata.internal : 3 classes
+   matlab.ui.eventdata.internal.AbstractEventData
+   matlab.ui.eventdata.internal.Interaction
+   matlab.ui.eventdata.internal.UpdateErrorEventData
+== matlab.ui.internal : 62 classes
+   matlab.ui.internal.AppStateChangeEventAggregator
+   matlab.ui.internal.DesignTimeButtonGroupController
+   matlab.ui.internal.DesignTimeContextMenuController
+   matlab.ui.internal.DesignTimeControllerPositionMixin
+   matlab.ui.internal.DesignTimeGBTComponentController
+   matlab.ui.internal.DesignTimeGBTControllerFontMixin
+   matlab.ui.internal.DesignTimeGBTControllerPositionMixin
+   matlab.ui.internal.DesignTimeGBTControllerViewPropertiesMixin
+   matlab.ui.internal.DesignTimeGbtParentingController
+   matlab.ui.internal.DesignTimeMenuController
+   matlab.ui.internal.DesignTimePanelController
+   matlab.ui.internal.DesignTimeTabController
+   matlab.ui.internal.DesignTimeTabGroupController
+   matlab.ui.internal.DesignTimeTableController
+   matlab.ui.internal.DesignTimeToolbarController
+   matlab.ui.internal.DesignTimeUIFigureController
+   matlab.ui.internal.DesignTimeWebUIContainerController
+   matlab.ui.internal.Driver
+   matlab.ui.internal.EmbeddedFigureDisabler
+   matlab.ui.internal.EmbeddedWebFigureStateManager
+   matlab.ui.internal.FigureCapability
+   matlab.ui.internal.FigureDocument
+   matlab.ui.internal.FigureDocumentGroup
+   matlab.ui.internal.FigureImageCaptureService
+   matlab.ui.internal.FigureKeyPressForwardingSuppressor
+   matlab.ui.internal.FigureMessageService
+   matlab.ui.internal.FigureModuleInfo
+   matlab.ui.internal.FigurePanel
+   matlab.ui.internal.FigurePointToLocal
+   matlab.ui.internal.FigureServices
+   matlab.ui.internal.FigureToolsDimsConstants
+   matlab.ui.internal.FontStorage
+   matlab.ui.internal.FontUtils
+   matlab.ui.internal.GetPixelPositionHelper
+   matlab.ui.internal.HGCallbackErrorLogger
+   matlab.ui.internal.HTMLFileUtils
+   matlab.ui.internal.HTMLUtils
+   matlab.ui.internal.ICOWriter
+   matlab.ui.internal.IconUtils
+   matlab.ui.internal.JavaMigrationTools
+   matlab.ui.internal.JavaWrapperController
+   matlab.ui.internal.MAPPIntegration
+   matlab.ui.internal.MoveguiStrategyJava
+   matlab.ui.internal.MoveguiStrategyUifigure
+   matlab.ui.internal.MoveguiStrategyWebui
+   matlab.ui.internal.PaperPositionStorage
+   matlab.ui.internal.PaperTypeStorage
+   matlab.ui.internal.PositionUtils
+   matlab.ui.internal.SetGetDisplayAdapter
+   matlab.ui.internal.TableSelectionStorage
+   matlab.ui.internal.URLUtils
+   matlab.ui.internal.UnitPos
+   matlab.ui.internal.UnitPosReadOnly
+   matlab.ui.internal.UnitsService
+   matlab.ui.internal.UnitsServiceStorage
+   matlab.ui.internal.UnitsServiceStorageInterface
+   matlab.ui.internal.WebButtonGroupController
+   matlab.ui.internal.WebContextMenuController
+   matlab.ui.internal.WebPanelController
+   matlab.ui.internal.WebTabController
+   matlab.ui.internal.WebTabGroupController
+   matlab.ui.internal.WebUIContainerController
+   [subpackages] matlab.ui.internal.componentconversion matlab.ui.internal.componentframework matlab.ui.internal.controller matlab.ui.internal.databrowser matlab.ui.internal.desktop matlab.ui.internal.dialog matlab.ui.internal.layout matlab.ui.internal.mixin matlab.ui.internal.preferences matlab.ui.internal.statusbar matlab.ui.internal.toolstrip matlab.ui.internal.utils
+   [functions] Contents FigureViewManager NotSupportedInWebAppServer UnsupportedInUifigure canContainNovelComponents completeFigureView createListener createMenuPeers createWinMenu divfigure embeddedfigure enablePanelFontResizer findToolbarModeButtonsById getAllCharts getClassName getDesktopFigureReadyForLaunch getDivFigurePacket getPanelMargins getPointerWindow getSystemColor getTextScaleFactor getUiFigureDefaultPosition hasDisplay hasFigureViewRequest isDesktopAvailable isFigureShowEnabled isJavaFigure isUIFigure prepareFigureFor preventMultiFigureAppsInWebAppServer restoreSubplotLayout saveSubplotLayout setActivationAffectsCurrentFigure setDesktopFigureReadyForLaunch setEnableFiguresInLiveEditor setMultipleFigureFlag setUiFigureDefaultPosition uifigureImpl uifigureIsolated uitree_deprecated uitreenode_deprecated waitForFigurePositionIsStable webGraphicsStateManager
+== matlab.graphics.controls : 19 classes
+   matlab.graphics.controls.AxesToolbar
+   matlab.graphics.controls.AxesToolbarButton
+   matlab.graphics.controls.BrushButton
+   matlab.graphics.controls.CanvasPlugin
+   matlab.graphics.controls.DataCursorButton
+   matlab.graphics.controls.DesktopToolbarController
+   matlab.graphics.controls.FadeTimer
+   matlab.graphics.controls.HTMLCanvasPlugin
+   matlab.graphics.controls.ModeButton
+   matlab.graphics.controls.PanButton
+   matlab.graphics.controls.PushButton
+   matlab.graphics.controls.ResetButton
+   matlab.graphics.controls.RestoreButton
+   matlab.graphics.controls.RotateButton
+   matlab.graphics.controls.ToggleButton
+   matlab.graphics.controls.ToolbarController
+   matlab.graphics.controls.WebToolbarController
+   matlab.graphics.controls.ZoomInButton
+   matlab.graphics.controls.ZoomOutButton
+   [subpackages] matlab.graphics.controls.eventdata matlab.graphics.controls.internal matlab.graphics.controls.selectors

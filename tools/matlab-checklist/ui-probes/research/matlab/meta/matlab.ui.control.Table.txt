@@ -1,0 +1,82 @@
+CLASS matlab.ui.control.Table
+Superclasses: matlab.ui.control.ClientComponent, matlab.ui.internal.mixin.ComponentLayoutable
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BackgroundColor | public | 1 | - | matlab.ui.control.Table
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+CellEditCallback | public | 1 | - | matlab.ui.control.Table
+CellSelectionCallback | public | 1 | - | matlab.ui.control.Table
+Children | public | 0 | - | matlab.ui.control.Table
+ClickedFcn | public | 1 | - | matlab.ui.control.Table
+ColumnEditable | public | 1 | - | matlab.ui.control.Table
+ColumnFormat | public | 1 | - | matlab.ui.control.Table
+ColumnName | public | 1 | - | matlab.ui.control.Table
+ColumnRearrangeable | public | 1 | - | matlab.ui.control.Table
+ColumnSortable | public | 1 | - | matlab.ui.control.Table
+ColumnWidth | public | 1 | - | matlab.ui.control.Table
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Data | public | 1 | - | matlab.ui.control.Table
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DisplayData | protected | 0 | double[] size 0  0 | matlab.ui.control.Table
+DisplayDataChangedFcn | public | 1 | - | matlab.ui.control.Table
+DisplaySelection | protected | 0 | double[] size 0  0 | matlab.ui.control.Table
+DoubleClickedFcn | public | 1 | - | matlab.ui.control.Table
+Enable | public | 1 | - | matlab.ui.control.ClientComponent
+FontAngle | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontName | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontSize | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontUnits | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontWeight | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+ForegroundColor | public | 1 | - | matlab.ui.control.ClientComponent
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | public | 0 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+KeyPressFcn | public | 1 | - | matlab.ui.internal.mixin.KeyInvokable
+KeyReleaseFcn | public | 1 | - | matlab.ui.internal.mixin.KeyInvokable
+Layout | public | 0 | - | matlab.graphics.mixin.Layoutable
+Multiselect | public | 1 | - | matlab.ui.control.Table
+OuterPosition | public | 0 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | - | matlab.ui.control.Table
+RowName | public | 1 | - | matlab.ui.control.Table
+RowStriping | public | 1 | - | matlab.ui.control.Table
+Selection | public | 1 | - | matlab.ui.control.Table
+SelectionChangedFcn | public | 1 | - | matlab.ui.control.Table
+SelectionType | public | 1 | - | matlab.ui.control.Table
+StyleConfigurations | protected | 0 | double[] size 0  0 | matlab.ui.control.Table
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 1 | - | matlab.ui.control.ClientComponent
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.ui.control.ClientComponent
+
+-- HIDDEN PUBLIC-GET PROPERTIES (112)
+ApplicationData BackgroundColorMode BackgroundColor_I ButtonDownFcnMode ButtonDownFcn_I CellDoubleClickedFcn CellDoubleClickedFcnMode CellDoubleClickedFcn_I CellEditCallbackMode CellEditCallback_I CellSelectionCallbackMode CellSelectionCallback_I ClickedFcnMode ClickedFcn_I ColumnEditableMode ColumnEditable_I ColumnFormatMode ColumnFormat_I ColumnNameMode ColumnName_I ColumnScrollData ColumnScrollDataMode ColumnScrollData_I ColumnSortableMode ColumnSortable_I ColumnWidthMode ColumnWidth_I ControllerMode Copyable CreateFcnMode CreateFcn_I DataMode Data_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I DisplayColumnOrder DisplayColumnOrderMode DisplayColumnOrder_I DisplayDataChangedFcnMode DisplayDataChangedFcn_I DisplayRowOrder DisplayRowOrderMode DisplayRowOrder_I DoubleClickedFcnMode DoubleClickedFcn_I EnableMode Enable_I Extent FontAngleMode FontAngle_I FontNameMode FontName_I FontSizeMode FontSize_I FontUnitsMode FontUnits_I FontWeightMode FontWeight_I ForegroundColorMode ForegroundColor_I HandleVisibilityMode HandleVisibility_I HitTest Internal KeyPressFcnMode KeyPressFcn_I KeyReleaseFcnMode KeyReleaseFcn_I MultiselectMode Multiselect_I NodeParent ParentMode Parent_I PositionMode Position_I RearrangeableColumns RearrangeableColumnsMode RearrangeableColumns_I RowNameMode RowName_I RowScrollData RowScrollDataMode RowScrollData_I RowStripingMode RowStriping_I Selected SelectionChangedFcnMode SelectionChangedFcn_I SelectionHighlight SelectionMode SelectionTypeMode SelectionType_I Selection_I Serializable StyleConfigurationStorage StyleConfigurationStorageMode StyleConfigurationStorage_I TagMode Tag_I TooltipMode TooltipStr TooltipString TooltipStringMode TooltipString_I Tooltip_I Tooltips UIContextMenu UnitsMode Units_I VisibleMode Visible_I
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (17)
+Table(matlab.ui.control.Table)
+addStyle(matlab.ui.control.Table)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+focus(matlab.ui.control.Table)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.control.Table)
+ne(matlab.graphics.Graphics)
+removeStyle(matlab.ui.control.Table)
+reset(matlab.graphics.Graphics)
+scroll(matlab.ui.control.Table)
+set(matlab.graphics.Graphics)

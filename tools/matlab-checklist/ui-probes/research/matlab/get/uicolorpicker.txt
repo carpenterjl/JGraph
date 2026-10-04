@@ -1,0 +1,23 @@
+CLASS matlab.ui.control.ColorPicker
+Value = [1 0 0]
+ValueChangedFcn = ''
+Parent = <matlab.ui.Figure> size 1  1
+HandleVisibility = 'on'
+ContextMenu = matlab.graphics.GraphicsPlaceholder.empty
+BusyAction = 'queue'
+BeingDeleted = 'off' (OnOffSwitchState)
+Interruptible = 'on' (OnOffSwitchState)
+CreateFcn = ''
+DeleteFcn = ''
+Type = 'uicolorpicker'
+Tag = ''
+UserData = double[] size 0  0
+Icon = ''
+InnerPosition = [100 100 38 22]
+Position = [100 100 38 22]
+OuterPosition = [100 100 38 22]
+Enable = 'on' (OnOffSwitchState)
+Visible = 'on' (OnOffSwitchState)
+Tooltip = ''
+Layout = matlab.ui.layout.LayoutOptions.empty
+BackgroundColor = [0.960784 0.960784 0.960784]

@@ -1,0 +1,49 @@
+CLASS matlab.ui.componentcontainer.ComponentContainer
+Superclasses: matlab.ui.container.internal.ComponentContainerProxy, matlab.graphics.chartcontainer.mixin.internal.GeneratedCallbackSaveLoadMixin, matlab.graphics.mixin.CustomThemeable
+Sealed=0 Abstract=1 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BackgroundColor | public | 1 | - | matlab.ui.container.internal.UIContainer
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+Children | public | 1 | - | matlab.ui.container.Container
+Clipping | public | 0 | - | matlab.ui.internal.mixin.Legacy
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | protected | 0 | [0 0 0 0] | matlab.ui.internal.mixin.UIOuterPositionable
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Layout | public | 0 | - | matlab.graphics.mixin.Layoutable
+OuterPosition | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+SizeChangedFcn | public | 1 | - | matlab.ui.container.internal.UIContainer
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.ui.container.internal.UIContainer
+
+-- HIDDEN PUBLIC-GET PROPERTIES (51)
+ALimInclude ApplicationData BackgroundColorMode BackgroundColor_I Behavior ButtonDownFcnMode ButtonDownFcn_I CLimInclude ChildrenMode Children_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I HandleVisibilityMode HandleVisibility_I HelpTopicKey HitTest InUpdateFlag IncludeRenderer Internal JavaFrame NodeChildren NodeParent ParentMode Parent_I PositionMode Position_I ResizeFcn Selected SelectionHighlight Serializable SerializableMode Serializable_I SetupComplete SizeChangedFcnMode SizeChangedFcn_I TagMode Tag_I UIContextMenu UnitsMode Units_I ValidateChildFcnMode VisibleMode Visible_I XLimInclude YLimInclude ZLimInclude
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (13)
+ComponentContainer(matlab.ui.componentcontainer.ComponentContainer)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.componentcontainer.ComponentContainer)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

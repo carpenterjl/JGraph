@@ -1,0 +1,22 @@
+CLASS matlab.ui.eventdata.CollapsedChangedData
+Superclasses: matlab.ui.eventdata.internal.AbstractEventData
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+AccordionPanel | private | 0 | - | matlab.ui.eventdata.CollapsedChangedData
+Collapsed | private | 0 | - | matlab.ui.eventdata.CollapsedChangedData
+EventName | private | 0 | - | event.EventData
+PreviousCollapsed | private | 0 | - | matlab.ui.eventdata.CollapsedChangedData
+Source | private | 0 | - | event.EventData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (3)
+CollapsedChangedData(matlab.ui.eventdata.CollapsedChangedData)
+addprop(dynamicprops)
+delete(event.EventData)

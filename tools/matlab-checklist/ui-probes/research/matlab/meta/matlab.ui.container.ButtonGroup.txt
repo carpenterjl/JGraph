@@ -1,0 +1,70 @@
+CLASS matlab.ui.container.ButtonGroup
+Superclasses: matlab.ui.container.Panel
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+AutoResizeChildren | public | 1 | - | matlab.ui.internal.mixin.AutoResizable
+BackgroundColor | public | 1 | - | matlab.ui.container.internal.UIContainer
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BorderColor | public | 1 | - | matlab.ui.container.Panel
+BorderType | public | 1 | - | matlab.ui.container.Panel
+BorderWidth | public | 1 | - | matlab.ui.container.Panel
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+Buttons | protected | 0 | double[] size 0  0 | matlab.ui.container.ButtonGroup
+Children | public | 1 | - | matlab.ui.container.Container
+Clipping | public | 0 | - | matlab.ui.internal.mixin.Legacy
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Enable | public | 1 | - | matlab.ui.container.Panel
+FontAngle | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontName | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontSize | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontUnits | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontWeight | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+ForegroundColor | public | 1 | - | matlab.ui.container.Panel
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+HighlightColor | public | 1 | - | matlab.ui.container.Panel
+InnerPosition | protected | 0 | [0 0 0 0] | matlab.ui.internal.mixin.UIOuterPositionable
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Layout | public | 0 | - | matlab.graphics.mixin.Layoutable
+OuterPosition | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+Scrollable | public | 0 | - | matlab.ui.internal.mixin.Scrollable
+SelectedObject | public | 0 | - | matlab.ui.container.ButtonGroup
+SelectionChangedFcn | public | 1 | - | matlab.ui.container.ButtonGroup
+SizeChangedFcn | public | 1 | - | matlab.ui.container.internal.UIContainer
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Title | public | 1 | - | matlab.ui.container.Panel
+TitlePosition | public | 1 | - | matlab.ui.container.Panel
+Tooltip | public | 1 | - | matlab.ui.container.Panel
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.internal.mixin.UIOuterPositionable
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.ui.container.internal.UIContainer
+
+-- HIDDEN PUBLIC-GET PROPERTIES (98)
+ALimInclude ApplicationData AutoResizeChildrenMode AutoResizeChildren_I BackgroundColorMode BackgroundColor_I Behavior BorderTypeMode BorderType_I BorderWidthMode BorderWidth_I ButtonDownFcnMode ButtonDownFcn_I CLimInclude ChildrenMode Children_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I EnableLegacyPadding EnableLegacyPaddingMode EnableLegacyPadding_I EnableMode Enable_I FontAngleMode FontAngle_I FontNameMode FontName_I FontSizeMode FontSize_I FontUnitsMode FontUnits_I FontWeightMode FontWeight_I ForegroundColorMode ForegroundColor_I HandleVisibilityMode HandleVisibility_I HelpTopicKey HighlightColorMode HighlightColor_I HitTest IncludeRenderer Internal JavaFrame NodeChildren NodeParent OldSelectedObject ParentMode Parent_I PositionMode Position_I ResizeFcn ScrollTarget ScrollableViewportLocation ScrollableViewportLocationChangedFcn ScrollableViewportLocationChangedFcnMode ScrollableViewportLocationChangedFcn_I ScrollableViewportLocationChangingFcn ScrollableViewportLocationChangingFcnMode ScrollableViewportLocationChangingFcn_I Selected SelectionChangeFcn SelectionChangedFcnMode SelectionChangedFcn_I SelectionHighlight Serializable SerializableMode Serializable_I ShadowColor ShadowColorMode ShadowColor_I SizeChangedFcnMode SizeChangedFcn_I TagMode Tag_I TitleAlignment TitleAlignmentMode TitleAlignment_I TitleMode TitlePositionMode TitlePosition_I Title_I TooltipMode Tooltip_I UIContextMenu UnitsMode Units_I ValidateChildFcnMode VisibleMode Visible_I XLimInclude YLimInclude ZLimInclude
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (15)
+ButtonGroup(matlab.ui.container.ButtonGroup)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isInScrollView(matlab.ui.internal.mixin.Scrollable)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.ButtonGroup)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+scroll(matlab.ui.internal.mixin.Scrollable)
+set(matlab.graphics.Graphics)

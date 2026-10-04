@@ -1,0 +1,16 @@
+CLASS matlab.ui.container.ButtonGroupSelectable
+Superclasses: handle
+Sealed=0 Abstract=1 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (2)
+ButtonGroupSelectable(matlab.ui.container.ButtonGroupSelectable)
+loadobj(matlab.ui.container.ButtonGroupSelectable)

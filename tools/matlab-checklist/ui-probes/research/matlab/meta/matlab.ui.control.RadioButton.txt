@@ -1,0 +1,55 @@
+CLASS matlab.ui.control.RadioButton
+Superclasses: matlab.ui.control.internal.model.AbstractMutualExclusiveComponent, matlab.ui.control.internal.model.mixin.MultilineTextComponent, matlab.ui.control.internal.model.mixin.WordWrapComponent, matlab.ui.control.internal.model.mixin.FontStyledComponent, matlab.ui.control.internal.model.mixin.FocusableComponent, matlab.ui.control.internal.model.mixin.InterpretableComponent
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Enable | public | 1 | 'on' (OnOffSwitchState) | matlab.ui.control.internal.model.mixin.EnableableComponent
+FontAngle | public | 1 | 'normal' | matlab.ui.control.internal.model.mixin.FontStyledComponent
+FontColor | public | 1 | [0 0 0] | matlab.ui.control.internal.model.mixin.FontStyledComponent
+FontName | public | 1 | 'Helvetica' | matlab.ui.control.internal.model.mixin.FontStyledComponent
+FontSize | public | 1 | 12 | matlab.ui.control.internal.model.mixin.FontStyledComponent
+FontWeight | public | 1 | 'normal' | matlab.ui.control.internal.model.mixin.FontStyledComponent
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | public | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Interpreter | public | 1 | 'none' | matlab.ui.control.internal.model.mixin.InterpretableComponent
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+OuterPosition | private | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Text | public | 1 | '' | matlab.ui.control.internal.model.mixin.MultilineTextComponent
+Tooltip | public | 1 | '' | matlab.ui.control.internal.model.mixin.TooltipComponent
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Value | public | 1 | logical false | matlab.ui.control.internal.model.AbstractMutualExclusiveComponent
+Visible | public | 1 | 'on' (OnOffSwitchState) | matlab.ui.control.internal.model.mixin.VisibleComponent
+WordWrap | public | 1 | 'off' (OnOffSwitchState) | matlab.ui.control.internal.model.mixin.WordWrapComponent
+
+-- HIDDEN PUBLIC-GET PROPERTIES (20)
+ApplicationData ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I FontColorMode FontColor_I HandleVisibilityMode HandleVisibility_I Internal NodeParent ParentMode Parent_I Serializable TagMode Tag_I UIContextMenu
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (15)
+RadioButton(matlab.ui.control.RadioButton)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+delete(appdesservices.internal.interfaces.model.AbstractModel)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+focus(matlab.ui.control.internal.model.mixin.FocusableComponent)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.control.RadioButton)
+ne(matlab.graphics.Graphics)
+reset(matlab.ui.control.internal.model.ComponentModel)
+set(matlab.graphics.Graphics)

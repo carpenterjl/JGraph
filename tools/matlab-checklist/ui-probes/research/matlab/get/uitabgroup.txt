@@ -1,0 +1,26 @@
+CLASS matlab.ui.container.TabGroup
+Tooltip = ''
+Visible = 'on' (OnOffSwitchState)
+SizeChangedFcn = ''
+TabLocation = 'top'
+SelectedTab = matlab.graphics.GraphicsPlaceholder.empty
+SelectionChangedFcn = ''
+Children = matlab.graphics.GraphicsPlaceholder.empty
+Parent = <matlab.ui.Figure> size 1  1
+HandleVisibility = 'on'
+ButtonDownFcn = ''
+ContextMenu = matlab.graphics.GraphicsPlaceholder.empty
+BusyAction = 'queue'
+BeingDeleted = 'off' (OnOffSwitchState)
+Interruptible = 'on' (OnOffSwitchState)
+CreateFcn = ''
+DeleteFcn = ''
+Type = 'uitabgroup'
+Tag = ''
+UserData = double[] size 0  0
+Units = 'normalized'
+Position = [0 0 1 1]
+InnerPosition = [0 0 1 1]
+OuterPosition = [0 0 1 1]
+AutoResizeChildren = 'off' (OnOffSwitchState)
+Layout = matlab.ui.layout.LayoutOptions.empty

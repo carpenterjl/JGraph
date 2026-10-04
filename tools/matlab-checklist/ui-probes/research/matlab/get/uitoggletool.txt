@@ -1,0 +1,25 @@
+CLASS matlab.ui.container.toolbar.ToggleTool
+Children = handle.empty
+Visible = 'on' (OnOffSwitchState)
+State = 'off' (OnOffSwitchState)
+Parent = <matlab.ui.container.Toolbar> size 1  1
+HandleVisibility = 'on'
+ButtonDownFcn = ''
+ContextMenu = matlab.graphics.GraphicsPlaceholder.empty
+BusyAction = 'queue'
+BeingDeleted = 'off' (OnOffSwitchState)
+Interruptible = 'on' (OnOffSwitchState)
+CreateFcn = ''
+DeleteFcn = ''
+Type = 'uitoggletool'
+Tag = ''
+UserData = double[] size 0  0
+Clipping = 'on' (OnOffSwitchState)
+Tooltip = ''
+CData = double[] size 0  0
+ClickedCallback = ''
+Enable = 'on' (OnOffSwitchState)
+Icon = ''
+Separator = 'off' (OnOffSwitchState)
+OffCallback = ''
+OnCallback = ''

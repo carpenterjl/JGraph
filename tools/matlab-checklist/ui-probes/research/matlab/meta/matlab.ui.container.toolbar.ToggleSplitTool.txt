@@ -1,0 +1,52 @@
+CLASS matlab.ui.container.toolbar.ToggleSplitTool
+Superclasses: matlab.ui.container.Container, matlab.graphics.internal.GraphicsUIProperties, matlab.ui.internal.mixin.Selectable, matlab.ui.internal.mixin.Legacy, matlab.ui.internal.mixin.AxesLimits, matlab.ui.internal.mixin.UIToolMixin, matlab.ui.internal.mixin.UIToggleToolMixin
+Sealed=1 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+CData | public | 1 | - | matlab.ui.internal.mixin.UIToolMixin
+Callback | public | 1 | - | matlab.ui.container.toolbar.ToggleSplitTool
+Children | public | 1 | - | matlab.ui.container.Container
+ClickedCallback | public | 1 | - | matlab.ui.internal.mixin.UIToolMixin
+Clipping | public | 0 | - | matlab.ui.internal.mixin.Legacy
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Enable | public | 1 | - | matlab.ui.internal.mixin.UIToolMixin
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+Icon | public | 1 | - | matlab.ui.internal.mixin.UIToolMixin
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+OffCallback | public | 1 | - | matlab.ui.internal.mixin.UIToggleToolMixin
+OnCallback | public | 1 | - | matlab.ui.internal.mixin.UIToggleToolMixin
+Parent | public | 1 | - | matlab.ui.control.Component
+Separator | public | 1 | - | matlab.ui.internal.mixin.UIToolMixin
+State | public | 1 | - | matlab.ui.container.toolbar.ToggleSplitTool
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 1 | - | matlab.ui.internal.mixin.UIToolMixin
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.ui.container.toolbar.ToggleSplitTool
+
+-- HIDDEN PUBLIC-GET PROPERTIES (65)
+ALimInclude ApplicationData Behavior ButtonDownFcnMode ButtonDownFcn_I CDataMode CData_I CLimInclude CallbackMode Callback_I ChildrenMode Children_I ClickedCallbackMode ClickedCallback_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I EnableMode Enable_I HandleVisibilityMode HandleVisibility_I HelpTopicKey HitTest IconMode Icon_I IncludeRenderer Internal JavaContainer NodeChildren NodeParent OffCallbackMode OffCallback_I OnCallbackMode OnCallback_I ParentMode Parent_I Selected SelectionHighlight SeparatorMode Separator_I Serializable SerializableMode Serializable_I StateMode State_I TagMode Tag_I TooltipMode TooltipStr TooltipString TooltipStringMode TooltipString_I Tooltip_I Tooltips UIContextMenu ValidateChildFcnMode VisibleMode Visible_I XLimInclude YLimInclude ZLimInclude
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (13)
+ToggleSplitTool(matlab.ui.container.toolbar.ToggleSplitTool)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.toolbar.ToggleSplitTool)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

@@ -1,0 +1,17 @@
+CLASS matlab.ui.container.Toolbar
+Visible = 'on' (OnOffSwitchState)
+BackgroundColor = [0.960784 0.960784 0.960784]
+Children = matlab.graphics.GraphicsPlaceholder.empty
+Parent = <matlab.ui.Figure> size 1  1
+HandleVisibility = 'on'
+ButtonDownFcn = ''
+ContextMenu = matlab.graphics.GraphicsPlaceholder.empty
+BusyAction = 'queue'
+BeingDeleted = 'off' (OnOffSwitchState)
+Interruptible = 'on' (OnOffSwitchState)
+CreateFcn = ''
+DeleteFcn = ''
+Type = 'uitoolbar'
+Tag = ''
+UserData = double[] size 0  0
+Clipping = 'on' (OnOffSwitchState)

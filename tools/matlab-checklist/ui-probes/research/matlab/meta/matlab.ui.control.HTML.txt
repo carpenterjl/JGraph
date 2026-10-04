@@ -1,0 +1,51 @@
+CLASS matlab.ui.control.HTML
+Superclasses: matlab.ui.control.internal.model.ComponentModel, matlab.ui.control.internal.model.mixin.InternalHTML, matlab.ui.control.internal.model.mixin.PositionableComponent, matlab.ui.control.internal.model.mixin.VisibleComponent, matlab.ui.control.internal.model.mixin.TooltipComponent, matlab.ui.control.internal.model.mixin.Layoutable, matlab.ui.control.internal.model.mixin.FocusableComponent
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Data | public | 1 | - | matlab.ui.control.HTML
+DataChangedFcn | public | 1 | '' | matlab.ui.control.HTML
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+HTMLEventReceivedFcn | public | 1 | '' | matlab.ui.control.HTML
+HTMLSource | public | 1 | - | matlab.ui.control.HTML
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | public | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Layout | public | 0 | - | matlab.graphics.mixin.Layoutable
+OuterPosition | private | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Parent | public | 1 | - | matlab.ui.control.Component
+Position | public | 1 | [100 100 20 20] | matlab.ui.control.internal.model.mixin.PositionableComponent
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 1 | '' | matlab.ui.control.internal.model.mixin.TooltipComponent
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | 'on' (OnOffSwitchState) | matlab.ui.control.internal.model.mixin.VisibleComponent
+
+-- HIDDEN PUBLIC-GET PROPERTIES (18)
+ApplicationData ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I HandleVisibilityMode HandleVisibility_I Internal NodeParent ParentMode Parent_I Serializable TagMode Tag_I UIContextMenu
+
+-- PUBLIC EVENTS (5)
+DataChanged HTMLEventReceived ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (16)
+HTML(matlab.ui.control.HTML)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+delete(appdesservices.internal.interfaces.model.AbstractModel)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+focus(matlab.ui.control.internal.model.mixin.FocusableComponent)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.control.HTML)
+ne(matlab.graphics.Graphics)
+reset(matlab.ui.control.internal.model.ComponentModel)
+sendEventToHTMLSource(matlab.ui.control.HTML)
+set(matlab.graphics.Graphics)

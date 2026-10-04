@@ -1,0 +1,108 @@
+M->JS double[1 1]                  Data reads back class=double | page saw event echo: class=char size=[1 3] value='1.5' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS double[1 3]                  Data reads back class=double | page saw event echo: class=char size=[1 7] value='[1,2,3]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS double[3 1]                  Data reads back class=double | page saw (none)
+M->JS double[2 2]                  Data reads back class=double | page saw event echo: class=char size=[1 13] value='[[1,2],[3,4]]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS double[0 0]                  Data reads back class=double | page saw event echo: class=char size=[1 2] value='[]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS double[1 0]                  Data reads back class=double | page saw (none)
+M->JS char[1 4]                    Data reads back class=char | page saw event echo: class=char size=[1 6] value='"text"' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS string[1 1]                  Data reads back class=string | page saw event echo: class=char size=[1 5] value='"str"' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS string[1 2]                  Data reads back class=string | page saw event echo: class=char size=[1 9] value='["a","b"]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS cell[1 2]                    Data reads back class=cell | page saw event echo: class=char size=[1 7] value='[1,"x"]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS struct[1 1]                  Data reads back class=struct | page saw event echo: class=char size=[1 15] value='{"a":1,"b":"x"}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS struct[1 2]                  Data reads back class=struct | page saw event echo: class=char size=[1 17] value='[{"a":1},{"a":2}]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS logical[1 1]                 Data reads back class=logical | page saw event echo: class=char size=[1 4] value='true' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS logical[1 2]                 Data reads back class=logical | page saw event echo: class=char size=[1 12] value='[true,false]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS double[1 1]                  Data reads back class=double | page saw event echo: class=char size=[1 4] value='null' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS double[1 1]                  Data reads back class=double | page saw (none)
+M->JS double[1 1]                  Data reads back class=double | page saw (none)
+M->JS int8[1 1]                    Data reads back class=int8 | page saw event echo: class=char size=[1 1] value='5' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS datetime[1 1]                Data reads back class=datetime | page saw event echo: class=char size=[1 22] value='"03-Oct-2026 12:00:00"' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS single[1 1]                  Data reads back class=single | page saw event echo: class=char size=[1 3] value='2.5' evt=matlab.ui.eventdata.HTMLEventReceivedData
+[Warning: Unable to encode complex-valued objects of class double as JSON-formatted text.] 
+[> In u0_uihtml>waitNew (line 100)
+In u0_uihtml (line 22)] 
+M->JS double[1 1]                  Data reads back class=double | page saw (none)
+M->JS cell[0 0]                    Data reads back class=cell | page saw event echo: class=char size=[1 2] value='[]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS struct[1 1]                  Data reads back class=struct | page saw event echo: class=char size=[1 2] value='{}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+M->JS containers.Map[1 1]          Data reads back class=containers.Map | page saw event echo: class=char size=[1 7] value='{"k":1}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+send  double[1 1]                  page saw event pong: class=char size=[1 3] value='1.5' evt=matlab.ui.eventdata.HTMLEventReceivedData
+send  double[1 3]                  page saw event pong: class=char size=[1 7] value='[1,2,3]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+send  double[2 2]                  page saw event pong: class=char size=[1 13] value='[[1,2],[3,4]]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+send  char[1 4]                    page saw event pong: class=char size=[1 6] value='"text"' evt=matlab.ui.eventdata.HTMLEventReceivedData
+send  struct[1 1]                  page saw event pong: class=char size=[1 15] value='{"a":1,"b":"x"}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+send  struct[1 2]                  page saw event pong: class=char size=[1 17] value='[{"a":1},{"a":2}]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+send  datetime[1 1]                page saw event pong: class=char size=[1 32] value='{"Month":10,"Day":3,"Year":2026}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+--- event log ---
+event loaded: class=struct size=[1 1] value={"href":"https://127.0.0.1:31515/static/RZgdiGjb/d121332c-6300-4e86-b9de-857f4486e572/page.html?mre=https%3A%2F%2F127.0.0.1%3A31515%2F","origin":"https://127.0.0.1:31515","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"} evt=matlab.ui.eventdata.HTMLEventReceivedData
+event initialData: class=char size=[1 10] value='{"init":1}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 10] value='{"init":1}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event f_sub: class=char size=[1 43] value='ok:<!doctype html>
+<html>
+<head>
+    <title' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event f_sibling: class=char size=[1 43] value='ok:<!doctype html>
+<html>
+<head>
+    <title' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event f_outside: class=char size=[1 43] value='ok:<!doctype html>
+<html>
+<head>
+    <title' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event net: class=char size=[1 2] value='ok' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 3] value='1.5' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 7] value='[1,2,3]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 13] value='[[1,2],[3,4]]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 2] value='[]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 6] value='"text"' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 5] value='"str"' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 9] value='["a","b"]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 7] value='[1,"x"]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 15] value='{"a":1,"b":"x"}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 17] value='[{"a":1},{"a":2}]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 4] value='true' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 12] value='[true,false]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 4] value='null' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 1] value='5' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 22] value='"03-Oct-2026 12:00:00"' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 3] value='2.5' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 2] value='[]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 2] value='{}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event echo: class=char size=[1 7] value='{"k":1}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event pong: class=char size=[1 3] value='1.5' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event pong: class=char size=[1 7] value='[1,2,3]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event pong: class=char size=[1 13] value='[[1,2],[3,4]]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event pong: class=char size=[1 6] value='"text"' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event pong: class=char size=[1 15] value='{"a":1,"b":"x"}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event pong: class=char size=[1 17] value='[{"a":1},{"a":2}]' evt=matlab.ui.eventdata.HTMLEventReceivedData
+event pong: class=char size=[1 32] value='{"Month":10,"Day":3,"Year":2026}' evt=matlab.ui.eventdata.HTMLEventReceivedData
+DataChangedFcn: Data class=double size=[1 1] value=1.5 | Previous=<containers.Map> evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=double size=[3 1] value=[1;2;3] | Previous=1.5 evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=double size=[2 2] value=[1 2;3 4] | Previous=[1;2;3] evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=double size=[0 0] value=[] | Previous=[1 2;3 4] evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=struct size=[1 1] value={"a":1,"b":"x"} | Previous=[] evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=struct size=[2 1] value=[{"a":1},{"a":2}] | Previous={"a":1,"b":"x"} evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=cell size=[3 1] value=[1,"x",true] | Previous=[{"a":1},{"a":2}] evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=logical size=[1 1] value=true | Previous=[1,"x",true] evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=double size=[0 0] value=[] | Previous=true evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=char size=[1 4] value='text' | Previous=[] evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=cell size=[2 1] value=["a","b"] | Previous='text' evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=struct size=[1 1] value={} | Previous=["a","b"] evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=cell size=[2 1] value=[[1,2],3] | Previous={} evt=matlab.ui.eventdata.DataChangedData
+DataChangedFcn: Data class=double size=[0 0] value=[] | Previous=[[1,2],3] evt=matlab.ui.eventdata.DataChangedData
+event jsdone: class=double size=[1 1] value=14 evt=matlab.ui.eventdata.HTMLEventReceivedData
+event ev_num: class=double size=[1 1] value=2.5 evt=matlab.ui.eventdata.HTMLEventReceivedData
+event ev_arr: class=double size=[1 3] value=[1 2 3] evt=matlab.ui.eventdata.HTMLEventReceivedData
+event ev_obj: class=struct size=[1 1] value={"k":"v","n":[1,2]} evt=matlab.ui.eventdata.HTMLEventReceivedData
+event ev_null: class=double size=[0 0] value=[] evt=matlab.ui.eventdata.HTMLEventReceivedData
+event ev_none: class=double size=[0 0] value=[] evt=matlab.ui.eventdata.HTMLEventReceivedData
+--- HTMLSource forms ---
+HTMLSource=page.html                                ok, reads back class=char value=page.html
+HTMLSource=<u0>\htmlsite\page.html ok, reads back class=char value=<u0>\htmlsite\page.html
+HTMLSource=<p>hi</p>                                ok, reads back class=char value=<p>hi</p>
+HTMLSource=hello world                              ok, reads back class=char value=hello world
+HTMLSource=missing.html                             ERROR MATLAB:ui:HTML:invalidHTMLSource | You have specified a file that cannot be found.
+Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.
+HTMLSource=https://www.mathworks.com                ERROR MATLAB:ui:HTML:invalidHTMLSource | You have specified a URL, which is not supported.
+Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.
+HTMLSource=<b>string</b>                            ok, reads back class=char value=<b>string</b>
+DataChangedFcn calls after a code set: 14 (before 14)

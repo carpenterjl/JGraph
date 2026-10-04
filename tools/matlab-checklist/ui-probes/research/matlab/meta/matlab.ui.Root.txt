@@ -1,0 +1,42 @@
+CLASS matlab.ui.Root
+Superclasses: matlab.ui.container.Container, matlab.graphics.internal.GraphicsBaseFunctions, matlab.ui.internal.mixin.TerminalStateRepresentable
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+CallbackObject | private | 0 | - | matlab.ui.Root
+Children | public | 1 | - | matlab.ui.container.Container
+CurrentFigure | public | 1 | - | matlab.ui.Root
+FixedWidthFontName | public | 1 | - | matlab.ui.Root
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+MonitorPositions | private | 0 | - | matlab.ui.Root
+Parent | public | 1 | - | matlab.ui.control.Component
+PointerLocation | public | 1 | - | matlab.ui.Root
+ScreenDepth | public | 1 | - | matlab.ui.Root
+ScreenPixelsPerInch | public | 0 | - | matlab.ui.Root
+ScreenSize | private | 0 | - | matlab.ui.Root
+ShowHiddenHandles | public | 1 | - | matlab.ui.Root
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.Root
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+
+-- HIDDEN PUBLIC-GET PROPERTIES (31)
+ApplicationData BlackAndWhite BlackAndWhiteMode BlackAndWhite_I ChildrenMode Children_I ControllerMode Copyable CurrentFigureMode CurrentFigure_I DefaultPropMap_Internal FixedWidthFontNameMode FixedWidthFontName_I HandleVisibilityMode HandleVisibility_I Internal NodeChildren NodeParent ParentMode Parent_I PointerLocationMode PointerLocation_I ScreenDepthMode ScreenDepth_I ShowHiddenHandlesMode ShowHiddenHandles_I TagMode Tag_I UnitsMode Units_I ValidateChildFcnMode
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (12)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.Root)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

@@ -1,0 +1,135 @@
+classdef ProbeApp < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure      matlab.ui.Figure
+        GridLayout    matlab.ui.container.GridLayout
+        CountLabel    matlab.ui.control.Label
+        AddButton     matlab.ui.control.Button
+        StepField     matlab.ui.control.NumericEditField
+    end
+
+    properties (Access = private)
+        Count = 0
+        Log = {}
+    end
+
+    methods (Access = private)
+        function refresh(app)
+            app.CountLabel.Text = sprintf('Count: %d', app.Count);
+        end
+    end
+
+    % Callbacks that handle component events
+    methods (Access = private)
+
+        % Code that executes after component creation
+        function startupFcn(app, start)
+            if nargin > 1
+                app.Count = start;
+            end
+            app.Log{end+1} = 'startup';
+            refresh(app);
+        end
+
+        % Button pushed function: AddButton
+        function AddButtonPushed(app, event)
+            app.Count = app.Count + app.StepField.Value;
+            app.Log{end+1} = class(event);
+            refresh(app);
+        end
+
+        % Close request function: UIFigure
+        function UIFigureCloseRequest(app, event)
+            app.Log{end+1} = 'close';
+            delete(app)
+        end
+    end
+
+    methods (Access = public)
+        function out = peek(app)
+            out = struct('Count', app.Count, 'Log', {app.Log});
+        end
+    end
+
+    % Component initialization
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create UIFigure and hide until all components are created
+            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Position = [100 100 300 120];
+            app.UIFigure.Name = 'Probe App';
+            app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @UIFigureCloseRequest, true);
+
+            % Create GridLayout
+            app.GridLayout = uigridlayout(app.UIFigure);
+            app.GridLayout.ColumnWidth = {'1x', 100};
+            app.GridLayout.RowHeight = {'1x', 22};
+
+            % Create CountLabel
+            app.CountLabel = uilabel(app.GridLayout);
+            app.CountLabel.Layout.Row = 1;
+            app.CountLabel.Layout.Column = [1 2];
+            app.CountLabel.Text = 'Count: 0';
+
+            % Create StepField
+            app.StepField = uieditfield(app.GridLayout, 'numeric');
+            app.StepField.Layout.Row = 2;
+            app.StepField.Layout.Column = 1;
+            app.StepField.Value = 2;
+
+            % Create AddButton
+            app.AddButton = uibutton(app.GridLayout, 'push');
+            app.AddButton.ButtonPushedFcn = createCallbackFcn(app, @AddButtonPushed, true);
+            app.AddButton.Layout.Row = 2;
+            app.AddButton.Layout.Column = 2;
+            app.AddButton.Text = 'Add';
+
+            % Show the figure after all components are created
+            % (probe: left invisible on purpose)
+        end
+    end
+
+    % App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = ProbeApp(varargin)
+
+            runningApp = getRunningApp(app);
+
+            % Check for running singleton app
+            if isempty(runningApp)
+
+                % Create UIFigure and components
+                createComponents(app)
+
+                % Register the app with App Designer
+                registerApp(app, app.UIFigure)
+
+                % Execute the startup function
+                runStartupFcn(app, @(app)startupFcn(app, varargin{:}))
+            else
+
+                % Focus the running singleton app
+                % (probe: figure(runningApp.UIFigure) would make it visible)
+
+                app = runningApp;
+            end
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end

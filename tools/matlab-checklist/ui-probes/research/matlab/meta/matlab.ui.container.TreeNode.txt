@@ -1,0 +1,46 @@
+CLASS matlab.ui.container.TreeNode
+Superclasses: matlab.ui.container.internal.model.ContainerModel, matlab.ui.control.internal.model.mixin.IconableComponent, matlab.ui.container.internal.model.mixin.ExpandableComponent, matlab.ui.control.internal.model.mixin.IconIDableComponent
+Sealed=1 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+Children | public | 1 | - | matlab.ui.container.Container
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+Icon | public | 1 | '' | matlab.ui.control.internal.model.mixin.IconableComponent
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+NodeData | public | 1 | double[] size 0  0 | matlab.ui.container.TreeNode
+Parent | public | 1 | - | matlab.ui.control.Component
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Text | public | 1 | 'Tree Node' | matlab.ui.container.TreeNode
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+
+-- HIDDEN PUBLIC-GET PROPERTIES (23)
+ApplicationData ChildrenMode Children_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I HandleVisibilityMode HandleVisibility_I IconID Internal NodeChildren NodeParent ParentMode Parent_I Serializable TagMode Tag_I UIContextMenu ValidateChildFcnMode
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (17)
+TreeNode(matlab.ui.container.TreeNode)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+collapse(matlab.ui.container.internal.model.mixin.ExpandableComponent)
+delete(matlab.ui.container.TreeNode)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+expand(matlab.ui.container.internal.model.mixin.ExpandableComponent)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.container.TreeNode)
+move(matlab.ui.container.TreeNode)
+ne(matlab.graphics.Graphics)
+reset(matlab.ui.container.internal.model.ContainerModel)
+set(matlab.graphics.Graphics)

@@ -1,0 +1,19 @@
+CLASS matlab.ui.eventdata.MutualExclusiveComponentSelectionChangeData
+Superclasses: event.EventData
+Sealed=0 Abstract=0 Hidden=0 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+EventName | private | 0 | - | event.EventData
+Source | private | 0 | - | event.EventData
+isInteractive | private | 0 | - | matlab.ui.eventdata.MutualExclusiveComponentSelectionChangeData
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (1)
+ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (2)
+MutualExclusiveComponentSelectionChangeData(matlab.ui.eventdata.MutualExclusiveComponentSelectionChangeData)
+delete(event.EventData)

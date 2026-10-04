@@ -1,0 +1,26 @@
+CLASS matlab.graphics.controls.FadeTimer
+Superclasses: handle
+Sealed=0 Abstract=0 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+CurrentFade | private | 0 | 0 | matlab.graphics.controls.FadeTimer
+ExpectedStartTime | public | 0 | - | matlab.graphics.controls.FadeTimer
+FadeTime | public | 0 | 0.25 | matlab.graphics.controls.FadeTimer
+Running | public | 0 | - | matlab.graphics.controls.FadeTimer
+Timer | public | 0 | - | matlab.graphics.controls.FadeTimer
+
+-- HIDDEN PUBLIC-GET PROPERTIES (0)
+
+
+-- PUBLIC EVENTS (2)
+Fade ObjectBeingDestroyed
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (7)
+FadeTimer(matlab.graphics.controls.FadeTimer)
+delete(matlab.graphics.controls.FadeTimer)
+fade(matlab.graphics.controls.FadeTimer)
+isvalidTimer(matlab.graphics.controls.FadeTimer)
+start(matlab.graphics.controls.FadeTimer)
+stop(matlab.graphics.controls.FadeTimer)
+timercb(matlab.graphics.controls.FadeTimer)

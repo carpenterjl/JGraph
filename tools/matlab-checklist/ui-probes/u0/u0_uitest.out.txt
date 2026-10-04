@@ -1,0 +1,4 @@
+batch=1 desktop=0
+press on invisible uifigure: MATLAB:uiautomation:Driver:VisibleHierarchy | Component must belong to a visible hierarchy.
+type: MATLAB:uiautomation:Driver:VisibleHierarchy | Component must belong to a visible hierarchy.
+press uicontrol in invisible figure: MATLAB:uiautomation:Driver:GestureNotSupportedForClass | "press" gesture does not support objects of class "matlab.ui.control.UIControl".

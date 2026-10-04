@@ -1,0 +1,27 @@
+CLASS matlab.ui.control.RadioButton
+Value = logical false
+Parent = <matlab.ui.container.ButtonGroup> size 1  1
+HandleVisibility = 'on'
+ContextMenu = matlab.graphics.GraphicsPlaceholder.empty
+BusyAction = 'queue'
+BeingDeleted = 'off' (OnOffSwitchState)
+Interruptible = 'on' (OnOffSwitchState)
+CreateFcn = ''
+DeleteFcn = ''
+Type = 'uiradiobutton'
+Tag = ''
+UserData = double[] size 0  0
+InnerPosition = [10 10 91 22]
+Position = [10 10 91 22]
+OuterPosition = [10 10 91 22]
+Enable = 'on' (OnOffSwitchState)
+Visible = 'on' (OnOffSwitchState)
+Tooltip = ''
+Text = 'Radio Button'
+WordWrap = 'off' (OnOffSwitchState)
+FontName = 'Helvetica'
+FontSize = 12
+FontWeight = 'normal'
+FontAngle = 'normal'
+FontColor = [0.129412 0.129412 0.129412]
+Interpreter = 'none'

@@ -1,0 +1,53 @@
+CLASS matlab.ui.control.ClientComponent
+Superclasses: matlab.ui.control.WebComponent, matlab.graphics.internal.GraphicsUIProperties, matlab.ui.internal.mixin.Selectable, matlab.ui.internal.mixin.KeyInvokable, matlab.ui.internal.mixin.FontRenderable, matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+Sealed=0 Abstract=1 Hidden=1 HandleCompatible=1
+
+-- PUBLIC PROPERTIES (GetAccess public, not Hidden)
+Name | SetAccess | Dependent | Default(meta) | DefiningClass
+BeingDeleted | protected | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+BusyAction | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+ButtonDownFcn | public | 1 | - | matlab.graphics.internal.GraphicsUIProperties
+ContextMenu | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+CreateFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+DeleteFcn | public | 1 | - | matlab.graphics.internal.GraphicsCoreProperties
+Enable | public | 1 | - | matlab.ui.control.ClientComponent
+FontAngle | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontName | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontSize | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontUnits | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+FontWeight | public | 1 | - | matlab.ui.internal.mixin.FontRenderable
+ForegroundColor | public | 1 | - | matlab.ui.control.ClientComponent
+HandleVisibility | public | 1 | - | matlab.ui.control.Component
+InnerPosition | public | 0 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+Interruptible | public | 0 | - | matlab.graphics.internal.GraphicsCoreProperties
+KeyPressFcn | public | 1 | - | matlab.ui.internal.mixin.KeyInvokable
+KeyReleaseFcn | public | 1 | - | matlab.ui.internal.mixin.KeyInvokable
+OuterPosition | public | 0 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+Parent | public | 1 | - | matlab.ui.control.Component
+Tag | public | 1 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Tooltip | public | 1 | - | matlab.ui.control.ClientComponent
+Type | protected | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Units | public | 1 | - | matlab.ui.internal.mixin.NoMarginsUnitsOnlyPositionable
+UserData | public | 0 | - | matlab.graphics.internal.GraphicsBaseFunctions
+Visible | public | 1 | - | matlab.ui.control.ClientComponent
+
+-- HIDDEN PUBLIC-GET PROPERTIES (52)
+ApplicationData ButtonDownFcnMode ButtonDownFcn_I ControllerMode Copyable CreateFcnMode CreateFcn_I DefaultPropMap_Internal DeleteFcnMode DeleteFcn_I EnableMode Enable_I FontAngleMode FontAngle_I FontNameMode FontName_I FontSizeMode FontSize_I FontUnitsMode FontUnits_I FontWeightMode FontWeight_I ForegroundColorMode ForegroundColor_I HandleVisibilityMode HandleVisibility_I HitTest Internal KeyPressFcnMode KeyPressFcn_I KeyReleaseFcnMode KeyReleaseFcn_I NodeParent ParentMode Parent_I Selected SelectionHighlight Serializable TagMode Tag_I TooltipMode TooltipStr TooltipString TooltipStringMode TooltipString_I Tooltip_I Tooltips UIContextMenu UnitsMode Units_I VisibleMode Visible_I
+
+-- PUBLIC EVENTS (3)
+ObjectBeingDestroyed PropertyAdded PropertyRemoved
+
+-- PUBLIC METHODS excluding handle/SetGet/display mixins (13)
+ClientComponent(matlab.ui.control.ClientComponent)
+addlistener(matlab.graphics.Graphics)
+addprop(dynamicprops)
+double(matlab.graphics.Graphics)
+eq(matlab.graphics.Graphics)
+findobj(matlab.graphics.Graphics)
+get(matlab.graphics.Graphics)
+isprop(matlab.graphics.internal.ReferenceObject)
+java(matlab.mixin.internal.JavaVisible)
+loadobj(matlab.ui.control.ClientComponent)
+ne(matlab.graphics.Graphics)
+reset(matlab.graphics.Graphics)
+set(matlab.graphics.Graphics)

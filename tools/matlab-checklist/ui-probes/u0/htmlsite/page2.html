@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<script src="sub/inside.js"></script>
+<script src="../outside.js"></script>
+<script>
+function setup(htmlComponent) {
+  const send = (n, d) => htmlComponent.sendEventToMATLAB(n, d);
+  send('scripts', 'sub=' + (window.subjs || 'no') + ' outside=' + (window.outjs || 'no'));
+  const probe = (name, url) => fetch(url).then(r => r.text().then(t => send(name, 'status=' + r.status + ' url=' + r.url + ' body=' + t.replace(/\s+/g,' ').slice(0, 300)))).catch(e => send(name, 'fail:' + e));
+  probe('f_txt', 'sub/inside.txt');
+  probe('f_json', 'sub/inside.json');
+  probe('f_js', 'sub/inside.js');
+  probe('f_out', '../outside.js');
+  setTimeout(() => send('done', 1), 3000);
+}
+</script></head><body>p2</body></html>
