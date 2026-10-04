@@ -55,6 +55,26 @@ public enum GraphicsEventKind
 
     /// <summary>The wheel turned over a figure — <c>WindowScrollWheelFcn</c>.</summary>
     WindowScrollWheel,
+
+    /// <summary>
+    /// A user acted on a component — a <c>uicontrol</c>'s <c>Callback</c> (app-building plan, U1). When
+    /// the action changed the component's value (an edit field's text), the event carries the new
+    /// value, and delivering it writes the value first, whatever then happens to the callback.
+    /// </summary>
+    ControlAction,
+
+    /// <summary>
+    /// Only a user's value write, with no callback left to run — what a <see cref="ControlAction"/>
+    /// becomes when Stop discards the callbacks it was waiting with. The value a person typed is not
+    /// lost because a script was stopped.
+    /// </summary>
+    ApplyUserValue,
+
+    /// <summary>A key went down while a component had the keyboard — the component's <c>KeyPressFcn</c>.</summary>
+    ComponentKeyPress,
+
+    /// <summary>A key came back up while a component had the keyboard — its <c>KeyReleaseFcn</c>.</summary>
+    ComponentKeyRelease,
 }
 
 /// <summary>
@@ -79,6 +99,10 @@ public enum GraphicsEventKind
 /// order, lowercase, as MATLAB's cell of words.</param>
 /// <param name="ScrollCount">For a wheel event: how many notches, negative for a turn away from the
 /// user, in MATLAB's sign convention.</param>
+/// <param name="UserValue">For a component action that changed the component: the value the user
+/// gave it (an edit field's text), written to the model when the event is delivered.</param>
+/// <param name="UserSeq">The sequence number of that write, which the window compares with what the
+/// model has taken before it lets a frame overwrite what the user is looking at.</param>
 public sealed record GraphicsEvent(
     GraphicsEventKind Kind,
     GraphObject Target,
@@ -90,7 +114,9 @@ public sealed record GraphicsEvent(
     string Character = "",
     string KeyName = "",
     IReadOnlyList<string>? Modifiers = null,
-    int ScrollCount = 0);
+    int ScrollCount = 0,
+    object? UserValue = null,
+    long UserSeq = 0);
 
 /// <summary>
 /// The queue between the interface and the interpreter. Interface threads only ever put events in;
@@ -165,6 +191,11 @@ public static class ScriptEventQueue
             }
         }
 
+        if (ScriptUiTrace.Enabled)
+        {
+            ScriptUiTrace.Write($"queue: {graphicsEvent.Kind} on {graphicsEvent.Target.GetType().Name}, pump {(_pump is null ? "absent" : "present")}");
+        }
+
         _pump?.Invoke();
     }
 
@@ -186,9 +217,11 @@ public static class ScriptEventQueue
     }
 
     /// <summary>
-    /// Empties the queue and hands back what was in it. Stop uses this: cancelled work should not
-    /// leave a click waiting to fire into the next statement, but a close request in the pile is a
-    /// person asking for a window to go away, and the caller owes it an answer.
+    /// Empties the queue of callbacks and hands back what was in it. Stop uses this: cancelled work
+    /// should not leave a click waiting to fire into the next statement, but a close request in the
+    /// pile is a person asking for a window to go away, and the caller owes it an answer. What a user
+    /// typed is not a callback: an event carrying a value write stays queued as the write alone
+    /// (<see cref="GraphicsEventKind.ApplyUserValue"/>), so the next drain still puts it in the model.
     /// </summary>
     public static IReadOnlyList<GraphicsEvent> Flush()
     {
@@ -196,6 +229,14 @@ public static class ScriptEventQueue
         {
             var taken = Events.ToArray();
             Events.Clear();
+            foreach (GraphicsEvent pending in taken)
+            {
+                if (pending.UserValue is not null)
+                {
+                    Events.Add(pending with { Kind = GraphicsEventKind.ApplyUserValue });
+                }
+            }
+
             return taken;
         }
     }

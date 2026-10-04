@@ -1505,6 +1505,7 @@ internal static class JgsBuiltinOutputCounts
         ["uencode"] = (1, true),
         ["uiaxes"] = (1, true),
         ["uicontextmenu"] = (1, false),
+        ["uicontrol"] = (1, false),
         ["uimenu"] = (1, false),
         ["uminus"] = (1, false),
         ["undershoot"] = (3, true),

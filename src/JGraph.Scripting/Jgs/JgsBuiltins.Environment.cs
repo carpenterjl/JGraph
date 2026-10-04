@@ -644,6 +644,7 @@ internal static partial class JgsBuiltins
             if (!limitRate || Environment.TickCount64 - _lastRenderFlush >= RenderFlushInterval)
             {
                 _lastRenderFlush = Environment.TickCount64;
+                ScriptComponentFrames.Flush(force: true); // what the callbacks just changed, too (U1)
                 ScriptRenderPump.Flush();
             }
 

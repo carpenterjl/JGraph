@@ -34,6 +34,14 @@
 .PARAMETER MatlabExe
     The MATLAB launcher. Defaults to R2025b's, the release every recording is of.
 
+.PARAMETER NoFigureWindows
+    Starts MATLAB with -noFigureWindows for every fixture recorded. Plain -batch DISPLAYS figure
+    windows (MathWorks documents this), so a fixture that makes figures puts windows on the screen
+    while it records. A fixture can ask for the flag itself with a line reading
+    "% record: -noFigureWindows" (the app-building fixtures do), which is the usual way: the switch
+    is not the default because getframe and exportapp refuse without a display, and their fixtures
+    need one.
+
 .EXAMPLE
     powershell -File tools/parity/record-matlab.ps1
     powershell -File tools/parity/record-matlab.ps1 -Fixtures m124_ode45,m124_integral
@@ -41,7 +49,8 @@
 [CmdletBinding()]
 param(
     [string[]] $Fixtures,
-    [string] $MatlabExe = 'C:\Program Files\MATLAB\R2025b\bin\matlab.exe'
+    [string] $MatlabExe = 'C:\Program Files\MATLAB\R2025b\bin\matlab.exe',
+    [switch] $NoFigureWindows
 )
 
 $ErrorActionPreference = 'Stop'
@@ -69,7 +78,7 @@ if ($Fixtures) {
 # ReadAllText honours a BOM when there is one and assumes UTF-8 when there is not; every CHK line
 # is ASCII, so either way the lines come back intact.
 function Invoke-Matlab {
-    param([string] $Statement, [string] $WorkingDirectory)
+    param([string] $Statement, [string] $WorkingDirectory, [switch] $NoFigures)
 
     $out = [System.IO.Path]::GetTempFileName()
     $err = [System.IO.Path]::GetTempFileName()
@@ -77,7 +86,9 @@ function Invoke-Matlab {
         # Not -Wait: in Windows PowerShell 5.1 that waits for every descendant too, and MATLAB.exe
         # leaves MathWorksServiceHost running, so a -Wait never returns. WaitForExit waits for the
         # launcher alone, which itself waits for MATLAB.exe.
-        $proc = Start-Process -FilePath $MatlabExe -ArgumentList @('-batch', "`"$Statement`"") `
+        $arguments = @('-batch', "`"$Statement`"")
+        if ($NoFigures) { $arguments = @('-noFigureWindows') + $arguments }
+        $proc = Start-Process -FilePath $MatlabExe -ArgumentList $arguments `
             -WorkingDirectory $WorkingDirectory -PassThru -NoNewWindow `
             -RedirectStandardOutput $out -RedirectStandardError $err
         $null = $proc.Handle   # without this PS 5.1 reports a null ExitCode
@@ -124,7 +135,9 @@ Write-Host "MATLAB: $($versionLine.Trim())"
 
 $failed = 0
 foreach ($name in $all) {
-    $result = Invoke-Matlab -Statement "cd('$fixtureDirMatlab'); addpath('$helpersDirMatlab'); $name" -WorkingDirectory $fixtureDir
+    $source = Get-Content -LiteralPath (Join-Path $fixtureDir ($name + '.m')) -Raw
+    $noFigures = $NoFigureWindows -or ($source -match '(?m)^\s*%\s*record:\s*-noFigureWindows\b')
+    $result = Invoke-Matlab -Statement "cd('$fixtureDirMatlab'); addpath('$helpersDirMatlab'); $name" -WorkingDirectory $fixtureDir -NoFigures:$noFigures
     $lines = @($result.Text -split "`r?`n" | ForEach-Object { $_.TrimEnd() } | Where-Object { $_ -match '^CHK\|' })
 
     # A bits line names a file the fixture wrote; the recording carries the file's SHA-256, never

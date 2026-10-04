@@ -1,0 +1,14 @@
+uicontrol DeleteFcn: class(e)=event.EventData EventName=ObjectBeingDestroyed Source=matlab.ui.control.UIControl fields=Source,EventName isa EventData=1
+axes DeleteFcn: class(e)=event.EventData EventName=ObjectBeingDestroyed Source=matlab.graphics.axis.Axes fields=Source,EventName isa EventData=1
+figure CloseRequestFcn: class(e)=matlab.ui.eventdata.WindowCloseRequestData EventName=Close Source=matlab.ui.Figure fields=Source,EventName isa EventData=1
+figure DeleteFcn: class(e)=event.EventData EventName=ObjectBeingDestroyed Source=matlab.ui.Figure fields=Source,EventName isa EventData=1
+figure closed: 1
+matlab.ui.eventdata.ActionData: supers=handle,event.EventData props=Source,EventName
+matlab.ui.eventdata.WindowCloseRequestData: supers=handle,event.EventData props=Source,EventName
+event.EventData: supers=handle props=Source,EventName
+matlab.ui.eventdata.KeyData: supers=handle,event.EventData props=Character,Modifier,Key,Source,EventName
+matlab.graphics.eventdata.Hit: supers=handle,event.EventData props=Button,IntersectionPoint,Source,EventName
+matlab.ui.eventdata.WindowMouseData: supers=handle,event.EventData props=Source,EventName
+matlab.ui.eventdata.ScrollWheelData: supers=handle,event.EventData props=VerticalScrollCount,VerticalScrollAmount,Source,EventName
+matlab.ui.eventdata.SizeChangedData: supers=handle,event.EventData props=Source,EventName
+matlab.ui.eventdata.MenuSelectedData: supers=event.EventData,handle,dynamicprops,matlab.mixin.CustomDisplay props=ContextObject,InteractionInformation,Source,EventName

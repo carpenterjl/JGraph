@@ -333,7 +333,7 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
         // queued, and delivered on the script thread. Nothing runs the interpreter on a window's
         // thread: a click during a running statement waits at the next drain point instead of being
         // dropped, and the callback gets the 16 MB script stack it was written for.
-        _dispatcher = new JgsCallbackDispatcher(_globals, _context);
+        _dispatcher = new JgsCallbackDispatcher(_globals, _context) { Interpreter = _interpreter };
         JgsCallbackDispatcher.Install(_dispatcher);
     }
 

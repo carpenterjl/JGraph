@@ -22,7 +22,6 @@ internal static partial class JgsBuiltins
         ["fmincon"] = "constrained optimization (Optimization Toolbox)",
         ["lsqcurvefit"] = "nonlinear least squares (Optimization Toolbox)",
         ["uifigure"] = "app building",
-        ["uicontrol"] = "app building",
         ["parfeval"] = "parallel execution",
         ["gpuArray"] = "GPU arrays",
     };

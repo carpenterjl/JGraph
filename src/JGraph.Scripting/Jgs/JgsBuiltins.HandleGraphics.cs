@@ -1046,6 +1046,10 @@ internal static partial class JgsBuiltins
             case MenuItemModel item when item.Parent is MenuItemModel parent:
                 parent.Items.Remove(item);
                 return;
+
+            case UiObject component when component.Parent is FigureModel holder:
+                holder.Components.Remove(component);
+                return;
         }
     }
 

@@ -70,6 +70,7 @@ internal static partial class JgsGraphicsProperties
         FigureModel => "figure",
         ContextMenuModel => "uicontextmenu",
         MenuItemModel => "uimenu",
+        UiControlModel => "uicontrol",
 
         // A circle is a different class in MATLAB, and findobj(gcf, 'Type', 'polaraxes') is how a
         // script finds one. Here it is a mode, so the mode is what the name is read off — the same
@@ -255,6 +256,17 @@ internal static partial class JgsGraphicsProperties
             case (ContextMenuModel or MenuItemModel, _):
                 throw new JgsRuntimeException(line, col,
                     $"A menu belongs to a figure, a context menu or another menu, not to a {owner.TypeName}.");
+            case (UiObject movingComponent, FigureModel componentOwner):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (movingComponent.Parent as FigureModel)?.Components.Remove(movingComponent);
+                    componentOwner.Components.Add(movingComponent);
+                }
+
+                return;
+            case (UiObject, _):
+                throw new JgsRuntimeException(line, col, "MATLAB:gbtobjects:Component",
+                    $"{JgsGraphicsCallbackValues.ClassWord(owner.Target)} cannot be a parent.");
         }
 
         if (entry.Target is not PlotObject plot)
@@ -311,6 +323,11 @@ internal static partial class JgsGraphicsProperties
                 children.AddRange(figure.Axes);
                 children.AddRange(figure.Annotations);
                 children.AddRange(figure.ContextMenus);
+
+                // Last, so they come first: Children is newest first, and in R2025b a uicontrol made
+                // after an axes is listed before it. One made before an axes is listed after it there
+                // and before it here, until U2 gives the figure one tree of children.
+                children.AddRange(figure.Components);
                 break;
             case ContextMenuModel menu:
                 children.AddRange(menu.Items);
@@ -458,6 +475,13 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static JgsRuntimeException Unknown(GraphObject target, string name, int line, int col)
     {
+        // A component answers in R2025b's words (U1); the hint below is this build's own.
+        if (target is UiObject)
+        {
+            return new JgsRuntimeException(line, col, "MATLAB:hg:InvalidProperty",
+                $"Unrecognized property {name} for class {JgsGraphicsCallbackValues.ClassWord(target)}.");
+        }
+
         string type = TypeNameOf(target);
         List<string> near = NamesOf(target)
             .Where(candidate => Resembles(candidate, name))
@@ -492,7 +516,13 @@ internal static partial class JgsGraphicsProperties
     private static IReadOnlyDictionary<string, GraphicsProperty> Build(Type type)
     {
         var table = new Dictionary<string, GraphicsProperty>(StringComparer.OrdinalIgnoreCase);
-        AddReflected(type, table);
+
+        // A component's surface is curated whole (U1): its model's names are not MATLAB's.
+        if (!typeof(UiObject).IsAssignableFrom(type))
+        {
+            AddReflected(type, table);
+        }
+
         AddAliases(type, table);
         return table;
     }
@@ -694,6 +724,16 @@ internal static partial class JgsGraphicsProperties
             AddCallbackSlot(table, "Callback",
                 static entry => entry.MenuSelectedFcn,
                 static (entry, value) => entry.MenuSelectedFcn = value);
+        }
+
+        if (typeof(UiObject).IsAssignableFrom(type))
+        {
+            AddUiObjectBlock(table);
+        }
+
+        if (typeof(UiControlModel).IsAssignableFrom(type))
+        {
+            AddUiControlBlock(table);
         }
 
         if (typeof(JgsGraphicsGroup).IsAssignableFrom(type))
@@ -1715,18 +1755,8 @@ internal static partial class JgsGraphicsProperties
                 entry => JgsValue.Str(JgsBuiltins.LegendLocationWord(((LegendModel)entry.Target).Position)),
                 (entry, value, line, col) => ((LegendModel)entry.Target).Position =
                     JgsBuiltins.ParseLegendLocation(JgsBuiltins.StrOf("Location", value, line, col), line, col));
-            Put(table, "ItemHitFcn",
-                entry => entry.ItemHitFcn ?? JgsValue.Array([]),
-                (entry, value, line, col) =>
-                {
-                    if (value.Type != JgsType.Function)
-                    {
-                        throw new JgsRuntimeException(line, col,
-                            "legend: ItemHitFcn is a function handle, such as @(src, event) myCallback(src, event).");
-                    }
-
-                    entry.ItemHitFcn = value;
-                });
+            AddCallbackSlot(table, "ItemHitFcn",
+                static entry => entry.ItemHitFcn, static (entry, value) => entry.ItemHitFcn = value);
             // A row with no label of its own shows the series' DisplayName, which is what the legend
             // draws — so reading String answered empty strings for the ordinary case where a script
             // named its series rather than the legend.
@@ -2261,10 +2291,13 @@ internal static partial class JgsGraphicsProperties
         table[name] = new GraphicsProperty(name, read, write);
 
     /// <summary>
-    /// A callback property over an entry slot. Unset reads as empty, the way MATLAB answers a
-    /// callback nobody assigned; a write takes a function handle or, to clear, an empty array —
-    /// anything else is refused by name. Writing never runs the callback: <c>CreateFcn</c> only
-    /// fires at creation, and the others only when their event happens.
+    /// A callback property over an entry slot. Unset reads as <c>''</c>, as R2025b answers a callback
+    /// nobody assigned (a figure's <c>CloseRequestFcn</c> reads <c>'closereq'</c>, the close it does
+    /// when unset). A write takes any of MATLAB's three forms (U1, <see cref="JgsGraphicsCallbackValues"/>)
+    /// and pins what it stores, because the slot holds it for as long as the object lives — an app
+    /// object or a nested GUI function's workspace must outlive <c>clear app</c> and the end of the
+    /// function that built the window. Writing never runs the callback: <c>CreateFcn</c> only fires at
+    /// creation, and the others only when their event happens.
     /// </summary>
     private static void AddCallbackSlot(
         IDictionary<string, GraphicsProperty> table,
@@ -2272,22 +2305,29 @@ internal static partial class JgsGraphicsProperties
         Func<JgsHandleEntry, JgsValue?> read,
         Action<JgsHandleEntry, JgsValue?> write) =>
         Put(table, name,
-            entry => read(entry) ?? JgsValue.Array([]),
+            entry => read(entry) ?? JgsValue.Str(name == "CloseRequestFcn" ? "closereq" : string.Empty),
             (entry, value, line, col) =>
             {
-                if (value.Type == JgsType.Function || name == "CloseRequestFcn" && value.Type == JgsType.String)
+                JgsValue? stored = JgsGraphicsCallbackValues.Normalize(entry.Target, name, value, line, col);
+
+                // A CloseRequestFcn is never "no callback" (u1_closereq): every empty form R2025b
+                // stores as '' and runs, which does nothing and so keeps the figure open. closereq
+                // is what an unset one does already; storing it would make every window's close wait
+                // on the script thread for the same answer.
+                if (name == "CloseRequestFcn")
                 {
-                    write(entry, value);
+                    stored = stored is null ? JgsValue.Str(string.Empty)
+                        : stored is { Type: JgsType.String } text && text.AsString.Equals("closereq", StringComparison.Ordinal)
+                            ? null
+                            : stored;
                 }
-                else if (value.Type == JgsType.Array && value.ArrayLength == 0)
+
+                if (stored is not null)
                 {
-                    write(entry, null);
+                    JgsLifetime.Pin(stored);
                 }
-                else
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"{name} is a function handle, such as @(src, event) myCallback(src, event), or [] to clear it.");
-                }
+
+                write(entry, stored);
             });
 
     /// <summary>Two spellings of one colour — MATLAB's <c>Color</c> and <c>FaceColor</c> on filled shapes.</summary>

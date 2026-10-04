@@ -90,6 +90,21 @@ internal static partial class JgsGraphicsProperties
                 figure.Size = new Size2D(System.Math.Max(1, box[2]), System.Math.Max(1, box[3]));
             });
 
+        // Visible decides whether the figure has a window at all (U1). Making one visible marks it
+        // touched, so a figure made with 'off' in one statement and turned 'on' in a later one is
+        // shown when that later one ends.
+        Put(table, "Visible",
+            entry => OnOff(Figure(entry).Visible),
+            (entry, value, line, col) =>
+            {
+                FigureModel figure = Figure(entry);
+                figure.Visible = ToOnOff("Visible", value, line, col);
+                if (figure.Visible)
+                {
+                    JGraph.Api.JG.TouchFigure(figure);
+                }
+            });
+
         Put(table, "NumberTitle",
             entry => OnOff(Figure(entry).NumberTitle),
             (entry, value, line, col) => Figure(entry).NumberTitle = ToOnOff("NumberTitle", value, line, col));

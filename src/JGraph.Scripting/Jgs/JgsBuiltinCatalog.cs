@@ -2225,6 +2225,7 @@ public static class JgsBuiltinCatalog
         Add("subplot", "Selects cell index of a rows-by-cols axes grid (a grid cell number, so 1-based, row-major) and returns a handle on it.", P("rows"), P("cols"), P("index"));
         Add("close", "Closes the current figure, figure n, or every figure with close all; a trailing 'force' skips CloseRequestFcn.", Opt("n"), Opt("force"));
         Add("closereq", "The default close a CloseRequestFcn opts back into: deletes the callback's figure without asking again.");
+        Add("uicontrol", "A classic component in a figure — a button, an edit field, a label, ...: h = uicontrol(fig, 'Style', 'pushbutton', 'Callback', @cb).", Opt("parent"), Opt("name"), Opt("value"));
         Add("uicontextmenu", "A right-click menu for a figure's objects: cm = uicontextmenu; set(h, 'ContextMenu', cm).", Opt("parent"), Opt("name"), Opt("value"));
         Add("uimenu", "One entry of a context menu: m = uimenu(cm, 'Text', 'Copy', 'MenuSelectedFcn', @onCopy).", Opt("parent"), Opt("name"), Opt("value"));
         Add("clf", "Clears the current figure (or figure n), keeping its window open.", Opt("n"));

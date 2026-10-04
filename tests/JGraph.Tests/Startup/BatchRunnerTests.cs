@@ -131,6 +131,46 @@ public class BatchRunnerTests : IDisposable
         Assert.Contains("C#", _output.ErrorText);
     }
 
+    [Fact]
+    public async Task ShowFiguresSession_KeepsAnsweringItsWindowsCallbacks_RoundAfterRound()
+    {
+        // App-building plan, U1: -batch -showfigures runs the script in a session that outlives it,
+        // and every user action after the run is delivered there, not only the first.
+        string path = Path.Combine(_directory, "calc.m");
+        File.WriteAllText(path, """
+            function calc()
+                f = figure('Name', 'calc');
+                a = uicontrol(f, 'Style', 'edit');
+                b = uicontrol(f, 'Style', 'edit');
+                r = uicontrol(f, 'Style', 'text', 'String', '--');
+                uicontrol(f, 'Style', 'pushbutton', 'Callback', @go);
+                function go(~, ~)
+                    set(r, 'String', sprintf('%g', str2double(get(a, 'String')) + str2double(get(b, 'String'))));
+                end
+            end
+            """);
+        (int code, IScriptSession? session) = await BatchRunner.RunInSessionAsync(
+            new StartupOptions(StartupMode.Batch, path, StartDirectory: _directory),
+            [new MatlabScriptEngine()], _output, Show);
+        Assert.Equal(0, code);
+        Assert.NotNull(session);
+        await using (session)
+        {
+            Assert.True(JG.TryGetFigure(1, out FigureModel figure));
+            var controls = figure.Components.OfType<UiControlModel>().ToList();
+            foreach ((string x, string y, string sum) in new[] { ("1", "2", "3"), ("20", "30", "50"), ("abc", "1", "NaN") })
+            {
+                ScriptGraphicsCallbacks.NotifyUserValue(controls[0], x);
+                ScriptGraphicsCallbacks.NotifyUserValue(controls[1], y);
+                ScriptGraphicsCallbacks.NotifyUserValue(controls[3], null);
+                await ((IGraphicsEventSession)session).DrainGraphicsEventsAsync(null, CancellationToken.None);
+                Assert.Equal(sum, controls[2].Text.Joined);
+            }
+        }
+
+        ScriptEventQueue.Flush();
+    }
+
     private Task<int> RunAsync(string statement, IScriptFigureFiles? files = null) =>
         BatchRunner.RunAsync(
             new StartupOptions(StartupMode.Batch, statement, StartDirectory: _directory),

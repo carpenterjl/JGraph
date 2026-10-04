@@ -386,6 +386,8 @@ public sealed class JGraphScriptGlobals
     /// </summary>
     internal void ShowTouchedFigures()
     {
+        // The components go first, so a window that opens below starts from the frame just taken.
+        ScriptComponentFrames.Flush(force: true);
         foreach (int number in JG.FiguresTouchedSince(_runStartStamp))
         {
             bool alreadyShown;
@@ -394,7 +396,9 @@ public sealed class JGraphScriptGlobals
                 alreadyShown = _shownThisRun.Contains(number);
             }
 
-            if (!alreadyShown && JG.TryGetFigure(number, out FigureModel figure))
+            // A figure made with Visible 'off' gets no window (U1): nothing in the display path used
+            // to read it, so figure('Visible','off') opened one anyway.
+            if (!alreadyShown && JG.TryGetFigure(number, out FigureModel figure) && figure.Visible)
             {
                 Display(number, figure);
             }

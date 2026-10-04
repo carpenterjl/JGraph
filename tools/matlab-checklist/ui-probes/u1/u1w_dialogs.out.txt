@@ -1,0 +1,102 @@
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+==== questdlg default
+figure Name=[Question] Tag=[Question] Units=pixels Position=[837 739 248 93] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=callback
+  pixels Position=[837 739 248 93]
+  uicontrol Style=[pushbutton] Tag=[Btn3] String=[Cancel] Units=[pixels] Position=[[162 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[162 10 56 31.7333]
+  uicontrol Style=[pushbutton] Tag=[Btn2] String=[No] Units=[pixels] Position=[[96 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[96 10 56 31.7333]
+  uicontrol Style=[pushbutton] Tag=[Btn1] String=[Yes] Units=[pixels] Position=[[30 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[30 10 56 31.7333]
+  annotationpane Tag=[scribeOverlay] Visible=[matlab.lang.OnOffSwitchState.on]
+  axes Tag=[IconAxes] Units=[pixels] Position=[[10 51.7333 32 32]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[10 51.7333 32 32]
+  axes Tag=[] Units=[normalized] Position=[[0 0 1 1]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[1 1 248 93]
+  image Tag=[] Visible=[matlab.lang.OnOffSwitchState.on]
+  text Tag=[Question] String=[{Do you want to continue?}] Units=[pixels] Position=[[52 55.4 0]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] VerticalAlignment=[bottom] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[none]
+[Warning: Invalid or deleted object.] 
+[> In questdlg (line 403)
+In u1w_dialogs>@()questdlg('Do you want to continue?','Question') (line 7)
+In u1w_dialogs (line 23)] 
+ERR MATLAB:hg:DeletedObject Cannot set property to a deleted object.
+==== questdlg two buttons
+figure Name=[Two] Tag=[Two] Units=pixels Position=[839 739 245 93] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=callback
+  pixels Position=[839 739 245 93]
+  uicontrol Style=[pushbutton] Tag=[Btn2] String=[Discard] Units=[pixels] Position=[[127.5 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[127.5 10 56 31.7333]
+  uicontrol Style=[pushbutton] Tag=[Btn1] String=[Keep] Units=[pixels] Position=[[61.5 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[61.5 10 56 31.7333]
+  annotationpane Tag=[scribeOverlay] Visible=[matlab.lang.OnOffSwitchState.on]
+  axes Tag=[IconAxes] Units=[pixels] Position=[[10 51.7333 32 32]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[10 51.7333 32 32]
+  axes Tag=[] Units=[normalized] Position=[[0 0 1 1]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[1 1 245 93]
+  image Tag=[] Visible=[matlab.lang.OnOffSwitchState.on]
+  text Tag=[Question] String=[{Keep the changes?}] Units=[pixels] Position=[[52 55.4 0]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] VerticalAlignment=[bottom] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[none]
+ERR MATLAB:hg:DeletedObject Cannot set property to a deleted object.
+==== questdlg long text
+figure Name=[Long] Tag=[Long] Units=pixels Position=[728 713 466 132] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=callback
+  pixels Position=[728 713 466 132]
+  uicontrol Style=[pushbutton] Tag=[Btn3] String=[Cancel] Units=[pixels] Position=[[271.333 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[271.333 10 56 31.7333]
+  uicontrol Style=[pushbutton] Tag=[Btn2] String=[No] Units=[pixels] Position=[[205.333 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[205.333 10 56 31.7333]
+  uicontrol Style=[pushbutton] Tag=[Btn1] String=[Yes] Units=[pixels] Position=[[139.333 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[139.333 10 56 31.7333]
+  annotationpane Tag=[scribeOverlay] Visible=[matlab.lang.OnOffSwitchState.on]
+  axes Tag=[IconAxes] Units=[pixels] Position=[[10 70.7333 32 32]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[10 70.7333 32 32]
+  axes Tag=[] Units=[normalized] Position=[[0 0 1 1]] FontName=[Helvetica] FontSize=[8.5] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[1 1 466 132]
+  image Tag=[] Visible=[matlab.lang.OnOffSwitchState.on]
+  text Tag=[Question] String=[{A long question that wraps over several lines. A long question that wraps |over several lines. A long question that wraps over several lines. A long |question that wraps over several lines. A long question that wraps over |several lines. A long question that wraps over several lines.}] Units=[pixels] Position=[[52 51.7333 0]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] VerticalAlignment=[bottom] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[none]
+ERR MATLAB:hg:DeletedObject Cannot set property to a deleted object.
+==== questdlg modal struct
+figure Name=[Struct] Tag=[Struct] Units=pixels Position=[839 739 245 93] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=callback
+  pixels Position=[839 739 245 93]
+  uicontrol Style=[pushbutton] Tag=[Btn2] String=[No] Units=[pixels] Position=[[127.5 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[127.5 10 56 31.7333]
+  uicontrol Style=[pushbutton] Tag=[Btn1] String=[Yes] Units=[pixels] Position=[[61.5 10 56 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[61.5 10 56 31.7333]
+  annotationpane Tag=[scribeOverlay] Visible=[matlab.lang.OnOffSwitchState.on]
+  axes Tag=[IconAxes] Units=[pixels] Position=[[10 51.7333 32 32]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[10 51.7333 32 32]
+  axes Tag=[] Units=[normalized] Position=[[0 0 1 1]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[1 1 245 93]
+  image Tag=[] Visible=[matlab.lang.OnOffSwitchState.on]
+  text Tag=[Question] String=[{Proceed?}] Units=[pixels] Position=[[52 55.4 0]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] VerticalAlignment=[bottom] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[none]
+ERR MATLAB:hg:DeletedObject Cannot set property to a deleted object.
+==== inputdlg one
+figure Name=[ ] Tag=[ ] Units=pixels Position=[874 737 175 96] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=callback
+  pixels Position=[874 737 175 96]
+  uicontrol Style=[pushbutton] Tag=[Cancel] String=[Cancel] Units=[pixels] Position=[[117 5 53 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[117 5 53 31.7333]
+  uicontrol Style=[pushbutton] Tag=[OK] String=[OK] Units=[pixels] Position=[[59 5 53 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[59 5 53 31.7333]
+  uicontrol Style=[edit] Tag=[Edit] String=[] Units=[pixels] Position=[[5 41.7333 165 26.6667]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[1 1 1]] px=[5 41.7333 165 26.6667]
+  annotationpane Tag=[scribeOverlay] Visible=[matlab.lang.OnOffSwitchState.on]
+  axes Tag=[] Units=[normalized] Position=[[0 0 1 1]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[1 1 175 96]
+  text Tag=[Quest] String=[{Single value:}] Units=[pixels] Position=[[5 68.4 0]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] VerticalAlignment=[bottom] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[none]
+returned: class=cell size=[0 0]
+==== inputdlg two with defaults
+figure Name=[Input] Tag=[Input] Units=pixels Position=[855 701 212 150] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=callback
+  pixels Position=[855 701 212 150]
+  uicontrol Style=[pushbutton] Tag=[Cancel] String=[Cancel] Units=[pixels] Position=[[153.333 5 53 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[153.333 5 53 31.7333]
+  uicontrol Style=[pushbutton] Tag=[OK] String=[OK] Units=[pixels] Position=[[95.3333 5 53 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[95.3333 5 53 31.7333]
+  uicontrol Style=[edit] Tag=[Edit] String=[36] Units=[pixels] Position=[[5 41.7333 202.333 26.6667]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[1 1 1]] px=[5 41.7333 202.333 26.6667]
+  uicontrol Style=[edit] Tag=[Edit] String=[Ada] Units=[pixels] Position=[[5 96.0667 202.333 26.6667]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[1 1 1]] px=[5 96.0667 202.333 26.6667]
+  annotationpane Tag=[scribeOverlay] Visible=[matlab.lang.OnOffSwitchState.on]
+  axes Tag=[] Units=[normalized] Position=[[0 0 1 1]] FontName=[Helvetica] FontSize=[9] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[1 1 212 150]
+  text Tag=[Quest] String=[{Age:}] Units=[pixels] Position=[[5 68.4 0]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] VerticalAlignment=[bottom] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[none]
+  text Tag=[Quest] String=[{Name:}] Units=[pixels] Position=[[5 122.733 0]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] VerticalAlignment=[bottom] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[none]
+returned: class=cell size=[0 0]
+==== inputdlg multiline
+figure Name=[Lines] Tag=[Lines] Units=pixels Position=[804 679 314 183] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=callback
+  pixels Position=[804 679 314 183]
+  uicontrol Style=[pushbutton] Tag=[Cancel] String=[Cancel] Units=[pixels] Position=[[256.333 5 53 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[256.333 5 53 31.7333]
+  uicontrol Style=[pushbutton] Tag=[OK] String=[OK] Units=[pixels] Position=[[198.333 5 53 31.7333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[198.333 5 53 31.7333]
+  uicontrol Style=[edit] Tag=[Edit] String=[] Units=[pixels] Position=[[5 41.7333 305.333 113.333]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] Max=[5] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[1 1 1]] px=[5 41.7333 305.333 113.333]
+  annotationpane Tag=[scribeOverlay] Visible=[matlab.lang.OnOffSwitchState.on]
+  axes Tag=[] Units=[normalized] Position=[[0 0 1 1]] FontName=[Helvetica] FontSize=[9.5] FontWeight=[normal] Visible=[matlab.lang.OnOffSwitchState.off] px=[1 1 314 183]
+  text Tag=[Quest] String=[{Notes:}] Units=[pixels] Position=[[5 155.067 0]] FontName=[Helvetica] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] VerticalAlignment=[bottom] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[none]
+returned: class=cell size=[0 0]
+==== listdlg default
+figure Name=[] Tag=[] Units=pixels Position=[865 524 192 416] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=on
+  pixels Position=[865 524 192 416]
+  uicontrol Style=[pushbutton] Tag=[selectall_btn] String=[Select all] Units=[pixels] Position=[[16 62 160 22]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[16 62 160 22]
+  uicontrol Style=[pushbutton] Tag=[cancel_btn] String=[Cancel] Units=[pixels] Position=[[100 16 76 22]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[100 16 76 22]
+  uicontrol Style=[pushbutton] Tag=[ok_btn] String=[OK] Units=[pixels] Position=[[16 16 76 22]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[16 16 76 22]
+  uicontrol Style=[listbox] Tag=[listbox] String=[{alpha|beta|gamma}] Units=[pixels] Position=[[16 92 160 300]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[2] Value=[1] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[1 1 1]] px=[16 92 160 300]
+returned: class=double size=[0 0]
+==== listdlg single
+figure Name=[Chooser] Tag=[] Units=pixels Position=[865 535 192 399] WindowStyle=modal Resize=off Color=[0.9608 0.9608 0.9608] HandleVisibility=on
+  pixels Position=[865 535 192 399]
+  uicontrol Style=[pushbutton] Tag=[cancel_btn] String=[Cancel] Units=[pixels] Position=[[100 16 76 22]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[100 16 76 22]
+  uicontrol Style=[pushbutton] Tag=[ok_btn] String=[OK] Units=[pixels] Position=[[16 16 76 22]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[16 16 76 22]
+  uicontrol Style=[listbox] Tag=[listbox] String=[{one|two}] Units=[pixels] Position=[[16 62 160 300]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[center] Max=[1] Value=[1] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[1 1 1]] px=[16 62 160 300]
+  uicontrol Style=[text] Tag=[] String=[{Pick one}] Units=[pixels] Position=[[16 370 160 13.6]] FontName=[MS Sans Serif] FontSize=[8] FontWeight=[normal] HorizontalAlignment=[left] Max=[1] Value=[0] Visible=[matlab.lang.OnOffSwitchState.on] BackgroundColor=[[0.960784 0.960784 0.960784]] px=[16 370 160 13.6]
+returned: class=double size=[0 0]

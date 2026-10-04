@@ -170,8 +170,11 @@ figure at `[340 300 300 200]` lands where and at what size it asked for too. `Po
   figure with a wheel callback still zooms under the pointer.
 - **`CurrentObject` is process-wide rather than per figure.** It answers what `gco` answers, because
   one pointer clicks one thing at a time.
-- **A key press fires the figure's callback and the window's together.** With no uicontrols in this
-  build a figure has the focus whenever its window does, so the two cannot be told apart.
+- ~~**A key press fires the figure's callback and the window's together.** With no uicontrols in this
+  build a figure has the focus whenever its window does, so the two cannot be told apart.~~
+  — **retired 2026-10-03 by U1 of the app-building plan (ADR 0198).** With a component holding the
+  keyboard, its own `KeyPressFcn` runs and the figure's does not, while `WindowKeyPressFcn` still
+  runs, which is MathWorks' documented rule; with the figure holding it, both run, as in MATLAB.
 - **`CurrentPoint` on a 2-D axes follows the pointer, and on a figure only a press or a move over
   the canvas.** A figure nobody has pointed at answers the origin rather than a stale reading.
 - **An axes read before the first frame answers an estimate.** Nothing has been measured yet, and an

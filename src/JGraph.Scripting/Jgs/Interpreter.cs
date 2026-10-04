@@ -10346,6 +10346,10 @@ internal sealed partial class Interpreter
         {
             _writeOwners.Clear();
         }
+
+        // And for the window's components (app-building plan, U1): what the last statement changed
+        // goes out as a frame, unless the previous frame is still on its way.
+        ScriptComponentFrames.FlushIfChanged();
     }
 
     /// <summary>

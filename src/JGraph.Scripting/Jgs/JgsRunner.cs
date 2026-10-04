@@ -104,6 +104,7 @@ internal static class JgsRunner
             // source id so its diagnostics stay bare; the stack still has the run's file to name.
             interpreter.MainScriptPath = sourceId.Length > 0 ? sourceId : context.ScriptPath ?? string.Empty;
             interpreter.Host = globals;
+            dispatcher.Interpreter = interpreter; // a callback written as text runs here (U1)
             DefineRunBuiltin(environment, interpreter, globals);
             JgsBuiltins.RegisterEvalBuiltins(environment, interpreter, globals);
             JgsBuiltins.RegisterSessionBuiltins(environment, globals);

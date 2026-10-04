@@ -183,6 +183,19 @@ public static class JG
         return numbers;
     }
 
+    /// <summary>
+    /// Records that <paramref name="figure"/> was changed by something that is not a drawing verb —
+    /// a component added to it (app-building plan, U1) — so the run shows it when it finishes.
+    /// </summary>
+    public static void TouchFigure(FigureModel figure)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        lock (Registry)
+        {
+            Touch(GetFigureNumber(figure));
+        }
+    }
+
     /// <summary>Records that figure <paramref name="number"/> was selected, created, or drawn into.</summary>
     private static void Touch(int number)
     {

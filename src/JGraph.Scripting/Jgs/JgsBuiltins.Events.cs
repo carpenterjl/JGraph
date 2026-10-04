@@ -284,7 +284,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>The event a plain <c>notify</c> hands its listeners: its name and its source.</summary>
-    private static JgsValue NewEventData(string eventName, JgsValue source)
+    internal static JgsValue NewEventData(string eventName, JgsValue source)
     {
         JgsValue data = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {

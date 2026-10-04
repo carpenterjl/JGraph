@@ -1,0 +1,389 @@
+figure Visible=off class=matlab.ui.Figure
+== default text
+  Position = double [20 20 60 20]
+  BackgroundColor = double [0.960784 0.960784 0.960784]
+  ForegroundColor = double [0.129412 0.129412 0.129412]
+  FontName = 'MS Sans Serif'
+  FontSize = double 8
+  FontUnits = 'points'
+  FontWeight = 'normal'
+  FontAngle = 'normal'
+  HorizontalAlignment = 'center'
+  Enable = 'on'
+  Visible = OnOff on
+  Value = double 0
+  String = ''
+  Max = double 1
+  Min = double 0
+  Units = 'pixels'
+  Tooltip = ''
+  Callback = ''
+  Tag = ''
+  UserData = double [0 0]
+  Type = 'uicontrol'
+  InnerPosition = double [20 20 60 20]
+  OuterPosition = double [20 20 60 20]
+  ListboxTop = double 1
+  SliderStep = double [0.01 0.1]
+  Interruptible = OnOff on
+  BusyAction = 'queue'
+  HandleVisibility = 'on'
+  KeyPressFcn = ''
+  KeyReleaseFcn = ''
+  ButtonDownFcn = ''
+  CreateFcn = ''
+  DeleteFcn = ''
+  BeingDeleted = OnOff off
+  Children = handle empty
+  CData = double [0 0]
+  ContextMenu = matlab.graphics.GraphicsPlaceholder empty
+== default edit
+  Position = double [20 20 60 20]
+  BackgroundColor = double [1 1 1]
+  ForegroundColor = double [0.129412 0.129412 0.129412]
+  FontName = 'MS Sans Serif'
+  FontSize = double 8
+  FontUnits = 'points'
+  FontWeight = 'normal'
+  FontAngle = 'normal'
+  HorizontalAlignment = 'center'
+  Enable = 'on'
+  Visible = OnOff on
+  Value = double 0
+  String = ''
+  Max = double 1
+  Min = double 0
+  Units = 'pixels'
+  Tooltip = ''
+  Callback = ''
+  Tag = ''
+  UserData = double [0 0]
+  Type = 'uicontrol'
+  InnerPosition = double [20 20 60 20]
+  OuterPosition = double [20 20 60 20]
+  ListboxTop = double 1
+  SliderStep = double [0.01 0.1]
+  Interruptible = OnOff on
+  BusyAction = 'queue'
+  HandleVisibility = 'on'
+  KeyPressFcn = ''
+  KeyReleaseFcn = ''
+  ButtonDownFcn = ''
+  CreateFcn = ''
+  DeleteFcn = ''
+  BeingDeleted = OnOff off
+  Children = handle empty
+  CData = double [0 0]
+  ContextMenu = matlab.graphics.GraphicsPlaceholder empty
+== default pushbutton
+  Position = double [20 20 60 20]
+  BackgroundColor = double [0.960784 0.960784 0.960784]
+  ForegroundColor = double [0.129412 0.129412 0.129412]
+  FontName = 'MS Sans Serif'
+  FontSize = double 8
+  FontUnits = 'points'
+  FontWeight = 'normal'
+  FontAngle = 'normal'
+  HorizontalAlignment = 'center'
+  Enable = 'on'
+  Visible = OnOff on
+  Value = double 0
+  String = ''
+  Max = double 1
+  Min = double 0
+  Units = 'pixels'
+  Tooltip = ''
+  Callback = ''
+  Tag = ''
+  UserData = double [0 0]
+  Type = 'uicontrol'
+  InnerPosition = double [20 20 60 20]
+  OuterPosition = double [20 20 60 20]
+  ListboxTop = double 1
+  SliderStep = double [0.01 0.1]
+  Interruptible = OnOff on
+  BusyAction = 'queue'
+  HandleVisibility = 'on'
+  KeyPressFcn = ''
+  KeyReleaseFcn = ''
+  ButtonDownFcn = ''
+  CreateFcn = ''
+  DeleteFcn = ''
+  BeingDeleted = OnOff off
+  Children = handle empty
+  CData = double [0 0]
+  ContextMenu = matlab.graphics.GraphicsPlaceholder empty
+get names (40): HorizontalAlignment,ListboxTop,Max,Min,SliderStep,String,Style,Value,Position,BackgroundColor,CData,Callback,Children,Extent,Tooltip,ForegroundColor,Enable,Visible,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,KeyPressFcn,KeyReleaseFcn,FontUnits,FontSize,FontName,FontAngle,FontWeight,Units,InnerPosition,OuterPosition
+set names (37): HorizontalAlignment,ListboxTop,Max,Min,SliderStep,String,Style,Value,Position,BackgroundColor,CData,Callback,Children,Tooltip,ForegroundColor,Enable,Visible,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,Interruptible,CreateFcn,DeleteFcn,Tag,UserData,KeyPressFcn,KeyReleaseFcn,FontUnits,FontSize,FontName,FontAngle,FontWeight,Units,InnerPosition,OuterPosition
+set HorizontalAlignment options: left|center|right
+set FontWeight options: normal|bold
+set FontAngle options: normal|italic
+set Enable options: on|off|inactive
+set FontUnits options: inches|centimeters|normalized|points|pixels
+set Style options: pushbutton|togglebutton|radiobutton|checkbox|edit|text|slider|frame|listbox|popupmenu
+TooltipString=''
+UIContextMenu=matlab.graphics.GraphicsPlaceholder empty
+Extent=double [0 0 5.33333 8]
+String <- 'abc' : 'abc'
+String <- "abc" : 'abc'
+String <- cellstr : cell [2 1] {'a','bc'}
+String <- cellcol : cell [2 1] {'a','bc'}
+String <- strarray : cell [2 1] {'a','bc'}
+String <- charmat : char [2 2] ['ab';'cd']
+String <- empty char : ''
+String <- empty [] : ''
+String <- number 5 : '5'
+String <- number row : char [3 1] ['1';'2';'3']
+String <- logical : ERR MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass | Error setting property 'String' of class 'UIControl': Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.
+String <- empty cell : cell [0 0] {}
+String <- mixed cell : cell [2 1] {'a','1'}
+String <- string empty : ''
+String <- string missing : ''
+String <- cell of string : cell [1 1] {'a'}
+String <- int8 : '65'
+dot String: 'dot set'
+style abbreviations:
+  push -> pushbutton
+  pushb -> pushbutton
+  Edit -> edit
+  TEXT -> text
+  popup -> popupmenu
+  te -> text
+  e -> edit
+  p -> ERR MATLAB:datatypes:InvalidEnumValue | 'p' is not a valid value. Use one of these values: 'pushbutton' | 'togglebutton' | 'radiobutton' | 'checkbox' | 'edit' | 'text' | 'slider' | 'frame' | 'listbox' | 'popupmenu'.
+  check -> checkbox
+  radio -> radiobutton
+  toggle -> togglebutton
+  list -> listbox
+  fr -> frame
+  sl -> slider
+HorizontalAlignment <- 'left' : 'left'
+HorizontalAlignment <- 'LEFT' : 'left'
+HorizontalAlignment <- 'l' : 'left'
+HorizontalAlignment <- 'ri' : 'right'
+HorizontalAlignment <- 'center' : 'center'
+HorizontalAlignment <- 'centre' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'HorizontalAlignment' of class 'UIControl': 'centre' is not a valid value. Use one of these values: 'left' | 'center' | 'right'.
+HorizontalAlignment <- 'bogus' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'HorizontalAlignment' of class 'UIControl': 'bogus' is not a valid value. Use one of these values: 'left' | 'center' | 'right'.
+HorizontalAlignment <- double 5 : ERR MATLAB:datatypes:InvalidEnumValueFor | Error setting property 'HorizontalAlignment' of class 'UIControl': Invalid enum value. Use one of these values: 'left' | 'center' | 'right'.
+FontWeight <- 'bold' : 'bold'
+FontWeight <- 'b' : 'bold'
+FontWeight <- 'demi' : 'demi'
+FontWeight <- 'light' : 'light'
+FontWeight <- 'normal' : 'normal'
+FontWeight <- 'Bold' : 'bold'
+FontWeight <- 'heavy' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'FontWeight' of class 'UIControl': 'heavy' is not a valid value. Use one of these values: 'normal' | 'bold'.
+FontAngle <- 'italic' : 'italic'
+FontAngle <- 'oblique' : 'oblique'
+FontAngle <- 'i' : 'italic'
+FontAngle <- 'normal' : 'normal'
+FontAngle <- 'slanted' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'FontAngle' of class 'UIControl': 'slanted' is not a valid value. Use one of these values: 'normal' | 'italic'.
+Enable <- 'off' : 'off'
+Enable <- 'inactive' : 'inactive'
+Enable <- 'on' : 'on'
+Enable <- 'ON' : 'on'
+Enable <- 'in' : 'inactive'
+Enable <- logical true : ERR MATLAB:datatypes:InvalidEnumValueFor | Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off' | 'inactive'.
+Enable <- logical false : ERR MATLAB:datatypes:InvalidEnumValueFor | Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off' | 'inactive'.
+Enable <- double 1 : ERR MATLAB:datatypes:InvalidEnumValueFor | Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off' | 'inactive'.
+Enable <- double 0 : ERR MATLAB:datatypes:InvalidEnumValueFor | Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off' | 'inactive'.
+Enable <- 'yes' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'Enable' of class 'UIControl': 'yes' is not a valid value. Use one of these values: 'on' | 'off' | 'inactive'.
+Visible <- 'off' : OnOff off
+Visible <- 'on' : OnOff on
+Visible <- logical true : OnOff on
+Visible <- double 0 : OnOff off
+Visible <- 'maybe' : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'Visible' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off'.
+FontUnits <- 'pixels' : 'pixels'
+FontUnits <- 'normalized' : 'normalized'
+FontUnits <- 'points' : 'points'
+FontUnits <- 'inches' : 'inches'
+FontUnits <- 'centimeters' : 'centimeters'
+FontUnits <- 'px' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'FontUnits' of class 'UIControl': 'px' is not a valid value. Use one of these values: 'inches' | 'centimeters' | 'normalized' | 'points' | 'pixels'.
+Units <- 'normalized' : 'normalized'
+Units <- 'pixels' : 'pixels'
+Units <- 'characters' : 'characters'
+Units <- 'points' : 'points'
+Units <- 'bogus' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'Units' of class 'UIControl': 'bogus' is not a valid value. Use one of these values: 'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels'.
+Interruptible <- 'off' : OnOff off
+Interruptible <- 'on' : OnOff on
+Interruptible <- logical false : OnOff off
+Interruptible <- 'nah' : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'Interruptible' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off'.
+BusyAction <- 'cancel' : 'cancel'
+BusyAction <- 'queue' : 'queue'
+BusyAction <- 'c' : 'cancel'
+BusyAction <- 'drop' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'BusyAction' of class 'UIControl': 'drop' is not a valid value. Use one of these values: 'queue' | 'cancel'.
+HandleVisibility <- 'off' : 'off'
+HandleVisibility <- 'callback' : 'callback'
+HandleVisibility <- 'on' : 'on'
+HandleVisibility <- 'c' : 'callback'
+HandleVisibility <- 'maybe' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'HandleVisibility' of class 'UIControl': 'maybe' is not a valid value. Use one of these values: 'on' | 'callback' | 'off'.
+ForegroundColor <- double [0 0.45 0.74] : double [0 0.45 0.74]  (exact 0 0.45000000000000001 0.73999999999999999 )
+ForegroundColor <- 'r' : double [1 0 0]  (exact 1 0 0 )
+ForegroundColor <- 'red' : double [1 0 0]  (exact 1 0 0 )
+ForegroundColor <- '#FF8000' : double [1 0.501961 0]  (exact 1 0.50196078431372548 0 )
+ForegroundColor <- '#f80' : double [1 0.533333 0]  (exact 1 0.53333333333333333 0 )
+ForegroundColor <- double [2 0 0] : ERR MATLAB:hg:ColorBase:BadColorValue | Error setting property 'ForegroundColor' of class 'UIControl': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+ForegroundColor <- double [0.5 0.5] : ERR MATLAB:datatypes:RGBAColor:ValueMustBe3or4ElementVector | Error setting property 'ForegroundColor' of class 'UIControl': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+ForegroundColor <- 'none' : 'none'  (exact 110 111 110 101 )
+ForegroundColor <- 'bogus' : ERR MATLAB:datatypes:RGBAColor:ParseError | Error setting property 'ForegroundColor' of class 'UIControl': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+ForegroundColor <- double [1;0;0] : double [1 0 0]  (exact 1 0 0 )
+ForegroundColor <- uint8 [255 0 0] : double [1 0 0]  (exact 1 0 0 )
+ForegroundColor <- "blue" : double [0 0 1]  (exact 0 0 1 )
+ForegroundColor <- double [-0.1 0 0] : ERR MATLAB:hg:ColorBase:BadColorValue | Error setting property 'ForegroundColor' of class 'UIControl': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+BackgroundColor <- double [0 0.45 0.74] : double [0 0.45 0.74]  (exact 0 0.45000000000000001 0.73999999999999999 )
+BackgroundColor <- 'r' : double [1 0 0]  (exact 1 0 0 )
+BackgroundColor <- 'red' : double [1 0 0]  (exact 1 0 0 )
+BackgroundColor <- '#FF8000' : double [1 0.501961 0]  (exact 1 0.50196078431372548 0 )
+BackgroundColor <- '#f80' : double [1 0.533333 0]  (exact 1 0.53333333333333333 0 )
+BackgroundColor <- double [2 0 0] : ERR MATLAB:hg:ColorBase:BadColorValue | Error setting property 'BackgroundColor' of class 'UIControl': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+BackgroundColor <- double [0.5 0.5] : ERR MATLAB:datatypes:RGBAColor:ValueMustBe3or4ElementVector | Error setting property 'BackgroundColor' of class 'UIControl': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+BackgroundColor <- 'none' : 'none'  (exact 110 111 110 101 )
+BackgroundColor <- 'bogus' : ERR MATLAB:datatypes:RGBAColor:ParseError | Error setting property 'BackgroundColor' of class 'UIControl': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+BackgroundColor <- double [1;0;0] : double [1 0 0]  (exact 1 0 0 )
+BackgroundColor <- uint8 [255 0 0] : double [1 0 0]  (exact 1 0 0 )
+BackgroundColor <- "blue" : double [0 0 1]  (exact 0 0 1 )
+BackgroundColor <- double [-0.1 0 0] : ERR MATLAB:hg:ColorBase:BadColorValue | Error setting property 'BackgroundColor' of class 'UIControl': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+FontSize <- double 10 : double 10
+FontSize <- double 0 : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBePositive | Value should be a double number greater than 0.
+FontSize <- double -1 : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeNotNegative | Error setting property 'FontSize' of class 'UIControl': Value should be a double number greater than or equal to 0.
+FontSize <- double 2.5 : double 2.5
+FontSize <- double [10 12] : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar | Error setting property 'FontSize' of class 'UIControl': Value should be a numeric scalar.
+FontSize <- 'big' : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar | Error setting property 'FontSize' of class 'UIControl': Value should be a numeric scalar.
+FontSize <- double NaN : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeNotNaN | Error setting property 'FontSize' of class 'UIControl': Value should be a number.
+FontSize <- double Inf : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeFinite | Error setting property 'FontSize' of class 'UIControl': Value should be a finite double number.
+FontSize <- int8 9 : double 9
+Position <- double [30 180 100 20] : double [30 180 100 20]
+Position <- double [1 2 3] : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector | Error setting property 'Position' of class 'UIControl': Value must be a 4 element vector
+Position <- double [0 0 0 0] : double [0 0 0 0]
+Position <- double [10 10 -5 20] : ERR MATLAB:hg:set_chck:DimensionsOutsideRange | Error setting property 'Position' of class 'UIControl': Width and height must be greater than or equal to 0
+Position <- double [10 10 5 -20] : ERR MATLAB:hg:set_chck:DimensionsOutsideRange | Error setting property 'Position' of class 'UIControl': Width and height must be greater than or equal to 0
+Position <- double [1.5 2.5 3.5 4.5] : double [1.5 2.5 3.5 4.5]
+Position <- 'abc' : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric | Error setting property 'Position' of class 'UIControl': Value must be numeric and finite
+Position <- double [NaN 1 1 1] : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric | Error setting property 'Position' of class 'UIControl': Value must be numeric and finite
+Position <- double [1 2 3 4 5] : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector | Error setting property 'Position' of class 'UIControl': Value must be a 4 element vector
+Position <- double [1;2;3;4] : double [1 2 3 4]
+Position <- int16 [1 2 3 4] : double [1 2 3 4]
+Value <- double 5 : double 5
+Value <- double -1 : double -1
+Value <- double [1 2] : double [1 2]
+Value <- 'x' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+Value <- logical true : double 1
+Value <- double [0 0] : double [0 0]
+Value <- int8 3 : double 3
+Max <- double 2 : double 2
+Max <- double -3 : double -3
+Max <- 'x' : ERR MATLAB:class:RequireNumeric | Error setting property 'Max' of class 'UIControl': Value must be numeric or logical.
+Max <- double [1 2] : ERR MATLAB:class:RequireScalar | Error setting property 'Max' of class 'UIControl': Value must be a scalar.
+Min <- double 2 : double 2
+Min <- double -3 : double -3
+Min <- 'x' : ERR MATLAB:class:RequireNumeric | Error setting property 'Min' of class 'UIControl': Value must be numeric or logical.
+Min <- double [1 2] : ERR MATLAB:class:RequireScalar | Error setting property 'Min' of class 'UIControl': Value must be a scalar.
+Tooltip <- 'tip' : 'tip'
+Tooltip <- "tip2" : 'tip2'
+Tooltip <- cell [1 2] {'a','b'} : cell [2 1] {'a','b'}
+Tooltip <- double 5 : ERR MATLAB:graphics:datatype:UIStringsDataType:NoNumericValue | Error setting property 'Tooltip' of class 'UIControl': UIStrings data type does not support numeric values.
+Tooltip <- '' : ''
+FontName <- 'Arial' : 'Arial'
+FontName <- "Courier New" : 'Courier New'
+FontName <- double 5 : ERR MATLAB:class:RequireString | Error setting property 'FontName' of class 'UIControl': Value must be a character vector or a string scalar.
+FontName <- '' : ERR MATLAB:class:MATLABConversionError | Error setting property 'FontName' of class 'UIControl': Character vector value must not be empty
+unknown prop: ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class UIControl.
+unknown get: ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.UIControl'.
+set Type: ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''UIControl'' because it is read-only.
+set Style bogus: ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'Style' of class 'UIControl': 'bogus' is not a valid value. Use one of these values: 'pushbutton' | 'togglebutton' | 'radiobutton' | 'checkbox' | 'edit' | 'text' | 'slider' | 'frame' | 'listbox' | 'popupmenu'.
+restyle to edit: Style=edit Bg=double [0 0 1]
+restyle to push: Style=pushbutton Bg=double [0 0 1]
+restyle after explicit colour: Bg=double [1 0 0]
+edit->text Bg=double [0.960784 0.960784 0.960784]
+Callback <- @@(s,e)disp(1) : @@(s,e)disp(1) (class function_handle)
+Callback <- 'disp(2)' : 'disp(2)' (class char)
+Callback <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3} (class cell)
+Callback <- cell [1 2] {'disp',double 4} : cell [2 1] {'disp',double 4} (class cell)
+Callback <- '' : '' (class char)
+Callback <- double [0 0] : '' (class char)
+Callback <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'Callback' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+Callback <- cell [1 1] {double 5} : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'Callback' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+Callback <- cell [0 0] {} : '' (class char)
+Callback <- cell [1 1] {@disp} : @disp (class function_handle)
+Callback <- "disp(7)" : 'disp(7)' (class char)
+Callback <- struct a : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'Callback' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+KeyPressFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+KeyPressFcn <- 'disp(2)' : 'disp(2)'
+KeyPressFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+KeyPressFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'KeyPressFcn' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+ButtonDownFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+ButtonDownFcn <- 'disp(2)' : 'disp(2)'
+ButtonDownFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+ButtonDownFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'ButtonDownFcn' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+DeleteFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+DeleteFcn <- 'disp(2)' : 'disp(2)'
+DeleteFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+DeleteFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'DeleteFcn' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+CreateFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+CreateFcn <- 'disp(2)' : 'disp(2)'
+CreateFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+CreateFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'CreateFcn' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+KeyReleaseFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+KeyReleaseFcn <- 'disp(2)' : 'disp(2)'
+KeyReleaseFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+KeyReleaseFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'KeyReleaseFcn' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+figure KeyPressFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+figure KeyPressFcn <- 'disp(2)' : 'disp(2)'
+figure KeyPressFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+figure KeyPressFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'KeyPressFcn' of class 'Figure': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+figure WindowKeyPressFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+figure WindowKeyPressFcn <- 'disp(2)' : 'disp(2)'
+figure WindowKeyPressFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+figure WindowKeyPressFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'WindowKeyPressFcn' of class 'Figure': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+figure WindowButtonDownFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+figure WindowButtonDownFcn <- 'disp(2)' : 'disp(2)'
+figure WindowButtonDownFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+figure WindowButtonDownFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'WindowButtonDownFcn' of class 'Figure': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+figure SizeChangedFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+figure SizeChangedFcn <- 'disp(2)' : 'disp(2)'
+figure SizeChangedFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+figure SizeChangedFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'SizeChangedFcn' of class 'Figure': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+figure CloseRequestFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+figure CloseRequestFcn <- 'disp(2)' : 'disp(2)'
+figure CloseRequestFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+figure CloseRequestFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'CloseRequestFcn' of class 'Figure': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+figure ButtonDownFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+figure ButtonDownFcn <- 'disp(2)' : 'disp(2)'
+figure ButtonDownFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+figure ButtonDownFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'ButtonDownFcn' of class 'Figure': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+figure DeleteFcn <- @@(s,e)disp(1) : @@(s,e)disp(1)
+figure DeleteFcn <- 'disp(2)' : 'disp(2)'
+figure DeleteFcn <- cell [1 2] {@@(s,e,a)disp(a),double 3} : cell [2 1] {@@(s,e,a)disp(a),double 3}
+figure DeleteFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'DeleteFcn' of class 'Figure': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+figure default CloseRequestFcn: 'closereq'
+CreateFcn ran: class(e)=double isempty=1 type=uicontrol
+DeleteFcn ran: class(e)=event.EventData
+char CreateFcn ran
+cell DeleteFcn ran with 42, class(e)=event.EventData
+figure Children (3): uicontrol:two,uicontrol:one,axes:
+Parent of c1 is f: 1
+findobj Style edit: 1 ; findobj Type uicontrol: 2
+isgraphics=1 ishandle=1 isvalid=1 class=matlab.ui.control.UIControl
+isa uicontrol=1 isa handle=1
+axes parent: ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uicontrol parent: ERR MATLAB:hgbuiltins:object_creation:CannotSpecifyPVPairsWithNonParentConvenienceArg | Invalid input combination. Parameter-value pairs must be specified with a valid parent, such as a Figure or Panel object.
+bad parent number: ERR MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle | Value must be a handle.
+odd pairs: ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+numeric name: ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+struct form: text from struct
+bare word: ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+Visible off -> off
+after delete: isgraphics=0 isvalid=0
+set on deleted: ERR MATLAB:class:InvalidHandle | Invalid or deleted object.
+get on deleted: ERR MATLAB:class:InvalidHandle | Invalid or deleted object.
+     3
+
+no parent: figures 0 -> 1, parent is gcf 1, gcf visible=on
+veto by text
+after close with text CloseRequestFcn: alive=1
+veto by cell
+after close with cell CloseRequestFcn: alive=1
+handle CloseRequestFcn class(e)=matlab.ui.eventdata.WindowCloseRequestData
+after close with handle CloseRequestFcn: alive=1
+after delete: alive=0
+ActionData superclasses: handle,event.EventData
+ActionData props: Source,EventName

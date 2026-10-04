@@ -42,6 +42,19 @@ public partial class FigureWindow : Window
         _binding.TitleChanged += ApplyTitle;
         _binding.ToolBarVisibilityChanged += shown =>
             FigureToolBar.Visibility = shown ? Visibility.Visible : Visibility.Collapsed;
+
+        // A figure set to Visible 'off' keeps its window but hides it, and 'on' brings it back (U1).
+        _binding.FigureVisibilityChanged += shown =>
+        {
+            if (shown)
+            {
+                Show();
+            }
+            else
+            {
+                Hide();
+            }
+        };
         Loaded += OnLoaded;
     }
 
@@ -243,11 +256,59 @@ public partial class FigureWindow : Window
     internal void RebindFigure()
     {
         _binding.Bind(_viewModel.Figure);
+        ComponentLayer.Bind(_viewModel.Figure);
         ApplyTitle();
+    }
+
+    /// <summary>Whether this window shows <paramref name="figure"/>.</summary>
+    internal bool Shows(FigureModel figure) => ReferenceEquals(_viewModel.Figure, figure);
+
+    /// <summary>Applies a frame of this window's figure's components (U1). UI thread.</summary>
+    internal void ApplyComponentFrame(UiFrame frame) => ComponentLayer.Apply(frame);
+
+    /// <summary>
+    /// A press anywhere in the window first commits an edit field that has the keyboard, so its value
+    /// reaches the script before the click does — the order a button's callback reading that field
+    /// depends on (U1). A press inside the field itself is the user still editing.
+    /// </summary>
+    protected override void OnPreviewMouseDown(System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (ComponentLayer.FocusedComponent is { Style: UiControlStyle.Edit }
+            && e.OriginalSource is DependencyObject hit
+            && System.Windows.Input.Keyboard.FocusedElement is DependencyObject focused
+            && !IsWithin(hit, focused))
+        {
+            ComponentLayer.CommitFocusedEdit();
+        }
+
+        base.OnPreviewMouseDown(e);
+    }
+
+    private static bool IsWithin(DependencyObject node, DependencyObject ancestor)
+    {
+        for (DependencyObject? walk = node; walk is not null;
+             walk = walk is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D
+                 ? System.Windows.Media.VisualTreeHelper.GetParent(walk)
+                 : LogicalTreeHelper.GetParent(walk))
+        {
+            if (ReferenceEquals(walk, ancestor))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>The window's bounds on screen, chrome included, for the figure's OuterPosition.</summary>
     internal Rect2D? OuterBoundsOf(FigureModel figure) => _binding.OuterBounds(figure);
+
+    /// <summary>
+    /// A press whose character is still to come: the key arrives before the text it types, and the
+    /// character a script is told is the one Windows produced (U1) — with the layout, the dead keys
+    /// and the input method all applied — not one guessed from the key.
+    /// </summary>
+    private (string KeyName, List<string> Modifiers, string Guess)? _pendingPress;
 
     /// <summary>
     /// Keys reach the script before the control's own shortcuts, and are never marked handled, so
@@ -256,23 +317,76 @@ public partial class FigureWindow : Window
     protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
     {
         base.OnPreviewKeyDown(e);
-        ReportKey(e, pressed: true);
+        FlushPendingPress();
+        System.Windows.Input.Key key = e.Key == System.Windows.Input.Key.System ? e.SystemKey : e.Key;
+        if (ProducesNoText(key))
+        {
+            ReportKey(key, pressed: true, CharacterOf(key));
+        }
+        else
+        {
+            _pendingPress = (KeyNameOf(key), HeldModifiers(), CharacterOf(key));
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnPreviewTextInput(System.Windows.Input.TextCompositionEventArgs e)
+    {
+        base.OnPreviewTextInput(e);
+        if (_pendingPress is { } pending)
+        {
+            _pendingPress = null;
+            string text = e.Text.Length > 0 ? e.Text : e.ControlText.Length > 0 ? e.ControlText : e.SystemText;
+            Report(pending.KeyName, pending.Modifiers, pressed: true, text);
+        }
     }
 
     /// <inheritdoc />
     protected override void OnPreviewKeyUp(System.Windows.Input.KeyEventArgs e)
     {
         base.OnPreviewKeyUp(e);
-        ReportKey(e, pressed: false);
+        FlushPendingPress();
+        System.Windows.Input.Key key = e.Key == System.Windows.Input.Key.System ? e.SystemKey : e.Key;
+        ReportKey(key, pressed: false, CharacterOf(key));
     }
 
-    private void ReportKey(System.Windows.Input.KeyEventArgs e, bool pressed)
+    /// <summary>A press that typed nothing after all is reported with the character guessed from its key.</summary>
+    private void FlushPendingPress()
+    {
+        if (_pendingPress is { } pending)
+        {
+            _pendingPress = null;
+            Report(pending.KeyName, pending.Modifiers, pressed: true, pending.Guess);
+        }
+    }
+
+    /// <summary>Keys that never produce a character, reported at once rather than held for one.</summary>
+    private static bool ProducesNoText(System.Windows.Input.Key key) =>
+        key is System.Windows.Input.Key.Left or System.Windows.Input.Key.Right or System.Windows.Input.Key.Up
+            or System.Windows.Input.Key.Down or System.Windows.Input.Key.Home or System.Windows.Input.Key.End
+            or System.Windows.Input.Key.PageUp or System.Windows.Input.Key.PageDown or System.Windows.Input.Key.Insert
+            or System.Windows.Input.Key.Delete or System.Windows.Input.Key.LeftShift or System.Windows.Input.Key.RightShift
+            or System.Windows.Input.Key.LeftCtrl or System.Windows.Input.Key.RightCtrl or System.Windows.Input.Key.LeftAlt
+            or System.Windows.Input.Key.RightAlt or System.Windows.Input.Key.LWin or System.Windows.Input.Key.RWin
+            or System.Windows.Input.Key.CapsLock or System.Windows.Input.Key.NumLock or System.Windows.Input.Key.Scroll
+            or System.Windows.Input.Key.Apps or System.Windows.Input.Key.PrintScreen or System.Windows.Input.Key.Pause
+            or (>= System.Windows.Input.Key.F1 and <= System.Windows.Input.Key.F24);
+
+    private void ReportKey(System.Windows.Input.Key key, bool pressed, string character) =>
+        Report(KeyNameOf(key), HeldModifiers(), pressed, character);
+
+    private void Report(string keyName, List<string> modifiers, bool pressed, string character)
     {
         if (_viewModel.Figure is not { } figure)
         {
             return;
         }
 
+        ScriptGraphicsCallbacks.NotifyKey(figure, pressed, character, keyName, modifiers, ComponentLayer.FocusedComponent);
+    }
+
+    private static List<string> HeldModifiers()
+    {
         var modifiers = new List<string>(3);
         System.Windows.Input.ModifierKeys held = System.Windows.Input.Keyboard.Modifiers;
         if (held.HasFlag(System.Windows.Input.ModifierKeys.Shift))
@@ -290,7 +404,7 @@ public partial class FigureWindow : Window
             modifiers.Add("alt");
         }
 
-        ScriptGraphicsCallbacks.NotifyKey(figure, pressed, CharacterOf(e.Key), KeyNameOf(e.Key), modifiers);
+        return modifiers;
     }
 
     /// <summary>The character a key produces, or empty for one that produces none.</summary>

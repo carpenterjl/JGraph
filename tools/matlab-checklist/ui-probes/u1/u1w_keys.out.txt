@@ -1,0 +1,49 @@
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+screen [1 1 1920 1200], java 1920x1200, scale 1
+== 1. edit field e1 focused, type a then Return
+fig.WindowKeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyPress Character=[a] Key=[a] Modifier=[] props=Character,Modifier,Key,Source,EventName
+e1.KeyPressFcn: class=matlab.ui.eventdata.UIClientComponentKeyEvent EventName=KeyPress Character=[a] Key=[a] Modifier=[] props=Character,Modifier,Key,Source,EventName
+e1.KeyReleaseFcn: class=matlab.ui.eventdata.UIClientComponentKeyEvent EventName=KeyRelease Character=[a] Key=[a] Modifier=[] props=Character,Modifier,Key,Source,EventName
+fig.WindowKeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyRelease Character=[a] Key=[a] Modifier=[] props=Character,Modifier,Key,Source,EventName
+fig.WindowKeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyPress Character=[char(13)] Key=[return] Modifier=[] props=Character,Modifier,Key,Source,EventName
+e1.KeyPressFcn: class=matlab.ui.eventdata.UIClientComponentKeyEvent EventName=KeyPress Character=[char(13)] Key=[return] Modifier=[] props=Character,Modifier,Key,Source,EventName
+e1.Callback String=[a]: class=matlab.ui.eventdata.ActionData EventName=Action props=Source,EventName
+e1.KeyReleaseFcn: class=matlab.ui.eventdata.UIClientComponentKeyEvent EventName=KeyRelease Character=[char(13)] Key=[return] Modifier=[] props=Character,Modifier,Key,Source,EventName
+fig.WindowKeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyRelease Character=[char(13)] Key=[return] Modifier=[] props=Character,Modifier,Key,Source,EventName
+== 2. type b in e1, then click e2 (focus moves)
+fig.WindowKeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyPress Character=[b] Key=[b] Modifier=[] props=Character,Modifier,Key,Source,EventName
+e1.KeyPressFcn: class=matlab.ui.eventdata.UIClientComponentKeyEvent EventName=KeyPress Character=[b] Key=[b] Modifier=[] props=Character,Modifier,Key,Source,EventName
+e1.KeyReleaseFcn: class=matlab.ui.eventdata.UIClientComponentKeyEvent EventName=KeyRelease Character=[b] Key=[b] Modifier=[] props=Character,Modifier,Key,Source,EventName
+fig.WindowKeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyRelease Character=[b] Key=[b] Modifier=[] props=Character,Modifier,Key,Source,EventName
+e1.Callback String=[ab]: class=matlab.ui.eventdata.ActionData EventName=Action props=Source,EventName
+== 3. type c in e2, then click the button
+fig.WindowKeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyPress Character=[c] Key=[c] Modifier=[] props=Character,Modifier,Key,Source,EventName
+fig.WindowKeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyRelease Character=[c] Key=[c] Modifier=[] props=Character,Modifier,Key,Source,EventName
+e2.Callback String=[c]: class=matlab.ui.eventdata.ActionData EventName=Action props=Source,EventName
+b.Callback: class=matlab.ui.eventdata.ActionData EventName=Action props=Source,EventName
+== 4. button focused, press space
+fig.WindowKeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyPress Character=[ ] Key=[space] Modifier=[] props=Character,Modifier,Key,Source,EventName
+b.KeyPressFcn: class=matlab.ui.eventdata.UIClientComponentKeyEvent EventName=KeyPress Character=[ ] Key=[space] Modifier=[] props=Character,Modifier,Key,Source,EventName
+b.Callback: class=matlab.ui.eventdata.ActionData EventName=Action props=Source,EventName
+fig.WindowKeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyRelease Character=[ ] Key=[space] Modifier=[] props=Character,Modifier,Key,Source,EventName
+== 5. click the figure background, press shift+x
+fig.WindowButtonDownFcn SelectionType=normal CurrentObject=figure:: class=matlab.ui.eventdata.WindowMouseData EventName=WindowMousePress IntersectionPoint=[[NaN NaN NaN]] props=Source,EventName
+fig.ButtonDownFcn: class=matlab.ui.eventdata.MouseData EventName=ButtonDown props=Source,EventName
+fig.WindowButtonUpFcn: class=matlab.ui.eventdata.WindowMouseData EventName=WindowMouseRelease IntersectionPoint=[[NaN NaN NaN]] props=Source,EventName
+fig.WindowKeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyPress Character=[] Key=[shift] Modifier=[shift] props=Character,Modifier,Key,Source,EventName
+fig.KeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=KeyPress Character=[] Key=[shift] Modifier=[shift] props=Character,Modifier,Key,Source,EventName
+fig.WindowKeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyPress Character=[X] Key=[x] Modifier=[shift] props=Character,Modifier,Key,Source,EventName
+fig.KeyPressFcn: class=matlab.ui.eventdata.KeyData EventName=KeyPress Character=[X] Key=[x] Modifier=[shift] props=Character,Modifier,Key,Source,EventName
+fig.KeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=KeyRelease Character=[X] Key=[x] Modifier=[shift] props=Character,Modifier,Key,Source,EventName
+fig.WindowKeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyRelease Character=[X] Key=[x] Modifier=[shift] props=Character,Modifier,Key,Source,EventName
+fig.KeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=KeyRelease Character=[] Key=[shift] Modifier=[] props=Character,Modifier,Key,Source,EventName
+fig.WindowKeyReleaseFcn: class=matlab.ui.eventdata.KeyData EventName=WindowKeyRelease Character=[] Key=[shift] Modifier=[] props=Character,Modifier,Key,Source,EventName
+== 6. wheel over the figure
+fig.WindowScrollWheelFcn: class=matlab.ui.eventdata.ScrollWheelData EventName=WindowScrollWheel VerticalScrollCount=[1] VerticalScrollAmount=[3] props=VerticalScrollCount,VerticalScrollAmount,Source,EventName
+== 7. right click on the background
+fig.WindowButtonDownFcn SelectionType=alt CurrentObject=figure:: class=matlab.ui.eventdata.WindowMouseData EventName=WindowMousePress IntersectionPoint=[[NaN NaN NaN]] props=Source,EventName
+fig.ButtonDownFcn: class=matlab.ui.eventdata.MouseData EventName=ButtonDown props=Source,EventName
+fig.WindowButtonUpFcn: class=matlab.ui.eventdata.WindowMouseData EventName=WindowMouseRelease IntersectionPoint=[[NaN NaN NaN]] props=Source,EventName

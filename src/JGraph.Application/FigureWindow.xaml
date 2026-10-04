@@ -81,7 +81,12 @@
                           Background="Transparent"
                           Visibility="{Binding ShowPlotBrowser, Converter={StaticResource BoolToVisibility}}" />
 
-            <jg:FigureControl x:Name="FigureView" Grid.Column="2" Figure="{Binding Figure}" />
+            <!-- The figure canvas, and over it the script's components (app-building plan, U1).
+                 The layer takes no clicks outside its controls. -->
+            <Grid Grid.Column="2">
+                <jg:FigureControl x:Name="FigureView" Figure="{Binding Figure}" />
+                <jg:UiComponentLayer x:Name="ComponentLayer" />
+            </Grid>
 
             <GridSplitter Grid.Column="3" Width="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                           Background="Transparent"

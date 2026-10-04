@@ -2026,14 +2026,10 @@ internal static partial class JgsBuiltins
             foreach (int n in numbers.Distinct())
             {
                 if (!JG.TryGetFigure(n,out var f)) continue;
-                if (!force && JgsHandleRegistry.TryGetEntry(f,out var e) && e.CloseRequestFcn is { } callback)
+                if (!force && JgsHandleRegistry.TryGetEntry(f,out var e) && e.CloseRequestFcn is not null)
                 {
-                    if (callback.Type == JgsType.Function) JgsCallbackDispatcher.Current?.FireCloseRequest(f);
-                    else if (callback.Type == JgsType.String && callback.AsString.Length > 0)
-                    {
-                        using var scope = JgsGraphicsCallbackState.Enter(f,null);
-                        if (env.TryGet("evalin",out var eval)) JgsCallbacks.Invoke(eval.AsCallable, [JgsValue.Str("base"),callback],line,col); // a command, asked for nothing (V9.1)
-                    }
+                    // Any of the three forms, run by the dispatcher with R2025b's event data (U1).
+                    JgsCallbackDispatcher.Current?.FireCloseRequest(f);
                 }
                 else graphicsHost.CloseFigure(n);
                 success &= !JG.TryGetFigure(n,out _);
@@ -2463,6 +2459,7 @@ internal static partial class JgsBuiltins
         RegisterCameraBuiltins(env);
         RegisterPrimitive3DBuiltins(env);
         RegisterHandleGraphicsBuiltins(env, host);
+        RegisterUiBuiltins(env);
         RegisterRulerBuiltins(env);
         RegisterSurfaceVariantBuiltins(env, dialect);
         RegisterGraphics2DBuiltins(env, dialect);

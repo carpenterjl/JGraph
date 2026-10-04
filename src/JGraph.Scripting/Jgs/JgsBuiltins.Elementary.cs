@@ -341,10 +341,11 @@ internal static partial class JgsBuiltins
                 "integer" => numericClass?.IsInteger() == true,
                 // Every handle is a 'handle' (V6): a classdef … < handle instance, and the builtin
                 // handle classes — a timer, a containers.Map, a VideoWriter.
-                "handle" => IsHandleClass(args[0])
+                "handle" => IsHandleClass(args[0]) || JgsUiEventData.IsBuiltinEventData(args[0])
                     || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsHandle),
                 // A class written < event.EventData is one (V6, #106), as the default event is.
                 EventDataClassName => string.Equals(actual, wanted, StringComparison.Ordinal)
+                    || JgsUiEventData.IsBuiltinEventData(args[0])
                     || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsEventData),
                 _ => string.Equals(actual, wanted, StringComparison.Ordinal),
             });

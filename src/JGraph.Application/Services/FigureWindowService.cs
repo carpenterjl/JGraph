@@ -22,6 +22,33 @@ public sealed class FigureWindowService : IFigureWindowService
         // A figure's OuterPosition is a question only the window it is in can answer, and this is
         // the one object that knows which window that is.
         JGraph.Scripting.ScriptGraphicsCallbacks.WindowBoundsProvider = OuterBoundsOf;
+
+        // Frames of a script's components (app-building plan, U1) arrive on the script thread; they
+        // are applied here, on this one, to the window showing their figure, and then acknowledged
+        // so the next one can be sent. A figure with no window yet takes its last frame on opening.
+        System.Windows.Threading.Dispatcher ui = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+        JGraph.Scripting.ScriptComponentFrames.SetSink(frame => ui.BeginInvoke(() =>
+        {
+            try
+            {
+                ApplyComponentFrame(frame);
+            }
+            finally
+            {
+                JGraph.Scripting.ScriptComponentFrames.Applied(frame);
+            }
+        }));
+    }
+
+    private void ApplyComponentFrame(UiFrame frame)
+    {
+        foreach (FigureWindow window in _windows.Values)
+        {
+            if (window.Shows(frame.Figure))
+            {
+                window.ApplyComponentFrame(frame);
+            }
+        }
     }
 
     private JGraph.Core.Primitives.Rect2D? OuterBoundsOf(FigureModel figure)

@@ -102,6 +102,12 @@ internal sealed class JgsHandleEntry
     /// <summary>A figure's <c>SizeChangedFcn</c>, if a script gave it one.</summary>
     public JgsValue? SizeChangedFcn { get; set; }
 
+    /// <summary>A <c>uicontrol</c>'s <c>CData</c>, the button-face image a script set (U1 keeps it).</summary>
+    public JgsValue? UiCData { get; set; }
+
+    /// <summary>A <c>uicontrol</c>'s <c>Callback</c>, if a script gave it one (U1).</summary>
+    public JgsValue? UiCallback { get; set; }
+
     /// <summary>A menu item's <c>MenuSelectedFcn</c>, if a script gave it one.</summary>
     public JgsValue? MenuSelectedFcn { get; set; }
 
@@ -111,10 +117,10 @@ internal sealed class JgsHandleEntry
     /// <summary>A context menu's <c>ContextMenuOpeningFcn</c>, if a script gave it one.</summary>
     public JgsValue? ContextMenuOpeningFcn { get; set; }
 
-    /// <summary>A figure's <c>KeyPressFcn</c>, if a script gave it one.</summary>
+    /// <summary>A figure's or a component's <c>KeyPressFcn</c>, if a script gave it one.</summary>
     public JgsValue? KeyPressFcn { get; set; }
 
-    /// <summary>A figure's <c>KeyReleaseFcn</c>, if a script gave it one.</summary>
+    /// <summary>A figure's or a component's <c>KeyReleaseFcn</c>, if a script gave it one.</summary>
     public JgsValue? KeyReleaseFcn { get; set; }
 
     /// <summary>A figure's <c>WindowKeyPressFcn</c>, if a script gave it one.</summary>

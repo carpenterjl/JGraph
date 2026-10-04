@@ -94,12 +94,14 @@ public class ButtonDownCallbackTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task BareCanvas_IsTheFiguresClick_WithNaNIntersection_AndEmptyGco()
+    public async Task BareCanvas_IsTheFiguresClick_WithMouseData_AndEmptyGco()
     {
+        // A figure's own click is told by a MouseData holding only Source and EventName — no
+        // IntersectionPoint, unlike a Hit on something drawn (R2025b, U1's u1w_keys).
         await Exec("""
             p = plot(1:3);
-            set(gcf, 'ButtonDownFcn', @(src, event) fprintf('fig %d nan %d\n', ...
-                src == gcf, all(isnan(event.IntersectionPoint))));
+            set(gcf, 'ButtonDownFcn', @(src, event) fprintf('fig %d %s %s %d\n', ...
+                src == gcf, class(event), event.EventName, isfield(event, 'IntersectionPoint')));
             """);
         (FigureModel figure, _, _) = Scene();
 
@@ -107,7 +109,7 @@ public class ButtonDownCallbackTests : IAsyncLifetime
         await Drain();
         await Exec("disp(isempty(gco));");
 
-        Assert.Contains(_output.NormalLines, static line => line.Contains("fig 1 nan 1"));
+        Assert.Contains(_output.NormalLines, static line => line.Contains("fig 1 matlab.ui.eventdata.MouseData ButtonDown 0"));
         Assert.Contains(_output.NormalLines, static line => line.Trim() == "true");
     }
 

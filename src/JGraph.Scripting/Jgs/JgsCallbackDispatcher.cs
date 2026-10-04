@@ -43,6 +43,13 @@ internal sealed class JgsCallbackDispatcher
         _context = context;
     }
 
+    /// <summary>
+    /// The interpreter a callback written as text runs in (its base workspace), and the one that
+    /// looks up a name leading a cell callback. The session or run sets it once the interpreter
+    /// exists; a function-handle callback does not need it.
+    /// </summary>
+    public Interpreter? Interpreter { get; set; }
+
     static JgsCallbackDispatcher()
     {
         // Deletions announce themselves from wherever they happen. On the thread running the
@@ -134,6 +141,19 @@ internal sealed class JgsCallbackDispatcher
                 return;
             }
 
+            // A user's value is written before anything decides whether its callback runs: the
+            // person typed it, and a busy or cancelled callback does not un-type it (U1).
+            if (next.UserValue is not null)
+            {
+                ApplyUserValue(next);
+                if (next.Kind == GraphicsEventKind.ApplyUserValue)
+                {
+                    continue;
+                }
+
+                next = next with { UserValue = null };
+            }
+
             bool interruptible = _running.Count == 0 || _running[^1];
             if (!interruptible && !AlwaysInterrupts(next.Kind))
             {
@@ -162,6 +182,11 @@ internal sealed class JgsCallbackDispatcher
     /// </summary>
     private void Dispatch(GraphicsEvent graphicsEvent)
     {
+        if (ScriptUiTrace.Enabled)
+        {
+            ScriptUiTrace.Write($"dispatch: {graphicsEvent.Kind} on {graphicsEvent.Target.GetType().Name}");
+        }
+
         if (!TryResolve(graphicsEvent, out JgsHandleEntry? entry, out JgsValue callback))
         {
             // A close request whose callback vanished between the click and its delivery still
@@ -184,13 +209,27 @@ internal sealed class JgsCallbackDispatcher
     }
 
     /// <summary>
+    /// Puts a user's value into the model, on this thread. A component deleted since the user acted
+    /// takes nothing, which is what happened to its value in MATLAB too.
+    /// </summary>
+    private static void ApplyUserValue(GraphicsEvent graphicsEvent)
+    {
+        if (graphicsEvent.Target is UiControlModel { BeingDeleted: false } control
+            && graphicsEvent.UserValue is string text)
+        {
+            control.Text = UiText.Of(text);
+            control.UserWriteSeq = graphicsEvent.UserSeq;
+        }
+    }
+
+    /// <summary>
     /// Runs a <c>CreateFcn</c> for a just-created object, synchronously — MATLAB's one moment for
     /// it. There is no event to queue: creation happens on the script thread by definition.
     /// </summary>
     public void FireCreateFcn(GraphObject target)
     {
         if (JgsHandleRegistry.TryGetEntry(target, out JgsHandleEntry? entry)
-            && entry.CreateFcn is { Type: JgsType.Function } callback)
+            && entry.CreateFcn is { } callback)
         {
             Run(target, clicked: null, entry.Interruptible, callback, JgsValue.Array([]), "CreateFcn");
         }
@@ -204,9 +243,10 @@ internal sealed class JgsCallbackDispatcher
     public void FireCloseRequest(FigureModel figure)
     {
         if (JgsHandleRegistry.TryGetEntry(figure, out JgsHandleEntry? entry)
-            && entry.CloseRequestFcn is { Type: JgsType.Function } callback)
+            && entry.CloseRequestFcn is { } callback)
         {
-            Run(figure, clicked: null, entry.Interruptible, callback, JgsValue.Array([]), "CloseRequestFcn");
+            Run(figure, clicked: null, entry.Interruptible, callback,
+                JgsUiEventData.WindowCloseRequest(JgsHandleRegistry.For(figure)), "CloseRequestFcn");
         }
     }
 
@@ -222,7 +262,7 @@ internal sealed class JgsCallbackDispatcher
         using IDisposable scope = JgsGraphicsCallbackState.Enter(target, clicked);
         try
         {
-            JgsCallbacks.Invoke(callback.AsCallable, [source, eventData], 0, 0);
+            JgsGraphicsCallbackValues.Invoke(Interpreter, callback, source, eventData);
         }
         catch (OperationCanceledException)
         {
@@ -276,10 +316,14 @@ internal sealed class JgsCallbackDispatcher
             GraphicsEventKind.WindowButtonUp => entry.WindowButtonUpFcn,
             GraphicsEventKind.WindowButtonMotion => entry.WindowButtonMotionFcn,
             GraphicsEventKind.WindowScrollWheel => entry.WindowScrollWheelFcn,
+            GraphicsEventKind.ControlAction => entry.UiCallback,
+            GraphicsEventKind.ComponentKeyPress => entry.KeyPressFcn,
+            GraphicsEventKind.ComponentKeyRelease => entry.KeyReleaseFcn,
             _ => null,
         };
 
-        if (found is not { Type: JgsType.Function })
+        // Any of MATLAB's three forms: the slot stores nothing else (U1).
+        if (found is null)
         {
             return false;
         }
@@ -301,20 +345,28 @@ internal sealed class JgsCallbackDispatcher
     {
         switch (graphicsEvent.Kind)
         {
+            // A figure's own ButtonDownFcn is told by a MouseData (u1w_keys); anything drawn, by a Hit.
+            case GraphicsEventKind.ButtonDown when graphicsEvent.Target is FigureModel:
+                return JgsUiEventData.Make(JgsUiEventData.MouseDataClass, source, "ButtonDown");
+
             case GraphicsEventKind.ButtonDown:
             {
                 double[] hit = graphicsEvent.IntersectionPoint is { Count: 3 } point
                     ? [point[0], point[1], point[2]]
                     : [double.NaN, double.NaN, double.NaN];
-                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                return JgsUiEventData.Make(JgsUiEventData.HitClass, source, "Hit", new()
                 {
-                    ["Source"] = source,
-                    ["EventName"] = JgsValue.Str("Hit"),
                     ["Button"] = JgsValue.Number(graphicsEvent.Button),
                     ["IntersectionPoint"] = JgsValue.Array(
                         [JgsValue.Number(hit[0]), JgsValue.Number(hit[1]), JgsValue.Number(hit[2])]),
                 });
             }
+
+            case GraphicsEventKind.WindowButtonDown:
+                return JgsUiEventData.Make(JgsUiEventData.WindowMouseDataClass, source, "WindowMousePress");
+
+            case GraphicsEventKind.WindowButtonUp:
+                return JgsUiEventData.Make(JgsUiEventData.WindowMouseDataClass, source, "WindowMouseRelease");
 
             case GraphicsEventKind.LegendItemHit:
                 return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
@@ -358,35 +410,54 @@ internal sealed class JgsCallbackDispatcher
                 });
             }
 
+            case GraphicsEventKind.ControlAction:
+                return JgsUiEventData.Action(source);
+
+            case GraphicsEventKind.CloseRequest:
+                return JgsUiEventData.WindowCloseRequest(source);
+
+            // Measured on R2025b (U1): a DeleteFcn is told by a plain event.EventData.
+            case GraphicsEventKind.ObjectDeleted:
+                return JgsBuiltins.NewEventData("ObjectBeingDestroyed", source);
+
+            // R2025b's key event data (u1w_keys): a KeyData for the figure's and the window's, a
+            // UIClientComponentKeyEvent for a component's; the window's are named WindowKey….
             case GraphicsEventKind.KeyPress:
             case GraphicsEventKind.KeyRelease:
             case GraphicsEventKind.WindowKeyPress:
             case GraphicsEventKind.WindowKeyRelease:
-                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-                {
-                    ["Source"] = source,
-                    ["EventName"] = JgsValue.Str(
-                        graphicsEvent.Kind is GraphicsEventKind.KeyPress or GraphicsEventKind.WindowKeyPress
-                            ? "KeyPress"
-                            : "KeyRelease"),
-                    ["Character"] = JgsValue.Str(graphicsEvent.Character),
-                    ["Key"] = JgsValue.Str(graphicsEvent.KeyName),
-                    ["Modifier"] = JgsValue.Cell(
-                        (graphicsEvent.Modifiers ?? []).Select(JgsValue.Str).ToArray()),
-                });
+            case GraphicsEventKind.ComponentKeyPress:
+            case GraphicsEventKind.ComponentKeyRelease:
+                return JgsUiEventData.Make(
+                    graphicsEvent.Kind is GraphicsEventKind.ComponentKeyPress or GraphicsEventKind.ComponentKeyRelease
+                        ? JgsUiEventData.ComponentKeyEventClass
+                        : JgsUiEventData.KeyDataClass,
+                    source,
+                    graphicsEvent.Kind switch
+                    {
+                        GraphicsEventKind.WindowKeyPress => "WindowKeyPress",
+                        GraphicsEventKind.WindowKeyRelease => "WindowKeyRelease",
+                        GraphicsEventKind.KeyPress or GraphicsEventKind.ComponentKeyPress => "KeyPress",
+                        _ => "KeyRelease",
+                    },
+                    new()
+                    {
+                        ["Character"] = JgsValue.Str(graphicsEvent.Character),
+                        ["Modifier"] = JgsValue.Cell(
+                            (graphicsEvent.Modifiers ?? []).Select(JgsValue.Str).ToArray()),
+                        ["Key"] = JgsValue.Str(graphicsEvent.KeyName),
+                    });
 
             case GraphicsEventKind.WindowScrollWheel:
-                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                return JgsUiEventData.Make(JgsUiEventData.ScrollWheelDataClass, source, "WindowScrollWheel", new()
                 {
-                    ["Source"] = source,
-                    ["EventName"] = JgsValue.Str("WindowScrollWheel"),
                     ["VerticalScrollCount"] = JgsValue.Number(graphicsEvent.ScrollCount),
                     ["VerticalScrollAmount"] = JgsValue.Number(3),
                 });
 
             default:
-                // CloseRequest, SizeChanged, ObjectDeleted and the window button events carry no
-                // event data in MATLAB — the callback reads CurrentPoint and SelectionType instead.
+                // SizeChanged and the pointer's motion: what R2025b hands them is not recorded yet,
+                // and the callback reads CurrentPoint and SelectionType meanwhile.
                 return JgsValue.Array([]);
         }
     }
@@ -409,6 +480,9 @@ internal sealed class JgsCallbackDispatcher
         GraphicsEventKind.WindowButtonUp => "WindowButtonUpFcn",
         GraphicsEventKind.WindowButtonMotion => "WindowButtonMotionFcn",
         GraphicsEventKind.WindowScrollWheel => "WindowScrollWheelFcn",
+        GraphicsEventKind.ControlAction => "Callback",
+        GraphicsEventKind.ComponentKeyPress => "KeyPressFcn",
+        GraphicsEventKind.ComponentKeyRelease => "KeyReleaseFcn",
         _ => "callback",
     };
 }

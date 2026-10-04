@@ -1,0 +1,6 @@
+empty char: stored class=char size=[0 0] value=[] close=0 alive=1
+empty double: stored class=char size=[0 0] value=[] close=0 alive=1
+empty cell: stored class=char size=[0 0] value=[] close=0 alive=1
+empty string: stored class=char size=[0 0] value=[] close=0 alive=1
+closereq: stored class=char size=[1 8] value=[closereq] close=1 alive=0
+closereq;: stored class=char size=[1 9] value=[closereq;] close=1 alive=0

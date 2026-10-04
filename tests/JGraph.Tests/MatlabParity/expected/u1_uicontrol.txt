@@ -1,0 +1,352 @@
+CHK|figure_visible|off|exact
+CHK|default_text_Style|text|exact
+CHK|default_text_Visible|on|exact
+CHK|default_text_Position|double [1 4] 20 20 60 20|exact
+CHK|default_text_BackgroundColor|double [1 3] 0.96078431372549022 0.96078431372549022 0.96078431372549022|exact
+CHK|default_text_ForegroundColor|double [1 3] 0.12941176470588237 0.12941176470588237 0.12941176470588237|exact
+CHK|default_text_FontName|char 'MS Sans Serif'|exact
+CHK|default_text_FontSize|double [1 1] 8|exact
+CHK|default_text_FontUnits|char 'points'|exact
+CHK|default_text_FontWeight|char 'normal'|exact
+CHK|default_text_FontAngle|char 'normal'|exact
+CHK|default_text_HorizontalAlignment|char 'center'|exact
+CHK|default_text_Enable|char 'on'|exact
+CHK|default_text_Value|double [1 1] 0|exact
+CHK|default_text_String|char ''|exact
+CHK|default_text_Max|double [1 1] 1|exact
+CHK|default_text_Min|double [1 1] 0|exact
+CHK|default_text_Units|char 'pixels'|exact
+CHK|default_text_Tooltip|char ''|exact
+CHK|default_text_Callback|char ''|exact
+CHK|default_text_Type|char 'uicontrol'|exact
+CHK|default_text_ListboxTop|double [1 1] 1|exact
+CHK|default_text_SliderStep|double [1 2] 0.01 0.10000000000000001|exact
+CHK|default_text_KeyPressFcn|char ''|exact
+CHK|default_text_InnerPosition|double [1 4] 20 20 60 20|exact
+CHK|default_text_OuterPosition|double [1 4] 20 20 60 20|exact
+CHK|default_text_Tag|char ''|exact
+CHK|default_text_BusyAction|char 'queue'|exact
+CHK|default_edit_Style|edit|exact
+CHK|default_edit_Visible|on|exact
+CHK|default_edit_Position|double [1 4] 20 20 60 20|exact
+CHK|default_edit_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|default_edit_ForegroundColor|double [1 3] 0.12941176470588237 0.12941176470588237 0.12941176470588237|exact
+CHK|default_edit_FontName|char 'MS Sans Serif'|exact
+CHK|default_edit_FontSize|double [1 1] 8|exact
+CHK|default_edit_FontUnits|char 'points'|exact
+CHK|default_edit_FontWeight|char 'normal'|exact
+CHK|default_edit_FontAngle|char 'normal'|exact
+CHK|default_edit_HorizontalAlignment|char 'center'|exact
+CHK|default_edit_Enable|char 'on'|exact
+CHK|default_edit_Value|double [1 1] 0|exact
+CHK|default_edit_String|char ''|exact
+CHK|default_edit_Max|double [1 1] 1|exact
+CHK|default_edit_Min|double [1 1] 0|exact
+CHK|default_edit_Units|char 'pixels'|exact
+CHK|default_edit_Tooltip|char ''|exact
+CHK|default_edit_Callback|char ''|exact
+CHK|default_edit_Type|char 'uicontrol'|exact
+CHK|default_edit_ListboxTop|double [1 1] 1|exact
+CHK|default_edit_SliderStep|double [1 2] 0.01 0.10000000000000001|exact
+CHK|default_edit_KeyPressFcn|char ''|exact
+CHK|default_edit_InnerPosition|double [1 4] 20 20 60 20|exact
+CHK|default_edit_OuterPosition|double [1 4] 20 20 60 20|exact
+CHK|default_edit_Tag|char ''|exact
+CHK|default_edit_BusyAction|char 'queue'|exact
+CHK|default_pushbutton_Style|pushbutton|exact
+CHK|default_pushbutton_Visible|on|exact
+CHK|default_pushbutton_Position|double [1 4] 20 20 60 20|exact
+CHK|default_pushbutton_BackgroundColor|double [1 3] 0.96078431372549022 0.96078431372549022 0.96078431372549022|exact
+CHK|default_pushbutton_ForegroundColor|double [1 3] 0.12941176470588237 0.12941176470588237 0.12941176470588237|exact
+CHK|default_pushbutton_FontName|char 'MS Sans Serif'|exact
+CHK|default_pushbutton_FontSize|double [1 1] 8|exact
+CHK|default_pushbutton_FontUnits|char 'points'|exact
+CHK|default_pushbutton_FontWeight|char 'normal'|exact
+CHK|default_pushbutton_FontAngle|char 'normal'|exact
+CHK|default_pushbutton_HorizontalAlignment|char 'center'|exact
+CHK|default_pushbutton_Enable|char 'on'|exact
+CHK|default_pushbutton_Value|double [1 1] 0|exact
+CHK|default_pushbutton_String|char ''|exact
+CHK|default_pushbutton_Max|double [1 1] 1|exact
+CHK|default_pushbutton_Min|double [1 1] 0|exact
+CHK|default_pushbutton_Units|char 'pixels'|exact
+CHK|default_pushbutton_Tooltip|char ''|exact
+CHK|default_pushbutton_Callback|char ''|exact
+CHK|default_pushbutton_Type|char 'uicontrol'|exact
+CHK|default_pushbutton_ListboxTop|double [1 1] 1|exact
+CHK|default_pushbutton_SliderStep|double [1 2] 0.01 0.10000000000000001|exact
+CHK|default_pushbutton_KeyPressFcn|char ''|exact
+CHK|default_pushbutton_InnerPosition|double [1 4] 20 20 60 20|exact
+CHK|default_pushbutton_OuterPosition|double [1 4] 20 20 60 20|exact
+CHK|default_pushbutton_Tag|char ''|exact
+CHK|default_pushbutton_BusyAction|char 'queue'|exact
+CHK|default_listbox_Style|listbox|exact
+CHK|default_listbox_Visible|on|exact
+CHK|default_listbox_Position|double [1 4] 20 20 60 20|exact
+CHK|default_listbox_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|default_listbox_ForegroundColor|double [1 3] 0.12941176470588237 0.12941176470588237 0.12941176470588237|exact
+CHK|default_listbox_FontName|char 'MS Sans Serif'|exact
+CHK|default_listbox_FontSize|double [1 1] 8|exact
+CHK|default_listbox_FontUnits|char 'points'|exact
+CHK|default_listbox_FontWeight|char 'normal'|exact
+CHK|default_listbox_FontAngle|char 'normal'|exact
+CHK|default_listbox_HorizontalAlignment|char 'center'|exact
+CHK|default_listbox_Enable|char 'on'|exact
+CHK|default_listbox_Value|double [1 1] 1|exact
+CHK|default_listbox_String|char ''|exact
+CHK|default_listbox_Max|double [1 1] 1|exact
+CHK|default_listbox_Min|double [1 1] 0|exact
+CHK|default_listbox_Units|char 'pixels'|exact
+CHK|default_listbox_Tooltip|char ''|exact
+CHK|default_listbox_Callback|char ''|exact
+CHK|default_listbox_Type|char 'uicontrol'|exact
+CHK|default_listbox_ListboxTop|double [1 1] 1|exact
+CHK|default_listbox_SliderStep|double [1 2] 0.01 0.10000000000000001|exact
+CHK|default_listbox_KeyPressFcn|char ''|exact
+CHK|default_listbox_InnerPosition|double [1 4] 20 20 60 20|exact
+CHK|default_listbox_OuterPosition|double [1 4] 20 20 60 20|exact
+CHK|default_listbox_Tag|char ''|exact
+CHK|default_listbox_BusyAction|char 'queue'|exact
+CHK|default_popupmenu_Style|popupmenu|exact
+CHK|default_popupmenu_Visible|on|exact
+CHK|default_popupmenu_Position|double [1 4] 20 20 60 20|exact
+CHK|default_popupmenu_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|default_popupmenu_ForegroundColor|double [1 3] 0.12941176470588237 0.12941176470588237 0.12941176470588237|exact
+CHK|default_popupmenu_FontName|char 'MS Sans Serif'|exact
+CHK|default_popupmenu_FontSize|double [1 1] 8|exact
+CHK|default_popupmenu_FontUnits|char 'points'|exact
+CHK|default_popupmenu_FontWeight|char 'normal'|exact
+CHK|default_popupmenu_FontAngle|char 'normal'|exact
+CHK|default_popupmenu_HorizontalAlignment|char 'center'|exact
+CHK|default_popupmenu_Enable|char 'on'|exact
+CHK|default_popupmenu_Value|double [1 1] 1|exact
+CHK|default_popupmenu_String|char ''|exact
+CHK|default_popupmenu_Max|double [1 1] 1|exact
+CHK|default_popupmenu_Min|double [1 1] 0|exact
+CHK|default_popupmenu_Units|char 'pixels'|exact
+CHK|default_popupmenu_Tooltip|char ''|exact
+CHK|default_popupmenu_Callback|char ''|exact
+CHK|default_popupmenu_Type|char 'uicontrol'|exact
+CHK|default_popupmenu_ListboxTop|double [1 1] 1|exact
+CHK|default_popupmenu_SliderStep|double [1 2] 0.01 0.10000000000000001|exact
+CHK|default_popupmenu_KeyPressFcn|char ''|exact
+CHK|default_popupmenu_InnerPosition|double [1 4] 20 20 60 20|exact
+CHK|default_popupmenu_OuterPosition|double [1 4] 20 20 60 20|exact
+CHK|default_popupmenu_Tag|char ''|exact
+CHK|default_popupmenu_BusyAction|char 'queue'|exact
+CHK|string_1|char 'abc'|exact
+CHK|string_2|char 'abc'|exact
+CHK|string_3|cell [2 1] {char 'a', char 'bc'}|exact
+CHK|string_4|cell [2 1] {char 'a', char 'bc'}|exact
+CHK|string_5|cell [2 1] {char 'a', char 'bc'}|exact
+CHK|string_6|char [2 2] ab;cd|exact
+CHK|string_7|char ''|exact
+CHK|string_8|char ''|exact
+CHK|string_9|char '5'|exact
+CHK|string_10|char [3 1] 1;2;3|exact
+CHK|string_11|cell [0 0] {}|exact
+CHK|string_12|cell [2 1] {char 'a', char '1'}|exact
+CHK|string_13|char ''|exact
+CHK|string_14|cell [1 1] {char 'a'}|exact
+CHK|string_15|char '65'|exact
+CHK|string_16|char '2.5'|exact
+CHK|string_dot|char 'dot set'|exact
+CHK|string_logical|MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass|exact
+CHK|string_logical_msg|Error setting property 'String' of class 'UIControl': Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.|exact
+CHK|style_push|pushbutton|exact
+CHK|style_Edit|edit|exact
+CHK|style_TEXT|text|exact
+CHK|style_popup|popupmenu|exact
+CHK|style_te|text|exact
+CHK|style_e|edit|exact
+CHK|style_p|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|style_p_msg|'p' is not a valid value. Use one of these values: 'pushbutton' / 'togglebutton' / 'radiobutton' / 'checkbox' / 'edit' / 'text' / 'slider' / 'frame' / 'listbox' / 'popupmenu'.|exact
+CHK|style_check|checkbox|exact
+CHK|style_fr|frame|exact
+CHK|style_sl|slider|exact
+CHK|word_HorizontalAlignment_1|left|exact
+CHK|word_HorizontalAlignment_2|left|exact
+CHK|word_HorizontalAlignment_3|left|exact
+CHK|word_HorizontalAlignment_4|right|exact
+CHK|word_HorizontalAlignment_5|center|exact
+CHK|word_HorizontalAlignment_6|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|word_HorizontalAlignment_6_msg|Error setting property 'HorizontalAlignment' of class 'UIControl': 'centre' is not a valid value. Use one of these values: 'left' / 'center' / 'right'.|exact
+CHK|word_HorizontalAlignment_7|MATLAB:datatypes:InvalidEnumValueFor|exact
+CHK|word_HorizontalAlignment_7_msg|Error setting property 'HorizontalAlignment' of class 'UIControl': Invalid enum value. Use one of these values: 'left' / 'center' / 'right'.|exact
+CHK|word_FontWeight_1|bold|exact
+CHK|word_FontWeight_2|bold|exact
+CHK|word_FontWeight_3|demi|exact
+CHK|word_FontWeight_4|light|exact
+CHK|word_FontWeight_5|normal|exact
+CHK|word_FontWeight_6|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|word_FontWeight_6_msg|Error setting property 'FontWeight' of class 'UIControl': 'heavy' is not a valid value. Use one of these values: 'normal' / 'bold'.|exact
+CHK|word_FontAngle_1|italic|exact
+CHK|word_FontAngle_2|oblique|exact
+CHK|word_FontAngle_3|italic|exact
+CHK|word_FontAngle_4|normal|exact
+CHK|word_FontAngle_5|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|word_FontAngle_5_msg|Error setting property 'FontAngle' of class 'UIControl': 'slanted' is not a valid value. Use one of these values: 'normal' / 'italic'.|exact
+CHK|word_Enable_1|off|exact
+CHK|word_Enable_2|inactive|exact
+CHK|word_Enable_3|on|exact
+CHK|word_Enable_4|on|exact
+CHK|word_Enable_5|inactive|exact
+CHK|word_Enable_6|MATLAB:datatypes:InvalidEnumValueFor|exact
+CHK|word_Enable_6_msg|Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' / 'off' / 'inactive'.|exact
+CHK|word_Enable_7|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|word_Enable_7_msg|Error setting property 'Enable' of class 'UIControl': 'yes' is not a valid value. Use one of these values: 'on' / 'off' / 'inactive'.|exact
+CHK|word_Visible_1|off|exact
+CHK|word_Visible_2|on|exact
+CHK|word_Visible_3|on|exact
+CHK|word_Visible_4|off|exact
+CHK|word_Visible_5|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|word_Visible_5_msg|Error setting property 'Visible' of class 'UIControl': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|word_FontUnits_1|normalized|exact
+CHK|word_FontUnits_2|points|exact
+CHK|word_FontUnits_3|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|word_FontUnits_3_msg|Error setting property 'FontUnits' of class 'UIControl': 'px' is not a valid value. Use one of these values: 'inches' / 'centimeters' / 'normalized' / 'points' / 'pixels'.|exact
+CHK|colour_1|double [1 3] 0 0.45000000000000001 0.73999999999999999|exact
+CHK|colour_2|double [1 3] 1 0 0|exact
+CHK|colour_3|double [1 3] 1 0 0|exact
+CHK|colour_4|double [1 3] 1 0.50196078431372548 0|exact
+CHK|colour_5|double [1 3] 1 0.53333333333333333 0|exact
+CHK|colour_6|MATLAB:hg:ColorBase:BadColorValue|exact
+CHK|colour_6_msg|Error setting property 'ForegroundColor' of class 'UIControl': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|colour_7|MATLAB:datatypes:RGBAColor:ValueMustBe3or4ElementVector|exact
+CHK|colour_7_msg|Error setting property 'ForegroundColor' of class 'UIControl': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|colour_8|char 'none'|exact
+CHK|colour_9|MATLAB:datatypes:RGBAColor:ParseError|exact
+CHK|colour_9_msg|Error setting property 'ForegroundColor' of class 'UIControl': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|colour_10|double [1 3] 1 0 0|exact
+CHK|colour_11|double [1 3] 1 0 0|exact
+CHK|colour_12|double [1 3] 0 0 1|exact
+CHK|fontsize_1|double [1 1] 10|exact
+CHK|fontsize_2|MATLAB:datatypes:PositiveWithZeroDataType:MustBePositive|exact
+CHK|fontsize_2_msg|Value should be a double number greater than 0.|exact
+CHK|fontsize_3|MATLAB:datatypes:PositiveWithZeroDataType:MustBeNotNegative|exact
+CHK|fontsize_3_msg|Error setting property 'FontSize' of class 'UIControl': Value should be a double number greater than or equal to 0.|exact
+CHK|fontsize_4|double [1 1] 2.5|exact
+CHK|fontsize_5|MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar|exact
+CHK|fontsize_5_msg|Error setting property 'FontSize' of class 'UIControl': Value should be a numeric scalar.|exact
+CHK|fontsize_6|MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar|exact
+CHK|fontsize_6_msg|Error setting property 'FontSize' of class 'UIControl': Value should be a numeric scalar.|exact
+CHK|fontsize_7|MATLAB:datatypes:PositiveWithZeroDataType:MustBeNotNaN|exact
+CHK|fontsize_7_msg|Error setting property 'FontSize' of class 'UIControl': Value should be a number.|exact
+CHK|fontsize_8|MATLAB:datatypes:PositiveWithZeroDataType:MustBeFinite|exact
+CHK|fontsize_8_msg|Error setting property 'FontSize' of class 'UIControl': Value should be a finite double number.|exact
+CHK|fontsize_9|double [1 1] 9|exact
+CHK|position_1|double [1 4] 30 180 100 20|exact
+CHK|position_2|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector|exact
+CHK|position_2_msg|Error setting property 'Position' of class 'UIControl': Value must be a 4 element vector|exact
+CHK|position_3|double [1 4] 0 0 0 0|exact
+CHK|position_4|MATLAB:hg:set_chck:DimensionsOutsideRange|exact
+CHK|position_4_msg|Error setting property 'Position' of class 'UIControl': Width and height must be greater than or equal to 0|exact
+CHK|position_5|double [1 4] 1.5 2.5 3.5 4.5|exact
+CHK|position_6|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric|exact
+CHK|position_6_msg|Error setting property 'Position' of class 'UIControl': Value must be numeric and finite|exact
+CHK|position_7|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric|exact
+CHK|position_7_msg|Error setting property 'Position' of class 'UIControl': Value must be numeric and finite|exact
+CHK|position_8|double [1 4] 1 2 3 4|exact
+CHK|position_9|double [1 4] 1 2 3 4|exact
+CHK|value_1|double [1 1] 5|exact
+CHK|value_2|double [1 1] -1|exact
+CHK|value_3|double [1 2] 1 2|exact
+CHK|value_4|MATLAB:hg:UIControlValueCharArrayString|exact
+CHK|value_5|double [1 1] 1|exact
+CHK|value_6|double [0 0]|exact
+CHK|value_7|double [1 1] 3|exact
+CHK|Max_double|double [1 1] 2|exact
+CHK|Max_char_1|MATLAB:class:RequireNumeric|exact
+CHK|Max_double_2|MATLAB:class:RequireScalar|exact
+CHK|Min_double|double [1 1] 2|exact
+CHK|Min_char_1|MATLAB:class:RequireNumeric|exact
+CHK|Min_double_2|MATLAB:class:RequireScalar|exact
+CHK|tooltip_1|char 'tip'|exact
+CHK|tooltip_2|char 'tip2'|exact
+CHK|tooltip_3|cell [2 1] {char 'a', char 'b'}|exact
+CHK|tooltip_4|MATLAB:graphics:datatype:UIStringsDataType:NoNumericValue|exact
+CHK|tooltip_5|char ''|exact
+CHK|tooltipstring|char ''|exact
+CHK|fontname_char|char 'Arial'|exact
+CHK|fontname_string|char 'Courier New'|exact
+CHK|fontname_double_1|MATLAB:class:RequireString|exact
+CHK|fontname_char_0|MATLAB:class:MATLABConversionError|exact
+CHK|unknown_set|MATLAB:hg:InvalidProperty|exact
+CHK|unknown_set_msg|Unrecognized property Bogus for class UIControl.|exact
+CHK|units_normalized|normalized|div=ADR0198|diverges|refused
+CHK|units_bogus|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|restyle_text_edit|double [1 3] 1 1 1|exact
+CHK|restyle_after_set|double [1 3] 1 0 0|exact
+CHK|callback_1|function_handle|exact
+CHK|callback_2|char 'disp(2)'|exact
+CHK|callback_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|callback_4|cell [2 1] {char 'disp', double [1 1] 4}|exact
+CHK|callback_5|char ''|exact
+CHK|callback_6|char ''|exact
+CHK|callback_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|callback_7_msg|Error setting property 'Callback' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|callback_8|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|callback_8_msg|Error setting property 'Callback' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|callback_9|char ''|exact
+CHK|callback_10|function_handle|exact
+CHK|callback_11|char 'disp(7)'|exact
+CHK|cb_KeyPressFcn_2|char 'disp(2)'|exact
+CHK|cb_KeyPressFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|cb_KeyPressFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|cb_ButtonDownFcn_2|char 'disp(2)'|exact
+CHK|cb_ButtonDownFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|cb_ButtonDownFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|cb_DeleteFcn_2|char 'disp(2)'|exact
+CHK|cb_DeleteFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|cb_DeleteFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|cb_CreateFcn_2|char 'disp(2)'|exact
+CHK|cb_CreateFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|cb_CreateFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|cb_KeyReleaseFcn_2|char 'disp(2)'|exact
+CHK|cb_KeyReleaseFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|cb_KeyReleaseFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|figure_cb_KeyPressFcn_2|char 'disp(2)'|exact
+CHK|figure_cb_KeyPressFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|figure_cb_KeyPressFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|figure_cb_WindowKeyPressFcn_2|char 'disp(2)'|exact
+CHK|figure_cb_WindowKeyPressFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|figure_cb_WindowKeyPressFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|figure_cb_WindowButtonDownFcn_2|char 'disp(2)'|exact
+CHK|figure_cb_WindowButtonDownFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|figure_cb_WindowButtonDownFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|figure_cb_SizeChangedFcn_2|char 'disp(2)'|exact
+CHK|figure_cb_SizeChangedFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|figure_cb_SizeChangedFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|figure_cb_ButtonDownFcn_2|char 'disp(2)'|exact
+CHK|figure_cb_ButtonDownFcn_3|cell [2 1] {function_handle, double [1 1] 3}|exact
+CHK|figure_cb_ButtonDownFcn_7|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|figure_closereq_default|char 'closereq'|exact
+CHK|fired_1|create double 1 uicontrol|exact
+CHK|fired_2|delete event.EventData ObjectBeingDestroyed 1|exact
+CHK|fired_3|text create|exact
+CHK|fired_4|cell delete 42 event.EventData|exact
+CHK|children|uicontrol,uicontrol,axes|exact
+CHK|children_first_is_newest|1|exact
+CHK|parent|1|exact
+CHK|findobj_style|1|exact
+CHK|findobj_type|2|exact
+CHK|isgraphics|1|exact
+CHK|class|matlab.ui.control.UIControl|div=ADR0198|diverges|double
+CHK|parent_axes|MATLAB:gbtobjects:Component|exact
+CHK|parent_axes_msg|Axes cannot be a parent.|exact
+CHK|parent_uicontrol|MATLAB:hgbuiltins:object_creation:CannotSpecifyPVPairsWithNonParentConvenienceArg|exact
+CHK|parent_number|MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle|exact
+CHK|odd_pairs|MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle|exact
+CHK|numeric_name|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|bare_word|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|struct_form|text from struct|exact
+CHK|deleted_isgraphics|0|exact
+CHK|set_on_deleted|MATLAB:class:InvalidHandle|div=ADR0198|diverges|
+CHK|veto_text_alive|1|exact
+CHK|veto_cell_alive|1|exact
+CHK|veto_handle_alive|1|exact
+CHK|veto_1|veto by text|exact
+CHK|veto_2|veto by cell|exact
+CHK|veto_3|handle matlab.ui.eventdata.WindowCloseRequestData Close|exact
+CHK|closereq_reads|char 'closereq'|exact
+CHK|closed|0|exact

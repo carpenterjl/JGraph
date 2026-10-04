@@ -42,6 +42,69 @@ public sealed class FigureModel : GraphObject
         Axes = new GraphObjectCollection<AxesModel>(this);
         Annotations = new GraphObjectCollection<AnnotationObject>(this);
         ContextMenus = new GraphObjectCollection<ContextMenuModel>(this);
+        Components = new GraphObjectCollection<UiObject>(this);
+    }
+
+    /// <summary>
+    /// The app-building components directly in this figure (MATLAB <c>uicontrol</c> and, later, the
+    /// rest), in creation order. Nothing here is drawn by the renderer: the window realises them from
+    /// a <see cref="UiFrame"/> taken at a flush.
+    /// </summary>
+    public GraphObjectCollection<UiObject> Components { get; }
+
+    private int _componentsDirty;
+    private static long _componentEpoch;
+
+    /// <summary>
+    /// Bumped by every component change in any figure, so a flush point can tell in one read that
+    /// nothing changed since it last looked — statement boundaries are hot, and almost always clean.
+    /// </summary>
+    public static long ComponentEpoch => Interlocked.Read(ref _componentEpoch);
+
+    /// <summary>Whether a component of this figure changed since its last frame was taken.</summary>
+    [Browsable(false)]
+    public bool ComponentsDirty => Volatile.Read(ref _componentsDirty) != 0;
+
+    private int _frameInFlight;
+    private UiFrame? _lastFrame;
+
+    /// <summary>Takes this figure's components as a frame and marks them clean. Script thread only.</summary>
+    public UiFrame TakeComponentFrame()
+    {
+        Volatile.Write(ref _componentsDirty, 0);
+        UiFrame frame = UiFrame.Take(this);
+        Volatile.Write(ref _lastFrame, frame);
+        return frame;
+    }
+
+    /// <summary>
+    /// The last frame taken of this figure's components, or null before any was — what a window that
+    /// opens later starts from, so it never has to read the model itself.
+    /// </summary>
+    [Browsable(false)]
+    public UiFrame? LastComponentFrame => Volatile.Read(ref _lastFrame);
+
+    /// <summary>Whether a frame of this figure has been sent and not yet applied by its window.</summary>
+    [Browsable(false)]
+    public bool ComponentFrameInFlight
+    {
+        get => Volatile.Read(ref _frameInFlight) != 0;
+        set => Volatile.Write(ref _frameInFlight, value ? 1 : 0);
+    }
+
+    protected override void OnInvalidated(InvalidatedEventArgs args)
+    {
+        // A component's own change, or this figure's children changing (a component added or taken
+        // away; an axes too, which costs one needless frame and nothing else).
+        if (args.Kind == InvalidationKind.Ui
+            || (args.Kind == InvalidationKind.Structure && ReferenceEquals(args.Source, this))
+            || (args.Kind == InvalidationKind.Render && args.Source is UiObject))
+        {
+            Volatile.Write(ref _componentsDirty, 1);
+            Interlocked.Increment(ref _componentEpoch);
+        }
+
+        base.OnInvalidated(args);
     }
 
     /// <summary>The axes (coordinate regions) contained in this figure.</summary>

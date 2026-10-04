@@ -20,4 +20,10 @@ public enum InvalidationKind
 
     /// <summary>Objects were added to or removed from the tree; the scene must be rebuilt.</summary>
     Structure = 4,
+
+    /// <summary>
+    /// An app-building component changed (app-building plan, U1). Nothing is drawn by Skia, so the
+    /// figure canvas does not repaint; the figure marks its components dirty for the next flush.
+    /// </summary>
+    Ui = 5,
 }

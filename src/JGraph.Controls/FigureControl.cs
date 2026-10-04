@@ -711,6 +711,13 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
 
     private void OnFigureInvalidated(object? sender, InvalidatedEventArgs e)
     {
+        // A component changed: nothing on this canvas draws one, and the component layer hears of it
+        // through the next frame instead (app-building plan, U1).
+        if (e.Kind == InvalidationKind.Ui)
+        {
+            return;
+        }
+
         // Auto-scaling during a paint raises invalidations; ignore them because the in-progress paint
         // already reflects the updated ranges.
         if (_isRendering)

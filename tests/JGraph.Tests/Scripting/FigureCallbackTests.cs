@@ -88,19 +88,33 @@ public class FigureCallbackTests : IAsyncLifetime
         """);
 
     [Fact]
-    public async Task AQueuedCloseRequest_WhoseCallbackWasCleared_ClosesByDefault()
+    public async Task AQueuedCloseRequest_WhoseCallbackWentBackToClosereq_ClosesByDefault()
     {
         // The X-button path: the window cancelled its close and queued the request; by the time the
-        // script thread gets to it the callback is gone. The close still happens — the cancelled
-        // close was standing in for exactly this moment.
+        // script thread gets to it the callback is the default again. The close still happens — the
+        // cancelled close was standing in for exactly this moment.
         await Exec("figure; f = gcf; set(f, 'CloseRequestFcn', @(s, e) disp('x'));");
         FigureModel figure = (FigureModel)JG.Gca().Parent!;
         ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.CloseRequest, figure));
-        await Exec("set(f, 'CloseRequestFcn', []);");
+        await Exec("set(f, 'CloseRequestFcn', 'closereq');");
 
         await Drain();
 
         Assert.Empty(JG.FigureNumbers);
+    }
+
+    [Fact]
+    public async Task AnEmptiedCloseRequestFcn_KeepsTheFigureOpen()
+    {
+        // R2025b (U1, u1_closereq): [] and '' are both stored as '', a callback that does nothing,
+        // so the close it stands in for never happens — the figure that cannot be closed by its X.
+        await Exec("figure; f = gcf; set(f, 'CloseRequestFcn', []);");
+        FigureModel figure = (FigureModel)JG.Gca().Parent!;
+        ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.CloseRequest, figure));
+
+        await Drain();
+
+        Assert.NotEmpty(JG.FigureNumbers);
     }
 
     [Fact]

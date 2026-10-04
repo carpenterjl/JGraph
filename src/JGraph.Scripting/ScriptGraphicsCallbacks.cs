@@ -105,20 +105,49 @@ public static class ScriptGraphicsCallbacks
         }
     }
 
+    private static long _userSeq;
+
+    /// <summary>
+    /// Reports what a user did to a component (app-building plan, U1): a push button pressed, an edit
+    /// field's text committed. Safe from any thread; nothing is written here. The event carries the
+    /// new value, and the script thread writes it into the model when it dequeues the event — before
+    /// deciding whether the callback may run, so a busy or a stopped script never loses what the user
+    /// typed. Answers the write's sequence number, which the window holds on to so that a frame taken
+    /// before the write arrived does not put the old text back under the user's cursor.
+    /// </summary>
+    /// <param name="component">The component the user acted on.</param>
+    /// <param name="value">The new value — an edit field's text — or null for an action that changes
+    /// nothing (a push button).</param>
+    public static long NotifyUserValue(GraphObject component, object? value)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        long seq = Interlocked.Increment(ref _userSeq);
+        if (value is not null || HasCallback(component, GraphicsEventKind.ControlAction))
+        {
+            ScriptEventQueue.Enqueue(new GraphicsEvent(
+                GraphicsEventKind.ControlAction, component, Clicked: component, UserValue: value, UserSeq: seq));
+        }
+
+        return seq;
+    }
+
     /// <summary>
     /// Reports a key going down or coming back up over a figure. The character the key produced is
     /// recorded on the figure first, because MATLAB's <c>CurrentCharacter</c> is what the callback
-    /// reads when it runs, and both the figure's callback and the window's are queued — with no
-    /// uicontrols in this build a figure has the focus whenever its window does, so the two are the
-    /// same event told twice, in MATLAB's order.
+    /// reads when it runs. Who hears it, and in which order, is R2025b's (U1, <c>u1w_keys</c>): while a
+    /// component that takes the keyboard has it, the component's own <c>KeyPressFcn</c> runs and the
+    /// figure's does not, and the window's <c>WindowKeyPressFcn</c> runs either way. A press reaches
+    /// the window first and then the one holding the keyboard; a release goes the other way round.
     /// </summary>
     /// <param name="figure">The figure the key went to.</param>
     /// <param name="pressed">True for a press, false for a release.</param>
     /// <param name="character">The character produced, or empty for a key that produces none.</param>
     /// <param name="keyName">MATLAB's lowercase name for the key itself.</param>
     /// <param name="modifiers">Which of shift, control and alt were held.</param>
+    /// <param name="focused">The component that has the keyboard, or null when the figure has it.</param>
     public static void NotifyKey(
-        FigureModel figure, bool pressed, string character, string keyName, IReadOnlyList<string> modifiers)
+        FigureModel figure, bool pressed, string character, string keyName, IReadOnlyList<string> modifiers,
+        GraphObject? focused = null)
     {
         ArgumentNullException.ThrowIfNull(figure);
         if (pressed && !string.IsNullOrEmpty(character))
@@ -139,15 +168,20 @@ public static class ScriptGraphicsCallbacks
                 figure.CurrentPointPx?.Y ?? 0));
         }
 
-        GraphicsEventKind own = pressed ? GraphicsEventKind.KeyPress : GraphicsEventKind.KeyRelease;
+        GraphicsEventKind own = focused is not null
+            ? pressed ? GraphicsEventKind.ComponentKeyPress : GraphicsEventKind.ComponentKeyRelease
+            : pressed ? GraphicsEventKind.KeyPress : GraphicsEventKind.KeyRelease;
         GraphicsEventKind window = pressed ? GraphicsEventKind.WindowKeyPress : GraphicsEventKind.WindowKeyRelease;
-        foreach (GraphicsEventKind kind in (ReadOnlySpan<GraphicsEventKind>)[own, window])
+        GraphObject ownTarget = focused ?? figure;
+        (GraphicsEventKind Kind, GraphObject Target)[] order = pressed
+            ? [(window, figure), (own, ownTarget)]
+            : [(own, ownTarget), (window, figure)];
+        foreach ((GraphicsEventKind kind, GraphObject target) in order)
         {
-            if (HasCallback(figure, kind))
+            if (HasCallback(target, kind))
             {
                 ScriptEventQueue.Enqueue(new GraphicsEvent(
-                    kind, figure, Character: character, KeyName: keyName,
-                    Modifiers: modifiers ?? []));
+                    kind, target, Character: character, KeyName: keyName, Modifiers: modifiers ?? []));
             }
         }
     }
@@ -310,6 +344,9 @@ public static class ScriptGraphicsCallbacks
             GraphicsEventKind.WindowButtonUp => entry.WindowButtonUpFcn is not null,
             GraphicsEventKind.WindowButtonMotion => entry.WindowButtonMotionFcn is not null,
             GraphicsEventKind.WindowScrollWheel => entry.WindowScrollWheelFcn is not null,
+            GraphicsEventKind.ControlAction => entry.UiCallback is not null,
+            GraphicsEventKind.ComponentKeyPress => entry.KeyPressFcn is not null,
+            GraphicsEventKind.ComponentKeyRelease => entry.KeyReleaseFcn is not null,
             _ => false,
         };
     }

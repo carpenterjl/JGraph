@@ -2040,6 +2040,7 @@ udpportfind	1	2
 uencode	1	2
 uiaxes	1	2
 uicontextmenu	1	5
+uicontrol	1	5
 uimenu	1	5
 uminus	1	5
 undershoot	3	2

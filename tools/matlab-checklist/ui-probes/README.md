@@ -21,6 +21,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `research/matlab/` | 2026-10-03 inventory: `get()` of 69 component variants (`get/`), ~140 metaclass dumps (`meta/`), validation errors and coercions (`behave.txt`), toolbox usage counts. |
 | `research/apps/` | The `.mlapp`/AppBase/GUIDE probes, the minimal `.mlapp` builders (`build_mlapp.py`, `build_dup.py`) and what they built (`built/`), the acceptance scripts `examples/ex1`–`ex5` + `SpinnerGauge.m`, and a hand-built GUIDE pair (`guide_pair/`). |
 | `u0/` | The U0 probes below. MathWorks' own `.mlapp` files are read in place from `matlabroot` and never copied here. |
+| `u1/` | The U1 probes (ADR 0198): headless `u1_*`, and the window session `u1w_*`. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
 
@@ -123,3 +124,45 @@ in for a `uialert`. It measures both and closes itself after about 40 s. `result
 - **Target framework.** The composition control needs the Windows SDK projection: on plain
   `net8.0-windows` it throws `FileNotFoundException` for `Microsoft.Windows.SDK.NET`. Hence the
   spike's `net8.0-windows10.0.17763.0`.
+
+## U1 findings (R2025b)
+
+`u1/run-probe.ps1` runs headless by default. `-WithWindows` runs plain `-batch`, which displays
+figures. `-Interactive` runs `-nodesktop -r` with a `-logfile`: **`-batch` is non-interactive even
+with a display**, so `questdlg`, `inputdlg` and `listdlg` refuse there. The `u1w_*` probes open
+windows, and `u1w_keys` moves the mouse and types with `java.awt.Robot`, so they run only with the
+user's leave.
+
+**`uicontrol`, headless** (`u1_uicontrol`): defaults per style; words in any case or by a unique
+prefix; `String` coercions (a number is its `num2str`, an array one line per element, a cell or a
+string array a column cell, a logical refused); colours as doubles, names and hex codes; R2025b's
+identifiers and sentences for every refusal. Refusals through `set` start "Error setting property
+'X' of class 'UIControl':"; inside the creating call they do not. Every graphics callback takes a
+handle, text or a cell. Cells are stored as columns, and `{@f}` is stored as `@f`.
+
+**Event data** (`u1_eventdata`, `u1w_keys`): `DeleteFcn` gets `event.EventData`
+(`ObjectBeingDestroyed`); `CloseRequestFcn` a `WindowCloseRequestData` (`Close`); a `uicontrol`
+`Callback` an `ActionData` (`Action`). Keys get a `KeyData` (`KeyPress`, `WindowKeyPress`, …), and a
+component's own key callbacks a `UIClientComponentKeyEvent`. Window buttons get a `WindowMouseData`
+(`WindowMousePress`/`Release`), a figure's own `ButtonDownFcn` a `MouseData` (no
+`IntersectionPoint`), and the wheel a `ScrollWheelData`.
+
+**`CloseRequestFcn`** (`u1_closereq`): `''`, `[]`, `{}` and `""` are all stored as `''`, which
+keeps the figure open; `'closereq'` closes it.
+
+**Keys and clicks in a classic figure** (`u1w_keys`):
+- A press reaches `WindowKeyPressFcn` first, then the holder's `KeyPressFcn`; a release goes the
+  other way. A component holding the keyboard keeps the figure's `KeyPressFcn` from running.
+- An edit field's `Callback` runs on Enter, after its `KeyPressFcn`. It also runs on a click
+  elsewhere after typing, before that click's own callback.
+- A click on a `uicontrol` does not run `WindowButtonDownFcn`.
+
+**uifigure gestures** (`u1w_uitest`): a click on a component does run `WindowButtonDownFcn`.
+`ValueChangingFcn` runs with the old `Value` still in place, and `ValueChangedData` carries
+`PreviousValue` (a drop-down's also carries `ValueIndex` and `Edited`). `type` refuses a figure.
+
+**Dialog layouts** (`u1w_dialogs`, for U4): `questdlg` buttons `Btn1`.. are 56×31.73 px, 10 px
+apart; `inputdlg` buttons are `OK`/`Cancel`, 53 px wide, with `Edit` fields 26.67 px tall;
+`listdlg` has a 160×300 `listbox` and `ok_btn`/`cancel_btn` 76×22, plus `selectall_btn` in
+multiple mode. All are modal pixel figures. `questdlg` errors (`MATLAB:hg:DeletedObject`) when its
+figure is deleted from outside.

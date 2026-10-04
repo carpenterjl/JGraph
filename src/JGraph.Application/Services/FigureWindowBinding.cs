@@ -120,6 +120,9 @@ internal sealed class FigureWindowBinding
                 case nameof(FigureModel.Name):
                     TitleChanged?.Invoke();
                     break;
+                case nameof(FigureModel.Visible):
+                    FigureVisibilityChanged?.Invoke(_figure.Visible);
+                    break;
                 default:
                     break;
             }
@@ -128,6 +131,9 @@ internal sealed class FigureWindowBinding
 
     /// <summary>Raised when the window's title needs rebuilding — the service owns the number.</summary>
     internal event Action? TitleChanged;
+
+    /// <summary>Raised when a script shows or hides the figure (its <c>Visible</c>, U1).</summary>
+    internal event Action<bool>? FigureVisibilityChanged;
 
     /// <summary>Applies everything again now the window is loaded and can be measured.</summary>
     internal void OnWindowLoaded() => ApplyAll();

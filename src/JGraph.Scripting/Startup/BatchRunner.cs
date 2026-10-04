@@ -30,6 +30,39 @@ public static class BatchRunner
         IScriptAudio? audio = null,
         CancellationToken cancellationToken = default)
     {
+        (int code, IScriptSession? _) = await RunCoreAsync(
+            options, engines, output, showFigure, figureFiles, audio, inSession: false, cancellationToken).ConfigureAwait(false);
+        return code;
+    }
+
+    /// <summary>
+    /// Runs the statement as <see cref="RunAsync"/> does, but in an interactive session it then hands
+    /// back alive (app-building plan, U1): what <c>-batch -showfigures</c> needs, because a script that
+    /// left a GUI on screen has callbacks still to run, and they run in the workspace that made them.
+    /// The run's end — its workspace's destruction, its open files, its native host — waits for the
+    /// caller to dispose the session, which it does when the last window closes. An engine without
+    /// sessions runs as <see cref="RunAsync"/> does and hands back none.
+    /// </summary>
+    public static Task<(int Code, IScriptSession? Session)> RunInSessionAsync(
+        StartupOptions options,
+        IReadOnlyList<IScriptEngine> engines,
+        IScriptOutput output,
+        Action<int, FigureModel> showFigure,
+        IScriptFigureFiles? figureFiles = null,
+        IScriptAudio? audio = null,
+        CancellationToken cancellationToken = default) =>
+        RunCoreAsync(options, engines, output, showFigure, figureFiles, audio, inSession: true, cancellationToken);
+
+    private static async Task<(int Code, IScriptSession? Session)> RunCoreAsync(
+        StartupOptions options,
+        IReadOnlyList<IScriptEngine> engines,
+        IScriptOutput output,
+        Action<int, FigureModel> showFigure,
+        IScriptFigureFiles? figureFiles,
+        IScriptAudio? audio,
+        bool inSession,
+        CancellationToken cancellationToken)
+    {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(engines);
         ArgumentNullException.ThrowIfNull(output);
@@ -39,7 +72,7 @@ public static class BatchRunner
         if (!Directory.Exists(workingDirectory))
         {
             output.WriteError($"jgraph: directory '{workingDirectory}' does not exist.");
-            return StartupExitCodes.UsageError;
+            return (StartupExitCodes.UsageError, null);
         }
 
         workingDirectory = Path.GetFullPath(workingDirectory);
@@ -47,13 +80,13 @@ public static class BatchRunner
         if (resolved.Error is { } error)
         {
             output.WriteError("jgraph: " + error);
-            return StartupExitCodes.UsageError;
+            return (StartupExitCodes.UsageError, null);
         }
 
         if (SelectEngine(engines, resolved.Language) is not { } engine)
         {
             output.WriteError("jgraph: " + UnavailableReason(engines, resolved.Language));
-            return StartupExitCodes.UsageError;
+            return (StartupExitCodes.UsageError, null);
         }
 
         var context = new ScriptContext(
@@ -67,31 +100,36 @@ public static class BatchRunner
             ScriptPath = resolved.SourcePath,
         };
 
+        IScriptSession? session = inSession && engine is IScriptRepl repl ? repl.CreateSession(context) : null;
         ScriptRunResult result;
         try
         {
-            result = await engine.RunAsync(resolved.Code, context, cancellationToken).ConfigureAwait(false);
+            result = session is null
+                ? await engine.RunAsync(resolved.Code, context, cancellationToken).ConfigureAwait(false)
+                : resolved.SourcePath is { } path
+                    ? await session.ExecuteFileAsync(resolved.Code, Path.GetFullPath(path), cancellationToken).ConfigureAwait(false)
+                    : await session.ExecuteAsync(resolved.Code, string.Empty, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
             output.WriteError("jgraph: the script run was cancelled.");
-            return StartupExitCodes.ScriptError;
+            return (StartupExitCodes.ScriptError, session);
         }
 
         if (result.ExitCode is { } code)
         {
-            return code;
+            return (code, session);
         }
 
         if (result.Success)
         {
-            return StartupExitCodes.Success;
+            return (StartupExitCodes.Success, session);
         }
 
         // The engines already write their diagnostics to the output as they go, so this is a single
         // closing line the shell can see rather than a second copy of everything.
         output.WriteError($"jgraph: script failed — {result.Message ?? "unknown error"}");
-        return StartupExitCodes.ScriptError;
+        return (StartupExitCodes.ScriptError, session);
     }
 
     /// <summary>

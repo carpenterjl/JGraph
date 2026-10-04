@@ -87,7 +87,7 @@ public class MatlabCallbackPropertyTests : IDisposable
         assert(strcmp(get(f, 'Interruptible'), 'on'));
         set(ax, 'DeleteFcn', @(s, e) disp('x'));
         assert(isa(get(ax, 'DeleteFcn'), 'function_handle'));
-        assert(isempty(get(f, 'CloseRequestFcn')));
+        assert(strcmp(get(f, 'CloseRequestFcn'), 'closereq')); % R2025b's default, read back (U1)
         assert(isempty(get(f, 'SizeChangedFcn')));
         set(f, 'CloseRequestFcn', @(s, e) disp('closing'));
         assert(isa(get(f, 'CloseRequestFcn'), 'function_handle'));

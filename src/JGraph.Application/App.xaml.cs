@@ -269,6 +269,20 @@ public partial class App : System.Windows.Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        // The batch session's run ends here, after its last window: its workspace, files and native
+        // host go now, as a one-shot run's go when its script returns.
+        if (_batchSession is not null)
+        {
+            try
+            {
+                EndBatchSessionAsync().Wait(TimeSpan.FromSeconds(5));
+            }
+            catch (AggregateException)
+            {
+                // Leaving anyway: the process is ending.
+            }
+        }
+
         if (_pendingExitCode is { } code)
         {
             // A batch run that ended while its figure windows were still open: the process exits when
@@ -312,16 +326,17 @@ public partial class App : System.Windows.Application
         IFigureWindowService figureWindows,
         TeeScriptOutput? tee)
     {
-        // This mode has a real dispatcher, so drawnow can be a real render barrier here too. There
-        // is no live session to pump events through — a one-shot run's callbacks queue and never
-        // fire, the documented degradation — so only the flusher is installed.
+        // This mode has a real dispatcher, so drawnow can be a real render barrier here too.
         ScriptRenderPump.SetFlusher(() => Dispatcher.Invoke(
             static () => { }, System.Windows.Threading.DispatcherPriority.Render));
 
+        // The script runs in a session that outlives it (app-building plan, U1): a GUI it leaves on
+        // screen keeps answering its user, in the workspace that built it, until the last window
+        // closes — then the session ends, and with it the run's files and native host.
         int code;
         try
         {
-            code = await BatchRunner.RunAsync(
+            (code, _batchSession) = await BatchRunner.RunInSessionAsync(
                 options,
                 engines,
                 output,
@@ -342,13 +357,85 @@ public partial class App : System.Windows.Application
 
         if (Windows.Count == 0)
         {
+            await EndBatchSessionAsync();
             Shutdown(code);
             return;
         }
 
         // Figures are on screen: hand control back to the user and keep the code for the way out.
+        // Their callbacks are delivered by the pump below, the IDE's idle pump in miniature.
         _pendingExitCode = code;
         ShutdownMode = ShutdownMode.OnLastWindowClose;
+        ScriptUiTrace.Write($"batch: run ended with {code}, {Windows.Count} window(s), session {_batchSession is not null}");
+        ScriptEventQueue.InstallPump(() => Dispatcher.BeginInvoke(new Action(PumpBatchSession)));
+        PumpBatchSession();
+    }
+
+    /// <summary>The session a <c>-batch -showfigures</c> run keeps for its windows' callbacks.</summary>
+    private IScriptSession? _batchSession;
+
+    /// <summary>
+    /// Whether a pump run is under way. A flag set before the run starts, never the run's task: a
+    /// drain that finishes before its first await completes the task synchronously, and assigning
+    /// that finished task after its own finally had cleared the field left the pump looking busy for
+    /// ever, so no event was delivered again (found by the U1 window check).
+    /// </summary>
+    private bool _batchPumping;
+    private readonly CancellationTokenSource _batchPumpStop = new();
+
+    /// <summary>
+    /// Delivers queued callbacks to the batch session when it is idle. UI thread; called when an
+    /// event is queued and again when a pump run ends, so an event that arrived mid-run is not missed.
+    /// </summary>
+    private void PumpBatchSession()
+    {
+        if (_batchPumping || _batchSession is not IGraphicsEventSession session || !ScriptEventQueue.HasWork)
+        {
+            ScriptUiTrace.Write($"pump: not started (running {_batchPumping}, session {_batchSession is not null}, work {ScriptEventQueue.HasWork})");
+            return;
+        }
+
+        ScriptUiTrace.Write("pump: started");
+        _batchPumping = true;
+        _ = PumpOnceAsync(session);
+    }
+
+    private async Task PumpOnceAsync(IGraphicsEventSession session)
+    {
+        try
+        {
+            await session.DrainGraphicsEventsAsync(null, _batchPumpStop.Token).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ScriptExitException.Unwrap(ex) is { } exit)
+        {
+            // A callback called exit: the run ends with the code it gave, windows or no windows.
+            _pendingExitCode = exit.ExitCode;
+            Shutdown(exit.ExitCode);
+            return;
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or OperationCanceledException or ObjectDisposedException)
+        {
+            // A callback's own errors were already reported; only the pump itself lands here.
+            ScriptUiTrace.Write("pump: " + ex.GetType().Name + " " + ex.Message);
+        }
+        finally
+        {
+            _batchPumping = false;
+            ScriptUiTrace.Write("pump: ended");
+        }
+
+        PumpBatchSession();
+    }
+
+    private async Task EndBatchSessionAsync()
+    {
+        ScriptEventQueue.InstallPump(null);
+        _batchPumpStop.Cancel();
+        if (_batchSession is { } session)
+        {
+            _batchSession = null;
+            await session.DisposeAsync();
+        }
     }
 
     /// <summary>Opens the HTML scripting guide, falling back to the flag reference in a dialog.</summary>
