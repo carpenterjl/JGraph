@@ -4,7 +4,7 @@
         xmlns:jg="clr-namespace:JGraph.Controls;assembly=JGraph.Controls"
         xmlns:browser="clr-namespace:JGraph.Controls.Browser;assembly=JGraph.Controls"
         xmlns:inspector="clr-namespace:JGraph.Controls.Inspector;assembly=JGraph.Controls"
-        Title="JGraph" Height="720" Width="1200">
+        Title="JGraph" Height="720" Width="1200" UseLayoutRounding="True">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </Window.Resources>
@@ -59,7 +59,7 @@
                       ToolTip="Choose a figure theme (from the plugin registry)" />
         </ToolBar>
 
-        <StatusBar DockPanel.Dock="Bottom">
+        <StatusBar x:Name="FigureStatusBar" DockPanel.Dock="Bottom">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusText}" />
             </StatusBarItem>

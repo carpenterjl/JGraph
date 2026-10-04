@@ -71,6 +71,7 @@ internal static partial class JgsGraphicsProperties
         ContextMenuModel => "uicontextmenu",
         MenuItemModel => "uimenu",
         UiControlModel => "uicontrol",
+        UiPanelModel => "uipanel",
 
         // A circle is a different class in MATLAB, and findobj(gcf, 'Type', 'polaraxes') is how a
         // script finds one. Here it is a mode, so the mode is what the name is read off — the same
@@ -224,7 +225,19 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static void Reparent(JgsHandleEntry entry, JgsValue value, int line, int col)
     {
+        if (entry.Target is UiObject or AxesModel && !JgsHandleRegistry.TryGetOrRoot(value, out _))
+        {
+            throw value.Type == JgsType.Array && value.ArrayLength == 0
+                ? new JgsRuntimeException(line, col,
+                    "An object with no parent cannot be kept in this build; delete it, or give it another parent.")
+                : ComponentError(entry, "Parent", "MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle", "Value must be a handle.", line, col);
+        }
+
         JgsHandleEntry owner = JgsHandleRegistry.Require(value, line, col);
+        if (TryReparentIntoContainer(entry, owner, line, col))
+        {
+            return;
+        }
 
         // Menus move between figures, context menus, and one another; every such move is a move.
         switch (entry.Target, owner.Target)
@@ -256,17 +269,6 @@ internal static partial class JgsGraphicsProperties
             case (ContextMenuModel or MenuItemModel, _):
                 throw new JgsRuntimeException(line, col,
                     $"A menu belongs to a figure, a context menu or another menu, not to a {owner.TypeName}.");
-            case (UiObject movingComponent, FigureModel componentOwner):
-                using (GraphObjectLifecycle.SuppressNotifications())
-                {
-                    (movingComponent.Parent as FigureModel)?.Components.Remove(movingComponent);
-                    componentOwner.Components.Add(movingComponent);
-                }
-
-                return;
-            case (UiObject, _):
-                throw new JgsRuntimeException(line, col, "MATLAB:gbtobjects:Component",
-                    $"{JgsGraphicsCallbackValues.ClassWord(owner.Target)} cannot be a parent.");
         }
 
         if (entry.Target is not PlotObject plot)
@@ -319,15 +321,23 @@ internal static partial class JgsGraphicsProperties
             case JgsGraphicsGroup group:
                 children.AddRange(group.Members);
                 break;
+            case JgsGraphicsRoot:
+                // Every figure; a search or a listing leaves out the ones whose handles are hidden.
+                children.AddRange(RootFigures(hidden: true));
+                break;
             case FigureModel figure:
-                children.AddRange(figure.Axes);
+                // The axes placed in the figure itself; one placed in a panel is the panel's child.
+                children.AddRange(figure.TopLevelAxes());
                 children.AddRange(figure.Annotations);
                 children.AddRange(figure.ContextMenus);
 
-                // Last, so they come first: Children is newest first, and in R2025b a uicontrol made
-                // after an axes is listed before it. One made before an axes is listed after it there
-                // and before it here, until U2 gives the figure one tree of children.
+                // Last, so they come first: Children is newest first, and R2025b lists every
+                // component before every axes, whichever was made first (probe u2_tree).
                 children.AddRange(figure.Components);
+                break;
+            case UiContainerModel container:
+                children.AddRange(container.ContainedAxes());
+                children.AddRange(container.Components);
                 break;
             case ContextMenuModel menu:
                 children.AddRange(menu.Items);
@@ -446,7 +456,7 @@ internal static partial class JgsGraphicsProperties
 
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
-            throw Unknown(entry.Target, name, line, col);
+            throw Unknown(entry.Target, name, line, col, reading: true);
         }
 
         return property.Read(entry);
@@ -462,8 +472,12 @@ internal static partial class JgsGraphicsProperties
 
         if (property.Write is null)
         {
-            throw new JgsRuntimeException(line, col,
-                $"'{property.Name}' can be read but not written on a {TypeNameOf(entry.Target)}.");
+            // A component, a figure and the root refuse in R2025b's words (U2).
+            throw entry.Target is UiObject or FigureModel or JgsGraphicsRoot
+                ? new JgsRuntimeException(line, col, "MATLAB:class:SetProhibited",
+                    $"Unable to set the '{property.Name}' property of class ''{JgsGraphicsCallbackValues.ClassWord(entry.Target)}'' because it is read-only.")
+                : new JgsRuntimeException(line, col,
+                    $"'{property.Name}' can be read but not written on a {TypeNameOf(entry.Target)}.");
         }
 
         property.Write(entry, value, line, col);
@@ -473,13 +487,21 @@ internal static partial class JgsGraphicsProperties
     /// The error for a name nothing answers to. It lists the near spellings rather than the whole
     /// surface, because a table of eighty names is not an answer to "you meant which of these?".
     /// </summary>
-    private static JgsRuntimeException Unknown(GraphObject target, string name, int line, int col)
+    private static JgsRuntimeException Unknown(GraphObject target, string name, int line, int col, bool reading = false)
     {
-        // A component answers in R2025b's words (U1); the hint below is this build's own.
+        // A component answers in R2025b's words (U1); the hint below is this build's own. R2025b
+        // names the class in full when reading and by its last word when writing (U2).
         if (target is UiObject)
         {
+            string word = JgsGraphicsCallbackValues.ClassWord(target);
+            string named = !reading ? word : target switch
+            {
+                UiControlModel => "matlab.ui.control.UIControl",
+                UiPanelModel => "matlab.ui.container.Panel",
+                _ => word,
+            };
             return new JgsRuntimeException(line, col, "MATLAB:hg:InvalidProperty",
-                $"Unrecognized property {name} for class {JgsGraphicsCallbackValues.ClassWord(target)}.");
+                $"Unrecognized property {name} for class {named}.");
         }
 
         string type = TypeNameOf(target);
@@ -600,21 +622,34 @@ internal static partial class JgsGraphicsProperties
         Put(table, "UserData",
             entry => entry.Target.UserData is JgsValue stored ? stored : JgsValue.Array([]),
             (entry, value, _, _) => entry.Target.UserData = JgsValue.Share(value));
+        // Three states (U2): on, callback — seen only while a callback runs — and off. A figure
+        // whose handle is hidden cannot stay the current one.
         Put(table, "HandleVisibility",
-            entry => OnOff(entry.HandleVisible),
-            (entry, value, line, col) => entry.HandleVisible = ToOnOff("HandleVisibility", value, line, col));
+            entry => JgsValue.Str(entry.HandleVisibility),
+            (entry, value, line, col) =>
+            {
+                entry.HandleVisibility = value.Type is JgsType.Bool or JgsType.Number
+                    ? (value.IsTruthy ? "on" : "off")
+                    : HandleVisibilityWords[Word(entry, "HandleVisibility", value, HandleVisibilityWords, HandleVisibilityWords, line, col)];
+                if (entry.Target is FigureModel)
+                {
+                    JG.ReselectCurrent();
+                }
+            });
         // Writable, which is how an object joins a group: MATLAB says it at construction —
         // plot(x, y, 'Parent', g) — and this build says it afterwards, because a 'Parent' the
         // property table understands works for every drawn object at once, where a construction
         // option would have to be taught to each of the drawing verbs one at a time.
         Put(table, "Parent",
-            entry => entry.Target.Parent is { } parent
+            entry => ParentOf(entry.Target) is { } parent
                 ? JgsHandleRegistry.For(parent)
                 : GroupOwning(entry.Target) is { } group
                     ? JgsHandleRegistry.For(group)
                     : JgsValue.Array([]),
             (entry, value, line, col) => Reparent(entry, value, line, col));
-        Put(table, "Children", entry => HandleRow(ChildrenOf(entry.Target)));
+        Put(table, "Children",
+            entry => HandleRow(VisibleChildrenOf(entry.Target)),
+            (entry, value, line, col) => SetChildren(entry, value, line, col));
 
         // The common callback and interaction block, on every object at once (M71). The callbacks
         // live on the handle entry — script-side state, gone when the object is — and the scalars
@@ -728,7 +763,12 @@ internal static partial class JgsGraphicsProperties
 
         if (typeof(UiObject).IsAssignableFrom(type))
         {
-            AddUiObjectBlock(table);
+            AddUiObjectBlock(type, table);
+        }
+
+        if (typeof(UiPanelModel).IsAssignableFrom(type))
+        {
+            AddUiPanelBlock(table);
         }
 
         if (typeof(UiControlModel).IsAssignableFrom(type))
@@ -764,13 +804,7 @@ internal static partial class JgsGraphicsProperties
         {
             // A rectangle of four numbers is not something the reflection bridge carries, and the
             // root has nothing but rectangles — so its whole surface is curated.
-            Put(table, "ScreenSize",
-                entry => Row(((JgsGraphicsRoot)entry.Target).ScreenSize));
-            Put(table, "MonitorPositions",
-                entry => Row(((JgsGraphicsRoot)entry.Target).ScreenSize));
-            Put(table, "CurrentFigure", _ => JG.CurrentFigureNumber > 0
-                ? JgsValue.Number(JG.CurrentFigureNumber)
-                : JgsValue.Array([]));
+            AddRootBlock(table);
         }
 
         if (typeof(PlotObject).IsAssignableFrom(type))
@@ -1724,7 +1758,6 @@ internal static partial class JgsGraphicsProperties
 
         if (typeof(FigureModel).IsAssignableFrom(type))
         {
-            Put(table, "Number", entry => JgsValue.Number(JG.GetFigureNumber((FigureModel)entry.Target)));
             // A figure's Color takes the word 'none', which is MATLAB's spelling of "there is no
             // page here" -- the figure is drawn without a background and an export writes what is
             // behind it as nothing at all. It reads back as the word, not as a triplet, because no
@@ -1747,6 +1780,7 @@ internal static partial class JgsGraphicsProperties
             AddCallbackSlot(table, "SizeChangedFcn",
                 static entry => entry.SizeChangedFcn, static (entry, value) => entry.SizeChangedFcn = value);
             AddFigureBlock(table);
+            AddFigureUnits(table);
         }
 
         if (typeof(LegendModel).IsAssignableFrom(type))

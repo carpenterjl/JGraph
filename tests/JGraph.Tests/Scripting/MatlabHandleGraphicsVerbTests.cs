@@ -184,8 +184,9 @@ public class MatlabHandleGraphicsVerbTests : IDisposable
             disp(numel(findobj));
             """);
 
-        // The figure, its axes, and the one line in it.
-        Assert.Equal(new[] { "3" }, _output.NormalLines);
+        // The root, the figure, its axes, and the one line in it: with no handle named the search
+        // starts at the root, which is itself the first thing found (R2025b; U2).
+        Assert.Equal(new[] { "4" }, _output.NormalLines);
     }
 
     [Fact]

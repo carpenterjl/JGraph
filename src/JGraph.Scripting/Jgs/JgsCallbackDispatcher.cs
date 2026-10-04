@@ -90,7 +90,15 @@ internal sealed class JgsCallbackDispatcher
 
     private static void DeliverDescendantDeletions(JgsCallbackDispatcher dispatcher, GraphObject parent)
     {
-        foreach (GraphObject child in JgsGraphicsProperties.DescendantsOf(parent))
+        // A figure's and a container's children go in the order Children lists them — front first —
+        // which is the order R2025b runs their DeleteFcns in (probe u2_tree).
+        IEnumerable<GraphObject> children = JgsGraphicsProperties.DescendantsOf(parent);
+        if (parent is IUiContainer)
+        {
+            children = children.Reverse();
+        }
+
+        foreach (GraphObject child in children)
         {
             if (GraphObjectLifecycle.TryBeginDeleting(child))
             {
@@ -152,6 +160,14 @@ internal sealed class JgsCallbackDispatcher
                 }
 
                 next = next with { UserValue = null };
+            }
+
+            // A resized figure settles its containers before anything decides whether its own
+            // callback runs: children are rescaled, and each container whose size changed is told.
+            if (next is { Kind: GraphicsEventKind.SizeChanged, Target: FigureModel resized }
+                && !JgsContainerResize.Apply(resized))
+            {
+                continue;
             }
 
             bool interruptible = _running.Count == 0 || _running[^1];
@@ -455,9 +471,13 @@ internal sealed class JgsCallbackDispatcher
                     ["VerticalScrollAmount"] = JgsValue.Number(3),
                 });
 
+            // R2025b's SizeChangedData for a figure's and a container's alike (probe u2w_resize).
+            case GraphicsEventKind.SizeChanged:
+                return JgsUiEventData.Make(JgsUiEventData.SizeChangedDataClass, source, "SizeChanged");
+
             default:
-                // SizeChanged and the pointer's motion: what R2025b hands them is not recorded yet,
-                // and the callback reads CurrentPoint and SelectionType meanwhile.
+                // The pointer's motion: what R2025b hands it is not recorded yet, and the callback
+                // reads CurrentPoint and SelectionType meanwhile.
                 return JgsValue.Array([]);
         }
     }

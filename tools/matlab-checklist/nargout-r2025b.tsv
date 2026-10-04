@@ -30,6 +30,7 @@ airy	1	5
 alignsignals	-1	2
 alim	1	2
 all	1	5
+allchild	1	2
 alpha	0	2
 alphamap	1	2
 amd	1	5
@@ -707,6 +708,7 @@ getappdata	ERR:MATLAB:narginout:doesNotApply	5
 getenv	1	5
 getfield	1	2
 getframe	2	2
+getpixelposition	1	2
 getpoints	ERR:MATLAB:nargin:isScript	2
 gevcdf	ERR:MATLAB:narginout:notValidMfile	0
 gevfit	ERR:MATLAB:narginout:notValidMfile	0
@@ -1260,6 +1262,7 @@ montage	1	2
 month	2	2
 more	0	5
 movefile	3	5
+movegui	0	2
 movie	0	6
 movmad	1	5
 movmax	1	5
@@ -1774,6 +1777,7 @@ setappdata	0	5
 setdiff	-1	2
 setenv	0	2
 setfield	1	2
+setpixelposition	0	2
 setstr	1	5
 settlingtime	3	2
 setxor	3	2
@@ -2041,7 +2045,10 @@ uencode	1	2
 uiaxes	1	2
 uicontextmenu	1	5
 uicontrol	1	5
+uifigure	1	2
 uimenu	1	5
+uipanel	ERR:MATLAB:narginout:doesNotApply	5
+uistack	-1	2
 uminus	1	5
 undershoot	3	2
 unicode2native	1	5

@@ -183,15 +183,45 @@ public class MatlabM75FigurePropertyTests : IDisposable
     }
 
     [Fact]
-    public async Task AnAxesIsMeasuredInFractionsAndRefusesAnyOtherUnit()
+    public async Task AnAxesIsMeasuredInFractionsUntilAScriptNamesAnotherUnit()
     {
-        ScriptRunResult result = await RunMatlab("units = get(gca, 'Units');");
+        // U2 (ADR 0199): the six units R2025b has. Changing Units keeps the axes where it is.
+        ScriptRunResult result = await RunMatlab("""
+            f = figure('Position', [100 100 560 420]);
+            ax = axes(f, 'Position', [0.25 0.5 0.5 0.25]);
+            units = get(ax, 'Units');
+            set(ax, 'Units', 'points');
+            points = get(ax, 'Position');
+            set(ax, 'Units', 'normalized');
+            back = get(ax, 'Position');
+            """);
         Succeeded(result);
         Assert.Equal("normalized", Text(result, "units"));
+        Assert.Equal(new[] { 105.0, 157.5, 210.0, 78.75 }, Row(result, "points").Select(v => Math.Round(v, 9)));
+        Assert.Equal(new[] { 0.25, 0.5, 0.5, 0.25 }, Row(result, "back").Select(v => Math.Round(v, 9)));
 
-        ScriptRunResult refused = await RunMatlab("set(gca, 'Units', 'points');");
+        ScriptRunResult refused = await RunMatlab("set(gca, 'Units', 'furlongs');");
         Assert.False(refused.Success);
-        Assert.Contains("normalized", refused.Message);
+        Assert.Contains("'furlongs' is not a valid value", refused.Message);
+    }
+
+    [Fact]
+    public async Task AFigureIsMeasuredInPixelsUntilAScriptNamesAnotherUnit()
+    {
+        // U2 (ADR 0199): Units and IntegerHandle were one-word truths; now they are R2025b's.
+        ScriptRunResult result = await RunMatlab("""
+            f = figure('Position', [100 100 560 420]);
+            units = get(f, 'Units');
+            set(f, 'Units', 'points');
+            points = get(f, 'Position');
+            set(f, 'Units', 'pixels');
+            set(f, 'IntegerHandle', 'off');
+            number = numel(get(f, 'Number'));
+            """);
+        Succeeded(result);
+        Assert.Equal("pixels", Text(result, "units"));
+        Assert.Equal(new[] { 74.25, 74.25, 420.0, 315.0 }, Row(result, "points"));
+        Assert.Equal(0.0, Number(result, "number"));
     }
 
     [Fact]
@@ -284,8 +314,6 @@ public class MatlabM75FigurePropertyTests : IDisposable
     [InlineData("WindowStyle", "modal", "ordinary windows")]
     [InlineData("MenuBar", "figure", "no menu bar")]
     [InlineData("DockControls", "on", "cannot be docked")]
-    [InlineData("IntegerHandle", "off", "are numbered")]
-    [InlineData("Units", "normalized", "measured in pixels")]
     public async Task APropertyWithOneTrueAnswerRefusesEveryOtherWord(
         string name, string wrong, string reason)
     {

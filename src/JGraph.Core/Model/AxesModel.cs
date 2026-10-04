@@ -559,6 +559,67 @@ public sealed class AxesModel : GraphObject
         set => SetProperty(ref _normalizedBounds, value, InvalidationKind.Layout);
     }
 
+    private UiContainerModel? _container;
+    private UiUnits _units = UiUnits.Normalized;
+    private Rect2D? _pixelBounds;
+
+    /// <summary>
+    /// The panel this axes is placed in, or null when it is placed in the figure itself (app-building
+    /// plan, U2). The axes stays in its figure's list either way; this is what its fractions are
+    /// fractions of, what it is clipped to, and what MATLAB's <c>Parent</c> answers.
+    /// </summary>
+    [Browsable(false)]
+    public UiContainerModel? Container
+    {
+        get => _container;
+        set => SetProperty(ref _container, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>MATLAB's <c>Units</c> for this axes' position rectangles; normalized by default.</summary>
+    [Browsable(false)]
+    public UiUnits Units
+    {
+        get => _units;
+        set => SetProperty(ref _units, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The rectangle this axes is pinned to while its <see cref="Units"/> are not normalized, as
+    /// MATLAB's pixel rectangle (1-based left and bottom, Y upward) in its container: the plot box
+    /// when <see cref="InnerTarget"/> is set, the cell otherwise. Null while normalized. It is what
+    /// keeps an axes placed in pixels where it is when its figure is resized.
+    /// </summary>
+    [Browsable(false)]
+    public Rect2D? PixelBounds
+    {
+        get => _pixelBounds;
+        set => SetProperty(ref _pixelBounds, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The rectangle the renderer places this axes by — <see cref="InnerTarget"/> if the plot box is
+    /// pinned, <see cref="NormalizedBounds"/> otherwise — as fractions of an area of the given size,
+    /// Y downward. An axes pinned in absolute units is converted against that size here, so it holds
+    /// its pixels whatever the area becomes.
+    /// </summary>
+    public Rect2D PlacementIn(Size2D area)
+    {
+        if (_pixelBounds is not { } pixels || area.Width <= 0 || area.Height <= 0)
+        {
+            return _innerTarget ?? _normalizedBounds;
+        }
+
+        return new Rect2D(
+            (pixels.X - 1) / area.Width,
+            1 - (((pixels.Y - 1) + pixels.Height) / area.Height),
+            pixels.Width / area.Width,
+            pixels.Height / area.Height);
+    }
+
+    /// <summary>The size in pixels of the area this axes is placed in: its panel's, or its figure's.</summary>
+    public Size2D ReferenceSize() =>
+        _container?.InnerPixelSize ?? (Parent as FigureModel)?.Size ?? new Size2D(560, 420);
+
     /// <summary>Fractional padding added around the data extent when an axis auto-scales.</summary>
     [Category("Behavior"), DisplayName("Auto-scale padding")]
     public double AutoScalePadding

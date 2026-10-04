@@ -2225,6 +2225,13 @@ public static class JgsBuiltinCatalog
         Add("subplot", "Selects cell index of a rows-by-cols axes grid (a grid cell number, so 1-based, row-major) and returns a handle on it.", P("rows"), P("cols"), P("index"));
         Add("close", "Closes the current figure, figure n, or every figure with close all; a trailing 'force' skips CloseRequestFcn.", Opt("n"), Opt("force"));
         Add("closereq", "The default close a CloseRequestFcn opts back into: deletes the callback's figure without asking again.");
+        Add("uipanel", "A bordered, optionally titled container for components and axes: p = uipanel(fig, 'Title', 'Settings', 'Position', [.1 .1 .4 .8]).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uifigure", "A figure for building an app: a plain window with no figure number, never the current figure.", Opt("name"), Opt("value"));
+        Add("getpixelposition", "An object's position in pixels, within its parent or (recursive true) within its figure.", P("h"), Opt("recursive"));
+        Add("setpixelposition", "Places an object by a pixel rectangle, whatever its Units are.", P("h"), P("position"), Opt("recursive"));
+        Add("movegui", "Moves a figure to a place on the screen: 'center', 'north', 'southwest', ..., an [x y] offset, or 'onscreen'.", Opt("h"), Opt("position"));
+        Add("uistack", "Moves objects up or down the order their parent draws them in: uistack(h, 'top').", P("h"), Opt("how"), Opt("step"));
+        Add("allchild", "An object's children, hidden handles included, front first.", P("h"));
         Add("uicontrol", "A classic component in a figure — a button, an edit field, a label, ...: h = uicontrol(fig, 'Style', 'pushbutton', 'Callback', @cb).", Opt("parent"), Opt("name"), Opt("value"));
         Add("uicontextmenu", "A right-click menu for a figure's objects: cm = uicontextmenu; set(h, 'ContextMenu', cm).", Opt("parent"), Opt("name"), Opt("value"));
         Add("uimenu", "One entry of a context menu: m = uimenu(cm, 'Text', 'Copy', 'MenuSelectedFcn', @onCopy).", Opt("parent"), Opt("name"), Opt("value"));

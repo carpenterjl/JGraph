@@ -48,7 +48,7 @@ public readonly record struct AxesLayoutSnapshot(
         ArgumentNullException.ThrowIfNull(axes);
         var canvas = new Rect2D(0, 0, canvasSize.Width, canvasSize.Height);
         Thickness inset = EstimateInset(axes);
-        Rect2D normalized = axes.InnerTarget ?? axes.NormalizedBounds;
+        Rect2D normalized = axes.PlacementIn(canvasSize);
         var placed = new Rect2D(
             normalized.X * canvas.Width,
             normalized.Y * canvas.Height,

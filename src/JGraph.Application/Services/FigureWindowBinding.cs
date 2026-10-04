@@ -36,6 +36,28 @@ internal sealed class FigureWindowBinding
         _view = view;
         _window.StateChanged += OnWindowStateChanged;
         _window.LocationChanged += OnWindowMoved;
+        _window.LocationChanged += (_, _) => NoteOuterBounds();
+        _window.SizeChanged += (_, _) => NoteOuterBounds();
+        _window.Loaded += (_, _) => NoteOuterBounds();
+    }
+
+    /// <summary>
+    /// The window's bounds as last seen on this thread, boxed so that the script thread reads one
+    /// reference: OuterPosition is asked for from there, and a window may only be touched from here.
+    /// </summary>
+    private object? _outerBounds;
+
+    private void NoteOuterBounds()
+    {
+        if (!_window.IsLoaded)
+        {
+            return;
+        }
+
+        double screen = SystemParameters.PrimaryScreenHeight;
+        Volatile.Write(ref _outerBounds, new Rect2D(
+            _window.Left, screen - _window.Top - _window.ActualHeight,
+            _window.ActualWidth, _window.ActualHeight));
     }
 
     /// <summary>Binds to a figure, releasing whatever was bound before, and applies it at once.</summary>
@@ -64,7 +86,7 @@ internal sealed class FigureWindowBinding
             // Size gives the size the window already is.
             if (_figure.PositionSpecified)
             {
-                _wanted = (_figure.Position, _figure.Size);
+                _wanted = (_figure.Position, _figure.RequestedSize ?? _figure.Size);
             }
 
             ApplyAll();
@@ -74,15 +96,8 @@ internal sealed class FigureWindowBinding
     /// <summary>The window's own bounds on screen, chrome included, in MATLAB's upward-Y pixels.</summary>
     internal Rect2D? OuterBounds(FigureModel figure)
     {
-        if (!ReferenceEquals(figure, _figure) || !_window.IsLoaded)
-        {
-            return null;
-        }
-
-        double screen = SystemParameters.PrimaryScreenHeight;
-        return new Rect2D(
-            _window.Left, screen - _window.Top - _window.ActualHeight,
-            _window.ActualWidth, _window.ActualHeight);
+        // Asked from the script thread: answered from what this thread last saw, never the window.
+        return ReferenceEquals(figure, _figure) && Volatile.Read(ref _outerBounds) is Rect2D seen ? seen : null;
     }
 
     private void OnFigureChanged(object? sender, PropertyChangedEventArgs e)
@@ -96,11 +111,16 @@ internal sealed class FigureWindowBinding
         {
             switch (e.PropertyName)
             {
-                // Position, and not Size. The figure's size is written back by the control every
+                // A placement, and not Size. The figure's size is written back by the control every
                 // time the window lays out, so treating that as a request would mean the window
-                // asking itself to be the size it already is; a script that means to resize a
-                // figure writes Position, which carries the size with it.
-                case nameof(FigureModel.Position):
+                // asking itself to be the size it already is. A script's placement is announced as
+                // a request, which carries the size it asked for (U2); a Position written straight
+                // to the model, by something that made no request, is still acted on.
+                case nameof(FigureModel.PlacementRequest):
+                    _wanted = null;
+                    ApplyPlacement();
+                    break;
+                case nameof(FigureModel.Position) when _figure?.RequestedSize is null:
                     _wanted = null;
                     ApplyPlacement();
                     break;
@@ -162,7 +182,7 @@ internal sealed class FigureWindowBinding
         // What was asked for, captured the moment it was asked. Between the request and the first
         // arrange the control writes the viewport's own size back into the figure, so reading the
         // size again later would place the window at the size it already had.
-        _wanted ??= (figure.Position, figure.Size);
+        _wanted ??= (figure.Position, figure.RequestedSize ?? figure.Size);
         (Point2D position, Size2D size) = _wanted.Value;
 
         double chromeWidth = _window.ActualWidth - _view.ActualWidth;

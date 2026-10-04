@@ -29,6 +29,7 @@ public static class ScriptComponentFrames
     {
         _sink = sink;
         _seenEpoch = -1;
+        FigureModel.FramesAreDelivered = sink is not null;
     }
 
     /// <summary>Whether a host is listening — what a flush point asks before doing any work.</summary>
@@ -81,6 +82,9 @@ public static class ScriptComponentFrames
             UiFrame frame = figure.TakeComponentFrame();
             figure.ComponentFrameInFlight = true;
             sink(frame);
+
+            // A container a script resized, or one shown for the first time, is told (U2).
+            Jgs.JgsContainerResize.Settle(figure);
         }
 
         if (!deferred)

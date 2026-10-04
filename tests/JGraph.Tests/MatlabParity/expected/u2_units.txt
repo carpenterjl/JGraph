@@ -1,0 +1,154 @@
+CHK|screen_origin|double [1 2] 1 1|exact
+CHK|screen_is_first_monitor|1|exact
+CHK|screen_ppi|96|exact
+CHK|root_units|pixels|exact
+CHK|screen_normalized|double [1 4] 0 0 1 1|exact
+CHK|screen_points_ratio|double [1 4] 0 0 0.75 0.75|exact
+CHK|screen_characters_ratio|double [1 2] 0.1785714286 0.06666666667|exact
+CHK|root_units_bogus|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|root_units_bogus_msg|Error setting property 'Units' of class 'Root': 'bogus' is not a valid value. Use one of these values: 'inches' / 'centimeters' / 'characters' / 'normalized' / 'points' / 'pixels'.|exact
+CHK|figure_pixels|double [1 4] 100 100 560 420|exact
+CHK|figure_pixels_same|1|exact
+CHK|figure_points|double [1 4] 74.25 74.25 420 315|exact
+CHK|figure_points_same|1|exact
+CHK|figure_inches|double [1 4] 1.03125 1.03125 5.833333333 4.375|exact
+CHK|figure_inches_same|1|exact
+CHK|figure_centimeters|double [1 4] 2.619375 2.619375 14.81666667 11.1125|exact
+CHK|figure_centimeters_same|1|exact
+CHK|figure_characters|double [1 4] 17.67857143 6.6 100 28|exact
+CHK|figure_characters_same|1|exact
+CHK|figure_normalized_times_screen|double [1 4] 99 99 560 420|exact
+CHK|figure_set_points|double [1 4] 101 101 400 300|exact
+CHK|figure_set_characters|double [1 4] 57 151 448 300|exact
+CHK|figure_set_normalized|double [1 4] 0.25 0.25 0.5 0.5|exact
+CHK|figure_units_bogus|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|figure_units_bogus_msg|Error setting property 'Units' of class 'Figure': 'bogus' is not a valid value. Use one of these values: 'inches' / 'centimeters' / 'characters' / 'normalized' / 'points' / 'pixels'.|exact
+CHK|figure_units_upper|pixels|exact
+CHK|figure_units_prefix|normalized|exact
+CHK|figure_position_three|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector|exact
+CHK|figure_position_three_msg|Error setting property 'Position' of class 'Figure': Value must be a 4 element vector|exact
+CHK|figure_position_negative|MATLAB:hg:set_chck:DimensionsOutsideRange|exact
+CHK|figure_position_negative_msg|Error setting property 'Position' of class 'Figure': Width and height must be greater than or equal to 0|exact
+CHK|figure_units_then_position|points double [1 4] 75 75 300 225|exact
+CHK|figure_position_then_units|points double [1 4] 75 75 300 225|exact
+CHK|axes_default_units|normalized|exact
+CHK|axes_pixels|double [1 4] 57 85 280 252|exact
+CHK|axes_pixels_inner|1|exact
+CHK|axes_points|double [1 4] 42 63 210 189|exact
+CHK|axes_points_inner|1|exact
+CHK|axes_inches|double [1 4] 0.5833333333 0.875 2.916666667 2.625|exact
+CHK|axes_inches_inner|1|exact
+CHK|axes_centimeters|double [1 4] 1.481666667 2.2225 7.408333333 6.6675|exact
+CHK|axes_centimeters_inner|1|exact
+CHK|axes_characters|double [1 4] 10 5.6 50 16.8|exact
+CHK|axes_characters_inner|1|exact
+CHK|axes_normalized|double [1 4] 0.1 0.2 0.5 0.6|exact
+CHK|axes_normalized_inner|1|exact
+CHK|axes_pixels_set|double [1 4] 50 60 300 200|exact
+CHK|axes_pixels_constraint|innerposition|exact
+CHK|axes_pixels_held_on_resize|double [1 4] 50 60 300 200|exact
+CHK|axes_back_to_normalized|double [1 4] 0.07 0.118 0.4285714286 0.4|exact
+CHK|axes_normalized_held_on_resize|double [1 4] 0.07 0.118 0.4285714286 0.4|exact
+CHK|axes_getpixelposition|double [1 4] 40.2 50.56 240 168|exact
+CHK|axes_units_bogus|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|axes_units_bogus_msg|Error setting property 'Units' of class 'Axes': 'bogus' is not a valid value. Use one of these values: 'inches' / 'centimeters' / 'characters' / 'normalized' / 'points' / 'pixels'.|exact
+CHK|axes_units_prefix|characters|exact
+CHK|axes_units_then_position|pixels double [1 4] 10 10 100 80|exact
+CHK|axes_position_then_units|pixels double [1 4] 141 106 280 210|exact
+CHK|axes_outer_pixels|double [1 4] 1 1 280 210|exact
+CHK|uicontrol_pixels|double [1 4] 20 30 100 40|exact
+CHK|panel_pixels|double [1 4] 50 60 200 150|exact
+CHK|panel_inner_pixels|double [1 4] 51 61 198 148|exact
+CHK|uicontrol_points|double [1 4] 14.25 21.75 75 30|exact
+CHK|panel_points|double [1 4] 36.75 44.25 150 112.5|exact
+CHK|panel_inner_points|double [1 4] 37.5 45 148.5 111|exact
+CHK|uicontrol_inches|double [1 4] 0.1979166667 0.3020833333 1.041666667 0.4166666667|exact
+CHK|panel_inches|double [1 4] 0.5104166667 0.6145833333 2.083333333 1.5625|exact
+CHK|panel_inner_inches|double [1 4] 0.5208333333 0.625 2.0625 1.541666667|exact
+CHK|uicontrol_centimeters|double [1 4] 0.5027083333 0.7672916667 2.645833333 1.058333333|exact
+CHK|panel_centimeters|double [1 4] 1.296458333 1.561041667 5.291666667 3.96875|exact
+CHK|panel_inner_centimeters|double [1 4] 1.322916667 1.5875 5.23875 3.915833333|exact
+CHK|uicontrol_characters|double [1 4] 3.392857143 1.933333333 17.85714286 2.666666667|exact
+CHK|panel_characters|double [1 4] 8.75 3.933333333 35.71428571 10|exact
+CHK|panel_inner_characters|double [1 4] 8.928571429 4 35.35714286 9.866666667|exact
+CHK|uicontrol_normalized|double [1 4] 0.03392857143 0.06904761905 0.1785714286 0.09523809524|exact
+CHK|panel_normalized|double [1 4] 0.0875 0.1404761905 0.3571428571 0.3571428571|exact
+CHK|panel_inner_normalized|double [1 4] 0.08928571429 0.1428571429 0.3535714286 0.3523809524|exact
+CHK|uicontrol_set_normalized|double [1 4] 281 211 140 105|exact
+CHK|uicontrol_normalized_after_resize|double [1 4] 0.5 0.5 0.25 0.25|exact
+CHK|uicontrol_pixels_after_resize|double [1 4] 351 251 175 125|exact
+CHK|child_in_panel|double [1 4] 100 75 49.5 37|exact
+CHK|child_in_panel_in_figure|double [1 4] 150 135 49.5 37|exact
+CHK|child_in_panel_characters|double [1 4] 17.67857143 4.933333333 8.839285714 2.466666667|exact
+CHK|child_in_panel_points|double [1 4] 74.25 55.5 37.125 27.75|exact
+CHK|uicontrol_default_in_normalized|double [1 4] 0.03392857143 0.04523809524 0.1071428571 0.04761904762|exact
+CHK|uicontrol_units_then_position|double [1 4] 57 43 112 84|exact
+CHK|uicontrol_position_then_units|double [1 4] 0.1 0.1 0.2 0.2|exact
+CHK|fontunits_normalized_to_pixels|double [1 1] 20|exact
+CHK|uicontrol_units_bogus|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|uicontrol_units_bogus_msg|Error setting property 'Units' of class 'UIControl': 'bogus' is not a valid value. Use one of these values: 'inches' / 'centimeters' / 'characters' / 'normalized' / 'points' / 'pixels'.|exact
+CHK|gpp_figure|double [1 4] 100 100 560 420|exact
+CHK|gpp_figure_recursive|double [1 4] 100 100 560 420|exact
+CHK|gpp_root|double [1 4] 0 0 0 0|exact
+CHK|gpp_no_arguments|MATLAB:narginchk:notEnoughInputs|exact
+CHK|gpp_no_arguments_msg|Not enough input arguments.|exact
+CHK|gpp_not_a_handle|MATLAB:getpixelposition:InvalidHandle|exact
+CHK|gpp_not_a_handle_msg|First argument must be a valid scalar graphics object handle.|exact
+CHK|gpp_two_handles|MATLAB:getpixelposition:InvalidHandle|exact
+CHK|gpp_two_handles_msg|First argument must be a valid scalar graphics object handle.|exact
+CHK|gpp_three_arguments|MATLAB:TooManyInputs|exact
+CHK|gpp_three_arguments_msg|Too many input arguments.|exact
+CHK|spp_keeps_units|normalized|exact
+CHK|spp_position|double [1 4] 0.007142857143 0.0119047619 0.125 0.1904761905|exact
+CHK|spp_pixels|double [1 4] 5 6 70 80|exact
+CHK|spp_recursive|double [1 4] -10 -10 30 20|exact
+CHK|spp_recursive_in_figure|double [1 4] 40 50 30 20|exact
+CHK|spp_recursive_units|points|exact
+CHK|spp_one_argument|MATLAB:narginchk:notEnoughInputs|exact
+CHK|spp_one_argument_msg|Not enough input arguments.|exact
+CHK|spp_three_numbers|MATLAB:setpixelposition:InvalidPosition|exact
+CHK|spp_three_numbers_msg|Second argument "position" must be a 4 element vector.|exact
+CHK|spp_text|MATLAB:setpixelposition:InvalidPosition|exact
+CHK|spp_text_msg|Second argument "position" must be a 4 element vector.|exact
+CHK|spp_not_a_handle|MATLAB:setpixelposition:InvalidHandle|exact
+CHK|spp_not_a_handle_msg|First argument must be a valid graphics object handle.|exact
+CHK|spp_negative|MATLAB:hg:set_chck:DimensionsOutsideRange|exact
+CHK|spp_negative_msg|Error setting property 'Position' of class 'UIControl': Width and height must be greater than or equal to 0|exact
+CHK|spp_figure|double [1 4] 10 20 300 200|exact
+CHK|spp_axes|double [1 4] 30 40 200 100|exact
+CHK|spp_axes_units|normalized|exact
+CHK|movegui_north|double [1 2] 0 31|exact
+CHK|movegui_north_size|double [1 2] 300 200|exact
+CHK|movegui_south|double [1 2] 0 8|exact
+CHK|movegui_south_size|double [1 2] 300 200|exact
+CHK|movegui_east|double [1 2] 8 -23|exact
+CHK|movegui_east_size|double [1 2] 300 200|exact
+CHK|movegui_west|double [1 2] 8 -23|exact
+CHK|movegui_west_size|double [1 2] 300 200|exact
+CHK|movegui_northeast|double [1 2] 8 31|exact
+CHK|movegui_northeast_size|double [1 2] 300 200|exact
+CHK|movegui_northwest|double [1 2] 8 31|exact
+CHK|movegui_northwest_size|double [1 2] 300 200|exact
+CHK|movegui_southeast|double [1 2] 8 8|exact
+CHK|movegui_southeast_size|double [1 2] 300 200|exact
+CHK|movegui_southwest|double [1 2] 8 8|exact
+CHK|movegui_southwest_size|double [1 2] 300 200|exact
+CHK|movegui_center|double [1 2] 0 -23|exact
+CHK|movegui_center_size|double [1 2] 300 200|exact
+CHK|movegui_onscreen_already|double [1 4] 200 200 300 200|exact
+CHK|movegui_offset|double [1 4] 19 29 300 200|exact
+CHK|movegui_negative_offset|double [1 2] 18 51|exact
+CHK|movegui_default_is_onscreen|double [1 4] 47 47 300 200|exact
+CHK|movegui_onscreen_from_beyond|double [1 2] 46 69|exact
+CHK|movegui_by_child|double [1 4] 9 9 300 200|exact
+CHK|movegui_keeps_units|normalized|exact
+CHK|movegui_normalized_figure|double [1 4] 9 9 300 200|exact
+CHK|movegui_bogus|MATLAB:movegui:UnrecognizedPosition|exact
+CHK|movegui_bogus_msg|unrecognized position|exact
+CHK|movegui_not_a_handle|MATLAB:movegio:UnrecognizedInput|exact
+CHK|movegui_not_a_handle_msg|unrecognized input argument|exact
+CHK|movegui_three_numbers|MATLAB:movegio:UnrecognizedInput|exact
+CHK|movegui_three_numbers_msg|unrecognized input argument|exact
+CHK|movegui_cell|MATLAB:movegio:UnrecognizedInput|exact
+CHK|movegui_cell_msg|unrecognized input argument|exact
+CHK|movegui_uifigure|double [1 2] 8 31|exact

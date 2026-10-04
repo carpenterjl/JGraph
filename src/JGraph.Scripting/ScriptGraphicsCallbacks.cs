@@ -98,7 +98,10 @@ public static class ScriptGraphicsCallbacks
     public static void NotifySizeChanged(FigureModel figure)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        if (HasCallback(figure, GraphicsEventKind.SizeChanged))
+
+        // A figure with components is told even with no callback of its own: its containers may
+        // have one, and AutoResizeChildren moves its children on the script thread (U2).
+        if (HasCallback(figure, GraphicsEventKind.SizeChanged) || figure.Components.Count > 0)
         {
             ScriptEventQueue.Enqueue(
                 new GraphicsEvent(GraphicsEventKind.SizeChanged, figure), coalesce: true);

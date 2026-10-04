@@ -129,6 +129,14 @@ public sealed class UiControlModel : UiObject
 
     private static readonly UiNumbers One = new([1], 1, 1);
 
+    /// <summary>Whether a script set <see cref="Value"/>, rather than it following the style.</summary>
+    [Browsable(false)]
+    public bool ValueIsSet => _valueSet;
+
+    /// <summary>Whether a script set <see cref="BackgroundColor"/>, rather than it following the style.</summary>
+    [Browsable(false)]
+    public bool BackgroundIsSet => _backgroundSet;
+
     [Browsable(false)]
     public double Min
     {

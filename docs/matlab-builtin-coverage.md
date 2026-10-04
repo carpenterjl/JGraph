@@ -34,7 +34,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**432 of 514 builtins implemented** (431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**433 of 514 builtins implemented** (432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -103,8 +103,10 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,159 of
-2,024** as of app-building stage U1 (ADR 0198), which added `uicontrol`; 1,158 as of device
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,166 of
+2,024** as of app-building stage U2 (ADR 0199), which added `uipanel`, `uifigure`,
+`getpixelposition`, `setpixelposition`, `movegui`, `uistack` and `allchild`; 1,159 as of
+app-building stage U1 (ADR 0198), which added `uicontrol`; 1,158 as of device
 classes stage D13 (ADR 0197), which added `serialExplorer`; 1,157 as of device
 classes stage D10 (ADR 0193), which added `audiodevinfo`, `audiodevreset` and
 `soundsc`, beside the classes `audioplayer` and `audiorecorder`, which the list does not name; 1,154
@@ -1047,12 +1049,16 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 82
+## Not implemented — 81
 
-### Handle graphics and app building — 6
+### Handle graphics and app building — 5
 
-`hgsetget` `selectmoveresize` `uipanel` `uipushtool`
+`hgsetget` `selectmoveresize` `uipushtool`
 `uitoggletool` `uitoolbar`
+
+**App-building stage U2 took `uipanel`** (ADR 0199): the container, in a classic figure and in a
+`uifigure`, with the units engine, the placement verbs and `uifigure` itself — functions rather
+than builtins in MATLAB, so they move the callable count and not this one.
 
 **App-building stage U1 took `uicontrol`** (ADR 0198): the classic component, with R2025b's whole
 property surface and its refusals, realised in the figure window for its `text`, `edit` and

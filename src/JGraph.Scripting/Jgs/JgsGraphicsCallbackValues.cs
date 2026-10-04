@@ -111,6 +111,7 @@ internal static class JgsGraphicsCallbackValues
     public static string ClassWord(GraphObject target) => target switch
     {
         UiControlModel => "UIControl",
+        UiPanelModel => "Panel",
         FigureModel => "Figure",
         AxesModel => "Axes",
         ContextMenuModel => "ContextMenu",
@@ -144,6 +145,7 @@ internal static class JgsUiEventData
     public const string MouseDataClass = "matlab.ui.eventdata.MouseData";
     public const string ScrollWheelDataClass = "matlab.ui.eventdata.ScrollWheelData";
     public const string HitClass = "matlab.graphics.eventdata.Hit";
+    public const string SizeChangedDataClass = "matlab.ui.eventdata.SizeChangedData";
 
     /// <summary>The built-in event data classes made here, each a handle and an <c>event.EventData</c>.</summary>
     private static readonly HashSet<string> Classes = new(StringComparer.Ordinal)
@@ -156,6 +158,7 @@ internal static class JgsUiEventData
         MouseDataClass,
         ScrollWheelDataClass,
         HitClass,
+        SizeChangedDataClass,
     };
 
     /// <summary>Whether a classed struct is one of the built-in event data classes made here.</summary>

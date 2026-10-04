@@ -1,0 +1,352 @@
+classic get names (38): BorderColor,Tooltip,Enable,ForegroundColor,HighlightColor,BorderType,BorderWidth,TitlePosition,Title,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout,FontUnits,FontSize,FontName,FontAngle,FontWeight,AutoResizeChildren,Scrollable
+classic set names (35): BorderColor,Tooltip,Enable,ForegroundColor,HighlightColor,BorderType,BorderWidth,TitlePosition,Title,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,Interruptible,CreateFcn,DeleteFcn,Tag,UserData,Clipping,Units,Position,OuterPosition,Layout,FontUnits,FontSize,FontName,FontAngle,FontWeight,AutoResizeChildren,Scrollable
+  set BorderType options: cell [2 1] {'none','line'}
+  set TitlePosition options: cell [6 1] {'lefttop','centertop','righttop','leftbottom','centerbottom','rightbottom'}
+  set Units options: cell [6 1] {'inches','centimeters','characters','normalized','points','pixels'}
+  set FontUnits options: cell [5 1] {'inches','centimeters','normalized','points','pixels'}
+  set FontWeight options: cell [2 1] {'normal','bold'}
+  set FontAngle options: cell [2 1] {'normal','italic'}
+  set Enable options: cell [2 1] {OnOff on,OnOff off}
+  set HandleVisibility options: cell [3 1] {'on','callback','off'}
+  set BusyAction options: cell [2 1] {'queue','cancel'}
+classic defaults:
+  BorderColor = double [0.49019608 0.49019608 0.49019608]
+  Tooltip = ''
+  Enable = OnOff on
+  ForegroundColor = double [0.12941176 0.12941176 0.12941176]
+  HighlightColor = double [0.49019608 0.49019608 0.49019608]
+  BorderType = 'line'
+  BorderWidth = double 1
+  TitlePosition = 'lefttop'
+  Title = ''
+  Visible = OnOff on
+  BackgroundColor = double [0.96078431 0.96078431 0.96078431]
+  SizeChangedFcn = ''
+  Children = matlab.graphics.GraphicsPlaceholder empty [0 0]
+  Parent = <matlab.ui.Figure [1 1]>
+  HandleVisibility = 'on'
+  ButtonDownFcn = ''
+  ContextMenu = matlab.graphics.GraphicsPlaceholder empty [0 0]
+  BusyAction = 'queue'
+  BeingDeleted = OnOff off
+  Interruptible = OnOff on
+  CreateFcn = ''
+  DeleteFcn = ''
+  Type = 'uipanel'
+  Tag = ''
+  UserData = double [0 0]
+  Clipping = OnOff on
+  Units = 'normalized'
+  Position = double [0 0 1 1]
+  InnerPosition = double [0.0017857143 0.0023809524 0.99642857 0.9952381]
+  OuterPosition = double [0 0 1 1]
+  Layout = <matlab.ui.layout.LayoutOptions>
+  FontUnits = 'points'
+  FontSize = double 8
+  FontName = 'MS Sans Serif'
+  FontAngle = 'normal'
+  FontWeight = 'normal'
+  AutoResizeChildren = OnOff off
+  Scrollable = OnOff off
+class=matlab.ui.container.Panel Type=uipanel
+uifigure get names (38): BorderColor,Tooltip,Enable,ForegroundColor,HighlightColor,BorderType,BorderWidth,TitlePosition,Title,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout,FontUnits,FontSize,FontName,FontAngle,FontWeight,AutoResizeChildren,Scrollable
+uifigure defaults:
+  BorderColor = double [0.49019608 0.49019608 0.49019608]
+  Tooltip = ''
+  Enable = OnOff on
+  ForegroundColor = double [0.12941176 0.12941176 0.12941176]
+  HighlightColor = double [0.49019608 0.49019608 0.49019608]
+  BorderType = 'line'
+  BorderWidth = double 1
+  TitlePosition = 'lefttop'
+  Title = ''
+  Visible = OnOff on
+  BackgroundColor = double [0.96078431 0.96078431 0.96078431]
+  SizeChangedFcn = ''
+  Children = matlab.graphics.GraphicsPlaceholder empty [0 0]
+  Parent = <matlab.ui.Figure [1 1]>
+  HandleVisibility = 'on'
+  ButtonDownFcn = ''
+  ContextMenu = matlab.graphics.GraphicsPlaceholder empty [0 0]
+  BusyAction = 'queue'
+  BeingDeleted = OnOff off
+  Interruptible = OnOff on
+  CreateFcn = ''
+  DeleteFcn = ''
+  Type = 'uipanel'
+  Tag = ''
+  UserData = double [0 0]
+  Clipping = OnOff on
+  Units = 'pixels'
+  Position = double [20 20 260 221]
+  InnerPosition = double [21 21 258 219]
+  OuterPosition = double [20 20 260 221]
+  Layout = <matlab.ui.layout.LayoutOptions>
+  FontUnits = 'pixels'
+  FontSize = double 12
+  FontName = 'Helvetica'
+  FontAngle = 'normal'
+  FontWeight = 'normal'
+  AutoResizeChildren = OnOff on
+  Scrollable = OnOff off
+hidden get ShadowColor : double [0.7 0.7 0.7]
+hidden get BorderColor : double [0.49019608 0.49019608 0.49019608]
+hidden get HighlightColor : double [0.49019608 0.49019608 0.49019608]
+hidden get ResizeFcn : ''
+hidden get UIContextMenu : matlab.graphics.GraphicsPlaceholder empty [0 0]
+hidden get TooltipString : ERR MATLAB:hg:InvalidProperty | Unrecognized property TooltipString for class matlab.ui.container.Panel.
+hidden get Selected : OnOff off
+hidden get SelectionHighlight : OnOff on
+hidden get HitTest : OnOff on
+hidden get PickableParts : ERR MATLAB:hg:InvalidProperty | Unrecognized property PickableParts for class matlab.ui.container.Panel.
+hidden get Extent : ERR MATLAB:hg:InvalidProperty | Unrecognized property Extent for class matlab.ui.container.Panel.
+hidden get Layout : <matlab.ui.layout.LayoutOptions>
+hidden get ContextMenu : matlab.graphics.GraphicsPlaceholder empty [0 0]
+uipanel() : 'matlab.ui.container.Panel'
+gcf after bare uipanel is f? 1 ; figures: 2
+uipanel(f) : logical true
+uipanel(f,'Title','T') : 'T'
+uipanel('Parent',f) : logical true
+uipanel('Title') : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uipanel(f,'Title') : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uipanel(5.5) : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uipanel(struct) : 'S'
+uipanel(f,struct) : 'S2'
+uipanel(f,'Bogus',1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Panel.
+uipanel(f,'BorderType','bogus') : ERR MATLAB:datatypes:InvalidEnumValue | 'bogus' is not a valid value. Use one of these values: 'none' | 'line'.
+uipanel(uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uipanel(uicontrol,'Title','x') : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uipanel(axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uipanel('Parent',axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uipanel(panel) : logical true
+uicontrol(panel) : logical true
+uicontrol('Parent',panel) : logical true
+axes(panel) : logical true
+axes('Parent',panel) : logical true
+uipanel(uifigure) : logical true
+uicontrol(uifigure) : logical true
+Title <- 'abc' : 'abc'
+Title <- "str" : 'str'
+Title <- double 5 : '5'
+Title <- cell [1 2] {'a','b'} : cell [2 1] {'a','b'}
+Title <- char [2 2] ['ab';'cd'] : char [2 2] ['ab';'cd']
+Title <- '' : ''
+Title <- double [0 0] : ''
+Title <- logical true : ERR MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass | Error setting property 'Title' of class 'Panel': Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.
+Title <- cell [1 1] {'a'} : cell [1 1] {'a'}
+Title <- string [1 2] [a,b] : cell [2 1] {'a','b'}
+BorderType <- 'none' : 'none'
+BorderType <- 'line' : 'line'
+[Warning: BorderType will not accept etchedin in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 99)] 
+BorderType <- 'etchedin' : 'etchedin'
+[Warning: BorderType will not accept etchedout in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 99)] 
+BorderType <- 'etchedout' : 'etchedout'
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 99)] 
+BorderType <- 'beveledin' : 'beveledin'
+[Warning: BorderType will not accept beveledout in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 99)] 
+BorderType <- 'beveledout' : 'beveledout'
+BorderType <- 'LINE' : 'line'
+BorderType <- 'n' : 'none'
+BorderType <- 'etched' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'BorderType' of class 'Panel': 'etched' is not a valid value. Use one of these values: 'none' | 'line'.
+BorderType <- 'bogus' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'BorderType' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'none' | 'line'.
+BorderType <- double 5 : ERR MATLAB:datatypes:InvalidEnumValueFor | Error setting property 'BorderType' of class 'Panel': Invalid enum value. Use one of these values: 'none' | 'line'.
+BorderWidth <- double 2 : double 2
+BorderWidth <- double 0 : double 0
+BorderWidth <- double -1 : ERR MATLAB:hg:uipanel | Border width cannot have negative values.
+BorderWidth <- double 1.5 : double 1.5
+BorderWidth <- 'a' : ERR MATLAB:class:RequireNumeric | Error setting property 'BorderWidth' of class 'Panel': Value must be numeric or logical.
+BorderWidth <- double [1 2] : ERR MATLAB:class:RequireScalar | Error setting property 'BorderWidth' of class 'Panel': Value must be a scalar.
+BorderWidth <- double [0 0] : ERR MATLAB:class:RequireScalar | Error setting property 'BorderWidth' of class 'Panel': Value must be a scalar.
+BorderWidth <- double NaN : double NaN
+BorderWidth <- double Inf : double Inf
+BorderWidth <- int8 3 : double 3
+TitlePosition <- 'lefttop' : 'lefttop'
+TitlePosition <- 'centertop' : 'centertop'
+TitlePosition <- 'righttop' : 'righttop'
+TitlePosition <- 'leftbottom' : 'leftbottom'
+TitlePosition <- 'centerbottom' : 'centerbottom'
+TitlePosition <- 'rightbottom' : 'rightbottom'
+TitlePosition <- 'CENTERTOP' : 'centertop'
+TitlePosition <- 'left' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'TitlePosition' of class 'Panel': 'left' is not a valid value. Use one of these values: 'lefttop' | 'centertop' | 'righttop' | 'leftbottom' | 'centerbottom' | 'rightbottom'.
+TitlePosition <- 'c' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'TitlePosition' of class 'Panel': 'c' is not a valid value. Use one of these values: 'lefttop' | 'centertop' | 'righttop' | 'leftbottom' | 'centerbottom' | 'rightbottom'.
+TitlePosition <- 'bogus' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'TitlePosition' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'lefttop' | 'centertop' | 'righttop' | 'leftbottom' | 'centerbottom' | 'rightbottom'.
+BackgroundColor <- double [1 0 0] : double [1 0 0]
+BackgroundColor <- 'r' : double [1 0 0]
+BackgroundColor <- 'red' : double [1 0 0]
+BackgroundColor <- '#00FF00' : double [0 1 0]
+BackgroundColor <- 'none' : ERR MATLAB:hg:ColorSpec_None | Cannot set Panel BackgroundColor to 'none'.
+BackgroundColor <- double [2 0 0] : ERR MATLAB:hg:ColorBase:BadColorValue | Error setting property 'BackgroundColor' of class 'Panel': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+BackgroundColor <- double [1 0] : ERR MATLAB:datatypes:RGBAColor:ValueMustBe3or4ElementVector | Error setting property 'BackgroundColor' of class 'Panel': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+BackgroundColor <- 'bogus' : ERR MATLAB:datatypes:RGBAColor:ParseError | Error setting property 'BackgroundColor' of class 'Panel': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+BackgroundColor <- "blue" : double [0 0 1]
+BackgroundColor <- uint8 [255 0 0] : double [1 0 0]
+ForegroundColor <- double [0 0 1] : double [0 0 1]
+ForegroundColor <- 'none' : 'none'
+ForegroundColor <- 'g' : double [0 1 0]
+HighlightColor <- double [0 1 1] : double [0 1 1]
+HighlightColor <- 'k' : double [0 0 0]
+HighlightColor <- 'none' : 'none'
+BorderColor <- double [0 1 0] : double [0 1 0]
+BorderColor <- 'k' : double [0 0 0]
+BorderColor <- 'none' : 'none'
+[Warning: ShadowColor will be removed in a future release. Use BorderColor instead.] 
+[> In u2_panel (line 99)] 
+ShadowColor <- double [0 1 0] : double [0 1 0]
+[Warning: ShadowColor will be removed in a future release. Use BorderColor instead.] 
+[> In u2_panel (line 99)] 
+ShadowColor <- 'k' : double [0 0 0]
+FontSize <- double 10 : double 10
+FontSize <- double 0 : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBePositive | Value should be a double number greater than 0.
+FontSize <- double -1 : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeNotNegative | Error setting property 'FontSize' of class 'Panel': Value should be a double number greater than or equal to 0.
+FontSize <- 'a' : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar | Error setting property 'FontSize' of class 'Panel': Value should be a numeric scalar.
+FontSize <- double [1 2] : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar | Error setting property 'FontSize' of class 'Panel': Value should be a numeric scalar.
+FontSize <- double 8.5 : double 8.5
+FontName <- 'Arial' : 'Arial'
+FontName <- '' : ERR MATLAB:class:MATLABConversionError | Error setting property 'FontName' of class 'Panel': Character vector value must not be empty
+FontName <- double 5 : ERR MATLAB:class:RequireString | Error setting property 'FontName' of class 'Panel': Value must be a character vector or a string scalar.
+FontName <- "Courier" : 'Courier'
+FontWeight <- 'bold' : 'bold'
+FontWeight <- 'light' : 'light'
+FontWeight <- 'demi' : 'demi'
+FontWeight <- 'normal' : 'normal'
+FontWeight <- 'b' : 'bold'
+FontWeight <- 'heavy' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'FontWeight' of class 'Panel': 'heavy' is not a valid value. Use one of these values: 'normal' | 'bold'.
+FontAngle <- 'italic' : 'italic'
+FontAngle <- 'oblique' : 'oblique'
+FontAngle <- 'normal' : 'normal'
+FontAngle <- 'bogus' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'FontAngle' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'normal' | 'italic'.
+FontUnits <- 'pixels' : 'pixels'
+FontUnits <- 'normalized' : 'normalized'
+FontUnits <- 'inches' : 'inches'
+FontUnits <- 'centimeters' : 'centimeters'
+FontUnits <- 'points' : 'points'
+FontUnits <- 'bogus' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'FontUnits' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'inches' | 'centimeters' | 'normalized' | 'points' | 'pixels'.
+Units <- 'pixels' : 'pixels'
+Units <- 'normalized' : 'normalized'
+Units <- 'inches' : 'inches'
+Units <- 'centimeters' : 'centimeters'
+Units <- 'points' : 'points'
+Units <- 'characters' : 'characters'
+Units <- 'PIX' : 'pixels'
+Units <- 'bogus' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'Units' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels'.
+Position <- double [10 20 30 40] : double [10 20 30 40]
+Position <- double [10 20 0 40] : double [10 20 0 40]
+Position <- double [10 20 -5 40] : ERR MATLAB:hg:set_chck:DimensionsOutsideRange | Error setting property 'Position' of class 'Panel': Width and height must be greater than or equal to 0
+Position <- double [1 2 3] : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector | Error setting property 'Position' of class 'Panel': Value must be a 4 element vector
+Position <- 'a' : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric | Error setting property 'Position' of class 'Panel': Value must be numeric and finite
+Position <- double [10 20 30 NaN] : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric | Error setting property 'Position' of class 'Panel': Value must be numeric and finite
+Position <- double [10 20 30 Inf] : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric | Error setting property 'Position' of class 'Panel': Value must be numeric and finite
+Position <- cell [1 1] {double 1} : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric | Error setting property 'Position' of class 'Panel': Value must be numeric and finite
+InnerPosition <- double [10 20 30 40] : ERR MATLAB:class:SetProhibited | Unable to set the 'InnerPosition' property of class ''Panel'' because it is read-only.
+OuterPosition <- double [10 20 30 40] : double [10 20 30 40]
+Visible <- 'off' : OnOff off
+Visible <- 'on' : OnOff on
+Visible <- logical true : OnOff on
+Visible <- logical false : OnOff off
+Visible <- double 1 : OnOff on
+Visible <- double 0 : OnOff off
+Visible <- 'bogus' : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'Visible' of class 'Panel': Invalid enum value. Use one of these values: 'on' | 'off'.
+Visible <- "off" : OnOff off
+Enable <- 'off' : OnOff off
+Enable <- 'inactive' : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'Enable' of class 'Panel': Invalid enum value. Use one of these values: 'on' | 'off'.
+Enable <- 'on' : OnOff on
+Enable <- 'bogus' : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'Enable' of class 'Panel': Invalid enum value. Use one of these values: 'on' | 'off'.
+Scrollable <- 'on' : OnOff on
+Scrollable <- 'off' : OnOff off
+Scrollable <- logical true : OnOff on
+AutoResizeChildren <- 'on' : OnOff on
+AutoResizeChildren <- 'off' : OnOff off
+Clipping <- 'off' : OnOff off
+Clipping <- 'on' : OnOff on
+Tag <- 't' : 't'
+Tag <- double 5 : ERR MATLAB:class:RequireString | Error setting property 'Tag' of class 'Panel': Value must be a character vector or a string scalar.
+Tag <- "s" : 's'
+Tooltip <- 'tip' : 'tip'
+Tooltip <- cell [1 2] {'a','b'} : cell [2 1] {'a','b'}
+Tooltip <- double 5 : ERR MATLAB:graphics:datatype:UIStringsDataType:NoNumericValue | Error setting property 'Tooltip' of class 'Panel': UIStrings data type does not support numeric values.
+HandleVisibility <- 'off' : 'off'
+HandleVisibility <- 'callback' : 'callback'
+HandleVisibility <- 'on' : 'on'
+HandleVisibility <- 'bogus' : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'HandleVisibility' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'on' | 'callback' | 'off'.
+SizeChangedFcn <- @@(s,e)1 : @@(s,e)1
+SizeChangedFcn <- 'disp(1)' : 'disp(1)'
+SizeChangedFcn <- cell [1 2] {@disp,double 1} : cell [2 1] {@disp,double 1}
+SizeChangedFcn <- '' : ''
+SizeChangedFcn <- double [0 0] : ''
+SizeChangedFcn <- double 5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'SizeChangedFcn' of class 'Panel': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+ResizeFcn <- 'disp(2)' : 'disp(2)'
+ButtonDownFcn <- 'disp(3)' : 'disp(3)'
+ButtonDownFcn <- '' : ''
+Type <- 'x' : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Panel'' because it is read-only.
+BeingDeleted <- 'on' : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''Panel'' because it is read-only.
+Children <- double [0 0] : matlab.graphics.GraphicsPlaceholder empty [0 0]
+Parent <- <matlab.ui.Figure [1 1]> : <matlab.ui.Figure [1 1]>
+Parent <- <matlab.ui.Figure [1 1]> : <matlab.ui.Figure [1 1]>
+Parent <- double [0 0] : matlab.graphics.GraphicsPlaceholder empty [0 0]
+Parent <- double 0 : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+Parent <- <matlab.graphics.axis.Axes [1 1]> : ERR MATLAB:hg:DeletedObject | Cannot set property to a deleted object.
+after ResizeFcn set: SizeChangedFcn='disp(2)'
+== classic inner areas of a 200x150 panel at [50 60]
+  [] child=[1 1 198 148] Inner=[51 61 198 148] Outer=[50 60 200 150] gpp(child)=[1 1 198 148] gpp(child,true)=[51 61 198 148]
+  [Title,T] child=[1 1 198 138] Inner=[51 61 198 138] Outer=[50 60 200 150] gpp(child)=[1 1 198 138] gpp(child,true)=[51 61 198 138]
+  [Title,T,FontSize,12] child=[1 1 198 133] Inner=[51 61 198 133] Outer=[50 60 200 150] gpp(child)=[1 1 198 133] gpp(child,true)=[51 61 198 133]
+  [Title,T,FontSize,20] child=[1 1 198 122] Inner=[51 61 198 122] Outer=[50 60 200 150] gpp(child)=[1 1 198 122] gpp(child,true)=[51 61 198 122]
+  [Title,T,FontUnits,pixels,FontSize,20] child=[1 1 198 129] Inner=[51 61 198 129] Outer=[50 60 200 150] gpp(child)=[1 1 198 129] gpp(child,true)=[51 61 198 129]
+  [Title,Tg,FontName,Arial,FontSize,10] child=[1 1 198 136] Inner=[51 61 198 136] Outer=[50 60 200 150] gpp(child)=[1 1 198 136] gpp(child,true)=[51 61 198 136]
+  [Title,T,TitlePosition,centertop] child=[1 1 198 138] Inner=[51 61 198 138] Outer=[50 60 200 150] gpp(child)=[1 1 198 138] gpp(child,true)=[51 61 198 138]
+  [Title,T,TitlePosition,leftbottom] child=[1 1 198 138] Inner=[51 71 198 138] Outer=[50 60 200 150] gpp(child)=[1 1 198 138] gpp(child,true)=[51 71 198 138]
+  [Title,T,TitlePosition,rightbottom] child=[1 1 198 138] Inner=[51 71 198 138] Outer=[50 60 200 150] gpp(child)=[1 1 198 138] gpp(child,true)=[51 71 198 138]
+  [BorderType,none] child=[1 1 200 150] Inner=[50 60 200 150] Outer=[50 60 200 150] gpp(child)=[1 1 200 150] gpp(child,true)=[50 60 200 150]
+  [BorderType,none,Title,T] child=[1 1 200 139] Inner=[50 60 200 139] Outer=[50 60 200 150] gpp(child)=[1 1 200 139] gpp(child,true)=[50 60 200 139]
+[Warning: BorderType will not accept etchedin in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 136)] 
+  [BorderType,etchedin] child=[1 1 196 146] Inner=[52 62 196 146] Outer=[50 60 200 150] gpp(child)=[1 1 196 146] gpp(child,true)=[52 62 196 146]
+[Warning: BorderType will not accept etchedout in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 136)] 
+  [BorderType,etchedout] child=[1 1 196 146] Inner=[52 62 196 146] Outer=[50 60 200 150] gpp(child)=[1 1 196 146] gpp(child,true)=[52 62 196 146]
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 136)] 
+  [BorderType,beveledin] child=[1 1 198 148] Inner=[51 61 198 148] Outer=[50 60 200 150] gpp(child)=[1 1 198 148] gpp(child,true)=[51 61 198 148]
+[Warning: BorderType will not accept beveledout in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 136)] 
+  [BorderType,beveledout] child=[1 1 198 148] Inner=[51 61 198 148] Outer=[50 60 200 150] gpp(child)=[1 1 198 148] gpp(child,true)=[51 61 198 148]
+  [BorderWidth,3] child=[1 1 194 144] Inner=[53 63 194 144] Outer=[50 60 200 150] gpp(child)=[1 1 194 144] gpp(child,true)=[53 63 194 144]
+  [BorderWidth,0] child=[1 1 200 150] Inner=[50 60 200 150] Outer=[50 60 200 150] gpp(child)=[1 1 200 150] gpp(child,true)=[50 60 200 150]
+  [BorderWidth,3,Title,T] child=[1 1 194 136] Inner=[53 63 194 136] Outer=[50 60 200 150] gpp(child)=[1 1 194 136] gpp(child,true)=[53 63 194 136]
+[Warning: BorderType will not accept etchedin in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 136)] 
+  [BorderType,etchedin,BorderWidth,3] child=[1 1 188 138] Inner=[56 66 188 138] Outer=[50 60 200 150] gpp(child)=[1 1 188 138] gpp(child,true)=[56 66 188 138]
+[Warning: BorderType will not accept beveledin in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 136)] 
+  [BorderType,beveledin,BorderWidth,3] child=[1 1 194 144] Inner=[53 63 194 144] Outer=[50 60 200 150] gpp(child)=[1 1 194 144] gpp(child,true)=[53 63 194 144]
+[Warning: BorderType will not accept etchedin in a future release. Use "line" or "none" instead.] 
+[> In u2_panel (line 136)] 
+  [BorderType,etchedin,Title,T] child=[1 1 196 137] Inner=[52 62 196 137] Outer=[50 60 200 150] gpp(child)=[1 1 196 137] gpp(child,true)=[52 62 196 137]
+  [Title,two] child=[1 1 198 138] Inner=[51 61 198 138] Outer=[50 60 200 150] gpp(child)=[1 1 198 138] gpp(child,true)=[51 61 198 138]
+== uifigure inner areas of a 200x150 panel at [50 60]
+  [] child=[1 1 198 148] Inner=[51 61 198 148] Outer=[50 60 200 150] gpp(child,true)=[51 61 198 148]
+  [Title,T] child=[1 1 198 137] Inner=[51 61 198 137] Outer=[50 60 200 150] gpp(child,true)=[51 61 198 137]
+  [Title,T,FontSize,20] child=[1 1 198 129] Inner=[51 61 198 129] Outer=[50 60 200 150] gpp(child,true)=[51 61 198 129]
+  [Title,T,TitlePosition,centertop] child=[1 1 198 137] Inner=[51 61 198 137] Outer=[50 60 200 150] gpp(child,true)=[51 61 198 137]
+  [BorderType,none] child=[1 1 200 150] Inner=[50 60 200 150] Outer=[50 60 200 150] gpp(child,true)=[50 60 200 150]
+  [BorderType,none,Title,T] child=[1 1 200 138] Inner=[50 60 200 138] Outer=[50 60 200 150] gpp(child,true)=[50 60 200 138]
+  [BorderWidth,3] child=[1 1 194 144] Inner=[53 63 194 144] Outer=[50 60 200 150] gpp(child,true)=[53 63 194 144]
+  [BorderWidth,3,Title,T] child=[1 1 194 135] Inner=[53 63 194 135] Outer=[50 60 200 150] gpp(child,true)=[53 63 194 135]
+uifigure panel Units set : 'normalized'
+[Warning: BorderType will not accept etchedin in a future release. Use "line" or "none" instead.] 
+[> In u2_panel>setget (line 189)
+In u2_panel>@()setget(uipanel(uf),'BorderType','etchedin') (line 168)
+In tryp (line 4)
+In u2_panel (line 168)] 
+uifigure panel BorderType etchedin : 'etchedin'
+uifigure panel TitlePosition leftbottom : 'leftbottom'
+nested: gpp(p2)=[20 30 200 150] gpp(p2,true)=[70 90 200 150] gpp(b)=[10 10 50 20] gpp(b,true)=[80 100 50 20]
+axes in panel: Units=normalized Position=[0.13 0.11 0.775 0.815] Outer=[0 0 1 1] gpp=[26.74 17.28 153.45 120.62] gpp(true)=[96.74 107.28 153.45 120.62]
+ancestor(b,figure)==f 1 ; ancestor(b,uipanel)==p2 1 ; ancestor(a,'uipanel','toplevel')==p 1
+p.Children: uipanel ; p2.Children: uicontrol,axes
+p2 off: b.Visible=on a.Visible=on
+p2 Enable off: b.Enable=on

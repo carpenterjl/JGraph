@@ -52,14 +52,9 @@ internal static partial class JgsGraphicsProperties
         AddInnerPosition(table, "InnerPosition");
 
         Put(table, "OuterPosition",
-            entry => FlipRow(OuterOf(Axes(entry))),
+            entry => AxesRectValue(Axes(entry), inner: false),
             (entry, value, line, col) =>
-            {
-                AxesModel axes = Axes(entry);
-                axes.InnerTarget = null;
-                axes.PositionConstraint = PositionConstraintType.OuterPosition;
-                axes.NormalizedBounds = FlipRect(Box("OuterPosition", value, line, col));
-            });
+                SetAxesRect(Axes(entry), Box("OuterPosition", value, line, col), inner: false));
 
         // Read-only, because it is a measurement. MATLAB orders it [left bottom right top], which is
         // the anticlockwise order its rectangles use rather than the clockwise one a Thickness uses.
@@ -82,12 +77,31 @@ internal static partial class JgsGraphicsProperties
                 {
                     case "innerposition":
                         // Taking the box that is drawn now is what makes the constraint act rather
-                        // than merely be recorded: from here on the margins move instead of it.
-                        axes.InnerTarget = InnerOf(axes);
+                        // than merely be recorded: from here on the margins move instead of it. An
+                        // axes pinned in absolute units is re-pinned by the rectangle it now keeps.
+                        if (axes.PixelBounds is not null && axes.InnerTarget is null)
+                        {
+                            Rect2D inner = AxesPixels(axes, inner: true);
+                            axes.InnerTarget = FractionOf(inner, axes.ReferenceSize());
+                            axes.PixelBounds = inner;
+                        }
+                        else if (axes.PixelBounds is null)
+                        {
+                            axes.InnerTarget = InnerOf(axes);
+                        }
+
                         axes.PositionConstraint = PositionConstraintType.InnerPosition;
                         break;
 
                     case "outerposition":
+                        if (axes.PixelBounds is not null && axes.InnerTarget is not null)
+                        {
+                            Rect2D outer = AxesPixels(axes, inner: false);
+                            axes.NormalizedBounds = FractionOf(outer, axes.ReferenceSize());
+                            axes.InnerTarget = null;
+                            axes.PixelBounds = outer;
+                        }
+
                         axes.InnerTarget = null;
                         axes.PositionConstraint = PositionConstraintType.OuterPosition;
                         break;
@@ -98,30 +112,17 @@ internal static partial class JgsGraphicsProperties
                 }
             });
 
-        // An axes is placed in fractions of its figure and nothing else here measures in points or
-        // pixels, so the one honest answer is 'normalized' and the others are refused by name.
+        // MATLAB's six units (U2). The model keeps fractions of the area the axes is placed in;
+        // in any other unit the rectangle is pinned in pixels and holds them through a resize.
         Put(table, "Units",
-            static entry => JgsValue.Str("normalized"),
-            (entry, value, line, col) =>
-            {
-                string word = JgsBuiltins.StrOf("Units", value, line, col);
-                if (!word.Equals("normalized", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"Axes units other than 'normalized' are not supported, but got '{word}'.");
-                }
-            });
+            entry => UnitsValue(Axes(entry).Units),
+            (entry, value, line, col) => SetAxesUnits(Axes(entry), UnitsWord(entry, value, line, col)));
     }
 
     private static void AddInnerPosition(IDictionary<string, GraphicsProperty> table, string name) =>
         Put(table, name,
-            entry => FlipRow(InnerOf(Axes(entry))),
-            (entry, value, line, col) =>
-            {
-                AxesModel axes = Axes(entry);
-                axes.InnerTarget = FlipRect(Box(name, value, line, col));
-                axes.PositionConstraint = PositionConstraintType.InnerPosition;
-            });
+            entry => AxesRectValue(Axes(entry), inner: true),
+            (entry, value, line, col) => SetAxesRect(Axes(entry), Box(name, value, line, col), inner: true));
 
     /// <summary>The plot box, as fractions of the figure with Y still downward.</summary>
     private static Rect2D InnerOf(AxesModel axes)
@@ -152,7 +153,7 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static AxesLayoutSnapshot LayoutOf(AxesModel axes) =>
         axes.LastLayout ?? AxesLayoutSnapshot.Estimate(
-            axes, axes.Parent is FigureModel figure ? figure.Size : new Size2D(640, 480));
+            axes, axes.Parent is FigureModel ? axes.ReferenceSize() : new Size2D(640, 480));
 
     /// <summary>Reads a four-element rectangle, refusing a width or height that is not positive.</summary>
     private static Rect2D Box(string what, JgsValue value, int line, int col)

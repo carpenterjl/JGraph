@@ -156,11 +156,14 @@ figure at `[340 300 300 200]` lands where and at what size it asked for too. `Po
   on screen. Turning it on gets MATLAB's behaviour.
 - **`MenuBar` answers `'none'`** and refuses `'figure'`, where MATLAB defaults to `'figure'`. This
   window's menus live in its toolbar and its panels.
-- **`Renderer`, `RendererMode`, `WindowStyle`, `DockControls`, `IntegerHandle`, figure `Units` and
-  figure `Clipping` each answer one word and refuse every other.** Painters is the only renderer,
-  figures are ordinary numbered windows, and a figure is measured in pixels.
-- **Axes `Units` answers `'normalized'` and refuses every other.** An axes is placed in fractions of
-  its figure and nothing here measures one in points or centimetres.
+- **`Renderer`, `RendererMode`, `WindowStyle`, `DockControls` and figure `Clipping` each answer one
+  word and refuse every other.** Painters is the only renderer and figures are ordinary windows.
+  (`IntegerHandle` and figure `Units` were on this list until 2026-10-04: U2 of the app-building
+  plan, ADR 0199, made both R2025b's.)
+- ~~**Axes `Units` answers `'normalized'` and refuses every other.** An axes is placed in fractions of
+  its figure and nothing here measures one in points or centimetres.~~
+  — **retired 2026-10-04 by U2 of the app-building plan (ADR 0199).** An axes takes R2025b's six
+  units; one placed in absolute units is pinned in pixels and keeps them through a resize.
 - **`print` with no file name is refused.** MATLAB sends it to the default printer; there is none to
   send it to, and quietly doing nothing would look like success.
 - **Holding overrides the figure's `NextPlot`.** MATLAB's `hold off` sets the figure's `NextPlot` to

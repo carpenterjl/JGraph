@@ -1,0 +1,92 @@
+ScreenSize=[1 1 1920 1200] MonitorPositions=[1 1 1920 1200] PPI=96
+set root Units bogus : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'Units' of class 'Root': 'bogus' is not a valid value. Use one of these values: 'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels'.
+set root ScreenSize : ERR MATLAB:class:SetProhibited | Unable to set the 'ScreenSize' property of class ''Root'' because it is read-only.
+set root MonitorPositions : ERR MATLAB:class:SetProhibited | Unable to set the 'MonitorPositions' property of class ''Root'' because it is read-only.
+root normalized: ScreenSize=[0 0 1 1] MonitorPositions=[0 0 1 1]
+root points: MonitorPositions=[0 0 1440 900] PointerLocation numel=2
+figure pixels      Position=[100 100 560 420] Inner=[100 100 560 420] Outer=[100 100 560 420]
+figure points      Position=[74.25 74.25 420 315] Inner=[74.25 74.25 420 315] Outer=[74.25 74.25 420 315]
+figure inches      Position=[1.03125 1.03125 5.8333333 4.375] Inner=[1.03125 1.03125 5.8333333 4.375] Outer=[1.03125 1.03125 5.8333333 4.375]
+figure centimeters Position=[2.619375 2.619375 14.816667 11.1125] Inner=[2.619375 2.619375 14.816667 11.1125] Outer=[2.619375 2.619375 14.816667 11.1125]
+figure normalized  Position=[0.0515625 0.0825 0.29166667 0.35] Inner=[0.0515625 0.0825 0.29166667 0.35] Outer=[0.0515625 0.0825 0.29166667 0.35]
+figure characters  Position=[17.678571 6.6 100 28] Inner=[17.678571 6.6 100 28] Outer=[17.678571 6.6 100 28]
+figure set [75 75 300 225] points -> pixels [101 101 400 300]
+figure set [.25 .25 .5 .5] normalized -> pixels [481 301 960 600] (screen [1 1 1920 1200])
+figure set [10 10 80 20] characters -> pixels [57 151 448 300]
+figure Units bogus : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'Units' of class 'Figure': 'bogus' is not a valid value. Use one of these values: 'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels'.
+figure Units PIX : 'pixels'
+figure Units norm : 'normalized'
+figure(Units normalized, Position) -> Units=normalized Position=[0.1 0.1 0.5 0.5]
+figure(Position, Units normalized) -> Units=normalized Position=[-0.00046875 -0.00075 0.00026041667 0.00041666667]
+default figure Position size=[1194 719] Units=pixels
+axes default Units=normalized Position=[0.13 0.11 0.775 0.815] Outer=[0 0 1 1]
+axes pixels      Position=[73.8 47.2 434 342.3] Inner=[73.8 47.2 434 342.3] Outer=[1 1 560 420]
+axes points      Position=[54.6 34.65 325.5 256.725] Inner=[54.6 34.65 325.5 256.725] Outer=[0 0 420 315]
+axes inches      Position=[0.75833333 0.48125 4.5208333 3.565625] Inner=[0.75833333 0.48125 4.5208333 3.565625] Outer=[0 0 5.8333333 4.375]
+axes centimeters Position=[1.9261667 1.222375 11.482917 9.0566875] Inner=[1.9261667 1.222375 11.482917 9.0566875] Outer=[0 0 14.816667 11.1125]
+axes normalized  Position=[0.13 0.11 0.775 0.815] Inner=[0.13 0.11 0.775 0.815] Outer=[0 0 1 1]
+axes characters  Position=[13 3.08 77.5 22.82] Inner=[13 3.08 77.5 22.82] Outer=[0 0 100 28]
+axes pixels set [50 60 300 200]: Position=[50 60 300 200] constraint=innerposition
+  after figure resize to 700x500: Position=[50 60 300 200] (pixels held)
+  back to normalized: Position=[0.07 0.118 0.42857143 0.4]
+  figure back to 560x420, axes normalized held: Position=[0.07 0.118 0.42857143 0.4] ; pixels=[40.2 50.56 240 168]
+axes Units bogus : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'Units' of class 'Axes': 'bogus' is not a valid value. Use one of these values: 'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels'.
+axes Position zero width : double [0 0]
+axes(Units pixels, Position) -> pixels [10 10 100 80]
+axes(Position, Units pixels) -> pixels [5601 4201 56000 33600]
+axes OuterPosition [0 0 .5 .5] pixels gpp=[37.4 24.1 217 171.15]
+pixels      uicontrol=[20 30 100 40] panel=[50 60 200 150] panelInner=[51 61 198 148]
+points      uicontrol=[14.25 21.75 75 30] panel=[36.75 44.25 150 112.5] panelInner=[37.5 45 148.5 111]
+inches      uicontrol=[0.19791667 0.30208333 1.0416667 0.41666667] panel=[0.51041667 0.61458333 2.0833333 1.5625] panelInner=[0.52083333 0.625 2.0625 1.5416667]
+centimeters uicontrol=[0.50270833 0.76729167 2.6458333 1.0583333] panel=[1.2964583 1.5610417 5.2916667 3.96875] panelInner=[1.3229167 1.5875 5.23875 3.9158333]
+normalized  uicontrol=[0.033928571 0.069047619 0.17857143 0.095238095] panel=[0.0875 0.14047619 0.35714286 0.35714286] panelInner=[0.089285714 0.14285714 0.35357143 0.35238095]
+characters  uicontrol=[3.3928571 1.9333333 17.857143 2.6666667] panel=[8.75 3.9333333 35.714286 10] panelInner=[8.9285714 4 35.357143 9.8666667]
+uicontrol normalized [.5 .5 .25 .25] in 560x420 -> [281 211 140 105]
+  after figure 700x500: normalized=[0.5 0.5 0.25 0.25] pixels=[351 251 175 125]
+child normalized in panel 200x150: gpp=[100 75 49.5 37] gpp(true)=[150 135 49.5 37]
+  child characters=[17.678571 4.9333333 8.8392857 2.4666667]
+  child points=[74.25 55.5 37.125 27.75]
+uicontrol(Units normalized) default Position=[0.033928571 0.045238095 0.10714286 0.047619048]
+uicontrol(Units normalized, Position [.1 .1 .2 .2]) pixels=[57 43 112 84]
+uicontrol(Position [.1 .1 .2 .2], Units normalized) Position=[-0.0016071429 -0.0021428571 0.00035714286 0.00047619048]
+FontUnits normalized 0.5 of height 40 -> pixels 20
+   -> points 15
+gpp(f)=[100 100 560 420] gpp(f,true)=[100 100 560 420]
+gpp() : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+gpp(5.5) : ERR MATLAB:getpixelposition:InvalidHandle | First argument must be a valid scalar graphics object handle.
+gpp(0) : double [0 0 0 0]
+gpp(c, 1) : double [281 211 140 105]
+gpp(c, 'x') : double [281 211 140 105]
+gpp([c p]) : ERR MATLAB:getpixelposition:InvalidHandle | First argument must be a valid scalar graphics object handle.
+setpixelposition on normalized: Units=normalized Position=[0.0071428571 0.011904762 0.125 0.19047619] gpp=[5 6 70 80]
+setpixelposition(k,..,true) in panel at [50 60]: gpp=[-10 -10 30 20] gpp(true)=[40 50 30 20] Units=points
+spp(c) : ERR MATLAB:TooManyOutputs | Too many output arguments.
+spp(c,[1 2 3]) : ERR MATLAB:TooManyOutputs | Too many output arguments.
+spp(5.5,[1 2 3 4]) : ERR MATLAB:TooManyOutputs | Too many output arguments.
+spp(f,[10 20 300 200]) : double [10 20 300 200]
+spp(axes) : double [30 40 200 100]
+  axes Units after spp=normalized
+nargout spp : double 0
+nargout gpp : double 1
+nargin gpp : double 2
+movegui north     Position=[811 921 300 200] left=810 bottom=920 rightgap=810 topgap=80 outer=[811 921 300 200]
+movegui south     Position=[811 9 300 200] left=810 bottom=8 rightgap=810 topgap=992 outer=[811 9 300 200]
+movegui east      Position=[1613 465 300 200] left=1612 bottom=464 rightgap=8 topgap=536 outer=[1613 465 300 200]
+movegui west      Position=[9 465 300 200] left=8 bottom=464 rightgap=1612 topgap=536 outer=[9 465 300 200]
+movegui northeast Position=[1613 921 300 200] left=1612 bottom=920 rightgap=8 topgap=80 outer=[1613 921 300 200]
+movegui northwest Position=[9 921 300 200] left=8 bottom=920 rightgap=1612 topgap=80 outer=[9 921 300 200]
+movegui southeast Position=[1613 9 300 200] left=1612 bottom=8 rightgap=8 topgap=992 outer=[1613 9 300 200]
+movegui southwest Position=[9 9 300 200] left=8 bottom=8 rightgap=1612 topgap=992 outer=[9 9 300 200]
+movegui center    Position=[811 465 300 200] left=810 bottom=464 rightgap=810 topgap=536 outer=[811 465 300 200]
+movegui onscreen  Position=[200 200 300 200] left=199 bottom=199 rightgap=1421 topgap=801 outer=[200 200 300 200]
+movegui [10 20] -> [19 29 300 200]
+movegui [-10 -20] -> rightgap=18 topgap=100
+movegui(f) from [-500 -500] -> [47 47 300 200]
+movegui onscreen from [-500 -500] -> [47 47 300 200]
+movegui onscreen from beyond top right -> rightgap=46 topgap=118
+movegui bogus : ERR MATLAB:TooManyOutputs | Too many output arguments.
+movegui(5.5) : ERR MATLAB:TooManyOutputs | Too many output arguments.
+movegui(c) : ERR MATLAB:TooManyOutputs | Too many output arguments.
+movegui('center') string first : double [300 200]
+nargout movegui : double 0
+movegui on normalized figure: Units=normalized

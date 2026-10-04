@@ -239,8 +239,11 @@ public partial class FigureWindow : Window
     internal void ApplyTitle()
     {
         FigureModel? figure = _viewModel.Figure;
-        string number = FigureNumber > 0 ? $"Figure {FigureNumber}" : "JGraph";
-        bool numbered = figure is null || figure.NumberTitle;
+        // A figure with no number of its own (a uifigure) is registered under a key that is not
+        // one, and its title never carries it.
+        bool hasNumber = FigureNumber > 0 && !JGraph.Api.JG.IsHiddenNumber(FigureNumber) && figure is not { IntegerHandle: false };
+        string number = hasNumber ? $"Figure {FigureNumber}" : "JGraph";
+        bool numbered = figure is null || (figure.NumberTitle && hasNumber);
         string name = figure?.Name is { Length: > 0 } given && given != "Figure" ? given : string.Empty;
 
         Title = (numbered, name.Length > 0) switch
@@ -258,13 +261,40 @@ public partial class FigureWindow : Window
         _binding.Bind(_viewModel.Figure);
         ComponentLayer.Bind(_viewModel.Figure);
         ApplyTitle();
+        ApplyPlainness();
+    }
+
+    /// <summary>
+    /// A <c>uifigure</c>'s window is plain (app-building plan, section G): no plotting toolbar, no
+    /// status bar, no plot browser and no inspector — the drawable area and nothing else, so that
+    /// the size a script asked for is the size of what it sees.
+    /// </summary>
+    private void ApplyPlainness()
+    {
+        if (_viewModel.Figure is not { IsUiFigure: true })
+        {
+            FigureStatusBar.Visibility = Visibility.Visible;
+            return;
+        }
+
+        FigureStatusBar.Visibility = Visibility.Collapsed;
+        FigureToolBar.Visibility = Visibility.Collapsed;
+        _viewModel.ShowPlotBrowser = false;
+        _viewModel.ShowInspector = false;
     }
 
     /// <summary>Whether this window shows <paramref name="figure"/>.</summary>
     internal bool Shows(FigureModel figure) => ReferenceEquals(_viewModel.Figure, figure);
 
     /// <summary>Applies a frame of this window's figure's components (U1). UI thread.</summary>
-    internal void ApplyComponentFrame(UiFrame frame) => ComponentLayer.Apply(frame);
+    internal void ApplyComponentFrame(UiFrame frame)
+    {
+        ComponentLayer.Apply(frame);
+
+        // The canvas draws the frame's panels and places the axes in them (U2), so a new frame is
+        // a new picture there too.
+        FigureView.RequestRender();
+    }
 
     /// <summary>
     /// A press anywhere in the window first commits an edit field that has the keyboard, so its value

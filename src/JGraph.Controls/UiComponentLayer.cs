@@ -132,7 +132,7 @@ public sealed class UiComponentLayer : Canvas
             return;
         }
 
-        foreach (UiPlacement placement in UiLayout.Place(_frame, new Size2D(ActualWidth, ActualHeight)))
+        foreach (UiPlacement placement in UiLayout.Compute(_frame, new Size2D(ActualWidth, ActualHeight)).Controls)
         {
             if (!_controls.TryGetValue(placement.Control.Source, out Realised? realised))
             {
@@ -140,12 +140,42 @@ public sealed class UiComponentLayer : Canvas
             }
 
             FrameworkElement element = realised.Element;
-            SetLeft(element, placement.Box.X);
-            SetTop(element, placement.Box.Y);
-            element.Width = placement.Box.Width;
-            element.Height = placement.Box.Height;
-            element.Visibility = placement.Visible ? Visibility.Visible : Visibility.Collapsed;
+            Rect2D box = placement.Box;
+            Rect2D shown = UiLayout.Intersect(placement.Clip, box);
+            SetLeft(element, box.X);
+            SetTop(element, box.Y);
+            element.Width = box.Width;
+            element.Height = box.Height;
+            element.Visibility = placement.Visible && !shown.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+            element.Clip = ClipOf(placement, box, shown);
         }
+    }
+
+    /// <summary>
+    /// What a control's containers leave of it (app-building plan, U2), in its own coordinates: the
+    /// part inside every ancestor panel's inner area, less every panel stacked over it — the panels
+    /// are drawn on the canvas below, so a control they cover has to be cut away rather than covered.
+    /// Null when the control shows whole, which is nearly always.
+    /// </summary>
+    private static Geometry? ClipOf(UiPlacement placement, Rect2D box, Rect2D shown)
+    {
+        bool whole = shown.X <= box.X && shown.Y <= box.Y && shown.Right >= box.Right && shown.Bottom >= box.Bottom;
+        if (whole && placement.Occluders.Count == 0)
+        {
+            return null;
+        }
+
+        Geometry clip = new RectangleGeometry(new Rect(shown.X - box.X, shown.Y - box.Y, shown.Width, shown.Height));
+        foreach (Rect2D over in placement.Occluders)
+        {
+            clip = new CombinedGeometry(
+                GeometryCombineMode.Exclude,
+                clip,
+                new RectangleGeometry(new Rect(over.X - box.X, over.Y - box.Y, over.Width, over.Height)));
+        }
+
+        clip.Freeze();
+        return clip;
     }
 
     // --- one control ---------------------------------------------------------------------------

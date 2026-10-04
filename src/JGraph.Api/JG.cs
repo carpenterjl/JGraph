@@ -37,8 +37,12 @@ public static class JG
     /// </summary>
     public static bool IsHolding => CurrentAxesOrNull?.Hold ?? false;
 
-    /// <summary>The current figure, creating figure 1 if none exists yet.</summary>
-    public static FigureModel CurrentFigure => _currentFigure ?? Figure(1);
+    /// <summary>
+    /// The current figure, creating one if none is current: figure 1 at the start of a run, and the
+    /// next unused number when figures exist that cannot be current (their handles are hidden, U2)
+    /// — a new figure, as MATLAB's <c>gcf</c> makes, rather than one of those.
+    /// </summary>
+    public static FigureModel CurrentFigure => _currentFigure ?? Figure();
 
     /// <summary>The current figure's number (1-based, MATLAB-style), creating figure 1 if none exists.</summary>
     public static int CurrentFigureNumber
@@ -108,6 +112,94 @@ public static class JG
             Touch(number);
             return figure;
         }
+    }
+
+    /// <summary>
+    /// The first number of the range a figure with no number of its own is registered under (U2). A
+    /// <c>uifigure</c> has no figure number in MATLAB, takes none from the ones <see cref="Figure()"/>
+    /// hands out, and is never current; it still needs a key here, because the windows, the flushes
+    /// and the touch stamps are all kept by number.
+    /// </summary>
+    public const int FirstHiddenNumber = 1_000_000_000;
+
+    /// <summary>Whether <paramref name="number"/> is a key of the hidden range rather than a figure number.</summary>
+    public static bool IsHiddenNumber(int number) => number >= FirstHiddenNumber;
+
+    /// <summary>
+    /// Whether a figure may be the current one. The script layer answers from the figure's
+    /// <c>HandleVisibility</c>; with nothing installed every figure may.
+    /// </summary>
+    public static Func<FigureModel, bool>? CanBeCurrent { get; set; }
+
+    /// <summary>
+    /// Registers a figure that has no number (a <c>uifigure</c>) under a key of the hidden range,
+    /// marks it touched so the run shows it, and leaves the current figure alone.
+    /// </summary>
+    public static int RegisterHiddenFigure(FigureModel figure)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        lock (Registry)
+        {
+            int number = GetFigureNumber(figure);
+            if (number == 0)
+            {
+                number = FirstHiddenNumber;
+                while (Figures.ContainsKey(number))
+                {
+                    number++;
+                }
+
+                Figures[number] = figure;
+            }
+
+            Touch(number);
+            return number;
+        }
+    }
+
+    /// <summary>
+    /// Makes sure the current figure is one that may be current: if it no longer may (its handle was
+    /// hidden), the most recently touched figure that may takes its place, or none does.
+    /// </summary>
+    public static void ReselectCurrent()
+    {
+        lock (Registry)
+        {
+            if (_currentFigure is null || CanBeCurrent is not { } allowed || allowed(_currentFigure))
+            {
+                return;
+            }
+
+            _currentFigure = null;
+            _currentNumber = 0;
+            _currentAxes = null;
+            int successor = MostRecentlyTouched();
+            if (successor != 0)
+            {
+                long stamp = TouchStamps[successor];
+                Figure(successor);
+                TouchStamps[successor] = stamp; // choosing a successor is not touching it
+                _touchCounter--;
+            }
+        }
+    }
+
+    /// <summary>The most recently touched figure that may be current, or 0. Call under the lock.</summary>
+    private static int MostRecentlyTouched()
+    {
+        int successor = 0;
+        long best = long.MinValue;
+        foreach ((int candidate, long touched) in TouchStamps)
+        {
+            if (touched > best && Figures.TryGetValue(candidate, out FigureModel? figure)
+                && (CanBeCurrent?.Invoke(figure) ?? true))
+            {
+                successor = candidate;
+                best = touched;
+            }
+        }
+
+        return successor;
     }
 
     /// <summary>Gets the figure registered under <paramref name="number"/>, if any.</summary>
@@ -1593,17 +1685,7 @@ public static class JG
             _currentNumber = 0;
             _currentAxes = null;
 
-            int successor = 0;
-            long best = long.MinValue;
-            foreach ((int candidate, long touched) in TouchStamps)
-            {
-                if (touched > best && Figures.ContainsKey(candidate))
-                {
-                    successor = candidate;
-                    best = touched;
-                }
-            }
-
+            int successor = MostRecentlyTouched();
             if (successor != 0)
             {
                 Figure(successor);

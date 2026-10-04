@@ -1,0 +1,56 @@
+uifigure 400x300 start: figure=[400 300]
+  uicontrol=[101 51 100 50] uibutton=[250 200 100 22] normalized uicontrol=[0.5 0.5 0.25 0.25] (pixels [201 151 100 75])
+  panel=[201 151 100 100] child uicontrol=[11 11 40 20] child uibutton=[50 50 40 22] pixel axes=[20 200 100 80]
+uifigure -> 800x600: figure=[800 600]
+  uicontrol=[101 51 100 50] uibutton=[250 200 100 22] normalized uicontrol=[0.5 0.5 0.25 0.25] (pixels [401 301 200 150])
+  panel=[201 151 100 100] child uicontrol=[11 11 40 20] child uibutton=[50 50 40 22] pixel axes=[20 200 290 220]
+uifigure -> 200x150: figure=[200 150]
+  uicontrol=[62 11 100 50] uibutton=[163 99.1558 100 22] normalized uicontrol=[1.355 0.46 1 1] (pixels [272 70 200 150])
+  panel=[175 75 64 73] child uicontrol=[11 10 40 20] child uibutton=[14.4091 39.8148 40 22] pixel axes=[20 104.165 100 80]
+uifigure -> back to 400x300: figure=[400 300]
+  uicontrol=[62 19 100 50] uibutton=[163 125.091 100 22] normalized uicontrol=[0.6775 0.463333 0.5 0.5] (pixels [272 140 200 150])
+  panel=[175 93 64 78] child uicontrol=[11 10 40 20] child uibutton=[14.4091 40.355 40 22] pixel axes=[20 128.391 100 80]
+uifigure -> 600x300 (width only): figure=[600 300]
+  uicontrol=[98 19 100 50] uibutton=[243.826 125.091 100 22] normalized uicontrol=[0.648333 0.463333 0.333333 0.5] (pixels [390 140 200 150])
+  panel=[199 93 97 78] child uicontrol=[11 10 40 20] child uibutton=[47.6565 40.355 40 22] pixel axes=[20 128.391 100 80]
+uifigure, AutoResizeChildren off: Position -> 500x400
+  uifigure SizeChangedFcn size=[500 400] class=matlab.ui.eventdata.SizeChangedData names=Source,EventName
+uifigure ARC off -> 500x400: figure=[500 400]
+  uicontrol=[62 19 100 50] uibutton=[163 125.091 100 22] normalized uicontrol=[0.6775 0.463333 0.5 0.5] (pixels [339.75 186.333 250 200])
+  panel=[175 93 64 78] child uicontrol=[11 10 40 20] child uibutton=[14.4091 40.355 40 22] pixel axes=[20 128.391 100 80]
+uifigure: same size again
+uifigure: moved only
+uifigure: panel resized by its own Position
+  uifigure panel SizeChangedFcn size=[150 120] class=matlab.ui.eventdata.SizeChangedData
+classic: created
+  classic normalized panel SizeChangedFcn pixels=[41 31 200 150] class=matlab.ui.eventdata.SizeChangedData
+  classic normalized panel SizeChangedFcn pixels=[41 31 200 150] class=matlab.ui.eventdata.SizeChangedData
+  classic normalized panel SizeChangedFcn pixels=[41 31 200 150] class=matlab.ui.eventdata.SizeChangedData
+  classic pixel panel SizeChangedFcn
+  classic pixel panel SizeChangedFcn
+classic: before the first drawnow
+  classic normalized panel SizeChangedFcn pixels=[41 31 200 150] class=matlab.ui.eventdata.SizeChangedData
+  classic normalized panel SizeChangedFcn pixels=[41 31 200 150] class=matlab.ui.eventdata.SizeChangedData
+  classic pixel panel SizeChangedFcn
+  classic pixel panel SizeChangedFcn
+classic: after the first drawnow
+classic: Position -> 800x600
+  classic normalized panel SizeChangedFcn pixels=[81 61 400 300] class=matlab.ui.eventdata.SizeChangedData
+  classic SizeChangedFcn size=[800 600] class=matlab.ui.eventdata.SizeChangedData EventName=SizeChanged
+  classic normalized panel SizeChangedFcn pixels=[81 61 400 300] class=matlab.ui.eventdata.SizeChangedData
+  classic normalized panel SizeChangedFcn pixels=[81 61 400 300] class=matlab.ui.eventdata.SizeChangedData
+  control=[20 250 100 30] normalized-panel pixels=[81 61 400 300] pixel-panel=[300 200 80 80] child pixels=[40.6 30.6 198 148]
+classic: same size again
+classic: moved only
+classic: pixel panel resized by its own Position
+  classic pixel panel SizeChangedFcn
+classic: normalized panel resized by its own Position
+  classic normalized panel SizeChangedFcn pixels=[81 61 200 150] class=matlab.ui.eventdata.SizeChangedData
+classic: AutoResizeChildren on, then Position -> 400x300
+  classic normalized panel SizeChangedFcn pixels=[41 31 100 75] class=matlab.ui.eventdata.SizeChangedData
+  classic normalized panel SizeChangedFcn pixels=[36 24 143 106] class=matlab.ui.eventdata.SizeChangedData
+  classic normalized panel SizeChangedFcn pixels=[36 24 143 106] class=matlab.ui.eventdata.SizeChangedData
+  classic pixel panel SizeChangedFcn
+  classic pixel panel SizeChangedFcn
+  control=[11 145 100 30] pixel-panel=[189 104 52 56] normalized-panel pixels=[36 24 143 106]
+  OuterPosition - Position with a window: [0 0 0 0]

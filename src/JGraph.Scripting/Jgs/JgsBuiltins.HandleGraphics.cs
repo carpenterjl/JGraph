@@ -434,20 +434,28 @@ internal static partial class JgsBuiltins
         }
         else
         {
-            foreach (int number in JG.FigureNumbers)
-            {
-                if (JG.TryGetFigure(number, out FigureModel figure))
-                {
-                    roots.Add(figure);
-                }
-            }
+            // With no handle named the search starts at the root, which is itself the first thing
+            // searched — and from there a figure whose handle is hidden is passed over (U2).
+            roots.Add(JgsGraphicsRoot.Instance);
         }
 
         int depth = int.MaxValue;
+        var properties = new List<string>();
         var wanted = new List<(string Name, JgsValue Value)>();
         for (int i = first; i < args.Count; i++)
         {
             string word = StrOf(verb, args[i], line, col);
+            if (word.Equals("-property", StringComparison.OrdinalIgnoreCase))
+            {
+                if (i + 1 >= args.Count)
+                {
+                    throw new JgsRuntimeException(line, col, $"{verb}: '-property' needs a property name.");
+                }
+
+                properties.Add(StrOf($"{verb}: -property", args[++i], line, col));
+                continue;
+            }
+
             if (word.Equals("flat", StringComparison.OrdinalIgnoreCase)
                 || word.Equals("-depth", StringComparison.OrdinalIgnoreCase))
             {
@@ -469,7 +477,7 @@ internal static partial class JgsBuiltins
             if (word.Length > 0 && word[0] == '-')
             {
                 throw new JgsRuntimeException(line, col,
-                    $"{verb} understands 'flat' and '-depth', but not '{word}'.");
+                    $"{verb} understands 'flat', '-depth' and '-property', but not '{word}'.");
             }
 
             if (i + 1 >= args.Count)
@@ -480,11 +488,45 @@ internal static partial class JgsBuiltins
             wanted.Add((word, args[++i]));
         }
 
+        // Level by level, as R2025b answers (probe u2_tree): an object's children all come before
+        // any of its grandchildren. An object named as a root is searched even when its handle is
+        // hidden; a hidden one met on the way down is passed over, with everything under it.
         var found = new List<GraphObject>();
         var seen = new HashSet<GraphObject>();
-        foreach (GraphObject root in roots)
+        var level = new List<GraphObject>(roots);
+        for (int at = 0; level.Count > 0; at++)
         {
-            Walk(root, 0);
+            var next = new List<GraphObject>();
+            foreach (GraphObject target in level)
+            {
+                if (!seen.Add(target))
+                {
+                    continue;
+                }
+
+                JgsHandleEntry entry = JgsHandleRegistry.EntryFor(target);
+                if (at > 0 && !hidden && !entry.HandleVisible)
+                {
+                    continue;
+                }
+
+                if ((hidden || at == 0 || entry.HandleVisible)
+                    && properties.All(name => JgsGraphicsProperties.TryFind(target, name, out _))
+                    && wanted.All(pair => Matches(entry, pair.Name, pair.Value)))
+                {
+                    found.Add(target);
+                }
+
+                if (at < depth)
+                {
+                    // Front first, the order Children lists them in.
+                    next.AddRange((hidden
+                        ? JgsGraphicsProperties.DescendantsOf(target)
+                        : JgsGraphicsProperties.ChildrenOf(target)).Reverse());
+                }
+            }
+
+            level = next;
         }
 
         var handles = new double[found.Count];
@@ -496,32 +538,6 @@ internal static partial class JgsBuiltins
         // A column, which is the shape MATLAB's findobj answers in and what a for-loop over the
         // result expects.
         return JgsMatrix.FromColumnMajor(handles, handles.Length, 1);
-
-        void Walk(GraphObject target, int level)
-        {
-            if (!seen.Add(target))
-            {
-                return;
-            }
-
-            JgsHandleEntry entry = JgsHandleRegistry.EntryFor(target);
-            if ((hidden || entry.HandleVisible) && wanted.All(pair => Matches(entry, pair.Name, pair.Value)))
-            {
-                found.Add(target);
-            }
-
-            if (level >= depth)
-            {
-                return;
-            }
-
-            foreach (GraphObject child in hidden
-                ? JgsGraphicsProperties.DescendantsOf(target)
-                : JgsGraphicsProperties.ChildrenOf(target))
-            {
-                Walk(child, level + 1);
-            }
-        }
     }
 
     /// <summary>
@@ -676,8 +692,9 @@ internal static partial class JgsBuiltins
         bool toplevel = args.Count == 3
             && StrOf("ancestor", args[2], line, col).Equals("toplevel", StringComparison.OrdinalIgnoreCase);
 
+        // MATLAB's ancestor starts at the object itself: ancestor(fig, 'figure') is fig.
         GraphObject? best = null;
-        for (GraphObject? walk = start.Target.Parent; walk is not null; walk = walk.Parent)
+        for (GraphObject? walk = start.Target; walk is not null; walk = JgsGraphicsProperties.ParentOf(walk))
         {
             string type = JgsGraphicsProperties.TypeNameOf(walk);
             if (!kinds.Any(kind => type.Equals(kind, StringComparison.OrdinalIgnoreCase)))
@@ -743,7 +760,7 @@ internal static partial class JgsBuiltins
 
         List<int> path = PathTo(owner, source)
             ?? throw new JgsRuntimeException(line, col,
-                $"copyobj cannot copy a {JgsGraphicsProperties.TypeNameOf(source)}; only the things a figure holds — axes, plotted series, annotations and lights — are copied.");
+                $"copyobj cannot copy a {JgsGraphicsProperties.TypeNameOf(source)}; only the things a figure holds — axes, plotted series, annotations, lights and components — are copied.");
 
         FigureModel clone;
         try
@@ -762,7 +779,24 @@ internal static partial class JgsBuiltins
         }
 
         if (copy is AxesModel copiedAxes) copiedAxes.Legend.Visible = false;
+
+        // A container brings the axes placed in it, which the document keeps in its figure's list.
+        List<AxesModel> held = copy is UiContainerModel container ? [.. clone.Axes.Where(container.Holds)] : [];
         Attach(copy, parent, line, col);
+        if (held.Count > 0 && JgsGraphicsProperties.AxesHolder(parent) is { } home)
+        {
+            using (GraphObjectLifecycle.SuppressNotifications())
+            {
+                foreach (AxesModel axes in held)
+                {
+                    UiContainerModel? keep = axes.Container;
+                    clone.Axes.Remove(axes);
+                    home.Axes.Add(axes);
+                    axes.Container = keep;
+                }
+            }
+        }
+
         return copy;
     }
 
@@ -778,6 +812,10 @@ internal static partial class JgsBuiltins
             case FigureModel figure:
                 parts.AddRange(figure.Axes);
                 parts.AddRange(figure.Annotations);
+                parts.AddRange(figure.Components);
+                break;
+            case UiContainerModel container:
+                parts.AddRange(container.Components);
                 break;
             case AxesModel axes:
                 parts.AddRange(axes.Plots);
@@ -825,7 +863,27 @@ internal static partial class JgsBuiltins
                 axes.Lights.Add(light);
                 return;
             case (FigureModel figure, AxesModel copied):
+                copied.Container = null;
                 figure.Axes.Add(copied);
+                return;
+            case (UiContainerModel { Figure: { } home } container, AxesModel copied):
+                home.Axes.Add(copied);
+                copied.Container = container;
+                JG.TouchFigure(home);
+                return;
+            case (IUiContainer holder, UiObject component):
+                // Out of the clone it was read into, and into the parent named, at the front.
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    component.Container?.Components.Remove(component);
+                }
+
+                holder.Components.Add(component);
+                if (component.Figure is { } shown)
+                {
+                    JG.TouchFigure(shown);
+                }
+
                 return;
             case (FigureModel figure, AnnotationObject annotation):
                 figure.Annotations.Add(annotation);
@@ -1047,7 +1105,18 @@ internal static partial class JgsBuiltins
                 parent.Items.Remove(item);
                 return;
 
-            case UiObject component when component.Parent is FigureModel holder:
+            case UiObject component when component.Container is { } holder:
+                // Announced first, while everything in it still stands; then the axes placed in it,
+                // which live in the figure's list and would otherwise outlive their panel.
+                GraphObjectLifecycle.NotifyDeleting(component);
+                if (component is UiContainerModel gone && component.Figure is { } home)
+                {
+                    foreach (AxesModel held in home.Axes.Where(gone.Holds).ToList())
+                    {
+                        home.Axes.Remove(held);
+                    }
+                }
+
                 holder.Components.Remove(component);
                 return;
         }

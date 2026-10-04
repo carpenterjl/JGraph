@@ -44,8 +44,25 @@ internal static class FigureMapper
 
         foreach (AxesModel axes in figure.Axes)
         {
-            dto.Axes.Add(ToDto(axes));
+            AxesDto axesDto = ToDto(axes);
+            axesDto.Container = UiComponentMapper.PathTo(figure, axes.Container);
+            dto.Axes.Add(axesDto);
         }
+
+        // The app-building side (U2): the components, and what makes a figure a uifigure.
+        foreach (UiObject component in figure.Components)
+        {
+            if (UiComponentMapper.ToDto(component) is { } componentDto)
+            {
+                dto.Components.Add(componentDto);
+            }
+        }
+
+        dto.IsUiFigure = figure.IsUiFigure;
+        dto.Units = figure.Units == UiUnits.Pixels ? null : figure.Units.ToString();
+        dto.AutoResizeChildren = figure.AutoResizeChildren;
+        dto.Scrollable = figure.Scrollable;
+        dto.IntegerHandle = figure.IntegerHandle;
 
         if (figure.TiledLayout is { } layout)
         {
@@ -151,9 +168,26 @@ internal static class FigureMapper
             figure.Position = new Point2D(placed.X, placed.Y);
         }
 
+        figure.IsUiFigure = dto.IsUiFigure;
+        figure.Units = ParseOr(dto.Units, UiUnits.Pixels);
+        figure.AutoResizeChildren = dto.AutoResizeChildren;
+        figure.Scrollable = dto.Scrollable;
+        figure.IntegerHandle = dto.IntegerHandle;
+
+        // Components before axes, so that an axes placed in a panel finds its panel.
+        foreach (UiComponentDto componentDto in dto.Components)
+        {
+            if (UiComponentMapper.ToModel(componentDto) is { } component)
+            {
+                figure.Components.Add(component);
+            }
+        }
+
         foreach (AxesDto axesDto in dto.Axes)
         {
-            figure.Axes.Add(ToModel(axesDto));
+            AxesModel axes = ToModel(axesDto);
+            figure.Axes.Add(axes);
+            axes.Container = UiComponentMapper.Follow(figure, axesDto.Container);
         }
 
         // The layout comes after its tiles, because taking them in is what it does with them — and
@@ -269,6 +303,8 @@ internal static class FigureMapper
             SubtitleStyle = DtoConvert.ToDto(axes.SubtitleStyle),
             Background = axes.Background,
             NormalizedBounds = DtoConvert.ToDto(axes.NormalizedBounds),
+            Units = axes.Units == UiUnits.Normalized ? null : axes.Units.ToString(),
+            PixelBounds = axes.PixelBounds is { } pinned ? DtoConvert.ToDto(pinned) : null,
             LayoutTile = axes.LayoutTile,
             LayoutRowSpan = axes.LayoutRowSpan,
             LayoutColumnSpan = axes.LayoutColumnSpan,
@@ -382,6 +418,8 @@ internal static class FigureMapper
             Subtitle = dto.Subtitle,
             Background = dto.Background,
             NormalizedBounds = DtoConvert.ToRect(dto.NormalizedBounds),
+            Units = ParseOr(dto.Units, UiUnits.Normalized),
+            PixelBounds = dto.PixelBounds is { } pinned ? DtoConvert.ToRect(pinned) : null,
             LayoutTile = dto.LayoutTile,
             LayoutRowSpan = dto.LayoutRowSpan,
             LayoutColumnSpan = dto.LayoutColumnSpan,

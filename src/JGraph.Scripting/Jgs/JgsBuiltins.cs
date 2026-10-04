@@ -1534,6 +1534,34 @@ internal static partial class JgsBuiltins
             // what makes every property the figure already answers to settable at construction.
             int first = 0;
             int? requested = null;
+            if (args.Count > 0 && args[0].Type == JgsType.Number && args[0].AsNumber != System.Math.Floor(args[0].AsNumber)
+                && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? named) && named.Target is FigureModel unnumbered)
+            {
+                // A figure with no number (a uifigure, or one whose IntegerHandle is off): shown, and
+                // made current only if its handle is visible — R2025b's figure(uf) leaves gcf alone.
+                if ((args.Count - 1) % 2 != 0)
+                {
+                    throw new JgsRuntimeException(
+                        line, col, "figure: every property after the figure number needs a value.");
+                }
+
+                if (named.HandleVisible)
+                {
+                    JG.Figure(JG.GetFigureNumber(unnumbered));
+                }
+                else
+                {
+                    JG.TouchFigure(unnumbered);
+                }
+
+                for (int i = 1; i < args.Count; i += 2)
+                {
+                    JgsGraphicsProperties.Set(named, Str("figure", args, i, line, col), args[i + 1], line, col);
+                }
+
+                return args[0];
+            }
+
             if (args.Count > 0 && args[0].Type != JgsType.String)
             {
                 requested = Count("figure", args, 0, line, col);
@@ -1560,13 +1588,20 @@ internal static partial class JgsBuiltins
                 JG.Figure();
             }
 
-            JgsHandleEntry entry = JgsHandleRegistry.EntryFor(JG.CurrentFigure);
+            FigureModel made = JG.CurrentFigure;
+            JgsHandleEntry entry = JgsHandleRegistry.EntryFor(made);
             for (int i = first; i < args.Count; i += 2)
             {
                 JgsGraphicsProperties.Set(entry, Str("figure", args, i, line, col), args[i + 1], line, col);
             }
 
-            return JgsValue.Number(JG.CurrentFigureNumber);
+            // The size it was made with is the size its first resize is measured from (U2).
+            if (requested is null)
+            {
+                JgsGraphicsProperties.RememberSize(made);
+            }
+
+            return JgsHandleRegistry.For(made);
         });
         DefineSilent("subplot", MatlabSubplot);
         // --- Tiled layouts (M43, made an object in M80) --------------------------------------------
@@ -2018,8 +2053,10 @@ internal static partial class JgsBuiltins
                 }
                 else foreach (double n in ToDoubles("close",input,line,col))
                 {
-                    if (n != System.Math.Truncate(n) || !JG.TryGetFigure((int)n,out _)) throw new JgsRuntimeException(line,col,$"There is no figure {n} to close.");
-                    numbers.Add((int)n);
+                    // A handle, which for a numbered figure is its number and for any other is not.
+                    if (!JgsHandleRegistry.TryGet(JgsValue.Number(n), out var named) || named.Target is not FigureModel closing)
+                        throw new JgsRuntimeException(line,col,$"There is no figure {n} to close.");
+                    numbers.Add(JG.GetFigureNumber(closing));
                 }
             }
             bool success = true;
@@ -2064,7 +2101,7 @@ internal static partial class JgsBuiltins
             var rest = reset ? args.Take(args.Count-1).ToArray() : args.ToArray();
             if (rest.Length > 1) throw new JgsRuntimeException(line,col,"clf expects a figure and optional reset.");
             var figures = rest.Length == 0 ? new[] { JG.CurrentFigure } : ToDoubles("clf",rest[0],line,col).Select(n =>
-                n == System.Math.Truncate(n) && JG.TryGetFigure((int)n,out var f) ? f
+                JgsHandleRegistry.TryGet(JgsValue.Number(n), out var named) && named.Target is FigureModel f ? f
                     : throw new JgsRuntimeException(line,col,$"There is no figure {n} to clear.")).ToArray();
             foreach (FigureModel figure in figures)
             {
@@ -2074,7 +2111,7 @@ internal static partial class JgsBuiltins
             {
                 var fresh = new FigureModel();
                 foreach (var property in typeof(FigureModel).GetProperties())
-                    if (property.CanWrite && property.Name is not ("Position" or "Size" or "PaperUnits" or "PaperPosition" or "PositionSpecified" or "ToolBar" or "WindowState" or "SelectionType" or "CurrentPointPx"))
+                    if (property.CanWrite && property.Name is not ("Position" or "Size" or "PaperUnits" or "PaperPosition" or "PositionSpecified" or "ToolBar" or "WindowState" or "SelectionType" or "CurrentPointPx" or "IsUiFigure" or "IntegerHandle" or "Units" or "ComponentFrameInFlight"))
                         property.SetValue(figure,property.GetValue(fresh));
                 JgsHandleRegistry.ResetEntry(figure);
             }
@@ -2089,7 +2126,10 @@ internal static partial class JgsBuiltins
         env.Builtins.Register("gcf", JgsValue.Function(new BuiltinFunction("gcf", (args, line, col) =>
         {
             Arity("gcf", args, 0, line, col);
-            return JgsValue.Number(JG.CurrentFigureNumber);
+
+            // The current figure, or a new one: a figure whose handle is hidden is never it (U2).
+            JG.ReselectCurrent();
+            return JgsHandleRegistry.For(JG.CurrentFigure);
         })
         { AutoCallsBare = true }));
 

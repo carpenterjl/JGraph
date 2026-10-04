@@ -218,17 +218,21 @@ cleared the field. The pump then looked busy for ever and delivered nothing more
 - **`class` of a `uicontrol` handle is `'double'`**, where R2025b answers
   `'matlab.ui.control.UIControl'`. Handles are numbers (ADR 0051); type-aware handles (decision Q2)
   arrive with App Designer's typed properties (`u1_uicontrol`, `class`).
-- **A component's `Units` is `'pixels'` only until U2's units engine.** R2025b takes
+- ~~**A component's `Units` is `'pixels'` only until U2's units engine.** R2025b takes
   `'normalized'`, `'characters'`, `'points'`, `'inches'` and `'centimeters'`; JGraph refuses them by
-  name (`units_normalized`).
+  name (`units_normalized`).~~
+  — **retired 2026-10-04 by U2 (ADR 0199)**, which brought the units engine.
 - **A deleted handle is refused without R2025b's identifier.** R2025b raises
   `MATLAB:class:InvalidHandle` ("Invalid or deleted object."); the registry cannot tell a deleted
   handle from a number that never was one (`set_on_deleted`).
-- **`Children` puts a figure's components before its axes**, whichever was made first. R2025b lists
-  them newest first across kinds; U2 gives the figure one tree of children.
+- ~~**`Children` puts a figure's components before its axes**, whichever was made first. R2025b lists
+  them newest first across kinds; U2 gives the figure one tree of children.~~
+  — **retired 2026-10-04, never a divergence.** R2025b lists every component before every axes too,
+  newest first within each (U2's probe `u2_tree`, ADR 0199).
 - **`Extent` is an estimate** until U3 measures the drawn text.
-- **The pointer's motion and a resize still hand their callbacks `[]`.** R2025b's event data for
-  them is not recorded yet.
+- **The pointer's motion still hands its callback `[]`.** R2025b's event data for it is not
+  recorded yet. (A resize was on this line until 2026-10-04: U2, ADR 0199, recorded R2025b's
+  `SizeChangedData` and hands it over.)
 
 ## Still open
 

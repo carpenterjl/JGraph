@@ -77,18 +77,69 @@ public sealed class UiText
 public abstract class UiObject : GraphObject
 {
     private Rect2D _position = new(20, 20, 60, 20);
+    private UiUnits _units = UiUnits.Pixels;
     private UiEnable _enable = UiEnable.On;
     private UiText _tooltip = UiText.Empty;
 
     /// <summary>
-    /// MATLAB's <c>Position</c> in pixels of 1/96 inch: <see cref="Rect2D.X"/> is the left edge and
-    /// <see cref="Rect2D.Y"/> the bottom edge, both 1-based from the parent's bottom-left corner.
+    /// MATLAB's <c>Position</c>, in <see cref="Units"/>: the left edge, the bottom edge, the width and
+    /// the height, measured from the bottom-left corner of the parent's inner area. In pixels the
+    /// edges are 1-based (see <see cref="UiUnitConverter"/>).
     /// </summary>
     [Browsable(false)]
     public Rect2D Position
     {
         get => _position;
         set => SetProperty(ref _position, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// MATLAB's <c>Units</c>. Writing it here changes what <see cref="Position"/> is counted in and
+    /// leaves the numbers alone; <see cref="ChangeUnits"/> is the write a script's <c>Units</c> makes,
+    /// which keeps the component where it is.
+    /// </summary>
+    [Browsable(false)]
+    public UiUnits Units
+    {
+        get => _units;
+        set => SetProperty(ref _units, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>The figure or panel holding this component, or null while it is detached.</summary>
+    [Browsable(false)]
+    public IUiContainer? Container => Parent as IUiContainer;
+
+    /// <summary>
+    /// The size, in pixels, of the area this component is placed in: its parent's inner area. A
+    /// detached component measures against a default figure's 560 by 420.
+    /// </summary>
+    public Size2D ReferenceSize() => Container?.InnerPixelSize ?? new Size2D(560, 420);
+
+    /// <summary><see cref="Position"/> as MATLAB's pixel rectangle within the parent.</summary>
+    public Rect2D PixelPosition() => UiUnitConverter.ToPixels(_position, _units, ReferenceSize());
+
+    /// <summary>Places the component by a pixel rectangle, keeping its <see cref="Units"/>.</summary>
+    public void SetPixelPosition(Rect2D pixels) =>
+        Position = UiUnitConverter.FromPixels(pixels, _units, ReferenceSize());
+
+    /// <summary>
+    /// Changes <see cref="Units"/> the way a script does: the component stays where it is and
+    /// <see cref="Position"/> is re-expressed.
+    /// </summary>
+    public void ChangeUnits(UiUnits units)
+    {
+        if (units == _units)
+        {
+            return;
+        }
+
+        Rect2D pixels = PixelPosition();
+        Size2D reference = ReferenceSize();
+        _units = units;
+        _position = UiUnitConverter.FromPixels(pixels, units, reference);
+        OnPropertyChanged(nameof(Units));
+        OnPropertyChanged(nameof(Position));
+        Invalidate(InvalidationKind.Ui);
     }
 
     /// <summary>MATLAB's <c>Enable</c>.</summary>

@@ -155,7 +155,14 @@ public sealed class Theme : ITheme
     public void Apply(FigureModel figure)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        figure.Background = FigureBackground;
+
+        // A uifigure keeps MATLAB's own look whatever the theme (app-building plan, section G): its
+        // components draw in their own colours, and a themed page behind them would not match.
+        if (!figure.IsUiFigure)
+        {
+            figure.Background = FigureBackground;
+        }
+
         figure.TitleStyle = Restyle(figure.TitleStyle, Title, FigureTitleFontSize, BoldTitles);
 
         foreach (AxesModel axes in figure.Axes)

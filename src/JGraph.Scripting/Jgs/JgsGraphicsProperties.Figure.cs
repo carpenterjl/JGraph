@@ -67,28 +67,9 @@ internal static partial class JgsGraphicsProperties
 
     private static void AddFigureWindow(IDictionary<string, GraphicsProperty> table)
     {
-        // Position and InnerPosition are the same rectangle in MATLAB too: a figure has no
-        // decoration of its own between the two, so there is nothing for them to differ by.
-        AddFigurePosition(table, "Position");
-        AddFigurePosition(table, "InnerPosition");
-
-        // The window's bounds including its title bar and border, when a window is there to ask.
-        // Headless, there is no chrome, so the honest answer is the drawable area itself.
-        Put(table, "OuterPosition",
-            entry =>
-            {
-                FigureModel figure = Figure(entry);
-                return ScriptGraphicsCallbacks.WindowBoundsProvider?.Invoke(figure) is { } outer
-                    ? Row(outer.X, outer.Y, outer.Width, outer.Height)
-                    : Row(figure.Position.X, figure.Position.Y, figure.Size.Width, figure.Size.Height);
-            },
-            (entry, value, line, col) =>
-            {
-                double[] box = Numbers("OuterPosition", value, 4, line, col);
-                FigureModel figure = Figure(entry);
-                figure.Position = new Point2D(box[0], box[1]);
-                figure.Size = new Size2D(System.Math.Max(1, box[2]), System.Math.Max(1, box[3]));
-            });
+        // Position, InnerPosition and OuterPosition are placed, in the figure's Units, by
+        // AddFigureUnits (U2). Position and InnerPosition are the same rectangle in MATLAB too: a
+        // figure has no decoration of its own between the two.
 
         // Visible decides whether the figure has a window at all (U1). Making one visible marks it
         // touched, so a figure made with 'off' in one statement and turned 'on' in a later one is
@@ -186,21 +167,6 @@ internal static partial class JgsGraphicsProperties
                 };
             });
     }
-
-    private static void AddFigurePosition(IDictionary<string, GraphicsProperty> table, string name) =>
-        Put(table, name,
-            entry =>
-            {
-                FigureModel figure = Figure(entry);
-                return Row(figure.Position.X, figure.Position.Y, figure.Size.Width, figure.Size.Height);
-            },
-            (entry, value, line, col) =>
-            {
-                double[] box = Numbers(name, value, 4, line, col);
-                FigureModel figure = Figure(entry);
-                figure.Position = new Point2D(box[0], box[1]);
-                figure.Size = new Size2D(System.Math.Max(1, box[2]), System.Math.Max(1, box[3]));
-            });
 
     // --- The pointer, and where it is -------------------------------------------------------------
 
@@ -415,13 +381,11 @@ internal static partial class JgsGraphicsProperties
     {
         // Each of these answers what is actually so and refuses to be told otherwise, rather than
         // accepting a word it would then ignore. A property that lies is worse than one that says no.
-        OnlyWord(table, "Units", "pixels", "A figure is measured in pixels");
         OnlyWord(table, "Renderer", "painters", "JGraph draws with painters");
         OnlyWord(table, "RendererMode", "auto", "The renderer is not chosen by hand");
         OnlyWord(table, "WindowStyle", "normal", "Figures are ordinary windows here");
         OnlyWord(table, "MenuBar", "none", "A figure has no menu bar");
         OnlyWord(table, "DockControls", "off", "Figures cannot be docked");
-        OnlyWord(table, "IntegerHandle", "on", "Figures are numbered");
 
         // MATLAB documents figure Clipping as having no effect, and it has none here either. Saying
         // 'on' back is the whole of it.

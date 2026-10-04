@@ -166,3 +166,63 @@ apart; `inputdlg` buttons are `OK`/`Cancel`, 53 px wide, with `Edit` fields 26.6
 `listdlg` has a 160×300 `listbox` and `ok_btn`/`cancel_btn` 76×22, plus `selectall_btn` in
 multiple mode. All are modal pixel figures. `questdlg` errors (`MATLAB:hg:DeletedObject`) when its
 figure is deleted from outside.
+
+## U2 findings (R2025b, headless)
+
+`u2/run-probe.ps1` is U1's. Every `u2_*` probe ran `-noFigureWindows -batch`; none opens a window.
+
+**`uipanel`** (`u2_panel`): 38 names in both kinds of figure. In a classic figure it starts
+`normalized [0 0 1 1]`, 8-point MS Sans Serif, `AutoResizeChildren` off; in a `uifigure`, pixels
+`[20 20 260 221]`, 12-pixel Helvetica, `AutoResizeChildren` on. `BorderType` lists `none` and
+`line`, still takes the four older words and warns (`MATLAB:Uipanel:UnsupportedBorderType`).
+`BackgroundColor` refuses `'none'`; the other colours take it. `Enable` is on or off.
+`InnerPosition` is read-only. `ResizeFcn` is `SizeChangedFcn`. `Visible` and `Enable` on a panel do
+not change what its children answer.
+
+**The inner area** (`u2_panel`, both kinds agree): the border takes its width from every edge —
+twice that when etched, nothing when `none` — and a title takes its font's pixel size, rounded,
+from the edge it sits on, in place of the border there if larger. A titled 200×150 line panel at
+8 points has an inner area of 198×138.
+
+**Units** (`u2_units`): pixel positions are 1-based and every other unit counts from 0, so pixel x
+is `(x − 1)` units along. A character is 5.6×15 px. `normalized` is of the parent's inner area, or
+of the screen for a figure. Setting `Units` re-expresses `Position`, so the order of `'Units'` and
+`'Position'` among a call's options matters. An axes placed in pixels keeps them through a figure
+resize. `getpixelposition(h, true)` adds where each container's inner area begins;
+`setpixelposition` keeps the object's `Units`.
+
+**`movegui`** (`u2_units`, `u2_more`): works on the whole window, estimated without a display as
+8 px of border all round, 23 px of title bar, 27 px of toolbar and 22 px of menu bar where the
+figure has them; `'onscreen'` keeps 30 px plus the border.
+
+**The tree** (`u2_tree`): `Children` lists every component before every axes, newest first within
+each. `uistack` and `set(f, 'Children', …)` move within a kind; an order putting an axes above a
+component warns (`MATLAB:hg:default_child_strategy:IllegalPermutation`) and changes nothing.
+`findobj` answers level by level, the starting object first, and with no handle starts at the
+root. A hidden handle is left out of `Children` and `findobj` with everything under it, but an
+object named as the start is searched even when hidden. A new parent puts a child at the front of
+its kind and keeps its `Position` numbers. `DeleteFcn` runs for the object first, then for its
+children in `Children` order. R2025b keeps an annotation pane tagged `scribeOverlay` beside every
+set of axes, which `allchild` and `findall` report.
+
+**A resize with a window** (`u2w_resize`, run with the user's leave; it opens two windows and
+resizes them from the script, typing and clicking nothing):
+- A figure's `SizeChangedFcn` runs once per change of size, for a script's `Position` write too;
+  not for a move, not for the same size again, and not when the figure is first shown. Its event
+  data is a `matlab.ui.eventdata.SizeChangedData` (`Source`, `EventName` `SizeChanged`).
+- A container's runs when its pixel size changes — its figure was resized and it is normalized, or
+  a script wrote its `Position` — and several times when it is first shown. On a figure resize a
+  normalized panel's ran once before the figure's and twice after.
+- `AutoResizeChildren` on: the `SizeChangedFcn` of that figure or container is silent. Growing a
+  `uifigure` from 400×300 to 800×600 left every pixel-placed child where it was. Shrinking it to
+  200×150 moved and resized them (a `uicontrol` at `[101 51 100 50]` went to `[62 11 100 50]`, a
+  panel `[201 151 100 100]` to `[175 75 64 73]`), and going back to 400×300 did not restore them:
+  the rule depends on the sizes passed through. A pixel-placed axes changed size on growing.
+- A classic figure with `AutoResizeChildren` turned on reflows the same way.
+- `OuterPosition` equals `Position` with a window too.
+
+**`uifigure`** (`u2_uifigure`): no `Number`, a non-integer handle, `HandleVisibility` `'off'` — so
+it is not in the root's `Children`, never `gcf`, `figure(uf)` does not make it current and `close
+all` leaves it (`close all force` does not). `AutoResizeChildren` is on, and setting
+`SizeChangedFcn` then warns (`MATLAB:ui:containers:SizeChangedFcnDisabledWhenAutoResizeOn`). With
+no window nothing resizes children and no `SizeChangedFcn` runs, in either kind of figure.

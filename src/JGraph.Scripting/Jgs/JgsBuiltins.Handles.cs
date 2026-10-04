@@ -112,7 +112,9 @@ internal static partial class JgsBuiltins
             return body();
         }
 
-        int previousFigure = JG.CurrentFigureNumber;
+        // Asked without making one: a verb aimed at an axes of a uifigure — which is never current —
+        // must not conjure Figure 1 just to have somewhere to go back to (U2).
+        int previousFigure = JG.CurrentFigureNumberOrZero;
         AxesModel? previous = JG.CurrentAxesOrNull;
         JG.MakeCurrent(axes);
         try
@@ -122,6 +124,7 @@ internal static partial class JgsBuiltins
         finally
         {
             if (previous is null && previousFigure > 0) JG.Figure(previousFigure);
+            if (previous is null && previousFigure == 0) JG.ReselectCurrent();
             if (previous is not null && !ReferenceEquals(previous, axes))
             {
                 JG.MakeCurrent(previous);

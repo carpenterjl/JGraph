@@ -1,0 +1,156 @@
+CHK|children|c2 p1 c1 a2 a1|exact
+CHK|panel_children|p2 c3 a3|exact
+CHK|findobj_figure|f c2 p1 c1 a2 a1 p2 c3 a3 c4|exact
+CHK|findobj_depth_1|f c2 p1 c1 a2 a1|exact
+CHK|findobj_flat|f|exact
+CHK|findobj_panel|p1 p2 c3 a3 c4|exact
+CHK|findobj_uicontrols|c2 c1 c3 c4|exact
+CHK|findobj_panels|p1 p2|exact
+CHK|findall_axes|a2 a1 a3|exact
+CHK|findobj_everywhere|1|exact
+CHK|findobj_property|p1 p2|exact
+CHK|allchild_figure|c2 p1 c1 a2 a1|exact
+CHK|allchild_panel|p2 c3 a3|exact
+CHK|allchild_is_column|1|exact
+CHK|allchild_count_with_furniture|4|div=ADR0199|diverges|3
+CHK|uistack_1|c1 c2 p1 a2 a1|exact
+CHK|uistack_2|c2 p1 c1 a2 a1|exact
+CHK|uistack_3|p1 c2 c1 a2 a1|exact
+CHK|uistack_4|p1 c2 c1 a2 a1|exact
+CHK|uistack_5|c2 p1 c1 a2 a1|exact
+CHK|uistack_6|c2 c1 p1 a2 a1|exact
+CHK|uistack_7|c2 c1 p1 a1 a2|exact
+CHK|uistack_8|c1 c2 p1 a1 a2|exact
+CHK|uistack_9|c1 c2 p1 a1 a2|exact
+CHK|uistack_10|c1 c2 p1 a1 a2|exact
+CHK|uistack_11|c1 c2 p1 a1 a2|exact
+CHK|uistack_in_panel|c3 p2 a3|exact
+CHK|uistack_bogus|MATLAB:uistack:InvalidStackOption|exact
+CHK|uistack_bogus_msg|Stacking location must be 'up', 'down', 'top', or 'bottom'.|exact
+CHK|uistack_fraction|MATLAB:NonIntegerInput|exact
+CHK|uistack_fraction_msg|Size inputs must be integers.|exact
+CHK|uistack_not_a_handle|MATLAB:uistack:PassedInvalidHandles|exact
+CHK|uistack_not_a_handle_msg|Invalid object specified for uistack.|exact
+CHK|uistack_two_parents|MATLAB:uistack:ParentMustBeSame|exact
+CHK|uistack_two_parents_msg|Objects specified for uistack must have the same parent.|exact
+CHK|uistack_no_arguments|MATLAB:narginchk:notEnoughInputs|exact
+CHK|uistack_no_arguments_msg|Not enough input arguments.|exact
+CHK|children_before_set|c1 c2 p1 a1 a2|exact
+CHK|set_children|c2 c1 p1 a1 a2|exact
+CHK|set_children_across_kinds|c2 c1 p1 a1 a2|exact
+CHK|set_children_across_kinds_warning|MATLAB:hg:default_child_strategy:IllegalPermutation : Illegal permutation. No effect on view|exact
+CHK|set_children_missing_one|MATLAB:hg:BadChildrenPermutation|exact
+CHK|set_children_missing_one_msg|Children may only be set to a permutation of itself.|exact
+CHK|set_children_not_handles|MATLAB:hg:BadChildren|exact
+CHK|set_children_not_handles_msg|Children must be either be a valid double array or an object array.|exact
+CHK|hidden_children|c1 a1 a2|exact
+CHK|hidden_allchild|c2 c1 p1 a1 a2|exact
+CHK|hidden_findobj|f c1 a1 a2|exact
+CHK|hidden_findall|f c2 c1 p1 a1 a2 c3 p2 a3 c4|exact
+CHK|hidden_findobj_from_hidden|p1 c3 p2 a3 c4|exact
+CHK|hidden_findobj_itself|c2|exact
+CHK|hidden_still_a_handle|1 c2|exact
+CHK|show_hidden_children|c2 c1 p1 a1 a2|exact
+CHK|show_hidden_findobj|f c2 c1 p1 a1 a2 c3 p2 a3 c4|exact
+CHK|show_hidden_default|off|exact
+CHK|handlevisibility_bogus|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|handlevisibility_bogus_msg|Error setting property 'HandleVisibility' of class 'Figure': 'bogus' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|handlevisibility_upper|callback|exact
+CHK|hidden_figure_in_root|0|exact
+CHK|hidden_figure_findobj|0|exact
+CHK|hidden_figure_findall|1|exact
+CHK|hidden_figure_current|1|exact
+CHK|gcf_makes_another|1 2|exact
+CHK|close_all_leaves_hidden|1|exact
+CHK|reparent_control_position|double [1 4] 20 30 60 20|exact
+CHK|reparent_control_in_figure|double [1 4] 120 130 60 20|exact
+CHK|reparent_control_children|c1 c3 p2 a3|exact
+CHK|reparent_axes_children|c1 c3 p2 a1 a3|exact
+CHK|reparent_axes_figure_children|c2 p1 a2|exact
+CHK|reparent_axes_parent|1|exact
+CHK|reparent_into_own_child|MATLAB:container:InvalidParentToChild|exact
+CHK|reparent_into_own_child_msg|You are trying to set the parent property to a descendant child object.|exact
+CHK|reparent_into_itself|MATLAB:container:InvalidParentToChild|exact
+CHK|reparent_into_itself_msg|You are trying to set the parent property to a descendant child object.|exact
+CHK|reparent_control_into_axes|MATLAB:gbtobjects:Component|exact
+CHK|reparent_control_into_axes_msg|Axes cannot be a parent.|exact
+CHK|reparent_control_into_control|MATLAB:gbtobjects:Component|exact
+CHK|reparent_control_into_control_msg|UIControl cannot be a parent.|exact
+CHK|reparent_axes_into_control|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|reparent_axes_into_control_msg|Axes cannot be a child of UIControl.|exact
+CHK|reparent_axes_into_axes|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|reparent_axes_into_axes_msg|Axes cannot be a child of Axes.|exact
+CHK|reparent_control_to_number|MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle|exact
+CHK|reparent_control_to_number_msg|Error setting property 'Parent' of class 'UIControl': Value must be a handle.|exact
+CHK|reparent_axes_to_number|MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle|exact
+CHK|reparent_axes_to_number_msg|Error setting property 'Parent' of class 'Axes': Value must be a handle.|exact
+CHK|reparent_panel_to_root|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|reparent_panel_to_root_msg|Parent must be a Figure or any UIContainer|exact
+CHK|reparent_control_to_root|MATLAB:uicontrol:InvalidParent|exact
+CHK|reparent_control_to_root_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|panel_moved_old_figure|c2 a2|exact
+CHK|panel_moved_new_figure|p1|exact
+CHK|panel_moved_descendants|1 1|exact
+CHK|delete_inner_panel|p2:uipanel:on c4:uicontrol:on|exact
+CHK|delete_inner_panel_child_gone|0|exact
+CHK|before_delete_panel|c1 c3 a1 a3|exact
+CHK|delete_panel|p1:uipanel:on c1:uicontrol:on c3:uicontrol:on a1:axes:on a3:axes:on|exact
+CHK|delete_panel_axes_gone|0 0|exact
+CHK|before_delete_figure|c2 a2|exact
+CHK|delete_figure|f:figure:on c2:uicontrol:on a2:axes:on|exact
+CHK|clf_deleted|panel control|exact
+CHK|clf_left|hidden|exact
+CHK|clf_reset_left|(none)|exact
+CHK|uifigure_type|figure|exact
+CHK|uifigure_number|double [0 0]|exact
+CHK|uifigure_handle|0 1 1|exact
+CHK|uifigure_root|0 0 1 1|exact
+CHK|figure_after_uifigure|1 1|exact
+CHK|figure_uifigure_not_current|1|exact
+CHK|no_current_after_delete|1|exact
+CHK|close_all_leaves_uifigure|1|exact
+CHK|close_uifigure|0|exact
+CHK|close_all_force|0|exact
+CHK|uifigure_default_Units|pixels|exact
+CHK|uifigure_default_Visible|off|exact
+CHK|uifigure_default_Color|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|uifigure_default_IntegerHandle|off|exact
+CHK|uifigure_default_HandleVisibility|off|exact
+CHK|uifigure_default_MenuBar|none|exact
+CHK|uifigure_default_ToolBar|none|exact
+CHK|uifigure_default_NumberTitle|off|exact
+CHK|uifigure_default_Name||exact
+CHK|uifigure_default_AutoResizeChildren|on|exact
+CHK|uifigure_default_Scrollable|off|exact
+CHK|uifigure_default_Resize|on|exact
+CHK|uifigure_default_Type|figure|exact
+CHK|uifigure_default_CloseRequestFcn|closereq|exact
+CHK|uifigure_default_SizeChangedFcn||exact
+CHK|uifigure_default_Tag||exact
+CHK|uifigure_default_WindowState|normal|exact
+CHK|uifigure_default_size|double [1 2] 560 420|exact
+CHK|uifigure_name|N|exact
+CHK|uifigure_number_argument|MATLAB:ui:uifigure:BadInputArgument|exact
+CHK|uifigure_number_argument_msg|Illegal first argument. To set focus on a figure, use the focus function instead.|exact
+CHK|uifigure_odd|MATLAB:HandleCtor:InvalidArgument|exact
+CHK|uifigure_odd_msg|Specify inputs as one or more name-value arguments, a scalar structure with property names as field names, or a cell array of property names followed by a cell array of values.|exact
+CHK|uifigure_unknown|MATLAB:handle_graphics:invalidCtorProperty|exact
+CHK|uifigure_unknown_msg|Can't find Bogus property on the Figure class. |exact
+CHK|uifigure_struct|S|exact
+CHK|uifigure_set_number|MATLAB:class:SetProhibited|exact
+CHK|uifigure_set_number_msg|Unable to set the 'Number' property of class ''Figure'' because it is read-only.|exact
+CHK|uifigure_units|normalized|exact
+CHK|uifigure_scrollable|on|exact
+CHK|uifigure_resize|off|exact
+CHK|uifigure_integerhandle_bogus|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|uifigure_integerhandle_bogus_msg|Error setting property 'IntegerHandle' of class 'Figure': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|uifigure_autoresize_bogus|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|uifigure_autoresize_bogus_msg|Error setting property 'AutoResizeChildren' of class 'Figure': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|uifigure_children|b2 p b a|exact
+CHK|uifigure_findobj|5|exact
+CHK|uifigure_panel_units|pixels|exact
+CHK|uifigure_still_no_current|1|exact
+CHK|uifigure_sizechanged_warning|MATLAB:ui:containers:SizeChangedFcnDisabledWhenAutoResizeOn : 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.|exact
+CHK|headless_resize_control|double [1 4] 100 100 100 50|exact
+CHK|headless_resize_calls|0|exact
+CHK|integerhandle_off|0 1 1|exact

@@ -433,30 +433,50 @@ internal static partial class JgsBuiltins
         // second bookkeeping of it here. A handle to anything else is refused in MATLAB's words.
         int start = 0;
         FigureModel? parent = null;
+        UiContainerModel? container = null;
         if (args.Count >= 1 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? given))
         {
-            parent = ParentFigureForAxes(given, line, col);
+            (parent, container) = ParentForAxes(given, line, col);
             start = 1;
         }
 
         var spec = new OptionSpec(
             "axes", [],
-            ["Parent", "Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility"]);
+            ["Parent", "Units", "Position", "InnerPosition", "OuterPosition", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility"]);
         ParsedArgs parsed = spec.Parse(args, start, line, col);
         if (parsed.Named("Parent") is { } namedParent)
         {
-            parent = ParentFigureForAxes(JgsHandleRegistry.Require(namedParent, line, col), line, col);
+            (parent, container) = ParentForAxes(JgsHandleRegistry.Require(namedParent, line, col), line, col);
         }
 
-        AxesModel axes = (parent ?? JG.CurrentFigure).AddAxes();
-        if (parent is null || ReferenceEquals(parent, JG.CurrentFigure))
+        // With no parent named, the current figure — asked for only now, because asking makes one.
+        FigureModel? current = parent is null ? JG.CurrentFigure
+            : JG.CurrentFigureNumberOrZero > 0 ? JG.CurrentFigure : null;
+        AxesModel axes = (parent ?? current!).AddAxes();
+        axes.Container = container;
+        if (parent is null || ReferenceEquals(parent, current))
         {
             JG.MakeCurrent(axes);
         }
+        else
+        {
+            JG.TouchFigure(parent);
+        }
 
         JgsHandleEntry entry = JgsHandleRegistry.EntryFor(axes);
+
+        // Units and the position rectangles act in the order the call gives them, as R2025b's do
+        // (U2): a Position written before 'Units','pixels' was written in fractions.
+        for (int i = start; i + 1 < args.Count; i += 2)
+        {
+            if (IsTextScalar(args[i]) && TextOf(args[i]).ToLowerInvariant() is "units" or "position" or "innerposition" or "outerposition")
+            {
+                JgsGraphicsProperties.Set(entry, TextOf(args[i]), args[i + 1], line, col);
+            }
+        }
+
         foreach (string name in new[]
-                 { "Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility" })
+                 { "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility" })
         {
             if (parsed.Named(name) is { } value)
             {
@@ -467,17 +487,22 @@ internal static partial class JgsBuiltins
         return JgsHandleRegistry.For(axes);
     }
 
-    /// <summary>The figure an axes may be made in, or MATLAB's refusal for any other kind of object.</summary>
-    private static FigureModel ParentFigureForAxes(JgsHandleEntry given, int line, int col)
+    /// <summary>
+    /// The figure an axes may be made in and, when the parent is a panel, the panel — or MATLAB's
+    /// refusal for any other kind of object.
+    /// </summary>
+    private static (FigureModel Figure, UiContainerModel? Container) ParentForAxes(JgsHandleEntry given, int line, int col)
     {
-        if (given.Target is FigureModel figure)
+        switch (given.Target)
         {
-            return figure;
+            case FigureModel figure:
+                return (figure, null);
+            case UiContainerModel { Figure: { } owner } container:
+                return (owner, container);
         }
 
-        string kind = given.TypeName;
-        throw new JgsRuntimeException(line, col,
-            $"Axes cannot be a child of {char.ToUpperInvariant(kind[0])}{kind[1..]}.");
+        throw new JgsRuntimeException(line, col, "MATLAB:handle_graphics:exceptions:HandleGraphicsException",
+            $"Axes cannot be a child of {JgsGraphicsCallbackValues.ClassWord(given.Target)}.");
     }
 
     // --- groups and transforms ----------------------------------------------------------------------
@@ -694,12 +719,9 @@ internal sealed class JgsGraphicsRoot : GraphObject
     public static JgsGraphicsRoot Instance { get; } = new();
 
     /// <summary>
-    /// The screen, in pixels, as <c>[left bottom width height]</c>. The script layer cannot see a
-    /// display — the window that could is in the host — so this answers the size the figure model
-    /// itself defaults to rather than guessing at hardware.
+    /// The units the root's rectangles — <c>ScreenSize</c>, <c>MonitorPositions</c> — are answered
+    /// in (U2). The screens themselves are <see cref="UiScreen"/>'s.
     /// </summary>
-    public double[] ScreenSize { get; } = [1, 1, 1280, 800];
-
-    /// <summary>The units the screen size is given in; pixels, and not settable.</summary>
-    public string Units => "pixels";
+    [System.ComponentModel.Browsable(false)]
+    public UiUnits Units { get; set; } = UiUnits.Pixels;
 }

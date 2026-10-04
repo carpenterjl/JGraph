@@ -80,8 +80,31 @@ internal sealed class JgsHandleEntry
     /// <summary>The MATLAB type word for this object — what <c>get(h, 'Type')</c> answers.</summary>
     public string TypeName => JgsGraphicsProperties.TypeNameOf(Target);
 
-    /// <summary>False when the object was created with <c>'HandleVisibility', 'off'</c>.</summary>
-    public bool HandleVisible { get; set; } = true;
+    /// <summary>
+    /// MATLAB's <c>HandleVisibility</c>: <c>on</c>, <c>callback</c> or <c>off</c> (app-building
+    /// plan, U2). A figure made by <c>uifigure</c> starts <c>off</c>.
+    /// </summary>
+    public string HandleVisibility { get; set; } = "on";
+
+    /// <summary>
+    /// Whether a search, <c>Children</c>, <c>gcf</c> and <c>close all</c> see this object now:
+    /// <c>on</c> always, <c>callback</c> while a callback is running, <c>off</c> never — unless the
+    /// root's <c>ShowHiddenHandles</c> is on, which shows everything. Writing it is the two-state
+    /// form the drawing verbs' <c>'HandleVisibility'</c> option has always used.
+    /// </summary>
+    public bool HandleVisible
+    {
+        get => JgsHandleRegistry.ShowHiddenHandles || HandleVisibility switch
+        {
+            "on" => true,
+            "callback" => JgsGraphicsCallbackState.CallbackObject is not null,
+            _ => false,
+        };
+        set => HandleVisibility = value ? "on" : "off";
+    }
+
+    /// <summary>A figure's or a panel's <c>SizeChangedFcn</c> last saw this size, in pixels.</summary>
+    public (double Width, double Height)? LastSize { get; set; }
 
     /// <summary>A legend's <c>ItemHitFcn</c>, if a script gave it one.</summary>
     public JgsValue? ItemHitFcn { get; set; }
@@ -223,18 +246,40 @@ internal static class JgsHandleRegistry
 
     private static double _next = FirstHandle;
 
+    /// <summary>The root's <c>ShowHiddenHandles</c>: while on, no handle is hidden from anything.</summary>
+    public static bool ShowHiddenHandles { get; set; }
+
     /// <summary>The handle for a figure object, minting one the first time it is asked for.</summary>
     public static JgsValue For(GraphObject target)
     {
         ArgumentNullException.ThrowIfNull(target);
 
-        // A figure is its number. Minting one would give the same figure two names.
+        // A figure is its number. Minting one would give the same figure two names. A figure whose
+        // IntegerHandle is off — every uifigure — has no number to be, and is minted like the rest,
+        // over the one entry a figure has.
         if (target is FigureModel figure)
         {
             int number = JG.GetFigureNumber(figure);
-            if (number > 0)
+            if (number > 0 && figure.IntegerHandle)
             {
                 return JgsValue.Number(number);
+            }
+
+            if (number > 0)
+            {
+                lock (Gate)
+                {
+                    if (Handles.TryGetValue(figure, out double minted))
+                    {
+                        return JgsValue.Number(minted);
+                    }
+
+                    double handle = _next;
+                    _next += 1;
+                    Entries[handle] = FigureEntry(figure);
+                    Handles[figure] = handle;
+                    return JgsValue.Number(handle);
+                }
             }
         }
 
@@ -250,6 +295,21 @@ internal static class JgsHandleRegistry
             Entries[handle] = new JgsHandleEntry(target);
             Handles[target] = handle;
             return JgsValue.Number(handle);
+        }
+    }
+
+    /// <summary>
+    /// Lets go of the minted handle of a figure whose <c>IntegerHandle</c> went back on, so that its
+    /// number is its only name again.
+    /// </summary>
+    public static void ForgetMinted(FigureModel figure)
+    {
+        lock (Gate)
+        {
+            if (Handles.Remove(figure, out double minted))
+            {
+                Entries.Remove(minted);
+            }
         }
     }
 
@@ -322,10 +382,14 @@ internal static class JgsHandleRegistry
             }
         }
 
+
         // A whole number may be a live figure. Resolving it here rather than minting on figure
         // creation is what keeps a closed-and-reopened number pointing at the current figure.
+        // A uifigure's key is not a figure number and names nothing. A numbered figure whose
+        // IntegerHandle was turned off afterwards still answers to its number, because a script's
+        // variables hold that number and a handle that died of a property write would be worse.
         if (handle > 0 && handle == System.Math.Floor(handle) && handle < int.MaxValue
-            && JG.TryGetFigure((int)handle, out FigureModel figure))
+            && !JG.IsHiddenNumber((int)handle) && JG.TryGetFigure((int)handle, out FigureModel figure))
         {
             entry = FigureEntry(figure);
             return true;
@@ -334,10 +398,19 @@ internal static class JgsHandleRegistry
         return false;
     }
 
+    /// <summary>
+    /// <see cref="TryGet"/>, with zero read as the root — MATLAB's oldest handle:
+    /// <c>get(0, 'ScreenSize')</c>. It is a separate question because <c>ishandle</c> must go on
+    /// answering false for the zeros <c>gobjects</c> hands out as blanks.
+    /// </summary>
+    public static bool TryGetOrRoot(JgsValue value, [NotNullWhen(true)] out JgsHandleEntry? entry) =>
+        TryGet(value, out entry)
+        || (value.Type == JgsType.Number && value.AsNumber == 0 && TryGet(For(JgsGraphicsRoot.Instance), out entry));
+
     /// <summary>The entry for a handle, or an error naming the handle as dead.</summary>
     public static JgsHandleEntry Require(JgsValue value, int line, int col)
     {
-        if (TryGet(value, out JgsHandleEntry? entry))
+        if (TryGetOrRoot(value, out JgsHandleEntry? entry))
         {
             return entry;
         }
@@ -355,6 +428,7 @@ internal static class JgsHandleRegistry
             Handles.Clear();
             FigureEntries.Clear();
             _next = FirstHandle;
+            ShowHiddenHandles = false;
             JgsGraphicsCallbackState.Clear();
             JgsGraphicsProperties.ForgetGroups();
         }

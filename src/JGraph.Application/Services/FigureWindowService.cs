@@ -68,7 +68,7 @@ public sealed class FigureWindowService : IFigureWindowService
     public void ShowScriptFigure(int number, FigureModel figure)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        string status = $"Figure {number} — from script";
+        string status = JGraph.Api.JG.IsHiddenNumber(number) ? "App — from script" : $"Figure {number} — from script";
 
         if (_windows.TryGetValue(number, out FigureWindow? window))
         {

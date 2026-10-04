@@ -1,0 +1,94 @@
+created a1 c1 p1 a2 c2 -> Children: c2 p1 c1 a2 a1
+allchild: c2 p1 c1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a2 a1 ; findobj(f):  c2 p1 c1 a2 a1
+p1.Children: p2 c3 a3
+findobj(f):  c2 p1 c1 a2 a1 p2 c3 a3 c4
+findobj(f,'-depth',1):  c2 p1 c1 a2 a1
+findobj(p1): p1 p2 c3 a3 c4
+findobj(f,'Type','uicontrol'): c2 c1 c3 c4
+findobj(f,'Type','uipanel'): p1 p2
+findall(f,'Type','axes'): a2 a1 a3
+findobj('Tag','c4') found 1
+findobj(f,'-property','Title') : p1 p2
+uistack(c1,'top') : 'c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a2 a1'
+uistack(c1,'bottom') : 'c2 p1 c1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a2 a1'
+uistack(p1,'up') : 'p1 c2 c1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a2 a1'
+uistack(p1,'up',2) : 'p1 c2 c1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a2 a1'
+uistack(p1,'down',1) : 'c2 p1 c1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a2 a1'
+uistack(p1,'down',99) : 'c2 c1 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a2 a1'
+uistack(a1,'top') : 'c2 c1 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2'
+uistack([c1 c2],'top') : 'c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2'
+uistack(c1) : 'c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2'
+uistack(c1,'bogus') : ERR MATLAB:uistack:InvalidStackOption | Stacking location must be 'up', 'down', 'top', or 'bottom'.
+uistack(c1,'up',-1) : 'c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2'
+uistack(c1,'up',1.5) : ERR MATLAB:NonIntegerInput | Size inputs must be integers.
+uistack(5.5,'top') : ERR MATLAB:uistack:PassedInvalidHandles | Invalid object specified for uistack.
+uistack(f,'top') : 'c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2'
+uistack([c1 c3],'top') different parents : ERR MATLAB:uistack:ParentMustBeSame | Objects specified for uistack must have the same parent.
+uistack(c3,'top') in panel : 'c3 p2 scribeOverlay a3'
+nargout uistack : double -1
+[Warning: Illegal permutation. No effect on view] 
+[> In u2_tree>setkids (line 143)
+In u2_tree>@()setkids(f) (line 44)
+In tryp (line 4)
+In u2_tree (line 44)] 
+set Children reorder : 'c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2'
+set Children missing one : ERR MATLAB:hg:BadChildrenPermutation | Children may only be set to a permutation of itself.
+c2 off, p1 callback: Children=c1 a1 a2
+  allchild=c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2
+  findobj(f)= c1 a1 a2
+  findall(f)= c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2 c3 p2 scribeOverlay a3 Standard.OpenInspector Standard.EditPlot Annotation.InsertLegend Annotation.InsertColorbar DataManager.Linking Standard.PrintFigure Standard.SaveFigure Standard.FileOpen Standard.NewFigure figMenuHelpPatents figMenuHelpTerms figMenuHelpPrintingExport figMenuHelpAnnotatingGraphs figMenuHelpPlottingTools figMenuHelpGraphics figMenuToolsDS figMenuToolsBF figMenuToolsAlignDistrib figMenuToolsAlign figMenuToolsAlignDistributeSmart figMenuViewGrid figMenuSnapToGrid figMenuEditPinning figDataManagerBrushTools figLinked figMenuToolsPlotedit figMenuInsertLight figMenuInsertAxes figMenuInsertEllipse figMenuInsertRectangle figMenuInsertTextbox figMenuInsertArrow2 figMenuInsertTextArrow figMenuInsertArrow figMenuInsertLine figMenuInsertColorbar figMenuInsertLegend figMenuInsertTitle figMenuInsertZLabel figMenuInsertYLabel figMenuInsertXLabel figMenuObjectBrowser figMenuPropertyInspector figMenuPloteditToolbar figMenuCameraToolbar figMenuFigureToolbar figMenuEditColormap figMenuEditGCO figMenuEditGCA figMenuEditGCF figMenuEditCopyOptions figMenuEditCopyFigure figMenuEditSelectAll figMenuEditDelete figMenuEditClear figMenuEditPaste figMenuEditCopy figMenuEditCut figMenuEditRedo figMenuEditUndo printMenu figMenuFilePrintPreview figMenuFileExportSetup figMenuGenerateCode figMenuFileSaveAs figMenuFileSave figMenuFileClose figMenuOpen figMenuNewFigure c4 figMenuToolsDistributeHRight figMenuToolsDistributeHCent figMenuToolsDistributeHLeft figMenuToolsDistributeHAdj figMenuToolsDistributeVBot figMenuToolsDistributeVMid figMenuToolsDistributeVTop figMenuToolsDistributeVAdj figMenuToolsAlignBottom figMenuToolsAlignMiddle figMenuToolsAlignTop figMenuToolsAlignRight figMenuToolsAlignCenter figMenuToolsAlignLeft figDataManagerCopy figDataManagerPaste figDataManagerNewVar figDataManagerRemoveUnbr figDataManagerRemove figDataManagerColor figDataManagerBrush figDataManagerReplaceConst figDataManagerReplaceNaN
+  findobj(p1)=p1 c3 p2 a3 c4 (searching from a hidden one)
+  findobj(c2)=c2
+  ishandle(c2)=1 isvalid=1 ; get(c2,Tag)=c2
+  ShowHiddenHandles on: Children=c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2 findobj(f)= c1 c2 p1 FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile scribeOverlay a1 a2 c3 p2 scribeOverlay a3 Standard.OpenInspector Standard.EditPlot Annotation.InsertLegend Annotation.InsertColorbar DataManager.Linking Standard.PrintFigure Standard.SaveFigure Standard.FileOpen Standard.NewFigure figMenuHelpPatents figMenuHelpTerms figMenuHelpPrintingExport figMenuHelpAnnotatingGraphs figMenuHelpPlottingTools figMenuHelpGraphics figMenuToolsDS figMenuToolsBF figMenuToolsAlignDistrib figMenuToolsAlign figMenuToolsAlignDistributeSmart figMenuViewGrid figMenuSnapToGrid figMenuEditPinning figDataManagerBrushTools figLinked figMenuToolsPlotedit figMenuInsertLight figMenuInsertAxes figMenuInsertEllipse figMenuInsertRectangle figMenuInsertTextbox figMenuInsertArrow2 figMenuInsertTextArrow figMenuInsertArrow figMenuInsertLine figMenuInsertColorbar figMenuInsertLegend figMenuInsertTitle figMenuInsertZLabel figMenuInsertYLabel figMenuInsertXLabel figMenuObjectBrowser figMenuPropertyInspector figMenuPloteditToolbar figMenuCameraToolbar figMenuFigureToolbar figMenuEditColormap figMenuEditGCO figMenuEditGCA figMenuEditGCF figMenuEditCopyOptions figMenuEditCopyFigure figMenuEditSelectAll figMenuEditDelete figMenuEditClear figMenuEditPaste figMenuEditCopy figMenuEditCut figMenuEditRedo figMenuEditUndo printMenu figMenuFilePrintPreview figMenuFileExportSetup figMenuGenerateCode figMenuFileSaveAs figMenuFileSave figMenuFileClose figMenuOpen figMenuNewFigure c4 figMenuToolsDistributeHRight figMenuToolsDistributeHCent figMenuToolsDistributeHLeft figMenuToolsDistributeHAdj figMenuToolsDistributeVBot figMenuToolsDistributeVMid figMenuToolsDistributeVTop figMenuToolsDistributeVAdj figMenuToolsAlignBottom figMenuToolsAlignMiddle figMenuToolsAlignTop figMenuToolsAlignRight figMenuToolsAlignCenter figMenuToolsAlignLeft figDataManagerCopy figDataManagerPaste figDataManagerNewVar figDataManagerRemoveUnbr figDataManagerRemove figDataManagerColor figDataManagerBrush figDataManagerReplaceConst figDataManagerReplaceNaN
+  in callback: Children=cb c1 a1 a2 gcbo= gcbf==f 
+  (called directly, not through a user action: gcbo empty? 1)
+a2 off: gca Tag=a3 (a2 was current) ; f.CurrentAxes Tag=a3
+f off: get(0,Children) has f? 0 ; findobj(0,'Type','figure') 0 ; findall 1 ; isempty(get(0,'CurrentFigure'))=1
+  gcf made a new figure? 1 (Number 2)
+f callback: get(0,Children) has f? 0
+  after close all: isvalid(f)=1
+HandleVisibility bogus : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'HandleVisibility' of class 'Figure': 'bogus' is not a valid value. Use one of these values: 'on' | 'callback' | 'off'.
+HandleVisibility CALL : 'callback'
+c1 into p1: Position=[20 30 60 20] gpp(true)=[120 130 60 20] p1.Children=c1 c3 p2 a3
+a1 into p1: Position=[0.13 0.11 0.775 0.815] p1.Children=c1 c3 p2 a1 a3 f.Children=cb c2 p1 a2
+panel into its own child : ERR MATLAB:container:InvalidParentToChild | You are trying to set the parent property to a descendant child object.
+panel into itself : ERR MATLAB:container:InvalidParentToChild | You are trying to set the parent property to a descendant child object.
+uicontrol Parent = axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uicontrol Parent = uicontrol : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uicontrol Parent = [] : matlab.graphics.GraphicsPlaceholder empty [0 0]
+  c2 with no parent: isvalid=1 f.Children=cb p1 a2
+axes Parent = uicontrol : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of UIControl.
+p1 moved to f2: f.Children=c2 cb a2 f2.Children=p1 ancestor(c4)==f2 1
+p1.Children before delete: c1 c3 p2 a1 a3
+delete(p2):
+  DeleteFcn p2 (uipanel) BeingDeleted=on parentBeingDeleted=off kids=1
+  DeleteFcn c4 (uicontrol) BeingDeleted=on parentBeingDeleted=on kids=0
+  isvalid(c4)=0 ishandle(c4)=0
+delete(p1):
+  DeleteFcn p1 (uipanel) BeingDeleted=on parentBeingDeleted=off kids=5
+  DeleteFcn c1 (uicontrol) BeingDeleted=on parentBeingDeleted=on kids=0
+  DeleteFcn c3 (uicontrol) BeingDeleted=on parentBeingDeleted=on kids=0
+  DeleteFcn a1 (axes) BeingDeleted=on parentBeingDeleted=on kids=0
+  DeleteFcn a3 (axes) BeingDeleted=on parentBeingDeleted=on kids=0
+f.Children before delete: c2 cb a2
+delete(f):
+  DeleteFcn f (figure) BeingDeleted=on parentBeingDeleted=- kids=11
+  DeleteFcn c2 (uicontrol) BeingDeleted=on parentBeingDeleted=on kids=0
+  DeleteFcn a2 (axes) BeingDeleted=on parentBeingDeleted=on kids=0
+get on deleted panel : ERR MATLAB:class:InvalidHandle | Invalid or deleted object.
+set on deleted panel : ERR MATLAB:class:InvalidHandle | Invalid or deleted object.
+uicontrol(deleted panel) : ERR MATLAB:hg:DeletedObject | Cannot set property to a deleted object.
+uipanel(deleted figure) : ERR MATLAB:hg:DeletedObject | Cannot set property to a deleted object.
+clf:
+  panel DeleteFcn
+  control DeleteFcn
+  after clf: allchild=hidden FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile
+  after clf reset: allchild=FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile
+close(f) with a CloseRequestFcn that does not delete:
+  CloseRequestFcn then delete
+  isvalid=1
+delete(f):
+  figure DeleteFcn
+  panel DeleteFcn
+  control DeleteFcn

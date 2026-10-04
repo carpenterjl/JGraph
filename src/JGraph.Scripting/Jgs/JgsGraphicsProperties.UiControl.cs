@@ -60,7 +60,7 @@ internal static partial class JgsGraphicsProperties
 
         Put(table, "String",
             entry => TextValue(Control(entry).Text),
-            (entry, value, line, col) => Control(entry).Text = ControlString(entry, value, line, col));
+            (entry, value, line, col) => Control(entry).Text = ComponentText(entry, "String", value, line, col));
 
         Put(table, "Value",
             entry => NumbersValue(Control(entry).Value),
@@ -98,20 +98,7 @@ internal static partial class JgsGraphicsProperties
 
         Put(table, "FontName",
             entry => JgsValue.Str(Control(entry).FontName),
-            (entry, value, line, col) =>
-            {
-                if (!JgsBuiltins.IsTextScalar(value))
-                {
-                    throw ComponentError(entry, "FontName", "MATLAB:class:RequireString",
-                        "Value must be a character vector or a string scalar.", line, col);
-                }
-
-                string name = JgsBuiltins.TextOf(value);
-                Control(entry).FontName = name.Length > 0
-                    ? name
-                    : throw ComponentError(entry, "FontName", "MATLAB:class:MATLABConversionError",
-                        "Character vector value must not be empty", line, col);
-            });
+            (entry, value, line, col) => Control(entry).FontName = FontNameOf(entry, value, line, col));
         Put(table, "FontSize",
             entry => JgsValue.Number(Control(entry).FontSize),
             (entry, value, line, col) => Control(entry).FontSize = FontSizeOf(entry, value, line, col));
@@ -122,9 +109,10 @@ internal static partial class JgsGraphicsProperties
                 // A change of units keeps the size the text is drawn at: FontSize is re-expressed.
                 UiControlModel control = Control(entry);
                 var units = (UiFontUnits)Word(entry, "FontUnits", value, FontUnitWords, FontUnitWords, line, col);
-                double pixels = control.FontSizeInPixels(control.Position.Height);
+                double height = control.PixelPosition().Height;
+                double pixels = control.FontSizeInPixels(height);
                 control.FontUnits = units;
-                double one = control.FontSizeInPixels(control.Position.Height) / control.FontSize;
+                double one = control.FontSizeInPixels(height) / control.FontSize;
                 control.FontSize = one > 0 && double.IsFinite(one) ? pixels / one : control.FontSize;
             });
         Put(table, "FontWeight",
@@ -150,18 +138,21 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Extent", entry =>
         {
             UiControlModel control = Control(entry);
-            double size = control.FontSizeInPixels(control.Position.Height);
+            double size = control.FontSizeInPixels(control.PixelPosition().Height);
             int longest = control.Text.Lines.Count == 0 ? 0 : control.Text.Lines.Max(static l => l.Length);
             return Row(0, 0, longest * size * 0.5, System.Math.Max(1, control.Text.Lines.Count) * size * 1.25);
         });
     }
 
     /// <summary>What every component shares: its place, whether it is on, its tooltip, its units.</summary>
-    private static void AddUiObjectBlock(IDictionary<string, GraphicsProperty> table)
+    private static void AddUiObjectBlock(Type type, IDictionary<string, GraphicsProperty> table)
     {
         // MATLAB's interaction words on drawn objects are not a component's: R2025b's uicontrol has
-        // no Selected, SelectionHighlight, HitTest or PickableParts, and answers neither of them.
-        foreach (string drawnOnly in new[] { "Selected", "SelectionHighlight", "HitTest", "PickableParts" })
+        // no Selected, SelectionHighlight, HitTest or PickableParts, and answers neither of them. A
+        // panel still answers the first three, though it lists none.
+        foreach (string drawnOnly in typeof(UiControlModel).IsAssignableFrom(type)
+            ? new[] { "Selected", "SelectionHighlight", "HitTest", "PickableParts" }
+            : ["PickableParts"])
         {
             table.Remove(drawnOnly);
         }
@@ -178,18 +169,11 @@ internal static partial class JgsGraphicsProperties
                 (entry, value, line, col) => ((UiObject)entry.Target).Position = ComponentPosition(entry, captured, value, line, col));
         }
 
+        // The units engine (U2): changing Units keeps the component where it is and re-expresses
+        // Position, so the order of 'Units' and 'Position' among a call's options matters, as in R2025b.
         Put(table, "Units",
-            static _ => JgsValue.Str("pixels"),
-            (entry, value, line, col) =>
-            {
-                int word = Word(entry, "Units", value, UnitWords, UnitWords, line, col);
-                if (UnitWords[word] != "pixels")
-                {
-                    // The units engine arrives in U2; until then a component is placed in pixels only.
-                    throw new JgsRuntimeException(line, col,
-                        $"A component is placed in pixels in this build, so Units cannot be '{UnitWords[word]}' yet.");
-                }
-            });
+            entry => UnitsValue(((UiObject)entry.Target).Units),
+            (entry, value, line, col) => ((UiObject)entry.Target).ChangeUnits(UnitsWord(entry, value, line, col)));
 
         Put(table, "Enable",
             entry => JgsValue.Str(EnableWords[(int)((UiObject)entry.Target).Enable]),
@@ -247,7 +231,7 @@ internal static partial class JgsGraphicsProperties
     /// array or a cell becomes a column of lines, a number is its <c>num2str</c>, an array of numbers
     /// one line per element, and a logical is refused.
     /// </summary>
-    private static UiText ControlString(JgsHandleEntry entry, JgsValue value, int line, int col)
+    private static UiText ComponentText(JgsHandleEntry entry, string property, JgsValue value, int line, int col)
     {
         string kind = JgsBuiltins.ClassOf(value, JgsDialect.Matlab);
         if (value.IsCharMatrix)
@@ -280,7 +264,7 @@ internal static partial class JgsGraphicsProperties
 
         if (kind == "logical" || !IsNumericKind(kind))
         {
-            throw ComponentError(entry, "String", "MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass",
+            throw ComponentError(entry, property, "MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass",
                 "Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.",
                 line, col);
         }
@@ -290,7 +274,7 @@ internal static partial class JgsGraphicsProperties
             return UiText.Empty;
         }
 
-        double[] numbers = JgsBuiltins.ToDoubles("String", value, line, col);
+        double[] numbers = JgsBuiltins.ToDoubles(property, value, line, col);
         if (numbers.Length == 1)
         {
             return UiText.Of(NumberLine(numbers[0], line, col));

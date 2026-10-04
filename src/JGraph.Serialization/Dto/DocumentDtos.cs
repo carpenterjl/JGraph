@@ -43,6 +43,24 @@ public sealed class FigureDto
     /// </summary>
     public List<ContextMenuDto> ContextMenus { get; set; } = new();
 
+    /// <summary>
+    /// The figure's app-building components (app-building plan, U2; decision Q9), panels holding
+    /// their own. Empty in every document written before, so nothing about an old one changes.
+    /// </summary>
+    public List<UiComponentDto> Components { get; set; } = new();
+
+    /// <summary>Whether <c>uifigure</c> made this figure. False in every document written before U2.</summary>
+    public bool IsUiFigure { get; set; }
+
+    /// <summary>MATLAB's <c>Units</c> for the figure's rectangles; null means pixels.</summary>
+    public string? Units { get; set; }
+
+    public bool AutoResizeChildren { get; set; }
+
+    public bool Scrollable { get; set; }
+
+    public bool IntegerHandle { get; set; } = true;
+
     /// <summary>Everything below is null or defaulted in documents written before M75.</summary>
     public ColormapDto? Colormap { get; set; }
 
@@ -169,6 +187,18 @@ public sealed class AxesDto
     public Color Background { get; set; }
 
     public RectDto NormalizedBounds { get; set; } = new(0, 0, 1, 1);
+
+    /// <summary>MATLAB's <c>Units</c> for the axes' rectangles (U2); null means normalized.</summary>
+    public string? Units { get; set; }
+
+    /// <summary>The rectangle the axes is pinned to in pixels while its units are not normalized.</summary>
+    public RectDto? PixelBounds { get; set; }
+
+    /// <summary>
+    /// The panel the axes is placed in, as the index at each level of the figure's components, or
+    /// null when it is placed in the figure itself.
+    /// </summary>
+    public int[]? Container { get; set; }
 
     /// <summary>Which cell of the figure's tiled layout this axes holds, or null when it is in none.</summary>
     public int? LayoutTile { get; set; }

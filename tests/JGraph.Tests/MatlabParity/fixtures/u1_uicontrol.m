@@ -139,7 +139,7 @@ for val = {'Arial', "Courier New", 5, ''}
 end
 try, set(h, 'Bogus', 1); catch err, fprintf('CHK|unknown_set|%s|exact\n', err.identifier); fprintf('CHK|unknown_set_msg|%s|exact\n', err.message); end
 try, set(h, 'Units', 'normalized'); units = h.Units; catch err, units = 'refused'; end
-fprintf('CHK|units_normalized|%s|div=ADR0198\n', units);
+fprintf('CHK|units_normalized|%s|exact\n', units);
 set(h, 'Units', 'pixels');
 try, set(h, 'Units', 'bogus'); catch err, fprintf('CHK|units_bogus|%s|exact\n', err.identifier); end
 

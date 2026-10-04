@@ -74,9 +74,22 @@ public sealed class FigureRenderer
             DrawLayoutText(layout, context, content);
         }
 
+        // The containers (app-building plan, U2): where each panel lies, from the figure's frame and
+        // never from the components themselves, which a script may be writing as this draws.
+        UiLayoutResult? containers = figure.Components.Count > 0
+            ? UiLayout.Compute(figure.FrameForRender(), size)
+            : null;
+
         var infos = new List<AxesRenderInfo>();
         foreach (AxesModel axes in figure.Axes.InDrawOrder())
         {
+            // An axes placed in a panel is drawn with its panel, over the panel's background and
+            // clipped to it. One whose panel the frame does not hold yet is drawn in the figure.
+            if (containers?.Find(axes.Container) is not null)
+            {
+                continue;
+            }
+
             // Every axes is drawn, visible or not: MATLAB's Visible governs the axes' own furniture
             // — background, rulers, ticks, grid and the two axis labels — and never its children,
             // so `axis off` leaves the surface on the page with nothing drawn around it.
@@ -84,6 +97,15 @@ public sealed class FigureRenderer
             if (info is not null)
             {
                 infos.Add(info);
+            }
+        }
+
+        // Panels lie over the figure's own axes, as MATLAB stacks them: components before axes.
+        if (containers is not null)
+        {
+            foreach (UiPanelPlacement panel in containers.Panels)
+            {
+                DrawPanel(panel, figure, context, theme, infos);
             }
         }
 
@@ -158,13 +180,181 @@ public sealed class FigureRenderer
         fraction.Width * content.Width,
         fraction.Height * content.Height);
 
+    /// <summary>
+    /// One panel: its background, border and title, then the axes placed in it, then the panels
+    /// inside it — each clipped to what its ancestors leave it. A panel that is not showing draws
+    /// nothing, and neither does anything in it.
+    /// </summary>
+    private void DrawPanel(
+        UiPanelPlacement placement, FigureModel figure, IRenderContext context, ITheme theme, List<AxesRenderInfo> infos)
+    {
+        if (!placement.Visible || placement.Clip.IsEmpty)
+        {
+            return;
+        }
+
+        context.PushClip(placement.Clip);
+        try
+        {
+            DrawPanelFrame(placement, figure.IsUiFigure, context);
+            Rect2D inner = UiLayout.Intersect(placement.Clip, placement.Inner);
+            if (inner.IsEmpty)
+            {
+                return;
+            }
+
+            context.PushClip(inner);
+            try
+            {
+                foreach (AxesModel axes in figure.Axes.InDrawOrder())
+                {
+                    if (ReferenceEquals(axes.Container, placement.Panel.Source)
+                        && RenderAxes(axes, context, theme, placement.Inner) is { } info)
+                    {
+                        infos.Add(info);
+                    }
+                }
+
+                foreach (UiPanelPlacement child in placement.Children)
+                {
+                    DrawPanel(child, figure, context, theme, infos);
+                }
+            }
+            finally
+            {
+                context.PopClip();
+            }
+        }
+        finally
+        {
+            context.PopClip();
+        }
+    }
+
+    /// <summary>
+    /// A panel's own drawing. A classic panel's title sits on its border, which breaks around it; a
+    /// uifigure panel's sits inside the border, at the top. Either way the title's band is the height
+    /// the layout took from the inner area.
+    /// </summary>
+    private static void DrawPanelFrame(UiPanelPlacement placement, bool flat, IRenderContext context)
+    {
+        UiPanelFrame panel = placement.Panel;
+        Rect2D box = placement.Box;
+        context.DrawRectangle(box, stroke: null, fill: panel.Background.ToColor());
+
+        bool titled = panel.Title.Length > 0;
+        bool atBottom = panel.TitlePosition is UiTitlePosition.LeftBottom or UiTitlePosition.CenterBottom or UiTitlePosition.RightBottom;
+        double band = titled ? System.Math.Round(panel.FontSize, MidpointRounding.AwayFromZero) : 0;
+        double width = double.IsFinite(panel.BorderWidth) ? System.Math.Max(0, panel.BorderWidth) : 0;
+
+        // The border's rectangle: the whole box, or — under a classic title — pulled in so that its
+        // edge passes through the middle of the title's band.
+        Rect2D frame = box;
+        if (titled && !flat && band > width)
+        {
+            double pull = (band - width) / 2;
+            frame = atBottom
+                ? new Rect2D(box.X, box.Y, box.Width, System.Math.Max(0, box.Height - pull))
+                : new Rect2D(box.X, box.Y + pull, box.Width, System.Math.Max(0, box.Height - pull));
+        }
+
+        if (width > 0 && panel.BorderType != UiBorderType.None)
+        {
+            Color? lit = panel.Highlight?.ToColor();
+            Color shade = panel.Shadow.ToColor();
+            switch (panel.BorderType)
+            {
+                case UiBorderType.Line:
+                    if (panel.BorderColor is { } line)
+                    {
+                        StrokeInside(context, frame, line.ToColor(), width, 0);
+                    }
+
+                    break;
+                case UiBorderType.EtchedIn or UiBorderType.EtchedOut:
+                    bool into = panel.BorderType == UiBorderType.EtchedIn;
+                    if ((into ? (Color?)shade : lit) is { } outerEdge)
+                    {
+                        StrokeInside(context, frame, outerEdge, width, 0);
+                    }
+
+                    if ((into ? lit : shade) is { } innerEdge)
+                    {
+                        StrokeInside(context, frame, innerEdge, width, width);
+                    }
+
+                    break;
+                default:
+                    bool sunk = panel.BorderType == UiBorderType.BeveledIn;
+                    Bevel(context, frame, sunk ? shade : lit, sunk ? lit : shade, width);
+                    break;
+            }
+        }
+
+        if (!titled || panel.Foreground is not { } ink)
+        {
+            return;
+        }
+
+        var style = new TextStyle(
+            ink.ToColor(), System.Math.Max(1, panel.FontSize), UiLayout.FontFamily(panel.FontName),
+            panel.Bold, panel.Italic, TextInterpreter.None);
+        Size2D text = context.MeasureText(panel.Title, style);
+        const double Indent = 8;
+        double left = panel.TitlePosition switch
+        {
+            UiTitlePosition.CenterTop or UiTitlePosition.CenterBottom => box.X + ((box.Width - text.Width) / 2),
+            UiTitlePosition.RightTop or UiTitlePosition.RightBottom => box.Right - Indent - text.Width,
+            _ => box.X + Indent,
+        };
+        double middle = atBottom ? box.Bottom - (band / 2) : box.Y + (band / 2);
+        if (!flat)
+        {
+            // The gap in the border the title sits in.
+            context.DrawRectangle(
+                new Rect2D(left - 2, middle - (band / 2), text.Width + 4, band), stroke: null, fill: panel.Background.ToColor());
+        }
+
+        context.DrawText(panel.Title, new Point2D(left, middle), style, HorizontalAlignment.Left, VerticalAlignment.Middle);
+    }
+
+    /// <summary>Strokes a rectangle's edge wholly inside it, <paramref name="inset"/> in from it.</summary>
+    private static void StrokeInside(IRenderContext context, Rect2D rect, Color color, double width, double inset)
+    {
+        double half = inset + (width / 2);
+        var path = new Rect2D(
+            rect.X + half, rect.Y + half,
+            System.Math.Max(0, rect.Width - (2 * half)), System.Math.Max(0, rect.Height - (2 * half)));
+        context.DrawRectangle(path, new LineStyle(color, width), fill: null);
+    }
+
+    /// <summary>A bevel: one colour along the top and left edges, another along the bottom and right.</summary>
+    private static void Bevel(IRenderContext context, Rect2D rect, Color? topLeft, Color? bottomRight, double width)
+    {
+        double half = width / 2;
+        if (topLeft is { } first)
+        {
+            var pen = new LineStyle(first, width);
+            context.DrawLine(new Point2D(rect.X, rect.Y + half), new Point2D(rect.Right, rect.Y + half), pen);
+            context.DrawLine(new Point2D(rect.X + half, rect.Y), new Point2D(rect.X + half, rect.Bottom), pen);
+        }
+
+        if (bottomRight is { } second)
+        {
+            var pen = new LineStyle(second, width);
+            context.DrawLine(new Point2D(rect.X, rect.Bottom - half), new Point2D(rect.Right, rect.Bottom - half), pen);
+            context.DrawLine(new Point2D(rect.Right - half, rect.Y), new Point2D(rect.Right - half, rect.Bottom), pen);
+        }
+    }
+
     private AxesRenderInfo? RenderAxes(AxesModel axes, IRenderContext context, ITheme theme, Rect2D content)
     {
         // A pinned plot box is measured against itself and then inflated, because the margins are
         // what stands between the two rectangles and neither is known before the other. Measuring
         // against the inner rectangle costs a few pixels on the tick lengths a ruler states as a
-        // fraction, and buys a plot box that lands exactly where it was asked for.
-        Rect2D outer = DeviceRect(content, axes.InnerTarget ?? axes.NormalizedBounds);
+        // fraction, and buys a plot box that lands exactly where it was asked for. An axes placed in
+        // absolute units is converted against this area here, so it keeps its pixels on a resize.
+        Rect2D outer = DeviceRect(content, axes.PlacementIn(new Size2D(content.Width, content.Height)));
 
         AxisModel xAxis = axes.PrimaryXAxis;
         AxisModel yAxis = axes.PrimaryYAxis;

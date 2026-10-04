@@ -1,0 +1,82 @@
+spp(c) : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+spp(c,[1 2 3]) : ERR MATLAB:setpixelposition:InvalidPosition | Second argument "position" must be a 4 element vector.
+spp(c,'a') : ERR MATLAB:setpixelposition:InvalidPosition | Second argument "position" must be a 4 element vector.
+spp(5.5,[1 2 3 4]) : ERR MATLAB:setpixelposition:InvalidHandle | First argument must be a valid graphics object handle.
+spp(c,[1 2 -3 4]) : ERR MATLAB:hg:set_chck:DimensionsOutsideRange | Error setting property 'Position' of class 'UIControl': Width and height must be greater than or equal to 0
+movegui bogus : ERR MATLAB:movegui:UnrecognizedPosition | unrecognized position
+movegui(5.5) : ERR MATLAB:movegio:UnrecognizedInput | unrecognized input argument
+movegui(f,[1 2 3]) : ERR MATLAB:movegio:UnrecognizedInput | unrecognized input argument
+movegui(f,{1}) : ERR MATLAB:movegio:UnrecognizedInput | unrecognized input argument
+movegui(c,center) : ok
+movegui(c): figure moved to [811 465 300 200]
+uistack() : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+gpp(c,1,2) : ERR MATLAB:TooManyInputs | Too many input arguments.
+[Warning: BorderType will not accept etchedin in a future release. Use "line" or "none" instead.] 
+[> In u2_more (line 23)] 
+BorderType warning: MATLAB:Uipanel:UnsupportedBorderType | BorderType will not accept etchedin in a future release. Use "line" or "none" instead.
+[Warning: ShadowColor will be removed in a future release. Use BorderColor instead.] 
+[> In u2_more (line 25)] 
+ShadowColor warning: MATLAB:Uipanel:UnsupportedProperty | ShadowColor will be removed in a future release. Use BorderColor instead.
+ShadowColor get warning:  | 
+[Warning: 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.] 
+[> In u2_more (line 29)] 
+panel SizeChangedFcn-ARC warning: MATLAB:ui:containers:SizeChangedFcnDisabledWhenAutoResizeOn | 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.
+[Warning: 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.] 
+[> In u2_more (line 31)] 
+figure SizeChangedFcn-ARC warning: MATLAB:ui:containers:SizeChangedFcnDisabledWhenAutoResizeOn | 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.
+Children flip (uipanel,uicontrol) warning:  |  -> uicontrol,uipanel
+axes swapped within their group: warning [] -> uicontrol,uipanel,axesa,axesa2
+[Warning: Illegal permutation. No effect on view] 
+[> In u2_more (line 38)] 
+axes above a component: warning [MATLAB:hg:default_child_strategy:IllegalPermutation | Illegal permutation. No effect on view] -> uicontrol,uipanel,axesa,axesa2
+Children not handles : ERR MATLAB:hg:BadChildren | Children must be either be a valid double array or an object array.
+panel Parent = groot : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uicontrol Parent = 0 : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+uicontrol Parent = 5.5 : ERR MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle | Error setting property 'Parent' of class 'UIControl': Value must be a handle.
+axes Parent = 5.5 : ERR MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle | Error setting property 'Parent' of class 'Axes': Value must be a handle.
+axes Parent = axes : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of Axes.
+panel Title logical : ERR MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass | Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.
+panel BorderWidth -1 at creation : ERR MATLAB:hg:uipanel | Border width cannot have negative values.
+panel Position 3 at creation : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector | Value must be a 4 element vector
+uipanel(f, 'Units') : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uipanel(1,2,3) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uipanel('Title','a','Bogus') : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uipanel(f,5,6) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+get panel bogus : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.container.Panel.
+set panel bogus : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Panel.
+p.Bogus : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.container.Panel'.
+panel Layout set : ERR MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass | Error setting property 'Layout' of class 'Panel': 'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.
+root Units set : ok
+figure Scrollable on : ok
+figure WindowStyle modal : ok
+figure IntegerHandle bogus : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'IntegerHandle' of class 'Figure': Invalid enum value. Use one of these values: 'on' | 'off'.
+figure AutoResizeChildren bogus : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'AutoResizeChildren' of class 'Figure': Invalid enum value. Use one of these values: 'on' | 'off'.
+figure Position 3 : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector | Error setting property 'Position' of class 'Figure': Value must be a 4 element vector
+figure Position neg : ERR MATLAB:hg:set_chck:DimensionsOutsideRange | Error setting property 'Position' of class 'Figure': Width and height must be greater than or equal to 0
+figure Position zero : ok
+figure Position after zero width: [1 2 0 4]
+axes Position neg : ERR MATLAB:hg:set_chck:DimensionsOutsideRange | Error setting property 'Position' of class 'Axes': Width and height must be greater than or equal to 0
+axes Position 3 : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector | Error setting property 'Position' of class 'Axes': Value must be a 4 element vector
+axes OuterPosition zero : ok
+axes Units set chars : ok
+axes Units char -> characters
+movegui no bars      northeast left=1612 bottom=969 rightgap=8 topgap=31
+movegui no bars      southwest left=8 bottom=8 rightgap=1612 topgap=992
+movegui no bars      center    left=810 bottom=488.5 rightgap=810 topgap=511.5
+movegui no bars      onscreen -> [47 47 300 200]
+movegui no bars      [10 20] -> [19 29 300 200]
+movegui toolbar only northeast left=1612 bottom=942 rightgap=8 topgap=58
+movegui toolbar only southwest left=8 bottom=8 rightgap=1612 topgap=992
+movegui toolbar only center    left=810 bottom=475 rightgap=810 topgap=525
+movegui toolbar only onscreen -> [47 47 300 200]
+movegui toolbar only [10 20] -> [19 29 300 200]
+movegui uifigure     northeast left=1612 bottom=969 rightgap=8 topgap=31
+movegui uifigure     southwest left=8 bottom=8 rightgap=1612 topgap=992
+movegui uifigure     center    left=810 bottom=488.5 rightgap=810 topgap=511.5
+movegui uifigure     onscreen -> [47 47 300 200]
+movegui uifigure     [10 20] -> [19 29 300 200]
+movegui larger than the screen: [9 9 1904 1112]
+uifigure Children: b2 p b a
+findobj(uf): 5 ; findall(uf): 6
+gcf inside uifigure creation left CurrentFigure empty? 1
+gca with only a uifigure axes: made a new figure? 1

@@ -176,8 +176,9 @@ internal static class Program
     }
 
     private static void SuppressFigure(IScriptOutput output, int number, FigureModel figure) =>
-        output.WriteLine(
-            $"Figure {number} ({figure.Axes.Count} axes) was not displayed — add -showfigures to see it.");
+        output.WriteLine(JGraph.Api.JG.IsHiddenNumber(number)
+            ? $"An app window ({figure.Components.Count} components) was not displayed — add -showfigures to see it."
+            : $"Figure {number} ({figure.Axes.Count} axes) was not displayed — add -showfigures to see it.");
 
     private static int StartApplication(IReadOnlyList<string> args) =>
         GuiLauncher.StartDetached(args) ? StartupExitCodes.Success : StartupExitCodes.UsageError;

@@ -711,8 +711,10 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
 
     private void OnFigureInvalidated(object? sender, InvalidatedEventArgs e)
     {
-        // A component changed: nothing on this canvas draws one, and the component layer hears of it
-        // through the next frame instead (app-building plan, U1).
+        // A component changed. The controls are the component layer's, and the panels this canvas
+        // draws are drawn from the figure's frame, not from the model — so there is nothing new to
+        // paint until the next frame arrives, and the window asks for a repaint when it does
+        // (app-building plan, U1 and U2).
         if (e.Kind == InvalidationKind.Ui)
         {
             return;

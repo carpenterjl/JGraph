@@ -9,7 +9,7 @@ namespace JGraph.Core.Model;
 /// object a rendering surface binds to and observes (via the bubbling <see cref="GraphObject.Invalidated"/>
 /// event) to know when to repaint.
 /// </summary>
-public sealed class FigureModel : GraphObject
+public sealed class FigureModel : GraphObject, IUiContainer
 {
     private Color _background = Colors.White;
     private Size2D _size = new(640, 480);
@@ -97,7 +97,7 @@ public sealed class FigureModel : GraphObject
         // A component's own change, or this figure's children changing (a component added or taken
         // away; an axes too, which costs one needless frame and nothing else).
         if (args.Kind == InvalidationKind.Ui
-            || (args.Kind == InvalidationKind.Structure && ReferenceEquals(args.Source, this))
+            || (args.Kind == InvalidationKind.Structure && (ReferenceEquals(args.Source, this) || args.Source is UiObject))
             || (args.Kind == InvalidationKind.Render && args.Source is UiObject))
         {
             Volatile.Write(ref _componentsDirty, 1);
@@ -106,6 +106,80 @@ public sealed class FigureModel : GraphObject
 
         base.OnInvalidated(args);
     }
+
+    private bool _isUiFigure;
+    private UiUnits _units = UiUnits.Pixels;
+    private bool _autoResizeChildren;
+    private bool _scrollable;
+    private bool _integerHandle = true;
+
+    /// <summary>
+    /// Whether this figure was made by <c>uifigure</c> (app-building plan, U2): a plain window with
+    /// none of the plotting chrome, whose components draw with the app-building defaults.
+    /// </summary>
+    [Browsable(false)]
+    public bool IsUiFigure
+    {
+        get => _isUiFigure;
+        set => SetProperty(ref _isUiFigure, value, InvalidationKind.None);
+    }
+
+    /// <summary>
+    /// MATLAB's <c>Units</c> for this figure's position rectangles. The model keeps
+    /// <see cref="Position"/> and <see cref="Size"/> in pixels whatever this says; the script surface
+    /// converts against the screen as it reads and writes.
+    /// </summary>
+    [Browsable(false)]
+    public UiUnits Units
+    {
+        get => _units;
+        set => SetProperty(ref _units, value, InvalidationKind.None);
+    }
+
+    /// <inheritdoc />
+    [Browsable(false)]
+    public bool AutoResizeChildren
+    {
+        get => _autoResizeChildren;
+        set => SetProperty(ref _autoResizeChildren, value, InvalidationKind.None);
+    }
+
+    /// <summary>MATLAB's <c>Scrollable</c>. Kept; nothing scrolls until the grid stage (U5).</summary>
+    [Browsable(false)]
+    public bool Scrollable
+    {
+        get => _scrollable;
+        set => SetProperty(ref _scrollable, value, InvalidationKind.None);
+    }
+
+    /// <summary>
+    /// MATLAB's <c>IntegerHandle</c>: whether the figure's handle is its number. A <c>uifigure</c>
+    /// has none, so it takes no figure number and no number names it.
+    /// </summary>
+    [Browsable(false)]
+    public bool IntegerHandle
+    {
+        get => _integerHandle;
+        set => SetProperty(ref _integerHandle, value, InvalidationKind.None);
+    }
+
+    /// <inheritdoc />
+    [Browsable(false)]
+    public Size2D InnerPixelSize => _size;
+
+    /// <summary>
+    /// The frame the renderer places containers and their axes by. Where a host is delivering frames
+    /// (the app), it is the last one taken, so the interface thread never reads components a script
+    /// is writing; headless, and before any was taken, it is taken now from the model.
+    /// </summary>
+    public UiFrame FrameForRender() =>
+        FramesAreDelivered && Volatile.Read(ref _lastFrame) is { } last ? last : UiFrame.Take(this);
+
+    /// <summary>The axes placed in the figure itself rather than in one of its panels.</summary>
+    public IEnumerable<AxesModel> TopLevelAxes() => Axes.Where(static axes => axes.Container is null);
+
+    /// <summary>Whether a host is delivering frames to windows; set by the script layer's flush.</summary>
+    public static bool FramesAreDelivered { get; set; }
 
     /// <summary>The axes (coordinate regions) contained in this figure.</summary>
     public GraphObjectCollection<AxesModel> Axes { get; }
@@ -265,6 +339,37 @@ public sealed class FigureModel : GraphObject
             _positionSpecified = true;
             SetProperty(ref _position, value, InvalidationKind.None);
         }
+    }
+
+    /// <summary>
+    /// The size a script last asked the window for, which <see cref="Size"/> cannot be trusted to
+    /// hold until the window has taken it: the control writes its viewport's size back into
+    /// <see cref="Size"/> whenever it lays out, and a request made while a window is showing would
+    /// otherwise be read back as the size the window already was (U2). Written just before
+    /// <see cref="Position"/>, whose change is what the window acts on. Never serialized.
+    /// </summary>
+    [Browsable(false)]
+    public Size2D? RequestedSize { get; private set; }
+
+    /// <summary>How many times a script has placed this figure; see <see cref="RequestPlacement"/>.</summary>
+    [Browsable(false)]
+    public int PlacementRequest { get; private set; }
+
+    /// <summary>
+    /// Places the figure the way a script's <c>Position</c> write does: the corner and the size
+    /// together, announced as one request (a change of <see cref="PlacementRequest"/>) that the
+    /// window acts on even when the corner did not move or the numbers are the ones it had — a
+    /// person may have dragged the window since.
+    /// </summary>
+    public void RequestPlacement(Point2D position, Size2D size)
+    {
+        RequestedSize = size;
+        Size = size;
+        _positionSpecified = true;
+        _position = position;
+        OnPropertyChanged(nameof(Position));
+        PlacementRequest++;
+        OnPropertyChanged(nameof(PlacementRequest));
     }
 
     /// <summary>True once something has placed this figure rather than letting the window choose.</summary>

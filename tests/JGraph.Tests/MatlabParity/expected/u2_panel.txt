@@ -1,0 +1,459 @@
+CHK|classic_default_Type|uipanel|exact
+CHK|uifigure_default_Type|uipanel|exact
+CHK|classic_default_Title||exact
+CHK|uifigure_default_Title||exact
+CHK|classic_default_TitlePosition|lefttop|exact
+CHK|uifigure_default_TitlePosition|lefttop|exact
+CHK|classic_default_BorderType|line|exact
+CHK|uifigure_default_BorderType|line|exact
+CHK|classic_default_BorderWidth|double [1 1] 1|exact
+CHK|uifigure_default_BorderWidth|double [1 1] 1|exact
+CHK|classic_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|uifigure_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|classic_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|uifigure_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|classic_default_BorderColor|double [1 3] 0.4901960784 0.4901960784 0.4901960784|exact
+CHK|uifigure_default_BorderColor|double [1 3] 0.4901960784 0.4901960784 0.4901960784|exact
+CHK|classic_default_HighlightColor|double [1 3] 0.4901960784 0.4901960784 0.4901960784|exact
+CHK|uifigure_default_HighlightColor|double [1 3] 0.4901960784 0.4901960784 0.4901960784|exact
+CHK|classic_default_FontName|MS Sans Serif|exact
+CHK|uifigure_default_FontName|Helvetica|exact
+CHK|classic_default_FontSize|double [1 1] 8|exact
+CHK|uifigure_default_FontSize|double [1 1] 12|exact
+CHK|classic_default_FontUnits|points|exact
+CHK|uifigure_default_FontUnits|pixels|exact
+CHK|classic_default_FontWeight|normal|exact
+CHK|uifigure_default_FontWeight|normal|exact
+CHK|classic_default_FontAngle|normal|exact
+CHK|uifigure_default_FontAngle|normal|exact
+CHK|classic_default_Units|normalized|exact
+CHK|uifigure_default_Units|pixels|exact
+CHK|classic_default_Position|double [1 4] 0 0 1 1|exact
+CHK|uifigure_default_Position|double [1 4] 20 20 260 221|exact
+CHK|classic_default_InnerPosition|double [1 4] 0.001785714286 0.002380952381 0.9964285714 0.9952380952|exact
+CHK|uifigure_default_InnerPosition|double [1 4] 21 21 258 219|exact
+CHK|classic_default_OuterPosition|double [1 4] 0 0 1 1|exact
+CHK|uifigure_default_OuterPosition|double [1 4] 20 20 260 221|exact
+CHK|classic_default_Visible|on|exact
+CHK|uifigure_default_Visible|on|exact
+CHK|classic_default_Enable|on|exact
+CHK|uifigure_default_Enable|on|exact
+CHK|classic_default_Scrollable|off|exact
+CHK|uifigure_default_Scrollable|off|exact
+CHK|classic_default_AutoResizeChildren|off|exact
+CHK|uifigure_default_AutoResizeChildren|on|exact
+CHK|classic_default_Clipping|on|exact
+CHK|uifigure_default_Clipping|on|exact
+CHK|classic_default_Tag||exact
+CHK|uifigure_default_Tag||exact
+CHK|classic_default_Tooltip||exact
+CHK|uifigure_default_Tooltip||exact
+CHK|classic_default_HandleVisibility|on|exact
+CHK|uifigure_default_HandleVisibility|on|exact
+CHK|classic_default_SizeChangedFcn||exact
+CHK|uifigure_default_SizeChangedFcn||exact
+CHK|classic_default_ButtonDownFcn||exact
+CHK|uifigure_default_ButtonDownFcn||exact
+CHK|classic_default_CreateFcn||exact
+CHK|uifigure_default_CreateFcn||exact
+CHK|classic_default_DeleteFcn||exact
+CHK|uifigure_default_DeleteFcn||exact
+CHK|classic_default_BusyAction|queue|exact
+CHK|uifigure_default_BusyAction|queue|exact
+CHK|classic_default_Interruptible|on|exact
+CHK|uifigure_default_Interruptible|on|exact
+CHK|classic_default_BeingDeleted|off|exact
+CHK|uifigure_default_BeingDeleted|off|exact
+CHK|default_parent|1 1|exact
+CHK|default_children|0|exact
+CHK|hidden_ShadowColor|double [1 3] 0.7 0.7 0.7|exact
+CHK|hidden_ResizeFcn||exact
+CHK|hidden_TooltipString|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_TooltipString_msg|Unrecognized property TooltipString for class matlab.ui.container.Panel.|exact
+CHK|hidden_PickableParts|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_PickableParts_msg|Unrecognized property PickableParts for class matlab.ui.container.Panel.|exact
+CHK|hidden_Extent|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_Extent_msg|Unrecognized property Extent for class matlab.ui.container.Panel.|exact
+CHK|hidden_Selected|off|exact
+CHK|form_parent|logical [1 1] 1|exact
+CHK|form_parent_pairs|T|exact
+CHK|form_named_parent|logical [1 1] 1|exact
+CHK|form_struct|S2|exact
+CHK|form_odd|MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle|exact
+CHK|form_odd_msg|First argument must be a valid parent, such as a Figure or Panel object.|exact
+CHK|form_parent_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|form_parent_odd_msg|Incorrect number of input arguments.|exact
+CHK|form_not_a_handle|MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle|exact
+CHK|form_not_a_handle_msg|First argument must be a valid parent, such as a Figure or Panel object.|exact
+CHK|form_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|form_unknown_msg|Unrecognized property Bogus for class Panel.|exact
+CHK|form_bad_word|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|form_bad_word_msg|'bogus' is not a valid value. Use one of these values: 'none' / 'line'.|exact
+CHK|form_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|form_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|form_in_uicontrol_pairs|MATLAB:gbtobjects:Component|exact
+CHK|form_in_uicontrol_pairs_msg|UIControl cannot be a parent.|exact
+CHK|form_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|form_in_axes_msg|Axes cannot be a parent.|exact
+CHK|form_named_axes|MATLAB:gbtobjects:Component|exact
+CHK|form_named_axes_msg|Axes cannot be a parent.|exact
+CHK|form_in_panel|logical [1 1] 1|exact
+CHK|form_uicontrol_in_panel|logical [1 1] 1|exact
+CHK|form_uicontrol_named_panel|logical [1 1] 1|exact
+CHK|form_axes_in_panel|logical [1 1] 1|exact
+CHK|form_axes_named_panel|logical [1 1] 1|exact
+CHK|form_in_uifigure|pixels|exact
+CHK|form_numbers|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|form_numbers_msg|Incorrect number of input arguments.|exact
+CHK|form_bad_title|MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass|exact
+CHK|form_bad_title_msg|Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.|exact
+CHK|form_bad_width|MATLAB:hg:uipanel|exact
+CHK|form_bad_width_msg|Border width cannot have negative values.|exact
+CHK|form_bad_position|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector|exact
+CHK|form_bad_position_msg|Value must be a 4 element vector|exact
+CHK|set_Title_1|abc|exact
+CHK|set_Title_2|str|exact
+CHK|set_Title_3|5|exact
+CHK|set_Title_4|cell [2 1] {char 'a', char 'b'}|exact
+CHK|set_Title_5|char [2 2] ab;cd|exact
+CHK|set_Title_6||exact
+CHK|set_Title_7||exact
+CHK|set_Title_8|MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass|exact
+CHK|set_Title_8_msg|Error setting property 'Title' of class 'Panel': Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.|exact
+CHK|set_Title_9|cell [2 1] {char 'a', char 'b'}|exact
+CHK|set_BorderType_1|none|exact
+CHK|set_BorderType_2|line|exact
+CHK|set_BorderType_3|line|exact
+CHK|set_BorderType_4|none|exact
+CHK|set_BorderType_5|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_BorderType_5_msg|Error setting property 'BorderType' of class 'Panel': 'etched' is not a valid value. Use one of these values: 'none' / 'line'.|exact
+CHK|set_BorderType_6|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_BorderType_6_msg|Error setting property 'BorderType' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'none' / 'line'.|exact
+CHK|set_BorderType_7|MATLAB:datatypes:InvalidEnumValueFor|exact
+CHK|set_BorderType_7_msg|Error setting property 'BorderType' of class 'Panel': Invalid enum value. Use one of these values: 'none' / 'line'.|exact
+CHK|set_BorderWidth_1|double [1 1] 2|exact
+CHK|set_BorderWidth_2|double [1 1] 0|exact
+CHK|set_BorderWidth_3|MATLAB:hg:uipanel|exact
+CHK|set_BorderWidth_3_msg|Border width cannot have negative values.|exact
+CHK|set_BorderWidth_4|double [1 1] 1.5|exact
+CHK|set_BorderWidth_5|MATLAB:class:RequireNumeric|exact
+CHK|set_BorderWidth_5_msg|Error setting property 'BorderWidth' of class 'Panel': Value must be numeric or logical.|exact
+CHK|set_BorderWidth_6|MATLAB:class:RequireScalar|exact
+CHK|set_BorderWidth_6_msg|Error setting property 'BorderWidth' of class 'Panel': Value must be a scalar.|exact
+CHK|set_BorderWidth_7|MATLAB:class:RequireScalar|exact
+CHK|set_BorderWidth_7_msg|Error setting property 'BorderWidth' of class 'Panel': Value must be a scalar.|exact
+CHK|set_BorderWidth_8|double [1 1] 3|exact
+CHK|set_TitlePosition_1|centertop|exact
+CHK|set_TitlePosition_2|rightbottom|exact
+CHK|set_TitlePosition_3|centertop|exact
+CHK|set_TitlePosition_4|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_TitlePosition_4_msg|Error setting property 'TitlePosition' of class 'Panel': 'left' is not a valid value. Use one of these values: 'lefttop' / 'centertop' / 'righttop' / 'leftbottom' / 'centerbottom' / 'rightbottom'.|exact
+CHK|set_TitlePosition_5|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_TitlePosition_5_msg|Error setting property 'TitlePosition' of class 'Panel': 'c' is not a valid value. Use one of these values: 'lefttop' / 'centertop' / 'righttop' / 'leftbottom' / 'centerbottom' / 'rightbottom'.|exact
+CHK|set_TitlePosition_6|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_TitlePosition_6_msg|Error setting property 'TitlePosition' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'lefttop' / 'centertop' / 'righttop' / 'leftbottom' / 'centerbottom' / 'rightbottom'.|exact
+CHK|set_BackgroundColor_1|double [1 3] 1 0 0|exact
+CHK|set_BackgroundColor_2|double [1 3] 1 0 0|exact
+CHK|set_BackgroundColor_3|double [1 3] 0 1 0|exact
+CHK|set_BackgroundColor_4|MATLAB:hg:ColorSpec_None|exact
+CHK|set_BackgroundColor_4_msg|Cannot set Panel BackgroundColor to 'none'.|exact
+CHK|set_BackgroundColor_5|MATLAB:hg:ColorBase:BadColorValue|exact
+CHK|set_BackgroundColor_5_msg|Error setting property 'BackgroundColor' of class 'Panel': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|set_BackgroundColor_6|MATLAB:datatypes:RGBAColor:ValueMustBe3or4ElementVector|exact
+CHK|set_BackgroundColor_6_msg|Error setting property 'BackgroundColor' of class 'Panel': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|set_BackgroundColor_7|MATLAB:datatypes:RGBAColor:ParseError|exact
+CHK|set_BackgroundColor_7_msg|Error setting property 'BackgroundColor' of class 'Panel': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|set_BackgroundColor_8|double [1 3] 1 0 0|exact
+CHK|set_ForegroundColor_1|double [1 3] 0 0 1|exact
+CHK|set_ForegroundColor_2|none|exact
+CHK|set_ForegroundColor_3|double [1 3] 0 1 0|exact
+CHK|set_HighlightColor_1|double [1 3] 0 1 1|exact
+CHK|set_HighlightColor_2|none|exact
+CHK|set_BorderColor_1|double [1 3] 0 1 0|exact
+CHK|set_BorderColor_2|double [1 3] 0 0 0|exact
+CHK|set_BorderColor_3|none|exact
+CHK|set_FontSize_1|double [1 1] 10|exact
+CHK|set_FontSize_2|MATLAB:datatypes:PositiveWithZeroDataType:MustBePositive|exact
+CHK|set_FontSize_2_msg|Value should be a double number greater than 0.|exact
+CHK|set_FontSize_3|MATLAB:datatypes:PositiveWithZeroDataType:MustBeNotNegative|exact
+CHK|set_FontSize_3_msg|Error setting property 'FontSize' of class 'Panel': Value should be a double number greater than or equal to 0.|exact
+CHK|set_FontSize_4|MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar|exact
+CHK|set_FontSize_4_msg|Error setting property 'FontSize' of class 'Panel': Value should be a numeric scalar.|exact
+CHK|set_FontSize_5|MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar|exact
+CHK|set_FontSize_5_msg|Error setting property 'FontSize' of class 'Panel': Value should be a numeric scalar.|exact
+CHK|set_FontSize_6|double [1 1] 8.5|exact
+CHK|set_FontName_1|Arial|exact
+CHK|set_FontName_2|MATLAB:class:MATLABConversionError|exact
+CHK|set_FontName_2_msg|Error setting property 'FontName' of class 'Panel': Character vector value must not be empty|exact
+CHK|set_FontName_3|MATLAB:class:RequireString|exact
+CHK|set_FontName_3_msg|Error setting property 'FontName' of class 'Panel': Value must be a character vector or a string scalar.|exact
+CHK|set_FontName_4|Courier|exact
+CHK|set_FontWeight_1|bold|exact
+CHK|set_FontWeight_2|light|exact
+CHK|set_FontWeight_3|demi|exact
+CHK|set_FontWeight_4|normal|exact
+CHK|set_FontWeight_5|bold|exact
+CHK|set_FontWeight_6|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_FontWeight_6_msg|Error setting property 'FontWeight' of class 'Panel': 'heavy' is not a valid value. Use one of these values: 'normal' / 'bold'.|exact
+CHK|set_FontAngle_1|italic|exact
+CHK|set_FontAngle_2|oblique|exact
+CHK|set_FontAngle_3|normal|exact
+CHK|set_FontAngle_4|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_FontAngle_4_msg|Error setting property 'FontAngle' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'normal' / 'italic'.|exact
+CHK|set_Units_1|normalized|exact
+CHK|set_Units_2|inches|exact
+CHK|set_Units_3|centimeters|exact
+CHK|set_Units_4|points|exact
+CHK|set_Units_5|characters|exact
+CHK|set_Units_6|pixels|exact
+CHK|set_Units_7|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_Units_7_msg|Error setting property 'Units' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'inches' / 'centimeters' / 'characters' / 'normalized' / 'points' / 'pixels'.|exact
+CHK|set_Position_1|double [1 4] 10 20 30 40|exact
+CHK|set_Position_2|double [1 4] 10 20 0 40|exact
+CHK|set_Position_3|MATLAB:hg:set_chck:DimensionsOutsideRange|exact
+CHK|set_Position_3_msg|Error setting property 'Position' of class 'Panel': Width and height must be greater than or equal to 0|exact
+CHK|set_Position_4|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector|exact
+CHK|set_Position_4_msg|Error setting property 'Position' of class 'Panel': Value must be a 4 element vector|exact
+CHK|set_Position_5|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric|exact
+CHK|set_Position_5_msg|Error setting property 'Position' of class 'Panel': Value must be numeric and finite|exact
+CHK|set_Position_6|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric|exact
+CHK|set_Position_6_msg|Error setting property 'Position' of class 'Panel': Value must be numeric and finite|exact
+CHK|set_Position_7|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric|exact
+CHK|set_Position_7_msg|Error setting property 'Position' of class 'Panel': Value must be numeric and finite|exact
+CHK|set_InnerPosition_1|MATLAB:class:SetProhibited|exact
+CHK|set_InnerPosition_1_msg|Unable to set the 'InnerPosition' property of class ''Panel'' because it is read-only.|exact
+CHK|set_OuterPosition_1|double [1 4] 11 21 31 41|exact
+CHK|set_Visible_1|off|exact
+CHK|set_Visible_2|on|exact
+CHK|set_Visible_3|on|exact
+CHK|set_Visible_4|off|exact
+CHK|set_Visible_5|on|exact
+CHK|set_Visible_6|off|exact
+CHK|set_Visible_7|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|set_Visible_7_msg|Error setting property 'Visible' of class 'Panel': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_8|off|exact
+CHK|set_Enable_1|off|exact
+CHK|set_Enable_2|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|set_Enable_2_msg|Error setting property 'Enable' of class 'Panel': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Enable_3|on|exact
+CHK|set_Enable_4|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|set_Enable_4_msg|Error setting property 'Enable' of class 'Panel': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Scrollable_1|on|exact
+CHK|set_Scrollable_2|off|exact
+CHK|set_Scrollable_3|on|exact
+CHK|set_AutoResizeChildren_1|on|exact
+CHK|set_AutoResizeChildren_2|off|exact
+CHK|set_AutoResizeChildren_3|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|set_AutoResizeChildren_3_msg|Error setting property 'AutoResizeChildren' of class 'Panel': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Clipping_1|off|exact
+CHK|set_Clipping_2|on|exact
+CHK|set_Tooltip_1|tip|exact
+CHK|set_Tooltip_2|cell [2 1] {char 'a', char 'b'}|exact
+CHK|set_Tooltip_3|MATLAB:graphics:datatype:UIStringsDataType:NoNumericValue|exact
+CHK|set_Tooltip_3_msg|Error setting property 'Tooltip' of class 'Panel': UIStrings data type does not support numeric values.|exact
+CHK|set_HandleVisibility_1|off|exact
+CHK|set_HandleVisibility_2|callback|exact
+CHK|set_HandleVisibility_3|callback|exact
+CHK|set_HandleVisibility_4|on|exact
+CHK|set_HandleVisibility_5|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_HandleVisibility_5_msg|Error setting property 'HandleVisibility' of class 'Panel': 'bogus' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_SizeChangedFcn_1|disp(1)|exact
+CHK|set_SizeChangedFcn_2|cell [2 1] {function_handle, double [1 1] 1}|exact
+CHK|set_SizeChangedFcn_3||exact
+CHK|set_SizeChangedFcn_4||exact
+CHK|set_SizeChangedFcn_5|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|set_SizeChangedFcn_5_msg|Error setting property 'SizeChangedFcn' of class 'Panel': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_ResizeFcn_1|disp(2)|exact
+CHK|set_Layout_1|MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass|exact
+CHK|set_Layout_1_msg|Error setting property 'Layout' of class 'Panel': 'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.|exact
+CHK|set_Type_1|MATLAB:class:SetProhibited|exact
+CHK|set_Type_1_msg|Unable to set the 'Type' property of class ''Panel'' because it is read-only.|exact
+CHK|resizefcn_is_sizechangedfcn|disp(2)|exact
+CHK|fontunits_pixels|double [1 1] 16|exact
+CHK|fontunits_inches|double [1 1] 0.1666666667|exact
+CHK|fontunits_points|double [1 1] 12|exact
+CHK|get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.Panel.|exact
+CHK|set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|set_unknown_msg|Unrecognized property Bogus for class Panel.|exact
+CHK|warn_bordertype|MATLAB:Uipanel:UnsupportedBorderType : BorderType will not accept etchedin in a future release. Use "line" or "none" instead.|exact
+CHK|bordertype_kept|etchedin|exact
+CHK|warn_shadowcolor|MATLAB:Uipanel:UnsupportedProperty : ShadowColor will be removed in a future release. Use BorderColor instead.|exact
+CHK|warn_sizechanged_panel|MATLAB:ui:containers:SizeChangedFcnDisabledWhenAutoResizeOn : 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.|exact
+CHK|warn_autoresize_panel|MATLAB:ui:containers:SizeChangedFcnDisabledWhenAutoResizeOn : 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.|exact
+CHK|inner_classic_1_child|double [1 4] 1 1 198 148|exact
+CHK|inner_classic_1_inner|double [1 4] 51 61 198 148|exact
+CHK|inner_classic_1_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_1_child_in_figure|double [1 4] 51 61 198 148|exact
+CHK|inner_uifigure_1_child|double [1 4] 1 1 198 148|exact
+CHK|inner_uifigure_1_inner|double [1 4] 51 61 198 148|exact
+CHK|inner_uifigure_1_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_1_child_in_figure|double [1 4] 51 61 198 148|exact
+CHK|inner_classic_2_child|double [1 4] 1 1 198 138|exact
+CHK|inner_classic_2_inner|double [1 4] 51 61 198 138|exact
+CHK|inner_classic_2_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_2_child_in_figure|double [1 4] 51 61 198 138|exact
+CHK|inner_uifigure_2_child|double [1 4] 1 1 198 137|exact
+CHK|inner_uifigure_2_inner|double [1 4] 51 61 198 137|exact
+CHK|inner_uifigure_2_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_2_child_in_figure|double [1 4] 51 61 198 137|exact
+CHK|inner_classic_3_child|double [1 4] 1 1 198 133|exact
+CHK|inner_classic_3_inner|double [1 4] 51 61 198 133|exact
+CHK|inner_classic_3_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_3_child_in_figure|double [1 4] 51 61 198 133|exact
+CHK|inner_uifigure_3_child|double [1 4] 1 1 198 137|exact
+CHK|inner_uifigure_3_inner|double [1 4] 51 61 198 137|exact
+CHK|inner_uifigure_3_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_3_child_in_figure|double [1 4] 51 61 198 137|exact
+CHK|inner_classic_4_child|double [1 4] 1 1 198 122|exact
+CHK|inner_classic_4_inner|double [1 4] 51 61 198 122|exact
+CHK|inner_classic_4_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_4_child_in_figure|double [1 4] 51 61 198 122|exact
+CHK|inner_uifigure_4_child|double [1 4] 1 1 198 129|exact
+CHK|inner_uifigure_4_inner|double [1 4] 51 61 198 129|exact
+CHK|inner_uifigure_4_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_4_child_in_figure|double [1 4] 51 61 198 129|exact
+CHK|inner_classic_5_child|double [1 4] 1 1 198 129|exact
+CHK|inner_classic_5_inner|double [1 4] 51 61 198 129|exact
+CHK|inner_classic_5_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_5_child_in_figure|double [1 4] 51 61 198 129|exact
+CHK|inner_uifigure_5_child|double [1 4] 1 1 198 129|exact
+CHK|inner_uifigure_5_inner|double [1 4] 51 61 198 129|exact
+CHK|inner_uifigure_5_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_5_child_in_figure|double [1 4] 51 61 198 129|exact
+CHK|inner_classic_6_child|double [1 4] 1 1 198 136|exact
+CHK|inner_classic_6_inner|double [1 4] 51 61 198 136|exact
+CHK|inner_classic_6_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_6_child_in_figure|double [1 4] 51 61 198 136|exact
+CHK|inner_uifigure_6_child|double [1 4] 1 1 198 139|exact
+CHK|inner_uifigure_6_inner|double [1 4] 51 61 198 139|exact
+CHK|inner_uifigure_6_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_6_child_in_figure|double [1 4] 51 61 198 139|exact
+CHK|inner_classic_7_child|double [1 4] 1 1 198 138|exact
+CHK|inner_classic_7_inner|double [1 4] 51 61 198 138|exact
+CHK|inner_classic_7_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_7_child_in_figure|double [1 4] 51 61 198 138|exact
+CHK|inner_uifigure_7_child|double [1 4] 1 1 198 137|exact
+CHK|inner_uifigure_7_inner|double [1 4] 51 61 198 137|exact
+CHK|inner_uifigure_7_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_7_child_in_figure|double [1 4] 51 61 198 137|exact
+CHK|inner_classic_8_child|double [1 4] 1 1 198 138|exact
+CHK|inner_classic_8_inner|double [1 4] 51 71 198 138|exact
+CHK|inner_classic_8_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_8_child_in_figure|double [1 4] 51 71 198 138|exact
+CHK|inner_uifigure_8_child|double [1 4] 1 1 198 137|exact
+CHK|inner_uifigure_8_inner|double [1 4] 51 72 198 137|exact
+CHK|inner_uifigure_8_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_8_child_in_figure|double [1 4] 51 72 198 137|exact
+CHK|inner_classic_9_child|double [1 4] 1 1 198 138|exact
+CHK|inner_classic_9_inner|double [1 4] 51 71 198 138|exact
+CHK|inner_classic_9_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_9_child_in_figure|double [1 4] 51 71 198 138|exact
+CHK|inner_uifigure_9_child|double [1 4] 1 1 198 137|exact
+CHK|inner_uifigure_9_inner|double [1 4] 51 72 198 137|exact
+CHK|inner_uifigure_9_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_9_child_in_figure|double [1 4] 51 72 198 137|exact
+CHK|inner_classic_10_child|double [1 4] 1 1 200 150|exact
+CHK|inner_classic_10_inner|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_10_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_10_child_in_figure|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_10_child|double [1 4] 1 1 200 150|exact
+CHK|inner_uifigure_10_inner|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_10_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_10_child_in_figure|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_11_child|double [1 4] 1 1 200 139|exact
+CHK|inner_classic_11_inner|double [1 4] 50 60 200 139|exact
+CHK|inner_classic_11_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_11_child_in_figure|double [1 4] 50 60 200 139|exact
+CHK|inner_uifigure_11_child|double [1 4] 1 1 200 138|exact
+CHK|inner_uifigure_11_inner|double [1 4] 50 60 200 138|exact
+CHK|inner_uifigure_11_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_11_child_in_figure|double [1 4] 50 60 200 138|exact
+CHK|inner_classic_12_child|double [1 4] 1 1 196 146|exact
+CHK|inner_classic_12_inner|double [1 4] 52 62 196 146|exact
+CHK|inner_classic_12_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_12_child_in_figure|double [1 4] 52 62 196 146|exact
+CHK|inner_uifigure_12_child|double [1 4] 1 1 196 146|exact
+CHK|inner_uifigure_12_inner|double [1 4] 52 62 196 146|exact
+CHK|inner_uifigure_12_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_12_child_in_figure|double [1 4] 52 62 196 146|exact
+CHK|inner_classic_13_child|double [1 4] 1 1 198 148|exact
+CHK|inner_classic_13_inner|double [1 4] 51 61 198 148|exact
+CHK|inner_classic_13_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_13_child_in_figure|double [1 4] 51 61 198 148|exact
+CHK|inner_uifigure_13_child|double [1 4] 1 1 198 148|exact
+CHK|inner_uifigure_13_inner|double [1 4] 51 61 198 148|exact
+CHK|inner_uifigure_13_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_13_child_in_figure|double [1 4] 51 61 198 148|exact
+CHK|inner_classic_14_child|double [1 4] 1 1 194 144|exact
+CHK|inner_classic_14_inner|double [1 4] 53 63 194 144|exact
+CHK|inner_classic_14_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_14_child_in_figure|double [1 4] 53 63 194 144|exact
+CHK|inner_uifigure_14_child|double [1 4] 1 1 194 144|exact
+CHK|inner_uifigure_14_inner|double [1 4] 53 63 194 144|exact
+CHK|inner_uifigure_14_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_14_child_in_figure|double [1 4] 53 63 194 144|exact
+CHK|inner_classic_15_child|double [1 4] 1 1 200 150|exact
+CHK|inner_classic_15_inner|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_15_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_15_child_in_figure|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_15_child|double [1 4] 1 1 200 150|exact
+CHK|inner_uifigure_15_inner|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_15_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_15_child_in_figure|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_16_child|double [1 4] 1 1 194 136|exact
+CHK|inner_classic_16_inner|double [1 4] 53 63 194 136|exact
+CHK|inner_classic_16_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_16_child_in_figure|double [1 4] 53 63 194 136|exact
+CHK|inner_uifigure_16_child|double [1 4] 1 1 194 135|exact
+CHK|inner_uifigure_16_inner|double [1 4] 53 63 194 135|exact
+CHK|inner_uifigure_16_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_16_child_in_figure|double [1 4] 53 63 194 135|exact
+CHK|inner_classic_17_child|double [1 4] 1 1 188 138|exact
+CHK|inner_classic_17_inner|double [1 4] 56 66 188 138|exact
+CHK|inner_classic_17_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_17_child_in_figure|double [1 4] 56 66 188 138|exact
+CHK|inner_uifigure_17_child|double [1 4] 1 1 188 138|exact
+CHK|inner_uifigure_17_inner|double [1 4] 56 66 188 138|exact
+CHK|inner_uifigure_17_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_17_child_in_figure|double [1 4] 56 66 188 138|exact
+CHK|inner_classic_18_child|double [1 4] 1 1 194 144|exact
+CHK|inner_classic_18_inner|double [1 4] 53 63 194 144|exact
+CHK|inner_classic_18_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_18_child_in_figure|double [1 4] 53 63 194 144|exact
+CHK|inner_uifigure_18_child|double [1 4] 1 1 194 144|exact
+CHK|inner_uifigure_18_inner|double [1 4] 53 63 194 144|exact
+CHK|inner_uifigure_18_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_18_child_in_figure|double [1 4] 53 63 194 144|exact
+CHK|inner_classic_19_child|double [1 4] 1 1 196 137|exact
+CHK|inner_classic_19_inner|double [1 4] 52 62 196 137|exact
+CHK|inner_classic_19_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_19_child_in_figure|double [1 4] 52 62 196 137|exact
+CHK|inner_uifigure_19_child|double [1 4] 1 1 196 136|exact
+CHK|inner_uifigure_19_inner|double [1 4] 52 62 196 136|exact
+CHK|inner_uifigure_19_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_19_child_in_figure|double [1 4] 52 62 196 136|exact
+CHK|inner_classic_20_child|double [1 4] 1 1 198 138|exact
+CHK|inner_classic_20_inner|double [1 4] 51 61 198 138|exact
+CHK|inner_classic_20_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_classic_20_child_in_figure|double [1 4] 51 61 198 138|exact
+CHK|inner_uifigure_20_child|double [1 4] 1 1 198 137|exact
+CHK|inner_uifigure_20_inner|double [1 4] 51 61 198 137|exact
+CHK|inner_uifigure_20_outer|double [1 4] 50 60 200 150|exact
+CHK|inner_uifigure_20_child_in_figure|double [1 4] 51 61 198 137|exact
+CHK|nested_panel|double [1 4] 20 30 200 150|exact
+CHK|nested_panel_in_figure|double [1 4] 70 90 200 150|exact
+CHK|nested_control|double [1 4] 10 10 50 20|exact
+CHK|nested_control_in_figure|double [1 4] 80 100 50 20|exact
+CHK|axes_in_panel_units|normalized|exact
+CHK|axes_in_panel_position|double [1 4] 0.2 0.25 0.5 0.5|exact
+CHK|axes_in_panel_pixels|double [1 4] 40.6 38 99 74|exact
+CHK|axes_in_panel_in_figure|double [1 4] 110.6 128 99 74|exact
+CHK|ancestor_figure|1|exact
+CHK|ancestor_panel|1|exact
+CHK|ancestor_toplevel|1|exact
+CHK|ancestor_self|1|exact
+CHK|panel_children|p2|exact
+CHK|inner_panel_children|b a|exact
+CHK|hidden_panel_children_visible|on on|exact
+CHK|disabled_panel_child_enable|on|exact
