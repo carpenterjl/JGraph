@@ -143,8 +143,13 @@ figure at `[340 300 300 200]` lands where and at what size it asked for too. `Po
 - **A figure window is bigger than its figure.** It carries a toolbar, a status bar and two side
   panels a MATLAB figure has not got, so `Position` sizes the window such that the *drawable area*
   comes to the figure's size, with the chrome measured at the moment rather than assumed.
-- **`Position` is placed in device-independent units, not physical pixels.** On a display with a
-  scaling factor the window lands where those units put it, which is not where MATLAB's pixels would.
+- ~~**`Position` is placed in device-independent units, not physical pixels.** On a display with a
+  scaling factor the window lands where those units put it, which is not where MATLAB's pixels would.~~
+  — **retired 2026-10-03, never a divergence.** Measured on R2025b at 125 % display scaling (U0 of
+  the app-building plan, `tools/matlab-checklist/ui-probes/u0/u0_dpi.out.txt`): `ScreenSize` is
+  `[1 1 1536 960]` on a 1920×1200 panel, `ScreenPixelsPerInch` stays 96, and a figure of `Position`
+  400×300 has a 500×375-pixel client area. MATLAB's pixel is the same 1/96-inch unit, as its
+  figure documentation says.
 - **Headless, `OuterPosition` equals `Position`.** With no window there is no border to add, and a
   batch run inventing one would be a worse answer than the honest one.
 - **`InvertHardcopy` defaults off**, where MATLAB defaults on, so that what is exported is what was

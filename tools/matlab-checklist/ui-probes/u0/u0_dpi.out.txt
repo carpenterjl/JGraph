@@ -1,0 +1,10 @@
+ScreenSize=[1 1 1536 960] ScreenPixelsPerInch=96 MonitorPositions=[1 1 1536 960]
+figure   Position=[100 100 400 300] OuterPosition=[100.2 100.2 400 300] InnerPosition=[100 100 400 300]
+uifigure Position=[600 100 400 300] OuterPosition=[600.2 100.2 400 300] InnerPosition=[600 100 400 300]
+getframe(figure) size=[300 400]
+getframe(uifigure) size=[300 400]
+exportapp(uifigure) size=[300 400]
+exportapp(figure) size=[300 400]
+print -r0 size=[375 500]
+print with uicontrol (display): MATLAB:print:ExportappForPrintFigureWithUIControl | UI components are not supported. To include UI components, use the 'exportapp' function.
+READY

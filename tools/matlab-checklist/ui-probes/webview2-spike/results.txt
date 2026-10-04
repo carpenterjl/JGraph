@@ -1,0 +1,16 @@
+runtime 154.0.4258.53
+comp: core ready in 590 ms
+hwnd: core ready in 82 ms
+overlay centre pixels (expect red where the overlay draws on top):
+  comp: overlay centre rgb(255,0,0) = RED (overlay on top), page corner rgb(0,192,0) = GREEN (page on top)
+  hwnd: overlay centre rgb(0,192,0) = GREEN (page on top), page corner rgb(0,192,0) = GREEN (page on top)
+comp alone: page rAF 60.0 fps, WPF frames 115.4/s, host process CPU 18.1 % of one core
+hwnd alone: page rAF 59.2 fps, WPF frames 57.4/s, host process CPU 1.2 % of one core
+both static: WPF frames 58.2/s, host process CPU 3.4 % of one core
+hwnd static alone: WPF frames 57.4/s, host process CPU 0.3 % of one core
+comp: message round trip median 0.22 ms, max 36.62 ms
+hwnd: message round trip median 0.23 ms, max 0.48 ms
+comp: CapturePreviewAsync 539x464 px in 94 ms (control 430x370 DIP)
+hwnd: CapturePreviewAsync 540x464 px in 41 ms (control 431x370 DIP)
+comp: RenderTargetBitmap sees page corner as rgb(0,192,0)
+hwnd: RenderTargetBitmap sees page corner as rgb(255,255,255)

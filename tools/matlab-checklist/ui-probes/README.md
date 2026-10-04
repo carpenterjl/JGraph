@@ -1,7 +1,7 @@
 # UI probes (app-building plan, U0)
 
 Probes of MATLAB R2025b's app-building behaviour, recorded for the `uicontrol`/`uifigure`/App
-Designer work. Every probe runs headless:
+Designer work. Every probe but `u0_dpi` runs headless:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\u0\run-probe.ps1 -Name u0_layout   # writes u0\u0_layout.out
@@ -54,6 +54,14 @@ and `MonitorPositions` are the real display. A titled 200×150 panel's inner are
 untitled and borderless, `[1 1 200 150]`. `Extent` is fractional (text "a" in MS Sans Serif 8 is
 10.667 × 22.667).
 
+**At 125 % display scaling** (`u0_dpi`, the one probe run **with windows**, plain `-batch`, while
+`winrect.ps1` read the real window rectangles). `ScreenSize` is `[1 1 1536 960]` on a 1920×1200
+panel, and `ScreenPixelsPerInch` stays 96. A figure or uifigure of `Position` 400×300 has a
+500×375-pixel client area (window DPI 120). So a MATLAB pixel is a device-independent 1/96 inch,
+not a physical pixel. `getframe` and `exportapp` return 300×400 images, downsampled to MATLAB
+pixels, while `print -r0` returns 375×500 physical pixels. With a display too, `print` refuses a
+figure holding a `uicontrol` (`MATLAB:print:ExportappForPrintFigureWithUIControl`).
+
 **Grid layout** (`u0_grid`). An invisible uifigure lays out asynchronously: positions change some
 100–500 ms after `drawnow`. `'fit'` sizes are fractional browser text metrics (label 31.375×16.766,
 button 45×23, edit field 123.27×22.77, …). Padding 10 gives a first cell at x 11. A child placed at
@@ -98,3 +106,20 @@ editable section and the startup body were written into `document.xml` and into 
 the edits. **The MAT header's subsystem offset (bytes 116–123) must be moved with the element it
 points to.** Leaving it stale makes App Designer's full load fail (`MATLAB:load:cantReadFile`) while
 `readAppCodeData` still works.
+
+## WebView2 spike (`webview2-spike/`, run with the user's leave at 125 %)
+
+A throwaway WPF app, not part of the solution. It shows the same animated page in a
+`WebView2CompositionControl` and in the `HwndHost` `WebView2`, each under a solid WPF panel standing
+in for a `uialert`. It measures both and closes itself after about 40 s. `results.txt` and
+`screenshot.png` are from the 2026-10-03 run (SDK 1.0.4258.31, runtime 154.0.4258.53).
+- **Overlay.** The composition control's page sits under the panel. The `HwndHost` page paints over
+  it.
+- **Cost of the host process.** Animating at 60 fps: 14–18 % of one core for the composition
+  control, against 1–2 %. A static page: about 3 % against 0.3 %.
+- **Messages.** The round trip is about 0.2 ms median.
+- **Capture.** `RenderTargetBitmap` of the window includes the composition page but not the
+  `HwndHost` page. `CapturePreviewAsync` returns physical pixels.
+- **Target framework.** The composition control needs the Windows SDK projection: on plain
+  `net8.0-windows` it throws `FileNotFoundException` for `Microsoft.Windows.SDK.NET`. Hence the
+  spike's `net8.0-windows10.0.17763.0`.
