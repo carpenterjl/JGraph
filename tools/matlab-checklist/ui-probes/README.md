@@ -22,6 +22,8 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `research/apps/` | The `.mlapp`/AppBase/GUIDE probes, the minimal `.mlapp` builders (`build_mlapp.py`, `build_dup.py`) and what they built (`built/`), the acceptance scripts `examples/ex1`–`ex5` + `SpinnerGauge.m`, and a hand-built GUIDE pair (`guide_pair/`). |
 | `u0/` | The U0 probes below. MathWorks' own `.mlapp` files are read in place from `matlabroot` and never copied here. |
 | `u1/` | The U1 probes (ADR 0198): headless `u1_*`, and the window session `u1w_*`. |
+| `u2/` | The U2 probes (ADR 0199): headless `u2_*`, and the window session `u2w_resize`. |
+| `u3/` | The U3 probes (ADR 0200): headless `u3_*`, and the window session `u3w_clicks` with `fgtitle.ps1`, its foreground check. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
 
@@ -226,3 +228,88 @@ it is not in the root's `Children`, never `gcf`, `figure(uf)` does not make it c
 all` leaves it (`close all force` does not). `AutoResizeChildren` is on, and setting
 `SizeChangedFcn` then warns (`MATLAB:ui:containers:SizeChangedFcnDisabledWhenAutoResizeOn`). With
 no window nothing resizes children and no `SizeChangedFcn` runs, in either kind of figure.
+
+## U3 findings (R2025b)
+
+Every `u3_*` probe ran `-noFigureWindows -batch`. `u3w_clicks` opens a figure and clicks in it with
+`java.awt.Robot`, so it runs only with the user's leave; before every click it asks Windows which
+window is in front (`fgtitle.ps1`) and stops unless it is its own figure.
+
+**The names** (`u3_styles`, `u3_more`, `u3_set`). `get(c)` lists 40 names and `set(c)` 37. Hidden
+and still answering: `TooltipString`, `TooltipStr`, `Tooltips`, `UIContextMenu`, `Selected`,
+`SelectionHighlight`, `HitTest` (on or off, any number counting as on). `TooltipString` takes one
+line of text only. `set(h)` is a struct of the writable names, each a column cell of the words it
+takes or an empty cell; `set(h, name)` is one name's words. `uicontrol(h)` is the focus form for
+every style, a frame included; `uicontrol('Parent', frame)` is refused.
+
+**`Value`** is the same for every style: any numeric or logical array, held as double, a column
+turned into a row, an empty as 0×0; a matrix is refused (`UIControlValueDimensions_M`), and a cell,
+a string and a complex number each have their own refusal. Nothing checks it against `Min`, `Max`
+or the items. A `listbox` and a `popupmenu` start at 1, and a control that becomes one keeps that 1
+whatever it becomes next.
+
+**`String`**. A newline starts a new line: a row becomes a padded character matrix, a cell element
+several elements. A `listbox` or `popupmenu` reads `'a|b|c'` as a 3-row character matrix, whenever
+it became a list; a cell's elements are not split. `{}` stays a 0×0 cell.
+
+**`SliderStep`**: not numeric, not two elements, a first step outside [0, 1] are three refusals; a
+second step below the first is kept with a warning. A `single` or an integer class is read as
+garbage (`single([0.1 0.3])` → `[3.8e-07 0]`), which is R2025b's fault.
+
+**`CData`**: an m×n×3 array of a numeric class, a floating one within [0, 1] or NaN; `[]` clears it
+and reads back as 0×0×3. Logical, char and cell are refused by type, a 2-D or 4-page array by size.
+
+**`Extent`** (`u3_extent`, `u3_metrics`, `u3_wrap`). Whole points: the widest line plus 4 points,
+the lines' height plus 6, each rounded. A `text` control, and any style with `Max - Min > 1`,
+measures every line; the rest measure the first (a list its first item). No lines at all is
+`[0 0 4 6]` points, and an empty line measures as a space. In other units it converts like a size.
+The text itself is measured through GDI at the display's scaling: at 125 % an 8-point MS Sans Serif
+`'a'` is 4.2 points wide and a line 11.25 points; widths scale with the size asked for while line
+heights step (the same from 4 to 10.5 points); `'Arial'`, `'Helvetica'` and a name no font has all
+measure alike, as the default font.
+
+**`textwrap`** (`u3_extent`, `u3_wrap`). To a count of characters: words are gathered with the
+spaces after them while they fit, the last word counting one space; a word longer than the count is
+cut into pieces of that many characters, a piece of spaces alone dropped; the paragraph's last line
+loses its trailing spaces; a paragraph with no words is `' '`. The count must be a positive whole
+scalar. To a control: lines whose `Extent` is no wider than the control, with no spaces at their
+ends; a word wider than the control keeps a line. The second output is `[x y w h]` in the control's
+units, the size being the `Extent` of the lines in a `text` control; without a control it is four
+zeros. Three outputs are refused.
+
+**`listfonts`**: a column cell, unique, sorted without regard to case. `listfonts(h)` adds the font
+`h` names when it is not listed; any other argument is ignored.
+
+**`uibuttongroup`** (`u3_bgroup`, `u3_more`). A `matlab.ui.container.ButtonGroup`, type
+`uibuttongroup`: a panel's names plus `Buttons` (always empty), `SelectedObject` and
+`SelectionChangedFcn` (older name `SelectionChangeFcn`). In a classic figure its `BorderColor` and
+`HighlightColor` are white; in a `uifigure` it starts at `[20 20 260 210]`.
+- It watches a radio button or a toggle button that joins with its `Value` at its `Min` or `Max`,
+  by being made in it or moved into it. A push button turned radio afterwards, a button in a panel
+  inside the group, and one made with a `Min` or `Max` its `Value` is not at, are not watched.
+- The first watched button to join is selected, and so is one that joins at its `Max`.
+- Writing a `Value` starting with 1 to a watched button selects it; writing 0 to the selected one
+  selects nothing. Selecting writes 1 into the button and 0 into the one that was selected,
+  whatever their `Min` and `Max`.
+- `SelectedObject` takes a radio or toggle button of the group, the first of several handles, or
+  `[]`; a check box, a push button and a figure are refused by type, a button elsewhere by parent.
+- A selected button that leaves the group reads 0 and nothing is selected. A script's writes run no
+  callback. A watched button that became a check box refuses a `Value` of 1 after it is written.
+- `DeleteFcn`: the group's first, then its children's in `Children` order; `SelectedObject` is
+  still set while they run.
+
+**Clicks** (`u3w_clicks`, with a window).
+- A toggle button, a check box and a radio button outside a group read 1 after a click and 0 after
+  the next — 1 and 0 even for a check box with `Min` 2 and `Max` 7.
+- A slider's arrow moves by `SliderStep(1)` of the range and its trough by `SliderStep(2)`.
+- A list's `Callback` runs for every click, the selected row again included.
+- In a button group a click on another button runs `SelectionChangedFcn`
+  (`matlab.ui.eventdata.SelectionChangedData`: `OldValue`, `NewValue`, `Source`, `EventName`
+  `SelectionChanged`) and then the button's `Callback`. A click on the selected radio button runs
+  nothing. A click on the selected toggle button writes 0 and runs its `Callback`; the group's
+  callback does not run and the button is still the group's `OldValue` at the next change.
+- A click on a control whose `Enable` is `'inactive'` or `'off'`, and a right click on an enabled
+  one, runs `WindowButtonDownFcn` and then the control's `ButtonDownFcn`, handed a
+  `matlab.ui.eventdata.MouseData` (`ButtonDown`). The `Callback` does not run. A left click on an
+  enabled `text` or `frame` runs nothing.
+- Every `Callback` gets an `ActionData`, and `gco` is the control.

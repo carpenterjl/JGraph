@@ -38,13 +38,21 @@ internal static class UiComponentMapper
                     FontUnits = control.FontUnits.ToString(),
                     FontWeight = control.FontWeight,
                     FontAngle = control.FontAngle,
+                    GroupManaged = control.GroupManaged,
                 };
+                if (control.Image is { } image)
+                {
+                    dto.ImageWidth = image.Width;
+                    dto.ImageHeight = image.Height;
+                    dto.ImagePixels = Convert.ToBase64String(image.Bgra);
+                }
+
                 break;
 
             case UiPanelModel panel:
                 dto = new UiComponentDto
                 {
-                    Kind = "uipanel",
+                    Kind = panel is UiButtonGroupModel ? "uibuttongroup" : "uipanel",
                     Title = ToDto(panel.Title),
                     TitlePosition = panel.TitlePosition.ToString(),
                     BorderType = panel.BorderType.ToString(),
@@ -64,10 +72,16 @@ internal static class UiComponentMapper
                     Scrollable = panel.Scrollable,
                     Clipping = panel.Clipping,
                 };
+                UiControlModel? selected = (panel as UiButtonGroupModel)?.SelectedObject;
                 foreach (UiObject child in panel.Components)
                 {
                     if (ToDto(child) is { } childDto)
                     {
+                        if (ReferenceEquals(child, selected))
+                        {
+                            dto.SelectedChild = dto.Children.Count;
+                        }
+
                         dto.Children.Add(childDto);
                     }
                 }
@@ -121,30 +135,46 @@ internal static class UiComponentMapper
                     control.BackgroundColor = ToColor(dto.Background);
                 }
 
+                control.GroupManaged = dto.GroupManaged;
+                if (dto.ImagePixels is { } pixels && dto.ImageWidth > 0 && dto.ImageHeight > 0)
+                {
+                    try
+                    {
+                        byte[] bytes = Convert.FromBase64String(pixels);
+                        if (bytes.Length == dto.ImageWidth * dto.ImageHeight * 4)
+                        {
+                            control.Image = new UiImage(dto.ImageWidth, dto.ImageHeight, bytes);
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        // A picture that does not read is no picture; the control still loads.
+                    }
+                }
+
                 component = control;
                 break;
             }
 
             case "uipanel":
+            case "uibuttongroup":
             {
-                var panel = new UiPanelModel
-                {
-                    Title = ToText(dto.Title),
-                    TitlePosition = ParseOr(dto.TitlePosition, UiTitlePosition.LeftTop),
-                    BorderType = ParseOr(dto.BorderType, UiBorderType.Line),
-                    BorderWidth = dto.BorderWidth,
-                    BorderColor = ToColor(dto.BorderColor),
-                    HighlightColor = ToColor(dto.HighlightColor),
-                    ForegroundColor = ToColor(dto.Foreground),
-                    FontName = dto.FontName,
-                    FontSize = dto.FontSize,
-                    FontUnits = ParseOr(dto.FontUnits, UiFontUnits.Points),
-                    FontWeight = dto.FontWeight,
-                    FontAngle = dto.FontAngle,
-                    AutoResizeChildren = dto.AutoResizeChildren,
-                    Scrollable = dto.Scrollable,
-                    Clipping = dto.Clipping,
-                };
+                UiPanelModel panel = dto.Kind == "uibuttongroup" ? new UiButtonGroupModel() : new UiPanelModel();
+                panel.Title = ToText(dto.Title);
+                panel.TitlePosition = ParseOr(dto.TitlePosition, UiTitlePosition.LeftTop);
+                panel.BorderType = ParseOr(dto.BorderType, UiBorderType.Line);
+                panel.BorderWidth = dto.BorderWidth;
+                panel.BorderColor = ToColor(dto.BorderColor);
+                panel.HighlightColor = ToColor(dto.HighlightColor);
+                panel.ForegroundColor = ToColor(dto.Foreground);
+                panel.FontName = dto.FontName;
+                panel.FontSize = dto.FontSize;
+                panel.FontUnits = ParseOr(dto.FontUnits, UiFontUnits.Points);
+                panel.FontWeight = dto.FontWeight;
+                panel.FontAngle = dto.FontAngle;
+                panel.AutoResizeChildren = dto.AutoResizeChildren;
+                panel.Scrollable = dto.Scrollable;
+                panel.Clipping = dto.Clipping;
                 if (ToColor(dto.Background) is { } background)
                 {
                     panel.BackgroundColor = background;
@@ -155,11 +185,15 @@ internal static class UiComponentMapper
                     panel.ShadowColor = shadow;
                 }
 
-                foreach (UiComponentDto childDto in dto.Children)
+                for (int i = 0; i < dto.Children.Count; i++)
                 {
-                    if (ToModel(childDto) is { } child)
+                    if (ToModel(dto.Children[i]) is { } child)
                     {
                         panel.Components.Add(child);
+                        if (dto.SelectedChild == i && panel is UiButtonGroupModel group && child is UiControlModel button)
+                        {
+                            group.RestoreSelection(button);
+                        }
                     }
                 }
 

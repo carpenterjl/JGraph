@@ -1,0 +1,56 @@
+matlab.ui.control.UIControl: set(h) is struct [1 1]
+  HorizontalAlignment : cell [3 1] {'left','center','right'}
+  Style : cell [10 1] {'pushbutton','togglebutton','radiobutton','checkbox','edit','text','slider','frame','listbox','popupmenu'}
+  Enable : cell [3 1] {'on','off','inactive'}
+  Visible : cell [2 1] {OnOff on,OnOff off}
+  HandleVisibility : cell [3 1] {'on','callback','off'}
+  BusyAction : cell [2 1] {'queue','cancel'}
+  Interruptible : cell [2 1] {OnOff on,OnOff off}
+  FontUnits : cell [5 1] {'inches','centimeters','normalized','points','pixels'}
+  FontAngle : cell [2 1] {'normal','italic'}
+  FontWeight : cell [2 1] {'normal','bold'}
+  Units : cell [6 1] {'inches','centimeters','characters','normalized','points','pixels'}
+  empty ones are cell [0 0]
+matlab.ui.container.Panel: set(h) is struct [1 1]
+  Enable : cell [2 1] {OnOff on,OnOff off}
+  BorderType : cell [2 1] {'none','line'}
+  TitlePosition : cell [6 1] {'lefttop','centertop','righttop','leftbottom','centerbottom','rightbottom'}
+  Visible : cell [2 1] {OnOff on,OnOff off}
+  HandleVisibility : cell [3 1] {'on','callback','off'}
+  BusyAction : cell [2 1] {'queue','cancel'}
+  Interruptible : cell [2 1] {OnOff on,OnOff off}
+  Clipping : cell [2 1] {OnOff on,OnOff off}
+  Units : cell [6 1] {'inches','centimeters','characters','normalized','points','pixels'}
+  FontUnits : cell [5 1] {'inches','centimeters','normalized','points','pixels'}
+  FontAngle : cell [2 1] {'normal','italic'}
+  FontWeight : cell [2 1] {'normal','bold'}
+  AutoResizeChildren : cell [2 1] {OnOff on,OnOff off}
+  Scrollable : cell [2 1] {OnOff on,OnOff off}
+  empty ones are cell [0 0]
+matlab.ui.container.ButtonGroup: set(h) is struct [1 1]
+  Enable : cell [2 1] {OnOff on,OnOff off}
+  BorderType : cell [2 1] {'none','line'}
+  TitlePosition : cell [6 1] {'lefttop','centertop','righttop','leftbottom','centerbottom','rightbottom'}
+  Visible : cell [2 1] {OnOff on,OnOff off}
+  HandleVisibility : cell [3 1] {'on','callback','off'}
+  BusyAction : cell [2 1] {'queue','cancel'}
+  Interruptible : cell [2 1] {OnOff on,OnOff off}
+  Clipping : cell [2 1] {OnOff on,OnOff off}
+  Units : cell [6 1] {'inches','centimeters','characters','normalized','points','pixels'}
+  FontUnits : cell [5 1] {'inches','centimeters','normalized','points','pixels'}
+  FontAngle : cell [2 1] {'normal','italic'}
+  FontWeight : cell [2 1] {'normal','bold'}
+  AutoResizeChildren : cell [2 1] {OnOff on,OnOff off}
+  Scrollable : cell [2 1] {OnOff on,OnOff off}
+  empty ones are cell [0 0]
+set(c,'Tag') : cell [0 0] {}
+set(c,'Enable') : cell [3 1] {'on','off','inactive'}
+set(c,'enable') : cell [3 1] {'on','off','inactive'}
+set(c,'Extent') : ERR MATLAB:class:SetProhibited | Unable to set the 'Extent' property of class ''UIControl'' because it is read-only.
+set(c,'Bogus') : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class UIControl.
+set(c,'TooltipString') : cell [0 0] {}
+set(c,'Selected') : cell [2 1] {OnOff on,OnOff off}
+set(f,'Units') : cell [6 1] {'inches','centimeters','characters','normalized','points','pixels'}
+set(c) nargout 0 : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'c'.
+set(axes) class : 'struct'
+set(axes,'XScale') : cell [2 1] {'linear','log'}

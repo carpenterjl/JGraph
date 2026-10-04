@@ -813,6 +813,13 @@ internal static partial class JgsBuiltins
         if (input.IsCharMatrix)
         {
             string[] rows = input.CharMatrixRows();
+
+            // An empty character array of any shape is one empty text, as MATLAB's is.
+            if (rows.Length == 0 || rows[0].Length == 0)
+            {
+                return JgsValue.Cell([JgsValue.Str(string.Empty)]);
+            }
+
             JgsValue stacked = JgsValue.Cell(Array.ConvertAll(rows, static r => JgsValue.Str(r.TrimEnd(' '))));
             stacked.Reshape(rows.Length, 1);
             return stacked;

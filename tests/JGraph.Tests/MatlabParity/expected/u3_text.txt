@@ -1,0 +1,133 @@
+CHK|empty_pushbutton|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_pushbutton|1 1|exact
+CHK|lines_counted_pushbutton|1 0|exact
+CHK|lines_counted_multiple_pushbutton|1|exact
+CHK|empty_togglebutton|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_togglebutton|1 1|exact
+CHK|lines_counted_togglebutton|1 0|exact
+CHK|lines_counted_multiple_togglebutton|1|exact
+CHK|empty_radiobutton|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_radiobutton|1 1|exact
+CHK|lines_counted_radiobutton|1 0|exact
+CHK|lines_counted_multiple_radiobutton|1|exact
+CHK|empty_checkbox|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_checkbox|1 1|exact
+CHK|lines_counted_checkbox|1 0|exact
+CHK|lines_counted_multiple_checkbox|1|exact
+CHK|empty_edit|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_edit|1 1|exact
+CHK|lines_counted_edit|1 0|exact
+CHK|lines_counted_multiple_edit|1|exact
+CHK|empty_text|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_text|1 1|exact
+CHK|lines_counted_text|0 1|exact
+CHK|lines_counted_multiple_text|1|exact
+CHK|empty_slider|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_slider|1 1|exact
+CHK|lines_counted_slider|1 0|exact
+CHK|lines_counted_multiple_slider|1|exact
+CHK|empty_frame|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_frame|1 1|exact
+CHK|lines_counted_frame|1 0|exact
+CHK|lines_counted_multiple_frame|1|exact
+CHK|empty_listbox|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_listbox|1 1|exact
+CHK|lines_counted_listbox|1 0|exact
+CHK|lines_counted_multiple_listbox|1|exact
+CHK|empty_popupmenu|double [1 4] 0 0 5.333333333 8|exact
+CHK|whole_points_popupmenu|1 1|exact
+CHK|lines_counted_popupmenu|1 0|exact
+CHK|lines_counted_multiple_popupmenu|1|exact
+CHK|blank_line_is_a_space|1|exact
+CHK|no_lines|double [1 4] 0 0 5.333333333 8|exact
+CHK|two_blank_lines|1 1|exact
+CHK|padded_matrix|1|exact
+CHK|wider_with_more|1 1|exact
+CHK|one_line_height|1|exact
+CHK|bigger_font|1 1|exact
+CHK|a_list_measures_its_first_item|1 1|exact
+CHK|extent_points|1|exact
+CHK|extent_characters|1|exact
+CHK|extent_normalized|1|exact
+CHK|extent_inches|1|exact
+CHK|extent_centimeters|1|exact
+CHK|extent_origin|double [1 2] 0 0|exact
+CHK|extent_normalized_in_panel|1|exact
+CHK|wrap_columns_1|cell [4 1] {char 'The quick brown fox ', char 'jumps over the lazy ', char 'dog and keeps on ', char 'running far away'}|exact
+CHK|wrap_columns_2|cell [9 1] {char 'The quick ', char 'brown fox ', char 'jumps ', char 'over the ', char 'lazy dog ', char 'and keeps ', char 'on ', char 'running ', char 'far away'}|exact
+CHK|wrap_columns_3|cell [6 1] {char 'abcde', char 'fghij', char 'klmno', char 'pqrst', char 'uvwxy', char 'z'}|exact
+CHK|wrap_columns_4|cell [2 1] {char 'a', char 'b'}|exact
+CHK|wrap_columns_5|cell [1 1] {char ' '}|exact
+CHK|wrap_columns_6|cell [0 0] {}|exact
+CHK|wrap_columns_7|cell [8 1] {char 'a ', char 'b ', char 'c ', char 'd ', char 'e ', char 'f ', char 'g ', char 'h'}|exact
+CHK|wrap_columns_8|cell [3 1] {char 'ab ', char 'abcde', char 'fghij'}|exact
+CHK|wrap_columns_9|cell [3 1] {char 'a  ', char 'b   ', char 'c'}|exact
+CHK|wrap_columns_10|cell [2 1] {char '  ', char 'lead'}|exact
+CHK|wrap_columns_11|cell [1 1] {char 'trail'}|exact
+CHK|wrap_columns_12|cell [4 1] {char 'abcd', char 'efgh', char 'i ', char 'jk'}|exact
+CHK|wrap_columns_13|cell [2 1] {char 'abcde', char 'fghij'}|exact
+CHK|wrap_columns_14|cell [2 1] {char 'abcde ', char 'fghij'}|exact
+CHK|wrap_columns_15|cell [1 1] {char 'one two'}|exact
+CHK|wrap_columns_16|cell [6 1] {char 'o', char 'n', char 'e', char 't', char 'w', char 'o'}|exact
+CHK|wrap_columns_17|MATLAB:textwrap:InvalidColumnsInput|exact
+CHK|wrap_columns_17_msg|Number of characters must be a positive integer.|exact
+CHK|wrap_columns_18|MATLAB:textwrap:InvalidColumnsInput|exact
+CHK|wrap_columns_18_msg|Number of characters must be a positive integer.|exact
+CHK|wrap_columns_19|cell [2 1] {char 'a	b', char 'c'}|exact
+CHK|wrap_columns_20|cell [3 1] {char 'a', char ' ', char 'b'}|exact
+CHK|wrap_columns_21|cell [1 1] {char ' '}|exact
+CHK|wrap_columns_22|cell [5 1] {char 'aaa ', char 'bbb ', char 'ccc', char 'ddd ', char 'eee'}|exact
+CHK|wrap_columns_23|MATLAB:textwrap:InvalidFirstInput|exact
+CHK|wrap_columns_23_msg|First input argument must be a UIControl object or cell array.|exact
+CHK|wrap_columns_24|MATLAB:textwrap:InvalidFirstInput|exact
+CHK|wrap_columns_24_msg|First input argument must be a UIControl object or cell array.|exact
+CHK|wrap_columns_25|MATLAB:nonLogicalConditional|exact
+CHK|wrap_columns_25_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|wrap_columns_26|MATLAB:textwrap:InvalidColumnsInput|exact
+CHK|wrap_columns_26_msg|Number of characters must be a positive integer.|exact
+CHK|wrap_columns_27|MATLAB:invalidConversion|exact
+CHK|wrap_columns_27_msg|Conversion to cellstr from double is not possible.|exact
+CHK|wrap_columns_28|cell [3 1] {char 'abc', char 'def', char 'ghi'}|exact
+CHK|wrap_two_outputs|double [1 4] 0 0 0 0|exact
+CHK|wrap_one_argument|MATLAB:narginchk:notEnoughInputs|exact
+CHK|wrap_one_argument_msg|Not enough input arguments.|exact
+CHK|wrap_no_arguments|MATLAB:narginchk:notEnoughInputs|exact
+CHK|wrap_no_arguments_msg|Not enough input arguments.|exact
+CHK|wrap_number|MATLAB:textwrap:InvalidFirstInput|exact
+CHK|wrap_number_msg|First input argument must be a UIControl object or cell array.|exact
+CHK|wrap_figure|MATLAB:textwrap:InvalidFirstInput|exact
+CHK|wrap_figure_msg|First input argument must be a UIControl object or cell array.|exact
+CHK|wrap_char|MATLAB:cellRefFromNonCell|exact
+CHK|wrap_char_msg|Brace indexing is not supported for variables of this type.|exact
+CHK|wrap_char_matrix|MATLAB:cellRefFromNonCell|exact
+CHK|wrap_char_matrix_msg|Brace indexing is not supported for variables of this type.|exact
+CHK|wrap_columns_zero|MATLAB:textwrap:InvalidColumnsInput|exact
+CHK|wrap_columns_zero_msg|Number of characters must be a positive integer.|exact
+CHK|wrap_three_outputs|MATLAB:textwrap:InvalidNumberOutputs|exact
+CHK|wrap_three_outputs_msg|TEXTWRAP requires 1 or 2 output arguments.|exact
+CHK|wrap_empty_paragraph|cell [1 1] {char ' '}|exact
+CHK|wrap_no_paragraphs|cell [0 0] {}|exact
+CHK|wrap_spaces_kept|cell [2 1] {char 'a   b', char '  c'}|exact
+CHK|wrap_string_array|cell [2 1] {char 'one two', char 'three'}|exact
+CHK|wrap_with_columns|cell [7 1] {char 'The quick ', char 'brown fox ', char 'jumps over the ', char 'lazy dog and ', char 'keeps on ', char 'running far ', char 'away'}|exact
+CHK|wrap_words_kept|1|exact
+CHK|wrap_more_than_one_line|1|exact
+CHK|wrap_lines_fit|1|exact
+CHK|wrap_position_is_the_extent|1 1|exact
+CHK|wrap_leaves_string||exact
+CHK|wrap_position_of_nothing|double [1 4] 20 20 5.333333333 8|exact
+CHK|wrap_long_word_whole|Supercalifragilisticexpialidocious 1|exact
+CHK|wrap_zero_width|cell [4 1] {char 'The', char 'quick', char 'brown', char 'fox'}|exact
+CHK|wrap_position_in_units|1|exact
+CHK|wrap_deleted|MATLAB:textwrap:InvalidFirstInput|exact
+CHK|wrap_deleted_msg|First input argument must be a UIControl object or cell array.|exact
+CHK|listfonts_shape|cell 1 1|exact
+CHK|listfonts_sorted|1|exact
+CHK|listfonts_has|1 1 1|exact
+CHK|listfonts_of_a_control|1 1|exact
+CHK|listfonts_of_a_listed_font|0|exact
+CHK|listfonts_figure|double [1 1] 0|exact
+CHK|listfonts_number|double [1 1] 0|exact
+CHK|listfonts_text|double [1 1] 0|exact
+CHK|listfonts_two|MATLAB:TooManyInputs|exact
+CHK|listfonts_two_msg|Too many input arguments.|exact

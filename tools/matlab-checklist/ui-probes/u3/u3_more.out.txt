@@ -1,0 +1,106 @@
+made in a group with buttons and no selection: r3=0 selected=(none)
+made with Value 5, no selection: r4=5 selected=(none)
+made with Value 5, with a selection: r5=5 selected=(none) r4=5
+first, Min 2 Max 7: a=0 selected=(none)
+second, Min 3 Max 9: a=0 b=0 selected=(none)
+SelectedObject=b: a=0 b=1
+SelectedObject=a: a=1 b=0
+SelectedObject=[]: a=0 b=0
+b.Value=9 (its Max): a=0 b=9 selected=(none)
+b.Value=1: a=0 b=1 selected=(none)
+a.Value=1: a=1 b=1 selected=(none)
+selected a.Value=0.5: a=0.5 b=1 selected=(none)
+selected a.Value=7: a=7 b=1 selected=(none)
+selected a.Value=[1 1]: a=[1 1] b=1 selected=(none)
+selected a.Value=2 (its Min): a=2 b=1 selected=(none)
+selected a.Value=1 again: a=1 b=1 selected=(none)
+b.Value=[1 2]: a=1 b=[1 2] selected=(none)
+b.Value=true: a=1 b=1 selected=(none)
+selected a becomes a checkbox: a=1 b=0 selected=a
+b.Value=1: a=0 b=1 selected=b
+checkbox a.Value=1 : ERR MATLAB:hg:InvalidSelectedObjectType | Must set the SelectedObject to a Radio Button or a Toggle Button.
+  a=1 b=1 selected=b
+a a radio again, Value=0: a=0 b=1 selected=b
+a a radio again, Value=1: a=1 b=0 selected=a
+SelectedObject<-late radio : 'p'
+  a=0 b=0 p=1 selected=p
+b.Value=1 after: a=0 b=1 p=0 selected=b
+toggle t.Value=1: a=0 b=0 t=1 selected=t
+first radio moved into an empty group: q1=1 selected=q1
+then one made in it: q1=1 q2=0 selected=q1
+q2.Value=1: q1=0 q2=1 selected=q2
+q1.Value=1: q1=1 q2=0 selected=q1
+selected q1.Value=0.5: q1=0.5 q2=0 selected=q1
+selected q1.Value=[1 1]: q1=1 q2=0 selected=q1
+q2.Value=[1 1]: q1=0 q2=1 selected=q2
+q2 at 3, q3 made with Value 1: q1=0 q2=3 q3=1 selected=q3
+q1 Max 5 Value 5: q1=5 q3=1 selected=q3
+q1 Max 5 Value 1: q1=1 q3=0 selected=q1
+first made with Max 7: m1=1 selected=m1
+second, plain: m1=1 m2=0 selected=m1
+m2.Value=1: m1=0 m2=1 selected=m2
+first made with Min -1: n1=0 selected=(none)
+second plain, Value=1: n1=0 n2=1 selected=n2
+copyobj(b,bg): b=0 c2=0 selected=t
+copyobj(bg,f): selected=t children=5
+set([a b],Value,1): a=0 b=1 selected=b
+pairs: selected=a
+get(bg,'SelectedObject')==a : logical true
+findobj(bg,'Value',1) : 'a'
+SelectedObject<-deleted : ERR MATLAB:hg:InvalidSelectedObjectComponent | Must set the SelectedObject to a Radio Button or a Toggle Button.
+Selected<-'on' : OnOff on
+Selected<-'off' : OnOff off
+Selected<-logical true : OnOff on
+Selected<-double 0 : OnOff off
+Selected<-'bogus' : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'Selected' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off'.
+Selected<-double 5 : OnOff on
+SelectionHighlight<-'on' : OnOff on
+SelectionHighlight<-'off' : OnOff off
+SelectionHighlight<-logical true : OnOff on
+SelectionHighlight<-double 0 : OnOff off
+SelectionHighlight<-'bogus' : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'SelectionHighlight' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off'.
+SelectionHighlight<-double 5 : OnOff on
+HitTest<-'on' : OnOff on
+HitTest<-'off' : OnOff off
+HitTest<-logical true : OnOff on
+HitTest<-double 0 : OnOff off
+HitTest<-'bogus' : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'HitTest' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off'.
+HitTest<-double 5 : OnOff on
+TooltipStr : 'x'
+Tooltip after TooltipStr : 'x'
+get(c) has Selected : logical false
+findobj Selected off : double 1
+set(c,'Enable') : cell [3 1] {'on','off','inactive'}
+set(c,'Style') : cell [10 1] {'pushbutton','togglebutton','radiobutton','checkbox','edit','text','slider','frame','listbox','popupmenu'}
+Enable<-INACTIVE : 'inactive'
+Enable<-ina : 'inactive'
+Enable<-true : ERR MATLAB:datatypes:InvalidEnumValueFor | Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off' | 'inactive'.
+Enable<-0 : ERR MATLAB:datatypes:InvalidEnumValueFor | Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' | 'off' | 'inactive'.
+Enable<-o : ERR MATLAB:datatypes:InvalidEnumValue | Error setting property 'Enable' of class 'UIControl': 'o' is not a valid value. Use one of these values: 'on' | 'off' | 'inactive'.
+ButtonDownFcn<-char : 'disp(1)'
+ButtonDownFcn<-5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'ButtonDownFcn' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+Callback<-cell : cell [2 1] {@disp,double 1}
+HorizontalAlignment<-r : 'right'
+reset(c) : 'Style=pushbutton String='' Value=0 Position=[1 2 3 4]'
+frame: Children=0 ; text Parent is figure 1 ; frame String='' BackgroundColor=[0.9608 0.9608 0.9608] ForegroundColor=[0.1294 0.1294 0.1294] Enable=on
+uicontrol(frame) : <matlab.ui.control.UIControl [1 1]>
+uicontrol('Parent',frame) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+[R2025b warned here that a focus listener of its own met a deleted object; its stack is left out.]
+[R2025b warned here that a focus listener of its own met a deleted object; its stack is left out.]
+uicontrol(h) focus on pushbutton : 'ran'
+   warn (the same listener warning)
+uicontrol(h) focus on edit : 'ran'
+uicontrol(h) focus on text : 'ran'
+uicontrol(h) focus on frame : 'ran'
+uicontrol(h) focus on slider : 'ran'
+uicontrol(h) focus on listbox : 'ran'
+nargin uicontrol : double -1
+nargout uicontrol : double 1
+nargin uibuttongroup : double -1
+nargout uibuttongroup : double 1
+nargin uipanel : ERR MATLAB:narginout:doesNotApply | MATLAB does not have nargin/nargout information for uipanel
+nargout uipanel : ERR MATLAB:narginout:doesNotApply | MATLAB does not have nargin/nargout information for uipanel
+nargin textwrap : double -1
+nargout textwrap : double -2
+nargin listfonts : double 1
+nargout listfonts : double 1

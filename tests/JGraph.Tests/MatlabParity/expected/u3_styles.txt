@@ -1,0 +1,582 @@
+CHK|get_names|BackgroundColor BeingDeleted BusyAction ButtonDownFcn CData Callback Children ContextMenu CreateFcn DeleteFcn Enable Extent FontAngle FontName FontSize FontUnits FontWeight ForegroundColor HandleVisibility HorizontalAlignment InnerPosition Interruptible KeyPressFcn KeyReleaseFcn ListboxTop Max Min OuterPosition Parent Position SliderStep String Style Tag Tooltip Type Units UserData Value Visible|exact
+CHK|set_names|BackgroundColor BusyAction ButtonDownFcn CData Callback Children ContextMenu CreateFcn DeleteFcn Enable FontAngle FontName FontSize FontUnits FontWeight ForegroundColor HandleVisibility HorizontalAlignment InnerPosition Interruptible KeyPressFcn KeyReleaseFcn ListboxTop Max Min OuterPosition Parent Position SliderStep String Style Tag Tooltip Units UserData Value Visible|exact
+CHK|hidden_TooltipString||exact
+CHK|hidden_Selected|off|exact
+CHK|hidden_SelectionHighlight|on|exact
+CHK|hidden_HitTest|on|exact
+CHK|hidden_TooltipStr||exact
+CHK|hidden_PickableParts|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_PickableParts_msg|Unrecognized property PickableParts for class matlab.ui.control.UIControl.|exact
+CHK|hidden_Clipping|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_Clipping_msg|Unrecognized property Clipping for class matlab.ui.control.UIControl.|exact
+CHK|hidden_FontColor|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_FontColor_msg|Unrecognized property FontColor for class matlab.ui.control.UIControl.|exact
+CHK|hidden_Text|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_Text_msg|Unrecognized property Text for class matlab.ui.control.UIControl.|exact
+CHK|hidden_Layout|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_Layout_msg|Unrecognized property Layout for class matlab.ui.control.UIControl.|exact
+CHK|hidden_ResizeFcn|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_ResizeFcn_msg|Unrecognized property ResizeFcn for class matlab.ui.control.UIControl.|exact
+CHK|hidden_SizeChangedFcn|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_SizeChangedFcn_msg|Unrecognized property SizeChangedFcn for class matlab.ui.control.UIControl.|exact
+CHK|hidden_UIContextMenu_empty|logical [1 1] 1|exact
+CHK|set_Selected_1|on|exact
+CHK|set_Selected_2|off|exact
+CHK|set_Selected_3|on|exact
+CHK|set_Selected_4|off|exact
+CHK|set_Selected_5|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|set_Selected_5_msg|Error setting property 'Selected' of class 'UIControl': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Selected_6|on|exact
+CHK|set_SelectionHighlight_1|on|exact
+CHK|set_SelectionHighlight_2|off|exact
+CHK|set_SelectionHighlight_3|on|exact
+CHK|set_SelectionHighlight_4|off|exact
+CHK|set_SelectionHighlight_5|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|set_SelectionHighlight_5_msg|Error setting property 'SelectionHighlight' of class 'UIControl': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_SelectionHighlight_6|on|exact
+CHK|set_HitTest_1|on|exact
+CHK|set_HitTest_2|off|exact
+CHK|set_HitTest_3|on|exact
+CHK|set_HitTest_4|off|exact
+CHK|set_HitTest_5|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|set_HitTest_5_msg|Error setting property 'HitTest' of class 'UIControl': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_HitTest_6|on|exact
+CHK|set_Extent|MATLAB:class:SetProhibited|exact
+CHK|set_Extent_msg|Unable to set the 'Extent' property of class ''UIControl'' because it is read-only.|exact
+CHK|set_Type|MATLAB:class:SetProhibited|exact
+CHK|set_Type_msg|Unable to set the 'Type' property of class ''UIControl'' because it is read-only.|exact
+CHK|set_BeingDeleted|MATLAB:class:SetProhibited|exact
+CHK|set_BeingDeleted_msg|Unable to set the 'BeingDeleted' property of class ''UIControl'' because it is read-only.|exact
+CHK|set_Enable_words|cell [3 1] {char 'on', char 'off', char 'inactive'}|exact
+CHK|set_Style_words|cell [10 1] {char 'pushbutton', char 'togglebutton', char 'radiobutton', char 'checkbox', char 'edit', char 'text', char 'slider', char 'frame', char 'listbox', char 'popupmenu'}|exact
+CHK|set_Enable_1|inactive|exact
+CHK|set_Enable_2|inactive|exact
+CHK|set_Enable_3|MATLAB:datatypes:InvalidEnumValueFor|exact
+CHK|set_Enable_3_msg|Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' / 'off' / 'inactive'.|exact
+CHK|set_Enable_4|MATLAB:datatypes:InvalidEnumValueFor|exact
+CHK|set_Enable_4_msg|Error setting property 'Enable' of class 'UIControl': Invalid enum value. Use one of these values: 'on' / 'off' / 'inactive'.|exact
+CHK|set_Enable_5|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|set_Enable_5_msg|Error setting property 'Enable' of class 'UIControl': 'o' is not a valid value. Use one of these values: 'on' / 'off' / 'inactive'.|exact
+CHK|set_Enable_6|off|exact
+CHK|set_Enable_7|on|exact
+CHK|set_ButtonDownFcn_char|disp(1)|exact
+CHK|set_ButtonDownFcn_number|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|set_ButtonDownFcn_number_msg|Error setting property 'ButtonDownFcn' of class 'UIControl': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HorizontalAlignment_r|right|exact
+CHK|default_pushbutton_Value|double [1 1] 0|exact
+CHK|default_pushbutton_Min|double [1 1] 0|exact
+CHK|default_pushbutton_Max|double [1 1] 1|exact
+CHK|default_pushbutton_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_pushbutton_ListboxTop|double [1 1] 1|exact
+CHK|default_pushbutton_HorizontalAlignment|center|exact
+CHK|default_pushbutton_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|default_pushbutton_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_pushbutton_Position|double [1 4] 20 20 60 20|exact
+CHK|default_pushbutton_String||exact
+CHK|default_pushbutton_Enable|on|exact
+CHK|default_pushbutton_CData|double [0 0]|exact
+CHK|default_pushbutton_Units|pixels|exact
+CHK|default_pushbutton_FontName|MS Sans Serif|exact
+CHK|default_pushbutton_FontSize|double [1 1] 8|exact
+CHK|default_togglebutton_Value|double [1 1] 0|exact
+CHK|default_togglebutton_Min|double [1 1] 0|exact
+CHK|default_togglebutton_Max|double [1 1] 1|exact
+CHK|default_togglebutton_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_togglebutton_ListboxTop|double [1 1] 1|exact
+CHK|default_togglebutton_HorizontalAlignment|center|exact
+CHK|default_togglebutton_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|default_togglebutton_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_togglebutton_Position|double [1 4] 20 20 60 20|exact
+CHK|default_togglebutton_String||exact
+CHK|default_togglebutton_Enable|on|exact
+CHK|default_togglebutton_CData|double [0 0]|exact
+CHK|default_togglebutton_Units|pixels|exact
+CHK|default_togglebutton_FontName|MS Sans Serif|exact
+CHK|default_togglebutton_FontSize|double [1 1] 8|exact
+CHK|default_radiobutton_Value|double [1 1] 0|exact
+CHK|default_radiobutton_Min|double [1 1] 0|exact
+CHK|default_radiobutton_Max|double [1 1] 1|exact
+CHK|default_radiobutton_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_radiobutton_ListboxTop|double [1 1] 1|exact
+CHK|default_radiobutton_HorizontalAlignment|center|exact
+CHK|default_radiobutton_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|default_radiobutton_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_radiobutton_Position|double [1 4] 20 20 60 20|exact
+CHK|default_radiobutton_String||exact
+CHK|default_radiobutton_Enable|on|exact
+CHK|default_radiobutton_CData|double [0 0]|exact
+CHK|default_radiobutton_Units|pixels|exact
+CHK|default_radiobutton_FontName|MS Sans Serif|exact
+CHK|default_radiobutton_FontSize|double [1 1] 8|exact
+CHK|default_checkbox_Value|double [1 1] 0|exact
+CHK|default_checkbox_Min|double [1 1] 0|exact
+CHK|default_checkbox_Max|double [1 1] 1|exact
+CHK|default_checkbox_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_checkbox_ListboxTop|double [1 1] 1|exact
+CHK|default_checkbox_HorizontalAlignment|center|exact
+CHK|default_checkbox_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|default_checkbox_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_checkbox_Position|double [1 4] 20 20 60 20|exact
+CHK|default_checkbox_String||exact
+CHK|default_checkbox_Enable|on|exact
+CHK|default_checkbox_CData|double [0 0]|exact
+CHK|default_checkbox_Units|pixels|exact
+CHK|default_checkbox_FontName|MS Sans Serif|exact
+CHK|default_checkbox_FontSize|double [1 1] 8|exact
+CHK|default_edit_Value|double [1 1] 0|exact
+CHK|default_edit_Min|double [1 1] 0|exact
+CHK|default_edit_Max|double [1 1] 1|exact
+CHK|default_edit_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_edit_ListboxTop|double [1 1] 1|exact
+CHK|default_edit_HorizontalAlignment|center|exact
+CHK|default_edit_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|default_edit_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_edit_Position|double [1 4] 20 20 60 20|exact
+CHK|default_edit_String||exact
+CHK|default_edit_Enable|on|exact
+CHK|default_edit_CData|double [0 0]|exact
+CHK|default_edit_Units|pixels|exact
+CHK|default_edit_FontName|MS Sans Serif|exact
+CHK|default_edit_FontSize|double [1 1] 8|exact
+CHK|default_text_Value|double [1 1] 0|exact
+CHK|default_text_Min|double [1 1] 0|exact
+CHK|default_text_Max|double [1 1] 1|exact
+CHK|default_text_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_text_ListboxTop|double [1 1] 1|exact
+CHK|default_text_HorizontalAlignment|center|exact
+CHK|default_text_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|default_text_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_text_Position|double [1 4] 20 20 60 20|exact
+CHK|default_text_String||exact
+CHK|default_text_Enable|on|exact
+CHK|default_text_CData|double [0 0]|exact
+CHK|default_text_Units|pixels|exact
+CHK|default_text_FontName|MS Sans Serif|exact
+CHK|default_text_FontSize|double [1 1] 8|exact
+CHK|default_slider_Value|double [1 1] 0|exact
+CHK|default_slider_Min|double [1 1] 0|exact
+CHK|default_slider_Max|double [1 1] 1|exact
+CHK|default_slider_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_slider_ListboxTop|double [1 1] 1|exact
+CHK|default_slider_HorizontalAlignment|center|exact
+CHK|default_slider_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|default_slider_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_slider_Position|double [1 4] 20 20 60 20|exact
+CHK|default_slider_String||exact
+CHK|default_slider_Enable|on|exact
+CHK|default_slider_CData|double [0 0]|exact
+CHK|default_slider_Units|pixels|exact
+CHK|default_slider_FontName|MS Sans Serif|exact
+CHK|default_slider_FontSize|double [1 1] 8|exact
+CHK|default_frame_Value|double [1 1] 0|exact
+CHK|default_frame_Min|double [1 1] 0|exact
+CHK|default_frame_Max|double [1 1] 1|exact
+CHK|default_frame_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_frame_ListboxTop|double [1 1] 1|exact
+CHK|default_frame_HorizontalAlignment|center|exact
+CHK|default_frame_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|default_frame_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_frame_Position|double [1 4] 20 20 60 20|exact
+CHK|default_frame_String||exact
+CHK|default_frame_Enable|on|exact
+CHK|default_frame_CData|double [0 0]|exact
+CHK|default_frame_Units|pixels|exact
+CHK|default_frame_FontName|MS Sans Serif|exact
+CHK|default_frame_FontSize|double [1 1] 8|exact
+CHK|default_listbox_Value|double [1 1] 1|exact
+CHK|default_listbox_Min|double [1 1] 0|exact
+CHK|default_listbox_Max|double [1 1] 1|exact
+CHK|default_listbox_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_listbox_ListboxTop|double [1 1] 1|exact
+CHK|default_listbox_HorizontalAlignment|center|exact
+CHK|default_listbox_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|default_listbox_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_listbox_Position|double [1 4] 20 20 60 20|exact
+CHK|default_listbox_String||exact
+CHK|default_listbox_Enable|on|exact
+CHK|default_listbox_CData|double [0 0]|exact
+CHK|default_listbox_Units|pixels|exact
+CHK|default_listbox_FontName|MS Sans Serif|exact
+CHK|default_listbox_FontSize|double [1 1] 8|exact
+CHK|default_popupmenu_Value|double [1 1] 1|exact
+CHK|default_popupmenu_Min|double [1 1] 0|exact
+CHK|default_popupmenu_Max|double [1 1] 1|exact
+CHK|default_popupmenu_SliderStep|double [1 2] 0.01 0.1|exact
+CHK|default_popupmenu_ListboxTop|double [1 1] 1|exact
+CHK|default_popupmenu_HorizontalAlignment|center|exact
+CHK|default_popupmenu_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|default_popupmenu_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|default_popupmenu_Position|double [1 4] 20 20 60 20|exact
+CHK|default_popupmenu_String||exact
+CHK|default_popupmenu_Enable|on|exact
+CHK|default_popupmenu_CData|double [0 0]|exact
+CHK|default_popupmenu_Units|pixels|exact
+CHK|default_popupmenu_FontName|MS Sans Serif|exact
+CHK|default_popupmenu_FontSize|double [1 1] 8|exact
+CHK|value_pushbutton_1|double [1 1] 0|exact
+CHK|value_pushbutton_2|double [1 1] 1|exact
+CHK|value_pushbutton_3|double [1 1] 0.5|exact
+CHK|value_pushbutton_4|double [1 1] 5|exact
+CHK|value_pushbutton_5|double [1 1] -1|exact
+CHK|value_pushbutton_6|double [1 2] 1 2|exact
+CHK|value_pushbutton_7|double [1 2] 2 3|exact
+CHK|value_pushbutton_8|double [0 0]|exact
+CHK|value_pushbutton_9|double [1 1] 1|exact
+CHK|value_pushbutton_10|double [1 1] 1|exact
+CHK|value_pushbutton_11|double [1 1] 0.25|exact
+CHK|value_pushbutton_12|double [1 1] NaN|exact
+CHK|value_pushbutton_13|double [1 1] Inf|exact
+CHK|value_pushbutton_14|MATLAB:hg:UIControlValueCharArrayString|exact
+CHK|value_pushbutton_14_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.|exact
+CHK|value_pushbutton_15|MATLAB:invalidConversion|exact
+CHK|value_pushbutton_15_msg|Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.|exact
+CHK|value_pushbutton_16|MATLAB:hg:UIControlValueComplex|exact
+CHK|value_pushbutton_16_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.|exact
+CHK|value_pushbutton_17|MATLAB:hg:UIControlValueDimensions_M|exact
+CHK|value_pushbutton_17_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. The input must have 1 rows.|exact
+CHK|value_pushbutton_18|double [0 0]|exact
+CHK|value_checkbox_1|double [1 1] 0|exact
+CHK|value_checkbox_2|double [1 1] 1|exact
+CHK|value_checkbox_3|double [1 1] 0.5|exact
+CHK|value_checkbox_4|double [1 1] 5|exact
+CHK|value_checkbox_5|double [1 1] -1|exact
+CHK|value_checkbox_6|double [1 2] 1 2|exact
+CHK|value_checkbox_7|double [1 2] 2 3|exact
+CHK|value_checkbox_8|double [0 0]|exact
+CHK|value_checkbox_9|double [1 1] 1|exact
+CHK|value_checkbox_10|double [1 1] 1|exact
+CHK|value_checkbox_11|double [1 1] 0.25|exact
+CHK|value_checkbox_12|double [1 1] NaN|exact
+CHK|value_checkbox_13|double [1 1] Inf|exact
+CHK|value_checkbox_14|MATLAB:hg:UIControlValueCharArrayString|exact
+CHK|value_checkbox_14_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.|exact
+CHK|value_checkbox_15|MATLAB:invalidConversion|exact
+CHK|value_checkbox_15_msg|Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.|exact
+CHK|value_checkbox_16|MATLAB:hg:UIControlValueComplex|exact
+CHK|value_checkbox_16_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.|exact
+CHK|value_checkbox_17|MATLAB:hg:UIControlValueDimensions_M|exact
+CHK|value_checkbox_17_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. The input must have 1 rows.|exact
+CHK|value_checkbox_18|double [0 0]|exact
+CHK|value_slider_1|double [1 1] 0|exact
+CHK|value_slider_2|double [1 1] 1|exact
+CHK|value_slider_3|double [1 1] 0.5|exact
+CHK|value_slider_4|double [1 1] 5|exact
+CHK|value_slider_5|double [1 1] -1|exact
+CHK|value_slider_6|double [1 2] 1 2|exact
+CHK|value_slider_7|double [1 2] 2 3|exact
+CHK|value_slider_8|double [0 0]|exact
+CHK|value_slider_9|double [1 1] 1|exact
+CHK|value_slider_10|double [1 1] 1|exact
+CHK|value_slider_11|double [1 1] 0.25|exact
+CHK|value_slider_12|double [1 1] NaN|exact
+CHK|value_slider_13|double [1 1] Inf|exact
+CHK|value_slider_14|MATLAB:hg:UIControlValueCharArrayString|exact
+CHK|value_slider_14_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.|exact
+CHK|value_slider_15|MATLAB:invalidConversion|exact
+CHK|value_slider_15_msg|Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.|exact
+CHK|value_slider_16|MATLAB:hg:UIControlValueComplex|exact
+CHK|value_slider_16_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.|exact
+CHK|value_slider_17|MATLAB:hg:UIControlValueDimensions_M|exact
+CHK|value_slider_17_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. The input must have 1 rows.|exact
+CHK|value_slider_18|double [0 0]|exact
+CHK|value_listbox_1|double [1 1] 0|exact
+CHK|value_listbox_2|double [1 1] 1|exact
+CHK|value_listbox_3|double [1 1] 0.5|exact
+CHK|value_listbox_4|double [1 1] 5|exact
+CHK|value_listbox_5|double [1 1] -1|exact
+CHK|value_listbox_6|double [1 2] 1 2|exact
+CHK|value_listbox_7|double [1 2] 2 3|exact
+CHK|value_listbox_8|double [0 0]|exact
+CHK|value_listbox_9|double [1 1] 1|exact
+CHK|value_listbox_10|double [1 1] 1|exact
+CHK|value_listbox_11|double [1 1] 0.25|exact
+CHK|value_listbox_12|double [1 1] NaN|exact
+CHK|value_listbox_13|double [1 1] Inf|exact
+CHK|value_listbox_14|MATLAB:hg:UIControlValueCharArrayString|exact
+CHK|value_listbox_14_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.|exact
+CHK|value_listbox_15|MATLAB:invalidConversion|exact
+CHK|value_listbox_15_msg|Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.|exact
+CHK|value_listbox_16|MATLAB:hg:UIControlValueComplex|exact
+CHK|value_listbox_16_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.|exact
+CHK|value_listbox_17|MATLAB:hg:UIControlValueDimensions_M|exact
+CHK|value_listbox_17_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. The input must have 1 rows.|exact
+CHK|value_listbox_18|double [0 0]|exact
+CHK|value_popupmenu_1|double [1 1] 0|exact
+CHK|value_popupmenu_2|double [1 1] 1|exact
+CHK|value_popupmenu_3|double [1 1] 0.5|exact
+CHK|value_popupmenu_4|double [1 1] 5|exact
+CHK|value_popupmenu_5|double [1 1] -1|exact
+CHK|value_popupmenu_6|double [1 2] 1 2|exact
+CHK|value_popupmenu_7|double [1 2] 2 3|exact
+CHK|value_popupmenu_8|double [0 0]|exact
+CHK|value_popupmenu_9|double [1 1] 1|exact
+CHK|value_popupmenu_10|double [1 1] 1|exact
+CHK|value_popupmenu_11|double [1 1] 0.25|exact
+CHK|value_popupmenu_12|double [1 1] NaN|exact
+CHK|value_popupmenu_13|double [1 1] Inf|exact
+CHK|value_popupmenu_14|MATLAB:hg:UIControlValueCharArrayString|exact
+CHK|value_popupmenu_14_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.|exact
+CHK|value_popupmenu_15|MATLAB:invalidConversion|exact
+CHK|value_popupmenu_15_msg|Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.|exact
+CHK|value_popupmenu_16|MATLAB:hg:UIControlValueComplex|exact
+CHK|value_popupmenu_16_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.|exact
+CHK|value_popupmenu_17|MATLAB:hg:UIControlValueDimensions_M|exact
+CHK|value_popupmenu_17_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. The input must have 1 rows.|exact
+CHK|value_popupmenu_18|double [0 0]|exact
+CHK|value_edit_1|double [1 1] 0|exact
+CHK|value_edit_2|double [1 1] 1|exact
+CHK|value_edit_3|double [1 1] 0.5|exact
+CHK|value_edit_4|double [1 1] 5|exact
+CHK|value_edit_5|double [1 1] -1|exact
+CHK|value_edit_6|double [1 2] 1 2|exact
+CHK|value_edit_7|double [1 2] 2 3|exact
+CHK|value_edit_8|double [0 0]|exact
+CHK|value_edit_9|double [1 1] 1|exact
+CHK|value_edit_10|double [1 1] 1|exact
+CHK|value_edit_11|double [1 1] 0.25|exact
+CHK|value_edit_12|double [1 1] NaN|exact
+CHK|value_edit_13|double [1 1] Inf|exact
+CHK|value_edit_14|MATLAB:hg:UIControlValueCharArrayString|exact
+CHK|value_edit_14_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.|exact
+CHK|value_edit_15|MATLAB:invalidConversion|exact
+CHK|value_edit_15_msg|Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.|exact
+CHK|value_edit_16|MATLAB:hg:UIControlValueComplex|exact
+CHK|value_edit_16_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.|exact
+CHK|value_edit_17|MATLAB:hg:UIControlValueDimensions_M|exact
+CHK|value_edit_17_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. The input must have 1 rows.|exact
+CHK|value_edit_18|double [0 0]|exact
+CHK|value_string|MATLAB:hg:DataTypeMismatchUIControlValueScalar|exact
+CHK|value_string_msg|Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.|exact
+CHK|listbox_value_unset|double [1 1] 1|exact
+CHK|listbox_to_checkbox|double [1 1] 1|exact
+CHK|checkbox_to_popupmenu|double [1 1] 1|exact
+CHK|popup_value_past_items|double [1 1] 3|exact
+CHK|popup_to_pushbutton|double [1 1] 3|exact
+CHK|checked_to_listbox|double [1 1] 1|exact
+CHK|toggle_min_max_value|double [1 1] 0|exact
+CHK|slider_min_max_value|double [1 1] 0|exact
+CHK|set_Max_1|double [1 1] 10|exact
+CHK|set_Max_2|double [1 1] 0|exact
+CHK|set_Max_3|double [1 1] -5|exact
+CHK|set_Max_4|MATLAB:class:RequireScalar|exact
+CHK|set_Max_4_msg|Error setting property 'Max' of class 'UIControl': Value must be a scalar.|exact
+CHK|set_Max_5|MATLAB:class:RequireNumeric|exact
+CHK|set_Max_5_msg|Error setting property 'Max' of class 'UIControl': Value must be numeric or logical.|exact
+CHK|set_Max_6|MATLAB:class:RequireScalar|exact
+CHK|set_Max_6_msg|Error setting property 'Max' of class 'UIControl': Value must be a scalar.|exact
+CHK|set_Max_7|double [1 1] 1|exact
+CHK|set_Max_8|double [1 1] 3|exact
+CHK|set_Max_9|double [1 1] NaN|exact
+CHK|set_Max_10|double [1 1] Inf|exact
+CHK|set_Min_1|double [1 1] -10|exact
+CHK|set_Min_2|double [1 1] 20|exact
+CHK|set_Min_3|MATLAB:class:RequireScalar|exact
+CHK|set_Min_3_msg|Error setting property 'Min' of class 'UIControl': Value must be a scalar.|exact
+CHK|set_Min_4|MATLAB:class:RequireNumeric|exact
+CHK|set_Min_4_msg|Error setting property 'Min' of class 'UIControl': Value must be numeric or logical.|exact
+CHK|set_Min_5|MATLAB:class:RequireScalar|exact
+CHK|set_Min_5_msg|Error setting property 'Min' of class 'UIControl': Value must be a scalar.|exact
+CHK|set_Min_6|double [1 1] NaN|exact
+CHK|set_Min_7|double [1 1] -Inf|exact
+CHK|set_SliderStep_1|double [1 2] 0.2 0.5|exact
+CHK|set_SliderStep_2|double [1 2] 0 1|exact
+CHK|set_SliderStep_3|MATLAB:hg:UIControlSliderStepIncrement|exact
+CHK|set_SliderStep_3_msg|Error setting property 'SliderStep' of class 'UIControl': Slider step line increment must be between 0 and 1.|exact
+CHK|set_SliderStep_4|MATLAB:hg:UIControlSliderStepValueSize|exact
+CHK|set_SliderStep_4_msg|Error setting property 'SliderStep' of class 'UIControl': Value must be a 2 element vector.|exact
+CHK|set_SliderStep_5|MATLAB:hg:UIControlSliderStepValueNumeric|exact
+CHK|set_SliderStep_5_msg|Error setting property 'SliderStep' of class 'UIControl': Value must be numeric.|exact
+CHK|set_SliderStep_6|MATLAB:hg:UIControlSliderStepIncrement|exact
+CHK|set_SliderStep_6_msg|Error setting property 'SliderStep' of class 'UIControl': Slider step line increment must be between 0 and 1.|exact
+CHK|set_SliderStep_7|MATLAB:hg:UIControlSliderStepValueSize|exact
+CHK|set_SliderStep_7_msg|Error setting property 'SliderStep' of class 'UIControl': Value must be a 2 element vector.|exact
+CHK|set_SliderStep_8|double [1 2] 0.1 0.2|exact
+CHK|set_SliderStep_9|double [1 2] NaN 1|exact
+CHK|set_SliderStep_10|MATLAB:hg:UIControlSliderStepIncrement|exact
+CHK|set_SliderStep_10_msg|Error setting property 'SliderStep' of class 'UIControl': Slider step line increment must be between 0 and 1.|exact
+CHK|set_SliderStep_11|MATLAB:hg:UIControlSliderStepValueNumeric|exact
+CHK|set_SliderStep_11_msg|Error setting property 'SliderStep' of class 'UIControl': Value must be numeric.|exact
+CHK|set_SliderStep_12|double [1 2] 1 1|exact
+CHK|set_SliderStep_13|MATLAB:hg:UIControlSliderStepValueNumeric|exact
+CHK|set_SliderStep_13_msg|Error setting property 'SliderStep' of class 'UIControl': Value must be numeric.|exact
+CHK|set_ListboxTop_1|double [1 1] 0|exact
+CHK|set_ListboxTop_2|double [1 1] 2|exact
+CHK|set_ListboxTop_3|double [1 1] 1.5|exact
+CHK|set_ListboxTop_4|double [1 1] -1|exact
+CHK|set_ListboxTop_5|MATLAB:class:RequireNumeric|exact
+CHK|set_ListboxTop_5_msg|Error setting property 'ListboxTop' of class 'UIControl': Value must be numeric or logical.|exact
+CHK|set_ListboxTop_6|MATLAB:class:RequireScalar|exact
+CHK|set_ListboxTop_6_msg|Error setting property 'ListboxTop' of class 'UIControl': Value must be a scalar.|exact
+CHK|set_ListboxTop_7|MATLAB:class:RequireScalar|exact
+CHK|set_ListboxTop_7_msg|Error setting property 'ListboxTop' of class 'UIControl': Value must be a scalar.|exact
+CHK|set_ListboxTop_8|double [1 1] 100|exact
+CHK|set_ListboxTop_9|double [1 1] NaN|exact
+CHK|set_ListboxTop_10|double [1 1] 2|exact
+CHK|warn_sliderstep|MATLAB:hg:UIControlSliderStepValueDifference : Sliderstep(2) cannot be less than sliderstep(1).|exact
+CHK|sliderstep_kept|double [1 2] 0.5 0.1|exact
+CHK|string_listbox_1|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_listbox_2|char [3 1] a;b;c|exact
+CHK|string_listbox_3|char [2 2] ab;cd|exact
+CHK|string_listbox_4||exact
+CHK|string_listbox_5|cell [0 0] {}|exact
+CHK|string_listbox_6|cell [2 1] {char 'a', char 'b'}|exact
+CHK|string_listbox_7|char [2 2] l1;l2|exact
+CHK|string_listbox_8|cell [2 1] {char 'x', char 'y'}|exact
+CHK|string_listbox_9|cell [2 1] {char 'a', char '5'}|exact
+CHK|string_listbox_10|5|exact
+CHK|string_listbox_11|char [3 1] 1;2;3|exact
+CHK|string_listbox_12|cell [1 1] {char ''}|exact
+CHK|string_listbox_13|char [2 1] p;q|exact
+CHK|string_listbox_14|char [3 2] ab;c;|exact
+CHK|string_listbox_15|char [2 0]|exact
+CHK|string_listbox_16|char [3 1] a;;b|exact
+CHK|string_listbox_17|char [2 3] a/b;c|exact
+CHK|string_listbox_18|char [3 1] a;;b|exact
+CHK|string_listbox_19|char [2 2] ab;|exact
+CHK|string_listbox_20|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_listbox_21|cell [2 1] {char 'a/b', char 'c'}|exact
+CHK|string_popupmenu_1|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_popupmenu_2|char [3 1] a;b;c|exact
+CHK|string_popupmenu_3|char [2 2] ab;cd|exact
+CHK|string_popupmenu_4||exact
+CHK|string_popupmenu_5|cell [0 0] {}|exact
+CHK|string_popupmenu_6|cell [2 1] {char 'a', char 'b'}|exact
+CHK|string_popupmenu_7|char [2 2] l1;l2|exact
+CHK|string_popupmenu_8|cell [2 1] {char 'x', char 'y'}|exact
+CHK|string_popupmenu_9|cell [2 1] {char 'a', char '5'}|exact
+CHK|string_popupmenu_10|5|exact
+CHK|string_popupmenu_11|char [3 1] 1;2;3|exact
+CHK|string_popupmenu_12|cell [1 1] {char ''}|exact
+CHK|string_popupmenu_13|char [2 1] p;q|exact
+CHK|string_popupmenu_14|char [3 2] ab;c;|exact
+CHK|string_popupmenu_15|char [2 0]|exact
+CHK|string_popupmenu_16|char [3 1] a;;b|exact
+CHK|string_popupmenu_17|char [2 3] a/b;c|exact
+CHK|string_popupmenu_18|char [3 1] a;;b|exact
+CHK|string_popupmenu_19|char [2 2] ab;|exact
+CHK|string_popupmenu_20|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_popupmenu_21|cell [2 1] {char 'a/b', char 'c'}|exact
+CHK|string_edit_1|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_edit_2|a/b/c|exact
+CHK|string_edit_3|char [2 2] ab;cd|exact
+CHK|string_edit_4||exact
+CHK|string_edit_5|cell [0 0] {}|exact
+CHK|string_edit_6|cell [2 1] {char 'a', char 'b'}|exact
+CHK|string_edit_7|char [2 2] l1;l2|exact
+CHK|string_edit_8|cell [2 1] {char 'x', char 'y'}|exact
+CHK|string_edit_9|cell [2 1] {char 'a', char '5'}|exact
+CHK|string_edit_10|5|exact
+CHK|string_edit_11|char [3 1] 1;2;3|exact
+CHK|string_edit_12|cell [1 1] {char ''}|exact
+CHK|string_edit_13|p/q|exact
+CHK|string_edit_14|ab/c/|exact
+CHK|string_edit_15|/|exact
+CHK|string_edit_16|a//b|exact
+CHK|string_edit_17|char [2 3] a/b;c|exact
+CHK|string_edit_18|char [3 1] a;;b|exact
+CHK|string_edit_19|char [2 2] ab;|exact
+CHK|string_edit_20|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_edit_21|cell [2 1] {char 'a/b', char 'c'}|exact
+CHK|string_text_1|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_text_2|a/b/c|exact
+CHK|string_text_3|char [2 2] ab;cd|exact
+CHK|string_text_4||exact
+CHK|string_text_5|cell [0 0] {}|exact
+CHK|string_text_6|cell [2 1] {char 'a', char 'b'}|exact
+CHK|string_text_7|char [2 2] l1;l2|exact
+CHK|string_text_8|cell [2 1] {char 'x', char 'y'}|exact
+CHK|string_text_9|cell [2 1] {char 'a', char '5'}|exact
+CHK|string_text_10|5|exact
+CHK|string_text_11|char [3 1] 1;2;3|exact
+CHK|string_text_12|cell [1 1] {char ''}|exact
+CHK|string_text_13|p/q|exact
+CHK|string_text_14|ab/c/|exact
+CHK|string_text_15|/|exact
+CHK|string_text_16|a//b|exact
+CHK|string_text_17|char [2 3] a/b;c|exact
+CHK|string_text_18|char [3 1] a;;b|exact
+CHK|string_text_19|char [2 2] ab;|exact
+CHK|string_text_20|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_text_21|cell [2 1] {char 'a/b', char 'c'}|exact
+CHK|string_pushbutton_1|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_pushbutton_2|a/b/c|exact
+CHK|string_pushbutton_3|char [2 2] ab;cd|exact
+CHK|string_pushbutton_4||exact
+CHK|string_pushbutton_5|cell [0 0] {}|exact
+CHK|string_pushbutton_6|cell [2 1] {char 'a', char 'b'}|exact
+CHK|string_pushbutton_7|char [2 2] l1;l2|exact
+CHK|string_pushbutton_8|cell [2 1] {char 'x', char 'y'}|exact
+CHK|string_pushbutton_9|cell [2 1] {char 'a', char '5'}|exact
+CHK|string_pushbutton_10|5|exact
+CHK|string_pushbutton_11|char [3 1] 1;2;3|exact
+CHK|string_pushbutton_12|cell [1 1] {char ''}|exact
+CHK|string_pushbutton_13|p/q|exact
+CHK|string_pushbutton_14|ab/c/|exact
+CHK|string_pushbutton_15|/|exact
+CHK|string_pushbutton_16|a//b|exact
+CHK|string_pushbutton_17|char [2 3] a/b;c|exact
+CHK|string_pushbutton_18|char [3 1] a;;b|exact
+CHK|string_pushbutton_19|char [2 2] ab;|exact
+CHK|string_pushbutton_20|cell [3 1] {char 'a', char 'b', char 'c'}|exact
+CHK|string_pushbutton_21|cell [2 1] {char 'a/b', char 'c'}|exact
+CHK|string_then_style|char [3 1] x;y;z|exact
+CHK|list_then_text|char [3 1] x;y;z|exact
+CHK|text_with_bars|x/y/z|exact
+CHK|text_then_listbox|char [3 1] x;y;z|exact
+CHK|multiline_string|cell [2 1] {char 'line one', char 'line two'}|exact
+CHK|multiline_value|double [1 1] 0|exact
+CHK|multiline_back_to_one|char [2 3] ab;cde|exact
+CHK|cdata_1|double [4 4 3]|exact
+CHK|cdata_2|MATLAB:hg:shaped_arrays:CDataSize|exact
+CHK|cdata_2_msg|Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|cdata_3|MATLAB:hg:shaped_arrays:CDataPredicate|exact
+CHK|cdata_3_msg|Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|cdata_4|uint8 [4 4 3]|exact
+CHK|cdata_5|MATLAB:hg:shaped_arrays:CDataType|exact
+CHK|cdata_5_msg|Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|cdata_6|double [0 0 3]|exact
+CHK|cdata_7|MATLAB:hg:shaped_arrays:CDataSize|exact
+CHK|cdata_7_msg|Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|cdata_8|single [2 2 3]|exact
+CHK|cdata_9|MATLAB:hg:shaped_arrays:CDataType|exact
+CHK|cdata_9_msg|Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|cdata_10|MATLAB:hg:shaped_arrays:CDataType|exact
+CHK|cdata_10_msg|Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|cdata_11|double [2 2 3]|exact
+CHK|cdata_12|int16 [2 2 3]|exact
+CHK|cdata_13|uint16 [2 2 3]|exact
+CHK|cdata_14|MATLAB:hg:shaped_arrays:CDataPredicate|exact
+CHK|cdata_14_msg|Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|cdata_15|double [1 1 3]|exact
+CHK|cdata_16|MATLAB:hg:shaped_arrays:CDataSize|exact
+CHK|cdata_16_msg|Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|tooltip_to_tooltipstring|tip|exact
+CHK|tooltipstring_to_tooltip|old|exact
+CHK|tooltipstr_to_tooltip|older|exact
+CHK|tooltipstring_number|MATLAB:class:RequireString|exact
+CHK|tooltipstring_number_msg|Error setting property 'TooltipString' of class 'UIControl': Value must be a character vector or a string scalar.|exact
+CHK|tooltipstring_cell|MATLAB:class:RequireString|exact
+CHK|tooltipstring_cell_msg|Error setting property 'TooltipString' of class 'UIControl': Value must be a character vector or a string scalar.|exact
+CHK|tooltip_string|s|exact
+CHK|tooltip_string_array|cell [2 1] {char 's', char 't'}|exact
+CHK|tooltip_char_matrix|char [2 2] ab;cd|exact
+CHK|tooltip_empty|MATLAB:graphics:datatype:UIStringsDataType:NoNumericValue|exact
+CHK|tooltip_empty_msg|Error setting property 'Tooltip' of class 'UIControl': UIStrings data type does not support numeric values.|exact
+CHK|contextmenu_menu|logical [1 1] 1|exact
+CHK|uicontextmenu_reads|logical [1 1] 1|exact
+CHK|uicontextmenu_empty|logical [1 1] 1|exact
+CHK|contextmenu_after|logical [1 1] 1|exact
+CHK|uicontextmenu_menu|logical [1 1] 1|exact
+CHK|contextmenu_number|MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle|exact
+CHK|contextmenu_number_msg|Error setting property 'ContextMenu' of class 'UIControl': The value set for this property must be a valid HG handle.|exact
+CHK|contextmenu_figure|MATLAB:hgutils:InvalidContextMenu|exact
+CHK|contextmenu_figure_msg|Handle must be a uicontextmenu.|exact
+CHK|contextmenu_uicontrol|MATLAB:hgutils:InvalidContextMenu|exact
+CHK|contextmenu_uicontrol_msg|Handle must be a uicontextmenu.|exact
+CHK|contextmenu_empty_text|logical [1 1] 1|exact
+CHK|contextmenu_after_delete|logical [1 1] 1|exact
+CHK|frame_children|0|exact
+CHK|frame_neighbour_parent|1|exact
+CHK|frame_as_named_parent|MATLAB:gbtobjects:Component|exact
+CHK|frame_as_named_parent_msg|UIControl cannot be a parent.|exact
+CHK|frame_focus_form|logical [1 1] 1|exact

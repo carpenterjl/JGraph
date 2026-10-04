@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,166 of
-2,024** as of app-building stage U2 (ADR 0199), which added `uipanel`, `uifigure`,
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,169 of
+2,024** as of app-building stage U3 (ADR 0200), which added `uibuttongroup`, `textwrap` and
+`listfonts`; 1,166 as of app-building stage U2 (ADR 0199), which added `uipanel`, `uifigure`,
 `getpixelposition`, `setpixelposition`, `movegui`, `uistack` and `allchild`; 1,159 as of
 app-building stage U1 (ADR 0198), which added `uicontrol`; 1,158 as of device
 classes stage D13 (ADR 0197), which added `serialExplorer`; 1,157 as of device
@@ -1055,6 +1056,10 @@ M52 left these behind, each named rather than silent (the full table is in
 
 `hgsetget` `selectmoveresize` `uipushtool`
 `uitoggletool` `uitoolbar`
+
+**App-building stage U3 finished `uicontrol`** (ADR 0200): every one of its ten styles is realised
+in the figure window, `uibuttongroup` keeps one of its buttons selected, and `Extent`, `textwrap`
+and `listfonts` measure and list the fonts the window draws.
 
 **App-building stage U2 took `uipanel`** (ADR 0199): the container, in a classic figure and in a
 `uifigure`, with the units engine, the placement verbs and `uifigure` itself — functions rather

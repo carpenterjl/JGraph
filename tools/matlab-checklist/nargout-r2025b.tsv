@@ -1132,6 +1132,7 @@ linkaxes	0	2
 linkprop	1	2
 linsolve	2	5
 linspace	1	2
+listfonts	1	2
 listener	ERR:MATLAB:narginout:notValidMfile	0
 load	1	5
 loadfigure	ERR:MATLAB:narginout:notValidMfile	0
@@ -1973,6 +1974,7 @@ texlabel	1	2
 text	1	5
 textcolumn	ERR:MATLAB:narginout:notValidMfile	0
 textscan	2	5
+textwrap	-2	2
 tf	1	2
 tf2latc	2	2
 tf2sos	-1	2
@@ -2043,6 +2045,7 @@ udpport	1	2
 udpportfind	1	2
 uencode	1	2
 uiaxes	1	2
+uibuttongroup	1	2
 uicontextmenu	1	5
 uicontrol	1	5
 uifigure	1	2

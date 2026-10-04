@@ -26,7 +26,7 @@ internal static partial class JgsBuiltins
         "jackknife", "legend", "load", "loglog", "mhsample", "notify", "ode15i", "odephas2", "odephas3", "odeplot",
         "odextend", "pause", "pdepe", "pulstran", "quad", "quad2d", "quadgk", "quadl", "quadv",
         "regexprep", "rowfun", "run", "semilogx", "semilogy", "slice", "slicesample", "spfun", "splitapply",
-        "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uicontextmenu", "uicontrol", "uifigure", "uimenu", "uipanel",
+        "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uibuttongroup", "uicontextmenu", "uicontrol", "uifigure", "uimenu", "uipanel",
         "varfun", "vectorize", "wait", "waitforbuttonpress",
     };
 

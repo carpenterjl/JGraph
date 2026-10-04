@@ -1,0 +1,159 @@
+class=matlab.ui.container.ButtonGroup Type=uibuttongroup
+  Buttons = double [0 0] || double [0 0]
+  SelectedObject = matlab.graphics.GraphicsPlaceholder empty [0 0] || matlab.graphics.GraphicsPlaceholder empty [0 0]
+  SelectionChangedFcn = '' || ''
+  BorderColor = double [1 1 1] || double [0.49019608 0.49019608 0.49019608]
+  Tooltip = '' || ''
+  Enable = OnOff on || OnOff on
+  ForegroundColor = double [0.12941176 0.12941176 0.12941176] || double [0.12941176 0.12941176 0.12941176]
+  HighlightColor = double [1 1 1] || double [0.49019608 0.49019608 0.49019608]
+  BorderType = 'line' || 'line'
+  BorderWidth = double 1 || double 1
+  TitlePosition = 'lefttop' || 'lefttop'
+  Title = '' || ''
+  Visible = OnOff on || OnOff on
+  BackgroundColor = double [0.96078431 0.96078431 0.96078431] || double [0.96078431 0.96078431 0.96078431]
+  SizeChangedFcn = '' || ''
+  Children = matlab.graphics.GraphicsPlaceholder empty [0 0] || matlab.graphics.GraphicsPlaceholder empty [0 0]
+  Parent = <matlab.ui.Figure [1 1]> || <matlab.ui.Figure [1 1]>
+  HandleVisibility = 'on' || 'on'
+  ButtonDownFcn = '' || ''
+  ContextMenu = matlab.graphics.GraphicsPlaceholder empty [0 0] || matlab.graphics.GraphicsPlaceholder empty [0 0]
+  BusyAction = 'queue' || 'queue'
+  BeingDeleted = OnOff off || OnOff off
+  Interruptible = OnOff on || OnOff on
+  CreateFcn = '' || ''
+  DeleteFcn = '' || ''
+  Type = 'uibuttongroup' || 'uibuttongroup'
+  Tag = '' || ''
+  UserData = double [0 0] || double [0 0]
+  Clipping = OnOff on || OnOff on
+  Units = 'normalized' || 'pixels'
+  Position = double [0 0 1 1] || double [20 20 260 210]
+  InnerPosition = double [0.0017857143 0.0023809524 0.99642857 0.9952381] || double [21 21 258 208]
+  OuterPosition = double [0 0 1 1] || double [20 20 260 210]
+  Layout = <matlab.ui.layout.LayoutOptions> || <matlab.ui.layout.LayoutOptions>
+  FontUnits = 'points' || 'pixels'
+  FontSize = double 8 || double 12
+  FontName = 'MS Sans Serif' || 'Helvetica'
+  FontAngle = 'normal' || 'normal'
+  FontWeight = 'normal' || 'normal'
+  AutoResizeChildren = OnOff off || OnOff on
+  Scrollable = OnOff off || OnOff off
+names only in buttongroup: Buttons,SelectedObject,SelectionChangedFcn
+names only in panel:
+set names only in buttongroup: SelectedObject,SelectionChangedFcn
+get SelectionChangeFcn : ''
+get Buttons : double [0 0]
+get ResizeFcn : ''
+get ShadowColor : double [0.7 0.7 0.7]
+get TooltipString : ERR MATLAB:hg:InvalidProperty | Unrecognized property TooltipString for class matlab.ui.container.ButtonGroup.
+get SelectedObject : matlab.graphics.GraphicsPlaceholder empty [0 0]
+get UIContextMenu : matlab.graphics.GraphicsPlaceholder empty [0 0]
+uibuttongroup(f) Parent : logical true
+uibuttongroup('Parent',f,'Title','T') : 'T'
+uibuttongroup(f,struct) : 'S'
+uibuttongroup('Title') : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uibuttongroup(f,'Title') : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uibuttongroup(5.5) : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uibuttongroup(c) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uibuttongroup(f,'Bogus',1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class ButtonGroup.
+uibuttongroup in panel : 'matlab.ui.container.Panel'
+uipanel in buttongroup : 'matlab.ui.container.ButtonGroup'
+axes in buttongroup : 'matlab.ui.container.ButtonGroup'
+uibuttongroup in buttongroup : 'matlab.ui.container.ButtonGroup'
+nargout uibuttongroup : double 1
+first radio: values=[r1:1] selected=r1
+second radio: values=[r1:1 r2:0] selected=r1
+five: values=[r1:1 r2:0 t1:0 cb:0 pb:0] selected=r1
+Children tags: pb cb t1 r2 r1
+Buttons : '(empty double [0 0])'
+r2.Value=1: values=[r1:0 r2:1 t1:0 cb:0 pb:0] selected=r2
+r2.Value=0 (selected one): values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+r1.Value=0 (unselected): values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+t1.Value=1: values=[r1:0 r2:0 t1:1 cb:0 pb:0] selected=t1
+cb.Value=1: values=[r1:0 r2:0 t1:1 cb:1 pb:0] selected=t1
+pb.Value=1: values=[r1:0 r2:0 t1:1 cb:1 pb:1] selected=t1
+r1.Value=0.5: values=[r1:0.5 r2:0 t1:1 cb:1 pb:1] selected=t1
+r1.Value=5: values=[r1:5 r2:0 t1:1 cb:1 pb:1] selected=t1
+r1.Value=true: values=[r1:1 r2:0 t1:0 cb:1 pb:1] selected=r1
+r2.Value=Max: values=[r1:0 r2:1 t1:0 cb:1 pb:1] selected=r2
+SelectedObject<-r1 : 'r1'
+  : values=[r1:1 r2:0 t1:0 cb:0 pb:0] selected=r1
+SelectedObject<-t1 : 't1'
+  : values=[r1:0 r2:0 t1:1 cb:0 pb:0] selected=t1
+SelectedObject<-[] : '(none)'
+  : values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+SelectedObject<-cb : ERR MATLAB:hg:InvalidSelectedObjectType | Must set the SelectedObject to a Radio Button or a Toggle Button.
+  : values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+SelectedObject<-pb : ERR MATLAB:hg:InvalidSelectedObjectType | Must set the SelectedObject to a Radio Button or a Toggle Button.
+  : values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+SelectedObject<-f : ERR MATLAB:hg:InvalidSelectedObjectType | Must set the SelectedObject to a Radio Button or a Toggle Button.
+  : values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+SelectedObject<-outside radio : ERR MATLAB:hg:InvalidSelectedObjectParent | SelectedObject must be a child of this UIButtonGroup.
+  : values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+SelectedObject<-5 : ERR MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle | Error setting property 'SelectedObject' of class 'ButtonGroup': The value set for this property must be a valid HG handle.
+  : values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+SelectedObject<-'r1' : ERR MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle | Error setting property 'SelectedObject' of class 'ButtonGroup': The value set for this property must be a valid HG handle.
+SelectedObject<-[r1 r2] : 'r1'
+  : values=[r1:1 r2:0 t1:0 cb:0 pb:0] selected=r1
+SelectedObject<-double(r2) : 'r2'
+  : values=[r1:0 r2:1 t1:0 cb:0 pb:0] selected=r2
+class of empty SelectedObject : 'matlab.graphics.GraphicsPlaceholder [0 0]'
+r2 Min 2 Max 7 (unselected): values=[r1:1 r2:0 t1:0 cb:0 pb:0] selected=r1
+r2.Value=7: values=[r1:1 r2:7 t1:0 cb:0 pb:0] selected=r1
+r1.Value=1: values=[r1:1 r2:7 t1:0 cb:0 pb:0] selected=r1
+r2.Value=1 (neither Min nor Max): values=[r1:0 r2:1 t1:0 cb:0 pb:0] selected=r2
+outside radio with Value 1 moved in: values=[r1:0 r2:0 t1:0 cb:0 pb:0 out:1] selected=out
+moved out again: values=[r1:0 r2:0 t1:0 cb:0 pb:0 out:0] selected=(none)
+  out.Value=0
+selected r2 moved out: values=[r1:0 t1:0 cb:0 pb:0] selected=(none)
+  r2.Value=0
+r2 moved back: values=[r1:0 r2:0 t1:0 cb:0 pb:0] selected=(none)
+selected t1 deleted: values=[r1:0 r2:0 cb:0 pb:0] selected=(none)
+pb becomes a radiobutton: values=[r1:0 r2:0 cb:0 pb:0] selected=(none)
+  and is selected: values=[r1:0 r2:0 cb:0 pb:1] selected=(none)
+  and becomes a pushbutton again: values=[r1:0 r2:0 cb:0 pb:1] selected=(none)
+invisible r1 selected: values=[r1:1 r2:0 cb:0 pb:1] selected=r1
+disabled r2 selected: values=[r1:0 r2:1 cb:0 pb:1] selected=r2
+first radio made with Value 0: a=1 selected=a
+second made with Value 1: a=0 b=1 selected=b
+third via Parent pair: c=0 selected=b
+fourth, Style before Parent: d=0 selected=b
+first toggle: t=1 selected=t
+pushbutton turned radio in a group with a selection: e=0 selected=t
+pushbutton turned radio in an empty group: g=0 selected=(none)
+group made with SelectedObject []: h1=1 selected=h1
+radio in a panel in the group: h1=1 h2=1 selected=h1
+SelectionChangedFcn<-handle : @@(s,e)note('changed',e)
+SelectionChangeFcn reads : @@(s,e)note('changed',e)
+SelectionChangeFcn<-char : 'disp(1)'
+SelectionChangedFcn reads : 'disp(1)'
+SelectionChangedFcn<-cell : cell [2 1] {@note,double 1}
+SelectionChangedFcn<-5 : ERR MATLAB:datatypes:callback:CreateCallback | Error setting property 'SelectionChangedFcn' of class 'ButtonGroup': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle
+SelectionChangedFcn<-'' : ''
+callbacks after programmatic changes: 0
+Title : 'Group'
+InnerPosition titled : double [21 21 298 288]
+Enable<-inactive : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Error setting property 'Enable' of class 'ButtonGroup': Invalid enum value. Use one of these values: 'on' | 'off'.
+Enable<-off : OnOff off
+  r1.Enable=on
+[Warning: BorderType will not accept etchedin in a future release. Use "line" or "none" instead.]
+BorderType<-etchedin : 'etchedin'
+  lastwarn=BorderType will not accept etchedin in a future release. Use "line" or "none" instead.
+BackgroundColor<-none : ERR MATLAB:hg:ColorSpec_None | Cannot set ButtonGroup BackgroundColor to 'none'.
+[Warning: ShadowColor will be removed in a future release. Use BorderColor instead.]
+ShadowColor<-r : double [1 0 0]
+Clipping<-off : OnOff off
+Scrollable<-on : OnOff on
+AutoResizeChildren<-on : OnOff on
+getpixelposition : double [20 20 300 300]
+findobj uibuttongroup : double 5
+findobj radiobutton : double 11
+ancestor(r1,'uibuttongroup') : 'bg'
+isa panel : logical true
+  deleted bg
+  deleted r2
+  deleted r1 (selected=r1)
+uicontrol radio in a uifigure group : 'a=1 b=0 selected=ua ; after b.Value=1: a=0 b=1 selected=ub'
+uiradiobutton exists : double 2

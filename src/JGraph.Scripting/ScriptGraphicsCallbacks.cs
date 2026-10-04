@@ -108,6 +108,18 @@ public static class ScriptGraphicsCallbacks
         }
     }
 
+    /// <summary>
+    /// Records the gesture of a press that landed on a component and is the component's own to
+    /// answer — MATLAB's <c>SelectionType</c>, which a list's callback reads to tell a double click
+    /// (<c>'open'</c>) from a single one. No callback runs for it: a press on a classic control that
+    /// is <c>'on'</c> is not the window's (U1, U3).
+    /// </summary>
+    public static void NoteSelectionType(FigureModel figure, SelectionKind selection)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        figure.SelectionType = selection;
+    }
+
     private static long _userSeq;
 
     /// <summary>
@@ -119,8 +131,10 @@ public static class ScriptGraphicsCallbacks
     /// before the write arrived does not put the old text back under the user's cursor.
     /// </summary>
     /// <param name="component">The component the user acted on.</param>
-    /// <param name="value">The new value — an edit field's text — or null for an action that changes
-    /// nothing (a push button).</param>
+    /// <param name="value">The new value, or null for an action that changes nothing (a push button).
+    /// A <see cref="string"/> is an edit field's text and a <c>string[]</c> a multi-line one's lines;
+    /// a <see cref="double"/> is the new <c>Value</c> of a button, a check box, a slider or a pop-up
+    /// menu, and a <c>double[]</c> a list's selected items.</param>
     public static long NotifyUserValue(GraphObject component, object? value)
     {
         ArgumentNullException.ThrowIfNull(component);
@@ -350,6 +364,7 @@ public static class ScriptGraphicsCallbacks
             GraphicsEventKind.ControlAction => entry.UiCallback is not null,
             GraphicsEventKind.ComponentKeyPress => entry.KeyPressFcn is not null,
             GraphicsEventKind.ComponentKeyRelease => entry.KeyReleaseFcn is not null,
+            GraphicsEventKind.GroupSelectionChanged => entry.SelectionChangedFcn is not null,
             _ => false,
         };
     }

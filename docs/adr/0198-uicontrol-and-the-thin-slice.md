@@ -210,8 +210,8 @@ cleared the field. The pump then looked busy for ever and delivered nothing more
   code and the unit tests, not by a person's input.
 - The IDE path (Run in the editor, callbacks through the console's idle pump) was not driven in a
   window; it shares the session, the queue and the layer with the batch path that was.
-- `Extent` is an estimate from the font size (half an em a character, 1.25 em a line) until U3
-  measures text.
+- `Extent` was an estimate from the font size (half an em a character, 1.25 em a line) until U3
+  measured text (ADR 0200).
 
 ## Divergences
 
@@ -229,14 +229,16 @@ cleared the field. The pump then looked busy for ever and delivered nothing more
   them newest first across kinds; U2 gives the figure one tree of children.~~
   — **retired 2026-10-04, never a divergence.** R2025b lists every component before every axes too,
   newest first within each (U2's probe `u2_tree`, ADR 0199).
-- **`Extent` is an estimate** until U3 measures the drawn text.
+- ~~**`Extent` is an estimate** until U3 measures the drawn text.~~
+  — **retired 2026-10-04 by U3 (ADR 0200)**, which measures the text in the font the window draws
+  and applies R2025b's margins and whole points. What still differs is recorded there.
 - **The pointer's motion still hands its callback `[]`.** R2025b's event data for it is not
   recorded yet. (A resize was on this line until 2026-10-04: U2, ADR 0199, recorded R2025b's
   `SizeChangedData` and hands it over.)
 
 ## Still open
 
-- The rest of the styles are drawn as labels until U3; their properties are already R2025b's.
+- The rest of the styles were drawn as labels until U3 (ADR 0200), which realised all ten.
 - `HandleVisibility 'callback'`, `Interruptible` and `BusyAction` keep the generic refusals'
   wording rather than R2025b's (U2).
 - The ownership audit is red on HEAD for reasons that predate this stage (open item 38);

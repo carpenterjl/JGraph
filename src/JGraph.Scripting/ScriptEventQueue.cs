@@ -75,6 +75,13 @@ public enum GraphicsEventKind
 
     /// <summary>A key came back up while a component had the keyboard — its <c>KeyReleaseFcn</c>.</summary>
     ComponentKeyRelease,
+
+    /// <summary>
+    /// A user picked another button of a button group — the group's <c>SelectionChangedFcn</c>
+    /// (app-building plan, U3). <c>Clicked</c> is the button now selected and <c>ContextObject</c>
+    /// the one that was.
+    /// </summary>
+    GroupSelectionChanged,
 }
 
 /// <summary>

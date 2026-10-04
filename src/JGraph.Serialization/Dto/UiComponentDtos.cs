@@ -10,7 +10,7 @@ namespace JGraph.Serialization.Dto;
 /// </summary>
 public sealed class UiComponentDto
 {
-    /// <summary><c>uicontrol</c> or <c>uipanel</c>.</summary>
+    /// <summary><c>uicontrol</c>, <c>uipanel</c> or <c>uibuttongroup</c>.</summary>
     public string Kind { get; set; } = "uicontrol";
 
     public string? Tag { get; set; }
@@ -67,6 +67,16 @@ public sealed class UiComponentDto
 
     public string? Alignment { get; set; }
 
+    /// <summary>Whether the button group the control sits in watches its <c>Value</c> (U3).</summary>
+    public bool GroupManaged { get; set; }
+
+    /// <summary>The control's <c>CData</c> picture: its width, and its pixels as base-64 BGRA rows (U3).</summary>
+    public int ImageWidth { get; set; }
+
+    public int ImageHeight { get; set; }
+
+    public string? ImagePixels { get; set; }
+
     // --- uipanel ---
 
     public UiTextDto? Title { get; set; }
@@ -88,6 +98,9 @@ public sealed class UiComponentDto
     public bool Scrollable { get; set; }
 
     public bool Clipping { get; set; } = true;
+
+    /// <summary>A button group's selected button, as its place among <see cref="Children"/>; null for none (U3).</summary>
+    public int? SelectedChild { get; set; }
 
     public List<UiComponentDto> Children { get; set; } = new();
 }

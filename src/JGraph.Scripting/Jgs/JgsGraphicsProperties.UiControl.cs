@@ -55,16 +55,38 @@ internal static partial class JgsGraphicsProperties
     {
         Put(table, "Style",
             entry => JgsValue.Str(StyleWords[(int)Control(entry).Style]),
-            (entry, value, line, col) => Control(entry).Style =
-                (UiControlStyle)Word(entry, "Style", value, StyleWords, StyleWords, line, col));
+            (entry, value, line, col) =>
+            {
+                UiControlModel control = Control(entry);
+                control.Style = (UiControlStyle)Word(entry, "Style", value, StyleWords, StyleWords, line, col);
+
+                // A list reads a row of text as its items, whenever it became a list (U3).
+                control.Text = ListItems(control, control.Text);
+            });
 
         Put(table, "String",
             entry => TextValue(Control(entry).Text),
-            (entry, value, line, col) => Control(entry).Text = ComponentText(entry, "String", value, line, col));
+            (entry, value, line, col) =>
+            {
+                UiControlModel control = Control(entry);
+                control.Text = ListItems(control, ComponentText(entry, "String", value, line, col));
+            });
 
         Put(table, "Value",
             entry => NumbersValue(Control(entry).Value),
-            (entry, value, line, col) => Control(entry).Value = ControlValue(entry, value, line, col));
+            (entry, value, line, col) =>
+            {
+                UiControlModel control = Control(entry);
+                control.Value = ControlValue(entry, value, line, col);
+
+                // A button group watching this button hears of it; a selection its style no longer
+                // allows is refused once the value is in, as R2025b refuses it.
+                if (control.Parent is UiButtonGroupModel group && !group.ValueWritten(control))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:hg:InvalidSelectedObjectType",
+                        "Must set the SelectedObject to a Radio Button or a Toggle Button.");
+                }
+            });
 
         Put(table, "Max",
             entry => JgsValue.Number(Control(entry).Max),
@@ -79,7 +101,7 @@ internal static partial class JgsGraphicsProperties
             entry => Row(Control(entry).SliderStepSmall, Control(entry).SliderStepLarge),
             (entry, value, line, col) =>
             {
-                double[] step = NumericVector(entry, "SliderStep", value, 2, line, col);
+                double[] step = SliderStepOf(entry, value, line, col);
                 Control(entry).SliderStepSmall = step[0];
                 Control(entry).SliderStepLarge = step[1];
             });
@@ -128,20 +150,240 @@ internal static partial class JgsGraphicsProperties
         AddCallbackSlot(table, "KeyPressFcn", static entry => entry.KeyPressFcn, static (entry, value) => entry.KeyPressFcn = value);
         AddCallbackSlot(table, "KeyReleaseFcn", static entry => entry.KeyReleaseFcn, static (entry, value) => entry.KeyReleaseFcn = value);
 
-        // CData is an image for a button face; U1 keeps what was set and draws none (U3 draws it).
+        // CData is a truecolor picture for the control's face: kept as given, so it reads back in
+        // the class it was set in, and handed to the window as pixels (U3).
         Put(table, "CData",
-            entry => entry.UiCData ?? JgsMatrix.FromColumnMajor([], 0, 0),
-            (entry, value, line, col) => entry.UiCData = JgsValue.Share(value));
+            entry => entry.UiCData ?? ImageValue(Control(entry).Image),
+            (entry, value, line, col) => SetControlImage(entry, value, line, col));
 
-        // An estimate from the font until the window measures text (U3): one line's height, and a
-        // width of about half an em per character.
+        // The size of the text, in the control's own units: R2025b's margins and whole points round
+        // this build's own measurement of the font the window draws (U3).
         Put(table, "Extent", entry =>
         {
             UiControlModel control = Control(entry);
-            double size = control.FontSizeInPixels(control.PixelPosition().Height);
-            int longest = control.Text.Lines.Count == 0 ? 0 : control.Text.Lines.Max(static l => l.Length);
-            return Row(0, 0, longest * size * 0.5, System.Math.Max(1, control.Text.Lines.Count) * size * 1.25);
+            Size2D pixels = control.ExtentPixels();
+            Rect2D sized = UiUnitConverter.FromPixels(
+                new Rect2D(1, 1, pixels.Width, pixels.Height), control.Units, control.ReferenceSize());
+            return Row(0, 0, sized.Width, sized.Height);
         });
+
+        // The older spellings of Tooltip, which take one line of text only; and the three words of
+        // a drawn object that a uicontrol answers though it lists none of them (U3).
+        foreach (string name in new[] { "TooltipString", "TooltipStr" })
+        {
+            string captured = name;
+            Put(table, captured,
+                entry => TextValue(Control(entry).Tooltip),
+                (entry, value, line, col) => Control(entry).Tooltip = JgsBuiltins.IsTextScalar(value)
+                    ? UiText.Of(MissingAsEmpty(JgsBuiltins.TextOf(value)))
+                    : throw ComponentError(entry, captured, "MATLAB:class:RequireString",
+                        "Value must be a character vector or a string scalar.", line, col));
+        }
+
+        Put(table, "Selected",
+            entry => OnOff(entry.Target.IsSelected),
+            (entry, value, line, col) => entry.Target.IsSelected = ComponentOnOff(entry, "Selected", value, line, col));
+        Put(table, "SelectionHighlight",
+            entry => OnOff(entry.Target.SelectionHighlight),
+            (entry, value, line, col) =>
+                entry.Target.SelectionHighlight = ComponentOnOff(entry, "SelectionHighlight", value, line, col));
+        Put(table, "HitTest",
+            entry => OnOff(entry.Target.Selectable),
+            (entry, value, line, col) => entry.Target.Selectable = ComponentOnOff(entry, "HitTest", value, line, col));
+        Unlist(table, "TooltipString", "TooltipStr", "UIContextMenu", "Selected", "SelectionHighlight", "HitTest");
+    }
+
+    /// <summary>
+    /// What a list reads a row of text as (R2025b, probe <c>u3_wrap</c>): a <c>listbox</c> or a
+    /// <c>popupmenu</c> takes <c>'a|b|c'</c> as three items, held as a character matrix. Text that is
+    /// already several lines, or a cell, is left as it is.
+    /// </summary>
+    private static UiText ListItems(UiControlModel control, UiText text)
+    {
+        if (control.Style is not (UiControlStyle.ListBox or UiControlStyle.PopupMenu)
+            || text.Form != UiTextForm.CharRow || text.Lines.Count != 1 || !text.Lines[0].Contains('|'))
+        {
+            return text;
+        }
+
+        string[] items = text.Lines[0].Split('|');
+        int width = items.Max(static item => item.Length);
+        return new UiText(UiTextForm.CharMatrix, [.. items.Select(item => item.PadRight(width))]);
+    }
+
+    /// <summary>
+    /// R2025b's <c>SliderStep</c>: two numbers, the first between 0 and 1. A second smaller than the
+    /// first is kept and warned about.
+    /// </summary>
+    private static double[] SliderStepOf(JgsHandleEntry entry, JgsValue value, int line, int col)
+    {
+        string kind = JgsBuiltins.ClassOf(value, JgsDialect.Matlab);
+        if (!IsNumericKind(kind))
+        {
+            throw ComponentError(entry, "SliderStep", "MATLAB:hg:UIControlSliderStepValueNumeric", "Value must be numeric.", line, col);
+        }
+
+        double[] step = JgsBuiltins.ToDoubles("SliderStep", value, line, col);
+        if (step.Length != 2)
+        {
+            throw ComponentError(entry, "SliderStep", "MATLAB:hg:UIControlSliderStepValueSize",
+                "Value must be a 2 element vector.", line, col);
+        }
+
+        if (step[0] < 0 || step[0] > 1)
+        {
+            throw ComponentError(entry, "SliderStep", "MATLAB:hg:UIControlSliderStepIncrement",
+                "Slider step line increment must be between 0 and 1.", line, col);
+        }
+
+        if (step[1] < step[0])
+        {
+            PropertyWarning("MATLAB:hg:UIControlSliderStepValueDifference", "Sliderstep(2) cannot be less than sliderstep(1).");
+        }
+
+        return step;
+    }
+
+    /// <summary>
+    /// A control's picture as a script reads it when it was not set through this handle — a copy's,
+    /// or one read from a document: an m-by-n-by-3 array of doubles in [0, 1], NaN where it shows
+    /// the face beneath.
+    /// </summary>
+    private static JgsValue ImageValue(UiImage? image)
+    {
+        if (image is null)
+        {
+            return JgsMatrix.FromColumnMajor([], 0, 0);
+        }
+
+        int rows = image.Height;
+        int cols = image.Width;
+        var data = new double[rows * cols * 3];
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                int at = ((r * cols) + c) * 4;
+                bool shown = image.Bgra[at + 3] != 0;
+                for (int channel = 0; channel < 3; channel++)
+                {
+                    data[r + (c * rows) + (channel * rows * cols)] = shown ? image.Bgra[at + 2 - channel] / 255.0 : double.NaN;
+                }
+            }
+        }
+
+        JgsValue value = JgsMatrix.FromColumnMajor(data, rows * cols * 3, 1);
+        value.ReshapeDims([rows, cols, 3]);
+        return value;
+    }
+
+    /// <summary>
+    /// R2025b's <c>CData</c> (probe <c>u3_styles</c>): an m-by-n-by-3 array of a numeric class, a
+    /// floating one within [0, 1] or NaN; <c>[]</c> clears it and reads back as 0-by-0-by-3.
+    /// </summary>
+    private static void SetControlImage(JgsHandleEntry entry, JgsValue value, int line, int col)
+    {
+        const string words =
+            "Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.";
+        string kind = JgsBuiltins.ClassOf(value, JgsDialect.Matlab);
+        if (!IsNumericKind(kind))
+        {
+            throw ComponentError(entry, "CData", "MATLAB:hg:shaped_arrays:CDataType", words, line, col);
+        }
+
+        int[] dims = value.Type == JgsType.Array ? value.Dims : [1, 1];
+        int count = value.Type == JgsType.Array ? value.ArrayLength : 1;
+        if (count == 0 && dims.Length == 2)
+        {
+            JgsValue none = JgsMatrix.FromColumnMajor([], 0, 0);
+            none.ReshapeDims([0, 0, 3]);
+            entry.UiCData = none;
+            Control(entry).Image = null;
+            return;
+        }
+
+        if (dims.Length != 3 || dims[2] != 3)
+        {
+            throw ComponentError(entry, "CData", "MATLAB:hg:shaped_arrays:CDataSize", words, line, col);
+        }
+
+        double[] data = JgsBuiltins.ToDoubles("CData", value, line, col);
+        bool floating = kind is "double" or "single";
+        if (floating && data.Any(static x => x < 0 || x > 1))
+        {
+            throw ComponentError(entry, "CData", "MATLAB:hg:shaped_arrays:CDataPredicate", words, line, col);
+        }
+
+        // A whole-number class spans its own range: uint8 255, uint16 65535, a signed one from its
+        // lowest to its highest.
+        (double low, double high) = kind switch
+        {
+            "uint8" => (0d, 255d),
+            "uint16" => (0d, 65535d),
+            "int8" => (-128d, 127d),
+            "int16" => (-32768d, 32767d),
+            "uint32" => (0d, 4294967295d),
+            "int32" => (-2147483648d, 2147483647d),
+            _ => (0d, 1d),
+        };
+
+        int rows = dims[0];
+        int cols = dims[1];
+        var pixels = new byte[rows * cols * 4];
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                int at = ((r * cols) + c) * 4;
+                double red = data[r + (c * rows)];
+                double green = data[r + (c * rows) + (rows * cols)];
+                double blue = data[r + (c * rows) + (2 * rows * cols)];
+                if (double.IsNaN(red) || double.IsNaN(green) || double.IsNaN(blue))
+                {
+                    continue; // a NaN pixel shows the face beneath
+                }
+
+                byte Channel(double x) => (byte)System.Math.Round(255 * System.Math.Clamp((x - low) / (high - low), 0, 1));
+                pixels[at] = Channel(blue);
+                pixels[at + 1] = Channel(green);
+                pixels[at + 2] = Channel(red);
+                pixels[at + 3] = 255;
+            }
+        }
+
+        entry.UiCData = JgsValue.Share(value);
+        Control(entry).Image = rows > 0 && cols > 0 ? new UiImage(cols, rows, pixels) : null;
+    }
+
+    /// <summary>The words each of a component's properties takes, as R2025b's <c>set(h)</c> lists them.</summary>
+    private static void AddComponentOptions(Type type, IDictionary<string, GraphicsProperty> table)
+    {
+        Options(table, "Visible", OnOffWords);
+        Options(table, "HandleVisibility", HandleVisibilityWords);
+        Options(table, "BusyAction", "queue", "cancel");
+        Options(table, "Interruptible", OnOffWords);
+        Options(table, "Units", UnitWords);
+        Options(table, "FontUnits", FontUnitWords);
+        Options(table, "FontAngle", FontAngleShown);
+        Options(table, "FontWeight", FontWeightShown);
+        Options(table, "Selected", OnOffWords);
+        Options(table, "SelectionHighlight", OnOffWords);
+        Options(table, "HitTest", OnOffWords);
+        if (typeof(UiControlModel).IsAssignableFrom(type))
+        {
+            Options(table, "Style", StyleWords);
+            Options(table, "Enable", EnableWords);
+            Options(table, "HorizontalAlignment", AlignmentWords);
+        }
+        else
+        {
+            Options(table, "Enable", OnOffWords);
+            Options(table, "BorderType", BorderTypeShown);
+            Options(table, "TitlePosition", TitlePositionWords);
+            Options(table, "Clipping", OnOffWords);
+            Options(table, "AutoResizeChildren", OnOffWords);
+            Options(table, "Scrollable", OnOffWords);
+        }
     }
 
     /// <summary>What every component shares: its place, whether it is on, its tooltip, its units.</summary>
@@ -150,11 +392,40 @@ internal static partial class JgsGraphicsProperties
         // MATLAB's interaction words on drawn objects are not a component's: R2025b's uicontrol has
         // no Selected, SelectionHighlight, HitTest or PickableParts, and answers neither of them. A
         // panel still answers the first three, though it lists none.
-        foreach (string drawnOnly in typeof(UiControlModel).IsAssignableFrom(type)
-            ? new[] { "Selected", "SelectionHighlight", "HitTest", "PickableParts" }
-            : ["PickableParts"])
+        table.Remove("PickableParts");
+        Unlist(table, "Selected", "SelectionHighlight", "HitTest", "UIContextMenu");
+
+        // The right-click menu, with R2025b's refusals (U3). A menu since deleted reads as none.
+        foreach (string name in new[] { "ContextMenu", "UIContextMenu" })
         {
-            table.Remove(drawnOnly);
+            string captured = name;
+            bool listed = name == "ContextMenu";
+            table[captured] = new GraphicsProperty(captured,
+                entry => entry.ContextMenu is { BeingDeleted: false } menu && JgsHandleRegistry.TryGetEntry(menu, out _)
+                    ? JgsHandleRegistry.For(menu)
+                    : JgsMatrix.FromColumnMajor([], 0, 0),
+                (entry, value, line, col) =>
+                {
+                    if ((value.Type == JgsType.Array && value.ArrayLength == 0)
+                        || (JgsBuiltins.IsTextScalar(value) && JgsBuiltins.TextOf(value).Length == 0))
+                    {
+                        entry.ContextMenu = null;
+                        return;
+                    }
+
+                    if (!JgsHandleRegistry.TryGet(value, out JgsHandleEntry? menu))
+                    {
+                        throw ComponentError(entry, captured, "MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle",
+                            "The value set for this property must be a valid HG handle.", line, col);
+                    }
+
+                    entry.ContextMenu = menu.Target is ContextMenuModel
+                        ? menu.Target
+                        : throw new JgsRuntimeException(line, col, "MATLAB:hgutils:InvalidContextMenu", "Handle must be a uicontextmenu.");
+                })
+            {
+                Listed = listed,
+            };
         }
 
         foreach (string name in new[] { "Position", "InnerPosition", "OuterPosition" })
@@ -231,7 +502,31 @@ internal static partial class JgsGraphicsProperties
     /// array or a cell becomes a column of lines, a number is its <c>num2str</c>, an array of numbers
     /// one line per element, and a logical is refused.
     /// </summary>
-    private static UiText ComponentText(JgsHandleEntry entry, string property, JgsValue value, int line, int col)
+    private static UiText ComponentText(JgsHandleEntry entry, string property, JgsValue value, int line, int col) =>
+        SplitAtNewlines(ComponentTextAsGiven(entry, property, value, line, col));
+
+    /// <summary>
+    /// A newline in a component's text starts a new line (R2025b, probe <c>u3_wrap</c>): a row
+    /// becomes a character matrix, padded, and a cell's element becomes several elements.
+    /// </summary>
+    private static UiText SplitAtNewlines(UiText text)
+    {
+        if (text.Form == UiTextForm.CharMatrix || !text.Lines.Any(static l => l.Contains('\n')))
+        {
+            return text;
+        }
+
+        string[] lines = [.. text.Lines.SelectMany(static l => l.Split('\n'))];
+        if (text.Form == UiTextForm.Cell)
+        {
+            return new UiText(UiTextForm.Cell, lines);
+        }
+
+        int width = lines.Max(static l => l.Length);
+        return new UiText(UiTextForm.CharMatrix, [.. lines.Select(l => l.PadRight(width))]);
+    }
+
+    private static UiText ComponentTextAsGiven(JgsHandleEntry entry, string property, JgsValue value, int line, int col)
     {
         string kind = JgsBuiltins.ClassOf(value, JgsDialect.Matlab);
         if (value.IsCharMatrix)
@@ -319,10 +614,29 @@ internal static partial class JgsGraphicsProperties
     private static UiNumbers ControlValue(JgsHandleEntry entry, JgsValue value, int line, int col)
     {
         string kind = JgsBuiltins.ClassOf(value, JgsDialect.Matlab);
+        if (kind == "cell")
+        {
+            throw ComponentError(entry, "Value", "MATLAB:invalidConversion",
+                "Conversion to double from cell is not possible.", line, col);
+        }
+
+        if (kind == "string")
+        {
+            throw ComponentError(entry, "Value", "MATLAB:hg:DataTypeMismatchUIControlValueScalar",
+                "This is not a valid UIControlValue value. This is not an expected input data type.", line, col);
+        }
+
         if (kind != "logical" && !IsNumericKind(kind))
         {
             throw ComponentError(entry, "Value", "MATLAB:hg:UIControlValueCharArrayString",
                 "This is not a valid UIControlValue value. Value must be numeric.", line, col);
+        }
+
+        if (value.Type == JgsType.Complex
+            || (value.Type == JgsType.Array && Enumerable.Range(0, value.ArrayLength).Any(i => value.ElementAt(i).Type == JgsType.Complex)))
+        {
+            throw ComponentError(entry, "Value", "MATLAB:hg:UIControlValueComplex",
+                "This is not a valid UIControlValue value. Complex inputs are not supported.", line, col);
         }
 
         if (value.Type != JgsType.Array)
@@ -330,8 +644,21 @@ internal static partial class JgsGraphicsProperties
             return new UiNumbers(JgsBuiltins.ToDoubles("Value", value, line, col), 1, 1);
         }
 
-        double[] numbers = value.ArrayLength == 0 ? [] : JgsBuiltins.ToDoubles("Value", value, line, col);
-        return new UiNumbers(numbers, value.Rows, value.Cols);
+        // A vector reads back as a row and an empty as 0-by-0; a matrix is refused (R2025b, probe
+        // u3_styles).
+        if (value.ArrayLength == 0)
+        {
+            return new UiNumbers([], 0, 0);
+        }
+
+        if (value.Rows > 1 && value.Cols > 1)
+        {
+            throw ComponentError(entry, "Value", "MATLAB:hg:UIControlValueDimensions_M",
+                "This is not a valid UIControlValue value. The input must have 1 rows.", line, col);
+        }
+
+        double[] numbers = JgsBuiltins.ToDoubles("Value", value, line, col);
+        return new UiNumbers(numbers, 1, numbers.Length);
     }
 
     private static double NumericScalar(JgsHandleEntry entry, string property, JgsValue value, int line, int col)
@@ -460,6 +787,13 @@ internal static partial class JgsGraphicsProperties
         if (JgsBuiltins.IsTextScalar(value))
         {
             return UiText.Of(MissingAsEmpty(JgsBuiltins.TextOf(value)));
+        }
+
+        // A string array is a column of lines, as a cell is.
+        if (JgsBuiltins.ClassOf(value, JgsDialect.Matlab) == "string")
+        {
+            return new UiText(UiTextForm.Cell,
+                [.. Enumerable.Range(0, value.ArrayLength).Select(i => MissingAsEmpty(JgsBuiltins.TextOf(value.ElementAt(i))))]);
         }
 
         if (value.Type == JgsType.String || (value.IsCharMatrix))

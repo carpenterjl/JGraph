@@ -30,6 +30,18 @@ internal sealed class GraphicsProperty
 
     /// <summary>Null when the property can be read but not written.</summary>
     public Action<JgsHandleEntry, JgsValue, int, int>? Write { get; }
+
+    /// <summary>
+    /// Whether <c>get(h)</c> and <c>set(h)</c> list the name. MATLAB's hidden properties — an older
+    /// spelling, an internal — answer when named and are left out of the lists (U3).
+    /// </summary>
+    public bool Listed { get; init; } = true;
+
+    /// <summary>
+    /// The words the property takes, when it takes words: what <c>set(h, name)</c> answers and what
+    /// <c>set(h)</c> lists beside the name (U3). Null for a property that takes something else.
+    /// </summary>
+    public IReadOnlyList<string>? Words { get; init; }
 }
 
 /// <summary>
@@ -71,6 +83,7 @@ internal static partial class JgsGraphicsProperties
         ContextMenuModel => "uicontextmenu",
         MenuItemModel => "uimenu",
         UiControlModel => "uicontrol",
+        UiButtonGroupModel => "uibuttongroup",
         UiPanelModel => "uipanel",
 
         // A circle is a different class in MATLAB, and findobj(gcf, 'Type', 'polaraxes') is how a
@@ -418,7 +431,7 @@ internal static partial class JgsGraphicsProperties
     /// <summary>Every property name an object answers to, alphabetically.</summary>
     public static IReadOnlyList<string> NamesOf(GraphObject target)
     {
-        var names = TableFor(target.GetType()).Values.Select(static p => p.Name).ToList();
+        var names = TableFor(target.GetType()).Values.Where(static p => p.Listed).Select(static p => p.Name).ToList();
         names.Sort(StringComparer.OrdinalIgnoreCase);
         return names;
     }
@@ -464,7 +477,14 @@ internal static partial class JgsGraphicsProperties
 
     public static void Set(JgsHandleEntry entry, string name, JgsValue value, int line, int col)
     {
-        if (value.IsStringArray && value.ArrayLength == 1) value = value.ElementAt(0);
+        // A string scalar is text to every property but a uicontrol's Value, which refuses it as
+        // a string (U3).
+        if (value.IsStringArray && value.ArrayLength == 1
+            && !(entry.Target is UiControlModel && name.Equals("Value", StringComparison.OrdinalIgnoreCase)))
+        {
+            value = value.ElementAt(0);
+        }
+
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
             throw Unknown(entry.Target, name, line, col);
@@ -497,6 +517,7 @@ internal static partial class JgsGraphicsProperties
             string named = !reading ? word : target switch
             {
                 UiControlModel => "matlab.ui.control.UIControl",
+                UiButtonGroupModel => "matlab.ui.container.ButtonGroup",
                 UiPanelModel => "matlab.ui.container.Panel",
                 _ => word,
             };
@@ -771,9 +792,19 @@ internal static partial class JgsGraphicsProperties
             AddUiPanelBlock(table);
         }
 
+        if (typeof(UiButtonGroupModel).IsAssignableFrom(type))
+        {
+            AddUiButtonGroupBlock(table);
+        }
+
         if (typeof(UiControlModel).IsAssignableFrom(type))
         {
             AddUiControlBlock(table);
+        }
+
+        if (typeof(UiObject).IsAssignableFrom(type))
+        {
+            AddComponentOptions(type, table);
         }
 
         if (typeof(JgsGraphicsGroup).IsAssignableFrom(type))
@@ -2323,6 +2354,80 @@ internal static partial class JgsGraphicsProperties
         Func<JgsHandleEntry, JgsValue> read,
         Action<JgsHandleEntry, JgsValue, int, int>? write = null) =>
         table[name] = new GraphicsProperty(name, read, write);
+
+    /// <summary>Says which words a property takes, for <c>set(h)</c> and <c>set(h, name)</c>.</summary>
+    private static void Options(IDictionary<string, GraphicsProperty> table, string name, params string[] words)
+    {
+        if (table.TryGetValue(name, out GraphicsProperty? property))
+        {
+            table[name] = new GraphicsProperty(property.Name, property.Read, property.Write)
+            {
+                Listed = property.Listed,
+                Words = words,
+            };
+        }
+    }
+
+    private static readonly string[] OnOffWords = ["on", "off"];
+
+    /// <summary>
+    /// What <c>set(h, name)</c> answers for a component (R2025b, probe <c>u3_set</c>): the words the
+    /// property takes as a column cell, or an empty cell when it takes something else. A name that
+    /// cannot be written, or that nothing answers to, is refused as a write would be.
+    /// </summary>
+    internal static JgsValue OptionsOf(JgsHandleEntry entry, string name, int line, int col)
+    {
+        if (!TryFind(entry.Target, name, out GraphicsProperty property))
+        {
+            throw Unknown(entry.Target, name, line, col);
+        }
+
+        if (property.Write is null)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:SetProhibited",
+                $"Unable to set the '{property.Name}' property of class ''{JgsGraphicsCallbackValues.ClassWord(entry.Target)}'' because it is read-only.");
+        }
+
+        return WordsCell(property.Words);
+    }
+
+    /// <summary>What <c>set(h)</c> answers for a component: every listed, writable name with its words.</summary>
+    internal static JgsValue OptionsOf(JgsHandleEntry entry)
+    {
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        foreach (string name in NamesOf(entry.Target))
+        {
+            if (TryFind(entry.Target, name, out GraphicsProperty property) && property.Write is not null)
+            {
+                fields[name] = WordsCell(property.Words);
+            }
+        }
+
+        return JgsValue.Struct(fields);
+    }
+
+    private static JgsValue WordsCell(IReadOnlyList<string>? words)
+    {
+        JgsValue cell = JgsValue.Cell([.. (words ?? []).Select(static word => JgsValue.Str(word))]);
+        cell.Reshape(words?.Count ?? 0, words is { Count: > 0 } ? 1 : 0);
+        return cell;
+    }
+
+    /// <summary>Leaves names out of what <c>get(h)</c> and <c>set(h)</c> list; they still answer.</summary>
+    private static void Unlist(IDictionary<string, GraphicsProperty> table, params string[] names)
+    {
+        foreach (string name in names)
+        {
+            if (table.TryGetValue(name, out GraphicsProperty? property))
+            {
+                table[name] = new GraphicsProperty(property.Name, property.Read, property.Write)
+                {
+                    Listed = false,
+                    Words = property.Words,
+                };
+            }
+        }
+    }
 
     /// <summary>
     /// A callback property over an entry slot. Unset reads as <c>''</c>, as R2025b answers a callback

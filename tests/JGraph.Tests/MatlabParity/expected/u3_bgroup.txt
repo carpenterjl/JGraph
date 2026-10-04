@@ -1,0 +1,213 @@
+CHK|classic_default_Type|uibuttongroup|exact
+CHK|uifigure_default_Type|uibuttongroup|exact
+CHK|classic_default_Title||exact
+CHK|uifigure_default_Title||exact
+CHK|classic_default_TitlePosition|lefttop|exact
+CHK|uifigure_default_TitlePosition|lefttop|exact
+CHK|classic_default_BorderType|line|exact
+CHK|uifigure_default_BorderType|line|exact
+CHK|classic_default_BorderWidth|double [1 1] 1|exact
+CHK|uifigure_default_BorderWidth|double [1 1] 1|exact
+CHK|classic_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|uifigure_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|classic_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|uifigure_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|classic_default_BorderColor|double [1 3] 1 1 1|exact
+CHK|uifigure_default_BorderColor|double [1 3] 0.4901960784 0.4901960784 0.4901960784|exact
+CHK|classic_default_HighlightColor|double [1 3] 1 1 1|exact
+CHK|uifigure_default_HighlightColor|double [1 3] 0.4901960784 0.4901960784 0.4901960784|exact
+CHK|classic_default_FontName|MS Sans Serif|exact
+CHK|uifigure_default_FontName|Helvetica|exact
+CHK|classic_default_FontSize|double [1 1] 8|exact
+CHK|uifigure_default_FontSize|double [1 1] 12|exact
+CHK|classic_default_FontUnits|points|exact
+CHK|uifigure_default_FontUnits|pixels|exact
+CHK|classic_default_FontWeight|normal|exact
+CHK|uifigure_default_FontWeight|normal|exact
+CHK|classic_default_FontAngle|normal|exact
+CHK|uifigure_default_FontAngle|normal|exact
+CHK|classic_default_Units|normalized|exact
+CHK|uifigure_default_Units|pixels|exact
+CHK|classic_default_Position|double [1 4] 0 0 1 1|exact
+CHK|uifigure_default_Position|double [1 4] 20 20 260 210|exact
+CHK|classic_default_InnerPosition|double [1 4] 0.001785714286 0.002380952381 0.9964285714 0.9952380952|exact
+CHK|uifigure_default_InnerPosition|double [1 4] 21 21 258 208|exact
+CHK|classic_default_OuterPosition|double [1 4] 0 0 1 1|exact
+CHK|uifigure_default_OuterPosition|double [1 4] 20 20 260 210|exact
+CHK|classic_default_Visible|on|exact
+CHK|uifigure_default_Visible|on|exact
+CHK|classic_default_Enable|on|exact
+CHK|uifigure_default_Enable|on|exact
+CHK|classic_default_Scrollable|off|exact
+CHK|uifigure_default_Scrollable|off|exact
+CHK|classic_default_AutoResizeChildren|off|exact
+CHK|uifigure_default_AutoResizeChildren|on|exact
+CHK|classic_default_Clipping|on|exact
+CHK|uifigure_default_Clipping|on|exact
+CHK|classic_default_Tag||exact
+CHK|uifigure_default_Tag||exact
+CHK|classic_default_Tooltip||exact
+CHK|uifigure_default_Tooltip||exact
+CHK|classic_default_HandleVisibility|on|exact
+CHK|uifigure_default_HandleVisibility|on|exact
+CHK|classic_default_SizeChangedFcn||exact
+CHK|uifigure_default_SizeChangedFcn||exact
+CHK|classic_default_SelectionChangedFcn||exact
+CHK|uifigure_default_SelectionChangedFcn||exact
+CHK|classic_default_ButtonDownFcn||exact
+CHK|uifigure_default_ButtonDownFcn||exact
+CHK|classic_default_BusyAction|queue|exact
+CHK|uifigure_default_BusyAction|queue|exact
+CHK|classic_default_Interruptible|on|exact
+CHK|uifigure_default_Interruptible|on|exact
+CHK|classic_default_BeingDeleted|off|exact
+CHK|uifigure_default_BeingDeleted|off|exact
+CHK|default_selected_empty|1 1|exact
+CHK|names_only_in_group|Buttons SelectedObject SelectionChangedFcn|exact
+CHK|names_only_in_panel||exact
+CHK|set_names_only_in_group|SelectedObject SelectionChangedFcn|exact
+CHK|hidden_SelectionChangeFcn||exact
+CHK|hidden_ResizeFcn||exact
+CHK|hidden_ShadowColor|double [1 3] 0.7 0.7 0.7|exact
+CHK|hidden_TooltipString|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_TooltipString_msg|Unrecognized property TooltipString for class matlab.ui.container.ButtonGroup.|exact
+CHK|hidden_Buttons_empty|logical [1 1] 1|exact
+CHK|isa_panel_type|uibuttongroup|exact
+CHK|form_parent|logical [1 1] 1|exact
+CHK|form_named_parent|T|exact
+CHK|form_struct|S|exact
+CHK|form_odd|MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle|exact
+CHK|form_odd_msg|First argument must be a valid parent, such as a Figure or Panel object.|exact
+CHK|form_parent_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|form_parent_odd_msg|Incorrect number of input arguments.|exact
+CHK|form_not_a_handle|MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle|exact
+CHK|form_not_a_handle_msg|First argument must be a valid parent, such as a Figure or Panel object.|exact
+CHK|form_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|form_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|form_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|form_unknown_msg|Unrecognized property Bogus for class ButtonGroup.|exact
+CHK|form_in_panel|uipanel|exact
+CHK|form_panel_in_group|uibuttongroup|exact
+CHK|form_axes_in_group|uibuttongroup|exact
+CHK|form_group_in_group|uibuttongroup|exact
+CHK|first_radio|r1:1 selected=r1|exact
+CHK|five|r1:1 r2:0 t1:0 cb:0 pb:0 selected=r1|exact
+CHK|children|pb cb t1 r2 r1|exact
+CHK|value_r2_one|r1:0 r2:1 t1:0 cb:0 pb:0 selected=r2|exact
+CHK|value_r2_zero_selected|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|value_r1_zero_unselected|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|value_t1_one|r1:0 r2:0 t1:1 cb:0 pb:0 selected=t1|exact
+CHK|value_cb_one|r1:0 r2:0 t1:1 cb:1 pb:0 selected=t1|exact
+CHK|value_pb_one|r1:0 r2:0 t1:1 cb:1 pb:1 selected=t1|exact
+CHK|value_r1_half|r1:0.5 r2:0 t1:1 cb:1 pb:1 selected=t1|exact
+CHK|value_r1_five|r1:5 r2:0 t1:1 cb:1 pb:1 selected=t1|exact
+CHK|value_r1_true|r1:1 r2:0 t1:0 cb:1 pb:1 selected=r1|exact
+CHK|value_r1_half_selected|r1:0.5 r2:0 t1:0 cb:1 pb:1 selected=r1|exact
+CHK|value_r1_ones|r1:1 r2:0 t1:0 cb:1 pb:1 selected=r1|exact
+CHK|value_r2_ones|r1:0 r2:1 t1:0 cb:1 pb:1 selected=r2|exact
+CHK|value_r2_one_two|r1:0 r2:1 t1:0 cb:1 pb:1 selected=r2|exact
+CHK|select_r1|ran|exact
+CHK|select_r1_state|r1:1 r2:0 t1:0 cb:0 pb:0 selected=r1|exact
+CHK|select_t1|ran|exact
+CHK|select_t1_state|r1:0 r2:0 t1:1 cb:0 pb:0 selected=t1|exact
+CHK|select_none|ran|exact
+CHK|select_none_state|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|select_checkbox|MATLAB:hg:InvalidSelectedObjectType|exact
+CHK|select_checkbox_msg|Must set the SelectedObject to a Radio Button or a Toggle Button.|exact
+CHK|select_checkbox_state|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|select_pushbutton|MATLAB:hg:InvalidSelectedObjectType|exact
+CHK|select_pushbutton_msg|Must set the SelectedObject to a Radio Button or a Toggle Button.|exact
+CHK|select_pushbutton_state|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|select_figure|MATLAB:hg:InvalidSelectedObjectType|exact
+CHK|select_figure_msg|Must set the SelectedObject to a Radio Button or a Toggle Button.|exact
+CHK|select_figure_state|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|select_outside|MATLAB:hg:InvalidSelectedObjectParent|exact
+CHK|select_outside_msg|SelectedObject must be a child of this UIButtonGroup.|exact
+CHK|select_outside_state|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|select_number|MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle|exact
+CHK|select_number_msg|Error setting property 'SelectedObject' of class 'ButtonGroup': The value set for this property must be a valid HG handle.|exact
+CHK|select_number_state|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|select_text|MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle|exact
+CHK|select_text_msg|Error setting property 'SelectedObject' of class 'ButtonGroup': The value set for this property must be a valid HG handle.|exact
+CHK|select_text_state|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|select_two|ran|exact
+CHK|select_two_state|r1:1 r2:0 t1:0 cb:0 pb:0 selected=r1|exact
+CHK|select_double|ran|exact
+CHK|select_double_state|r1:0 r2:1 t1:0 cb:0 pb:0 selected=r2|exact
+CHK|selected_empty_size|[0 0]|exact
+CHK|minmax_set|r1:1 r2:0 t1:0 cb:0 pb:0 selected=r1|exact
+CHK|minmax_at_max|r1:1 r2:7 t1:0 cb:0 pb:0 selected=r1|exact
+CHK|minmax_one|r1:0 r2:1 t1:0 cb:0 pb:0 selected=r2|exact
+CHK|minmax_deselected|r1:1 r2:0 t1:0 cb:0 pb:0 selected=r1|exact
+CHK|minmax_selected|r1:0 r2:1 t1:0 cb:0 pb:0 selected=r2|exact
+CHK|moved_in_at_max|r1:0 r2:0 t1:0 cb:0 pb:0 out:1 selected=out|exact
+CHK|moved_out|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none) out:0|exact
+CHK|selected_moved_out|r1:0 t1:0 cb:0 pb:0 selected=(none) r2:0|exact
+CHK|moved_back|r1:0 r2:0 t1:0 cb:0 pb:0 selected=(none)|exact
+CHK|selected_deleted|r1:0 r2:0 cb:0 pb:0 selected=(none)|exact
+CHK|late_radio_value|r1:0 r2:0 cb:0 pb:1 selected=(none)|exact
+CHK|late_radio_select|ran|exact
+CHK|late_radio_selected|r1:0 r2:0 cb:0 pb:1 selected=pb|exact
+CHK|after_late_radio|r1:1 r2:0 cb:0 pb:0 selected=r1|exact
+CHK|selected_becomes_checkbox|r1:1 r2:0 cb:0 pb:0 selected=r1|exact
+CHK|other_selected|r1:0 r2:1 cb:0 pb:0 selected=r2|exact
+CHK|checkbox_value_one|MATLAB:hg:InvalidSelectedObjectType|exact
+CHK|checkbox_value_one_msg|Must set the SelectedObject to a Radio Button or a Toggle Button.|exact
+CHK|checkbox_value_one_state|r1:1 r2:1 cb:0 pb:0 selected=r2|exact
+CHK|radio_again|r1:1 r2:0 cb:0 pb:0 selected=r1|exact
+CHK|disabled_selected|r1:0 r2:1 cb:0 pb:0 selected=r2|exact
+CHK|set_both|r1:0 r2:1 cb:0 pb:0 selected=r2|exact
+CHK|join_first_value_0|a:1 selected=a|exact
+CHK|join_second_value_1|a:0 b:1 selected=b|exact
+CHK|join_named_parent|a:0 b:1 c:0 selected=b|exact
+CHK|join_style_first|a:0 b:1 c:0 d:0 selected=b|exact
+CHK|join_no_selection|a:0 b:0 c:0 d:0 e:0 selected=(none)|exact
+CHK|join_value_5|a:0 b:0 c:0 d:0 e:0 h:5 selected=(none)|exact
+CHK|join_first_toggle|t:1 selected=t|exact
+CHK|join_as_pushbutton|t:1 e:0 selected=t|exact
+CHK|join_empty_as_pushbutton|e:0 selected=(none)|exact
+CHK|join_in_inner_panel|h1:1 h2:1 selected=h1|exact
+CHK|join_moved_first|q1:1 selected=q1|exact
+CHK|join_third_at_max|q1:0 q2:3 q3:1 selected=q3|exact
+CHK|max_5_value_5|q1:5 q2:3 q3:1 selected=q3|exact
+CHK|max_5_value_1|q1:1 q2:3 q3:0 selected=q1|exact
+CHK|join_first_max_7|m1:1 selected=m1|exact
+CHK|join_then_plain|m1:0 m2:1 selected=m2|exact
+CHK|join_first_min_minus_1|n1:0 selected=(none)|exact
+CHK|join_after_unwatched|n1:0 n2:1 selected=n2|exact
+CHK|unwatched_pair|x1:0 x2:0 selected=(none)|exact
+CHK|unwatched_pair_ones|x1:1 x2:1 selected=(none)|exact
+CHK|unwatched_pair_selected|x1:1 x2:1 selected=x2|exact
+CHK|unwatched_pair_other|x1:1 x2:0 selected=x1|exact
+CHK|copy_of_button|a:1 b:0 c2:0 selected=a|exact
+CHK|copy_of_group|a 3|exact
+CHK|copy_is_its_own|1|exact
+CHK|changedfcn_handle|function_handle|exact
+CHK|changefcn_reads|function_handle|exact
+CHK|changefcn_char|disp(1)|exact
+CHK|changedfcn_reads|disp(1)|exact
+CHK|changedfcn_cell|cell [2 1] {function_handle, double [1 1] 1}|exact
+CHK|changedfcn_number|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|changedfcn_number_msg|Error setting property 'SelectionChangedFcn' of class 'ButtonGroup': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|changedfcn_empty||exact
+CHK|callbacks_from_script_writes|0|exact
+CHK|title|Group|exact
+CHK|inner_titled|double [1 4] 21 21 298 288|exact
+CHK|enable_inactive|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|enable_inactive_msg|Error setting property 'Enable' of class 'ButtonGroup': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|enable_off|off|exact
+CHK|child_enable|on|exact
+CHK|background_none|MATLAB:hg:ColorSpec_None|exact
+CHK|background_none_msg|Cannot set ButtonGroup BackgroundColor to 'none'.|exact
+CHK|pixel_position|double [1 4] 20 20 300 300|exact
+CHK|findobj_type|double [1 1] 1|exact
+CHK|findobj_panel|double [1 1] 0|exact
+CHK|findobj_style|double [1 1] 2|exact
+CHK|ancestor|bg|exact
+CHK|get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.ButtonGroup.|exact
+CHK|set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|set_unknown_msg|Unrecognized property Bogus for class ButtonGroup.|exact
+CHK|delete_order|bg, r2, r1 selected=r1|exact
+CHK|uifigure_group|ua:1 ub:0 selected=ua|exact
+CHK|uifigure_group_second|ua:0 ub:1 selected=ub|exact

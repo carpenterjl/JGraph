@@ -1,0 +1,74 @@
+screen [1 1 1920 1200], java 1920x1200, scale 1, figure [300 250 480 440]
+--- toggle: click
+toggle.Callback Value=1 SelectionType=normal gco=uicontrol:toggle | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- toggle: click again
+toggle.Callback Value=0 SelectionType=normal gco=uicontrol:toggle | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- checkbox (Min 2 Max 7): click
+check.Callback Value=1 SelectionType=normal gco=uicontrol:check | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- checkbox: click again
+check.Callback Value=0 SelectionType=normal gco=uicontrol:check | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- radio outside a group: click
+radio.Callback Value=1 SelectionType=normal gco=uicontrol:radio | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- radio: click again
+radio.Callback Value=0 SelectionType=normal gco=uicontrol:radio | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- slider: right arrow
+slider.Callback Value=0.01 SelectionType=normal gco=uicontrol:radio | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- slider: trough right of the thumb
+slider.Callback Value=0.11 SelectionType=normal gco=uicontrol:slider | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- list: second row
+list.Callback Value=2 SelectionType=normal gco=uicontrol:list | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- list: third row
+list.Callback Value=3 SelectionType=normal gco=uicontrol:list | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- list: third row again
+list.Callback Value=3 SelectionType=normal gco=uicontrol:list | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- group: second radio
+group.SelectionChangedFcn Old=uicontrol:g1 New=uicontrol:g2 selected=uicontrol:g2 | event: matlab.ui.eventdata.SelectionChangedData {OldValue=<matlab.ui.control.UIControl>, NewValue=<matlab.ui.control.UIControl>, Source=<matlab.ui.container.ButtonGroup>, EventName='SelectionChanged'}
+g2.Callback Value=1 SelectionType=normal gco=uicontrol:g2 | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- group: second radio again
+--- group: toggle
+group.SelectionChangedFcn Old=uicontrol:g2 New=uicontrol:g3 selected=uicontrol:g3 | event: matlab.ui.eventdata.SelectionChangedData {OldValue=<matlab.ui.control.UIControl>, NewValue=<matlab.ui.control.UIControl>, Source=<matlab.ui.container.ButtonGroup>, EventName='SelectionChanged'}
+g3.Callback Value=1 SelectionType=normal gco=uicontrol:g3 | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- group: toggle again
+g3.Callback Value=0 SelectionType=normal gco=uicontrol:g3 | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- group: first radio
+group.SelectionChangedFcn Old=uicontrol:g3 New=uicontrol:g1 selected=uicontrol:g1 | event: matlab.ui.eventdata.SelectionChangedData {OldValue=<matlab.ui.control.UIControl>, NewValue=<matlab.ui.control.UIControl>, Source=<matlab.ui.container.ButtonGroup>, EventName='SelectionChanged'}
+g1.Callback Value=1 SelectionType=normal gco=uicontrol:g1 | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- inactive text: click
+fig.WindowButtonDownFcn SelectionType=normal CurrentObject=uicontrol:inactive | event: matlab.ui.eventdata.WindowMouseData {Source=<matlab.ui.Figure>, EventName='WindowMousePress'}
+inactive.ButtonDownFcn Value=0 SelectionType=normal | event: matlab.ui.eventdata.MouseData {Source=<matlab.ui.control.UIControl>, EventName='ButtonDown'}
+--- disabled button: click
+fig.WindowButtonDownFcn SelectionType=normal CurrentObject=uicontrol:off | event: matlab.ui.eventdata.WindowMouseData {Source=<matlab.ui.Figure>, EventName='WindowMousePress'}
+off.ButtonDownFcn Value=0 SelectionType=normal | event: matlab.ui.eventdata.MouseData {Source=<matlab.ui.control.UIControl>, EventName='ButtonDown'}
+--- inactive push button: click
+fig.WindowButtonDownFcn SelectionType=normal CurrentObject=uicontrol:inactivepush | event: matlab.ui.eventdata.WindowMouseData {Source=<matlab.ui.Figure>, EventName='WindowMousePress'}
+inactivepush.ButtonDownFcn Value=0 SelectionType=normal | event: matlab.ui.eventdata.MouseData {Source=<matlab.ui.control.UIControl>, EventName='ButtonDown'}
+--- enabled text: click
+--- frame: click
+--- enabled push button: right click
+fig.WindowButtonDownFcn SelectionType=alt CurrentObject=uicontrol:push | event: matlab.ui.eventdata.WindowMouseData {Source=<matlab.ui.Figure>, EventName='WindowMousePress'}
+push.ButtonDownFcn Value=0 SelectionType=alt | event: matlab.ui.eventdata.MouseData {Source=<matlab.ui.control.UIControl>, EventName='ButtonDown'}
+--- enabled push button: click
+push.Callback Value=0 SelectionType=normal gco=uicontrol:push | event: matlab.ui.eventdata.ActionData {Source=<matlab.ui.control.UIControl>, EventName='Action'}
+--- figure background: click
+fig.WindowButtonDownFcn SelectionType=normal CurrentObject=figure: | event: matlab.ui.eventdata.WindowMouseData {Source=<matlab.ui.Figure>, EventName='WindowMousePress'}
+fig.ButtonDownFcn | event: matlab.ui.eventdata.MouseData {Source=<matlab.ui.Figure>, EventName='ButtonDown'}
+--- popup: open
+--- popup: the row below the box
+fig.WindowButtonDownFcn SelectionType=normal CurrentObject=figure: | event: matlab.ui.eventdata.WindowMouseData {Source=<matlab.ui.Figure>, EventName='WindowMousePress'}
+fig.ButtonDownFcn | event: matlab.ui.eventdata.MouseData {Source=<matlab.ui.Figure>, EventName='ButtonDown'}
+end g1 Value=1
+end g2 Value=0
+end g3 Value=0
+end toggle Value=0
+end check Value=0
+end radio Value=0
+end slider Value=0.11
+end list Value=3
+end inactive Value=0
+end off Value=0
+end push Value=0
+end text Value=0
+end frame Value=0
+end inactivepush Value=0
+end popup Value=1
+end group selected=uicontrol:g1

@@ -364,6 +364,22 @@ internal static partial class JgsBuiltins
         }
 
         List<JgsHandleEntry> targets = HandleList("set", args[0], line, col);
+
+        // A component answers as R2025b's does (U3): set(h) is a struct of the names that can be
+        // written, each with the words it takes, and set(h, name) is one name's words.
+        if (targets.Count == 1 && targets[0].Target is UiObject)
+        {
+            if (args.Count == 1)
+            {
+                return JgsGraphicsProperties.OptionsOf(targets[0]);
+            }
+
+            if (args.Count == 2 && IsTextScalar(args[1]))
+            {
+                return JgsGraphicsProperties.OptionsOf(targets[0], TextOf(args[1]), line, col);
+            }
+        }
+
         if (args.Count == 1)
         {
             return JgsValue.Cell(Writable(targets[0]).Select(JgsValue.Str).ToArray());
@@ -879,6 +895,11 @@ internal static partial class JgsBuiltins
                 }
 
                 holder.Components.Add(component);
+                if (component is UiControlModel button && holder is UiButtonGroupModel group)
+                {
+                    group.Added(button);
+                }
+
                 if (component.Figure is { } shown)
                 {
                     JG.TouchFigure(shown);

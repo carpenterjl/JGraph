@@ -170,12 +170,5 @@ public static class UiLayout
     /// bitmap font Windows maps to Microsoft Sans Serif, and Helvetica, the uifigure default, is Arial
     /// here. One table, so text is measured and drawn in the same face.
     /// </summary>
-    public static string FontFamily(string name) => name.Trim().ToLowerInvariant() switch
-    {
-        "ms sans serif" => "Microsoft Sans Serif",
-        "helvetica" => "Arial",
-        "fixedwidth" => "Courier New",
-        "" => "Microsoft Sans Serif",
-        _ => name,
-    };
+    public static string FontFamily(string name) => UiFonts.Family(name);
 }

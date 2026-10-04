@@ -2444,6 +2444,18 @@ internal sealed partial class Interpreter
         return true;
     }
 
+    /// <summary>The object a handle, or a one-element array holding a handle, names.</summary>
+    private static bool TryGetOneHandle(JgsValue value, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out JgsHandleEntry? entry)
+    {
+        if (JgsHandleRegistry.TryGet(value, out entry))
+        {
+            return true;
+        }
+
+        return value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsStringArray
+            && JgsHandleRegistry.TryGet(value.ElementAt(0), out entry);
+    }
+
     /// <summary>Whether <paramref name="value"/> is an array of graphics handles.</summary>
     private static bool IsHandleArrayValue(JgsValue value) =>
         value.Type == JgsType.Array
@@ -8757,8 +8769,9 @@ internal sealed partial class Interpreter
         }
 
         // A handle on a figure object is a number (M51), so a dot on one reads that object's
-        // property rather than a struct field.
-        if (JgsHandleRegistry.TryGet(target, out JgsHandleEntry? handle))
+        // property rather than a struct field. A one-element array of handles — what findobj
+        // answers for one match — is that handle, as a 1-by-1 is a scalar in MATLAB.
+        if (TryGetOneHandle(target, out JgsHandleEntry? handle))
         {
             return JgsBuiltins.GetHandleProperty(handle, field, member.Line, member.Column);
         }
@@ -8993,7 +9006,7 @@ internal sealed partial class Interpreter
         switch (expr)
         {
             case VariableExpr variable when LookUp(variable.Name, env, out JgsValue bound):
-                return JgsHandleRegistry.TryGet(bound, out JgsHandleEntry? entry) ? entry : null;
+                return TryGetOneHandle(bound, out JgsHandleEntry? entry) ? entry : null;
 
             // h(i).Color = c — a handle out of an array of them. A numeric array can hold nothing
             // but handles here, so a miss is an error rather than a fall-through to the struct path.

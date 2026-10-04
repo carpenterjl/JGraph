@@ -235,4 +235,4 @@ Callbacks are script-side state and are not saved, as with every other object.
   A `uifigure` keeps its own.
 - The whole suite has three failing audio tests that predate this stage (open item 39).
 - `WindowStyle` still answers one word; modal figures arrive with the dialogs (U4).
-- The seven `uicontrol` styles U1 does not draw are still labels (U3).
+- The seven `uicontrol` styles U1 did not draw were labels until U3 (ADR 0200).

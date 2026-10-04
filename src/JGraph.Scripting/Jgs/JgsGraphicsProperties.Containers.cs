@@ -206,8 +206,19 @@ internal static partial class JgsGraphicsProperties
                     List<AxesModel> held = component is UiContainerModel moved && oldFigure is not null
                         ? [.. oldFigure.Axes.Where(moved.Holds)]
                         : [];
+                    // A button leaving a group it was selected in is deselected, and one arriving
+                    // in a group is taken up by it (U3).
+                    if (component is UiControlModel leaving && component.Parent is UiButtonGroupModel from)
+                    {
+                        from.Leaving(leaving);
+                    }
+
                     component.Container?.Components.Remove(component);
                     holder.Components.Add(component);
+                    if (component is UiControlModel arriving && holder is UiButtonGroupModel into2)
+                    {
+                        into2.Added(arriving);
+                    }
 
                     // The axes placed in a panel live in its figure's list, so they follow it to another.
                     if (newFigure is not null && !ReferenceEquals(oldFigure, newFigure))
@@ -604,7 +615,7 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => Panel(entry).BackgroundColor =
                 ComponentColor(entry, "BackgroundColor", value, line, col)
                 ?? throw new JgsRuntimeException(line, col, "MATLAB:hg:ColorSpec_None",
-                    "Cannot set Panel BackgroundColor to 'none'."));
+                    $"Cannot set {JgsGraphicsCallbackValues.ClassWord(entry.Target)} BackgroundColor to 'none'."));
         Put(table, "ForegroundColor",
             entry => UiColorValue(Panel(entry).ForegroundColor),
             (entry, value, line, col) => Panel(entry).ForegroundColor = ComponentColor(entry, "ForegroundColor", value, line, col));
@@ -692,6 +703,62 @@ internal static partial class JgsGraphicsProperties
             static _ => JgsMatrix.FromColumnMajor([], 0, 0),
             (entry, _, line, col) => throw ComponentError(entry, "Layout", "MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass",
                 "'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.", line, col));
+    }
+
+    // --- uibuttongroup ---------------------------------------------------------------------------
+
+    /// <summary>
+    /// What a <c>uibuttongroup</c> adds to a panel (U3): <c>SelectedObject</c>, and
+    /// <c>SelectionChangedFcn</c> with its older spelling. R2025b's words and refusals (probe
+    /// <c>u3_bgroup</c>).
+    /// </summary>
+    private static void AddUiButtonGroupBlock(IDictionary<string, GraphicsProperty> table)
+    {
+        Put(table, "SelectedObject",
+            entry => ((UiButtonGroupModel)entry.Target).SelectedObject is { } selected
+                ? JgsHandleRegistry.For(selected)
+                : JgsMatrix.FromColumnMajor([], 0, 0),
+            (entry, value, line, col) =>
+            {
+                var group = (UiButtonGroupModel)entry.Target;
+                if (value.Type == JgsType.Array && value.ArrayLength == 0)
+                {
+                    group.Select(null);
+                    return;
+                }
+
+                // Of several handles the first is taken.
+                JgsValue first = value.Type == JgsType.Array && !value.IsStringArray ? value.ElementAt(0) : value;
+                if (first.Type != JgsType.Number || !JgsHandleRegistry.TryGet(first, out JgsHandleEntry? named))
+                {
+                    throw ComponentError(entry, "SelectedObject", "MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle",
+                        "The value set for this property must be a valid HG handle.", line, col);
+                }
+
+                if (named.Target is not UiControlModel button || !UiButtonGroupModel.IsButton(button))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:hg:InvalidSelectedObjectType",
+                        "Must set the SelectedObject to a Radio Button or a Toggle Button.");
+                }
+
+                if (!ReferenceEquals(button.Parent, group))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:hg:InvalidSelectedObjectParent",
+                        "SelectedObject must be a child of this UIButtonGroup.");
+                }
+
+                group.Select(button);
+            });
+
+        foreach (string name in new[] { "SelectionChangedFcn", "SelectionChangeFcn" })
+        {
+            AddCallbackSlot(table, name,
+                static entry => entry.SelectionChangedFcn, static (entry, value) => entry.SelectionChangedFcn = value);
+        }
+
+        // R2025b answers an empty for Buttons whatever the group holds.
+        Put(table, "Buttons", static _ => JgsMatrix.FromColumnMajor([], 0, 0));
+        Unlist(table, "SelectionChangeFcn");
     }
 
     private static string FontNameOf(JgsHandleEntry entry, JgsValue value, int line, int col)

@@ -76,4 +76,86 @@
     <Style x:Key="JG.Ui.Text" TargetType="Border">
         <Setter Property="SnapsToDevicePixels" Value="True" />
     </Style>
+
+    <!-- The rest of the uicontrol styles (U3). A toggle button is a push button that stays down. -->
+    <Style x:Key="JG.Ui.ToggleButton" TargetType="ToggleButton">
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Padding" Value="2,0" />
+        <Setter Property="BorderBrush" Value="#FFADADAD" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Border x:Name="Face" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" />
+                        <Border x:Name="Shade" Background="#00000000" />
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="Center" RecognizesAccessKey="False" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Face" Property="BorderBrush" Value="#FF0078D7" />
+                            <Setter TargetName="Shade" Property="Background" Value="#140078D7" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Face" Property="BorderBrush" Value="#FF0078D7" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Face" Property="BorderBrush" Value="#FF005A9E" />
+                            <Setter TargetName="Shade" Property="Background" Value="#400078D7" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Shade" Property="Background" Value="#300078D7" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="#FF9E9E9E" />
+                            <Setter TargetName="Face" Property="BorderBrush" Value="#FFCCCCCC" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- A check box, a radio button, a slider, a list and a drop-down list wear the system's own
+         templates: a style with a key and no BasedOn stands on the theme's, not on the IDE's. -->
+    <Style x:Key="JG.Ui.CheckBox" TargetType="CheckBox">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="2,0,0,0" />
+    </Style>
+
+    <Style x:Key="JG.Ui.RadioButton" TargetType="RadioButton">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="2,0,0,0" />
+    </Style>
+
+    <Style x:Key="JG.Ui.Slider" TargetType="ScrollBar">
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+    </Style>
+
+    <Style x:Key="JG.Ui.Frame" TargetType="Border">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style x:Key="JG.Ui.ListBox" TargetType="ListBox">
+        <Setter Property="BorderBrush" Value="#FFABADB3" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    </Style>
+
+    <Style x:Key="JG.Ui.PopupMenu" TargetType="ComboBox">
+        <Setter Property="IsEditable" Value="False" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="4,0" />
+    </Style>
 </ResourceDictionary>

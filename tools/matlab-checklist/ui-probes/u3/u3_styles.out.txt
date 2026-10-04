@@ -1,0 +1,373 @@
+get names (40): HorizontalAlignment ListboxTop Max Min SliderStep String Style Value Position BackgroundColor CData Callback Children Extent Tooltip ForegroundColor Enable Visible Parent HandleVisibility ButtonDownFcn ContextMenu BusyAction BeingDeleted Interruptible CreateFcn DeleteFcn Type Tag UserData KeyPressFcn KeyReleaseFcn FontUnits FontSize FontName FontAngle FontWeight Units InnerPosition OuterPosition
+set names (37): HorizontalAlignment ListboxTop Max Min SliderStep String Style Value Position BackgroundColor CData Callback Children Tooltip ForegroundColor Enable Visible Parent HandleVisibility ButtonDownFcn ContextMenu BusyAction Interruptible CreateFcn DeleteFcn Tag UserData KeyPressFcn KeyReleaseFcn FontUnits FontSize FontName FontAngle FontWeight Units InnerPosition OuterPosition
+get hidden TooltipString : ''
+get hidden UIContextMenu : matlab.graphics.GraphicsPlaceholder empty [0 0]
+get hidden Selected : OnOff off
+get hidden SelectionHighlight : OnOff on
+get hidden HitTest : OnOff on
+get hidden TooltipStr : ''
+get hidden Tooltips : ''
+get hidden ApplicationData : struct
+get hidden Serializable : OnOff on
+get hidden Copyable : logical true
+get hidden PickableParts : ERR MATLAB:hg:InvalidProperty | Unrecognized property PickableParts for class matlab.ui.control.UIControl.
+get hidden Clipping : ERR MATLAB:hg:InvalidProperty | Unrecognized property Clipping for class matlab.ui.control.UIControl.
+get hidden FontColor : ERR MATLAB:hg:InvalidProperty | Unrecognized property FontColor for class matlab.ui.control.UIControl.
+get hidden Text : ERR MATLAB:hg:InvalidProperty | Unrecognized property Text for class matlab.ui.control.UIControl.
+get hidden Layout : ERR MATLAB:hg:InvalidProperty | Unrecognized property Layout for class matlab.ui.control.UIControl.
+get hidden ResizeFcn : ERR MATLAB:hg:InvalidProperty | Unrecognized property ResizeFcn for class matlab.ui.control.UIControl.
+get hidden SizeChangedFcn : ERR MATLAB:hg:InvalidProperty | Unrecognized property SizeChangedFcn for class matlab.ui.control.UIControl.
+isprop TooltipString : logical true
+isprop UIContextMenu : logical true
+isprop Selected : logical true
+set Selected on : OnOff on
+set SelectionHighlight off : OnOff off
+set HitTest off : OnOff off
+set Children : handle empty [0 0]
+set Extent : ERR MATLAB:class:SetProhibited | Unable to set the 'Extent' property of class ''UIControl'' because it is read-only.
+set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''UIControl'' because it is read-only.
+set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''UIControl'' because it is read-only.
+default pushbutton: Value=double 0 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[0.960784 0.960784 0.960784] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default togglebutton: Value=double 0 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[0.960784 0.960784 0.960784] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default radiobutton: Value=double 0 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[0.960784 0.960784 0.960784] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default checkbox: Value=double 0 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[0.960784 0.960784 0.960784] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default edit: Value=double 0 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[1 1 1] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default text: Value=double 0 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[0.960784 0.960784 0.960784] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default slider: Value=double 0 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[0.960784 0.960784 0.960784] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default frame: Value=double 0 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[0.960784 0.960784 0.960784] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default listbox: Value=double 1 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[1 1 1] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+default popupmenu: Value=double 1 Min=double 0 Max=double 1 SliderStep=double [0.01 0.1] ListboxTop=double 1 HorizontalAlignment=center BackgroundColor=[1 1 1] ForegroundColor=[0.129412 0.129412 0.129412] Position=[20 20 60 20] Extent=[0 0 5.3333333 8] String='' Enable=on CData=double [0 0]
+pushbutton Value<-double 0 : double 0
+pushbutton Value<-double 1 : double 1
+pushbutton Value<-double 0.5 : double 0.5
+pushbutton Value<-double 5 : double 5
+pushbutton Value<-double -1 : double -1
+pushbutton Value<-double [1 2] : double [1 2]
+pushbutton Value<-double [2;3] : double [2 3]
+pushbutton Value<-double [0 0] : double [0 0]
+pushbutton Value<-logical true : double 1
+pushbutton Value<-int8 1 : double 1
+pushbutton Value<-single 0.25 : double 0.25
+pushbutton Value<-double NaN : double NaN
+pushbutton Value<-double Inf : double Inf
+pushbutton Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+pushbutton Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+pushbutton Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+pushbutton Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+togglebutton Value<-double 0 : double 0
+togglebutton Value<-double 1 : double 1
+togglebutton Value<-double 0.5 : double 0.5
+togglebutton Value<-double 5 : double 5
+togglebutton Value<-double -1 : double -1
+togglebutton Value<-double [1 2] : double [1 2]
+togglebutton Value<-double [2;3] : double [2 3]
+togglebutton Value<-double [0 0] : double [0 0]
+togglebutton Value<-logical true : double 1
+togglebutton Value<-int8 1 : double 1
+togglebutton Value<-single 0.25 : double 0.25
+togglebutton Value<-double NaN : double NaN
+togglebutton Value<-double Inf : double Inf
+togglebutton Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+togglebutton Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+togglebutton Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+togglebutton Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+radiobutton Value<-double 0 : double 0
+radiobutton Value<-double 1 : double 1
+radiobutton Value<-double 0.5 : double 0.5
+radiobutton Value<-double 5 : double 5
+radiobutton Value<-double -1 : double -1
+radiobutton Value<-double [1 2] : double [1 2]
+radiobutton Value<-double [2;3] : double [2 3]
+radiobutton Value<-double [0 0] : double [0 0]
+radiobutton Value<-logical true : double 1
+radiobutton Value<-int8 1 : double 1
+radiobutton Value<-single 0.25 : double 0.25
+radiobutton Value<-double NaN : double NaN
+radiobutton Value<-double Inf : double Inf
+radiobutton Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+radiobutton Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+radiobutton Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+radiobutton Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+checkbox Value<-double 0 : double 0
+checkbox Value<-double 1 : double 1
+checkbox Value<-double 0.5 : double 0.5
+checkbox Value<-double 5 : double 5
+checkbox Value<-double -1 : double -1
+checkbox Value<-double [1 2] : double [1 2]
+checkbox Value<-double [2;3] : double [2 3]
+checkbox Value<-double [0 0] : double [0 0]
+checkbox Value<-logical true : double 1
+checkbox Value<-int8 1 : double 1
+checkbox Value<-single 0.25 : double 0.25
+checkbox Value<-double NaN : double NaN
+checkbox Value<-double Inf : double Inf
+checkbox Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+checkbox Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+checkbox Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+checkbox Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+edit Value<-double 0 : double 0
+edit Value<-double 1 : double 1
+edit Value<-double 0.5 : double 0.5
+edit Value<-double 5 : double 5
+edit Value<-double -1 : double -1
+edit Value<-double [1 2] : double [1 2]
+edit Value<-double [2;3] : double [2 3]
+edit Value<-double [0 0] : double [0 0]
+edit Value<-logical true : double 1
+edit Value<-int8 1 : double 1
+edit Value<-single 0.25 : double 0.25
+edit Value<-double NaN : double NaN
+edit Value<-double Inf : double Inf
+edit Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+edit Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+edit Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+edit Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+text Value<-double 0 : double 0
+text Value<-double 1 : double 1
+text Value<-double 0.5 : double 0.5
+text Value<-double 5 : double 5
+text Value<-double -1 : double -1
+text Value<-double [1 2] : double [1 2]
+text Value<-double [2;3] : double [2 3]
+text Value<-double [0 0] : double [0 0]
+text Value<-logical true : double 1
+text Value<-int8 1 : double 1
+text Value<-single 0.25 : double 0.25
+text Value<-double NaN : double NaN
+text Value<-double Inf : double Inf
+text Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+text Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+text Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+text Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+slider Value<-double 0 : double 0
+slider Value<-double 1 : double 1
+slider Value<-double 0.5 : double 0.5
+slider Value<-double 5 : double 5
+slider Value<-double -1 : double -1
+slider Value<-double [1 2] : double [1 2]
+slider Value<-double [2;3] : double [2 3]
+slider Value<-double [0 0] : double [0 0]
+slider Value<-logical true : double 1
+slider Value<-int8 1 : double 1
+slider Value<-single 0.25 : double 0.25
+slider Value<-double NaN : double NaN
+slider Value<-double Inf : double Inf
+slider Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+slider Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+slider Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+slider Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+frame Value<-double 0 : double 0
+frame Value<-double 1 : double 1
+frame Value<-double 0.5 : double 0.5
+frame Value<-double 5 : double 5
+frame Value<-double -1 : double -1
+frame Value<-double [1 2] : double [1 2]
+frame Value<-double [2;3] : double [2 3]
+frame Value<-double [0 0] : double [0 0]
+frame Value<-logical true : double 1
+frame Value<-int8 1 : double 1
+frame Value<-single 0.25 : double 0.25
+frame Value<-double NaN : double NaN
+frame Value<-double Inf : double Inf
+frame Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+frame Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+frame Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+frame Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+listbox Value<-double 0 : double 0
+listbox Value<-double 1 : double 1
+listbox Value<-double 0.5 : double 0.5
+listbox Value<-double 5 : double 5
+listbox Value<-double -1 : double -1
+listbox Value<-double [1 2] : double [1 2]
+listbox Value<-double [2;3] : double [2 3]
+listbox Value<-double [0 0] : double [0 0]
+listbox Value<-logical true : double 1
+listbox Value<-int8 1 : double 1
+listbox Value<-single 0.25 : double 0.25
+listbox Value<-double NaN : double NaN
+listbox Value<-double Inf : double Inf
+listbox Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+listbox Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+listbox Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+listbox Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+popupmenu Value<-double 0 : double 0
+popupmenu Value<-double 1 : double 1
+popupmenu Value<-double 0.5 : double 0.5
+popupmenu Value<-double 5 : double 5
+popupmenu Value<-double -1 : double -1
+popupmenu Value<-double [1 2] : double [1 2]
+popupmenu Value<-double [2;3] : double [2 3]
+popupmenu Value<-double [0 0] : double [0 0]
+popupmenu Value<-logical true : double 1
+popupmenu Value<-int8 1 : double 1
+popupmenu Value<-single 0.25 : double 0.25
+popupmenu Value<-double NaN : double NaN
+popupmenu Value<-double Inf : double Inf
+popupmenu Value<-'a' : ERR MATLAB:hg:UIControlValueCharArrayString | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Value must be numeric.
+popupmenu Value<-cell [1 1] {double 1} : ERR MATLAB:invalidConversion | Error setting property 'Value' of class 'UIControl': Conversion to double from cell is not possible.
+popupmenu Value<-"1" : ERR MATLAB:hg:DataTypeMismatchUIControlValueScalar | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. This is not an expected input data type.
+popupmenu Value<-double 1+2i : ERR MATLAB:hg:UIControlValueComplex | Error setting property 'Value' of class 'UIControl': This is not a valid UIControlValue value. Complex inputs are not supported.
+listbox Value unset: double 1
+ -> checkbox: double 1
+ -> popupmenu: double 1
+popup Value 3 then String of one: Value=double 3 warn=
+ -> pushbutton keeps: double 3
+checkbox Value 1 -> listbox: double 1
+toggle Min 2 Max 7 Value: double 0
+slider Min 2 Max 7 Value: double 0 warn=[]
+checkbox Min 2 Max 7 Value: double 0
+slider Max<-double 10 : double 10
+slider Max<-double 0 : double 0
+slider Max<-double -5 : double -5
+slider Max<-double [1 2] : ERR MATLAB:class:RequireScalar | Error setting property 'Max' of class 'UIControl': Value must be a scalar.
+slider Max<-'a' : ERR MATLAB:class:RequireNumeric | Error setting property 'Max' of class 'UIControl': Value must be numeric or logical.
+slider Max<-double [0 0] : ERR MATLAB:class:RequireScalar | Error setting property 'Max' of class 'UIControl': Value must be a scalar.
+slider Max<-logical true : double 1
+slider Max<-int8 3 : double 3
+slider Max<-double NaN : double NaN
+slider Max<-double Inf : double Inf
+slider Min<-double -10 : double -10
+slider Min<-double 20 : double 20
+slider Min<-double [1 2] : ERR MATLAB:class:RequireScalar | Error setting property 'Min' of class 'UIControl': Value must be a scalar.
+slider Min<-'a' : ERR MATLAB:class:RequireNumeric | Error setting property 'Min' of class 'UIControl': Value must be numeric or logical.
+slider Min<-double [0 0] : ERR MATLAB:class:RequireScalar | Error setting property 'Min' of class 'UIControl': Value must be a scalar.
+slider Min<-double NaN : double NaN
+slider Min<-double -Inf : double -Inf
+slider SliderStep<-double [0.2 0.5] : double [0.2 0.5]
+slider SliderStep<-double [0 1] : double [0 1]
+slider SliderStep<-double [-1 1] : ERR MATLAB:hg:UIControlSliderStepIncrement | Error setting property 'SliderStep' of class 'UIControl': Slider step line increment must be between 0 and 1.
+[Warning: Sliderstep(2) cannot be less than sliderstep(1).]
+[Warning: Sliderstep(2) cannot be less than sliderstep(1).]
+[Warning: Sliderstep(2) cannot be less than sliderstep(1).]
+slider SliderStep<-double [0.5 0.1] : double [0.5 0.1]
+   warn MATLAB:hg:UIControlSliderStepValueDifference | Sliderstep(2) cannot be less than sliderstep(1).
+slider SliderStep<-double [1 2 3] : ERR MATLAB:hg:UIControlSliderStepValueSize | Error setting property 'SliderStep' of class 'UIControl': Value must be a 2 element vector.
+slider SliderStep<-'a' : ERR MATLAB:hg:UIControlSliderStepValueNumeric | Error setting property 'SliderStep' of class 'UIControl': Value must be numeric.
+slider SliderStep<-double [2 3] : ERR MATLAB:hg:UIControlSliderStepIncrement | Error setting property 'SliderStep' of class 'UIControl': Slider step line increment must be between 0 and 1.
+slider SliderStep<-double 0.5 : ERR MATLAB:hg:UIControlSliderStepValueSize | Error setting property 'SliderStep' of class 'UIControl': Value must be a 2 element vector.
+slider SliderStep<-double [0.1;0.2] : double [0.1 0.2]
+slider SliderStep<-double [NaN 1] : double [NaN 1]
+slider SliderStep<-double [Inf 1] : ERR MATLAB:hg:UIControlSliderStepIncrement | Error setting property 'SliderStep' of class 'UIControl': Slider step line increment must be between 0 and 1.
+[Warning: Sliderstep(2) cannot be less than sliderstep(1).]
+[Warning: Sliderstep(2) cannot be less than sliderstep(1).]
+[Warning: Sliderstep(2) cannot be less than sliderstep(1).]
+slider SliderStep<-int8 [0 1] : double [1.2648081e-321 0]
+   warn MATLAB:hg:UIControlSliderStepValueDifference | Sliderstep(2) cannot be less than sliderstep(1).
+slider SliderStep<-logical true : ERR MATLAB:hg:UIControlSliderStepValueNumeric | Error setting property 'SliderStep' of class 'UIControl': Value must be numeric.
+slider ListboxTop<-double 0 : double 0
+slider ListboxTop<-double 2 : double 2
+slider ListboxTop<-double 1.5 : double 1.5
+slider ListboxTop<-double -1 : double -1
+slider ListboxTop<-'a' : ERR MATLAB:class:RequireNumeric | Error setting property 'ListboxTop' of class 'UIControl': Value must be numeric or logical.
+slider ListboxTop<-double [1 2] : ERR MATLAB:class:RequireScalar | Error setting property 'ListboxTop' of class 'UIControl': Value must be a scalar.
+slider ListboxTop<-double [0 0] : ERR MATLAB:class:RequireScalar | Error setting property 'ListboxTop' of class 'UIControl': Value must be a scalar.
+slider ListboxTop<-double 100 : double 100
+slider ListboxTop<-double NaN : double NaN
+slider ListboxTop<-int8 2 : double 2
+listbox String<-cell [1 3] {'a','b','c'} : cell [3 1] {'a','b','c'}
+listbox String<-'a|b|c' : char [3 1] ['a';'b';'c']
+listbox String<-char [2 2] ['ab';'cd'] : char [2 2] ['ab';'cd']
+listbox String<-'' : ''
+listbox String<-cell [0 0] {} : cell [0 0] {}
+listbox String<-cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+listbox String<-'l1
+l2' : char [2 2] ['l1';'l2']
+listbox String<-string [1 2] [x,y] : cell [2 1] {'x','y'}
+listbox String<-cell [1 2] {'a',double 5} : cell [2 1] {'a','5'}
+listbox String<-double 5 : '5'
+listbox String<-double [1 2 3] : char [3 1] ['1';'2';'3']
+listbox String<-cell [1 1] {''} : cell [1 1] {''}
+popupmenu String<-cell [1 3] {'a','b','c'} : cell [3 1] {'a','b','c'}
+popupmenu String<-'a|b|c' : char [3 1] ['a';'b';'c']
+popupmenu String<-char [2 2] ['ab';'cd'] : char [2 2] ['ab';'cd']
+popupmenu String<-'' : ''
+popupmenu String<-cell [0 0] {} : cell [0 0] {}
+popupmenu String<-cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+popupmenu String<-'l1
+l2' : char [2 2] ['l1';'l2']
+popupmenu String<-string [1 2] [x,y] : cell [2 1] {'x','y'}
+popupmenu String<-cell [1 2] {'a',double 5} : cell [2 1] {'a','5'}
+popupmenu String<-double 5 : '5'
+popupmenu String<-double [1 2 3] : char [3 1] ['1';'2';'3']
+popupmenu String<-cell [1 1] {''} : cell [1 1] {''}
+edit String<-cell [1 3] {'a','b','c'} : cell [3 1] {'a','b','c'}
+edit String<-'a|b|c' : 'a|b|c'
+edit String<-char [2 2] ['ab';'cd'] : char [2 2] ['ab';'cd']
+edit String<-'' : ''
+edit String<-cell [0 0] {} : cell [0 0] {}
+edit String<-cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+edit String<-'l1
+l2' : char [2 2] ['l1';'l2']
+edit String<-string [1 2] [x,y] : cell [2 1] {'x','y'}
+edit String<-cell [1 2] {'a',double 5} : cell [2 1] {'a','5'}
+edit String<-double 5 : '5'
+edit String<-double [1 2 3] : char [3 1] ['1';'2';'3']
+edit String<-cell [1 1] {''} : cell [1 1] {''}
+text String<-cell [1 3] {'a','b','c'} : cell [3 1] {'a','b','c'}
+text String<-'a|b|c' : 'a|b|c'
+text String<-char [2 2] ['ab';'cd'] : char [2 2] ['ab';'cd']
+text String<-'' : ''
+text String<-cell [0 0] {} : cell [0 0] {}
+text String<-cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+text String<-'l1
+l2' : char [2 2] ['l1';'l2']
+text String<-string [1 2] [x,y] : cell [2 1] {'x','y'}
+text String<-cell [1 2] {'a',double 5} : cell [2 1] {'a','5'}
+text String<-double 5 : '5'
+text String<-double [1 2 3] : char [3 1] ['1';'2';'3']
+text String<-cell [1 1] {''} : cell [1 1] {''}
+pushbutton String<-cell [1 3] {'a','b','c'} : cell [3 1] {'a','b','c'}
+pushbutton String<-'a|b|c' : 'a|b|c'
+pushbutton String<-char [2 2] ['ab';'cd'] : char [2 2] ['ab';'cd']
+pushbutton String<-'' : ''
+pushbutton String<-cell [0 0] {} : cell [0 0] {}
+pushbutton String<-cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+pushbutton String<-'l1
+l2' : char [2 2] ['l1';'l2']
+pushbutton String<-string [1 2] [x,y] : cell [2 1] {'x','y'}
+pushbutton String<-cell [1 2] {'a',double 5} : cell [2 1] {'a','5'}
+pushbutton String<-double 5 : '5'
+pushbutton String<-double [1 2 3] : char [3 1] ['1';'2';'3']
+pushbutton String<-cell [1 1] {''} : cell [1 1] {''}
+multi-line edit String=cell [2 1] {'line one','line two'} Value=double 0 Max-Min=2
+  newline char: char [2 1] ['a';'b'] size=[2 1]
+  char matrix: char [2 3] ['ab ';'cde']
+  back to single line: char [2 3] ['ab ';'cde']
+CData<-logical [4 4 3] : ERR MATLAB:hg:shaped_arrays:CDataType | Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+CData<-double [4 4 3] : 'double [4 4 3]'
+CData<-double [4 4] : ERR MATLAB:hg:shaped_arrays:CDataSize | Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+CData<-double [2 3 3] : ERR MATLAB:hg:shaped_arrays:CDataPredicate | Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+CData<-uint8 [4 4 3] : 'uint8 [4 4 3]'
+CData<-char [1 1] : ERR MATLAB:hg:shaped_arrays:CDataType | Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+CData<-double [0 0] : 'double [0 0 3]'
+CData<-double [4 4 4] : ERR MATLAB:hg:shaped_arrays:CDataSize | Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+CData<-single [2 2 3] : 'single [2 2 3]'
+CData<-logical [2 2 3] : ERR MATLAB:hg:shaped_arrays:CDataType | Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+CData<-cell [1 1] : ERR MATLAB:hg:shaped_arrays:CDataType | Error setting property 'CData' of class 'UIControl': Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+CData<-double [2 2 3] : 'double [2 2 3]'
+CData<-int16 [2 2 3] : 'int16 [2 2 3]'
+CData<-uint16 [2 2 3] : 'uint16 [2 2 3]'
+Tooltip set -> TooltipString='tip'
+TooltipString set -> Tooltip='old'
+TooltipString<-5 : ERR MATLAB:class:RequireString | Error setting property 'TooltipString' of class 'UIControl': Value must be a character vector or a string scalar.
+TooltipString<-cell : ERR MATLAB:class:RequireString | Error setting property 'TooltipString' of class 'UIControl': Value must be a character vector or a string scalar.
+Tooltip<-string : 's'
+Tooltip<-string array : cell [2 1] {'s','t'}
+Tooltip<-char matrix : char [2 2] ['ab';'cd']
+Tooltip<-[] : ERR MATLAB:graphics:datatype:UIStringsDataType:NoNumericValue | Error setting property 'Tooltip' of class 'UIControl': UIStrings data type does not support numeric values.
+ContextMenu<-menu : logical true
+UIContextMenu reads : logical true
+UIContextMenu<-[] : matlab.graphics.GraphicsPlaceholder empty [0 0]
+ContextMenu after : matlab.graphics.GraphicsPlaceholder empty [0 0]
+UIContextMenu<-menu : logical true
+ContextMenu<-5 : ERR MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle | Error setting property 'ContextMenu' of class 'UIControl': The value set for this property must be a valid HG handle.
+ContextMenu<-figure : ERR MATLAB:hgutils:InvalidContextMenu | Handle must be a uicontextmenu.
+ContextMenu<-uicontrol : ERR MATLAB:hgutils:InvalidContextMenu | Handle must be a uicontextmenu.
+ContextMenu<-'' : matlab.graphics.GraphicsPlaceholder empty [0 0]
+ContextMenu after delete(menu) : matlab.graphics.GraphicsPlaceholder empty [0 0]
+inactive text: Enable=inactive ButtonDownFcn=@@(s,e)disp(class(e))
+meta matlab.ui.eventdata.ActionData < handle,event.EventData : Source(public,hidden=0) EventName(public,hidden=0)
+meta matlab.ui.eventdata.SelectionChangedData < handle,event.EventData : OldValue(public,hidden=0) NewValue(public,hidden=0) Source(public,hidden=0) EventName(public,hidden=0)
+meta matlab.ui.eventdata.MouseData < handle,event.EventData : HitObject(public,hidden=1) Source(public,hidden=0) EventName(public,hidden=0)
+meta matlab.ui.eventdata.ButtonDownData: none
+meta matlab.graphics.eventdata.Hit < handle,event.EventData : Button(public,hidden=0) IntersectionPoint(public,hidden=0) Primitive(public,hidden=1) Source(public,hidden=0) EventName(public,hidden=0)

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using JGraph.Core.Primitives;
 
 namespace JGraph.Core.Model;
 
@@ -57,10 +58,17 @@ public sealed class UiNumbers
 }
 
 /// <summary>
+/// A picture a component shows — a button's <c>CData</c> — as the window draws it: rows top to
+/// bottom, four bytes a pixel in blue, green, red, alpha order. A NaN pixel of MATLAB's is one with
+/// no alpha.
+/// </summary>
+public sealed record UiImage(int Width, int Height, byte[] Bgra);
+
+/// <summary>
 /// MATLAB's <c>uicontrol</c> (<c>matlab.ui.control.UIControl</c>): one classic component of ten
-/// styles. U1 of the app-building plan realises <c>text</c>, <c>edit</c> and <c>pushbutton</c> in the
-/// window; the model holds R2025b's whole property surface for every style so that a script can
-/// build any of them and read back what it set.
+/// styles, each realised in the window (app-building plan, U1 and U3). The model holds R2025b's
+/// whole property surface for every style, so a script can build any of them and read back what it
+/// set.
 /// </summary>
 public sealed class UiControlModel : UiObject
 {
@@ -89,6 +97,8 @@ public sealed class UiControlModel : UiObject
     private string _fontWeight = "normal";
     private string _fontAngle = "normal";
     private long _userWriteSeq;
+    private UiImage? _image;
+    private int _focusRequests;
 
     public UiControlModel()
     {
@@ -99,7 +109,18 @@ public sealed class UiControlModel : UiObject
     public UiControlStyle Style
     {
         get => _style;
-        set => SetProperty(ref _style, value, InvalidationKind.Ui);
+        set
+        {
+            // A control that becomes a list while its Value is untouched takes 1, the first item,
+            // and keeps it whatever it becomes next (R2025b, probe u3_styles).
+            if (!_valueSet && value is UiControlStyle.ListBox or UiControlStyle.PopupMenu)
+            {
+                _value = One;
+                _valueSet = true;
+            }
+
+            SetProperty(ref _style, value, InvalidationKind.Ui);
+        }
     }
 
     /// <summary>MATLAB's <c>String</c>: the label, the edit field's contents, a list's items.</summary>
@@ -255,6 +276,76 @@ public sealed class UiControlModel : UiObject
     {
         get => _userWriteSeq;
         set => SetProperty(ref _userWriteSeq, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// How many times a script has asked for the keyboard to go to this control —
+    /// <c>uicontrol(h)</c>. The window gives it the keyboard when the count it sees has grown.
+    /// </summary>
+    [Browsable(false)]
+    public int FocusRequests => _focusRequests;
+
+    /// <summary>Asks the window to give this control the keyboard.</summary>
+    public void RequestFocus()
+    {
+        _focusRequests++;
+        Invalidate(InvalidationKind.Ui);
+    }
+
+    /// <summary>MATLAB's <c>CData</c> as a picture to draw on the control's face, or null for none.</summary>
+    [Browsable(false)]
+    public UiImage? Image
+    {
+        get => _image;
+        set => SetProperty(ref _image, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// Whether the button group this control sits in watches its <c>Value</c>: decided when the
+    /// control joins the group (see <see cref="UiButtonGroupModel.Added"/>), and kept through a later
+    /// change of style, as R2025b keeps it.
+    /// </summary>
+    [Browsable(false)]
+    public bool GroupManaged { get; set; }
+
+    /// <summary>Whether <c>Max - Min</c> exceeds one: a multi-line edit field, a multiple-selection list.</summary>
+    [Browsable(false)]
+    public bool IsMultiple => _max - _min > 1;
+
+    /// <summary>
+    /// MATLAB's <c>Extent</c> in pixels: the size of the control's text, with R2025b's margins and in
+    /// R2025b's whole points (probes <c>u3_extent</c>, <c>u3_metrics</c>) — the widest line plus 4
+    /// points, the lines' height plus 6 points, each rounded to a point. A <c>text</c> control, and
+    /// any style whose <c>Max - Min</c> exceeds one, measures every line; the rest measure the first.
+    /// No lines at all is 4 by 6 points, and an empty line measures as a space. The text itself is
+    /// measured in the font the window draws.
+    /// </summary>
+    public Size2D ExtentPixels()
+    {
+        const double PixelsPerPoint = 96.0 / 72;
+        IReadOnlyList<string> lines = _text.Lines;
+        int count = lines.Count == 0 ? 0 : _style == UiControlStyle.Text || IsMultiple ? lines.Count : 1;
+        if (count == 0)
+        {
+            return new Size2D(4 * PixelsPerPoint, 6 * PixelsPerPoint);
+        }
+
+        double size = FontSizeInPixels(PixelPosition().Height);
+        bool bold = _fontWeight is "bold" or "demi";
+        bool italic = _fontAngle is "italic" or "oblique";
+        double widest = 0;
+        double line = 0;
+        for (int i = 0; i < count; i++)
+        {
+            (double width, double height) = UiFonts.Measure(
+                lines[i].Length == 0 ? " " : lines[i], _fontName, size, bold, italic);
+            widest = System.Math.Max(widest, width);
+            line = height;
+        }
+
+        double widthPoints = System.Math.Round((widest / PixelsPerPoint) + 4, MidpointRounding.AwayFromZero);
+        double heightPoints = System.Math.Round((count * line / PixelsPerPoint) + 6, MidpointRounding.AwayFromZero);
+        return new Size2D(widthPoints * PixelsPerPoint, heightPoints * PixelsPerPoint);
     }
 
     /// <summary>The font size in pixels of 1/96 inch, for drawing.</summary>

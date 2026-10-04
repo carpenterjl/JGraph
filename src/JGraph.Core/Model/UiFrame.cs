@@ -37,7 +37,24 @@ public sealed record UiControlFrame(
     bool Italic,
     string Tooltip,
     long UserWriteSeq,
-    UiUnits Units = UiUnits.Pixels) : IUiNodeFrame;
+    UiUnits Units = UiUnits.Pixels,
+    UiNumbers? Value = null,
+    double Min = 0,
+    double Max = 1,
+    double StepSmall = 0.01,
+    double StepLarge = 0.1,
+    double ListboxTop = 1,
+    UiImage? Image = null,
+    bool InGroup = false,
+    int FocusRequests = 0,
+    string Tag = "") : IUiNodeFrame
+{
+    /// <summary>Whether <c>Max - Min</c> exceeds one: a multi-line edit field, a multiple-selection list.</summary>
+    public bool IsMultiple => Max - Min > 1;
+
+    /// <summary>The first element of <c>Value</c>, or NaN when it has none.</summary>
+    public double Scalar => Value is { Data.Count: > 0 } value ? value.Data[0] : double.NaN;
+}
 
 /// <summary>
 /// One <c>uipanel</c> as a frame snapshot holds it, with the nodes inside it in creation order.
@@ -131,7 +148,17 @@ public sealed class UiFrame
                         control.FontAngle is "italic" or "oblique",
                         control.Tooltip.Joined,
                         control.UserWriteSeq,
-                        control.Units));
+                        control.Units,
+                        control.Value,
+                        control.Min,
+                        control.Max,
+                        control.SliderStepSmall,
+                        control.SliderStepLarge,
+                        control.ListboxTop,
+                        control.Image,
+                        control.GroupManaged && control.Parent is UiButtonGroupModel,
+                        control.FocusRequests,
+                        control.Tag ?? string.Empty));
                     break;
 
                 case UiPanelModel panel:

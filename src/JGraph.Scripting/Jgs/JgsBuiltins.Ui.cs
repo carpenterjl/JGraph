@@ -28,7 +28,9 @@ internal static partial class JgsBuiltins
 
         DefineMaker("uicontrol", UiControl);
         DefineMaker("uipanel", UiPanel);
+        DefineMaker("uibuttongroup", UiButtonGroup);
         DefineMaker("uifigure", UiFigure);
+        RegisterUiTextBuiltins(env);
         env.Builtins.Register("getpixelposition", JgsValue.Function(new BuiltinFunction("getpixelposition", GetPixelPosition)));
         DefineQuiet("setpixelposition", SetPixelPosition);
         DefineQuiet("movegui", MoveGui);
@@ -140,6 +142,12 @@ internal static partial class JgsBuiltins
             throw;
         }
 
+        // A button made in a group joins it once its options are in (U3).
+        if (component is UiControlModel button && parent is UiButtonGroupModel group)
+        {
+            group.Added(button);
+        }
+
         if (component.Figure is { } figure)
         {
             JG.TouchFigure(figure);
@@ -156,6 +164,14 @@ internal static partial class JgsBuiltins
     /// <summary><c>uicontrol</c> in R2025b's forms (measured in U1); its parent is a figure or a container.</summary>
     private static JgsValue UiControl(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        // uicontrol(h) gives an existing control the keyboard and answers it (U3).
+        if (args.Count == 1 && args[0].Type == JgsType.Number
+            && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? named) && named.Target is UiControlModel existing)
+        {
+            existing.RequestFocus();
+            return JgsHandleRegistry.For(existing);
+        }
+
         (IUiContainer parent, List<(string Name, JgsValue Value)> options) = ComponentArguments(args, focusForm: true, line, col);
         return AddComponent(new UiControlModel(), parent, options, line, col);
     }
@@ -170,6 +186,18 @@ internal static partial class JgsBuiltins
         FigureModel? figure = parent as FigureModel ?? (parent as UiObject)?.Figure;
         UiPanelModel panel = figure is { IsUiFigure: true } ? UiPanelModel.ForUiFigure() : new UiPanelModel();
         return AddComponent(panel, parent, options, line, col);
+    }
+
+    /// <summary>
+    /// <c>uibuttongroup</c> in R2025b's forms (U3): a panel that keeps one of its radio buttons and
+    /// toggle buttons selected. One made in a <c>uifigure</c> starts with that kind's defaults.
+    /// </summary>
+    private static JgsValue UiButtonGroup(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        (IUiContainer parent, List<(string Name, JgsValue Value)> options) = ComponentArguments(args, focusForm: false, line, col);
+        FigureModel? figure = parent as FigureModel ?? (parent as UiObject)?.Figure;
+        UiButtonGroupModel group = figure is { IsUiFigure: true } ? UiButtonGroupModel.ForUiFigure() : new UiButtonGroupModel();
+        return AddComponent(group, parent, options, line, col);
     }
 
     /// <summary>

@@ -153,13 +153,19 @@ internal sealed class JgsCallbackDispatcher
             // person typed it, and a busy or cancelled callback does not un-type it (U1).
             if (next.UserValue is not null)
             {
-                ApplyUserValue(next);
+                GraphicsEvent? selection = ApplyUserValue(next);
                 if (next.Kind == GraphicsEventKind.ApplyUserValue)
                 {
                     continue;
                 }
 
                 next = next with { UserValue = null };
+
+                // A button group hears of its new selection before the button's own callback runs.
+                if (selection is not null && ScriptGraphicsCallbacks.HasCallback(selection.Target, selection.Kind))
+                {
+                    Deliver(selection);
+                }
             }
 
             // A resized figure settles its containers before anything decides whether its own
@@ -170,22 +176,29 @@ internal sealed class JgsCallbackDispatcher
                 continue;
             }
 
-            bool interruptible = _running.Count == 0 || _running[^1];
-            if (!interruptible && !AlwaysInterrupts(next.Kind))
-            {
-                // The event may not run here. Its own object's BusyAction decides its fate — and a
-                // 'queue' event goes to the back, not back to the front, or this loop would spin on
-                // it for the rest of the budget.
-                if (BusyActionQueues(next.Target))
-                {
-                    ScriptEventQueue.Enqueue(next);
-                }
+            Deliver(next);
+        }
+    }
 
-                continue;
+    /// <summary>Runs an event's callback if the running one may be interrupted; otherwise its own
+    /// object's <c>BusyAction</c> decides whether it waits or is dropped.</summary>
+    private void Deliver(GraphicsEvent next)
+    {
+        bool interruptible = _running.Count == 0 || _running[^1];
+        if (!interruptible && !AlwaysInterrupts(next.Kind))
+        {
+            // The event may not run here. Its own object's BusyAction decides its fate — and a
+            // 'queue' event goes to the back, not back to the front, or the drain would spin on
+            // it for the rest of its budget.
+            if (BusyActionQueues(next.Target))
+            {
+                ScriptEventQueue.Enqueue(next);
             }
 
-            Dispatch(next);
+            return;
         }
+
+        Dispatch(next);
     }
 
     /// <summary>Whether any event is waiting — what an idle host checks before starting a pump run.</summary>
@@ -228,14 +241,76 @@ internal sealed class JgsCallbackDispatcher
     /// Puts a user's value into the model, on this thread. A component deleted since the user acted
     /// takes nothing, which is what happened to its value in MATLAB too.
     /// </summary>
-    private static void ApplyUserValue(GraphicsEvent graphicsEvent)
+    /// <returns>The event a button group is owed when the write changed its selection.</returns>
+    private static GraphicsEvent? ApplyUserValue(GraphicsEvent graphicsEvent)
     {
-        if (graphicsEvent.Target is UiControlModel { BeingDeleted: false } control
-            && graphicsEvent.UserValue is string text)
+        if (graphicsEvent.Target is not UiControlModel { BeingDeleted: false } control)
         {
-            control.Text = UiText.Of(text);
-            control.UserWriteSeq = graphicsEvent.UserSeq;
+            return null;
         }
+
+        GraphicsEvent? selection = null;
+        switch (graphicsEvent.UserValue)
+        {
+            case string text:
+                control.Text = UiText.Of(text);
+                break;
+
+            // A multi-line edit field's lines, in the shape its String had: a cell stays a cell,
+            // and anything else is a character matrix, or a row when one line is left.
+            case string[] lines:
+                if (control.Text.Form == UiTextForm.Cell)
+                {
+                    control.Text = new UiText(UiTextForm.Cell, lines);
+                }
+                else if (lines.Length <= 1)
+                {
+                    control.Text = UiText.Of(lines.Length == 0 ? string.Empty : lines[0]);
+                }
+                else
+                {
+                    int width = lines.Max(static l => l.Length);
+                    control.Text = new UiText(UiTextForm.CharMatrix, [.. lines.Select(l => l.PadRight(width))]);
+                }
+
+                break;
+
+            // A press that turns on a button its group watches selects it. One that lets the
+            // selected toggle button up writes its 0 and leaves the group's selection where it was,
+            // which is what R2025b does (window session u3w_clicks): the group hears nothing.
+            case double pressed when control.GroupManaged && control.Parent is UiButtonGroupModel group
+                                     && UiButtonGroupModel.IsButton(control):
+            {
+                UiControlModel? old = group.SelectedObject;
+                if (pressed == 0)
+                {
+                    control.Value = UiNumbers.Zero;
+                }
+                else if (ReferenceEquals(old, control))
+                {
+                    control.Value = new UiNumbers([1], 1, 1);
+                }
+                else
+                {
+                    group.Select(control);
+                    selection = new GraphicsEvent(
+                        GraphicsEventKind.GroupSelectionChanged, group, Clicked: control, ContextObject: old);
+                }
+
+                break;
+            }
+
+            case double number:
+                control.Value = new UiNumbers([number], 1, 1);
+                break;
+
+            case double[] numbers:
+                control.Value = new UiNumbers(numbers, numbers.Length == 0 ? 0 : 1, numbers.Length);
+                break;
+        }
+
+        control.UserWriteSeq = graphicsEvent.UserSeq;
+        return selection;
     }
 
     /// <summary>
@@ -335,6 +410,7 @@ internal sealed class JgsCallbackDispatcher
             GraphicsEventKind.ControlAction => entry.UiCallback,
             GraphicsEventKind.ComponentKeyPress => entry.KeyPressFcn,
             GraphicsEventKind.ComponentKeyRelease => entry.KeyReleaseFcn,
+            GraphicsEventKind.GroupSelectionChanged => entry.SelectionChangedFcn,
             _ => null,
         };
 
@@ -361,8 +437,9 @@ internal sealed class JgsCallbackDispatcher
     {
         switch (graphicsEvent.Kind)
         {
-            // A figure's own ButtonDownFcn is told by a MouseData (u1w_keys); anything drawn, by a Hit.
-            case GraphicsEventKind.ButtonDown when graphicsEvent.Target is FigureModel:
+            // A figure's own ButtonDownFcn is told by a MouseData (u1w_keys), and so is a
+            // component's (u3w_clicks); anything drawn, by a Hit.
+            case GraphicsEventKind.ButtonDown when graphicsEvent.Target is FigureModel or UiObject:
                 return JgsUiEventData.Make(JgsUiEventData.MouseDataClass, source, "ButtonDown");
 
             case GraphicsEventKind.ButtonDown:
@@ -471,6 +548,18 @@ internal sealed class JgsCallbackDispatcher
                     ["VerticalScrollAmount"] = JgsValue.Number(3),
                 });
 
+            // R2025b's SelectionChangedData: the button that was selected and the one that is.
+            case GraphicsEventKind.GroupSelectionChanged:
+                return JgsUiEventData.Make(JgsUiEventData.SelectionChangedDataClass, source, "SelectionChanged", new()
+                {
+                    ["OldValue"] = graphicsEvent.ContextObject is { BeingDeleted: false } old
+                        ? JgsHandleRegistry.For(old)
+                        : JgsMatrix.FromColumnMajor([], 0, 0),
+                    ["NewValue"] = graphicsEvent.Clicked is { } picked
+                        ? JgsHandleRegistry.For(picked)
+                        : JgsMatrix.FromColumnMajor([], 0, 0),
+                });
+
             // R2025b's SizeChangedData for a figure's and a container's alike (probe u2w_resize).
             case GraphicsEventKind.SizeChanged:
                 return JgsUiEventData.Make(JgsUiEventData.SizeChangedDataClass, source, "SizeChanged");
@@ -503,6 +592,7 @@ internal sealed class JgsCallbackDispatcher
         GraphicsEventKind.ControlAction => "Callback",
         GraphicsEventKind.ComponentKeyPress => "KeyPressFcn",
         GraphicsEventKind.ComponentKeyRelease => "KeyReleaseFcn",
+        GraphicsEventKind.GroupSelectionChanged => "SelectionChangedFcn",
         _ => "callback",
     };
 }

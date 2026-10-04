@@ -2226,6 +2226,9 @@ public static class JgsBuiltinCatalog
         Add("close", "Closes the current figure, figure n, or every figure with close all; a trailing 'force' skips CloseRequestFcn.", Opt("n"), Opt("force"));
         Add("closereq", "The default close a CloseRequestFcn opts back into: deletes the callback's figure without asking again.");
         Add("uipanel", "A bordered, optionally titled container for components and axes: p = uipanel(fig, 'Title', 'Settings', 'Position', [.1 .1 .4 .8]).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uibuttongroup", "A panel that keeps one of its radio buttons and toggle buttons selected: bg = uibuttongroup(fig, 'SelectionChangedFcn', @cb).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("textwrap", "Breaks paragraphs into lines that fit a uicontrol, or a count of characters: [lines, position] = textwrap(h, {'a long paragraph'}).", P("h"), P("text"), Opt("columns"));
+        Add("listfonts", "The machine's font families, sorted; listfonts(h) adds the font h names.", Opt("h"));
         Add("uifigure", "A figure for building an app: a plain window with no figure number, never the current figure.", Opt("name"), Opt("value"));
         Add("getpixelposition", "An object's position in pixels, within its parent or (recursive true) within its figure.", P("h"), Opt("recursive"));
         Add("setpixelposition", "Places an object by a pixel rectangle, whatever its Units are.", P("h"), P("position"), Opt("recursive"));

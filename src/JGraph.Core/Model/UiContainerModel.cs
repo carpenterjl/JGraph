@@ -143,7 +143,7 @@ public enum UiTitlePosition
 /// that holds components and axes. Its defaults are a classic figure's; <see cref="ForUiFigure"/>
 /// gives the ones a panel made in a <c>uifigure</c> starts with (R2025b, probe <c>u2_panel</c>).
 /// </summary>
-public sealed class UiPanelModel : UiContainerModel
+public class UiPanelModel : UiContainerModel
 {
     /// <summary>R2025b's panel grey, 245/255.</summary>
     public static readonly UiColor DefaultBackground = new(245 / 255.0, 245 / 255.0, 245 / 255.0);
@@ -345,4 +345,166 @@ public sealed class UiPanelModel : UiContainerModel
 
         return new Thickness(border, top, border, bottom);
     }
+}
+
+/// <summary>
+/// MATLAB's <c>uibuttongroup</c> (<c>matlab.ui.container.ButtonGroup</c>): a panel that keeps at
+/// most one of the radio buttons and toggle buttons placed directly in it selected (app-building
+/// plan, U3). Its rules are R2025b's, measured headless (probes <c>u3_bgroup</c>, <c>u3_more</c>):
+/// <list type="bullet">
+/// <item>it watches a button that was a radio button or a toggle button, with a <c>Value</c> at its
+/// <c>Min</c> or its <c>Max</c>, when it joined the group — by being made in it or moved into it;</item>
+/// <item>the first such button to join is selected, and so is one that joins with its <c>Value</c>
+/// at its <c>Max</c>;</item>
+/// <item>writing a <c>Value</c> that starts with 1 to a watched button selects it, and writing 0
+/// to the selected one leaves nothing selected;</item>
+/// <item>selecting writes 1 into the button and 0 into the one that was selected, whatever their
+/// <c>Min</c> and <c>Max</c>.</item>
+/// </list>
+/// </summary>
+public sealed class UiButtonGroupModel : UiPanelModel
+{
+    private static readonly UiColor White = new(1, 1, 1);
+    private static readonly UiNumbers One = new([1], 1, 1);
+    private UiControlModel? _selected;
+
+    public UiButtonGroupModel()
+    {
+        Name = "ButtonGroup";
+
+        // A classic figure's group draws its line white, where a panel's is grey (R2025b).
+        BorderColor = White;
+        HighlightColor = White;
+    }
+
+    /// <summary>A button group with the defaults one made in a <c>uifigure</c> has.</summary>
+    public static new UiButtonGroupModel ForUiFigure() => new()
+    {
+        Units = UiUnits.Pixels,
+        Position = new Rect2D(20, 20, 260, 210),
+        FontUnits = UiFontUnits.Pixels,
+        FontSize = 12,
+        FontName = "Helvetica",
+        AutoResizeChildren = true,
+        BorderColor = DefaultBorder,
+        HighlightColor = DefaultBorder,
+    };
+
+    /// <summary>MATLAB's <c>SelectedObject</c>: the selected button, or null for none.</summary>
+    [Browsable(false)]
+    public UiControlModel? SelectedObject =>
+        _selected is { } selected && ReferenceEquals(selected.Parent, this) ? selected : null;
+
+    /// <summary>Whether a control is of a style a group can select.</summary>
+    public static bool IsButton(UiControlModel control) =>
+        control.Style is UiControlStyle.RadioButton or UiControlStyle.ToggleButton;
+
+    /// <summary>
+    /// Selects a button, or nothing: 1 goes into it and 0 into the one that was selected. The caller
+    /// has checked that it is a button of this group.
+    /// </summary>
+    public void Select(UiControlModel? button)
+    {
+        UiControlModel? old = SelectedObject;
+        if (old is not null && !ReferenceEquals(old, button))
+        {
+            old.Value = UiNumbers.Zero;
+        }
+
+        _selected = button;
+        if (button is not null)
+        {
+            button.Value = One;
+        }
+
+        Invalidate(InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// A control has joined the group — made in it, with its options applied, or moved into it.
+    /// Decides whether the group watches it, and selects it when it is the first watched button or
+    /// arrives with its <c>Value</c> at its <c>Max</c>.
+    /// </summary>
+    public void Added(UiControlModel control)
+    {
+        ArgumentNullException.ThrowIfNull(control);
+        control.GroupManaged = false;
+        if (!IsButton(control) || control.Value.Data.Count != 1)
+        {
+            return;
+        }
+
+        double value = control.Value.Data[0];
+        bool atMax = value == control.Max;
+        if (!atMax && value != control.Min)
+        {
+            return;
+        }
+
+        bool first = true;
+        foreach (UiObject other in Components)
+        {
+            if (other is UiControlModel { GroupManaged: true } && !ReferenceEquals(other, control))
+            {
+                first = false;
+                break;
+            }
+        }
+
+        control.GroupManaged = true;
+        if (atMax || first)
+        {
+            Select(control);
+        }
+    }
+
+    /// <summary>
+    /// A watched control's <c>Value</c> was written. Answers false when the write asks for a
+    /// selection the control's style no longer allows — R2025b refuses that after the value is in.
+    /// </summary>
+    public bool ValueWritten(UiControlModel control)
+    {
+        ArgumentNullException.ThrowIfNull(control);
+        if (!control.GroupManaged || !ReferenceEquals(control.Parent, this))
+        {
+            return true;
+        }
+
+        IReadOnlyList<double> data = control.Value.Data;
+        if (data.Count > 0 && data[0] == 1)
+        {
+            if (!IsButton(control))
+            {
+                return false;
+            }
+
+            Select(control);
+        }
+        else if (ReferenceEquals(SelectedObject, control) && data.Count == 1 && data[0] == 0)
+        {
+            _selected = null;
+            Invalidate(InvalidationKind.Ui);
+        }
+
+        return true;
+    }
+
+    /// <summary>A control is leaving the group for another parent: the selected one is deselected.</summary>
+    public void Leaving(UiControlModel control)
+    {
+        ArgumentNullException.ThrowIfNull(control);
+        if (ReferenceEquals(_selected, control))
+        {
+            _selected = null;
+            control.Value = UiNumbers.Zero;
+        }
+
+        control.GroupManaged = false;
+    }
+
+    /// <summary>
+    /// Restores a selection read from a document or carried by a copy, writing nothing into the
+    /// buttons: their values were saved with them.
+    /// </summary>
+    public void RestoreSelection(UiControlModel? button) => _selected = button;
 }
