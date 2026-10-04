@@ -112,6 +112,7 @@ internal static class JgsGraphicsCallbackValues
     {
         UiControlModel => "UIControl",
         UiButtonGroupModel => "ButtonGroup",
+        UiProgressIndicatorModel => "ProgressIndicator",
         UiPanelModel => "Panel",
         FigureModel => "Figure",
         AxesModel => "Axes",

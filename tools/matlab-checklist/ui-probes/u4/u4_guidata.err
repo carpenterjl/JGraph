@@ -1,0 +1,8 @@
+{Error using setappdata
+Second argument must be a character vector
+
+Error in u4_guidata (line 97)
+setappdata(f, {'x1', 'x2'}, {10, 20});
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+ERROR: MATLAB error Exit Status: 0x00000001

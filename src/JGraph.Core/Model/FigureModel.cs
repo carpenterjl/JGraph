@@ -26,6 +26,8 @@ public sealed class FigureModel : GraphObject, IUiContainer
     private bool _resizable = true;
     private FigureToolBarMode _toolBar = FigureToolBarMode.Auto;
     private FigureWindowState _windowState = FigureWindowState.Normal;
+    private FigureWindowStyle _windowStyle = FigureWindowStyle.Normal;
+    private bool _menuBar = true;
     private Point2D _position;
     private bool _positionSpecified;
     private PaperUnitType _paperUnits = PaperUnitType.Inches;
@@ -327,6 +329,37 @@ public sealed class FigureModel : GraphObject, IUiContainer
     }
 
     /// <summary>
+    /// MATLAB's <c>MenuBar</c>: true for <c>'figure'</c>, false for <c>'none'</c>. A classic figure's
+    /// window carries JGraph's own furniture — the toolbar, the status bar, the browser and the
+    /// inspector — where MATLAB's carries its menus, and <c>'none'</c> takes it away, which is how
+    /// a script says its window is an interface rather than a plot (U4).
+    /// </summary>
+    [Browsable(false)]
+    public bool MenuBar
+    {
+        get => _menuBar;
+        set => SetProperty(ref _menuBar, value, InvalidationKind.None);
+    }
+
+    /// <summary>
+    /// Whether the window shows the plotting toolbar: <c>ToolBar</c>'s own word, or — left at
+    /// <c>'auto'</c> — whether there is a menu bar, as in MATLAB.
+    /// </summary>
+    [Browsable(false)]
+    public bool ShowsToolBar => !IsUiFigure && (_toolBar == FigureToolBarMode.Figure || (_toolBar == FigureToolBarMode.Auto && _menuBar));
+
+    /// <summary>
+    /// How the window stands among the others (MATLAB <c>WindowStyle</c>): a modal one stays in
+    /// front and keeps the other windows from being used while it is up.
+    /// </summary>
+    [Browsable(false)]
+    public FigureWindowStyle WindowStyle
+    {
+        get => _windowStyle;
+        set => SetProperty(ref _windowStyle, value, InvalidationKind.None);
+    }
+
+    /// <summary>
     /// Where the window's drawable area sits on the screen, in pixels from the top-left, once
     /// something has said (see <see cref="PositionSpecified"/>). Until then the window places itself.
     /// </summary>
@@ -475,6 +508,11 @@ public sealed class FigureModel : GraphObject, IUiContainer
     /// <remarks>Interaction state: never serialized, silent, and empty until a key is pressed.</remarks>
     [Browsable(false)]
     public string CurrentCharacter { get; set; } = string.Empty;
+
+    /// <summary>MATLAB's name for the last key pressed in this figure (its hidden <c>CurrentKey</c>).</summary>
+    /// <remarks>Interaction state: never serialized, silent, and empty until a key is pressed.</remarks>
+    [Browsable(false)]
+    public string CurrentKey { get; set; } = string.Empty;
 
     /// <summary>Which gesture last selected something here (MATLAB <c>SelectionType</c>).</summary>
     [Browsable(false)]

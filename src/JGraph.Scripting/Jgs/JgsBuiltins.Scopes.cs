@@ -28,6 +28,11 @@ internal static partial class JgsBuiltins
         "regexprep", "rowfun", "run", "semilogx", "semilogy", "slice", "slicesample", "spfun", "splitapply",
         "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uibuttongroup", "uicontextmenu", "uicontrol", "uifigure", "uimenu", "uipanel",
         "varfun", "vectorize", "wait", "waitforbuttonpress",
+
+        // U4: the waits deliver callbacks while they block, the dialogs that wait do so through
+        // them, and the others delete or replace figures, which runs their DeleteFcns.
+        "dialog", "errordlg", "helpdlg", "inputdlg", "listdlg", "msgbox", "questdlg", "uiload", "uiopen", "uisave",
+        "uiwait", "waitbar", "waitfor", "warndlg",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code

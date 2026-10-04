@@ -130,6 +130,13 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
+                // Nothing to delete is nothing done: delete(findall(...)) of a search that found
+                // nothing is the ordinary way to clear up (U4).
+                if (args[i].Type == JgsType.Array && !args[i].IsStringArray && args[i].ArrayLength == 0)
+                {
+                    continue;
+                }
+
                 // A handle object with no delete method of its own comes here (one with a method
                 // reached the method, which marks the object as it finishes — V6, #104).
                 if (TryDeleteObject(args[i], line, col))

@@ -308,11 +308,10 @@ public class MatlabM75FigurePropertyTests : IDisposable
         Assert.Contains("Unknown pointer", refused.Message);
     }
 
+    // WindowStyle and MenuBar left this list in app-building stage U4 (ADR 0201): both are real now.
     [Theory]
     [InlineData("Renderer", "opengl", "painters")]
     [InlineData("RendererMode", "manual", "not chosen by hand")]
-    [InlineData("WindowStyle", "modal", "ordinary windows")]
-    [InlineData("MenuBar", "figure", "no menu bar")]
     [InlineData("DockControls", "on", "cannot be docked")]
     public async Task APropertyWithOneTrueAnswerRefusesEveryOtherWord(
         string name, string wrong, string reason)

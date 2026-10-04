@@ -333,6 +333,12 @@ public partial class App : System.Windows.Application
         // The script runs in a session that outlives it (app-building plan, U1): a GUI it leaves on
         // screen keeps answering its user, in the workspace that built it, until the last window
         // closes — then the session ends, and with it the run's files and native host.
+        // The windows answer their user from the first statement on, so a wait inside the script
+        // (uiwait, waitfor, a blocking dialog) is a real one: the pump is what says somebody can
+        // answer. While the script runs there is no session to drain and the pump does nothing;
+        // the script's own waits and drawnow deliver the events.
+        ScriptEventQueue.InstallPump(() => Dispatcher.BeginInvoke(new Action(PumpBatchSession)));
+
         int code;
         try
         {
@@ -342,7 +348,8 @@ public partial class App : System.Windows.Application
                 output,
                 (number, figure) => Dispatcher.Invoke(() => figureWindows.ShowScriptFigure(number, figure)),
                 new AppScriptFigureFiles(),
-                audio: null);
+                audio: null,
+                closeFigure: number => Dispatcher.Invoke(() => figureWindows.CloseScriptFigure(number)));
         }
         catch (Exception ex)
         {
@@ -367,7 +374,6 @@ public partial class App : System.Windows.Application
         _pendingExitCode = code;
         ShutdownMode = ShutdownMode.OnLastWindowClose;
         ScriptUiTrace.Write($"batch: run ended with {code}, {Windows.Count} window(s), session {_batchSession is not null}");
-        ScriptEventQueue.InstallPump(() => Dispatcher.BeginInvoke(new Action(PumpBatchSession)));
         PumpBatchSession();
     }
 

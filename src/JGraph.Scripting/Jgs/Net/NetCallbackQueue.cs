@@ -47,6 +47,13 @@ internal sealed class NetCallbackQueue
     /// <summary>Whether any script thread has .NET work waiting.</summary>
     public static bool AnyPending => Volatile.Read(ref s_pending) > 0;
 
+    /// <summary>
+    /// Whether the calling thread's own queue holds work: what a wait on that thread can itself
+    /// run. <see cref="AnyPending"/> counts every script thread's, and so says nothing about
+    /// whether this one's wait could ever be ended.
+    /// </summary>
+    public static bool CurrentHasWork => t_current is { } queue && !queue._requests.IsEmpty;
+
     /// <summary>The queue of the calling thread, made on first use; the calling thread is its script thread.</summary>
     public static NetCallbackQueue ForCurrentThread() => t_current ??= new NetCallbackQueue(Environment.CurrentManagedThreadId);
 

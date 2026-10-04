@@ -1,0 +1,85 @@
+CHK|status_default|double [0 0]|exact
+CHK|status_listed|0 0|exact
+CHK|status_set_waiting|ran|exact
+CHK|status_waiting|waiting|exact
+CHK|status_set_inactive|ran|exact
+CHK|status_inactive|inactive|exact
+CHK|status_set_bad|MATLAB:gbtdatatypes:WrongFormat|exact
+CHK|status_set_bad_msg|Error setting property 'WaitStatus' of class 'Figure': The data is in the wrong format.|exact
+CHK|status_set_number|MATLAB:gbtdatatypes:WrongFormat|exact
+CHK|status_set_number_msg|Error setting property 'WaitStatus' of class 'Figure': The data is in the wrong format.|exact
+CHK|status_set_empty|MATLAB:gbtdatatypes:WrongFormat|exact
+CHK|status_set_empty_msg|Error setting property 'WaitStatus' of class 'Figure': The data is in the wrong format.|exact
+CHK|status_set_upper|ran|exact
+CHK|status_upper|waiting|exact
+CHK|status_set_short|ran|exact
+CHK|status_short|inactive|exact
+CHK|status_on_control|MATLAB:hg:InvalidProperty|exact
+CHK|status_on_control_msg|Unrecognized property WaitStatus for class matlab.ui.control.UIControl.|exact
+CHK|uiwait_not_a_handle|MATLAB:uiwait:InvalidInputType|exact
+CHK|uiwait_not_a_handle_msg|Input argument must be of type figure|exact
+CHK|uiwait_control|MATLAB:uiwait:InvalidInputType|exact
+CHK|uiwait_control_msg|Input argument must be of type figure|exact
+CHK|uiwait_two_figures|MATLAB:uiwait:InvalidInputType|exact
+CHK|uiwait_two_figures_msg|Input argument must be of type figure|exact
+CHK|uiwait_text|MATLAB:uiwait:InvalidInputType|exact
+CHK|uiwait_text_msg|Input argument must be of type figure|exact
+CHK|uiwait_text_timeout|MATLAB:uiwait:InvalidSecondInputType|exact
+CHK|uiwait_text_timeout_msg|Second input must be numeric|exact
+CHK|uiwait_logical_timeout|MATLAB:uiwait:InvalidSecondInputType|exact
+CHK|uiwait_logical_timeout_msg|Second input must be numeric|exact
+CHK|uiwait_vector_timeout|MATLAB:validation:IncompatibleSize|exact
+CHK|uiwait_vector_timeout_msg|Error setting property 'StartDelay' of class 'timer'. Value must be a scalar.|exact
+CHK|uiwait_empty_timeout|MATLAB:validation:IncompatibleSize|exact
+CHK|uiwait_empty_timeout_msg|Error setting property 'StartDelay' of class 'timer'. Value must be a scalar.|exact
+CHK|uiwait_nan_timeout|MATLAB:validators:mustBeNonnegative|exact
+CHK|uiwait_nan_timeout_msg|Error setting property 'StartDelay' of class 'timer'. Value must be nonnegative.|exact
+CHK|uiwait_three|MATLAB:TooManyInputs|exact
+CHK|uiwait_three_msg|Too many input arguments.|exact
+CHK|uiresume_not_a_handle|MATLAB:class:InvalidHandle|exact
+CHK|uiresume_not_a_handle_msg|Invalid or deleted object.|exact
+CHK|uiresume_control|MATLAB:uiresume:InvalidInputType|exact
+CHK|uiresume_control_msg|Argument must be a Figure object.|exact
+CHK|uiresume_idle|ran|exact
+CHK|uiresume_two|MATLAB:TooManyInputs|exact
+CHK|uiresume_two_msg|Too many input arguments.|exact
+CHK|uiresume_two_figures|ran|exact
+CHK|timeout_time|1|exact
+CHK|timeout_status|inactive|exact
+CHK|timeout_shows_figure|on|exact
+CHK|timeout_warning|MATLAB:hg:NoDisplayNoFigureSupportSeeReleaseNotes|exact
+CHK|short_timeout_time|1|exact
+CHK|short_timeout_warning|MATLAB:uiwait:InvalidSecondInputValue|exact
+CHK|short_timeout_message|Timeout value cannot be less than one second thus changing timeout value to one second.|exact
+CHK|single_timeout_time|1|exact
+CHK|ended_by_uiresume|1 inactive|exact
+CHK|ended_by_status|1|exact
+CHK|resumed_before_timeout|1|exact
+CHK|ended_by_delete|1 0|exact
+CHK|ended_by_close|1 0|exact
+CHK|status_while_waiting|waiting|exact
+CHK|bare_uiresume_is_gcf|1|exact
+CHK|waitfor_none|MATLAB:minrhs|exact
+CHK|waitfor_none_msg|Not enough input arguments.|exact
+CHK|waitfor_not_a_handle|ran|exact
+CHK|waitfor_text|ran|exact
+CHK|waitfor_no_such_property|MATLAB:waitfor:BadProperty|exact
+CHK|waitfor_no_such_property_msg|Invalid property.|exact
+CHK|waitfor_number_property|MATLAB:waitfor:BadProperty|exact
+CHK|waitfor_number_property_msg|Invalid property.|exact
+CHK|waitfor_four|MATLAB:maxrhs|exact
+CHK|waitfor_four_msg|Too many input arguments.|exact
+CHK|waitfor_deleted|ran|exact
+CHK|waitfor_deleted_property|ran|exact
+CHK|waitfor_already_equal|1|exact
+CHK|waitfor_value_already|1|exact
+CHK|waitfor_value_logical|1|exact
+CHK|waitfor_value_reached|1|exact
+CHK|waitfor_change|1|exact
+CHK|waitfor_same_value_is_no_change|1|exact
+CHK|waitfor_name_any_case|1|exact
+CHK|waitfor_text_is_exact|1|exact
+CHK|waitfor_userdata_change|1|exact
+CHK|waitfor_userdata_value|1|exact
+CHK|waitfor_ended_by_delete|1|exact
+CHK|waitfor_figure_deleted|1 0|exact

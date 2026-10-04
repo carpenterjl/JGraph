@@ -362,6 +362,51 @@ public class UiPanelModel : UiContainerModel
 /// <c>Min</c> and <c>Max</c>.</item>
 /// </list>
 /// </summary>
+/// <summary>
+/// The bar a <c>waitbar</c> fills (app-building plan, U4): R2025b's
+/// <c>matlab.ui.control.internal.ProgressIndicator</c>, type <c>uiprogressindicator</c>. It is a
+/// borderless box in pixels whose left part, <see cref="Value"/> of its width, is drawn in
+/// <see cref="ProgressColor"/>. It is drawn the way a panel is, so it appears wherever panels do.
+/// </summary>
+public sealed class UiProgressIndicatorModel : UiPanelModel
+{
+    private double _value;
+    private bool _indeterminate;
+    private UiColor _progressColor = new(38 / 255.0, 140 / 255.0, 221 / 255.0);
+
+    public UiProgressIndicatorModel()
+    {
+        Name = "ProgressIndicator";
+        Units = UiUnits.Pixels;
+        BorderType = UiBorderType.None;
+        BackgroundColor = new UiColor(0.82, 0.82, 0.82);
+    }
+
+    /// <summary>How far along, from 0 to 1.</summary>
+    [Browsable(false)]
+    public double Value
+    {
+        get => _value;
+        set => SetProperty(ref _value, double.IsNaN(value) ? 0 : System.Math.Clamp(value, 0, 1), InvalidationKind.Ui);
+    }
+
+    /// <summary>Whether the bar shows activity of no known length.</summary>
+    [Browsable(false)]
+    public bool Indeterminate
+    {
+        get => _indeterminate;
+        set => SetProperty(ref _indeterminate, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>The colour of the filled part.</summary>
+    [Browsable(false)]
+    public UiColor ProgressColor
+    {
+        get => _progressColor;
+        set => SetProperty(ref _progressColor, value, InvalidationKind.Ui);
+    }
+}
+
 public sealed class UiButtonGroupModel : UiPanelModel
 {
     private static readonly UiColor White = new(1, 1, 1);

@@ -1,0 +1,61 @@
+WaitStatus default=[] class=double
+WaitStatus listed by get=0 set=0 isprop=1
+set WaitStatus waiting: ok
+  -> [waiting]
+set WaitStatus inactive: ok
+set WaitStatus bad: ERR [MATLAB:gbtdatatypes:WrongFormat] Error setting property 'WaitStatus' of class 'Figure': / The data is in the wrong format.
+set WaitStatus 1: ERR [MATLAB:gbtdatatypes:WrongFormat] Error setting property 'WaitStatus' of class 'Figure': / The data is in the wrong format.
+set WaitStatus WAITING: ok
+  -> [waiting]
+set WaitStatus wait (abbrev): ok
+  -> [waiting]
+uicontrol WaitStatus: ERR [MATLAB:hg:InvalidProperty] Unrecognized property WaitStatus for class matlab.ui.control.UIControl.
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(5.5): ERR [MATLAB:uiwait:InvalidInputType] Input argument must be of type figure
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(c): ERR [MATLAB:uiwait:InvalidInputType] Input argument must be of type figure
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait([f f]): ERR [MATLAB:uiwait:InvalidInputType] Input argument must be of type figure
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait('a'): ERR [MATLAB:uiwait:InvalidInputType] Input argument must be of type figure
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(f, 'a'): ERR [MATLAB:uiwait:InvalidSecondInputType] Second input must be numeric
+uiwait(f, 1, 2): ERR [MATLAB:TooManyInputs] Too many input arguments.
+uiresume(5.5): ERR [MATLAB:class:InvalidHandle] Invalid or deleted object.
+uiresume(c): ERR [MATLAB:uiresume:InvalidInputType] Argument must be a Figure object.
+uiresume(f) when not waiting: ok
+uiresume(f, 1): ERR [MATLAB:TooManyInputs] Too many input arguments.
+uiresume([f f]): ok
+x = uiwait(f, 1): ERR [MATLAB:TooManyOutputs] Too many output arguments.
+x = uiresume(f): ERR [MATLAB:TooManyOutputs] Too many output arguments.
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(f,1): 2.3s status=[inactive] Visible=on lastwarn=[MATLAB:hg:NoDisplayNoFigureSupportSeeReleaseNotes] [uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+[Warning: Timeout value cannot be less than one second thus changing timeout value to one second.]
+uiwait(f,0.2): 1.0s lastwarn=[MATLAB:uiwait:InvalidSecondInputValue] [Timeout value cannot be less than one second thus changing timeout value to one second.]
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(f,1.5): 1.6s
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(f,single(1)): 1.0s
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(f, [1 2]): ERR [MATLAB:validation:IncompatibleSize] Error setting property 'StartDelay' of class 'timer'. Value must be a scalar.
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(f, []): ERR [MATLAB:validation:IncompatibleSize] Error setting property 'StartDelay' of class 'timer'. Value must be a scalar.
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(f, NaN): ERR [MATLAB:validators:mustBeNonnegative] Error setting property 'StartDelay' of class 'timer'. Value must be nonnegative.
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(f, true): ERR [MATLAB:uiwait:InvalidSecondInputType] Second input must be numeric
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+timer uiresume: 0.5s status=[inactive]
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+timer set inactive: 0.5s
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+timer uiresume before timeout: 0.5s timers left=0
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+timer delete: 0.9s valid=0
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+timer close: 0.8s valid=0
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+  in timer: f status=[waiting]
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+TIMEOUT after 300 s

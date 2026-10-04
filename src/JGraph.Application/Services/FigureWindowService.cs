@@ -23,6 +23,10 @@ public sealed class FigureWindowService : IFigureWindowService
         // the one object that knows which window that is.
         JGraph.Scripting.ScriptGraphicsCallbacks.WindowBoundsProvider = OuterBoundsOf;
 
+        // The system's file, folder, colour and font dialogs, for uigetfile and its kin (U4).
+        JGraph.Scripting.ScriptGraphicsCallbacks.NativeDialogs =
+            new AppScriptNativeDialogs(System.Windows.Threading.Dispatcher.CurrentDispatcher);
+
         // Frames of a script's components (app-building plan, U1) arrive on the script thread; they
         // are applied here, on this one, to the window showing their figure, and then acknowledged
         // so the next one can be sent. A figure with no window yet takes its last frame on opening.
@@ -81,6 +85,7 @@ public sealed class FigureWindowService : IFigureWindowService
             }
 
             window.Show(); // No-op when already visible; deliberately does not steal focus.
+            ApplyWindowStyles();
             return;
         }
 
@@ -94,9 +99,12 @@ public sealed class FigureWindowService : IFigureWindowService
 
         // Closing the window retires the figure itself, so the engine stops handing scripts a model
         // nothing can display — the next figure(n) builds a new one and opens a new window.
+        window.WindowStyleChanged += ApplyWindowStyles;
+        window.IsVisibleChanged += (_, _) => ApplyWindowStyles();
         window.Closed += (_, _) =>
         {
             _windows.Remove(number);
+            ApplyWindowStyles();
             JGraph.Api.JG.CloseFigure(number);
 
             // Retiring the figure is what makes its script-side handles unreachable; this is what
@@ -116,7 +124,41 @@ public sealed class FigureWindowService : IFigureWindowService
         };
         _windows[number] = window;
         window.Show();
+        ApplyWindowStyles();
     }
+
+    /// <summary>
+    /// Applies each figure's <c>WindowStyle</c> (U4). A modal figure stays in front and keeps the
+    /// other figure windows from being used while it is up; an always-on-top one stays in front
+    /// and blocks nothing. The application's own window is left usable, so a script blocked in a
+    /// dialog can still be stopped.
+    /// </summary>
+    private void ApplyWindowStyles()
+    {
+        static bool Modal(FigureWindow window) =>
+            window.IsVisible && window.ShownFigure is { WindowStyle: FigureWindowStyle.Modal };
+
+        bool anyModal = _windows.Values.Any(Modal);
+        foreach (FigureWindow window in _windows.Values)
+        {
+            bool modal = Modal(window);
+            if (modal && !window.Topmost)
+            {
+                window.Activate(); // a dialog is for answering: it takes the keyboard as it appears
+            }
+
+            window.IsEnabled = !anyModal || modal;
+            bool front = modal || (window.IsVisible && window.ShownFigure is { WindowStyle: FigureWindowStyle.AlwaysOnTop });
+            if (window.Topmost != front)
+            {
+                window.Topmost = front;
+            }
+        }
+    }
+
+    /// <summary>The window showing a figure, or null. UI thread.</summary>
+    internal FigureWindow? WindowOf(FigureModel figure) =>
+        _windows.Values.FirstOrDefault(window => window.Shows(figure));
 
     /// <inheritdoc />
     public int OpenBlankFigure()

@@ -54,6 +54,13 @@ public abstract class AnnotationObject : GraphObject
     [Browsable(false)]
     public Rect2D RenderedBounds { get; private set; }
 
+    /// <summary>
+    /// Whether this annotation is drawn whole even where it leaves its axes' plot box: one placed
+    /// in device units is, because where it stands has nothing to do with the data's limits.
+    /// </summary>
+    [Browsable(false)]
+    public virtual bool IgnoresAxesClip => false;
+
     /// <summary>The geometry-defining points of this annotation, in its <see cref="Space"/> coordinates.</summary>
     public abstract IReadOnlyList<Point2D> GetAnchorPoints();
 

@@ -661,8 +661,9 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue LinePrimitive(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) =
-            SplitTrailingOptions(args, LineOptionNames);
+        // The coordinates are numbers, so the first text after them begins the options — any
+        // property a line has, not only the ones this verb reads itself (U4).
+        (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) = SplitOptionsAt(args, 2);
         if (data.Count is < 2 or > 3)
         {
             throw new JgsRuntimeException(line, col, "line expects (x, y) or (x, y, z), then 'Name', value options.");
@@ -678,7 +679,14 @@ internal static partial class JgsBuiltins
                 Line3DPlot plot = axes.AddLine3D(x, y, DoubleArray("line", data, 2, line, col));
                 foreach ((string name, JgsValue value) in options)
                 {
-                    ApplyLineOption("line", plot, name, value, line, col);
+                    if (LineOptionNames.Contains(name))
+                    {
+                        ApplyLineOption("line", plot, name, value, line, col);
+                    }
+                    else
+                    {
+                        JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(plot), name, value, line, col);
+                    }
                 }
 
                 return Handle(plot);
@@ -688,7 +696,14 @@ internal static partial class JgsBuiltins
                 LinePlot plot = axes.AddLine(x, y);
                 foreach ((string name, JgsValue value) in options)
                 {
-                    ApplyLineOption("line", plot, name, value, line, col);
+                    if (LineOptionNames.Contains(name))
+                    {
+                        ApplyLineOption("line", plot, name, value, line, col);
+                    }
+                    else
+                    {
+                        JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(plot), name, value, line, col);
+                    }
                 }
 
                 return Handle(plot);
@@ -703,8 +718,12 @@ internal static partial class JgsBuiltins
     /// <summary><c>text(x, y, str)</c> or <c>text(x, y, z, str)</c>, plus 'Name', value options.</summary>
     private static JgsValue TextPrimitive(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) =
-            SplitTrailingOptions(args, TextOptionNames);
+        // The label is the first text; whatever follows it is options — any property a text has,
+        // not only the ones this verb reads itself (U4).
+        bool heightGiven = args.Count > 3
+            && (args[2].Type is JgsType.Number or JgsType.Bool || (args[2].Type == JgsType.Array && !args[2].IsStringArray));
+        int labelAt = heightGiven ? 3 : 2;
+        (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) = SplitOptionsAt(args, labelAt + 1);
         if (data.Count is < 3 or > 4)
         {
             throw new JgsRuntimeException(line, col, "text expects (x, y, string) or (x, y, z, string).");
@@ -714,9 +733,17 @@ internal static partial class JgsBuiltins
         double x = Num("text", data, 0, line, col);
         double y = Num("text", data, 1, line, col);
         double z = threeD ? Num("text", data, 2, line, col) : 0;
-        string label = Str("text", data, threeD ? 3 : 2, line, col);
+        // The label is text, or a cell or a string array of lines.
+        JgsValue said = data[threeD ? 3 : 2];
+        bool cell = said.Type == JgsType.Cell;
+        string label = cell
+            ? AnnotationString("text", said, line, col)
+            : said.IsStringArray && said.ArrayLength != 1
+                ? string.Join("\n", Enumerable.Range(0, said.ArrayLength).Select(i => TextOf(said.ElementAt(i))))
+                : Str("text", data, threeD ? 3 : 2, line, col);
 
         TextAnnotation annotation = JG.Text(x, y, z, label);
+        annotation.LinesAreCell = cell;
         foreach ((string name, JgsValue value) in options)
         {
             switch (name.ToLowerInvariant())
@@ -758,6 +785,9 @@ internal static partial class JgsBuiltins
                         "middle" => VerticalAlignment.Middle,
                         _ => VerticalAlignment.Bottom,
                     };
+                    break;
+                default:
+                    JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(annotation), name, value, line, col);
                     break;
             }
         }
@@ -848,6 +878,32 @@ internal static partial class JgsBuiltins
     /// that names one — the same rule <c>plot</c> uses, so a spec string or a color word before them
     /// stays data.
     /// </summary>
+    /// <summary>
+    /// Splits a call into its data and its options where the options begin at the first text at or
+    /// after <paramref name="from"/> — the form of a primitive whose data are all numbers.
+    /// </summary>
+    private static (IReadOnlyList<JgsValue> Data, List<(string Name, JgsValue Value)> Options) SplitOptionsAt(
+        IReadOnlyList<JgsValue> args, int from)
+    {
+        int start = args.Count;
+        for (int i = from; i < args.Count; i++)
+        {
+            if (IsTextScalar(args[i]))
+            {
+                start = i;
+                break;
+            }
+        }
+
+        var options = new List<(string, JgsValue)>();
+        for (int i = start; i + 1 < args.Count; i += 2)
+        {
+            options.Add((IsTextScalar(args[i]) ? TextOf(args[i]) : string.Empty, args[i + 1]));
+        }
+
+        return ([.. args.Take(start)], options);
+    }
+
     private static (IReadOnlyList<JgsValue> Data, List<(string Name, JgsValue Value)> Options) SplitTrailingOptions(
         IReadOnlyList<JgsValue> args, HashSet<string> names)
     {

@@ -119,9 +119,15 @@ public partial class ScriptWorkspaceWindow : Window
         ScriptEventQueue.InstallPump(() => Dispatcher.BeginInvoke(new Action(PumpGraphicsEventsWhenIdle)));
         ScriptRenderPump.SetFlusher(() => Dispatcher.Invoke(
             static () => { }, System.Windows.Threading.DispatcherPriority.Render));
+        // A script blocked in uiwait, waitfor or a dialog says so here, because what is typed
+        // meanwhile waits behind it (app-building plan, U4).
+        ScriptGraphicsCallbacks.WaitingChanged = verb => SetStatus(verb is null
+            ? "Ready."
+            : $"Waiting in {verb} — the script goes on when its window is answered or closed; Stop ends the wait.");
         Closed += (_, _) =>
         {
             ScriptAnimation.SetPlayer(null);
+            ScriptGraphicsCallbacks.WaitingChanged = null;
             ScriptEventQueue.InstallPump(null);
             ScriptRenderPump.SetFlusher(null);
             DevicesPanel.Dispose();

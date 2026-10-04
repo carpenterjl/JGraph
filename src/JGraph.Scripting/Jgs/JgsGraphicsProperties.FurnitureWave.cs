@@ -1863,14 +1863,33 @@ internal static partial class JgsGraphicsProperties
 
         // A label is anchored either among the data or in the figure, and that is exactly the choice
         // MATLAB spells with these two words.
+        // A label is anchored among the data, in the figure, or — since U4 — so far in device units
+        // from the lower left corner of its axes, which is how MATLAB's dialogs place their text.
         AddWordProperty(table, "Units",
-            entry => Label(entry).Space == AnnotationSpace.Figure ? "normalized" : "data",
-            (entry, word, line, col) => Label(entry).Space = word switch
+            entry => Label(entry).DeviceUnits is { } units ? UiUnitConverter.Words[(int)units]
+                : Label(entry).Space == AnnotationSpace.Figure ? "normalized" : "data",
+            (entry, word, line, col) =>
             {
-                "data" => AnnotationSpace.Data,
-                "normalized" => AnnotationSpace.Figure,
-                _ => throw new JgsRuntimeException(line, col,
-                    $"Text units are 'data' or 'normalized' here, but got '{word}'."),
+                TextAnnotation label = Label(entry);
+                switch (word)
+                {
+                    case "data":
+                        label.DeviceUnits = null;
+                        label.Space = AnnotationSpace.Data;
+                        break;
+                    case "normalized":
+                        label.DeviceUnits = null;
+                        label.Space = AnnotationSpace.Figure;
+                        break;
+                    case "pixels" or "points" or "inches" or "centimeters" or "characters":
+                        label.Space = AnnotationSpace.Data;
+                        label.DeviceUnits = (UiUnits)UiUnitConverter.Words.ToList().IndexOf(word);
+                        break;
+                    default:
+                        throw new JgsRuntimeException(line, col, "MATLAB:datatypes:InvalidEnumValue",
+                            $"Error setting property 'Units' of class 'Text':\n'{word}' is not a valid value. Use one of these values: "
+                            + "'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels' | 'data'.");
+                }
             });
 
         // Typing into a label in the figure is the plot browser's business, not a script's, and there
@@ -1900,6 +1919,30 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static JgsValue ExtentOf(TextAnnotation label)
     {
+        // A label in device units is measured rather than looked up: its size is its font's, and
+        // its place is its anchor's, so it answers before anything is drawn — which is when a
+        // dialog sizes itself round its message (U4).
+        if (label.DeviceUnits is { } units)
+        {
+            Size2D size = MeasuredPixels(label);
+            (double fx, double fy) = UiUnitConverter.PixelsPer(units, new Size2D(1, 1));
+            double width = size.Width / fx;
+            double height = size.Height / fy;
+            double startX = label.HorizontalAlignment switch
+            {
+                HorizontalAlignment.Center => label.Position.X - (width / 2),
+                HorizontalAlignment.Right => label.Position.X - width,
+                _ => label.Position.X,
+            };
+            double startY = label.VerticalAlignment switch
+            {
+                VerticalAlignment.Top => label.Position.Y - height,
+                VerticalAlignment.Middle => label.Position.Y - (height / 2),
+                _ => label.Position.Y,
+            };
+            return Row(startX, startY, width, height);
+        }
+
         Rect2D pixels = label.RenderedBounds;
         if (pixels.Width <= 0 && pixels.Height <= 0)
         {
@@ -1928,6 +1971,31 @@ internal static partial class JgsGraphicsProperties
             System.Math.Min(bottom, top),
             System.Math.Abs(right - left),
             System.Math.Abs(top - bottom));
+    }
+
+    /// <summary>
+    /// The size of a point-sized label's text in pixels: its widest line by its lines' height, in
+    /// the font the window draws it in. No lines measure nothing.
+    /// </summary>
+    internal static Size2D MeasuredPixels(TextAnnotation label)
+    {
+        if (label.Text.Length == 0)
+        {
+            return new Size2D(0, 0);
+        }
+
+        double pixels = label.FontSize * 96.0 / 72;
+        string[] lines = label.Text.Split('\n');
+        double width = 0;
+        double lineHeight = 0;
+        foreach (string line in lines)
+        {
+            (double w, double h) = UiFonts.Measure(line.Length == 0 ? " " : line, label.FontFamily, pixels, label.Bold, label.Italic);
+            width = System.Math.Max(width, line.Length == 0 ? 0 : w);
+            lineHeight = h;
+        }
+
+        return new Size2D(width, lineHeight * lines.Length);
     }
 
     /// <summary>Turns one device coordinate back into the value the ruler draws there.</summary>

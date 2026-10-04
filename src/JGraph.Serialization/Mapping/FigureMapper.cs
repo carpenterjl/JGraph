@@ -63,6 +63,8 @@ internal static class FigureMapper
         dto.AutoResizeChildren = figure.AutoResizeChildren;
         dto.Scrollable = figure.Scrollable;
         dto.IntegerHandle = figure.IntegerHandle;
+        dto.MenuBar = figure.MenuBar;
+        dto.WindowStyle = figure.WindowStyle == FigureWindowStyle.Normal ? null : figure.WindowStyle.ToString();
 
         if (figure.TiledLayout is { } layout)
         {
@@ -173,6 +175,8 @@ internal static class FigureMapper
         figure.AutoResizeChildren = dto.AutoResizeChildren;
         figure.Scrollable = dto.Scrollable;
         figure.IntegerHandle = dto.IntegerHandle;
+        figure.MenuBar = dto.MenuBar;
+        figure.WindowStyle = ParseOr(dto.WindowStyle, FigureWindowStyle.Normal);
 
         // Components before axes, so that an axes placed in a panel finds its panel.
         foreach (UiComponentDto componentDto in dto.Components)

@@ -103,9 +103,12 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,169 of
-2,024** as of app-building stage U3 (ADR 0200), which added `uibuttongroup`, `textwrap` and
-`listfonts`; 1,166 as of app-building stage U2 (ADR 0199), which added `uipanel`, `uifigure`,
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,188 of
+2,024** as of app-building stage U4 (ADR 0201), which added `uiwait`, `uiresume`, `guihandles`, the
+classic dialogs (`dialog`, `msgbox`, `errordlg`, `warndlg`, `helpdlg`, `questdlg`, `inputdlg`,
+`listdlg`, `waitbar`) and the system's (`uigetfile`, `uiputfile`, `uigetdir`, `uisetcolor`,
+`uisetfont`, `uiopen`, `uisave`, `uiload`); 1,169 as of app-building stage U3 (ADR 0200), which
+added `uibuttongroup`, `textwrap` and `listfonts`; 1,166 as of app-building stage U2 (ADR 0199), which added `uipanel`, `uifigure`,
 `getpixelposition`, `setpixelposition`, `movegui`, `uistack` and `allchild`; 1,159 as of
 app-building stage U1 (ADR 0198), which added `uicontrol`; 1,158 as of device
 classes stage D13 (ADR 0197), which added `serialExplorer`; 1,157 as of device
@@ -1056,6 +1059,10 @@ M52 left these behind, each named rather than silent (the full table is in
 
 `hgsetget` `selectmoveresize` `uipushtool`
 `uitoggletool` `uitoolbar`
+
+**App-building stage U4 made a script able to wait** (ADR 0201): `uiwait`, `uiresume` and a
+`waitfor` that delivers what `pause` delivers; `guihandles`; the classic dialogs as figures built
+from controls, with R2025b's trees; and the system's file, folder, colour and font dialogs.
 
 **App-building stage U3 finished `uicontrol`** (ADR 0200): every one of its ten styles is realised
 in the figure window, `uibuttongroup` keeps one of its buttons selected, and `Extent`, `textwrap`

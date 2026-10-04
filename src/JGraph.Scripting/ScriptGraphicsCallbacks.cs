@@ -172,6 +172,11 @@ public static class ScriptGraphicsCallbacks
             figure.CurrentCharacter = character;
         }
 
+        if (pressed)
+        {
+            figure.CurrentKey = keyName;
+        }
+
         // Told whether or not anybody is listening, because the verbs that wait for a key have to
         // hear it without a KeyPressFcn being present — which is exactly what the callback queue
         // below will not carry, since it only ever holds events something has a callback for.
@@ -283,6 +288,29 @@ public static class ScriptGraphicsCallbacks
     /// area, because headless there is no border to add.
     /// </summary>
     public static Func<FigureModel, Rect2D?>? WindowBoundsProvider { get; set; }
+
+    /// <summary>
+    /// A stand-in for the person a blocking dialog waits for (app-building plan, U4). When set, the
+    /// blocking dialogs — <c>questdlg</c>, <c>inputdlg</c>, <c>listdlg</c> — run without a window
+    /// instead of refusing, and call this on the script thread once the dialog's figure is built and
+    /// its wait is about to begin. The handler answers through the same door a window does:
+    /// <see cref="NotifyUserValue"/> on one of the figure's controls, or <see cref="NotifyKey"/>.
+    /// Tests set it; a host with real windows leaves it null.
+    /// </summary>
+    public static Action<FigureModel>? BlockingDialogShown { get; set; }
+
+    /// <summary>
+    /// Told when a script begins to wait on its interface — with the verb that waits — and, with
+    /// null, when the wait is over (U4). A host with a prompt says so there, because statements
+    /// typed meanwhile queue behind the wait. Called on the script thread.
+    /// </summary>
+    public static Action<string?>? WaitingChanged { get; set; }
+
+    /// <summary>
+    /// The system's file, folder, colour and font dialogs, for <c>uigetfile</c> and its kin (U4). A
+    /// host with windows installs them; without one those verbs refuse as R2025b does with no display.
+    /// </summary>
+    public static IScriptNativeDialogs? NativeDialogs { get; set; }
 
     /// <summary>The <c>uicontextmenu</c> assigned to this object, or null — what a right-click on
     /// it should show in place of the built-in menu.</summary>

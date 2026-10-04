@@ -1,0 +1,624 @@
+CHK|dialog_defaults|[] modal off pixels [] callback off off none on|exact
+CHK|dialog_buttondown|if isempty(allchild(gcbf)), close(gcbf), end|exact
+CHK|dialog_color|[0.9608 0.9608 0.9608]|exact
+CHK|dialog_is_figure|figure 1|exact
+CHK|dialog_options|[N] normal on [10 20 300 100] [t] [1 0 0] off callback|exact
+CHK|dialog_odd|MATLAB:dialog:NeedParamPairs|exact
+CHK|dialog_odd_msg|Must have param/value pairs.|exact
+CHK|dialog_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|dialog_unknown_msg|Unrecognized property NoSuch for class Figure.|exact
+CHK|dialog_bad_style|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|dialog_bad_style_msg|Error setting property 'WindowStyle' of class 'Figure': 'bad' is not a valid value. Use one of these values: 'normal' / 'modal' / 'docked' / 'alwaysontop'.|exact
+CHK|dialog_string_arguments|ran|exact
+CHK|windowstyle_normal|normal|exact
+CHK|windowstyle_modal|modal|exact
+CHK|windowstyle_docked|docked|exact
+CHK|windowstyle_alwaysontop|alwaysontop|exact
+CHK|windowstyle_bad|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|windowstyle_bad_msg|Error setting property 'WindowStyle' of class 'Figure': 'bad' is not a valid value. Use one of these values: 'normal' / 'modal' / 'docked' / 'alwaysontop'.|exact
+CHK|one_arg_figure|[ ] normal off points [Msgbox_ ] callback off off none none|exact
+CHK|one_arg_width|150|abs=8
+CHK|one_arg_height|54.75|abs=8
+CHK|one_arg_children|uicontrol axes|exact
+CHK|one_arg_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|one_arg_ok_x|55|abs=4
+CHK|one_arg_ok_callback|delete(gcbf) function_handle|exact
+CHK|one_arg_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|one_arg_text_lines|cell [1 1] Hello there|exact
+CHK|one_arg_text_x|7|exact
+CHK|one_arg_text_y|31|abs=4
+CHK|one_arg_text_extent_w|39|abs=8
+CHK|one_arg_text_extent_h|9|abs=3
+CHK|one_arg_has_icon|0|exact
+CHK|title_figure|[Title] normal off points [Msgbox_Title] callback off off none none|exact
+CHK|title_width|150|abs=8
+CHK|title_height|54.75|abs=8
+CHK|title_children|uicontrol axes|exact
+CHK|title_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|title_ok_x|55|abs=4
+CHK|title_ok_callback|delete(gcbf) function_handle|exact
+CHK|title_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|title_text_lines|cell [1 1] Hello there|exact
+CHK|title_text_x|7|exact
+CHK|title_text_y|31|abs=4
+CHK|title_text_extent_w|39|abs=8
+CHK|title_text_extent_h|9|abs=3
+CHK|title_has_icon|0|exact
+CHK|modal_figure|[Title] modal off points [Msgbox_Title] callback off off none none|exact
+CHK|modal_width|150|abs=8
+CHK|modal_height|54.75|abs=8
+CHK|modal_children|uicontrol axes|exact
+CHK|modal_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|modal_ok_x|55|abs=4
+CHK|modal_ok_callback|delete(gcbf) function_handle|exact
+CHK|modal_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|modal_text_lines|cell [1 1] Hello there|exact
+CHK|modal_text_x|7|exact
+CHK|modal_text_y|31|abs=4
+CHK|modal_text_extent_w|39|abs=8
+CHK|modal_text_extent_h|9|abs=3
+CHK|modal_has_icon|0|exact
+CHK|warn_figure|[Title] normal off points [Msgbox_Title] callback off off none none|exact
+CHK|warn_width|196.5|abs=8
+CHK|warn_height|62.25|abs=8
+CHK|warn_children|uicontrol axes axes|exact
+CHK|warn_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|warn_ok_x|78.5|abs=4
+CHK|warn_ok_callback|delete(gcbf) function_handle|exact
+CHK|warn_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|warn_text_lines|cell [1 1] Hello there|exact
+CHK|warn_text_x|38|exact
+CHK|warn_text_y|34.5|abs=4
+CHK|warn_text_extent_w|39|abs=8
+CHK|warn_text_extent_h|9|abs=3
+CHK|warn_has_icon|1|exact
+CHK|warn_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|warn_icon_y|31|abs=4
+CHK|warn_icon_image|[32 32 3]|exact
+CHK|help_figure|[Title] normal off points [Msgbox_Title] callback off off none none|exact
+CHK|help_width|196.5|abs=8
+CHK|help_height|62.25|abs=8
+CHK|help_children|uicontrol axes axes|exact
+CHK|help_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|help_ok_x|78.5|abs=4
+CHK|help_ok_callback|delete(gcbf) function_handle|exact
+CHK|help_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|help_text_lines|cell [1 1] Hello there|exact
+CHK|help_text_x|38|exact
+CHK|help_text_y|34.5|abs=4
+CHK|help_text_extent_w|39|abs=8
+CHK|help_text_extent_h|9|abs=3
+CHK|help_has_icon|1|exact
+CHK|help_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|help_icon_y|31|abs=4
+CHK|help_icon_image|[32 32 3]|exact
+CHK|error_figure|[Title] normal off points [Msgbox_Title] callback off off none none|exact
+CHK|error_width|196.5|abs=8
+CHK|error_height|62.25|abs=8
+CHK|error_children|uicontrol axes axes|exact
+CHK|error_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|error_ok_x|78.5|abs=4
+CHK|error_ok_callback|delete(gcbf) function_handle|exact
+CHK|error_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|error_text_lines|cell [1 1] Hello there|exact
+CHK|error_text_x|38|exact
+CHK|error_text_y|34.5|abs=4
+CHK|error_text_extent_w|39|abs=8
+CHK|error_text_extent_h|9|abs=3
+CHK|error_has_icon|1|exact
+CHK|error_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|error_icon_y|31|abs=4
+CHK|error_icon_image|[32 32 3]|exact
+CHK|none_figure|[Title] normal off points [Msgbox_Title] callback off off none none|exact
+CHK|none_width|150|abs=8
+CHK|none_height|54.75|abs=8
+CHK|none_children|uicontrol axes|exact
+CHK|none_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|none_ok_x|55|abs=4
+CHK|none_ok_callback|delete(gcbf) function_handle|exact
+CHK|none_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|none_text_lines|cell [1 1] Hello there|exact
+CHK|none_text_x|7|exact
+CHK|none_text_y|31|abs=4
+CHK|none_text_extent_w|39|abs=8
+CHK|none_text_extent_h|9|abs=3
+CHK|none_has_icon|0|exact
+CHK|icon_modal_figure|[Title] modal off points [Msgbox_Title] callback off off none none|exact
+CHK|icon_modal_width|196.5|abs=8
+CHK|icon_modal_height|62.25|abs=8
+CHK|icon_modal_children|uicontrol axes axes|exact
+CHK|icon_modal_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|icon_modal_ok_x|78.5|abs=4
+CHK|icon_modal_ok_callback|delete(gcbf) function_handle|exact
+CHK|icon_modal_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|icon_modal_text_lines|cell [1 1] Hello there|exact
+CHK|icon_modal_text_x|38|exact
+CHK|icon_modal_text_y|34.5|abs=4
+CHK|icon_modal_text_extent_w|39|abs=8
+CHK|icon_modal_text_extent_h|9|abs=3
+CHK|icon_modal_has_icon|1|exact
+CHK|icon_modal_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|icon_modal_icon_y|31|abs=4
+CHK|icon_modal_icon_image|[32 32 3]|exact
+CHK|two_lines_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|two_lines_width|150|abs=8
+CHK|two_lines_height|67.5|abs=11
+CHK|two_lines_children|uicontrol axes|exact
+CHK|two_lines_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|two_lines_ok_x|55|abs=4
+CHK|two_lines_ok_callback|delete(gcbf) function_handle|exact
+CHK|two_lines_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|two_lines_text_lines|cell [2 1] First line/Second line is longer|exact
+CHK|two_lines_text_x|7|exact
+CHK|two_lines_text_y|31|abs=6
+CHK|two_lines_text_extent_w|75.75|abs=8
+CHK|two_lines_text_extent_h|18|abs=4
+CHK|two_lines_has_icon|0|exact
+CHK|char_matrix_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|char_matrix_width|150|abs=8
+CHK|char_matrix_height|67.5|abs=11
+CHK|char_matrix_children|uicontrol axes|exact
+CHK|char_matrix_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|char_matrix_ok_x|55|abs=4
+CHK|char_matrix_ok_callback|delete(gcbf) function_handle|exact
+CHK|char_matrix_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|char_matrix_text_lines|cell [2 1] ab/cde|exact
+CHK|char_matrix_text_x|7|exact
+CHK|char_matrix_text_y|31|abs=6
+CHK|char_matrix_text_extent_w|13.5|abs=8
+CHK|char_matrix_text_extent_h|18|abs=4
+CHK|char_matrix_has_icon|0|exact
+CHK|newline_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|newline_width|150|abs=8
+CHK|newline_height|67.5|abs=11
+CHK|newline_children|uicontrol axes|exact
+CHK|newline_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|newline_ok_x|55|abs=4
+CHK|newline_ok_callback|delete(gcbf) function_handle|exact
+CHK|newline_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|newline_text_lines|cell [2 1] one/two|exact
+CHK|newline_text_x|7|exact
+CHK|newline_text_y|31|abs=6
+CHK|newline_text_extent_w|13.5|abs=8
+CHK|newline_text_extent_h|18|abs=4
+CHK|newline_has_icon|0|exact
+CHK|string_scalar_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|string_scalar_width|150|abs=8
+CHK|string_scalar_height|54.75|abs=8
+CHK|string_scalar_children|uicontrol axes|exact
+CHK|string_scalar_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|string_scalar_ok_x|55|abs=4
+CHK|string_scalar_ok_callback|delete(gcbf) function_handle|exact
+CHK|string_scalar_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|string_scalar_text_lines|cell [1 1] A string|exact
+CHK|string_scalar_text_x|7|exact
+CHK|string_scalar_text_y|31|abs=4
+CHK|string_scalar_text_extent_w|28.5|abs=8
+CHK|string_scalar_text_extent_h|9|abs=3
+CHK|string_scalar_has_icon|0|exact
+CHK|string_array_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|string_array_width|150|abs=8
+CHK|string_array_height|67.5|abs=11
+CHK|string_array_children|uicontrol axes|exact
+CHK|string_array_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|string_array_ok_x|55|abs=4
+CHK|string_array_ok_callback|delete(gcbf) function_handle|exact
+CHK|string_array_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|string_array_text_lines|cell [2 1] a/b|exact
+CHK|string_array_text_x|7|exact
+CHK|string_array_text_y|31|abs=6
+CHK|string_array_text_extent_w|5.25|abs=8
+CHK|string_array_text_extent_h|18|abs=4
+CHK|string_array_has_icon|0|exact
+CHK|empty_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|empty_width|150|abs=8
+CHK|empty_height|49.5|abs=8
+CHK|empty_children|uicontrol axes|exact
+CHK|empty_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|empty_ok_x|55|abs=4
+CHK|empty_ok_callback|delete(gcbf) function_handle|exact
+CHK|empty_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|empty_text_lines|cell [0 0] |exact
+CHK|empty_text_x|7|exact
+CHK|empty_text_y|31|abs=4
+CHK|empty_text_extent_w|0|abs=8
+CHK|empty_text_extent_h|0|abs=3
+CHK|empty_has_icon|0|exact
+CHK|long_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|long_width|307.5|abs=8
+CHK|long_height|78|abs=14
+CHK|long_children|uicontrol axes|exact
+CHK|long_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|long_ok_x|134|abs=4
+CHK|long_ok_callback|delete(gcbf) function_handle|exact
+CHK|long_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|long_text_lines|cell [3 1] word word word word word word word word word word word word word word word /word word word word word word word word word word word word word word word /word word word word word word word word word word|exact
+CHK|long_text_x|7|exact
+CHK|long_text_y|31|abs=8
+CHK|long_text_extent_w|294|abs=8
+CHK|long_text_extent_h|27|abs=5
+CHK|long_has_icon|0|exact
+CHK|five_lines_icon_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|five_lines_icon_width|196.5|abs=8
+CHK|five_lines_icon_height|99.75|abs=20
+CHK|five_lines_icon_children|uicontrol axes axes|exact
+CHK|five_lines_icon_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|five_lines_icon_ok_x|78.5|abs=4
+CHK|five_lines_icon_ok_callback|delete(gcbf) function_handle|exact
+CHK|five_lines_icon_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|five_lines_icon_text_lines|cell [5 1] 1/2/3/4/5|exact
+CHK|five_lines_icon_text_x|38|exact
+CHK|five_lines_icon_text_y|31|abs=12
+CHK|five_lines_icon_text_extent_w|5.25|abs=8
+CHK|five_lines_icon_text_extent_h|45|abs=7
+CHK|five_lines_icon_has_icon|1|exact
+CHK|five_lines_icon_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|five_lines_icon_icon_y|50|abs=12
+CHK|five_lines_icon_icon_image|[32 32 3]|exact
+CHK|struct_mode_figure|[T] modal off points [Msgbox_T] callback off off none none|exact
+CHK|struct_mode_width|150|abs=8
+CHK|struct_mode_height|54.75|abs=8
+CHK|struct_mode_children|uicontrol axes|exact
+CHK|struct_mode_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|struct_mode_ok_x|55|abs=4
+CHK|struct_mode_ok_callback|delete(gcbf) function_handle|exact
+CHK|struct_mode_text|[MessageBox] points 8 MS Sans Serif left bottom tex|exact
+CHK|struct_mode_text_lines|cell [1 1] x|exact
+CHK|struct_mode_text_x|7|exact
+CHK|struct_mode_text_y|31|abs=4
+CHK|struct_mode_text_extent_w|5.25|abs=8
+CHK|struct_mode_text_extent_h|9|abs=3
+CHK|struct_mode_has_icon|0|exact
+CHK|struct_icon_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|struct_icon_width|196.5|abs=8
+CHK|struct_icon_height|62.25|abs=8
+CHK|struct_icon_children|uicontrol axes axes|exact
+CHK|struct_icon_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|struct_icon_ok_x|78.5|abs=4
+CHK|struct_icon_ok_callback|delete(gcbf) function_handle|exact
+CHK|struct_icon_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|struct_icon_text_lines|cell [1 1] x|exact
+CHK|struct_icon_text_x|38|exact
+CHK|struct_icon_text_y|34.5|abs=4
+CHK|struct_icon_text_extent_w|5.25|abs=8
+CHK|struct_icon_text_extent_h|9|abs=3
+CHK|struct_icon_has_icon|1|exact
+CHK|struct_icon_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|struct_icon_icon_y|31|abs=4
+CHK|struct_icon_icon_image|[32 32 3]|exact
+CHK|replace_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|replace_width|150|abs=8
+CHK|replace_height|54.75|abs=8
+CHK|replace_children|uicontrol axes|exact
+CHK|replace_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|replace_ok_x|55|abs=4
+CHK|replace_ok_callback|delete(gcbf) function_handle|exact
+CHK|replace_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|replace_text_lines|cell [1 1] x|exact
+CHK|replace_text_x|7|exact
+CHK|replace_text_y|31|abs=4
+CHK|replace_text_extent_w|5.25|abs=8
+CHK|replace_text_extent_h|9|abs=3
+CHK|replace_has_icon|0|exact
+CHK|custom_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|custom_width|196.5|abs=8
+CHK|custom_height|62.25|abs=8
+CHK|custom_children|uicontrol axes axes|exact
+CHK|custom_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|custom_ok_x|78.5|abs=4
+CHK|custom_ok_callback|delete(gcbf) function_handle|exact
+CHK|custom_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|custom_text_lines|cell [1 1] x|exact
+CHK|custom_text_x|38|exact
+CHK|custom_text_y|34.5|abs=4
+CHK|custom_text_extent_w|5.25|abs=8
+CHK|custom_text_extent_h|9|abs=3
+CHK|custom_has_icon|1|exact
+CHK|custom_icon|points 7 24 24 [0.5 8.5] [0.5 8.5] reverse off|exact
+CHK|custom_icon_y|31|abs=4
+CHK|custom_icon_image|[8 8 3]|exact
+CHK|custom_map_figure|[T] normal off points [Msgbox_T] callback off off none none|exact
+CHK|custom_map_width|196.5|abs=8
+CHK|custom_map_height|62.25|abs=8
+CHK|custom_map_children|uicontrol axes axes|exact
+CHK|custom_map_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|custom_map_ok_x|78.5|abs=4
+CHK|custom_map_ok_callback|delete(gcbf) function_handle|exact
+CHK|custom_map_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|custom_map_text_lines|cell [1 1] x|exact
+CHK|custom_map_text_x|38|exact
+CHK|custom_map_text_y|34.5|abs=4
+CHK|custom_map_text_extent_w|5.25|abs=8
+CHK|custom_map_text_extent_h|9|abs=3
+CHK|custom_map_has_icon|1|exact
+CHK|custom_map_icon|points 7 24 24 [0.5 4.5] [0.5 4.5] reverse off|exact
+CHK|custom_map_icon_y|31|abs=4
+CHK|custom_map_icon_image|[4 4]|exact
+CHK|six_args_figure|[T] modal off points [Msgbox_T] callback off off none none|exact
+CHK|six_args_width|196.5|abs=8
+CHK|six_args_height|62.25|abs=8
+CHK|six_args_children|uicontrol axes axes|exact
+CHK|six_args_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|six_args_ok_x|78.5|abs=4
+CHK|six_args_ok_callback|delete(gcbf) function_handle|exact
+CHK|six_args_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|six_args_text_lines|cell [1 1] x|exact
+CHK|six_args_text_x|38|exact
+CHK|six_args_text_y|34.5|abs=4
+CHK|six_args_text_extent_w|5.25|abs=8
+CHK|six_args_text_extent_h|9|abs=3
+CHK|six_args_has_icon|1|exact
+CHK|six_args_icon|points 7 24 24 [0.5 4.5] [0.5 4.5] reverse off|exact
+CHK|six_args_icon_y|31|abs=4
+CHK|six_args_icon_image|[4 4]|exact
+CHK|errordlg_none_figure|[Error Dialog] normal off points [Msgbox_Error Dialog] callback off off none none|exact
+CHK|errordlg_none_width|196.5|abs=8
+CHK|errordlg_none_height|62.25|abs=8
+CHK|errordlg_none_children|uicontrol axes axes|exact
+CHK|errordlg_none_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|errordlg_none_ok_x|78.5|abs=4
+CHK|errordlg_none_ok_callback|delete(gcbf) function_handle|exact
+CHK|errordlg_none_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|errordlg_none_text_lines|cell [1 1] This is the default error.|exact
+CHK|errordlg_none_text_x|38|exact
+CHK|errordlg_none_text_y|34.5|abs=4
+CHK|errordlg_none_text_extent_w|84.75|abs=8
+CHK|errordlg_none_text_extent_h|9|abs=3
+CHK|errordlg_none_has_icon|1|exact
+CHK|errordlg_none_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|errordlg_none_icon_y|31|abs=4
+CHK|errordlg_none_icon_image|[32 32 3]|exact
+CHK|errordlg_text_figure|[Error Dialog] normal off points [Msgbox_Error Dialog] callback off off none none|exact
+CHK|errordlg_text_width|196.5|abs=8
+CHK|errordlg_text_height|62.25|abs=8
+CHK|errordlg_text_children|uicontrol axes axes|exact
+CHK|errordlg_text_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|errordlg_text_ok_x|78.5|abs=4
+CHK|errordlg_text_ok_callback|delete(gcbf) function_handle|exact
+CHK|errordlg_text_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|errordlg_text_text_lines|cell [1 1] Bad value|exact
+CHK|errordlg_text_text_x|38|exact
+CHK|errordlg_text_text_y|34.5|abs=4
+CHK|errordlg_text_text_extent_w|36|abs=8
+CHK|errordlg_text_text_extent_h|9|abs=3
+CHK|errordlg_text_has_icon|1|exact
+CHK|errordlg_text_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|errordlg_text_icon_y|31|abs=4
+CHK|errordlg_text_icon_image|[32 32 3]|exact
+CHK|errordlg_title_figure|[Oops] normal off points [Msgbox_Oops] callback off off none none|exact
+CHK|errordlg_title_width|196.5|abs=8
+CHK|errordlg_title_height|62.25|abs=8
+CHK|errordlg_title_children|uicontrol axes axes|exact
+CHK|errordlg_title_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|errordlg_title_ok_x|78.5|abs=4
+CHK|errordlg_title_ok_callback|delete(gcbf) function_handle|exact
+CHK|errordlg_title_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|errordlg_title_text_lines|cell [1 1] Bad value|exact
+CHK|errordlg_title_text_x|38|exact
+CHK|errordlg_title_text_y|34.5|abs=4
+CHK|errordlg_title_text_extent_w|36|abs=8
+CHK|errordlg_title_text_extent_h|9|abs=3
+CHK|errordlg_title_has_icon|1|exact
+CHK|errordlg_title_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|errordlg_title_icon_y|31|abs=4
+CHK|errordlg_title_icon_image|[32 32 3]|exact
+CHK|errordlg_modal_figure|[Oops] modal off points [Msgbox_Oops] callback off off none none|exact
+CHK|errordlg_modal_width|196.5|abs=8
+CHK|errordlg_modal_height|62.25|abs=8
+CHK|errordlg_modal_children|uicontrol axes axes|exact
+CHK|errordlg_modal_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|errordlg_modal_ok_x|78.5|abs=4
+CHK|errordlg_modal_ok_callback|delete(gcbf) function_handle|exact
+CHK|errordlg_modal_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|errordlg_modal_text_lines|cell [1 1] Bad value|exact
+CHK|errordlg_modal_text_x|38|exact
+CHK|errordlg_modal_text_y|34.5|abs=4
+CHK|errordlg_modal_text_extent_w|36|abs=8
+CHK|errordlg_modal_text_extent_h|9|abs=3
+CHK|errordlg_modal_has_icon|1|exact
+CHK|errordlg_modal_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|errordlg_modal_icon_y|31|abs=4
+CHK|errordlg_modal_icon_image|[32 32 3]|exact
+CHK|errordlg_cell_figure|[Oops] normal off points [Msgbox_Oops] callback off off none none|exact
+CHK|errordlg_cell_width|196.5|abs=8
+CHK|errordlg_cell_height|67.5|abs=11
+CHK|errordlg_cell_children|uicontrol axes axes|exact
+CHK|errordlg_cell_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|errordlg_cell_ok_x|78.5|abs=4
+CHK|errordlg_cell_ok_callback|delete(gcbf) function_handle|exact
+CHK|errordlg_cell_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|errordlg_cell_text_lines|cell [2 1] a/b|exact
+CHK|errordlg_cell_text_x|38|exact
+CHK|errordlg_cell_text_y|31|abs=6
+CHK|errordlg_cell_text_extent_w|5.25|abs=8
+CHK|errordlg_cell_text_extent_h|18|abs=4
+CHK|errordlg_cell_has_icon|1|exact
+CHK|errordlg_cell_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|errordlg_cell_icon_y|33.5|abs=6
+CHK|errordlg_cell_icon_image|[32 32 3]|exact
+CHK|warndlg_none_figure|[Warning Dialog] normal off points [Msgbox_Warning Dialog] callback off off none none|exact
+CHK|warndlg_none_width|196.5|abs=8
+CHK|warndlg_none_height|62.25|abs=8
+CHK|warndlg_none_children|uicontrol axes axes|exact
+CHK|warndlg_none_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|warndlg_none_ok_x|78.5|abs=4
+CHK|warndlg_none_ok_callback|delete(gcbf) function_handle|exact
+CHK|warndlg_none_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|warndlg_none_text_lines|cell [1 1] This is the default warning.|exact
+CHK|warndlg_none_text_x|38|exact
+CHK|warndlg_none_text_y|34.5|abs=4
+CHK|warndlg_none_text_extent_w|96|abs=8
+CHK|warndlg_none_text_extent_h|9|abs=3
+CHK|warndlg_none_has_icon|1|exact
+CHK|warndlg_none_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|warndlg_none_icon_y|31|abs=4
+CHK|warndlg_none_icon_image|[32 32 3]|exact
+CHK|warndlg_modal_figure|[W] modal off points [Msgbox_W] callback off off none none|exact
+CHK|warndlg_modal_width|196.5|abs=8
+CHK|warndlg_modal_height|62.25|abs=8
+CHK|warndlg_modal_children|uicontrol axes axes|exact
+CHK|warndlg_modal_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|warndlg_modal_ok_x|78.5|abs=4
+CHK|warndlg_modal_ok_callback|delete(gcbf) function_handle|exact
+CHK|warndlg_modal_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|warndlg_modal_text_lines|cell [1 1] Careful|exact
+CHK|warndlg_modal_text_x|38|exact
+CHK|warndlg_modal_text_y|34.5|abs=4
+CHK|warndlg_modal_text_extent_w|26.25|abs=8
+CHK|warndlg_modal_text_extent_h|9|abs=3
+CHK|warndlg_modal_has_icon|1|exact
+CHK|warndlg_modal_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|warndlg_modal_icon_y|31|abs=4
+CHK|warndlg_modal_icon_image|[32 32 3]|exact
+CHK|warndlg_struct_figure|[W] modal off points [Msgbox_W] callback off off none none|exact
+CHK|warndlg_struct_width|196.5|abs=8
+CHK|warndlg_struct_height|62.25|abs=8
+CHK|warndlg_struct_children|uicontrol axes axes|exact
+CHK|warndlg_struct_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|warndlg_struct_ok_x|78.5|abs=4
+CHK|warndlg_struct_ok_callback|delete(gcbf) function_handle|exact
+CHK|warndlg_struct_text|[MessageBox] points 8 MS Sans Serif left bottom tex|exact
+CHK|warndlg_struct_text_lines|cell [1 1] Careful|exact
+CHK|warndlg_struct_text_x|38|exact
+CHK|warndlg_struct_text_y|34.5|abs=4
+CHK|warndlg_struct_text_extent_w|26.25|abs=8
+CHK|warndlg_struct_text_extent_h|9|abs=3
+CHK|warndlg_struct_has_icon|1|exact
+CHK|warndlg_struct_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|warndlg_struct_icon_y|31|abs=4
+CHK|warndlg_struct_icon_image|[32 32 3]|exact
+CHK|helpdlg_none_figure|[Help Dialog] normal off points [Msgbox_Help Dialog] callback off off none none|exact
+CHK|helpdlg_none_width|196.5|abs=8
+CHK|helpdlg_none_height|62.25|abs=8
+CHK|helpdlg_none_children|uicontrol axes axes|exact
+CHK|helpdlg_none_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|helpdlg_none_ok_x|78.5|abs=4
+CHK|helpdlg_none_ok_callback|delete(gcbf) function_handle|exact
+CHK|helpdlg_none_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|helpdlg_none_text_lines|cell [1 1] This is the default help.|exact
+CHK|helpdlg_none_text_x|38|exact
+CHK|helpdlg_none_text_y|34.5|abs=4
+CHK|helpdlg_none_text_extent_w|83.25|abs=8
+CHK|helpdlg_none_text_extent_h|9|abs=3
+CHK|helpdlg_none_has_icon|1|exact
+CHK|helpdlg_none_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|helpdlg_none_icon_y|31|abs=4
+CHK|helpdlg_none_icon_image|[32 32 3]|exact
+CHK|helpdlg_title_figure|[H] normal off points [Msgbox_H] callback off off none none|exact
+CHK|helpdlg_title_width|196.5|abs=8
+CHK|helpdlg_title_height|62.25|abs=8
+CHK|helpdlg_title_children|uicontrol axes axes|exact
+CHK|helpdlg_title_ok|pushbutton points [OK] 8 MS Sans Serif center 7 40 17|exact
+CHK|helpdlg_title_ok_x|78.5|abs=4
+CHK|helpdlg_title_ok_callback|delete(gcbf) function_handle|exact
+CHK|helpdlg_title_text|[MessageBox] points 8 MS Sans Serif left bottom none|exact
+CHK|helpdlg_title_text_lines|cell [1 1] Help text|exact
+CHK|helpdlg_title_text_x|38|exact
+CHK|helpdlg_title_text_y|34.5|abs=4
+CHK|helpdlg_title_text_extent_w|33|abs=8
+CHK|helpdlg_title_text_extent_h|9|abs=3
+CHK|helpdlg_title_has_icon|1|exact
+CHK|helpdlg_title_icon|points 7 24 24 [0.5 32.5] [0.5 32.5] reverse off|exact
+CHK|helpdlg_title_icon_y|31|abs=4
+CHK|helpdlg_title_icon_image|[32 32 3]|exact
+CHK|refused_custom_no_data|MATLAB:msgbox:icondata|exact
+CHK|refused_custom_no_data_msg|Must specify icon data when Icon is 'custom'.|exact
+CHK|refused_custom_cell_data|MATLAB:msgbox:IncorrectIconDataType|exact
+CHK|refused_custom_cell_data_msg|Must specify numeric data for icon when Icon is 'custom'.|exact
+CHK|refused_no_args|MATLAB:narginchk:notEnoughInputs|exact
+CHK|refused_no_args_msg|Not enough input arguments.|exact
+CHK|refused_seven_args|MATLAB:narginchk:tooManyInputs|exact
+CHK|refused_seven_args_msg|Too many input arguments.|exact
+CHK|refused_numeric_text|MATLAB:dialogCellstrHelper:invalidType|exact
+CHK|refused_numeric_text_msg|Expected input to be one of these types: char, cell Instead its type was double.|exact
+CHK|refused_numeric_title|MATLAB:class:RequireString|exact
+CHK|refused_numeric_title_msg|Error setting property 'Name' of class 'Figure': Value must be a character vector or a string scalar.|exact
+CHK|refused_bad_struct|MATLAB:msgbox:InvalidInput|exact
+CHK|refused_bad_struct_msg|Must specify fields Interpreter and WindowStyle when passing struct as last input argument.|exact
+CHK|refused_bad_interpreter|MATLAB:msgbox:interpreter|exact
+CHK|refused_bad_interpreter_msg|Bad value for text property: 'Interpreter'|exact
+CHK|refused_errordlg_number|MATLAB:dialogCellstrHelper:invalidType|exact
+CHK|refused_errordlg_number_msg|Expected input to be one of these types: char, cell Instead its type was double.|exact
+CHK|refused_errordlg_four|MATLAB:TooManyInputs|exact
+CHK|refused_errordlg_four_msg|Too many input arguments.|exact
+CHK|refused_helpdlg_three|MATLAB:TooManyInputs|exact
+CHK|refused_helpdlg_three_msg|Too many input arguments.|exact
+CHK|bad_icon_warning|MATLAB:msgbox:iconstring 1|exact
+CHK|five_args_warning|MATLAB:msgbox:customicon 0|exact
+CHK|nonmodal_adds|0 2|exact
+CHK|replace_takes_newest|0 1 1 0 1|exact
+CHK|replace_text|third|exact
+CHK|modal_replaces_too|1 1 modal|exact
+CHK|helpdlg_replaces|1|exact
+CHK|errordlg_adds|0|exact
+CHK|errordlg_on_replaces|1|exact
+CHK|msgbox_callbacks|closereq function_handle|exact
+CHK|uiwait_msgbox|1 0|exact
+CHK|waitbar_figure|[] normal off points [TMWWaitbar] callback off off none|exact
+CHK|waitbar_size|[270 56.25]|exact
+CHK|waitbar_busy|queue off|exact
+CHK|waitbar_appdata|TMWWaitbar_handles TMWWaitbar_value|exact
+CHK|waitbar_handles|figure axes axesTitle progressbar container|exact
+CHK|waitbar_value|25|exact
+CHK|waitbar_axes|points [13.5 16.875 243 11.25] [0 100] [0 1] off|exact
+CHK|waitbar_title|Working... 1 on|exact
+CHK|waitbar_indicator|[19 23.5 324 6] 0.25 off [0.149 0.549 0.8667] off|exact
+CHK|waitbar_indicator_is_progressbar|1|exact
+CHK|waitbar_update|1 50 0.5|exact
+CHK|waitbar_message|New message 0.75|exact
+CHK|waitbar_above_one|1|exact
+CHK|waitbar_below_zero|0|exact
+CHK|waitbar_bare_updates_newest|1 0.3|exact
+CHK|waitbar_none|MATLAB:waitbar:InvalidArguments|exact
+CHK|waitbar_none_msg|Input arguments not valid.|exact
+CHK|waitbar_text_value|MATLAB:waitbar:InvalidFirstInput|exact
+CHK|waitbar_text_value_msg|The first argument must be a numeric value between 0 and 1.|exact
+CHK|waitbar_vector_value|MATLAB:waitbar:InvalidFirstInput|exact
+CHK|waitbar_vector_value_msg|The first argument must be a numeric value between 0 and 1.|exact
+CHK|waitbar_bad_second|MATLAB:waitbar:InvalidSecondInput|exact
+CHK|waitbar_bad_second_msg|The second argument must be a message character vector or a handle to an existing waitbar.|exact
+CHK|waitbar_number_message|ran|exact
+CHK|waitbar_survives|1|exact
+CHK|waitbar_options|Progress [1 1 1]|exact
+CHK|waitbar_cancel|pushbutton points [Cancel] [207 7 45 17.25] disp(1)|exact
+CHK|waitbar_cancel_figure|disp(1) 270|exact
+CHK|waitbar_cancel_height|61.625|abs=3
+CHK|waitbar_cancel_axes|[13.5 34.125 243 11.25] [19 46.5 324 6]|exact
+CHK|waitbar_default_message|Waitbar|exact
+CHK|waitbar_two|0|exact
+CHK|waitbar_invisible|off|exact
+CHK|waitbar_bad_option|MATLAB:uistring:waitbar:WarningCouldNotSetPropertyValue 1|exact
+CHK|waitbar_odd_options|MATLAB:waitbar:InvalidArguments|exact
+CHK|waitbar_odd_options_msg|Improper arguments for waitbar.|exact
+CHK|questdlg_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|questdlg_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|questdlg_refuses_before_arguments|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|questdlg_refuses_before_arguments_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|questdlg_seven|MATLAB:TooManyInputs|exact
+CHK|questdlg_seven_msg|Too many input arguments.|exact
+CHK|inputdlg_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|inputdlg_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|inputdlg_six|MATLAB:TooManyInputs|exact
+CHK|inputdlg_six_msg|Too many input arguments.|exact
+CHK|listdlg_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|listdlg_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|listdlg_refuses_before_arguments|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|listdlg_refuses_before_arguments_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uigetfile_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|uigetfile_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uiputfile_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|uiputfile_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uigetdir_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|uigetdir_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uisetcolor_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|uisetcolor_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uisetfont_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|uisetfont_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uiopen_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|uiopen_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uisave_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|uisave_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uiload_refuses|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|uiload_refuses_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|uiload_argument|MATLAB:TooManyInputs|exact
+CHK|uiload_argument_msg|Too many input arguments.|exact

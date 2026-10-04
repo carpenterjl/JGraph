@@ -54,6 +54,9 @@ public sealed class TextAnnotationDto : AnnotationDto
 
     public double Padding { get; set; } = 4;
 
+    /// <summary>The device units a label's anchor is measured in, or null for one placed by its space (U4).</summary>
+    public UiUnits? DeviceUnits { get; set; }
+
     /// <summary>How far the label is turned, anticlockwise on the page.</summary>
     public double Rotation { get; set; }
 

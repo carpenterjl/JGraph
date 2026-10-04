@@ -42,6 +42,8 @@ public partial class FigureWindow : Window
         _binding.TitleChanged += ApplyTitle;
         _binding.ToolBarVisibilityChanged += shown =>
             FigureToolBar.Visibility = shown ? Visibility.Visible : Visibility.Collapsed;
+        _binding.PlainnessChanged += ApplyPlainness;
+        _binding.WindowStyleChanged += () => WindowStyleChanged?.Invoke();
 
         // A figure set to Visible 'off' keeps its window but hides it, and 'on' brings it back (U1).
         _binding.FigureVisibilityChanged += shown =>
@@ -271,16 +273,55 @@ public partial class FigureWindow : Window
     /// </summary>
     private void ApplyPlainness()
     {
-        if (_viewModel.Figure is not { IsUiFigure: true })
+        // A classic figure whose MenuBar is 'none' is an interface rather than a plot, and its
+        // window is as plain as a uifigure's (U4): a dialog is its drawable area and nothing else.
+        FigureModel? figure = _viewModel.Figure;
+        bool plain = figure is { IsUiFigure: true } or { MenuBar: false };
+        FigureStatusBar.Visibility = plain ? Visibility.Collapsed : Visibility.Visible;
+        FigureToolBar.Visibility = figure is null or { ShowsToolBar: true } ? Visibility.Visible : Visibility.Collapsed;
+        if (plain)
         {
-            FigureStatusBar.Visibility = Visibility.Visible;
-            return;
+            _viewModel.ShowPlotBrowser = false;
+            _viewModel.ShowInspector = false;
+        }
+    }
+
+    /// <summary>The figure this window shows, for the service that decides which windows a modal one disables.</summary>
+    internal FigureModel? ShownFigure => _viewModel.Figure;
+
+    /// <summary>Raised when the shown figure's <c>WindowStyle</c> changed.</summary>
+    internal event Action? WindowStyleChanged;
+
+    /// <summary>
+    /// A picture of the figure's own area — the canvas and the components over it, without the
+    /// window's furniture — which is what <c>exportapp</c> writes. UI thread.
+    /// </summary>
+    internal System.Windows.Media.Imaging.BitmapSource? CaptureSurface()
+    {
+        if (FigureSurface.ActualWidth <= 0 || FigureSurface.ActualHeight <= 0)
+        {
+            return null;
         }
 
-        FigureStatusBar.Visibility = Visibility.Collapsed;
-        FigureToolBar.Visibility = Visibility.Collapsed;
-        _viewModel.ShowPlotBrowser = false;
-        _viewModel.ShowInspector = false;
+        System.Windows.DpiScale dpi = System.Windows.Media.VisualTreeHelper.GetDpi(FigureSurface);
+        var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(
+            (int)System.Math.Ceiling(FigureSurface.ActualWidth * dpi.DpiScaleX),
+            (int)System.Math.Ceiling(FigureSurface.ActualHeight * dpi.DpiScaleY),
+            96 * dpi.DpiScaleX, 96 * dpi.DpiScaleY, System.Windows.Media.PixelFormats.Pbgra32);
+
+        // Drawn through a brush of the element rather than the element itself, so that where it
+        // sits in the window does not offset the picture.
+        var visual = new System.Windows.Media.DrawingVisual();
+        using (System.Windows.Media.DrawingContext drawing = visual.RenderOpen())
+        {
+            drawing.DrawRectangle(
+                new System.Windows.Media.VisualBrush(FigureSurface), null,
+                new Rect(0, 0, FigureSurface.ActualWidth, FigureSurface.ActualHeight));
+        }
+
+        bitmap.Render(visual);
+        bitmap.Freeze();
+        return bitmap;
     }
 
     /// <summary>Whether this window shows <paramref name="figure"/>.</summary>

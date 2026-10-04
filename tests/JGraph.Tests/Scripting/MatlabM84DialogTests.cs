@@ -79,7 +79,8 @@ public class MatlabM84DialogTests : IDisposable
             ("plot(1:3); printpreview(gcf);", "exportgraphics or print"),
             ("plot(1:3); pagesetupdlg(gcf);", "PaperType"),
             ("plot(1:3); exportsetupdlg(gcf);", "Resolution"),
-            ("plot(1:3); exportapp(gcf, 'x.png');", "exportgraphics writes the figure itself"));
+            // R2025b's own refusal since U4 (ADR 0201): exportapp photographs a window, and there is none.
+            ("plot(1:3); exportapp(gcf, 'x.png');", "startup options that prevent figures from displaying"));
 
     /// <summary>And each says it opens a window, rather than saying it is not implemented.</summary>
     [Fact]

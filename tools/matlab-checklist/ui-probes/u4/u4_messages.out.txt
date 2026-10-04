@@ -1,0 +1,55 @@
+MATLAB:questdlg:StringMismatch => [Default character vector does not match any button character vector name.]
+MATLAB:questdlg:TooFewArguments => [Too few arguments for QUESTDLG]
+MATLAB:questdlg:WrongNumberOutputs => [Wrong number of output arguments for QUESTDLG]
+MATLAB:questdlg:TooManyInputs => [Too many input arguments]
+MATLAB:inputdlg:IncorrectSize => [NumLines size is incorrect.]
+MATLAB:inputdlg:InvalidDefaultAnswer => [Default answer must be a string array or cell array of character vectors.]
+MATLAB:inputdlg:InvalidInput => [Default answer must be a string array or cell array of character vectors.]
+MATLAB:listdlg:InvalidArgument => [Arguments to LISTDLG must be param/value pairs.]
+MATLAB:listdlg:NeedParameter => [ListString parameter is required.]
+MATLAB:msgbox:colormap => [A Colormap must be specified when calling MSGBOX with 5 input arguments.]
+MATLAB:msgbox:IncorrectIconColormap => [Colormap must be an array of type double, float or sparse when Icon is 'custom'.]
+MATLAB:waitbar:InvalidOptionalArgsPass => [Optional initialization arguments must be passed in pairs.]
+MATLAB:waitbar:WaitbarHandlesNotFound => [Couldn't find waitbar handles.]
+MATLAB:waitbar:ImproperArguments => [Improper arguments for waitbar.]
+MATLAB:uistring:popupdialogs:InputDlgInput => [Input:]
+MATLAB:uistring:popupdialogs:SelectAll => [Select all]
+MATLAB:uistring:popupdialogs:OK => [OK]
+MATLAB:uistring:popupdialogs:Cancel => [Cancel]
+MATLAB:uistring:popupdialogs:Yes => [Yes]
+MATLAB:uistring:popupdialogs:No => [No]
+MATLAB:uistring:waitbar:WaitbarLabel => [Waitbar]
+MATLAB:uistring:waitbar:Cancel => [Cancel]
+MATLAB:uistring:uiopen:DialogOpen => [Open]
+MATLAB:uistring:filedialogs:SelectFileToOpen => [Select File to Open]
+MATLAB:uistring:filedialogs:SelectFileToWrite => [Select File to Write]
+MATLAB:uistring:filedialogs:SelectFolderToOpen => (no such message: MATLAB:builtins:MessageNotFound)
+MATLAB:uistring:uisetcolor:Color => (no such message: MATLAB:builtins:MessageNotFound)
+MATLAB:uistring:uisetfont:Font => (no such message: MATLAB:builtins:MessageNotFound)
+MATLAB:uigetdir:TooManyInputs => (no such message: MATLAB:builtins:MessageCatalogLoadFailed)
+MATLAB:uisetcolor:InvalidParameterList => [Title should be the second arg]
+MATLAB:uisetfont:InvalidParameterList => [Title should be the second arg]
+MATLAB:hg:NonInteractiveFunctionSupport => [Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.]
+
+ans =
+
+    'Unknown parameter name passed to LISTDLG.  Name was Bogus'
+
+UnknownParameter => [Unknown parameter name passed to LISTDLG.  Name was Bogus]
+DefaultFigurePosition=[363 278 1194 719] DefaultUicontrolFontSize=8 DefaultTextFontSize=10 DefaultTextFontName=Helvetica DefaultAxesFontSize=10
+uigetdir 3 args: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uigetdir number: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisetcolor 3 args: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisetcolor bad: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisetfont 3 args: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uigetfile number: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uigetfile odd: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uigetfile bad option: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiputfile number: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisave number: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiopen number: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiload arg: ERR [MATLAB:TooManyInputs] Too many input arguments.
+exportapp 3 args: ERR [MATLAB:TooManyInputs] Too many input arguments.
+exportapp not a figure: ERR [MATLAB:print:ExportHandleNotValid] Specified handle is not valid for export.
+exportapp bad extension: ERR [MATLAB:print:HeadlessFigureUnsupported] Running using -nodisplay or other startup options that prevent figures from displaying is not supported.
+exportapp no file: ERR [MATLAB:print:HeadlessFigureUnsupported] Running using -nodisplay or other startup options that prevent figures from displaying is not supported.

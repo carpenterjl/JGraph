@@ -102,6 +102,15 @@ public sealed class UiComponentDto
     /// <summary>A button group's selected button, as its place among <see cref="Children"/>; null for none (U3).</summary>
     public int? SelectedChild { get; set; }
 
+    /// <summary>A progress indicator's value from 0 to 1; null for every other kind (U4).</summary>
+    public double? Progress { get; set; }
+
+    /// <summary>Whether a progress indicator shows activity of no known length (U4).</summary>
+    public bool Indeterminate { get; set; }
+
+    /// <summary>A progress indicator's fill colour (U4).</summary>
+    public double[]? ProgressColor { get; set; }
+
     public List<UiComponentDto> Children { get; set; } = new();
 }
 

@@ -85,11 +85,52 @@ internal static partial class JgsBuiltins
         // exportgraphics and the reason it is the one verb here with no non-interactive answer at all.
         DefineSilent("exportapp", (args, line, col) =>
         {
-            (FigureModel figure, IReadOnlyList<JgsValue> rest) = PeelFigure(args);
-            string path = FilePath("exportapp", rest, 0, ".png", line, col);
-            bool written = host.FigureFiles?.CaptureWindow(figure, path) == true;
-            return NeedsAWindow(written, "exportapp",
-                "exportgraphics writes the figure itself, without the window around it", line, col);
+            // R2025b's forms and refusals (U4, probes u4_dialogs and u4_messages).
+            if (args.Count < 1)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            }
+
+            if (args.Count > 2)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+            }
+
+            if (args[0].Type != JgsType.Number || !JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? named)
+                || named.Target is not FigureModel figure)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:print:ExportHandleNotValid", "Specified handle is not valid for export.");
+            }
+
+            if (!ScriptEventQueue.PumpInstalled || host.FigureFiles is null)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:print:HeadlessFigureUnsupported",
+                    "Running using -nodisplay or other startup options that prevent figures from displaying is not supported.");
+            }
+
+            string path = host.ResolveForWrite(FilePath("exportapp", args, 1, ".png", line, col));
+            string extension = Path.GetExtension(path).ToLowerInvariant();
+            if (extension is not (".png" or ".jpg" or ".jpeg" or ".tif" or ".tiff" or ".bmp"))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"exportapp writes a picture of the window as .png, .jpg, .tif or .bmp, and '{extension}' is none of them — "
+                    + "R2025b's .pdf is not written here.");
+            }
+
+            // The barrier: the figure is shown and what the script changed is in its window before
+            // the window is photographed.
+            figure.Visible = true;
+            JG.TouchFigure(figure);
+            host.ShowTouchedFigures();
+            ScriptComponentFrames.Flush(force: true);
+            ScriptRenderPump.Flush();
+            if (!host.FigureFiles.CaptureWindow(figure, path))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:print:HeadlessFigureUnsupported",
+                    "Running using -nodisplay or other startup options that prevent figures from displaying is not supported.");
+            }
+
+            return JgsValue.Null;
         });
 
         // uiaxes is an axes with the defaults MATLAB's app-building one has. It lives in an ordinary

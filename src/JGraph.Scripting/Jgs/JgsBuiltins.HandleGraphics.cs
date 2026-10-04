@@ -411,11 +411,42 @@ internal static partial class JgsBuiltins
                 $"set: every property needs a value, but '{StrOf("set", args[^1], line, col)}' has none.");
         }
 
+        // set(h, 'XData', x, 'YData', y) writes a series' two coordinates together, which is the
+        // one way to change how many points it has: either alone would leave the pair uneven.
+        int xAt = 0;
+        int yAt = 0;
+        for (int i = 1; i < args.Count; i += 2)
+        {
+            string name = StrOf("set", args[i], line, col);
+            xAt = name.Equals("XData", StringComparison.OrdinalIgnoreCase) ? i : xAt;
+            yAt = name.Equals("YData", StringComparison.OrdinalIgnoreCase) ? i : yAt;
+        }
+
+        bool paired = xAt > 0 && yAt > 0;
         for (int i = 1; i < args.Count; i += 2)
         {
             string name = StrOf("set", args[i], line, col);
             foreach (JgsHandleEntry entry in targets)
             {
+                if (paired && (i == xAt || i == yAt) && entry.Target is XYPlot series)
+                {
+                    if (i == System.Math.Max(xAt, yAt))
+                    {
+                        double[] xs = ToDoubles("XData", args[xAt + 1], line, col);
+                        double[] ys = ToDoubles("YData", args[yAt + 1], line, col);
+                        if (xs.Length != ys.Length)
+                        {
+                            throw new JgsRuntimeException(line, col,
+                                $"set: XData has {xs.Length} values and YData has {ys.Length}. A series is a pair.");
+                        }
+
+                        series.SetData(xs, ys);
+                        series.XImplied = false;
+                    }
+
+                    continue;
+                }
+
                 JgsGraphicsProperties.Set(entry, name, args[i + 1], line, col);
             }
         }

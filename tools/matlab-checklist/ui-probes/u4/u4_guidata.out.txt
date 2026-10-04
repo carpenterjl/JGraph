@@ -1,0 +1,149 @@
+guihandles(f): mainFig,hidden,go,nameEdit,panel1,FigureToolBar,figMenuHelp,figMenuTools,figMenuInsert,figMenuView,figMenuEdit,figMenuFile,scribeOverlay,ax1,figMenuHelpPatents,figMenuHelpTerms,figMenuHelpPrintingExport,figMenuHelpAnnotatingGraphs,figMenuHelpPlottingTools,figMenuHelpGraphics,figMenuToolsDS,figMenuToolsBF,figMenuToolsAlignDistrib,figMenuToolsAlign,figMenuToolsAlignDistributeSmart,figMenuViewGrid,figMenuSnapToGrid,figMenuEditPinning,figDataManagerBrushTools,figLinked,figMenuToolsPlotedit,figMenuInsertLight,figMenuInsertAxes,figMenuInsertEllipse,figMenuInsertRectangle,figMenuInsertTextbox,figMenuInsertArrow2,figMenuInsertTextArrow,figMenuInsertArrow,figMenuInsertLine,figMenuInsertColorbar,figMenuInsertLegend,figMenuInsertTitle,figMenuInsertZLabel,figMenuInsertYLabel,figMenuInsertXLabel,figMenuObjectBrowser,figMenuPropertyInspector,figMenuPloteditToolbar,figMenuCameraToolbar,figMenuFigureToolbar,figMenuEditColormap,figMenuEditGCO,figMenuEditGCA,figMenuEditGCF,figMenuEditCopyOptions,figMenuEditCopyFigure,figMenuEditSelectAll,figMenuEditDelete,figMenuEditClear,figMenuEditPaste,figMenuEditCopy,figMenuEditCut,figMenuEditRedo,figMenuEditUndo,printMenu,figMenuFilePrintPreview,figMenuFileExportSetup,figMenuGenerateCode,figMenuFileSaveAs,figMenuFileSave,figMenuFileClose,figMenuOpen,figMenuNewFigure,tx1,ln1,figMenuToolsDistributeHRight,figMenuToolsDistributeHCent,figMenuToolsDistributeHLeft,figMenuToolsDistributeHAdj,figMenuToolsDistributeVBot,figMenuToolsDistributeVMid,figMenuToolsDistributeVTop,figMenuToolsDistributeVAdj,figMenuToolsAlignBottom,figMenuToolsAlignMiddle,figMenuToolsAlignTop,figMenuToolsAlignRight,figMenuToolsAlignCenter,figMenuToolsAlignLeft,figDataManagerCopy,figDataManagerPaste,figDataManagerNewVar,figDataManagerRemoveUnbr,figDataManagerRemove,figDataManagerColor,figDataManagerBrush,figDataManagerReplaceConst,figDataManagerReplaceNaN
+  mainFig: class=matlab.ui.Figure size=[1 1]
+  hidden: class=matlab.ui.control.UIControl size=[1 1]
+  go: class=matlab.ui.control.UIControl size=[1 2]
+  nameEdit: class=matlab.ui.control.UIControl size=[1 1]
+  panel1: class=matlab.ui.container.Panel size=[1 1]
+  FigureToolBar: class=matlab.ui.container.Toolbar size=[1 1]
+  figMenuHelp: class=matlab.ui.container.Menu size=[1 1]
+  figMenuTools: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsert: class=matlab.ui.container.Menu size=[1 1]
+  figMenuView: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEdit: class=matlab.ui.container.Menu size=[1 1]
+  figMenuFile: class=matlab.ui.container.Menu size=[1 1]
+  scribeOverlay: class=matlab.graphics.shape.internal.AnnotationPane size=[1 1]
+  ax1: class=matlab.graphics.axis.Axes size=[1 1]
+  figMenuHelpPatents: class=matlab.ui.container.Menu size=[1 1]
+  figMenuHelpTerms: class=matlab.ui.container.Menu size=[1 1]
+  figMenuHelpPrintingExport: class=matlab.ui.container.Menu size=[1 1]
+  figMenuHelpAnnotatingGraphs: class=matlab.ui.container.Menu size=[1 1]
+  figMenuHelpPlottingTools: class=matlab.ui.container.Menu size=[1 1]
+  figMenuHelpGraphics: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsDS: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsBF: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlignDistrib: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlign: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlignDistributeSmart: class=matlab.ui.container.Menu size=[1 1]
+  figMenuViewGrid: class=matlab.ui.container.Menu size=[1 1]
+  figMenuSnapToGrid: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditPinning: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerBrushTools: class=matlab.ui.container.Menu size=[1 1]
+  figLinked: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsPlotedit: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertLight: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertAxes: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertEllipse: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertRectangle: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertTextbox: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertArrow2: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertTextArrow: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertArrow: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertLine: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertColorbar: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertLegend: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertTitle: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertZLabel: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertYLabel: class=matlab.ui.container.Menu size=[1 1]
+  figMenuInsertXLabel: class=matlab.ui.container.Menu size=[1 1]
+  figMenuObjectBrowser: class=matlab.ui.container.Menu size=[1 1]
+  figMenuPropertyInspector: class=matlab.ui.container.Menu size=[1 1]
+  figMenuPloteditToolbar: class=matlab.ui.container.Menu size=[1 1]
+  figMenuCameraToolbar: class=matlab.ui.container.Menu size=[1 1]
+  figMenuFigureToolbar: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditColormap: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditGCO: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditGCA: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditGCF: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditCopyOptions: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditCopyFigure: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditSelectAll: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditDelete: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditClear: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditPaste: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditCopy: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditCut: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditRedo: class=matlab.ui.container.Menu size=[1 1]
+  figMenuEditUndo: class=matlab.ui.container.Menu size=[1 1]
+  printMenu: class=matlab.ui.container.Menu size=[1 1]
+  figMenuFilePrintPreview: class=matlab.ui.container.Menu size=[1 1]
+  figMenuFileExportSetup: class=matlab.ui.container.Menu size=[1 1]
+  figMenuGenerateCode: class=matlab.ui.container.Menu size=[1 1]
+  figMenuFileSaveAs: class=matlab.ui.container.Menu size=[1 1]
+  figMenuFileSave: class=matlab.ui.container.Menu size=[1 1]
+  figMenuFileClose: class=matlab.ui.container.Menu size=[1 1]
+  figMenuOpen: class=matlab.ui.container.Menu size=[1 1]
+  figMenuNewFigure: class=matlab.ui.container.Menu size=[1 1]
+  tx1: class=matlab.graphics.primitive.Text size=[1 1]
+  ln1: class=matlab.graphics.primitive.Line size=[1 1]
+  figMenuToolsDistributeHRight: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsDistributeHCent: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsDistributeHLeft: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsDistributeHAdj: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsDistributeVBot: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsDistributeVMid: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsDistributeVTop: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsDistributeVAdj: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlignBottom: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlignMiddle: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlignTop: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlignRight: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlignCenter: class=matlab.ui.container.Menu size=[1 1]
+  figMenuToolsAlignLeft: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerCopy: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerPaste: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerNewVar: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerRemoveUnbr: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerRemove: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerColor: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerBrush: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerReplaceConst: class=matlab.ui.container.Menu size=[1 1]
+  figDataManagerReplaceNaN: class=matlab.ui.container.Menu size=[1 1]
+go order: first is b2=1, second is b=1
+guihandles(control) same fields=1
+guihandles(line) same fields=1
+guihandles(empty fig): class=struct size=[1 1] isempty=0
+guihandles() uses gcf: class=struct
+guihandles(5.5): ERR [MATLAB:guihandles:InvalidInput] Object must be a figure or one of its child objects.
+guihandles([f f]): ERR [MATLAB:guihandles:InvalidInput] Object must be a figure or one of its child objects.
+guihandles('a'): ERR [MATLAB:guihandles:InvalidInput] Object must be a figure or one of its child objects.
+guihandles(0): ERR [MATLAB:guihandles:InvalidInput] Object must be a figure or one of its child objects.
+guihandles(f, 1): ERR [MATLAB:TooManyInputs] Too many input arguments.
+guidata(f) before: class=double size=[0 0]
+guidata(f) after: 1
+guidata(b) from a child: two
+guidata(ln) from a line: two
+appdata names: UsedByGUIData_m
+isappdata UsedByGUIData_m=1
+stored copy is independent: 1
+guidata set through a child: 42
+guidata(f, []) removes: isappdata=0 value class=double size=[0 0]
+guidata(f, '') : isappdata=0
+guidata(f, {}) : isappdata=0
+guidata(f, 0) : isappdata=1
+guidata(): ERR [MATLAB:narginchk:notEnoughInputs] Not enough input arguments.
+guidata(5.5): ERR [MATLAB:guidata:InvalidInput] Object must be a figure or one of its child objects.
+guidata(0): ERR [MATLAB:guidata:InvalidInput] Object must be a figure or one of its child objects.
+guidata([f f]): ERR [MATLAB:guidata:InvalidInput] Object must be a figure or one of its child objects.
+guidata('a', 1): ERR [MATLAB:guidata:InvalidInput] Object must be a figure or one of its child objects.
+guidata(f, 1, 2): ERR [MATLAB:TooManyInputs] Too many input arguments.
+x = guidata(f, 1): ERR [MATLAB:nargoutchk:tooManyOutputs] Too many output arguments.
+guidata(deleted): ERR [MATLAB:guidata:InvalidInput] Object must be a figure or one of its child objects.
+getappdata(f): UsedByGUIData_m,one,two
+getappdata(f, 'one')=1
+getappdata(f, 'none'): class=double size=[0 0]
+isappdata none=0 one=1
+rmappdata(f, 'none'): ERR [MATLAB:HandleGraphics:Appdata:InvalidPropertyName] Invalid user property: none.
+rmappdata(f, 'one'): ok
+after rm: UsedByGUIData_m,two
+setappdata(f, 5, 1): ERR [MATLAB:HandleGraphics:Appdata:InvalidSecondArgumentName] Second argument must be a character vector
+setappdata(f, 'not a name', 1): ERR [MATLAB:AddField:InvalidFieldName] Invalid field name: 'not a name'.
+  names: UsedByGUIData_m,two
+getappdata(5.5, 'a'): ERR [MATLAB:hg:InvalidArray] Input was not a valid graphics object.
+setappdata(5.5, 'a', 1): ERR [MATLAB:hg:InvalidArray] Input was not a valid graphics object.
+isappdata(5.5, 'a'): ERR [MATLAB:hg:InvalidArray] Input was not a valid graphics object.
+rmappdata(5.5, 'a'): ERR [MATLAB:hg:InvalidArray] Input was not a valid graphics object.
+setappdata(f, 'a'): ERR [MATLAB:minrhs] Not enough input arguments.
+root appdata: 7 isappdata=1
+root appdata removed: 0
+appdata on a control: 3; on its figure: 0
+getappdata(no data): class=struct fields=0 size=[1 1]

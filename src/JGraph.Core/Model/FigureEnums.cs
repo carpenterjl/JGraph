@@ -31,6 +31,22 @@ public enum FigureToolBarMode
     None,
 }
 
+/// <summary>How a figure's window stands among the others (MATLAB <c>WindowStyle</c>).</summary>
+public enum FigureWindowStyle
+{
+    /// <summary>An ordinary window.</summary>
+    Normal,
+
+    /// <summary>Stays in front and takes all input until it is closed or made normal.</summary>
+    Modal,
+
+    /// <summary>Docked in MATLAB's desktop. JGraph has no dock: the window is an ordinary one.</summary>
+    Docked,
+
+    /// <summary>Stays in front of other windows without taking their input.</summary>
+    AlwaysOnTop,
+}
+
 /// <summary>How a figure's window is displayed (MATLAB <c>WindowState</c>).</summary>
 public enum FigureWindowState
 {

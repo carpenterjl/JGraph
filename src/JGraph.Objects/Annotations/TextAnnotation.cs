@@ -39,6 +39,7 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
     private DashStyle _borderDash = DashStyle.Solid;
     private bool _smoothing = true;
     private bool _clipping;
+    private UiUnits? _deviceUnits;
 
     public TextAnnotation()
     {
@@ -225,6 +226,30 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         set => SetProperty(ref _clipping, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// The device units the anchor is measured in, or null for a label placed by
+    /// <see cref="AnnotationObject.Space"/>. With a unit, <see cref="Position"/> is an offset from
+    /// the lower left corner of the axes' plot box, y upward, and <see cref="FontSize"/> is in
+    /// points — MATLAB's text with <c>Units</c> of pixels, points and the rest, which is how its
+    /// dialogs place their message (app-building plan, U4).
+    /// </summary>
+    [Browsable(false)]
+    public UiUnits? DeviceUnits
+    {
+        get => _deviceUnits;
+        set => SetProperty(ref _deviceUnits, value, InvalidationKind.Render);
+    }
+
+    /// <inheritdoc />
+    public override bool IgnoresAxesClip => _deviceUnits is not null;
+
+    /// <summary>
+    /// Whether the text was given as a cell of lines, which is how a script reads it back. The
+    /// lines themselves are <see cref="Text"/>'s, one to a line either way.
+    /// </summary>
+    [Browsable(false)]
+    public bool LinesAreCell { get; set; }
+
     /// <inheritdoc />
     public override IReadOnlyList<Point2D> GetAnchorPoints() => new[] { _position };
 
@@ -257,7 +282,7 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         DrawAt(
             context,
             state,
-            () => state.Mapper.DataToPixel(_position.X, _position.Y),
+            () => _deviceUnits is { } units ? DeviceAnchor(state.PlotArea, units) : state.Mapper.DataToPixel(_position.X, _position.Y),
             () => _box is { } box
                 ? Rect2D.FromCorners(
                     state.Mapper.DataToPixel(box.Left, box.Top),
@@ -274,6 +299,13 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         DrawAt(context, state, () => projection.ProjectPoint(_position.X, _position.Y, _z), () => null);
     }
 
+    /// <summary>Where a device-unit anchor falls: so far right of, and above, the plot box's lower left corner.</summary>
+    private Point2D DeviceAnchor(Rect2D plotArea, UiUnits units)
+    {
+        (double fx, double fy) = UiUnitConverter.PixelsPer(units, new Size2D(plotArea.Width, plotArea.Height));
+        return new Point2D(plotArea.Left + (_position.X * fx), plotArea.Bottom - (_position.Y * fy));
+    }
+
     private void DrawAt(IRenderContext context, RenderState state, Func<Point2D> anchorAt, Func<Rect2D?> boxAt)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -286,7 +318,11 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         }
 
         Color ink = _color ?? state.SeriesColor;
-        var style = new TextStyle(ink, _fontSize, _fontFamily, _bold, _italic, _interpreter, _smoothing);
+        // A label placed in device units is sized in points and sits on its anchor with no margin
+        // of its own unless it has a box to keep the text off.
+        double fontSize = _deviceUnits is null ? _fontSize : _fontSize * 96.0 / 72;
+        double padding = _deviceUnits is not null && _background is null && _borderColor is null ? 0 : _padding;
+        var style = new TextStyle(ink, fontSize, _fontFamily, _bold, _italic, _interpreter, _smoothing);
         Size2D textSize = context.MeasureText(_text, style);
 
         Rect2D box;
@@ -300,8 +336,8 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         {
             Point2D anchor = anchorAt();
             pivot = anchor;
-            double boxWidth = textSize.Width + (_padding * 2);
-            double boxHeight = textSize.Height + (_padding * 2);
+            double boxWidth = textSize.Width + (padding * 2);
+            double boxHeight = textSize.Height + (padding * 2);
 
             double left = _horizontalAlignment switch
             {
@@ -355,7 +391,7 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
 
         if (_text.Length > 0)
         {
-            var origin = new Point2D(box.Left + _padding, box.Top + _padding);
+            var origin = new Point2D(box.Left + padding, box.Top + padding);
             context.DrawText(
                 _text,
                 turned ? Turn(origin, pivot) : origin,

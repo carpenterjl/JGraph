@@ -52,7 +52,12 @@ internal static class UiComponentMapper
             case UiPanelModel panel:
                 dto = new UiComponentDto
                 {
-                    Kind = panel is UiButtonGroupModel ? "uibuttongroup" : "uipanel",
+                    Kind = panel switch
+                    {
+                        UiButtonGroupModel => "uibuttongroup",
+                        UiProgressIndicatorModel => "uiprogressindicator",
+                        _ => "uipanel",
+                    },
                     Title = ToDto(panel.Title),
                     TitlePosition = panel.TitlePosition.ToString(),
                     BorderType = panel.BorderType.ToString(),
@@ -72,6 +77,13 @@ internal static class UiComponentMapper
                     Scrollable = panel.Scrollable,
                     Clipping = panel.Clipping,
                 };
+                if (panel is UiProgressIndicatorModel bar)
+                {
+                    dto.Progress = bar.Value;
+                    dto.Indeterminate = bar.Indeterminate;
+                    dto.ProgressColor = ToDto(bar.ProgressColor);
+                }
+
                 UiControlModel? selected = (panel as UiButtonGroupModel)?.SelectedObject;
                 foreach (UiObject child in panel.Components)
                 {
@@ -158,8 +170,23 @@ internal static class UiComponentMapper
 
             case "uipanel":
             case "uibuttongroup":
+            case "uiprogressindicator":
             {
-                UiPanelModel panel = dto.Kind == "uibuttongroup" ? new UiButtonGroupModel() : new UiPanelModel();
+                UiPanelModel panel = dto.Kind switch
+                {
+                    "uibuttongroup" => new UiButtonGroupModel(),
+                    "uiprogressindicator" => new UiProgressIndicatorModel
+                    {
+                        Value = dto.Progress ?? 0,
+                        Indeterminate = dto.Indeterminate,
+                    },
+                    _ => new UiPanelModel(),
+                };
+                if (panel is UiProgressIndicatorModel indicator && ToColor(dto.ProgressColor) is { } fill)
+                {
+                    indicator.ProgressColor = fill;
+                }
+
                 panel.Title = ToText(dto.Title);
                 panel.TitlePosition = ParseOr(dto.TitlePosition, UiTitlePosition.LeftTop);
                 panel.BorderType = ParseOr(dto.BorderType, UiBorderType.Line);

@@ -269,6 +269,7 @@ internal static partial class JgsBuiltins
         {
             IsUiFigure = true,
             IntegerHandle = false,
+            MenuBar = false,
             AutoResizeChildren = true,
             NumberTitle = false,
             ToolBar = FigureToolBarMode.None,

@@ -136,6 +136,13 @@ internal sealed class FigureWindowBinding
                 case nameof(FigureModel.ToolBar):
                     ApplyToolBar();
                     break;
+                case nameof(FigureModel.MenuBar):
+                    ApplyToolBar();
+                    PlainnessChanged?.Invoke();
+                    break;
+                case nameof(FigureModel.WindowStyle):
+                    WindowStyleChanged?.Invoke();
+                    break;
                 case nameof(FigureModel.NumberTitle):
                 case nameof(FigureModel.Name):
                     TitleChanged?.Invoke();
@@ -272,8 +279,13 @@ internal sealed class FigureWindowBinding
     private void ApplyPointer() =>
         _view.Cursor = _figure is { } figure ? CursorFor(figure.Pointer) : Cursors.Arrow;
 
-    private void ApplyToolBar() => ToolBarVisibilityChanged?.Invoke(
-        _figure is not { ToolBar: FigureToolBarMode.None });
+    private void ApplyToolBar() => ToolBarVisibilityChanged?.Invoke(_figure is null or { ShowsToolBar: true });
+
+    /// <summary>Raised when the figure's <c>MenuBar</c> changed, which decides the window's furniture.</summary>
+    internal event Action? PlainnessChanged;
+
+    /// <summary>Raised when the figure's <c>WindowStyle</c> changed.</summary>
+    internal event Action? WindowStyleChanged;
 
     /// <summary>Raised with whether the toolbar should be shown; the window owns the element.</summary>
     internal event Action<bool>? ToolBarVisibilityChanged;

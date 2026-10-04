@@ -214,11 +214,11 @@ internal sealed class JgsHandleEntry
     public Dictionary<string, JgsValue> AppData { get; } = new(StringComparer.Ordinal);
 
     /// <summary>
-    /// What <c>guidata</c> stored on this figure (V6, appendix A #102). Only a figure's entry holds
-    /// one: <c>guidata(h, v)</c> on any object stores on the figure the object belongs to, and
-    /// <c>guidata(h)</c> reads from there. Null until something is stored, which reads as <c>[]</c>.
+    /// A figure's <c>WaitStatus</c> (U4): null until something waits on it, <c>'waiting'</c> while
+    /// a <c>uiwait</c> is blocked on it and <c>'inactive'</c> once <c>uiresume</c> has ended that.
+    /// Written and read on the script thread only.
     /// </summary>
-    public JgsValue? GuiData { get; set; }
+    public string? WaitStatus { get; set; }
 }
 
 /// <summary>

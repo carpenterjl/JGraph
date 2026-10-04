@@ -242,6 +242,13 @@ public sealed class FigureRenderer
         Rect2D box = placement.Box;
         context.DrawRectangle(box, stroke: null, fill: panel.Background.ToColor());
 
+        // A progress indicator's filled part: so much of its width, from the left (U4).
+        if (panel is { Fill: { } fraction, FillColor: { } filled } && fraction > 0)
+        {
+            context.DrawRectangle(
+                new Rect2D(box.X, box.Y, box.Width * System.Math.Min(1, fraction), box.Height), stroke: null, fill: filled.ToColor());
+        }
+
         bool titled = panel.Title.Length > 0;
         bool atBottom = panel.TitlePosition is UiTitlePosition.LeftBottom or UiTitlePosition.CenterBottom or UiTitlePosition.RightBottom;
         double band = titled ? System.Math.Round(panel.FontSize, MidpointRounding.AwayFromZero) : 0;
@@ -491,8 +498,13 @@ public sealed class FigureRenderer
         // told not to clip, which is how MATLAB shows content that runs past the limits.
         bool clip2D = axes.Clipping;
         if (clip2D) { context.PushClip(plotArea); }
-        DrawAnnotations(axes.Annotations, context, transform, plotArea, theme);
-        if (clip2D) { context.PopClip(); }
+        DrawAnnotations(axes.Annotations, context, transform, plotArea, theme, clipped: clip2D);
+        if (clip2D)
+        {
+            // What is placed in device units stands where it was put, in or out of the plot box (U4).
+            context.PopClip();
+            DrawAnnotations(axes.Annotations, context, transform, plotArea, theme, clipped: false, onlyUnclipped: true);
+        }
 
         // Axis frame, edge by edge so each ruler's color reaches its own line. The two edges the
         // rulers sit on are drawn whenever those rulers show ticks or labels — MATLAB's box off
@@ -1530,7 +1542,9 @@ public sealed class FigureRenderer
         IRenderContext context,
         ICoordinateMapper mapper,
         Rect2D area,
-        ITheme theme)
+        ITheme theme,
+        bool clipped = false,
+        bool onlyUnclipped = false)
     {
         if (annotations.Count == 0)
         {
@@ -1541,6 +1555,12 @@ public sealed class FigureRenderer
         var state = new RenderState(mapper, area, theme.AxisLabel);
         foreach (AnnotationObject annotation in annotations.InDrawOrder())
         {
+            // Under a clip, the ones that ignore it wait for the pass that follows without one.
+            if ((clipped && annotation.IgnoresAxesClip) || (onlyUnclipped && !annotation.IgnoresAxesClip))
+            {
+                continue;
+            }
+
             if (annotation.Visible && annotation is IDrawable drawable)
             {
                 drawable.Render(context, state);

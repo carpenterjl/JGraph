@@ -1,0 +1,453 @@
+ScreenPixelsPerInch=96 ScreenSize=[1 1 1920 1200]
+FactoryUicontrolFontSize=8 FactoryUicontrolFontName=MS Sans Serif
+   [dialog] figure: Name=[] WindowStyle=modal Resize=off Units=pixels Position=[363 278 1194 719] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=auto
+   pixels=[363 278 1194 719]
+  ButtonDownFcn=[if isempty(allchild(gcbf)), close(gcbf), end] PaperPositionMode=auto DockControls=off Pointer=arrow
+  gcf is it=0  findobj sees it=1 findall sees it=1
+   [dialog with options] figure: Name=[N] WindowStyle=normal Resize=on Units=pixels Position=[10 20 300 100] Color=[1 0 0] Visible=off Tag=[t] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=auto
+   pixels=[10 20 300 100]
+dialog('Name'): ERR [MATLAB:dialog:NeedParamPairs] Must have param/value pairs.
+dialog('NoSuch', 1): ERR [MATLAB:hg:InvalidProperty] Unrecognized property NoSuch for class Figure.
+dialog("Name", "s"): ok
+dialog('windowstyle', 'bad'): ERR [MATLAB:datatypes:InvalidEnumValue] Error setting property 'WindowStyle' of class 'Figure': / 'bad' is not a valid value. Use one of these values: 'normal' | 'modal' | 'docked' | 'alwaysontop'.
+figure WindowStyle normal: ok
+  -> normal
+figure WindowStyle modal: ok
+  -> modal
+figure WindowStyle docked: ok
+  -> docked
+figure WindowStyle alwaysontop: ok
+  -> alwaysontop
+== one arg: class=matlab.ui.Figure size=[1 1]
+   [one arg] figure: Name=[ ] WindowStyle=normal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_ ] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 752 200 73]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[7 31 39 9]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== title: class=matlab.ui.Figure size=[1 1]
+   [title] figure: Name=[Title] WindowStyle=normal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Title] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 752 200 73]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[7 31 39 9]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== modal: class=matlab.ui.Figure size=[1 1]
+   [modal] figure: Name=[Title] WindowStyle=modal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Title] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 752 200 73]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[7 31 39 9]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== warn icon: class=matlab.ui.Figure size=[1 1]
+   [warn icon] figure: Name=[Title] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Title] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[38 34.5 39 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== help icon: class=matlab.ui.Figure size=[1 1]
+   [help icon] figure: Name=[Title] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Title] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[38 34.5 39 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== error icon: class=matlab.ui.Figure size=[1 1]
+   [error icon] figure: Name=[Title] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Title] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[38 34.5 39 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== none icon: class=matlab.ui.Figure size=[1 1]
+   [none icon] figure: Name=[Title] WindowStyle=normal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Title] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 752 200 73]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[7 31 39 9]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== icon and modal: class=matlab.ui.Figure size=[1 1]
+   [icon and modal] figure: Name=[Title] WindowStyle=modal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Title] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[38 34.5 39 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+[Warning: Invalid character vector for Icon in MSGBOX.]
+== bad icon: warned [MATLAB:msgbox:iconstring] Invalid character vector for Icon in MSGBOX.
+== bad icon: class=matlab.ui.Figure size=[1 1]
+   [bad icon] figure: Name=[Title] WindowStyle=normal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Title] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 752 200 73]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Hello there" Extent=[7 31 39 9]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== two lines cell: class=matlab.ui.Figure size=[1 1]
+   [two lines cell] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[645 555 150 67.5] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 741 200 90]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[2 1] String="First line|Second line is longer" Extent=[7 31 75.75 18]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== char matrix: class=matlab.ui.Figure size=[1 1]
+   [char matrix] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[645 555 150 67.5] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 741 200 90]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[2 1] String="ab|cde" Extent=[7 31 13.5 18]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== newline in text: class=matlab.ui.Figure size=[1 1]
+   [newline in text] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[645 555 150 67.5] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 741 200 90]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[2 1] String="one|two" Extent=[7 31 13.5 18]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== string scalar: class=matlab.ui.Figure size=[1 1]
+   [string scalar] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 752 200 73]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="A string" Extent=[7 31 28.5 9]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== string array: class=matlab.ui.Figure size=[1 1]
+   [string array] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[645 555 150 67.5] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 741 200 90]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[2 1] String="a|b" Extent=[7 31 5.25 18]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== empty text: class=matlab.ui.Figure size=[1 1]
+   [empty text] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[645 567 150 49.5] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 757 200 66]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[0 0] String="" Extent=[7 31 0 0]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== long text: class=matlab.ui.Figure size=[1 1]
+   [long text] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[566.25 548.25 307.5 78] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[756 732 410 104]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[3 1] String="word word word word word word word word word word word word word word word |word word word word word word word word word word word word word word word |word word word word word word word word word word" Extent=[7 31 294 27]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[134 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== five lines icon: class=matlab.ui.Figure size=[1 1]
+   [five lines icon] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[621.75 533.25 196.5 99.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 712 262 133]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8.5 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[5 1] String="1|2|3|4|5" Extent=[38 31 5.25 45]
+   - axes Tag=IconAxes Units=points Position=[7 50 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== struct mode: class=matlab.ui.Figure size=[1 1]
+   [struct mode] figure: Name=[T] WindowStyle=modal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 752 200 73]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="x" Extent=[7 31 5.25 9]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== struct mode icon: class=matlab.ui.Figure size=[1 1]
+   [struct mode icon] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="x" Extent=[38 34.5 5.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== replace: class=matlab.ui.Figure size=[1 1]
+   [replace] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[645 563.25 150 54.75] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[861 752 200 73]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[7 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="x" Extent=[7 31 5.25 9]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[55 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== custom icon: class=matlab.ui.Figure size=[1 1]
+   [custom icon] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="x" Extent=[38 34.5 5.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 8.5] YLim=[0.5 8.5] YDir=reverse Visible=off
+     - image CData=[8 8 3] class=double AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== custom icon cmap: class=matlab.ui.Figure size=[1 1]
+   [custom icon cmap] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="x" Extent=[38 34.5 5.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 4.5] YLim=[0.5 4.5] YDir=reverse Visible=off
+     - image CData=[4 4] class=double AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== custom, no data: ERR [MATLAB:msgbox:icondata] Must specify icon data when Icon is 'custom'.
+== custom, cell data: ERR [MATLAB:msgbox:IncorrectIconDataType] Must specify numeric data for icon when Icon is 'custom'.
+[Warning: Icon must be 'custom' when specifying icon data in MSGBOX]
+== five args not custom: warned [MATLAB:msgbox:customicon] Icon must be 'custom' when specifying icon data in MSGBOX
+== five args not custom: class=matlab.ui.Figure size=[1 1]
+   [five args not custom] figure: Name=[T] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="x" Extent=[38 34.5 5.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 4.5] YLim=[0.5 4.5] YDir=reverse Visible=off
+     - image CData=[4 4] class=double AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== six args: class=matlab.ui.Figure size=[1 1]
+   [six args] figure: Name=[T] WindowStyle=modal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_T] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="x" Extent=[38 34.5 5.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 4.5] YLim=[0.5 4.5] YDir=reverse Visible=off
+     - image CData=[4 4] class=double AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== no args: ERR [MATLAB:narginchk:notEnoughInputs] Not enough input arguments.
+== seven args: ERR [MATLAB:narginchk:tooManyInputs] Too many input arguments.
+== numeric text: ERR [MATLAB:dialogCellstrHelper:invalidType] Expected input to be one of these types: /  / char, cell /  / Instead its type was double.
+== numeric title: ERR [MATLAB:class:RequireString] Error setting property 'Name' of class 'Figure': / Value must be a character vector or a string scalar.
+== bad struct: ERR [MATLAB:msgbox:InvalidInput] Must specify fields Interpreter and WindowStyle when passing struct as last input argument.
+== bad interpreter: ERR [MATLAB:msgbox:interpreter] Bad value for text property: 'Interpreter'
+== two outputs: ERR [MATLAB:nargoutchk:tooManyOutputs] Too many output arguments.
+== errordlg none: class=matlab.ui.Figure size=[1 1]
+   [errordlg none] figure: Name=[Error Dialog] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Error Dialog] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="This is the default error." Extent=[38 34.5 84.75 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== errordlg text: class=matlab.ui.Figure size=[1 1]
+   [errordlg text] figure: Name=[Error Dialog] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Error Dialog] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Bad value" Extent=[38 34.5 36 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== errordlg title: class=matlab.ui.Figure size=[1 1]
+   [errordlg title] figure: Name=[Oops] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Oops] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Bad value" Extent=[38 34.5 36 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== errordlg modal: class=matlab.ui.Figure size=[1 1]
+   [errordlg modal] figure: Name=[Oops] WindowStyle=modal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Oops] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Bad value" Extent=[38 34.5 36 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== errordlg on: class=matlab.ui.Figure size=[1 1]
+   [errordlg on] figure: Name=[Oops] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Oops] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Bad value" Extent=[38 34.5 36 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== errordlg cell: class=matlab.ui.Figure size=[1 1]
+   [errordlg cell] figure: Name=[Oops] WindowStyle=normal Resize=off Units=points Position=[621.75 555 196.5 67.5] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Oops] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 741 262 90]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 31 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[2 1] String="a|b" Extent=[38 31 5.25 18]
+   - axes Tag=IconAxes Units=points Position=[7 33.5 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== errordlg number: ERR [MATLAB:dialogCellstrHelper:invalidType] Expected input to be one of these types: /  / char, cell /  / Instead its type was double.
+== errordlg 4 args: ERR [MATLAB:TooManyInputs] Too many input arguments.
+== warndlg none: class=matlab.ui.Figure size=[1 1]
+   [warndlg none] figure: Name=[Warning Dialog] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Warning Dialog] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="This is the default warning." Extent=[38 34.5 96 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== warndlg text: class=matlab.ui.Figure size=[1 1]
+   [warndlg text] figure: Name=[Warning Dialog] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Warning Dialog] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Careful" Extent=[38 34.5 26.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== warndlg modal: class=matlab.ui.Figure size=[1 1]
+   [warndlg modal] figure: Name=[W] WindowStyle=modal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_W] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Careful" Extent=[38 34.5 26.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== warndlg struct: class=matlab.ui.Figure size=[1 1]
+   [warndlg struct] figure: Name=[W] WindowStyle=modal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_W] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Careful" Extent=[38 34.5 26.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[32 32]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== helpdlg none: class=matlab.ui.Figure size=[1 1]
+   [helpdlg none] figure: Name=[Help Dialog] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Help Dialog] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="This is the default help." Extent=[38 34.5 83.25 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== helpdlg text: class=matlab.ui.Figure size=[1 1]
+   [helpdlg text] figure: Name=[Help Dialog] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_Help Dialog] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Help text" Extent=[38 34.5 33 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== helpdlg title: class=matlab.ui.Figure size=[1 1]
+   [helpdlg title] figure: Name=[H] WindowStyle=normal Resize=off Units=points Position=[621.75 558.75 196.5 62.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[Msgbox_H] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=none
+   pixels=[830 746 262 83]
+   - axes Units=normalized Position=[0 0 1 1] FontSize=8 FontName=Helvetica XLim=[0 1] YLim=[0 1] YDir=normal Visible=off
+     - text Tag=MessageBox Units=points Position=[38 34.5 0] FontSize=8 FontName=MS Sans Serif HAlign=left class(String)=cell size=[1 1] String="Help text" Extent=[38 34.5 33 9]
+   - axes Tag=IconAxes Units=points Position=[7 31 24 24] FontSize=8 FontName=Helvetica XLim=[0.5 32.5] YLim=[0.5 32.5] YDir=reverse Visible=off
+     - image CData=[32 32 3] class=uint8 AlphaData=[1 1]
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=OKButton Units=points Position=[78.5 7 40 17] String="OK" FontSize=8 FontName=MS Sans Serif HAlign=center
+== helpdlg 3 args: ERR [MATLAB:TooManyInputs] Too many input arguments.
+non-modal twice: same=0 count=2
+replace: same as first=0 same as second=1 count=1 valid a=0 b=1
+  text now=[third]
+modal reuses too: same=1 count=1 style=modal
+helpdlg twice: same=1
+errordlg twice: same=0
+errordlg on: reuses=1
+OK Callback=[delete(gcbf)] class=char KeyPressFcn class=function_handle fig KeyPressFcn class=function_handle
+fig CloseRequestFcn=[closereq] DeleteFcn=[] ButtonDownFcn=[if isempty(allchild(gcbf)), close(gcbf), end]
+text: Interpreter=none VerticalAlignment=bottom FontWeight=normal Color=[0.129411764705882 0.129411764705882 0.129411764705882] class(String)=cell
+text Extent(points)=[7 31 20.25 9]
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait(msgbox): 0.6s valid=0
+   [waitbar] figure: Name=[] WindowStyle=normal Resize=off Units=points Position=[585 421.875 270 56.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[TMWWaitbar] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=auto
+   pixels=[781 563.5 360 75]
+   appdata: TMWWaitbar_handles, TMWWaitbar_value
+   - axes Units=points Position=[13.5 16.875 243 11.25] FontSize=8 FontName=Helvetica XLim=[0 100] YLim=[0 1] YDir=normal Visible=off
+   - annotationpane Tag=scribeOverlay
+   - uiprogressindicator Position=[19 23.5 324 6] Value=0.25
+  handles fields: figure,axes,axesTitle,progressbar,container
+  value appdata=25
+  title=[Working...] FontSize=10 FontName=Helvetica Units=data Visible=on
+  indicator class=matlab.ui.control.internal.ProgressIndicator
+               Value: 0.2500
+       Indeterminate: off
+       ProgressColor: [0.1490 0.5490 0.8667]
+              Parent: [1×1 Figure]
+    HandleVisibility: 'off'
+         ContextMenu: [0×0 GraphicsPlaceholder]
+          BusyAction: 'queue'
+        BeingDeleted: off
+       Interruptible: on
+           CreateFcn: ''
+           DeleteFcn: ''
+                Type: 'uiprogressindicator'
+                 Tag: ''
+            UserData: []
+       InnerPosition: [19 23.5000 324 6]
+            Position: [19 23.5000 324 6]
+       OuterPosition: [19 23.5000 324 6]
+              Enable: on
+             Visible: on
+             Tooltip: ''
+              Layout: [0×0 matlab.ui.layout.LayoutOptions]
+
+  figure BusyAction=queue Interruptible=off CloseRequestFcn=[closereq]
+update returns same=1 value=50 indicator Value=0.5
+message now=[New message] Value=0.75
+x=2 clamps: 1
+x=-1 clamps: 0
+waitbar(x) updates the existing one: same=1 Value=0.3
+waitbar(): ERR [MATLAB:waitbar:InvalidArguments] Input arguments not valid.
+waitbar('a'): ERR [MATLAB:waitbar:InvalidFirstInput] The first argument must be a numeric value between 0 and 1.
+waitbar([1 2]): ERR [MATLAB:waitbar:InvalidFirstInput] The first argument must be a numeric value between 0 and 1.
+waitbar(0.5, 5.5): ERR [MATLAB:waitbar:InvalidSecondInput] The second argument must be a message character vector or a handle to an existing waitbar.
+waitbar(0.5, w, 5): ok
+  still valid=1
+waitbar with options: Name=Progress Color=[1 1 1]
+   [waitbar with cancel] figure: Name=[] WindowStyle=normal Resize=off Units=points Position=[585 419.188 270 61.625] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[TMWWaitbar] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=auto
+   pixels=[781 559.917 360 82.1667]
+   appdata: TMWWaitbar_handles, TMWWaitbar_value
+   - axes Units=points Position=[13.5 34.125 243 11.25] FontSize=8 FontName=Helvetica XLim=[0 100] YLim=[0 1] YDir=normal Visible=off
+   - annotationpane Tag=scribeOverlay
+   - uicontrol Style=pushbutton Tag=TMWWaitbarCancelButton Units=points Position=[207 7 45 17.25] String="Cancel" FontSize=8 FontName=MS Sans Serif HAlign=center
+   - uiprogressindicator Position=[19 46.5 324 6] Value=0.1
+  CloseRequestFcn=[disp(1)]
+   [waitbar cell message] figure: Name=[] WindowStyle=normal Resize=off Units=points Position=[585 421.875 270 56.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[TMWWaitbar] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=auto
+   pixels=[781 563.5 360 75]
+   appdata: TMWWaitbar_handles, TMWWaitbar_value
+   - axes Units=points Position=[13.5 16.875 243 11.25] FontSize=8 FontName=Helvetica XLim=[0 100] YLim=[0 1] YDir=normal Visible=off
+   - annotationpane Tag=scribeOverlay
+   - uiprogressindicator Position=[19 23.5 324 6] Value=0.1
+   [waitbar long message] figure: Name=[] WindowStyle=normal Resize=off Units=points Position=[235.725 421.875 968.55 56.25] Color=[0.9608 0.9608 0.9608] Visible=on Tag=[TMWWaitbar] HandleVisibility=callback IntegerHandle=off NumberTitle=off MenuBar=none ToolBar=auto
+   pixels=[315.3 563.5 1291.4 75]
+   appdata: TMWWaitbar_handles, TMWWaitbar_value
+   - axes Units=points Position=[48.4275 16.875 871.695 11.25] FontSize=8 FontName=Helvetica XLim=[0 100] YLim=[0 1] YDir=normal Visible=off
+   - annotationpane Tag=scribeOverlay
+   - uiprogressindicator Position=[65.57 23.5 1162.26 6] Value=0.1
+[Warning: Could not set property value
+Property: NoSuchProp
+Value: 1
+]
+waitbar bad option: warned [MATLAB:uistring:waitbar:WarningCouldNotSetPropertyValue] Could not set property value
+Property: NoSuchProp
+Value: 1
+ valid=1
+waitbar odd options: ERR [MATLAB:waitbar:InvalidArguments] Improper arguments for waitbar.
+waitbar(x) alone: title=[Waitbar]
+two waitbars: distinct=1
+waitbar Visible off: off
+questdlg(): ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+questdlg('a'): ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+questdlg 7 args: ERR [MATLAB:TooManyInputs] Too many input arguments.
+inputdlg(): ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+inputdlg bad numlines: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+inputdlg 6 args: ERR [MATLAB:TooManyInputs] Too many input arguments.
+listdlg(): ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+listdlg odd: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+listdlg unknown: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+listdlg no list: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+listdlg ok: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uigetfile: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiputfile: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uigetdir: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisetcolor: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisetfont: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiopen: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uisave: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiload: ERR [MATLAB:hg:NonInteractiveFunctionSupport] Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uigetfile 5 outputs: ERR [MATLAB:TooManyOutputs] Too many output arguments.
+exportapp(f): ERR [MATLAB:print:HeadlessFigureUnsupported] Running using -nodisplay or other startup options that prevent figures from displaying is not supported.
+exportapp(): ERR [MATLAB:minrhs] Not enough input arguments.

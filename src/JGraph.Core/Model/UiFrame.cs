@@ -81,7 +81,9 @@ public sealed record UiPanelFrame(
     bool Bold,
     bool Italic,
     Thickness Insets,
-    IReadOnlyList<IUiNodeFrame> Children) : IUiNodeFrame;
+    IReadOnlyList<IUiNodeFrame> Children,
+    double? Fill = null,
+    UiColor? FillColor = null) : IUiNodeFrame;
 
 /// <summary>
 /// An immutable picture of a figure's components at one flush (app-building plan, section A): the
@@ -182,7 +184,9 @@ public sealed class UiFrame
                         panel.FontWeight is "bold" or "demi",
                         panel.FontAngle is "italic" or "oblique",
                         panel.Insets(),
-                        TakeNodes(panel.Components)));
+                        TakeNodes(panel.Components),
+                        panel is UiProgressIndicatorModel bar ? (bar.Indeterminate ? 1 : bar.Value) : null,
+                        (panel as UiProgressIndicatorModel)?.ProgressColor));
                     break;
             }
         }

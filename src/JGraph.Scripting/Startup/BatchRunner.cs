@@ -42,6 +42,8 @@ public static class BatchRunner
     /// The run's end — its workspace's destruction, its open files, its native host — waits for the
     /// caller to dispose the session, which it does when the last window closes. An engine without
     /// sessions runs as <see cref="RunAsync"/> does and hands back none.
+    /// <paramref name="closeFigure"/> closes the window of a figure the script deleted or closed: a
+    /// dialog's OK button deletes its figure, and its window has to go with it.
     /// </summary>
     public static Task<(int Code, IScriptSession? Session)> RunInSessionAsync(
         StartupOptions options,
@@ -50,8 +52,9 @@ public static class BatchRunner
         Action<int, FigureModel> showFigure,
         IScriptFigureFiles? figureFiles = null,
         IScriptAudio? audio = null,
-        CancellationToken cancellationToken = default) =>
-        RunCoreAsync(options, engines, output, showFigure, figureFiles, audio, inSession: true, cancellationToken);
+        CancellationToken cancellationToken = default,
+        Action<int>? closeFigure = null) =>
+        RunCoreAsync(options, engines, output, showFigure, figureFiles, audio, inSession: true, cancellationToken, closeFigure);
 
     private static async Task<(int Code, IScriptSession? Session)> RunCoreAsync(
         StartupOptions options,
@@ -61,7 +64,8 @@ public static class BatchRunner
         IScriptFigureFiles? figureFiles,
         IScriptAudio? audio,
         bool inSession,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        Action<int>? closeFigure = null)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(engines);
@@ -95,7 +99,8 @@ public static class BatchRunner
             workingDirectory,
             ReadResolver(workingDirectory, resolved.SourceDirectory),
             figureFiles,
-            audio)
+            audio,
+            closeFigure)
         {
             ScriptPath = resolved.SourcePath,
         };

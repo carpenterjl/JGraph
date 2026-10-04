@@ -152,8 +152,25 @@ internal static partial class JgsBuiltins
             }
         }
         if (data is null) throw new JgsRuntimeException(line, col, $"{verb} requires CData.");
-        bool holding = JG.IsHolding;
-        ImagePlot plot = highLevel ? JG.Image(new double[0,0]) : JG.Gca().AddImage(new double[0,0]);
+        // 'Parent', ax puts the image in that axes and leaves the current one alone (U4).
+        JGraph.Core.Model.AxesModel? named = null;
+        foreach ((string name, JgsValue value) in properties)
+        {
+            if (name.Equals("Parent", StringComparison.OrdinalIgnoreCase)
+                && JgsHandleRegistry.TryGet(value, out JgsHandleEntry? parent) && parent.Target is JGraph.Core.Model.AxesModel chosen)
+            {
+                named = chosen;
+            }
+        }
+
+        if (named is not null)
+        {
+            properties.RemoveAll(static p => p.Name.Equals("Parent", StringComparison.OrdinalIgnoreCase));
+        }
+
+        bool holding = named is null ? JG.IsHolding : named.Hold;
+        ImagePlot plot = named is not null ? named.AddImage(new double[0,0])
+            : highLevel ? JG.Image(new double[0,0]) : JG.Gca().AddImage(new double[0,0]);
         var entry = JgsHandleRegistry.EntryFor(plot);
         JgsGraphicsProperties.SetImageCData(entry, data, line, col);
         plot.RowZeroAtTop = false;
@@ -163,20 +180,20 @@ internal static partial class JgsBuiltins
         if (y is not null) JgsGraphicsProperties.Set(entry, "YData", y, line, col);
         if (highLevel && !holding)
         {
-            JG.Gca().ActiveYAxis.Inverted = true;
-            JG.Gca().Layer = JGraph.Core.Model.AxesLayer.Top;
-            JG.Gca().SetViewAngles(0, 90);
+            (named ?? JG.Gca()).ActiveYAxis.Inverted = true;
+            (named ?? JG.Gca()).Layer = JGraph.Core.Model.AxesLayer.Top;
+            (named ?? JG.Gca()).SetViewAngles(0, 90);
         }
         foreach (var property in properties) JgsGraphicsProperties.Set(entry, property.Name, property.Value, line, col);
         if (scaled && plot.TrueColors is null)
         {
             plot.AutoScaleColor = true;
             var range = plot.ColorRange;
-            JG.Gca().ColorLimits = new DataRange(range.Min, range.Max);
+            (named ?? JG.Gca()).ColorLimits = new DataRange(range.Min, range.Max);
         }
         if (limits is not null)
         {
-            JG.Gca().ColorLimits = new DataRange(limits[0], limits[1]);
+            (named ?? JG.Gca()).ColorLimits = new DataRange(limits[0], limits[1]);
             plot.AutoScaleColor = false; plot.ColorMin = limits[0]; plot.ColorMax = limits[1];
         }
         return JgsHandleRegistry.For(plot);

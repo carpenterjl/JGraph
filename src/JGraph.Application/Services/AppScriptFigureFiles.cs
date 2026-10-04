@@ -68,24 +68,30 @@ public sealed class AppScriptFigureFiles : IScriptFigureFiles
     /// </remarks>
     public bool CaptureWindow(FigureModel figure, string path)
     {
-        // The active window, which is the one a script asking for a picture of the application means.
-        System.Windows.Window? window = System.Windows.Application.Current?.Windows
-            .OfType<System.Windows.Window>()
-            .FirstOrDefault(w => w.IsActive);
-
-        if (window is null || window.ActualWidth <= 0 || window.ActualHeight <= 0)
+        if (System.Windows.Application.Current is not { } app)
         {
             return false;
         }
 
-        var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(
-            (int)System.Math.Ceiling(window.ActualWidth),
-            (int)System.Math.Ceiling(window.ActualHeight),
-            96, 96, System.Windows.Media.PixelFormats.Pbgra32);
-        bitmap.Render(window);
+        // The figure's own window, asked for on the thread that owns it and only once that thread
+        // has nothing left to lay out or draw (U4): a script calls from its own thread, and before
+        // this fix the picture was of whichever window happened to be active.
+        System.Windows.Media.Imaging.BitmapSource? picture = app.Dispatcher.Invoke(
+            () => app.Windows.OfType<FigureWindow>().FirstOrDefault(window => window.IsVisible && window.Shows(figure))?.CaptureSurface(),
+            System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        if (picture is null)
+        {
+            return false;
+        }
 
-        var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
-        encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+        System.Windows.Media.Imaging.BitmapEncoder encoder = Path.GetExtension(path).ToLowerInvariant() switch
+        {
+            ".jpg" or ".jpeg" => new System.Windows.Media.Imaging.JpegBitmapEncoder { QualityLevel = 95 },
+            ".tif" or ".tiff" => new System.Windows.Media.Imaging.TiffBitmapEncoder(),
+            ".bmp" => new System.Windows.Media.Imaging.BmpBitmapEncoder(),
+            _ => new System.Windows.Media.Imaging.PngBitmapEncoder(),
+        };
+        encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(picture));
         using FileStream file = File.Create(path);
         encoder.Save(file);
         return true;

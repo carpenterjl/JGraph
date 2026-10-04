@@ -313,3 +313,73 @@ zeros. Three outputs are refused.
   `matlab.ui.eventdata.MouseData` (`ButtonDown`). The `Callback` does not run. A left click on an
   enabled `text` or `frame` runs nothing.
 - Every `Callback` gets an `ActionData`, and `gco` is the control.
+
+## U4 findings (R2025b, headless)
+
+Every `u4_*` probe ran `-noFigureWindows -batch`; none opens a window. The layouts of the three
+blocking dialogs were recorded in U1's window session (`u1/u1w_dialogs`).
+
+**`uiwait`, `uiresume`, `WaitStatus`** (`u4_wait`, `u4_wait2`). A figure has a hidden `WaitStatus`:
+`[]` until something waits on it, then `'waiting'` or `'inactive'`. It takes its two words in any
+case and abbreviated; anything else is `MATLAB:gbtdatatypes:WrongFormat`. `uiwait` warns that it
+has no display **before** it looks at its arguments, then: what is not one figure is
+`MATLAB:uiwait:InvalidInputType`; a timeout that is not numeric is `InvalidSecondInputType`; a
+timeout under one second becomes one second with a warning; a vector, an empty and a NaN are
+refused in the words of the timer the timeout is. It makes the figure visible. `uiresume` on a
+handle that is no object is `MATLAB:class:InvalidHandle`, on one object that is not a figure
+`MATLAB:uiresume:InvalidInputType`; a figure that is not waiting, and several figures, pass.
+A timeout, a timer's `uiresume`, a `WaitStatus` written by hand, a `delete` and a `close` each end
+the wait; a timeout leaves `'inactive'`. Timer callbacks do not nest: a `uiwait` started inside a
+timer's callback is never ended by another timer, which is where `u4_wait` stops (its output ends
+in the runner's TIMEOUT line, and `u4_wait2` is the rest of it). One reading is not understood: a
+bare `uiwait` on the current figure, resumed by a timer after 0.5 s, took about 4 s.
+
+**`waitfor`** (`u4_wait2`). No argument is `MATLAB:minrhs`, four are `MATLAB:maxrhs`. What is not a
+live object — a number, text, a deleted handle — returns at once without complaint. A property
+the object lacks, or a name that is not text, is `MATLAB:waitfor:BadProperty`. The name is taken
+in any case; the value is compared exactly (text by case, a `Value` of 0 by `false` too). A
+property set to the value it already has is no change.
+
+**`guihandles`, `guidata`, application data** (`u4_guidata`). `guihandles` walks `findall`'s
+order — the figure, its children front first, then theirs — and makes one field for each `Tag`
+that is a valid name; objects sharing a tag share a field as a row; hidden handles are included;
+a figure with nothing tagged answers `[]`. `guidata` is the figure's application data
+`UsedByGUIData_m`, and storing an empty value removes it. `rmappdata` of a name not there is
+`MATLAB:HandleGraphics:Appdata:InvalidPropertyName`; a name that is not text is
+`...:InvalidSecondArgumentName` (a cell of names too); a name that cannot be a field is
+`MATLAB:AddField:InvalidFieldName`; what is not an object is `MATLAB:hg:InvalidArray`. The root
+takes application data.
+
+**The message boxes** (`u4_dialogs`). The tree is the one `u0_dialogs` found; this probe adds the
+forms. A dialog's pixel rectangle is centred across the screen and two thirds of the way up it,
+each edge rounded to a whole pixel: `x = 1 + (W - w)/2`, `y = 1 + (H - h)*2/3`. The message text's
+`String` is always a cell; a newline in the message starts a new line; text is wrapped at 75
+characters. `'replace'` and `'modal'` take over the newest box of the same title and tag and
+close the others; `'non-modal'` adds one. `helpdlg` always replaces; `errordlg` and `warndlg` add
+unless told `'replace'` (`errordlg` also takes `'on'`). An icon word that is none of the four
+warns and shows none. The OK button's `Callback` is the text `delete(gcbf)`; Return, Space and
+Escape delete the box through `KeyPressFcn`.
+
+**`dialog`** is a figure with `WindowStyle` modal, `Resize` off, `MenuBar` none, `NumberTitle`
+off, `IntegerHandle` off, `HandleVisibility` callback, and a `ButtonDownFcn` that closes it while
+it is empty. A figure's `WindowStyle` takes `normal`, `modal`, `docked` and `alwaysontop`.
+
+**`waitbar`** is a 270 by 56.25 point figure (360 by 75 pixels) in the middle of the screen, tagged
+`TMWWaitbar`, with an invisible axes at `[13.5 16.875 243 11.25]` points whose title is the
+message, and a `uiprogressindicator` at `[19 23.5 324 6]` pixels (`Value` 0 to 1, `Indeterminate`,
+`ProgressColor` `[0.149 0.549 0.867]`, `HandleVisibility` off). Its application data are
+`TMWWaitbar_handles` (figure, axes, axesTitle, progressbar, container) and `TMWWaitbar_value`
+(0 to 100). `waitbar(x)` moves the newest one; `waitbar(x, h, message)` changes the title, and a
+message that is not text is taken without complaint. With `'CreateCancelBtn'` the axes move up by
+the button's height, but the figure grows only to fit the title, so the extra height asked for is
+lost (61.625 points, not 73.5).
+
+**The ones that block** refuse without a display before they read their arguments
+(`MATLAB:hg:NonInteractiveFunctionSupport`): `questdlg`, `inputdlg`, `listdlg`, `uigetfile`,
+`uiputfile`, `uigetdir`, `uisetcolor`, `uisetfont`, `uiopen`, `uisave`, `uiload`. Only MATLAB's own
+count of arguments comes first (`questdlg` with seven, `uiload` with one). `exportapp` without a
+display is `MATLAB:print:HeadlessFigureUnsupported`, and on what is not a figure
+`MATLAB:print:ExportHandleNotValid`.
+
+**Words** (`u4_messages`): the dialogs' messages as R2025b's catalogue has them, and
+`u4_nargout` the output counts the generator reads.

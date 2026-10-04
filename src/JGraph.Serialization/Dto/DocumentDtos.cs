@@ -61,6 +61,12 @@ public sealed class FigureDto
 
     public bool IntegerHandle { get; set; } = true;
 
+    /// <summary>MATLAB's <c>MenuBar</c>: false for <c>'none'</c>. True in every document written before U4.</summary>
+    public bool MenuBar { get; set; } = true;
+
+    /// <summary>MATLAB's <c>WindowStyle</c>; null means normal, as in every document written before U4.</summary>
+    public string? WindowStyle { get; set; }
+
     /// <summary>Everything below is null or defaulted in documents written before M75.</summary>
     public ColormapDto? Colormap { get; set; }
 

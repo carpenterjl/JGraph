@@ -83,7 +83,7 @@
 
             <!-- The figure canvas, and over it the script's components (app-building plan, U1).
                  The layer takes no clicks outside its controls. -->
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="2" x:Name="FigureSurface">
                 <jg:FigureControl x:Name="FigureView" Figure="{Binding Figure}" />
                 <jg:UiComponentLayer x:Name="ComponentLayer" />
             </Grid>

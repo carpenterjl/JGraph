@@ -84,6 +84,7 @@ internal static partial class JgsGraphicsProperties
         MenuItemModel => "uimenu",
         UiControlModel => "uicontrol",
         UiButtonGroupModel => "uibuttongroup",
+        UiProgressIndicatorModel => "uiprogressindicator",
         UiPanelModel => "uipanel",
 
         // A circle is a different class in MATLAB, and findobj(gcf, 'Type', 'polaraxes') is how a
@@ -518,6 +519,7 @@ internal static partial class JgsGraphicsProperties
             {
                 UiControlModel => "matlab.ui.control.UIControl",
                 UiButtonGroupModel => "matlab.ui.container.ButtonGroup",
+                UiProgressIndicatorModel => "matlab.ui.control.internal.ProgressIndicator",
                 UiPanelModel => "matlab.ui.container.Panel",
                 _ => word,
             };
@@ -795,6 +797,11 @@ internal static partial class JgsGraphicsProperties
         if (typeof(UiButtonGroupModel).IsAssignableFrom(type))
         {
             AddUiButtonGroupBlock(table);
+        }
+
+        if (typeof(UiProgressIndicatorModel).IsAssignableFrom(type))
+        {
+            AddUiProgressIndicatorBlock(table);
         }
 
         if (typeof(UiControlModel).IsAssignableFrom(type))
@@ -1877,10 +1884,27 @@ internal static partial class JgsGraphicsProperties
     {
         if (typeof(TextAnnotation).IsAssignableFrom(type))
         {
+            // A label given as a cell of lines reads back as that cell, a column (U4).
             Put(table, "String",
-                entry => JgsValue.Str(((TextAnnotation)entry.Target).Text),
-                (entry, value, line, col) => ((TextAnnotation)entry.Target).Text =
-                    JgsBuiltins.AnnotationString("String", value, line, col));
+                entry =>
+                {
+                    var text = (TextAnnotation)entry.Target;
+                    if (!text.LinesAreCell)
+                    {
+                        return JgsValue.Str(text.Text);
+                    }
+
+                    string[] lines = text.Text.Length == 0 ? [] : text.Text.Split('\n');
+                    JgsValue cell = JgsValue.Cell([.. lines.Select(static l => JgsValue.Str(l))]);
+                    cell.Reshape(lines.Length, lines.Length == 0 ? 0 : 1);
+                    return cell;
+                },
+                (entry, value, line, col) =>
+                {
+                    var text = (TextAnnotation)entry.Target;
+                    text.Text = JgsBuiltins.AnnotationString("String", value, line, col);
+                    text.LinesAreCell = value.Type == JgsType.Cell;
+                });
             Put(table, "FontName",
                 entry => JgsValue.Str(((TextAnnotation)entry.Target).FontFamily),
                 (entry, value, line, col) => ((TextAnnotation)entry.Target).FontFamily =
@@ -1917,6 +1941,36 @@ internal static partial class JgsGraphicsProperties
                     var text = (TextAnnotation)entry.Target;
                     text.Position = a;
                     text.Box = Rect2D.FromCorners(a, b);
+                });
+
+            // A text in an axes — one with no box of its own, placed among the data or in device
+            // units — is a point, [x y z], in the units it is placed in. The box above is an
+            // annotation's, in fractions of the figure.
+            GraphicsProperty boxed = table["Position"];
+            Put(table, "Position",
+                entry =>
+                {
+                    var text = (TextAnnotation)entry.Target;
+                    return IsAxesText(text) ? Row(text.Position.X, text.Position.Y, text.DeviceUnits is null ? text.Z : 0) : boxed.Read(entry);
+                },
+                (entry, value, line, col) =>
+                {
+                    var text = (TextAnnotation)entry.Target;
+                    if (!IsAxesText(text))
+                    {
+                        boxed.Write!(entry, value, line, col);
+                        return;
+                    }
+
+                    double[] point = JgsBuiltins.ToDoubles("Position", value, line, col);
+                    if (point.Length is not (2 or 3))
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:hg:shaped_arrays:Vector3Type",
+                            "Error setting property 'Position' of class 'Text':\nValue must be a 2 or 3 element vector");
+                    }
+
+                    text.Position = new Point2D(point[0], point[1]);
+                    text.Z = point.Length == 3 ? point[2] : 0;
                 });
             AddTextBlock(table);
         }
@@ -2017,6 +2071,10 @@ internal static partial class JgsGraphicsProperties
                     new Point2D(box[0] + box[2], Up(box[1])));
             });
     }
+
+    /// <summary>Whether a label is a text in an axes — a point — rather than a figure's annotation box.</summary>
+    private static bool IsAxesText(TextAnnotation text) =>
+        text.Box is null && (text.DeviceUnits is not null || text.Space == AnnotationSpace.Data);
 
     /// <summary>
     /// Flips one normalized y between MATLAB's origin and this model's. It is its own inverse, which

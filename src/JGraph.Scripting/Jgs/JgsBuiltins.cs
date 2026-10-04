@@ -328,6 +328,8 @@ internal static partial class JgsBuiltins
         // switch. Only the bare one needs a window.
         Define("pause", (args, line, col) => Pause(args, cancellationToken, host.Timers, line, col));
         RegisterWaitingBuiltins(env, cancellationToken);
+        RegisterUiWaitingBuiltins(env, host, cancellationToken);
+        RegisterUiDialogBuiltins(env, host, cancellationToken);
 
         // --- Time & date ---------------------------------------------------------------------
         // A stopwatch handle is the high-resolution tick count taken relative to when these globals were

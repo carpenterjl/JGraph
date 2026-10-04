@@ -35,6 +35,8 @@ internal static partial class JgsBuiltins
         Define("isappdata", IsAppData);
         DefineSilent("rmappdata", RemoveAppData);
         Define("guidata", (args, line, col) => GuiData(args, dialect.CopyOnAssign, line, col));
+        env.Builtins.Register("guihandles", JgsValue.Function(
+            new BuiltinFunction("guihandles", GuiHandles) { AutoCallsBare = true }));
 
         // --- Keeping objects in step ------------------------------------------------------------
         Define("linkprop", LinkProp);
@@ -66,75 +68,206 @@ internal static partial class JgsBuiltins
         return (JgsHandleRegistry.Require(args[0], line, col), args.Skip(1).ToList());
     }
 
+    // --- application data (R2025b's forms and refusals, probe u4_guidata) ---------------------------
+
+    /// <summary>The name <c>guidata</c> keeps its value under, among the figure's application data.</summary>
+    private const string GuiDataName = "UsedByGUIData_m";
+
+    /// <summary>
+    /// The object an application-data verb names — any graphics object, the root included — with
+    /// R2025b's refusals for too few arguments and for what is not an object.
+    /// </summary>
+    private static JgsHandleEntry AppDataOwner(IReadOnlyList<JgsValue> args, int needed, int line, int col)
+    {
+        if (args.Count < needed)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        if (args[0].Type != JgsType.Number || !JgsHandleRegistry.TryGetOrRoot(args[0], out JgsHandleEntry? entry))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:hg:InvalidArray", "Input was not a valid graphics object.");
+        }
+
+        return entry;
+    }
+
+    /// <summary>The name an application-data verb was given, which is text and nothing else.</summary>
+    private static string AppDataName(JgsValue value, int line, int col) =>
+        IsTextScalar(value)
+            ? TextOf(value)
+            : throw new JgsRuntimeException(line, col, "MATLAB:HandleGraphics:Appdata:InvalidSecondArgumentName",
+                "Second argument must be a character vector");
+
     private static JgsValue GetAppData(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        (JgsHandleEntry entry, IReadOnlyList<JgsValue> rest) = PeelEntry("getappdata", args, line, col);
+        JgsHandleEntry entry = AppDataOwner(args, 1, line, col);
+        if (args.Count > 2)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
+        }
 
         // getappdata(h) with no name answers with the whole lot as a struct, which is how a script
         // asks what is there without knowing the names.
-        if (rest.Count == 0)
+        if (args.Count == 1)
         {
             return JgsValue.Struct(new Dictionary<string, JgsValue>(entry.AppData, StringComparer.Ordinal));
         }
 
-        string name = StrOf("getappdata", rest[0], line, col);
-
         // A name nothing was stored under answers empty rather than erroring, which is MATLAB's rule
         // and what makes `if isempty(getappdata(h, 'x'))` the ordinary way to ask.
-        return entry.AppData.TryGetValue(name, out JgsValue? stored) ? stored : JgsValue.Array([]);
+        return entry.AppData.TryGetValue(AppDataName(args[1], line, col), out JgsValue? stored)
+            ? stored
+            : JgsMatrix.FromColumnMajor([], 0, 0);
     }
 
     private static JgsValue SetAppData(IReadOnlyList<JgsValue> args, bool sharesOnStore, int line, int col)
     {
-        (JgsHandleEntry entry, IReadOnlyList<JgsValue> rest) = PeelEntry("setappdata", args, line, col);
-        if (rest.Count != 2)
+        JgsHandleEntry entry = AppDataOwner(args, 3, line, col);
+        if (args.Count > 3)
         {
-            throw new JgsRuntimeException(line, col,
-                "setappdata takes a handle, a name, and the value to store under it.");
+            throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
         }
 
-        // M2 (appendix A #100): appdata is an entry, so in the MATLAB dialect it holds a counted
-        // share of its own — `setappdata(f, 'k', v); v(1) = 7` leaves what the figure hands back.
-        // The JGS dialect keeps the caller's own wrapper (M17, reference semantics), and marks the
-        // payload exposed so `clear` cannot free what the figure can still hand back (M6, #152).
-        JgsValue kept = RetainedForEntry(rest[1], sharesOnStore);
-        JgsLifetime.Pin(kept); // V10: the figure holds it for as long as it likes
-        entry.AppData[StrOf("setappdata", rest[0], line, col)] = kept;
+        // The data is kept as a struct's fields in R2025b, so a name is a field name.
+        string name = AppDataName(args[1], line, col);
+        if (!IsValidVariableName(name))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:AddField:InvalidFieldName", $"Invalid field name: '{name}'.");
+        }
+
+        StoreAppData(entry, name, args[2], sharesOnStore);
         return JgsValue.Null;
     }
+
+    /// <summary>
+    /// Stores one value among an object's application data. M2 (appendix A #100): in the MATLAB
+    /// dialect the entry holds a counted share of its own — <c>setappdata(f, 'k', v); v(1) = 7</c>
+    /// leaves what the figure hands back. The JGS dialect keeps the caller's own wrapper (M17) and
+    /// marks the payload exposed so <c>clear</c> cannot free what the figure can still hand back.
+    /// </summary>
+    internal static void StoreAppData(JgsHandleEntry entry, string name, JgsValue value, bool sharesOnStore)
+    {
+        JgsValue kept = RetainedForEntry(value, sharesOnStore);
+        JgsLifetime.Pin(kept); // V10: the object holds it for as long as it likes
+        entry.AppData[name] = kept;
+    }
+
+    /// <summary>Takes one name out, keeping the others in the order they were stored in.</summary>
+    internal static bool DropAppData(JgsHandleEntry entry, string name)
+    {
+        if (!entry.AppData.ContainsKey(name))
+        {
+            return false;
+        }
+
+        // Rebuilt rather than removed from: a dictionary hands a freed slot to the next name, which
+        // would then be listed where the old one was instead of last.
+        List<KeyValuePair<string, JgsValue>> rest = [.. entry.AppData.Where(pair => pair.Key != name)];
+        entry.AppData.Clear();
+        foreach ((string key, JgsValue value) in rest)
+        {
+            entry.AppData[key] = value;
+        }
+
+        return true;
+    }
+
+    /// <summary>The figure an object is in, for <c>guidata</c> and <c>guihandles</c>, or R2025b's refusal.</summary>
+    private static FigureModel GuiFigure(string verb, JgsValue handle, int line, int col) =>
+        handle.Type == JgsType.Number && JgsHandleRegistry.TryGet(handle, out JgsHandleEntry? named)
+        && FigureOf(named.Target) is { } figure
+            ? figure
+            : throw new JgsRuntimeException(line, col, $"MATLAB:{verb}:InvalidInput",
+                "Object must be a figure or one of its child objects.");
 
     /// <summary>
     /// <c>guidata(h)</c> reads, and <c>guidata(h, v)</c> stores, the one value a figure keeps for the
     /// script that built it (V6, appendix A #102). The object named may be the figure or anything in
     /// it: the value lives on the figure either way, which is what lets a callback on a button find
-    /// what the figure's builder stored. Stored as a counted share (M2), so the caller's later writes
-    /// do not reach it and what is handed back is a copy of its own; nothing stored reads as <c>[]</c>.
+    /// what the figure's builder stored. It is one of the figure's application data, under R2025b's
+    /// name for it, and storing an empty value takes it out (U4). Stored as a counted share (M2), so
+    /// the caller's later writes do not reach it; nothing stored reads as <c>[]</c>.
     /// </summary>
     private static JgsValue GuiData(IReadOnlyList<JgsValue> args, bool sharesOnStore, int line, int col)
     {
-        if (args.Count is < 1 or > 2)
+        if (args.Count < 1)
         {
-            throw new JgsRuntimeException(line, col,
-                "guidata takes a handle, and the value to store on its figure: guidata(h) or guidata(h, v).");
+            throw new JgsRuntimeException(line, col, "MATLAB:narginchk:notEnoughInputs", "Not enough input arguments.");
         }
 
-        // MATLAB's own words for a dead or a non-handle argument, and for a handle nothing owns.
-        if (!JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? named)
-            || FigureOf(named.Target) is not { } figure)
+        if (args.Count > 2)
         {
-            throw new JgsRuntimeException(line, col, "Object must be a figure or one of its child objects.");
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
         }
 
-        JgsHandleEntry owner = JgsHandleRegistry.EntryFor(figure);
+        JgsHandleEntry owner = JgsHandleRegistry.EntryFor(GuiFigure("guidata", args[0], line, col));
         if (args.Count == 1)
         {
-            return owner.GuiData ?? JgsMatrix.FromColumnMajor([], 0, 0);
+            return owner.AppData.TryGetValue(GuiDataName, out JgsValue? stored) ? stored : JgsMatrix.FromColumnMajor([], 0, 0);
         }
 
-        JgsValue kept = RetainedForEntry(args[1], sharesOnStore);
-        JgsLifetime.Pin(kept); // V10: the figure holds it for as long as it likes
-        owner.GuiData = kept;
+        if (IsEmptyValue(args[1]))
+        {
+            DropAppData(owner, GuiDataName);
+        }
+        else
+        {
+            StoreAppData(owner, GuiDataName, args[1], sharesOnStore);
+        }
+
         return JgsValue.Null;
+    }
+
+    /// <summary>
+    /// <c>guihandles(h)</c>: a struct of the handles in an object's figure, one field for each
+    /// <c>Tag</c> that can be a field name, in the order <c>findall</c> meets them. Objects sharing
+    /// a tag share a field, as a row.
+    /// </summary>
+    private static JgsValue GuiHandles(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count > 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+        }
+
+        FigureModel figure = args.Count == 0 ? JG.CurrentFigure : GuiFigure("guihandles", args[0], line, col);
+        JgsValue all = Find("findall", [JgsHandleRegistry.For(figure)], line, col, hidden: true);
+        var tagged = new Dictionary<string, List<double>>(StringComparer.Ordinal);
+        int count = all.Type == JgsType.Array ? all.ArrayLength : 1;
+        for (int i = 0; i < count; i++)
+        {
+            JgsValue handle = all.Type == JgsType.Array ? all.ElementAt(i) : all;
+            if (!JgsHandleRegistry.TryGet(handle, out JgsHandleEntry? entry)
+                || !JgsGraphicsProperties.TryFind(entry.Target, "Tag", out _))
+            {
+                continue;
+            }
+
+            JgsValue tag = JgsGraphicsProperties.Get(entry, "Tag", line, col);
+            if (!IsTextScalar(tag) || !IsValidVariableName(TextOf(tag)))
+            {
+                continue;
+            }
+
+            if (!tagged.TryGetValue(TextOf(tag), out List<double>? handles))
+            {
+                tagged[TextOf(tag)] = handles = [];
+            }
+
+            handles.Add(handle.AsNumber);
+        }
+
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        foreach ((string tag, List<double> handles) in tagged)
+        {
+            fields[tag] = handles.Count == 1
+                ? JgsValue.Number(handles[0])
+                : JgsMatrix.FromColumnMajor([.. handles], 1, handles.Count);
+        }
+
+        // A figure with nothing tagged answers [], which is what R2025b's loop starts from.
+        return fields.Count == 0 ? JgsMatrix.FromColumnMajor([], 0, 0) : JgsValue.Struct(fields);
     }
 
     /// <summary>
@@ -155,28 +288,28 @@ internal static partial class JgsBuiltins
 
     private static JgsValue IsAppData(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        (JgsHandleEntry entry, IReadOnlyList<JgsValue> rest) = PeelEntry("isappdata", args, line, col);
-        if (rest.Count != 1)
+        JgsHandleEntry entry = AppDataOwner(args, 2, line, col);
+        if (args.Count > 2)
         {
-            throw new JgsRuntimeException(line, col, "isappdata takes a handle and a name.");
+            throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
         }
 
-        return JgsValue.Bool(entry.AppData.ContainsKey(StrOf("isappdata", rest[0], line, col)));
+        return JgsValue.Bool(entry.AppData.ContainsKey(AppDataName(args[1], line, col)));
     }
 
     private static JgsValue RemoveAppData(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        (JgsHandleEntry entry, IReadOnlyList<JgsValue> rest) = PeelEntry("rmappdata", args, line, col);
-        if (rest.Count != 1)
+        JgsHandleEntry entry = AppDataOwner(args, 2, line, col);
+        if (args.Count > 2)
         {
-            throw new JgsRuntimeException(line, col, "rmappdata takes a handle and a name.");
+            throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
         }
 
-        string name = StrOf("rmappdata", rest[0], line, col);
-        if (!entry.AppData.Remove(name))
+        string name = AppDataName(args[1], line, col);
+        if (!DropAppData(entry, name))
         {
-            throw new JgsRuntimeException(line, col,
-                $"rmappdata: nothing is stored under '{name}' on this object.");
+            throw new JgsRuntimeException(line, col, "MATLAB:HandleGraphics:Appdata:InvalidPropertyName",
+                $"Invalid user property: {name}.");
         }
 
         return JgsValue.Null;

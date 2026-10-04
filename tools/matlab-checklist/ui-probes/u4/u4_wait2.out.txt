@@ -1,0 +1,27 @@
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiwait bare: 4.1s
+[Warning: uiwait is not supported when MATLAB is started with the -nodisplay or -noFigureWindows option or there is no display.]
+uiresume bare from a timer: 0.5s
+waitfor(): ERR [MATLAB:minrhs] Not enough input arguments.
+waitfor(5.5): ok
+waitfor('a'): ok
+waitfor(f, 'NoSuch'): ERR [MATLAB:waitfor:BadProperty] Invalid property.
+waitfor(f, 5): ERR [MATLAB:waitfor:BadProperty] Invalid property.
+waitfor(f, 'Name', 'x', 4): ERR [MATLAB:maxrhs] Too many input arguments.
+x = waitfor(f, 'Name', ''): ERR [MATLAB:maxlhs] Too many output arguments.
+waitfor(deleted): ok
+  0.0s
+waitfor(deleted, 'Name'): ok
+  0.0s
+waitfor already equal: 0.0s
+waitfor Value already 0: 0.0s
+waitfor Value false (logical): 0.0s
+waitfor Value 1: 0.5s
+waitfor Value change: 0.5s
+waitfor Value set to the same, then changed: 1.2s
+waitfor name (lower case): 0.5s
+waitfor Name is case sensitive in the value: 1.2s
+waitfor ended by delete: 0.5s
+waitfor(fig) ended by delete: 0.6s
+waitfor UserData change: 0.5s
+waitfor UserData value: 0.5s

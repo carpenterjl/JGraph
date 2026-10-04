@@ -267,7 +267,25 @@ public class MatlabLivingGraphicsTests : IDisposable
     [Fact]
     public void WaitforStillChecksWhatItWasAskedToWaitOn()
     {
-        Assert.Contains("no 'Wobble'", Error("figure(1); waitfor(gca, 'Wobble');"));
+        // R2025b's words for a property the object lacks (U4, probe u4_wait2).
+        Assert.Contains("Invalid property.", Error("figure(1); waitfor(gca, 'Wobble');"));
+    }
+
+    [Fact]
+    public void SetWritesXDataAndYDataTogether_SoASeriesCanGrow()
+    {
+        // The growing-plot idiom of every acquisition loop (U4, ex5): one set call, both coordinates.
+        Ok(Run("""
+            h = plot(NaN, NaN, '.-');
+            set(h, 'XData', 1:3, 'YData', [4 5 6]);
+            disp(mat2str(get(h, 'XData'))); disp(mat2str(get(h, 'YData')));
+            set(h, 'YData', [7 8], 'Color', [1 0 0], 'XData', [1 2]);
+            disp(mat2str(get(h, 'YData')));
+            """));
+        Assert.Contains("[1 2 3]", _output.NormalText);
+        Assert.Contains("[4 5 6]", _output.NormalText);
+        Assert.Contains("[7 8]", _output.NormalText);
+        Assert.Contains("A series is a pair", Error("h = plot(1:2, 1:2); set(h, 'XData', 1:3, 'YData', 1:2);"));
     }
 
     // --- groups and transforms -----------------------------------------------------------------------

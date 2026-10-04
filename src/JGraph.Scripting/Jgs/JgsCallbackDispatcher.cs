@@ -25,7 +25,7 @@ internal sealed class JgsCallbackDispatcher
 {
     /// <summary>Nested drains stop at this depth and leave events queued — a resize storm inside a
     /// waitfor inside a callback degrades to waiting, not to a blown stack.</summary>
-    private const int MaxDrainDepth = 64;
+    internal const int MaxDrainDepth = 64;
 
     private readonly JGraphScriptGlobals _globals;
     private readonly ScriptContext _context;
@@ -57,6 +57,33 @@ internal sealed class JgsCallbackDispatcher
         // before the object is gone — and from any other thread (a window closing, the plot
         // browser) they queue for the script thread like every other interface event.
         GraphObjectLifecycle.Deleting += OnModelDeleting;
+    }
+
+    /// <summary>Whether callbacks are nested as deep as they are delivered: a wait started here
+    /// would have nothing delivered to it, so the waiting verbs refuse instead of spinning (U4).</summary>
+    public bool AtDrainLimit => _drainDepth >= MaxDrainDepth;
+
+    /// <summary>
+    /// Marks the running callback as waiting, for as long as the answer is held (U4). MATLAB
+    /// documents that a callback inside <c>waitfor</c> — and so inside <c>uiwait</c> or a blocking
+    /// dialog — can be interrupted whatever its <c>Interruptible</c> says: without that, a dialog
+    /// opened from a callback that asked not to be interrupted could never be answered.
+    /// </summary>
+    public IDisposable Waiting()
+    {
+        _running.Add(true);
+        return new WaitScope(this);
+    }
+
+    private sealed class WaitScope(JgsCallbackDispatcher owner) : IDisposable
+    {
+        public void Dispose()
+        {
+            if (owner._running.Count > 0)
+            {
+                owner._running.RemoveAt(owner._running.Count - 1);
+            }
+        }
     }
 
     /// <summary>The live dispatcher, installed by the session that owns the interpreter. Builtins

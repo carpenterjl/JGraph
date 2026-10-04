@@ -86,6 +86,30 @@ internal static partial class JgsGraphicsProperties
                 }
             });
 
+        // MenuBar is MATLAB's word for whether the window carries the plotting furniture (U4).
+        // 'figure' is the default and what an ordinary figure's window has; 'none' leaves the
+        // drawable area alone, and with ToolBar at 'auto' takes the toolbar with it.
+        Put(table, "MenuBar",
+            entry => JgsValue.Str(Figure(entry).MenuBar ? "figure" : "none"),
+            (entry, value, line, col) => Figure(entry).MenuBar =
+                Word(entry, "MenuBar", value, MenuBarWords, MenuBarWords, line, col) == 1);
+        Options(table, "MenuBar", MenuBarWords);
+
+        // WindowStyle is the window's standing among the others (U4): a modal figure stays in front
+        // and keeps the rest from being used. 'docked' is taken and remembered; there is no dock.
+        Put(table, "WindowStyle",
+            entry => JgsValue.Str(WindowStyleWords[(int)Figure(entry).WindowStyle]),
+            (entry, value, line, col) => Figure(entry).WindowStyle =
+                (FigureWindowStyle)Word(entry, "WindowStyle", value, WindowStyleWords, WindowStyleWords, line, col));
+        Options(table, "WindowStyle", WindowStyleWords);
+
+        // WaitStatus is what uiwait blocks on and uiresume writes (U4). R2025b keeps it out of the
+        // lists, answers [] until something has waited, and takes its two words abbreviated.
+        Put(table, "WaitStatus",
+            entry => entry.WaitStatus is { } status ? JgsValue.Str(status) : JgsMatrix.FromColumnMajor([], 0, 0),
+            (entry, value, line, col) => entry.WaitStatus = JgsBuiltins.WaitStatusWord(value, line, col));
+        Unlist(table, "WaitStatus");
+
         Put(table, "NumberTitle",
             entry => OnOff(Figure(entry).NumberTitle),
             (entry, value, line, col) => Figure(entry).NumberTitle = ToOnOff("NumberTitle", value, line, col));
@@ -202,6 +226,10 @@ internal static partial class JgsGraphicsProperties
             entry => JgsValue.Str(Figure(entry).CurrentCharacter),
             (entry, value, line, col) => Figure(entry).CurrentCharacter =
                 JgsBuiltins.StrOf("CurrentCharacter", value, line, col));
+
+        // The last key pressed, by name: R2025b answers it and lists it nowhere (U4).
+        Put(table, "CurrentKey", entry => JgsValue.Str(Figure(entry).CurrentKey));
+        Unlist(table, "CurrentKey");
 
         Put(table, "SelectionType",
             entry => JgsValue.Str(Figure(entry).SelectionType.ToString().ToLowerInvariant()),
@@ -383,14 +411,17 @@ internal static partial class JgsGraphicsProperties
         // accepting a word it would then ignore. A property that lies is worse than one that says no.
         OnlyWord(table, "Renderer", "painters", "JGraph draws with painters");
         OnlyWord(table, "RendererMode", "auto", "The renderer is not chosen by hand");
-        OnlyWord(table, "WindowStyle", "normal", "Figures are ordinary windows here");
-        OnlyWord(table, "MenuBar", "none", "A figure has no menu bar");
         OnlyWord(table, "DockControls", "off", "Figures cannot be docked");
 
         // MATLAB documents figure Clipping as having no effect, and it has none here either. Saying
         // 'on' back is the whole of it.
         OnlyWord(table, "Clipping", "on", "A figure clips its children to itself");
     }
+
+    /// <summary>R2025b's words for a figure's <c>WindowStyle</c>, in <see cref="FigureWindowStyle"/>'s order.</summary>
+    private static readonly string[] WindowStyleWords = ["normal", "modal", "docked", "alwaysontop"];
+
+    private static readonly string[] MenuBarWords = ["none", "figure"];
 
     /// <summary>A property with exactly one true answer, which refuses every other word by name.</summary>
     private static void OnlyWord(

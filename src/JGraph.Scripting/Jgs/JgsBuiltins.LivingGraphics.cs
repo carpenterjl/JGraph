@@ -49,7 +49,6 @@ internal static partial class JgsBuiltins
 
         Define("frame2im", Frame2Im);
         Define("im2frame", Im2Frame);
-        DefineSilent("waitfor", WaitFor);
     }
 
     // --- animatedline -------------------------------------------------------------------------------
@@ -440,13 +439,19 @@ internal static partial class JgsBuiltins
             start = 1;
         }
 
-        var spec = new OptionSpec(
-            "axes", [],
-            ["Parent", "Units", "Position", "InnerPosition", "OuterPosition", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility"]);
-        ParsedArgs parsed = spec.Parse(args, start, line, col);
-        if (parsed.Named("Parent") is { } namedParent)
+        // The options are any property an axes has, in name-value pairs (U4: a dialog's icon axes
+        // is made invisible, reversed and limited in the call that makes it). 'Parent' says where.
+        if ((args.Count - start) % 2 != 0 || Enumerable.Range(0, (args.Count - start) / 2).Any(i => !IsTextScalar(args[start + (2 * i)])))
         {
-            (parent, container) = ParentForAxes(JgsHandleRegistry.Require(namedParent, line, col), line, col);
+            throw new JgsRuntimeException(line, col, "axes takes an optional parent, then 'Name', value pairs.");
+        }
+
+        for (int i = start; i + 1 < args.Count; i += 2)
+        {
+            if (TextOf(args[i]).Equals("Parent", StringComparison.OrdinalIgnoreCase))
+            {
+                (parent, container) = ParentForAxes(JgsHandleRegistry.Require(args[i + 1], line, col), line, col);
+            }
         }
 
         // With no parent named, the current figure — asked for only now, because asking makes one.
@@ -465,22 +470,14 @@ internal static partial class JgsBuiltins
 
         JgsHandleEntry entry = JgsHandleRegistry.EntryFor(axes);
 
-        // Units and the position rectangles act in the order the call gives them, as R2025b's do
-        // (U2): a Position written before 'Units','pixels' was written in fractions.
+        // Every option acts in the order the call gives it, as R2025b's do (U2): a Position written
+        // before 'Units','pixels' was written in fractions.
         for (int i = start; i + 1 < args.Count; i += 2)
         {
-            if (IsTextScalar(args[i]) && TextOf(args[i]).ToLowerInvariant() is "units" or "position" or "innerposition" or "outerposition")
+            string name = TextOf(args[i]);
+            if (!name.Equals("Parent", StringComparison.OrdinalIgnoreCase))
             {
-                JgsGraphicsProperties.Set(entry, TextOf(args[i]), args[i + 1], line, col);
-            }
-        }
-
-        foreach (string name in new[]
-                 { "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility" })
-        {
-            if (parsed.Named(name) is { } value)
-            {
-                JgsGraphicsProperties.Set(entry, name, value, line, col);
+                JgsGraphicsProperties.Set(entry, name, args[i + 1], line, col);
             }
         }
 
@@ -631,79 +628,6 @@ internal static partial class JgsBuiltins
         JgsValue picture = JgsMatrix.FromColumnMajorDims(levels, [dims[0], dims[1], 3]);
         picture.SetNumericClass(JgsNumericClass.UInt8);
         return picture;
-    }
-
-    // --- waitfor ------------------------------------------------------------------------------------
-
-    /// <summary>
-    /// <c>waitfor</c> stops until something a person does changes the thing it was given: until the
-    /// object is deleted, until a named property changes, or until it takes a given value. While it
-    /// waits it delivers queued callbacks — a wait with no way to answer the click that would end it
-    /// would never end — and it wakes at once for Stop.
-    /// <para>
-    /// All of that presumes somewhere a person's events can come from. Where no event pump is
-    /// installed — a headless <c>-batch</c>, a one-shot run — nothing between here and the end of
-    /// the run can change a property, so the wait is already over the moment it starts, and this
-    /// returns. Returning rather than refusing is the point: a script that opens a figure and waits
-    /// for it is asking to stay alive until the window closes, and under <c>-batch</c> the answer to
-    /// that is that the run ends. Refusing would fail a script that is doing nothing wrong, and
-    /// hanging would fail the run itself.
-    /// </para>
-    /// </summary>
-    private static JgsValue WaitFor(IReadOnlyList<JgsValue> args, int line, int col)
-    {
-        if (args.Count is < 1 or > 3)
-        {
-            throw new JgsRuntimeException(line, col,
-                "waitfor takes the object to wait on, and optionally a property name and the value to wait for.");
-        }
-
-        // The handle is still checked, so waitfor on something that is not an object says so.
-        JgsHandleEntry entry = JgsHandleRegistry.Require(args[0], line, col);
-        string? property = null;
-        if (args.Count > 1)
-        {
-            property = StrOf("waitfor", args[1], line, col);
-            if (!JgsGraphicsProperties.TryFind(entry.Target, property, out _))
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"waitfor: a {entry.TypeName} has no '{property}' to wait for.");
-            }
-        }
-
-        if (!ScriptEventQueue.PumpInstalled || JgsCallbackDispatcher.Current is not { } dispatcher)
-        {
-            return JgsValue.Null;
-        }
-
-        // waitfor(h, prop) returns on any change from the value it saw at entry; the three-argument
-        // form returns on equality with the value asked for — at once if it already holds.
-        JgsValue? watched = property is null ? null : JgsGraphicsProperties.Get(entry, property, line, col);
-        while (true)
-        {
-            if (!JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? alive)
-                || !ReferenceEquals(alive.Target, entry.Target))
-            {
-                return JgsValue.Null;
-            }
-
-            if (property is not null)
-            {
-                JgsValue current = JgsGraphicsProperties.Get(entry, property, line, col);
-                bool satisfied = args.Count == 3
-                    ? JgsStdlib.DeepEquals(current, args[2], nanEqual: true)
-                    : !JgsStdlib.DeepEquals(current, watched!, nanEqual: true);
-                if (satisfied)
-                {
-                    return JgsValue.Null;
-                }
-            }
-
-            CancellationToken token = dispatcher.StatementToken;
-            token.WaitHandle.WaitOne(TimeSpan.FromMilliseconds(25));
-            token.ThrowIfCancellationRequested();
-            dispatcher.Drain();
-        }
     }
 }
 

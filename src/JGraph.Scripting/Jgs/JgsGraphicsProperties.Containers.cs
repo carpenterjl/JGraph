@@ -708,6 +708,39 @@ internal static partial class JgsGraphicsProperties
     // --- uibuttongroup ---------------------------------------------------------------------------
 
     /// <summary>
+    /// A progress indicator's own three names (R2025b, probe <c>u4_dialogs</c>): how far along it
+    /// is, whether its length is unknown, and the colour of its filled part.
+    /// </summary>
+    private static void AddUiProgressIndicatorBlock(IDictionary<string, GraphicsProperty> table)
+    {
+        static UiProgressIndicatorModel Bar(JgsHandleEntry entry) => (UiProgressIndicatorModel)entry.Target;
+
+        Put(table, "Value",
+            entry => JgsValue.Number(Bar(entry).Value),
+            (entry, value, line, col) =>
+            {
+                double[] given = JgsBuiltins.ToDoubles("Value", value, line, col);
+                if (given.Length != 1 || !(given[0] >= 0 && given[0] <= 1))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:ui:ProgressIndicator:invalidValue",
+                        "Error setting property 'Value' of class 'ProgressIndicator':\n'Value' must be a number between 0 and 1.");
+                }
+
+                Bar(entry).Value = given[0];
+            });
+        Put(table, "Indeterminate",
+            entry => OnOff(Bar(entry).Indeterminate),
+            (entry, value, line, col) => Bar(entry).Indeterminate = ComponentOnOff(entry, "Indeterminate", value, line, col));
+        Put(table, "ProgressColor",
+            entry => Row(Bar(entry).ProgressColor.R, Bar(entry).ProgressColor.G, Bar(entry).ProgressColor.B),
+            (entry, value, line, col) =>
+            {
+                JGraph.Core.Drawing.Color colour = JgsBuiltins.OptionColor(value, line, col, "ProgressColor");
+                Bar(entry).ProgressColor = new UiColor(colour.R / 255.0, colour.G / 255.0, colour.B / 255.0);
+            });
+    }
+
+    /// <summary>
     /// What a <c>uibuttongroup</c> adds to a panel (U3): <c>SelectedObject</c>, and
     /// <c>SelectionChangedFcn</c> with its older spelling. R2025b's words and refusals (probe
     /// <c>u3_bgroup</c>).

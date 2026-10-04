@@ -432,6 +432,7 @@ detrend	1	2
 deval	2	2
 dftmtx	1	2
 diag	1	5
+dialog	1	2
 diary	0	5
 dice	1	2
 dictionary	ERR:MATLAB:narginout:notValidMfile	7
@@ -499,6 +500,7 @@ erfcx	1	5
 erfinv	1	5
 error	0	5
 errorbar	1	2
+errordlg	-1	2
 etime	1	2
 etree	2	5
 etreeplot	0	2
@@ -761,6 +763,7 @@ gsvd	5	2
 gt	1	5
 gtext	1	2
 guidata	1	2
+guihandles	1	2
 hadamard	1	2
 HalfNormalDistribution	ERR:MATLAB:narginout:notValidMfile	0
 hamming	1	2
@@ -773,6 +776,7 @@ head	1	2
 heatmap	1	2
 height	1	2
 help	2	2
+helpdlg	-1	2
 hess	4	5
 hex2dec	1	5
 hex2num	1	2
@@ -940,6 +944,7 @@ inline	1	2
 inlineeval	1	2
 inpolygon	2	2
 input	1	5
+inputdlg	1	2
 inputname	1	5
 insert	ERR:MATLAB:narginout:notValidMfile	0
 insertAfter	1	2
@@ -1132,6 +1137,7 @@ linkaxes	0	2
 linkprop	1	2
 linsolve	2	5
 linspace	1	2
+listdlg	2	2
 listfonts	1	2
 listener	ERR:MATLAB:narginout:notValidMfile	0
 load	1	5
@@ -1277,6 +1283,7 @@ movvar	1	5
 mpower	1	2
 mrdivide	1	5
 mscohere	-1	2
+msgbox	-1	2
 mtimes	1	5
 multcompare	ERR:MATLAB:narginout:notValidMfile	0
 MultinomialDistribution	ERR:MATLAB:narginout:notValidMfile	0
@@ -1592,6 +1599,7 @@ quadl	2	2
 quadv	2	2
 quantile	1	2
 quarter	1	2
+questdlg	1	2
 quit	0	5
 quiver	1	2
 quiver3	1	2
@@ -2049,9 +2057,19 @@ uibuttongroup	1	2
 uicontextmenu	1	5
 uicontrol	1	5
 uifigure	1	2
+uigetdir	1	2
+uigetfile	3	2
+uiload	0	2
 uimenu	1	5
+uiopen	0	2
 uipanel	ERR:MATLAB:narginout:doesNotApply	5
+uiputfile	3	2
+uiresume	0	2
+uisave	0	2
+uisetcolor	1	2
+uisetfont	1	2
 uistack	-1	2
+uiwait	0	2
 uminus	1	5
 undershoot	3	2
 unicode2native	1	5
@@ -2107,8 +2125,10 @@ voronoin	2	2
 vrjoystick	1	6
 vswr	1	2
 wait	ERR:MATLAB:narginout:notValidMfile	0
+waitbar	1	2
 waitfor	0	5
 waitforbuttonpress	1	5
+warndlg	-1	2
 warning	1	5
 warp	1	2
 waterfall	1	2
