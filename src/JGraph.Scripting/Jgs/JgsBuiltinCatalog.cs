@@ -2276,7 +2276,13 @@ public static class JgsBuiltinCatalog
         Add("allchild", "An object's children, hidden handles included, front first.", P("h"));
         Add("uicontrol", "A classic component in a figure — a button, an edit field, a label, ...: h = uicontrol(fig, 'Style', 'pushbutton', 'Callback', @cb).", Opt("parent"), Opt("name"), Opt("value"));
         Add("uicontextmenu", "A right-click menu for a figure's objects: cm = uicontextmenu; set(h, 'ContextMenu', cm).", Opt("parent"), Opt("name"), Opt("value"));
-        Add("uimenu", "One entry of a context menu: m = uimenu(cm, 'Text', 'Copy', 'MenuSelectedFcn', @onCopy).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uimenu", "A menu on a figure's menu bar, or one entry of a menu or a context menu: m = uimenu(fig, 'Text', 'File'); uimenu(m, 'Text', 'Open', 'MenuSelectedFcn', @onOpen).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uitable", "A table of numbers, text and check boxes in a figure: t = uitable(fig, 'Data', magic(4), 'ColumnName', {'A','B','C','D'}, 'ColumnEditable', true, 'CellEditCallback', @cb).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uitabgroup", "A box of tabbed pages: tg = uitabgroup(fig); t = uitab(tg, 'Title', 'Plot').", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uitab", "One page of a tab group, holding components and axes: t = uitab(tg, 'Title', 'Data'); ax = axes(t).", Opt("tabgroup"), Opt("name"), Opt("value"));
+        Add("uitoolbar", "A row of tools under a figure's menu bar: tb = uitoolbar(fig).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uipushtool", "A button on a toolbar: uipushtool(tb, 'Icon', 'save.png', 'Tooltip', 'Save', 'ClickedCallback', @onSave).", Opt("toolbar"), Opt("name"), Opt("value"));
+        Add("uitoggletool", "A toolbar button that stays down: uitoggletool(tb, 'Tooltip', 'Grid', 'OnCallback', @gridOn, 'OffCallback', @gridOff).", Opt("toolbar"), Opt("name"), Opt("value"));
         Add("clf", "Clears the current figure (or figure n), keeping its window open.", Opt("n"));
         Add("gcf", "The current figure's number.");
         Add("gca", "Selects the current axes, creating a figure and axes if there are none.");

@@ -1,0 +1,630 @@
+EVT matlab.ui.eventdata.CellEditData : props=Indices,DisplayIndices,PreviousData,EditData,NewData,Error,Source,EventName supers=handle,event.EventData
+EVT matlab.ui.eventdata.CellSelectionChangeData : props=Indices,DisplayIndices,Source,EventName supers=handle,event.EventData
+EVT matlab.ui.eventdata.TableSelectionChangedData : props=Selection,PreviousSelection,SelectionType,DisplaySelection,PreviousDisplaySelection,Source,EventName supers=handle,event.EventData
+EVT matlab.ui.eventdata.SelectionChangedData : props=OldValue,NewValue,Source,EventName supers=handle,event.EventData
+EVT matlab.ui.eventdata.ActionData : props=Source,EventName supers=handle,event.EventData
+EVT matlab.ui.eventdata.DisplayDataChangedData : props=DisplayRowName,DisplayColumnName,DisplaySelection,PreviousDisplaySelection,Interaction,InteractionColumn,InteractionDisplayColumn,InteractionVariable,Source,EventName supers=handle,event.EventData
+EVT matlab.ui.eventdata.ClickedData : props=InteractionInformation,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData
+EVT matlab.ui.eventdata.DoubleClickedData : props=InteractionInformation,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData
+EVT matlab.ui.eventdata.MenuSelectedData : props=ContextObject,InteractionInformation,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData
+EVT matlab.ui.eventdata.ContextMenuOpeningData : props=ContextObject,InteractionInformation,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData
+EVT matlab.ui.eventdata.TableInteraction : props=DisplayRow,DisplayColumn,Row,Column,RowHeader,ColumnHeader,Location,ScreenLocation supers=matlab.mixin.CustomDisplay,matlab.ui.eventdata.internal.Interaction
+EVT matlab.ui.eventdata.SizeChangedData : props=Source,EventName supers=handle,event.EventData
+F Data magic3 : 'double [3 3] | Display=double [3 3] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data cell : 'cell [2 3] {double 1,double 2,'a','b',logical true,logical false} | Display=cell [2 3] {double 1,double 2,'a','b',logical true,logical false} | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data logical : 'logical [2 2] | Display=logical [2 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data table : 'table [2 3] vars=N,S,L | Display=table [2 3] vars=N,S,L | ColumnName=cell [3 1] {'N','S','L'} | RowName=cell [0 0] {} | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data string : 'string [2 2] | Display=string [2 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data single : 'single [1 2] | Display=single [1 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data int8 : 'int8 [2 2] | Display=int8 [2 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data char : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+F Data cellstr : 'cell [1 2] {'a','b'} | Display=cell [1 2] {'a','b'} | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data empty : 'double [0 0] | Display=double [0 0] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data zeros03 : 'double [0 3] | Display=double [0 3] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data cellnested : ERR MATLAB:hg:uitable:BadDataCellArrayType | Values within a cell array must be numeric, logical, or char
+F Data cellmat : ERR MATLAB:hg:uitable:BadDataCellArraySize | Data within a cell array must have size [1 1]
+F Data struct : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+F Data complex : 'double [1 2] | Display=double [1 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data nan : 'double [1 3] | Display=double [1 3] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data datetime : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+F Data categorical : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+F Data tabledt : 'table [2 3] vars=Var1,Var2,Var3 | Display=table [2 3] vars=Var1,Var2,Var3 | ColumnName=cell [3 1] {'Var1','Var2','Var3'} | RowName=cell [0 0] {} | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data nd : ERR MATLAB:hg:uitable:BadDataDimension | Data must be a two-dimensional matrix.
+F Data cellfn : ERR MATLAB:hg:uitable:BadDataCellArrayType | Values within a cell array must be numeric, logical, or char
+F Data col : 'double [4 1] | Display=double [4 1] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data tablerows : 'table [2 1] vars=Var1 | Display=table [2 1] vars=Var1 | ColumnName=cell [1 1] {'Var1'} | RowName=cell [2 1] {'r1','r2'} | Sortable=logical [0 0] Editable=logical [0 0]'
+F Data duration : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+F ColumnName numbered read with 3 cols : 'numbered'
+F ColumnName read with table data : cell [3 1] {'N','S','L'}
+F RowName read with table rows : cell [2 1] {'r1','r2'}
+F ColumnName {A,B} with 3 cols : cell [2 1] {'A','B'}
+F ColumnName {A;B;C} column cell : cell [3 1] {'A','B','C'}
+F ColumnName {A,B,C} row cell : cell [3 1] {'A','B','C'}
+F ColumnName string row : cell [2 1] {'A','B'}
+F ColumnName {1,2} : cell [2 1] {'1','2'}
+F ColumnName {A|B} : cell [2 1] {'A|B','C'}
+F ColumnName [] : ''
+F ColumnName {} : cell [0 0] {}
+F ColumnName char matrix : char [2 2] ['ab';'cd']
+F ColumnName 1:3 : char [3 1] ['1';'2';'3']
+F RowName {r1;r2} : cell [2 1] {'r1','r2'}
+F RowName {r1,r2} row : cell [2 1] {'r1','r2'}
+F RowName [] : ''
+F RowName x : 'x'
+F ColumnEditable true : logical true
+F ColumnEditable [1 0 1] double : ERR MATLAB:hg:uitable:BadColumnEditableLogical | ColumnEditable must be a logical or logical array
+F ColumnEditable [true false] : logical [true false]
+F ColumnEditable [true;false] : ERR MATLAB:hg:uitable:BadColumnEditableRowVector | ColumnEditable must be a row vector
+F ColumnEditable [] : logical [0 0]
+F ColumnSortable true : logical true
+F ColumnSortable [true false] : logical [true false]
+F ColumnFormat {char} : cell [1 1] {'char'}
+F ColumnFormat {numeric} : cell [1 1] {'numeric'}
+F ColumnFormat {logical} : cell [1 1] {'logical'}
+F ColumnFormat {short} : cell [1 1] {'short'}
+F ColumnFormat {long} : cell [1 1] {'long'}
+F ColumnFormat {shortE} : cell [1 1] {'shortE'}
+F ColumnFormat {longE} : cell [1 1] {'longE'}
+F ColumnFormat {shortG} : cell [1 1] {'shortG'}
+F ColumnFormat {longG} : cell [1 1] {'longG'}
+F ColumnFormat {shortEng} : cell [1 1] {'shortEng'}
+F ColumnFormat {longEng} : cell [1 1] {'longEng'}
+F ColumnFormat {bank} : cell [1 1] {'bank'}
+F ColumnFormat {+} : cell [1 1] {'+'}
+F ColumnFormat {rat} : cell [1 1] {'rat'}
+F ColumnFormat {hex} : ERR MATLAB:hg:uitable:BadColumnFormatIncorrectDataType | ColumnFormat definitions must be either 'numeric', 'logical', 'char', 'short', 'long', 'short e', 'long e', 'short g', 'long g', 'short eng', 'long eng', 'bank', '+', 'rat' or be a popupmenu definition
+F ColumnFormat {bogus} : ERR MATLAB:hg:uitable:BadColumnFormatIncorrectDataType | ColumnFormat definitions must be either 'numeric', 'logical', 'char', 'short', 'long', 'short e', 'long e', 'short g', 'long g', 'short eng', 'long eng', 'bank', '+', 'rat' or be a popupmenu definition
+F ColumnFormat {} : cell [1 1] {''}
+F ColumnFormat {[]} : cell [1 1] {double [0 0]}
+F ColumnFormat {{a,b}} : cell [1 1] {cell [1 2] {'a','b'}}
+F ColumnFormat {{a;b}} : ERR MATLAB:hg:uitable:BadColumnFormatPopupmenuRowVector | ColumnFormat popupmenu definitions must be row vectors
+F ColumnFormat {numeric;char} column : ERR MATLAB:hg:uitable:BadColumnFormatRowVector | ColumnFormat must be a row vector
+F ColumnFormat ["numeric" "char"] : ERR MATLAB:hg:uitable:BadColumnFormatCellArray | ColumnFormat must be a cell array
+F ColumnFormat {{1,2}} : ERR MATLAB:hg:uitable:BadColumnFormatChar | ColumnFormat popupmenu definitions must contain only char values
+F ColumnWidth 'auto' : 'auto'
+F ColumnWidth 'fit' : 'fit'
+F ColumnWidth '1x' : '1x'
+F ColumnWidth cell [1 1] {'auto'} : cell [1 1] {'auto'}
+F ColumnWidth cell [1 1] {'fit'} : cell [1 1] {'fit'}
+F ColumnWidth cell [1 1] {'1x'} : cell [1 1] {'1x'}
+F ColumnWidth cell [1 1] {double 50} : cell [1 1] {double 50}
+F ColumnWidth cell [1 2] {double 50,'auto'} : cell [1 2] {double 50,'auto'}
+F ColumnWidth cell [1 2] {'1x','2x'} : cell [1 2] {'1x','2x'}
+F ColumnWidth cell [1 4] {'fit',double 50,'2x','auto'} : cell [1 4] {'fit',double 50,'2x','auto'}
+F ColumnWidth double 50 : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+F ColumnWidth double [50 60] : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+F ColumnWidth cell [1 1] {double -1} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+F ColumnWidth cell [1 1] {double 0} : cell [1 1] {double 0}
+F ColumnWidth cell [1 1] {'0x'} : cell [1 1] {'0x'}
+F ColumnWidth cell [1 1] {'x'} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+F ColumnWidth cell [2 1] {double 50,double 60} : ERR MATLAB:hg:uitable:BadColumnWidthRowVector | ColumnWidth must be a row vector
+F ColumnWidth cell [1 1] {double 1.5} : cell [1 1] {double 1.5}
+F ColumnWidth cell [1 1] {'1.5x'} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+F ColumnWidth cell [1 1] {int8 5} : cell [1 1] {int8 5}
+F ColumnWidth cell [1 1] {"auto"} : cell [1 1] {'auto'}
+F ColumnWidth "auto" : 'auto'
+F BackgroundColor double [1 0 0] : double [1 0 0]
+F BackgroundColor double [1 0 0;0 1 0;0 0 1] : double [1 0 0;0 1 0;0 0 1]
+F BackgroundColor 'red' : double [1 0 0]
+F BackgroundColor cell [1 2] {'red','blue'} : double [1 0 0;0 0 1]
+F BackgroundColor string [1 2] [red,blue] : double [1 0 0;0 0 1]
+F BackgroundColor double [1 1 1 1] : ERR MATLAB:datatypes:RGBMatrixColor:InvalidColor | Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+F BackgroundColor 'none' : ERR MATLAB:datatypes:RGBMatrixColor:InvalidColor | Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+F BackgroundColor '#ff0000' : double [1 0 0]
+F BackgroundColor double [0 3] : double [0 3]
+F ForegroundColor red : double [1 0 0]
+F Extent : double [0 0 340 340]
+F Selection default with data : double [0 0]
+F Selection [1 2] cell : double [1 2]
+F Selection [1 2;2 3] cell : double [1 2;2 3]
+F Selection [9 9] out of range : ERR MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary | Selection indices are out of data boundary.
+F Selection [1 2 3] in cell mode : ERR MATLAB:hg:gbtdatatypes:TableSelection:InvalidCellSelection | Selection indices for cells must be a N-by-2 numeric array.
+F Selection row [1 3] : double [1 3]
+F Selection row [3 1] order kept : double [3 1]
+F Selection row [1;3] column : ERR MATLAB:hg:gbtdatatypes:TableSelection:InvalidRowSelection | Selection indices for rows must be a 1-by-N numeric array.
+F Selection column 2 : double 2
+F Selection row 0 : ERR MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary | Selection indices are out of data boundary.
+F Selection row 1.5 : double 1.5
+F Selection two rows Multiselect off : ERR MATLAB:hg:gbtdatatypes:TableSelection:InvalidSingleSelection | When 'Multiselect' is 'off', 'Selection' must be empty, or a scalar number for 'row' and 'column' selection type, or a 1-by-2 numeric array for 'cell' selection type.
+F Selection then SelectionType change : 'double [0 0]'
+F Selection then Data change : 'double [1 2]'
+F Selection with no data : ERR MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary | Selection indices are out of data boundary.
+F DisplayData numeric : 'double [3 3]'
+F DisplaySelection : double [0 0]
+F Data(2,2) = 99 indexed write : '[8 1 6;3 99 7;4 9 2]'
+F Data{2,2} = x on cell : 'cell [2 2] {double 1,double 2,'a','x'}'
+F scroll bottom : ERR MATLAB:TooManyOutputs | Too many output arguments.
+F scroll row 2 : ERR MATLAB:TooManyOutputs | Too many output arguments.
+F table Position in panel : double [20 20 300 300]
+F table Units normalized Position : double [0.033928571 0.045238095 0.53571429 0.71428571]
+F table Units normalized set keeps place : '[0.0339286 0.0452381 0.535714 0.714286]'
+F table FontSize 20 points pixels : '[20 26.666667 20]'
+F table Enable inactive : 'inactive'
+F table Enable true : ERR MATLAB:datatypes:InvalidEnumValueFor | Invalid enum value. Use one of these values: 'on' | 'off' | 'inactive'.
+F table TooltipString : 'x'
+F table Tooltip cell : cell [2 1] {'a','b'}
+F table RearrangeableColumns alias : OnOff on
+F table CellEditCallback forms : 'ok:@sin ; ok:'disp(1)' ; ok:cell [2 1] {@sin,double 1} ; ok:'str' ; ERR MATLAB:datatypes:callback:CreateCallback ; ERR MATLAB:datatypes:callback:CreateCallback ; ok:'''
+F table isprop Extent/Value/String : '100'
+F tg SelectedTab none : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+F tg SelectedTab after three : 'One'
+F tg Children titles : 'One,Two,Three'
+F tg Children size : double [3 1]
+F tg Position : double [0 0 1 1]
+F tg getpixelposition : double [1 1 560 420]
+F tg InnerPosition : double [0 0 1 1]
+F t1 Position : double [0 0 1 1]
+F t1 Units : 'normalized'
+F t1 InnerPosition : double [0 0 1 1]
+F t1 OuterPosition : double [0 0 1 1]
+F t1 getpixelposition : double [1 1 560 420]
+F t1 getpixelposition recursive : double [1 1 560 420]
+F t2 Position (unselected) : double [0 0 1 1]
+F t2 getpixelposition (unselected) : double [1 1 560 420]
+F t1 set Position : ERR MATLAB:class:SetProhibited | Unable to set the 'Position' property of class ''Tab'' because it is read-only.
+F t1 set Units pixels then Position : '[1 1 560 420]'
+F select t2 : 'Two'
+F select by index 3 : ERR MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle | Error setting property 'SelectedTab' of class 'TabGroup': The value set for this property must be a valid HG handle.
+F select [] : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+F select foreign tab : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+F select a panel : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+F after deleting selected middle : 'Three'
+F after deleting selected last : 'Three'
+F after deleting selected first : 'Three'
+F after deleting the only tab : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+F reorder Children flip : 'C,B,A sel=B'
+F uistack tab top : 'A,C,B'
+F tab Parent <- other group : 'C n=1'
+F source group after move : 'A,B sel=B'
+F loc top tab Position : '[1 1 300 200]'
+F loc top tab InnerPosition : '[1 1 300 200]'
+F loc top tab OuterPosition : '[1 1 300 200]'
+F loc top tg InnerPosition : '[20 20 300 200]'
+F loc top child getpixelposition rec : '[29 29 50 20] / [20 20 300 200]'
+F loc bottom tab Position : '[1 1 300 200]'
+F loc bottom tab InnerPosition : '[1 1 300 200]'
+F loc bottom tab OuterPosition : '[1 1 300 200]'
+F loc bottom tg InnerPosition : '[20 20 300 200]'
+F loc bottom child getpixelposition rec : '[29 29 50 20] / [20 20 300 200]'
+F loc left tab Position : '[1 1 300 200]'
+F loc left tab InnerPosition : '[1 1 300 200]'
+F loc left tab OuterPosition : '[1 1 300 200]'
+F loc left tg InnerPosition : '[20 20 300 200]'
+F loc left child getpixelposition rec : '[29 29 50 20] / [20 20 300 200]'
+F loc right tab Position : '[1 1 300 200]'
+F loc right tab InnerPosition : '[1 1 300 200]'
+F loc right tab OuterPosition : '[1 1 300 200]'
+F loc right tg InnerPosition : '[20 20 300 200]'
+F loc right child getpixelposition rec : '[29 29 50 20] / [20 20 300 200]'
+F empty group InnerPosition : '[20 20 300 200]'
+F untitled tab Position px : '[1 1 300 200]'
+F titled later Position px : '[1 1 300 200]'
+F tab Title cell : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+F tab Title string : 's'
+F tab Title 5 : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+F tab Title char matrix : 'acbd'
+F axes in tab Parent class : 'matlab.ui.container.Tab'
+F axes in tab Position Units : 'normalized [0.13 0.11 0.775 0.815]'
+F panel in tab default Position : double [0 0 1 1]
+F tabgroup in tab : 'matlab.ui.container.TabGroup'
+F tab Visible : ERR MATLAB:hg:InvalidProperty | Unrecognized property Visible for class matlab.ui.container.Tab.
+F tab findobj uitab count : double 3
+F tab ancestor figure : 'matlab.ui.Figure'
+F SelectionChangedFcn on code select : double 0
+F tg Visible off children Visible : 'off on'
+F tg SizeChangedFcn : 'ok:@sin ; ok:'disp(1)' ; ok:cell [2 1] {@sin,double 1} ; ok:'str' ; ERR MATLAB:datatypes:callback:CreateCallback ; ERR MATLAB:datatypes:callback:CreateCallback ; ok:'''
+F tg delete(tg) children valid : '00'
+F tg Units normalized -> pixels Position : '[1 1 560 420]'
+F tg in panel default Position : double [0 0 1 1]
+F builtin menus findall : double 0
+F MenuBar : 'figure'
+F menu Positions : double [1 2 3]
+F figure Children texts : '[3 1] C,B,A'
+F allchild texts : '[3 1] C,B,A'
+F after m3.Position=1 Positions : double [2 3 1]
+F after m3.Position=1 Children : '[3 1] B,A,C'
+F m1.Position=9 : '[9 2 1]'
+F m1.Position=0 : '[0 2 1]'
+F m1.Position=1.5 : '[1.5 3 1]'
+F submenu Positions : double [1 2 3]
+F submenu Children texts : '[3 1] a3,a2,a1'
+F after delete s2 Positions : double [1 2]
+F uimenu Position at creation : '[3 2 1] [3 1] a3,a1,first'
+F Label alias : 'L'
+F Label read : 'L'
+F Callback alias : 'sin'
+F Callback read : 'sin'
+F Text &File : '&File'
+F Text cell : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+F Text string : 's'
+F Text 5 : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+F Accelerator 'a' : 'a'
+F Accelerator 'A' : 'A'
+F Accelerator 'ab' : ERR MATLAB:gbtdatatypes:InputMustBeASingleCharacter | Input can either be an empty Char array or a Char array with a single character.
+F Accelerator '1' : '1'
+F Accelerator '' : ''
+F Accelerator ' ' : ' '
+F Accelerator "s" : 's'
+F Accelerator double 5 : ERR MATLAB:gbtdatatypes:InputMustBeASingleCharacter | Input can either be an empty Char array or a Char array with a single character.
+F Accelerator '+' : '+'
+F Accelerator on top-level : 'q'
+F Checked on top-level : 'on'
+F Checked on parent with children : 'on'
+F Separator on top-level : 'on'
+F Enable class : 'matlab.lang.OnOffSwitchState'
+F ForegroundColor red : double [1 0 0]
+F delete parent deletes children : logical false
+F menu Parent <- other menu : '0 1 matlab.ui.container.Menu'
+F menu Parent <- contextmenu : '1 matlab.ui.container.ContextMenu'
+F findobj uimenu count (depth) : double 28
+F findobj -depth 1 uimenu : double 16
+F gcbo/gcbf in menu callback need a click : 'n/a'
+F menu HandleVisibility default in figure Children : double 17
+F MenuBar none keeps uimenus : '1 none'
+F builtin toolbars findall : double 0
+F ToolBar : 'auto'
+F ToolBar after uitoolbar : 'auto'
+F toolbars findall after one : double 1
+F toolbar Children tips : '[3 1] three,two,one'
+F figure Children types : '[1 1] uitoolbar'
+F allchild types : '[1 1] uitoolbar'
+F two toolbars : '[2 1] uitoolbar,uitoolbar'
+F CData double [16 16 3] : 'double [16 16 3] Icon='''
+F CData double [20 30 3] : 'double [20 30 3] Icon='''
+F CData uint8 [16 16 3] : 'uint8 [16 16 3] Icon='''
+F CData double [16 16] : ERR MATLAB:hg:shaped_arrays:CDataSize | Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+F CData double [16 16 3] : ERR MATLAB:hg:shaped_arrays:CDataPredicate | Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+F CData double [16 16 3] : 'double [16 16 3] Icon='''
+F CData double [0 0] : 'double [0 0 3] Icon='''
+F CData logical [16 16 3] : ERR MATLAB:hg:shaped_arrays:CDataType | Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+F CData single [4 4 3] : 'single [4 4 3] Icon='''
+F CData uint16 [4 4 3] : 'uint16 [4 4 3] Icon='''
+F CData int8 [4 4 3] : 'int8 [4 4 3] Icon='''
+F CData double [16 16 4] : ERR MATLAB:hg:shaped_arrays:CDataSize | Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+F Icon '' : 'Icon='' CData=double [0 0]'
+F Icon 'bogus.png' : 'Icon='bogus.png' CData=double [0 0]'
+F Icon 'C:\Program Files\MATLAB\R2025b\toolbox\matlab\icons\help_ex.png' : 'Icon='C:\Program Files\MATLAB\R2025b\toolbox\matlab\icons\help_ex.png' CData=double [0 0]'
+F Icon double size [16 16 3] : 'Icon=double size [16 16 3] CData=double [0 0]'
+F Icon "s" : 'Icon='s' CData=double [0 0]'
+F Icon double 5 : ERR MATLAB:hg:gbtdatatypes:Icon:invalidIcon | Icon value must be a valid file path or an m-by-n-by-3 color data matrix.
+F Icon cell [1 1] {'a'} : ERR MATLAB:hg:gbtdatatypes:Icon:invalidIcon | Icon value must be a valid file path or an m-by-n-by-3 color data matrix.
+F Icon then CData : '[0 0] then Icon='C:\Program Files\MATLAB\R2025b\toolbox\matlab\icons\help_ex.png''
+F TooltipString alias : 'x'
+F Tooltip cell : cell [2 1] {'a','b'}
+F Tooltip char matrix : char [2 2] ['ab';'cd']
+[Warning: Error occurred when parsing the 'CData' value.] 
+[Warning: File 'bogus.png' is not on the MATLAB or specified path.] 
+[Warning: When both the Icon and CData properties are set, the CData property is ignored. To display an icon in the tool, use the Icon
+property.] 
+[Warning: When both the Icon and CData properties are set, the CData property is ignored. To display an icon in the tool, use the Icon
+property.] 
+[Warning: Icon value must be a valid file path or an m-by-n-by-3 color data matrix.] 
+F State on from code fires : '[on off ]'
+F State class : 'matlab.lang.OnOffSwitchState'
+F State 1 : 'on'
+F State bogus : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Invalid enum value. Use one of these values: 'on' | 'off'.
+F tool Parent <- other toolbar : '1 matlab.ui.container.Toolbar'
+F uistack tool : ERR MATLAB:strjoin:InvalidCellType | First input must be a string array or cell array of character vectors.
+F toolbar Visible off : 'off'
+F delete toolbar deletes tools : logical false
+U Data magic3 : 'double [3 3] | Display=double [3 3] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data cell : 'cell [2 3] {double 1,double 2,'a','b',logical true,logical false} | Display=cell [2 3] {double 1,double 2,'a','b',logical true,logical false} | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data logical : 'logical [2 2] | Display=logical [2 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data table : 'table [2 3] vars=N,S,L | Display=table [2 3] vars=N,S,L | ColumnName=cell [3 1] {'N','S','L'} | RowName=cell [0 0] {} | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data string : 'string [2 2] | Display=string [2 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data single : 'single [1 2] | Display=single [1 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data int8 : 'int8 [2 2] | Display=int8 [2 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data char : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+U Data cellstr : 'cell [1 2] {'a','b'} | Display=cell [1 2] {'a','b'} | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data empty : 'double [0 0] | Display=double [0 0] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data zeros03 : 'double [0 3] | Display=double [0 3] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data cellnested : ERR MATLAB:hg:uitable:BadDataCellArrayType | Values within a cell array must be numeric, logical, or char
+U Data cellmat : ERR MATLAB:hg:uitable:BadDataCellArraySize | Data within a cell array must have size [1 1]
+U Data struct : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+U Data complex : 'double [1 2] | Display=double [1 2] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data nan : 'double [1 3] | Display=double [1 3] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data datetime : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+U Data categorical : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+U Data tabledt : 'table [2 3] vars=Var1,Var2,Var3 | Display=table [2 3] vars=Var1,Var2,Var3 | ColumnName=cell [3 1] {'Var1','Var2','Var3'} | RowName=cell [0 0] {} | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data nd : ERR MATLAB:hg:uitable:BadDataDimension | Data must be a two-dimensional matrix.
+U Data cellfn : ERR MATLAB:hg:uitable:BadDataCellArrayType | Values within a cell array must be numeric, logical, or char
+U Data col : 'double [4 1] | Display=double [4 1] | ColumnName='numbered' | RowName='numbered' | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data tablerows : 'table [2 1] vars=Var1 | Display=table [2 1] vars=Var1 | ColumnName=cell [1 1] {'Var1'} | RowName=cell [2 1] {'r1','r2'} | Sortable=logical [0 0] Editable=logical [0 0]'
+U Data duration : ERR MATLAB:hg:uitable:BadDataType | Data must be a numeric, logical, string, cell, or table array
+U ColumnName numbered read with 3 cols : 'numbered'
+U ColumnName read with table data : cell [3 1] {'N','S','L'}
+U RowName read with table rows : cell [2 1] {'r1','r2'}
+U ColumnName {A,B} with 3 cols : cell [2 1] {'A','B'}
+U ColumnName {A;B;C} column cell : cell [3 1] {'A','B','C'}
+U ColumnName {A,B,C} row cell : cell [3 1] {'A','B','C'}
+U ColumnName string row : cell [2 1] {'A','B'}
+U ColumnName {1,2} : cell [2 1] {'1','2'}
+U ColumnName {A|B} : cell [2 1] {'A|B','C'}
+U ColumnName [] : ''
+U ColumnName {} : cell [0 0] {}
+U ColumnName char matrix : char [2 2] ['ab';'cd']
+U ColumnName 1:3 : char [3 1] ['1';'2';'3']
+U RowName {r1;r2} : cell [2 1] {'r1','r2'}
+U RowName {r1,r2} row : cell [2 1] {'r1','r2'}
+U RowName [] : ''
+U RowName x : 'x'
+U ColumnEditable true : logical true
+U ColumnEditable [1 0 1] double : ERR MATLAB:hg:uitable:BadColumnEditableLogical | ColumnEditable must be a logical or logical array
+U ColumnEditable [true false] : logical [true false]
+U ColumnEditable [true;false] : ERR MATLAB:hg:uitable:BadColumnEditableRowVector | ColumnEditable must be a row vector
+U ColumnEditable [] : logical [0 0]
+U ColumnSortable true : logical true
+U ColumnSortable [true false] : logical [true false]
+U ColumnFormat {char} : cell [1 1] {'char'}
+U ColumnFormat {numeric} : cell [1 1] {'numeric'}
+U ColumnFormat {logical} : cell [1 1] {'logical'}
+U ColumnFormat {short} : cell [1 1] {'short'}
+U ColumnFormat {long} : cell [1 1] {'long'}
+U ColumnFormat {shortE} : cell [1 1] {'shortE'}
+U ColumnFormat {longE} : cell [1 1] {'longE'}
+U ColumnFormat {shortG} : cell [1 1] {'shortG'}
+U ColumnFormat {longG} : cell [1 1] {'longG'}
+U ColumnFormat {shortEng} : cell [1 1] {'shortEng'}
+U ColumnFormat {longEng} : cell [1 1] {'longEng'}
+U ColumnFormat {bank} : cell [1 1] {'bank'}
+U ColumnFormat {+} : cell [1 1] {'+'}
+U ColumnFormat {rat} : cell [1 1] {'rat'}
+U ColumnFormat {hex} : ERR MATLAB:hg:uitable:BadColumnFormatIncorrectDataType | ColumnFormat definitions must be either 'numeric', 'logical', 'char', 'short', 'long', 'short e', 'long e', 'short g', 'long g', 'short eng', 'long eng', 'bank', '+', 'rat' or be a popupmenu definition
+U ColumnFormat {bogus} : ERR MATLAB:hg:uitable:BadColumnFormatIncorrectDataType | ColumnFormat definitions must be either 'numeric', 'logical', 'char', 'short', 'long', 'short e', 'long e', 'short g', 'long g', 'short eng', 'long eng', 'bank', '+', 'rat' or be a popupmenu definition
+U ColumnFormat {} : cell [1 1] {''}
+U ColumnFormat {[]} : cell [1 1] {double [0 0]}
+U ColumnFormat {{a,b}} : cell [1 1] {cell [1 2] {'a','b'}}
+U ColumnFormat {{a;b}} : ERR MATLAB:hg:uitable:BadColumnFormatPopupmenuRowVector | ColumnFormat popupmenu definitions must be row vectors
+U ColumnFormat {numeric;char} column : ERR MATLAB:hg:uitable:BadColumnFormatRowVector | ColumnFormat must be a row vector
+U ColumnFormat ["numeric" "char"] : ERR MATLAB:hg:uitable:BadColumnFormatCellArray | ColumnFormat must be a cell array
+U ColumnFormat {{1,2}} : ERR MATLAB:hg:uitable:BadColumnFormatChar | ColumnFormat popupmenu definitions must contain only char values
+U ColumnWidth 'auto' : 'auto'
+U ColumnWidth 'fit' : 'fit'
+U ColumnWidth '1x' : '1x'
+U ColumnWidth cell [1 1] {'auto'} : cell [1 1] {'auto'}
+U ColumnWidth cell [1 1] {'fit'} : cell [1 1] {'fit'}
+U ColumnWidth cell [1 1] {'1x'} : cell [1 1] {'1x'}
+U ColumnWidth cell [1 1] {double 50} : cell [1 1] {double 50}
+U ColumnWidth cell [1 2] {double 50,'auto'} : cell [1 2] {double 50,'auto'}
+U ColumnWidth cell [1 2] {'1x','2x'} : cell [1 2] {'1x','2x'}
+U ColumnWidth cell [1 4] {'fit',double 50,'2x','auto'} : cell [1 4] {'fit',double 50,'2x','auto'}
+U ColumnWidth double 50 : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+U ColumnWidth double [50 60] : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+U ColumnWidth cell [1 1] {double -1} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+U ColumnWidth cell [1 1] {double 0} : cell [1 1] {double 0}
+U ColumnWidth cell [1 1] {'0x'} : cell [1 1] {'0x'}
+U ColumnWidth cell [1 1] {'x'} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+U ColumnWidth cell [2 1] {double 50,double 60} : ERR MATLAB:hg:uitable:BadColumnWidthRowVector | ColumnWidth must be a row vector
+U ColumnWidth cell [1 1] {double 1.5} : cell [1 1] {double 1.5}
+U ColumnWidth cell [1 1] {'1.5x'} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+U ColumnWidth cell [1 1] {int8 5} : cell [1 1] {int8 5}
+U ColumnWidth cell [1 1] {"auto"} : cell [1 1] {'auto'}
+U ColumnWidth "auto" : 'auto'
+U BackgroundColor double [1 0 0] : double [1 0 0]
+U BackgroundColor double [1 0 0;0 1 0;0 0 1] : double [1 0 0;0 1 0;0 0 1]
+U BackgroundColor 'red' : double [1 0 0]
+U BackgroundColor cell [1 2] {'red','blue'} : double [1 0 0;0 0 1]
+U BackgroundColor string [1 2] [red,blue] : double [1 0 0;0 0 1]
+U BackgroundColor double [1 1 1 1] : ERR MATLAB:datatypes:RGBMatrixColor:InvalidColor | Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+U BackgroundColor 'none' : ERR MATLAB:datatypes:RGBMatrixColor:InvalidColor | Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+U BackgroundColor '#ff0000' : double [1 0 0]
+U BackgroundColor double [0 3] : double [0 3]
+U ForegroundColor red : double [1 0 0]
+U Extent : double [0 0 340 340]
+U Selection default with data : double [0 0]
+U Selection [1 2] cell : double [1 2]
+U Selection [1 2;2 3] cell : double [1 2;2 3]
+U Selection [9 9] out of range : ERR MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary | Selection indices are out of data boundary.
+U Selection [1 2 3] in cell mode : ERR MATLAB:hg:gbtdatatypes:TableSelection:InvalidCellSelection | Selection indices for cells must be a N-by-2 numeric array.
+U Selection row [1 3] : double [1 3]
+U Selection row [3 1] order kept : double [3 1]
+U Selection row [1;3] column : ERR MATLAB:hg:gbtdatatypes:TableSelection:InvalidRowSelection | Selection indices for rows must be a 1-by-N numeric array.
+U Selection column 2 : double 2
+U Selection row 0 : ERR MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary | Selection indices are out of data boundary.
+U Selection row 1.5 : double 1.5
+U Selection two rows Multiselect off : ERR MATLAB:hg:gbtdatatypes:TableSelection:InvalidSingleSelection | When 'Multiselect' is 'off', 'Selection' must be empty, or a scalar number for 'row' and 'column' selection type, or a 1-by-2 numeric array for 'cell' selection type.
+U Selection then SelectionType change : 'double [0 0]'
+U Selection then Data change : 'double [1 2]'
+U Selection with no data : ERR MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary | Selection indices are out of data boundary.
+U DisplayData numeric : 'double [3 3]'
+U DisplaySelection : double [0 0]
+U Data(2,2) = 99 indexed write : '[8 1 6;3 99 7;4 9 2]'
+U Data{2,2} = x on cell : 'cell [2 2] {double 1,double 2,'a','x'}'
+U scroll bottom : ERR MATLAB:TooManyOutputs | Too many output arguments.
+U scroll row 2 : ERR MATLAB:TooManyOutputs | Too many output arguments.
+U table Position in panel : double [20 20 300 300]
+U table Units normalized Position : double [0.033928571 0.045238095 0.53571429 0.71428571]
+U table Units normalized set keeps place : '[0.0339286 0.0452381 0.535714 0.714286]'
+U table FontSize 20 points pixels : '[20 20 15]'
+U table Enable inactive : 'inactive'
+U table Enable true : ERR MATLAB:datatypes:InvalidEnumValueFor | Invalid enum value. Use one of these values: 'on' | 'off' | 'inactive'.
+U table TooltipString : 'x'
+U table Tooltip cell : cell [2 1] {'a','b'}
+U table RearrangeableColumns alias : OnOff on
+U table CellEditCallback forms : 'ok:@sin ; ok:'disp(1)' ; ok:cell [2 1] {@sin,double 1} ; ok:'str' ; ERR MATLAB:datatypes:callback:CreateCallback ; ERR MATLAB:datatypes:callback:CreateCallback ; ok:'''
+U table isprop Extent/Value/String : '100'
+U tg SelectedTab none : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+U tg SelectedTab after three : 'One'
+U tg Children titles : 'One,Two,Three'
+U tg Children size : double [3 1]
+U tg Position : double [20 20 250 210]
+U tg getpixelposition : double [20 20 250 210]
+U tg InnerPosition : double [20 20 250 210]
+U t1 Position : double [1 1 250 210]
+U t1 Units : 'pixels'
+U t1 InnerPosition : double [1 1 250 210]
+U t1 OuterPosition : double [1 1 250 210]
+U t1 getpixelposition : double [1 1 250 210]
+U t1 getpixelposition recursive : double [20 20 250 210]
+U t2 Position (unselected) : double [1 1 250 210]
+U t2 getpixelposition (unselected) : double [1 1 250 210]
+U t1 set Position : ERR MATLAB:class:SetProhibited | Unable to set the 'Position' property of class ''Tab'' because it is read-only.
+U t1 set Units pixels then Position : '[1 1 250 210]'
+U select t2 : 'Two'
+U select by index 3 : ERR MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle | Error setting property 'SelectedTab' of class 'TabGroup': The value set for this property must be a valid HG handle.
+U select [] : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+U select foreign tab : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+U select a panel : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+U after deleting selected middle : 'Three'
+U after deleting selected last : 'Three'
+U after deleting selected first : 'Three'
+U after deleting the only tab : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+U reorder Children flip : 'C,B,A sel=B'
+U uistack tab top : 'A,C,B'
+U tab Parent <- other group : 'C n=1'
+U source group after move : 'A,B sel=B'
+U loc top tab Position : '[1 1 298 175]'
+U loc top tab InnerPosition : '[1 1 298 175]'
+U loc top tab OuterPosition : '[1 1 298 175]'
+U loc top tg InnerPosition : '[21 21 298 175]'
+U loc top child getpixelposition rec : '[30 30 50 20] / [21 21 298 175]'
+U loc bottom tab Position : '[1 1 298 175]'
+U loc bottom tab InnerPosition : '[1 1 298 175]'
+U loc bottom tab OuterPosition : '[1 1 298 175]'
+U loc bottom tg InnerPosition : '[21 44 298 175]'
+U loc bottom child getpixelposition rec : '[30 53 50 20] / [21 44 298 175]'
+U loc left tab Position : '[1 1 197 198]'
+U loc left tab InnerPosition : '[1 1 197 198]'
+U loc left tab OuterPosition : '[1 1 197 198]'
+U loc left tg InnerPosition : '[87 21 232 198]'
+U loc left child getpixelposition rec : '[96 30 50 20] / [87 21 197 198]'
+U loc right tab Position : '[1 1 197 198]'
+U loc right tab InnerPosition : '[1 1 197 198]'
+U loc right tab OuterPosition : '[1 1 197 198]'
+U loc right tg InnerPosition : '[21 21 232 198]'
+U loc right child getpixelposition rec : '[30 30 50 20] / [21 21 197 198]'
+U empty group InnerPosition : '[20 20 300 200]'
+U untitled tab Position px : '[1 1 300 200]'
+U titled later Position px : '[1 1 298 175]'
+U tab Title cell : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+U tab Title string : 's'
+U tab Title 5 : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+U tab Title char matrix : 'acbd'
+U axes in tab Parent class : 'matlab.ui.container.Tab'
+U axes in tab Position Units : 'pixels [10 10 400 300]'
+U panel in tab default Position : double [20 20 260 221]
+U tabgroup in tab : 'matlab.ui.container.TabGroup'
+U tab Visible : ERR MATLAB:hg:InvalidProperty | Unrecognized property Visible for class matlab.ui.container.Tab.
+U tab findobj uitab count : double 3
+U tab ancestor figure : 'matlab.ui.Figure'
+U SelectionChangedFcn on code select : double 0
+U tg Visible off children Visible : 'off on'
+[Warning: 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.] 
+[Warning: 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.] 
+[Warning: 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.] 
+[Warning: 'SizeChangedFcn' callback will not execute while 'AutoResizeChildren' is set to 'on'.] 
+U tg SizeChangedFcn : 'ok:@sin ; ok:'disp(1)' ; ok:cell [2 1] {@sin,double 1} ; ok:'str' ; ERR MATLAB:datatypes:callback:CreateCallback ; ERR MATLAB:datatypes:callback:CreateCallback ; ok:'''
+U tg delete(tg) children valid : '00'
+U tg Units normalized -> pixels Position : '[20 20 250 210]'
+U tg in panel default Position : double [20 20 250 210]
+U builtin menus findall : double 0
+U MenuBar : 'none'
+U menu Positions : double [1 2 3]
+U figure Children texts : '[3 1] C,B,A'
+U allchild texts : '[3 1] C,B,A'
+U after m3.Position=1 Positions : double [2 3 1]
+U after m3.Position=1 Children : '[3 1] B,A,C'
+U m1.Position=9 : '[9 2 1]'
+U m1.Position=0 : '[0 2 1]'
+U m1.Position=1.5 : '[1.5 3 1]'
+U submenu Positions : double [1 2 3]
+U submenu Children texts : '[3 1] a3,a2,a1'
+U after delete s2 Positions : double [1 2]
+U uimenu Position at creation : '[3 2 1] [3 1] a3,a1,first'
+U Label alias : 'L'
+U Label read : 'L'
+U Callback alias : 'sin'
+U Callback read : 'sin'
+U Text &File : '&File'
+U Text cell : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+U Text string : 's'
+U Text 5 : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+U Accelerator 'a' : 'a'
+U Accelerator 'A' : 'A'
+U Accelerator 'ab' : ERR MATLAB:gbtdatatypes:InputMustBeASingleCharacter | Input can either be an empty Char array or a Char array with a single character.
+U Accelerator '1' : '1'
+U Accelerator '' : ''
+U Accelerator ' ' : ' '
+U Accelerator "s" : 's'
+U Accelerator double 5 : ERR MATLAB:gbtdatatypes:InputMustBeASingleCharacter | Input can either be an empty Char array or a Char array with a single character.
+U Accelerator '+' : '+'
+U Accelerator on top-level : 'q'
+U Checked on top-level : 'on'
+U Checked on parent with children : 'on'
+U Separator on top-level : 'on'
+U Enable class : 'matlab.lang.OnOffSwitchState'
+U ForegroundColor red : double [1 0 0]
+U delete parent deletes children : logical false
+U menu Parent <- other menu : '0 1 matlab.ui.container.Menu'
+U menu Parent <- contextmenu : '1 matlab.ui.container.ContextMenu'
+U findobj uimenu count (depth) : double 28
+U findobj -depth 1 uimenu : double 16
+U gcbo/gcbf in menu callback need a click : 'n/a'
+U menu HandleVisibility default in figure Children : double 17
+U MenuBar none keeps uimenus : '1 none'
+U builtin toolbars findall : double 0
+U ToolBar : 'none'
+U ToolBar after uitoolbar : 'none'
+U toolbars findall after one : double 1
+U toolbar Children tips : '[3 1] three,two,one'
+U figure Children types : '[1 1] uitoolbar'
+U allchild types : '[1 1] uitoolbar'
+U two toolbars : '[2 1] uitoolbar,uitoolbar'
+U CData double [16 16 3] : 'double [16 16 3] Icon='''
+U CData double [20 30 3] : 'double [20 30 3] Icon='''
+U CData uint8 [16 16 3] : 'uint8 [16 16 3] Icon='''
+U CData double [16 16] : ERR MATLAB:hg:shaped_arrays:CDataSize | Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+U CData double [16 16 3] : ERR MATLAB:hg:shaped_arrays:CDataPredicate | Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+U CData double [16 16 3] : 'double [16 16 3] Icon='''
+U CData double [0 0] : 'double [0 0 3] Icon='''
+U CData logical [16 16 3] : ERR MATLAB:hg:shaped_arrays:CDataType | Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+U CData single [4 4 3] : 'single [4 4 3] Icon='''
+U CData uint16 [4 4 3] : 'uint16 [4 4 3] Icon='''
+U CData int8 [4 4 3] : 'int8 [4 4 3] Icon='''
+U CData double [16 16 4] : ERR MATLAB:hg:shaped_arrays:CDataSize | Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.
+U Icon '' : 'Icon='' CData=double [0 0]'
+U Icon 'bogus.png' : 'Icon='bogus.png' CData=double [0 0]'
+U Icon 'C:\Program Files\MATLAB\R2025b\toolbox\matlab\icons\help_ex.png' : 'Icon='C:\Program Files\MATLAB\R2025b\toolbox\matlab\icons\help_ex.png' CData=double [0 0]'
+U Icon double size [16 16 3] : 'Icon=double size [16 16 3] CData=double [0 0]'
+U Icon "s" : 'Icon='s' CData=double [0 0]'
+U Icon double 5 : ERR MATLAB:hg:gbtdatatypes:Icon:invalidIcon | Icon value must be a valid file path or an m-by-n-by-3 color data matrix.
+U Icon cell [1 1] {'a'} : ERR MATLAB:hg:gbtdatatypes:Icon:invalidIcon | Icon value must be a valid file path or an m-by-n-by-3 color data matrix.
+U Icon then CData : '[0 0] then Icon='C:\Program Files\MATLAB\R2025b\toolbox\matlab\icons\help_ex.png''
+U TooltipString alias : 'x'
+U Tooltip cell : cell [2 1] {'a','b'}
+U Tooltip char matrix : char [2 2] ['ab';'cd']
+[Warning: Error occurred when parsing the 'CData' value.] 
+[Warning: File 'bogus.png' is not on the MATLAB or specified path.] 
+[Warning: When both the Icon and CData properties are set, the CData property is ignored. To display an icon in the tool, use the Icon
+property.] 
+[Warning: When both the Icon and CData properties are set, the CData property is ignored. To display an icon in the tool, use the Icon
+property.] 
+[Warning: Icon value must be a valid file path or an m-by-n-by-3 color data matrix.] 
+U State on from code fires : '[on off ]'
+U State class : 'matlab.lang.OnOffSwitchState'
+U State 1 : 'on'
+U State bogus : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Invalid enum value. Use one of these values: 'on' | 'off'.
+U tool Parent <- other toolbar : '1 matlab.ui.container.Toolbar'
+U uistack tool : ERR MATLAB:strjoin:InvalidCellType | First input must be a string array or cell array of character vectors.
+U toolbar Visible off : 'off'
+U delete toolbar deletes tools : logical false
+F default findall uimenu : double 89
+F default findall uitoolbar : double 1
+F default allchild types : '[7 1] uitoolbar,uimenu,uimenu,uimenu,uimenu,uimenu,uimenu'
+F top menus tags : 'figMenuFile,figMenuEdit,figMenuView,figMenuInsert,figMenuTools,figMenuHelp'
+F top menus texts : '&File,&Edit,&View,&Insert,&Tools,&Help'
+F user menu Position beside builtins : double 7
+F MenuBar words : cell [2 1] {'none','figure'}
+F ToolBar words : cell [3 1] {'none','auto','figure'}
+F MenuBar none findall uimenu : double 1
+F MenuBar none user Position : double 1
+F MenuBar none ToolBar auto findall uitoolbar : double 0
+F MenuBar figure again findall uimenu : double 7
+F ToolBar none findall uitoolbar : double 0
+F ToolBar figure findall uitoolbar : double 1
+F toolbar tags : 'FigureToolBar'
+F toolbar tool tags : 'Standard.NewFigure,Standard.FileOpen,Standard.SaveFigure,Standard.PrintFigure,DataManager.Linking,Annotation.InsertColorbar,Annotation.InsertLegend,Standard.EditPlot,Standard.OpenInspector'
+F get(f,Children) with bars : '[1 1] uimenu'
+U MenuBar figure : 'figure'
+U ToolBar figure : 'figure'
+U findall uimenu after : double 89

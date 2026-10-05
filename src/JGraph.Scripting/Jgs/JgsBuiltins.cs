@@ -2512,6 +2512,7 @@ internal static partial class JgsBuiltins
         RegisterPrimitive3DBuiltins(env);
         RegisterHandleGraphicsBuiltins(env, host);
         RegisterUiBuiltins(env);
+        RegisterUiTableAndBarBuiltins(env);
         RegisterRulerBuiltins(env);
         RegisterSurfaceVariantBuiltins(env, dialect);
         RegisterGraphics2DBuiltins(env, dialect);

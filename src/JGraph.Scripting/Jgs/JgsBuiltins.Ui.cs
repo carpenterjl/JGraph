@@ -50,14 +50,14 @@ internal static partial class JgsBuiltins
     /// forms, and its refusals for the others. Answers the options in order with 'Parent' taken out.
     /// </summary>
     private static (IUiContainer Parent, List<(string Name, JgsValue Value)> Options) ComponentArguments(
-        IReadOnlyList<JgsValue> args, bool focusForm, int line, int col)
+        IReadOnlyList<JgsValue> args, bool focusForm, int line, int col, bool control = false)
     {
         int start = 0;
         IUiContainer? parent = null;
         bool positionalParent = false;
         if (args.Count > 0 && args[0].Type is JgsType.Number or JgsType.Array && !args[0].IsStringArray)
         {
-            parent = ComponentParent(args[0], focusForm && args.Count > 1, positional: true, line, col);
+            parent = ComponentParent(args[0], focusForm && args.Count > 1, positional: true, line, col, control);
             positionalParent = true;
             start = 1;
         }
@@ -99,7 +99,7 @@ internal static partial class JgsBuiltins
         {
             if (name.Equals("Parent", StringComparison.OrdinalIgnoreCase))
             {
-                parent = ComponentParent(value, pairsWithFocus: false, positional: false, line, col);
+                parent = ComponentParent(value, pairsWithFocus: false, positional: false, line, col, control);
             }
         }
 
@@ -175,7 +175,7 @@ internal static partial class JgsBuiltins
             return JgsHandleRegistry.For(existing);
         }
 
-        (IUiContainer parent, List<(string Name, JgsValue Value)> options) = ComponentArguments(args, focusForm: true, line, col);
+        (IUiContainer parent, List<(string Name, JgsValue Value)> options) = ComponentArguments(args, focusForm: true, line, col, control: true);
         if (parent is UiGridLayoutModel)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:uicontrol:InvalidParent", "Parent must be a Figure or UITab or any UIContainer");
@@ -218,7 +218,8 @@ internal static partial class JgsBuiltins
     /// The figure or container a component is made in, from a handle a script named, with R2025b's
     /// refusals for what is not a handle and for what cannot hold a component.
     /// </summary>
-    private static IUiContainer ComponentParent(JgsValue value, bool pairsWithFocus, bool positional, int line, int col)
+    private static IUiContainer ComponentParent(
+        JgsValue value, bool pairsWithFocus, bool positional, int line, int col, bool control = false)
     {
         if (!JgsHandleRegistry.TryGet(value, out JgsHandleEntry? named))
         {
@@ -230,6 +231,10 @@ internal static partial class JgsBuiltins
 
         return named.Target switch
         {
+            // A tab group holds tabs and nothing else, and a menu or a toolbar no component (U8).
+            UiTabGroupModel or MenuItemModel or ContextMenuModel or UiToolbarModel => throw (control
+                ? (JgsRuntimeException)new JgsRuntimeException(line, col, "MATLAB:uicontrol:InvalidParent", "Parent must be a Figure or UITab or any UIContainer")
+                : new JgsRuntimeException(line, col, "MATLAB:uicontainer:InvalidParentFigure", "Parent must be a Figure or any UIContainer")),
             IUiContainer holder => holder,
             UiObject when pairsWithFocus => throw new JgsRuntimeException(line, col,
                 "MATLAB:hgbuiltins:object_creation:CannotSpecifyPVPairsWithNonParentConvenienceArg",
@@ -630,6 +635,10 @@ internal static partial class JgsBuiltins
         {
             switch (parents[0])
             {
+                // A tab group's tabs are held in the order Children lists them (U8).
+                case UiTabGroupModel pages:
+                    RestackKind(pages.Components, [.. targets.OfType<UiObject>()], how, (int)step, frontFirst: false);
+                    break;
                 case IUiContainer holder:
                     RestackKind(holder.Components, [.. targets.OfType<UiObject>()], how, (int)step);
                     if (JgsGraphicsProperties.AxesHolder((GraphObject)holder) is { } figure)
@@ -654,7 +663,7 @@ internal static partial class JgsBuiltins
     /// the result is written back into the slots those members held.
     /// </summary>
     private static void RestackKind<T>(
-        GraphObjectCollection<T> collection, List<T> moving, string how, int step, Func<T, bool>? among = null)
+        GraphObjectCollection<T> collection, List<T> moving, string how, int step, Func<T, bool>? among = null, bool frontFirst = true)
         where T : GraphObject
     {
         if (moving.Count == 0)
@@ -663,7 +672,12 @@ internal static partial class JgsBuiltins
         }
 
         // Front first, as Children lists them: the collection is held back to front.
-        List<T> order = [.. collection.Where(item => among?.Invoke(item) ?? true).Reverse()];
+        List<T> order = [.. collection.Where(item => among?.Invoke(item) ?? true)];
+        if (frontFirst)
+        {
+            order.Reverse();
+        }
+
         if (order.Count <= moving.Count)
         {
             return;
@@ -699,7 +713,11 @@ internal static partial class JgsBuiltins
                 break;
         }
 
-        order.Reverse();
+        if (frontFirst)
+        {
+            order.Reverse();
+        }
+
         JgsGraphicsProperties.Restack(collection, order);
     }
 

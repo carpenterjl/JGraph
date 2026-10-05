@@ -112,8 +112,11 @@ internal static partial class JgsGraphicsProperties
             }
         }
 
-        // Front first in the script's list; back first in the model's.
-        var components = wanted.OfType<UiObject>().Reverse().ToList();
+        // Front first in the script's list; back first in the model's. A tab group's are the
+        // other way about: its tabs are listed, and held, in the order their headings stand.
+        var components = entry.Target is UiTabGroupModel
+            ? wanted.OfType<UiObject>().ToList()
+            : wanted.OfType<UiObject>().Reverse().ToList();
         var axes = wanted.OfType<AxesModel>().Reverse().ToList();
         using (GraphObjectLifecycle.SuppressNotifications())
         {
@@ -174,19 +177,34 @@ internal static partial class JgsGraphicsProperties
         }
 
         string moving = JgsGraphicsCallbackValues.ClassWord(entry.Target);
-        if (owner.Target is not IUiContainer holder)
+
+        // A tab goes in a tab group, and a tab group takes nothing else (U8).
+        bool tabInGroup = entry.Target is UiTabModel && owner.Target is UiTabGroupModel;
+        bool misplaced = (entry.Target is UiTabModel) != (owner.Target is UiTabGroupModel);
+        if (owner.Target is not IUiContainer holder || (misplaced && !tabInGroup))
         {
-            throw entry.Target is AxesModel
-                ? new JgsRuntimeException(line, col, "MATLAB:handle_graphics:exceptions:HandleGraphicsException",
-                    $"{moving} cannot be a child of {JgsGraphicsCallbackValues.ClassWord(owner.Target)}.")
-                : owner.Target is JgsGraphicsRoot
-                    ? new JgsRuntimeException(line, col,
-                        entry.Target is UiControlModel ? "MATLAB:uicontrol:InvalidParent" : "MATLAB:uicontainer:InvalidParentFigure",
-                        entry.Target is UiControlModel
-                            ? "Parent must be a Figure or UITab or any UIContainer"
-                            : "Parent must be a Figure or any UIContainer")
-                    : new JgsRuntimeException(line, col, "MATLAB:gbtobjects:Component",
-                        $"{JgsGraphicsCallbackValues.ClassWord(owner.Target)} cannot be a parent.");
+            if (entry.Target is AxesModel)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:handle_graphics:exceptions:HandleGraphicsException",
+                    $"{(entry.Target is AxesModel { IsUiAxes: true } ? "UIAxes" : moving)} cannot be a child of {JgsGraphicsCallbackValues.ClassWord(owner.Target)}.");
+            }
+
+            if (JgsBuiltins.HoldsNothing(owner.Target))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:gbtobjects:Component",
+                    $"{JgsGraphicsCallbackValues.ClassWord(owner.Target)} cannot be a parent.");
+            }
+
+            throw entry.Target switch
+            {
+                UiTabModel => new JgsRuntimeException(line, col, "MATLAB:uitab:InvalidParent", "Parent must be a TabGroup"),
+                UiTabGroupModel => new JgsRuntimeException(line, col, "MATLAB:uitabgroup:InvalidParent", "Parent must be a figure, uipanel or a uitab"),
+                UiTableModel => new JgsRuntimeException(line, col, "MATLAB:uitable:ParentMustBeFigureOrUIContainer", "Parent must be a Figure or any UIContainer"),
+                UiControlModel => new JgsRuntimeException(line, col, "MATLAB:uicontrol:InvalidParent", "Parent must be a Figure or UITab or any UIContainer"),
+                UiComponentModel or UiGridLayoutModel => new JgsRuntimeException(line, col, $"MATLAB:ui:{moving}:invalidParent",
+                    "'Parent' must be a parent component, such as a uifigure object."),
+                _ => new JgsRuntimeException(line, col, "MATLAB:uicontainer:InvalidParentFigure", "Parent must be a Figure or any UIContainer"),
+            };
         }
 
         // A radio or toggle button lives in a button group and nowhere else (U5).
@@ -218,6 +236,12 @@ internal static partial class JgsGraphicsProperties
                     if (component is UiControlModel leaving && component.Parent is UiButtonGroupModel from)
                     {
                         from.Leaving(leaving);
+                    }
+
+                    // A tab that was showing hands the page to its neighbour (U8).
+                    if (component is UiTabModel page && component.Parent is UiTabGroupModel pages)
+                    {
+                        pages.Leaving(page);
                     }
 
                     component.Container?.Components.Remove(component);

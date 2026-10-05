@@ -1,0 +1,144 @@
+uicontrol (tabgroup) : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+uicontrol (tab) : 'matlab.ui.control.UIControl'
+uicontrol (menu) : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+uicontrol (contextmenu) : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+uicontrol (toolbar) : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+uicontrol (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uicontrol (table) : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uicontrol Parent <- tabgroup : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+uicontrol Parent <- tab : 'matlab.ui.container.Tab'
+uicontrol Parent <- menu : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+uicontrol Parent <- table : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uicontrol Parent <- toolbar : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+uipanel (tabgroup) : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uipanel (tab) : 'matlab.ui.container.Panel'
+uipanel (menu) : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uipanel (contextmenu) : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uipanel (toolbar) : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uipanel (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uipanel (table) : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uipanel Parent <- tabgroup : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uipanel Parent <- tab : 'matlab.ui.container.Tab'
+uipanel Parent <- menu : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uipanel Parent <- table : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uipanel Parent <- toolbar : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uibuttongroup (tabgroup) : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uibuttongroup (tab) : 'matlab.ui.container.ButtonGroup'
+uibuttongroup (menu) : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uibuttongroup (contextmenu) : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uibuttongroup (toolbar) : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uibuttongroup (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uibuttongroup (table) : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uibuttongroup Parent <- tabgroup : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uibuttongroup Parent <- tab : 'matlab.ui.container.Tab'
+uibuttongroup Parent <- menu : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uibuttongroup Parent <- table : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uibuttongroup Parent <- toolbar : ERR MATLAB:uicontainer:InvalidParentFigure | Parent must be a Figure or any UIContainer
+uibutton (tabgroup) : ERR MATLAB:ui:Button:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uibutton (tab) : 'matlab.ui.control.Button'
+uibutton (menu) : ERR MATLAB:ui:Button:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uibutton (contextmenu) : ERR MATLAB:ui:Button:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uibutton (toolbar) : ERR MATLAB:ui:Button:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uibutton (pushtool) : ERR MATLAB:ui:Button:unknownInput | PushTool cannot be a parent.
+uibutton (table) : ERR MATLAB:ui:Button:unknownInput | Table cannot be a parent.
+uibutton Parent <- tabgroup : ERR MATLAB:ui:Button:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uibutton Parent <- tab : 'matlab.ui.container.Tab'
+uibutton Parent <- menu : ERR MATLAB:ui:Button:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uibutton Parent <- table : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uibutton Parent <- toolbar : ERR MATLAB:ui:Button:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uilabel (tabgroup) : ERR MATLAB:ui:Label:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uilabel (tab) : 'matlab.ui.control.Label'
+uilabel (menu) : ERR MATLAB:ui:Label:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uilabel (contextmenu) : ERR MATLAB:ui:Label:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uilabel (toolbar) : ERR MATLAB:ui:Label:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uilabel (pushtool) : ERR MATLAB:ui:Label:unknownInput | PushTool cannot be a parent.
+uilabel (table) : ERR MATLAB:ui:Label:unknownInput | Table cannot be a parent.
+uilabel Parent <- tabgroup : ERR MATLAB:ui:Label:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uilabel Parent <- tab : 'matlab.ui.container.Tab'
+uilabel Parent <- menu : ERR MATLAB:ui:Label:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uilabel Parent <- table : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uilabel Parent <- toolbar : ERR MATLAB:ui:Label:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uigridlayout (tabgroup) : ERR MATLAB:ui:GridLayout:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uigridlayout (tab) : 'matlab.ui.container.GridLayout'
+uigridlayout (menu) : ERR MATLAB:ui:GridLayout:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uigridlayout (contextmenu) : ERR MATLAB:ui:GridLayout:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uigridlayout (toolbar) : ERR MATLAB:ui:GridLayout:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uigridlayout (pushtool) : ERR MATLAB:ui:GridLayout:unknownInput | PushTool cannot be a parent.
+uigridlayout (table) : ERR MATLAB:ui:GridLayout:unknownInput | Table cannot be a parent.
+uigridlayout Parent <- tabgroup : ERR MATLAB:ui:GridLayout:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uigridlayout Parent <- tab : 'matlab.ui.container.Tab'
+uigridlayout Parent <- menu : ERR MATLAB:ui:GridLayout:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uigridlayout Parent <- table : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uigridlayout Parent <- toolbar : ERR MATLAB:ui:GridLayout:invalidParent | 'Parent' must be a parent component, such as a uifigure object.
+uiaxes (tabgroup) : ERR MATLAB:ui:UIAxes:unknownInput | UIAxes cannot be a child of TabGroup.
+uiaxes (tab) : 'matlab.ui.control.UIAxes'
+uiaxes (menu) : ERR MATLAB:ui:UIAxes:unknownInput | UIAxes cannot be a child of Menu.
+uiaxes (contextmenu) : ERR MATLAB:ui:UIAxes:unknownInput | UIAxes cannot be a child of ContextMenu.
+uiaxes (toolbar) : ERR MATLAB:ui:UIAxes:unknownInput | UIAxes cannot be a child of Toolbar.
+uiaxes (pushtool) : ERR MATLAB:ui:UIAxes:unknownInput | UIAxes cannot be a child of PushTool.
+uiaxes (table) : ERR MATLAB:ui:UIAxes:unknownInput | UIAxes cannot be a child of Table.
+uiaxes Parent <- tabgroup : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | UIAxes cannot be a child of TabGroup.
+uiaxes Parent <- tab : 'matlab.ui.container.Tab'
+uiaxes Parent <- menu : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | UIAxes cannot be a child of Menu.
+uiaxes Parent <- table : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | UIAxes cannot be a child of Table.
+uiaxes Parent <- toolbar : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | UIAxes cannot be a child of Toolbar.
+axes (tabgroup) : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of TabGroup.
+axes (tab) : 'matlab.graphics.axis.Axes'
+axes (menu) : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of Menu.
+axes (contextmenu) : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of ContextMenu.
+axes (toolbar) : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of Toolbar.
+axes (pushtool) : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of PushTool.
+axes (table) : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of Table.
+axes Parent <- tabgroup : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of TabGroup.
+axes Parent <- tab : 'matlab.ui.container.Tab'
+axes Parent <- menu : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of Menu.
+axes Parent <- table : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of Table.
+axes Parent <- toolbar : ERR MATLAB:handle_graphics:exceptions:HandleGraphicsException | Axes cannot be a child of Toolbar.
+uitable (tabgroup) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (tab) : 'matlab.ui.control.Table'
+uitable (menu) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (contextmenu) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (toolbar) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uitable (table) : 'matlab.ui.control.Table'
+uitable Parent <- tabgroup : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable Parent <- tab : 'matlab.ui.container.Tab'
+uitable Parent <- menu : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable Parent <- table : ERR MATLAB:gbtobjects:Component | Table cannot be a parent.
+uitable Parent <- toolbar : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+tab Parent <- figure : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+tab Parent <- panel : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+tab Parent <- tab : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+tabgroup Parent <- its own tab : ERR MATLAB:container:InvalidParentToChild | You are trying to set the parent property to a descendant child object.
+tabgroup Parent <- grid : 'matlab.ui.container.GridLayout'
+tabgroup Parent <- tabgroup : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+table Parent <- tab : 'matlab.ui.container.Tab'
+table Parent <- grid : 'matlab.ui.container.GridLayout'
+menu Parent <- panel : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+menu Parent <- toolbar : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+menu Parent <- its own child : ERR MATLAB:container:InvalidParentToChild | You are trying to set the parent property to a descendant child object.
+contextmenu Parent <- menu : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+toolbar Parent <- panel : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+pushtool Parent <- figure : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+pushtool Parent <- menu : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+toggletool Parent <- figure : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+isgraphics tool : logical true
+ancestor tool figure : 'matlab.ui.Figure'
+findobj uipushtool : double 3
+get(tool) fields n : double 21
+tool Position : ERR MATLAB:hg:InvalidProperty | Unrecognized property Position for class matlab.ui.container.toolbar.PushTool.
+toolbar Position : ERR MATLAB:hg:InvalidProperty | Unrecognized property Position for class matlab.ui.container.Toolbar.
+menu Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.container.Menu.
+menu Label listed : logical false
+menu isprop Label Callback : logical [true true]
+copyobj menu : 'matlab.ui.container.Menu'
+copyobj tab : 'A'
+copyobj tabgroup children : double 2
+copyobj table Data : '[8 1 6;3 5 7;4 9 2]'
+uistack tabgroup : <matlab.ui.control.WebComponent [31 1]>
+reset(tbl) Data : '[0 0]'
+set(tbl) names n : double 46
+get(tbl,{Data,Tag}) : 'cell [1 2] {double [0 0],''}'
+findobj uitable -property Data : double 4
+findobj Title A : double 4
+delete(tg) then isvalid(t) : logical false

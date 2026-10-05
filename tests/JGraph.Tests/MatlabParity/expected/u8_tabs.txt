@@ -1,0 +1,147 @@
+CHK|F_selected_none|1|exact
+CHK|F_selected_first|One|exact
+CHK|F_children|One,Two,Three|exact
+CHK|F_selected_set|Two|exact
+CHK|F_select_number|MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle|exact
+CHK|F_select_number_msg|Error setting property 'SelectedTab' of class 'TabGroup': The value set for this property must be a valid HG handle.|exact
+CHK|F_select_nothing|MATLAB:UITabGroup|exact
+CHK|F_select_nothing_msg|Invalid value for SelectedTab.|exact
+CHK|F_select_foreign|MATLAB:UITabGroup|exact
+CHK|F_select_foreign_msg|Invalid value for SelectedTab.|exact
+CHK|F_select_panel|MATLAB:UITabGroup|exact
+CHK|F_select_panel_msg|Invalid value for SelectedTab.|exact
+CHK|F_select_same|ran|exact
+CHK|F_select_deleted|MATLAB:UITabGroup|exact
+CHK|F_select_deleted_msg|Invalid value for SelectedTab.|exact
+CHK|F_select_in_maker|MATLAB:UITabGroup|exact
+CHK|F_select_in_maker_msg|Invalid value for SelectedTab.|exact
+CHK|F_after_middle|Three|exact
+CHK|F_after_last|Three|exact
+CHK|F_after_first|Three|exact
+CHK|F_after_only|1|exact
+CHK|F_reordered|C,B,A sel=B|exact
+CHK|F_restacked|A,C,B|exact
+CHK|F_moved|C n=1|exact
+CHK|F_moved_from|A,B sel=B|exact
+CHK|F_moved_selected|A then C|exact
+CHK|F_code_select_fires|0|exact
+CHK|F_title_cell|MATLAB:class:RequireString|exact
+CHK|F_title_cell_msg|Value must be a character vector or a string scalar.|exact
+CHK|F_title_string|s|exact
+CHK|F_title_number|MATLAB:class:RequireString|exact
+CHK|F_title_number_msg|Value must be a character vector or a string scalar.|exact
+CHK|F_title_matrix|acbd|exact
+CHK|F_tab_set_position|MATLAB:class:SetProhibited|exact
+CHK|F_tab_set_position_msg|Unable to set the 'Position' property of class ''Tab'' because it is read-only.|exact
+CHK|F_tab_set_inner|MATLAB:class:SetProhibited|exact
+CHK|F_tab_set_inner_msg|Unable to set the 'InnerPosition' property of class ''Tab'' because it is read-only.|exact
+CHK|F_tab_set_outer|MATLAB:class:SetProhibited|exact
+CHK|F_tab_set_outer_msg|Unable to set the 'OuterPosition' property of class ''Tab'' because it is read-only.|exact
+CHK|F_group_set_inner|MATLAB:class:SetProhibited|exact
+CHK|F_group_set_inner_msg|Unable to set the 'InnerPosition' property of class ''TabGroup'' because it is read-only.|exact
+CHK|F_tab_visible|MATLAB:hg:InvalidProperty|exact
+CHK|F_tab_visible_msg|Unrecognized property Visible for class matlab.ui.container.Tab.|exact
+CHK|F_tab_enable|MATLAB:hg:InvalidProperty|exact
+CHK|F_tab_enable_msg|Unrecognized property Enable for class matlab.ui.container.Tab.|exact
+CHK|F_group_enable|MATLAB:hg:InvalidProperty|exact
+CHK|F_group_enable_msg|Unrecognized property Enable for class matlab.ui.container.TabGroup.|exact
+CHK|F_group_tooltipstring|MATLAB:hg:InvalidProperty|exact
+CHK|F_group_tooltipstring_msg|Unrecognized property TooltipString for class TabGroup.|exact
+CHK|F_tab_tooltipstring|x|exact
+CHK|F_tab_none|none none|exact
+CHK|F_tab_scrollable|on|exact
+CHK|F_group_hidden|off on|exact
+CHK|F_group_deleted|0 0|exact
+CHK|F_findobj_tabs|double [1 1] 7|exact
+CHK|F_ancestor|figure|exact
+CHK|F_group_callbacks|function_handle ; char 'disp(1)' ; cell [2 1] {function_handle, double [1 1] 1} ; char 'str' ; MATLAB:datatypes:callback:CreateCallback ; MATLAB:datatypes:callback:CreateCallback ; char ''|exact
+CHK|F_group_outer|double [1 4] 30 30 200 100|exact
+CHK|F_tab_children|uitable,uipanel,uicontrol,axes|exact
+CHK|F_axes_parent|uitab|exact
+CHK|F_axes_units|normalized|exact
+CHK|F_nested_group|uitab < uitabgroup < uitab < uitabgroup < figure|exact
+CHK|U_selected_none|1|exact
+CHK|U_selected_first|One|exact
+CHK|U_children|One,Two,Three|exact
+CHK|U_selected_set|Two|exact
+CHK|U_select_number|MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle|exact
+CHK|U_select_number_msg|Error setting property 'SelectedTab' of class 'TabGroup': The value set for this property must be a valid HG handle.|exact
+CHK|U_select_nothing|MATLAB:UITabGroup|exact
+CHK|U_select_nothing_msg|Invalid value for SelectedTab.|exact
+CHK|U_select_foreign|MATLAB:UITabGroup|exact
+CHK|U_select_foreign_msg|Invalid value for SelectedTab.|exact
+CHK|U_select_panel|MATLAB:UITabGroup|exact
+CHK|U_select_panel_msg|Invalid value for SelectedTab.|exact
+CHK|U_select_same|ran|exact
+CHK|U_select_deleted|MATLAB:UITabGroup|exact
+CHK|U_select_deleted_msg|Invalid value for SelectedTab.|exact
+CHK|U_select_in_maker|MATLAB:UITabGroup|exact
+CHK|U_select_in_maker_msg|Invalid value for SelectedTab.|exact
+CHK|U_after_middle|Three|exact
+CHK|U_after_last|Three|exact
+CHK|U_after_first|Three|exact
+CHK|U_after_only|1|exact
+CHK|U_reordered|C,B,A sel=B|exact
+CHK|U_restacked|A,C,B|exact
+CHK|U_moved|C n=1|exact
+CHK|U_moved_from|A,B sel=B|exact
+CHK|U_moved_selected|A then C|exact
+CHK|U_code_select_fires|0|exact
+CHK|U_title_cell|MATLAB:class:RequireString|exact
+CHK|U_title_cell_msg|Value must be a character vector or a string scalar.|exact
+CHK|U_title_string|s|exact
+CHK|U_title_number|MATLAB:class:RequireString|exact
+CHK|U_title_number_msg|Value must be a character vector or a string scalar.|exact
+CHK|U_title_matrix|acbd|exact
+CHK|U_tab_set_position|MATLAB:class:SetProhibited|exact
+CHK|U_tab_set_position_msg|Unable to set the 'Position' property of class ''Tab'' because it is read-only.|exact
+CHK|U_tab_set_inner|MATLAB:class:SetProhibited|exact
+CHK|U_tab_set_inner_msg|Unable to set the 'InnerPosition' property of class ''Tab'' because it is read-only.|exact
+CHK|U_tab_set_outer|MATLAB:class:SetProhibited|exact
+CHK|U_tab_set_outer_msg|Unable to set the 'OuterPosition' property of class ''Tab'' because it is read-only.|exact
+CHK|U_group_set_inner|MATLAB:class:SetProhibited|exact
+CHK|U_group_set_inner_msg|Unable to set the 'InnerPosition' property of class ''TabGroup'' because it is read-only.|exact
+CHK|U_tab_visible|MATLAB:hg:InvalidProperty|exact
+CHK|U_tab_visible_msg|Unrecognized property Visible for class matlab.ui.container.Tab.|exact
+CHK|U_tab_enable|MATLAB:hg:InvalidProperty|exact
+CHK|U_tab_enable_msg|Unrecognized property Enable for class matlab.ui.container.Tab.|exact
+CHK|U_group_enable|MATLAB:hg:InvalidProperty|exact
+CHK|U_group_enable_msg|Unrecognized property Enable for class matlab.ui.container.TabGroup.|exact
+CHK|U_group_tooltipstring|MATLAB:hg:InvalidProperty|exact
+CHK|U_group_tooltipstring_msg|Unrecognized property TooltipString for class TabGroup.|exact
+CHK|U_tab_tooltipstring|x|exact
+CHK|U_tab_none|none none|exact
+CHK|U_tab_scrollable|on|exact
+CHK|U_group_hidden|off on|exact
+CHK|U_group_deleted|0 0|exact
+CHK|U_findobj_tabs|double [1 1] 7|exact
+CHK|U_ancestor|figure|exact
+CHK|U_group_callbacks|function_handle ; char 'disp(1)' ; cell [2 1] {function_handle, double [1 1] 1} ; char 'str' ; MATLAB:datatypes:callback:CreateCallback ; MATLAB:datatypes:callback:CreateCallback ; char ''|exact
+CHK|U_group_outer|double [1 4] 30 30 200 100|exact
+CHK|U_tab_children|uitable,uipanel,uibutton,axes|exact
+CHK|U_axes_parent|uitab|exact
+CHK|U_axes_units|pixels|exact
+CHK|U_nested_group|uitab < uitabgroup < uitab < uitabgroup < figure|exact
+CHK|U_top_tab|[1 1 298 175]|exact
+CHK|U_top_tab_inner|[1 1 298 175]|exact
+CHK|U_top_tab_outer|[1 1 298 175]|exact
+CHK|U_top_group_inner|[21 21 298 175]|exact
+CHK|U_top_group|[20 20 300 200]|exact
+CHK|U_top_child_in_figure|[30 30 50 20]|exact
+CHK|U_top_tab_in_figure|[21 21 298 175]|exact
+CHK|U_top_tab_normalized|[0 0 1 1]|exact
+CHK|U_bottom_tab|[1 1 298 175]|exact
+CHK|U_bottom_tab_inner|[1 1 298 175]|exact
+CHK|U_bottom_tab_outer|[1 1 298 175]|exact
+CHK|U_bottom_group_inner|[21 44 298 175]|exact
+CHK|U_bottom_group|[20 20 300 200]|exact
+CHK|U_bottom_child_in_figure|[30 53 50 20]|exact
+CHK|U_bottom_tab_in_figure|[21 44 298 175]|exact
+CHK|U_bottom_tab_normalized|[0 0 1 1]|exact
+CHK|U_left_tab|[1 1 232 198]|exact
+CHK|U_left_group_inner|[87 21 232 198]|exact
+CHK|U_left_tab_long|[1 1 197 198]|exact
+CHK|U_right_tab|[1 1 232 198]|exact
+CHK|U_right_group_inner|[21 21 232 198]|exact
+CHK|U_right_tab_long|[1 1 197 198]|exact
+CHK|U_empty_group_inner|[21 21 298 175]|exact

@@ -311,12 +311,12 @@ internal static partial class UiComponentMapper
         return found;
     }
 
-    private static UiTextDto? ToDto(UiText text) =>
+    internal static UiTextDto? ToDto(UiText text) =>
         text.Lines.Count == 0 && text.Form == UiTextForm.CharRow
             ? null
             : new UiTextDto { Form = text.Form.ToString(), Lines = [.. text.Lines] };
 
-    private static UiText ToText(UiTextDto? dto) =>
+    internal static UiText ToText(UiTextDto? dto) =>
         dto is null ? UiText.Empty : new UiText(ParseOr(dto.Form, UiTextForm.CharRow), [.. dto.Lines]);
 
     private static double[]? ToDto(UiColor? color) => color is { } rgb ? [rgb.R, rgb.G, rgb.B] : null;

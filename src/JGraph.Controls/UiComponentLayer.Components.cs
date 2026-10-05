@@ -96,6 +96,8 @@ public sealed partial class UiComponentLayer
 
     private void ClearComponents()
     {
+        _tables.Clear();
+        _tabStrips.Clear();
         _components.Clear();
         _componentPlacements = [];
         _overlays.Clear();
@@ -129,7 +131,12 @@ public sealed partial class UiComponentLayer
             shown.Applying = true;
             try
             {
+                bool waiting = shown.PendingSeq > 0 && component.UserWriteSeq < shown.PendingSeq;
                 Refresh(shown, component);
+                if (shown.Kind == UiComponentKind.Table)
+                {
+                    RefreshTable(shown, component, waiting);
+                }
             }
             finally
             {
@@ -143,8 +150,13 @@ public sealed partial class UiComponentLayer
         {
             Children.Remove(_components[gone].Element);
             _components.Remove(gone);
+            if (gone is UiTableModel table)
+            {
+                _tables.Remove(table);
+            }
         }
 
+        ApplyTabStrips(frame);
         ApplyOverlays(frame);
     }
 
@@ -178,6 +190,7 @@ public sealed partial class UiComponentLayer
             SetZIndex(element, placement.Order);
         }
 
+        ArrangeTabStrips(layout);
         ArrangeScrollBars(layout);
         if (_overlayHost is not null)
         {
@@ -333,7 +346,7 @@ public sealed partial class UiComponentLayer
         }
 
         long seq = ScriptGraphicsCallbacks.NotifyComponent(shown.Source, action, value);
-        if (action == "value")
+        if (action is "value" or "celledit")
         {
             shown.PendingSeq = seq;
         }
@@ -346,6 +359,9 @@ public sealed partial class UiComponentLayer
         UiComponentModel source = frame.Source;
         switch (frame.Kind)
         {
+            case UiComponentKind.Table:
+                return MakeTable(frame);
+
             case UiComponentKind.Button:
             {
                 var button = new Button { Style = (Style)Styles["JG.Ui.PushButton"] };

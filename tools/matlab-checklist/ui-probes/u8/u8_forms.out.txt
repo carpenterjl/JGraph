@@ -1,0 +1,406 @@
+uitable () : 'matlab.ui.control.Table < uifigure'
+uitable () with a current figure : 'matlab.ui.control.Table < uifigure'
+uitable (uifigure) : 'matlab.ui.control.Table < uifigure'
+uitable (figure) : 'matlab.ui.control.Table < uifigure'
+uitable (uipanel) : 'matlab.ui.control.Table < matlab.ui.container.Panel < uifigure'
+uitable (classic uipanel) : 'matlab.ui.control.Table < matlab.ui.container.Panel < uifigure'
+uitable (grid) : 'matlab.ui.control.Table < matlab.ui.container.GridLayout < uifigure'
+uitable (uibuttongroup) : 'matlab.ui.control.Table < matlab.ui.container.ButtonGroup < uifigure'
+uitable (tabgroup) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (classic tabgroup) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (tab) : 'matlab.ui.control.Table < matlab.ui.container.Tab < matlab.ui.container.TabGroup < uifigure'
+uitable (classic tab) : 'matlab.ui.control.Table < matlab.ui.container.Tab < matlab.ui.container.TabGroup < uifigure'
+uitable (menu) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (classic menu) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (contextmenu) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (classic contextmenu) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (toolbar) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (classic toolbar) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uitable (axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitable (uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uitable (label) : ERR MATLAB:gbtobjects:Component | Label cannot be a parent.
+uitable (5.5) : ERR MATLAB:UndefinedFunction | Undefined function 'isvalid' for input arguments of type 'double'.
+[Warning: This implementation of uitable is no longer supported and will be removed in a future release.
+See the documentation for correct uitable usage:
+  <a href="matlab:help('uitable')">help uitable</a> and <a href="matlab:doc('uitable')">doc uitable</a>] 
+uitable ([]) : ERR MATLAB:uitable:DeprecatedFunctionWeb | The 'v0' argument for uitable has been removed.
+uitable (groot) : ERR MATLAB:uitable:ParentMustBeFigureOrUIContainer | Parent must be a Figure or any UIContainer
+uitable (Parent, uf) : 'matlab.ui.control.Table < uifigure'
+uitable (Parent, f) : 'matlab.ui.control.Table < uifigure'
+uitable (Parent, []) : 'matlab.ui.control.Table'
+uitable (f, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Table.
+uitable (uf, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Table.
+uitable (f, Tag) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uitable (Tag, t) pairs only : 't'
+[Warning: This implementation of uitable is no longer supported and will be removed in a future release.
+See the documentation for correct uitable usage:
+  <a href="matlab:help('uitable')">help uitable</a> and <a href="matlab:doc('uitable')">doc uitable</a>] 
+uitable (f, struct) : ERR MATLAB:uitable:DeprecatedFunctionWeb | The 'v0' argument for uitable has been removed.
+uitable (f, tag, t) lower case : 't'
+uitable (f, Ta, t) prefix : 't'
+uitable (uf, Ta, t) prefix : 't'
+uitable (f, "Tag", "t") strings : 't'
+uitable bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.Table.
+uitable bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Table.
+uitable set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Table'' because it is read-only.
+uitable isprop Units Position Visible Enable, isgraphics, ishghandle : '1111 1 1'
+uitable u isprop Units Position Visible Enable : '1111 1 1'
+uitable Parent <- other figure : 'matlab.ui.control.Table < uifigure'
+uitable Parent <- [] : 'matlab.ui.control.Table'
+uitable Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitable Parent <- panel : 'matlab.ui.control.Table < matlab.ui.container.Panel < uifigure'
+uitable findobj by Type f : double 17
+uitable findobj by Type uf : double 10
+uitable findall by Type uf : double 11
+uitable nargout 0 : double 1
+uitabgroup () : 'matlab.ui.container.TabGroup < uifigure'
+uitabgroup () with a current figure : 'matlab.ui.container.TabGroup < uifigure'
+uitabgroup (uifigure) : 'matlab.ui.container.TabGroup < uifigure'
+uitabgroup (figure) : 'matlab.ui.container.TabGroup < uifigure'
+uitabgroup (uipanel) : 'matlab.ui.container.TabGroup < matlab.ui.container.Panel < uifigure'
+uitabgroup (classic uipanel) : 'matlab.ui.container.TabGroup < matlab.ui.container.Panel < uifigure'
+uitabgroup (grid) : 'matlab.ui.container.TabGroup < matlab.ui.container.GridLayout < uifigure'
+uitabgroup (uibuttongroup) : 'matlab.ui.container.TabGroup < matlab.ui.container.ButtonGroup < uifigure'
+uitabgroup (tabgroup) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (classic tabgroup) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (tab) : 'matlab.ui.container.TabGroup < matlab.ui.container.Tab < matlab.ui.container.TabGroup < uifigure'
+uitabgroup (classic tab) : 'matlab.ui.container.TabGroup < matlab.ui.container.Tab < matlab.ui.container.TabGroup < uifigure'
+uitabgroup (menu) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (classic menu) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (contextmenu) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (classic contextmenu) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (toolbar) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (classic toolbar) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uitabgroup (axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitabgroup (uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uitabgroup (label) : ERR MATLAB:gbtobjects:Component | Label cannot be a parent.
+uitabgroup (5.5) : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uitabgroup ([]) : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uitabgroup (groot) : ERR MATLAB:uitabgroup:InvalidParent | Parent must be a figure, uipanel or a uitab
+uitabgroup (Parent, uf) : 'matlab.ui.container.TabGroup < uifigure'
+uitabgroup (Parent, f) : 'matlab.ui.container.TabGroup < uifigure'
+uitabgroup (Parent, []) : 'matlab.ui.container.TabGroup'
+uitabgroup (f, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class TabGroup.
+uitabgroup (uf, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class TabGroup.
+uitabgroup (f, Tag) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uitabgroup (Tag, t) pairs only : 't'
+uitabgroup (f, struct) : 's'
+uitabgroup (f, tag, t) lower case : 't'
+uitabgroup (f, Ta, t) prefix : ERR MATLAB:hg:InvalidProperty | Unrecognized property Ta for class TabGroup.
+uitabgroup (uf, Ta, t) prefix : ERR MATLAB:hg:InvalidProperty | Unrecognized property Ta for class TabGroup.
+uitabgroup (f, "Tag", "t") strings : 't'
+uitabgroup bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.container.TabGroup.
+uitabgroup bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class TabGroup.
+uitabgroup set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''TabGroup'' because it is read-only.
+uitabgroup isprop Units Position Visible Enable, isgraphics, ishghandle : '1110 1 1'
+uitabgroup u isprop Units Position Visible Enable : '1110 1 1'
+uitabgroup Parent <- other figure : 'matlab.ui.container.TabGroup < uifigure'
+uitabgroup Parent <- [] : 'matlab.ui.container.TabGroup'
+uitabgroup Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitabgroup Parent <- panel : 'matlab.ui.container.TabGroup < matlab.ui.container.Panel < uifigure'
+uitabgroup findobj by Type f : double 19
+uitabgroup findobj by Type uf : double 11
+uitabgroup findall by Type uf : double 12
+uitabgroup nargout 0 : double 1
+uitab () : 'matlab.ui.container.Tab < matlab.ui.container.TabGroup < uifigure'
+uitab () with a current figure : 'matlab.ui.container.Tab < matlab.ui.container.TabGroup < uifigure'
+uitab (uifigure) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (figure) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (uipanel) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (classic uipanel) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (grid) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (uibuttongroup) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (tabgroup) : 'matlab.ui.container.Tab < matlab.ui.container.TabGroup < uifigure'
+uitab (classic tabgroup) : 'matlab.ui.container.Tab < matlab.ui.container.TabGroup < uifigure'
+uitab (tab) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (classic tab) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (menu) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (classic menu) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (contextmenu) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (classic contextmenu) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (toolbar) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (classic toolbar) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uitab (axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitab (uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uitab (label) : ERR MATLAB:gbtobjects:Component | Label cannot be a parent.
+uitab (5.5) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab ([]) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (groot) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (Parent, uf) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (Parent, f) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (Parent, []) : 'matlab.ui.container.Tab'
+uitab (f, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Tab.
+uitab (uf, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Tab.
+uitab (f, Tag) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uitab (Tag, t) pairs only : 't'
+uitab (f, struct) : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (f, tag, t) lower case : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (f, Ta, t) prefix : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (uf, Ta, t) prefix : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab (f, "Tag", "t") strings : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab bogus get : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab bogus set : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab set Type : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab isprop Units Position Visible Enable, isgraphics, ishghandle : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab u isprop Units Position Visible Enable : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab Parent <- other figure : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab Parent <- [] : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab Parent <- axes : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab Parent <- panel : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab findobj by Type f : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab findobj by Type uf : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab findall by Type uf : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uitab nargout 0 : ERR MATLAB:uitab:InvalidParent | Parent must be a TabGroup
+uimenu () : 'matlab.ui.container.Menu < uifigure'
+uimenu () with a current figure : 'matlab.ui.container.Menu < uifigure'
+uimenu (uifigure) : 'matlab.ui.container.Menu < uifigure'
+uimenu (figure) : 'matlab.ui.container.Menu < uifigure'
+uimenu (uipanel) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (classic uipanel) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (grid) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (uibuttongroup) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (tabgroup) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (classic tabgroup) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (tab) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (classic tab) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (menu) : 'matlab.ui.container.Menu < matlab.ui.container.Menu < uifigure'
+uimenu (classic menu) : 'matlab.ui.container.Menu < matlab.ui.container.Menu < uifigure'
+uimenu (contextmenu) : 'matlab.ui.container.Menu < matlab.ui.container.ContextMenu < uifigure'
+uimenu (classic contextmenu) : 'matlab.ui.container.Menu < matlab.ui.container.ContextMenu < uifigure'
+uimenu (toolbar) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (classic toolbar) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uimenu (axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uimenu (uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uimenu (label) : ERR MATLAB:gbtobjects:Component | Label cannot be a parent.
+uimenu (5.5) : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uimenu ([]) : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uimenu (groot) : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu (Parent, uf) : 'matlab.ui.container.Menu < uifigure'
+uimenu (Parent, f) : 'matlab.ui.container.Menu < uifigure'
+uimenu (Parent, []) : 'matlab.ui.container.Menu'
+uimenu (f, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Menu.
+uimenu (uf, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Menu.
+uimenu (f, Tag) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uimenu (Tag, t) pairs only : 't'
+uimenu (f, struct) : 's'
+uimenu (f, tag, t) lower case : 't'
+uimenu (f, Ta, t) prefix : 't'
+uimenu (uf, Ta, t) prefix : 't'
+uimenu (f, "Tag", "t") strings : 't'
+uimenu bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.container.Menu.
+uimenu bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Menu.
+uimenu set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Menu'' because it is read-only.
+uimenu isprop Units Position Visible Enable, isgraphics, ishghandle : '0111 1 1'
+uimenu u isprop Units Position Visible Enable : '0111 1 1'
+uimenu Parent <- other figure : 'matlab.ui.container.Menu < uifigure'
+uimenu Parent <- [] : 'matlab.ui.container.Menu'
+uimenu Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uimenu Parent <- panel : ERR MATLAB:uimenu:InvalidParent | Parent must be a Figure, UIContextMenu, or another Menu
+uimenu findobj by Type f : double 19
+uimenu findobj by Type uf : double 9
+uimenu findall by Type uf : double 10
+uimenu nargout 0 : double 0
+uicontextmenu () : 'matlab.ui.container.ContextMenu < uifigure'
+uicontextmenu () with a current figure : 'matlab.ui.container.ContextMenu < uifigure'
+uicontextmenu (uifigure) : 'matlab.ui.container.ContextMenu < uifigure'
+uicontextmenu (figure) : 'matlab.ui.container.ContextMenu < uifigure'
+uicontextmenu (uipanel) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (classic uipanel) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (grid) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (uibuttongroup) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (tabgroup) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (classic tabgroup) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (tab) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (classic tab) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (menu) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (classic menu) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (contextmenu) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (classic contextmenu) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (toolbar) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (classic toolbar) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uicontextmenu (axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uicontextmenu (uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uicontextmenu (label) : ERR MATLAB:gbtobjects:Component | Label cannot be a parent.
+uicontextmenu (5.5) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu ([]) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (groot) : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu (Parent, uf) : 'matlab.ui.container.ContextMenu < uifigure'
+uicontextmenu (Parent, f) : 'matlab.ui.container.ContextMenu < uifigure'
+uicontextmenu (Parent, []) : 'matlab.ui.container.ContextMenu'
+uicontextmenu (f, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class ContextMenu.
+uicontextmenu (uf, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class ContextMenu.
+uicontextmenu (f, Tag) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uicontextmenu (Tag, t) pairs only : 't'
+uicontextmenu (f, struct) : 's'
+uicontextmenu (f, tag, t) lower case : 't'
+uicontextmenu (f, Ta, t) prefix : 't'
+uicontextmenu (uf, Ta, t) prefix : 't'
+uicontextmenu (f, "Tag", "t") strings : 't'
+uicontextmenu bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.container.ContextMenu.
+uicontextmenu bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class ContextMenu.
+uicontextmenu set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''ContextMenu'' because it is read-only.
+uicontextmenu isprop Units Position Visible Enable, isgraphics, ishghandle : '0110 1 1'
+uicontextmenu u isprop Units Position Visible Enable : '0110 1 1'
+uicontextmenu Parent <- other figure : 'matlab.ui.container.ContextMenu < uifigure'
+uicontextmenu Parent <- [] : 'matlab.ui.container.ContextMenu'
+uicontextmenu Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uicontextmenu Parent <- panel : ERR MATLAB:Uicontextmenu:InvalidParent | Parent must be a Figure
+uicontextmenu findobj by Type f : double 17
+uicontextmenu findobj by Type uf : double 7
+uicontextmenu findall by Type uf : double 8
+uicontextmenu nargout 0 : double 0
+uitoolbar () : 'matlab.ui.container.Toolbar < uifigure'
+uitoolbar () with a current figure : 'matlab.ui.container.Toolbar < uifigure'
+uitoolbar (uifigure) : 'matlab.ui.container.Toolbar < uifigure'
+uitoolbar (figure) : 'matlab.ui.container.Toolbar < uifigure'
+uitoolbar (uipanel) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (classic uipanel) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (grid) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (uibuttongroup) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (tabgroup) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (classic tabgroup) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (tab) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (classic tab) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (menu) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (classic menu) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (contextmenu) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (classic contextmenu) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (toolbar) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (classic toolbar) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uitoolbar (axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitoolbar (uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uitoolbar (label) : ERR MATLAB:gbtobjects:Component | Label cannot be a parent.
+uitoolbar (5.5) : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uitoolbar ([]) : ERR MATLAB:hgbuiltins:object_creation:InvalidConvenienceArgHandle | First argument must be a valid parent, such as a Figure or Panel object.
+uitoolbar (groot) : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar (Parent, uf) : 'matlab.ui.container.Toolbar < uifigure'
+uitoolbar (Parent, f) : 'matlab.ui.container.Toolbar < uifigure'
+uitoolbar (Parent, []) : 'matlab.ui.container.Toolbar'
+uitoolbar (f, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Toolbar.
+uitoolbar (uf, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Toolbar.
+uitoolbar (f, Tag) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uitoolbar (Tag, t) pairs only : 't'
+uitoolbar (f, struct) : 's'
+uitoolbar (f, tag, t) lower case : 't'
+uitoolbar (f, Ta, t) prefix : 't'
+uitoolbar (uf, Ta, t) prefix : 't'
+uitoolbar (f, "Tag", "t") strings : 't'
+uitoolbar bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.container.Toolbar.
+uitoolbar bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Toolbar.
+uitoolbar set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Toolbar'' because it is read-only.
+uitoolbar isprop Units Position Visible Enable, isgraphics, ishghandle : '0010 1 1'
+uitoolbar u isprop Units Position Visible Enable : '0010 1 1'
+uitoolbar Parent <- other figure : 'matlab.ui.container.Toolbar < uifigure'
+uitoolbar Parent <- [] : 'matlab.ui.container.Toolbar'
+uitoolbar Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitoolbar Parent <- panel : ERR MATLAB:uitoolbar:InvalidParent | Parent must be a Figure
+uitoolbar findobj by Type f : double 18
+uitoolbar findobj by Type uf : double 7
+uitoolbar findall by Type uf : double 8
+uitoolbar nargout 0 : double 0
+uipushtool () : 'matlab.ui.container.toolbar.PushTool < matlab.ui.container.Toolbar < uifigure'
+uipushtool () with a current figure : 'matlab.ui.container.toolbar.PushTool < matlab.ui.container.Toolbar < uifigure'
+uipushtool (uifigure) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (figure) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (uipanel) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (classic uipanel) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (grid) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (uibuttongroup) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (tabgroup) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (classic tabgroup) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (tab) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (classic tab) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (menu) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (classic menu) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (contextmenu) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (classic contextmenu) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (toolbar) : 'matlab.ui.container.toolbar.PushTool < matlab.ui.container.Toolbar < uifigure'
+uipushtool (classic toolbar) : 'matlab.ui.container.toolbar.PushTool < matlab.ui.container.Toolbar < uifigure'
+uipushtool (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uipushtool (axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uipushtool (uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uipushtool (label) : ERR MATLAB:gbtobjects:Component | Label cannot be a parent.
+uipushtool (5.5) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool ([]) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (groot) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (Parent, uf) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (Parent, f) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (Parent, []) : 'matlab.ui.container.toolbar.PushTool'
+uipushtool (f, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class PushTool.
+uipushtool (uf, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class PushTool.
+uipushtool (f, Tag) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uipushtool (Tag, t) pairs only : 't'
+uipushtool (f, struct) : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (f, tag, t) lower case : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (f, Ta, t) prefix : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (uf, Ta, t) prefix : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool (f, "Tag", "t") strings : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool bogus get : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool bogus set : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool set Type : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool isprop Units Position Visible Enable, isgraphics, ishghandle : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool u isprop Units Position Visible Enable : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool Parent <- other figure : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool Parent <- [] : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool Parent <- axes : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool Parent <- panel : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool findobj by Type f : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool findobj by Type uf : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool findall by Type uf : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uipushtool nargout 0 : ERR MATLAB:uipushtool:InvalidParent | Parent must be a Toolbar
+uitoggletool () : 'matlab.ui.container.toolbar.ToggleTool < matlab.ui.container.Toolbar < uifigure'
+uitoggletool () with a current figure : 'matlab.ui.container.toolbar.ToggleTool < matlab.ui.container.Toolbar < uifigure'
+uitoggletool (uifigure) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (figure) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (uipanel) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (classic uipanel) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (grid) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (uibuttongroup) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (tabgroup) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (classic tabgroup) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (tab) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (classic tab) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (menu) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (classic menu) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (contextmenu) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (classic contextmenu) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (toolbar) : 'matlab.ui.container.toolbar.ToggleTool < matlab.ui.container.Toolbar < uifigure'
+uitoggletool (classic toolbar) : 'matlab.ui.container.toolbar.ToggleTool < matlab.ui.container.Toolbar < uifigure'
+uitoggletool (pushtool) : ERR MATLAB:gbtobjects:Component | PushTool cannot be a parent.
+uitoggletool (axes) : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitoggletool (uicontrol) : ERR MATLAB:gbtobjects:Component | UIControl cannot be a parent.
+uitoggletool (label) : ERR MATLAB:gbtobjects:Component | Label cannot be a parent.
+uitoggletool (5.5) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool ([]) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (groot) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (Parent, uf) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (Parent, f) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (Parent, []) : 'matlab.ui.container.toolbar.ToggleTool'
+uitoggletool (f, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class ToggleTool.
+uitoggletool (uf, Bogus, 1) : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class ToggleTool.
+uitoggletool (f, Tag) : ERR MATLAB:hgbuiltins:object_creation:InvalidArgs | Incorrect number of input arguments.
+uitoggletool (Tag, t) pairs only : 't'
+uitoggletool (f, struct) : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (f, tag, t) lower case : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (f, Ta, t) prefix : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (uf, Ta, t) prefix : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool (f, "Tag", "t") strings : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool bogus get : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool bogus set : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool set Type : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool isprop Units Position Visible Enable, isgraphics, ishghandle : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool u isprop Units Position Visible Enable : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool Parent <- other figure : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool Parent <- [] : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool Parent <- axes : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool Parent <- panel : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool findobj by Type f : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool findobj by Type uf : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool findall by Type uf : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar
+uitoggletool nargout 0 : ERR MATLAB:uitoggletool:InvalidParent | Parent must be a Toolbar

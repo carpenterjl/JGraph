@@ -1,0 +1,186 @@
+CHK|F_positions|[1 2 3]|exact
+CHK|F_children|C,B,A|exact
+CHK|F_moved_first|[2 3 1] B,A,C|exact
+CHK|F_moved_past|[9 2 1] A,B,C|exact
+CHK|F_moved_zero|[0 2 1] B,C,A|exact
+CHK|F_moved_between|[1.5 3 1] B,A,C|exact
+CHK|F_moved_again|[1.5 1 2] A,C,B|exact
+CHK|F_position_negative|MATLAB:hg:Position|exact
+CHK|F_position_negative_msg|Position cannot be negative.|exact
+CHK|F_sub_positions|[1 2 3] a3,a2,a1|exact
+CHK|F_sub_after_delete|[1 2] a3,a1|exact
+CHK|F_made_first|a3,a1,first|exact
+CHK|F_label_alias|L|exact
+CHK|F_label_read|L|exact
+CHK|F_callback_alias|function_handle|exact
+CHK|F_callback_read|function_handle|exact
+CHK|F_names_listed|double [1 3] 0 1 1|exact
+CHK|F_text_ampersand|&File|exact
+CHK|F_text_cell|MATLAB:class:RequireString|exact
+CHK|F_text_cell_msg|Value must be a character vector or a string scalar.|exact
+CHK|F_text_number|MATLAB:class:RequireString|exact
+CHK|F_text_number_msg|Value must be a character vector or a string scalar.|exact
+CHK|F_accelerator_01|a|exact
+CHK|F_accelerator_02|A|exact
+CHK|F_accelerator_03|MATLAB:gbtdatatypes:InputMustBeASingleCharacter|exact
+CHK|F_accelerator_03_msg|Input can either be an empty Char array or a Char array with a single character.|exact
+CHK|F_accelerator_04|1|exact
+CHK|F_accelerator_05||exact
+CHK|F_accelerator_06| |exact
+CHK|F_accelerator_07|s|exact
+CHK|F_accelerator_08|MATLAB:gbtdatatypes:InputMustBeASingleCharacter|exact
+CHK|F_accelerator_08_msg|Input can either be an empty Char array or a Char array with a single character.|exact
+CHK|F_accelerator_09|+|exact
+CHK|F_accelerator_top|q|exact
+CHK|F_checked_top|on|exact
+CHK|F_separator_top|on|exact
+CHK|F_units|MATLAB:hg:InvalidProperty|exact
+CHK|F_units_msg|Unrecognized property Units for class matlab.ui.container.Menu.|exact
+CHK|F_callbacks|function_handle ; char 'disp(1)' ; cell [2 1] {function_handle, double [1 1] 1} ; char 'str' ; MATLAB:datatypes:callback:CreateCallback ; MATLAB:datatypes:callback:CreateCallback ; char ''|exact
+CHK|F_entry_moved|0 1 b|exact
+CHK|F_menu_under_itself|MATLAB:container:InvalidParentToChild|exact
+CHK|F_menu_under_itself_msg|You are trying to set the parent property to a descendant child object.|exact
+CHK|F_to_contextmenu|1 uicontextmenu|exact
+CHK|F_parent_deleted|0|exact
+CHK|F_menubar_none|1 none|exact
+CHK|F_figure_children|uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uicontrol,axes|exact
+CHK|F_findobj|figure,uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uicontrol,axes|exact
+CHK|F_toolbar_property|none|exact
+CHK|F_tools|three,two,one|exact
+CHK|F_two_toolbars|uitoolbar,uitoolbar|exact
+CHK|F_cdata_01|cdata double [16 16 3] icon ''|exact
+CHK|F_cdata_02|cdata double [20 30 3] icon ''|exact
+CHK|F_cdata_03|cdata uint8 [16 16 3] icon ''|exact
+CHK|F_cdata_04|MATLAB:hg:shaped_arrays:CDataSize|exact
+CHK|F_cdata_04_msg|Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|F_cdata_05|MATLAB:hg:shaped_arrays:CDataPredicate|exact
+CHK|F_cdata_05_msg|Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|F_cdata_06|cdata double [16 16 3] icon ''|exact
+CHK|F_cdata_07|cdata double [0 0 3] icon ''|exact
+CHK|F_cdata_08|MATLAB:hg:shaped_arrays:CDataType|exact
+CHK|F_cdata_08_msg|Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|F_cdata_09|cdata single [4 4 3] icon ''|exact
+CHK|F_cdata_10|cdata uint16 [4 4 3] icon ''|exact
+CHK|F_cdata_11|cdata int8 [4 4 3] icon ''|exact
+CHK|F_cdata_12|MATLAB:hg:shaped_arrays:CDataSize|exact
+CHK|F_cdata_12_msg|Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|F_icon_01|cdata double [0 0] icon ''|exact
+CHK|F_icon_02|cdata double [0 0] icon 'bogus'|exact
+CHK|F_icon_03|cdata double [0 0] icon double [16 16 3]|exact
+CHK|F_icon_04|cdata double [0 0] icon 's'|exact
+CHK|F_icon_05|MATLAB:hg:gbtdatatypes:Icon:invalidIcon|exact
+CHK|F_icon_05_msg|Icon value must be a valid file path or an m-by-n-by-3 color data matrix.|exact
+CHK|F_icon_06|MATLAB:hg:gbtdatatypes:Icon:invalidIcon|exact
+CHK|F_icon_06_msg|Icon value must be a valid file path or an m-by-n-by-3 color data matrix.|exact
+CHK|F_icon_07|cdata double [0 0] icon 'acbd'|exact
+CHK|F_icon_08|cdata double [0 0] icon ''|exact
+CHK|F_tooltipstring|x|exact
+CHK|F_tooltip_cell|cell [2 1] {char 'a', char 'b'}|exact
+CHK|F_state_number|on|exact
+CHK|F_state_word|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|F_state_word_msg|Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|F_push_state|MATLAB:hg:InvalidProperty|exact
+CHK|F_push_state_msg|Unrecognized property State for class matlab.ui.container.toolbar.PushTool.|exact
+CHK|F_tool_position|MATLAB:hg:InvalidProperty|exact
+CHK|F_tool_position_msg|Unrecognized property Position for class matlab.ui.container.toolbar.PushTool.|exact
+CHK|F_toolbar_position|MATLAB:hg:InvalidProperty|exact
+CHK|F_toolbar_position_msg|Unrecognized property Position for class matlab.ui.container.Toolbar.|exact
+CHK|F_tool_moved|1 uitoolbar|exact
+CHK|F_toolbar_hidden|off|exact
+CHK|F_toolbar_deleted|0|exact
+CHK|F_ancestor|figure|exact
+CHK|F_findobj_tools|2|exact
+CHK|F_state_written|[on off ]|exact
+CHK|U_positions|[1 2 3]|exact
+CHK|U_children|C,B,A|exact
+CHK|U_moved_first|[2 3 1] B,A,C|exact
+CHK|U_moved_past|[9 2 1] A,B,C|exact
+CHK|U_moved_zero|[0 2 1] B,C,A|exact
+CHK|U_moved_between|[1.5 3 1] B,A,C|exact
+CHK|U_moved_again|[1.5 1 2] A,C,B|exact
+CHK|U_position_negative|MATLAB:hg:Position|exact
+CHK|U_position_negative_msg|Position cannot be negative.|exact
+CHK|U_sub_positions|[1 2 3] a3,a2,a1|exact
+CHK|U_sub_after_delete|[1 2] a3,a1|exact
+CHK|U_made_first|a3,a1,first|exact
+CHK|U_label_alias|L|exact
+CHK|U_label_read|L|exact
+CHK|U_callback_alias|function_handle|exact
+CHK|U_callback_read|function_handle|exact
+CHK|U_names_listed|double [1 3] 0 1 1|exact
+CHK|U_text_ampersand|&File|exact
+CHK|U_text_cell|MATLAB:class:RequireString|exact
+CHK|U_text_cell_msg|Value must be a character vector or a string scalar.|exact
+CHK|U_text_number|MATLAB:class:RequireString|exact
+CHK|U_text_number_msg|Value must be a character vector or a string scalar.|exact
+CHK|U_accelerator_01|a|exact
+CHK|U_accelerator_02|A|exact
+CHK|U_accelerator_03|MATLAB:gbtdatatypes:InputMustBeASingleCharacter|exact
+CHK|U_accelerator_03_msg|Input can either be an empty Char array or a Char array with a single character.|exact
+CHK|U_accelerator_04|1|exact
+CHK|U_accelerator_05||exact
+CHK|U_accelerator_06| |exact
+CHK|U_accelerator_07|s|exact
+CHK|U_accelerator_08|MATLAB:gbtdatatypes:InputMustBeASingleCharacter|exact
+CHK|U_accelerator_08_msg|Input can either be an empty Char array or a Char array with a single character.|exact
+CHK|U_accelerator_09|+|exact
+CHK|U_accelerator_top|q|exact
+CHK|U_checked_top|on|exact
+CHK|U_separator_top|on|exact
+CHK|U_units|MATLAB:hg:InvalidProperty|exact
+CHK|U_units_msg|Unrecognized property Units for class matlab.ui.container.Menu.|exact
+CHK|U_callbacks|function_handle ; char 'disp(1)' ; cell [2 1] {function_handle, double [1 1] 1} ; char 'str' ; MATLAB:datatypes:callback:CreateCallback ; MATLAB:datatypes:callback:CreateCallback ; char ''|exact
+CHK|U_entry_moved|0 1 b|exact
+CHK|U_menu_under_itself|MATLAB:container:InvalidParentToChild|exact
+CHK|U_menu_under_itself_msg|You are trying to set the parent property to a descendant child object.|exact
+CHK|U_to_contextmenu|1 uicontextmenu|exact
+CHK|U_parent_deleted|0|exact
+CHK|U_menubar_none|1 none|exact
+CHK|U_figure_children|uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uibutton,axes|exact
+CHK|U_findobj|figure,uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uibutton,axes|exact
+CHK|U_toolbar_property|none|exact
+CHK|U_tools|three,two,one|exact
+CHK|U_two_toolbars|uitoolbar,uitoolbar|exact
+CHK|U_cdata_01|cdata double [16 16 3] icon ''|exact
+CHK|U_cdata_02|cdata double [20 30 3] icon ''|exact
+CHK|U_cdata_03|cdata uint8 [16 16 3] icon ''|exact
+CHK|U_cdata_04|MATLAB:hg:shaped_arrays:CDataSize|exact
+CHK|U_cdata_04_msg|Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|U_cdata_05|MATLAB:hg:shaped_arrays:CDataPredicate|exact
+CHK|U_cdata_05_msg|Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|U_cdata_06|cdata double [16 16 3] icon ''|exact
+CHK|U_cdata_07|cdata double [0 0 3] icon ''|exact
+CHK|U_cdata_08|MATLAB:hg:shaped_arrays:CDataType|exact
+CHK|U_cdata_08_msg|Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|U_cdata_09|cdata single [4 4 3] icon ''|exact
+CHK|U_cdata_10|cdata uint16 [4 4 3] icon ''|exact
+CHK|U_cdata_11|cdata int8 [4 4 3] icon ''|exact
+CHK|U_cdata_12|MATLAB:hg:shaped_arrays:CDataSize|exact
+CHK|U_cdata_12_msg|Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.|exact
+CHK|U_icon_01|cdata double [0 0] icon ''|exact
+CHK|U_icon_02|cdata double [0 0] icon 'bogus'|exact
+CHK|U_icon_03|cdata double [0 0] icon double [16 16 3]|exact
+CHK|U_icon_04|cdata double [0 0] icon 's'|exact
+CHK|U_icon_05|MATLAB:hg:gbtdatatypes:Icon:invalidIcon|exact
+CHK|U_icon_05_msg|Icon value must be a valid file path or an m-by-n-by-3 color data matrix.|exact
+CHK|U_icon_06|MATLAB:hg:gbtdatatypes:Icon:invalidIcon|exact
+CHK|U_icon_06_msg|Icon value must be a valid file path or an m-by-n-by-3 color data matrix.|exact
+CHK|U_icon_07|cdata double [0 0] icon 'acbd'|exact
+CHK|U_icon_08|cdata double [0 0] icon ''|exact
+CHK|U_tooltipstring|x|exact
+CHK|U_tooltip_cell|cell [2 1] {char 'a', char 'b'}|exact
+CHK|U_state_number|on|exact
+CHK|U_state_word|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue|exact
+CHK|U_state_word_msg|Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|U_push_state|MATLAB:hg:InvalidProperty|exact
+CHK|U_push_state_msg|Unrecognized property State for class matlab.ui.container.toolbar.PushTool.|exact
+CHK|U_tool_position|MATLAB:hg:InvalidProperty|exact
+CHK|U_tool_position_msg|Unrecognized property Position for class matlab.ui.container.toolbar.PushTool.|exact
+CHK|U_toolbar_position|MATLAB:hg:InvalidProperty|exact
+CHK|U_toolbar_position_msg|Unrecognized property Position for class matlab.ui.container.Toolbar.|exact
+CHK|U_tool_moved|1 uitoolbar|exact
+CHK|U_toolbar_hidden|off|exact
+CHK|U_toolbar_deleted|0|exact
+CHK|U_ancestor|figure|exact
+CHK|U_findobj_tools|2|exact
+CHK|U_state_written|[on off ]|exact

@@ -27,6 +27,7 @@ internal static partial class JgsBuiltins
         "odextend", "pause", "pdepe", "pulstran", "quad", "quad2d", "quadgk", "quadl", "quadv",
         "regexprep", "rowfun", "run", "semilogx", "semilogy", "slice", "slicesample", "spfun", "splitapply",
         "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uibuttongroup", "uicontextmenu", "uicontrol", "uifigure", "uimenu", "uipanel",
+        "uipushtool", "uitab", "uitabgroup", "uitable", "uitoggletool", "uitoolbar",
         "varfun", "vectorize", "wait", "waitforbuttonpress",
 
         // U4: the waits deliver callbacks while they block, the dialogs that wait do so through

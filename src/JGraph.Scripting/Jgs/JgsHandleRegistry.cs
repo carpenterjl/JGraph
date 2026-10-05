@@ -141,6 +141,26 @@ internal sealed class JgsHandleEntry
     /// <summary>A drop-down's or a list box's <c>ItemsData</c>, kept as given: it can be any value (U5).</summary>
     public JgsValue? ItemsData { get; set; }
 
+    /// <summary>A <c>uitable</c>'s data and column properties, kept as given (U8).</summary>
+    public JgsTableState? Table { get; set; }
+
+    /// <summary>A toolbar tool's <c>Icon</c> as given: a file's name or an array; null for none (U8).</summary>
+    public JgsValue? ToolIcon { get; set; }
+
+    /// <summary>The number last written to a menu's <c>Position</c>, which reads back until a sibling moves (U8).</summary>
+    public double? MenuPosition { get; set; }
+
+    /// <summary>A menu's <c>Tooltip</c> in the shape it was given, and whether its colour was given as <c>'none'</c> (U8).</summary>
+    public JGraph.Core.Model.UiText? MenuTooltip { get; set; }
+
+    public bool MenuInkIsNone { get; set; }
+
+    /// <summary>A context menu's unlisted <c>Position</c> (U8).</summary>
+    public (double X, double Y)? MenuPlace { get; set; }
+
+    /// <summary>A menu's <c>ForegroundColor</c> as given, which reads back unrounded (U8).</summary>
+    public JGraph.Core.Model.UiColor? MenuInk { get; set; }
+
     /// <summary>The <c>CloseFcn</c> a <c>uialert</c> or a <c>uiconfirm</c> was given (U5).</summary>
     public JgsValue? OverlayCloseFcn { get; set; }
 

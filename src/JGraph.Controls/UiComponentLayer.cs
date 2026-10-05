@@ -47,7 +47,14 @@ public sealed partial class UiComponentLayer : Canvas
         // The parts inside a list, a drop-down list and a multi-line field — their scroll bars and
         // their rows — would otherwise wear the IDE's implicit styles. An empty style of the type,
         // found here first, leaves them the system's own look, which is the one a component wears.
-        foreach (Type part in new[] { typeof(ScrollBar), typeof(ListBoxItem), typeof(ComboBoxItem), typeof(ToggleButton), typeof(TextBox) })
+        foreach (Type part in new[]
+                 {
+                     typeof(ScrollBar), typeof(ListBoxItem), typeof(ComboBoxItem), typeof(ToggleButton), typeof(TextBox),
+
+                     // A table's grid and a tab group's headings (U8), part by part.
+                     typeof(DataGrid), typeof(DataGridCell), typeof(DataGridRow), typeof(DataGridColumnHeader), typeof(DataGridRowHeader),
+                     typeof(CheckBox), typeof(ComboBox), typeof(TabControl), typeof(TabItem),
+                 })
         {
             Resources.Add(part, new Style(part));
         }

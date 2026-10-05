@@ -198,84 +198,6 @@ internal static partial class JgsBuiltins
 
         DefineSilent("cla", Cla);
 
-        // --- uicontextmenu / uimenu (M71) --------------------------------------------------------
-
-        // AutoCallsBare, because the documented spelling is the bare name on an assignment's right
-        // side — cm = uicontextmenu — and a bare name in expression position is otherwise the
-        // function rather than a call of it.
-        void DefineMenuVerb(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Builtins.Register(name, JgsValue.Function(
-                new BuiltinFunction(name, body) { AutoCallsBare = true, BindsAnsAsStatement = false }));
-
-        DefineMenuVerb("uicontextmenu", (args, line, col) =>
-        {
-            // cm = uicontextmenu | uicontextmenu(parent) | uicontextmenu(___, Name, Value)
-            int start = 0;
-            FigureModel? figure = null;
-            if (args.Count > 0 && args[0].Type == JgsType.Number)
-            {
-                JgsHandleEntry owner = JgsHandleRegistry.Require(args[0], line, col);
-                if (owner.Target is not FigureModel named)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"uicontextmenu: the parent is a figure, and this handle names a {owner.TypeName}.");
-                }
-
-                figure = named;
-                start = 1;
-            }
-
-            figure ??= JG.CurrentFigureNumber > 0 && JG.TryGetFigure(JG.CurrentFigureNumber, out FigureModel current)
-                ? current
-                : JG.Figure();
-
-            var menu = new ContextMenuModel();
-            figure.ContextMenus.Add(menu);
-            ApplyMenuOptions("uicontextmenu", menu, args, start, line, col);
-            return JgsHandleRegistry.For(menu);
-        });
-
-        DefineMenuVerb("uimenu", (args, line, col) =>
-        {
-            // m = uimenu(parent) | uimenu(parent, Name, Value) — the parent is a uicontextmenu or
-            // another uimenu. MATLAB's no-parent form adds to the current figure's menu bar, which
-            // this build does not have; that spelling is refused by name rather than half-honoured.
-            int start = 0;
-            GraphObject? parent = null;
-            if (args.Count > 0 && args[0].Type == JgsType.Number)
-            {
-                JgsHandleEntry owner = JgsHandleRegistry.Require(args[0], line, col);
-                if (owner.Target is not (ContextMenuModel or MenuItemModel))
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"uimenu: the parent is a uicontextmenu or a uimenu, and this handle names a {owner.TypeName} — a figure's menu bar is not supported.");
-                }
-
-                parent = owner.Target;
-                start = 1;
-            }
-
-            if (parent is null)
-            {
-                throw new JgsRuntimeException(line, col,
-                    "uimenu needs a uicontextmenu or uimenu parent — a figure's menu bar is not supported.");
-            }
-
-            var item = new MenuItemModel();
-            switch (parent)
-            {
-                case ContextMenuModel menu:
-                    menu.Items.Add(item);
-                    break;
-                case MenuItemModel above:
-                    above.Items.Add(item);
-                    break;
-            }
-
-            ApplyMenuOptions("uimenu", item, args, start, line, col);
-            return JgsHandleRegistry.For(item);
-        });
-
         env.Builtins.Register("ishold", JgsValue.Function(new BuiltinFunction("ishold", (args, line, col) =>
         {
             ArityRange("ishold", args, 0, 1, line, col);
@@ -384,7 +306,7 @@ internal static partial class JgsBuiltins
 
         // A component answers as R2025b's does (U3): set(h) is a struct of the names that can be
         // written, each with the words it takes, and set(h, name) is one name's words.
-        if (targets.Count == 1 && targets[0].Target is UiObject)
+        if (targets.Count == 1 && JgsGraphicsProperties.SpeaksAsComponent(targets[0].Target))
         {
             if (args.Count == 1)
             {
@@ -848,6 +770,9 @@ internal static partial class JgsBuiltins
         // A container brings the axes placed in it, which the document keeps in its figure's list.
         List<AxesModel> held = copy is UiContainerModel container ? [.. clone.Axes.Where(container.Holds)] : [];
         Attach(copy, parent, line, col);
+
+        // A table's data stays on the script's side of a document: the copy is given its own (U8).
+        JgsUiTables.CopyStates(source, copy);
         if (held.Count > 0 && JgsGraphicsProperties.AxesHolder(parent) is { } home)
         {
             using (GraphObjectLifecycle.SuppressNotifications())
@@ -878,9 +803,21 @@ internal static partial class JgsBuiltins
                 parts.AddRange(figure.Axes);
                 parts.AddRange(figure.Annotations);
                 parts.AddRange(figure.Components);
+                parts.AddRange(figure.Menus);
+                parts.AddRange(figure.Toolbars);
+                parts.AddRange(figure.ContextMenus);
                 break;
             case UiContainerModel container:
                 parts.AddRange(container.Components);
+                break;
+            case MenuItemModel item:
+                parts.AddRange(item.Items);
+                break;
+            case ContextMenuModel menu:
+                parts.AddRange(menu.Items);
+                break;
+            case UiToolbarModel bar:
+                parts.AddRange(bar.Tools);
                 break;
             case AxesModel axes:
                 parts.AddRange(axes.Plots);
@@ -936,6 +873,52 @@ internal static partial class JgsBuiltins
                 copied.Container = container;
                 JG.TouchFigure(home);
                 return;
+            // The bars of U8: a menu into a figure, a context menu or another menu; a toolbar and
+            // a context menu into a figure; a tool into a toolbar.
+            case (FigureModel or ContextMenuModel or MenuItemModel, MenuItemModel item):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    JgsGraphicsProperties.SiblingsOf(item)?.Remove(item);
+                }
+
+                (parent switch
+                {
+                    FigureModel bar => bar.Menus,
+                    ContextMenuModel menu => menu.Items,
+                    _ => ((MenuItemModel)parent).Items,
+                }).Add(item);
+                return;
+            case (FigureModel figure, UiToolbarModel bar):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (bar.Parent as FigureModel)?.Toolbars.Remove(bar);
+                }
+
+                figure.Toolbars.Add(bar);
+                JG.TouchFigure(figure);
+                return;
+            case (FigureModel figure, ContextMenuModel menu):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (menu.Parent as FigureModel)?.ContextMenus.Remove(menu);
+                }
+
+                figure.ContextMenus.Add(menu);
+                return;
+            case (UiToolbarModel bar, UiToolModel tool):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (tool.Parent as UiToolbarModel)?.Tools.Remove(tool);
+                }
+
+                bar.Tools.Add(tool);
+                return;
+
+            // A tab goes in a tab group, and a tab group takes nothing else.
+            case (IUiContainer holder, UiObject component) when (component is UiTabModel) != (holder is UiTabGroupModel):
+                throw new JgsRuntimeException(line, col,
+                    $"copyobj cannot put a {JgsGraphicsProperties.TypeNameOf(copy)} inside a {JgsGraphicsProperties.TypeNameOf(parent)}.");
+
             case (IUiContainer holder, UiObject component):
                 // Out of the clone it was read into, and into the parent named, at the front.
                 using (GraphObjectLifecycle.SuppressNotifications())
@@ -1175,10 +1158,30 @@ internal static partial class JgsBuiltins
                 parent.Items.Remove(item);
                 return;
 
+            // The bars of U8: a figure's own menus, its toolbars, and their tools.
+            case MenuItemModel item when item.Parent is FigureModel bar:
+                bar.Menus.Remove(item);
+                return;
+
+            case UiToolbarModel toolbar when toolbar.Parent is FigureModel owner:
+                owner.Toolbars.Remove(toolbar);
+                return;
+
+            case UiToolModel tool when tool.Parent is UiToolbarModel toolbar:
+                toolbar.Tools.Remove(tool);
+                return;
+
             case UiObject component when component.Container is { } holder:
                 // Announced first, while everything in it still stands; then the axes placed in it,
                 // which live in the figure's list and would otherwise outlive their panel.
                 GraphObjectLifecycle.NotifyDeleting(component);
+
+                // A tab that was showing hands the page to its neighbour (U8).
+                if (component is UiTabModel page && holder is UiTabGroupModel pages)
+                {
+                    pages.Leaving(page);
+                }
+
                 if (component is UiContainerModel gone && component.Figure is { } home)
                 {
                     foreach (AxesModel held in home.Axes.Where(gone.Holds).ToList())
@@ -1222,7 +1225,7 @@ internal static partial class JgsBuiltins
         }
 
         if (given.Count >= 3 && given[0].Type == JgsType.Number
-            && JgsHandleRegistry.TryGet(given[0], out JgsHandleEntry? entry) && entry.Target is UiObject)
+            && JgsHandleRegistry.TryGet(given[0], out JgsHandleEntry? entry) && JgsGraphicsProperties.SpeaksAsComponent(entry.Target))
         {
             for (int i = 1; i + 1 < given.Count; i += 2)
             {

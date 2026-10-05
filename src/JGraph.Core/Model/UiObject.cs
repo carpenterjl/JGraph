@@ -140,6 +140,13 @@ public abstract class UiObject : GraphObject
             return grid.OwnPixelRect();
         }
 
+        // A tab fills what its group leaves its tabs (U8).
+        if (this is UiTabModel && Parent is UiTabGroupModel group)
+        {
+            Size2D inner = group.InnerPixelSize;
+            return new Rect2D(1, 1, inner.Width, inner.Height);
+        }
+
         return Parent is UiGridLayoutModel holder
             ? InCell(holder.RectOf(this))
             : UiUnitConverter.ToPixels(_position, _units, ReferenceSize());

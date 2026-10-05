@@ -24,6 +24,16 @@ public abstract class GraphObject : INotifyPropertyChanged
     [Browsable(false)]
     public Guid Id { get; } = Guid.NewGuid();
 
+    private static long _made;
+
+    /// <summary>
+    /// A number that grows with every object made, process-wide: which of two objects is the newer.
+    /// A figure keeps its menus, its toolbars and its components in separate lists, and MATLAB lists
+    /// them as one, newest first.
+    /// </summary>
+    [Browsable(false)]
+    public long CreationOrder { get; } = Interlocked.Increment(ref _made);
+
     /// <summary>The parent object in the figure tree, or null if this is a root or detached.</summary>
     [Browsable(false)]
     public GraphObject? Parent { get; private set; }

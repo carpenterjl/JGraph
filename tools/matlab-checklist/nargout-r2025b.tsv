@@ -2077,6 +2077,7 @@ uimenu	1	5
 uiopen	0	2
 uipanel	ERR:MATLAB:narginout:doesNotApply	5
 uiprogressdlg	1	2
+uipushtool	1	5
 uiputfile	3	2
 uiradiobutton	1	2
 uiresume	0	2
@@ -2086,8 +2087,13 @@ uisetfont	1	2
 uislider	1	2
 uispinner	1	2
 uistack	-1	2
+uitab	1	2
+uitabgroup	1	2
+uitable	2	5
 uitextarea	1	2
 uitogglebutton	1	2
+uitoggletool	1	5
+uitoolbar	1	5
 uiwait	0	2
 uminus	1	5
 undershoot	3	2

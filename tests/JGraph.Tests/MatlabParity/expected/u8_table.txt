@@ -1,0 +1,404 @@
+CHK|F_data_magic|double [3 3] display double [3 3] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_cell|cell [2 3] display cell [2 3] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_logical|logical [2 2] display logical [2 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_table|table [2 3] display table [2 3] names cell [3 1] {char 'N', char 'S', char 'L'} rows cell [0 0] {}|exact
+CHK|F_data_string|string [2 2] display string [2 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_single|single [1 2] display single [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_int8|int8 [2 2] display int8 [2 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_char|MATLAB:hg:uitable:BadDataType|exact
+CHK|F_data_char_msg|Data must be a numeric, logical, string, cell, or table array|exact
+CHK|F_data_cellstr|cell [1 2] display cell [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_empty|double [0 0] display double [0 0] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_zeros03|double [0 3] display double [0 3] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_nested|MATLAB:hg:uitable:BadDataCellArrayType|exact
+CHK|F_data_nested_msg|Values within a cell array must be numeric, logical, or char|exact
+CHK|F_data_cellvector|MATLAB:hg:uitable:BadDataCellArraySize|exact
+CHK|F_data_cellvector_msg|Data within a cell array must have size [1 1]|exact
+CHK|F_data_struct|MATLAB:hg:uitable:BadDataType|exact
+CHK|F_data_struct_msg|Data must be a numeric, logical, string, cell, or table array|exact
+CHK|F_data_complex|double [1 2] display double [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_nan|double [1 3] display double [1 3] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_handle|MATLAB:hg:uitable:BadDataCellArrayType|exact
+CHK|F_data_handle_msg|Values within a cell array must be numeric, logical, or char|exact
+CHK|F_data_column|double [4 1] display double [4 1] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_rows|table [2 1] display table [2 1] names cell [1 1] {char 'Var1'} rows cell [2 1] {char 'r1', char 'r2'}|exact
+CHK|F_data_cellempty|cell [1 2] display cell [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_cellint|cell [1 2] display cell [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_cellstring|MATLAB:hg:uitable:BadDataCellArrayType|exact
+CHK|F_data_cellstring_msg|Values within a cell array must be numeric, logical, or char|exact
+CHK|F_data_stringscalar|string [1 1] display string [1 1] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_emptycell|cell [0 0] display cell [0 0] names char 'numbered' rows char 'numbered'|exact
+CHK|F_data_sparse|double [2 2] display double [2 2] names char 'numbered' rows char 'numbered'|exact
+CHK|F_columnname_with_table|cell [3 1] {char 'N', char 'S', char 'L'}|exact
+CHK|F_rowname_with_table|cell [0 0] {}|exact
+CHK|F_rowname_with_row_names|cell [2 1] {char 'r1', char 'r2'}|exact
+CHK|F_columnname_fewer|cell [2 1] {char 'A', char 'B'}|exact
+CHK|F_columnname_row_cell|cell [3 1] {char 'A', char 'B', char 'C'}|exact
+CHK|F_columnname_string_row|cell [2 1] {char 'A', char 'B'}|exact
+CHK|F_columnname_numbers|cell [2 1] {char '1', char '2'}|exact
+CHK|F_columnname_empty_cell|cell [0 0] {}|exact
+CHK|F_columnname_empty_in_cell|cell [3 1] {char 'a', char '', char 'c'}|exact
+CHK|F_columnname_2d_cell|cell [4 1] {char 'a', char 'c', char 'b', char 'd'}|exact
+CHK|F_columnname_nested|MATLAB:hg:datatypes:NumericOrStringDataType:InvalidCellArray|exact
+CHK|F_columnname_nested_msg|Cell array can contain only non-empty character vectors, string vectors, or numbers.|exact
+CHK|F_columnname_vector|char [3 3] 1;10;100|exact
+CHK|F_columnname_matrix|char ''|exact
+CHK|F_columnname_caps|char 'Numbered'|exact
+CHK|F_columnname_back|char 'numbered'|exact
+CHK|F_rowname_column_cell|cell [2 1] {char 'r1', char 'r2'}|exact
+CHK|F_rowname_number|char '2.5'|exact
+CHK|F_rowname_string_column|cell [2 1] {char 'a', char 'b'}|exact
+CHK|F_editable_scalar|logical [1 1] 1|exact
+CHK|F_editable_row|logical [1 3] 1 0 1|exact
+CHK|F_editable_column|MATLAB:hg:uitable:BadColumnEditableRowVector|exact
+CHK|F_editable_column_msg|ColumnEditable must be a row vector|exact
+CHK|F_editable_numbers|MATLAB:hg:uitable:BadColumnEditableLogical|exact
+CHK|F_editable_numbers_msg|ColumnEditable must be a logical or logical array|exact
+CHK|F_sortable_row|logical [1 2] 1 0|exact
+CHK|F_sortable_column|MATLAB:hg:gbtdatatypes:LogicalArray:BadLogicalArrayRowVector|exact
+CHK|F_sortable_column_msg|Value must be a row vector|exact
+CHK|F_format_01|cell [1 1] {char 'char'}|exact
+CHK|F_format_02|cell [1 1] {char 'numeric'}|exact
+CHK|F_format_03|cell [1 1] {char 'logical'}|exact
+CHK|F_format_04|cell [1 1] {char 'short'}|exact
+CHK|F_format_05|cell [1 1] {char 'long'}|exact
+CHK|F_format_06|cell [1 1] {char 'shortE'}|exact
+CHK|F_format_07|cell [1 1] {char 'longE'}|exact
+CHK|F_format_08|cell [1 1] {char 'shortG'}|exact
+CHK|F_format_09|cell [1 1] {char 'longG'}|exact
+CHK|F_format_10|cell [1 1] {char 'shortEng'}|exact
+CHK|F_format_11|cell [1 1] {char 'longEng'}|exact
+CHK|F_format_12|cell [1 1] {char 'bank'}|exact
+CHK|F_format_13|cell [1 1] {char '+'}|exact
+CHK|F_format_14|cell [1 1] {char 'rat'}|exact
+CHK|F_format_15|cell [1 1] {char 'short e'}|exact
+CHK|F_format_16|cell [1 1] {char 'NUMERIC'}|exact
+CHK|F_format_17|MATLAB:hg:uitable:BadColumnFormatIncorrectDataType|exact
+CHK|F_format_17_msg|ColumnFormat definitions must be either 'numeric', 'logical', 'char', 'short', 'long', 'short e', 'long e', 'short g', 'long g', 'short eng', 'long eng', 'bank', '+', 'rat' or be a popupmenu definition|exact
+CHK|F_format_18|MATLAB:hg:uitable:BadColumnFormatIncorrectDataType|exact
+CHK|F_format_18_msg|ColumnFormat definitions must be either 'numeric', 'logical', 'char', 'short', 'long', 'short e', 'long e', 'short g', 'long g', 'short eng', 'long eng', 'bank', '+', 'rat' or be a popupmenu definition|exact
+CHK|F_format_19|cell [1 1] {char ''}|exact
+CHK|F_format_empty_in_cell|cell [1 1] {double [0 0]}|exact
+CHK|F_format_choices|cell [1 2] {cell [1 2] {char 'a', char 'b'}, char 'numeric'}|exact
+CHK|F_format_choices_column|MATLAB:hg:uitable:BadColumnFormatPopupmenuRowVector|exact
+CHK|F_format_choices_column_msg|ColumnFormat popupmenu definitions must be row vectors|exact
+CHK|F_format_choices_empty|MATLAB:hg:uitable:BadColumnFormatPopupmenuRowVector|exact
+CHK|F_format_choices_empty_msg|ColumnFormat popupmenu definitions must be row vectors|exact
+CHK|F_format_choices_numbers|MATLAB:hg:uitable:BadColumnFormatChar|exact
+CHK|F_format_choices_numbers_msg|ColumnFormat popupmenu definitions must contain only char values|exact
+CHK|F_format_column|MATLAB:hg:uitable:BadColumnFormatRowVector|exact
+CHK|F_format_column_msg|ColumnFormat must be a row vector|exact
+CHK|F_format_strings|MATLAB:hg:uitable:BadColumnFormatCellArray|exact
+CHK|F_format_strings_msg|ColumnFormat must be a cell array|exact
+CHK|F_format_string_in_cell|MATLAB:hg:uitable:BadColumnFormatInvalidDataType|exact
+CHK|F_format_string_in_cell_msg|ColumnFormat definitions must be either 'numeric', 'logical', 'char', or be a popupmenu definition|exact
+CHK|F_format_number|MATLAB:hg:uitable:BadColumnFormatInvalidDataType|exact
+CHK|F_format_number_msg|ColumnFormat definitions must be either 'numeric', 'logical', 'char', or be a popupmenu definition|exact
+CHK|F_format_char|MATLAB:hg:uitable:BadColumnFormatCellArray|exact
+CHK|F_format_char_msg|ColumnFormat must be a cell array|exact
+CHK|F_width_01|char 'auto'|exact
+CHK|F_width_02|char 'fit'|exact
+CHK|F_width_03|char '1x'|exact
+CHK|F_width_04|cell [1 1] {char 'auto'}|exact
+CHK|F_width_05|cell [1 1] {double [1 1] 50}|exact
+CHK|F_width_06|cell [1 2] {double [1 1] 50, char 'auto'}|exact
+CHK|F_width_07|cell [1 2] {char '1x', char '2x'}|exact
+CHK|F_width_08|cell [1 4] {char 'fit', double [1 1] 50, char '2x', char 'auto'}|exact
+CHK|F_width_09|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|F_width_09_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|F_width_10|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|F_width_10_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|F_width_11|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|F_width_11_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|F_width_12|cell [1 1] {double [1 1] 0}|exact
+CHK|F_width_13|cell [1 1] {char '0x'}|exact
+CHK|F_width_14|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|F_width_14_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|F_width_15|MATLAB:hg:uitable:BadColumnWidthRowVector|exact
+CHK|F_width_15_msg|ColumnWidth must be a row vector|exact
+CHK|F_width_16|cell [1 1] {double [1 1] 1.5}|exact
+CHK|F_width_17|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|F_width_17_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|F_width_18|cell [1 1] {int8 [1 1] 5}|exact
+CHK|F_width_19|cell [1 1] {char 'auto'}|exact
+CHK|F_width_20|char 'auto'|exact
+CHK|F_width_21|cell [1 2] {char 'auto', char 'fit'}|exact
+CHK|F_width_22|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|F_width_22_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|F_width_23|char 'AUTO'|exact
+CHK|F_width_24|cell [1 1] {char '2X'}|exact
+CHK|F_width_25|cell [1 1] {double [1 1] Inf}|exact
+CHK|F_width_26|cell [1 1] {double [1 1] NaN}|exact
+CHK|F_width_27|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|F_width_27_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|F_width_28|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|F_width_28_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|F_stripes_01|double [1 3] 1 0 0|exact
+CHK|F_stripes_02|double [3 3] 1 0 0 0 1 0 0 0 1|exact
+CHK|F_stripes_03|double [1 3] 1 0 0|exact
+CHK|F_stripes_04|double [2 3] 1 0 0 0 0 1|exact
+CHK|F_stripes_05|double [2 3] 1 0 0 0 0 1|exact
+CHK|F_stripes_06|MATLAB:datatypes:RGBMatrixColor:InvalidColor|exact
+CHK|F_stripes_06_msg|Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|F_stripes_07|MATLAB:datatypes:RGBMatrixColor:InvalidColor|exact
+CHK|F_stripes_07_msg|Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|F_stripes_08|double [1 3] 1 0 0|exact
+CHK|F_stripes_09|double [0 3]|exact
+CHK|F_stripes_10|double [2 3] 1 0 0 0 0 1|exact
+CHK|F_stripes_11|MATLAB:datatypes:RGBMatrixColor:InvalidColor|exact
+CHK|F_stripes_11_msg|Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|F_selection_default|double [0 0]|exact
+CHK|F_selection_cell|double [1 2] 1 2|exact
+CHK|F_selection_cells|double [2 2] 1 2 2 3|exact
+CHK|F_selection_outside|MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary|exact
+CHK|F_selection_outside_msg|Selection indices are out of data boundary.|exact
+CHK|F_selection_three|MATLAB:hg:gbtdatatypes:TableSelection:InvalidCellSelection|exact
+CHK|F_selection_three_msg|Selection indices for cells must be a N-by-2 numeric array.|exact
+CHK|F_selection_rows|double [1 2] 3 1|exact
+CHK|F_selection_rows_column|MATLAB:hg:gbtdatatypes:TableSelection:InvalidRowSelection|exact
+CHK|F_selection_rows_column_msg|Selection indices for rows must be a 1-by-N numeric array.|exact
+CHK|F_selection_column|double [1 1] 2|exact
+CHK|F_selection_columns_column|MATLAB:hg:gbtdatatypes:TableSelection:InvalidColumnSelection|exact
+CHK|F_selection_columns_column_msg|Selection indices for columns must be a 1-by-N numeric array.|exact
+CHK|F_selection_row_zero|MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary|exact
+CHK|F_selection_row_zero_msg|Selection indices are out of data boundary.|exact
+CHK|F_selection_row_fraction|double [1 1] 1.5|exact
+CHK|F_selection_single|MATLAB:hg:gbtdatatypes:TableSelection:InvalidSingleSelection|exact
+CHK|F_selection_single_msg|When 'Multiselect' is 'off', 'Selection' must be empty, or a scalar number for 'row' and 'column' selection type, or a 1-by-2 numeric array for 'cell' selection type.|exact
+CHK|F_selection_single_cell|double [1 2] 1 3|exact
+CHK|F_selection_no_data|MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary|exact
+CHK|F_selection_no_data_msg|Selection indices are out of data boundary.|exact
+CHK|F_selection_after_type|double [0 0]|exact
+CHK|F_selection_after_data|double [1 2] 1 2|exact
+CHK|F_selection_cleared|double [0 0]|exact
+CHK|F_indexed_write|[8 1 6;3 99 7;4 9 2]|exact
+CHK|F_grown|[3 4]|exact
+CHK|F_cell_write|cell [2 2] {double [1 1] 1, double [1 1] 2, char 'a', char 'x'}|exact
+CHK|F_display_data|[8 1 6 1;3 99 7 1;4 9 2 1]|exact
+CHK|F_units_normalized|double [1 4] 0.03392857143 0.04523809524 0.5357142857 0.7142857143|exact
+CHK|F_font_units|20 26.6667 20|exact
+CHK|F_font_normalized|double [1 1] 0.03555555556|exact
+CHK|F_font_weight_light|light|exact
+CHK|F_font_angle_oblique|oblique|exact
+CHK|F_enable_inactive|inactive|exact
+CHK|F_enable_true|MATLAB:datatypes:InvalidEnumValueFor|exact
+CHK|F_enable_true_msg|Invalid enum value. Use one of these values: 'on' / 'off' / 'inactive'.|exact
+CHK|F_tooltipstring|x|exact
+CHK|F_rearrangeable_alias|on|exact
+CHK|F_isprop|double [1 5] 1 0 0 1 1|exact
+CHK|F_extent|double [1 4] 0 0 340 340|exact
+CHK|F_set_extent|MATLAB:class:SetProhibited|exact
+CHK|F_set_extent_msg|Unable to set the 'Extent' property of class ''Table'' because it is read-only.|exact
+CHK|F_set_displaydata|MATLAB:class:SetProhibited|exact
+CHK|F_set_displaydata_msg|Unable to set the 'DisplayData' property of class ''Table'' because it is read-only.|exact
+CHK|F_set_styleconfigurations|MATLAB:class:SetProhibited|exact
+CHK|F_set_styleconfigurations_msg|Unable to set the 'StyleConfigurations' property of class ''Table'' because it is read-only.|exact
+CHK|F_in_panel|double [1 4] 20 20 300 300|exact
+CHK|F_inner_position|double [1 4] 1 2 30 40|exact
+CHK|F_outer_position|double [1 4] 1 2 30 40|exact
+CHK|F_position_negative|MATLAB:hg:set_chck:DimensionsOutsideRange|exact
+CHK|F_position_negative_msg|Width and height must be greater than or equal to 0|exact
+CHK|F_callback_forms|function_handle ; char 'disp(1)' ; cell [2 1] {function_handle, double [1 1] 1} ; char 'str' ; MATLAB:datatypes:callback:CreateCallback ; MATLAB:datatypes:callback:CreateCallback ; char ''|exact
+CHK|F_children|logical [1 1] 1|exact
+CHK|U_data_magic|double [3 3] display double [3 3] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_cell|cell [2 3] display cell [2 3] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_logical|logical [2 2] display logical [2 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_table|table [2 3] display table [2 3] names cell [3 1] {char 'N', char 'S', char 'L'} rows cell [0 0] {}|exact
+CHK|U_data_string|string [2 2] display string [2 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_single|single [1 2] display single [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_int8|int8 [2 2] display int8 [2 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_char|MATLAB:hg:uitable:BadDataType|exact
+CHK|U_data_char_msg|Data must be a numeric, logical, string, cell, or table array|exact
+CHK|U_data_cellstr|cell [1 2] display cell [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_empty|double [0 0] display double [0 0] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_zeros03|double [0 3] display double [0 3] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_nested|MATLAB:hg:uitable:BadDataCellArrayType|exact
+CHK|U_data_nested_msg|Values within a cell array must be numeric, logical, or char|exact
+CHK|U_data_cellvector|MATLAB:hg:uitable:BadDataCellArraySize|exact
+CHK|U_data_cellvector_msg|Data within a cell array must have size [1 1]|exact
+CHK|U_data_struct|MATLAB:hg:uitable:BadDataType|exact
+CHK|U_data_struct_msg|Data must be a numeric, logical, string, cell, or table array|exact
+CHK|U_data_complex|double [1 2] display double [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_nan|double [1 3] display double [1 3] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_handle|MATLAB:hg:uitable:BadDataCellArrayType|exact
+CHK|U_data_handle_msg|Values within a cell array must be numeric, logical, or char|exact
+CHK|U_data_column|double [4 1] display double [4 1] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_rows|table [2 1] display table [2 1] names cell [1 1] {char 'Var1'} rows cell [2 1] {char 'r1', char 'r2'}|exact
+CHK|U_data_cellempty|cell [1 2] display cell [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_cellint|cell [1 2] display cell [1 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_cellstring|MATLAB:hg:uitable:BadDataCellArrayType|exact
+CHK|U_data_cellstring_msg|Values within a cell array must be numeric, logical, or char|exact
+CHK|U_data_stringscalar|string [1 1] display string [1 1] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_emptycell|cell [0 0] display cell [0 0] names char 'numbered' rows char 'numbered'|exact
+CHK|U_data_sparse|double [2 2] display double [2 2] names char 'numbered' rows char 'numbered'|exact
+CHK|U_columnname_with_table|cell [3 1] {char 'N', char 'S', char 'L'}|exact
+CHK|U_rowname_with_table|cell [0 0] {}|exact
+CHK|U_rowname_with_row_names|cell [2 1] {char 'r1', char 'r2'}|exact
+CHK|U_columnname_fewer|cell [2 1] {char 'A', char 'B'}|exact
+CHK|U_columnname_row_cell|cell [3 1] {char 'A', char 'B', char 'C'}|exact
+CHK|U_columnname_string_row|cell [2 1] {char 'A', char 'B'}|exact
+CHK|U_columnname_numbers|cell [2 1] {char '1', char '2'}|exact
+CHK|U_columnname_empty_cell|cell [0 0] {}|exact
+CHK|U_columnname_empty_in_cell|cell [3 1] {char 'a', char '', char 'c'}|exact
+CHK|U_columnname_2d_cell|cell [4 1] {char 'a', char 'c', char 'b', char 'd'}|exact
+CHK|U_columnname_nested|MATLAB:hg:datatypes:NumericOrStringDataType:InvalidCellArray|exact
+CHK|U_columnname_nested_msg|Cell array can contain only non-empty character vectors, string vectors, or numbers.|exact
+CHK|U_columnname_vector|char [3 3] 1;10;100|exact
+CHK|U_columnname_matrix|char ''|exact
+CHK|U_columnname_caps|char 'Numbered'|exact
+CHK|U_columnname_back|char 'numbered'|exact
+CHK|U_rowname_column_cell|cell [2 1] {char 'r1', char 'r2'}|exact
+CHK|U_rowname_number|char '2.5'|exact
+CHK|U_rowname_string_column|cell [2 1] {char 'a', char 'b'}|exact
+CHK|U_editable_scalar|logical [1 1] 1|exact
+CHK|U_editable_row|logical [1 3] 1 0 1|exact
+CHK|U_editable_column|MATLAB:hg:uitable:BadColumnEditableRowVector|exact
+CHK|U_editable_column_msg|ColumnEditable must be a row vector|exact
+CHK|U_editable_numbers|MATLAB:hg:uitable:BadColumnEditableLogical|exact
+CHK|U_editable_numbers_msg|ColumnEditable must be a logical or logical array|exact
+CHK|U_sortable_row|logical [1 2] 1 0|exact
+CHK|U_sortable_column|MATLAB:hg:gbtdatatypes:LogicalArray:BadLogicalArrayRowVector|exact
+CHK|U_sortable_column_msg|Value must be a row vector|exact
+CHK|U_format_01|cell [1 1] {char 'char'}|exact
+CHK|U_format_02|cell [1 1] {char 'numeric'}|exact
+CHK|U_format_03|cell [1 1] {char 'logical'}|exact
+CHK|U_format_04|cell [1 1] {char 'short'}|exact
+CHK|U_format_05|cell [1 1] {char 'long'}|exact
+CHK|U_format_06|cell [1 1] {char 'shortE'}|exact
+CHK|U_format_07|cell [1 1] {char 'longE'}|exact
+CHK|U_format_08|cell [1 1] {char 'shortG'}|exact
+CHK|U_format_09|cell [1 1] {char 'longG'}|exact
+CHK|U_format_10|cell [1 1] {char 'shortEng'}|exact
+CHK|U_format_11|cell [1 1] {char 'longEng'}|exact
+CHK|U_format_12|cell [1 1] {char 'bank'}|exact
+CHK|U_format_13|cell [1 1] {char '+'}|exact
+CHK|U_format_14|cell [1 1] {char 'rat'}|exact
+CHK|U_format_15|cell [1 1] {char 'short e'}|exact
+CHK|U_format_16|cell [1 1] {char 'NUMERIC'}|exact
+CHK|U_format_17|MATLAB:hg:uitable:BadColumnFormatIncorrectDataType|exact
+CHK|U_format_17_msg|ColumnFormat definitions must be either 'numeric', 'logical', 'char', 'short', 'long', 'short e', 'long e', 'short g', 'long g', 'short eng', 'long eng', 'bank', '+', 'rat' or be a popupmenu definition|exact
+CHK|U_format_18|MATLAB:hg:uitable:BadColumnFormatIncorrectDataType|exact
+CHK|U_format_18_msg|ColumnFormat definitions must be either 'numeric', 'logical', 'char', 'short', 'long', 'short e', 'long e', 'short g', 'long g', 'short eng', 'long eng', 'bank', '+', 'rat' or be a popupmenu definition|exact
+CHK|U_format_19|cell [1 1] {char ''}|exact
+CHK|U_format_empty_in_cell|cell [1 1] {double [0 0]}|exact
+CHK|U_format_choices|cell [1 2] {cell [1 2] {char 'a', char 'b'}, char 'numeric'}|exact
+CHK|U_format_choices_column|MATLAB:hg:uitable:BadColumnFormatPopupmenuRowVector|exact
+CHK|U_format_choices_column_msg|ColumnFormat popupmenu definitions must be row vectors|exact
+CHK|U_format_choices_empty|MATLAB:hg:uitable:BadColumnFormatPopupmenuRowVector|exact
+CHK|U_format_choices_empty_msg|ColumnFormat popupmenu definitions must be row vectors|exact
+CHK|U_format_choices_numbers|MATLAB:hg:uitable:BadColumnFormatChar|exact
+CHK|U_format_choices_numbers_msg|ColumnFormat popupmenu definitions must contain only char values|exact
+CHK|U_format_column|MATLAB:hg:uitable:BadColumnFormatRowVector|exact
+CHK|U_format_column_msg|ColumnFormat must be a row vector|exact
+CHK|U_format_strings|MATLAB:hg:uitable:BadColumnFormatCellArray|exact
+CHK|U_format_strings_msg|ColumnFormat must be a cell array|exact
+CHK|U_format_string_in_cell|MATLAB:hg:uitable:BadColumnFormatInvalidDataType|exact
+CHK|U_format_string_in_cell_msg|ColumnFormat definitions must be either 'numeric', 'logical', 'char', or be a popupmenu definition|exact
+CHK|U_format_number|MATLAB:hg:uitable:BadColumnFormatInvalidDataType|exact
+CHK|U_format_number_msg|ColumnFormat definitions must be either 'numeric', 'logical', 'char', or be a popupmenu definition|exact
+CHK|U_format_char|MATLAB:hg:uitable:BadColumnFormatCellArray|exact
+CHK|U_format_char_msg|ColumnFormat must be a cell array|exact
+CHK|U_width_01|char 'auto'|exact
+CHK|U_width_02|char 'fit'|exact
+CHK|U_width_03|char '1x'|exact
+CHK|U_width_04|cell [1 1] {char 'auto'}|exact
+CHK|U_width_05|cell [1 1] {double [1 1] 50}|exact
+CHK|U_width_06|cell [1 2] {double [1 1] 50, char 'auto'}|exact
+CHK|U_width_07|cell [1 2] {char '1x', char '2x'}|exact
+CHK|U_width_08|cell [1 4] {char 'fit', double [1 1] 50, char '2x', char 'auto'}|exact
+CHK|U_width_09|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|U_width_09_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|U_width_10|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|U_width_10_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|U_width_11|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|U_width_11_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|U_width_12|cell [1 1] {double [1 1] 0}|exact
+CHK|U_width_13|cell [1 1] {char '0x'}|exact
+CHK|U_width_14|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|U_width_14_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|U_width_15|MATLAB:hg:uitable:BadColumnWidthRowVector|exact
+CHK|U_width_15_msg|ColumnWidth must be a row vector|exact
+CHK|U_width_16|cell [1 1] {double [1 1] 1.5}|exact
+CHK|U_width_17|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|U_width_17_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|U_width_18|cell [1 1] {int8 [1 1] 5}|exact
+CHK|U_width_19|cell [1 1] {char 'auto'}|exact
+CHK|U_width_20|char 'auto'|exact
+CHK|U_width_21|cell [1 2] {char 'auto', char 'fit'}|exact
+CHK|U_width_22|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|U_width_22_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|U_width_23|char 'AUTO'|exact
+CHK|U_width_24|cell [1 1] {char '2X'}|exact
+CHK|U_width_25|cell [1 1] {double [1 1] Inf}|exact
+CHK|U_width_26|cell [1 1] {double [1 1] NaN}|exact
+CHK|U_width_27|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|U_width_27_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|U_width_28|MATLAB:hg:uitable:BadColumnWidthValue|exact
+CHK|U_width_28_msg|'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.|exact
+CHK|U_stripes_01|double [1 3] 1 0 0|exact
+CHK|U_stripes_02|double [3 3] 1 0 0 0 1 0 0 0 1|exact
+CHK|U_stripes_03|double [1 3] 1 0 0|exact
+CHK|U_stripes_04|double [2 3] 1 0 0 0 0 1|exact
+CHK|U_stripes_05|double [2 3] 1 0 0 0 0 1|exact
+CHK|U_stripes_06|MATLAB:datatypes:RGBMatrixColor:InvalidColor|exact
+CHK|U_stripes_06_msg|Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|U_stripes_07|MATLAB:datatypes:RGBMatrixColor:InvalidColor|exact
+CHK|U_stripes_07_msg|Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|U_stripes_08|double [1 3] 1 0 0|exact
+CHK|U_stripes_09|double [0 3]|exact
+CHK|U_stripes_10|double [2 3] 1 0 0 0 0 1|exact
+CHK|U_stripes_11|MATLAB:datatypes:RGBMatrixColor:InvalidColor|exact
+CHK|U_stripes_11_msg|Invalid color. Specify color as an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|U_selection_default|double [0 0]|exact
+CHK|U_selection_cell|double [1 2] 1 2|exact
+CHK|U_selection_cells|double [2 2] 1 2 2 3|exact
+CHK|U_selection_outside|MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary|exact
+CHK|U_selection_outside_msg|Selection indices are out of data boundary.|exact
+CHK|U_selection_three|MATLAB:hg:gbtdatatypes:TableSelection:InvalidCellSelection|exact
+CHK|U_selection_three_msg|Selection indices for cells must be a N-by-2 numeric array.|exact
+CHK|U_selection_rows|double [1 2] 3 1|exact
+CHK|U_selection_rows_column|MATLAB:hg:gbtdatatypes:TableSelection:InvalidRowSelection|exact
+CHK|U_selection_rows_column_msg|Selection indices for rows must be a 1-by-N numeric array.|exact
+CHK|U_selection_column|double [1 1] 2|exact
+CHK|U_selection_columns_column|MATLAB:hg:gbtdatatypes:TableSelection:InvalidColumnSelection|exact
+CHK|U_selection_columns_column_msg|Selection indices for columns must be a 1-by-N numeric array.|exact
+CHK|U_selection_row_zero|MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary|exact
+CHK|U_selection_row_zero_msg|Selection indices are out of data boundary.|exact
+CHK|U_selection_row_fraction|double [1 1] 1.5|exact
+CHK|U_selection_single|MATLAB:hg:gbtdatatypes:TableSelection:InvalidSingleSelection|exact
+CHK|U_selection_single_msg|When 'Multiselect' is 'off', 'Selection' must be empty, or a scalar number for 'row' and 'column' selection type, or a 1-by-2 numeric array for 'cell' selection type.|exact
+CHK|U_selection_single_cell|double [1 2] 1 3|exact
+CHK|U_selection_no_data|MATLAB:hg:gbtdatatypes:TableSelection:SelectionOutOfBoundary|exact
+CHK|U_selection_no_data_msg|Selection indices are out of data boundary.|exact
+CHK|U_selection_after_type|double [0 0]|exact
+CHK|U_selection_after_data|double [1 2] 1 2|exact
+CHK|U_selection_cleared|double [0 0]|exact
+CHK|U_indexed_write|[8 1 6;3 99 7;4 9 2]|exact
+CHK|U_grown|[3 4]|exact
+CHK|U_cell_write|cell [2 2] {double [1 1] 1, double [1 1] 2, char 'a', char 'x'}|exact
+CHK|U_display_data|[8 1 6 1;3 99 7 1;4 9 2 1]|exact
+CHK|U_units_normalized|double [1 4] 0.03392857143 0.04523809524 0.5357142857 0.7142857143|exact
+CHK|U_font_units|20 26.6667 20|exact
+CHK|U_font_normalized|double [1 1] 0.04|exact
+CHK|U_font_weight_light|light|exact
+CHK|U_font_angle_oblique|oblique|exact
+CHK|U_enable_inactive|inactive|exact
+CHK|U_enable_true|MATLAB:datatypes:InvalidEnumValueFor|exact
+CHK|U_enable_true_msg|Invalid enum value. Use one of these values: 'on' / 'off' / 'inactive'.|exact
+CHK|U_tooltipstring|x|exact
+CHK|U_rearrangeable_alias|on|exact
+CHK|U_isprop|double [1 5] 1 0 0 1 1|exact
+CHK|U_extent|double [1 4] 0 0 340 340|exact
+CHK|U_set_extent|MATLAB:class:SetProhibited|exact
+CHK|U_set_extent_msg|Unable to set the 'Extent' property of class ''Table'' because it is read-only.|exact
+CHK|U_set_displaydata|MATLAB:class:SetProhibited|exact
+CHK|U_set_displaydata_msg|Unable to set the 'DisplayData' property of class ''Table'' because it is read-only.|exact
+CHK|U_set_styleconfigurations|MATLAB:class:SetProhibited|exact
+CHK|U_set_styleconfigurations_msg|Unable to set the 'StyleConfigurations' property of class ''Table'' because it is read-only.|exact
+CHK|U_in_panel|double [1 4] 20 20 300 300|exact
+CHK|U_inner_position|double [1 4] 1 2 30 40|exact
+CHK|U_outer_position|double [1 4] 1 2 30 40|exact
+CHK|U_position_negative|MATLAB:hg:set_chck:DimensionsOutsideRange|exact
+CHK|U_position_negative_msg|Width and height must be greater than or equal to 0|exact
+CHK|U_callback_forms|function_handle ; char 'disp(1)' ; cell [2 1] {function_handle, double [1 1] 1} ; char 'str' ; MATLAB:datatypes:callback:CreateCallback ; MATLAB:datatypes:callback:CreateCallback ; char ''|exact
+CHK|U_children|logical [1 1] 1|exact

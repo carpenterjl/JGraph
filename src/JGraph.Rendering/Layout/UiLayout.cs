@@ -29,6 +29,18 @@ public readonly record struct UiComponentPlacement(
     int Order);
 
 /// <summary>
+/// Where the strip of a tab group's headings goes (U8): along one edge of the group's box. The
+/// window puts the headings there; the renderer draws the group's box and the page that shows.
+/// </summary>
+public readonly record struct UiTabStripPlacement(
+    UiTabGroupFrame Group,
+    Rect2D Box,
+    bool Visible,
+    Rect2D Clip,
+    IReadOnlyList<Rect2D> Occluders,
+    int Order);
+
+/// <summary>
 /// Where one panel goes: its whole box, the inner area its children and axes are placed in, and the
 /// part of the surface its ancestors leave it. <c>Depth</c> counts its container ancestors.
 /// </summary>
@@ -76,13 +88,18 @@ public sealed class UiLayoutResult
         IReadOnlyList<UiPlacement> controls,
         IReadOnlyList<UiComponentPlacement> components,
         IReadOnlyList<UiPanelPlacement> roots,
-        Dictionary<UiContainerModel, UiPanelPlacement> bySource)
+        Dictionary<UiContainerModel, UiPanelPlacement> bySource,
+        IReadOnlyList<UiTabStripPlacement> tabStrips)
     {
         Controls = controls;
         Components = components;
         Panels = roots;
         _bySource = bySource;
+        TabStrips = tabStrips;
     }
+
+    /// <summary>The strip of headings of every tab group, in painting order (U8).</summary>
+    public IReadOnlyList<UiTabStripPlacement> TabStrips { get; }
 
     /// <summary>Every <c>uifigure</c> component, in painting order (U5).</summary>
     public IReadOnlyList<UiComponentPlacement> Components { get; }
@@ -148,7 +165,13 @@ public static class UiLayout
             components.Add(placement with { Occluders = Over(placement.Box, placement.Order, ancestors) });
         }
 
-        return new UiLayoutResult(controls, components, roots, walk.BySource);
+        var strips = new List<UiTabStripPlacement>(walk.TabStrips.Count);
+        foreach ((UiTabStripPlacement placement, IReadOnlyList<UiPanelFrame> ancestors) in walk.TabStrips)
+        {
+            strips.Add(placement with { Occluders = Over(placement.Box, placement.Order, ancestors) });
+        }
+
+        return new UiLayoutResult(controls, components, roots, walk.BySource, strips);
     }
 
     /// <summary>The controls of <see cref="Compute"/>, for a caller that wants nothing else.</summary>
@@ -163,6 +186,8 @@ public static class UiLayout
         public List<(UiComponentPlacement Placement, IReadOnlyList<UiPanelFrame> Ancestors)> Components { get; } = [];
 
         public List<(UiPanelPlacement Panel, int Order)> Panels { get; } = [];
+
+        public List<(UiTabStripPlacement Placement, IReadOnlyList<UiPanelFrame> Ancestors)> TabStrips { get; } = [];
 
         public Dictionary<UiContainerModel, UiPanelPlacement> BySource { get; } = new(ReferenceEqualityComparer.Instance);
 
@@ -195,6 +220,10 @@ public static class UiLayout
                 else if (node is UiGridFrame)
                 {
                     box = gridArea;
+                }
+                else if (node is UiPanelFrame { FillsParent: true })
+                {
+                    box = area; // a tab is the whole of what its group leaves
                 }
                 else
                 {
@@ -284,6 +313,42 @@ public static class UiLayout
                         break;
                     }
 
+                    case UiTabGroupFrame tabs:
+                    {
+                        // The group is drawn as a bordered box; its pages are panels in what the
+                        // strip of headings and the border leave, and the strip is the window's.
+                        Thickness edge = tabs.Insets;
+                        var pageArea = new Rect2D(
+                            box.X + edge.Left,
+                            box.Y + edge.Top,
+                            System.Math.Max(0, box.Width - edge.Left - edge.Right),
+                            System.Math.Max(0, box.Height - edge.Top - edge.Bottom));
+                        Rect2D strip = tabs.Location switch
+                        {
+                            UiTabLocation.Top => new Rect2D(box.X, box.Y, box.Width, System.Math.Min(box.Height, edge.Top)),
+                            UiTabLocation.Bottom => new Rect2D(
+                                box.X, pageArea.Y + pageArea.Height, box.Width, System.Math.Min(box.Height, edge.Bottom)),
+                            UiTabLocation.Left => new Rect2D(box.X, box.Y, System.Math.Min(box.Width, edge.Left), box.Height),
+                            _ => new Rect2D(pageArea.X + pageArea.Width, box.Y, System.Math.Min(box.Width, edge.Right), box.Height),
+                        };
+                        var shell = new UiPanelFrame(
+                            tabs.Source, new Rect2D(1, 1, box.Width, box.Height), UiUnits.Pixels, tabs.Visible, UiEnable.On,
+                            string.Empty, UiTitlePosition.LeftTop, UiBorderType.Line, 1, TabShellFill, null, TabShellEdge, TabShellEdge,
+                            TabShellEdge, string.Empty, 12, false, false, edge, tabs.Children);
+                        Rect2D pageClip = Intersect(clip, pageArea);
+                        var under = new List<UiPanelFrame>(ancestors) { shell };
+                        int shellSlot = Panels.Count;
+                        Panels.Add((null!, order));
+                        TabStrips.Add((new UiTabStripPlacement(tabs, strip, shown, clip, [], order), ancestors));
+                        IReadOnlyList<UiPanelPlacement> pages =
+                            Place(tabs.Children, pageArea, pageArea, pageClip, shown, depth + 1, under, null);
+                        var shellPlacement = new UiPanelPlacement(shell, box, pageArea, clip, shown, depth, pages);
+                        Panels[shellSlot] = (shellPlacement, order);
+                        BySource[tabs.Source] = shellPlacement;
+                        panels.Add(shellPlacement);
+                        break;
+                    }
+
                     case UiPanelFrame panel:
                         Thickness inset = panel.Insets;
                         var inner = new Rect2D(
@@ -314,6 +379,11 @@ public static class UiLayout
             return panels;
         }
     }
+
+    /// <summary>The grey a tab group's strip stands on, and the grey of the line round the group.</summary>
+    private static readonly UiColor TabShellFill = new(240 / 255.0, 240 / 255.0, 240 / 255.0);
+
+    private static readonly UiColor TabShellEdge = new(200 / 255.0, 200 / 255.0, 200 / 255.0);
 
     /// <summary>MATLAB's pixel rectangle in an area as a rectangle on the surface, Y downward.</summary>
     private static Rect2D OnSurface(Rect2D area, Rect2D pixels) => new(

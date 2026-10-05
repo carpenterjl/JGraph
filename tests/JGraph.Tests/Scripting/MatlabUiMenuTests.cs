@@ -87,15 +87,12 @@ public class MatlabUiMenuTests : IAsyncLifetime
         """);
 
     [Fact]
-    public Task TheMenubarForms_AreRefusedByName() => RunAsserting("""
-        figure;
-        ok = 0;
-        try
-            uimenu('Text', 'x');
-        catch err
-            ok = contains(err.message, 'menu bar');
-        end
-        assert(ok);
+    public Task AMenuWithNoParentNamed_GoesOnTheCurrentFiguresMenuBar() => RunAsserting("""
+        f = figure;
+        m = uimenu('Text', 'x');
+        assert(get(m, 'Parent') == f);
+        assert(get(m, 'Position') == 1);
+        assert(strcmp(get(uimenu(m, 'Text', 'y'), 'Type'), 'uimenu'));
         """);
 
     [Fact]

@@ -1,0 +1,203 @@
+F Children types in order : '[9 1] uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uicontrol,axes'
+F allchild types in order : '[17 1] uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uicontrol,uitoolbar,uimenu,uimenu,uimenu,uimenu,uimenu,uimenu,annotationpane,axes'
+F findobj types : '[10 1] figure,uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uicontrol,axes'
+F findall -depth 1 : '[18 1] figure,uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uicontrol,uitoolbar,uimenu,uimenu,uimenu,uimenu,uimenu,uimenu,annotationpane,axes'
+F tab Children types : '[4 1] uitable,uipanel,uicontrol,axes'
+F uitabgroup(SelectedTab) in maker : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+F tg.SelectedTab = a (same) : 'a'
+F tg numeric index into Children : 'b'
+F SelectedTab deleted handle : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+F tab Units normalized Position : '[0 0 1 1]'
+F tab Units points Position : '[0 0 225 150]'
+F tab InnerPosition set : ERR MATLAB:class:SetProhibited | Unable to set the 'InnerPosition' property of class ''Tab'' because it is read-only.
+F tab OuterPosition set : ERR MATLAB:class:SetProhibited | Unable to set the 'OuterPosition' property of class ''Tab'' because it is read-only.
+F tg InnerPosition set : ERR MATLAB:class:SetProhibited | Unable to set the 'InnerPosition' property of class ''TabGroup'' because it is read-only.
+F tg OuterPosition set : '[30 30 200 100]'
+F tg Position after : double [30 30 200 100]
+F tab Scrollable on : 'on'
+F tab BackgroundColor none : 'none'
+F tab ForegroundColor none : 'none'
+F tab Tooltip cell : cell [2 1] {'a','b'}
+F tab TooltipString : 'x'
+F tg TooltipString : ERR MATLAB:hg:InvalidProperty | Unrecognized property TooltipString for class TabGroup.
+F tab Enable : ERR MATLAB:hg:InvalidProperty | Unrecognized property Enable for class matlab.ui.container.Tab.
+F tab ButtonDownFcn : 'function_handle'
+F table size(Data) after Data(:,5)=1 : '[4 5]'
+F table Data = {} then class : 'cell [0 0]'
+F table Data = [] then class size : 'double [0 0]'
+F table Data string scalar : 'string [1 1]'
+F table Data = int8 : 'int8 [1 2]'
+F table Data cell with string : ERR MATLAB:hg:uitable:BadDataCellArrayType | Error setting property 'Data' of class 'Table': Values within a cell array must be numeric, logical, or char
+F table Data cell with empty : 'cell [1 2]'
+F table Data cell with int8 : 'cell [1 2]'
+F table Data cell with char matrix : 'cell [1 1]'
+F table Data sparse : 'double [2 2]'
+F table ColumnName numbered after set cell then back : ''numbered''
+F table RowName numbered written : 'numbered'
+F table ColumnName "numbered" string : 'numbered'
+F table ColumnName Numbered caps : 'Numbered'
+F table ColumnName abc char : 'abc'
+F table ColumnName cell with empty : cell [3 1] {'a','','c'}
+F table ColumnName cell with [] : cell [3 1] {'a','','c'}
+F table ColumnName cell nested : ERR MATLAB:hg:datatypes:NumericOrStringDataType:InvalidCellArray | Cell array can contain only non-empty character vectors, string vectors, or numbers.
+F table ColumnName 2-D cell : cell [4 1] {'a','c','b','d'}
+F table ColumnName logical : ERR MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass | Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.
+F table ColumnName struct : ERR MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass | Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.
+F table RowName 2.5 : '2.5'
+F table RowName [1 2;3 4] : ''
+F table RowName string col : cell [2 1] {'a','b'}
+F table ColumnEditable 1 double : ERR MATLAB:hg:uitable:BadColumnEditableLogical | ColumnEditable must be a logical or logical array
+F table ColumnEditable on : ERR MATLAB:hg:uitable:BadColumnEditableLogical | ColumnEditable must be a logical or logical array
+F table ColumnSortable 1 double : ERR MATLAB:hg:gbtdatatypes:LogicalArray:BadLogicalArray | Value must be a logical or logical array
+F table ColumnSortable [true;false] : ERR MATLAB:hg:gbtdatatypes:LogicalArray:BadLogicalArrayRowVector | Value must be a row vector
+F table ColumnSortable [] : logical [0 0]
+F table ColumnFormat [] : cell [0 0] {}
+F table ColumnFormat char : ERR MATLAB:hg:uitable:BadColumnFormatCellArray | ColumnFormat must be a cell array
+F table ColumnFormat {NUMERIC} : cell [1 1] {'NUMERIC'}
+F table ColumnFormat {short e} : cell [1 1] {'short e'}
+F table ColumnFormat {"char"} : ERR MATLAB:hg:uitable:BadColumnFormatInvalidDataType | ColumnFormat definitions must be either 'numeric', 'logical', 'char', or be a popupmenu definition
+F table ColumnFormat {{}} : ERR MATLAB:hg:uitable:BadColumnFormatPopupmenuRowVector | ColumnFormat popupmenu definitions must be row vectors
+F table ColumnFormat {5} : ERR MATLAB:hg:uitable:BadColumnFormatInvalidDataType | ColumnFormat definitions must be either 'numeric', 'logical', 'char', or be a popupmenu definition
+F table ColumnWidth ["auto" "fit"] : cell [1 2] {'auto','fit'}
+F table ColumnWidth {"1x"} : cell [1 1] {'1x'}
+F table ColumnWidth {} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+F table ColumnWidth AUTO : 'AUTO'
+F table ColumnWidth {AUTO} : cell [1 1] {'AUTO'}
+F table ColumnWidth {2X} : cell [1 1] {'2X'}
+F table ColumnWidth {Inf} : cell [1 1] {double Inf}
+F table ColumnWidth {NaN} : cell [1 1] {double NaN}
+F table ColumnWidth {[1 2]} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+F table ColumnWidth {true} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+F table SelectionType ROW : 'row'
+F table SelectionType r : 'row'
+F table SelectionType bogus : ERR MATLAB:datatypes:InvalidEnumValue | 'bogus' is not a valid value. Use one of these values: 'cell' | 'row' | 'column'.
+F table Multiselect 0 : 'off'
+F table RowStriping x : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Invalid enum value. Use one of these values: 'on' | 'off'.
+F table FontName 5 : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+F table FontName empty : ERR MATLAB:class:MATLABConversionError | Character vector value must not be empty
+F table FontSize 0 : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBePositive | Value should be a double number greater than 0.
+F table FontSize -1 : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeNotNegative | Value should be a double number greater than or equal to 0.
+F table FontSize [1 2] : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar | Value should be a numeric scalar.
+F table FontSize x : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar | Value should be a numeric scalar.
+F table FontWeight BOLD : 'bold'
+F table FontWeight light : 'light'
+F table FontAngle oblique : 'oblique'
+F table FontUnits normalized size : double 0.035555556
+F table Position 3 numbers : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector | Value must be a 4 element vector
+F table Position negative size : ERR MATLAB:hg:set_chck:DimensionsOutsideRange | Width and height must be greater than or equal to 0
+F table InnerPosition set : double [1 2 30 40]
+F table OuterPosition set : double [1 2 30 40]
+F table Extent set : ERR MATLAB:class:SetProhibited | Unable to set the 'Extent' property of class ''Table'' because it is read-only.
+F table Extent 0 data : double [0 0 340 340]
+F table Extent 2x2 : double [0 0 340 340]
+F table Extent 10x10 : double [0 0 340 340]
+F table DisplayData set : ERR MATLAB:class:SetProhibited | Unable to set the 'DisplayData' property of class ''Table'' because it is read-only.
+F table StyleConfigurations set : ERR MATLAB:class:SetProhibited | Unable to set the 'StyleConfigurations' property of class ''Table'' because it is read-only.
+F table Children set : double [0 0]
+F table KeyPressFcn : 'function_handle'
+F table ButtonDownFcn : 'function_handle'
+U Children types in order : '[9 1] uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uibutton,axes'
+U allchild types in order : '[10 1] uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uibutton,annotationpane,axes'
+U findobj types : '[10 1] figure,uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uibutton,axes'
+U findall -depth 1 : '[11 1] figure,uimenu,uitabgroup,uitable,uipanel,uitoolbar,uicontextmenu,uimenu,uibutton,annotationpane,axes'
+U tab Children types : '[4 1] uitable,uipanel,uibutton,axes'
+U uitabgroup(SelectedTab) in maker : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+U tg.SelectedTab = a (same) : 'a'
+U tg numeric index into Children : 'b'
+U SelectedTab deleted handle : ERR MATLAB:UITabGroup | Invalid value for SelectedTab.
+U tab Units normalized Position : '[0 0 1 1]'
+U tab Units points Position : '[0 0 225 150]'
+U tab InnerPosition set : ERR MATLAB:class:SetProhibited | Unable to set the 'InnerPosition' property of class ''Tab'' because it is read-only.
+U tab OuterPosition set : ERR MATLAB:class:SetProhibited | Unable to set the 'OuterPosition' property of class ''Tab'' because it is read-only.
+U tg InnerPosition set : ERR MATLAB:class:SetProhibited | Unable to set the 'InnerPosition' property of class ''TabGroup'' because it is read-only.
+U tg OuterPosition set : '[30 30 200 100]'
+U tg Position after : double [30 30 200 100]
+U tab Scrollable on : 'on'
+U tab BackgroundColor none : 'none'
+U tab ForegroundColor none : 'none'
+U tab Tooltip cell : cell [2 1] {'a','b'}
+U tab TooltipString : 'x'
+U tg TooltipString : ERR MATLAB:hg:InvalidProperty | Unrecognized property TooltipString for class TabGroup.
+U tab Enable : ERR MATLAB:hg:InvalidProperty | Unrecognized property Enable for class matlab.ui.container.Tab.
+U tab ButtonDownFcn : 'function_handle'
+U table size(Data) after Data(:,5)=1 : '[4 5]'
+U table Data = {} then class : 'cell [0 0]'
+U table Data = [] then class size : 'double [0 0]'
+U table Data string scalar : 'string [1 1]'
+U table Data = int8 : 'int8 [1 2]'
+U table Data cell with string : ERR MATLAB:hg:uitable:BadDataCellArrayType | Error setting property 'Data' of class 'Table': Values within a cell array must be numeric, logical, or char
+U table Data cell with empty : 'cell [1 2]'
+U table Data cell with int8 : 'cell [1 2]'
+U table Data cell with char matrix : 'cell [1 1]'
+U table Data sparse : 'double [2 2]'
+U table ColumnName numbered after set cell then back : ''numbered''
+U table RowName numbered written : 'numbered'
+U table ColumnName "numbered" string : 'numbered'
+U table ColumnName Numbered caps : 'Numbered'
+U table ColumnName abc char : 'abc'
+U table ColumnName cell with empty : cell [3 1] {'a','','c'}
+U table ColumnName cell with [] : cell [3 1] {'a','','c'}
+U table ColumnName cell nested : ERR MATLAB:hg:datatypes:NumericOrStringDataType:InvalidCellArray | Cell array can contain only non-empty character vectors, string vectors, or numbers.
+U table ColumnName 2-D cell : cell [4 1] {'a','c','b','d'}
+U table ColumnName logical : ERR MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass | Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.
+U table ColumnName struct : ERR MATLAB:hg:datatypes:NumericOrStringDataType:ArrayClass | Value must be a character vector, categorical array, string array, numeric array, or cell array of character vectors.
+U table RowName 2.5 : '2.5'
+U table RowName [1 2;3 4] : ''
+U table RowName string col : cell [2 1] {'a','b'}
+U table ColumnEditable 1 double : ERR MATLAB:hg:uitable:BadColumnEditableLogical | ColumnEditable must be a logical or logical array
+U table ColumnEditable on : ERR MATLAB:hg:uitable:BadColumnEditableLogical | ColumnEditable must be a logical or logical array
+U table ColumnSortable 1 double : ERR MATLAB:hg:gbtdatatypes:LogicalArray:BadLogicalArray | Value must be a logical or logical array
+U table ColumnSortable [true;false] : ERR MATLAB:hg:gbtdatatypes:LogicalArray:BadLogicalArrayRowVector | Value must be a row vector
+U table ColumnSortable [] : logical [0 0]
+U table ColumnFormat [] : cell [0 0] {}
+U table ColumnFormat char : ERR MATLAB:hg:uitable:BadColumnFormatCellArray | ColumnFormat must be a cell array
+U table ColumnFormat {NUMERIC} : cell [1 1] {'NUMERIC'}
+U table ColumnFormat {short e} : cell [1 1] {'short e'}
+U table ColumnFormat {"char"} : ERR MATLAB:hg:uitable:BadColumnFormatInvalidDataType | ColumnFormat definitions must be either 'numeric', 'logical', 'char', or be a popupmenu definition
+U table ColumnFormat {{}} : ERR MATLAB:hg:uitable:BadColumnFormatPopupmenuRowVector | ColumnFormat popupmenu definitions must be row vectors
+U table ColumnFormat {5} : ERR MATLAB:hg:uitable:BadColumnFormatInvalidDataType | ColumnFormat definitions must be either 'numeric', 'logical', 'char', or be a popupmenu definition
+U table ColumnWidth ["auto" "fit"] : cell [1 2] {'auto','fit'}
+U table ColumnWidth {"1x"} : cell [1 1] {'1x'}
+U table ColumnWidth {} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+U table ColumnWidth AUTO : 'AUTO'
+U table ColumnWidth {AUTO} : cell [1 1] {'AUTO'}
+U table ColumnWidth {2X} : cell [1 1] {'2X'}
+U table ColumnWidth {Inf} : cell [1 1] {double Inf}
+U table ColumnWidth {NaN} : cell [1 1] {double NaN}
+U table ColumnWidth {[1 2]} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+U table ColumnWidth {true} : ERR MATLAB:hg:uitable:BadColumnWidthValue | 'ColumnWidth' must be an array containing 'fit', 'auto', positive numbers, or positive integers paired with 'x'. You can specify 'ColumnWidth' as a cell array containing any combination of values, or as a string array when all elements are of the same type.
+U table SelectionType ROW : 'row'
+U table SelectionType r : 'row'
+U table SelectionType bogus : ERR MATLAB:datatypes:InvalidEnumValue | 'bogus' is not a valid value. Use one of these values: 'cell' | 'row' | 'column'.
+U table Multiselect 0 : 'off'
+U table RowStriping x : ERR MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue | Invalid enum value. Use one of these values: 'on' | 'off'.
+U table FontName 5 : ERR MATLAB:class:RequireString | Value must be a character vector or a string scalar.
+U table FontName empty : ERR MATLAB:class:MATLABConversionError | Character vector value must not be empty
+U table FontSize 0 : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBePositive | Value should be a double number greater than 0.
+U table FontSize -1 : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeNotNegative | Value should be a double number greater than or equal to 0.
+U table FontSize [1 2] : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar | Value should be a numeric scalar.
+U table FontSize x : ERR MATLAB:datatypes:PositiveWithZeroDataType:MustBeANumericScalar | Value should be a numeric scalar.
+U table FontWeight BOLD : 'bold'
+U table FontWeight light : 'light'
+U table FontAngle oblique : 'oblique'
+U table FontUnits normalized size : double 0.04
+U table Position 3 numbers : ERR MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector | Value must be a 4 element vector
+U table Position negative size : ERR MATLAB:hg:set_chck:DimensionsOutsideRange | Width and height must be greater than or equal to 0
+U table InnerPosition set : double [1 2 30 40]
+U table OuterPosition set : double [1 2 30 40]
+U table Extent set : ERR MATLAB:class:SetProhibited | Unable to set the 'Extent' property of class ''Table'' because it is read-only.
+U table Extent 0 data : double [0 0 340 340]
+U table Extent 2x2 : double [0 0 340 340]
+U table Extent 10x10 : double [0 0 340 340]
+U table DisplayData set : ERR MATLAB:class:SetProhibited | Unable to set the 'DisplayData' property of class ''Table'' because it is read-only.
+U table StyleConfigurations set : ERR MATLAB:class:SetProhibited | Unable to set the 'StyleConfigurations' property of class ''Table'' because it is read-only.
+U table Children set : double [0 0]
+U table KeyPressFcn : 'function_handle'
+U table ButtonDownFcn : 'function_handle'
+U table in grid Position : double [20 20 300 300]
+U table in grid Layout : double [1 1]
+U table in fit cell Position : double [11 311 267 100]
+U tabgroup in grid Position : double [288 166 263 245]
+U tabgroup in fit cell Position : double [288 166 262 245]
+U button in grid in tab Position : double [11 11 80 80]
+U grid in tab Position : double [1 1 100 100]

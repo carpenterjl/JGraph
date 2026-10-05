@@ -17,6 +17,8 @@ internal static partial class UiComponentMapper
 {
     private const string ComponentPrefix = "ui:";
     private const string GridKind = "uigridlayout";
+    private const string TabGroupKind = "uitabgroup";
+    private const string TabKind = "uitab";
 
     private static readonly JsonSerializerOptions BagOptions = new()
     {
@@ -51,6 +53,41 @@ internal static partial class UiComponentMapper
                 return dto;
             }
 
+            // A tab group and its tabs (U8): each its own bag, the tabs as the group's children,
+            // and the tab that shows by its place among them.
+            case UiTabGroupModel group:
+            {
+                var dto = new UiComponentDto { Kind = TabGroupKind, Properties = Bag(group) };
+                foreach (UiObject child in group.Components)
+                {
+                    if (ToDto(child) is { } childDto)
+                    {
+                        if (ReferenceEquals(child, group.SelectedTab))
+                        {
+                            dto.SelectedChild = dto.Children.Count;
+                        }
+
+                        dto.Children.Add(childDto);
+                    }
+                }
+
+                return dto;
+            }
+
+            case UiTabModel tab:
+            {
+                var dto = new UiComponentDto { Kind = TabKind, Properties = Bag(tab) };
+                foreach (UiObject child in tab.Components)
+                {
+                    if (ToDto(child) is { } childDto)
+                    {
+                        dto.Children.Add(childDto);
+                    }
+                }
+
+                return dto;
+            }
+
             default:
                 return null;
         }
@@ -58,6 +95,28 @@ internal static partial class UiComponentMapper
 
     private static UiObject? ComponentToModel(UiComponentDto dto)
     {
+        if (dto.Kind is TabGroupKind or TabKind)
+        {
+            UiContainerModel holder = dto.Kind == TabGroupKind ? new UiTabGroupModel() : new UiTabModel();
+            Fill(holder, dto.Properties);
+            foreach (UiComponentDto childDto in dto.Children)
+            {
+                // A tab group holds tabs and nothing else.
+                if (ToModel(childDto) is { } child && (holder is UiTabModel || child is UiTabModel))
+                {
+                    holder.Components.Add(child);
+                }
+            }
+
+            if (holder is UiTabGroupModel group && dto.SelectedChild is { } shown && shown >= 0 && shown < group.Components.Count
+                && group.Components[shown] is UiTabModel showing)
+            {
+                group.Select(showing);
+            }
+
+            return holder;
+        }
+
         if (dto.Kind == GridKind)
         {
             var grid = new UiGridLayoutModel();
@@ -97,6 +156,7 @@ internal static partial class UiComponentMapper
             UiComponentKind.Slider => new UiSliderModel(),
             UiComponentKind.RangeSlider => new UiRangeSliderModel(),
             UiComponentKind.Image => new UiImageModel(),
+            UiComponentKind.Table => new UiTableModel(),
             _ => null,
         };
         if (made is not null)

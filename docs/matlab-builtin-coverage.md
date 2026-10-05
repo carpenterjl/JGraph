@@ -34,7 +34,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**434 of 514 builtins implemented** (433 from app-building stage U2 to U5; 432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**437 of 514 builtins implemented** (434 from app-building stage U6 to U7b; 433 from app-building stage U2 to U5; 432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -103,8 +103,10 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,206 of
-2,024** as of app-building stage U6 (ADR 0203), which added `superclasses` once a class could
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,212 of
+2,024** as of app-building stage U8 (ADR 0206), which added `uitable`, `uitabgroup`, `uitab`,
+`uitoolbar`, `uipushtool` and `uitoggletool`, and put `uimenu` on a figure's menu bar; 1,206 as of
+app-building stage U6 (ADR 0203), which added `superclasses` once a class could
 inherit from another; 1,205 as of app-building stage U5 (ADR 0202), which added `uigridlayout`, the `uifigure`
 components (`uilabel`, `uibutton`, `uieditfield`, `uitextarea`, `uidropdown`, `uilistbox`,
 `uicheckbox`, `uiradiobutton`, `uitogglebutton`, `uislider`, `uispinner`, `uiimage`, `uihyperlink`)
@@ -1058,12 +1060,16 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 80
+## Not implemented — 77
 
-### Handle graphics and app building — 5
+### Handle graphics and app building — 2
 
-`hgsetget` `selectmoveresize` `uipushtool`
-`uitoggletool` `uitoolbar`
+`hgsetget` `selectmoveresize`
+
+**App-building stage U8 took the toolbar's three** (ADR 0206): `uitoolbar`, `uipushtool` and
+`uitoggletool`, with `uitable`, `uitabgroup` and `uitab` beside them among the functions, and a
+real menu bar for the `uimenu`s made in a figure. Their names, defaults, words and refusals are
+R2025b's, fixture by fixture (`u8_*`).
 
 **App-building stage U5 took the first batch of `uifigure` components** (ADR 0202):
 `uigridlayout` with R2025b's track and fit arithmetic, thirteen components with their defaults,

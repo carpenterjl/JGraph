@@ -1,0 +1,636 @@
+CHK|F_Table_type|uitable|exact
+CHK|F_Table_get_names|BackgroundColor BeingDeleted BusyAction ButtonDownFcn CellEditCallback CellSelectionCallback Children ClickedFcn ColumnEditable ColumnFormat ColumnName ColumnRearrangeable ColumnSortable ColumnWidth ContextMenu CreateFcn Data DeleteFcn DisplayData DisplayDataChangedFcn DisplaySelection DoubleClickedFcn Enable FontAngle FontName FontSize FontUnits FontWeight ForegroundColor HandleVisibility InnerPosition Interruptible KeyPressFcn KeyReleaseFcn Layout Multiselect OuterPosition Parent Position RowName RowStriping Selection SelectionChangedFcn SelectionType StyleConfigurations Tag Tooltip Type Units UserData Visible|exact
+CHK|F_Table_set_names|BackgroundColor BusyAction ButtonDownFcn CellEditCallback CellSelectionCallback Children ClickedFcn ColumnEditable ColumnFormat ColumnName ColumnRearrangeable ColumnSortable ColumnWidth ContextMenu CreateFcn Data DeleteFcn DisplayDataChangedFcn DoubleClickedFcn Enable FontAngle FontName FontSize FontUnits FontWeight ForegroundColor HandleVisibility InnerPosition Interruptible KeyPressFcn KeyReleaseFcn Layout Multiselect OuterPosition Parent Position RowName RowStriping Selection SelectionChangedFcn SelectionType Tag Tooltip Units UserData Visible|exact
+CHK|F_Table_default_BackgroundColor|double [2 3] 1 0.9607843137 1 0.9607843137 1 0.9607843137|exact
+CHK|F_Table_default_BeingDeleted|onoff off|exact
+CHK|F_Table_default_BusyAction|char 'queue'|exact
+CHK|F_Table_default_ButtonDownFcn|char ''|exact
+CHK|F_Table_default_CellEditCallback|char ''|exact
+CHK|F_Table_default_CellSelectionCallback|char ''|exact
+CHK|F_Table_default_ClickedFcn|char ''|exact
+CHK|F_Table_default_ColumnEditable|logical [0 0]|exact
+CHK|F_Table_default_ColumnFormat|cell [0 0] {}|exact
+CHK|F_Table_default_ColumnName|char 'numbered'|exact
+CHK|F_Table_default_ColumnRearrangeable|onoff off|exact
+CHK|F_Table_default_ColumnSortable|logical [0 0]|exact
+CHK|F_Table_default_ColumnWidth|char 'auto'|exact
+CHK|F_Table_default_CreateFcn|char ''|exact
+CHK|F_Table_default_Data|double [0 0]|exact
+CHK|F_Table_default_DeleteFcn|char ''|exact
+CHK|F_Table_default_DisplayData|double [0 0]|exact
+CHK|F_Table_default_DisplayDataChangedFcn|char ''|exact
+CHK|F_Table_default_DisplaySelection|double [0 0]|exact
+CHK|F_Table_default_DoubleClickedFcn|char ''|exact
+CHK|F_Table_default_Enable|onoff on|exact
+CHK|F_Table_default_FontAngle|char 'normal'|exact
+CHK|F_Table_default_FontName|char 'MS Sans Serif'|exact
+CHK|F_Table_default_FontSize|double [1 1] 8|exact
+CHK|F_Table_default_FontUnits|char 'points'|exact
+CHK|F_Table_default_FontWeight|char 'normal'|exact
+CHK|F_Table_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_Table_default_HandleVisibility|onoff on|exact
+CHK|F_Table_default_InnerPosition|double [1 4] 20 20 300 300|exact
+CHK|F_Table_default_Interruptible|onoff on|exact
+CHK|F_Table_default_KeyPressFcn|char ''|exact
+CHK|F_Table_default_KeyReleaseFcn|char ''|exact
+CHK|F_Table_default_Multiselect|onoff on|exact
+CHK|F_Table_default_OuterPosition|double [1 4] 20 20 300 300|exact
+CHK|F_Table_default_Position|double [1 4] 20 20 300 300|exact
+CHK|F_Table_default_RowName|char 'numbered'|exact
+CHK|F_Table_default_RowStriping|onoff on|exact
+CHK|F_Table_default_Selection|double [0 0]|exact
+CHK|F_Table_default_SelectionChangedFcn|char ''|exact
+CHK|F_Table_default_SelectionType|char 'cell'|exact
+CHK|F_Table_default_Tag|char ''|exact
+CHK|F_Table_default_Tooltip|char ''|exact
+CHK|F_Table_default_Type|char 'uitable'|exact
+CHK|F_Table_default_Units|char 'pixels'|exact
+CHK|F_Table_default_Visible|onoff on|exact
+CHK|F_Table_userdata_empty|1|exact
+CHK|F_Table_children_empty|1|exact
+CHK|F_Table_contextmenu_empty|1|exact
+CHK|F_Table_parent_type|figure|exact
+CHK|F_Table_flags|1 1 1 1 1 1 1 1|exact
+CHK|F_Table_words_ColumnRearrangeable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Table_words_SelectionType|cell [3 1] {char 'cell', char 'row', char 'column'}|exact
+CHK|F_Table_words_RowStriping|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Table_words_Multiselect|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Table_words_Enable|cell [3 1] {onoff on, onoff off, char 'inactive'}|exact
+CHK|F_Table_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Table_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Table_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Table_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Table_words_FontUnits|cell [5 1] {char 'inches', char 'centimeters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|F_Table_words_FontAngle|cell [2 1] {char 'normal', char 'italic'}|exact
+CHK|F_Table_words_FontWeight|cell [2 1] {char 'normal', char 'bold'}|exact
+CHK|F_Table_words_Units|cell [6 1] {char 'inches', char 'centimeters', char 'characters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|F_TabGroup_type|uitabgroup|exact
+CHK|F_TabGroup_get_names|AutoResizeChildren BeingDeleted BusyAction ButtonDownFcn Children ContextMenu CreateFcn DeleteFcn HandleVisibility InnerPosition Interruptible Layout OuterPosition Parent Position SelectedTab SelectionChangedFcn SizeChangedFcn TabLocation Tag Tooltip Type Units UserData Visible|exact
+CHK|F_TabGroup_set_names|AutoResizeChildren BusyAction ButtonDownFcn Children ContextMenu CreateFcn DeleteFcn HandleVisibility Interruptible Layout OuterPosition Parent Position SelectedTab SelectionChangedFcn SizeChangedFcn TabLocation Tag Tooltip Units UserData Visible|exact
+CHK|F_TabGroup_default_AutoResizeChildren|onoff off|exact
+CHK|F_TabGroup_default_BeingDeleted|onoff off|exact
+CHK|F_TabGroup_default_BusyAction|char 'queue'|exact
+CHK|F_TabGroup_default_ButtonDownFcn|char ''|exact
+CHK|F_TabGroup_default_CreateFcn|char ''|exact
+CHK|F_TabGroup_default_DeleteFcn|char ''|exact
+CHK|F_TabGroup_default_HandleVisibility|onoff on|exact
+CHK|F_TabGroup_default_Interruptible|onoff on|exact
+CHK|F_TabGroup_default_OuterPosition|double [1 4] 0 0 1 1|exact
+CHK|F_TabGroup_default_Position|double [1 4] 0 0 1 1|exact
+CHK|F_TabGroup_default_SelectionChangedFcn|char ''|exact
+CHK|F_TabGroup_default_SizeChangedFcn|char ''|exact
+CHK|F_TabGroup_default_TabLocation|char 'top'|exact
+CHK|F_TabGroup_default_Tag|char ''|exact
+CHK|F_TabGroup_default_Tooltip|char ''|exact
+CHK|F_TabGroup_default_Type|char 'uitabgroup'|exact
+CHK|F_TabGroup_default_Units|char 'normalized'|exact
+CHK|F_TabGroup_default_Visible|onoff on|exact
+CHK|F_TabGroup_userdata_empty|1|exact
+CHK|F_TabGroup_children_empty|1|exact
+CHK|F_TabGroup_contextmenu_empty|1|exact
+CHK|F_TabGroup_parent_type|figure|exact
+CHK|F_TabGroup_flags|1 1 1 0 1 1 1 1|exact
+CHK|F_TabGroup_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_TabGroup_words_TabLocation|cell [4 1] {char 'top', char 'left', char 'bottom', char 'right'}|exact
+CHK|F_TabGroup_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_TabGroup_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_TabGroup_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_TabGroup_words_Units|cell [6 1] {char 'inches', char 'centimeters', char 'characters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|F_TabGroup_words_AutoResizeChildren|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Tab_type|uitab|exact
+CHK|F_Tab_get_names|AutoResizeChildren BackgroundColor BeingDeleted BusyAction ButtonDownFcn Children ContextMenu CreateFcn DeleteFcn ForegroundColor HandleVisibility InnerPosition Interruptible OuterPosition Parent Position Scrollable SizeChangedFcn Tag Title Tooltip Type Units UserData|exact
+CHK|F_Tab_set_names|AutoResizeChildren BackgroundColor BusyAction ButtonDownFcn Children ContextMenu CreateFcn DeleteFcn ForegroundColor HandleVisibility Interruptible Parent Scrollable SizeChangedFcn Tag Title Tooltip Units UserData|exact
+CHK|F_Tab_default_AutoResizeChildren|onoff off|exact
+CHK|F_Tab_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|F_Tab_default_BeingDeleted|onoff off|exact
+CHK|F_Tab_default_BusyAction|char 'queue'|exact
+CHK|F_Tab_default_ButtonDownFcn|char ''|exact
+CHK|F_Tab_default_CreateFcn|char ''|exact
+CHK|F_Tab_default_DeleteFcn|char ''|exact
+CHK|F_Tab_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_Tab_default_HandleVisibility|onoff on|exact
+CHK|F_Tab_default_Interruptible|onoff on|exact
+CHK|F_Tab_default_Scrollable|onoff off|exact
+CHK|F_Tab_default_SizeChangedFcn|char ''|exact
+CHK|F_Tab_default_Tag|char ''|exact
+CHK|F_Tab_default_Title|char ''|exact
+CHK|F_Tab_default_Tooltip|char ''|exact
+CHK|F_Tab_default_Type|char 'uitab'|exact
+CHK|F_Tab_default_Units|char 'normalized'|exact
+CHK|F_Tab_userdata_empty|1|exact
+CHK|F_Tab_children_empty|1|exact
+CHK|F_Tab_contextmenu_empty|1|exact
+CHK|F_Tab_parent_type|uitabgroup|exact
+CHK|F_Tab_flags|1 1 0 0 1 1 1 1|exact
+CHK|F_Tab_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Tab_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Tab_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Tab_words_Units|cell [6 1] {char 'inches', char 'centimeters', char 'characters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|F_Tab_words_AutoResizeChildren|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Tab_words_Scrollable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Menu_type|uimenu|exact
+CHK|F_Menu_get_names|Accelerator BeingDeleted BusyAction ButtonDownFcn Checked Children Clipping ContextMenu CreateFcn DeleteFcn Enable ForegroundColor HandleVisibility Interruptible MenuSelectedFcn Parent Position Separator Tag Text Tooltip Type UserData Visible|exact
+CHK|F_Menu_set_names|Accelerator BusyAction ButtonDownFcn Checked Children Clipping ContextMenu CreateFcn DeleteFcn Enable ForegroundColor HandleVisibility Interruptible MenuSelectedFcn Parent Position Separator Tag Text Tooltip UserData Visible|exact
+CHK|F_Menu_default_Accelerator|char ''|exact
+CHK|F_Menu_default_BeingDeleted|onoff off|exact
+CHK|F_Menu_default_BusyAction|char 'queue'|exact
+CHK|F_Menu_default_ButtonDownFcn|char ''|exact
+CHK|F_Menu_default_Checked|onoff off|exact
+CHK|F_Menu_default_Clipping|onoff on|exact
+CHK|F_Menu_default_CreateFcn|char ''|exact
+CHK|F_Menu_default_DeleteFcn|char ''|exact
+CHK|F_Menu_default_Enable|onoff on|exact
+CHK|F_Menu_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_Menu_default_HandleVisibility|onoff on|exact
+CHK|F_Menu_default_Interruptible|onoff on|exact
+CHK|F_Menu_default_MenuSelectedFcn|char ''|exact
+CHK|F_Menu_default_Position|double [1 1] 1|exact
+CHK|F_Menu_default_Separator|onoff off|exact
+CHK|F_Menu_default_Tag|char ''|exact
+CHK|F_Menu_default_Text|char ''|exact
+CHK|F_Menu_default_Tooltip|char ''|exact
+CHK|F_Menu_default_Type|char 'uimenu'|exact
+CHK|F_Menu_default_Visible|onoff on|exact
+CHK|F_Menu_userdata_empty|1|exact
+CHK|F_Menu_children_empty|1|exact
+CHK|F_Menu_contextmenu_empty|1|exact
+CHK|F_Menu_parent_type|figure|exact
+CHK|F_Menu_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_Menu_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Menu_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Menu_words_Separator|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Menu_words_Checked|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Menu_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Menu_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Menu_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Menu_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SubMenu_type|uimenu|exact
+CHK|F_SubMenu_get_names|Accelerator BeingDeleted BusyAction ButtonDownFcn Checked Children Clipping ContextMenu CreateFcn DeleteFcn Enable ForegroundColor HandleVisibility Interruptible MenuSelectedFcn Parent Position Separator Tag Text Tooltip Type UserData Visible|exact
+CHK|F_SubMenu_set_names|Accelerator BusyAction ButtonDownFcn Checked Children Clipping ContextMenu CreateFcn DeleteFcn Enable ForegroundColor HandleVisibility Interruptible MenuSelectedFcn Parent Position Separator Tag Text Tooltip UserData Visible|exact
+CHK|F_SubMenu_default_Accelerator|char ''|exact
+CHK|F_SubMenu_default_BeingDeleted|onoff off|exact
+CHK|F_SubMenu_default_BusyAction|char 'queue'|exact
+CHK|F_SubMenu_default_ButtonDownFcn|char ''|exact
+CHK|F_SubMenu_default_Checked|onoff off|exact
+CHK|F_SubMenu_default_Clipping|onoff on|exact
+CHK|F_SubMenu_default_CreateFcn|char ''|exact
+CHK|F_SubMenu_default_DeleteFcn|char ''|exact
+CHK|F_SubMenu_default_Enable|onoff on|exact
+CHK|F_SubMenu_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_SubMenu_default_HandleVisibility|onoff on|exact
+CHK|F_SubMenu_default_Interruptible|onoff on|exact
+CHK|F_SubMenu_default_MenuSelectedFcn|char ''|exact
+CHK|F_SubMenu_default_Position|double [1 1] 1|exact
+CHK|F_SubMenu_default_Separator|onoff off|exact
+CHK|F_SubMenu_default_Tag|char ''|exact
+CHK|F_SubMenu_default_Text|char ''|exact
+CHK|F_SubMenu_default_Tooltip|char ''|exact
+CHK|F_SubMenu_default_Type|char 'uimenu'|exact
+CHK|F_SubMenu_default_Visible|onoff on|exact
+CHK|F_SubMenu_userdata_empty|1|exact
+CHK|F_SubMenu_children_empty|1|exact
+CHK|F_SubMenu_contextmenu_empty|1|exact
+CHK|F_SubMenu_parent_type|uimenu|exact
+CHK|F_SubMenu_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_SubMenu_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SubMenu_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SubMenu_words_Separator|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SubMenu_words_Checked|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SubMenu_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_SubMenu_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_SubMenu_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SubMenu_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ContextMenu_type|uicontextmenu|exact
+CHK|F_ContextMenu_get_names|BeingDeleted BusyAction ButtonDownFcn Children Clipping ContextMenu ContextMenuOpeningFcn CreateFcn DeleteFcn HandleVisibility Interruptible Parent Tag Type UserData|exact
+CHK|F_ContextMenu_set_names|BusyAction ButtonDownFcn Children Clipping ContextMenu ContextMenuOpeningFcn CreateFcn DeleteFcn HandleVisibility Interruptible Parent Tag UserData|exact
+CHK|F_ContextMenu_default_BeingDeleted|onoff off|exact
+CHK|F_ContextMenu_default_BusyAction|char 'queue'|exact
+CHK|F_ContextMenu_default_ButtonDownFcn|char ''|exact
+CHK|F_ContextMenu_default_Clipping|onoff on|exact
+CHK|F_ContextMenu_default_ContextMenuOpeningFcn|char ''|exact
+CHK|F_ContextMenu_default_CreateFcn|char ''|exact
+CHK|F_ContextMenu_default_DeleteFcn|char ''|exact
+CHK|F_ContextMenu_default_HandleVisibility|onoff on|exact
+CHK|F_ContextMenu_default_Interruptible|onoff on|exact
+CHK|F_ContextMenu_default_Tag|char ''|exact
+CHK|F_ContextMenu_default_Type|char 'uicontextmenu'|exact
+CHK|F_ContextMenu_userdata_empty|1|exact
+CHK|F_ContextMenu_children_empty|1|exact
+CHK|F_ContextMenu_contextmenu_empty|1|exact
+CHK|F_ContextMenu_parent_type|figure|exact
+CHK|F_ContextMenu_flags|0 1 1 0 1 1 1 1|exact
+CHK|F_ContextMenu_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_ContextMenu_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_ContextMenu_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ContextMenu_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Toolbar_type|uitoolbar|exact
+CHK|F_Toolbar_get_names|BackgroundColor BeingDeleted BusyAction ButtonDownFcn Children Clipping ContextMenu CreateFcn DeleteFcn HandleVisibility Interruptible Parent Tag Type UserData Visible|exact
+CHK|F_Toolbar_set_names|BackgroundColor BusyAction ButtonDownFcn Children Clipping ContextMenu CreateFcn DeleteFcn HandleVisibility Interruptible Parent Tag UserData Visible|exact
+CHK|F_Toolbar_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|F_Toolbar_default_BeingDeleted|onoff off|exact
+CHK|F_Toolbar_default_BusyAction|char 'queue'|exact
+CHK|F_Toolbar_default_ButtonDownFcn|char ''|exact
+CHK|F_Toolbar_default_Clipping|onoff on|exact
+CHK|F_Toolbar_default_CreateFcn|char ''|exact
+CHK|F_Toolbar_default_DeleteFcn|char ''|exact
+CHK|F_Toolbar_default_HandleVisibility|onoff on|exact
+CHK|F_Toolbar_default_Interruptible|onoff on|exact
+CHK|F_Toolbar_default_Tag|char ''|exact
+CHK|F_Toolbar_default_Type|char 'uitoolbar'|exact
+CHK|F_Toolbar_default_Visible|onoff on|exact
+CHK|F_Toolbar_userdata_empty|1|exact
+CHK|F_Toolbar_children_empty|1|exact
+CHK|F_Toolbar_contextmenu_empty|1|exact
+CHK|F_Toolbar_parent_type|figure|exact
+CHK|F_Toolbar_flags|0 0 1 0 1 1 1 1|exact
+CHK|F_Toolbar_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Toolbar_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Toolbar_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Toolbar_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Toolbar_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_PushTool_type|uipushtool|exact
+CHK|F_PushTool_get_names|BeingDeleted BusyAction ButtonDownFcn CData Children ClickedCallback Clipping ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon Interruptible Parent Separator Tag Tooltip Type UserData Visible|exact
+CHK|F_PushTool_set_names|BusyAction ButtonDownFcn CData Children ClickedCallback Clipping ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon Interruptible Parent Separator Tag Tooltip UserData Visible|exact
+CHK|F_PushTool_default_BeingDeleted|onoff off|exact
+CHK|F_PushTool_default_BusyAction|char 'queue'|exact
+CHK|F_PushTool_default_ButtonDownFcn|char ''|exact
+CHK|F_PushTool_default_CData|double [0 0]|exact
+CHK|F_PushTool_default_ClickedCallback|char ''|exact
+CHK|F_PushTool_default_Clipping|onoff on|exact
+CHK|F_PushTool_default_CreateFcn|char ''|exact
+CHK|F_PushTool_default_DeleteFcn|char ''|exact
+CHK|F_PushTool_default_Enable|onoff on|exact
+CHK|F_PushTool_default_HandleVisibility|onoff on|exact
+CHK|F_PushTool_default_Icon|char ''|exact
+CHK|F_PushTool_default_Interruptible|onoff on|exact
+CHK|F_PushTool_default_Separator|onoff off|exact
+CHK|F_PushTool_default_Tag|char ''|exact
+CHK|F_PushTool_default_Tooltip|char ''|exact
+CHK|F_PushTool_default_Type|char 'uipushtool'|exact
+CHK|F_PushTool_default_Visible|onoff on|exact
+CHK|F_PushTool_userdata_empty|1|exact
+CHK|F_PushTool_children_empty|1|exact
+CHK|F_PushTool_contextmenu_empty|1|exact
+CHK|F_PushTool_parent_type|uitoolbar|exact
+CHK|F_PushTool_flags|0 0 1 1 1 1 1 1|exact
+CHK|F_PushTool_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_PushTool_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_PushTool_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_PushTool_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_PushTool_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_PushTool_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_PushTool_words_Separator|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleTool_type|uitoggletool|exact
+CHK|F_ToggleTool_get_names|BeingDeleted BusyAction ButtonDownFcn CData Children ClickedCallback Clipping ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon Interruptible OffCallback OnCallback Parent Separator State Tag Tooltip Type UserData Visible|exact
+CHK|F_ToggleTool_set_names|BusyAction ButtonDownFcn CData Children ClickedCallback Clipping ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon Interruptible OffCallback OnCallback Parent Separator State Tag Tooltip UserData Visible|exact
+CHK|F_ToggleTool_default_BeingDeleted|onoff off|exact
+CHK|F_ToggleTool_default_BusyAction|char 'queue'|exact
+CHK|F_ToggleTool_default_ButtonDownFcn|char ''|exact
+CHK|F_ToggleTool_default_CData|double [0 0]|exact
+CHK|F_ToggleTool_default_ClickedCallback|char ''|exact
+CHK|F_ToggleTool_default_Clipping|onoff on|exact
+CHK|F_ToggleTool_default_CreateFcn|char ''|exact
+CHK|F_ToggleTool_default_DeleteFcn|char ''|exact
+CHK|F_ToggleTool_default_Enable|onoff on|exact
+CHK|F_ToggleTool_default_HandleVisibility|onoff on|exact
+CHK|F_ToggleTool_default_Icon|char ''|exact
+CHK|F_ToggleTool_default_Interruptible|onoff on|exact
+CHK|F_ToggleTool_default_OffCallback|char ''|exact
+CHK|F_ToggleTool_default_OnCallback|char ''|exact
+CHK|F_ToggleTool_default_Separator|onoff off|exact
+CHK|F_ToggleTool_default_State|onoff off|exact
+CHK|F_ToggleTool_default_Tag|char ''|exact
+CHK|F_ToggleTool_default_Tooltip|char ''|exact
+CHK|F_ToggleTool_default_Type|char 'uitoggletool'|exact
+CHK|F_ToggleTool_default_Visible|onoff on|exact
+CHK|F_ToggleTool_userdata_empty|1|exact
+CHK|F_ToggleTool_children_empty|1|exact
+CHK|F_ToggleTool_contextmenu_empty|1|exact
+CHK|F_ToggleTool_parent_type|uitoolbar|exact
+CHK|F_ToggleTool_flags|0 0 1 1 1 1 1 1|exact
+CHK|F_ToggleTool_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleTool_words_State|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleTool_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_ToggleTool_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_ToggleTool_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleTool_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleTool_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleTool_words_Separator|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Table_type|uitable|exact
+CHK|U_Table_get_names|BackgroundColor BeingDeleted BusyAction ButtonDownFcn CellEditCallback CellSelectionCallback Children ClickedFcn ColumnEditable ColumnFormat ColumnName ColumnRearrangeable ColumnSortable ColumnWidth ContextMenu CreateFcn Data DeleteFcn DisplayData DisplayDataChangedFcn DisplaySelection DoubleClickedFcn Enable FontAngle FontName FontSize FontUnits FontWeight ForegroundColor HandleVisibility InnerPosition Interruptible KeyPressFcn KeyReleaseFcn Layout Multiselect OuterPosition Parent Position RowName RowStriping Selection SelectionChangedFcn SelectionType StyleConfigurations Tag Tooltip Type Units UserData Visible|exact
+CHK|U_Table_set_names|BackgroundColor BusyAction ButtonDownFcn CellEditCallback CellSelectionCallback Children ClickedFcn ColumnEditable ColumnFormat ColumnName ColumnRearrangeable ColumnSortable ColumnWidth ContextMenu CreateFcn Data DeleteFcn DisplayDataChangedFcn DoubleClickedFcn Enable FontAngle FontName FontSize FontUnits FontWeight ForegroundColor HandleVisibility InnerPosition Interruptible KeyPressFcn KeyReleaseFcn Layout Multiselect OuterPosition Parent Position RowName RowStriping Selection SelectionChangedFcn SelectionType Tag Tooltip Units UserData Visible|exact
+CHK|U_Table_default_BackgroundColor|double [2 3] 1 0.9607843137 1 0.9607843137 1 0.9607843137|exact
+CHK|U_Table_default_BeingDeleted|onoff off|exact
+CHK|U_Table_default_BusyAction|char 'queue'|exact
+CHK|U_Table_default_ButtonDownFcn|char ''|exact
+CHK|U_Table_default_CellEditCallback|char ''|exact
+CHK|U_Table_default_CellSelectionCallback|char ''|exact
+CHK|U_Table_default_ClickedFcn|char ''|exact
+CHK|U_Table_default_ColumnEditable|logical [0 0]|exact
+CHK|U_Table_default_ColumnFormat|cell [0 0] {}|exact
+CHK|U_Table_default_ColumnName|char 'numbered'|exact
+CHK|U_Table_default_ColumnRearrangeable|onoff off|exact
+CHK|U_Table_default_ColumnSortable|logical [0 0]|exact
+CHK|U_Table_default_ColumnWidth|char 'auto'|exact
+CHK|U_Table_default_CreateFcn|char ''|exact
+CHK|U_Table_default_Data|double [0 0]|exact
+CHK|U_Table_default_DeleteFcn|char ''|exact
+CHK|U_Table_default_DisplayData|double [0 0]|exact
+CHK|U_Table_default_DisplayDataChangedFcn|char ''|exact
+CHK|U_Table_default_DisplaySelection|double [0 0]|exact
+CHK|U_Table_default_DoubleClickedFcn|char ''|exact
+CHK|U_Table_default_Enable|onoff on|exact
+CHK|U_Table_default_FontAngle|char 'normal'|exact
+CHK|U_Table_default_FontName|char 'Helvetica'|exact
+CHK|U_Table_default_FontSize|double [1 1] 12|exact
+CHK|U_Table_default_FontUnits|char 'pixels'|exact
+CHK|U_Table_default_FontWeight|char 'normal'|exact
+CHK|U_Table_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_Table_default_HandleVisibility|onoff on|exact
+CHK|U_Table_default_InnerPosition|double [1 4] 20 20 300 300|exact
+CHK|U_Table_default_Interruptible|onoff on|exact
+CHK|U_Table_default_KeyPressFcn|char ''|exact
+CHK|U_Table_default_KeyReleaseFcn|char ''|exact
+CHK|U_Table_default_Multiselect|onoff on|exact
+CHK|U_Table_default_OuterPosition|double [1 4] 20 20 300 300|exact
+CHK|U_Table_default_Position|double [1 4] 20 20 300 300|exact
+CHK|U_Table_default_RowName|char 'numbered'|exact
+CHK|U_Table_default_RowStriping|onoff on|exact
+CHK|U_Table_default_Selection|double [0 0]|exact
+CHK|U_Table_default_SelectionChangedFcn|char ''|exact
+CHK|U_Table_default_SelectionType|char 'cell'|exact
+CHK|U_Table_default_Tag|char ''|exact
+CHK|U_Table_default_Tooltip|char ''|exact
+CHK|U_Table_default_Type|char 'uitable'|exact
+CHK|U_Table_default_Units|char 'pixels'|exact
+CHK|U_Table_default_Visible|onoff on|exact
+CHK|U_Table_userdata_empty|1|exact
+CHK|U_Table_children_empty|1|exact
+CHK|U_Table_contextmenu_empty|1|exact
+CHK|U_Table_parent_type|figure|exact
+CHK|U_Table_flags|1 1 1 1 1 1 1 1|exact
+CHK|U_Table_words_ColumnRearrangeable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Table_words_SelectionType|cell [3 1] {char 'cell', char 'row', char 'column'}|exact
+CHK|U_Table_words_RowStriping|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Table_words_Multiselect|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Table_words_Enable|cell [3 1] {onoff on, onoff off, char 'inactive'}|exact
+CHK|U_Table_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Table_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Table_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Table_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Table_words_FontUnits|cell [5 1] {char 'inches', char 'centimeters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|U_Table_words_FontAngle|cell [2 1] {char 'normal', char 'italic'}|exact
+CHK|U_Table_words_FontWeight|cell [2 1] {char 'normal', char 'bold'}|exact
+CHK|U_Table_words_Units|cell [6 1] {char 'inches', char 'centimeters', char 'characters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|U_TabGroup_type|uitabgroup|exact
+CHK|U_TabGroup_get_names|AutoResizeChildren BeingDeleted BusyAction ButtonDownFcn Children ContextMenu CreateFcn DeleteFcn HandleVisibility InnerPosition Interruptible Layout OuterPosition Parent Position SelectedTab SelectionChangedFcn SizeChangedFcn TabLocation Tag Tooltip Type Units UserData Visible|exact
+CHK|U_TabGroup_set_names|AutoResizeChildren BusyAction ButtonDownFcn Children ContextMenu CreateFcn DeleteFcn HandleVisibility Interruptible Layout OuterPosition Parent Position SelectedTab SelectionChangedFcn SizeChangedFcn TabLocation Tag Tooltip Units UserData Visible|exact
+CHK|U_TabGroup_default_AutoResizeChildren|onoff on|exact
+CHK|U_TabGroup_default_BeingDeleted|onoff off|exact
+CHK|U_TabGroup_default_BusyAction|char 'queue'|exact
+CHK|U_TabGroup_default_ButtonDownFcn|char ''|exact
+CHK|U_TabGroup_default_CreateFcn|char ''|exact
+CHK|U_TabGroup_default_DeleteFcn|char ''|exact
+CHK|U_TabGroup_default_HandleVisibility|onoff on|exact
+CHK|U_TabGroup_default_Interruptible|onoff on|exact
+CHK|U_TabGroup_default_OuterPosition|double [1 4] 20 20 250 210|exact
+CHK|U_TabGroup_default_Position|double [1 4] 20 20 250 210|exact
+CHK|U_TabGroup_default_SelectionChangedFcn|char ''|exact
+CHK|U_TabGroup_default_SizeChangedFcn|char ''|exact
+CHK|U_TabGroup_default_TabLocation|char 'top'|exact
+CHK|U_TabGroup_default_Tag|char ''|exact
+CHK|U_TabGroup_default_Tooltip|char ''|exact
+CHK|U_TabGroup_default_Type|char 'uitabgroup'|exact
+CHK|U_TabGroup_default_Units|char 'pixels'|exact
+CHK|U_TabGroup_default_Visible|onoff on|exact
+CHK|U_TabGroup_userdata_empty|1|exact
+CHK|U_TabGroup_children_empty|1|exact
+CHK|U_TabGroup_contextmenu_empty|1|exact
+CHK|U_TabGroup_parent_type|figure|exact
+CHK|U_TabGroup_flags|1 1 1 0 1 1 1 1|exact
+CHK|U_TabGroup_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_TabGroup_words_TabLocation|cell [4 1] {char 'top', char 'left', char 'bottom', char 'right'}|exact
+CHK|U_TabGroup_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_TabGroup_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_TabGroup_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_TabGroup_words_Units|cell [6 1] {char 'inches', char 'centimeters', char 'characters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|U_TabGroup_words_AutoResizeChildren|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Tab_type|uitab|exact
+CHK|U_Tab_get_names|AutoResizeChildren BackgroundColor BeingDeleted BusyAction ButtonDownFcn Children ContextMenu CreateFcn DeleteFcn ForegroundColor HandleVisibility InnerPosition Interruptible OuterPosition Parent Position Scrollable SizeChangedFcn Tag Title Tooltip Type Units UserData|exact
+CHK|U_Tab_set_names|AutoResizeChildren BackgroundColor BusyAction ButtonDownFcn Children ContextMenu CreateFcn DeleteFcn ForegroundColor HandleVisibility Interruptible Parent Scrollable SizeChangedFcn Tag Title Tooltip Units UserData|exact
+CHK|U_Tab_default_AutoResizeChildren|onoff on|exact
+CHK|U_Tab_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|U_Tab_default_BeingDeleted|onoff off|exact
+CHK|U_Tab_default_BusyAction|char 'queue'|exact
+CHK|U_Tab_default_ButtonDownFcn|char ''|exact
+CHK|U_Tab_default_CreateFcn|char ''|exact
+CHK|U_Tab_default_DeleteFcn|char ''|exact
+CHK|U_Tab_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_Tab_default_HandleVisibility|onoff on|exact
+CHK|U_Tab_default_Interruptible|onoff on|exact
+CHK|U_Tab_default_Scrollable|onoff off|exact
+CHK|U_Tab_default_SizeChangedFcn|char ''|exact
+CHK|U_Tab_default_Tag|char ''|exact
+CHK|U_Tab_default_Title|char ''|exact
+CHK|U_Tab_default_Tooltip|char ''|exact
+CHK|U_Tab_default_Type|char 'uitab'|exact
+CHK|U_Tab_default_Units|char 'pixels'|exact
+CHK|U_Tab_userdata_empty|1|exact
+CHK|U_Tab_children_empty|1|exact
+CHK|U_Tab_contextmenu_empty|1|exact
+CHK|U_Tab_parent_type|uitabgroup|exact
+CHK|U_Tab_flags|1 1 0 0 1 1 1 1|exact
+CHK|U_Tab_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Tab_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Tab_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Tab_words_Units|cell [6 1] {char 'inches', char 'centimeters', char 'characters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|U_Tab_words_AutoResizeChildren|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Tab_words_Scrollable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Menu_type|uimenu|exact
+CHK|U_Menu_get_names|Accelerator BeingDeleted BusyAction ButtonDownFcn Checked Children Clipping ContextMenu CreateFcn DeleteFcn Enable ForegroundColor HandleVisibility Interruptible MenuSelectedFcn Parent Position Separator Tag Text Tooltip Type UserData Visible|exact
+CHK|U_Menu_set_names|Accelerator BusyAction ButtonDownFcn Checked Children Clipping ContextMenu CreateFcn DeleteFcn Enable ForegroundColor HandleVisibility Interruptible MenuSelectedFcn Parent Position Separator Tag Text Tooltip UserData Visible|exact
+CHK|U_Menu_default_Accelerator|char ''|exact
+CHK|U_Menu_default_BeingDeleted|onoff off|exact
+CHK|U_Menu_default_BusyAction|char 'queue'|exact
+CHK|U_Menu_default_ButtonDownFcn|char ''|exact
+CHK|U_Menu_default_Checked|onoff off|exact
+CHK|U_Menu_default_Clipping|onoff on|exact
+CHK|U_Menu_default_CreateFcn|char ''|exact
+CHK|U_Menu_default_DeleteFcn|char ''|exact
+CHK|U_Menu_default_Enable|onoff on|exact
+CHK|U_Menu_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_Menu_default_HandleVisibility|onoff on|exact
+CHK|U_Menu_default_Interruptible|onoff on|exact
+CHK|U_Menu_default_MenuSelectedFcn|char ''|exact
+CHK|U_Menu_default_Position|double [1 1] 1|exact
+CHK|U_Menu_default_Separator|onoff off|exact
+CHK|U_Menu_default_Tag|char ''|exact
+CHK|U_Menu_default_Text|char ''|exact
+CHK|U_Menu_default_Tooltip|char ''|exact
+CHK|U_Menu_default_Type|char 'uimenu'|exact
+CHK|U_Menu_default_Visible|onoff on|exact
+CHK|U_Menu_userdata_empty|1|exact
+CHK|U_Menu_children_empty|1|exact
+CHK|U_Menu_contextmenu_empty|1|exact
+CHK|U_Menu_parent_type|figure|exact
+CHK|U_Menu_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_Menu_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Menu_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Menu_words_Separator|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Menu_words_Checked|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Menu_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Menu_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Menu_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Menu_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SubMenu_type|uimenu|exact
+CHK|U_SubMenu_get_names|Accelerator BeingDeleted BusyAction ButtonDownFcn Checked Children Clipping ContextMenu CreateFcn DeleteFcn Enable ForegroundColor HandleVisibility Interruptible MenuSelectedFcn Parent Position Separator Tag Text Tooltip Type UserData Visible|exact
+CHK|U_SubMenu_set_names|Accelerator BusyAction ButtonDownFcn Checked Children Clipping ContextMenu CreateFcn DeleteFcn Enable ForegroundColor HandleVisibility Interruptible MenuSelectedFcn Parent Position Separator Tag Text Tooltip UserData Visible|exact
+CHK|U_SubMenu_default_Accelerator|char ''|exact
+CHK|U_SubMenu_default_BeingDeleted|onoff off|exact
+CHK|U_SubMenu_default_BusyAction|char 'queue'|exact
+CHK|U_SubMenu_default_ButtonDownFcn|char ''|exact
+CHK|U_SubMenu_default_Checked|onoff off|exact
+CHK|U_SubMenu_default_Clipping|onoff on|exact
+CHK|U_SubMenu_default_CreateFcn|char ''|exact
+CHK|U_SubMenu_default_DeleteFcn|char ''|exact
+CHK|U_SubMenu_default_Enable|onoff on|exact
+CHK|U_SubMenu_default_ForegroundColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_SubMenu_default_HandleVisibility|onoff on|exact
+CHK|U_SubMenu_default_Interruptible|onoff on|exact
+CHK|U_SubMenu_default_MenuSelectedFcn|char ''|exact
+CHK|U_SubMenu_default_Position|double [1 1] 1|exact
+CHK|U_SubMenu_default_Separator|onoff off|exact
+CHK|U_SubMenu_default_Tag|char ''|exact
+CHK|U_SubMenu_default_Text|char ''|exact
+CHK|U_SubMenu_default_Tooltip|char ''|exact
+CHK|U_SubMenu_default_Type|char 'uimenu'|exact
+CHK|U_SubMenu_default_Visible|onoff on|exact
+CHK|U_SubMenu_userdata_empty|1|exact
+CHK|U_SubMenu_children_empty|1|exact
+CHK|U_SubMenu_contextmenu_empty|1|exact
+CHK|U_SubMenu_parent_type|uimenu|exact
+CHK|U_SubMenu_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_SubMenu_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SubMenu_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SubMenu_words_Separator|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SubMenu_words_Checked|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SubMenu_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_SubMenu_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_SubMenu_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SubMenu_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ContextMenu_type|uicontextmenu|exact
+CHK|U_ContextMenu_get_names|BeingDeleted BusyAction ButtonDownFcn Children Clipping ContextMenu ContextMenuOpeningFcn CreateFcn DeleteFcn HandleVisibility Interruptible Parent Tag Type UserData|exact
+CHK|U_ContextMenu_set_names|BusyAction ButtonDownFcn Children Clipping ContextMenu ContextMenuOpeningFcn CreateFcn DeleteFcn HandleVisibility Interruptible Parent Tag UserData|exact
+CHK|U_ContextMenu_default_BeingDeleted|onoff off|exact
+CHK|U_ContextMenu_default_BusyAction|char 'queue'|exact
+CHK|U_ContextMenu_default_ButtonDownFcn|char ''|exact
+CHK|U_ContextMenu_default_Clipping|onoff on|exact
+CHK|U_ContextMenu_default_ContextMenuOpeningFcn|char ''|exact
+CHK|U_ContextMenu_default_CreateFcn|char ''|exact
+CHK|U_ContextMenu_default_DeleteFcn|char ''|exact
+CHK|U_ContextMenu_default_HandleVisibility|onoff on|exact
+CHK|U_ContextMenu_default_Interruptible|onoff on|exact
+CHK|U_ContextMenu_default_Tag|char ''|exact
+CHK|U_ContextMenu_default_Type|char 'uicontextmenu'|exact
+CHK|U_ContextMenu_userdata_empty|1|exact
+CHK|U_ContextMenu_children_empty|1|exact
+CHK|U_ContextMenu_contextmenu_empty|1|exact
+CHK|U_ContextMenu_parent_type|figure|exact
+CHK|U_ContextMenu_flags|0 1 1 0 1 1 1 1|exact
+CHK|U_ContextMenu_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_ContextMenu_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_ContextMenu_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ContextMenu_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Toolbar_type|uitoolbar|exact
+CHK|U_Toolbar_get_names|BackgroundColor BeingDeleted BusyAction ButtonDownFcn Children Clipping ContextMenu CreateFcn DeleteFcn HandleVisibility Interruptible Parent Tag Type UserData Visible|exact
+CHK|U_Toolbar_set_names|BackgroundColor BusyAction ButtonDownFcn Children Clipping ContextMenu CreateFcn DeleteFcn HandleVisibility Interruptible Parent Tag UserData Visible|exact
+CHK|U_Toolbar_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|U_Toolbar_default_BeingDeleted|onoff off|exact
+CHK|U_Toolbar_default_BusyAction|char 'queue'|exact
+CHK|U_Toolbar_default_ButtonDownFcn|char ''|exact
+CHK|U_Toolbar_default_Clipping|onoff on|exact
+CHK|U_Toolbar_default_CreateFcn|char ''|exact
+CHK|U_Toolbar_default_DeleteFcn|char ''|exact
+CHK|U_Toolbar_default_HandleVisibility|onoff on|exact
+CHK|U_Toolbar_default_Interruptible|onoff on|exact
+CHK|U_Toolbar_default_Tag|char ''|exact
+CHK|U_Toolbar_default_Type|char 'uitoolbar'|exact
+CHK|U_Toolbar_default_Visible|onoff on|exact
+CHK|U_Toolbar_userdata_empty|1|exact
+CHK|U_Toolbar_children_empty|1|exact
+CHK|U_Toolbar_contextmenu_empty|1|exact
+CHK|U_Toolbar_parent_type|figure|exact
+CHK|U_Toolbar_flags|0 0 1 0 1 1 1 1|exact
+CHK|U_Toolbar_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Toolbar_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Toolbar_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Toolbar_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Toolbar_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_PushTool_type|uipushtool|exact
+CHK|U_PushTool_get_names|BeingDeleted BusyAction ButtonDownFcn CData Children ClickedCallback Clipping ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon Interruptible Parent Separator Tag Tooltip Type UserData Visible|exact
+CHK|U_PushTool_set_names|BusyAction ButtonDownFcn CData Children ClickedCallback Clipping ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon Interruptible Parent Separator Tag Tooltip UserData Visible|exact
+CHK|U_PushTool_default_BeingDeleted|onoff off|exact
+CHK|U_PushTool_default_BusyAction|char 'queue'|exact
+CHK|U_PushTool_default_ButtonDownFcn|char ''|exact
+CHK|U_PushTool_default_CData|double [0 0]|exact
+CHK|U_PushTool_default_ClickedCallback|char ''|exact
+CHK|U_PushTool_default_Clipping|onoff on|exact
+CHK|U_PushTool_default_CreateFcn|char ''|exact
+CHK|U_PushTool_default_DeleteFcn|char ''|exact
+CHK|U_PushTool_default_Enable|onoff on|exact
+CHK|U_PushTool_default_HandleVisibility|onoff on|exact
+CHK|U_PushTool_default_Icon|char ''|exact
+CHK|U_PushTool_default_Interruptible|onoff on|exact
+CHK|U_PushTool_default_Separator|onoff off|exact
+CHK|U_PushTool_default_Tag|char ''|exact
+CHK|U_PushTool_default_Tooltip|char ''|exact
+CHK|U_PushTool_default_Type|char 'uipushtool'|exact
+CHK|U_PushTool_default_Visible|onoff on|exact
+CHK|U_PushTool_userdata_empty|1|exact
+CHK|U_PushTool_children_empty|1|exact
+CHK|U_PushTool_contextmenu_empty|1|exact
+CHK|U_PushTool_parent_type|uitoolbar|exact
+CHK|U_PushTool_flags|0 0 1 1 1 1 1 1|exact
+CHK|U_PushTool_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_PushTool_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_PushTool_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_PushTool_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_PushTool_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_PushTool_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_PushTool_words_Separator|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleTool_type|uitoggletool|exact
+CHK|U_ToggleTool_get_names|BeingDeleted BusyAction ButtonDownFcn CData Children ClickedCallback Clipping ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon Interruptible OffCallback OnCallback Parent Separator State Tag Tooltip Type UserData Visible|exact
+CHK|U_ToggleTool_set_names|BusyAction ButtonDownFcn CData Children ClickedCallback Clipping ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon Interruptible OffCallback OnCallback Parent Separator State Tag Tooltip UserData Visible|exact
+CHK|U_ToggleTool_default_BeingDeleted|onoff off|exact
+CHK|U_ToggleTool_default_BusyAction|char 'queue'|exact
+CHK|U_ToggleTool_default_ButtonDownFcn|char ''|exact
+CHK|U_ToggleTool_default_CData|double [0 0]|exact
+CHK|U_ToggleTool_default_ClickedCallback|char ''|exact
+CHK|U_ToggleTool_default_Clipping|onoff on|exact
+CHK|U_ToggleTool_default_CreateFcn|char ''|exact
+CHK|U_ToggleTool_default_DeleteFcn|char ''|exact
+CHK|U_ToggleTool_default_Enable|onoff on|exact
+CHK|U_ToggleTool_default_HandleVisibility|onoff on|exact
+CHK|U_ToggleTool_default_Icon|char ''|exact
+CHK|U_ToggleTool_default_Interruptible|onoff on|exact
+CHK|U_ToggleTool_default_OffCallback|char ''|exact
+CHK|U_ToggleTool_default_OnCallback|char ''|exact
+CHK|U_ToggleTool_default_Separator|onoff off|exact
+CHK|U_ToggleTool_default_State|onoff off|exact
+CHK|U_ToggleTool_default_Tag|char ''|exact
+CHK|U_ToggleTool_default_Tooltip|char ''|exact
+CHK|U_ToggleTool_default_Type|char 'uitoggletool'|exact
+CHK|U_ToggleTool_default_Visible|onoff on|exact
+CHK|U_ToggleTool_userdata_empty|1|exact
+CHK|U_ToggleTool_children_empty|1|exact
+CHK|U_ToggleTool_contextmenu_empty|1|exact
+CHK|U_ToggleTool_parent_type|uitoolbar|exact
+CHK|U_ToggleTool_flags|0 0 1 1 1 1 1 1|exact
+CHK|U_ToggleTool_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleTool_words_State|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleTool_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_ToggleTool_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_ToggleTool_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleTool_words_Clipping|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleTool_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleTool_words_Separator|cell [2 1] {onoff on, onoff off}|exact

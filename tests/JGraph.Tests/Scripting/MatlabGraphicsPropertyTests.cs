@@ -60,6 +60,28 @@ public sealed class MatlabGraphicsPropertyTests
         ["UiOverlayModel.Selectable"] = "a dialog over a figure has R2025b's ten ProgressDialog properties and no others (ADR 0202)",
         ["ContextMenuModel.Items"] = "reached as Children",
         ["MenuItemModel.Items"] = "reached as Children",
+        ["ContextMenuModel.Name"] = "a context menu answers to R2025b's names alone, and has no Name (ADR 0206)",
+        ["ContextMenuModel.ZOrder"] = "a menu's place is its Position among its siblings (ADR 0206)",
+        ["ContextMenuModel.Selectable"] = "reached as HitTest, which R2025b's context menu answers though it lists none (ADR 0206)",
+        ["MenuItemModel.Name"] = "a menu answers to R2025b's names alone, and has no Name (ADR 0206)",
+        ["MenuItemModel.ZOrder"] = "a menu's place is its Position among its siblings (ADR 0206)",
+        ["MenuItemModel.Selectable"] = "reached as HitTest, which R2025b's menu answers though it lists none (ADR 0206)",
+        ["UiToolbarModel.Name"] = "a toolbar answers to R2025b's names alone, and has no Name (ADR 0206)",
+        ["UiToolbarModel.ZOrder"] = "a toolbar's place is its place among its figure's children (ADR 0206)",
+        ["UiToolbarModel.Selectable"] = "reached as HitTest, which R2025b's toolbar answers though it lists none (ADR 0206)",
+        ["UiToolModel.Name"] = "a toolbar tool answers to R2025b's names alone, and has no Name (ADR 0206)",
+        ["UiToolModel.ZOrder"] = "a tool's place is its place among its toolbar's children (ADR 0206)",
+        ["UiToolModel.Selectable"] = "reached as HitTest, which R2025b's tool answers though it lists none (ADR 0206)",
+        ["UiToggleToolModel.Name"] = "a toolbar tool answers to R2025b's names alone, and has no Name (ADR 0206)",
+        ["UiToggleToolModel.ZOrder"] = "a tool's place is its place among its toolbar's children (ADR 0206)",
+        ["UiToggleToolModel.Selectable"] = "reached as HitTest, which R2025b's tool answers though it lists none (ADR 0206)",
+        ["UiTabGroupModel.Name"] = "a tab group answers to R2025b's names alone, and has no Name (ADR 0206)",
+        ["UiTabGroupModel.ZOrder"] = "a component's stacking is its place among Children, as uistack moves it (ADR 0206)",
+        ["UiTabGroupModel.Selectable"] = "reached as HitTest, which is MATLAB's name for it (ADR 0206)",
+        ["UiTabModel.Name"] = "a tab answers to R2025b's names alone, and has no Name (ADR 0206)",
+        ["UiTabModel.ZOrder"] = "a tab's place is its place among its group's Children (ADR 0206)",
+        ["UiTabModel.Selectable"] = "reached as HitTest, which is MATLAB's name for it (ADR 0206)",
+        ["UiTabModel.Visible"] = "R2025b's tab has no Visible: its group shows it or does not (ADR 0206, fixture u8_tabs)",
         ["LegendModel.Entries"] = "reached as the String property",
         ["AxesModel.PrimaryXAxis"] = "aliased to a handle by the XAxis property",
         ["AxesModel.PrimaryYAxis"] = "aliased to a handle by the YAxis property",
@@ -137,7 +159,14 @@ public sealed class MatlabGraphicsPropertyTests
 
         foreach (string universal in new[] { "type", "tag", "userdata", "parent", "children", "visible" })
         {
-            if (universal == "children" && typeof(UiComponentModel).IsAssignableFrom(type))
+            // A table has Children in R2025b, an empty; no other component of a uifigure has.
+            if (universal == "children" && typeof(UiComponentModel).IsAssignableFrom(type) && type != typeof(UiTableModel))
+            {
+                continue;
+            }
+
+            // R2025b's tab has no Visible (ADR 0206, fixture u8_tabs).
+            if (universal == "visible" && type == typeof(UiTabModel))
             {
                 continue;
             }

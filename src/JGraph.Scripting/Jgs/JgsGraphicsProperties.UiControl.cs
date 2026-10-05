@@ -281,11 +281,29 @@ internal static partial class JgsGraphicsProperties
     /// R2025b's <c>CData</c> (probe <c>u3_styles</c>): an m-by-n-by-3 array of a numeric class, a
     /// floating one within [0, 1] or NaN; <c>[]</c> clears it and reads back as 0-by-0-by-3.
     /// </summary>
-    private static void SetControlImage(JgsHandleEntry entry, JgsValue value, int line, int col)
+    private static void SetControlImage(JgsHandleEntry entry, JgsValue value, int line, int col) =>
+        Control(entry).Image = CDataPicture(entry, value, line, col);
+
+    /// <summary>Checks a <c>CData</c>, keeps it on the entry as given, and answers the picture it makes.</summary>
+    private static UiImage? CDataPicture(JgsHandleEntry entry, JgsValue value, int line, int col, bool tool = false)
     {
         const string words =
             "Value must be a three-dimensional matrix of RGB values that defines a truecolor image. Each value must be between 0.0 and 1.0 or NaN.";
+
+        // A toolbar tool takes any empty for no picture, and asks whether the numbers are in range
+        // before it asks about their shape (R2025b, fixture u8_props).
+        if (tool && IsEmptyValue(value) && !value.IsStringArray)
+        {
+            value = JgsMatrix.FromColumnMajor([], 0, 0);
+        }
+
         string kind = JgsBuiltins.ClassOf(value, JgsDialect.Matlab);
+        if (tool && kind is "double" or "single" && value.Type is JgsType.Number or JgsType.Array
+            && JgsBuiltins.ToDoubles("CData", value, line, col).Any(static x => x < 0 || x > 1))
+        {
+            throw ComponentError(entry, "CData", "MATLAB:hg:shaped_arrays:CDataPredicate", words, line, col);
+        }
+
         if (!IsNumericKind(kind))
         {
             throw ComponentError(entry, "CData", "MATLAB:hg:shaped_arrays:CDataType", words, line, col);
@@ -298,8 +316,7 @@ internal static partial class JgsGraphicsProperties
             JgsValue none = JgsMatrix.FromColumnMajor([], 0, 0);
             none.ReshapeDims([0, 0, 3]);
             entry.UiCData = none;
-            Control(entry).Image = null;
-            return;
+            return null;
         }
 
         if (dims.Length != 3 || dims[2] != 3)
@@ -352,7 +369,7 @@ internal static partial class JgsGraphicsProperties
         }
 
         entry.UiCData = JgsValue.Share(value);
-        Control(entry).Image = rows > 0 && cols > 0 ? new UiImage(cols, rows, pixels) : null;
+        return rows > 0 && cols > 0 ? new UiImage(cols, rows, pixels) : null;
     }
 
     /// <summary>The words each of a component's properties takes, as R2025b's <c>set(h)</c> lists them.</summary>
@@ -369,7 +386,14 @@ internal static partial class JgsGraphicsProperties
         Options(table, "Selected", OnOffWords);
         Options(table, "SelectionHighlight", OnOffWords);
         Options(table, "HitTest", OnOffWords);
-        if (typeof(UiControlModel).IsAssignableFrom(type))
+        if (typeof(UiTableModel).IsAssignableFrom(type))
+        {
+            Options(table, "Enable", EnableWords);
+            Options(table, "ColumnRearrangeable", OnOffWords);
+            Options(table, "RowStriping", OnOffWords);
+            Options(table, "Multiselect", OnOffWords);
+        }
+        else if (typeof(UiControlModel).IsAssignableFrom(type))
         {
             Options(table, "Style", StyleWords);
             Options(table, "Enable", EnableWords);

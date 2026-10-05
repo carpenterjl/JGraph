@@ -49,6 +49,12 @@ public sealed class FigureDto
     /// </summary>
     public List<UiComponentDto> Components { get; set; } = new();
 
+    /// <summary>The figure's menu bar: its top-level <c>uimenu</c>s, left to right (app-building plan, U8).</summary>
+    public List<MenuItemDto> Menus { get; set; } = new();
+
+    /// <summary>The figure's <c>uitoolbar</c>s, top to bottom (U8).</summary>
+    public List<UiToolbarDto> Toolbars { get; set; } = new();
+
     /// <summary>Whether <c>uifigure</c> made this figure. False in every document written before U2.</summary>
     public bool IsUiFigure { get; set; }
 
@@ -134,7 +140,50 @@ public sealed class MenuItemDto
 
     public Color ForegroundColor { get; set; }
 
+    public bool Visible { get; set; } = true;
+
+    public string? Tag { get; set; }
+
     public List<MenuItemDto> Items { get; set; } = new();
+}
+
+/// <summary>The serialized form of a <see cref="UiToolbarModel"/> (U8): its colour and its tools.</summary>
+public sealed class UiToolbarDto
+{
+    public string? Tag { get; set; }
+
+    public bool Visible { get; set; } = true;
+
+    public double[]? Background { get; set; }
+
+    public List<UiToolDto> Tools { get; set; } = new();
+}
+
+/// <summary>
+/// The serialized form of a <see cref="UiToolModel"/> (U8). Its picture is kept as it is drawn:
+/// its width and height, and its pixels as base-64 BGRA rows.
+/// </summary>
+public sealed class UiToolDto
+{
+    public bool Toggle { get; set; }
+
+    public bool State { get; set; }
+
+    public bool Enable { get; set; } = true;
+
+    public bool Separator { get; set; }
+
+    public bool Visible { get; set; } = true;
+
+    public string? Tag { get; set; }
+
+    public UiTextDto? Tooltip { get; set; }
+
+    public int ImageWidth { get; set; }
+
+    public int ImageHeight { get; set; }
+
+    public string? ImagePixels { get; set; }
 }
 
 /// <summary>

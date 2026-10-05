@@ -60,6 +60,37 @@ public partial class FigureWindow : Window
         Loaded += OnLoaded;
     }
 
+    /// <summary>
+    /// Shows a frame's menu bar and toolbars (U8). A bar that arrives, or goes, after the window is
+    /// up takes its room from the window and not from the figure: the window's height is changed by
+    /// what the bars will change by, before the next layout, so the drawable area never moves.
+    /// </summary>
+    private void ApplyBars(UiFrame frame)
+    {
+        ScriptBars.Apply(frame);
+        if (!IsLoaded || WindowState != WindowState.Normal || double.IsNaN(Height) || ActualWidth <= 0)
+        {
+            return;
+        }
+
+        // Two frames can arrive between two layouts: what has been allowed for is kept here, not
+        // read off the bars, whose size is the last layout's.
+        if (double.IsNaN(_barsHeight))
+        {
+            _barsHeight = ScriptBars.ActualHeight;
+        }
+
+        ScriptBars.Measure(new Size(ScriptBars.ActualWidth > 0 ? ScriptBars.ActualWidth : ActualWidth, double.PositiveInfinity));
+        double wanted = ScriptBars.DesiredSize.Height;
+        if (System.Math.Abs(wanted - _barsHeight) > 0.5)
+        {
+            Height = System.Math.Max(MinHeight, Height + wanted - _barsHeight);
+            _barsHeight = wanted;
+        }
+    }
+
+    private double _barsHeight = double.NaN;
+
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         _viewModel.AttachNavigator(FigureView);
@@ -262,6 +293,12 @@ public partial class FigureWindow : Window
     {
         _binding.Bind(_viewModel.Figure);
         ComponentLayer.Bind(_viewModel.Figure);
+        ScriptBars.Clear();
+        if (_viewModel.Figure?.LastComponentFrame is { } frame)
+        {
+            ApplyBars(frame);
+        }
+
         ApplyTitle();
         ApplyPlainness();
     }
@@ -331,6 +368,10 @@ public partial class FigureWindow : Window
     internal void ApplyComponentFrame(UiFrame frame)
     {
         ComponentLayer.Apply(frame);
+        if (Shows(frame.Figure))
+        {
+            ApplyBars(frame);
+        }
 
         // The canvas draws the frame's panels and places the axes in them (U2), so a new frame is
         // a new picture there too.
@@ -397,6 +438,12 @@ public partial class FigureWindow : Window
         else
         {
             _pendingPress = (KeyNameOf(key), HeldModifiers(), CharacterOf(key));
+        }
+
+        // Ctrl and a menu entry's Accelerator choose the entry (U8), and the key goes no further.
+        if (System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.Control && ScriptBars.TryAccelerator(key))
+        {
+            e.Handled = true;
         }
     }
 

@@ -35,6 +35,12 @@ internal static partial class JgsGraphicsProperties
         UiSliderModel => name.Equals("MajorTickLabels", StringComparison.OrdinalIgnoreCase),
         UiNumericModel => name.Equals("Value", StringComparison.OrdinalIgnoreCase),
         UiGridLayoutModel => name.Equals("RowHeight", StringComparison.OrdinalIgnoreCase) || name.Equals("ColumnWidth", StringComparison.OrdinalIgnoreCase),
+        UiTableModel => name.Equals("Data", StringComparison.OrdinalIgnoreCase) || name.Equals("ColumnEditable", StringComparison.OrdinalIgnoreCase)
+            || name.Equals("ColumnSortable", StringComparison.OrdinalIgnoreCase) || name.Equals("ColumnFormat", StringComparison.OrdinalIgnoreCase)
+            || name.Equals("Selection", StringComparison.OrdinalIgnoreCase),
+        UiToolModel => name.Equals("CData", StringComparison.OrdinalIgnoreCase),
+        UiTabGroupModel => name.Equals("SelectedTab", StringComparison.OrdinalIgnoreCase),
+        MenuItemModel => name.Equals("Position", StringComparison.OrdinalIgnoreCase),
         _ => false,
     };
 
@@ -46,6 +52,12 @@ internal static partial class JgsGraphicsProperties
         UiProgressIndicatorModel => "matlab.ui.control.internal.ProgressIndicator",
         UiPanelModel => "matlab.ui.container.Panel",
         UiGridLayoutModel => "matlab.ui.container.GridLayout",
+        UiTabModel => "matlab.ui.container.Tab",
+        UiTabGroupModel => "matlab.ui.container.TabGroup",
+        UiToolModel tool => tool.IsToggle ? "matlab.ui.container.toolbar.ToggleTool" : "matlab.ui.container.toolbar.PushTool",
+        UiToolbarModel => "matlab.ui.container.Toolbar",
+        MenuItemModel => "matlab.ui.container.Menu",
+        ContextMenuModel => "matlab.ui.container.ContextMenu",
         UiComponentModel => "matlab.ui.control." + JgsGraphicsCallbackValues.ClassWord(target),
         FigureModel => "matlab.ui.Figure",
         AxesModel { IsUiAxes: true } => "matlab.ui.control.UIAxes",
@@ -336,6 +348,14 @@ internal static partial class JgsGraphicsProperties
         }
 
         string kind = JgsBuiltins.ClassOf(value, JgsDialect.Matlab);
+
+        // Three or four logicals are a colour, and a colour with an opacity (R2025b, fixture u8_props).
+        if (value.Type == JgsType.Array && kind == "logical" && value.ArrayLength is 3 or 4)
+        {
+            double[] flags = JgsBuiltins.ToDoubles(property, value, line, col);
+            return new UiColor(flags[0], flags[1], flags[2]);
+        }
+
         if (value.Type == JgsType.Array && !value.IsStringArray && value.ArrayLength == 4 && kind != "logical" && IsNumericKind(kind))
         {
             double[] rgba = JgsBuiltins.ToDoubles(property, value, line, col);

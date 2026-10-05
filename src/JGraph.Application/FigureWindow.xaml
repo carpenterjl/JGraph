@@ -9,6 +9,8 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </Window.Resources>
     <DockPanel>
+        <!-- The figure's own menu bar and toolbars (app-building plan, U8): uimenu, uitoolbar. -->
+        <jg:UiFigureBars x:Name="ScriptBars" DockPanel.Dock="Top" />
         <ToolBar x:Name="FigureToolBar" DockPanel.Dock="Top">
             <Button Content="Open…" Command="{Binding OpenCommand}" Margin="2,0"
                     ToolTip="Open a JGraph (.graph) figure" />

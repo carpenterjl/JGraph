@@ -17,7 +17,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>EventName</c>) and MathWorks' documentation for the event names.
 /// </para>
 /// </summary>
-internal static class JgsUiComponentEvents
+internal static partial class JgsUiComponentEvents
 {
     /// <summary>The actions a window reports, and the callback property each is owed.</summary>
     public const string Value = "value";
@@ -38,6 +38,17 @@ internal static class JgsUiComponentEvents
     /// </summary>
     public static GraphicsEvent? Prepare(GraphicsEvent raised)
     {
+        // A callback whose event data is made already is owed as it stands (U8).
+        if (IsOwedAsItStands(raised))
+        {
+            return raised.Target.BeingDeleted ? null : raised;
+        }
+
+        if (raised.Target is UiTabGroupModel or UiToolModel)
+        {
+            return PrepareBars(raised);
+        }
+
         if (raised.Target is not UiComponentModel { BeingDeleted: false } component
             || !JgsHandleRegistry.TryGetEntry(component, out JgsHandleEntry? entry))
         {
@@ -45,6 +56,11 @@ internal static class JgsUiComponentEvents
         }
 
         JgsValue source = JgsHandleRegistry.For(component);
+        if (component is UiTableModel table)
+        {
+            return PrepareTable(raised, table, entry, source);
+        }
+
         switch (raised.Action)
         {
             case Value:

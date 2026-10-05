@@ -242,7 +242,10 @@ public sealed class FigureRenderer
     {
         UiPanelFrame panel = placement.Panel;
         Rect2D box = placement.Box;
-        context.DrawRectangle(box, stroke: null, fill: panel.Background.ToColor());
+        if (!panel.Clear)
+        {
+            context.DrawRectangle(box, stroke: null, fill: panel.Background.ToColor());
+        }
 
         // A progress indicator's filled part: so much of its width, from the left (U4).
         if (panel is { Fill: { } fraction, FillColor: { } filled } && fraction > 0)

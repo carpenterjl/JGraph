@@ -28,6 +28,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `u5/` | The U5 probes (ADR 0202): headless `u5_*`, with their helpers `tryp`, `v2s`, `oneline` and `u5_makers`. |
 | `u7/` | The U7 probes (ADR 0204): headless `u7_*`, the class table generator, and `mlapp/`, which builds the text-only `.mlapp` fixtures. |
 | `u7b/` | The U7b probes (ADR 0205): headless `u7b_*`. `u7b_build` writes the fixture app `U7bApp.mlapp` with R2025b's own serializer; `u7b_verify` reads what JGraph saved. `rt/` (ignored) holds what they write, copies of shipped apps included. |
+| `u8/` | The U8 probes (ADR 0206): headless `u8_*` for tables, tabs, menus and toolbar tools. `summarize.py` prints one kind of `u8_matrix.out` property by property. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
 
@@ -574,3 +575,68 @@ back by R2025b as written.
 Not measured: App Designer opening a saved file in its window (the full load it starts with is
 measured; the designer itself needs a display and a person), and a file saved by any release but
 R2025b.
+
+## U8 findings (R2025b, headless)
+
+**One class each, in both kinds of figure.** `uitable`, `uitabgroup`, `uitab`, `uimenu`,
+`uicontextmenu`, `uitoolbar`, `uipushtool` and `uitoggletool` answer to the same names, take the
+same words and refuse in the same sentences in a classic figure and in a `uifigure`
+(`u8_matrix`: the two halves differ only in a table's font - 8-point MS Sans Serif against
+12-pixel Helvetica - and in a tab group's place and units, `[0 0 1 1]` normalized against
+`[20 20 250 210]` pixels). They refuse as the newer components do (on/off, word, colour and text
+coercions), not as a `uicontrol` does; a table keeps a classic control's `Units` and `FontUnits`.
+
+**A table's data** is a numeric array of any class, a logical array, a string array, a cell or
+a table; it reads back as given, class included. Refused: text (`BadDataType`; the empty `''`
+is taken), a datetime, a categorical, a duration, a struct, three dimensions
+(`BadDataDimension`), and in a cell a nested cell, a handle or a string (`BadDataCellArrayType`)
+or a vector (`BadDataCellArraySize`). `ColumnName` and `RowName` read `'numbered'` until
+written; with a table for data they read its variable names and its row names (an empty cell
+when it has none). `DisplayData` is the data. `Extent` was `[0 0 340 340]` for every table asked.
+
+**Tabs.** The first tab made shows. Deleting or moving away the one that shows hands the page to
+the tab after it, or the one before when it was last. A group's `Children` are its tabs in
+heading order, first first. A tab's `Position` is read-only and `[1 1 w h]` in pixels; the group's
+`InnerPosition` says where that is. **Settled sizes** in a `uifigure`, for a 300-by-200 group: a
+tab is 298 by 175 with the strip along the top or the bottom (a 24-pixel strip and a pixel of
+border on the other three sides); with the strip along a side it is 232 by 198 for one tab named
+`Alpha` (a 66-pixel strip) and 197 by 198 once a tab has a long title (a 101-pixel strip). **The
+values are racy**: a tab answers the group's whole rectangle until the layout has run, which
+takes more than half a second for the first group of a figure, and never happens in a classic
+figure that is not shown; a group goes on answering its old `InnerPosition` after a longer title
+has widened its strip.
+
+**Menus.** A menu's `Position` is its place among its siblings, and `Children` lists them last
+place first. Writing a place moves the menu there. Writing any other number - `0`, `1.5`, `9` of
+three - moves it to where the number falls among the others and reads back as written; the
+others count round it, a number below 1 taking no place from the count. `Label` and `Callback`
+are answered and not listed. A classic figure with `MenuBar` `'figure'` has six menus and a
+toolbar of its own as objects with hidden handles (`findall` finds 89 menus); a script's first
+menu has `Position` 7 there, and 1 with `MenuBar` `'none'`.
+
+**A figure's children** are one list, newest first, whatever they are - menus, context menus,
+toolbars, panels, tables, tab groups, controls - with the axes after them (`u8_more`).
+
+**Tools.** `CData` takes an m-by-n-by-3 array of any numeric class, floating ones within
+`[0, 1]` or NaN; `Icon` takes a file's name or such an array, keeps a name that is no file and
+warns only when the name has an extension. With both set the `Icon` shows and a warning says
+so. A toggle tool's `State` written by a script runs `OnCallback` or `OffCallback` at the next
+`drawnow`, and not `ClickedCallback`.
+
+**Parents.** `uitab` takes a tab group, a tool a toolbar, a toolbar and a context menu a figure,
+a menu a figure, a context menu or a menu; each names what it takes in its refusal
+(`MATLAB:uitab:InvalidParent` and its like). What can hold nothing is refused the same way by
+every maker (`MATLAB:gbtobjects:Component`, "PushTool cannot be a parent."). A wrong name or an
+odd number of arguments is refused before a wrong parent is. With no parent named `uitab` makes
+a tab group in the current figure, and a tool uses the current figure's toolbar or makes one.
+
+**Event classes** (`meta.class`, `u8_behave`): `CellEditData` (`Indices`, `DisplayIndices`,
+`PreviousData`, `EditData`, `NewData`, `Error`), `CellSelectionChangeData` (`Indices`,
+`DisplayIndices`), `TableSelectionChangedData` (`Selection`, `PreviousSelection`,
+`SelectionType`, `DisplaySelection`, `PreviousDisplaySelection`), `SelectionChangedData`
+(`OldValue`, `NewValue`), `MenuSelectedData` (`ContextObject`, `InteractionInformation`),
+`TableInteraction` (`DisplayRow`, `DisplayColumn`, `Row`, `Column`, `RowHeader`,
+`ColumnHeader`, `Location`, `ScreenLocation`).
+
+Not measured: any callback of these objects, which needs a window in R2025b, and how a table
+draws its cells.

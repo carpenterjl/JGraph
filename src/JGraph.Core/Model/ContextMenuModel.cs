@@ -21,9 +21,9 @@ public sealed class ContextMenuModel : GraphObject
 }
 
 /// <summary>
-/// One entry of a <see cref="ContextMenuModel"/> — MATLAB's <c>uimenu</c>. An entry with items of
-/// its own opens them as a submenu; its own selection then does nothing, which is how MATLAB
-/// treats a menu that became a folder.
+/// One entry of a figure's menu bar, of a <see cref="ContextMenuModel"/> or of another entry —
+/// MATLAB's <c>uimenu</c>. An entry with items of its own opens them as a submenu; its own
+/// selection then does nothing, which is how MATLAB treats a menu that became a folder.
 /// </summary>
 public sealed class MenuItemModel : GraphObject
 {
@@ -33,7 +33,7 @@ public sealed class MenuItemModel : GraphObject
     private bool _separator;
     private string _accelerator = string.Empty;
     private string _tooltip = string.Empty;
-    private Color _foregroundColor = Colors.Black;
+    private Color _foregroundColor = UiComponentModel.DefaultFontColor.ToColor(); // R2025b's 33/255 grey
 
     public MenuItemModel()
     {
@@ -49,7 +49,7 @@ public sealed class MenuItemModel : GraphObject
     public string Text
     {
         get => _text;
-        set => SetProperty(ref _text, value ?? string.Empty, InvalidationKind.None);
+        set => SetProperty(ref _text, value ?? string.Empty, InvalidationKind.Ui);
     }
 
     /// <summary>Whether the entry shows a check mark.</summary>
@@ -57,7 +57,7 @@ public sealed class MenuItemModel : GraphObject
     public bool Checked
     {
         get => _checked;
-        set => SetProperty(ref _checked, value, InvalidationKind.None);
+        set => SetProperty(ref _checked, value, InvalidationKind.Ui);
     }
 
     /// <summary>Whether the entry can be picked; a disabled entry is shown greyed.</summary>
@@ -65,7 +65,7 @@ public sealed class MenuItemModel : GraphObject
     public bool Enable
     {
         get => _enable;
-        set => SetProperty(ref _enable, value, InvalidationKind.None);
+        set => SetProperty(ref _enable, value, InvalidationKind.Ui);
     }
 
     /// <summary>Whether a dividing line is drawn above this entry.</summary>
@@ -73,7 +73,7 @@ public sealed class MenuItemModel : GraphObject
     public bool Separator
     {
         get => _separator;
-        set => SetProperty(ref _separator, value, InvalidationKind.None);
+        set => SetProperty(ref _separator, value, InvalidationKind.Ui);
     }
 
     /// <summary>The keyboard shortcut letter MATLAB documents (stored; menus here are mouse-driven).</summary>
@@ -81,7 +81,7 @@ public sealed class MenuItemModel : GraphObject
     public string Accelerator
     {
         get => _accelerator;
-        set => SetProperty(ref _accelerator, value ?? string.Empty, InvalidationKind.None);
+        set => SetProperty(ref _accelerator, value ?? string.Empty, InvalidationKind.Ui);
     }
 
     /// <summary>Hover text for the entry.</summary>
@@ -89,7 +89,7 @@ public sealed class MenuItemModel : GraphObject
     public string Tooltip
     {
         get => _tooltip;
-        set => SetProperty(ref _tooltip, value ?? string.Empty, InvalidationKind.None);
+        set => SetProperty(ref _tooltip, value ?? string.Empty, InvalidationKind.Ui);
     }
 
     /// <summary>The label's colour.</summary>
@@ -97,6 +97,6 @@ public sealed class MenuItemModel : GraphObject
     public Color ForegroundColor
     {
         get => _foregroundColor;
-        set => SetProperty(ref _foregroundColor, value, InvalidationKind.None);
+        set => SetProperty(ref _foregroundColor, value, InvalidationKind.Ui);
     }
 }

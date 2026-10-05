@@ -1,0 +1,677 @@
+CHK|uitable_in_uifigure|uitable < figure|exact
+CHK|uitable_in_figure|uitable < figure|exact
+CHK|uitable_in_uipanel|uitable < uipanel < figure|exact
+CHK|uitable_in_classic_uipanel|uitable < uipanel < figure|exact
+CHK|uitable_in_grid|uitable < uigridlayout < figure|exact
+CHK|uitable_in_group|uitable < uibuttongroup < figure|exact
+CHK|uitable_in_tabgroup|MATLAB:uitable:ParentMustBeFigureOrUIContainer|exact
+CHK|uitable_in_tabgroup_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uitable_in_classic_tabgroup|MATLAB:uitable:ParentMustBeFigureOrUIContainer|exact
+CHK|uitable_in_classic_tabgroup_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uitable_in_tab|uitable < uitab < uitabgroup < figure|exact
+CHK|uitable_in_classic_tab|uitable < uitab < uitabgroup < figure|exact
+CHK|uitable_in_menu|MATLAB:uitable:ParentMustBeFigureOrUIContainer|exact
+CHK|uitable_in_menu_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uitable_in_contextmenu|MATLAB:uitable:ParentMustBeFigureOrUIContainer|exact
+CHK|uitable_in_contextmenu_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uitable_in_toolbar|MATLAB:uitable:ParentMustBeFigureOrUIContainer|exact
+CHK|uitable_in_toolbar_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uitable_in_classic_toolbar|MATLAB:uitable:ParentMustBeFigureOrUIContainer|exact
+CHK|uitable_in_classic_toolbar_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uitable_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uitable_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uitable_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitable_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitable_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|uitable_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uitable_in_label|MATLAB:gbtobjects:Component|exact
+CHK|uitable_in_label_msg|Label cannot be a parent.|exact
+CHK|uitable_in_root|MATLAB:uitable:ParentMustBeFigureOrUIContainer|exact
+CHK|uitable_in_root_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uitable_named_parent|uitable < figure|exact
+CHK|uitable_named_classic_parent|uitable < figure|exact
+CHK|uitable_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitable_unknown_msg|Unrecognized property Bogus for class Table.|exact
+CHK|uitable_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|uitable_odd_msg|Incorrect number of input arguments.|exact
+CHK|uitable_to_panel|uitable < uipanel < figure|exact
+CHK|uitable_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitable_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uitabgroup_in_uifigure|uitabgroup < figure|exact
+CHK|uitabgroup_in_figure|uitabgroup < figure|exact
+CHK|uitabgroup_in_uipanel|uitabgroup < uipanel < figure|exact
+CHK|uitabgroup_in_classic_uipanel|uitabgroup < uipanel < figure|exact
+CHK|uitabgroup_in_grid|uitabgroup < uigridlayout < figure|exact
+CHK|uitabgroup_in_group|uitabgroup < uibuttongroup < figure|exact
+CHK|uitabgroup_in_tabgroup|MATLAB:uitabgroup:InvalidParent|exact
+CHK|uitabgroup_in_tabgroup_msg|Parent must be a figure, uipanel or a uitab|exact
+CHK|uitabgroup_in_classic_tabgroup|MATLAB:uitabgroup:InvalidParent|exact
+CHK|uitabgroup_in_classic_tabgroup_msg|Parent must be a figure, uipanel or a uitab|exact
+CHK|uitabgroup_in_tab|uitabgroup < uitab < uitabgroup < figure|exact
+CHK|uitabgroup_in_classic_tab|uitabgroup < uitab < uitabgroup < figure|exact
+CHK|uitabgroup_in_menu|MATLAB:uitabgroup:InvalidParent|exact
+CHK|uitabgroup_in_menu_msg|Parent must be a figure, uipanel or a uitab|exact
+CHK|uitabgroup_in_contextmenu|MATLAB:uitabgroup:InvalidParent|exact
+CHK|uitabgroup_in_contextmenu_msg|Parent must be a figure, uipanel or a uitab|exact
+CHK|uitabgroup_in_toolbar|MATLAB:uitabgroup:InvalidParent|exact
+CHK|uitabgroup_in_toolbar_msg|Parent must be a figure, uipanel or a uitab|exact
+CHK|uitabgroup_in_classic_toolbar|MATLAB:uitabgroup:InvalidParent|exact
+CHK|uitabgroup_in_classic_toolbar_msg|Parent must be a figure, uipanel or a uitab|exact
+CHK|uitabgroup_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uitabgroup_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uitabgroup_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitabgroup_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitabgroup_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|uitabgroup_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uitabgroup_in_label|MATLAB:gbtobjects:Component|exact
+CHK|uitabgroup_in_label_msg|Label cannot be a parent.|exact
+CHK|uitabgroup_in_root|MATLAB:uitabgroup:InvalidParent|exact
+CHK|uitabgroup_in_root_msg|Parent must be a figure, uipanel or a uitab|exact
+CHK|uitabgroup_named_parent|uitabgroup < figure|exact
+CHK|uitabgroup_named_classic_parent|uitabgroup < figure|exact
+CHK|uitabgroup_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitabgroup_unknown_msg|Unrecognized property Bogus for class TabGroup.|exact
+CHK|uitabgroup_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|uitabgroup_odd_msg|Incorrect number of input arguments.|exact
+CHK|uitabgroup_to_panel|uitabgroup < uipanel < figure|exact
+CHK|uitabgroup_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitabgroup_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uitab_in_uifigure|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_uifigure_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_figure|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_figure_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_uipanel|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_uipanel_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_classic_uipanel|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_classic_uipanel_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_grid|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_grid_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_group|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_group_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_tabgroup|uitab < uitabgroup < figure|exact
+CHK|uitab_in_classic_tabgroup|uitab < uitabgroup < figure|exact
+CHK|uitab_in_tab|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_tab_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_classic_tab|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_classic_tab_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_menu|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_menu_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_contextmenu|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_contextmenu_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_toolbar|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_toolbar_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_classic_toolbar|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_classic_toolbar_msg|Parent must be a TabGroup|exact
+CHK|uitab_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uitab_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uitab_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitab_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitab_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|uitab_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uitab_in_label|MATLAB:gbtobjects:Component|exact
+CHK|uitab_in_label_msg|Label cannot be a parent.|exact
+CHK|uitab_in_root|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_in_root_msg|Parent must be a TabGroup|exact
+CHK|uitab_named_parent|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_named_parent_msg|Parent must be a TabGroup|exact
+CHK|uitab_named_classic_parent|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_named_classic_parent_msg|Parent must be a TabGroup|exact
+CHK|uitab_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitab_unknown_msg|Unrecognized property Bogus for class Tab.|exact
+CHK|uitab_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|uitab_odd_msg|Incorrect number of input arguments.|exact
+CHK|uitab_to_panel|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_to_panel_msg|Parent must be a TabGroup|exact
+CHK|uitab_to_axes|MATLAB:uitab:InvalidParent|exact
+CHK|uitab_to_axes_msg|Parent must be a TabGroup|exact
+CHK|uimenu_in_uifigure|uimenu < figure|exact
+CHK|uimenu_in_figure|uimenu < figure|exact
+CHK|uimenu_in_uipanel|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_uipanel_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_classic_uipanel|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_classic_uipanel_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_grid|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_grid_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_group|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_group_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_tabgroup|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_tabgroup_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_classic_tabgroup|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_classic_tabgroup_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_tab|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_tab_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_classic_tab|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_classic_tab_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_menu|uimenu < uimenu < figure|exact
+CHK|uimenu_in_contextmenu|uimenu < uicontextmenu < figure|exact
+CHK|uimenu_in_toolbar|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_toolbar_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_classic_toolbar|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_classic_toolbar_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uimenu_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uimenu_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|uimenu_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uimenu_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|uimenu_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uimenu_in_label|MATLAB:gbtobjects:Component|exact
+CHK|uimenu_in_label_msg|Label cannot be a parent.|exact
+CHK|uimenu_in_root|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_in_root_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_named_parent|uimenu < figure|exact
+CHK|uimenu_named_classic_parent|uimenu < figure|exact
+CHK|uimenu_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uimenu_unknown_msg|Unrecognized property Bogus for class Menu.|exact
+CHK|uimenu_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|uimenu_odd_msg|Incorrect number of input arguments.|exact
+CHK|uimenu_to_panel|MATLAB:uimenu:InvalidParent|exact
+CHK|uimenu_to_panel_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|uimenu_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uimenu_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uicontextmenu_in_uifigure|uicontextmenu < figure|exact
+CHK|uicontextmenu_in_figure|uicontextmenu < figure|exact
+CHK|uicontextmenu_in_uipanel|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_uipanel_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_classic_uipanel|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_classic_uipanel_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_grid|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_grid_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_group|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_group_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_tabgroup|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_tabgroup_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_classic_tabgroup|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_classic_tabgroup_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_tab|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_tab_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_classic_tab|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_classic_tab_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_menu|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_menu_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_contextmenu|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_contextmenu_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_toolbar|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_toolbar_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_classic_toolbar|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_classic_toolbar_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uicontextmenu_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uicontextmenu_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|uicontextmenu_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uicontextmenu_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|uicontextmenu_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uicontextmenu_in_label|MATLAB:gbtobjects:Component|exact
+CHK|uicontextmenu_in_label_msg|Label cannot be a parent.|exact
+CHK|uicontextmenu_in_root|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_in_root_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_named_parent|uicontextmenu < figure|exact
+CHK|uicontextmenu_named_classic_parent|uicontextmenu < figure|exact
+CHK|uicontextmenu_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uicontextmenu_unknown_msg|Unrecognized property Bogus for class ContextMenu.|exact
+CHK|uicontextmenu_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|uicontextmenu_odd_msg|Incorrect number of input arguments.|exact
+CHK|uicontextmenu_to_panel|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|uicontextmenu_to_panel_msg|Parent must be a Figure|exact
+CHK|uicontextmenu_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uicontextmenu_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uitoolbar_in_uifigure|uitoolbar < figure|exact
+CHK|uitoolbar_in_figure|uitoolbar < figure|exact
+CHK|uitoolbar_in_uipanel|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_uipanel_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_classic_uipanel|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_classic_uipanel_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_grid|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_grid_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_group|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_group_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_tabgroup|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_tabgroup_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_classic_tabgroup|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_classic_tabgroup_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_tab|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_tab_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_classic_tab|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_classic_tab_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_menu|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_menu_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_contextmenu|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_contextmenu_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_toolbar|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_toolbar_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_classic_toolbar|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_classic_toolbar_msg|Parent must be a Figure|exact
+CHK|uitoolbar_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uitoolbar_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uitoolbar_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitoolbar_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitoolbar_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|uitoolbar_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uitoolbar_in_label|MATLAB:gbtobjects:Component|exact
+CHK|uitoolbar_in_label_msg|Label cannot be a parent.|exact
+CHK|uitoolbar_in_root|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_in_root_msg|Parent must be a Figure|exact
+CHK|uitoolbar_named_parent|uitoolbar < figure|exact
+CHK|uitoolbar_named_classic_parent|uitoolbar < figure|exact
+CHK|uitoolbar_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitoolbar_unknown_msg|Unrecognized property Bogus for class Toolbar.|exact
+CHK|uitoolbar_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|uitoolbar_odd_msg|Incorrect number of input arguments.|exact
+CHK|uitoolbar_to_panel|MATLAB:uitoolbar:InvalidParent|exact
+CHK|uitoolbar_to_panel_msg|Parent must be a Figure|exact
+CHK|uitoolbar_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitoolbar_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uipushtool_in_uifigure|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_uifigure_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_figure|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_figure_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_uipanel|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_uipanel_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_classic_uipanel|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_classic_uipanel_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_grid|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_grid_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_group|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_group_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_tabgroup|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_tabgroup_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_classic_tabgroup|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_classic_tabgroup_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_tab|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_tab_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_classic_tab|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_classic_tab_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_menu|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_menu_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_contextmenu|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_contextmenu_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_in_toolbar|uipushtool < uitoolbar < figure|exact
+CHK|uipushtool_in_classic_toolbar|uipushtool < uitoolbar < figure|exact
+CHK|uipushtool_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uipushtool_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uipushtool_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|uipushtool_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uipushtool_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|uipushtool_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uipushtool_in_label|MATLAB:gbtobjects:Component|exact
+CHK|uipushtool_in_label_msg|Label cannot be a parent.|exact
+CHK|uipushtool_in_root|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_in_root_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_named_parent|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_named_parent_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_named_classic_parent|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_named_classic_parent_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uipushtool_unknown_msg|Unrecognized property Bogus for class PushTool.|exact
+CHK|uipushtool_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|uipushtool_odd_msg|Incorrect number of input arguments.|exact
+CHK|uipushtool_to_panel|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_to_panel_msg|Parent must be a Toolbar|exact
+CHK|uipushtool_to_axes|MATLAB:uipushtool:InvalidParent|exact
+CHK|uipushtool_to_axes_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_uifigure|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_uifigure_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_figure|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_figure_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_uipanel|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_uipanel_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_classic_uipanel|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_classic_uipanel_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_grid|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_grid_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_group|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_group_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_tabgroup|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_tabgroup_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_classic_tabgroup|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_classic_tabgroup_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_tab|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_tab_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_classic_tab|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_classic_tab_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_menu|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_menu_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_contextmenu|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_contextmenu_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_in_toolbar|uitoggletool < uitoolbar < figure|exact
+CHK|uitoggletool_in_classic_toolbar|uitoggletool < uitoolbar < figure|exact
+CHK|uitoggletool_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uitoggletool_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uitoggletool_in_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitoggletool_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitoggletool_in_uicontrol|MATLAB:gbtobjects:Component|exact
+CHK|uitoggletool_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uitoggletool_in_label|MATLAB:gbtobjects:Component|exact
+CHK|uitoggletool_in_label_msg|Label cannot be a parent.|exact
+CHK|uitoggletool_in_root|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_in_root_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_named_parent|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_named_parent_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_named_classic_parent|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_named_classic_parent_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitoggletool_unknown_msg|Unrecognized property Bogus for class ToggleTool.|exact
+CHK|uitoggletool_odd|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
+CHK|uitoggletool_odd_msg|Incorrect number of input arguments.|exact
+CHK|uitoggletool_to_panel|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_to_panel_msg|Parent must be a Toolbar|exact
+CHK|uitoggletool_to_axes|MATLAB:uitoggletool:InvalidParent|exact
+CHK|uitoggletool_to_axes_msg|Parent must be a Toolbar|exact
+CHK|uitable_pairs|double [1 1] 5|exact
+CHK|uitable_lower_case|t|exact
+CHK|uitable_strings|t|exact
+CHK|uitable_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitable_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Table.|exact
+CHK|uitable_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitable_set_unknown_msg|Unrecognized property Bogus for class Table.|exact
+CHK|uitable_set_type|MATLAB:class:SetProhibited|exact
+CHK|uitable_set_type_msg|Unable to set the 'Type' property of class ''Table'' because it is read-only.|exact
+CHK|uitable_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uitable_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Table'' because it is read-only.|exact
+CHK|uitable_isprop|double [1 4] 1 1 1 1|exact
+CHK|uitable_findobj|double [1 1] 1|exact
+CHK|uitabgroup_pairs|double [1 1] 5|exact
+CHK|uitabgroup_lower_case|t|exact
+CHK|uitabgroup_strings|t|exact
+CHK|uitabgroup_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitabgroup_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.TabGroup.|exact
+CHK|uitabgroup_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitabgroup_set_unknown_msg|Unrecognized property Bogus for class TabGroup.|exact
+CHK|uitabgroup_set_type|MATLAB:class:SetProhibited|exact
+CHK|uitabgroup_set_type_msg|Unable to set the 'Type' property of class ''TabGroup'' because it is read-only.|exact
+CHK|uitabgroup_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uitabgroup_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''TabGroup'' because it is read-only.|exact
+CHK|uitabgroup_isprop|double [1 4] 1 1 1 0|exact
+CHK|uitabgroup_findobj|double [1 1] 1|exact
+CHK|uitab_pairs|double [1 1] 5|exact
+CHK|uitab_lower_case|t|exact
+CHK|uitab_strings|t|exact
+CHK|uitab_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitab_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.Tab.|exact
+CHK|uitab_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitab_set_unknown_msg|Unrecognized property Bogus for class Tab.|exact
+CHK|uitab_set_type|MATLAB:class:SetProhibited|exact
+CHK|uitab_set_type_msg|Unable to set the 'Type' property of class ''Tab'' because it is read-only.|exact
+CHK|uitab_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uitab_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Tab'' because it is read-only.|exact
+CHK|uitab_isprop|double [1 4] 1 1 0 0|exact
+CHK|uitab_findobj|double [1 1] 1|exact
+CHK|uimenu_pairs|double [1 1] 5|exact
+CHK|uimenu_lower_case|t|exact
+CHK|uimenu_strings|t|exact
+CHK|uimenu_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uimenu_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.Menu.|exact
+CHK|uimenu_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uimenu_set_unknown_msg|Unrecognized property Bogus for class Menu.|exact
+CHK|uimenu_set_type|MATLAB:class:SetProhibited|exact
+CHK|uimenu_set_type_msg|Unable to set the 'Type' property of class ''Menu'' because it is read-only.|exact
+CHK|uimenu_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uimenu_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Menu'' because it is read-only.|exact
+CHK|uimenu_isprop|double [1 4] 0 1 1 1|exact
+CHK|uimenu_findobj|double [1 1] 1|exact
+CHK|uicontextmenu_pairs|double [1 1] 5|exact
+CHK|uicontextmenu_lower_case|t|exact
+CHK|uicontextmenu_strings|t|exact
+CHK|uicontextmenu_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uicontextmenu_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.ContextMenu.|exact
+CHK|uicontextmenu_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uicontextmenu_set_unknown_msg|Unrecognized property Bogus for class ContextMenu.|exact
+CHK|uicontextmenu_set_type|MATLAB:class:SetProhibited|exact
+CHK|uicontextmenu_set_type_msg|Unable to set the 'Type' property of class ''ContextMenu'' because it is read-only.|exact
+CHK|uicontextmenu_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uicontextmenu_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''ContextMenu'' because it is read-only.|exact
+CHK|uicontextmenu_isprop|double [1 4] 0 1 1 0|exact
+CHK|uicontextmenu_findobj|double [1 1] 1|exact
+CHK|uitoolbar_pairs|double [1 1] 5|exact
+CHK|uitoolbar_lower_case|t|exact
+CHK|uitoolbar_strings|t|exact
+CHK|uitoolbar_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitoolbar_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.Toolbar.|exact
+CHK|uitoolbar_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitoolbar_set_unknown_msg|Unrecognized property Bogus for class Toolbar.|exact
+CHK|uitoolbar_set_type|MATLAB:class:SetProhibited|exact
+CHK|uitoolbar_set_type_msg|Unable to set the 'Type' property of class ''Toolbar'' because it is read-only.|exact
+CHK|uitoolbar_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uitoolbar_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Toolbar'' because it is read-only.|exact
+CHK|uitoolbar_isprop|double [1 4] 0 0 1 0|exact
+CHK|uitoolbar_findobj|double [1 1] 1|exact
+CHK|uipushtool_pairs|double [1 1] 5|exact
+CHK|uipushtool_lower_case|t|exact
+CHK|uipushtool_strings|t|exact
+CHK|uipushtool_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uipushtool_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.toolbar.PushTool.|exact
+CHK|uipushtool_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uipushtool_set_unknown_msg|Unrecognized property Bogus for class PushTool.|exact
+CHK|uipushtool_set_type|MATLAB:class:SetProhibited|exact
+CHK|uipushtool_set_type_msg|Unable to set the 'Type' property of class ''PushTool'' because it is read-only.|exact
+CHK|uipushtool_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uipushtool_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''PushTool'' because it is read-only.|exact
+CHK|uipushtool_isprop|double [1 4] 0 0 1 1|exact
+CHK|uipushtool_findobj|double [1 1] 1|exact
+CHK|uitoggletool_pairs|double [1 1] 5|exact
+CHK|uitoggletool_lower_case|t|exact
+CHK|uitoggletool_strings|t|exact
+CHK|uitoggletool_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitoggletool_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.toolbar.ToggleTool.|exact
+CHK|uitoggletool_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitoggletool_set_unknown_msg|Unrecognized property Bogus for class ToggleTool.|exact
+CHK|uitoggletool_set_type|MATLAB:class:SetProhibited|exact
+CHK|uitoggletool_set_type_msg|Unable to set the 'Type' property of class ''ToggleTool'' because it is read-only.|exact
+CHK|uitoggletool_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uitoggletool_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''ToggleTool'' because it is read-only.|exact
+CHK|uitoggletool_isprop|double [1 4] 0 0 1 1|exact
+CHK|uitoggletool_findobj|double [1 1] 1|exact
+CHK|uitable_struct|MATLAB:uitable:DeprecatedFunctionWeb|exact
+CHK|uitable_struct_msg|The 'v0' argument for uitable has been removed.|exact
+CHK|uitabgroup_struct|s|exact
+CHK|uimenu_struct|s|exact
+CHK|uitoolbar_struct|s|exact
+CHK|uitable_prefix|t|exact
+CHK|uimenu_prefix|t|exact
+CHK|uitoolbar_prefix|t|exact
+CHK|uicontextmenu_prefix|t|exact
+CHK|uitabgroup_prefix|MATLAB:hg:InvalidProperty|exact
+CHK|uitabgroup_prefix_msg|Unrecognized property Ta for class TabGroup.|exact
+CHK|uicontrol_in_tabgroup|MATLAB:uicontrol:InvalidParent|exact
+CHK|uicontrol_in_tabgroup_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|uicontrol_in_tab|uicontrol < uitab < uitabgroup < figure|exact
+CHK|uicontrol_in_menu|MATLAB:uicontrol:InvalidParent|exact
+CHK|uicontrol_in_menu_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|uicontrol_in_contextmenu|MATLAB:uicontrol:InvalidParent|exact
+CHK|uicontrol_in_contextmenu_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|uicontrol_in_toolbar|MATLAB:uicontrol:InvalidParent|exact
+CHK|uicontrol_in_toolbar_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|uicontrol_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uicontrol_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uicontrol_to_tabgroup|MATLAB:uicontrol:InvalidParent|exact
+CHK|uicontrol_to_tabgroup_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|uicontrol_to_tab|uicontrol < uitab < uitabgroup < figure|exact
+CHK|uicontrol_to_menu|MATLAB:uicontrol:InvalidParent|exact
+CHK|uicontrol_to_menu_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|uicontrol_to_table|MATLAB:gbtobjects:Component|exact
+CHK|uicontrol_to_table_msg|Table cannot be a parent.|exact
+CHK|uicontrol_to_toolbar|MATLAB:uicontrol:InvalidParent|exact
+CHK|uicontrol_to_toolbar_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|uipanel_in_tabgroup|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uipanel_in_tabgroup_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uipanel_in_tab|uipanel < uitab < uitabgroup < figure|exact
+CHK|uipanel_in_menu|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uipanel_in_menu_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uipanel_in_contextmenu|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uipanel_in_contextmenu_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uipanel_in_toolbar|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uipanel_in_toolbar_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uipanel_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uipanel_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uipanel_to_tabgroup|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uipanel_to_tabgroup_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uipanel_to_tab|uipanel < uitab < uitabgroup < figure|exact
+CHK|uipanel_to_menu|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uipanel_to_menu_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uipanel_to_table|MATLAB:gbtobjects:Component|exact
+CHK|uipanel_to_table_msg|Table cannot be a parent.|exact
+CHK|uipanel_to_toolbar|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uipanel_to_toolbar_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uibuttongroup_in_tabgroup|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uibuttongroup_in_tabgroup_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uibuttongroup_in_tab|uibuttongroup < uitab < uitabgroup < figure|exact
+CHK|uibuttongroup_in_menu|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uibuttongroup_in_menu_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uibuttongroup_in_contextmenu|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uibuttongroup_in_contextmenu_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uibuttongroup_in_toolbar|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uibuttongroup_in_toolbar_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uibuttongroup_in_pushtool|MATLAB:gbtobjects:Component|exact
+CHK|uibuttongroup_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uibuttongroup_to_tabgroup|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uibuttongroup_to_tabgroup_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uibuttongroup_to_tab|uibuttongroup < uitab < uitabgroup < figure|exact
+CHK|uibuttongroup_to_menu|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uibuttongroup_to_menu_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uibuttongroup_to_table|MATLAB:gbtobjects:Component|exact
+CHK|uibuttongroup_to_table_msg|Table cannot be a parent.|exact
+CHK|uibuttongroup_to_toolbar|MATLAB:uicontainer:InvalidParentFigure|exact
+CHK|uibuttongroup_to_toolbar_msg|Parent must be a Figure or any UIContainer|exact
+CHK|uibutton_in_tabgroup|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uibutton_in_tab|uibutton < uitab < uitabgroup < figure|exact
+CHK|uibutton_in_menu|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uibutton_in_contextmenu|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uibutton_in_toolbar|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uibutton_in_pushtool|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uibutton_to_tabgroup|MATLAB:ui:Button:invalidParent|exact
+CHK|uibutton_to_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uibutton_to_tab|uibutton < uitab < uitabgroup < figure|exact
+CHK|uibutton_to_menu|MATLAB:ui:Button:invalidParent|exact
+CHK|uibutton_to_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uibutton_to_table|MATLAB:gbtobjects:Component|exact
+CHK|uibutton_to_table_msg|Table cannot be a parent.|exact
+CHK|uibutton_to_toolbar|MATLAB:ui:Button:invalidParent|exact
+CHK|uibutton_to_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_in_tabgroup|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_in_tab|uilabel < uitab < uitabgroup < figure|exact
+CHK|uilabel_in_menu|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_in_contextmenu|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_in_toolbar|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_in_pushtool|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uilabel_to_tabgroup|MATLAB:ui:Label:invalidParent|exact
+CHK|uilabel_to_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_to_tab|uilabel < uitab < uitabgroup < figure|exact
+CHK|uilabel_to_menu|MATLAB:ui:Label:invalidParent|exact
+CHK|uilabel_to_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_to_table|MATLAB:gbtobjects:Component|exact
+CHK|uilabel_to_table_msg|Table cannot be a parent.|exact
+CHK|uilabel_to_toolbar|MATLAB:ui:Label:invalidParent|exact
+CHK|uilabel_to_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigridlayout_in_tabgroup|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigridlayout_in_tab|uigridlayout < uitab < uitabgroup < figure|exact
+CHK|uigridlayout_in_menu|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigridlayout_in_contextmenu|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigridlayout_in_toolbar|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigridlayout_in_pushtool|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_in_pushtool_msg|PushTool cannot be a parent.|exact
+CHK|uigridlayout_to_tabgroup|MATLAB:ui:GridLayout:invalidParent|exact
+CHK|uigridlayout_to_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigridlayout_to_tab|uigridlayout < uitab < uitabgroup < figure|exact
+CHK|uigridlayout_to_menu|MATLAB:ui:GridLayout:invalidParent|exact
+CHK|uigridlayout_to_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigridlayout_to_table|MATLAB:gbtobjects:Component|exact
+CHK|uigridlayout_to_table_msg|Table cannot be a parent.|exact
+CHK|uigridlayout_to_toolbar|MATLAB:ui:GridLayout:invalidParent|exact
+CHK|uigridlayout_to_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiaxes_in_tabgroup|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_in_tabgroup_msg|UIAxes cannot be a child of TabGroup.|exact
+CHK|uiaxes_in_tab|axes < uitab < uitabgroup < figure|exact
+CHK|uiaxes_in_menu|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_in_menu_msg|UIAxes cannot be a child of Menu.|exact
+CHK|uiaxes_in_contextmenu|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_in_contextmenu_msg|UIAxes cannot be a child of ContextMenu.|exact
+CHK|uiaxes_in_toolbar|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_in_toolbar_msg|UIAxes cannot be a child of Toolbar.|exact
+CHK|uiaxes_in_pushtool|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_in_pushtool_msg|UIAxes cannot be a child of PushTool.|exact
+CHK|uiaxes_to_tabgroup|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|uiaxes_to_tabgroup_msg|UIAxes cannot be a child of TabGroup.|exact
+CHK|uiaxes_to_tab|axes < uitab < uitabgroup < figure|exact
+CHK|uiaxes_to_menu|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|uiaxes_to_menu_msg|UIAxes cannot be a child of Menu.|exact
+CHK|uiaxes_to_table|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|uiaxes_to_table_msg|UIAxes cannot be a child of Table.|exact
+CHK|uiaxes_to_toolbar|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|uiaxes_to_toolbar_msg|UIAxes cannot be a child of Toolbar.|exact
+CHK|axes_in_tabgroup|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_in_tabgroup_msg|Axes cannot be a child of TabGroup.|exact
+CHK|axes_in_tab|axes < uitab < uitabgroup < figure|exact
+CHK|axes_in_menu|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_in_menu_msg|Axes cannot be a child of Menu.|exact
+CHK|axes_in_contextmenu|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_in_contextmenu_msg|Axes cannot be a child of ContextMenu.|exact
+CHK|axes_in_toolbar|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_in_toolbar_msg|Axes cannot be a child of Toolbar.|exact
+CHK|axes_in_pushtool|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_in_pushtool_msg|Axes cannot be a child of PushTool.|exact
+CHK|axes_to_tabgroup|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_to_tabgroup_msg|Axes cannot be a child of TabGroup.|exact
+CHK|axes_to_tab|axes < uitab < uitabgroup < figure|exact
+CHK|axes_to_menu|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_to_menu_msg|Axes cannot be a child of Menu.|exact
+CHK|axes_to_table|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_to_table_msg|Axes cannot be a child of Table.|exact
+CHK|axes_to_toolbar|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|axes_to_toolbar_msg|Axes cannot be a child of Toolbar.|exact
+CHK|tab_to_figure|MATLAB:uitab:InvalidParent|exact
+CHK|tab_to_figure_msg|Parent must be a TabGroup|exact
+CHK|tab_to_panel|MATLAB:uitab:InvalidParent|exact
+CHK|tab_to_panel_msg|Parent must be a TabGroup|exact
+CHK|tab_to_tab|MATLAB:uitab:InvalidParent|exact
+CHK|tab_to_tab_msg|Parent must be a TabGroup|exact
+CHK|tab_to_group|uitab < uitabgroup < figure|exact
+CHK|tabgroup_to_grid|uitabgroup < uigridlayout < figure|exact
+CHK|tabgroup_to_tabgroup|MATLAB:uitabgroup:InvalidParent|exact
+CHK|tabgroup_to_tabgroup_msg|Parent must be a figure, uipanel or a uitab|exact
+CHK|tabgroup_to_tab|uitabgroup < uitab < uitabgroup < figure|exact
+CHK|table_to_tab|uitable < uitab < uitabgroup < figure|exact
+CHK|table_to_grid|uitable < uigridlayout < figure|exact
+CHK|table_to_other_figure|uitable < figure|exact
+CHK|menu_to_panel|MATLAB:uimenu:InvalidParent|exact
+CHK|menu_to_panel_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|menu_to_toolbar|MATLAB:uimenu:InvalidParent|exact
+CHK|menu_to_toolbar_msg|Parent must be a Figure, UIContextMenu, or another Menu|exact
+CHK|menu_to_menu|uimenu < uimenu < figure|exact
+CHK|menu_to_contextmenu|uimenu < uicontextmenu < figure|exact
+CHK|menu_to_other_figure|uimenu < figure|exact
+CHK|contextmenu_to_menu|MATLAB:Uicontextmenu:InvalidParent|exact
+CHK|contextmenu_to_menu_msg|Parent must be a Figure|exact
+CHK|contextmenu_to_other_figure|uicontextmenu < figure|exact
+CHK|toolbar_to_panel|MATLAB:uitoolbar:InvalidParent|exact
+CHK|toolbar_to_panel_msg|Parent must be a Figure|exact
+CHK|toolbar_to_other_figure|uitoolbar < figure|exact
+CHK|pushtool_to_figure|MATLAB:uipushtool:InvalidParent|exact
+CHK|pushtool_to_figure_msg|Parent must be a Toolbar|exact
+CHK|pushtool_to_menu|MATLAB:uipushtool:InvalidParent|exact
+CHK|pushtool_to_menu_msg|Parent must be a Toolbar|exact
+CHK|pushtool_to_toolbar|uipushtool < uitoolbar < figure|exact
+CHK|toggletool_to_figure|MATLAB:uitoggletool:InvalidParent|exact
+CHK|toggletool_to_figure_msg|Parent must be a Toolbar|exact
+CHK|uitab_alone|uitab < uitabgroup < figure|exact
+CHK|uitab_alone_figures|1|exact
+CHK|uipushtool_alone|uipushtool < uitoolbar < figure|exact
+CHK|uitoggletool_alone|uitoggletool < uitoolbar < figure|exact
+CHK|toolbars_made|1|exact
+CHK|uimenu_alone|uimenu < figure|exact
+CHK|uitable_alone|uitable < figure|exact
+CHK|uitabgroup_alone|uitabgroup < figure|exact
+CHK|uicontextmenu_alone|uicontextmenu < figure|exact
+CHK|alone_figures|1|exact

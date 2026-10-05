@@ -92,7 +92,37 @@ public sealed record UiPanelFrame(
     UiColor? FillColor = null,
     UiGridCell? Cell = null,
     Size2D Fit = default,
-    Thickness? GridInsets = null) : IUiNodeFrame;
+    Thickness? GridInsets = null) : IUiNodeFrame
+{
+    /// <summary>Whether the panel fills the area its parent gives its children: a tab does (U8).</summary>
+    public bool FillsParent { get; init; }
+
+    /// <summary>Whether the panel has no background of its own: a tab whose colour is <c>'none'</c>.</summary>
+    public bool Clear { get; init; }
+}
+
+/// <summary>One tab's heading as a frame holds it.</summary>
+public sealed record UiTabHeading(UiTabModel Source, string Title, UiColor? Foreground, string Tooltip, string Tag);
+
+/// <summary>
+/// One <c>uitabgroup</c> as a frame snapshot holds it (app-building plan, U8): where it is, which
+/// edge its headings run along, the headings, which tab shows, and the tabs themselves as panels
+/// that fill what the strip leaves — each visible only when it is the one showing.
+/// </summary>
+public sealed record UiTabGroupFrame(
+    UiTabGroupModel Source,
+    Rect2D Position,
+    UiUnits Units,
+    bool Visible,
+    UiTabLocation Location,
+    int Selected,
+    IReadOnlyList<UiTabHeading> Headings,
+    Thickness Insets,
+    IReadOnlyList<IUiNodeFrame> Children,
+    string Tooltip,
+    string Tag,
+    UiGridCell? Cell = null,
+    Size2D Fit = default) : IUiNodeFrame;
 
 /// <summary>
 /// One axes placed in a grid, as the grid's frame holds it: where it sits and what it asks for. The
@@ -143,9 +173,11 @@ public sealed class UiFrame
         Roots = roots;
         var controls = new List<UiControlFrame>();
         var components = new List<UiComponentFrame>();
-        Flatten(roots, controls, components);
+        var tabGroups = new List<UiTabGroupFrame>();
+        Flatten(roots, controls, components, tabGroups);
         Controls = controls;
         Components = components;
+        TabGroups = tabGroups;
     }
 
     /// <summary>A frame with nothing in it.</summary>
@@ -168,6 +200,15 @@ public sealed class UiFrame
     /// <summary>The dialogs laid over the figure — <c>uialert</c>, <c>uiconfirm</c>, <c>uiprogressdlg</c> — oldest first (U5).</summary>
     public IReadOnlyList<UiOverlayFrame> Overlays { get; private init; } = [];
 
+    /// <summary>Every tab group in the tree, depth first (U8).</summary>
+    public IReadOnlyList<UiTabGroupFrame> TabGroups { get; }
+
+    /// <summary>The figure's menu bar: its top-level menus that show, left to right (U8).</summary>
+    public IReadOnlyList<UiMenuFrame> Menus { get; private init; } = [];
+
+    /// <summary>The figure's toolbars that show, top to bottom (U8).</summary>
+    public IReadOnlyList<UiToolbarFrame> Toolbars { get; private init; } = [];
+
     private static long _sequence;
 
     /// <summary>Copies the figure's components. Call on the thread that writes the model.</summary>
@@ -179,8 +220,39 @@ public sealed class UiFrame
             return new UiFrame(figure, Interlocked.Increment(ref _sequence), TakeNodes(figure.Components))
             {
                 Overlays = [.. figure.Overlays.Select(static overlay => overlay.Snapshot())],
+                Menus = TakeMenus(figure.Menus),
+                Toolbars =
+                [
+                    .. figure.Toolbars.Where(static bar => bar.Visible).Select(static bar => new UiToolbarFrame(
+                        bar,
+                        bar.BackgroundColor,
+                        bar.Tag ?? string.Empty,
+                        [
+                            .. bar.Tools.Where(static tool => tool.Visible).Select(static tool => new UiToolFrame(
+                                tool, tool.IsToggle, tool.State, tool.Enable, tool.Separator, tool.Tooltip.Joined,
+                                tool.Picture, tool.Tag ?? string.Empty, tool.UserWriteSeq)),
+                        ])),
+                ],
             };
         }
+    }
+
+    /// <summary>The entries of a menu that show, each with the entries under it.</summary>
+    public static IReadOnlyList<UiMenuFrame> TakeMenus(IReadOnlyList<MenuItemModel> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+        var taken = new List<UiMenuFrame>(items.Count);
+        foreach (MenuItemModel item in items)
+        {
+            if (item.Visible)
+            {
+                taken.Add(new UiMenuFrame(
+                    item, item.Text, item.Checked, item.Enable, item.Separator, item.Accelerator, item.Tooltip,
+                    item.ForegroundColor, item.Tag ?? string.Empty, TakeMenus(item.Items)));
+            }
+        }
+
+        return taken;
     }
 
     private static List<IUiNodeFrame> TakeNodes(IReadOnlyList<UiObject> components)
@@ -248,6 +320,42 @@ public sealed class UiFrame
                         control.Tag ?? string.Empty));
                     break;
 
+                case UiTabGroupModel tabs:
+                {
+                    List<UiTabModel> pages = [.. tabs.Tabs];
+                    UiTabModel? showing = tabs.SelectedTab;
+                    var pageFrames = new List<IUiNodeFrame>(pages.Count);
+                    foreach (UiTabModel page in pages)
+                    {
+                        UiColor fill = page.BackgroundColor ?? UiPanelModel.DefaultBackground;
+                        pageFrames.Add(new UiPanelFrame(
+                            page, new Rect2D(1, 1, 0, 0), UiUnits.Pixels, ReferenceEquals(page, showing), page.Enable,
+                            string.Empty, UiTitlePosition.LeftTop, UiBorderType.None, 0, fill, null, null, null, fill,
+                            "Helvetica", 12, false, false, new Thickness(0), TakeNodes(page.Components))
+                        {
+                            FillsParent = true,
+                            Clear = page.BackgroundColor is null,
+                        });
+                    }
+
+                    nodes.Add(new UiTabGroupFrame(
+                        tabs,
+                        tabs.Position,
+                        tabs.Units,
+                        tabs.Visible,
+                        tabs.TabLocation,
+                        showing is null ? -1 : pages.IndexOf(showing),
+                        [.. pages.Select(static page => new UiTabHeading(
+                            page, page.Title, page.ForegroundColor, page.Tooltip.Joined, page.Tag ?? string.Empty))],
+                        tabs.Insets(),
+                        pageFrames,
+                        tabs.Tooltip.Joined,
+                        tabs.Tag ?? string.Empty,
+                        cell,
+                        fit));
+                    break;
+                }
+
                 case UiPanelModel panel:
                     nodes.Add(new UiPanelFrame(
                         panel,
@@ -282,7 +390,8 @@ public sealed class UiFrame
         return nodes;
     }
 
-    private static void Flatten(IReadOnlyList<IUiNodeFrame> nodes, List<UiControlFrame> into, List<UiComponentFrame> components)
+    private static void Flatten(
+        IReadOnlyList<IUiNodeFrame> nodes, List<UiControlFrame> into, List<UiComponentFrame> components, List<UiTabGroupFrame> tabGroups)
     {
         foreach (IUiNodeFrame node in nodes)
         {
@@ -295,10 +404,14 @@ public sealed class UiFrame
                     components.Add(component);
                     break;
                 case UiPanelFrame panel:
-                    Flatten(panel.Children, into, components);
+                    Flatten(panel.Children, into, components, tabGroups);
                     break;
                 case UiGridFrame grid:
-                    Flatten(grid.Children, into, components);
+                    Flatten(grid.Children, into, components, tabGroups);
+                    break;
+                case UiTabGroupFrame tabs:
+                    tabGroups.Add(tabs);
+                    Flatten(tabs.Children, into, components, tabGroups);
                     break;
             }
         }

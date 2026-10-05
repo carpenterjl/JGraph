@@ -495,7 +495,7 @@ internal static partial class JgsBuiltins
         {
             case FigureModel figure:
                 return (figure, null);
-            case UiContainerModel { Figure: { } owner } container:
+            case UiContainerModel { Figure: { } owner } container and not UiTabGroupModel:
                 return (owner, container);
         }
 

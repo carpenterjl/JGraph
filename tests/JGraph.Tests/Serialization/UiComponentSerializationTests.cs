@@ -249,4 +249,104 @@ public class UiComponentSerializationTests
         var again = Assert.IsType<UiButtonGroupModel>(Assert.Single(RoundTrip(figure).Components));
         Assert.Equal([false, true], again.Components.Cast<UiRadioButtonModel>().Select(static b => b.Value));
     }
+
+    [Fact]
+    public void ATableATabGroupAndAFiguresBars_KeepWhatTheyHold()
+    {
+        // U8 (ADR 0206): a table keeps its picture, a tab group its tabs and the one that shows,
+        // a figure its menu bar and its toolbars with their tools.
+        var figure = new FigureModel { IsUiFigure = true };
+        var group = UiTabGroupModel.ForUiFigure();
+        group.TabLocation = UiTabLocation.Left;
+        group.Tag = "tg";
+        var first = new UiTabModel { Title = "One" };
+        var second = new UiTabModel { Title = "Two", BackgroundColor = null, ForegroundColor = new UiColor(1, 0, 0) };
+        group.Components.Add(first);
+        group.Components.Add(second);
+        group.Select(second);
+        var table = new UiTableModel
+        {
+            Tag = "t",
+            Units = UiUnits.Normalized,
+            Position = new Rect2D(0, 0, 1, 1),
+            Content = new UiTableContent(
+                2,
+                [new UiTableColumn("N", new UiGridTrack(UiGridTrackKind.Fixed, 50), true, false), new UiTableColumn("L", new UiGridTrack(UiGridTrackKind.Fit, 0), false, true, ["a", "b"])],
+                [new UiTableCell("1.5000", UiTableCellKind.Number), new UiTableCell(string.Empty, UiTableCellKind.Checked),
+                 new UiTableCell("2", UiTableCellKind.Number), new UiTableCell("txt", UiTableCellKind.Text)],
+                ["r1", "r2"]),
+            Stripes = [new UiColor(1, 0, 0), new UiColor(0, 1, 0), new UiColor(0, 0, 1)],
+            RowStriping = false,
+            SelectionType = UiTableSelectionType.Row,
+            Multiselect = false,
+            Selection = [1],
+            FontUnits = UiFontUnits.Points,
+            FontSize = 9,
+        };
+        second.Components.Add(table);
+        figure.Components.Add(group);
+
+        var file = new MenuItemModel { Text = "&File", Tag = "mf" };
+        file.Items.Add(new MenuItemModel { Text = "Open", Accelerator = "O", Checked = true });
+        file.Items.Add(new MenuItemModel { Text = "Hidden", Visible = false, Separator = true, Enable = false });
+        figure.Menus.Add(file);
+        var bar = new UiToolbarModel { Tag = "tb", BackgroundColor = new UiColor(0.5, 0.6, 0.7) };
+        bar.Tools.Add(new UiToolModel { Tooltip = UiText.Of("go"), Picture = new UiImage(1, 2, [1, 2, 3, 255, 4, 5, 6, 255]), Separator = true });
+        bar.Tools.Add(new UiToggleToolModel { State = true, Enable = false, Tag = "tt", Visible = false });
+        figure.Toolbars.Add(bar);
+
+        FigureModel loaded = RoundTrip(figure);
+
+        var loadedGroup = Assert.IsType<UiTabGroupModel>(Assert.Single(loaded.Components));
+        Assert.Equal(UiTabLocation.Left, loadedGroup.TabLocation);
+        Assert.Equal("tg", loadedGroup.Tag);
+        Assert.Equal(["One", "Two"], loadedGroup.Tabs.Select(static tab => tab.Title));
+        UiTabModel showing = loadedGroup.SelectedTab!;
+        Assert.Equal("Two", showing.Title);
+        Assert.Null(showing.BackgroundColor);
+        Assert.Equal(new UiColor(1, 0, 0), showing.ForegroundColor);
+
+        var loadedTable = Assert.IsType<UiTableModel>(Assert.Single(showing.Components));
+        Assert.Equal(UiUnits.Normalized, loadedTable.Units);
+        Assert.Equal(2, loadedTable.Content.Rows);
+        Assert.Equal(["N", "L"], loadedTable.Content.Columns.Select(static column => column.Header));
+        Assert.Equal(new UiGridTrack(UiGridTrackKind.Fixed, 50), loadedTable.Content.Columns[0].Width);
+        Assert.Equal(["a", "b"], loadedTable.Content.Columns[1].Choices);
+        Assert.Equal(new UiTableCell("1.5000", UiTableCellKind.Number), loadedTable.Content.At(0, 0));
+        Assert.Equal(UiTableCellKind.Checked, loadedTable.Content.At(0, 1).Kind);
+        Assert.Equal(new UiTableCell("txt", UiTableCellKind.Text), loadedTable.Content.At(1, 1));
+        Assert.Equal(["r1", "r2"], loadedTable.Content.RowHeaders);
+        Assert.Equal(3, loadedTable.Stripes.Count);
+        Assert.False(loadedTable.RowStriping);
+        Assert.Equal(UiTableSelectionType.Row, loadedTable.SelectionType);
+        Assert.False(loadedTable.Multiselect);
+        Assert.Equal([1], loadedTable.Selection);
+        Assert.Equal(UiFontUnits.Points, loadedTable.FontUnits);
+        Assert.Equal(9, loadedTable.FontSize);
+
+        MenuItemModel loadedFile = Assert.Single(loaded.Menus);
+        Assert.Equal("&File", loadedFile.Text);
+        Assert.Equal("mf", loadedFile.Tag);
+        Assert.Equal(["Open", "Hidden"], loadedFile.Items.Select(static item => item.Text));
+        Assert.True(loadedFile.Items[0].Checked);
+        Assert.Equal("O", loadedFile.Items[0].Accelerator);
+        Assert.False(loadedFile.Items[1].Visible);
+        Assert.True(loadedFile.Items[1].Separator);
+        Assert.False(loadedFile.Items[1].Enable);
+
+        UiToolbarModel loadedBar = Assert.Single(loaded.Toolbars);
+        Assert.Equal("tb", loadedBar.Tag);
+        Assert.Equal(new UiColor(0.5, 0.6, 0.7), loadedBar.BackgroundColor);
+        Assert.Equal(2, loadedBar.Tools.Count);
+        Assert.False(loadedBar.Tools[0].IsToggle);
+        Assert.Equal("go", loadedBar.Tools[0].Tooltip.Joined);
+        Assert.Equal((1, 2), (loadedBar.Tools[0].Picture!.Width, loadedBar.Tools[0].Picture!.Height));
+        Assert.Equal<byte>([1, 2, 3, 255, 4, 5, 6, 255], loadedBar.Tools[0].Picture!.Bgra);
+        Assert.True(loadedBar.Tools[0].Separator);
+        Assert.True(loadedBar.Tools[1].IsToggle);
+        Assert.True(loadedBar.Tools[1].State);
+        Assert.False(loadedBar.Tools[1].Enable);
+        Assert.False(loadedBar.Tools[1].Visible);
+        Assert.Equal("tt", loadedBar.Tools[1].Tag);
+    }
 }

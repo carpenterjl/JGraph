@@ -87,6 +87,36 @@ internal static class FigureMapper
             });
         }
 
+        // The figure's own bars (U8).
+        dto.Menus = figure.Menus.Select(ToDto).ToList();
+        foreach (UiToolbarModel bar in figure.Toolbars)
+        {
+            var barDto = new UiToolbarDto
+            {
+                Tag = bar.Tag,
+                Visible = bar.Visible,
+                Background = [bar.BackgroundColor.R, bar.BackgroundColor.G, bar.BackgroundColor.B],
+            };
+            foreach (UiToolModel tool in bar.Tools)
+            {
+                barDto.Tools.Add(new UiToolDto
+                {
+                    Toggle = tool.IsToggle,
+                    State = tool.State,
+                    Enable = tool.Enable,
+                    Separator = tool.Separator,
+                    Visible = tool.Visible,
+                    Tag = tool.Tag,
+                    Tooltip = UiComponentMapper.ToDto(tool.Tooltip),
+                    ImageWidth = tool.Picture?.Width ?? 0,
+                    ImageHeight = tool.Picture?.Height ?? 0,
+                    ImagePixels = tool.Picture is { } picture ? Convert.ToBase64String(picture.Bgra) : null,
+                });
+            }
+
+            dto.Toolbars.Add(barDto);
+        }
+
         return dto;
     }
 
@@ -99,6 +129,8 @@ internal static class FigureMapper
         Accelerator = item.Accelerator,
         Tooltip = item.Tooltip,
         ForegroundColor = item.ForegroundColor,
+        Visible = item.Visible,
+        Tag = item.Tag,
         Items = item.Items.Select(ToDto).ToList(),
     };
 
@@ -113,6 +145,8 @@ internal static class FigureMapper
             Accelerator = dto.Accelerator,
             Tooltip = dto.Tooltip,
             ForegroundColor = dto.ForegroundColor,
+            Visible = dto.Visible,
+            Tag = dto.Tag,
         };
         foreach (MenuItemDto child in dto.Items)
         {
@@ -230,6 +264,50 @@ internal static class FigureMapper
             }
 
             figure.ContextMenus.Add(menu);
+        }
+
+        foreach (MenuItemDto menuDto in dto.Menus)
+        {
+            figure.Menus.Add(ToModel(menuDto));
+        }
+
+        foreach (UiToolbarDto barDto in dto.Toolbars)
+        {
+            var bar = new UiToolbarModel { Tag = barDto.Tag, Visible = barDto.Visible };
+            if (barDto.Background is { Length: 3 } rgb)
+            {
+                bar.BackgroundColor = new UiColor(rgb[0], rgb[1], rgb[2]);
+            }
+
+            foreach (UiToolDto toolDto in barDto.Tools)
+            {
+                UiToolModel tool = toolDto.Toggle ? new UiToggleToolModel() : new UiToolModel();
+                tool.State = toolDto.State;
+                tool.Enable = toolDto.Enable;
+                tool.Separator = toolDto.Separator;
+                tool.Visible = toolDto.Visible;
+                tool.Tag = toolDto.Tag;
+                tool.Tooltip = UiComponentMapper.ToText(toolDto.Tooltip);
+                if (toolDto is { ImageWidth: > 0, ImageHeight: > 0, ImagePixels: { } pixels })
+                {
+                    try
+                    {
+                        byte[] bgra = Convert.FromBase64String(pixels);
+                        if (bgra.Length == toolDto.ImageWidth * toolDto.ImageHeight * 4)
+                        {
+                            tool.Picture = new UiImage(toolDto.ImageWidth, toolDto.ImageHeight, bgra);
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        // A picture that does not read leaves the tool without one.
+                    }
+                }
+
+                bar.Tools.Add(tool);
+            }
+
+            figure.Toolbars.Add(bar);
         }
 
         return figure;

@@ -22,6 +22,7 @@ public enum UiComponentKind
     Spinner,
     Image,
     Hyperlink,
+    Table,
 }
 
 /// <summary>How a component sets its content from top to bottom (<c>VerticalAlignment</c>).</summary>
@@ -1258,4 +1259,7 @@ public sealed record UiComponentFrame : IUiNodeFrame
 
     /// <summary>Its cell, when its parent is a grid.</summary>
     public UiGridCell? Cell { get; init; }
+
+    /// <summary>What a table shows and how it selects (U8); null for every other class.</summary>
+    public UiTableFrame? Table { get; init; }
 }

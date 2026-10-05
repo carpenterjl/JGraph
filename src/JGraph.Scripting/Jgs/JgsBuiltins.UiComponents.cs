@@ -205,6 +205,12 @@ internal static partial class JgsBuiltins
             throw MakerError(classWord, notAHandle, line, col);
         }
 
+        // A tab group holds tabs and nothing else, and a menu or a toolbar no component (U8).
+        if (named.Target is UiTabGroupModel or MenuItemModel or ContextMenuModel or UiToolbarModel)
+        {
+            throw MakerError(classWord, NeedsAParent, line, col);
+        }
+
         return named.Target as IUiContainer
             ?? throw MakerError(classWord, $"{JgsGraphicsCallbackValues.ClassWord(named.Target)} cannot be a parent.", line, col);
     }
@@ -523,7 +529,7 @@ internal static partial class JgsBuiltins
                 throw MakerError(word, NeedsAParent, line, col);
             }
 
-            return named.Target is FigureModel or UiContainerModel
+            return named.Target is FigureModel or UiContainerModel and not UiTabGroupModel
                 ? named.Target
                 : throw MakerError(word, $"UIAxes cannot be a child of {JgsGraphicsCallbackValues.ClassWord(named.Target)}.", line, col);
         }

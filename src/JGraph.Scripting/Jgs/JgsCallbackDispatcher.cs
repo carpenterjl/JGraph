@@ -191,12 +191,20 @@ internal sealed class JgsCallbackDispatcher
 
             // A uifigure component's event (U5): its value is written, and its callback's event
             // data made, before anything decides whether the callback runs.
-            if (next.Target is UiComponentModel && next.Kind is GraphicsEventKind.ComponentUser or GraphicsEventKind.ApplyUserValue)
+            if (next.Target is UiComponentModel or UiTabGroupModel or UiToolModel
+                && next.Kind is GraphicsEventKind.ComponentUser or GraphicsEventKind.ApplyUserValue)
             {
                 GraphicsEvent? owed = JgsUiComponentEvents.Prepare(next);
+                IReadOnlyList<GraphicsEvent> after = JgsUiComponentEvents.TakeFollowUps();
                 if (owed is not null && next.Kind == GraphicsEventKind.ComponentUser)
                 {
                     Deliver(owed);
+
+                    // What is owed after it, in order (U8): a toggle tool's ClickedCallback.
+                    foreach (GraphicsEvent then in after)
+                    {
+                        Deliver(then);
+                    }
                 }
 
                 continue;

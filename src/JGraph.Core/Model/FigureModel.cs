@@ -46,7 +46,20 @@ public sealed class FigureModel : GraphObject, IUiContainer
         ContextMenus = new GraphObjectCollection<ContextMenuModel>(this);
         Components = new GraphObjectCollection<UiObject>(this);
         Overlays = new GraphObjectCollection<UiOverlayModel>(this);
+        Menus = new GraphObjectCollection<MenuItemModel>(this);
+        Toolbars = new GraphObjectCollection<UiToolbarModel>(this);
     }
+
+    /// <summary>
+    /// The entries of this figure's menu bar, left to right — the <c>uimenu</c>s made in the figure
+    /// itself (app-building plan, U8). The window builds the bar from the frame.
+    /// </summary>
+    [Browsable(false)]
+    public GraphObjectCollection<MenuItemModel> Menus { get; }
+
+    /// <summary>The toolbars a script gave this figure (<c>uitoolbar</c>), top to bottom (U8).</summary>
+    [Browsable(false)]
+    public GraphObjectCollection<UiToolbarModel> Toolbars { get; }
 
     /// <summary>
     /// The dialogs laid over this figure — <c>uialert</c>, <c>uiconfirm</c>, <c>uiprogressdlg</c> —
@@ -107,8 +120,9 @@ public sealed class FigureModel : GraphObject, IUiContainer
         // A component's own change, or this figure's children changing (a component added or taken
         // away; an axes too, which costs one needless frame and nothing else).
         if (args.Kind == InvalidationKind.Ui
-            || (args.Kind == InvalidationKind.Structure && (ReferenceEquals(args.Source, this) || args.Source is UiObject or UiOverlayModel))
-            || (args.Kind == InvalidationKind.Render && args.Source is UiObject))
+            || (args.Kind == InvalidationKind.Structure
+                && (ReferenceEquals(args.Source, this) || args.Source is UiObject or UiOverlayModel or MenuItemModel or UiToolbarModel))
+            || (args.Kind == InvalidationKind.Render && args.Source is UiObject or MenuItemModel or UiToolbarModel or UiToolModel))
         {
             Volatile.Write(ref _componentsDirty, 1);
             Interlocked.Increment(ref _componentEpoch);

@@ -84,6 +84,11 @@ internal static partial class JgsGraphicsProperties
         MenuItemModel => "uimenu",
         UiControlModel => "uicontrol",
         UiGridLayoutModel => "uigridlayout",
+        UiTableModel => "uitable",
+        UiTabGroupModel => "uitabgroup",
+        UiTabModel => "uitab",
+        UiToolbarModel => "uitoolbar",
+        UiToolModel tool => tool.IsToggle ? "uitoggletool" : "uipushtool",
         UiComponentModel component => component.Kind switch
         {
             UiComponentKind.Label => "uilabel",
@@ -294,6 +299,16 @@ internal static partial class JgsGraphicsProperties
 
                 return;
             case (MenuItemModel movingItem, MenuItemModel itemOwner):
+                // A menu cannot be put under one of its own entries.
+                for (GraphObject? up = itemOwner; up is not null; up = up.Parent)
+                {
+                    if (ReferenceEquals(up, movingItem))
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:container:InvalidParentToChild",
+                            "You are trying to set the parent property to a descendant child object.");
+                    }
+                }
+
                 using (GraphObjectLifecycle.SuppressNotifications())
                 {
                     RemoveMenuItem(movingItem);
@@ -301,9 +316,49 @@ internal static partial class JgsGraphicsProperties
                 }
 
                 return;
-            case (ContextMenuModel or MenuItemModel, _):
-                throw new JgsRuntimeException(line, col,
-                    $"A menu belongs to a figure, a context menu or another menu, not to a {owner.TypeName}.");
+            case (MenuItemModel movingItem, FigureModel barOwner):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    RemoveMenuItem(movingItem);
+                    barOwner.Menus.Add(movingItem);
+                }
+
+                JG.TouchFigure(barOwner);
+                return;
+            case (UiToolbarModel movingBar, FigureModel barFigure):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (movingBar.Parent as FigureModel)?.Toolbars.Remove(movingBar);
+                    barFigure.Toolbars.Add(movingBar);
+                }
+
+                JG.TouchFigure(barFigure);
+                return;
+            case (UiToolModel movingTool, UiToolbarModel toolOwner):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (movingTool.Parent as UiToolbarModel)?.Tools.Remove(movingTool);
+                    toolOwner.Tools.Add(movingTool);
+                }
+
+                return;
+            case (ContextMenuModel or MenuItemModel or UiToolbarModel or UiToolModel, _):
+                // What each of these belongs to, and nothing else, in R2025b's words.
+                if (JgsBuiltins.HoldsNothing(owner.Target))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:gbtobjects:Component",
+                        $"{JgsGraphicsCallbackValues.ClassWord(owner.Target)} cannot be a parent.");
+                }
+
+                throw entry.Target switch
+                {
+                    MenuItemModel => new JgsRuntimeException(line, col, "MATLAB:uimenu:InvalidParent",
+                        "Parent must be a Figure, UIContextMenu, or another Menu"),
+                    ContextMenuModel => new JgsRuntimeException(line, col, "MATLAB:Uicontextmenu:InvalidParent", "Parent must be a Figure"),
+                    UiToolbarModel => new JgsRuntimeException(line, col, "MATLAB:uitoolbar:InvalidParent", "Parent must be a Figure"),
+                    UiToolModel { IsToggle: true } => new JgsRuntimeException(line, col, "MATLAB:uitoggletool:InvalidParent", "Parent must be a Toolbar"),
+                    _ => new JgsRuntimeException(line, col, "MATLAB:uipushtool:InvalidParent", "Parent must be a Toolbar"),
+                };
         }
 
         if (entry.Target is not PlotObject plot)
@@ -345,6 +400,38 @@ internal static partial class JgsGraphicsProperties
             case MenuItemModel owner:
                 owner.Items.Remove(item);
                 break;
+            case FigureModel figure:
+                figure.Menus.Remove(item);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Several lists as one, oldest first, each keeping its own order: at every step the list
+    /// whose next object was made earliest gives it up.
+    /// </summary>
+    private static List<GraphObject> ByCreation(params IReadOnlyList<GraphObject>[] lists)
+    {
+        var merged = new List<GraphObject>();
+        var next = new int[lists.Length];
+        while (true)
+        {
+            int from = -1;
+            for (int i = 0; i < lists.Length; i++)
+            {
+                if (next[i] < lists[i].Count
+                    && (from < 0 || lists[i][next[i]].CreationOrder < lists[from][next[from]].CreationOrder))
+                {
+                    from = i;
+                }
+            }
+
+            if (from < 0)
+            {
+                return merged;
+            }
+
+            merged.Add(lists[from][next[from]++]);
         }
     }
 
@@ -364,11 +451,20 @@ internal static partial class JgsGraphicsProperties
                 // The axes placed in the figure itself; one placed in a panel is the panel's child.
                 children.AddRange(figure.TopLevelAxes());
                 children.AddRange(figure.Annotations);
-                children.AddRange(figure.ContextMenus);
 
                 // Last, so they come first: Children is newest first, and R2025b lists every
-                // component before every axes, whichever was made first (probe u2_tree).
-                children.AddRange(figure.Components);
+                // component before every axes, whichever was made first (probe u2_tree). Menus,
+                // context menus and toolbars stand among the components in the order they were
+                // all made (probe u8_more); each list keeps the order it has, restacked or not.
+                children.AddRange(ByCreation(figure.ContextMenus, figure.Menus, figure.Toolbars, figure.Components));
+                break;
+            case UiToolbarModel bar:
+                children.AddRange(bar.Tools);
+                break;
+            case UiTabGroupModel pages:
+                // A tab group's Children are its tabs in the order their headings stand, first
+                // first, where every other list is newest first (R2025b, fixture u8_tabs).
+                children.AddRange(pages.Components.Reverse());
                 break;
             case UiContainerModel container:
                 children.AddRange(container.ContainedAxes());
@@ -534,7 +630,7 @@ internal static partial class JgsGraphicsProperties
         if (property.Write is null)
         {
             // A component, a figure and the root refuse in R2025b's words (U2).
-            throw entry.Target is UiObject or FigureModel or JgsGraphicsRoot
+            throw SpeaksAsComponent(entry.Target) || entry.Target is FigureModel or JgsGraphicsRoot
                 ? new JgsRuntimeException(line, col, "MATLAB:class:SetProhibited",
                     $"Unable to set the '{property.Name}' property of class ''{JgsGraphicsCallbackValues.ClassWord(entry.Target)}'' because it is read-only.")
                 : new JgsRuntimeException(line, col,
@@ -552,8 +648,9 @@ internal static partial class JgsGraphicsProperties
     {
         // A component answers in R2025b's words (U1); the hint below is this build's own. R2025b
         // names the class in full when reading and by its last word when writing (U2).
-        if (target is UiObject)
+        if (SpeaksAsComponent(target))
         {
+            // R2025b's own words: the class by its last word when writing, in full when reading.
             string word = JgsGraphicsCallbackValues.ClassWord(target);
             string named = !reading ? word : FullClassOf(target);
             return new JgsRuntimeException(line, col, "MATLAB:hg:InvalidProperty",
@@ -785,48 +882,45 @@ internal static partial class JgsGraphicsProperties
         PutContextMenu("ContextMenu");
         PutContextMenu("UIContextMenu");
 
+        // The menus, toolbars and tools of U8: R2025b's names, words and refusals.
         if (typeof(ContextMenuModel).IsAssignableFrom(type))
         {
-            AddCallbackSlot(table, "ContextMenuOpeningFcn",
-                static entry => entry.ContextMenuOpeningFcn,
-                static (entry, value) => entry.ContextMenuOpeningFcn = value);
+            AddContextMenuBlock(table);
         }
 
         if (typeof(MenuItemModel).IsAssignableFrom(type))
         {
-            AddCallbackSlot(table, "MenuSelectedFcn",
-                static entry => entry.MenuSelectedFcn,
-                static (entry, value) => entry.MenuSelectedFcn = value);
+            AddMenuBlock(table);
+        }
 
-            // MATLAB's Separator, Checked and Enable are on/off words over what reflection would
-            // otherwise expose as bools.
-            Put(table, "Checked",
-                entry => OnOff(((MenuItemModel)entry.Target).Checked),
-                (entry, value, line, col) =>
-                    ((MenuItemModel)entry.Target).Checked = ToOnOff("Checked", value, line, col));
-            Put(table, "Enable",
-                entry => OnOff(((MenuItemModel)entry.Target).Enable),
-                (entry, value, line, col) =>
-                    ((MenuItemModel)entry.Target).Enable = ToOnOff("Enable", value, line, col));
-            Put(table, "Separator",
-                entry => OnOff(((MenuItemModel)entry.Target).Separator),
-                (entry, value, line, col) =>
-                    ((MenuItemModel)entry.Target).Separator = ToOnOff("Separator", value, line, col));
+        if (typeof(UiToolbarModel).IsAssignableFrom(type))
+        {
+            AddUiToolbarBlock(table);
+        }
 
-            // The spellings MATLAB used before R2017b, still written everywhere: 'Label' is Text,
-            // 'Callback' is MenuSelectedFcn. Same slots, older names.
-            Put(table, "Label",
-                entry => JgsValue.Str(((MenuItemModel)entry.Target).Text),
-                (entry, value, line, col) =>
-                    ((MenuItemModel)entry.Target).Text = JgsBuiltins.StrOf("Label", value, line, col));
-            AddCallbackSlot(table, "Callback",
-                static entry => entry.MenuSelectedFcn,
-                static (entry, value) => entry.MenuSelectedFcn = value);
+        if (typeof(UiToolModel).IsAssignableFrom(type))
+        {
+            AddUiToolBlock(type, table);
         }
 
         if (typeof(UiObject).IsAssignableFrom(type))
         {
             AddUiObjectBlock(type, table);
+        }
+
+        if (typeof(UiTableModel).IsAssignableFrom(type))
+        {
+            AddUiTableBlock(table);
+        }
+
+        if (typeof(UiTabGroupModel).IsAssignableFrom(type))
+        {
+            AddUiTabGroupBlock(table);
+        }
+
+        if (typeof(UiTabModel).IsAssignableFrom(type))
+        {
+            AddUiTabBlock(table);
         }
 
         if (typeof(UiPanelModel).IsAssignableFrom(type))
@@ -849,7 +943,9 @@ internal static partial class JgsGraphicsProperties
             AddUiControlBlock(table);
         }
 
-        if (typeof(UiComponentModel).IsAssignableFrom(type) || typeof(UiGridLayoutModel).IsAssignableFrom(type))
+        // A table is a component with a classic control's units and fonts: its block is its own.
+        if ((typeof(UiComponentModel).IsAssignableFrom(type) && !typeof(UiTableModel).IsAssignableFrom(type))
+            || typeof(UiGridLayoutModel).IsAssignableFrom(type))
         {
             AddUiComponentBlock(type, table);
         }
