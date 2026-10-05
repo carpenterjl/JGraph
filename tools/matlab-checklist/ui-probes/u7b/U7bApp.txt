@@ -1,0 +1,120 @@
+classdef U7bApp < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure     matlab.ui.Figure
+        GridLayout   matlab.ui.container.GridLayout
+        AmpField     matlab.ui.control.NumericEditField
+        GoButton     matlab.ui.control.Button
+        ClearButton  matlab.ui.control.Button
+    end
+
+    
+    properties (Access = public)
+        Log = {} % what the app did, oldest first
+    end
+    
+    methods (Access = private)
+        
+        function note(app, text)
+            app.Log{end+1} = text;
+        end
+    end
+    
+
+    % Callbacks that handle component events
+    methods (Access = private)
+
+        % Code that executes after component creation
+        function startupFcn(app, amp)
+            if nargin > 1
+                app.AmpField.Value = amp;
+            end
+            note(app, 'startup');
+        end
+
+        % Button pushed function: GoButton
+        function GoButtonPushed(app, event)
+            for k = 1:2
+                note(app, sprintf('go %g', k * app.AmpField.Value));
+            end
+        end
+
+        % Button pushed function: ClearButton
+        function ClearButtonPushed(app, event)
+            
+        end
+    end
+
+    % Component initialization
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create UIFigure and hide until all components are created
+            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Position = [100 100 320 160];
+            app.UIFigure.Name = 'U7b App';
+
+            % Create GridLayout
+            app.GridLayout = uigridlayout(app.UIFigure);
+            app.GridLayout.ColumnWidth = {'1x', '1x'};
+            app.GridLayout.RowHeight = {22, 22};
+
+            % Create AmpField
+            app.AmpField = uieditfield(app.GridLayout, 'numeric');
+            app.AmpField.Tag = 'amp';
+            app.AmpField.Layout.Row = 1;
+            app.AmpField.Layout.Column = [1 2];
+            app.AmpField.Value = 2;
+
+            % Create GoButton
+            app.GoButton = uibutton(app.GridLayout, 'push');
+            app.GoButton.ButtonPushedFcn = createCallbackFcn(app, @GoButtonPushed, true);
+            app.GoButton.Tag = 'go';
+            app.GoButton.Layout.Row = 2;
+            app.GoButton.Layout.Column = 1;
+            app.GoButton.Text = 'Go';
+
+            % Create ClearButton
+            app.ClearButton = uibutton(app.GridLayout, 'push');
+            app.ClearButton.ButtonPushedFcn = createCallbackFcn(app, @ClearButtonPushed, true);
+            app.ClearButton.Tag = 'clear';
+            app.ClearButton.Layout.Row = 2;
+            app.ClearButton.Layout.Column = 2;
+            app.ClearButton.Text = 'Clear';
+
+            % Show the figure after all components are created
+            app.UIFigure.Visible = 'on';
+        end
+    end
+
+    % App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = U7bApp(varargin)
+
+            % Create UIFigure and components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.UIFigure)
+
+            % Execute the startup function
+            runStartupFcn(app, @(app)startupFcn(app, varargin{:}))
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end

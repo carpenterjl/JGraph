@@ -132,6 +132,9 @@ public static class ThemeKeys
     /// <summary>The band drawn behind the line the debugger is paused at. Semi-transparent by design.</summary>
     public const string CurrentLineHighlight = "JG.Brush.CurrentLineHighlight";
 
+    /// <summary>The shade behind the lines of an App Designer file that App Designer generates. Semi-transparent by design.</summary>
+    public const string GeneratedCode = "JG.Brush.GeneratedCode";
+
     /// <summary>A breakpoint dot.</summary>
     public const string BreakpointFill = "JG.Brush.BreakpointFill";
 
@@ -191,7 +194,7 @@ public static class ThemeKeys
         Text, TextSecondary, TextDisabled, TextOnAccent,
         Accent, Hover, Pressed, Selection, SelectionText, FocusRing,
         Error, Warning, Success,
-        EditorBackground, EditorForeground, LineNumber, CurrentLineHighlight,
+        EditorBackground, EditorForeground, LineNumber, CurrentLineHighlight, GeneratedCode,
         BreakpointFill, BreakpointMargin, ExecutionArrow, ExecutionArrowBorder, ExecutionArrowGhost,
         GridHeader, GridRowAlt, GridLine,
         FontUI, FontMono, FontSizeSmall, FontSizeNormal, FontSizeLarge, FontSizeCode,

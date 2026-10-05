@@ -26,6 +26,9 @@ public static class WorkspaceCommands
     /// <summary>Saves the active script to a path the user picks, re-homing the document there.</summary>
     public static RoutedUICommand SaveAs { get; } = Create("Save As…", Key.S, ModifierKeys.Control | ModifierKeys.Shift);
 
+    /// <summary>Writes the class of the active App Designer file as an <c>.m</c> file, leaving the <c>.mlapp</c> as it is.</summary>
+    public static RoutedUICommand ExportAppCode { get; } = Create("Export to .m File…");
+
     /// <summary>Closes the active script tab.</summary>
     public static RoutedUICommand CloseTab { get; } = Create("Close Tab", Key.W, ModifierKeys.Control);
 

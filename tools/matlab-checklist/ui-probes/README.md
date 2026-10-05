@@ -26,6 +26,8 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `u3/` | The U3 probes (ADR 0200): headless `u3_*`, and the window session `u3w_clicks` with `fgtitle.ps1`, its foreground check. |
 | `u4/` | The U4 probes (ADR 0201): headless `u4_*`. |
 | `u5/` | The U5 probes (ADR 0202): headless `u5_*`, with their helpers `tryp`, `v2s`, `oneline` and `u5_makers`. |
+| `u7/` | The U7 probes (ADR 0204): headless `u7_*`, the class table generator, and `mlapp/`, which builds the text-only `.mlapp` fixtures. |
+| `u7b/` | The U7b probes (ADR 0205): headless `u7b_*`. `u7b_build` writes the fixture app `U7bApp.mlapp` with R2025b's own serializer; `u7b_verify` reads what JGraph saved. `rt/` (ignored) holds what they write, copies of shipped apps included. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
 
@@ -505,3 +507,70 @@ with the line counted in the code.
 
 Not measured: a file App Designer itself saved (the fixtures' files are built from text), and
 what `run` does with a classdef file beyond raising no error.
+
+## U7b findings (R2025b, headless)
+
+`u7b/u7b_shape` reads every `.mlapp` R2025b ships (44) in place and tallies where each piece of
+`appModel.mat`'s `code` variable sits in the class text, and the exact form of each value.
+`u7b/u7b_build` builds `U7bApp.mlapp` from `U7bApp.txt` with
+`appdesigner.internal.serialization.MLAPPSerializer`, the class App Designer's save goes through,
+so the file holds a real component tree and metadata; the copy in
+`tests/JGraph.Tests/MatlabParity/fixtures/helpers` is that file. `u7b/u7b_verify` hands R2025b the
+files JGraph saved an edit into. `u7b/u7b_char` and `u7b_char7` ask how char data past ASCII is
+stored in a MAT-file.
+
+**The text.** Line feeds only, no newline at the end, in all 44. Four marker comments are in every
+app: `% Properties that correspond to app components`, `% Callbacks that handle component events`,
+`% Component initialization`, `% App creation and deletion`.
+
+**The editable section** is every line from the second line after the component properties
+block's `end` to the second line before the callbacks comment: one empty line (length 0) is left
+on each side and is not part of it. Its own first and last lines are often whitespace-only
+(`'    '`), stored as written; an empty line is stored as a 0-by-0 char. The value is a 1-by-N cell.
+An app with nothing there has no `EditableSectionCode` field and one empty line between the two
+blocks. A responsive app has a second generated block first (`% Properties that correspond to apps
+with auto-reflow`), and three Simulink apps a third kind (`% Public properties that correspond to
+the Simulink model`); the section starts after it - except in one Simulink app, whose record
+takes the block in.
+
+**Callbacks.** `Callbacks` is a 1-by-N struct array with the fields `Name` and `Code`, in text
+order. Every one of the 383 is written `function Name(app, event)` under a comment line, inside
+the callbacks block, and its `Code` is the lines between that line and the function's `end`, a
+1-by-N cell. One callback with no line between the two has `Code` as a 0-by-0 char. A function
+nested inside a callback is part of its `Code`. A responsive app's `updateAppLayout`, under
+`% Changes arrangement of the app based on UIFigure width`, is listed and its `Code` is not the
+text's lines. `StartupCallback` is a 1-by-1 struct of the same two fields, for the function under
+`% Code that executes after component creation`, always the first in the block; `InputParameters`
+is what follows `app, ` in its signature, a char row.
+
+**Which fields there are.** `MLAPPSerializer` writes `ClassName` and then each of
+`EditableSectionCode`, `Callbacks`, `StartupCallback`, `InputParameters`, `SingletonMode`,
+`AppTypeData` and `Bindings` that is not empty: a field is there exactly when it holds something.
+`SingletonMode` is `'FOCUS'` where present; `AppTypeData` a 1-by-1 struct with no fields.
+
+**The model file.** `appModel.mat` holds `appData` (an
+`appdesigner.internal.serialization.app.AppData` object), `code` and `components` (a struct of
+`UIFigure`, a `matlab.ui.Figure`, and `Groups`). It is a level-5 MAT-file with compressed
+elements in 43 of the 44; **one shipped app's is version 7.3** (HDF5), which a splice cannot
+rewrite.
+
+**What R2025b makes of a file JGraph saved** (`u7b_verify`). Each shipped app was copied, a
+comment line put first in a callback, in the startup function and in the editable section, and
+saved by JGraph. For all 43 with a level-5 model, `readAppCodeData` returns each edit in its
+place, `matlab.internal.getCode` returns the edited text, and `readAppDesignerData`,
+`readAppMetadata` and App Designer's own full load
+(`DeserializerFactory.createDeserializer(...).getAppData()`) succeed. The fixture app with real
+edits is read the same way and runs: its new property, its edited startup function and its edited
+callback all act. The full load adds `ComponentData` to each callback and `codeFormatting` and
+`HelpComments` to `code`, for the unedited file too.
+
+**Char data past ASCII.** R2025b's default save writes a char with a unit above 127 as miUTF16
+(type 17). Its `-v6` save writes miUINT16 units in the machine's code page: U+4E2D is stored as
+0x1A and U+20AC as 0x80. Reading follows: miUINT16 units are taken in the code page, so a UTF-16
+unit above 255 written as miUINT16 comes back as its low byte, and the same units typed miUTF16
+come back whole. A CDATA terminator in the code (`]]>`), written as two CDATA sections, is read
+back by R2025b as written.
+
+Not measured: App Designer opening a saved file in its window (the full load it starts with is
+measured; the designer itself needs a display and a person), and a file saved by any release but
+R2025b.

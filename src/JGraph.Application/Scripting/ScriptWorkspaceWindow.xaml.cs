@@ -40,6 +40,9 @@ public partial class ScriptWorkspaceWindow : Window
     private readonly AppScriptTableViewer _tables = new();
     private readonly List<DocumentEntry> _documents = new();
     private readonly Dictionary<string, List<int>> _persistedBreakpoints = new();
+
+    /// <summary>Whether the one-time notice about editing an App Designer file's generated code has been shown.</summary>
+    private bool _generatedCodeNoticeShown;
     private readonly Dictionary<string, (DateTime WrittenUtc, IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> Items)> _symbolCache =
         new(StringComparer.OrdinalIgnoreCase);
     private ScriptWorkspace? _workspace;

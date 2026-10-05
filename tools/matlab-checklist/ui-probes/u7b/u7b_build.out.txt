@@ -1,0 +1,19 @@
+saved rt/U7bApp.mlapp
+code fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters
+callbacks: GoButtonPushed,ClearButtonPushed
+editable lines 12, startup lines 4, inputs "amp"
+text round trip: 1
+getAppData ok: struct; figure children 1
+part [Content_Types].xml 1106 bytes
+part _rels/.rels 1212 bytes
+part matlab/document.xml 3837 bytes
+part appdesigner/appModel.mat 10200 bytes
+part metadata/appMetadata.xml 444 bytes
+part metadata/coreProperties.xml 656 bytes
+part metadata/mwcoreProperties.xml 331 bytes
+part metadata/mwcorePropertiesExtension.xml 222 bytes
+part metadata/mwcorePropertiesReleaseInfo.xml 303 bytes
+mat variable appData : appdesigner.internal.serialization.app.AppData
+mat variable code : struct
+mat variable components : struct
+runs: startup; amp 5

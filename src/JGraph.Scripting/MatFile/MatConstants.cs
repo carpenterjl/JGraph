@@ -17,6 +17,8 @@ internal static class MatConstants
     public const int MiMatrix = 14;
     public const int MiCompressed = 15;
     public const int MiUtf8 = 16;
+    public const int MiUtf16 = 17;
+    public const int MiUtf32 = 18;
 
     // Array classes (the first byte of the array-flags word).
     public const int MxCell = 1;

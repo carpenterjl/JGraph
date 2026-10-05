@@ -401,7 +401,7 @@ internal sealed class MatFileReader
         var sb = new StringBuilder(Math.Max(count, 0));
         switch (type)
         {
-            case MiUInt16:
+            case MiUInt16 or MiUtf16: // 17 is what MATLAB writes once a char is past ASCII
                 for (int i = 0; i + 1 < size; i += 2)
                 {
                     sb.Append((char)U16(dataStart + i));
@@ -410,6 +410,13 @@ internal sealed class MatFileReader
                 break;
             case MiUtf8:
                 sb.Append(Encoding.UTF8.GetString(_bytes, dataStart, size));
+                break;
+            case MiUtf32:
+                for (int i = 0; i + 3 < size; i += 4)
+                {
+                    sb.Append(char.ConvertFromUtf32(I32(dataStart + i)));
+                }
+
                 break;
             case MiInt8 or MiUInt8:
                 sb.Append(Encoding.ASCII.GetString(_bytes, dataStart, size));

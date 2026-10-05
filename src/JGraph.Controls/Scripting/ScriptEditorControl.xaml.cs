@@ -17,6 +17,7 @@ public partial class ScriptEditorControl : UserControl
 
     private readonly BreakpointMargin _breakpointMargin = new();
     private readonly CurrentLineRenderer _currentLineRenderer = new();
+    private readonly GeneratedCodeRenderer _generatedCodeRenderer = new();
     private readonly CompletionSupport _completion;
     private readonly MenuItem _openSymbolItem = new() { InputGestureText = "Ctrl+D" };
     private ToolTip? _datatip;
@@ -30,6 +31,15 @@ public partial class ScriptEditorControl : UserControl
         DependencyProperty.Register(
             nameof(CurrentLineBrush), typeof(Brush), typeof(ScriptEditorControl),
             new FrameworkPropertyMetadata(Brushes.Transparent, OnCurrentLineBrushChanged));
+
+    /// <summary>
+    /// The shade behind the generated lines of an App Designer file. Themed for the same reason
+    /// <see cref="CurrentLineBrushProperty"/> is.
+    /// </summary>
+    public static readonly DependencyProperty GeneratedCodeBrushProperty =
+        DependencyProperty.Register(
+            nameof(GeneratedCodeBrush), typeof(Brush), typeof(ScriptEditorControl),
+            new FrameworkPropertyMetadata(Brushes.Transparent, OnGeneratedCodeBrushChanged));
 
     /// <summary>
     /// Whether the dark theme is in force, which decides the syntax palette. Bound to the theme's own
@@ -46,7 +56,9 @@ public partial class ScriptEditorControl : UserControl
         _completion = new CompletionSupport(Editor);
         SetResourceReference(CurrentLineBrushProperty, Themes.ThemeKeys.CurrentLineHighlight);
         SetResourceReference(SyntaxIsDarkProperty, Themes.ThemeKeys.ThemeIsDark);
+        SetResourceReference(GeneratedCodeBrushProperty, Themes.ThemeKeys.GeneratedCode);
         Editor.TextArea.LeftMargins.Insert(0, _breakpointMargin);
+        Editor.TextArea.TextView.BackgroundRenderers.Add(_generatedCodeRenderer);
         Editor.TextArea.TextView.BackgroundRenderers.Add(_currentLineRenderer);
         // Find has no implementation until the search panel is installed. Without this the Edit menu's
         // Find item is bound to a command nothing in the window can execute, so it is permanently grey.
@@ -342,6 +354,28 @@ public partial class ScriptEditorControl : UserControl
         set => _completion.LiveNames = value;
     }
 
+    /// <summary>The shade behind the generated lines of an App Designer file.</summary>
+    public Brush GeneratedCodeBrush
+    {
+        get => (Brush)GetValue(GeneratedCodeBrushProperty);
+        set => SetValue(GeneratedCodeBrushProperty, value);
+    }
+
+    /// <summary>
+    /// Whether the document is the code of an App Designer file, whose generated lines are shaded
+    /// (app-building plan U7b). The host says so; the control does not know what file its text is from.
+    /// </summary>
+    public bool ShadeGeneratedCode
+    {
+        get => _generatedCodeRenderer.Enabled;
+        set
+        {
+            _generatedCodeRenderer.Enabled = value;
+            _generatedCodeRenderer.Invalidate();
+            Editor.TextArea.TextView.InvalidateLayer(ICSharpCode.AvalonEdit.Rendering.KnownLayer.Background);
+        }
+    }
+
     /// <summary>The script source shown in the editor.</summary>
     public string ScriptText
     {
@@ -395,5 +429,19 @@ public partial class ScriptEditorControl : UserControl
             ICSharpCode.AvalonEdit.Rendering.KnownLayer.Background);
     }
 
-    private void OnEditorTextChanged(object sender, EventArgs e) => TextChanged?.Invoke(this, EventArgs.Empty);
+    private static void OnGeneratedCodeBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var control = (ScriptEditorControl)d;
+        control._generatedCodeRenderer.ShadeBrush = (Brush)e.NewValue;
+        control.Editor.TextArea.TextView.InvalidateLayer(
+            ICSharpCode.AvalonEdit.Rendering.KnownLayer.Background);
+    }
+
+    private void OnEditorTextChanged(object sender, EventArgs e)
+    {
+        // An edit can move a line from the user's code into generated code or back; a redraw of
+        // the lines on screen follows every edit, and reads the spans again.
+        _generatedCodeRenderer.Invalidate();
+        TextChanged?.Invoke(this, EventArgs.Empty);
+    }
 }

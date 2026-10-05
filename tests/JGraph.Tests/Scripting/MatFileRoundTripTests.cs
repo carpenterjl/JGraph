@@ -195,6 +195,42 @@ public class MatFileRoundTripTests : IDisposable
         Assert.Equal(99, value.AsNumber);
     }
 
+    /// <summary>
+    /// R2025b reads char units typed miUINT16 in the machine code page, so a unit past 255 lost its
+    /// high byte there, and writes text past ASCII as miUTF16 (type 17), which the reader refused
+    /// (probes u7b_char and u7b_char7, found in U7b). Text past ASCII is now written as R2025b
+    /// writes it, and read.
+    /// </summary>
+    [Fact]
+    public void TextPastAsciiIsWrittenAsUtf16_AndPlainTextAsItWas()
+    {
+        string text = "Aé中€B";
+        Assert.Equal(text, RoundTrip(JgsValue.Str(text)).AsString);
+        byte[] bytes = File.ReadAllBytes(PathFor("roundtrip.mat"));
+        Assert.Equal(17, BitConverter.ToInt32(bytes, 128 + 8 + 16 + 16 + 16)); // after the flags, the dimensions and the name
+        Assert.Equal([0x41, 0x00, 0xE9, 0x00, 0x2D, 0x4E, 0xAC, 0x20, 0x42, 0x00], bytes[(128 + 64)..(128 + 74)]);
+
+        Assert.Equal("plain", RoundTrip(JgsValue.Str("plain")).AsString);
+        Assert.Equal(4, BitConverter.ToInt32(File.ReadAllBytes(PathFor("roundtrip.mat")), 128 + 8 + 16 + 16 + 16));
+    }
+
+    [Fact]
+    public void TheElementR2025bWritesForTextPastAscii_IsRead()
+    {
+        // char([65 233 20013 8364 66]) saved by R2025b in its default format, inflated (probe u7b_char7).
+        byte[] element = Convert.FromHexString(
+            "0e00000040000000060000000800000004000000000000000500000008000000010000000500000001000100730000001100"
+            + "00000a0000004100e9002d4eac204200000000000000");
+        string path = PathFor("utf16.mat");
+        MatFileWriter.Write(path, []);
+        File.WriteAllBytes(path, [.. File.ReadAllBytes(path), .. element]);
+
+        (string name, JgsValue value) = Assert.Single(MatFileReader.Read(path));
+
+        Assert.Equal("s", name);
+        Assert.Equal("Aé中€B", value.AsString);
+    }
+
     [Fact]
     public void SomethingThatIsNotAMatFile_ReportsItPlainly()
     {

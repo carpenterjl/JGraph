@@ -62,6 +62,7 @@
     <SolidColorBrush x:Key="JG.Brush.EditorForeground" Color="#FFDCDCDC" />
     <SolidColorBrush x:Key="JG.Brush.LineNumber" Color="#FF858585" />
     <SolidColorBrush x:Key="JG.Brush.CurrentLineHighlight" Color="#40F5DD60" />
+    <SolidColorBrush x:Key="JG.Brush.GeneratedCode" Color="#16FFFFFF" />
     <SolidColorBrush x:Key="JG.Brush.BreakpointFill" Color="#FFE04343" />
     <SolidColorBrush x:Key="JG.Brush.BreakpointMargin" Color="#FF252526" />
     <SolidColorBrush x:Key="JG.Brush.ExecutionArrow" Color="#FFFFD94A" />

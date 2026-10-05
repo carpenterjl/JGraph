@@ -1,0 +1,18 @@
+43 of 43 edited shipped apps read by R2025b with every edit in the copy and the text
+sample fields: ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters
+sample callback first line: note(app, 'edited callback');
+sample callback lines: 4 1
+sample section has the property: 1 (13 lines)
+sample startup first line: note(app, sprintf('edited startup %d', app.Extra));
+sample inputs: amp
+sample code value classes: cell struct cell cell
+sample code value sizes: [1 13] [1 2] [1 4]
+sample full load: struct, 1 component(s) under the figure; code fields ClassName,EditableSectionCode,Callbacks,StartupCallback,InputParameters,codeFormatting,HelpComments
+sample full load has the copy's callbacks, section, startup: 0 1 1
+sample full load callbacks: fields Name,Code,ComponentData; names and code as the copy: 1 1
+unedited full load has the copy's callbacks, section, startup: 0 1 1
+sample section line ends with code points: [93 93 62 32 233 32 20013]
+sample text holds the same line: 1
+which: sample\U7bApp.mlapp
+runs: edited startup 7,startup; amp 5; extra 7
+after the button: edited startup 7,startup,edited callback,go 5,go 10

@@ -18,7 +18,7 @@ namespace JGraph.Scripting.Jgs;
 /// it is called, as <c>MATLAB:fileio:cantOpenFile</c>. The text need not be an app: a plain class
 /// or a function in an <c>.mlapp</c> runs as one.
 /// </remarks>
-public static class JgsMlapp
+public static partial class JgsMlapp
 {
     /// <summary>The extension of an App Designer file.</summary>
     public const string Extension = ".mlapp";
@@ -61,7 +61,11 @@ public static class JgsMlapp
     /// The part the package's relationships name as its code document. Null when the package has
     /// no relationships or they name none, which MATLAB cannot open either.
     /// </summary>
-    private static ZipArchiveEntry? DocumentOf(ZipArchive package)
+    private static ZipArchiveEntry? DocumentOf(ZipArchive package) =>
+        TargetOf(package, DocumentRelationship) is { } target ? package.GetEntry(target) : null;
+
+    /// <summary>The part the package's relationships name for a kind of relationship, by the end of its type; null when none do.</summary>
+    private static string? TargetOf(ZipArchive package, string relationship)
     {
         if (package.GetEntry(Relationships) is not { } relationships)
         {
@@ -73,10 +77,10 @@ public static class JgsMlapp
         while (reader.Read())
         {
             if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "Relationship"
-                && reader.GetAttribute("Type") is { } type && type.EndsWith(DocumentRelationship, StringComparison.Ordinal)
+                && reader.GetAttribute("Type") is { } type && type.EndsWith(relationship, StringComparison.Ordinal)
                 && reader.GetAttribute("Target") is { } target)
             {
-                return package.GetEntry(target.TrimStart('/'));
+                return target.TrimStart('/');
             }
         }
 

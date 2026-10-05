@@ -1,0 +1,25 @@
+CHK|which|U7bApp.mlapp|exact
+CHK|exist|double [1 1] 2|exact
+CHK|exist_class|double [1 1] 8|exact
+CHK|type_first_line|classdef U7bApp < matlab.apps.AppBase|exact
+CHK|type_line_count|double [1 1] 98|exact
+CHK|class|U7bApp|exact
+CHK|isa_appbase|logical [1 1] 1|exact
+CHK|properties|UIFigure,GridLayout,AmpField,GoButton,ClearButton,Log|exact
+CHK|startup_log|startup|exact
+CHK|startup_amp|double [1 1] 5|exact
+CHK|figure_name|U7b App|exact
+CHK|figure_position|double [1 2] 320 160|exact
+CHK|grid_children|double [1 1] 3|exact
+CHK|grid_columns|double [1 1] 2|exact
+CHK|button_text|Go|exact
+CHK|button_cell|double [1 2] 2 2|exact
+CHK|running_is_app|logical [1 1] 1|exact
+CHK|pushed_log|startup,go 5,go 10|exact
+CHK|empty_callback_log_count|double [1 1] 3|exact
+CHK|private_callback_from_outside|MATLAB:class:MethodRestricted|exact
+CHK|figure_goes_with_app|logical [1 1] 0|exact
+CHK|no_argument_amp|double [1 1] 2|exact
+CHK|no_argument_log|startup|exact
+CHK|app_goes_with_figure|logical [1 1] 0|exact
+CHK|too_many_arguments|MATLAB:maxrhs|exact

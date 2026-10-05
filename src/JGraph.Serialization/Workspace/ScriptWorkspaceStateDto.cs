@@ -43,6 +43,12 @@ public sealed class ScriptWorkspaceStateDto
     /// </summary>
     public int LayoutSchema { get; set; }
 
+    /// <summary>
+    /// Whether the user has been told what a save that changes an App Designer file's generated
+    /// code means (app-building plan U7b). It is said once, not once a session.
+    /// </summary>
+    public bool GeneratedCodeNoticeShown { get; set; }
+
     /// <summary>The shell window's last position, or null when it was never recorded.</summary>
     public double? WindowLeft { get; set; }
 

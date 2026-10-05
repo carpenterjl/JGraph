@@ -118,6 +118,7 @@ public partial class ScriptWorkspaceWindow
 
         RestorePlacement(state);
         SelectConsoleLanguage(state.ConsoleLanguage);
+        _generatedCodeNoticeShown = state.GeneratedCodeNoticeShown;
 
         foreach ((string file, List<int> lines) in state.Breakpoints)
         {
@@ -405,6 +406,7 @@ public partial class ScriptWorkspaceWindow
             DockLayoutXml = SerializeLayout(),
             LayoutSchema = ScriptWorkspaceStateFormat.CurrentLayoutSchema,
             ConsoleLanguage = _consoleLanguage,
+            GeneratedCodeNoticeShown = _generatedCodeNoticeShown,
 
             // RestoreBounds, not Left/Top/Width/Height: those report the maximized frame, so a window
             // closed maximized would reopen full-screen-sized but un-maximized on the next un-maximize.

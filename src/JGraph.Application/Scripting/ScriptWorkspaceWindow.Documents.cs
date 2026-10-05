@@ -127,7 +127,12 @@ public partial class ScriptWorkspaceWindow
 
     private DocumentEntry AddDocument(ScriptDocumentModel model, bool activate)
     {
-        var editor = new ScriptEditorControl { ScriptLanguage = model.Language, ScriptText = model.Text };
+        var editor = new ScriptEditorControl
+        {
+            ScriptLanguage = model.Language,
+            ScriptText = model.Text,
+            ShadeGeneratedCode = model.IsAppDesignerFile,
+        };
         var document = new LayoutDocument
         {
             Title = model.FileName,
@@ -254,6 +259,44 @@ public partial class ScriptWorkspaceWindow
         }
     }
 
+    /// <summary>
+    /// File > Export to .m File: writes the class of the active App Designer file as an .m file
+    /// named for it, as MATLAB's export does, and opens what it wrote. The .mlapp and its tab are
+    /// left as they are.
+    /// </summary>
+    private void ExportActiveAppCode()
+    {
+        if (ActiveDocument is not { Model.IsAppDesignerFile: true } entry)
+        {
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Title = "Export to .m file",
+            Filter = "MATLAB class file (*.m)|*.m",
+            InitialDirectory = Path.GetDirectoryName(entry.Model.FilePath),
+            FileName = Path.GetFileNameWithoutExtension(entry.Model.FileName) + "_exported.m",
+        };
+        if (dialog.ShowDialog(this) != true)
+        {
+            return;
+        }
+
+        try
+        {
+            AppDesignerDocument.Export(dialog.FileName, entry.Editor.ScriptText);
+            SetStatus($"Exported {dialog.FileName}. {entry.Model.FileName} is unchanged.");
+            OpenDocument(dialog.FileName);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            SetStatus($"Could not export: {ex.Message}");
+            MessageBox.Show(this, $"Could not export to '{dialog.FileName}'.\n\n{ex.Message}",
+                "Export failed", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     /// <summary>Saves <paramref name="entry"/> to its own path, prompting for one when it has none.
     /// False means the document is still unsaved — the dialog was cancelled or the write failed —
     /// which a pending close must treat as "do not close".</summary>
@@ -266,19 +309,22 @@ public partial class ScriptWorkspaceWindow
     /// tab identity) once the write has actually succeeded.</summary>
     private bool TrySaveAs(DocumentEntry entry)
     {
+        // An app is saved under a new name as an app, the way App Designer's Save As does it; its
+        // class alone is saved through Export, or by picking the .m type here.
+        bool app = entry.Model.IsAppDesignerFile;
         var dialog = new SaveFileDialog
         {
             Title = "Save script",
-            Filter = "JGS script (*.jgs)|*.jgs|MATLAB script (*.m)|*.m|C# script (*.csx)|*.csx|"
+            Filter = (app ? "App Designer file (*.mlapp)|*.mlapp|" : string.Empty)
+                + "JGS script (*.jgs)|*.jgs|MATLAB script (*.m)|*.m|C# script (*.csx)|*.csx|"
                 + "Python script (*.py)|*.py|All files (*.*)|*.*",
             InitialDirectory = Path.GetDirectoryName(entry.Model.FilePath)
                 ?? _workspace?.RootPath ?? DefaultScriptDirectory(),
 
             // The tab is already named for the language it was created as ("NewScript.py"), so the
-            // dialog only has to agree with it — name and filter both follow the document. An
-            // .mlapp's code is saved as the class file it is.
-            FileName = entry.Model.IsAppDesignerFile ? Path.ChangeExtension(entry.Model.FileName, ".m") : entry.Model.FileName,
-            FilterIndex = entry.Model.Language switch
+            // dialog only has to agree with it — name and filter both follow the document.
+            FileName = entry.Model.FileName,
+            FilterIndex = app ? 1 : entry.Model.Language switch
             {
                 "JGS" => 1,
                 "MATLAB" => 2,
@@ -308,6 +354,7 @@ public partial class ScriptWorkspaceWindow
 
         entry.Model.SetFilePath(dialog.FileName);
         entry.Editor.ScriptLanguage = entry.Model.Language;
+        entry.Editor.ShadeGeneratedCode = entry.Model.IsAppDesignerFile;
         entry.Document.ContentId = dialog.FileName;
         entry.Document.Title = entry.Model.FileName;
         return true;
@@ -320,18 +367,17 @@ public partial class ScriptWorkspaceWindow
     /// </summary>
     private SaveOutcome TryWriteDocument(DocumentEntry entry, string path)
     {
-        // An .mlapp is a package holding the code, not the code: writing the text over it would
-        // destroy the app. Until the code can be put back into the package, an edit is kept by
-        // saving it as a class file.
-        if (JGraph.Scripting.Jgs.JgsMlapp.IsMlapp(path))
+        // An .mlapp is a package holding the code, not the code: text written over it would
+        // destroy the app. Code goes back into the package it came out of (U7b), or into a copy of
+        // that package under a new name; there is no package to put any other document's text in.
+        bool intoApp = JGraph.Scripting.Jgs.JgsMlapp.IsMlapp(path);
+        if (intoApp && !entry.Model.IsAppDesignerFile)
         {
-            MessageBoxResult choice = MessageBox.Show(this,
-                $"'{Path.GetFileName(path)}' is an App Designer file. JGraph runs it and shows its code, "
-                + "and cannot yet save an edit back into it.\n\n"
-                + "OK saves the code as a .m class file instead. Give it a new name and rename the class to match: "
-                + "beside the .mlapp, a .m file of the same name is not the one that runs.",
-                "App Designer file", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-            return choice == MessageBoxResult.OK && TrySaveAs(entry) ? SaveOutcome.Diverted : SaveOutcome.Failed;
+            MessageBox.Show(this,
+                $"'{Path.GetFileName(path)}' would be an App Designer file, which holds an app's components beside "
+                + "its code. Only the code of an App Designer file can be saved as one.\n\nSave this as a .m file instead.",
+                "App Designer file", MessageBoxButton.OK, MessageBoxImage.Information);
+            return SaveOutcome.Failed;
         }
 
         try
@@ -360,14 +406,41 @@ public partial class ScriptWorkspaceWindow
                 }
             }
 
-            File.WriteAllText(path, entry.Editor.ScriptText);
-            entry.Model.SetText(entry.Editor.ScriptText);
+            string text = entry.Editor.ScriptText;
+            JGraph.Scripting.Jgs.MlappSaveResult? saved = null;
+            if (intoApp)
+            {
+                (text, saved) = AppDesignerDocument.Save(entry.Model.FilePath!, path, text);
+            }
+            else if (entry.Model.IsAppDesignerFile && Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase))
+            {
+                // The class of an app saved as a class file takes the file's name, as an export does.
+                text = AppDesignerDocument.Export(path, text);
+            }
+            else
+            {
+                File.WriteAllText(path, text);
+            }
+
+            if (!string.Equals(text, entry.Editor.ScriptText, StringComparison.Ordinal))
+            {
+                entry.Editor.ScriptText = text; // the class was renamed for its new file
+            }
+
+            entry.Model.SetText(text);
             entry.Model.MarkSaved();
             entry.Document.Title = entry.Model.FileName;
-            SetStatus($"Saved {path}");
+            SetStatus(saved is null ? $"Saved {path}" : $"Saved {path}.{AppDesignerDocument.StatusNote(saved)}");
+            if (saved is { HasDesignCopy: true, DesignCopyInStep: true, GeneratedCodeChanged: true } && !_generatedCodeNoticeShown)
+            {
+                _generatedCodeNoticeShown = true;
+                MessageBox.Show(this, AppDesignerDocument.GeneratedCodeNotice,
+                    "App Designer file", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
             return SaveOutcome.Written;
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
         {
             SetStatus($"Could not save: {ex.Message}");
             MessageBox.Show(this, $"Could not save '{path}'.\n\n{ex.Message}",

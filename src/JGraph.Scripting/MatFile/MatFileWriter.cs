@@ -381,7 +381,11 @@ internal static class MatFileWriter
             }
         }
 
-        WriteDataElement(w, MiUInt16, bytes);
+        // Sixteen-bit units either way; the type says what they are. MATLAB reads miUINT16 units
+        // in the machine's own code page - a unit past 255 loses its high byte, measured in R2025b
+        // (probe u7b_char) - and miUTF16 units as the UTF-16 they are, which is what it writes
+        // itself once a char is past ASCII.
+        WriteDataElement(w, Array.Exists(rows, static row => row.AsSpan().ContainsAnyExceptInRange('\0', '\x7F')) ? MiUtf16 : MiUInt16, bytes);
     }
 
     private static void WriteSparse(BinaryWriter w, string name, JGraph.Numerics.Sparse.CscMatrix matrix)
@@ -509,7 +513,9 @@ internal static class MatFileWriter
     /// <summary>Field name length (a small element), then the names in fixed 32-byte slots.</summary>
     private static void WriteFieldNames(BinaryWriter w, string[] names)
     {
-        w.Write((FieldNameLength << 16) | MiInt32);
+        // The small form: the type and a size of four bytes share the first word. The size written
+        // here was the slot length until U7b; MATLAB read the file all the same, and it was not the format.
+        w.Write((4 << 16) | MiInt32);
         w.Write(FieldNameLength);
 
         var slots = new byte[names.Length * FieldNameLength];

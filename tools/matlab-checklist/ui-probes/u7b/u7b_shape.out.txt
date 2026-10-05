@@ -1,0 +1,185 @@
+44 shipped .mlapp files
+  TestSuitesManager.mlapp: extra in callbacks block: createTestSuite,switchTestSuite
+--- app1.mlapp skeleton ---
+   1: classdef app1 < matlab.apps.AppBase
+   3:     % Properties that correspond to app components
+   4:     properties (Access = public)
+  11:     % Callbacks that handle component events
+  12:     methods (Access = private)
+  14:         % Callback function
+  15:         function FlattentheBlockButtonGroupSelectionChanged(...
+  19:         % Button pushed function: CancelButton
+  20:         function CancelButtonPushed(...
+  24:         % Button pushed function: OKButton
+  25:         function OKButtonPushed(...
+  31:     % Component initialization
+  32:     methods (Access = private)
+  35:         function createComponents(...
+  65:     % App creation and deletion
+  66:     methods (Access = public)
+  68:         % Construct app
+  69:         function app = app1
+  82:         % Code that executes before app deletion
+  83:         function delete(...
+--- InstrumentationVisualizer.mlapp skeleton ---
+   1: classdef InstrumentationVisualizer < matlab.apps.AppBase
+   3:     % Properties that correspond to app components
+   4:     properties (Access = public)
+  25:     % Callbacks that handle component events
+  26:     methods (Access = private)
+  28:         % Button pushed function: PlotButton
+  29:         function PlotButtonPushed(...
+  36:         % Button pushed function: StartButton
+  37:         function StartButtonPushed(...
+  45:         % Button pushed function: StopButton
+  46:         function StopButtonPushed(...
+  54:         % Button pushed function: ClearDataButton
+  55:         function ClearDataButtonPushed(...
+  59:         % Button pushed function: ResettoDefaultButton
+  60:         function ResettoDefaultButtonPushed(...
+  69:     % Component initialization
+  70:     methods (Access = private)
+  73:         function createComponents(...
+ 183:     % App creation and deletion
+ 184:     methods (Access = public)
+ 186:         % Construct app
+ 187:         function app = InstrumentationVisualizer
+ 200:         % Code that executes before app deletion
+ 201:         function delete(...
+--- SystemLogViewer.mlapp skeleton ---
+   1: classdef SystemLogViewer < matlab.apps.AppBase
+   3:     % Properties that correspond to app components
+   4:     properties (Access = public)
+  16:     % Properties that correspond to apps with auto-reflow
+  17:     properties (Access = private)
+  22:     properties (Access = private)
+  29:     properties (Access = public)
+  33:     methods (Access = private)
+  35:         function systemLogUpdated(...
+  43:         function tgConnected(...
+  54:     % Callbacks that handle component events
+  55:     methods (Access = private)
+  57:         % Code that executes after component creation
+  58:         function startupFcn(...
+  68:         % Value changed function: MessageEditField
+  69:         function MessageEditFieldValueChanged(...
+  75:         % Value changed function: SeverityDropDown
+  76:         function SeverityDropDownValueChanged(...
+  82:         % Changes arrangement of the app based on UIFigure width
+  83:         function updateAppLayout(...
+ 101:     % Component initialization
+ 102:     methods (Access = private)
+ 105:         function createComponents(...
+ 172:     % App creation and deletion
+ 173:     methods (Access = public)
+ 175:         % Construct app
+ 176:         function app = SystemLogViewer
+ 192:         % Code that executes before app deletion
+ 193:         function delete(...
+=== tally ===
+  36  AppTypeData struct 1x1 fields=
+   1  Callbacks class=struct size=1x1 fields=Name,Code
+   1  Callbacks class=struct size=1x10 fields=Name,Code
+   1  Callbacks class=struct size=1x11 fields=Name,Code
+   1  Callbacks class=struct size=1x12 fields=Name,Code
+   2  Callbacks class=struct size=1x17 fields=Name,Code
+   1  Callbacks class=struct size=1x19 fields=Name,Code
+   3  Callbacks class=struct size=1x2 fields=Name,Code
+   1  Callbacks class=struct size=1x21 fields=Name,Code
+   1  Callbacks class=struct size=1x27 fields=Name,Code
+   1  Callbacks class=struct size=1x28 fields=Name,Code
+   6  Callbacks class=struct size=1x3 fields=Name,Code
+   3  Callbacks class=struct size=1x4 fields=Name,Code
+   1  Callbacks class=struct size=1x45 fields=Name,Code
+   6  Callbacks class=struct size=1x5 fields=Name,Code
+   2  Callbacks class=struct size=1x6 fields=Name,Code
+   3  Callbacks class=struct size=1x7 fields=Name,Code
+   5  Callbacks class=struct size=1x8 fields=Name,Code
+   4  Callbacks class=struct size=1x9 fields=Name,Code
+  44  ClassName class=char matches file=1
+  42  ES class=cell rows=1 empty=0
+  35  ES empty line stored as char0x0
+  16  ES first line blank=0 last line blank=0
+   6  ES first line blank=0 last line blank=1
+   8  ES first line blank=1 last line blank=0
+  12  ES first line blank=1 last line blank=1
+   1  ES gap before=[b0 TEXT TEXT TEXT TEXT b0] after=[b0]
+   2  ES gap before=[b0 b0 TEXT TEXT TEXT TEXT b0] after=[b0]
+  39  ES gap before=[b0] after=[b0]
+   1  InputParameters class=char size=1x11
+   1  InputParameters class=char size=1x13
+   1  InputParameters class=char size=1x15
+   1  InputParameters class=char size=1x16
+   3  InputParameters class=char size=1x18
+   1  InputParameters class=char size=1x21
+   1  InputParameters class=char size=1x24
+   1  InputParameters class=char size=1x29
+   1  InputParameters class=char size=1x30
+   2  InputParameters class=char size=1x31
+   1  InputParameters class=char size=1x32
+   1  InputParameters class=char size=1x33
+   1  InputParameters class=char size=1x35
+   1  InputParameters class=char size=1x40
+   1  InputParameters class=char size=1x42
+   1  InputParameters class=char size=1x48
+   1  InputParameters class=char size=1x6
+   1  InputParameters class=char size=1x62
+   1  InputParameters class=char size=1x68
+   7  InputParameters class=char size=1x8
+   4  InputParameters class=char size=1x9
+   6  SingletonMode class=char value='FOCUS'
+  42  Startup class=struct size=1x1 fields=Name,Code
+  42  Startup name class=char empty=0; Code class=cell rows=1
+  44  anchors props=1 cb=1 init=1 ctor=1
+  42  callbacks block has 0 extra functions
+   1  callbacks block has 2 extra functions
+  43  callbacks in text order=1
+ 382  cb Code class=cell rows=1
+   1  cb Code class=char rows=0
+ 383  cb comment line above=1
+   1  cb empty Code size=0x0
+ 383  cb signature form: function NAME(app, event)
+ 383  cb within callbacks block=1
+   1  no Callbacks field
+   2  no ES field: between props end and anchor=[b0]
+   2  no StartupCallback field
+  42  startup comment above="% Code that executes after component creation"
+  42  startup is first in callbacks block=1
+  44  text ends with newline=0
+  44  text has CRLF=0
+=== DataExport package: version '2' ===
+appData.components : struct [1 1]
+    .UIFigure : matlab.ui.Figure [1 1]
+    .Groups : cell [1 2]
+appData.code : struct [1 1]
+    .ClassName : char [1 10]
+    .EditableSectionCode : cell [1 94]
+    .Callbacks : struct [1 3]
+    .StartupCallback : struct [1 1]
+    .InputParameters : char [1 42]
+    .AppTypeData : struct [1 1]
+appData.appData : appdesigner.internal.serialization.app.AppData [1 1]
+    .UIFigure : double [0 0]
+    .CodeData : double [0 0]
+    .Metadata : double [0 0]
+    .ToolboxVer : char [1 5]
+    .FullVersion : char [1 34]
+    .MinimumSupportedVersion : char [1 6]
+    .StandardApp : char [1 8]
+    .ResponsiveApp : char [1 10]
+    .MLAPPVersionOne : char [1 1]
+    .MLAPPVersionTwo : char [1 1]
+metadata.Name : char = Data Export
+metadata.Summary : char
+metadata.Author : char
+metadata.Version : char = 1.0
+metadata.Description : char
+metadata.ScreenshotMode : char
+metadata.MLAPPVersion : char = 2
+metadata.MinimumSupportedMATLABRelease : char = R2018a
+metadata.MATLABRelease : char = R2024b
+metadata.Uuid : char
+metadata.AppType : char
+metadata.RequiredProducts : cell
+metadata.UserComponents : cell
+metadata.ImageRelativePaths : cell
