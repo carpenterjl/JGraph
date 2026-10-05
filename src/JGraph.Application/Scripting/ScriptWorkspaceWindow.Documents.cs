@@ -92,7 +92,7 @@ public partial class ScriptWorkspaceWindow
         var dialog = new OpenFileDialog
         {
             Title = "Open script",
-            Filter = "Scripts (*.jgs;*.m;*.csx;*.cs;*.py)|*.jgs;*.m;*.csx;*.cs;*.py|All files (*.*)|*.*",
+            Filter = "Scripts (*.jgs;*.m;*.mlapp;*.csx;*.cs;*.py)|*.jgs;*.m;*.mlapp;*.csx;*.cs;*.py|All files (*.*)|*.*",
             InitialDirectory = _workspace?.RootPath ?? DefaultScriptDirectory(),
         };
         if (dialog.ShowDialog(this) == true)
@@ -114,9 +114,9 @@ public partial class ScriptWorkspaceWindow
         string text;
         try
         {
-            text = File.ReadAllText(path);
+            text = ScriptDocumentModel.ReadFile(path); // an .mlapp shows the class file it holds
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
         {
             SetStatus($"Could not open '{path}': {ex.Message}");
             return;
@@ -275,8 +275,9 @@ public partial class ScriptWorkspaceWindow
                 ?? _workspace?.RootPath ?? DefaultScriptDirectory(),
 
             // The tab is already named for the language it was created as ("NewScript.py"), so the
-            // dialog only has to agree with it — name and filter both follow the document.
-            FileName = entry.Model.FileName,
+            // dialog only has to agree with it — name and filter both follow the document. An
+            // .mlapp's code is saved as the class file it is.
+            FileName = entry.Model.IsAppDesignerFile ? Path.ChangeExtension(entry.Model.FileName, ".m") : entry.Model.FileName,
             FilterIndex = entry.Model.Language switch
             {
                 "JGS" => 1,
@@ -319,6 +320,20 @@ public partial class ScriptWorkspaceWindow
     /// </summary>
     private SaveOutcome TryWriteDocument(DocumentEntry entry, string path)
     {
+        // An .mlapp is a package holding the code, not the code: writing the text over it would
+        // destroy the app. Until the code can be put back into the package, an edit is kept by
+        // saving it as a class file.
+        if (JGraph.Scripting.Jgs.JgsMlapp.IsMlapp(path))
+        {
+            MessageBoxResult choice = MessageBox.Show(this,
+                $"'{Path.GetFileName(path)}' is an App Designer file. JGraph runs it and shows its code, "
+                + "and cannot yet save an edit back into it.\n\n"
+                + "OK saves the code as a .m class file instead. Give it a new name and rename the class to match: "
+                + "beside the .mlapp, a .m file of the same name is not the one that runs.",
+                "App Designer file", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+            return choice == MessageBoxResult.OK && TrySaveAs(entry) ? SaveOutcome.Diverted : SaveOutcome.Failed;
+        }
+
         try
         {
             if (File.Exists(path))

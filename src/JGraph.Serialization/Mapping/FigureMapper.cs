@@ -47,7 +47,7 @@ internal static class FigureMapper
             AxesDto axesDto = ToDto(axes);
             axesDto.Container = UiComponentMapper.PathTo(figure, axes.Container);
             axesDto.GridCell = UiComponentMapper.ToDto(axes.GridCell);
-            axesDto.UiAxes = axes.ReplaceChildrenOnly;
+            axesDto.UiAxes = axes.IsUiAxes;
             dto.Axes.Add(axesDto);
         }
 

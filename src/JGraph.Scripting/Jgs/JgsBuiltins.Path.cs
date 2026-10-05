@@ -73,6 +73,36 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(Joined());
         });
 
+        Define("type", (args, line, col) =>
+        {
+            Arity("type", args, 1, line, col);
+            string asked = Str("type", args, 0, line, col);
+            string path = host.Resolve(asked);
+
+            // A function's or a class's name, with or without its extension, is looked for where a
+            // call would find it; an .mlapp lists the code it holds (U7).
+            if (!File.Exists(path) && search.FindFile(asked) is { } onPath)
+            {
+                path = onPath;
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new JgsRuntimeException(line, col, $"type: there is no file '{path}'.");
+            }
+
+            try
+            {
+                host.print(JgsMlapp.ReadSource(path));
+            }
+            catch (InvalidDataException)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:fileio:cantOpenFile", $"{path}: Can't open file.");
+            }
+
+            return JgsValue.Null;
+        });
+
         Define("addpath", (args, line, col) =>
         {
             if (args.Count == 0)

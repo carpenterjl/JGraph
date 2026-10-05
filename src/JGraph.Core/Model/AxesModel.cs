@@ -578,6 +578,14 @@ public sealed class AxesModel : GraphObject
     }
 
     /// <summary>
+    /// Whether this axes was made by <c>uiaxes</c> (app-building plan, U7): MATLAB's
+    /// <c>matlab.ui.control.UIAxes</c>, which is an axes and a class of its own. It is the axes
+    /// placed by its outer box, which nothing but <c>uiaxes</c> asks for.
+    /// </summary>
+    [Browsable(false)]
+    public bool IsUiAxes => _positionIsOuter;
+
+    /// <summary>
     /// MATLAB's <c>NextPlot = 'replacechildren'</c>, which is what a <c>uiaxes</c> starts with
     /// (app-building plan, U5): a new plot takes away what was drawn and leaves the title, the
     /// labels and the grid alone, so an app that titles its axes once and redraws on every change

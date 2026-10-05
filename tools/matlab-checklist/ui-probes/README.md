@@ -461,3 +461,47 @@ a grid its `Position` is its cell. `focus` on it is `MATLAB:UndefinedFunction`, 
 panel and a classic control; on a figure that is not shown `focus` warns and returns.
 
 Not measured: any callback's event data (no component can be worked headless), and scrolling.
+
+## U7 findings (R2025b, headless)
+
+`u7/u7_classes` makes one object of each kind JGraph makes and prints its class, its
+`superclasses`, and which of a list of known bases `isa` answers true for. `u7/gen_classes.py`
+turns the output into `src/JGraph.Scripting/Jgs/JgsGraphicsClasses.Table.cs`. `u7/u7_small` asks
+the small questions below. `u7/mlapp/build_mlapp.py` builds the `.mlapp` files the parity
+fixtures `u7_app` and `u7_mlapp` run, from text; they hold the three parts R2025b needs and no
+`appModel.mat`.
+
+**`superclasses` is not the whole of `isa`.** `isa(ax, 'matlab.graphics.axis.AbstractAxes')` is
+true and the name is in no `superclasses` answer; the same holds for `matlab.graphics.primitive.Data`,
+`matlab.graphics.mixin.Legendable`, `matlab.ui.container.Container`, `matlab.ui.control.Component`
+and the other bases MATLAB builds in. Every graphics object is a `handle`, a
+`matlab.graphics.Graphics`, a `matlab.mixin.SetGet`, a `dynamicprops` and an `hgsetget`. A
+`uiaxes` is an `Axes`; a button group is a `Panel`.
+
+**A property typed with a graphics class** starts as an empty of the class, refuses `[]`
+(`MATLAB:validation:UnableToConvert`) and a number that is no handle
+(`MATLAB:graphics:CannotConvertDoubleToHandle`, "Cannot convert double value 5.5 to a handle"),
+and takes a subclass's object.
+
+**Destruction.** For a class with its own `delete`: the `ObjectBeingDestroyed` listener runs
+first and the `delete` method second, and `isvalid` is false in both. For a graphics object: its
+listeners newest first, then its `DeleteFcn`, the parent before its children, `isvalid` false in
+both. `events(uibutton)` is `ButtonPushed, ObjectBeingDestroyed, PropertyAdded, PropertyRemoved`.
+
+**`matlab.apps.AppBase`.** `saveobj` warns `MATLAB:appdesigner:appdesigner:SaveObjWarning`
+("Unable to save App Designer app object. Save not supported for matlab.apps.AppBase objects.")
+and answers `[]`. The handle `createCallbackFcn` answers has two inputs: one is
+`MATLAB:minrhs`, three `MATLAB:TooManyInputs`. An app whose startup function fails keeps its
+figure and is not deleted. `getRunningApp` answers the app on the newest figure that has one of
+the class. Too many arguments to a class method are `MATLAB:maxrhs`, to a function
+`MATLAB:TooManyInputs`.
+
+**The `.mlapp` file.** Found before an `.m` of its name in one folder; `exist` 2, `exist(…,
+'class')` 8; `type` prints its code; a function or a plain class in one runs; the document may be
+any part the relationships name; a zip with the document and no relationships is `exist` 2 and
+`MATLAB:fileio:cantOpenFile` when called; a class under the wrong file name is
+`MATLAB:m_class_filename`; an error's stack names the frame `Class.method` and the `.mlapp` file,
+with the line counted in the code.
+
+Not measured: a file App Designer itself saved (the fixtures' files are built from text), and
+what `run` does with a classdef file beyond raising no error.

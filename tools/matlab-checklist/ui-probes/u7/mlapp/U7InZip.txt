@@ -1,0 +1,21 @@
+classdef U7InZip < handle
+    % A plain class kept in an .mlapp (U7 fixtures).
+    properties
+        Value = 7
+    end
+    methods
+        function r = twice(obj)
+            r = 2 * obj.Value;
+        end
+        function [name, folderIsHelpers] = where(~)
+            [folder, name] = fileparts(mfilename('fullpath'));
+            [~, last] = fileparts(folder);
+            folderIsHelpers = strcmp(last, 'helpers');
+        end
+    end
+    methods (Static)
+        function r = fixed()
+            r = 'static';
+        end
+    end
+end

@@ -604,19 +604,6 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(Environment.TickCount64 / 1000.0);
         });
 
-        Define("type", (args, line, col) =>
-        {
-            Arity("type", args, 1, line, col);
-            string path = host.Resolve(Str("type", args, 0, line, col));
-            if (!File.Exists(path))
-            {
-                throw new JgsRuntimeException(line, col, $"type: there is no file '{path}'.");
-            }
-
-            host.print(File.ReadAllText(path));
-            return JgsValue.Null;
-        });
-
         Define("drawnow", (args, line, col) =>
         {
             ArityRange("drawnow", args, 0, 2, line, col);

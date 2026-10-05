@@ -1,0 +1,9 @@
+classdef U7Throws < handle
+    % A class in an .mlapp whose method fails on a known line (U7 fixtures).
+    methods
+        function fail(~)
+            x = 1;
+            error('U7:thrown', 'Thrown from line %d.', 6 + 0 * x);
+        end
+    end
+end

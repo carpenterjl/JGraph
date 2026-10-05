@@ -182,6 +182,19 @@ internal static partial class JgsBuiltins
             return value;
         }
 
+        // A graphics class takes the handles of its objects (U7): matlab.ui.Figure, a figure's number.
+        if (JgsGraphicsClasses.IsGraphicsType(className))
+        {
+            return JgsGraphicsClasses.Fitting(value, className, out double stray) switch
+            {
+                JgsGraphicsClasses.Fit.Fits => value,
+                JgsGraphicsClasses.Fit.NotAHandle => throw new JgsRuntimeException(line, col, "MATLAB:graphics:CannotConvertDoubleToHandle",
+                    $"Cannot convert double value {Format(stray)} to a handle"),
+                _ => throw new JgsRuntimeException(line, col, "MATLAB:validation:UnableToConvert",
+                    $"Value must be of type {className} or be convertible to {className}."),
+            };
+        }
+
         // An instance of a subclass is an instance of the class asked for (U6), and keeps its own class.
         if (value.Type == JgsType.Object && value.AsObject.Class.IsA(className))
         {

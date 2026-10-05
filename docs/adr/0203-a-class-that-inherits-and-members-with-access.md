@@ -189,7 +189,9 @@ Everything in the five fixtures: 493 lines, all `exact`, agreeing in both repres
   an `enumeration` block, a method whose body is in another file, class folders and packages.
 - **A class's methods are found by bare name inside its own file whatever the arguments.**
   R2025b dispatches on the arguments alone (ADR 0068); a helper called with a plain number is
-  found here and is undefined there.
+  found here and is undefined there. Narrowed in U7 (ADR 0204): where a built-in has the name,
+  the built-in takes a call that has none of the class's objects, so `delete(fig)` in a class
+  with a `delete` method is the figure's.
 - **A handle to a bare method name reads `@name` in `func2str`**, as every named handle does here
   (ADR 0149); R2025b's reads `name`.
 - **A subclass built before its superclass's file was edited keeps the old superclass** until

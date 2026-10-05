@@ -12,7 +12,7 @@ namespace JGraph.Scripting.Jgs;
 /// answered by <see cref="JgsClass.IsHandle"/> and <see cref="JgsClass.IsEventData"/>, as they were
 /// before a class could inherit from anything else. <c>matlab.apps.AppBase</c> is U7's to add.
 /// </remarks>
-internal static class JgsBuiltinClasses
+internal static partial class JgsBuiltinClasses
 {
     /// <summary>The mixin that gives a handle class <c>copy</c>.</summary>
     public const string Copyable = "matlab.mixin.Copyable";
@@ -30,6 +30,7 @@ internal static class JgsBuiltinClasses
         SetGet => Class(name,
             Method("set", MemberAccess.Public, isSealed: true, (args, line, col) => Set(interpreter, args, line, col), bindsAns: false),
             Method("get", MemberAccess.Public, isSealed: true, (args, line, col) => Get(interpreter, args, line, col))),
+        AppBase => AppBaseDeclaration(interpreter),
         _ => null,
     };
 

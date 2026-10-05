@@ -213,6 +213,21 @@ internal static class JgsRunner
     /// </summary>
     internal static void InvokeMainIfFunctionFile(IReadOnlyList<Stmt> program, Interpreter interpreter)
     {
+        // A class file run as a file is its constructor called with nothing (U7): what MATLAB's Run
+        // does with a classdef, and how an App Designer app is started from its .mlapp or its .m.
+        // Only a file named for its class is one; classdef text run from anywhere else defines the
+        // class and constructs nothing, as it always has.
+        if (program.Count > 0 && program[0] is ClassdefStmt { Dialect.IsMatlab: true } classFile
+            && program.Skip(1).All(static s => s is FnStmt)
+            && string.Equals(
+                Path.GetFileNameWithoutExtension(classFile.SourceId.Length > 0 ? classFile.SourceId : interpreter.MainScriptPath),
+                classFile.Name, StringComparison.Ordinal)
+            && interpreter.Classes.TryGetValue(classFile.Name, out JgsClass? definition) && !definition.IsAbstract)
+        {
+            JgsCallbacks.Invoke(definition.ConstructorValue.AsCallable, System.Array.Empty<JgsValue>(), classFile.Line, classFile.Column);
+            return;
+        }
+
         if (!IsFunctionFile(program))
         {
             return;
@@ -287,9 +302,9 @@ internal static class JgsRunner
             try
             {
                 fullPath = Path.GetFullPath(resolved);
-                source = File.ReadAllText(fullPath);
+                source = JgsMlapp.ReadSource(fullPath); // an .mlapp runs the class file it holds (U7)
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException or InvalidDataException)
             {
                 throw new JgsRuntimeException(line, column, $"run: cannot read '{resolved}': {ex.Message}");
             }
@@ -339,7 +354,7 @@ internal static class JgsRunner
     /// file has to mean the same thing however it was reached.
     /// </summary>
     internal static JgsDialect DialectOfFile(string path, JgsDialect caller) =>
-        Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) ? JgsDialect.Matlab : caller;
+        Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) || JgsMlapp.IsMlapp(path) ? JgsDialect.Matlab : caller;
 
     /// <summary>
     /// Declares the workspace-management builtins — <c>clear</c>, <c>clearvars</c>, <c>whos</c> —

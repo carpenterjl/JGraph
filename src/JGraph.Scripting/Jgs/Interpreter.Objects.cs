@@ -69,6 +69,9 @@ internal sealed partial class Interpreter
         }
     }
 
+    /// <summary>The file a class was read from, as <c>which</c> names it; empty for a class this build supplies.</summary>
+    internal string FileOfClass(JgsClass definition) => definition.Declaration.SourceId;
+
     /// <summary>A class this build supplies for a user class to inherit from (<c>matlab.mixin.Copyable</c>), or null.</summary>
     internal JgsClass? BuiltinClass(string name)
     {
@@ -336,7 +339,7 @@ internal sealed partial class Interpreter
         {
             if (name == "isvalid")
             {
-                return JgsValue.Bool(!instance.Deleted);
+                return JgsValue.Bool(!instance.Deleted && !instance.Destroying);
             }
 
             instance.MarkDeleted();
@@ -354,9 +357,45 @@ internal sealed partial class Interpreter
     private bool TryClassInFront(MemberExpr member, JgsEnvironment env, bool autoCall, out JgsValue value)
     {
         value = JgsValue.Null;
-        return member.Target is VariableExpr name
-            && ClassNamed(name.Name, env) is { } definition
-            && TryClassMember(definition, FieldName(member, env), member, autoCall, out value);
+        if (member.Target is VariableExpr name)
+        {
+            return ClassNamed(name.Name, env) is { } definition
+                && TryClassMember(definition, FieldName(member, env), member, autoCall, out value);
+        }
+
+        // matlab.apps.AppBase and matlab.apps.AppBase.loadobj(s): a class this build supplies,
+        // named by its package (U7). Only a chain that starts at an unbound "matlab" is looked at.
+        if (DottedName(member) is not { } dotted || !dotted.StartsWith("matlab.", StringComparison.Ordinal)
+            || LookUp("matlab", env, out _))
+        {
+            return false;
+        }
+
+        if (BuiltinClass(dotted) is { } whole)
+        {
+            value = autoCall ? whole.ConstructorValue.AsCallable.Call([], member.Line, member.Column) : whole.ConstructorValue;
+            return true;
+        }
+
+        int last = dotted.LastIndexOf('.');
+        return BuiltinClass(dotted[..last]) is { } supplied
+            && TryClassMember(supplied, dotted[(last + 1)..], member, autoCall, out value);
+    }
+
+    /// <summary>A chain of plain dots as one name (<c>a.b.c</c>), or null when a step is anything else.</summary>
+    private static string? DottedName(MemberExpr member)
+    {
+        if (member.Field is not { } field)
+        {
+            return null;
+        }
+
+        return member.Target switch
+        {
+            VariableExpr root => root.Name + "." + field,
+            MemberExpr inner when DottedName(inner) is { } head => head + "." + field,
+            _ => null,
+        };
     }
 
     /// <summary>
@@ -398,7 +437,7 @@ internal sealed partial class Interpreter
             _ = TryResolveOnPath(name, out _);
         }
 
-        return _classes.TryGetValue(name, out JgsClass? definition) ? definition : null;
+        return _classes.TryGetValue(name, out JgsClass? definition) ? definition : BuiltinClass(name); // matlab.apps.AppBase, named as text (U7)
     }
 
     /// <summary>
@@ -788,13 +827,18 @@ internal sealed partial class Interpreter
 
         public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
         {
-            if (instance.Deleted)
+            if (instance.Deleted || instance.Destroying)
             {
                 return [];
             }
 
+            // R2025b's order (U7, measured): the object stops being valid, its listeners hear
+            // ObjectBeingDestroyed, and then the class's own delete runs - all three before the
+            // properties go.
+            instance.Destroying = true;
             try
             {
+                JgsBuiltins.FireObjectBeingDestroyed(instance);
                 foreach (IJgsCallable destructor in instance.Class.Destructors())
                 {
                     destructor.Call(arguments.Count > 0 ? [arguments[0]] : [JgsValue.Object(instance)], line, column);
@@ -805,7 +849,6 @@ internal sealed partial class Interpreter
             finally
             {
                 instance.MarkDeleted();
-                JgsBuiltins.FireObjectBeingDestroyed(instance); // after the mark (V6, #106)
                 JgsLifetime.ObjectDeleted(instance); // V10: the properties' contents go with the object
             }
         }

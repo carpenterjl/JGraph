@@ -53,9 +53,9 @@ public static class StartupStatement
 
         try
         {
-            return new ResolvedStatement(File.ReadAllText(path), language, path);
+            return new ResolvedStatement(ScriptDocumentModel.ReadFile(path), language, path); // an .mlapp's code (U7)
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
         {
             return ResolvedStatement.Invalid($"Cannot read '{path}': {ex.Message}");
         }

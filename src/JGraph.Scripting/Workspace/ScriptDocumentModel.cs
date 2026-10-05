@@ -59,7 +59,7 @@ public sealed class ScriptDocumentModel
         : Path.GetExtension(path).ToLowerInvariant() switch
         {
             ".jgs" => "JGS",
-            ".m" => "MATLAB",
+            ".m" or ".mlapp" => "MATLAB", // an App Designer file holds a MATLAB class file (U7)
             ".csx" or ".cs" => "C#",
             ".py" => "Python",
             _ => "Text",
@@ -76,6 +76,19 @@ public sealed class ScriptDocumentModel
         "Python" => ".py",
         _ => ".txt",
     };
+
+    /// <summary>
+    /// Whether the document is the code of an App Designer file (app-building plan, U7). Its text
+    /// is read out of the package and cannot be written over it: the file is a zip that holds the
+    /// code twice, and putting it back is its own stage (U7b).
+    /// </summary>
+    public bool IsAppDesignerFile => FilePath is not null && Jgs.JgsMlapp.IsMlapp(FilePath);
+
+    /// <summary>
+    /// The text a document shows for a file: an <c>.mlapp</c>'s class file, any other file's text.
+    /// </summary>
+    /// <exception cref="InvalidDataException">An <c>.mlapp</c> that holds no code document.</exception>
+    public static string ReadFile(string path) => Jgs.JgsMlapp.ReadSource(path);
 
     /// <summary>Updates the buffer text (typically from the editor's TextChanged).</summary>
     public void SetText(string text) => _text = text ?? string.Empty;

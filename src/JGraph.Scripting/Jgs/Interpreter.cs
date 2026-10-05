@@ -1110,7 +1110,11 @@ internal sealed partial class Interpreter
             // every frame it passed through has already been torn down by the finally below. Each
             // frame records the line that was running in it: this one's own failing line for the
             // innermost, and the call it was waiting on for everything outside.
-            error.PushFrame(declaration.Name, FileOfFrame(declaration.SourceId), callLine);
+            // A method's frame is named Class.method, as R2025b's stack names it (U7, measured).
+            string frameName = AnyClasses && local.ClassContext is { } running && running.DeclaresMethod(declaration)
+                ? $"{running.Name}.{declaration.Name}"
+                : declaration.Name;
+            error.PushFrame(frameName, FileOfFrame(declaration.SourceId), callLine);
             error.AttributeTo(declaration.SourceId);
             throw;
         }
@@ -9074,6 +9078,23 @@ internal sealed partial class Interpreter
                     ? nested
                     : null;
 
+            // app.Button.Text = 'Go' — a handle an object's property holds (U7), which is how every
+            // line of an App Designer createComponents is written. The property is read as a dot
+            // reads it, access and get method included; anything but a handle is left to the
+            // struct path.
+            case MemberExpr { Target: VariableExpr or MemberExpr } held when RootIsObject(held, env):
+                return EvaluateMember(held, env, autoCall: false) is { Type: JgsType.Number } number
+                    && JgsHandleRegistry.TryGet(number, out JgsHandleEntry? inObject)
+                    ? inObject
+                    : null;
+
+            // s.button.Text = 'Go' — a handle a struct's field holds, as guihandles hands them out.
+            // The write used to turn the field into a struct and leave the button alone.
+            case MemberExpr inStruct when TryPeekStructField(inStruct, env, out JgsValue peeked):
+                return peeked.Type == JgsType.Number && JgsHandleRegistry.TryGet(peeked, out JgsHandleEntry? inField)
+                    ? inField
+                    : null;
+
             // t.DataTipRows(1).Label = 'x' — one of a row of handles a property answered with.
             case CallExpr { Arguments.Count: 1, Callee: MemberExpr callee } nestedCall
                 when TryResolveHandleTarget(callee.Target, env) is not null:
@@ -9084,6 +9105,48 @@ internal sealed partial class Interpreter
             default:
                 return null;
         }
+    }
+
+    /// <summary>Whether a chain of dots starts at a variable that holds an object.</summary>
+    private bool RootIsObject(MemberExpr chain, JgsEnvironment env)
+    {
+        Expr root = chain;
+        while (root is MemberExpr member)
+        {
+            root = member.Target;
+        }
+
+        return AnyClasses && root is VariableExpr variable && LookUp(variable.Name, env, out JgsValue bound)
+            && bound.Type == JgsType.Object;
+    }
+
+    /// <summary>
+    /// What a chain of plain field names reads out of a variable holding a plain struct, when
+    /// every field on the way is there: a look that runs nothing and creates nothing.
+    /// </summary>
+    private bool TryPeekStructField(MemberExpr chain, JgsEnvironment env, out JgsValue value)
+    {
+        value = JgsValue.Null;
+        if (chain.Field is not { } field)
+        {
+            return false;
+        }
+
+        JgsValue holder;
+        switch (chain.Target)
+        {
+            case VariableExpr variable when LookUp(variable.Name, env, out JgsValue bound):
+                holder = bound;
+                break;
+            case MemberExpr inner when TryPeekStructField(inner, env, out JgsValue above):
+                holder = above;
+                break;
+            default:
+                return false;
+        }
+
+        return holder.Type == JgsType.Struct && holder.ClassName is null && !holder.IsStructArray
+            && holder.AsStruct.TryGetValue(field, out value!);
     }
 
     private bool IsHandleArray(VariableExpr variable, JgsEnvironment env) =>

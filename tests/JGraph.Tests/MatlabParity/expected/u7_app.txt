@@ -1,0 +1,152 @@
+CHK|class|U7App|exact
+CHK|isa_appbase|logical [1 1] 1|exact
+CHK|isa_handle|logical [1 1] 1|exact
+CHK|superclasses|matlab.apps.AppBase,handle|exact
+CHK|properties|UIFigure,GridLayout,AmpLabel,AmpField,NameLabel,NameField,PlotButton,UIAxes,Scale|exact
+CHK|methods|U7App,addlistener,delete,eq,findobj,findprop,ge,gt,isvalid,le,listener,loadobj,lt,ne,notify,presses,saveobj|exact
+CHK|methods_of_base|AppBase,addlistener,delete,eq,findobj,findprop,ge,gt,isvalid,le,listener,loadobj,lt,ne,notify,saveobj|exact
+CHK|startup_log|startup 3;|exact
+CHK|startup_amp|double [1 1] 3|exact
+CHK|startup_name|ramp|exact
+CHK|startup_drawn|double [1 1] 1|exact
+CHK|startup_title|ramp|exact
+CHK|startup_ydata|double [1 1] 3|exact
+CHK|figure_name|U7 App|exact
+CHK|figure_visible|on|exact
+CHK|figure_handlevisibility|off|exact
+CHK|figure_isa|logical [1 1] 1|exact
+CHK|figure_count|double [1 1] 1|exact
+CHK|grid_children|double [1 1] 6|exact
+CHK|button_cell|double [1 3] 3 1 2|exact
+CHK|axes_isa|logical [1 1] 1|exact
+CHK|isvalid|logical [1 1] 1|exact
+CHK|isprop_running|logical [1 1] 1|exact
+CHK|running_is_app|logical [1 1] 1|exact
+CHK|running_file|U7App.m|exact
+CHK|running_get|logical [1 1] 1|exact
+CHK|isprop_running_plain|logical [1 1] 0|exact
+CHK|running_plain|MATLAB:noSuchMethodOrField|div=ADR0204|diverges|
+CHK|running_write|ran|exact
+CHK|callback_class|function_handle|exact
+CHK|callback_nargin|double [1 1] 2|exact
+CHK|callback_text|@(source,event)executeCallback(ams,app,callback,requiresEventData,event)|div=ADR0204|diverges|@(source, event) executeCallback(ams, app, callback, requiresEventData, event)
+CHK|callback_log|pushed char;|exact
+CHK|callback_presses|double [1 1] 1|exact
+CHK|callback_one_argument|MATLAB:minrhs :: Not enough input arguments.|exact
+CHK|callback_no_arguments|MATLAB:minrhs :: Not enough input arguments.|exact
+CHK|callback_three_arguments|MATLAB:TooManyInputs :: Too many input arguments.|exact
+CHK|callback_arity_log|(none)|exact
+CHK|callback_amp_log|amp 4 struct;|exact
+CHK|callback_no_event_log|name ramp 1;|exact
+CHK|callback_no_event_one|MATLAB:minrhs :: Not enough input arguments.|exact
+CHK|redraw_ydata|double [1 1] 8|exact
+CHK|redraw_children|double [1 1] 1|exact
+CHK|private_method|MATLAB:class:MethodRestricted :: Cannot access method 'redraw' in class 'U7App'.|exact
+CHK|private_method_dot|MATLAB:class:MethodRestricted :: Cannot access method 'redraw' in class 'U7App'.|exact
+CHK|private_callback|MATLAB:class:MethodRestricted :: Cannot access method 'PlotButtonPushed' in class 'U7App'.|exact
+CHK|private_startup|MATLAB:class:MethodRestricted :: Cannot access method 'startupFcn' in class 'U7App'.|exact
+CHK|private_create|MATLAB:class:MethodRestricted :: Cannot access method 'createComponents' in class 'U7App'.|exact
+CHK|private_read|MATLAB:class:GetProhibited|exact
+CHK|private_read_msg|No public property 'Presses' for class ''U7App''.|exact
+CHK|private_write|MATLAB:class:SetProhibited :: Setting the 'Presses' property of class ''U7App'' is not supported.|exact
+CHK|protected_callbackfcn|MATLAB:class:MethodRestricted :: Cannot access method 'createCallbackFcn' in class 'matlab.apps.AppBase'.|exact
+CHK|protected_register|MATLAB:class:MethodRestricted :: Cannot access method 'registerApp' in class 'matlab.apps.AppBase'.|exact
+CHK|protected_startup|MATLAB:class:MethodRestricted :: Cannot access method 'runStartupFcn' in class 'matlab.apps.AppBase'.|exact
+CHK|protected_running|MATLAB:class:MethodRestricted :: Cannot access method 'getRunningApp' in class 'matlab.apps.AppBase'.|exact
+CHK|protected_autoresize|MATLAB:class:MethodRestricted :: Cannot access method 'setAutoResize' in class 'matlab.apps.AppBase'.|exact
+CHK|typed_property_number|MATLAB:graphics:CannotConvertDoubleToHandle :: Error setting property 'UIFigure' of class 'U7App'. Cannot convert double value 5.5 to a handle|exact
+CHK|typed_property_button|MATLAB:validation:UnableToConvert :: Error setting property 'UIFigure' of class 'U7App'. Value must be of type matlab.ui.Figure or be convertible to matlab.ui.Figure.|exact
+CHK|typed_property_kept|logical [1 1] 1|exact
+CHK|private_log|(none)|exact
+CHK|close_log|closereq;delete;|exact
+CHK|close_app_valid|logical [1 1] 0|exact
+CHK|close_figure_valid|logical [1 1] 0|exact
+CHK|close_figure_count|double [1 1] 0|exact
+CHK|dead_app_read|MATLAB:class:InvalidHandle :: Invalid or deleted object.|exact
+CHK|dead_app_method|MATLAB:class:InvalidHandle :: Invalid or deleted object.|exact
+CHK|dead_app_delete|ran|exact
+CHK|dead_log|(none)|exact
+CHK|default_log|startup 1;|exact
+CHK|default_amp|double [1 1] 2|exact
+CHK|delete_log|delete;|exact
+CHK|delete_app_valid|logical [1 1] 0|exact
+CHK|delete_figure_valid|logical [1 1] 0|exact
+CHK|delete_figure_count|double [1 1] 0|exact
+CHK|figure_delete_log|figure listener;app listener;delete;deletefcn;|exact
+CHK|figure_delete_app_valid|logical [1 1] 0|exact
+CHK|clear_log|startup 3;|exact
+CHK|clear_figure_valid|logical [1 1] 1|exact
+CHK|clear_callback_log|pushed double;|exact
+CHK|clear_app_valid|logical [1 1] 1|exact
+CHK|clear_presses|double [1 1] 1|exact
+CHK|clear_again_figure_valid|logical [1 1] 1|exact
+CHK|clear_close_log|closereq;delete;|exact
+CHK|clear_close_figure_valid|logical [1 1] 0|exact
+CHK|bare_ans|double [1 1] 0|exact
+CHK|bare_log|startup 3;|exact
+CHK|bare_figure_count|double [1 1] 1|exact
+CHK|bare_found|double [1 1] 1|exact
+CHK|bare_app_amp|double [1 1] 6|exact
+CHK|bare_delete_log|delete;|exact
+CHK|bare_delete_count|double [1 1] 0|exact
+CHK|too_many_arguments|MATLAB:maxrhs :: Too many input arguments.|exact
+CHK|too_many_log|(none)|exact
+CHK|too_many_count|double [1 1] 1|exact
+CHK|startup_fails|U7:startup :: The startup function failed.|exact
+CHK|startup_fails_log|startup;|exact
+CHK|startup_fails_count|double [1 1] 2|exact
+CHK|startup_bad_argument|MATLAB:ui:NumericEditField:invalidValue :: 'Value' must be a double scalar.|exact
+CHK|startup_bad_log|startup 2;|exact
+CHK|startup_bad_count|double [1 1] 3|exact
+CHK|plain_log|startup;|exact
+CHK|plain_seen|off 0|exact
+CHK|plain_seen_current|1|exact
+CHK|plain_handlevisibility|off|exact
+CHK|callback_seen|on 1|exact
+CHK|callback_seen_current|0|div=ADR0204|diverges|1
+CHK|callback_handlevisibility|callback|exact
+CHK|wrap_class|function_handle|exact
+CHK|wrap_event_log|noted 2;|exact
+CHK|wrap_no_event_log|noted 1;|exact
+CHK|wrap_anonymous_log|anonymous U7Plain double;|exact
+CHK|wrap_public_log|poke;|exact
+CHK|running_same|logical [1 1] 1|exact
+CHK|running_class|U7Plain|exact
+CHK|register_again|ran|exact
+CHK|register_again_same|logical [1 1] 1|exact
+CHK|register_number|MATLAB:UndefinedFunction :: Undefined function 'addprop' for input arguments of type 'double'.|exact
+CHK|autoresize_off|ran|exact
+CHK|autoresize_read|off|exact
+CHK|autoresize_on|ran|exact
+CHK|autoresize_read_on|on|exact
+CHK|start_again|ran|exact
+CHK|start_anonymous|ran|exact
+CHK|start_number|MATLAB:validation:UnableToConvert :: Invalid argument at position 2. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|start_log|poke;anonymous U7Plain;|exact
+CHK|wrap_bad_flag|ran|exact
+CHK|wrap_called_bad_flag|ran|exact
+CHK|wrap_after_delete|ran|exact
+CHK|wrap_after_delete_log|delete;noted 2;|exact
+CHK|plain_figure_valid|logical [1 1] 0|exact
+CHK|single_log|startup 1;|exact
+CHK|single_second_log|delete 1;|exact
+CHK|single_same|logical [1 1] 1|exact
+CHK|single_started|double [1 1] 1|exact
+CHK|single_figure_count|double [1 1] 4|exact
+CHK|single_bare_log|delete 1;|exact
+CHK|single_bare_count|double [1 1] 4|exact
+CHK|single_other_running|logical [1 1] 1|exact
+CHK|single_delete_log|delete 0;|exact
+CHK|single_b_valid|logical [1 1] 0|exact
+CHK|single_new_started|double [1 1] 4|exact
+CHK|single_new_log|startup 4;|exact
+CHK|base_alone|ran|exact
+CHK|base_alone_class|matlab.apps.AppBase|exact
+CHK|base_properties|double [1 1] 0|exact
+CHK|base_superclasses|handle|exact
+CHK|base_exist|double [1 1] 8|exact
+CHK|saveobj_value|double [0 0]|exact
+CHK|saveobj_warning|MATLAB:appdesigner:appdesigner:SaveObjWarning|exact
+CHK|loadobj|MATLAB:appdesigner:appdesigner:LoadObjWarning :: Unable to load App Designer app object. Load not supported for matlab.apps.AppBase objects.|exact
+CHK|end_log|delete 0;startup;delete;delete;delete;delete;|exact
+CHK|end_count|double [1 1] 0|exact

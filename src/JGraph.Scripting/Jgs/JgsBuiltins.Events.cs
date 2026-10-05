@@ -123,7 +123,15 @@ internal static partial class JgsBuiltins
         JgsValue sourceValue = args[0];
         if (sourceValue.Type == JgsType.Number)
         {
-            throw new JgsRuntimeException(line, col, "Double input must be an HG handle");
+            // A graphics handle (U7): the one event every graphics object raises here.
+            if (JgsHandleRegistry.TryGet(sourceValue, out JgsHandleEntry? graphics) && !graphics.Target.BeingDeleted)
+            {
+                return AddGraphicsListener(verb, host, graphics, sourceValue, args, line, col);
+            }
+
+            throw graphics is not null || JgsHandleRegistry.WasMinted(sourceValue.AsNumber)
+                ? new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.")
+                : new JgsRuntimeException(line, col, "MATLAB:addlistener:invalidinput", "Double input must be an HG handle");
         }
 
         if (sourceValue.AsExternalOrNull() is NetObject { IsHandle: true } net)
@@ -245,6 +253,115 @@ internal static partial class JgsBuiltins
         ListenerStates.Add(listener.AsStructArray, state);
         (source.Listeners ??= new List<JgsListener>()).Add(state);
         return listener;
+    }
+
+    /// <summary>
+    /// <c>addlistener(h, 'ObjectBeingDestroyed', @cb)</c> on a graphics handle (U7): the listener
+    /// joins the object's list and is told, with the handle and an <c>event.EventData</c>, as the
+    /// object is deleted. No other event of a graphics object can be listened to here.
+    /// </summary>
+    private static JgsValue AddGraphicsListener(
+        string verb, JGraphScriptGlobals host, JgsHandleEntry entry, JgsValue sourceValue,
+        IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count == 4)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: a property listener on a graphics object is not supported; "
+                + $"'{JgsClass.ObjectBeingDestroyed}' is the event that can be listened to on one.");
+        }
+
+        JgsValue callback = args[^1];
+        if (callback.Type != JgsType.Function || !IsTextScalar(args[1]))
+        {
+            throw new JgsRuntimeException(line, col, $"Invalid input argument for function '{verb}'.");
+        }
+
+        string eventName = TextOf(args[1]);
+        if (eventName != JgsClass.ObjectBeingDestroyed)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:invalidEvent",
+                $"Event '{eventName}' is not defined for class '{JgsGraphicsClasses.ClassOf(entry.Target)}'.");
+        }
+
+        JgsValue listener = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            [EventSourceField] = JgsValue.Cell([sourceValue]),
+            [EventNameField] = JgsValue.Str(eventName),
+            ["Callback"] = callback,
+            ["Enabled"] = JgsValue.Bool(true),
+            ["Recursive"] = JgsValue.Bool(false),
+        });
+        listener.SetClassName(ListenerClassName);
+        var state = new JgsListener
+        {
+            Value = listener,
+            Graphics = entry,
+            SourceValue = sourceValue,
+            Host = host,
+            EventName = eventName,
+            Callback = callback,
+            FromListenerFunction = verb == "listener",
+        };
+
+        JgsLifetime.Unscan(listener);
+        listener.AsStructArray.External = true;
+        listener.AsStructArray.Scanned = state.FromListenerFunction;
+        JgsLifetime.Pin(callback); // the listener holds its callback for as long as it lives
+        ListenerStates.Add(listener.AsStructArray, state);
+        (entry.DestroyListeners ??= new List<JgsListener>()).Add(state);
+        return listener;
+    }
+
+    /// <summary>
+    /// A listener written in C# on a graphics object's going (U7): how an app hears that its
+    /// figure is being deleted. It takes its turn with the script's own listeners, newest first.
+    /// </summary>
+    internal static void AddGraphicsDestroyedHook(JgsHandleEntry entry, JGraphScriptGlobals host, Action hook)
+    {
+        JgsValue source = JgsHandleRegistry.For(entry.Target);
+        JgsValue callback = JgsValue.Function(new BuiltinFunction(JgsClass.ObjectBeingDestroyed, (_, _, _) =>
+        {
+            hook();
+            return JgsValue.Null;
+        }));
+        JgsValue listener = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal));
+        (entry.DestroyListeners ??= new List<JgsListener>()).Add(new JgsListener
+        {
+            Value = listener,
+            Graphics = entry,
+            SourceValue = source,
+            Host = host,
+            EventName = JgsClass.ObjectBeingDestroyed,
+            Callback = callback,
+        });
+    }
+
+    /// <summary>
+    /// Tells a graphics object's <c>ObjectBeingDestroyed</c> listeners that it is going, newest
+    /// first, each with the handle and an <c>event.EventData</c>. A listener's failure is a
+    /// warning, as it is on any other source.
+    /// </summary>
+    internal static void FireGraphicsDestroyed(JgsHandleEntry entry)
+    {
+        if (entry.DestroyListeners is not { Count: > 0 } listeners)
+        {
+            return;
+        }
+
+        JgsListener[] due = [.. listeners];
+        entry.DestroyListeners = null; // told once: the object goes once
+        for (int i = due.Length - 1; i >= 0; i--)
+        {
+            JgsListener listener = due[i];
+            if (listener.Deleted || !listener.Enabled)
+            {
+                continue;
+            }
+
+            RunListener(listener, listener.SourceValue, NewEventData(JgsClass.ObjectBeingDestroyed, listener.SourceValue),
+                $"for event {JgsClass.ObjectBeingDestroyed} defined for class {JgsGraphicsClasses.ClassOf(entry.Target)}");
+        }
     }
 
     /// <summary>The property or properties a four-argument <c>addlistener</c> names.</summary>

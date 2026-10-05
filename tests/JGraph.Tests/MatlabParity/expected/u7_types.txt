@@ -1,0 +1,88 @@
+CHK|isa_figure|1111100000000000000000000000|exact
+CHK|isa_axes|1111011000000000000000000000|exact
+CHK|isa_line|1111000010000000000000000000|exact
+CHK|isa_text|1111000001000000000000000000|exact
+CHK|isa_uicontrol|1111000000100000000000000000|exact
+CHK|isa_uifigure|1111100000000000000000000000|exact
+CHK|isa_grid|1111000000010000000000000000|exact
+CHK|isa_button|1111000000000010000000000000|exact
+CHK|isa_label|1111000000000001000000000000|exact
+CHK|isa_editfield|1111000000000000100000000000|exact
+CHK|isa_numericfield|1111000000000000010000000000|exact
+CHK|isa_dropdown|1111000000000000001000000000|exact
+CHK|isa_checkbox|1111000000000000000100000000|exact
+CHK|isa_slider|1111000000000000000010000000|exact
+CHK|isa_uiaxes|1111011100000000000000000000|exact
+CHK|isa_panel|1111000000001000000000000000|exact
+CHK|isa_buttongroup|1111000000001100000000000000|exact
+CHK|isa_radio|1111000000000000000001000000|exact
+CHK|isa_root|1111000000000000000000100000|exact
+CHK|isa_number|logical [1 1] 0|exact
+CHK|isa_empty|logical [1 1] 0|exact
+CHK|isa_char|logical [1 1] 0|exact
+CHK|isa_struct|logical [1 1] 0|exact
+CHK|isa_gobjects|1|div=ADR0204|diverges|0
+CHK|isa_gobjects_handle|1|div=ADR0204|diverges|0
+CHK|isa_two_figures|logical [1 1] 1|exact
+CHK|isa_two_buttons|logical [1 1] 1|exact
+CHK|isgraphics_button|logical [1 1] 1|exact
+CHK|isgraphics_button_type|logical [1 1] 1|exact
+CHK|ishghandle_figure|logical [1 1] 1|exact
+CHK|isvalid_button|logical [1 1] 1|exact
+CHK|class_figure|matlab.ui.Figure|div=ADR0204|diverges|double
+CHK|class_button|matlab.ui.control.Button|div=ADR0204|diverges|double
+CHK|isa_figure_double|0|div=ADR0204|diverges|1
+CHK|isa_one_is_figure|0|div=ADR0204|diverges|1
+CHK|isobject_button|1|div=ADR0204|diverges|0
+CHK|typed_default_isempty|logical [1 1] 1|exact
+CHK|typed_default_size|double [1 2] 0 0|exact
+CHK|typed_default_numel|double [1 1] 0|exact
+CHK|typed_default_number|double [0 0]|exact
+CHK|typed_default_isa|1|div=ADR0204|diverges|0
+CHK|typed_delete_empty|ran|exact
+CHK|typed_figure_uifigure|ran|exact
+CHK|typed_figure_held|logical [1 1] 1|exact
+CHK|typed_figure_classic|ran|exact
+CHK|typed_figure_classic_held|double [1 1] 1|exact
+CHK|typed_figure_button|MATLAB:validation:UnableToConvert :: Error setting property 'Fig' of class 'U7Typed'. Value must be of type matlab.ui.Figure or be convertible to matlab.ui.Figure.|exact
+CHK|typed_figure_number|MATLAB:graphics:CannotConvertDoubleToHandle :: Error setting property 'Fig' of class 'U7Typed'. Cannot convert double value 5.5 to a handle|exact
+CHK|typed_figure_text|MATLAB:validation:UnableToConvert :: Error setting property 'Fig' of class 'U7Typed'. Value must be of type matlab.ui.Figure or be convertible to matlab.ui.Figure.|exact
+CHK|typed_figure_cell|MATLAB:validation:UnableToConvert :: Error setting property 'Fig' of class 'U7Typed'. Value must be of type matlab.ui.Figure or be convertible to matlab.ui.Figure.|exact
+CHK|typed_figure_kept|logical [1 1] 1|exact
+CHK|typed_figure_empty|MATLAB:validation:UnableToConvert|div=ADR0204|diverges|ran
+CHK|typed_figure_emptied|0|div=ADR0204|diverges|1
+CHK|typed_figure_two|ran|exact
+CHK|typed_figure_two_size|double [1 2] 1 2|exact
+CHK|typed_button|ran|exact
+CHK|typed_button_held|Button|exact
+CHK|typed_button_label|MATLAB:validation:UnableToConvert :: Error setting property 'Btn' of class 'U7Typed'. Value must be of type matlab.ui.control.Button or be convertible to matlab.ui.control.Button.|exact
+CHK|typed_button_figure|MATLAB:validation:UnableToConvert :: Error setting property 'Btn' of class 'U7Typed'. Value must be of type matlab.ui.control.Button or be convertible to matlab.ui.control.Button.|exact
+CHK|typed_uiaxes|ran|exact
+CHK|typed_uiaxes_axes|MATLAB:validation:UnableToConvert :: Error setting property 'Ax' of class 'U7Typed'. Value must be of type matlab.ui.control.UIAxes or be convertible to matlab.ui.control.UIAxes.|exact
+CHK|typed_axes_uiaxes|ran|exact
+CHK|typed_axes_axes|ran|exact
+CHK|typed_axes_line|MATLAB:validation:UnableToConvert :: Error setting property 'AnyAx' of class 'U7Typed'. Value must be of type matlab.graphics.axis.Axes or be convertible to matlab.graphics.axis.Axes.|exact
+CHK|typed_panel|ran|exact
+CHK|typed_panel_buttongroup|ran|exact
+CHK|typed_panel_grid|MATLAB:validation:UnableToConvert :: Error setting property 'Pan' of class 'U7Typed'. Value must be of type matlab.ui.container.Panel or be convertible to matlab.ui.container.Panel.|exact
+CHK|typed_graphics_line|ran|exact
+CHK|typed_graphics_button|ran|exact
+CHK|typed_graphics_number|MATLAB:graphics:CannotConvertDoubleToHandle :: Error setting property 'Any' of class 'U7Typed'. Cannot convert double value 5.5 to a handle|exact
+CHK|typed_graphics_object|MATLAB:validation:UnableToConvert :: Error setting property 'Any' of class 'U7Typed'. Value must be of type matlab.graphics.Graphics or be convertible to matlab.graphics.Graphics.|exact
+CHK|typed_line|ran|exact
+CHK|typed_line_text|MATLAB:validation:UnableToConvert :: Error setting property 'Ln' of class 'U7Typed'. Value must be of type matlab.graphics.chart.primitive.Line or be convertible to matlab.graphics.chart.primitive.Line.|exact
+CHK|typed_line_held|-|exact
+CHK|typed_write_through|through|exact
+CHK|typed_write_through_axes|double [1 2] 0 5|exact
+CHK|listener_class|event.listener|exact
+CHK|listener_valid|logical [1 1] 1|exact
+CHK|destroy_order|figure again;figure;figure deletefcn;panel;panel deletefcn;button event.EventData ObjectBeingDestroyed 0;button deletefcn;|exact
+CHK|listener_valid_after|logical [1 1] 1|exact
+CHK|destroy_removed|listener;|exact
+CHK|destroy_dropped_listener|(none)|exact
+CHK|listener_unknown_event|MATLAB:class:invalidEvent :: Event 'Bogus' is not defined for class 'matlab.ui.Figure'.|exact
+CHK|listener_dead_handle|MATLAB:class:InvalidHandle :: Invalid or deleted object.|exact
+CHK|listener_number|MATLAB:addlistener:invalidinput :: Double input must be an HG handle|exact
+CHK|destroy_cla|line;|exact
+CHK|destroy_close|figure;axes;|exact
+CHK|destroy_all|all;|exact

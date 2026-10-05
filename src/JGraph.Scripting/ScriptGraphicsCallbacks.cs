@@ -435,7 +435,7 @@ public static class ScriptGraphicsCallbacks
             GraphicsEventKind.MenuSelected => entry.MenuSelectedFcn is not null,
             GraphicsEventKind.ToolbarSelectionChanged => entry.SelectionChangedFcn is not null,
             GraphicsEventKind.ContextMenuOpening => entry.ContextMenuOpeningFcn is not null,
-            GraphicsEventKind.ObjectDeleted => entry.DeleteFcn is not null,
+            GraphicsEventKind.ObjectDeleted => entry.DeleteFcn is not null || entry.DestroyListeners is { Count: > 0 },
             GraphicsEventKind.KeyPress => entry.KeyPressFcn is not null,
             GraphicsEventKind.KeyRelease => entry.KeyReleaseFcn is not null,
             GraphicsEventKind.WindowKeyPress => entry.WindowKeyPressFcn is not null,

@@ -207,7 +207,51 @@ internal sealed class JgsFunctionPath
 
         // The current folder and the running script's own folder come first, exactly as they do for
         // every other file a script names — Resolve already knows that order, so it is not repeated.
-        string beside = _host.Resolve(name + ".m");
+        // In one folder an .mlapp is found before an .m of the same name (U7, measured in R2025b).
+        foreach (string extension in CodeExtensions)
+        {
+            string beside = _host.Resolve(name + extension);
+            if (File.Exists(beside))
+            {
+                return Path.GetFullPath(beside);
+            }
+        }
+
+        foreach (string folder in _folders)
+        {
+            foreach (string extension in CodeExtensions)
+            {
+                string candidate = Path.Combine(folder, name + extension);
+                if (File.Exists(candidate))
+                {
+                    fromAddedFolder = true;
+                    return candidate;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// The file a name means when it may carry a code file's extension: <c>which('app1.mlapp')</c>
+    /// and <c>type helper.m</c> look where a call would. Null for any other extension.
+    /// </summary>
+    internal string? FindFile(string asked)
+    {
+        string extension = Path.GetExtension(asked);
+        if (extension.Length == 0)
+        {
+            return Find(asked);
+        }
+
+        string stem = asked[..^extension.Length];
+        if (!CodeExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase) || !IsPlainName(stem))
+        {
+            return null;
+        }
+
+        string beside = _host.Resolve(asked);
         if (File.Exists(beside))
         {
             return Path.GetFullPath(beside);
@@ -215,15 +259,59 @@ internal sealed class JgsFunctionPath
 
         foreach (string folder in _folders)
         {
-            string candidate = Path.Combine(folder, name + ".m");
+            string candidate = Path.Combine(folder, asked);
             if (File.Exists(candidate))
             {
-                fromAddedFolder = true;
                 return candidate;
             }
         }
 
         return null;
+    }
+
+    /// <summary>The extensions a name is looked for under, first found first: an App Designer file, then a code file.</summary>
+    internal static readonly string[] CodeExtensions = [JgsMlapp.Extension, ".m"];
+
+    /// <summary>
+    /// Every file <paramref name="name"/> names, in the order MATLAB's <c>which -all</c> lists them:
+    /// folder by folder, the <c>.mlapp</c> of a folder before its <c>.m</c>.
+    /// </summary>
+    internal IReadOnlyList<string> FindAll(string name)
+    {
+        var found = new List<string>();
+        if (!IsPlainName(name))
+        {
+            return found;
+        }
+
+        void Add(string candidate)
+        {
+            string full = Path.GetFullPath(candidate);
+            if (File.Exists(full) && !found.Contains(full, PathComparer))
+            {
+                found.Add(full);
+            }
+        }
+
+        string? first = Find(name);
+        string? firstFolder = first is null ? null : Path.GetDirectoryName(first);
+        if (firstFolder is not null)
+        {
+            foreach (string extension in CodeExtensions)
+            {
+                Add(Path.Combine(firstFolder, name + extension));
+            }
+        }
+
+        foreach (string folder in _folders)
+        {
+            foreach (string extension in CodeExtensions)
+            {
+                Add(Path.Combine(folder, name + extension));
+            }
+        }
+
+        return found;
     }
 
     /// <summary>
@@ -360,7 +448,12 @@ internal sealed class JgsFunctionPath
         string source;
         try
         {
-            source = File.ReadAllText(path);
+            source = JgsMlapp.ReadSource(path);
+        }
+        catch (InvalidDataException)
+        {
+            // An .mlapp that is not a package MATLAB can read: R2025b's refusal (U7, measured).
+            throw new JgsRuntimeException(0, 0, "MATLAB:fileio:cantOpenFile", $"{path}: Can't open file.");
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -393,7 +486,7 @@ internal sealed class JgsFunctionPath
         {
             if (!string.Equals(classFile.Name, name, StringComparison.Ordinal))
             {
-                throw new JgsRuntimeException(classFile.Line, classFile.Column,
+                throw new JgsRuntimeException(classFile.Line, classFile.Column, "MATLAB:m_class_filename",
                     $"'{Path.GetFileName(path)}' defines class '{classFile.Name}', so it answers to "
                     + $"'{classFile.Name}' and not to '{name}' — a class file is named after its class.");
             }

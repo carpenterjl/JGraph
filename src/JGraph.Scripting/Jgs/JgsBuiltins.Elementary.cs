@@ -331,6 +331,13 @@ internal static partial class JgsBuiltins
                 return JgsValue.True;
             }
 
+            // A number that names a live graphics object is also R2025b's class of that object and
+            // each class it derives from (U7, decision Q2): isa(fig, 'matlab.ui.Figure').
+            if (JgsGraphicsClasses.TryIsA(args[0], wanted, out bool graphics))
+            {
+                return JgsValue.Bool(graphics);
+            }
+
             string actual = ClassOf(args[0], dialect);
             JgsNumericClass? numericClass = JgsNumericClasses.Parse(actual);
             return JgsValue.Bool(wanted switch

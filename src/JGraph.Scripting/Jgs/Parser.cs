@@ -510,6 +510,13 @@ internal sealed class Parser
         if (Check(TokenType.Identifier))
         {
             className = Advance().Text;
+
+            // A class in a package is written with its dots: UIFigure matlab.ui.Figure (U7).
+            while (Check(TokenType.Dot) && _tokens[_pos + 1].Type == TokenType.Identifier)
+            {
+                Advance();
+                className += "." + Advance().Text;
+            }
         }
 
         var validators = new List<Expr>();
@@ -817,6 +824,10 @@ internal sealed class Parser
                 {
                     throw Error(header, "A 'methods' block holds functions and nothing else.");
                 }
+
+                // A method is built here, not by ParseStatement, so it is told its file here: the
+                // body runs as that file (mfilename, private/ folders, the error stack).
+                function.SourceId = _sourceId;
 
                 into.Add(new ClassMethod(function, isStatic)
                 {

@@ -129,8 +129,16 @@ internal sealed class JgsClass
         // That is MATLAB's rule and it is the one that makes a helper method usable: `value(x)` inside
         // `plus` has to work for a plain number too, and dispatch cannot help there because a plain
         // number belongs to no class.
+        // The constructor is told how many outputs were asked for (U7): App Designer's ends with
+        // `if nargout == 0, clear app, end`, which is how an app run as a statement leaves no ans.
         _constructor = JgsValue.Function(
-            new BuiltinFunction(Name, (args, line, col) => Construct(args, line, col)) { AutoCallsBare = true });
+            new BuiltinFunction(Name, (args, line, col) => Construct(args, line, col))
+            {
+                AutoCallsBare = true,
+                TakesOutputCount = true,
+                MultiOutput = (args, wanted, line, col) =>
+                    ConstructAsked(args, wanted, line, col) is { } made ? [made] : [],
+            });
         foreach (ClassMethod method in _own.Values)
         {
             if (!method.Abstract)
@@ -208,10 +216,12 @@ internal sealed class JgsClass
             // A class that wrote no constructor still has one (measured: methods lists 'U6Doc').
             if (!_own.ContainsKey(Name) && !Declaration.Abstract)
             {
-                listed = listed.Append(Name);
+                listed = listed.Append(Name[(Name.LastIndexOf('.') + 1)..]); // matlab.apps.AppBase lists 'AppBase'
             }
 
-            return IsHandle ? listed.Concat(HandleMethodNames).Distinct(StringComparer.Ordinal) : listed;
+            // In R2025b's order (U7, measured): by character code, so the constructor's capital leads.
+            return (IsHandle ? listed.Concat(HandleMethodNames).Distinct(StringComparer.Ordinal) : listed)
+                .Order(StringComparer.Ordinal);
         }
     }
 
@@ -512,6 +522,13 @@ internal sealed class JgsClass
         }
         catch (JgsRuntimeException failure)
         {
+            // A property typed with a graphics class refuses in R2025b's words (U7, measured).
+            if (failure.Identifier is "MATLAB:graphics:CannotConvertDoubleToHandle" or "MATLAB:validation:UnableToConvert")
+            {
+                throw new JgsRuntimeException(line, col, failure.Identifier,
+                    $"Error setting property '{property.Spec.Name}' of class '{owner.Name}'. {failure.Message}");
+            }
+
             // The validator's identifier travels with the refusal (U6): a script branches on it.
             throw new JgsRuntimeException(line, col, failure.Identifier,
                 $"{Name}.{property.Spec.Name}: {failure.Message}");
@@ -528,7 +545,7 @@ internal sealed class JgsClass
             ? _interpreter.EvaluateInContext(
                 expression, owner.DefaultWorkspace(), owner.Declaration.SourceId, $"{owner.Name}.{property.Spec.Name} default",
                 line, owner.Declaration.Dialect)
-            : JgsValue.Array([]);
+            : JgsMatrix.FromColumnMajor([], 0, 0); // MATLAB's [], 0-by-0 (U7, measured)
         return Check(property, start, line, col);
     }
 
@@ -564,7 +581,14 @@ internal sealed class JgsClass
     /// starts out fully defaulted, which is what lets a constructor set two properties and leave the
     /// rest alone.
     /// </summary>
-    public JgsValue Construct(IReadOnlyList<JgsValue> arguments, int line, int col)
+    public JgsValue Construct(IReadOnlyList<JgsValue> arguments, int line, int col) =>
+        ConstructAsked(arguments, 1, line, col)!;
+
+    /// <summary>
+    /// <see cref="Construct"/>, told how many outputs the call asked for. Null when it asked for
+    /// none and the constructor cleared its own output, which is the one way to make nothing.
+    /// </summary>
+    private JgsValue? ConstructAsked(IReadOnlyList<JgsValue> arguments, int wanted, int line, int col)
     {
         if (_own.TryGetValue(Name, out ClassMethod? constructor) && !constructor.Access.IsPublic
             && !Allows(constructor.Access, this, _interpreter.ContextClass(), Name))
@@ -584,7 +608,7 @@ internal sealed class JgsClass
                       + $"properties that '{Name}' must implement if you do not intend the class to be abstract.");
         }
 
-        return RunConstructor(JgsValue.Object(NewDefault(line, col)), arguments, line, col);
+        return RunConstructor(JgsValue.Object(NewDefault(line, col)), arguments, wanted, line, col);
     }
 
     /// <summary>
@@ -593,7 +617,10 @@ internal sealed class JgsClass
     /// <c>obj@Super(…)</c> - is constructed first with no arguments, as R2025b does; a class with
     /// no constructor hands its arguments to its one superclass (measured: <c>U6Cube(5)</c>).
     /// </summary>
-    internal JgsValue RunConstructor(JgsValue built, IReadOnlyList<JgsValue> arguments, int line, int col)
+    internal JgsValue RunConstructor(JgsValue built, IReadOnlyList<JgsValue> arguments, int line, int col) =>
+        RunConstructor(built, arguments, 1, line, col)!;
+
+    private JgsValue? RunConstructor(JgsValue built, IReadOnlyList<JgsValue> arguments, int wanted, int line, int col)
     {
         if (!_own.TryGetValue(Name, out ClassMethod? constructor) || constructor.Native is not null)
         {
@@ -660,18 +687,28 @@ internal sealed class JgsClass
         }
 
         local.Declare("nargin", JgsValue.Number(arguments.Count));
-        local.Declare("nargout", JgsValue.Number(1));
+        local.Declare("nargout", JgsValue.Number(wanted));
         local.Declare(output, built);
 
         _interpreter.ExecuteFunctionBody(declaration, local, line);
         if (!local.TryGet(output, out JgsValue result) || result.Type != JgsType.Object)
         {
+            // Asked for nothing and left nothing: `clear app` at the end of an app's constructor.
+            if (wanted == 0 && !local.DeclaresLocally(output))
+            {
+                return null;
+            }
+
             throw new JgsRuntimeException(line, col,
                 $"The constructor of '{Name}' finished without leaving a '{Name}' in '{output}'.");
         }
 
         return result;
     }
+
+    /// <summary>Whether <paramref name="function"/> is one of the methods this class's own file declares.</summary>
+    internal bool DeclaresMethod(FnStmt function) =>
+        _own.TryGetValue(function.Name, out ClassMethod? method) && ReferenceEquals(method.Function, function);
 
     /// <summary>Whether <paramref name="function"/> is this class's constructor - the one place an immutable property is written.</summary>
     internal bool IsConstructor(FnStmt? function) =>
@@ -946,6 +983,14 @@ internal sealed class JgsObject
 
     /// <summary>Marks the instance deleted; a second <c>delete</c> is a no-op and runs no destructor.</summary>
     public void MarkDeleted() => Deleted = true;
+
+    /// <summary>
+    /// The object is on its way out (U7, measured in R2025b): <c>isvalid</c> already answers
+    /// false, to an <c>ObjectBeingDestroyed</c> listener and to the class's own <c>delete</c>
+    /// alike, and both still read its properties. A <c>delete</c> that arrives meanwhile - an
+    /// app's figure deleting the app that is deleting the figure - finds nothing left to do.
+    /// </summary>
+    public bool Destroying { get; set; }
 
     /// <summary>
     /// The listeners <c>addlistener</c> put on this instance, oldest first (V6, #106, #108). They

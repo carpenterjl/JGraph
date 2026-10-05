@@ -497,6 +497,11 @@ internal static partial class JgsGraphicsProperties
 
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
+            if (entry.AddedProperties is { } added && added.TryGetValue(name, out JgsValue? held))
+            {
+                return held;
+            }
+
             throw Unknown(entry.Target, name, line, col, reading: true);
         }
 
@@ -516,6 +521,13 @@ internal static partial class JgsGraphicsProperties
 
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
+            if (entry.AddedProperties is { } added && added.ContainsKey(name))
+            {
+                JgsLifetime.Pin(value); // the object holds it for as long as it likes
+                added[name] = value;
+                return;
+            }
+
             throw Unknown(entry.Target, name, line, col);
         }
 

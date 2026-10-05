@@ -65,14 +65,14 @@ public partial class ScriptWorkspaceWindow
 
                 try
                 {
-                    string text = File.ReadAllText(script.FullPath);
+                    string text = ScriptDocumentModel.ReadFile(script.FullPath);
                     if (FunctionLocator.FindDefinition(text, ScriptDocumentModel.LanguageForFile(script.FullPath), name) is int line)
                     {
                         OpenDocumentAt(script.FullPath, line);
                         return;
                     }
                 }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
                 {
                     // An unreadable script simply does not define it.
                 }
@@ -186,7 +186,7 @@ public partial class ScriptWorkspaceWindow
         string? scriptDirectory = ActiveDocument?.Model.FilePath is { } current ? Path.GetDirectoryName(current) : null;
         IEnumerable<string> candidates = Path.HasExtension(argument)
             ? new[] { argument }
-            : new[] { argument + ".m", argument + ".jgs", argument + ".py", argument + ".csx", argument + ".txt", argument };
+            : new[] { argument + ".mlapp", argument + ".m", argument + ".jgs", argument + ".py", argument + ".csx", argument + ".txt", argument };
         foreach (string candidate in candidates)
         {
             string resolved = _workspace is { } workspace

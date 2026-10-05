@@ -33,7 +33,8 @@ public static class WorkspaceFiles
         {
             ".csv" or ".tsv" or ".xlsx" => WorkspaceFileKind.Data,
             ".graph" => WorkspaceFileKind.Figure,
-            ".jgs" or ".m" or ".csx" or ".cs" or ".py" or ".txt" or ".md" or ".json" => WorkspaceFileKind.Document,
+            // An .mlapp opens as the class file it holds (app-building plan, U7).
+            ".jgs" or ".m" or ".mlapp" or ".csx" or ".cs" or ".py" or ".txt" or ".md" or ".json" => WorkspaceFileKind.Document,
             _ => WorkspaceFileKind.Unsupported,
         };
     }

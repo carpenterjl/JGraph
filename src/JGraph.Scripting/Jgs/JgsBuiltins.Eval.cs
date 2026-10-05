@@ -28,7 +28,7 @@ internal static partial class JgsBuiltins
         "func2str", "functions", "mfilename", "inputname",
 
         // M62: the search path is interpreter state, so the builtins that manage it are declared here.
-        "path", "addpath", "rmpath", "genpath", "pathsep",
+        "path", "addpath", "rmpath", "genpath", "pathsep", "type",
 
         // M58: the legacy function plotters take their function as text, which needs the interpreter
         // to turn into a handle — the same reason eval itself is declared here.
@@ -189,7 +189,12 @@ internal static partial class JgsBuiltins
         DefineBare("mfilename", (args, line, col) =>
         {
             ArityRange("mfilename", args, 0, 1, line, col);
-            string? path = host.RunScriptPath;
+
+            // The file the running code was read from - a function's, a class's, an .mlapp's (U7:
+            // a method used to answer with the script that called it) - or the script being run.
+            string? path = interpreter.CurrentFile is { Length: > 0 } running && Path.IsPathRooted(running) && File.Exists(running)
+                ? running
+                : host.RunScriptPath;
 
             // Bare mfilename is the name without its extension; 'fullpath' asks for the whole path
             // minus the extension. Code typed at the prompt has no file, and reports nothing.
@@ -670,10 +675,29 @@ internal static partial class JgsBuiltins
                     return JgsValue.Number(7);
                 }
 
+                // A class this build supplies for a class file to inherit from: matlab.apps.AppBase (U7).
+                if (kind != "dir" && interpreter.BuiltinClass(name) is not null)
+                {
+                    return JgsValue.Number(8);
+                }
+
                 // The classes of the NET package JGraph answers with (probe3, ADR 0176).
                 if (kind != "dir" && name is "NET.NetException" or "NET.Assembly")
                 {
                     return JgsValue.Number(8);
+                }
+            }
+
+            // A class file, asked about as a class (U7, measured: 8 for a class in an .m or an .mlapp).
+            if (kind == "class")
+            {
+                try
+                {
+                    return JgsValue.Number(interpreter.ClassForLoad(name) is not null ? 8 : 0);
+                }
+                catch (JgsException)
+                {
+                    return JgsValue.Number(0); // a file that does not load is not a class
                 }
             }
 
@@ -690,15 +714,27 @@ internal static partial class JgsBuiltins
 
             // A function the resolver would run from a file — a local function of the running file
             // included, which R2025b also reports as 2 — before a plain file of that exact name.
-            if (wantFile && AFileAnswers(name))
+            // A file that is there and does not load is still there (U7, measured: 2 for an .mlapp
+            // MATLAB cannot open).
+            bool answers;
+            try
+            {
+                answers = wantFile && AFileAnswers(name);
+            }
+            catch (JgsRuntimeException)
+            {
+                answers = interpreter.FunctionPath?.Find(name) is not null;
+            }
+
+            if (answers)
             {
                 return JgsValue.Number(2);
             }
 
             string resolved = host.Resolve(name);
-            if (wantFile && File.Exists(resolved))
+            if (wantFile && (File.Exists(resolved) || interpreter.FunctionPath?.FindFile(name) is not null))
             {
-                return JgsValue.Number(2);
+                return JgsValue.Number(2); // a code file named with its extension is looked for on the path too (U7)
             }
 
             if (wantFolder && Directory.Exists(resolved))
@@ -797,13 +833,30 @@ internal static partial class JgsBuiltins
                 where.Add($"{name} is a built-in method");
             }
 
-            // Not a function at all: a data file the name spells out, when there is one.
+            // Every file of the name, an .mlapp before the .m beside it (U7, measured).
+            if (all && interpreter.FunctionPath is { } everywhere)
+            {
+                foreach (string file in everywhere.FindAll(name))
+                {
+                    if (!where.Contains(file, JgsFunctionPath.PathComparer))
+                    {
+                        where.Add(file);
+                    }
+                }
+            }
+
+            // Not a function at all: a data file the name spells out, when there is one - a code
+            // file named with its extension is looked for on the path as well (U7).
             if (where.Count == 0)
             {
                 string resolved = host.Resolve(name);
                 if (File.Exists(resolved))
                 {
                     where.Add(resolved);
+                }
+                else if (interpreter.FunctionPath?.FindFile(name) is { } onPath)
+                {
+                    where.Add(onPath);
                 }
             }
 

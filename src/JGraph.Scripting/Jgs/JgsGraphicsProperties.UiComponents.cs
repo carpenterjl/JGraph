@@ -48,7 +48,7 @@ internal static partial class JgsGraphicsProperties
         UiGridLayoutModel => "matlab.ui.container.GridLayout",
         UiComponentModel => "matlab.ui.control." + JgsGraphicsCallbackValues.ClassWord(target),
         FigureModel => "matlab.ui.Figure",
-        AxesModel { ReplaceChildrenOnly: true } => "matlab.ui.control.UIAxes",
+        AxesModel { IsUiAxes: true } => "matlab.ui.control.UIAxes",
         _ => JgsGraphicsCallbackValues.ClassWord(target),
     };
 

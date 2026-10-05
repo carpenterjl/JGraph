@@ -200,6 +200,15 @@ internal sealed class JgsNameResolver
     /// </summary>
     public Resolution Invoke(string name, Resolution lexical, IReadOnlyList<JgsValue> arguments)
     {
+        // A class's method is found by the walk from the class's own code, and is still a method:
+        // it takes a call that has one of its objects among the arguments. delete(app.UIFigure)
+        // in an app's delete is the figure's delete, not the app's (U7).
+        if (lexical.IsLexical && _interpreter.Dialect.IsMatlab && MethodWithoutItsObject(name, lexical.Value, arguments)
+            && BuiltinOf(name) is { } meant)
+        {
+            lexical = new Resolution(ResolutionLayer.Builtin, meant, null);
+        }
+
         if (lexical.IsLexical || !_interpreter.Dialect.IsMatlab)
         {
             // A method called by bare name from its own class's code still dispatches on the
@@ -571,6 +580,32 @@ internal sealed class JgsNameResolver
     /// of a subclass, or another class's method of the same name - asked for as the class the
     /// name was written in. Null when the found function is the one to call.
     /// </summary>
+    /// <summary>
+    /// Whether what the walk found is an instance method of a class and no argument is an object
+    /// of that class: a call the method was never going to answer in MATLAB, where a method is
+    /// reached through its object and not through the file it is written in.
+    /// </summary>
+    private bool MethodWithoutItsObject(string name, JgsValue found, IReadOnlyList<JgsValue> arguments)
+    {
+        if (!_interpreter.AnyClasses || found.Type != JgsType.Function
+            || found.AsCallable is not UserFunction { Owner: { } owner }
+            || string.Equals(name, owner.Name, StringComparison.Ordinal)
+            || !owner.TryMethod(name, out ClassMethod? method) || method.Static)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < arguments.Count; i++)
+        {
+            if (arguments[i].Type == JgsType.Object && arguments[i].AsObject.Class.IsA(owner.Name))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private IJgsCallable? OverriddenFor(string name, JgsValue found, IReadOnlyList<JgsValue> arguments)
     {
         if (!_interpreter.AnyClasses || found.Type != JgsType.Function
@@ -579,8 +614,11 @@ internal sealed class JgsNameResolver
             return null;
         }
 
+        // delete is asked of the object whatever its class (U7): delete(app) written in the app's
+        // own code is the whole destruction - the listeners, each class's delete, the mark - and
+        // not a bare call of the method's body.
         return DominantObject(arguments) is { Type: JgsType.Object } instance
-            && !ReferenceEquals(instance.AsObject.Class, owner)
+            && (!ReferenceEquals(instance.AsObject.Class, owner) || name == "delete")
             && _interpreter.TryUserMethod(name, instance, owner, true, out IJgsCallable? method)
             ? method
             : null;

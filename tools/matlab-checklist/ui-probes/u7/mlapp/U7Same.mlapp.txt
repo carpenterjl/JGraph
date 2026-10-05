@@ -1,0 +1,6 @@
+classdef U7Same < handle
+    % The class of this name that lives in an .mlapp (U7 fixtures).
+    properties
+        Source = 'mlapp'
+    end
+end

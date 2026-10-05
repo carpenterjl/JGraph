@@ -1,0 +1,12 @@
+[Warning: Unable to save App Designer app object. Save not supported for matlab.apps.AppBase objects.] 
+saveobj: MATLAB:appdesigner:appdesigner:SaveObjWarning | Unable to save App Designer app object. Save not supported for matlab.apps.AppBase objects.
+order on delete(app): listener valid=0;delete;
+plain class order: listener valid=0;delete valid=0;
+direct delete of a button: listener valid=0 same=1;deletefcn valid=0;
+property listener on a figure: listener valid=0 same=1;deletefcn valid=0;name;
+events of a deleted button: 4
+events of a button: ButtonPushed,ObjectBeingDestroyed,PropertyAdded,PropertyRemoved
+events of a figure: ObjectBeingDestroyed,PropertyAdded,PropertyRemoved
+too many: MATLAB:maxrhs | Too many input arguments. | @(app)startupFcn(app,varargin{:})
+too many, function: MATLAB:TooManyInputs | Too many input arguments.
+too many, anonymous: MATLAB:TooManyInputs | Too many input arguments.

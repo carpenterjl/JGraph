@@ -65,10 +65,13 @@ public static class JgsCompletionEngine
             if (!IsInStringOrComment(code, replaceStart, matlab) && DottedQualifier(code, replaceStart) is { } qualifier)
             {
                 string typed = code[replaceStart..offset];
-                // jgraph and its packages are JGraph's own (ADR 0197); every other dotted name is .NET's.
-                IEnumerable<CompletionItem> offered = DeviceCompletion.PackageMembers(qualifier) is { } package
-                    ? package.Concat(names.Members(qualifier))
-                    : names.Members(qualifier);
+                // app. in a class file is the class's own members (U7). jgraph and its packages are
+                // JGraph's own (ADR 0197); every other dotted name is .NET's.
+                IEnumerable<CompletionItem> offered = ClassCompletion.Members(code, qualifier) is { } ofClass
+                    ? ofClass
+                    : DeviceCompletion.PackageMembers(qualifier) is { } package
+                        ? package.Concat(names.Members(qualifier))
+                        : names.Members(qualifier);
                 var members = offered
                     .Where(i => i.Text.StartsWith(typed, StringComparison.OrdinalIgnoreCase))
                     .DistinctBy(static i => i.Text)

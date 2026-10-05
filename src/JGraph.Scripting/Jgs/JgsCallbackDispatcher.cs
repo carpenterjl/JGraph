@@ -279,7 +279,18 @@ internal sealed class JgsCallbackDispatcher
             ScriptUiTrace.Write($"dispatch: {graphicsEvent.Kind} on {graphicsEvent.Target.GetType().Name}");
         }
 
-        if (!TryResolve(graphicsEvent, out JgsHandleEntry? entry, out JgsValue callback))
+        // An object on its way out tells its ObjectBeingDestroyed listeners first, newest first,
+        // and then runs its DeleteFcn (U7, measured in R2025b). The DeleteFcn is read before the
+        // listeners run: one of them may finish the deletion - an app's delete deletes its figure -
+        // and the callback is owed all the same.
+        bool resolved = TryResolve(graphicsEvent, out JgsHandleEntry? entry, out JgsValue callback);
+        if (graphicsEvent.Kind == GraphicsEventKind.ObjectDeleted
+            && JgsHandleRegistry.TryGetEntry(graphicsEvent.Target, out JgsHandleEntry? leaving))
+        {
+            JgsBuiltins.FireGraphicsDestroyed(leaving);
+        }
+
+        if (!resolved || entry is null)
         {
             // A close request whose callback vanished between the click and its delivery still
             // means the window should close — the cancelled close was standing in for this moment.

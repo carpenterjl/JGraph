@@ -326,7 +326,7 @@ public class EventsListenersM167Tests : IDisposable
     }
 
     [Fact]
-    public void AClassWithItsOwnDestructorRaisesObjectBeingDestroyedAfterIt()
+    public void AClassWithItsOwnDestructorRaisesObjectBeingDestroyedBeforeIt()
     {
         WriteClass("Closing", """
             classdef Closing < handle
@@ -337,7 +337,9 @@ public class EventsListenersM167Tests : IDisposable
                 end
             end
             """);
-        Assert.Equal("dtor;gone/0;", RunAndRead(Log + """
+        // R2025b's order (U7, probe u7_small): the listener hears the event, the object already
+        // invalid, and then the class's own delete runs. The event used to follow the destructor.
+        Assert.Equal("gone/0;dtor;", RunAndRead(Log + """
             c = Closing();
             lh = addlistener(c, 'ObjectBeingDestroyed', @(src, ~) vlog(['gone/' num2str(isvalid(src))]));
             delete(c);

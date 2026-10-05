@@ -241,6 +241,19 @@ internal sealed class JgsHandleEntry
     /// Written and read on the script thread only.
     /// </summary>
     public string? WaitStatus { get; set; }
+
+    /// <summary>
+    /// The listeners <c>addlistener(h, 'ObjectBeingDestroyed', @cb)</c> put on this object, oldest
+    /// first (U7). They run newest first as the object is deleted, before its <c>DeleteFcn</c>.
+    /// </summary>
+    public List<JgsListener>? DestroyListeners { get; set; }
+
+    /// <summary>
+    /// Properties added to this one object (U7): what <c>matlab.apps.AppBase.registerApp</c>
+    /// gives an app's figure - <c>RunningAppInstance</c> and <c>RunningInstanceFullFileName</c> -
+    /// where R2025b uses <c>addprop</c>. Read, written and found by <c>isprop</c>; not listed.
+    /// </summary>
+    public Dictionary<string, JgsValue>? AddedProperties { get; set; }
 }
 
 /// <summary>
@@ -428,6 +441,18 @@ internal static class JgsHandleRegistry
     public static bool TryGetOrRoot(JgsValue value, [NotNullWhen(true)] out JgsHandleEntry? entry) =>
         TryGet(value, out entry)
         || (value.Type == JgsType.Number && value.AsNumber == 0 && TryGet(For(JgsGraphicsRoot.Instance), out entry));
+
+    /// <summary>
+    /// Whether a number that names nothing was once minted here: the handle of an object since
+    /// deleted, which is refused as a dead handle where any other number is refused as no handle.
+    /// </summary>
+    public static bool WasMinted(double handle)
+    {
+        lock (Gate)
+        {
+            return handle >= FirstHandle && handle < _next && handle - System.Math.Floor(handle) == 0.5;
+        }
+    }
 
     /// <summary>The entry for a handle, or an error naming the handle as dead.</summary>
     public static JgsHandleEntry Require(JgsValue value, int line, int col)

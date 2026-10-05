@@ -180,12 +180,12 @@ internal sealed class JgsFileIndex
             return; // not a path the file system will accept either; the write itself will say so
         }
 
-        // Only a .m file can change what a name means. A write with any other extension — an image
-        // in a loop, a diary, a .mat — leaves the stems alone, unless the path names a folder the
-        // index knows (a folder called v1.2 has an "extension" too).
+        // Only a .m file or an .mlapp can change what a name means. A write with any other
+        // extension — an image in a loop, a diary, a .mat — leaves the stems alone, unless the path
+        // names a folder the index knows (a folder called v1.2 has an "extension" too).
         string extension = Path.GetExtension(full);
         if (extension.Length > 0
-            && !extension.Equals(".m", StringComparison.OrdinalIgnoreCase)
+            && !IsCodeExtension(extension)
             && !_folders.ContainsKey(full))
         {
             return;
@@ -196,6 +196,11 @@ internal sealed class JgsFileIndex
         MarkDirty(Path.GetDirectoryName(full));
         MarkDirty(full);
     }
+
+    /// <summary>Whether a file of this extension answers to its name: a code file, or an App Designer file (U7).</summary>
+    private static bool IsCodeExtension(string extension) =>
+        extension.Equals(".m", StringComparison.OrdinalIgnoreCase)
+        || extension.Equals(JgsMlapp.Extension, StringComparison.OrdinalIgnoreCase);
 
     private void MarkDirty(string? folder)
     {
@@ -341,7 +346,7 @@ internal sealed class JgsFileIndex
             written = LastWrite(folder);
             foreach (string file in EnumerateFiles(folder))
             {
-                if (Path.GetExtension(file).Equals(".m", StringComparison.OrdinalIgnoreCase))
+                if (IsCodeExtension(Path.GetExtension(file)))
                 {
                     stems.Add(Path.GetFileNameWithoutExtension(file));
                 }

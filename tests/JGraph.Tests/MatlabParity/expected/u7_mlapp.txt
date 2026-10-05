@@ -1,0 +1,60 @@
+CHK|which|U7MlApp.mlapp|exact
+CHK|which_in_helpers|logical [1 1] 1|exact
+CHK|which_with_extension|U7MlApp.mlapp|exact
+CHK|exist|double [1 1] 2|exact
+CHK|exist_file|double [1 1] 2|exact
+CHK|exist_with_extension|double [1 1] 2|exact
+CHK|exist_full_path|double [1 1] 2|exact
+CHK|exist_class|double [1 1] 8|exact
+CHK|exist_plain_class|double [1 1] 8|exact
+CHK|exist_function|double [1 1] 2|exact
+CHK|exist_none|double [1 1] 0|exact
+CHK|same_which|U7Same.mlapp|exact
+CHK|same_which_all|U7Same.mlapp,U7Same.m|exact
+CHK|same_runs|mlapp|exact
+CHK|what_has_field|logical [1 1] 1|exact
+CHK|what_lists|logical [1 1] 1|exact
+CHK|what_m_keeps_twin|logical [1 1] 1|exact
+CHK|what_m_no_mlapp|logical [1 1] 0|exact
+CHK|isfile|logical [1 1] 1|exact
+CHK|class|U7InZip|exact
+CHK|property|double [1 1] 7|exact
+CHK|method|double [1 1] 14|exact
+CHK|static|static|exact
+CHK|mfilename|U7InZip|exact
+CHK|mfilename_folder|logical [1 1] 1|exact
+CHK|methods|U7InZip,addlistener,delete,eq,findobj,findprop,fixed,ge,gt,isvalid,le,listener,lt,ne,notify,twice,where|exact
+CHK|properties|Value|exact
+CHK|type_first_line|classdef U7InZip < handle|exact
+CHK|type_line_count|double [1 1] 21|exact
+CHK|type_with_extension|classdef U7InZip < handle|exact
+CHK|bare_zip|MATLAB:fileio:cantOpenFile|exact
+CHK|bare_zip_exist|double [1 1] 2|exact
+CHK|function_in_mlapp|double [1 1] 2|exact
+CHK|wrong_name|MATLAB:m_class_filename|exact
+CHK|wrong_name_other|MATLAB:UndefinedFunction|exact
+CHK|run_mlapp|ran|exact
+CHK|error_identifier|U7:thrown|exact
+CHK|error_message|Thrown from line 6.|exact
+CHK|error_stack_name|U7Throws.fail|exact
+CHK|error_stack_line|double [1 1] 6|exact
+CHK|error_stack_file|U7Throws.mlapp|exact
+CHK|app_class|U7MlApp|exact
+CHK|app_isa|logical [1 1] 1|exact
+CHK|app_startup_log|startup 3;|exact
+CHK|app_amp|double [1 1] 3|exact
+CHK|app_title|ramp|exact
+CHK|app_ydata|double [1 1] 3|exact
+CHK|app_figure_name|U7 MlApp|exact
+CHK|app_running_file|U7MlApp.mlapp|exact
+CHK|app_running|logical [1 1] 1|exact
+CHK|app_callback_log|pushed char;|exact
+CHK|app_presses|double [1 1] 1|exact
+CHK|app_private|MATLAB:class:MethodRestricted :: Cannot access method 'redraw' in class 'U7MlApp'.|exact
+CHK|app_cleared_valid|logical [1 1] 1|exact
+CHK|app_close_log|closereq;delete;|exact
+CHK|app_close_valid|logical [1 1] 0|exact
+CHK|app_bare_found|double [1 1] 1|exact
+CHK|app_bare_amp|double [1 1] 8|exact
+CHK|app_bare_log|startup 2;delete;|exact
+CHK|end_count|double [1 1] 0|exact

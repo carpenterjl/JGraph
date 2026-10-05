@@ -575,7 +575,8 @@ internal static partial class JgsBuiltins
                 }
 
                 if ((hidden || at == 0 || entry.HandleVisible)
-                    && properties.All(name => JgsGraphicsProperties.TryFind(target, name, out _))
+                    && properties.All(name => JgsGraphicsProperties.TryFind(target, name, out _)
+                        || entry.AddedProperties?.ContainsKey(name) == true) // an app's figure has RunningAppInstance (U7)
                     && wanted.All(pair => Matches(entry, pair.Name, pair.Value)))
                 {
                     found.Add(target);
@@ -660,7 +661,7 @@ internal static partial class JgsBuiltins
     }
 
     private static bool IsLiveHandle(double handle) =>
-        JgsHandleRegistry.TryGet(JgsValue.Number(handle), out _);
+        JgsHandleRegistry.TryGet(JgsValue.Number(handle), out JgsHandleEntry? entry) && !entry.Target.BeingDeleted;
 
     /// <summary>
     /// <c>isvalid(h)</c> (V6, appendix A #104): whether a graphics handle still names a live object,
@@ -685,7 +686,7 @@ internal static partial class JgsBuiltins
             JgsObject instance = asked.AsObject;
             if (instance.Class.IsHandle)
             {
-                return JgsValue.Bool(!instance.Deleted);
+                return JgsValue.Bool(!instance.Deleted && !instance.Destroying);
             }
         }
         else if (asked.Type is JgsType.Number or JgsType.Bool)

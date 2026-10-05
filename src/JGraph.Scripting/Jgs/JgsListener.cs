@@ -24,11 +24,15 @@ internal sealed class JgsListener
     /// <summary>The .NET event the listener is on, with the listeners beside it (ADR 0178); null for a classdef object's.</summary>
     public Net.NetEventSubscription? NetEvent { get; init; }
 
+    /// <summary>The graphics object the listener is on (U7); null for every other kind of source.</summary>
+    public JgsHandleEntry? Graphics { get; init; }
+
     /// <summary>Takes the listener off its source's list, whichever kind of source it has.</summary>
     public void Detach()
     {
         Source?.Listeners?.Remove(this);
         NetEvent?.Remove(this);
+        Graphics?.DestroyListeners?.Remove(this);
     }
 
     /// <summary>The source as a value, which is what every callback is handed first (a handle: the one object).</summary>
