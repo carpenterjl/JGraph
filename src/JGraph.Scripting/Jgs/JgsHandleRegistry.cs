@@ -131,6 +131,28 @@ internal sealed class JgsHandleEntry
     /// <summary>A <c>uicontrol</c>'s <c>Callback</c>, if a script gave it one (U1).</summary>
     public JgsValue? UiCallback { get; set; }
 
+    /// <summary>
+    /// The callbacks of a <c>uifigure</c> component, by property name (U5): <c>ValueChangedFcn</c>,
+    /// <c>ButtonPushedFcn</c> and the rest. They are too many, and too particular to a class, for a
+    /// field each.
+    /// </summary>
+    public Dictionary<string, JgsValue> NamedCallbacks { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>A drop-down's or a list box's <c>ItemsData</c>, kept as given: it can be any value (U5).</summary>
+    public JgsValue? ItemsData { get; set; }
+
+    /// <summary>The <c>CloseFcn</c> a <c>uialert</c> or a <c>uiconfirm</c> was given (U5).</summary>
+    public JgsValue? OverlayCloseFcn { get; set; }
+
+    /// <summary>Which button of a dialog over a figure was pressed, from 0; null until one is (U5).</summary>
+    public int? OverlayAnswer { get; set; }
+
+    /// <summary>The numeric class a list's <c>ValueIndex</c> was last written in, which reads back (U5).</summary>
+    public string ValueIndexClass { get; set; } = "double";
+
+    /// <summary>The numeric class a progress dialog's <c>Value</c> was written in, which reads back (U5).</summary>
+    public string OverlayValueClass { get; set; } = "double";
+
     /// <summary>A menu item's <c>MenuSelectedFcn</c>, if a script gave it one.</summary>
     public JgsValue? MenuSelectedFcn { get; set; }
 
@@ -415,8 +437,7 @@ internal static class JgsHandleRegistry
             return entry;
         }
 
-        throw new JgsRuntimeException(line, col,
-            "This is not a handle to a figure object; it may belong to a figure that has since been cleared.");
+        throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.");
     }
 
     /// <summary>Forgets every handle — what a fresh run or a cleared figure registry means.</summary>

@@ -9017,6 +9017,13 @@ internal sealed partial class Interpreter
                 when IsHandleArray(target, env):
                 return JgsHandleRegistry.Require(Evaluate(indexed, env), indexed.Line, indexed.Column);
 
+            // c{k}.Visible = 'off' — a handle kept in a cell, which is how a script holds components
+            // of different kinds (U5). Only a subscript that is a number or a name is looked at:
+            // reading it here and again on the struct path must not run anything twice.
+            case BraceIndexExpr { Indices: [NumberLiteral or VariableExpr], Target: VariableExpr holder } brace
+                when LookUp(holder.Name, env, out JgsValue held) && held.Type == JgsType.Cell:
+                return TryGetOneHandle(Evaluate(brace, env), out JgsHandleEntry? inCell) ? inCell : null;
+
             // ax.XAxis.Color = c, and h.Annotation.LegendInformation.IconDisplayStyle = 'off' — a
             // chain of properties that each answer a handle, which is how MATLAB spells the settings
             // an object keeps on a smaller object of its own. Every step is a property read, so

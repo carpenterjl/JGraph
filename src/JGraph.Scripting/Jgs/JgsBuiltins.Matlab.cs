@@ -21,7 +21,6 @@ internal static partial class JgsBuiltins
         ["ode23"] = "stiffness-tuned ODE solvers — ode45 is implemented",
         ["fmincon"] = "constrained optimization (Optimization Toolbox)",
         ["lsqcurvefit"] = "nonlinear least squares (Optimization Toolbox)",
-        ["uifigure"] = "app building",
         ["parfeval"] = "parallel execution",
         ["gpuArray"] = "GPU arrays",
     };

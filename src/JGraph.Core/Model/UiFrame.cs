@@ -12,6 +12,12 @@ public interface IUiNodeFrame
 
     /// <summary>The node's own <c>Visible</c>; what shows is this and every ancestor's.</summary>
     bool Visible { get; }
+
+    /// <summary>The node's cell, when its parent is a grid (U5).</summary>
+    UiGridCell? Cell => null;
+
+    /// <summary>The size the node asks for in a <c>'fit'</c> track of a grid (U5).</summary>
+    Size2D Fit => default;
 }
 
 /// <summary>
@@ -62,7 +68,7 @@ public sealed record UiControlFrame(
 /// script thread by the model so that the window and a script's <c>InnerPosition</c> agree.
 /// </summary>
 public sealed record UiPanelFrame(
-    UiPanelModel Source,
+    UiContainerModel Source,
     Rect2D Position,
     UiUnits Units,
     bool Visible,
@@ -83,7 +89,44 @@ public sealed record UiPanelFrame(
     Thickness Insets,
     IReadOnlyList<IUiNodeFrame> Children,
     double? Fill = null,
-    UiColor? FillColor = null) : IUiNodeFrame;
+    UiColor? FillColor = null,
+    UiGridCell? Cell = null,
+    Size2D Fit = default,
+    Thickness? GridInsets = null) : IUiNodeFrame;
+
+/// <summary>
+/// One axes placed in a grid, as the grid's frame holds it: where it sits and what it asks for. The
+/// layout answers its cell, so the renderer can keep it there while a window is being resized.
+/// </summary>
+public sealed record UiAxesCellFrame(AxesModel Source, UiGridCell Cell, Size2D Fit);
+
+/// <summary>
+/// One <c>uigridlayout</c> as a frame snapshot holds it (app-building plan, U5): its tracks, its
+/// padding and spacing, and the nodes and axes inside it with their cells and the sizes they ask
+/// for — everything the layout needs to place them again at any size without asking the script.
+/// </summary>
+public sealed record UiGridFrame(
+    UiGridLayoutModel Source,
+    bool Visible,
+    IReadOnlyList<UiGridTrack> Rows,
+    IReadOnlyList<UiGridTrack> Columns,
+    IReadOnlyList<double> Padding,
+    double RowSpacing,
+    double ColumnSpacing,
+    UiColor Background,
+    bool Scrollable,
+    IReadOnlyList<IUiNodeFrame> Children,
+    IReadOnlyList<UiAxesCellFrame> Axes,
+    UiGridCell? Cell = null,
+    Size2D Fit = default,
+    double ScrollX = 0,
+    double ScrollY = 0) : IUiNodeFrame
+{
+    /// <summary>A grid has no place of its own: it fills the area its parent gives it.</summary>
+    public Rect2D Position => new(1, 1, 0, 0);
+
+    public UiUnits Units => UiUnits.Pixels;
+}
 
 /// <summary>
 /// An immutable picture of a figure's components at one flush (app-building plan, section A): the
@@ -99,8 +142,10 @@ public sealed class UiFrame
         Sequence = sequence;
         Roots = roots;
         var controls = new List<UiControlFrame>();
-        Flatten(roots, controls);
+        var components = new List<UiComponentFrame>();
+        Flatten(roots, controls, components);
         Controls = controls;
+        Components = components;
     }
 
     /// <summary>A frame with nothing in it.</summary>
@@ -117,13 +162,25 @@ public sealed class UiFrame
     /// <summary>Every control in the tree, depth first — the order they are painted in.</summary>
     public IReadOnlyList<UiControlFrame> Controls { get; }
 
+    /// <summary>Every <c>uifigure</c> component in the tree, depth first (U5).</summary>
+    public IReadOnlyList<UiComponentFrame> Components { get; }
+
+    /// <summary>The dialogs laid over the figure — <c>uialert</c>, <c>uiconfirm</c>, <c>uiprogressdlg</c> — oldest first (U5).</summary>
+    public IReadOnlyList<UiOverlayFrame> Overlays { get; private init; } = [];
+
     private static long _sequence;
 
     /// <summary>Copies the figure's components. Call on the thread that writes the model.</summary>
     public static UiFrame Take(FigureModel figure)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        return new UiFrame(figure, Interlocked.Increment(ref _sequence), TakeNodes(figure.Components));
+        using (UiGridLayoutModel.Remembering())
+        {
+            return new UiFrame(figure, Interlocked.Increment(ref _sequence), TakeNodes(figure.Components))
+            {
+                Overlays = [.. figure.Overlays.Select(static overlay => overlay.Snapshot())],
+            };
+        }
     }
 
     private static List<IUiNodeFrame> TakeNodes(IReadOnlyList<UiObject> components)
@@ -131,8 +188,36 @@ public sealed class UiFrame
         var nodes = new List<IUiNodeFrame>(components.Count);
         foreach (UiObject component in components)
         {
+            bool inGrid = component.Parent is UiGridLayoutModel;
+            UiGridCell? cell = inGrid ? component.GridCell ?? new UiGridCell(1, 1) : null;
+            Size2D fit = inGrid ? UiFit.Of(component) : default;
             switch (component)
             {
+                case UiComponentModel leaf:
+                    nodes.Add(leaf.Snapshot() with { Cell = cell, Fit = fit });
+                    break;
+
+                case UiGridLayoutModel grid:
+                    grid.PinAxes();
+                    nodes.Add(new UiGridFrame(
+                        grid,
+                        grid.Visible,
+                        grid.Rows,
+                        grid.Columns,
+                        grid.Padding,
+                        grid.RowSpacing,
+                        grid.ColumnSpacing,
+                        grid.BackgroundColor,
+                        grid.Scrollable,
+                        TakeNodes(grid.Components),
+                        [.. grid.ContainedAxes().Select(static axes =>
+                            new UiAxesCellFrame(axes, axes.GridCell ?? new UiGridCell(1, 1), UiFit.Of(axes)))],
+                        cell,
+                        fit,
+                        grid.ScrollX,
+                        grid.ScrollY));
+                    break;
+
                 case UiControlModel control:
                     nodes.Add(new UiControlFrame(
                         control,
@@ -186,7 +271,10 @@ public sealed class UiFrame
                         panel.Insets(),
                         TakeNodes(panel.Components),
                         panel is UiProgressIndicatorModel bar ? (bar.Indeterminate ? 1 : bar.Value) : null,
-                        (panel as UiProgressIndicatorModel)?.ProgressColor));
+                        (panel as UiProgressIndicatorModel)?.ProgressColor,
+                        cell,
+                        fit,
+                        panel.GridInsets()));
                     break;
             }
         }
@@ -194,7 +282,7 @@ public sealed class UiFrame
         return nodes;
     }
 
-    private static void Flatten(IReadOnlyList<IUiNodeFrame> nodes, List<UiControlFrame> into)
+    private static void Flatten(IReadOnlyList<IUiNodeFrame> nodes, List<UiControlFrame> into, List<UiComponentFrame> components)
     {
         foreach (IUiNodeFrame node in nodes)
         {
@@ -203,8 +291,14 @@ public sealed class UiFrame
                 case UiControlFrame control:
                     into.Add(control);
                     break;
+                case UiComponentFrame component:
+                    components.Add(component);
+                    break;
                 case UiPanelFrame panel:
-                    Flatten(panel.Children, into);
+                    Flatten(panel.Children, into, components);
+                    break;
+                case UiGridFrame grid:
+                    Flatten(grid.Children, into, components);
                     break;
             }
         }

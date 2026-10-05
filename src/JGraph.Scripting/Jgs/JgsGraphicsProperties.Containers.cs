@@ -189,6 +189,13 @@ internal static partial class JgsGraphicsProperties
                         $"{JgsGraphicsCallbackValues.ClassWord(owner.Target)} cannot be a parent.");
         }
 
+        // A radio or toggle button lives in a button group and nowhere else (U5).
+        if (entry.Target is UiRadioButtonModel or UiToggleButtonModel && holder is not UiButtonGroupModel)
+        {
+            throw new JgsRuntimeException(line, col, $"MATLAB:ui:{moving}:invalidClassForParent",
+                "'Parent' value must be specified as a ButtonGroup object.");
+        }
+
         if (entry.Target is UiContainerModel container && owner.Target is UiObject into && container.Holds(into))
         {
             throw new JgsRuntimeException(line, col, "MATLAB:container:InvalidParentToChild",
@@ -220,6 +227,15 @@ internal static partial class JgsGraphicsProperties
                         into2.Added(arriving);
                     }
 
+                    // A radio or toggle button arriving in a group joins it; anything arriving in
+                    // a grid takes its next cell, and anything leaving one lets go of its cell (U5).
+                    if (component is UiCaptionModel selectable and (UiRadioButtonModel or UiToggleButtonModel) && holder is UiButtonGroupModel joined)
+                    {
+                        JgsBuiltins.JoinGroup(joined, selectable);
+                    }
+
+                    GridMembershipChanged(component);
+
                     // The axes placed in a panel live in its figure's list, so they follow it to another.
                     if (newFigure is not null && !ReferenceEquals(oldFigure, newFigure))
                     {
@@ -239,6 +255,7 @@ internal static partial class JgsGraphicsProperties
                     (axes.Parent as FigureModel)?.Axes.Remove(axes);
                     newFigure.Axes.Add(axes);
                     axes.Container = owner.Target as UiContainerModel;
+                    GridMembershipChanged(axes);
                     break;
             }
         }
@@ -437,6 +454,8 @@ internal static partial class JgsGraphicsProperties
 
     private static JgsValue AxesRectValue(AxesModel axes, bool inner)
     {
+        // An axes in a grid is where the grid put it (U5).
+        (axes.Container as UiGridLayoutModel)?.PinAxes();
         if (axes.Units == UiUnits.Normalized)
         {
             return FlipRow(inner ? InnerOf(axes) : OuterOf(axes));
@@ -699,10 +718,19 @@ internal static partial class JgsGraphicsProperties
         }
 
         // The grid's placement options arrive with uigridlayout (U5); until then there are none.
+        // In a grid, where the panel sits (U5); anywhere else it has no layout options to take.
         Put(table, "Layout",
-            static _ => JgsMatrix.FromColumnMajor([], 0, 0),
-            (entry, _, line, col) => throw ComponentError(entry, "Layout", "MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass",
-                "'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.", line, col));
+            LayoutValue,
+            (entry, value, line, col) =>
+            {
+                if (GridOf(entry.Target) is null)
+                {
+                    throw ComponentError(entry, "Layout", "MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass",
+                        "'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.", line, col);
+                }
+
+                SetLayout(entry, value, line, col);
+            });
     }
 
     // --- uibuttongroup ---------------------------------------------------------------------------
@@ -748,12 +776,41 @@ internal static partial class JgsGraphicsProperties
     private static void AddUiButtonGroupBlock(IDictionary<string, GraphicsProperty> table)
     {
         Put(table, "SelectedObject",
-            entry => ((UiButtonGroupModel)entry.Target).SelectedObject is { } selected
-                ? JgsHandleRegistry.For(selected)
-                : JgsMatrix.FromColumnMajor([], 0, 0),
+            entry => JgsBuiltins.SelectedButton((UiButtonGroupModel)entry.Target) is { } chosen ? JgsHandleRegistry.For(chosen)
+                : ((UiButtonGroupModel)entry.Target).SelectedObject is { } selected
+                    ? JgsHandleRegistry.For(selected)
+                    : JgsMatrix.FromColumnMajor([], 0, 0),
             (entry, value, line, col) =>
             {
                 var group = (UiButtonGroupModel)entry.Target;
+
+                // A group of uiradiobuttons or uitogglebuttons always has one selected (U5): none
+                // cannot be asked for, and the one asked for takes the selection from the rest.
+                List<UiCaptionModel> own = [.. group.Components.OfType<UiCaptionModel>().Where(static b => b is UiRadioButtonModel or UiToggleButtonModel)];
+                if (own.Count > 0)
+                {
+                    JgsValue one = value.Type == JgsType.Array && !value.IsStringArray && value.ArrayLength > 0 ? value.ElementAt(0) : value;
+                    if (one.Type != JgsType.Number || !JgsHandleRegistry.TryGet(one, out JgsHandleEntry? picked)
+                        || picked.Target is not UiCaptionModel wanted || wanted is not (UiRadioButtonModel or UiToggleButtonModel))
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:hg:InvalidSelectedObjectType",
+                            "Must set the SelectedObject to a Radio Button or a Toggle Button.");
+                    }
+
+                    if (!ReferenceEquals(wanted.Parent, group))
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:hg:InvalidSelectedObjectParent",
+                            "SelectedObject must be a child of this UIButtonGroup.");
+                    }
+
+                    foreach (UiCaptionModel each in own)
+                    {
+                        each.Value = ReferenceEquals(each, wanted);
+                    }
+
+                    return;
+                }
+
                 if (value.Type == JgsType.Array && value.ArrayLength == 0)
                 {
                     group.Select(null);

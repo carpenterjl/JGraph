@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using JGraph.Data;
 using JGraph.Maths;
@@ -997,6 +998,40 @@ internal static partial class JgsBuiltins
     private static JgsValue[] PolynomialValue(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("polyval", args, 2, 4, line, col);
+
+        // A polynomial evaluated off the real line — on the unit circle, for a frequency response
+        // — or with complex coefficients: Horner's rule in complex arithmetic, nothing else.
+        if (args.Count == 2 && (HasComplexPart(args[0]) || HasComplexPart(args[1])))
+        {
+            Complex[] complexCoefficients = ComplexElements("polyval", args[0], line, col);
+            Complex At(Complex x)
+            {
+                Complex sum = Complex.Zero;
+                foreach (Complex c in complexCoefficients)
+                {
+                    sum = (sum * x) + c;
+                }
+
+                return sum;
+            }
+
+            if (!HasComplexPart(args[0]))
+            {
+                return [MapComplexAware("polyval", args[1], x => At(x).Real, x => JgsValue.ComplexNum(At(x)), line, col)];
+            }
+
+            // Complex coefficients make every answer complex, a real x included.
+            Complex[] points = ComplexElements("polyval", args[1], line, col);
+            if (args[1].Type != JgsType.Array)
+            {
+                return [JgsValue.ComplexNum(At(points[0]))];
+            }
+
+            JgsValue values = JgsValue.Array([.. points.Select(x => JgsValue.ComplexNum(At(x)))]);
+            values.Reshape(args[1].Rows, args[1].Cols);
+            return [values];
+        }
+
         double[] coefficients = ToDoubles("polyval", args[0], line, col);
 
         double centre = 0;

@@ -1,0 +1,562 @@
+CHK|form_parent|uigridlayout|exact
+CHK|form_size|R{1x,1x,1x} C{1x,1x,1x,1x}|exact
+CHK|form_size_1x1|R{1x} C{1x}|exact
+CHK|form_size_scalar|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_size_scalar_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|form_size_three|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_size_three_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|form_size_zero|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_size_zero_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|form_size_fraction|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_size_fraction_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|form_size_text|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_size_text_msg|No value was given for 'a'. Name-value pair arguments require a name followed by a value.|exact
+CHK|form_size_column|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_size_column_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|form_size_then_pairs|R{10,20} C{1x,1x,1x}|exact
+CHK|form_size_then_longer|R{10,20,30} C{1x,1x,1x}|exact
+CHK|form_pairs|R{1x,1x} C{fit,5}|exact
+CHK|form_named_parent|R{1x,1x} C{1x,1x}|exact
+CHK|form_odd|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_odd_msg|No value was given for 'RowHeight'. Name-value pair arguments require a name followed by a value.|exact
+CHK|form_unknown|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_unknown_msg|Unrecognized property Bogus for class GridLayout.|exact
+CHK|form_not_a_handle|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_not_a_handle_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|form_empty|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|form_in_label|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_in_label_msg|Label cannot be a parent.|exact
+CHK|form_struct|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_struct_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|form_position|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|form_position_msg|Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.|exact
+CHK|form_prefix|t|exact
+CHK|form_in_panel|uipanel|exact
+CHK|form_in_grid|uigridlayout|exact
+CHK|form_in_group|uibuttongroup|exact
+CHK|form_in_classic_figure|figure|exact
+CHK|form_in_classic_panel|uipanel|exact
+CHK|form_uicontrol_in_grid|MATLAB:uicontrol:InvalidParent|exact
+CHK|form_uicontrol_in_grid_msg|Parent must be a Figure or UITab or any UIContainer|exact
+CHK|form_axes_in_grid|axes|exact
+CHK|rowheight_01|cell [1 4] {char '1x', char 'fit', double [1 1] 40, char '2x'}|exact
+CHK|columnwidth_01|cell [1 4] {char '1x', char 'fit', double [1 1] 40, char '2x'}|exact
+CHK|rowheight_02|cell [1 2] {double [1 1] 30, double [1 1] 40}|exact
+CHK|columnwidth_02|cell [1 2] {double [1 1] 30, double [1 1] 40}|exact
+CHK|rowheight_03|cell [1 2] {char 'fit', char '1x'}|exact
+CHK|columnwidth_03|cell [1 2] {char 'fit', char '1x'}|exact
+CHK|rowheight_04|cell [1 1] {char '1x'}|exact
+CHK|columnwidth_04|cell [1 1] {char '1x'}|exact
+CHK|rowheight_05|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_05|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_06|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_06|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_07|cell [1 1] {double [1 1] 50}|exact
+CHK|columnwidth_07|cell [1 1] {double [1 1] 50}|exact
+CHK|rowheight_08|cell [0 0] {}|exact
+CHK|columnwidth_08|cell [0 0] {}|exact
+CHK|rowheight_09|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_09|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_10|cell [1 1] {char '0x'}|exact
+CHK|columnwidth_10|cell [1 1] {char '0x'}|exact
+CHK|rowheight_11|cell [1 1] {char '1.5x'}|exact
+CHK|columnwidth_11|cell [1 1] {char '1.5x'}|exact
+CHK|rowheight_12|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_12|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_13|cell [1 1] {char '2x'}|exact
+CHK|columnwidth_13|cell [1 1] {char '2x'}|exact
+CHK|rowheight_14|cell [1 1] {char '2x'}|exact
+CHK|columnwidth_14|cell [1 1] {char '2x'}|exact
+CHK|rowheight_15|cell [1 1] {char 'fit'}|exact
+CHK|columnwidth_15|cell [1 1] {char 'fit'}|exact
+CHK|rowheight_16|cell [1 1] {double [1 1] 0}|exact
+CHK|columnwidth_16|cell [1 1] {double [1 1] 0}|exact
+CHK|rowheight_17|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_17|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_18|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_18|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_19|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_19|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_20|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_20|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_21|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_21|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_22|cell [1 2] {char '1x', char '2x'}|exact
+CHK|columnwidth_22|cell [1 2] {char '1x', char '2x'}|exact
+CHK|rowheight_23|cell [1 1] {int8 [1 1] 5}|exact
+CHK|columnwidth_23|cell [1 1] {int8 [1 1] 5}|exact
+CHK|rowheight_24|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_24|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_25|cell [1 1] {char '2x'}|exact
+CHK|columnwidth_25|cell [1 1] {char '2x'}|exact
+CHK|rowheight_26|cell [1 1] {char '3x'}|exact
+CHK|columnwidth_26|cell [1 1] {char '3x'}|exact
+CHK|rowheight_27|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_27|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_28|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_28|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_29|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_29|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_30|cell [1 1] {single [1 1] 2.5}|exact
+CHK|columnwidth_30|cell [1 1] {single [1 1] 2.5}|exact
+CHK|rowheight_31|cell [1 1] {char '10x'}|exact
+CHK|columnwidth_31|cell [1 1] {char '10x'}|exact
+CHK|rowheight_32|MATLAB:ui:GridLayout:InvalidRowHeight :: 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|columnwidth_32|MATLAB:ui:GridLayout:InvalidColumnWidth :: 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].|exact
+CHK|rowheight_33|cell [1 1] {char '0.5x'}|exact
+CHK|columnwidth_33|cell [1 1] {char '0.5x'}|exact
+CHK|padding_01|double [1 4] 5 5 5 5|exact
+CHK|padding_02|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_03|double [1 4] 1 2 3 4|exact
+CHK|padding_04|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_05|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_06|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_07|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_08|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_09|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_10|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_11|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_12|int8 [1 4] 1 2 3 4|exact
+CHK|padding_13|MATLAB:ui:GridLayout:InvalidPadding :: 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.|exact
+CHK|padding_14|double [1 4] 1.5 2.5 3.5 4.5|exact
+CHK|rowspacing_01|double [1 1] 5|exact
+CHK|columnspacing_01|double [1 1] 5|exact
+CHK|rowspacing_02|double [1 1] 0|exact
+CHK|columnspacing_02|double [1 1] 0|exact
+CHK|rowspacing_03|MATLAB:ui:GridLayout:InvalidRowSpacing :: 'RowSpacing' must be a nonnegative number.|exact
+CHK|columnspacing_03|MATLAB:ui:GridLayout:InvalidColumnSpacing :: 'ColumnSpacing' must be a nonnegative number.|exact
+CHK|rowspacing_04|double [1 1] 2.5|exact
+CHK|columnspacing_04|double [1 1] 2.5|exact
+CHK|rowspacing_05|MATLAB:ui:GridLayout:InvalidRowSpacing :: 'RowSpacing' must be a nonnegative number.|exact
+CHK|columnspacing_05|MATLAB:ui:GridLayout:InvalidColumnSpacing :: 'ColumnSpacing' must be a nonnegative number.|exact
+CHK|rowspacing_06|MATLAB:ui:GridLayout:InvalidRowSpacing :: 'RowSpacing' must be a nonnegative number.|exact
+CHK|columnspacing_06|MATLAB:ui:GridLayout:InvalidColumnSpacing :: 'ColumnSpacing' must be a nonnegative number.|exact
+CHK|rowspacing_07|MATLAB:ui:GridLayout:InvalidRowSpacing :: 'RowSpacing' must be a nonnegative number.|exact
+CHK|columnspacing_07|MATLAB:ui:GridLayout:InvalidColumnSpacing :: 'ColumnSpacing' must be a nonnegative number.|exact
+CHK|rowspacing_08|MATLAB:ui:GridLayout:InvalidRowSpacing :: 'RowSpacing' must be a nonnegative number.|exact
+CHK|columnspacing_08|MATLAB:ui:GridLayout:InvalidColumnSpacing :: 'ColumnSpacing' must be a nonnegative number.|exact
+CHK|rowspacing_09|MATLAB:ui:GridLayout:InvalidRowSpacing :: 'RowSpacing' must be a nonnegative number.|exact
+CHK|columnspacing_09|MATLAB:ui:GridLayout:InvalidColumnSpacing :: 'ColumnSpacing' must be a nonnegative number.|exact
+CHK|rowspacing_10|int8 [1 1] 4|exact
+CHK|columnspacing_10|int8 [1 1] 4|exact
+CHK|rowspacing_11|MATLAB:ui:GridLayout:InvalidRowSpacing :: 'RowSpacing' must be a nonnegative number.|exact
+CHK|columnspacing_11|MATLAB:ui:GridLayout:InvalidColumnSpacing :: 'ColumnSpacing' must be a nonnegative number.|exact
+CHK|auto_child_1|r1 c1 R{1x,1x} C{1x,1x}|exact
+CHK|auto_child_2|r1 c2 R{1x,1x} C{1x,1x}|exact
+CHK|auto_child_3|r2 c1 R{1x,1x} C{1x,1x}|exact
+CHK|auto_child_4|r2 c2 R{1x,1x} C{1x,1x}|exact
+CHK|auto_child_5|r3 c1 R{1x,1x,1x} C{1x,1x}|exact
+CHK|auto_child_6|r3 c2 R{1x,1x,1x} C{1x,1x}|exact
+CHK|auto_after_delete|r4 c1|exact
+CHK|auto_after_move|r4 c2 R{1x,1x,1x,1x} C{1x,1x}|exact
+CHK|auto_after_span|r3 c1 R{1x,1x,1x} C{1x,1x}|exact
+CHK|auto_after_last_column|r2 c1 R{1x,1x} C{1x,1x,1x}|exact
+CHK|auto_containers|r1 c1 / r1 c2 / r2 c1 / r2 c2|exact
+CHK|layout_fields|Column Row|exact
+CHK|layout_row_01|r2 c1|exact
+CHK|layout_row_01_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_01|r2 c2|exact
+CHK|layout_row_02|r[1 2] c2|exact
+CHK|layout_row_02_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_02|r[1 2] c[1 2]|exact
+CHK|layout_row_03|r[2 3] c[1 2]|exact
+CHK|layout_row_03_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_03|r[2 3] c[2 3]|exact
+CHK|layout_row_04|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_04_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_04_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_04|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_04_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_05|r[1 3] c[2 3]|exact
+CHK|layout_row_05_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_05|r[1 3] c[1 3]|exact
+CHK|layout_row_06|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_06_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_06_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_06|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_06_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_07|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_07_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_07_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_07|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_07_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_08|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_08_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_08_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_08|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_08_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_09|r5 c[1 3]|exact
+CHK|layout_row_09_tracks|R{1x,1x,1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_09|r5 c5|exact
+CHK|layout_row_10|r[1 5] c5|exact
+CHK|layout_row_10_tracks|R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}|exact
+CHK|layout_column_10|r[1 5] c[1 5]|exact
+CHK|layout_row_11|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_11_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_11_tracks|R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}|exact
+CHK|layout_column_11|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_11_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_12|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_12_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_12_tracks|R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}|exact
+CHK|layout_column_12|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_12_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_13|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_13_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_13_tracks|R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}|exact
+CHK|layout_column_13|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_13_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_14|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_14_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_14_tracks|R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}|exact
+CHK|layout_column_14|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_14_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_15|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_15_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_15_tracks|R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}|exact
+CHK|layout_column_15|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_15_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_16|r2 c[1 5]|exact
+CHK|layout_row_16_tracks|R{1x,1x,1x} C{1x,1x,1x,1x,1x}|exact
+CHK|layout_column_16|r2 c2|exact
+CHK|layout_row_17|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_17_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_17_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_17|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_17_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_18|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_18_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_18_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_18|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_18_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_19|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_19_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_19_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_19|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_19_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_20|r3 c2|exact
+CHK|layout_row_20_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_20|r3 c3|exact
+CHK|layout_row_21|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_21_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_21_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_21|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_21_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_22|MATLAB:ui:GridLayoutOptions:InvalidGridRow|exact
+CHK|layout_row_22_msg|'Row' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_row_22_tracks|R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|layout_column_22|MATLAB:ui:GridLayoutOptions:InvalidGridColumn|exact
+CHK|layout_column_22_msg|'Column' must be a positive integer or a 1x2 increasing array of positive integers.|exact
+CHK|layout_struct|MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass|exact
+CHK|layout_struct_msg|Error setting property 'Layout' of class 'Button': 'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.|exact
+CHK|layout_empty|MATLAB:ui:components:invalidClassParentDependent|exact
+CHK|layout_empty_msg|'Layout' must be a 'matlab.ui.layout.GridLayoutOptions' object when the parent is 'matlab.ui.container.GridLayout'.|exact
+CHK|layout_number|MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass|exact
+CHK|layout_number_msg|Error setting property 'Layout' of class 'Button': 'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.|exact
+CHK|layout_outside_a_grid|1|exact
+CHK|layout_moved_in|r4 c1|exact
+CHK|layout_moved_out|1 [100 100 100 22]|exact
+CHK|layout_moved_to_another_grid|r3 c3 R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|tracks_cut_under_a_child|r3 c3 R{1x,1x,1x} C{1x,1x,1x}|exact
+CHK|grid_position_x|1.000000|abs=0.01
+CHK|grid_position_y|1.000000|abs=0.01
+CHK|grid_position_w|600.000000|abs=0.01
+CHK|grid_position_h|400.000000|abs=0.01
+CHK|grid_inner_x|11.000000|abs=0.01
+CHK|grid_inner_y|11.000000|abs=0.01
+CHK|grid_inner_w|580.000000|abs=0.01
+CHK|grid_inner_h|380.000000|abs=0.01
+CHK|grid_outer_x|1.000000|abs=0.01
+CHK|grid_outer_y|1.000000|abs=0.01
+CHK|grid_outer_w|600.000000|abs=0.01
+CHK|grid_outer_h|400.000000|abs=0.01
+CHK|grid_position_set|MATLAB:class:SetProhibited|exact
+CHK|grid_position_set_msg|Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.|exact
+CHK|mixed_1_x|11.000000|abs=1
+CHK|mixed_1_y|287.666667|abs=1
+CHK|mixed_1_w|100.000000|abs=1
+CHK|mixed_1_h|103.333333|abs=1
+CHK|mixed_2_x|121.000000|abs=1
+CHK|mixed_2_y|287.666667|abs=1
+CHK|mixed_2_w|406.000000|abs=1
+CHK|mixed_2_h|103.333333|abs=1
+CHK|mixed_3_x|537.000000|abs=1
+CHK|mixed_3_y|287.666667|abs=1
+CHK|mixed_3_w|54.000000|abs=1
+CHK|mixed_3_h|103.333333|abs=1
+CHK|mixed_4_x|11.000000|abs=1
+CHK|mixed_4_y|71.000000|abs=1
+CHK|mixed_4_w|100.000000|abs=1
+CHK|mixed_4_h|206.666667|abs=1
+CHK|mixed_5_x|121.000000|abs=1
+CHK|mixed_5_y|71.000000|abs=1
+CHK|mixed_5_w|406.000000|abs=1
+CHK|mixed_5_h|206.666667|abs=1
+CHK|mixed_6_x|537.000000|abs=1
+CHK|mixed_6_y|71.000000|abs=1
+CHK|mixed_6_w|54.000000|abs=1
+CHK|mixed_6_h|206.666667|abs=1
+CHK|mixed_7_x|11.000000|abs=1
+CHK|mixed_7_y|11.000000|abs=1
+CHK|mixed_7_w|100.000000|abs=1
+CHK|mixed_7_h|50.000000|abs=1
+CHK|mixed_8_x|121.000000|abs=1
+CHK|mixed_8_y|11.000000|abs=1
+CHK|mixed_8_w|406.000000|abs=1
+CHK|mixed_8_h|50.000000|abs=1
+CHK|mixed_9_x|537.000000|abs=1
+CHK|mixed_9_y|11.000000|abs=1
+CHK|mixed_9_w|54.000000|abs=1
+CHK|mixed_9_h|50.000000|abs=1
+CHK|span_columns_x|11.000000|abs=1
+CHK|span_columns_y|287.666667|abs=1
+CHK|span_columns_w|580.000000|abs=1
+CHK|span_columns_h|103.333333|abs=1
+CHK|span_rows_x|11.000000|abs=1
+CHK|span_rows_y|11.000000|abs=1
+CHK|span_rows_w|100.000000|abs=1
+CHK|span_rows_h|266.666667|abs=1
+CHK|fit_column_child_hidden_x|537.000000|abs=1
+CHK|fit_column_child_hidden_y|71.000000|abs=1
+CHK|fit_column_child_hidden_w|54.000000|abs=1
+CHK|fit_column_child_hidden_h|206.666667|abs=1
+CHK|fit_column_empty_x|121.000000|abs=0.01
+CHK|fit_column_empty_y|71.000000|abs=0.01
+CHK|fit_column_empty_w|470.000000|abs=0.01
+CHK|fit_column_empty_h|206.666667|abs=0.01
+CHK|overflow_1_x|11.000000|abs=0.01
+CHK|overflow_1_y|91.000000|abs=0.01
+CHK|overflow_1_w|400.000000|abs=0.01
+CHK|overflow_1_h|300.000000|abs=0.01
+CHK|overflow_2_x|421.000000|abs=0.01
+CHK|overflow_2_y|91.000000|abs=0.01
+CHK|overflow_2_w|170.000000|abs=0.01
+CHK|overflow_2_h|300.000000|abs=0.01
+CHK|overflow_3_x|11.000000|abs=0.01
+CHK|overflow_3_y|-219.000000|abs=0.01
+CHK|overflow_3_w|400.000000|abs=0.01
+CHK|overflow_3_h|300.000000|abs=0.01
+CHK|overflow_4_x|421.000000|abs=0.01
+CHK|overflow_4_y|-219.000000|abs=0.01
+CHK|overflow_4_w|170.000000|abs=0.01
+CHK|overflow_4_h|300.000000|abs=0.01
+CHK|two_in_a_fit_cell_button_x|11.000000|abs=0.1
+CHK|two_in_a_fit_cell_button_y|344.703125|abs=0.1
+CHK|two_in_a_fit_cell_button_w|580.000000|abs=0.1
+CHK|two_in_a_fit_cell_button_h|46.296875|abs=0.1
+CHK|two_in_a_fit_cell_label_x|11.000000|abs=0.1
+CHK|two_in_a_fit_cell_label_y|344.703125|abs=0.1
+CHK|two_in_a_fit_cell_label_w|580.000000|abs=0.1
+CHK|two_in_a_fit_cell_label_h|46.296875|abs=0.1
+CHK|two_in_a_fit_cell_below_x|11.000000|abs=0.1
+CHK|two_in_a_fit_cell_below_y|11.000000|abs=0.1
+CHK|two_in_a_fit_cell_below_w|580.000000|abs=0.1
+CHK|two_in_a_fit_cell_below_h|323.703125|abs=0.1
+CHK|span_two_fit_rows_list_x|11.000000|abs=0.1
+CHK|span_two_fit_rows_list_y|317.000000|abs=0.1
+CHK|span_two_fit_rows_list_w|580.000000|abs=0.1
+CHK|span_two_fit_rows_list_h|74.000000|abs=0.1
+CHK|span_two_fit_rows_below_x|11.000000|abs=0.1
+CHK|span_two_fit_rows_below_y|11.000000|abs=0.1
+CHK|span_two_fit_rows_below_w|580.000000|abs=0.1
+CHK|span_two_fit_rows_below_h|296.000000|abs=0.1
+CHK|nested_inner_x|11.000000|abs=0.1
+CHK|nested_inner_y|348.234375|abs=0.1
+CHK|nested_inner_w|187.281250|abs=0.1
+CHK|nested_inner_h|42.765625|abs=0.1
+CHK|nested_label_x|11.000000|abs=0.1
+CHK|nested_label_y|11.000000|abs=0.1
+CHK|nested_label_w|34.015625|abs=0.1
+CHK|nested_label_h|22.765625|abs=0.1
+CHK|nested_field_x|55.015625|abs=0.1
+CHK|nested_field_y|11.000000|abs=0.1
+CHK|nested_field_w|123.265625|abs=0.1
+CHK|nested_field_h|22.765625|abs=0.1
+CHK|nested_below_x|11.000000|abs=0.1
+CHK|nested_below_y|11.000000|abs=0.1
+CHK|nested_below_w|187.281250|abs=0.1
+CHK|nested_below_h|327.234375|abs=0.1
+CHK|panel_in_fit_column_x|11.000000|abs=1
+CHK|panel_in_fit_column_y|11.000000|abs=1
+CHK|panel_in_fit_column_w|100.000000|abs=1
+CHK|panel_in_fit_column_h|380.000000|abs=1
+CHK|panel_grid_x|1.000000|abs=1
+CHK|panel_grid_y|1.000000|abs=1
+CHK|panel_grid_w|98.375000|abs=1
+CHK|panel_grid_h|358.234375|abs=1
+CHK|panel_label_x|11.000000|abs=1
+CHK|panel_label_y|332.468750|abs=1
+CHK|panel_label_w|78.375000|abs=1
+CHK|panel_label_h|16.765625|abs=1
+CHK|panel_dropdown_x|11.000000|abs=1
+CHK|panel_dropdown_y|299.703125|abs=1
+CHK|panel_dropdown_w|78.375000|abs=1
+CHK|panel_dropdown_h|22.765625|abs=1
+CHK|panel_right_x|121.375000|abs=1
+CHK|panel_right_y|11.000000|abs=1
+CHK|panel_right_w|469.625000|abs=1
+CHK|panel_right_h|380.000000|abs=1
+CHK|uiaxes_in_grid_x|11.000000|abs=0.01
+CHK|uiaxes_in_grid_y|11.000000|abs=0.01
+CHK|uiaxes_in_grid_w|285.000000|abs=0.01
+CHK|uiaxes_in_grid_h|380.000000|abs=0.01
+CHK|uiaxes_in_grid_units|pixels|exact
+CHK|grid_in_titled_panel_x|1.000000|abs=0.1
+CHK|grid_in_titled_panel_y|1.000000|abs=0.1
+CHK|grid_in_titled_panel_w|298.000000|abs=0.1
+CHK|grid_in_titled_panel_h|178.234375|abs=0.1
+CHK|grid_in_titled_panel_button_x|11.000000|abs=0.1
+CHK|grid_in_titled_panel_button_y|11.000000|abs=0.1
+CHK|grid_in_titled_panel_button_w|278.000000|abs=0.1
+CHK|grid_in_titled_panel_button_h|158.234375|abs=0.1
+CHK|child_position_set|double [1 4] 11 11 580 380 WARN MATLAB:ui:components:noPositionSetWhenInLayoutContainer|exact
+CHK|child_innerposition_set|double [1 4] 11 11 580 380 WARN MATLAB:ui:components:noPositionSetWhenInLayoutContainer|exact
+CHK|fit_label_1_12_0_w|8.687500|abs=0.05
+CHK|fit_label_1_12_0_h|16.765625|abs=0.05
+CHK|fit_label_1_12_1_w|8.687500|abs=0.05
+CHK|fit_label_1_12_1_h|16.765625|abs=0.05
+CHK|fit_label_1_20_0_w|13.125000|abs=0.05
+CHK|fit_label_1_20_0_h|26.609375|abs=0.05
+CHK|fit_label_1_20_1_w|13.125000|abs=0.05
+CHK|fit_label_1_20_1_h|26.609375|abs=0.05
+CHK|fit_label_2_12_0_w|13.328125|abs=0.05
+CHK|fit_label_2_12_0_h|16.765625|abs=0.05
+CHK|fit_label_2_12_1_w|13.328125|abs=0.05
+CHK|fit_label_2_12_1_h|16.765625|abs=0.05
+CHK|fit_label_2_20_0_w|20.890625|abs=0.05
+CHK|fit_label_2_20_0_h|26.609375|abs=0.05
+CHK|fit_label_2_20_1_w|20.890625|abs=0.05
+CHK|fit_label_2_20_1_h|26.609375|abs=0.05
+CHK|fit_label_3_12_0_w|31.375000|abs=0.05
+CHK|fit_label_3_12_0_h|16.765625|abs=0.05
+CHK|fit_label_3_12_1_w|33.343750|abs=0.05
+CHK|fit_label_3_12_1_h|16.765625|abs=0.05
+CHK|fit_label_3_20_0_w|50.937500|abs=0.05
+CHK|fit_label_3_20_0_h|26.609375|abs=0.05
+CHK|fit_label_3_20_1_w|54.250000|abs=0.05
+CHK|fit_label_3_20_1_h|26.609375|abs=0.05
+CHK|fit_label_4_12_0_w|12.671875|abs=0.05
+CHK|fit_label_4_12_0_h|16.765625|abs=0.05
+CHK|fit_label_4_12_1_w|15.343750|abs=0.05
+CHK|fit_label_4_12_1_h|16.765625|abs=0.05
+CHK|fit_label_4_20_0_w|19.781250|abs=0.05
+CHK|fit_label_4_20_0_h|26.609375|abs=0.05
+CHK|fit_label_4_20_1_w|24.234375|abs=0.05
+CHK|fit_label_4_20_1_h|26.609375|abs=0.05
+CHK|fit_label_5_12_0_w|41.984375|abs=0.05
+CHK|fit_label_5_12_0_h|16.765625|abs=0.05
+CHK|fit_label_5_12_1_w|41.984375|abs=0.05
+CHK|fit_label_5_12_1_h|16.765625|abs=0.05
+CHK|fit_label_5_20_0_w|68.640625|abs=0.05
+CHK|fit_label_5_20_0_h|26.609375|abs=0.05
+CHK|fit_label_5_20_1_w|68.640625|abs=0.05
+CHK|fit_label_5_20_1_h|26.609375|abs=0.05
+CHK|fit_label_6_12_0_w|109.390625|abs=0.05
+CHK|fit_label_6_12_0_h|16.765625|abs=0.05
+CHK|fit_label_6_12_1_w|118.671875|abs=0.05
+CHK|fit_label_6_12_1_h|16.765625|abs=0.05
+CHK|fit_label_6_20_0_w|180.984375|abs=0.05
+CHK|fit_label_6_20_0_h|26.609375|abs=0.05
+CHK|fit_label_6_20_1_w|196.453125|abs=0.05
+CHK|fit_label_6_20_1_h|26.609375|abs=0.05
+CHK|fit_label_7_12_0_w|68.750000|abs=0.05
+CHK|fit_label_7_12_0_h|16.765625|abs=0.05
+CHK|fit_label_7_12_1_w|68.750000|abs=0.05
+CHK|fit_label_7_12_1_h|16.765625|abs=0.05
+CHK|fit_label_7_20_0_w|113.234375|abs=0.05
+CHK|fit_label_7_20_0_h|26.609375|abs=0.05
+CHK|fit_label_7_20_1_w|113.234375|abs=0.05
+CHK|fit_label_7_20_1_h|26.609375|abs=0.05
+CHK|fit_label_8_12_0_w|5.343750|abs=0.05
+CHK|fit_label_8_12_0_h|16.765625|abs=0.05
+CHK|fit_label_8_12_1_w|5.343750|abs=0.05
+CHK|fit_label_8_12_1_h|16.765625|abs=0.05
+CHK|fit_label_8_20_0_w|7.562500|abs=0.05
+CHK|fit_label_8_20_0_h|26.609375|abs=0.05
+CHK|fit_label_8_20_1_w|7.562500|abs=0.05
+CHK|fit_label_8_20_1_h|26.609375|abs=0.05
+CHK|fit_label_9_12_0_w|5.343750|abs=0.05
+CHK|fit_label_9_12_0_h|16.765625|abs=0.05
+CHK|fit_label_9_12_1_w|5.343750|abs=0.05
+CHK|fit_label_9_12_1_h|16.765625|abs=0.05
+CHK|fit_label_9_20_0_w|7.562500|abs=0.05
+CHK|fit_label_9_20_0_h|26.609375|abs=0.05
+CHK|fit_label_9_20_1_w|7.562500|abs=0.05
+CHK|fit_label_9_20_1_h|26.609375|abs=0.05
+CHK|fit_Label_12_w|31.375000|abs=0.6
+CHK|fit_Label_12_h|16.765625|abs=0.6
+CHK|fit_Label_20_w|50.937500|abs=0.6
+CHK|fit_Label_20_h|26.609375|abs=0.6
+CHK|fit_Button_12_w|45.000000|abs=0.6
+CHK|fit_Button_12_h|23.000000|abs=0.6
+CHK|fit_Button_20_w|68.000000|abs=0.6
+CHK|fit_Button_20_h|33.000000|abs=0.6
+CHK|fit_StateButton_12_w|77.000000|abs=0.6
+CHK|fit_StateButton_12_h|23.000000|abs=0.6
+CHK|fit_StateButton_20_w|121.000000|abs=0.6
+CHK|fit_StateButton_20_h|33.000000|abs=0.6
+CHK|fit_EditField_12_w|123.265625|abs=0.6
+CHK|fit_EditField_12_h|22.765625|abs=0.6
+CHK|fit_EditField_20_w|198.781250|abs=0.6
+CHK|fit_EditField_20_h|32.609375|abs=0.6
+CHK|fit_NumericEditField_12_w|76.750000|abs=0.6
+CHK|fit_NumericEditField_12_h|22.765625|abs=0.6
+CHK|fit_NumericEditField_20_w|121.234375|abs=0.6
+CHK|fit_NumericEditField_20_h|32.609375|abs=0.6
+CHK|fit_TextArea_12_w|179.906250|abs=0.6
+CHK|fit_TextArea_12_h|65.062500|abs=0.6
+CHK|fit_TextArea_20_w|293.156250|abs=0.6
+CHK|fit_TextArea_20_h|104.437500|abs=0.6
+CHK|fit_DropDown_12_w|78.375000|abs=0.6
+CHK|fit_DropDown_12_h|22.765625|abs=0.6
+CHK|fit_DropDown_20_w|108.609375|abs=0.6
+CHK|fit_DropDown_20_h|32.609375|abs=0.6
+CHK|fit_ListBox_12_w|44.000000|abs=0.6
+CHK|fit_ListBox_12_h|74.000000|abs=0.6
+CHK|fit_ListBox_20_w|66.000000|abs=0.6
+CHK|fit_ListBox_20_h|122.000000|abs=0.6
+CHK|fit_CheckBox_12_w|77.031250|abs=0.6
+CHK|fit_CheckBox_12_h|16.765625|abs=0.6
+CHK|fit_CheckBox_20_w|115.718750|abs=0.6
+CHK|fit_CheckBox_20_h|26.609375|abs=0.6
+CHK|fit_Slider_12_w|148.000000|abs=0.6
+CHK|fit_Slider_12_h|3.000000|abs=0.6
+CHK|fit_Slider_20_w|148.062500|abs=0.6
+CHK|fit_Slider_20_h|3.000000|abs=0.6
+CHK|fit_RangeSlider_12_w|148.000000|abs=0.6
+CHK|fit_RangeSlider_12_h|3.000000|abs=0.6
+CHK|fit_RangeSlider_20_w|148.062500|abs=0.6
+CHK|fit_RangeSlider_20_h|3.000000|abs=0.6
+CHK|fit_Spinner_12_w|98.750000|abs=0.6
+CHK|fit_Spinner_12_h|22.000000|abs=0.6
+CHK|fit_Spinner_20_w|143.234375|abs=0.6
+CHK|fit_Spinner_20_h|28.609375|abs=0.6
+CHK|fit_Image_12_w|100.000000|abs=0.6
+CHK|fit_Image_12_h|100.000000|abs=0.6
+CHK|fit_Image_20_w|100.000000|abs=0.6
+CHK|fit_Image_20_h|100.000000|abs=0.6
+CHK|fit_Hyperlink_12_w|56.687500|abs=0.6
+CHK|fit_Hyperlink_12_h|16.765625|abs=0.6
+CHK|fit_Hyperlink_20_w|93.156250|abs=0.6
+CHK|fit_Hyperlink_20_h|26.609375|abs=0.6
+CHK|fit_GridLayout_12_w|30.000000|abs=0.6
+CHK|fit_GridLayout_12_h|30.000000|abs=0.6
+CHK|fit_GridLayout_20_w|30.000000|abs=0.6
+CHK|fit_GridLayout_20_h|30.000000|abs=0.6
+CHK|fit_long_button_w|147.000000|abs=0.6
+CHK|fit_long_button_h|23.000000|abs=0.6
+CHK|fit_long_checkbox_w|153.078125|abs=0.6
+CHK|fit_long_checkbox_h|16.765625|abs=0.6
+CHK|fit_long_dropdown_w|158.390625|abs=0.6
+CHK|fit_long_dropdown_h|22.765625|abs=0.6
+CHK|fit_long_listbox_w|136.000000|abs=0.6
+CHK|fit_long_listbox_h|38.000000|abs=0.6
+CHK|fit_two_line_label_w|26.687500|abs=0.6
+CHK|fit_two_line_label_h|31.531250|abs=0.6
+CHK|fit_two_line_button_w|35.000000|abs=0.6
+CHK|fit_two_line_button_h|38.000000|abs=0.6
+CHK|fit_long_hyperlink_w|134.250000|abs=0.6
+CHK|fit_long_hyperlink_h|16.765625|abs=0.6
+CHK|fit_long_state_button_w|114.000000|abs=0.6
+CHK|fit_long_state_button_h|23.000000|abs=0.6

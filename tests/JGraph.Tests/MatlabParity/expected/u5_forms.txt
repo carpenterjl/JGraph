@@ -1,0 +1,682 @@
+CHK|uilabel_in_uifigure|uilabel in figure at [100 100 31 22]|exact
+CHK|uilabel_in_figure|uilabel in figure at [100 100 31 22]|exact
+CHK|uilabel_in_uipanel|uilabel in uipanel at [100 100 31 22]|exact
+CHK|uilabel_in_classic_uipanel|uilabel in uipanel at [100 100 31 22]|exact
+CHK|uilabel_in_grid|uilabel in uigridlayout|exact
+CHK|uilabel_in_group|uilabel in uibuttongroup at [100 100 31 22]|exact
+CHK|uilabel_in_classic_group|uilabel in uibuttongroup at [100 100 31 22]|exact
+CHK|uilabel_in_axes|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uilabel_in_label|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_in_label_msg|Label cannot be a parent.|exact
+CHK|uilabel_number|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_empty|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilabel_named_parent|uilabel in figure at [100 100 31 22]|exact
+CHK|uilabel_unknown|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_unknown_msg|Unrecognized property Bogus for class Label.|exact
+CHK|uilabel_odd|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uilabel_struct|s|exact
+CHK|uilabel_pairs|off|exact
+CHK|uilabel_lower_case|t|exact
+CHK|uilabel_prefix|t|exact
+CHK|uilabel_strings|t|exact
+CHK|uilabel_position|double [1 4] 1 2 30 40|exact
+CHK|uilabel_units|MATLAB:hg:InvalidProperty|exact
+CHK|uilabel_units_msg|Unrecognized property Units for class matlab.ui.control.Label.|exact
+CHK|uilabel_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uilabel_set_units_msg|Unrecognized property Units for class Label.|exact
+CHK|uilabel_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uilabel_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Label.|exact
+CHK|uilabel_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uilabel_set_unknown_msg|Unrecognized property Bogus for class Label.|exact
+CHK|uilabel_set_type|MATLAB:class:SetProhibited|exact
+CHK|uilabel_set_type_msg|Unable to set the 'Type' property of class ''Label'' because it is read-only.|exact
+CHK|uilabel_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uilabel_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Label'' because it is read-only.|exact
+CHK|uilabel_to_figure|uilabel in figure at [100 100 31 22]|exact
+CHK|uilabel_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uilabel_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uilabel_to_panel|uilabel in uipanel at [100 100 31 22]|exact
+CHK|uilabel_in_panel_position|double [1 4] 100 100 31 22|exact
+CHK|uibutton_in_uifigure|uibutton in figure at [100 100 100 22]|exact
+CHK|uibutton_in_figure|uibutton in figure at [100 100 100 22]|exact
+CHK|uibutton_in_uipanel|uibutton in uipanel at [100 100 100 22]|exact
+CHK|uibutton_in_classic_uipanel|uibutton in uipanel at [100 100 100 22]|exact
+CHK|uibutton_in_grid|uibutton in uigridlayout|exact
+CHK|uibutton_in_group|uibutton in uibuttongroup at [100 100 100 22]|exact
+CHK|uibutton_in_classic_group|uibutton in uibuttongroup at [100 100 100 22]|exact
+CHK|uibutton_in_axes|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uibutton_in_label|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_in_label_msg|Label cannot be a parent.|exact
+CHK|uibutton_number|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uibutton_empty|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uibutton_named_parent|uibutton in figure at [100 100 100 22]|exact
+CHK|uibutton_unknown|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_unknown_msg|Unrecognized property Bogus for class Button.|exact
+CHK|uibutton_odd|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_odd_msg|'Tag' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.|exact
+CHK|uibutton_struct|s|exact
+CHK|uibutton_pairs|off|exact
+CHK|uibutton_lower_case|t|exact
+CHK|uibutton_prefix|t|exact
+CHK|uibutton_strings|t|exact
+CHK|uibutton_position|double [1 4] 1 2 30 40|exact
+CHK|uibutton_units|MATLAB:hg:InvalidProperty|exact
+CHK|uibutton_units_msg|Unrecognized property Units for class matlab.ui.control.Button.|exact
+CHK|uibutton_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uibutton_set_units_msg|Unrecognized property Units for class Button.|exact
+CHK|uibutton_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uibutton_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Button.|exact
+CHK|uibutton_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uibutton_set_unknown_msg|Unrecognized property Bogus for class Button.|exact
+CHK|uibutton_set_type|MATLAB:class:SetProhibited|exact
+CHK|uibutton_set_type_msg|Unable to set the 'Type' property of class ''Button'' because it is read-only.|exact
+CHK|uibutton_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uibutton_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Button'' because it is read-only.|exact
+CHK|uibutton_to_figure|uibutton in figure at [100 100 100 22]|exact
+CHK|uibutton_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uibutton_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uibutton_to_panel|uibutton in uipanel at [100 100 100 22]|exact
+CHK|uibutton_in_panel_position|double [1 4] 100 100 100 22|exact
+CHK|uieditfield_in_uifigure|uieditfield in figure at [100 100 100 22]|exact
+CHK|uieditfield_in_figure|uieditfield in figure at [100 100 100 22]|exact
+CHK|uieditfield_in_uipanel|uieditfield in uipanel at [100 100 100 22]|exact
+CHK|uieditfield_in_classic_uipanel|uieditfield in uipanel at [100 100 100 22]|exact
+CHK|uieditfield_in_grid|uieditfield in uigridlayout|exact
+CHK|uieditfield_in_group|uieditfield in uibuttongroup at [100 100 100 22]|exact
+CHK|uieditfield_in_classic_group|uieditfield in uibuttongroup at [100 100 100 22]|exact
+CHK|uieditfield_in_axes|MATLAB:ui:EditField:unknownInput|exact
+CHK|uieditfield_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uieditfield_in_label|MATLAB:ui:EditField:unknownInput|exact
+CHK|uieditfield_in_label_msg|Label cannot be a parent.|exact
+CHK|uieditfield_number|MATLAB:ui:EditField:unknownInput|exact
+CHK|uieditfield_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uieditfield_empty|MATLAB:ui:EditField:unknownInput|exact
+CHK|uieditfield_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uieditfield_named_parent|uieditfield in figure at [100 100 100 22]|exact
+CHK|uieditfield_unknown|MATLAB:ui:EditField:unknownInput|exact
+CHK|uieditfield_unknown_msg|Unrecognized property Bogus for class EditField.|exact
+CHK|uieditfield_odd|MATLAB:ui:EditField:unknownInput|exact
+CHK|uieditfield_odd_msg|'Tag' is not a valid STYLE for uieditfield. STYLE must be 'text' or 'numeric'.|exact
+CHK|uieditfield_struct|s|exact
+CHK|uieditfield_pairs|off|exact
+CHK|uieditfield_lower_case|t|exact
+CHK|uieditfield_prefix|t|exact
+CHK|uieditfield_strings|t|exact
+CHK|uieditfield_position|double [1 4] 1 2 30 40|exact
+CHK|uieditfield_units|MATLAB:hg:InvalidProperty|exact
+CHK|uieditfield_units_msg|Unrecognized property Units for class matlab.ui.control.EditField.|exact
+CHK|uieditfield_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uieditfield_set_units_msg|Unrecognized property Units for class EditField.|exact
+CHK|uieditfield_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uieditfield_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.EditField.|exact
+CHK|uieditfield_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uieditfield_set_unknown_msg|Unrecognized property Bogus for class EditField.|exact
+CHK|uieditfield_set_type|MATLAB:class:SetProhibited|exact
+CHK|uieditfield_set_type_msg|Unable to set the 'Type' property of class ''EditField'' because it is read-only.|exact
+CHK|uieditfield_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uieditfield_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''EditField'' because it is read-only.|exact
+CHK|uieditfield_to_figure|uieditfield in figure at [100 100 100 22]|exact
+CHK|uieditfield_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uieditfield_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uieditfield_to_panel|uieditfield in uipanel at [100 100 100 22]|exact
+CHK|uieditfield_in_panel_position|double [1 4] 100 100 100 22|exact
+CHK|uitextarea_in_uifigure|uitextarea in figure at [100 100 150 60]|exact
+CHK|uitextarea_in_figure|uitextarea in figure at [100 100 150 60]|exact
+CHK|uitextarea_in_uipanel|uitextarea in uipanel at [100 100 150 60]|exact
+CHK|uitextarea_in_classic_uipanel|uitextarea in uipanel at [100 100 150 60]|exact
+CHK|uitextarea_in_grid|uitextarea in uigridlayout|exact
+CHK|uitextarea_in_group|uitextarea in uibuttongroup at [100 100 150 60]|exact
+CHK|uitextarea_in_classic_group|uitextarea in uibuttongroup at [100 100 150 60]|exact
+CHK|uitextarea_in_axes|MATLAB:ui:TextArea:unknownInput|exact
+CHK|uitextarea_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitextarea_in_label|MATLAB:ui:TextArea:unknownInput|exact
+CHK|uitextarea_in_label_msg|Label cannot be a parent.|exact
+CHK|uitextarea_number|MATLAB:ui:TextArea:unknownInput|exact
+CHK|uitextarea_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitextarea_empty|MATLAB:ui:TextArea:unknownInput|exact
+CHK|uitextarea_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitextarea_named_parent|uitextarea in figure at [100 100 150 60]|exact
+CHK|uitextarea_unknown|MATLAB:ui:TextArea:unknownInput|exact
+CHK|uitextarea_unknown_msg|Unrecognized property Bogus for class TextArea.|exact
+CHK|uitextarea_odd|MATLAB:ui:TextArea:unknownInput|exact
+CHK|uitextarea_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uitextarea_struct|s|exact
+CHK|uitextarea_pairs|off|exact
+CHK|uitextarea_lower_case|t|exact
+CHK|uitextarea_prefix|t|exact
+CHK|uitextarea_strings|t|exact
+CHK|uitextarea_position|double [1 4] 1 2 30 40|exact
+CHK|uitextarea_units|MATLAB:hg:InvalidProperty|exact
+CHK|uitextarea_units_msg|Unrecognized property Units for class matlab.ui.control.TextArea.|exact
+CHK|uitextarea_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uitextarea_set_units_msg|Unrecognized property Units for class TextArea.|exact
+CHK|uitextarea_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitextarea_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.TextArea.|exact
+CHK|uitextarea_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitextarea_set_unknown_msg|Unrecognized property Bogus for class TextArea.|exact
+CHK|uitextarea_set_type|MATLAB:class:SetProhibited|exact
+CHK|uitextarea_set_type_msg|Unable to set the 'Type' property of class ''TextArea'' because it is read-only.|exact
+CHK|uitextarea_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uitextarea_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''TextArea'' because it is read-only.|exact
+CHK|uitextarea_to_figure|uitextarea in figure at [100 100 150 60]|exact
+CHK|uitextarea_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitextarea_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uitextarea_to_panel|uitextarea in uipanel at [100 100 150 60]|exact
+CHK|uitextarea_in_panel_position|double [1 4] 100 100 150 60|exact
+CHK|uidropdown_in_uifigure|uidropdown in figure at [100 100 100 22]|exact
+CHK|uidropdown_in_figure|uidropdown in figure at [100 100 100 22]|exact
+CHK|uidropdown_in_uipanel|uidropdown in uipanel at [100 100 100 22]|exact
+CHK|uidropdown_in_classic_uipanel|uidropdown in uipanel at [100 100 100 22]|exact
+CHK|uidropdown_in_grid|uidropdown in uigridlayout|exact
+CHK|uidropdown_in_group|uidropdown in uibuttongroup at [100 100 100 22]|exact
+CHK|uidropdown_in_classic_group|uidropdown in uibuttongroup at [100 100 100 22]|exact
+CHK|uidropdown_in_axes|MATLAB:ui:DropDown:unknownInput|exact
+CHK|uidropdown_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uidropdown_in_label|MATLAB:ui:DropDown:unknownInput|exact
+CHK|uidropdown_in_label_msg|Label cannot be a parent.|exact
+CHK|uidropdown_number|MATLAB:ui:DropDown:unknownInput|exact
+CHK|uidropdown_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidropdown_empty|MATLAB:ui:DropDown:unknownInput|exact
+CHK|uidropdown_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidropdown_named_parent|uidropdown in figure at [100 100 100 22]|exact
+CHK|uidropdown_unknown|MATLAB:ui:DropDown:unknownInput|exact
+CHK|uidropdown_unknown_msg|Unrecognized property Bogus for class DropDown.|exact
+CHK|uidropdown_odd|MATLAB:ui:DropDown:unknownInput|exact
+CHK|uidropdown_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uidropdown_struct|s|exact
+CHK|uidropdown_pairs|off|exact
+CHK|uidropdown_lower_case|t|exact
+CHK|uidropdown_prefix|t|exact
+CHK|uidropdown_strings|t|exact
+CHK|uidropdown_position|double [1 4] 1 2 30 40|exact
+CHK|uidropdown_units|MATLAB:hg:InvalidProperty|exact
+CHK|uidropdown_units_msg|Unrecognized property Units for class matlab.ui.control.DropDown.|exact
+CHK|uidropdown_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uidropdown_set_units_msg|Unrecognized property Units for class DropDown.|exact
+CHK|uidropdown_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uidropdown_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.DropDown.|exact
+CHK|uidropdown_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uidropdown_set_unknown_msg|Unrecognized property Bogus for class DropDown.|exact
+CHK|uidropdown_set_type|MATLAB:class:SetProhibited|exact
+CHK|uidropdown_set_type_msg|Unable to set the 'Type' property of class ''DropDown'' because it is read-only.|exact
+CHK|uidropdown_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uidropdown_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''DropDown'' because it is read-only.|exact
+CHK|uidropdown_to_figure|uidropdown in figure at [100 100 100 22]|exact
+CHK|uidropdown_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uidropdown_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uidropdown_to_panel|uidropdown in uipanel at [100 100 100 22]|exact
+CHK|uidropdown_in_panel_position|double [1 4] 100 100 100 22|exact
+CHK|uilistbox_in_uifigure|uilistbox in figure at [100 100 100 74]|exact
+CHK|uilistbox_in_figure|uilistbox in figure at [100 100 100 74]|exact
+CHK|uilistbox_in_uipanel|uilistbox in uipanel at [100 100 100 74]|exact
+CHK|uilistbox_in_classic_uipanel|uilistbox in uipanel at [100 100 100 74]|exact
+CHK|uilistbox_in_grid|uilistbox in uigridlayout|exact
+CHK|uilistbox_in_group|uilistbox in uibuttongroup at [100 100 100 74]|exact
+CHK|uilistbox_in_classic_group|uilistbox in uibuttongroup at [100 100 100 74]|exact
+CHK|uilistbox_in_axes|MATLAB:ui:ListBox:unknownInput|exact
+CHK|uilistbox_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uilistbox_in_label|MATLAB:ui:ListBox:unknownInput|exact
+CHK|uilistbox_in_label_msg|Label cannot be a parent.|exact
+CHK|uilistbox_number|MATLAB:ui:ListBox:unknownInput|exact
+CHK|uilistbox_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilistbox_empty|MATLAB:ui:ListBox:unknownInput|exact
+CHK|uilistbox_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilistbox_named_parent|uilistbox in figure at [100 100 100 74]|exact
+CHK|uilistbox_unknown|MATLAB:ui:ListBox:unknownInput|exact
+CHK|uilistbox_unknown_msg|Unrecognized property Bogus for class ListBox.|exact
+CHK|uilistbox_odd|MATLAB:ui:ListBox:unknownInput|exact
+CHK|uilistbox_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uilistbox_struct|s|exact
+CHK|uilistbox_pairs|off|exact
+CHK|uilistbox_lower_case|t|exact
+CHK|uilistbox_prefix|t|exact
+CHK|uilistbox_strings|t|exact
+CHK|uilistbox_position|double [1 4] 1 2 30 40|exact
+CHK|uilistbox_units|MATLAB:hg:InvalidProperty|exact
+CHK|uilistbox_units_msg|Unrecognized property Units for class matlab.ui.control.ListBox.|exact
+CHK|uilistbox_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uilistbox_set_units_msg|Unrecognized property Units for class ListBox.|exact
+CHK|uilistbox_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uilistbox_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.ListBox.|exact
+CHK|uilistbox_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uilistbox_set_unknown_msg|Unrecognized property Bogus for class ListBox.|exact
+CHK|uilistbox_set_type|MATLAB:class:SetProhibited|exact
+CHK|uilistbox_set_type_msg|Unable to set the 'Type' property of class ''ListBox'' because it is read-only.|exact
+CHK|uilistbox_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uilistbox_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''ListBox'' because it is read-only.|exact
+CHK|uilistbox_to_figure|uilistbox in figure at [100 100 100 74]|exact
+CHK|uilistbox_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uilistbox_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uilistbox_to_panel|uilistbox in uipanel at [100 100 100 74]|exact
+CHK|uilistbox_in_panel_position|double [1 4] 100 100 100 74|exact
+CHK|uicheckbox_in_uifigure|uicheckbox in figure at [100 100 84 22]|exact
+CHK|uicheckbox_in_figure|uicheckbox in figure at [100 100 84 22]|exact
+CHK|uicheckbox_in_uipanel|uicheckbox in uipanel at [100 100 84 22]|exact
+CHK|uicheckbox_in_classic_uipanel|uicheckbox in uipanel at [100 100 84 22]|exact
+CHK|uicheckbox_in_grid|uicheckbox in uigridlayout|exact
+CHK|uicheckbox_in_group|uicheckbox in uibuttongroup at [100 100 84 22]|exact
+CHK|uicheckbox_in_classic_group|uicheckbox in uibuttongroup at [100 100 84 22]|exact
+CHK|uicheckbox_in_axes|MATLAB:ui:CheckBox:unknownInput|exact
+CHK|uicheckbox_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uicheckbox_in_label|MATLAB:ui:CheckBox:unknownInput|exact
+CHK|uicheckbox_in_label_msg|Label cannot be a parent.|exact
+CHK|uicheckbox_number|MATLAB:ui:CheckBox:unknownInput|exact
+CHK|uicheckbox_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicheckbox_empty|MATLAB:ui:CheckBox:unknownInput|exact
+CHK|uicheckbox_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicheckbox_named_parent|uicheckbox in figure at [100 100 84 22]|exact
+CHK|uicheckbox_unknown|MATLAB:ui:CheckBox:unknownInput|exact
+CHK|uicheckbox_unknown_msg|Unrecognized property Bogus for class CheckBox.|exact
+CHK|uicheckbox_odd|MATLAB:ui:CheckBox:unknownInput|exact
+CHK|uicheckbox_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uicheckbox_struct|s|exact
+CHK|uicheckbox_pairs|off|exact
+CHK|uicheckbox_lower_case|t|exact
+CHK|uicheckbox_prefix|t|exact
+CHK|uicheckbox_strings|t|exact
+CHK|uicheckbox_position|double [1 4] 1 2 30 40|exact
+CHK|uicheckbox_units|MATLAB:hg:InvalidProperty|exact
+CHK|uicheckbox_units_msg|Unrecognized property Units for class matlab.ui.control.CheckBox.|exact
+CHK|uicheckbox_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uicheckbox_set_units_msg|Unrecognized property Units for class CheckBox.|exact
+CHK|uicheckbox_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uicheckbox_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.CheckBox.|exact
+CHK|uicheckbox_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uicheckbox_set_unknown_msg|Unrecognized property Bogus for class CheckBox.|exact
+CHK|uicheckbox_set_type|MATLAB:class:SetProhibited|exact
+CHK|uicheckbox_set_type_msg|Unable to set the 'Type' property of class ''CheckBox'' because it is read-only.|exact
+CHK|uicheckbox_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uicheckbox_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''CheckBox'' because it is read-only.|exact
+CHK|uicheckbox_to_figure|uicheckbox in figure at [100 100 84 22]|exact
+CHK|uicheckbox_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uicheckbox_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uicheckbox_to_panel|uicheckbox in uipanel at [100 100 84 22]|exact
+CHK|uicheckbox_in_panel_position|double [1 4] 100 100 84 22|exact
+CHK|uislider_in_uifigure|uislider in figure at [100 100 150 3]|exact
+CHK|uislider_in_figure|uislider in figure at [100 100 150 3]|exact
+CHK|uislider_in_uipanel|uislider in uipanel at [100 100 150 3]|exact
+CHK|uislider_in_classic_uipanel|uislider in uipanel at [100 100 150 3]|exact
+CHK|uislider_in_grid|uislider in uigridlayout|exact
+CHK|uislider_in_group|uislider in uibuttongroup at [100 100 150 3]|exact
+CHK|uislider_in_classic_group|uislider in uibuttongroup at [100 100 150 3]|exact
+CHK|uislider_in_axes|MATLAB:ui:Slider:unknownInput|exact
+CHK|uislider_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uislider_in_label|MATLAB:ui:Slider:unknownInput|exact
+CHK|uislider_in_label_msg|Label cannot be a parent.|exact
+CHK|uislider_number|MATLAB:ui:Slider:unknownInput|exact
+CHK|uislider_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uislider_empty|MATLAB:ui:Slider:unknownInput|exact
+CHK|uislider_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uislider_named_parent|uislider in figure at [100 100 150 3]|exact
+CHK|uislider_unknown|MATLAB:ui:Slider:unknownInput|exact
+CHK|uislider_unknown_msg|Unrecognized property Bogus for class Slider.|exact
+CHK|uislider_odd|MATLAB:ui:Slider:unknownInput|exact
+CHK|uislider_odd_msg|'Tag' is not a valid STYLE for uislider. STYLE must be 'slider' or 'range'.|exact
+CHK|uislider_struct|s|exact
+CHK|uislider_pairs|off|exact
+CHK|uislider_lower_case|t|exact
+CHK|uislider_prefix|t|exact
+CHK|uislider_strings|t|exact
+CHK|uislider_position|double [1 4] 1 2 30 3|exact
+CHK|uislider_units|MATLAB:hg:InvalidProperty|exact
+CHK|uislider_units_msg|Unrecognized property Units for class matlab.ui.control.Slider.|exact
+CHK|uislider_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uislider_set_units_msg|Unrecognized property Units for class Slider.|exact
+CHK|uislider_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uislider_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Slider.|exact
+CHK|uislider_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uislider_set_unknown_msg|Unrecognized property Bogus for class Slider.|exact
+CHK|uislider_set_type|MATLAB:class:SetProhibited|exact
+CHK|uislider_set_type_msg|Unable to set the 'Type' property of class ''Slider'' because it is read-only.|exact
+CHK|uislider_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uislider_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Slider'' because it is read-only.|exact
+CHK|uislider_to_figure|uislider in figure at [100 100 150 3]|exact
+CHK|uislider_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uislider_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uislider_to_panel|uislider in uipanel at [100 100 150 3]|exact
+CHK|uislider_in_panel_position|double [1 4] 100 100 150 3|exact
+CHK|uispinner_in_uifigure|uispinner in figure at [100 100 100 22]|exact
+CHK|uispinner_in_figure|uispinner in figure at [100 100 100 22]|exact
+CHK|uispinner_in_uipanel|uispinner in uipanel at [100 100 100 22]|exact
+CHK|uispinner_in_classic_uipanel|uispinner in uipanel at [100 100 100 22]|exact
+CHK|uispinner_in_grid|uispinner in uigridlayout|exact
+CHK|uispinner_in_group|uispinner in uibuttongroup at [100 100 100 22]|exact
+CHK|uispinner_in_classic_group|uispinner in uibuttongroup at [100 100 100 22]|exact
+CHK|uispinner_in_axes|MATLAB:ui:Spinner:unknownInput|exact
+CHK|uispinner_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uispinner_in_label|MATLAB:ui:Spinner:unknownInput|exact
+CHK|uispinner_in_label_msg|Label cannot be a parent.|exact
+CHK|uispinner_number|MATLAB:ui:Spinner:unknownInput|exact
+CHK|uispinner_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uispinner_empty|MATLAB:ui:Spinner:unknownInput|exact
+CHK|uispinner_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uispinner_named_parent|uispinner in figure at [100 100 100 22]|exact
+CHK|uispinner_unknown|MATLAB:ui:Spinner:unknownInput|exact
+CHK|uispinner_unknown_msg|Unrecognized property Bogus for class Spinner.|exact
+CHK|uispinner_odd|MATLAB:ui:Spinner:unknownInput|exact
+CHK|uispinner_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uispinner_struct|s|exact
+CHK|uispinner_pairs|off|exact
+CHK|uispinner_lower_case|t|exact
+CHK|uispinner_prefix|t|exact
+CHK|uispinner_strings|t|exact
+CHK|uispinner_position|double [1 4] 1 2 30 40|exact
+CHK|uispinner_units|MATLAB:hg:InvalidProperty|exact
+CHK|uispinner_units_msg|Unrecognized property Units for class matlab.ui.control.Spinner.|exact
+CHK|uispinner_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uispinner_set_units_msg|Unrecognized property Units for class Spinner.|exact
+CHK|uispinner_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uispinner_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Spinner.|exact
+CHK|uispinner_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uispinner_set_unknown_msg|Unrecognized property Bogus for class Spinner.|exact
+CHK|uispinner_set_type|MATLAB:class:SetProhibited|exact
+CHK|uispinner_set_type_msg|Unable to set the 'Type' property of class ''Spinner'' because it is read-only.|exact
+CHK|uispinner_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uispinner_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Spinner'' because it is read-only.|exact
+CHK|uispinner_to_figure|uispinner in figure at [100 100 100 22]|exact
+CHK|uispinner_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uispinner_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uispinner_to_panel|uispinner in uipanel at [100 100 100 22]|exact
+CHK|uispinner_in_panel_position|double [1 4] 100 100 100 22|exact
+CHK|uiimage_in_uifigure|uiimage in figure at [100 100 100 100]|exact
+CHK|uiimage_in_figure|uiimage in figure at [100 100 100 100]|exact
+CHK|uiimage_in_uipanel|uiimage in uipanel at [100 100 100 100]|exact
+CHK|uiimage_in_classic_uipanel|uiimage in uipanel at [100 100 100 100]|exact
+CHK|uiimage_in_grid|uiimage in uigridlayout|exact
+CHK|uiimage_in_group|uiimage in uibuttongroup at [100 100 100 100]|exact
+CHK|uiimage_in_classic_group|uiimage in uibuttongroup at [100 100 100 100]|exact
+CHK|uiimage_in_axes|MATLAB:ui:Image:unknownInput|exact
+CHK|uiimage_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uiimage_in_label|MATLAB:ui:Image:unknownInput|exact
+CHK|uiimage_in_label_msg|Label cannot be a parent.|exact
+CHK|uiimage_number|MATLAB:ui:Image:unknownInput|exact
+CHK|uiimage_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiimage_empty|MATLAB:ui:Image:unknownInput|exact
+CHK|uiimage_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiimage_named_parent|uiimage in figure at [100 100 100 100]|exact
+CHK|uiimage_unknown|MATLAB:ui:Image:unknownInput|exact
+CHK|uiimage_unknown_msg|Unrecognized property Bogus for class Image.|exact
+CHK|uiimage_odd|MATLAB:ui:Image:unknownInput|exact
+CHK|uiimage_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uiimage_struct|s|exact
+CHK|uiimage_pairs|off|exact
+CHK|uiimage_lower_case|t|exact
+CHK|uiimage_prefix|t|exact
+CHK|uiimage_strings|t|exact
+CHK|uiimage_position|double [1 4] 1 2 30 40|exact
+CHK|uiimage_units|MATLAB:hg:InvalidProperty|exact
+CHK|uiimage_units_msg|Unrecognized property Units for class matlab.ui.control.Image.|exact
+CHK|uiimage_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uiimage_set_units_msg|Unrecognized property Units for class Image.|exact
+CHK|uiimage_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uiimage_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Image.|exact
+CHK|uiimage_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uiimage_set_unknown_msg|Unrecognized property Bogus for class Image.|exact
+CHK|uiimage_set_type|MATLAB:class:SetProhibited|exact
+CHK|uiimage_set_type_msg|Unable to set the 'Type' property of class ''Image'' because it is read-only.|exact
+CHK|uiimage_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uiimage_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Image'' because it is read-only.|exact
+CHK|uiimage_to_figure|uiimage in figure at [100 100 100 100]|exact
+CHK|uiimage_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uiimage_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uiimage_to_panel|uiimage in uipanel at [100 100 100 100]|exact
+CHK|uiimage_in_panel_position|double [1 4] 100 100 100 100|exact
+CHK|uihyperlink_in_uifigure|uihyperlink in figure at [100 100 70 22]|exact
+CHK|uihyperlink_in_figure|uihyperlink in figure at [100 100 70 22]|exact
+CHK|uihyperlink_in_uipanel|uihyperlink in uipanel at [100 100 70 22]|exact
+CHK|uihyperlink_in_classic_uipanel|uihyperlink in uipanel at [100 100 70 22]|exact
+CHK|uihyperlink_in_grid|uihyperlink in uigridlayout|exact
+CHK|uihyperlink_in_group|uihyperlink in uibuttongroup at [100 100 70 22]|exact
+CHK|uihyperlink_in_classic_group|uihyperlink in uibuttongroup at [100 100 70 22]|exact
+CHK|uihyperlink_in_axes|MATLAB:ui:Hyperlink:unknownInput|exact
+CHK|uihyperlink_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uihyperlink_in_label|MATLAB:ui:Hyperlink:unknownInput|exact
+CHK|uihyperlink_in_label_msg|Label cannot be a parent.|exact
+CHK|uihyperlink_number|MATLAB:ui:Hyperlink:unknownInput|exact
+CHK|uihyperlink_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uihyperlink_empty|MATLAB:ui:Hyperlink:unknownInput|exact
+CHK|uihyperlink_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uihyperlink_named_parent|uihyperlink in figure at [100 100 70 22]|exact
+CHK|uihyperlink_unknown|MATLAB:ui:Hyperlink:unknownInput|exact
+CHK|uihyperlink_unknown_msg|Unrecognized property Bogus for class Hyperlink.|exact
+CHK|uihyperlink_odd|MATLAB:ui:Hyperlink:unknownInput|exact
+CHK|uihyperlink_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uihyperlink_struct|s|exact
+CHK|uihyperlink_pairs|off|exact
+CHK|uihyperlink_lower_case|t|exact
+CHK|uihyperlink_prefix|t|exact
+CHK|uihyperlink_strings|t|exact
+CHK|uihyperlink_position|double [1 4] 1 2 30 40|exact
+CHK|uihyperlink_units|MATLAB:hg:InvalidProperty|exact
+CHK|uihyperlink_units_msg|Unrecognized property Units for class matlab.ui.control.Hyperlink.|exact
+CHK|uihyperlink_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uihyperlink_set_units_msg|Unrecognized property Units for class Hyperlink.|exact
+CHK|uihyperlink_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uihyperlink_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Hyperlink.|exact
+CHK|uihyperlink_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uihyperlink_set_unknown_msg|Unrecognized property Bogus for class Hyperlink.|exact
+CHK|uihyperlink_set_type|MATLAB:class:SetProhibited|exact
+CHK|uihyperlink_set_type_msg|Unable to set the 'Type' property of class ''Hyperlink'' because it is read-only.|exact
+CHK|uihyperlink_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uihyperlink_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Hyperlink'' because it is read-only.|exact
+CHK|uihyperlink_to_figure|uihyperlink in figure at [100 100 70 22]|exact
+CHK|uihyperlink_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uihyperlink_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uihyperlink_to_panel|uihyperlink in uipanel at [100 100 70 22]|exact
+CHK|uihyperlink_in_panel_position|double [1 4] 100 100 70 22|exact
+CHK|uiradiobutton_in_uifigure|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_in_uifigure_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_in_figure|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_in_figure_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_in_uipanel|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_in_uipanel_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_in_classic_uipanel|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_in_classic_uipanel_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_in_grid|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_in_grid_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_in_group|uiradiobutton in uibuttongroup at [10 10 91 22]|exact
+CHK|uiradiobutton_in_classic_group|uiradiobutton in uibuttongroup at [10 10 91 22]|exact
+CHK|uiradiobutton_in_axes|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uiradiobutton_in_label|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_in_label_msg|Label cannot be a parent.|exact
+CHK|uiradiobutton_number|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_number_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_empty|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_empty_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_named_parent|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_named_parent_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_unknown|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_unknown_msg|Unrecognized property Bogus for class RadioButton.|exact
+CHK|uiradiobutton_odd|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uiradiobutton_struct|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_struct_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_pairs|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_pairs_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_lower_case|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_lower_case_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_prefix|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_prefix_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_strings|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_strings_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_position|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_position_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_units|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_units_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_set_units|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_set_units_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_get_unknown|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_get_unknown_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_set_unknown|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_set_unknown_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_set_type|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_set_type_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_set_beingdeleted|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_set_beingdeleted_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_to_figure|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_to_figure_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_to_axes|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_to_axes_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_to_panel|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_to_panel_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uiradiobutton_in_panel_position|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|uiradiobutton_in_panel_position_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_in_uifigure|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_in_uifigure_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_in_figure|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_in_figure_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_in_uipanel|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_in_uipanel_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_in_classic_uipanel|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_in_classic_uipanel_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_in_grid|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_in_grid_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_in_group|uitogglebutton in uibuttongroup at [10 10 100 22]|exact
+CHK|uitogglebutton_in_classic_group|uitogglebutton in uibuttongroup at [10 10 100 22]|exact
+CHK|uitogglebutton_in_axes|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitogglebutton_in_label|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_in_label_msg|Label cannot be a parent.|exact
+CHK|uitogglebutton_number|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_number_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_empty|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_empty_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_named_parent|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_named_parent_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_unknown|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_unknown_msg|Unrecognized property Bogus for class ToggleButton.|exact
+CHK|uitogglebutton_odd|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uitogglebutton_struct|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_struct_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_pairs|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_pairs_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_lower_case|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_lower_case_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_prefix|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_prefix_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_strings|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_strings_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_position|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_position_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_units|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_units_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_set_units|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_set_units_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_get_unknown|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_get_unknown_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_set_unknown|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_set_unknown_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_set_type|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_set_type_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_set_beingdeleted|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_set_beingdeleted_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_to_figure|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_to_figure_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_to_axes|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_to_axes_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_to_panel|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_to_panel_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uitogglebutton_in_panel_position|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|uitogglebutton_in_panel_position_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|uigridlayout_in_uifigure|uigridlayout in figure|exact
+CHK|uigridlayout_in_figure|uigridlayout in figure|exact
+CHK|uigridlayout_in_uipanel|uigridlayout in uipanel|exact
+CHK|uigridlayout_in_classic_uipanel|uigridlayout in uipanel|exact
+CHK|uigridlayout_in_grid|uigridlayout in uigridlayout|exact
+CHK|uigridlayout_in_group|uigridlayout in uibuttongroup|exact
+CHK|uigridlayout_in_classic_group|uigridlayout in uibuttongroup|exact
+CHK|uigridlayout_in_axes|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uigridlayout_in_label|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_in_label_msg|Label cannot be a parent.|exact
+CHK|uigridlayout_number|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_number_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|uigridlayout_empty|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigridlayout_named_parent|uigridlayout in figure|exact
+CHK|uigridlayout_unknown|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_unknown_msg|Unrecognized property Bogus for class GridLayout.|exact
+CHK|uigridlayout_odd|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uigridlayout_struct|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_struct_msg|Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.|exact
+CHK|uigridlayout_pairs|off|exact
+CHK|uigridlayout_lower_case|t|exact
+CHK|uigridlayout_prefix|t|exact
+CHK|uigridlayout_strings|t|exact
+CHK|uigridlayout_position|MATLAB:ui:GridLayout:unknownInput|exact
+CHK|uigridlayout_position_msg|Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.|exact
+CHK|uigridlayout_units|MATLAB:hg:InvalidProperty|exact
+CHK|uigridlayout_units_msg|Unrecognized property Units for class matlab.ui.container.GridLayout.|exact
+CHK|uigridlayout_set_units|MATLAB:hg:InvalidProperty|exact
+CHK|uigridlayout_set_units_msg|Unrecognized property Units for class GridLayout.|exact
+CHK|uigridlayout_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uigridlayout_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.GridLayout.|exact
+CHK|uigridlayout_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uigridlayout_set_unknown_msg|Unrecognized property Bogus for class GridLayout.|exact
+CHK|uigridlayout_set_type|MATLAB:class:SetProhibited|exact
+CHK|uigridlayout_set_type_msg|Unable to set the 'Type' property of class ''GridLayout'' because it is read-only.|exact
+CHK|uigridlayout_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uigridlayout_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''GridLayout'' because it is read-only.|exact
+CHK|uigridlayout_to_figure|uigridlayout in figure|exact
+CHK|uigridlayout_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uigridlayout_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uigridlayout_to_panel|uigridlayout in uipanel|exact
+CHK|uilabel_alone|uilabel in figure at [100 100 31 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uibutton_alone|uibutton in figure at [100 100 100 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uieditfield_alone|uieditfield in figure at [100 100 100 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uitextarea_alone|uitextarea in figure at [100 100 150 60]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uidropdown_alone|uidropdown in figure at [100 100 100 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uilistbox_alone|uilistbox in figure at [100 100 100 74]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uicheckbox_alone|uicheckbox in figure at [100 100 84 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uislider_alone|uislider in figure at [100 100 150 3]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uispinner_alone|uispinner in figure at [100 100 100 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uiimage_alone|uiimage in figure at [100 100 100 100]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uihyperlink_alone|uihyperlink in figure at [100 100 70 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uiradiobutton_alone|uiradiobutton in uibuttongroup at [10 10 91 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uitogglebutton_alone|uitogglebutton in uibuttongroup at [10 10 100 22]; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uigridlayout_alone|uigridlayout in figure; 1 new figure; a uifigure 1; [560 420]|exact
+CHK|uibutton_push|uibutton in figure at [100 100 100 22]|exact
+CHK|uibutton_state|uistatebutton in figure at [100 100 100 22]|exact
+CHK|uibutton_upper|uibutton in figure at [100 100 100 22]|exact
+CHK|uibutton_prefix|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_prefix_msg|'st' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.|exact
+CHK|uibutton_string|uistatebutton in figure at [100 100 100 22]|exact
+CHK|uibutton_bad|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_bad_msg|'bogus' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.|exact
+CHK|uibutton_style_then_pairs|x|exact
+CHK|uibutton_pairs_then_style|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_pairs_then_style_msg|'Text' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.|exact
+CHK|uibutton_style_named_parent|uistatebutton in figure at [100 100 100 22]|exact
+CHK|uibutton_named_parent_style|MATLAB:ui:Button:unknownInput|exact
+CHK|uibutton_named_parent_style_msg|'Parent' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.|exact
+CHK|uieditfield_text|uieditfield in figure at [100 100 100 22]|exact
+CHK|uieditfield_numeric|uinumericeditfield in figure at [100 100 100 22]|exact
+CHK|uieditfield_prefix|MATLAB:ui:EditField:unknownInput|exact
+CHK|uieditfield_prefix_msg|'num' is not a valid STYLE for uieditfield. STYLE must be 'text' or 'numeric'.|exact
+CHK|uieditfield_bad|MATLAB:ui:EditField:unknownInput|exact
+CHK|uieditfield_bad_msg|'bogus' is not a valid STYLE for uieditfield. STYLE must be 'text' or 'numeric'.|exact
+CHK|uislider_slider|uislider in figure at [100 100 150 3]|exact
+CHK|uislider_range|uirangeslider in figure at [100 100 150 3]|exact
+CHK|uislider_bad|MATLAB:ui:Slider:unknownInput|exact
+CHK|uislider_bad_msg|'bogus' is not a valid STYLE for uislider. STYLE must be 'slider' or 'range'.|exact
+CHK|uispinner_no_styles|MATLAB:ui:Spinner:unknownInput|exact
+CHK|uispinner_no_styles_msg|No value was given for 'numeric'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uilabel_no_styles|MATLAB:ui:Label:unknownInput|exact
+CHK|uilabel_no_styles_msg|No value was given for 'text'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uidropdown_no_styles|MATLAB:ui:DropDown:unknownInput|exact
+CHK|uidropdown_no_styles_msg|No value was given for 'bogus'. Name-value pair arguments require a name followed by a value.|exact
+CHK|tree_children|c1 l1 b1 a1|exact
+CHK|tree_ancestors|1 1|exact
+CHK|tree_findobj|1 1 1|exact
+CHK|tree_after_uistack|c1 b1 l1 a1|exact
+CHK|tree_after_delete|c1 l1 a1 3|exact

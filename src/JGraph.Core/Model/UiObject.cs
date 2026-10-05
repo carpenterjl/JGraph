@@ -115,8 +115,38 @@ public abstract class UiObject : GraphObject
     /// </summary>
     public Size2D ReferenceSize() => Container?.InnerPixelSize ?? new Size2D(560, 420);
 
-    /// <summary><see cref="Position"/> as MATLAB's pixel rectangle within the parent.</summary>
-    public Rect2D PixelPosition() => UiUnitConverter.ToPixels(_position, _units, ReferenceSize());
+    private UiGridCell? _gridCell;
+
+    /// <summary>
+    /// The cell this component sits in while its parent is a grid (app-building plan, U5): MATLAB's
+    /// <c>Layout.Row</c> and <c>Layout.Column</c>. Null anywhere else.
+    /// </summary>
+    [Browsable(false)]
+    public UiGridCell? GridCell
+    {
+        get => _gridCell;
+        set => SetProperty(ref _gridCell, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// <see cref="Position"/> as MATLAB's pixel rectangle within the parent. A grid's child has the
+    /// cell the grid gives it, and a grid has the whole of its parent, whatever <see cref="Position"/>
+    /// holds.
+    /// </summary>
+    public Rect2D PixelPosition()
+    {
+        if (this is UiGridLayoutModel grid)
+        {
+            return grid.OwnPixelRect();
+        }
+
+        return Parent is UiGridLayoutModel holder
+            ? InCell(holder.RectOf(this))
+            : UiUnitConverter.ToPixels(_position, _units, ReferenceSize());
+    }
+
+    /// <summary>The rectangle this component takes of a grid's cell: all of it, for nearly everything.</summary>
+    public virtual Rect2D InCell(Rect2D cell) => cell;
 
     /// <summary>Places the component by a pixel rectangle, keeping its <see cref="Units"/>.</summary>
     public void SetPixelPosition(Rect2D pixels) =>

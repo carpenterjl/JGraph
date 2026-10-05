@@ -109,7 +109,7 @@ public class MatlabM84DialogTests : IDisposable
         // The documented UIAxes table is Axes' 147 plus BackgroundColor; this build answers a superset,
         // as it does for a plain axes, so the check is that it reaches at least the documented count.
         Assert.True(Number(result, "b") >= 148, "a uiaxes should answer at least its documented names");
-        Assert.Equal([1.0, 1.0, 1.0], Row(result, "c"));
+        Assert.Equal("none", Text(result, "c")); // R2025b, probe u5_dialogs
         Assert.Equal("on", Text(result, "d"));
     }
 

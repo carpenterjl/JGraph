@@ -46,6 +46,8 @@ internal static class FigureMapper
         {
             AxesDto axesDto = ToDto(axes);
             axesDto.Container = UiComponentMapper.PathTo(figure, axes.Container);
+            axesDto.GridCell = UiComponentMapper.ToDto(axes.GridCell);
+            axesDto.UiAxes = axes.ReplaceChildrenOnly;
             dto.Axes.Add(axesDto);
         }
 
@@ -192,6 +194,9 @@ internal static class FigureMapper
             AxesModel axes = ToModel(axesDto);
             figure.Axes.Add(axes);
             axes.Container = UiComponentMapper.Follow(figure, axesDto.Container);
+            axes.GridCell = UiComponentMapper.ToCell(axesDto.GridCell);
+            axes.ReplaceChildrenOnly = axesDto.UiAxes;
+            axes.PositionIsOuter = axesDto.UiAxes;
         }
 
         // The layout comes after its tiles, because taking them in is what it does with them — and

@@ -149,4 +149,104 @@ public class UiComponentSerializationTests
         Assert.True(loaded.IntegerHandle);
         Assert.Equal(UiUnits.Pixels, loaded.Units);
     }
+
+    // --- the uifigure components and uigridlayout (U5, ADR 0202) -------------------------------------
+
+    [Fact]
+    public void AUifigureComponent_KeepsWhatItHolds()
+    {
+        var figure = new FigureModel();
+        figure.Components.Add(new UiSliderModel { Lower = -5, Upper = 5, Value = 2.5, Vertical = true, Tag = "s", Position = new Rect2D(10, 20, 3, 150) });
+        figure.Components.Add(new UiDropDownModel { Items = ["Red", "Green", "Blue"], Selected = [2], FontSize = 14, Bold = true });
+        figure.Components.Add(new UiNumericEditFieldModel { Value = null, AllowEmpty = true, Lower = double.NegativeInfinity, Upper = 10, UpperInclusive = false });
+        figure.Components.Add(new UiLabelModel
+        {
+            Text = new UiText(UiTextForm.Cell, ["two", "lines"]),
+            FontColor = new UiColor(0.2, 0.4, 0.6),
+            BackgroundColor = new UiColor(1, 1, 0),
+            HorizontalAlignment = UiHorizontalAlignment.Right,
+            VerticalAlignment = UiVerticalAlignment.Top,
+        });
+        figure.Components.Add(new UiImageModel { Image = new UiImage(1, 2, [1, 2, 3, 4, 5, 6, 7, 8]), ScaleMethod = "fill" });
+        figure.Components.Add(new UiTextAreaModel { Lines = ["a", "", "c"], Editable = false });
+
+        FigureModel loaded = RoundTrip(figure);
+
+        var slider = Assert.IsType<UiSliderModel>(loaded.Components[0]);
+        Assert.Equal((-5, 5, 2.5, true, "s"), (slider.Lower, slider.Upper, slider.Value, slider.Vertical, slider.Tag));
+        Assert.Equal(new Rect2D(10, 20, 3, 150), slider.Position);
+        var list = Assert.IsType<UiDropDownModel>(loaded.Components[1]);
+        Assert.Equal(["Red", "Green", "Blue"], list.Items);
+        Assert.Equal([2], list.Selected);
+        Assert.Equal((14, true), (list.FontSize, list.Bold));
+        var number = Assert.IsType<UiNumericEditFieldModel>(loaded.Components[2]);
+        Assert.Null(number.Value);
+        Assert.Equal((true, double.NegativeInfinity, 10, false), (number.AllowEmpty, number.Lower, number.Upper, number.UpperInclusive));
+        var label = Assert.IsType<UiLabelModel>(loaded.Components[3]);
+        Assert.Equal(UiTextForm.Cell, label.Text.Form);
+        Assert.Equal(["two", "lines"], label.Text.Lines);
+        Assert.Equal(new UiColor(0.2, 0.4, 0.6), label.FontColor);
+        Assert.Equal(new UiColor(1, 1, 0), label.BackgroundColor);
+        Assert.Equal((UiHorizontalAlignment.Right, UiVerticalAlignment.Top), (label.HorizontalAlignment, label.VerticalAlignment));
+        var picture = Assert.IsType<UiImageModel>(loaded.Components[4]);
+        Assert.Equal((1, 2), (picture.Image!.Width, picture.Image.Height));
+        Assert.Equal(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, picture.Image.Bgra);
+        Assert.Equal("fill", picture.ScaleMethod);
+        var area = Assert.IsType<UiTextAreaModel>(loaded.Components[5]);
+        Assert.Equal(["a", "", "c"], area.Lines);
+        Assert.False(area.Editable);
+    }
+
+    [Fact]
+    public void AGrid_KeepsItsTracksItsChildrenAndTheirCells_AndAUiaxesInItFindsItsCell()
+    {
+        var figure = new FigureModel { IsUiFigure = true };
+        var grid = new UiGridLayoutModel
+        {
+            Rows = [new UiGridTrack(UiGridTrackKind.Fixed, 40), UiGridTrack.Fit, new UiGridTrack(UiGridTrackKind.Weight, 2)],
+            Columns = [UiGridTrack.Fit, UiGridTrack.One],
+            Padding = [1, 2, 3, 4],
+            RowSpacing = 5,
+            ColumnSpacing = 6,
+        };
+        figure.Components.Add(grid);
+        grid.Components.Add(new UiButtonModel { Text = UiText.Of("Go"), GridCell = new UiGridCell(1, 1, 1, 2) });
+        var inner = new UiPanelModel { GridCell = new UiGridCell(3, 1) };
+        grid.Components.Add(inner);
+        inner.Components.Add(new UiCheckBoxModel { Value = true });
+        var axes = new AxesModel { Container = grid, GridCell = new UiGridCell(2, 2), ReplaceChildrenOnly = true, PositionIsOuter = true };
+        figure.Axes.Add(axes);
+
+        FigureModel loaded = RoundTrip(figure);
+
+        var again = Assert.IsType<UiGridLayoutModel>(Assert.Single(loaded.Components));
+        Assert.Equal(grid.Rows, again.Rows);
+        Assert.Equal(grid.Columns, again.Columns);
+        Assert.Equal([1, 2, 3, 4], again.Padding);
+        Assert.Equal((5, 6), (again.RowSpacing, again.ColumnSpacing));
+        var button = Assert.IsType<UiButtonModel>(again.Components[0]);
+        Assert.Equal("Go", button.Text.Joined);
+        Assert.Equal(new UiGridCell(1, 1, 1, 2), button.GridCell);
+        var panel = Assert.IsType<UiPanelModel>(again.Components[1]);
+        Assert.Equal(new UiGridCell(3, 1), panel.GridCell);
+        Assert.True(Assert.IsType<UiCheckBoxModel>(Assert.Single(panel.Components)).Value);
+        AxesModel plotted = Assert.Single(loaded.Axes);
+        Assert.Same(again, plotted.Container);
+        Assert.Equal(new UiGridCell(2, 2), plotted.GridCell);
+        Assert.True(plotted.ReplaceChildrenOnly);
+        Assert.True(plotted.PositionIsOuter);
+    }
+
+    [Fact]
+    public void AButtonGroupOfRadioButtons_KeepsTheOneSelected()
+    {
+        var figure = new FigureModel { IsUiFigure = true };
+        var group = new UiButtonGroupModel();
+        figure.Components.Add(group);
+        group.Components.Add(new UiRadioButtonModel { Text = UiText.Of("A"), Value = false });
+        group.Components.Add(new UiRadioButtonModel { Text = UiText.Of("B"), Value = true });
+
+        var again = Assert.IsType<UiButtonGroupModel>(Assert.Single(RoundTrip(figure).Components));
+        Assert.Equal([false, true], again.Components.Cast<UiRadioButtonModel>().Select(static b => b.Value));
+    }
 }

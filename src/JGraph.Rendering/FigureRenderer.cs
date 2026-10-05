@@ -208,8 +208,10 @@ public sealed class FigureRenderer
             {
                 foreach (AxesModel axes in figure.Axes.InDrawOrder())
                 {
+                    // An axes in a grid is drawn in the cell the layout gave it at this size.
                     if (ReferenceEquals(axes.Container, placement.Panel.Source)
-                        && RenderAxes(axes, context, theme, placement.Inner) is { } info)
+                        && RenderAxes(axes, context, theme, placement.Inner,
+                            placement.AxesCells is { } cells && cells.TryGetValue(axes, out Rect2D cell) ? cell : null) is { } info)
                     {
                         infos.Add(info);
                     }
@@ -354,14 +356,14 @@ public sealed class FigureRenderer
         }
     }
 
-    private AxesRenderInfo? RenderAxes(AxesModel axes, IRenderContext context, ITheme theme, Rect2D content)
+    private AxesRenderInfo? RenderAxes(AxesModel axes, IRenderContext context, ITheme theme, Rect2D content, Rect2D? gridCell = null)
     {
         // A pinned plot box is measured against itself and then inflated, because the margins are
         // what stands between the two rectangles and neither is known before the other. Measuring
         // against the inner rectangle costs a few pixels on the tick lengths a ruler states as a
         // fraction, and buys a plot box that lands exactly where it was asked for. An axes placed in
         // absolute units is converted against this area here, so it keeps its pixels on a resize.
-        Rect2D outer = DeviceRect(content, axes.PlacementIn(new Size2D(content.Width, content.Height)));
+        Rect2D outer = gridCell ?? DeviceRect(content, axes.PlacementIn(new Size2D(content.Width, content.Height)));
 
         AxisModel xAxis = axes.PrimaryXAxis;
         AxisModel yAxis = axes.PrimaryYAxis;

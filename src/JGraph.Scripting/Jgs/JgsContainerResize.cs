@@ -40,6 +40,9 @@ internal static class JgsContainerResize
         }
 
         Settle(figure);
+
+        // Grids have laid their children out again at the new size: sliders and axes follow (U5).
+        JgsGraphicsProperties.SettleSliders(figure);
         return !figure.AutoResizeChildren && entry.SizeChangedFcn is not null;
     }
 

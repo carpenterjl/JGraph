@@ -8,7 +8,7 @@ namespace JGraph.Serialization.Mapping;
 /// decision Q9). A word this build does not know — a newer document's style or border — loads as the
 /// default rather than as an error, the way every other part of a document does.
 /// </summary>
-internal static class UiComponentMapper
+internal static partial class UiComponentMapper
 {
     public static UiComponentDto? ToDto(UiObject component)
     {
@@ -101,9 +101,16 @@ internal static class UiComponentMapper
                 break;
 
             default:
-                return null;
+                if (ComponentToDto(component) is not { } other)
+                {
+                    return null;
+                }
+
+                dto = other;
+                break;
         }
 
+        dto.Cell = ToDto(component.GridCell);
         dto.Tag = component.Tag;
         dto.Visible = component.Visible;
         dto.Position = DtoConvert.ToDto(component.Position);
@@ -230,7 +237,13 @@ internal static class UiComponentMapper
 
             default:
                 // A kind from a later build: the document still opens, without that component.
-                return null;
+                if (ComponentToModel(dto) is not { } other)
+                {
+                    return null;
+                }
+
+                component = other;
+                break;
         }
 
         component.Tag = dto.Tag;
@@ -239,6 +252,7 @@ internal static class UiComponentMapper
         component.Position = DtoConvert.ToRect(dto.Position);
         component.Enable = ParseOr(dto.Enable, UiEnable.On);
         component.Tooltip = ToText(dto.Tooltip);
+        component.GridCell = ToCell(dto.Cell);
         return component;
     }
 

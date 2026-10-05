@@ -330,6 +330,7 @@ internal static partial class JgsBuiltins
         RegisterWaitingBuiltins(env, cancellationToken);
         RegisterUiWaitingBuiltins(env, host, cancellationToken);
         RegisterUiDialogBuiltins(env, host, cancellationToken);
+        RegisterUiComponentBuiltins(env, host, cancellationToken);
 
         // --- Time & date ---------------------------------------------------------------------
         // A stopwatch handle is the high-resolution tick count taken relative to when these globals were
@@ -2026,6 +2027,15 @@ internal static partial class JgsBuiltins
             // argument's class rather than by counting, so neither verb has to know about the other.
             if (TryCloseVideoWriter(host, args, line, col))
             {
+                return JgsValue.Null;
+            }
+
+            // close(d) on a uiprogressdlg takes the dialog off its figure (U5).
+            if (args.Count == 1 && args[0].Type == JgsType.Number
+                && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? dialog) && dialog.Target is UiOverlayModel overlay)
+            {
+                RemoveOverlay(overlay);
+                JgsHandleRegistry.DropUnreachable();
                 return JgsValue.Null;
             }
 

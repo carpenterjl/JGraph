@@ -153,6 +153,22 @@
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
     </Style>
 
+    <!-- The arrows of a uispinner, and the bar of a uiprogressdlg (U5). -->
+    <Style x:Key="JG.Ui.SpinButton" TargetType="RepeatButton">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="8" />
+        <Setter Property="BorderBrush" Value="#FFABADB3" />
+        <Setter Property="BorderThickness" Value="0,1,1,1" />
+        <Setter Property="Background" Value="#FFF5F5F5" />
+    </Style>
+
+    <Style x:Key="JG.Ui.Progress" TargetType="ProgressBar">
+        <Setter Property="Foreground" Value="#FF268CDD" />
+        <Setter Property="Background" Value="#FFD1D1D1" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
     <Style x:Key="JG.Ui.PopupMenu" TargetType="ComboBox">
         <Setter Property="IsEditable" Value="False" />
         <Setter Property="VerticalContentAlignment" Value="Center" />

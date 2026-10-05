@@ -1,0 +1,58 @@
+uialert invisible : ERR MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+uialert no args : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+uialert one arg : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+uialert two args : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+uialert number : ERR MATLAB:uitools:uidialogs:InvalidFigureHandle | Invalid or deleted figure handle. First argument must be a valid figure handle
+uialert classic figure : ERR MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+uialert component : ERR MATLAB:uitools:uidialogs:InvalidFigureHandle | Invalid or deleted figure handle. First argument must be a valid figure handle
+uialert bad option on invisible : ERR MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+uialert bad icon on invisible : ERR MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+uialert numeric message on invisible : ERR MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+[Warning: Focusing this component is not supported when the 'Visible' value of the figure is 'off'.]
+focus invisible figure : ok  WARN MATLAB:ui:Figure:FigureNotFocusable | Focusing this component is not supported when the 'Visible' value of the figure is 'off'.
+[Warning: Focusing this component is not supported when the 'Visible' value of the figure is 'off'.]
+focus component of invisible figure : ok  WARN MATLAB:ui:Button:FigureNotFocusable | Focusing this component is not supported when the 'Visible' value of the figure is 'off'.
+[Warning: Focusing this component is not supported when the 'Visible' value of the figure is 'off'.]
+focus classic figure : ok  WARN MATLAB:ui:Figure:FigureNotFocusable | Focusing this component is not supported when the 'Visible' value of the figure is 'off'.
+[Warning: Focusing this component is not supported when the 'Visible' value of the figure is 'off'.]
+focus label : ok  WARN MATLAB:ui:Label:FigureNotFocusable | Focusing this component is not supported when the 'Visible' value of the figure is 'off'.
+focus axes : ERR MATLAB:UndefinedFunction | Undefined function 'focus' for input arguments of type 'matlab.ui.control.UIAxes'.
+focus panel : ERR MATLAB:UndefinedFunction | Undefined function 'focus' for input arguments of type 'matlab.ui.container.Panel'.
+focus deleted : ok
+focus two : ERR MATLAB:nonLogicalConditional | Operands to the logical AND (&&) and OR (||) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.
+focus uicontrol : ERR MATLAB:UndefinedFunction | Undefined function 'focus' for input arguments of type 'matlab.ui.control.UIControl'.
+uialert visible : ok
+uialert message cell : ok
+uialert message string array : ok
+uialert message number : ERR MATLAB:uitools:uidialogs:InvalidMessageText | 'Message' must be a char array, string array or a cell array of character vectors.
+uialert message empty : ok
+uialert title number : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+uialert title cell : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+uialert bad option : ERR MATLAB:uitools:uidialogs:IncorrectParameterName | Invalid parameter name 'Bogus'. Valid names are 'Icon', 'Modal', 'CloseFcn', 'Interpreter'.
+uialert odd options : ERR MATLAB:uitools:uidialogs:IncorrectNameValuePairs | Incorrect number of name-value pairs. Each parameter name must be followed by a corresponding value.
+uialert Icon 'error' : ok
+uialert Icon 'warning' : ok
+uialert Icon 'info' : ok
+uialert Icon 'success' : ok
+uialert Icon 'question' : ok
+uialert Icon 'none' : ok
+uialert Icon '' : ok
+uialert Icon 'bogus' : ERR MATLAB:uitools:uidialogs:InvalidIconSpecified | Icon value must be 'error', 'warning', 'info', 'question', 'success', 'none', a valid file path, or an m-by-n-by-3 color data matrix.
+uialert Icon double 5 : ERR MATLAB:uitools:uidialogs:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+uialert Icon 'ERROR' : ok
+uialert Icon 'err' : ok
+uialert Modal false : ok
+uialert Modal bogus : ERR MATLAB:uitools:uidialogs:InvalidModalValue | 'Modal' value must be true or false.
+uialert Interpreter html : ok
+uialert Interpreter bogus : ERR MATLAB:uitools:uidialogs:InvalidInterpreter | 'Interpreter' value must be 'none', 'html', 'latex', or 'tex'.
+uialert CloseFcn handle : ok
+uialert CloseFcn text : ok
+uialert CloseFcn cell : ok
+uialert CloseFcn number : ERR MATLAB:uitools:uidialogs:InvalidCloseFcnValue | 'CloseFcn' value must be a character vector, a function handle, or a cell array containing a character vector or a function handle.
+uialert lower-case option : ok
+uialert prefix option : ok
+uialert on a component of a visible figure : ERR MATLAB:uitools:uidialogs:InvalidFigureHandle | Invalid or deleted figure handle. First argument must be a valid figure handle
+focus visible figure : ok
+focus component of visible figure : ok
+   figures left: 0
+close all force then count : ok

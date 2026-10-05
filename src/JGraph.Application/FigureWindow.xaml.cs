@@ -344,7 +344,7 @@ public partial class FigureWindow : Window
     /// </summary>
     protected override void OnPreviewMouseDown(System.Windows.Input.MouseButtonEventArgs e)
     {
-        if (ComponentLayer.FocusedComponent is { Style: UiControlStyle.Edit }
+        if (ComponentLayer.HasFocusedTextEntry
             && e.OriginalSource is DependencyObject hit
             && System.Windows.Input.Keyboard.FocusedElement is DependencyObject focused
             && !IsWithin(hit, focused))
@@ -453,7 +453,7 @@ public partial class FigureWindow : Window
             return;
         }
 
-        ScriptGraphicsCallbacks.NotifyKey(figure, pressed, character, keyName, modifiers, ComponentLayer.FocusedComponent);
+        ScriptGraphicsCallbacks.NotifyKey(figure, pressed, character, keyName, modifiers, ComponentLayer.FocusedObject);
     }
 
     private static List<string> HeldModifiers()

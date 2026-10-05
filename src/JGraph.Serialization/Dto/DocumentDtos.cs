@@ -206,6 +206,12 @@ public sealed class AxesDto
     /// </summary>
     public int[]? Container { get; set; }
 
+    /// <summary>The cell of a <c>uigridlayout</c> the axes sits in: row, last row, column, last column.</summary>
+    public int[]? GridCell { get; set; }
+
+    /// <summary>A <c>uiaxes</c>: a plot into it replaces its children and keeps the rest, and its Position is its outer box.</summary>
+    public bool UiAxes { get; set; }
+
     /// <summary>Which cell of the figure's tiled layout this axes holds, or null when it is in none.</summary>
     public int? LayoutTile { get; set; }
 

@@ -79,6 +79,8 @@ public static class ScriptComponentFrames
                 continue;
             }
 
+            // A slider a grid has stretched works its ticks out again for the length it has now (U5).
+            Jgs.JgsGraphicsProperties.SettleSliders(figure);
             UiFrame frame = figure.TakeComponentFrame();
             figure.ComponentFrameInFlight = true;
             sink(frame);

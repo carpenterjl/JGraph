@@ -119,10 +119,12 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => SetAxesUnits(Axes(entry), UnitsWord(entry, value, line, col)));
     }
 
+    // A uiaxes' Position is its outer rectangle (U5); its InnerPosition is still the plot box.
     private static void AddInnerPosition(IDictionary<string, GraphicsProperty> table, string name) =>
         Put(table, name,
-            entry => AxesRectValue(Axes(entry), inner: true),
-            (entry, value, line, col) => SetAxesRect(Axes(entry), Box(name, value, line, col), inner: true));
+            entry => AxesRectValue(Axes(entry), inner: !(name == "Position" && Axes(entry).PositionIsOuter)),
+            (entry, value, line, col) => SetAxesRect(
+                Axes(entry), Box(name, value, line, col), inner: !(name == "Position" && Axes(entry).PositionIsOuter)));
 
     /// <summary>The plot box, as fractions of the figure with Y still downward.</summary>
     private static Rect2D InnerOf(AxesModel axes)

@@ -32,7 +32,8 @@ internal static partial class JgsBuiltins
     /// interface events, or a test has said it will answer blocking dialogs itself.
     /// </summary>
     internal static bool CanInteract =>
-        ScriptEventQueue.PumpInstalled || ScriptGraphicsCallbacks.BlockingDialogShown is not null;
+        ScriptEventQueue.PumpInstalled || ScriptGraphicsCallbacks.BlockingDialogShown is not null
+        || ScriptGraphicsCallbacks.OverlayShown is not null;
 
     private static void RegisterUiWaitingBuiltins(
         JgsEnvironment env, JGraphScriptGlobals host, CancellationToken cancellationToken)

@@ -364,7 +364,7 @@ public class MatlabLivingGraphicsTests : IDisposable
     [Fact]
     public void AGroupDiesWithTheAxesItWasMadeIn()
     {
-        Assert.Contains("since been cleared", Error("""
+        Assert.Contains("Invalid or deleted object.", Error("""
             figure(1); a = plot(1:3); g = hggroup; set(a, 'Parent', g);
             figure(1); clf;
             get(g, 'Visible');

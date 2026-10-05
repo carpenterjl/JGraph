@@ -459,6 +459,7 @@ internal static partial class JgsBuiltins
             : JG.CurrentFigureNumberOrZero > 0 ? JG.CurrentFigure : null;
         AxesModel axes = (parent ?? current!).AddAxes();
         axes.Container = container;
+        JgsGraphicsProperties.GridMembershipChanged(axes);
         if (parent is null || ReferenceEquals(parent, current))
         {
             JG.MakeCurrent(axes);

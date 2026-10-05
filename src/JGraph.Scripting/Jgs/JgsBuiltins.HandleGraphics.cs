@@ -138,8 +138,18 @@ internal static partial class JgsBuiltins
 
         Define("get", (args, line, col) => TryDeviceBuiltin("get", args, 1, line, col, out JgsValue device) ? device
             : TryLibBuiltin("get", host, args, line, col, out JgsValue got) ? got : Get(args, line, col));
-        DefineSilent("set", (args, line, col) => TryDeviceBuiltin("set", args, 0, line, col, out JgsValue device) ? device
-            : TryLibBuiltin("set", host, args, line, col, out JgsValue none) ? none : Set(args, line, col));
+        // set sees a string scalar as the string it is only where a component's property tells the
+        // two apart (U5): everywhere else it is handed the char row, as every builtin is.
+        env.Builtins.Register("set", JgsValue.Function(new BuiltinFunction("set", (given, line, col) =>
+        {
+            IReadOnlyList<JgsValue> args = StringsOnlyWhereTold(given);
+            return TryDeviceBuiltin("set", args, 0, line, col, out JgsValue device) ? device
+                : TryLibBuiltin("set", host, args, line, col, out JgsValue none) ? none : Set(args, line, col);
+        })
+        {
+            BindsAnsAsStatement = false,
+            KeepsStringArguments = true,
+        }));
 
         // Both answer a question with no arguments — every object there is — so the bare name has to
         // be that answer rather than the function itself, or numel(findobj) counts a function.
@@ -1170,8 +1180,53 @@ internal static partial class JgsBuiltins
                 }
 
                 holder.Components.Remove(component);
+
+                // A group whose selected button is deleted selects its first one (U5).
+                if (component is UiCaptionModel { Value: true } and (UiRadioButtonModel or UiToggleButtonModel) && holder is UiButtonGroupModel bereft
+                    && bereft.Components.OfType<UiCaptionModel>().FirstOrDefault(static b => b is UiRadioButtonModel or UiToggleButtonModel) is { } first)
+                {
+                    first.Value = true;
+                }
+
+                return;
+
+            case UiOverlayModel overlay:
+                RemoveOverlay(overlay);
                 return;
         }
+    }
+
+    /// <summary>
+    /// The arguments of <c>set</c> with every string scalar read as the char row it stands for —
+    /// except the value of a property that tells a string from text, on a component that has one.
+    /// </summary>
+    private static IReadOnlyList<JgsValue> StringsOnlyWhereTold(IReadOnlyList<JgsValue> given)
+    {
+        if (!given.Any(IsStringScalar))
+        {
+            return given;
+        }
+
+        var args = new JgsValue[given.Count];
+        for (int i = 0; i < given.Count; i++)
+        {
+            args[i] = IsStringScalar(given[i]) ? given[i].ElementAt(0) : given[i];
+        }
+
+        if (given.Count >= 3 && given[0].Type == JgsType.Number
+            && JgsHandleRegistry.TryGet(given[0], out JgsHandleEntry? entry) && entry.Target is UiObject)
+        {
+            for (int i = 1; i + 1 < given.Count; i += 2)
+            {
+                if (IsStringScalar(given[i + 1]) && IsTextScalar(given[i])
+                    && JgsGraphicsProperties.KeepsStringScalar(entry.Target, TextOf(given[i])))
+                {
+                    args[i + 1] = given[i + 1];
+                }
+            }
+        }
+
+        return args;
     }
 
     // --- shared plumbing ---------------------------------------------------------------------------

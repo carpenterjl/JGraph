@@ -1,0 +1,675 @@
+CHK|dd_default|Value=char 'Option 1' Index=double [1 1] 1 Items=cell [1 4] {char 'Option 1', char 'Option 2', char 'Option 3', char 'Option 4'} Data=double [0 0]|exact
+CHK|dd_items|Value=char 'x' Index=double [1 1] 1 Items=cell [1 3] {char 'x', char 'y', char 'z'} Data=double [0 0]|exact
+CHK|dd_value|Value=char 'y' Index=double [1 1] 2 Items=cell [1 3] {char 'x', char 'y', char 'z'} Data=double [0 0]|exact
+CHK|dd_items_keep_value|Value=char 'y' Index=double [1 1] 1 Items=cell [1 3] {char 'y', char 'z', char 'w'} Data=double [0 0]|exact
+CHK|dd_items_value_gone|Value=char 'a' Index=double [1 1] 1 Items=cell [1 2] {char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_index|Value=char 'b' Index=double [1 1] 2 Items=cell [1 2] {char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_index_1|MATLAB:ui:DropDown:invalidValueIndex|exact
+CHK|dd_index_1_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|dd_index_2|MATLAB:ui:DropDown:invalidValueIndex|exact
+CHK|dd_index_2_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|dd_index_3|MATLAB:ui:DropDown:invalidValueIndex|exact
+CHK|dd_index_3_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|dd_index_4|MATLAB:ui:DropDown:invalidValueIndex|exact
+CHK|dd_index_4_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|dd_index_5|MATLAB:ui:DropDown:invalidValueIndex|exact
+CHK|dd_index_5_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|dd_after_bad_indices|Value=char 'b' Index=double [1 1] 2 Items=cell [1 2] {char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_value_1|char 'a'|exact
+CHK|dd_value_2|MATLAB:ui:DropDown:valueNotInText|exact
+CHK|dd_value_2_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dd_value_3|char 'a'|exact
+CHK|dd_value_4|MATLAB:ui:DropDown:valueNotInText|exact
+CHK|dd_value_4_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dd_value_5|MATLAB:ui:DropDown:valueNotInText|exact
+CHK|dd_value_5_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dd_value_6|MATLAB:ui:DropDown:valueNotInText|exact
+CHK|dd_value_6_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dd_after_values|Value=char 'a' Index=double [1 1] 1 Items=cell [1 2] {char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_data|Value=double [1 1] 10 Index=double [1 1] 1 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=double [1 3] 10 20 30|exact
+CHK|dd_data_value|double [1 1] 20|exact
+CHK|dd_after_data_value|Value=double [1 1] 20 Index=double [1 1] 2 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=double [1 3] 10 20 30|exact
+CHK|dd_data_value_by_text|MATLAB:ui:DropDown:valueNotInItemsData|exact
+CHK|dd_data_value_by_text_msg|'Value' must be an element defined in the 'ItemsData' property.|exact
+CHK|dd_data_value_int8|double [1 1] 30|exact
+CHK|dd_after_int8|Value=double [1 1] 30 Index=double [1 1] 3 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=double [1 3] 10 20 30|exact
+CHK|dd_data_cell|Value=char 'p' Index=double [1 1] 1 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=cell [1 3] {char 'p', char 'q', char 'r'}|exact
+CHK|dd_data_cell_value|char 'q'|exact
+CHK|dd_data_shorter|Value=double [1 1] 1 Index=double [1 1] 1 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=double [1 2] 1 2|exact
+CHK|dd_data_shorter_value|MATLAB:ui:DropDown:valueNotInItemsData|exact
+CHK|dd_data_shorter_value_msg|'Value' must be an element defined in the 'ItemsData' property.|exact
+CHK|dd_data_shorter_index|double [1 1] 1|exact
+CHK|dd_data_longer|Value=double [1 1] 1 Index=double [1 1] 1 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=double [1 5] 1 2 3 4 5|exact
+CHK|dd_data_longer_value|MATLAB:ui:DropDown:valueNotWithinLengthOfText|exact
+CHK|dd_data_longer_value_msg|'Value' must be an element defined in the 'ItemsData' property within the length of the 'Items' property.|exact
+CHK|dd_data_mixed|Value=double [1 1] 1 Index=double [1 1] 1 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=cell [1 3] {double [1 1] 1, char 'two', double [1 2] 3 3}|exact
+CHK|dd_data_mixed_value|double [1 2] 3 3|exact
+CHK|dd_after_mixed|Value=double [1 2] 3 3 Index=double [1 1] 3 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=cell [1 3] {double [1 1] 1, char 'two', double [1 2] 3 3}|exact
+CHK|dd_data_cleared|Value=char 'c' Index=double [1 1] 3 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=double [0 0]|exact
+CHK|dd_duplicates|Value=char 'a' Index=double [1 1] 2 Items=cell [1 3] {char 'a', char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_no_items|Value=cell [0 0] {} Index=double [0 0] Items=cell [0 0] {} Data=double [0 0]|exact
+CHK|dd_no_items_value|MATLAB:ui:DropDown:valueNotEmpty|exact
+CHK|dd_no_items_value_msg|'Value' must be the empty cell because the 'Items' property is empty.|exact
+CHK|dd_items_1|MATLAB:ui:DropDown:invalidText|exact
+CHK|dd_items_1_msg|'Items' must be a 1-by-N cell array of character vectors or a string array.|exact
+CHK|dd_items_2|MATLAB:ui:DropDown:invalidText|exact
+CHK|dd_items_2_msg|'Items' must be a 1-by-N cell array of character vectors or a string array.|exact
+CHK|dd_items_3|MATLAB:ui:DropDown:invalidText|exact
+CHK|dd_items_3_msg|'Items' must be a 1-by-N cell array of character vectors or a string array.|exact
+CHK|dd_items_4|cell [1 2] {char 'a', char 'b'}|exact
+CHK|dd_items_5|MATLAB:ui:DropDown:invalidText|exact
+CHK|dd_items_5_msg|Expected input to be a vector.|exact
+CHK|dd_editable|Value=char 'a' Index=double [1 1] 1 Items=cell [1 2] {char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_editable_free|Value=char 'free' Index=double [0 0] Items=cell [1 2] {char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_editable_number|MATLAB:ui:DropDown:valueNotInText|exact
+CHK|dd_editable_number_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dd_editable_back|Value=char 'b' Index=double [1 1] 2 Items=cell [1 2] {char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_editable_off|Value=char 'a' Index=double [1 1] 1 Items=cell [1 2] {char 'a', char 'b'} Data=double [0 0]|exact
+CHK|dd_made_value_then_items|q|exact
+CHK|dd_made_value_not_an_item|MATLAB:ui:DropDown:unknownInput|exact
+CHK|dd_made_value_not_an_item_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dd_made_with_data|double [1 1] 2|exact
+CHK|lb_default|Value=char 'Item 1' Index=double [1 1] 1 Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_value|Value=char 'Item 3' Index=double [1 1] 3 Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_value_1|cell [0 0] {}|exact
+CHK|lb_value_2|MATLAB:ui:ListBox:scalarItemInSingleSelect|exact
+CHK|lb_value_2_msg|'Value' must be a character vector, string scalar or an empty cell array when component is single selection.|exact
+CHK|lb_value_3|char 'Item 1'|exact
+CHK|lb_value_4|MATLAB:ui:ListBox:scalarItemInSingleSelect|exact
+CHK|lb_value_4_msg|'Value' must be a character vector, string scalar or an empty cell array when component is single selection.|exact
+CHK|lb_value_5|MATLAB:ui:ListBox:valueNotInText|exact
+CHK|lb_value_5_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|lb_index_two|MATLAB:ui:ListBox:invalidValueIndex|exact
+CHK|lb_index_two_msg|'ValueIndex' must be [] or a positive integer representing an index in 'Items'.|exact
+CHK|lb_index_past|MATLAB:ui:ListBox:invalidValueIndex|exact
+CHK|lb_index_past_msg|'ValueIndex' must be [] or a positive integer representing an index in 'Items'.|exact
+CHK|lb_multi|Value=cell [1 1] {char 'Item 1'} Index=double [1 1] 1 Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_multi_value|Value=cell [1 2] {char 'Item 3', char 'Item 1'} Index=double [1 2] 3 1 Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_multi_char|Value=cell [1 1] {char 'Item 2'} Index=double [1 1] 2 Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_multi_index|Value=cell [1 2] {char 'Item 4', char 'Item 2'} Index=double [1 2] 4 2 Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_multi_value_twice|MATLAB:ui:ListBox:notASubset|exact
+CHK|lb_multi_value_twice_msg|The 'Value' property must be a subset of the 'Items' property. Note that elements in the 'Items' property with no corresponding element in the 'ItemsData' property are ignored. Use the empty cell to indicate no selection.|exact
+CHK|lb_multi_value_none|cell [0 0] {}|exact
+CHK|lb_multi_none|Value=cell [0 0] {} Index=double [0 0] Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_multi_strings|cell [1 2] {char 'Item 1', char 'Item 4'}|exact
+CHK|lb_multi_after_strings|Value=cell [1 2] {char 'Item 1', char 'Item 4'} Index=double [1 2] 1 4 Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_multi_off|Value=char 'Item 1' Index=double [1 1] 1 Items=cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'} Data=double [0 0]|exact
+CHK|lb_items|Value=char 'Item 4' Index=double [1 1] 1 Items=cell [1 2] {char 'Item 4', char 'new'} Data=double [0 0]|exact
+CHK|lb_multi_data|Value=double [1 2] 5 6 Index=double [1 2] 1 2 Items=cell [1 2] {char 'Item 4', char 'new'} Data=double [1 2] 5 6|exact
+CHK|lb_multi_data_value|double [1 2] 6 5|exact
+CHK|lb_multi_data_cell|MATLAB:ui:ListBox:notASubset|exact
+CHK|lb_multi_data_cell_msg|The 'Value' property must be a subset of the 'ItemsData' property. Note that elements in the 'ItemsData' property with no corresponding element in the 'Items' property are ignored. Use the empty cell to indicate no selection.|exact
+CHK|lb_multi_data_missing|MATLAB:ui:ListBox:notASubset|exact
+CHK|lb_multi_data_missing_msg|The 'Value' property must be a subset of the 'ItemsData' property. Note that elements in the 'ItemsData' property with no corresponding element in the 'Items' property are ignored. Use the empty cell to indicate no selection.|exact
+CHK|lb_no_items|Value=cell [0 0] {} Index=double [0 0] Items=cell [0 0] {} Data=double [1 2] 5 6|exact
+CHK|lb_made_with_data|Value=double [1 1] 2 Index=double [1 1] 2 Items=cell [1 3] {char 'a', char 'b', char 'c'} Data=double [1 3] 1 2 3|exact
+CHK|lb_made_multi|double [1 2] 2 4|exact
+CHK|ef_limited_1|MATLAB:ui:EditField:valueLengthNotInRange|exact
+CHK|ef_limited_1_msg|The number of characters in 'Value' must be within the range of 'CharacterLimits'.|exact
+CHK|ef_limited_2|MATLAB:ui:EditField:valueLengthNotInRange|exact
+CHK|ef_limited_2_msg|The number of characters in 'Value' must be within the range of 'CharacterLimits'.|exact
+CHK|ef_limited_3|MATLAB:ui:EditField:valueLengthNotInRange|exact
+CHK|ef_limited_3_msg|The number of characters in 'Value' must be within the range of 'CharacterLimits'.|exact
+CHK|ef_limited_4|char 'ab'|exact
+CHK|ef_limited_5|char 'abcd'|exact
+CHK|ef_limits_keep|abc|exact
+CHK|ef_limits_empty_short|MATLAB:ui:EditField:unknownInput|exact
+CHK|ef_limits_empty_short_msg|The number of characters in 'Value' must be within the range of 'CharacterLimits'.|exact
+CHK|ef_limits_empty_long|MATLAB:ui:EditField:unknownInput|exact
+CHK|ef_limits_empty_long_msg|The number of characters in 'Value' must be within the range of 'CharacterLimits'.|exact
+CHK|ef_limits_01|double [1 2] 0 0|exact
+CHK|ef_limits_02|double [1 2] 3 3|exact
+CHK|ef_limits_03|MATLAB:ui:EditField:invalidCharacterLimits|exact
+CHK|ef_limits_03_msg|'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.|exact
+CHK|ef_limits_04|MATLAB:ui:EditField:invalidCharacterLimits|exact
+CHK|ef_limits_04_msg|'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.|exact
+CHK|ef_limits_05|double [1 2] 0 Inf|exact
+CHK|ef_limits_06|MATLAB:ui:EditField:invalidCharacterLimits|exact
+CHK|ef_limits_06_msg|'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.|exact
+CHK|ef_limits_07|MATLAB:ui:EditField:invalidCharacterLimits|exact
+CHK|ef_limits_07_msg|'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.|exact
+CHK|ef_limits_08|MATLAB:ui:EditField:invalidCharacterLimits|exact
+CHK|ef_limits_08_msg|'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.|exact
+CHK|ef_limits_09|MATLAB:ui:EditField:invalidCharacterLimits|exact
+CHK|ef_limits_09_msg|'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.|exact
+CHK|ef_limits_10|MATLAB:ui:EditField:invalidCharacterLimits|exact
+CHK|ef_limits_10_msg|'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.|exact
+CHK|ef_limits_11|MATLAB:ui:EditField:invalidCharacterLimits|exact
+CHK|ef_limits_11_msg|'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.|exact
+CHK|ef_inputtype_1|char 'text'|exact
+CHK|ef_inputtype_2|char 'digits'|exact
+CHK|ef_inputtype_3|char 'letters'|exact
+CHK|ef_inputtype_4|char 'alphanumerics'|exact
+CHK|ef_inputtype_5|MATLAB:ui:EditField:invalidFourStringEnum|exact
+CHK|ef_inputtype_5_msg|'InputType' value must be 'text', 'letters', 'digits', or 'alphanumerics'.|exact
+CHK|ef_inputtype_6|char 'digits'|exact
+CHK|ef_inputtype_7|char 'digits'|exact
+CHK|ef_inputtype_8|MATLAB:ui:EditField:invalidFourStringEnum|exact
+CHK|ef_inputtype_8_msg|'InputType' value must be 'text', 'letters', 'digits', or 'alphanumerics'.|exact
+CHK|ef_digits_over_letters|MATLAB:ui:EditField:unknownInput|exact
+CHK|ef_digits_over_letters_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_digits_1|char '123'|exact
+CHK|ef_digits_2|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_digits_2_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_digits_3|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_digits_3_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_digits_4|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_digits_4_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_digits_5|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_digits_5_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_digits_6|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_digits_6_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_digits_7|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_digits_7_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_digits_8|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_digits_8_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_digits_9|char ''|exact
+CHK|ef_letters_1|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_letters_1_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_letters_2|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_letters_2_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_letters_3|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_letters_3_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_letters_4|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_letters_4_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_letters_5|char 'abc'|exact
+CHK|ef_letters_6|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_letters_6_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_letters_7|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_letters_7_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_letters_8|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_letters_8_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_letters_9|char ''|exact
+CHK|ef_alphanumerics_1|char '123'|exact
+CHK|ef_alphanumerics_2|char '12a'|exact
+CHK|ef_alphanumerics_3|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_alphanumerics_3_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_alphanumerics_4|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_alphanumerics_4_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_alphanumerics_5|char 'abc'|exact
+CHK|ef_alphanumerics_6|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_alphanumerics_6_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_alphanumerics_7|char 'ab1'|exact
+CHK|ef_alphanumerics_8|MATLAB:ui:EditField:invalidValueText|exact
+CHK|ef_alphanumerics_8_msg|'Value' must consist of valid text as specified by 'InputType'.|exact
+CHK|ef_alphanumerics_9|char ''|exact
+CHK|NumericEditField_closed_1|double [1 1] 0|exact
+CHK|NumericEditField_closed_2|double [1 1] 10|exact
+CHK|NumericEditField_closed_3|MATLAB:ui:NumericEditField:invalidValue|exact
+CHK|NumericEditField_closed_3_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|NumericEditField_closed_4|MATLAB:ui:NumericEditField:invalidValue|exact
+CHK|NumericEditField_closed_4_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|NumericEditField_closed_5|double [1 1] 5.5|exact
+CHK|NumericEditField_open_1|MATLAB:ui:NumericEditField:invalidValue|exact
+CHK|NumericEditField_open_1_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|NumericEditField_open_2|MATLAB:ui:NumericEditField:invalidValue|exact
+CHK|NumericEditField_open_2_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|NumericEditField_open_3|double [1 1] 0.001|exact
+CHK|NumericEditField_limits_under_value|double [1 1] 10|exact
+CHK|NumericEditField_limits_over_value|double [1 1] 0|exact
+CHK|NumericEditField_upper_opened|double [1 1] 9|exact
+CHK|NumericEditField_lower_opened|double [1 1] 1|exact
+CHK|NumericEditField_limits_01|double [1 2] 0 10|exact
+CHK|NumericEditField_limits_02|MATLAB:ui:NumericEditField:notIncreasingLimits|exact
+CHK|NumericEditField_limits_02_msg|'Limits' must be a 1-by-2 array of non-decreasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|NumericEditField_limits_03|double [1 2] 5 5|exact
+CHK|NumericEditField_limits_04|double [1 2] -Inf Inf|exact
+CHK|NumericEditField_limits_05|double [1 2] 0 Inf|exact
+CHK|NumericEditField_limits_06|double [1 2] -Inf 0|exact
+CHK|NumericEditField_limits_07|double [1 2] Inf Inf|exact
+CHK|NumericEditField_limits_08|MATLAB:ui:NumericEditField:invalidLimits|exact
+CHK|NumericEditField_limits_08_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|NumericEditField_limits_09|MATLAB:ui:NumericEditField:invalidLimits|exact
+CHK|NumericEditField_limits_09_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|NumericEditField_limits_10|MATLAB:ui:NumericEditField:invalidLimits|exact
+CHK|NumericEditField_limits_10_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|NumericEditField_limits_11|MATLAB:ui:NumericEditField:invalidLimits|exact
+CHK|NumericEditField_limits_11_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|NumericEditField_limits_12|double [1 2] 1 2|exact
+CHK|NumericEditField_limits_13|MATLAB:ui:NumericEditField:invalidLimits|exact
+CHK|NumericEditField_limits_13_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|NumericEditField_limits_14|MATLAB:ui:NumericEditField:invalidLimits|exact
+CHK|NumericEditField_limits_14_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|NumericEditField_limits_15|MATLAB:ui:NumericEditField:invalidLimits|exact
+CHK|NumericEditField_limits_15_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|NumericEditField_rounded|double [1 1] 3|exact
+CHK|NumericEditField_rounding_1|double [1 1] 3|exact
+CHK|NumericEditField_rounding_2|double [1 1] 4|exact
+CHK|NumericEditField_rounding_3|double [1 1] -3|exact
+CHK|NumericEditField_rounding_4|double [1 1] 2|exact
+CHK|NumericEditField_rounding_5|double [1 1] 1e+10|exact
+CHK|NumericEditField_rounding_at_the_limit|double [1 1] 2|exact
+CHK|NumericEditField_rounding_inside|double [1 1] 2|exact
+CHK|NumericEditField_rounded_inside_limits|double [1 1] 2|exact
+CHK|NumericEditField_empty_refused|MATLAB:ui:NumericEditField:invalidValue|exact
+CHK|NumericEditField_empty_refused_msg|'Value' cannot be [] when 'AllowEmpty' is 'off'.|exact
+CHK|NumericEditField_empty_allowed|double [0 0]|exact
+CHK|NumericEditField_empty_filled|double [1 1] 0|exact
+CHK|NumericEditField_format_01|char '%d'|exact
+CHK|NumericEditField_format_02|char '%.2f'|exact
+CHK|NumericEditField_format_03|char '%11.4g'|exact
+CHK|NumericEditField_format_04|char '%s'|exact
+CHK|NumericEditField_format_05|MATLAB:ui:NumericEditField:invalidDisplayFormat|exact
+CHK|NumericEditField_format_05_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|NumericEditField_format_06|char '%d units'|exact
+CHK|NumericEditField_format_07|char '%5.1f%%'|exact
+CHK|NumericEditField_format_08|MATLAB:ui:NumericEditField:invalidDisplayFormat|exact
+CHK|NumericEditField_format_08_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|NumericEditField_format_09|MATLAB:ui:NumericEditField:invalidDisplayFormat|exact
+CHK|NumericEditField_format_09_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|NumericEditField_format_10|MATLAB:ui:NumericEditField:invalidDisplayFormat|exact
+CHK|NumericEditField_format_10_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|NumericEditField_format_11|char '%x'|exact
+CHK|NumericEditField_format_12|char '%e'|exact
+CHK|NumericEditField_format_13|char '%i'|exact
+CHK|NumericEditField_format_14|char '%c'|exact
+CHK|NumericEditField_format_15|char '$%.2f'|exact
+CHK|NumericEditField_format_16|char '%.3f'|exact
+CHK|NumericEditField_format_17|char '%bx'|exact
+CHK|NumericEditField_format_18|MATLAB:ui:NumericEditField:invalidDisplayFormat|exact
+CHK|NumericEditField_format_18_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|NumericEditField_format_19|char '%u'|exact
+CHK|NumericEditField_format_20|char '%o'|exact
+CHK|NumericEditField_format_21|char '%G'|exact
+CHK|NumericEditField_format_22|char '%+d'|exact
+CHK|NumericEditField_format_23|char '%ld'|exact
+CHK|Spinner_closed_1|double [1 1] 0|exact
+CHK|Spinner_closed_2|double [1 1] 10|exact
+CHK|Spinner_closed_3|MATLAB:ui:Spinner:invalidValue|exact
+CHK|Spinner_closed_3_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|Spinner_closed_4|MATLAB:ui:Spinner:invalidValue|exact
+CHK|Spinner_closed_4_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|Spinner_closed_5|double [1 1] 5.5|exact
+CHK|Spinner_open_1|MATLAB:ui:Spinner:invalidValue|exact
+CHK|Spinner_open_1_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|Spinner_open_2|MATLAB:ui:Spinner:invalidValue|exact
+CHK|Spinner_open_2_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|Spinner_open_3|double [1 1] 0.001|exact
+CHK|Spinner_limits_under_value|double [1 1] 10|exact
+CHK|Spinner_limits_over_value|double [1 1] 0|exact
+CHK|Spinner_upper_opened|double [1 1] 9|exact
+CHK|Spinner_lower_opened|double [1 1] 1|exact
+CHK|Spinner_limits_01|double [1 2] 0 10|exact
+CHK|Spinner_limits_02|MATLAB:ui:Spinner:notIncreasingLimits|exact
+CHK|Spinner_limits_02_msg|'Limits' must be a 1-by-2 array of non-decreasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|Spinner_limits_03|double [1 2] 5 5|exact
+CHK|Spinner_limits_04|double [1 2] -Inf Inf|exact
+CHK|Spinner_limits_05|double [1 2] 0 Inf|exact
+CHK|Spinner_limits_06|double [1 2] -Inf 0|exact
+CHK|Spinner_limits_07|double [1 2] Inf Inf|exact
+CHK|Spinner_limits_08|MATLAB:ui:Spinner:invalidLimits|exact
+CHK|Spinner_limits_08_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|Spinner_limits_09|MATLAB:ui:Spinner:invalidLimits|exact
+CHK|Spinner_limits_09_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|Spinner_limits_10|MATLAB:ui:Spinner:invalidLimits|exact
+CHK|Spinner_limits_10_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|Spinner_limits_11|MATLAB:ui:Spinner:invalidLimits|exact
+CHK|Spinner_limits_11_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|Spinner_limits_12|double [1 2] 1 2|exact
+CHK|Spinner_limits_13|MATLAB:ui:Spinner:invalidLimits|exact
+CHK|Spinner_limits_13_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|Spinner_limits_14|MATLAB:ui:Spinner:invalidLimits|exact
+CHK|Spinner_limits_14_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|Spinner_limits_15|MATLAB:ui:Spinner:invalidLimits|exact
+CHK|Spinner_limits_15_msg|'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.|exact
+CHK|Spinner_rounded|double [1 1] 3|exact
+CHK|Spinner_rounding_1|double [1 1] 3|exact
+CHK|Spinner_rounding_2|double [1 1] 4|exact
+CHK|Spinner_rounding_3|double [1 1] -3|exact
+CHK|Spinner_rounding_4|double [1 1] 2|exact
+CHK|Spinner_rounding_5|double [1 1] 1e+10|exact
+CHK|Spinner_rounding_at_the_limit|double [1 1] 2|exact
+CHK|Spinner_rounding_inside|double [1 1] 2|exact
+CHK|Spinner_rounded_inside_limits|double [1 1] 2|exact
+CHK|Spinner_empty_refused|MATLAB:ui:Spinner:invalidValue|exact
+CHK|Spinner_empty_refused_msg|'Value' cannot be [] when 'AllowEmpty' is 'off'.|exact
+CHK|Spinner_empty_allowed|double [0 0]|exact
+CHK|Spinner_empty_filled|double [1 1] 0|exact
+CHK|Spinner_format_01|char '%d'|exact
+CHK|Spinner_format_02|char '%.2f'|exact
+CHK|Spinner_format_03|char '%11.4g'|exact
+CHK|Spinner_format_04|char '%s'|exact
+CHK|Spinner_format_05|MATLAB:ui:Spinner:invalidDisplayFormat|exact
+CHK|Spinner_format_05_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|Spinner_format_06|char '%d units'|exact
+CHK|Spinner_format_07|char '%5.1f%%'|exact
+CHK|Spinner_format_08|MATLAB:ui:Spinner:invalidDisplayFormat|exact
+CHK|Spinner_format_08_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|Spinner_format_09|MATLAB:ui:Spinner:invalidDisplayFormat|exact
+CHK|Spinner_format_09_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|Spinner_format_10|MATLAB:ui:Spinner:invalidDisplayFormat|exact
+CHK|Spinner_format_10_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|Spinner_format_11|char '%x'|exact
+CHK|Spinner_format_12|char '%e'|exact
+CHK|Spinner_format_13|char '%i'|exact
+CHK|Spinner_format_14|char '%c'|exact
+CHK|Spinner_format_15|char '$%.2f'|exact
+CHK|Spinner_format_16|char '%.3f'|exact
+CHK|Spinner_format_17|char '%bx'|exact
+CHK|Spinner_format_18|MATLAB:ui:Spinner:invalidDisplayFormat|exact
+CHK|Spinner_format_18_msg|'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.|exact
+CHK|Spinner_format_19|char '%u'|exact
+CHK|Spinner_format_20|char '%o'|exact
+CHK|Spinner_format_21|char '%G'|exact
+CHK|Spinner_format_22|char '%+d'|exact
+CHK|Spinner_format_23|char '%ld'|exact
+CHK|spinner_step_01|double [1 1] 1|exact
+CHK|spinner_step_02|double [1 1] 0.5|exact
+CHK|spinner_step_03|MATLAB:ui:Spinner:invalidValue|exact
+CHK|spinner_step_03_msg|'Step' must be a finite, positive number.|exact
+CHK|spinner_step_04|MATLAB:ui:Spinner:invalidValue|exact
+CHK|spinner_step_04_msg|'Step' must be a finite, positive number.|exact
+CHK|spinner_step_05|MATLAB:ui:Spinner:invalidValue|exact
+CHK|spinner_step_05_msg|'Step' must be a finite, positive number.|exact
+CHK|spinner_step_06|MATLAB:ui:Spinner:invalidValue|exact
+CHK|spinner_step_06_msg|'Step' must be a finite, positive number.|exact
+CHK|spinner_step_07|MATLAB:ui:Spinner:invalidValue|exact
+CHK|spinner_step_07_msg|'Step' must be a finite, positive number.|exact
+CHK|spinner_step_08|MATLAB:ui:Spinner:invalidValue|exact
+CHK|spinner_step_08_msg|'Step' must be a finite, positive number.|exact
+CHK|spinner_step_09|int8 [1 1] 2|exact
+CHK|spinner_step_10|MATLAB:ui:Spinner:invalidValue|exact
+CHK|spinner_step_10_msg|'Step' must be a finite, positive number.|exact
+CHK|spinner_step_11|double [1 1] 0.001|exact
+CHK|spinner_step_12|double [1 1] 1|exact
+CHK|spinner_step_fraction_while_rounding|MATLAB:ui:Spinner:invalidStepWhenRoundingIsTrue|exact
+CHK|spinner_step_fraction_while_rounding_msg|'Step' cannot be fractional when 'RoundFractionalValues' is 'on'.|exact
+CHK|spinner_rounding_with_fraction_step|MATLAB:ui:Spinner:invalidRoundFractionalValueWhenStepIsFloat|exact
+CHK|spinner_rounding_with_fraction_step_msg|'RoundFractionalValues' cannot be set to 'on' when 'Step' is a fractional value.|exact
+CHK|slider_value_01|double [1 1] 50|exact
+CHK|slider_value_02|double [1 1] 0|exact
+CHK|slider_value_03|double [1 1] 100|exact
+CHK|slider_value_04|MATLAB:ui:Slider:invalidValue|exact
+CHK|slider_value_04_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|slider_value_05|MATLAB:ui:Slider:invalidValue|exact
+CHK|slider_value_05_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|slider_value_06|MATLAB:ui:Slider:invalidValue|exact
+CHK|slider_value_06_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|slider_value_07|MATLAB:ui:Slider:invalidValue|exact
+CHK|slider_value_07_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|slider_value_08|MATLAB:ui:Slider:invalidValue|exact
+CHK|slider_value_08_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|slider_value_09|MATLAB:ui:Slider:invalidValue|exact
+CHK|slider_value_09_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|slider_value_10|MATLAB:ui:Slider:invalidValue|exact
+CHK|slider_value_10_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|slider_value_11|MATLAB:ui:Slider:invalidValue|exact
+CHK|slider_value_11_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|slider_value_12|double [1 1] 33.333|exact
+CHK|slider_limits_under_value|double [1 1] 50 double [1 1] 0.05|exact
+CHK|slider_limits_over_value|double [1 1] 30 double [1 1] 0.02|exact
+CHK|slider_limits_01|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_01_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_02|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_02_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_03|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_03_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_04|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_04_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_05|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_05_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_06|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_06_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_07|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_07_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_08|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_08_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_09|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_09_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_10|MATLAB:ui:Slider:invalidFiniteScaleLimits|exact
+CHK|slider_limits_10_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|slider_limits_11|double [1 2] 0 1|exact
+CHK|slider_ticks_set|double [1 3] 0 50 100 manual cell [1 3] {char '0', char '50', char '100'} auto|exact
+CHK|slider_labels_set|double [1 6] 0 20 40 60 80 100 cell [1 2] {char 'lo', char 'hi'} manual|exact
+CHK|slider_minor_set|double [1 5] 0 25 50 75 100 manual|exact
+CHK|slider_no_ticks|double [0 0] cell [0 0] {}|exact
+CHK|slider_ticks_outside|double [1 2] 200 300 cell [1 2] {char '200', char '300'}|exact
+CHK|slider_major_1|double [1 3] 1 2 3|exact
+CHK|slider_major_2|double [1 2] 1 2|exact
+CHK|slider_major_3|MATLAB:ui:Slider:invalidMajorTicks|exact
+CHK|slider_major_3_msg|'MajorTicks' must be a 1-by-n numeric array.|exact
+CHK|slider_major_4|MATLAB:ui:Slider:invalidMajorTicks|exact
+CHK|slider_major_4_msg|'MajorTicks' must be a 1-by-n numeric array.|exact
+CHK|slider_major_5|MATLAB:ui:Slider:invalidMajorTicks|exact
+CHK|slider_major_5_msg|'MajorTicks' array cannot contain NaN or Inf.|exact
+CHK|slider_major_6|MATLAB:ui:Slider:invalidMajorTicks|exact
+CHK|slider_major_6_msg|'MajorTicks' array cannot contain NaN or Inf.|exact
+CHK|slider_major_7|double [1 2] 1 2|exact
+CHK|slider_major_8|double [1 2] 1 2|exact
+CHK|slider_minor_1|double [1 3] 1 2 3|exact
+CHK|slider_minor_2|double [1 2] 1 2|exact
+CHK|slider_minor_3|MATLAB:ui:Slider:invalidMinorTicks|exact
+CHK|slider_minor_3_msg|'MinorTicks' must be a 1-by-n numeric array.|exact
+CHK|slider_minor_4|MATLAB:ui:Slider:invalidMinorTicks|exact
+CHK|slider_minor_4_msg|'MinorTicks' must be a 1-by-n numeric array.|exact
+CHK|slider_minor_5|MATLAB:ui:Slider:invalidMinorTicks|exact
+CHK|slider_minor_5_msg|'MinorTicks' array cannot contain NaN or Inf.|exact
+CHK|slider_minor_6|MATLAB:ui:Slider:invalidMinorTicks|exact
+CHK|slider_minor_6_msg|'MinorTicks' array cannot contain NaN or Inf.|exact
+CHK|slider_minor_7|double [1 2] 1 2|exact
+CHK|slider_minor_8|double [1 2] 1 2|exact
+CHK|slider_labels_1|cell [1 2] {char 'a', char 'b'}|exact
+CHK|slider_labels_2|cell [1 2] {char 'a', char 'b'}|exact
+CHK|slider_labels_3|MATLAB:ui:Slider:invalidMajorTickLabels|exact
+CHK|slider_labels_3_msg|'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|slider_labels_4|MATLAB:ui:Slider:invalidMajorTickLabels|exact
+CHK|slider_labels_4_msg|'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|slider_labels_5|MATLAB:ui:Slider:invalidMajorTickLabels|exact
+CHK|slider_labels_5_msg|'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|slider_labels_6|cell [0 0] {}|exact
+CHK|slider_labels_7|cell [1 2] {char 'a', char 'b'}|exact
+CHK|slider_step_set|double [1 1] 5 manual|exact
+CHK|slider_step_value_off_it|double [1 1] 13|exact
+CHK|slider_step_auto|double [1 1] 0.1 auto|exact
+CHK|slider_step_1|MATLAB:ui:Slider:invalidStep|exact
+CHK|slider_step_1_msg|'Step' must be a finite, positive number.|exact
+CHK|slider_step_2|MATLAB:ui:Slider:invalidStep|exact
+CHK|slider_step_2_msg|'Step' must be a finite, positive number.|exact
+CHK|slider_step_3|double [1 1] 200|exact
+CHK|slider_step_4|MATLAB:ui:Slider:invalidStep|exact
+CHK|slider_step_4_msg|'Step' must be a finite, positive number.|exact
+CHK|slider_step_5|double [1 1] 97|exact
+CHK|slider_step_6|MATLAB:ui:Slider:invalidStep|exact
+CHK|slider_step_6_msg|'Step' must be a finite, positive number.|exact
+CHK|slider_step_7|MATLAB:ui:Slider:invalidStep|exact
+CHK|slider_step_7_msg|'Step' must be a finite, positive number.|exact
+CHK|slider_step_8|double [1 1] 0.001|exact
+CHK|slider_step_9|MATLAB:validation:UnableToConvert|exact
+CHK|slider_step_9_msg|Error setting property 'Step' of class 'matlab.ui.control.Slider'. Value must be of type double or be convertible to double.|exact
+CHK|slider_upright|[100 100 3 150] [93 70 39 166]|exact
+CHK|slider_made_upright|double [1 4] 100 100 3 150|exact
+CHK|slider_position|double [1 4] 10 10 300 3|exact
+CHK|slider_outer|double [1 4] 3 -20 316 39|exact
+CHK|slider_outer_set|MATLAB:class:SetProhibited|exact
+CHK|slider_outer_set_msg|Unable to set the 'OuterPosition' property of class ''Slider'' because it is read-only.|exact
+CHK|range_value_01|double [1 2] 10 20|exact
+CHK|range_value_02|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_02_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_03|double [1 2] 10 10|exact
+CHK|range_value_04|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_04_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_05|double [1 2] 0 100|exact
+CHK|range_value_06|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_06_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_07|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_07_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_08|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_08_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_09|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_09_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_10|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_10_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_11|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_11_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_12|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_12_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_value_13|MATLAB:ui:RangeSlider:invalidValue|exact
+CHK|range_value_13_msg|'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.|exact
+CHK|range_limits_under|double [1 2] 50 50|exact
+CHK|range_limits_inside|double [1 2] 20 50|exact
+CHK|textarea_01|cell [1 1] {char 'one'}|exact
+CHK|textarea_02|cell [1 1] {char 'str'}|exact
+CHK|textarea_03|cell [2 1] {char 'a', char 'b'}|exact
+CHK|textarea_04|cell [2 1] {char 'a', char 'b'}|exact
+CHK|textarea_05|cell [2 1] {char 'p', char 'q'}|exact
+CHK|textarea_06|cell [2 1] {char 'p', char 'q'}|exact
+CHK|textarea_07|cell [2 1] {char 'x', char 'y'}|exact
+CHK|textarea_08|MATLAB:ui:TextArea:invalidMultilineTextValue|exact
+CHK|textarea_08_msg|'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|textarea_09|cell [1 1] {char ''}|exact
+CHK|textarea_10|MATLAB:ui:TextArea:invalidMultilineTextValue|exact
+CHK|textarea_10_msg|'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|textarea_11|cell [1 1] {char ''}|exact
+CHK|textarea_12|MATLAB:ui:TextArea:invalidMultilineTextValue|exact
+CHK|textarea_12_msg|'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|textarea_13|MATLAB:ui:TextArea:invalidMultilineTextValue|exact
+CHK|textarea_13_msg|'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|textarea_14|MATLAB:ui:TextArea:invalidMultilineTextValue|exact
+CHK|textarea_14_msg|'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|textarea_15|MATLAB:ui:TextArea:invalidMultilineTextValue|exact
+CHK|textarea_15_msg|'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|textarea_16|cell [3 1] {char 'm', char 'n', char 'o'}|exact
+CHK|label_text_01|char 'one'|exact
+CHK|label_text_02|char 'str'|exact
+CHK|label_text_03|cell [2 1] {char 'a', char 'b'}|exact
+CHK|label_text_04|cell [2 1] {char 'a', char 'b'}|exact
+CHK|label_text_05|cell [2 1] {char 'p', char 'q'}|exact
+CHK|label_text_06|cell [2 1] {char 'p', char 'q'}|exact
+CHK|label_text_07|char 'x y'|exact
+CHK|label_text_08|MATLAB:ui:Label:invalidMultilineTextValue|exact
+CHK|label_text_08_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|label_text_09|char ''|exact
+CHK|label_text_10|MATLAB:ui:Label:invalidMultilineTextValue|exact
+CHK|label_text_10_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|label_text_11|cell [1 1] {char ''}|exact
+CHK|label_text_12|MATLAB:ui:Label:invalidMultilineTextValue|exact
+CHK|label_text_12_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|label_text_13|MATLAB:ui:Label:invalidMultilineTextValue|exact
+CHK|label_text_13_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|label_text_14|MATLAB:ui:Label:invalidMultilineTextValue|exact
+CHK|label_text_14_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|label_text_15|MATLAB:ui:Label:invalidMultilineTextValue|exact
+CHK|label_text_15_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|label_text_16|cell [2 1] {char 'm n', char 'o'}|exact
+CHK|checkbox_text_01|char 'one'|exact
+CHK|checkbox_text_02|char 'str'|exact
+CHK|checkbox_text_03|cell [2 1] {char 'a', char 'b'}|exact
+CHK|checkbox_text_04|cell [2 1] {char 'a', char 'b'}|exact
+CHK|checkbox_text_05|cell [2 1] {char 'p', char 'q'}|exact
+CHK|checkbox_text_06|cell [2 1] {char 'p', char 'q'}|exact
+CHK|checkbox_text_07|char 'x y'|exact
+CHK|checkbox_text_08|MATLAB:ui:CheckBox:invalidMultilineTextValue|exact
+CHK|checkbox_text_08_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|checkbox_text_09|char ''|exact
+CHK|checkbox_text_10|MATLAB:ui:CheckBox:invalidMultilineTextValue|exact
+CHK|checkbox_text_10_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|checkbox_text_11|cell [1 1] {char ''}|exact
+CHK|checkbox_text_12|MATLAB:ui:CheckBox:invalidMultilineTextValue|exact
+CHK|checkbox_text_12_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|checkbox_text_13|MATLAB:ui:CheckBox:invalidMultilineTextValue|exact
+CHK|checkbox_text_13_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|checkbox_text_14|MATLAB:ui:CheckBox:invalidMultilineTextValue|exact
+CHK|checkbox_text_14_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|checkbox_text_15|MATLAB:ui:CheckBox:invalidMultilineTextValue|exact
+CHK|checkbox_text_15_msg|'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|checkbox_text_16|cell [2 1] {char 'm n', char 'o'}|exact
+CHK|icon_01|double [1 2] 0 0|exact
+CHK|imagesource_01|double [1 2] 0 0|exact
+CHK|icon_02|MATLAB:ui:Button:invalidIconCData|exact
+CHK|icon_02_msg|You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|imagesource_02|MATLAB:ui:Image:invalidIconCData|exact
+CHK|imagesource_02_msg|You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|icon_03|double [1 3] 4 4 3|exact
+CHK|imagesource_03|double [1 3] 4 4 3|exact
+CHK|icon_04|double [1 3] 4 4 3|exact
+CHK|imagesource_04|double [1 3] 4 4 3|exact
+CHK|icon_05|MATLAB:ui:Button:invalidIconCData|exact
+CHK|icon_05_msg|You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|imagesource_05|MATLAB:ui:Image:invalidIconCData|exact
+CHK|imagesource_05_msg|You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|icon_06|double [1 2] 1 4|exact
+CHK|imagesource_06|MATLAB:ui:Image:InvalidImageSourceSpecified|exact
+CHK|imagesource_06_msg|ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|icon_07|double [1 2] 1 7|exact
+CHK|imagesource_07|MATLAB:ui:Image:InvalidImageSourceSpecified|exact
+CHK|imagesource_07_msg|ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|icon_08|double [1 2] 1 5|exact
+CHK|imagesource_08|MATLAB:ui:Image:InvalidImageSourceSpecified|exact
+CHK|imagesource_08_msg|ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|icon_09|double [1 2] 1 7|exact
+CHK|imagesource_09|MATLAB:ui:Image:InvalidImageSourceSpecified|exact
+CHK|imagesource_09_msg|ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|icon_10|double [1 2] 1 8|exact
+CHK|imagesource_10|MATLAB:ui:Image:InvalidImageSourceSpecified|exact
+CHK|imagesource_10_msg|ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|icon_11|MATLAB:ui:Button:invalidIconFile|exact
+CHK|icon_11_msg|You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|imagesource_11|MATLAB:ui:Image:InvalidImageSourceSpecified|exact
+CHK|imagesource_11_msg|ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|icon_12|double [1 2] 0 0|exact
+CHK|imagesource_12|double [1 2] 0 0|exact
+CHK|icon_13|MATLAB:ui:Button:invalidIconCData|exact
+CHK|icon_13_msg|You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|imagesource_13|MATLAB:ui:Image:invalidIconCData|exact
+CHK|imagesource_13_msg|You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|icon_14|MATLAB:ui:Button:invalidIconFile|exact
+CHK|icon_14_msg|You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|imagesource_14|MATLAB:ui:Image:InvalidImageSourceSpecified|exact
+CHK|imagesource_14_msg|ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|icon_15|MATLAB:ui:Button:invalidIconFile|exact
+CHK|icon_15_msg|You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|imagesource_15|MATLAB:ui:Image:InvalidImageSourceSpecified|exact
+CHK|imagesource_15_msg|ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|icon_16|MATLAB:ui:Button:invalidIconFormat|exact
+CHK|icon_16_msg|You have specified an invalid file format. Valid file formats are one of the following: png, jpg, jpeg, gif, svg.|exact
+CHK|imagesource_16|MATLAB:ui:Image:invalidIconFormat|exact
+CHK|imagesource_16_msg|You have specified an invalid file format. Valid file formats are one of the following: png, jpg, jpeg, gif, svg.|exact
+CHK|group_empty|1|exact
+CHK|group_first|r1=true sel=r1 [10 10 91 22]|exact
+CHK|group_second|r1=true r2=false sel=r1 [10 10 91 22]|exact
+CHK|group_third_made_on|r1=false r2=false r3=true sel=r3|exact
+CHK|group_value_on|r1=false r2=true r3=false sel=r2|exact
+CHK|group_selected_off|ran|exact
+CHK|group_after_selected_off|r1=true r2=false r3=false sel=r1|exact
+CHK|group_unselected_off|ran|exact
+CHK|group_after_unselected_off|r1=false r2=true r3=false sel=r2|exact
+CHK|group_value_one|ran|exact
+CHK|group_after_one|r1=true r2=false r3=false sel=r1|exact
+CHK|group_value_two|MATLAB:ui:RadioButton:invalidValue|exact
+CHK|group_value_two_msg|'Selected' must be true or false.|exact
+CHK|group_value_word|MATLAB:ui:RadioButton:invalidValue|exact
+CHK|group_value_word_msg|'Selected' must be true or false.|exact
+CHK|group_selectedobject|r1=false r2=false r3=true sel=r3|exact
+CHK|group_select_none|MATLAB:hg:InvalidSelectedObjectType|exact
+CHK|group_select_none_msg|Must set the SelectedObject to a Radio Button or a Toggle Button.|exact
+CHK|group_after_none|r1=false r2=false r3=true sel=r3|exact
+CHK|group_select_figure|MATLAB:hg:InvalidSelectedObjectType|exact
+CHK|group_select_figure_msg|Must set the SelectedObject to a Radio Button or a Toggle Button.|exact
+CHK|group_select_outsider|MATLAB:hg:InvalidSelectedObjectParent|exact
+CHK|group_select_outsider_msg|SelectedObject must be a child of this UIButtonGroup.|exact
+CHK|group_selected_deleted|r1=true r2=false sel=r1|exact
+CHK|group_first_deleted|r2=true sel=r2|exact
+CHK|group_all_deleted|1|exact
+CHK|group_first_made_off|r4=true sel=r4|exact
+CHK|group_toggle_among_radios|MATLAB:ui:ToggleButton:unknownInput|exact
+CHK|group_toggle_among_radios_msg|Mutual exclusivity violated for ButtonGroup. A ToggleButton can only be parented to a ButtonGroup with ToggleButton.|exact
+CHK|group_uicontrol_among_radios|MATLAB:gbtobjects:MutualExclusivityViolation|exact
+CHK|group_uicontrol_among_radios_msg|Mutual exclusivity violated for ButtonGroup. A UIControl can only be parented to a ButtonGroup with UIControl.|exact
+CHK|group_button_among_radios|uibutton in uibuttongroup at [100 100 100 22]|exact
+CHK|group_after_strangers|r4=true sel=r4|exact
+CHK|group_first_toggle|t1=true sel=t1 [10 10 100 22]|exact
+CHK|group_second_toggle|t1=true t2=false sel=t1|exact
+CHK|group_toggle_on|t1=false t2=true sel=t2|exact
+CHK|group_toggle_off|ran|exact
+CHK|group_after_toggle_off|t1=true t2=false sel=t1|exact
+CHK|group_radio_among_toggles|MATLAB:ui:RadioButton:unknownInput|exact
+CHK|group_radio_among_toggles_msg|Mutual exclusivity violated for ButtonGroup. A RadioButton can only be parented to a ButtonGroup with RadioButton.|exact
+CHK|group_move_selected_in|uitogglebutton in uibuttongroup at [10 10 100 22]|exact
+CHK|group_after_move_in|t1=false t2=false q=true sel=q|exact
+CHK|group_radio_to_figure|MATLAB:ui:RadioButton:invalidClassForParent|exact
+CHK|group_radio_to_figure_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|group_radio_to_panel|MATLAB:ui:RadioButton:invalidClassForParent|exact
+CHK|group_radio_to_panel_msg|'Parent' value must be specified as a ButtonGroup object.|exact
+CHK|group_callback|function_handle|exact
+CHK|group_radio_has_no_callback|MATLAB:hg:InvalidProperty|exact
+CHK|group_radio_has_no_callback_msg|Unrecognized property ValueChangedFcn for class matlab.ui.control.RadioButton.|exact

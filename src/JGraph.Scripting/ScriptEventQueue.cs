@@ -82,6 +82,15 @@ public enum GraphicsEventKind
     /// the one that was.
     /// </summary>
     GroupSelectionChanged,
+
+    /// <summary>
+    /// Something a person did to a <c>uifigure</c> component (U5). <c>Action</c> says what: a value
+    /// settled, a value on its way, a button pushed, a list clicked.
+    /// </summary>
+    ComponentUser,
+
+    /// <summary>A button of a dialog over a figure was pressed (U5).</summary>
+    OverlayAnswered,
 }
 
 /// <summary>
@@ -110,6 +119,10 @@ public enum GraphicsEventKind
 /// gave it (an edit field's text), written to the model when the event is delivered.</param>
 /// <param name="UserSeq">The sequence number of that write, which the window compares with what the
 /// model has taken before it lets a frame overwrite what the user is looking at.</param>
+/// <param name="Action">For a <c>uifigure</c> component's event (U5), what happened — a value
+/// settled, a button pushed — and, once prepared for delivery, the callback property it is owed.</param>
+/// <param name="Interim">For such an event, a value that is not to be written: one still on its
+/// way, a clicked item's position, or the event data made for the callback.</param>
 public sealed record GraphicsEvent(
     GraphicsEventKind Kind,
     GraphObject Target,
@@ -123,7 +136,9 @@ public sealed record GraphicsEvent(
     IReadOnlyList<string>? Modifiers = null,
     int ScrollCount = 0,
     object? UserValue = null,
-    long UserSeq = 0);
+    long UserSeq = 0,
+    string Action = "",
+    object? Interim = null);
 
 /// <summary>
 /// The queue between the interface and the interpreter. Interface threads only ever put events in;
@@ -207,6 +222,37 @@ public static class ScriptEventQueue
     }
 
     /// <summary>Takes the oldest event, or answers false when the queue is empty.</summary>
+    /// <summary>
+    /// Queues an event that supersedes the last one queued for its object when that one is of the
+    /// same kind and action — a slider's value on its way. Only the last is replaced, so it still
+    /// comes before whatever is queued after it.
+    /// </summary>
+    public static void EnqueueOverLast(GraphicsEvent graphicsEvent)
+    {
+        ArgumentNullException.ThrowIfNull(graphicsEvent);
+        lock (Gate)
+        {
+            for (int i = Events.Count - 1; i >= 0; i--)
+            {
+                if (!ReferenceEquals(Events[i].Target, graphicsEvent.Target))
+                {
+                    continue;
+                }
+
+                if (Events[i].Kind == graphicsEvent.Kind && Events[i].Action == graphicsEvent.Action)
+                {
+                    Events[i] = graphicsEvent;
+                    _pump?.Invoke();
+                    return;
+                }
+
+                break;
+            }
+        }
+
+        Enqueue(graphicsEvent);
+    }
+
     internal static bool TryDequeue(out GraphicsEvent graphicsEvent)
     {
         lock (Gate)

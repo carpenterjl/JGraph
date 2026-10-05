@@ -1845,6 +1845,19 @@ public static class JG
             return;
         }
 
+        // 'replacechildren' — a uiaxes — takes away what was drawn and nothing else (U5): the
+        // limits follow the new data, and the title, labels, grid and view stay.
+        if (axes.ReplaceChildrenOnly)
+        {
+            axes.Plots.Clear();
+            axes.Annotations.Clear();
+            axes.Lights.Clear();
+            axes.PrimaryXAxis.AutoScale = true;
+            axes.PrimaryYAxis.AutoScale = true;
+            axes.ZAxis.AutoScale = true;
+            return;
+        }
+
         axes.Plots.Clear();
         axes.Annotations.Clear();
         axes.Lights.Clear();

@@ -103,8 +103,12 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,188 of
-2,024** as of app-building stage U4 (ADR 0201), which added `uiwait`, `uiresume`, `guihandles`, the
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,205 of
+2,024** as of app-building stage U5 (ADR 0202), which added `uigridlayout`, the `uifigure`
+components (`uilabel`, `uibutton`, `uieditfield`, `uitextarea`, `uidropdown`, `uilistbox`,
+`uicheckbox`, `uiradiobutton`, `uitogglebutton`, `uislider`, `uispinner`, `uiimage`, `uihyperlink`)
+and the dialogs over a figure (`uialert`, `uiconfirm`, `uiprogressdlg`) — and `focus`, which
+R2021b's list does not have; 1,188 as of app-building stage U4 (ADR 0201), which added `uiwait`, `uiresume`, `guihandles`, the
 classic dialogs (`dialog`, `msgbox`, `errordlg`, `warndlg`, `helpdlg`, `questdlg`, `inputdlg`,
 `listdlg`, `waitbar`) and the system's (`uigetfile`, `uiputfile`, `uigetdir`, `uisetcolor`,
 `uisetfont`, `uiopen`, `uisave`, `uiload`); 1,169 as of app-building stage U3 (ADR 0200), which
@@ -1059,6 +1063,12 @@ M52 left these behind, each named rather than silent (the full table is in
 
 `hgsetget` `selectmoveresize` `uipushtool`
 `uitoggletool` `uitoolbar`
+
+**App-building stage U5 took the first batch of `uifigure` components** (ADR 0202):
+`uigridlayout` with R2025b's track and fit arithmetic, thirteen components with their defaults,
+their refusals and their events, `uiaxes` as a real child of a container, and `uialert`,
+`uiconfirm` and `uiprogressdlg` laid over the figure. All are functions in MATLAB, so they move the
+callable count and not this one.
 
 **App-building stage U4 made a script able to wait** (ADR 0201): `uiwait`, `uiresume` and a
 `waitfor` that delivers what `pause` delivers; `guihandles`; the classic dialogs as figures built

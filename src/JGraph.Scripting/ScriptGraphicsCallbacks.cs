@@ -149,6 +149,61 @@ public static class ScriptGraphicsCallbacks
     }
 
     /// <summary>
+    /// Reports what a person did to a <c>uifigure</c> component (app-building plan, U5). Safe from
+    /// any thread; nothing is written here.
+    /// </summary>
+    /// <param name="component">The component acted on.</param>
+    /// <param name="action">What happened: <c>"value"</c> for a value that has settled,
+    /// <c>"changing"</c> for one on its way (a slider being dragged, text being typed),
+    /// <c>"pushed"</c>, <c>"clicked"</c>, <c>"doubleclicked"</c>, <c>"opening"</c>, <c>"image"</c>
+    /// or <c>"link"</c>.</param>
+    /// <param name="value">For <c>"value"</c>, the new value: a <see cref="bool"/> for a state
+    /// button, a check box and a radio or toggle button; a <see cref="string"/> for an edit field,
+    /// a numeric field's typed text and an editable drop-down's; a <c>string[]</c> for a text area;
+    /// an <see cref="int"/> for a drop-down's item and an <c>int[]</c> for a list's, counted from 0;
+    /// a <see cref="double"/> for a slider and a spinner's arrows, and a <c>double[]</c> of two for a
+    /// range slider. For <c>"changing"</c>, the value so far; for a click on a list, the item's
+    /// position.</param>
+    /// <returns>The sequence number of a settled value, which the window holds on to.</returns>
+    public static long NotifyComponent(GraphObject component, string action, object? value = null)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        ArgumentNullException.ThrowIfNull(action);
+        long seq = Interlocked.Increment(ref _userSeq);
+        bool settles = action == "value";
+        var raised = new GraphicsEvent(
+            GraphicsEventKind.ComponentUser, component, Clicked: component,
+            UserValue: settles ? value : null, UserSeq: seq, Action: action, Interim: settles ? null : value);
+        if (action == "changing")
+        {
+            ScriptEventQueue.EnqueueOverLast(raised);
+        }
+        else
+        {
+            ScriptEventQueue.Enqueue(raised);
+        }
+
+        return seq;
+    }
+
+    /// <summary>
+    /// Reports that a button of a dialog over a figure was pressed (U5): the position of the option,
+    /// from 0, or -1 for the dialog's close box and Escape.
+    /// </summary>
+    public static void NotifyOverlay(UiOverlayModel overlay, int option)
+    {
+        ArgumentNullException.ThrowIfNull(overlay);
+        ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.OverlayAnswered, overlay, UserValue: option));
+    }
+
+    /// <summary>
+    /// A stand-in for the person a <c>uiconfirm</c> waits for (U5), as <see cref="BlockingDialogShown"/>
+    /// is for the classic dialogs: called on the script thread once the dialog is over its figure
+    /// and the wait is about to begin. The handler answers through <see cref="NotifyOverlay"/>.
+    /// </summary>
+    public static Action<UiOverlayModel>? OverlayShown { get; set; }
+
+    /// <summary>
     /// Reports a key going down or coming back up over a figure. The character the key produced is
     /// recorded on the figure first, because MATLAB's <c>CurrentCharacter</c> is what the callback
     /// reads when it runs. Who hears it, and in which order, is R2025b's (U1, <c>u1w_keys</c>): while a

@@ -1,0 +1,345 @@
+form parent : 'matlab.ui.container.GridLayout'
+form parent size : 'R{1x,1x,1x} C{1x,1x,1x,1x}'
+form size row vector 1x1 : 'R{1x} C{1x}'
+form size scalar : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+form size three : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+form size zero : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+form size fraction : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+form size negative : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+form size text : ERR MATLAB:ui:GridLayout:unknownInput | No value was given for 'a'. Name-value pair arguments require a name followed by a value.
+form size column : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+form size then pairs : 'R{10,20} C{1x,1x,1x}'
+form size then pairs mismatch : 'R{10,20,30} C{1x,1x,1x}'
+form pairs : 'R{1x,1x} C{fit,5}'
+form named parent : 'R{1x,1x} C{1x,1x}'
+form odd : ERR MATLAB:ui:GridLayout:unknownInput | No value was given for 'RowHeight'. Name-value pair arguments require a name followed by a value.
+form unknown : ERR MATLAB:ui:GridLayout:unknownInput | Unrecognized property Bogus for class GridLayout.
+form bad parent number : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+form parent label : ERR MATLAB:ui:GridLayout:unknownInput | Label cannot be a parent.
+form struct : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+form second grid in figure : '2 children, valid 1 1'
+form grid in panel : 'matlab.ui.container.Panel'
+form grid in grid : 'matlab.ui.container.GridLayout'
+form grid in buttongroup : 'matlab.ui.container.ButtonGroup'
+form grid in classic figure : 'matlab.ui.Figure'
+form grid in classic panel : 'matlab.ui.container.Panel'
+form uicontrol in grid : ERR MATLAB:uicontrol:InvalidParent | Parent must be a Figure or UITab or any UIContainer
+form axes in grid : 'matlab.graphics.axis.Axes'
+RowHeight <- cell [1 4] {'1x','fit',double 40,'2x'} : cell [1 4] {'1x','fit',double 40,'2x'}
+ColumnWidth <- cell [1 4] {'1x','fit',double 40,'2x'} : cell [1 4] {'1x','fit',double 40,'2x'}
+RowHeight <- double [30 40] : cell [1 2] {double 30,double 40}
+ColumnWidth <- double [30 40] : cell [1 2] {double 30,double 40}
+RowHeight <- string [1 2] [fit,1x] : cell [1 2] {'fit','1x'}
+ColumnWidth <- string [1 2] [fit,1x] : cell [1 2] {'fit','1x'}
+RowHeight <- cell [1 1] {'1x'} : cell [1 1] {'1x'}
+ColumnWidth <- cell [1 1] {'1x'} : cell [1 1] {'1x'}
+RowHeight <- '1x' : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- '1x' : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- 'fit' : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- 'fit' : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- double 50 : cell [1 1] {double 50}
+ColumnWidth <- double 50 : cell [1 1] {double 50}
+RowHeight <- cell [0 0] {} : cell [0 0] {}
+ColumnWidth <- cell [0 0] {} : cell [0 0] {}
+RowHeight <- double [0 0] : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- double [0 0] : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {'0x'} : cell [1 1] {'0x'}
+ColumnWidth <- cell [1 1] {'0x'} : cell [1 1] {'0x'}
+RowHeight <- cell [1 1] {'1.5x'} : cell [1 1] {'1.5x'}
+ColumnWidth <- cell [1 1] {'1.5x'} : cell [1 1] {'1.5x'}
+RowHeight <- cell [1 1] {'x'} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {'x'} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {' 2x'} : cell [1 1] {'2x'}
+ColumnWidth <- cell [1 1] {' 2x'} : cell [1 1] {'2x'}
+RowHeight <- cell [1 1] {'2X'} : cell [1 1] {'2x'}
+ColumnWidth <- cell [1 1] {'2X'} : cell [1 1] {'2x'}
+RowHeight <- cell [1 1] {'FIT'} : cell [1 1] {'fit'}
+ColumnWidth <- cell [1 1] {'FIT'} : cell [1 1] {'fit'}
+RowHeight <- cell [1 1] {double 0} : cell [1 1] {double 0}
+ColumnWidth <- cell [1 1] {double 0} : cell [1 1] {double 0}
+RowHeight <- cell [1 1] {double -5} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {double -5} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {double Inf} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {double Inf} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {double NaN} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {double NaN} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {'bogus'} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {'bogus'} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [2 2] {double 1,double 2,'fit',double 3} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [2 2] {double 1,double 2,'fit',double 3} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [2 1] {'1x','2x'} : cell [1 2] {'1x','2x'}
+ColumnWidth <- cell [2 1] {'1x','2x'} : cell [1 2] {'1x','2x'}
+RowHeight <- cell [1 1] {int8 5} : cell [1 1] {int8 5}
+ColumnWidth <- cell [1 1] {int8 5} : cell [1 1] {int8 5}
+RowHeight <- cell [1 1] {logical true} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {logical true} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {"2x"} : cell [1 1] {'2x'}
+ColumnWidth <- cell [1 1] {"2x"} : cell [1 1] {'2x'}
+RowHeight <- "3x" : cell [1 1] {'3x'}
+ColumnWidth <- "3x" : cell [1 1] {'3x'}
+RowHeight <- cell [1 1] {'10'} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {'10'} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {'10px'} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {'10px'} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {double [1 2]} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {double [1 2]} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {single 2.5} : cell [1 1] {single 2.5}
+ColumnWidth <- cell [1 1] {single 2.5} : cell [1 1] {single 2.5}
+RowHeight <- cell [1 1] {'1e1x'} : cell [1 1] {'10x'}
+ColumnWidth <- cell [1 1] {'1e1x'} : cell [1 1] {'10x'}
+RowHeight <- cell [1 1] {'-1x'} : ERR MATLAB:ui:GridLayout:InvalidRowHeight | 'RowHeight' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+ColumnWidth <- cell [1 1] {'-1x'} : ERR MATLAB:ui:GridLayout:InvalidColumnWidth | 'ColumnWidth' must be a cell vector containing the keyword 'fit', numbers, or numbers paired with 'x' characters. You can specify any combination of values, e.g. {100, '2x', 'fit', '1x'}. If all the elements are of the same type, vector arrays are accepted, e.g. ["fit", "1x"] or [100, 200].
+RowHeight <- cell [1 1] {'.5x'} : cell [1 1] {'0.5x'}
+ColumnWidth <- cell [1 1] {'.5x'} : cell [1 1] {'0.5x'}
+Padding <- double 5 : double [5 5 5 5]
+Padding <- double [1 2] : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- double [1 2 3 4] : double [1 2 3 4]
+Padding <- double [1;2;3;4] : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- double -1 : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- double [1 2 3 -4] : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- 'a' : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- cell [1 4] {double 1,double 2,double 3,double 4} : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- double [0 0] : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- double [NaN NaN NaN NaN] : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- double [Inf 1 1 1] : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- int8 [1 2 3 4] : double [1 2 3 4]
+Padding <- logical true : ERR MATLAB:ui:GridLayout:InvalidPadding | 'Padding' must be a nonnegative number or a 1x4 vector of nonnegative numbers representing the padding on the left, bottom, right and top.
+Padding <- double [1.5 2.5 3.5 4.5] : double [1.5 2.5 3.5 4.5]
+RowSpacing <- double 5 : double 5
+ColumnSpacing <- double 5 : double 5
+RowSpacing <- double 0 : double 0
+ColumnSpacing <- double 0 : double 0
+RowSpacing <- double -1 : ERR MATLAB:ui:GridLayout:InvalidRowSpacing | 'RowSpacing' must be a nonnegative number.
+ColumnSpacing <- double -1 : ERR MATLAB:ui:GridLayout:InvalidColumnSpacing | 'ColumnSpacing' must be a nonnegative number.
+RowSpacing <- double 2.5 : double 2.5
+ColumnSpacing <- double 2.5 : double 2.5
+RowSpacing <- double [1 2] : ERR MATLAB:ui:GridLayout:InvalidRowSpacing | 'RowSpacing' must be a nonnegative number.
+ColumnSpacing <- double [1 2] : ERR MATLAB:ui:GridLayout:InvalidColumnSpacing | 'ColumnSpacing' must be a nonnegative number.
+RowSpacing <- 'a' : ERR MATLAB:ui:GridLayout:InvalidRowSpacing | 'RowSpacing' must be a nonnegative number.
+ColumnSpacing <- 'a' : ERR MATLAB:ui:GridLayout:InvalidColumnSpacing | 'ColumnSpacing' must be a nonnegative number.
+RowSpacing <- double [0 0] : ERR MATLAB:ui:GridLayout:InvalidRowSpacing | 'RowSpacing' must be a nonnegative number.
+ColumnSpacing <- double [0 0] : ERR MATLAB:ui:GridLayout:InvalidColumnSpacing | 'ColumnSpacing' must be a nonnegative number.
+RowSpacing <- double NaN : ERR MATLAB:ui:GridLayout:InvalidRowSpacing | 'RowSpacing' must be a nonnegative number.
+ColumnSpacing <- double NaN : ERR MATLAB:ui:GridLayout:InvalidColumnSpacing | 'ColumnSpacing' must be a nonnegative number.
+RowSpacing <- double Inf : ERR MATLAB:ui:GridLayout:InvalidRowSpacing | 'RowSpacing' must be a nonnegative number.
+ColumnSpacing <- double Inf : ERR MATLAB:ui:GridLayout:InvalidColumnSpacing | 'ColumnSpacing' must be a nonnegative number.
+RowSpacing <- int8 4 : int8 4
+ColumnSpacing <- int8 4 : int8 4
+RowSpacing <- logical true : ERR MATLAB:ui:GridLayout:InvalidRowSpacing | 'RowSpacing' must be a nonnegative number.
+ColumnSpacing <- logical true : ERR MATLAB:ui:GridLayout:InvalidColumnSpacing | 'ColumnSpacing' must be a nonnegative number.
+auto child 1: Row=1 Column=1 | tracks R{1x,1x} C{1x,1x}
+auto child 2: Row=1 Column=2 | tracks R{1x,1x} C{1x,1x}
+auto child 3: Row=2 Column=1 | tracks R{1x,1x} C{1x,1x}
+auto child 4: Row=2 Column=2 | tracks R{1x,1x} C{1x,1x}
+auto child 5: Row=3 Column=1 | tracks R{1x,1x,1x} C{1x,1x}
+auto child 6: Row=3 Column=2 | tracks R{1x,1x,1x} C{1x,1x}
+auto children order (Children): b1 b2 b3 b4 b5 b6
+after deleting b2, new child: Row=4 Column=1
+after moving b1 to (2,2), new child: Row=4 Column=2 | tracks R{1x,1x,1x,1x} C{1x,1x}
+after a spanning child, next: Row=3 Column=1 | tracks R{1x,1x,1x} C{1x,1x}
+after first moved to col 3, next: Row=2 Column=1 | tracks R{1x,1x} C{1x,1x,1x}
+Layout in ctor: Row=2 Column=2
+  next: Row=3 Column=1
+containers placed: panel 1/1 axes 1/2 grid 2/1 group 2/2
+Layout class: matlab.ui.layout.GridLayoutOptions | fields: Row Column
+Layout disp props: Row Column
+Layout.Row <- double 2 : 'Row=2 Column=1'
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double 2 : 'Row=2 Column=2'
+Layout.Row <- double [1 2] : 'Row=[1 2] Column=2'
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double [1 2] : 'Row=[1 2] Column=[1 2]'
+Layout.Row <- double [2 3] : 'Row=[2 3] Column=[1 2]'
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double [2 3] : 'Row=[2 3] Column=[2 3]'
+Layout.Row <- double [2 1] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double [2 1] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- double [1 3] : 'Row=[1 3] Column=[2 3]'
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double [1 3] : 'Row=[1 3] Column=[1 3]'
+Layout.Row <- double 0 : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double 0 : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- double -1 : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double -1 : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- double 1.5 : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double 1.5 : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- double 5 : 'Row=5 Column=[1 3]'
+   tracks R{1x,1x,1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double 5 : 'Row=5 Column=5'
+Layout.Row <- double [1 5] : 'Row=[1 5] Column=5'
+   tracks R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}
+Layout.Column <- double [1 5] : 'Row=[1 5] Column=[1 5]'
+Layout.Row <- double [1 2 3] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}
+Layout.Column <- double [1 2 3] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- 'a' : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}
+Layout.Column <- 'a' : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- double [0 0] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}
+Layout.Column <- double [0 0] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- cell [1 1] {double 1} : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}
+Layout.Column <- cell [1 1] {double 1} : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- logical true : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x,1x,1x} C{1x,1x,1x,1x,1x}
+Layout.Column <- logical true : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- int8 2 : 'Row=2 Column=[1 5]'
+   tracks R{1x,1x,1x} C{1x,1x,1x,1x,1x}
+Layout.Column <- int8 2 : 'Row=2 Column=2'
+Layout.Row <- double NaN : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double NaN : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- double Inf : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double Inf : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- double [2 2] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double [2 2] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- single 3 : 'Row=3 Column=2'
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- single 3 : 'Row=3 Column=3'
+Layout.Row <- "2" : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- "2" : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout.Row <- double [0 1] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+   tracks R{1x,1x,1x} C{1x,1x,1x}
+Layout.Column <- double [0 1] : ERR MATLAB:ui:GridLayoutOptions:InvalidGridColumn | 'Column' must be a positive integer or a 1x2 increasing array of positive integers.
+Layout <- options object : 'matlab.ui.layout.GridLayoutOptions Row=3 Column=[1 2]'
+Layout <- struct : ERR MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass | Error setting property 'Layout' of class 'Button': 'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.
+Layout <- [] : ERR MATLAB:ui:components:invalidClassParentDependent | 'Layout' must be a 'matlab.ui.layout.GridLayoutOptions' object when the parent is 'matlab.ui.container.GridLayout'.
+Layout <- number : ERR MATLAB:ui:datatypes:LayoutOptionsDatatype:InvalidClass | Error setting property 'Layout' of class 'Button': 'Layout' value must be specified as a matlab.ui.layout.LayoutOptions object.
+Layout <- LayoutOptions.empty : ERR MATLAB:ui:components:invalidClassParentDependent | 'Layout' must be a 'matlab.ui.layout.GridLayoutOptions' object when the parent is 'matlab.ui.container.GridLayout'.
+GridLayoutOptions() : 'matlab.ui.layout.GridLayoutOptions Row=1 Column=1'
+GridLayoutOptions bad name : ERR MATLAB:handle_graphics:invalidCtorProperty | Can't find Bogus property on the GridLayoutOptions class.
+GridLayoutOptions Row 0 : ERR MATLAB:ui:GridLayoutOptions:InvalidGridRow | 'Row' must be a positive integer or a 1x2 increasing array of positive integers.
+non-grid child Layout: class matlab.ui.layout.LayoutOptions size [0 0]
+non-grid child Layout <- options : ERR MATLAB:ui:components:invalidLayoutValueWithNonLayoutContainerParent | 'Layout' must be empty when the parent object is not a layout container.
+non-grid child Layout.Row <- 2 : ERR MATLAB:emptyObjectDotAssignment | Property assignment is not allowed when the object is empty. Use subscripted assignment to create an array element.
+moved into grid: Row=3 Column=3
+moved out of grid: class matlab.ui.layout.LayoutOptions size [0 0] | Position [100 100 100 22]
+moved to another grid from (3,3): Row=3 Column=3 | tracks R{1x,1x,1x} C{1x,1x,1x}
+tracks cut under a child at (3,3): Row=3 Column=3 | tracks R{1x,1x,1x} C{1x,1x,1x}
+   its Position [404.33333 11 186.66667 120] Visible on
+grid in 600x400 uifigure: Position [1 1 600 400] Inner [11 11 580 380] Outer [1 1 600 400]
+grid Position <- [10 10 50 50] : ERR MATLAB:class:SetProhibited | Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.
+   lastwarn  |
+3x3 mixed child 1: [11 287.66667 100 103.33333]
+3x3 mixed child 2: [121 287.66667 406 103.33333]
+3x3 mixed child 3: [537 287.66667 54 103.33333]
+3x3 mixed child 4: [11 71 100 206.66667]
+3x3 mixed child 5: [121 71 406 206.66667]
+3x3 mixed child 6: [537 71 54 206.66667]
+3x3 mixed child 7: [11 11 100 50]
+3x3 mixed child 8: [121 11 406 50]
+3x3 mixed child 9: [537 11 54 50]
+span cols 1-3: [11 287.66667 580 103.33333]
+span rows 2-3: [11 11 100 266.66667]
+with the only fit-column child hidden: child 6 [537 71 54 206.66667] child 9 [537 11 54 50]
+with the fit column empty: child 5 [121 71 470 206.66667] child 8 [121 11 470 50]
+overflow child 1: [11 91 400 300]
+overflow child 2: [421 91 170 300]
+overflow child 3: [11 -219 400 300]
+overflow child 4: [421 -219 170 300]
+overflow scrollable child 1: [11 91 400 300]
+overflow scrollable child 2: [421 91 153 300]
+overflow scrollable child 3: [11 -219 400 300]
+overflow scrollable child 4: [421 -219 153 300]
+two in one fit cell: button [11 344.70312 580 46.296875] label [11 344.70312 580 46.296875] below [11 11 580 323.70312]
+span over two fit rows: list [11 317 580 74] below [11 11 580 296]
+nested fit grid: inner [11 348.23438 187.28125 42.765625] label [11 11 34.015625 22.765625] field [55.015625 11 123.26562 22.765625] below [11 11 187.28125 327.23438]
+panel in fit column: panel [11 11 100 380] grid [1 1 98.375 358.23438] label [11 332.46875 78.375 16.765625] dropdown [11 299.70312 78.375 22.765625] right [121.375 11 469.625 380]
+   panel inner [12 12 98 358]
+uiaxes in grid: Position [11 11 285 380] Outer [11 11 285 380] Units pixels
+uiaxes in grid Position <- : double [1 1 50 50]
+   lastwarn  |
+grid in titled 300x200 panel: grid [1 1 298 178.23438] button [11 11 278 158.23438]
+[Warning: Unable to set 'Position', 'InnerPosition', or 'OuterPosition' for components in 'GridLayout'.]
+child Position <- : double [11 11 580 380]
+   lastwarn MATLAB:ui:components:noPositionSetWhenInLayoutContainer | Unable to set 'Position', 'InnerPosition', or 'OuterPosition' for components in 'GridLayout'.
+[Warning: Unable to set 'Position', 'InnerPosition', or 'OuterPosition' for components in 'GridLayout'.]
+child InnerPosition <- : double [11 11 580 380]
+   lastwarn MATLAB:ui:components:noPositionSetWhenInLayoutContainer | Unable to set 'Position', 'InnerPosition', or 'OuterPosition' for components in 'GridLayout'.
+fit label [a] size 12 bold 0: [8.6875 16.765625]
+fit label [a] size 12 bold 1: [8.6875 16.765625]
+fit label [a] size 20 bold 0: [13.125 26.609375]
+fit label [a] size 20 bold 1: [13.125 26.609375]
+fit label [W] size 12 bold 0: [13.328125 16.765625]
+fit label [W] size 12 bold 1: [13.328125 16.765625]
+fit label [W] size 20 bold 0: [20.890625 26.609375]
+fit label [W] size 20 bold 1: [20.890625 26.609375]
+fit label [Label] size 12 bold 0: [31.375 16.765625]
+fit label [Label] size 12 bold 1: [33.34375 16.765625]
+fit label [Label] size 20 bold 0: [50.9375 26.609375]
+fit label [Label] size 20 bold 1: [54.25 26.609375]
+fit label [iiii] size 12 bold 0: [12.671875 16.765625]
+fit label [iiii] size 12 bold 1: [15.34375 16.765625]
+fit label [iiii] size 20 bold 0: [19.78125 26.609375]
+fit label [iiii] size 20 bold 1: [24.234375 26.609375]
+fit label [MMMM] size 12 bold 0: [41.984375 16.765625]
+fit label [MMMM] size 12 bold 1: [41.984375 16.765625]
+fit label [MMMM] size 20 bold 0: [68.640625 26.609375]
+fit label [MMMM] size 20 bold 1: [68.640625 26.609375]
+fit label [The quick brown fox] size 12 bold 0: [109.39062 16.765625]
+fit label [The quick brown fox] size 12 bold 1: [118.67188 16.765625]
+fit label [The quick brown fox] size 20 bold 0: [180.98438 26.609375]
+fit label [The quick brown fox] size 20 bold 1: [196.45312 26.609375]
+fit label [0123456789] size 12 bold 0: [68.75 16.765625]
+fit label [0123456789] size 12 bold 1: [68.75 16.765625]
+fit label [0123456789] size 20 bold 0: [113.23438 26.609375]
+fit label [0123456789] size 20 bold 1: [113.23438 26.609375]
+fit label [ ] size 12 bold 0: [5.34375 16.765625]
+fit label [ ] size 12 bold 1: [5.34375 16.765625]
+fit label [ ] size 20 bold 0: [7.5625 26.609375]
+fit label [ ] size 20 bold 1: [7.5625 26.609375]
+fit label [] size 12 bold 0: [5.34375 16.765625]
+fit label [] size 12 bold 1: [5.34375 16.765625]
+fit label [] size 20 bold 0: [7.5625 26.609375]
+fit label [] size 20 bold 1: [7.5625 26.609375]
+fit label in Arial: [109.39062 16.765625]
+fit label in Courier New: [138.82812 16.765625]
+fit label in Times New Roman: [102.98438 16.765625]
+fit label in Segoe UI: [109.51562 16.765625]
+fit Label size 12: [31.375 16.765625]
+fit Label size 20: [50.9375 26.609375]
+fit Button size 12: [45 23]
+fit Button size 20: [68 33]
+fit StateButton size 12: [77 23]
+fit StateButton size 20: [121 33]
+fit EditField size 12: [123.26562 22.765625]
+fit EditField size 20: [198.78125 32.609375]
+fit NumericEditField size 12: [76.75 22.765625]
+fit NumericEditField size 20: [121.23438 32.609375]
+fit TextArea size 12: [179.90625 65.0625]
+fit TextArea size 20: [293.15625 104.4375]
+fit DropDown size 12: [78.375 22.765625]
+fit DropDown size 20: [108.60938 32.609375]
+fit ListBox size 12: [44 74]
+fit ListBox size 20: [66 122]
+fit CheckBox size 12: [77.03125 16.765625]
+fit CheckBox size 20: [115.71875 26.609375]
+fit Slider size 12: [148 3]
+fit Slider size 20: [148.0625 3]
+fit RangeSlider size 12: [148 3]
+fit RangeSlider size 20: [148.0625 3]
+fit Spinner size 12: [98.75 22]
+fit Spinner size 20: [143.23438 28.609375]
+fit Image size 12: [100 100]
+fit Image size 20: [100 100]
+fit Hyperlink size 12: [56.6875 16.765625]
+fit Hyperlink size 20: [93.15625 26.609375]
+fit GridLayout size 12: [30 30]
+fit GridLayout size 20: [30 30]
+fit long button: [147 23]
+fit long checkbox: [153.07812 16.765625]
+fit long dropdown: [158.39062 22.765625]
+fit edit with text: [123.26562 22.765625]
+fit long listbox: [136 38]
+fit two-line label: [26.6875 31.53125]
+fit two-line button: [35 38]
+fit long hyperlink: [134.25 16.765625]
+fit long state button: [114 23]

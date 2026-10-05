@@ -176,6 +176,42 @@ internal sealed class JgsCallbackDispatcher
                 return;
             }
 
+            // A scrollable grid's bars (U5): where it is scrolled to is the grid's own, and no
+            // callback hears of it.
+            if (next.Target is UiGridLayoutModel scrolledGrid)
+            {
+                if (next.UserValue is double[] { Length: 2 } offset && !scrolledGrid.BeingDeleted)
+                {
+                    scrolledGrid.ScrollX = offset[0];
+                    scrolledGrid.ScrollY = offset[1];
+                }
+
+                continue;
+            }
+
+            // A uifigure component's event (U5): its value is written, and its callback's event
+            // data made, before anything decides whether the callback runs.
+            if (next.Target is UiComponentModel && next.Kind is GraphicsEventKind.ComponentUser or GraphicsEventKind.ApplyUserValue)
+            {
+                GraphicsEvent? owed = JgsUiComponentEvents.Prepare(next);
+                if (owed is not null && next.Kind == GraphicsEventKind.ComponentUser)
+                {
+                    Deliver(owed);
+                }
+
+                continue;
+            }
+
+            if (next.Kind == GraphicsEventKind.OverlayAnswered)
+            {
+                if (JgsUiComponentEvents.Answer(next) is { } closed)
+                {
+                    Run(closed.Figure, clicked: null, interruptible: true, closed.Callback, closed.EventData, "CloseFcn");
+                }
+
+                continue;
+            }
+
             // A user's value is written before anything decides whether its callback runs: the
             // person typed it, and a busy or cancelled callback does not un-type it (U1).
             if (next.UserValue is not null)
@@ -438,6 +474,7 @@ internal sealed class JgsCallbackDispatcher
             GraphicsEventKind.ComponentKeyPress => entry.KeyPressFcn,
             GraphicsEventKind.ComponentKeyRelease => entry.KeyReleaseFcn,
             GraphicsEventKind.GroupSelectionChanged => entry.SelectionChangedFcn,
+            GraphicsEventKind.ComponentUser => entry.NamedCallbacks.GetValueOrDefault(graphicsEvent.Action),
             _ => null,
         };
 
@@ -533,6 +570,10 @@ internal sealed class JgsCallbackDispatcher
             case GraphicsEventKind.ControlAction:
                 return JgsUiEventData.Action(source);
 
+            // Made when the event left the queue, with the value as it then was (U5).
+            case GraphicsEventKind.ComponentUser when graphicsEvent.Interim is JgsValue made:
+                return made;
+
             case GraphicsEventKind.CloseRequest:
                 return JgsUiEventData.WindowCloseRequest(source);
 
@@ -620,6 +661,7 @@ internal sealed class JgsCallbackDispatcher
         GraphicsEventKind.ComponentKeyPress => "KeyPressFcn",
         GraphicsEventKind.ComponentKeyRelease => "KeyReleaseFcn",
         GraphicsEventKind.GroupSelectionChanged => "SelectionChangedFcn",
+        GraphicsEventKind.ComponentUser => "component",
         _ => "callback",
     };
 }

@@ -562,6 +562,44 @@ public sealed class AxesModel : GraphObject
     private UiContainerModel? _container;
     private UiUnits _units = UiUnits.Normalized;
     private Rect2D? _pixelBounds;
+    private UiGridCell? _gridCell;
+    private bool _replaceChildrenOnly;
+    private bool _positionIsOuter;
+
+    /// <summary>
+    /// Whether MATLAB's <c>Position</c> is this axes' outer rectangle rather than its plot box —
+    /// true of a <c>uiaxes</c>, whose <c>PositionConstraint</c> starts as <c>outerposition</c> (U5).
+    /// </summary>
+    [Browsable(false)]
+    public bool PositionIsOuter
+    {
+        get => _positionIsOuter;
+        set => SetProperty(ref _positionIsOuter, value, InvalidationKind.None);
+    }
+
+    /// <summary>
+    /// MATLAB's <c>NextPlot = 'replacechildren'</c>, which is what a <c>uiaxes</c> starts with
+    /// (app-building plan, U5): a new plot takes away what was drawn and leaves the title, the
+    /// labels and the grid alone, so an app that titles its axes once and redraws on every change
+    /// keeps its title.
+    /// </summary>
+    [Browsable(false)]
+    public bool ReplaceChildrenOnly
+    {
+        get => _replaceChildrenOnly;
+        set => SetProperty(ref _replaceChildrenOnly, value, InvalidationKind.None);
+    }
+
+    /// <summary>
+    /// The cell this axes sits in while its container is a grid (app-building plan, U5): MATLAB's
+    /// <c>Layout.Row</c> and <c>Layout.Column</c>. The grid pins <see cref="PixelBounds"/> to it.
+    /// </summary>
+    [Browsable(false)]
+    public UiGridCell? GridCell
+    {
+        get => _gridCell;
+        set => SetProperty(ref _gridCell, value, InvalidationKind.Layout);
+    }
 
     /// <summary>
     /// The panel this axes is placed in, or null when it is placed in the figure itself (app-building

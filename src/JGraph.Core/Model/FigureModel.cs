@@ -45,7 +45,15 @@ public sealed class FigureModel : GraphObject, IUiContainer
         Annotations = new GraphObjectCollection<AnnotationObject>(this);
         ContextMenus = new GraphObjectCollection<ContextMenuModel>(this);
         Components = new GraphObjectCollection<UiObject>(this);
+        Overlays = new GraphObjectCollection<UiOverlayModel>(this);
     }
+
+    /// <summary>
+    /// The dialogs laid over this figure — <c>uialert</c>, <c>uiconfirm</c>, <c>uiprogressdlg</c> —
+    /// oldest first (app-building plan, U5). The window draws them from the frame, like components.
+    /// </summary>
+    [Browsable(false)]
+    public GraphObjectCollection<UiOverlayModel> Overlays { get; }
 
     /// <summary>
     /// The app-building components directly in this figure (MATLAB <c>uicontrol</c> and, later, the
@@ -99,7 +107,7 @@ public sealed class FigureModel : GraphObject, IUiContainer
         // A component's own change, or this figure's children changing (a component added or taken
         // away; an axes too, which costs one needless frame and nothing else).
         if (args.Kind == InvalidationKind.Ui
-            || (args.Kind == InvalidationKind.Structure && (ReferenceEquals(args.Source, this) || args.Source is UiObject))
+            || (args.Kind == InvalidationKind.Structure && (ReferenceEquals(args.Source, this) || args.Source is UiObject or UiOverlayModel))
             || (args.Kind == InvalidationKind.Render && args.Source is UiObject))
         {
             Volatile.Write(ref _componentsDirty, 1);

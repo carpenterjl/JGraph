@@ -384,9 +384,21 @@ internal static partial class JgsGraphicsProperties
         IDictionary<string, GraphicsProperty> table, Func<JgsHandleEntry, AxesModel?> owner)
     {
         Func<JgsHandleEntry, AxesModel?> whose = owner;
+        // An axes in a uigridlayout answers the grid's options, which can be written (U5).
         Put(table, "Layout",
-            entry => whose(entry) is { LayoutTile: not null } axes
-                ? JgsHandleRegistry.For(entry.Target is ColorbarModel bar ? bar.LayoutOptions(axes) : axes.LayoutOptions)
-                : JgsValue.Array([]));
+            entry => GridOf(entry.Target) is not null ? LayoutValue(entry)
+                : whose(entry) is { LayoutTile: not null } axes
+                    ? JgsHandleRegistry.For(entry.Target is ColorbarModel bar ? bar.LayoutOptions(axes) : axes.LayoutOptions)
+                    : JgsValue.Array([]),
+            (entry, value, line, col) =>
+            {
+                if (GridOf(entry.Target) is null)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"'Layout' can be read but not written on a {TypeNameOf(entry.Target)}.");
+                }
+
+                SetLayout(entry, value, line, col);
+            });
     }
 }

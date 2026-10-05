@@ -148,6 +148,9 @@ internal static partial class JgsBuiltins
             group.Added(button);
         }
 
+        // Made in a grid, it takes the next cell (U5).
+        JgsGraphicsProperties.GridMembershipChanged(component);
+
         if (component.Figure is { } figure)
         {
             JG.TouchFigure(figure);
@@ -173,6 +176,17 @@ internal static partial class JgsBuiltins
         }
 
         (IUiContainer parent, List<(string Name, JgsValue Value)> options) = ComponentArguments(args, focusForm: true, line, col);
+        if (parent is UiGridLayoutModel)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:uicontrol:InvalidParent", "Parent must be a Figure or UITab or any UIContainer");
+        }
+
+        if (parent is UiButtonGroupModel mixed && mixed.Components.Any(static other => other is UiRadioButtonModel or UiToggleButtonModel))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:gbtobjects:MutualExclusivityViolation",
+                "Mutual exclusivity violated for ButtonGroup.\nA UIControl can only be parented to a ButtonGroup with UIControl.");
+        }
+
         return AddComponent(new UiControlModel(), parent, options, line, col);
     }
 

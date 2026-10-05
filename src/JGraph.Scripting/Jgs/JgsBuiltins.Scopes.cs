@@ -33,6 +33,12 @@ internal static partial class JgsBuiltins
         // them, and the others delete or replace figures, which runs their DeleteFcns.
         "dialog", "errordlg", "helpdlg", "inputdlg", "listdlg", "msgbox", "questdlg", "uiload", "uiopen", "uisave",
         "uiwait", "waitbar", "waitfor", "warndlg",
+
+        // U5: a component's maker runs its CreateFcn, uiconfirm delivers callbacks while it waits,
+        // and the dialogs over a figure run a CloseFcn when they are replaced.
+        "uialert", "uiaxes", "uibutton", "uicheckbox", "uiconfirm", "uidropdown", "uieditfield", "uigridlayout",
+        "uihyperlink", "uiimage", "uilabel", "uilistbox", "uiprogressdlg", "uiradiobutton", "uislider", "uispinner",
+        "uitextarea", "uitogglebutton",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code

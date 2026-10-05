@@ -112,6 +112,14 @@ public sealed class UiComponentDto
     public double[]? ProgressColor { get; set; }
 
     public List<UiComponentDto> Children { get; set; } = new();
+
+    // --- uifigure components and uigridlayout (U5) ---
+
+    /// <summary>The cell of the grid this component sits in: row, last row, column, last column.</summary>
+    public int[]? Cell { get; set; }
+
+    /// <summary>What a <c>uifigure</c> component or a grid holds, by the name of each property of its model.</summary>
+    public Dictionary<string, System.Text.Json.JsonElement>? Properties { get; set; }
 }
 
 /// <summary>A component's text and the shape it reads back in: a char row, a char matrix or a cell.</summary>

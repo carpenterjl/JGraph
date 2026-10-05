@@ -83,6 +83,27 @@ internal static partial class JgsGraphicsProperties
         ContextMenuModel => "uicontextmenu",
         MenuItemModel => "uimenu",
         UiControlModel => "uicontrol",
+        UiGridLayoutModel => "uigridlayout",
+        UiComponentModel component => component.Kind switch
+        {
+            UiComponentKind.Label => "uilabel",
+            UiComponentKind.Button => "uibutton",
+            UiComponentKind.StateButton => "uistatebutton",
+            UiComponentKind.EditField => "uieditfield",
+            UiComponentKind.NumericEditField => "uinumericeditfield",
+            UiComponentKind.TextArea => "uitextarea",
+            UiComponentKind.DropDown => "uidropdown",
+            UiComponentKind.ListBox => "uilistbox",
+            UiComponentKind.CheckBox => "uicheckbox",
+            UiComponentKind.RadioButton => "uiradiobutton",
+            UiComponentKind.ToggleButton => "uitogglebutton",
+            UiComponentKind.Slider => "uislider",
+            UiComponentKind.RangeSlider => "uirangeslider",
+            UiComponentKind.Spinner => "uispinner",
+            UiComponentKind.Image => "uiimage",
+            _ => "uihyperlink",
+        },
+        UiOverlayModel => "uiprogressdlg",
         UiButtonGroupModel => "uibuttongroup",
         UiProgressIndicatorModel => "uiprogressindicator",
         UiPanelModel => "uipanel",
@@ -423,6 +444,12 @@ internal static partial class JgsGraphicsProperties
             }
         }
 
+        // A figure's dialogs are its own parts, not its children: they keep their handles while shown.
+        if (target is FigureModel withDialogs)
+        {
+            all.AddRange(withDialogs.Overlays);
+        }
+
         all.AddRange(JgsTextLabel.Existing(target));
         return all;
     }
@@ -481,7 +508,8 @@ internal static partial class JgsGraphicsProperties
         // A string scalar is text to every property but a uicontrol's Value, which refuses it as
         // a string (U3).
         if (value.IsStringArray && value.ArrayLength == 1
-            && !(entry.Target is UiControlModel && name.Equals("Value", StringComparison.OrdinalIgnoreCase)))
+            && !(entry.Target is UiControlModel && name.Equals("Value", StringComparison.OrdinalIgnoreCase))
+            && !KeepsStringScalar(entry.Target, name))
         {
             value = value.ElementAt(0);
         }
@@ -515,14 +543,7 @@ internal static partial class JgsGraphicsProperties
         if (target is UiObject)
         {
             string word = JgsGraphicsCallbackValues.ClassWord(target);
-            string named = !reading ? word : target switch
-            {
-                UiControlModel => "matlab.ui.control.UIControl",
-                UiButtonGroupModel => "matlab.ui.container.ButtonGroup",
-                UiProgressIndicatorModel => "matlab.ui.control.internal.ProgressIndicator",
-                UiPanelModel => "matlab.ui.container.Panel",
-                _ => word,
-            };
+            string named = !reading ? word : FullClassOf(target);
             return new JgsRuntimeException(line, col, "MATLAB:hg:InvalidProperty",
                 $"Unrecognized property {name} for class {named}.");
         }
@@ -561,6 +582,13 @@ internal static partial class JgsGraphicsProperties
     private static IReadOnlyDictionary<string, GraphicsProperty> Build(Type type)
     {
         var table = new Dictionary<string, GraphicsProperty>(StringComparer.OrdinalIgnoreCase);
+
+        // A dialog over a figure answers to its own ten names and nothing else (U5).
+        if (typeof(UiOverlayModel).IsAssignableFrom(type))
+        {
+            AddOverlayBlock(table);
+            return table;
+        }
 
         // A component's surface is curated whole (U1): its model's names are not MATLAB's.
         if (!typeof(UiObject).IsAssignableFrom(type))
@@ -807,6 +835,11 @@ internal static partial class JgsGraphicsProperties
         if (typeof(UiControlModel).IsAssignableFrom(type))
         {
             AddUiControlBlock(table);
+        }
+
+        if (typeof(UiComponentModel).IsAssignableFrom(type) || typeof(UiGridLayoutModel).IsAssignableFrom(type))
+        {
+            AddUiComponentBlock(type, table);
         }
 
         if (typeof(UiObject).IsAssignableFrom(type))
@@ -2157,6 +2190,8 @@ internal static partial class JgsGraphicsProperties
 
     private static void AddAxesAliases(IDictionary<string, GraphicsProperty> table)
     {
+        // Where the axes sits in a grid, when it sits in one (U5).
+        Put(table, "Layout", LayoutValue, SetLayout);
         // Every y-facing spelling answers for the ruler yyaxis has made active, which is how MATLAB
         // reads them: on a two-sided axes, get(ax, 'YLim') is the side you are working on.
         AddLimit(table, "XLim", axes => axes.PrimaryXAxis);
@@ -2195,12 +2230,16 @@ internal static partial class JgsGraphicsProperties
         // It is served on every axes rather than only on a handle uiaxes made, because that is what
         // this table has always done — a plain axes already answers RLim, ThetaLim and ThetaDir, and
         // gating one name by the verb that built the object would be a rule with a single member.
-        // What uiaxes gives it is a *default*: a plain axes leaves the fill unset and draws exactly as
-        // it always has, while a uiaxes starts with the figure's own colour in it.
+        // A uiaxes reads 'none' until a script fills it (R2025b, probe u5_dialogs), and 'none'
+        // written to any axes takes the fill away again.
         Put(table, "BackgroundColor",
-            entry => ColorRow(Axes(entry).BackgroundColor ?? Axes(entry).Background),
+            entry => Axes(entry).BackgroundColor is null && Axes(entry).ReplaceChildrenOnly
+                ? JgsValue.Str("none")
+                : ColorRow(Axes(entry).BackgroundColor ?? Axes(entry).Background),
             (entry, value, line, col) =>
-                Axes(entry).BackgroundColor = JgsBuiltins.OptionColor(value, line, col, "uiaxes"));
+                Axes(entry).BackgroundColor = value.Type == JgsType.String && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+                    ? null
+                    : JgsBuiltins.OptionColor(value, line, col, "uiaxes"));
 
         // A name MATLAB does not document (M83), and the reason is that MATLAB's polar axes does not
         // turn: ThetaZeroLocation holds four compass points and a drag moves the chart by whatever
@@ -2265,17 +2304,23 @@ internal static partial class JgsGraphicsProperties
             });
 
         Put(table, "NextPlot",
-            entry => JgsValue.Str(Axes(entry).Hold ? "add" : "replace"),
+            entry => JgsValue.Str(Axes(entry).Hold ? "add" : Axes(entry).ReplaceChildrenOnly ? "replacechildren" : "replace"),
             (entry, value, line, col) =>
             {
-                string word = JgsBuiltins.StrOf("NextPlot", value, line, col);
-                Axes(entry).Hold = word.ToLowerInvariant() switch
+                string word = JgsBuiltins.StrOf("NextPlot", value, line, col).ToLowerInvariant();
+                Axes(entry).Hold = word switch
                 {
                     "add" => true,
                     "replace" or "replacechildren" or "replaceall" => false,
                     _ => throw new JgsRuntimeException(line, col,
                         $"NextPlot is 'add' or 'replace', but got '{word}'."),
                 };
+
+                // 'replacechildren' keeps the title, the labels and the grid over a new plot (U5).
+                if (word != "add")
+                {
+                    Axes(entry).ReplaceChildrenOnly = word == "replacechildren";
+                }
             });
 
         // Each direction has its own grid switch since M73, as MATLAB's XGrid/YGrid/ZGrid do; the

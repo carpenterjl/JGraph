@@ -96,6 +96,88 @@ public static class UiFonts
         return (text.Length * sizePixels * 0.55, sizePixels * 1.15);
     }
 
+    private static readonly Dictionary<(string Family, bool Bold, bool Italic), Dictionary<uint, int>> Kerns = new();
+
+    /// <summary>
+    /// How much the font's own pair kerning changes the width of a line of text, in pixels at
+    /// <paramref name="sizePixels"/> — negative where letters are drawn closer, as "A" and a space
+    /// are in Arial. <see cref="Measure"/> leaves it out, as GDI and a classic control do; a browser
+    /// applies it, and so does the size R2025b gives a <c>uifigure</c> component in a grid (U5).
+    /// </summary>
+    public static double Kerning(string text, string? fontName, double sizePixels, bool bold = false, bool italic = false)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        if (text.Length < 2 || !(sizePixels > 0) || !OperatingSystem.IsWindows())
+        {
+            return 0;
+        }
+
+        string family = Family(fontName);
+        lock (Gate)
+        {
+            try
+            {
+                if (!Kerns.TryGetValue((family, bold, italic), out Dictionary<uint, int>? pairs))
+                {
+                    pairs = [];
+                    Kerns[(family, bold, italic)] = pairs;
+
+                    // Measuring selects the font into the context and leaves it cached; the pairs
+                    // are read with it selected again.
+                    if (MeasureWithGdi(" ", family, bold, italic) is not null
+                        && Fonts.TryGetValue((family, bold, italic), out IntPtr font))
+                    {
+                        IntPtr dc = Dc();
+                        IntPtr previous = SelectObject(dc, font);
+                        try
+                        {
+                            uint count = GetKerningPairsW(dc, 0, null);
+                            if (count > 0)
+                            {
+                                var raw = new KERNINGPAIR[count];
+                                count = GetKerningPairsW(dc, count, raw);
+                                for (int i = 0; i < count; i++)
+                                {
+                                    pairs[((uint)raw[i].wFirst << 16) | raw[i].wSecond] = raw[i].iKernAmount;
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            SelectObject(dc, previous);
+                        }
+                    }
+                }
+
+                int total = 0;
+                for (int i = 0; i + 1 < text.Length; i++)
+                {
+                    if (pairs.TryGetValue(((uint)text[i] << 16) | text[i + 1], out int amount))
+                    {
+                        total += amount;
+                    }
+                }
+
+                return total * sizePixels / MeasureEm;
+            }
+            catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+            {
+                return 0;
+            }
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct KERNINGPAIR
+    {
+        public ushort wFirst;
+        public ushort wSecond;
+        public int iKernAmount;
+    }
+
+    [DllImport("gdi32.dll")]
+    private static extern uint GetKerningPairsW(IntPtr hdc, uint count, [Out] KERNINGPAIR[]? pairs);
+
     private static HashSet<string> Scalable()
     {
         lock (Gate)

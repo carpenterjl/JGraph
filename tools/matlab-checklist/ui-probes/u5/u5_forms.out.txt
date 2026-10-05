@@ -1,0 +1,1203 @@
+uilabel () : 'matlab.ui.control.Label in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 31 22]'
+uilabel (uifigure) : 'matlab.ui.control.Label type uilabel parent matlab.ui.Figure Position [100 100 31 22]'
+uilabel (figure) : 'matlab.ui.control.Label type uilabel parent matlab.ui.Figure Position [100 100 31 22]'
+uilabel (uipanel) : 'matlab.ui.control.Label type uilabel parent matlab.ui.container.Panel Position [100 100 31 22]'
+uilabel (classic uipanel) : 'matlab.ui.control.Label type uilabel parent matlab.ui.container.Panel Position [100 100 31 22]'
+uilabel (grid) : 'matlab.ui.control.Label type uilabel parent matlab.ui.container.GridLayout Position [100 100 31 22]'
+uilabel (uibuttongroup) : 'matlab.ui.control.Label type uilabel parent matlab.ui.container.ButtonGroup Position [100 100 31 22]'
+uilabel (classic uibuttongroup) : 'matlab.ui.control.Label type uilabel parent matlab.ui.container.ButtonGroup Position [100 100 31 22]'
+uilabel (axes) : ERR MATLAB:ui:Label:unknownInput | Axes cannot be a parent.
+uilabel (label) : ERR MATLAB:ui:Label:unknownInput | Label cannot be a parent.
+uilabel (5.5) : ERR MATLAB:ui:Label:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uilabel ([]) : ERR MATLAB:ui:Label:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uilabel (Parent, uf) : 'matlab.ui.control.Label type uilabel parent matlab.ui.Figure Position [100 100 31 22]'
+uilabel (Parent, []) : 'matlab.ui.control.Label type uilabel parent matlab.graphics.GraphicsPlaceholder Position [100 100 31 22]'
+uilabel (uf, Bogus, 1) : ERR MATLAB:ui:Label:unknownInput | Unrecognized property Bogus for class Label.
+uilabel (uf, Tag) : ERR MATLAB:ui:Label:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uilabel (uf, struct) : 's'
+uilabel (uf, Tag, t, Visible, off) : OnOff off
+uilabel (uf, tag, t) lower case : 't'
+uilabel (uf, Ta, t) prefix : 't'
+uilabel (uf, "Tag", "t") strings : 't'
+uilabel (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uilabel Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.Label.
+uilabel set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class Label.
+uilabel bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.Label.
+uilabel bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Label.
+uilabel dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.Label'.
+uilabel dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.Label'.
+uilabel set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Label'' because it is read-only.
+uilabel set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''Label'' because it is read-only.
+uilabel isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uilabel Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 31 22]'
+uilabel Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 31 22]'
+uilabel Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uilabel Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 31 22]'
+uilabel in panel default Position : double [100 100 31 22]
+uilabel findobj by Type : double 25
+uibutton () : 'matlab.ui.control.Button in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 100 22]'
+uibutton (uifigure) : 'matlab.ui.control.Button type uibutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton (figure) : 'matlab.ui.control.Button type uibutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton (uipanel) : 'matlab.ui.control.Button type uibutton parent matlab.ui.container.Panel Position [100 100 100 22]'
+uibutton (classic uipanel) : 'matlab.ui.control.Button type uibutton parent matlab.ui.container.Panel Position [100 100 100 22]'
+uibutton (grid) : 'matlab.ui.control.Button type uibutton parent matlab.ui.container.GridLayout Position [100 100 100 22]'
+uibutton (uibuttongroup) : 'matlab.ui.control.Button type uibutton parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+uibutton (classic uibuttongroup) : 'matlab.ui.control.Button type uibutton parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+uibutton (axes) : ERR MATLAB:ui:Button:unknownInput | Axes cannot be a parent.
+uibutton (label) : ERR MATLAB:ui:Button:unknownInput | Label cannot be a parent.
+uibutton (5.5) : ERR MATLAB:ui:Button:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uibutton ([]) : ERR MATLAB:ui:Button:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uibutton (Parent, uf) : 'matlab.ui.control.Button type uibutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton (Parent, []) : 'matlab.ui.control.Button type uibutton parent matlab.graphics.GraphicsPlaceholder Position [100 100 100 22]'
+uibutton (uf, Bogus, 1) : ERR MATLAB:ui:Button:unknownInput | Unrecognized property Bogus for class Button.
+uibutton (uf, Tag) : ERR MATLAB:ui:Button:unknownInput | 'Tag' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.
+uibutton (uf, struct) : 's'
+uibutton (uf, Tag, t, Visible, off) : OnOff off
+uibutton (uf, tag, t) lower case : 't'
+uibutton (uf, Ta, t) prefix : 't'
+uibutton (uf, "Tag", "t") strings : 't'
+uibutton (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uibutton Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.Button.
+uibutton set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class Button.
+uibutton bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.Button.
+uibutton bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Button.
+uibutton dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.Button'.
+uibutton dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.Button'.
+uibutton set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Button'' because it is read-only.
+uibutton set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''Button'' because it is read-only.
+uibutton isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uibutton Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 100 22]'
+uibutton Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 100 22]'
+uibutton Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uibutton Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 100 22]'
+uibutton in panel default Position : double [100 100 100 22]
+uibutton findobj by Type : double 24
+uieditfield () : 'matlab.ui.control.EditField in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 100 22]'
+uieditfield (uifigure) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.Figure Position [100 100 100 22]'
+uieditfield (figure) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.Figure Position [100 100 100 22]'
+uieditfield (uipanel) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.container.Panel Position [100 100 100 22]'
+uieditfield (classic uipanel) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.container.Panel Position [100 100 100 22]'
+uieditfield (grid) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.container.GridLayout Position [100 100 100 22]'
+uieditfield (uibuttongroup) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+uieditfield (classic uibuttongroup) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+uieditfield (axes) : ERR MATLAB:ui:EditField:unknownInput | Axes cannot be a parent.
+uieditfield (label) : ERR MATLAB:ui:EditField:unknownInput | Label cannot be a parent.
+uieditfield (5.5) : ERR MATLAB:ui:EditField:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uieditfield ([]) : ERR MATLAB:ui:EditField:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uieditfield (Parent, uf) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.Figure Position [100 100 100 22]'
+uieditfield (Parent, []) : 'matlab.ui.control.EditField type uieditfield parent matlab.graphics.GraphicsPlaceholder Position [100 100 100 22]'
+uieditfield (uf, Bogus, 1) : ERR MATLAB:ui:EditField:unknownInput | Unrecognized property Bogus for class EditField.
+uieditfield (uf, Tag) : ERR MATLAB:ui:EditField:unknownInput | 'Tag' is not a valid STYLE for uieditfield. STYLE must be 'text' or 'numeric'.
+uieditfield (uf, struct) : 's'
+uieditfield (uf, Tag, t, Visible, off) : OnOff off
+uieditfield (uf, tag, t) lower case : 't'
+uieditfield (uf, Ta, t) prefix : 't'
+uieditfield (uf, "Tag", "t") strings : 't'
+uieditfield (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uieditfield Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.EditField.
+uieditfield set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class EditField.
+uieditfield bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.EditField.
+uieditfield bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class EditField.
+uieditfield dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.EditField'.
+uieditfield dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.EditField'.
+uieditfield set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''EditField'' because it is read-only.
+uieditfield set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''EditField'' because it is read-only.
+uieditfield isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uieditfield Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 100 22]'
+uieditfield Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 100 22]'
+uieditfield Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uieditfield Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 100 22]'
+uieditfield in panel default Position : double [100 100 100 22]
+uieditfield findobj by Type : double 24
+uitextarea () : 'matlab.ui.control.TextArea in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 150 60]'
+uitextarea (uifigure) : 'matlab.ui.control.TextArea type uitextarea parent matlab.ui.Figure Position [100 100 150 60]'
+uitextarea (figure) : 'matlab.ui.control.TextArea type uitextarea parent matlab.ui.Figure Position [100 100 150 60]'
+uitextarea (uipanel) : 'matlab.ui.control.TextArea type uitextarea parent matlab.ui.container.Panel Position [100 100 150 60]'
+uitextarea (classic uipanel) : 'matlab.ui.control.TextArea type uitextarea parent matlab.ui.container.Panel Position [100 100 150 60]'
+uitextarea (grid) : 'matlab.ui.control.TextArea type uitextarea parent matlab.ui.container.GridLayout Position [100 100 150 60]'
+uitextarea (uibuttongroup) : 'matlab.ui.control.TextArea type uitextarea parent matlab.ui.container.ButtonGroup Position [100 100 150 60]'
+uitextarea (classic uibuttongroup) : 'matlab.ui.control.TextArea type uitextarea parent matlab.ui.container.ButtonGroup Position [100 100 150 60]'
+uitextarea (axes) : ERR MATLAB:ui:TextArea:unknownInput | Axes cannot be a parent.
+uitextarea (label) : ERR MATLAB:ui:TextArea:unknownInput | Label cannot be a parent.
+uitextarea (5.5) : ERR MATLAB:ui:TextArea:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uitextarea ([]) : ERR MATLAB:ui:TextArea:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uitextarea (Parent, uf) : 'matlab.ui.control.TextArea type uitextarea parent matlab.ui.Figure Position [100 100 150 60]'
+uitextarea (Parent, []) : 'matlab.ui.control.TextArea type uitextarea parent matlab.graphics.GraphicsPlaceholder Position [100 100 150 60]'
+uitextarea (uf, Bogus, 1) : ERR MATLAB:ui:TextArea:unknownInput | Unrecognized property Bogus for class TextArea.
+uitextarea (uf, Tag) : ERR MATLAB:ui:TextArea:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uitextarea (uf, struct) : 's'
+uitextarea (uf, Tag, t, Visible, off) : OnOff off
+uitextarea (uf, tag, t) lower case : 't'
+uitextarea (uf, Ta, t) prefix : 't'
+uitextarea (uf, "Tag", "t") strings : 't'
+uitextarea (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uitextarea Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.TextArea.
+uitextarea set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class TextArea.
+uitextarea bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.TextArea.
+uitextarea bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class TextArea.
+uitextarea dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.TextArea'.
+uitextarea dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.TextArea'.
+uitextarea set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''TextArea'' because it is read-only.
+uitextarea set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''TextArea'' because it is read-only.
+uitextarea isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uitextarea Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 150 60]'
+uitextarea Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 150 60]'
+uitextarea Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uitextarea Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 150 60]'
+uitextarea in panel default Position : double [100 100 150 60]
+uitextarea findobj by Type : double 24
+uidropdown () : 'matlab.ui.control.DropDown in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 100 22]'
+uidropdown (uifigure) : 'matlab.ui.control.DropDown type uidropdown parent matlab.ui.Figure Position [100 100 100 22]'
+uidropdown (figure) : 'matlab.ui.control.DropDown type uidropdown parent matlab.ui.Figure Position [100 100 100 22]'
+uidropdown (uipanel) : 'matlab.ui.control.DropDown type uidropdown parent matlab.ui.container.Panel Position [100 100 100 22]'
+uidropdown (classic uipanel) : 'matlab.ui.control.DropDown type uidropdown parent matlab.ui.container.Panel Position [100 100 100 22]'
+uidropdown (grid) : 'matlab.ui.control.DropDown type uidropdown parent matlab.ui.container.GridLayout Position [100 100 100 22]'
+uidropdown (uibuttongroup) : 'matlab.ui.control.DropDown type uidropdown parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+uidropdown (classic uibuttongroup) : 'matlab.ui.control.DropDown type uidropdown parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+uidropdown (axes) : ERR MATLAB:ui:DropDown:unknownInput | Axes cannot be a parent.
+uidropdown (label) : ERR MATLAB:ui:DropDown:unknownInput | Label cannot be a parent.
+uidropdown (5.5) : ERR MATLAB:ui:DropDown:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uidropdown ([]) : ERR MATLAB:ui:DropDown:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uidropdown (Parent, uf) : 'matlab.ui.control.DropDown type uidropdown parent matlab.ui.Figure Position [100 100 100 22]'
+uidropdown (Parent, []) : 'matlab.ui.control.DropDown type uidropdown parent matlab.graphics.GraphicsPlaceholder Position [100 100 100 22]'
+uidropdown (uf, Bogus, 1) : ERR MATLAB:ui:DropDown:unknownInput | Unrecognized property Bogus for class DropDown.
+uidropdown (uf, Tag) : ERR MATLAB:ui:DropDown:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uidropdown (uf, struct) : 's'
+uidropdown (uf, Tag, t, Visible, off) : OnOff off
+uidropdown (uf, tag, t) lower case : 't'
+uidropdown (uf, Ta, t) prefix : 't'
+uidropdown (uf, "Tag", "t") strings : 't'
+uidropdown (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uidropdown Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.DropDown.
+uidropdown set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class DropDown.
+uidropdown bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.DropDown.
+uidropdown bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class DropDown.
+uidropdown dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.DropDown'.
+uidropdown dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.DropDown'.
+uidropdown set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''DropDown'' because it is read-only.
+uidropdown set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''DropDown'' because it is read-only.
+uidropdown isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uidropdown Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 100 22]'
+uidropdown Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 100 22]'
+uidropdown Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uidropdown Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 100 22]'
+uidropdown in panel default Position : double [100 100 100 22]
+uidropdown findobj by Type : double 24
+uilistbox () : 'matlab.ui.control.ListBox in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 100 74]'
+uilistbox (uifigure) : 'matlab.ui.control.ListBox type uilistbox parent matlab.ui.Figure Position [100 100 100 74]'
+uilistbox (figure) : 'matlab.ui.control.ListBox type uilistbox parent matlab.ui.Figure Position [100 100 100 74]'
+uilistbox (uipanel) : 'matlab.ui.control.ListBox type uilistbox parent matlab.ui.container.Panel Position [100 100 100 74]'
+uilistbox (classic uipanel) : 'matlab.ui.control.ListBox type uilistbox parent matlab.ui.container.Panel Position [100 100 100 74]'
+uilistbox (grid) : 'matlab.ui.control.ListBox type uilistbox parent matlab.ui.container.GridLayout Position [100 100 100 74]'
+uilistbox (uibuttongroup) : 'matlab.ui.control.ListBox type uilistbox parent matlab.ui.container.ButtonGroup Position [100 100 100 74]'
+uilistbox (classic uibuttongroup) : 'matlab.ui.control.ListBox type uilistbox parent matlab.ui.container.ButtonGroup Position [100 100 100 74]'
+uilistbox (axes) : ERR MATLAB:ui:ListBox:unknownInput | Axes cannot be a parent.
+uilistbox (label) : ERR MATLAB:ui:ListBox:unknownInput | Label cannot be a parent.
+uilistbox (5.5) : ERR MATLAB:ui:ListBox:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uilistbox ([]) : ERR MATLAB:ui:ListBox:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uilistbox (Parent, uf) : 'matlab.ui.control.ListBox type uilistbox parent matlab.ui.Figure Position [100 100 100 74]'
+uilistbox (Parent, []) : 'matlab.ui.control.ListBox type uilistbox parent matlab.graphics.GraphicsPlaceholder Position [100 100 100 74]'
+uilistbox (uf, Bogus, 1) : ERR MATLAB:ui:ListBox:unknownInput | Unrecognized property Bogus for class ListBox.
+uilistbox (uf, Tag) : ERR MATLAB:ui:ListBox:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uilistbox (uf, struct) : 's'
+uilistbox (uf, Tag, t, Visible, off) : OnOff off
+uilistbox (uf, tag, t) lower case : 't'
+uilistbox (uf, Ta, t) prefix : 't'
+uilistbox (uf, "Tag", "t") strings : 't'
+uilistbox (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uilistbox Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.ListBox.
+uilistbox set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class ListBox.
+uilistbox bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.ListBox.
+uilistbox bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class ListBox.
+uilistbox dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.ListBox'.
+uilistbox dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.ListBox'.
+uilistbox set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''ListBox'' because it is read-only.
+uilistbox set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''ListBox'' because it is read-only.
+uilistbox isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uilistbox Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 100 74]'
+uilistbox Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 100 74]'
+uilistbox Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uilistbox Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 100 74]'
+uilistbox in panel default Position : double [100 100 100 74]
+uilistbox findobj by Type : double 24
+uicheckbox () : 'matlab.ui.control.CheckBox in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 84 22]'
+uicheckbox (uifigure) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.ui.Figure Position [100 100 84 22]'
+uicheckbox (figure) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.ui.Figure Position [100 100 84 22]'
+uicheckbox (uipanel) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.ui.container.Panel Position [100 100 84 22]'
+uicheckbox (classic uipanel) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.ui.container.Panel Position [100 100 84 22]'
+uicheckbox (grid) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.ui.container.GridLayout Position [100 100 84 22]'
+uicheckbox (uibuttongroup) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.ui.container.ButtonGroup Position [100 100 84 22]'
+uicheckbox (classic uibuttongroup) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.ui.container.ButtonGroup Position [100 100 84 22]'
+uicheckbox (axes) : ERR MATLAB:ui:CheckBox:unknownInput | Axes cannot be a parent.
+uicheckbox (label) : ERR MATLAB:ui:CheckBox:unknownInput | Label cannot be a parent.
+uicheckbox (5.5) : ERR MATLAB:ui:CheckBox:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uicheckbox ([]) : ERR MATLAB:ui:CheckBox:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uicheckbox (Parent, uf) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.ui.Figure Position [100 100 84 22]'
+uicheckbox (Parent, []) : 'matlab.ui.control.CheckBox type uicheckbox parent matlab.graphics.GraphicsPlaceholder Position [100 100 84 22]'
+uicheckbox (uf, Bogus, 1) : ERR MATLAB:ui:CheckBox:unknownInput | Unrecognized property Bogus for class CheckBox.
+uicheckbox (uf, Tag) : ERR MATLAB:ui:CheckBox:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uicheckbox (uf, struct) : 's'
+uicheckbox (uf, Tag, t, Visible, off) : OnOff off
+uicheckbox (uf, tag, t) lower case : 't'
+uicheckbox (uf, Ta, t) prefix : 't'
+uicheckbox (uf, "Tag", "t") strings : 't'
+uicheckbox (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uicheckbox Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.CheckBox.
+uicheckbox set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class CheckBox.
+uicheckbox bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.CheckBox.
+uicheckbox bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class CheckBox.
+uicheckbox dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.CheckBox'.
+uicheckbox dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.CheckBox'.
+uicheckbox set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''CheckBox'' because it is read-only.
+uicheckbox set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''CheckBox'' because it is read-only.
+uicheckbox isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uicheckbox Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 84 22]'
+uicheckbox Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 84 22]'
+uicheckbox Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uicheckbox Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 84 22]'
+uicheckbox in panel default Position : double [100 100 84 22]
+uicheckbox findobj by Type : double 24
+uislider () : 'matlab.ui.control.Slider in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 150 3]'
+uislider (uifigure) : 'matlab.ui.control.Slider type uislider parent matlab.ui.Figure Position [100 100 150 3]'
+uislider (figure) : 'matlab.ui.control.Slider type uislider parent matlab.ui.Figure Position [100 100 150 3]'
+uislider (uipanel) : 'matlab.ui.control.Slider type uislider parent matlab.ui.container.Panel Position [100 100 150 3]'
+uislider (classic uipanel) : 'matlab.ui.control.Slider type uislider parent matlab.ui.container.Panel Position [100 100 150 3]'
+uislider (grid) : 'matlab.ui.control.Slider type uislider parent matlab.ui.container.GridLayout Position [100 100 150 3]'
+uislider (uibuttongroup) : 'matlab.ui.control.Slider type uislider parent matlab.ui.container.ButtonGroup Position [100 100 150 3]'
+uislider (classic uibuttongroup) : 'matlab.ui.control.Slider type uislider parent matlab.ui.container.ButtonGroup Position [100 100 150 3]'
+uislider (axes) : ERR MATLAB:ui:Slider:unknownInput | Axes cannot be a parent.
+uislider (label) : ERR MATLAB:ui:Slider:unknownInput | Label cannot be a parent.
+uislider (5.5) : ERR MATLAB:ui:Slider:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uislider ([]) : ERR MATLAB:ui:Slider:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uislider (Parent, uf) : 'matlab.ui.control.Slider type uislider parent matlab.ui.Figure Position [100 100 150 3]'
+uislider (Parent, []) : 'matlab.ui.control.Slider type uislider parent matlab.graphics.GraphicsPlaceholder Position [100 100 150 3]'
+uislider (uf, Bogus, 1) : ERR MATLAB:ui:Slider:unknownInput | Unrecognized property Bogus for class Slider.
+uislider (uf, Tag) : ERR MATLAB:ui:Slider:unknownInput | 'Tag' is not a valid STYLE for uislider. STYLE must be 'slider' or 'range'.
+uislider (uf, struct) : 's'
+uislider (uf, Tag, t, Visible, off) : OnOff off
+uislider (uf, tag, t) lower case : 't'
+uislider (uf, Ta, t) prefix : 't'
+uislider (uf, "Tag", "t") strings : 't'
+[Warning: The height of this component cannot be changed.]
+uislider (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 3]
+uislider Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.Slider.
+uislider set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class Slider.
+uislider bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.Slider.
+uislider bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Slider.
+uislider dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.Slider'.
+uislider dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.Slider'.
+uislider set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Slider'' because it is read-only.
+uislider set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''Slider'' because it is read-only.
+uislider isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uislider Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 150 3]'
+uislider Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 150 3]'
+uislider Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uislider Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 150 3]'
+uislider in panel default Position : double [100 100 150 3]
+uislider findobj by Type : double 24
+uispinner () : 'matlab.ui.control.Spinner in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 100 22]'
+uispinner (uifigure) : 'matlab.ui.control.Spinner type uispinner parent matlab.ui.Figure Position [100 100 100 22]'
+uispinner (figure) : 'matlab.ui.control.Spinner type uispinner parent matlab.ui.Figure Position [100 100 100 22]'
+uispinner (uipanel) : 'matlab.ui.control.Spinner type uispinner parent matlab.ui.container.Panel Position [100 100 100 22]'
+uispinner (classic uipanel) : 'matlab.ui.control.Spinner type uispinner parent matlab.ui.container.Panel Position [100 100 100 22]'
+uispinner (grid) : 'matlab.ui.control.Spinner type uispinner parent matlab.ui.container.GridLayout Position [100 100 100 22]'
+uispinner (uibuttongroup) : 'matlab.ui.control.Spinner type uispinner parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+uispinner (classic uibuttongroup) : 'matlab.ui.control.Spinner type uispinner parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+uispinner (axes) : ERR MATLAB:ui:Spinner:unknownInput | Axes cannot be a parent.
+uispinner (label) : ERR MATLAB:ui:Spinner:unknownInput | Label cannot be a parent.
+uispinner (5.5) : ERR MATLAB:ui:Spinner:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uispinner ([]) : ERR MATLAB:ui:Spinner:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uispinner (Parent, uf) : 'matlab.ui.control.Spinner type uispinner parent matlab.ui.Figure Position [100 100 100 22]'
+uispinner (Parent, []) : 'matlab.ui.control.Spinner type uispinner parent matlab.graphics.GraphicsPlaceholder Position [100 100 100 22]'
+uispinner (uf, Bogus, 1) : ERR MATLAB:ui:Spinner:unknownInput | Unrecognized property Bogus for class Spinner.
+uispinner (uf, Tag) : ERR MATLAB:ui:Spinner:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uispinner (uf, struct) : 's'
+uispinner (uf, Tag, t, Visible, off) : OnOff off
+uispinner (uf, tag, t) lower case : 't'
+uispinner (uf, Ta, t) prefix : 't'
+uispinner (uf, "Tag", "t") strings : 't'
+uispinner (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uispinner Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.Spinner.
+uispinner set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class Spinner.
+uispinner bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.Spinner.
+uispinner bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Spinner.
+uispinner dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.Spinner'.
+uispinner dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.Spinner'.
+uispinner set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Spinner'' because it is read-only.
+uispinner set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''Spinner'' because it is read-only.
+uispinner isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uispinner Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 100 22]'
+uispinner Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 100 22]'
+uispinner Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uispinner Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 100 22]'
+uispinner in panel default Position : double [100 100 100 22]
+uispinner findobj by Type : double 24
+uiimage () : 'matlab.ui.control.Image in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 100 100]'
+uiimage (uifigure) : 'matlab.ui.control.Image type uiimage parent matlab.ui.Figure Position [100 100 100 100]'
+uiimage (figure) : 'matlab.ui.control.Image type uiimage parent matlab.ui.Figure Position [100 100 100 100]'
+uiimage (uipanel) : 'matlab.ui.control.Image type uiimage parent matlab.ui.container.Panel Position [100 100 100 100]'
+uiimage (classic uipanel) : 'matlab.ui.control.Image type uiimage parent matlab.ui.container.Panel Position [100 100 100 100]'
+uiimage (grid) : 'matlab.ui.control.Image type uiimage parent matlab.ui.container.GridLayout Position [100 100 100 100]'
+uiimage (uibuttongroup) : 'matlab.ui.control.Image type uiimage parent matlab.ui.container.ButtonGroup Position [100 100 100 100]'
+uiimage (classic uibuttongroup) : 'matlab.ui.control.Image type uiimage parent matlab.ui.container.ButtonGroup Position [100 100 100 100]'
+uiimage (axes) : ERR MATLAB:ui:Image:unknownInput | Axes cannot be a parent.
+uiimage (label) : ERR MATLAB:ui:Image:unknownInput | Label cannot be a parent.
+uiimage (5.5) : ERR MATLAB:ui:Image:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uiimage ([]) : ERR MATLAB:ui:Image:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uiimage (Parent, uf) : 'matlab.ui.control.Image type uiimage parent matlab.ui.Figure Position [100 100 100 100]'
+uiimage (Parent, []) : 'matlab.ui.control.Image type uiimage parent matlab.graphics.GraphicsPlaceholder Position [100 100 100 100]'
+uiimage (uf, Bogus, 1) : ERR MATLAB:ui:Image:unknownInput | Unrecognized property Bogus for class Image.
+uiimage (uf, Tag) : ERR MATLAB:ui:Image:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uiimage (uf, struct) : 's'
+uiimage (uf, Tag, t, Visible, off) : OnOff off
+uiimage (uf, tag, t) lower case : 't'
+uiimage (uf, Ta, t) prefix : 't'
+uiimage (uf, "Tag", "t") strings : 't'
+uiimage (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uiimage Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.Image.
+uiimage set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class Image.
+uiimage bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.Image.
+uiimage bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Image.
+uiimage dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.Image'.
+uiimage dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.Image'.
+uiimage set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Image'' because it is read-only.
+uiimage set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''Image'' because it is read-only.
+uiimage isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uiimage Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 100 100]'
+uiimage Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 100 100]'
+uiimage Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uiimage Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 100 100]'
+uiimage in panel default Position : double [100 100 100 100]
+uiimage findobj by Type : double 24
+uihyperlink () : 'matlab.ui.control.Hyperlink in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [100 100 70 22]'
+uihyperlink (uifigure) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.ui.Figure Position [100 100 70 22]'
+uihyperlink (figure) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.ui.Figure Position [100 100 70 22]'
+uihyperlink (uipanel) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.ui.container.Panel Position [100 100 70 22]'
+uihyperlink (classic uipanel) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.ui.container.Panel Position [100 100 70 22]'
+uihyperlink (grid) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.ui.container.GridLayout Position [100 100 70 22]'
+uihyperlink (uibuttongroup) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.ui.container.ButtonGroup Position [100 100 70 22]'
+uihyperlink (classic uibuttongroup) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.ui.container.ButtonGroup Position [100 100 70 22]'
+uihyperlink (axes) : ERR MATLAB:ui:Hyperlink:unknownInput | Axes cannot be a parent.
+uihyperlink (label) : ERR MATLAB:ui:Hyperlink:unknownInput | Label cannot be a parent.
+uihyperlink (5.5) : ERR MATLAB:ui:Hyperlink:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uihyperlink ([]) : ERR MATLAB:ui:Hyperlink:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uihyperlink (Parent, uf) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.ui.Figure Position [100 100 70 22]'
+uihyperlink (Parent, []) : 'matlab.ui.control.Hyperlink type uihyperlink parent matlab.graphics.GraphicsPlaceholder Position [100 100 70 22]'
+uihyperlink (uf, Bogus, 1) : ERR MATLAB:ui:Hyperlink:unknownInput | Unrecognized property Bogus for class Hyperlink.
+uihyperlink (uf, Tag) : ERR MATLAB:ui:Hyperlink:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uihyperlink (uf, struct) : 's'
+uihyperlink (uf, Tag, t, Visible, off) : OnOff off
+uihyperlink (uf, tag, t) lower case : 't'
+uihyperlink (uf, Ta, t) prefix : 't'
+uihyperlink (uf, "Tag", "t") strings : 't'
+uihyperlink (uf, Position, [1 2 30 40], Tag, t) : double [1 2 30 40]
+uihyperlink Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.control.Hyperlink.
+uihyperlink set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class Hyperlink.
+uihyperlink bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.control.Hyperlink.
+uihyperlink bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class Hyperlink.
+uihyperlink dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.Hyperlink'.
+uihyperlink dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.control.Hyperlink'.
+uihyperlink set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''Hyperlink'' because it is read-only.
+uihyperlink set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''Hyperlink'' because it is read-only.
+uihyperlink isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 1'
+uihyperlink Parent <- figure : 'parent now matlab.ui.Figure Position [100 100 70 22]'
+uihyperlink Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [100 100 70 22]'
+uihyperlink Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uihyperlink Parent <- panel : 'parent now matlab.ui.container.Panel Position [100 100 70 22]'
+uihyperlink in panel default Position : double [100 100 70 22]
+uihyperlink findobj by Type : double 24
+uiradiobutton () : 'matlab.ui.control.RadioButton in matlab.ui.container.ButtonGroup | figure Visible on Position [560 420] | own Position [10 10 91 22]'
+uiradiobutton (uifigure) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (figure) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (uipanel) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (classic uipanel) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (grid) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (uibuttongroup) : 'matlab.ui.control.RadioButton type uiradiobutton parent matlab.ui.container.ButtonGroup Position [10 10 91 22]'
+uiradiobutton (classic uibuttongroup) : 'matlab.ui.control.RadioButton type uiradiobutton parent matlab.ui.container.ButtonGroup Position [10 10 91 22]'
+uiradiobutton (axes) : ERR MATLAB:ui:RadioButton:unknownInput | Axes cannot be a parent.
+uiradiobutton (label) : ERR MATLAB:ui:RadioButton:unknownInput | Label cannot be a parent.
+uiradiobutton (5.5) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton ([]) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (Parent, uf) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (Parent, []) : 'matlab.ui.control.RadioButton type uiradiobutton parent matlab.graphics.GraphicsPlaceholder Position [10 10 91 22]'
+uiradiobutton (uf, Bogus, 1) : ERR MATLAB:ui:RadioButton:unknownInput | Unrecognized property Bogus for class RadioButton.
+uiradiobutton (uf, Tag) : ERR MATLAB:ui:RadioButton:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uiradiobutton (uf, struct) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (uf, Tag, t, Visible, off) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (uf, tag, t) lower case : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (uf, Ta, t) prefix : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (uf, "Tag", "t") strings : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton (uf, Position, [1 2 30 40], Tag, t) : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton Units : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton set Units : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton bogus get : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton bogus set : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton dot bogus get : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton dot bogus set : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton set Type : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton set BeingDeleted : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton isprop Units, isgraphics, ishghandle, isvalid : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton Parent <- figure : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton Parent <- [] : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton Parent <- axes : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton Parent <- panel : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton in panel default Position : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uiradiobutton findobj by Type : ERR MATLAB:ui:RadioButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton () : 'matlab.ui.control.ToggleButton in matlab.ui.container.ButtonGroup | figure Visible on Position [560 420] | own Position [10 10 100 22]'
+uitogglebutton (uifigure) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (figure) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (uipanel) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (classic uipanel) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (grid) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (uibuttongroup) : 'matlab.ui.control.ToggleButton type uitogglebutton parent matlab.ui.container.ButtonGroup Position [10 10 100 22]'
+uitogglebutton (classic uibuttongroup) : 'matlab.ui.control.ToggleButton type uitogglebutton parent matlab.ui.container.ButtonGroup Position [10 10 100 22]'
+uitogglebutton (axes) : ERR MATLAB:ui:ToggleButton:unknownInput | Axes cannot be a parent.
+uitogglebutton (label) : ERR MATLAB:ui:ToggleButton:unknownInput | Label cannot be a parent.
+uitogglebutton (5.5) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton ([]) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (Parent, uf) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (Parent, []) : 'matlab.ui.control.ToggleButton type uitogglebutton parent matlab.graphics.GraphicsPlaceholder Position [10 10 100 22]'
+uitogglebutton (uf, Bogus, 1) : ERR MATLAB:ui:ToggleButton:unknownInput | Unrecognized property Bogus for class ToggleButton.
+uitogglebutton (uf, Tag) : ERR MATLAB:ui:ToggleButton:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uitogglebutton (uf, struct) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (uf, Tag, t, Visible, off) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (uf, tag, t) lower case : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (uf, Ta, t) prefix : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (uf, "Tag", "t") strings : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton (uf, Position, [1 2 30 40], Tag, t) : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton Units : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton set Units : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton bogus get : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton bogus set : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton dot bogus get : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton dot bogus set : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton set Type : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton set BeingDeleted : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton isprop Units, isgraphics, ishghandle, isvalid : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton Parent <- figure : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton Parent <- [] : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton Parent <- axes : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton Parent <- panel : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton in panel default Position : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uitogglebutton findobj by Type : ERR MATLAB:ui:ToggleButton:unknownInput | 'Parent' value must be specified as a ButtonGroup object.
+uigridlayout () : 'matlab.ui.container.GridLayout in matlab.ui.Figure | figure Visible on Position [560 420] | own Position [1 1 100 100]'
+uigridlayout (uifigure) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.ui.Figure Position [1 1 100 100]'
+uigridlayout (figure) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.ui.Figure Position [1 1 100 100]'
+uigridlayout (uipanel) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.ui.container.Panel Position [1 1 100 100]'
+uigridlayout (classic uipanel) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.ui.container.Panel Position [1 1 100 100]'
+uigridlayout (grid) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.ui.container.GridLayout Position [1 1 100 100]'
+uigridlayout (uibuttongroup) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.ui.container.ButtonGroup Position [1 1 100 100]'
+uigridlayout (classic uibuttongroup) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.ui.container.ButtonGroup Position [1 1 100 100]'
+uigridlayout (axes) : ERR MATLAB:ui:GridLayout:unknownInput | Axes cannot be a parent.
+uigridlayout (label) : ERR MATLAB:ui:GridLayout:unknownInput | Label cannot be a parent.
+uigridlayout (5.5) : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+uigridlayout ([]) : ERR MATLAB:ui:GridLayout:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uigridlayout (Parent, uf) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.ui.Figure Position [1 1 100 100]'
+uigridlayout (Parent, []) : 'matlab.ui.container.GridLayout type uigridlayout parent matlab.graphics.GraphicsPlaceholder Position [1 1 100 100]'
+uigridlayout (uf, Bogus, 1) : ERR MATLAB:ui:GridLayout:unknownInput | Unrecognized property Bogus for class GridLayout.
+uigridlayout (uf, Tag) : ERR MATLAB:ui:GridLayout:unknownInput | No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.
+uigridlayout (uf, struct) : ERR MATLAB:ui:GridLayout:unknownInput | Grid size must be a 1x2 vector of positive numbers representing the number of rows and columns.
+uigridlayout (uf, Tag, t, Visible, off) : OnOff off
+uigridlayout (uf, tag, t) lower case : 't'
+uigridlayout (uf, Ta, t) prefix : 't'
+uigridlayout (uf, "Tag", "t") strings : 't'
+uigridlayout (uf, Position, [1 2 30 40], Tag, t) : ERR MATLAB:ui:GridLayout:unknownInput | Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.
+uigridlayout Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class matlab.ui.container.GridLayout.
+uigridlayout set Units : ERR MATLAB:hg:InvalidProperty | Unrecognized property Units for class GridLayout.
+uigridlayout bogus get : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class matlab.ui.container.GridLayout.
+uigridlayout bogus set : ERR MATLAB:hg:InvalidProperty | Unrecognized property Bogus for class GridLayout.
+uigridlayout dot bogus get : ERR MATLAB:noSuchMethodOrField | Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.container.GridLayout'.
+uigridlayout dot bogus set : ERR MATLAB:noPublicFieldForClass | Unrecognized property 'Bogus' for class 'matlab.ui.container.GridLayout'.
+uigridlayout set Type : ERR MATLAB:class:SetProhibited | Unable to set the 'Type' property of class ''GridLayout'' because it is read-only.
+uigridlayout set BeingDeleted : ERR MATLAB:class:SetProhibited | Unable to set the 'BeingDeleted' property of class ''GridLayout'' because it is read-only.
+uigridlayout isprop Units, isgraphics, ishghandle, isvalid : 'isprop Units 0 isgraphics 1 ishghandle 1 isvalid 1 ishandle 1 isa Component 0'
+uigridlayout Parent <- figure : 'parent now matlab.ui.Figure Position [1 1 100 100]'
+uigridlayout Parent <- [] : 'parent now matlab.graphics.GraphicsPlaceholder Position [1 1 100 100]'
+uigridlayout Parent <- axes : ERR MATLAB:gbtobjects:Component | Axes cannot be a parent.
+uigridlayout Parent <- panel : 'parent now matlab.ui.container.Panel Position [1 1 100 100]'
+uigridlayout in panel default Position : double [1 1 100 100]
+uigridlayout findobj by Type : double 23
+uibutton(uf, push) : 'matlab.ui.control.Button type uibutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton(uf, state) : 'matlab.ui.control.StateButton type uistatebutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton(uf, PUSH) : 'matlab.ui.control.Button type uibutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton(uf, st) : ERR MATLAB:ui:Button:unknownInput | 'st' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.
+uibutton(uf, "state") : 'matlab.ui.control.StateButton type uistatebutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton(state) : 'matlab.ui.control.StateButton type uistatebutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton(uf, bogus) : ERR MATLAB:ui:Button:unknownInput | 'bogus' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.
+uibutton(uf, state, Text, x) : 'x'
+uibutton(uf, Text, x, state) : ERR MATLAB:ui:Button:unknownInput | 'Text' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.
+uibutton(state, Parent, uf) : 'matlab.ui.control.StateButton type uistatebutton parent matlab.ui.Figure Position [100 100 100 22]'
+uibutton(Parent, uf, state) : ERR MATLAB:ui:Button:unknownInput | 'Parent' is not a valid STYLE for uibutton. STYLE must be 'push' or 'state'.
+uieditfield(uf, text) : 'matlab.ui.control.EditField type uieditfield parent matlab.ui.Figure Position [100 100 100 22]'
+uieditfield(uf, numeric) : 'matlab.ui.control.NumericEditField type uinumericeditfield parent matlab.ui.Figure Position [100 100 100 22]'
+uieditfield(uf, num) : ERR MATLAB:ui:EditField:unknownInput | 'num' is not a valid STYLE for uieditfield. STYLE must be 'text' or 'numeric'.
+uieditfield(numeric) : 'matlab.ui.control.NumericEditField type uinumericeditfield parent matlab.ui.Figure Position [100 100 100 22]'
+uieditfield(uf, bogus) : ERR MATLAB:ui:EditField:unknownInput | 'bogus' is not a valid STYLE for uieditfield. STYLE must be 'text' or 'numeric'.
+uislider(uf, slider) : 'matlab.ui.control.Slider type uislider parent matlab.ui.Figure Position [100 100 150 3]'
+uislider(uf, range) : 'matlab.ui.control.RangeSlider type uirangeslider parent matlab.ui.Figure Position [100 100 150 3]'
+uislider(uf, bogus) : ERR MATLAB:ui:Slider:unknownInput | 'bogus' is not a valid STYLE for uislider. STYLE must be 'slider' or 'range'.
+uispinner(uf, numeric) : ERR MATLAB:ui:Spinner:unknownInput | No value was given for 'numeric'. Name-value pair arguments require a name followed by a value.
+uilabel(uf, text) : ERR MATLAB:ui:Label:unknownInput | No value was given for 'text'. Name-value pair arguments require a name followed by a value.
+uidropdown(uf, bogus) : ERR MATLAB:ui:DropDown:unknownInput | No value was given for 'bogus'. Name-value pair arguments require a name followed by a value.
+dd default: Value='Option 1' ValueIndex=double 1 Items=cell [1 4] {'Option 1','Option 2','Option 3','Option 4'} ItemsData=double [0 0]
+dd Items xyz: Value='x' ValueIndex=double 1 Items=cell [1 3] {'x','y','z'} ItemsData=double [0 0]
+dd Value y: Value='y' ValueIndex=double 2 Items=cell [1 3] {'x','y','z'} ItemsData=double [0 0]
+dd Items yzw (y kept?): Value='y' ValueIndex=double 1 Items=cell [1 3] {'y','z','w'} ItemsData=double [0 0]
+dd Items ab (y gone): Value='a' ValueIndex=double 1 Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd ValueIndex 2: Value='b' ValueIndex=double 2 Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd ValueIndex 3 : ERR MATLAB:ui:DropDown:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+dd ValueIndex 0 : ERR MATLAB:ui:DropDown:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+dd ValueIndex [] : ERR MATLAB:ui:DropDown:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+dd after ValueIndex []: Value='b' ValueIndex=double 2 Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd ValueIndex 1.5 : ERR MATLAB:ui:DropDown:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+dd ValueIndex [1 2] : ERR MATLAB:ui:DropDown:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+dd Value "a" : 'a'
+dd Value A (case) : ERR MATLAB:ui:DropDown:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+dd Value {a} : 'a'
+dd Value 1 : ERR MATLAB:ui:DropDown:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+dd Value [] : ERR MATLAB:ui:DropDown:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+dd after Value []: Value='a' ValueIndex=double 1 Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd Value empty char : ERR MATLAB:ui:DropDown:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+dd after Value empty char: Value='a' ValueIndex=double 1 Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd ItemsData 10 20 30: Value=double 10 ValueIndex=double 1 Items=cell [1 3] {'a','b','c'} ItemsData=double [10 20 30]
+dd Value 20 : double 20
+dd after Value 20: Value=double 20 ValueIndex=double 2 Items=cell [1 3] {'a','b','c'} ItemsData=double [10 20 30]
+dd Value b with ItemsData : ERR MATLAB:ui:DropDown:valueNotInItemsData | 'Value' must be an element defined in the 'ItemsData' property.
+dd Value int8(30) : double 30
+dd after int8(30): Value=double 30 ValueIndex=double 3 Items=cell [1 3] {'a','b','c'} ItemsData=double [10 20 30]
+dd ItemsData cell pqr: Value='p' ValueIndex=double 1 Items=cell [1 3] {'a','b','c'} ItemsData=cell [1 3] {'p','q','r'}
+dd Value q : 'q'
+dd ItemsData shorter: Value=double 1 ValueIndex=double 1 Items=cell [1 3] {'a','b','c'} ItemsData=double [1 2]
+dd Value c with short ItemsData : ERR MATLAB:ui:DropDown:valueNotInItemsData | 'Value' must be an element defined in the 'ItemsData' property.
+dd ValueIndex 3 past ItemsData: Value=double 1 ValueIndex=double 1 Items=cell [1 3] {'a','b','c'} ItemsData=double [1 2]
+dd ItemsData longer: Value=double 1 ValueIndex=double 1 Items=cell [1 3] {'a','b','c'} ItemsData=double [1 2 3 4 5]
+dd Value 5 (data past items) : ERR MATLAB:ui:DropDown:valueNotWithinLengthOfText | 'Value' must be an element defined in the 'ItemsData' property within the length of the 'Items' property.
+dd ItemsData mixed cell: Value=double 1 ValueIndex=double 1 Items=cell [1 3] {'a','b','c'} ItemsData=cell [1 3] {double 1,'two',double [3 3]}
+dd Value [3 3] : double [3 3]
+dd after [3 3]: Value=double [3 3] ValueIndex=double 3 Items=cell [1 3] {'a','b','c'} ItemsData=cell [1 3] {double 1,'two',double [3 3]}
+dd ItemsData string: Value="s1" ValueIndex=double 1 Items=cell [1 3] {'a','b','c'} ItemsData=string [1 3] [s1,s2,s3]
+dd ItemsData cleared: Value='a' ValueIndex=double 1 Items=cell [1 3] {'a','b','c'} ItemsData=double [0 0]
+dd duplicate items index 2: Value='a' ValueIndex=double 2 Items=cell [1 3] {'a','a','b'} ItemsData=double [0 0]
+dd Items {}: Value=cell [0 0] {} ValueIndex=double [0 0] Items=cell [0 0] {} ItemsData=double [0 0]
+dd Items {} Value x : ERR MATLAB:ui:DropDown:valueNotEmpty | 'Value' must be the empty cell because the 'Items' property is empty.
+dd Items string scalar: Value='one' ValueIndex=double 1 Items=cell [1 1] {'one'} ItemsData=double [0 0]
+dd Items char abc : ERR MATLAB:ui:DropDown:invalidText | 'Items' must be a 1-by-N cell array of character vectors or a string array.
+dd Items numbers : ERR MATLAB:ui:DropDown:invalidText | 'Items' must be a 1-by-N cell array of character vectors or a string array.
+dd Items cell numbers : ERR MATLAB:ui:DropDown:invalidText | 'Items' must be a 1-by-N cell array of character vectors or a string array.
+dd Items column cell : cell [1 2] {'a','b'}
+dd Items 2x2 cell : ERR MATLAB:ui:DropDown:invalidText | Expected input to be a vector.
+dd Items categorical : cell [1 2] {'u','v'}
+dd Items missing : cell [1 2] {'a',''}
+dd editable default: Value='a' ValueIndex=double 1 Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd editable free text: Value='free' ValueIndex=double [0 0] Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd editable Value 5 : ERR MATLAB:ui:DropDown:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+dd editable back to b: Value='b' ValueIndex=double 2 Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd editable off with free text: Value='a' ValueIndex=double 1 Items=cell [1 2] {'a','b'} ItemsData=double [0 0]
+dd editable ItemsData : double [1 2 3 4]
+dd ItemsData then editable : OnOff on
+dd ValueIndex 3 with ItemsData [1 2] : double 1
+dd ctor Value before Items : 'q'
+dd ctor Value not in Items : ERR MATLAB:ui:DropDown:unknownInput | 'Value' must be an element defined in the 'Items' property.
+dd ctor ItemsData Value : double 2
+lb default: Value='Item 1' ValueIndex=double 1 Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb Value Item 3: Value='Item 3' ValueIndex=double 3 Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb Value {} : cell [0 0] {}
+lb after {}: Value=cell [0 0] {} ValueIndex=double [0 0] Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb Value [] : ERR MATLAB:ui:ListBox:scalarItemInSingleSelect | 'Value' must be a character vector, string scalar or an empty cell array when component is single selection.
+lb Value {Item 1} : 'Item 1'
+lb Value {Item 1, Item 2} single : ERR MATLAB:ui:ListBox:scalarItemInSingleSelect | 'Value' must be a character vector, string scalar or an empty cell array when component is single selection.
+lb Value bogus : ERR MATLAB:ui:ListBox:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+lb ValueIndex [1 2] single : ERR MATLAB:ui:ListBox:invalidValueIndex | 'ValueIndex' must be [] or a positive integer representing an index in 'Items'.
+lb ValueIndex 9 : ERR MATLAB:ui:ListBox:invalidValueIndex | 'ValueIndex' must be [] or a positive integer representing an index in 'Items'.
+lb multiselect on: Value=cell [1 1] {'Item 1'} ValueIndex=double 1 Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb multi Value 3,1: Value=cell [1 2] {'Item 3','Item 1'} ValueIndex=double [3 1] Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb multi Value char: Value=cell [1 1] {'Item 2'} ValueIndex=double 2 Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb multi ValueIndex [4 2]: Value=cell [1 2] {'Item 4','Item 2'} ValueIndex=double [4 2] Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb multi ValueIndex [2 2] : double [2 2]
+lb multi Value dup : ERR MATLAB:ui:ListBox:notASubset | The 'Value' property must be a subset of the 'Items' property. Note that elements in the 'Items' property with no corresponding element in the 'ItemsData' property are ignored. Use the empty cell to indicate no selection.
+lb multi Value {} : cell [0 0] {}
+lb multi after {}: Value=cell [0 0] {} ValueIndex=double [0 0] Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb multi Value ["Item 1";"Item 4"] : cell [1 2] {'Item 1','Item 4'}
+lb multi after strings: Value=cell [1 2] {'Item 1','Item 4'} ValueIndex=double [1 4] Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb multiselect back off with two: Value='Item 1' ValueIndex=double 1 Items=cell [1 4] {'Item 1','Item 2','Item 3','Item 4'} ItemsData=double [0 0]
+lb Items changed: Value='Item 4' ValueIndex=double 1 Items=cell [1 2] {'Item 4','new'} ItemsData=double [0 0]
+lb multi ItemsData numeric: Value=double [5 6] ValueIndex=double [1 2] Items=cell [1 2] {'Item 4','new'} ItemsData=double [5 6]
+lb multi Value [6 5] : double [6 5]
+lb multi Value {5} : ERR MATLAB:ui:ListBox:notASubset | The 'Value' property must be a subset of the 'ItemsData' property. Note that elements in the 'ItemsData' property with no corresponding element in the 'Items' property are ignored. Use the empty cell to indicate no selection.
+lb multi Value 7 : ERR MATLAB:ui:ListBox:notASubset | The 'Value' property must be a subset of the 'ItemsData' property. Note that elements in the 'ItemsData' property with no corresponding element in the 'Items' property are ignored. Use the empty cell to indicate no selection.
+lb multi ItemsData cell: Value=cell [1 1] {'p'} ValueIndex=double 1 Items=cell [1 2] {'Item 4','new'} ItemsData=cell [1 2] {'p',double [1 2]}
+lb multi Value {[1 2]} : cell [1 1] {double [1 2]}
+lb after: Value=cell [1 1] {double [1 2]} ValueIndex=double 2 Items=cell [1 2] {'Item 4','new'} ItemsData=cell [1 2] {'p',double [1 2]}
+lb Items {}: Value=cell [0 0] {} ValueIndex=double [0 0] Items=cell [0 0] {} ItemsData=cell [1 2] {'p',double [1 2]}
+lb ctor ItemsData Value: Value=double 2 ValueIndex=double 2 Items=cell [1 3] {'a','b','c'} ItemsData=double [1 2 3]
+lb ctor multi Value : double [2 4]
+lb ctor Value then multi : double [2 4]
+ef Value <- 'abc' : 'abc'
+ef Value <- "str" : 'str'
+ef Value <- '' : ''
+ef Value <- "" : ''
+ef Value <- string <missing> : ''
+ef Value <- double 5 : ERR MATLAB:ui:EditField:invalidText | 'Value' must be a character vector or a string scalar.
+ef Value <- cell [1 1] {'a'} : ERR MATLAB:ui:EditField:invalidText | 'Value' must be a character vector or a string scalar.
+ef Value <- char [2 2] ['ab';'cd'] : ERR MATLAB:ui:EditField:invalidText | 'Value' must be a character vector or a string scalar.
+ef Value <- 'a
+b' : 'a
+b'
+ef Value <- 'tab	in' : 'tab	in'
+ef Value <- logical true : ERR MATLAB:ui:EditField:invalidText | 'Value' must be a character vector or a string scalar.
+ef Value <- double [0 0] : ERR MATLAB:ui:EditField:invalidText | 'Value' must be a character vector or a string scalar.
+ef Value <- <categorical> : ERR MATLAB:ui:EditField:invalidText | 'Value' must be a character vector or a string scalar.
+ef CharacterLimits [2 4] with abc : 'limits [2 4] value 'abc''
+ef CharacterLimits [2 4] with a : 'limits [2 4] value '''
+ef CharacterLimits [2 4] with empty : 'limits [2 4] value '''
+ef CharacterLimits [2 4] with abcdef : 'limits [2 4] value '''
+ef limited Value a : ERR MATLAB:ui:EditField:valueLengthNotInRange | The number of characters in 'Value' must be within the range of 'CharacterLimits'.
+ef limited Value abcde : ERR MATLAB:ui:EditField:valueLengthNotInRange | The number of characters in 'Value' must be within the range of 'CharacterLimits'.
+ef limited Value empty : ERR MATLAB:ui:EditField:valueLengthNotInRange | The number of characters in 'Value' must be within the range of 'CharacterLimits'.
+ef CharacterLimits <- double [0 0] : double [0 0]
+ef CharacterLimits <- double [3 3] : double [3 3]
+ef CharacterLimits <- double [5 1] : ERR MATLAB:ui:EditField:invalidCharacterLimits | 'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.
+ef CharacterLimits <- double [-1 3] : ERR MATLAB:ui:EditField:invalidCharacterLimits | 'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.
+ef CharacterLimits <- double [0 Inf] : double [0 Inf]
+ef CharacterLimits <- double [1.5 3] : ERR MATLAB:ui:EditField:invalidCharacterLimits | 'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.
+ef CharacterLimits <- double [Inf Inf] : ERR MATLAB:ui:EditField:invalidCharacterLimits | 'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.
+ef CharacterLimits <- double 5 : ERR MATLAB:ui:EditField:invalidCharacterLimits | 'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.
+ef CharacterLimits <- double [1 2 3] : ERR MATLAB:ui:EditField:invalidCharacterLimits | 'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.
+ef CharacterLimits <- 'a' : ERR MATLAB:ui:EditField:invalidCharacterLimits | 'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.
+ef CharacterLimits <- double [NaN 3] : ERR MATLAB:ui:EditField:invalidCharacterLimits | 'CharacterLimits' must be a non-decreasing 1-by-2 array of nonnegative integers that specifies the minimum and maximum number of entered characters. Use Inf to indicate no bound for the upper limit.
+ef InputType <- 'text' : 'text'
+ef InputType <- 'digits' : 'digits'
+ef InputType <- 'letters' : 'letters'
+ef InputType <- 'alphanumerics' : 'alphanumerics'
+ef InputType <- 'bogus' : ERR MATLAB:ui:EditField:invalidFourStringEnum | 'InputType' value must be 'text', 'letters', 'digits', or 'alphanumerics'.
+ef InputType <- 'DIGITS' : 'digits'
+ef InputType <- 'dig' : 'digits'
+ef InputType <- double 5 : ERR MATLAB:ui:EditField:invalidFourStringEnum | 'InputType' value must be 'text', 'letters', 'digits', or 'alphanumerics'.
+ef digits with abc : 'digits'
+ef digits Value 123 : '123'
+ef digits Value 12a : ERR MATLAB:ui:EditField:invalidValueText | 'Value' must consist of valid text as specified by 'InputType'.
+ef digits Value 1.5 : ERR MATLAB:ui:EditField:invalidValueText | 'Value' must consist of valid text as specified by 'InputType'.
+ef digits Value -1 : ERR MATLAB:ui:EditField:invalidValueText | 'Value' must consist of valid text as specified by 'InputType'.
+ef letters Value abc : 'abc'
+ef letters Value ab c : ERR MATLAB:ui:EditField:invalidValueText | 'Value' must consist of valid text as specified by 'InputType'.
+ef letters Value ab1 : ERR MATLAB:ui:EditField:invalidValueText | 'Value' must consist of valid text as specified by 'InputType'.
+ef alnum Value ab1 : 'ab1'
+ef alnum Value ab_1 : ERR MATLAB:ui:EditField:invalidValueText | 'Value' must consist of valid text as specified by 'InputType'.
+nf Value <- double 5 : 'double 5 (double)'
+nf Value <- double 2.5 : 'double 2.5 (double)'
+nf Value <- double -3 : 'double -3 (double)'
+nf Value <- int8 3 : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf Value <- single 2.5 : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf Value <- logical true : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf Value <- '5' : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf Value <- "5" : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf Value <- double [1 2] : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf Value <- double [0 0] : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' cannot be [] when 'AllowEmpty' is 'off'.
+nf Value <- double NaN : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+nf Value <- double Inf : 'double Inf (double)'
+nf Value <- double -Inf : 'double -Inf (double)'
+nf Value <- double 1+2i : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf Value <- cell [1 1] {double 5} : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf Value <- uint8 200 : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf [0 10] Value <- 0 : double 0
+nf [0 10] Value <- 10 : double 10
+nf [0 10] Value <- -1 : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+nf [0 10] Value <- 11 : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+nf [0 10] Value <- 5.5 : double 5.5
+nf (0 10) Value <- 0 : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+nf (0 10) Value <- 10 : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+nf (0 10) Value <- 0.001 : double 0.001
+nf Value 50 then Limits [0 10] : double [0 10]
+   Value now double 10
+nf Value -50 then Limits [0 10] : double [0 10]
+   Value now double 0
+nf Value at upper then UpperLimitInclusive off : OnOff off
+   Value now double 9
+nf Value at lower then LowerLimitInclusive off : OnOff off
+   Value now double 1
+nf Limits <- double [0 10] : double [0 10]
+nf Limits <- double [10 0] : ERR MATLAB:ui:NumericEditField:notIncreasingLimits | 'Limits' must be a 1-by-2 array of non-decreasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+nf Limits <- double [5 5] : double [5 5]
+nf Limits <- double [-Inf Inf] : double [-Inf Inf]
+nf Limits <- double [0 Inf] : double [0 Inf]
+nf Limits <- double [-Inf 0] : double [-Inf 0]
+nf Limits <- double [Inf Inf] : double [Inf Inf]
+nf Limits <- double [NaN 1] : ERR MATLAB:ui:NumericEditField:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+nf Limits <- double 5 : ERR MATLAB:ui:NumericEditField:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+nf Limits <- double [1 2 3] : ERR MATLAB:ui:NumericEditField:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+nf Limits <- 'a' : ERR MATLAB:ui:NumericEditField:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+nf Limits <- double [1;2] : double [1 2]
+nf Limits <- int8 [1 5] : ERR MATLAB:ui:NumericEditField:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+nf Limits <- double [0 0] : ERR MATLAB:ui:NumericEditField:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+nf Limits <- cell [1 2] {double 1,double 2} : ERR MATLAB:ui:NumericEditField:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+nf Limits <- double [0 Inf] : double [0 Inf]
+nf 2.6 then Round on: double 3
+nf rounding Value <- 2.5 : double 3
+nf rounding Value <- 3.5 : double 4
+nf rounding Value <- -2.5 : double -3
+nf rounding Value <- 2.4999 : double 2
+nf rounding Value <- 1e+10 : double 1e+10
+nf rounding [0 2.5] Value <- 2.5 : double 2
+nf rounding [0 2.5] Value <- 2.2 : double 2
+nf 2.6 in [0 2.9] then Round on : OnOff on
+   Value now double 2
+nf Value [] AllowEmpty off : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' cannot be [] when 'AllowEmpty' is 'off'.
+nf Value [] AllowEmpty on : double [0 0]
+nf AllowEmpty off while empty : OnOff off
+   Value now double 0
+nf Value zeros(0,1) AllowEmpty on : ERR MATLAB:ui:NumericEditField:invalidValue | 'Value' must be a double scalar.
+nf ValueDisplayFormat <- '%d' : '%d'
+nf ValueDisplayFormat <- '%.2f' : '%.2f'
+nf ValueDisplayFormat <- '%11.4g' : '%11.4g'
+nf ValueDisplayFormat <- '%s' : '%s'
+nf ValueDisplayFormat <- 'abc' : ERR MATLAB:ui:NumericEditField:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+nf ValueDisplayFormat <- '%d units' : '%d units'
+nf ValueDisplayFormat <- '%5.1f%%' : '%5.1f%%'
+nf ValueDisplayFormat <- '' : ERR MATLAB:ui:NumericEditField:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+nf ValueDisplayFormat <- double 5 : ERR MATLAB:ui:NumericEditField:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+nf ValueDisplayFormat <- '%d %d' : ERR MATLAB:ui:NumericEditField:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+nf ValueDisplayFormat <- '%x' : '%x'
+nf ValueDisplayFormat <- '%e' : '%e'
+nf ValueDisplayFormat <- '%i' : '%i'
+nf ValueDisplayFormat <- '%c' : '%c'
+nf ValueDisplayFormat <- '$%.2f' : '$%.2f'
+nf ValueDisplayFormat <- "%.3f" : '%.3f'
+nf ValueDisplayFormat <- '%bx' : '%bx'
+nf ValueDisplayFormat <- '%*d' : ERR MATLAB:ui:NumericEditField:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+nf ValueDisplayFormat <- '%u' : '%u'
+nf ValueDisplayFormat <- '%o' : '%o'
+nf ValueDisplayFormat <- '%G' : '%G'
+nf ValueDisplayFormat <- '%+d' : '%+d'
+nf ValueDisplayFormat <- '%ld' : '%ld'
+sp Value <- double 5 : 'double 5 (double)'
+sp Value <- double 2.5 : 'double 2.5 (double)'
+sp Value <- double -3 : 'double -3 (double)'
+sp Value <- int8 3 : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp Value <- single 2.5 : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp Value <- logical true : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp Value <- '5' : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp Value <- "5" : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp Value <- double [1 2] : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp Value <- double [0 0] : ERR MATLAB:ui:Spinner:invalidValue | 'Value' cannot be [] when 'AllowEmpty' is 'off'.
+sp Value <- double NaN : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sp Value <- double Inf : 'double Inf (double)'
+sp Value <- double -Inf : 'double -Inf (double)'
+sp Value <- double 1+2i : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp Value <- cell [1 1] {double 5} : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp Value <- uint8 200 : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp [0 10] Value <- 0 : double 0
+sp [0 10] Value <- 10 : double 10
+sp [0 10] Value <- -1 : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sp [0 10] Value <- 11 : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sp [0 10] Value <- 5.5 : double 5.5
+sp (0 10) Value <- 0 : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sp (0 10) Value <- 10 : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sp (0 10) Value <- 0.001 : double 0.001
+sp Value 50 then Limits [0 10] : double [0 10]
+   Value now double 10
+sp Value -50 then Limits [0 10] : double [0 10]
+   Value now double 0
+sp Value at upper then UpperLimitInclusive off : OnOff off
+   Value now double 9
+sp Value at lower then LowerLimitInclusive off : OnOff off
+   Value now double 1
+sp Limits <- double [0 10] : double [0 10]
+sp Limits <- double [10 0] : ERR MATLAB:ui:Spinner:notIncreasingLimits | 'Limits' must be a 1-by-2 array of non-decreasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+sp Limits <- double [5 5] : double [5 5]
+sp Limits <- double [-Inf Inf] : double [-Inf Inf]
+sp Limits <- double [0 Inf] : double [0 Inf]
+sp Limits <- double [-Inf 0] : double [-Inf 0]
+sp Limits <- double [Inf Inf] : double [Inf Inf]
+sp Limits <- double [NaN 1] : ERR MATLAB:ui:Spinner:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+sp Limits <- double 5 : ERR MATLAB:ui:Spinner:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+sp Limits <- double [1 2 3] : ERR MATLAB:ui:Spinner:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+sp Limits <- 'a' : ERR MATLAB:ui:Spinner:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+sp Limits <- double [1;2] : double [1 2]
+sp Limits <- int8 [1 5] : ERR MATLAB:ui:Spinner:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+sp Limits <- double [0 0] : ERR MATLAB:ui:Spinner:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+sp Limits <- cell [1 2] {double 1,double 2} : ERR MATLAB:ui:Spinner:invalidLimits | 'Limits' must be a 1-by-2 array of increasing double values, such as [0 100]. Use -Inf and/or Inf to indicate no bound for the lower and/or upper limit.
+sp Limits <- double [0 Inf] : double [0 Inf]
+sp 2.6 then Round on: double 3
+sp rounding Value <- 2.5 : double 3
+sp rounding Value <- 3.5 : double 4
+sp rounding Value <- -2.5 : double -3
+sp rounding Value <- 2.4999 : double 2
+sp rounding Value <- 1e+10 : double 1e+10
+sp rounding [0 2.5] Value <- 2.5 : double 2
+sp rounding [0 2.5] Value <- 2.2 : double 2
+sp 2.6 in [0 2.9] then Round on : OnOff on
+   Value now double 2
+sp Value [] AllowEmpty off : ERR MATLAB:ui:Spinner:invalidValue | 'Value' cannot be [] when 'AllowEmpty' is 'off'.
+sp Value [] AllowEmpty on : double [0 0]
+sp AllowEmpty off while empty : OnOff off
+   Value now double 0
+sp Value zeros(0,1) AllowEmpty on : ERR MATLAB:ui:Spinner:invalidValue | 'Value' must be a double scalar.
+sp ValueDisplayFormat <- '%d' : '%d'
+sp ValueDisplayFormat <- '%.2f' : '%.2f'
+sp ValueDisplayFormat <- '%11.4g' : '%11.4g'
+sp ValueDisplayFormat <- '%s' : '%s'
+sp ValueDisplayFormat <- 'abc' : ERR MATLAB:ui:Spinner:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+sp ValueDisplayFormat <- '%d units' : '%d units'
+sp ValueDisplayFormat <- '%5.1f%%' : '%5.1f%%'
+sp ValueDisplayFormat <- '' : ERR MATLAB:ui:Spinner:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+sp ValueDisplayFormat <- double 5 : ERR MATLAB:ui:Spinner:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+sp ValueDisplayFormat <- '%d %d' : ERR MATLAB:ui:Spinner:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+sp ValueDisplayFormat <- '%x' : '%x'
+sp ValueDisplayFormat <- '%e' : '%e'
+sp ValueDisplayFormat <- '%i' : '%i'
+sp ValueDisplayFormat <- '%c' : '%c'
+sp ValueDisplayFormat <- '$%.2f' : '$%.2f'
+sp ValueDisplayFormat <- "%.3f" : '%.3f'
+sp ValueDisplayFormat <- '%bx' : '%bx'
+sp ValueDisplayFormat <- '%*d' : ERR MATLAB:ui:Spinner:invalidDisplayFormat | 'ValueDisplayFormat' value must be a character vector or a string scalar containing a valid formatting operator, such as '%d'. For more information on formatting operators, see the documentation for sprintf.
+sp ValueDisplayFormat <- '%u' : '%u'
+sp ValueDisplayFormat <- '%o' : '%o'
+sp ValueDisplayFormat <- '%G' : '%G'
+sp ValueDisplayFormat <- '%+d' : '%+d'
+sp ValueDisplayFormat <- '%ld' : '%ld'
+sp Step <- double 1 : double 1
+sp Step <- double 0.5 : double 0.5
+sp Step <- double 0 : ERR MATLAB:ui:Spinner:invalidValue | 'Step' must be a finite, positive number.
+sp Step <- double -1 : ERR MATLAB:ui:Spinner:invalidValue | 'Step' must be a finite, positive number.
+sp Step <- double [1 2] : ERR MATLAB:ui:Spinner:invalidValue | 'Step' must be a finite, positive number.
+sp Step <- 'a' : ERR MATLAB:ui:Spinner:invalidValue | 'Step' must be a finite, positive number.
+sp Step <- double Inf : ERR MATLAB:ui:Spinner:invalidValue | 'Step' must be a finite, positive number.
+sp Step <- double NaN : ERR MATLAB:ui:Spinner:invalidValue | 'Step' must be a finite, positive number.
+sp Step <- int8 2 : int8 2
+sp Step <- double [0 0] : ERR MATLAB:ui:Spinner:invalidValue | 'Step' must be a finite, positive number.
+sp Step <- double 0.001 : double 0.001
+sp Step <- logical true : double 1
+sp rounding Step <- 0.5 : ERR MATLAB:ui:Spinner:invalidStepWhenRoundingIsTrue | 'Step' cannot be fractional when 'RoundFractionalValues' is 'on'.
+sp Step 0.5 then Round on : ERR MATLAB:ui:Spinner:invalidRoundFractionalValueWhenStepIsFloat | 'RoundFractionalValues' cannot be set to 'on' when 'Step' is a fractional value.
+   Step now double 0.5
+sl default: Value=double 0 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.1 (auto)
+sl Value <- double 50 : 'double 50 (double)'
+sl Value <- double 0 : 'double 0 (double)'
+sl Value <- double 100 : 'double 100 (double)'
+sl Value <- double -1 : ERR MATLAB:ui:Slider:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sl Value <- double 101 : ERR MATLAB:ui:Slider:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sl Value <- double [1 2] : ERR MATLAB:ui:Slider:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sl Value <- 'a' : ERR MATLAB:ui:Slider:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sl Value <- double NaN : ERR MATLAB:ui:Slider:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sl Value <- int8 5 : ERR MATLAB:ui:Slider:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sl Value <- logical true : ERR MATLAB:ui:Slider:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sl Value <- double [0 0] : ERR MATLAB:ui:Slider:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+sl Value <- double 33.333 : 'double 33.333 (double)'
+sl 80 then Limits [0 50]: Value=double 50 Limits=double [0 50] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.05 (auto)
+sl 20 then Limits [30 50]: Value=double 30 Limits=double [30 50] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.02 (auto)
+sl Limits [0 1]: Value=double 0 Limits=double [0 1] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.001 (auto)
+sl Limits [-1000 1000]: Value=double 0 Limits=double [-1000 1000] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 2 (auto)
+sl Limits [0 7]: Value=double 0 Limits=double [0 7] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.007 (auto)
+sl Limits [0.001 0.002]: Value=double 0.001 Limits=double [0.001 0.002] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 1e-06 (auto)
+sl Limits [0.01 0.99]: Value=double 0.01 Limits=double [0.01 0.99] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.00098 (auto)
+sl Limits [1 12]: Value=double 1 Limits=double [1 12] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.011 (auto)
+sl Limits [0 1e6]: Value=double 0 Limits=double [0 1000000] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 1000 (auto)
+sl Limits [-5 5]: Value=double 0 Limits=double [-5 5] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.01 (auto)
+sl Limits [0 255]: Value=double 0 Limits=double [0 255] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.255 (auto)
+sl Limits [20 20000]: Value=double 20 Limits=double [20 20000] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 19.98 (auto)
+sl Limits <- double [10 0] : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- double [5 5] : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- double [-Inf Inf] : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- double [0 Inf] : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- double [NaN 1] : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- double 5 : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- double [1 2 3] : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- 'a' : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- int8 [1 5] : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl Limits <- double [0 0] : ERR MATLAB:ui:Slider:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+sl MajorTicks [0 50 100]: Value=double 0 Limits=double [0 100] MajorTicks=double [0 50 100] (manual) MinorTicks=double [0 0] (auto) Labels=cell [1 3] {'0','50','100'} (auto) Step=double 0.1 (auto)
+   then Limits [0 200]: Value=double 0 Limits=double [0 200] MajorTicks=double [0 50 100] (manual) MinorTicks=double [0 0] (auto) Labels=cell [1 3] {'0','50','100'} (auto) Step=double 0.2 (auto)
+   then MajorTicksMode auto: Value=double 0 Limits=double [0 200] MajorTicks=double [0 50 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 3] {'0','50','100'} (auto) Step=double 0.2 (auto)
+sl MajorTickLabels {lo,hi}: Value=double 0 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 2] {'lo','hi'} (manual) Step=double 0.1 (auto)
+sl MinorTicks 0:5:100: Value=double 0 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100] (manual) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.1 (auto)
+sl MajorTicks []: Value=double 0 Limits=double [0 100] MajorTicks=double [0 0] (manual) MinorTicks=double [0 0] (auto) Labels=cell [0 0] {} (auto) Step=double 0.1 (auto)
+sl MajorTicks outside: Value=double 0 Limits=double [0 100] MajorTicks=double [200 300] (manual) MinorTicks=double [0 0] (auto) Labels=cell [1 2] {'200','300'} (auto) Step=double 0.1 (auto)
+sl MajorTicks <- double [3 1 2] : double [1 2 3]
+sl MajorTicks <- double [1 1 2] : double [1 2]
+sl MajorTicks <- 'a' : ERR MATLAB:ui:Slider:invalidMajorTicks | 'MajorTicks' must be a 1-by-n numeric array.
+sl MajorTicks <- cell [1 2] {double 1,double 2} : ERR MATLAB:ui:Slider:invalidMajorTicks | 'MajorTicks' must be a 1-by-n numeric array.
+sl MajorTicks <- double NaN : ERR MATLAB:ui:Slider:invalidMajorTicks | 'MajorTicks' array cannot contain NaN or Inf.
+sl MajorTicks <- double [1 Inf] : ERR MATLAB:ui:Slider:invalidMajorTicks | 'MajorTicks' array cannot contain NaN or Inf.
+sl MajorTicks <- double [1;2] : double [1 2]
+sl MajorTicks <- int8 [1 2] : double [1 2]
+sl MinorTicks <- double [3 1 2] : double [1 2 3]
+sl MinorTicks <- double [1 1 2] : double [1 2]
+sl MinorTicks <- 'a' : ERR MATLAB:ui:Slider:invalidMinorTicks | 'MinorTicks' must be a 1-by-n numeric array.
+sl MinorTicks <- cell [1 2] {double 1,double 2} : ERR MATLAB:ui:Slider:invalidMinorTicks | 'MinorTicks' must be a 1-by-n numeric array.
+sl MinorTicks <- double NaN : ERR MATLAB:ui:Slider:invalidMinorTicks | 'MinorTicks' array cannot contain NaN or Inf.
+sl MinorTicks <- double [1 Inf] : ERR MATLAB:ui:Slider:invalidMinorTicks | 'MinorTicks' array cannot contain NaN or Inf.
+sl MinorTicks <- double [1;2] : double [1 2]
+sl MinorTicks <- int8 [1 2] : double [1 2]
+sl MajorTickLabels <- cell [1 2] {'a','b'} : cell [1 2] {'a','b'}
+sl MajorTickLabels <- string [1 2] [a,b] : cell [1 2] {'a','b'}
+sl MajorTickLabels <- 'ab' : ERR MATLAB:ui:Slider:invalidMajorTickLabels | 'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.
+sl MajorTickLabels <- double [1 2] : ERR MATLAB:ui:Slider:invalidMajorTickLabels | 'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.
+sl MajorTickLabels <- cell [1 2] {double 1,double 2} : ERR MATLAB:ui:Slider:invalidMajorTickLabels | 'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.
+sl MajorTickLabels <- cell [0 0] {} : cell [0 0] {}
+sl MajorTickLabels <- cell [2 1] {'a','b'} : cell [1 2] {'a','b'}
+sl MajorTickLabels <- "x" : cell [1 1] {'x'}
+sl Step 5: Value=double 0 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 5 (manual)
+sl Step 5 Value 12 : double 12
+sl Step 5 Value 13 : double 13
+sl StepMode back auto: Value=double 13 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.1 (auto)
+sl Step <- double 0 : ERR MATLAB:ui:Slider:invalidStep | 'Step' must be a finite, positive number.
+sl Step <- double -1 : ERR MATLAB:ui:Slider:invalidStep | 'Step' must be a finite, positive number.
+sl Step <- double 200 : double 200
+sl Step <- double [1 2] : ERR MATLAB:ui:Slider:invalidStep | 'Step' must be a finite, positive number.
+sl Step <- 'a' : double 97
+sl Step <- double NaN : ERR MATLAB:ui:Slider:invalidStep | 'Step' must be a finite, positive number.
+sl Step <- double Inf : ERR MATLAB:ui:Slider:invalidStep | 'Step' must be a finite, positive number.
+sl Step <- double 0.001 : double 0.001
+sl vertical: Value=double 0 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.1 (auto)
+   Position [100 100 150 3] -> [100 100 3 150] Outer [93 70 39 166]
+sl ctor vertical Position : double [100 100 3 150]
+sl Position [10 10 300 3] : double [10 10 300 3]
+[Warning: The height of this component cannot be changed.]
+sl Position [10 10 300 40] : double [10 10 300 3]
+sl OuterPosition after Position [10 10 300 3] : double [3 -20 316 39]
+sl OuterPosition <- : ERR MATLAB:class:SetProhibited | Unable to set the 'OuterPosition' property of class ''Slider'' because it is read-only.
+sl InnerPosition after OuterPosition <- : ERR MATLAB:class:SetProhibited | Unable to set the 'OuterPosition' property of class ''Slider'' because it is read-only.
+sl OuterPosition with no ticks : double [93 70 166 39]
+sl OuterPosition with no labels : double [93 70 166 39]
+sl settled Limits [0 1]: Value=double 0 Limits=double [0 1] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.001 (auto)
+sl settled Limits [-1000 1000]: Value=double 0 Limits=double [-1000 1000] MajorTicks=double [-1000 -600 -200 200 600 1000] (auto) MinorTicks=double [-1000 -950 -900 -850 -800 -750 -700 -650 -600 -550 -500 -450 -400 -350 -300 -250 -200 -150 -100 -50 0 50 100 150 200 250 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000] (auto) Labels=cell [1 6] {'-1000','-600','-200','200','600','1000'} (auto) Step=double 2 (auto)
+sl settled Limits [0 7]: Value=double 0 Limits=double [0 7] MajorTicks=double [0 1 2 3 4 5 6 7] (auto) MinorTicks=double [0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7] (auto) Labels=cell [1 8] {'0','1','2','3','4','5','6','7'} (auto) Step=double 0.007 (auto)
+sl settled Limits [0.001 0.002]: Value=double 0.001 Limits=double [0.001 0.002] MajorTicks=double [0.001 0.0015 0.002] (auto) MinorTicks=double [0.001 0.00105 0.0011 0.00115 0.0012 0.00125 0.0013 0.00135 0.0014 0.00145 0.0015 0.00155 0.0016 0.00165 0.0017 0.00175 0.0018 0.00185 0.0019 0.00195 0.002] (auto) Labels=cell [1 3] {'0.001','0.0015','0.002'} (auto) Step=double 1e-06 (auto)
+sl settled Limits [0.01 0.99]: Value=double 0.01 Limits=double [0.01 0.99] MajorTicks=double [0.01 0.5 0.99] (auto) MinorTicks=double [0.01 0.08 0.15 0.22 0.29 0.36 0.43 0.5 0.57 0.64 0.71 0.78 0.85 0.92 0.99] (auto) Labels=cell [1 3] {'0.01','0.5','0.99'} (auto) Step=double 0.00098 (auto)
+sl settled Limits [1 12]: Value=double 1 Limits=double [1 12] MajorTicks=double [1 2.5 4 5.5 7 8.5 10 12] (auto) MinorTicks=double [1 1.3 1.6 1.9 2.2 2.5 2.8 3.1 3.4 3.7 4 4.3 4.6 4.9 5.2 5.5 5.8 6.1 6.4 6.7 7 7.3 7.6 7.9 8.2 8.5 8.8 9.1 9.4 9.7 10 10.3 10.6 10.9 11.2 11.5 11.8 12] (auto) Labels=cell [1 8] {'1','2.5','4','5.5','7','8.5','10','12'} (auto) Step=double 0.011 (auto)
+sl settled Limits [0 1000000]: Value=double 0 Limits=double [0 1000000] MajorTicks=double [0 250000 500000 750000 1000000] (auto) MinorTicks=double [0 31250 62500 93750 125000 156250 187500 218750 250000 281250 312500 343750 375000 406250 437500 468750 500000 531250 562500 593750 625000 656250 687500 718750 750000 781250 812500 843750 875000 906250 937500 968750 1000000] (auto) Labels=cell [1 5] {'0','2.5e+05','5e+05','7.5e+05','1e+06'} (auto) Step=double 1000 (auto)
+sl settled Limits [-5 5]: Value=double 0 Limits=double [-5 5] MajorTicks=double [-5 -3 -1 1 3 5] (auto) MinorTicks=double [-5 -4.6 -4.2 -3.8 -3.4 -3 -2.6 -2.2 -1.8 -1.4 -1 -0.6 -0.2 0.2 0.6 1 1.4 1.8 2.2 2.6 3 3.4 3.8 4.2 4.6 5] (auto) Labels=cell [1 6] {'-5','-3','-1','1','3','5'} (auto) Step=double 0.01 (auto)
+sl settled Limits [0 255]: Value=double 0 Limits=double [0 255] MajorTicks=double [0 51 102 153 204 255] (auto) MinorTicks=double [0 17 34 51 68 85 102 119 136 153 170 187 204 221 238 255] (auto) Labels=cell [1 6] {'0','51','102','153','204','255'} (auto) Step=double 0.255 (auto)
+sl settled Limits [20 20000]: Value=double 20 Limits=double [20 20000] MajorTicks=double [20 6680 13340 20000] (auto) MinorTicks=double [20 575 1130 1685 2240 2795 3350 3905 4460 5015 5570 6125 6680 7235 7790 8345 8900 9455 10010 10565 11120 11675 12230 12785 13340 13895 14450 15005 15560 16115 16670 17225 17780 18335 18890 19445 20000] (auto) Labels=cell [1 4] {'20','6680','1.334e+04','2e+04'} (auto) Step=double 19.98 (auto)
+sl settled Limits [0 50]: Value=double 0 Limits=double [0 50] MajorTicks=double [0 10 20 30 40 50] (auto) MinorTicks=double [0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50] (auto) Labels=cell [1 6] {'0','10','20','30','40','50'} (auto) Step=double 0.05 (auto)
+sl settled Limits [30 50]: Value=double 30 Limits=double [30 50] MajorTicks=double [30 34 38 42 46 50] (auto) MinorTicks=double [30 30.5 31 31.5 32 32.5 33 33.5 34 34.5 35 35.5 36 36.5 37 37.5 38 38.5 39 39.5 40 40.5 41 41.5 42 42.5 43 43.5 44 44.5 45 45.5 46 46.5 47 47.5 48 48.5 49 49.5 50] (auto) Labels=cell [1 6] {'30','34','38','42','46','50'} (auto) Step=double 0.02 (auto)
+sl settled Limits [0 3]: Value=double 0 Limits=double [0 3] MajorTicks=double [0 0.5 1 1.5 2 2.5 3] (auto) MinorTicks=double [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3] (auto) Labels=cell [1 7] {'0','0.5','1','1.5','2','2.5','3'} (auto) Step=double 0.003 (auto)
+sl settled Limits [0 10]: Value=double 0 Limits=double [0 10] MajorTicks=double [0 2 4 6 8 10] (auto) MinorTicks=double [0 0.4 0.8 1.2 1.6 2 2.4 2.8 3.2 3.6 4 4.4 4.8 5.2 5.6 6 6.4 6.8 7.2 7.6 8 8.4 8.8 9.2 9.6 10] (auto) Labels=cell [1 6] {'0','2','4','6','8','10'} (auto) Step=double 0.01 (auto)
+sl settled Limits [0 15]: Value=double 0 Limits=double [0 15] MajorTicks=double [0 2.5 5 7.5 10 12.5 15] (auto) MinorTicks=double [0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15] (auto) Labels=cell [1 7] {'0','2.5','5','7.5','10','12.5','15'} (auto) Step=double 0.015 (auto)
+sl settled Limits [0 25]: Value=double 0 Limits=double [0 25] MajorTicks=double [0 5 10 15 20 25] (auto) MinorTicks=double [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25] (auto) Labels=cell [1 6] {'0','5','10','15','20','25'} (auto) Step=double 0.025 (auto)
+sl settled Limits [0 40]: Value=double 0 Limits=double [0 40] MajorTicks=double [0 5 10 15 20 25 30 35 40] (auto) MinorTicks=double [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40] (auto) Labels=cell [1 9] {'0','5','10','15','20','25','30','35','40'} (auto) Step=double 0.04 (auto)
+sl settled Limits [0 60]: Value=double 0 Limits=double [0 60] MajorTicks=double [0 10 20 30 40 50 60] (auto) MinorTicks=double [0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60] (auto) Labels=cell [1 7] {'0','10','20','30','40','50','60'} (auto) Step=double 0.06 (auto)
+sl settled Limits [0 150]: Value=double 0 Limits=double [0 150] MajorTicks=double [0 25 50 75 100 125 150] (auto) MinorTicks=double [0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150] (auto) Labels=cell [1 7] {'0','25','50','75','100','125','150'} (auto) Step=double 0.15 (auto)
+sl settled Limits [0 300]: Value=double 0 Limits=double [0 300] MajorTicks=double [0 50 100 150 200 250 300] (auto) MinorTicks=double [0 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180 190 200 210 220 230 240 250 260 270 280 290 300] (auto) Labels=cell [1 7] {'0','50','100','150','200','250','300'} (auto) Step=double 0.3 (auto)
+sl settled Limits [0 500]: Value=double 0 Limits=double [0 500] MajorTicks=double [0 100 200 300 400 500] (auto) MinorTicks=double [0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 360 380 400 420 440 460 480 500] (auto) Labels=cell [1 6] {'0','100','200','300','400','500'} (auto) Step=double 0.5 (auto)
+sl settled Limits [0 1000]: Value=double 0 Limits=double [0 1000] MajorTicks=double [0 200 400 600 800 1000] (auto) MinorTicks=double [0 25 50 75 100 125 150 175 200 225 250 275 300 325 350 375 400 425 450 475 500 525 550 575 600 625 650 675 700 725 750 775 800 825 850 875 900 925 950 975 1000] (auto) Labels=cell [1 6] {'0','200','400','600','800','1000'} (auto) Step=double 1 (auto)
+sl settled Limits [-1 1]: Value=double 0 Limits=double [-1 1] MajorTicks=double [-1 -0.6 -0.2 0.2 0.6 1] (auto) MinorTicks=double [-1 -0.95 -0.9 -0.85 -0.8 -0.75 -0.7 -0.65 -0.6 -0.55 -0.5 -0.45 -0.4 -0.35 -0.3 -0.25 -0.2 -0.15 -0.1 -0.05 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95 1] (auto) Labels=cell [1 6] {'-1','-0.6','-0.2','0.2','0.6','1'} (auto) Step=double 0.002 (auto)
+sl settled Limits [5 6]: Value=double 5 Limits=double [5 6] MajorTicks=double [5 5.2 5.4 5.6 5.8 6] (auto) MinorTicks=double [5 5.04 5.08 5.12 5.16 5.2 5.24 5.28 5.32 5.36 5.4 5.44 5.48 5.52 5.56 5.6 5.64 5.68 5.72 5.76 5.8 5.84 5.88 5.92 5.96 6] (auto) Labels=cell [1 6] {'5','5.2','5.4','5.6','5.8','6'} (auto) Step=double 0.001 (auto)
+sl settled Limits [0 0.5]: Value=double 0 Limits=double [0 0.5] MajorTicks=double [0 0.1 0.2 0.3 0.4 0.5] (auto) MinorTicks=double [0 0.02 0.04 0.06 0.08 0.1 0.12 0.14 0.16 0.18 0.2 0.22 0.24 0.26 0.28 0.3 0.32 0.34 0.36 0.38 0.4 0.42 0.44 0.46 0.48 0.5] (auto) Labels=cell [1 6] {'0','0.1','0.2','0.3','0.4','0.5'} (auto) Step=double 0.0005 (auto)
+sl settled Limits [100 200]: Value=double 100 Limits=double [100 200] MajorTicks=double [100 120 140 160 180 200] (auto) MinorTicks=double [100 104 108 112 116 120 124 128 132 136 140 144 148 152 156 160 164 168 172 176 180 184 188 192 196 200] (auto) Labels=cell [1 6] {'100','120','140','160','180','200'} (auto) Step=double 0.1 (auto)
+sl settled Limits [-100 0]: Value=double 0 Limits=double [-100 0] MajorTicks=double [-100 -80 -60 -40 -20 0] (auto) MinorTicks=double [-100 -96 -92 -88 -84 -80 -76 -72 -68 -64 -60 -56 -52 -48 -44 -40 -36 -32 -28 -24 -20 -16 -12 -8 -4 0] (auto) Labels=cell [1 6] {'-100','-80','-60','-40','-20','0'} (auto) Step=double 0.1 (auto)
+sl settled Limits [0 12345]: Value=double 0 Limits=double [0 12345] MajorTicks=double [0 4115 8230 12345] (auto) MinorTicks=double [0 823 1646 2469 3292 4115 4938 5761 6584 7407 8230 9053 9876 10699 11522 12345] (auto) Labels=cell [1 4] {'0','4115','8230','1.234e+04'} (auto) Step=double 12.345 (auto)
+sl settled Limits [0.5 2.5]: Value=double 0.5 Limits=double [0.5 2.5] MajorTicks=double [0.5 0.9 1.3 1.7 2.1 2.5] (auto) MinorTicks=double [0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95 1 1.05 1.1 1.15 1.2 1.25 1.3 1.35 1.4 1.45 1.5 1.55 1.6 1.65 1.7 1.75 1.8 1.85 1.9 1.95 2 2.05 2.1 2.15 2.2 2.25 2.3 2.35 2.4 2.45 2.5] (auto) Labels=cell [1 6] {'0.5','0.9','1.3','1.7','2.1','2.5'} (auto) Step=double 0.002 (auto)
+sl settled width 50: Value=double 0 Limits=double [0 100] MajorTicks=double [0 50 100] (auto) MinorTicks=double [0 10 20 30 40 50 60 70 80 90 100] (auto) Labels=cell [1 3] {'0','50','100'} (auto) Step=double 0.1 (auto)
+sl settled width 100: Value=double 0 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.1 (auto)
+sl settled width 150: Value=double 0 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.1 (auto)
+sl settled width 300: Value=double 0 Limits=double [0 100] MajorTicks=double [0 10 20 30 40 50 60 70 80 90 100] (auto) MinorTicks=double [0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100] (auto) Labels=cell [1 11] {'0','10','20','30','40','50','60','70','80','90','100'} (auto) Step=double 0.1 (auto)
+sl settled width 600: Value=double 0 Limits=double [0 100] MajorTicks=double [0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100] (auto) MinorTicks=double [0 0.8 1.6 2.4 3.2 4 4.8 5.6 6.4 7.2 8 8.8 9.6 10.4 11.2 12 12.8 13.6 14.4 15.2 16 16.8 17.6 18.4 19.2 20 20.8 21.6 22.4 23.2 24 24.8 25.6 26.4 27.2 28 28.8 29.6 30.4 31.2 32 32.8 33.6 34.4 35.2 36 36.8 37.6 38.4 39.2 40 40.8 41.6 42.4 43.2 44 44.8 45.6 46.4 47.2 48 48.8 49.6 50.4 51.2 52 52.8 53.6 54.4 55.2 56 56.8 57.6 58.4 59.2 60 60.8 61.6 62.4 63.2 64 64.8 65.6 66.4 67.2 68 68.8 69.6 70.4 71.2 72 72.8 73.6 74.4 75.2 76 76.8 77.6 78.4 79.2 80 80.8 81.6 82.4 83.2 84 84.8 85.6 86.4 87.2 88 88.8 89.6 90.4 91.2 92 92.8 93.6 94.4 95.2 96 96.8 97.6 98.4 99.2 100] (auto) Labels=cell [1 26] {'0','4','8','12','16','20','24','28','32','36','40','44','48','52','56','60','64','68','72','76','80','84','88','92','96','100'} (auto) Step=double 0.1 (auto)
+sl settled vertical: Value=double 0 Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.1 (auto)
+rs default: Value=double [0 100] Limits=double [0 100] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.1 (auto)
+rs Value <- double [10 20] : 'double [10 20] (double)'
+rs Value <- double [20 10] : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- double [10 10] : 'double [10 10] (double)'
+rs Value <- double 50 : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- double [0 100] : 'double [0 100] (double)'
+rs Value <- double [-1 50] : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- double [50 101] : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- double [1 2 3] : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- 'a' : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- double [NaN 5] : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- double [10;20] : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- int8 [10 20] : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs Value <- double [0 0] : ERR MATLAB:ui:RangeSlider:invalidValue | 'Value' must be a 1-by-2 non-decreasing array of doubles within the range of 'Limits'.
+rs [60 80] then Limits [0 50]: Value=double [50 50] Limits=double [0 50] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.05 (auto)
+rs [10 80] then Limits [20 50]: Value=double [20 50] Limits=double [20 50] MajorTicks=double [0 20 40 60 80 100] (auto) MinorTicks=double [0 0] (auto) Labels=cell [1 6] {'0','20','40','60','80','100'} (auto) Step=double 0.03 (auto)
+ta Value <- 'one' : cell [1 1] {'one'}
+ta Value <- "str" : cell [1 1] {'str'}
+ta Value <- cell [1 2] {'a','b'} : cell [2 1] {'a','b'}
+ta Value <- cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+ta Value <- string [1 2] [p,q] : cell [2 1] {'p','q'}
+ta Value <- string [2 1] [p,q] : cell [2 1] {'p','q'}
+ta Value <- 'x
+y' : cell [2 1] {'x','y'}
+ta Value <- char [2 2] ['ab';'cd'] : ERR MATLAB:ui:TextArea:invalidMultilineTextValue | 'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+ta Value <- '' : cell [1 1] {''}
+ta Value <- cell [0 0] {} : ERR MATLAB:ui:TextArea:invalidMultilineTextValue | 'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+ta Value <- cell [1 1] {''} : cell [1 1] {''}
+ta Value <- double 5 : ERR MATLAB:ui:TextArea:invalidMultilineTextValue | 'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+ta Value <- cell [1 1] {double 1} : ERR MATLAB:ui:TextArea:invalidMultilineTextValue | 'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+ta Value <- double [0 0] : ERR MATLAB:ui:TextArea:invalidMultilineTextValue | 'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+ta Value <- string <missing> : cell [1 1] {''}
+ta Value <- <categorical> : cell [2 1] {'u','v'}
+ta Value <- cell [2 2] {'a','c','b','d'} : ERR MATLAB:ui:TextArea:invalidMultilineTextValue | 'Value' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+ta Value <- cell [1 2] {'m
+n','o'} : cell [3 1] {'m','n','o'}
+Label Text <- 'one' : 'one'
+Label Text <- "str" : 'str'
+Label Text <- cell [1 2] {'a','b'} : cell [2 1] {'a','b'}
+Label Text <- cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+Label Text <- string [1 2] [p,q] : cell [2 1] {'p','q'}
+Label Text <- string [2 1] [p,q] : cell [2 1] {'p','q'}
+Label Text <- 'x
+y' : 'x
+y'
+Label Text <- char [2 2] ['ab';'cd'] : ERR MATLAB:ui:Label:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Label Text <- '' : ''
+Label Text <- cell [0 0] {} : ERR MATLAB:ui:Label:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Label Text <- cell [1 1] {''} : cell [1 1] {''}
+Label Text <- double 5 : ERR MATLAB:ui:Label:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Label Text <- cell [1 1] {double 1} : ERR MATLAB:ui:Label:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Label Text <- double [0 0] : ERR MATLAB:ui:Label:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Label Text <- string <missing> : ''
+Label Text <- <categorical> : cell [2 1] {'u','v'}
+Label Text <- cell [2 2] {'a','c','b','d'} : ERR MATLAB:ui:Label:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Label Text <- cell [1 2] {'m
+n','o'} : cell [2 1] {'m
+n','o'}
+Button Text <- 'one' : 'one'
+Button Text <- "str" : 'str'
+Button Text <- cell [1 2] {'a','b'} : cell [2 1] {'a','b'}
+Button Text <- cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+Button Text <- string [1 2] [p,q] : cell [2 1] {'p','q'}
+Button Text <- string [2 1] [p,q] : cell [2 1] {'p','q'}
+Button Text <- 'x
+y' : 'x
+y'
+Button Text <- char [2 2] ['ab';'cd'] : ERR MATLAB:ui:Button:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Button Text <- '' : ''
+Button Text <- cell [0 0] {} : ERR MATLAB:ui:Button:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Button Text <- cell [1 1] {''} : cell [1 1] {''}
+Button Text <- double 5 : ERR MATLAB:ui:Button:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Button Text <- cell [1 1] {double 1} : ERR MATLAB:ui:Button:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Button Text <- double [0 0] : ERR MATLAB:ui:Button:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Button Text <- string <missing> : ''
+Button Text <- <categorical> : cell [2 1] {'u','v'}
+Button Text <- cell [2 2] {'a','c','b','d'} : ERR MATLAB:ui:Button:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Button Text <- cell [1 2] {'m
+n','o'} : cell [2 1] {'m
+n','o'}
+CheckBox Text <- 'one' : 'one'
+CheckBox Text <- "str" : 'str'
+CheckBox Text <- cell [1 2] {'a','b'} : cell [2 1] {'a','b'}
+CheckBox Text <- cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+CheckBox Text <- string [1 2] [p,q] : cell [2 1] {'p','q'}
+CheckBox Text <- string [2 1] [p,q] : cell [2 1] {'p','q'}
+CheckBox Text <- 'x
+y' : 'x
+y'
+CheckBox Text <- char [2 2] ['ab';'cd'] : ERR MATLAB:ui:CheckBox:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+CheckBox Text <- '' : ''
+CheckBox Text <- cell [0 0] {} : ERR MATLAB:ui:CheckBox:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+CheckBox Text <- cell [1 1] {''} : cell [1 1] {''}
+CheckBox Text <- double 5 : ERR MATLAB:ui:CheckBox:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+CheckBox Text <- cell [1 1] {double 1} : ERR MATLAB:ui:CheckBox:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+CheckBox Text <- double [0 0] : ERR MATLAB:ui:CheckBox:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+CheckBox Text <- string <missing> : ''
+CheckBox Text <- <categorical> : cell [2 1] {'u','v'}
+CheckBox Text <- cell [2 2] {'a','c','b','d'} : ERR MATLAB:ui:CheckBox:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+CheckBox Text <- cell [1 2] {'m
+n','o'} : cell [2 1] {'m
+n','o'}
+Hyperlink Text <- 'one' : 'one'
+Hyperlink Text <- "str" : 'str'
+Hyperlink Text <- cell [1 2] {'a','b'} : cell [2 1] {'a','b'}
+Hyperlink Text <- cell [2 1] {'a','b'} : cell [2 1] {'a','b'}
+Hyperlink Text <- string [1 2] [p,q] : cell [2 1] {'p','q'}
+Hyperlink Text <- string [2 1] [p,q] : cell [2 1] {'p','q'}
+Hyperlink Text <- 'x
+y' : 'x
+y'
+Hyperlink Text <- char [2 2] ['ab';'cd'] : ERR MATLAB:ui:Hyperlink:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Hyperlink Text <- '' : ''
+Hyperlink Text <- cell [0 0] {} : ERR MATLAB:ui:Hyperlink:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Hyperlink Text <- cell [1 1] {''} : cell [1 1] {''}
+Hyperlink Text <- double 5 : ERR MATLAB:ui:Hyperlink:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Hyperlink Text <- cell [1 1] {double 1} : ERR MATLAB:ui:Hyperlink:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Hyperlink Text <- double [0 0] : ERR MATLAB:ui:Hyperlink:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Hyperlink Text <- string <missing> : ''
+Hyperlink Text <- <categorical> : cell [2 1] {'u','v'}
+Hyperlink Text <- cell [2 2] {'a','c','b','d'} : ERR MATLAB:ui:Hyperlink:invalidMultilineTextValue | 'Text' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.
+Hyperlink Text <- cell [1 2] {'m
+n','o'} : cell [2 1] {'m
+n','o'}
+cb Value <- logical true : 'logical true (logical)'
+cb Value <- logical false : 'logical false (logical)'
+cb Value <- double 1 : 'logical true (logical)'
+cb Value <- double 0 : 'logical false (logical)'
+cb Value <- double 2 : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+cb Value <- 'on' : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+cb Value <- "on" : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+cb Value <- 'off' : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+cb Value <- double [0 0] : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+cb Value <- double [1 0] : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+cb Value <- int8 1 : 'logical true (logical)'
+cb Value <- double 0.5 : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+cb Value <- double NaN : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+cb Value <- cell [1 1] {logical true} : ERR MATLAB:ui:CheckBox:invalidSelected | 'Value' must be true or false.
+stb Value <- logical true : 'logical true (logical)'
+stb Value <- double 1 : 'logical true (logical)'
+stb Value <- double 2 : ERR MATLAB:ui:StateButton:invalidSelected | 'Value' must be true or false.
+stb Value <- 'on' : ERR MATLAB:ui:StateButton:invalidSelected | 'Value' must be true or false.
+stb Value <- double [0 0] : ERR MATLAB:ui:StateButton:invalidSelected | 'Value' must be true or false.
+stb Value <- double [1 0] : ERR MATLAB:ui:StateButton:invalidSelected | 'Value' must be true or false.
+Button Icon <- '' : ''''
+[Warning: File 'nosuchfile.png' is not on the MATLAB or specified path.]
+Button Icon <- 'nosuchfile.png' : ''''
+Button Icon <- <path>greenarrowicon.gif : '<path>greenarrowicon.gif'
+Button Icon <- double [1 1] : ERR MATLAB:ui:Button:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+Button Icon <- double [4 4 3] : 'double [4 4 3]'
+Button Icon <- uint8 [4 4 3] : 'uint8 [4 4 3]'
+Button Icon <- double [4 4] : ERR MATLAB:ui:Button:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+Button Icon <- 'info' : ''info''
+Button Icon <- 'success' : ''success''
+Button Icon <- 'error' : ''error''
+Button Icon <- 'warning' : ''warning''
+Button Icon <- 'question' : ''question''
+Button Icon <- 'none' : ERR MATLAB:ui:Button:invalidIconFile | You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.
+Button Icon <- "" : ''''
+Button Icon <- double [4 4 4] : ERR MATLAB:ui:Button:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+Button Icon <- logical [3 3 3] : ERR MATLAB:ui:Button:invalidIconFile | You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.
+Image ImageSource <- '' : ''''
+[Warning: File 'nosuchfile.png' is not on the MATLAB or specified path.]
+Image ImageSource <- 'nosuchfile.png' : ''''
+Image ImageSource <- <path>greenarrowicon.gif : '<path>greenarrowicon.gif'
+Image ImageSource <- double [1 1] : ERR MATLAB:ui:Image:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+Image ImageSource <- double [4 4 3] : 'double [4 4 3]'
+Image ImageSource <- uint8 [4 4 3] : 'uint8 [4 4 3]'
+Image ImageSource <- double [4 4] : ERR MATLAB:ui:Image:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+Image ImageSource <- 'info' : ERR MATLAB:ui:Image:InvalidImageSourceSpecified | ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.
+Image ImageSource <- 'success' : ERR MATLAB:ui:Image:InvalidImageSourceSpecified | ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.
+Image ImageSource <- 'error' : ERR MATLAB:ui:Image:InvalidImageSourceSpecified | ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.
+Image ImageSource <- 'warning' : ERR MATLAB:ui:Image:InvalidImageSourceSpecified | ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.
+Image ImageSource <- 'question' : ERR MATLAB:ui:Image:InvalidImageSourceSpecified | ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.
+Image ImageSource <- 'none' : ERR MATLAB:ui:Image:InvalidImageSourceSpecified | ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.
+Image ImageSource <- "" : ''''
+Image ImageSource <- double [4 4 4] : ERR MATLAB:ui:Image:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+Image ImageSource <- logical [3 3 3] : ERR MATLAB:ui:Image:InvalidImageSourceSpecified | ImageSource value must be a valid file path, or an m-by-n-by-3 color data matrix.
+ubg empty: SelectedObject matlab.graphics.GraphicsPlaceholder empty [0 0] Buttons double [0 0]
+first radio: r1=true sel=r1 | pos [10 10 91 22]
+second radio: r1=true r2=false sel=r1 | pos [10 10 91 22]
+third radio made true: r1=false r2=false r3=true sel=r3
+r2 true: r1=false r2=true r3=false sel=r2
+r2 false (selected) : logical false
+   r1=true r2=false r3=false sel=r1
+r1 false (unselected) : logical false
+   r1=false r2=true r3=false sel=r2
+r1 Value 1 : 'logical true (logical)'
+   r1=true r2=false r3=false sel=r1
+r1 Value 2 : ERR MATLAB:ui:RadioButton:invalidValue | 'Selected' must be true or false.
+r1 Value on : ERR MATLAB:ui:RadioButton:invalidValue | 'Selected' must be true or false.
+SelectedObject r3: r1=false r2=false r3=true sel=r3
+SelectedObject [] : ERR MATLAB:hg:InvalidSelectedObjectType | Must set the SelectedObject to a Radio Button or a Toggle Button.
+   r1=false r2=false r3=true sel=r3
+SelectedObject figure : ERR MATLAB:hg:InvalidSelectedObjectType | Must set the SelectedObject to a Radio Button or a Toggle Button.
+SelectedObject outside radio : ERR MATLAB:hg:InvalidSelectedObjectParent | SelectedObject must be a child of this UIButtonGroup.
+SelectedObject [r1 r2] : <matlab.ui.control.RadioButton [1 1]>
+deleted the selected r3: r1=true r2=false sel=r1
+deleted the selected r1: r2=true sel=r2
+deleted the last: matlab.graphics.GraphicsPlaceholder empty [0 0]
+first radio made false: r4=true sel=r4
+toggle added to radios : ERR MATLAB:ui:ToggleButton:unknownInput | Mutual exclusivity violated for ButtonGroup. A ToggleButton can only be parented to a ButtonGroup with ToggleButton.
+   r4=true sel=r4
+uicontrol radio added to ui radios : ERR MATLAB:gbtobjects:MutualExclusivityViolation | Mutual exclusivity violated for ButtonGroup. A UIControl can only be parented to a ButtonGroup with UIControl.
+   r4=true sel=r4
+button added to ui radios : 'matlab.ui.control.Button type uibutton parent matlab.ui.container.ButtonGroup Position [100 100 100 22]'
+panel added to ui radios : 'matlab.ui.container.Panel'

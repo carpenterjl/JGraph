@@ -48,6 +48,16 @@ public sealed class MatlabGraphicsPropertyTests
         ["UiProgressIndicatorModel.Name"] = "a component answers to MATLAB's names alone, and a progress indicator has no Name (ADR 0201)",
         ["UiProgressIndicatorModel.Selectable"] = "reached as HitTest, which is MATLAB's name for it (ADR 0201)",
         ["UiProgressIndicatorModel.ZOrder"] = "a component's stacking is its place among Children, as uistack moves it (ADR 0201)",
+        ["UiComponentModel.Name"] = "a uifigure component answers to R2025b's names alone, and none has a Name (ADR 0202)",
+        ["UiComponentModel.ZOrder"] = "a component's stacking is its place among Children, as uistack moves it (ADR 0202)",
+        ["UiComponentModel.Selectable"] = "the model's own; R2025b's components have no HitTest to carry it (ADR 0202)",
+        ["UiGridLayoutModel.Name"] = "a grid answers to R2025b's names alone, and has no Name (ADR 0202)",
+        ["UiGridLayoutModel.ZOrder"] = "a component's stacking is its place among Children, as uistack moves it (ADR 0202)",
+        ["UiGridLayoutModel.Selectable"] = "the model's own; R2025b's grid has no HitTest to carry it (ADR 0202)",
+        ["UiOverlayModel.Name"] = "a dialog over a figure has R2025b's ten ProgressDialog properties and no others (ADR 0202)",
+        ["UiOverlayModel.Visible"] = "a dialog over a figure has R2025b's ten ProgressDialog properties and no others (ADR 0202)",
+        ["UiOverlayModel.ZOrder"] = "a dialog over a figure has R2025b's ten ProgressDialog properties and no others (ADR 0202)",
+        ["UiOverlayModel.Selectable"] = "a dialog over a figure has R2025b's ten ProgressDialog properties and no others (ADR 0202)",
         ["ContextMenuModel.Items"] = "reached as Children",
         ["MenuItemModel.Items"] = "reached as Children",
         ["LegendModel.Entries"] = "reached as the String property",
@@ -94,7 +104,8 @@ public sealed class MatlabGraphicsPropertyTests
             }
 
             string key = $"{info.DeclaringType?.Name}.{info.Name}";
-            if (Excused.ContainsKey(key) || Excused.ContainsKey($"{type.Name}.{info.Name}"))
+            if (Excused.ContainsKey(key) || Excused.ContainsKey($"{type.Name}.{info.Name}")
+                || (typeof(UiComponentModel).IsAssignableFrom(type) && Excused.ContainsKey($"{nameof(UiComponentModel)}.{info.Name}")))
             {
                 continue;
             }
@@ -116,8 +127,21 @@ public sealed class MatlabGraphicsPropertyTests
     public void EveryFigureObjectAnswersTheUniversalProperties(Type type)
     {
         IReadOnlyDictionary<string, GraphicsProperty> table = JgsGraphicsProperties.TableFor(type);
+        // R2025b's own exceptions (ADR 0202, fixtures u5_props and u5_dialogs): a ProgressDialog has
+        // its ten properties and none of these, and a uifigure component that holds nothing has no
+        // Children.
+        if (type == typeof(UiOverlayModel))
+        {
+            return;
+        }
+
         foreach (string universal in new[] { "type", "tag", "userdata", "parent", "children", "visible" })
         {
+            if (universal == "children" && typeof(UiComponentModel).IsAssignableFrom(type))
+            {
+                continue;
+            }
+
             Assert.True(table.ContainsKey(universal), $"{type.Name} does not answer to '{universal}'.");
         }
     }

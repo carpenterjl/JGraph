@@ -1,0 +1,195 @@
+uialert invisible : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert no args : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert one arg : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert two args : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert number : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert classic figure : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert component : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert bad option on invisible : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert bad icon on invisible : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert numeric message on invisible : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uiconfirm invisible : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm no args : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+uiconfirm classic figure : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm number : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiprogressdlg invisible : ERR MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+uiprogressdlg no args : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+uiprogressdlg classic figure : ERR MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+uiprogressdlg number : ERR MATLAB:uitools:uidialogs:InvalidFigureHandle | Invalid or deleted figure handle. First argument must be a valid figure handle
+uiprogressdlg bad option on invisible : ERR MATLAB:uitools:uidialogs:InvisibleFigure | Figure handle 'Visible' value must be 'on'.
+focus invisible figure : ERR MATLAB:TooManyOutputs | Too many output arguments.
+   lastwarn  |
+focus component of invisible figure : ERR MATLAB:TooManyOutputs | Too many output arguments.
+   lastwarn  |
+focus classic figure : ERR MATLAB:TooManyOutputs | Too many output arguments.
+focus number : ERR MATLAB:UndefinedFunction | Undefined function 'focus' for input arguments of type 'double'.
+focus no args : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'focus'.
+focus label : ERR MATLAB:TooManyOutputs | Too many output arguments.
+   lastwarn  |
+visible uifigure: Visible on
+uialert visible : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert message cell : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert message string array : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert message number : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert title number : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert bad option : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert odd options : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'error' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'warning' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'info' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'success' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'question' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'none' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon '' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'bogus' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon double 5 : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'ERROR' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Icon 'err' : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Modal false : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Modal bogus : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Interpreter html : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert Interpreter bogus : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert CloseFcn handle : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert CloseFcn number : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uialert nargout : double 0
+uialert with output : ERR MATLAB:TooManyOutputs | Too many output arguments.
+uiconfirm visible : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm bad option : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm Options number : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm five options : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm DefaultOption 9 : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm DefaultOption text not in options : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm CancelOption 9 : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiconfirm Icon bogus : ERR MATLAB:hg:NonInteractiveFunctionSupport | Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.
+uiprogressdlg visible : 'matlab.ui.dialog.ProgressDialog'
+progress names: Value Message Title Indeterminate Icon ShowPercentage Cancelable CancelText Interpreter CancelRequested
+progress default Value : double 0
+progress default Message : ''
+progress default Title : ''
+progress default Indeterminate : OnOff off
+progress default Icon : ''
+progress default ShowPercentage : OnOff off
+progress default Cancelable : OnOff off
+progress default CancelText : 'Cancel'
+progress default Interpreter : 'none'
+progress default CancelRequested : logical false
+progress Value <- double 0.5 : double 0.5
+progress Value <- double 1 : double 1
+progress Value <- double 0 : double 0
+progress Value <- double -0.1 : ERR MATLAB:validators:mustBeGreaterThanOrEqual | Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be greater than or equal to 0.
+progress Value <- double 1.5 : ERR MATLAB:validators:mustBeLessThanOrEqual | Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be less than or equal to 1.
+progress Value <- double [0.1 0.2] : ERR MATLAB:validation:IncompatibleSize | Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.
+progress Value <- 'a' : ERR MATLAB:validators:mustBeNumeric | Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be numeric.
+progress Value <- double NaN : ERR MATLAB:validators:mustBeGreaterThanOrEqual | Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be greater than or equal to 0.
+progress Value <- int8 1 : int8 1
+progress Value <- logical true : ERR MATLAB:validators:mustBeNumeric | Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be numeric.
+progress Value <- double [0 0] : ERR MATLAB:validation:IncompatibleSize | Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.
+progress Message <- 'abc' : 'abc'
+progress Message <- "str" : 'str'
+progress Message <- cell [1 2] {'a','b'} : 'a
+b'
+progress Message <- string [2 1] [a,b] : 'a
+b'
+progress Message <- double 5 : ERR MATLAB:uitools:uidialogs:InvalidMessageText | 'Message' must be a char array, string array or a cell array of character vectors.
+progress Message <- '' : ''
+progress Message <- double [0 0] : ERR MATLAB:uitools:uidialogs:InvalidMessageText | 'Message' must be a char array, string array or a cell array of character vectors.
+progress Title <- 'abc' : 'abc'
+progress Title <- "str" : 'str'
+progress Title <- cell [1 2] {'a','b'} : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+progress Title <- string [2 1] [a,b] : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+progress Title <- double 5 : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+progress Title <- '' : ''
+progress Title <- double [0 0] : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+progress CancelText <- 'abc' : 'abc'
+progress CancelText <- "str" : 'str'
+progress CancelText <- cell [1 2] {'a','b'} : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+progress CancelText <- string [2 1] [a,b] : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+progress CancelText <- double 5 : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+progress CancelText <- '' : ''
+progress CancelText <- double [0 0] : ERR MATLAB:uitools:uidialogs:InvalidTitleText | 'Title' must be a char array or a string scalar.
+progress Indeterminate <- 'on' : OnOff on
+progress Indeterminate <- 'off' : OnOff off
+progress Indeterminate <- logical true : OnOff on
+progress Indeterminate <- double 0 : OnOff off
+progress Indeterminate <- 'bogus' : ERR MATLAB:validation:UnableToConvert | Error setting property 'Indeterminate' of class 'matlab.ui.dialog.ProgressDialog'. 'bogus' is invalid. Value must be 'off' or 'on'.
+progress Indeterminate <- double [1 0] : ERR MATLAB:validation:IncompatibleSize | Error setting property 'Indeterminate' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.
+progress Cancelable <- 'on' : OnOff on
+progress Cancelable <- 'off' : OnOff off
+progress Cancelable <- logical true : OnOff on
+progress Cancelable <- double 0 : OnOff off
+progress Cancelable <- 'bogus' : ERR MATLAB:validation:UnableToConvert | Error setting property 'Cancelable' of class 'matlab.ui.dialog.ProgressDialog'. 'bogus' is invalid. Value must be 'off' or 'on'.
+progress Cancelable <- double [1 0] : ERR MATLAB:validation:IncompatibleSize | Error setting property 'Cancelable' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.
+progress ShowPercentage <- 'on' : OnOff on
+progress ShowPercentage <- 'off' : OnOff off
+progress ShowPercentage <- logical true : OnOff on
+progress ShowPercentage <- double 0 : OnOff off
+progress ShowPercentage <- 'bogus' : ERR MATLAB:validation:UnableToConvert | Error setting property 'ShowPercentage' of class 'matlab.ui.dialog.ProgressDialog'. 'bogus' is invalid. Value must be 'off' or 'on'.
+progress ShowPercentage <- double [1 0] : ERR MATLAB:validation:IncompatibleSize | Error setting property 'ShowPercentage' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.
+progress Icon <- 'error' : 'error'
+progress Icon <- 'warning' : 'warning'
+progress Icon <- 'info' : 'info'
+progress Icon <- 'success' : 'success'
+progress Icon <- 'question' : 'question'
+progress Icon <- 'none' : ''
+progress Icon <- '' : ''
+progress Icon <- 'bogus' : ERR MATLAB:ui:ProgressDialog:InvalidIconSpecified | Icon value must be 'error', 'warning', 'info', 'question', 'success', 'none', a valid file path, or an m-by-n-by-3 color data matrix.
+progress Icon <- double 5 : ERR MATLAB:ui:ProgressDialog:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+progress Icon <- 'ERROR' : 'error'
+progress Icon <- 'err' : 'error'
+progress Interpreter html : 'html'
+progress Interpreter bogus : ERR MATLAB:uitools:uidialogs:InvalidInterpreter | 'Interpreter' value must be 'none', 'html', 'latex', or 'tex'.
+progress CancelRequested get : logical false
+progress CancelRequested set : logical true
+progress Bogus set : ERR MATLAB:class:InvalidProperty | The name 'Bogus' is not an accessible property for an instance of class 'matlab.ui.dialog.ProgressDialog'.
+progress dot : int8 1
+progress isvalid 1 class matlab.ui.dialog.ProgressDialog
+after close: isvalid 0
+progress Value after close : ERR MATLAB:class:InvalidHandle | Invalid or deleted object.
+progress close twice : ERR MATLAB:TooManyOutputs | Too many output arguments.
+progress ctor pairs: Title T Message M Value double 0.25 Cancelable on Indeterminate on
+after delete: isvalid 0
+two dialogs: valid 1 1
+after the figure is deleted: valid 1 1
+uiprogressdlg odd : ERR MATLAB:uitools:uidialogs:IncorrectNameValuePairs | Incorrect number of name-value pairs. Each parameter name must be followed by a corresponding value.
+uiprogressdlg bad option : ERR MATLAB:uitools:uidialogs:IncorrectParameterNameShort | Invalid parameter name 'Bogus'.
+uiprogressdlg bad value : ERR MATLAB:validators:mustBeLessThanOrEqual | Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be less than or equal to 1.
+uiaxes () : 'matlab.ui.control.UIAxes type axes parent matlab.ui.Figure Units pixels Position [10 10 400 300]'
+uiaxes (uifigure) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.Figure Units pixels Position [10 10 400 300]'
+uiaxes (figure) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.Figure Units pixels Position [10 10 400 300]'
+uiaxes (panel) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.container.Panel Units pixels Position [10 10 400 300]'
+uiaxes (classic panel) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.container.Panel Units pixels Position [10 10 400 300]'
+uiaxes (grid) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.container.GridLayout Units pixels Position [10 10 400 300]'
+uiaxes (buttongroup) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.container.ButtonGroup Units pixels Position [10 10 400 300]'
+uiaxes (axes) : ERR MATLAB:ui:UIAxes:unknownInput | UIAxes cannot be a child of Axes.
+uiaxes (button) : ERR MATLAB:ui:UIAxes:unknownInput | UIAxes cannot be a child of Button.
+uiaxes (5.5) : ERR MATLAB:ui:UIAxes:unknownInput | 'Parent' must be a parent component, such as a uifigure object.
+uiaxes (Parent, uf) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.Figure Units pixels Position [10 10 400 300]'
+uiaxes (uf, Position) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.Figure Units pixels Position [20 30 200 150]'
+uiaxes (uf, Units normalized, Position) : 'matlab.ui.control.UIAxes type axes parent matlab.ui.Figure Units normalized Position [0.1 0.1 0.5 0.5]'
+uiaxes (uf, Bogus) : ERR MATLAB:ui:UIAxes:unknownInput | Unrecognized property Bogus for class UIAxes.
+uiaxes (uf, odd) : ERR MATLAB:ui:UIAxes:unknownInput | Invalid parameter/value pair arguments.
+uiaxes (uf, XLim, Title? ) : double [0 5]
+uiaxes (struct) : ERR MATLAB:ui:UIAxes:unknownInput | Invalid parameter/value pair arguments.
+axes (uifigure) : 'matlab.graphics.axis.Axes type axes parent matlab.ui.Figure Units normalized Position [0.13 0.11 0.775 0.815]'
+axes (uipanel in uifigure) : 'matlab.graphics.axis.Axes type axes parent matlab.ui.container.Panel Units normalized Position [0.13 0.11 0.775 0.815]'
+uiaxes: isa UIAxes 1 isa Axes 1 Type axes NextPlot replacechildren Box off FontSize 12 FontUnits pixels FontName Helvetica Toolbar matlab.ui.controls.AxesToolbar
+uiaxes: InnerPosition [31.7333 27.7333 373.267 275.267] OuterPosition [10 10 400 300] PositionConstraint outerposition Units pixels
+uiaxes BackgroundColor : 'none'
+uiaxes Layout : 'matlab.ui.layout.LayoutOptions'
+uiaxes Units <- normalized : 'normalized'
+   Position now [0.0160714 0.0214286 0.714286 0.714286]
+uiaxes Position <- [50 60 300 200] : double [50 60 300 200]
+   Inner [71.7333 77.7333 273.267 175.267] Outer [50 60 300 200] Constraint outerposition
+uiaxes InnerPosition <- [80 90 200 100] : double [80 90 200 100]
+   Position [58.2667 72.2667 226.733 124.733] Outer [58.2667 72.2667 226.733 124.733] Constraint innerposition
+uiaxes OuterPosition <- [10 10 400 300] : double [10 10 400 300]
+   Position [10 10 400 300] Inner [31.7333 27.7333 373.267 275.267] Constraint outerposition
+after plot(ax): children 1 title kept [T] xlabel [X] XLim [1 3]
+after second plot(ax): children 1 title kept [T] XLim [1 5]
+hold on: children 2 NextPlot add
+gca with only a uiaxes : 'matlab.ui.Figure'
+   figures before 2 after 2
+figure children order: axes
+button, then uiaxes: uibutton axes axes
+cla(ax) : double 0
+grid(ax, on) : 'XGrid on YGrid on'

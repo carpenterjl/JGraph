@@ -1,0 +1,196 @@
+CHK|alert_invisible|MATLAB:uitools:uidialogs:InvisibleFigure :: Figure handle 'Visible' value must be 'on'.|exact
+CHK|alert_no_arguments|MATLAB:narginchk:notEnoughInputs :: Not enough input arguments.|exact
+CHK|alert_one_argument|MATLAB:narginchk:notEnoughInputs :: Not enough input arguments.|exact
+CHK|alert_two_arguments|MATLAB:narginchk:notEnoughInputs :: Not enough input arguments.|exact
+CHK|alert_number|MATLAB:uitools:uidialogs:InvalidFigureHandle :: Invalid or deleted figure handle. First argument must be a valid figure handle|exact
+CHK|alert_classic_figure|MATLAB:uitools:uidialogs:InvisibleFigure :: Figure handle 'Visible' value must be 'on'.|exact
+CHK|alert_component|MATLAB:uitools:uidialogs:InvalidFigureHandle :: Invalid or deleted figure handle. First argument must be a valid figure handle|exact
+CHK|alert_invisible_bad_option|MATLAB:uitools:uidialogs:InvisibleFigure :: Figure handle 'Visible' value must be 'on'.|exact
+CHK|alert_invisible_bad_message|MATLAB:uitools:uidialogs:InvisibleFigure :: Figure handle 'Visible' value must be 'on'.|exact
+CHK|confirm_invisible|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|confirm_invisible_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|confirm_no_arguments|MATLAB:narginchk:notEnoughInputs|exact
+CHK|confirm_no_arguments_msg|Not enough input arguments.|exact
+CHK|confirm_classic_figure|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|confirm_classic_figure_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|confirm_number|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|confirm_number_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|progress_invisible|MATLAB:uitools:uidialogs:InvisibleFigure|exact
+CHK|progress_invisible_msg|Figure handle 'Visible' value must be 'on'.|exact
+CHK|progress_no_arguments|MATLAB:narginchk:notEnoughInputs|exact
+CHK|progress_no_arguments_msg|Not enough input arguments.|exact
+CHK|progress_classic_figure|MATLAB:uitools:uidialogs:InvisibleFigure|exact
+CHK|progress_classic_figure_msg|Figure handle 'Visible' value must be 'on'.|exact
+CHK|progress_number|MATLAB:uitools:uidialogs:InvalidFigureHandle|exact
+CHK|progress_number_msg|Invalid or deleted figure handle. First argument must be a valid figure handle|exact
+CHK|progress_invisible_bad_option|MATLAB:uitools:uidialogs:InvisibleFigure|exact
+CHK|progress_invisible_bad_option_msg|Figure handle 'Visible' value must be 'on'.|exact
+CHK|focus_invisible_figure|ran WARN MATLAB:ui:Figure:FigureNotFocusable|exact
+CHK|focus_invisible_component|ran WARN MATLAB:ui:Button:FigureNotFocusable|exact
+CHK|focus_classic_figure|ran WARN MATLAB:ui:Figure:FigureNotFocusable|exact
+CHK|focus_label|ran WARN MATLAB:ui:Label:FigureNotFocusable|exact
+CHK|focus_axes|MATLAB:UndefinedFunction :: Undefined function 'focus' for input arguments of type 'matlab.ui.control.UIAxes'.|exact
+CHK|focus_panel|MATLAB:UndefinedFunction :: Undefined function 'focus' for input arguments of type 'matlab.ui.container.Panel'.|exact
+CHK|focus_uicontrol|MATLAB:UndefinedFunction :: Undefined function 'focus' for input arguments of type 'matlab.ui.control.UIControl'.|exact
+CHK|focus_no_arguments|MATLAB:UndefinedFunction :: Unrecognized function or variable 'focus'.|exact
+CHK|alert_shown|ran|exact
+CHK|alert_message_cell|ran|exact
+CHK|alert_message_strings|ran|exact
+CHK|alert_message_number|MATLAB:uitools:uidialogs:InvalidMessageText :: 'Message' must be a char array, string array or a cell array of character vectors.|exact
+CHK|alert_message_empty|ran|exact
+CHK|alert_title_number|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|alert_title_cell|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|alert_bad_option|MATLAB:uitools:uidialogs:IncorrectParameterName :: Invalid parameter name 'Bogus'. Valid names are 'Icon', 'Modal', 'CloseFcn', 'Interpreter'.|exact
+CHK|alert_odd_options|MATLAB:uitools:uidialogs:IncorrectNameValuePairs :: Incorrect number of name-value pairs. Each parameter name must be followed by a corresponding value.|exact
+CHK|alert_icon_01|ran|exact
+CHK|alert_icon_02|ran|exact
+CHK|alert_icon_03|ran|exact
+CHK|alert_icon_04|ran|exact
+CHK|alert_icon_05|ran|exact
+CHK|alert_icon_06|ran|exact
+CHK|alert_icon_07|ran|exact
+CHK|alert_icon_08|MATLAB:uitools:uidialogs:InvalidIconSpecified :: Icon value must be 'error', 'warning', 'info', 'question', 'success', 'none', a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|alert_icon_09|MATLAB:uitools:uidialogs:invalidIconCData :: You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|alert_icon_10|ran|exact
+CHK|alert_icon_11|ran|exact
+CHK|alert_modal_false|ran|exact
+CHK|alert_modal_word|MATLAB:uitools:uidialogs:InvalidModalValue :: 'Modal' value must be true or false.|exact
+CHK|alert_interpreter|ran|exact
+CHK|alert_interpreter_bad|MATLAB:uitools:uidialogs:InvalidInterpreter :: 'Interpreter' value must be 'none', 'html', 'latex', or 'tex'.|exact
+CHK|alert_closefcn_handle|ran|exact
+CHK|alert_closefcn_text|ran|exact
+CHK|alert_closefcn_cell|ran|exact
+CHK|alert_closefcn_number|MATLAB:uitools:uidialogs:InvalidCloseFcnValue :: 'CloseFcn' value must be a character vector, a function handle, or a cell array containing a character vector or a function handle.|exact
+CHK|alert_option_lower_case|ran|exact
+CHK|alert_option_prefix|ran|exact
+CHK|alert_on_a_component|MATLAB:uitools:uidialogs:InvalidFigureHandle :: Invalid or deleted figure handle. First argument must be a valid figure handle|exact
+CHK|confirm_shown|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|confirm_shown_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact
+CHK|focus_shown_figure|ran|exact
+CHK|focus_shown_component|ran|exact
+CHK|progress_default_Value|double [1 1] 0|exact
+CHK|progress_default_Message|char ''|exact
+CHK|progress_default_Title|char ''|exact
+CHK|progress_default_Indeterminate|onoff off|exact
+CHK|progress_default_Icon|char ''|exact
+CHK|progress_default_ShowPercentage|onoff off|exact
+CHK|progress_default_Cancelable|onoff off|exact
+CHK|progress_default_CancelText|char 'Cancel'|exact
+CHK|progress_default_Interpreter|char 'none'|exact
+CHK|progress_default_CancelRequested|logical [1 1] 0|exact
+CHK|progress_value_01|double [1 1] 0.5|exact
+CHK|progress_value_02|double [1 1] 1|exact
+CHK|progress_value_03|double [1 1] 0|exact
+CHK|progress_value_04|MATLAB:validators:mustBeGreaterThanOrEqual :: Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be greater than or equal to 0.|exact
+CHK|progress_value_05|MATLAB:validators:mustBeLessThanOrEqual :: Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be less than or equal to 1.|exact
+CHK|progress_value_06|MATLAB:validation:IncompatibleSize :: Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.|exact
+CHK|progress_value_07|MATLAB:validators:mustBeNumeric :: Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be numeric.|exact
+CHK|progress_value_08|MATLAB:validators:mustBeGreaterThanOrEqual :: Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be greater than or equal to 0.|exact
+CHK|progress_value_09|int8 [1 1] 1|exact
+CHK|progress_value_10|MATLAB:validators:mustBeNumeric :: Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be numeric.|exact
+CHK|progress_value_11|MATLAB:validation:IncompatibleSize :: Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.|exact
+CHK|progress_message_1|char 'abc'|exact
+CHK|progress_message_2|char 'str'|exact
+CHK|progress_message_3|char 'a b'|exact
+CHK|progress_message_4|char 'a b'|exact
+CHK|progress_message_5|MATLAB:uitools:uidialogs:InvalidMessageText :: 'Message' must be a char array, string array or a cell array of character vectors.|exact
+CHK|progress_message_6|char ''|exact
+CHK|progress_message_7|MATLAB:uitools:uidialogs:InvalidMessageText :: 'Message' must be a char array, string array or a cell array of character vectors.|exact
+CHK|progress_title_1|char 'abc'|exact
+CHK|progress_title_2|char 'str'|exact
+CHK|progress_title_3|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|progress_title_4|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|progress_title_5|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|progress_title_6|char ''|exact
+CHK|progress_title_7|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|progress_canceltext_1|char 'abc'|exact
+CHK|progress_canceltext_2|char 'str'|exact
+CHK|progress_canceltext_3|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|progress_canceltext_4|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|progress_canceltext_5|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|progress_canceltext_6|char ''|exact
+CHK|progress_canceltext_7|MATLAB:uitools:uidialogs:InvalidTitleText :: 'Title' must be a char array or a string scalar.|exact
+CHK|progress_Indeterminate_1|onoff on|exact
+CHK|progress_Indeterminate_2|onoff off|exact
+CHK|progress_Indeterminate_3|onoff on|exact
+CHK|progress_Indeterminate_4|onoff off|exact
+CHK|progress_Indeterminate_5|MATLAB:validation:UnableToConvert :: Error setting property 'Indeterminate' of class 'matlab.ui.dialog.ProgressDialog'. 'bogus' is invalid. Value must be 'off' or 'on'.|exact
+CHK|progress_Indeterminate_6|MATLAB:validation:IncompatibleSize :: Error setting property 'Indeterminate' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.|exact
+CHK|progress_Cancelable_1|onoff on|exact
+CHK|progress_Cancelable_2|onoff off|exact
+CHK|progress_Cancelable_3|onoff on|exact
+CHK|progress_Cancelable_4|onoff off|exact
+CHK|progress_Cancelable_5|MATLAB:validation:UnableToConvert :: Error setting property 'Cancelable' of class 'matlab.ui.dialog.ProgressDialog'. 'bogus' is invalid. Value must be 'off' or 'on'.|exact
+CHK|progress_Cancelable_6|MATLAB:validation:IncompatibleSize :: Error setting property 'Cancelable' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.|exact
+CHK|progress_ShowPercentage_1|onoff on|exact
+CHK|progress_ShowPercentage_2|onoff off|exact
+CHK|progress_ShowPercentage_3|onoff on|exact
+CHK|progress_ShowPercentage_4|onoff off|exact
+CHK|progress_ShowPercentage_5|MATLAB:validation:UnableToConvert :: Error setting property 'ShowPercentage' of class 'matlab.ui.dialog.ProgressDialog'. 'bogus' is invalid. Value must be 'off' or 'on'.|exact
+CHK|progress_ShowPercentage_6|MATLAB:validation:IncompatibleSize :: Error setting property 'ShowPercentage' of class 'matlab.ui.dialog.ProgressDialog'. Value must be a scalar.|exact
+CHK|progress_icon_01|char 'error'|exact
+CHK|progress_icon_02|char 'warning'|exact
+CHK|progress_icon_03|char 'info'|exact
+CHK|progress_icon_04|char 'success'|exact
+CHK|progress_icon_05|char 'question'|exact
+CHK|progress_icon_06|char ''|exact
+CHK|progress_icon_07|char ''|exact
+CHK|progress_icon_08|MATLAB:ui:ProgressDialog:InvalidIconSpecified :: Icon value must be 'error', 'warning', 'info', 'question', 'success', 'none', a valid file path, or an m-by-n-by-3 color data matrix.|exact
+CHK|progress_icon_09|MATLAB:ui:ProgressDialog:invalidIconCData :: You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|progress_icon_10|char 'error'|exact
+CHK|progress_icon_11|char 'error'|exact
+CHK|progress_interpreter|char 'html'|exact
+CHK|progress_interpreter_bad|MATLAB:uitools:uidialogs:InvalidInterpreter :: 'Interpreter' value must be 'none', 'html', 'latex', or 'tex'.|exact
+CHK|progress_cancelrequested|logical [1 1] 1|exact
+CHK|progress_dot|double [1 1] 0.25 working|exact
+CHK|progress_value_after_close|MATLAB:class:InvalidHandle :: Invalid or deleted object.|exact
+CHK|progress_made_with_pairs|T M double [1 1] 0.25 on on|exact
+CHK|progress_odd|MATLAB:uitools:uidialogs:IncorrectNameValuePairs|exact
+CHK|progress_odd_msg|Incorrect number of name-value pairs. Each parameter name must be followed by a corresponding value.|exact
+CHK|progress_bad_option|MATLAB:uitools:uidialogs:IncorrectParameterNameShort|exact
+CHK|progress_bad_option_msg|Invalid parameter name 'Bogus'.|exact
+CHK|progress_bad_value|MATLAB:validators:mustBeLessThanOrEqual|exact
+CHK|progress_bad_value_msg|Error setting property 'Value' of class 'matlab.ui.dialog.ProgressDialog'. Value must be less than or equal to 1.|exact
+CHK|uiaxes_in_uifigure|axes in figure pixels [10 10 400 300]|exact
+CHK|uiaxes_in_figure|axes in figure pixels [10 10 400 300]|exact
+CHK|uiaxes_in_panel|axes in uipanel pixels [10 10 400 300]|exact
+CHK|uiaxes_in_classic_panel|axes in uipanel pixels [10 10 400 300]|exact
+CHK|uiaxes_in_group|axes in uibuttongroup pixels [10 10 400 300]|exact
+CHK|uiaxes_in_axes|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_in_axes_msg|UIAxes cannot be a child of Axes.|exact
+CHK|uiaxes_in_button|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_in_button_msg|UIAxes cannot be a child of Button.|exact
+CHK|uiaxes_number|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiaxes_named_parent|axes in figure pixels [10 10 400 300]|exact
+CHK|uiaxes_position|axes in figure pixels [20 30 200 150]|exact
+CHK|uiaxes_unknown|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_unknown_msg|Unrecognized property Bogus for class UIAxes.|exact
+CHK|uiaxes_odd|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_odd_msg|Invalid parameter/value pair arguments.|exact
+CHK|uiaxes_pairs|double [1 2] 0 5|exact
+CHK|uiaxes_struct|MATLAB:ui:UIAxes:unknownInput|exact
+CHK|uiaxes_struct_msg|Invalid parameter/value pair arguments.|exact
+CHK|uiaxes_alone|axes in figure pixels [10 10 400 300]; 1 new figure; a uifigure 1|exact
+CHK|uiaxes_nextplot|replacechildren|exact
+CHK|uiaxes_backgroundcolor|char 'none'|exact
+CHK|uiaxes_backgroundcolor_set|double [1 3] 1 0 0|exact
+CHK|uiaxes_backgroundcolor_none|char 'none'|exact
+CHK|uiaxes_outer_x|10.000000|abs=0.01
+CHK|uiaxes_outer_y|10.000000|abs=0.01
+CHK|uiaxes_outer_w|400.000000|abs=0.01
+CHK|uiaxes_outer_h|300.000000|abs=0.01
+CHK|uiaxes_position_set_x|50.000000|abs=0.01
+CHK|uiaxes_position_set_y|60.000000|abs=0.01
+CHK|uiaxes_position_set_w|300.000000|abs=0.01
+CHK|uiaxes_position_set_h|200.000000|abs=0.01
+CHK|uiaxes_position_set_outer_x|50.000000|abs=0.01
+CHK|uiaxes_position_set_outer_y|60.000000|abs=0.01
+CHK|uiaxes_position_set_outer_w|300.000000|abs=0.01
+CHK|uiaxes_position_set_outer_h|200.000000|abs=0.01
+CHK|uiaxes_after_plot|1 [T] [X]|exact
+CHK|uiaxes_after_second_plot|1 [T] 5|exact
+CHK|uiaxes_hold|2 add|exact
+CHK|uiaxes_is_never_gca|0 0|exact
+CHK|uiaxes_children_order|b2 ax2 ax|exact
+CHK|uiaxes_cla|0|exact

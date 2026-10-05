@@ -1,0 +1,581 @@
+CHK|Label_type|uilabel|exact
+CHK|Label_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition Interpreter Interruptible Layout OuterPosition Parent Position Tag Text Tooltip Type UserData VerticalAlignment Visible WordWrap|exact
+CHK|Label_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition Interpreter Interruptible Layout Parent Position Tag Text Tooltip UserData VerticalAlignment Visible WordWrap|exact
+CHK|Label_default_BackgroundColor|char 'none'|exact
+CHK|Label_default_BeingDeleted|onoff off|exact
+CHK|Label_default_BusyAction|char 'queue'|exact
+CHK|Label_default_CreateFcn|char ''|exact
+CHK|Label_default_DeleteFcn|char ''|exact
+CHK|Label_default_Enable|onoff on|exact
+CHK|Label_default_FontAngle|char 'normal'|exact
+CHK|Label_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|Label_default_FontName|char 'Helvetica'|exact
+CHK|Label_default_FontSize|double [1 1] 12|exact
+CHK|Label_default_FontWeight|char 'normal'|exact
+CHK|Label_default_HandleVisibility|onoff on|exact
+CHK|Label_default_HorizontalAlignment|char 'left'|exact
+CHK|Label_default_InnerPosition|double [1 4] 100 100 31 22|exact
+CHK|Label_default_Interpreter|char 'none'|exact
+CHK|Label_default_Interruptible|onoff on|exact
+CHK|Label_default_OuterPosition|double [1 4] 100 100 31 22|exact
+CHK|Label_default_Position|double [1 4] 100 100 31 22|exact
+CHK|Label_default_Tag|char ''|exact
+CHK|Label_default_Text|char 'Label'|exact
+CHK|Label_default_Tooltip|char ''|exact
+CHK|Label_default_Type|char 'uilabel'|exact
+CHK|Label_default_VerticalAlignment|char 'center'|exact
+CHK|Label_default_Visible|onoff on|exact
+CHK|Label_default_WordWrap|onoff off|exact
+CHK|Label_userdata_empty|1|exact
+CHK|Label_layout_empty|logical [1 1] 1|exact
+CHK|Label_parent_type|figure|exact
+CHK|Label_flags|0 1 1 1 1|exact
+CHK|Button_type|uibutton|exact
+CHK|Button_get_names|BackgroundColor BeingDeleted BusyAction ButtonPushedFcn ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment Icon IconAlignment InnerPosition Interpreter Interruptible Layout OuterPosition Parent Position Tag Text Tooltip Type UserData VerticalAlignment Visible WordWrap|exact
+CHK|Button_set_names|BackgroundColor BusyAction ButtonPushedFcn ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment Icon IconAlignment InnerPosition Interpreter Interruptible Layout Parent Position Tag Text Tooltip UserData VerticalAlignment Visible WordWrap|exact
+CHK|Button_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|Button_default_BeingDeleted|onoff off|exact
+CHK|Button_default_BusyAction|char 'queue'|exact
+CHK|Button_default_ButtonPushedFcn|char ''|exact
+CHK|Button_default_CreateFcn|char ''|exact
+CHK|Button_default_DeleteFcn|char ''|exact
+CHK|Button_default_Enable|onoff on|exact
+CHK|Button_default_FontAngle|char 'normal'|exact
+CHK|Button_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|Button_default_FontName|char 'Helvetica'|exact
+CHK|Button_default_FontSize|double [1 1] 12|exact
+CHK|Button_default_FontWeight|char 'normal'|exact
+CHK|Button_default_HandleVisibility|onoff on|exact
+CHK|Button_default_HorizontalAlignment|char 'center'|exact
+CHK|Button_default_Icon|char ''|exact
+CHK|Button_default_IconAlignment|char 'left'|exact
+CHK|Button_default_InnerPosition|double [1 4] 100 100 100 22|exact
+CHK|Button_default_Interpreter|char 'none'|exact
+CHK|Button_default_Interruptible|onoff on|exact
+CHK|Button_default_OuterPosition|double [1 4] 100 100 100 22|exact
+CHK|Button_default_Position|double [1 4] 100 100 100 22|exact
+CHK|Button_default_Tag|char ''|exact
+CHK|Button_default_Text|char 'Button'|exact
+CHK|Button_default_Tooltip|char ''|exact
+CHK|Button_default_Type|char 'uibutton'|exact
+CHK|Button_default_VerticalAlignment|char 'center'|exact
+CHK|Button_default_Visible|onoff on|exact
+CHK|Button_default_WordWrap|onoff off|exact
+CHK|Button_userdata_empty|1|exact
+CHK|Button_layout_empty|logical [1 1] 1|exact
+CHK|Button_parent_type|figure|exact
+CHK|Button_flags|0 1 1 1 1|exact
+CHK|StateButton_type|uistatebutton|exact
+CHK|StateButton_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment Icon IconAlignment InnerPosition Interpreter Interruptible Layout OuterPosition Parent Position Tag Text Tooltip Type UserData Value ValueChangedFcn VerticalAlignment Visible WordWrap|exact
+CHK|StateButton_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment Icon IconAlignment InnerPosition Interpreter Interruptible Layout Parent Position Tag Text Tooltip UserData Value ValueChangedFcn VerticalAlignment Visible WordWrap|exact
+CHK|StateButton_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|StateButton_default_BeingDeleted|onoff off|exact
+CHK|StateButton_default_BusyAction|char 'queue'|exact
+CHK|StateButton_default_CreateFcn|char ''|exact
+CHK|StateButton_default_DeleteFcn|char ''|exact
+CHK|StateButton_default_Enable|onoff on|exact
+CHK|StateButton_default_FontAngle|char 'normal'|exact
+CHK|StateButton_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|StateButton_default_FontName|char 'Helvetica'|exact
+CHK|StateButton_default_FontSize|double [1 1] 12|exact
+CHK|StateButton_default_FontWeight|char 'normal'|exact
+CHK|StateButton_default_HandleVisibility|onoff on|exact
+CHK|StateButton_default_HorizontalAlignment|char 'center'|exact
+CHK|StateButton_default_Icon|char ''|exact
+CHK|StateButton_default_IconAlignment|char 'left'|exact
+CHK|StateButton_default_InnerPosition|double [1 4] 100 100 100 22|exact
+CHK|StateButton_default_Interpreter|char 'none'|exact
+CHK|StateButton_default_Interruptible|onoff on|exact
+CHK|StateButton_default_OuterPosition|double [1 4] 100 100 100 22|exact
+CHK|StateButton_default_Position|double [1 4] 100 100 100 22|exact
+CHK|StateButton_default_Tag|char ''|exact
+CHK|StateButton_default_Text|char 'State Button'|exact
+CHK|StateButton_default_Tooltip|char ''|exact
+CHK|StateButton_default_Type|char 'uistatebutton'|exact
+CHK|StateButton_default_Value|logical [1 1] 0|exact
+CHK|StateButton_default_ValueChangedFcn|char ''|exact
+CHK|StateButton_default_VerticalAlignment|char 'center'|exact
+CHK|StateButton_default_Visible|onoff on|exact
+CHK|StateButton_default_WordWrap|onoff off|exact
+CHK|StateButton_userdata_empty|1|exact
+CHK|StateButton_layout_empty|logical [1 1] 1|exact
+CHK|StateButton_parent_type|figure|exact
+CHK|StateButton_flags|0 1 1 1 1|exact
+CHK|EditField_type|uieditfield|exact
+CHK|EditField_get_names|BackgroundColor BeingDeleted BusyAction CharacterLimits ContextMenu CreateFcn DeleteFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition InputType Interruptible Layout OuterPosition Parent Placeholder Position Tag Tooltip Type UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|EditField_set_names|BackgroundColor BusyAction CharacterLimits ContextMenu CreateFcn DeleteFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition InputType Interruptible Layout Parent Placeholder Position Tag Tooltip UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|EditField_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|EditField_default_BeingDeleted|onoff off|exact
+CHK|EditField_default_BusyAction|char 'queue'|exact
+CHK|EditField_default_CharacterLimits|double [1 2] 0 Inf|exact
+CHK|EditField_default_CreateFcn|char ''|exact
+CHK|EditField_default_DeleteFcn|char ''|exact
+CHK|EditField_default_Editable|onoff on|exact
+CHK|EditField_default_Enable|onoff on|exact
+CHK|EditField_default_FontAngle|char 'normal'|exact
+CHK|EditField_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|EditField_default_FontName|char 'Helvetica'|exact
+CHK|EditField_default_FontSize|double [1 1] 12|exact
+CHK|EditField_default_FontWeight|char 'normal'|exact
+CHK|EditField_default_HandleVisibility|onoff on|exact
+CHK|EditField_default_HorizontalAlignment|char 'left'|exact
+CHK|EditField_default_InnerPosition|double [1 4] 100 100 100 22|exact
+CHK|EditField_default_InputType|char 'text'|exact
+CHK|EditField_default_Interruptible|onoff on|exact
+CHK|EditField_default_OuterPosition|double [1 4] 100 100 100 22|exact
+CHK|EditField_default_Placeholder|char ''|exact
+CHK|EditField_default_Position|double [1 4] 100 100 100 22|exact
+CHK|EditField_default_Tag|char ''|exact
+CHK|EditField_default_Tooltip|char ''|exact
+CHK|EditField_default_Type|char 'uieditfield'|exact
+CHK|EditField_default_Value|char ''|exact
+CHK|EditField_default_ValueChangedFcn|char ''|exact
+CHK|EditField_default_ValueChangingFcn|char ''|exact
+CHK|EditField_default_Visible|onoff on|exact
+CHK|EditField_userdata_empty|1|exact
+CHK|EditField_layout_empty|logical [1 1] 1|exact
+CHK|EditField_parent_type|figure|exact
+CHK|EditField_flags|0 1 1 1 1|exact
+CHK|NumericEditField_type|uinumericeditfield|exact
+CHK|NumericEditField_get_names|AllowEmpty BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition Interruptible Layout Limits LowerLimitInclusive OuterPosition Parent Placeholder Position RoundFractionalValues Tag Tooltip Type UpperLimitInclusive UserData Value ValueChangedFcn ValueDisplayFormat Visible|exact
+CHK|NumericEditField_set_names|AllowEmpty BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition Interruptible Layout Limits LowerLimitInclusive Parent Placeholder Position RoundFractionalValues Tag Tooltip UpperLimitInclusive UserData Value ValueChangedFcn ValueDisplayFormat Visible|exact
+CHK|NumericEditField_default_AllowEmpty|onoff off|exact
+CHK|NumericEditField_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|NumericEditField_default_BeingDeleted|onoff off|exact
+CHK|NumericEditField_default_BusyAction|char 'queue'|exact
+CHK|NumericEditField_default_CreateFcn|char ''|exact
+CHK|NumericEditField_default_DeleteFcn|char ''|exact
+CHK|NumericEditField_default_Editable|onoff on|exact
+CHK|NumericEditField_default_Enable|onoff on|exact
+CHK|NumericEditField_default_FontAngle|char 'normal'|exact
+CHK|NumericEditField_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|NumericEditField_default_FontName|char 'Helvetica'|exact
+CHK|NumericEditField_default_FontSize|double [1 1] 12|exact
+CHK|NumericEditField_default_FontWeight|char 'normal'|exact
+CHK|NumericEditField_default_HandleVisibility|onoff on|exact
+CHK|NumericEditField_default_HorizontalAlignment|char 'right'|exact
+CHK|NumericEditField_default_InnerPosition|double [1 4] 100 100 100 22|exact
+CHK|NumericEditField_default_Interruptible|onoff on|exact
+CHK|NumericEditField_default_Limits|double [1 2] -Inf Inf|exact
+CHK|NumericEditField_default_LowerLimitInclusive|onoff on|exact
+CHK|NumericEditField_default_OuterPosition|double [1 4] 100 100 100 22|exact
+CHK|NumericEditField_default_Placeholder|char ''|exact
+CHK|NumericEditField_default_Position|double [1 4] 100 100 100 22|exact
+CHK|NumericEditField_default_RoundFractionalValues|onoff off|exact
+CHK|NumericEditField_default_Tag|char ''|exact
+CHK|NumericEditField_default_Tooltip|char ''|exact
+CHK|NumericEditField_default_Type|char 'uinumericeditfield'|exact
+CHK|NumericEditField_default_UpperLimitInclusive|onoff on|exact
+CHK|NumericEditField_default_Value|double [1 1] 0|exact
+CHK|NumericEditField_default_ValueChangedFcn|char ''|exact
+CHK|NumericEditField_default_ValueDisplayFormat|char '%11.4g'|exact
+CHK|NumericEditField_default_Visible|onoff on|exact
+CHK|NumericEditField_userdata_empty|1|exact
+CHK|NumericEditField_layout_empty|logical [1 1] 1|exact
+CHK|NumericEditField_parent_type|figure|exact
+CHK|NumericEditField_flags|0 1 1 1 1|exact
+CHK|TextArea_type|uitextarea|exact
+CHK|TextArea_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition Interruptible Layout OuterPosition Parent Placeholder Position Tag Tooltip Type UserData Value ValueChangedFcn ValueChangingFcn Visible WordWrap|exact
+CHK|TextArea_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition Interruptible Layout Parent Placeholder Position Tag Tooltip UserData Value ValueChangedFcn ValueChangingFcn Visible WordWrap|exact
+CHK|TextArea_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|TextArea_default_BeingDeleted|onoff off|exact
+CHK|TextArea_default_BusyAction|char 'queue'|exact
+CHK|TextArea_default_CreateFcn|char ''|exact
+CHK|TextArea_default_DeleteFcn|char ''|exact
+CHK|TextArea_default_Editable|onoff on|exact
+CHK|TextArea_default_Enable|onoff on|exact
+CHK|TextArea_default_FontAngle|char 'normal'|exact
+CHK|TextArea_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|TextArea_default_FontName|char 'Helvetica'|exact
+CHK|TextArea_default_FontSize|double [1 1] 12|exact
+CHK|TextArea_default_FontWeight|char 'normal'|exact
+CHK|TextArea_default_HandleVisibility|onoff on|exact
+CHK|TextArea_default_HorizontalAlignment|char 'left'|exact
+CHK|TextArea_default_InnerPosition|double [1 4] 100 100 150 60|exact
+CHK|TextArea_default_Interruptible|onoff on|exact
+CHK|TextArea_default_OuterPosition|double [1 4] 100 100 150 60|exact
+CHK|TextArea_default_Placeholder|char ''|exact
+CHK|TextArea_default_Position|double [1 4] 100 100 150 60|exact
+CHK|TextArea_default_Tag|char ''|exact
+CHK|TextArea_default_Tooltip|char ''|exact
+CHK|TextArea_default_Type|char 'uitextarea'|exact
+CHK|TextArea_default_Value|cell [1 1] {char ''}|exact
+CHK|TextArea_default_ValueChangedFcn|char ''|exact
+CHK|TextArea_default_ValueChangingFcn|char ''|exact
+CHK|TextArea_default_Visible|onoff on|exact
+CHK|TextArea_default_WordWrap|onoff on|exact
+CHK|TextArea_userdata_empty|1|exact
+CHK|TextArea_layout_empty|logical [1 1] 1|exact
+CHK|TextArea_parent_type|figure|exact
+CHK|TextArea_flags|0 1 1 1 1|exact
+CHK|DropDown_type|uidropdown|exact
+CHK|DropDown_get_names|BackgroundColor BeingDeleted BusyAction ClickedFcn ContextMenu CreateFcn DeleteFcn DropDownOpeningFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout OuterPosition Parent Placeholder Position StyleConfigurations Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|DropDown_set_names|BackgroundColor BusyAction ClickedFcn ContextMenu CreateFcn DeleteFcn DropDownOpeningFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Parent Placeholder Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|DropDown_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|DropDown_default_BeingDeleted|onoff off|exact
+CHK|DropDown_default_BusyAction|char 'queue'|exact
+CHK|DropDown_default_ClickedFcn|char ''|exact
+CHK|DropDown_default_CreateFcn|char ''|exact
+CHK|DropDown_default_DeleteFcn|char ''|exact
+CHK|DropDown_default_DropDownOpeningFcn|char ''|exact
+CHK|DropDown_default_Editable|onoff off|exact
+CHK|DropDown_default_Enable|onoff on|exact
+CHK|DropDown_default_FontAngle|char 'normal'|exact
+CHK|DropDown_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|DropDown_default_FontName|char 'Helvetica'|exact
+CHK|DropDown_default_FontSize|double [1 1] 12|exact
+CHK|DropDown_default_FontWeight|char 'normal'|exact
+CHK|DropDown_default_HandleVisibility|onoff on|exact
+CHK|DropDown_default_InnerPosition|double [1 4] 100 100 100 22|exact
+CHK|DropDown_default_Interruptible|onoff on|exact
+CHK|DropDown_default_Items|cell [1 4] {char 'Option 1', char 'Option 2', char 'Option 3', char 'Option 4'}|exact
+CHK|DropDown_default_ItemsData|double [0 0]|exact
+CHK|DropDown_default_OuterPosition|double [1 4] 100 100 100 22|exact
+CHK|DropDown_default_Placeholder|char ''|exact
+CHK|DropDown_default_Position|double [1 4] 100 100 100 22|exact
+CHK|DropDown_default_Tag|char ''|exact
+CHK|DropDown_default_Tooltip|char ''|exact
+CHK|DropDown_default_Type|char 'uidropdown'|exact
+CHK|DropDown_default_Value|char 'Option 1'|exact
+CHK|DropDown_default_ValueChangedFcn|char ''|exact
+CHK|DropDown_default_ValueIndex|double [1 1] 1|exact
+CHK|DropDown_default_Visible|onoff on|exact
+CHK|DropDown_userdata_empty|1|exact
+CHK|DropDown_layout_empty|logical [1 1] 1|exact
+CHK|DropDown_parent_type|figure|exact
+CHK|DropDown_flags|0 1 1 1 1|exact
+CHK|ListBox_type|uilistbox|exact
+CHK|ListBox_get_names|BackgroundColor BeingDeleted BusyAction ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Multiselect OuterPosition Parent Position StyleConfigurations Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|ListBox_set_names|BackgroundColor BusyAction ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Multiselect Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|ListBox_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|ListBox_default_BeingDeleted|onoff off|exact
+CHK|ListBox_default_BusyAction|char 'queue'|exact
+CHK|ListBox_default_ClickedFcn|char ''|exact
+CHK|ListBox_default_CreateFcn|char ''|exact
+CHK|ListBox_default_DeleteFcn|char ''|exact
+CHK|ListBox_default_DoubleClickedFcn|char ''|exact
+CHK|ListBox_default_Enable|onoff on|exact
+CHK|ListBox_default_FontAngle|char 'normal'|exact
+CHK|ListBox_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|ListBox_default_FontName|char 'Helvetica'|exact
+CHK|ListBox_default_FontSize|double [1 1] 12|exact
+CHK|ListBox_default_FontWeight|char 'normal'|exact
+CHK|ListBox_default_HandleVisibility|onoff on|exact
+CHK|ListBox_default_InnerPosition|double [1 4] 100 100 100 74|exact
+CHK|ListBox_default_Interruptible|onoff on|exact
+CHK|ListBox_default_Items|cell [1 4] {char 'Item 1', char 'Item 2', char 'Item 3', char 'Item 4'}|exact
+CHK|ListBox_default_ItemsData|double [0 0]|exact
+CHK|ListBox_default_Multiselect|onoff off|exact
+CHK|ListBox_default_OuterPosition|double [1 4] 100 100 100 74|exact
+CHK|ListBox_default_Position|double [1 4] 100 100 100 74|exact
+CHK|ListBox_default_Tag|char ''|exact
+CHK|ListBox_default_Tooltip|char ''|exact
+CHK|ListBox_default_Type|char 'uilistbox'|exact
+CHK|ListBox_default_Value|char 'Item 1'|exact
+CHK|ListBox_default_ValueChangedFcn|char ''|exact
+CHK|ListBox_default_ValueIndex|double [1 1] 1|exact
+CHK|ListBox_default_Visible|onoff on|exact
+CHK|ListBox_userdata_empty|1|exact
+CHK|ListBox_layout_empty|logical [1 1] 1|exact
+CHK|ListBox_parent_type|figure|exact
+CHK|ListBox_flags|0 1 1 1 1|exact
+CHK|CheckBox_type|uicheckbox|exact
+CHK|CheckBox_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout OuterPosition Parent Position Tag Text Tooltip Type UserData Value ValueChangedFcn Visible WordWrap|exact
+CHK|CheckBox_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Parent Position Tag Text Tooltip UserData Value ValueChangedFcn Visible WordWrap|exact
+CHK|CheckBox_default_BeingDeleted|onoff off|exact
+CHK|CheckBox_default_BusyAction|char 'queue'|exact
+CHK|CheckBox_default_CreateFcn|char ''|exact
+CHK|CheckBox_default_DeleteFcn|char ''|exact
+CHK|CheckBox_default_Enable|onoff on|exact
+CHK|CheckBox_default_FontAngle|char 'normal'|exact
+CHK|CheckBox_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|CheckBox_default_FontName|char 'Helvetica'|exact
+CHK|CheckBox_default_FontSize|double [1 1] 12|exact
+CHK|CheckBox_default_FontWeight|char 'normal'|exact
+CHK|CheckBox_default_HandleVisibility|onoff on|exact
+CHK|CheckBox_default_InnerPosition|double [1 4] 100 100 84 22|exact
+CHK|CheckBox_default_Interruptible|onoff on|exact
+CHK|CheckBox_default_OuterPosition|double [1 4] 100 100 84 22|exact
+CHK|CheckBox_default_Position|double [1 4] 100 100 84 22|exact
+CHK|CheckBox_default_Tag|char ''|exact
+CHK|CheckBox_default_Text|char 'Check Box'|exact
+CHK|CheckBox_default_Tooltip|char ''|exact
+CHK|CheckBox_default_Type|char 'uicheckbox'|exact
+CHK|CheckBox_default_Value|logical [1 1] 0|exact
+CHK|CheckBox_default_ValueChangedFcn|char ''|exact
+CHK|CheckBox_default_Visible|onoff on|exact
+CHK|CheckBox_default_WordWrap|onoff off|exact
+CHK|CheckBox_userdata_empty|1|exact
+CHK|CheckBox_layout_empty|logical [1 1] 1|exact
+CHK|CheckBox_parent_type|figure|exact
+CHK|CheckBox_flags|0 1 1 1 1|exact
+CHK|RadioButton_type|uiradiobutton|exact
+CHK|RadioButton_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interpreter Interruptible OuterPosition Parent Position Tag Text Tooltip Type UserData Value Visible WordWrap|exact
+CHK|RadioButton_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interpreter Interruptible Parent Position Tag Text Tooltip UserData Value Visible WordWrap|exact
+CHK|RadioButton_default_BeingDeleted|onoff off|exact
+CHK|RadioButton_default_BusyAction|char 'queue'|exact
+CHK|RadioButton_default_CreateFcn|char ''|exact
+CHK|RadioButton_default_DeleteFcn|char ''|exact
+CHK|RadioButton_default_Enable|onoff on|exact
+CHK|RadioButton_default_FontAngle|char 'normal'|exact
+CHK|RadioButton_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|RadioButton_default_FontName|char 'Helvetica'|exact
+CHK|RadioButton_default_FontSize|double [1 1] 12|exact
+CHK|RadioButton_default_FontWeight|char 'normal'|exact
+CHK|RadioButton_default_HandleVisibility|onoff on|exact
+CHK|RadioButton_default_InnerPosition|double [1 4] 10 10 91 22|exact
+CHK|RadioButton_default_Interpreter|char 'none'|exact
+CHK|RadioButton_default_Interruptible|onoff on|exact
+CHK|RadioButton_default_OuterPosition|double [1 4] 10 10 91 22|exact
+CHK|RadioButton_default_Position|double [1 4] 10 10 91 22|exact
+CHK|RadioButton_default_Tag|char ''|exact
+CHK|RadioButton_default_Text|char 'Radio Button'|exact
+CHK|RadioButton_default_Tooltip|char ''|exact
+CHK|RadioButton_default_Type|char 'uiradiobutton'|exact
+CHK|RadioButton_default_Value|logical [1 1] 1|exact
+CHK|RadioButton_default_Visible|onoff on|exact
+CHK|RadioButton_default_WordWrap|onoff off|exact
+CHK|RadioButton_userdata_empty|1|exact
+CHK|RadioButton_layout_empty|MATLAB:hg:InvalidProperty|exact
+CHK|RadioButton_layout_empty_msg|Unrecognized property Layout for class matlab.ui.control.RadioButton.|exact
+CHK|RadioButton_parent_type|uibuttongroup|exact
+CHK|RadioButton_flags|0 1 1 1 1|exact
+CHK|ToggleButton_type|uitogglebutton|exact
+CHK|ToggleButton_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment Icon IconAlignment InnerPosition Interpreter Interruptible OuterPosition Parent Position Tag Text Tooltip Type UserData Value VerticalAlignment Visible WordWrap|exact
+CHK|ToggleButton_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment Icon IconAlignment InnerPosition Interpreter Interruptible Parent Position Tag Text Tooltip UserData Value VerticalAlignment Visible WordWrap|exact
+CHK|ToggleButton_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|ToggleButton_default_BeingDeleted|onoff off|exact
+CHK|ToggleButton_default_BusyAction|char 'queue'|exact
+CHK|ToggleButton_default_CreateFcn|char ''|exact
+CHK|ToggleButton_default_DeleteFcn|char ''|exact
+CHK|ToggleButton_default_Enable|onoff on|exact
+CHK|ToggleButton_default_FontAngle|char 'normal'|exact
+CHK|ToggleButton_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|ToggleButton_default_FontName|char 'Helvetica'|exact
+CHK|ToggleButton_default_FontSize|double [1 1] 12|exact
+CHK|ToggleButton_default_FontWeight|char 'normal'|exact
+CHK|ToggleButton_default_HandleVisibility|onoff on|exact
+CHK|ToggleButton_default_HorizontalAlignment|char 'center'|exact
+CHK|ToggleButton_default_Icon|char ''|exact
+CHK|ToggleButton_default_IconAlignment|char 'left'|exact
+CHK|ToggleButton_default_InnerPosition|double [1 4] 10 10 100 22|exact
+CHK|ToggleButton_default_Interpreter|char 'none'|exact
+CHK|ToggleButton_default_Interruptible|onoff on|exact
+CHK|ToggleButton_default_OuterPosition|double [1 4] 10 10 100 22|exact
+CHK|ToggleButton_default_Position|double [1 4] 10 10 100 22|exact
+CHK|ToggleButton_default_Tag|char ''|exact
+CHK|ToggleButton_default_Text|char 'Toggle Button'|exact
+CHK|ToggleButton_default_Tooltip|char ''|exact
+CHK|ToggleButton_default_Type|char 'uitogglebutton'|exact
+CHK|ToggleButton_default_Value|logical [1 1] 1|exact
+CHK|ToggleButton_default_VerticalAlignment|char 'center'|exact
+CHK|ToggleButton_default_Visible|onoff on|exact
+CHK|ToggleButton_default_WordWrap|onoff off|exact
+CHK|ToggleButton_userdata_empty|1|exact
+CHK|ToggleButton_layout_empty|MATLAB:hg:InvalidProperty|exact
+CHK|ToggleButton_layout_empty_msg|Unrecognized property Layout for class matlab.ui.control.ToggleButton.|exact
+CHK|ToggleButton_parent_type|uibuttongroup|exact
+CHK|ToggleButton_flags|0 1 1 1 1|exact
+CHK|Slider_type|uislider|exact
+CHK|Slider_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation OuterPosition Parent Position Step StepMode Tag Tooltip Type UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|Slider_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation Parent Position Step StepMode Tag Tooltip UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|Slider_default_BeingDeleted|onoff off|exact
+CHK|Slider_default_BusyAction|char 'queue'|exact
+CHK|Slider_default_CreateFcn|char ''|exact
+CHK|Slider_default_DeleteFcn|char ''|exact
+CHK|Slider_default_Enable|onoff on|exact
+CHK|Slider_default_FontAngle|char 'normal'|exact
+CHK|Slider_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|Slider_default_FontName|char 'Helvetica'|exact
+CHK|Slider_default_FontSize|double [1 1] 12|exact
+CHK|Slider_default_FontWeight|char 'normal'|exact
+CHK|Slider_default_HandleVisibility|onoff on|exact
+CHK|Slider_default_InnerPosition|double [1 4] 100 100 150 3|exact
+CHK|Slider_default_Interruptible|onoff on|exact
+CHK|Slider_default_Limits|double [1 2] 0 100|exact
+CHK|Slider_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|Slider_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|Slider_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|Slider_default_MajorTicksMode|char 'auto'|exact
+CHK|Slider_default_MinorTicksMode|char 'auto'|exact
+CHK|Slider_default_Orientation|char 'horizontal'|exact
+CHK|Slider_default_OuterPosition|double [1 4] 93 70 166 39|exact
+CHK|Slider_default_Position|double [1 4] 100 100 150 3|exact
+CHK|Slider_default_Step|double [1 1] 0.1|exact
+CHK|Slider_default_StepMode|char 'auto'|exact
+CHK|Slider_default_Tag|char ''|exact
+CHK|Slider_default_Tooltip|char ''|exact
+CHK|Slider_default_Type|char 'uislider'|exact
+CHK|Slider_default_Value|double [1 1] 0|exact
+CHK|Slider_default_ValueChangedFcn|char ''|exact
+CHK|Slider_default_ValueChangingFcn|char ''|exact
+CHK|Slider_default_Visible|onoff on|exact
+CHK|Slider_userdata_empty|1|exact
+CHK|Slider_layout_empty|logical [1 1] 1|exact
+CHK|Slider_parent_type|figure|exact
+CHK|Slider_flags|0 1 1 1 1|exact
+CHK|RangeSlider_type|uirangeslider|exact
+CHK|RangeSlider_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation OuterPosition Parent Position Step StepMode Tag Tooltip Type UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|RangeSlider_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation Parent Position Step StepMode Tag Tooltip UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|RangeSlider_default_BeingDeleted|onoff off|exact
+CHK|RangeSlider_default_BusyAction|char 'queue'|exact
+CHK|RangeSlider_default_CreateFcn|char ''|exact
+CHK|RangeSlider_default_DeleteFcn|char ''|exact
+CHK|RangeSlider_default_Enable|onoff on|exact
+CHK|RangeSlider_default_FontAngle|char 'normal'|exact
+CHK|RangeSlider_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|RangeSlider_default_FontName|char 'Helvetica'|exact
+CHK|RangeSlider_default_FontSize|double [1 1] 12|exact
+CHK|RangeSlider_default_FontWeight|char 'normal'|exact
+CHK|RangeSlider_default_HandleVisibility|onoff on|exact
+CHK|RangeSlider_default_InnerPosition|double [1 4] 100 100 150 3|exact
+CHK|RangeSlider_default_Interruptible|onoff on|exact
+CHK|RangeSlider_default_Limits|double [1 2] 0 100|exact
+CHK|RangeSlider_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|RangeSlider_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|RangeSlider_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|RangeSlider_default_MajorTicksMode|char 'auto'|exact
+CHK|RangeSlider_default_MinorTicksMode|char 'auto'|exact
+CHK|RangeSlider_default_Orientation|char 'horizontal'|exact
+CHK|RangeSlider_default_OuterPosition|double [1 4] 93 70 166 39|exact
+CHK|RangeSlider_default_Position|double [1 4] 100 100 150 3|exact
+CHK|RangeSlider_default_Step|double [1 1] 0.1|exact
+CHK|RangeSlider_default_StepMode|char 'auto'|exact
+CHK|RangeSlider_default_Tag|char ''|exact
+CHK|RangeSlider_default_Tooltip|char ''|exact
+CHK|RangeSlider_default_Type|char 'uirangeslider'|exact
+CHK|RangeSlider_default_Value|double [1 2] 0 100|exact
+CHK|RangeSlider_default_ValueChangedFcn|char ''|exact
+CHK|RangeSlider_default_ValueChangingFcn|char ''|exact
+CHK|RangeSlider_default_Visible|onoff on|exact
+CHK|RangeSlider_userdata_empty|1|exact
+CHK|RangeSlider_layout_empty|logical [1 1] 1|exact
+CHK|RangeSlider_parent_type|figure|exact
+CHK|RangeSlider_flags|0 1 1 1 1|exact
+CHK|Spinner_type|uispinner|exact
+CHK|Spinner_get_names|AllowEmpty BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition Interruptible Layout Limits LowerLimitInclusive OuterPosition Parent Placeholder Position RoundFractionalValues Step Tag Tooltip Type UpperLimitInclusive UserData Value ValueChangedFcn ValueChangingFcn ValueDisplayFormat Visible|exact
+CHK|Spinner_set_names|AllowEmpty BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment InnerPosition Interruptible Layout Limits LowerLimitInclusive Parent Placeholder Position RoundFractionalValues Step Tag Tooltip UpperLimitInclusive UserData Value ValueChangedFcn ValueChangingFcn ValueDisplayFormat Visible|exact
+CHK|Spinner_default_AllowEmpty|onoff off|exact
+CHK|Spinner_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|Spinner_default_BeingDeleted|onoff off|exact
+CHK|Spinner_default_BusyAction|char 'queue'|exact
+CHK|Spinner_default_CreateFcn|char ''|exact
+CHK|Spinner_default_DeleteFcn|char ''|exact
+CHK|Spinner_default_Editable|onoff on|exact
+CHK|Spinner_default_Enable|onoff on|exact
+CHK|Spinner_default_FontAngle|char 'normal'|exact
+CHK|Spinner_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|Spinner_default_FontName|char 'Helvetica'|exact
+CHK|Spinner_default_FontSize|double [1 1] 12|exact
+CHK|Spinner_default_FontWeight|char 'normal'|exact
+CHK|Spinner_default_HandleVisibility|onoff on|exact
+CHK|Spinner_default_HorizontalAlignment|char 'right'|exact
+CHK|Spinner_default_InnerPosition|double [1 4] 100 100 100 22|exact
+CHK|Spinner_default_Interruptible|onoff on|exact
+CHK|Spinner_default_Limits|double [1 2] -Inf Inf|exact
+CHK|Spinner_default_LowerLimitInclusive|onoff on|exact
+CHK|Spinner_default_OuterPosition|double [1 4] 100 100 100 22|exact
+CHK|Spinner_default_Placeholder|char ''|exact
+CHK|Spinner_default_Position|double [1 4] 100 100 100 22|exact
+CHK|Spinner_default_RoundFractionalValues|onoff off|exact
+CHK|Spinner_default_Step|double [1 1] 1|exact
+CHK|Spinner_default_Tag|char ''|exact
+CHK|Spinner_default_Tooltip|char ''|exact
+CHK|Spinner_default_Type|char 'uispinner'|exact
+CHK|Spinner_default_UpperLimitInclusive|onoff on|exact
+CHK|Spinner_default_Value|double [1 1] 0|exact
+CHK|Spinner_default_ValueChangedFcn|char ''|exact
+CHK|Spinner_default_ValueChangingFcn|char ''|exact
+CHK|Spinner_default_ValueDisplayFormat|char '%11.4g'|exact
+CHK|Spinner_default_Visible|onoff on|exact
+CHK|Spinner_userdata_empty|1|exact
+CHK|Spinner_layout_empty|logical [1 1] 1|exact
+CHK|Spinner_parent_type|figure|exact
+CHK|Spinner_flags|0 1 1 1 1|exact
+CHK|Image_type|uiimage|exact
+CHK|Image_get_names|AltText BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable HandleVisibility HorizontalAlignment ImageClickedFcn ImageSource InnerPosition Interruptible Layout OuterPosition Parent Position ScaleMethod Tag Tooltip Type URL UserData VerticalAlignment Visible|exact
+CHK|Image_set_names|AltText BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable HandleVisibility HorizontalAlignment ImageClickedFcn ImageSource InnerPosition Interruptible Layout Parent Position ScaleMethod Tag Tooltip URL UserData VerticalAlignment Visible|exact
+CHK|Image_default_AltText|char ''|exact
+CHK|Image_default_BackgroundColor|char 'none'|exact
+CHK|Image_default_BeingDeleted|onoff off|exact
+CHK|Image_default_BusyAction|char 'queue'|exact
+CHK|Image_default_CreateFcn|char ''|exact
+CHK|Image_default_DeleteFcn|char ''|exact
+CHK|Image_default_Enable|onoff on|exact
+CHK|Image_default_HandleVisibility|onoff on|exact
+CHK|Image_default_HorizontalAlignment|char 'center'|exact
+CHK|Image_default_ImageClickedFcn|char ''|exact
+CHK|Image_default_ImageSource|char ''|exact
+CHK|Image_default_InnerPosition|double [1 4] 100 100 100 100|exact
+CHK|Image_default_Interruptible|onoff on|exact
+CHK|Image_default_OuterPosition|double [1 4] 100 100 100 100|exact
+CHK|Image_default_Position|double [1 4] 100 100 100 100|exact
+CHK|Image_default_ScaleMethod|char 'fit'|exact
+CHK|Image_default_Tag|char ''|exact
+CHK|Image_default_Tooltip|char ''|exact
+CHK|Image_default_Type|char 'uiimage'|exact
+CHK|Image_default_URL|char ''|exact
+CHK|Image_default_VerticalAlignment|char 'center'|exact
+CHK|Image_default_Visible|onoff on|exact
+CHK|Image_userdata_empty|1|exact
+CHK|Image_layout_empty|logical [1 1] 1|exact
+CHK|Image_parent_type|figure|exact
+CHK|Image_flags|0 1 1 1 1|exact
+CHK|Hyperlink_type|uihyperlink|exact
+CHK|Hyperlink_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment HyperlinkClickedFcn InnerPosition Interruptible Layout OuterPosition Parent Position Tag Text Tooltip Type URL UserData VerticalAlignment Visible VisitedColor WordWrap|exact
+CHK|Hyperlink_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility HorizontalAlignment HyperlinkClickedFcn InnerPosition Interruptible Layout Parent Position Tag Text Tooltip URL UserData VerticalAlignment Visible VisitedColor WordWrap|exact
+CHK|Hyperlink_default_BackgroundColor|char 'none'|exact
+CHK|Hyperlink_default_BeingDeleted|onoff off|exact
+CHK|Hyperlink_default_BusyAction|char 'queue'|exact
+CHK|Hyperlink_default_CreateFcn|char ''|exact
+CHK|Hyperlink_default_DeleteFcn|char ''|exact
+CHK|Hyperlink_default_Enable|onoff on|exact
+CHK|Hyperlink_default_FontAngle|char 'normal'|exact
+CHK|Hyperlink_default_FontColor|double [1 3] 0.06666666667 0.4431372549 0.7450980392|exact
+CHK|Hyperlink_default_FontName|char 'Helvetica'|exact
+CHK|Hyperlink_default_FontSize|double [1 1] 12|exact
+CHK|Hyperlink_default_FontWeight|char 'bold'|exact
+CHK|Hyperlink_default_HandleVisibility|onoff on|exact
+CHK|Hyperlink_default_HorizontalAlignment|char 'left'|exact
+CHK|Hyperlink_default_HyperlinkClickedFcn|char ''|exact
+CHK|Hyperlink_default_InnerPosition|double [1 4] 100 100 70 22|exact
+CHK|Hyperlink_default_Interruptible|onoff on|exact
+CHK|Hyperlink_default_OuterPosition|double [1 4] 100 100 70 22|exact
+CHK|Hyperlink_default_Position|double [1 4] 100 100 70 22|exact
+CHK|Hyperlink_default_Tag|char ''|exact
+CHK|Hyperlink_default_Text|char 'Hyperlink'|exact
+CHK|Hyperlink_default_Tooltip|char ''|exact
+CHK|Hyperlink_default_Type|char 'uihyperlink'|exact
+CHK|Hyperlink_default_URL|char ''|exact
+CHK|Hyperlink_default_VerticalAlignment|char 'center'|exact
+CHK|Hyperlink_default_Visible|onoff on|exact
+CHK|Hyperlink_default_VisitedColor|double [1 3] 0.5215686275 0.0862745098 0.8196078431|exact
+CHK|Hyperlink_default_WordWrap|onoff off|exact
+CHK|Hyperlink_userdata_empty|1|exact
+CHK|Hyperlink_layout_empty|logical [1 1] 1|exact
+CHK|Hyperlink_parent_type|figure|exact
+CHK|Hyperlink_flags|0 1 1 1 1|exact
+CHK|GridLayout_type|uigridlayout|exact
+CHK|GridLayout_get_names|BackgroundColor BeingDeleted BusyAction Children ColumnSpacing ColumnWidth ContextMenu CreateFcn DeleteFcn HandleVisibility InnerPosition Interruptible Layout OuterPosition Padding Parent Position RowHeight RowSpacing Scrollable Tag Tooltip Type UserData Visible|exact
+CHK|GridLayout_set_names|BackgroundColor BusyAction Children ColumnSpacing ColumnWidth ContextMenu CreateFcn DeleteFcn HandleVisibility Interruptible Layout Padding Parent RowHeight RowSpacing Scrollable Tag Tooltip UserData Visible|exact
+CHK|GridLayout_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|GridLayout_default_BeingDeleted|onoff off|exact
+CHK|GridLayout_default_BusyAction|char 'queue'|exact
+CHK|GridLayout_default_ColumnSpacing|double [1 1] 10|exact
+CHK|GridLayout_default_ColumnWidth|cell [1 2] {char '1x', char '1x'}|exact
+CHK|GridLayout_default_CreateFcn|char ''|exact
+CHK|GridLayout_default_DeleteFcn|char ''|exact
+CHK|GridLayout_default_HandleVisibility|onoff on|exact
+CHK|GridLayout_default_Interruptible|onoff on|exact
+CHK|GridLayout_default_Padding|double [1 4] 10 10 10 10|exact
+CHK|GridLayout_default_RowHeight|cell [1 2] {char '1x', char '1x'}|exact
+CHK|GridLayout_default_RowSpacing|double [1 1] 10|exact
+CHK|GridLayout_default_Scrollable|onoff off|exact
+CHK|GridLayout_default_Tag|char ''|exact
+CHK|GridLayout_default_Tooltip|char ''|exact
+CHK|GridLayout_default_Type|char 'uigridlayout'|exact
+CHK|GridLayout_default_Visible|onoff on|exact
+CHK|GridLayout_userdata_empty|1|exact
+CHK|GridLayout_layout_empty|logical [1 1] 1|exact
+CHK|GridLayout_parent_type|figure|exact
+CHK|GridLayout_flags|0 1 1 1 1|exact

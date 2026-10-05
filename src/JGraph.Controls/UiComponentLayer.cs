@@ -25,7 +25,7 @@ namespace JGraph.Controls;
 /// no input; a press on it, and a right press on any control, is the control's <c>ButtonDownFcn</c>.
 /// </para>
 /// </summary>
-public sealed class UiComponentLayer : Canvas
+public sealed partial class UiComponentLayer : Canvas
 {
     private static readonly ResourceDictionary Styles = new()
     {
@@ -47,7 +47,7 @@ public sealed class UiComponentLayer : Canvas
         // The parts inside a list, a drop-down list and a multi-line field — their scroll bars and
         // their rows — would otherwise wear the IDE's implicit styles. An empty style of the type,
         // found here first, leaves them the system's own look, which is the one a component wears.
-        foreach (Type part in new[] { typeof(ScrollBar), typeof(ListBoxItem), typeof(ComboBoxItem) })
+        foreach (Type part in new[] { typeof(ScrollBar), typeof(ListBoxItem), typeof(ComboBoxItem), typeof(ToggleButton), typeof(TextBox) })
         {
             Resources.Add(part, new Style(part));
         }
@@ -80,6 +80,7 @@ public sealed class UiComponentLayer : Canvas
         {
             Children.Clear();
             _controls.Clear();
+            ClearComponents();
             _placements = [];
             _frame = null;
             _figure = figure;
@@ -139,6 +140,7 @@ public sealed class UiComponentLayer : Canvas
             _controls.Remove(gone);
         }
 
+        ApplyComponents(frame);
         Arrange();
     }
 
@@ -152,6 +154,8 @@ public sealed class UiComponentLayer : Canvas
                 Commit(realised);
             }
         }
+
+        CommitFocusedComponent();
     }
 
     /// <summary>
@@ -190,6 +194,21 @@ public sealed class UiComponentLayer : Canvas
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
         base.OnPreviewMouseDown(e);
+
+        // In a uifigure a press on a component is the window's too: WindowButtonDownFcn runs for it
+        // and the component still answers (R2025b, window session u1w_uitest).
+        if (_figure is { IsUiFigure: true } && UiComponentAt(e.GetPosition(this)) is not null)
+        {
+            Point over = e.GetPosition(this);
+            SelectionKind gesture = e.ClickCount > 1 ? SelectionKind.Open
+                : e.ChangedButton == MouseButton.Right || Keyboard.Modifiers.HasFlag(ModifierKeys.Control) ? SelectionKind.Alt
+                : e.ChangedButton == MouseButton.Middle || Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) ? SelectionKind.Extend
+                : SelectionKind.Normal;
+            ScriptGraphicsCallbacks.NotifyWindowButton(_figure, pressed: true, gesture, (over.X, over.Y));
+            _reportedDown = gesture;
+            return;
+        }
+
         if (_figure is null || ComponentAt(e.GetPosition(this)) is not { } component
             || !_controls.TryGetValue(component, out Realised? realised) || realised.Frame is not { } frame)
         {
@@ -249,7 +268,9 @@ public sealed class UiComponentLayer : Canvas
             return;
         }
 
-        _placements = UiLayout.Compute(_frame, new Size2D(ActualWidth, ActualHeight)).Controls;
+        UiLayoutResult layout = UiLayout.Compute(_frame, new Size2D(ActualWidth, ActualHeight));
+        _placements = layout.Controls;
+        ArrangeComponents(layout);
         foreach (UiPlacement placement in _placements)
         {
             if (!_controls.TryGetValue(placement.Control.Source, out Realised? realised))
@@ -265,7 +286,8 @@ public sealed class UiComponentLayer : Canvas
             element.Width = box.Width;
             element.Height = box.Height;
             element.Visibility = placement.Visible && !shown.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
-            element.Clip = ClipOf(placement, box, shown);
+            element.Clip = ClipOf(placement.Occluders, box, shown);
+            SetZIndex(element, placement.Order);
 
             // A slider lies along its longer side.
             if (realised.Control is ScrollBar bar)
@@ -291,16 +313,16 @@ public sealed class UiComponentLayer : Canvas
     /// are drawn on the canvas below, so a control they cover has to be cut away rather than covered.
     /// Null when the control shows whole, which is nearly always.
     /// </summary>
-    private static Geometry? ClipOf(UiPlacement placement, Rect2D box, Rect2D shown)
+    private static Geometry? ClipOf(IReadOnlyList<Rect2D> occluders, Rect2D box, Rect2D shown)
     {
         bool whole = shown.X <= box.X && shown.Y <= box.Y && shown.Right >= box.Right && shown.Bottom >= box.Bottom;
-        if (whole && placement.Occluders.Count == 0)
+        if (whole && occluders.Count == 0)
         {
             return null;
         }
 
         Geometry clip = new RectangleGeometry(new Rect(shown.X - box.X, shown.Y - box.Y, shown.Width, shown.Height));
-        foreach (Rect2D over in placement.Occluders)
+        foreach (Rect2D over in occluders)
         {
             clip = new CombinedGeometry(
                 GeometryCombineMode.Exclude,

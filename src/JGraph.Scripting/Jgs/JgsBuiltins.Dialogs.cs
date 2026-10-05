@@ -133,39 +133,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        // uiaxes is an axes with the defaults MATLAB's app-building one has. It lives in an ordinary
-        // figure, because this build has no uifigure and will not grow one for this.
-        // `ax = uiaxes` with no parentheses is the form every app-building script uses, so the bare
-        // name has to make the axes rather than hand back the verb that would — the rule bubblesize
-        // wrote and nexttile paid for again in M80.
-        env.Builtins.Register("uiaxes", JgsValue.Function(new BuiltinFunction("uiaxes", (args, line, col) =>
-        {
-            (FigureModel figure, IReadOnlyList<JgsValue> rest) = PeelFigure(args);
-            AxesModel axes = figure.AddAxes();
-            JG.MakeCurrent(axes);
-
-            // What a uiaxes is, here: an axes with MATLAB's app-building defaults. The fill behind the
-            // whole cell starts at the figure's own colour, so one drawn and left alone looks like the
-            // axes it is, and the toolbar a UIAxes shows is showing.
-            axes.BackgroundColor = figure.Background;
-            axes.Toolbar.Visible = true;
-
-            JgsHandleEntry entry = JgsHandleRegistry.EntryFor(axes);
-            var spec = new OptionSpec(
-                "uiaxes", [], ["Position", "XLim", "YLim", "ZLim", "Color", "BackgroundColor", "Box", "Tag", "Title"]);
-            ParsedArgs parsed = spec.Parse(rest, 0, line, col);
-            foreach (string name in new[]
-                     { "Position", "XLim", "YLim", "ZLim", "Color", "BackgroundColor", "Box", "Tag", "Title" })
-            {
-                if (parsed.Named(name) is { } value)
-                {
-                    JgsGraphicsProperties.Set(entry, name, value, line, col);
-                }
-            }
-
-            return JgsHandleRegistry.For(axes);
-        })
-        { AutoCallsBare = true }));
+        // uiaxes moved to JgsBuiltins.UiComponents.cs with the rest of a uifigure's components (U5).
     }
 
     /// <summary>

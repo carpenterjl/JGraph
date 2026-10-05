@@ -24,6 +24,8 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `u1/` | The U1 probes (ADR 0198): headless `u1_*`, and the window session `u1w_*`. |
 | `u2/` | The U2 probes (ADR 0199): headless `u2_*`, and the window session `u2w_resize`. |
 | `u3/` | The U3 probes (ADR 0200): headless `u3_*`, and the window session `u3w_clicks` with `fgtitle.ps1`, its foreground check. |
+| `u4/` | The U4 probes (ADR 0201): headless `u4_*`. |
+| `u5/` | The U5 probes (ADR 0202): headless `u5_*`, with their helpers `tryp`, `v2s`, `oneline` and `u5_makers`. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
 
@@ -383,3 +385,79 @@ display is `MATLAB:print:HeadlessFigureUnsupported`, and on what is not a figure
 
 **Words** (`u4_messages`): the dialogs' messages as R2025b's catalogue has them, and
 `u4_nargout` the output counts the generator reads.
+
+## U5 findings (R2025b, headless)
+
+Every `u5_*` probe ran `-noFigureWindows -batch` through `u5/run-probe.ps1`; none opens a window.
+`tryp` prints a value or an error's identifier and sentence, `u5_dialogs2` uses a form of it for
+functions with no output.
+
+**The components** (`u5_matrix`, `u5_forms`). Sixteen classes from thirteen functions. A refusal
+is `MATLAB:ui:<Class>:<id>` and a plain sentence; a graphics datatype's refusal (a colour, an
+on/off state, a callback) has the prefix "Error setting property 'X' of class 'C':". Inside the
+call that makes a component every refusal becomes `MATLAB:ui:<Class>:unknownInput`. `Value` and
+`ValueIndex` are applied after the other pairs of a making call. An enumerated word is matched
+whole in any case; only `InputType` takes an abbreviation. A string scalar is not a char row for
+`Items`, `ItemsData`, `ValueIndex`, `MajorTickLabels`, a numeric `Value`, `RowHeight` and
+`ColumnWidth`. A leaf component has no `Children`, and a radio button no `Layout`.
+
+**Button groups in a `uifigure`.** The first radio or toggle button made is selected whatever its
+`Value` was asked to be. Writing false to the selected one selects the first; with one button it is
+`noButtonSelected`. Mixing the two kinds is refused ("Mutual exclusivity violated…"). A radio
+button's `Parent` must be a `ButtonGroup` (`invalidClassForParent`). After a button is moved out
+of a group, the group's `SelectedObject` still names it.
+
+**Fit sizes** (`u5_grid`), with `fs` the font size in pixels and widths taken with pair kerning,
+each rounded up to a sixty-fourth:
+
+| component | width | height |
+| --- | --- | --- |
+| a line of text | sum of glyph widths | 1.23 fs |
+| label, hyperlink | text + 2 | lines + 2 |
+| check box, radio button | text + 19 | line + 2 |
+| button, state and toggle button | ceil(text) + 10 | ceil(lines) + 8 |
+| edit field | 10 + 9.4388 fs | line + 8 |
+| numeric edit field | width of "0123456789" + 10 | line + 8 |
+| spinner | numeric + 22 | max(22, line + 4) |
+| text area | 10 + 14.1589 fs | 4 lines + 6 |
+| drop-down | widest item + 33 | line + 8 |
+| list box | ceil(widest item) + 10 | items × 1.5 fs + 2 |
+| slider | 164 (the track and 16) | 39 (the track and 36) |
+| an empty grid | 30 | 30 |
+
+A slider's track sits 7.5 from the left and 6 from the top of that rectangle.
+
+**The grid** (`u5_grid`). Tracks are laid from the left and the top, inside the padding. A `'fit'`
+track is the largest fit of a child that sits in it alone; a child that spans shares what it
+still needs among the `'fit'` tracks it spans; a `'fit'` track of size 0 takes no spacing. Weighted
+tracks share the rest and stop at zero. A grid asked for its own fit sizes its weighted tracks to
+their content. A new child takes the cell after the row-major maximum of the cells in use.
+`RowHeight` and `ColumnWidth` read back as the declared list with `'1x'` added to cover the
+children, and the growth is not kept when the children go. A child moved between grids keeps its
+cell. Writing a child's `Position` warns
+(`MATLAB:ui:components:noPositionSetWhenInLayoutContainer`); a grid's own `Position` is read-only.
+A grid in a titled `uifigure` panel loses a line and 6 at the top and a pixel on each other edge.
+`uicontrol` is refused in a grid. **The layout is asynchronous**: positions settle 0.1 to 0.5 s
+after `drawnow`, so the probe waits before it reads.
+
+**A slider's ticks** are computed by R2025b's view and read back only once it has settled;
+`MinorTicks` reads `[]` until then. Thirty-four ranges are recorded in `u5_matrix.out.txt`.
+
+**The dialogs** (`u5_dialogs`, `u5_dialogs2`). `uialert` and `uiprogressdlg` on a figure that is
+not shown are `MATLAB:uitools:uidialogs:InvisibleFigure`; on what is not a figure,
+`InvalidFigureHandle`. `uiconfirm` waits only when an output is asked for, and without a display
+is `MATLAB:hg:NonInteractiveFunctionSupport`. Defaults: `uialert` `Icon` `'error'`; `uiconfirm`
+`Icon` `'question'`, `Options` `{'OK', 'Cancel'}`, `DefaultOption` 1, `CancelOption` the last. The
+`CloseFcn` structures, read from R2025b's installed source: an alert's has `Source`, `EventName`
+(`'AlertDialogClosed'`) and `DialogTitle`; a confirmation's adds `SelectedOptionIndex` and
+`SelectedOption` and is named `'ConfirmDialogClosed'`. A `ProgressDialog` has ten properties
+(`Value`, `Message`, `Title`, `Indeterminate`, `Icon`, `ShowPercentage`, `Cancelable`,
+`CancelText`, `Interpreter`, `CancelRequested`) and refuses in the words of a property validator.
+A property of a closed one is `MATLAB:class:InvalidHandle`.
+
+**`uiaxes`** is `matlab.ui.control.UIAxes`: `Units` pixels, `Position` equal to `OuterPosition`
+(`[10 10 400 300]`), `NextPlot` `'replacechildren'`, `BackgroundColor` `'none'`, never `gca`. In
+a grid its `Position` is its cell. `focus` on it is `MATLAB:UndefinedFunction`, as on a label, a
+panel and a classic control; on a figure that is not shown `focus` warns and returns.
+
+Not measured: any callback's event data (no component can be worked headless), and scrolling.

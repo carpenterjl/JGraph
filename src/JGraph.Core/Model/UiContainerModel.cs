@@ -313,6 +313,36 @@ public class UiPanelModel : UiContainerModel
     };
 
     /// <summary>
+    /// How far a grid placed in this panel stands in from each edge, once R2025b's layout has
+    /// settled (probe <c>u5_grid</c>). In a <c>uifigure</c> a title takes a line of its font and 6
+    /// pixels, and the border a pixel on every side; elsewhere it is <see cref="Insets"/>.
+    /// </summary>
+    public Thickness GridInsets()
+    {
+        Thickness inset = Insets();
+        if (Figure is not { IsUiFigure: true } || _borderType == UiBorderType.None || !HasTitle)
+        {
+            return inset;
+        }
+
+        bool bottomTitle = _titlePosition is UiTitlePosition.LeftBottom or UiTitlePosition.CenterBottom or UiTitlePosition.RightBottom;
+        double strip = UiFit.LineHeight(FontSizeInPixels()) + 6;
+        return bottomTitle
+            ? new Thickness(inset.Left, inset.Left, inset.Right, strip)
+            : new Thickness(inset.Left, strip, inset.Right, inset.Left);
+    }
+
+    /// <summary>The size of the area a grid placed in this panel fills.</summary>
+    public Size2D GridArea()
+    {
+        Rect2D outer = PixelPosition();
+        Thickness inset = GridInsets();
+        return new Size2D(
+            System.Math.Max(0, outer.Width - inset.Left - inset.Right),
+            System.Math.Max(0, outer.Height - inset.Top - inset.Bottom));
+    }
+
+    /// <summary>
     /// R2025b's inner area, measured in both figure kinds (probe <c>u2_panel</c>). The border takes
     /// its width from every edge — twice that when etched, nothing when <c>none</c> — and a title takes
     /// its font's pixel size, rounded, from the edge it sits on in place of the border there, whichever

@@ -434,10 +434,25 @@ internal static partial class JgsGraphicsProperties
             Put(table, captured,
                 entry =>
                 {
-                    Rect2D box = ((UiObject)entry.Target).Position;
+                    // A grid's child is where the grid put it, in its own units (U5).
+                    var component = (UiObject)entry.Target;
+                    Rect2D box = component.Parent is UiGridLayoutModel
+                        ? UiUnitConverter.FromPixels(component.PixelPosition(), component.Units, component.ReferenceSize())
+                        : component.Position;
                     return Row(box.X, box.Y, box.Width, box.Height);
                 },
-                (entry, value, line, col) => ((UiObject)entry.Target).Position = ComponentPosition(entry, captured, value, line, col));
+                (entry, value, line, col) =>
+                {
+                    Rect2D box = ComponentPosition(entry, captured, value, line, col);
+                    if (((UiObject)entry.Target).Parent is UiGridLayoutModel)
+                    {
+                        PropertyWarning("MATLAB:ui:components:noPositionSetWhenInLayoutContainer",
+                            "Unable to set 'Position', 'InnerPosition', or 'OuterPosition' for components in 'GridLayout'.");
+                        return;
+                    }
+
+                    ((UiObject)entry.Target).Position = box;
+                });
         }
 
         // The units engine (U2): changing Units keeps the component where it is and re-expresses
