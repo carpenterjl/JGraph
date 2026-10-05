@@ -1,0 +1,82 @@
+CHK|default_from_superclass_file|double [1 1] 7|exact
+CHK|validator_of_superclass|MATLAB:validators:mustBePositive|exact
+CHK|size_of_superclass|MATLAB:validation:IncompatibleSize|exact
+CHK|dependent_inherited|double [1 1] 6|exact
+CHK|dependent_set_inherited|double [1 1] 5|exact
+CHK|set_method_inherited|setTag:x;|exact
+CHK|local_function_of_superclass|double [1 1] 8|exact
+CHK|properties_with_dependent|cell [1 6] {char 'Extra', char 'W', char 'Tag', char 'Twice', char 'Count', char 'Info'}|exact
+CHK|element_write_inside|double [1 4] 1 2 3 4|exact
+CHK|field_write_inside|double [1 1] 2|exact
+CHK|element_read_outside|double [1 1] 2|exact
+CHK|field_read_outside|double [1 1] 1|exact
+CHK|element_write_outside|MATLAB:class:SetProhibited|exact
+CHK|element_write_outside_msg|Unable to set the 'Count' property of class ''U6AccSub'' because it is read-only.|exact
+CHK|field_write_outside|MATLAB:class:SetProhibited|exact
+CHK|field_write_outside_msg|Unable to set the 'Info' property of class ''U6AccSub'' because it is read-only.|exact
+CHK|element_write_kept|double [1 4] 1 2 3 4|exact
+CHK|element_write_private|MATLAB:class:GetProhibited|exact
+CHK|element_write_private_msg|No public property 'Secret' for class ''U6Vault''.|exact
+CHK|element_write_readonly|MATLAB:class:SetProhibited|exact
+CHK|element_write_readonly_msg|Unable to set the 'ReadOnly' property of class ''U6Vault'' because it is read-only.|exact
+CHK|element_read_private|MATLAB:class:GetProhibited|exact
+CHK|element_read_private_msg|No public property 'Secret' for class ''U6Vault''.|exact
+CHK|dynamic_read_private|MATLAB:class:GetProhibited|exact
+CHK|dynamic_read_private_msg|No public property 'Secret' for class ''U6Vault''.|exact
+CHK|element_write_public|double [1 3] 1 0 7|exact
+CHK|private_through_cell|MATLAB:class:GetProhibited|exact
+CHK|private_through_cell_msg|No public property 'Secret' for class ''U6Vault''.|exact
+CHK|private_through_struct|MATLAB:class:GetProhibited|exact
+CHK|private_through_struct_msg|No public property 'Secret' for class ''U6Vault''.|exact
+CHK|public_through_struct|double [1 3] 1 0 7|exact
+CHK|hook_called_by_superclass|sub hook<base hook|exact
+CHK|hook_of_plain_superclass|base hook|exact
+CHK|hook_outside|MATLAB:class:MethodRestricted|exact
+CHK|hook_outside_msg|Cannot access method 'hook' in class 'U6AccSub'.|exact
+CHK|hook_handle|sub hook<base hook|exact
+CHK|bound_inherited_handle|sub hook<base hook|exact
+CHK|static_through_instance_inside|accsub|exact
+CHK|static_through_instance|accsub|exact
+CHK|static_through_class|accsub|exact
+CHK|private_shadow_class|U6PrivSub|exact
+CHK|private_shadow_from_superclass|base|exact
+CHK|private_shadow_from_superclass_dot|base|exact
+CHK|private_shadow_from_subclass|sub|exact
+CHK|private_shadow_outside|sub|exact
+CHK|private_shadow_plain|base|exact
+CHK|private_shadow_plain_outside|MATLAB:class:MethodRestricted|exact
+CHK|private_shadow_plain_outside_msg|Cannot access method 'helper' in class 'U6Priv'.|exact
+CHK|private_shadow_methods|cell [1 5] {char 'U6PrivSub', char 'helper', char 'run', char 'runDot', char 'runSub'}|exact
+CHK|signatures_abstract|MATLAB:class:abstract|exact
+CHK|signatures_abstract_msg|Abstract classes cannot be instantiated. Class 'U6Sig' defines abstract methods and/or properties.|exact
+CHK|signatures_partial|MATLAB:class:abstract|exact
+CHK|signatures_partial_msg|Abstract classes cannot be instantiated. Class 'U6SigPart' inherits abstract methods or properties but does not implement them. Use matlab.metadata.abstractDetails to see the list of methods and properties that 'U6SigPart' must implement if you do not intend the class to be abstract.|exact
+CHK|signatures_no_output|a;d;|exact
+CHK|signatures_one_output|double [1 1] 2|exact
+CHK|signatures_two_outputs|double [1 2] 1 2|exact
+CHK|signatures_protected|g|exact
+CHK|signatures_protected_outside|MATLAB:class:MethodRestricted|exact
+CHK|signatures_protected_outside_msg|Cannot access method 'g' in class 'U6SigImpl'.|exact
+CHK|signatures_static|f|exact
+CHK|signatures_methods|cell [1 7] {char 'U6SigImpl', char 'a', char 'b', char 'c', char 'd', char 'f', char 'runE'}|exact
+CHK|handle_constructor_by_name|double [1 1] 4|exact
+CHK|varargin_to_superclass|cell [1 2] {char 'named', double [1 1] 5}|exact
+CHK|varargin_to_superclass_log|Shape:U6Var:2;|exact
+CHK|varargin_none_log|Shape:U6Var:0;|exact
+CHK|varargin_too_many|MATLAB:TooManyInputs|exact
+CHK|varargin_too_many_msg|Too many input arguments.|exact
+CHK|both_constructors_reversed|MixB;MixA;BothRev;|exact
+CHK|dominant_first|high|exact
+CHK|dominant_second|high|exact
+CHK|dominant_alone|low|exact
+CHK|dominant_number_first|low|exact
+CHK|dominant_dot|low|exact
+CHK|events_hidden_left_out|cell [1 3] {char 'Echo', char 'Shout', char 'ObjectBeingDestroyed'}|exact
+CHK|events_by_name|cell [1 3] {char 'Echo', char 'Shout', char 'ObjectBeingDestroyed'}|exact
+CHK|events_hidden_still_heard|whisper;shout;|exact
+CHK|events_unknown|MATLAB:class:invalidEvent|exact
+CHK|events_unknown_msg|Event 'Nope' is not defined for class 'U6QuietSub'.|exact
+CHK|saved_class|U6Square|exact
+CHK|saved_inherited|kept|exact
+CHK|saved_own|double [1 1] 4|exact
+CHK|saved_equal|logical [1 1] 1|exact

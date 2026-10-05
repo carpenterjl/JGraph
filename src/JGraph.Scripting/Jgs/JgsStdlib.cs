@@ -147,6 +147,10 @@ internal static class JgsStdlib
         return result;
     }
 
+    /// <summary>The pairs of objects an isequal is in the middle of comparing, so two that hold each other end.</summary>
+    [ThreadStatic]
+    private static HashSet<(JgsObject, JgsObject)>? t_comparing;
+
     /// <summary>
     /// Deep equality: arrays element-by-element (recursively), scalars by value. NaN is unequal to
     /// itself, which is what <c>isequal</c> reports; <paramref name="nanEqual"/> switches to the
@@ -160,6 +164,42 @@ internal static class JgsStdlib
         if (left.Type == JgsType.External || right.Type == JgsType.External)
         {
             return Net.NetEquality.DeepEquals(left, right, nanEqual);
+        }
+
+        // Two objects are equal when they are one object, or of one class with equal properties
+        // (U6, measured: isequal(U6Square(2), U6Square(2)) is true).
+        if (left.Type == JgsType.Object || right.Type == JgsType.Object)
+        {
+            if (left.Type != right.Type || !ReferenceEquals(left.AsObject.Class, right.AsObject.Class))
+            {
+                return false;
+            }
+
+            JgsObject one = left.AsObject;
+            JgsObject other = right.AsObject;
+            if (ReferenceEquals(one, other))
+            {
+                return true;
+            }
+
+            // Two handles that hold each other, or themselves, would be compared for ever: a pair
+            // already being compared is taken as equal, which leaves the answer to everything else.
+            t_comparing ??= [];
+            if (!t_comparing.Add((one, other)))
+            {
+                return true;
+            }
+
+            try
+            {
+                return one.Fields.Count == other.Fields.Count
+                    && one.Fields.All(field => other.Fields.TryGetValue(field.Key, out JgsValue? held)
+                        && (ReferenceEquals(field.Value, held) || DeepEquals(field.Value, held, nanEqual)));
+            }
+            finally
+            {
+                t_comparing.Remove((one, other));
+            }
         }
 
         left = JgsBuiltins.ImageNumbers(left);

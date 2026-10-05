@@ -178,6 +178,7 @@ internal sealed partial class Interpreter
                 // past it is created here and stored back through the property's setter.
                 if (held is { Type: JgsType.Object } && held.AsObject.Fields.TryGetValue(field, out JgsValue? property))
                 {
+                    RequirePassThrough(held, field, step); // U6
                     next = property;
                     return LevelKind.Continue;
                 }
@@ -635,6 +636,7 @@ internal sealed partial class Interpreter
             throw new JgsRuntimeException(level.Line, level.Column, $"'{definition.Name}' has no property '{field}'.");
         }
 
+        RequireGetAccess(definition, property, field, level); // U6: the get half; the set half checks itself
         JgsValue? current;
         bool minted = false;
         if ((definition.TryGetter(field, out _) && !InAccessor(definition.GetterTag(field))) || property.Dependent)

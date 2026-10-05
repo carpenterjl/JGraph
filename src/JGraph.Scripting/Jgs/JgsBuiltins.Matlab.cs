@@ -325,7 +325,7 @@ internal static partial class JgsBuiltins
             // On an object it is the property names, Dependent ones included, and runs no getter (V6, #28).
             // A .NET object's are its properties and fields, as properties lists them (ADR 0174).
             JgsValue names = args[0].Type == JgsType.Object
-                ? JgsValue.Cell(args[0].AsObject.Class.Properties.Select(static p => JgsValue.Str(p.Spec.Name)).ToArray())
+                ? JgsValue.Cell(args[0].AsObject.Class.ListedProperties.Select(static p => JgsValue.Str(p.Spec.Name)).ToArray())
                 : args[0].AsExternalOrNull() is NetObject net
                     ? JgsValue.Cell(Net.NetDisplay.MemberNames(net).Select(JgsValue.Str).ToArray())
                     : IsLibValue(args[0].AsExternalOrNull())

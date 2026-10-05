@@ -31,6 +31,208 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// The class the running code belongs to (U6, ADR 0203), or null for a script, a function
+    /// file and the prompt: what decides whether a private or protected member may be reached.
+    /// A handle made inside a class runs under the class's scope wherever it is called from, so
+    /// it keeps the class's access, as R2025b's does.
+    /// </summary>
+    internal JgsClass? ContextClass() => AnyClasses ? CurrentFrame.ClassContext : null;
+
+    private readonly HashSet<string> _classesBeingBuilt = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, JgsClass> _builtinClasses = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// The class a <c>classdef</c> header names after <c>&lt;</c> (U6): a mixin this build supplies,
+    /// or a class file on the path, loaded now if this is its first mention. Null when nothing
+    /// defines it. A class that reaches itself through its own superclasses is refused.
+    /// </summary>
+    internal JgsClass? ClassForSuper(string name, ClassdefStmt from)
+    {
+        if (BuiltinClass(name) is { } supplied)
+        {
+            return supplied;
+        }
+
+        if (!_classesBeingBuilt.Add(from.Name))
+        {
+            throw new JgsRuntimeException(from.Line, from.Column,
+                $"Class '{from.Name}' inherits from itself through '{name}'.");
+        }
+
+        try
+        {
+            return ClassForLoad(name);
+        }
+        finally
+        {
+            _classesBeingBuilt.Remove(from.Name);
+        }
+    }
+
+    /// <summary>A class this build supplies for a user class to inherit from (<c>matlab.mixin.Copyable</c>), or null.</summary>
+    internal JgsClass? BuiltinClass(string name)
+    {
+        if (_builtinClasses.TryGetValue(name, out JgsClass? made))
+        {
+            return made;
+        }
+
+        if (JgsBuiltinClasses.DeclarationOf(name, this) is not { } declaration)
+        {
+            return null;
+        }
+
+        made = new JgsClass(declaration, NewFileScope(), this);
+        _builtinClasses[name] = made;
+        return made;
+    }
+
+    /// <summary>What asking for a method came to: there is one, there is none, or there is one the caller may not have.</summary>
+    internal enum MethodAnswer
+    {
+        /// <summary>The class has no such method, as far as the caller can tell.</summary>
+        Missing,
+
+        /// <summary>The method, which the caller may call.</summary>
+        Found,
+
+        /// <summary>The method exists and the caller may not call it.</summary>
+        Refused,
+    }
+
+    /// <summary>
+    /// The method <paramref name="name"/> on <paramref name="definition"/> for the running code
+    /// (U6). A public method costs one lookup; anything else asks which class is running.
+    /// </summary>
+    internal MethodAnswer FindMethod(
+        JgsClass definition, string name, JgsClass? context, bool contextKnown, out ClassMethod? method)
+    {
+        if (!definition.TryMethod(name, out method))
+        {
+            return MethodAnswer.Missing;
+        }
+
+        if (method.Access.IsPublic && !definition.HasPrivateShadows)
+        {
+            return MethodAnswer.Found;
+        }
+
+        context = contextKnown ? context : ContextClass();
+        if (definition.HasPrivateShadows)
+        {
+            definition.TryMethodFor(name, context, out method);
+        }
+
+        if (method!.Access.IsPublic)
+        {
+            return MethodAnswer.Found;
+        }
+
+        if (!definition.Visible(method, context))
+        {
+            return MethodAnswer.Missing;
+        }
+
+        return JgsClass.Allows(method.Access, method.Owner ?? definition, context, name) ? MethodAnswer.Found : MethodAnswer.Refused;
+    }
+
+    /// <summary>
+    /// A write that goes on past <c>obj.field</c> - <c>obj.p(2) = v</c>, <c>obj.s.f = v</c> - reads
+    /// the property and then sets it (U6, measured: the read is refused first), so it needs both
+    /// accesses. When what the property holds is a handle, the write lands in the handle and the
+    /// property is only read.
+    /// </summary>
+    private void RequirePassThrough(JgsValue owner, string field, Node at)
+    {
+        JgsObject instance = owner.AsObject;
+        JgsClass definition = instance.Class;
+        if (definition.Property(field) is not { } property || (property.GetAccess.IsPublic && property.SetAccess.IsPublic))
+        {
+            return;
+        }
+
+        RequireGetAccess(definition, property, field, at);
+        if (property.SetAccess.IsPublic || (instance.Fields.TryGetValue(field, out JgsValue? held) && IsReference(held)))
+        {
+            return;
+        }
+
+        RequireSetAccess(definition, property, field, at.Line, at.Column);
+    }
+
+    /// <summary>Whether a value names something rather than holding it: a handle object, a graphics handle, a built-in handle class, a .NET or device object.</summary>
+    private static bool IsReference(JgsValue value) =>
+        value.Type == JgsType.External
+        || (value.Type == JgsType.Object && value.AsObject.Class.IsHandle)
+        || JgsBuiltins.IsHandleClass(value)
+        || (value.Type == JgsType.Number && JgsHandleRegistry.TryGet(value, out _));
+
+    /// <summary>R2025b's words for a name an object has no property, method or field of.</summary>
+    private static JgsRuntimeException NoSuchMember(string field, JgsClass definition, Node at) =>
+        new(at.Line, at.Column, "MATLAB:noSuchMethodOrField",
+            $"Unrecognized method, property, or field '{field}' for class '{definition.Name}'.");
+
+    /// <summary>R2025b's words for a property the caller may not read (the doubled quotes are R2025b's).</summary>
+    internal static JgsRuntimeException GetProhibited(string field, JgsClass definition, int line, int col) =>
+        new(line, col, "MATLAB:class:GetProhibited", $"No public property '{field}' for class ''{definition.Name}''.");
+
+    /// <summary>
+    /// Refuses a read of <paramref name="property"/> the running code may not make (U6): a
+    /// superclass's private property is no property of the object at all, and any other is
+    /// R2025b's <c>GetProhibited</c>.
+    /// </summary>
+    internal void RequireGetAccess(JgsClass definition, ClassProperty property, string field, Node at)
+    {
+        if (property.GetAccess.IsPublic)
+        {
+            return;
+        }
+
+        JgsClass? context = ContextClass();
+        if (!definition.Visible(property, context, write: false))
+        {
+            throw NoSuchMember(field, definition, at);
+        }
+
+        if (!JgsClass.Allows(property.GetAccess, property.Owner ?? definition, context, field))
+        {
+            throw GetProhibited(field, definition, at.Line, at.Column);
+        }
+    }
+
+    /// <summary>
+    /// Refuses a write of <paramref name="property"/> the running code may not make (U6), in
+    /// R2025b's two sentences: a property the caller can read is "read-only", one it cannot is
+    /// "not supported". An immutable property is written by its class's constructor alone.
+    /// </summary>
+    internal void RequireSetAccess(JgsClass definition, ClassProperty property, string field, int line, int col)
+    {
+        if (property.SetAccess.IsPublic)
+        {
+            return;
+        }
+
+        JgsClass? context = ContextClass();
+        JgsClass owner = property.Owner ?? definition;
+        if (!definition.Visible(property, context, write: true))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:noPublicFieldForClass",
+                $"Unrecognized property '{field}' for class '{definition.Name}'.");
+        }
+
+        bool allowed = property.SetAccess.Kind == MemberAccessKind.Immutable
+            ? ReferenceEquals(context, owner) && owner.IsConstructor(CurrentFrame.EnclosingFunction)
+            : JgsClass.Allows(property.SetAccess, owner, context, field);
+        if (!allowed)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:SetProhibited",
+                JgsClass.Allows(property.GetAccess, owner, context, field)
+                    ? $"Unable to set the '{field}' property of class ''{definition.Name}'' because it is read-only."
+                    : $"Setting the '{field}' property of class ''{definition.Name}'' is not supported.");
+        }
+    }
+
+    /// <summary>
     /// Reads <c>obj.name</c>: a property, or a method with the object already in its hand. The two are
     /// asked in that order because a property is data and a method is behaviour, and a class that has
     /// both under one name is a class that cannot say what it meant.
@@ -44,7 +246,13 @@ internal sealed partial class Interpreter
         // the method's own body, where obj.p is the storage - and a Dependent property has nothing
         // else to read as, so one without a get method is refused in R2025b's words.
         JgsClass definition = instance.Class;
-        if (definition.Property(field) is { Constant: false } property
+        ClassProperty? declared = definition.Property(field);
+        if (declared is not null)
+        {
+            RequireGetAccess(definition, declared, field, member); // U6: who may read it
+        }
+
+        if (declared is { Constant: false } property
             && ((definition.TryGetter(field, out _) && !InAccessor(definition.GetterTag(field))) || property.Dependent))
         {
             _readRanGetter = true;
@@ -61,20 +269,26 @@ internal sealed partial class Interpreter
             return constant;
         }
 
-        if (instance.Class.TryMethod(field, out ClassMethod? method))
+        MethodAnswer answer = FindMethod(definition, field, null, false, out ClassMethod? method);
+        if (answer == MethodAnswer.Refused)
+        {
+            throw JgsClass.Restricted(field, method!.Owner ?? definition, member.Line, member.Column);
+        }
+
+        if (answer == MethodAnswer.Found && method is not null)
         {
             if (method.Static)
             {
-                throw new JgsRuntimeException(member.Line, member.Column,
-                    $"'{field}' is a static method of {instance.Class.Name}, so it is called on the class: "
-                    + $"{instance.Class.Name}.{field}(…).");
+                // A static method read off an instance is the class's (R2025b allows the spelling).
+                IJgsCallable unbound = definition.Callable(method);
+                return autoCall && method.Function.Parameters.Count == 0
+                    ? unbound.Call([], member.Line, member.Column)
+                    : JgsValue.Function(unbound);
             }
 
-            IJgsCallable body = instance.Class.Callable(method);
-            if (field == "delete" && instance.Class.IsHandle)
-            {
-                body = new DestructorCall(body, instance); // obj.delete is delete(obj) (V6, #104)
-            }
+            IJgsCallable body = field == "delete" && instance.Class.IsHandle
+                ? new DestructorCall(instance) // obj.delete is delete(obj) (V6, #104)
+                : instance.Class.Callable(method);
 
             var bound = new BoundMethod(body, target);
 
@@ -94,8 +308,7 @@ internal sealed partial class Interpreter
             return autoCall ? inherited.Call([], member.Line, member.Column) : JgsValue.Function(inherited);
         }
 
-        throw new JgsRuntimeException(member.Line, member.Column,
-            $"'{instance.Class.Name}' has no property or method '{field}'.");
+        throw NoSuchMember(field, definition, member);
     }
 
     /// <summary>
@@ -195,6 +408,11 @@ internal sealed partial class Interpreter
     private bool TryClassMember(
         JgsClass definition, string field, MemberExpr member, bool autoCall, out JgsValue value)
     {
+        if (definition.Property(field) is { Constant: true } constant)
+        {
+            RequireGetAccess(definition, constant, field, member); // U6
+        }
+
         if (definition.TryConstant(field, out value))
         {
             return true;
@@ -202,6 +420,11 @@ internal sealed partial class Interpreter
 
         if (definition.TryMethod(field, out ClassMethod? method) && method.Static)
         {
+            if (FindMethod(definition, field, null, false, out _) != MethodAnswer.Found)
+            {
+                throw JgsClass.Restricted(field, method.Owner ?? definition, member.Line, member.Column);
+            }
+
             IJgsCallable callable = definition.Callable(method);
             value = autoCall && method.Function.Parameters.Count == 0
                 ? callable.Call([], member.Line, member.Column)
@@ -243,16 +466,27 @@ internal sealed partial class Interpreter
         JgsClass definition = instance.Class;
         if (definition.Property(field) is not { } property)
         {
-            throw new JgsRuntimeException(member.Line, member.Column,
-                definition.TryMethod(field, out _)
-                    ? $"'{field}' is a method of {definition.Name}, not a property, so it cannot be assigned to."
-                    : $"'{definition.Name}' has no property '{field}'.");
+            throw definition.TryMethod(field, out _)
+                ? new JgsRuntimeException(member.Line, member.Column,
+                    $"'{field}' is a method of {definition.Name}, not a property, so it cannot be assigned to.")
+                : new JgsRuntimeException(member.Line, member.Column, "MATLAB:noPublicFieldForClass",
+                    $"Unrecognized property '{field}' for class '{definition.Name}'.");
         }
 
         if (property.Constant)
         {
             throw new JgsRuntimeException(member.Line, member.Column,
                 $"{definition.Name}.{field} is Constant, so it belongs to the class and cannot be assigned to.");
+        }
+
+        RequireSetAccess(definition, property, field, member.Line, member.Column); // U6: who may write it
+
+        // AbortSet (U6, measured): a write of a value isequal to the one held is no write - no set
+        // method, no PreSet, no PostSet, and the held value keeps its class.
+        if (property.AbortSet && instance.Fields.TryGetValue(field, out JgsValue? unchanged)
+            && JgsBuiltins.IsEqualValues(unchanged, value))
+        {
+            return true;
         }
 
         // A property with a set method is written by that method (V6, #27, #28) - except inside the
@@ -278,10 +512,18 @@ internal sealed partial class Interpreter
             return true;
         }
 
+        StoreProperty(holder, definition, property, field, value, member.Line, member.Column);
+        return true;
+    }
+
+    /// <summary>The store a property write ends in, once its access and its set method have had their say.</summary>
+    private void StoreProperty(
+        JgsValue holder, JgsClass definition, ClassProperty property, string field, JgsValue value, int line, int col)
+    {
         // A SetObservable property with a listener raises PreSet before the write and PostSet after
         // it (V6, #108) — inside the statement, whose operands were read before it began (M5). An
         // object nobody listens to pays one null test.
-        bool observed = property.Observable && instance.HasPropertyListener(field);
+        bool observed = property.Observable && holder.AsObject.HasPropertyListener(field);
         if (observed)
         {
             JgsBuiltins.FirePropertyEvent(holder, field, post: false);
@@ -290,7 +532,7 @@ internal sealed partial class Interpreter
         // M7: the write gate. The entry holds this very wrapper (M2), so detaching here is what
         // gives the entry its own instance — nothing has to be written back.
         Dictionary<string, JgsValue> fields = holder.WritableFields();
-        JgsValue stored = definition.Check(property, CopyForBinding(value), member.Line, member.Column);
+        JgsValue stored = definition.Check(property, CopyForBinding(value), line, col);
         fields.TryGetValue(field, out JgsValue? replaced);
         fields[field] = stored;
         JgsLifetime.Stored(holder, replaced, stored); // V10: the property's lifetime moves with the write
@@ -299,8 +541,62 @@ internal sealed partial class Interpreter
         {
             JgsBuiltins.FirePropertyEvent(holder, field, post: true);
         }
+    }
 
-        return true;
+    /// <summary>
+    /// Reads a property by name as <c>obj.name</c> would (U6): the access the running code has,
+    /// the get method, the constant, the storage. What <c>get</c> on a
+    /// <c>matlab.mixin.SetGet</c> object asks.
+    /// </summary>
+    internal JgsValue ReadProperty(JgsValue target, string field, int line, int col)
+    {
+        JgsObject instance = target.AsObject;
+        JgsClass definition = instance.Class;
+        var at = new VariableExpr(field) { Line = line, Column = col };
+        ClassProperty property = definition.Property(field) ?? throw NoSuchMember(field, definition, at);
+        RequireGetAccess(definition, property, field, at);
+        if (!property.Constant && (definition.TryGetter(field, out _) || property.Dependent))
+        {
+            return definition.CallGetter(field, target, line, col);
+        }
+
+        return instance.Fields.TryGetValue(field, out JgsValue? held) ? held
+            : definition.TryConstant(field, out JgsValue constant) ? constant
+            : throw NoSuchMember(field, definition, at);
+    }
+
+    /// <summary>
+    /// Writes a property of a handle object by name as <c>obj.name = value</c> would (U6): the
+    /// access the running code has, AbortSet, the declaration's checks, the set method, the
+    /// listeners. What <c>set</c> on a <c>matlab.mixin.SetGet</c> object asks.
+    /// </summary>
+    internal void WriteProperty(JgsValue target, string field, JgsValue value, int line, int col)
+    {
+        JgsObject instance = target.AsObject;
+        JgsClass definition = instance.Class;
+        ClassProperty property = definition.Property(field)
+            ?? throw new JgsRuntimeException(line, col, "MATLAB:noPublicFieldForClass",
+                $"Unrecognized property '{field}' for class '{definition.Name}'.");
+        if (property.Constant)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{definition.Name}.{field} is Constant, so it belongs to the class and cannot be assigned to.");
+        }
+
+        RequireSetAccess(definition, property, field, line, col);
+        if (property.AbortSet && instance.Fields.TryGetValue(field, out JgsValue? unchanged)
+            && JgsBuiltins.IsEqualValues(unchanged, value))
+        {
+            return;
+        }
+
+        if (definition.TrySetter(field, out _) || property.Dependent)
+        {
+            definition.CallSetter(field, target, definition.Check(property, CopyForBinding(value), line, col), line, col);
+            return;
+        }
+
+        StoreProperty(target, definition, property, field, value, line, col);
     }
 
     /// <summary>
@@ -366,6 +662,7 @@ internal sealed partial class Interpreter
                 string field = FieldName(member, env);
                 if (owner.Type == JgsType.Object)
                 {
+                    RequirePassThrough(owner, field, member); // U6
                     return owner.WritableFields().TryGetValue(field, out JgsValue? property) ? property : null;
                 }
 
@@ -419,7 +716,17 @@ internal sealed partial class Interpreter
     /// a bound name, a nested or local function and a private file, above the folders and the
     /// built-ins — the resolver asks it in that place rather than before the name is looked up.
     /// </summary>
-    internal bool TryUserMethod(string name, JgsValue dominant, [NotNullWhen(true)] out IJgsCallable? callable)
+    internal bool TryUserMethod(string name, JgsValue dominant, [NotNullWhen(true)] out IJgsCallable? callable) =>
+        TryUserMethod(name, dominant, null, false, out callable);
+
+    /// <summary>
+    /// The same, asked on behalf of <paramref name="context"/> when it is known - the class a
+    /// handle was made in, or the class whose own method a bare name found (U6) - rather than of
+    /// whatever is running. A method the caller may not have comes back as a call that refuses in
+    /// R2025b's words, so the refusal carries the call's place.
+    /// </summary>
+    internal bool TryUserMethod(
+        string name, JgsValue dominant, JgsClass? context, bool contextKnown, [NotNullWhen(true)] out IJgsCallable? callable)
     {
         callable = null;
         if (dominant.Type == JgsType.External)
@@ -435,28 +742,43 @@ internal sealed partial class Interpreter
         }
 
         JgsClass definition = dominant.AsObject.Class;
-        if (!definition.TryMethod(name, out ClassMethod? method) || method.Static)
+        MethodAnswer answer = FindMethod(definition, name, context, contextKnown, out ClassMethod? method);
+        if (answer == MethodAnswer.Missing || method is null || method.Static)
         {
             return false;
         }
 
-        callable = definition.Callable(method);
+        if (answer == MethodAnswer.Refused)
+        {
+            callable = new RefusedMethod(name, method.Owner ?? definition);
+            return true;
+        }
 
         // A handle class's own delete is its destructor: once it has run, the object is deleted for
         // every alias (V6, #104), and a second delete runs nothing. The mark is made after the body
         // so the body may still read its own properties.
-        if (name == "delete" && definition.IsHandle)
-        {
-            callable = new DestructorCall(callable, dominant.AsObject);
-        }
-
+        callable = name == "delete" && definition.IsHandle
+            ? new DestructorCall(dominant.AsObject)
+            : definition.Callable(method);
         return true;
     }
 
-    /// <summary>A class's <c>delete</c> method, followed by the mark that ends the object.</summary>
-    private sealed class DestructorCall(IJgsCallable body, JgsObject instance) : IJgsCallable, IJgsMultiCallable
+    /// <summary>A method the caller may not call: calling it is R2025b's refusal, at the call.</summary>
+    private sealed class RefusedMethod(string name, JgsClass owner) : IJgsCallable
     {
-        public string Name => body.Name;
+        public string Name => name;
+
+        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
+            throw JgsClass.Restricted(name, owner, line, column);
+    }
+
+    /// <summary>
+    /// A handle object's destructors - its class's <c>delete</c> and then each superclass's (U6,
+    /// measured) - followed by the mark that ends the object.
+    /// </summary>
+    private sealed class DestructorCall(JgsObject instance) : IJgsCallable, IJgsMultiCallable
+    {
+        public string Name => "delete";
 
         public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
         {
@@ -473,9 +795,12 @@ internal sealed partial class Interpreter
 
             try
             {
-                return body is IJgsMultiCallable several
-                    ? several.CallMultiple(arguments, wanted, line, column)
-                    : [body.Call(arguments, line, column)];
+                foreach (IJgsCallable destructor in instance.Class.Destructors())
+                {
+                    destructor.Call(arguments.Count > 0 ? [arguments[0]] : [JgsValue.Object(instance)], line, column);
+                }
+
+                return [];
             }
             finally
             {
@@ -531,6 +856,11 @@ internal sealed partial class Interpreter
         // The left operand chooses when it is an object, which is MATLAB's own precedence for two
         // classes of equal standing and the only sensible reading of `obj + 1`.
         JgsClass definition = left.Type == JgsType.Object ? left.AsObject.Class : right.AsObject.Class;
+        if (left.Type == JgsType.Object && right.Type == JgsType.Object && right.AsObject.Class.Dominates(definition))
+        {
+            definition = right.AsObject.Class; // InferiorClasses (U6): the right operand's class said so
+        }
+
         string? wanted = OperatorMethodName(op);
         if (wanted is null || !definition.TryMethod(wanted, out ClassMethod? method) || method.Static)
         {

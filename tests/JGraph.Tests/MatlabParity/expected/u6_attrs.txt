@@ -1,0 +1,89 @@
+CHK|abstract_class|MATLAB:class:abstract|exact
+CHK|abstract_class_msg|Abstract classes cannot be instantiated. Class 'U6Abs' defines abstract methods and/or properties.|exact
+CHK|abstract_method_only|MATLAB:class:abstract|exact
+CHK|abstract_method_only_msg|Abstract classes cannot be instantiated. Class 'U6AbsMeth' defines abstract methods and/or properties.|exact
+CHK|abstract_half_done|MATLAB:class:abstract|exact
+CHK|abstract_half_done_msg|Abstract classes cannot be instantiated. Class 'U6Half' inherits abstract methods or properties but does not implement them. Use matlab.metadata.abstractDetails to see the list of methods and properties that 'U6Half' must implement if you do not intend the class to be abstract.|exact
+CHK|concrete_compute|double [1 1] 16|exact
+CHK|concrete_inherited|double [1 1] 32|exact
+CHK|concrete_rate|double [1 1] 3|exact
+CHK|concrete_show|ran|exact
+CHK|concrete_show_log|show;|exact
+CHK|concrete_supers|cell [1 1] {char 'U6Abs'}|exact
+CHK|concrete_props|cell [1 2] {char 'Rate', char 'Base'}|exact
+CHK|meta_abstract|logical [1 1] 1|exact
+CHK|meta_concrete|logical [1 1] 0|exact
+CHK|meta_name|U6Conc|exact
+CHK|meta_superclass|U6Abs|exact
+CHK|meta_abstract_by_method|logical [1 1] 1|exact
+CHK|meta_sealed|logical [1 1] 1|exact
+CHK|meta_handle|logical [1 1] 1|exact
+CHK|meta_value|logical [1 1] 0|exact
+CHK|meta_no_superclass|double [1 1] 0|exact
+CHK|forms_class|U6Attr|exact
+CHK|forms_static|s|exact
+CHK|forms_constant|double [1 1] 3|exact
+CHK|forms_method|double [1 1] 4|exact
+CHK|forms_sealed|MATLAB:class:sealed|exact
+CHK|forms_sealed_msg|Class 'U6Attr' is Sealed and may not be used as a superclass.|exact
+CHK|copy_class|U6Doc|exact
+CHK|copy_is_another|logical [1 1] 0|exact
+CHK|copy_title|orig|exact
+CHK|copy_data|double [1 3] 1 2 3|exact
+CHK|copy_noncopyable|double [1 1] 0|exact
+CHK|copy_transient|warm|exact
+CHK|copy_transient_noncopyable|b|exact
+CHK|copy_shares_child|logical [1 1] 1|exact
+CHK|copy_independent|orig|exact
+CHK|copy_supers|cell [1 2] {char 'matlab.mixin.Copyable', char 'handle'}|exact
+CHK|copy_isa_mixin|logical [1 1] 1|exact
+CHK|copy_isa_handle|logical [1 1] 1|exact
+CHK|copy_log|(none)|exact
+CHK|copy_element_class|U6DeepDoc|exact
+CHK|copy_element_title|deep (copy)|exact
+CHK|copy_element_log|copyElement;|exact
+CHK|copy_element_outside|MATLAB:class:MethodRestricted|exact
+CHK|copy_element_outside_msg|Cannot access method 'copyElement' in class 'U6DeepDoc'.|exact
+CHK|copy_of_plain_handle|MATLAB:UndefinedFunction|exact
+CHK|copy_of_plain_handle_msg|Undefined function 'copy' for input arguments of type 'U6MixA'.|exact
+CHK|copy_of_value|MATLAB:UndefinedFunction|exact
+CHK|copy_of_value_msg|Undefined function 'copy' for input arguments of type 'U6VBox'.|exact
+CHK|copy_methods|cell [1 15] {char 'U6Doc', char 'addlistener', char 'copy', char 'delete', char 'eq', char 'findobj', char 'findprop', char 'ge', char 'gt', char 'isvalid', char 'le', char 'listener', char 'lt', char 'ne', char 'notify'}|exact
+CHK|saved_kept|double [1 1] 5|exact
+CHK|saved_transient|default|exact
+CHK|abortset_same_value|postQ;|exact
+CHK|abortset_new_value|setP;postP;postQ;|exact
+CHK|abortset_new_shape|setP;postP;|exact
+CHK|abortset_new_class|(none)|exact
+CHK|abortset_kept_class|double|exact
+CHK|inferior_on_the_right|dom:U6Shape+U6Dom|exact
+CHK|inferior_on_the_left|dom:U6Dom+U6Shape|exact
+CHK|inferior_subclass|MATLAB:noSuchMethodOrField|exact
+CHK|inferior_subclass_msg|Unrecognized method, property, or field 'Sides' for class 'U6Dom'.|exact
+CHK|inferior_with_number|dom:double+U6Dom|exact
+CHK|allowed_subclass|U6Allowed|exact
+CHK|denied_subclass|MATLAB:class:SubclassNotAllowed|exact
+CHK|denied_subclass_msg|Class 'U6Denied' could not be instantiated because it may not inherit from class 'U6Gate'. Class 'U6Denied' is not specified as an allowed subclass of class 'U6Gate'. Remove class 'U6Gate' from the list of superclasses of class 'U6Denied'.|exact
+CHK|setget_set|ran|exact
+CHK|setget_get|double [1 1] 5|exact
+CHK|setget_set_pairs|ran|exact
+CHK|setget_get_label|x|exact
+CHK|setget_get_cell|cell [1 2] {double [1 1] 2, char 'x'}|exact
+CHK|setget_case|ran|exact
+CHK|setget_case_got|double [1 1] 3|exact
+CHK|setget_partial|ran|exact
+CHK|setget_partial_got|double [1 1] 4|exact
+CHK|setget_readonly|MATLAB:class:SetProhibited :: Unable to set the 'Locked' property of class ''U6Knob'' because it is read-only.|exact
+CHK|setget_get_readonly|double [1 1] 0|exact
+CHK|setget_private|MATLAB:class:SetProhibited :: Setting the 'Inner' property of class ''U6Knob'' is not supported.|exact
+CHK|setget_get_private|MATLAB:class:GetProhibited|exact
+CHK|setget_get_private_msg|No public property 'Inner' for class ''U6Knob''.|exact
+CHK|setget_unknown|MATLAB:class:InvalidProperty :: The name 'Nope' is not an accessible property for an instance of class 'U6Knob'.|exact
+CHK|setget_get_unknown|MATLAB:class:setgetPropertyNotFound|exact
+CHK|setget_get_unknown_msg|Property Nope not found in class U6Knob, or is not present in all elements of the array of class U6Knob.|exact
+CHK|setget_struct|ran|exact
+CHK|setget_struct_got|cell [1 2] {double [1 1] 9, char 'st'}|exact
+CHK|setget_get_all|cell [1 3] {char 'Level', char 'Label', char 'Locked'}|exact
+CHK|setget_supers|cell [1 2] {char 'matlab.mixin.SetGet', char 'handle'}|exact
+CHK|setget_on_plain|MATLAB:graphics:GetMethodUnknown|exact
+CHK|setget_on_plain_msg|Cannot find 'get' method for U6MixA class.|exact

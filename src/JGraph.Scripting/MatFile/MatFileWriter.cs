@@ -454,7 +454,8 @@ internal static class MatFileWriter
         WriteName(w, name);
         WriteDataElement(w, MiInt8, Encoding.ASCII.GetBytes(instance.Class.Name));
 
-        string[] names = seen ? [] : [.. instance.Fields.Keys];
+        // A Transient property is not saved (U6), so load finds its default.
+        string[] names = seen ? [] : [.. instance.Fields.Keys.Where(name => instance.Class.Property(name) is not { Transient: true })];
         WriteFieldNames(w, names);
         if (!seen)
         {

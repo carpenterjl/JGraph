@@ -246,7 +246,9 @@ internal sealed class Parser
             // Likewise 'classdef Widget'. The word stays an ordinary identifier everywhere else, which
             // is what lets 'properties' and 'methods' — recognised only inside the block below — go on
             // being the names of the two builtins that ask an object what it has.
-            TokenType.Identifier when _matlab && start.Text == "classdef" && NextType == TokenType.Identifier =>
+            TokenType.Identifier when _matlab && start.Text == "classdef"
+                && (NextType == TokenType.Identifier
+                    || (NextType == TokenType.LParen && _tokens[_pos + 1].PrecededByWhitespace)) =>
                 ParseClassdef(start),
             // 'import System.IO.*': the '.*' would stop command syntax, and the names are not strings.
             TokenType.Identifier when _matlab && start.Text == "import" && NextType == TokenType.Identifier
@@ -537,48 +539,70 @@ internal sealed class Parser
     }
 
     /// <summary>
-    /// Parses <c>classdef Name … end</c>, optionally <c>classdef Name &lt; handle</c> or
-    /// <c>&lt; event.EventData</c>. The blocks it may hold are <c>properties</c>, <c>methods</c> and
+    /// Parses <c>classdef (Attributes) Name &lt; Super &amp; Other … end</c> (M68; superclasses and
+    /// attributes U6, ADR 0203). The blocks it may hold are <c>properties</c>, <c>methods</c> and
     /// <c>events</c> (V6, #106); every other word MATLAB allows there is refused by name, because a
     /// class whose <c>enumeration</c> block was quietly skipped is a class that looks like it works
-    /// and does not.
+    /// and does not. Whether a superclass exists, and whether it may be inherited from, is the
+    /// class's own question when it is built: the parser reads one file.
     /// </summary>
     private Stmt ParseClassdef(Token start)
     {
         Advance(); // 'classdef'
+        List<(Token Name, Expr? Value)> classAttributes = ReadAttributes();
         Token name = Expect(TokenType.Identifier, "a class name");
-        bool isHandle = false;
-        bool isEventData = false;
+        var supers = new List<string>();
         if (Match(TokenType.Less))
         {
-            Token super = Expect(TokenType.Identifier, "a superclass name");
-            string superName = super.Text;
-            while (Match(TokenType.Dot))
+            do
             {
-                superName += "." + Expect(TokenType.Identifier, "a superclass name").Text;
+                supers.Add(ParseDottedName());
             }
+            while (Match(TokenType.Amp));
 
-            if (string.Equals(superName, "event.EventData", StringComparison.Ordinal))
+            if (Check(TokenType.AmpAmp))
             {
-                isEventData = true; // an event's data is a handle class, as MATLAB's is
+                throw Error(Current, $"'{name.Text}': superclasses are joined with '&', not '&&'.");
             }
-            else if (!string.Equals(superName, "handle", StringComparison.Ordinal))
-            {
-                throw Error(super,
-                    $"'{name.Text} < {superName}': a class may only inherit from 'handle' (or 'event.EventData') here, "
-                    + "so that two names for one object mean one object; user superclasses are not supported.");
-            }
+        }
 
-            isHandle = true;
-            if (Check(TokenType.Amp) || Check(TokenType.AmpAmp))
+        bool sealedClass = false;
+        bool abstractClass = false;
+        bool handleCompatible = false;
+        IReadOnlyList<string> inferior = [];
+        IReadOnlyList<string>? allowed = null;
+        foreach ((Token attribute, Expr? value) in classAttributes)
+        {
+            switch (attribute.Text)
             {
-                throw Error(Current, $"'{name.Text}' may inherit from '{superName}' alone, not from several classes at once.");
+                case "Sealed":
+                    sealedClass = AttributeFlag(attribute, value);
+                    break;
+                case "Abstract":
+                    abstractClass = AttributeFlag(attribute, value);
+                    break;
+                case "HandleCompatible":
+                    handleCompatible = AttributeFlag(attribute, value);
+                    break;
+                case "Hidden":
+                    _ = AttributeFlag(attribute, value); // nothing here lists classes, so nothing hides one
+                    break;
+                case "InferiorClasses":
+                    inferior = AttributeClasses(attribute, value);
+                    break;
+                case "AllowedSubclasses":
+                    allowed = AttributeClasses(attribute, value);
+                    break;
+                default:
+                    throw Error(attribute,
+                        $"'{name.Text}': the class attribute '{attribute.Text}' is not supported — this build understands "
+                        + "'Sealed', 'Abstract', 'Hidden', 'HandleCompatible', 'InferiorClasses' and 'AllowedSubclasses'.");
             }
         }
 
         var properties = new List<ClassProperty>();
         var methods = new List<ClassMethod>();
-        var events = new List<string>();
+        var events = new List<ClassEvent>();
         SkipSeparators();
         while (!Check(TokenType.End) && !IsAtEnd)
         {
@@ -604,10 +628,19 @@ internal sealed class Parser
         }
 
         Expect(TokenType.End, "'end' to close the class definition");
-        return new ClassdefStmt(name.Text, isHandle, properties, methods, events, isEventData)
+        bool isEventData = supers.Contains("event.EventData", StringComparer.Ordinal);
+        bool isHandle = isEventData || supers.Contains("handle", StringComparer.Ordinal);
+        return new ClassdefStmt(name.Text, isHandle, properties, methods, [.. events.Select(static e => e.Name)], isEventData)
         {
             Line = start.Line,
             Column = start.Column,
+            EventSpecs = events,
+            Superclasses = supers,
+            Sealed = sealedClass,
+            Abstract = abstractClass,
+            HandleCompatible = handleCompatible,
+            InferiorClasses = inferior,
+            AllowedSubclasses = allowed,
         };
     }
 
@@ -618,14 +651,69 @@ internal sealed class Parser
     /// </summary>
     private void ParsePropertiesBlock(string className, Token block, List<ClassProperty> into)
     {
-        HashSet<string> attributes = ReadBlockAttributes(className, block, "Constant", "SetObservable", "Dependent");
-        bool constant = attributes.Contains("Constant");
-        bool observable = attributes.Contains("SetObservable");
-        bool dependent = attributes.Contains("Dependent");
+        bool constant = false, observable = false, dependent = false, hidden = false, transient = false;
+        bool nonCopyable = false, isAbstract = false, abortSet = false;
+        MemberAccess get = MemberAccess.Public, set = MemberAccess.Public;
+        foreach ((Token attribute, Expr? value) in ReadAttributes())
+        {
+            switch (attribute.Text)
+            {
+                case "Constant":
+                    constant = AttributeFlag(attribute, value);
+                    break;
+                case "SetObservable":
+                    observable = AttributeFlag(attribute, value);
+                    break;
+                case "Dependent":
+                    dependent = AttributeFlag(attribute, value);
+                    break;
+                case "Hidden":
+                    hidden = AttributeFlag(attribute, value);
+                    break;
+                case "Transient":
+                    transient = AttributeFlag(attribute, value);
+                    break;
+                case "NonCopyable":
+                    nonCopyable = AttributeFlag(attribute, value);
+                    break;
+                case "Abstract":
+                    isAbstract = AttributeFlag(attribute, value);
+                    break;
+                case "AbortSet":
+                    abortSet = AttributeFlag(attribute, value);
+                    break;
+                case "Access":
+                    get = set = AttributeAccess(attribute, value, allowImmutable: false);
+                    break;
+                case "GetAccess":
+                    get = AttributeAccess(attribute, value, allowImmutable: false);
+                    break;
+                case "SetAccess":
+                    set = AttributeAccess(attribute, value, allowImmutable: true);
+                    break;
+                case "GetObservable" when value is BoolLiteral { Value: false }:
+                    break; // saying out loud what leaving the attribute off already means
+                default:
+                    throw Error(attribute,
+                        $"'{className}': the '{block.Text}' attribute '{attribute.Text}' is not supported — this build understands "
+                        + "'Constant', 'Dependent', 'SetObservable', 'AbortSet', 'Hidden', 'Transient', 'NonCopyable', 'Abstract', "
+                        + "'Access', 'GetAccess' and 'SetAccess'.");
+            }
+        }
+
         SkipSeparators();
         while (!Check(TokenType.End) && !IsAtEnd)
         {
-            into.Add(new ClassProperty(ParseArgumentSpec(), constant, observable, dependent));
+            into.Add(new ClassProperty(ParseArgumentSpec(), constant, observable, dependent)
+            {
+                GetAccess = get,
+                SetAccess = set,
+                Hidden = hidden,
+                Transient = transient,
+                NonCopyable = nonCopyable,
+                Abstract = isAbstract,
+                AbortSet = abortSet,
+            });
             SkipSeparators();
         }
 
@@ -633,23 +721,45 @@ internal sealed class Parser
     }
 
     /// <summary>
-    /// Parses one <c>events … end</c> block into <paramref name="into"/>: a name a line (V6, #106).
-    /// That only a handle class may declare events is the class's own refusal, made when the class
-    /// is defined (<see cref="JgsClass"/>), in MATLAB's words and catchable where the class is used.
+    /// Parses one <c>events … end</c> block into <paramref name="into"/>: a name a line (V6, #106),
+    /// each with the block's <c>ListenAccess</c> and <c>NotifyAccess</c> (U6). That only a handle
+    /// class may declare events is the class's own refusal, made when the class is defined
+    /// (<see cref="JgsClass"/>), in MATLAB's words and catchable where the class is used.
     /// </summary>
-    private void ParseEventsBlock(string className, Token block, List<string> into)
+    private void ParseEventsBlock(string className, Token block, List<ClassEvent> into)
     {
-        ReadBlockAttributes(className, block);
+        MemberAccess listen = MemberAccess.Public, notify = MemberAccess.Public;
+        bool hidden = false;
+        foreach ((Token attribute, Expr? value) in ReadAttributes())
+        {
+            switch (attribute.Text)
+            {
+                case "ListenAccess":
+                    listen = AttributeAccess(attribute, value, allowImmutable: false);
+                    break;
+                case "NotifyAccess":
+                    notify = AttributeAccess(attribute, value, allowImmutable: false);
+                    break;
+                case "Hidden":
+                    hidden = AttributeFlag(attribute, value);
+                    break;
+                default:
+                    throw Error(attribute,
+                        $"'{className}': the '{block.Text}' attribute '{attribute.Text}' is not supported — this build understands "
+                        + "'ListenAccess', 'NotifyAccess' and 'Hidden'.");
+            }
+        }
+
         SkipSeparators();
         while (!Check(TokenType.End) && !IsAtEnd)
         {
             Token name = Expect(TokenType.Identifier, "an event name");
-            if (into.Contains(name.Text))
+            if (into.Exists(e => e.Name == name.Text))
             {
                 throw Error(name, $"Class '{className}' defines the event '{name.Text}' twice.");
             }
 
-            into.Add(name.Text);
+            into.Add(new ClassEvent(name.Text, listen, notify, hidden));
             SkipSeparators();
         }
 
@@ -659,7 +769,34 @@ internal sealed class Parser
     /// <summary>Parses one <c>methods … end</c> block into <paramref name="into"/>.</summary>
     private void ParseMethodsBlock(string className, Token block, List<ClassMethod> into)
     {
-        bool isStatic = ReadBlockAttributes(className, block, "Static").Contains("Static");
+        bool isStatic = false, isAbstract = false, isSealed = false, hidden = false;
+        MemberAccess access = MemberAccess.Public;
+        foreach ((Token attribute, Expr? value) in ReadAttributes())
+        {
+            switch (attribute.Text)
+            {
+                case "Static":
+                    isStatic = AttributeFlag(attribute, value);
+                    break;
+                case "Abstract":
+                    isAbstract = AttributeFlag(attribute, value);
+                    break;
+                case "Sealed":
+                    isSealed = AttributeFlag(attribute, value);
+                    break;
+                case "Hidden":
+                    hidden = AttributeFlag(attribute, value);
+                    break;
+                case "Access":
+                    access = AttributeAccess(attribute, value, allowImmutable: false);
+                    break;
+                default:
+                    throw Error(attribute,
+                        $"'{className}': the '{block.Text}' attribute '{attribute.Text}' is not supported — this build understands "
+                        + "'Static', 'Abstract', 'Sealed', 'Hidden' and 'Access'.");
+            }
+        }
+
         SkipSeparators();
         _inMethodsBlock = true;
         try
@@ -667,12 +804,27 @@ internal sealed class Parser
             while (!Check(TokenType.End) && !IsAtEnd)
             {
                 Token header = Current;
-                if (!Check(TokenType.Function))
+                FnStmt function;
+                if (Check(TokenType.Function))
+                {
+                    function = (FnStmt)ParseMatlabFunction(header);
+                }
+                else if (isAbstract)
+                {
+                    function = ParseMethodSignature(header); // an abstract method is its signature
+                }
+                else
                 {
                     throw Error(header, "A 'methods' block holds functions and nothing else.");
                 }
 
-                into.Add(new ClassMethod((FnStmt)ParseMatlabFunction(header), isStatic));
+                into.Add(new ClassMethod(function, isStatic)
+                {
+                    Access = access,
+                    Abstract = isAbstract,
+                    Sealed = isSealed,
+                    Hidden = hidden,
+                });
                 SkipSeparators();
             }
         }
@@ -685,21 +837,72 @@ internal sealed class Parser
     }
 
     /// <summary>
+    /// One line of a <c>methods (Abstract)</c> block: <c>[a, b] = name(x, y)</c>, <c>r = name(x)</c>,
+    /// <c>name(x)</c> or <c>name</c> - the signature a subclass's method answers to, with no body.
+    /// </summary>
+    private FnStmt ParseMethodSignature(Token start)
+    {
+        var outputs = new List<string>();
+        if (Match(TokenType.LBracket))
+        {
+            if (!Check(TokenType.RBracket))
+            {
+                do
+                {
+                    outputs.Add(Expect(TokenType.Identifier, "an output name").Text);
+                }
+                while (Match(TokenType.Comma) || Check(TokenType.Identifier));
+            }
+
+            Expect(TokenType.RBracket, "']'");
+            Expect(TokenType.Assign, "'='");
+        }
+
+        Token name = Expect(TokenType.Identifier, "a method name");
+        if (Match(TokenType.Assign))
+        {
+            outputs.Add(name.Text);
+            name = Expect(TokenType.Identifier, "a method name");
+        }
+
+        var parameters = new List<string>();
+        if (Match(TokenType.LParen))
+        {
+            if (!Check(TokenType.RParen))
+            {
+                do
+                {
+                    parameters.Add(Match(TokenType.Bang) ? "~" : Expect(TokenType.Identifier, "a parameter name").Text);
+                }
+                while (Match(TokenType.Comma));
+            }
+
+            Expect(TokenType.RParen, "')'");
+        }
+
+        return new FnStmt(name.Text, parameters, [], outputs) { Line = start.Line, Column = start.Column, Dialect = Dialect };
+    }
+
+    /// <summary>
     /// Whether the function being parsed sits in a <c>methods</c> block, where <c>get.p</c> and
-    /// <c>set.p</c> are the names a property's accessors are written under (V6, #27). Anywhere else
-    /// a dot after a function name is the parse error it always was.
+    /// <c>set.p</c> are the names a property's accessors are written under (V6, #27) and
+    /// <c>name@Superclass</c> reaches a superclass (U6). Anywhere else a dot after a function name
+    /// is the parse error it always was.
     /// </summary>
     private bool _inMethodsBlock;
 
+    /// <summary>The <c>name@Superclass</c> references of the method being parsed (U6), or null outside one.</summary>
+    private List<SuperRefExpr>? _superRefs;
+
     /// <summary>
-    /// Reads the optional <c>(…)</c> attribute list after <c>properties</c>, <c>methods</c> or
-    /// <c>events</c>, and answers which of the attributes this build understands —
-    /// <paramref name="wanted"/> — were on it. <c>Access = public</c> is accepted because it is what a
-    /// block without it already means; every other attribute is refused by name rather than ignored.
+    /// Reads the optional <c>(…)</c> attribute list after <c>classdef</c>, <c>properties</c>,
+    /// <c>methods</c> or <c>events</c>: each attribute's name, and the expression after its
+    /// <c>=</c> if it has one. What an attribute means, and whether this build knows it, is the
+    /// block's own reading; an attribute nobody knows is refused by name rather than ignored.
     /// </summary>
-    private HashSet<string> ReadBlockAttributes(string className, Token block, params string[] wanted)
+    private List<(Token Name, Expr? Value)> ReadAttributes()
     {
-        var found = new HashSet<string>(StringComparer.Ordinal);
+        var found = new List<(Token, Expr?)>();
         if (!Match(TokenType.LParen))
         {
             return found;
@@ -708,33 +911,71 @@ internal sealed class Parser
         do
         {
             Token attribute = Expect(TokenType.Identifier, "an attribute name");
-            string? setting = Match(TokenType.Assign)
-                ? Expect(TokenType.Identifier, "an attribute value").Text
-                : null;
-
-            if (Array.IndexOf(wanted, attribute.Text) >= 0 && setting is null or "true")
-            {
-                found.Add(attribute.Text);
-            }
-            else if (attribute.Text is "Access" or "GetAccess" or "SetAccess" or "ListenAccess" or "NotifyAccess"
-                && setting == "public")
-            {
-                // Saying out loud what leaving the attribute off already means.
-            }
-            else
-            {
-                string understood = wanted.Length == 0
-                    ? "no attribute on an events block"
-                    : string.Join(" or ", wanted.Select(static w => $"'{w}'")) + " and public access only";
-                throw Error(attribute,
-                    $"'{className}': the '{block.Text}' attribute '{attribute.Text}' is not supported — "
-                    + $"this build understands {understood}.");
-            }
+            Expr? value = Match(TokenType.Assign) ? OutsideLiteral(ParseExpression) : null;
+            found.Add((attribute, value));
         }
         while (Match(TokenType.Comma));
 
         Expect(TokenType.RParen, "')' to close the attribute list");
         return found;
+    }
+
+    /// <summary>An attribute that is on or off: its bare name, <c>= true</c> or <c>= false</c>.</summary>
+    private bool AttributeFlag(Token attribute, Expr? value) => value switch
+    {
+        null => true,
+        BoolLiteral literal => literal.Value,
+        _ => throw Error(attribute, $"The attribute '{attribute.Text}' is true or false."),
+    };
+
+    /// <summary>
+    /// An access attribute's value: one of the words <c>public</c>, <c>protected</c>, <c>private</c>
+    /// (and <c>immutable</c> for <c>SetAccess</c>), bare or quoted, or a class list - <c>?Name</c>
+    /// or <c>{?A, ?B}</c>.
+    /// </summary>
+    private MemberAccess AttributeAccess(Token attribute, Expr? value, bool allowImmutable)
+    {
+        string? word = value switch
+        {
+            VariableExpr named => named.Name,
+            StringLiteral text => text.Value,
+            _ => null,
+        };
+
+        switch (word)
+        {
+            case "public":
+                return MemberAccess.Public;
+            case "protected":
+                return new MemberAccess(MemberAccessKind.Protected);
+            case "private":
+                return new MemberAccess(MemberAccessKind.Private);
+            case "immutable" when allowImmutable:
+                return new MemberAccess(MemberAccessKind.Immutable);
+        }
+
+        if (word is null && value is MetaClassExpr or CellLiteral)
+        {
+            return new MemberAccess(MemberAccessKind.List, AttributeClasses(attribute, value));
+        }
+
+        throw Error(attribute,
+            $"The attribute '{attribute.Text}' is 'public', 'protected', 'private'"
+            + (allowImmutable ? ", 'immutable'" : string.Empty) + " or a list of classes written ?Name or {?A, ?B}.");
+    }
+
+    /// <summary>The class names of <c>?Name</c> or <c>{?A, ?B}</c>.</summary>
+    private IReadOnlyList<string> AttributeClasses(Token attribute, Expr? value)
+    {
+        switch (value)
+        {
+            case MetaClassExpr one:
+                return [one.Name];
+            case CellLiteral list when list.Rows.All(static row => row.All(static e => e is MetaClassExpr)):
+                return [.. list.Rows.SelectMany(static row => row).Select(static e => ((MetaClassExpr)e).Name)];
+            default:
+                throw Error(attribute, $"The attribute '{attribute.Text}' is a list of classes written ?Name or {{?A, ?B}}.");
+        }
     }
 
     private Stmt ParseMatlabFunction(Token start)
@@ -795,6 +1036,9 @@ internal sealed class Parser
         // One-line bodies spell 'function f(), body; end' — the comma is the ordinary MATLAB
         // statement separator, consumed by the body's own separator skipping.
         _functionDepth++;
+        List<SuperRefExpr>? outerRefs = _superRefs;
+        _superRefs = _inMethodsBlock ? [] : null;
+        List<SuperRefExpr>? ownRefs = _superRefs;
         IReadOnlyList<Stmt> body;
         try
         {
@@ -808,6 +1052,7 @@ internal sealed class Parser
         finally
         {
             _functionDepth--;
+            _superRefs = outerRefs;
         }
 
         if (_functionEnds)
@@ -821,7 +1066,13 @@ internal sealed class Parser
 
         // A class method is built here and never flows through ParseStatement, so it is stamped
         // here: a method runs in the class file's dialect however it is called (V11, ADR 0172).
-        return new FnStmt(name.Text, parameters, body, outputs) { Line = start.Line, Column = start.Column, Dialect = Dialect };
+        return new FnStmt(name.Text, parameters, body, outputs)
+        {
+            Line = start.Line,
+            Column = start.Column,
+            Dialect = Dialect,
+            SuperRefs = ownRefs is { Count: > 0 } ? ownRefs : null,
+        };
     }
 
     private Stmt ParseSwitch(Token start)
@@ -1270,6 +1521,26 @@ internal sealed class Parser
     private Expr ParsePostfix()
     {
         Expr expr = ParsePrimary();
+
+        // name@Superclass(arguments) inside a method (U6, ADR 0203): the three are written with no
+        // space between them, which is what tells it from [a @f] in a literal.
+        if (_matlab && _inMethodsBlock && expr is VariableExpr reaching && Check(TokenType.At)
+            && !Current.PrecededByWhitespace && _pos + 1 < _tokens.Count
+            && _tokens[_pos + 1].Type == TokenType.Identifier && !_tokens[_pos + 1].PrecededByWhitespace)
+        {
+            Token at = Advance();
+            var reference = new SuperRefExpr(reaching.Name, ParseDottedName()) { Line = reaching.Line, Column = reaching.Column };
+            _superRefs?.Add(reference);
+            List<Expr> given = [];
+            if (Check(TokenType.LParen) && !Current.PrecededByWhitespace)
+            {
+                Advance();
+                given = ParseSubscripts(TokenType.RParen, "')'", namedArguments: true);
+            }
+
+            expr = new CallExpr(reference, given) { Line = at.Line, Column = at.Column };
+        }
+
         while (true)
         {
             if (Check(TokenType.LParen) && !OpensANewLiteralElement())

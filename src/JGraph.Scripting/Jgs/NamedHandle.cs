@@ -37,6 +37,13 @@ internal sealed class NamedHandle : IJgsCallable, IJgsMultiCallable
     /// <inheritdoc />
     public string Name { get; }
 
+    /// <summary>
+    /// The class whose code made the handle, or null for a script's (U6, ADR 0203): a method the
+    /// handle reaches on an object is asked for as that class, wherever the handle is called from,
+    /// so <c>@step</c> made outside a class cannot reach its private <c>step</c> from inside one.
+    /// </summary>
+    public JgsClass? Context { get; init; }
+
     /// <summary>The layer that answered the name when the handle was made.</summary>
     public ResolutionLayer Layer { get; }
 

@@ -1,0 +1,119 @@
+CHK|shape_ctor_log|Shape:U6Shape:0;|exact
+CHK|square_ctor_log|Shape:U6Square:2;Square:1;|exact
+CHK|square_class|U6Square|exact
+CHK|square_name|square|exact
+CHK|square_sides|double [1 1] 4|exact
+CHK|square_side|double [1 1] 3|exact
+CHK|square_area_fn|double [1 1] 9|exact
+CHK|square_area_dot|double [1 1] 9|exact
+CHK|square_area_call|double [1 1] 9|exact
+CHK|square_describe|sq:square/4/9|exact
+CHK|square_via_dot|double [1 1] 9|exact
+CHK|square_whoami|square<shape|exact
+CHK|shape_describe|shape/0/0|exact
+CHK|square_static|made by shape|exact
+CHK|square_const|shape|exact
+CHK|square_const_instance|shape|exact
+CHK|square_isa_self|logical [1 1] 1|exact
+CHK|square_isa_super|logical [1 1] 1|exact
+CHK|square_isa_handle|logical [1 1] 0|exact
+CHK|square_isa_other|logical [1 1] 0|exact
+CHK|shape_isa_sub|logical [1 1] 0|exact
+CHK|square_isobject|logical [1 1] 1|exact
+CHK|square_supers|cell [1 1] {char 'U6Shape'}|exact
+CHK|square_supers_name|cell [1 1] {char 'U6Shape'}|exact
+CHK|shape_supers|cell [1 0] {}|exact
+CHK|square_props|cell [1 4] {char 'Side', char 'Name', char 'Sides', char 'Kind'}|exact
+CHK|square_props_name|cell [1 4] {char 'Side', char 'Name', char 'Sides', char 'Kind'}|exact
+CHK|square_methods|cell [1 7] {char 'U6Square', char 'area', char 'describe', char 'make', char 'plus', char 'viaDot', char 'whoami'}|exact
+CHK|square_fieldnames|cell [1 4] {char 'Side', char 'Name', char 'Sides', char 'Kind'}|exact
+CHK|square_isprop_inherited|logical [1 1] 1|exact
+CHK|square_isprop_own|logical [1 1] 1|exact
+CHK|square_isprop_constant|logical [1 1] 1|exact
+CHK|square_isprop_none|logical [1 1] 0|exact
+CHK|square_ismethod_inherited|logical [1 1] 1|exact
+CHK|square_ismethod_static|logical [1 1] 1|exact
+CHK|square_ismethod_ctor|logical [1 1] 1|exact
+CHK|square_ismethod_super_ctor|logical [1 1] 0|exact
+CHK|square_disp|U6Square with properties: Side: 3 Name: 'square' Sides: 4 Kind: 'shape'|exact
+CHK|square_metaclass|U6Square|exact
+CHK|value_copy_kept|double [1 1] 3|exact
+CHK|inherited_write|renamed|exact
+CHK|inherited_write_kept|square|exact
+CHK|plus_class|U6Square|exact
+CHK|plus_sides|double [1 1] 8|exact
+CHK|isequal_same|logical [1 1] 1|exact
+CHK|isequal_different|logical [1 1] 0|exact
+CHK|square_too_many|MATLAB:TooManyInputs|exact
+CHK|square_too_many_msg|Too many input arguments.|exact
+CHK|unknown_read|MATLAB:noSuchMethodOrField|exact
+CHK|unknown_read_msg|Unrecognized method, property, or field 'Nope' for class 'U6Square'.|exact
+CHK|unknown_write|MATLAB:noPublicFieldForClass|exact
+CHK|unknown_write_msg|Unrecognized property 'Nope' for class 'U6Square'.|exact
+CHK|unknown_method|MATLAB:UndefinedFunction|exact
+CHK|unknown_method_msg|Undefined function 'nope' for input arguments of type 'U6Square'.|exact
+CHK|cube_ctor_log|Shape:U6Cube:2;Square:0;|exact
+CHK|cube_class|U6Cube|exact
+CHK|cube_area|double [1 1] 6|exact
+CHK|cube_describe|sq:square/4/6|exact
+CHK|cube_whoami|square<shape|exact
+CHK|cube_supers|cell [1 2] {char 'U6Square', char 'U6Shape'}|exact
+CHK|cube_props|cell [1 5] {char 'Depth', char 'Side', char 'Name', char 'Sides', char 'Kind'}|exact
+CHK|cube_isa_root|logical [1 1] 1|exact
+CHK|cube_with_argument|double [1 1] 5|exact
+CHK|cube_with_argument_log|Shape:U6Cube:2;Square:1;|exact
+CHK|cube_with_two|MATLAB:TooManyInputs|exact
+CHK|cube_with_two_msg|Too many input arguments.|exact
+CHK|typed_takes_subclass|U6Square|exact
+CHK|typed_refuses_other|U6Holder|exact
+CHK|typed_refuses_number|U6Holder|exact
+CHK|base_log|Base:1;|exact
+CHK|mid_log|Base:0;Mid;|exact
+CHK|leaf_log|Base:0;Mid;Leaf;|exact
+CHK|leaf_tag|leaf>base0|exact
+CHK|leaf_l|x|exact
+CHK|leaf_isa_handle|logical [1 1] 1|exact
+CHK|leaf_isa_root|logical [1 1] 1|exact
+CHK|leaf_supers|cell [1 3] {char 'U6Mid', char 'U6Base', char 'handle'}|exact
+CHK|leaf_props|cell [1 3] {char 'L', char 'M', char 'Id'}|exact
+CHK|leaf_events|cell [1 2] {char 'Ping', char 'ObjectBeingDestroyed'}|exact
+CHK|leaf_ismethod_delete|logical [1 1] 1|exact
+CHK|leaf_ismethod_isvalid|logical [1 1] 1|exact
+CHK|leaf_inherited_mutator|double [1 1] 2|exact
+CHK|leaf_alias|changed|exact
+CHK|leaf_eq_alias|logical [1 1] 1|exact
+CHK|leaf_eq_other|logical [1 1] 0|exact
+CHK|leaf_ne_other|logical [1 1] 1|exact
+CHK|leaf_event_log|ping;ping;|exact
+CHK|leaf_delete_log|delMid;delBase:U6Leaf;|exact
+CHK|leaf_valid|logical [1 1] 0|exact
+CHK|leaf_dead_read|MATLAB:class:InvalidHandle|exact
+CHK|leaf_dead_read_msg|Invalid or deleted object.|exact
+CHK|mid_delete_log|delMid;delBase:U6Mid;|exact
+CHK|base_delete_log|delBase:U6Base;|exact
+CHK|arg_log|Base:1;Arg;|exact
+CHK|arg_id|double [1 1] 8|exact
+CHK|arg_tag|base8|exact
+CHK|scope_log|Base:0;Mid;delMid;delBase:U6Mid;|exact
+CHK|both_log|MixA;MixB;Both;|exact
+CHK|both_from_a|A:a|exact
+CHK|both_from_b|B:b|exact
+CHK|both_supers|cell [1 3] {char 'U6MixA', char 'handle', char 'U6MixB'}|exact
+CHK|both_props|cell [1 3] {char 'C', char 'A', char 'B'}|exact
+CHK|both_isa_a|logical [1 1] 1|exact
+CHK|both_isa_b|logical [1 1] 1|exact
+CHK|both_isa_handle|logical [1 1] 1|exact
+CHK|bad_mix|MATLAB:class:inconsistentSuperclasses|exact
+CHK|bad_mix_msg|If a class defines superclasses, all or none must be handle classes.|exact
+CHK|sealed_base_itself|U6SealedBase|exact
+CHK|sub_of_sealed|MATLAB:class:sealed|exact
+CHK|sub_of_sealed_msg|Class 'U6SealedBase' is Sealed and may not be used as a superclass.|exact
+CHK|duplicate_property|MATLAB:class:RedefinedProperty|exact
+CHK|duplicate_property_msg|Cannot define property 'Name' in class 'U6DupProp' because the property has already been defined in the superclass 'U6Shape'.|exact
+CHK|missing_superclass|MATLAB:class:InvalidSuperClass|exact
+CHK|missing_superclass_msg|The specified superclass 'U6DoesNotExist' contains a parse error, cannot be found on MATLAB's search path, or is shadowed by another file with the same name.|exact
+CHK|sealed_method_inherited|locked|exact
+CHK|sealed_method_overridden|MATLAB:class:methodOverrideSealed|exact
+CHK|sealed_method_overridden_msg|Method 'locked' in class 'U6SealOver' conflicts with the sealed method in superclass 'U6SealMeth'. Overriding a sealed method is not supported.|exact
+CHK|method_clash|MATLAB:class:methodAmbiguous|exact
+CHK|method_clash_msg|Method 'fromA' defined in class 'U6Clash' has 2 or more conflicting definitions.|exact

@@ -1,0 +1,164 @@
+CHK|open_read|double [1 1] 1|exact
+CHK|open_write|double [1 1] 2|exact
+CHK|secret_read|MATLAB:class:GetProhibited|exact
+CHK|secret_read_msg|No public property 'Secret' for class ''U6Vault''.|exact
+CHK|secret_write|MATLAB:class:SetProhibited|exact
+CHK|secret_write_msg|Setting the 'Secret' property of class ''U6Vault'' is not supported.|exact
+CHK|secret_peek|double [1 1] 42|exact
+CHK|secret_poke|double [1 1] 43|exact
+CHK|readonly_read|ro|exact
+CHK|readonly_write|MATLAB:class:SetProhibited|exact
+CHK|readonly_write_msg|Unable to set the 'ReadOnly' property of class ''U6Vault'' because it is read-only.|exact
+CHK|readonly_by_method|set|exact
+CHK|writeonly_read|MATLAB:class:GetProhibited|exact
+CHK|writeonly_read_msg|No public property 'WriteOnly' for class ''U6Vault''.|exact
+CHK|writeonly_write|U6Vault|exact
+CHK|writeonly_by_method|w2|exact
+CHK|protected_read|MATLAB:class:GetProhibited|exact
+CHK|protected_read_msg|No public property 'Prot' for class ''U6Vault''.|exact
+CHK|protected_write|MATLAB:class:SetProhibited|exact
+CHK|protected_write_msg|Setting the 'Prot' property of class ''U6Vault'' is not supported.|exact
+CHK|protected_set_read|double [1 1] 4|exact
+CHK|protected_set_write|MATLAB:class:SetProhibited|exact
+CHK|protected_set_write_msg|Unable to set the 'ProtSet' property of class ''U6Vault'' because it is read-only.|exact
+CHK|immutable_read|double [1 1] 50|exact
+CHK|immutable_write|MATLAB:class:SetProhibited|exact
+CHK|immutable_write_msg|Unable to set the 'Fixed' property of class ''U6Vault'' because it is read-only.|exact
+CHK|immutable_by_method|MATLAB:class:SetProhibited :: Unable to set the 'Fixed' property of class ''U6Vault'' because it is read-only.|exact
+CHK|immutable_kept|double [1 1] 50|exact
+CHK|listed_one_read|MATLAB:class:GetProhibited|exact
+CHK|listed_one_read_msg|No public property 'Shared' for class ''U6Vault''.|exact
+CHK|listed_one_write|MATLAB:class:SetProhibited|exact
+CHK|listed_one_write_msg|Setting the 'Shared' property of class ''U6Vault'' is not supported.|exact
+CHK|listed_two_read|MATLAB:class:GetProhibited|exact
+CHK|listed_two_read_msg|No public property 'Listed' for class ''U6Vault''.|exact
+CHK|hidden_read|double [1 1] 8|exact
+CHK|hidden_write|double [1 1] 80|exact
+CHK|constant_private|MATLAB:class:GetProhibited|exact
+CHK|constant_private_msg|No public property 'K' for class ''U6Vault''.|exact
+CHK|constant_private_instance|MATLAB:class:GetProhibited|exact
+CHK|constant_private_instance_msg|No public property 'K' for class ''U6Vault''.|exact
+CHK|constant_private_inside|double [1 1] 18|exact
+CHK|quoted_read|MATLAB:class:GetProhibited|exact
+CHK|quoted_read_msg|No public property 'Quoted' for class ''U6Vault''.|exact
+CHK|both_read|double [1 1] 11|exact
+CHK|both_write|MATLAB:class:SetProhibited|exact
+CHK|both_write_msg|Unable to set the 'Both' property of class ''U6Vault'' because it is read-only.|exact
+CHK|properties|cell [1 5] {char 'Open', char 'ReadOnly', char 'ProtSet', char 'Fixed', char 'Both'}|exact
+CHK|fieldnames|cell [1 5] {char 'Open', char 'ReadOnly', char 'ProtSet', char 'Fixed', char 'Both'}|exact
+CHK|isprop_public|logical [1 1] 1|exact
+CHK|isprop_private|logical [1 1] 1|exact
+CHK|isprop_protected|logical [1 1] 1|exact
+CHK|isprop_hidden|logical [1 1] 1|exact
+CHK|isprop_readonly|logical [1 1] 1|exact
+CHK|isprop_writeonly|logical [1 1] 1|exact
+CHK|methods|cell [1 32] {char 'U6Vault', char 'addlistener', char 'anonTo', char 'boundTo', char 'callPriv', char 'callPrivDot', char 'constK', char 'delete', char 'eq', char 'findobj', char 'findprop', char 'ge', char 'getWriteOnly', char 'gt', char 'handleTo', char 'isvalid', char 'le', char 'listenQuiet', char 'listener', char 'lt', char 'ne', char 'notify', char 'other', char 'peek', char 'poke', char 'protHandle', char 'quiet', char 'sPub', char 'setFixed', char 'setReadOnly', char 'tick', char 'viaLocal'}|exact
+CHK|ismethod_public|logical [1 1] 1|exact
+CHK|ismethod_private|logical [1 1] 0|exact
+CHK|ismethod_protected|logical [1 1] 0|exact
+CHK|ismethod_hidden|logical [1 1] 0|exact
+CHK|ismethod_listed|logical [1 1] 0|exact
+CHK|ismethod_static_private|logical [1 1] 0|exact
+CHK|ismethod_static_public|logical [1 1] 1|exact
+CHK|events|cell [1 2] {char 'Tick', char 'ObjectBeingDestroyed'}|exact
+CHK|disp|U6Vault with properties: Open: 2 ReadOnly: 'set' ProtSet: 4 Fixed: 50 Both: 11|exact
+CHK|private_fn|MATLAB:class:MethodRestricted|exact
+CHK|private_fn_msg|Cannot access method 'priv' in class 'U6Vault'.|exact
+CHK|private_dot|MATLAB:class:MethodRestricted|exact
+CHK|private_dot_msg|Cannot access method 'priv' in class 'U6Vault'.|exact
+CHK|private_inside|double [1 1] 44|exact
+CHK|private_inside_dot|double [1 1] 44|exact
+CHK|private_other_instance|double [1 1] 85|exact
+CHK|private_local_function|double [1 1] 87|exact
+CHK|private_feval|MATLAB:class:MethodRestricted|exact
+CHK|private_feval_msg|Cannot access method 'priv' in class 'U6Vault'.|exact
+CHK|protected_fn|MATLAB:class:MethodRestricted|exact
+CHK|protected_fn_msg|Cannot access method 'prot' in class 'U6Vault'.|exact
+CHK|protected_dot|MATLAB:class:MethodRestricted|exact
+CHK|protected_dot_msg|Cannot access method 'prot' in class 'U6Vault'.|exact
+CHK|hidden_fn|hidden|exact
+CHK|listed_one_fn|MATLAB:class:MethodRestricted|exact
+CHK|listed_one_fn_msg|Cannot access method 'forFriend' in class 'U6Vault'.|exact
+CHK|listed_two_fn|MATLAB:class:MethodRestricted|exact
+CHK|listed_two_fn_msg|Cannot access method 'forListed' in class 'U6Vault'.|exact
+CHK|static_private|MATLAB:class:MethodRestricted|exact
+CHK|static_private_msg|Cannot access method 'sPriv' in class 'U6Vault'.|exact
+CHK|static_public|spriv|exact
+CHK|handle_bare|double [1 1] 44|exact
+CHK|handle_anonymous|double [1 1] 44|exact
+CHK|handle_bound|double [1 1] 44|exact
+CHK|handle_protected|double [1 1] 4|exact
+CHK|handle_made_outside|MATLAB:class:MethodRestricted|exact
+CHK|handle_made_outside_msg|Cannot access method 'priv' in class 'U6Vault'.|exact
+CHK|handle_anonymous_outside|MATLAB:class:MethodRestricted|exact
+CHK|handle_anonymous_outside_msg|Cannot access method 'priv' in class 'U6Vault'.|exact
+CHK|sub_reads_protected|double [1 1] 3|exact
+CHK|sub_writes_protected|ran|exact
+CHK|sub_protected_written|double [1 1] 30|exact
+CHK|sub_reads_private|MATLAB:noSuchMethodOrField|exact
+CHK|sub_reads_private_msg|Unrecognized method, property, or field 'Secret' for class 'U6VaultSub'.|exact
+CHK|sub_writes_private|MATLAB:noPublicFieldForClass :: Unrecognized property 'Secret' for class 'U6VaultSub'.|exact
+CHK|sub_writes_readonly|MATLAB:class:SetProhibited :: Unable to set the 'ReadOnly' property of class ''U6VaultSub'' because it is read-only.|exact
+CHK|sub_writes_protected_set|ran|exact
+CHK|sub_protected_set_written|double [1 1] 40|exact
+CHK|sub_writes_immutable|MATLAB:class:SetProhibited :: Unable to set the 'Fixed' property of class ''U6VaultSub'' because it is read-only.|exact
+CHK|sub_calls_protected|double [1 1] 31|exact
+CHK|sub_calls_private|MATLAB:UndefinedFunction|exact
+CHK|sub_calls_private_msg|Undefined function 'priv' for input arguments of type 'U6VaultSub'.|exact
+CHK|sub_reads_listed_one|MATLAB:class:GetProhibited|exact
+CHK|sub_reads_listed_one_msg|No public property 'Shared' for class ''U6VaultSub''.|exact
+CHK|sub_reads_listed_two|MATLAB:class:GetProhibited|exact
+CHK|sub_reads_listed_two_msg|No public property 'Listed' for class ''U6VaultSub''.|exact
+CHK|sub_protected_of_base_instance|double [1 1] 3|exact
+CHK|sub_inherited_peek|double [1 1] 42|exact
+CHK|sub_private_outside|MATLAB:noSuchMethodOrField|exact
+CHK|sub_private_outside_msg|Unrecognized method, property, or field 'Secret' for class 'U6VaultSub'.|exact
+CHK|sub_protected_outside|MATLAB:class:GetProhibited|exact
+CHK|sub_protected_outside_msg|No public property 'Prot' for class ''U6VaultSub''.|exact
+CHK|sub_protected_fn_outside|MATLAB:class:MethodRestricted|exact
+CHK|sub_protected_fn_outside_msg|Cannot access method 'prot' in class 'U6Vault'.|exact
+CHK|sub_properties|cell [1 5] {char 'Open', char 'ReadOnly', char 'ProtSet', char 'Fixed', char 'Both'}|exact
+CHK|friend_reads_listed_one|double [1 1] 6|exact
+CHK|friend_writes_listed_one|ran|exact
+CHK|friend_wrote_listed_one|double [1 1] 60|exact
+CHK|friend_reads_listed_two|double [1 1] 7|exact
+CHK|friend_calls_listed_one|friend|exact
+CHK|friend_calls_listed_two|listed|exact
+CHK|friend_reads_private|MATLAB:class:GetProhibited|exact
+CHK|friend_reads_private_msg|No public property 'Secret' for class ''U6Vault''.|exact
+CHK|friend_reads_protected|MATLAB:class:GetProhibited|exact
+CHK|friend_reads_protected_msg|No public property 'Prot' for class ''U6Vault''.|exact
+CHK|friend_sub_reads_listed_one|double [1 1] 60|exact
+CHK|friend_sub_calls_listed_one|friend|exact
+CHK|friend_sub_inherited_read|double [1 1] 60|exact
+CHK|other_reads_listed_two|double [1 1] 7|exact
+CHK|other_reads_listed_one|MATLAB:class:GetProhibited|exact
+CHK|other_reads_listed_one_msg|No public property 'Shared' for class ''U6Vault''.|exact
+CHK|other_calls_listed_two|listed|exact
+CHK|other_calls_listed_one|MATLAB:class:MethodRestricted|exact
+CHK|other_calls_listed_one_msg|Cannot access method 'forFriend' in class 'U6Vault'.|exact
+CHK|listen_public|event.listener|exact
+CHK|listen_private_outside|MATLAB:class:ListenRestricted|exact
+CHK|listen_private_outside_msg|Cannot listen to event 'Quiet' in class 'U6Vault'.|exact
+CHK|listen_private_inside|event.listener|exact
+CHK|listen_protected_outside|MATLAB:class:ListenRestricted|exact
+CHK|listen_protected_outside_msg|Cannot listen to event 'Family' in class 'U6Vault'.|exact
+CHK|listen_protected_sub|event.listener|exact
+CHK|notify_private_outside|MATLAB:class:NotifyRestricted :: Cannot notify listeners of event 'Tick' in class 'U6Vault'.|exact
+CHK|notify_private_inside|ran|exact
+CHK|notify_private_sub|MATLAB:class:NotifyRestricted :: Cannot notify listeners of event 'Tick' in class 'U6Vault'.|exact
+CHK|notify_public_inside|ran|exact
+CHK|notify_protected_outside|MATLAB:class:NotifyRestricted :: Cannot notify listeners of event 'Family' in class 'U6Vault'.|exact
+CHK|notify_protected_sub|ran|exact
+CHK|event_log|tick;quiet;family;|exact
+CHK|value_total|double [1 1] 3|exact
+CHK|value_readonly_read|double [1 1] 1|exact
+CHK|value_readonly_write|MATLAB:class:SetProhibited|exact
+CHK|value_readonly_write_msg|Unable to set the 'N' property of class ''U6VBox'' because it is read-only.|exact
+CHK|value_private_read|MATLAB:class:GetProhibited|exact
+CHK|value_private_read_msg|No public property 'P' for class ''U6VBox''.|exact
+CHK|value_properties|cell [1 1] {char 'N'}|exact
+CHK|private_constructor|MATLAB:class:MethodRestricted|exact
+CHK|private_constructor_msg|Cannot access method 'U6Single' in class 'U6Single'.|exact
+CHK|private_constructor_static|U6Single|exact
+CHK|private_constructor_same|logical [1 1] 1|exact

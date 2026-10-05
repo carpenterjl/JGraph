@@ -124,6 +124,7 @@ internal static partial class JgsBuiltins
             JgsValue target = args[0];
             if (target.Type == JgsType.Object)
             {
+                // Any property, whoever may read it (U6, measured: isprop of a private one is true).
                 return JgsValue.Bool(target.AsObject.Class.Property(name) is not null);
             }
 
@@ -166,7 +167,8 @@ internal static partial class JgsBuiltins
             string name = TextOf(args[1]);
             return JgsValue.Bool(args[0].Type switch
             {
-                JgsType.Object => args[0].AsObject.Class.TryMethod(name, out _),
+                // The methods a listing shows (U6, measured: a private, protected or hidden one is not one).
+                JgsType.Object => args[0].AsObject.Class.MethodNames.Contains(name, StringComparer.Ordinal),
                 JgsType.External when args[0].AsExternal is NetObject net =>
                     Net.NetInvoke.HasMethod(net.Type, name, instance: true),
                 JgsType.External when args[0].AsExternal is Devices.DeviceObject device =>
@@ -175,9 +177,28 @@ internal static partial class JgsBuiltins
             });
         });
 
+        // superclasses(obj) or superclasses('Name'): each superclass followed by its own, a column
+        // (U6, measured: {'U6Mid'; 'U6Base'; 'handle'}); a value of a built-in class has none.
+        Define("superclasses", (args, line, col) =>
+        {
+            Arity("superclasses", args, 1, line, col);
+            JgsClass? asked = args[0].Type == JgsType.Object ? args[0].AsObject.Class
+                : IsTextScalar(args[0]) ? interpreter.ClassForLoad(TextOf(args[0])) ?? interpreter.BuiltinClass(TextOf(args[0]))
+                : null;
+            JgsValue[] names = asked is null ? [] : [.. asked.SuperclassNames.Select(JgsValue.Str)];
+            JgsValue column = JgsValue.Cell(names);
+            column.Reshape(names.Length, 1);
+            return column;
+        });
+
         Define("metaclass", (args, line, col) =>
         {
             Arity("metaclass", args, 1, line, col);
+            if (args[0].Type == JgsType.Object)
+            {
+                return MetaClassOf(args[0].AsObject.Class);
+            }
+
             JgsValue described = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
                 ["Name"] = JgsValue.Str(ClassOf(args[0], JgsDialect.Matlab)),
@@ -221,10 +242,30 @@ internal static partial class JgsBuiltins
             ["Name"] = JgsValue.Str(definition.Name),
             ["PropertyList"] = CellColumn(definition.Properties.Select(static p => p.Spec.Name)),
             ["MethodList"] = CellColumn(definition.MethodNames),
+            ["Abstract"] = JgsValue.Bool(definition.IsAbstract),
+            ["Sealed"] = JgsValue.Bool(definition.Declaration.Sealed),
+            ["HandleCompatible"] = JgsValue.Bool(definition.IsHandle || definition.Declaration.HandleCompatible),
+            ["SuperclassList"] = SuperclassList(definition),
         });
 
         described.SetClassName(MetaClassName);
         return described;
+    }
+
+    /// <summary>
+    /// A metaclass's <c>SuperclassList</c>: the classes its header names, each by its name, as a
+    /// column a script indexes and counts (U6). <c>handle</c> has no entry here, as it has no file.
+    /// </summary>
+    private static JgsValue SuperclassList(JgsClass definition)
+    {
+        Dictionary<string, JgsValue>[] direct =
+        [
+            .. definition.Supers.Select(static super => new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                ["Name"] = JgsValue.Str(super.Name),
+            }),
+        ];
+        return JgsValue.StructArray(new JgsStructArray(direct), direct.Length, direct.Length == 0 ? 0 : 1);
     }
 
     /// <summary>The causes an exception already carries, or none.</summary>
@@ -262,7 +303,7 @@ internal static partial class JgsBuiltins
     {
         if (value.Type == JgsType.Object)
         {
-            return value.AsObject.Class.Properties.Select(static p => p.Spec.Name);
+            return value.AsObject.Class.ListedProperties.Select(static p => p.Spec.Name); // public and not hidden (U6)
         }
 
         // A .NET object's readable properties and fields (ADR 0174); an assembly's seven lists; a
@@ -290,7 +331,7 @@ internal static partial class JgsBuiltins
 
         if (NamedClass(value, interpreter) is { } definition)
         {
-            return definition.Properties.Select(static p => p.Spec.Name);
+            return definition.ListedProperties.Select(static p => p.Spec.Name);
         }
 
         if (IsMatFile(value))
@@ -385,9 +426,9 @@ internal static partial class JgsBuiltins
     /// about the char row. Null when the value is not the name of a loaded class.
     /// </summary>
     private static JgsClass? NamedClass(JgsValue value, Interpreter interpreter) =>
-        value.Type == JgsType.String && interpreter.Classes.TryGetValue(value.AsString, out JgsClass? definition)
-            ? definition
-            : null;
+        value.Type != JgsType.String ? null
+        : interpreter.Classes.TryGetValue(value.AsString, out JgsClass? definition) ? definition
+        : interpreter.ClassForLoad(value.AsString); // the first mention of the class loads its file (U6)
 
     /// <summary>A cell column of names — the shape MATLAB's <c>properties</c> and <c>methods</c> answer.</summary>
     private static JgsValue CellColumn(IEnumerable<string> names)

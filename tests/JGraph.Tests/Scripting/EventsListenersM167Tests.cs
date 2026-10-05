@@ -417,8 +417,9 @@ public class EventsListenersM167Tests : IDisposable
     [Fact]
     public void AnEventsBlockAttributeIsRefusedByName()
     {
-        WriteClass("Guarded", "classdef Guarded < handle\n events (ListenAccess = private)\n Changed\n end\nend\n");
-        Assert.Contains("the 'events' attribute 'ListenAccess' is not supported", RunExpectingError("g = Guarded();"), StringComparison.Ordinal);
+        // ListenAccess, NotifyAccess and Hidden are understood since U6 (ADR 0203); anything else is still refused.
+        WriteClass("Guarded", "classdef Guarded < handle\n events (Observable)\n Changed\n end\nend\n");
+        Assert.Contains("the 'events' attribute 'Observable' is not supported", RunExpectingError("g = Guarded();"), StringComparison.Ordinal);
     }
 
     [Fact]

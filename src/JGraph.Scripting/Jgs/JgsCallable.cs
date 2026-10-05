@@ -361,6 +361,9 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
     /// <summary>The class this function is a method of, or null - what the unassigned-output refusal names it under (V9).</summary>
     internal string? OwnerClass { get; init; }
 
+    /// <summary>The class this function is a method of, as the class itself, or null (U6): what a handle to it runs as.</summary>
+    internal JgsClass? Owner { get; init; }
+
     /// <summary>The environment the function closes over: for a nested function, the workspace its handle keeps alive (V10).</summary>
     internal JgsEnvironment Closure => _closure;
 

@@ -320,6 +320,13 @@ internal static partial class JgsBuiltins
     private static JgsValue Get(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("get", args, 1, 2, line, col);
+
+        // An object whose class did not inherit get from matlab.mixin.SetGet has none (U6, measured).
+        if (args[0].Type == JgsType.Object)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:graphics:GetMethodUnknown",
+                $"Cannot find 'get' method for {args[0].AsObject.Class.Name} class.");
+        }
         List<JgsHandleEntry> targets = HandleList("get", args[0], line, col);
 
         if (args.Count == 1)

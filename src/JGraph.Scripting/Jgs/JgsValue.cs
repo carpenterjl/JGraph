@@ -1439,7 +1439,7 @@ internal sealed class JgsValue
     {
         var sb = new StringBuilder(instance.Class.Name);
         sb.Append(" with properties:");
-        foreach (ClassProperty property in instance.Class.Properties)
+        foreach (ClassProperty property in instance.Class.ListedProperties)
         {
             // A property with a get method shows as that method's answer, a Dependent one included
             // (V6, #27, #28: R2025b's display runs every getter).
@@ -1452,6 +1452,7 @@ internal sealed class JgsValue
             // unfolded: a handle whose property holds itself would otherwise unfold for ever (V6, #111).
             string shown = held.Type == JgsType.Object
                 ? $"[1x1 {held.AsObject.Class.Name}]"
+                : held.Type == JgsType.String ? "'" + Truncate(held.AsString) + "'" // a char row, as R2025b shows one
                 : Truncate(held.Display());
             sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(shown);
         }

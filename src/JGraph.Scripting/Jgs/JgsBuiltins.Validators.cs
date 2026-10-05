@@ -15,14 +15,14 @@ internal static partial class JgsBuiltins
     /// hold — which is the same value unless a class conversion or an empty's refitting happened.
     /// </summary>
     internal static JgsValue CheckArgument(
-        ArgumentSpec spec, JgsValue value, int line, int col, JgsEnvironment env)
+        ArgumentSpec spec, JgsValue value, int line, int col, JgsEnvironment env, Interpreter? interpreter = null)
     {
         if (spec.Dims is { } dims)
         {
             value = CheckSize(spec.Name, dims, value, line, col);
         }
 
-        return spec.ClassName is { } className ? CoerceToClass(spec.Name, className, value, line, col, env) : value;
+        return spec.ClassName is { } className ? CoerceToClass(spec.Name, className, value, line, col, env, interpreter) : value;
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ internal static partial class JgsBuiltins
             int have = i < actual.Length ? actual[i] : 1;
             if (want != have)
             {
-                throw new JgsRuntimeException(line, col,
+                throw new JgsRuntimeException(line, col, "MATLAB:validation:IncompatibleSize",
                     $"'{name}' must be {DescribeSize(declared)}, but it is {string.Join("-by-", actual)}.");
             }
         }
@@ -175,17 +175,31 @@ internal static partial class JgsBuiltins
     /// expressed with the machinery already here.
     /// </summary>
     private static JgsValue CoerceToClass(
-        string name, string className, JgsValue value, int line, int col, JgsEnvironment env)
+        string name, string className, JgsValue value, int line, int col, JgsEnvironment env, Interpreter? interpreter)
     {
         if (string.Equals(ClassOf(value, JgsDialect.Matlab), className, StringComparison.Ordinal))
         {
             return value;
         }
 
+        // An instance of a subclass is an instance of the class asked for (U6), and keeps its own class.
+        if (value.Type == JgsType.Object && value.AsObject.Class.IsA(className))
+        {
+            return value;
+        }
+
         // The container classes have constructors that mean something else entirely — cell(3) builds
-        // a 3-by-3 cell rather than converting anything — so those are checked, never converted.
-        if (className is "cell" or "struct" or "table" or "function_handle" or "MException"
-            || !env.TryGet(className, out JgsValue constructor) || constructor.Type != JgsType.Function)
+        // a 3-by-3 cell rather than converting anything — so those are checked, never converted. A
+        // user class converts through its constructor, as R2025b's does (U6, measured).
+        JgsValue? constructor = null;
+        if (className is not ("cell" or "struct" or "table" or "function_handle" or "MException"))
+        {
+            constructor = env.TryGet(className, out JgsValue bound) && bound.Type == JgsType.Function
+                ? bound
+                : interpreter?.ClassForLoad(className)?.ConstructorValue;
+        }
+
+        if (constructor is null)
         {
             throw new JgsRuntimeException(line, col,
                 $"'{name}' must be {className}, but it is {ClassOf(value, JgsDialect.Matlab)}.");

@@ -225,6 +225,48 @@ internal sealed class JgsEnvironment
     /// </summary>
     public string? AccessorOf { get; init; }
 
+    /// <summary>The class this scope is the file scope of, or null for every other scope (U6, ADR 0203).</summary>
+    internal JgsClass? OwnClass { get; set; }
+
+    /// <summary>
+    /// The class the code of this scope belongs to, or null: the nearest class scope outward. A
+    /// method's frame, a local function of the class file and an anonymous function made in
+    /// either all sit under the class's scope, which is how a handle made inside a class keeps
+    /// the class's access wherever it is called from (U6, measured in R2025b).
+    /// </summary>
+    internal JgsClass? ClassContext
+    {
+        get
+        {
+            for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
+            {
+                if (scope.OwnClass is { } own)
+                {
+                    return own;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    /// <summary>The function whose call this scope is, or sits inside: the nearest frame outward, stopping at a class scope.</summary>
+    internal FnStmt? EnclosingFunction
+    {
+        get
+        {
+            for (JgsEnvironment? scope = this; scope is not null && scope.OwnClass is null; scope = scope._parent)
+            {
+                if (scope.Function is { } function)
+                {
+                    return function;
+                }
+            }
+
+            return null;
+        }
+    }
+
     /// <summary>
     /// The function this scope is a call frame of, or null for every other scope. A nested
     /// function's frame reads its parents' declarations off this to decide where a write of a

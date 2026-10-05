@@ -276,6 +276,13 @@ internal sealed class AnonymousFnExpr(IReadOnlyList<string> parameters, Expr bod
 internal sealed class FunctionHandleExpr(string name) : Expr
 {
     public string Name { get; } = name;
+
+    /// <summary>
+    /// <c>@obj.method</c> written out as the anonymous function R2025b makes of it,
+    /// <c>@(varargin)obj.method(varargin{:})</c>, built the first time the name's head turns out
+    /// to hold an object (U6, ADR 0203).
+    /// </summary>
+    internal AnonymousFnExpr? Bound;
 }
 
 /// <summary>
@@ -285,6 +292,20 @@ internal sealed class FunctionHandleExpr(string name) : Expr
 internal sealed class MetaClassExpr(string name) : Expr
 {
     public string Name { get; } = name;
+}
+
+/// <summary>
+/// <c>name@Superclass</c> inside a method (U6, ADR 0203): the superclass's constructor when
+/// <c>name</c> is the constructor's own output, and the superclass's method of that name otherwise.
+/// The parser always puts it in the callee of a call.
+/// </summary>
+internal sealed class SuperRefExpr(string name, string superclass) : Expr
+{
+    /// <summary>The word before the <c>@</c>: the object being built, or a method's name.</summary>
+    public string Name { get; } = name;
+
+    /// <summary>The class after the <c>@</c>, dotted names allowed.</summary>
+    public string Superclass { get; } = superclass;
 }
 
 /// <summary>
@@ -401,6 +422,9 @@ internal sealed class FnStmt(
     /// the first time the function is called (ADR 0176); empty for nearly every function.
     /// </summary>
     internal ImportStmt[]? Imports;
+
+    /// <summary>The <c>name@Superclass</c> references written in a method's body, or null (U6).</summary>
+    internal IReadOnlyList<SuperRefExpr>? SuperRefs;
 }
 
 /// <summary>
@@ -518,7 +542,74 @@ internal sealed class ArgumentsStmt(IReadOnlyList<ArgumentSpec> arguments) : Stm
 /// <param name="Dependent">Whether the block said <c>(Dependent)</c>: the property has no storage of
 /// its own - a read is its <c>get</c> method's answer and a write is its <c>set</c> method's doing,
 /// and a default written on it is ignored (V6, #28; measured in R2025b).</param>
-internal sealed record ClassProperty(ArgumentSpec Spec, bool Constant, bool Observable = false, bool Dependent = false);
+internal sealed record ClassProperty(ArgumentSpec Spec, bool Constant, bool Observable = false, bool Dependent = false)
+{
+    /// <summary>Who may read the property (<c>GetAccess</c>, or <c>Access</c>; U6, ADR 0203).</summary>
+    public MemberAccess GetAccess { get; init; } = MemberAccess.Public;
+
+    /// <summary>Who may write the property (<c>SetAccess</c>, or <c>Access</c>).</summary>
+    public MemberAccess SetAccess { get; init; } = MemberAccess.Public;
+
+    /// <summary>Whether the block said <c>(Hidden)</c>: readable and writable, and left out of every listing.</summary>
+    public bool Hidden { get; init; }
+
+    /// <summary>Whether the block said <c>(Transient)</c>: <c>save</c> leaves the property out, so <c>load</c> finds its default.</summary>
+    public bool Transient { get; init; }
+
+    /// <summary>Whether the block said <c>(NonCopyable)</c>: <c>copy</c> gives the new object the default instead.</summary>
+    public bool NonCopyable { get; init; }
+
+    /// <summary>Whether the block said <c>(Abstract)</c>: a subclass must declare the property before it can be made.</summary>
+    public bool Abstract { get; init; }
+
+    /// <summary>Whether the block said <c>(AbortSet)</c>: a write of a value equal to the one held does nothing.</summary>
+    public bool AbortSet { get; init; }
+
+    /// <summary>The class that declares the property, written once when that class is built.</summary>
+    internal JgsClass? Owner { get; set; }
+}
+
+/// <summary>The four words a member's access can be, and the list form (U6, ADR 0203).</summary>
+internal enum MemberAccessKind
+{
+    /// <summary>Anyone.</summary>
+    Public,
+
+    /// <summary>The class and its subclasses.</summary>
+    Protected,
+
+    /// <summary>The class alone.</summary>
+    Private,
+
+    /// <summary><c>SetAccess = immutable</c>: the class's constructor alone.</summary>
+    Immutable,
+
+    /// <summary><c>?Class</c> or <c>{?A, ?B}</c>: the class, the classes named and their subclasses.</summary>
+    List,
+}
+
+/// <summary>Who may reach a member: one of the access words, or the classes of a list (U6, ADR 0203).</summary>
+/// <param name="Kind">The word, or <see cref="MemberAccessKind.List"/>.</param>
+/// <param name="Classes">The classes a list names; null for a word.</param>
+internal sealed record MemberAccess(MemberAccessKind Kind, IReadOnlyList<string>? Classes = null)
+{
+    /// <summary>Access for anyone, which is what a block with no access attribute means.</summary>
+    public static readonly MemberAccess Public = new(MemberAccessKind.Public);
+
+    /// <summary>Whether anyone may reach the member.</summary>
+    public bool IsPublic => Kind == MemberAccessKind.Public;
+}
+
+/// <summary>One declared event of a class, with who may listen to it and who may raise it (U6, ADR 0203).</summary>
+/// <param name="Name">The event's name.</param>
+/// <param name="ListenAccess">Who may <c>addlistener</c> to it.</param>
+/// <param name="NotifyAccess">Who may <c>notify</c> it.</param>
+/// <param name="Hidden">Whether <c>events</c> leaves it out.</param>
+internal sealed record ClassEvent(string Name, MemberAccess ListenAccess, MemberAccess NotifyAccess, bool Hidden)
+{
+    /// <summary>The class that declares the event, written once when that class is built.</summary>
+    internal JgsClass? Owner { get; set; }
+}
 
 /// <summary>One method of a class: the function itself, and whether its block said <c>(Static)</c>.</summary>
 /// <param name="Function">The method body, parsed exactly as any other <c>function</c> is.</param>
@@ -526,6 +617,24 @@ internal sealed record ClassProperty(ArgumentSpec Spec, bool Constant, bool Obse
 /// first parameter is an ordinary argument and not the object.</param>
 internal sealed record ClassMethod(FnStmt Function, bool Static)
 {
+    /// <summary>Who may call the method (U6, ADR 0203).</summary>
+    public MemberAccess Access { get; init; } = MemberAccess.Public;
+
+    /// <summary>Whether the block said <c>(Abstract)</c>: a signature with no body, which a subclass must supply.</summary>
+    public bool Abstract { get; init; }
+
+    /// <summary>Whether the block said <c>(Sealed)</c>: a subclass may not define a method of this name.</summary>
+    public bool Sealed { get; init; }
+
+    /// <summary>Whether the block said <c>(Hidden)</c>: callable, and left out of <c>methods</c>.</summary>
+    public bool Hidden { get; init; }
+
+    /// <summary>The body of a method a built-in class supplies (<c>copy</c> of <c>matlab.mixin.Copyable</c>), or null.</summary>
+    internal IJgsCallable? Native { get; init; }
+
+    /// <summary>The class that defines the method, written once when that class is built.</summary>
+    internal JgsClass? Owner { get; set; }
+
     /// <summary>The property this method is the <c>get.p</c> or <c>set.p</c> of, or null for an ordinary method (V6, #27).</summary>
     public string? AccessorProperty =>
         Function.Name.StartsWith("get.", StringComparison.Ordinal) || Function.Name.StartsWith("set.", StringComparison.Ordinal)
@@ -561,6 +670,30 @@ internal sealed class ClassdefStmt(
 
     /// <summary>The names the <c>events</c> blocks declared, in the order the file wrote them (V6, #106).</summary>
     public IReadOnlyList<string> Events { get; } = events ?? [];
+
+    /// <summary>The same events with their access (U6); empty when a caller built the class without them.</summary>
+    public IReadOnlyList<ClassEvent> EventSpecs { get; init; } = [];
+
+    /// <summary>
+    /// The superclasses the header names after <c>&lt;</c>, in order, as written: user classes,
+    /// <c>handle</c>, <c>event.EventData</c> and the mixins (U6, ADR 0203).
+    /// </summary>
+    public IReadOnlyList<string> Superclasses { get; init; } = [];
+
+    /// <summary>Whether the header said <c>(Sealed)</c>: no class may name this one as a superclass.</summary>
+    public bool Sealed { get; init; }
+
+    /// <summary>Whether the header said <c>(Abstract)</c>: no instance can be made.</summary>
+    public bool Abstract { get; init; }
+
+    /// <summary>Whether the header said <c>(HandleCompatible)</c>: a value class a handle class may inherit from.</summary>
+    public bool HandleCompatible { get; init; }
+
+    /// <summary>The classes <c>InferiorClasses</c> names: this class's method answers an operator or a call that mixes the two.</summary>
+    public IReadOnlyList<string> InferiorClasses { get; init; } = [];
+
+    /// <summary>The classes <c>AllowedSubclasses</c> names, or null when any class may inherit.</summary>
+    public IReadOnlyList<string>? AllowedSubclasses { get; init; }
 
     /// <summary>
     /// Whether the header read <c>&lt; event.EventData</c>: an instance is what <c>notify</c> hands

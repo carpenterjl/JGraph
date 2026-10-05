@@ -202,7 +202,11 @@ internal sealed class JgsNameResolver
     {
         if (lexical.IsLexical || !_interpreter.Dialect.IsMatlab)
         {
-            return lexical;
+            // A method called by bare name from its own class's code still dispatches on the
+            // object (U6, ADR 0203): area(obj) in a superclass method is the subclass's area.
+            return OverriddenFor(name, lexical.Value, arguments) is { } overriding
+                ? new Resolution(ResolutionLayer.UserMethod, JgsValue.Function(overriding), null)
+                : lexical;
         }
 
         // What phase one left in hand: the built-in the walk ended on, or a file — a private or
@@ -297,6 +301,13 @@ internal sealed class JgsNameResolver
         if (env.TryGetFunction(name, out JgsEnvironment? scope, out JgsValue value) && !scope.IsBuiltinLayer)
         {
             return Classify(name, scope, value);
+        }
+
+        // @method inside a class, for a method the class inherited (U6): its own are in its scope.
+        if (_interpreter.AnyClasses && env.ClassContext is { } running
+            && running.TryMethod(name, out ClassMethod? inherited) && !inherited.Abstract && !inherited.Static)
+        {
+            return new Resolution(ResolutionLayer.Local, JgsValue.Function(running.Callable(inherited)), null);
         }
 
         bool ownFile = _interpreter.TryGetFileFunction(name, out JgsValue held, out string file, out bool isMain);
@@ -463,14 +474,20 @@ internal sealed class JgsNameResolver
         if (!_interpreter.Dialect.IsMatlab || handle.Layer is ResolutionLayer.Nested or ResolutionLayer.Local
             or ResolutionLayer.ExplicitImport or ResolutionLayer.WildcardImport)
         {
-            return handle.Captured;
+            // @method made inside a class: the object's own method of that name, asked for as
+            // the class the handle was made in (U6).
+            return _interpreter.Dialect.IsMatlab && handle.Layer == ResolutionLayer.Local
+                && OverriddenFor(handle.Name, JgsValue.Function(handle.Captured), arguments) is { } overriding
+                ? overriding
+                : handle.Captured;
         }
 
         JgsValue? dominant = DominantObject(arguments);
         if (handle.Layer == ResolutionLayer.Builtin)
         {
             // Nothing captured but the built-in: only a user method can take the call from it.
-            return dominant is { } instance && _interpreter.TryUserMethod(handle.Name, instance, out IJgsCallable? method)
+            return dominant is { } instance
+                && _interpreter.TryUserMethod(handle.Name, instance, handle.Context, true, out IJgsCallable? method)
                 ? method
                 : handle.Captured;
         }
@@ -488,7 +505,7 @@ internal sealed class JgsNameResolver
             return handle.Captured;
         }
 
-        return _interpreter.TryUserMethod(handle.Name, dominant, out IJgsCallable? dispatched)
+        return _interpreter.TryUserMethod(handle.Name, dominant, handle.Context, true, out IJgsCallable? dispatched)
             ? dispatched
             : handle.Captured;
     }
@@ -510,7 +527,11 @@ internal sealed class JgsNameResolver
         return new Resolution(imported.Explicit ? ResolutionLayer.ExplicitImport : ResolutionLayer.WildcardImport, value, null);
     }
 
-    /// <summary>The leftmost user object among the arguments — the one a user method dispatches on — or null.</summary>
+    /// <summary>
+    /// The leftmost user object among the arguments — the one a user method dispatches on — or null.
+    /// An object further right takes its place when its class names the first one's in
+    /// <c>InferiorClasses</c> (U6, measured: by exact class, a subclass is not inferior).
+    /// </summary>
     private JgsValue? DominantObject(IReadOnlyList<JgsValue> arguments)
     {
         if (!_interpreter.AnyClasses && !_interpreter.AnyNet)
@@ -518,16 +539,51 @@ internal sealed class JgsNameResolver
             return null;
         }
 
+        JgsValue? dominant = null;
         for (int i = 0; i < arguments.Count; i++)
         {
             // A .NET object is dominant too (ADR 0174): Describe(m) calls its method.
-            if (arguments[i].Type is JgsType.Object or JgsType.External)
+            if (arguments[i].Type is not (JgsType.Object or JgsType.External))
             {
-                return arguments[i];
+                continue;
+            }
+
+            if (dominant is null)
+            {
+                dominant = arguments[i];
+                if (dominant.Type != JgsType.Object)
+                {
+                    return dominant;
+                }
+            }
+            else if (arguments[i].Type == JgsType.Object && arguments[i].AsObject.Class.Dominates(dominant.AsObject.Class))
+            {
+                dominant = arguments[i];
             }
         }
 
-        return null;
+        return dominant;
+    }
+
+    /// <summary>
+    /// The method a bare name means when what the walk found is a class's own method and the
+    /// dominant argument is an object of another class (U6): that object's method - the override
+    /// of a subclass, or another class's method of the same name - asked for as the class the
+    /// name was written in. Null when the found function is the one to call.
+    /// </summary>
+    private IJgsCallable? OverriddenFor(string name, JgsValue found, IReadOnlyList<JgsValue> arguments)
+    {
+        if (!_interpreter.AnyClasses || found.Type != JgsType.Function
+            || found.AsCallable is not UserFunction { Owner: { } owner })
+        {
+            return null;
+        }
+
+        return DominantObject(arguments) is { Type: JgsType.Object } instance
+            && !ReferenceEquals(instance.AsObject.Class, owner)
+            && _interpreter.TryUserMethod(name, instance, owner, true, out IJgsCallable? method)
+            ? method
+            : null;
     }
 
     /// <summary>

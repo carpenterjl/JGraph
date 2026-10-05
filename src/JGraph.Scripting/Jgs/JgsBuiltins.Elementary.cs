@@ -347,7 +347,9 @@ internal static partial class JgsBuiltins
                 EventDataClassName => string.Equals(actual, wanted, StringComparison.Ordinal)
                     || JgsUiEventData.IsBuiltinEventData(args[0])
                     || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsEventData),
-                _ => string.Equals(actual, wanted, StringComparison.Ordinal),
+                // An instance is one of each of its superclasses too (U6).
+                _ => string.Equals(actual, wanted, StringComparison.Ordinal)
+                    || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsA(wanted)),
             });
         });
 

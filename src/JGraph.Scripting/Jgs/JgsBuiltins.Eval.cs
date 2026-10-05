@@ -37,7 +37,7 @@ internal static partial class JgsBuiltins
 
         // M68: the class questions need the interpreter, because what classes exist is interpreter
         // state — a class is defined by loading a file, exactly as a function is.
-        "addCause", "isobject", "properties", "methods", "metaclass", "ismethod",
+        "addCause", "isobject", "properties", "methods", "metaclass", "ismethod", "superclasses",
 
         // ADR 0174: the .NET names need the session's type catalog and its warning state.
         "NET", "meta", "dotnetenv", "isjava",

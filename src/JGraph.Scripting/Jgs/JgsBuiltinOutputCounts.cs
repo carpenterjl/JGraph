@@ -1436,6 +1436,7 @@ internal static class JgsBuiltinOutputCounts
         ["subvolume"] = (6, true),
         ["sum"] = (1, false),
         ["summary"] = (1, true),
+        ["superclasses"] = (1, false),
         ["superpixels"] = (2, true),
         ["superpixels3"] = (2, true),
         ["surf"] = (1, true),

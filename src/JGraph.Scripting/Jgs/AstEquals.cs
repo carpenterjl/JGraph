@@ -126,6 +126,9 @@ internal static class AstEquals
                 && ExpressionsEqual(x.Body, y.Body),
             (FunctionHandleExpr x, FunctionHandleExpr y) => string.Equals(x.Name, y.Name, StringComparison.Ordinal),
             (MetaClassExpr x, MetaClassExpr y) => string.Equals(x.Name, y.Name, StringComparison.Ordinal),
+            (SuperRefExpr x, SuperRefExpr y) =>
+                string.Equals(x.Name, y.Name, StringComparison.Ordinal)
+                && string.Equals(x.Superclass, y.Superclass, StringComparison.Ordinal),
             _ => false,
         };
     }

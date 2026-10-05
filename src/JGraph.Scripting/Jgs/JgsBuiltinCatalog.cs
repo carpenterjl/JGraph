@@ -2124,6 +2124,7 @@ public static class JgsBuiltinCatalog
         Add("isprop", "Whether an object, a built-in object or a graphics handle has a property of that name: isprop(obj, 'Radius').", P("obj"), P("name"));
         Add("metaclass", "A description of a value's class: its name, its properties, and its methods.", P("x"));
         Add("ismethod", "Whether an object's class has a method of that name, a .NET object's static methods included.", P("obj"), P("name"));
+        Add("superclasses", "The classes an object's class inherits from, nearest first, as a cell column: superclasses(obj) or superclasses('ClassName').", P("obj"));
 
         // --- .NET (interop plan, stage 1, ADR 0174) -------------------------------------------------
         Add("isjava", "Whether a value is a Java object: never, since JGraph hosts no Java.", P("x"));

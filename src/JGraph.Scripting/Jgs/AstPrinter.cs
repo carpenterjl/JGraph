@@ -182,6 +182,10 @@ internal static class AstPrinter
                 text.Append('?').Append(meta.Name);
                 break;
 
+            case SuperRefExpr reaching:
+                text.Append(reaching.Name).Append('@').Append(reaching.Superclass);
+                break;
+
             case PreEvaluated evaluated:
                 // Only the interpreter makes these, and only around a value it has already computed.
                 text.Append(evaluated.Value.Display());

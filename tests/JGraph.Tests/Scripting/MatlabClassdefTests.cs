@@ -176,12 +176,16 @@ public class MatlabClassdefTests : IDisposable
             static () => Parser.Parse("classdef A\n enumeration\n Red\n end\nend", "A.m", JgsDialect.Matlab)).Message,
             StringComparison.Ordinal);
 
-        Assert.Contains("only inherit from 'handle'", Assert.Throws<JgsSyntaxException>(
-            static () => Parser.Parse("classdef A < Base\nend", "A.m", JgsDialect.Matlab)).Message,
-            StringComparison.Ordinal);
+        // A superclass and an Abstract block parse since U6 (ADR 0203); whether the superclass
+        // exists is the class's own question when it is built, in R2025b's words.
+        Assert.Single(Parser.Parse("classdef A < Base\nend", "A.m", JgsDialect.Matlab));
+        Assert.Single(Parser.Parse("classdef A\n methods (Abstract)\n end\nend", "A.m", JgsDialect.Matlab));
+        WriteClass("Orphan", "classdef Orphan < NoSuchBase\nend\n");
+        Assert.Contains("The specified superclass 'NoSuchBase' contains a parse error, cannot be found on MATLAB's search path",
+            Error("o = Orphan();"), StringComparison.Ordinal);
 
-        Assert.Contains("Abstract", Assert.Throws<JgsSyntaxException>(
-            static () => Parser.Parse("classdef A\n methods (Abstract)\n end\nend", "A.m", JgsDialect.Matlab)).Message,
+        Assert.Contains("'Enumerated' is not supported", Assert.Throws<JgsSyntaxException>(
+            static () => Parser.Parse("classdef A\n methods (Enumerated)\n end\nend", "A.m", JgsDialect.Matlab)).Message,
             StringComparison.Ordinal);
     }
 
@@ -210,7 +214,7 @@ public class MatlabClassdefTests : IDisposable
     {
         Assert.Contains("Circle.Radius", Error("c = Circle(1); c.Radius = -2;"), StringComparison.Ordinal);
         Assert.Contains("Circle.Radius", Error("c = Circle(-1);"), StringComparison.Ordinal);
-        Assert.Contains("has no property 'Nope'", Error("c = Circle(1); c.Nope = 3;"), StringComparison.Ordinal);
+        Assert.Contains("Unrecognized property 'Nope' for class 'Circle'.", Error("c = Circle(1); c.Nope = 3;"), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -237,7 +241,9 @@ public class MatlabClassdefTests : IDisposable
     public void AStaticMethodIsCalledOnTheClass()
     {
         Assert.Equal("1\n", RunAndRead("fprintf('%g\\n', Circle.unit().Radius);"));
-        Assert.Contains("static method", Error("c = Circle(1); c.unit();"), StringComparison.Ordinal);
+
+        // A static method read off an instance is the class's, as R2025b allows (U6, measured).
+        Assert.EndsWith("1\n", RunAndRead("c = Circle(3); u = c.unit(); fprintf('%g\\n', u.Radius);"), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -315,7 +321,7 @@ public class MatlabClassdefTests : IDisposable
         string shown = RunAndRead("c = Circle(2, 'ring');\ndisp(c)\n");
         Assert.Contains("Circle with properties:", shown, StringComparison.Ordinal);
         Assert.Contains("Radius: 2", shown, StringComparison.Ordinal);
-        Assert.Contains("Label: ring", shown, StringComparison.Ordinal);
+        Assert.Contains("Label: 'ring'", shown, StringComparison.Ordinal); // a char row in quotes, as R2025b shows one (U6)
     }
 
     // --- Introspection ------------------------------------------------------------------------------

@@ -160,7 +160,7 @@ internal static partial class JgsBuiltins
             }
 
             string eventName = TextOf(args[1]);
-            RequireEvent(source.Class, eventName, line, col);
+            RequireEvent(source.Class, eventName, listen: true, line, col);
             fields[EventSourceField] = JgsValue.Cell([sourceValue]);
             fields[EventNameField] = JgsValue.Str(eventName);
             fields["Callback"] = callback;
@@ -263,12 +263,27 @@ internal static partial class JgsBuiltins
         throw new JgsRuntimeException(line, col, $"Invalid input argument for function '{verb}'.");
     }
 
-    private static void RequireEvent(JgsClass definition, string eventName, int line, int col)
+    private static void RequireEvent(JgsClass definition, string eventName, bool listen, int line, int col)
     {
         if (!definition.HasEvent(eventName))
         {
             throw new JgsRuntimeException(line, col, "MATLAB:class:invalidEvent",
                 $"Event '{eventName}' is not defined for class '{definition.Name}'.");
+        }
+
+        // ListenAccess and NotifyAccess (U6): the refusals name the class that declares the event.
+        if (definition.Event(eventName) is { } declared)
+        {
+            MemberAccess access = listen ? declared.ListenAccess : declared.NotifyAccess;
+            JgsClass owner = declared.Owner ?? definition;
+            if (!access.IsPublic && !JgsClass.Allows(access, owner, definition.Interpreter.ContextClass(), eventName))
+            {
+                throw listen
+                    ? new JgsRuntimeException(line, col, "MATLAB:class:ListenRestricted",
+                        $"Cannot listen to event '{eventName}' in class '{owner.Name}'.")
+                    : new JgsRuntimeException(line, col, "MATLAB:class:NotifyRestricted",
+                        $"Cannot notify listeners of event '{eventName}' in class '{owner.Name}'.");
+            }
         }
     }
 
@@ -339,7 +354,7 @@ internal static partial class JgsBuiltins
                 $"Cannot notify listeners of event '{JgsClass.ObjectBeingDestroyed}' in class 'handle'.");
         }
 
-        RequireEvent(source.Class, eventName, line, col);
+        RequireEvent(source.Class, eventName, listen: false, line, col);
 
         JgsValue data;
         if (args.Count == 3)
@@ -562,7 +577,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"events: a {asked.TypeName} has no events to list.");
         }
 
-        IEnumerable<string> names = definition.Events;
+        IEnumerable<string> names = definition.ListedEvents; // the ones anyone may listen to (U6)
         if (definition.IsHandle)
         {
             names = names.Append(JgsClass.ObjectBeingDestroyed);

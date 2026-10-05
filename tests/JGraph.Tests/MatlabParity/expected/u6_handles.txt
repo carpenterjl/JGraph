@@ -1,0 +1,39 @@
+CHK|bare_class|function_handle|exact
+CHK|bare_called|double [1 1] 5|exact
+CHK|dotted_text|@(varargin)obj.add(varargin{:})|exact
+CHK|dotted_called|double [1 1] 7|exact
+CHK|anonymous_text|@(n)add(obj,n)|exact
+CHK|anonymous_called|double [1 1] 10|exact
+CHK|anonymous_dot_called|double [1 1] 14|exact
+CHK|private_bare_call|ran|exact
+CHK|private_bare_called|double [1 1] 15|exact
+CHK|private_dotted_text|@(varargin)obj.step(varargin{:})|exact
+CHK|private_dotted_call|ran|exact
+CHK|private_dotted_called|double [1 1] 16|exact
+CHK|private_anonymous_call|ran|exact
+CHK|private_anonymous_called|double [1 1] 17|exact
+CHK|static_called|double [1 1] 42|exact
+CHK|wrapped_call|ran|exact
+CHK|wrapped_called|double [1 1] 18|exact
+CHK|stored_call|ran|exact
+CHK|stored_called|double [1 1] 19|exact
+CHK|callback_called|double [1 1] 119|exact
+CHK|callback_anonymous_called|double [1 1] 219|exact
+CHK|script_bare_called|double [1 1] 10|exact
+CHK|script_dotted_text|@(varargin)c.add(varargin{:})|exact
+CHK|script_dotted_called|double [1 1] 11|exact
+CHK|script_private_bare|MATLAB:class:MethodRestricted :: Cannot access method 'step' in class 'U6Counter'.|exact
+CHK|script_private_anonymous|MATLAB:class:MethodRestricted :: Cannot access method 'step' in class 'U6Counter'.|exact
+CHK|script_private_dotted|MATLAB:class:MethodRestricted :: Cannot access method 'step' in class 'U6Counter'.|exact
+CHK|script_private_left_alone|double [1 1] 11|exact
+CHK|str2func_called|double [1 1] 12|exact
+CHK|feval_called|double [1 1] 14|exact
+CHK|script_static|double [1 1] 8|exact
+CHK|constructor_handle|U6Counter|exact
+CHK|alive_after_clear|double [1 1] 7|exact
+CHK|callback_property_class|function_handle|exact
+CHK|callback_property_called|double [1 1] 100|exact
+CHK|callback_private_called|double [1 1] 101|exact
+CHK|cellfun_method|double [1 2] 4 9|exact
+CHK|cellfun_anonymous|double [1 2] 4 6|exact
+CHK|cellfun_text|cell [1 2] {char 'sq:square/4/4', char 'shape/0/0'}|exact

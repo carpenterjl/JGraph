@@ -1155,7 +1155,7 @@ internal sealed partial class Interpreter
             return;
         }
 
-        var destructor = new DestructorCall(instance.Class.Callable(method), instance);
+        var destructor = new DestructorCall(instance);
         try
         {
             JgsCallbacks.Invoke(destructor, [JgsValue.Object(instance)], 0, 0);
@@ -1541,6 +1541,13 @@ internal sealed partial class Interpreter
     {
         Expr expression = statement.Expression;
 
+        // obj@Superclass(…); - a superclass's constructor or method, asked for nothing (U6).
+        if (expression is CallExpr { Callee: SuperRefExpr } reaching)
+        {
+            ExecuteSuperCallStatement(reaching, env);
+            return;
+        }
+
         // Value mode for the bare name: what the workspace walk, the files and the built-in layer
         // hold. A function definition from any layer - a file shadowing a built-in, `eps` with
         // eps.m present, a clear.m run as `clear;` - is called here asked for nothing (V9.1),
@@ -1830,7 +1837,12 @@ internal sealed partial class Interpreter
         resolved = _resolver.Invoke(name, resolved, given);
         if (!resolved.Found)
         {
-            throw UndefinedError(name, call.Callee);
+            // With an object in front, R2025b names the class no method or function answered for
+            // (U6, measured): a private method of a superclass ends here too.
+            throw given.Length > 0 && given[0].Type == JgsType.Object && Dialect.IsMatlab
+                ? new JgsRuntimeException(call.Callee.Line, call.Callee.Column, "MATLAB:UndefinedFunction",
+                    $"Undefined function '{name}' for input arguments of type '{given[0].AsObject.Class.Name}'.")
+                : UndefinedError(name, call.Callee);
         }
 
         return true;
@@ -1863,13 +1875,24 @@ internal sealed partial class Interpreter
         if (!referenced.Found || referenced.Value.Type != JgsType.Function)
         {
             // @System.Math.Max: a .NET static method group, or a type's constructor (ADR 0174).
-            return TryNetHandle(name, env, out handle);
+            if (TryNetHandle(name, env, out handle))
+            {
+                return true;
+            }
+
+            // With a class loaded, a name nothing answers yet may be a method of the object the
+            // handle is later called with (U6): @area in a script, before any shape exists. The
+            // handle is made, as R2025b makes it, and a call nothing answers is the error.
+            return Dialect.IsMatlab && AnyClasses && TryMethodHandle(name, env, out handle);
         }
 
         handle = Dialect.IsMatlab
             ? JgsValue.Function(new NamedHandle(
                 name, referenced.Layer, referenced.Value.AsCallable, referenced.File,
-                _resolver.BuiltinOf(name)?.AsCallable, _resolver))
+                _resolver.BuiltinOf(name)?.AsCallable, _resolver)
+            {
+                Context = AnyClasses ? env.ClassContext : null,
+            })
             : referenced.Value;
         return true;
     }
@@ -2091,7 +2114,7 @@ internal sealed partial class Interpreter
     /// The MATLAB dialect's error carries R2025b's identifier, <c>MATLAB:UndefinedFunction</c>, which
     /// a script can branch on (the .NET fixtures of ADR 0174 ask for it).
     /// </remarks>
-    private string Undefined(string name)
+    internal string Undefined(string name)
     {
         if (!Dialect.IsMatlab)
         {
@@ -3066,7 +3089,18 @@ internal sealed partial class Interpreter
             case MetaClassExpr meta:
                 return EvaluateMetaClass(meta, env);
 
+            case SuperRefExpr reaching:
+                return EvaluateSuperRef(reaching, env);
+
             case FunctionHandleExpr handle:
+                // @obj.method on a variable holding an object is the method with that object in
+                // hand (U6): R2025b's own reading, @(varargin)obj.method(varargin{:}), which is
+                // also what func2str answers for it.
+                if (AnyClasses && BoundMethodHandle(handle, env) is { } bound)
+                {
+                    return bound;
+                }
+
                 // Handle mode: never a variable, and a file as readily as a function in scope, or a
                 // path function could be called but never passed to cellfun.
                 if (TryMakeHandle(handle.Name, env, out JgsValue made))
@@ -4829,11 +4863,14 @@ internal sealed partial class Interpreter
                     return held;
                 }
 
-                if (owner.Type == JgsType.Object
-                    && owner.WritableFields().TryGetValue(field, out JgsValue? property))
+                if (owner.Type == JgsType.Object)
                 {
-                    _writeOwners.Add(owner);
-                    return property;
+                    RequirePassThrough(owner, field, member); // U6: the property is read, then set
+                    if (owner.WritableFields().TryGetValue(field, out JgsValue? property))
+                    {
+                        _writeOwners.Add(owner);
+                        return property;
+                    }
                 }
 
                 break;
@@ -9112,6 +9149,7 @@ internal sealed partial class Interpreter
                 JgsValue? child;
                 if (ResolveObjectTarget(nested.Target, env) is { } holderObject)
                 {
+                    RequirePassThrough(holderObject, field, nested); // U6
                     fields = holderObject.WritableFields();
                     if (!fields.TryGetValue(field, out child))
                     {
