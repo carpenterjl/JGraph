@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>echo</title><script>
+// The U9b echo page. It answers MATLAB by a fixed protocol, which the parity fixtures and the
+// bridge test drive (JGraph's test page host follows the same protocol):
+//   ready    on setup, the page's Data as JSON text
+//   echo     each DataChanged the page hears, its Data as JSON text
+//   ping     answered by pong with the event's data as JSON text
+//   set      Data = JSON.parse(data), or a special value by its token; then setdone
+//   send     sendEventToMATLAB(data.name, JSON.parse(data.json)), or with no data when json is absent
+const special = { '__undefined__': undefined, '__nan__': NaN, '__inf__': Infinity, '__ninf__': -Infinity };
+function text(v) { return v === undefined ? '__undefined__' : JSON.stringify(v); }
+function setup(htmlComponent) {
+  const send = (n, d) => htmlComponent.sendEventToMATLAB(n, d);
+  htmlComponent.addEventListener('DataChanged', function () { send('echo', text(htmlComponent.Data)); });
+  htmlComponent.addEventListener('ping', function (event) { send('pong', text(event.Data)); });
+  htmlComponent.addEventListener('set', function (event) {
+    const t = event.Data;
+    htmlComponent.Data = Object.prototype.hasOwnProperty.call(special, t) ? special[t] : JSON.parse(t);
+    send('setdone', text(htmlComponent.Data));
+  });
+  htmlComponent.addEventListener('send', function (event) {
+    const d = event.Data;
+    if (d.json === undefined) { htmlComponent.sendEventToMATLAB(d.name); }
+    else { htmlComponent.sendEventToMATLAB(d.name, Object.prototype.hasOwnProperty.call(special, d.json) ? special[d.json] : JSON.parse(d.json)); }
+  });
+  send('ready', text(htmlComponent.Data));
+}
+</script></head><body><p id="p">echo</p></body></html>

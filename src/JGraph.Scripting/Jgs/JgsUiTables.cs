@@ -137,6 +137,14 @@ internal static class JgsUiTables
     /// </summary>
     public static void CopyStates(GraphObject source, GraphObject copy)
     {
+        // A uihtml's Data and page go with it (U9b, probe u9b_forms).
+        if (source is UiHtmlModel page && copy is UiHtmlModel pageCopy)
+        {
+            JgsUiHtml.CopyState(page, pageCopy);
+            pageCopy.SetSource(page.Source, page.SourceFile);
+            return;
+        }
+
         if (source is UiTableModel && copy is UiTableModel
             && JgsHandleRegistry.TryGetEntry(source, out JgsHandleEntry? from) && from.Table is { } state)
         {

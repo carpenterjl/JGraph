@@ -104,6 +104,7 @@ m = {
  'fplot', @() fplot(ax, @sin)
  'gobjects', @() gobjects(1)
  'buttonlayout', @() u7_layout(g)
+ 'uihtml', @() uihtml(uf)
  };
 % superclasses leaves out the bases MATLAB builds in (isa(ax, 'matlab.graphics.axis.AbstractAxes') is
 % true and the name is not listed), so the known ones are asked about one by one.

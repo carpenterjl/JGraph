@@ -167,6 +167,10 @@ internal sealed class JgsCallbackDispatcher
             return;
         }
 
+        // What scripts queued for their uihtml pages goes first (U9b), so a page's answer to it can
+        // be heard in this drain.
+        JgsUiHtml.Flush(_globals);
+
         int budget = ScriptEventQueue.Count;
         for (int i = 0; i < budget; i++)
         {

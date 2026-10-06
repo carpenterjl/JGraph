@@ -33,7 +33,8 @@ internal static partial class JgsBuiltins
         RegisterPathBuiltins(Define, Query, env, host);
         RegisterStreamBuiltins(Define, env, host);
         RegisterMachineBuiltins(Define, Query, host);
-        RegisterJsonBuiltins(Define);
+        RegisterJsonBuiltins((name, body) =>
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true })));
     }
 
     // --- Directories ------------------------------------------------------------------------------
@@ -657,125 +658,86 @@ internal static partial class JgsBuiltins
 
     private static void RegisterJsonBuiltins(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
     {
+        // R2025b's forms and refusals (probe u9b_json): the value, then name-value options whose
+        // names match exactly; jsondecode takes the text alone.
         Define("jsonencode", (args, line, col) =>
         {
-            ArityRange("jsonencode", args, 1, 3, line, col);
-            var json = new StringBuilder();
-            WriteJson(json, args[0], line, col);
-            return JgsValue.Str(json.ToString());
+            if (args.Count == 0)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            }
+
+            JgsJson.Options options = JgsJson.Options.Default;
+            for (int i = 1; i < args.Count; i += 2)
+            {
+                if (!IsTextScalar(args[i]))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:json:InvalidParamType",
+                        "Name argument type must be string scalar or character vector.");
+                }
+
+                string name = TextOf(args[i]);
+                if (name is not ("ConvertInfAndNaN" or "PrettyPrint"))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:json:UnmatchedParameter",
+                        "Name argument must be 'ConvertInfAndNaN' or 'PrettyPrint'.");
+                }
+
+                if (i + 1 >= args.Count)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:json:ParamMissingValue", $"Name '{name}' requires a value.");
+                }
+
+                JgsValue setting = args[i + 1];
+                if (setting.Type is not (JgsType.Bool or JgsType.Number) || IsTextScalar(setting))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:json:InvalidValueType",
+                        $"Value type must be logical scalar for name '{name}'.");
+                }
+
+                options = name == "PrettyPrint"
+                    ? options with { PrettyPrint = setting.AsNumber != 0 }
+                    : options with { ConvertInfAndNaN = setting.AsNumber != 0 };
+            }
+
+            try
+            {
+                return JgsValue.Str(JgsJson.Encode(args[0], options));
+            }
+            catch (JgsJson.Unwritable refused)
+            {
+                throw new JgsRuntimeException(line, col, refused.Identifier, refused.Message);
+            }
         });
 
         Define("jsondecode", (args, line, col) =>
         {
-            Arity("jsondecode", args, 1, line, col);
+            if (args.Count == 0)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            }
+
+            if (args.Count > 1)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
+            }
+
+            JgsValue text = args[0];
+            bool missing = text.IsStringArray && text.ArrayLength == 1 && IsMissingText(text.ElementAt(0).AsString);
+            if (!IsTextScalar(text) || missing)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:json:InvalidInput",
+                    "JSON text must be a character vector or a scalar non-missing string.");
+            }
+
             try
             {
-                using JsonDocument document = JsonDocument.Parse(Str("jsondecode", args, 0, line, col));
-                return ReadJson(document.RootElement);
+                return JgsJson.Decode(TextOf(text));
             }
-            catch (JsonException ex)
+            catch (JgsJson.Malformed malformed)
             {
-                throw new JgsRuntimeException(line, col, $"jsondecode: {ex.Message}");
+                throw new JgsRuntimeException(line, col, malformed.Identifier, malformed.Message);
             }
         });
-    }
-
-    /// <summary>Writes one script value as JSON.</summary>
-    private static void WriteJson(StringBuilder json, JgsValue value, int line, int col)
-    {
-        switch (value.Type)
-        {
-            case JgsType.Number:
-                json.Append(double.IsFinite(value.AsNumber)
-                    ? value.AsNumber.ToString("R", CultureInfo.InvariantCulture)
-                    : "null"); // JSON has no way to write Inf or NaN, and null is what MATLAB writes
-                return;
-
-            case JgsType.Bool:
-                json.Append(value.AsNumber != 0 ? "true" : "false");
-                return;
-
-            case JgsType.String:
-                json.Append(JsonSerializer.Serialize(value.AsString));
-                return;
-
-            case JgsType.Array or JgsType.Cell:
-                json.Append('[');
-                JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
-                for (int i = 0; i < elements.Length; i++)
-                {
-                    if (i > 0)
-                    {
-                        json.Append(',');
-                    }
-
-                    WriteJson(json, elements[i], line, col);
-                }
-
-                json.Append(']');
-                return;
-
-            case JgsType.Struct:
-                json.Append('{');
-                bool first = true;
-                foreach ((string field, JgsValue held) in value.AsStruct)
-                {
-                    if (!first)
-                    {
-                        json.Append(',');
-                    }
-
-                    first = false;
-                    json.Append(JsonSerializer.Serialize(field)).Append(':');
-                    WriteJson(json, held, line, col);
-                }
-
-                json.Append('}');
-                return;
-
-            default:
-                throw new JgsRuntimeException(line, col, $"jsonencode cannot write a {value.TypeName}.");
-        }
-    }
-
-    /// <summary>Reads one JSON element as a script value.</summary>
-    private static JgsValue ReadJson(JsonElement element)
-    {
-        switch (element.ValueKind)
-        {
-            case JsonValueKind.Number:
-                return JgsValue.Number(element.GetDouble());
-
-            case JsonValueKind.True or JsonValueKind.False:
-                return JgsValue.Bool(element.GetBoolean());
-
-            case JsonValueKind.String:
-                return JgsValue.Str(element.GetString() ?? string.Empty);
-
-            case JsonValueKind.Array:
-                var items = new List<JgsValue>();
-                bool allNumeric = true;
-                foreach (JsonElement item in element.EnumerateArray())
-                {
-                    items.Add(ReadJson(item));
-                    allNumeric &= items[^1].Type is JgsType.Number or JgsType.Bool;
-                }
-
-                // An all-numeric array decodes to a numeric array, as MATLAB does; anything mixed
-                // has to be a cell, because a JGS array holds one kind of thing.
-                return allNumeric ? JgsValue.Array(items.ToArray()) : JgsValue.Cell(items.ToArray());
-
-            case JsonValueKind.Object:
-                var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-                foreach (JsonProperty property in element.EnumerateObject())
-                {
-                    fields[property.Name] = ReadJson(property.Value);
-                }
-
-                return JgsValue.Struct(fields);
-
-            default:
-                return JgsValue.Array([]); // null decodes to an empty value, as MATLAB does
-        }
     }
 }

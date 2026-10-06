@@ -249,7 +249,7 @@ public class MatlabEvalBuiltinTests : IDisposable
         assert(strcmp(back.name, 'jgraph'));
         assert(back.count == 3);
 
-        assert(isequal(jsondecode('[1,2,3]'), [1 2 3]));
+        assert(isequal(jsondecode('[1,2,3]'), [1; 2; 3])); % a JSON array reads back as a column (U9b)
         nested = jsondecode('{"a":{"b":7}}');
         assert(nested.a.b == 7);
         """);

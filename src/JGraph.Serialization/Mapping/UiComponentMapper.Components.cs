@@ -194,6 +194,7 @@ internal static partial class UiComponentMapper
             UiComponentKind.RangeSlider => new UiRangeSliderModel(),
             UiComponentKind.Image => new UiImageModel(),
             UiComponentKind.Table => new UiTableModel(),
+            UiComponentKind.Html => new UiHtmlModel(),
             _ => null,
         };
         if (made is not null)
@@ -326,6 +327,13 @@ internal static partial class UiComponentMapper
             bag[property.Name] = JsonSerializer.SerializeToElement(property.GetValue(component), property.PropertyType, BagOptions);
         }
 
+        // A uihtml's page is set as a pair, so it is kept by hand (U9b).
+        if (component is UiHtmlModel html)
+        {
+            bag[HtmlSourceKey] = JsonSerializer.SerializeToElement(html.Source, BagOptions);
+            bag[HtmlFileKey] = JsonSerializer.SerializeToElement(html.SourceFile, BagOptions);
+        }
+
         return bag;
     }
 
@@ -356,5 +364,15 @@ internal static partial class UiComponentMapper
                 // A value that does not read leaves the property as the component made it.
             }
         }
+
+        if (component is UiHtmlModel html && bag.TryGetValue(HtmlSourceKey, out JsonElement source)
+            && source.ValueKind == JsonValueKind.String)
+        {
+            string? file = bag.TryGetValue(HtmlFileKey, out JsonElement held) && held.ValueKind == JsonValueKind.String ? held.GetString() : null;
+            html.SetSource(source.GetString() ?? string.Empty, file);
+        }
     }
+
+    private const string HtmlSourceKey = "HTMLSource";
+    private const string HtmlFileKey = "HTMLSourceFile";
 }

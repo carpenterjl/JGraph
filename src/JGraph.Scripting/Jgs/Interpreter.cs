@@ -7027,6 +7027,13 @@ internal sealed partial class Interpreter
             return JgsBuiltins.WrapCharMatrix(IndexIntoCore(target, subscripts, at, env));
         }
 
+        // A char row read with a row and a column, v(1, :) or v(:, 2), is read as the 1-by-N char
+        // matrix it is (U9b): it fell through to the one-subscript refusal before.
+        if (target.Type == JgsType.String && subscripts.Count >= 2)
+        {
+            return JgsBuiltins.WrapCharMatrix(IndexIntoCore(JgsValue.CharMatrix([target.AsString]), subscripts, at, env));
+        }
+
         // A subscript into a keyed collection is a key, not a position (M64), so it resolves before
         // every positional reading below.
         if (IsKeyedRead(target))

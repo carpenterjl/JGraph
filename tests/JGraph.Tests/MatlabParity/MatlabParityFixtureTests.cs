@@ -58,9 +58,20 @@ public class MatlabParityFixtureTests : IDisposable
 {
     private static readonly string Root = Path.Combine(AppContext.BaseDirectory, "MatlabParity");
 
-    public MatlabParityFixtureTests() => JG.Reset();
+    public MatlabParityFixtureTests()
+    {
+        JG.Reset();
 
-    public void Dispose() => JG.Reset();
+        // A uihtml's page is played by a stand-in that knows the fixtures' echo page (U9b), so the
+        // bridge runs with neither a browser nor a window.
+        UiHtmlPages.Hidden = new EchoHtmlPageHost();
+    }
+
+    public void Dispose()
+    {
+        UiHtmlPages.Hidden = null;
+        JG.Reset();
+    }
 
     public static IEnumerable<object[]> Fixtures()
     {

@@ -86,7 +86,7 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     /// R2025b's <c>nargout</c> for the name (<see cref="JgsBuiltinOutputCounts"/>) when it is
     /// fixed, or null - what <c>nargout('name')</c> answers here (V9.3).
     /// </summary>
-    public int? MatlabOutputCount { get; }
+    public int? MatlabOutputCount { get; init; }
 
     /// <summary>
     /// The most outputs a call may ask of this builtin, or null when unbounded here: the recorded
@@ -107,7 +107,7 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     /// identifier: a file refuses excess outputs as <c>MATLAB:TooManyOutputs</c>, a built-in as
     /// <c>MATLAB:maxlhs</c> (measured, V9).
     /// </summary>
-    public bool IsMatlabFile { get; }
+    public bool IsMatlabFile { get; init; }
 
     /// <summary>
     /// Whether this builtin hands the interpreter's pending call site on to the callable it invokes

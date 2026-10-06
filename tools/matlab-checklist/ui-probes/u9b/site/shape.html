@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>shape</title><script>
+// U9b: what the page side looks like: the order things run in, the htmlComponent object, the
+// event objects, and what Data assignments of odd values do.
+const order = [];
+order.push('inline script');
+document.addEventListener('DOMContentLoaded', () => order.push('DOMContentLoaded'));
+window.addEventListener('load', () => order.push('load'));
+function describe(o) {
+  const own = Object.getOwnPropertyNames(o);
+  let proto = Object.getPrototypeOf(o), chain = [];
+  while (proto && proto !== Object.prototype) { chain.push(Object.getOwnPropertyNames(proto).join(',')); proto = Object.getPrototypeOf(proto); }
+  return 'own=' + own.join(',') + ' proto=' + chain.join(' | ') + ' ctor=' + (o.constructor && o.constructor.name);
+}
+function setup(htmlComponent) {
+  order.push('setup readyState=' + document.readyState);
+  const send = (n, d) => htmlComponent.sendEventToMATLAB(n, d);
+  send('order', order.join(' ; '));
+  send('component', describe(htmlComponent));
+  const names = ['Data', 'addEventListener', 'removeEventListener', 'sendEventToMATLAB', 'dispatchEvent', 'Position', 'Visible', 'HTMLSource', 'Tag'];
+  send('types', names.map(n => n + ':' + typeof htmlComponent[n]).join(' '));
+  send('location', String(location.href) + ' protocol=' + location.protocol + ' title=' + document.title);
+  send('setupThis', String(this === window));
+  setTimeout(() => send('laterOrder', order.join(' ; ')), 500);
+  htmlComponent.addEventListener('DataChanged', function (event) {
+    send('dcEvent', 'type=' + event.type + ' ' + describe(event) + ' Data=' + JSON.stringify(event.Data) + ' hcData=' + JSON.stringify(htmlComponent.Data)
+      + ' isEvent=' + (event instanceof Event) + ' this=' + (this === htmlComponent));
+  });
+  htmlComponent.addEventListener('probe', function (event) {
+    send('mEvent', 'type=' + event.type + ' ' + describe(event) + ' Data=' + JSON.stringify(event.Data) + ' isEvent=' + (event instanceof Event)
+      + ' detail=' + JSON.stringify(event.detail));
+  });
+  let calls = 0;
+  const counter = function () { calls++; };
+  htmlComponent.addEventListener('twice', counter);
+  htmlComponent.addEventListener('twice', counter);
+  htmlComponent.addEventListener('twice', () => send('twiceCount', calls));
+  const seen = [];
+  htmlComponent.addEventListener('order3', () => seen.push('first'));
+  htmlComponent.addEventListener('order3', () => seen.push('second'));
+  htmlComponent.addEventListener('order3', () => { seen.push('third'); setTimeout(() => send('order3', seen.join(',')), 100); });
+  const removed = () => send('removedRan', 1);
+  htmlComponent.addEventListener('removed', removed);
+  htmlComponent.removeEventListener('removed', removed);
+  htmlComponent.addEventListener('removed', () => send('removedDone', 1));
+  htmlComponent.addEventListener('odd', function () {
+    const tries = [['undefined', undefined], ['NaN', NaN], ['Infinity', Infinity], ['function', function () { return 1; }],
+      ['date', new Date(Date.UTC(2024, 0, 15))], ['cyclic', (() => { const o = {}; o.self = o; return o; })()],
+      ['bigint', null], ['nested undefined', { a: undefined, b: 1 }], ['array holes', [1, , 3]], ['typed', new Float64Array([1.5, 2])],
+      ['minus zero', -0], ['symbol', Symbol('s')], ['map', new Map([['k', 1]])]];
+    let i = 0;
+    const next = () => {
+      if (i >= tries.length) { send('oddDone', i); return; }
+      const [label, value] = tries[i++];
+      try { htmlComponent.Data = value; send('oddSet', label + ' ok, Data now ' + String(typeof htmlComponent.Data) + ' ' + (() => { try { return JSON.stringify(htmlComponent.Data); } catch (e) { return 'unstringifiable'; } })()); }
+      catch (e) { send('oddSet', label + ' threw ' + e.name + ': ' + e.message); }
+      setTimeout(next, 300);
+    };
+    next();
+  });
+  htmlComponent.addEventListener('oddsend', function () {
+    const tries = [['undefined name', undefined, 1], ['number name', 5, 1], ['empty name', '', 1], ['object name', { a: 1 }, 1],
+      ['function data', 'fn', function () { return 1; }], ['NaN data', 'nan', NaN], ['Infinity data', 'inf', Infinity], ['date data', 'date', new Date(Date.UTC(2024, 0, 15))],
+      ['cyclic data', 'cyc', (() => { const o = {}; o.self = o; return o; })()], ['DataChanged name', 'DataChanged', 7], ['space name', 'a b', 1],
+      ['minus zero', 'mz', -0], ['big', 'big', 123456789012345678], ['tiny', 'tiny', 1e-320], ['undefined data', 'und', undefined]];
+    let i = 0;
+    const next = () => {
+      if (i >= tries.length) { send('oddsendDone', i); return; }
+      const [label, name, value] = tries[i++];
+      try { htmlComponent.sendEventToMATLAB(name, value); send('oddsendTry', label + ' ok'); }
+      catch (e) { send('oddsendTry', label + ' threw ' + e.name + ': ' + e.message); }
+      setTimeout(next, 300);
+    };
+    next();
+  });
+  htmlComponent.addEventListener('argc', function () {
+    try { htmlComponent.sendEventToMATLAB(); send('argc0', 'ok'); } catch (e) { send('argc0', 'threw ' + e.name + ': ' + e.message); }
+    try { htmlComponent.sendEventToMATLAB('three', 1, 2); send('argc3', 'ok'); } catch (e) { send('argc3', 'threw ' + e.name + ': ' + e.message); }
+  });
+  htmlComponent.addEventListener('selfset', function () {
+    // The page sets Data to what it holds already, then twice to one new value.
+    htmlComponent.Data = htmlComponent.Data;
+    setTimeout(() => { htmlComponent.Data = 5; }, 300);
+    setTimeout(() => { htmlComponent.Data = 5; }, 600);
+    setTimeout(() => send('selfsetDone', 1), 900);
+  });
+  htmlComponent.addEventListener('setthensend', function () {
+    htmlComponent.Data = 'fromPage';
+    send('afterSet', 1);
+  });
+}
+</script></head><body><p>shape</p></body></html>

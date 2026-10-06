@@ -37,7 +37,7 @@
     stamp mode reads it.
   -->
   <ItemGroup>
-    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\fixtures\*.jgs;MatlabParity\fixtures\*.owners;MatlabParity\fixtures\helpers\*.m;MatlabParity\fixtures\helpers\*.mlapp;MatlabParity\fixtures\helpers\*.cs;MatlabParity\expected\*.txt"
+    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\fixtures\*.jgs;MatlabParity\fixtures\*.owners;MatlabParity\fixtures\helpers\*.m;MatlabParity\fixtures\helpers\*.mlapp;MatlabParity\fixtures\helpers\*.html;MatlabParity\fixtures\helpers\*.cs;MatlabParity\expected\*.txt"
              CopyToOutputDirectory="PreserveNewest" />
     <!-- A fixture's C# helper is compiled by jgraph.net.compile at run time (ADR 0179), never by this project. -->
     <Compile Remove="MatlabParity\fixtures\**\*.cs" />
@@ -98,5 +98,8 @@
     <ProjectReference Include="..\..\src\JGraph.Scripting\JGraph.Scripting.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Reporting\JGraph.Reporting.csproj" />
   </ItemGroup>
+
+  <!-- uihtml's WebView2 host (U9b), copied beside the program. -->
+  <Import Project="..\..\src\JGraph.Controls.Web\IncludeHtmlHost.targets" />
 
 </Project>

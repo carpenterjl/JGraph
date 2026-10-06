@@ -188,6 +188,9 @@ internal static partial class JgsBuiltins
         new("uicolorpicker", "ColorPicker", null, static _ => new UiColorPickerModel()),
         new("uitree", "Tree", ["tree", "checkbox"], static style => style == "checkbox" ? new UiCheckBoxTreeModel() : new UiTreeModel(),
             StyleList: "'tree' or 'checkbox'"),
+
+        // U9b: a web page (probe u9b_forms).
+        new("uihtml", "HTML", null, static _ => new UiHtmlModel()),
     ];
 
     private static void RegisterUiComponentBuiltins(JgsEnvironment env, JGraphScriptGlobals host, CancellationToken cancellationToken)

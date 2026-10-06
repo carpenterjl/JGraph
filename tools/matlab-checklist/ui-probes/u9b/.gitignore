@@ -1,0 +1,7 @@
+*.out
+*.err
+sendfrom.txt
+# written by make_site.py
+site/types/
+site/page.html
+outside.js

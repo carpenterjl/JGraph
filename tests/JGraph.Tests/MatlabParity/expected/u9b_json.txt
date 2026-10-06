@@ -1,0 +1,305 @@
+CHK|enc_001|char[1 1]'1'|exact
+CHK|enc_002|char[1 2]'-1'|exact
+CHK|enc_003|char[1 1]'0'|exact
+CHK|enc_004|char[1 2]'-0'|exact
+CHK|enc_005|char[1 3]'0.1'|exact
+CHK|enc_006|char[1 3]'0.5'|exact
+CHK|enc_007|char[1 19]'0.33333333333333331'|exact
+CHK|enc_008|char[1 18]'3.1415926535897931'|exact
+CHK|enc_009|char[1 3]'100'|exact
+CHK|enc_010|char[1 6]'100000'|exact
+CHK|enc_011|char[1 6]'999999'|exact
+CHK|enc_012|char[1 6]'1.0E+6'|exact
+CHK|enc_013|char[1 11]'1.234567E+6'|exact
+CHK|enc_014|char[1 12]'1.2345675E+6'|exact
+CHK|enc_015|char[1 6]'1.0E+7'|exact
+CHK|enc_016|char[1 13]'1.23456789E+8'|exact
+CHK|enc_017|char[1 7]'1.0E+15'|exact
+CHK|enc_018|char[1 7]'1.0E+21'|exact
+CHK|enc_019|char[1 7]'1.0E+22'|exact
+CHK|enc_020|char[1 8]'1.5E+300'|exact
+CHK|enc_021|char[1 5]'0.001'|exact
+CHK|enc_022|char[1 6]'0.0012'|exact
+CHK|enc_023|char[1 6]'0.0001'|exact
+CHK|enc_024|char[1 4]'1E-5'|exact
+CHK|enc_025|char[1 6]'1.5E-5'|exact
+CHK|enc_026|char[1 4]'1E-7'|exact
+CHK|enc_027|char[1 8]'1.234E-8'|exact
+CHK|enc_028|char[1 21]'9.007199254740992E+15'|exact
+CHK|enc_029|char[1 23]'2.2250738585072014E-308'|exact
+CHK|enc_030|char[1 23]'1.7976931348623157E+308'|exact
+CHK|enc_031|char[1 22]'2.2204460492503131E-16'|exact
+CHK|enc_032|char[1 21]'4.94065645841247E-324'|exact
+CHK|enc_033|char[1 21]'9.99988867182683E-321'|exact
+CHK|enc_034|char[1 18]'100000.33333333333'|exact
+CHK|enc_035|char[1 21]'3.3333333333333335E+6'|exact
+CHK|enc_036|char[1 22]'1.0000000000000005E+15'|exact
+CHK|enc_037|char[1 19]'0.30000000000000004'|exact
+CHK|enc_038|char[1 19]'0.99999999999999978'|exact
+CHK|enc_039|char[1 7]'-1.0E+7'|exact
+CHK|enc_040|char[1 20]'-0.33333333333333331'|exact
+CHK|enc_041|char[1 5]'-1E-5'|exact
+CHK|enc_042|char[1 4]'null'|exact
+CHK|enc_043|char[1 4]'null'|exact
+CHK|enc_044|char[1 4]'null'|exact
+CHK|enc_045|char[1 13]'[1,null,null]'|exact
+CHK|enc_046|char[1 10]'3.14159274'|exact
+CHK|enc_047|char[1 3]'0.1'|exact
+CHK|enc_048|char[1 7]'1.0E+10'|exact
+CHK|enc_049|char[1 11]'0.333333343'|exact
+CHK|enc_050|char[1 12]'1.2345678E+7'|exact
+CHK|enc_051|char[1 6]'1.5E-5'|exact
+CHK|enc_052|char[1 5]'100.5'|exact
+CHK|enc_053|char[1 2]'-5'|exact
+CHK|enc_054|char[1 3]'200'|exact
+CHK|enc_055|char[1 3]'300'|exact
+CHK|enc_056|char[1 2]'-7'|exact
+CHK|enc_057|char[1 9]'123456789'|exact
+CHK|enc_058|char[1 10]'4294967295'|exact
+CHK|enc_059|char[1 4]'true'|exact
+CHK|enc_060|char[1 5]'false'|exact
+CHK|enc_061|char[1 12]'[true,false]'|exact
+CHK|enc_062|char[1 25]'[[true,true],[true,true]]'|exact
+CHK|enc_063|char[1 2]'[]'|exact
+CHK|enc_064|char[1 2]'[]'|exact
+CHK|enc_065|char[1 2]'[]'|exact
+CHK|enc_066|char[1 7]'[1,2,3]'|exact
+CHK|enc_067|char[1 7]'[1,2,3]'|exact
+CHK|enc_068|char[1 13]'[[1,2],[3,4]]'|exact
+CHK|enc_069|char[1 25]'[[8,1,6],[3,5,7],[4,9,2]]'|exact
+CHK|enc_070|char[1 29]'[[[0,0],[0,0]],[[0,0],[0,0]]]'|exact
+CHK|enc_071|char[1 29]'[[[1,5],[3,7]],[[2,6],[4,8]]]'|exact
+CHK|enc_072|char[1 5]'[0,0]'|exact
+CHK|enc_073|char[1 17]'[[[0,0]],[[0,0]]]'|exact
+CHK|enc_074|char[1 2]'""'|exact
+CHK|enc_075|char[1 3]'"a"'|exact
+CHK|enc_076|char[1 5]'"abc"'|exact
+CHK|enc_077|char[1 11]'["ab","cd"]'|exact
+CHK|enc_078|char[1 2]'""'|exact
+CHK|enc_079|char[1 11]'"a\"b\\c/d"'|exact
+CHK|enc_080|char[1 11]'"t\tn\nr\r"'|exact
+CHK|enc_081|char[1 8]'"\u0001"'|exact
+CHK|enc_082|char[1 8]'"\u001f"'|exact
+CHK|enc_083|char[1 3]'""'|exact
+CHK|enc_084|char[1 6]'"<>&'"'|exact
+CHK|enc_085|char[1 2]'""'|exact
+CHK|enc_086|char[1 3]'"s"'|exact
+CHK|enc_087|char[1 9]'["a","b"]'|exact
+CHK|enc_088|char[1 9]'["a","b"]'|exact
+CHK|enc_089|char[1 4]'null'|exact
+CHK|enc_090|char[1 10]'["a",null]'|exact
+CHK|enc_091|char[1 2]'[]'|exact
+CHK|enc_092|char[1 17]'[["",""],["",""]]'|exact
+CHK|enc_093|char[1 2]'[]'|exact
+CHK|enc_094|char[1 3]'[1]'|exact
+CHK|enc_095|char[1 7]'[1,"x"]'|exact
+CHK|enc_096|char[1 7]'[1,"x"]'|exact
+CHK|enc_097|char[1 13]'[1,2,"x","y"]'|exact
+CHK|enc_098|char[1 4]'[[]]'|exact
+CHK|enc_099|char[1 4]'[[]]'|exact
+CHK|enc_100|char[1 7]'[[1,2]]'|exact
+CHK|enc_101|char[1 2]'[]'|exact
+CHK|enc_102|char[1 13]'[[1,2],[3,4]]'|exact
+CHK|enc_103|char[1 2]'{}'|exact
+CHK|enc_104|char[1 7]'{"a":1}'|exact
+CHK|enc_105|char[1 2]'[]'|exact
+CHK|enc_106|char[1 17]'[{"a":1},{"a":2}]'|exact
+CHK|enc_107|char[1 17]'[{"a":1},{"a":2}]'|exact
+CHK|enc_108|char[1 37]'[[{"a":1},{"a":2}],[{"a":3},{"a":4}]]'|exact
+CHK|enc_109|char[1 19]'{"a":[[1,2],[3,4]]}'|exact
+CHK|enc_110|char[1 8]'{"a":[]}'|exact
+CHK|enc_111|char[1 11]'{"a":[1,2]}'|exact
+CHK|enc_112|char[1 14]'{"a":{"b":[]}}'|exact
+CHK|enc_113|char[1 15]'{"x_1":1,"A":2}'|exact
+CHK|enc_114|char[1 11]'[1,[2,[3]]]'|exact
+CHK|enc_115|char[1 29]'[{"n":{"m":1}},{"n":{"m":2}}]'|exact
+CHK|enc_116|char[1 2]'[]'|exact
+CHK|enc_117|char[1 13]'"15-Jan-2024"'|exact
+CHK|enc_118|char[1 22]'"15-Jan-2024 10:30:05"'|exact
+CHK|enc_119|char[1 29]'["15-Jan-2024","16-Jan-2024"]'|exact
+CHK|enc_120|char[1 4]'null'|exact
+CHK|enc_121|char[1 12]'"2024-01-15"'|exact
+CHK|enc_122|char[1 17]'{"k1":1,"k2":"v"}'|exact
+CHK|enc_123|char[1 2]'{}'|exact
+CHK|enc_124|char[1 17]'[{"n":1},{"n":2}]'|exact
+CHK|enc_utf16|double[1 6] [34 233 8364 55357 56832 34]|exact
+CHK|enc_fn|MATLAB:json:UnsupportedDataType|exact
+CHK|enc_fn_msg|Unable to encode objects of class function_handle as JSON-formatted text.|exact
+CHK|enc_complex|MATLAB:json:UnsupportedComplexDataType|exact
+CHK|enc_complex_msg|Unable to encode complex-valued objects of class double as JSON-formatted text.|exact
+CHK|enc_complex_single|MATLAB:json:UnsupportedComplexDataType|exact
+CHK|enc_complex_single_msg|Unable to encode complex-valued objects of class single as JSON-formatted text.|exact
+CHK|enc_sparse|MATLAB:json:UnsupportedSparseDataType|exact
+CHK|enc_sparse_msg|Unable to encode sparse objects of class double as JSON-formatted text.|exact
+CHK|enc_fn_in_struct|MATLAB:json:UnsupportedDataType|exact
+CHK|enc_fn_in_struct_msg|Unable to encode objects of class function_handle as JSON-formatted text.|exact
+CHK|enc_fn_in_cell|MATLAB:json:UnsupportedDataType|exact
+CHK|enc_fn_in_cell_msg|Unable to encode objects of class function_handle as JSON-formatted text.|exact
+CHK|enc_map_double_keys|MATLAB:json:UnsupportedKeyType|exact
+CHK|enc_map_double_keys_msg|Unable to encode objects of class containers.Map as JSON-formatted text. KeyType must be char.|exact
+CHK|opt_01|char[1 3]'NaN'|exact
+CHK|opt_02|char[1 22]'[1,Infinity,-Infinity]'|exact
+CHK|opt_03|char[1 8]'[1,null]'|exact
+CHK|opt_04|char[1 41]'{\n  "a": [\n    1,\n    2\n  ],\n  "b": "x"\n}'|exact
+CHK|opt_05|char[1 22]'[\n  1,\n  [\n    2\n  ]\n]'|exact
+CHK|opt_06|char[1 46]'[\n  [\n    1,\n    2\n  ],\n  [\n    3,\n    4\n  ]\n]'|exact
+CHK|opt_07|char[1 2]'{}'|exact
+CHK|opt_08|char[1 2]'[]'|exact
+CHK|opt_09|char[1 2]'[]'|exact
+CHK|opt_10|char[1 2]'[]'|exact
+CHK|opt_11|char[1 42]'[\n  {\n    "a": 1\n  },\n  {\n    "a": 2\n  }\n]'|exact
+CHK|opt_12|char[1 7]'{"a":1}'|exact
+CHK|opt_13|char[1 3]'NaN'|exact
+CHK|opt_14|MATLAB:json:UnmatchedParameter|exact
+CHK|opt_14_msg|Name argument must be 'ConvertInfAndNaN' or 'PrettyPrint'.|exact
+CHK|opt_15|MATLAB:json:ParamMissingValue|exact
+CHK|opt_15_msg|Name 'PrettyPrint' requires a value.|exact
+CHK|opt_16|MATLAB:json:UnmatchedParameter|exact
+CHK|opt_16_msg|Name argument must be 'ConvertInfAndNaN' or 'PrettyPrint'.|exact
+CHK|opt_17|MATLAB:json:UnmatchedParameter|exact
+CHK|opt_17_msg|Name argument must be 'ConvertInfAndNaN' or 'PrettyPrint'.|exact
+CHK|opt_18|MATLAB:json:InvalidValueType|exact
+CHK|opt_18_msg|Value type must be logical scalar for name 'PrettyPrint'.|exact
+CHK|opt_19|MATLAB:json:InvalidParamType|exact
+CHK|opt_19_msg|Name argument type must be string scalar or character vector.|exact
+CHK|opt_20|char[1 1]'1'|exact
+CHK|enc_none|MATLAB:minrhs|exact
+CHK|enc_none_msg|Not enough input arguments.|exact
+CHK|dec_001|double[1 1] 1|exact
+CHK|dec_002|double[1 1] 0|exact
+CHK|dec_003|double[1 1] 1500|exact
+CHK|dec_004|double[1 1] 0.01|exact
+CHK|dec_005|double[1 1] 1.2345678901234568e+17|exact
+CHK|dec_006|double[1 1] Inf|exact
+CHK|dec_007|double[1 1] -Inf|exact
+CHK|dec_008|double[1 1] 0|exact
+CHK|dec_009|double[1 1] 9.9998886718268301e-321|exact
+CHK|dec_010|logical[1 1] 1|exact
+CHK|dec_011|logical[1 1] 0|exact
+CHK|dec_012|double[0 0]|exact
+CHK|dec_013|char[1 1]'s'|exact
+CHK|dec_014|char[0 0]''|exact
+CHK|dec_015|char[1 3]'a\nb'|exact
+CHK|dec_016|char[1 4]'	"\/'|exact
+CHK|dec_017|double[0 0]|exact
+CHK|dec_018|double[1 1] 1|exact
+CHK|dec_019|double[3 1] [1;2;3]|exact
+CHK|dec_020|double[2 2] [1 2;3 4]|exact
+CHK|dec_021|double[2 1] [1;2]|exact
+CHK|dec_022|double[1 2] [1 2]|exact
+CHK|dec_023|cell[2 1]{double[2 1] [1;2];double[1 1] 3}|exact
+CHK|dec_024|double[2 2] [1 2;3 NaN]|exact
+CHK|dec_025|double[2 2 2] nd [1 5 3 7 2 6 4 8]|exact
+CHK|dec_026|double[2 1 2] nd [1 3 2 4]|exact
+CHK|dec_027|double[2 2] [1 2;3 4]|exact
+CHK|dec_028|cell[2 1]{double[0 0];double[0 0]}|exact
+CHK|dec_029|cell[1 1]{double[0 0]}|exact
+CHK|dec_030|cell[1 1]{cell[1 1]{double[0 0]}}|exact
+CHK|dec_031|double[2 1] [1;NaN]|exact
+CHK|dec_032|double[1 1] NaN|exact
+CHK|dec_033|double[2 1] [NaN;NaN]|exact
+CHK|dec_034|logical[2 1] [1;0]|exact
+CHK|dec_035|cell[2 1]{logical[1 1] 1;double[0 0]}|exact
+CHK|dec_036|cell[2 1]{logical[1 1] 1;double[1 1] 1}|exact
+CHK|dec_037|logical[2 1] [1;0]|exact
+CHK|dec_038|cell[2 1]{logical[2 1] [1;0];double[2 1] [1;0]}|exact
+CHK|dec_039|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|dec_040|cell[1 1]{char[1 1]'a'}|exact
+CHK|dec_041|cell[2 1]{char[1 1]'a';double[0 0]}|exact
+CHK|dec_042|cell[2 1]{cell[2 1]{char[1 1]'a';char[1 1]'b'};cell[2 1]{char[1 1]'c';char[1 1]'d'}}|exact
+CHK|dec_043|cell[2 1]{double[1 1] 1;char[1 1]'a'}|exact
+CHK|dec_044|double[2 1] [1;2]|exact
+CHK|dec_045|cell[2 1]{double[1 1] 1;double[2 1] [2;3]}|exact
+CHK|dec_046|cell[2 1]{double[2 1] [1;2];char[1 1]'a'}|exact
+CHK|dec_047|struct[1 1]{()}|exact
+CHK|dec_048|struct[1 1]{()}|exact
+CHK|dec_049|struct[2 1]{()()}|exact
+CHK|dec_050|struct[1 1]{(a=double[1 1] 1)}|exact
+CHK|dec_051|struct[2 1]{(a=double[1 1] 1)(a=double[1 1] 2)}|exact
+CHK|dec_052|cell[2 1]{struct[1 1]{(a=double[1 1] 1)};struct[1 1]{(b=double[1 1] 2)}}|exact
+CHK|dec_053|cell[2 1]{struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)};struct[1 1]{(b=double[1 1] 3,a=double[1 1] 4)}}|exact
+CHK|dec_054|struct[2 1]{(a=double[2 1] [1;2])(a=double[2 1] [3;4])}|exact
+CHK|dec_055|struct[2 1]{(a=double[1 1] 1)(a=char[1 1]'x')}|exact
+CHK|dec_056|struct[2 1]{(a=double[1 1] 1)(a=double[1 1] 2)}|exact
+CHK|dec_057|struct[2 2]{(a=double[1 1] 1)(a=double[1 1] 3)(a=double[1 1] 2)(a=double[1 1] 4)}|exact
+CHK|dec_058|struct[1 1]{(a=double[0 0])}|exact
+CHK|dec_059|struct[1 1]{(a=struct[1 1]{()})}|exact
+CHK|dec_060|struct[1 1]{(a=double[0 0])}|exact
+CHK|dec_061|struct[1 1]{(x1a=double[1 1] 1)}|exact
+CHK|dec_062|struct[1 1]{(aB=double[1 1] 1)}|exact
+CHK|dec_063|struct[1 1]{(x=double[1 1] 1)}|exact
+CHK|dec_064|struct[1 1]{(a_b=double[1 1] 1)}|exact
+CHK|dec_065|struct[1 1]{(x_a=double[1 1] 1)}|exact
+CHK|dec_066|struct[1 1]{(a=double[1 1] 1,a_1=double[1 1] 2)}|exact
+CHK|dec_067|struct[1 1]{(aBC=double[1 1] 1)}|exact
+CHK|dec_068|struct[1 1]{(aB=double[1 1] 1,aB_1=double[1 1] 2)}|exact
+CHK|dec_069|struct[1 1]{(if=double[1 1] 1)}|exact
+CHK|dec_070|struct[1 1]{(end=double[1 1] 1)}|exact
+CHK|dec_071|struct[1 1]{(x=double[1 1] 1,X=double[1 1] 2)}|exact
+CHK|dec_072|struct[1 1]{(x_=double[1 1] 1)}|exact
+CHK|dec_073|struct[1 1]{(a_b=double[1 1] 1)}|exact
+CHK|dec_074|struct[1 1]{(a=double[1 1] 1)}|exact
+CHK|dec_075|struct[1 1]{(a=double[1 1] 1)}|exact
+CHK|dec_076|struct[1 1]{(abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij=double[1 1] 1)}|exact
+CHK|dec_077|cell[2 1]{double[1 1] 1;logical[1 1] 1}|exact
+CHK|dec_078|cell[2 1]{double[2 1] [1;2];logical[2 1] [1;0]}|exact
+CHK|dec_079|double[2 1] [1;2]|exact
+CHK|dec_080|double[2 1] [1;2]|exact
+CHK|dec_081|MATLAB:json:ExpectedValue|exact
+CHK|dec_081_msg|JSON syntax error at line 1, column 6 (character 6): expected value but found ']'.|exact
+CHK|dec_082|MATLAB:json:ExpectedName|exact
+CHK|dec_082_msg|JSON syntax error at line 1, column 8 (character 8): expected quoted name but found '}'.|exact
+CHK|dec_083|MATLAB:json:ExpectedValueAtEnd|exact
+CHK|dec_083_msg|JSON syntax error: expected value but found end of text.|exact
+CHK|dec_084|MATLAB:json:ExpectedValueAtEnd|exact
+CHK|dec_084_msg|JSON syntax error: expected value but found end of text.|exact
+CHK|dec_085|MATLAB:json:ExpectedLiteral|exact
+CHK|dec_085_msg|JSON syntax error at line 1, column 1 (character 1): expected 'null' but found 'nul'.|exact
+CHK|dec_086|MATLAB:json:ExpectedCommaOrEnd|exact
+CHK|dec_086_msg|JSON syntax error at line 1, column 4 (character 4): expected ',' or ']' but found '2'.|exact
+CHK|dec_087|MATLAB:json:ExpectedColon|exact
+CHK|dec_087_msg|JSON syntax error at line 1, column 5 (character 5): expected ':' but found '}'.|exact
+CHK|dec_088|double[1 1] NaN|exact
+CHK|dec_089|MATLAB:json:ExpectedQuoteAtEnd|exact
+CHK|dec_089_msg|JSON syntax error: expected '"' but found end of text.|exact
+CHK|dec_090|MATLAB:json:ExtraText|exact
+CHK|dec_090_msg|JSON syntax error at line 1, column 3 (character 3): extra text.|exact
+CHK|dec_091|double[1 1] 1|exact
+CHK|dec_092|MATLAB:json:ExpectedValueAtEnd|exact
+CHK|dec_092_msg|JSON syntax error: expected value but found end of text.|exact
+CHK|dec_093|MATLAB:json:ExpectedValueAtEnd|exact
+CHK|dec_093_msg|JSON syntax error: expected value but found end of text.|exact
+CHK|dec_094|MATLAB:json:ExpectedColon|exact
+CHK|dec_094_msg|JSON syntax error at line 1, column 6 (character 6): expected ':' but found '1'.|exact
+CHK|dec_095|MATLAB:json:ExpectedLiteral|exact
+CHK|dec_095_msg|JSON syntax error at line 1, column 1 (character 1): expected 'true' but found 'tru'.|exact
+CHK|dec_096|MATLAB:json:ExtraText|exact
+CHK|dec_096_msg|JSON syntax error at line 1, column 4 (character 4): extra text.|exact
+CHK|dec_097|MATLAB:json:ExpectedValue|exact
+CHK|dec_097_msg|JSON syntax error at line 3, column 1 (character 8): expected value but found ']'.|exact
+CHK|dec_098|MATLAB:json:ExpectedNameOrEnd|exact
+CHK|dec_098_msg|JSON syntax error at line 1, column 2 (character 2): expected quoted name or '}' but found '1'.|exact
+CHK|dec_099|MATLAB:json:ExpectedNumberAtEnd|exact
+CHK|dec_099_msg|JSON syntax error: expected number but found end of text.|exact
+CHK|dec_100|MATLAB:json:ExpectedValue|exact
+CHK|dec_100_msg|JSON syntax error at line 1, column 1 (character 1): expected value but found '.'.|exact
+CHK|dec_utf16|double[1 4] [233 8364 55357 56832]|exact
+CHK|dec_name_utf16|cell[1 1]{char[1 2]'x_'}|exact
+CHK|dec_string|double[1 1] 1|exact
+CHK|dec_number|MATLAB:json:InvalidInput|exact
+CHK|dec_number_msg|JSON text must be a character vector or a scalar non-missing string.|exact
+CHK|dec_cell|MATLAB:json:InvalidInput|exact
+CHK|dec_cell_msg|JSON text must be a character vector or a scalar non-missing string.|exact
+CHK|dec_charmatrix|MATLAB:json:InvalidInput|exact
+CHK|dec_charmatrix_msg|JSON text must be a character vector or a scalar non-missing string.|exact
+CHK|dec_missing|MATLAB:json:InvalidInput|exact
+CHK|dec_missing_msg|JSON text must be a character vector or a scalar non-missing string.|exact
+CHK|dec_two|MATLAB:maxrhs|exact
+CHK|dec_two_msg|Too many input arguments.|exact
+CHK|dec_option|MATLAB:maxrhs|exact
+CHK|dec_option_msg|Too many input arguments.|exact
+CHK|dec_none|MATLAB:minrhs|exact
+CHK|dec_none_msg|Not enough input arguments.|exact
+CHK|roundtrip_struct|struct[2 1]{(a=double[1 1] 1,b=char[1 1]'x')(a=double[1 1] 2,b=char[1 1]'y')}|exact
+CHK|roundtrip_matrix|double[4 4] [16 2 3 13;5 11 10 8;9 7 6 12;4 14 15 1]|exact
+CHK|roundtrip_cell|cell[3 1]{double[1 1] 1;char[1 1]'a';double[3 1] [1;2;3]}|exact

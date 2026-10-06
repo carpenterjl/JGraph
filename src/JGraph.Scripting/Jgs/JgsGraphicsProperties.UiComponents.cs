@@ -45,6 +45,8 @@ internal static partial class JgsGraphicsProperties
         MenuItemModel => name.Equals("Position", StringComparison.OrdinalIgnoreCase),
         UiTreeNodeModel => name.Equals("NodeData", StringComparison.OrdinalIgnoreCase),
         UiDatePickerModel => name.Equals("DisplayFormat", StringComparison.OrdinalIgnoreCase),
+        UiHtmlModel => name.Equals("Data", StringComparison.OrdinalIgnoreCase) || name.Equals("HTMLSource", StringComparison.OrdinalIgnoreCase)
+            || name.Equals("DataChangedFcn", StringComparison.OrdinalIgnoreCase) || name.Equals("HTMLEventReceivedFcn", StringComparison.OrdinalIgnoreCase),
         _ => false,
     };
 
@@ -291,7 +293,7 @@ internal static partial class JgsGraphicsProperties
 
     /// <summary>A double's 0-by-0 empty, which R2025b takes for no text where the text is already empty.</summary>
     private static bool IsEmptyDouble(JgsValue value) =>
-        value.Type == JgsType.Array && value.ArrayLength == 0 && !value.IsStringArray && !value.IsCharMatrix
+        value.Type == JgsType.Array && value.ArrayLength == 0 && value.Rows == 0 && value.Cols == 0 && !value.IsStringArray && !value.IsCharMatrix
         && JgsBuiltins.ClassOf(value, JgsDialect.Matlab) == "double";
 
     /// <summary>
@@ -837,7 +839,7 @@ internal static partial class JgsGraphicsProperties
         }
 
         bool caption = typeof(UiCaptionModel).IsAssignableFrom(type);
-        bool hasFont = type != typeof(UiImageModel) && type != typeof(UiLampModel) && type != typeof(UiColorPickerModel);
+        bool hasFont = type != typeof(UiImageModel) && type != typeof(UiLampModel) && type != typeof(UiColorPickerModel) && type != typeof(UiHtmlModel);
         if (hasFont)
         {
             AddUiFontBlock(table);
@@ -847,7 +849,8 @@ internal static partial class JgsGraphicsProperties
         // image and a hyperlink may have none.
         bool clearable = type == typeof(UiLabelModel) || type == typeof(UiImageModel) || type == typeof(UiHyperlinkModel);
         if (type != typeof(UiCheckBoxModel) && type != typeof(UiRadioButtonModel) && !typeof(UiSliderModel).IsAssignableFrom(type)
-            && type != typeof(UiKnobModel) && type != typeof(UiDiscreteKnobModel) && type != typeof(UiSwitchModel) && type != typeof(UiLampModel))
+            && type != typeof(UiKnobModel) && type != typeof(UiDiscreteKnobModel) && type != typeof(UiSwitchModel) && type != typeof(UiLampModel)
+            && type != typeof(UiHtmlModel))
         {
             Put(table, "BackgroundColor",
                 entry => UiColorValue(Leaf(entry).BackgroundColor),
@@ -942,6 +945,12 @@ internal static partial class JgsGraphicsProperties
         {
             AddTreeBlock(table);
             AddTreeKindBlock(type == typeof(UiCheckBoxTreeModel), table);
+        }
+
+        // U9b: a web page.
+        if (type == typeof(UiHtmlModel))
+        {
+            AddHtmlBlock(table);
         }
 
         // R2025b's set(h) lists no words for these on the U9 kinds, though each takes its words

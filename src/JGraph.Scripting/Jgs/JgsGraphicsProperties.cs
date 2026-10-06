@@ -121,6 +121,7 @@ internal static partial class JgsGraphicsProperties
             UiComponentKind.ColorPicker => "uicolorpicker",
             UiComponentKind.Tree => "uitree",
             UiComponentKind.CheckBoxTree => "uicheckboxtree",
+            UiComponentKind.Html => "uihtml",
             _ => "uihyperlink",
         },
         UiOverlayModel => "uiprogressdlg",

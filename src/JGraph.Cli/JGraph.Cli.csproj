@@ -31,4 +31,7 @@
                       SkipGetTargetFrameworkProperties="true" />
   </ItemGroup>
 
+  <!-- uihtml's WebView2 host (U9b), copied beside the program. -->
+  <Import Project="..\JGraph.Controls.Web\IncludeHtmlHost.targets" />
+
 </Project>

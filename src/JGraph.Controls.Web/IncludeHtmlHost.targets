@@ -1,0 +1,29 @@
+<Project>
+
+  <!--
+    uihtml's WebView2 host (U9b) in a host's output. JGraph.Controls.Web targets a Windows SDK
+    framework, so it is built here but not linked; the host loads it by path, beside itself, with
+    the WebView2 assemblies and the native loader. The Windows SDK projection it needs comes with
+    the Bluetooth backend (JGraph.Scripting's IncludeBluetoothBackend).
+  -->
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)JGraph.Controls.Web.csproj"
+                      ReferenceOutputAssembly="false" Private="false"
+                      SkipGetTargetFrameworkProperties="true" />
+  </ItemGroup>
+
+  <!-- The files are gathered as their own item first: a None item whose Link names its own
+       metadata would lend that metadata to every other None item of the host. -->
+  <Target Name="IncludeHtmlHost" BeforeTargets="AssignTargetPaths">
+    <PropertyGroup>
+      <_HtmlHostOut>$(MSBuildThisFileDirectory)bin\$(Configuration)\net8.0-windows10.0.19041.0\</_HtmlHostOut>
+    </PropertyGroup>
+    <ItemGroup>
+      <_HtmlHostFile Include="$(_HtmlHostOut)JGraph.Controls.Web.dll;$(_HtmlHostOut)Microsoft.Web.WebView2.Core.dll;$(_HtmlHostOut)Microsoft.Web.WebView2.Wpf.dll;$(_HtmlHostOut)WebView2Loader.dll"
+                     Condition="Exists('$(_HtmlHostOut)JGraph.Controls.Web.dll')" />
+      <None Include="@(_HtmlHostFile)" Link="%(_HtmlHostFile.Filename)%(_HtmlHostFile.Extension)"
+            CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
+    </ItemGroup>
+  </Target>
+
+</Project>

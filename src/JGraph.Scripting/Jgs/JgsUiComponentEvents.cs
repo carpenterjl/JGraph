@@ -66,6 +66,11 @@ internal static partial class JgsUiComponentEvents
             return PrepareTree(raised, tree, entry, source);
         }
 
+        if (component is UiHtmlModel html)
+        {
+            return JgsUiHtml.Prepare(raised, html, source);
+        }
+
         switch (raised.Action)
         {
             case Value:

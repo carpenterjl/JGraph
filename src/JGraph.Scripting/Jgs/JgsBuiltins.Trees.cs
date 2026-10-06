@@ -33,6 +33,7 @@ internal static partial class JgsBuiltins
         }));
         DefineQuiet("addStyle", (args, line, col) => AddStyle(interpreter, args, line, col));
         DefineQuiet("removeStyle", RemoveStyle);
+        RegisterUiHtmlBuiltins(env); // U9b
     }
 
     private const string NeedsATree = "'Parent' must be a valid Tree object or TreeNode object.";

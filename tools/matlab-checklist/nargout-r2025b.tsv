@@ -1783,6 +1783,7 @@ second	1	2
 seconds	1	2
 semilogx	1	5
 semilogy	1	5
+sendEventToHTMLSource	ERR:MATLAB:narginout:notValidMfile	0
 seqperiod	ERR:MATLAB:narginout:doesNotApply	3
 serialExplorer	0	2
 serialport	1	2
@@ -2077,6 +2078,7 @@ uigauge	1	2
 uigetdir	1	2
 uigetfile	3	2
 uigridlayout	1	2
+uihtml	1	2
 uihyperlink	1	2
 uiimage	1	2
 uiknob	1	2

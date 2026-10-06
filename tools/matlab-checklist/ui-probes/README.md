@@ -696,3 +696,47 @@ style is copied by value, rows stay when data shrink or a node is deleted; a dro
 
 Not measured: any callback of these objects, which needs a window in R2025b, how it draws them,
 and the identifier of the aspect-ratio warning.
+
+## U9b findings (R2025b, headless)
+
+**`uihtml` is `matlab.ui.control.HTML`** (`u9b_matrix`, `u9b_forms`): 21 properties in either kind
+of figure, no `Enable` and no font; `Data` takes anything as given; `HTMLSource` is text, a URL is
+refused, a file is found beside the current folder, on the path or in full (any type), and other
+text ending in lower-case `.html`/`.htm` is a missing file; anything else is markup.
+`sendEventToHTMLSource` is a method: refusals are `MATLAB:UndefinedFunction` for the class, a name
+must be text, no output.
+
+**Two encoders** (`u9b_bridge`, `u9b_bridge2`, `u9b_sends`, `u9b_more`). `Data` travels as
+`jsonencode`/`jsondecode`; an event goes out through another encoder (`NaN` → `"NaN"`, a single's
+NaN → `null`, `"s"` → `["s"]`, a missing string → `[""]`, datetime → `{Month,Day,Year}`, NaT →
+`"NaT"`, on/off → a logical, `@sin` → `"sin"`, a duration or a `containers.Map` → `[]`), and a
+page's event data come back through `jsondecode` with vectors as rows (a cell's too, not inside
+it; a struct array keeps its shape, its fields are laid out). An event with no data arrives as
+`[]`. A complex or sparse value warns, and ends the bridge for the whole session.
+
+**Order and dedupe.** Data written after a ping is sent before it; MATLAB's Data is not sent when
+its JSON is the page's already (whichever side set it); a page's every `Data` write runs
+`DataChangedFcn`. After each `HTMLSource`, callbacks run once more per message (a bug).
+`setup(htmlComponent)` runs after `load`; a `DataChanged` follows it when `Data` is not `[]`.
+
+**The page side** (`u9b_bridge`, `site/shape.html`): own properties `addEventListener`,
+`removeEventListener`, `sendEventToMATLAB`, `Data`; listeners newest first; event objects
+`{Source, EventName, Data, PreviousData}` and `{Source, Data}`; a `Data` that cannot be written
+(a cycle) throws in the page; `undefined`, a function or no name make MATLAB print an internal
+error and do nothing.
+
+**The page server** (`u9b_types`, 143 requests): the page's folder and below, nothing above; a
+folder is its `index.html`; GET and HEAD, POST 501; served: `.html .htm .js .json .css .xml .svg
+.png .jpg .jpeg .gif .ico .cur .psd .woff .woff2 .ttf .otf .mp4 .webm .ogv .ogg .oga .opus .wav
+.vtt .pdf .wasm .glb .gltf .md .map .zip .bin .mlapp` and no extension; everything else (`.txt
+.mjs .cjs .webp .bmp .mp3 .csv .tif`, ...) is a 404.
+
+**`jsonencode`/`jsondecode`** (`u9b_json`, `u9b_num`): numbers are the digits of `%.15g`, or
+`%.17g` when those do not read back (`%.6g`/`%.9g` for single), from 1e6 up as `d.dddE+n` with
+at least one decimal, below 1e-4 as `dE-n`; vectors either way are flat, the rest nest first
+dimension outermost; decoding stacks equal-sized numeric children along a new first dimension and
+makes columns; names: `x` prefix, blanks dropped with the next letter upper case, other characters
+`_`, duplicates `_1`; `jsondecode` takes the text alone. `jsonencode` of a duration fails with an
+internal warning.
+
+Not measured: anything in a window.

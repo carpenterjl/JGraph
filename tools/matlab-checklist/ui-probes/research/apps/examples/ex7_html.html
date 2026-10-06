@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ex7 page</title>
+<style>
+  body { font-family: Segoe UI, Helvetica, sans-serif; margin: 10px; background: #eef4fb; }
+  #count { font-size: 32px; font-weight: 600; color: #0b5394; }
+  button { font-size: 14px; padding: 4px 12px; }
+  #message { color: #38761d; min-height: 1.2em; }
+</style>
+<script>
+// The page of ex7_html (app-building stage U9b): it shows the component's Data, counts up from its
+// own button (MATLAB hears a DataChanged), and answers MATLAB's 'greet' event with one of its own.
+function setup(htmlComponent) {
+  const count = document.getElementById('count');
+  const show = () => { count.textContent = JSON.stringify(htmlComponent.Data); };
+  show();
+  htmlComponent.addEventListener('DataChanged', show);
+  document.getElementById('up').addEventListener('click', () => {
+    const now = typeof htmlComponent.Data === 'number' ? htmlComponent.Data : 0;
+    htmlComponent.Data = now + 1;
+    show();
+  });
+  htmlComponent.addEventListener('greet', event => {
+    document.getElementById('message').textContent = event.Data;
+    htmlComponent.sendEventToMATLAB('greeted', String(event.Data).length);
+  });
+}
+</script>
+</head>
+<body>
+  <div id="count"></div>
+  <button id="up">Count up</button>
+  <p id="message"></p>
+</body>
+</html>

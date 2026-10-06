@@ -1531,6 +1531,7 @@ internal static class JgsBuiltinOutputCounts
         ["uigetdir"] = (1, true),
         ["uigetfile"] = (3, true),
         ["uigridlayout"] = (1, true),
+        ["uihtml"] = (1, true),
         ["uihyperlink"] = (1, true),
         ["uiimage"] = (1, true),
         ["uiknob"] = (1, true),

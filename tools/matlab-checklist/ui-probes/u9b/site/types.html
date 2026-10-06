@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>types</title><script>
+// U9b: which files R2025b's server gives a page, by name. The list arrives as the event 'list'.
+function setup(htmlComponent) {
+  const send = (n, d) => htmlComponent.sendEventToMATLAB(n, d);
+  htmlComponent.addEventListener('list', async function (event) {
+    const urls = event.Data;
+    for (const url of urls) {
+      let line;
+      try {
+        const r = await fetch(url, { cache: 'no-store' });
+        const body = await r.text();
+        line = url + ' => ' + r.status + ' type=' + r.headers.get('content-type') + ' len=' + body.length
+          + (r.status === 200 ? ' body=' + body.slice(0, 12).replace(/\s+/g, ' ') : '');
+      } catch (e) { line = url + ' => threw ' + e.name; }
+      send('t', line);
+    }
+    try {
+      const r = await fetch('types/a.js', { method: 'POST', body: 'x' });
+      send('t', 'POST types/a.js => ' + r.status);
+    } catch (e) { send('t', 'POST threw ' + e.name); }
+    try {
+      const r = await fetch('types/a.js', { method: 'HEAD' });
+      send('t', 'HEAD types/a.js => ' + r.status + ' type=' + r.headers.get('content-type'));
+    } catch (e) { send('t', 'HEAD threw ' + e.name); }
+    send('t', 'location ' + location.pathname);
+    send('done', urls.length);
+  });
+  send('ready', 1);
+}
+</script></head><body>types</body></html>

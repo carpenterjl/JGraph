@@ -39,6 +39,9 @@ public enum UiComponentKind
     ColorPicker,
     Tree,
     CheckBoxTree,
+
+    // U9b: a web page.
+    Html,
 }
 
 /// <summary>How a component sets its content from top to bottom (<c>VerticalAlignment</c>).</summary>
@@ -1247,6 +1250,9 @@ public sealed record UiComponentFrame : IUiNodeFrame
 
     /// <summary>One colour of the component's own: a lamp's, a colour picker's value.</summary>
     public UiColor? Color { get; init; }
+
+    /// <summary>A uihtml's page: its file or markup, and which load (U9b).</summary>
+    public UiHtmlFrame? Html { get; init; }
 
     /// <summary>The styles added to a table, a tree, a list or a drop-down (U9).</summary>
     public IReadOnlyList<UiStyleRule> Styles { get; init; } = [];

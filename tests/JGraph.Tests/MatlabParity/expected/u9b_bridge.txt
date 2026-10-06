@@ -1,0 +1,270 @@
+CHK|data_01|char[1 26]'event echo: char[1 3]'1.5''|exact
+CHK|data_02|char[1 24]'event echo: char[1 1]'0''|exact
+CHK|data_03|char[1 43]'event echo: char[1 19]'0.30000000000000004''|exact
+CHK|data_04|char[1 41]'event echo: char[1 17]'3.141592653589793''|exact
+CHK|data_05|char[1 42]'event echo: char[1 18]'0.3333333333333333''|exact
+CHK|data_06|char[1 28]'event echo: char[1 5]'1e+21''|exact
+CHK|data_07|char[1 27]'event echo: char[1 4]'1e-7''|exact
+CHK|data_08|char[1 42]'event echo: char[1 18]'123456789012345680''|exact
+CHK|data_09|char[1 29]'event echo: char[1 6]'1e+300''|exact
+CHK|data_10|char[1 47]'event echo: char[1 23]'2.2250738585072014e-308''|exact
+CHK|data_11|char[1 34]'event echo: char[1 10]'[1,null,3]''|exact
+CHK|data_12|char[1 35]'event echo: char[1 11]'[null,null]''|exact
+CHK|data_13|char[1 6]'(none)'|exact
+CHK|data_14|char[1 25]'event echo: char[1 2]'-5''|exact
+CHK|data_15|char[1 34]'event echo: char[1 10]'3.14159274''|exact
+CHK|data_16|char[1 30]'event echo: char[1 7]'[1,2,3]''|exact
+CHK|data_17|char[1 49]'event echo: char[1 25]'[[true,true],[true,true]]''|exact
+CHK|data_18|char[1 36]'event echo: char[1 12]'[true,false]''|exact
+CHK|data_19|char[1 32]'event echo: char[1 9]'"a\"b\\c"''|exact
+CHK|data_20|char[1 38]'event echo: char[1 14]'"line1\nline2"''|exact
+CHK|data_21|char[1 35]'event echo: char[1 11]'["ab","cd"]''|exact
+CHK|data_22|char[1 25]'event echo: char[1 2]'""''|exact
+CHK|data_23|char[1 6]'(none)'|exact
+CHK|data_24|char[1 27]'event echo: char[1 4]'null''|exact
+CHK|data_25|char[1 34]'event echo: char[1 10]'["a",null]''|exact
+CHK|data_26|char[1 25]'event echo: char[1 2]'[]''|exact
+CHK|data_27|char[1 6]'(none)'|exact
+CHK|data_28|char[1 6]'(none)'|exact
+CHK|data_29|char[1 37]'event echo: char[1 13]'[1,2,"x","y"]''|exact
+CHK|data_30|char[1 27]'event echo: char[1 4]'[[]]''|exact
+CHK|data_31|char[1 28]'event echo: char[1 5]'[[1]]''|exact
+CHK|data_32|char[1 25]'event echo: char[1 2]'{}''|exact
+CHK|data_33|char[1 25]'event echo: char[1 2]'[]''|exact
+CHK|data_34|char[1 41]'event echo: char[1 17]'[{"a":1},{"a":2}]''|exact
+CHK|data_35|char[1 43]'event echo: char[1 19]'{"a":[[1,2],[3,4]]}''|exact
+CHK|data_36|char[1 38]'event echo: char[1 14]'{"a":{"b":[]}}''|exact
+CHK|data_37|char[1 53]'event echo: char[1 29]'[[[0,0],[0,0]],[[0,0],[0,0]]]''|exact
+CHK|data_38|char[1 25]'event echo: char[1 2]'[]''|exact
+CHK|data_39|char[1 6]'(none)'|exact
+CHK|data_40|char[1 30]'event echo: char[1 7]'[1,2,3]''|exact
+CHK|data_41|char[1 49]'event echo: char[1 25]'[[8,1,6],[3,5,7],[4,9,2]]''|exact
+CHK|data_42|char[1 30]'event echo: char[1 7]'[1,2,3]''|exact
+CHK|data_43|char[1 37]'event echo: char[1 13]'"15-Jan-2024"''|exact
+CHK|data_44|char[1 53]'event echo: char[1 29]'["15-Jan-2024","16-Jan-2024"]''|exact
+CHK|data_45|char[1 41]'event echo: char[1 17]'{"k1":1,"k2":"v"}''|exact
+CHK|data_46|char[1 6]'(none)' WARN MATLAB:json:UnsupportedDataType|exact
+CHK|data_47|char[1 6]'(none)' WARN MATLAB:json:UnsupportedSparseDataType|exact
+CHK|data_48|char[1 6]'(none)' WARN MATLAB:json:UnsupportedComplexDataType|exact
+CHK|data_49|char[1 24]'event echo: char[1 1]'5''|exact
+CHK|data_50|char[1 6]'(none)'|exact
+CHK|data_51|char[1 24]'event echo: char[1 1]'6''|exact
+CHK|send_01|char[1 26]'event pong: char[1 3]'1.5''|exact
+CHK|send_02|char[1 30]'event pong: char[1 7]'[1,2,3]''|exact
+CHK|send_03|char[1 30]'event pong: char[1 7]'[1,2,3]''|exact
+CHK|send_04|char[1 49]'event pong: char[1 25]'[[8,1,6],[3,5,7],[4,9,2]]''|exact
+CHK|send_05|char[1 25]'event pong: char[1 2]'[]''|exact
+CHK|send_06|char[1 25]'event pong: char[1 2]'[]''|exact
+CHK|send_07|char[1 29]'event pong: char[1 6]'"text"''|exact
+CHK|send_08|char[1 30]'event pong: char[1 7]'["str"]''|exact
+CHK|send_09|char[1 32]'event pong: char[1 9]'["a","b"]''|exact
+CHK|send_10|char[1 30]'event pong: char[1 7]'[1,"x"]''|exact
+CHK|send_11|char[1 41]'event pong: char[1 17]'[{"a":1},{"a":2}]''|exact
+CHK|send_12|char[1 27]'event pong: char[1 4]'true''|exact
+CHK|send_13|char[1 28]'event pong: char[1 5]'"NaN"''|exact
+CHK|send_14|char[1 32]'event pong: char[1 9]'[1,"NaN"]''|exact
+CHK|send_15|char[1 28]'event pong: char[1 5]'"Inf"''|exact
+CHK|send_16|char[1 29]'event pong: char[1 6]'"-Inf"''|exact
+CHK|send_17|char[1 24]'event pong: char[1 1]'5''|exact
+CHK|send_18|char[1 56]'event pong: char[1 32]'{"Month":1,"Day":15,"Year":2024}''|exact
+CHK|send_19|char[1 77]'event pong: char[1 53]'{"Month":[1,null],"Day":[15,null],"Year":[2024,null]}''|exact
+CHK|send_20|char[1 28]'event pong: char[1 5]'"NaT"''|exact
+CHK|send_21|char[1 25]'event pong: char[1 2]'[]''|exact
+CHK|send_22|char[1 25]'event pong: char[1 2]'{}''|exact
+CHK|send_23|char[1 25]'event pong: char[1 2]'[]''|exact
+CHK|send_24|char[1 28]'event pong: char[1 5]'"sin"''|exact
+CHK|send_25|char[1 53]'event pong: char[1 29]'[[[0,0],[0,0]],[[0,0],[0,0]]]''|exact
+CHK|send_26|char[1 27]'event pong: char[1 4]'[""]''|exact
+CHK|send_27|char[1 27]'event pong: char[1 4]'[""]''|exact
+CHK|send_28|char[1 25]'event pong: char[1 2]'[]''|exact
+CHK|send_29|char[1 34]'event pong: char[1 10]'3.14159274''|exact
+CHK|send_30|char[1 27]'event pong: char[1 4]'null''|exact
+CHK|send_31|char[1 35]'event pong: char[1 11]'["ab","cd"]''|exact
+CHK|send_32|char[1 25]'event pong: char[1 2]'""''|exact
+CHK|send_33|char[1 30]'event pong: char[1 7]'1000000''|exact
+CHK|send_34|char[1 30]'event pong: char[1 7]'0.00001''|exact
+CHK|send_35|char[1 42]'event pong: char[1 18]'0.3333333333333333''|exact
+CHK|send_36|char[1 43]'event pong: char[1 19]'{"a":[[1,2],[3,4]]}''|exact
+CHK|send_37|char[1 30]'event pong: char[1 7]'[[1,2]]''|exact
+CHK|send_38|char[1 26]'event pong: char[1 3]'200''|exact
+CHK|send_39|char[1 24]'event pong: char[1 1]'0''|exact
+CHK|send_40|char[1 28]'event pong: char[1 5]'1e+21''|exact
+CHK|send_41|char[1 35]'event pong: char[1 11]'[1,[2,"x"]]''|exact
+CHK|send_nodata|char[1 25]'event pong: char[1 2]'[]''|exact
+CHK|send_anonymous|char[1 32]'event pong: char[1 9]'"@(x)x+1"''|div=ADR0208|diverges|char[1 36]'event pong: char[1 12]'"@(x) x + 1"''
+CHK|send_cellname|char[1 24]'event pong: char[1 1]'7''|exact
+CHK|send_stringname|char[1 24]'event pong: char[1 1]'8''|exact
+CHK|pagedata_01|char[1 72]'data double[1 1] 1.5 prev double[1 1] 6 // event setdone: char[1 3]'1.5''|exact
+CHK|pagedata_02|char[1 82]'data double[3 1] [1;2;3] prev double[1 1] 1.5 // event setdone: char[1 7]'[1,2,3]''|exact
+CHK|pagedata_03|char[1 95]'data double[2 2] [1 2;3 4] prev double[3 1] [1;2;3] // event setdone: char[1 13]'[[1,2],[3,4]]''|exact
+CHK|pagedata_04|char[1 126]'data cell[2 1]{double[2 1] [1;2];double[3 1] [3;4;5]} prev double[2 2] [1 2;3 4] // event setdone: char[1 15]'[[1,2],[3,4,5]]''|exact
+CHK|pagedata_05|char[1 102]'data double[0 0] prev cell[2 1]{double[2 1] [1;2];double[3 1] [3;4;5]} // event setdone: char[1 2]'[]''|exact
+CHK|pagedata_06|char[1 78]'data cell[1 1]{double[0 0]} prev double[0 0] // event setdone: char[1 4]'[[]]''|exact
+CHK|pagedata_07|char[1 104]'data cell[2 1]{double[0 0];double[0 0]} prev cell[1 1]{double[0 0]} // event setdone: char[1 7]'[[],[]]''|exact
+CHK|pagedata_08|char[1 92]'data struct[1 1]{()} prev cell[2 1]{double[0 0];double[0 0]} // event setdone: char[1 2]'{}''|exact
+CHK|pagedata_09|char[1 75]'data struct[1 1]{()} prev struct[1 1]{()} // event setdone: char[1 4]'[{}]''|exact
+CHK|pagedata_10|char[1 80]'data struct[2 1]{()()} prev struct[1 1]{()} // event setdone: char[1 7]'[{},{}]''|exact
+CHK|pagedata_11|char[1 123]'data struct[2 1]{(a=double[1 1] 1)(a=double[1 1] 2)} prev struct[2 1]{()()} // event setdone: char[1 17]'[{"a":1},{"a":2}]''|exact
+CHK|pagedata_12|char[1 178]'data cell[2 1]{struct[1 1]{(a=double[1 1] 1)};struct[1 1]{(b=double[1 1] 2)}} prev struct[2 1]{(a=double[1 1] 1)(a=double[1 1] 2)} // event setdone: char[1 17]'[{"a":1},{"b":2}]''|exact
+CHK|pagedata_13|char[1 194]'data struct[2 1]{(a=double[2 1] [1;2])(a=double[2 1] [3;4])} prev cell[2 1]{struct[1 1]{(a=double[1 1] 1)};struct[1 1]{(b=double[1 1] 2)}} // event setdone: char[1 25]'[{"a":[1,2]},{"a":[3,4]}]''|exact
+CHK|pagedata_14|char[1 209]'data struct[1 1]{(x1a=double[1 1] 1,aB=double[1 1] 2,x=double[1 1] 3,a_b=double[1 1] 4)} prev struct[2 1]{(a=double[2 1] [1;2])(a=double[2 1] [3;4])} // event setdone: char[1 29]'{"1a":1,"a b":2,"":3,"a-b":4}''|exact
+CHK|pagedata_15|char[1 184]'data struct[1 1]{(a=double[1 1] 1,A=double[1 1] 2)} prev struct[1 1]{(x1a=double[1 1] 1,aB=double[1 1] 2,x=double[1 1] 3,a_b=double[1 1] 4)} // event setdone: char[1 13]'{"a":1,"A":2}''|exact
+CHK|pagedata_16|char[1 119]'data double[3 1] [1;NaN;3] prev struct[1 1]{(a=double[1 1] 1,A=double[1 1] 2)} // event setdone: char[1 10]'[1,null,3]''|exact
+CHK|pagedata_17|char[1 95]'data double[2 1] [NaN;NaN] prev double[3 1] [1;NaN;3] // event setdone: char[1 11]'[null,null]''|exact
+CHK|pagedata_18|char[1 93]'data logical[2 1] [1;0] prev double[2 1] [NaN;NaN] // event setdone: char[1 12]'[true,false]''|exact
+CHK|pagedata_19|char[1 108]'data cell[2 1]{logical[1 1] 1;double[0 0]} prev logical[2 1] [1;0] // event setdone: char[1 11]'[true,null]''|exact
+CHK|pagedata_20|char[1 125]'data cell[2 1]{logical[1 1] 1;double[1 1] 1} prev cell[2 1]{logical[1 1] 1;double[0 0]} // event setdone: char[1 8]'[true,1]''|exact
+CHK|pagedata_21|char[1 125]'data cell[2 1]{char[1 1]'a';char[1 1]'b'} prev cell[2 1]{logical[1 1] 1;double[1 1] 1} // event setdone: char[1 9]'["a","b"]''|exact
+CHK|pagedata_22|char[1 123]'data cell[2 1]{char[1 1]'a';double[0 0]} prev cell[2 1]{char[1 1]'a';char[1 1]'b'} // event setdone: char[1 10]'["a",null]''|exact
+CHK|pagedata_23|char[1 120]'data cell[2 1]{double[1 1] 1;char[1 1]'a'} prev cell[2 1]{char[1 1]'a';double[0 0]} // event setdone: char[1 7]'[1,"a"]''|exact
+CHK|pagedata_24|char[1 99]'data char[1 4]'text' prev cell[2 1]{double[1 1] 1;char[1 1]'a'} // event setdone: char[1 6]'"text"''|exact
+CHK|pagedata_25|char[1 69]'data char[0 0]'' prev char[1 4]'text' // event setdone: char[1 2]'""''|exact
+CHK|pagedata_26|char[1 78]'data cell[1 1]{char[0 0]''} prev char[0 0]'' // event setdone: char[1 4]'[""]''|exact
+CHK|pagedata_27|char[1 78]'data double[0 0] prev cell[1 1]{char[0 0]''} // event setdone: char[1 4]'null''|exact
+CHK|pagedata_28|char[1 70]'data logical[1 1] 1 prev double[0 0] // event setdone: char[1 4]'true''|exact
+CHK|pagedata_29|char[1 74]'data logical[1 1] 0 prev logical[1 1] 1 // event setdone: char[1 5]'false''|exact
+CHK|pagedata_30|char[1 69]'data double[1 1] 0 prev logical[1 1] 0 // event setdone: char[1 1]'0''|exact
+CHK|pagedata_31|char[1 68]'data double[1 1] 0 prev double[1 1] 0 // event setdone: char[1 1]'0''|exact
+CHK|pagedata_32|char[1 104]'data struct[1 1]{(a=double[3 1] [1;2;3])} prev double[1 1] 0 // event setdone: char[1 13]'{"a":[1,2,3]}''|exact
+CHK|pagedata_33|char[1 137]'data struct[1 1]{(a=struct[1 1]{(b=double[0 0])})} prev struct[1 1]{(a=double[3 1] [1;2;3])} // event setdone: char[1 14]'{"a":{"b":[]}}''|exact
+CHK|pagedata_34|char[1 125]'data struct[1 1]{(a=double[0 0])} prev struct[1 1]{(a=struct[1 1]{(b=double[0 0])})} // event setdone: char[1 10]'{"a":null}''|exact
+CHK|pagedata_35|char[1 133]'data double[2 2 2] nd [1 5 3 7 2 6 4 8] prev struct[1 1]{(a=double[0 0])} // event setdone: char[1 29]'[[[1,2],[3,4]],[[5,6],[7,8]]]''|exact
+CHK|pagedata_36|char[1 101]'data double[2 1] [1;2] prev double[2 2 2] nd [1 5 3 7 2 6 4 8] // event setdone: char[1 9]'[[1],[2]]''|exact
+CHK|pagedata_37|char[1 164]'data cell[2 1]{cell[2 1]{char[1 1]'a';char[1 1]'b'};cell[2 1]{char[1 1]'c';char[1 1]'d'}} prev double[2 1] [1;2] // event setdone: char[1 21]'[["a","b"],["c","d"]]''|exact
+CHK|pagedata_38|char[1 213]'data struct[1 1]{(x=struct[2 1]{(y=double[1 1] 1)(y=double[1 1] 2)})} prev cell[2 1]{cell[2 1]{char[1 1]'a';char[1 1]'b'};cell[2 1]{char[1 1]'c';char[1 1]'d'}} // event setdone: char[1 23]'{"x":[{"y":1},{"y":2}]}''|exact
+CHK|pagedata_39|char[1 158]'data double[1 1] 1.2345678901234568e+17 prev struct[1 1]{(x=struct[2 1]{(y=double[1 1] 1)(y=double[1 1] 2)})} // event setdone: char[1 18]'123456789012345680''|exact
+CHK|pagedata_40|char[1 116]'data double[1 1] 9.9998886718268301e-321 prev double[1 1] 1.2345678901234568e+17 // event setdone: char[1 6]'1e-320''|exact
+CHK|pagedata_41|char[1 100]'data double[1 1] 1e+308 prev double[1 1] 9.9998886718268301e-321 // event setdone: char[1 6]'1e+308''|exact
+CHK|pagedata_42|char[1 94]'data char[1 10]'2024-01-15' prev double[1 1] 1e+308 // event setdone: char[1 12]'"2024-01-15"''|exact
+CHK|pagedata_43|char[1 114]'data cell[2 1]{double[2 1] [1;2];double[0 0]} prev char[1 10]'2024-01-15' // event setdone: char[1 10]'[[1,2],[]]''|exact
+CHK|pagedata_44|char[1 101]'data double[1 1] 1.5 prev cell[2 1]{double[2 1] [1;2];double[0 0]} // event setdone: char[1 5]'[1.5]''|exact
+CHK|pagedata_45|char[1 84]'data cell[1 1]{char[1 1]'x'} prev double[1 1] 1.5 // event setdone: char[1 5]'["x"]''|exact
+CHK|pagedata_46|char[1 103]'data struct[1 1]{(a=double[1 1] 1)} prev cell[1 1]{char[1 1]'x'} // event setdone: char[1 9]'[{"a":1}]''|exact
+CHK|pagedata_47|char[1 121]'data logical[2 2] [1 0;0 1] prev struct[1 1]{(a=double[1 1] 1)} // event setdone: char[1 27]'[[true,false],[false,true]]''|exact
+CHK|pagedata_48|char[1 121]'data struct[1 1]{(a=double[2 2] [1 2;3 4])} prev logical[2 2] [1 0;0 1] // event setdone: char[1 19]'{"a":[[1,2],[3,4]]}''|exact
+CHK|pagedata_49|char[1 162]'data cell[2 1]{double[2 1] [1;2];cell[2 1]{char[1 1]'a';char[1 1]'b'}} prev struct[1 1]{(a=double[2 2] [1 2;3 4])} // event setdone: char[1 17]'[[1,2],["a","b"]]''|exact
+CHK|pagedata_50|char[1 146]'data double[2 2] [1 2;3 NaN] prev cell[2 1]{double[2 1] [1;2];cell[2 1]{char[1 1]'a';char[1 1]'b'}} // event setdone: char[1 16]'[[1,2],[3,null]]''|exact
+CHK|pagedata_51|char[1 152]'data struct[1 1]{(a=struct[2 1]{(b=double[1 1] 1)(b=double[1 1] 2)})} prev double[2 2] [1 2;3 NaN] // event setdone: char[1 23]'{"a":[{"b":1},{"b":2}]}''|exact
+CHK|pagedata_52|char[1 239]'data cell[2 1]{struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)};struct[1 1]{(b=double[1 1] 3,a=double[1 1] 4)}} prev struct[1 1]{(a=struct[2 1]{(b=double[1 1] 1)(b=double[1 1] 2)})} // event setdone: char[1 29]'[{"a":1,"b":2},{"b":3,"a":4}]''|exact
+CHK|pagedata_53|char[1 182]'data struct[1 1]{(a=double[1 1] 2)} prev cell[2 1]{struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)};struct[1 1]{(b=double[1 1] 3,a=double[1 1] 4)}} // event setdone: char[1 7]'{"a":2}''|exact
+CHK|pagedata_54|char[1 86]'data double[0 0] prev struct[1 1]{(a=double[1 1] 2)} // event setdone: char[1 4]'null''|exact
+CHK|pagedata_55|char[1 67]'data double[0 0] prev double[0 0] // event setdone: char[1 4]'null''|exact
+CHK|pagedata_56|char[1 67]'data double[0 0] prev double[0 0] // event setdone: char[1 4]'null''|exact
+CHK|pagedata_57|char[1 40]'event setdone: char[1 13]'__undefined__''|exact
+CHK|pagedata_read_back|double[0 0]|exact
+CHK|pageevent_01|char[1 25]'event ev: double[1 1] 1.5'|exact
+CHK|pageevent_02|char[1 29]'event ev: double[1 3] [1 2 3]'|exact
+CHK|pageevent_03|char[1 31]'event ev: double[2 2] [1 2;3 4]'|exact
+CHK|pageevent_04|char[1 58]'event ev: cell[1 2]{double[2 1] [1;2];double[3 1] [3;4;5]}'|exact
+CHK|pageevent_05|char[1 21]'event ev: double[0 0]'|exact
+CHK|pageevent_06|char[1 32]'event ev: cell[1 1]{double[0 0]}'|exact
+CHK|pageevent_07|char[1 44]'event ev: cell[1 2]{double[0 0];double[0 0]}'|exact
+CHK|pageevent_08|char[1 25]'event ev: struct[1 1]{()}'|exact
+CHK|pageevent_09|char[1 25]'event ev: struct[1 1]{()}'|exact
+CHK|pageevent_10|char[1 27]'event ev: struct[2 1]{()()}'|exact
+CHK|pageevent_11|char[1 57]'event ev: struct[2 1]{(a=double[1 1] 1)(a=double[1 1] 2)}'|exact
+CHK|pageevent_12|char[1 82]'event ev: cell[1 2]{struct[1 1]{(a=double[1 1] 1)};struct[1 1]{(b=double[1 1] 2)}}'|exact
+CHK|pageevent_13|char[1 65]'event ev: struct[2 1]{(a=double[1 2] [1 2])(a=double[1 2] [3 4])}'|exact
+CHK|pageevent_14|char[1 93]'event ev: struct[1 1]{(x1a=double[1 1] 1,aB=double[1 1] 2,x=double[1 1] 3,a_b=double[1 1] 4)}'|exact
+CHK|pageevent_15|char[1 56]'event ev: struct[1 1]{(a=double[1 1] 1,A=double[1 1] 2)}'|exact
+CHK|pageevent_16|char[1 31]'event ev: double[1 3] [1 NaN 3]'|exact
+CHK|pageevent_17|char[1 31]'event ev: double[1 2] [NaN NaN]'|exact
+CHK|pageevent_18|char[1 28]'event ev: logical[1 2] [1 0]'|exact
+CHK|pageevent_19|char[1 47]'event ev: cell[1 2]{logical[1 1] 1;double[0 0]}'|exact
+CHK|pageevent_20|char[1 49]'event ev: cell[1 2]{logical[1 1] 1;double[1 1] 1}'|exact
+CHK|pageevent_21|char[1 46]'event ev: cell[1 2]{char[1 1]'a';char[1 1]'b'}'|exact
+CHK|pageevent_22|char[1 45]'event ev: cell[1 2]{char[1 1]'a';double[0 0]}'|exact
+CHK|pageevent_23|char[1 47]'event ev: cell[1 2]{double[1 1] 1;char[1 1]'a'}'|exact
+CHK|pageevent_24|char[1 25]'event ev: char[1 4]'text''|exact
+CHK|pageevent_25|char[1 21]'event ev: char[0 0]'''|exact
+CHK|pageevent_26|char[1 32]'event ev: cell[1 1]{char[0 0]''}'|exact
+CHK|pageevent_27|char[1 21]'event ev: double[0 0]'|exact
+CHK|pageevent_28|char[1 24]'event ev: logical[1 1] 1'|exact
+CHK|pageevent_29|char[1 24]'event ev: logical[1 1] 0'|exact
+CHK|pageevent_30|char[1 23]'event ev: double[1 1] 0'|exact
+CHK|pageevent_31|char[1 23]'event ev: double[1 1] 0'|exact
+CHK|pageevent_32|char[1 46]'event ev: struct[1 1]{(a=double[1 3] [1 2 3])}'|exact
+CHK|pageevent_33|char[1 55]'event ev: struct[1 1]{(a=struct[1 1]{(b=double[0 0])})}'|exact
+CHK|pageevent_34|char[1 38]'event ev: struct[1 1]{(a=double[0 0])}'|exact
+CHK|pageevent_35|char[1 44]'event ev: double[2 2 2] nd [1 5 3 7 2 6 4 8]'|exact
+CHK|pageevent_36|char[1 27]'event ev: double[1 2] [1 2]'|exact
+CHK|pageevent_37|char[1 94]'event ev: cell[1 2]{cell[2 1]{char[1 1]'a';char[1 1]'b'};cell[2 1]{char[1 1]'c';char[1 1]'d'}}'|exact
+CHK|pageevent_38|char[1 74]'event ev: struct[1 1]{(x=struct[2 1]{(y=double[1 1] 1)(y=double[1 1] 2)})}'|exact
+CHK|pageevent_39|char[1 44]'event ev: double[1 1] 1.2345678901234568e+17'|exact
+CHK|pageevent_40|char[1 45]'event ev: double[1 1] 9.9998886718268301e-321'|exact
+CHK|pageevent_41|char[1 28]'event ev: double[1 1] 1e+308'|exact
+CHK|pageevent_42|char[1 32]'event ev: char[1 10]'2024-01-15''|exact
+CHK|pageevent_43|char[1 50]'event ev: cell[1 2]{double[2 1] [1;2];double[0 0]}'|exact
+CHK|pageevent_44|char[1 25]'event ev: double[1 1] 1.5'|exact
+CHK|pageevent_45|char[1 33]'event ev: cell[1 1]{char[1 1]'x'}'|exact
+CHK|pageevent_46|char[1 40]'event ev: struct[1 1]{(a=double[1 1] 1)}'|exact
+CHK|pageevent_47|char[1 32]'event ev: logical[2 2] [1 0;0 1]'|exact
+CHK|pageevent_48|char[1 48]'event ev: struct[1 1]{(a=double[2 2] [1 2;3 4])}'|exact
+CHK|pageevent_49|char[1 75]'event ev: cell[1 2]{double[2 1] [1;2];cell[2 1]{char[1 1]'a';char[1 1]'b'}}'|exact
+CHK|pageevent_50|char[1 33]'event ev: double[2 2] [1 2;3 NaN]'|exact
+CHK|pageevent_51|char[1 74]'event ev: struct[1 1]{(a=struct[2 1]{(b=double[1 1] 1)(b=double[1 1] 2)})}'|exact
+CHK|pageevent_52|char[1 114]'event ev: cell[1 2]{struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)};struct[1 1]{(b=double[1 1] 3,a=double[1 1] 4)}}'|exact
+CHK|pageevent_53|char[1 40]'event ev: struct[1 1]{(a=double[1 1] 2)}'|exact
+CHK|pageevent_54|char[1 21]'event ev: double[0 0]'|exact
+CHK|pageevent_55|char[1 21]'event ev: double[0 0]'|exact
+CHK|pageevent_56|char[1 21]'event ev: double[0 0]'|exact
+CHK|pageevent_57|char[1 21]'event ev: double[0 0]'|exact
+CHK|pageevent_nodata|char[1 21]'event ev: double[0 0]'|exact
+CHK|pageevent_numbername|char[1 36]'event {double[1 1] 5}: double[1 1] 1'|exact
+CHK|pageevent_emptyname|char[1 21]'event : double[1 1] 1'|exact
+CHK|pageevent_datachangedname|char[1 32]'event DataChanged: double[1 1] 7'|exact
+CHK|step_page_sets_row|char[1 78]'data double[3 1] [1;2;3] prev double[0 0] // event setdone: char[1 7]'[1,2,3]''|exact
+CHK|step_same_json_column|char[1 6]'(none)'|exact
+CHK|step_same_json_row|char[1 6]'(none)'|exact
+CHK|step_seven|char[1 24]'event echo: char[1 1]'7''|exact
+CHK|step_seven_again|char[1 6]'(none)'|exact
+CHK|step_page_seven|char[1 68]'data double[1 1] 7 prev double[1 1] 7 // event setdone: char[1 1]'7''|exact
+CHK|step_page_seven_again|char[1 68]'data double[1 1] 7 prev double[1 1] 7 // event setdone: char[1 1]'7''|exact
+CHK|step_seven_after_page|char[1 6]'(none)'|exact
+CHK|step_page_pair|char[1 76]'data double[2 1] [4;5] prev double[1 1] 7 // event setdone: char[1 5]'[4,5]''|exact
+CHK|step_pair_the_page_holds|char[1 6]'(none)'|exact
+CHK|step_three_writes|char[1 24]'event echo: char[1 1]'8''|exact
+CHK|step_write_then_ping|char[1 57]'event echo: char[1 2]'10' // event pong: char[1 5]'"p10"''|exact
+CHK|step_ping_then_write|char[1 57]'event echo: char[1 2]'11' // event pong: char[1 5]'"p11"''|exact
+CHK|step_two_pings|char[1 65]'event pong: char[1 7]'"first"' // event pong: char[1 8]'"second"''|exact
+CHK|step_nan|char[1 27]'event echo: char[1 4]'null''|exact
+CHK|step_inf_same_json|char[1 6]'(none)'|exact
+CHK|step_empty_cell|char[1 25]'event echo: char[1 2]'[]''|exact
+CHK|step_empty_after_cell|char[1 6]'(none)'|exact
+CHK|step_complex|char[1 6]'(none)' WARN MATLAB:json:UnsupportedComplexDataType|exact
+CHK|step_after_complex|char[1 25]'event echo: char[1 2]'13''|exact
+CHK|step_lastwarn_before_drawnow|char[1 25]'right after the write: []' WARN MATLAB:json:UnsupportedComplexDataType|exact
+CHK|step_invisible_ping|char[1 31]'event pong: char[1 8]'"hidden"''|exact
+CHK|step_no_callbacks|double[1 1] 17|exact
+CHK|first_data_five|char[1 53]'event ready: char[1 1]'5' // event echo: char[1 1]'5''|exact
+CHK|first_data_empty_cell|char[1 26]'event ready: char[1 2]'[]''|exact
+CHK|first_data_structs|char[1 87]'event ready: char[1 17]'[{"a":1},{"a":2}]' // event echo: char[1 17]'[{"a":1},{"a":2}]''|exact
+CHK|evt_count|double[1 1] 3|exact
+CHK|evt_1_class|char[1 41]'matlab.ui.eventdata.HTMLEventReceivedData'|exact
+CHK|evt_1_source_is_h|logical[1 1] 1|exact
+CHK|evt_1_properties|cell[4 1]{char[1 13]'HTMLEventName';char[1 13]'HTMLEventData';char[1 6]'Source';char[1 9]'EventName'}|exact
+CHK|evt_1_eventname|char[1 17]'HTMLEventReceived'|exact
+CHK|evt_1_isa|double[1 3] [1 1 0]|exact
+CHK|evt_1_readonly|char[1 26]'MATLAB:class:SetProhibited'|div=ADR0208|diverges|char[1 3]'set'
+CHK|evt_1_name|char[1 3]'evx'|exact
+CHK|evt_1_data|double[1 2] [1 2]|exact
+CHK|evt_2_class|char[1 35]'matlab.ui.eventdata.DataChangedData'|exact
+CHK|evt_2_source_is_h|logical[1 1] 1|exact
+CHK|evt_2_properties|cell[4 1]{char[1 4]'Data';char[1 12]'PreviousData';char[1 6]'Source';char[1 9]'EventName'}|exact
+CHK|evt_2_eventname|char[1 11]'DataChanged'|exact
+CHK|evt_2_isa|double[1 3] [1 1 0]|exact
+CHK|evt_2_readonly|char[1 26]'MATLAB:class:SetProhibited'|div=ADR0208|diverges|char[1 3]'set'
+CHK|evt_2_data|struct[1 1]{(z=double[1 1] 1)}|exact
+CHK|evt_2_previous|double[0 0]|exact
+CHK|evt_3_class|char[1 41]'matlab.ui.eventdata.HTMLEventReceivedData'|exact
+CHK|evt_3_source_is_h|logical[1 1] 1|exact
+CHK|evt_3_properties|cell[4 1]{char[1 13]'HTMLEventName';char[1 13]'HTMLEventData';char[1 6]'Source';char[1 9]'EventName'}|exact
+CHK|evt_3_eventname|char[1 17]'HTMLEventReceived'|exact
+CHK|evt_3_isa|double[1 3] [1 1 0]|exact
+CHK|evt_3_readonly|char[1 26]'MATLAB:class:SetProhibited'|div=ADR0208|diverges|char[1 3]'set'
+CHK|evt_3_name|char[1 7]'setdone'|exact
+CHK|evt_3_data|char[1 7]'{"z":1}'|exact
+CHK|callback_cell|char[1 15]'cell pong extra'|exact
+CHK|callback_text|char[1 17]'text callback ran'|exact
+CHK|send_complex|char[1 6]'(none)' WARN MATLAB:json:UnsupportedComplexDataType|exact
+CHK|send_sparse|char[1 6]'(none)' WARN MATLAB:json:UnsupportedSparseDataType|exact

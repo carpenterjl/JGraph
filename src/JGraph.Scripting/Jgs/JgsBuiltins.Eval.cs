@@ -102,6 +102,9 @@ internal static partial class JgsBuiltins
 
         // U9: the tree makers and verbs and the styles resolve handles through the interpreter.
         "uitreenode", "expand", "collapse", "move", "scroll", "uistyle", "addStyle", "removeStyle",
+
+        // U9b: a uihtml's event for its page.
+        "sendEventToHTMLSource",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>

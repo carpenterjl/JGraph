@@ -1,0 +1,919 @@
+CHK|F_type|uihtml|exact
+CHK|F_get_names|BeingDeleted BusyAction ContextMenu CreateFcn Data DataChangedFcn DeleteFcn HTMLEventReceivedFcn HTMLSource HandleVisibility InnerPosition Interruptible Layout OuterPosition Parent Position Tag Tooltip Type UserData Visible|exact
+CHK|F_set_names|BusyAction ContextMenu CreateFcn Data DataChangedFcn DeleteFcn HTMLEventReceivedFcn HTMLSource HandleVisibility InnerPosition Interruptible Layout Parent Position Tag Tooltip UserData Visible|exact
+CHK|F_default_BeingDeleted|onoff off|exact
+CHK|F_default_BusyAction|char[1 5]'queue'|exact
+CHK|F_default_CreateFcn|char[0 0]''|exact
+CHK|F_default_Data|double[0 0]|exact
+CHK|F_default_DataChangedFcn|char[0 0]''|exact
+CHK|F_default_DeleteFcn|char[0 0]''|exact
+CHK|F_default_HTMLEventReceivedFcn|char[0 0]''|exact
+CHK|F_default_HTMLSource|char[0 0]''|exact
+CHK|F_default_HandleVisibility|onoff on|exact
+CHK|F_default_InnerPosition|double[1 4] [100 100 100 100]|exact
+CHK|F_default_Interruptible|onoff on|exact
+CHK|F_default_OuterPosition|double[1 4] [100 100 100 100]|exact
+CHK|F_default_Position|double[1 4] [100 100 100 100]|exact
+CHK|F_default_Tag|char[0 0]''|exact
+CHK|F_default_Tooltip|char[0 0]''|exact
+CHK|F_default_Type|char[1 6]'uihtml'|exact
+CHK|F_default_Visible|onoff on|exact
+CHK|F_words_HandleVisibility|cell[3 1]{onoff on;char[1 8]'callback';onoff off}|exact
+CHK|F_words_BusyAction|cell[2 1]{char[1 5]'queue';char[1 6]'cancel'}|exact
+CHK|F_words_Interruptible|cell[2 1]{onoff on;onoff off}|exact
+CHK|F_words_Visible|cell[2 1]{onoff on;onoff off}|exact
+CHK|F_userdata_empty|1|exact
+CHK|F_contextmenu_empty|1|exact
+CHK|F_parent_type|figure|exact
+CHK|F_flags|0 0 0 0 1 1 1 1 1|exact
+CHK|U_type|uihtml|exact
+CHK|U_get_names|BeingDeleted BusyAction ContextMenu CreateFcn Data DataChangedFcn DeleteFcn HTMLEventReceivedFcn HTMLSource HandleVisibility InnerPosition Interruptible Layout OuterPosition Parent Position Tag Tooltip Type UserData Visible|exact
+CHK|U_set_names|BusyAction ContextMenu CreateFcn Data DataChangedFcn DeleteFcn HTMLEventReceivedFcn HTMLSource HandleVisibility InnerPosition Interruptible Layout Parent Position Tag Tooltip UserData Visible|exact
+CHK|U_default_BeingDeleted|onoff off|exact
+CHK|U_default_BusyAction|char[1 5]'queue'|exact
+CHK|U_default_CreateFcn|char[0 0]''|exact
+CHK|U_default_Data|double[0 0]|exact
+CHK|U_default_DataChangedFcn|char[0 0]''|exact
+CHK|U_default_DeleteFcn|char[0 0]''|exact
+CHK|U_default_HTMLEventReceivedFcn|char[0 0]''|exact
+CHK|U_default_HTMLSource|char[0 0]''|exact
+CHK|U_default_HandleVisibility|onoff on|exact
+CHK|U_default_InnerPosition|double[1 4] [100 100 100 100]|exact
+CHK|U_default_Interruptible|onoff on|exact
+CHK|U_default_OuterPosition|double[1 4] [100 100 100 100]|exact
+CHK|U_default_Position|double[1 4] [100 100 100 100]|exact
+CHK|U_default_Tag|char[0 0]''|exact
+CHK|U_default_Tooltip|char[0 0]''|exact
+CHK|U_default_Type|char[1 6]'uihtml'|exact
+CHK|U_default_Visible|onoff on|exact
+CHK|U_words_HandleVisibility|cell[3 1]{onoff on;char[1 8]'callback';onoff off}|exact
+CHK|U_words_BusyAction|cell[2 1]{char[1 5]'queue';char[1 6]'cancel'}|exact
+CHK|U_words_Interruptible|cell[2 1]{onoff on;onoff off}|exact
+CHK|U_words_Visible|cell[2 1]{onoff on;onoff off}|exact
+CHK|U_userdata_empty|1|exact
+CHK|U_contextmenu_empty|1|exact
+CHK|U_parent_type|figure|exact
+CHK|U_flags|0 0 0 0 1 1 1 1 1|exact
+CHK|set_Data_01|onoff on|exact
+CHK|set_Data_02|onoff off|exact
+CHK|set_Data_03|logical[1 1] 1|exact
+CHK|set_Data_04|logical[1 1] 0|exact
+CHK|set_Data_05|double[1 1] 1|exact
+CHK|set_Data_06|double[1 1] 0|exact
+CHK|set_Data_07|double[1 1] -1|exact
+CHK|set_Data_08|double[1 1] 2.5|exact
+CHK|set_Data_09|double[1 2] [1 2]|exact
+CHK|set_Data_10|double[1 4] [10 20 30 40]|exact
+CHK|set_Data_11|double[1 3] [1 2 3]|exact
+CHK|set_Data_12|char[1 3]'abc'|exact
+CHK|set_Data_13|string[1 1]"str"|exact
+CHK|set_Data_14|cell[1 2]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|set_Data_15|string[2 1]"p","q"|exact
+CHK|set_Data_16|double[0 0]|exact
+CHK|set_Data_17|char[0 0]''|exact
+CHK|set_Data_18|cell[0 0]{}|exact
+CHK|set_Data_19|double[1 1] NaN|exact
+CHK|set_Data_20|double[1 1] Inf|exact
+CHK|set_Data_21|function_handle sin|exact
+CHK|set_Data_22|struct[1 1]{(a=double[1 1] 1)}|exact
+CHK|set_Data_23|int8[1 1] 3|exact
+CHK|set_Data_24|single[1 1] 2.5|exact
+CHK|set_Data_25|char[1 4]'left'|exact
+CHK|set_Data_26|char[1 4]'auto'|exact
+CHK|set_Data_27|char[2 2]'ab;cd'|exact
+CHK|set_Data_28|string[1 1]""|exact
+CHK|set_Data_29|string[1 1]"<missing>"|exact
+CHK|set_Data_30|cell[1 2]{double[1 1] 1;double[1 1] 2}|exact
+CHK|set_Data_31|cell[1 2]{function_handle sin;double[1 1] 1}|exact
+CHK|set_Data_32|double[3 3] [8 1 6;3 5 7;4 9 2]|exact
+CHK|set_Data_33|char[1 6]'pixels'|exact
+CHK|set_Data_34|char[1 2]'ON'|exact
+CHK|set_Data_35|char[1 3]'Off'|exact
+CHK|set_Data_36|datetime[1 1][15-Jan-2024]|exact
+CHK|set_Data_37|double[1 1] 1+2i|exact
+CHK|set_Data_38|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|set_Data_39|uint8[1 3] [10 20 30]|exact
+CHK|set_Data_40|char[1 9]'<p>hi</p>'|exact
+CHK|set_Data_41|char[1 12]'missing.html'|exact
+CHK|set_Data_42|char[1 11]'missing.HTM'|exact
+CHK|set_Data_43|char[1 25]'https://www.mathworks.com'|exact
+CHK|set_Data_44|char[1 17]'www.mathworks.com'|exact
+CHK|set_Data_45|char[1 12]'mailto:a@b.c'|exact
+CHK|set_Data_46|char[1 7]'ftp://x'|exact
+CHK|set_Data_47|char[1 23]'data:text/html,<b>x</b>'|exact
+CHK|set_Data_48|char[1 11]'missing.txt'|exact
+CHK|set_Data_49|char[1 14]'  missing.html'|exact
+CHK|set_Data_50|char[1 10]'u9b_json.m'|exact
+CHK|set_Data_51|double[1 3] [0 0 0]|exact
+CHK|set_Data_52|char[1 3]'red'|exact
+CHK|set_Data_53|double[1 0]|exact
+CHK|set_HTMLSource_01|onoff on|exact
+CHK|set_HTMLSource_02|onoff off|exact
+CHK|set_HTMLSource_03|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_04|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_05|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_06|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_07|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_08|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_09|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_10|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_11|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_12|char[1 3]'abc'|exact
+CHK|set_HTMLSource_13|char[1 3]'str'|exact
+CHK|set_HTMLSource_14|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_15|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_16|char[0 0]''|exact
+CHK|set_HTMLSource_17|char[0 0]''|exact
+CHK|set_HTMLSource_18|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_19|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_20|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_21|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_22|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_23|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_24|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_25|char[1 4]'left'|exact
+CHK|set_HTMLSource_26|char[1 4]'auto'|exact
+CHK|set_HTMLSource_27|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_28|char[0 0]''|exact
+CHK|set_HTMLSource_29|char[0 0]''|exact
+CHK|set_HTMLSource_30|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_31|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_32|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_33|char[1 6]'pixels'|exact
+CHK|set_HTMLSource_34|char[1 2]'ON'|exact
+CHK|set_HTMLSource_35|char[1 3]'Off'|exact
+CHK|set_HTMLSource_36|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_37|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_38|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_39|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_40|char[1 9]'<p>hi</p>'|exact
+CHK|set_HTMLSource_41|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|set_HTMLSource_42|char[1 11]'missing.HTM'|exact
+CHK|set_HTMLSource_43|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|set_HTMLSource_44|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|set_HTMLSource_45|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|set_HTMLSource_46|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|set_HTMLSource_47|char[1 23]'data:text/html,<b>x</b>'|exact
+CHK|set_HTMLSource_48|char[1 11]'missing.txt'|exact
+CHK|set_HTMLSource_49|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|set_HTMLSource_50|char[1 10]'u9b_json.m'|exact
+CHK|set_HTMLSource_51|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_HTMLSource_52|char[1 3]'red'|exact
+CHK|set_HTMLSource_53|MATLAB:ui:HTML:invalidHTMLSource :: 'HTMLSource' must be a character vector or a string scalar.|exact
+CHK|set_DataChangedFcn_01|onoff on|exact
+CHK|set_DataChangedFcn_02|onoff off|exact
+CHK|set_DataChangedFcn_03|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_04|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_05|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_06|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_07|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_08|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_09|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_10|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_11|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_12|char[1 3]'abc'|exact
+CHK|set_DataChangedFcn_13|char[1 3]'str'|exact
+CHK|set_DataChangedFcn_14|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|set_DataChangedFcn_15|cell[2 1]{char[1 1]'p';char[1 1]'q'}|exact
+CHK|set_DataChangedFcn_16|char[0 0]''|exact
+CHK|set_DataChangedFcn_17|char[0 0]''|exact
+CHK|set_DataChangedFcn_18|char[0 0]''|exact
+CHK|set_DataChangedFcn_19|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_20|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_21|function_handle sin|exact
+CHK|set_DataChangedFcn_22|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_23|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_24|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_25|char[1 4]'left'|exact
+CHK|set_DataChangedFcn_26|char[1 4]'auto'|exact
+CHK|set_DataChangedFcn_27|char[1 4]'acbd'|exact
+CHK|set_DataChangedFcn_28|char[0 0]''|exact
+CHK|set_DataChangedFcn_29|char[0 0]''|exact
+CHK|set_DataChangedFcn_30|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_31|cell[2 1]{function_handle sin;double[1 1] 1}|exact
+CHK|set_DataChangedFcn_32|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_33|char[1 6]'pixels'|exact
+CHK|set_DataChangedFcn_34|char[1 2]'ON'|exact
+CHK|set_DataChangedFcn_35|char[1 3]'Off'|exact
+CHK|set_DataChangedFcn_36|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_37|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_38|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|set_DataChangedFcn_39|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_40|char[1 9]'<p>hi</p>'|exact
+CHK|set_DataChangedFcn_41|char[1 12]'missing.html'|exact
+CHK|set_DataChangedFcn_42|char[1 11]'missing.HTM'|exact
+CHK|set_DataChangedFcn_43|char[1 25]'https://www.mathworks.com'|exact
+CHK|set_DataChangedFcn_44|char[1 17]'www.mathworks.com'|exact
+CHK|set_DataChangedFcn_45|char[1 12]'mailto:a@b.c'|exact
+CHK|set_DataChangedFcn_46|char[1 7]'ftp://x'|exact
+CHK|set_DataChangedFcn_47|char[1 23]'data:text/html,<b>x</b>'|exact
+CHK|set_DataChangedFcn_48|char[1 11]'missing.txt'|exact
+CHK|set_DataChangedFcn_49|char[1 14]'  missing.html'|exact
+CHK|set_DataChangedFcn_50|char[1 10]'u9b_json.m'|exact
+CHK|set_DataChangedFcn_51|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'DataChangedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_DataChangedFcn_52|char[1 3]'red'|exact
+CHK|set_DataChangedFcn_53|char[0 0]''|exact
+CHK|set_HTMLEventReceivedFcn_01|onoff on|exact
+CHK|set_HTMLEventReceivedFcn_02|onoff off|exact
+CHK|set_HTMLEventReceivedFcn_03|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_04|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_05|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_06|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_07|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_08|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_09|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_10|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_11|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_12|char[1 3]'abc'|exact
+CHK|set_HTMLEventReceivedFcn_13|char[1 3]'str'|exact
+CHK|set_HTMLEventReceivedFcn_14|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|set_HTMLEventReceivedFcn_15|cell[2 1]{char[1 1]'p';char[1 1]'q'}|exact
+CHK|set_HTMLEventReceivedFcn_16|char[0 0]''|exact
+CHK|set_HTMLEventReceivedFcn_17|char[0 0]''|exact
+CHK|set_HTMLEventReceivedFcn_18|char[0 0]''|exact
+CHK|set_HTMLEventReceivedFcn_19|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_20|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_21|function_handle sin|exact
+CHK|set_HTMLEventReceivedFcn_22|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_23|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_24|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_25|char[1 4]'left'|exact
+CHK|set_HTMLEventReceivedFcn_26|char[1 4]'auto'|exact
+CHK|set_HTMLEventReceivedFcn_27|char[1 4]'acbd'|exact
+CHK|set_HTMLEventReceivedFcn_28|char[0 0]''|exact
+CHK|set_HTMLEventReceivedFcn_29|char[0 0]''|exact
+CHK|set_HTMLEventReceivedFcn_30|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_31|cell[2 1]{function_handle sin;double[1 1] 1}|exact
+CHK|set_HTMLEventReceivedFcn_32|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_33|char[1 6]'pixels'|exact
+CHK|set_HTMLEventReceivedFcn_34|char[1 2]'ON'|exact
+CHK|set_HTMLEventReceivedFcn_35|char[1 3]'Off'|exact
+CHK|set_HTMLEventReceivedFcn_36|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_37|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_38|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|set_HTMLEventReceivedFcn_39|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_40|char[1 9]'<p>hi</p>'|exact
+CHK|set_HTMLEventReceivedFcn_41|char[1 12]'missing.html'|exact
+CHK|set_HTMLEventReceivedFcn_42|char[1 11]'missing.HTM'|exact
+CHK|set_HTMLEventReceivedFcn_43|char[1 25]'https://www.mathworks.com'|exact
+CHK|set_HTMLEventReceivedFcn_44|char[1 17]'www.mathworks.com'|exact
+CHK|set_HTMLEventReceivedFcn_45|char[1 12]'mailto:a@b.c'|exact
+CHK|set_HTMLEventReceivedFcn_46|char[1 7]'ftp://x'|exact
+CHK|set_HTMLEventReceivedFcn_47|char[1 23]'data:text/html,<b>x</b>'|exact
+CHK|set_HTMLEventReceivedFcn_48|char[1 11]'missing.txt'|exact
+CHK|set_HTMLEventReceivedFcn_49|char[1 14]'  missing.html'|exact
+CHK|set_HTMLEventReceivedFcn_50|char[1 10]'u9b_json.m'|exact
+CHK|set_HTMLEventReceivedFcn_51|MATLAB:datatypes:callback:CreateCallback :: Error setting property 'HTMLEventReceivedFcn' of class 'HTML': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|set_HTMLEventReceivedFcn_52|char[1 3]'red'|exact
+CHK|set_HTMLEventReceivedFcn_53|char[0 0]''|exact
+CHK|set_Tooltip_01|onoff on|exact
+CHK|set_Tooltip_02|onoff off|exact
+CHK|set_Tooltip_03|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_04|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_05|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_06|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_07|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_08|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_09|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_10|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_11|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_12|char[1 3]'abc'|exact
+CHK|set_Tooltip_13|char[1 3]'str'|exact
+CHK|set_Tooltip_14|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|set_Tooltip_15|cell[2 1]{char[1 1]'p';char[1 1]'q'}|exact
+CHK|set_Tooltip_16|char[0 0]''|exact
+CHK|set_Tooltip_17|char[0 0]''|exact
+CHK|set_Tooltip_18|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_19|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_20|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_21|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_22|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_23|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_24|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_25|char[1 4]'left'|exact
+CHK|set_Tooltip_26|char[1 4]'auto'|exact
+CHK|set_Tooltip_27|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_28|char[0 0]''|exact
+CHK|set_Tooltip_29|char[0 0]''|exact
+CHK|set_Tooltip_30|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_31|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_32|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_33|char[1 6]'pixels'|exact
+CHK|set_Tooltip_34|char[1 2]'ON'|exact
+CHK|set_Tooltip_35|char[1 3]'Off'|exact
+CHK|set_Tooltip_36|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_37|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_38|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|set_Tooltip_39|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_40|char[1 9]'<p>hi</p>'|exact
+CHK|set_Tooltip_41|char[1 12]'missing.html'|exact
+CHK|set_Tooltip_42|char[1 11]'missing.HTM'|exact
+CHK|set_Tooltip_43|char[1 25]'https://www.mathworks.com'|exact
+CHK|set_Tooltip_44|char[1 17]'www.mathworks.com'|exact
+CHK|set_Tooltip_45|char[1 12]'mailto:a@b.c'|exact
+CHK|set_Tooltip_46|char[1 7]'ftp://x'|exact
+CHK|set_Tooltip_47|char[1 23]'data:text/html,<b>x</b>'|exact
+CHK|set_Tooltip_48|char[1 11]'missing.txt'|exact
+CHK|set_Tooltip_49|char[1 14]'  missing.html'|exact
+CHK|set_Tooltip_50|char[1 10]'u9b_json.m'|exact
+CHK|set_Tooltip_51|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Tooltip_52|char[1 3]'red'|exact
+CHK|set_Tooltip_53|MATLAB:ui:HTML:invalidTooltip :: 'Tooltip' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|set_Position_01|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_02|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_03|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_04|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_05|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_06|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_07|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_08|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_09|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_10|double[1 4] [10 20 30 40]|exact
+CHK|set_Position_11|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_12|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_13|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_14|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_15|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_16|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_17|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_18|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_19|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_20|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_21|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_22|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_23|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_24|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_25|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_26|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_27|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_28|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_29|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_30|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_31|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_32|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_33|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_34|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_35|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_36|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_37|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_38|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_39|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_40|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_41|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_42|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_43|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_44|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_45|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_46|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_47|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_48|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_49|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_50|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_51|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_Position_52|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'Position' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_Position_53|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'Position' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_01|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_02|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_03|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_04|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_05|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_06|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_07|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_08|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_09|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_10|double[1 4] [10 20 30 40]|exact
+CHK|set_InnerPosition_11|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_12|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_13|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_14|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_15|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_16|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_17|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_18|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_19|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_20|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_21|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_22|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_23|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_24|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_25|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_26|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_27|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_28|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_29|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_30|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_31|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_32|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_33|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_34|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_35|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_36|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_37|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_38|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_39|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_40|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_41|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_42|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_43|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_44|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_45|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_46|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_47|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_48|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_49|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_50|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_51|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_InnerPosition_52|MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric :: Error setting property 'InnerPosition' of class 'HTML': Value must be numeric and finite|exact
+CHK|set_InnerPosition_53|MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector :: Error setting property 'InnerPosition' of class 'HTML': Value must be a 4 element vector|exact
+CHK|set_OuterPosition_01|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_02|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_03|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_04|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_05|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_06|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_07|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_08|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_09|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_10|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_11|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_12|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_13|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_14|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_15|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_16|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_17|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_18|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_19|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_20|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_21|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_22|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_23|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_24|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_25|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_26|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_27|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_28|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_29|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_30|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_31|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_32|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_33|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_34|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_35|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_36|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_37|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_38|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_39|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_40|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_41|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_42|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_43|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_44|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_45|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_46|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_47|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_48|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_49|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_50|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_51|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_52|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_OuterPosition_53|MATLAB:class:SetProhibited :: Unable to set the 'OuterPosition' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Visible_01|onoff on|exact
+CHK|set_Visible_02|onoff off|exact
+CHK|set_Visible_03|onoff on|exact
+CHK|set_Visible_04|onoff off|exact
+CHK|set_Visible_05|onoff on|exact
+CHK|set_Visible_06|onoff off|exact
+CHK|set_Visible_07|onoff on|exact
+CHK|set_Visible_08|onoff on|exact
+CHK|set_Visible_09|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_10|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_11|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_12|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_13|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_14|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_15|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_16|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_17|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_18|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_19|onoff on|exact
+CHK|set_Visible_20|onoff on|exact
+CHK|set_Visible_21|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_22|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_23|onoff on|exact
+CHK|set_Visible_24|onoff on|exact
+CHK|set_Visible_25|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_26|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_27|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_28|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_29|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_30|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_31|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_32|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_33|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_34|onoff on|exact
+CHK|set_Visible_35|onoff off|exact
+CHK|set_Visible_36|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_37|onoff on|exact
+CHK|set_Visible_38|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_39|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_40|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_41|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_42|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_43|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_44|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_45|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_46|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_47|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_48|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_49|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_50|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_51|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_52|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Visible_53|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Visible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Tag_01|onoff on|exact
+CHK|set_Tag_02|onoff off|exact
+CHK|set_Tag_03|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_04|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_05|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_06|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_07|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_08|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_09|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_10|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_11|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_12|char[1 3]'abc'|exact
+CHK|set_Tag_13|char[1 3]'str'|exact
+CHK|set_Tag_14|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_15|MATLAB:class:RequireScalar :: Error setting property 'Tag' of class 'HTML': Value must be a scalar.|exact
+CHK|set_Tag_16|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_17|char[0 0]''|exact
+CHK|set_Tag_18|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_19|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_20|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_21|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_22|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_23|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_24|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_25|char[1 4]'left'|exact
+CHK|set_Tag_26|char[1 4]'auto'|exact
+CHK|set_Tag_27|char[1 4]'acbd'|exact
+CHK|set_Tag_28|char[0 0]''|exact
+CHK|set_Tag_29|MATLAB:string:MissingNotSupported :: Error setting property 'Tag' of class 'HTML': <missing> string element not supported.|exact
+CHK|set_Tag_30|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_31|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_32|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_33|char[1 6]'pixels'|exact
+CHK|set_Tag_34|char[1 2]'ON'|exact
+CHK|set_Tag_35|char[1 3]'Off'|exact
+CHK|set_Tag_36|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_37|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_38|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_39|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_40|char[1 9]'<p>hi</p>'|exact
+CHK|set_Tag_41|char[1 12]'missing.html'|exact
+CHK|set_Tag_42|char[1 11]'missing.HTM'|exact
+CHK|set_Tag_43|char[1 25]'https://www.mathworks.com'|exact
+CHK|set_Tag_44|char[1 17]'www.mathworks.com'|exact
+CHK|set_Tag_45|char[1 12]'mailto:a@b.c'|exact
+CHK|set_Tag_46|char[1 7]'ftp://x'|exact
+CHK|set_Tag_47|char[1 23]'data:text/html,<b>x</b>'|exact
+CHK|set_Tag_48|char[1 11]'missing.txt'|exact
+CHK|set_Tag_49|char[1 14]'  missing.html'|exact
+CHK|set_Tag_50|char[1 10]'u9b_json.m'|exact
+CHK|set_Tag_51|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_Tag_52|char[1 3]'red'|exact
+CHK|set_Tag_53|MATLAB:class:RequireString :: Error setting property 'Tag' of class 'HTML': Value must be a character vector or a string scalar.|exact
+CHK|set_HandleVisibility_01|onoff on|exact
+CHK|set_HandleVisibility_02|onoff off|exact
+CHK|set_HandleVisibility_03|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_04|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_05|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_06|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_07|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_08|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_09|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_10|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_11|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_12|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'abc' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_13|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'str' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_14|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_15|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_16|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_17|MATLAB:datatypes:InvalidValue :: Error setting property 'HandleVisibility' of class 'HTML': Value cannot be empty. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_18|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_19|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_20|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_21|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_22|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_23|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_24|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_25|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'left' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_26|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'auto' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_27|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'acbd' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_28|MATLAB:datatypes:InvalidValue :: Error setting property 'HandleVisibility' of class 'HTML': Value cannot be empty. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_29|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_30|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_31|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_32|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_33|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'pixels' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_34|onoff on|exact
+CHK|set_HandleVisibility_35|onoff off|exact
+CHK|set_HandleVisibility_36|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_37|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_38|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_39|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_40|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': '<p>hi</p>' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_41|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'missing.html' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_42|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'missing.HTM' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_43|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'https://www.mathworks.com' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_44|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'www.mathworks.com' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_45|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'mailto:a@b.c' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_46|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'ftp://x' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_47|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'data:text/html,<b>x</b>' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_48|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'missing.txt' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_49|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': ' missing.html' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_50|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'u9b_json.m' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_51|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_52|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'HandleVisibility' of class 'HTML': 'red' is not a valid value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_HandleVisibility_53|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'HandleVisibility' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'callback' / 'off'.|exact
+CHK|set_BusyAction_01|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'on' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_02|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'off' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_03|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_04|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_05|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_06|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_07|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_08|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_09|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_10|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_11|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_12|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'abc' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_13|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'str' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_14|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_15|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_16|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_17|MATLAB:datatypes:InvalidValue :: Error setting property 'BusyAction' of class 'HTML': Value cannot be empty. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_18|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_19|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_20|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_21|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_22|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_23|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_24|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_25|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'left' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_26|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'auto' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_27|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'acbd' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_28|MATLAB:datatypes:InvalidValue :: Error setting property 'BusyAction' of class 'HTML': Value cannot be empty. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_29|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_30|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_31|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_32|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_33|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'pixels' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_34|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'ON' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_35|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'Off' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_36|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_37|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_38|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_39|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_40|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': '<p>hi</p>' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_41|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'missing.html' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_42|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'missing.HTM' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_43|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'https://www.mathworks.com' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_44|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'www.mathworks.com' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_45|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'mailto:a@b.c' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_46|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'ftp://x' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_47|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'data:text/html,<b>x</b>' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_48|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'missing.txt' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_49|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': ' missing.html' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_50|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'u9b_json.m' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_51|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_52|MATLAB:datatypes:InvalidEnumValue :: Error setting property 'BusyAction' of class 'HTML': 'red' is not a valid value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_BusyAction_53|MATLAB:datatypes:InvalidEnumValueFor :: Error setting property 'BusyAction' of class 'HTML': Invalid enum value. Use one of these values: 'queue' / 'cancel'.|exact
+CHK|set_Interruptible_01|onoff on|exact
+CHK|set_Interruptible_02|onoff off|exact
+CHK|set_Interruptible_03|onoff on|exact
+CHK|set_Interruptible_04|onoff off|exact
+CHK|set_Interruptible_05|onoff on|exact
+CHK|set_Interruptible_06|onoff off|exact
+CHK|set_Interruptible_07|onoff on|exact
+CHK|set_Interruptible_08|onoff on|exact
+CHK|set_Interruptible_09|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_10|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_11|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_12|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_13|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_14|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_15|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_16|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_17|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_18|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_19|onoff on|exact
+CHK|set_Interruptible_20|onoff on|exact
+CHK|set_Interruptible_21|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_22|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_23|onoff on|exact
+CHK|set_Interruptible_24|onoff on|exact
+CHK|set_Interruptible_25|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_26|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_27|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_28|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_29|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_30|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_31|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_32|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_33|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_34|onoff on|exact
+CHK|set_Interruptible_35|onoff off|exact
+CHK|set_Interruptible_36|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_37|onoff on|exact
+CHK|set_Interruptible_38|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_39|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_40|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_41|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_42|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_43|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_44|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_45|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_46|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_47|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_48|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_49|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_50|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_51|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_52|MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Interruptible_53|MATLAB:datatypes:onoffboolean:IncorrectValue :: Error setting property 'Interruptible' of class 'HTML': Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|set_Enable_01|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_02|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_03|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_04|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_05|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_06|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_07|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_08|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_09|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_10|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_11|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_12|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_13|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_14|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_15|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_16|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_17|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_18|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_19|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_20|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_21|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_22|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_23|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_24|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_25|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_26|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_27|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_28|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_29|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_30|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_31|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_32|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_33|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_34|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_35|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_36|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_37|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_38|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_39|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_40|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_41|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_42|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_43|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_44|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_45|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_46|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_47|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_48|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_49|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_50|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_51|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_52|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Enable_53|MATLAB:hg:InvalidProperty :: Unrecognized property Enable for class HTML.|exact
+CHK|set_Type_01|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_02|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_03|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_04|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_05|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_06|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_07|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_08|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_09|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_10|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_11|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_12|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_13|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_14|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_15|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_16|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_17|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_18|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_19|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_20|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_21|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_22|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_23|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_24|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_25|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_26|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_27|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_28|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_29|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_30|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_31|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_32|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_33|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_34|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_35|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_36|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_37|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_38|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_39|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_40|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_41|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_42|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_43|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_44|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_45|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_46|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_47|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_48|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_49|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_50|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_51|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_52|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_Type_53|MATLAB:class:SetProhibited :: Unable to set the 'Type' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_01|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_02|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_03|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_04|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_05|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_06|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_07|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_08|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_09|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_10|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_11|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_12|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_13|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_14|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_15|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_16|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_17|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_18|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_19|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_20|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_21|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_22|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_23|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_24|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_25|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_26|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_27|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_28|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_29|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_30|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_31|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_32|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_33|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_34|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_35|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_36|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_37|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_38|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_39|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_40|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_41|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_42|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_43|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_44|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_45|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_46|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_47|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_48|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_49|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_50|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_51|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_52|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|set_BeingDeleted_53|MATLAB:class:SetProhibited :: Unable to set the 'BeingDeleted' property of class ''HTML'' because it is read-only.|exact
+CHK|dot_source_string|char[1 8]'<b>s</b>'|exact
+CHK|dot_data_string|string[1 1]"s"|exact
+CHK|dot_data_cell_string|cell[1 1]{string[1 1]"s"}|exact
+CHK|set_data_string|string[1 1]"t"|exact
+CHK|dot_tooltip_string|char[1 1]'t'|exact
+CHK|dot_data_struct|struct[1 2]{(a=double[1 1] 1)(a=double[1 1] 2)}|exact
+CHK|get_bogus|MATLAB:hg:InvalidProperty|exact
+CHK|get_bogus_msg|Unrecognized property Bogus for class matlab.ui.control.HTML.|exact
+CHK|set_bogus|MATLAB:hg:InvalidProperty|exact
+CHK|set_bogus_msg|Unrecognized property Bogus for class HTML.|exact
+CHK|get_units|MATLAB:hg:InvalidProperty|exact
+CHK|get_units_msg|Unrecognized property Units for class matlab.ui.control.HTML.|exact
+CHK|callback_cell|cell[2 1]{function_handle disp;double[1 1] 1}|exact
+CHK|callback_text|char[1 7]'disp(1)'|exact
+CHK|position_after|cell[1 3]{double[1 4] [10 20 300 200];double[1 4] [10 20 300 200];double[1 4] [10 20 300 200]}|exact

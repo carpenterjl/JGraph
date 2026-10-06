@@ -183,6 +183,7 @@ public sealed partial class UiComponentLayer
         foreach (UiComponentModel gone in _components.Keys.Where(model => !present.Contains(model)).ToList())
         {
             Children.Remove(_components[gone].Element);
+            (_components[gone].Element as IDisposable)?.Dispose(); // a uihtml's page closes with its view (U9b)
             _components.Remove(gone);
             if (gone is UiTableModel table)
             {
@@ -677,6 +678,14 @@ public sealed partial class UiComponentLayer
             case UiComponentKind.Tree:
             case UiComponentKind.CheckBoxTree:
                 return MakeTree(frame);
+
+            // U9b: a web page, in WebView2 when it is there; with no runtime, the component is a
+            // blank rectangle and the script was told so once.
+            case UiComponentKind.Html:
+            {
+                FrameworkElement view = UiHtmlViews.Factory?.Create((UiHtmlModel)source) ?? new Border { Background = Brushes.White };
+                return new Shown(source, frame.Kind, view);
+            }
 
             default:
             {

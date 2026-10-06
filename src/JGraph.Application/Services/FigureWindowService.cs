@@ -42,6 +42,9 @@ public sealed class FigureWindowService : IFigureWindowService
                 JGraph.Scripting.ScriptComponentFrames.Applied(frame);
             }
         }));
+
+        // A uihtml in a shown figure gets its page from the window (U9b), not a hidden one first.
+        JGraph.Scripting.UiHtmlPages.WindowsHostPages = true;
     }
 
     private void ApplyComponentFrame(UiFrame frame)

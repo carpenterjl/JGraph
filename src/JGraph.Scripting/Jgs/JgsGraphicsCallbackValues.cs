@@ -120,6 +120,7 @@ internal static class JgsGraphicsCallbackValues
         UiToolbarModel => "Toolbar",
         UiToolModel tool => tool.IsToggle ? "ToggleTool" : "PushTool",
         UiTreeNodeModel => "TreeNode",
+        UiHtmlModel => "HTML",
         UiComponentModel component => component.Kind.ToString(),
         UiOverlayModel => "matlab.ui.dialog.ProgressDialog",
         FigureModel => "Figure",
@@ -173,9 +174,13 @@ internal static class JgsUiEventData
         SelectionChangedDataClass,
     };
 
-    /// <summary>Whether a classed struct is one of the built-in event data classes made here.</summary>
+    /// <summary>
+    /// Whether a classed struct is one of the built-in event data classes made here: the ones above,
+    /// and every component's <c>matlab.ui.eventdata.*</c> (U5 to U9b), each an <c>event.EventData</c>.
+    /// </summary>
     public static bool IsBuiltinEventData(JgsValue value) =>
-        value.Type == JgsType.Struct && value.ClassName is { } name && Classes.Contains(name);
+        value.Type == JgsType.Struct && value.ClassName is { } name
+        && (Classes.Contains(name) || name.StartsWith("matlab.ui.eventdata.", StringComparison.Ordinal));
 
     public static JgsValue Action(JgsValue source) => Make(ActionDataClass, source, "Action");
 

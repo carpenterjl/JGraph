@@ -1,0 +1,137 @@
+CHK|in_uifigure|char[1 15]'uihtml < figure'|exact
+CHK|in_figure|char[1 15]'uihtml < figure'|exact
+CHK|in_uipanel|char[1 25]'uihtml < uipanel < figure'|exact
+CHK|in_classic_uipanel|char[1 25]'uihtml < uipanel < figure'|exact
+CHK|in_grid|char[1 30]'uihtml < uigridlayout < figure'|exact
+CHK|in_group|char[1 31]'uihtml < uibuttongroup < figure'|exact
+CHK|in_tabgroup|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|in_tab|char[1 36]'uihtml < uitab < uitabgroup < figure'|exact
+CHK|in_menu|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|in_axes|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_axes_msg|Axes cannot be a parent.|exact
+CHK|in_uiaxes|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|in_uicontrol|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|in_label|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_label_msg|Label cannot be a parent.|exact
+CHK|in_tree|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|in_number|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|in_empty|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|in_root|MATLAB:ui:HTML:unknownInput|exact
+CHK|in_root_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|named_parent|char[1 15]'uihtml < figure'|exact
+CHK|unknown|MATLAB:ui:HTML:unknownInput|exact
+CHK|unknown_msg|Unrecognized property Bogus for class HTML.|exact
+CHK|odd|MATLAB:ui:HTML:unknownInput|exact
+CHK|odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|numbers|MATLAB:ui:HTML:unknownInput|exact
+CHK|numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|struct|char[1 1]'s'|exact
+CHK|lower_name|char[1 1]'t'|exact
+CHK|prefix_name|char[1 1]'t'|exact
+CHK|prefix_source|char[1 8]'<b>x</b>'|exact
+CHK|string_names|char[1 1]'t'|exact
+CHK|missing_source|MATLAB:ui:HTML:unknownInput|exact
+CHK|missing_source_msg|You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|url_source|MATLAB:ui:HTML:unknownInput|exact
+CHK|url_source_msg|You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|data_pair|double[1 1] 5|exact
+CHK|flags|double[1 6] [0 1 1 1 1 1]|exact
+CHK|parent_figure|char[1 6]'figure'|exact
+CHK|parent_none|char[1 4]'none'|div=ADR0202|diverges|char[1 101]'refused: An object with no parent cannot be kept in this build; delete it, or give it another parent.'
+CHK|parent_panel|char[1 7]'uipanel'|exact
+CHK|parent_axes|MATLAB:gbtobjects:Component|exact
+CHK|parent_axes_msg|Axes cannot be a parent.|exact
+CHK|in_panel_position|double[1 4] [100 100 100 100]|exact
+CHK|findobj|logical[1 1] 1|exact
+CHK|copyobj|cell[1 5]{struct[1 1]{(a=double[1 1] 3)};char[1 8]'<b>c</b>';char[1 1]'c';char[1 6]'uihtml';logical[1 1] 0}|exact
+CHK|copyobj_data_is_a_copy|double[1 2] [1 2]|exact
+CHK|source_01|char[1 10]'u9b_json.m'|exact
+CHK|source_02|char[1 17]'<here>\u9b_json.m'|exact
+CHK|source_03|char[1 12]'./u9b_json.m'|exact
+CHK|source_04|char[1 18]'helpers/u9b_text.m'|exact
+CHK|source_05|char[1 18]'helpers\u9b_text.m'|exact
+CHK|source_06|char[1 10]'U9B_JSON.M'|exact
+CHK|source_07|char[1 13]'u9b_echo.html'|exact
+CHK|source_08|char[1 21]'helpers/u9b_echo.html'|exact
+CHK|source_09|char[1 10]'u9b_text.m'|exact
+CHK|source_10|char[1 7]'helpers'|exact
+CHK|source_11|char[1 8]'u9b_json'|exact
+CHK|source_12|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_13|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_14|char[1 12]'MISSING.HTML'|exact
+CHK|source_15|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_16|char[1 11]'missing.txt'|exact
+CHK|source_17|char[1 7]'missing'|exact
+CHK|source_18|char[1 9]'<p>hi</p>'|exact
+CHK|source_19|char[1 11]'hello world'|exact
+CHK|source_20|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_21|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_22|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_23|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_24|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_25|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a URL, which is not supported. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_26|char[1 23]'data:text/html,<b>x</b>'|exact
+CHK|source_27|char[1 19]'javascript:alert(1)'|exact
+CHK|source_28|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_29|char[1 25]'file:///<here>/u9b_json.m'|exact
+CHK|source_30|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_31|char[1 14]'missing.html  '|exact
+CHK|source_32|char[1 1]'<'|exact
+CHK|source_33|char[1 8]'a.html b'|exact
+CHK|source_34|char[1 7]'x.html<'|exact
+CHK|source_35|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_36|MATLAB:ui:HTML:invalidHTMLSource :: You have specified a file that cannot be found. Specify HTML markup, a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|source_37|char[1 22]'..\fixtures\u9b_json.m'|exact
+CHK|send_01|MATLAB:minrhs|exact
+CHK|send_01_msg|Invalid argument list. Function requires 1 more input(s).|exact
+CHK|send_02|char[1 2]'ok'|exact
+CHK|send_03|MATLAB:TooManyInputs|exact
+CHK|send_03_msg|Too many input arguments.|exact
+CHK|send_04|MATLAB:UndefinedFunction|exact
+CHK|send_04_msg|Undefined function 'sendEventToHTMLSource' for input arguments of type 'double'.|exact
+CHK|send_05|MATLAB:UndefinedFunction|exact
+CHK|send_05_msg|Undefined function 'sendEventToHTMLSource' for input arguments of type 'char'.|exact
+CHK|send_06|MATLAB:validators:mustBeText|exact
+CHK|send_06_msg|Invalid argument at position 2. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|send_07|char[1 2]'ok'|exact
+CHK|send_08|char[1 2]'ok'|exact
+CHK|send_09|char[1 2]'ok'|exact
+CHK|send_10|char[1 2]'ok'|exact
+CHK|send_11|char[1 2]'ok'|exact
+CHK|send_12|MATLAB:validation:IncompatibleSize|exact
+CHK|send_12_msg|Invalid argument at position 2. Value must be a vector.|exact
+CHK|send_13|char[1 2]'ok'|exact
+CHK|send_14|char[1 2]'ok'|exact
+CHK|send_15|char[1 2]'ok'|exact
+CHK|send_16|MATLAB:index:expected_one_output_for_assignment|exact
+CHK|send_16_msg|Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|send_17|MATLAB:UndefinedFunction|exact
+CHK|send_17_msg|Undefined function 'sendEventToHTMLSource' for input arguments of type 'matlab.ui.Figure'.|exact
+CHK|send_18|MATLAB:UndefinedFunction|exact
+CHK|send_18_msg|Undefined function 'sendEventToHTMLSource' for input arguments of type 'matlab.ui.control.Label'.|exact
+CHK|send_19|MATLAB:TooManyInputs|exact
+CHK|send_19_msg|Too many input arguments.|exact
+CHK|send_20|MATLAB:UndefinedFunction|exact
+CHK|send_20_msg|Unrecognized function or variable 'sendEventToHTMLSource'.|exact
+CHK|send_21|MATLAB:validators:mustBeText|exact
+CHK|send_21_msg|Invalid argument at position 2. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|send_22|MATLAB:validators:mustBeText|exact
+CHK|send_22_msg|Invalid argument at position 2. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|send_23|MATLAB:validators:mustBeText|exact
+CHK|send_23_msg|Invalid argument at position 2. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|send_24|char[1 2]'ok'|exact
+CHK|send_25|MATLAB:UndefinedFunction|exact
+CHK|send_25_msg|Undefined function 'sendEventToHTMLSource' for input arguments of type 'struct'.|exact
+CHK|send_26|MATLAB:UndefinedFunction|exact
+CHK|send_26_msg|Undefined function 'sendEventToHTMLSource' for input arguments of type 'cell'.|exact
+CHK|send_output|MATLAB:TooManyOutputs|exact
+CHK|send_output_msg|Too many output arguments.|exact
+CHK|send_deleted|MATLAB:class:InvalidHandle|div=ADR0208|diverges|MATLAB:UndefinedFunction
+CHK|send_deleted_msg|Invalid or deleted object.|div=ADR0208|diverges|Undefined function 'sendEventToHTMLSource' for input arguments of type 'double'.

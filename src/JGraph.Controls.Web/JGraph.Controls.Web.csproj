@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    uihtml for JGraph (app-building plan, section L, stage U9b): web pages in components, hosted by
+    Microsoft Edge WebView2. The figure window shows a page in WebView2CompositionControl, which
+    draws inside WPF's own surface so a uialert can sit over it (the U0 spike); a page with no window
+    - under -batch, or in an invisible figure - runs in a hidden window of its own. The composition
+    control needs the Windows SDK projection, so this project targets a Windows SDK framework like
+    JGraph.Devices.Bluetooth (ADR 0186) and is loaded at run time: JGraph.Scripting finds the hidden
+    host and JGraph.Controls the window's view by name, and nothing else depends on a Windows TFM.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>JGraph.Controls.Web</RootNamespace>
+    <Description>Web pages in JGraph components (uihtml), hosted by Microsoft Edge WebView2.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
+    <ProjectReference Include="..\JGraph.Controls\JGraph.Controls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Bridge\bridge.js" LogicalName="JGraph.Controls.Web.bridge.js" />
+  </ItemGroup>
+
+  <!-- The hosts load this assembly by path, so the native WebView2 loader travels beside it rather
+       than under runtimes\, where only this project's own deps.json would point. -->
+  <Target Name="CopyWebView2LoaderFlat" AfterTargets="Build">
+    <ItemGroup>
+      <_WebView2Loader Include="$(OutDir)runtimes\win-x64\native\WebView2Loader.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_WebView2Loader)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" Condition="Exists('@(_WebView2Loader)')" />
+  </Target>
+
+</Project>

@@ -43,6 +43,9 @@ internal static partial class JgsBuiltins
 
         // U9: the makers run a CreateFcn.
         "uicolorpicker", "uidatepicker", "uigauge", "uiknob", "uilamp", "uiswitch", "uitree", "uitreenode",
+
+        // U9b.
+        "uihtml",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code

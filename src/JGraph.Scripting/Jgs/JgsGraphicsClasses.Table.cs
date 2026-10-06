@@ -141,6 +141,7 @@ internal static partial class JgsGraphicsClasses
         "matlab.graphics.function.mixin.Legendable",
         "matlab.graphics.GraphicsPlaceholder",
         "matlab.ui.layout.GridLayoutOptions",
+        "matlab.ui.control.HTML",
     ];
 
     /// <summary>Each kind of object: its key, then the indices of its class and of each superclass, as R2025b lists them.</summary>
@@ -242,5 +243,6 @@ internal static partial class JgsGraphicsClasses
         ("fplot", [132, 1, 2, 3, 4, 5, 6, 7, 8, 133, 46, 49, 30, 21, 47, 23, 9, 25, 26, 13, 14]),
         ("gobjects", [134, 1, 2, 3, 4, 5, 6, 7, 8, 14]),
         ("buttonlayout", [135]),
+        ("uihtml", [136, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14]),
     ];
 }

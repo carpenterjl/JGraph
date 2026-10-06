@@ -2298,6 +2298,8 @@ public static class JgsBuiltinCatalog
         Add("collapse", "Closes the nodes of a tree or a node; with 'all', every node under it.", P("parent"), Opt("all"));
         Add("move", "Moves a tree node to stand after, or 'before', another: move(node, target, 'before').", P("node"), P("target"), Opt("where"));
         Add("scroll", "Scrolls a tree to a node, a list to an item, a table to a row, a column or a cell, a grid to a place, or any of them to 'top' or 'bottom'.", P("component"), P("location"), Opt("index"));
+        Add("uihtml", "A web page in a component, from a file or markup, whose Data and events reach the page's setup(htmlComponent): h = uihtml(fig, 'HTMLSource', 'page.html').", Opt("parent"), Opt("name"), Opt("value"));
+        Add("sendEventToHTMLSource", "Sends an event, with data, to a uihtml's page, where htmlComponent's listener for that name hears it: sendEventToHTMLSource(h, 'update', data).", P("h"), P("name"), Opt("data"));
         Add("clf", "Clears the current figure (or figure n), keeping its window open.", Opt("n"));
         Add("gcf", "The current figure's number.");
         Add("gca", "Selects the current axes, creating a figure and axes if there are none.");
