@@ -209,6 +209,9 @@ public sealed class UiFrame
     /// <summary>The figure's toolbars that show, top to bottom (U8).</summary>
     public IReadOnlyList<UiToolbarFrame> Toolbars { get; private init; } = [];
 
+    /// <summary>The context menus a script has asked to open (<c>open(cm, x, y)</c>; U9), with how often and where.</summary>
+    public IReadOnlyList<UiMenuOpenFrame> MenuOpens { get; private init; } = [];
+
     private static long _sequence;
 
     /// <summary>Copies the figure's components. Call on the thread that writes the model.</summary>
@@ -221,6 +224,11 @@ public sealed class UiFrame
             {
                 Overlays = [.. figure.Overlays.Select(static overlay => overlay.Snapshot())],
                 Menus = TakeMenus(figure.Menus),
+                MenuOpens =
+                [
+                    .. figure.ContextMenus.Where(static menu => menu.OpenRequests > 0).Select(static menu =>
+                        new UiMenuOpenFrame(menu, menu.OpenRequests, menu.OpenAt.X, menu.OpenAt.Y, TakeMenus(menu.Items))),
+                ],
                 Toolbars =
                 [
                     .. figure.Toolbars.Where(static bar => bar.Visible).Select(static bar => new UiToolbarFrame(
@@ -417,3 +425,6 @@ public sealed class UiFrame
         }
     }
 }
+
+/// <summary>A context menu a script asked to show (U9): how many times so far, the point in the figure, and its entries then.</summary>
+public sealed record UiMenuOpenFrame(ContextMenuModel Source, int Requests, double X, double Y, IReadOnlyList<UiMenuFrame> Items);

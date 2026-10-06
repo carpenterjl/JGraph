@@ -640,3 +640,59 @@ a tab group in the current figure, and a tool uses the current figure's toolbar 
 
 Not measured: any callback of these objects, which needs a window in R2025b, and how a table
 draws its cells.
+
+## U9 findings (R2025b, headless)
+
+**One class each, in both kinds of figure** (`u9_matrix`, 47,015 lines): `uiknob` (Knob,
+DiscreteKnob), `uiswitch` (Switch, RockerSwitch, ToggleSwitch), `uigauge` (Gauge, LinearGauge,
+NinetyDegreeGauge, SemicircularGauge), `uilamp`, `uidatepicker`, `uicolorpicker`, `uitree` (Tree,
+CheckBoxTree) and `uitreenode` answer to the same names and refuse in the same sentences in a
+classic figure and in a `uifigure`. The makers follow U5's forms (`unknownInput`; a STYLE word
+refused with the list of styles; `uitree('v0')` refused as removed); `uitreenode` takes a Tree or
+a TreeNode as its parent and nothing else, checking the pairs before the parent.
+
+**Every write goes through `isequal` first.** A value equal to the one held is not written:
+`false` lands on a knob at 0 where `true` is refused, `[]` on a picker with no disabled dates where
+it is refused once there are some, `{}` on an empty `DisabledDates`; the `AutoConvertStrings`
+warning is `isequal`'s, when a datetime meets text that is no date (`u9_extra`, `u9_props`).
+
+**Values.** A knob's `Value` is a double within `Limits`, which clamp it; a gauge's any finite
+number, not clamped; `ScaleColors` rows or names, `ScaleColorLimits` increasing pairs, equal bands
+until written; `MajorTicks`/`MinorTicks` a 1-by-n numeric array. A switch has two `Items` and at
+most two `ItemsData`, a discrete knob at least two; items rewritten under a value take the first
+when the value is gone; data first given keep the index, data replaced look the datum up. A date
+picker's `Value` is a datetime scalar within `Limits` or NaT (time dropped, years 0 to 9999, a
+disabled weekday refused); a limit or a disabled weekday that excludes the value leaves a NaT in
+datetime's default format, a disabled date one in the picker's; `DisplayFormat` drops a time of
+day and refuses a time alone, an empty, or an unknown letter (`'A'` is unknown). A colour
+picker's `Icon` takes `'default'` and `'text'` by any beginning. Blanks round an on/off or an
+enumeration word are ignored.
+
+**Shapes.** A knob, a discrete knob, a lamp, a circular and a ninety-degree gauge keep a square, a
+semicircular gauge 120:65, a switch 45:20: a rectangle written is shrunk to the largest of the
+shape inside it (`[10 10 80 40]` on a knob is `[10 10 40 40]`), with a warning from the view that a
+script does not see. Fit sizes (`u9_grid`): gauges, lamp and colour picker their Position; date
+picker about 8.33·fs+34 by 1.23·fs+8; tree about 14.16·fs+20 by 9.51·fs+97.9; knob and switch
+by their labels. Automatic ticks before a window settles them: a knob `[0 20 40 60 80 100]`, a
+ninety-degree gauge `[0 50 100]`.
+
+**Trees.** `Children` are the nodes first-first; `SelectedNodes` keep the order written and lose a
+node deleted or moved out; `CheckedNodes` are the nodes written, then descendants, then parents
+whose children are all in, in one pass; a child added under a checked parent is checked. A node
+has fifteen properties (`Text` char or string only); `copyobj` of a node outside a tree is
+`MATLAB:ui:TreeNode:invalidParent`; `expand([n1 n2])` runs, `move(n, m, 'bef')` takes the
+beginning of a word. `scroll(lb, 2)` is refused (text or an end only); a container that does not
+scroll warns `MATLAB:uicontainer:ScrollableOff`; `focus` refuses a gauge, a lamp, a node, a tab and
+a menu.
+
+**Styles.** `uistyle` is `matlab.ui.style.Style`, ten properties, `MATLAB:ui:Style:invalid*`;
+`set`/`get` on one are `SetMethodUnknown`/`GetMethodUnknown`. `addStyle` checks the target word
+then the index (`invalidStyleTarget`, `invalid<Word>TargetIndex`, `invalidTargetIndex` for the
+whole, `invalidNumberOfInputs` for three arguments); `removeStyle` `invalidRemovalIndex`,
+`removalIndexOutOfBounds`. `StyleConfigurations` is a table (Target categorical, TargetIndex cell,
+Style object array); an index past the data is kept, a column of indices reads as a row, the
+style is copied by value, rows stay when data shrink or a node is deleted; a drop-down takes
+`addStyle`.
+
+Not measured: any callback of these objects, which needs a window in R2025b, how it draws them,
+and the identifier of the aspect-ratio warning.

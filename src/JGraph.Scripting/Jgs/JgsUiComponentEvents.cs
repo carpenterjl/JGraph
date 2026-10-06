@@ -61,6 +61,11 @@ internal static partial class JgsUiComponentEvents
             return PrepareTable(raised, table, entry, source);
         }
 
+        if (component is UiTreeModel tree)
+        {
+            return PrepareTree(raised, tree, entry, source);
+        }
+
         switch (raised.Action)
         {
             case Value:
@@ -216,6 +221,27 @@ internal static partial class JgsUiComponentEvents
                 list.Selected = [.. picked.Where(i => i >= 0 && i < list.Items.Count).Take(list.Multiselect ? int.MaxValue : 1)];
                 break;
 
+            // U9: a knob turned, a switch or a discrete knob set, a date picked or typed, a colour chosen.
+            case UiKnobModel knob when raised.UserValue is double turned:
+                knob.Value = System.Math.Clamp(turned, knob.Lower, knob.Upper);
+                break;
+
+            case UiDiscreteKnobModel or UiSwitchModel when raised.UserValue is int chosen && component is UiItemsModel picks:
+                if (chosen >= 0 && chosen < picks.Items.Count)
+                {
+                    picks.Selected = [chosen];
+                }
+
+                break;
+
+            case UiDatePickerModel picker:
+                ApplyDate(picker, raised.UserValue);
+                break;
+
+            case UiColorPickerModel colours when raised.UserValue is UiColor chosenColour:
+                colours.Value = chosenColour;
+                break;
+
             case UiRangeSliderModel range when raised.UserValue is double[] { Length: 2 } pair:
                 range.Value = System.Math.Clamp(System.Math.Min(pair[0], pair[1]), range.Lower, range.Upper);
                 range.High = System.Math.Clamp(System.Math.Max(pair[0], pair[1]), range.Lower, range.Upper);
@@ -286,6 +312,41 @@ internal static partial class JgsUiComponentEvents
 
         field.Value = stored;
         field.DisplayText = JgsGraphicsProperties.DisplayOf(field);
+    }
+
+    /// <summary>
+    /// A date picker's new date (U9): a day from its calendar, or text typed in its own format;
+    /// nothing typed is <c>NaT</c>. A day the picker does not allow, or text that is no date, is not
+    /// taken, and the field shows the date it had.
+    /// </summary>
+    private static void ApplyDate(UiDatePickerModel picker, object? given)
+    {
+        double? days;
+        bool readable = true;
+        switch (given)
+        {
+            case double direct:
+                days = direct;
+                break;
+            case string text when text.Trim().Length == 0:
+                days = null;
+                break;
+            case string text:
+                days = JgsGraphicsProperties.DateTyped(picker, text);
+                readable = days is not null;
+                break;
+            default:
+                return;
+        }
+
+        if (!readable || (days is { } day && !picker.Allows(day)))
+        {
+            picker.DisplayText = JgsGraphicsProperties.DateText(picker, picker.ValueDays);
+            return;
+        }
+
+        picker.ValueDays = days;
+        picker.DisplayText = JgsGraphicsProperties.DateText(picker, days);
     }
 
     /// <summary>The number a person typed: digits, a sign, a decimal point, an exponent, <c>Inf</c>.</summary>

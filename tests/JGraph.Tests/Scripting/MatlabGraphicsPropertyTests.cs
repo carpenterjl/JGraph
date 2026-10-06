@@ -82,6 +82,10 @@ public sealed class MatlabGraphicsPropertyTests
         ["UiTabModel.ZOrder"] = "a tab's place is its place among its group's Children (ADR 0206)",
         ["UiTabModel.Selectable"] = "reached as HitTest, which is MATLAB's name for it (ADR 0206)",
         ["UiTabModel.Visible"] = "R2025b's tab has no Visible: its group shows it or does not (ADR 0206, fixture u8_tabs)",
+        ["UiTreeNodeModel.Name"] = "a tree node answers to R2025b's fifteen names alone, and has no Name (ADR 0207)",
+        ["UiTreeNodeModel.Visible"] = "R2025b's TreeNode has no Visible: its tree shows it or does not (ADR 0207, fixture u9_tree)",
+        ["UiTreeNodeModel.ZOrder"] = "a node's place is its place among its parent's Children, as move changes it (ADR 0207)",
+        ["UiTreeNodeModel.Selectable"] = "the model's own; R2025b's TreeNode has no HitTest to carry it (ADR 0207)",
         ["LegendModel.Entries"] = "reached as the String property",
         ["AxesModel.PrimaryXAxis"] = "aliased to a handle by the XAxis property",
         ["AxesModel.PrimaryYAxis"] = "aliased to a handle by the YAxis property",
@@ -165,8 +169,8 @@ public sealed class MatlabGraphicsPropertyTests
                 continue;
             }
 
-            // R2025b's tab has no Visible (ADR 0206, fixture u8_tabs).
-            if (universal == "visible" && type == typeof(UiTabModel))
+            // R2025b's tab has no Visible (ADR 0206, fixture u8_tabs), nor has its tree node (ADR 0207, fixture u9_tree).
+            if (universal == "visible" && (type == typeof(UiTabModel) || type == typeof(UiTreeNodeModel)))
             {
                 continue;
             }

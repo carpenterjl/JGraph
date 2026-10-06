@@ -18,6 +18,22 @@ public sealed class ContextMenuModel : GraphObject
 
     /// <summary>The menu's entries, in the order they show.</summary>
     public GraphObjectCollection<MenuItemModel> Items { get; }
+
+    /// <summary>How many times a script has asked for the menu to open (<c>open(cm, x, y)</c>; U9).</summary>
+    [Browsable(false)]
+    public int OpenRequests { get; private set; }
+
+    /// <summary>Where the last <c>open</c> asked for it, in pixels from the figure's lower-left corner.</summary>
+    [Browsable(false)]
+    public (double X, double Y) OpenAt { get; private set; }
+
+    /// <summary>Asks the window to show the menu at a point of its figure.</summary>
+    public void RequestOpen(double x, double y)
+    {
+        OpenAt = (x, y);
+        OpenRequests++;
+        Invalidate(InvalidationKind.Ui);
+    }
 }
 
 /// <summary>

@@ -118,6 +118,13 @@ internal static partial class JgsBuiltins
 
         env.Builtins.Register("open", JgsValue.Function(new BuiltinFunction("open", (args, line, col) =>
         {
+            // open(cm, x, y) and open(cm, [x y]): a context menu shown at a point of its figure (U9).
+            if (args.Count > 0 && args[0].Type == JgsType.Number && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? named)
+                && named.Target is JGraph.Core.Model.ContextMenuModel menu)
+            {
+                return OpenContextMenu(menu, named, args, line, col);
+            }
+
             Arity("open", args, 1, line, col);
             OpenVideoWriter(host, RequireVideoWriter("open", args[0], line, col), line, col);
             return JgsValue.Null;

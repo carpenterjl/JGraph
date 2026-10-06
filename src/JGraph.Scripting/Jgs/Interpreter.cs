@@ -3285,7 +3285,18 @@ internal sealed partial class Interpreter
         var holds = new ScopeHolds();
         try
         {
-            JgsValue assembled = AssembleMatrix(matrix, EvaluateRows(matrix.Rows, env, ref holds));
+            List<JgsValue[]> rows = EvaluateRows(matrix.Rows, env, ref holds);
+            JgsValue assembled = AssembleMatrix(matrix, rows);
+            if (Dialect.ConcatenatesBrackets && !assembled.IsTime && rows.Count > 0 && rows[0].Length > 0)
+            {
+                // [t1; t2] is a datetime as [t1 t2] is (M82); the first piece's format is kept (U9).
+                JgsTimeTag? first = rows[0][0].TimeTag;
+                if (first is not null && rows.All(row => Array.TrueForAll(row, e => e.TimeTag?.Kind == first.Kind)))
+                {
+                    assembled = assembled.MarkTime(JgsTime.ConcatTag(first, rows.SelectMany(static row => row)));
+                }
+            }
+
             holds.Keep(assembled); // a literal's answer is adopted, so a piece handed back stays counted
             return assembled;
         }
@@ -3473,7 +3484,7 @@ internal sealed partial class Interpreter
             JgsTimeTag? first = elements[0].TimeTag;
             if (first is not null && Array.TrueForAll(elements, e => e.TimeTag?.Kind == first.Kind))
             {
-                built = built.MarkTime(first);
+                built = built.MarkTime(JgsTime.ConcatTag(first, elements));
             }
         }
 

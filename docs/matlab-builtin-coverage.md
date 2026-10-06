@@ -103,8 +103,11 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,212 of
-2,024** as of app-building stage U8 (ADR 0206), which added `uitable`, `uitabgroup`, `uitab`,
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,220 of
+2,024** as of app-building stage U9 (ADR 0207), which added `uiknob`, `uiswitch`, `uigauge`,
+`uilamp`, `uidatepicker`, `uicolorpicker`, `uitree`, `uitreenode`, `uistyle`, `addStyle`,
+`removeStyle`, `expand`, `collapse`, `move` and `scroll`; 1,212 as of
+app-building stage U8 (ADR 0206), which added `uitable`, `uitabgroup`, `uitab`,
 `uitoolbar`, `uipushtool` and `uitoggletool`, and put `uimenu` on a figure's menu bar; 1,206 as of
 app-building stage U6 (ADR 0203), which added `superclasses` once a class could
 inherit from another; 1,205 as of app-building stage U5 (ADR 0202), which added `uigridlayout`, the `uifigure`
@@ -1065,6 +1068,11 @@ M52 left these behind, each named rather than silent (the full table is in
 ### Handle graphics and app building — 2
 
 `hgsetget` `selectmoveresize`
+
+**App-building stage U9 took the dashboard components** (ADR 0207): `uiknob`, `uiswitch`,
+`uigauge`, `uilamp`, `uidatepicker`, `uicolorpicker`, `uitree` and `uitreenode`, with `uistyle`,
+`addStyle`, `removeStyle`, `expand`, `collapse`, `move` and `scroll` beside them among the
+functions. Their names, defaults, words and refusals are R2025b's, fixture by fixture (`u9_*`).
 
 **App-building stage U8 took the toolbar's three** (ADR 0206): `uitoolbar`, `uipushtool` and
 `uitoggletool`, with `uitable`, `uitabgroup` and `uitab` beside them among the functions, and a

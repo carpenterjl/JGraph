@@ -89,6 +89,7 @@ internal static partial class JgsGraphicsProperties
         UiTabModel => "uitab",
         UiToolbarModel => "uitoolbar",
         UiToolModel tool => tool.IsToggle ? "uitoggletool" : "uipushtool",
+        UiTreeNodeModel => "uitreenode",
         UiComponentModel component => component.Kind switch
         {
             UiComponentKind.Label => "uilabel",
@@ -106,6 +107,20 @@ internal static partial class JgsGraphicsProperties
             UiComponentKind.RangeSlider => "uirangeslider",
             UiComponentKind.Spinner => "uispinner",
             UiComponentKind.Image => "uiimage",
+            UiComponentKind.Knob => "uiknob",
+            UiComponentKind.DiscreteKnob => "uidiscreteknob",
+            UiComponentKind.Switch => "uiswitch",
+            UiComponentKind.RockerSwitch => "uirockerswitch",
+            UiComponentKind.ToggleSwitch => "uitoggleswitch",
+            UiComponentKind.Gauge => "uigauge",
+            UiComponentKind.LinearGauge => "uilineargauge",
+            UiComponentKind.NinetyDegreeGauge => "uininetydegreegauge",
+            UiComponentKind.SemicircularGauge => "uisemicirculargauge",
+            UiComponentKind.Lamp => "uilamp",
+            UiComponentKind.DatePicker => "uidatepicker",
+            UiComponentKind.ColorPicker => "uicolorpicker",
+            UiComponentKind.Tree => "uitree",
+            UiComponentKind.CheckBoxTree => "uicheckboxtree",
             _ => "uihyperlink",
         },
         UiOverlayModel => "uiprogressdlg",
@@ -265,7 +280,7 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static void Reparent(JgsHandleEntry entry, JgsValue value, int line, int col)
     {
-        if (entry.Target is UiObject or AxesModel && !JgsHandleRegistry.TryGetOrRoot(value, out _))
+        if (entry.Target is UiObject or AxesModel or UiTreeNodeModel && !JgsHandleRegistry.TryGetOrRoot(value, out _))
         {
             throw value.Type == JgsType.Array && value.ArrayLength == 0
                 ? new JgsRuntimeException(line, col,
@@ -282,6 +297,15 @@ internal static partial class JgsGraphicsProperties
         // Menus move between figures, context menus, and one another; every such move is a move.
         switch (entry.Target, owner.Target)
         {
+            // A tree node goes under a tree or another node, and nowhere else (U9).
+            case (UiTreeNodeModel movingNode, UiTreeModel or UiTreeNodeModel):
+                MoveTreeNode(movingNode, owner.Target, null, after: true, line, col);
+                return;
+            case (UiTreeNodeModel, _) when JgsBuiltins.HoldsNothing(owner.Target):
+                throw new JgsRuntimeException(line, col, "MATLAB:gbtobjects:Component",
+                    $"{JgsGraphicsCallbackValues.ClassWord(owner.Target)} cannot be a parent.");
+            case (UiTreeNodeModel, _):
+                throw new JgsRuntimeException(line, col, "MATLAB:ui:TreeNode:invalidParent", "'Parent' must be a valid Tree object or TreeNode object.");
             case (ContextMenuModel movingMenu, FigureModel figureOwner):
                 using (GraphObjectLifecycle.SuppressNotifications())
                 {
@@ -466,6 +490,14 @@ internal static partial class JgsGraphicsProperties
                 // first, where every other list is newest first (R2025b, fixture u8_tabs).
                 children.AddRange(pages.Components.Reverse());
                 break;
+            // A tree's children are its nodes and a node's its own, each list in the order it
+            // stands, first first (U9, probe u9_behave).
+            case UiTreeModel tree:
+                children.AddRange(tree.Nodes);
+                break;
+            case UiTreeNodeModel node:
+                children.AddRange(node.Nodes);
+                break;
             case UiContainerModel container:
                 children.AddRange(container.ContainedAxes());
                 children.AddRange(container.Components);
@@ -635,6 +667,11 @@ internal static partial class JgsGraphicsProperties
                     $"Unable to set the '{property.Name}' property of class ''{JgsGraphicsCallbackValues.ClassWord(entry.Target)}'' because it is read-only.")
                 : new JgsRuntimeException(line, col,
                     $"'{property.Name}' can be read but not written on a {TypeNameOf(entry.Target)}.");
+        }
+
+        if (entry.Target is UiComponentModel or UiTreeNodeModel && SkipsEqualWrite(entry, property, value))
+        {
+            return;
         }
 
         property.Write(entry, value, line, col);
@@ -901,6 +938,12 @@ internal static partial class JgsGraphicsProperties
         if (typeof(UiToolModel).IsAssignableFrom(type))
         {
             AddUiToolBlock(type, table);
+        }
+
+        // A tree node (U9): fifteen names and no rectangle.
+        if (typeof(UiTreeNodeModel).IsAssignableFrom(type))
+        {
+            AddTreeNodeBlock(table);
         }
 
         if (typeof(UiObject).IsAssignableFrom(type))

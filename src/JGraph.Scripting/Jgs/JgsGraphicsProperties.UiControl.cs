@@ -381,8 +381,18 @@ internal static partial class JgsGraphicsProperties
         Options(table, "Interruptible", OnOffWords);
         Options(table, "Units", UnitWords);
         Options(table, "FontUnits", FontUnitWords);
-        Options(table, "FontAngle", FontAngleShown);
-        Options(table, "FontWeight", FontWeightShown);
+        if (IsU9Kind(type))
+        {
+            // set(k).FontWeight is {} on a knob where it names both words on a button (probe u9_defaults).
+            Options(table, "FontAngle");
+            Options(table, "FontWeight");
+        }
+        else
+        {
+            Options(table, "FontAngle", FontAngleShown);
+            Options(table, "FontWeight", FontWeightShown);
+        }
+
         Options(table, "Selected", OnOffWords);
         Options(table, "SelectionHighlight", OnOffWords);
         Options(table, "HitTest", OnOffWords);
@@ -965,7 +975,7 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static JgsRuntimeException ComponentError(
         JgsHandleEntry entry, string property, string identifier, string reason, int line, int col) =>
-        new(line, col, identifier, _creatingComponent
+        new(line, col, identifier, _creatingComponent && !(entry.Target is UiColorPickerModel && property == "Value")
             ? reason
             : $"Error setting property '{property}' of class '{JgsGraphicsCallbackValues.ClassWord(entry.Target)}':\n{reason}");
 }

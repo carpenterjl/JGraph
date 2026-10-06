@@ -2283,6 +2283,21 @@ public static class JgsBuiltinCatalog
         Add("uitoolbar", "A row of tools under a figure's menu bar: tb = uitoolbar(fig).", Opt("parent"), Opt("name"), Opt("value"));
         Add("uipushtool", "A button on a toolbar: uipushtool(tb, 'Icon', 'save.png', 'Tooltip', 'Save', 'ClickedCallback', @onSave).", Opt("toolbar"), Opt("name"), Opt("value"));
         Add("uitoggletool", "A toolbar button that stays down: uitoggletool(tb, 'Tooltip', 'Grid', 'OnCallback', @gridOn, 'OffCallback', @gridOff).", Opt("toolbar"), Opt("name"), Opt("value"));
+        Add("uiknob", "A dial turned between its Limits, or with 'discrete' one with a position per item: k = uiknob(fig, 'Limits', [0 10], 'ValueChangedFcn', @cb).", Opt("parent"), Opt("style"), Opt("name"), Opt("value"));
+        Add("uiswitch", "A two-position switch, 'slider', 'rocker' or 'toggle', whose Value is one of its two Items: s = uiswitch(fig, 'rocker').", Opt("parent"), Opt("style"), Opt("name"), Opt("value"));
+        Add("uigauge", "A gauge with a needle and no input, 'circular', 'linear', 'ninetydegree' or 'semicircular': g = uigauge(fig, 'semicircular', 'Value', 42).", Opt("parent"), Opt("style"), Opt("name"), Opt("value"));
+        Add("uilamp", "A lamp, a circle of one colour: uilamp(fig, 'Color', 'green').", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uidatepicker", "A field with a calendar for one date, a datetime or NaT: d = uidatepicker(fig, 'DisplayFormat', 'dd/MM/uuuu').", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uicolorpicker", "A button that opens a palette; its Value is an RGB triplet: c = uicolorpicker(fig, 'Value', 'blue').", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uitree", "A tree of nodes, or with 'checkbox' one whose nodes have check boxes: t = uitree(fig); uitreenode(t, 'Text', 'Root').", Opt("parent"), Opt("style"), Opt("name"), Opt("value"));
+        Add("uitreenode", "A node of a tree or of another node: n = uitreenode(parent, 'Text', 'Leaf', 'NodeData', 7).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uistyle", "A style for the cells of a table, the nodes of a tree or the items of a list: s = uistyle('BackgroundColor', 'yellow', 'FontWeight', 'bold').", Opt("name"), Opt("value"));
+        Add("addStyle", "Adds a style to a table, a tree, a list box or a drop-down, or to part of one: addStyle(t, s, 'row', 2).", P("component"), P("style"), Opt("target"), Opt("index"));
+        Add("removeStyle", "Removes a component's styles, or those numbered in its StyleConfigurations: removeStyle(t, 1).", P("component"), Opt("order"));
+        Add("expand", "Opens the nodes of a tree or a node; with 'all', every node under it.", P("parent"), Opt("all"));
+        Add("collapse", "Closes the nodes of a tree or a node; with 'all', every node under it.", P("parent"), Opt("all"));
+        Add("move", "Moves a tree node to stand after, or 'before', another: move(node, target, 'before').", P("node"), P("target"), Opt("where"));
+        Add("scroll", "Scrolls a tree to a node, a list to an item, a table to a row, a column or a cell, a grid to a place, or any of them to 'top' or 'bottom'.", P("component"), P("location"), Opt("index"));
         Add("clf", "Clears the current figure (or figure n), keeping its window open.", Opt("n"));
         Add("gcf", "The current figure's number.");
         Add("gca", "Selects the current axes, creating a figure and axes if there are none.");
@@ -2525,7 +2540,7 @@ public static class JgsBuiltinCatalog
 
         // M108: where a frame goes once getframe has made one.
         Add("VideoWriter", "Creates a video file writer: v = VideoWriter('clip.mp4', 'MPEG-4'). The profile decides the container — 'Motion JPEG AVI' (the default for .avi), 'Uncompressed AVI', 'Grayscale AVI', 'Indexed AVI' or 'MPEG-4'. VideoWriter.getProfiles lists them.", P("filename"), Opt("profile"));
-        Add("open", "Opens a VideoWriter for writing: open(v). Nothing is written until the first frame, which is what fixes the frame size.", P("v"));
+        Add("open", "Opens a VideoWriter for writing (open(v); nothing is written until the first frame, which fixes the frame size), or shows a context menu at a point of its figure: open(cm, x, y).", P("v"), Opt("x"), Opt("y"));
         Add("writeVideo", "Appends one frame to an open VideoWriter: writeVideo(v, frame). The frame is a getframe struct, an array of them, or an image — uint8 0 to 255, or double 0 to 1.", P("v"), P("frame"));
 
         // M67: the objects a living figure is built from.

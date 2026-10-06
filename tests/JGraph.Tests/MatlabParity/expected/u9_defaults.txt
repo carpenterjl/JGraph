@@ -1,0 +1,1144 @@
+CHK|F_Knob_type|uiknob|exact
+CHK|F_Knob_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|F_Knob_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|F_Knob_default_BeingDeleted|onoff off|exact
+CHK|F_Knob_default_BusyAction|char 'queue'|exact
+CHK|F_Knob_default_CreateFcn|char ''|exact
+CHK|F_Knob_default_DeleteFcn|char ''|exact
+CHK|F_Knob_default_Enable|onoff on|exact
+CHK|F_Knob_default_FontAngle|char 'normal'|exact
+CHK|F_Knob_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_Knob_default_FontName|char 'Helvetica'|exact
+CHK|F_Knob_default_FontSize|double [1 1] 12|exact
+CHK|F_Knob_default_FontWeight|char 'normal'|exact
+CHK|F_Knob_default_HandleVisibility|onoff on|exact
+CHK|F_Knob_default_InnerPosition|double [1 4] 100 100 60 60|exact
+CHK|F_Knob_default_Interruptible|onoff on|exact
+CHK|F_Knob_default_Limits|double [1 2] 0 100|exact
+CHK|F_Knob_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|F_Knob_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|F_Knob_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|F_Knob_default_MajorTicksMode|char 'auto'|exact
+CHK|F_Knob_default_MinorTicksMode|char 'auto'|exact
+CHK|F_Knob_default_Position|double [1 4] 100 100 60 60|exact
+CHK|F_Knob_default_Tag|char ''|exact
+CHK|F_Knob_default_Tooltip|char ''|exact
+CHK|F_Knob_default_Type|char 'uiknob'|exact
+CHK|F_Knob_default_Value|double [1 1] 0|exact
+CHK|F_Knob_default_ValueChangedFcn|char ''|exact
+CHK|F_Knob_default_ValueChangingFcn|char ''|exact
+CHK|F_Knob_default_Visible|onoff on|exact
+CHK|F_Knob_userdata_empty|1|exact
+CHK|F_Knob_children_prop|0|exact
+CHK|F_Knob_contextmenu_empty|1|exact
+CHK|F_Knob_parent_type|figure|exact
+CHK|F_Knob_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_Knob_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Knob_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Knob_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Knob_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Knob_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_DiscreteKnob_type|uidiscreteknob|exact
+CHK|F_DiscreteKnob_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|F_DiscreteKnob_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|F_DiscreteKnob_default_BeingDeleted|onoff off|exact
+CHK|F_DiscreteKnob_default_BusyAction|char 'queue'|exact
+CHK|F_DiscreteKnob_default_CreateFcn|char ''|exact
+CHK|F_DiscreteKnob_default_DeleteFcn|char ''|exact
+CHK|F_DiscreteKnob_default_Enable|onoff on|exact
+CHK|F_DiscreteKnob_default_FontAngle|char 'normal'|exact
+CHK|F_DiscreteKnob_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_DiscreteKnob_default_FontName|char 'Helvetica'|exact
+CHK|F_DiscreteKnob_default_FontSize|double [1 1] 12|exact
+CHK|F_DiscreteKnob_default_FontWeight|char 'normal'|exact
+CHK|F_DiscreteKnob_default_HandleVisibility|onoff on|exact
+CHK|F_DiscreteKnob_default_InnerPosition|double [1 4] 100 100 60 60|exact
+CHK|F_DiscreteKnob_default_Interruptible|onoff on|exact
+CHK|F_DiscreteKnob_default_Items|cell [1 4] {char 'Off', char 'Low', char 'Medium', char 'High'}|exact
+CHK|F_DiscreteKnob_default_ItemsData|double [0 0]|exact
+CHK|F_DiscreteKnob_default_Position|double [1 4] 100 100 60 60|exact
+CHK|F_DiscreteKnob_default_Tag|char ''|exact
+CHK|F_DiscreteKnob_default_Tooltip|char ''|exact
+CHK|F_DiscreteKnob_default_Type|char 'uidiscreteknob'|exact
+CHK|F_DiscreteKnob_default_Value|char 'Off'|exact
+CHK|F_DiscreteKnob_default_ValueChangedFcn|char ''|exact
+CHK|F_DiscreteKnob_default_ValueIndex|double [1 1] 1|exact
+CHK|F_DiscreteKnob_default_Visible|onoff on|exact
+CHK|F_DiscreteKnob_userdata_empty|1|exact
+CHK|F_DiscreteKnob_children_prop|0|exact
+CHK|F_DiscreteKnob_contextmenu_empty|1|exact
+CHK|F_DiscreteKnob_parent_type|figure|exact
+CHK|F_DiscreteKnob_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_DiscreteKnob_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_DiscreteKnob_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_DiscreteKnob_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_DiscreteKnob_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_DiscreteKnob_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Switch_type|uiswitch|exact
+CHK|F_Switch_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|F_Switch_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|F_Switch_default_BeingDeleted|onoff off|exact
+CHK|F_Switch_default_BusyAction|char 'queue'|exact
+CHK|F_Switch_default_CreateFcn|char ''|exact
+CHK|F_Switch_default_DeleteFcn|char ''|exact
+CHK|F_Switch_default_Enable|onoff on|exact
+CHK|F_Switch_default_FontAngle|char 'normal'|exact
+CHK|F_Switch_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_Switch_default_FontName|char 'Helvetica'|exact
+CHK|F_Switch_default_FontSize|double [1 1] 12|exact
+CHK|F_Switch_default_FontWeight|char 'normal'|exact
+CHK|F_Switch_default_HandleVisibility|onoff on|exact
+CHK|F_Switch_default_InnerPosition|double [1 4] 100 100 45 20|exact
+CHK|F_Switch_default_Interruptible|onoff on|exact
+CHK|F_Switch_default_Items|cell [1 2] {char 'Off', char 'On'}|exact
+CHK|F_Switch_default_ItemsData|double [0 0]|exact
+CHK|F_Switch_default_Orientation|char 'horizontal'|exact
+CHK|F_Switch_default_Position|double [1 4] 100 100 45 20|exact
+CHK|F_Switch_default_Tag|char ''|exact
+CHK|F_Switch_default_Tooltip|char ''|exact
+CHK|F_Switch_default_Type|char 'uiswitch'|exact
+CHK|F_Switch_default_Value|char 'Off'|exact
+CHK|F_Switch_default_ValueChangedFcn|char ''|exact
+CHK|F_Switch_default_ValueIndex|double [1 1] 1|exact
+CHK|F_Switch_default_Visible|onoff on|exact
+CHK|F_Switch_userdata_empty|1|exact
+CHK|F_Switch_children_prop|0|exact
+CHK|F_Switch_contextmenu_empty|1|exact
+CHK|F_Switch_parent_type|figure|exact
+CHK|F_Switch_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_Switch_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Switch_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Switch_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Switch_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Switch_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_RockerSwitch_type|uirockerswitch|exact
+CHK|F_RockerSwitch_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|F_RockerSwitch_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|F_RockerSwitch_default_BeingDeleted|onoff off|exact
+CHK|F_RockerSwitch_default_BusyAction|char 'queue'|exact
+CHK|F_RockerSwitch_default_CreateFcn|char ''|exact
+CHK|F_RockerSwitch_default_DeleteFcn|char ''|exact
+CHK|F_RockerSwitch_default_Enable|onoff on|exact
+CHK|F_RockerSwitch_default_FontAngle|char 'normal'|exact
+CHK|F_RockerSwitch_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_RockerSwitch_default_FontName|char 'Helvetica'|exact
+CHK|F_RockerSwitch_default_FontSize|double [1 1] 12|exact
+CHK|F_RockerSwitch_default_FontWeight|char 'normal'|exact
+CHK|F_RockerSwitch_default_HandleVisibility|onoff on|exact
+CHK|F_RockerSwitch_default_InnerPosition|double [1 4] 100 100 20 45|exact
+CHK|F_RockerSwitch_default_Interruptible|onoff on|exact
+CHK|F_RockerSwitch_default_Items|cell [1 2] {char 'Off', char 'On'}|exact
+CHK|F_RockerSwitch_default_ItemsData|double [0 0]|exact
+CHK|F_RockerSwitch_default_Orientation|char 'vertical'|exact
+CHK|F_RockerSwitch_default_Position|double [1 4] 100 100 20 45|exact
+CHK|F_RockerSwitch_default_Tag|char ''|exact
+CHK|F_RockerSwitch_default_Tooltip|char ''|exact
+CHK|F_RockerSwitch_default_Type|char 'uirockerswitch'|exact
+CHK|F_RockerSwitch_default_Value|char 'Off'|exact
+CHK|F_RockerSwitch_default_ValueChangedFcn|char ''|exact
+CHK|F_RockerSwitch_default_ValueIndex|double [1 1] 1|exact
+CHK|F_RockerSwitch_default_Visible|onoff on|exact
+CHK|F_RockerSwitch_userdata_empty|1|exact
+CHK|F_RockerSwitch_children_prop|0|exact
+CHK|F_RockerSwitch_contextmenu_empty|1|exact
+CHK|F_RockerSwitch_parent_type|figure|exact
+CHK|F_RockerSwitch_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_RockerSwitch_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_RockerSwitch_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_RockerSwitch_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_RockerSwitch_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_RockerSwitch_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleSwitch_type|uitoggleswitch|exact
+CHK|F_ToggleSwitch_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|F_ToggleSwitch_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|F_ToggleSwitch_default_BeingDeleted|onoff off|exact
+CHK|F_ToggleSwitch_default_BusyAction|char 'queue'|exact
+CHK|F_ToggleSwitch_default_CreateFcn|char ''|exact
+CHK|F_ToggleSwitch_default_DeleteFcn|char ''|exact
+CHK|F_ToggleSwitch_default_Enable|onoff on|exact
+CHK|F_ToggleSwitch_default_FontAngle|char 'normal'|exact
+CHK|F_ToggleSwitch_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_ToggleSwitch_default_FontName|char 'Helvetica'|exact
+CHK|F_ToggleSwitch_default_FontSize|double [1 1] 12|exact
+CHK|F_ToggleSwitch_default_FontWeight|char 'normal'|exact
+CHK|F_ToggleSwitch_default_HandleVisibility|onoff on|exact
+CHK|F_ToggleSwitch_default_InnerPosition|double [1 4] 100 100 20 45|exact
+CHK|F_ToggleSwitch_default_Interruptible|onoff on|exact
+CHK|F_ToggleSwitch_default_Items|cell [1 2] {char 'Off', char 'On'}|exact
+CHK|F_ToggleSwitch_default_ItemsData|double [0 0]|exact
+CHK|F_ToggleSwitch_default_Orientation|char 'vertical'|exact
+CHK|F_ToggleSwitch_default_Position|double [1 4] 100 100 20 45|exact
+CHK|F_ToggleSwitch_default_Tag|char ''|exact
+CHK|F_ToggleSwitch_default_Tooltip|char ''|exact
+CHK|F_ToggleSwitch_default_Type|char 'uitoggleswitch'|exact
+CHK|F_ToggleSwitch_default_Value|char 'Off'|exact
+CHK|F_ToggleSwitch_default_ValueChangedFcn|char ''|exact
+CHK|F_ToggleSwitch_default_ValueIndex|double [1 1] 1|exact
+CHK|F_ToggleSwitch_default_Visible|onoff on|exact
+CHK|F_ToggleSwitch_userdata_empty|1|exact
+CHK|F_ToggleSwitch_children_prop|0|exact
+CHK|F_ToggleSwitch_contextmenu_empty|1|exact
+CHK|F_ToggleSwitch_parent_type|figure|exact
+CHK|F_ToggleSwitch_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_ToggleSwitch_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_ToggleSwitch_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_ToggleSwitch_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleSwitch_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ToggleSwitch_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Gauge_type|uigauge|exact
+CHK|F_Gauge_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode OuterPosition Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip Type UserData Value Visible|exact
+CHK|F_Gauge_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip UserData Value Visible|exact
+CHK|F_Gauge_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|F_Gauge_default_BeingDeleted|onoff off|exact
+CHK|F_Gauge_default_BusyAction|char 'queue'|exact
+CHK|F_Gauge_default_CreateFcn|char ''|exact
+CHK|F_Gauge_default_DeleteFcn|char ''|exact
+CHK|F_Gauge_default_Enable|onoff on|exact
+CHK|F_Gauge_default_FontAngle|char 'normal'|exact
+CHK|F_Gauge_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_Gauge_default_FontName|char 'Helvetica'|exact
+CHK|F_Gauge_default_FontSize|double [1 1] 12|exact
+CHK|F_Gauge_default_FontWeight|char 'normal'|exact
+CHK|F_Gauge_default_HandleVisibility|onoff on|exact
+CHK|F_Gauge_default_InnerPosition|double [1 4] 100 100 120 120|exact
+CHK|F_Gauge_default_Interruptible|onoff on|exact
+CHK|F_Gauge_default_Limits|double [1 2] 0 100|exact
+CHK|F_Gauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|F_Gauge_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|F_Gauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|F_Gauge_default_MajorTicksMode|char 'auto'|exact
+CHK|F_Gauge_default_MinorTicksMode|char 'auto'|exact
+CHK|F_Gauge_default_OuterPosition|double [1 4] 100 100 120 120|exact
+CHK|F_Gauge_default_Position|double [1 4] 100 100 120 120|exact
+CHK|F_Gauge_default_ScaleColorLimits|double [0 0]|exact
+CHK|F_Gauge_default_ScaleColors|double [0 0]|exact
+CHK|F_Gauge_default_ScaleDirection|char 'clockwise'|exact
+CHK|F_Gauge_default_Tag|char ''|exact
+CHK|F_Gauge_default_Tooltip|char ''|exact
+CHK|F_Gauge_default_Type|char 'uigauge'|exact
+CHK|F_Gauge_default_Value|double [1 1] 0|exact
+CHK|F_Gauge_default_Visible|onoff on|exact
+CHK|F_Gauge_userdata_empty|1|exact
+CHK|F_Gauge_children_prop|0|exact
+CHK|F_Gauge_contextmenu_empty|1|exact
+CHK|F_Gauge_parent_type|figure|exact
+CHK|F_Gauge_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_Gauge_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Gauge_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Gauge_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Gauge_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Gauge_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_LinearGauge_type|uilineargauge|exact
+CHK|F_LinearGauge_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation OuterPosition Parent Position ScaleColorLimits ScaleColors Tag Tooltip Type UserData Value Visible|exact
+CHK|F_LinearGauge_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation Parent Position ScaleColorLimits ScaleColors Tag Tooltip UserData Value Visible|exact
+CHK|F_LinearGauge_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|F_LinearGauge_default_BeingDeleted|onoff off|exact
+CHK|F_LinearGauge_default_BusyAction|char 'queue'|exact
+CHK|F_LinearGauge_default_CreateFcn|char ''|exact
+CHK|F_LinearGauge_default_DeleteFcn|char ''|exact
+CHK|F_LinearGauge_default_Enable|onoff on|exact
+CHK|F_LinearGauge_default_FontAngle|char 'normal'|exact
+CHK|F_LinearGauge_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_LinearGauge_default_FontName|char 'Helvetica'|exact
+CHK|F_LinearGauge_default_FontSize|double [1 1] 12|exact
+CHK|F_LinearGauge_default_FontWeight|char 'normal'|exact
+CHK|F_LinearGauge_default_HandleVisibility|onoff on|exact
+CHK|F_LinearGauge_default_InnerPosition|double [1 4] 100 100 120 40|exact
+CHK|F_LinearGauge_default_Interruptible|onoff on|exact
+CHK|F_LinearGauge_default_Limits|double [1 2] 0 100|exact
+CHK|F_LinearGauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|F_LinearGauge_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|F_LinearGauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|F_LinearGauge_default_MajorTicksMode|char 'auto'|exact
+CHK|F_LinearGauge_default_MinorTicksMode|char 'auto'|exact
+CHK|F_LinearGauge_default_Orientation|char 'horizontal'|exact
+CHK|F_LinearGauge_default_OuterPosition|double [1 4] 100 100 120 40|exact
+CHK|F_LinearGauge_default_Position|double [1 4] 100 100 120 40|exact
+CHK|F_LinearGauge_default_ScaleColorLimits|double [0 0]|exact
+CHK|F_LinearGauge_default_ScaleColors|double [0 0]|exact
+CHK|F_LinearGauge_default_Tag|char ''|exact
+CHK|F_LinearGauge_default_Tooltip|char ''|exact
+CHK|F_LinearGauge_default_Type|char 'uilineargauge'|exact
+CHK|F_LinearGauge_default_Value|double [1 1] 0|exact
+CHK|F_LinearGauge_default_Visible|onoff on|exact
+CHK|F_LinearGauge_userdata_empty|1|exact
+CHK|F_LinearGauge_children_prop|0|exact
+CHK|F_LinearGauge_contextmenu_empty|1|exact
+CHK|F_LinearGauge_parent_type|figure|exact
+CHK|F_LinearGauge_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_LinearGauge_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_LinearGauge_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_LinearGauge_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_LinearGauge_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_LinearGauge_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_NinetyDegreeGauge_type|uininetydegreegauge|exact
+CHK|F_NinetyDegreeGauge_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation OuterPosition Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip Type UserData Value Visible|exact
+CHK|F_NinetyDegreeGauge_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip UserData Value Visible|exact
+CHK|F_NinetyDegreeGauge_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|F_NinetyDegreeGauge_default_BeingDeleted|onoff off|exact
+CHK|F_NinetyDegreeGauge_default_BusyAction|char 'queue'|exact
+CHK|F_NinetyDegreeGauge_default_CreateFcn|char ''|exact
+CHK|F_NinetyDegreeGauge_default_DeleteFcn|char ''|exact
+CHK|F_NinetyDegreeGauge_default_Enable|onoff on|exact
+CHK|F_NinetyDegreeGauge_default_FontAngle|char 'normal'|exact
+CHK|F_NinetyDegreeGauge_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_NinetyDegreeGauge_default_FontName|char 'Helvetica'|exact
+CHK|F_NinetyDegreeGauge_default_FontSize|double [1 1] 12|exact
+CHK|F_NinetyDegreeGauge_default_FontWeight|char 'normal'|exact
+CHK|F_NinetyDegreeGauge_default_HandleVisibility|onoff on|exact
+CHK|F_NinetyDegreeGauge_default_InnerPosition|double [1 4] 100 100 90 90|exact
+CHK|F_NinetyDegreeGauge_default_Interruptible|onoff on|exact
+CHK|F_NinetyDegreeGauge_default_Limits|double [1 2] 0 100|exact
+CHK|F_NinetyDegreeGauge_default_MajorTickLabels|cell [1 3] {char '0', char '50', char '100'}|exact
+CHK|F_NinetyDegreeGauge_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|F_NinetyDegreeGauge_default_MajorTicks|double [1 3] 0 50 100|exact
+CHK|F_NinetyDegreeGauge_default_MajorTicksMode|char 'auto'|exact
+CHK|F_NinetyDegreeGauge_default_MinorTicksMode|char 'auto'|exact
+CHK|F_NinetyDegreeGauge_default_Orientation|char 'northwest'|exact
+CHK|F_NinetyDegreeGauge_default_OuterPosition|double [1 4] 100 100 90 90|exact
+CHK|F_NinetyDegreeGauge_default_Position|double [1 4] 100 100 90 90|exact
+CHK|F_NinetyDegreeGauge_default_ScaleColorLimits|double [0 0]|exact
+CHK|F_NinetyDegreeGauge_default_ScaleColors|double [0 0]|exact
+CHK|F_NinetyDegreeGauge_default_ScaleDirection|char 'clockwise'|exact
+CHK|F_NinetyDegreeGauge_default_Tag|char ''|exact
+CHK|F_NinetyDegreeGauge_default_Tooltip|char ''|exact
+CHK|F_NinetyDegreeGauge_default_Type|char 'uininetydegreegauge'|exact
+CHK|F_NinetyDegreeGauge_default_Value|double [1 1] 0|exact
+CHK|F_NinetyDegreeGauge_default_Visible|onoff on|exact
+CHK|F_NinetyDegreeGauge_userdata_empty|1|exact
+CHK|F_NinetyDegreeGauge_children_prop|0|exact
+CHK|F_NinetyDegreeGauge_contextmenu_empty|1|exact
+CHK|F_NinetyDegreeGauge_parent_type|figure|exact
+CHK|F_NinetyDegreeGauge_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_NinetyDegreeGauge_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_NinetyDegreeGauge_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_NinetyDegreeGauge_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_NinetyDegreeGauge_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_NinetyDegreeGauge_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SemicircularGauge_type|uisemicirculargauge|exact
+CHK|F_SemicircularGauge_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation OuterPosition Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip Type UserData Value Visible|exact
+CHK|F_SemicircularGauge_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip UserData Value Visible|exact
+CHK|F_SemicircularGauge_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|F_SemicircularGauge_default_BeingDeleted|onoff off|exact
+CHK|F_SemicircularGauge_default_BusyAction|char 'queue'|exact
+CHK|F_SemicircularGauge_default_CreateFcn|char ''|exact
+CHK|F_SemicircularGauge_default_DeleteFcn|char ''|exact
+CHK|F_SemicircularGauge_default_Enable|onoff on|exact
+CHK|F_SemicircularGauge_default_FontAngle|char 'normal'|exact
+CHK|F_SemicircularGauge_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_SemicircularGauge_default_FontName|char 'Helvetica'|exact
+CHK|F_SemicircularGauge_default_FontSize|double [1 1] 12|exact
+CHK|F_SemicircularGauge_default_FontWeight|char 'normal'|exact
+CHK|F_SemicircularGauge_default_HandleVisibility|onoff on|exact
+CHK|F_SemicircularGauge_default_InnerPosition|double [1 4] 100 100 120 65|exact
+CHK|F_SemicircularGauge_default_Interruptible|onoff on|exact
+CHK|F_SemicircularGauge_default_Limits|double [1 2] 0 100|exact
+CHK|F_SemicircularGauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|F_SemicircularGauge_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|F_SemicircularGauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|F_SemicircularGauge_default_MajorTicksMode|char 'auto'|exact
+CHK|F_SemicircularGauge_default_MinorTicksMode|char 'auto'|exact
+CHK|F_SemicircularGauge_default_Orientation|char 'north'|exact
+CHK|F_SemicircularGauge_default_OuterPosition|double [1 4] 100 100 120 65|exact
+CHK|F_SemicircularGauge_default_Position|double [1 4] 100 100 120 65|exact
+CHK|F_SemicircularGauge_default_ScaleColorLimits|double [0 0]|exact
+CHK|F_SemicircularGauge_default_ScaleColors|double [0 0]|exact
+CHK|F_SemicircularGauge_default_ScaleDirection|char 'clockwise'|exact
+CHK|F_SemicircularGauge_default_Tag|char ''|exact
+CHK|F_SemicircularGauge_default_Tooltip|char ''|exact
+CHK|F_SemicircularGauge_default_Type|char 'uisemicirculargauge'|exact
+CHK|F_SemicircularGauge_default_Value|double [1 1] 0|exact
+CHK|F_SemicircularGauge_default_Visible|onoff on|exact
+CHK|F_SemicircularGauge_userdata_empty|1|exact
+CHK|F_SemicircularGauge_children_prop|0|exact
+CHK|F_SemicircularGauge_contextmenu_empty|1|exact
+CHK|F_SemicircularGauge_parent_type|figure|exact
+CHK|F_SemicircularGauge_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_SemicircularGauge_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_SemicircularGauge_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_SemicircularGauge_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SemicircularGauge_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_SemicircularGauge_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Lamp_type|uilamp|exact
+CHK|F_Lamp_get_names|BeingDeleted BusyAction Color ContextMenu CreateFcn DeleteFcn Enable HandleVisibility InnerPosition Interruptible Layout OuterPosition Parent Position Tag Tooltip Type UserData Visible|exact
+CHK|F_Lamp_set_names|BusyAction Color ContextMenu CreateFcn DeleteFcn Enable HandleVisibility InnerPosition Interruptible Layout Parent Position Tag Tooltip UserData Visible|exact
+CHK|F_Lamp_default_BeingDeleted|onoff off|exact
+CHK|F_Lamp_default_BusyAction|char 'queue'|exact
+CHK|F_Lamp_default_Color|double [1 3] 0 1 0|exact
+CHK|F_Lamp_default_CreateFcn|char ''|exact
+CHK|F_Lamp_default_DeleteFcn|char ''|exact
+CHK|F_Lamp_default_Enable|onoff on|exact
+CHK|F_Lamp_default_HandleVisibility|onoff on|exact
+CHK|F_Lamp_default_InnerPosition|double [1 4] 100 100 20 20|exact
+CHK|F_Lamp_default_Interruptible|onoff on|exact
+CHK|F_Lamp_default_OuterPosition|double [1 4] 100 100 20 20|exact
+CHK|F_Lamp_default_Position|double [1 4] 100 100 20 20|exact
+CHK|F_Lamp_default_Tag|char ''|exact
+CHK|F_Lamp_default_Tooltip|char ''|exact
+CHK|F_Lamp_default_Type|char 'uilamp'|exact
+CHK|F_Lamp_default_Visible|onoff on|exact
+CHK|F_Lamp_userdata_empty|1|exact
+CHK|F_Lamp_children_prop|0|exact
+CHK|F_Lamp_contextmenu_empty|1|exact
+CHK|F_Lamp_parent_type|figure|exact
+CHK|F_Lamp_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_Lamp_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Lamp_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Lamp_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Lamp_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Lamp_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_DatePicker_type|uidatepicker|exact
+CHK|F_DatePicker_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn DisabledDates DisabledDaysOfWeek DisplayFormat Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits OuterPosition Parent Placeholder Position Tag Tooltip Type UserData Value ValueChangedFcn Visible|exact
+CHK|F_DatePicker_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn DisabledDates DisabledDaysOfWeek DisplayFormat Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits Parent Placeholder Position Tag Tooltip UserData Value ValueChangedFcn Visible|exact
+CHK|F_DatePicker_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|F_DatePicker_default_BeingDeleted|onoff off|exact
+CHK|F_DatePicker_default_BusyAction|char 'queue'|exact
+CHK|F_DatePicker_default_CreateFcn|char ''|exact
+CHK|F_DatePicker_default_DeleteFcn|char ''|exact
+CHK|F_DatePicker_default_DisabledDates|datetime [0 0] fmt=dd-MMM-uuuu tz=- []|exact
+CHK|F_DatePicker_default_DisabledDaysOfWeek|double [0 0]|exact
+CHK|F_DatePicker_default_DisplayFormat|char 'dd-MMM-uuuu'|exact
+CHK|F_DatePicker_default_Editable|onoff on|exact
+CHK|F_DatePicker_default_Enable|onoff on|exact
+CHK|F_DatePicker_default_FontAngle|char 'normal'|exact
+CHK|F_DatePicker_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_DatePicker_default_FontName|char 'Helvetica'|exact
+CHK|F_DatePicker_default_FontSize|double [1 1] 12|exact
+CHK|F_DatePicker_default_FontWeight|char 'normal'|exact
+CHK|F_DatePicker_default_HandleVisibility|onoff on|exact
+CHK|F_DatePicker_default_InnerPosition|double [1 4] 100 100 150 22|exact
+CHK|F_DatePicker_default_Interruptible|onoff on|exact
+CHK|F_DatePicker_default_Limits|datetime [1 2] fmt=dd-MMM-uuuu tz=- [01-Jan-0000,31-Dec-9999]|exact
+CHK|F_DatePicker_default_OuterPosition|double [1 4] 100 100 150 22|exact
+CHK|F_DatePicker_default_Placeholder|char ''|exact
+CHK|F_DatePicker_default_Position|double [1 4] 100 100 150 22|exact
+CHK|F_DatePicker_default_Tag|char ''|exact
+CHK|F_DatePicker_default_Tooltip|char ''|exact
+CHK|F_DatePicker_default_Type|char 'uidatepicker'|exact
+CHK|F_DatePicker_default_Value|datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]|exact
+CHK|F_DatePicker_default_ValueChangedFcn|char ''|exact
+CHK|F_DatePicker_default_Visible|onoff on|exact
+CHK|F_DatePicker_userdata_empty|1|exact
+CHK|F_DatePicker_children_prop|0|exact
+CHK|F_DatePicker_contextmenu_empty|1|exact
+CHK|F_DatePicker_parent_type|figure|exact
+CHK|F_DatePicker_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_DatePicker_words_Editable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_DatePicker_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_DatePicker_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_DatePicker_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_DatePicker_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_DatePicker_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ColorPicker_type|uicolorpicker|exact
+CHK|F_ColorPicker_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon InnerPosition Interruptible Layout OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn Visible|exact
+CHK|F_ColorPicker_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon InnerPosition Interruptible Layout Parent Position Tag Tooltip UserData Value ValueChangedFcn Visible|exact
+CHK|F_ColorPicker_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|F_ColorPicker_default_BeingDeleted|onoff off|exact
+CHK|F_ColorPicker_default_BusyAction|char 'queue'|exact
+CHK|F_ColorPicker_default_CreateFcn|char ''|exact
+CHK|F_ColorPicker_default_DeleteFcn|char ''|exact
+CHK|F_ColorPicker_default_Enable|onoff on|exact
+CHK|F_ColorPicker_default_HandleVisibility|onoff on|exact
+CHK|F_ColorPicker_default_Icon|char ''|exact
+CHK|F_ColorPicker_default_InnerPosition|double [1 4] 100 100 38 22|exact
+CHK|F_ColorPicker_default_Interruptible|onoff on|exact
+CHK|F_ColorPicker_default_OuterPosition|double [1 4] 100 100 38 22|exact
+CHK|F_ColorPicker_default_Position|double [1 4] 100 100 38 22|exact
+CHK|F_ColorPicker_default_Tag|char ''|exact
+CHK|F_ColorPicker_default_Tooltip|char ''|exact
+CHK|F_ColorPicker_default_Type|char 'uicolorpicker'|exact
+CHK|F_ColorPicker_default_Value|double [1 3] 1 0 0|exact
+CHK|F_ColorPicker_default_ValueChangedFcn|char ''|exact
+CHK|F_ColorPicker_default_Visible|onoff on|exact
+CHK|F_ColorPicker_userdata_empty|1|exact
+CHK|F_ColorPicker_children_prop|0|exact
+CHK|F_ColorPicker_contextmenu_empty|1|exact
+CHK|F_ColorPicker_parent_type|figure|exact
+CHK|F_ColorPicker_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_ColorPicker_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_ColorPicker_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_ColorPicker_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ColorPicker_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_ColorPicker_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Tree_type|uitree|exact
+CHK|F_Tree_get_names|BackgroundColor BeingDeleted BusyAction Children ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Multiselect NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn OuterPosition Parent Position SelectedNodes SelectionChangedFcn StyleConfigurations Tag Tooltip Type UserData Visible|exact
+CHK|F_Tree_set_names|BackgroundColor BusyAction Children ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Multiselect NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn Parent Position SelectedNodes SelectionChangedFcn Tag Tooltip UserData Visible|exact
+CHK|F_Tree_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|F_Tree_default_BeingDeleted|onoff off|exact
+CHK|F_Tree_default_BusyAction|char 'queue'|exact
+CHK|F_Tree_default_ClickedFcn|char ''|exact
+CHK|F_Tree_default_CreateFcn|char ''|exact
+CHK|F_Tree_default_DeleteFcn|char ''|exact
+CHK|F_Tree_default_DoubleClickedFcn|char ''|exact
+CHK|F_Tree_default_Editable|onoff off|exact
+CHK|F_Tree_default_Enable|onoff on|exact
+CHK|F_Tree_default_FontAngle|char 'normal'|exact
+CHK|F_Tree_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_Tree_default_FontName|char 'Helvetica'|exact
+CHK|F_Tree_default_FontSize|double [1 1] 12|exact
+CHK|F_Tree_default_FontWeight|char 'normal'|exact
+CHK|F_Tree_default_HandleVisibility|onoff on|exact
+CHK|F_Tree_default_InnerPosition|double [1 4] 20 20 150 300|exact
+CHK|F_Tree_default_Interruptible|onoff on|exact
+CHK|F_Tree_default_Multiselect|onoff off|exact
+CHK|F_Tree_default_NodeCollapsedFcn|char ''|exact
+CHK|F_Tree_default_NodeExpandedFcn|char ''|exact
+CHK|F_Tree_default_NodeTextChangedFcn|char ''|exact
+CHK|F_Tree_default_OuterPosition|double [1 4] 20 20 150 300|exact
+CHK|F_Tree_default_Position|double [1 4] 20 20 150 300|exact
+CHK|F_Tree_default_SelectionChangedFcn|char ''|exact
+CHK|F_Tree_default_Tag|char ''|exact
+CHK|F_Tree_default_Tooltip|char ''|exact
+CHK|F_Tree_default_Type|char 'uitree'|exact
+CHK|F_Tree_default_Visible|onoff on|exact
+CHK|F_Tree_userdata_empty|1|exact
+CHK|F_Tree_children_prop|1|exact
+CHK|F_Tree_children_empty|1|exact
+CHK|F_Tree_contextmenu_empty|1|exact
+CHK|F_Tree_parent_type|figure|exact
+CHK|F_Tree_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_Tree_words_Multiselect|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Tree_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_Tree_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_Tree_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Tree_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Tree_words_Editable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_Tree_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_CheckBoxTree_type|uicheckboxtree|exact
+CHK|F_CheckBoxTree_get_names|BackgroundColor BeingDeleted BusyAction CheckedNodes CheckedNodesChangedFcn Children ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn OuterPosition Parent Position SelectedNodes SelectionChangedFcn StyleConfigurations Tag Tooltip Type UserData Visible|exact
+CHK|F_CheckBoxTree_set_names|BackgroundColor BusyAction CheckedNodes CheckedNodesChangedFcn Children ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn Parent Position SelectedNodes SelectionChangedFcn Tag Tooltip UserData Visible|exact
+CHK|F_CheckBoxTree_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|F_CheckBoxTree_default_BeingDeleted|onoff off|exact
+CHK|F_CheckBoxTree_default_BusyAction|char 'queue'|exact
+CHK|F_CheckBoxTree_default_CheckedNodesChangedFcn|char ''|exact
+CHK|F_CheckBoxTree_default_ClickedFcn|char ''|exact
+CHK|F_CheckBoxTree_default_CreateFcn|char ''|exact
+CHK|F_CheckBoxTree_default_DeleteFcn|char ''|exact
+CHK|F_CheckBoxTree_default_DoubleClickedFcn|char ''|exact
+CHK|F_CheckBoxTree_default_Editable|onoff off|exact
+CHK|F_CheckBoxTree_default_Enable|onoff on|exact
+CHK|F_CheckBoxTree_default_FontAngle|char 'normal'|exact
+CHK|F_CheckBoxTree_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|F_CheckBoxTree_default_FontName|char 'Helvetica'|exact
+CHK|F_CheckBoxTree_default_FontSize|double [1 1] 12|exact
+CHK|F_CheckBoxTree_default_FontWeight|char 'normal'|exact
+CHK|F_CheckBoxTree_default_HandleVisibility|onoff on|exact
+CHK|F_CheckBoxTree_default_InnerPosition|double [1 4] 20 20 150 300|exact
+CHK|F_CheckBoxTree_default_Interruptible|onoff on|exact
+CHK|F_CheckBoxTree_default_NodeCollapsedFcn|char ''|exact
+CHK|F_CheckBoxTree_default_NodeExpandedFcn|char ''|exact
+CHK|F_CheckBoxTree_default_NodeTextChangedFcn|char ''|exact
+CHK|F_CheckBoxTree_default_OuterPosition|double [1 4] 20 20 150 300|exact
+CHK|F_CheckBoxTree_default_Position|double [1 4] 20 20 150 300|exact
+CHK|F_CheckBoxTree_default_SelectionChangedFcn|char ''|exact
+CHK|F_CheckBoxTree_default_Tag|char ''|exact
+CHK|F_CheckBoxTree_default_Tooltip|char ''|exact
+CHK|F_CheckBoxTree_default_Type|char 'uicheckboxtree'|exact
+CHK|F_CheckBoxTree_default_Visible|onoff on|exact
+CHK|F_CheckBoxTree_userdata_empty|1|exact
+CHK|F_CheckBoxTree_children_prop|1|exact
+CHK|F_CheckBoxTree_children_empty|1|exact
+CHK|F_CheckBoxTree_contextmenu_empty|1|exact
+CHK|F_CheckBoxTree_parent_type|figure|exact
+CHK|F_CheckBoxTree_flags|0 1 1 1 1 1 1 1|exact
+CHK|F_CheckBoxTree_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_CheckBoxTree_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_CheckBoxTree_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_CheckBoxTree_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_CheckBoxTree_words_Editable|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_CheckBoxTree_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|F_TreeNode_type|uitreenode|exact
+CHK|F_TreeNode_get_names|BeingDeleted BusyAction Children ContextMenu CreateFcn DeleteFcn HandleVisibility Icon Interruptible NodeData Parent Tag Text Type UserData|exact
+CHK|F_TreeNode_set_names|BusyAction Children ContextMenu CreateFcn DeleteFcn HandleVisibility Icon Interruptible NodeData Parent Tag Text UserData|exact
+CHK|F_TreeNode_default_BeingDeleted|onoff off|exact
+CHK|F_TreeNode_default_BusyAction|char 'queue'|exact
+CHK|F_TreeNode_default_CreateFcn|char ''|exact
+CHK|F_TreeNode_default_DeleteFcn|char ''|exact
+CHK|F_TreeNode_default_HandleVisibility|onoff on|exact
+CHK|F_TreeNode_default_Icon|char ''|exact
+CHK|F_TreeNode_default_Interruptible|onoff on|exact
+CHK|F_TreeNode_default_NodeData|double [0 0]|exact
+CHK|F_TreeNode_default_Tag|char ''|exact
+CHK|F_TreeNode_default_Text|char 'Tree Node'|exact
+CHK|F_TreeNode_default_Type|char 'uitreenode'|exact
+CHK|F_TreeNode_userdata_empty|1|exact
+CHK|F_TreeNode_children_prop|1|exact
+CHK|F_TreeNode_children_empty|1|exact
+CHK|F_TreeNode_contextmenu_empty|1|exact
+CHK|F_TreeNode_parent_type|uitree|exact
+CHK|F_TreeNode_flags|0 0 0 0 1 1 1 1|exact
+CHK|F_TreeNode_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|F_TreeNode_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|F_TreeNode_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Knob_type|uiknob|exact
+CHK|U_Knob_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|U_Knob_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueChangingFcn Visible|exact
+CHK|U_Knob_default_BeingDeleted|onoff off|exact
+CHK|U_Knob_default_BusyAction|char 'queue'|exact
+CHK|U_Knob_default_CreateFcn|char ''|exact
+CHK|U_Knob_default_DeleteFcn|char ''|exact
+CHK|U_Knob_default_Enable|onoff on|exact
+CHK|U_Knob_default_FontAngle|char 'normal'|exact
+CHK|U_Knob_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_Knob_default_FontName|char 'Helvetica'|exact
+CHK|U_Knob_default_FontSize|double [1 1] 12|exact
+CHK|U_Knob_default_FontWeight|char 'normal'|exact
+CHK|U_Knob_default_HandleVisibility|onoff on|exact
+CHK|U_Knob_default_InnerPosition|double [1 4] 100 100 60 60|exact
+CHK|U_Knob_default_Interruptible|onoff on|exact
+CHK|U_Knob_default_Limits|double [1 2] 0 100|exact
+CHK|U_Knob_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|U_Knob_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|U_Knob_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|U_Knob_default_MajorTicksMode|char 'auto'|exact
+CHK|U_Knob_default_MinorTicksMode|char 'auto'|exact
+CHK|U_Knob_default_Position|double [1 4] 100 100 60 60|exact
+CHK|U_Knob_default_Tag|char ''|exact
+CHK|U_Knob_default_Tooltip|char ''|exact
+CHK|U_Knob_default_Type|char 'uiknob'|exact
+CHK|U_Knob_default_Value|double [1 1] 0|exact
+CHK|U_Knob_default_ValueChangedFcn|char ''|exact
+CHK|U_Knob_default_ValueChangingFcn|char ''|exact
+CHK|U_Knob_default_Visible|onoff on|exact
+CHK|U_Knob_userdata_empty|1|exact
+CHK|U_Knob_children_prop|0|exact
+CHK|U_Knob_contextmenu_empty|1|exact
+CHK|U_Knob_parent_type|figure|exact
+CHK|U_Knob_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_Knob_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Knob_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Knob_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Knob_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Knob_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_DiscreteKnob_type|uidiscreteknob|exact
+CHK|U_DiscreteKnob_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|U_DiscreteKnob_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|U_DiscreteKnob_default_BeingDeleted|onoff off|exact
+CHK|U_DiscreteKnob_default_BusyAction|char 'queue'|exact
+CHK|U_DiscreteKnob_default_CreateFcn|char ''|exact
+CHK|U_DiscreteKnob_default_DeleteFcn|char ''|exact
+CHK|U_DiscreteKnob_default_Enable|onoff on|exact
+CHK|U_DiscreteKnob_default_FontAngle|char 'normal'|exact
+CHK|U_DiscreteKnob_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_DiscreteKnob_default_FontName|char 'Helvetica'|exact
+CHK|U_DiscreteKnob_default_FontSize|double [1 1] 12|exact
+CHK|U_DiscreteKnob_default_FontWeight|char 'normal'|exact
+CHK|U_DiscreteKnob_default_HandleVisibility|onoff on|exact
+CHK|U_DiscreteKnob_default_InnerPosition|double [1 4] 100 100 60 60|exact
+CHK|U_DiscreteKnob_default_Interruptible|onoff on|exact
+CHK|U_DiscreteKnob_default_Items|cell [1 4] {char 'Off', char 'Low', char 'Medium', char 'High'}|exact
+CHK|U_DiscreteKnob_default_ItemsData|double [0 0]|exact
+CHK|U_DiscreteKnob_default_Position|double [1 4] 100 100 60 60|exact
+CHK|U_DiscreteKnob_default_Tag|char ''|exact
+CHK|U_DiscreteKnob_default_Tooltip|char ''|exact
+CHK|U_DiscreteKnob_default_Type|char 'uidiscreteknob'|exact
+CHK|U_DiscreteKnob_default_Value|char 'Off'|exact
+CHK|U_DiscreteKnob_default_ValueChangedFcn|char ''|exact
+CHK|U_DiscreteKnob_default_ValueIndex|double [1 1] 1|exact
+CHK|U_DiscreteKnob_default_Visible|onoff on|exact
+CHK|U_DiscreteKnob_userdata_empty|1|exact
+CHK|U_DiscreteKnob_children_prop|0|exact
+CHK|U_DiscreteKnob_contextmenu_empty|1|exact
+CHK|U_DiscreteKnob_parent_type|figure|exact
+CHK|U_DiscreteKnob_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_DiscreteKnob_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_DiscreteKnob_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_DiscreteKnob_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_DiscreteKnob_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_DiscreteKnob_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Switch_type|uiswitch|exact
+CHK|U_Switch_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|U_Switch_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|U_Switch_default_BeingDeleted|onoff off|exact
+CHK|U_Switch_default_BusyAction|char 'queue'|exact
+CHK|U_Switch_default_CreateFcn|char ''|exact
+CHK|U_Switch_default_DeleteFcn|char ''|exact
+CHK|U_Switch_default_Enable|onoff on|exact
+CHK|U_Switch_default_FontAngle|char 'normal'|exact
+CHK|U_Switch_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_Switch_default_FontName|char 'Helvetica'|exact
+CHK|U_Switch_default_FontSize|double [1 1] 12|exact
+CHK|U_Switch_default_FontWeight|char 'normal'|exact
+CHK|U_Switch_default_HandleVisibility|onoff on|exact
+CHK|U_Switch_default_InnerPosition|double [1 4] 100 100 45 20|exact
+CHK|U_Switch_default_Interruptible|onoff on|exact
+CHK|U_Switch_default_Items|cell [1 2] {char 'Off', char 'On'}|exact
+CHK|U_Switch_default_ItemsData|double [0 0]|exact
+CHK|U_Switch_default_Orientation|char 'horizontal'|exact
+CHK|U_Switch_default_Position|double [1 4] 100 100 45 20|exact
+CHK|U_Switch_default_Tag|char ''|exact
+CHK|U_Switch_default_Tooltip|char ''|exact
+CHK|U_Switch_default_Type|char 'uiswitch'|exact
+CHK|U_Switch_default_Value|char 'Off'|exact
+CHK|U_Switch_default_ValueChangedFcn|char ''|exact
+CHK|U_Switch_default_ValueIndex|double [1 1] 1|exact
+CHK|U_Switch_default_Visible|onoff on|exact
+CHK|U_Switch_userdata_empty|1|exact
+CHK|U_Switch_children_prop|0|exact
+CHK|U_Switch_contextmenu_empty|1|exact
+CHK|U_Switch_parent_type|figure|exact
+CHK|U_Switch_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_Switch_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Switch_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Switch_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Switch_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Switch_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_RockerSwitch_type|uirockerswitch|exact
+CHK|U_RockerSwitch_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|U_RockerSwitch_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|U_RockerSwitch_default_BeingDeleted|onoff off|exact
+CHK|U_RockerSwitch_default_BusyAction|char 'queue'|exact
+CHK|U_RockerSwitch_default_CreateFcn|char ''|exact
+CHK|U_RockerSwitch_default_DeleteFcn|char ''|exact
+CHK|U_RockerSwitch_default_Enable|onoff on|exact
+CHK|U_RockerSwitch_default_FontAngle|char 'normal'|exact
+CHK|U_RockerSwitch_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_RockerSwitch_default_FontName|char 'Helvetica'|exact
+CHK|U_RockerSwitch_default_FontSize|double [1 1] 12|exact
+CHK|U_RockerSwitch_default_FontWeight|char 'normal'|exact
+CHK|U_RockerSwitch_default_HandleVisibility|onoff on|exact
+CHK|U_RockerSwitch_default_InnerPosition|double [1 4] 100 100 20 45|exact
+CHK|U_RockerSwitch_default_Interruptible|onoff on|exact
+CHK|U_RockerSwitch_default_Items|cell [1 2] {char 'Off', char 'On'}|exact
+CHK|U_RockerSwitch_default_ItemsData|double [0 0]|exact
+CHK|U_RockerSwitch_default_Orientation|char 'vertical'|exact
+CHK|U_RockerSwitch_default_Position|double [1 4] 100 100 20 45|exact
+CHK|U_RockerSwitch_default_Tag|char ''|exact
+CHK|U_RockerSwitch_default_Tooltip|char ''|exact
+CHK|U_RockerSwitch_default_Type|char 'uirockerswitch'|exact
+CHK|U_RockerSwitch_default_Value|char 'Off'|exact
+CHK|U_RockerSwitch_default_ValueChangedFcn|char ''|exact
+CHK|U_RockerSwitch_default_ValueIndex|double [1 1] 1|exact
+CHK|U_RockerSwitch_default_Visible|onoff on|exact
+CHK|U_RockerSwitch_userdata_empty|1|exact
+CHK|U_RockerSwitch_children_prop|0|exact
+CHK|U_RockerSwitch_contextmenu_empty|1|exact
+CHK|U_RockerSwitch_parent_type|figure|exact
+CHK|U_RockerSwitch_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_RockerSwitch_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_RockerSwitch_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_RockerSwitch_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_RockerSwitch_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_RockerSwitch_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleSwitch_type|uitoggleswitch|exact
+CHK|U_ToggleSwitch_get_names|BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|U_ToggleSwitch_set_names|BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Items ItemsData Layout Orientation Parent Position Tag Tooltip UserData Value ValueChangedFcn ValueIndex Visible|exact
+CHK|U_ToggleSwitch_default_BeingDeleted|onoff off|exact
+CHK|U_ToggleSwitch_default_BusyAction|char 'queue'|exact
+CHK|U_ToggleSwitch_default_CreateFcn|char ''|exact
+CHK|U_ToggleSwitch_default_DeleteFcn|char ''|exact
+CHK|U_ToggleSwitch_default_Enable|onoff on|exact
+CHK|U_ToggleSwitch_default_FontAngle|char 'normal'|exact
+CHK|U_ToggleSwitch_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_ToggleSwitch_default_FontName|char 'Helvetica'|exact
+CHK|U_ToggleSwitch_default_FontSize|double [1 1] 12|exact
+CHK|U_ToggleSwitch_default_FontWeight|char 'normal'|exact
+CHK|U_ToggleSwitch_default_HandleVisibility|onoff on|exact
+CHK|U_ToggleSwitch_default_InnerPosition|double [1 4] 100 100 20 45|exact
+CHK|U_ToggleSwitch_default_Interruptible|onoff on|exact
+CHK|U_ToggleSwitch_default_Items|cell [1 2] {char 'Off', char 'On'}|exact
+CHK|U_ToggleSwitch_default_ItemsData|double [0 0]|exact
+CHK|U_ToggleSwitch_default_Orientation|char 'vertical'|exact
+CHK|U_ToggleSwitch_default_Position|double [1 4] 100 100 20 45|exact
+CHK|U_ToggleSwitch_default_Tag|char ''|exact
+CHK|U_ToggleSwitch_default_Tooltip|char ''|exact
+CHK|U_ToggleSwitch_default_Type|char 'uitoggleswitch'|exact
+CHK|U_ToggleSwitch_default_Value|char 'Off'|exact
+CHK|U_ToggleSwitch_default_ValueChangedFcn|char ''|exact
+CHK|U_ToggleSwitch_default_ValueIndex|double [1 1] 1|exact
+CHK|U_ToggleSwitch_default_Visible|onoff on|exact
+CHK|U_ToggleSwitch_userdata_empty|1|exact
+CHK|U_ToggleSwitch_children_prop|0|exact
+CHK|U_ToggleSwitch_contextmenu_empty|1|exact
+CHK|U_ToggleSwitch_parent_type|figure|exact
+CHK|U_ToggleSwitch_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_ToggleSwitch_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_ToggleSwitch_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_ToggleSwitch_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleSwitch_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ToggleSwitch_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Gauge_type|uigauge|exact
+CHK|U_Gauge_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode OuterPosition Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip Type UserData Value Visible|exact
+CHK|U_Gauge_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip UserData Value Visible|exact
+CHK|U_Gauge_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|U_Gauge_default_BeingDeleted|onoff off|exact
+CHK|U_Gauge_default_BusyAction|char 'queue'|exact
+CHK|U_Gauge_default_CreateFcn|char ''|exact
+CHK|U_Gauge_default_DeleteFcn|char ''|exact
+CHK|U_Gauge_default_Enable|onoff on|exact
+CHK|U_Gauge_default_FontAngle|char 'normal'|exact
+CHK|U_Gauge_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_Gauge_default_FontName|char 'Helvetica'|exact
+CHK|U_Gauge_default_FontSize|double [1 1] 12|exact
+CHK|U_Gauge_default_FontWeight|char 'normal'|exact
+CHK|U_Gauge_default_HandleVisibility|onoff on|exact
+CHK|U_Gauge_default_InnerPosition|double [1 4] 100 100 120 120|exact
+CHK|U_Gauge_default_Interruptible|onoff on|exact
+CHK|U_Gauge_default_Limits|double [1 2] 0 100|exact
+CHK|U_Gauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|U_Gauge_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|U_Gauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|U_Gauge_default_MajorTicksMode|char 'auto'|exact
+CHK|U_Gauge_default_MinorTicksMode|char 'auto'|exact
+CHK|U_Gauge_default_OuterPosition|double [1 4] 100 100 120 120|exact
+CHK|U_Gauge_default_Position|double [1 4] 100 100 120 120|exact
+CHK|U_Gauge_default_ScaleColorLimits|double [0 0]|exact
+CHK|U_Gauge_default_ScaleColors|double [0 0]|exact
+CHK|U_Gauge_default_ScaleDirection|char 'clockwise'|exact
+CHK|U_Gauge_default_Tag|char ''|exact
+CHK|U_Gauge_default_Tooltip|char ''|exact
+CHK|U_Gauge_default_Type|char 'uigauge'|exact
+CHK|U_Gauge_default_Value|double [1 1] 0|exact
+CHK|U_Gauge_default_Visible|onoff on|exact
+CHK|U_Gauge_userdata_empty|1|exact
+CHK|U_Gauge_children_prop|0|exact
+CHK|U_Gauge_contextmenu_empty|1|exact
+CHK|U_Gauge_parent_type|figure|exact
+CHK|U_Gauge_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_Gauge_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Gauge_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Gauge_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Gauge_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Gauge_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_LinearGauge_type|uilineargauge|exact
+CHK|U_LinearGauge_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation OuterPosition Parent Position ScaleColorLimits ScaleColors Tag Tooltip Type UserData Value Visible|exact
+CHK|U_LinearGauge_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation Parent Position ScaleColorLimits ScaleColors Tag Tooltip UserData Value Visible|exact
+CHK|U_LinearGauge_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|U_LinearGauge_default_BeingDeleted|onoff off|exact
+CHK|U_LinearGauge_default_BusyAction|char 'queue'|exact
+CHK|U_LinearGauge_default_CreateFcn|char ''|exact
+CHK|U_LinearGauge_default_DeleteFcn|char ''|exact
+CHK|U_LinearGauge_default_Enable|onoff on|exact
+CHK|U_LinearGauge_default_FontAngle|char 'normal'|exact
+CHK|U_LinearGauge_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_LinearGauge_default_FontName|char 'Helvetica'|exact
+CHK|U_LinearGauge_default_FontSize|double [1 1] 12|exact
+CHK|U_LinearGauge_default_FontWeight|char 'normal'|exact
+CHK|U_LinearGauge_default_HandleVisibility|onoff on|exact
+CHK|U_LinearGauge_default_InnerPosition|double [1 4] 100 100 120 40|exact
+CHK|U_LinearGauge_default_Interruptible|onoff on|exact
+CHK|U_LinearGauge_default_Limits|double [1 2] 0 100|exact
+CHK|U_LinearGauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|U_LinearGauge_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|U_LinearGauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|U_LinearGauge_default_MajorTicksMode|char 'auto'|exact
+CHK|U_LinearGauge_default_MinorTicksMode|char 'auto'|exact
+CHK|U_LinearGauge_default_Orientation|char 'horizontal'|exact
+CHK|U_LinearGauge_default_OuterPosition|double [1 4] 100 100 120 40|exact
+CHK|U_LinearGauge_default_Position|double [1 4] 100 100 120 40|exact
+CHK|U_LinearGauge_default_ScaleColorLimits|double [0 0]|exact
+CHK|U_LinearGauge_default_ScaleColors|double [0 0]|exact
+CHK|U_LinearGauge_default_Tag|char ''|exact
+CHK|U_LinearGauge_default_Tooltip|char ''|exact
+CHK|U_LinearGauge_default_Type|char 'uilineargauge'|exact
+CHK|U_LinearGauge_default_Value|double [1 1] 0|exact
+CHK|U_LinearGauge_default_Visible|onoff on|exact
+CHK|U_LinearGauge_userdata_empty|1|exact
+CHK|U_LinearGauge_children_prop|0|exact
+CHK|U_LinearGauge_contextmenu_empty|1|exact
+CHK|U_LinearGauge_parent_type|figure|exact
+CHK|U_LinearGauge_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_LinearGauge_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_LinearGauge_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_LinearGauge_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_LinearGauge_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_LinearGauge_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_NinetyDegreeGauge_type|uininetydegreegauge|exact
+CHK|U_NinetyDegreeGauge_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation OuterPosition Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip Type UserData Value Visible|exact
+CHK|U_NinetyDegreeGauge_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip UserData Value Visible|exact
+CHK|U_NinetyDegreeGauge_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|U_NinetyDegreeGauge_default_BeingDeleted|onoff off|exact
+CHK|U_NinetyDegreeGauge_default_BusyAction|char 'queue'|exact
+CHK|U_NinetyDegreeGauge_default_CreateFcn|char ''|exact
+CHK|U_NinetyDegreeGauge_default_DeleteFcn|char ''|exact
+CHK|U_NinetyDegreeGauge_default_Enable|onoff on|exact
+CHK|U_NinetyDegreeGauge_default_FontAngle|char 'normal'|exact
+CHK|U_NinetyDegreeGauge_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_NinetyDegreeGauge_default_FontName|char 'Helvetica'|exact
+CHK|U_NinetyDegreeGauge_default_FontSize|double [1 1] 12|exact
+CHK|U_NinetyDegreeGauge_default_FontWeight|char 'normal'|exact
+CHK|U_NinetyDegreeGauge_default_HandleVisibility|onoff on|exact
+CHK|U_NinetyDegreeGauge_default_InnerPosition|double [1 4] 100 100 90 90|exact
+CHK|U_NinetyDegreeGauge_default_Interruptible|onoff on|exact
+CHK|U_NinetyDegreeGauge_default_Limits|double [1 2] 0 100|exact
+CHK|U_NinetyDegreeGauge_default_MajorTickLabels|cell [1 3] {char '0', char '50', char '100'}|exact
+CHK|U_NinetyDegreeGauge_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|U_NinetyDegreeGauge_default_MajorTicks|double [1 3] 0 50 100|exact
+CHK|U_NinetyDegreeGauge_default_MajorTicksMode|char 'auto'|exact
+CHK|U_NinetyDegreeGauge_default_MinorTicksMode|char 'auto'|exact
+CHK|U_NinetyDegreeGauge_default_Orientation|char 'northwest'|exact
+CHK|U_NinetyDegreeGauge_default_OuterPosition|double [1 4] 100 100 90 90|exact
+CHK|U_NinetyDegreeGauge_default_Position|double [1 4] 100 100 90 90|exact
+CHK|U_NinetyDegreeGauge_default_ScaleColorLimits|double [0 0]|exact
+CHK|U_NinetyDegreeGauge_default_ScaleColors|double [0 0]|exact
+CHK|U_NinetyDegreeGauge_default_ScaleDirection|char 'clockwise'|exact
+CHK|U_NinetyDegreeGauge_default_Tag|char ''|exact
+CHK|U_NinetyDegreeGauge_default_Tooltip|char ''|exact
+CHK|U_NinetyDegreeGauge_default_Type|char 'uininetydegreegauge'|exact
+CHK|U_NinetyDegreeGauge_default_Value|double [1 1] 0|exact
+CHK|U_NinetyDegreeGauge_default_Visible|onoff on|exact
+CHK|U_NinetyDegreeGauge_userdata_empty|1|exact
+CHK|U_NinetyDegreeGauge_children_prop|0|exact
+CHK|U_NinetyDegreeGauge_contextmenu_empty|1|exact
+CHK|U_NinetyDegreeGauge_parent_type|figure|exact
+CHK|U_NinetyDegreeGauge_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_NinetyDegreeGauge_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_NinetyDegreeGauge_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_NinetyDegreeGauge_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_NinetyDegreeGauge_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_NinetyDegreeGauge_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SemicircularGauge_type|uisemicirculargauge|exact
+CHK|U_SemicircularGauge_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation OuterPosition Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip Type UserData Value Visible|exact
+CHK|U_SemicircularGauge_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits MajorTickLabels MajorTickLabelsMode MajorTicks MajorTicksMode MinorTicks MinorTicksMode Orientation Parent Position ScaleColorLimits ScaleColors ScaleDirection Tag Tooltip UserData Value Visible|exact
+CHK|U_SemicircularGauge_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|U_SemicircularGauge_default_BeingDeleted|onoff off|exact
+CHK|U_SemicircularGauge_default_BusyAction|char 'queue'|exact
+CHK|U_SemicircularGauge_default_CreateFcn|char ''|exact
+CHK|U_SemicircularGauge_default_DeleteFcn|char ''|exact
+CHK|U_SemicircularGauge_default_Enable|onoff on|exact
+CHK|U_SemicircularGauge_default_FontAngle|char 'normal'|exact
+CHK|U_SemicircularGauge_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_SemicircularGauge_default_FontName|char 'Helvetica'|exact
+CHK|U_SemicircularGauge_default_FontSize|double [1 1] 12|exact
+CHK|U_SemicircularGauge_default_FontWeight|char 'normal'|exact
+CHK|U_SemicircularGauge_default_HandleVisibility|onoff on|exact
+CHK|U_SemicircularGauge_default_InnerPosition|double [1 4] 100 100 120 65|exact
+CHK|U_SemicircularGauge_default_Interruptible|onoff on|exact
+CHK|U_SemicircularGauge_default_Limits|double [1 2] 0 100|exact
+CHK|U_SemicircularGauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
+CHK|U_SemicircularGauge_default_MajorTickLabelsMode|char 'auto'|exact
+CHK|U_SemicircularGauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
+CHK|U_SemicircularGauge_default_MajorTicksMode|char 'auto'|exact
+CHK|U_SemicircularGauge_default_MinorTicksMode|char 'auto'|exact
+CHK|U_SemicircularGauge_default_Orientation|char 'north'|exact
+CHK|U_SemicircularGauge_default_OuterPosition|double [1 4] 100 100 120 65|exact
+CHK|U_SemicircularGauge_default_Position|double [1 4] 100 100 120 65|exact
+CHK|U_SemicircularGauge_default_ScaleColorLimits|double [0 0]|exact
+CHK|U_SemicircularGauge_default_ScaleColors|double [0 0]|exact
+CHK|U_SemicircularGauge_default_ScaleDirection|char 'clockwise'|exact
+CHK|U_SemicircularGauge_default_Tag|char ''|exact
+CHK|U_SemicircularGauge_default_Tooltip|char ''|exact
+CHK|U_SemicircularGauge_default_Type|char 'uisemicirculargauge'|exact
+CHK|U_SemicircularGauge_default_Value|double [1 1] 0|exact
+CHK|U_SemicircularGauge_default_Visible|onoff on|exact
+CHK|U_SemicircularGauge_userdata_empty|1|exact
+CHK|U_SemicircularGauge_children_prop|0|exact
+CHK|U_SemicircularGauge_contextmenu_empty|1|exact
+CHK|U_SemicircularGauge_parent_type|figure|exact
+CHK|U_SemicircularGauge_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_SemicircularGauge_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_SemicircularGauge_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_SemicircularGauge_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SemicircularGauge_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_SemicircularGauge_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Lamp_type|uilamp|exact
+CHK|U_Lamp_get_names|BeingDeleted BusyAction Color ContextMenu CreateFcn DeleteFcn Enable HandleVisibility InnerPosition Interruptible Layout OuterPosition Parent Position Tag Tooltip Type UserData Visible|exact
+CHK|U_Lamp_set_names|BusyAction Color ContextMenu CreateFcn DeleteFcn Enable HandleVisibility InnerPosition Interruptible Layout Parent Position Tag Tooltip UserData Visible|exact
+CHK|U_Lamp_default_BeingDeleted|onoff off|exact
+CHK|U_Lamp_default_BusyAction|char 'queue'|exact
+CHK|U_Lamp_default_Color|double [1 3] 0 1 0|exact
+CHK|U_Lamp_default_CreateFcn|char ''|exact
+CHK|U_Lamp_default_DeleteFcn|char ''|exact
+CHK|U_Lamp_default_Enable|onoff on|exact
+CHK|U_Lamp_default_HandleVisibility|onoff on|exact
+CHK|U_Lamp_default_InnerPosition|double [1 4] 100 100 20 20|exact
+CHK|U_Lamp_default_Interruptible|onoff on|exact
+CHK|U_Lamp_default_OuterPosition|double [1 4] 100 100 20 20|exact
+CHK|U_Lamp_default_Position|double [1 4] 100 100 20 20|exact
+CHK|U_Lamp_default_Tag|char ''|exact
+CHK|U_Lamp_default_Tooltip|char ''|exact
+CHK|U_Lamp_default_Type|char 'uilamp'|exact
+CHK|U_Lamp_default_Visible|onoff on|exact
+CHK|U_Lamp_userdata_empty|1|exact
+CHK|U_Lamp_children_prop|0|exact
+CHK|U_Lamp_contextmenu_empty|1|exact
+CHK|U_Lamp_parent_type|figure|exact
+CHK|U_Lamp_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_Lamp_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Lamp_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Lamp_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Lamp_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Lamp_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_DatePicker_type|uidatepicker|exact
+CHK|U_DatePicker_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn DisabledDates DisabledDaysOfWeek DisplayFormat Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits OuterPosition Parent Placeholder Position Tag Tooltip Type UserData Value ValueChangedFcn Visible|exact
+CHK|U_DatePicker_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn DisabledDates DisabledDaysOfWeek DisplayFormat Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Limits Parent Placeholder Position Tag Tooltip UserData Value ValueChangedFcn Visible|exact
+CHK|U_DatePicker_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|U_DatePicker_default_BeingDeleted|onoff off|exact
+CHK|U_DatePicker_default_BusyAction|char 'queue'|exact
+CHK|U_DatePicker_default_CreateFcn|char ''|exact
+CHK|U_DatePicker_default_DeleteFcn|char ''|exact
+CHK|U_DatePicker_default_DisabledDates|datetime [0 0] fmt=dd-MMM-uuuu tz=- []|exact
+CHK|U_DatePicker_default_DisabledDaysOfWeek|double [0 0]|exact
+CHK|U_DatePicker_default_DisplayFormat|char 'dd-MMM-uuuu'|exact
+CHK|U_DatePicker_default_Editable|onoff on|exact
+CHK|U_DatePicker_default_Enable|onoff on|exact
+CHK|U_DatePicker_default_FontAngle|char 'normal'|exact
+CHK|U_DatePicker_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_DatePicker_default_FontName|char 'Helvetica'|exact
+CHK|U_DatePicker_default_FontSize|double [1 1] 12|exact
+CHK|U_DatePicker_default_FontWeight|char 'normal'|exact
+CHK|U_DatePicker_default_HandleVisibility|onoff on|exact
+CHK|U_DatePicker_default_InnerPosition|double [1 4] 100 100 150 22|exact
+CHK|U_DatePicker_default_Interruptible|onoff on|exact
+CHK|U_DatePicker_default_Limits|datetime [1 2] fmt=dd-MMM-uuuu tz=- [01-Jan-0000,31-Dec-9999]|exact
+CHK|U_DatePicker_default_OuterPosition|double [1 4] 100 100 150 22|exact
+CHK|U_DatePicker_default_Placeholder|char ''|exact
+CHK|U_DatePicker_default_Position|double [1 4] 100 100 150 22|exact
+CHK|U_DatePicker_default_Tag|char ''|exact
+CHK|U_DatePicker_default_Tooltip|char ''|exact
+CHK|U_DatePicker_default_Type|char 'uidatepicker'|exact
+CHK|U_DatePicker_default_Value|datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]|exact
+CHK|U_DatePicker_default_ValueChangedFcn|char ''|exact
+CHK|U_DatePicker_default_Visible|onoff on|exact
+CHK|U_DatePicker_userdata_empty|1|exact
+CHK|U_DatePicker_children_prop|0|exact
+CHK|U_DatePicker_contextmenu_empty|1|exact
+CHK|U_DatePicker_parent_type|figure|exact
+CHK|U_DatePicker_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_DatePicker_words_Editable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_DatePicker_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_DatePicker_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_DatePicker_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_DatePicker_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_DatePicker_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ColorPicker_type|uicolorpicker|exact
+CHK|U_ColorPicker_get_names|BackgroundColor BeingDeleted BusyAction ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon InnerPosition Interruptible Layout OuterPosition Parent Position Tag Tooltip Type UserData Value ValueChangedFcn Visible|exact
+CHK|U_ColorPicker_set_names|BackgroundColor BusyAction ContextMenu CreateFcn DeleteFcn Enable HandleVisibility Icon InnerPosition Interruptible Layout Parent Position Tag Tooltip UserData Value ValueChangedFcn Visible|exact
+CHK|U_ColorPicker_default_BackgroundColor|double [1 3] 0.9607843137 0.9607843137 0.9607843137|exact
+CHK|U_ColorPicker_default_BeingDeleted|onoff off|exact
+CHK|U_ColorPicker_default_BusyAction|char 'queue'|exact
+CHK|U_ColorPicker_default_CreateFcn|char ''|exact
+CHK|U_ColorPicker_default_DeleteFcn|char ''|exact
+CHK|U_ColorPicker_default_Enable|onoff on|exact
+CHK|U_ColorPicker_default_HandleVisibility|onoff on|exact
+CHK|U_ColorPicker_default_Icon|char ''|exact
+CHK|U_ColorPicker_default_InnerPosition|double [1 4] 100 100 38 22|exact
+CHK|U_ColorPicker_default_Interruptible|onoff on|exact
+CHK|U_ColorPicker_default_OuterPosition|double [1 4] 100 100 38 22|exact
+CHK|U_ColorPicker_default_Position|double [1 4] 100 100 38 22|exact
+CHK|U_ColorPicker_default_Tag|char ''|exact
+CHK|U_ColorPicker_default_Tooltip|char ''|exact
+CHK|U_ColorPicker_default_Type|char 'uicolorpicker'|exact
+CHK|U_ColorPicker_default_Value|double [1 3] 1 0 0|exact
+CHK|U_ColorPicker_default_ValueChangedFcn|char ''|exact
+CHK|U_ColorPicker_default_Visible|onoff on|exact
+CHK|U_ColorPicker_userdata_empty|1|exact
+CHK|U_ColorPicker_children_prop|0|exact
+CHK|U_ColorPicker_contextmenu_empty|1|exact
+CHK|U_ColorPicker_parent_type|figure|exact
+CHK|U_ColorPicker_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_ColorPicker_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_ColorPicker_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_ColorPicker_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ColorPicker_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_ColorPicker_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Tree_type|uitree|exact
+CHK|U_Tree_get_names|BackgroundColor BeingDeleted BusyAction Children ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Multiselect NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn OuterPosition Parent Position SelectedNodes SelectionChangedFcn StyleConfigurations Tag Tooltip Type UserData Visible|exact
+CHK|U_Tree_set_names|BackgroundColor BusyAction Children ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout Multiselect NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn Parent Position SelectedNodes SelectionChangedFcn Tag Tooltip UserData Visible|exact
+CHK|U_Tree_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|U_Tree_default_BeingDeleted|onoff off|exact
+CHK|U_Tree_default_BusyAction|char 'queue'|exact
+CHK|U_Tree_default_ClickedFcn|char ''|exact
+CHK|U_Tree_default_CreateFcn|char ''|exact
+CHK|U_Tree_default_DeleteFcn|char ''|exact
+CHK|U_Tree_default_DoubleClickedFcn|char ''|exact
+CHK|U_Tree_default_Editable|onoff off|exact
+CHK|U_Tree_default_Enable|onoff on|exact
+CHK|U_Tree_default_FontAngle|char 'normal'|exact
+CHK|U_Tree_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_Tree_default_FontName|char 'Helvetica'|exact
+CHK|U_Tree_default_FontSize|double [1 1] 12|exact
+CHK|U_Tree_default_FontWeight|char 'normal'|exact
+CHK|U_Tree_default_HandleVisibility|onoff on|exact
+CHK|U_Tree_default_InnerPosition|double [1 4] 20 20 150 300|exact
+CHK|U_Tree_default_Interruptible|onoff on|exact
+CHK|U_Tree_default_Multiselect|onoff off|exact
+CHK|U_Tree_default_NodeCollapsedFcn|char ''|exact
+CHK|U_Tree_default_NodeExpandedFcn|char ''|exact
+CHK|U_Tree_default_NodeTextChangedFcn|char ''|exact
+CHK|U_Tree_default_OuterPosition|double [1 4] 20 20 150 300|exact
+CHK|U_Tree_default_Position|double [1 4] 20 20 150 300|exact
+CHK|U_Tree_default_SelectionChangedFcn|char ''|exact
+CHK|U_Tree_default_Tag|char ''|exact
+CHK|U_Tree_default_Tooltip|char ''|exact
+CHK|U_Tree_default_Type|char 'uitree'|exact
+CHK|U_Tree_default_Visible|onoff on|exact
+CHK|U_Tree_userdata_empty|1|exact
+CHK|U_Tree_children_prop|1|exact
+CHK|U_Tree_children_empty|1|exact
+CHK|U_Tree_contextmenu_empty|1|exact
+CHK|U_Tree_parent_type|figure|exact
+CHK|U_Tree_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_Tree_words_Multiselect|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Tree_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_Tree_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_Tree_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Tree_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Tree_words_Editable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_Tree_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_CheckBoxTree_type|uicheckboxtree|exact
+CHK|U_CheckBoxTree_get_names|BackgroundColor BeingDeleted BusyAction CheckedNodes CheckedNodesChangedFcn Children ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn OuterPosition Parent Position SelectedNodes SelectionChangedFcn StyleConfigurations Tag Tooltip Type UserData Visible|exact
+CHK|U_CheckBoxTree_set_names|BackgroundColor BusyAction CheckedNodes CheckedNodesChangedFcn Children ClickedFcn ContextMenu CreateFcn DeleteFcn DoubleClickedFcn Editable Enable FontAngle FontColor FontName FontSize FontWeight HandleVisibility InnerPosition Interruptible Layout NodeCollapsedFcn NodeExpandedFcn NodeTextChangedFcn Parent Position SelectedNodes SelectionChangedFcn Tag Tooltip UserData Visible|exact
+CHK|U_CheckBoxTree_default_BackgroundColor|double [1 3] 1 1 1|exact
+CHK|U_CheckBoxTree_default_BeingDeleted|onoff off|exact
+CHK|U_CheckBoxTree_default_BusyAction|char 'queue'|exact
+CHK|U_CheckBoxTree_default_CheckedNodesChangedFcn|char ''|exact
+CHK|U_CheckBoxTree_default_ClickedFcn|char ''|exact
+CHK|U_CheckBoxTree_default_CreateFcn|char ''|exact
+CHK|U_CheckBoxTree_default_DeleteFcn|char ''|exact
+CHK|U_CheckBoxTree_default_DoubleClickedFcn|char ''|exact
+CHK|U_CheckBoxTree_default_Editable|onoff off|exact
+CHK|U_CheckBoxTree_default_Enable|onoff on|exact
+CHK|U_CheckBoxTree_default_FontAngle|char 'normal'|exact
+CHK|U_CheckBoxTree_default_FontColor|double [1 3] 0.1294117647 0.1294117647 0.1294117647|exact
+CHK|U_CheckBoxTree_default_FontName|char 'Helvetica'|exact
+CHK|U_CheckBoxTree_default_FontSize|double [1 1] 12|exact
+CHK|U_CheckBoxTree_default_FontWeight|char 'normal'|exact
+CHK|U_CheckBoxTree_default_HandleVisibility|onoff on|exact
+CHK|U_CheckBoxTree_default_InnerPosition|double [1 4] 20 20 150 300|exact
+CHK|U_CheckBoxTree_default_Interruptible|onoff on|exact
+CHK|U_CheckBoxTree_default_NodeCollapsedFcn|char ''|exact
+CHK|U_CheckBoxTree_default_NodeExpandedFcn|char ''|exact
+CHK|U_CheckBoxTree_default_NodeTextChangedFcn|char ''|exact
+CHK|U_CheckBoxTree_default_OuterPosition|double [1 4] 20 20 150 300|exact
+CHK|U_CheckBoxTree_default_Position|double [1 4] 20 20 150 300|exact
+CHK|U_CheckBoxTree_default_SelectionChangedFcn|char ''|exact
+CHK|U_CheckBoxTree_default_Tag|char ''|exact
+CHK|U_CheckBoxTree_default_Tooltip|char ''|exact
+CHK|U_CheckBoxTree_default_Type|char 'uicheckboxtree'|exact
+CHK|U_CheckBoxTree_default_Visible|onoff on|exact
+CHK|U_CheckBoxTree_userdata_empty|1|exact
+CHK|U_CheckBoxTree_children_prop|1|exact
+CHK|U_CheckBoxTree_children_empty|1|exact
+CHK|U_CheckBoxTree_contextmenu_empty|1|exact
+CHK|U_CheckBoxTree_parent_type|figure|exact
+CHK|U_CheckBoxTree_flags|0 1 1 1 1 1 1 1|exact
+CHK|U_CheckBoxTree_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_CheckBoxTree_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_CheckBoxTree_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_CheckBoxTree_words_Enable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_CheckBoxTree_words_Editable|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_CheckBoxTree_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|U_TreeNode_type|uitreenode|exact
+CHK|U_TreeNode_get_names|BeingDeleted BusyAction Children ContextMenu CreateFcn DeleteFcn HandleVisibility Icon Interruptible NodeData Parent Tag Text Type UserData|exact
+CHK|U_TreeNode_set_names|BusyAction Children ContextMenu CreateFcn DeleteFcn HandleVisibility Icon Interruptible NodeData Parent Tag Text UserData|exact
+CHK|U_TreeNode_default_BeingDeleted|onoff off|exact
+CHK|U_TreeNode_default_BusyAction|char 'queue'|exact
+CHK|U_TreeNode_default_CreateFcn|char ''|exact
+CHK|U_TreeNode_default_DeleteFcn|char ''|exact
+CHK|U_TreeNode_default_HandleVisibility|onoff on|exact
+CHK|U_TreeNode_default_Icon|char ''|exact
+CHK|U_TreeNode_default_Interruptible|onoff on|exact
+CHK|U_TreeNode_default_NodeData|double [0 0]|exact
+CHK|U_TreeNode_default_Tag|char ''|exact
+CHK|U_TreeNode_default_Text|char 'Tree Node'|exact
+CHK|U_TreeNode_default_Type|char 'uitreenode'|exact
+CHK|U_TreeNode_userdata_empty|1|exact
+CHK|U_TreeNode_children_prop|1|exact
+CHK|U_TreeNode_children_empty|1|exact
+CHK|U_TreeNode_contextmenu_empty|1|exact
+CHK|U_TreeNode_parent_type|uitree|exact
+CHK|U_TreeNode_flags|0 0 0 0 1 1 1 1|exact
+CHK|U_TreeNode_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|U_TreeNode_words_BusyAction|cell [2 1] {char 'queue', char 'cancel'}|exact
+CHK|U_TreeNode_words_Interruptible|cell [2 1] {onoff on, onoff off}|exact

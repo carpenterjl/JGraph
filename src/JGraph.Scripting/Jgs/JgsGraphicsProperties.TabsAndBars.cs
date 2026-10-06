@@ -22,7 +22,7 @@ internal static partial class JgsGraphicsProperties
     /// rather than this build's own: every component, and the menus, toolbars and tools of U8.
     /// </summary>
     internal static bool SpeaksAsComponent(GraphObject target) =>
-        target is UiObject or MenuItemModel or ContextMenuModel or UiToolbarModel or UiToolModel;
+        target is UiObject or MenuItemModel or ContextMenuModel or UiToolbarModel or UiToolModel or UiTreeNodeModel;
 
     /// <summary>
     /// One line of text as <c>Tag</c>, a tab's <c>Title</c> and a menu's <c>Text</c> take it: a

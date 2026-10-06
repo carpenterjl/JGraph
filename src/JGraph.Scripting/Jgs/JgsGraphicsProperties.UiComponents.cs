@@ -32,7 +32,9 @@ internal static partial class JgsGraphicsProperties
     {
         UiItemsModel => name.Equals("Items", StringComparison.OrdinalIgnoreCase) || name.Equals("ItemsData", StringComparison.OrdinalIgnoreCase)
             || name.Equals("ValueIndex", StringComparison.OrdinalIgnoreCase),
-        UiSliderModel => name.Equals("MajorTickLabels", StringComparison.OrdinalIgnoreCase),
+        UiGaugeModel => name.Equals("MajorTickLabels", StringComparison.OrdinalIgnoreCase)
+            || name.Equals("ScaleColors", StringComparison.OrdinalIgnoreCase) || name.Equals("ScaleColorLimits", StringComparison.OrdinalIgnoreCase),
+        UiScaleModel => name.Equals("MajorTickLabels", StringComparison.OrdinalIgnoreCase),
         UiNumericModel => name.Equals("Value", StringComparison.OrdinalIgnoreCase),
         UiGridLayoutModel => name.Equals("RowHeight", StringComparison.OrdinalIgnoreCase) || name.Equals("ColumnWidth", StringComparison.OrdinalIgnoreCase),
         UiTableModel => name.Equals("Data", StringComparison.OrdinalIgnoreCase) || name.Equals("ColumnEditable", StringComparison.OrdinalIgnoreCase)
@@ -41,7 +43,103 @@ internal static partial class JgsGraphicsProperties
         UiToolModel => name.Equals("CData", StringComparison.OrdinalIgnoreCase),
         UiTabGroupModel => name.Equals("SelectedTab", StringComparison.OrdinalIgnoreCase),
         MenuItemModel => name.Equals("Position", StringComparison.OrdinalIgnoreCase),
+        UiTreeNodeModel => name.Equals("NodeData", StringComparison.OrdinalIgnoreCase),
+        UiDatePickerModel => name.Equals("DisplayFormat", StringComparison.OrdinalIgnoreCase),
         _ => false,
+    };
+
+    /// <summary>
+    /// R2025b writes a component's property through <c>isequal</c> first (probe <c>u9_extra</c>, U9):
+    /// a value equal to the one held is not written at all — so <c>false</c> lands on a knob at 0
+    /// where <c>true</c> is refused, and <c>[]</c> on a picker with no disabled dates — and a datetime
+    /// met by text, or text by a datetime, is converted on the way, which warns when the text is no
+    /// date. The comparison is this build's <c>isequal</c>; a property that cannot be read is written.
+    /// </summary>
+    private static bool SkipsEqualWrite(JgsHandleEntry entry, GraphicsProperty property, JgsValue value)
+    {
+        JgsValue current;
+        try
+        {
+            current = property.Read(entry);
+        }
+        catch (JgsRuntimeException)
+        {
+            return false;
+        }
+
+        // An empty datetime and an empty cell of the same shape compare equal there: datetime({})
+        // is the empty datetime (probe u9_props: {} lands on a picker with no disabled dates).
+        if (current.IsDatetime && current.ArrayLength == 0 && value.Type == JgsType.Cell && value.AsCell.Length == 0
+            && current.Rows == value.Rows && current.Cols == value.Cols)
+        {
+            return true;
+        }
+
+        // Only values of one kind and shape are compared: a number against a number or a logical,
+        // text against text. [] is not '' here — [] on a Tag of '' is refused, '' on data of [] is
+        // written — though false is 0 (probe u9_props); an empty of another shape is written.
+        if (current.Type == JgsType.Array && value.Type == JgsType.Array && !current.Dims.SequenceEqual(value.Dims))
+        {
+            return false;
+        }
+
+        return KindOf(current) == KindOf(value) && JgsBuiltins.IsEqualValues(current, value);
+    }
+
+    private static string KindOf(JgsValue value) => value.Type switch
+    {
+        JgsType.String => "text",
+        JgsType.Array when value.IsStringArray => "text",
+        JgsType.Cell => "cell",
+        JgsType.Struct => "struct",
+        JgsType.Bool or JgsType.Number or JgsType.Complex or JgsType.Array => "number",
+        _ => value.Type.ToString(),
+    };
+
+    private const string AutoConvertWarning = "Unable to convert text array to a datetime array because the format was not recognized.";
+
+    /// <summary>
+    /// R2025b's validators compare a text property with what is written through <c>isequal</c>,
+    /// which converts a datetime's partner to a datetime and warns when the text is no date (probe
+    /// <c>u9_extra</c>). So a datetime written to a word, a line of text or the items warns before
+    /// it is refused; the on/off and enumeration properties convert first and do not.
+    /// </summary>
+    private static void WarnDatetimeAgainstText(JgsValue value, bool textHeld = true)
+    {
+        if (value.IsDatetime && textHeld)
+        {
+            PropertyWarning("MATLAB:datetime:AutoConvertStrings", AutoConvertWarning);
+        }
+    }
+
+    /// <summary>
+    /// The other way about: text written to a datetime property — a character row, a string scalar
+    /// or a cell of text — is converted on the way and warns when it is no date (R2025b).
+    /// </summary>
+    private static void WarnTextAgainstDatetime(JgsValue text)
+    {
+        IEnumerable<string>? texts = text.Type == JgsType.String && !text.IsCharMatrix && text.AsString.Length > 0 ? [text.AsString]
+            : text.IsStringArray && text.ArrayLength == 1 ? [JgsBuiltins.TextOf(text.ElementAt(0))]
+            : text.Type == JgsType.Cell && text.AsCell.Length > 0 && Array.TrueForAll(text.AsCell, JgsBuiltins.IsTextScalar)
+                ? text.AsCell.Select(JgsBuiltins.TextOf)
+            : null;
+        if (texts is not null && texts.Any(static t => !JgsTime.TryParse(t, null, out _)))
+        {
+            PropertyWarning("MATLAB:datetime:AutoConvertStrings", AutoConvertWarning);
+        }
+    }
+
+    /// <summary>
+    /// The width over the height a component keeps whatever rectangle it is given (probe
+    /// <c>u9_extra</c>): the round ones and the semicircular gauge their shape, a switch its track.
+    /// </summary>
+    private static double? AspectRatioOf(UiObject component) => component switch
+    {
+        UiKnobModel or UiDiscreteKnobModel or UiLampModel => 1,
+        UiGaugeModel { Style: UiGaugeStyle.Circular or UiGaugeStyle.NinetyDegree } => 1,
+        UiGaugeModel { Style: UiGaugeStyle.Semicircular } => 120.0 / 65,
+        UiSwitchModel toggle => toggle.Vertical ? 20.0 / 45 : 45.0 / 20,
+        _ => null,
     };
 
     /// <summary>MATLAB's class of an object, in full, where its property errors spell it so.</summary>
@@ -58,6 +156,8 @@ internal static partial class JgsGraphicsProperties
         UiToolbarModel => "matlab.ui.container.Toolbar",
         MenuItemModel => "matlab.ui.container.Menu",
         ContextMenuModel => "matlab.ui.container.ContextMenu",
+        UiTreeNodeModel => "matlab.ui.container.TreeNode",
+        UiTreeModel tree => tree.CheckBoxes ? "matlab.ui.container.CheckBoxTree" : "matlab.ui.container.Tree",
         UiComponentModel => "matlab.ui.control." + JgsGraphicsCallbackValues.ClassWord(target),
         FigureModel => "matlab.ui.Figure",
         AxesModel { IsUiAxes: true } => "matlab.ui.control.UIAxes",
@@ -86,7 +186,8 @@ internal static partial class JgsGraphicsProperties
 
         if (value.Type == JgsType.String || value.IsCharMatrix)
         {
-            string word = value.IsCharMatrix ? string.Empty : value.AsString;
+            // Blanks around the word are ignored (probe u9_extra: 'off ' and ' on' are taken).
+            string word = value.IsCharMatrix ? string.Empty : value.AsString.Trim();
             if (JgsBuiltins.IsMissingText(word))
             {
                 throw ComponentError(entry, property, "MATLAB:datatypes:onoffboolean:IncorrectValue", words, line, col);
@@ -97,7 +198,7 @@ internal static partial class JgsGraphicsProperties
                 : throw ComponentError(entry, property, "MATLAB:datatypes:onoffboolean:UnknownOnOffBooleanValue", words, line, col);
         }
 
-        if (value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsStringArray
+        if (value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsStringArray && !value.IsTime
             && value.ElementAt(0).Type is JgsType.Bool or JgsType.Number or JgsType.Complex)
         {
             return OnOffState(entry, property, value.ElementAt(0), line, col);
@@ -120,6 +221,8 @@ internal static partial class JgsGraphicsProperties
                 $"Invalid enum value. Use one of these values: {list}.", line, col);
         }
 
+        // Blanks around the word are ignored (probe u9_props: 'off ' is HandleVisibility off), though
+        // a refusal quotes the text as typed.
         string typed = value.IsCharMatrix ? ColumnMajorText(value) : value.AsString;
         if (JgsBuiltins.IsMissingText(typed))
         {
@@ -133,7 +236,7 @@ internal static partial class JgsGraphicsProperties
                 $"Value cannot be empty. Use one of these values: {list}.", line, col);
         }
 
-        return Matching(typed, words)
+        return Matching(typed.Trim(), words)
             ?? throw ComponentError(entry, property, "MATLAB:datatypes:InvalidEnumValue",
                 $"'{typed}' is not a valid value. Use one of these values: {list}.", line, col);
     }
@@ -161,11 +264,14 @@ internal static partial class JgsGraphicsProperties
     /// taken in any case; only <c>InputType</c> also takes a start of one (probe <c>u5_matrix</c>).
     /// </summary>
     private static string UiWord(
-        JgsHandleEntry entry, JgsValue value, string[] words, string id, string message, int line, int col, bool starts = false) =>
-        (value.Type == JgsType.String && !JgsBuiltins.IsMissingText(value.AsString)
+        JgsHandleEntry entry, JgsValue value, string[] words, string id, string message, int line, int col, bool starts = false)
+    {
+        WarnDatetimeAgainstText(value);
+        return (value.Type == JgsType.String && !JgsBuiltins.IsMissingText(value.AsString)
             ? starts ? Matching(value.AsString, words) : Array.Find(words, word => word.Equals(value.AsString, StringComparison.OrdinalIgnoreCase))
             : null)
-        ?? throw UiError(entry, id, message, line, col);
+            ?? throw UiError(entry, id, message, line, col);
+    }
 
     /// <summary>A character matrix read down its columns, which is how R2025b reads one as a word.</summary>
     private static string ColumnMajorText(JgsValue value)
@@ -194,6 +300,7 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static string OneLine(JgsHandleEntry entry, JgsValue value, string current, string id, string message, int line, int col)
     {
+        WarnDatetimeAgainstText(value, current.Length > 0);
         if (value.Type == JgsType.String)
         {
             return MissingAsEmpty(value.AsString);
@@ -214,6 +321,7 @@ internal static partial class JgsGraphicsProperties
     private static UiText Caption(JgsHandleEntry entry, JgsValue value, UiText current, string id, string property, int line, int col)
     {
         string message = $"'{property}' must be a character vector, or a N-by-1 array of the following type: cell array of character vectors, string, or categorical.";
+        WarnDatetimeAgainstText(value, current.Lines.Any(static l => l.Length > 0));
         if (value.Type == JgsType.String)
         {
             return UiText.Of(MissingAsEmpty(value.AsString));
@@ -429,6 +537,7 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Visible",
             entry => OnOff(entry.Target.Visible),
             (entry, value, line, col) => entry.Target.Visible = OnOffState(entry, "Visible", value, line, col));
+        AddSameFigureContextMenu(table);
 
         if (isGrid)
         {
@@ -518,6 +627,18 @@ internal static partial class JgsGraphicsProperties
         {
             box = component.Parent is UiGridLayoutModel holder ? holder.RectOf(slider) : UiSliderModel.OuterOf(box, slider.Vertical);
         }
+        else if (name == "OuterPosition" && component is UiKnobModel knobModel)
+        {
+            box = knobModel.OuterOf(box);
+        }
+        else if (name == "OuterPosition" && component is UiDiscreteKnobModel dialModel)
+        {
+            box = dialModel.OuterOf(box);
+        }
+        else if (name == "OuterPosition" && component is UiSwitchModel switchModel)
+        {
+            box = switchModel.OuterOf(box);
+        }
 
         return Row(box.X, box.Y, box.Width, box.Height);
     }
@@ -525,17 +646,26 @@ internal static partial class JgsGraphicsProperties
     private static void SetComponentRect(JgsHandleEntry entry, string name, JgsValue value, int line, int col)
     {
         var component = (UiObject)entry.Target;
-        if (JgsBuiltins.ClassOf(value, JgsDialect.Matlab) == "logical")
+        if (JgsBuiltins.ClassOf(value, JgsDialect.Matlab) == "logical" || value.IsCharMatrix)
         {
             throw ComponentError(entry, name, "MATLAB:hg:dt_conv:Matrix_to_matlabRect:ExpectedNumeric", "Value must be numeric and finite", line, col);
         }
 
-        if (value.Type == JgsType.Complex)
+        if (value.Type == JgsType.Complex || (value.Type == JgsType.Array && value.Rows > 1 && value.Cols > 1))
         {
             throw ComponentError(entry, name, "MATLAB:hg:dt_conv:Matrix_to_matlabRect:Expected4ElementVector", "Value must be a 4 element vector", line, col);
         }
 
         Rect2D box = ComponentPosition(entry, name, value, line, col);
+
+        // A round component, a switch and a semicircular gauge keep their proportions (probe
+        // u9_extra): the rectangle asked for is shrunk to the largest of that shape inside it.
+        // R2025b's view warns about it later, off the script's thread; this build does not (ADR 0207).
+        if (AspectRatioOf(component) is { } ratio && System.Math.Abs(box.Width - (box.Height * ratio)) > 1e-9)
+        {
+            double width = System.Math.Min(box.Width, box.Height * ratio);
+            box = new Rect2D(box.X, box.Y, width, width / ratio);
+        }
 
         // A grid places its children itself: R2025b warns and leaves the component where it is.
         if (component.Parent is UiGridLayoutModel)
@@ -707,7 +837,7 @@ internal static partial class JgsGraphicsProperties
         }
 
         bool caption = typeof(UiCaptionModel).IsAssignableFrom(type);
-        bool hasFont = !typeof(UiImageModel).IsAssignableFrom(type);
+        bool hasFont = type != typeof(UiImageModel) && type != typeof(UiLampModel) && type != typeof(UiColorPickerModel);
         if (hasFont)
         {
             AddUiFontBlock(table);
@@ -716,7 +846,8 @@ internal static partial class JgsGraphicsProperties
         // BackgroundColor: every class but a check box, a radio button and a slider. A label, an
         // image and a hyperlink may have none.
         bool clearable = type == typeof(UiLabelModel) || type == typeof(UiImageModel) || type == typeof(UiHyperlinkModel);
-        if (type != typeof(UiCheckBoxModel) && type != typeof(UiRadioButtonModel) && !typeof(UiSliderModel).IsAssignableFrom(type))
+        if (type != typeof(UiCheckBoxModel) && type != typeof(UiRadioButtonModel) && !typeof(UiSliderModel).IsAssignableFrom(type)
+            && type != typeof(UiKnobModel) && type != typeof(UiDiscreteKnobModel) && type != typeof(UiSwitchModel) && type != typeof(UiLampModel))
         {
             Put(table, "BackgroundColor",
                 entry => UiColorValue(Leaf(entry).BackgroundColor),
@@ -774,7 +905,58 @@ internal static partial class JgsGraphicsProperties
         {
             AddUiImageBlock(table);
         }
+
+        // U9: knobs, switches, gauges, the lamp, the pickers and the trees.
+        if (type == typeof(UiKnobModel))
+        {
+            AddKnobBlock(table);
+        }
+
+        if (typeof(UiGaugeModel).IsAssignableFrom(type))
+        {
+            AddGaugeBlock(table);
+            AddGaugeWords(GaugeStyleOf(type), table);
+        }
+
+        if (type == typeof(UiSwitchModel))
+        {
+            AddSwitchOrientation(table);
+        }
+
+        if (type == typeof(UiLampModel))
+        {
+            AddLampBlock(table);
+        }
+
+        if (type == typeof(UiDatePickerModel))
+        {
+            AddDatePickerBlock(table);
+        }
+
+        if (type == typeof(UiColorPickerModel))
+        {
+            AddColorPickerBlock(table);
+        }
+
+        if (typeof(UiTreeModel).IsAssignableFrom(type))
+        {
+            AddTreeBlock(table);
+            AddTreeKindBlock(type == typeof(UiCheckBoxTreeModel), table);
+        }
+
+        // R2025b's set(h) lists no words for these on the U9 kinds, though each takes its words
+        // (probe u9_defaults): set(k).Orientation is {} on a switch.
+        if (IsU9Kind(type))
+        {
+            Options(table, "Orientation");
+            Options(table, "ScaleDirection");
+        }
     }
+
+    /// <summary>The kinds U9 added that have a font: their font words are not listed by set(h) in R2025b.</summary>
+    private static bool IsU9Kind(Type type) =>
+        type == typeof(UiKnobModel) || type == typeof(UiDiscreteKnobModel) || type == typeof(UiSwitchModel)
+        || typeof(UiGaugeModel).IsAssignableFrom(type) || type == typeof(UiDatePickerModel) || typeof(UiTreeModel).IsAssignableFrom(type);
 
     /// <summary>A callback slot kept by name on the handle's entry (U5's are too many for a field each).</summary>
     private static void AddNamedSlot(IDictionary<string, GraphicsProperty> table, string name)
@@ -817,10 +999,14 @@ internal static partial class JgsGraphicsProperties
     {
         Put(table, "FontName",
             entry => JgsValue.Str(Leaf(entry).FontName),
-            (entry, value, line, col) => Leaf(entry).FontName =
-                value.Type == JgsType.String && value.AsString.Length > 0 && !JgsBuiltins.IsMissingText(value.AsString)
-                    ? value.AsString
-                    : throw UiError(entry, "invalidFontName", "'FontName' must be a non empty character vector or a string scalar.", line, col));
+            (entry, value, line, col) =>
+            {
+                WarnDatetimeAgainstText(value);
+                Leaf(entry).FontName =
+                    value.Type == JgsType.String && value.AsString.Length > 0 && !JgsBuiltins.IsMissingText(value.AsString)
+                        ? value.AsString
+                        : throw UiError(entry, "invalidFontName", "'FontName' must be a non empty character vector or a string scalar.", line, col);
+            });
         Put(table, "FontSize",
             entry => JgsValue.Number(Leaf(entry).FontSize),
             (entry, value, line, col) => Leaf(entry).FontSize =
@@ -1426,13 +1612,21 @@ internal static partial class JgsGraphicsProperties
     private static void AddItemsBlock(Type type, IDictionary<string, GraphicsProperty> table)
     {
         bool isList = type == typeof(UiListBoxModel);
+        bool isDrop = type == typeof(UiDropDownModel);
+        bool isSwitch = type == typeof(UiSwitchModel);
+        bool isDial = type == typeof(UiDiscreteKnobModel);
         AddNamedSlot(table, "ValueChangedFcn");
-        AddNamedSlot(table, "ClickedFcn");
+        if (isList || isDrop)
+        {
+            AddNamedSlot(table, "ClickedFcn");
+        }
+
         if (isList)
         {
             AddNamedSlot(table, "DoubleClickedFcn");
         }
-        else
+
+        if (isDrop)
         {
             AddNamedSlot(table, "DropDownOpeningFcn");
         }
@@ -1441,7 +1635,8 @@ internal static partial class JgsGraphicsProperties
             entry => RowCell(Items(entry).Items),
             (entry, value, line, col) =>
             {
-                if (value.Type == JgsType.Cell && value.Rows > 1 && value.Cols > 1)
+                WarnDatetimeAgainstText(value, Items(entry).Items.Count > 0);
+                if (value.Type == JgsType.Cell && value.Rows > 1 && value.Cols > 1 && !isSwitch && !isDial)
                 {
                     throw UiError(entry, "invalidText", "Expected input to be a vector.", line, col);
                 }
@@ -1450,6 +1645,17 @@ internal static partial class JgsGraphicsProperties
                 if (items is null)
                 {
                     throw UiError(entry, "invalidText", "'Items' must be a 1-by-N cell array of character vectors or a string array.", line, col);
+                }
+
+                // A switch has two items, a discrete knob at least two (U9, probe u9_matrix).
+                if (isSwitch && items.Length != 2)
+                {
+                    throw UiError(entry, "invalidText", "'Items' must have 2 elements.", line, col);
+                }
+
+                if (isDial && items.Length < 2)
+                {
+                    throw UiError(entry, "invalidText", "'Items' must have at least 2 elements.", line, col);
                 }
 
                 ReplaceItems(entry, () => Items(entry).Items = items);
@@ -1468,11 +1674,46 @@ internal static partial class JgsGraphicsProperties
                     throw UiError(entry, "invalidItemsData", "'ItemsData' must be a vector, such as [1,2] or {'Data 1', 'Data 2'}'.", line, col);
                 }
 
+                // A switch's data has two elements, or none (U9).
+                if (isSwitch)
+                {
+                    int count = value.Type == JgsType.Cell ? value.AsCell.Length
+                        : value.Type == JgsType.Array ? value.ArrayLength
+                        : value.Type == JgsType.String ? value.AsString.Length
+                        : 1;
+                    if (count > 2)
+                    {
+                        throw UiError(entry, "invalidItemsData", "'ItemsData' must have at most 2 elements.", line, col);
+                    }
+
+                    if (count == 1)
+                    {
+                        throw UiError(entry, "invalidItemsData", "'ItemsData' must have at least 2 elements.", line, col);
+                    }
+                }
+
+                // A discrete knob's data has at least two elements, or none (U9, probe u9_extra).
+                if (isDial)
+                {
+                    int count = value.Type == JgsType.Cell ? value.AsCell.Length
+                        : value.Type == JgsType.Array ? value.ArrayLength
+                        : value.Type == JgsType.String ? value.AsString.Length
+                        : 1;
+                    if (count == 1)
+                    {
+                        throw UiError(entry, "invalidItemsData", "'ItemsData' must have at least 2 elements.", line, col);
+                    }
+                }
+
                 // A column is kept as a row, which is how R2025b hands it back.
                 JgsValue kept = JgsValue.Share(value);
                 if (kept.Type is JgsType.Array or JgsType.Cell && kept.Cols == 1 && kept.Rows > 1)
                 {
                     kept = JgsBuiltins.AsRow(kept);
+                    if (value.TimeTag is { } tag)
+                    {
+                        kept = kept.MarkTime(tag); // a column of datetimes is still one
+                    }
                 }
 
                 ReplaceItems(entry, () => entry.ItemsData = kept);
@@ -1505,7 +1746,7 @@ internal static partial class JgsGraphicsProperties
                     }
                 });
         }
-        else
+        else if (isDrop)
         {
             Put(table, "Editable",
                 entry => OnOff(((UiDropDownModel)entry.Target).Editable),
@@ -1525,8 +1766,11 @@ internal static partial class JgsGraphicsProperties
                     ((UiDropDownModel)entry.Target).Placeholder, "invalidPlaceholder", "'Placeholder' must be a character vector or a string scalar.", line, col));
         }
 
-        // R2025b lists a table of styles here; none can be added yet, so it is always empty.
-        Put(table, "StyleConfigurations", static _ => JgsMatrix.FromColumnMajor([], 0, 3));
+        // The styles added with addStyle (U9); a switch and a discrete knob take none.
+        if (isList || isDrop)
+        {
+            Put(table, "StyleConfigurations", StyleConfigurationsValue);
+        }
     }
 
     /// <summary>
@@ -1542,22 +1786,25 @@ internal static partial class JgsGraphicsProperties
         bool dataBefore = HasData(entry);
         change();
         List<JgsValue> after = ItemValues(entry);
-        if (model is UiDropDownModel drop)
+        if (model is not UiListBoxModel)
         {
-            if (drop.Typed is not null)
+            if (model is UiDropDownModel { Typed: not null })
             {
                 return;
             }
 
-            // Data taken away leaves the selection where it was; anything else keeps the value
-            // when the new items or data still have it, and takes the first otherwise.
-            if (dataBefore && !HasData(entry) && drop.Selected.Count > 0 && drop.Selected[0] < drop.Items.Count)
+            // Data taken away, or first given, leaves the selection where it was (probe u9_extra:
+            // a drop-down at its second item keeps it when data arrives); anything else keeps the
+            // value when the new items or data still have it, and takes the first otherwise. A
+            // switch and a discrete knob follow the drop-down here (U9).
+            bool stays = model.Selected.Count > 0 && model.Selected[0] < model.Items.Count;
+            if (stays && dataBefore != HasData(entry))
             {
                 return;
             }
 
             int kept = had.Count > 0 ? IndexOfValue(after, had[0]) : -1;
-            drop.Selected = kept >= 0 ? [kept] : drop.Items.Count > 0 ? [0] : [];
+            model.Selected = kept >= 0 ? [kept] : model.Items.Count > 0 ? [0] : [];
             return;
         }
 
@@ -1622,6 +1869,7 @@ internal static partial class JgsGraphicsProperties
     private static void SetItemsValue(JgsHandleEntry entry, JgsValue value, int line, int col)
     {
         UiItemsModel model = Items(entry);
+        WarnDatetimeAgainstText(value, model.Items.Count > 0 && !HasData(entry));
         List<JgsValue> values = ItemValues(entry);
         bool data = HasData(entry);
         string notIn = data
@@ -1629,7 +1877,8 @@ internal static partial class JgsGraphicsProperties
             : "'Value' must be an element defined in the 'Items' property.";
         string notInId = data ? "valueNotInItemsData" : "valueNotInText";
 
-        if (model is UiDropDownModel drop)
+        UiDropDownModel? drop = model as UiDropDownModel;
+        if (model is not UiListBoxModel)
         {
             if (model.Items.Count == 0)
             {
@@ -1645,12 +1894,16 @@ internal static partial class JgsGraphicsProperties
             int at = IndexOfValue(values, wanted);
             if (at >= 0)
             {
-                drop.Typed = null;
-                drop.Selected = [at];
+                if (drop is not null)
+                {
+                    drop.Typed = null;
+                }
+
+                model.Selected = [at];
                 return;
             }
 
-            if (drop.Editable && !data && wanted.Type == JgsType.String)
+            if (drop is { Editable: true } && !data && wanted.Type == JgsType.String)
             {
                 drop.Typed = wanted.AsString;
                 return;
@@ -1836,9 +2089,9 @@ internal static partial class JgsGraphicsProperties
         {
             foreach (UiObject component in components)
             {
-                if (component is UiSliderModel slider)
+                if (component is UiScaleModel scale)
                 {
-                    RefreshSliderTicks(slider);
+                    RefreshTicks(scale);
                 }
                 else if (component is UiContainerModel container)
                 {
@@ -1893,29 +2146,7 @@ internal static partial class JgsGraphicsProperties
                     ? given
                     : throw UiError(entry, "invalidValue", "'Value' must be a double scalar within the range of 'Limits'.", line, col);
             });
-        Put(table, "Limits",
-            entry => Row(Slider(entry).Lower, Slider(entry).Upper),
-            (entry, value, line, col) =>
-            {
-                UiSliderModel slider = Slider(entry);
-                double[]? limits = value.Type == JgsType.Array && JgsBuiltins.ClassOf(value, JgsDialect.Matlab) == "double" && (value.Rows == 1 || value.Cols == 1)
-                    ? RealNumbers(value)
-                    : null;
-                if (limits is not { Length: 2 } || !limits.All(double.IsFinite) || !(limits[1] > limits[0]))
-                {
-                    throw UiError(entry, "invalidFiniteScaleLimits", "'Limits' must be a 1-by-2 array of finite, increasing double values.", line, col);
-                }
-
-                slider.Lower = limits[0];
-                slider.Upper = limits[1];
-                slider.Value = System.Math.Clamp(slider.Value, limits[0], limits[1]);
-                if (slider is UiRangeSliderModel two)
-                {
-                    two.High = System.Math.Clamp(two.High, limits[0], limits[1]);
-                }
-
-                RefreshSliderTicks(slider);
-            });
+        AddScaleLimits(table, clamp: true);
         Put(table, "Step",
             entry => JgsValue.Number(Slider(entry).Step),
             (entry, value, line, col) =>
@@ -1942,90 +2173,7 @@ internal static partial class JgsGraphicsProperties
                 RefreshSliderTicks(Slider(entry));
             });
 
-        foreach (bool major in new[] { true, false })
-        {
-            string name = major ? "MajorTicks" : "MinorTicks";
-            Put(table, name,
-                entry =>
-                {
-                    RefreshSliderTicks(Slider(entry));
-                    IReadOnlyList<double> ticks = major ? Slider(entry).MajorTicks : Slider(entry).MinorTicks;
-                    return ticks.Count == 0 ? JgsMatrix.FromColumnMajor([], 0, 0) : Row([.. ticks]);
-                },
-                (entry, value, line, col) =>
-                {
-                    UiSliderModel slider = Slider(entry);
-                    if (value.Type == JgsType.Complex
-                        || (value.Type == JgsType.Array && !value.IsStringArray && Enumerable.Range(0, value.ArrayLength).Any(i => value.ElementAt(i).Type == JgsType.Complex)))
-                    {
-                        throw UiError(entry, $"invalid{name}", $"'{name}' array cannot contain complex values.", line, col);
-                    }
-
-                    double[]? ticks = RealNumbers(value);
-                    if (ticks is null)
-                    {
-                        throw UiError(entry, $"invalid{name}", $"'{name}' must be a 1-by-n numeric array.", line, col);
-                    }
-
-                    if (!ticks.All(double.IsFinite))
-                    {
-                        throw UiError(entry, $"invalid{name}", $"'{name}' array cannot contain NaN or Inf.", line, col);
-                    }
-
-                    double[] sorted = [.. ticks.Distinct().OrderBy(static t => t)];
-                    if (major)
-                    {
-                        slider.MajorTicks = sorted;
-                        slider.MajorTicksManual = true;
-                    }
-                    else
-                    {
-                        slider.MinorTicks = sorted;
-                        slider.MinorTicksManual = true;
-                    }
-
-                    RefreshSliderTicks(slider);
-                });
-            string mode = name + "Mode";
-            Put(table, mode,
-                entry => JgsValue.Str((major ? Slider(entry).MajorTicksManual : Slider(entry).MinorTicksManual) ? "manual" : "auto"),
-                (entry, value, line, col) =>
-                {
-                    bool manual = UiWord(entry, value, AutoManualWords, $"invalid{mode}", $"'{mode}' value must be 'auto' or 'manual'.", line, col) == "manual";
-                    if (major)
-                    {
-                        Slider(entry).MajorTicksManual = manual;
-                    }
-                    else
-                    {
-                        Slider(entry).MinorTicksManual = manual;
-                    }
-
-                    RefreshSliderTicks(Slider(entry));
-                });
-        }
-
-        Put(table, "MajorTickLabels",
-            entry =>
-            {
-                RefreshSliderTicks(Slider(entry));
-                return RowCell(Slider(entry).MajorTickLabels);
-            },
-            (entry, value, line, col) =>
-            {
-                string[]? labels = value.Type == JgsType.Cell && value.AsCell.Length == 0 ? [] : TextVector(value);
-                Slider(entry).MajorTickLabels = labels ?? throw UiError(entry, "invalidMajorTickLabels",
-                    "'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.", line, col);
-                Slider(entry).MajorTickLabelsManual = true;
-            });
-        Put(table, "MajorTickLabelsMode",
-            entry => JgsValue.Str(Slider(entry).MajorTickLabelsManual ? "manual" : "auto"),
-            (entry, value, line, col) =>
-            {
-                Slider(entry).MajorTickLabelsManual = UiWord(entry, value, AutoManualWords, "invalidMajorTickLabelsMode",
-                    "'MajorTickLabelsMode' value must be 'auto' or 'manual'.", line, col) == "manual";
-                RefreshSliderTicks(Slider(entry));
-            });
+        AddScaleTicksBlock(table);
         Put(table, "Orientation",
             entry => JgsValue.Str(Slider(entry).Vertical ? "vertical" : "horizontal"),
             (entry, value, line, col) =>

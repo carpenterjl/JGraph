@@ -23,6 +23,22 @@ public enum UiComponentKind
     Image,
     Hyperlink,
     Table,
+
+    // U9: knobs, switches, gauges, a lamp, the two pickers and the trees.
+    Knob,
+    DiscreteKnob,
+    Switch,
+    RockerSwitch,
+    ToggleSwitch,
+    Gauge,
+    LinearGauge,
+    NinetyDegreeGauge,
+    SemicircularGauge,
+    Lamp,
+    DatePicker,
+    ColorPicker,
+    Tree,
+    CheckBoxTree,
 }
 
 /// <summary>How a component sets its content from top to bottom (<c>VerticalAlignment</c>).</summary>
@@ -58,6 +74,9 @@ public abstract class UiComponentModel : UiObject
     private UiColor? _background;
     private long _userWriteSeq;
     private int _focusRequests;
+    private IReadOnlyList<UiStyleRule> _styles = [];
+    private int _scrollRequests;
+    private object? _scrollTarget;
 
     protected UiComponentModel(string name, Rect2D position)
     {
@@ -133,6 +152,33 @@ public abstract class UiComponentModel : UiObject
         Invalidate(InvalidationKind.Ui);
     }
 
+    /// <summary>How many times a script has asked this component to scroll (<c>scroll(h, …)</c>; U9).</summary>
+    [Browsable(false)]
+    public int ScrollRequests => _scrollRequests;
+
+    /// <summary>Where the last <c>scroll</c> asked to go: <c>"top"</c>, <c>"bottom"</c>, an item's position from 0, a tree node.</summary>
+    [Browsable(false)]
+    public object? ScrollTarget => _scrollTarget;
+
+    /// <summary>Asks the window to bring a place into view.</summary>
+    public void RequestScroll(object target)
+    {
+        _scrollTarget = target;
+        _scrollRequests++;
+        Invalidate(InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// The styles added with <c>addStyle</c> (U9), oldest first; only a table, a tree, a list and
+    /// a drop-down take any. Not part of a document: a rule may name nodes.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<UiStyleRule> Styles
+    {
+        get => _styles;
+        set => SetProperty(ref _styles, value ?? [], InvalidationKind.Ui);
+    }
+
     /// <summary>The lines of text this component shows, for measuring; empty when it shows none.</summary>
     [Browsable(false)]
     public virtual IReadOnlyList<string> ShownLines => [];
@@ -159,6 +205,9 @@ public abstract class UiComponentModel : UiObject
         UserWriteSeq = _userWriteSeq,
         FocusRequests = _focusRequests,
         Lines = ShownLines,
+        Styles = _styles,
+        ScrollRequests = _scrollRequests,
+        ScrollTarget = _scrollTarget,
     };
 }
 
@@ -896,20 +945,11 @@ public sealed class UiListBoxModel : UiItemsModel
 /// pixels thick whatever is written; the ticks and their labels lie outside it, in
 /// <c>OuterPosition</c>.
 /// </summary>
-public class UiSliderModel : UiComponentModel
+public class UiSliderModel : UiScaleModel
 {
-    private double _value;
-    private double _lower;
-    private double _upper = 100;
     private double _step = 0.1;
     private bool _stepManual;
     private bool _vertical;
-    private IReadOnlyList<double> _majorTicks = [0, 20, 40, 60, 80, 100];
-    private IReadOnlyList<double> _minorTicks = [];
-    private IReadOnlyList<string> _labels = ["0", "20", "40", "60", "80", "100"];
-    private bool _majorManual;
-    private bool _minorManual;
-    private bool _labelsManual;
 
     public UiSliderModel()
         : this("Slider")
@@ -923,27 +963,6 @@ public class UiSliderModel : UiComponentModel
 
     /// <inheritdoc />
     public override UiComponentKind Kind => UiComponentKind.Slider;
-
-    [Browsable(false)]
-    public double Value
-    {
-        get => _value;
-        set => SetProperty(ref _value, value, InvalidationKind.Ui);
-    }
-
-    [Browsable(false)]
-    public double Lower
-    {
-        get => _lower;
-        set => SetProperty(ref _lower, value, InvalidationKind.Ui);
-    }
-
-    [Browsable(false)]
-    public double Upper
-    {
-        get => _upper;
-        set => SetProperty(ref _upper, value, InvalidationKind.Ui);
-    }
 
     [Browsable(false)]
     public double Step
@@ -964,48 +983,6 @@ public class UiSliderModel : UiComponentModel
     {
         get => _vertical;
         set => SetProperty(ref _vertical, value, InvalidationKind.Ui);
-    }
-
-    [Browsable(false)]
-    public IReadOnlyList<double> MajorTicks
-    {
-        get => _majorTicks;
-        set => SetProperty(ref _majorTicks, value ?? [], InvalidationKind.Ui);
-    }
-
-    [Browsable(false)]
-    public IReadOnlyList<double> MinorTicks
-    {
-        get => _minorTicks;
-        set => SetProperty(ref _minorTicks, value ?? [], InvalidationKind.Ui);
-    }
-
-    [Browsable(false)]
-    public IReadOnlyList<string> MajorTickLabels
-    {
-        get => _labels;
-        set => SetProperty(ref _labels, value ?? [], InvalidationKind.Ui);
-    }
-
-    [Browsable(false)]
-    public bool MajorTicksManual
-    {
-        get => _majorManual;
-        set => SetProperty(ref _majorManual, value, InvalidationKind.Ui);
-    }
-
-    [Browsable(false)]
-    public bool MinorTicksManual
-    {
-        get => _minorManual;
-        set => SetProperty(ref _minorManual, value, InvalidationKind.Ui);
-    }
-
-    [Browsable(false)]
-    public bool MajorTickLabelsManual
-    {
-        get => _labelsManual;
-        set => SetProperty(ref _labelsManual, value, InvalidationKind.Ui);
     }
 
     /// <summary>The track's length in pixels: its width lying down, its height standing up.</summary>
@@ -1036,16 +1013,10 @@ public class UiSliderModel : UiComponentModel
         : new Rect2D(cell.X + 7.5, cell.Y + cell.Height - 9, System.Math.Max(0, cell.Width - 16), 3);
 
     /// <inheritdoc />
-    public override UiComponentFrame Snapshot() => Common() with
+    public override UiComponentFrame Snapshot() => ScaleFrame() with
     {
-        Number = _value,
-        Min = _lower,
-        Max = _upper,
         Step = _step,
         Upright = _vertical,
-        MajorTicks = _majorTicks,
-        MinorTicks = _minorTicks,
-        TickLabels = _labels,
     };
 }
 
@@ -1062,7 +1033,7 @@ public sealed class UiRangeSliderModel : UiSliderModel
     /// <inheritdoc />
     public override UiComponentKind Kind => UiComponentKind.RangeSlider;
 
-    /// <summary>The upper thumb; <see cref="UiSliderModel.Value"/> is the lower one.</summary>
+    /// <summary>The upper thumb; <see cref="UiScaleModel.Value"/> is the lower one.</summary>
     [Browsable(false)]
     public double High
     {
@@ -1262,4 +1233,26 @@ public sealed record UiComponentFrame : IUiNodeFrame
 
     /// <summary>What a table shows and how it selects (U8); null for every other class.</summary>
     public UiTableFrame? Table { get; init; }
+
+    /// <summary>What a tree shows and selects (U9); null for every other class.</summary>
+    public UiTreeFrame? Tree { get; init; }
+
+    /// <summary>What a date picker's calendar greys out (U9); null for every other class.</summary>
+    public UiDateFrame? Date { get; init; }
+
+    /// <summary>A gauge's bands of colour (U9), and where each lies as pairs of scale values.</summary>
+    public IReadOnlyList<UiColor> Colors { get; init; } = [];
+
+    public IReadOnlyList<double> ColorLimits { get; init; } = [];
+
+    /// <summary>One colour of the component's own: a lamp's, a colour picker's value.</summary>
+    public UiColor? Color { get; init; }
+
+    /// <summary>The styles added to a table, a tree, a list or a drop-down (U9).</summary>
+    public IReadOnlyList<UiStyleRule> Styles { get; init; } = [];
+
+    /// <summary>A script's <c>scroll</c> requests so far, and where the last asked to go (U9).</summary>
+    public int ScrollRequests { get; init; }
+
+    public object? ScrollTarget { get; init; }
 }

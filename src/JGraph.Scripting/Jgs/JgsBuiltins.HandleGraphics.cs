@@ -302,6 +302,13 @@ internal static partial class JgsBuiltins
                 "set wants a handle: set(h, 'Name', value) writes a property, set(h) lists the writable ones.");
         }
 
+        // An object whose class did not inherit set from matlab.mixin.SetGet has none (U6; a uistyle, U9).
+        if (args[0].Type == JgsType.Object)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:graphics:SetMethodUnknown",
+                $"Cannot find 'set' method for {args[0].AsObject.Class.Name} class.");
+        }
+
         List<JgsHandleEntry> targets = HandleList("set", args[0], line, col);
 
         // A component answers as R2025b's does (U3): set(h) is a struct of the names that can be
@@ -816,6 +823,12 @@ internal static partial class JgsBuiltins
             case ContextMenuModel menu:
                 parts.AddRange(menu.Items);
                 break;
+            case UiTreeModel tree:
+                parts.AddRange(tree.Nodes);
+                break;
+            case UiTreeNodeModel node:
+                parts.AddRange(node.Nodes);
+                break;
             case UiToolbarModel bar:
                 parts.AddRange(bar.Tools);
                 break;
@@ -914,6 +927,21 @@ internal static partial class JgsBuiltins
                 bar.Tools.Add(tool);
                 return;
 
+            // A tree node into a tree or another node (U9).
+            case (UiTreeModel or UiTreeNodeModel, UiTreeNodeModel node):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (node.Parent switch
+                    {
+                        UiTreeModel from => from.Nodes,
+                        UiTreeNodeModel above => above.Nodes,
+                        _ => null,
+                    })?.Remove(node);
+                }
+
+                (parent is UiTreeModel into ? into.Nodes : ((UiTreeNodeModel)parent).Nodes).Add(node);
+                return;
+
             // A tab goes in a tab group, and a tab group takes nothing else.
             case (IUiContainer holder, UiObject component) when (component is UiTabModel) != (holder is UiTabGroupModel):
                 throw new JgsRuntimeException(line, col,
@@ -941,6 +969,8 @@ internal static partial class JgsBuiltins
             case (FigureModel figure, AnnotationObject annotation):
                 figure.Annotations.Add(annotation);
                 return;
+            case (_, UiTreeNodeModel):
+                throw new JgsRuntimeException(line, col, "MATLAB:ui:TreeNode:invalidParent", "'Parent' must be a valid Tree object or TreeNode object.");
             default:
                 throw new JgsRuntimeException(line, col,
                     $"copyobj cannot put a {JgsGraphicsProperties.TypeNameOf(copy)} inside a {JgsGraphicsProperties.TypeNameOf(parent)}.");
@@ -1199,6 +1229,18 @@ internal static partial class JgsBuiltins
                     first.Value = true;
                 }
 
+                return;
+
+            // A tree node (U9): its tree lets go of it, then its parent does.
+            case UiTreeNodeModel node:
+                GraphObjectLifecycle.NotifyDeleting(node);
+                node.Tree?.Forget(node);
+                (node.Parent switch
+                {
+                    UiTreeModel tree => tree.Nodes,
+                    UiTreeNodeModel above => above.Nodes,
+                    _ => null,
+                })?.Remove(node);
                 return;
 
             case UiOverlayModel overlay:

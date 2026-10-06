@@ -144,6 +144,15 @@ internal sealed class JgsHandleEntry
     /// <summary>A <c>uitable</c>'s data and column properties, kept as given (U8).</summary>
     public JgsTableState? Table { get; set; }
 
+    /// <summary>A tree node's <c>NodeData</c>, kept as given: it can be any value (U9).</summary>
+    public JgsValue? NodeData { get; set; }
+
+    /// <summary>The styles added to a table, a tree, a list or a drop-down with <c>addStyle</c>, in order (U9).</summary>
+    public List<JgsStyleRow>? Styles { get; set; }
+
+    /// <summary>The class a date picker's <c>DisabledDaysOfWeek</c> was given in, which it reads back in (U9).</summary>
+    public string DisabledDaysClass { get; set; } = "double";
+
     /// <summary>A toolbar tool's <c>Icon</c> as given: a file's name or an array; null for none (U8).</summary>
     public JgsValue? ToolIcon { get; set; }
 

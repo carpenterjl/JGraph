@@ -1,0 +1,696 @@
+CHK|uiknob_in_uifigure|uiknob < figure|exact
+CHK|uiknob_in_figure|uiknob < figure|exact
+CHK|uiknob_in_uipanel|uiknob < uipanel < figure|exact
+CHK|uiknob_in_classic_uipanel|uiknob < uipanel < figure|exact
+CHK|uiknob_in_grid|uiknob < uigridlayout < figure|exact
+CHK|uiknob_in_group|uiknob < uibuttongroup < figure|exact
+CHK|uiknob_in_tabgroup|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_tab|uiknob < uitab < uitabgroup < figure|exact
+CHK|uiknob_in_classic_tab|uiknob < uitab < uitabgroup < figure|exact
+CHK|uiknob_in_menu|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_contextmenu|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_toolbar|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_axes|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uiknob_in_uiaxes|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|uiknob_in_uicontrol|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uiknob_in_label|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_label_msg|Label cannot be a parent.|exact
+CHK|uiknob_in_tree|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_checkbox_tree|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_checkbox_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_treenode|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_treenode_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_classic_tree|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_classic_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_table|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_table_msg|Table cannot be a parent.|exact
+CHK|uiknob_in_number|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_empty|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_in_root|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_in_root_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_named_parent|uiknob < figure|exact
+CHK|uiknob_named_classic_parent|uiknob < figure|exact
+CHK|uiknob_named_tree_parent|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_named_tree_parent_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_unknown|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_unknown_msg|Unrecognized property Bogus for class Knob.|exact
+CHK|uiknob_odd|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_odd_msg|'Tag' is not a valid STYLE for uiknob. STYLE must be 'continuous' or 'discrete'.|exact
+CHK|uiknob_numbers|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|uiknob_to_panel|uiknob < uipanel < figure|exact
+CHK|uiknob_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uiknob_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uiknob_to_tree|MATLAB:ui:Knob:invalidParent|exact
+CHK|uiknob_to_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_to_node|MATLAB:ui:Knob:invalidParent|exact
+CHK|uiknob_to_node_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiknob_to_grid|uiknob < uigridlayout < figure|exact
+CHK|uiswitch_in_uifigure|uiswitch < figure|exact
+CHK|uiswitch_in_figure|uiswitch < figure|exact
+CHK|uiswitch_in_uipanel|uiswitch < uipanel < figure|exact
+CHK|uiswitch_in_classic_uipanel|uiswitch < uipanel < figure|exact
+CHK|uiswitch_in_grid|uiswitch < uigridlayout < figure|exact
+CHK|uiswitch_in_group|uiswitch < uibuttongroup < figure|exact
+CHK|uiswitch_in_tabgroup|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_tab|uiswitch < uitab < uitabgroup < figure|exact
+CHK|uiswitch_in_classic_tab|uiswitch < uitab < uitabgroup < figure|exact
+CHK|uiswitch_in_menu|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_contextmenu|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_toolbar|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_axes|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uiswitch_in_uiaxes|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|uiswitch_in_uicontrol|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uiswitch_in_label|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_label_msg|Label cannot be a parent.|exact
+CHK|uiswitch_in_tree|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_checkbox_tree|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_checkbox_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_treenode|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_treenode_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_classic_tree|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_classic_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_table|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_table_msg|Table cannot be a parent.|exact
+CHK|uiswitch_in_number|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_empty|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_in_root|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_in_root_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_named_parent|uiswitch < figure|exact
+CHK|uiswitch_named_classic_parent|uiswitch < figure|exact
+CHK|uiswitch_named_tree_parent|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_named_tree_parent_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_unknown|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_unknown_msg|Unrecognized property Bogus for class Switch.|exact
+CHK|uiswitch_odd|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_odd_msg|'Tag' is not a valid STYLE for uiswitch. STYLE must be 'slider', 'toggle' or 'rocker'.|exact
+CHK|uiswitch_numbers|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|uiswitch_to_panel|uiswitch < uipanel < figure|exact
+CHK|uiswitch_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uiswitch_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uiswitch_to_tree|MATLAB:ui:Switch:invalidParent|exact
+CHK|uiswitch_to_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_to_node|MATLAB:ui:Switch:invalidParent|exact
+CHK|uiswitch_to_node_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uiswitch_to_grid|uiswitch < uigridlayout < figure|exact
+CHK|uigauge_in_uifigure|uigauge < figure|exact
+CHK|uigauge_in_figure|uigauge < figure|exact
+CHK|uigauge_in_uipanel|uigauge < uipanel < figure|exact
+CHK|uigauge_in_classic_uipanel|uigauge < uipanel < figure|exact
+CHK|uigauge_in_grid|uigauge < uigridlayout < figure|exact
+CHK|uigauge_in_group|uigauge < uibuttongroup < figure|exact
+CHK|uigauge_in_tabgroup|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_tab|uigauge < uitab < uitabgroup < figure|exact
+CHK|uigauge_in_classic_tab|uigauge < uitab < uitabgroup < figure|exact
+CHK|uigauge_in_menu|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_contextmenu|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_toolbar|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_axes|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uigauge_in_uiaxes|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|uigauge_in_uicontrol|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uigauge_in_label|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_label_msg|Label cannot be a parent.|exact
+CHK|uigauge_in_tree|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_checkbox_tree|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_checkbox_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_treenode|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_treenode_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_classic_tree|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_classic_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_table|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_table_msg|Table cannot be a parent.|exact
+CHK|uigauge_in_number|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_empty|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_in_root|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_in_root_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_named_parent|uigauge < figure|exact
+CHK|uigauge_named_classic_parent|uigauge < figure|exact
+CHK|uigauge_named_tree_parent|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_named_tree_parent_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_unknown|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_unknown_msg|Unrecognized property Bogus for class Gauge.|exact
+CHK|uigauge_odd|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_odd_msg|'Tag' is not a valid STYLE for uigauge. STYLE must be 'circular', 'semicircular', 'ninetydegree' or 'linear'.|exact
+CHK|uigauge_numbers|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|uigauge_to_panel|uigauge < uipanel < figure|exact
+CHK|uigauge_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uigauge_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uigauge_to_tree|MATLAB:ui:Gauge:invalidParent|exact
+CHK|uigauge_to_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_to_node|MATLAB:ui:Gauge:invalidParent|exact
+CHK|uigauge_to_node_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uigauge_to_grid|uigauge < uigridlayout < figure|exact
+CHK|uilamp_in_uifigure|uilamp < figure|exact
+CHK|uilamp_in_figure|uilamp < figure|exact
+CHK|uilamp_in_uipanel|uilamp < uipanel < figure|exact
+CHK|uilamp_in_classic_uipanel|uilamp < uipanel < figure|exact
+CHK|uilamp_in_grid|uilamp < uigridlayout < figure|exact
+CHK|uilamp_in_group|uilamp < uibuttongroup < figure|exact
+CHK|uilamp_in_tabgroup|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_tab|uilamp < uitab < uitabgroup < figure|exact
+CHK|uilamp_in_classic_tab|uilamp < uitab < uitabgroup < figure|exact
+CHK|uilamp_in_menu|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_contextmenu|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_toolbar|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_axes|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uilamp_in_uiaxes|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|uilamp_in_uicontrol|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uilamp_in_label|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_label_msg|Label cannot be a parent.|exact
+CHK|uilamp_in_tree|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_checkbox_tree|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_checkbox_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_treenode|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_treenode_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_classic_tree|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_classic_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_table|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_table_msg|Table cannot be a parent.|exact
+CHK|uilamp_in_number|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_empty|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_in_root|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_in_root_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_named_parent|uilamp < figure|exact
+CHK|uilamp_named_classic_parent|uilamp < figure|exact
+CHK|uilamp_named_tree_parent|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_named_tree_parent_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_unknown|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_unknown_msg|Unrecognized property Bogus for class Lamp.|exact
+CHK|uilamp_odd|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uilamp_numbers|MATLAB:ui:Lamp:unknownInput|exact
+CHK|uilamp_numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|uilamp_to_panel|uilamp < uipanel < figure|exact
+CHK|uilamp_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uilamp_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uilamp_to_tree|MATLAB:ui:Lamp:invalidParent|exact
+CHK|uilamp_to_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_to_node|MATLAB:ui:Lamp:invalidParent|exact
+CHK|uilamp_to_node_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uilamp_to_grid|uilamp < uigridlayout < figure|exact
+CHK|uidatepicker_in_uifigure|uidatepicker < figure|exact
+CHK|uidatepicker_in_figure|uidatepicker < figure|exact
+CHK|uidatepicker_in_uipanel|uidatepicker < uipanel < figure|exact
+CHK|uidatepicker_in_classic_uipanel|uidatepicker < uipanel < figure|exact
+CHK|uidatepicker_in_grid|uidatepicker < uigridlayout < figure|exact
+CHK|uidatepicker_in_group|uidatepicker < uibuttongroup < figure|exact
+CHK|uidatepicker_in_tabgroup|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_tab|uidatepicker < uitab < uitabgroup < figure|exact
+CHK|uidatepicker_in_classic_tab|uidatepicker < uitab < uitabgroup < figure|exact
+CHK|uidatepicker_in_menu|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_contextmenu|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_toolbar|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_axes|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uidatepicker_in_uiaxes|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|uidatepicker_in_uicontrol|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uidatepicker_in_label|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_label_msg|Label cannot be a parent.|exact
+CHK|uidatepicker_in_tree|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_checkbox_tree|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_checkbox_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_treenode|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_treenode_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_classic_tree|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_classic_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_table|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_table_msg|Table cannot be a parent.|exact
+CHK|uidatepicker_in_number|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_empty|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_in_root|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_in_root_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_named_parent|uidatepicker < figure|exact
+CHK|uidatepicker_named_classic_parent|uidatepicker < figure|exact
+CHK|uidatepicker_named_tree_parent|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_named_tree_parent_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_unknown|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_unknown_msg|Unrecognized property Bogus for class DatePicker.|exact
+CHK|uidatepicker_odd|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uidatepicker_numbers|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|uidatepicker_to_panel|uidatepicker < uipanel < figure|exact
+CHK|uidatepicker_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uidatepicker_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uidatepicker_to_tree|MATLAB:ui:DatePicker:invalidParent|exact
+CHK|uidatepicker_to_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_to_node|MATLAB:ui:DatePicker:invalidParent|exact
+CHK|uidatepicker_to_node_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uidatepicker_to_grid|uidatepicker < uigridlayout < figure|exact
+CHK|uicolorpicker_in_uifigure|uicolorpicker < figure|exact
+CHK|uicolorpicker_in_figure|uicolorpicker < figure|exact
+CHK|uicolorpicker_in_uipanel|uicolorpicker < uipanel < figure|exact
+CHK|uicolorpicker_in_classic_uipanel|uicolorpicker < uipanel < figure|exact
+CHK|uicolorpicker_in_grid|uicolorpicker < uigridlayout < figure|exact
+CHK|uicolorpicker_in_group|uicolorpicker < uibuttongroup < figure|exact
+CHK|uicolorpicker_in_tabgroup|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_tab|uicolorpicker < uitab < uitabgroup < figure|exact
+CHK|uicolorpicker_in_classic_tab|uicolorpicker < uitab < uitabgroup < figure|exact
+CHK|uicolorpicker_in_menu|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_contextmenu|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_toolbar|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_axes|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uicolorpicker_in_uiaxes|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|uicolorpicker_in_uicontrol|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uicolorpicker_in_label|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_label_msg|Label cannot be a parent.|exact
+CHK|uicolorpicker_in_tree|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_checkbox_tree|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_checkbox_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_treenode|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_treenode_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_classic_tree|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_classic_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_table|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_table_msg|Table cannot be a parent.|exact
+CHK|uicolorpicker_in_number|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_empty|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_in_root|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_in_root_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_named_parent|uicolorpicker < figure|exact
+CHK|uicolorpicker_named_classic_parent|uicolorpicker < figure|exact
+CHK|uicolorpicker_named_tree_parent|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_named_tree_parent_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_unknown|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_unknown_msg|Unrecognized property Bogus for class ColorPicker.|exact
+CHK|uicolorpicker_odd|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uicolorpicker_numbers|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|uicolorpicker_to_panel|uicolorpicker < uipanel < figure|exact
+CHK|uicolorpicker_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uicolorpicker_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uicolorpicker_to_tree|MATLAB:ui:ColorPicker:invalidParent|exact
+CHK|uicolorpicker_to_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_to_node|MATLAB:ui:ColorPicker:invalidParent|exact
+CHK|uicolorpicker_to_node_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uicolorpicker_to_grid|uicolorpicker < uigridlayout < figure|exact
+CHK|uitree_in_uifigure|uitree < figure|exact
+CHK|uitree_in_figure|uitree < figure|exact
+CHK|uitree_in_uipanel|uitree < uipanel < figure|exact
+CHK|uitree_in_classic_uipanel|uitree < uipanel < figure|exact
+CHK|uitree_in_grid|uitree < uigridlayout < figure|exact
+CHK|uitree_in_group|uitree < uibuttongroup < figure|exact
+CHK|uitree_in_tabgroup|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_tabgroup_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_tab|uitree < uitab < uitabgroup < figure|exact
+CHK|uitree_in_classic_tab|uitree < uitab < uitabgroup < figure|exact
+CHK|uitree_in_menu|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_menu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_contextmenu|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_contextmenu_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_toolbar|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_toolbar_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_axes|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitree_in_uiaxes|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|uitree_in_uicontrol|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uitree_in_label|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_label_msg|Label cannot be a parent.|exact
+CHK|uitree_in_tree|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_checkbox_tree|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_checkbox_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_treenode|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_treenode_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_classic_tree|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_classic_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_table|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_table_msg|Table cannot be a parent.|exact
+CHK|uitree_in_number|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_number_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_empty|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_empty_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_in_root|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_in_root_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_named_parent|uitree < figure|exact
+CHK|uitree_named_classic_parent|uitree < figure|exact
+CHK|uitree_named_tree_parent|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_named_tree_parent_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_unknown|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_unknown_msg|Unrecognized property Bogus for class Tree.|exact
+CHK|uitree_odd|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_odd_msg|'Tag' is not a valid STYLE for uitree. STYLE must be 'tree' or 'checkbox'.|exact
+CHK|uitree_numbers|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|uitree_to_panel|uitree < uipanel < figure|exact
+CHK|uitree_to_axes|MATLAB:gbtobjects:Component|exact
+CHK|uitree_to_axes_msg|Axes cannot be a parent.|exact
+CHK|uitree_to_tree|MATLAB:ui:Tree:invalidParent|exact
+CHK|uitree_to_tree_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_to_node|MATLAB:ui:Tree:invalidParent|exact
+CHK|uitree_to_node_msg|'Parent' must be a parent component, such as a uifigure object.|exact
+CHK|uitree_to_grid|uitree < uigridlayout < figure|exact
+CHK|uitreenode_in_uifigure|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_uifigure_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_figure|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_figure_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_uipanel|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_uipanel_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_classic_uipanel|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_classic_uipanel_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_grid|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_grid_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_group|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_group_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_tabgroup|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_tabgroup_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_tab|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_tab_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_classic_tab|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_classic_tab_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_menu|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_menu_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_contextmenu|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_contextmenu_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_toolbar|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_toolbar_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_axes|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_axes_msg|Axes cannot be a parent.|exact
+CHK|uitreenode_in_uiaxes|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_uiaxes_msg|UIAxes cannot be a parent.|exact
+CHK|uitreenode_in_uicontrol|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_uicontrol_msg|UIControl cannot be a parent.|exact
+CHK|uitreenode_in_label|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_label_msg|Label cannot be a parent.|exact
+CHK|uitreenode_in_tree|uitreenode < uitree < figure|exact
+CHK|uitreenode_in_checkbox_tree|uitreenode < uicheckboxtree < figure|exact
+CHK|uitreenode_in_treenode|uitreenode < uitreenode < uitree < figure|exact
+CHK|uitreenode_in_classic_tree|uitreenode < uitree < figure|exact
+CHK|uitreenode_in_table|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_table_msg|Table cannot be a parent.|exact
+CHK|uitreenode_in_number|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_number_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_empty|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_empty_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_in_root|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_in_root_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_named_parent|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_named_parent_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_named_classic_parent|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_named_classic_parent_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_named_tree_parent|uitreenode < uitree < figure|exact
+CHK|uitreenode_unknown|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_unknown_msg|Unrecognized property Bogus for class TreeNode.|exact
+CHK|uitreenode_odd|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_odd_msg|No value was given for 'Tag'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uitreenode_numbers|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_numbers_msg|Invalid parameter/value pair arguments.|exact
+CHK|uitreenode_to_panel|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_to_panel_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_to_axes|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_to_axes_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_to_tree|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_to_tree_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_to_node|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_to_node_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uitreenode_to_grid|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_to_grid_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|uiknob_pairs|double [1 1] 5|exact
+CHK|uiknob_struct|s|exact
+CHK|uiknob_lower_case|t|exact
+CHK|uiknob_prefix|t|exact
+CHK|uiknob_strings|t|exact
+CHK|uiknob_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uiknob_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Knob.|exact
+CHK|uiknob_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uiknob_set_unknown_msg|Unrecognized property Bogus for class Knob.|exact
+CHK|uiknob_set_type|MATLAB:class:SetProhibited|exact
+CHK|uiknob_set_type_msg|Unable to set the 'Type' property of class ''Knob'' because it is read-only.|exact
+CHK|uiknob_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uiknob_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Knob'' because it is read-only.|exact
+CHK|uiknob_get_units|MATLAB:hg:InvalidProperty|exact
+CHK|uiknob_get_units_msg|Unrecognized property Units for class matlab.ui.control.Knob.|exact
+CHK|uiknob_isprop|double [1 5] 0 1 1 1 1|exact
+CHK|uiknob_isa|double [1 4] 1 1 0 1|exact
+CHK|uiknob_findobj|double [1 1] 1|exact
+CHK|uiswitch_pairs|double [1 1] 5|exact
+CHK|uiswitch_struct|s|exact
+CHK|uiswitch_lower_case|t|exact
+CHK|uiswitch_prefix|t|exact
+CHK|uiswitch_strings|t|exact
+CHK|uiswitch_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uiswitch_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Switch.|exact
+CHK|uiswitch_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uiswitch_set_unknown_msg|Unrecognized property Bogus for class Switch.|exact
+CHK|uiswitch_set_type|MATLAB:class:SetProhibited|exact
+CHK|uiswitch_set_type_msg|Unable to set the 'Type' property of class ''Switch'' because it is read-only.|exact
+CHK|uiswitch_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uiswitch_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Switch'' because it is read-only.|exact
+CHK|uiswitch_get_units|MATLAB:hg:InvalidProperty|exact
+CHK|uiswitch_get_units_msg|Unrecognized property Units for class matlab.ui.control.Switch.|exact
+CHK|uiswitch_isprop|double [1 5] 0 1 1 1 1|exact
+CHK|uiswitch_isa|double [1 4] 1 1 0 1|exact
+CHK|uiswitch_findobj|double [1 1] 1|exact
+CHK|uigauge_pairs|double [1 1] 5|exact
+CHK|uigauge_struct|s|exact
+CHK|uigauge_lower_case|t|exact
+CHK|uigauge_prefix|t|exact
+CHK|uigauge_strings|t|exact
+CHK|uigauge_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uigauge_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Gauge.|exact
+CHK|uigauge_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uigauge_set_unknown_msg|Unrecognized property Bogus for class Gauge.|exact
+CHK|uigauge_set_type|MATLAB:class:SetProhibited|exact
+CHK|uigauge_set_type_msg|Unable to set the 'Type' property of class ''Gauge'' because it is read-only.|exact
+CHK|uigauge_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uigauge_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Gauge'' because it is read-only.|exact
+CHK|uigauge_get_units|MATLAB:hg:InvalidProperty|exact
+CHK|uigauge_get_units_msg|Unrecognized property Units for class matlab.ui.control.Gauge.|exact
+CHK|uigauge_isprop|double [1 5] 0 1 1 1 1|exact
+CHK|uigauge_isa|double [1 4] 1 1 0 1|exact
+CHK|uigauge_findobj|double [1 1] 1|exact
+CHK|uilamp_pairs|double [1 1] 5|exact
+CHK|uilamp_struct|s|exact
+CHK|uilamp_lower_case|t|exact
+CHK|uilamp_prefix|t|exact
+CHK|uilamp_strings|t|exact
+CHK|uilamp_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uilamp_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.Lamp.|exact
+CHK|uilamp_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uilamp_set_unknown_msg|Unrecognized property Bogus for class Lamp.|exact
+CHK|uilamp_set_type|MATLAB:class:SetProhibited|exact
+CHK|uilamp_set_type_msg|Unable to set the 'Type' property of class ''Lamp'' because it is read-only.|exact
+CHK|uilamp_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uilamp_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Lamp'' because it is read-only.|exact
+CHK|uilamp_get_units|MATLAB:hg:InvalidProperty|exact
+CHK|uilamp_get_units_msg|Unrecognized property Units for class matlab.ui.control.Lamp.|exact
+CHK|uilamp_isprop|double [1 5] 0 1 1 1 1|exact
+CHK|uilamp_isa|double [1 4] 1 1 0 1|exact
+CHK|uilamp_findobj|double [1 1] 1|exact
+CHK|uidatepicker_pairs|double [1 1] 5|exact
+CHK|uidatepicker_struct|s|exact
+CHK|uidatepicker_lower_case|t|exact
+CHK|uidatepicker_prefix|t|exact
+CHK|uidatepicker_strings|t|exact
+CHK|uidatepicker_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uidatepicker_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.DatePicker.|exact
+CHK|uidatepicker_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uidatepicker_set_unknown_msg|Unrecognized property Bogus for class DatePicker.|exact
+CHK|uidatepicker_set_type|MATLAB:class:SetProhibited|exact
+CHK|uidatepicker_set_type_msg|Unable to set the 'Type' property of class ''DatePicker'' because it is read-only.|exact
+CHK|uidatepicker_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uidatepicker_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''DatePicker'' because it is read-only.|exact
+CHK|uidatepicker_get_units|MATLAB:hg:InvalidProperty|exact
+CHK|uidatepicker_get_units_msg|Unrecognized property Units for class matlab.ui.control.DatePicker.|exact
+CHK|uidatepicker_isprop|double [1 5] 0 1 1 1 1|exact
+CHK|uidatepicker_isa|double [1 4] 1 1 0 1|exact
+CHK|uidatepicker_findobj|double [1 1] 1|exact
+CHK|uicolorpicker_pairs|double [1 1] 5|exact
+CHK|uicolorpicker_struct|s|exact
+CHK|uicolorpicker_lower_case|t|exact
+CHK|uicolorpicker_prefix|t|exact
+CHK|uicolorpicker_strings|t|exact
+CHK|uicolorpicker_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uicolorpicker_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.control.ColorPicker.|exact
+CHK|uicolorpicker_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uicolorpicker_set_unknown_msg|Unrecognized property Bogus for class ColorPicker.|exact
+CHK|uicolorpicker_set_type|MATLAB:class:SetProhibited|exact
+CHK|uicolorpicker_set_type_msg|Unable to set the 'Type' property of class ''ColorPicker'' because it is read-only.|exact
+CHK|uicolorpicker_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uicolorpicker_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''ColorPicker'' because it is read-only.|exact
+CHK|uicolorpicker_get_units|MATLAB:hg:InvalidProperty|exact
+CHK|uicolorpicker_get_units_msg|Unrecognized property Units for class matlab.ui.control.ColorPicker.|exact
+CHK|uicolorpicker_isprop|double [1 5] 0 1 1 1 1|exact
+CHK|uicolorpicker_isa|double [1 4] 1 1 0 1|exact
+CHK|uicolorpicker_findobj|double [1 1] 1|exact
+CHK|uitree_pairs|double [1 1] 5|exact
+CHK|uitree_struct|s|exact
+CHK|uitree_lower_case|t|exact
+CHK|uitree_prefix|t|exact
+CHK|uitree_strings|t|exact
+CHK|uitree_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitree_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.Tree.|exact
+CHK|uitree_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitree_set_unknown_msg|Unrecognized property Bogus for class Tree.|exact
+CHK|uitree_set_type|MATLAB:class:SetProhibited|exact
+CHK|uitree_set_type_msg|Unable to set the 'Type' property of class ''Tree'' because it is read-only.|exact
+CHK|uitree_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uitree_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''Tree'' because it is read-only.|exact
+CHK|uitree_get_units|MATLAB:hg:InvalidProperty|exact
+CHK|uitree_get_units_msg|Unrecognized property Units for class matlab.ui.container.Tree.|exact
+CHK|uitree_isprop|double [1 5] 0 1 1 1 1|exact
+CHK|uitree_isa|double [1 4] 1 1 1 1|exact
+CHK|uitree_findobj|double [1 1] 1|exact
+CHK|uitreenode_pairs|double [1 1] 5|exact
+CHK|uitreenode_struct|s|exact
+CHK|uitreenode_lower_case|t|exact
+CHK|uitreenode_prefix|t|exact
+CHK|uitreenode_strings|t|exact
+CHK|uitreenode_get_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitreenode_get_unknown_msg|Unrecognized property Bogus for class matlab.ui.container.TreeNode.|exact
+CHK|uitreenode_set_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|uitreenode_set_unknown_msg|Unrecognized property Bogus for class TreeNode.|exact
+CHK|uitreenode_set_type|MATLAB:class:SetProhibited|exact
+CHK|uitreenode_set_type_msg|Unable to set the 'Type' property of class ''TreeNode'' because it is read-only.|exact
+CHK|uitreenode_set_beingdeleted|MATLAB:class:SetProhibited|exact
+CHK|uitreenode_set_beingdeleted_msg|Unable to set the 'BeingDeleted' property of class ''TreeNode'' because it is read-only.|exact
+CHK|uitreenode_get_units|MATLAB:hg:InvalidProperty|exact
+CHK|uitreenode_get_units_msg|Unrecognized property Units for class matlab.ui.container.TreeNode.|exact
+CHK|uitreenode_isprop|double [1 5] 0 0 0 0 0|exact
+CHK|uitreenode_isa|double [1 4] 1 1 1 1|exact
+CHK|uitreenode_findobj|double [1 1] 1|exact
+CHK|uiknob_continuous|uiknob|exact
+CHK|uiknob_discrete|uidiscreteknob|exact
+CHK|uiknob_DISCRETE|uidiscreteknob|exact
+CHK|uiknob_disc|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_disc_msg|'disc' is not a valid STYLE for uiknob. STYLE must be 'continuous' or 'discrete'.|exact
+CHK|uiknob_string_style|uidiscreteknob|exact
+CHK|uiknob_bogus_style|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_bogus_style_msg|'bogus' is not a valid STYLE for uiknob. STYLE must be 'continuous' or 'discrete'.|exact
+CHK|uiknob_discrete_items|a|exact
+CHK|uiknob_discrete_value_first|b|exact
+CHK|uiknob_items_on_continuous|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_items_on_continuous_msg|Unrecognized property Items for class Knob.|exact
+CHK|uiknob_value_outside|MATLAB:ui:Knob:unknownInput|exact
+CHK|uiknob_value_outside_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|uiknob_value_then_limits|double [1 1] 150|exact
+CHK|uiknob_limits_then_value|double [1 1] 150|exact
+CHK|uiswitch_slider|uiswitch|exact
+CHK|uiswitch_rocker|uirockerswitch|exact
+CHK|uiswitch_toggle|uitoggleswitch|exact
+CHK|uiswitch_ROCKER|uirockerswitch|exact
+CHK|uiswitch_rock|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_rock_msg|'rock' is not a valid STYLE for uiswitch. STYLE must be 'slider', 'toggle' or 'rocker'.|exact
+CHK|uiswitch_bogus|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_bogus_msg|'bogus' is not a valid STYLE for uiswitch. STYLE must be 'slider', 'toggle' or 'rocker'.|exact
+CHK|uiswitch_toggle_horizontal|double [1 4] 100 100 45 20|exact
+CHK|uiswitch_value_on|On|exact
+CHK|uiswitch_value_lower|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_value_lower_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|uiswitch_value_true|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_value_true_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|uiswitch_value_then_items|b|exact
+CHK|uiswitch_three_items|MATLAB:ui:Switch:unknownInput|exact
+CHK|uiswitch_three_items_msg|'Items' must have 2 elements.|exact
+CHK|uigauge_circular|uigauge|exact
+CHK|uigauge_linear|uilineargauge|exact
+CHK|uigauge_ninetydegree|uininetydegreegauge|exact
+CHK|uigauge_semicircular|uisemicirculargauge|exact
+CHK|uigauge_NINETYDEGREE|uininetydegreegauge|exact
+CHK|uigauge_semi|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_semi_msg|'semi' is not a valid STYLE for uigauge. STYLE must be 'circular', 'semicircular', 'ninetydegree' or 'linear'.|exact
+CHK|uigauge_bogus|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_bogus_msg|'bogus' is not a valid STYLE for uigauge. STYLE must be 'circular', 'semicircular', 'ninetydegree' or 'linear'.|exact
+CHK|uigauge_value_outside|double [1 1] 150|exact
+CHK|uigauge_linear_vertical|double [1 4] 100 100 40 120|exact
+CHK|uigauge_circular_orientation|MATLAB:ui:Gauge:unknownInput|exact
+CHK|uigauge_circular_orientation_msg|Unrecognized property Orientation for class Gauge.|exact
+CHK|uitree_checkbox|uicheckboxtree|exact
+CHK|uitree_CHECKBOX|uicheckboxtree|exact
+CHK|uitree_check|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_check_msg|'check' is not a valid STYLE for uitree. STYLE must be 'tree' or 'checkbox'.|exact
+CHK|uitree_tree|uitree|exact
+CHK|uitree_bogus|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_bogus_msg|'bogus' is not a valid STYLE for uitree. STYLE must be 'tree' or 'checkbox'.|exact
+CHK|uitree_v0_in_figure|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_v0_in_figure_msg|'v0' is not a valid STYLE for uitree. STYLE must be 'tree' or 'checkbox'.|exact
+CHK|uitree_v0|MATLAB:uitree:DeprecatedFunctionWeb|exact
+CHK|uitree_v0_msg|The 'v0' argument for uitree has been removed|exact
+CHK|uitree_checkbox_multiselect|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_checkbox_multiselect_msg|Unrecognized property Multiselect for class CheckBoxTree.|exact
+CHK|uitree_checkednodes_on_tree|MATLAB:ui:Tree:unknownInput|exact
+CHK|uitree_checkednodes_on_tree_msg|Unrecognized property CheckedNodes for class Tree.|exact
+CHK|uitreenode_text|x|exact
+CHK|uitreenode_text_number|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_text_number_msg|'Text' must be a character vector or a string scalar.|exact
+CHK|uitreenode_odd_text|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_odd_text_msg|No value was given for 'x'. Name-value pair arguments require a name followed by a value.|exact
+CHK|uitreenode_under_node|uitreenode < uitreenode < uitree < figure|exact
+CHK|uitreenode_nodedata|struct|exact
+CHK|uitreenode_visible|MATLAB:ui:TreeNode:unknownInput|exact
+CHK|uitreenode_visible_msg|Unrecognized property Visible for class TreeNode.|exact
+CHK|uidatepicker_value|datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]|exact
+CHK|uidatepicker_value_char|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_value_char_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|uidatepicker_value_then_limits|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_value_then_limits_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|uidatepicker_limits_then_value|MATLAB:ui:DatePicker:unknownInput|exact
+CHK|uidatepicker_limits_then_value_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|uicolorpicker_value|double [1 3] 0 0 1|exact
+CHK|uicolorpicker_bogus_value|MATLAB:ui:ColorPicker:unknownInput|exact
+CHK|uicolorpicker_bogus_value_msg|Error setting property 'Value' of class 'ColorPicker': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|uilamp_color|double [1 3] 1 0 0|exact

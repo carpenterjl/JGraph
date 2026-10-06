@@ -102,6 +102,8 @@ public sealed partial class UiComponentLayer
 
         public IReadOnlyList<UiColor> Stripes { get; set; } = [];
 
+        public IReadOnlyList<UiStyleRule> Styles { get; set; } = [];
+
         public int ScrollSeen { get; set; }
 
         /// <summary>A person put something in a cell: the script side hears what, and where in the data.</summary>
@@ -150,6 +152,7 @@ public sealed partial class UiComponentLayer
             {
                 e.Row.Header = row.Header;
                 e.Row.Background = view.Stripes.Count > 0 ? BrushOf(view.Stripes[row.Index % view.Stripes.Count]) : Brushes.White;
+                StyleRow(grid, view, e.Row, row.Index);
             }
         };
 
@@ -200,6 +203,94 @@ public sealed partial class UiComponentLayer
             }
         };
         return shown;
+    }
+
+    /// <summary>
+    /// Lays the styles added with <c>addStyle</c> (U9) over a row as it loads: the row's own on the
+    /// row, and each cell's on the cell once the row has its cells.
+    /// </summary>
+    private static void StyleRow(DataGrid grid, TableView view, DataGridRow row, int index)
+    {
+        IReadOnlyList<UiStyleRule> rules = view.Styles;
+        if (rules.Count == 0)
+        {
+            row.ClearValue(Control.ForegroundProperty);
+            row.ClearValue(Control.FontWeightProperty);
+            row.ClearValue(Control.FontStyleProperty);
+            return;
+        }
+
+        UiStyle rowStyle = UiStyleRule.Combine(rules.Where(rule => rule.Target is UiStyleTarget.Whole or UiStyleTarget.Row && rule.Covers(index + 1, 1)));
+        if (rowStyle.BackgroundColor is { } fill)
+        {
+            row.Background = BrushOf(fill);
+        }
+
+        if (rowStyle.FontColor is { } ink)
+        {
+            row.Foreground = BrushOf(ink);
+        }
+        else
+        {
+            row.ClearValue(Control.ForegroundProperty);
+        }
+
+        row.FontWeight = rowStyle.FontWeight == "bold" ? FontWeights.Bold : FontWeights.Normal;
+        row.FontStyle = rowStyle.FontAngle == "italic" ? FontStyles.Italic : FontStyles.Normal;
+        void Cells()
+        {
+            for (int c = 0; c < grid.Columns.Count; c++)
+            {
+                if (grid.Columns[c].GetCellContent(row)?.Parent is not DataGridCell cell)
+                {
+                    continue;
+                }
+
+                UiStyle cellStyle = UiStyleRule.Combine(rules.Where(rule => rule.Target is UiStyleTarget.Column or UiStyleTarget.Cell && rule.Covers(index + 1, c + 1)));
+                cell.Background = BrushOf(cellStyle.BackgroundColor) ?? Brushes.Transparent;
+                if (cellStyle.FontColor is { } cellInk)
+                {
+                    cell.Foreground = BrushOf(cellInk);
+                }
+                else
+                {
+                    cell.ClearValue(Control.ForegroundProperty);
+                }
+
+                if (cellStyle.FontWeight.Length > 0)
+                {
+                    cell.FontWeight = cellStyle.FontWeight == "bold" ? FontWeights.Bold : FontWeights.Normal;
+                }
+                else
+                {
+                    cell.ClearValue(Control.FontWeightProperty);
+                }
+
+                if (cellStyle.FontAngle.Length > 0)
+                {
+                    cell.FontStyle = cellStyle.FontAngle == "italic" ? FontStyles.Italic : FontStyles.Normal;
+                }
+                else
+                {
+                    cell.ClearValue(Control.FontStyleProperty);
+                }
+            }
+        }
+
+        if (row.IsLoaded)
+        {
+            Cells();
+        }
+        else
+        {
+            RoutedEventHandler? once = null;
+            once = (_, _) =>
+            {
+                row.Loaded -= once;
+                Cells();
+            };
+            row.Loaded += once;
+        }
     }
 
     /// <summary>The data row and column of what was pressed, and whether it was a heading: 1 for a row's, 2 for a column's.</summary>
@@ -266,8 +357,9 @@ public sealed partial class UiComponentLayer
             _ => DataGridHeadersVisibility.None,
         };
 
-        bool restriped = !view.Stripes.SequenceEqual(table.Stripes);
+        bool restriped = !view.Stripes.SequenceEqual(table.Stripes) || !ReferenceEquals(view.Styles, frame.Styles);
         view.Stripes = table.Stripes;
+        view.Styles = frame.Styles;
         if (!ReferenceEquals(view.Content, content))
         {
             // A person part-way through a cell keeps it: the frame that answers the edit is on its way.

@@ -95,6 +95,19 @@ internal static partial class JgsGraphicsProperties
                 "Children may only be set to a permutation of itself.");
         }
 
+        // A tree's and a node's children stand in the order given, first first (U9).
+        if (entry.Target is UiTreeModel treeHolder)
+        {
+            Restack(treeHolder.Nodes, [.. wanted.OfType<UiTreeNodeModel>()]);
+            return;
+        }
+
+        if (entry.Target is UiTreeNodeModel nodeHolder)
+        {
+            Restack(nodeHolder.Nodes, [.. wanted.OfType<UiTreeNodeModel>()]);
+            return;
+        }
+
         if (entry.Target is not IUiContainer holder)
         {
             throw new JgsRuntimeException(line, col,

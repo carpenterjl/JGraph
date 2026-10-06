@@ -1,0 +1,191 @@
+CHK|children_empty|logical [1 1] 1|exact
+CHK|children_order|char 'n1(2) .c1(0) .c2(0) n2(0) n3(0)'|exact
+CHK|children_count|double [1 1] 3|exact
+CHK|node_children_count|double [1 1] 2|exact
+CHK|node_parent_type|char 'uitreenode'|exact
+CHK|leaf_children_empty|logical [1 1] 1|exact
+CHK|figure_children_count|double [1 1] 1|exact
+CHK|findobj_nodes|double [1 1] 5|exact
+CHK|findobj_text|double [1 1] 1|exact
+CHK|findall_nodes|double [1 1] 5|exact
+CHK|allchild_tree|double [1 1] 3|exact
+CHK|allchild_node|double [1 1] 2|exact
+CHK|isa_node|double [1 4] 1 1 1 1|exact
+CHK|isa_tree|double [1 3] 1 1 1|exact
+CHK|ancestor_figure|char 'figure'|exact
+CHK|ancestor_tree|char 'uitree'|exact
+CHK|selected_default|logical [1 1] 1|exact
+CHK|selected_one|char '1 [n1]'|exact
+CHK|selected_two_single|MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff|exact
+CHK|selected_two_single_msg|When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.|exact
+CHK|selected_empty|char 'none'|exact
+CHK|selected_cell|MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff|exact
+CHK|selected_cell_msg|When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.|exact
+CHK|selected_number|MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff|exact
+CHK|selected_number_msg|When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.|exact
+CHK|selected_tree|MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff|exact
+CHK|selected_tree_msg|When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.|exact
+CHK|selected_foreign|MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff|exact
+CHK|selected_foreign_msg|When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.|exact
+CHK|selected_nested|char '1 [c1]'|exact
+CHK|multiselect_on|onoff on|exact
+CHK|selected_two_multi|char '2 [n1,n2]'|exact
+CHK|selected_column|char '2 [n1,n2]'|exact
+CHK|selected_duplicate|char '1 [n1]'|exact
+CHK|selected_order|char '3 [n2,n1,c1]'|exact
+CHK|selected_with_foreign|MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOn|exact
+CHK|selected_with_foreign_msg|When 'Multiselect' is 'on', 'SelectedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.|exact
+CHK|multiselect_off_keeps_first|char '1 [n2]'|exact
+CHK|selected_after_delete|char 'none'|exact
+CHK|selected_after_parent_delete|char 'none'|exact
+CHK|valid_after_parent_delete|double [1 3] 0 0 0|exact
+CHK|children_after_deletes|char 'n3(0)'|exact
+CHK|selected_after_move_out|char 'none / none'|exact
+CHK|moved_node_tree|char 'mover(0)'|exact
+CHK|valid_after_tree_delete|logical [1 1] 0|exact
+CHK|text_number|MATLAB:ui:TreeNode:invalidText :: 'Text' must be a character vector or a string scalar.|exact
+CHK|text_string|char 's'|exact
+CHK|text_cell|MATLAB:ui:TreeNode:invalidText :: 'Text' must be a character vector or a string scalar.|exact
+CHK|text_empty|char ''|exact
+CHK|text_strings|MATLAB:ui:TreeNode:invalidText :: 'Text' must be a character vector or a string scalar.|exact
+CHK|text_matrix|MATLAB:ui:TreeNode:invalidText :: 'Text' must be a character vector or a string scalar.|exact
+CHK|nodedata_struct|struct|exact
+CHK|nodedata_cell|cell [1 2] {double [1 1] 1, char 'a'}|exact
+CHK|nodedata_string|string [1 1] [s]|exact
+CHK|nodedata_empty|double [0 0]|exact
+CHK|icon_nofile|char '' WARN MATLAB:ui:TreeNode:invalidIconNotInPath|exact
+CHK|icon_word|MATLAB:ui:TreeNode:invalidIconFile :: You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|icon_cube|double [4 4 3] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|icon_number|MATLAB:ui:TreeNode:invalidIconCData :: You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|icon_empty|char ''|exact
+CHK|icon_empty_double|char ''|exact
+CHK|icon_matrix|MATLAB:ui:TreeNode:invalidIconCData :: You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|icon_uint8|uint8 [2 2 3] 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|icon_over_one|double [2 2 3] 2 2 2 2 2 2 2 2 2 2 2 2|exact
+CHK|node_visible|MATLAB:hg:InvalidProperty|exact
+CHK|node_visible_msg|Unrecognized property Visible for class matlab.ui.container.TreeNode.|exact
+CHK|node_position|MATLAB:hg:InvalidProperty|exact
+CHK|node_position_msg|Unrecognized property Position for class matlab.ui.container.TreeNode.|exact
+CHK|node_enable|MATLAB:hg:InvalidProperty|exact
+CHK|node_enable_msg|Unrecognized property Enable for class matlab.ui.container.TreeNode.|exact
+CHK|node_layout|MATLAB:hg:InvalidProperty|exact
+CHK|node_layout_msg|Unrecognized property Layout for class matlab.ui.container.TreeNode.|exact
+CHK|node_to_grid|MATLAB:ui:TreeNode:invalidParent|exact
+CHK|node_to_grid_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|node_to_figure|MATLAB:ui:TreeNode:invalidParent|exact
+CHK|node_to_figure_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|node_to_listbox|MATLAB:gbtobjects:Component|exact
+CHK|node_to_listbox_msg|ListBox cannot be a parent.|exact
+CHK|tree_editable|char 'Editable=onoff on'|exact
+CHK|texts_before|char 'n1(2) .c1(1) ..g1(0) .c2(0) n2(0)'|exact
+CHK|move_to_sibling|ran|exact
+CHK|texts_after_move|char 'n1(1) .c2(0) n2(0) c1(1) .g1(0)'|exact
+CHK|move_before|ran|exact
+CHK|texts_after_before|char 'n1(2) .c1(1) ..g1(0) .c2(0) n2(0)'|exact
+CHK|move_after|ran|exact
+CHK|texts_after_after|char 'n1(2) .c2(0) .c1(1) ..g1(0) n2(0)'|exact
+CHK|move_AFTER|ran|exact
+CHK|move_bef|ran|exact
+CHK|move_string_where|ran|exact
+CHK|move_bogus_where|MATLAB:unrecognizedStringChoice|exact
+CHK|move_bogus_where_msg|Expected input to match one of these values: 'after', 'before' The input, 'bogus', did not match any of the valid values.|exact
+CHK|move_too_many|MATLAB:TooManyInputs|exact
+CHK|move_too_many_msg|Too many input arguments.|exact
+CHK|move_onto_itself|ran|exact
+CHK|move_into_descendant|MATLAB:container:InvalidParentToChild|exact
+CHK|move_into_descendant_msg|You are trying to set the parent property to a descendant child object.|exact
+CHK|move_to_tree|MATLAB:ui:TreeNode:targetRequiresTreeNode|exact
+CHK|move_to_tree_msg|Target node must be a TreeNode object.|exact
+CHK|move_to_figure|MATLAB:ui:TreeNode:targetRequiresTreeNode|exact
+CHK|move_to_figure_msg|Target node must be a TreeNode object.|exact
+CHK|move_across_trees|ran|exact
+CHK|texts_after_across|char 'n1(1) .c2(0) n2(0) / m1(0) c1(1) .g1(0)'|exact
+CHK|move_across_before|ran|exact
+CHK|texts_after_across_before|char 'n1(1) .c2(0) n2(0) / c1(1) .g1(0) m1(0)'|exact
+CHK|move_tree|MATLAB:UndefinedFunction|exact
+CHK|move_tree_msg|Undefined function 'move' for input arguments of type 'matlab.ui.container.Tree'.|exact
+CHK|move_one_argument|MATLAB:narginchk:notEnoughInputs|exact
+CHK|move_one_argument_msg|Not enough input arguments.|exact
+CHK|move_number|MATLAB:ui:TreeNode:firstArgumentRequiresTreeNode|exact
+CHK|move_number_msg|First argument must be a TreeNode object.|exact
+CHK|move_two_nodes|MATLAB:ui:TreeNode:requiresScalarTreeNode|exact
+CHK|move_two_nodes_msg|TreeNode object must be scalar.|exact
+CHK|children_reorder_bad|MATLAB:hg:BadChildrenPermutation|exact
+CHK|children_reorder_bad_msg|Children may only be set to a permutation of itself.|exact
+CHK|children_foreign|MATLAB:hg:BadChildrenPermutation|exact
+CHK|children_foreign_msg|Children may only be set to a permutation of itself.|exact
+CHK|children_reorder|ran|exact
+CHK|texts_after_children|char 'n2(0) n1(1) .c2(0)'|exact
+CHK|parent_to_tree|ran|exact
+CHK|texts_after_parent|char 'n2(0) n1(0) c2(0)'|exact
+CHK|parent_to_other_tree|ran|exact
+CHK|texts_after_parent_other|char 'n2(0) n1(0) / c1(1) .g1(0) m1(0) c2(0)'|exact
+CHK|tree_to_classic|ran|exact
+CHK|tree_classic_chain|char 'uitreenode < uitree < figure'|exact
+CHK|tree_back|ran|exact
+CHK|copy_tree|char 'n2(0) n1(0)'|exact
+CHK|copy_node_to_figure|MATLAB:ui:TreeNode:invalidParent|exact
+CHK|copy_node_to_figure_msg|'Parent' must be a valid Tree object or TreeNode object.|exact
+CHK|expand_tree|ran|exact
+CHK|expand_node|ran|exact
+CHK|expand_leaf|ran|exact
+CHK|expand_all|ran|exact
+CHK|expand_node_all|ran|exact
+CHK|expand_ALL|ran|exact
+CHK|expand_string_all|ran|exact
+CHK|expand_bogus|MATLAB:unrecognizedStringChoice|exact
+CHK|expand_bogus_msg|Expected input to match one of these values: 'all' The input, 'bogus', did not match any of the valid values.|exact
+CHK|expand_node_arg|MATLAB:unrecognizedStringChoice|exact
+CHK|expand_node_arg_msg|Expected input to match one of these values: 'all' The input did not match any of the valid values.|exact
+CHK|expand_number_arg|MATLAB:unrecognizedStringChoice|exact
+CHK|expand_number_arg_msg|Expected input to match one of these values: 'all' The input did not match any of the valid values.|exact
+CHK|expand_two_nodes|ran|exact
+CHK|expand_figure|MATLAB:UndefinedFunction|exact
+CHK|expand_figure_msg|Undefined function 'expand' for input arguments of type 'matlab.ui.Figure'.|exact
+CHK|expand_listbox|MATLAB:UndefinedFunction|exact
+CHK|expand_listbox_msg|Undefined function 'expand' for input arguments of type 'matlab.ui.control.ListBox'.|exact
+CHK|expand_number|MATLAB:UndefinedFunction|exact
+CHK|expand_number_msg|Undefined function 'expand' for input arguments of type 'double'.|exact
+CHK|collapse_tree|ran|exact
+CHK|collapse_node|ran|exact
+CHK|collapse_all|ran|exact
+CHK|collapse_bogus|MATLAB:unrecognizedStringChoice|exact
+CHK|collapse_bogus_msg|Expected input to match one of these values: 'all' The input, 'bogus', did not match any of the valid values.|exact
+CHK|collapse_figure|MATLAB:UndefinedFunction|exact
+CHK|collapse_figure_msg|Undefined function 'collapse' for input arguments of type 'matlab.ui.Figure'.|exact
+CHK|checked_default|logical [1 1] 1|exact
+CHK|checked_parent|char '4 [p1,k1,k2,k3]'|exact
+CHK|checked_child_only|char '2 [k1,k3]'|exact
+CHK|checked_all_children|char '4 [k1,k2,k3,p1]'|exact
+CHK|checked_deepest|char '2 [k3,k1]'|exact
+CHK|checked_two_leaves|char '3 [k3,k2,k1]'|exact
+CHK|checked_mixed|char '3 [p2,k1,k3]'|exact
+CHK|checked_column|char '5 [p1,p2,k1,k2,k3]'|exact
+CHK|checked_duplicate|char '4 [p1,k1,k2,k3]'|exact
+CHK|checked_empty|char 'none'|exact
+CHK|checked_number|MATLAB:ui:CheckBoxTree:checkedNodesInvalid|exact
+CHK|checked_number_msg|'CheckedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.|exact
+CHK|checked_foreign|MATLAB:ui:CheckBoxTree:checkedNodesInvalid|exact
+CHK|checked_foreign_msg|'CheckedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.|exact
+CHK|checked_plain_node|MATLAB:ui:CheckBoxTree:checkedNodesInvalid|exact
+CHK|checked_plain_node_msg|'CheckedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.|exact
+CHK|checked_tree|MATLAB:ui:CheckBoxTree:checkedNodesInvalid|exact
+CHK|checked_tree_msg|'CheckedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.|exact
+CHK|checked_on_plain_tree|MATLAB:hg:InvalidProperty|exact
+CHK|checked_on_plain_tree_msg|Unrecognized property CheckedNodes for class Tree.|exact
+CHK|checked_read_plain_tree|MATLAB:hg:InvalidProperty|exact
+CHK|checked_read_plain_tree_msg|Unrecognized property CheckedNodes for class matlab.ui.container.Tree.|exact
+CHK|multiselect_on_checkbox_tree|MATLAB:hg:InvalidProperty|exact
+CHK|multiselect_on_checkbox_tree_msg|Unrecognized property Multiselect for class matlab.ui.container.CheckBoxTree.|exact
+CHK|selected_two_on_checkbox_tree|MATLAB:ui:CheckBoxTree:selectedCheckBoxTreeNodes|exact
+CHK|selected_two_on_checkbox_tree_msg|'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the CheckBoxTree.|exact
+CHK|checked_after_new_child|char '2 [p2,newborn]'|exact
+CHK|checked_with_doomed|char '5 [k2,k3,k1,doomed,p1]'|exact
+CHK|checked_after_delete|char '4 [k2,k3,k1,p1]'|exact
+CHK|checked_after_move_out|char 'none / none'|exact
+CHK|checkbox_texts|char 'p1(2) .k1(1) ..k3(0) .k2(0) p2(0)'|exact
+CHK|F_type|char 'uitree'|exact
+CHK|F_class_count|double [1 1] 35|exact
+CHK|F_texts|char 'n1(1) .c1(0)'|exact
+CHK|F_selected|char '1 [c1]'|exact
+CHK|F_checked|char '2 [p1,k1]'|exact

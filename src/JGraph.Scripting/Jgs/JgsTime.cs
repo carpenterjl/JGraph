@@ -293,8 +293,25 @@ internal static class JgsTime
             return NotATime;
         }
 
-        var start = new DateTime((int)System.Math.Clamp(year, 1, 9999), 1, 1);
-        double ms = FromDateTime(start.AddMonths((int)month - 1));
+        // A year .NET has no DateTime for — 0, which a date picker's lower limit is, or 10000 and
+        // beyond — is built four hundred years on or back, which the Gregorian calendar repeats
+        // exactly, and moved by that many days (U9).
+        double whole = System.Math.Clamp(System.Math.Floor(year), -4000000, 4000000);
+        int blocks = 0;
+        while (whole < 1)
+        {
+            whole += 400;
+            blocks++;
+        }
+
+        while (whole > 9999)
+        {
+            whole -= 400;
+            blocks--;
+        }
+
+        var start = new DateTime((int)whole, 1, 1);
+        double ms = FromDateTime(start.AddMonths((int)month - 1)) - (blocks * 146097 * MsPerDay);
         return ms
             + ((day - 1) * MsPerDay)
             + (hour * MsPerHour)
@@ -324,18 +341,48 @@ internal static class JgsTime
             return "NaT";
         }
 
+        // A moment before year 1, which the lower limit of a date picker is (R2025b reads it as
+        // 01-Jan-0000; U9): .NET counts from year 1, so the moment is read four hundred years on,
+        // which the Gregorian calendar repeats exactly, and the year is written back.
+        // A day's margin at either end: at this magnitude a double cannot tell the last tick of
+        // year 9999 from the first of 10000.
+        double earliest = (DateTime.MinValue - Epoch).TotalMilliseconds + MsPerDay;
+        double latest = (DateTime.MaxValue - Epoch).TotalMilliseconds - MsPerDay;
+        int centuriesOn = 0;
+        while (ms < earliest)
+        {
+            ms += 146097 * MsPerDay;
+            centuriesOn += 4;
+        }
+
+        while (ms > latest)
+        {
+            ms -= 146097 * MsPerDay;
+            centuriesOn -= 4;
+        }
+
         // The wall clock in the value's own zone, which for an unzoned value is the stored moment
         // itself. Only the reading moves; the storage stays the instant (M82).
         DateTime moment = WallClock(ms, tag);
         string net = ToNetFormat(WithZoneTokens(tag.Format, ms, tag));
+        string text;
         try
         {
-            return moment.ToString(net, culture ?? CultureInfo.InvariantCulture);
+            text = moment.ToString(net, culture ?? CultureInfo.InvariantCulture);
         }
         catch (FormatException)
         {
-            return moment.ToString(ToNetFormat(DefaultDatetimeFormat), CultureInfo.InvariantCulture);
+            text = moment.ToString(ToNetFormat(DefaultDatetimeFormat), CultureInfo.InvariantCulture);
         }
+
+        if (centuriesOn != 0)
+        {
+            int year = moment.Year - (100 * centuriesOn);
+            text = text.Replace(
+                moment.Year.ToString("0000", CultureInfo.InvariantCulture), year.ToString("0000", CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        }
+
+        return text;
     }
 
     /// <summary>
@@ -564,6 +611,18 @@ internal static class JgsTime
         while (i < format.Length)
         {
             char c = format[i];
+
+            // Text in quotes is literal in both languages and is copied through as it stands (U9:
+            // a date picker's 'Date:' dd-MMM-uuuu), rather than read letter by letter.
+            if (c == '\'')
+            {
+                int close = format.IndexOf('\'', i + 1);
+                int end = close < 0 ? format.Length : close + 1;
+                built.Append(format, i, end - i);
+                i = end;
+                continue;
+            }
+
             int run = 1;
             while (i + run < format.Length && format[i + run] == c)
             {
@@ -778,7 +837,7 @@ internal static class JgsTime
             // sitting on midnight in its own zone stores an offset instant, and testing the storage
             // would make every zoned date print a time of day it does not have (M82).
             anyMoment = true;
-            if (WallClock(ms, zoned).TimeOfDay != TimeSpan.Zero)
+            if (WallClock(InNetRange(ms), zoned).TimeOfDay != TimeSpan.Zero)
             {
                 return zoned;
             }
@@ -790,6 +849,53 @@ internal static class JgsTime
     }
 
     /// <summary>The tag a freshly built duration takes.</summary>
+    /// <summary>
+    /// A moment moved by whole blocks of four hundred years — which the Gregorian calendar repeats
+    /// exactly, so the month, day and time of day are kept — into the years .NET's DateTime has.
+    /// </summary>
+    private static double InNetRange(double ms)
+    {
+        double earliest = (DateTime.MinValue - Epoch).TotalMilliseconds + MsPerDay;
+        double latest = (DateTime.MaxValue - Epoch).TotalMilliseconds - MsPerDay;
+        while (ms < earliest)
+        {
+            ms += 146097 * MsPerDay;
+        }
+
+        while (ms > latest)
+        {
+            ms -= 146097 * MsPerDay;
+        }
+
+        return ms;
+    }
+
+    /// <summary>
+    /// The tag a concatenation of datetimes carries (U9): when every piece shows one of the default
+    /// formats the format is worked out again from all the moments, as R2025b does — <c>[d1 d2]</c>
+    /// shows the time of day only <c>d2</c> has — and otherwise the first piece's is kept.
+    /// </summary>
+    internal static JgsTimeTag ConcatTag(JgsTimeTag first, IEnumerable<JgsValue> pieces)
+    {
+        if (first.Kind != JgsTimeKind.Datetime)
+        {
+            return first;
+        }
+
+        var moments = new List<double>();
+        foreach (JgsValue piece in pieces)
+        {
+            if (piece.TimeTag is not { } tag || tag.Format is not (DefaultDatetimeFormat or DateOnlyFormat) || tag.TimeZone != first.TimeZone)
+            {
+                return first;
+            }
+
+            moments.AddRange(JgsBuiltins.TimeMs(piece));
+        }
+
+        return DatetimeTag(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(moments), first.TimeZone);
+    }
+
     public static JgsTimeTag DurationTag(string format = DefaultDurationFormat) =>
         new(JgsTimeKind.Duration, format);
 }

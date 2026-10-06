@@ -51,6 +51,39 @@ public sealed partial class UiComponentLayer
 
         public UiSliderFace? Slider { get; init; }
 
+        // U9: the drawn faces, a date picker's parts, a colour picker's parts, a tree's items.
+        public UiKnobFace? Knob { get; init; }
+
+        public UiDiscreteKnobFace? Dial { get; init; }
+
+        public UiSwitchFace? Switch { get; init; }
+
+        public UiGaugeFace? Gauge { get; init; }
+
+        public UiLampFace? Lamp { get; init; }
+
+        public TextBox? DateBox { get; init; }
+
+        public Calendar? Calendar { get; init; }
+
+        public Popup? Popup { get; init; }
+
+        public Border? Swatch { get; init; }
+
+        public TextBox? Hex { get; init; }
+
+        public TreeView? Tree { get; init; }
+
+        public Dictionary<UiTreeNodeModel, TreeViewItem> TreeItems { get; } = new(ReferenceEqualityComparer.Instance);
+
+        public Dictionary<UiTreeNodeModel, UiTreeNodeFrame> TreeFrames { get; } = new(ReferenceEqualityComparer.Instance);
+
+        public List<UiTreeNodeModel> TreeSelection { get; set; } = [];
+
+        public string TreeSignature { get; set; } = string.Empty;
+
+        public int ScrollSeen { get; set; }
+
         public UiComponentFrame? Frame { get; set; }
 
         /// <summary>True while a frame is being applied, so the control's own events are not taken for a person's.</summary>
@@ -124,6 +157,7 @@ public sealed partial class UiComponentLayer
             if (!_components.TryGetValue(component.Source, out Shown? shown))
             {
                 shown = Make(component);
+                AttachContextMenu(shown);
                 _components[component.Source] = shown;
                 Children.Add(shown.Element);
             }
@@ -158,6 +192,7 @@ public sealed partial class UiComponentLayer
 
         ApplyTabStrips(frame);
         ApplyOverlays(frame);
+        ApplyMenuOpens(frame);
     }
 
     private void ArrangeComponents(UiLayoutResult layout)
@@ -177,6 +212,11 @@ public sealed partial class UiComponentLayer
                 box = placement.Component.Upright
                     ? new Rect2D(box.X - 7, box.Y - 8, box.Width + 36, box.Height + 16)
                     : new Rect2D(box.X - 7, box.Y - 6, box.Width + 16, box.Height + 36);
+            }
+            else if (shown.Knob is not null || shown.Dial is not null || shown.Switch is not null)
+            {
+                // A dial's and a switch's labels lie outside the component's own rectangle (U9).
+                box = OuterOf(placement.Component, box);
             }
 
             FrameworkElement element = shown.Element;
@@ -346,7 +386,7 @@ public sealed partial class UiComponentLayer
         }
 
         long seq = ScriptGraphicsCallbacks.NotifyComponent(shown.Source, action, value);
-        if (action is "value" or "celledit")
+        if (action is "value" or "celledit" or "nodeselect" or "nodecheck" or "nodetext")
         {
             shown.PendingSeq = seq;
         }
@@ -615,6 +655,29 @@ public sealed partial class UiComponentLayer
                 return shown;
             }
 
+            // U9: the drawn faces, the pickers and the trees.
+            case UiComponentKind.Knob:
+            case UiComponentKind.DiscreteKnob:
+            case UiComponentKind.Switch:
+            case UiComponentKind.RockerSwitch:
+            case UiComponentKind.ToggleSwitch:
+            case UiComponentKind.Gauge:
+            case UiComponentKind.LinearGauge:
+            case UiComponentKind.NinetyDegreeGauge:
+            case UiComponentKind.SemicircularGauge:
+            case UiComponentKind.Lamp:
+                return MakeFace(frame);
+
+            case UiComponentKind.DatePicker:
+                return MakeDatePicker(frame);
+
+            case UiComponentKind.ColorPicker:
+                return MakeColorPicker(frame);
+
+            case UiComponentKind.Tree:
+            case UiComponentKind.CheckBoxTree:
+                return MakeTree(frame);
+
             default:
             {
                 var label = new TextBlock();
@@ -836,6 +899,7 @@ public sealed partial class UiComponentLayer
                 combo.Background = background ?? Brushes.Transparent;
                 combo.IsEditable = frame.Editable;
                 SetItemTexts(combo, frame.Items);
+                ApplyItemStyles(combo, frame, foreground);
                 if (!waiting && !combo.IsDropDownOpen)
                 {
                     if (frame.Editable && frame.HasNumber && frame.Text.Length > 0)
@@ -859,6 +923,7 @@ public sealed partial class UiComponentLayer
                 var list = (ListBox)shown.Input!;
                 list.Background = background ?? Brushes.Transparent;
                 SetItemTexts(list, frame.Items);
+                ApplyItemStyles(list, frame, foreground);
                 list.SelectionMode = frame.Multi ? SelectionMode.Extended : SelectionMode.Single;
                 if (!waiting)
                 {
@@ -942,6 +1007,32 @@ public sealed partial class UiComponentLayer
                 picture.VerticalAlignment = Down(frame.Vertical);
                 break;
             }
+
+            case UiComponentKind.Knob:
+            case UiComponentKind.DiscreteKnob:
+            case UiComponentKind.Switch:
+            case UiComponentKind.RockerSwitch:
+            case UiComponentKind.ToggleSwitch:
+            case UiComponentKind.Gauge:
+            case UiComponentKind.LinearGauge:
+            case UiComponentKind.NinetyDegreeGauge:
+            case UiComponentKind.SemicircularGauge:
+            case UiComponentKind.Lamp:
+                RefreshFace(shown, frame, foreground, new Typeface(family, style, weight, FontStretches.Normal), size, waiting);
+                break;
+
+            case UiComponentKind.DatePicker:
+                RefreshDatePicker(shown, frame, waiting);
+                break;
+
+            case UiComponentKind.ColorPicker:
+                RefreshColorPicker(shown, frame);
+                break;
+
+            case UiComponentKind.Tree:
+            case UiComponentKind.CheckBoxTree:
+                RefreshTree(shown, frame, foreground, family, weight, style, size, waiting);
+                break;
         }
 
         // focus(h): the keyboard goes to the component, once per asking.

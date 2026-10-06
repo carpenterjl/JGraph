@@ -54,6 +54,9 @@ public sealed partial class UiComponentLayer : Canvas
                      // A table's grid and a tab group's headings (U8), part by part.
                      typeof(DataGrid), typeof(DataGridCell), typeof(DataGridRow), typeof(DataGridColumnHeader), typeof(DataGridRowHeader),
                      typeof(CheckBox), typeof(ComboBox), typeof(TabControl), typeof(TabItem),
+
+                     // A tree and a date picker's calendar (U9).
+                     typeof(TreeView), typeof(TreeViewItem), typeof(Calendar), typeof(CalendarItem), typeof(CalendarDayButton), typeof(CalendarButton),
                  })
         {
             Resources.Add(part, new Style(part));

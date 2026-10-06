@@ -20,6 +20,7 @@ addedvarplot	ERR:MATLAB:narginout:notValidMfile	0
 addlistener	ERR:MATLAB:narginout:doesNotApply	5
 addpath	1	2
 addpoints	ERR:MATLAB:nargin:isScript	2
+addStyle	ERR:MATLAB:narginout:notValidMfile	0
 addtodate	1	2
 addToolbarExplorationButtons	0	6
 addvars	1	0
@@ -289,6 +290,7 @@ cmunique	2	2
 cohere	2	2
 col2im	1	2
 colfilt	1	2
+collapse	ERR:MATLAB:narginout:notValidMfile	0
 colnames	ERR:MATLAB:narginout:notValidMfile	0
 colon	1	5
 colorangle	1	2
@@ -520,6 +522,7 @@ ExhaustiveSearcher	ERR:MATLAB:narginout:notValidMfile	0
 exist	1	5
 exit	0	5
 exp	1	5
+expand	1	0
 expcdf	ERR:MATLAB:narginout:notValidMfile	0
 expfit	ERR:MATLAB:narginout:notValidMfile	0
 expint	1	2
@@ -1269,6 +1272,7 @@ moment	ERR:MATLAB:narginout:notValidMfile	0
 montage	1	2
 month	2	2
 more	0	5
+move	-1	0
 movefile	3	5
 movegui	0	2
 movie	0	6
@@ -1678,6 +1682,7 @@ rem	1	5
 remez	3	2
 remezord	4	2
 remove	ERR:MATLAB:narginout:notValidMfile	0
+removeStyle	ERR:MATLAB:narginout:notValidMfile	0
 removeToolbarExplorationButtons	0	6
 rendererinfo	1	6
 repelem	1	5
@@ -1770,6 +1775,7 @@ scatterhist	ERR:MATLAB:narginout:notValidMfile	0
 scatterhistogram	1	2
 schur	2	2
 schurrc	2	2
+scroll	ERR:MATLAB:narginout:notValidMfile	0
 sec	1	2
 secd	1	2
 sech	1	2
@@ -2059,18 +2065,23 @@ uiaxes	1	2
 uibutton	1	2
 uibuttongroup	1	2
 uicheckbox	1	2
+uicolorpicker	1	2
 uiconfirm	1	2
 uicontextmenu	1	5
 uicontrol	1	5
+uidatepicker	1	2
 uidropdown	1	2
 uieditfield	1	2
 uifigure	1	2
+uigauge	1	2
 uigetdir	1	2
 uigetfile	3	2
 uigridlayout	1	2
 uihyperlink	1	2
 uiimage	1	2
+uiknob	1	2
 uilabel	1	2
+uilamp	1	2
 uilistbox	1	2
 uiload	0	2
 uimenu	1	5
@@ -2087,6 +2098,8 @@ uisetfont	1	2
 uislider	1	2
 uispinner	1	2
 uistack	-1	2
+uistyle	1	2
+uiswitch	1	2
 uitab	1	2
 uitabgroup	1	2
 uitable	2	5
@@ -2094,6 +2107,8 @@ uitextarea	1	2
 uitogglebutton	1	2
 uitoggletool	1	5
 uitoolbar	1	5
+uitree	-2	2
+uitreenode	1	2
 uiwait	0	2
 uminus	1	5
 undershoot	3	2

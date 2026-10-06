@@ -216,6 +216,18 @@ public class OwnershipGateTests
         ("JgsWorkspaceIo.cs",
          "environment.Declare(name, value);",
          "load of a text file: a fresh matrix"),
+        ("JgsBuiltinClasses.Style.cs",
+         "copy.Fields[field] = held;",
+         "uistyle: a fresh value object being built from another's fields, which are shares (U9)"),
+        ("JgsBuiltinClasses.Style.cs",
+         "copy.Fields[name] = StyleValueOf(name, args[1], line, col);",
+         "uistyle: a coerced property value into the fresh object the constructor is building (U9)"),
+        ("JgsBuiltins.Trees.cs",
+         "style.Fields[name] = JgsBuiltinClasses.StyleValueOf(name, value, line, col);",
+         "a style's native setter: a coerced value into the object's own field (U9)"),
+        ("JgsBuiltins.Trees.cs",
+         "copy.Fields[name] = JgsValue.Share(held);",
+         "addStyle: the style copied by value into a fresh object the component keeps (U9)"),
     ];
 
     [Fact]

@@ -1,0 +1,439 @@
+CHK|dk_items|char 'Value=char 'a' ValueIndex=double [1 1] 1'|exact
+CHK|dk_value|char 'Value=char 'b' ValueIndex=double [1 1] 2'|exact
+CHK|dk_value_case|MATLAB:ui:DiscreteKnob:valueNotInText|exact
+CHK|dk_value_case_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dk_value_unknown|MATLAB:ui:DiscreteKnob:valueNotInText|exact
+CHK|dk_value_unknown_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dk_value_number|MATLAB:ui:DiscreteKnob:valueNotInText|exact
+CHK|dk_value_number_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|dk_value_cell|char 'Value=char 'b''|exact
+CHK|dk_value_string|char 'Value=char 'c' ValueIndex=double [1 1] 3'|exact
+CHK|dk_index|char 'Value=char 'a' ValueIndex=double [1 1] 1'|exact
+CHK|dk_index_high|MATLAB:ui:DiscreteKnob:invalidValueIndex|exact
+CHK|dk_index_high_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|dk_index_zero|MATLAB:ui:DiscreteKnob:invalidValueIndex|exact
+CHK|dk_index_zero_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|dk_index_empty|MATLAB:ui:DiscreteKnob:invalidValueIndex|exact
+CHK|dk_index_empty_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|dk_items_empty|MATLAB:ui:DiscreteKnob:invalidText|exact
+CHK|dk_items_empty_msg|'Items' must have at least 2 elements.|exact
+CHK|dk_items_one|MATLAB:ui:DiscreteKnob:invalidText|exact
+CHK|dk_items_one_msg|'Items' must have at least 2 elements.|exact
+CHK|dk_items_column|char 'Items=cell [1 2] {char 'a', char 'b'} Value=char 'a''|exact
+CHK|dk_items_strings|char 'Items=cell [1 2] {char 's', char 't'} Value=char 's''|exact
+CHK|dk_items_mixed|MATLAB:ui:DiscreteKnob:invalidText|exact
+CHK|dk_items_mixed_msg|'Items' must be a 1-by-N cell array of character vectors or a string array.|exact
+CHK|dk_items_char|MATLAB:ui:DiscreteKnob:invalidText|exact
+CHK|dk_items_char_msg|'Items' must be a 1-by-N cell array of character vectors or a string array.|exact
+CHK|dk_data|char 'Value=double [1 1] 10 ItemsData=double [1 2] 10 20'|exact
+CHK|dk_value_datum|char 'Value=double [1 1] 20 ValueIndex=double [1 1] 2'|exact
+CHK|dk_value_text_with_data|MATLAB:ui:DiscreteKnob:valueNotInItemsData|exact
+CHK|dk_value_text_with_data_msg|'Value' must be an element defined in the 'ItemsData' property.|exact
+CHK|dk_data_cell|char 'Value=char 'x' ItemsData=cell [1 2] {char 'x', char 'y'}'|exact
+CHK|dk_data_cleared|char 'Value=char 's' ItemsData=double [0 0]'|exact
+CHK|dk_keeps_value|char 'b 2'|exact
+CHK|dk_loses_value|char 'x 1'|exact
+CHK|knob_items|MATLAB:hg:InvalidProperty|exact
+CHK|knob_items_msg|Unrecognized property Items for class matlab.ui.control.Knob.|exact
+CHK|dk_limits|MATLAB:hg:InvalidProperty|exact
+CHK|dk_limits_msg|Unrecognized property Limits for class matlab.ui.control.DiscreteKnob.|exact
+CHK|sw_on|char 'Value=char 'On' ValueIndex=double [1 1] 2'|exact
+CHK|sw_on_lower|MATLAB:ui:Switch:valueNotInText|exact
+CHK|sw_on_lower_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|sw_OFF|MATLAB:ui:Switch:valueNotInText|exact
+CHK|sw_OFF_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|sw_true|MATLAB:ui:Switch:valueNotInText|exact
+CHK|sw_true_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|sw_one|MATLAB:ui:Switch:valueNotInText|exact
+CHK|sw_one_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|sw_maybe|MATLAB:ui:Switch:valueNotInText|exact
+CHK|sw_maybe_msg|'Value' must be an element defined in the 'Items' property.|exact
+CHK|sw_string|char 'Value=char 'On' ValueIndex=double [1 1] 2'|exact
+CHK|sw_three_items|MATLAB:ui:Switch:invalidText|exact
+CHK|sw_three_items_msg|'Items' must have 2 elements.|exact
+CHK|sw_one_item|MATLAB:ui:Switch:invalidText|exact
+CHK|sw_one_item_msg|'Items' must have 2 elements.|exact
+CHK|sw_no_items|MATLAB:ui:Switch:invalidText|exact
+CHK|sw_no_items_msg|'Items' must have 2 elements.|exact
+CHK|sw_items|char 'Value=char 'Lo' ValueIndex=double [1 1] 1'|exact
+CHK|sw_value_hi|char 'Value=char 'Hi' ValueIndex=double [1 1] 2'|exact
+CHK|sw_items_swapped|char 'Value=char 'Hi' ValueIndex=double [1 1] 1'|exact
+CHK|sw_items_strings|char 'Items=cell [1 2] {char 'p', char 'q'} Value=char 'p''|exact
+CHK|sw_data|char 'Value=double [1 1] 0 ItemsData=double [1 2] 0 1'|exact
+CHK|sw_value_datum|char 'Value=double [1 1] 1 ValueIndex=double [1 1] 2'|exact
+CHK|sw_value_true_datum|char 'Value=double [1 1] 1 ValueIndex=double [1 1] 2'|exact
+CHK|sw_data_three|MATLAB:ui:Switch:invalidItemsData|exact
+CHK|sw_data_three_msg|'ItemsData' must have at most 2 elements.|exact
+CHK|sw_data_one|MATLAB:ui:Switch:invalidItemsData|exact
+CHK|sw_data_one_msg|'ItemsData' must have at least 2 elements.|exact
+CHK|sw_index_two|char 'Value=double [1 1] 1 ValueIndex=double [1 1] 2'|exact
+CHK|sw_index_three|MATLAB:ui:Switch:invalidValueIndex|exact
+CHK|sw_index_three_msg|'ValueIndex' must be a positive integer representing an index in 'Items'.|exact
+CHK|sw_vertical|char 'Orientation=char 'vertical' Position=double [1 4] 100 100 20 45'|exact
+CHK|rocker_horizontal|char 'Orientation=char 'horizontal' Position=double [1 4] 100 100 45 20'|exact
+CHK|toggle_horizontal|char 'Orientation=char 'horizontal' Position=double [1 4] 100 100 45 20'|exact
+CHK|knob_value_high|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_high_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_value_low|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_low_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_value_nan|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_nan_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_value|char 'Value=double [1 1] 50'|exact
+CHK|knob_limits_clamp_high|char 'Limits=double [1 2] 0 10 Value=double [1 1] 10'|exact
+CHK|knob_limits_clamp_low|char 'Limits=double [1 2] 60 100 Value=double [1 1] 60'|exact
+CHK|knob_limits_reversed|MATLAB:ui:Knob:invalidFiniteScaleLimits|exact
+CHK|knob_limits_reversed_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|knob_limits_equal|MATLAB:ui:Knob:invalidFiniteScaleLimits|exact
+CHK|knob_limits_equal_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|knob_limits_inf|MATLAB:ui:Knob:invalidFiniteScaleLimits|exact
+CHK|knob_limits_inf_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|knob_limits_nan|MATLAB:ui:Knob:invalidFiniteScaleLimits|exact
+CHK|knob_limits_nan_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|knob_limits_column|char 'Limits=double [1 2] 0 100'|exact
+CHK|knob_limits_int8|MATLAB:ui:Knob:invalidFiniteScaleLimits|exact
+CHK|knob_limits_int8_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|knob_limits_single|MATLAB:ui:Knob:invalidFiniteScaleLimits|exact
+CHK|knob_limits_single_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|knob_value_int8|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_int8_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_value_single|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_single_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_value_true|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_true_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_value_false|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_false_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_value_pair|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_pair_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_value_char|MATLAB:ui:Knob:invalidValue|exact
+CHK|knob_value_char_msg|'Value' must be a double scalar within the range of 'Limits'.|exact
+CHK|knob_major_ticks|char 'MajorTicks=double [1 3] 0 50 100 MajorTicksMode=char 'manual' MajorTickLabels=cell [1 3] {char '0', char '50', char '100'} MajorTickLabelsMode=char 'auto''|exact
+CHK|knob_major_unsorted|char 'MajorTicks=double [1 3] 0 50 100'|exact
+CHK|knob_major_outside|char 'MajorTicks=double [1 2] 0 500'|exact
+CHK|knob_major_empty|char 'MajorTicks=double [0 0] MajorTickLabels=cell [0 0] {}'|exact
+CHK|knob_labels|char 'MajorTickLabels=cell [1 2] {char 'a', char 'b'} MajorTickLabelsMode=char 'manual''|exact
+CHK|knob_labels_strings|char 'MajorTickLabels=cell [1 2] {char 'a', char 'b'}'|exact
+CHK|knob_labels_numbers|MATLAB:ui:Knob:invalidMajorTickLabels|exact
+CHK|knob_labels_numbers_msg|'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.|exact
+CHK|knob_labels_empty|char 'MajorTickLabels=cell [0 0] {}'|exact
+CHK|knob_minor_ticks|char 'MinorTicks=double [1 11] 0 10 20 30 40 50 60 70 80 90 100 MinorTicksMode=char 'manual''|exact
+CHK|knob_minor_empty|char 'MinorTicks=double [0 0]'|exact
+CHK|gauge_value_high|char 'Value=double [1 1] 150'|exact
+CHK|gauge_value_low|char 'Value=double [1 1] -5'|exact
+CHK|gauge_value_nan|MATLAB:ui:Gauge:invalidValue|exact
+CHK|gauge_value_nan_msg|'Value' must be a finite numeric, such as 10.|exact
+CHK|gauge_value_inf|MATLAB:ui:Gauge:invalidValue|exact
+CHK|gauge_value_inf_msg|'Value' must be a finite numeric, such as 10.|exact
+CHK|gauge_value_int8|char 'Value=double [1 1] 3'|exact
+CHK|gauge_value_true|MATLAB:ui:Gauge:invalidValue|exact
+CHK|gauge_value_true_msg|'Value' must be a finite numeric, such as 10.|exact
+CHK|gauge_value_false|MATLAB:ui:Gauge:invalidValue|exact
+CHK|gauge_value_false_msg|'Value' must be a finite numeric, such as 10.|exact
+CHK|gauge_value_pair|MATLAB:ui:Gauge:invalidValue|exact
+CHK|gauge_value_pair_msg|'Value' must be a finite numeric, such as 10.|exact
+CHK|gauge_limits_keep_value|char 'Limits=double [1 2] 0 10 Value=double [1 1] 3'|exact
+CHK|gauge_limits_reversed|MATLAB:ui:Gauge:invalidFiniteScaleLimits|exact
+CHK|gauge_limits_reversed_msg|'Limits' must be a 1-by-2 array of finite, increasing double values.|exact
+CHK|gauge_colors_rows|char 'ScaleColors=double [2 3] 1 0 0 1 0 0 ScaleColorLimits=double [2 2] 0 5 5 10'|exact
+CHK|gauge_colors_names|char 'ScaleColors=double [2 3] 1 0 0 1 0 0 ScaleColorLimits=double [2 2] 0 5 5 10'|exact
+CHK|gauge_colors_one_name|MATLAB:ui:Gauge:invalidScaleColors|exact
+CHK|gauge_colors_one_name_msg|'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|gauge_colors_strings|char 'ScaleColors=double [2 3] 1 0 0 1 0 0 ScaleColorLimits=double [2 2] 0 5 5 10'|exact
+CHK|gauge_colors_one_row|char 'ScaleColors=double [1 3] 1 0 0 ScaleColorLimits=double [1 2] 0 10'|exact
+CHK|gauge_colors_letters|MATLAB:ui:Gauge:invalidScaleColors|exact
+CHK|gauge_colors_letters_msg|'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|gauge_colors_three|char 'ScaleColors=double [3 3] 1 0 0 0 1 0 0 0 1 ScaleColorLimits=double [3 2] 0 3.333333333 6.666666667 3.333333333 6.666666667 10'|exact
+CHK|gauge_colors_rgba|MATLAB:ui:Gauge:invalidScaleColors|exact
+CHK|gauge_colors_rgba_msg|'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|gauge_colors_over|MATLAB:ui:Gauge:invalidScaleColors|exact
+CHK|gauge_colors_over_msg|'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|gauge_colors_none|MATLAB:ui:Gauge:invalidScaleColors|exact
+CHK|gauge_colors_none_msg|'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|gauge_colors_mixed|MATLAB:ui:Gauge:invalidScaleColors|exact
+CHK|gauge_colors_mixed_msg|'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.|exact
+CHK|gauge_bands_two|char 'ScaleColors=double [3 3] 1 0 0 0 1 0 0 0 1 ScaleColorLimits=double [2 2] 0 50 50 100'|exact
+CHK|gauge_bands_three|char 'ScaleColors=double [3 3] 1 0 0 0 1 0 0 0 1 ScaleColorLimits=double [3 2] 0 30 60 30 60 100'|exact
+CHK|gauge_bands_reversed|MATLAB:ui:Gauge:nonIncreasingScaleColorLimits|exact
+CHK|gauge_bands_reversed_msg|'ScaleColorLimits' must be a n-by-2 array, where each element in the first column is less than the corresponding element in the second column.|exact
+CHK|gauge_bands_outside|char 'ScaleColors=double [3 3] 1 0 0 0 1 0 0 0 1 ScaleColorLimits=double [1 2] 0 500'|exact
+CHK|gauge_bands_empty|char 'ScaleColors=double [3 3] 1 0 0 0 1 0 0 0 1 ScaleColorLimits=double [0 0]'|exact
+CHK|gauge_bands_row|MATLAB:ui:Gauge:invalidScaleColorLimits|exact
+CHK|gauge_bands_row_msg|'ScaleColorLimits' must be a n-by-2 array, such as [0 10; 80 90; 90 100];|exact
+CHK|gauge_colors_empty|char 'ScaleColors=double [0 0] ScaleColorLimits=double [0 0]'|exact
+CHK|gauge_bands_no_colors|char 'ScaleColors=double [0 0] ScaleColorLimits=double [1 2] 0 50'|exact
+CHK|gauge_colors_with_bands|char 'ScaleColors=double [2 3] 1 0 0 1 0 0 ScaleColorLimits=double [1 2] 0 50'|exact
+CHK|gauge_counterclockwise|char 'ScaleDirection=char 'counterclockwise''|exact
+CHK|gauge_direction_prefix|MATLAB:ui:Gauge:invalidScaleDirection|exact
+CHK|gauge_direction_prefix_msg|'ScaleDirection' value must be 'clockwise' or 'counterclockwise'.|exact
+CHK|gauge_major|char 'MajorTicks=double [1 3] 0 50 100 MajorTickLabels=cell [1 3] {char '0', char '50', char '100'}'|exact
+CHK|gauge_major_empty|char 'MajorTicks=double [0 0] MajorTickLabels=cell [0 0] {}'|exact
+CHK|linear_vertical|char 'Orientation=char 'vertical' Position=double [1 4] 100 100 40 120'|exact
+CHK|linear_north|MATLAB:ui:LinearGauge:invalidOrientation|exact
+CHK|linear_north_msg|'Orientation' value must be 'horizontal' or 'vertical'.|exact
+CHK|ninety_southeast|char 'Orientation=char 'southeast''|exact
+CHK|ninety_north|MATLAB:ui:NinetyDegreeGauge:invalidOrientation|exact
+CHK|ninety_north_msg|'Orientation' value must be 'northwest', 'northeast', 'southwest', or 'southeast'.|exact
+CHK|semi_south|char 'Orientation=char 'south''|exact
+CHK|semi_east|char 'Orientation=char 'east''|exact
+CHK|semi_northwest|MATLAB:ui:SemicircularGauge:invalidOrientation|exact
+CHK|semi_northwest_msg|'Orientation' value must be 'north', 'south', 'east', or 'west'.|exact
+CHK|gauge_orientation|MATLAB:hg:InvalidProperty|exact
+CHK|gauge_orientation_msg|Unrecognized property Orientation for class matlab.ui.control.Gauge.|exact
+CHK|linear_direction|MATLAB:hg:InvalidProperty|exact
+CHK|linear_direction_msg|Unrecognized property ScaleDirection for class matlab.ui.control.LinearGauge.|exact
+CHK|dp_default|datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]|exact
+CHK|dp_isnat|logical [1 1] 1|exact
+CHK|dp_value|char 'Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'|exact
+CHK|dp_value_time|char 'Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [05-Mar-2024]'|exact
+CHK|dp_value_nat|char 'Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]'|exact
+CHK|dp_value_char|MATLAB:ui:DatePicker:valueNotValid|exact
+CHK|dp_value_char_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|dp_value_number|MATLAB:ui:DatePicker:valueNotValid|exact
+CHK|dp_value_number_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|dp_value_empty|MATLAB:ui:DatePicker:valueNotValid|exact
+CHK|dp_value_empty_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|dp_value_two|MATLAB:ui:DatePicker:valueNotValid|exact
+CHK|dp_value_two_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|dp_value_none|MATLAB:ui:DatePicker:valueNotValid|exact
+CHK|dp_value_none_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|dp_value_zoned|char 'Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'|exact
+CHK|dp_value_formatted|char 'Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'|exact
+CHK|dp_value_year_zero|char 'Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [01-Jan-0000]'|exact
+CHK|dp_value_year_minus|MATLAB:ui:DatePicker:valueNotValid|exact
+CHK|dp_value_year_minus_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|dp_value_year_ten_thousand|MATLAB:ui:DatePicker:valueNotValid|exact
+CHK|dp_value_year_ten_thousand_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|dp_limits_default|datetime [1 2] fmt=dd-MMM-uuuu tz=- [01-Jan-0000,31-Dec-9999]|exact
+CHK|dp_limits|char 'Limits=datetime [1 2] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'|exact
+CHK|dp_value_outside|MATLAB:ui:DatePicker:valueNotValid|exact
+CHK|dp_value_outside_msg|'Value' must be a finite datetime object within the range of 'Limits' or NaT.|exact
+CHK|dp_value_inside|char 'Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [01-Feb-2024]'|exact
+CHK|dp_limits_reversed|MATLAB:ui:DatePicker:dateLimitsInvalid|exact
+CHK|dp_limits_reversed_msg|'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.|exact
+CHK|dp_limits_equal|char 'Limits=datetime [1 2] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,15-Jan-2024]'|exact
+CHK|dp_limits_exclude|char 'Limits=datetime [1 2] fmt=dd-MMM-uuuu tz=- [01-Jan-2025,01-Feb-2025] Value=datetime [1 1] fmt=dd-MMM-uuuu HH:mm:ss tz=- [NaT]'|exact
+CHK|dp_limits_nat|MATLAB:ui:DatePicker:dateLimitsInvalid|exact
+CHK|dp_limits_nat_msg|'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.|exact
+CHK|dp_limits_scalar|MATLAB:ui:DatePicker:dateLimitsInvalid|exact
+CHK|dp_limits_scalar_msg|'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.|exact
+CHK|dp_limits_chars|MATLAB:ui:DatePicker:dateLimitsInvalid|exact
+CHK|dp_limits_chars_msg|'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.|exact
+CHK|dp_limits_column|char 'Limits=datetime [1 2] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'|exact
+CHK|dp_limits_empty|MATLAB:ui:DatePicker:dateLimitsInvalid|exact
+CHK|dp_limits_empty_msg|'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.|exact
+CHK|dp_limits_zoned|char 'Limits=datetime [1 2] fmt=dd-MMM-uuuu tz=- [01-Jan-2024,01-Feb-2024]'|exact
+CHK|dp_disabled|char 'DisabledDates=datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'|exact
+CHK|dp_disabled_two|char 'DisabledDates=datetime [2 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'|exact
+CHK|dp_disabled_column|char 'DisabledDates=datetime [2 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'|exact
+CHK|dp_disabled_duplicate|char 'DisabledDates=datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'|exact
+CHK|dp_disabled_unsorted|char 'DisabledDates=datetime [2 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'|exact
+CHK|dp_disabled_empty|MATLAB:ui:DatePicker:disabledDatesInvalid|exact
+CHK|dp_disabled_empty_msg|'DisabledDates' value must be an array of datetime objects or datetime.empty().|exact
+CHK|dp_disabled_nat|MATLAB:ui:DatePicker:disabledDatesContainsNaT|exact
+CHK|dp_disabled_nat_msg|'DisabledDaysOfWeek' value must not contain NaT.|exact
+CHK|dp_disabled_char|MATLAB:ui:DatePicker:disabledDatesInvalid|exact
+CHK|dp_disabled_char_msg|'DisabledDates' value must be an array of datetime objects or datetime.empty().|exact
+CHK|dp_disabled_value_date|char 'DisabledDates=datetime [1 1] fmt=dd-MMM-uuuu tz=- [01-Feb-2024] Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]'|exact
+CHK|dp_days_one|char 'DisabledDaysOfWeek=double [1 1] 1'|exact
+CHK|dp_days_two|char 'DisabledDaysOfWeek=double [1 2] 1 7'|exact
+CHK|dp_days_unsorted|char 'DisabledDaysOfWeek=double [1 2] 1 7'|exact
+CHK|dp_days_duplicate|char 'DisabledDaysOfWeek=double [1 1] 1'|exact
+CHK|dp_days_all|char 'DisabledDaysOfWeek=double [1 7] 1 2 3 4 5 6 7'|exact
+CHK|dp_days_eight|MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid|exact
+CHK|dp_days_eight_msg|'DisabledDaysOfWeek' value must be an array of numbers from 1 to 7, or an array of day names.|exact
+CHK|dp_days_zero|MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid|exact
+CHK|dp_days_zero_msg|'DisabledDaysOfWeek' value must be an array of numbers from 1 to 7, or an array of day names.|exact
+CHK|dp_days_fraction|MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid|exact
+CHK|dp_days_fraction_msg|'DisabledDaysOfWeek' value must be an array of numbers from 1 to 7, or an array of day names.|exact
+CHK|dp_days_name|char 'DisabledDaysOfWeek=double [1 1] 2'|exact
+CHK|dp_days_names|char 'DisabledDaysOfWeek=double [1 2] 1 2'|exact
+CHK|dp_days_strings|char 'DisabledDaysOfWeek=double [1 2] 1 7'|exact
+CHK|dp_days_column|char 'DisabledDaysOfWeek=double [1 2] 1 7'|exact
+CHK|dp_days_empty|char 'DisabledDaysOfWeek=double [0 0]'|exact
+CHK|dp_days_logical|MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid|exact
+CHK|dp_days_logical_msg|'DisabledDaysOfWeek' value must be an array of numbers from 1 to 7, or an array of day names.|exact
+CHK|dp_days_int8|char 'DisabledDaysOfWeek=int8 [1 1] 2'|exact
+CHK|dp_days_bogus_name|MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid|exact
+CHK|dp_days_bogus_name_msg|Unrecognized day name 'abc'.|exact
+CHK|dp_days_of_value|char 'DisabledDaysOfWeek=double [1 1] 2'|exact
+CHK|dp_format_slashes|char 'DisplayFormat=char 'dd/MM/uuuu' Value=datetime [1 1] fmt=dd/MM/uuuu tz=- [NaT]'|exact
+CHK|dp_format_yyyy|char 'DisplayFormat=char 'MM/dd/yyyy' Value=datetime [1 1] fmt=MM/dd/yyyy tz=- [NaT]'|exact
+CHK|dp_format_iso|char 'DisplayFormat=char 'uuuu-MM-dd' Value=datetime [1 1] fmt=uuuu-MM-dd tz=- [NaT]'|exact
+CHK|dp_format_long|char 'DisplayFormat=char 'MMM d, uuuu' Value=datetime [1 1] fmt=MMM d, uuuu tz=- [NaT]'|exact
+CHK|dp_format_month_day|char 'DisplayFormat=char 'MMMM d' Value=datetime [1 1] fmt=MMMM d tz=- [NaT]'|exact
+CHK|dp_format_year|char 'DisplayFormat=char 'uuuu' Value=datetime [1 1] fmt=uuuu tz=- [NaT]'|exact
+CHK|dp_format_with_time|char 'DisplayFormat=char 'dd-MMM-uuuu' Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]'|exact
+CHK|dp_format_time_only|MATLAB:ui:DatePicker:displayFormatInvalid|exact
+CHK|dp_format_time_only_msg|'DisplayFormat' value specifies a time instead of a date. For more information on valid letter identifiers, see the documentation for DatePicker.DisplayFormat.|exact
+CHK|dp_format_bogus|MATLAB:ui:DatePicker:displayFormatInvalid|exact
+CHK|dp_format_bogus_msg|'DisplayFormat' contains an unsupported format symbol.|exact
+CHK|dp_format_empty|MATLAB:ui:DatePicker:displayFormatInvalid|exact
+CHK|dp_format_empty_msg|'DisplayFormat' value must be a nonempty character vector or string scalar.|exact
+CHK|dp_format_number|MATLAB:ui:DatePicker:displayFormatInvalid|exact
+CHK|dp_format_number_msg|'DisplayFormat' value must be a nonempty character vector or string scalar.|exact
+CHK|dp_format_string|char 'DisplayFormat=char 'dd/MM/uuuu''|exact
+CHK|dp_format_weekday|char 'DisplayFormat=char 'eeee' Value=datetime [1 1] fmt=eeee tz=- [NaT]'|exact
+CHK|dp_format_quarter|char 'DisplayFormat=char 'QQQ uuuu' Value=datetime [1 1] fmt=QQQ uuuu tz=- [NaT]'|exact
+CHK|dp_format_dots|char 'DisplayFormat=char 'dd.MM.yy' Value=datetime [1 1] fmt=dd.MM.yy tz=- [NaT]'|exact
+CHK|dp_format_short|char 'DisplayFormat=char 'd/M/u' Value=datetime [1 1] fmt=d/M/u tz=- [NaT]'|exact
+CHK|dp_format_quoted|char 'DisplayFormat=char ''Date:' dd-MMM-uuuu' Value=datetime [1 1] fmt='Date:' dd-MMM-uuuu tz=- [NaT]'|exact
+CHK|dp_limits_format|datetime [1 2] fmt='Date:' dd-MMM-uuuu tz=- [Date: 01-Jan-0000,Date: 31-Dec-9999]|exact
+CHK|dp_disabled_format|char 'DisabledDates=datetime [1 1] fmt='Date:' dd-MMM-uuuu tz=- [Date: 15-Jan-2024]'|exact
+CHK|dp_nat_format|char 'Value=datetime [1 1] fmt='Date:' dd-MMM-uuuu tz=- [NaT]'|exact
+CHK|dp_editable|char 'Editable=onoff off'|exact
+CHK|dp_placeholder|char 'Placeholder=char 'pick''|exact
+CHK|cp_red|char 'Value=double [1 3] 1 0 0'|exact
+CHK|cp_hex|char 'Value=double [1 3] 0 1 0'|exact
+CHK|cp_short_hex|char 'Value=double [1 3] 0 1 0'|exact
+CHK|cp_triplet|char 'Value=double [1 3] 0 0 1'|exact
+CHK|cp_column|char 'Value=double [1 3] 0 0 1'|exact
+CHK|cp_none|MATLAB:datatypes:RGBColor:ParseError|exact
+CHK|cp_none_msg|Error setting property 'Value' of class 'ColorPicker': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|cp_rgba|MATLAB:datatypes:RGBColor:ValueMustBe3ElementVector|exact
+CHK|cp_rgba_msg|Error setting property 'Value' of class 'ColorPicker': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|cp_over|MATLAB:hg:ColorBase:BadColorValue|exact
+CHK|cp_over_msg|Error setting property 'Value' of class 'ColorPicker': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|cp_letter|char 'Value=double [1 3] 0 0 0'|exact
+CHK|cp_string|char 'Value=double [1 3] 0 0 1'|exact
+CHK|cp_bogus|MATLAB:datatypes:RGBColor:ParseError|exact
+CHK|cp_bogus_msg|Error setting property 'Value' of class 'ColorPicker': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|cp_empty|MATLAB:datatypes:RGBColor:ValueMustBe3ElementVector|exact
+CHK|cp_empty_msg|Error setting property 'Value' of class 'ColorPicker': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|cp_uint8|char 'Value=double [1 3] 1 0 0'|exact
+CHK|cp_single|char 'Value=double [1 3] 0 1 0'|exact
+CHK|cp_logical|char 'Value=double [1 3] 1 0 0'|exact
+CHK|cp_icon_word|MATLAB:ui:ColorPicker:invalidIconFile|exact
+CHK|cp_icon_word_msg|You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.|exact
+CHK|cp_icon_nofile|char '' WARN MATLAB:ui:ColorPicker:invalidIconNotInPath|exact
+CHK|cp_icon_cube|char 'Icon=double [4 4 3] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'|exact
+CHK|cp_icon_number|MATLAB:ui:ColorPicker:invalidIconCData|exact
+CHK|cp_icon_number_msg|You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|cp_icon_empty|char 'Icon=char '''|exact
+CHK|cp_background|char 'BackgroundColor=double [1 3] 1 0 0'|exact
+CHK|cp_background_none|MATLAB:datatypes:RGBColor:ParseError|exact
+CHK|cp_background_none_msg|Error setting property 'BackgroundColor' of class 'ColorPicker': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|lamp_letter|char 'Color=double [1 3] 1 0 0'|exact
+CHK|lamp_none|MATLAB:datatypes:RGBColor:ParseError|exact
+CHK|lamp_none_msg|Error setting property 'Color' of class 'Lamp': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|lamp_rgba|MATLAB:datatypes:RGBColor:ValueMustBe3ElementVector|exact
+CHK|lamp_rgba_msg|Error setting property 'Color' of class 'Lamp': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|lamp_bogus|MATLAB:datatypes:RGBColor:ParseError|exact
+CHK|lamp_bogus_msg|Error setting property 'Color' of class 'Lamp': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|lamp_hex|char 'Color=double [1 3] 1 0 0'|exact
+CHK|lamp_empty|MATLAB:datatypes:RGBColor:ValueMustBe3ElementVector|exact
+CHK|lamp_empty_msg|Error setting property 'Color' of class 'Lamp': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|lamp_background|MATLAB:hg:InvalidProperty|exact
+CHK|lamp_background_msg|Unrecognized property BackgroundColor for class matlab.ui.control.Lamp.|exact
+CHK|lamp_fontsize|MATLAB:hg:InvalidProperty|exact
+CHK|lamp_fontsize_msg|Unrecognized property FontSize for class matlab.ui.control.Lamp.|exact
+CHK|cm_default|logical [1 1] 1|exact
+CHK|cm_set|char 'uicontextmenu'|exact
+CHK|cm_other_figure|MATLAB:hg:InvalidObject|exact
+CHK|cm_other_figure_msg|The UIContextMenu's parent figure is not the same as the parent figure of this object.|exact
+CHK|cm_menu|MATLAB:hgutils:InvalidContextMenu|exact
+CHK|cm_menu_msg|Handle must be a uicontextmenu.|exact
+CHK|cm_empty|char 'none'|exact
+CHK|cm_number|MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle|exact
+CHK|cm_number_msg|Error setting property 'ContextMenu' of class 'Button': The value set for this property must be a valid HG handle.|exact
+CHK|cm_two|char 'uicontextmenu'|exact
+CHK|cm_alias|char 'uicontextmenu'|exact
+CHK|cm_deleted_reads_empty|logical [1 1] 1|exact
+CHK|cm_knob|char 'uicontextmenu'|exact
+CHK|cm_tree|char 'uicontextmenu'|exact
+CHK|cm_node|char 'uicontextmenu'|exact
+CHK|cm_node_other_figure|MATLAB:hg:InvalidObject|exact
+CHK|cm_node_other_figure_msg|The UIContextMenu's parent figure is not the same as the parent figure of this object.|exact
+CHK|cm_lamp|char 'uicontextmenu'|exact
+CHK|cm_grid|char 'uicontextmenu'|exact
+CHK|cm_figure|char 'uicontextmenu'|exact
+CHK|cm_open|ran|exact
+CHK|cm_open_pair|ran|exact
+CHK|cm_open_alone|MATLAB:narginchk:notEnoughInputs|exact
+CHK|cm_open_alone_msg|Not enough input arguments.|exact
+CHK|focus_tree|ran WARN MATLAB:ui:Tree:FigureNotFocusable|exact
+CHK|focus_node|MATLAB:UndefinedFunction|exact
+CHK|focus_node_msg|Undefined function 'focus' for input arguments of type 'matlab.ui.container.TreeNode'.|exact
+CHK|focus_knob|ran WARN MATLAB:ui:Knob:FigureNotFocusable|exact
+CHK|focus_gauge|MATLAB:UndefinedFunction|exact
+CHK|focus_gauge_msg|Undefined function 'focus' for input arguments of type 'matlab.ui.control.Gauge'.|exact
+CHK|focus_lamp|MATLAB:UndefinedFunction|exact
+CHK|focus_lamp_msg|Undefined function 'focus' for input arguments of type 'matlab.ui.control.Lamp'.|exact
+CHK|focus_datepicker|ran WARN MATLAB:ui:DatePicker:FigureNotFocusable|exact
+CHK|focus_colorpicker|ran WARN MATLAB:ui:ColorPicker:FigureNotFocusable|exact
+CHK|focus_switch|ran WARN MATLAB:ui:Switch:FigureNotFocusable|exact
+CHK|focus_tab|MATLAB:UndefinedFunction|exact
+CHK|focus_tab_msg|Undefined function 'focus' for input arguments of type 'matlab.ui.container.Tab'.|exact
+CHK|focus_menu|MATLAB:UndefinedFunction|exact
+CHK|focus_menu_msg|Undefined function 'focus' for input arguments of type 'matlab.ui.container.Menu'.|exact
+CHK|scroll_tree_node|ran|exact
+CHK|scroll_tree_foreign|MATLAB:ui:Tree:invalidTreeScrollTarget|exact
+CHK|scroll_tree_foreign_msg|Scroll location must be 'top', 'bottom', or a TreeNode object.|exact
+CHK|scroll_tree_top|ran|exact
+CHK|scroll_tree_bottom|ran|exact
+CHK|scroll_tree_TOP|ran|exact
+CHK|scroll_tree_left|MATLAB:ui:Tree:invalidTreeScrollTarget|exact
+CHK|scroll_tree_left_msg|Scroll location must be 'top', 'bottom', or a TreeNode object.|exact
+CHK|scroll_tree_number|MATLAB:ui:Tree:invalidTreeScrollTarget|exact
+CHK|scroll_tree_number_msg|Scroll location must be 'top', 'bottom', or a TreeNode object.|exact
+CHK|scroll_tree_alone|MATLAB:narginchk:notEnoughInputs|exact
+CHK|scroll_tree_alone_msg|Not enough input arguments.|exact
+CHK|scroll_tree_extra|MATLAB:TooManyInputs|exact
+CHK|scroll_tree_extra_msg|Too many input arguments.|exact
+CHK|scroll_list_top|ran|exact
+CHK|scroll_list_bottom|ran|exact
+CHK|scroll_list_number|MATLAB:ui:ListBox:invalidScrollTarget|exact
+CHK|scroll_list_number_msg|Input to scroll must be either 'top', 'bottom' or an entry in Items or ItemsData.|exact
+CHK|scroll_list_item|ran|exact
+CHK|scroll_list_left|MATLAB:ui:ListBox:invalidScrollTarget|exact
+CHK|scroll_list_left_msg|Input to scroll must be either 'top', 'bottom' or an entry in Items or ItemsData.|exact
+CHK|scroll_list_pair|MATLAB:ui:ListBox:invalidScrollTarget|exact
+CHK|scroll_list_pair_msg|Input to scroll must be either 'top', 'bottom' or an entry in Items or ItemsData.|exact
+CHK|scroll_table_top|ran|exact
+CHK|scroll_table_right|ran|exact
+CHK|scroll_table_row|ran|exact
+CHK|scroll_table_column|ran|exact
+CHK|scroll_table_cell|ran|exact
+CHK|scroll_table_row_high|MATLAB:ui:Table:invalidRowTargetIndex|exact
+CHK|scroll_table_row_high_msg|Option for 'row' must be a positive integer within the range of data.|exact
+CHK|scroll_table_row_zero|MATLAB:ui:Table:invalidRowTargetIndex|exact
+CHK|scroll_table_row_zero_msg|Option for 'row' must be a positive integer within the range of data.|exact
+CHK|scroll_table_row_alone|MATLAB:ui:Table:invalidScrollLocation|exact
+CHK|scroll_table_row_alone_msg|Location must be 'top', 'bottom', 'left' or 'right'.|exact
+CHK|scroll_table_cell_three|MATLAB:ui:Table:invalidCellTargetIndex|exact
+CHK|scroll_table_cell_three_msg|Option for 'cell' must be an 1-by-2 vector of positive integers within the range of data.|exact
+CHK|scroll_table_cell_one|MATLAB:ui:Table:invalidCellTargetIndex|exact
+CHK|scroll_table_cell_one_msg|Option for 'cell' must be an 1-by-2 vector of positive integers within the range of data.|exact
+CHK|scroll_table_number|MATLAB:ui:Table:invalidScrollLocation|exact
+CHK|scroll_table_number_msg|Location must be 'top', 'bottom', 'left' or 'right'.|exact
+CHK|scroll_table_bogus|MATLAB:ui:Table:invalidScrollLocation|exact
+CHK|scroll_table_bogus_msg|Location must be 'top', 'bottom', 'left' or 'right'.|exact
+CHK|scroll_table_two_numbers|MATLAB:ui:Table:invalidScrollTarget|exact
+CHK|scroll_table_two_numbers_msg|Target must be 'row', 'column' or 'cell'.|exact
+CHK|scroll_grid_top|ran|exact
+CHK|scroll_grid_right|ran|exact
+CHK|scroll_grid_point|ran|exact
+CHK|scroll_grid_pair|ran|exact
+CHK|scroll_grid_one|MATLAB:uicontainer:InvalidScrollTarget|exact
+CHK|scroll_grid_one_msg|Invalid location|exact
+CHK|scroll_grid_row|MATLAB:uicontainer:InvalidScrollTarget|exact
+CHK|scroll_grid_row_msg|Invalid location|exact
+CHK|scroll_grid_unscrollable|ran WARN MATLAB:uicontainer:ScrollableOff|exact
+CHK|scroll_panel_top|ran|exact
+CHK|scroll_figure_top|ran WARN MATLAB:uicontainer:ScrollableOff|exact
+CHK|scroll_classic_figure|ran WARN MATLAB:uicontainer:ScrollableOff|exact
+CHK|scroll_textarea_top|ran|exact
+CHK|scroll_textarea_bottom|ran|exact
+CHK|scroll_textarea_number|MATLAB:ui:TextArea:invalidScrollTarget|exact
+CHK|scroll_textarea_number_msg|Scroll location must be 'top' or 'bottom'.|exact
+CHK|scroll_button|MATLAB:UndefinedFunction|exact
+CHK|scroll_button_msg|Undefined function 'scroll' for input arguments of type 'matlab.ui.control.Button'.|exact
+CHK|scroll_knob|MATLAB:UndefinedFunction|exact
+CHK|scroll_knob_msg|Undefined function 'scroll' for input arguments of type 'matlab.ui.control.Knob'.|exact
+CHK|scroll_dropdown|MATLAB:UndefinedFunction|exact
+CHK|scroll_dropdown_msg|Undefined function 'scroll' for input arguments of type 'matlab.ui.control.DropDown'.|exact
+CHK|scroll_uicontrol|MATLAB:UndefinedFunction|exact
+CHK|scroll_uicontrol_msg|Undefined function 'scroll' for input arguments of type 'matlab.ui.control.UIControl'.|exact
+CHK|scroll_tab|ran WARN MATLAB:uicontainer:ScrollableOff|exact
+CHK|scroll_number|MATLAB:UndefinedFunction|exact
+CHK|scroll_number_msg|Undefined function 'scroll' for input arguments of type 'double'.|exact
+CHK|scroll_list_alone|MATLAB:narginchk:notEnoughInputs|exact
+CHK|scroll_list_alone_msg|Not enough input arguments.|exact

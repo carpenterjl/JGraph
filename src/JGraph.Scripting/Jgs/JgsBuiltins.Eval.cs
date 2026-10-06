@@ -99,6 +99,9 @@ internal static partial class JgsBuiltins
 
         // Stage D11: cameras.
         "webcamlist", "webcam",
+
+        // U9: the tree makers and verbs and the styles resolve handles through the interpreter.
+        "uitreenode", "expand", "collapse", "move", "scroll", "uistyle", "addStyle", "removeStyle",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -126,6 +129,7 @@ internal static partial class JgsBuiltins
         RegisterIntrospection(Define, DefineBare, interpreter, host);
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
         RegisterClassBuiltins(env, interpreter);
+        RegisterUiTreeBuiltins(env, interpreter);
         RegisterCleanupBuiltins(env, interpreter);
         RegisterTimerBuiltins(env, interpreter, host, dialect);
         RegisterEventBuiltins(env, interpreter, host);

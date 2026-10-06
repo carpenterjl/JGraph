@@ -20,7 +20,7 @@ internal sealed partial class Interpreter
     internal IReadOnlyDictionary<string, JgsClass> Classes => _classes;
 
     /// <summary>Whether any class has been defined at all — the guard every dispatch site opens with.</summary>
-    internal bool AnyClasses => _classes.Count > 0;
+    internal bool AnyClasses => _classes.Count > 0 || _builtinClasses.Count > 0;
 
     /// <summary>Records a class built from a file, replacing an earlier definition of the same name.</summary>
     internal JgsClass DefineClass(ClassdefStmt declaration, JgsEnvironment scope)

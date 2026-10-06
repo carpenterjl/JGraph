@@ -21,6 +21,27 @@ public static class UiFit
     public static double Ceil64(double length) => System.Math.Ceiling((length * 64) - 1e-9) / 64;
 
     /// <summary>The height of one line of text at a font size.</summary>
+    /// <summary>
+    /// The rectangle a component that keeps its proportions takes of a grid's cell (U9): the
+    /// largest of its shape — <paramref name="ratio"/> is width over height — whose outer box, as
+    /// <paramref name="outerOf"/> grows it, still fits the cell, centred in it. A knob's labels and a
+    /// switch's captions are the outer box; a lamp and a round gauge have none.
+    /// </summary>
+    public static Rect2D ShapeInCell(Rect2D cell, double ratio, Func<Rect2D, Rect2D> outerOf)
+    {
+        var probe = new Rect2D(0, 0, 100, 100 / ratio);
+        Rect2D outer = outerOf(probe);
+        double low = probe.X - outer.X;
+        double high = outer.Right - probe.Right;
+        double under = probe.Y - outer.Y;
+        double over = outer.Bottom - probe.Bottom;
+        double room = System.Math.Max(0, cell.Width - low - high);
+        double rise = System.Math.Max(0, cell.Height - under - over);
+        double width = System.Math.Min(room, rise * ratio);
+        double height = width / ratio;
+        return new Rect2D(cell.X + low + ((room - width) / 2), cell.Y + under + ((rise - height) / 2), width, height);
+    }
+
     public static double LineHeight(double fontSize) => Ceil64(1.23 * fontSize);
 
     /// <summary>The width of the widest of some lines, rounded up to a 64th; an empty line is a space wide.</summary>
@@ -117,6 +138,33 @@ public static class UiFit
 
             case UiSliderModel slider:
                 return slider.Vertical ? new Size2D(39, 164) : new Size2D(164, 39);
+
+            // U9: a dial or a switch asks for itself and its labels (this build's placement of
+            // them; R2025b's differ by a few pixels), a date picker and a tree for what R2025b's
+            // fit cells measured at two font sizes (probe u9_grid).
+            case UiKnobModel knob:
+            {
+                Rect2D outer = knob.OuterOf(knob.Position);
+                return new Size2D(outer.Width, outer.Height);
+            }
+
+            case UiDiscreteKnobModel dial:
+            {
+                Rect2D outer = dial.OuterOf(dial.Position);
+                return new Size2D(outer.Width, outer.Height);
+            }
+
+            case UiSwitchModel toggle:
+            {
+                Rect2D outer = toggle.OuterOf(toggle.Position);
+                return new Size2D(outer.Width, outer.Height);
+            }
+
+            case UiDatePickerModel:
+                return new Size2D(Ceil64(8.334 * size) + 34, line + 8);
+
+            case UiTreeModel:
+                return new Size2D(Ceil64(AreaWidthPerPixel * size) + 20, Ceil64(9.5117 * size) + 97.86);
 
             default:
             {

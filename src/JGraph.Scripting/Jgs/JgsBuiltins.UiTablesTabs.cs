@@ -80,7 +80,7 @@ internal static partial class JgsBuiltins
     /// every maker refuses in the same words, whatever it would have taken instead.
     /// </summary>
     internal static bool HoldsNothing(GraphObject target) =>
-        target is not (FigureModel or IUiContainer or MenuItemModel or ContextMenuModel or UiToolbarModel or JgsGraphicsRoot);
+        target is not (FigureModel or IUiContainer or MenuItemModel or ContextMenuModel or UiToolbarModel or JgsGraphicsRoot or UiTreeModel or UiTreeNodeModel);
 
     /// <summary>
     /// The object a maker is to make its own in. A value that names nothing is refused here; one

@@ -359,7 +359,15 @@ public partial class App : System.Windows.Application
         }
         finally
         {
-            tee?.Dispose();
+            // The log stays open while windows are up: their callbacks print to it (U9).
+            if (Windows.Count == 0)
+            {
+                tee?.Dispose();
+            }
+            else
+            {
+                _batchLog = tee;
+            }
         }
 
         if (Windows.Count == 0)
@@ -379,6 +387,9 @@ public partial class App : System.Windows.Application
 
     /// <summary>The session a <c>-batch -showfigures</c> run keeps for its windows' callbacks.</summary>
     private IScriptSession? _batchSession;
+
+    /// <summary>The run's <c>-logfile</c>, kept open with the session for what the callbacks print.</summary>
+    private TeeScriptOutput? _batchLog;
 
     /// <summary>
     /// Whether a pump run is under way. A flag set before the run starts, never the run's task: a
@@ -442,6 +453,9 @@ public partial class App : System.Windows.Application
             _batchSession = null;
             await session.DisposeAsync();
         }
+
+        _batchLog?.Dispose();
+        _batchLog = null;
     }
 
     /// <summary>Opens the HTML scripting guide, falling back to the flag reference in a dialog.</summary>

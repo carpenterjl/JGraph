@@ -262,13 +262,8 @@ internal static partial class JgsGraphicsProperties
                 name == "DisplaySelection" ? null : (entry, value, line, col) => SetTableSelection(entry, value, line, col));
         }
 
-        // What the styles added to a table come to: none, until uistyle arrives (U9).
-        Put(table, "StyleConfigurations", static _ => JgsValue.Table(new JGraph.Data.Table(
-        [
-            new JGraph.Data.TextColumn("Target", []),
-            new JGraph.Data.TextColumn("TargetIndex", []),
-            new JGraph.Data.TextColumn("Style", []),
-        ])));
+        // The styles added with addStyle (U9).
+        Put(table, "StyleConfigurations", StyleConfigurationsValue);
 
         // R2025b answers the same rectangle whatever the table holds (probe u8_more): its own
         // size and 40 pixels each way.

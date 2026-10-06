@@ -89,6 +89,17 @@ internal static partial class JgsBuiltins
             return TextOf(left) == TextOf(right);
         }
 
+        // [] and '' are equal, as are any two empty arrays of one shape (isequal([], '') is true);
+        // an empty cell is not one of them (isequal([], {}) is false).
+        static bool EmptyArray(JgsValue v) => v.Type == JgsType.String ? v.AsString.Length == 0 && !v.IsCharMatrix
+            : v.Type == JgsType.Array && v.ArrayLength == 0;
+        if (EmptyArray(left) && EmptyArray(right))
+        {
+            int[] a = left.Type == JgsType.Array ? left.Dims : [0, 0];
+            int[] b = right.Type == JgsType.Array ? right.Dims : [0, 0];
+            return a.SequenceEqual(b);
+        }
+
         return JgsStdlib.DeepEquals(left, right);
     }
 
@@ -138,7 +149,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>What one maker makes: its verb, MATLAB's class word, the styles it takes, and the model for each.</summary>
     private sealed record ComponentMaker(
-        string Verb, string ClassWord, string[]? Styles, Func<string?, UiComponentModel> Make, bool InGroup = false);
+        string Verb, string ClassWord, string[]? Styles, Func<string?, UiComponentModel> Make, bool InGroup = false, string? StyleList = null);
 
     private static readonly ComponentMaker[] ComponentMakers =
     [
@@ -155,6 +166,28 @@ internal static partial class JgsBuiltins
         new("uispinner", "Spinner", null, static _ => new UiSpinnerModel()),
         new("uiimage", "Image", null, static _ => new UiImageModel()),
         new("uihyperlink", "Hyperlink", null, static _ => new UiHyperlinkModel()),
+
+        // U9: the words each refusal lists are R2025b's, in its order (probe u9_forms).
+        new("uiknob", "Knob", ["continuous", "discrete"], static style => style == "discrete" ? new UiDiscreteKnobModel() : new UiKnobModel(),
+            StyleList: "'continuous' or 'discrete'"),
+        new("uiswitch", "Switch", ["slider", "rocker", "toggle"], static style => new UiSwitchModel(style switch
+        {
+            "rocker" => UiSwitchStyle.Rocker,
+            "toggle" => UiSwitchStyle.Toggle,
+            _ => UiSwitchStyle.Slider,
+        }), StyleList: "'slider', 'toggle' or 'rocker'"),
+        new("uigauge", "Gauge", ["circular", "linear", "ninetydegree", "semicircular"], static style => style switch
+        {
+            "linear" => new UiLinearGaugeModel(),
+            "ninetydegree" => new UiNinetyDegreeGaugeModel(),
+            "semicircular" => new UiSemicircularGaugeModel(),
+            _ => new UiGaugeModel(),
+        }, StyleList: "'circular', 'semicircular', 'ninetydegree' or 'linear'"),
+        new("uilamp", "Lamp", null, static _ => new UiLampModel()),
+        new("uidatepicker", "DatePicker", null, static _ => new UiDatePickerModel()),
+        new("uicolorpicker", "ColorPicker", null, static _ => new UiColorPickerModel()),
+        new("uitree", "Tree", ["tree", "checkbox"], static style => style == "checkbox" ? new UiCheckBoxTreeModel() : new UiTreeModel(),
+            StyleList: "'tree' or 'checkbox'"),
     ];
 
     private static void RegisterUiComponentBuiltins(JgsEnvironment env, JGraphScriptGlobals host, CancellationToken cancellationToken)
@@ -206,13 +239,18 @@ internal static partial class JgsBuiltins
         }
 
         // A tab group holds tabs and nothing else, and a menu or a toolbar no component (U8).
-        if (named.Target is UiTabGroupModel or MenuItemModel or ContextMenuModel or UiToolbarModel)
+        if (named.Target is UiTabGroupModel or MenuItemModel or ContextMenuModel or UiToolbarModel or UiTreeModel or UiTreeNodeModel)
         {
             throw MakerError(classWord, NeedsAParent, line, col);
         }
 
         return named.Target as IUiContainer
-            ?? throw MakerError(classWord, $"{JgsGraphicsCallbackValues.ClassWord(named.Target)} cannot be a parent.", line, col);
+            ?? throw MakerError(classWord, named.Target switch
+            {
+                JgsGraphicsRoot => NeedsAParent,
+                AxesModel { IsUiAxes: true } => "UIAxes cannot be a parent.",
+                _ => $"{JgsGraphicsCallbackValues.ClassWord(named.Target)} cannot be a parent.",
+            }, line, col);
     }
 
     /// <summary>A new, shown <c>uifigure</c>: what a component made with no parent is put in.</summary>
@@ -234,7 +272,7 @@ internal static partial class JgsBuiltins
             .Where(name => typed.Length > 0 && name.StartsWith(typed, StringComparison.OrdinalIgnoreCase))];
         return starts.Count == 1
             ? starts[0]
-            : throw MakerError(classWord, $"Unrecognized property {typed} for class {classWord}.", line, col);
+            : throw MakerError(classWord, $"Unrecognized property {typed} for class {JgsGraphicsCallbackValues.ClassWord(target)}.", line, col);
     }
 
     /// <summary>
@@ -288,6 +326,13 @@ internal static partial class JgsBuiltins
             start = 1;
         }
 
+        // uitree('v0') is the removed tree of old, refused in R2025b's words (probe u9_forms).
+        if (maker.Verb == "uitree" && start == 0 && args.Count == 1 && IsTextScalar(args[0])
+            && TextOf(args[0]).Equals("v0", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:uitree:DeprecatedFunctionWeb", "The 'v0' argument for uitree has been removed");
+        }
+
         // A style, where the maker has styles: the word left over when the rest are pairs.
         string? style = null;
         if (maker.Styles is not null && (args.Count - start) % 2 == 1 && args[start].Type != JgsType.Struct)
@@ -295,12 +340,13 @@ internal static partial class JgsBuiltins
             string typed = IsTextScalar(args[start]) ? TextOf(args[start]) : string.Empty;
             style = Array.Find(maker.Styles, known => known.Equals(typed, StringComparison.OrdinalIgnoreCase))
                 ?? throw MakerError(word,
-                    $"'{typed}' is not a valid STYLE for {maker.Verb}. STYLE must be '{maker.Styles[0]}' or '{maker.Styles[1]}'.", line, col);
+                    $"'{typed}' is not a valid STYLE for {maker.Verb}. STYLE must be {maker.StyleList ?? $"'{maker.Styles[0]}' or '{maker.Styles[1]}'"}.", line, col);
             start++;
         }
 
+        // A refusal names the maker's class whatever style was asked for: uitree(uf, 'checkbox', ...)
+        // refuses as a Tree (probe u9_forms).
         UiComponentModel component = maker.Make(style);
-        word = JgsGraphicsCallbackValues.ClassWord(component);
         List<(string Name, JgsValue Value)> pairs = MakerPairs(args, start, word, line, col);
         var options = new List<(string Name, JgsValue Value)>(pairs.Count);
         foreach ((string name, JgsValue value) in pairs)
@@ -978,7 +1024,8 @@ internal static partial class JgsBuiltins
         }
 
         GraphObject target = named.Target;
-        if (target is not (FigureModel or UiComponentModel))
+        // A gauge and a lamp take no keyboard (U9): focus has no method for them.
+        if (target is not (FigureModel or UiComponentModel) || target is UiGaugeModel or UiLampModel)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
                 $"Undefined function 'focus' for input arguments of type '{JgsGraphicsProperties.FullClassOf(target)}'.");

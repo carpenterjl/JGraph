@@ -209,10 +209,12 @@ public static class UiLayout
                 Rect2D box;
                 if (cells is not null)
                 {
+                    // A slider has its track of the cell, a knob, a switch, a lamp and a round gauge
+                    // the largest of their shape that fits with what they draw round it (U9).
                     Rect2D cell = cells[index];
-                    if (node is UiComponentFrame { Kind: UiComponentKind.Slider or UiComponentKind.RangeSlider } slider)
+                    if (node is UiComponentFrame component)
                     {
-                        cell = UiSliderModel.TrackInCell(cell, slider.Upright);
+                        cell = UiShapedCells.InCell(component, cell);
                     }
 
                     box = OnSurface(area, cell);

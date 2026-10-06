@@ -19,6 +19,7 @@ internal static partial class UiComponentMapper
     private const string GridKind = "uigridlayout";
     private const string TabGroupKind = "uitabgroup";
     private const string TabKind = "uitab";
+    private const string TreeNodeKind = "uitreenode";
 
     private static readonly JsonSerializerOptions BagOptions = new()
     {
@@ -30,12 +31,34 @@ internal static partial class UiComponentMapper
     private static readonly HashSet<string> NotInBag = new(StringComparer.Ordinal)
     {
         nameof(UiComponentModel.UserWriteSeq),
+
+        // U9: a style rule may name nodes, which are not a document's to keep.
+        nameof(UiComponentModel.Styles),
+    };
+
+    /// <summary>A tree's selection and checks name nodes and stay out of a document (U9); a list's Selected is kept.</summary>
+    private static readonly HashSet<string> TreeOnly = new(StringComparer.Ordinal)
+    {
+        nameof(UiTreeModel.Selected),
+        nameof(UiTreeModel.Checked),
     };
 
     private static UiComponentDto? ComponentToDto(UiObject component)
     {
         switch (component)
         {
+            // A tree's nodes are its children, each a bag of its own and its nodes under it (U9).
+            case UiTreeModel tree:
+            {
+                var dto = new UiComponentDto { Kind = ComponentPrefix + tree.Kind, Properties = Bag(tree) };
+                foreach (UiTreeNodeModel node in tree.Nodes)
+                {
+                    dto.Children.Add(NodeToDto(node));
+                }
+
+                return dto;
+            }
+
             case UiComponentModel leaf:
                 return new UiComponentDto { Kind = ComponentPrefix + leaf.Kind, Properties = Bag(leaf) };
 
@@ -140,6 +163,20 @@ internal static partial class UiComponentMapper
 
         UiComponentModel? made = kind switch
         {
+            UiComponentKind.Knob => new UiKnobModel(),
+            UiComponentKind.DiscreteKnob => new UiDiscreteKnobModel(),
+            UiComponentKind.Switch => new UiSwitchModel(UiSwitchStyle.Slider),
+            UiComponentKind.RockerSwitch => new UiSwitchModel(UiSwitchStyle.Rocker),
+            UiComponentKind.ToggleSwitch => new UiSwitchModel(UiSwitchStyle.Toggle),
+            UiComponentKind.Gauge => new UiGaugeModel(),
+            UiComponentKind.LinearGauge => new UiLinearGaugeModel(),
+            UiComponentKind.NinetyDegreeGauge => new UiNinetyDegreeGaugeModel(),
+            UiComponentKind.SemicircularGauge => new UiSemicircularGaugeModel(),
+            UiComponentKind.Lamp => new UiLampModel(),
+            UiComponentKind.DatePicker => new UiDatePickerModel(),
+            UiComponentKind.ColorPicker => new UiColorPickerModel(),
+            UiComponentKind.Tree => new UiTreeModel(),
+            UiComponentKind.CheckBoxTree => new UiCheckBoxTreeModel(),
             UiComponentKind.Label => new UiLabelModel(),
             UiComponentKind.Button => new UiButtonModel(),
             UiComponentKind.StateButton => new UiStateButtonModel(),
@@ -164,7 +201,89 @@ internal static partial class UiComponentMapper
             Fill(made, dto.Properties);
         }
 
+        if (made is UiTreeModel grown)
+        {
+            foreach (UiComponentDto childDto in dto.Children)
+            {
+                if (NodeToModel(childDto) is { } node)
+                {
+                    grown.Nodes.Add(node);
+                }
+            }
+        }
+
         return made;
+    }
+
+    private static UiComponentDto NodeToDto(UiTreeNodeModel node)
+    {
+        var dto = new UiComponentDto
+        {
+            Kind = TreeNodeKind,
+            Tag = node.Tag,
+            Properties = new Dictionary<string, JsonElement>(StringComparer.Ordinal)
+            {
+                [nameof(UiTreeNodeModel.Text)] = JsonSerializer.SerializeToElement(node.Text, BagOptions),
+                [nameof(UiTreeNodeModel.IconSource)] = JsonSerializer.SerializeToElement(node.IconSource, BagOptions),
+                [nameof(UiTreeNodeModel.Expanded)] = JsonSerializer.SerializeToElement(node.Expanded, BagOptions),
+                [nameof(UiTreeNodeModel.Icon)] = JsonSerializer.SerializeToElement(node.Icon, BagOptions),
+            },
+        };
+        foreach (UiTreeNodeModel child in node.Nodes)
+        {
+            dto.Children.Add(NodeToDto(child));
+        }
+
+        return dto;
+    }
+
+    private static UiTreeNodeModel? NodeToModel(UiComponentDto dto)
+    {
+        if (dto.Kind != TreeNodeKind)
+        {
+            return null;
+        }
+
+        var node = new UiTreeNodeModel { Tag = dto.Tag };
+        if (dto.Properties is { } bag)
+        {
+            try
+            {
+                if (bag.TryGetValue(nameof(UiTreeNodeModel.Text), out JsonElement text))
+                {
+                    node.Text = text.Deserialize<string>(BagOptions) ?? string.Empty;
+                }
+
+                if (bag.TryGetValue(nameof(UiTreeNodeModel.IconSource), out JsonElement source))
+                {
+                    node.IconSource = source.Deserialize<string>(BagOptions) ?? string.Empty;
+                }
+
+                if (bag.TryGetValue(nameof(UiTreeNodeModel.Expanded), out JsonElement open))
+                {
+                    node.Expanded = open.Deserialize<bool>(BagOptions);
+                }
+
+                if (bag.TryGetValue(nameof(UiTreeNodeModel.Icon), out JsonElement icon))
+                {
+                    node.Icon = icon.Deserialize<UiImage>(BagOptions);
+                }
+            }
+            catch (JsonException)
+            {
+                // A value that does not read leaves the node as it was made.
+            }
+        }
+
+        foreach (UiComponentDto childDto in dto.Children)
+        {
+            if (NodeToModel(childDto) is { } child)
+            {
+                node.Nodes.Add(child);
+            }
+        }
+
+        return node;
     }
 
     /// <summary>The cell a grid's child sits in, as row, last row, column, last column.</summary>
@@ -191,7 +310,7 @@ internal static partial class UiComponentMapper
             foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
                 if (property.CanRead && property.SetMethod is { IsPublic: true } && property.GetIndexParameters().Length == 0
-                    && !NotInBag.Contains(property.Name))
+                    && !NotInBag.Contains(property.Name) && !(component is UiTreeModel && TreeOnly.Contains(property.Name)))
                 {
                     yield return property;
                 }

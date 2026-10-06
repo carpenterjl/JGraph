@@ -119,6 +119,7 @@ internal static class JgsGraphicsCallbackValues
         UiTabModel => "Tab",
         UiToolbarModel => "Toolbar",
         UiToolModel tool => tool.IsToggle ? "ToggleTool" : "PushTool",
+        UiTreeNodeModel => "TreeNode",
         UiComponentModel component => component.Kind.ToString(),
         UiOverlayModel => "matlab.ui.dialog.ProgressDialog",
         FigureModel => "Figure",

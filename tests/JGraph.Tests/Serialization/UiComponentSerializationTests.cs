@@ -16,6 +16,69 @@ public class UiComponentSerializationTests
         GraphFormat.Deserialize(GraphFormat.Serialize(figure));
 
     [Fact]
+    public void TheU9Kinds_KeepWhatTheyHold_AndATreeItsNodes()
+    {
+        var figure = new FigureModel { IsUiFigure = true };
+        figure.Components.Add(new UiKnobModel { Lower = 10, Upper = 50, Value = 30, MajorTicks = [10, 30, 50], MajorTicksManual = true, Tag = "k" });
+        figure.Components.Add(new UiSemicircularGaugeModel
+        {
+            Value = 7,
+            ScaleColors = [new UiColor(1, 0, 0), new UiColor(0, 1, 0)],
+            ScaleColorLimits = [0, 50, 50, 100],
+            ScaleColorLimitsManual = true,
+            Orientation = "south",
+        });
+        figure.Components.Add(new UiSwitchModel(UiSwitchStyle.Rocker) { Items = ["Lo", "Hi"], Selected = [1] });
+        figure.Components.Add(new UiLampModel { Color = new UiColor(1, 0, 0) });
+        figure.Components.Add(new UiDatePickerModel
+        {
+            ValueDays = 45306,
+            DisplayFormat = "uuuu-MM-dd",
+            DisabledDays = [45300, 45301],
+            DisabledWeekdays = [1, 7],
+            LowerDays = 45000,
+            UpperDays = 46000,
+            Editable = false,
+            Placeholder = "pick",
+        });
+        figure.Components.Add(new UiColorPickerModel { Value = new UiColor(0, 0, 1) });
+        var tree = new UiCheckBoxTreeModel { Multiselect = true, Editable = true };
+        var root = new UiTreeNodeModel { Text = "root", Expanded = true };
+        root.Nodes.Add(new UiTreeNodeModel { Text = "leaf" });
+        tree.Nodes.Add(root);
+        tree.Nodes.Add(new UiTreeNodeModel { Text = "other" });
+        figure.Components.Add(tree);
+
+        FigureModel loaded = RoundTrip(figure);
+
+        var knob = Assert.IsType<UiKnobModel>(loaded.Components[0]);
+        Assert.Equal((10, 50, 30, "k"), (knob.Lower, knob.Upper, knob.Value, knob.Tag));
+        Assert.Equal([10, 30, 50], knob.MajorTicks);
+        Assert.True(knob.MajorTicksManual);
+        var gauge = Assert.IsType<UiSemicircularGaugeModel>(loaded.Components[1]);
+        Assert.Equal(7, gauge.Value);
+        Assert.Equal([new UiColor(1, 0, 0), new UiColor(0, 1, 0)], gauge.ScaleColors);
+        Assert.Equal([0, 50, 50, 100], gauge.ScaleColorLimits);
+        Assert.Equal(("south", true), (gauge.Orientation, gauge.ScaleColorLimitsManual));
+        var toggle = Assert.IsType<UiSwitchModel>(loaded.Components[2]);
+        Assert.Equal((UiSwitchStyle.Rocker, true), (toggle.Style, toggle.IsOn));
+        Assert.Equal(["Lo", "Hi"], toggle.Items);
+        Assert.Equal(new UiColor(1, 0, 0), Assert.IsType<UiLampModel>(loaded.Components[3]).Color);
+        var picker = Assert.IsType<UiDatePickerModel>(loaded.Components[4]);
+        Assert.Equal((45306.0, "uuuu-MM-dd", 45000.0, 46000.0, false, "pick"),
+            (picker.ValueDays, picker.DisplayFormat, picker.LowerDays, picker.UpperDays, picker.Editable, picker.Placeholder));
+        Assert.Equal([45300, 45301], picker.DisabledDays);
+        Assert.Equal([1, 7], picker.DisabledWeekdays);
+        Assert.Equal(new UiColor(0, 0, 1), Assert.IsType<UiColorPickerModel>(loaded.Components[5]).Value);
+        var boxes = Assert.IsType<UiCheckBoxTreeModel>(loaded.Components[6]);
+        Assert.True(boxes.CheckBoxes && boxes.Multiselect && boxes.Editable);
+        Assert.Equal(["root", "other"], boxes.Nodes.Select(static n => n.Text));
+        Assert.True(boxes.Nodes[0].Expanded);
+        Assert.Equal("leaf", Assert.Single(boxes.Nodes[0].Nodes).Text);
+        Assert.Same(boxes, boxes.Nodes[0].Nodes[0].Tree);
+    }
+
+    [Fact]
     public void AUicontrol_KeepsWhatAScriptSet_AndWhatItLeftToFollowTheStyle()
     {
         var figure = new FigureModel();

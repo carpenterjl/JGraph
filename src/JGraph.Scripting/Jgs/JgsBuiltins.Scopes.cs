@@ -40,6 +40,9 @@ internal static partial class JgsBuiltins
         "uialert", "uiaxes", "uibutton", "uicheckbox", "uiconfirm", "uidropdown", "uieditfield", "uigridlayout",
         "uihyperlink", "uiimage", "uilabel", "uilistbox", "uiprogressdlg", "uiradiobutton", "uislider", "uispinner",
         "uitextarea", "uitogglebutton",
+
+        // U9: the makers run a CreateFcn.
+        "uicolorpicker", "uidatepicker", "uigauge", "uiknob", "uilamp", "uiswitch", "uitree", "uitreenode",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code

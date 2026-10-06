@@ -1,0 +1,226 @@
+CHK|style_empty|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_class|char 'matlab.ui.style.Style'|exact
+CHK|style_flags|double [1 5] 1 0 0 0 1|exact
+CHK|style_properties|cell [10 1] {char 'BackgroundColor', char 'FontColor', char 'FontWeight', char 'FontAngle', char 'FontName', char 'HorizontalAlignment', char 'HorizontalClipping', char 'IconAlignment', char 'Interpreter', char 'Icon'}|exact
+CHK|style_size|double [1 2] 1 1|exact
+CHK|style_background|char 'BackgroundColor=double [1 3] 1 0 0; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_many|char 'BackgroundColor=double [1 3] 0 0 1; FontColor=double [1 3] 0 1 0; FontWeight=char 'bold'; FontAngle=char 'italic'; FontName=char 'Arial'; HorizontalAlignment=char 'center'; HorizontalClipping=char 'left'; IconAlignment=char 'right'; Interpreter=char 'html'; Icon=char '''|exact
+CHK|style_icon_word|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char 'error''|exact
+CHK|style_icon_nofile|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char ''' WARN MATLAB:ui:Style:invalidIconNotInPath|exact
+CHK|style_icon_cube|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=double [4 4 3] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'|exact
+CHK|style_icon_number|MATLAB:ui:Style:invalidIconCData|exact
+CHK|style_icon_number_msg|You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.|exact
+CHK|style_bogus|MATLAB:noPublicFieldForClass|exact
+CHK|style_bogus_msg|Unrecognized property 'bogus' for class 'matlab.ui.style.Style'.|exact
+CHK|style_odd|MATLAB:InputParser:ParamMissingValue|exact
+CHK|style_odd_msg|No value was given for 'BackgroundColor'. Name-value pair arguments require a name followed by a value.|exact
+CHK|style_number_name|MATLAB:InputParser:ParamMustBeChar|exact
+CHK|style_number_name_msg|Expected a string scalar or character vector for the parameter name.|exact
+CHK|style_weight_heavy|MATLAB:ui:Style:invalidFontWeight|exact
+CHK|style_weight_heavy_msg|'FontWeight' value must be 'normal', 'bold', or ''.|exact
+CHK|style_weight_upper|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char 'bold'; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_weight_prefix|MATLAB:ui:Style:invalidFontWeight|exact
+CHK|style_weight_prefix_msg|'FontWeight' value must be 'normal', 'bold', or ''.|exact
+CHK|style_weight_string|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char 'bold'; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_weight_empty|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_angle_oblique|MATLAB:ui:Style:invalidFontAngle|exact
+CHK|style_angle_oblique_msg|'FontAngle' value must be 'normal', 'italic', or ''.|exact
+CHK|style_align_middle|MATLAB:ui:Style:invalidHorizontalAlignment|exact
+CHK|style_align_middle_msg|'HorizontalAlignment' value must be 'left', 'center', 'right', or ''.|exact
+CHK|style_align_upper|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char 'left'; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_clip_left|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char 'left'; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_clip_on|MATLAB:ui:Style:invalidHorizontalClipping|exact
+CHK|style_clip_on_msg|'HorizontalClipping' value must be 'left', 'right', or ''.|exact
+CHK|style_clip_logical|MATLAB:validation:UnableToConvert|exact
+CHK|style_clip_logical_msg|Error setting property 'HorizontalClipping' of class 'matlab.ui.style.internal.Stylable'. Value must be of type char or be convertible to char.|exact
+CHK|style_icon_align_margin|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char 'leftmargin'; Interpreter=char ''; Icon=char '''|exact
+CHK|style_icon_align_top|MATLAB:ui:Style:invalidIconAlignment|exact
+CHK|style_icon_align_top_msg|'IconAlignment' value must be 'left', 'center', 'right', 'leftmargin', 'rightmargin', or ''.|exact
+CHK|style_interpreter_latex|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char 'latex'; Icon=char '''|exact
+CHK|style_interpreter_bogus|MATLAB:ui:Style:invalidInterpreter|exact
+CHK|style_interpreter_bogus_msg|'Interpreter' value must be 'none', 'html', 'latex', 'tex', or ''.|exact
+CHK|style_color_none|MATLAB:ui:Style:invalidColor|exact
+CHK|style_color_none_msg|Invalid color value.|exact
+CHK|style_color_over|MATLAB:ui:Style:invalidColor|exact
+CHK|style_color_over_msg|Invalid color value.|exact
+CHK|style_color_hex|char 'BackgroundColor=double [1 3] 1 0 0; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_color_empty|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_color_rgba|MATLAB:ui:Style:invalidColor|exact
+CHK|style_color_rgba_msg|Invalid color value.|exact
+CHK|style_font_number|MATLAB:ui:Style:invalidFontName|exact
+CHK|style_font_number_msg|'FontName' must be a character vector, string scalar, or ''.|exact
+CHK|style_font_string|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char 'Arial'; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_font_unknown|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char 'Bogus Font'; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_strings|char 'BackgroundColor=double [1 3] 1 0 0; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_lower|char 'BackgroundColor=double [1 3] 1 0 0; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_prefix|char 'BackgroundColor=double [1 3] 1 0 0; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_struct|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char 'bold'; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_figure_arg|MATLAB:InputParser:ParamMustBeChar|exact
+CHK|style_figure_arg_msg|Expected a string scalar or character vector for the parameter name.|exact
+CHK|style_dot_background|char 'BackgroundColor=double [1 3] 0 1 0; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_dot_weight_upper|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char 'bold'; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_dot_weight_heavy|MATLAB:ui:Style:invalidFontWeight|exact
+CHK|style_dot_weight_heavy_msg|'FontWeight' value must be 'normal', 'bold', or ''.|exact
+CHK|style_dot_weight_empty|char 'BackgroundColor=double [0 0]; FontColor=double [0 0]; FontWeight=char ''; FontAngle=char ''; FontName=char ''; HorizontalAlignment=char ''; HorizontalClipping=char ''; IconAlignment=char ''; Interpreter=char ''; Icon=char '''|exact
+CHK|style_dot_bogus|MATLAB:noPublicFieldForClass|exact
+CHK|style_dot_bogus_msg|Unrecognized property 'Bogus' for class 'matlab.ui.style.Style'.|exact
+CHK|style_type|MATLAB:noSuchMethodOrField|exact
+CHK|style_type_msg|Unrecognized method, property, or field 'Type' for class 'matlab.ui.style.Style'.|exact
+CHK|style_value_semantics|char 'char '' / char 'Arial''|exact
+CHK|style_set|MATLAB:graphics:SetMethodUnknown|exact
+CHK|style_set_msg|Cannot find 'set' method for matlab.ui.style.Style class.|exact
+CHK|style_get|MATLAB:graphics:GetMethodUnknown|exact
+CHK|style_get_msg|Cannot find 'get' method for matlab.ui.style.Style class.|exact
+CHK|sc_empty|char '0x3 vars=Target,TargetIndex,Style'|exact
+CHK|sc_empty_class|char 'table'|exact
+CHK|sc_in_names|double [1 6] 1 1 1 1 0 0|exact
+CHK|add_table_whole|ran|exact
+CHK|add_table_word|MATLAB:ui:Table:invalidNumberOfInputs|exact
+CHK|add_table_word_msg|Incorrect number of input arguments.|exact
+CHK|add_row|ran|exact
+CHK|add_rows|ran|exact
+CHK|add_rows_column_vector|ran|exact
+CHK|add_row_high|ran|exact
+CHK|add_row_zero|MATLAB:ui:Table:invalidRowTargetIndex|exact
+CHK|add_row_zero_msg|Option for 'row' must be a positive integer or a vector of positive integers.|exact
+CHK|add_row_fraction|MATLAB:ui:Table:invalidRowTargetIndex|exact
+CHK|add_row_fraction_msg|Option for 'row' must be a positive integer or a vector of positive integers.|exact
+CHK|add_row_char|MATLAB:ui:Table:invalidRowTargetIndex|exact
+CHK|add_row_char_msg|Option for 'row' must be a positive integer or a vector of positive integers.|exact
+CHK|add_row_empty|MATLAB:ui:Table:invalidRowTargetIndex|exact
+CHK|add_row_empty_msg|Option for 'row' must be a positive integer or a vector of positive integers.|exact
+CHK|add_row_duplicate|ran|exact
+CHK|add_row_logical|MATLAB:ui:Table:invalidRowTargetIndex|exact
+CHK|add_row_logical_msg|Option for 'row' must be a positive integer or a vector of positive integers.|exact
+CHK|add_row_int8|ran|exact
+CHK|add_row_no_index|MATLAB:ui:Table:invalidNumberOfInputs|exact
+CHK|add_row_no_index_msg|Incorrect number of input arguments.|exact
+CHK|add_ROW|ran|exact
+CHK|add_row_string|ran|exact
+CHK|add_column|ran|exact
+CHK|add_columns|ran|exact
+CHK|add_cell|ran|exact
+CHK|add_cells|ran|exact
+CHK|add_cell_three|MATLAB:ui:Table:invalidCellTargetIndex|exact
+CHK|add_cell_three_msg|Option for 'cell' must be an N-by-2 matrix of positive integers.|exact
+CHK|add_cell_high|ran|exact
+CHK|add_cell_one|MATLAB:ui:Table:invalidCellTargetIndex|exact
+CHK|add_cell_one_msg|Option for 'cell' must be an N-by-2 matrix of positive integers.|exact
+CHK|add_bogus_target|MATLAB:ui:Table:invalidStyleTarget|exact
+CHK|add_bogus_target_msg|Third argument must be 'cell', 'row', 'column', or 'table'.|exact
+CHK|add_node_on_table|MATLAB:ui:Table:invalidStyleTarget|exact
+CHK|add_node_on_table_msg|Third argument must be 'cell', 'row', 'column', or 'table'.|exact
+CHK|add_item_on_table|MATLAB:ui:Table:invalidStyleTarget|exact
+CHK|add_item_on_table_msg|Third argument must be 'cell', 'row', 'column', or 'table'.|exact
+CHK|add_table_with_index|MATLAB:ui:Table:invalidTargetIndex|exact
+CHK|add_table_with_index_msg|Option for 'table' must be an empty character vector.|exact
+CHK|add_number_style|MATLAB:ui:Table:invalidStyleObject|exact
+CHK|add_number_style_msg|Invalid Style object.|exact
+CHK|add_struct_style|MATLAB:ui:Table:invalidStyleObject|exact
+CHK|add_struct_style_msg|Invalid Style object.|exact
+CHK|add_one_argument|MATLAB:narginchk:notEnoughInputs|exact
+CHK|add_one_argument_msg|Not enough input arguments.|exact
+CHK|add_five_arguments|MATLAB:narginchk:tooManyInputs|exact
+CHK|add_five_arguments_msg|Too many input arguments.|exact
+CHK|add_six_arguments|MATLAB:narginchk:tooManyInputs|exact
+CHK|add_six_arguments_msg|Too many input arguments.|exact
+CHK|add_on_button|MATLAB:UndefinedFunction|exact
+CHK|add_on_button_msg|Undefined function 'addStyle' for input arguments of type 'matlab.ui.control.Button'.|exact
+CHK|add_on_figure|MATLAB:UndefinedFunction|exact
+CHK|add_on_figure_msg|Undefined function 'addStyle' for input arguments of type 'matlab.ui.Figure'.|exact
+CHK|add_on_label|MATLAB:UndefinedFunction|exact
+CHK|add_on_label_msg|Undefined function 'addStyle' for input arguments of type 'matlab.ui.control.Label'.|exact
+CHK|add_on_textarea|MATLAB:UndefinedFunction|exact
+CHK|add_on_textarea_msg|Undefined function 'addStyle' for input arguments of type 'matlab.ui.control.TextArea'.|exact
+CHK|add_on_number|MATLAB:UndefinedFunction|exact
+CHK|add_on_number_msg|Undefined function 'addStyle' for input arguments of type 'matlab.ui.style.Style'.|exact
+CHK|add_on_classic_table|ran|exact
+CHK|sc_after_many|char '14x3 vars=Target,TargetIndex,Style / 1: table char '' / 2: row double [1 1] 1 / 3: row double [1 2] 1 3 / 4: row double [1 2] 1 3 / 5: row double [1 1] 99 / 6: row double [1 2] 1 1 / 7: row int8 [1 1] 2 / 8: row double [1 1] 1 / 9: row double [1 1] 1 / 10: column double [1 1] 2 / 11: column double [1 2] 2 4 / 12: cell double [1 2] 1 1 / 13: cell double [2 2] 1 2 1 2 / 14: cell double [1 2] 1 9'|exact
+CHK|remove_one|ran|exact
+CHK|remove_two|ran|exact
+CHK|sc_after_removes|char '11x3 vars=Target,TargetIndex,Style / 1: row double [1 2] 1 3 / 2: row double [1 1] 99 / 3: row double [1 2] 1 1 / 4: row int8 [1 1] 2 / 5: row double [1 1] 1 / 6: row double [1 1] 1 / 7: column double [1 1] 2 / 8: column double [1 2] 2 4 / 9: cell double [1 2] 1 1 / 10: cell double [2 2] 1 2 1 2 / 11: cell double [1 2] 1 9'|exact
+CHK|remove_high|MATLAB:ui:Table:removalIndexOutOfBounds|exact
+CHK|remove_high_msg|Error removing style: Style order number exceeds 'StyleConfigurations' table dimensions.|exact
+CHK|remove_zero|MATLAB:ui:Table:invalidRemovalIndex|exact
+CHK|remove_zero_msg|Option must be a positive integer or a vector of positive integers.|exact
+CHK|remove_fraction|MATLAB:ui:Table:invalidRemovalIndex|exact
+CHK|remove_fraction_msg|Option must be a positive integer or a vector of positive integers.|exact
+CHK|remove_char|MATLAB:ui:Table:invalidRemovalIndex|exact
+CHK|remove_char_msg|Option must be a positive integer or a vector of positive integers.|exact
+CHK|remove_empty|MATLAB:ui:Table:invalidRemovalIndex|exact
+CHK|remove_empty_msg|Option must be a positive integer or a vector of positive integers.|exact
+CHK|remove_all_word|MATLAB:ui:Table:invalidRemovalIndex|exact
+CHK|remove_all_word_msg|Option must be a positive integer or a vector of positive integers.|exact
+CHK|remove_duplicate|ran|exact
+CHK|remove_three_arguments|MATLAB:narginchk:tooManyInputs|exact
+CHK|remove_three_arguments_msg|Too many input arguments.|exact
+CHK|sc_before_clear|char '10x3 vars=Target,TargetIndex,Style / 1: row double [1 1] 99 / 2: row double [1 2] 1 1 / 3: row int8 [1 1] 2 / 4: row double [1 1] 1 / 5: row double [1 1] 1 / 6: column double [1 1] 2 / 7: column double [1 2] 2 4 / 8: cell double [1 2] 1 1 / 9: cell double [2 2] 1 2 1 2 / 10: cell double [1 2] 1 9'|exact
+CHK|remove_everything|ran|exact
+CHK|sc_cleared|char '0x3 vars=Target,TargetIndex,Style'|exact
+CHK|remove_when_empty|ran|exact
+CHK|remove_one_when_empty|MATLAB:ui:Table:removalIndexOutOfBounds|exact
+CHK|remove_one_when_empty_msg|Error removing style: Style order number exceeds 'StyleConfigurations' table dimensions.|exact
+CHK|remove_on_button|MATLAB:UndefinedFunction|exact
+CHK|remove_on_button_msg|Undefined function 'removeStyle' for input arguments of type 'matlab.ui.control.Button'.|exact
+CHK|remove_on_figure|MATLAB:UndefinedFunction|exact
+CHK|remove_on_figure_msg|Undefined function 'removeStyle' for input arguments of type 'matlab.ui.Figure'.|exact
+CHK|sc_copy_kept|char '1x3 vars=Target,TargetIndex,Style / 1: row double [1 1] 1'|exact
+CHK|sc_data_smaller|char '2x3 vars=Target,TargetIndex,Style / 1: row double [1 1] 4 / 2: cell double [1 2] 4 4'|exact
+CHK|sc_set|MATLAB:class:SetProhibited|exact
+CHK|sc_set_msg|Unable to set the 'StyleConfigurations' property of class ''Table'' because it is read-only.|exact
+CHK|add_tree_whole|ran|exact
+CHK|add_tree_word|MATLAB:ui:Tree:invalidNumberOfInputs|exact
+CHK|add_tree_word_msg|Incorrect number of input arguments.|exact
+CHK|add_node|ran|exact
+CHK|add_nodes|ran|exact
+CHK|add_nodes_column|ran|exact
+CHK|add_node_number|MATLAB:ui:Tree:invalidNodeTargetIndex|exact
+CHK|add_node_number_msg|Option for 'node' must be a TreeNode or vector of TreeNodes.|exact
+CHK|add_node_foreign|ran|exact
+CHK|add_node_tree|MATLAB:ui:Tree:invalidNodeTargetIndex|exact
+CHK|add_node_tree_msg|Option for 'node' must be a TreeNode or vector of TreeNodes.|exact
+CHK|add_node_empty|MATLAB:ui:Tree:invalidNodeTargetIndex|exact
+CHK|add_node_empty_msg|Option for 'node' must be a TreeNode or vector of TreeNodes.|exact
+CHK|add_level|ran|exact
+CHK|add_levels|ran|exact
+CHK|add_level_zero|MATLAB:ui:Tree:invalidLevelTargetIndex|exact
+CHK|add_level_zero_msg|Option for 'level' must be a positive integer or a vector of positive integers.|exact
+CHK|add_level_high|ran|exact
+CHK|add_level_fraction|MATLAB:ui:Tree:invalidLevelTargetIndex|exact
+CHK|add_level_fraction_msg|Option for 'level' must be a positive integer or a vector of positive integers.|exact
+CHK|add_subtree|ran|exact
+CHK|add_row_on_tree|MATLAB:ui:Tree:invalidStyleTarget|exact
+CHK|add_row_on_tree_msg|Third argument must be 'tree', 'node', 'level', or 'subtree'.|exact
+CHK|add_item_on_tree|MATLAB:ui:Tree:invalidStyleTarget|exact
+CHK|add_item_on_tree_msg|Third argument must be 'tree', 'node', 'level', or 'subtree'.|exact
+CHK|add_on_node|MATLAB:UndefinedFunction|exact
+CHK|add_on_node_msg|Undefined function 'addStyle' for input arguments of type 'matlab.ui.container.TreeNode'.|exact
+CHK|sc_tree|char '9x3 vars=Target,TargetIndex,Style / 1: tree char '' / 2: node 1 [n1] / 3: node 2 [n1,c2] / 4: node 2 [n1,c2] / 5: node 1 [foreign] / 6: level double [1 1] 1 / 7: level double [1 2] 1 3 / 8: level double [1 1] 99 / 9: subtree 1 [n1]'|exact
+CHK|remove_tree_one|ran|exact
+CHK|sc_tree_after|char '8x3 vars=Target,TargetIndex,Style / 1: node 1 [n1] / 2: node 2 [n1,c2] / 3: node 2 [n1,c2] / 4: node 1 [foreign] / 5: level double [1 1] 1 / 6: level double [1 2] 1 3 / 7: level double [1 1] 99 / 8: subtree 1 [n1]'|exact
+CHK|remove_tree|ran|exact
+CHK|add_checkbox_node|ran|exact
+CHK|add_list_whole|ran|exact
+CHK|add_list_word|MATLAB:ui:ListBox:invalidNumberOfInputs|exact
+CHK|add_list_word_msg|Incorrect number of input arguments.|exact
+CHK|add_item|ran|exact
+CHK|add_items|ran|exact
+CHK|add_item_high|ran|exact
+CHK|add_item_zero|MATLAB:ui:ListBox:invalidItemTargetIndex|exact
+CHK|add_item_zero_msg|Option for 'item' must be a positive integer or a vector of positive integers.|exact
+CHK|add_row_on_list|MATLAB:ui:ListBox:invalidStyleTarget|exact
+CHK|add_row_on_list_msg|Third argument must be 'listbox' or 'item'.|exact
+CHK|add_table_word_on_list|MATLAB:ui:ListBox:invalidNumberOfInputs|exact
+CHK|add_table_word_on_list_msg|Incorrect number of input arguments.|exact
+CHK|sc_list|char '4x3 vars=Target,TargetIndex,Style / 1: listbox char '' / 2: item double [1 1] 1 / 3: item double [1 2] 1 3 / 4: item double [1 1] 99'|exact
+CHK|sc_list_items_shorter|char '1x3 vars=Target,TargetIndex,Style / 1: item double [1 1] 3'|exact
+CHK|remove_list|ran|exact
+CHK|add_dropdown_whole|ran|exact
+CHK|add_dropdown_item|ran|exact
+CHK|add_dropdown_word|MATLAB:ui:DropDown:invalidNumberOfInputs|exact
+CHK|add_dropdown_word_msg|Incorrect number of input arguments.|exact
+CHK|add_listbox_word_on_dropdown|MATLAB:ui:DropDown:invalidNumberOfInputs|exact
+CHK|add_listbox_word_on_dropdown_msg|Incorrect number of input arguments.|exact
+CHK|sc_dropdown|char '2x3 vars=Target,TargetIndex,Style / 1: dropdown char '' / 2: item double [1 1] 2'|exact
+CHK|remove_dropdown|ran|exact
+CHK|sc_dropdown_cleared|char '0x3 vars=Target,TargetIndex,Style'|exact

@@ -844,6 +844,26 @@ internal static partial class JgsBuiltins
             return input;
         }
 
+        // A datetime or duration is one cell per moment, as each displays, in the shape it came
+        // (U9, ADR 0207): cellstr(NaT) is {'NaT'}, and an empty one is an empty cell of its size.
+        if (input.IsTime)
+        {
+            var moments = new JgsValue[input.ArrayLength];
+            for (int i = 0; i < moments.Length; i++)
+            {
+                moments[i] = JgsValue.Str(TimeText(input, i));
+            }
+
+            if (moments.Length == 0)
+            {
+                JgsValue none = JgsValue.Cell([]);
+                none.Reshape(input.Rows, input.Cols);
+                return none;
+            }
+
+            return ShapedLike(input, moments);
+        }
+
         throw new JgsRuntimeException(line, col, "MATLAB:cellstr:MustContainText",
             "Input must be a string array, character array, or cell array of character vectors.");
     }
