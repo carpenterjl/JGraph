@@ -68,15 +68,14 @@ public class MatlabLinalgProviderM88Tests : IDisposable
     }
 
     [Fact]
-    public void MatrixTimesVectorReorientsTheVector()
+    public void MatrixTimesARowThatDoesNotConformIsRefused()
     {
-        // The row [1 1] does not conform as written, so it is stood up as a column.
-        string output = RunAndRead("""
-            v = [1 2; 3 4] * [1 1];
-            fprintf('%g %g\n', v(1), v(2));
-            """);
-
-        Assert.Contains("3 7", output, StringComparison.Ordinal);
+        // MATLAB multiplies the shapes as written: [1 1] is a row, so R2025b refuses (ADR 0214; it
+        // was stood up as a column here before).
+        ScriptRunResult result = RunMatlab("v = [1 2; 3 4] * [1 1];");
+        Assert.False(result.Success);
+        Assert.Contains("Incorrect dimensions for matrix multiplication", result.Message, StringComparison.Ordinal);
+        Assert.Contains("3 7", RunAndRead("v = [1 2; 3 4] * [1; 1]; fprintf('%g %g\\n', v(1), v(2));"), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -84,7 +83,7 @@ public class MatlabLinalgProviderM88Tests : IDisposable
     {
         ScriptRunResult result = RunMatlab("r = [1 2 3] * [4 5 6];");
         Assert.False(result.Success);
-        Assert.Contains("ambiguous", result.Message, StringComparison.Ordinal);
+        Assert.Contains("Incorrect dimensions for matrix multiplication", result.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -92,7 +91,7 @@ public class MatlabLinalgProviderM88Tests : IDisposable
     {
         ScriptRunResult result = RunMatlab("M = [1 2; 3 4] * [1 2; 3 4; 5 6];");
         Assert.False(result.Success);
-        Assert.Contains("the left has 2 columns and the right has 3 rows", result.Message, StringComparison.Ordinal);
+        Assert.Contains("Incorrect dimensions for matrix multiplication", result.Message, StringComparison.Ordinal);
     }
 
     [Fact]

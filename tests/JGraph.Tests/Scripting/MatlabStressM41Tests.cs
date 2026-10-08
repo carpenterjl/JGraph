@@ -272,7 +272,7 @@ public class MatlabStressM41Tests : IDisposable
 
     [Fact]
     public Task IncompatibleShapes_StillRefuse() =>
-        RunExpectingError("x = [1 2] + [1 2 3];", "different lengths");
+        RunExpectingError("x = [1 2] + [1 2 3];", "Arrays have incompatible sizes for this operation.");
 
     [Fact]
     public Task Bsxfun_AgreesWithTheOperator() => RunAsserting("""

@@ -31,7 +31,7 @@ for k = 1:numel(sends)
 end
 u9b_chk('send_nodata', @() sendwait(h, 'ping', [], 'event pong', 2, true));
 % An anonymous function is sent as its text, which func2str writes with spaces here (open item 54).
-u9b_chkdiv('send_anonymous', @() sendwait(h, 'ping', @(x) x + 1, 'event pong', 2), 'ADR0208');
+u9b_chk('send_anonymous', @() sendwait(h, 'ping', @(x) x + 1, 'event pong', 2));
 u9b_chk('send_cellname', @() sendwait(h, {'ping'}, 7, 'event pong', 2));
 u9b_chk('send_stringname', @() sendwait(h, "ping", 8, 'event pong', 2));
 

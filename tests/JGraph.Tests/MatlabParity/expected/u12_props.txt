@@ -33,7 +33,7 @@ CHK|obj_colon|char[1 21]'matlab.ui.style.Style'|exact
 CHK|obj_empty_parens|char[1 21]'matlab.ui.style.Style'|exact
 CHK|obj_true|char[1 21]'matlab.ui.style.Style'|exact
 CHK|obj_field|char[1 4]'bold'|exact
-CHK|obj_two|MATLAB:badsubscript|div=0211|diverges|
-CHK|obj_two_msg|Index exceeds the number of array elements. Index must not exceed 1.|div=0211|diverges|Index 2 is out of range for length 1 (indexing is 1-based).
-CHK|obj_zero|MATLAB:badsubscript|div=0211|diverges|
-CHK|obj_zero_msg|Array indices must be positive integers or logical values.|div=0211|diverges|Index 0 is out of range for length 1 (indexing is 1-based).
+CHK|obj_two|MATLAB:badsubscript|exact
+CHK|obj_two_msg|Index exceeds the number of array elements. Index must not exceed 1.|exact
+CHK|obj_zero|MATLAB:badsubscript|exact
+CHK|obj_zero_msg|Array indices must be positive integers or logical values.|exact

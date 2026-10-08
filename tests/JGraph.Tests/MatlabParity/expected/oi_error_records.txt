@@ -1,0 +1,119 @@
+CHK|sub_past_scalar|MATLAB:badsubscript|exact
+CHK|sub_past_scalar_msg|Index exceeds the number of array elements. Index must not exceed 1.|exact
+CHK|sub_zero|MATLAB:badsubscript|exact
+CHK|sub_zero_msg|Array indices must be positive integers or logical values.|exact
+CHK|sub_negative|MATLAB:badsubscript|exact
+CHK|sub_negative_msg|Array indices must be positive integers or logical values.|exact
+CHK|sub_fraction|MATLAB:badsubscript|exact
+CHK|sub_fraction_msg|Array indices must be positive integers or logical values.|exact
+CHK|sub_past_row|MATLAB:badsubscript|exact
+CHK|sub_past_row_msg|Index exceeds the number of array elements. Index must not exceed 3.|exact
+CHK|sub_past_in_list|MATLAB:badsubscript|exact
+CHK|sub_past_in_list_msg|Index exceeds the number of array elements. Index must not exceed 3.|exact
+CHK|sub_end_plus|MATLAB:badsubscript|exact
+CHK|sub_end_plus_msg|Index exceeds the number of array elements. Index must not exceed 3.|exact
+CHK|sub_mask_true_past|MATLAB:badsubscript|exact
+CHK|sub_mask_true_past_msg|The logical indices contain a true value outside of the array bounds.|exact
+CHK|sub_mask_false_past|double[1 1] 10|exact
+CHK|sub_mask_short|double[1 1] 20|exact
+CHK|sub_nan|MATLAB:badsubscript|exact
+CHK|sub_nan_msg|Array indices must be positive integers or logical values.|exact
+CHK|sub_inf|MATLAB:badsubscript|exact
+CHK|sub_inf_msg|Array indices must be positive integers or logical values.|exact
+CHK|sub_row_past|MATLAB:badsubscript|exact
+CHK|sub_row_past_msg|Index in position 1 exceeds array bounds. Index must not exceed 3.|exact
+CHK|sub_col_past|MATLAB:badsubscript|exact
+CHK|sub_col_past_msg|Index in position 2 exceeds array bounds. Index must not exceed 3.|exact
+CHK|sub_row_zero|MATLAB:badsubscript|exact
+CHK|sub_row_zero_msg|Index in position 1 is invalid. Array indices must be positive integers or logical values.|exact
+CHK|sub_row_fraction|MATLAB:badsubscript|exact
+CHK|sub_row_fraction_msg|Index in position 1 is invalid. Array indices must be positive integers or logical values.|exact
+CHK|sub_col_fraction|MATLAB:badsubscript|exact
+CHK|sub_col_fraction_msg|Index in position 2 is invalid. Array indices must be positive integers or logical values.|exact
+CHK|sub_linear_matrix|MATLAB:badsubscript|exact
+CHK|sub_linear_matrix_msg|Index exceeds the number of array elements. Index must not exceed 9.|exact
+CHK|sub_page_past|MATLAB:badsubscript|exact
+CHK|sub_page_past_msg|Index in position 3 exceeds array bounds. Index must not exceed 2.|exact
+CHK|sub_first_of_three|MATLAB:badsubscript|exact
+CHK|sub_first_of_three_msg|Index in position 1 exceeds array bounds. Index must not exceed 2.|exact
+CHK|sub_cell_paren|MATLAB:badsubscript|exact
+CHK|sub_cell_paren_msg|Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|sub_cell_brace|MATLAB:badsubscript|exact
+CHK|sub_cell_brace_msg|Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|sub_struct|MATLAB:badsubscript|exact
+CHK|sub_struct_msg|Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|sub_string|MATLAB:badsubscript|exact
+CHK|sub_string_msg|Index exceeds the number of array elements. Index must not exceed 1.|exact
+CHK|sub_char|MATLAB:badsubscript|exact
+CHK|sub_char_msg|Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|sub_logical|MATLAB:badsubscript|exact
+CHK|sub_logical_msg|Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|brace_number|MATLAB:cellRefFromNonCell|exact
+CHK|brace_number_msg|Brace indexing is not supported for variables of this type.|exact
+CHK|brace_logical|MATLAB:cellRefFromNonCell|exact
+CHK|brace_logical_msg|Brace indexing is not supported for variables of this type.|exact
+CHK|brace_char|MATLAB:cellRefFromNonCell|exact
+CHK|brace_char_msg|Brace indexing is not supported for variables of this type.|exact
+CHK|brace_handle|MATLAB:cellRefFromNonCell|exact
+CHK|brace_handle_msg|Brace indexing is not supported for variables of this type.|exact
+CHK|brace_struct|MATLAB:cellRefFromNonCell|exact
+CHK|brace_struct_msg|Brace indexing is not supported for variables of this type.|exact
+CHK|brace_string|char[1 3]'abc'|exact
+CHK|size_plus|MATLAB:sizeDimensionsMustMatch|exact
+CHK|size_plus_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|size_times|MATLAB:sizeDimensionsMustMatch|exact
+CHK|size_times_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|size_equal|MATLAB:sizeDimensionsMustMatch|exact
+CHK|size_equal_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|size_chars|MATLAB:sizeDimensionsMustMatch|exact
+CHK|size_chars_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|size_expands|double[1 2] [2 3]|exact
+CHK|inner_rows|MATLAB:innerdim|exact
+CHK|inner_rows_msg|Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.|exact
+CHK|inner_columns|MATLAB:innerdim|exact
+CHK|inner_columns_msg|Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.|exact
+CHK|inner_fits|double[1 1] 11|exact
+CHK|cat_side|MATLAB:catenate:dimensionMismatch|exact
+CHK|cat_side_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|cat_stack|MATLAB:catenate:dimensionMismatch|exact
+CHK|cat_stack_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|undefined_name|MATLAB:UndefinedFunction|exact
+CHK|undefined_name_msg|Unrecognized function or variable 'no_such_variable_zz'.|exact
+CHK|undefined_call_double|MATLAB:UndefinedFunction|exact
+CHK|undefined_call_double_msg|Undefined function 'no_such_function_zz' for input arguments of type 'double'.|exact
+CHK|undefined_call_char|MATLAB:UndefinedFunction|exact
+CHK|undefined_call_char_msg|Undefined function 'no_such_function_zz' for input arguments of type 'char'.|exact
+CHK|undefined_call_cell|MATLAB:UndefinedFunction|exact
+CHK|undefined_call_cell_msg|Undefined function 'no_such_function_zz' for input arguments of type 'cell'.|exact
+CHK|undefined_call_int8|MATLAB:UndefinedFunction|exact
+CHK|undefined_call_int8_msg|Undefined function 'no_such_function_zz' for input arguments of type 'int8'.|exact
+CHK|too_many|MATLAB:maxrhs|exact
+CHK|too_many_msg|Too many input arguments.|exact
+CHK|not_enough|MATLAB:minrhs|exact
+CHK|not_enough_msg|Not enough input arguments.|exact
+CHK|write_brace_number|MATLAB:cellAssToNonCell|exact
+CHK|write_brace_number_msg|Unable to perform assignment because brace indexing is not supported for variables of this type.|exact
+CHK|write_brace_logical|MATLAB:cellAssToNonCell|exact
+CHK|write_brace_logical_msg|Unable to perform assignment because brace indexing is not supported for variables of this type.|exact
+CHK|write_brace_char|MATLAB:cellAssToNonCell|exact
+CHK|write_brace_char_msg|Unable to perform assignment because brace indexing is not supported for variables of this type.|exact
+CHK|write_brace_struct|MATLAB:cellAssToNonCell|exact
+CHK|write_brace_struct_msg|Unable to perform assignment because brace indexing is not supported for variables of this type.|exact
+CHK|write_zero|MATLAB:badsubscript|exact
+CHK|write_zero_msg|Array indices must be positive integers or logical values.|exact
+CHK|write_fraction|MATLAB:badsubscript|exact
+CHK|write_fraction_msg|Array indices must be positive integers or logical values.|exact
+CHK|write_count|MATLAB:matrix:singleSubscriptNumelMismatch|exact
+CHK|write_count_msg|Unable to perform assignment because the left and right sides have a different number of elements.|exact
+CHK|write_shape|MATLAB:subsassigndimmismatch|exact
+CHK|write_shape_msg|Unable to perform assignment because the size of the left side is 3-by-1 and the size of the right side is 1-by-2.|exact
+CHK|top_stack_n|double[1 1] 1|exact
+CHK|top_stack_name|char[1 16]'oi_error_records'|exact
+CHK|top_report|char[1 43]'Error using oi_error_records (line 85)\nboom'|exact
+CHK|top_report_extended|char[1 43]'Error using oi_error_records (line 85)\nboom'|exact
+CHK|index_stack_n|double[1 1] 1|exact
+CHK|index_report|char[1 68]'Index exceeds the number of array elements. Index must not exceed 3.'|exact
+CHK|local_stack_n|double[1 1] 2|exact
+CHK|local_stack_names|cell[1 2]{char[1 10]'deep_error';char[1 16]'oi_error_records'}|exact
+CHK|local_report|char[1 55]'Error using oi_error_records>deep_error (line 130)\ndeep'|exact
+CHK|throw_report|char[1 48]'Error using oi_error_records (line 106)\nthrown 7'|exact

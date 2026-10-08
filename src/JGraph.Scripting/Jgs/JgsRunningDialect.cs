@@ -30,7 +30,26 @@ internal sealed class JgsRunningDialect
     public JgsDialect Session { get; }
 
     /// <summary>The dialect of the code running now; the interpreter swaps it at every body entry.</summary>
-    public JgsDialect Current { get; set; }
+    public JgsDialect Current
+    {
+        get => _current;
+        set
+        {
+            _current = value;
+            t_matlab = value.IsMatlab;
+        }
+    }
+
+    private JgsDialect _current = null!;
+
+    [ThreadStatic]
+    private static bool t_matlab;
+
+    /// <summary>
+    /// Whether the code this thread last entered is MATLAB's, for a static helper with no slot in hand
+    /// (the arity checks, ADR 0214): set with <see cref="Current"/>, so it follows every body entry.
+    /// </summary>
+    internal static bool ThreadIsMatlab => t_matlab;
 
     /// <inheritdoc cref="JgsDialect.Name"/>
     public string Name => Current.Name;

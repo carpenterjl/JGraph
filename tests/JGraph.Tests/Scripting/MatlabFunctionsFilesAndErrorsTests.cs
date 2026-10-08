@@ -220,7 +220,7 @@ public class MatlabFunctionsFilesAndErrorsTests : IDisposable
         ScriptDiagnostic diagnostic = Assert.Single(result.Diagnostics);
         Assert.EndsWith("broken_script.m", diagnostic.File, StringComparison.Ordinal);
         Assert.Equal(3, diagnostic.Line);
-        Assert.Contains("broken_script.m(3,5): 'undefined_thing'", _output.ErrorText, StringComparison.Ordinal);
+        Assert.Contains("broken_script.m(3,5): Unrecognized function or variable 'undefined_thing'", _output.ErrorText, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -64,6 +64,6 @@ u9b_chk('obj_colon', @() class(s(:)));
 u9b_chk('obj_empty_parens', @() class(s()));
 u9b_chk('obj_true', @() class(s(true)));
 u9b_chk('obj_field', @() s(1).FontWeight);
-% an object's subscript is refused as any one-element array's is, in this build's words (item 79)
-u9b_chkdiv('obj_two', @() s(2), '0211');
-u9b_chkdiv('obj_zero', @() s(0), '0211');
+% an object's subscript is refused as any one-element array's is, in R2025b's words (item 79, ADR 0214)
+u9b_chk('obj_two', @() s(2));
+u9b_chk('obj_zero', @() s(0));

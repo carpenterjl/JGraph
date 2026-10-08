@@ -62,7 +62,7 @@ chk('cls_int64_small', wrap(join(string(int64([-9007199254740992 123456789012 90
 % where R2025b writes the single's double value to fourteen digits: both older than item 09.
 chk('cls_int64_max', wrap(string(intmax('int64'))), 'div=ADR0156');
 chk('cls_uint64_max', wrap(string(intmax('uint64'))), 'div=ADR0156');
-chk('cls_single', wrap(join(string(single([pi 0.1 1e10 16777217 -2.5 1e-5])), ' ')), 'div=ADR0156');
+chk('cls_single', wrap(join(string(single([pi 0.1 1e10 16777217 -2.5 1e-5])), ' ')), 'exact');
 chk('cls_logical', wrap(join(string([true false true]), ' ')), 'exact');
 
 bitsdir = tempname;
@@ -74,8 +74,8 @@ textbits('sweep_billions', bitsdir, string(round(r * 1e9)));
 textbits('sweep_hundred_trillions', bitsdir, string(floor(r * 1e14)));
 % R2025b takes one precision for a whole array from its largest magnitude, as num2str does for a
 % matrix; JGraph takes each element's own, so a fraction beside a larger one loses digits here.
-chk('array_precision', wrap(join(string([9016.9943749474514 12345.5 -4.2520534963913263]), ' ')), 'div=ADR0156');
-chk('array_precision_small', wrap(join(string([-29.144008230214052 -123.25]), ' ')), 'div=ADR0156');
+chk('array_precision', wrap(join(string([9016.9943749474514 12345.5 -4.2520534963913263]), ' ')), 'exact');
+chk('array_precision_small', wrap(join(string([-29.144008230214052 -123.25]), ' ')), 'exact');
 textbits('sweep_tenths', bitsdir, string((-20000:20000) * 0.1));
 
 % --- 09b: a chain of string + over every kind of operand in every position ---
@@ -93,13 +93,9 @@ for i = 1:numel(ops)
             catch
                 t = 'ERR';
             end
-            % A char row meeting a number, a logical, a char matrix, a cell or another char row under +
-            % joins text in JGraph where R2025b adds code points: older than item 09.
-            rule = 'exact';
-            if (strcmp(names{i}, 'chr') && ~textish(j)) || (strcmp(names{j}, 'chr') && ~textish(i))
-                rule = 'div=ADR0156';
-            end
-            chk(sprintf('chain_%s_%s_%s', names{i}, names{j}, names{k}), ['<' t '>'], rule);
+            % A char row meeting a number, a logical, a char matrix or another char row under +
+            % adds code points, as in R2025b (open item 2, ADR 0213; it joined text before).
+            chk(sprintf('chain_%s_%s_%s', names{i}, names{j}, names{k}), ['<' t '>'], 'exact');
         end
     end
 end
@@ -108,7 +104,7 @@ ids = [1 22 NaN 333];
 sv = ["a"; "b"; string(NaN); "d"];
 chk('chain4_keys', ['<' show("R" + string(ids') + "-" + sv) '>'], 'exact');
 chk('chain4_numeric_head', ['<' show(1 + 2 + "a" + 3) '>'], 'exact');
-chk('chain4_char_head', ['<' show('x' + 1 + "y" + 'z') '>'], 'div=ADR0156');
+chk('chain4_char_head', ['<' show('x' + 1 + "y" + 'z') '>'], 'exact');
 chk('chain5_cells', ['<' show({'a'; 'b'} + "-" + ["1" "2"] + "." + 7) '>'], 'exact');
 x = "q";
 chk('chain_parens', ['<' show(x + ("a" + "b") + x) '>'], 'exact');

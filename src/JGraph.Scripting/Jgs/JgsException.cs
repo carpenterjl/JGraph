@@ -128,4 +128,11 @@ public sealed class JgsRuntimeException : JgsException
 
     /// <summary><c>throwAsCaller</c>: the stack leaves out the frame that called it.</summary>
     internal bool DropsThrowingFrame { get; init; }
+
+    /// <summary>
+    /// Raised by <c>error</c>, <c>throw</c>, <c>rethrow</c> or <c>throwAsCaller</c> rather than refused
+    /// by the runtime: R2025b's <c>getReport(ME, 'basic')</c> heads such an error with the frame it
+    /// came from, and a runtime refusal (an index past the end) with nothing (open item 13).
+    /// </summary>
+    internal bool Raised { get; init; }
 }

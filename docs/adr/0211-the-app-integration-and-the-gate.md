@@ -133,10 +133,6 @@ drawing verbs hand back a handle. What is missing is the sixteen geographic name
 
 ## Divergences
 
-- **A subscript of one object out of range is refused in this build's words**, as any array's is:
-  "Index 2 is out of range for length 1 (indexing is 1-based)." with no identifier, where R2025b
-  says `MATLAB:badsubscript`, "Index exceeds the number of array elements. Index must not exceed
-  1." (`u12_props`: `obj_two`, `obj_zero`; open item 79).
 - **The Workspace pane shows a figure's number as a number**, where MATLAB's pane says `1×1
   Figure`: a handle is a number here (ADR 0051), and a figure's cannot be told from any other.
 - **An axes toolbar button's callback runs before the toolbar's `SelectionChangedFcn`**, an order
@@ -153,7 +149,6 @@ drawing verbs hand back a handle. What is missing is the sixteen geographic name
 ## Still open
 
 - The toolbar's press order and event data in a MATLAB window (open item 78).
-- Subscript refusals in R2025b's words (open item 79).
 - Arrays of objects, and of styles in `StyleConfigurations` (open item 65).
 - The IDE theme painting over a script figure's colours, seen again in U11's GUIDE windows (open
   item 40).

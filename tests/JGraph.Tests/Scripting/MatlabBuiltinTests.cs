@@ -264,7 +264,8 @@ public class MatlabBuiltinTests : IDisposable
     public void AnUnsupportedMatlabFunction_IsNamedInTheError()
     {
         // ode45 graduated to a real builtin in M42, so the deliberately absent example is symbolic math.
-        ScriptRunResult result = RunMatlab("y = solve(x + 1);");
+        // R2025b evaluates a call's arguments before it looks for the function, so x is defined (ADR 0214).
+        ScriptRunResult result = RunMatlab("x = 1; y = solve(x + 1);");
 
         Assert.False(result.Success);
         Assert.Contains("'solve' is not supported in JGraph", result.Message!, StringComparison.Ordinal);
@@ -277,7 +278,7 @@ public class MatlabBuiltinTests : IDisposable
         ScriptRunResult result = RunMatlab("disp(nosuchthing)");
 
         Assert.False(result.Success);
-        Assert.Contains("not recognized as a variable or a function", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("Unrecognized function or variable", result.Message!, StringComparison.Ordinal);
     }
 
     [Fact]

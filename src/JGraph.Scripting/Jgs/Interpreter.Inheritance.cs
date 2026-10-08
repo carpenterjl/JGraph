@@ -147,7 +147,7 @@ internal sealed partial class Interpreter
         });
 
     /// <summary>What a handle to an unanswered name calls when no object's method takes the call: R2025b's refusal.</summary>
-    private sealed class UndefinedFunction(string name, Interpreter interpreter) : IJgsCallable
+    private sealed class UndefinedFunction(string name, Interpreter interpreter) : IJgsUnanswered
     {
         public string Name => name;
 

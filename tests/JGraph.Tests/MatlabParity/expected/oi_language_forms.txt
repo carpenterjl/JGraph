@@ -1,0 +1,39 @@
+CHK|cmd_class|char[1 4]'char'|exact
+CHK|cmd_upper|char[1 3]'ABC'|exact
+CHK|late_class|char[1 15]'function_handle'|exact
+CHK|late_func2str|char[1 13]'no_such_fn_oi'|exact
+CHK|late_call|MATLAB:UndefinedFunction|exact
+CHK|late_call_msg|Unrecognized function or variable 'no_such_fn_oi'.|exact
+CHK|late_feval|MATLAB:UndefinedFunction|exact
+CHK|late_feval_msg|Undefined function 'no_such_fn_oi' for input arguments of type 'double'.|exact
+CHK|late_isequal|logical[1 1] 1|exact
+CHK|late_functions|cell[1 3]{char[1 13]'no_such_fn_oi';char[1 6]'simple';char[0 0]''}|exact
+CHK|echo_two|cell[1 2]{char[1 2]'a1';char[1 2]'b1'}|exact
+CHK|echo_tilde|cell[1 1]{char[1 2]'a2'}|exact
+CHK|echo_indexed|cell[1 2]{char[1 2]'st';char[1 2]'cc'}|exact
+CHK|echo_list|cell[1 1]{char[1 2]'c3'}|exact
+CHK|echo_suppressed|double[0 0]|exact
+CHK|list_target_values|cell[1 2]{double[1 1] 7;double[1 1] 8}|exact
+CHK|hex_plain|uint8[1 1] 31|exact
+CHK|hex_upper|uint8[1 1] 31|exact
+CHK|bin_plain|uint8[1 1] 5|exact
+CHK|hex_16|uint32[1 1] 131071|exact
+CHK|hex_u8|uint8[1 1] 255|exact
+CHK|hex_s8|int8[1 1] 127|exact
+CHK|hex_s8_negative|int8[1 1] -128|exact
+CHK|hex_32|uint32[1 1] 4294967295|exact
+CHK|hex_64|uint64[1 1] 4294967296|exact
+CHK|bin_u16|uint16[1 1] 255|exact
+CHK|hex_s32|int32[1 1] 31|exact
+CHK|hex_negated|uint8[1 1] 0|exact
+CHK|hex_plus|uint8[1 1] 32|exact
+CHK|hex_s64|char[1 5]'int64'|exact
+CHK|anon_none_answers|cell[1 1]{char[1 3]'ans'}|exact
+CHK|anon_none_disp|double[0 0]|exact
+CHK|list_statement|cell[1 2]{char[1 3]'ans';char[1 3]'ans'}|exact
+CHK|list_brace_statement|cell[1 2]{char[1 3]'ans';char[1 3]'ans'}|exact
+CHK|list_operator|MATLAB:maxrhs|exact
+CHK|list_operator_msg|Too many input arguments.|exact
+CHK|list_disp|char[1 13]'MATLAB:maxrhs'|exact
+CHK|no_e|MATLAB:UndefinedFunction|exact
+CHK|no_e_msg|Unrecognized function or variable 'e'.|exact

@@ -236,7 +236,7 @@ public class JgsNameResolverTests : IDisposable
             file = s.file;
             b = functions(@cos);
             builtin = strcmp(b.type, 'builtin') && isempty(b.file);
-            printed = strcmp(func2str(@beside_me), '@beside_me');
+            printed = strcmp(func2str(@beside_me), 'beside_me');
             """);
 
         Assert.True(result.Success, result.Message + _output.ErrorText);

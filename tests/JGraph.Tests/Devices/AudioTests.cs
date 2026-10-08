@@ -86,11 +86,23 @@ public class AudioTests
                 samples.AddRange(block.Take(frames));
             }
         }, static _ => { });
-        Thread.Sleep(200);
+        // Wait on the count, not the clock: a loaded machine can hold the stream's thread back.
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (DateTime.UtcNow < deadline)
+        {
+            lock (samples)
+            {
+                if (samples.Count >= 800)
+                {
+                    break;
+                }
+            }
+            Thread.Sleep(20);
+        }
         stream.Stop();
         lock (samples)
         {
-            Assert.InRange(samples.Count, 800, 4000);
+            Assert.True(samples.Count >= 800, $"{samples.Count} samples");
             Assert.Equal(0f, samples[0]);
             Assert.Equal(0.5f, samples[150], 5); // 440 Hz at 8000 Hz peaks at sample 150
         }

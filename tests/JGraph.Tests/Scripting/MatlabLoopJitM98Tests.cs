@@ -294,17 +294,19 @@ public class MatlabLoopJitM98Tests : IDisposable
         fprintf('%.17g\n', e);
         """, expectCompiled: true);
 
+    // A zero step is an empty range in MATLAB, so a loop over it runs no times (ADR 0213; it threw
+    // before). The compiled loop still bails to the walk for it, and both roads agree.
     [Fact]
-    public void AZeroRangeStepThrowsTheWalksError() => AssertParity("""
+    public void AZeroRangeStepRunsNoTimes() => AssertParity("""
         acc = 0;
         for k = 1:0:5
             acc = acc + 1;
         end
-        fprintf('never\n');
-        """, expectSuccess: false);
+        fprintf('%d\n', acc);
+        """);
 
     [Fact]
-    public void ANestedZeroStepThrowsMidLoopWithStateKept() => AssertParity("""
+    public void ANestedZeroStepRunsNoTimesWithStateKept() => AssertParity("""
         w = 0;
         for k = 1:3
             w = w + 1;
@@ -312,8 +314,8 @@ public class MatlabLoopJitM98Tests : IDisposable
                 w = w + 100;
             end
         end
-        fprintf('never\n');
-        """, expectSuccess: false, expectCompiled: true);
+        fprintf('%d\n', w);
+        """, expectCompiled: true);
 
     [Fact]
     public void AnOverLimitNestedRangeThrowsTheWalksError() => AssertParity("""

@@ -216,7 +216,7 @@ public class LoopChargeBlocksM160Tests : IDisposable
         """, budgets: 80);
 
     [Fact]
-    public Task ANestedZeroStepStopsWhereTheWalkThrows() => SweepAsync("""
+    public Task ANestedZeroStepRunsNoTimes() => SweepAsync("""
         w = 0;
         for k = 1:3
             w = w + 1;
@@ -225,8 +225,8 @@ public class LoopChargeBlocksM160Tests : IDisposable
                 w = w + 100;
             end
         end
-        fprintf('never\n');
-        """, budgets: 30, mustFinish: false);
+        fprintf('%d\n', w);
+        """, budgets: 30); // a zero step is an empty range (ADR 0213; it threw before)
 
     /// <summary>An output sink that cancels the run the moment a given line is printed.</summary>
     private sealed class CancelOnLine(string line, CancellationTokenSource source) : IScriptOutput

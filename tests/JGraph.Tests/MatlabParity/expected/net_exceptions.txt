@@ -82,4 +82,4 @@ CHK|custom_isa_Exception|logical:1|exact
 CHK|custom_isa_MException|logical:1|exact
 CHK|custom_properties|ExceptionObject,identifier,message,cause,stack,Correction|exact
 CHK|custom_rethrow|MATLAB:NET:CLRException:MethodInvoke|exact
-CHK|custom_report_basic|Error using net_exceptions (line 52) / Message: outer failure / Source: JGraph.Interop.TestAssembly / HelpLink: None|div=ADR0174|diverges|Message: outer failure / Source: JGraph.Interop.TestAssembly / HelpLink: None
+CHK|custom_report_basic|Error using net_exceptions (line 52) / Message: outer failure / Source: JGraph.Interop.TestAssembly / HelpLink: None|exact

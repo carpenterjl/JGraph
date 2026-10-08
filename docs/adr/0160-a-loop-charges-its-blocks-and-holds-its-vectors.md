@@ -223,17 +223,9 @@ is still the bridge and the right-hand side, which 12e.2 addresses; a compiled r
 
 ## Divergences
 
-All three were found by `m160_loops` on the 12a binary and are kept by this stage; chip
-task_56e0bb57 is filed to close them together, and the compiled road agrees with the walk on
-each.
-
-- A logical stored into every element of a double vector: JGraph's `class(f)` answers `logical`
-  where R2025b keeps `double` (`m160_loops`, `logical_store_class`, `div=ADR0160`). The walk's
-  element write demotes a packed buffer to boxed on a Bool value; the compiled `VStore` bails on
-  a logical for that reason, so both roads agree.
-- A zero-step colon in a loop head: JGraph throws `A range step must not be zero.` where R2025b
-  runs the loop zero times over a 1-by-0 range (`refused_nested_zero_step`, `div=ADR0160`). The
-  compiled `RangeCount` bails to the walk, which throws.
+None since ADR 0213. Of the three this stage recorded, V8 (ADR 0169) retired the loop variable
+after an empty range, and ADR 0213 the logical store and the zero-step colon; `m160_loops` checks
+all three as exact lines.
 
 **Retired by V8 (ADR 0169), and deleted from the list above rather than struck through**: *"The
 loop variable after an empty range: R2025b binds it to a 0-by-0 double, so `exist('qq', 'var')` is

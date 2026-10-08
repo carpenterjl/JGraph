@@ -170,10 +170,6 @@ invoke), an instance call 15 µs, R2025b not yet measured beside them (stage 10'
 - **A 64-bit integer past 2^53 comes back rounded, with a warning.** `JGTest.Returns.Int64()` is
   2^53 + 1 in R2025b and 2^53 in JGraph, which holds integers in doubles (ADR 0069, 0156);
   `JGraph:interop:int64Precision` says so (`net_conversions`, `ret_Int64`, `div=ADR0174`).
-- **`getReport(e, 'basic')` of a `NET.NetException` caught at a script's top level has no "Error
-  using" line.** JGraph puts no frame on `ME.stack` for top-level script code, so the report has no
-  location to name; R2025b names the script and line (`net_exceptions`, `custom_report_basic`,
-  `div=ADR0174`). The gap is not .NET's and is filed as its own chip.
 - **The runtime is always JGraph's own .NET 8.** `dotnetenv` reports `core` and `loaded` before any
   .NET call, where R2025b reports `framework` and `notloaded`; a request naming the running runtime is
   accepted, and any other is R2025b's `MATLAB:netenv:NETLoaded` refusal, the answer it gives once .NET

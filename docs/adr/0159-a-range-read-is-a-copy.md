@@ -151,15 +151,6 @@ cost is the bridge and the right-hand side, which 12e.2 and 12d address.
 
 ## Divergences
 
-Both were found by `m159_slices` on the binary before this item and are kept by it; a chip is
-filed to close them together.
-
-- A colon with fractional operands used directly as an index: R2025b rounds each element with the
-  warning `Integer operands are required for colon operator when used as index`, so
-  `x(2:0.5:3)` reads elements 2, 3 and 3, where JGraph refuses the fractional position
-  (`m159_slices`, `refused_fractional_step`, `div=ADR0159`). The copy path is not involved: a
-  fractional step fails the proof and the general path refuses as it always did.
-- A classed range whose stop is outside the class: R2025b refuses `uint8(254):258` with
-  `MATLAB:colon:OutOfRange`, where JGraph saturates it to `[254 255 255 255 255]` and reads five
-  elements (`m159_slices`, `refused_uint8_saturating`, `div=ADR0159`). The copy path refuses a
-  classed bound and leaves the range to the general path, which is where the saturation lives.
+None since ADR 0213. The two this item recorded (a fractional colon used as an index, and a
+classed range whose stop is outside the class) now agree with R2025b; `m159_slices` checks both as
+exact lines.

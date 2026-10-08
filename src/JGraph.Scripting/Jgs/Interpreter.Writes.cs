@@ -695,7 +695,7 @@ internal sealed partial class Interpreter
     /// positional one for a write with several subscripts.
     /// </summary>
     private JgsRuntimeException BadWriteIndex(int raw, int position, Node at) => Dialect.IsMatlab
-        ? new JgsRuntimeException(at.Line, at.Column, position == 0
+        ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:badsubscript", position == 0
             ? "Array indices must be positive integers or logical values."
             : $"Index in position {position} is invalid. Array indices must be positive integers or logical values.")
         : new JgsRuntimeException(at.Line, at.Column,

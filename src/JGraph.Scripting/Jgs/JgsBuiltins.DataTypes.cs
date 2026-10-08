@@ -111,6 +111,8 @@ internal static partial class JgsBuiltins
                 JgsType.Array when input.IsPacked => ShapedLike(input, PackedStringElements(input)).MarkStringArray(),
                 JgsType.Array when HasComplexElements(input) =>
                     ShapedLike(input, Array.ConvertAll(input.BoxedElements(), static e => JgsValue.Str(ComplexText(e)))).MarkStringArray(),
+                JgsType.Array when RealArrayTexts(input) is { } texts =>
+                    ShapedLike(input, Array.ConvertAll(texts, static t => JgsValue.Str(t ?? MissingSentinel))).MarkStringArray(),
                 JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringElementOf)).MarkStringArray(),
                 _ => JgsValue.StringScalar(StringElementOf(input).AsString),
             };
@@ -735,8 +737,43 @@ internal static partial class JgsBuiltins
     /// <see cref="StringElementOf"/> answers for each element <see cref="JgsValue.BoxedElements"/>
     /// would have boxed, without boxing one (ADR 0156).
     /// </summary>
+    /// <summary>
+    /// The texts of a real numeric array of two or more elements, every one at the array's one
+    /// precision (open item 3; <see cref="JgsSprintf.ArrayPrecision"/>), with null for NaN, which is
+    /// the missing string. Null when the value is not such an array (a scalar keeps its own
+    /// precision, a logical array its words, a complex one <see cref="ComplexText"/>).
+    /// </summary>
+    internal static string?[]? RealArrayTexts(JgsValue value)
+    {
+        if (value.Type != JgsType.Array || value.IsStringArray || value.IsPackedComplex || value.ArrayLength < 2
+            || (value.IsPacked && value.PackedKind != JgsPackedKind.Number))
+        {
+            return null;
+        }
+
+        var numbers = new double[value.ArrayLength];
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            JgsValue element = value.ElementAt(i);
+            if (element.Type != JgsType.Number)
+            {
+                return null;
+            }
+
+            numbers[i] = element.AsNumber;
+        }
+
+        int precision = JgsSprintf.ArrayPrecision(numbers);
+        return Array.ConvertAll(numbers, v => double.IsNaN(v) ? null : JgsSprintf.FormatAtPrecision(v, precision));
+    }
+
     private static JgsValue[] PackedStringElements(JgsValue input)
     {
+        if (RealArrayTexts(input) is { } aligned)
+        {
+            return Array.ConvertAll(aligned, static t => JgsValue.Str(t ?? MissingSentinel));
+        }
+
         JGraph.Numerics.NumericBuffer buffer = input.AsBuffer;
         int count = input.ArrayLength;
         Span<double> values = buffer.AsSpan(0, count);

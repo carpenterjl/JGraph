@@ -170,7 +170,7 @@ internal static partial class JgsBuiltins
         Define("func2str", (args, line, col) =>
         {
             Arity("func2str", args, 1, line, col);
-            return JgsValue.Str(SourceTextOf("func2str", args[0], line, col));
+            return JgsValue.Str(SourceTextOf("func2str", args[0], line, col, interpreter.Dialect.IsMatlab));
         });
 
         Define("functions", (args, line, col) =>
@@ -190,8 +190,11 @@ internal static partial class JgsBuiltins
             IJgsCallable target = callable is NamedHandle captured ? captured.Captured : callable;
             return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
-                ["function"] = JgsValue.Str(SourceTextOf("functions", args[0], line, col).TrimStart('@')),
-                ["type"] = JgsValue.Str(target is AnonymousFunction ? "anonymous" : target is UserFunction ? "simple" : "builtin"),
+                // R2025b: func2str's text, the anonymous one's @ included (measured, ADR 0213).
+                ["function"] = JgsValue.Str(interpreter.Dialect.IsMatlab
+                    ? SourceTextOf("functions", args[0], line, col, matlab: true)
+                    : SourceTextOf("functions", args[0], line, col).TrimStart('@')),
+                ["type"] = JgsValue.Str(target is AnonymousFunction ? "anonymous" : target is UserFunction or IJgsUnanswered ? "simple" : "builtin"),
                 ["file"] = JgsValue.Str(file),
             });
         });
@@ -261,8 +264,13 @@ internal static partial class JgsBuiltins
         });
     }
 
-    /// <summary>The source text of a function handle, as func2str prints it.</summary>
-    internal static string SourceTextOf(string name, JgsValue value, int line, int col)
+    /// <summary>
+    /// The source text of a function handle, as func2str prints it. An anonymous function written in
+    /// the MATLAB dialect is R2025b's text of it (<c>@(x)x+1</c>, open items 22 and 54), and with
+    /// <paramref name="matlab"/> a named handle is its bare name (<c>func2str(@sin)</c> is
+    /// <c>'sin'</c>); the JGS dialect keeps its own spelling of both.
+    /// </summary>
+    internal static string SourceTextOf(string name, JgsValue value, int line, int col, bool matlab = false)
     {
         if (value.Type != JgsType.Function)
         {
@@ -271,9 +279,10 @@ internal static partial class JgsBuiltins
 
         return value.AsCallable switch
         {
+            AnonymousFunction { Declaration: { Dialect.IsMatlab: true, MatlabText: { } written } } => written,
             AnonymousFunction anonymous => AstPrinter.Print(anonymous.Declaration),
             Net.NetCallable net => net.Name, // R2025b writes a .NET method's handle without its @ (ADR 0174)
-            { } callable => "@" + callable.Name,
+            { } callable => matlab ? callable.Name : "@" + callable.Name,
             _ => throw new JgsRuntimeException(line, col, $"{name} expects a function handle."),
         };
     }

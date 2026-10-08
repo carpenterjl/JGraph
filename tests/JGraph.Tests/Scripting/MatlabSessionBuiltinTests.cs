@@ -35,13 +35,13 @@ public class MatlabSessionBuiltinTests : IDisposable
     [Fact]
     public Task Func2str_PrintsTheHandleBack() => RunAsserting("""
         f = @(x) x.^2 + 1;
-        assert(strcmp(func2str(f), '@(x) (x .^ 2) + 1'));
+        assert(strcmp(func2str(f), '@(x)x.^2+1'));
 
-        % A named handle prints as @name, which is the other half of what func2str reports.
-        assert(strcmp(func2str(@sin), '@sin'));
+        % A named handle prints as its bare name in R2025b (ADR 0213).
+        assert(strcmp(func2str(@sin), 'sin'));
 
-        % Two handles written differently but meaning the same thing print the same, because the
-        % text comes from the parsed tree rather than from the caller's spacing.
+        % Two handles written with different spacing print the same: R2025b drops the whitespace
+        % outside quotes (ADR 0213, measured).
         g = @(x)x.^2+1;
         assert(strcmp(func2str(f), func2str(g)));
 
@@ -54,7 +54,7 @@ public class MatlabSessionBuiltinTests : IDisposable
     public Task Functions_SaysWhatAHandleIs() => RunAsserting("""
         s = functions(@(x) x + 1);
         assert(strcmp(s.type, 'anonymous'));
-        assert(strcmp(s.function, '(x) x + 1'));
+        assert(strcmp(s.function, '@(x)x+1')); % R2025b keeps the @ (ADR 0213, measured)
 
         b = functions(@cos);
         assert(strcmp(b.type, 'builtin'));

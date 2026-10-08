@@ -230,7 +230,7 @@ public sealed class MatlabSignalM135Tests : IDisposable
         string message = RunError(
             "d = designfilt('lowpassfir','FilterOrder',20,'CutoffFrequency',0.4); filternorm(d)");
 
-        Assert.Contains("filternorm", message);
+        Assert.Contains("Not enough input arguments", message);
     }
 
     // --- The refusals -----------------------------------------------------------------------------

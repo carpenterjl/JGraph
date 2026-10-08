@@ -908,7 +908,7 @@ internal static partial class JgsBuiltins
 
         if (subject.Type == JgsType.Array && SizeDims(subject).Length > 2)
         {
-            throw new JgsRuntimeException(line, col, "mat2str writes a two-dimensional array; this one has more dimensions.");
+            throw new JgsRuntimeException(line, col, "MATLAB:mat2str:TwoDInput", "Input matrix must be 2-D.");
         }
 
         // Only 'class' asks for the constructor round the value: mat2str(int8([1 2])) is '[1 2]' and

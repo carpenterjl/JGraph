@@ -233,11 +233,12 @@ public class MatlabReductionAlongDimensionTests : IDisposable
 
     [Fact]
     public Task ADimensionOfZeroOrLess_SaysSoRatherThanGuessing() => RunAsserting("""
+        % R2025b's refusal, as for a fractional dimension (ADR 0213).
         ok = false;
         try
             sum([1 2; 3 4], 0);
         catch err
-            ok = ~isempty(strfind(err.message, 'positive whole number'));
+            ok = strcmp(err.identifier, 'MATLAB:getdimarg:invalidDim');
         end
         assert(ok);
         """);

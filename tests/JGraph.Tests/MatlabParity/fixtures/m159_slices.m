@@ -90,10 +90,10 @@ refused('refused_row_high', @() M(401, :));
 refused('refused_fractional_row', @() M(1.5, :));
 % R2025b rounds a colon with fractional operands when it is used directly as an index, with a
 % warning (elements 2, 3, 3 here); JGraph refuses the fractional position (ADR 0159, older than the item).
-refused('refused_fractional_step', @() x(2:0.5:3), 'div=ADR0159');
+refused('refused_fractional_step', @() x(2:0.5:3)); % rounds with a warning since ADR 0213
 % R2025b refuses a classed range whose stop is outside the class (MATLAB:colon:outOfRange);
 % JGraph saturates it to [254 255 255 255 255] and reads five elements (ADR 0159, older than the item).
-refused('refused_uint8_saturating', @() x(uint8(254):258), 'div=ADR0159');
+refused('refused_uint8_saturating', @() x(uint8(254):258)); % refused since ADR 0213
 
 % --- 12e.1: the explicit solvers whose interpolant lost its per-component weights ---
 lorenz = @(t, y) [10*(y(2) - y(1)); y(1)*(28 - y(3)) - y(2); y(1)*y(2) - (8/3)*y(3)];

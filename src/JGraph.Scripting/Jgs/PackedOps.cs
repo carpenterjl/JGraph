@@ -398,7 +398,13 @@ internal static class PackedOps
         int[] picks;
         if (selector.PackedKind == JgsPackedKind.Bool)
         {
-            if (span.Length != targetLength)
+            int read = span.Length;
+            if (indexBase == 1 && JgsRunningDialect.ThreadIsMatlab && span.Length != targetLength)
+            {
+                double[] copy = span.ToArray();
+                read = MatlabMaskSpan(i => copy[i] != 0, copy.Length, targetLength, line, column);
+            }
+            else if (span.Length != targetLength)
             {
                 throw new JgsRuntimeException(line, column,
                     $"A mask must match the {targetName} length (mask {span.Length}, {targetName} {targetLength}).");
@@ -407,9 +413,9 @@ internal static class PackedOps
             // Counted first, then filled (M92): a List of a few million matches spends most of its
             // time doubling and then copies the lot once more on the way out, where the count is one
             // vector pass over storage that is about to be read again anyway.
-            picks = new int[PackedMath.CountNonZero(buffer)];
+            picks = new int[read == span.Length ? PackedMath.CountNonZero(buffer) : CountTrue(span[..read])];
             int next = 0;
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; i < read; i++)
             {
                 if (span[i] != 0)
                 {
@@ -460,12 +466,79 @@ internal static class PackedOps
     }
 
     /// <summary>
+    /// Which subscript of several is being read, 1-based, while a multi-subscript index reads it; 0 for
+    /// a single subscript. Set by the interpreter around each slot's picks, so a refusal can name its
+    /// position as R2025b's does.
+    /// </summary>
+    [ThreadStatic]
+    internal static int SubscriptPosition;
+
+    /// <summary>
+    /// R2025b's <c>MATLAB:badsubscript</c> for a subscript that is not a positive whole number
+    /// (<paramref name="invalid"/>) or that lies past <paramref name="length"/> (open item 79).
+    /// </summary>
+    internal static JgsRuntimeException SubscriptRefusal(bool invalid, int length, int line, int column)
+    {
+        int position = SubscriptPosition;
+        string text = (invalid, position) switch
+        {
+            (true, 0) => "Array indices must be positive integers or logical values.",
+            (true, _) => $"Index in position {position} is invalid. Array indices must be positive integers or logical values.",
+            (false, 0) => $"Index exceeds the number of array elements. Index must not exceed {length}.",
+            (false, _) => $"Index in position {position} exceeds array bounds. Index must not exceed {length}.",
+        };
+        return new JgsRuntimeException(line, column, "MATLAB:badsubscript", text);
+    }
+
+    /// <summary>
+    /// A MATLAB mask's length against the array's (open item 79): a shorter mask picks from the front,
+    /// a longer one is fine while its extra entries are false, and a true past the end is R2025b's
+    /// refusal. Answers how many of the mask's entries to read.
+    /// </summary>
+    internal static int MatlabMaskSpan(Func<int, bool> isTrue, int maskLength, int targetLength, int line, int column)
+    {
+        for (int i = targetLength; i < maskLength; i++)
+        {
+            if (isTrue(i))
+            {
+                throw new JgsRuntimeException(line, column, "MATLAB:badsubscript",
+                    "The logical indices contain a true value outside of the array bounds.");
+            }
+        }
+
+        return Math.Min(maskLength, targetLength);
+    }
+
+    private static int CountTrue(ReadOnlySpan<double> span)
+    {
+        int count = 0;
+        foreach (double v in span)
+        {
+            if (v != 0)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /// <summary>
     /// A raw double as an element position, counted from <paramref name="indexBase"/> (0 in JGS, 1 in
     /// MATLAB), with the boxed paths' exact messages.
     /// </summary>
     public static int ToIndex(double raw, int length, int indexBase, int line, int column)
     {
-        if (raw != Math.Floor(raw) || double.IsNaN(raw) || double.IsInfinity(raw))
+        bool fractional = raw != Math.Floor(raw) || double.IsNaN(raw) || double.IsInfinity(raw);
+
+        // The MATLAB dialect refuses in R2025b's words (a 1-based JGS script keeps its own) (open item 79): one subscript
+        // says "Index exceeds the number of array elements", one of several names its position.
+        if (indexBase == 1 && JgsRunningDialect.ThreadIsMatlab && (fractional || raw < 1 || raw > length))
+        {
+            throw SubscriptRefusal(invalid: fractional || raw < 1, length, line, column);
+        }
+
+        if (fractional)
         {
             throw new JgsRuntimeException(line, column,
                 $"An index must be a whole number, but got {raw.ToString("R", CultureInfo.InvariantCulture)}.");

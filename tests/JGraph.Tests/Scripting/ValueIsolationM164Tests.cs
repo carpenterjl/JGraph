@@ -300,7 +300,11 @@ public class ValueIsolationM164Tests : IDisposable
         foreach (string name in JgsBuiltins.ScriptRunningBuiltins)
         {
             ScriptRunResult result = await session.ExecuteAsync($"h = @{name};", sourceId: "", CancellationToken.None);
-            if (!result.Success)
+            // The MATLAB dialect makes a handle to a name nothing answers and refuses only its call
+            // (ADR 0215), so an unreachable name is a handle with nothing behind it there.
+            bool unanswered = result.Success && session.Workspace.TryGet("h", out JgsValue made)
+                && made.AsCallable is NamedHandle { Captured: IJgsUnanswered };
+            if (!result.Success || unanswered)
             {
                 Assert.True(new BuiltinFunction(name, (_, _, _) => JgsValue.Null).RunsScript);
                 continue;

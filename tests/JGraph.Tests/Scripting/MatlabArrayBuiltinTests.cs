@@ -65,10 +65,12 @@ public class MatlabArrayBuiltinTests : IDisposable
 
     [Fact]
     public Task Accumarray_SumsIntoTheBinsItsSubscriptsName() => RunAsserting("""
-        assert(isequal(accumarray([1 2 1 3], [10 20 30 40]), [40 20 40]));
-        assert(isequal(accumarray([1 1 2], 1), [2 1]));
-        assert(isequal(accumarray([1 2 1], [1 2 3], 4), [4 2 0 0]));
-        assert(isequal(accumarray([1 1 2], [1 5 9], 2, @max), [5 9]));
+        % A column of subscripts gives a column; a row would be one subscript of as many
+        % dimensions as it is long (R2025b, ADR 0213).
+        assert(isequal(accumarray([1; 2; 1; 3], [10 20 30 40]), [40; 20; 40]));
+        assert(isequal(accumarray([1; 1; 2], 1), [2; 1]));
+        assert(isequal(accumarray([1; 2; 1], [1 2 3], [4 1]), [4; 2; 0; 0]));
+        assert(isequal(accumarray([1; 1; 2], [1 5 9], [2 1], @max), [5; 9]));
         """);
 
     [Fact]

@@ -1341,7 +1341,8 @@ internal sealed class Parser
                 text += "." + Advance().Text;
             }
 
-            arguments.Add(new StringLiteral(text) { Line = word.Line, Column = word.Column });
+            // A command word is a char row, as R2025b passes it (`class abc` is 'char'; open item 15).
+            arguments.Add(new StringLiteral(text) { Line = word.Line, Column = word.Column, IsChar = true });
         }
 
         var callee = new VariableExpr(name.Text) { Line = name.Line, Column = name.Column };
@@ -1679,7 +1680,12 @@ internal sealed class Parser
         {
             case TokenType.Number:
                 Advance();
-                return new NumberLiteral(token.Number) { Line = token.Line, Column = token.Column };
+                return new NumberLiteral(token.Number)
+        {
+            Line = token.Line,
+            Column = token.Column,
+            IntegerClass = IntegerLiteralClass(token.Text, token.Number),
+        };
             case TokenType.ImaginaryNumber:
                 Advance();
                 return new ComplexLiteral(token.Number) { Line = token.Line, Column = token.Column };
@@ -1903,6 +1909,7 @@ internal sealed class Parser
 
     private Expr ParseFunctionHandle(Token start)
     {
+        int first = _pos;
         Advance(); // '@'
 
         // '@name' refers to an existing function; '@(args) expr' defines one inline.
@@ -1924,8 +1931,103 @@ internal sealed class Parser
 
         Expect(TokenType.RParen, "')'");
         Expr body = ParseExpression();
-        return new AnonymousFnExpr(parameters, body) { Line = start.Line, Column = start.Column, Dialect = Dialect };
+        return new AnonymousFnExpr(parameters, body)
+        {
+            Line = start.Line,
+            Column = start.Column,
+            Dialect = Dialect,
+            MatlabText = MatlabTextOf(first, _pos),
+        };
     }
+
+    /// <summary>
+    /// The tokens <c>[first, end)</c> as R2025b's <c>func2str</c> writes them (open items 22 and 54):
+    /// joined with no whitespace, every literal as it was written, and a space that separated two
+    /// elements of a bracket or brace literal written as the comma it stands for.
+    /// </summary>
+    private string MatlabTextOf(int first, int end)
+    {
+        var text = new System.Text.StringBuilder();
+        var nesting = new Stack<TokenType>();
+        for (int i = first; i < end && i < _tokens.Count; i++)
+        {
+            Token token = _tokens[i];
+            bool inLiteral = nesting.Count > 0 && nesting.Peek() is TokenType.LBracket or TokenType.LBrace;
+            if (inLiteral && token.PrecededByWhitespace && i > first && StartsElementAt(i))
+            {
+                TokenType before = _tokens[i - 1].Type;
+                bool afterElement = before is TokenType.Number or TokenType.ImaginaryNumber or TokenType.String
+                    or TokenType.Identifier or TokenType.RParen or TokenType.RBracket or TokenType.RBrace
+                    or TokenType.True or TokenType.False or TokenType.End or TokenType.Transpose or TokenType.DotTranspose;
+                if (afterElement)
+                {
+                    text.Append(',');
+                }
+            }
+
+            switch (token.Type)
+            {
+                case TokenType.LParen or TokenType.LBracket or TokenType.LBrace:
+                    nesting.Push(token.Type);
+                    break;
+                case TokenType.RParen or TokenType.RBracket or TokenType.RBrace when nesting.Count > 0:
+                    nesting.Pop();
+                    break;
+            }
+
+            text.Append(token.Type switch
+            {
+                TokenType.String when token.IsCharLiteral => "'" + token.Text.Replace("'", "''") + "'",
+                TokenType.String => "\"" + token.Text.Replace("\"", "\"\"") + "\"",
+                TokenType.Newline when inLiteral => ";",
+                TokenType.Newline => string.Empty,
+                _ => token.Text,
+            });
+        }
+
+        return text.ToString();
+    }
+
+    /// <summary>
+    /// The class of a hexadecimal or binary literal (open item 23, measured in R2025b): its suffix's, or
+    /// the smallest unsigned integer that holds it; null for a literal written in decimal.
+    /// </summary>
+    private static JgsNumericClass? IntegerLiteralClass(string text, double value)
+    {
+        if (text.Length < 3 || text[0] != '0' || text[1] is not ('x' or 'X' or 'b' or 'B'))
+        {
+            return null;
+        }
+
+        int suffix = text.LastIndexOfAny(['u', 's']);
+        if (suffix > 1 && text[1] is 'b' or 'B' or 'x' or 'X' && int.TryParse(text.AsSpan(suffix + 1), out int bits))
+        {
+            bool signed = text[suffix] == 's';
+            return bits switch
+            {
+                8 => signed ? JgsNumericClass.Int8 : JgsNumericClass.UInt8,
+                16 => signed ? JgsNumericClass.Int16 : JgsNumericClass.UInt16,
+                32 => signed ? JgsNumericClass.Int32 : JgsNumericClass.UInt32,
+                _ => signed ? JgsNumericClass.Int64 : JgsNumericClass.UInt64,
+            };
+        }
+
+        return value <= byte.MaxValue ? JgsNumericClass.UInt8
+            : value <= ushort.MaxValue ? JgsNumericClass.UInt16
+            : value <= uint.MaxValue ? JgsNumericClass.UInt32
+            : JgsNumericClass.UInt64;
+    }
+
+    /// <summary><see cref="StartsANewElement"/>'s rule for the token at <paramref name="at"/>, whitespace already known.</summary>
+    private bool StartsElementAt(int at) => _tokens[at].Type switch
+    {
+        TokenType.Number or TokenType.ImaginaryNumber or TokenType.String or TokenType.Identifier
+            or TokenType.LParen or TokenType.LBracket or TokenType.LBrace or TokenType.At
+            or TokenType.True or TokenType.False or TokenType.End or TokenType.Colon => true,
+        TokenType.Plus or TokenType.Minus or TokenType.Bang =>
+            at + 1 < _tokens.Count && !_tokens[at + 1].PrecededByWhitespace,
+        _ => false,
+    };
 
     /// <summary>An identifier and any <c>.identifier</c> parts written against it: <c>System.Math.Max</c>.</summary>
     private string ParseDottedName()

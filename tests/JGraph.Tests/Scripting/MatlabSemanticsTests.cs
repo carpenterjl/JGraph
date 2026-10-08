@@ -56,8 +56,7 @@ public class MatlabSemanticsTests : IDisposable
         ScriptRunResult result = RunMatlab("x = [10 20 30];\ndisp(x(0))");
 
         Assert.False(result.Success);
-        Assert.Contains("out of range", result.Message!, StringComparison.Ordinal);
-        Assert.Contains("1-based", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("Array indices must be positive integers or logical values.", result.Message!, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -154,9 +153,9 @@ public class MatlabSemanticsTests : IDisposable
     [Fact]
     public void StarBetweenAMatrixAndAVector_IsAMatrixProduct()
     {
-        // A row vector's orientation is often incidental, so it is turned into the column the
-        // product needs — and the result is the column MATLAB would give.
-        Assert.Contains("[4; 6]", RunAndRead("A = [1 0; 0 1];\nv = [4 6];\ndisp(A * v)"), StringComparison.Ordinal);
+        // MATLAB multiplies the shapes as written (ADR 0214): a column conforms, a row is refused.
+        Assert.Contains("[4; 6]", RunAndRead("A = [1 0; 0 1];\nv = [4; 6];\ndisp(A * v)"), StringComparison.Ordinal);
+        Assert.False(RunMatlab("A = [1 0; 0 1];\nv = [4 6];\ndisp(A * v)").Success);
     }
 
     [Fact]
@@ -166,7 +165,7 @@ public class MatlabSemanticsTests : IDisposable
         ScriptRunResult result = RunMatlab("disp([1 2] * [3 4])");
 
         Assert.False(result.Success);
-        Assert.Contains("ambiguous", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("Incorrect dimensions for matrix multiplication", result.Message!, StringComparison.Ordinal);
         Assert.Contains(".*", result.Message!, StringComparison.Ordinal);
     }
 

@@ -317,7 +317,7 @@ public sealed class MatlabSignalM134Tests : IDisposable
 
     [Fact]
     public void Cfirpm_IsNotThere() =>
-        Assert.Contains("not recognized", RunError("cfirpm(20, [-1 -0.5 0.5 1], 'lowpass')"));
+        Assert.Contains("Undefined function 'cfirpm'", RunError("cfirpm(20, [-1 -0.5 0.5 1], 'lowpass')"));
 
     [Fact]
     public void Fir2_FollowsTheResponseItWasDrawn()

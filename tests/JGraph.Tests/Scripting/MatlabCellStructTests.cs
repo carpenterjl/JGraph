@@ -70,7 +70,7 @@ public class MatlabCellStructTests : IDisposable
         ScriptRunResult result = RunMatlab("x = [1 2 3];\ndisp(x{1})");
 
         Assert.False(result.Success);
-        Assert.Contains("Braces index a cell array", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("Brace indexing is not supported for variables of this type.", result.Message!, StringComparison.Ordinal);
     }
 
     // --- Structs --------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ public class MatlabCellStructTests : IDisposable
             """);
 
         Assert.Contains("recovered", output, StringComparison.Ordinal);
-        Assert.Contains("out of range", output, StringComparison.Ordinal);
+        Assert.Contains("Index exceeds the number of array elements", output, StringComparison.Ordinal);
     }
 
     [Fact]

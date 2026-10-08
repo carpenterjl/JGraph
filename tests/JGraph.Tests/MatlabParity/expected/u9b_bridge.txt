@@ -91,7 +91,7 @@ CHK|send_39|char[1 24]'event pong: char[1 1]'0''|exact
 CHK|send_40|char[1 28]'event pong: char[1 5]'1e+21''|exact
 CHK|send_41|char[1 35]'event pong: char[1 11]'[1,[2,"x"]]''|exact
 CHK|send_nodata|char[1 25]'event pong: char[1 2]'[]''|exact
-CHK|send_anonymous|char[1 32]'event pong: char[1 9]'"@(x)x+1"''|div=ADR0208|diverges|char[1 36]'event pong: char[1 12]'"@(x) x + 1"''
+CHK|send_anonymous|char[1 32]'event pong: char[1 9]'"@(x)x+1"''|exact
 CHK|send_cellname|char[1 24]'event pong: char[1 1]'7''|exact
 CHK|send_stringname|char[1 24]'event pong: char[1 1]'8''|exact
 CHK|pagedata_01|char[1 72]'data double[1 1] 1.5 prev double[1 1] 6 // event setdone: char[1 3]'1.5''|exact

@@ -39,7 +39,7 @@ CHK|dot_ambig_t|MATLAB:class:AmbiguousProperty ## Ambiguous audioplayer property
 CHK|get_ambig|MATLAB:class:AmbiguousProperty ## Ambiguous audioplayer property: 'St'.|exact
 CHK|get_bogus|MATLAB:class:setgetPropertyNotFound ## Property Bogus not found in class audioplayer, or is not present in all elements of the array of class audioplayer.|exact
 CHK|dot_bogus|MATLAB:noSuchMethodOrField ## Unrecognized method, property, or field 'Bogus' for class 'audioplayer'.|exact
-CHK|method_upper|MATLAB:UndefinedFunction ## Undefined function 'ISPLAYING' for input arguments of type 'audioplayer'.|div=ADR0193|diverges|MATLAB:UndefinedFunction ## 'ISPLAYING' is not recognized as a variable or a function.
+CHK|method_upper|MATLAB:UndefinedFunction ## Undefined function 'ISPLAYING' for input arguments of type 'audioplayer'.|exact
 CHK|set_tag|string|exact
 CHK|set_tag_num|MATLAB:audiovideo:audioplayer:TagMustBeString ## TAG must be a character vector or string scalar.|exact
 CHK|set_tag_strarr|MATLAB:audiovideo:audioplayer:TagMustBeString ## TAG must be a character vector or string scalar.|exact

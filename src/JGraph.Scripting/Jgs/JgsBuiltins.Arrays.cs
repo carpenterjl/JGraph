@@ -20,7 +20,7 @@ internal static partial class JgsBuiltins
         RegisterSelectionAndSets(env, dialect);
         RegisterRandomDraws(Define, random);
         RegisterRng(env, random);
-        RegisterRearrangements(Define);
+        RegisterRearrangements(Define, dialect);
         RegisterMovingStatistics(env);
     }
 
@@ -586,7 +586,125 @@ internal static partial class JgsBuiltins
 
     // --- Rearrangement ----------------------------------------------------------------------------
 
-    private static void RegisterRearrangements(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+    /// <summary>
+    /// MATLAB's <c>accumarray(subs, vals, sz, fun, fillval)</c> (open item 7, measured in R2025b): each
+    /// row of <c>subs</c> is one subscript, so a column gives a column as long as its largest
+    /// subscript (a size must then be <c>[N 1]</c>), a matrix with k columns gives a k-dimensional
+    /// array, and a row is one subscript of as many dimensions as it is long. <c>vals</c> is a scalar
+    /// or one value a row; a function sees each bin's values as a column.
+    /// </summary>
+    private static JgsValue MatlabAccumArray(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        JgsValue subs = args[0];
+        double[] flat = ToDoubles("accumarray", subs, line, col);
+        int rows = subs.Type == JgsType.Array ? JgsMatrix.RowCount(subs) : 1;
+        int dimsCount = subs.Type == JgsType.Array && rows > 0 ? flat.Length / rows : 1;
+        if (subs.Type == JgsType.Array && JgsMatrix.ColCount(subs) == 1)
+        {
+            dimsCount = 1; // a column (an empty one included) is one subscript a row
+        }
+
+        int count = dimsCount == 0 ? 0 : flat.Length / dimsCount;
+        double[] values = args[1].Type is JgsType.Number or JgsType.Bool
+            ? Enumerable.Repeat(args[1].AsNumber, count).ToArray()
+            : ToDoubles("accumarray", args[1], line, col);
+        if (values.Length != count)
+        {
+            throw new JgsRuntimeException(line, col, $"accumarray got {count} subscripts for {values.Length} values.");
+        }
+
+        var extent = new int[System.Math.Max(dimsCount, 1)];
+        foreach (double subscript in flat)
+        {
+            if (subscript < 1 || subscript != Math.Floor(subscript))
+            {
+                throw new JgsRuntimeException(line, col, "accumarray subscripts are whole numbers from 1 up.");
+            }
+        }
+
+        for (int r = 0; r < count; r++)
+        {
+            for (int d = 0; d < dimsCount; d++)
+            {
+                extent[d] = System.Math.Max(extent[d], (int)flat[(d * count) + r]);
+            }
+        }
+
+        if (args.Count >= 3 && !(args[2].Type == JgsType.Array && args[2].ArrayLength == 0))
+        {
+            double[] size = ToDoubles("accumarray", args[2], line, col);
+            if (dimsCount == 1 && (size.Length != 2 || size[1] != 1))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:accumarray:badSzInputVecInd",
+                    "If the first input is a column vector, then the third input must be of the form [N 1].");
+            }
+
+            for (int d = 0; d < extent.Length && d < size.Length; d++)
+            {
+                extent[d] = System.Math.Max(extent[d], (int)size[d]);
+            }
+        }
+
+        int[] dims = dimsCount == 1 ? [extent[0], 1] : extent;
+        int total = 1;
+        foreach (int e in dims)
+        {
+            total *= e;
+        }
+
+        int Linear(int r)
+        {
+            int at = 0;
+            int stride = 1;
+            for (int d = 0; d < dimsCount; d++)
+            {
+                at += ((int)flat[(d * count) + r] - 1) * stride;
+                stride *= dims[d];
+            }
+
+            return at;
+        }
+
+        IJgsCallable? reducer = args.Count >= 4 && args[3].Type == JgsType.Function ? args[3].AsCallable : null;
+        double fill = args.Count >= 5 ? Num("accumarray", args, 4, line, col) : 0;
+        var answer = new double[total];
+        Array.Fill(answer, fill);
+        if (reducer is null)
+        {
+            var touched = new bool[total];
+            for (int r = 0; r < count; r++)
+            {
+                int bin = Linear(r);
+                answer[bin] = touched[bin] ? answer[bin] + values[r] : values[r];
+                touched[bin] = true;
+            }
+        }
+        else
+        {
+            var buckets = new List<double>?[total];
+            for (int r = 0; r < count; r++)
+            {
+                (buckets[Linear(r)] ??= []).Add(values[r]);
+            }
+
+            for (int bin = 0; bin < total; bin++)
+            {
+                if (buckets[bin] is not { } bucket)
+                {
+                    continue;
+                }
+
+                JgsValue outcome = reducer.Call([JgsMatrix.FromColumnMajor([.. bucket], bucket.Count, 1)], line, col);
+                answer[bin] = outcome.Type is JgsType.Number or JgsType.Bool
+                    ? outcome.AsNumber
+                    : throw new JgsRuntimeException(line, col, "accumarray: the function must return one number per bin.");
+            }
+        }
+
+        return JgsMatrix.FromColumnMajorDims(answer, dims);
+    }
+
+    private static void RegisterRearrangements(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, JgsRunningDialect dialect)
     {
         // circshift(A, k), circshift(A, k, dim) and circshift(A, [k1 k2 …]): every form is the same
         // rotation applied to one dimension, so the third form is the first one repeated. The default
@@ -660,6 +778,11 @@ internal static partial class JgsBuiltins
         Define("accumarray", (args, line, col) =>
         {
             ArityRange("accumarray", args, 2, 5, line, col);
+            if (dialect.IsMatlab)
+            {
+                return MatlabAccumArray(args, line, col);
+            }
+
             double[] subscripts = ToDoubles("accumarray", args[0], line, col);
             double[] values = args[1].Type is JgsType.Number or JgsType.Bool
                 ? Enumerable.Repeat(args[1].AsNumber, subscripts.Length).ToArray()

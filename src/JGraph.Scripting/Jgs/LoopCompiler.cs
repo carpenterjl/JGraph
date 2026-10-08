@@ -606,6 +606,8 @@ internal sealed partial class LoopCompiler
     {
         switch (expression)
         {
+            case NumberLiteral { IntegerClass: not null }:
+                throw Refuse(); // a classed literal (0x1F) is the walk's: the registers hold doubles
             case NumberLiteral number:
                 Constant(number.Value);
                 return;

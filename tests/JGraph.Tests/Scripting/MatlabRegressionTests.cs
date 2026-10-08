@@ -766,7 +766,7 @@ public class MatlabRegressionTests : IDisposable
     // --- refusals ------------------------------------------------------------------------------------------
 
     [Theory]
-    [InlineData("regress(1)", "regress")]
+    [InlineData("regress(1)", "Not enough input arguments")]
     [InlineData("regstats([1;2;3], [1;2;3], 'cubic')", "cubic")]
     [InlineData("regstats([1;2;3], [1;2;3], 'linear', 'nonsense')", "nonsense")]
     [InlineData("ridge([1;2;3], [1;2;3], -1)", "negative")]

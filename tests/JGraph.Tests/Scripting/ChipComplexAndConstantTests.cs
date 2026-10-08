@@ -126,7 +126,7 @@ public class ChipComplexAndConstantTests : IDisposable
 
     [Fact]
     public Task ASecondElementOfAComplexScalarIsStillPastTheEnd() =>
-        Refuses("z = 1 + 2i; disp(z(2));", "out of range");
+        Refuses("z = 1 + 2i; disp(z(2));", "Index exceeds the number of array elements");
 
     [Fact]
     public Task AOneByOneComplexAnsweredByAVerbCanBeFlattenedLikeAnythingElse() => Asserts("""

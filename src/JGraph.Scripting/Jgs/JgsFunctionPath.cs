@@ -80,6 +80,12 @@ internal sealed class JgsFunctionPath
             return false;
         }
 
+        // A name JGraph defines and MATLAB does not (e) shadows nothing of MATLAB's (open item 53).
+        if (name is "e")
+        {
+            return true;
+        }
+
         string message = $"Function {name} has the same name as a MATLAB built-in. "
             + "We suggest you rename the function to avoid a potential name conflict.";
         if (_interpreter.Globals.TryGet("warning", out JgsValue warning) && warning.Type == JgsType.Function)

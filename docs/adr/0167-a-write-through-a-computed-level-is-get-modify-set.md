@@ -267,8 +267,8 @@ which retires the line and this entry — fails the fixture.
   draw the series again." (#133's growth through a property is built; the mismatch alone is refused.)
 - **An error the runtime raises itself has no identifier and no "Error using" header**
   (`h_message_builtin_failure`, `errorhandler_records`; ADR 0062). Under an `ErrorHandler`, R2025b's
-  record of an inner-dimension failure carries `MATLAB:innerdim` and the header; this build's
-  carries an empty identifier and the bare message, as every runtime-raised error does.
+  record of an inner-dimension failure carries `MATLAB:innerdim` and the header; since ADR 0214 this
+  build's carries the identifier too, and still the bare message without the header.
 - **`isvalid` of a plain number answers false** (`h_isvalid_number`, `handle_lifetime`). R2025b refuses
   "Undefined function 'isvalid' for input arguments of type 'double'."; a graphics handle here is a
   number, so a number that names nothing is a dead handle and `isvalid` says so.

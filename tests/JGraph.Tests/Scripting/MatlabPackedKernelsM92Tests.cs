@@ -348,13 +348,14 @@ public class MatlabPackedKernelsM92Tests : IDisposable
     }
 
     [Fact]
-    public void AMaskOfTheWrongLengthIsStillRefused()
+    public void AMaskWithATruePastTheEndIsRefused()
     {
+        // A shorter mask picks from the front in R2025b; a true past the end is its refusal (ADR 0214).
         string message = RunExpectingFailure("""
             v = [1 2 3 4];
-            w = v(logical([1 0 1]));
+            w = v(logical([1 0 1 0 1]));
             """);
-        Assert.Contains("mask", message);
+        Assert.Contains("logical indices contain a true value outside of the array bounds", message);
     }
 
     [Fact]

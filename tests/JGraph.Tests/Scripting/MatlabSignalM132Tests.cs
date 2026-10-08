@@ -147,7 +147,7 @@ public class MatlabSignalM132Tests : IDisposable
     /// <summary>A window that does not take a flavour refuses one.</summary>
     [Fact]
     public void APlainWindowRefusesASymmetryFlag() =>
-        Assert.Contains("bartlett", Refuses("bartlett(8, 'periodic')"));
+        Assert.Contains("Too many input arguments", Refuses("bartlett(8, 'periodic')"));
 
     /// <summary>An unknown flavour is named in the refusal rather than silently ignored.</summary>
     [Fact]

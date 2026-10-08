@@ -1,0 +1,129 @@
+CHK|chr_plus_num|double[1 1] 98|exact
+CHK|chr_plus_num_row|double[1 2] [106 107]|exact
+CHK|chr_plus_chr|double[1 2] [196 198]|exact
+CHK|chr_plus_row|double[1 2] [100 102]|exact
+CHK|chr_chain_string|string[1 1]"121y"|exact
+CHK|string_plus_chr|string[1 1]"yx"|exact
+CHK|chr_minus_chr|double[1 3] [1 2 3]|exact
+CHK|chr_step|char[1 1]'C'|exact
+CHK|chr_eq_chr|logical[1 3] [1 1 0]|exact
+CHK|chr_lt_chr|logical[1 2] [0 1]|exact
+CHK|num_times_chr|double[1 1] 194|exact
+CHK|chr_dottimes|double[1 2] [97 194]|exact
+CHK|chr_divide|double[1 2] [48.5 49]|exact
+CHK|chr_negate|double[1 1] -97|exact
+CHK|chr_plus_logical|double[1 1] 98|exact
+CHK|chr_plus_int8|int8[1 1] 98|exact
+CHK|chr_plus_int8_class|char[1 4]'int8'|exact
+CHK|chr_plus_single_class|char[1 6]'single'|exact
+CHK|chr_plus_shorter|double[1 2] [196 197]|exact
+CHK|chr_matrix_plus|double[2 2] [98 99;100 101]|exact
+CHK|chr_plus_column|double[2 2] [98 99;99 100]|exact
+CHK|chr_power|double[1 1] 9409|exact
+CHK|chr_plus_cell|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|chr_plus_cell_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|chr_plus_imag|double[1 1] 97+1i|exact
+CHK|chr_and|logical[1 1] 1|exact
+CHK|chr_not|logical[1 2] [0 0]|exact
+CHK|chr_empty_plus|double[1 2] [0 0]|exact
+CHK|chr_colon_size|double[1 2] [3 1]|exact
+CHK|chr_colon_back|char[1 3]'abc'|exact
+CHK|chr_colon_equal|logical[1 1] 1|exact
+CHK|store_loop|cell[1 2]{char[1 6]'double';double[1 3] [1 0 1]}|exact
+CHK|store_all|char[1 6]'double'|exact
+CHK|store_mask|cell[1 2]{char[1 6]'double';double[1 4] [1 0 0 0]}|exact
+CHK|store_int8|char[1 4]'int8'|exact
+CHK|store_into_logical|char[1 7]'logical'|exact
+CHK|store_into_empty|cell[1 2]{char[1 6]'double';double[1 2] [0 1]}|exact
+CHK|zero_step_size|double[1 2] [1 0]|exact
+CHK|zero_step_class|char[1 4]'int8'|exact
+CHK|zero_step_loop|double[1 1] 0|exact
+CHK|colon_half_step|double[1 3] [2 3 3] WARN MATLAB:colon:nonIntegerIndex|exact
+CHK|colon_whole_elements|double[1 2] [1 2] WARN MATLAB:colon:nonIntegerIndex|exact
+CHK|colon_fraction_start|double[1 3] [1 2 3] WARN MATLAB:colon:nonIntegerIndex|exact
+CHK|colon_down|double[1 5] [3 3 2 2 1] WARN MATLAB:colon:nonIntegerIndex|exact
+CHK|colon_two_subscripts|double[3 1] [8;3;3] WARN MATLAB:colon:nonIntegerIndex|exact
+CHK|colon_uint8_out|MATLAB:colon:OutOfRange|exact
+CHK|colon_uint8_out_msg|Colon operands must be in the range of the data type.|exact
+CHK|colon_uint8_step_out|MATLAB:colon:OutOfRange|exact
+CHK|colon_uint8_step_out_msg|Colon operands must be in the range of the data type.|exact
+CHK|colon_int16_out|MATLAB:colon:OutOfRange|exact
+CHK|colon_int16_out_msg|Colon operands must be in the range of the data type.|exact
+CHK|colon_int8_below|int8[1 2] [-128 -127]|exact
+CHK|colon_uint8_big_step|uint8[1 1] 1|exact
+CHK|colon_uint8_down|uint8[1 2] [1 0]|exact
+CHK|acc_column|double[3 1] [1;2;1]|exact
+CHK|acc_column_size|double[1 2] [4 1]|exact
+CHK|acc_column_row_size|MATLAB:accumarray:badSzInputVecInd|exact
+CHK|acc_column_row_size_msg|If the first input is a column vector, then the third input must be of the form [N 1].|exact
+CHK|acc_row_subscript|double[1 4] [1 2 2 3]|exact
+CHK|acc_matrix|double[2 2] [5 0;0 10]|exact
+CHK|acc_matrix_size|double[3 3] [5 0 0;0 6 0;0 0 0]|exact
+CHK|acc_values|double[3 1] [10;0;20]|exact
+CHK|acc_empty|double[1 2] [0 1]|exact
+CHK|acc_empty_size|double[1 2] [3 1]|exact
+CHK|acc_row_values|double[2 1] [4;3]|exact
+CHK|acc_function|double[2 1] [4;6]|exact
+CHK|sum_complex|double[1 1] 4+2i|exact
+CHK|sum_complex_matrix|double[1 2] [5+2i 3+5i]|exact
+CHK|sum_complex_dim2|double[2 1] [3+1i;7]|exact
+CHK|prod_complex|double[1 1] 3+6i|exact
+CHK|mean_complex|double[1 1] 2+1i|exact
+CHK|cumsum_complex|double[1 3] [1+2i 4+2i 4+3i]|exact
+CHK|cumprod_complex|double[1 3] [1+2i 3+6i -6+3i]|exact
+CHK|diff_complex|double[1 2] [2-2i -3+1i]|exact
+CHK|sum_complex_zero_imag|logical[1 1] 1|exact
+CHK|sum_complex_all|double[1 1] 6+2i|exact
+CHK|sum_complex_single|char[1 6]'single'|exact
+CHK|sum_fractional_dim|MATLAB:getdimarg:invalidDim|exact
+CHK|sum_fractional_dim_msg|Dimension argument must be a positive integer scalar, a vector of unique positive integers, or 'all'.|exact
+CHK|string_array_precision|string[1 2]"9016.99437","12345.5"|exact
+CHK|string_array_thirds|string[1 2]"0.333333","66.6667"|exact
+CHK|string_array_hundred|string[1 2]"0.333333","100"|exact
+CHK|string_array_thousand|string[1 2]"0.3333333","1000"|exact
+CHK|string_array_cap|string[1 2]"0.3333333333333333","1000000000000000"|exact
+CHK|string_array_inf|string[1 2]"Inf","1234.5678"|exact
+CHK|string_array_big|string[1 2]"1e+20","0.5"|exact
+CHK|string_single_array|string[1 2]"9016.99414","12345.5"|exact
+CHK|string_single_hundred|string[1 2]"0.333333","100"|exact
+CHK|string_scalar|string[1 1]"9016.9944"|exact
+CHK|string_plus_array|string[1 2]"a9016.99437","a12345.5"|exact
+CHK|array_plus_string|string[1 2]"9016.99437a","12345.5a"|exact
+CHK|strings_plus_array|string[2 1]"x0.333333","y66.6667"|exact
+CHK|string_single_pi|string[1 1]"3.1416"|exact
+CHK|f2s_builtin|char[1 4]'disp'|exact
+CHK|f2s_sin|char[1 3]'sin'|exact
+CHK|f2s_call|char[1 13]'@(n)plus(1,n)'|exact
+CHK|f2s_operators|char[1 11]'@(x,y)x+y*2'|exact
+CHK|f2s_matrix|char[1 13]'@(x)[x,1;2,x]'|exact
+CHK|f2s_fields|char[1 18]'@(s)s.a(1)+s.('b')'|exact
+CHK|f2s_transpose|char[1 8]'@(x)x'*2'|exact
+CHK|f2s_char|char[1 14]'@()disp('a b')'|exact
+CHK|f2s_cell_string|char[1 13]'@(x){x,"s t"}'|exact
+CHK|f2s_logic|char[1 19]'@(x)~x&&~isempty(x)'|exact
+CHK|f2s_negatives|char[1 9]'@(x)-x+-1'|exact
+CHK|f2s_end|char[1 15]'@(x)x(end:-1:1)'|exact
+CHK|f2s_empty_arg|char[1 15]'@(x)max(x,[],2)'|exact
+CHK|f2s_dotted|char[1 11]'@(x)x.^2./3'|exact
+CHK|f2s_varargin|char[1 26]'@(varargin)numel(varargin)'|exact
+CHK|f2s_compare|char[1 13]'@(x)x==1/x~=2'|exact
+CHK|f2s_literal|char[1 12]'@(x)1e-3+0.5'|exact
+CHK|f2s_spaces|char[1 11]'@(x)[1,2,3]'|exact
+CHK|f2s_commas|char[1 11]'@(x)[1,2,3]'|exact
+CHK|f2s_nested|char[1 11]'@(x)@(y)x+y'|exact
+CHK|f2s_str2func|char[1 7]'@(x)x+1'|exact
+CHK|f2s_colon_transpose|char[1 9]'@(x)x(:)''|exact
+CHK|true_three|double[1 3] [2 2 3]|exact
+CHK|false_vector|double[1 3] [2 3 4]|exact
+CHK|true_empty|double[1 2] [0 3]|exact
+CHK|true_square|logical[2 2] [1 1;1 1]|exact
+CHK|true_like|logical[2 2] [1 1;1 1]|exact
+CHK|true_trailing|double[1 2] [2 3]|exact
+CHK|true_negative|double[1 2] [0 0]|exact
+CHK|true_fraction|MATLAB:NonIntegerInput|exact
+CHK|true_fraction_msg|Size inputs must be integers.|exact
+CHK|true_like_double|MATLAB:True:invalidInputClass|exact
+CHK|true_like_double_msg|Argument following "like" must be a variable with a data type that supports TRUE, such as a logical variable.|exact
+CHK|false_like_int8|MATLAB:False:invalidInputClass|exact
+CHK|false_like_int8_msg|Argument following "like" must be a variable with a data type that supports FALSE, such as a logical variable.|exact
+CHK|true_like_sparse|char[1 7]'logical'|exact

@@ -627,6 +627,77 @@ internal static class JgsSprintf
         return value < 0 ? "-" + digits : digits;
     }
 
+    /// <summary>
+    /// The one precision <c>string(x)</c> writes every element of a real array at (open item 3,
+    /// measured in R2025b): <c>ceil(log10(m)) + 4</c> significant digits for the largest finite
+    /// magnitude <c>m</c> in the array, five at least and sixteen at most. So
+    /// <c>string([9016.99437494 12345.5])</c> is <c>"9016.99437" "12345.5"</c>, where each element
+    /// alone would be written to its own precision.
+    /// </summary>
+    internal static int ArrayPrecision(ReadOnlySpan<double> values)
+    {
+        double largest = 0;
+        foreach (double value in values)
+        {
+            if (double.IsFinite(value))
+            {
+                largest = Math.Max(largest, Math.Abs(value));
+            }
+        }
+
+        if (largest == 0)
+        {
+            return 5;
+        }
+
+        // ceil(log10(m)), exact at the powers of ten, where the floating logarithm may land either side.
+        int exponent = (int)Math.Floor(Math.Log10(largest));
+        if (Math.Pow(10, exponent) > largest)
+        {
+            exponent--;
+        }
+        else if (Math.Pow(10, exponent + 1) <= largest)
+        {
+            exponent++;
+        }
+
+        int ceiling = Math.Pow(10, exponent) == largest ? exponent : exponent + 1;
+        return Math.Clamp(ceiling + 4, 5, 16);
+    }
+
+    /// <summary>One element of a real array at the array's precision: <see cref="FormatScalarGeneral"/>'s spelling, at a precision it is given.</summary>
+    internal static string FormatAtPrecision(double value, int precision)
+    {
+        if (double.IsNaN(value))
+        {
+            return "NaN";
+        }
+
+        if (double.IsInfinity(value))
+        {
+            return value > 0 ? "Inf" : "-Inf";
+        }
+
+        if (value == 0)
+        {
+            return "0";
+        }
+
+        double magnitude = Math.Abs(value);
+        if (value == Math.Floor(value) && magnitude < 1e15)
+        {
+            long integer = (long)magnitude;
+            if (DecimalDigits(integer) <= precision)
+            {
+                string written = integer.ToString(CultureInfo.InvariantCulture);
+                return value < 0 ? "-" + written : written;
+            }
+        }
+
+        string digits = FormatGeneral(magnitude, precision);
+        return value < 0 ? "-" + digits : digits;
+    }
+
     /// <summary>How many decimal digits a positive integer below 10^15 has.</summary>
     private static int DecimalDigits(long integer)
     {

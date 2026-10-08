@@ -224,6 +224,56 @@ internal static class Lexer
                 continue;
             }
 
+            // MATLAB's hexadecimal and binary integer literals, 0x1F and 0b101 with an optional class
+            // suffix (u8 … u64, s8 … s64): the token keeps its text, from which the parser takes the
+            // class, and its value, a signed suffix read as two's complement (open item 23).
+            if (matlab && c == '0' && i + 2 < source.Length && source[i + 1] is 'x' or 'X' or 'b' or 'B'
+                && (source[i + 1] is 'x' or 'X' ? Uri.IsHexDigit(source[i + 2]) : source[i + 2] is '0' or '1'))
+            {
+                bool hex = source[i + 1] is 'x' or 'X';
+                int digitsStart = i + 2;
+                i = digitsStart;
+                while (i < source.Length && (hex ? Uri.IsHexDigit(source[i]) : source[i] is '0' or '1'))
+                {
+                    i++;
+                }
+
+                string digits = source[digitsStart..i];
+                int suffixEnd = i;
+                if (i < source.Length && source[i] is 'u' or 's')
+                {
+                    int k = i + 1;
+                    while (k < source.Length && char.IsDigit(source[k]))
+                    {
+                        k++;
+                    }
+
+                    string bits = source[(i + 1)..k];
+                    if (bits is "8" or "16" or "32" or "64" && (k >= source.Length || !(char.IsLetterOrDigit(source[k]) || source[k] == '_')))
+                    {
+                        suffixEnd = k;
+                    }
+                }
+
+                ulong raw = 0;
+                foreach (char digit in digits)
+                {
+                    raw = unchecked((raw * (hex ? 16UL : 2UL)) + (ulong)Convert.ToInt32(digit.ToString(), 16));
+                }
+
+                string suffix = source[i..suffixEnd];
+                double value = raw;
+                if (suffix.StartsWith('s'))
+                {
+                    int width = int.Parse(suffix.AsSpan(1), CultureInfo.InvariantCulture);
+                    value = width == 64 ? unchecked((long)raw) : raw >= (1UL << (width - 1)) ? (double)raw - Math.Pow(2, width) : raw;
+                }
+
+                i = suffixEnd;
+                Add(TokenType.Number, source[start..i], start, value);
+                continue;
+            }
+
             if (char.IsDigit(c) || (c == '.' && i + 1 < source.Length && char.IsDigit(source[i + 1])))
             {
                 string text = ReadNumber(source, ref i);

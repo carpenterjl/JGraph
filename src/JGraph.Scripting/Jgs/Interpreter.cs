@@ -269,6 +269,15 @@ internal sealed partial class Interpreter
             line = _activeCallLines[i];
         }
 
+        // The script whose top level is running is a frame of its own in R2025b (open item 13): an
+        // error at its top level has one frame naming it, and one deeper ends with it.
+        if (Dialect.IsMatlab && MainScriptPath.Length > 0 && Path.GetExtension(MainScriptPath).Equals(".m", StringComparison.OrdinalIgnoreCase)
+            && !listed.Exists(frame => frame.File.Equals(MainScriptPath, StringComparison.OrdinalIgnoreCase)
+                && frame.Name == Path.GetFileNameWithoutExtension(MainScriptPath)))
+        {
+            listed.Add((Path.GetFileNameWithoutExtension(MainScriptPath), MainScriptPath, line));
+        }
+
         return JgsBuiltins.StackValue(listed);
     }
 
@@ -1687,6 +1696,18 @@ internal sealed partial class Interpreter
             return;
         }
 
+        // A comma-separated list written as a statement shows each value as ans, ans keeping the
+        // last: `s.f` on a 1-by-2 struct array, `c{:}` on a 1-by-2 cell (open item 30, measured).
+        if (Dialect.IsMatlab && ListLength(expression, env) > 1)
+        {
+            foreach (JgsValue each in EvaluateAll([expression], env))
+            {
+                BindAns(statement, each, env, owned: false);
+            }
+
+            return;
+        }
+
         JgsValue value = expression is MemberExpr bareMember && Dialect.IsMatlab
             ? EvaluateBareStatement(bareMember, env)
             : Evaluate(expression, env);
@@ -1826,6 +1847,13 @@ internal sealed partial class Interpreter
         // loaded, in which case an object among the arguments could still answer with a method.
         if (!resolved.Found && !AnyClasses && !AnyNet)
         {
+            // R2025b evaluates the arguments first and names the first one's class (measured, ADR
+            // 0214): `nosuch(3)` is "Undefined function 'nosuch' for input arguments of type 'double'."
+            if (Dialect.IsMatlab && call.Arguments.Count > 0)
+            {
+                throw UndefinedForArguments(name, EvaluateAll(call.Arguments, env)[0], call.Callee);
+            }
+
             throw UndefinedError(name, call.Callee);
         }
 
@@ -1843,9 +1871,8 @@ internal sealed partial class Interpreter
         {
             // With an object in front, R2025b names the class no method or function answered for
             // (U6, measured): a private method of a superclass ends here too.
-            throw given.Length > 0 && given[0].Type == JgsType.Object && Dialect.IsMatlab
-                ? new JgsRuntimeException(call.Callee.Line, call.Callee.Column, "MATLAB:UndefinedFunction",
-                    $"Undefined function '{name}' for input arguments of type '{given[0].AsObject.Class.Name}'.")
+            throw given.Length > 0 && Dialect.IsMatlab
+                ? UndefinedForArguments(name, given[0], call.Callee)
                 : UndefinedError(name, call.Callee);
         }
 
@@ -2103,6 +2130,16 @@ internal sealed partial class Interpreter
         }
     }
 
+    /// <summary>
+    /// R2025b's refusal of a call nothing answers, naming the first argument's class (ADR 0214); an
+    /// unsupported MATLAB function still says so by name.
+    /// </summary>
+    private JgsRuntimeException UndefinedForArguments(string name, JgsValue first, Node at) =>
+        JgsBuiltins.IsUnsupportedMatlabFunction(name, out _)
+            ? UndefinedError(name, at)
+            : new JgsRuntimeException(at.Line, at.Column, "MATLAB:UndefinedFunction",
+                $"Undefined function '{name}' for input arguments of type '{JgsBuiltins.ClassOf(first, JgsDialect.Matlab)}'.");
+
     /// <summary>The error for a name that resolves to nothing (see <see cref="Undefined"/>).</summary>
     private JgsRuntimeException UndefinedError(string name, Node at) =>
         Dialect.IsMatlab
@@ -2127,7 +2164,7 @@ internal sealed partial class Interpreter
 
         return JgsBuiltins.IsUnsupportedMatlabFunction(name, out string what)
             ? $"'{name}' is not supported in JGraph ({what})."
-            : $"'{name}' is not recognized as a variable or a function.";
+            : $"Unrecognized function or variable '{name}'."; // R2025b's words (ADR 0214)
     }
 
     /// <summary>
@@ -2221,6 +2258,11 @@ internal sealed partial class Interpreter
             JgsValue caught = error.Carried is JgsValue carried
                 ? JgsBuiltins.CaughtException(carried, error.KeepsStack ? null : StackOf(error))
                 : JgsBuiltins.MakeException(error.Identifier, error.Message, StackOf(error));
+            if (error.Raised)
+            {
+                JgsBuiltins.MarkRaised(caught);
+            }
+
             handler.Declare(name, caught);
         }
 
@@ -2285,6 +2327,19 @@ internal sealed partial class Interpreter
                 };
                 EvaluateAssign(assignment, env);
             }
+
+            // An unsuppressed [a, b] = ... echoes each target it wrote, in order, '~' skipped; a target
+            // that stood for several slots ([c{:}] = ...) echoes its variable once (open item 21, measured).
+            if (Dialect.IsMatlab && !statement.Suppressed)
+            {
+                foreach (Expr? written in statement.Targets)
+                {
+                    if (written is not null && RootName(written) is string root)
+                    {
+                        EchoVariable(statement, root, env);
+                    }
+                }
+            }
         }
         finally
         {
@@ -2321,6 +2376,22 @@ internal sealed partial class Interpreter
                 && held.Type == JgsType.Cell ? held.AsCell.Length : 0;
 
             JgsValue? index = EvaluateIndexArgument(brace.Indices[0], length, env);
+
+            // [c{:}] = f(...) stands for every slot the cell has: two for a 1-by-2 cell (open item 21).
+            if (index is null && Dialect.IsMatlab && length > 0)
+            {
+                for (int slot = 0; slot < length; slot++)
+                {
+                    expanded.Add(new BraceIndexExpr(brace.Target, [new PreEvaluated(JgsValue.Number(slot + Dialect.IndexBase))])
+                    {
+                        Line = brace.Line,
+                        Column = brace.Column,
+                    });
+                }
+
+                continue;
+            }
+
             if (index is null || index.Type != JgsType.Array)
             {
                 expanded.Add(target); // one slot, or a ':' that the assignment itself will judge
@@ -2875,6 +2946,7 @@ internal sealed partial class Interpreter
         double start = RangeBoundValue(startValue, range.Start, "start", ref carried);
         double step = RangeBoundValue(stepValue, range.Step ?? range.Start, "step", ref carried);
         double stop = RangeBoundValue(stopValue, range.Stop, "stop", ref carried);
+        RequireColonInClass(range, start, stop, carried);
         var steps = new RangeSteps(start, step, stop, HotLoopRangeCount(start, step, stop, range.Line, range.Column), carried);
         if (steps.Count == 0)
         {
@@ -2987,7 +3059,9 @@ internal sealed partial class Interpreter
         switch (expression)
         {
             case NumberLiteral number:
-                return JgsValue.Number(number.Value);
+                return number.IntegerClass is { } integerClass
+                    ? JgsNumericClasses.Stamp(JgsValue.Number(number.Value), integerClass) // 0x1F (open item 23)
+                    : JgsValue.Number(number.Value);
 
             case ComplexLiteral imaginary:
                 return JgsValue.ComplexNum(new Complex(0, imaginary.Imaginary));
@@ -3119,6 +3193,12 @@ internal sealed partial class Interpreter
                     return made;
                 }
 
+                // A handle to a name nothing answers yet is made in R2025b and refused only when it is
+                // called, as str2func's is (open items 17 and 73); the JGS dialect refuses it here.
+                if (Dialect.IsMatlab)
+                {
+                    return UnansweredHandle(handle.Name, env);
+                }
 
                 throw new JgsRuntimeException(handle.Line, handle.Column,
                     $"'@{handle.Name}': there is no function called '{handle.Name}'.");
@@ -3156,6 +3236,26 @@ internal sealed partial class Interpreter
         return (long)Math.Floor(ratio * (1 + (4 * MachineEpsilon))) + 1;
     }
 
+    /// <summary>
+    /// An integer-classed colon whose start or stop the class cannot hold is refused in the MATLAB
+    /// dialect, as R2025b refuses <c>uint8(254):258</c> (open item 8); the step is not checked
+    /// (<c>uint8(1):300:2</c> is 1 there). It used to saturate into a run of 255s.
+    /// </summary>
+    private void RequireColonInClass(RangeExpr range, double start, double stop, JgsNumericClass carried)
+    {
+        if (!Dialect.IsMatlab || !carried.IsInteger())
+        {
+            return;
+        }
+
+        (double low, double high) = JgsNumericClasses.Range(carried);
+        if (start < low || start > high || stop < low || stop > high)
+        {
+            throw new JgsRuntimeException(range.Line, range.Column, "MATLAB:colon:OutOfRange",
+                "Colon operands must be in the range of the data type.");
+        }
+    }
+
     /// <summary>The range from its three bounds already evaluated (in the order Start, Step, Stop).</summary>
     private JgsValue RangeFromValues(RangeExpr range, JgsValue startValue, JgsValue stepValue, JgsValue stopValue)
     {
@@ -3171,16 +3271,21 @@ internal sealed partial class Interpreter
             if (!stopValue.IsTime) stop *= JgsTime.MsPerDay;
         }
         JgsValue Finish(JgsValue result) => time is null ? result : result.MarkTime(time);
+        RequireColonInClass(range, start, stop, carried);
 
-        if (step == 0)
+        // A zero step is an empty range in MATLAB (1:0:5 is 1-by-0, and a loop over it runs no
+        // times; open item 9); the JGS dialect refuses it.
+        if (step == 0 && !Dialect.IsMatlab)
         {
             throw new JgsRuntimeException(range.Line, range.Column, "A range step must not be zero.");
         }
 
-        long count = RangeCountOf(start, step, stop);
+        long count = step == 0 ? -1 : RangeCountOf(start, step, stop);
         if (count < 0)
         {
-            return Finish(JgsValue.Array(System.Array.Empty<JgsValue>()));
+            // An empty range keeps its class in MATLAB: int8(5):1 is an empty int8 (open item 9).
+            JgsValue empty = JgsValue.Array(System.Array.Empty<JgsValue>());
+            return Finish(Dialect.IsMatlab ? JgsNumericClasses.Stamp(empty, carried) : empty);
         }
 
         // Packed ranges are 8 bytes/element and may spill to disk, so they get a far higher
@@ -3384,7 +3489,7 @@ internal sealed partial class Interpreter
             ReadRowsAsColumns(shapes);
         }
 
-        (int height, int width) = MeasureLiteral(rows, shapes, matrix);
+        (int height, int width) = MeasureLiteral(rows, shapes, matrix, Dialect.IsMatlab);
         return height == 0 || width == 0
             ? StampLiteral(EmptyJoin(shapes), rows, matrix)
             : StampLiteral(AssembleLiteral(rows, shapes, height, width), rows, matrix);
@@ -3642,7 +3747,7 @@ internal sealed partial class Interpreter
             shapes[0][i] = BlockShape(elements[i]);
         }
 
-        (int height, int width) = MeasureLiteral(rows, shapes, array.Line, array.Column);
+        (int height, int width) = MeasureLiteral(rows, shapes, array.Line, array.Column, Dialect.IsMatlab);
         return height == 0 || width == 0
             ? StampLiteral(EmptyJoin(shapes), rows, array)
             : StampLiteral(AssembleLiteral(rows, shapes, height, width), rows, array);
@@ -3868,11 +3973,15 @@ internal sealed partial class Interpreter
 
     /// <summary>Checks that the blocks tile a rectangle and returns its size.</summary>
     private static (int Height, int Width) MeasureLiteral(
-        List<JgsValue[]> rows, List<(int Height, int Width)[]> shapes, Node at) =>
-        MeasureLiteral(rows, shapes, at.Line, at.Column);
+        List<JgsValue[]> rows, List<(int Height, int Width)[]> shapes, Node at, bool matlab = false) =>
+        MeasureLiteral(rows, shapes, at.Line, at.Column, matlab);
+
+    /// <summary>R2025b's refusal of a bracket whose pieces do not fit together (ADR 0214).</summary>
+    private static JgsRuntimeException CatenateMismatch(int line, int column) =>
+        new(line, column, "MATLAB:catenate:dimensionMismatch", "Dimensions of arrays being concatenated are not consistent.");
 
     private static (int Height, int Width) MeasureLiteral(
-        List<JgsValue[]> rows, List<(int Height, int Width)[]> shapes, int atLine, int atColumn)
+        List<JgsValue[]> rows, List<(int Height, int Width)[]> shapes, int atLine, int atColumn, bool matlab = false)
     {
         int height = 0;
         int width = -1;
@@ -3894,8 +4003,10 @@ internal sealed partial class Interpreter
                 }
                 else if (blockHeight != rowHeight)
                 {
-                    throw new JgsRuntimeException(atLine, atColumn,
-                        $"Cannot join these side by side: row {r + 1} starts {rowHeight} rows tall but element {i + 1} is {blockHeight}x{blockWidth}.");
+                    throw matlab
+                        ? CatenateMismatch(atLine, atColumn)
+                        : new JgsRuntimeException(atLine, atColumn,
+                            $"Cannot join these side by side: row {r + 1} starts {rowHeight} rows tall but element {i + 1} is {blockHeight}x{blockWidth}.");
                 }
 
                 rowWidth += blockWidth;
@@ -3912,8 +4023,10 @@ internal sealed partial class Interpreter
             }
             else if (rowWidth != width)
             {
-                throw new JgsRuntimeException(atLine, atColumn,
-                    $"Cannot stack these: the literal is {width} columns wide but row {r + 1} is {rowWidth}.");
+                throw matlab
+                    ? CatenateMismatch(atLine, atColumn)
+                    : new JgsRuntimeException(atLine, atColumn,
+                        $"Cannot stack these: the literal is {width} columns wide but row {r + 1} is {rowWidth}.");
             }
 
             height += rowHeight;
@@ -4053,6 +4166,12 @@ internal sealed partial class Interpreter
         if (AnyClasses && TryUnaryOverload(unary.Op, operand, unary, out JgsValue overloaded))
         {
             return overloaded;
+        }
+
+        // A MATLAB char is its codes under - and ~ (-'a' is -97, ~'ab' is [0 0]; open item 2).
+        if (Dialect.IsMatlab && IsCharOperand(operand))
+        {
+            operand = CharCodes(operand);
         }
 
         if (unary.Op == TokenType.Bang)
@@ -4358,6 +4477,13 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue EvaluateOperand(Expr expr, JgsEnvironment env, out bool fresh)
     {
+        // An operator handed a list of several values is a call of plus with too many arguments in
+        // R2025b: `s.f + 1` on a 1-by-2 struct array is MATLAB:maxrhs (open item 30, measured).
+        if (Dialect.IsMatlab && expr is MemberExpr or BraceIndexExpr && ListLength(expr, env) > 1)
+        {
+            throw new JgsRuntimeException(expr.Line, expr.Column, "MATLAB:maxrhs", "Too many input arguments.");
+        }
+
         switch (expr)
         {
             case BinaryExpr binary:
@@ -4457,6 +4583,50 @@ internal sealed partial class Interpreter
             return ApplyBinaryCore(op, left, right, at);
         }
 
+        // A MATLAB char row or matrix is a vector of codes under every operator that has a numeric
+        // or char partner (open item 2, measured in R2025b): 'a' + 1 is 98, 'abc' == 'abd' is
+        // [1 1 0], '123' - '0' is [1 2 3]. + joins text only with a string, which took the branch
+        // above. The JGS dialect keeps + joining text (decision D2, 2026-10-03).
+        if (Dialect.IsMatlab && IsTextComparisonWithString(op, left, right) && _stringComparisonDepth == 0)
+        {
+            // A string array compared with anything compares text; its elements reach the operator
+            // one at a time below as plain text, which must not be read as char codes.
+            _stringComparisonDepth++;
+            try
+            {
+                return ApplyBinary(op, left, right, at, reuse);
+            }
+            finally
+            {
+                _stringComparisonDepth--;
+            }
+        }
+
+        if (Dialect.IsMatlab && _stringComparisonDepth == 0 && (IsCharOperand(left) || IsCharOperand(right))
+            && IsCodeOperand(left) && IsCodeOperand(right))
+        {
+            left = IsCharOperand(left) ? CharCodes(left) : left;
+            right = IsCharOperand(right) ? CharCodes(right) : right;
+            reuse = JgsReuse.Operands.None;
+        }
+        else if (Dialect.IsMatlab && IsArithmetic(op)
+            && ((IsCharOperand(left) && right.Type == JgsType.Cell) || (IsCharOperand(right) && left.Type == JgsType.Cell)))
+        {
+            // 'a' + {1} is no text join in MATLAB (measured).
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:math:mustBeNumericCharOrLogical",
+                "Invalid data type. Argument must be numeric, char, or logical.");
+        }
+
+        // Two arrays whose shapes do not expand into each other, under an elementwise operator, are
+        // R2025b's MATLAB:sizeDimensionsMustMatch before any kernel says so in its own words (ADR 0214).
+        if (Dialect.IsMatlab && left.Type == JgsType.Array && right.Type == JgsType.Array
+            && !left.IsStringArray && !right.IsStringArray && !left.IsTime && !right.IsTime
+            && IsElementwiseOperator(op) && !Expandable(JgsMatrix.DimsOf(left), JgsMatrix.DimsOf(right)))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:sizeDimensionsMustMatch",
+                "Arrays have incompatible sizes for this operation.");
+        }
+
         if (left.NumericClass == JgsNumericClass.Double && right.NumericClass == JgsNumericClass.Double)
         {
             return ApplyBinaryCore(op, left, right, at, JgsNumericClass.Double, out _, reuse);
@@ -4510,6 +4680,131 @@ internal sealed partial class Interpreter
             throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:class:concatenationScalar",
                 $"Concatenation of objects of class '{first.AsExternal.ClassName}' is not allowed.");
         }
+    }
+
+    /// <summary>
+    /// A one-subscript write whose right side has another count of elements: R2025b's
+    /// MATLAB:matrix:singleSubscriptNumelMismatch in the MATLAB dialect (ADR 0214), JGS's own sentence otherwise.
+    /// </summary>
+    private JgsRuntimeException AssignCountMismatch(int have, int want, Node at) => Dialect.IsMatlab
+        ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:matrix:singleSubscriptNumelMismatch",
+            "Unable to perform assignment because the left and right sides have a different number of elements.")
+        : new JgsRuntimeException(at.Line, at.Column, $"Cannot assign {have} values into {want} selected elements.");
+
+    /// <summary>
+    /// A two-subscript write whose right side does not fit the selection: R2025b's
+    /// MATLAB:subsassigndimmismatch, naming both sizes, in the MATLAB dialect (ADR 0214).
+    /// </summary>
+    private JgsRuntimeException AssignShapeMismatch(JgsValue rhs, int rows, int cols, Node at) => Dialect.IsMatlab
+        ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:subsassigndimmismatch",
+            $"Unable to perform assignment because the size of the left side is {rows}-by-{cols} and the size of the right side is "
+            + $"{JgsMatrix.RowCount(rhs)}-by-{JgsMatrix.ColCount(rhs)}.")
+        : new JgsRuntimeException(at.Line, at.Column, $"Cannot assign {rhs.ArrayLength} values into a {rows}x{cols} selection.");
+
+    /// <summary>
+    /// How many values a comma-separated list expression stands for, where that can be told without
+    /// running anything: a field of a struct-array variable (<c>s.f</c>) or a brace index of a cell
+    /// variable with one subscript (<c>c{:}</c>, <c>c{1:2}</c>). 1 for anything else (open item 30).
+    /// </summary>
+    private int ListLength(Expr expression, JgsEnvironment env)
+    {
+        switch (expression)
+        {
+            case MemberExpr { Target: VariableExpr owner } when LookUp(owner.Name, env, out JgsValue held)
+                && held.Type == JgsType.Struct && held.IsStructArray:
+                return held.AsStructArray.Length;
+            case BraceIndexExpr { Target: VariableExpr owner, Indices.Count: 1 } brace when LookUp(owner.Name, env, out JgsValue cell)
+                && cell.Type == JgsType.Cell:
+                if (brace.Indices[0] is AllExpr)
+                {
+                    return cell.AsCell.Length;
+                }
+
+                return brace.Indices[0] is RangeExpr && IsInert(brace.Indices[0], env)
+                    && EvaluateIndexArgument(brace.Indices[0], cell.AsCell.Length, env) is { Type: JgsType.Array } picks
+                    ? picks.ArrayLength
+                    : 1;
+            default:
+                return 1;
+        }
+    }
+
+    /// <summary>The operators that pair elements, whatever the operands' shapes: never a matrix product or solve.</summary>
+    private static bool IsElementwiseOperator(TokenType op) => op is TokenType.Plus or TokenType.Minus
+        or TokenType.DotStar or TokenType.DotSlash or TokenType.DotBackslash or TokenType.DotCaret
+        or TokenType.EqualEqual or TokenType.BangEqual or TokenType.Less or TokenType.LessEqual
+        or TokenType.Greater or TokenType.GreaterEqual or TokenType.Amp or TokenType.Pipe;
+
+    /// <summary>Whether two shapes expand into each other: each dimension equal, or one of them 1.</summary>
+    private static bool Expandable(int[] left, int[] right)
+    {
+        for (int d = 0; d < Math.Max(left.Length, right.Length); d++)
+        {
+            int a = d < left.Length ? left[d] : 1;
+            int b = d < right.Length ? right[d] : 1;
+            if (a != b && a != 1 && b != 1)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>How deep this thread is inside a comparison with a string array, whose elements compare as text.</summary>
+    [ThreadStatic]
+    private static int _stringComparisonDepth;
+
+    /// <summary>A MATLAB char row (a JGS string that is not a string array) or a char matrix.</summary>
+    private static bool IsCharOperand(JgsValue value) =>
+        (value.Type == JgsType.String && !value.IsStringArray) || (value.Type == JgsType.Array && value.IsCharMatrix);
+
+    /// <summary>An operand a char's codes combine with: a number, a logical, a complex, a numeric or char array.</summary>
+    private static bool IsCodeOperand(JgsValue value) =>
+        value.Type is JgsType.Number or JgsType.Bool or JgsType.Complex
+        || (value.Type == JgsType.String && !value.IsStringArray)
+        || (value.Type == JgsType.Array && !value.IsStringArray && !value.IsTime);
+
+    /// <summary>A char compared with a string array is a text comparison, which the string side owns.</summary>
+    private static bool IsTextComparisonWithString(TokenType op, JgsValue left, JgsValue right) =>
+        (left.IsStringArray || right.IsStringArray) && op is TokenType.EqualEqual or TokenType.BangEqual
+            or TokenType.Less or TokenType.LessEqual or TokenType.Greater or TokenType.GreaterEqual;
+
+    /// <summary>
+    /// A char row or matrix as the double array of its codes, in its shape: one character is the
+    /// number, '' the 0-by-0 empty (open item 2).
+    /// </summary>
+    private static JgsValue CharCodes(JgsValue value)
+    {
+        if (value.Type == JgsType.String)
+        {
+            string text = value.AsString;
+            if (text.Length == 1)
+            {
+                return JgsValue.Number(text[0]);
+            }
+
+            if (text.Length == 0)
+            {
+                return JgsMatrix.FromColumnMajorDims([], [0, 0]);
+            }
+
+            var codes = new double[text.Length];
+            for (int i = 0; i < codes.Length; i++)
+            {
+                codes[i] = text[i];
+            }
+
+            return JgsMatrix.FromColumnMajor(codes, 1, codes.Length);
+        }
+
+        var values = new double[value.ArrayLength];
+        for (int i = 0; i < values.Length; i++)
+        {
+            values[i] = value.ElementAt(i).AsNumber;
+        }
+
+        return JgsMatrix.FromColumnMajorDims(values, JgsMatrix.DimsOf(value));
     }
 
     /// <summary>The operators whose result carries a numeric class; everything else answers logical.</summary>
@@ -5786,8 +6081,7 @@ internal sealed partial class Interpreter
             int wanted = rowPicks.Length * colPicks.Length;
             if (rhs.ArrayLength != wanted)
             {
-                throw new JgsRuntimeException(at.Line, at.Column,
-                    $"Cannot assign {rhs.ArrayLength} values into a {rowPicks.Length}x{colPicks.Length} selection.");
+                throw AssignShapeMismatch(rhs, rowPicks.Length, colPicks.Length, at);
             }
         }
 
@@ -5889,7 +6183,10 @@ internal sealed partial class Interpreter
         double raw = position.AsNumber;
         if (raw != Math.Floor(raw) || double.IsNaN(raw))
         {
-            throw new JgsRuntimeException(at.Line, at.Column, $"An index must be a whole number, not {raw}.");
+            // A fractional subscript is the same refusal as one below one in MATLAB (open item 79).
+            throw Dialect.IsMatlab
+                ? BadWriteIndex(0, slotPosition, at)
+                : new JgsRuntimeException(at.Line, at.Column, $"An index must be a whole number, not {raw}.");
         }
 
         int slot = (int)raw - Dialect.IndexBase;
@@ -6120,9 +6417,53 @@ internal sealed partial class Interpreter
     /// array to boxed in place first (all aliases share the wrapper, so they all see the demotion —
     /// semantics identical).
     /// </summary>
-    private static void WriteElement(JgsValue container, int index, JgsValue value)
+    /// <summary>
+    /// Whether a MATLAB array holds numbers rather than logicals, so a logical stored into it keeps
+    /// the array's class (open item 9). A MATLAB array is one class throughout, so a boxed one's first
+    /// element says which; an empty one takes the class of what is stored, so it is not one.
+    /// </summary>
+    private static bool IsNumericContainer(JgsValue container) =>
+        container.IsPacked ? container.PackedKind == JgsPackedKind.Number && container.ArrayLength > 0
+        : container.IsPackedComplex
+        || (container.Type == JgsType.Array && !container.IsStringArray && container.ArrayLength > 0
+            && container.ElementAt(0).Type is JgsType.Number or JgsType.Complex);
+
+    /// <summary>A logical scalar or array as the numbers 1 and 0 in its shape; anything else as it is.</summary>
+    private static JgsValue LogicalAsNumbers(JgsValue value)
+    {
+        if (value.Type == JgsType.Bool)
+        {
+            return JgsValue.Number(value.AsBool ? 1 : 0);
+        }
+
+        bool logical = value.IsPacked
+            ? value.PackedKind == JgsPackedKind.Bool
+            : value.Type == JgsType.Array && !value.IsStringArray && !value.IsPackedComplex && value.ArrayLength > 0
+              && value.AsArray.All(static element => element.Type == JgsType.Bool);
+        if (!logical)
+        {
+            return value;
+        }
+
+        var numbers = new double[value.ArrayLength];
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            numbers[i] = value.ElementAt(i).AsNumber;
+        }
+
+        return JgsMatrix.Like(value, NumbersOf(numbers));
+    }
+
+    private void WriteElement(JgsValue container, int index, JgsValue value)
     {
         value = JgsNumericClasses.Storable(value, container.NumericClass);
+
+        // MATLAB keeps the container's class: a logical stored into a numeric array is 1 or 0 of
+        // that array (open item 9). The JGS dialect keeps its own mixed arrays.
+        if (value.Type == JgsType.Bool && Dialect.IsMatlab && IsNumericContainer(container))
+        {
+            value = JgsValue.Number(value.AsBool ? 1 : 0);
+        }
 
         if (container.IsPacked)
         {
@@ -6315,8 +6656,7 @@ internal sealed partial class Interpreter
                 needed = Highest(picks) + 1;
                 if (op == TokenType.Assign && rhs.Type == JgsType.Array && rhs.ArrayLength != picks.Length)
                 {
-                    throw new JgsRuntimeException(at.Line, at.Column,
-                        $"Cannot assign {rhs.ArrayLength} values into {picks.Length} selected elements.");
+                    throw AssignCountMismatch(rhs.ArrayLength, picks.Length, at);
                 }
             }
             else
@@ -6345,6 +6685,11 @@ internal sealed partial class Interpreter
                         $"Index {needed - 1 + Dialect.IndexBase} is past the end of a "
                         + $"{JgsMatrix.RowCount(callee)}x{JgsMatrix.ColCount(callee)} matrix; grow it with two subscripts, like A({needed}, 1).");
             }
+        }
+
+        if (Dialect.IsMatlab && op == TokenType.Assign && IsNumericContainer(callee))
+        {
+            rhs = LogicalAsNumbers(rhs);
         }
 
         if (callee.IsPacked)
@@ -6403,8 +6748,7 @@ internal sealed partial class Interpreter
             JgsValue[] source = rhs.BoxedElements();
             if (source.Length != picks.Length)
             {
-                throw new JgsRuntimeException(at.Line, at.Column,
-                    $"Cannot assign {source.Length} values into {picks.Length} selected elements.");
+                throw AssignCountMismatch(source.Length, picks.Length, at);
             }
 
             for (int i = 0; i < picks.Length; i++)
@@ -6474,8 +6818,7 @@ internal sealed partial class Interpreter
 
         if (rhsPacked && rhs.ArrayLength != picks.Length)
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Cannot assign {rhs.ArrayLength} values into {picks.Length} selected elements.");
+            throw AssignCountMismatch(rhs.ArrayLength, picks.Length, at);
         }
 
         if (simple)
@@ -6561,8 +6904,7 @@ internal sealed partial class Interpreter
 
         if (!rhsScalar && rhs.ArrayLength != picks.Length)
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Cannot assign {rhs.ArrayLength} values into {picks.Length} selected elements.");
+            throw AssignCountMismatch(rhs.ArrayLength, picks.Length, at);
         }
 
         planes = target.WritablePlanes(); // M7: the write gate, before the scatter
@@ -7151,7 +7493,12 @@ internal sealed partial class Interpreter
             // flatten, and for a shaped value it is a buffer clone rather than a gather.
             if (target.Type == JgsType.String)
             {
-                return target;
+                // A JGS string is one value; a MATLAB char row is a row of characters, and (:) makes
+                // it the column of them, as for any other row ('abc'(:) is 3-by-1).
+                string text = target.AsString;
+                return Dialect.IsMatlab && text.Length > 1 && !target.IsStringArray
+                    ? JgsValue.CharMatrix([.. text.Select(static c => c.ToString())])
+                    : target;
             }
 
             JgsValue all = target.IsPacked ? PackedOps.Clone(target, _cancelCheck)
@@ -7533,12 +7880,32 @@ internal sealed partial class Interpreter
     /// One subscript slot resolved to 0-based positions along its dimension: null is ':', a scalar
     /// is a single position, and an array is a mask or a list of indices.
     /// </summary>
-    private int[] SubscriptPicks(JgsValue? index, int extent, string dimension, Node at) => index switch
+    private int[] SubscriptPicks(JgsValue? index, int extent, string dimension, Node at)
     {
-        null => AllPicks(extent),
-        { Type: JgsType.Array } => ComputePicks(index, extent, dimension, at.Line, at.Column),
-        _ => [ToIndex(index, extent, at.Line, at.Column)],
-    };
+        // A refusal names the subscript's position, as R2025b's does (open item 79).
+        int saved = PackedOps.SubscriptPosition;
+        PackedOps.SubscriptPosition = dimension switch
+        {
+            "row" => 1,
+            "column" => 2,
+            _ when dimension.StartsWith("dimension-", StringComparison.Ordinal)
+                && int.TryParse(dimension.AsSpan("dimension-".Length), out int k) => k,
+            _ => saved,
+        };
+        try
+        {
+            return index switch
+            {
+                null => AllPicks(extent),
+                { Type: JgsType.Array } => ComputePicks(index, extent, dimension, at.Line, at.Column),
+                _ => [ToIndex(index, extent, at.Line, at.Column)],
+            };
+        }
+        finally
+        {
+            PackedOps.SubscriptPosition = saved;
+        }
+    }
 
     /// <summary>
     /// Reads from an image value: <c>img(r, c)</c>, <c>img(r, c, ch)</c>, or any of those with a range,
@@ -7706,6 +8073,16 @@ internal sealed partial class Interpreter
         _indexContext.Add(context);
         try
         {
+            // A colon with a fractional operand rounds, with R2025b's warning (open item 8).
+            if (argument is RangeExpr range && Dialect.IsMatlab)
+            {
+                JgsValue startValue = Evaluate(range.Start, env);
+                JgsValue stepValue = range.Step is null ? JgsValue.Number(1) : Evaluate(range.Step, env);
+                JgsValue stopValue = Evaluate(range.Stop, env);
+                return RoundedIndexRange(range, startValue, stepValue, stopValue)
+                    ?? RangeFromValues(range, startValue, stepValue, stopValue);
+            }
+
             // A lone true or false is a one-element mask, as MATLAB reads it: x(true) is x(1) and
             // x(false) is empty (ADR 0174 met it in ix_flat, whose filter of one line is a scalar).
             JgsValue index = Evaluate(argument, env);
@@ -7844,13 +8221,18 @@ internal sealed partial class Interpreter
         var picks = new List<int>(selector.Length);
         if (selector.Length > 0 && Array.TrueForAll(selector, v => v.Type == JgsType.Bool))
         {
-            if (selector.Length != length)
+            int read = selector.Length;
+            if (Dialect.IsMatlab && selector.Length != length)
+            {
+                read = PackedOps.MatlabMaskSpan(i => selector[i].AsBool, selector.Length, length, line, column);
+            }
+            else if (selector.Length != length)
             {
                 throw new JgsRuntimeException(line, column,
                     $"A mask must match the {targetName} length (mask {selector.Length}, {targetName} {length}).");
             }
 
-            for (int i = 0; i < selector.Length; i++)
+            for (int i = 0; i < read; i++)
             {
                 if (selector[i].AsBool)
                 {
@@ -7907,6 +8289,18 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue MatrixOperation(TokenType op, JgsValue left, JgsValue right, Node at)
     {
+        // MATLAB multiplies the shapes as written: the inner dimensions agree or the product is
+        // refused in R2025b's words (open item 79's batch, ADR 0214). The reorientation of a vector
+        // below is JGS's; in the MATLAB dialect it answered [1;2;3] * [1;2] with an outer product.
+        if (op == TokenType.Star && Dialect.IsMatlab && left.Type == JgsType.Array && right.Type == JgsType.Array
+            && JgsMatrix.ColCount(left) != JgsMatrix.RowCount(right))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:innerdim",
+                "Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix "
+                + "matches the number of rows in the second matrix. To operate on each element of the matrix "
+                + "individually, use TIMES (.*) for elementwise multiplication.");
+        }
+
         if (op == TokenType.Caret)
         {
             // Two matrices are neither a base with a scalar exponent nor a scalar with a matrix
@@ -8417,8 +8811,12 @@ internal sealed partial class Interpreter
 
         if (target.Type != JgsType.Cell)
         {
-            throw new JgsRuntimeException(brace.Line, brace.Column,
-                $"Braces index a cell array, but this is a {target.TypeName}. Use parentheses to index it.");
+            // R2025b's words for every other kind in the MATLAB dialect (open item 16).
+            throw Dialect.IsMatlab
+                ? new JgsRuntimeException(brace.Line, brace.Column, "MATLAB:cellRefFromNonCell",
+                    "Brace indexing is not supported for variables of this type.")
+                : new JgsRuntimeException(brace.Line, brace.Column,
+                    $"Braces index a cell array, but this is a {target.TypeName}. Use parentheses to index it.");
         }
 
         JgsValue[] elements = target.AsCell;
@@ -9559,11 +9957,11 @@ internal sealed partial class Interpreter
 
         if (target.Type != JgsType.Cell)
         {
-            throw new JgsRuntimeException(brace.Line, brace.Column,
-                Dialect.IsMatlab && target.Type is JgsType.Struct or JgsType.Number or JgsType.Bool or JgsType.Complex
-                        or JgsType.String or JgsType.Array or JgsType.External
-                    ? BraceNotSupported
-                    : $"Braces assign into a cell array, but '{variable?.Name ?? "this"}' is a {target.TypeName}.");
+            throw Dialect.IsMatlab && target.Type is JgsType.Struct or JgsType.Number or JgsType.Bool or JgsType.Complex
+                    or JgsType.String or JgsType.Array or JgsType.External
+                ? new JgsRuntimeException(brace.Line, brace.Column, "MATLAB:cellAssToNonCell", BraceNotSupported) // open item 16
+                : new JgsRuntimeException(brace.Line, brace.Column,
+                    $"Braces assign into a cell array, but '{variable?.Name ?? "this"}' is a {target.TypeName}.");
         }
 
         // c{i, j, k} = v is the paren write of the one cell that holds v (V6): the N-subscript road

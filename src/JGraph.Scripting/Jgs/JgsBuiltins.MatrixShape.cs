@@ -594,6 +594,85 @@ internal static partial class JgsBuiltins
     /// The MATLAB constructor shapes: () scalar, (n) n-by-n, (r, c, …) or a size vector as written —
     /// any number of dimensions, empty ones included (<c>zeros(5, 0, 2)</c>).
     /// </summary>
+    /// <summary>MATLAB's <c>true</c> and <c>false</c> over the JGS constructors, registered once those exist.</summary>
+    private static void RegisterMatlabLogicalConstructors(JgsEnvironment env, JgsRunningDialect dialect)
+    {
+        RegisterMatlabFormOver(env, dialect, "true",
+            new BuiltinFunction("true", (args, line, col) => LogicalConstructor("true", true, args, line, col)));
+        RegisterMatlabFormOver(env, dialect, "false",
+            new BuiltinFunction("false", (args, line, col) => LogicalConstructor("false", false, args, line, col)));
+    }
+
+    private static JgsValue LogicalConstructor(string name, bool value, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        // MATLAB's true and false with sizes (open item 42, measured in R2025b): any number of them
+        // or a size vector, as zeros takes them, a negative size read as 0, trailing singletons
+        // dropped, a fractional size refused, and 'like' read off the end.
+        if (args.Count >= 2 && IsTextScalar(args[^2]) && TextOf(args[^2]).Equals("like", StringComparison.OrdinalIgnoreCase))
+        {
+            // A sparse prototype is taken: this build's sparse storage keeps no logical flag to check,
+            // and the answer is dense (ADR 0213, Divergences).
+            bool sparseLogical = args[^1].Type == JgsType.Sparse;
+            if (!IsLogicalValue(args[^1]) && !sparseLogical)
+            {
+                string word = value ? "True" : "False";
+                throw new JgsRuntimeException(line, col, $"MATLAB:{word}:invalidInputClass",
+                    $"Argument following \"like\" must be a variable with a data type that supports {word.ToUpperInvariant()}, such as a logical variable.");
+            }
+
+            args = args.Take(args.Count - 2).ToList();
+        }
+
+        if (args.Count == 0)
+        {
+            return JgsValue.Bool(value);
+        }
+
+        foreach (JgsValue size in args)
+        {
+            int n = size.Type == JgsType.Number ? 1 : size.Type == JgsType.Array && !size.IsStringArray ? size.ArrayLength : 0;
+            for (int i = 0; i < n; i++)
+            {
+                double v = size.Type == JgsType.Number ? size.AsNumber : size.ElementAt(i).AsNumber;
+                if (double.IsFinite(v) && v != Math.Floor(v))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:NonIntegerInput", "Size inputs must be integers.");
+                }
+            }
+        }
+
+        int[] dims = SquareDims(name, args, line, col);
+        long count = 1;
+        foreach (int dim in dims)
+        {
+            count *= dim;
+        }
+
+        int[] trimmed = dims;
+        while (trimmed.Length > 2 && trimmed[^1] == 1)
+        {
+            trimmed = trimmed[..^1];
+        }
+
+        if (trimmed.Length == 2 && count == 0)
+        {
+            return EmptyLogical(trimmed[0], trimmed[1]);
+        }
+
+        if (count == 1)
+        {
+            return JgsValue.Bool(value);
+        }
+
+        var data = new double[count];
+        if (value)
+        {
+            Array.Fill(data, 1.0);
+        }
+
+        return AsMask(JgsMatrix.FromColumnMajorDims(data, trimmed));
+    }
+
     private static JgsValue NdConstructorValue(
         string name, IReadOnlyList<JgsValue> args, int line, int col, Func<double> next)
     {
@@ -1226,7 +1305,15 @@ internal static partial class JgsBuiltins
             }
             else if (next < rest.Length && rest[next].Type == JgsType.Number)
             {
-                dim = (int)rest[next].AsNumber;
+                // sum(A, 1.5) is refused in R2025b's words, not read as dimension 1 (open item 10).
+                double named = rest[next].AsNumber;
+                if (named != System.Math.Floor(named) || named < 1)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:getdimarg:invalidDim",
+                        "Dimension argument must be a positive integer scalar, a vector of unique positive integers, or 'all'.");
+                }
+
+                dim = (int)named;
                 next++;
             }
             else if (spec.Vecdim && next < rest.Length
@@ -1484,6 +1571,208 @@ internal static partial class JgsBuiltins
             return result;
         }
 
+        // Complex input to the six reductions R2025b takes it for (open item 10): sum, prod, mean,
+        // cumsum, cumprod and diff. The planes are sliced as the real road slices, and each slice is
+        // folded serially in order (MATLAB's sum is serial). sum, mean, cumsum and diff are the same
+        // fold over each plane; prod and cumprod multiply as complex numbers. The answer is real when
+        // every imaginary part is zero, as sum(complex([1 2], 0)) is in R2025b. Null for anything else.
+        JgsValue? ComplexReduction(
+            JgsValue subject, int? dim, int[]? vecdim, bool all, int order, bool omitNan, bool reverse, int line, int col)
+        {
+            if (name is not ("sum" or "prod" or "mean" or "cumsum" or "cumprod" or "diff")
+                || !(subject.Type == JgsType.Complex || subject.IsPackedComplex
+                    || (subject.Type == JgsType.Array && !subject.IsPacked && !subject.IsStringArray
+                        && subject.AsArray.Any(static e => e.Type == JgsType.Complex))))
+            {
+                return null;
+            }
+
+            JgsNumericClass numericClass = subject.NumericClass;
+            int[] dims = subject.Type == JgsType.Array ? JgsMatrix.DimsOf(subject) : [1, 1];
+            var flat = new System.Numerics.Complex[subject.Type == JgsType.Array ? subject.ArrayLength : 1];
+            for (int i = 0; i < flat.Length; i++)
+            {
+                flat[i] = (subject.Type == JgsType.Array ? subject.ElementAt(i) : subject).AsComplex;
+            }
+
+            JgsValue answer;
+            if (all || (dim is null && vecdim is null && !keepShape && flat.Length == 0 && dims.Length == 2 && dims[0] == 0 && dims[1] == 0))
+            {
+                System.Numerics.Complex[] whole = ComplexFold(flat, order, omitNan, reverse);
+                answer = Shaped(whole, [1, whole.Length]);
+            }
+            else if (vecdim is not null)
+            {
+                (System.Numerics.Complex[] running, int[] shape) = (flat, dims);
+                foreach (int one in vecdim)
+                {
+                    (running, shape) = ComplexAlong(running, shape, one, order, omitNan, reverse);
+                }
+
+                answer = Shaped(running, shape);
+            }
+            else
+            {
+                (System.Numerics.Complex[] values, int[] shape) = ComplexAlong(flat, dims, dim ?? JgsMatrix.DefaultDim(dims), order, omitNan, reverse);
+                answer = Shaped(values, shape);
+            }
+
+            return numericClass == JgsNumericClass.Double ? answer : JgsNumericClasses.Stamp(answer, numericClass);
+        }
+
+        (System.Numerics.Complex[] Values, int[] Shape) ComplexAlong(
+            System.Numerics.Complex[] flat, int[] dims, int dim, int order, bool omitNan, bool reverse)
+        {
+            double[] re = System.Array.ConvertAll(flat, static z => z.Real);
+            double[] im = System.Array.ConvertAll(flat, static z => z.Imaginary);
+            (double[][] reSlices, int[] reduced) = JgsMatrix.SlicesAlongOwned(re, dims, dim);
+            (double[][] imSlices, _) = JgsMatrix.SlicesAlongOwned(im, dims, dim);
+            var folded = new System.Numerics.Complex[reSlices.Length][];
+            for (int s = 0; s < reSlices.Length; s++)
+            {
+                var slice = new System.Numerics.Complex[reSlices[s].Length];
+                for (int i = 0; i < slice.Length; i++)
+                {
+                    slice[i] = new System.Numerics.Complex(reSlices[s][i], imSlices[s][i]);
+                }
+
+                folded[s] = ComplexFold(slice, order, omitNan, reverse);
+            }
+
+            if (!keepShape)
+            {
+                return (System.Array.ConvertAll(folded, static f => f[0]), reduced);
+            }
+
+            int span = folded.Length > 0 ? folded[0].Length
+                : ComplexFold(new System.Numerics.Complex[dim - 1 < dims.Length ? dims[dim - 1] : 1], order, omitNan, reverse).Length;
+            (double[] reJoined, int[] shape) = folded.Length == 0
+                ? ([], JgsMatrix.ShapeAlong(dims, dim, span))
+                : JgsMatrix.JoinAlong(System.Array.ConvertAll(folded, static f => System.Array.ConvertAll(f, static z => z.Real)), dims, dim);
+            double[] imJoined = folded.Length == 0 ? []
+                : JgsMatrix.JoinAlong(System.Array.ConvertAll(folded, static f => System.Array.ConvertAll(f, static z => z.Imaginary)), dims, dim).ColumnMajor;
+            var joined = new System.Numerics.Complex[reJoined.Length];
+            for (int i = 0; i < joined.Length; i++)
+            {
+                joined[i] = new System.Numerics.Complex(reJoined[i], imJoined[i]);
+            }
+
+            return (joined, shape);
+        }
+
+        System.Numerics.Complex[] ComplexFold(System.Numerics.Complex[] slice, int order, bool omitNan, bool reverse)
+        {
+            static bool IsNan(System.Numerics.Complex z) => double.IsNaN(z.Real) || double.IsNaN(z.Imaginary);
+            System.Numerics.Complex[] x = slice;
+            if (omitNan)
+            {
+                x = keepShape
+                    ? System.Array.ConvertAll(x, z => IsNan(z) ? new System.Numerics.Complex(spec.Identity, 0) : z)
+                    : System.Array.FindAll(x, z => !IsNan(z));
+            }
+
+            if (reverse)
+            {
+                x = (System.Numerics.Complex[])x.Clone();
+                System.Array.Reverse(x);
+            }
+
+            System.Numerics.Complex[] result;
+            switch (name)
+            {
+                case "sum":
+                case "mean":
+                {
+                    double re = 0, im = 0;
+                    foreach (System.Numerics.Complex z in x)
+                    {
+                        re += z.Real;
+                        im += z.Imaginary;
+                    }
+
+                    result = name == "sum" ? [new(re, im)] : [new(re / x.Length, im / x.Length)];
+                    break;
+                }
+
+                case "prod":
+                {
+                    System.Numerics.Complex p = System.Numerics.Complex.One;
+                    foreach (System.Numerics.Complex z in x)
+                    {
+                        p *= z;
+                    }
+
+                    result = [p];
+                    break;
+                }
+
+                case "cumsum":
+                {
+                    result = new System.Numerics.Complex[x.Length];
+                    double re = 0, im = 0;
+                    for (int i = 0; i < x.Length; i++)
+                    {
+                        re += x[i].Real;
+                        im += x[i].Imaginary;
+                        result[i] = new(re, im);
+                    }
+
+                    break;
+                }
+
+                case "cumprod":
+                {
+                    result = new System.Numerics.Complex[x.Length];
+                    System.Numerics.Complex p = System.Numerics.Complex.One;
+                    for (int i = 0; i < x.Length; i++)
+                    {
+                        p *= x[i];
+                        result[i] = p;
+                    }
+
+                    break;
+                }
+
+                default: // diff, order times
+                {
+                    result = x;
+                    for (int pass = 0; pass < order; pass++)
+                    {
+                        var next = new System.Numerics.Complex[System.Math.Max(0, result.Length - 1)];
+                        for (int i = 0; i < next.Length; i++)
+                        {
+                            next[i] = new(result[i + 1].Real - result[i].Real, result[i + 1].Imaginary - result[i].Imaginary);
+                        }
+
+                        result = next;
+                    }
+
+                    break;
+                }
+            }
+
+            if (reverse)
+            {
+                System.Array.Reverse(result);
+            }
+
+            return result;
+        }
+
+        // A complex array in a shape: real throughout when no element has an imaginary part.
+        static JgsValue Shaped(System.Numerics.Complex[] values, int[] shape)
+        {
+            bool real = System.Array.TrueForAll(values, static z => z.Imaginary == 0);
+            if (values.Length == 1)
+            {
+                return real ? JgsValue.Number(values[0].Real) : JgsValue.ComplexNum(values[0]);
+            }
+
+            return real
+                ? JgsMatrix.FromColumnMajorDims(System.Array.ConvertAll(values, static z => z.Real), shape)
+                : JgsMatrix.FromElementsDims(System.Array.ConvertAll(values, static z => JgsValue.ComplexNum(z)), shape);
+        }
+
         JgsValue SingleCore(IReadOnlyList<JgsValue> args, int line, int col)
         {
             (JgsValue subject, int? dim, int[]? vecdim, JgsValue[] extra, bool all, int order,
@@ -1499,6 +1788,11 @@ internal static partial class JgsBuiltins
                 // diff of a scalar is the 0-by-0 empty, not a 1-by-0 row: MATLAB treats the one
                 // value as having no dimension to difference along (ADR 0158).
                 return JgsMatrix.FromColumnMajorDims([], [0, 0]);
+            }
+
+            if (extra.Length == 0 && ComplexReduction(subject, dim, vecdim, all, order, omitNan, reverse, line, col) is { } complex)
+            {
+                return complex;
             }
 
             // A packed double array with arguments the kernels understand reduces in place, without

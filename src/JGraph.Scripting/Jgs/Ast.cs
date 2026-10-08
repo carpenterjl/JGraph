@@ -72,6 +72,12 @@ internal abstract class Stmt : Node
 internal sealed class NumberLiteral(double value) : Expr
 {
     public double Value { get; } = value;
+
+    /// <summary>
+    /// The integer class of a hexadecimal or binary literal (<c>0x1F</c> is uint8, <c>0x80s8</c> an int8
+    /// -128; open item 23); null for an ordinary number, which is a double.
+    /// </summary>
+    public JgsNumericClass? IntegerClass { get; init; }
 }
 
 /// <summary>A string literal such as <c>"hello"</c>.</summary>
@@ -270,6 +276,13 @@ internal sealed class AnonymousFnExpr(IReadOnlyList<string> parameters, Expr bod
     /// parameters bind by, wherever the handle is called from. Stamped by the parser.
     /// </summary>
     public JgsDialect Dialect { get; set; } = JgsDialect.Jgs;
+
+    /// <summary>
+    /// The handle as R2025b's <c>func2str</c> writes it, from the tokens as written (open items 22
+    /// and 54): no whitespace outside quotes, a space between elements of a bracket written as a
+    /// comma, every literal spelt as written. Stamped by the parser; null for a tree built otherwise.
+    /// </summary>
+    public string? MatlabText { get; set; }
 }
 
 /// <summary>A MATLAB function handle <c>@name</c>, naming a user function or a builtin.</summary>

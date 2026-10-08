@@ -621,7 +621,7 @@ public class MatlabClusterTests : IDisposable
     [InlineData("pdist([1 2; 3 4], 'euclidean', 3);", "takes no further argument")]
     [InlineData("linkage([1 2; 3 4], 'wards');", "is not a linkage method")]
     [InlineData("squareform([1 2 3 4 5]);", "do not describe every pair")]
-    [InlineData("cluster(linkage([1 1; 2 2; 5 5]));", "cluster expects")]
+    [InlineData("cluster(linkage([1 1; 2 2; 5 5]));", "Not enough input arguments")]
     [InlineData("kmeans([1 1; 2 2], 5);", "fewer observations than clusters")]
     [InlineData("kmeans([1 1; 2 2; 9 9], 2, 'Distance', 'cityblock');", "kmedoids")]
     [InlineData("kmeans([1 1; 2 2; 9 9], 2, 'Start', 'clusters');", "the start is")]

@@ -464,6 +464,12 @@ internal static partial class JgsBuiltins
 
         if (value.Type == JgsType.Array)
         {
+            // A real array's numbers are written at one precision, as string() writes them (open item 3).
+            if (RealArrayTexts(value) is { } texts)
+            {
+                return (texts, value.Rows, value.Cols);
+            }
+
             // One complex element makes every element complex: "abc" + [1+2i 3] ends in "3+0i" (measured).
             JgsValue[] elements = value.BoxedElements();
             return (HasComplexElements(value)

@@ -133,6 +133,11 @@ internal sealed partial class Interpreter
                 _indexContext.RemoveAt(_indexContext.Count - 1);
             }
 
+            if (RoundedIndexRange(range, startValue, stepValue, stopValue) is { } rounded)
+            {
+                return new SubscriptSlot(rounded);
+            }
+
             if (TryAffineRange(startValue, stepValue, stopValue, extent, out AffineSelector selector))
             {
                 return new SubscriptSlot(selector, scalar: false);
@@ -148,6 +153,37 @@ internal sealed partial class Interpreter
         }
 
         return new SubscriptSlot(index);
+    }
+
+    /// <summary>
+    /// A colon written as a subscript with a fractional operand, the MATLAB dialect's way (open item
+    /// 8): R2025b warns <c>MATLAB:colon:nonIntegerIndex</c> once for the expression, even when every
+    /// element comes out whole (<c>x(1:2.5)</c>), and rounds each element half away from zero
+    /// (<c>x(3:-0.5:1)</c> is <c>x([3 3 2 2 1])</c>). Null when every operand is whole.
+    /// </summary>
+    private JgsValue? RoundedIndexRange(RangeExpr range, JgsValue startValue, JgsValue stepValue, JgsValue stopValue)
+    {
+        static bool Fractional(JgsValue value) =>
+            IsUnclassedDouble(value) && double.IsFinite(value.AsNumber) && value.AsNumber != Math.Floor(value.AsNumber);
+
+        if (!Dialect.IsMatlab || !(Fractional(startValue) || Fractional(stepValue) || Fractional(stopValue)))
+        {
+            return null;
+        }
+
+        if (Host is { } host)
+        {
+            JgsBuiltins.Warn(host, "MATLAB:colon:nonIntegerIndex", "Integer operands are required for colon operator when used as index.");
+        }
+
+        JgsValue values = RangeFromValues(range, startValue, stepValue, stopValue);
+        var rounded = new double[values.ArrayLength];
+        for (int i = 0; i < rounded.Length; i++)
+        {
+            rounded[i] = Math.Round(values.ElementAt(i).AsNumber, MidpointRounding.AwayFromZero);
+        }
+
+        return JgsMatrix.Like(values, NumbersOf(rounded));
     }
 
     /// <summary>A plain double scalar: no integer or single class to round or saturate through, and not a time.</summary>

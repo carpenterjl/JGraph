@@ -453,11 +453,11 @@ public class JgsPrecedenceTests : IDisposable
             """);
         Ok(fromFile);
         Assert.Equal("private secret", Text(fromFile, "a"));
-        Assert.Equal("'secret' is not recognized as a variable or a function.", Text(fromFile, "b"));
+        Assert.Equal("Unrecognized function or variable 'secret'.", Text(fromFile, "b"));
 
         ScriptRunResult fromNoFile = await RunMatlab("a = secret();");
         Assert.False(fromNoFile.Success);
-        Assert.Contains("'secret' is not recognized", fromNoFile.Message, StringComparison.Ordinal);
+        Assert.Contains("Unrecognized function or variable 'secret'", fromNoFile.Message, StringComparison.Ordinal);
     }
 
     /// <summary>A variable shadows everything and the call becomes an index; clearing it uncovers the function.</summary>
@@ -565,7 +565,7 @@ public class JgsPrecedenceTests : IDisposable
 
         Ok(result);
         Assert.Equal(101.0, Number(result, "x"));
-        Assert.Equal("'helper' is not recognized as a variable or a function.", Text(result, "h"));
+        Assert.Equal("Unrecognized function or variable 'helper'.", Text(result, "h"));
     }
 
     // --- Handles and name-based calls ---------------------------------------------------------

@@ -167,7 +167,7 @@ public class PropertyAccessorsM167Tests : IDisposable
             end
             """);
         Assert.Equal("6", RunAndRead("o = AccLocal(); disp(o.total());"));
-        Assert.Contains("not recognized", RunExpectingError("o = AccLocal(); disp(add_up([1 2]));"), StringComparison.Ordinal);
+        Assert.Contains("Undefined function 'add_up'", RunExpectingError("o = AccLocal(); disp(add_up([1 2]));"), StringComparison.Ordinal);
     }
 
     // --- Dependent ----------------------------------------------------------------------------------

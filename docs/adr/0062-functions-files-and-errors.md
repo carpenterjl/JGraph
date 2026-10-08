@@ -152,9 +152,9 @@ against the script's own directory, like every other path a script names. The le
   `x (1,1) double` accepts a logical and converts it. The container classes (`cell`, `struct`,
   `table`) are checked and never converted, because their constructors mean something else entirely —
   `cell(3)` builds a 3-by-3 cell rather than converting anything.
-- **An error raised at the top level has an empty stack**, where MATLAB names the script frame.
-- **`error` with no identifier still records nothing**, including for every error the interpreter
-  raises itself. This is the decision above, not an omission.
+- **`error` with no identifier still records nothing.** This is the decision above, not an omission.
+  The interpreter's own refusals carry R2025b's identifiers in the MATLAB dialect since ADR 0214, which
+  also gave an error at a script's top level the script's frame (once a divergence here).
 
 ## Live checks for the user
 

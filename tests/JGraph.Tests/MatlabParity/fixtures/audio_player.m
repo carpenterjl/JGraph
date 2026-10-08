@@ -53,7 +53,7 @@ ix_chk('get_ambig', dv_err(@() get(p, 'St')));
 ix_chk('get_bogus', dv_err(@() get(p, 'Bogus')));
 ix_chk('dot_bogus', dv_err(@() p.Bogus));
 % JGraph's sentence for an unknown function does not name the argument's class (div=ADR0193).
-ix_chk('method_upper', dv_err(@() ISPLAYING(p)), 'div=ADR0193');
+ix_chk('method_upper', dv_err(@() ISPLAYING(p)));
 set(p, 'Tag', "hello");
 ix_chk('set_tag', class(p.Tag));
 ix_chk('set_tag_num', dv_err(@() set(p, 'Tag', 5)));

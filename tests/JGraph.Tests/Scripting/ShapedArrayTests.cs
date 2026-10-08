@@ -194,10 +194,10 @@ public class ShapedArrayTests : IDisposable
     public async Task Concatenation_MismatchedBlocks_NameBothShapes()
     {
         string sideBySide = await RunFailing("x = [[1 2; 3 4], [1 2 3]];");
-        Assert.Contains("side by side", sideBySide, StringComparison.Ordinal);
+        Assert.Contains("Dimensions of arrays being concatenated are not consistent.", sideBySide, StringComparison.Ordinal);
 
         string stacked = await RunFailing("x = [[1 2; 3 4]; [1 2 3]];");
-        Assert.Contains("columns wide", stacked, StringComparison.Ordinal);
+        Assert.Contains("Dimensions of arrays being concatenated are not consistent.", stacked, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -246,9 +246,15 @@ public class ShapedArrayTests : IDisposable
     public Task MatrixProduct_UsesRealOrientation_AndTurnsAVectorOnlyWhenItMustg() => RunAsserting("""
         A = [1 0; 0 1];
 
-        % A row vector's orientation is incidental, so it is turned to make the product work.
-        assert(isequal(A * [4 6], [4; 6]));
+        % MATLAB multiplies the shapes as written (ADR 0214): a column conforms, a row is refused.
         assert(isequal(A * [4; 6], [4; 6]));
+        refused = false;
+        try
+            A * [4 6];
+        catch
+            refused = true;
+        end
+        assert(refused);
 
         % With real orientation, an inner product and an outer product are both unambiguous.
         u = [1; 2; 3];
@@ -261,7 +267,7 @@ public class ShapedArrayTests : IDisposable
     {
         // Neither one says which product was meant, and an elementwise answer would be a wrong number.
         string message = await RunFailing("disp([1 2] * [3 4])");
-        Assert.Contains("ambiguous", message, StringComparison.Ordinal);
+        Assert.Contains("Incorrect dimensions for matrix multiplication", message, StringComparison.Ordinal);
     }
 
     [Fact]

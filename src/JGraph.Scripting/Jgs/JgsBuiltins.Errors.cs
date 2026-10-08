@@ -130,6 +130,34 @@ internal static partial class JgsBuiltins
         return (identifier, message.Type == JgsType.String ? message.AsString : message.Display());
     }
 
+    /// <summary>The caught exceptions that error() or a throw verb raised (open item 13), by their payload.</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, object> RaisedExceptions = new();
+
+    /// <summary>Marks a caught exception as one error() or a throw verb raised.</summary>
+    internal static void MarkRaised(JgsValue exception)
+    {
+        if (exception.Type == JgsType.Struct)
+        {
+            RaisedExceptions.AddOrUpdate(exception.AsStructArray, RaisedExceptions);
+        }
+    }
+
+    private static bool IsRaised(JgsValue exception) =>
+        exception.Type == JgsType.Struct && RaisedExceptions.TryGetValue(exception.AsStructArray, out _);
+
+    /// <summary>
+    /// A stack frame's name as R2025b's report header writes it: a local function of a file is
+    /// <c>file&gt;local</c>, a file's own function its name (open item 13, measured).
+    /// </summary>
+    private static string FrameShownName(Dictionary<string, JgsValue> frame)
+    {
+        string name = frame["name"].AsString;
+        string stem = frame.TryGetValue("file", out JgsValue? file) && file.Type == JgsType.String
+            ? Path.GetFileNameWithoutExtension(file.AsString)
+            : string.Empty;
+        return stem.Length > 0 && stem != name && !name.Contains('>', StringComparison.Ordinal) ? $"{stem}>{name}" : name;
+    }
+
     /// <summary>Declares <c>error</c>, <c>MException</c>, and the three throwing verbs.</summary>
     private static void RegisterErrorObjects(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, Interpreter interpreter,
@@ -157,14 +185,17 @@ internal static partial class JgsBuiltins
             {
                 Arity("error", args, 1, line, col);
                 (string existingId, string existingMessage) = ReadErrorValue("error", args[0], line, col);
-                throw new JgsRuntimeException(line, col, existingId, existingMessage);
+                throw new JgsRuntimeException(line, col, existingId, existingMessage) { Raised = true };
             }
 
             string first = Str("error", args, 0, line, col);
             bool hasIdentifier = args.Count > 1 && IsErrorIdentifier(first);
             throw new JgsRuntimeException(line, col,
                 hasIdentifier ? first : string.Empty,
-                FormatMessage(env, host, dialect, "error", args, hasIdentifier ? 1 : 0, hasIdentifier, line, col));
+                FormatMessage(env, host, dialect, "error", args, hasIdentifier ? 1 : 0, hasIdentifier, line, col))
+            {
+                Raised = true,
+            };
         });
 
         Define("MException", (args, line, col) =>
@@ -206,6 +237,7 @@ internal static partial class JgsBuiltins
                     Carried = whole ? args[0] : null,
                     KeepsStack = whole && name == "rethrow",
                     DropsThrowingFrame = name == "throwAsCaller",
+                    Raised = true,
                 };
             });
 
@@ -226,13 +258,17 @@ internal static partial class JgsBuiltins
             // A NET.NetException keeps its "Error using" line under 'basic' too (R2025b,
             // net_exceptions; ADR 0174): the .NET message is three lines of its own below it.
             basic &= args[0].ClassName != Net.NetInvoke.NetExceptionClass;
+
+            // An error error() or throw raised keeps its header under 'basic' too in R2025b; a refusal
+            // of the runtime's (an index past the end) is its message alone (open item 13, measured).
+            basic &= !IsRaised(args[0]);
             if (basic || stack is not { Type: JgsType.Struct } || stack.AsStructArray.Length == 0)
             {
                 return JgsValue.Str(message);
             }
 
             Dictionary<string, JgsValue> top = stack.AsStructArray.Elements[0];
-            return JgsValue.Str($"Error using {top["name"].AsString} (line {top["line"].AsNumber:0})\n{message}");
+            return JgsValue.Str($"Error using {FrameShownName(top)} (line {top["line"].AsNumber:0})\n{message}");
         });
 
         Define("lasterror", (args, line, col) =>

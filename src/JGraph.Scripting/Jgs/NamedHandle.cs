@@ -76,5 +76,13 @@ internal sealed class NamedHandle : IJgsCallable, IJgsMultiCallable
     public bool SameAs(NamedHandle other) =>
         string.Equals(Name, other.Name, StringComparison.Ordinal)
         && Layer == other.Layer
-        && ReferenceEquals(Captured, other.Captured);
+        && (ReferenceEquals(Captured, other.Captured) || (Captured is IJgsUnanswered && other.Captured is IJgsUnanswered));
+}
+
+/// <summary>
+/// What a handle to a name nothing answers captures (U11, open items 17 and 73): two of one name are
+/// one value, as R2025b's <c>isequal(@nosuch, @nosuch)</c> says, and <c>functions</c> calls it simple.
+/// </summary>
+internal interface IJgsUnanswered : IJgsCallable
+{
 }

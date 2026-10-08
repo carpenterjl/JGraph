@@ -197,24 +197,14 @@ of the charmatrix row's 2,000 rows and of every edge input of `char` as a row, a
 
 ## Divergences
 
-Every one of these was found by `m156_text` on the binary before item 09 and is kept by it.
+Every one of these was found by `m156_text` on the binary before item 09 and is kept by it. ADR
+0213 retired three more: the array-wide precision of `string`, `string` of a `single` array, and a
+char row's arithmetic under `+`.
 
-- `string` of a numeric array: R2025b takes one precision for the whole array from its largest
-  magnitude, as `num2str` does for a matrix, and writes `string([9016.9943749474514 12345.5])` as
-  `9016.99437` where JGraph writes each element at its own precision, `9016.9944` (`m156_text`,
-  `array_precision`, `array_precision_small`, `div=ADR0156`). 09a kept each element's own
-  precision byte for byte, which was its contract.
-- `string` of a `single`: R2025b writes the single's double value to fourteen significant digits,
-  `3.1415927410126`, where JGraph writes it as `num2str` writes the double, `3.1416` (`m156_text`,
-  `cls_single`, `div=ADR0156`).
 - `string` of an `int64` or `uint64` beyond 2^53: JGraph holds the value as a double and writes
   `string(intmax('int64'))` as `9.223372036854776e+18` where R2025b writes every digit
   (`m156_text`, `cls_int64_max`, `cls_uint64_max`, `div=ADR0156`). Narrow integer storage is
   outside the plan.
-- A char row meeting a number, NaN, a logical, a char matrix, a cell or another char row under `+`:
-  JGraph joins their text, so `'x' + 1 + "y"` is `"x1y"`, where R2025b adds code points first,
-  `"121y"`, and refuses a cell (`m156_text`, the 55 `chain_chr_*` and `chain_*_chr_*` lines over
-  those operands, `chain4_char_head`, `div=ADR0156`).
 - A string whose text spells the missing sentinel: `"<miss" + "ing>" + "x"` is the missing string
   in JGraph, whose missing string is that text, and `"<missing>x"` in R2025b (`m156_text`,
   `chain_sentinel_text`, `div=ADR0156`).

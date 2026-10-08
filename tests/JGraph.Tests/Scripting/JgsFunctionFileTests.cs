@@ -59,7 +59,7 @@ public class JgsFunctionFileTests : IDisposable
         return path;
     }
 
-    private static string Undefined(string name) => $"'{name}' is not recognized as a variable or a function.";
+    private static string Undefined(string name) => $"Unrecognized function or variable '{name}'."; // R2025b's words (ADR 0214)
 
     // --- The four leaks, closed -------------------------------------------------------------------
 

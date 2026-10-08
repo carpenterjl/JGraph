@@ -170,12 +170,12 @@ for k = 1:10
     h(k) = tf;
 end
 chk('logical_store', [sum(f) sum(h)]);
-fprintf('CHK|logical_store_class|%s %s|div=ADR0160\n', class(f), class(h));
+fprintf('CHK|logical_store_class|%s %s|exact\n', class(f), class(h)); % double since ADR 0213
 
 refused('refused_zero_position', @() vzero(x));
 refused('refused_fraction_position', @() vfraction(x));
 refused('refused_past_end_read', @() vpast(x));
-refused('refused_nested_zero_step', @() vzerostep(), 'div=ADR0160');
+refused('refused_nested_zero_step', @() vzerostep()); % an empty range since ADR 0213
 
 %% 12d -- walked statements inside a compiled loop, and a return from one.
 cs = cell(1, 5);

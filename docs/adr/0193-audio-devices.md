@@ -129,9 +129,6 @@ second at 0.1 s, then stop with Running `'off'`.
 - **A callback's first argument is the audioplayer or audiorecorder itself.** R2025b hands its
   internal implementation object, `audiovideo.internal.audioplayerDesktop` or
   `audiovideo.internal.audiorecorderDesktop`. Its properties read the same, and `class` does not.
-- **An unknown function called on an audio object** gets JGraph's "is not recognized" sentence,
-  where R2025b names the argument's class ("Undefined function 'ISPLAYING' for input arguments of
-  type 'audioplayer'.") (`audio_player`, `method_upper`, div=ADR0193).
 - **The support test** of `audiodevinfo(io, [id,] rate, bits, channels)` opens and closes a stream
   rather than recording or playing for a moment.
 - **The objects display in JGraph's layout**, as every device object does since ADR 0174.

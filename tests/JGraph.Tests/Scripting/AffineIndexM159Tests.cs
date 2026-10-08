@@ -174,7 +174,8 @@ public class AffineIndexM159Tests : IDisposable
         show('frac_stop', x(1:2.5));
         show('frac_step', x(1:0.5:1));
         show('uint8_bounds', x(uint8(2):5));
-        show('uint8_saturating', x(uint8(254):258));
+        show('frac_step_rounds', x(2:0.5:3));
+        show('zero_step_empty', x(1:0:5));
         show('int32_step', x(1:int32(3):20));
         show('single_bound', x(single(3):9));
         show('logical_bound', x(true:3));
@@ -188,12 +189,11 @@ public class AffineIndexM159Tests : IDisposable
         AssertParity("y = x(4990:5010);", expectSuccess: false);
         AssertParity("y = x(-3:-1:-10);", expectSuccess: false);
         AssertParity("y = x(5001:5001);", expectSuccess: false);
-        AssertParity("y = x(2:0.5:3);", expectSuccess: false);
+        AssertParity("y = x(uint8(254):258);", expectSuccess: false); // outside uint8 (ADR 0213)
         AssertParity("y = M(0:2, 1);", expectSuccess: false);
         AssertParity("y = M(1:3, 99:101);", expectSuccess: false);
         AssertParity("y = M(61, :);", expectSuccess: false);
         AssertParity("y = M(1.5, :);", expectSuccess: false);
-        AssertParity("y = x(1:0:5);", expectSuccess: false);
     }
 
     [Fact]

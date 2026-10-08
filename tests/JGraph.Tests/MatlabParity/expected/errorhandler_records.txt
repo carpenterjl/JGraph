@@ -5,7 +5,7 @@ CHK|h_record_fields|identifier,message,index|exact
 CHK|h_message_local_function|Error using errorhandler_records>failing (line 55) bad 1|exact
 CHK|h_message_anonymous_error|Error using error Too many output arguments.|exact
 CHK|h_message_anonymous_calls_local|Error using errorhandler_records>failing (line 55) bad 5|exact
-CHK|h_message_builtin_failure|MATLAB:innerdim#1|div=ADR0167|diverges|#0
+CHK|h_message_builtin_failure|MATLAB:innerdim#1|div=ADR0167|diverges|MATLAB:innerdim#0
 CHK|h_message_no_identifier|[]#Error using errorhandler_records>plain_failing (line 60) no identifier here 3|exact
 CHK|h_index_nonuniform|probe:bad#1,probe:bad#2|exact
 CHK|h_index_arrayfun_matrix|[10 -3;30 -4]|exact

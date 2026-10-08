@@ -189,7 +189,7 @@ internal sealed partial class Interpreter
     {
         if (step == 0)
         {
-            throw new JgsRuntimeException(line, column, "A range step must not be zero.");
+            return Dialect.IsMatlab ? 0 : throw new JgsRuntimeException(line, column, "A range step must not be zero.");
         }
 
         double ratio = (stop - start) / step;

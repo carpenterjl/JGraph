@@ -130,7 +130,22 @@ internal static partial class JgsBuiltins
 
         // --- Constants -----------------------------------------------------------------------
         env.Builtins.RegisterConstant("pi", JgsValue.Number(System.Math.PI));
-        env.Builtins.RegisterConstant("e", JgsValue.Number(System.Math.E));
+        // e is JGS's: MATLAB has none (exp(1) is its spelling), so a MATLAB script's bare e is R2025b's
+        // refusal, and a file, local function or method named e is found and called as any name is
+        // (open item 53). A function rather than a constant, so it ranks below them.
+        env.Builtins.Register("e", JgsValue.Function(new BuiltinFunction("e", (args, line, col) =>
+        {
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction", "Unrecognized function or variable 'e'.");
+            }
+
+            Arity("e", args, 0, line, col);
+            return JgsValue.Number(System.Math.E);
+        })
+        {
+            AutoCallsBare = true,
+        }));
         env.Builtins.RegisterConstant("inf", JgsValue.Number(double.PositiveInfinity));
         env.Builtins.RegisterConstant("nan", JgsValue.Number(double.NaN));
 
@@ -2513,6 +2528,7 @@ internal static partial class JgsBuiltins
         RegisterArrayBuiltins(env, random, dialect);
         RegisterEnvironmentBuiltins(env, host);
         RegisterGeometryBuiltins(env);
+        RegisterMatlabLogicalConstructors(env, dialect); // over the JGS true and false the line above declares
         RegisterColorControlBuiltins(env, dialect);
         RegisterCameraBuiltins(env);
         RegisterPrimitive3DBuiltins(env);
@@ -5880,7 +5896,8 @@ internal static partial class JgsBuiltins
     {
         if (args.Count != count)
         {
-            throw new JgsRuntimeException(line, col, $"{name} expects {count} argument(s), but got {args.Count}.");
+            throw ArityRefusal(args.Count > count, line, col)
+                ?? new JgsRuntimeException(line, col, $"{name} expects {count} argument(s), but got {args.Count}.");
         }
     }
 
@@ -5888,9 +5905,19 @@ internal static partial class JgsBuiltins
     {
         if (args.Count < min || args.Count > max)
         {
-            throw new JgsRuntimeException(line, col, $"{name} expects between {min} and {max} argument(s), but got {args.Count}.");
+            throw ArityRefusal(args.Count > max, line, col)
+                ?? new JgsRuntimeException(line, col, $"{name} expects between {min} and {max} argument(s), but got {args.Count}.");
         }
     }
+
+    /// <summary>
+    /// R2025b's MATLAB:maxrhs or MATLAB:minrhs when the calling code is MATLAB's (ADR 0214); null for
+    /// JGS code, which keeps the sentence that names the builtin and the counts.
+    /// </summary>
+    private static JgsRuntimeException? ArityRefusal(bool tooMany, int line, int col) =>
+        !JgsRunningDialect.ThreadIsMatlab ? null
+        : tooMany ? new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.")
+        : new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
 
     /// <summary>
     /// What <c>find</c>'s optional arguments mean, which is not the same question in the two dialects.

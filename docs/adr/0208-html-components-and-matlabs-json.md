@@ -224,8 +224,6 @@ themselves), and `u7_classes` extended with `uihtml`. What they showed shaped th
   sent as an array of one.
 - **Event data are classed structs** (ADR 0202): a write to `e.EventName` is not refused
   (`u9b_bridge`, `evt_*_readonly`).
-- **An anonymous function sent to a page** is `func2str`'s text, which has spaces here (open item
-  54; `u9b_bridge`, `send_anonymous`).
 - Taken out of the fixtures, with the gap filed as open items: a component's class name and
   `properties(h)` (handles are numbers), dot access of an unknown name on a component (R2025b's
   `MATLAB:noSuchMethodOrField` and `MATLAB:noPublicFieldForClass`), and a component left with no

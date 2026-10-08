@@ -211,7 +211,9 @@ public class LoopVectorsM160Tests : IDisposable
         """, compiled: false);
 
     [Fact]
-    public void ALogicalStoreDemotesByTheWalk() => AssertParity("""
+    // A logical stored into a double vector keeps it double since ADR 0213; VStore still bails on a
+    // logical, so the walk does the store and both roads agree.
+    public void ALogicalStoreKeepsTheArraysClass() => AssertParity("""
         y = zeros(1, 10);
         flags = zeros(1, 10);
         for k = 1:10
