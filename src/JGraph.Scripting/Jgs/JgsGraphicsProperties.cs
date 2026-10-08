@@ -618,6 +618,7 @@ internal static partial class JgsGraphicsProperties
             else if (key.StartsWith("axes",StringComparison.OrdinalIgnoreCase)) { fresh=new AxesModel(); length=4; }
             else if (key.StartsWith("figure",StringComparison.OrdinalIgnoreCase)) { fresh=new FigureModel(); length=6; }
             else if (key.StartsWith("text",StringComparison.OrdinalIgnoreCase)) { fresh=JgsTextLabel.For(new AxesModel(),"Title"); length=4; }
+            else if (key.StartsWith("uicontrol",StringComparison.OrdinalIgnoreCase)) { fresh=new UiControlModel(); length=9; } // U11: GUIDE's CreateFcn template asks for the BackgroundColor
             if (fresh is not null)
             {
                 if (key.Equals("LineColor",StringComparison.OrdinalIgnoreCase)) return Row(33.0/255,33.0/255,33.0/255);
@@ -2018,11 +2019,22 @@ internal static partial class JgsGraphicsProperties
             // A row with no label of its own shows the series' DisplayName, which is what the legend
             // draws — so reading String answered empty strings for the ordinary case where a script
             // named its series rather than the legend.
-            Put(table, "String", entry => JgsValue.Cell(
-                ((LegendModel)entry.Target).Entries
+            //
+            // The rows are brought up to date first (U11): the renderer does that each frame, so a run
+            // that draws nothing - every -batch run - read an empty String back from legend(…).
+            Put(table, "String", entry =>
+            {
+                var legend = (LegendModel)entry.Target;
+                if (legend.Parent is AxesModel owner)
+                {
+                    legend.SyncEntries(owner.Plots.Where(static p => p is JGraph.Rendering.ILegendItem && p.ShowsInLegend));
+                }
+
+                return JgsValue.Cell(legend.Entries
                     .Select(e => JgsValue.Str(
                         e.Label is { Length: > 0 } written ? written : e.Plot?.DisplayName ?? string.Empty))
-                    .ToArray()));
+                    .ToArray());
+            });
             AddLegendBlock(table);
         }
 

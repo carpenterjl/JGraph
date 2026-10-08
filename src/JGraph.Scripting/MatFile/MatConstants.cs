@@ -38,6 +38,13 @@ internal static class MatConstants
     public const int MxUInt64 = 15;
     public const int MxFunction = 16;
 
+    /// <summary>
+    /// MATLAB's opaque element (U11, ADR 0210): a class instance MATLAB keeps in the file's subsystem
+    /// - a string, a datetime, a graphics object, a function handle's workspace - named here and
+    /// resolved through <see cref="MatMcos"/>.
+    /// </summary>
+    public const int MxOpaque = 17;
+
     // Array-flag bits.
     public const int FlagComplex = 0x0800;
     public const int FlagGlobal = 0x0400;

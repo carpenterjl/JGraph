@@ -1,0 +1,58 @@
+CHK|plots_figure|cell[1 6]{onoff off;char[1 5]'plots';onoff off;double[1 3] [1 1 0.80000000000000004];double[1 4] [100 100 640 360];char[1 5]'plots'}|exact
+CHK|plots_filename|logical[1 1] 1|exact
+CHK|plots_current|logical[1 1] 1|exact
+CHK|left_axes|cell[1 7]{double[1 4] [0.13 0.11 0.33465899999999998 0.81499999999999995];char[1 3]'Top';char[1 1]'X';char[1 1]'Y';onoff on;onoff on;char[1 4]'auto'}|exact
+CHK|right_axes|cell[1 6]{double[1 4] [0.57034099999999999 0.11 0.245226 0.81499999999999995];char[1 7]'reverse';double[1 2] [0.5 4.5];double[1 2] [0.5 4.5];char[1 6]'manual';double[1 2] [1 16]}|exact
+CHK|first_line|cell[1 6]{double[1 3] [1 0 0];char[1 1]'-';char[1 1]'o';double[1 1] 2;double[1 5] [1 2 3 4 5];double[1 5] [1 4 2 5 3]}|exact
+CHK|second_line|cell[1 3]{double[1 3] [0 0 1];char[1 2]'--';double[1 5] [2 2 3 3 4]}|exact
+CHK|line_order|cell[2 1]{char[1 6]'second';char[1 5]'first'}|exact
+CHK|note_text|cell[1 3]{char[1 4]'note';double[1 3] [2 3 0];double[1 3] [0 0.59999999999999998 0]}|exact
+CHK|image|cell[1 2]{double[4 4] [16 2 3 13;5 11 10 8;9 7 6 12;4 14 15 1];char[1 6]'scaled'}|exact
+CHK|legend|cell[1 2]{double[1 1] 1;cell[1 2]{char[1 1]'a';char[1 1]'b'}}|exact
+CHK|colorbar|double[1 1] 1|exact
+CHK|colormap|cell[1 2]{double[1 2] [16 3];double[1 3] [1 1 1]}|exact
+CHK|gui_figure|cell[1 4]{char[1 3]'gui';char[1 4]'none';char[1 6]'guifig';double[1 4] [100 100 420 300]}|exact
+CHK|panel|cell[1 4]{char[1 5]'Panel';char[1 10]'normalized';double[1 4] [0.050000000000000003 0.45000000000000001 0.5 0.49999999999999994];cell[4 1]{char[1 3]'chk';char[1 3]'pop';char[1 2]'ed';char[1 2]'go'}}|exact
+CHK|buttongroup|cell[1 3]{char[1 4]'Pick';char[1 2]'rb';cell[2 1]{char[1 2]'rb';char[1 2]'ra'}}|exact
+CHK|popup|cell[1 4]{char[1 9]'popupmenu';double[1 1] 2;cell[3 1]{char[1 3]'one';char[1 3]'two';char[1 5]'three'};double[1 4] [10 50 100 24]}|exact
+CHK|listbox|cell[1 3]{double[1 1] 2;double[1 2] [1 3];cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}}|exact
+CHK|slider|cell[1 5]{char[1 10]'normalized';double[1 4] [0.050000000000000003 0.29999999999999999 0.5 0.059999999999999998];double[1 1] 0;double[1 1] 10;double[1 1] 3}|exact
+CHK|checkbox|cell[1 2]{double[1 1] 1;char[1 5]'Check'}|exact
+CHK|push_callback|cell[1 2]{char[1 10]'pushbutton';char[1 21]'u11_log('go pressed')'}|exact
+CHK|edit|cell[1 3]{char[1 3]'abc';double[1 3] [1 1 1];char[1 4]'mctx'}|exact
+CHK|text_control|cell[1 3]{cell[2 1]{char[1 3]'two';char[1 5]'lines'};char[1 4]'bold';char[1 4]'left'}|exact
+CHK|menus|cell[1 3]{char[1 4]'File';char[1 4]'Open';char[1 1]'O'}|exact
+CHK|menu_callback_captured|char[1 6]'open 4'|exact
+CHK|table|cell[1 3]{double[2 2] [1 2;3 4];cell[2 1]{char[1 1]'p';char[1 1]'q'};double[1 4] [250 120 150 60]}|exact
+CHK|surf_visible|onoff off|exact
+CHK|surf_creates|char[1 30]'create L / create F / create P'|div=0210|diverges|char[1 30]'create F / create P / create L'
+CHK|surf_axes|cell[1 2]{double[1 2] [30 40];cell[3 1]{char[1 4]'line';char[1 5]'patch';char[1 7]'surface'}}|exact
+CHK|surface|double[1 2] [8 8]|exact
+CHK|patch|cell[1 2]{double[1 3] [0 1 0];double[1 1] 0.5}|exact
+CHK|u11_labels_axes|cell[1 8]{char[1 1]'T';char[1 2]'XL';char[1 2]'YL';char[1 3]'log';double[1 2] [0.5 4];char[1 6]'manual';char[1 4]'auto';onoff on}|exact
+CHK|u11_labels_legend|cell[1 1]{char[1 4]'only'}|exact
+CHK|u11_labels_line|double[1 3] [3 1 2]|exact
+CHK|u11_labels7_axes|cell[1 8]{char[1 1]'T';char[1 2]'XL';char[1 2]'YL';char[1 3]'log';double[1 2] [0.5 4];char[1 6]'manual';char[1 4]'auto';onoff on}|exact
+CHK|u11_labels7_legend|cell[1 1]{char[1 4]'only'}|exact
+CHK|u11_labels7_line|double[1 3] [3 1 2]|exact
+CHK|order_savefig|char[1 116]'create L2 / create L1 / create F / create M1 / create C2 / create P1 / create C1 / create A2 / create T3 / create A1'|div=0210|diverges|char[1 116]'create F / create M1 / create C2 / create P1 / create C1 / create A2 / create T3 / create A1 / create L2 / create L1'
+CHK|order_savefig_children|cell[5 1]{char[1 2]'M1';char[1 2]'C2';char[1 2]'P1';char[1 2]'A2';char[1 2]'A1'}|exact
+CHK|order_hgsave|char[1 116]'create L2 / create L1 / create F / create M1 / create C2 / create P1 / create C1 / create A2 / create T3 / create A1'|div=0210|diverges|char[1 116]'create F / create M1 / create C2 / create P1 / create C1 / create A2 / create T3 / create A1 / create L2 / create L1'
+CHK|order_struct_only|char[1 116]'create F / create M1 / create C2 / create P1 / create C1 / create A2 / create T3 / create A1 / create L2 / create L1'|exact
+CHK|order_struct_children|cell[5 1]{char[1 2]'M1';char[1 2]'C2';char[1 2]'P1';char[1 2]'A2';char[1 2]'A1'}|exact
+CHK|order_struct_axes|cell[2 1]{char[1 2]'L2';char[1 2]'L1'}|exact
+CHK|order_struct_panel|char[1 2]'C1'|exact
+CHK|reuse|logical[1 2] [1 0]|exact
+CHK|reuse_none_open|cell[1 2]{logical[1 1] 1;onoff off}|exact
+CHK|visible_option|onoff on|exact
+CHK|no_extension|cell[1 2]{char[1 5]'plots';onoff off}|exact
+CHK|bad_option|MATLAB:openfig:InvalidOption|exact
+CHK|bad_option_msg|'bogus' is not a recognized option.|exact
+CHK|missing|MATLAB:load:couldNotReadFile|exact
+CHK|missing_msg|Unable to find file or directory 'u11_nope.fig'.|exact
+CHK|missing_no_extension|MATLAB:load:couldNotReadFile|exact
+CHK|missing_no_extension_msg|Unable to find file or directory 'u11_nope'.|exact
+CHK|not_a_figure|MATLAB:loadFigure:InvalidFigFile|exact
+CHK|not_a_figure_msg|Invalid Figure file format.|exact
+CHK|hgload|cell[1 4]{onoff off;char[1 5]'plots';char[1 4]'cell';double[1 2] [1 1]}|exact
+CHK|hgload_props|cell[1 3]{onoff off;char[1 7]'renamed';cell[1 1]{struct[1 1]{(Name=char[1 5]'plots')}}}|exact

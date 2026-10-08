@@ -1,0 +1,8 @@
+*.out
+*.err
+# written by the probes; u11_makefix writes the fixtures' copies into the test helpers
+figs/
+guide/*.fig
+guide/myguides.m
+guide/myguidev.m
+guide/myguide0.m

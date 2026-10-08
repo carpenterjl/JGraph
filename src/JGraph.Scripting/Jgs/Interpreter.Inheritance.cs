@@ -133,6 +133,19 @@ internal sealed partial class Interpreter
         return true;
     }
 
+    /// <summary>
+    /// A handle to <paramref name="name"/>, which nothing answers yet: what R2025b's
+    /// <c>str2func</c> makes of any name (U11) - a GUIDE app's main function turns its first
+    /// argument into a handle whether it names a callback or a property - so that only a call is
+    /// refused.
+    /// </summary>
+    internal JgsValue UnansweredHandle(string name, JgsEnvironment env) =>
+        JgsValue.Function(new NamedHandle(
+            name, ResolutionLayer.Builtin, new UndefinedFunction(name, this), null, null, _resolver)
+        {
+            Context = AnyClasses ? env.ClassContext : null,
+        });
+
     /// <summary>What a handle to an unanswered name calls when no object's method takes the call: R2025b's refusal.</summary>
     private sealed class UndefinedFunction(string name, Interpreter interpreter) : IJgsCallable
     {

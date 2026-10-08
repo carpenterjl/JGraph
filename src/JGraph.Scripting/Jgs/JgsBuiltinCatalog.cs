@@ -2521,8 +2521,10 @@ public static class JgsBuiltinCatalog
         // .graph document, which openfig and hgload read back.
         Add("savefig", "Saves a figure to a file: savefig('name') or savefig(h, 'name.fig').", Opt("h"), P("filename"), Opt("compact"));
         Add("hgsave", "Saves a figure to a file; the older spelling of savefig.", Opt("h"), P("filename"));
-        Add("openfig", "Reads a saved figure back and returns a handle to it: h = openfig('name.fig').", P("filename"), Opt("mode"));
-        Add("hgload", "Reads a saved figure back; the older spelling of openfig.", P("filename"));
+        Add("openfig", "Reads a saved figure back and returns a handle to it: h = openfig('name.fig'), with 'new' or 'reuse' and 'visible' or 'invisible'. Reads MATLAB's own .fig files, either form, as well as this build's.", P("filename"), Opt("mode"), Opt("visibility"));
+        Add("hgload", "Reads a saved figure back, the older spelling of openfig: [h, old] = hgload('name.fig', props) also sets props on it.", P("filename"), Opt("props"));
+        Add("gui_mainfcn", "The GUIDE runtime a GUIDE app's main function calls: opens the app's .fig (or runs its layout function) and its opening and output functions, or runs one of its callbacks.", P("gui_State"), Opt("args..."));
+        Add("guide", "Answers MATLAB's own refusal: the GUIDE design environment has been removed. GUIDE apps still run.", Opt("filename"));
         // The print and export dialogs, and uiaxes (M84) — the six names that stood on the graphics
         // exclusion list as "app building" until the figure they describe turned out to be this one.
         Add("printdlg", "Opens the print dialog and prints the figure; printdlg('-setup', fig) opens page setup.", Opt("fig"));

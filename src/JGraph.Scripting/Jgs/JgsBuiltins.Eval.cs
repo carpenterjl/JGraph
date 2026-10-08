@@ -105,6 +105,10 @@ internal static partial class JgsBuiltins
 
         // U9b: a uihtml's event for its page.
         "sendEventToHTMLSource",
+
+        // U11: GUIDE's runtime calls back into the app's own file, and guide answers its removal.
+        // (openfig and hgload are re-declared here over their plain forms, so they are not listed.)
+        "gui_mainfcn", "guide",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -142,6 +146,7 @@ internal static partial class JgsBuiltins
         RegisterNetCompile(env, interpreter);
         RegisterSharedLibraryBuiltins(env, interpreter);
         RegisterDeviceBuiltins(env, interpreter, host);
+        RegisterFigFileBuiltins(env, interpreter, host); // U11
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.
@@ -481,9 +486,16 @@ internal static partial class JgsBuiltins
                 return interpreter.EvaluateSource(text, defining, line, col);
             }
 
-            // The same handle @name would make where the call stands (M145).
-            return interpreter.TryMakeHandle(text, interpreter.CurrentFrame, out JgsValue handle)
-                ? handle
+            // The same handle @name would make where the call stands (M145). A name nothing answers
+            // is still a handle in R2025b, refused only when called (U11): GUIDE's main function
+            // turns every first argument into one, 'Visible' included.
+            if (interpreter.TryMakeHandle(text, interpreter.CurrentFrame, out JgsValue handle))
+            {
+                return handle;
+            }
+
+            return interpreter.Dialect.IsMatlab && IsValidVariableName(text)
+                ? interpreter.UnansweredHandle(text, interpreter.CurrentFrame)
                 : throw new JgsRuntimeException(line, col, $"str2func: '{text}' is not a function.");
         });
 

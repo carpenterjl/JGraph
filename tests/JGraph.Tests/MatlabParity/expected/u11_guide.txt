@@ -1,0 +1,45 @@
+CHK|guide|char[1 32]'MATLAB:guide:GUIDEHasBeenRemoved'|exact
+CHK|guide_msg|char[1 324]'The GUIDE interactive design environment has been removed. You can continue to run and edit your GUIDE app from the MATLAB Editor by opening the app code file. To continue developing your apps interactively, use the <a href="matlab:guide.internal.launchGUIDEAppMaintenanceOptions()">GUIDE to App Designer Migration Tool</a>.'|div=0210|diverges|char[1 253]'The GUIDE interactive design environment has been removed. You can continue to run and edit your GUIDE app from the MATLAB Editor by opening the app code file. To continue developing your apps interactively, use the GUIDE to App Designer Migration Tool.'
+CHK|guide_file|char[1 32]'MATLAB:guide:GUIDEHasBeenRemoved'|exact
+CHK|research_open|cell[1 6]{onoff off;char[1 7]'figure1';char[1 8]'callback';cell[1 7]{char[1 7]'figure1';char[1 5]'text1';char[1 5]'edit1';char[1 11]'pushbutton1';char[1 6]'output';char[1 5]'count';char[1 11]'openingArgs'};double[1 3] [1 1 1];double[1 1] 2}|exact
+CHK|research_callback|cell[1 2]{double[1 1] 2;char[1 8]'Count: 2'}|exact
+CHK|research_singleton|logical[1 1] 1|exact
+CHK|u11_guide1_log|char[1 140]'edit1 create handles=double / opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1 / output nargout=1 visible=off'|exact
+CHK|u11_guide1_figure|cell[1 8]{onoff off;char[1 8]'callback';char[1 7]'figure1';char[1 10]'u11_guide1';logical[1 1] 1;onoff off;logical[1 1] 0;logical[1 1] 1}|exact
+CHK|u11_guide1_handles|cell[1 3]{cell[1 7]{char[1 7]'figure1';char[1 5]'text1';char[1 5]'edit1';char[1 11]'pushbutton1';char[1 6]'output';char[1 5]'count';char[1 11]'openingArgs'};double[1 1] 2;double[1 3] [1 1 1]}|exact
+CHK|u11_guide1_callback|cell[1 2]{double[1 1] 2;char[1 8]'Count: 2'}|exact
+CHK|u11_guide1_by_name|char[1 8]'Count: 4'|exact
+CHK|u11_guide1_no_function|char[1 24]'MATLAB:UndefinedFunction'|exact
+CHK|u11_guide1_createfcn_by_name|char[1 27]'edit1 create handles=struct'|exact
+CHK|u11_guide1_singleton|cell[1 3]{logical[1 1] 1;char[1 5]'Again';char[1 135]'opening nargs=4 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide1_statement|cell[1 2]{char[1 135]'opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=0 visible=off';double[1 1] 0}|exact
+CHK|u11_guide1_numeric_first|cell[1 2]{logical[1 1] 1;char[1 135]'opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide1_lone_word|cell[1 3]{logical[1 1] 1;onoff off;char[1 135]'opening nargs=1 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide1_unknown_pair|cell[1 2]{logical[1 1] 1;char[1 135]'opening nargs=4 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide1_unmatched_name|cell[1 2]{logical[1 1] 1;char[1 135]'opening nargs=4 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide1_after_delete|char[1 140]'edit1 create handles=double / opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1 / output nargout=1 visible=off'|exact
+CHK|u11_guide2_log|char[1 140]'edit1 create handles=double / opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1 / output nargout=1 visible=off'|exact
+CHK|u11_guide2_figure|cell[1 8]{onoff off;char[1 8]'callback';char[1 7]'figure1';char[1 10]'u11_guide2';logical[1 1] 1;onoff off;logical[1 1] 0;logical[1 1] 1}|exact
+CHK|u11_guide2_handles|cell[1 3]{cell[1 7]{char[1 7]'figure1';char[1 5]'text1';char[1 5]'edit1';char[1 11]'pushbutton1';char[1 6]'output';char[1 5]'count';char[1 11]'openingArgs'};double[1 1] 2;double[1 3] [1 1 1]}|exact
+CHK|u11_guide2_callback|cell[1 2]{double[1 1] 2;char[1 8]'Count: 2'}|exact
+CHK|u11_guide2_by_name|char[1 8]'Count: 4'|exact
+CHK|u11_guide2_no_function|char[1 24]'MATLAB:UndefinedFunction'|exact
+CHK|u11_guide2_createfcn_by_name|char[1 27]'edit1 create handles=struct'|exact
+CHK|u11_guide2_singleton|cell[1 3]{logical[1 1] 1;char[1 5]'Again';char[1 135]'opening nargs=4 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide2_statement|cell[1 2]{char[1 135]'opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=0 visible=off';double[1 1] 0}|exact
+CHK|u11_guide2_numeric_first|cell[1 2]{logical[1 1] 1;char[1 135]'opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide2_lone_word|cell[1 3]{logical[1 1] 1;onoff off;char[1 135]'opening nargs=1 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide2_unknown_pair|cell[1 2]{logical[1 1] 1;char[1 135]'opening nargs=4 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide2_unmatched_name|cell[1 2]{logical[1 1] 1;char[1 135]'opening nargs=4 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1,output,count,openingArgs / output nargout=1 visible=off'}|exact
+CHK|u11_guide2_after_delete|char[1 140]'edit1 create handles=double / opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1 / output nargout=1 visible=off'|exact
+CHK|saved_hidden|cell[1 3]{onoff off;logical[1 1] 0;char[1 140]'edit1 create handles=double / opening nargs=0 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1 / output nargout=1 visible=off'}|exact
+CHK|saved_visible|cell[1 2]{onoff on;char[1 139]'edit1 create handles=double / opening nargs=0 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1 / output nargout=1 visible=on'}|exact
+CHK|saved_visible_kept_hidden|onoff off|exact
+CHK|saved_visible_openfig|cell[1 3]{onoff on;char[1 8]'callback';char[1 170]'edit1 create handles=double / opening nargs=2 visible=off hv=on init=1 fields=figure1,text1,edit1,pushbutton1 / output nargout=1 visible=off / edit1 create handles=double'}|exact
+CHK|not_singleton|logical[1 1] 0|exact
+CHK|layout|cell[1 3]{char[1 47]'x layout reuse / x opening fields=figure1,text1';char[1 7]'figure1';onoff off}|exact
+CHK|layout_again|cell[1 2]{logical[1 1] 0;char[1 47]'x layout reuse / x opening fields=figure1,text1'}|exact
+CHK|mainfcn_no_args|MATLAB:minrhs|exact
+CHK|mainfcn_no_args_msg|Not enough input arguments.|exact
+CHK|mainfcn_no_figure|MATLAB:load:couldNotReadFile|exact
+CHK|mainfcn_no_figure_msg|Unable to find file or directory 'u11_nofig_here.fig'.|exact

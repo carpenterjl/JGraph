@@ -772,3 +772,43 @@ property's forms and refusal); `notify` runs it after the listeners; a failure i
 raised; on a plain class the attribute is `MATLAB:class:UnrecognizedAttribute`.
 
 Not measured: anything in a window.
+
+## U11 findings (R2025b, headless)
+
+Probes in `u11/` (`run-probe.ps1` as before): `u11_figs` and `u11_hgm` (what `savefig` and
+`hgsave` write, `openfig`/`hgload`), `u11_lte` (the struct tree of the shipped LTE GUIDE figure and
+an `hgsave` file with labels), `u11_guide` (GUIDE pairs under R2025b's `gui_mainfcn`, with
+`guide/myguide.m` and `guide/myguidex.m`), `u11_open` and `u11_guiderun` (read-only, run in both
+engines and diffed), and `u11_makefix`, which writes the parity fixtures' figure files.
+
+**R2025b's `savefig` writes no struct tree**: `hgS_080000` is an empty 0×0 struct and the figure
+is only in `hgM_080000.GraphicsObjects.Format3Data`, a `matlab.ui.Figure` in the MAT-file's MCOS
+subsystem. `hgsave` (and R2024a's `savefig`) write both `hgS_070000` and `hgM_070000`; MATLAB
+reads `hgM` first and a file with `hgS` alone too.
+
+**The struct tree** keeps public names; an axes's `special` is `[title; xlabel; ylabel; zlabel]` as
+1-based places among its children; children are stored **oldest first**; a legend is a
+figure-level `scribe.legend`; callbacks are MATLAB function elements whose anonymous text starts
+`sf%N`.
+
+**The subsystem's objects** save `Name_I`/`Name_IS` beside `NameMode`; a container's and a
+figure's place is in a `UnitPos`, an axes's limits in its data space (`XLimWithInfsMode` marks a
+limit `imagesc` set), its labels on its rulers, `SerializableChildren` newest first; a function
+handle is `{0xDD000000, struct}` with its captures in a `function_handle_workspace` object.
+
+**`openfig`**: a new figure, current, `FileName` the full path, visible as saved unless
+`'visible'`/`'invisible'`; `'reuse'` answers the first figure open from the file;
+`MATLAB:openfig:InvalidOption`, `MATLAB:load:couldNotReadFile` (the name as given),
+`MATLAB:loadFigure:InvalidFigFile`. `hgload`'s second output is a cell holding the old values
+(`Visible` left out). CreateFcns on open: the struct form alone runs parent first in `Children`
+order; the subsystem form runs one axes's lines before the figure.
+
+**`gui_mainfcn`**: a callback only when the name contains the source's `Tag` and `_` (or
+`_CreateFcn`); the figure is invisible through the opening function (`HandleVisibility` `'on'`,
+`InGUIInitialization` set), shown before the output function only if saved visible and not asked
+otherwise; pairs naming figure properties are set, others ignored; the output function gets the
+caller's `nargout`, zero included; a singleton reuses the open figure and reruns the opening
+function; a layout function gets `'reuse'`/`'new'` and must set `GUIDEOptions` itself.
+`guide` is `MATLAB:guide:GUIDEHasBeenRemoved`.
+
+Not measured: anything in a window; a `uifigure` saved by `savefig`; chart objects in a file.

@@ -35,12 +35,106 @@ internal sealed class MatFileReader
     /// <summary>The handle objects read so far, by the element id the writer gave them.</summary>
     private readonly Dictionary<int, JgsValue> _handles;
 
+    /// <summary>
+    /// What an opaque element stands for (U11): handed its class name and its content, the
+    /// reference into the subsystem. Null refuses the element by name.
+    /// </summary>
+    private Func<string, JgsValue, JgsValue>? _opaque;
+
     private MatFileReader(byte[] bytes, bool swap, IMatObjectBinder? binder, Dictionary<int, JgsValue> handles)
     {
         _bytes = bytes;
         _swap = swap;
         _binder = binder;
         _handles = handles;
+    }
+
+    /// <summary>
+    /// Reads a MATLAB-written file whose variables refer into its subsystem (U11, ADR 0210): the
+    /// subsystem is decoded first, into the <see cref="MatMcos"/> returned beside the variables, and
+    /// each opaque element read afterwards is resolved through it - a function handle's workspace to
+    /// the struct of what it captured, anything else to the reference <see cref="MatMcos.Refs"/>
+    /// reads back. A file with no subsystem answers a null store.
+    /// </summary>
+    /// <exception cref="InvalidDataException">The file is not a level-5 MAT-file, or is malformed.</exception>
+    public static (IReadOnlyList<(string Name, JgsValue Value)> Variables, MatMcos? Store) ReadWithSubsystem(
+        string path, IReadOnlySet<string>? wanted, IMatObjectBinder binder)
+    {
+        byte[] bytes = File.ReadAllBytes(path);
+        if (bytes.Length < 128 || Hdf5File.Looks(bytes))
+        {
+            throw new InvalidDataException("Not a level-5 MAT-file.");
+        }
+
+        var reader = new MatFileReader(bytes, Swaps(bytes), binder, new Dictionary<int, JgsValue>());
+        MatMcos? store = reader.ReadSubsystem();
+        reader._opaque = store is null ? null : store.Opaque;
+        return (reader.ReadVariables(128, wanted), store);
+    }
+
+    /// <summary>
+    /// The subsystem the header's offset (bytes 116-123) points at: a <c>uint8</c> variable whose
+    /// bytes are a small MAT stream of its own, whose one struct holds MATLAB's <c>FileWrapper__</c>
+    /// object, whose content is the cell <see cref="MatMcos"/> decodes. No offset, no subsystem.
+    /// </summary>
+    private MatMcos? ReadSubsystem()
+    {
+        long offset = I64(116);
+        if (offset <= 128 || offset >= _bytes.Length || offset == 0x2020202020202020)
+        {
+            return null;
+        }
+
+        (int type, int size, int dataStart, _) = ReadTag((int)offset);
+        MatFileReader holder = this;
+        int start = dataStart;
+        int length = size;
+        if (type == MiCompressed)
+        {
+            holder = new MatFileReader(Inflate(dataStart, size), _swap, _binder, _handles);
+            (_, length, start, _) = holder.ReadTag(0);
+        }
+        else if (type != MiMatrix)
+        {
+            return null;
+        }
+
+        byte[] payload = holder.RawBytes(start, length);
+        if (payload.Length < 16)
+        {
+            return null;
+        }
+
+        var inner = new MatFileReader(payload, _swap, _binder, _handles)
+        {
+            _opaque = static (_, content) => content, // the wrapper's content is what is wanted
+        };
+        foreach ((_, JgsValue value) in inner.ReadVariables(8, null))
+        {
+            if (value.Type == JgsType.Struct && !value.IsStructArray
+                && value.AsStruct.TryGetValue("MCOS", out JgsValue? wrapper) && wrapper.Type == JgsType.Cell)
+            {
+                return new MatMcos(wrapper.AsCell, _binder);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>The bytes of a <c>uint8</c> matrix element, taken as they are rather than widened.</summary>
+    private byte[] RawBytes(int start, int size)
+    {
+        int at = start;
+        (_, _, _, at) = ReadTag(at); // flags
+        (_, _, _, at) = ReadTag(at); // dimensions
+        (_, _, _, at) = ReadTag(at); // name
+        (int dataType, int dataSize, int dataStart, _) = ReadTag(at);
+        if (dataType is not (MiUInt8 or MiInt8) || dataStart + dataSize > start + size)
+        {
+            return [];
+        }
+
+        return _bytes.AsSpan(dataStart, dataSize).ToArray();
     }
 
     /// <summary>
@@ -135,7 +229,7 @@ internal sealed class MatFileReader
             (int type, int size, int dataStart, int next) = ReadTag(at);
             if (type == MiCompressed)
             {
-                var inner = new MatFileReader(Inflate(dataStart, size), _swap, _binder, _handles);
+                var inner = new MatFileReader(Inflate(dataStart, size), _swap, _binder, _handles) { _opaque = _opaque };
                 (int innerType, int innerSize, int innerStart, _) = inner.ReadTag(0);
                 if (innerType == MiMatrix)
                 {
@@ -233,6 +327,13 @@ internal sealed class MatFileReader
 
     private (string Name, JgsValue Value) ReadMatrix(int start, int size)
     {
+        // MATLAB writes an empty field - a struct tree's childless node - as a matrix element with
+        // nothing in it (U11): the empty double it was.
+        if (size == 0)
+        {
+            return (string.Empty, JgsValue.Array([]));
+        }
+
         int at = start;
         int end = start + size;
 
@@ -248,6 +349,21 @@ internal sealed class MatFileReader
         bool isLogical = (flags & FlagLogical) != 0;
         int second = I32(flagsStart + 4); // nzmax for a sparse array; an object's element id
         at = afterFlags;
+
+        // An opaque element has no dimensions: its name, its type system and its class follow the
+        // flags, then the content that refers into the subsystem (U11).
+        if (arrayClass == MxOpaque)
+        {
+            string opaqueName = ReadText(ref at);
+            ReadText(ref at); // the type system, 'MCOS'
+            string opaqueClass = ReadText(ref at);
+            (int contentType, int contentSize, int contentStart, _) = ReadTag(at);
+            JgsValue content = contentType == MiMatrix ? ReadMatrix(contentStart, contentSize).Value : JgsValue.Array([]);
+            return _opaque is { } resolve
+                ? (opaqueName, resolve(opaqueClass, content))
+                : throw new InvalidDataException(
+                    $"MAT-file variable '{opaqueName}' holds a MATLAB {opaqueClass} object, which cannot be loaded.");
+        }
 
         (int dimsType, int dimsSize, int dimsStart, int afterDims) = ReadTag(at);
         if (dimsType != MiInt32)
@@ -530,7 +646,28 @@ internal sealed class MatFileReader
                 $"MAT-file variable '{name}' holds a function handle, which cannot be loaded.");
         }
 
-        Dictionary<string, JgsValue> body = ReadFields(ref at, end, ReadFieldNames(ref at));
+        // MATLAB's own form nests one struct - matlabroot, separator, sentinel and function_handle,
+        // the struct functions() reports - where this build's writer puts the fields directly (U11).
+        Dictionary<string, JgsValue> body;
+        (int firstType, int firstSize, int firstStart, _) = ReadTag(at);
+        if (firstType == MiMatrix)
+        {
+            JgsValue outer = ReadMatrix(firstStart, firstSize).Value;
+            body = outer.Type == JgsType.Struct && !outer.IsStructArray
+                   && outer.AsStruct.TryGetValue("function_handle", out JgsValue? described)
+                   && described.Type == JgsType.Struct && !described.IsStructArray
+                ? new Dictionary<string, JgsValue>(described.AsStruct, StringComparer.Ordinal)
+                : throw new InvalidDataException($"MAT-file variable '{name}' is a function handle with no function.");
+            if (body.TryGetValue("function", out JgsValue? saved) && saved.Type == JgsType.String)
+            {
+                body["function"] = JgsValue.Str(MatMcos.FunctionText(saved.AsString));
+            }
+        }
+        else
+        {
+            body = ReadFields(ref at, end, ReadFieldNames(ref at));
+        }
+
         string text = body.TryGetValue("function", out JgsValue? function) && function.Type == JgsType.String
             ? function.AsString
             : throw new InvalidDataException($"MAT-file variable '{name}' is a function handle with no function.");

@@ -46,6 +46,10 @@ internal static partial class JgsBuiltins
 
         // U9b.
         "uihtml",
+
+        // U11: a MATLAB figure file's objects run their CreateFcns as it opens, and a GUIDE app's
+        // main function runs its opening, output and callback functions.
+        "gui_mainfcn", "hgload", "openfig",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code
