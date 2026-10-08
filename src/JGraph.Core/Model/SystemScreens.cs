@@ -91,6 +91,85 @@ internal static class SystemScreens
 
     private delegate bool MonitorEnumProc(IntPtr monitor, IntPtr hdc, ref NativeRect rect, IntPtr data);
 
+    /// <summary>
+    /// The pointer in MATLAB's screen pixels (bottom-left origin, 1-based, Y upward), scaled by the
+    /// monitor it is on, or null where it cannot be read.
+    /// </summary>
+    public static Point2D? ReadPointer(double primaryHeight)
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return null;
+        }
+
+        try
+        {
+            if (!GetCursorPos(out NativePoint at))
+            {
+                return null;
+            }
+
+            double scale = ScaleAt(at);
+            return new Point2D((at.X / scale) + 1, primaryHeight - (at.Y / scale));
+        }
+        catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException or MarshalDirectiveException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>Moves the pointer to a point given as <see cref="ReadPointer"/> answers one.</summary>
+    public static void MovePointer(Point2D point, double primaryHeight)
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        try
+        {
+            // The scale is the one at the target, found from the target as an unscaled point first.
+            var guess = new NativePoint { X = (int)Math.Round(point.X - 1), Y = (int)Math.Round(primaryHeight - point.Y) };
+            double scale = ScaleAt(guess);
+            SetCursorPos((int)Math.Round((point.X - 1) * scale), (int)Math.Round((primaryHeight - point.Y) * scale));
+        }
+        catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException or MarshalDirectiveException)
+        {
+            // Nowhere to move it.
+        }
+    }
+
+    private static double ScaleAt(NativePoint at)
+    {
+        try
+        {
+            IntPtr monitor = MonitorFromPoint(at, 2); // the nearest monitor
+            return monitor != IntPtr.Zero && GetDpiForMonitor(monitor, 0, out uint dpiX, out _) == 0 && dpiX > 0
+                ? dpiX / 96.0
+                : 1;
+        }
+        catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+        {
+            return 1;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativePoint
+    {
+        public int X;
+        public int Y;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool GetCursorPos(out NativePoint point);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int x, int y);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromPoint(NativePoint point, uint flags);
+
     [DllImport("user32.dll")]
     private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr clip, MonitorEnumProc callback, IntPtr data);
 

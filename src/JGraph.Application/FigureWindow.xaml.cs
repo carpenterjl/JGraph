@@ -149,6 +149,9 @@ public partial class FigureWindow : Window
         // way a legend row queues its ItemHitFcn (M80).
         FigureView.ToolbarButtonPressed += (_, button) =>
         {
+            // The button's own callback first (U12): a state button has already flipped. Which of
+            // the two R2025b runs first is not measured yet (open item 78).
+            ScriptGraphicsCallbacks.NotifyToolbarButton(button, previous: !button.Value);
             if (button.Parent is AxesToolbarModel toolbar)
             {
                 ScriptGraphicsCallbacks.NotifyToolbarSelection(toolbar, button);

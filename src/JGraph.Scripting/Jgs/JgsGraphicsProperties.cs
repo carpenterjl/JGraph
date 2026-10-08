@@ -42,6 +42,13 @@ internal sealed class GraphicsProperty
     /// <c>set(h)</c> lists beside the name (U3). Null for a property that takes something else.
     /// </summary>
     public IReadOnlyList<string>? Words { get; init; }
+
+    /// <summary>
+    /// When set, the objects of the table's type that have the property at all: one model can stand
+    /// for two MATLAB classes, and a name only one of them has is neither listed nor answered by the
+    /// other (U12: a toolbar button's ButtonPushedFcn and ValueChangedFcn).
+    /// </summary>
+    public Func<GraphObject, bool>? OnlyWhen { get; init; }
 }
 
 /// <summary>
@@ -589,13 +596,17 @@ internal static partial class JgsGraphicsProperties
     /// <summary>Every property name an object answers to, alphabetically.</summary>
     public static IReadOnlyList<string> NamesOf(GraphObject target)
     {
-        var names = TableFor(target.GetType()).Values.Where(static p => p.Listed).Select(static p => p.Name).ToList();
+        var names = TableFor(target.GetType()).Values
+            .Where(p => p.Listed && (p.OnlyWhen is null || p.OnlyWhen(target)))
+            .Select(static p => p.Name)
+            .ToList();
         names.Sort(StringComparer.OrdinalIgnoreCase);
         return names;
     }
 
     public static bool TryFind(GraphObject target, string name, out GraphicsProperty property) =>
-        TableFor(target.GetType()).TryGetValue(name.ToLowerInvariant(), out property!);
+        TableFor(target.GetType()).TryGetValue(name.ToLowerInvariant(), out property!)
+        && (property.OnlyWhen is null || property.OnlyWhen(target));
 
     public static JgsValue Get(JgsHandleEntry entry, string name, int line, int col)
     {
@@ -2632,6 +2643,7 @@ internal static partial class JgsGraphicsProperties
             {
                 Listed = property.Listed,
                 Words = words,
+                OnlyWhen = property.OnlyWhen,
             };
         }
     }
@@ -2692,6 +2704,7 @@ internal static partial class JgsGraphicsProperties
                 {
                     Listed = false,
                     Words = property.Words,
+                    OnlyWhen = property.OnlyWhen,
                 };
             }
         }

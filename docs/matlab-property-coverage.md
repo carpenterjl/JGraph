@@ -5,46 +5,97 @@ building the object in `jgraph.exe` and asking it, not from reading the source: 
 table is built by reflection over the model's CLR types, so what an object answers to is a
 runtime fact.
 
-**1569 of 1585 documented properties** are answered across the
-31 object kinds that could be built and asked. The other
+**2914 of 2930 documented properties** are answered across the
+78 object kinds that could be built and asked. The other
 0 kinds are counted separately below rather than scored as zero —
 an object that cannot be reached is not the same measurement as one missing properties, and
 folding the two together is the mistake `docs/matlab-builtin-coverage.md` has been corrected
 for six times.
 
-| Kind | MATLAB class | Answered | Documented | Extra |
-|---|---|---:|---:|---:|
-| `uiaxes` | `UIAxes` | 148 | 148 | 59 |
-| `axes` | `Axes` | 147 | 147 | 60 |
-| `polaraxes` | `PolarAxes` | 107 | 107 | 100 |
-| `scatter` | `Scatter` | 68 | 74 | 25 |
-| `bubblechart` | `BubbleChart` | 67 | 73 | 26 |
-| `figure` | `Figure` | 66 | 66 | 8 |
-| `surface` | `Surface` | 60 | 60 | 21 |
-| `patch` | `Patch` | 56 | 56 | 21 |
-| `pie` | `Patch` | 56 | 56 | 19 |
-| `line` | `Line` | 48 | 52 | 13 |
-| `errorbar` | `ErrorBar` | 52 | 52 | 11 |
-| `quiver` | `Quiver` | 52 | 52 | 11 |
-| `histogram` | `Histogram` | 46 | 46 | 10 |
-| `contour` | `Contour` | 46 | 46 | 19 |
-| `bar` | `Bar` | 44 | 44 | 14 |
-| `stem` | `Stem` | 43 | 43 | 11 |
-| `colorbar` | `ColorBar` | 42 | 42 | 14 |
-| `text` | `Text` | 41 | 41 | 17 |
-| `legend` | `Legend` | 39 | 39 | 11 |
-| `area` | `Area` | 39 | 39 | 10 |
-| `heatmap` | `HeatmapChart` | 39 | 39 | 32 |
-| `stair` | `Stair` | 38 | 38 | 23 |
-| `bubblelegend` | `BubbleLegend` | 37 | 37 | 13 |
-| `constantline` | `ConstantLine` | 35 | 35 | 18 |
-| `boxchart` | `BoxChart` | 29 | 29 | 24 |
-| `tiledlayout` | `TiledChartLayout` | 28 | 28 | 16 |
-| `image` | `Image` | 27 | 27 | 18 |
-| `light` | `Light` | 21 | 21 | 5 |
-| `uimenu` | `Menu` | 21 | 21 | 11 |
-| `axestoolbar` | `AxesToolbar` | 15 | 15 | 8 |
-| `uicontextmenu` | `ContextMenu` | 12 | 12 | 11 |
+**Hidden** counts the documented names `get(h)` leaves out but `get(h, name)` answers.
+R2025b hides them too (a `uicontrol`'s `TooltipString`, a `uitable`'s `Extent`), so they
+are counted as answered: they are what a script ported from MATLAB writes.
+
+| Kind | MATLAB class | Answered | Documented | Hidden | Extra |
+|---|---|---:|---:|---:|---:|
+| `uiaxes` | `UIAxes` | 148 | 148 | 0 | 61 |
+| `axes` | `Axes` | 147 | 147 | 0 | 62 |
+| `polaraxes` | `PolarAxes` | 107 | 107 | 0 | 102 |
+| `scatter` | `Scatter` | 68 | 74 | 0 | 25 |
+| `bubblechart` | `BubbleChart` | 67 | 73 | 0 | 26 |
+| `figure` | `Figure` | 66 | 66 | 0 | 10 |
+| `uifigure` | `Figure` | 66 | 66 | 0 | 10 |
+| `surface` | `Surface` | 60 | 60 | 0 | 22 |
+| `patch` | `Patch` | 56 | 56 | 0 | 21 |
+| `pie` | `Patch` | 56 | 56 | 0 | 19 |
+| `line` | `Line` | 48 | 52 | 0 | 13 |
+| `errorbar` | `ErrorBar` | 52 | 52 | 0 | 11 |
+| `quiver` | `Quiver` | 52 | 52 | 0 | 11 |
+| `uitable` | `Table` | 50 | 50 | 3 | 4 |
+| `histogram` | `Histogram` | 46 | 46 | 0 | 10 |
+| `contour` | `Contour` | 46 | 46 | 0 | 20 |
+| `bar` | `Bar` | 44 | 44 | 0 | 14 |
+| `uicontrol` | `UIControl` | 44 | 44 | 4 | 0 |
+| `stem` | `Stem` | 43 | 43 | 0 | 11 |
+| `colorbar` | `ColorBar` | 42 | 42 | 0 | 15 |
+| `text` | `Text` | 41 | 41 | 0 | 17 |
+| `uibuttongroup` | `ButtonGroup` | 41 | 41 | 1 | 3 |
+| `legend` | `Legend` | 39 | 39 | 0 | 11 |
+| `area` | `Area` | 39 | 39 | 0 | 10 |
+| `heatmap` | `HeatmapChart` | 39 | 39 | 0 | 32 |
+| `stair` | `Stair` | 38 | 38 | 0 | 23 |
+| `uipanel` | `Panel` | 38 | 38 | 1 | 3 |
+| `bubblelegend` | `BubbleLegend` | 37 | 37 | 0 | 13 |
+| `ninetydegreegauge` | `NinetyDegreeGauge` | 36 | 36 | 0 | 0 |
+| `semicirculargauge` | `SemicircularGauge` | 36 | 36 | 0 | 0 |
+| `constantline` | `ConstantLine` | 35 | 35 | 0 | 18 |
+| `uigauge` | `Gauge` | 35 | 35 | 0 | 0 |
+| `lineargauge` | `LinearGauge` | 35 | 35 | 0 | 0 |
+| `uispinner` | `Spinner` | 35 | 35 | 0 | 2 |
+| `uicheckboxtree` | `CheckBoxTree` | 34 | 34 | 0 | 2 |
+| `uislider` | `Slider` | 34 | 34 | 0 | 2 |
+| `uitree` | `Tree` | 33 | 33 | 0 | 2 |
+| `numericeditfield` | `NumericEditField` | 33 | 33 | 0 | 2 |
+| `uiknob` | `Knob` | 33 | 33 | 0 | 0 |
+| `statebutton` | `StateButton` | 32 | 32 | 0 | 1 |
+| `uidatepicker` | `DatePicker` | 32 | 32 | 0 | 0 |
+| `uibutton` | `Button` | 31 | 31 | 0 | 1 |
+| `uidropdown` | `DropDown` | 31 | 31 | 0 | 3 |
+| `uihyperlink` | `Hyperlink` | 31 | 31 | 0 | 0 |
+| `uitextarea` | `TextArea` | 31 | 31 | 0 | 0 |
+| `uieditfield` | `EditField` | 30 | 30 | 0 | 2 |
+| `uitogglebutton` | `ToggleButton` | 30 | 30 | 0 | 1 |
+| `boxchart` | `BoxChart` | 29 | 29 | 0 | 24 |
+| `uilabel` | `Label` | 29 | 29 | 0 | 0 |
+| `uilistbox` | `ListBox` | 29 | 29 | 0 | 4 |
+| `tiledlayout` | `TiledChartLayout` | 28 | 28 | 0 | 16 |
+| `uiswitch` | `Switch` | 28 | 28 | 0 | 1 |
+| `rockerswitch` | `RockerSwitch` | 28 | 28 | 0 | 1 |
+| `toggleswitch` | `ToggleSwitch` | 28 | 28 | 0 | 1 |
+| `image` | `Image` | 27 | 27 | 0 | 19 |
+| `uicheckbox` | `CheckBox` | 27 | 27 | 0 | 0 |
+| `discreteknob` | `DiscreteKnob` | 27 | 27 | 0 | 1 |
+| `uitabgroup` | `TabGroup` | 25 | 25 | 0 | 0 |
+| `uiradiobutton` | `RadioButton` | 25 | 25 | 0 | 1 |
+| `uitab` | `Tab` | 24 | 24 | 0 | 0 |
+| `uiimage` | `Image` | 24 | 24 | 0 | 2 |
+| `uitoggletool` | `ToggleTool` | 23 | 23 | 2 | 3 |
+| `light` | `Light` | 21 | 21 | 0 | 5 |
+| `uimenu` | `Menu` | 21 | 21 | 0 | 3 |
+| `uigridlayout` | `GridLayout` | 21 | 21 | 0 | 4 |
+| `uifiguremenu` | `Menu` | 21 | 21 | 0 | 3 |
+| `uipushtool` | `PushTool` | 20 | 20 | 2 | 3 |
+| `uihtml` | `HTML` | 20 | 20 | 0 | 1 |
+| `uilamp` | `Lamp` | 19 | 19 | 0 | 0 |
+| `axtoolbarstate` | `ToolbarStateButton` | 18 | 18 | 0 | 9 |
+| `axtoolbarbtn` | `ToolbarPushButton` | 17 | 17 | 0 | 10 |
+| `root` | `Root` | 16 | 16 | 0 | 16 |
+| `axestoolbar` | `AxesToolbar` | 15 | 15 | 0 | 8 |
+| `uitreenode` | `TreeNode` | 15 | 15 | 0 | 0 |
+| `uitoolbar` | `Toolbar` | 14 | 14 | 1 | 3 |
+| `uicontextmenu` | `ContextMenu` | 12 | 12 | 0 | 3 |
+| `uiprogressdlg` | `ProgressDialog` | 10 | 10 | 0 | 0 |
+| `uistyle` | `Style` | 6 | 6 | 0 | 4 |
 
 ## Does the verb hand back what it drew?
 

@@ -260,7 +260,51 @@ internal static class JgsRunner
     private static string Brief(JgsValue value) =>
         value.AsExternalOrNull() is { } external
             ? external.Summary() is { } summary ? $"1×1 {external.ClassName}: {summary}" : $"1×1 {external.ClassName}"
-            : value.Display();
+            : HandleBrief(value) ?? value.Display();
+
+    /// <summary>
+    /// What the pane shows for graphics handles (U12): MATLAB's pane names the class, <c>1×1 Button</c>,
+    /// and the number a handle is here follows it. Only minted handles are named — they are never
+    /// whole numbers — because a figure's number cannot be told from any other 1; and only an array
+    /// of live handles, so a number that merely matches one is shown as the number it is.
+    /// </summary>
+    private static string? HandleBrief(JgsValue value)
+    {
+        const int Largest = 1000; // asked after every statement: a long array of numbers is not handles
+        if (value.Type is not (JgsType.Number or JgsType.Array) || value.NumericClass != JgsNumericClass.Double
+            || value.TimeTag is not null)
+        {
+            return null;
+        }
+
+        int count = value.Type == JgsType.Number ? 1 : value.ArrayLength;
+        if (count is 0 or > Largest)
+        {
+            return null;
+        }
+
+        string? word = null;
+        bool mixed = false;
+        for (int i = 0; i < count; i++)
+        {
+            JgsValue element = value.Type == JgsType.Number ? value : value.ElementAt(i);
+            double number = element.Type == JgsType.Number ? element.AsNumber : double.NaN;
+            if (!double.IsFinite(number) || number == Math.Floor(number)
+                || !JgsHandleRegistry.TryGet(element, out JgsHandleEntry? entry))
+            {
+                return null;
+            }
+
+            string kind = JgsGraphicsCallbackValues.ClassWord(entry.Target);
+            mixed |= word is not null && word != kind;
+            word ??= kind;
+        }
+
+        string size = value.Type == JgsType.Number ? "1×1" : $"{value.Rows}×{value.Cols}";
+        return count == 1
+            ? $"{size} {word} ({value.Display()})"
+            : $"{size} {(mixed ? "graphics array" : word)}";
+    }
 
     /// <summary>
     /// Defines the <c>run(path)</c> builtin: it resolves the path like the table readers do, parses the

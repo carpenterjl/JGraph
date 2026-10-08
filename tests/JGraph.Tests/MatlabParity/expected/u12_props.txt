@@ -1,0 +1,39 @@
+CHK|root_listed|logical[1 4] [1 1 1 1]|exact
+CHK|root_font|char[1 11]'Courier New'|exact
+CHK|root_font_set|char[1 8]'Consolas'|exact
+CHK|root_font_num|MATLAB:class:RequireString|exact
+CHK|root_font_num_msg|Error setting property 'FixedWidthFontName' of class 'Root': Value must be a character vector or a string scalar.|exact
+CHK|root_font_string|char[1 14]'Lucida Console'|exact
+CHK|root_depth|double[1 1] 32|exact
+CHK|root_depth_set|double[1 1] 8|exact
+CHK|root_pointer|cell[1 2]{char[1 6]'double';double[1 2] [1 2]}|exact
+CHK|root_pointer_bad|MATLAB:datatypes:Point2dDataType:ArrayShape|exact
+CHK|root_pointer_bad_msg|Error setting property 'PointerLocation' of class 'Root': Input must be 1x2|exact
+CHK|root_cbo_empty|logical[1 1] 1|exact
+CHK|root_cbo_set|MATLAB:class:SetProhibited|exact
+CHK|root_cbo_set_msg|Unable to set the 'CallbackObject' property of class ''Root'' because it is read-only.|exact
+CHK|root_cbo_in_callback|cell[1 2]{logical[1 1] 1;logical[1 1] 1}|exact
+CHK|root_cbo_after|logical[1 1] 1|exact
+CHK|push_default|char[0 0]''|exact
+CHK|state_default|char[0 0]''|exact
+CHK|push_listed|logical[1 2] [1 0]|exact
+CHK|state_listed|logical[1 2] [0 1]|exact
+CHK|push_set|cell[1 2]{char[1 15]'function_handle';logical[1 1] 1}|exact
+CHK|state_set|char[1 7]'disp(1)'|exact
+CHK|push_isprop|logical[1 2] [1 0]|exact
+CHK|state_isprop|logical[1 2] [0 1]|exact
+CHK|push_numeric|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|push_numeric_msg|Error setting property 'ButtonPushedFcn' of class 'ToolbarPushButton': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|push_pair|logical[1 1] 1|exact
+CHK|push_cleared|char[0 0]''|exact
+CHK|obj_one|char[1 21]'matlab.ui.style.Style'|exact
+CHK|obj_one_one|char[1 21]'matlab.ui.style.Style'|exact
+CHK|obj_end|char[1 21]'matlab.ui.style.Style'|exact
+CHK|obj_colon|char[1 21]'matlab.ui.style.Style'|exact
+CHK|obj_empty_parens|char[1 21]'matlab.ui.style.Style'|exact
+CHK|obj_true|char[1 21]'matlab.ui.style.Style'|exact
+CHK|obj_field|char[1 4]'bold'|exact
+CHK|obj_two|MATLAB:badsubscript|div=0211|diverges|
+CHK|obj_two_msg|Index exceeds the number of array elements. Index must not exceed 1.|div=0211|diverges|Index 2 is out of range for length 1 (indexing is 1-based).
+CHK|obj_zero|MATLAB:badsubscript|div=0211|diverges|
+CHK|obj_zero_msg|Array indices must be positive integers or logical values.|div=0211|diverges|Index 0 is out of range for length 1 (indexing is 1-based).

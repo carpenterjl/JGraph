@@ -598,6 +598,10 @@ internal sealed class JgsCallbackDispatcher
             case GraphicsEventKind.ComponentUser when graphicsEvent.Interim is JgsValue made:
                 return made;
 
+            // An axes toolbar button's press (U12), in R2025b's classes and field order.
+            case GraphicsEventKind.ComponentUser when graphicsEvent.Target is AxesToolbarButtonModel button:
+                return JgsUiEventData.ToolbarButton(button, source, graphicsEvent.Interim is true);
+
             case GraphicsEventKind.CloseRequest:
                 return JgsUiEventData.WindowCloseRequest(source);
 

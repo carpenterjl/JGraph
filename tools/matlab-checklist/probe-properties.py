@@ -64,7 +64,9 @@ KINDS: list[tuple[str, str, str]] = [
     ("stem", "matlab.graphics.chart.primitive.Stem", "h = stem([1 2 3]);"),
     ("errorbar", "matlab.graphics.chart.primitive.ErrorBar",
      "h = errorbar([1 2 3], [1 2 3], [.1 .1 .1]);"),
-    ("contour", "matlab.graphics.chart.primitive.Contour", "h = contour(peaks(8));"),
+    # One output is the contour matrix, not the object (R2025b; this build agrees since it learned
+    # that), so the object is the second output.
+    ("contour", "matlab.graphics.chart.primitive.Contour", "[~, h] = contour(peaks(8));"),
     ("quiver", "matlab.graphics.chart.primitive.Quiver",
      "h = quiver([0 1], [0 1], [1 1], [1 1]);"),
     ("image", "matlab.graphics.primitive.Image", "h = image(magic(4));"),
@@ -99,6 +101,73 @@ KINDS: list[tuple[str, str, str]] = [
     ("uicontextmenu", "matlab.ui.container.ContextMenu", "figure; h = uicontextmenu;"),
     ("uimenu", "matlab.ui.container.Menu",
      "figure; cm = uicontextmenu; h = uimenu(cm, 'Text', 'Copy');"),
+
+    # U12 of the app-building plan: the matlab.ui classes U1-U11 made real. Each documented class is
+    # its own row even where this build has one model under several (the four gauge shapes, the two
+    # switch styles' three classes), because a script reaches each by its own maker. A uifigure is
+    # made first wherever MATLAB would make one implicitly, so a row measures the component and not
+    # the implicit parent. The plain figure's uifigure twin is measured against the same Figure
+    # class, which is what MATLAB documents it as.
+    ("root", "matlab.ui.Root", "h = groot;"),
+    ("uifigure", "matlab.ui.Figure", "h = uifigure;"),
+    ("uicontrol", "matlab.ui.control.UIControl", "figure; h = uicontrol;"),
+    ("uipanel", "matlab.ui.container.Panel", "f = uifigure; h = uipanel(f);"),
+    ("uibuttongroup", "matlab.ui.container.ButtonGroup", "f = uifigure; h = uibuttongroup(f);"),
+    ("uitabgroup", "matlab.ui.container.TabGroup", "f = uifigure; h = uitabgroup(f);"),
+    ("uitab", "matlab.ui.container.Tab", "f = uifigure; g = uitabgroup(f); h = uitab(g);"),
+    ("uigridlayout", "matlab.ui.container.GridLayout", "f = uifigure; h = uigridlayout(f);"),
+    ("uitree", "matlab.ui.container.Tree", "f = uifigure; h = uitree(f);"),
+    ("uicheckboxtree", "matlab.ui.container.CheckBoxTree", "f = uifigure; h = uitree(f, 'checkbox');"),
+    ("uitreenode", "matlab.ui.container.TreeNode",
+     "f = uifigure; t = uitree(f); h = uitreenode(t, 'Text', 'a');"),
+    ("uifiguremenu", "matlab.ui.container.Menu", "f = uifigure; h = uimenu(f, 'Text', 'File');"),
+    ("uitoolbar", "matlab.ui.container.Toolbar", "f = figure; h = uitoolbar(f);"),
+    ("uipushtool", "matlab.ui.container.toolbar.PushTool",
+     "f = figure; t = uitoolbar(f); h = uipushtool(t);"),
+    ("uitoggletool", "matlab.ui.container.toolbar.ToggleTool",
+     "f = figure; t = uitoolbar(f); h = uitoggletool(t);"),
+    ("uibutton", "matlab.ui.control.Button", "f = uifigure; h = uibutton(f);"),
+    ("statebutton", "matlab.ui.control.StateButton", "f = uifigure; h = uibutton(f, 'state');"),
+    ("uicheckbox", "matlab.ui.control.CheckBox", "f = uifigure; h = uicheckbox(f);"),
+    ("uidatepicker", "matlab.ui.control.DatePicker", "f = uifigure; h = uidatepicker(f);"),
+    ("uidropdown", "matlab.ui.control.DropDown", "f = uifigure; h = uidropdown(f);"),
+    ("uieditfield", "matlab.ui.control.EditField", "f = uifigure; h = uieditfield(f);"),
+    ("numericeditfield", "matlab.ui.control.NumericEditField",
+     "f = uifigure; h = uieditfield(f, 'numeric');"),
+    ("uigauge", "matlab.ui.control.Gauge", "f = uifigure; h = uigauge(f);"),
+    ("lineargauge", "matlab.ui.control.LinearGauge", "f = uifigure; h = uigauge(f, 'linear');"),
+    ("ninetydegreegauge", "matlab.ui.control.NinetyDegreeGauge",
+     "f = uifigure; h = uigauge(f, 'ninetydegree');"),
+    ("semicirculargauge", "matlab.ui.control.SemicircularGauge",
+     "f = uifigure; h = uigauge(f, 'semicircular');"),
+    ("uihtml", "matlab.ui.control.HTML", "f = uifigure; h = uihtml(f);"),
+    ("uihyperlink", "matlab.ui.control.Hyperlink", "f = uifigure; h = uihyperlink(f);"),
+    ("uiimage", "matlab.ui.control.Image", "f = uifigure; h = uiimage(f);"),
+    ("uiknob", "matlab.ui.control.Knob", "f = uifigure; h = uiknob(f);"),
+    ("discreteknob", "matlab.ui.control.DiscreteKnob", "f = uifigure; h = uiknob(f, 'discrete');"),
+    ("uilabel", "matlab.ui.control.Label", "f = uifigure; h = uilabel(f);"),
+    ("uilamp", "matlab.ui.control.Lamp", "f = uifigure; h = uilamp(f);"),
+    ("uilistbox", "matlab.ui.control.ListBox", "f = uifigure; h = uilistbox(f);"),
+    ("uiradiobutton", "matlab.ui.control.RadioButton",
+     "f = uifigure; g = uibuttongroup(f); h = uiradiobutton(g);"),
+    ("uitogglebutton", "matlab.ui.control.ToggleButton",
+     "f = uifigure; g = uibuttongroup(f); h = uitogglebutton(g);"),
+    ("uislider", "matlab.ui.control.Slider", "f = uifigure; h = uislider(f);"),
+    ("uispinner", "matlab.ui.control.Spinner", "f = uifigure; h = uispinner(f);"),
+    ("uiswitch", "matlab.ui.control.Switch", "f = uifigure; h = uiswitch(f);"),
+    ("rockerswitch", "matlab.ui.control.RockerSwitch", "f = uifigure; h = uiswitch(f, 'rocker');"),
+    ("toggleswitch", "matlab.ui.control.ToggleSwitch", "f = uifigure; h = uiswitch(f, 'toggle');"),
+    ("uitable", "matlab.ui.control.Table", "f = uifigure; h = uitable(f);"),
+    ("uitextarea", "matlab.ui.control.TextArea", "f = uifigure; h = uitextarea(f);"),
+    ("uiprogressdlg", "matlab.ui.dialog.ProgressDialog", "f = uifigure; h = uiprogressdlg(f);"),
+    ("uistyle", "matlab.ui.style.Style", "h = uistyle('FontWeight', 'bold');"),
+    ("axtoolbarbtn", "matlab.ui.controls.ToolbarPushButton",
+     "plot([1 2 3]); t = axtoolbar; h = axtoolbarbtn(t, 'push');"),
+    ("axtoolbarstate", "matlab.ui.controls.ToolbarStateButton",
+     "plot([1 2 3]); t = axtoolbar; h = axtoolbarbtn(t, 'state');"),
+    # ComponentContainer has no maker: it is reached only through a class file a script writes, so a
+    # one-statement row cannot build it. FigureAPPD is the documented table's App Designer view of a
+    # figure, not an object a script holds. Both are left unmeasured rather than scored as zero.
 ]
 
 # Drawing verbs MATLAB documents as returning an object. A verb that draws and returns nothing is
@@ -128,9 +197,11 @@ RETURNS: list[tuple[str, str]] = [
     ("meshz", "h = meshz(peaks(8));"),
     ("waterfall", "h = waterfall(peaks(8));"),
     ("ribbon", "h = ribbon(peaks(8));"),
-    ("contour", "h = contour(peaks(8));"),
-    ("contourf", "h = contourf(peaks(8));"),
-    ("contour3", "h = contour3(peaks(8));"),
+    # The contour verbs' one output is the contour matrix (U12 found these three reading as
+    # not-a-handle once this build agreed with MATLAB on that); the object is the second.
+    ("contour", "[~, h] = contour(peaks(8));"),
+    ("contourf", "[~, h] = contourf(peaks(8));"),
+    ("contour3", "[~, h] = contour3(peaks(8));"),
     # Two triangles, not one: the connectivity argument has to arrive as a matrix, and a single row
     # written [1 2 3] is a vector. The first draft of this line measured that mistake, not the verb.
     ("trisurf", "h = trisurf([1 2 3; 2 3 4], [0 1 0 1], [0 0 1 1], [0 0 1 1]);"),
@@ -225,13 +296,35 @@ catch ME
 end
 """
 
+# Three things the template allows for, each found by U12's matlab.ui rows against R2025b (probe
+# u12_props): an object with no Type (a ProgressDialog), one with no get (a Style, whose names are
+# its properties), and a name get(h) leaves out that get(h, name) still answers — MATLAB's hidden
+# properties, such as a uicontrol's TooltipString or a uitable's Extent, which R2025b hides as well.
+# A hidden name that answers is counted as answered; it is what a script porting from MATLAB writes.
 TEMPLATE = """\
 try
     {snippet}
-    fprintf('TYPE %s\\n', get(h(1), 'Type'));
-    names = fieldnames(get(h(1)));
+    try
+        fprintf('TYPE %s\\n', get(h(1), 'Type'));
+    catch
+    end
+    try
+        names = fieldnames(get(h(1)));
+    catch
+        names = properties(h(1));
+    end
     for k = 1:numel(names)
         fprintf('PROP %s\\n', names{{k}});
+    end
+    documented = {documented};
+    for k = 1:numel(documented)
+        if ~any(strcmp(names, documented{{k}}))
+            try
+                get(h(1), documented{{k}});
+                fprintf('HIDDEN %s\\n', documented{{k}});
+            catch
+            end
+        end
     end
 catch ME
     fprintf('ERROR %s\\n', ME.message);
@@ -248,17 +341,19 @@ def documented(path: Path) -> dict[str, set[str]]:
     return table
 
 
-def run(exe: Path, folder: Path, label: str, snippet: str) -> tuple[str, str, list[str]]:
-    """Runs one kind's script. Returns (verdict, type name, property names)."""
+def run(exe: Path, folder: Path, label: str, snippet: str,
+        documented_names: set[str]) -> tuple[str, str, list[str], list[str]]:
+    """Runs one kind's script. Returns (verdict, type name, listed names, hidden names that answer)."""
     script = folder / f"prop_{label}.m"
-    script.write_text(TEMPLATE.format(snippet=snippet), encoding="utf-8")
+    cell = "{" + ", ".join(f"'{name}'" for name in sorted(documented_names)) + "}"
+    script.write_text(TEMPLATE.format(snippet=snippet, documented=cell), encoding="utf-8")
 
     try:
         done = subprocess.run(
             [str(exe), "-batch", script.name, "-sd", str(folder)],
             capture_output=True, text=True, timeout=120)
     except subprocess.TimeoutExpired:
-        return "failed", "", ["the verb did not finish inside two minutes"]
+        return "failed", "", ["the verb did not finish inside two minutes"], []
 
     text = done.stdout + done.stderr
     if match := re.search(r"^ERROR (.*)$", text, re.M):
@@ -267,15 +362,16 @@ def run(exe: Path, folder: Path, label: str, snippet: str) -> tuple[str, str, li
         # itself ran — what it handed back is the problem — and that is a different finding from a
         # verb that refused, so it gets a verdict of its own rather than being filed under failure.
         if "not a handle" in message or "a null" in message or "got a function" in message:
-            return "no-handle", "", [message]
-        return "failed", "", [message]
+            return "no-handle", "", [message], []
+        return "failed", "", [message], []
 
-    kind = (re.search(r"^TYPE (.*)$", text, re.M) or re.match("", "")).group(1).strip() \
-        if re.search(r"^TYPE (.*)$", text, re.M) else ""
+    typed = re.search(r"^TYPE (.*)$", text, re.M)
+    kind = typed.group(1).strip() if typed else ""
     names = [line[5:].strip() for line in text.splitlines() if line.startswith("PROP ")]
+    hidden = [line[7:].strip() for line in text.splitlines() if line.startswith("HIDDEN ")]
     if not names:
-        return "no-handle", kind, ["the object was built but answered no properties"]
-    return "ok", kind, names
+        return "no-handle", kind, ["the object was built but answered no properties"], []
+    return "ok", kind, names, hidden
 
 
 def returns_handle(exe: Path, folder: Path, verb: str, snippet: str) -> str:
@@ -314,11 +410,12 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="jgraph-props-") as temporary:
         folder = Path(temporary)
         for label, klass, snippet in KINDS:
-            verdict, kind, names = run(args.exe, folder, label, snippet)
             want = table.get(klass, set())
             if not want:
                 print(f"warning: {klass} has no documented properties in the CSV", file=sys.stderr)
-            have = set(names) if verdict == "ok" else set()
+            verdict, kind, names, hidden = run(args.exe, folder, label, snippet, want)
+            listed = set(names) if verdict == "ok" else set()
+            have = listed | set(hidden)
             results.append({
                 "label": label,
                 "class": klass,
@@ -326,11 +423,12 @@ def main() -> int:
                 "verdict": verdict,
                 "documented": len(want),
                 "implemented": len(want & have),
-                "extra": len(have - want),
+                "hidden": len(want & set(hidden)),
+                "extra": len(listed - want),
                 "missing": sorted(want - have),
                 "note": "" if verdict == "ok" else (names[0] if names else ""),
             })
-            print(f"  {label:<14} {verdict:<10} {len(want & have)}/{len(want)}")
+            print(f"  {label:<18} {verdict:<10} {len(want & have)}/{len(want)}")
 
         returns = [(verb, returns_handle(args.exe, folder, verb, snippet))
                    for verb, snippet in RETURNS]
@@ -361,12 +459,16 @@ def main() -> int:
         "folding the two together is the mistake `docs/matlab-builtin-coverage.md` has been corrected",
         "for six times.",
         "",
-        "| Kind | MATLAB class | Answered | Documented | Extra |",
-        "|---|---|---:|---:|---:|",
+        "**Hidden** counts the documented names `get(h)` leaves out but `get(h, name)` answers.",
+        "R2025b hides them too (a `uicontrol`'s `TooltipString`, a `uitable`'s `Extent`), so they",
+        "are counted as answered: they are what a script ported from MATLAB writes.",
+        "",
+        "| Kind | MATLAB class | Answered | Documented | Hidden | Extra |",
+        "|---|---|---:|---:|---:|---:|",
     ]
     for row in sorted(ok, key=lambda r: -r["documented"]):
         lines.append(f"| `{row['label']}` | `{row['class'].split('.')[-1]}` | "
-                     f"{row['implemented']} | {row['documented']} | {row['extra']} |")
+                     f"{row['implemented']} | {row['documented']} | {row['hidden']} | {row['extra']} |")
 
     unreachable = [r for r in results if r["verdict"] != "ok"]
     if unreachable:

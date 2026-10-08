@@ -649,4 +649,12 @@ internal sealed class JgsGraphicsRoot : GraphObject
     /// </summary>
     [System.ComponentModel.Browsable(false)]
     public UiUnits Units { get; set; } = UiUnits.Pixels;
+
+    /// <summary>The root's <c>FixedWidthFontName</c> (U12): R2025b's Windows default until a script names another.</summary>
+    [System.ComponentModel.Browsable(false)]
+    public string FixedWidthFontName { get; set; } = "Courier New";
+
+    /// <summary>The root's <c>ScreenDepth</c> (U12): stored, as R2025b stores a write, and changes nothing.</summary>
+    [System.ComponentModel.Browsable(false)]
+    public double ScreenDepth { get; set; } = 32;
 }

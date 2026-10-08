@@ -411,6 +411,23 @@ public static class ScriptGraphicsCallbacks
         }
     }
 
+    /// <summary>
+    /// Reports a press of one button of an axes toolbar (U12): a push button's
+    /// <c>ButtonPushedFcn</c>, or a state button's <c>ValueChangedFcn</c> after its value flipped.
+    /// </summary>
+    /// <param name="button">The button pressed.</param>
+    /// <param name="previous">A state button's value before the press; ignored for a push button.</param>
+    public static void NotifyToolbarButton(AxesToolbarButtonModel button, bool previous)
+    {
+        ArgumentNullException.ThrowIfNull(button);
+        string name = button.Style == ToolbarButtonStyle.State ? "ValueChangedFcn" : "ButtonPushedFcn";
+        if (JgsHandleRegistry.TryGetEntry(button, out JgsHandleEntry? entry) && entry.NamedCallbacks.ContainsKey(name))
+        {
+            ScriptEventQueue.Enqueue(new GraphicsEvent(
+                GraphicsEventKind.ComponentUser, button, Clicked: button, Action: name, Interim: previous));
+        }
+    }
+
     /// <summary>Reports that a menu entry was picked — the entry's <c>MenuSelectedFcn</c>.</summary>
     public static void NotifyMenuSelected(MenuItemModel item)
     {

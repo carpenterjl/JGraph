@@ -130,6 +130,10 @@ internal static class JgsGraphicsCallbackValues
         ContextMenuModel => "ContextMenu",
         MenuItemModel => "Menu",
         LinePlot => "Line",
+        AxesToolbarModel => "AxesToolbar",
+        AxesToolbarButtonModel button => button.Style == ToolbarButtonStyle.State // probe u12_more
+            ? "ToolbarStateButton"
+            : "ToolbarPushButton",
         _ => Capitalised(JgsGraphicsProperties.TypeNameOf(target)),
     };
 
@@ -174,6 +178,8 @@ internal static class JgsUiEventData
         HitClass,
         SizeChangedDataClass,
         SelectionChangedDataClass,
+        ToolbarButtonPushedClass,
+        ToolbarValueChangedClass,
     };
 
     /// <summary>
@@ -187,6 +193,37 @@ internal static class JgsUiEventData
     public static JgsValue Action(JgsValue source) => Make(ActionDataClass, source, "Action");
 
     public static JgsValue WindowCloseRequest(JgsValue source) => Make(WindowCloseRequestDataClass, source, "Close");
+
+    public const string ToolbarButtonPushedClass = "matlab.graphics.controls.eventdata.ButtonPushedEventData";
+    public const string ToolbarValueChangedClass = "matlab.graphics.controls.eventdata.ValueChangedEventData";
+
+    /// <summary>
+    /// What an axes toolbar button's callback is told (U12, probe <c>u12_more</c>): R2025b's
+    /// ButtonPushedEventData (Source, Axes, EventName) or ValueChangedEventData (and Value,
+    /// PreviousValue), in the order its class lists them.
+    /// </summary>
+    public static JgsValue ToolbarButton(AxesToolbarButtonModel button, JgsValue source, bool previous)
+    {
+        JgsValue axes = button.Parent?.Parent is AxesModel owner
+            ? JgsHandleRegistry.For(owner)
+            : JgsMatrix.FromColumnMajor([], 0, 0);
+        bool state = button.Style == ToolbarButtonStyle.State;
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Source"] = source,
+            ["Axes"] = axes,
+            ["EventName"] = JgsValue.Str(state ? "ValueChanged" : "ButtonPushed"),
+        };
+        if (state)
+        {
+            fields["Value"] = JgsValue.Str(previous ? "off" : "on");
+            fields["PreviousValue"] = JgsValue.Str(previous ? "on" : "off");
+        }
+
+        JgsValue data = JgsValue.Struct(fields);
+        data.SetClassName(state ? ToolbarValueChangedClass : ToolbarButtonPushedClass);
+        return data;
+    }
 
     /// <summary>One event data value: the class's own fields first, then <c>Source</c> and <c>EventName</c>.</summary>
     public static JgsValue Make(

@@ -812,3 +812,32 @@ function; a layout function gets `'reuse'`/`'new'` and must set `GUIDEOptions` i
 `guide` is `MATLAB:guide:GUIDEHasBeenRemoved`.
 
 Not measured: anything in a window; a `uifigure` saved by `savefig`; chart objects in a file.
+
+## U12 findings (R2025b, headless)
+
+Probes in `u12/` (`run-probe.ps1` as before): `u12_props` (each name R2021b documents that the
+regenerated property coverage found missing, asked of R2025b by `get(h)`, `isprop` and
+`get(h, name)`), `u12_more` (the root's four names and the axes toolbar buttons' callbacks and event
+data classes) and `u12_examples` (the guide's two app examples, run in both engines and diffed).
+
+**Hidden, not missing**: a `uicontrol`'s `HitTest`, `Selected`, `SelectionHighlight` and
+`TooltipString`, the panels' and toolbar tools' `HitTest`, the tools' `TooltipString` and a
+`uitable`'s `Extent`, `HitTest` and `RearrangeableColumns` are left out of `get(h)` and answer
+`get(h, name)` and `isprop`. A `ProgressDialog` has no `Type`; a `Style` has no `get` (its names are
+its `properties`); `s(1)` on one is the style.
+
+**The root** lists `CallbackObject` (empty outside a callback, the source inside one, read-only:
+`MATLAB:class:SetProhibited`), `FixedWidthFontName` (`'Courier New'`, text only:
+`MATLAB:class:RequireString`), `PointerLocation` (1×2 double; another shape is
+`MATLAB:datatypes:Point2dDataType:ArrayShape`, "Input must be 1x2") and `ScreenDepth` (32, and a
+write is kept).
+
+**Axes toolbar buttons**: a `ToolbarPushButton` lists `ButtonPushedFcn` first and a
+`ToolbarStateButton` `ValueChangedFcn`, each `''` until set and unknown to the other class
+(`MATLAB:noPublicFieldForClass`); a bad value is `MATLAB:datatypes:callback:CreateCallback`.
+Their event data are `matlab.graphics.controls.eventdata.ButtonPushedEventData` (`Source`, `Axes`,
+`EventName`) and `ValueChangedEventData` (and `Value`, `PreviousValue`); the toolbar's is
+`SelectionChangedEventData` (`Axes`, `Selection`, `PreviousSelection`, `Source`, `EventName`).
+
+Not measured: a press in a window, so which of a button's callback and the toolbar's
+`SelectionChangedFcn` runs first (open item 78).

@@ -178,6 +178,14 @@
       <li><a href="#dev-instruments">Instruments</a></li>
       <li><a href="#dev-usb">USB devices</a></li>
       <li><a href="#dev-audio-video">Audio &amp; video</a></li>
+      <div class="grouplabel">Apps and GUIs</div>
+      <li><a href="#apps">Apps and GUIs</a></li>
+      <li><a href="#apps-running" class="sub">Running an app</a></li>
+      <li><a href="#apps-classic" class="sub">Classic figures</a></li>
+      <li><a href="#apps-uifigure" class="sub">uifigure apps</a></li>
+      <li><a href="#apps-designer" class="sub">App Designer apps</a></li>
+      <li><a href="#apps-guide" class="sub">GUIDE &amp; .fig files</a></li>
+      <li><a href="#apps-differences" class="sub">Where apps differ</a></li>
       <div class="grouplabel">Plotting model</div>
       <li><a href="#figmodel">Figures, axes &amp; show</a></li>
       <li><a href="#linespec">Line-spec strings</a></li>
@@ -456,7 +464,7 @@ m(<span class="num">0</span>, :) = []                <span class="com"># deletin
       <li>Drawing verbs hand back <strong>handles</strong>: <code>ax = subplot(2,1,1)</code>, <code>p = plot(ax, x, y)</code>, <code>lgd = legend(ax, p, 'Location', 'best')</code>. A handle names a figure object, so <code>p.Color</code>, <code>p.LineWidth</code> and <code>p.DisplayName</code> read, <code>p.Visible = 'off'</code> writes, and <code>title(ax, …)</code> aims a verb at one axes without making it the current one. Handles are numbers, so they go in arrays, compare with <code>==</code>, and gather out of a struct array with <code>[rows.line]</code>. Set <code>lgd.ItemHitFcn</code> to a function handle and clicking that legend row in the figure window runs it, with the clicked line in <code>event.Peer</code>.</li>
     </ul>
     <div class="callout"><strong>Matrix vs. elementwise:</strong> in a <code>.m</code> file <code>*</code>, <code>/</code>, and <code>^</code> are matrix operations and the dotted forms <code>.*</code>, <code>./</code>, <code>.^</code> are elementwise, exactly as MATLAB has them. JGraph's arrays are one-dimensional, so <code>*</code> implements matrix×matrix and matrix×vector; a product of two plain vectors is ambiguous and raises an error naming <code>.*</code> and <code>dot</code>, rather than silently returning the wrong thing.</div>
-    <div class="note"><strong>What is not supported</strong> is named plainly rather than failing obscurely: <code>classdef</code>, <code>parfor</code>, struct arrays (<code>s(2).f</code>), and toolbox functions JGraph does not have (<code>ode45</code>, <code>fmincon</code>, <code>syms</code>, …) report exactly what is missing. See <a href="#" onclick="return false;">ADR 0031</a> for the full boundary, including how the 1-D array model shapes <code>size</code> and transpose.</div>
+    <div class="note"><strong>What is not supported</strong> is named plainly rather than failing obscurely: <code>parfor</code>, arrays of class objects, and toolbox functions JGraph does not have (<code>ode45</code>, <code>fmincon</code>, <code>syms</code>, …) report exactly what is missing. See <a href="#" onclick="return false;">ADR 0031</a> for the full boundary, including how the 1-D array model shapes <code>size</code> and transpose.</div>
     <pre><code><span class="com">% A MATLAB script — unmodified.</span>
 t = <span class="num">0</span>:<span class="num">0.01</span>:<span class="num">1</span>;
 y = <span class="fn">exp</span>(<span class="num">-3</span>*t) .* <span class="fn">sin</span>(<span class="num">2</span>*<span class="kw">pi</span>*<span class="num">5</span>*t);
@@ -609,6 +617,74 @@ img = <span class="fn">snapshot</span>(cam);
 <span class="fn">imshow</span>(img)
 <span class="fn">clear</span> cam   <span class="com">% releases the camera; its light goes out</span></code></pre>
     <div class="note"><strong>Where JGraph differs.</strong> MATLAB needs the Audio Toolbox for MIDI and a support package for <code>webcam</code>; JGraph has both built in. Audio devices are listed in MATLAB's order and with its names, and played through Windows' shared mode, so other programs keep their sound. A camera or microphone in use shows Windows' own indicator; a script that opens one holds it until the variable is cleared.</div>
+
+    <!-- ================= APPS AND GUIS ================= -->
+    <h2 id="apps">Apps and GUIs</h2>
+    <p>A <code>.m</code> file that builds a window of buttons, fields and plots runs in JGraph as it runs in MATLAB R2025b: the same functions, properties, defaults, callbacks, event data and error messages. All four ways MATLAB has of writing an app work, and an app written one way can use the others' pieces:</p>
+    <ul>
+      <li><strong>Classic figures</strong> built from <code>figure</code> and <code>uicontrol</code>, the oldest and most common kind of GUI script.</li>
+      <li><strong><code>uifigure</code> apps</strong> built from MATLAB's newer components and laid out with <code>uigridlayout</code>.</li>
+      <li><strong>App Designer apps</strong>: <code>.mlapp</code> files, and the class files App Designer exports.</li>
+      <li><strong>GUIDE apps</strong>: a <code>.m</code> file and a <code>.fig</code> file made by MATLAB's retired GUIDE tool.</li>
+    </ul>
+
+    <h2 id="apps-running">Running an app</h2>
+    <p><strong>In JGraph,</strong> run the app's file with the Run button or <kbd>F5</kbd>, or type its name at the prompt. Its windows stay open after the script ends, as in MATLAB, and their callbacks run in the console's workspace as you use them. A callback runs when the script is waiting: at a <code>pause</code>, a <code>drawnow</code>, a <code>uiwait</code> or <code>waitfor</code>, or when the console prompt is idle. It never runs in the middle of a statement. <code>Interruptible</code> and <code>BusyAction</code> decide what happens to a click that arrives while another callback is running. <strong>Clear Workspace</strong> clears variables only: open windows, their callbacks and the data stored on them stay until each window closes.</p>
+    <p><strong>From the command line,</strong> <code>jgraph -batch app.m</code> runs the script and ends with it, as MATLAB's <code>-batch</code> does, noting each window it did not show. Add <code>-showfigures</code> to show them: the process then stays until the last window closes, running callbacks as you use them, and a callback's <code>exit</code> ends it with that exit code. A <code>uiwait</code> or <code>waitfor</code> that nothing could ever end, because no window is shown, warns as R2025b does and returns instead of hanging.</p>
+    <p><strong>In the Workspace pane,</strong> a variable holding a component shows its class and its number, for example <code>1×1 Button (1000001.5)</code>. An array of handles shows its size and class, or <em>graphics array</em> when the classes differ. A figure's number is shown as a plain number, because it cannot be told apart from any other whole number.</p>
+    <pre><code><span class="com">% counter.m - a classic GUI: a number and a button that adds one to it.</span>
+f = <span class="fn">figure</span>(<span class="str">'Name'</span>, <span class="str">'Counter'</span>, <span class="str">'MenuBar'</span>, <span class="str">'none'</span>, <span class="str">'Position'</span>, [<span class="num">300</span> <span class="num">300</span> <span class="num">240</span> <span class="num">120</span>]);
+t = <span class="fn">uicontrol</span>(f, <span class="str">'Style'</span>, <span class="str">'text'</span>, <span class="str">'String'</span>, <span class="str">'0'</span>, <span class="str">'FontSize'</span>, <span class="num">20</span>, <span class="str">'Position'</span>, [<span class="num">20</span> <span class="num">60</span> <span class="num">200</span> <span class="num">40</span>]);
+<span class="fn">uicontrol</span>(f, <span class="str">'Style'</span>, <span class="str">'pushbutton'</span>, <span class="str">'String'</span>, <span class="str">'Add one'</span>, <span class="str">'Position'</span>, [<span class="num">20</span> <span class="num">15</span> <span class="num">200</span> <span class="num">30</span>], ...
+    <span class="str">'Callback'</span>, @(src, evt) <span class="fn">set</span>(t, <span class="str">'String'</span>, <span class="fn">num2str</span>(<span class="fn">str2double</span>(t.String) + <span class="num">1</span>)));</code></pre>
+
+    <h2 id="apps-classic">Classic figures and uicontrol</h2>
+    <ul>
+      <li><strong>Controls:</strong> <code>uicontrol</code> makes all ten of MATLAB's styles: push and toggle buttons, check boxes, radio buttons, edit fields, static text, sliders, list boxes, pop-up menus and frames. <code>uipanel</code> and <code>uibuttongroup</code> hold them, and a button group keeps one of its buttons selected. <code>uitable</code>, <code>uitabgroup</code> with <code>uitab</code>, <code>uimenu</code> on a figure or on a <code>uicontextmenu</code>, and <code>uitoolbar</code> with <code>uipushtool</code> and <code>uitoggletool</code> complete the set.</li>
+      <li><strong>Positions and units:</strong> every container and control takes <code>Units</code> (pixels, normalized, characters, points, inches, centimeters), and <code>get(groot, 'ScreenSize')</code> and <code>MonitorPositions</code> are the real screens. <code>getpixelposition</code>, <code>setpixelposition</code>, <code>movegui</code> and <code>uistack</code> work, as do <code>Extent</code> and <code>textwrap</code>.</li>
+      <li><strong>Callbacks</strong> take MATLAB's three forms: a function handle called as <code>f(src, evt)</code>, text run in the base workspace, or a cell <code>{f, a, b}</code> called as <code>f(src, evt, a, b)</code>. The event data are R2025b's classes, so <code>evt.Source</code>, <code>evt.EventName</code> and <code>class(evt)</code> answer as in MATLAB. <code>gcbo</code>, <code>gcbf</code> and <code>get(groot, 'CallbackObject')</code> name the object whose callback is running. Figures also run <code>KeyPressFcn</code>, <code>WindowButtonDownFcn</code>, <code>SizeChangedFcn</code>, <code>CloseRequestFcn</code> and the rest.</li>
+      <li><strong>App data:</strong> <code>guidata</code>, <code>guihandles</code>, <code>setappdata</code>/<code>getappdata</code> and <code>UserData</code> keep an app's state on its figure.</li>
+      <li><strong>Waiting and dialogs:</strong> <code>uiwait</code>/<code>uiresume</code> and <code>waitfor</code> block until the app says so. <code>msgbox</code>, <code>errordlg</code>, <code>warndlg</code>, <code>helpdlg</code>, <code>questdlg</code>, <code>inputdlg</code>, <code>listdlg</code>, <code>waitbar</code> and <code>dialog</code> make figures with the same children as MATLAB's. <code>uigetfile</code>, <code>uiputfile</code>, <code>uigetdir</code>, <code>uisetcolor</code> and <code>uisetfont</code> open Windows' own dialogs.</li>
+    </ul>
+
+    <h2 id="apps-uifigure">uifigure apps</h2>
+    <p><code>fig = uifigure</code> makes a window for MATLAB's newer components. Its handle is hidden, as in MATLAB, so <code>gcf</code> and <code>findobj</code> do not find it unless asked; keep it in a variable.</p>
+    <ul>
+      <li><strong>Components:</strong> <code>uibutton</code> (push and state), <code>uilabel</code>, <code>uieditfield</code> (text and numeric), <code>uitextarea</code>, <code>uidropdown</code>, <code>uilistbox</code>, <code>uicheckbox</code>, <code>uiradiobutton</code> and <code>uitogglebutton</code> in a <code>uibuttongroup</code>, <code>uislider</code>, <code>uispinner</code>, <code>uiknob</code> (continuous and discrete), <code>uiswitch</code> (slider, rocker and toggle), <code>uigauge</code> (four shapes), <code>uilamp</code>, <code>uidatepicker</code>, <code>uicolorpicker</code>, <code>uiimage</code>, <code>uihyperlink</code>, <code>uitree</code> with <code>uitreenode</code> (and check-box trees), <code>uitable</code>, <code>uitabgroup</code>, <code>uipanel</code>, <code>uimenu</code> and <code>uicontextmenu</code>.</li>
+      <li><strong>Layout:</strong> <code>uigridlayout(fig, [rows cols])</code> places components in a grid with fixed, <code>'fit'</code> and weighted (<code>'1x'</code>, <code>'2x'</code>) rows and columns. A component's <code>Layout.Row</code> and <code>Layout.Column</code> choose its cell, grids nest, and a grid with <code>Scrollable</code> on scrolls.</li>
+      <li><strong>Plots:</strong> <code>ax = uiaxes(parent)</code> is an axes inside the app; every plotting verb takes it as its first argument.</li>
+      <li><strong>Callbacks</strong> are named for what happened: <code>ButtonPushedFcn</code>, <code>ValueChangedFcn</code>, <code>ValueChangingFcn</code> while a slider is dragged or text is typed, <code>SelectionChangedFcn</code>, <code>CellEditCallback</code>, <code>NodeExpandedFcn</code>, and so on. The event data carry <code>Value</code> and <code>PreviousValue</code> where MATLAB's do.</li>
+      <li><strong>Dialogs over the window:</strong> <code>uialert</code>, <code>uiconfirm</code> and <code>uiprogressdlg</code> appear on top of the app, as in MATLAB.</li>
+      <li><strong>Styles:</strong> <code>s = uistyle('BackgroundColor', 'yellow')</code> and <code>addStyle(tbl, s, 'cell', [2 3])</code> colour table cells, tree nodes and list items; <code>removeStyle</code> takes them off.</li>
+      <li><strong>Web pages:</strong> <code>uihtml</code> shows an HTML file or text in the app, through Microsoft Edge WebView2. The page and the script talk through <code>Data</code>, <code>DataChangedFcn</code>, <code>HTMLEventReceivedFcn</code> and <code>sendEventToHTMLSource</code>, with MATLAB's page-side <code>setup(htmlComponent)</code>.</li>
+      <li><strong>Your own components:</strong> a class that derives from <code>matlab.ui.componentcontainer.ComponentContainer</code> and writes <code>setup</code> and <code>update</code> is a component like the built-in ones, with its own properties and events.</li>
+    </ul>
+    <pre><code><span class="com">% A two-row app: pick a frequency, see the wave.</span>
+fig = <span class="fn">uifigure</span>(<span class="str">'Name'</span>, <span class="str">'Sine'</span>);
+g = <span class="fn">uigridlayout</span>(fig, [<span class="num">2</span> <span class="num">1</span>], <span class="str">'RowHeight'</span>, {<span class="str">'fit'</span>, <span class="str">'1x'</span>});
+s = <span class="fn">uislider</span>(g, <span class="str">'Limits'</span>, [<span class="num">1</span> <span class="num">10</span>], <span class="str">'Value'</span>, <span class="num">2</span>);
+ax = <span class="fn">uiaxes</span>(g);
+t = <span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">500</span>);
+draw = @(f) <span class="fn">plot</span>(ax, t, <span class="fn">sin</span>(<span class="num">2</span>*<span class="kw">pi</span>*f*t));
+draw(s.Value);
+s.ValueChangedFcn = @(src, evt) draw(evt.Value);</code></pre>
+
+    <h2 id="apps-designer">App Designer apps (.mlapp)</h2>
+    <p>An <code>.mlapp</code> file is found on the path like a <code>.m</code> file, and before one of the same name. Its app runs from the Run button, from <code>run('myapp.mlapp')</code>, by typing <code>myapp</code>, or with <code>jgraph -batch myapp.mlapp -showfigures</code>. <code>matlab.apps.AppBase</code> supplies what App Designer's generated code calls, including <code>createCallbackFcn</code>, <code>registerApp</code> and <code>runStartupFcn</code>, and the class language underneath works too: properties with access attributes, methods, events, inheritance and handles to private methods.</p>
+    <p><strong>The editor opens an <code>.mlapp</code> as its code.</strong> The lines App Designer generates are shaded, and the editor says once what editing them means. Save writes the code back into the <code>.mlapp</code> and keeps App Designer's own copy of the code in step, so the file still opens in MATLAB's App Designer. <strong>File → Export to .m File…</strong> writes the app as a plain class file, as App Designer's export does.</p>
+    <div class="note"><strong>There is no drag-and-drop layout designer in JGraph yet.</strong> Change an app's components in its code, or lay them out in MATLAB's App Designer; JGraph runs and edits the result.</div>
+
+    <h2 id="apps-guide">GUIDE apps and MATLAB .fig files</h2>
+    <p>A GUIDE app, a <code>.m</code> file and the <code>.fig</code> file it opens, runs unchanged. <code>gui_mainfcn</code> follows the behaviour measured in R2025b: the opening function runs before the window is shown, the output function after, callbacks are found by their <code>Tag</code>, and a singleton app comes back to its open window. <code>guide</code> itself reports that GUIDE has been removed, as R2025b does.</p>
+    <p><code>openfig</code> and <code>hgload</code> open MATLAB's <code>.fig</code> files from any release, including the form R2025b's <code>savefig</code> writes, as well as JGraph's own figure files. Axes and their labels, lines, text, patches, surfaces, images, legends, colour bars and the classic controls are rebuilt. Objects JGraph cannot rebuild yet, such as bar charts, scatter charts, histograms and annotations, are left out, with one warning that names them. <code>savefig</code> in JGraph writes JGraph's own format, which MATLAB cannot open.</p>
+
+    <h2 id="apps-differences">Where apps differ from MATLAB</h2>
+    <ul>
+      <li><strong>Handles are numbers.</strong> <code>class(h)</code> answers <code>'double'</code> and <code>h</code> prints as a number, but <code>isa(h, 'matlab.ui.control.Button')</code>, typed properties, <code>h.Value</code> and listeners answer as in MATLAB.</li>
+      <li><strong>The look</strong> is MATLAB's default look drawn by Windows, not a copy of MATLAB's web components pixel for pixel. Positions and sizes are MATLAB's.</li>
+      <li><strong>Web pages</strong> in <code>uihtml</code> run in Edge rather than MATLAB's Chromium. Without the WebView2 runtime a <code>uihtml</code> keeps its data but draws nothing, and warns once.</li>
+      <li><strong>Arrays of objects</strong> are not supported yet: <code>s(1)</code> on one object is that object, but <code>[s1 s2]</code> does not make an array of two.</li>
+    </ul>
 
     <!-- ================= PLOTTING MODEL ================= -->
     <h2 id="figmodel">Figures, axes &amp; show</h2>

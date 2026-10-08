@@ -6947,6 +6947,14 @@ internal sealed partial class Interpreter
                 $"Array indexing is not supported for objects of class '{callee.AsExternal.ClassName}'.");
         }
 
+        // obj(1), obj(1, 1), obj(end), obj(:) and obj() on one object are that object, as on any
+        // one-element array (U12: the property probe's h(1) on a uistyle). Arrays of objects are
+        // open item 65, so a subscript that would make one is refused rather than guessed at.
+        if (callee.Type == JgsType.Object)
+        {
+            return IndexScalarObject(callee, call, env);
+        }
+
         if (callee.Type != JgsType.Function)
         {
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
@@ -6978,6 +6986,29 @@ internal sealed partial class Interpreter
     /// The one-by-one array a scalar is, kept in whatever numeric class the scalar was in so that
     /// <c>class(x(1))</c> answers what <c>class(x)</c> does.
     /// </summary>
+    /// <summary>
+    /// A paren subscript of one object. The subscripts are applied to a stand-in one-element array, so
+    /// <c>end</c>, a colon, a mask and every refusal (<c>s(2)</c>, <c>s(0)</c>) are exactly what a
+    /// one-element array answers; a pick of the one element is the object itself. A pick of none or
+    /// of several would make an array of objects, which this build does not have yet (open item 65).
+    /// </summary>
+    private JgsValue IndexScalarObject(JgsValue callee, CallExpr call, JgsEnvironment env)
+    {
+        if (call.Arguments.Count == 0)
+        {
+            return callee;
+        }
+
+        JgsValue picked = IndexInto(OneElementArray(JgsValue.Number(0)), call.Arguments, call, env);
+        if (picked.Type is JgsType.Number || (picked.Type == JgsType.Array && picked.ArrayLength == 1))
+        {
+            return callee;
+        }
+
+        throw new JgsRuntimeException(call.Line, call.Column,
+            $"Indexing a {callee.TypeName} this way makes an array of objects, which JGraph does not support yet.");
+    }
+
     private static JgsValue OneElementArray(JgsValue scalar)
     {
         JgsValue array = JgsNumericClasses.Stamp(JgsValue.Array([scalar]), scalar.NumericClass);

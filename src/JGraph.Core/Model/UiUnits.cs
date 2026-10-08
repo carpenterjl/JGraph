@@ -106,4 +106,28 @@ public static class UiScreen
 
     /// <summary>MATLAB's <c>ScreenSize</c>: the primary monitor.</summary>
     public static Rect2D Primary => Monitors[0];
+
+    private static Point2D? _testPointer;
+
+    /// <summary>
+    /// Stands in for the real pointer (or, with null, stops standing in), so a test reads and moves a
+    /// point of its own rather than the user's mouse.
+    /// </summary>
+    public static void SetTestPointer(Point2D? pointer) => _testPointer = pointer;
+
+    /// <summary>MATLAB's <c>PointerLocation</c> in pixels: the pointer, or the bottom-left corner when it cannot be read.</summary>
+    public static Point2D Pointer =>
+        _testPointer ?? (_provider is null ? SystemScreens.ReadPointer(Primary.Height) : null) ?? new Point2D(1, 1);
+
+    /// <summary>Moves the pointer, as a write to <c>PointerLocation</c> does in MATLAB.</summary>
+    public static void MovePointer(Point2D pointer)
+    {
+        if (_testPointer is not null || _provider is not null)
+        {
+            _testPointer = pointer;
+            return;
+        }
+
+        SystemScreens.MovePointer(pointer, Primary.Height);
+    }
 }

@@ -334,6 +334,23 @@ internal static partial class JgsGraphicsProperties
 
                 Button(entry).Value = ToOnOff("Value", value, line, col);
             });
+
+        // R2025b's two button classes each have one callback of their own, which the other does not
+        // answer to (U12): a press of a push button runs ButtonPushedFcn, a state button's flip its
+        // ValueChangedFcn. Both ride the queue a component's callbacks do.
+        AddNamedSlot(table, "ButtonPushedFcn");
+        AddNamedSlot(table, "ValueChangedFcn");
+        foreach ((string name, ToolbarButtonStyle style) in new[]
+            { ("ButtonPushedFcn", ToolbarButtonStyle.Push), ("ValueChangedFcn", ToolbarButtonStyle.State) })
+        {
+            GraphicsProperty slot = table[name];
+            table[name] = new GraphicsProperty(slot.Name, slot.Read, slot.Write)
+            {
+                Listed = slot.Listed,
+                Words = slot.Words,
+                OnlyWhen = target => ((AxesToolbarButtonModel)target).Style == style,
+            };
+        }
     }
 
     /// <summary>An array of handles, or a single one, as the list a script meant.</summary>

@@ -615,6 +615,49 @@ internal static partial class JgsGraphicsProperties
                 ? JgsHandleRegistry.For(current)
                 : JgsMatrix.FromColumnMajor([], 0, 0));
         Put(table, "Children", static _ => HandleRow(RootFigures(hidden: false)));
+
+        // Four more R2025b lists (U12): what gcbo answers, read-only; the font a fixed-width text
+        // default names; the pointer, in the root's Units, which a write moves; and a colour depth
+        // that is only stored, as it is there.
+        Put(table, "CallbackObject", static _ =>
+            JgsGraphicsCallbackState.CallbackObject is { } running
+                ? JgsComponentContainers.ValueFor(running)
+                : JgsMatrix.FromColumnMajor([], 0, 0));
+        Put(table, "FixedWidthFontName",
+            static _ => JgsValue.Str(JgsGraphicsRoot.Instance.FixedWidthFontName),
+            static (entry, value, line, col) =>
+                JgsGraphicsRoot.Instance.FixedWidthFontName = JgsBuiltins.IsTextScalar(value)
+                    ? JgsBuiltins.TextOf(value)
+                    : throw ComponentError(entry, "FixedWidthFontName", "MATLAB:class:RequireString",
+                        "Value must be a character vector or a string scalar.", line, col));
+        Put(table, "PointerLocation",
+            static entry =>
+            {
+                Point2D at = UiScreen.Pointer;
+                Rect2D box = UiUnitConverter.FromPixels(
+                    new Rect2D(at.X, at.Y, 0, 0), ((JgsGraphicsRoot)entry.Target).Units, ScreenExtent());
+                return Row(box.X, box.Y);
+            },
+            static (entry, value, line, col) =>
+            {
+                if (value.Type is not (JgsType.Array or JgsType.Number) || value.Rows != 1 || value.Cols != 2)
+                {
+                    throw ComponentError(entry, "PointerLocation", "MATLAB:datatypes:Point2dDataType:ArrayShape",
+                        "Input must be 1x2", line, col);
+                }
+
+                Rect2D box = UiUnitConverter.ToPixels(
+                    new Rect2D(value.ElementAt(0).AsNumber, value.ElementAt(1).AsNumber, 0, 0),
+                    ((JgsGraphicsRoot)entry.Target).Units, ScreenExtent());
+                UiScreen.MovePointer(new Point2D(box.X, box.Y));
+            });
+        Put(table, "ScreenDepth",
+            static _ => JgsValue.Number(JgsGraphicsRoot.Instance.ScreenDepth),
+            static (entry, value, line, col) =>
+                JgsGraphicsRoot.Instance.ScreenDepth = value.Type == JgsType.Number && double.IsFinite(value.AsNumber)
+                    ? value.AsNumber
+                    : throw ComponentError(entry, "ScreenDepth", "MATLAB:datatypes:InvalidDataType",
+                        "Value must be a finite numeric scalar.", line, col));
     }
 
     /// <summary>The figures the root lists: every one, or only those whose handles show.</summary>
