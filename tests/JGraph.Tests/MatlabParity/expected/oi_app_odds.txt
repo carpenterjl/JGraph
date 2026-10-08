@@ -1,0 +1,9 @@
+CHK|uifigure_ran|cell[1 1]{char[1 41]'uifigure name=nm tag= event=double gcbo=1'}|exact
+CHK|uiaxes_ran|cell[1 1]{char[1 39]'uiaxes name= tag=tg event=double gcbo=1'}|exact
+CHK|dialog_kept|cell[0 0]{}|exact
+CHK|dialog_stored|char[1 15]'function_handle'|exact
+CHK|uifigure_stored|char[1 15]'function_handle'|exact
+CHK|uiaxes_stored|char[1 15]'function_handle'|exact
+CHK|text_callback|cell[1 1]{char[1 13]'text callback'}|exact
+CHK|confirm_invisible|MATLAB:hg:NonInteractiveFunctionSupport|exact
+CHK|confirm_invisible_msg|Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.|exact

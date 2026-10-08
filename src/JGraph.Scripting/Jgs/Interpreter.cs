@@ -770,6 +770,17 @@ internal sealed partial class Interpreter
     /// </summary>
     internal JgsValue EvaluateSource(string code, JgsEnvironment env, int line, int column, bool asStatement)
     {
+        // A class is defined by its file and nowhere else: R2025b refuses classdef in eval'd text
+        // as a misused keyword, whole or not (open item 81, measured on stess_40).
+        JgsRuntimeException ClassdefInEval() => new(line, column, "MATLAB:m_illegal_reserved_keyword_usage",
+            "Error: Illegal use of reserved keyword \"classdef\".");
+        string trimmed = code.TrimStart();
+        if (Dialect.IsMatlab && trimmed.StartsWith("classdef", StringComparison.Ordinal)
+            && (trimmed.Length == 8 || !(char.IsLetterOrDigit(trimmed[8]) || trimmed[8] == '_')))
+        {
+            throw ClassdefInEval();
+        }
+
         IReadOnlyList<Stmt> program;
         try
         {
@@ -778,6 +789,11 @@ internal sealed partial class Interpreter
         catch (JgsException ex)
         {
             throw new JgsRuntimeException(line, column, ex.Message);
+        }
+
+        if (Dialect.IsMatlab && program.Any(static s => s is ClassdefStmt))
+        {
+            throw ClassdefInEval();
         }
 
         JgsValue result = JgsValue.Null;
@@ -3629,6 +3645,15 @@ internal sealed partial class Interpreter
         // is an int8 — so only the type dispatch below reads the shortened list.
         JgsValue[] joinable = Dialect.ConcatenatesBrackets ? WithoutEmpties(elements) : elements;
 
+        // A row of nothing but empties, one an empty char that is not '', is that char's shape:
+        // [blanks(0), ''] is the 1-by-0 char (open item 31, measured).
+        if (Dialect.ConcatenatesBrackets
+            && Array.TrueForAll(joinable, static e => e.Type == JgsType.String && e.AsString.Length == 0 && !e.IsStringArray)
+            && Array.Exists(elements, static e => e.IsCharMatrix && e.ArrayLength == 0 && e.Rows > 0))
+        {
+            return JgsBuiltins.EmptyChar(elements.Where(static e => e.IsCharMatrix).Max(static e => e.Rows), 0);
+        }
+
         // In JGS a bracket literal is a list, so [[1, 2], [3, 4]] is a matrix by nesting — the
         // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
         concatenating &= Dialect.ConcatenatesBrackets;
@@ -3821,7 +3846,9 @@ internal sealed partial class Interpreter
         {
             foreach (JgsValue piece in row)
             {
-                if (IsEmptyPiece(piece))
+                // An empty char other than '' (the 1-by-0 of blanks(0)) is char all the same, and its
+                // shape is what a bracket of nothing else answers (open item 31).
+                if (IsEmptyPiece(piece) && !piece.IsCharMatrix)
                 {
                     continue;
                 }
@@ -3858,13 +3885,22 @@ internal sealed partial class Interpreter
     {
         var stacked = new List<string>();
         int width = -1;
+        int emptyRows = 0;
         foreach (JgsValue[] row in rows)
         {
             List<string>? band = null;
+            int emptyHeight = 0;
             foreach (JgsValue piece in row)
             {
                 if (IsEmptyPiece(piece))
                 {
+                    // A 1-by-0 (or n-by-0) char holds rows of nothing: [blanks(0); blanks(0)] is
+                    // 2-by-0 and [blanks(0); ''] is 1-by-0 (open item 31, measured).
+                    if (piece.IsCharMatrix)
+                    {
+                        emptyHeight = System.Math.Max(emptyHeight, piece.Rows);
+                    }
+
                     continue;
                 }
 
@@ -3893,6 +3929,7 @@ internal sealed partial class Interpreter
 
             if (band is null)
             {
+                emptyRows += emptyHeight;
                 continue;
             }
 
@@ -3914,7 +3951,7 @@ internal sealed partial class Interpreter
         // is the char row 'ab' in MATLAB, not a 1-by-2 char matrix wearing a tag.
         return stacked.Count switch
         {
-            0 => JgsValue.Str(string.Empty),
+            0 => JgsBuiltins.EmptyChar(emptyRows, 0),
             1 => JgsValue.Str(stacked[0]),
             _ => JgsValue.CharMatrix([.. stacked]),
         };
@@ -8121,6 +8158,13 @@ internal sealed partial class Interpreter
         int[] picks = ComputePicks(index, length, target.TypeName, line, column);
         if (isString)
         {
+            // Nothing picked from a char row is the 1-by-0 char: the row's orientation wins, as for
+            // any vector, and only a 0-by-0 index ([]) gives the 0-by-0 '' (open item 31, measured).
+            if (picks.Length == 0 && Dialect.IsMatlab && !target.IsStringArray && !(index.Rows == 0 && index.Cols == 0))
+            {
+                return JgsValue.CharMatrix([string.Empty]);
+            }
+
             var sb = new StringBuilder(picks.Length);
             foreach (int i in picks)
             {
@@ -9466,6 +9510,21 @@ internal sealed partial class Interpreter
         {
             JgsBuiltins.SetTimerProperty(heldTimer, FieldName(member, env), value, retain: false, member.Line, member.Column);
             return value;
+        }
+
+        // A component's or a figure's event data is an object whose properties are read-only (open
+        // item 69, recorded in u9b_bridge): e.EventName = 'x' is R2025b's SetProhibited, and a name it
+        // does not have is no property of it.
+        if (Dialect.IsMatlab && member.Target is VariableExpr eventTarget
+            && LookUp(eventTarget.Name, env, out JgsValue heldEvent) && JgsUiEventData.IsBuiltinEventData(heldEvent))
+        {
+            string eventField = FieldName(member, env);
+            string className = heldEvent.ClassName!;
+            throw heldEvent.AsStruct.ContainsKey(eventField)
+                ? new JgsRuntimeException(member.Line, member.Column, "MATLAB:class:SetProhibited",
+                    $"Unable to set the '{eventField}' property of class ''{className[(className.LastIndexOf('.') + 1)..]}'' because it is read-only.")
+                : new JgsRuntimeException(member.Line, member.Column, "MATLAB:noPublicFieldForClass",
+                    $"Unrecognized property '{eventField}' for class '{className}'.");
         }
 
         // lh.Enabled = false on a listener (V6, #106): checked in MATLAB's words, written in place.

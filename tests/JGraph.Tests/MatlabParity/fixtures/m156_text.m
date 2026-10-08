@@ -139,7 +139,7 @@ cnames = {'abc', 'frac', 'unicode', 'wide', 'negative', 'nan', 'inf', 'huge', 'm
 % R2025b saturates a code into [0, 65535] and refuses a logical; JGraph casts to int and keeps the
 % low sixteen bits, answers a logical's 0 and 1, and makes char of a 0-by-3 array 0-by-0. All older
 % than item 09, and 09c keeps the cast exactly (no range check).
-cdiv = {'wide', 'negative', 'inf', 'huge', 'empty_0x3', 'int8', 'logical'};
+cdiv = {'wide', 'negative', 'inf', 'huge', 'int8', 'logical'};   % empty_0x3 retired by ADR 0219
 for k = 1:numel(codes)
     try
         c = char(codes{k});

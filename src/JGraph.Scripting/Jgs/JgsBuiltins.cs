@@ -1249,9 +1249,11 @@ internal static partial class JgsBuiltins
             try
             {
                 // MATLAB flattens array arguments and cycles the format over them; JGS stays strict.
-                return JgsValue.Str(dialect!.IsMatlab
+                // MATLAB's answer is always a row, so nothing written is the 1-by-0 char (open item 31).
+                string written = dialect!.IsMatlab
                     ? JgsSprintf.FormatMatlab(format, args.Skip(1).ToArray())
-                    : JgsSprintf.Format(format, args.Skip(1).ToArray()));
+                    : JgsSprintf.Format(format, args.Skip(1).ToArray());
+                return written.Length == 0 && dialect.IsMatlab ? EmptyChar(1, 0) : JgsValue.Str(written);
             }
             catch (FormatException ex)
             {
@@ -2088,7 +2090,9 @@ internal static partial class JgsBuiltins
                 {
                     // A handle, which for a numbered figure is its number and for any other is not.
                     if (!JgsHandleRegistry.TryGet(JgsValue.Number(n), out var named) || named.Target is not FigureModel closing)
-                        throw new JgsRuntimeException(line,col,$"There is no figure {n} to close.");
+                        throw JgsRunningDialect.ThreadIsMatlab
+                            ? new JgsRuntimeException(line,col,"MATLAB:close:InvalidFigureHandle","Invalid figure handle.") // open item 83, measured
+                            : new JgsRuntimeException(line,col,$"There is no figure {n} to close.");
                     numbers.Add(JG.GetFigureNumber(closing));
                 }
             }

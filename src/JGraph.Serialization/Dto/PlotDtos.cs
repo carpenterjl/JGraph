@@ -74,6 +74,9 @@ public abstract class PlotDto
 
     /// <summary>Whether the object takes a legend row — MATLAB's Annotation.LegendInformation.</summary>
     public bool ShowsInLegend { get; set; } = true;
+
+    /// <summary>The script's label for the object (open item 74); absent from documents before it.</summary>
+    public string? Tag { get; set; }
 }
 
 /// <summary>

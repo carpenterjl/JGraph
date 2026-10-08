@@ -235,10 +235,10 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
-        if (variable.RawValue is null && variable.Type is "array" or "cell" or "struct")
+        if (variable.RawValue is ScriptOversizeValue)
         {
-            // Oversize values carry no raw copy (JgsRunner.MaxRawValueElements and
-            // ScriptValueGrid.MaxCells) — the grid would freeze on millions of rows anyway.
+            // Oversize values carry a marker rather than a copy (JgsRunner.MaxRawValueElements and
+            // ScriptValueGrid.MaxCells, open item 19) — the grid would freeze on millions of rows anyway.
             SetStatus($"'{variable.Name}' is too large for the data viewer — index a smaller slice to inspect it.");
         }
         else

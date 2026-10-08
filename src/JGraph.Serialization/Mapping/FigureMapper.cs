@@ -16,6 +16,7 @@ internal static class FigureMapper
         var dto = new FigureDto
         {
             Name = figure.Name,
+            Tag = string.IsNullOrEmpty(figure.Tag) ? null : figure.Tag,
             Background = figure.Background,
             Size = DtoConvert.ToDto(figure.Size),
             Title = figure.Title,
@@ -170,6 +171,7 @@ internal static class FigureMapper
         var figure = new FigureModel
         {
             Name = dto.Name,
+            Tag = dto.Tag,
             Background = dto.Background,
             Size = DtoConvert.ToSize(dto.Size),
             Title = dto.Title,
@@ -384,6 +386,7 @@ internal static class FigureMapper
         var dto = new AxesDto
         {
             Name = axes.Name,
+            Tag = string.IsNullOrEmpty(axes.Tag) ? null : axes.Tag,
             Title = axes.Title,
             TitleStyle = DtoConvert.ToDto(axes.TitleStyle),
             Subtitle = axes.Subtitle,
@@ -501,6 +504,7 @@ internal static class FigureMapper
         var axes = new AxesModel
         {
             Name = dto.Name,
+            Tag = dto.Tag,
             Title = dto.Title,
             Subtitle = dto.Subtitle,
             Background = dto.Background,

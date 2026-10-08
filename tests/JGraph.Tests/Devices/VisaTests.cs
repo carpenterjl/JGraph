@@ -104,6 +104,10 @@ public class VisaTests
         // An answer left unread is dropped when the next message goes out, as HiSLIP's synchronized mode does.
         session.Write(PeerEngine.Frame("send 0102"), default);
         session.Write(PeerEngine.Frame("later 50 0304"), default);
+
+        // The read ends at the message's end, so a long timeout costs nothing unless the machine is
+        // loaded enough to hold the peer's 50 ms timer past 200 ms, which the lanes have seen.
+        session.SetAttribute(VisaAttribute.TimeoutValue, 5000);
         VisaReadResult after = session.Read(10, default);
         Assert.Equal(new byte[] { 3, 4 }, after.Data);
 

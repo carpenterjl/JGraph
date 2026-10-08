@@ -222,8 +222,6 @@ themselves), and `u7_classes` extended with `uihtml`. What they showed shaped th
   (`u9b_forms`, `send_deleted`).
 - **A categorical is a cell here**, so a 2-by-2 one is written in memory order and a scalar one is
   sent as an array of one.
-- **Event data are classed structs** (ADR 0202): a write to `e.EventName` is not refused
-  (`u9b_bridge`, `evt_*_readonly`).
 - Taken out of the fixtures, with the gap filed as open items: a component's class name and
   `properties(h)` (handles are numbers), dot access of an unknown name on a component (R2025b's
   `MATLAB:noSuchMethodOrField` and `MATLAB:noPublicFieldForClass`), and a component left with no
@@ -235,6 +233,5 @@ themselves), and `u7_classes` extended with `uihtml`. What they showed shaped th
 - Methods and unknown names through the dot on graphics handles: `h.expand()`,
   `h.sendEventToHTMLSource(...)`, `methods(h)`, `properties(h)`, and R2025b's errors for an unknown
   name (open item 68).
-- Event data as read-only objects (open item 69).
 - `exportapp`/`getframe` with a page, markup pages' relative addresses, and DevTools in Options
   (open item 70).

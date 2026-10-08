@@ -31,7 +31,7 @@ CHK|dev_class|mididevice|exact
 CHK|dev_props|cell:{char:Input;char:Output;char:InputID;char:OutputID}|exact
 CHK|dev_methods|cell:{char:addlistener;char:delete;char:eq;char:findobj;char:findprop;char:ge;char:gt;char:isvalid;char:le;char:listener;char:lt;char:mididevice;char:ne;char:notify}|exact
 CHK|dev_values|Microsoft MIDI Mapper/0/-1/char|exact
-CHK|dev_input_size|double:[1 0]|div=ADR0194|diverges|double:[0 0]
+CHK|dev_input_size|double:[1 0]|exact
 CHK|dev_isa|1 1 1|exact
 CHK|dev_by_name|audio:midi:MidiDeviceOpenTxFailed ## Could not open output device 'Microsoft GS Wavetable Synth': The specified device is already in use.  Wait until it is free, and then try again.|exact
 CHK|dev_output_kw|double:0|exact

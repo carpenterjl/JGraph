@@ -328,6 +328,9 @@ internal static partial class JgsBuiltins
 
         // The size it was made with is the size its first resize is measured from.
         JgsGraphicsProperties.RememberSize(figure);
+
+        // A CreateFcn among the options runs once the others are set (open item 80, measured).
+        JgsCallbackDispatcher.Current?.FireCreateFcn(figure);
         return JgsHandleRegistry.For(figure);
     }
 

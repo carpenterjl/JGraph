@@ -116,8 +116,8 @@ for k = 1:min(numel(EVT), 3)
     u9b_chk(sprintf('evt_%d_properties', k), @() properties(e));
     u9b_chk(sprintf('evt_%d_eventname', k), @() e.EventName);
     u9b_chk(sprintf('evt_%d_isa', k), @() double([isa(e, 'event.EventData') isobject(e) isstruct(e)]));
-    % Event data are classed structs here (ADR 0202), so a write to one is not refused.
-    u9b_chkdiv(sprintf('evt_%d_readonly', k), @() setevt(e), 'ADR0208');
+    % Event data are read-only objects, as R2025b's are (open item 69, ADR 0218).
+    u9b_chk(sprintf('evt_%d_readonly', k), @() setevt(e));
     if isprop(e, 'HTMLEventName')
         u9b_chk(sprintf('evt_%d_name', k), @() e.HTMLEventName);
         u9b_chk(sprintf('evt_%d_data', k), @() e.HTMLEventData);

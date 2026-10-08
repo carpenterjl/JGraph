@@ -1240,7 +1240,7 @@ CHK|char_inf|<[1 2]:65,65535,>|div=ADR0156|diverges|<[1 2]:65,0,>
 CHK|char_huge|<[1 1]:65535,>|div=ADR0156|diverges|<[1 1]:0,>
 CHK|char_matrix|<[2 3]:72,75,73,76,74,77,>|exact
 CHK|char_column|<[3 1]:65,66,67,>|exact
-CHK|char_empty_0x3|<[0 3]>|div=ADR0156|diverges|<[0 0]>
+CHK|char_empty_0x3|<[0 3]>|exact
 CHK|char_empty_3x0|<[3 0]>|exact
 CHK|char_empty|<[0 0]>|exact
 CHK|char_int8|<[1 2]:72,0,>|div=ADR0156|diverges|<[1 2]:72,65535,>

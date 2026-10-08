@@ -232,6 +232,30 @@ public static class FigureExporter
         document.Close();
     }
 
+    /// <summary>
+    /// Writes a one-page PDF holding a picture (open item 45): <c>exportapp</c>'s photograph of a
+    /// window, the page the picture's size at <paramref name="dpi"/> dots per inch.
+    /// </summary>
+    /// <param name="encodedPicture">The picture in a format Skia decodes (PNG).</param>
+    /// <param name="dpi">The picture's resolution, so a 192-dpi capture prints at the window's size.</param>
+    /// <param name="title">The document's title.</param>
+    /// <param name="stream">Where the PDF goes.</param>
+    public static void WritePicturePdf(byte[] encodedPicture, double dpi, string title, Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(encodedPicture);
+        ArgumentNullException.ThrowIfNull(stream);
+        using SKBitmap picture = SKBitmap.Decode(encodedPicture)
+            ?? throw new InvalidOperationException("The picture could not be decoded.");
+        float pointsPerPixel = (float)(72.0 / (dpi > 0 ? dpi : 96.0));
+        using SKDocument document = SKDocument.CreatePdf(stream, new SKDocumentPdfMetadata { Title = title, Creator = "JGraph" })
+            ?? throw new InvalidOperationException("Skia could not create a PDF document.");
+        SKCanvas canvas = document.BeginPage(picture.Width * pointsPerPixel, picture.Height * pointsPerPixel);
+        canvas.Scale(pointsPerPixel);
+        canvas.DrawBitmap(picture, 0, 0);
+        document.EndPage();
+        document.Close();
+    }
+
     private static void RenderTo(
         SKCanvas canvas,
         FigureModel figure,

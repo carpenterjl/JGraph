@@ -217,8 +217,13 @@ internal static partial class JgsBuiltins
         DefineMaker("uiaxes", UiAxes);
         DefineQuiet("uialert", UiAlert);
         env.Builtins.Register("uiconfirm", JgsValue.Function(new BuiltinFunction("uiconfirm",
-            (args, line, col) => UiConfirm(host, cancellationToken, args, line, col))
-        { BindsAnsAsStatement = false }));
+            (args, line, col) => UiConfirm(host, cancellationToken, args, wanted: 1, line, col))
+        {
+            BindsAnsAsStatement = false,
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) =>
+                UiConfirm(host, cancellationToken, args, wanted, line, col) is { Type: not JgsType.Null } answer ? [answer] : [],
+        }));
         DefineMaker("uiprogressdlg", UiProgressDlg);
         DefineQuiet("focus", Focus);
     }
@@ -660,6 +665,9 @@ internal static partial class JgsBuiltins
 
         JgsGraphicsProperties.GridMembershipChanged(axes);
         JG.TouchFigure(figure);
+
+        // A CreateFcn among the options runs once the others are set (open item 80, measured).
+        JgsCallbackDispatcher.Current?.FireCreateFcn(axes);
         return JgsHandleRegistry.For(axes);
     }
 
@@ -899,16 +907,20 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// <c>selection = uiconfirm(fig, message, title, …)</c>: a question over the figure, which the
-    /// script waits on. With nobody to answer it refuses as R2025b's does.
+    /// script waits on. With nobody to answer it refuses as R2025b's does. Asked for no output it
+    /// shows the question and returns at once, leaving the answer to a <c>CloseFcn</c> (open item 50,
+    /// measured), and answers null.
     /// </summary>
     private static JgsValue UiConfirm(
-        JGraphScriptGlobals host, CancellationToken cancellationToken, IReadOnlyList<JgsValue> args, int line, int col)
+        JGraphScriptGlobals host, CancellationToken cancellationToken, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         if (args.Count < 3)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:narginchk:notEnoughInputs", "Not enough input arguments.");
         }
 
+        // Asked for nothing it still needs a window: R2025b under -batch refuses both forms
+        // (oi_app_odds, confirm_invisible).
         RequireSomebodyToAnswer(line, col);
         FigureModel figure = DialogFigure(args[0], line, col);
         var overlay = new UiOverlayModel(UiOverlayKind.Confirm)
@@ -970,6 +982,11 @@ internal static partial class JgsBuiltins
         host.ShowTouchedFigures();
         ScriptComponentFrames.Flush(force: true);
         ScriptGraphicsCallbacks.OverlayShown?.Invoke(overlay);
+        if (wanted == 0)
+        {
+            return JgsValue.Null;
+        }
+
         BlockUntil("uiconfirm", host, cancellationToken,
             () => overlay.BeingDeleted || overlay.Parent is null || figure.BeingDeleted, deadline: null, line, col);
         int answer = entry.OverlayAnswer ?? overlay.CancelOption;

@@ -215,5 +215,3 @@ char row's arithmetic under `+`.
   its own.
 - `char` of a logical: R2025b refuses it and JGraph answers codes 1 and 0 (`m156_text`,
   `char_logical`, `div=ADR0156`).
-- `char(zeros(0, 3))`: 0-by-3 in R2025b, 0-by-0 in JGraph (`m156_text`, `char_empty_0x3`,
-  `div=ADR0156`).

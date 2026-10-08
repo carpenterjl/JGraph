@@ -781,7 +781,7 @@ internal static class JgsRunner
     /// </summary>
     private const int MaxRawValueElements = 2_000_000;
 
-    private static object? ToRawValue(JgsValue value) => value.Type switch
+    private static object? ToRawValue(JgsValue value) => (object?)OversizeOf(value) ?? value.Type switch
     {
         JgsType.Number => value.AsNumber,
         JgsType.Bool => value.AsBool,
@@ -810,6 +810,25 @@ internal static class JgsRunner
         JgsType.Struct => StructGrid(value.AsStruct),
         _ => null,
     };
+
+    /// <summary>
+    /// The marker for a value past what the data viewer is given (open item 19): an array past
+    /// <see cref="MaxRawValueElements"/>, or a matrix, cell or struct past <see cref="ScriptValueGrid.MaxCells"/>.
+    /// </summary>
+    private static ScriptOversizeValue? OversizeOf(JgsValue value)
+    {
+        long count = value.Type switch
+        {
+            JgsType.Array => value.ArrayLength,
+            JgsType.Cell => value.AsCell.Length,
+            JgsType.Struct => value.AsStruct.Count,
+            _ => 0,
+        };
+        long limit = value.Type == JgsType.Array && !JgsMatrix.IsNested(value) && !JgsMatrix.IsMatrix(value)
+            ? MaxRawValueElements
+            : ScriptValueGrid.MaxCells;
+        return count > limit ? new ScriptOversizeValue(count) : null;
+    }
 
     private static ScriptValueGrid? MatrixGrid(JgsValue matrix)
     {

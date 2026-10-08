@@ -184,7 +184,7 @@ internal static partial class JgsBuiltins
             // Every piece is text: strjoin({'a', 1}) is refused, as MATLAB refuses it (measured).
             string text = element.Type == JgsType.String
                 ? element.AsString
-                : IsStringScalar(element)
+                : IsStringScalar(element) || IsEmptyCharRow(element)
                     ? TextOf(element)
                     : throw new JgsRuntimeException(line, col, "MATLAB:strjoin:InvalidCstrType",
                         "First input must be a cell array of character vectors or a string array.");
@@ -895,6 +895,14 @@ internal static partial class JgsBuiltins
         // quote round a char row, so mat2str('auto') answered text eval would read back as a string:
         // the one function whose contract is "eval reads this back as what it was" got the type wrong
         // for every char row it was ever given.
+        // An empty char that is not '' is written as the call that makes an empty of its shape, as
+        // R2025b writes mat2str(blanks(0)): 'zeros(1,0)' (open item 31, measured).
+        if (subject.IsCharMatrix && subject.ArrayLength == 0)
+        {
+            return JgsValue.Str("zeros(" + subject.Rows.ToString(CultureInfo.InvariantCulture) + ","
+                + subject.Cols.ToString(CultureInfo.InvariantCulture) + ")");
+        }
+
         if (TryReadText(subject, out TextBundle text))
         {
             return JgsValue.Str(TextMatrixText(text));

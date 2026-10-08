@@ -84,6 +84,18 @@ public sealed class AppScriptFigureFiles : IScriptFigureFiles
             return false;
         }
 
+        // A PDF is the picture on one page of the window's size (open item 45).
+        if (Path.GetExtension(path).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+        {
+            var png = new System.Windows.Media.Imaging.PngBitmapEncoder();
+            png.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(picture));
+            using var encoded = new MemoryStream();
+            png.Save(encoded);
+            using FileStream pdf = File.Create(path);
+            JGraph.Export.FigureExporter.WritePicturePdf(encoded.ToArray(), picture.DpiX, figure.Name, pdf);
+            return true;
+        }
+
         System.Windows.Media.Imaging.BitmapEncoder encoder = Path.GetExtension(path).ToLowerInvariant() switch
         {
             ".jpg" or ".jpeg" => new System.Windows.Media.Imaging.JpegBitmapEncoder { QualityLevel = 95 },

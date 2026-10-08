@@ -599,6 +599,13 @@ internal static partial class JgsBuiltins
     {
         int height = (text.Length == 0 ? 0 : 1) * down;
         int width = text.Length * across;
+
+        // Asked before the one-row case, which would answer '' for it (open item 31).
+        if (height == 1 && width == 0)
+        {
+            return JgsValue.CharMatrix([string.Empty]); // repmat('a', 1, 0) is the 1-by-0 char (measured)
+        }
+
         if (height == 1)
         {
             return JgsValue.Str(string.Concat(Enumerable.Repeat(text, across)));
@@ -607,11 +614,6 @@ internal static partial class JgsBuiltins
         if (height == 0 && width == 0)
         {
             return JgsValue.Str(string.Empty); // the 0-by-0 char row '' already is
-        }
-
-        if (height == 1 && width == 0)
-        {
-            return JgsValue.CharMatrix([string.Empty]); // repmat('a', 1, 0) is the 1-by-0 char (measured)
         }
 
         var codes = new JgsValue[height * width];

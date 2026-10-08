@@ -1120,6 +1120,41 @@ internal static partial class JgsBuiltins
         return true;
     }
 
+    /// <summary>Whether a value is a number or a non-empty array of numbers: what a handle or a handle list is here.</summary>
+    internal static bool IsHandleNumbers(JgsValue value) =>
+        value.Type == JgsType.Number
+        || (value.Type == JgsType.Array && !value.IsStringArray && value.ArrayLength > 0
+            && Enumerable.Range(0, value.ArrayLength).All(i => value.ElementAt(i).Type == JgsType.Number));
+
+    /// <summary>
+    /// <c>delete</c> of handles some of which name nothing any more (open item 83): the live ones are
+    /// deleted, the retired ones passed over, and false when any never was a handle.
+    /// </summary>
+    internal static bool TryDeleteLiveOrRetired(JgsValue value, JGraphScriptGlobals host)
+    {
+        int count = value.Type == JgsType.Array ? value.ArrayLength : 1;
+        var live = new List<JgsValue>(count);
+        for (int i = 0; i < count; i++)
+        {
+            JgsValue one = value.Type == JgsType.Array ? value.ElementAt(i) : value;
+            if (JgsHandleRegistry.TryGet(one, out _))
+            {
+                live.Add(one);
+            }
+            else if (!JgsHandleRegistry.WasHandle(one.AsNumber))
+            {
+                return false;
+            }
+        }
+
+        foreach (JgsValue one in live)
+        {
+            TryDeleteGraphics(one, host);
+        }
+
+        return true;
+    }
+
     /// <summary>
     /// Applies a menu verb's trailing name-value pairs through the property table — one definition
     /// of each name, however it is spelled into the object — then fires <c>CreateFcn</c> if the

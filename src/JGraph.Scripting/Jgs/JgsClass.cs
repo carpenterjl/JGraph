@@ -544,8 +544,10 @@ internal sealed class JgsClass
         }
         catch (JgsRuntimeException failure)
         {
-            // A property typed with a graphics class refuses in R2025b's words (U7, measured).
-            if (failure.Identifier is "MATLAB:graphics:CannotConvertDoubleToHandle" or "MATLAB:validation:UnableToConvert")
+            // A property typed with a graphics class refuses in R2025b's words (U7, measured), and in
+            // the MATLAB dialect so does every other (open item 81, measured on stess_40's classes).
+            if (failure.Identifier is "MATLAB:graphics:CannotConvertDoubleToHandle" or "MATLAB:validation:UnableToConvert"
+                || JgsRunningDialect.ThreadIsMatlab)
             {
                 throw new JgsRuntimeException(line, col, failure.Identifier,
                     $"Error setting property '{property.Spec.Name}' of class '{owner.Name}'. {failure.Message}");

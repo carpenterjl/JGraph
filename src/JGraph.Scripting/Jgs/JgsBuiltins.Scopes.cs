@@ -47,6 +47,10 @@ internal static partial class JgsBuiltins
         // U9b.
         "uihtml",
 
+        // Open item 80: uifigure and uiaxes run a CreateFcn named among their options. dialog
+        // keeps one without running it, as R2025b does (measured), so it is not here.
+        "uiaxes", "uifigure",
+
         // U11: a MATLAB figure file's objects run their CreateFcns as it opens, and a GUIDE app's
         // main function runs its opening, output and callback functions.
         "gui_mainfcn", "hgload", "openfig",

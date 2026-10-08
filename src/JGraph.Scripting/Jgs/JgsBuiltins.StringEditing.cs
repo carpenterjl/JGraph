@@ -174,6 +174,13 @@ internal static partial class JgsBuiltins
             // A numeric array is code points, which is the other half of what char means.
             if (only.Type == JgsType.Array)
             {
+                // No codes keep their shape: char(zeros(1, 0)) is the 1-by-0 char and char(zeros(0, 3))
+                // a 0-by-3 one; only a 0-by-0 is '' (open item 31, measured).
+                if (only.ArrayLength == 0 && JgsRunningDialect.ThreadIsMatlab && !only.IsStringArray && !(only.Rows == 0 && only.Cols == 0))
+                {
+                    return EmptyChar(only.Rows, only.Cols);
+                }
+
                 // A packed array's codes are read where they lie and each row's text is made once
                 // (ADR 0156, stage 09c), with exactly the cast Glyph below makes and no range check,
                 // which Glyph has never made either: char([65536 65537]) is codes 0 and 1 both ways.

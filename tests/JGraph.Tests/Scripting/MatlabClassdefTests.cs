@@ -212,8 +212,9 @@ public class MatlabClassdefTests : IDisposable
     [Fact]
     public void APropertyIsCheckedAgainstItsDeclarationOnEveryWrite()
     {
-        Assert.Contains("Circle.Radius", Error("c = Circle(1); c.Radius = -2;"), StringComparison.Ordinal);
-        Assert.Contains("Circle.Radius", Error("c = Circle(-1);"), StringComparison.Ordinal);
+        // R2025b's sentence (open item 81, ADR 0217).
+        Assert.Contains("Error setting property 'Radius' of class 'Circle'.", Error("c = Circle(1); c.Radius = -2;"), StringComparison.Ordinal);
+        Assert.Contains("Error setting property 'Radius' of class 'Circle'.", Error("c = Circle(-1);"), StringComparison.Ordinal);
         Assert.Contains("Unrecognized property 'Nope' for class 'Circle'.", Error("c = Circle(1); c.Nope = 3;"), StringComparison.Ordinal);
     }
 
@@ -221,7 +222,9 @@ public class MatlabClassdefTests : IDisposable
     public void AConstantBelongsToTheClassAndCannotBeAssignedTo()
     {
         Assert.Equal("Inf Inf\n", RunAndRead("c = Circle(1); fprintf('%g %g\\n', Circle.Sides, c.Sides);"));
-        Assert.Contains("Constant", Error("c = Circle(1); c.Sides = 3;"), StringComparison.Ordinal);
+        // Through an instance, R2025b's SetProhibited (open item 81, ADR 0217); through the class, JGraph's.
+        Assert.Contains("Unable to set the 'Sides' property of class ''Circle'' because it is read-only.",
+            Error("c = Circle(1); c.Sides = 3;"), StringComparison.Ordinal);
         Assert.Contains("Constant", Error("Circle.Sides = 3;"), StringComparison.Ordinal);
     }
 

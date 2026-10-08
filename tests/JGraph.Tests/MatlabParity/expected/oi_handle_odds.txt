@@ -1,0 +1,11 @@
+CHK|delete_deleted_figure|char[1 3]'ran'|exact
+CHK|close_deleted_figure|char[1 57]'MATLAB:close:InvalidFigureHandle / Invalid figure handle.'|exact
+CHK|ishghandle_deleted|logical[1 1] 0|exact
+CHK|delete_deleted_uifigure|char[1 3]'ran'|exact
+CHK|delete_deleted_line|char[1 3]'ran'|exact
+CHK|delete_never_a_handle|char[1 65]'MATLAB:hg:udd_interface:CannotDelete / Invalid or deleted object.'|exact
+CHK|delete_closed_number|char[1 65]'MATLAB:hg:udd_interface:CannotDelete / Invalid or deleted object.'|div=0218|diverges|char[1 3]'ran'
+CHK|close_closed_number|char[1 57]'MATLAB:close:InvalidFigureHandle / Invalid figure handle.'|exact
+CHK|printdlg_headless|char[1 187]'MATLAB:hg:NonInteractiveFunctionSupport / Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.'|exact
+CHK|printpreview_headless|char[1 187]'MATLAB:hg:NonInteractiveFunctionSupport / Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.'|exact
+CHK|exportsetupdlg_headless|char[1 187]'MATLAB:hg:NonInteractiveFunctionSupport / Creating dialog boxes that block execution is not supported when MATLAB is in a configuration that is non-interactive or disables window display.'|exact

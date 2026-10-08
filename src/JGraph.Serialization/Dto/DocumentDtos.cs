@@ -18,6 +18,9 @@ public sealed class FigureDto
 {
     public string Name { get; set; } = string.Empty;
 
+    /// <summary>The script's label for the figure (open item 74); absent from documents before it.</summary>
+    public string? Tag { get; set; }
+
     public Color Background { get; set; }
 
     public SizeDto Size { get; set; } = new(640, 480);
@@ -230,6 +233,9 @@ public sealed class TiledLayoutDto
 public sealed class AxesDto
 {
     public string Name { get; set; } = string.Empty;
+
+    /// <summary>The script's label for the axes (open item 74); absent from documents before it.</summary>
+    public string? Tag { get; set; }
 
     public string Title { get; set; } = string.Empty;
 

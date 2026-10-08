@@ -69,26 +69,19 @@ public class MatlabM84DialogTests : IDisposable
     // --- The five that want a window ---------------------------------------------------------------
 
     /// <summary>
-    /// Each refuses by name and says which verb does the same job without a window — M60's fourth
-    /// answer for a verb that wants one, and what keeps a batch run free of a modal dialog.
+    /// Each refuses without a window. In the MATLAB dialect printdlg, printpreview and
+    /// exportsetupdlg say R2025b's blocking-dialog sentence (open item 84, ADR 0218) and exportapp its
+    /// own (ADR 0201); pagesetupdlg, which R2025b has removed, still names the verb that needs none.
     /// </summary>
     [Fact]
-    public async Task WithoutAWindowEachDialogNamesTheVerbThatNeedsNone() =>
+    public async Task WithoutAWindowEachDialogRefuses() =>
         await RefusesEach(
-            ("plot(1:3); printdlg(gcf);", "print(fig, file, '-dpng')"),
-            ("plot(1:3); printpreview(gcf);", "exportgraphics or print"),
+            ("plot(1:3); printdlg(gcf);", "Creating dialog boxes that block execution is not supported"),
+            ("plot(1:3); printdlg('-setup', gcf);", "Creating dialog boxes that block execution is not supported"),
+            ("plot(1:3); printpreview;", "Creating dialog boxes that block execution is not supported"),
+            ("plot(1:3); exportsetupdlg(gcf);", "Creating dialog boxes that block execution is not supported"),
             ("plot(1:3); pagesetupdlg(gcf);", "PaperType"),
-            ("plot(1:3); exportsetupdlg(gcf);", "Resolution"),
-            // R2025b's own refusal since U4 (ADR 0201): exportapp photographs a window, and there is none.
             ("plot(1:3); exportapp(gcf, 'x.png');", "startup options that prevent figures from displaying"));
-
-    /// <summary>And each says it opens a window, rather than saying it is not implemented.</summary>
-    [Fact]
-    public async Task TheRefusalSaysWhatIsMissingRatherThanThatTheVerbIs() =>
-        await RefusesEach(
-            ("plot(1:3); printdlg(gcf);", "opens a window"),
-            ("plot(1:3); printdlg('-setup', gcf);", "opens a window"),
-            ("plot(1:3); printpreview;", "opens a window"));
 
     // --- uiaxes -------------------------------------------------------------------------------------
 

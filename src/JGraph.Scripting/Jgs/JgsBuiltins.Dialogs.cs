@@ -110,11 +110,10 @@ internal static partial class JgsBuiltins
 
             string path = host.ResolveForWrite(FilePath("exportapp", args, 1, ".png", line, col));
             string extension = Path.GetExtension(path).ToLowerInvariant();
-            if (extension is not (".png" or ".jpg" or ".jpeg" or ".tif" or ".tiff" or ".bmp"))
+            if (extension is not (".png" or ".jpg" or ".jpeg" or ".tif" or ".tiff" or ".bmp" or ".pdf"))
             {
                 throw new JgsRuntimeException(line, col,
-                    $"exportapp writes a picture of the window as .png, .jpg, .tif or .bmp, and '{extension}' is none of them — "
-                    + "R2025b's .pdf is not written here.");
+                    $"exportapp writes a picture of the window as .png, .jpg, .tif, .bmp or .pdf, and '{extension}' is none of them.");
             }
 
             // The barrier: the figure is shown and what the script changed is in its window before
@@ -143,6 +142,10 @@ internal static partial class JgsBuiltins
     private static JgsValue NeedsAWindow(bool shown, string verb, string instead, int line, int col) =>
         shown
             ? JgsValue.Null
-            : throw new JgsRuntimeException(line, col,
-                $"{verb} opens a window, and this host has none — {instead}.");
+            : JgsRunningDialect.ThreadIsMatlab && verb != "pagesetupdlg"
+                // R2025b's refusal of a blocking dialog with no display (open item 84, measured);
+                // pagesetupdlg is removed in R2025b and waits on a decision of its own.
+                ? throw new JgsRuntimeException(line, col, NonInteractiveId, NonInteractiveText)
+                : throw new JgsRuntimeException(line, col,
+                    $"{verb} opens a window, and this host has none — {instead}.");
 }

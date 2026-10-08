@@ -46,7 +46,7 @@ ix_chk('dev_class', class(d));
 ix_chk('dev_props', properties(d));
 ix_chk('dev_methods', methods(d));
 ix_chk('dev_values', sprintf('%s|%d|%d|%s', d.Output, d.OutputID, d.InputID, class(d.Input)));
-ix_chk('dev_input_size', size(d.Input), 'div=ADR0194');
+ix_chk('dev_input_size', size(d.Input));   % the 1-by-0 char (open item 31, ADR 0219)
 ix_chk('dev_isa', sprintf('%d %d %d', isa(d, 'handle'), isvalid(d), isobject(d)));
 ix_chk('dev_by_name', midi_try(@() midi_output_id(mididevice('Microsoft GS Wavetable Synth'))));
 ix_chk('dev_output_kw', midi_output_id(mididevice('Output', 0)));

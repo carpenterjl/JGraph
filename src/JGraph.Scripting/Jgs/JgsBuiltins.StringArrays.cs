@@ -60,11 +60,21 @@ internal static partial class JgsBuiltins
     /// Whether <paramref name="value"/> reads as one piece of text: a char row or a string scalar.
     /// This is the question nearly every builtin is really asking when it tests for a string.
     /// </summary>
-    internal static bool IsTextScalar(JgsValue value) => value.Type == JgsType.String || IsStringScalar(value);
+    internal static bool IsTextScalar(JgsValue value) =>
+        value.Type == JgsType.String || IsStringScalar(value) || IsEmptyCharRow(value);
+
+    /// <summary>
+    /// Whether a value is the 1-by-0 char (<c>blanks(0)</c>, <c>x(1:0)</c>): a char row with no
+    /// characters, held as a char matrix because <c>''</c> is the 0-by-0 one (open item 31).
+    /// </summary>
+    internal static bool IsEmptyCharRow(JgsValue value) =>
+        value.IsCharMatrix && value.Rows == 1 && value.ArrayLength == 0 && value.Dims.Length <= 2;
 
     /// <summary>The text of a char row or a string scalar; anything else is a caller error.</summary>
     internal static string TextOf(JgsValue value) =>
-        value.Type == JgsType.String ? value.AsString : value.ElementAt(0).AsString;
+        value.Type == JgsType.String ? value.AsString
+        : IsEmptyCharRow(value) ? string.Empty
+        : value.ElementAt(0).AsString;
 
     /// <summary>
     /// The elements of a value read as text, one entry per string: a char row is one, a string array
@@ -136,6 +146,27 @@ internal static partial class JgsBuiltins
     private static JgsValue PadIntoCharMatrix(string[] texts) => JgsValue.CharMatrix(texts);
 
     /// <summary>
+    /// An empty char of a given shape (open item 31): the 1-by-0 char a char row's empty pick is, or
+    /// the 0-by-n one <c>char(zeros(0, n))</c> is. 0-by-0 is <c>''</c>.
+    /// </summary>
+    internal static JgsValue EmptyChar(int rows, int cols)
+    {
+        if (rows == 0 && cols == 0)
+        {
+            return JgsValue.Str(string.Empty);
+        }
+
+        if (rows == 1 && cols == 0)
+        {
+            return JgsValue.CharMatrix([string.Empty]);
+        }
+
+        JgsValue empty = JgsMatrix.FromColumnMajor([], rows, cols);
+        empty.Reshape(rows, cols);
+        return empty.MarkCharMatrix();
+    }
+
+    /// <summary>
     /// Gives a value read out of a char matrix its character back (M105). One element is a one-character
     /// char row, a single row is the char row it spells, and anything taller stays a char matrix —
     /// which is exactly MATLAB's own reading, where <c>A(2, :)</c> is a 1-by-n char and <c>A(:, 2)</c>
@@ -162,6 +193,12 @@ internal static partial class JgsBuiltins
         // reading Rows alone would have flattened it into a char row.
         if (picked.Rows == 1 && picked.Dims.Length <= 2)
         {
+            // An empty row is the 1-by-0 char, which '' (0-by-0) is not (open item 31, measured).
+            if (picked.ArrayLength == 0)
+            {
+                return JgsValue.CharMatrix([string.Empty]);
+            }
+
             var row = new char[picked.ArrayLength];
             for (int i = 0; i < row.Length; i++)
             {

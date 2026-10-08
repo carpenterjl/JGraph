@@ -514,8 +514,7 @@ internal sealed partial class Interpreter
 
         if (property.Constant)
         {
-            throw new JgsRuntimeException(member.Line, member.Column,
-                $"{definition.Name}.{field} is Constant, so it belongs to the class and cannot be assigned to.");
+            throw ConstantWrite(definition, field, member.Line, member.Column);
         }
 
         RequireSetAccess(definition, property, field, member.Line, member.Column); // U6: who may write it
@@ -609,6 +608,18 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// The refusal of a write to a Constant property through an instance: R2025b's
+    /// <c>MATLAB:class:SetProhibited</c> in the MATLAB dialect (open item 81, measured on stess_40's
+    /// classes), JGraph's sentence in JGS.
+    /// </summary>
+    private static JgsRuntimeException ConstantWrite(JgsClass definition, string field, int line, int col) =>
+        JgsRunningDialect.ThreadIsMatlab
+            ? new JgsRuntimeException(line, col, "MATLAB:class:SetProhibited",
+                $"Unable to set the '{field}' property of class ''{definition.Name}'' because it is read-only.")
+            : new JgsRuntimeException(line, col,
+                $"{definition.Name}.{field} is Constant, so it belongs to the class and cannot be assigned to.");
+
+    /// <summary>
     /// Writes a property of a handle object by name as <c>obj.name = value</c> would (U6): the
     /// access the running code has, AbortSet, the declaration's checks, the set method, the
     /// listeners. What <c>set</c> on a <c>matlab.mixin.SetGet</c> object asks.
@@ -622,8 +633,7 @@ internal sealed partial class Interpreter
                 $"Unrecognized property '{field}' for class '{definition.Name}'.");
         if (property.Constant)
         {
-            throw new JgsRuntimeException(line, col,
-                $"{definition.Name}.{field} is Constant, so it belongs to the class and cannot be assigned to.");
+            throw ConstantWrite(definition, field, line, col);
         }
 
         RequireSetAccess(definition, property, field, line, col);

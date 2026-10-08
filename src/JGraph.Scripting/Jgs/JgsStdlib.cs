@@ -206,10 +206,23 @@ internal static class JgsStdlib
         right = JgsBuiltins.ImageNumbers(right);
         if (left.Type == JgsType.Sparse) left = JgsBuiltins.SparseAsDense(left.AsSparse);
         if (right.Type == JgsType.Sparse) right = JgsBuiltins.SparseAsDense(right.AsSparse);
+        // A char row is its codes, and '' is the 0-by-0 of them: isequal('', blanks(0)) is false, the
+        // 1-by-0 char being another shape (open item 31, measured), where isequal('', []) is true.
+        static JgsValue Codes(JgsValue text)
+        {
+            JgsValue codes = JgsValue.Array(text.AsString.Select(c => JgsValue.Number(c)).ToArray());
+            if (text.AsString.Length == 0)
+            {
+                codes.Reshape(0, 0);
+            }
+
+            return codes;
+        }
+
         if (left.Type == JgsType.String && right.Type is JgsType.Number or JgsType.Bool or JgsType.Array)
-            left = JgsValue.Array(left.AsString.Select(c => JgsValue.Number(c)).ToArray());
+            left = Codes(left);
         if (right.Type == JgsType.String && left.Type is JgsType.Number or JgsType.Bool or JgsType.Array)
-            right = JgsValue.Array(right.AsString.Select(c => JgsValue.Number(c)).ToArray());
+            right = Codes(right);
         static bool IsOneElementArray(JgsValue value) =>
             value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsNd;
 

@@ -1,0 +1,57 @@
+CHK|blanks_zero|char[1 0]''|exact
+CHK|index_range|char[1 0]''|exact
+CHK|index_empty|char[0 0]''|exact
+CHK|index_zeros_1x0|char[1 0]''|exact
+CHK|index_zeros_0x1|char[1 0]''|exact
+CHK|index_mask|char[1 0]''|exact
+CHK|index_logical_false|char[1 0]''|exact
+CHK|col_index_range|char[1 0]''|exact
+CHK|two_d_range|char[1 0]''|exact
+CHK|end_range|char[1 0]''|exact
+CHK|char_zeros_1x0|char[1 0]''|exact
+CHK|char_zeros_0x0|char[0 0]''|exact
+CHK|char_zeros_0x3|double[1 2] [0 3]|exact
+CHK|repmat_1x0|char[1 0]''|exact
+CHK|repmat_0x1|double[1 2] [0 1]|exact
+CHK|repmat_str_1x0|char[1 0]''|exact
+CHK|sprintf_empty|char[1 0]''|exact
+CHK|sprintf_s_empty|char[1 0]''|exact
+CHK|sprintf_s_1x0|char[1 0]''|exact
+CHK|num2str_empty|char[0 0]''|exact
+CHK|strcat_empty|char[0 0]''|exact
+CHK|strcat_1x0|char[1 0]''|exact
+CHK|upper_1x0|char[1 0]''|exact
+CHK|fliplr_1x0|char[1 0]''|exact
+CHK|deblank_spaces|char[0 0]''|exact
+CHK|strtrim_spaces|char[0 0]''|exact
+CHK|strjoin_empty|char[0 0]''|exact
+CHK|regexprep_all|char[0 0]''|exact
+CHK|strrep_all|char[0 0]''|exact
+CHK|erase_all|char[0 0]''|exact
+CHK|cat_1x0_quote|char[1 0]''|exact
+CHK|cat_quote_1x0|char[1 0]''|exact
+CHK|hcat_1x0_1x0|char[1 0]''|exact
+CHK|vcat_1x0_1x0|double[1 2] [2 0]|exact
+CHK|hcat_1x0_quote|char[1 0]''|exact
+CHK|hcat_quote_1x0|char[1 0]''|exact
+CHK|hcat_ab_1x0|char[1 2]'ab'|exact
+CHK|grow_from_1x0|char[1 2]'ab'|exact
+CHK|mat2str_1x0|char[1 10]'zeros(1,0)'|exact
+CHK|string_1x0|string[1 1]""|exact
+CHK|char_string_empty|char[0 0]''|exact
+CHK|char_cell_empty|char[1 0]''|exact
+CHK|cellstr_1x0|cell[1 1]{char[0 0]''}|exact
+CHK|isequal_1x0_quote|logical[1 1] 0|exact
+CHK|isequal_quote_1x0|logical[1 1] 0|exact
+CHK|isequal_1x0_1x0|logical[1 1] 1|exact
+CHK|isequal_quote_empty|logical[1 1] 1|exact
+CHK|strcmp_1x0_quote|logical[1 1] 0|exact
+CHK|strcmp_1x0_range|logical[1 1] 1|exact
+CHK|isempty_1x0|logical[1 1] 1|exact
+CHK|length_1x0|double[1 1] 0|exact
+CHK|ismember_1x0|logical[1 1] 1|exact
+CHK|switch_1x0|char[1 8]'no match'|exact
+CHK|switch_quote|char[1 13]'matched quote'|exact
+CHK|double_1x0|double[1 0]|exact
+CHK|struct_field_1x0|char[1 0]''|exact
+CHK|strtok_empty|char[0 0]''|exact

@@ -533,8 +533,9 @@ internal sealed class MididevObject : DeviceObject, IJgsOwnDisp
 
         return new DeviceClass("mididevice", "mididevice", [],
             [
-                ReadOnly("Input", static d => JgsValue.Str(d.Input)),
-                ReadOnly("Output", static d => JgsValue.Str(d.Output)),
+                // Declared (1,:) char in R2025b, so a device with no input is the 1-by-0 char (open item 31).
+                ReadOnly("Input", static d => d.Input.Length == 0 ? JgsBuiltins.EmptyChar(1, 0) : JgsValue.Str(d.Input)),
+                ReadOnly("Output", static d => d.Output.Length == 0 ? JgsBuiltins.EmptyChar(1, 0) : JgsValue.Str(d.Output)),
                 ReadOnly("InputID", static d => JgsValue.Number(d.InputId)),
                 ReadOnly("OutputID", static d => JgsValue.Number(d.OutputId)),
             ],

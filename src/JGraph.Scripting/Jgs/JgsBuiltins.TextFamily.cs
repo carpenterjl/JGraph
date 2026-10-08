@@ -997,6 +997,12 @@ internal static partial class JgsBuiltins
             return cell;
         }
 
+        // Two 1-by-0 chars join into one, where '' and '' join into '' (open item 31, measured).
+        if (count == 1 && texts[0].Length == 0 && args.Any(static a => a.IsCharMatrix && a.Rows == 1 && a.ArrayLength == 0))
+        {
+            return EmptyChar(1, 0);
+        }
+
         return count == 1 ? JgsValue.Str(texts[0]) : PadIntoCharMatrix(texts);
     }
 

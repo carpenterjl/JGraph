@@ -1,4 +1,4 @@
-﻿using JGraph.Api;
+using JGraph.Api;
 using JGraph.Core.Model;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
@@ -102,7 +102,7 @@ public class MatlabFormatEscapeM144Tests : IDisposable
     [InlineData("'A\\qB'", "65", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("'A\\eB'", "65", "Escaped character '\\e' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("'A\\zB'", "65", "Escaped character '\\z' is not valid. See 'doc sprintf' for supported special characters.")]
-    [InlineData("'\\z'", "[]", "Escaped character '\\z' is not valid. See 'doc sprintf' for supported special characters.")]
+    [InlineData("'\\z'", "zeros(1,0)", "Escaped character '\\z' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("'A\\<B'", "65", "Escaped character '\\<' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("'A\\NB'", "65", "Escaped character '\\N' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("'A\\TB'", "65", "Escaped character '\\T' is not valid. See 'doc sprintf' for supported special characters.")]
@@ -133,7 +133,7 @@ public class MatlabFormatEscapeM144Tests : IDisposable
     [InlineData("sprintf('%d\\qX', 5)", "53", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("sprintf('%d\\q%d', 5, 6)", "[53 54]", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("sprintf('[%d]\\q[%d]', [1 2 3 4])", "[91 49 93 91 50 93 91 51 93 91 52 93]", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]
-    [InlineData("sprintf('\\q%d', 5)", "[]", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]
+    [InlineData("sprintf('\\q%d', 5)", "zeros(1,0)", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("sprintf('%s\\q', 'hi')", "[104 105]", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("sprintf('%d\\q', [1 2 3])", "[49 50 51]", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]
     [InlineData("sprintf('%d%%\\q%d', 5, 6)", "[53 37 54 37]", "Escaped character '\\q' is not valid. See 'doc sprintf' for supported special characters.")]

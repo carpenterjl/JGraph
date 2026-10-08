@@ -131,6 +131,19 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
+                // A handle that named an object and names nothing now is deleted quietly, as R2025b
+                // deletes a deleted handle; a number that never was one is its CannotDelete rather
+                // than a file name (open item 83, measured).
+                if (JgsRunningDialect.ThreadIsMatlab && IsHandleNumbers(args[i]))
+                {
+                    if (!TryDeleteLiveOrRetired(args[i], host))
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:hg:udd_interface:CannotDelete", "Invalid or deleted object.");
+                    }
+
+                    continue;
+                }
+
                 // Nothing to delete is nothing done: delete(findall(...)) of a search that found
                 // nothing is the ordinary way to clear up (U4).
                 if (args[i].Type == JgsType.Array && !args[i].IsStringArray && args[i].ArrayLength == 0)

@@ -152,11 +152,17 @@ public class BatchRunnerTests : IDisposable
         (int code, IScriptSession? session) = await BatchRunner.RunInSessionAsync(
             new StartupOptions(StartupMode.Batch, path, StartDirectory: _directory),
             [new MatlabScriptEngine()], _output, Show);
-        Assert.Equal(0, code);
+
+        // It has failed under the full suite's load and passed alone; say why when it does.
+        Assert.True(code == 0, $"exit {code}: {_output.ErrorText} {_output.NormalText}");
         Assert.NotNull(session);
         await using (session)
         {
-            Assert.True(JG.TryGetFigure(1, out FigureModel figure));
+            // Found by its name, not as figure 1: a test outside this collection may hold a figure
+            // of its own while this one runs, which is how this test failed under the full suite.
+            FigureModel figure = JG.FigureNumbers
+                .Select(n => JG.TryGetFigure(n, out FigureModel f) ? f : null)
+                .Last(f => f is { Name: "calc" })!;
             var controls = figure.Components.OfType<UiControlModel>().ToList();
             foreach ((string x, string y, string sum) in new[] { ("1", "2", "3"), ("20", "30", "50"), ("abc", "1", "NaN") })
             {

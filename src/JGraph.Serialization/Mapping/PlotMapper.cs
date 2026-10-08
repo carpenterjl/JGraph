@@ -854,6 +854,7 @@ internal static class PlotMapper
         dto.SeriesIndex = plot.SeriesIndex;
         dto.Clipping = plot.Clipping;
         dto.ShowsInLegend = plot.ShowsInLegend;
+        dto.Tag = string.IsNullOrEmpty(plot.Tag) ? null : plot.Tag;
     }
 
     private static void ApplyCommon(PlotDto dto, PlotObject plot)
@@ -868,6 +869,11 @@ internal static class PlotMapper
         plot.YAxisIndex = dto.YAxisIndex;
         plot.SeriesIndex = dto.SeriesIndex;
         plot.Clipping = dto.Clipping;
+        if (dto.Tag is { } tag)
+        {
+            plot.Tag = tag;
+        }
+
         if (!dto.ShowsInLegend)
         {
             plot.Annotation.LegendInformation.IconDisplayStyle = LegendIconDisplay.Off;

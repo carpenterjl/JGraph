@@ -316,6 +316,33 @@ internal static class JgsHandleRegistry
 
     private static double _next = FirstHandle;
 
+    /// <summary>The figure numbers handed out as handles this session (open item 83).</summary>
+    private static readonly HashSet<int> IssuedFigureNumbers = [];
+
+    /// <summary>
+    /// Whether <paramref name="number"/> was handed out as a handle this session and names nothing
+    /// now: a deleted object, which R2025b's <c>delete</c> takes quietly where a number that never
+    /// was a handle is refused (open item 83, measured). A minted handle is a half above an integer
+    /// from <see cref="FirstHandle"/> on; a figure's is its number.
+    /// </summary>
+    public static bool WasHandle(double number)
+    {
+        // Asked of JG before the gate is taken, so this lock is never held while JG's is wanted.
+        bool wholeNumber = number == System.Math.Floor(number) && number is > 0 and <= int.MaxValue;
+        bool openFigure = wholeNumber && JG.FigureNumbers.Contains((int)number);
+        lock (Gate)
+        {
+            if (Entries.ContainsKey(number))
+            {
+                return false;
+            }
+
+            bool minted = number >= FirstHandle && number < _next && number - System.Math.Floor(number) == 0.5;
+            bool figure = wholeNumber && !openFigure && IssuedFigureNumbers.Contains((int)number);
+            return minted || figure;
+        }
+    }
+
     /// <summary>The root's <c>ShowHiddenHandles</c>: while on, no handle is hidden from anything.</summary>
     public static bool ShowHiddenHandles { get; set; }
 
@@ -332,6 +359,11 @@ internal static class JgsHandleRegistry
             int number = JG.GetFigureNumber(figure);
             if (number > 0 && figure.IntegerHandle)
             {
+                lock (Gate)
+                {
+                    IssuedFigureNumbers.Add(number);
+                }
+
                 return JgsValue.Number(number);
             }
 
@@ -509,6 +541,7 @@ internal static class JgsHandleRegistry
             Entries.Clear();
             Handles.Clear();
             FigureEntries.Clear();
+            IssuedFigureNumbers.Clear();
             _next = FirstHandle;
             ShowHiddenHandles = false;
             JgsComponentContainers.Clear();

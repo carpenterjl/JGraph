@@ -81,7 +81,7 @@ public class MatlabFigureLifecycleTests : IDisposable
         ScriptRunResult result = await Prompt(session, "close(7)");
 
         Assert.False(result.Success);
-        Assert.Contains("no figure 7", _output.ErrorText, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Invalid figure handle.", _output.ErrorText, StringComparison.Ordinal); // R2025b's (open item 83)
     }
 
     [Fact]
