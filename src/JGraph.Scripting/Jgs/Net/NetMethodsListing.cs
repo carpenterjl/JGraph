@@ -171,7 +171,7 @@ internal static class NetMethodsListing
     }
 
     /// <summary>Names in columns filled top to bottom, each padded to <paramref name="width"/>.</summary>
-    private static IEnumerable<string> Columns(string[] names, int width)
+    internal static IEnumerable<string> Columns(string[] names, int width)
     {
         int columns = Math.Max(1, WindowWidth / width);
         int rows = (names.Length + columns - 1) / columns;

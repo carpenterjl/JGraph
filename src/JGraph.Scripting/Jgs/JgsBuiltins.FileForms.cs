@@ -205,7 +205,36 @@ internal static partial class JgsBuiltins
             answer.Reshape(values.Count, 1);
         }
 
-        if (!target.Equals("double", StringComparison.OrdinalIgnoreCase)
+        // A precision that keeps char ('*char', 'uint8=>char') answers characters in the same shape
+        // (open item 34, measured: 8-by-1, 1-by-8 and 2-by-2 for the three sizes).
+        if (target.Equals("char", StringComparison.OrdinalIgnoreCase))
+        {
+            int down = rows > 0 && values.Count > 0 ? rows : values.Count;
+            int across = down == 0 ? 0 : (values.Count + down - 1) / down;
+            if (down <= 1 || across == 0)
+            {
+                answer = JgsValue.Str(new string([.. values.Select(static v => (char)v)]));
+            }
+            else
+            {
+                var codes = new double[down * across];
+                values.CopyTo(codes);
+                var rowTexts = new string[down];
+                for (int r = 0; r < down; r++)
+                {
+                    var row = new char[across];
+                    for (int c = 0; c < across; c++)
+                    {
+                        row[c] = (char)codes[(c * down) + r];
+                    }
+
+                    rowTexts[r] = new string(row);
+                }
+
+                answer = JgsValue.CharMatrix(rowTexts);
+            }
+        }
+        else if (!target.Equals("double", StringComparison.OrdinalIgnoreCase)
             && JgsNumericClasses.Parse(target) is { } numericClass)
         {
             answer = ToNumericClass("fread", numericClass, answer, line, col);

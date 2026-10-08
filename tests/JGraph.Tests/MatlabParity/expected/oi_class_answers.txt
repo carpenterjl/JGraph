@@ -1,0 +1,77 @@
+CHK|m_plain|cell[1 6]{char[0 0]'';char[1 25]'Methods for class OiBase:';char[1 44]'OiBase     base_only  skip_arg   two_out    ';char[1 15]'Static methods:';char[1 11]'make       ';char[0 0]''}|exact
+CHK|m_value_only_ctor|cell[1 4]{char[0 0]'';char[1 26]'Methods for class OiValue:';char[1 9]'OiValue  ';char[0 0]''}|exact
+CHK|m_kid|cell[1 6]{char[0 0]'';char[1 24]'Methods for class OiKid:';char[1 55]'OiKid      base_only  kid_only   skip_arg   two_out    ';char[1 15]'Static methods:';char[1 11]'make       ';char[0 0]''}|exact
+CHK|m_kid_obj|cell[1 6]{char[0 0]'';char[1 24]'Methods for class OiKid:';char[1 55]'OiKid      base_only  kid_only   skip_arg   two_out    ';char[1 15]'Static methods:';char[1 11]'make       ';char[0 0]''}|exact
+CHK|m_base_full|cell[1 8]{char[0 0]'';char[1 25]'Methods for class OiBase:';char[1 10]'obj OiBase';char[1 18]'out base_only(obj)';char[1 19]'Static r make(n, m)';char[1 14]'skip_arg(~, y)';char[1 32]'[a, b] two_out(obj, x, varargin)';char[0 0]''}|exact
+CHK|m_kid_full|cell[1 9]{char[0 0]'';char[1 24]'Methods for class OiKid:';char[1 9]'obj OiKid';char[1 18]'out base_only(obj)';char[1 13]'kid_only(obj)';char[1 44]'Static r make(n, m)  % Inherited from OiBase';char[1 39]'skip_arg(~, y)  % Inherited from OiBase';char[1 57]'[a, b] two_out(obj, x, varargin)  % Inherited from OiBase';char[0 0]''}|exact
+CHK|m_value_full|cell[1 4]{char[0 0]'';char[1 26]'Methods for class OiValue:';char[1 11]'obj OiValue';char[0 0]''}|exact
+CHK|m_shape_full|cell[1 30]{char[0 0]'';char[1 26]'Methods for class OiShape:';char[1 14]'obj OiShape(r)';char[1 68]'L addlistener(sources, eventname, callback)  % Inherited from handle';char[1 80]'L addlistener(sources, properties, eventname, callback)  % Inherited from handle';char[1 82]'L addlistener(sources, propertyname, eventname, callback)  % Inherited from handle';char[1 82]'L addlistener(sources, propertyname, eventname, callback)  % Inherited from handle';char[1 83]'L addlistener(sources, propertynames, eventname, callback)  % Inherited from handle';char[1 11]'a area(obj)';char[1 36]'delete(obj)  % Inherited from handle';char[1 36]'TF eq(A, B)  % Inherited from handle';char[1 48]'HM findobj(H, varargin)  % Inherited from handle';char[1 56]'prop findprop(object, propname)  % Inherited from handle';char[1 36]'TF ge(A, B)  % Inherited from handle';char[1 12]'grow(obj, k)';char[1 36]'TF gt(A, B)  % Inherited from handle';char[1 46]'validity isvalid(obj)  % Inherited from handle';char[1 36]'TF le(A, B)  % Inherited from handle';char[1 65]'L listener(sources, eventname, callback)  % Inherited from handle';char[1 77]'L listener(sources, properties, eventname, callback)  % Inherited from handle';char[1 79]'L listener(sources, propertyname, eventname, callback)  % Inherited from handle';char[1 79]'L listener(sources, propertyname, eventname, callback)  % Inherited from handle';char[1 80]'L listener(sources, propertynames, eventname, callback)  % Inherited from handle';char[1 23]'longer_method_name(obj)';char[1 36]'TF lt(A, B)  % Inherited from handle';char[1 36]'TF ne(A, B)  % Inherited from handle';char[1 51]'notify(sources, eventname)  % Inherited from handle';char[1 62]'notify(sources, eventname, eventdata)  % Inherited from handle';char[1 13]'Static c unit';char[0 0]''}|exact
+CHK|m_copykid_full|cell[1 27]{char[0 0]'';char[1 28]'Methods for class OiCopyKid:';char[1 13]'obj OiCopyKid';char[1 68]'L addlistener(sources, eventname, callback)  % Inherited from handle';char[1 80]'L addlistener(sources, properties, eventname, callback)  % Inherited from handle';char[1 82]'L addlistener(sources, propertyname, eventname, callback)  % Inherited from handle';char[1 82]'L addlistener(sources, propertyname, eventname, callback)  % Inherited from handle';char[1 83]'L addlistener(sources, propertynames, eventname, callback)  % Inherited from handle';char[1 55]'lhs1 copy(rhs1)  % Inherited from matlab.mixin.Copyable';char[1 36]'delete(obj)  % Inherited from handle';char[1 36]'TF eq(A, B)  % Inherited from handle';char[1 48]'HM findobj(H, varargin)  % Inherited from handle';char[1 56]'prop findprop(object, propname)  % Inherited from handle';char[1 36]'TF ge(A, B)  % Inherited from handle';char[1 36]'TF gt(A, B)  % Inherited from handle';char[1 46]'validity isvalid(obj)  % Inherited from handle';char[1 36]'TF le(A, B)  % Inherited from handle';char[1 65]'L listener(sources, eventname, callback)  % Inherited from handle';char[1 77]'L listener(sources, properties, eventname, callback)  % Inherited from handle';char[1 79]'L listener(sources, propertyname, eventname, callback)  % Inherited from handle';char[1 79]'L listener(sources, propertyname, eventname, callback)  % Inherited from handle';char[1 80]'L listener(sources, propertynames, eventname, callback)  % Inherited from handle';char[1 36]'TF lt(A, B)  % Inherited from handle';char[1 36]'TF ne(A, B)  % Inherited from handle';char[1 51]'notify(sources, eventname)  % Inherited from handle';char[1 62]'notify(sources, eventname, eventdata)  % Inherited from handle';char[0 0]''}|exact
+CHK|m_shape|cell[1 7]{char[0 0]'';char[1 26]'Methods for class OiShape:';char[1 80]'OiShape             area                grow                longer_method_name  ';char[1 15]'Static methods:';char[1 20]'unit                ';char[1 119]'<a href="matlab: methods handle">Methods</a> of OiShape inherited from <a href="matlab:helpPopup('handle')">handle</a>.';char[0 0]''}|div=0216|diverges|cell[1 7]{char[0 0]'';char[1 26]'Methods for class OiShape:';char[1 80]'OiShape             area                grow                longer_method_name  ';char[1 15]'Static methods:';char[1 20]'unit                ';char[1 41]'Methods of OiShape inherited from handle.';char[0 0]''}
+CHK|m_copykid|cell[1 5]{char[0 0]'';char[1 28]'Methods for class OiCopyKid:';char[1 22]'OiCopyKid  copy       ';char[1 121]'<a href="matlab: methods handle">Methods</a> of OiCopyKid inherited from <a href="matlab:helpPopup('handle')">handle</a>.';char[0 0]''}|div=0216|diverges|cell[1 5]{char[0 0]'';char[1 28]'Methods for class OiCopyKid:';char[1 22]'OiCopyKid  copy       ';char[1 43]'Methods of OiCopyKid inherited from handle.';char[0 0]''}
+CHK|m_shape_full_cell|cell[27 1]{char[1 14]'obj OiShape(r)';char[1 43]'L addlistener(sources, eventname, callback)';char[1 55]'L addlistener(sources, properties, eventname, callback)';char[1 57]'L addlistener(sources, propertyname, eventname, callback)';char[1 57]'L addlistener(sources, propertyname, eventname, callback)';char[1 58]'L addlistener(sources, propertynames, eventname, callback)';char[1 11]'a area(obj)';char[1 11]'delete(obj)';char[1 11]'TF eq(A, B)';char[1 23]'HM findobj(H, varargin)';char[1 31]'prop findprop(object, propname)';char[1 11]'TF ge(A, B)';char[1 12]'grow(obj, k)';char[1 11]'TF gt(A, B)';char[1 21]'validity isvalid(obj)';char[1 11]'TF le(A, B)';char[1 40]'L listener(sources, eventname, callback)';char[1 52]'L listener(sources, properties, eventname, callback)';char[1 54]'L listener(sources, propertyname, eventname, callback)';char[1 54]'L listener(sources, propertyname, eventname, callback)';char[1 55]'L listener(sources, propertynames, eventname, callback)';char[1 23]'longer_method_name(obj)';char[1 11]'TF lt(A, B)';char[1 11]'TF ne(A, B)';char[1 26]'notify(sources, eventname)';char[1 37]'notify(sources, eventname, eventdata)';char[1 13]'Static c unit'}|exact
+CHK|m_kid_full_cell|cell[6 1]{char[1 9]'obj OiKid';char[1 18]'out base_only(obj)';char[1 13]'kid_only(obj)';char[1 19]'Static r make(n, m)';char[1 14]'skip_arg(~, y)';char[1 32]'[a, b] two_out(obj, x, varargin)'}|exact
+CHK|m_shape_names|cell[18 1]{char[1 7]'OiShape';char[1 11]'addlistener';char[1 4]'area';char[1 6]'delete';char[1 2]'eq';char[1 7]'findobj';char[1 8]'findprop';char[1 2]'ge';char[1 4]'grow';char[1 2]'gt';char[1 7]'isvalid';char[1 2]'le';char[1 8]'listener';char[1 18]'longer_method_name';char[1 2]'lt';char[1 2]'ne';char[1 6]'notify';char[1 4]'unit'}|exact
+CHK|m_kid_names|cell[6 1]{char[1 5]'OiKid';char[1 9]'base_only';char[1 8]'kid_only';char[1 4]'make';char[1 8]'skip_arg';char[1 7]'two_out'}|exact
+CHK|m_struct|cell[1 4]{char[0 0]'';char[1 25]'Methods for class struct:';char[1 143]'ctranspose   display      iscolumn     ismatrix     isrow        isscalar     isvector     permute      reshape      struct2cell  transpose    ';char[0 0]''}|exact
+CHK|m_struct_names|cell[11 1]{char[1 10]'ctranspose';char[1 7]'display';char[1 8]'iscolumn';char[1 8]'ismatrix';char[1 5]'isrow';char[1 8]'isscalar';char[1 8]'isvector';char[1 7]'permute';char[1 7]'reshape';char[1 11]'struct2cell';char[1 9]'transpose'}|exact
+CHK|m_handle_fn|cell[1 4]{char[0 0]'';char[1 34]'Methods for class function_handle:';char[1 77]'display    edit       func2str   functions  nargin     nargout    open       ';char[0 0]''}|exact
+CHK|m_handle_fn_names|cell[7 1]{char[1 7]'display';char[1 4]'edit';char[1 8]'func2str';char[1 9]'functions';char[1 6]'nargin';char[1 7]'nargout';char[1 4]'open'}|exact
+CHK|m_unknown|cell[1 3]{char[0 0]'';char[1 25]'No class 'NoSuchClassOi'.';char[0 0]''}|exact
+CHK|m_unknown_full|cell[1 3]{char[0 0]'';char[1 25]'No class 'NoSuchClassOi'.';char[0 0]''}|exact
+CHK|m_unknown_answer|double[0 0]|exact
+CHK|m_command|cell[1 6]{char[0 0]'';char[1 25]'Methods for class OiBase:';char[1 44]'OiBase     base_only  skip_arg   two_out    ';char[1 15]'Static methods:';char[1 11]'make       ';char[0 0]''}|exact
+CHK|sc_handle|cell[1 1]{char[1 6]'handle'}|exact
+CHK|sc_value|cell[0 1]{}|exact
+CHK|sc_two|cell[3 1]{char[1 13]'OiPlainHandle';char[1 6]'handle';char[1 21]'matlab.mixin.Copyable'}|exact
+CHK|sc_obj|cell[3 1]{char[1 13]'OiPlainHandle';char[1 6]'handle';char[1 21]'matlab.mixin.Copyable'}|exact
+CHK|sc_string|cell[1 1]{char[1 6]'OiBase'}|exact
+CHK|sc_double|cell[0 1]{}|exact
+CHK|sc_number|cell[0 1]{}|exact
+CHK|sc_unknown|cell[0 1]{}|exact
+CHK|sc_extra|MATLAB:maxrhs|exact
+CHK|sc_extra_msg|Too many input arguments.|exact
+CHK|sc_listing|cell[1 6]{char[0 0]'';char[1 33]'Superclasses for class OiCopyKid:';char[1 17]'    OiPlainHandle';char[1 10]'    handle';char[1 25]'    matlab.mixin.Copyable';char[0 0]''}|exact
+CHK|sc_listing_none|cell[1 3]{char[0 0]'';char[1 33]'No superclasses for class double.';char[0 0]''}|exact
+CHK|sc_listing_value|cell[1 3]{char[0 0]'';char[1 34]'No superclasses for class OiValue.';char[0 0]''}|exact
+CHK|pid_class|char[1 6]'double'|exact
+CHK|pid_size|double[1 2] [1 1]|exact
+CHK|pid_whole|logical[1 1] 1|exact
+CHK|feature_none|MATLAB:minrhs|exact
+CHK|feature_none_msg|Not enough input arguments.|exact
+CHK|st_value|struct[1 1]{(X=double[1 1] 1,Y=char[1 3]'two',Z=double[1 1] 3,Q=double[1 1] 4,K=double[1 1] 9)} WARN MATLAB:structOnObject|exact
+CHK|st_warning|char[1 21]'MATLAB:structOnObject' WARN MATLAB:structOnObject|exact
+CHK|st_handle|struct[1 1]{(A=double[1 1] 1,H=char[1 3]'hid',P=double[1 1] 3)} WARN MATLAB:structOnObject|exact
+CHK|st_order|cell[4 1]{char[1 1]'B';char[1 1]'A';char[1 1]'H';char[1 1]'P'} WARN MATLAB:structOnObject|exact
+CHK|st_getters|struct[1 1]{(R=double[1 1] 2,D=double[1 1] 20)} WARN MATLAB:structOnObject|exact
+CHK|st_array_size|double[1 2] [1 1] WARN MATLAB:structOnObject|exact
+CHK|st_array_first|double[1 1] 10 WARN MATLAB:structOnObject|exact
+CHK|fr_star_char|char[8 1]'a;b;c;d;e;f;g;h'|exact
+CHK|fr_row_char|char[1 8]'abcdefgh'|exact
+CHK|fr_u8_char|char[8 1]'a;b;c;d;e;f;g;h'|exact
+CHK|fr_char_char|char[3 1]'a;b;c'|exact
+CHK|fr_char_double|double[3 1] [97;98;99]|exact
+CHK|fr_square_char|char[2 2]'ac;bd'|exact
+CHK|fr_one_char|char[1 1]'a'|exact
+CHK|fr_star_u16|uint16[2 1] [25185;25699]|exact
+CHK|fileread_text|char[1 8]'abcdefgh'|exact
+CHK|fileread_string_name|char[1 8]'abcdefgh'|exact
+CHK|fileread_case|char[1 8]'abcdefgh'|exact
+CHK|fileread_utf8|double[1 6] [104 105 13 10 233 10]|exact
+CHK|fileread_latin1|double[1 7] [104 105 13 10 195 169 10]|exact
+CHK|fileread_bom|double[1 3] [65279 97 98]|exact
+CHK|fileread_empty|double[1 2] [0 0]|exact
+CHK|fileread_bad_name|MATLAB:TooManyInputs|exact
+CHK|fileread_bad_name_msg|Invalid argument name 'Bogus'. Use 'Encoding'.|exact
+CHK|fileread_odd|MATLAB:TooManyInputs|exact
+CHK|fileread_odd_msg|Invalid argument at position 2. Make sure name-value arguments include both the name and the value.|exact
+CHK|fileread_bad_encoding|MATLAB:iofun:InvalidEncoding|exact
+CHK|fileread_bad_encoding_msg|The encoding 'nonsense-enc' is not valid.|exact
+CHK|fileread_missing|MATLAB:fileread:cannotOpenFile|exact
+CHK|fileread_missing_msg|Could not open file no_such_file_oi.txt. No such file or directory.|exact
+CHK|fileread_number|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|fileread_number_msg|Invalid argument at position 1. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|fileread_cell|MATLAB:validators:mustBeTextScalar|exact
+CHK|fileread_cell_msg|Invalid argument at position 1. Value must be a character vector or string scalar.|exact
+CHK|fileread_empty_name|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|fileread_empty_name_msg|Invalid argument at position 1. Value must be text with one or more characters.|exact

@@ -234,6 +234,18 @@ internal sealed class JgsClass
         }
     }
 
+    /// <summary>
+    /// The methods a listing shows, the class's own and the inherited ones, public and not hidden;
+    /// not the ones every handle class has, which <see cref="MethodNames"/> adds by name (open item 14).
+    /// </summary>
+    internal IEnumerable<ClassMethod> ListedMethods => _methods.Values.Where(static m => m.Access.IsPublic && !m.Hidden);
+
+    /// <summary>Whether the class wrote no constructor and still has one (it is not abstract).</summary>
+    internal bool HasImplicitConstructor => !_own.ContainsKey(Name) && !Declaration.Abstract;
+
+    /// <summary>The constructor's name as a listing shows it: the class name after its last dot.</summary>
+    internal string ConstructorName => Name[(Name.LastIndexOf('.') + 1)..];
+
     /// <summary>The classes named after <c>&lt;</c> that are classes here: user classes and mixins, not <c>handle</c>.</summary>
     public IReadOnlyList<JgsClass> Supers => _supers;
 

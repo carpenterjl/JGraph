@@ -293,14 +293,38 @@ internal static partial class JgsBuiltins
 
             // struct(obj) is a struct of the object's properties, each read as a dot would read it,
             // so a property with a get method is its answer (V6, #28, measured: the getters run in
-            // declaration order); a Dependent property nothing can answer for is left out.
-            if (args.Count == 1 && args[0].Type == JgsType.Object)
+            // declaration order); a Dependent property nothing can answer for is left out, and so is
+            // one whose getter refuses (open item 29, measured). R2025b warns MATLAB:structOnObject
+            // first, and answers an array of objects from its first, 1-by-1 (measured).
+            JgsObject? instance = args.Count != 1 ? null
+                : args[0].Type == JgsType.Object ? args[0].AsObject
+                : args[0].Type == JgsType.Array && args[0].ArrayLength > 0 && args[0].ElementAt(0).Type == JgsType.Object
+                    ? args[0].ElementAt(0).AsObject
+                    : null;
+            if (instance is not null)
             {
-                JgsObject instance = args[0].AsObject;
+                if (JgsRunningDialect.ThreadIsMatlab)
+                {
+                    Warn(host, "MATLAB:structOnObject",
+                        "Calling STRUCT on an object prevents the object from hiding its implementation details and should " +
+                        "thus be avoided. Use DISP or DISPLAY to see the visible public details of an object. See 'help " +
+                        "struct' for more information.");
+                }
+
                 var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
                 foreach (ClassProperty property in instance.Class.Properties)
                 {
-                    if (instance.Class.DisplayValue(instance, property) is { } held)
+                    JgsValue? held;
+                    try
+                    {
+                        held = instance.Class.DisplayValue(instance, property);
+                    }
+                    catch (JgsException)
+                    {
+                        continue;
+                    }
+
+                    if (held is not null)
                     {
                         fields[property.Spec.Name] = instance.Class.TryGetter(property.Spec.Name, out _) ? held : JgsValue.Share(held);
                     }
@@ -315,6 +339,25 @@ internal static partial class JgsBuiltins
             }
 
             return BuildStruct(args, line, col);
+        });
+
+        // feature('getpid'): this process's id as a double, the key matched in any case and further
+        // arguments ignored (open item 27, measured). feature is undocumented and has hundreds of
+        // keys, so another key is refused in JGraph's words rather than called "not found".
+        Define("feature", (args, line, col) =>
+        {
+            if (args.Count == 0)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            }
+
+            if (IsTextScalar(args[0]) && TextOf(args[0]).Equals("getpid", StringComparison.OrdinalIgnoreCase))
+            {
+                return JgsValue.Number(Environment.ProcessId);
+            }
+
+            throw new JgsRuntimeException(line, col, "JGraph:feature:unsupported",
+                "JGraph answers feature('getpid') and no other feature key.");
         });
 
         Define("fieldnames", (args, line, col) =>

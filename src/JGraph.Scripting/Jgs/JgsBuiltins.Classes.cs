@@ -72,9 +72,56 @@ internal static partial class JgsBuiltins
                 return JgsEmpty.Zero();
             }
 
+            // A user class's -full lines, a struct's or a function handle's names, and [] for a
+            // name that is no class (open item 14, measured).
+            switch (MethodsSubject(args[0]))
+            {
+                case { Class: { } cls } when full:
+                    return CellColumn(ClassMethodsListing.FullLines(cls, notes: false));
+                case { Builtin: { } names }:
+                    return CellColumn(names);
+                case { Unknown: not null }:
+                    return JgsEmpty.Zero();
+            }
+
             return full && NetTypeNamed(args[0], interpreter) is { } type
                 ? CellColumn(Net.NetMethodsListing.FullLines(type))
                 : CellColumn(MethodNames("methods", args[0], interpreter, line, col));
+        }
+
+        // What a methods call is about, when it is one the listing of open item 14 covers: a user
+        // class (an instance or its name), a built-in class whose names were measured (a struct, a
+        // function handle, or either named), or in the MATLAB dialect a name that is nothing at all —
+        // not a class, a .NET type, a library or a builtin, so methods('double') keeps its refusal
+        // rather than claiming there is no such class.
+        (JgsClass? Class, string[]? Builtin, string? BuiltinName, string? Unknown) MethodsSubject(JgsValue value)
+        {
+            if (value.Type == JgsType.Object)
+            {
+                return (value.AsObject.Class, null, null, null);
+            }
+
+            if (NamedClass(value, interpreter) is { } named)
+            {
+                return (named, null, null, null);
+            }
+
+            string? builtinName = IsTextScalar(value) ? TextOf(value)
+                : value.Type is JgsType.Struct or JgsType.Function ? ClassOf(value, JgsDialect.Matlab)
+                : null;
+            if (builtinName is not null && ClassMethodsListing.BuiltinClassMethods.TryGetValue(builtinName, out string[]? names))
+            {
+                return (null, names, builtinName, null);
+            }
+
+            if (interpreter.Dialect.IsMatlab && IsTextScalar(value) && TextOf(value) is { Length: > 0 } text
+                && !text.Contains('.', StringComparison.Ordinal) && interpreter.BuiltinClass(text) is null
+                && !env.TryGet(text, out _) && LibListingOf(value, interpreter, out _) is null)
+            {
+                return (null, null, null, text);
+            }
+
+            return (null, null, null, null);
         }
 
         env.Builtins.Register("methods", JgsValue.Function(new BuiltinFunction("methods", Methods)
@@ -98,6 +145,22 @@ internal static partial class JgsBuiltins
                     if (unknownLib)
                     {
                         libHost.WriteOut($"\nNo class '{TextOf(args[0])}'.\n\n");
+                        return [];
+                    }
+                }
+
+                if (wanted == 0 && interpreter.Host is { } listingHost)
+                {
+                    string? listing = MethodsSubject(args[0]) switch
+                    {
+                        { Class: { } cls } => MethodsFull(args, line, col) ? ClassMethodsListing.Full(cls) : ClassMethodsListing.Names(cls),
+                        { Builtin: { } names, BuiltinName: { } className } => ClassMethodsListing.BuiltinNames(className, names),
+                        { Unknown: { } name } => ClassMethodsListing.NoClass(name),
+                        _ => null,
+                    };
+                    if (listing is not null)
+                    {
+                        listingHost.WriteOut(listing);
                         return [];
                     }
                 }
@@ -179,17 +242,40 @@ internal static partial class JgsBuiltins
 
         // superclasses(obj) or superclasses('Name'): each superclass followed by its own, a column
         // (U6, measured: {'U6Mid'; 'U6Base'; 'handle'}); a value of a built-in class has none.
-        Define("superclasses", (args, line, col) =>
+        // Asked for nothing it prints R2025b's listing instead (open item 27, measured): a blank line,
+        // "Superclasses for class X:", a blank line, each name indented four, and a blank line; or
+        // "No superclasses for class X." between blank lines.
+        env.Builtins.Register("superclasses", JgsValue.Function(new BuiltinFunction("superclasses", (args, line, col) =>
+            Superclasses(args, line, col).Column)
+        {
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                (JgsValue column, string[] names, string className) = Superclasses(args, line, col);
+                if (wanted == 0 && interpreter.Host is { } host)
+                {
+                    host.WriteOut(names.Length == 0
+                        ? $"\nNo superclasses for class {className}.\n\n"
+                        : $"\nSuperclasses for class {className}:\n\n{string.Concat(names.Select(static n => $"    {n}\n"))}\n");
+                    return [];
+                }
+
+                return [column];
+            },
+        }));
+
+        (JgsValue Column, string[] Names, string ClassName) Superclasses(IReadOnlyList<JgsValue> args, int line, int col)
         {
             Arity("superclasses", args, 1, line, col);
             JgsClass? asked = args[0].Type == JgsType.Object ? args[0].AsObject.Class
                 : IsTextScalar(args[0]) ? interpreter.ClassForLoad(TextOf(args[0])) ?? interpreter.BuiltinClass(TextOf(args[0]))
                 : null;
-            JgsValue[] names = asked is null ? [] : [.. asked.SuperclassNames.Select(JgsValue.Str)];
-            JgsValue column = JgsValue.Cell(names);
+            string className = asked?.Name ?? (IsTextScalar(args[0]) ? TextOf(args[0]) : ClassOf(args[0], JgsDialect.Matlab));
+            string[] names = asked is null ? [] : [.. asked.SuperclassNames];
+            JgsValue column = JgsValue.Cell([.. names.Select(JgsValue.Str)]);
             column.Reshape(names.Length, 1);
-            return column;
-        });
+            return (column, names, className);
+        }
 
         Define("metaclass", (args, line, col) =>
         {
@@ -384,9 +470,8 @@ internal static partial class JgsBuiltins
             return definition.MethodNames;
         }
 
-        // A function handle's one method is calling it, and a value of any other kind has none. Saying
-        // so with an empty list rather than an error is what MATLAB does, and it is what lets a script
-        // ask about a value it has not looked at yet.
+        // A plain struct and a function handle answer R2025b's names before this (open item 14); a
+        // tagged struct answers none, which lets a script ask about a value it has not looked at yet.
         return value.Type is JgsType.Function or JgsType.Struct
             ? []
             : throw new JgsRuntimeException(line, col,

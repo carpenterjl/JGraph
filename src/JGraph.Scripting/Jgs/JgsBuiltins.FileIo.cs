@@ -89,6 +89,8 @@ internal static partial class JgsBuiltins
         DefineMany("fgets", (args, wanted, line, col) =>
             ReadLine(host, "fgets", args, wanted, keepTerminator: true, line, col));
 
+        Define("fileread", (args, line, col) => FileRead(host, args, line, col));
+
         // image draws, so its handle does not echo as `ans` — the rule plot has always had.
         env.Builtins.Register("image", JgsValue.Function(new BuiltinFunction(
             "image", OnNamedAxes((args, line, col) =>
@@ -103,6 +105,88 @@ internal static partial class JgsBuiltins
                 return DrawImage("image", args, scaled: false, line, col);
             }))
         { BindsAnsAsStatement = false }));
+    }
+
+    /// <summary>
+    /// <c>fileread(file)</c> and <c>fileread(file, 'Encoding', name)</c> (open item 34, measured in
+    /// R2025b): the whole file as one char row, line ends kept, read as UTF-8 unless an encoding is
+    /// named; an empty file is <c>''</c>.
+    /// </summary>
+    private static JgsValue FileRead(JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        if (args[0].Type == JgsType.Cell)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeTextScalar",
+                "Invalid argument at position 1. Value must be a character vector or string scalar.");
+        }
+
+        if (!IsTextScalar(args[0]))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonzeroLengthText",
+                "Invalid argument at position 1. Value must be a character vector, string array, or cell array of character vectors.");
+        }
+
+        if (TextOf(args[0]).Length == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonzeroLengthText",
+                "Invalid argument at position 1. Value must be text with one or more characters.");
+        }
+
+        if (args.Count % 2 == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs",
+                $"Invalid argument at position {args.Count}. Make sure name-value arguments include both the name and the value.");
+        }
+
+        string name = TextOf(args[0]);
+        System.Text.Encoding? encoding = null;
+        for (int at = 1; at < args.Count; at += 2)
+        {
+            if (!IsTextScalar(args[at]) || !TextOf(args[at]).Equals("Encoding", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs",
+                    $"Invalid argument name '{(IsTextScalar(args[at]) ? TextOf(args[at]) : ClassOf(args[at], JgsDialect.Matlab))}'. Use 'Encoding'.");
+            }
+
+            string named = IsTextScalar(args[at + 1]) ? TextOf(args[at + 1]) : string.Empty;
+            try
+            {
+                encoding = JGraphScriptGlobals.EncodingNamed(named);
+            }
+            catch (ArgumentException)
+            {
+                try
+                {
+                    encoding = System.Text.Encoding.GetEncoding(named);
+                }
+                catch (ArgumentException)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:iofun:InvalidEncoding",
+                        $"The encoding '{named}' is not valid.");
+                }
+            }
+        }
+
+        byte[] bytes;
+        try
+        {
+            bytes = File.ReadAllBytes(host.Resolve(name));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:fileread:cannotOpenFile",
+                $"Could not open file {name}. No such file or directory.");
+        }
+
+        // UTF-8 by default. A byte-order mark is kept as the character U+FEFF, as R2025b keeps it
+        // (measured), so GetString and not a reader that would step over it.
+        System.Text.Encoding reading = encoding ?? new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        return JgsValue.Str(reading.GetString(bytes));
     }
 
     /// <summary>

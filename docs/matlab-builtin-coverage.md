@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,222 of
-2,024** as of app-building stage U11 (ADR 0210), which added `guide` (it answers R2025b's own
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,223 of
+2,024** as of open-items batch 5 (ADR 0216), which added `fileread` (and the undocumented `feature`,
+which is not among the 2,024, for `feature('getpid')`); 1,222 as of app-building stage U11 (ADR 0210), which added `guide` (it answers R2025b's own
 removal error; `gui_mainfcn`, which GUIDE apps call, is not among the 2,024) and made `openfig` and
 `hgload` read MATLAB's own figure files; 1,221 as of app-building stage U10 (ADR 0209), which added none (custom components are a class,
 `matlab.ui.componentcontainer.ComponentContainer`); the same as of app-building stage U9b (ADR

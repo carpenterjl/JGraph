@@ -237,7 +237,8 @@ public static class JgsBuiltinCatalog
         Add("computer", "The platform name, or its short form with 'arch'.", Opt("option"));
         Add("matlabroot", "The folder JGraph is installed in.");
         Add("matlabdrive", "Empty: JGraph has no cloud drive to point at.");
-        Add("license", "The licence name, or 1 from license('test', feature) — everything is present.", Opt("option"), Opt("feature"));
+        Add("feature", "feature('getpid'): this process's id, as a double. JGraph answers no other feature key.", P("name"));
+        Add("license","The licence name, or 1 from license('test', feature) — everything is present.", Opt("option"), Opt("feature"));
         Add("isstudent", "False: JGraph has no student edition.");
         Add("memory", "A struct of available and used memory, in bytes.");
         Add("maxNumCompThreads", "The computation thread count; an argument sets it and returns the old one.", Opt("count"));
@@ -2101,6 +2102,7 @@ public static class JgsBuiltinCatalog
         Add("fwrite", "Writes values to a file in binary: a precision, bytes to skip between elements, and a byte order; answers how many elements went out.", P("fid"), P("data"), Opt("precision"), Opt("skip"), Opt("machinefmt"));
         Add("frewind", "Moves an open file back to its beginning.", P("fid"));
         Add("fgetl", "The next text line of a file, without its newline; -1 (a number) at end of file.", P("fid"));
+        Add("fileread", "A whole file as one char row, line ends kept: read as UTF-8, or in the encoding an 'Encoding' pair names.", P("filename"), Opt("Encoding"));
         Add("image", "Displays a matrix as a colormapped image over its cell indices (an image value shows as-is).", P("z"));
         Add("help", "Shows a builtin's signature and summary; help alone lists every function.", Opt("name"));
         Add("format", "Sets numeric display precision: short, long, shortE, longE (bare format resets).", Opt("mode"));

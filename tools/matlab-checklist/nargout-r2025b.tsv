@@ -564,6 +564,7 @@ fclose	1	5
 fcnchk	2	2
 fcontour	1	2
 feather	1	2
+feature	1	5
 feof	1	5
 ferror	2	5
 feval	-1	5
@@ -582,6 +583,7 @@ figure	1	5
 fileattrib	3	5
 filemarker	ERR:MATLAB:narginout:doesNotApply	5
 fileparts	3	2
+fileread	1	2
 filesep	1	5
 fill	1	5
 fill3	1	5
