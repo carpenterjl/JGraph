@@ -189,6 +189,69 @@ public class JgsFileIndexTests : IDisposable
         Assert.NotEqual(probe.At(line: 4)[0].Epoch, probe.At(line: 6)[0].Epoch);
     }
 
+    /// <summary>
+    /// Open item 1: file times move in clock ticks, so a file dropped in the tick the folder was last
+    /// read in leaves the folder time where it was, and the test above failed one run in three under
+    /// load. A folder whose time was too recent to trust is listed again at the next statement. The
+    /// folder time and the clock are frozen here so that the drop never moves the time.
+    /// </summary>
+    [Fact]
+    public async Task AnExternalChange_InTheTickOfTheLastRead_IsSeen_AtTheNextTopLevelStatement()
+    {
+        DateTime frozen = Directory.GetLastWriteTimeUtc(_folder);
+        var probe = new Probe();
+        probe.BeforeLine(1, index =>
+        {
+            index.LastWrite = _ => frozen;
+            index.UtcNow = () => frozen.AddMilliseconds(5);
+            index.Invalidate(null);
+        });
+        probe.BeforeLine(3, _ => File.WriteAllText(Path.Combine(_folder, "mean.m"), MeanSource));
+        ScriptRunResult result = await RunProbed("""
+            for pass = 1:1
+                a = 1; % probe: read at a time 5 ms old
+                b = 1; % dropped from outside, the folder time unmoved
+            end
+            d = 1; % probe: listed again, so seen
+            """, probe);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.False(probe.At(line: 2)[0].ShadowsMean);
+        Assert.True(Assert.Single(probe.At(line: 5)).ShadowsMean);
+    }
+
+    /// <summary>A folder whose time is older than the tick is trusted: unmoved time, no new listing.</summary>
+    [Fact]
+    public async Task ASettledFolder_IsNotListedAgain_WhileItsTimeStands()
+    {
+        DateTime frozen = Directory.GetLastWriteTimeUtc(_folder);
+        int listings = 0;
+        var probe = new Probe();
+        probe.BeforeLine(1, index =>
+        {
+            index.LastWrite = _ => frozen;
+            index.UtcNow = () => frozen.AddMinutes(1);
+            index.EnumerateFiles = folder =>
+            {
+                listings++;
+                return Directory.EnumerateFiles(folder, "*.m");
+            };
+            index.Invalidate(null);
+        });
+        int afterFirst = -1;
+        probe.BeforeLine(2, _ => afterFirst = listings);
+        ScriptRunResult result = await RunProbed("""
+            a = 1; % probe: every search folder listed once
+            b = 1; % probe: nothing listed again
+            c = 1; % probe: nor here
+            """, probe);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal(3, probe.All.Count);
+        Assert.True(afterFirst > 0);
+        Assert.Equal(afterFirst, listings);
+    }
+
     [Fact]
     public async Task Rehash_ShowsAnExternalChange_InsideTheStatement()
     {

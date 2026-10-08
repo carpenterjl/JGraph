@@ -399,7 +399,8 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// <c>jgraph.internal.audiosim('on')</c>: simulated audio devices for this session (device classes plan,
     /// stage D10), so nothing is heard and no microphone records; <c>audiosim('off')</c> removes them, and
-    /// <c>audiosim('played')</c> answers the last block an output played, frames by channels. Test-only
+    /// <c>audiosim('played')</c> answers the last block an output played, frames by channels, and
+    /// <c>audiosim('log')</c> one row of frames, channels and rate for every block played. Test-only
     /// and undocumented.
     /// </summary>
     private static JgsValue AudioSimFunction(Interpreter interpreter) =>
@@ -437,8 +438,19 @@ internal static partial class JgsBuiltins
                     }
 
                     return JgsMatrix.FromColumnMajor(columnMajor, count, channels);
+                case "log" when host.Devices.AudioSimulation is { } sim:
+                    IReadOnlyList<(int Frames, int Channels, int Rate)> log = sim.Log;
+                    double[] rows = new double[log.Count * 3];
+                    for (int i = 0; i < log.Count; i++)
+                    {
+                        rows[i] = log[i].Frames;
+                        rows[log.Count + i] = log[i].Channels;
+                        rows[(2 * log.Count) + i] = log[i].Rate;
+                    }
+
+                    return JgsMatrix.FromColumnMajor(rows, log.Count, 3);
                 default:
-                    throw new JgsRuntimeException(line, col, "JGraph:audiosim:Arguments", "jgraph.internal.audiosim takes 'on', 'off' or 'played'.");
+                    throw new JgsRuntimeException(line, col, "JGraph:audiosim:Arguments", "jgraph.internal.audiosim takes 'on', 'off', 'played' or 'log'.");
             }
         })
         {

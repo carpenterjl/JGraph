@@ -117,28 +117,37 @@ public class JgsDspBuiltinTests : IDisposable
             WaveFile.Write16BitPcm(stream, samples, 8000);
         }
 
+        // sound plays through the session's audio devices (ADR 0193), simulated here so nothing is heard.
         ScriptRunResult result = await Run("""
+            feval("jgraph.internal.audiosim", "on");
             let [y, fs] = audioread("tone.wav");
             print(length(y), fs)
             sound(y, fs);
+            let played = feval("jgraph.internal.audiosim", "log");
+            print(numel(played), played(0), played(1), played(2))
+            feval("jgraph.internal.audiosim", "off");
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.Equal(new[] { "100 8000\n" }, _output.Normal);
-        (double[] played, int rate) = Assert.Single(_audio.Played);
-        Assert.Equal(100, played.Length);
-        Assert.Equal(8000, rate);
+        // 100 samples, one channel, at 8 kHz, padded by the player to whole 25 ms buffers of 200 frames.
+        Assert.Equal(new[] { "100 8000\n", "3 200 1 8000\n" }, _output.Normal);
     }
 
     [Fact]
-    public async Task Sound_WithoutAHostSink_FailsClearly()
+    public async Task Sound_GoesToTheSessionsAudio_NotTheHostSink()
     {
-        ScriptRunResult result = await _engine.RunAsync(
-            "sound([0, 0.5], 8000)",
-            new ScriptContext(_output, (_, _) => { }, _directory), default);
+        // The host's IScriptAudio serves C# scripts' sound(); a JGS or MATLAB script's sound is
+        // sound.m's, played by an audioplayer the session keeps (ADR 0193).
+        ScriptRunResult result = await Run("""
+            feval("jgraph.internal.audiosim", "on");
+            sound([0, 0.5], 8000);
+            print(size(feval("jgraph.internal.audiosim", "log"), 1))
+            feval("jgraph.internal.audiosim", "off");
+            """);
 
-        Assert.False(result.Success);
-        Assert.Contains("not supported by this host", Assert.Single(result.Diagnostics).Message);
+        Assert.True(result.Success, result.Message);
+        Assert.Equal(new[] { "1\n" }, _output.Normal);
+        Assert.Empty(_audio.Played);
     }
 
     [Fact]

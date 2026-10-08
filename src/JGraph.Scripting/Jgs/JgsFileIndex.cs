@@ -34,7 +34,20 @@ internal sealed class JgsFileIndex
         public bool Read;
         public bool Warned;
         public int CheckedEpoch = -1;
+
+        /// <summary>
+        /// The folder time was too recent to trust when it was read: a file another program drops in
+        /// the same clock tick leaves the time where it was, so the folder is listed again at the next
+        /// statement whatever its time says.
+        /// </summary>
+        public bool Racy;
     }
+
+    /// <summary>
+    /// How recent a folder time must be to be distrusted (<see cref="Folder.Racy"/>). File times move in
+    /// clock ticks — about 15.6 ms on NTFS, two seconds on FAT — so two seconds covers both.
+    /// </summary>
+    private static readonly TimeSpan RacyWindow = TimeSpan.FromSeconds(2);
 
     private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
         ? StringComparer.OrdinalIgnoreCase
@@ -84,6 +97,9 @@ internal sealed class JgsFileIndex
 
     /// <summary>How a folder's write time is read; a test can freeze it.</summary>
     internal Func<string, DateTime> LastWrite { get; set; } = Directory.GetLastWriteTimeUtc;
+
+    /// <summary>The clock a folder time is compared with to decide it is racy; a test can freeze it.</summary>
+    internal Func<DateTime> UtcNow { get; set; } = static () => DateTime.UtcNow;
 
     /// <summary>
     /// The built-in names a file on some search folder also claims. Refreshed on the way in, so
@@ -322,7 +338,7 @@ internal sealed class JgsFileIndex
         {
             // A folder that is not there answers a fixed time for as long as it is not there; the
             // read below records it, so the folder is not re-read every statement for not existing.
-            return LastWrite(folder) != entry.Written;
+            return entry.Racy || LastWrite(folder) != entry.Written;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -358,6 +374,7 @@ internal sealed class JgsFileIndex
             // and most files have no private/ folder beside them. One that has been removed since it
             // was read is the same case: a loaded file from it is the loader's business, not the index's.
             entry.Written = MissingFolderTime(folder);
+            entry.Racy = false;
             entry.Stems.Clear();
             entry.Dirty = false;
             entry.Read = true;
@@ -378,6 +395,7 @@ internal sealed class JgsFileIndex
         }
 
         entry.Written = written;
+        entry.Racy = UtcNow() - written < RacyWindow;
         entry.Stems.Clear();
         entry.Stems.UnionWith(stems);
         entry.Dirty = false;

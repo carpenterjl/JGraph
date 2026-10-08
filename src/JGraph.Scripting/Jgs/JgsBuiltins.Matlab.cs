@@ -324,15 +324,16 @@ internal static partial class JgsBuiltins
             // A column, as MATLAB's is (measured): fieldnames(s)' is the row a script compares with.
             // On an object it is the property names, Dependent ones included, and runs no getter (V6, #28).
             // A .NET object's are its properties and fields, as properties lists them (ADR 0174).
-            JgsValue names = args[0].Type == JgsType.Object
-                ? JgsValue.Cell(args[0].AsObject.Class.ListedProperties.Select(static p => JgsValue.Str(p.Spec.Name)).ToArray())
+            IEnumerable<string> listed = args[0].Type == JgsType.Object
+                ? args[0].AsObject.Class.ListedProperties.Select(static p => p.Spec.Name)
                 : args[0].AsExternalOrNull() is NetObject net
-                    ? JgsValue.Cell(Net.NetDisplay.MemberNames(net).Select(JgsValue.Str).ToArray())
+                    ? Net.NetDisplay.MemberNames(net)
                     : IsLibValue(args[0].AsExternalOrNull())
-                    ? JgsValue.Cell(LibPropertyNames(args[0].AsExternal).Select(JgsValue.Str).ToArray())
+                    ? LibPropertyNames(args[0].AsExternal)
                     : IsDeviceValue(args[0].AsExternalOrNull())
-                    ? JgsValue.Cell(DevicePropertyNames(args[0].AsExternal).Select(JgsValue.Str).ToArray())
-                    : JgsValue.Cell(StructOf("fieldnames", args[0], line, col).Keys.Select(JgsValue.Str).ToArray());
+                    ? DevicePropertyNames(args[0].AsExternal)
+                    : StructOf("fieldnames", args[0], line, col).Keys;
+            JgsValue names = JgsValue.Cell(listed.Select(JgsValue.Str).ToArray());
             names.Reshape(names.AsCell.Length, 1);
             return names;
         });

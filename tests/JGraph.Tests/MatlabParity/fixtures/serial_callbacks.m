@@ -3,7 +3,9 @@
 % bytes received since the mode was set or the input flushed, however they arrived) and in
 % "terminator" mode (once per terminator); where it runs (at pause, pause(0) included, and drawnow;
 % never in a busy loop, between statements, or inside a blocking read); its event data; and a mode
-% turned off with events still queued. A timer does fire inside a blocking read.
+% turned off with events still queued. A timer does fire inside a blocking read. The rows whose peer
+% trickles its bytes wait for the count with a ten-second deadline, then 0.2 s for any extra call,
+% so a peer slowed by a loaded machine cannot end the row early (open item 37).
 %
 % An error inside the callback is R2025b's warning MATLAB:callback:DynamicPropertyEventError, whose
 % text names AsyncIO's internals; JGraph gives the identifier and its own sentence (div=ADR0184).
@@ -50,7 +52,8 @@ ix_chk('byte_chunk_log', ix_show(DVLOG));
 flush(s);
 DVLOG = {};
 dp(s, sprintf('chunks 40 1 %s', dp_hex(1:10)));
-pause(1.5);
+t0 = tic; while numel(DVLOG) < 3 && toc(t0) < 10, pause(0.05); end
+pause(0.2);
 ix_chk('byte_trickle_calls', numel(DVLOG));
 ix_chk('byte_trickle_log', ix_show(DVLOG));
 flush(s);
@@ -119,7 +122,8 @@ ix_chk('term_chunk_calls', numel(DVLOG));
 flush(s);
 DVLOG = {};
 dp(s, sprintf('chunks 50 1 %s', dp_hex(['xy' 10 'z' 10])));
-pause(1);
+t0 = tic; while numel(DVLOG) < 2 && toc(t0) < 10, pause(0.05); end
+pause(0.2);
 ix_chk('term_trickle_calls', numel(DVLOG));
 flush(s);
 DVLOG = {};
@@ -132,7 +136,8 @@ configureTerminator(s, "CR/LF");
 DVLOG = {};
 configureCallback(s, "terminator", @dv_cblog);
 dp(s, sprintf('chunks 30 1 %s', dp_hex(['p' 13 10 'q' 13 'r' 10 13 10])));
-pause(1);
+t0 = tic; while numel(DVLOG) < 2 && toc(t0) < 10, pause(0.05); end
+pause(0.2);
 ix_chk('term_crlf_calls', numel(DVLOG));
 configureTerminator(s, "LF");
 flush(s);

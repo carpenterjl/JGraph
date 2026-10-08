@@ -260,9 +260,19 @@ public sealed class PeerEngine : IDisposable
                     int every = Int(words, 1);
                     int size = Math.Max(1, Int(words, 2));
                     byte[] all = Hex(words, 3);
-                    for (int at = 0, k = 1; at < all.Length; at += size, k++)
+
+                    // One timer a chunk, but whichever fires sends the next chunk in line: timers due
+                    // close together fire in no set order, and a stream sent out of order is not the
+                    // stream asked for (open item 37 found a CR/LF row reordered under load).
+                    var pending = new Queue<byte[]>();
+                    for (int at = 0; at < all.Length; at += size)
                     {
-                        Schedule(every * k, all.AsSpan(at, Math.Min(size, all.Length - at)).ToArray());
+                        pending.Enqueue(all.AsSpan(at, Math.Min(size, all.Length - at)).ToArray());
+                    }
+
+                    for (int k = 1; k <= pending.Count; k++)
+                    {
+                        Schedule(every * k, () => pending.Dequeue());
                     }
 
                     break;
@@ -379,7 +389,10 @@ public sealed class PeerEngine : IDisposable
         _link.SetDtr(false);
     }
 
-    private void Schedule(int milliseconds, byte[] bytes)
+    private void Schedule(int milliseconds, byte[] bytes) => Schedule(milliseconds, () => bytes);
+
+    /// <summary>Sends what <paramref name="next"/> answers, under the engine's lock, once the time is up.</summary>
+    private void Schedule(int milliseconds, Func<byte[]> next)
     {
         Timer? timer = null;
         timer = new Timer(_ =>
@@ -394,7 +407,7 @@ public sealed class PeerEngine : IDisposable
                 timer!.Dispose();
                 try
                 {
-                    _link.Send(bytes);
+                    _link.Send(next());
                 }
                 catch (Exception)
                 {

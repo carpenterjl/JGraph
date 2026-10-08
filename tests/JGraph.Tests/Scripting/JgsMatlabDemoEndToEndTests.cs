@@ -166,8 +166,10 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
             WaveFile.Write16BitPcm(stream, pluck, rate);
         }
 
-        // examples/audio-compression.jgs, verbatim.
+        // examples/audio-compression.jgs, verbatim between the simulator's on and its log, so nothing
+        // is heard (sound plays through the session's audio devices, ADR 0193).
         ScriptRunResult result = await Run("""
+            feval('jgraph.internal.audiosim', 'on');
             let [audio_sample, fs] = audioread('gc.wav');
 
             let N_orig = length(audio_sample);
@@ -242,6 +244,10 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
 
             disp('Playing 50% compressed audio...');
             sound(y50, fs);
+
+            let played = feval('jgraph.internal.audiosim', 'log');
+            print(size(played, 1), played(0, 0), played(1, 0), played(0, 2), played(1, 2))
+            feval('jgraph.internal.audiosim', 'off');
             """);
 
         Assert.True(result.Success, result.Message);
@@ -256,11 +262,9 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
             Assert.Equal(rate / 2.0, axes.PrimaryXAxis.Range.Max);
         }
 
-        // Both compressed versions played, padded to multiples of 8 and 4 respectively.
-        Assert.Equal(2, _audio.Played.Count);
-        Assert.Equal(1608, _audio.Played[0].Samples.Length); // 1601 padded to /8
-        Assert.Equal(1604, _audio.Played[1].Samples.Length); // 1601 padded to /4
-        Assert.All(_audio.Played, p => Assert.Equal(rate, p.SampleRate));
+        // Both compressed versions played at the file's rate: 1608 and 1604 samples (1601 padded to /8 and /4),
+        // each padded by the player to whole 25 ms buffers of 200 frames.
+        Assert.Contains($"2 1800 1800 {rate} {rate}\n", _output.Normal);
 
         Assert.Contains("Playing 75% compressed audio...", _output.NormalText);
         Assert.Contains("Playing 50% compressed audio...", _output.NormalText);

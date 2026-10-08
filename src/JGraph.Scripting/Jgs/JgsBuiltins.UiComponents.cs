@@ -151,6 +151,7 @@ internal static partial class JgsBuiltins
     private sealed record ComponentMaker(
         string Verb, string ClassWord, string[]? Styles, Func<string?, UiComponentModel> Make, bool InGroup = false, string? StyleList = null);
 
+    // audit: registered through MakeComponent — RegisterUiComponentBuiltins defines each Verb below as a call of it
     private static readonly ComponentMaker[] ComponentMakers =
     [
         new("uilabel", "Label", null, static _ => new UiLabelModel()),

@@ -86,6 +86,7 @@ internal static class NetBuiltinConversions
     /// <c>Object</c> answers (a string stays a <c>System.String</c>), a jagged array's rows as MATLAB
     /// arrays. An array of numbers, logicals or chars, and a 2-D array, are refused (probe4).
     /// </summary>
+    // audit: mints — the one return is the cell built here; anything else is refused (open item 38)
     public static JgsValue Cell(JgsValue value, int line, int col)
     {
         Alive(value, line, col);

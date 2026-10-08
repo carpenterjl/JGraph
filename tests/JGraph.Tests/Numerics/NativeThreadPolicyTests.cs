@@ -25,9 +25,19 @@ public class NativeThreadPolicyTests
     public void TraceReportsEachCallByRoutineThreadsSizeAndSeconds()
     {
         if (!OpenBlasLoader.Status.Loaded) return;
+        // The sink is static, and test classes run in parallel: a native call from another class can
+        // land in it (open item 6 saw a Geev line). Keep only the lines this test's call writes; the
+        // routine is the second field, the caller's member name.
         var lines = new List<string>();
+        string own = "|" + nameof(TraceReportsEachCallByRoutineThreadsSizeAndSeconds) + "|";
         Action<string>? before = NativeThreads.Trace;
-        NativeThreads.Trace = line => { lock (lines) { lines.Add(line); } };
+        NativeThreads.Trace = line =>
+        {
+            if (line.Contains(own, StringComparison.Ordinal))
+            {
+                lock (lines) { lines.Add(line); }
+            }
+        };
         try
         {
             using (NativeThreads.Use(NativeThreads.Work.Factor, 300))

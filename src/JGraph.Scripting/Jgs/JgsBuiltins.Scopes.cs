@@ -23,22 +23,22 @@ internal static partial class JgsBuiltins
         "close", "dblquad", "dde23", "ddensd", "ddesd", "decic", "delete", "designfilt", "drawnow", "eval", "evalc",
         "evalin", "ezpolar", "fcnchk", "feval", "fminbnd", "fminsearch", "funm", "fzero", "getframe",
         "ginput", "image", "inline", "inlineeval", "innerintegral", "integral", "integral2", "integral3",
-        "jackknife", "legend", "load", "loglog", "mhsample", "notify", "ode15i", "odephas2", "odephas3", "odeplot",
+        "jackknife", "load", "loglog", "mhsample", "notify", "ode15i", "odephas2", "odephas3", "odeplot",
         "odextend", "pause", "pdepe", "pulstran", "quad", "quad2d", "quadgk", "quadl", "quadv",
         "regexprep", "rowfun", "run", "semilogx", "semilogy", "slice", "slicesample", "spfun", "splitapply",
-        "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uibuttongroup", "uicontextmenu", "uicontrol", "uifigure", "uimenu", "uipanel",
+        "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uibuttongroup", "uicontextmenu", "uicontrol", "uimenu", "uipanel",
         "uipushtool", "uitab", "uitabgroup", "uitable", "uitoggletool", "uitoolbar",
         "varfun", "vectorize", "wait", "waitforbuttonpress",
 
         // U4: the waits deliver callbacks while they block, the dialogs that wait do so through
         // them, and the others delete or replace figures, which runs their DeleteFcns.
-        "dialog", "errordlg", "helpdlg", "inputdlg", "listdlg", "msgbox", "questdlg", "uiload", "uiopen", "uisave",
+        "errordlg", "helpdlg", "inputdlg", "listdlg", "msgbox", "questdlg", "uiload", "uiopen", "uisave",
         "uiwait", "waitbar", "waitfor", "warndlg",
 
         // U5: a component's maker runs its CreateFcn, uiconfirm delivers callbacks while it waits,
         // and the dialogs over a figure run a CloseFcn when they are replaced.
-        "uialert", "uiaxes", "uibutton", "uicheckbox", "uiconfirm", "uidropdown", "uieditfield", "uigridlayout",
-        "uihyperlink", "uiimage", "uilabel", "uilistbox", "uiprogressdlg", "uiradiobutton", "uislider", "uispinner",
+        "uialert", "uibutton", "uicheckbox", "uiconfirm", "uidropdown", "uieditfield", "uigridlayout",
+        "uihyperlink", "uiimage", "uilabel", "uilistbox", "uiradiobutton", "uislider", "uispinner",
         "uitextarea", "uitogglebutton",
 
         // U9: the makers run a CreateFcn.
@@ -50,6 +50,16 @@ internal static partial class JgsBuiltins
         // U11: a MATLAB figure file's objects run their CreateFcns as it opens, and a GUIDE app's
         // main function runs its opening, output and callback functions.
         "gui_mainfcn", "hgload", "openfig",
+
+        // Open item 38, found once the audit read method groups and stopped misreading a lambda
+        // argument as a declaration: a property's get and set methods and PostSet listeners; a
+        // CreateFcn named among a plot's options; the function plotters' and the fitters' and
+        // tests' callables; a wait that pumps callbacks; a prototype function; an app's callback.
+        "get", "set", "plot", "stairs", "polar", "polarplot", "subplot",
+        "ezcontour", "ezcontourf", "ezmesh", "ezmeshc", "ezplot", "ezplot3", "ezsurf", "ezsurfc",
+        "fcontour", "fimplicit", "fimplicit3", "fmesh", "fplot", "fplot3", "fsurf",
+        "groupfilter", "grouptransform", "kstest", "nlinfit", "nlpredci",
+        "midiid", "loadlibrary", "executeCallback",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code
@@ -65,4 +75,21 @@ internal static partial class JgsBuiltins
     // audit: runs no script: reverse — forwards to the legacy JGS reverse builtin.
     // audit: runs no script: whitepoint — forwards to the single-output whitepoint builtin it wraps.
     // audit: runs no script: nancov — forwards to the cov builtin.
+    // audit: runs no script: isprop — lists a class's property names through NamedClass, the same name-sharing road as properties.
+    // audit: runs no script: box colorbar grid hold hidden — OnOff's Of reads a word; its Read shares a name with TransportClient.Read, which drains a device's timers.
+    // audit: runs no script: makehgtform quiver quiver3 ellipj — Spread's Read, the same name-sharing road to TransportClient.Read.
+    // audit: runs no script: fread fgetl fgets — read a file entry; Read, ReadLine and TakeLine share names with TransportClient's, which a device's own fread method reaches as a method.
+    // audit: runs no script: fwrite writematrix writecell writetable print — their Write shares a name with the interpreter's Execute road.
+    // audit: runs no script: hggroup hgtransform — Group's All and Build share names with the property tables' Build.
+    // audit: runs no script: isvalid — TryLibBuiltin's road to a C library value's members shares WriteMember and MemberOf with the interpreter's.
+    // audit: runs no script: libfunctions — forwards to the methods builtin, which runs none.
+    // audit: runs no script: libpointer — Adopt's Apply shares a name with the .NET operators' Apply.
+    // audit: runs no script: calllib — process.Call is the library host's request over its pipe, not a callable.
+    // audit: runs no script: qrupdate — Update's NameOf shares MemberOf with the interpreter's member read.
+    // audit: runs no script: uminus uplus — an object's overload is the dynamic rule's; ApplyBinary's Compare shares MemberOf with the member read.
+    // audit: runs no script: copyobj — its Copy shares a name with matlab.mixin.Copyable's copy, which calls copyElement.
+    //
+    // And the other way: a listed builtin whose road to script code the graph cannot follow.
+    //
+    // audit: runs script: openfig hgload — JgsFigFile.Build fires each object's CreateFcn and calls the makers by name; Build is a name the graph does not follow on a receiver.
 }

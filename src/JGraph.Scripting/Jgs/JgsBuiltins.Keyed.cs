@@ -408,6 +408,7 @@ internal static partial class JgsBuiltins
     /// column, strings as a string column, a cell-valued dictionary's as a cell column of the
     /// contents, anything else as a cell of shares. M2: each value handed out is a share.
     /// </summary>
+    // audit: mints — every arm builds its answer here; the one .NET value gets a wrapper of its own (open item 38)
     internal static JgsValue DictionaryValues(JgsValue map)
     {
         JgsValue[] stored = ValueCell(map);
@@ -447,10 +448,11 @@ internal static partial class JgsBuiltins
             return ShapedCell(System.Array.ConvertAll(stored, static v => JgsValue.Share(v.AsCell[0])), count, 1);
         }
 
-        // One .NET value is itself, as R2025b's values of a Dictionary<Int32, String> (ADR 0177).
+        // One .NET value is itself, as R2025b's values of a Dictionary<Int32, String> (ADR 0177): the
+        // same object in a wrapper of its own, so the answer is minted here and values may be adopted.
         if (count == 1 && stored[0].Type == JgsType.External)
         {
-            return JgsValue.Share(stored[0]);
+            return JgsValue.External(stored[0].AsExternal);
         }
 
         return ShapedCell(System.Array.ConvertAll(stored, JgsValue.Share), count, 1);

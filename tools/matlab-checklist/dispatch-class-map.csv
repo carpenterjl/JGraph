@@ -15,7 +15,8 @@ string,string,
 cell,cell,
 struct,struct,
 function_handle,fh,
-table,table,a timetable answers 'table' to class() here and takes the table column
+table,table,
+timetable,table,never swept; a timetable shares tabular's methods with a table
 datetime,datetime,
 duration,duration,
 calendarDuration,duration,the nearest measured time class
@@ -36,3 +37,11 @@ ExhaustiveSearcher,struct,a tagged struct
 KDTreeSearcher,struct,a tagged struct
 paretotails,struct,a tagged struct
 prob.*,struct,every distribution object is a tagged struct with a package-qualified class
+timer,struct,never swept; a handle object with methods of its own
+event.EventData,struct,never swept; the event data a listener's callback is given
+event.PropertyEvent,struct,never swept; the event data a property listener's callback is given
+event.listener,struct,never swept; a handle object with methods of its own
+event.proplistener,struct,never swept; a handle object with methods of its own
+matlab.io.MatFile,struct,never swept; a handle object with methods of its own
+matlab.io.matfile.Properties,struct,never swept; the Properties of a matfile object
+matlab.metadata.Property,struct,never swept; a metaclass's property description

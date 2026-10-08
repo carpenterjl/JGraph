@@ -182,6 +182,22 @@ public class DeviceLayerTests
         Assert.Equal("A", link.Text);
     }
 
+    /// <summary>
+    /// Open item 37: one timer a chunk, and timers due close together fire in no set order, so
+    /// <c>chunks</c> sent its stream shuffled on a loaded machine. Two hundred chunks a millisecond
+    /// apart arrive in the order asked for.
+    /// </summary>
+    [Fact]
+    public void ThePeerSendsChunksInOrder()
+    {
+        var link = new RecordingLink();
+        using var engine = new PeerEngine(link);
+        byte[] stream = [.. Enumerable.Range(0, 200).Select(static i => (byte)i)];
+        engine.Receive(PeerEngine.Frame("chunks 1 1 " + Convert.ToHexString(stream)));
+        Assert.True(SpinWait.SpinUntil(() => link.Sent.Count >= stream.Length, 10000));
+        Assert.Equal(stream, link.Sent.ToArray());
+    }
+
     // --- the simulated line ---------------------------------------------------------------------------
 
     [Fact]

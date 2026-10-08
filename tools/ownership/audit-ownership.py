@@ -750,11 +750,20 @@ def borrowing_contracts(files: list[tuple[str, dict, dict]], fresh: set[str]) ->
 REGISTRATION_RE = re.compile(r"(?:Define\w*|Register|BuiltinFunction)\(\s*\"([\w.]+)\"\s*,")
 HELPER_REGISTRATION_RE = re.compile(r"\b(\w+)\(\s*Define\w*\s*,\s*\"([\w.]+)\"")
 LAMBDA_HEAD_RE = re.compile(r"^\s*\(?\s*\w*\s*\(?\s*(?:args|arguments)\s*,[^)]*\)\s*=>\s*(.*)$", re.S)
+# A body that is a method group (`DefineSilent("waitfor", WaitFor)`): the builtin is that member.
+METHOD_GROUP_RE = re.compile(r"^\s*(?:[A-Za-z_]\w*\.)*([A-Z]\w*)\s*(?:,\s*\w+\s*:[^=>]*)?$")
+# A table of builtins registered in a loop (`foreach (maker in ComponentMakers) Define(maker.Verb, …)`):
+# a person's assertion, `// audit: registered through Member`, above the table names the member every
+# entry's call runs, and each `new("name", …)` in the table's initializer is a builtin of that name.
+TABLE_REGISTRATION_RE = re.compile(r"//\s*audit:\s*registered through (\w+)[^\n]*\n")
+TABLE_ENTRY_RE = re.compile(r"\bnew\(\s*\"([\w.]+)\"")
 
 
 def registrations(raw: str):
     """Each builtin registered by a literal name in this file, with its lambda body (comments and
-    string bodies blanked, so the name is read from the raw text and the body from the stripped)."""
+    string bodies blanked, so the name is read from the raw text and the body from the stripped).
+    A method-group body is read as a call of that member (open item 38: `waitfor` was invisible),
+    and a table under `// audit: registered through Member` yields each entry with that member."""
     code = strip_code(raw)
     seen_direct: set[int] = set()
     for m in REGISTRATION_RE.finditer(raw):
@@ -772,9 +781,17 @@ def registrations(raw: str):
         body = code[m.end():k]
         if "new BuiltinFunction(" in body:
             continue  # the inner BuiltinFunction("name", …) match carries the single-output body
+        group = METHOD_GROUP_RE.match(body)
+        if group:
+            body = f"{group.group(1)}(args, line, col)"
         yield m.group(1), body, raw.count("\n", 0, m.start()) + 1, None
     for m in HELPER_REGISTRATION_RE.finditer(raw):
         yield m.group(2), "", raw.count("\n", 0, m.start()) + 1, m.group(1)
+    for m in TABLE_REGISTRATION_RE.finditer(raw):
+        start = code.index("[", m.end())
+        end = code.index("];", start)
+        for entry in TABLE_ENTRY_RE.finditer(raw, start, end):
+            yield entry.group(1), "", raw.count("\n", 0, entry.start()) + 1, m.group(1)
 
 
 def analyze_builtins(files: list[Path], fresh: set[str], borrowing: set[str],
@@ -1014,8 +1031,12 @@ def function_bodies(raw: str, label: str = "") -> tuple[dict[str, list[str]], di
         elif c == ";" and paren <= 0:
             piece = " ".join(code[start:i].split())
             if piece:
+                # `return Foo(a, () => b)` is a call whose argument is a lambda, not an
+                # expression-bodied `Foo` declared here: a statement led by a keyword declares nothing.
                 m = EXPRESSION_BODIED_RE.match(piece)
-                if m and m.group(1) not in NOT_A_FUNCTION:
+                if m and (m.group(1) in NOT_A_FUNCTION or piece.split(None, 1)[0] in NOT_A_FUNCTION):
+                    m = None
+                if m:
                     name = m.group(1)
                     if stack:
                         name = local.setdefault(m.group(1), f"{label}::{m.group(1)}")
@@ -1102,22 +1123,43 @@ def asserted_script_free() -> set[str]:
     return names
 
 
+ASSERTED_RUNS_RE = re.compile(r"//\s*audit: runs script:\s*([\w. ]+?)\s+—")
+
+
+def asserted_script_running() -> set[str]:
+    """The other direction (open item 38): listed builtins whose road to script code the graph
+    cannot follow — a member reached through a receiver or a name it does not follow — each
+    asserted in JgsBuiltins.Scopes.cs with the road spelled out."""
+    if not SCOPES_SOURCE.exists():
+        return set()
+    names: set[str] = set()
+    for m in ASSERTED_RUNS_RE.finditer(SCOPES_SOURCE.read_text(encoding="utf-8")):
+        names.update(m.group(1).split())
+    return names
+
+
 def check_script_runners(computed: dict[str, int]) -> list[str]:
     """The list must be exactly the builtins this audit sees reach script code, less those
-    asserted script-free; an assertion about a builtin the graph no longer flags is stale."""
+    asserted script-free, plus those asserted to run script by a road it cannot see; an assertion
+    the graph has come to agree or disagree with is stale."""
     listed = set(listed_script_runners())
     asserted = asserted_script_free()
+    runs = asserted_script_running()
     flagged = set(computed)
     problems = [f"{name}: reaches script code but is neither on ScriptRunningBuiltins nor asserted script-free"
                 for name in sorted(flagged - listed - asserted)]
     known = registered_names()
-    for name in sorted(listed - flagged):
+    for name in sorted(listed - flagged - runs):
         problems.append(f"{name}: on ScriptRunningBuiltins but "
                         + ("reaches no script entry" if name in known else "not a builtin this audit can see"))
     for name in sorted(asserted - flagged):
         problems.append(f"{name}: asserted script-free but the graph no longer flags it (stale assertion)")
     for name in sorted(asserted & listed):
         problems.append(f"{name}: both listed and asserted script-free")
+    for name in sorted(runs & flagged):
+        problems.append(f"{name}: asserted to run script, and the graph now sees it (stale assertion)")
+    for name in sorted(runs - listed):
+        problems.append(f"{name}: asserted to run script but not on ScriptRunningBuiltins")
     return problems
 
 

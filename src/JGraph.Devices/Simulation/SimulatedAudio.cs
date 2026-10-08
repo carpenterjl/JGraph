@@ -33,6 +33,20 @@ public sealed class SimulatedAudio : IAudioBackend
     /// <summary>The frames the last output stream played, interleaved, and its channel count.</summary>
     public (float[] Frames, int Channels) LastPlayed { get; private set; } = ([], 1);
 
+    private readonly List<(int Frames, int Channels, int Rate)> _log = [];
+
+    /// <summary>Every block an output started, in order: its frames, channels and sample rate.</summary>
+    public IReadOnlyList<(int Frames, int Channels, int Rate)> Log
+    {
+        get
+        {
+            lock (_log)
+            {
+                return [.. _log];
+            }
+        }
+    }
+
     public IAudioOutputStream OpenOutput(AudioDeviceInfo device, int sampleRate, int channels) => new Output(this, sampleRate, channels);
 
     public IAudioInputStream OpenInput(AudioDeviceInfo device, int sampleRate, int channels) => new Input(sampleRate, channels);
@@ -54,6 +68,11 @@ public sealed class SimulatedAudio : IAudioBackend
         {
             Stop();
             owner.LastPlayed = (interleaved[..(frames * channels)], channels);
+            lock (owner._log)
+            {
+                owner._log.Add((frames, channels, rate));
+            }
+
             _frames = frames;
             _done = done;
             _played = 0;

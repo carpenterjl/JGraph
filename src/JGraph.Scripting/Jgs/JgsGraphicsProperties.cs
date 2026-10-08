@@ -666,7 +666,7 @@ internal static partial class JgsGraphicsProperties
             if (entry.AddedProperties is { } added && added.ContainsKey(name))
             {
                 JgsLifetime.Pin(value); // the object holds it for as long as it likes
-                added[name] = value;
+                added[name] = JgsValue.Share(value); // M2: the entry holds its own wrapper (open item 38)
                 return;
             }
 
