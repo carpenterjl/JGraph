@@ -2474,6 +2474,13 @@ internal sealed partial class Interpreter
     /// <summary>The object a handle, or a one-element array holding a handle, names.</summary>
     private static bool TryGetOneHandle(JgsValue value, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out JgsHandleEntry? entry)
     {
+        // A custom component is a handle to builtins, but its dots are its class's (U10).
+        if (value.Type == JgsType.Object)
+        {
+            entry = null;
+            return false;
+        }
+
         if (JgsHandleRegistry.TryGet(value, out entry))
         {
             return true;
@@ -8832,6 +8839,12 @@ internal sealed partial class Interpreter
         // answers for one match — is that handle, as a 1-by-1 is a scalar in MATLAB.
         if (TryGetOneHandle(target, out JgsHandleEntry? handle))
         {
+            // A custom component's area answers as the component (U10): f.Children(1).Value.
+            if (handle.Owner is { Deleted: false } component && JgsComponentContainers.TryState(component, out JgsComponentContainerState? state))
+            {
+                return ObjectMember(state.Self, field, member, autoCall);
+            }
+
             return JgsBuiltins.GetHandleProperty(handle, field, member.Line, member.Column);
         }
 
@@ -8969,6 +8982,13 @@ internal sealed partial class Interpreter
         // variable with a fresh struct.
         if (TryResolveHandleTarget(member.Target, env) is { } handle)
         {
+            // A custom component's area is written as the component (U10): f.Children(1).Value = v.
+            if (handle.Owner is { Deleted: false } component && JgsComponentContainers.TryState(component, out JgsComponentContainerState? state))
+            {
+                WriteProperty(state.Self, FieldName(member, env), value, member.Line, member.Column);
+                return value;
+            }
+
             JgsBuiltins.SetHandleProperty(handle, FieldName(member, env), value, member.Line, member.Column);
             return value;
         }

@@ -1,0 +1,87 @@
+CHK|parent_pair|double[1 2] [1 3]|exact
+CHK|parent_pair_log|char[1 49]'setup Value=1 Pos=[100 100 100 100] Parent=figure'|exact
+CHK|positional_value|MATLAB:ui:componentcontainer:UnmatchedNameValuePairs|exact
+CHK|positional_value_msg|Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|positional_value_log|char[1 11]'user delete'|exact
+CHK|bogus_pair|MATLAB:ui:componentcontainer:ErrorWhileSettingNameValuePairs|exact
+CHK|bogus_pair_msg|Unable to set name-value arguments.|exact
+CHK|bogus_pair_log|char[1 63]'setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete'|exact
+CHK|position_pair|double[1 4] [1 2 30 40]|exact
+CHK|normalized|double[1 4] [0 0 0.5 0.5]|exact
+CHK|normalized_pixels|double[1 4] [1 1 280 210]|exact
+CHK|private_pair|MATLAB:ui:componentcontainer:ErrorWhileSettingNameValuePairs|exact
+CHK|private_pair_msg|Unable to set name-value arguments.|exact
+CHK|private_access_pair|MATLAB:ui:componentcontainer:ErrorWhileSettingNameValuePairs|exact
+CHK|private_access_pair_msg|Unable to set name-value arguments.|exact
+CHK|lower_case_pair|double[1 1] 4|exact
+CHK|partial_pair|MATLAB:ui:componentcontainer:ErrorWhileSettingNameValuePairs|exact
+CHK|partial_pair_msg|Unable to set name-value arguments.|exact
+CHK|string_pair|double[1 1] 4|exact
+CHK|struct_pair|double[1 1] 8|exact
+CHK|odd_pairs|MATLAB:ui:componentcontainer:UnmatchedNameValuePairs|exact
+CHK|odd_pairs_msg|Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|bad_value_pair|MATLAB:ui:componentcontainer:ErrorWhileSettingNameValuePairs|exact
+CHK|bad_value_pair_msg|Unable to set name-value arguments.|exact
+CHK|bad_position_pair|MATLAB:ui:componentcontainer:ErrorWhileSettingNameValuePairs|exact
+CHK|bad_position_pair_msg|Unable to set name-value arguments.|exact
+CHK|bad_callback_pair|MATLAB:ui:componentcontainer:ErrorWhileSettingNameValuePairs|exact
+CHK|bad_callback_pair_msg|Unable to set name-value arguments.|exact
+CHK|type_pair|char[1 1]'x'|div=0209|diverges|char[1 8]'u10probe'
+CHK|number_parent|MATLAB:ui:componentcontainer:UnmatchedNameValuePairs|exact
+CHK|number_parent_msg|Incorrect number of input arguments. Each parameter name must be followed by a corresponding value.|exact
+CHK|no_parent_type|char[1 6]'figure'|exact
+CHK|no_parent_value|double[1 1] 2|exact
+CHK|classic_figure|char[1 6]'figure'|exact
+CHK|in_panel|char[1 7]'uipanel'|exact
+CHK|in_grid|double[1 3] [2 1 2]|exact
+CHK|axes_parent|MATLAB:gbtobjects:Component|exact
+CHK|axes_parent_msg|UIAxes cannot be a parent.|exact
+CHK|component_parent|MATLAB:ui:componentcontainer:invalidParent|exact
+CHK|component_parent_msg|U10Probe cannot be a parent of U10Probe.|exact
+CHK|abstract_half|MATLAB:class:abstract|exact
+CHK|abstract_half_msg|Abstract classes cannot be instantiated. Class 'U10Half' inherits abstract methods or properties but does not implement them. Use matlab.metadata.abstractDetails to see the list of methods and properties that 'U10Half' must implement if you do not intend the class to be abstract.|exact
+CHK|abstract_base|MATLAB:class:abstract|exact
+CHK|abstract_base_msg|Abstract classes cannot be instantiated. Class 'matlab.ui.componentcontainer.ComponentContainer' defines abstract methods and/or properties.|exact
+CHK|plain_class|MATLAB:class:UnrecognizedAttribute|exact
+CHK|plain_class_msg|Illegal attribute 'HasCallbackProperty'.|exact
+CHK|own_ctor_log|char[1 64]'ctor before super / ctor setup Extra= / ctor after super Count=0'|exact
+CHK|own_ctor_drawnow|char[1 28]'ctor update Count=0 Extra=ex'|exact
+CHK|own_ctor_drawnow_again|char[0 0]''|exact
+CHK|own_ctor_count|double[1 1] 1|exact
+CHK|child_after|MATLAB:ui:Button:unknownInput|exact
+CHK|child_after_msg|U10Probe cannot be a parent of Button.|exact
+CHK|child_parent_pair|MATLAB:ui:Button:unknownInput|exact
+CHK|child_parent_pair_msg|U10Probe cannot be a parent of Button.|exact
+CHK|reparent_into|MATLAB:ui:componentcontainer:invalidParent|exact
+CHK|reparent_into_msg|U10Probe cannot be a parent of Button.|exact
+CHK|grid_child_after|double[1 1] 2|exact
+CHK|child_in_update|char[1 81]'update refused: MATLAB:ui:Label:unknownInput U10Late cannot be a parent of Label.'|exact
+CHK|reparent|double[1 2] [1 1]|exact
+CHK|reparent_log|char[0 0]''|exact
+CHK|reparent_drawnow_log|char[1 14]'update Value=1'|exact
+CHK|setup_error|MATLAB:ui:componentcontainer:ErrorWhileExecutingSetup|exact
+CHK|setup_error_msg|Unable to execute 'setup' method.|exact
+CHK|setup_error_log|char[1 9]'bad setup'|exact
+CHK|setup_error_children|double[1 1] 1|exact
+CHK|update_error|char[1 2]'ok'|exact
+CHK|update_error_log|char[1 10]'bad update'|exact
+CHK|update_error_again_log|char[0 0]''|exact
+CHK|update_error_write_log|char[1 10]'bad update'|exact
+CHK|update_recovered_log|char[1 10]'bad update'|exact
+CHK|delete|cell[1 3]{char[1 11]'user delete';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|dot_after_delete|MATLAB:class:InvalidHandle|exact
+CHK|dot_after_delete_msg|Invalid or deleted object.|exact
+CHK|delete_grid|double[1 2] [1 0]|exact
+CHK|write_through_child_handle|double[1 1] 11|exact
+CHK|read_through_child_handle|double[1 1] 11|exact
+CHK|figure_delete|logical[1 1] 0|exact
+CHK|figure_delete_log|char[1 11]'user delete'|exact
+CHK|sg_ctor|double[1 2] [1 0]|exact
+CHK|sg_drawnow|double[1 2] [1 1]|exact
+CHK|sg_two_sets|double[1 1] 2|exact
+CHK|sg_position|double[1 4] [10 10 220 80]|exact
+CHK|sg_type|char[1 12]'spinnergauge'|exact
+CHK|sg_limits|double[1 2] [0 200]|exact
+CHK|sg_cb_default|char[0 0]''|exact
+CHK|sg_cb|char[1 15]'function_handle'|exact
+CHK|sg_after_delete|logical[1 1] 0|exact

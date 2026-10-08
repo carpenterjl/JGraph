@@ -138,6 +138,24 @@ public class UiComponentSerializationTests
     }
 
     [Fact]
+    public void ACustomComponentsArea_IsSavedAsTheBorderlessPanelItIs_WithWhatItHolds()
+    {
+        // U10 (ADR 0209): the class is the script's, so a saved figure keeps the picture - a
+        // borderless panel and what the component's setup built in it.
+        var figure = new FigureModel { IsUiFigure = true, IntegerHandle = false };
+        var area = new UiComponentContainerModel("SpinnerGauge") { Position = new Rect2D(10, 10, 220, 80) };
+        area.Components.Add(new UiControlModel { Tag = "inside" });
+        figure.Components.Add(area);
+
+        FigureModel loaded = RoundTrip(figure);
+        var panel = Assert.IsType<UiPanelModel>(Assert.Single(loaded.Components));
+        Assert.Equal(UiBorderType.None, panel.BorderType);
+        Assert.Equal(new Rect2D(10, 10, 220, 80), panel.Position);
+        Assert.Equal(UiUnits.Pixels, panel.Units);
+        Assert.Equal("inside", Assert.Single(panel.Components).Tag);
+    }
+
+    [Fact]
     public void APanel_KeepsItsLook_ItsChildren_AndTheAxesPlacedInIt()
     {
         var figure = new FigureModel { IsUiFigure = true, IntegerHandle = false, AutoResizeChildren = true, Units = UiUnits.Points };

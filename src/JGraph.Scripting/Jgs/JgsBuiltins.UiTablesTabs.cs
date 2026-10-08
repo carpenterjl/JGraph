@@ -13,8 +13,9 @@ internal static partial class JgsBuiltins
 {
     private static void RegisterUiTableAndBarBuiltins(JgsEnvironment env)
     {
+        // A custom component named as the parent is its area's handle (U10).
         void DefineMaker(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => body(JgsComponentContainers.AsHandles(args), line, col))
             {
                 AutoCallsBare = true,
                 BindsAnsAsStatement = false,
@@ -274,6 +275,7 @@ internal static partial class JgsBuiltins
         var parent = (IUiContainer)(named ?? FigureToMakeIn());
         FigureModel? figure = parent as FigureModel ?? (parent as UiObject)?.Figure;
         UiTableModel table = figure is { IsUiFigure: true } ? new UiTableModel() : UiTableModel.ForClassicFigure();
+        JgsComponentContainers.RequireOpen(parent, table, line, col); // U10
         parent.Components.Add(table);
         JgsUiTables.Rebuild(JgsHandleRegistry.EntryFor(table));
         JgsValue handle = FinishMaking(TableMaker, table, () => parent.Components.Remove(table), options, line, col);
@@ -293,6 +295,7 @@ internal static partial class JgsBuiltins
     {
         FigureModel? figure = parent as FigureModel ?? (parent as UiObject)?.Figure;
         UiTabGroupModel group = figure is { IsUiFigure: true } ? UiTabGroupModel.ForUiFigure() : new UiTabGroupModel();
+        JgsComponentContainers.RequireOpen(parent, group, line, col); // U10
         parent.Components.Add(group);
         JgsValue handle = FinishMaking(TabGroupMaker, group, () => parent.Components.Remove(group), options, line, col);
         JgsGraphicsProperties.GridMembershipChanged(group);

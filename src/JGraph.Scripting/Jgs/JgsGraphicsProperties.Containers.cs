@@ -191,6 +191,12 @@ internal static partial class JgsGraphicsProperties
 
         string moving = JgsGraphicsCallbackValues.ClassWord(entry.Target);
 
+        // A custom component takes nothing in once its setup is over (U10, probe u10_more).
+        if (owner.Target is UiComponentContainerModel { InSetup: false } closed)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:ui:componentcontainer:invalidParent", $"{closed.ClassName} cannot be a parent of {moving}.");
+        }
+
         // A tab goes in a tab group, and a tab group takes nothing else (U8).
         bool tabInGroup = entry.Target is UiTabModel && owner.Target is UiTabGroupModel;
         bool misplaced = (entry.Target is UiTabModel) != (owner.Target is UiTabGroupModel);

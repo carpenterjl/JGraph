@@ -80,6 +80,8 @@ internal sealed class JgsClass
             _properties.Add(property);
         }
 
+        AddCallbackProperties(declaration);
+
         foreach (ClassMethod method in declaration.Methods)
         {
             method.Owner = this;
@@ -175,6 +177,13 @@ internal sealed class JgsClass
     /// <summary>Whether the class is an event's data: its header names <c>event.EventData</c> (V6, #106), or a superclass's does.</summary>
     public bool IsEventData { get; private set; }
 
+    /// <summary>
+    /// Whether instances are custom components (U10, ADR 0209): the class is
+    /// <c>matlab.ui.componentcontainer.ComponentContainer</c> or inherits from it, so each instance
+    /// stands for an area in a figure.
+    /// </summary>
+    public bool IsComponentContainer { get; private set; }
+
     /// <summary>The name every handle class's <c>delete</c> raises, without declaring it.</summary>
     public const string ObjectBeingDestroyed = "ObjectBeingDestroyed";
 
@@ -253,7 +262,8 @@ internal sealed class JgsClass
 
     /// <summary>Whether an instance <c>isa</c> the named class: this one, a superclass, <c>handle</c>.</summary>
     public bool IsA(string name) =>
-        string.Equals(Name, name, StringComparison.Ordinal) || _superclassNames.Contains(name, StringComparer.Ordinal);
+        string.Equals(Name, name, StringComparison.Ordinal) || _superclassNames.Contains(name, StringComparer.Ordinal)
+        || (IsComponentContainer && JgsBuiltinClasses.ComponentContainerAncestors.Contains(name, StringComparer.Ordinal));
 
     /// <summary>Whether the class or a superclass says <paramref name="other"/> is inferior to it (<c>InferiorClasses</c>; measured: by exact name).</summary>
     public bool Dominates(JgsClass other) => Declaration.InferiorClasses.Contains(other.Name, StringComparer.Ordinal);
@@ -622,6 +632,14 @@ internal sealed class JgsClass
 
     private JgsValue? RunConstructor(JgsValue built, IReadOnlyList<JgsValue> arguments, int wanted, int line, int col)
     {
+        // A built-in class's constructor written in C# (U10: ComponentContainer's), handed the
+        // object being made and the arguments.
+        if (_own.TryGetValue(Name, out ClassMethod? native) && native.Native is { } body && native.Function.Outputs.Count == 1)
+        {
+            body.Call([built, .. arguments], line, col);
+            return built;
+        }
+
         if (!_own.TryGetValue(Name, out ClassMethod? constructor) || constructor.Native is not null)
         {
             if (arguments.Count > 0 && _supers.Count != 1)
@@ -833,6 +851,43 @@ internal sealed class JgsClass
         }
 
         IsHandle = anyHandle;
+        IsComponentContainer = declaration.Name == JgsBuiltinClasses.ComponentContainer || _supers.Exists(static s => s.IsComponentContainer);
+    }
+
+    /// <summary>
+    /// The properties a custom component's <c>events (HasCallbackProperty)</c> block makes (U10,
+    /// probe <c>u10_matrix</c>): for each event a public, Dependent <c>NameFcn</c>, listed after the
+    /// class's own properties, holding a callback as a graphics callback property does. On a
+    /// class that is no component the attribute is R2025b's refusal.
+    /// </summary>
+    private void AddCallbackProperties(ClassdefStmt declaration)
+    {
+        foreach (ClassEvent declared in declaration.EventSpecs)
+        {
+            if (!declared.HasCallbackProperty)
+            {
+                continue;
+            }
+
+            if (!IsComponentContainer)
+            {
+                throw new JgsRuntimeException(declaration.Line, declaration.Column, "MATLAB:class:UnrecognizedAttribute",
+                    "Illegal attribute 'HasCallbackProperty'.");
+            }
+
+            string name = declared.Name + "Fcn";
+            var property = new ClassProperty(new ArgumentSpec(name, null, null, [], null), Constant: false, Dependent: true) { Owner = this };
+            if (!_propertyByName.TryAdd(name, property))
+            {
+                throw new JgsRuntimeException(declaration.Line, declaration.Column,
+                    $"Class '{declaration.Name}' defines the property '{name}' twice.");
+            }
+
+            _properties.Add(property);
+            string eventName = declared.Name;
+            _getters[name] = JgsBuiltinClasses.CallbackAccessor(this, "get." + name, eventName, write: false);
+            _setters[name] = JgsBuiltinClasses.CallbackAccessor(this, "set." + name, eventName, write: true);
+        }
     }
 
     private void AddSuperclassNames(IEnumerable<string> names)

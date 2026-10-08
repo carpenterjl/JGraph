@@ -125,6 +125,7 @@ internal static partial class JgsGraphicsProperties
             _ => "uihyperlink",
         },
         UiOverlayModel => "uiprogressdlg",
+        UiComponentContainerModel area => area.TypeName, // a custom component's (U10): its class, lower case
         UiButtonGroupModel => "uibuttongroup",
         UiProgressIndicatorModel => "uiprogressindicator",
         UiPanelModel => "uipanel",
@@ -840,7 +841,7 @@ internal static partial class JgsGraphicsProperties
         // option would have to be taught to each of the drawing verbs one at a time.
         Put(table, "Parent",
             entry => ParentOf(entry.Target) is { } parent
-                ? JgsHandleRegistry.For(parent)
+                ? JgsComponentContainers.ValueFor(parent) // inside a custom component, the component (U10)
                 : GroupOwning(entry.Target) is { } group
                     ? JgsHandleRegistry.For(group)
                     : JgsValue.Array([]),

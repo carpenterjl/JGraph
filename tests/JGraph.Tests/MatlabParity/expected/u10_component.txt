@@ -1,0 +1,88 @@
+CHK|ctor_log|char[1 49]'setup Value=1 Pos=[100 100 100 100] Parent=figure'|exact
+CHK|ctor_counts|double[1 2] [1 0]|exact
+CHK|drawnow_log|char[1 14]'update Value=5'|exact
+CHK|drawnow_again_log|char[0 0]''|exact
+CHK|field_after_update|double[1 1] 5|exact
+CHK|two_sets_log|char[0 0]''|exact
+CHK|two_sets_drawnow_log|char[1 14]'update Value=7'|exact
+CHK|tag_log|char[1 14]'update Value=7'|exact
+CHK|position_log|char[1 14]'update Value=7'|exact
+CHK|visible_log|char[1 14]'update Value=7'|exact
+CHK|private_write_log|char[1 14]'update Value=7'|exact
+CHK|same_value_log|char[1 14]'update Value=7'|exact
+CHK|pause_log|char[1 14]'update Value=7'|exact
+CHK|callback_write_log|char[0 0]''|exact
+CHK|counts|double[1 2] [1 9]|exact
+CHK|class|char[1 8]'U10Probe'|exact
+CHK|type|char[1 8]'u10probe'|exact
+CHK|isa_cc|logical[1 1] 1|exact
+CHK|isa_handle|logical[1 1] 1|exact
+CHK|isa_graphics|logical[1 1] 1|exact
+CHK|isa_component|logical[1 1] 1|exact
+CHK|isobject|logical[1 1] 1|exact
+CHK|ishghandle|logical[1 1] 1|exact
+CHK|isgraphics|logical[1 1] 1|exact
+CHK|isgraphics_type|logical[1 1] 0|div=0209|diverges|logical[1 1] 1
+CHK|ishandle|logical[1 1] 1|exact
+CHK|isvalid|logical[1 1] 1|exact
+CHK|isstruct|logical[1 1] 0|exact
+CHK|position|double[1 4] [20 20 150 40]|exact
+CHK|units|char[1 6]'pixels'|exact
+CHK|background|double[1 3] [0.96078431372549022 0.96078431372549022 0.96078431372549022]|exact
+CHK|visible|onoff on|exact
+CHK|handlevisibility|onoff on|exact
+CHK|tag|char[1 2]'tg'|exact
+CHK|parent_is_f|logical[1 1] 1|exact
+CHK|parent_type|char[1 6]'figure'|exact
+CHK|children_size|double[1 2] [0 0]|exact
+CHK|allchild_numel|double[1 1] 0|exact
+CHK|findall_grid_numel|double[1 1] 0|exact
+CHK|findall_f_types|char[1 15]'figure,u10probe'|exact
+CHK|grid_parent_is_c|logical[1 1] 1|exact
+CHK|grid_parent_class|char[1 8]'U10Probe'|exact
+CHK|grid_ancestor_type|char[1 6]'figure'|exact
+CHK|f_children_numel|double[1 1] 1|exact
+CHK|f_children_eq_c|logical[1 1] 1|exact
+CHK|f_children_class|char[1 8]'U10Probe'|div=0209|diverges|char[1 6]'double'
+CHK|isequal_c_child|logical[1 1] 1|exact
+CHK|get_type|char[1 8]'u10probe'|exact
+CHK|get_value|double[1 1] 7|exact
+CHK|get_cell|cell[1 2]{double[1 1] 7;char[1 1]'x'}|exact
+CHK|get_names|char[1 294]'Value,Label,SetupCalls,UpdateCalls,ValueChangedFcn,ClickedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout'|exact
+CHK|properties|char[1 294]'Value,Label,SetupCalls,UpdateCalls,ValueChangedFcn,ClickedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout'|exact
+CHK|fresh_value_cb|char[0 0]''|exact
+CHK|fresh_clicked_cb|char[0 0]''|exact
+CHK|isprop_valuechangedfcn|logical[1 1] 1|exact
+CHK|isprop_plainfcn|logical[1 1] 0|exact
+CHK|isprop_value|logical[1 1] 1|exact
+CHK|isprop_position|logical[1 1] 1|exact
+CHK|set_value|double[1 1] 9|exact
+CHK|set_lower_name|char[1 5]'lower'|exact
+CHK|set_bogus|MATLAB:hg:InvalidProperty|exact
+CHK|set_bogus_msg|Unrecognized property Bogus for class U10Probe.|exact
+CHK|read_bogus|MATLAB:noSuchMethodOrField|exact
+CHK|read_bogus_msg|Unrecognized method, property, or field 'Bogus' for class 'U10Probe'.|exact
+CHK|write_bogus|MATLAB:noPublicFieldForClass|exact
+CHK|write_bogus_msg|Unrecognized property 'Bogus' for class 'U10Probe'.|exact
+CHK|write_type|MATLAB:class:SetProhibited|exact
+CHK|write_type_msg|Unable to set the 'Type' property of class ''U10Probe'' because it is read-only.|exact
+CHK|write_children|char[1 2]'ok'|exact
+CHK|write_cb_number|MATLAB:datatypes:callback:CreateCallback|exact
+CHK|write_cb_number_msg|Error setting property 'ValueChangedFcn' of class 'U10Probe': Callback value must be a character vector, a function handle, or a cell array containing character vector or function handle|exact
+CHK|write_cb_char|char[1 2]'ok'|exact
+CHK|cb_char_class|char[1 4]'char'|exact
+CHK|cb_cell_class|char[1 4]'cell'|exact
+CHK|cell_cb_fired|char[1 9]'cell cb A'|exact
+CHK|empty_cb_fired|char[0 0]''|exact
+CHK|cb_after_empty|char[0 0]''|exact
+CHK|events|cell[6 1]{char[1 12]'ValueChanged';char[1 7]'Clicked';char[1 5]'Plain';char[1 20]'ObjectBeingDestroyed';char[1 13]'PropertyAdded';char[1 15]'PropertyRemoved'}|exact
+CHK|fire_order|char[1 83]'listener event.EventData ValueChanged 1 / callback event.EventData ValueChanged 1 1'|exact
+CHK|gcbo|char[1 69]'listener event.EventData ValueChanged 1 / gcbo U10Probe 1 gcbf figure'|exact
+CHK|callback_error|char[1 2]'ok'|exact
+CHK|callback_error_log|char[1 39]'listener event.EventData ValueChanged 1'|exact
+CHK|no_arg_callback_log|char[1 39]'listener event.EventData ValueChanged 1'|exact
+CHK|plain_event_log|char[0 0]''|exact
+CHK|fire_unknown|MATLAB:class:invalidEvent|exact
+CHK|fire_unknown_msg|Event 'Bogus' is not defined for class 'U10Probe'.|exact
+CHK|ctor_callback|char[1 17]'clicked from ctor'|exact
+CHK|ctor_callback_class|char[1 15]'function_handle'|exact

@@ -1193,7 +1193,13 @@ internal static partial class JgsBuiltins
         Define("isequal", (args, line, col) =>
         {
             ArityRange("isequal", args, 2, int.MaxValue, line, col);
-            return JgsValue.Bool(args.Skip(1).All(v => JgsStdlib.DeepEquals(args[0], v)));
+
+            // A custom component is its area's handle when set beside handles (U10, measured).
+            static JgsValue Plain(JgsValue v) =>
+                v.Type == JgsType.Object && JgsComponentContainers.TryEntry(v, out JgsHandleEntry? area) ? JgsHandleRegistry.For(area.Target) : v;
+            bool mixed = args.Any(static v => v.Type == JgsType.Object) && args.Any(static v => v.Type != JgsType.Object);
+            IReadOnlyList<JgsValue> compared = mixed ? [.. args.Select(Plain)] : args;
+            return JgsValue.Bool(compared.Skip(1).All(v => JgsStdlib.DeepEquals(compared[0], v)));
         });
 
         Define("and", (args, line, col) => Logical2("and", args, line, col, static (a, b) => a && b));

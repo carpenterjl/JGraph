@@ -740,3 +740,35 @@ makes columns; names: `x` prefix, blanks dropped with the next letter upper case
 internal warning.
 
 Not measured: anything in a window.
+
+## U10 findings (R2025b, headless)
+
+**Construction** (`u10_matrix`): `setup` runs inside the constructor with the parent set (a
+`'Parent'` pair too) and before the other pairs; pairs match names without regard to case, not by
+beginnings, take string names and one struct; an odd count is `UnmatchedNameValuePairs` before
+`setup`, a pair that cannot be set `ErrorWhileSettingNameValuePairs` after it, each deleting the
+object (its `delete` runs); a failing `setup` is `ErrorWhileExecutingSetup` with the class's error
+as cause and leaves the component in its figure; no parent makes a `uifigure`; another component
+is `invalidParent`; a `'Type'` pair writes the read-only `Type` (a bug).
+
+**`update`** is owed after construction and after any property write (own, private, same value,
+`Tag`, `Position`, `Visible`) but not a callback property's, and runs once at the next `drawnow` or
+`pause` (not `figure(f)`); a write inside `update` owes nothing; a failing `update` prints "Unable
+to execute 'update' method." and is not raised. After reparenting into a figure not yet drawn,
+R2025b updates once more a few drains later.
+
+**The object** is the graphics object: `f.Children` holds it, a part's `Parent` and `gcbo` are
+it, `ishghandle`/`isgraphics`/`ishandle` are true, `isa` Graphics and Component are true, `Type`
+is the class name in lower case (`isgraphics(c, type)` is nonetheless false), `get`/`set` work;
+`properties` lists the class's own, then the callback properties, then the 22 inherited ones;
+`events` ends with `ObjectBeingDestroyed`, `PropertyAdded`, `PropertyRemoved`.
+
+**Children only in `setup`** (`u10_more`): `uibutton(c)`, a `'Parent'` pair, `b.Parent = c` and a
+child made in `update` are refused (`<Class> cannot be a parent of Button.`); `Children`,
+`allchild` and `findall` reach nothing inside; a grid made in `setup` takes children later.
+
+**`HasCallbackProperty`** makes a public Dependent `NameFcn` ('' at first, a graphics callback
+property's forms and refusal); `notify` runs it after the listeners; a failure is printed, not
+raised; on a plain class the attribute is `MATLAB:class:UnrecognizedAttribute`.
+
+Not measured: anything in a window.

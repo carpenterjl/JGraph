@@ -576,6 +576,10 @@ internal sealed partial class Interpreter
         fields[field] = stored;
         JgsLifetime.Stored(holder, replaced, stored); // V10: the property's lifetime moves with the write
         NoteTrackedStore(stored);
+        if (definition.IsComponentContainer)
+        {
+            JgsComponentContainers.MarkOwed(holder.AsObject); // any write owes the component an update (U10)
+        }
         if (observed)
         {
             JgsBuiltins.FirePropertyEvent(holder, field, post: true);
@@ -916,6 +920,19 @@ internal sealed partial class Interpreter
                 bool same = ReferenceEquals(left.AsObject, right.AsObject);
                 result = JgsValue.Bool(wanted == "eq" ? same : !same);
                 return true;
+            }
+
+            // A custom component against handles - f.Children(1) == c (U10, measured) - is its
+            // area's handle against them.
+            if (wanted is "eq" or "ne" && (left.Type == JgsType.Object) != (right.Type == JgsType.Object))
+            {
+                JgsValue component = left.Type == JgsType.Object ? left : right;
+                if (JgsComponentContainers.TryEntry(component, out JgsHandleEntry? area))
+                {
+                    JgsValue handle = JgsHandleRegistry.For(area.Target);
+                    result = ApplyBinary(op, left.Type == JgsType.Object ? handle : left, right.Type == JgsType.Object ? handle : right, at);
+                    return true;
+                }
             }
 
             throw new JgsRuntimeException(at.Line, at.Column,

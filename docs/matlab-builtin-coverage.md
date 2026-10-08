@@ -104,7 +104,9 @@ number and this one agree again. `opengl` *is* counted, because an accepted no-o
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
 Across every callable kind — builtin, function, operator, keyword, script — the count is **1,221 of
-2,024** as of app-building stage U9b (ADR 0208), which added `uihtml` (its `sendEventToHTMLSource`
+2,024** as of app-building stage U10 (ADR 0209), which added none (custom components are a class,
+`matlab.ui.componentcontainer.ComponentContainer`); the same as of app-building stage U9b (ADR
+0208), which added `uihtml` (its `sendEventToHTMLSource`
 is a method in R2025b, not one of the 2,024) and made `jsonencode` and `jsondecode` R2025b's; 1,220
 as of app-building stage U9 (ADR 0207), which added `uiknob`, `uiswitch`, `uigauge`,
 `uilamp`, `uidatepicker`, `uicolorpicker`, `uitree`, `uitreenode`, `uistyle`, `addStyle`,
@@ -1070,6 +1072,11 @@ M52 left these behind, each named rather than silent (the full table is in
 ### Handle graphics and app building — 2
 
 `hgsetget` `selectmoveresize`
+
+**App-building stage U10 took custom components** (ADR 0209): a class written under
+`matlab.ui.componentcontainer.ComponentContainer` - `setup`, `update` owed and run at drain
+points, `events (HasCallbackProperty)` - is a component in its figure (`u10_component`,
+`u10_forms`). No callable is added.
 
 **App-building stage U9b took `uihtml`** (ADR 0208): a web page in a component, hosted by Edge
 WebView2, with `sendEventToHTMLSource` beside it, and `jsonencode` and `jsondecode` rewritten to

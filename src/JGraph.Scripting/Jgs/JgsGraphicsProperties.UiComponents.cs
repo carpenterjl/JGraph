@@ -148,6 +148,7 @@ internal static partial class JgsGraphicsProperties
     internal static string FullClassOf(GraphObject target) => target switch
     {
         UiControlModel => "matlab.ui.control.UIControl",
+        UiComponentContainerModel area => area.ClassName, // a custom component (U10)
         UiButtonGroupModel => "matlab.ui.container.ButtonGroup",
         UiProgressIndicatorModel => "matlab.ui.control.internal.ProgressIndicator",
         UiPanelModel => "matlab.ui.container.Panel",

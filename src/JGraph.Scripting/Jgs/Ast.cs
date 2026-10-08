@@ -607,6 +607,12 @@ internal sealed record MemberAccess(MemberAccessKind Kind, IReadOnlyList<string>
 /// <param name="Hidden">Whether <c>events</c> leaves it out.</param>
 internal sealed record ClassEvent(string Name, MemberAccess ListenAccess, MemberAccess NotifyAccess, bool Hidden)
 {
+    /// <summary>
+    /// Whether the block said <c>(HasCallbackProperty)</c> (U10): a custom component gets a public
+    /// <c>NameFcn</c> property whose callback <c>notify</c> runs after the listeners.
+    /// </summary>
+    public bool HasCallbackProperty { get; init; }
+
     /// <summary>The class that declares the event, written once when that class is built.</summary>
     internal JgsClass? Owner { get; set; }
 }

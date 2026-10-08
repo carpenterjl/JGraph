@@ -16,8 +16,9 @@ internal static partial class JgsBuiltins
     {
         // AutoCallsBare, because the documented spelling is the bare name on an assignment's right
         // side — h = uicontrol — and a bare name in expression position is otherwise the function.
+        // A custom component named as the parent is its area's handle (U10).
         void DefineMaker(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => body(JgsComponentContainers.AsHandles(args), line, col))
             {
                 AutoCallsBare = true,
                 BindsAnsAsStatement = false,
@@ -31,10 +32,11 @@ internal static partial class JgsBuiltins
         DefineMaker("uibuttongroup", UiButtonGroup);
         DefineMaker("uifigure", UiFigure);
         RegisterUiTextBuiltins(env);
-        env.Builtins.Register("getpixelposition", JgsValue.Function(new BuiltinFunction("getpixelposition", GetPixelPosition)));
-        DefineQuiet("setpixelposition", SetPixelPosition);
-        DefineQuiet("movegui", MoveGui);
-        DefineQuiet("uistack", UiStack);
+        env.Builtins.Register("getpixelposition", JgsValue.Function(new BuiltinFunction("getpixelposition",
+            (args, line, col) => GetPixelPosition(JgsComponentContainers.AsHandles(args), line, col))));
+        DefineQuiet("setpixelposition", (args, line, col) => SetPixelPosition(JgsComponentContainers.AsHandles(args), line, col));
+        DefineQuiet("movegui", (args, line, col) => MoveGui(JgsComponentContainers.AsHandles(args), line, col));
+        DefineQuiet("uistack", (args, line, col) => UiStack(JgsComponentContainers.AsHandles(args), line, col));
         env.Builtins.Register("allchild", JgsValue.Function(new BuiltinFunction("allchild", AllChild)));
 
         // A figure whose handle is hidden cannot be the current one (U2).
@@ -117,6 +119,7 @@ internal static partial class JgsBuiltins
     private static JgsValue AddComponent(
         UiObject component, IUiContainer parent, List<(string Name, JgsValue Value)> options, int line, int col)
     {
+        JgsComponentContainers.RequireOpen(parent, component, line, col); // U10: only while a custom component's setup runs
         parent.Components.Add(component);
         JgsValue handle = JgsHandleRegistry.For(component);
         JgsHandleEntry entry = JgsHandleRegistry.EntryFor(component);
@@ -731,9 +734,12 @@ internal static partial class JgsBuiltins
         JgsValue One(JgsValue handle)
         {
             JgsHandleEntry entry = JgsHandleRegistry.Require(handle, line, col);
-            IReadOnlyList<GraphObject> children = entry.Target is JgsGraphicsRoot
-                ? JgsGraphicsProperties.RootFigures(hidden: true)
-                : JgsGraphicsProperties.ChildrenOf(entry.Target);
+            IReadOnlyList<GraphObject> children = entry.Target switch
+            {
+                JgsGraphicsRoot => JgsGraphicsProperties.RootFigures(hidden: true),
+                UiComponentContainerModel => [], // what a custom component's setup built is its own (U10)
+                _ => JgsGraphicsProperties.ChildrenOf(entry.Target),
+            };
             var handles = new double[children.Count];
             for (int i = 0; i < children.Count; i++)
             {

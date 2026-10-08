@@ -167,8 +167,9 @@ internal sealed class JgsCallbackDispatcher
             return;
         }
 
-        // What scripts queued for their uihtml pages goes first (U9b), so a page's answer to it can
-        // be heard in this drain.
+        // Custom components' owed updates (U10) - the prompt's return is a drain too - and then what
+        // scripts queued for their uihtml pages (U9b), so a page's answer to it can be heard in this drain.
+        JgsComponentContainers.RunUpdates(_globals);
         JgsUiHtml.Flush(_globals);
 
         int budget = ScriptEventQueue.Count;

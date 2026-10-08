@@ -283,6 +283,12 @@ internal sealed class JgsHandleEntry
     /// where R2025b uses <c>addprop</c>. Read, written and found by <c>isprop</c>; not listed.
     /// </summary>
     public Dictionary<string, JgsValue>? AddedProperties { get; set; }
+
+    /// <summary>
+    /// The custom component this object is the area of (U10), or null: what a dot on the
+    /// object's handle, and a read of a child's <c>Parent</c>, reach instead of the area.
+    /// </summary>
+    public JgsObject? Owner { get; set; }
 }
 
 /// <summary>
@@ -434,7 +440,8 @@ internal static class JgsHandleRegistry
         entry = null;
         if (value.Type != JgsType.Number)
         {
-            return false;
+            // A custom component is a graphics object as well as an object (U10).
+            return value.Type == JgsType.Object && JgsComponentContainers.TryEntry(value, out entry);
         }
 
         double handle = value.AsNumber;
@@ -504,6 +511,7 @@ internal static class JgsHandleRegistry
             FigureEntries.Clear();
             _next = FirstHandle;
             ShowHiddenHandles = false;
+            JgsComponentContainers.Clear();
             JgsGraphicsCallbackState.Clear();
             JgsGraphicsProperties.ForgetGroups();
         }

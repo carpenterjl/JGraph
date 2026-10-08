@@ -122,6 +122,7 @@ internal static partial class JgsBuiltins
         // A device's callbacks run at every pause, pause(0) included, where .NET's wait for a positive
         // one (R2025b, probe_sp_callbacks).
         Devices.DeviceEventQueue.DrainCurrent();
+        JgsComponentContainers.RunUpdates(); // a pause owes custom components their update (U10, measured)
         if (_pausesEnabled && seconds > 0 && !double.IsNaN(seconds))
         {
             // A pause is a drain point for timers as well (V6, #105).

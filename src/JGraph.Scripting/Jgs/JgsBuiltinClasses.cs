@@ -32,6 +32,7 @@ internal static partial class JgsBuiltinClasses
             Method("get", MemberAccess.Public, isSealed: true, (args, line, col) => Get(interpreter, args, line, col))),
         AppBase => AppBaseDeclaration(interpreter),
         Style => StyleDeclaration(),
+        ComponentContainer => ComponentContainerDeclaration(interpreter),
         _ => null,
     };
 

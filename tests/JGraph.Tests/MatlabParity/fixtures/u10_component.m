@@ -1,0 +1,134 @@
+% record: -noFigureWindows
+% U10 of the app-building plan (ADR 0209): a custom component, a class written under
+% matlab.ui.componentcontainer.ComponentContainer. When setup and update run, what the object is
+% and answers, its properties, its callback properties and its events. Probes u10_matrix, u10_more.
+f = uifigure('Visible', 'off');
+u10_log();
+
+% --- when setup and update run
+c = U10Probe(f, 'Value', 5);
+u9b_chk('ctor_log', @() u10_log());
+u9b_chk('ctor_counts', @() [c.SetupCalls c.UpdateCalls]);
+drawnow;
+u9b_chk('drawnow_log', @() u10_log());
+drawnow;
+u9b_chk('drawnow_again_log', @() u10_log());
+u9b_chk('field_after_update', @() c.fieldValue());
+c.Value = 6; c.Value = 7;
+u9b_chk('two_sets_log', @() u10_log());
+drawnow;
+u9b_chk('two_sets_drawnow_log', @() u10_log());
+c.Tag = 'tg'; drawnow;
+u9b_chk('tag_log', @() u10_log());
+c.Position = [20 20 150 40]; drawnow;
+u9b_chk('position_log', @() u10_log());
+c.Visible = 'off'; drawnow;
+u9b_chk('visible_log', @() u10_log());
+c.Visible = 'on'; drawnow; u10_log();
+c.poke(); drawnow;
+u9b_chk('private_write_log', @() u10_log());
+c.Value = 7; drawnow;
+u9b_chk('same_value_log', @() u10_log());
+c.Label = 'x'; pause(0.05);
+u9b_chk('pause_log', @() u10_log());
+c.ValueChangedFcn = @(s, e) u10_log('cb');
+drawnow;
+u9b_chk('callback_write_log', @() u10_log());
+u9b_chk('counts', @() [c.SetupCalls c.UpdateCalls]);
+
+% --- what the object is
+u9b_chk('class', @() class(c));
+u9b_chk('type', @() c.Type);
+u9b_chk('isa_cc', @() isa(c, 'matlab.ui.componentcontainer.ComponentContainer'));
+u9b_chk('isa_handle', @() isa(c, 'handle'));
+u9b_chk('isa_graphics', @() isa(c, 'matlab.graphics.Graphics'));
+u9b_chk('isa_component', @() isa(c, 'matlab.ui.control.Component'));
+u9b_chk('isobject', @() isobject(c));
+u9b_chk('ishghandle', @() ishghandle(c));
+u9b_chk('isgraphics', @() isgraphics(c));
+u9b_chkdiv('isgraphics_type', @() isgraphics(c, 'u10probe'), '0209');
+u9b_chk('ishandle', @() ishandle(c));
+u9b_chk('isvalid', @() isvalid(c));
+u9b_chk('isstruct', @() isstruct(c));
+u9b_chk('position', @() c.Position);
+u9b_chk('units', @() c.Units);
+u9b_chk('background', @() c.BackgroundColor);
+u9b_chk('visible', @() c.Visible);
+u9b_chk('handlevisibility', @() c.HandleVisibility);
+u9b_chk('tag', @() c.Tag);
+u9b_chk('parent_is_f', @() c.Parent == f);
+u9b_chk('parent_type', @() c.Parent.Type);
+u9b_chk('children_size', @() size(c.Children));
+u9b_chk('allchild_numel', @() numel(allchild(c)));
+u9b_chk('findall_grid_numel', @() numel(findall(c, 'Type', 'uigridlayout')));
+u9b_chk('findall_f_types', @() strjoin(sort(get(findall(f), 'Type'))', ','));
+u9b_chk('grid_parent_is_c', @() c.grid().Parent == c);
+u9b_chk('grid_parent_class', @() class(c.grid().Parent));
+u9b_chk('grid_ancestor_type', @() get(ancestor(c.grid(), 'figure'), 'Type'));
+u9b_chk('f_children_numel', @() numel(f.Children));
+u9b_chk('f_children_eq_c', @() f.Children(1) == c);
+u9b_chkdiv('f_children_class', @() class(f.Children), '0209');
+u9b_chk('isequal_c_child', @() isequal(c, f.Children(1)));
+u9b_chk('get_type', @() get(c, 'Type'));
+u9b_chk('get_value', @() get(c, 'Value'));
+u9b_chk('get_cell', @() get(c, {'Value', 'Label'}));
+u9b_chk('get_names', @() strjoin(fieldnames(get(c))', ','));
+u9b_chk('properties', @() strjoin(properties(c)', ','));
+
+% --- properties
+c2 = U10Probe(f);
+u9b_chk('fresh_value_cb', @() c2.ValueChangedFcn);
+u9b_chk('fresh_clicked_cb', @() c2.ClickedFcn);
+u9b_chk('isprop_valuechangedfcn', @() isprop(c2, 'ValueChangedFcn'));
+u9b_chk('isprop_plainfcn', @() isprop(c2, 'PlainFcn'));
+u9b_chk('isprop_value', @() isprop(c2, 'Value'));
+u9b_chk('isprop_position', @() isprop(c2, 'Position'));
+set(c2, 'Value', 9);
+u9b_chk('set_value', @() c2.Value);
+set(c2, 'label', 'lower');
+u9b_chk('set_lower_name', @() c2.Label);
+u9b_chk('set_bogus', @() u10_do(@() set(c2, 'Bogus', 1)));
+u9b_chk('read_bogus', @() c2.Bogus);
+u9b_chk('write_bogus', @() u10_set(c2, 'Bogus', 1));
+u9b_chk('write_type', @() u10_set(c2, 'Type', 'x'));
+u9b_chk('write_children', @() u10_set(c2, 'Children', []));
+u9b_chk('write_cb_number', @() u10_set(c2, 'ValueChangedFcn', 5));
+u9b_chk('write_cb_char', @() u10_set(c2, 'ValueChangedFcn', 'disp(''chr cb'')'));
+u9b_chk('cb_char_class', @() class(c2.ValueChangedFcn));
+c2.ValueChangedFcn = {@(s, e, a) u10_log(['cell cb ' a]), 'A'};
+u9b_chk('cb_cell_class', @() class(c2.ValueChangedFcn));
+u10_log();
+c2.fire('ValueChanged');
+u9b_chk('cell_cb_fired', @() u10_log());
+c2.ValueChangedFcn = '';
+c2.fire('ValueChanged');
+u9b_chk('empty_cb_fired', @() u10_log());
+c2.ValueChangedFcn = [];
+u9b_chk('cb_after_empty', @() c2.ValueChangedFcn);
+u9b_chk('events', @() events(c2));
+
+% --- events
+u10_log();
+addlistener(c, 'ValueChanged', @(s, e) u10_log(sprintf('listener %s %s %d', class(e), e.EventName, e.Source == c)));
+c.ValueChangedFcn = @(s, e) u10_log(sprintf('callback %s %s %d %d', class(e), e.EventName, s == c, e.Source == c));
+c.fire('ValueChanged');
+u9b_chk('fire_order', @() u10_log());
+c.ValueChangedFcn = @(s, e) u10_log(sprintf('gcbo %s %d gcbf %s', class(gcbo), isequal(gcbo, c), get(gcbf, 'Type')));
+c.fire('ValueChanged');
+u9b_chk('gcbo', @() u10_log());
+c.ValueChangedFcn = @(s, e) error('u10:cb', 'callback failed');
+u9b_chk('callback_error', @() u10_do(@() c.fire('ValueChanged')));
+u9b_chk('callback_error_log', @() u10_log());
+c.ValueChangedFcn = @() u10_log('no args');
+c.fire('ValueChanged');
+u9b_chk('no_arg_callback_log', @() u10_log());
+c.ValueChangedFcn = '';
+c.fire('Plain');
+u9b_chk('plain_event_log', @() u10_log());
+u9b_chk('fire_unknown', @() u10_do(@() c.fire('Bogus')));
+c3 = U10Probe(f, 'ClickedFcn', @(s, e) u10_log('clicked from ctor'));
+u10_log();
+c3.fire('Clicked');
+u9b_chk('ctor_callback', @() u10_log());
+u9b_chk('ctor_callback_class', @() class(c3.ClickedFcn));
+delete(f);

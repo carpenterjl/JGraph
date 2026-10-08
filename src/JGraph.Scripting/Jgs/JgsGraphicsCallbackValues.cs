@@ -111,6 +111,7 @@ internal static class JgsGraphicsCallbackValues
     public static string ClassWord(GraphObject target) => target switch
     {
         UiControlModel => "UIControl",
+        UiComponentContainerModel area => area.ClassName, // a custom component (U10)
         UiButtonGroupModel => "ButtonGroup",
         UiProgressIndicatorModel => "ProgressIndicator",
         UiPanelModel => "Panel",
@@ -124,6 +125,7 @@ internal static class JgsGraphicsCallbackValues
         UiComponentModel component => component.Kind.ToString(),
         UiOverlayModel => "matlab.ui.dialog.ProgressDialog",
         FigureModel => "Figure",
+        AxesModel { IsUiAxes: true } => "UIAxes", // R2025b: "UIAxes cannot be a parent." (U10)
         AxesModel => "Axes",
         ContextMenuModel => "ContextMenu",
         MenuItemModel => "Menu",

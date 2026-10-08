@@ -386,6 +386,10 @@ public sealed class JGraphScriptGlobals
     /// </summary>
     internal void ShowTouchedFigures()
     {
+        // Custom components' owed updates first (U10): a run's end, a statement's, an idle drain's
+        // and a drawnow's all draw what the script left, as R2025b's do.
+        Jgs.JgsComponentContainers.RunUpdates(this);
+
         // The components go first, so a window that opens below starts from the frame just taken.
         ScriptComponentFrames.Flush(force: true);
         foreach (int number in JG.FiguresTouchedSince(_runStartStamp))

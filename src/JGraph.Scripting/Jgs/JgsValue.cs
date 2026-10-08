@@ -1439,8 +1439,17 @@ internal sealed class JgsValue
     {
         var sb = new StringBuilder(instance.Class.Name);
         sb.Append(" with properties:");
+
+        // A custom component shows its class's own properties and its Position, then offers the
+        // rest, as R2025b's display does (U10, probe u10_more).
+        bool component = instance.Class.IsComponentContainer;
         foreach (ClassProperty property in instance.Class.ListedProperties)
         {
+            if (component && property.Owner?.Name == JgsBuiltinClasses.ComponentContainer && property.Spec.Name != "Position")
+            {
+                continue;
+            }
+
             // A property with a get method shows as that method's answer, a Dependent one included
             // (V6, #27, #28: R2025b's display runs every getter).
             if (instance.Class.DisplayValue(instance, property) is not { } held)
@@ -1455,6 +1464,11 @@ internal sealed class JgsValue
                 : held.Type == JgsType.String ? "'" + Truncate(held.AsString) + "'" // a char row, as R2025b shows one
                 : Truncate(held.Display());
             sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(shown);
+        }
+
+        if (component)
+        {
+            sb.Append("\n\n  Show all properties");
         }
 
         return sb.ToString();

@@ -736,7 +736,7 @@ internal sealed class Parser
     private void ParseEventsBlock(string className, Token block, List<ClassEvent> into)
     {
         MemberAccess listen = MemberAccess.Public, notify = MemberAccess.Public;
-        bool hidden = false;
+        bool hidden = false, callbackProperty = false;
         foreach ((Token attribute, Expr? value) in ReadAttributes())
         {
             switch (attribute.Text)
@@ -750,10 +750,14 @@ internal sealed class Parser
                 case "Hidden":
                     hidden = AttributeFlag(attribute, value);
                     break;
+                case "HasCallbackProperty":
+                    // A custom component's (U10): the class refuses it when it is no component.
+                    callbackProperty = AttributeFlag(attribute, value);
+                    break;
                 default:
                     throw Error(attribute,
                         $"'{className}': the '{block.Text}' attribute '{attribute.Text}' is not supported — this build understands "
-                        + "'ListenAccess', 'NotifyAccess' and 'Hidden'.");
+                        + "'ListenAccess', 'NotifyAccess', 'Hidden' and 'HasCallbackProperty'.");
             }
         }
 
@@ -766,7 +770,7 @@ internal sealed class Parser
                 throw Error(name, $"Class '{className}' defines the event '{name.Text}' twice.");
             }
 
-            into.Add(new ClassEvent(name.Text, listen, notify, hidden));
+            into.Add(new ClassEvent(name.Text, listen, notify, hidden) { HasCallbackProperty = callbackProperty });
             SkipSeparators();
         }
 

@@ -494,6 +494,13 @@ internal static partial class JgsBuiltins
         }
 
         FireEvent(source, eventName, data);
+
+        // A custom component's HasCallbackProperty event runs its NameFcn after the listeners (U10).
+        if (source.Class.IsComponentContainer && source.Class.Event(eventName) is { HasCallbackProperty: true })
+        {
+            JgsComponentContainers.RunEventCallback(source, eventName, data);
+        }
+
         return JgsValue.Null;
     }
 
@@ -698,6 +705,12 @@ internal static partial class JgsBuiltins
         if (definition.IsHandle)
         {
             names = names.Append(JgsClass.ObjectBeingDestroyed);
+        }
+
+        // A custom component is dynamicprops too (U10, measured).
+        if (definition.IsComponentContainer)
+        {
+            names = names.Append("PropertyAdded").Append("PropertyRemoved");
         }
 
         return EventColumn(names);

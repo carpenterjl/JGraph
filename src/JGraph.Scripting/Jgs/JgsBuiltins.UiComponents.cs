@@ -195,8 +195,9 @@ internal static partial class JgsBuiltins
 
     private static void RegisterUiComponentBuiltins(JgsEnvironment env, JGraphScriptGlobals host, CancellationToken cancellationToken)
     {
+        // A custom component named as the parent is its area's handle (U10).
         void DefineMaker(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => body(JgsComponentContainers.AsHandles(args), line, col))
             {
                 AutoCallsBare = true,
                 BindsAnsAsStatement = false,
@@ -262,6 +263,17 @@ internal static partial class JgsBuiltins
         JgsValue handle = UiFigure([], line, col);
         return (FigureModel)JgsHandleRegistry.Require(handle, line, col).Target;
     }
+
+    /// <summary>The <c>uifigure</c> a custom component made with no parent is put in (U10, measured).</summary>
+    internal static IUiContainer NewUiFigureForComponent(int line, int col) => NewUiFigure(line, col);
+
+    /// <summary>The container a custom component's parent names, with a maker's refusals (U10: <c>UIAxes cannot be a parent.</c>).</summary>
+    internal static IUiContainer ContainerForComponent(JgsValue value, int line, int col) =>
+        ComponentParent(value, pairsWithFocus: false, positional: true, line, col);
+
+    /// <summary>Puts a custom component's area in its parent, as a maker puts a component (U10).</summary>
+    internal static JgsValue AddComponentArea(UiComponentContainerModel area, IUiContainer parent, int line, int col) =>
+        AddComponent(area, parent, [], line, col);
 
     /// <summary>The property a name in a creating call means: itself in any case, or the one name it begins.</summary>
     private static string PropertyNamed(GraphObject target, string typed, string classWord, int line, int col)
@@ -418,6 +430,7 @@ internal static partial class JgsBuiltins
     private static JgsValue AddUiComponent(
         UiObject component, IUiContainer parent, List<(string Name, JgsValue Value)> options, string word, int line, int col)
     {
+        JgsComponentContainers.RequireOpen(parent, component, line, col); // U10: only while a custom component's setup runs
         parent.Components.Add(component);
         JgsValue handle = JgsHandleRegistry.For(component);
         JgsHandleEntry entry = JgsHandleRegistry.EntryFor(component);

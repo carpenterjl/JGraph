@@ -84,6 +84,7 @@ internal static partial class JgsBuiltins
     /// a builtin a drain point; where no session exists (a one-shot or batch run) it is a no-op.</summary>
     internal static void PumpEvents(JGraphScriptGlobals host)
     {
+        JgsComponentContainers.RunUpdates(host); // custom components' owed updates first (U10), session or not
         JgsCallbackDispatcher.Current?.Drain();
         host.Timers?.Drain(); // a due timer fires here too (V6, #105)
         Net.NetCallbackQueue.DrainCurrent(); // and .NET's work from other threads (ADR 0178)
@@ -118,6 +119,7 @@ internal static partial class JgsBuiltins
             WaitHandle.WaitAny([token.WaitHandle, Devices.DeviceEventQueue.Posted], TimeSpan.FromMilliseconds(
                 System.Math.Min(remaining, PumpSlice.TotalMilliseconds)));
             token.ThrowIfCancellationRequested();
+            JgsComponentContainers.RunUpdates(); // U10
             dispatcher?.Drain();
             timers?.Drain();
             Net.NetCallbackQueue.DrainCurrent(); // .NET's events and delegates from other threads (ADR 0178)
@@ -169,7 +171,7 @@ internal static partial class JgsBuiltins
         Define("isvalid", (args, line, col) => TryDeviceBuiltin("isvalid", args, 1, line, col, out JgsValue device) ? device
             : TryLibBuiltin("isvalid", host, args, line, col, out JgsValue valid) ? valid : IsValid(args, line, col));
 
-        Define("ancestor", Ancestor);
+        Define("ancestor", (args, line, col) => Ancestor(JgsComponentContainers.AsHandles(args), line, col)); // a custom component is its area (U10)
         DefineSilent("copyobj", Copy);
         Define("gobjects", Gobjects);
 
@@ -243,7 +245,13 @@ internal static partial class JgsBuiltins
     {
         ArityRange("get", args, 1, 2, line, col);
 
-        // An object whose class did not inherit get from matlab.mixin.SetGet has none (U6, measured).
+        // A custom component is a graphics object (U10); any other object whose class did not
+        // inherit get from matlab.mixin.SetGet has none (U6, measured).
+        if (args[0].Type == JgsType.Object && JgsComponentContainers.TryState(args[0].AsObject, out JgsComponentContainerState? component))
+        {
+            return JgsComponentContainers.Get(component, args, line, col);
+        }
+
         if (args[0].Type == JgsType.Object)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:graphics:GetMethodUnknown",
@@ -302,7 +310,13 @@ internal static partial class JgsBuiltins
                 "set wants a handle: set(h, 'Name', value) writes a property, set(h) lists the writable ones.");
         }
 
-        // An object whose class did not inherit set from matlab.mixin.SetGet has none (U6; a uistyle, U9).
+        // A custom component is a graphics object (U10); any other object whose class did not
+        // inherit set from matlab.mixin.SetGet has none (U6; a uistyle, U9).
+        if (args[0].Type == JgsType.Object && JgsComponentContainers.TryState(args[0].AsObject, out JgsComponentContainerState? component))
+        {
+            return JgsComponentContainers.Set(component, args, line, col);
+        }
+
         if (args[0].Type == JgsType.Object)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:graphics:SetMethodUnknown",
@@ -511,7 +525,8 @@ internal static partial class JgsBuiltins
                     found.Add(target);
                 }
 
-                if (at < depth)
+                // What a custom component's setup built is no one's to find (U10, probe u10_more).
+                if (at < depth && target is not UiComponentContainerModel)
                 {
                     // Front first, the order Children lists them in.
                     next.AddRange((hidden
@@ -562,6 +577,11 @@ internal static partial class JgsBuiltins
     private static JgsValue IsHandle(string verb, IReadOnlyList<JgsValue> args, int line, int col)
     {
         Arity(verb, args, 1, line, col);
+        if (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsComponentContainer)
+        {
+            return JgsValue.Bool(JgsComponentContainers.TryEntry(args[0], out _)); // a custom component is a graphics object (U10)
+        }
+
         if (args[0].Type is JgsType.Struct or JgsType.Object or JgsType.Cell or JgsType.Function)
         {
             return JgsValue.Bool(false); // a listener, an object, a cell: not a graphics handle (V6, #106)
@@ -577,6 +597,13 @@ internal static partial class JgsBuiltins
     private static JgsValue IsGraphics(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("isgraphics", args, 1, 2, line, col);
+        if (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsComponentContainer)
+        {
+            // A custom component is a graphics object of its own type (U10).
+            return JgsValue.Bool(JgsComponentContainers.TryEntry(args[0], out JgsHandleEntry? area)
+                && (args.Count == 1 || area.TypeName.Equals(StrOf("isgraphics", args[1], line, col), StringComparison.OrdinalIgnoreCase)));
+        }
+
         if (args.Count == 1)
         {
             return MapToBool("isgraphics", args[0], IsLiveHandle, line, col);
@@ -1434,7 +1461,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>A handle on an object, or the empty answer that stands for "there isn't one".</summary>
     private static JgsValue Named(GraphObject? target) =>
-        target is null ? JgsValue.Array([]) : JgsHandleRegistry.For(target);
+        target is null ? JgsValue.Array([]) : JgsComponentContainers.ValueFor(target); // a custom component is its object (U10)
 
     /// <summary>The figure an object is drawn in, walking up until there is nothing above.</summary>
     internal static FigureModel? FigureOf(GraphObject? target)

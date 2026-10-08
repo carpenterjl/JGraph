@@ -69,6 +69,9 @@ internal sealed class JgsLifetime
         _interpreter = interpreter;
     }
 
+    /// <summary>The interpreter whose run this tracks.</summary>
+    internal Interpreter Interpreter => _interpreter;
+
     /// <summary>Whether anything with a destructor is alive in any run — the gate on the factory scans.</summary>
     internal static bool AnyLive => Volatile.Read(ref s_live) > 0;
 
