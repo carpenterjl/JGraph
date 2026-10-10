@@ -14,6 +14,7 @@ namespace JGraph.Tests.Devices;
 /// against it (<c>jgraph.internal.visasim</c>): the list, identification, synchronous reads, the
 /// terminator a failed read restores (div=ADR0187), status, device clear, and the enumerations.
 /// </summary>
+[Collection("JG facade")]
 public class VisaTests
 {
     private static SimulatedVisa Visa(SimulatedLine line) =>

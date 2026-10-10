@@ -61,8 +61,12 @@ internal static partial class JgsGraphicsProperties
     }
 
     /// <summary>What MATLAB's <c>Parent</c> answers: an axes placed in a panel belongs to the panel.</summary>
-    internal static GraphObject? ParentOf(GraphObject target) =>
-        target is AxesModel { Container: { } container } ? container : target.Parent;
+    internal static GraphObject? ParentOf(GraphObject target) => target switch
+    {
+        AxesModel { Container: { } container } => container,
+        JgsGraphicsGroup group => (GraphObject?)group.Outer ?? group.Home, // beside the tree (item 89)
+        _ => target.Parent,
+    };
 
     /// <summary>
     /// <c>set(h, 'Children', order)</c>: a permutation of the children, front first. Components and
@@ -802,6 +806,9 @@ internal static partial class JgsGraphicsProperties
         {
             AddResizeSlot(table, name);
         }
+
+        // R2025b's Panel hides both: they answer when named and get(p) leaves them out (open item 82).
+        Unlist(table, "ResizeFcn", "ShadowColor");
 
         // The grid's placement options arrive with uigridlayout (U5); until then there are none.
         // In a grid, where the panel sits (U5); anywhere else it has no layout options to take.

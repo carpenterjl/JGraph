@@ -597,7 +597,7 @@ internal static partial class JgsGraphicsProperties
     public static IReadOnlyList<string> NamesOf(GraphObject target)
     {
         var names = TableFor(target.GetType()).Values
-            .Where(p => p.Listed && (p.OnlyWhen is null || p.OnlyWhen(target)))
+            .Where(p => p.Listed && (p.OnlyWhen is null || p.OnlyWhen(target)) && !UnlistedForMatlab(target, p))
             .Select(static p => p.Name)
             .ToList();
         names.Sort(StringComparer.OrdinalIgnoreCase);
@@ -606,7 +606,8 @@ internal static partial class JgsGraphicsProperties
 
     public static bool TryFind(GraphObject target, string name, out GraphicsProperty property) =>
         TableFor(target.GetType()).TryGetValue(name.ToLowerInvariant(), out property!)
-        && (property.OnlyWhen is null || property.OnlyWhen(target));
+        && (property.OnlyWhen is null || property.OnlyWhen(target))
+        && !NotMatlabs(target, property);
 
     public static JgsValue Get(JgsHandleEntry entry, string name, int line, int col)
     {
@@ -615,7 +616,7 @@ internal static partial class JgsGraphicsProperties
             var fields=new Dictionary<string,JgsValue>();
             foreach (var pair in new Dictionary<string,GraphObject> { ["Line"]=new LinePlot([],[]), ["Axes"]=new AxesModel(), ["Figure"]=new FigureModel() })
                 foreach (var item in TableFor(pair.Value.GetType()).Values)
-                    if (item.Write is not null && item.Name is not ("Parent" or "Children"))
+                    if (item.Write is not null && item.Name is not ("Parent" or "Children") && TryFind(pair.Value, item.Name, out _))
                         fields["factory"+pair.Key+item.Name]=Get(new JgsHandleEntry(pair.Value),"factory"+pair.Key+item.Name,line,col);
             return JgsValue.Struct(fields);
         }
@@ -706,6 +707,13 @@ internal static partial class JgsGraphicsProperties
             string named = !reading ? word : FullClassOf(target);
             return new JgsRuntimeException(line, col, "MATLAB:hg:InvalidProperty",
                 $"Unrecognized property {name} for class {named}.");
+        }
+
+        // Any other object R2025b's class names were recorded for says the same (open item 82).
+        if (MatlabClassWord(target, full: reading) is { } classWord)
+        {
+            return new JgsRuntimeException(line, col, "MATLAB:hg:InvalidProperty",
+                $"Unrecognized property {name} for class {classWord}.");
         }
 
         string type = TypeNameOf(target);
@@ -2668,10 +2676,13 @@ internal static partial class JgsGraphicsProperties
                 $"Unable to set the '{property.Name}' property of class ''{JgsGraphicsCallbackValues.ClassWord(entry.Target)}'' because it is read-only.");
         }
 
-        return WordsCell(property.Words);
+        return WordsFor(entry.Target, property);
     }
 
-    /// <summary>What <c>set(h)</c> answers for a component: every listed, writable name with its words.</summary>
+    /// <summary>
+    /// What <c>set(h)</c> answers for a component, or for any object R2025b's words were recorded for
+    /// (open item 41): every listed, writable name with its words.
+    /// </summary>
     internal static JgsValue OptionsOf(JgsHandleEntry entry)
     {
         var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
@@ -2679,7 +2690,7 @@ internal static partial class JgsGraphicsProperties
         {
             if (TryFind(entry.Target, name, out GraphicsProperty property) && property.Write is not null)
             {
-                fields[name] = WordsCell(property.Words);
+                fields[name] = WordsFor(entry.Target, property);
             }
         }
 

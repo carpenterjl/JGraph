@@ -14,6 +14,7 @@ namespace JGraph.Tests.Devices;
 /// and the HID list and a collection's capabilities on whatever this machine has.
 /// </summary>
 [SupportedOSPlatform("windows")]
+[Collection("JG facade")]
 public class HidTests
 {
     [Theory]

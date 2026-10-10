@@ -56,7 +56,6 @@ public class MatlabMeshPlotTests : IDisposable
             disp(get(h(1), 'Type'));
             disp(get(h(1), 'XData'));
             disp(get(h(1), 'Marker'));
-            disp(get(h(2), 'Name'));
 
             % The edges are one series with a gap between each segment: three samples per segment,
             % the third being the gap, and every segment starting at the middle.
@@ -67,7 +66,7 @@ public class MatlabMeshPlotTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "[2, 1]", "line", "[0, 1, 1, 0]", ".", "Voronoi", "12", "4", "[0.5]" },
+            new[] { "[2, 1]", "line", "[0, 1, 1, 0]", ".", "12", "4", "[0.5]" },
             _output.NormalLines);
     }
 

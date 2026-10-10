@@ -16,6 +16,7 @@ namespace JGraph.Tests.Devices;
 /// null-modem wiring, the natural port order, validatestring's matching, and a serialport losing its
 /// device. The com0com checks run only where the pair COM20/COM21 exists.
 /// </summary>
+[Collection("JG facade")]
 public class DeviceLayerTests
 {
     // --- the input buffer -----------------------------------------------------------------------------

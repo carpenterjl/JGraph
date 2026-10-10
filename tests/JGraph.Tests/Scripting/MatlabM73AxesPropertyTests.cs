@@ -568,7 +568,9 @@ public class MatlabM73AxesPropertyTests : IDisposable
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.True(Number(result, "counted") >= 159, $"axes answered {Number(result, "counted")}");
-        Assert.Equal(Number(result, "counted"), Number(result, "polarCounted"));
+        // Since ADR 0220 get(h) lists only the names R2025b lists too: 147 of an axes' 156 and 107 of
+        // a polar axes' 110 (R2025b's two lists differ, so the counts do).
+        Assert.True(Number(result, "counted") >= 147, $"axes answered {Number(result, "counted")}");
+        Assert.True(Number(result, "polarCounted") >= 107, $"polar axes answered {Number(result, "polarCounted")}");
     }
 }

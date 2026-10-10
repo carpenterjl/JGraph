@@ -161,10 +161,10 @@ internal static partial class JgsBuiltins
             case 5:
                 return JgsValue.Bool(Supports(session, interpreter, Input(args[0]), args[1], args[2], args[3], args[4], line, col));
             default:
-                return wanted > 0
-                    ? throw new JgsRuntimeException(line, col, "MATLAB:unassignedOutputs",
-                        "Output argument \"devInfo\" (and possibly others) not assigned a value in the execution with \"audiovideo.internal.audiodevinfoDesktop\" function.")
-                    : JgsValue.Null;
+                // audiodevinfo.m asks audiodevinfoDesktop for devInfo however it was called, so the
+                // refusal holds as a statement too (open item 28, probe_28d).
+                throw new JgsRuntimeException(line, col, "MATLAB:unassignedOutputs",
+                    "Output argument \"devInfo\" (and possibly others) not assigned a value in the execution with \"audiovideo.internal.audiodevinfoDesktop\" function.");
         }
     }
 

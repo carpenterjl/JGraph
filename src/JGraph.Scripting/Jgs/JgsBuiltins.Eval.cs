@@ -389,11 +389,7 @@ internal static partial class JgsBuiltins
         Define("evalc", (args, line, col) =>
         {
             ArityRange("evalc", args, 1, 2, line, col);
-            if (!host.BeginCapture())
-            {
-                throw new JgsRuntimeException(line, col, "evalc is already capturing output; it does not nest.");
-            }
-
+            host.BeginCapture();
             string captured;
 
             try

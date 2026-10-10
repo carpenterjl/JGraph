@@ -326,8 +326,10 @@ internal static partial class JgsBuiltins
         List<JgsHandleEntry> targets = HandleList("set", args[0], line, col);
 
         // A component answers as R2025b's does (U3): set(h) is a struct of the names that can be
-        // written, each with the words it takes, and set(h, name) is one name's words.
-        if (targets.Count == 1 && JgsGraphicsProperties.SpeaksAsComponent(targets[0].Target))
+        // written, each with the words it takes, and set(h, name) is one name's words. So does any
+        // object whose R2025b words were recorded, in the MATLAB dialect (open item 41).
+        if (targets.Count == 1 && (JgsGraphicsProperties.SpeaksAsComponent(targets[0].Target)
+            || JgsGraphicsProperties.AnswersMatlabOptions(targets[0].Target)))
         {
             if (args.Count == 1)
             {

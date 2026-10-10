@@ -1,0 +1,9 @@
+CHK|first_use_method|double[1 1] 12|exact
+CHK|anon_unassigned|char[1 3]'ran'|exact
+CHK|anon_varargout_none|char[1 3]'ran'|exact
+CHK|anon_varargout_one|char[1 7]'ans = 7'|exact
+CHK|anon_nested|char[1 7]'ans = 4'|exact
+CHK|audiodevinfo_six_statement|char[1 169]'MATLAB:unassignedOutputs / Output argument "devInfo" (and possibly others) not assigned a value in the execution with "audiovideo.internal.audiodevinfoDesktop" function.'|exact
+CHK|audiodevinfo_six_anon|char[1 169]'MATLAB:unassignedOutputs / Output argument "devInfo" (and possibly others) not assigned a value in the execution with "audiovideo.internal.audiodevinfoDesktop" function.'|exact
+CHK|evalc_nested|char[1 1]'1'|exact
+CHK|evalc_nested_split|cell[1 2]{char[1 1]'3';char[1 1]'2'}|exact

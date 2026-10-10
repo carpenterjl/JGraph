@@ -1,0 +1,148 @@
+CHK|figure_set_class|struct|exact
+CHK|figure_listed_Units|1|exact
+CHK|figure_words_Units|cell [6 1] {char 'inches', char 'centimeters', char 'characters', char 'normalized', char 'points', char 'pixels'}|exact
+CHK|figure_listed_Visible|1|exact
+CHK|figure_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|figure_listed_Pointer|1|exact
+CHK|figure_words_Pointer|cell [17 1] {char 'arrow', char 'ibeam', char 'crosshair', char 'watch', char 'topl', char 'topr', char 'botl', char 'botr', char 'circle', char 'cross', char 'fleur', char 'custom', char 'left', char 'top', char 'right', char 'bottom', char 'hand'}|exact
+CHK|figure_listed_WindowStyle|1|exact
+CHK|figure_words_WindowStyle|cell [4 1] {char 'normal', char 'modal', char 'docked', char 'alwaysontop'}|exact
+CHK|figure_listed_MenuBar|1|exact
+CHK|figure_words_MenuBar|cell [2 1] {char 'none', char 'figure'}|exact
+CHK|figure_listed_ToolBar|1|exact
+CHK|figure_words_ToolBar|cell [3 1] {char 'none', char 'auto', char 'figure'}|exact
+CHK|figure_listed_NumberTitle|1|exact
+CHK|figure_words_NumberTitle|cell [2 1] {onoff on, onoff off}|exact
+CHK|figure_listed_PaperType|1|exact
+CHK|figure_words_PaperType|cell [26 1] {char 'usletter', char 'uslegal', char 'A0', char 'A1', char 'A2', char 'A3', char 'A4', char 'A5', char 'B0', char 'B1', char 'B2', char 'B3', char 'B4', char 'B5', char 'A', char 'B', char 'C', char 'D', char 'E', char 'arch-A', char 'arch-B', char 'arch-C', char 'arch-D', char 'arch-E', char 'tabloid', char '<custom>'}|exact
+CHK|figure_listed_HandleVisibility|1|exact
+CHK|figure_words_HandleVisibility|cell [3 1] {onoff on, char 'callback', onoff off}|exact
+CHK|figure_listed_Resize|1|exact
+CHK|figure_words_Resize|cell [2 1] {onoff on, onoff off}|exact
+CHK|figure_listed_Name|1|exact
+CHK|figure_words_Name|cell [0 0] {}|exact
+CHK|figure_listed_Color|1|exact
+CHK|figure_words_Color|cell [0 1] {}|exact
+CHK|axes_set_class|struct|exact
+CHK|axes_listed_XScale|1|exact
+CHK|axes_words_XScale|cell [2 1] {char 'linear', char 'log'}|exact
+CHK|axes_listed_YDir|1|exact
+CHK|axes_words_YDir|cell [2 1] {char 'normal', char 'reverse'}|exact
+CHK|axes_listed_Box|1|exact
+CHK|axes_words_Box|cell [2 1] {onoff on, onoff off}|exact
+CHK|axes_listed_GridLineStyle|1|exact
+CHK|axes_words_GridLineStyle|cell [5 1] {char '-', char '--', char ':', char '-.', char 'none'}|exact
+CHK|axes_listed_TickDir|1|exact
+CHK|axes_words_TickDir|cell [4 1] {char 'in', char 'out', char 'both', char 'none'}|exact
+CHK|axes_listed_NextPlot|1|exact
+CHK|axes_words_NextPlot|cell [4 1] {char 'add', char 'replace', char 'replacechildren', char 'replaceall'}|exact
+CHK|axes_listed_XAxisLocation|1|exact
+CHK|axes_words_XAxisLocation|cell [3 1] {char 'bottom', char 'top', char 'origin'}|exact
+CHK|axes_listed_YAxisLocation|1|exact
+CHK|axes_words_YAxisLocation|cell [3 1] {char 'left', char 'right', char 'origin'}|exact
+CHK|axes_listed_Layer|1|exact
+CHK|axes_words_Layer|cell [2 1] {char 'bottom', char 'top'}|exact
+CHK|axes_listed_Projection|1|exact
+CHK|axes_words_Projection|cell [2 1] {char 'orthographic', char 'perspective'}|exact
+CHK|axes_listed_FontWeight|1|exact
+CHK|axes_words_FontWeight|cell [2 1] {char 'normal', char 'bold'}|exact
+CHK|axes_listed_XLim|1|exact
+CHK|axes_words_XLim|cell [0 0] {}|exact
+CHK|axes_listed_Color|1|exact
+CHK|axes_words_Color|cell [0 1] {}|exact
+CHK|line_set_class|struct|exact
+CHK|line_listed_LineStyle|1|exact
+CHK|line_words_LineStyle|cell [5 1] {char '-', char '--', char ':', char '-.', char 'none'}|exact
+CHK|line_listed_Marker|1|exact
+CHK|line_words_Marker|cell [16 1] {char '+', char 'o', char '*', char '.', char 'x', char 'square', char 'diamond', char 'v', char '^', char '>', char '<', char 'pentagram', char 'hexagram', char '/', char '_', char 'none'}|exact
+CHK|line_listed_MarkerEdgeColor|1|exact
+CHK|line_words_MarkerEdgeColor|cell [2 1] {char 'auto', char 'none'}|exact
+CHK|line_listed_MarkerFaceColor|1|exact
+CHK|line_words_MarkerFaceColor|cell [2 1] {char 'auto', char 'none'}|exact
+CHK|line_listed_LineJoin|1|exact
+CHK|line_words_LineJoin|cell [3 1] {char 'chamfer', char 'miter', char 'round'}|exact
+CHK|line_listed_Visible|1|exact
+CHK|line_words_Visible|cell [2 1] {onoff on, onoff off}|exact
+CHK|line_listed_XData|1|exact
+CHK|line_words_XData|cell [0 0] {}|exact
+CHK|line_listed_Color|1|exact
+CHK|line_words_Color|cell [0 1] {}|exact
+CHK|line_listed_LineWidth|1|exact
+CHK|line_words_LineWidth|cell [0 0] {}|exact
+CHK|text_set_class|struct|exact
+CHK|text_listed_Interpreter|1|exact
+CHK|text_words_Interpreter|cell [3 1] {char 'none', char 'tex', char 'latex'}|exact
+CHK|text_listed_HorizontalAlignment|1|exact
+CHK|text_words_HorizontalAlignment|cell [3 1] {char 'left', char 'center', char 'right'}|exact
+CHK|text_listed_VerticalAlignment|1|exact
+CHK|text_words_VerticalAlignment|cell [5 1] {char 'baseline', char 'top', char 'cap', char 'middle', char 'bottom'}|exact
+CHK|text_listed_FontWeight|1|exact
+CHK|text_words_FontWeight|cell [2 1] {char 'normal', char 'bold'}|exact
+CHK|text_listed_FontAngle|1|exact
+CHK|text_words_FontAngle|cell [2 1] {char 'normal', char 'italic'}|exact
+CHK|text_listed_Units|1|exact
+CHK|text_words_Units|cell [7 1] {char 'inches', char 'centimeters', char 'characters', char 'normalized', char 'points', char 'pixels', char 'data'}|exact
+CHK|text_listed_String|1|exact
+CHK|text_words_String|cell [0 0] {}|exact
+CHK|patch_set_class|struct|exact
+CHK|patch_listed_FaceColor|1|exact
+CHK|patch_words_FaceColor|cell [3 1] {char 'none', char 'flat', char 'interp'}|exact
+CHK|patch_listed_EdgeColor|1|exact
+CHK|patch_words_EdgeColor|cell [3 1] {char 'none', char 'flat', char 'interp'}|exact
+CHK|patch_listed_LineStyle|1|exact
+CHK|patch_words_LineStyle|cell [5 1] {char '-', char '--', char ':', char '-.', char 'none'}|exact
+CHK|patch_listed_Marker|1|exact
+CHK|patch_words_Marker|cell [16 1] {char '+', char 'o', char '*', char '.', char 'x', char 'square', char 'diamond', char 'v', char '^', char '>', char '<', char 'pentagram', char 'hexagram', char '/', char '_', char 'none'}|exact
+CHK|patch_listed_FaceLighting|1|exact
+CHK|patch_words_FaceLighting|cell [3 1] {char 'none', char 'flat', char 'gouraud'}|exact
+CHK|surface_set_class|struct|exact
+CHK|surface_listed_FaceColor|1|exact
+CHK|surface_words_FaceColor|cell [4 1] {char 'none', char 'flat', char 'interp', char 'texturemap'}|exact
+CHK|surface_listed_EdgeColor|1|exact
+CHK|surface_words_EdgeColor|cell [4 1] {char 'none', char 'flat', char 'interp', char 'texturemap'}|exact
+CHK|surface_listed_LineStyle|1|exact
+CHK|surface_words_LineStyle|cell [5 1] {char '-', char '--', char ':', char '-.', char 'none'}|exact
+CHK|surface_listed_MeshStyle|1|exact
+CHK|surface_words_MeshStyle|cell [3 1] {char 'both', char 'row', char 'column'}|exact
+CHK|surface_listed_FaceLighting|1|exact
+CHK|surface_words_FaceLighting|cell [3 1] {char 'none', char 'flat', char 'gouraud'}|exact
+CHK|scatter_set_class|struct|exact
+CHK|scatter_listed_Marker|1|exact
+CHK|scatter_words_Marker|cell [16 1] {char '+', char 'o', char '*', char '.', char 'x', char 'square', char 'diamond', char 'v', char '^', char '>', char '<', char 'pentagram', char 'hexagram', char '/', char '_', char 'none'}|exact
+CHK|scatter_listed_MarkerEdgeColor|1|exact
+CHK|scatter_words_MarkerEdgeColor|cell [2 1] {char 'flat', char 'none'}|exact
+CHK|scatter_listed_MarkerFaceColor|1|exact
+CHK|scatter_words_MarkerFaceColor|cell [3 1] {char 'none', char 'flat', char 'auto'}|exact
+CHK|scatter_listed_LineWidth|1|exact
+CHK|scatter_words_LineWidth|cell [0 0] {}|exact
+CHK|bar_set_class|struct|exact
+CHK|bar_listed_BarLayout|1|exact
+CHK|bar_words_BarLayout|cell [2 1] {char 'stacked', char 'grouped'}|exact
+CHK|bar_listed_Horizontal|1|exact
+CHK|bar_words_Horizontal|cell [2 1] {onoff on, onoff off}|exact
+CHK|bar_listed_FaceColor|1|exact
+CHK|bar_words_FaceColor|cell [2 1] {char 'flat', char 'none'}|exact
+CHK|bar_listed_EdgeColor|1|exact
+CHK|bar_words_EdgeColor|cell [2 1] {char 'flat', char 'none'}|exact
+CHK|bar_listed_LineStyle|1|exact
+CHK|bar_words_LineStyle|cell [5 1] {char '-', char '--', char ':', char '-.', char 'none'}|exact
+CHK|bar_listed_ShowBaseLine|1|exact
+CHK|bar_words_ShowBaseLine|cell [2 1] {onoff on, onoff off}|exact
+CHK|legend_set_class|struct|exact
+CHK|legend_listed_Location|1|exact
+CHK|legend_words_Location|cell [20 1] {char 'north', char 'south', char 'east', char 'west', char 'northeast', char 'northwest', char 'southeast', char 'southwest', char 'northoutside', char 'southoutside', char 'eastoutside', char 'westoutside', char 'northeastoutside', char 'northwestoutside', char 'southeastoutside', char 'southwestoutside', char 'best', char 'bestoutside', char 'none', char 'layout'}|exact
+CHK|legend_listed_Orientation|1|exact
+CHK|legend_words_Orientation|cell [2 1] {char 'horizontal', char 'vertical'}|exact
+CHK|legend_listed_Box|1|exact
+CHK|legend_words_Box|cell [2 1] {onoff on, onoff off}|exact
+CHK|legend_listed_Interpreter|1|exact
+CHK|legend_words_Interpreter|cell [3 1] {char 'none', char 'tex', char 'latex'}|exact
+CHK|legend_listed_TextColor|1|exact
+CHK|legend_words_TextColor|cell [0 1] {}|exact
+CHK|one_name|cell[2 1]{char[1 6]'linear';char[1 3]'log'}|exact
+CHK|one_name_no_words|cell[0 0]{}|exact
+CHK|one_name_read_only|MATLAB:class:SetProhibited|exact
+CHK|one_name_read_only_msg|Unable to set the 'Type' property of class ''Axes'' because it is read-only.|exact
+CHK|one_name_unknown|MATLAB:hg:InvalidProperty|exact
+CHK|one_name_unknown_msg|Unrecognized property Bogus for class Axes.|exact
+CHK|listed_read_only|logical[1 1] 0|exact

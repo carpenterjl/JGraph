@@ -12,6 +12,7 @@ namespace JGraph.Tests.Devices;
 /// (<c>jgraph.internal.btsim</c>): an RFCOMM channel driven by the peer protocol, discovery tables, reads,
 /// writes, notifications and their callback, descriptors, and a dropped link.
 /// </summary>
+[Collection("JG facade")]
 public class BluetoothTests
 {
     [Fact]

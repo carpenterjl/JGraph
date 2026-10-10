@@ -1861,16 +1861,23 @@ internal sealed partial class Interpreter
 
         // A name nothing holds errors before its arguments are evaluated, unless a user class is
         // loaded, in which case an object among the arguments could still answer with a method.
+        JgsValue[]? early = null;
         if (!resolved.Found && !AnyClasses && !AnyNet)
         {
             // R2025b evaluates the arguments first and names the first one's class (measured, ADR
             // 0214): `nosuch(3)` is "Undefined function 'nosuch' for input arguments of type 'double'."
-            if (Dialect.IsMatlab && call.Arguments.Count > 0)
+            if (!Dialect.IsMatlab || call.Arguments.Count == 0)
             {
-                throw UndefinedForArguments(name, EvaluateAll(call.Arguments, env)[0], call.Callee);
+                throw UndefinedError(name, call.Callee);
             }
 
-            throw UndefinedError(name, call.Callee);
+            // Evaluating them can load the session's first class, whose method may be the answer:
+            // area_of(holder_obj()) as the first line to name holder_obj (ADR 0220).
+            early = EvaluateAll(call.Arguments, env);
+            if (!AnyClasses && !AnyNet)
+            {
+                throw UndefinedForArguments(name, early[0], call.Callee);
+            }
         }
 
         // A user function asked for more outputs than it declares is refused here, before its
@@ -1881,7 +1888,7 @@ internal sealed partial class Interpreter
             JgsOutputDemand.Refuse(declared, wanted, call.Line, call.Column);
         }
 
-        given = EvaluateAll(call.Arguments, env);
+        given = early ?? EvaluateAll(call.Arguments, env);
         resolved = _resolver.Invoke(name, resolved, given);
         if (!resolved.Found)
         {

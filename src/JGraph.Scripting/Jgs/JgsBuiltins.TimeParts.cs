@@ -33,9 +33,22 @@ internal static partial class JgsBuiltins
             })));
         }
 
+        // day and week take a second word that says which count (open item 66, probe_66c and
+        // probe_66d); with one argument they are the table's readers above.
+        foreach (string counted in new[] { "day", "week" })
+        {
+            env.Builtins.Register(counted, JgsValue.Function(new BuiltinFunction(counted, (args, line, col) =>
+            {
+                ArityRange(counted, args, 1, 2, line, col);
+                return args.Count == 1
+                    ? TimeFieldReaders[counted](args[0], line, col)
+                    : CountOf(counted, args[0], TextOfArgument(counted, args[1], line, col), line, col);
+            })));
+        }
+
         // --- The grouped accessors, which answer with several numbers at once ---------------------
-        Parts(env, "ymd", static m => [m.Year, m.Month, m.Day]);
-        Parts(env, "hms", static m => [m.Hour, m.Minute, JgsTime.SecondsOf(m)]);
+        Parts(env, "ymd", static (m, cycles) => [JgsTime.YearOf(m, cycles), m.Month, m.Day]);
+        Parts(env, "hms", static (m, _) => [m.Hour, m.Minute, JgsTime.SecondsOf(m)]);
 
         // --- Conversions out ----------------------------------------------------------------------
         Define("datevec", (args, line, col) =>
@@ -51,8 +64,8 @@ internal static partial class JgsBuiltins
             var values = new double[source.Length * 6];
             for (int r = 0; r < source.Length; r++)
             {
-                DateTime at = JgsTime.WallClock(source[r], zone);
-                double[] row = [at.Year, at.Month, at.Day, at.Hour, at.Minute, JgsTime.SecondsOf(at)];
+                DateTime at = JgsTime.WallClock(source[r], zone, out int cycles);
+                double[] row = [JgsTime.YearOf(at, cycles), at.Month, at.Day, at.Hour, at.Minute, JgsTime.SecondsOf(at)];
                 for (int c = 0; c < 6; c++)
                 {
                     values[(c * source.Length) + r] = row[c];   // column-major
@@ -93,8 +106,8 @@ internal static partial class JgsBuiltins
             JgsTimeTag? tag = moment.TimeTag;
             return MapMs(moment, ms =>
             {
-                DateTime at = JgsTime.WallClock(ms, tag);
-                return (at.Year * 10000) + (at.Month * 100) + at.Day;
+                DateTime at = JgsTime.WallClock(ms, tag, out int cycles);
+                return (JgsTime.YearOf(at, cycles) * 10000) + (at.Month * 100) + at.Day;
             });
         });
 
@@ -111,7 +124,7 @@ internal static partial class JgsBuiltins
                 // The time of day is what a clock in the value's own zone reads (M82), so the modulo
                 // is taken over the wall clock rather than over the stored instant. Taken the positive
                 // way round so a date before the epoch does not answer with a negative time of day.
-                double wall = double.IsNaN(source[i]) ? source[i] : JgsTime.FromDateTime(JgsTime.WallClock(source[i], tag));
+                double wall = double.IsNaN(source[i]) ? source[i] : JgsTime.FromDateTime(JgsTime.WallClock(source[i], tag, out _));
                 double remainder = wall % JgsTime.MsPerDay;
                 values[i] = remainder < 0 ? remainder + JgsTime.MsPerDay : remainder;
             }
@@ -147,7 +160,10 @@ internal static partial class JgsBuiltins
                 values[i] = ShiftToBoundary(source[i], unit, where == "end", offset, line, col, tag);
             }
 
-            return TimeLike(moment, values, tag);
+            // A default format is worked out again for the moments shifted to (probe_66c: the start
+            // of a month shows no time of day); one a script set is kept.
+            bool worked = !tag.FormatSet && tag.Format is JgsTime.DefaultDatetimeFormat or JgsTime.DateOnlyFormat;
+            return TimeLike(moment, values, worked ? JgsTime.DatetimeTag(values, tag.TimeZone) : tag);
         });
 
         Define("isbetween", (args, line, col) =>
@@ -273,16 +289,16 @@ internal static partial class JgsBuiltins
     private static Dictionary<string, Func<JgsValue, int, int, JgsValue>> BuildTimeFieldReaders() =>
         new(StringComparer.Ordinal)
         {
-            ["year"] = FieldReader("year", static m => m.Year),
-            ["month"] = FieldReader("month", static m => m.Month),
-            ["day"] = FieldReader("day", static m => m.Day),
-            ["hour"] = FieldReader("hour", static m => m.Hour),
-            ["minute"] = FieldReader("minute", static m => m.Minute),
-            ["week"] = FieldReader("week", static m => ISOWeek.GetWeekOfYear(m)),
-            ["quarter"] = FieldReader("quarter", static m => ((m.Month - 1) / 3) + 1),
+            ["year"] = FieldReader("year", static (m, cycles) => JgsTime.YearOf(m, cycles)),
+            ["month"] = FieldReader("month", static (m, _) => m.Month),
+            ["day"] = FieldReader("day", static (m, _) => m.Day),
+            ["hour"] = FieldReader("hour", static (m, _) => m.Hour),
+            ["minute"] = FieldReader("minute", static (m, _) => m.Minute),
+            ["week"] = FieldReader("week", static (m, _) => WeekOfYear(m)),
+            ["quarter"] = FieldReader("quarter", static (m, _) => ((m.Month - 1) / 3) + 1),
 
             // weekday counts from Sunday = 1, which is MATLAB's convention and not .NET's zero-based one.
-            ["weekday"] = FieldReader("weekday", static m => (int)m.DayOfWeek + 1),
+            ["weekday"] = FieldReader("weekday", static (m, _) => (int)m.DayOfWeek + 1),
 
             // second carries the fraction, unlike every other field: MATLAB's second(t) is 30.25 for a
             // moment a quarter of a second past the half minute, where its minute(t) is a whole number.
@@ -291,8 +307,12 @@ internal static partial class JgsBuiltins
             ["second"] = Seconds,
         };
 
-    /// <summary>One accessor that reads a single whole-number field off each moment.</summary>
-    private static Func<JgsValue, int, int, JgsValue> FieldReader(string name, Func<DateTime, int> read) =>
+    /// <summary>
+    /// One accessor that reads a single whole-number field off each moment. The reader is handed the
+    /// wall clock and how many four-hundred-year cycles back it was read, which only the year needs
+    /// (open item 66).
+    /// </summary>
+    private static Func<JgsValue, int, int, JgsValue> FieldReader(string name, Func<DateTime, int, int> read) =>
         (argument, line, col) =>
         {
             JgsValue moment = RequireDatetime(name, argument, line, col);
@@ -301,29 +321,82 @@ internal static partial class JgsBuiltins
             // zoned datetime stores the instant. An unzoned one is its own wall clock, so nothing
             // that never mentions a zone reads differently.
             JgsTimeTag? tag = moment.TimeTag;
-            return MapMs(moment, ms => read(JgsTime.WallClock(ms, tag)));
+            return MapMs(moment, ms => read(JgsTime.WallClock(ms, tag, out int cycles), cycles));
         };
+
+    /// <summary>
+    /// R2025b's week of the year: weeks start on Sunday and the first holds the first of January, so
+    /// the thirty-first of December is often in week 53. Not ISO's, which is its own kind.
+    /// </summary>
+    private static int WeekOfYear(DateTime m) =>
+        ((m.DayOfYear - 1 + (int)new DateTime(m.Year, 1, 1).DayOfWeek) / 7) + 1;
+
+    /// <summary>
+    /// <c>day(t, kind)</c> and <c>week(t, kind)</c>. Every count reads the wall clock, whose weekdays
+    /// are a far moment's own (a four-hundred-year cycle is whole weeks). The ISO week of a month is
+    /// the week, Monday first, of the month its Thursday falls in.
+    /// </summary>
+    private static JgsValue CountOf(string name, JgsValue argument, string kind, int line, int col)
+    {
+        if (name == "day" && kind is "name" or "shortname")
+        {
+            JgsValue moment = RequireDatetime(name, argument, line, col);
+            JgsTimeTag? tag = moment.TimeTag;
+            double[] source = TimeMs(moment);
+            DateTimeFormatInfo words = CultureInfo.InvariantCulture.DateTimeFormat;
+            var names = new JgsValue[source.Length];
+            for (int i = 0; i < source.Length; i++)
+            {
+                DayOfWeek weekday = JgsTime.WallClock(source[i], tag, out _).DayOfWeek;
+                names[i] = JgsValue.Str(double.IsNaN(source[i]) ? string.Empty
+                    : kind == "name" ? words.GetDayName(weekday) : words.GetAbbreviatedDayName(weekday));
+            }
+
+            JgsValue cell = JgsValue.Cell(names);
+            cell.TakeShapeOf(moment);
+            return cell;
+        }
+
+        Func<DateTime, int, int> read = (name, kind) switch
+        {
+            ("day", "dayofmonth") => static (m, _) => m.Day,
+            ("day", "dayofweek") => static (m, _) => (int)m.DayOfWeek + 1,
+            ("day", "iso-dayofweek") => static (m, _) => (((int)m.DayOfWeek + 6) % 7) + 1,
+            ("day", "dayofyear") => static (m, _) => m.DayOfYear,
+            ("week", "weekofyear") => static (m, _) => WeekOfYear(m),
+            ("week", "weekofmonth") => static (m, _) => ((m.Day - 1 + (int)new DateTime(m.Year, m.Month, 1).DayOfWeek) / 7) + 1,
+            ("week", "iso-weekofyear") => static (m, _) => ISOWeek.GetWeekOfYear(m),
+            ("week", "iso-weekofmonth") => static (m, _) =>
+                ((m.Date.AddDays(4 - ((((int)m.DayOfWeek + 6) % 7) + 1)).Day - 1) / 7) + 1,
+            ("day", _) => throw new JgsRuntimeException(line, col, "MATLAB:datetime:InvalidDayType",
+                "Day type must be 'dayofmonth', 'dayofweek', 'iso-dayofweek', 'dayofyear', 'name', or 'shortname'."),
+            _ => throw new JgsRuntimeException(line, col, "MATLAB:datetime:InvalidWeekType",
+                "Week type must be 'weekofyear', 'weekofmonth, 'iso-weekofyear', or 'iso-weekofmonth."),
+        };
+
+        return FieldReader(name, read)(argument, line, col);
+    }
 
     /// <summary>The one accessor that answers with a fraction — see the note in the table above.</summary>
     private static JgsValue Seconds(JgsValue argument, int line, int col)
     {
         JgsValue moment = RequireDatetime("second", argument, line, col);
         JgsTimeTag? tag = moment.TimeTag;
-        return MapMs(moment, ms => JgsTime.SecondsOf(JgsTime.WallClock(ms, tag)));
+        return MapMs(moment, ms => JgsTime.SecondsOf(JgsTime.WallClock(ms, tag, out _)));
     }
 
     /// <summary>
     /// Declares one of the grouped accessors, which hands back its parts as several outputs —
     /// <c>[y, m, d] = ymd(t)</c> — and as a single row when only one output is wanted.
     /// </summary>
-    private static void Parts(JgsEnvironment env, string name, Func<DateTime, double[]> read)
+    private static void Parts(JgsEnvironment env, string name, Func<DateTime, int, double[]> read)
     {
         JgsValue[] Split(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
             Arity(name, args, 1, line, col);
             JgsValue moment = RequireDatetime(name, args[0], line, col);
             double[] source = TimeMs(moment);
-            int fields = read(JgsTime.Epoch).Length;
+            int fields = read(JgsTime.Epoch, 0).Length;
 
             var columns = new double[fields][];
             for (int f = 0; f < fields; f++)
@@ -334,7 +407,7 @@ internal static partial class JgsBuiltins
             JgsTimeTag? tag = moment.TimeTag;
             for (int i = 0; i < source.Length; i++)
             {
-                double[] parts = read(JgsTime.WallClock(source[i], tag));
+                double[] parts = read(JgsTime.WallClock(source[i], tag, out int cycles), cycles);
                 for (int f = 0; f < fields; f++)
                 {
                     columns[f][i] = parts[f];
@@ -416,7 +489,7 @@ internal static partial class JgsBuiltins
             return ms;
         }
 
-        DateTime at = JgsTime.WallClock(ms, tag);
+        DateTime at = JgsTime.WallClock(ms, tag, out int cycles);
         DateTime start = unit switch
         {
             "year" => new DateTime(at.Year, 1, 1),
@@ -447,7 +520,7 @@ internal static partial class JgsBuiltins
 
         if (!toEnd)
         {
-            return JgsTime.FromWallClock(start, tag);
+            return JgsTime.FromWallClock(start, tag, cycles);
         }
 
         // The end of a unit is the last instant inside it: the start of the next one, less the
@@ -468,6 +541,6 @@ internal static partial class JgsBuiltins
             _ => start.AddSeconds(1),
         };
 
-        return Math.BitDecrement(JgsTime.FromWallClock(next, tag));
+        return Math.BitDecrement(JgsTime.FromWallClock(next, tag, cycles));
     }
 }

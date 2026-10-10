@@ -153,29 +153,27 @@ public sealed class JGraphScriptGlobals
     }
 
     /// <summary>
-    /// Where console output goes while <c>evalc</c> is running, or null for the console itself. It is
-    /// a single buffer rather than a stack because MATLAB's evalc does not nest meaningfully: an
-    /// inner one would capture text the outer already claimed.
+    /// Where console output goes while <c>evalc</c> is running, or null for the console itself. An
+    /// <c>evalc</c> inside another one captures into a buffer of its own, and the outer one sees only
+    /// what the inner did not claim, as R2025b's do (open item 28, probe_28d).
     /// </summary>
     private StringBuilder? _capture;
 
-    /// <summary>Starts capturing console output for <c>evalc</c>; returns false when already capturing.</summary>
-    internal bool BeginCapture()
-    {
-        if (_capture is not null)
-        {
-            return false;
-        }
+    /// <summary>The buffers of the <c>evalc</c> calls an inner one interrupted, innermost on top.</summary>
+    private readonly Stack<StringBuilder?> _outerCaptures = new();
 
+    /// <summary>Starts capturing console output for <c>evalc</c>.</summary>
+    internal void BeginCapture()
+    {
+        _outerCaptures.Push(_capture);
         _capture = new StringBuilder();
-        return true;
     }
 
     /// <summary>Stops capturing and returns everything written since <see cref="BeginCapture"/>.</summary>
     internal string EndCapture()
     {
         string captured = _capture?.ToString() ?? string.Empty;
-        _capture = null;
+        _capture = _outerCaptures.Count > 0 ? _outerCaptures.Pop() : null;
         return captured;
     }
 

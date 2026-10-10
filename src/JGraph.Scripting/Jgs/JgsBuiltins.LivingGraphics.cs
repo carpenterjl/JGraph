@@ -507,17 +507,24 @@ internal static partial class JgsBuiltins
 
     private static JgsValue Group(string verb, IReadOnlyList<JgsValue> args, int line, int col)
     {
+        // A parent may come first, as for any graphics object (open item 89): hggroup(ax).
+        int start = args.Count >= 1 && !IsTextScalar(args[0]) && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? first)
+            && first.Target is AxesModel or JgsGraphicsGroup ? 1 : 0;
+        var spec = new OptionSpec(verb, [], ["Matrix", "Tag", "Visible", "Parent"]);
+        ParsedArgs parsed = spec.Parse(args, start, line, col);
+
+        // The parent, first or as 'Parent', is the axes or the group the group was made in: a group is
+        // beside the render tree, so it is placed nowhere, but its Parent reads back as that one.
+        JgsHandleEntry? parent = start == 1 ? JgsHandleRegistry.Require(args[0], line, col)
+            : parsed.Named("Parent") is { } named && JgsHandleRegistry.TryGet(named, out JgsHandleEntry? given) ? given : null;
+
         // MATLAB's hggroup parents itself to gca, making a figure and an axes when there is none.
         // Recording that axes is also what keeps the group's handle alive across a clf aimed
         // elsewhere: the sweep has nowhere else to look for a group.
-        var group = new JgsGraphicsGroup(transforms: verb == "hgtransform", home: JG.Gca());
+        var group = new JgsGraphicsGroup(transforms: verb == "hgtransform",
+            home: (parent is null ? null : HomeOf(parent)) ?? JG.Gca(), outer: parent?.Target as JgsGraphicsGroup);
         JgsGraphicsProperties.Remember(group);
-        var spec = new OptionSpec(verb, [], ["Matrix", "Tag", "Visible", "Parent"]);
-        ParsedArgs parsed = spec.Parse(args, 0, line, col);
 
-        // 'Parent' on a group names the axes it belongs to, which this build has no use for — a group
-        // is beside the render tree, so it has no place in an axes to be put. Reading it and doing
-        // nothing is the honest answer; refusing would fail a script that is doing nothing wrong.
         if (parsed.Named("Tag") is { } tag)
         {
             group.Tag = StrOf(verb, tag, line, col);
@@ -531,6 +538,14 @@ internal static partial class JgsBuiltins
 
         return JgsHandleRegistry.For(group);
     }
+
+    /// <summary>The axes a group given as a parent lives in: the axes itself, or a parent group's.</summary>
+    private static AxesModel? HomeOf(JgsHandleEntry parent) => parent.Target switch
+    {
+        AxesModel axes => axes,
+        JgsGraphicsGroup outer => outer.Home,
+        _ => null,
+    };
 
     /// <summary>Refuses a matrix on a plain group, which has nothing to do with one.</summary>
     private static void RequireTransform(string verb, JgsGraphicsGroup group, int line, int col)

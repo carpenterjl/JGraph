@@ -662,12 +662,35 @@ internal static partial class JgsBuiltins
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
 
+        // A figure or a panel first is where a new polar axes goes, as for axes(parent) (open item
+        // 89's sibling, found by oi_property_names).
+        FigureModel? elsewhere = null;
+        if (named is null && args.Count >= 1 && !IsTextScalar(args[0])
+            && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? holder) && holder.Target is FigureModel or UiContainerModel)
+        {
+            (FigureModel parent, UiContainerModel? container) = ParentForAxes(holder, line, col);
+            named = parent.AddAxes();
+            named.Container = container;
+            JgsGraphicsProperties.GridMembershipChanged(named);
+            elsewhere = ReferenceEquals(parent, JG.CurrentFigureNumberOrZero > 0 ? JG.CurrentFigure : null) ? null : parent;
+            rest = args.Skip(1).ToList();
+        }
+
         AxesModel axes;
         if (named is not null)
         {
             // Naming an existing axes selects it rather than clearing it: polaraxes(pax) is how a
-            // script comes back to a chart it drew earlier, and wiping it would be the opposite.
-            JG.MakeCurrent(named);
+            // script comes back to a chart it drew earlier, and wiping it would be the opposite. A new
+            // one in a figure that is not current leaves that figure where it is, as axes(f) does.
+            if (elsewhere is not null)
+            {
+                JG.TouchFigure(elsewhere);
+            }
+            else
+            {
+                JG.MakeCurrent(named);
+            }
+
             named.MakePolar();
             axes = named;
         }

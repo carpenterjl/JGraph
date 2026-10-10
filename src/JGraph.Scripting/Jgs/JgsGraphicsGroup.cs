@@ -30,12 +30,16 @@ internal sealed class JgsGraphicsGroup : GraphObject
 
     private readonly List<PlotObject> _members = new();
 
-    public JgsGraphicsGroup(bool transforms, AxesModel? home = null)
+    public JgsGraphicsGroup(bool transforms, AxesModel? home = null, JgsGraphicsGroup? outer = null)
     {
         Transforms = transforms;
         Home = home;
+        Outer = outer;
         Name = transforms ? "Transform" : "Group";
     }
+
+    /// <summary>The group this one was made in, when it was made in a group rather than an axes.</summary>
+    public JgsGraphicsGroup? Outer { get; }
 
     /// <summary>Whether this group carries a matrix — that is, whether it is an hgtransform.</summary>
     public bool Transforms { get; }

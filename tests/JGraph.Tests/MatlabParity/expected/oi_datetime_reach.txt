@@ -1,0 +1,36 @@
+CHK|year_zero|cell[1 6]{char[1 11]'01-Jan-0000';double[1 1] 0;double[1 1] 1;double[1 1] 1;double[1 1] 7;double[1 1] 1}|exact
+CHK|year_10000|cell[1 8]{char[1 21]'04-Mar-10000 05:06:07';double[1 1] 10000;double[1 1] 3;double[1 1] 4;double[1 1] 5;double[1 1] 6;double[1 1] 7;double[1 1] 7}|exact
+CHK|year_minus_50|cell[1 6]{char[1 12]'15-Jun--0050';double[1 1] -50;double[1 1] 6;double[1 1] 15;double[1 1] 5;double[1 1] 166}|exact
+CHK|year_12345|cell[1 5]{char[1 12]'31-Dec-12345';double[1 1] 12345;double[1 1] 4;double[1 1] 53;double[1 1] 2}|exact
+CHK|set_year|cell[1 2]{char[1 12]'01-Jan-20000';double[1 1] 20000}|exact
+CHK|ymd_leap|double[1 3] [10000 2 29]|exact
+CHK|datevec_far|double[1 6] [10000 3 4 5 6 7]|exact
+CHK|yyyymmdd_far|double[1 1] 100000304|exact
+CHK|dateshift_far|char[1 12]'01-Mar-10000'|exact
+CHK|timeofday_far|char[1 8]'05:06:07'|exact
+CHK|diff_far|char[1 10]'8760:00:00'|exact
+CHK|week_default|double[1 8] [1 2 53 1 1 2 53 1]|exact
+CHK|week_of_month|double[1 8] [1 2 5 1 1 2 5 1]|exact
+CHK|week_iso|double[1 8] [1 1 53 53 53 53 1 1]|exact
+CHK|week_iso_of_month|double[1 41] [1 1 1 1 2 2 2 2 2 2 2 3 3 3 3 3 3 3 4 4 4 4 4 4 4 5 5 5 5 5 5 5 1 1 1 1 1 1 1 2 2]|exact
+CHK|day_of_year|double[1 8] [1 4 365 1 2 3 366 7]|exact
+CHK|day_of_week|double[1 8] [5 1 5 6 7 1 3 7]|exact
+CHK|day_iso_of_week|double[1 7] [4 7 4 5 6 7 2]|exact
+CHK|day_names|cell[1 2]{cell[1 2]{char[1 8]'Thursday';char[1 6]'Sunday'};cell[1 2]{char[1 3]'Thu';char[1 3]'Sun'}}|exact
+CHK|day_bad_kind|MATLAB:datetime:InvalidDayType|exact
+CHK|day_bad_kind_msg|Day type must be 'dayofmonth', 'dayofweek', 'iso-dayofweek', 'dayofyear', 'name', or 'shortname'.|exact
+CHK|week_bad_kind|MATLAB:datetime:InvalidWeekType|exact
+CHK|week_bad_kind_msg|Week type must be 'weekofyear', 'weekofmonth, 'iso-weekofyear', or 'iso-weekofmonth.|exact
+CHK|dateshift_default_format|char[1 11]'dd-MMM-uuuu'|exact
+CHK|cat_default|char[1 20]'dd-MMM-uuuu HH:mm:ss'|exact
+CHK|cat_default_then_set|char[1 11]'dd-MMM-uuuu'|exact
+CHK|cat_timed_then_set|char[1 20]'dd-MMM-uuuu HH:mm:ss'|exact
+CHK|cat_set_then_timed|char[1 4]'yyyy'|exact
+CHK|cat_set_default_text|char[1 11]'dd-MMM-uuuu'|exact
+CHK|cat_ctor_format|char[1 11]'dd-MMM-uuuu'|exact
+CHK|format_default_word|cell[1 2]{char[1 11]'dd-MMM-uuuu';char[1 20]'dd-MMM-uuuu HH:mm:ss'}|exact
+CHK|format_empty|MATLAB:datetime:UnrecognizedFormat|exact
+CHK|format_empty_msg|The format '' is not valid. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|write_keeps_set|char[1 11]'dd-MMM-uuuu'|exact
+CHK|write_default|char[1 20]'dd-MMM-uuuu HH:mm:ss'|exact
+CHK|write_midnight_keeps_set|char[1 20]'dd-MMM-uuuu HH:mm:ss'|exact

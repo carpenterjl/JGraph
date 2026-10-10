@@ -212,7 +212,7 @@ internal sealed partial class Interpreter
     /// </summary>
     private static void RefreshDatetimeFormat(JgsValue target, JgsValue written)
     {
-        if (target.TimeTag is not { Kind: JgsTimeKind.Datetime } tag
+        if (target.TimeTag is not { Kind: JgsTimeKind.Datetime, FormatSet: false } tag
             || tag.Format is not (JgsTime.DateOnlyFormat or JgsTime.DefaultDatetimeFormat))
         {
             return;
@@ -234,7 +234,7 @@ internal sealed partial class Interpreter
             }
 
             anyMoment = true;
-            if (JgsTime.WallClock(ms, tag).TimeOfDay != TimeSpan.Zero)
+            if (JgsTime.WallClock(ms, tag, out _).TimeOfDay != TimeSpan.Zero)
             {
                 anyTimeOfDay = true;
                 break;

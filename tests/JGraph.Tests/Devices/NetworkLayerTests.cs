@@ -15,6 +15,7 @@ namespace JGraph.Tests.Devices;
 /// its connection before the next statement, and the datagram callback's count. Every port is one
 /// the OS hands out, so these run beside the lanes' other processes.
 /// </summary>
+[Collection("JG facade")]
 public class NetworkLayerTests
 {
     private static readonly TimeSpan Wait = TimeSpan.FromSeconds(5);

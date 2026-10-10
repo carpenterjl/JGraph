@@ -18,6 +18,7 @@ namespace JGraph.Tests.Devices;
 /// ADR 0197), through the UI-free models the panes bind to. The machine's own devices are only
 /// enumerated, as <c>jgraph.usb.devices</c> enumerates them; the terminal runs on the simulated port.
 /// </summary>
+[Collection("JG facade")]
 public class DevicePanesTests
 {
     // --- the Devices pane's tree ---------------------------------------------------------------------

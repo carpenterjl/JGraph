@@ -255,7 +255,8 @@ public class MatlabM75FigurePropertyTests : IDisposable
         Succeeded(result);
 
         // The probe is the real measure; this is the guard that stops a name going missing quietly.
-        Assert.True(Number(result, "count") >= 66);
+        // Since ADR 0220 get(f) lists only the names R2025b's figure lists too: 64 of its 68.
+        Assert.True(Number(result, "count") >= 64);
     }
 
     [Fact]

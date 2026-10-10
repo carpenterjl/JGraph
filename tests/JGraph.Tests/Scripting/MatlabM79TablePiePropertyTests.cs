@@ -398,13 +398,14 @@ public class MatlabM79TablePiePropertyTests : IDisposable
 
     /// <summary>
     /// What each kind answers, counted the way the coverage probe counts it. These are the numbers
-    /// the milestone claims, pinned so that a later wave cannot quietly lose one.
+    /// the milestone claims, pinned so that a later wave cannot quietly lose one. Since ADR 0220 a
+    /// MATLAB script's <c>get(h)</c> lists only the names R2025b lists too (a pie is not recorded).
     /// </summary>
     [Theory]
     [InlineData("h = pie([1 2 3]);", 75)]
-    [InlineData("h = scatter([1 2 3], [1 2 3]);", 68)]
-    [InlineData("h = bubblechart([1 2], [1 2], [10 20]);", 68)]
-    [InlineData("h = xline(1);", 44)]
+    [InlineData("h = scatter([1 2 3], [1 2 3]);", 60)]
+    [InlineData("h = bubblechart([1 2], [1 2], [10 20]);", 59)]
+    [InlineData("h = xline(1);", 36)]
     [InlineData("h = boxchart([1 2 3 4]);", 40)]
     public async Task EachKindAnswersAtLeastTheNamesThisMilestoneClaims(string build, int wanted)
     {

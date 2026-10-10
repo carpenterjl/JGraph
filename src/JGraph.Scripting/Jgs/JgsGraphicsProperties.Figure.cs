@@ -110,6 +110,15 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => entry.WaitStatus = JgsBuiltins.WaitStatusWord(value, line, col));
         Unlist(table, "WaitStatus");
 
+        // A new figure's model is named "Figure" for the plot browser, which the window already reads
+        // as no name; R2025b's new figure is named '' (open item 82). A MATLAB-dialect script reads
+        // that sentinel as '', so a figure named 'Figure' by hand reads '' too, as its window shows it.
+        Put(table, "Name",
+            entry => JgsValue.Str(Figure(entry).Name is "Figure" && JgsRunningDialect.ThreadIsMatlab
+                ? string.Empty
+                : Figure(entry).Name ?? string.Empty),
+            (entry, value, line, col) => Figure(entry).Name = JgsBuiltins.StrOf("Name", value, line, col));
+
         Put(table, "NumberTitle",
             entry => OnOff(Figure(entry).NumberTitle),
             (entry, value, line, col) => Figure(entry).NumberTitle = ToOnOff("NumberTitle", value, line, col));

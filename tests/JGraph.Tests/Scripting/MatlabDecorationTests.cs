@@ -70,8 +70,8 @@ public class MatlabDecorationTests : IDisposable
             title('x', 'Colr', 'r');
             """);
 
-        Assert.Contains("Colr", message, StringComparison.Ordinal);
-        Assert.Contains("Color", message, StringComparison.Ordinal);
+        // R2025b's sentence for a recorded class (ADR 0220).
+        Assert.Contains("Unrecognized property Colr", message, StringComparison.Ordinal);
     }
 
     [Fact]

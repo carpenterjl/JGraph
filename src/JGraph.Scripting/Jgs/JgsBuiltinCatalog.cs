@@ -983,11 +983,11 @@ public static class JgsBuiltinCatalog
         // The field accessors, conversions and boundary moves (M64).
         Add("year", "The year of each moment of a datetime.", P("t"));
         Add("month", "The month (1-12) of each moment of a datetime.", P("t"));
-        Add("day", "The day of the month of each moment of a datetime.", P("t"));
+        Add("day", "The day of the month of each moment of a datetime, or the count a second word names: day(t, 'dayofyear'), 'dayofweek', 'iso-dayofweek', 'name', 'shortname'.", P("t"), Opt("kind"));
         Add("hour", "The hour (0-23) of each moment of a datetime.", P("t"));
         Add("minute", "The minute (0-59) of each moment of a datetime.", P("t"));
         Add("second", "The second of each moment, carrying its fractional part.", P("t"));
-        Add("week", "The ISO week number of each moment of a datetime.", P("t"));
+        Add("week", "The week of the year of each moment of a datetime (Sunday first, week 1 holding the first of January), or the count a second word names: 'weekofmonth', 'iso-weekofyear', 'iso-weekofmonth'.", P("t"), Opt("kind"));
         Add("quarter", "The quarter (1-4) of each moment of a datetime.", P("t"));
         Add("weekday", "The day of the week, Sunday = 1, of each moment of a datetime.", P("t"));
         Add("ymd", "The year, month and day of a datetime: [y, m, d] = ymd(t).", P("t"));

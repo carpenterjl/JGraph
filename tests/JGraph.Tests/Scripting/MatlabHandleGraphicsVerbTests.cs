@@ -120,10 +120,11 @@ public class MatlabHandleGraphicsVerbTests : IDisposable
             disp(p.Tag);
             names = set(p);
             disp(class(names));
-            disp(numel(names) > 5);
+            disp(numel(fieldnames(names)) > 5);
             """);
 
-        Assert.Equal(new[] { "4", "first", "cell", "true" }, _output.NormalLines);
+        // set(h) is R2025b's struct of the writable names and their words (open item 41, ADR 0220).
+        Assert.Equal(new[] { "4", "first", "struct", "true" }, _output.NormalLines);
     }
 
     [Fact]
@@ -326,7 +327,7 @@ public class MatlabHandleGraphicsVerbTests : IDisposable
     }
 
     [Fact]
-    public async Task AMisspelledPropertyNamesTheOneThatWasMeant()
+    public async Task AMisspelledPropertyIsRefusedInR2025bsWords()
     {
         string errors = await RunExpectingFailure("""
             figure(1);
@@ -334,16 +335,19 @@ public class MatlabHandleGraphicsVerbTests : IDisposable
             get(p, 'Colour');
             """);
 
-        Assert.Contains("Colour", errors, StringComparison.Ordinal);
-        Assert.Contains("Color", errors, StringComparison.Ordinal);
+        // R2025b's sentence for a recorded class, without this build's old "Did you mean" (ADR 0220).
+        Assert.Contains("Unrecognized property Colour for class matlab.graphics.chart.primitive.Line.",
+            errors, StringComparison.Ordinal);
     }
 
     [Fact]
     public async Task AnUnpairedPropertyAndAnUnknownFlagBothSayWhatIsWrong()
     {
+        // set(h, 'LineWidth') alone answers that name's words, as R2025b's does (ADR 0220); a name left
+        // over after a pair is still the unpaired one.
         Assert.Contains("has none", await RunExpectingFailure("""
             figure(1);
-            set(plot(1:3, [1 2 3]), 'LineWidth');
+            set(plot(1:3, [1 2 3]), 'LineWidth', 2, 'Color');
             """), StringComparison.Ordinal);
 
         Assert.Contains("'-depth'", await RunExpectingFailure("""

@@ -907,18 +907,22 @@ public class MatlabM78FurniturePropertyTests : IDisposable
     /// draws a marker. Renaming the model took them away. Nothing documented was lost: neither
     /// spelling appears anywhere in <c>matlab-r2021b-properties.csv</c>, so the coverage numbers this
     /// floor exists to protect did not move at all.
+    /// <para>
+    /// ADR 0220 took every name R2025b does not list out of a MATLAB script's <c>get(h)</c> (they
+    /// still answer when named), so the floors became the names each kind shares with R2025b.
+    /// </para>
     /// </remarks>
     [Theory]
-    [InlineData("polaraxes;", 201)]
-    [InlineData("plot([1 2 3]); h = legend('a');", 49)]
-    [InlineData("plot([1 2 3]); h = text(0.5, 0.5, 'label');", 57)]
-    [InlineData("h = surf(peaks(8));", 81)]
+    [InlineData("polaraxes;", 107)]
+    [InlineData("plot([1 2 3]); h = legend('a');", 39)]
+    [InlineData("plot([1 2 3]); h = text(0.5, 0.5, 'label');", 41)]
+    [InlineData("h = surf(peaks(8));", 55)]
     [InlineData("[~, h] = contour(peaks(8));", 65)]
-    [InlineData("h = heatmap(magic(4));", 70)]
-    [InlineData("surf(peaks(8)); h = colorbar;", 55)]
-    [InlineData("h = patch([0 1 1], [0 0 1], 'r');", 77)]
-    [InlineData("h = image(magic(4));", 45)]
-    [InlineData("h = quiver([0 1], [0 1], [1 1], [1 1]);", 63)]
+    [InlineData("h = heatmap(magic(4));", 39)]
+    [InlineData("surf(peaks(8)); h = colorbar;", 42)]
+    [InlineData("h = patch([0 1 1], [0 0 1], 'r');", 56)]
+    [InlineData("h = image(magic(4));", 26)]
+    [InlineData("h = quiver([0 1], [0 1], [1 1], [1 1]);", 52)]
     [InlineData("bubblechart([1 2], [1 2], [10 20]); h = bubblelegend();", 49)]
     public async Task EachKindAnswersAtLeastTheNamesThisMilestoneClaims(string build, int wanted)
     {

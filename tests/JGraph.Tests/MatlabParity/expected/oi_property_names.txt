@@ -1,0 +1,30 @@
+CHK|isprop_name|logical[1 5] [0 0 0 0 1]|exact
+CHK|get_name_axes|MATLAB:hg:InvalidProperty|exact
+CHK|get_name_axes_msg|Unrecognized property Name for class matlab.graphics.axis.Axes.|exact
+CHK|set_name_line|char[1 70]'MATLAB:hg:InvalidProperty / Unrecognized property Name for class Line.'|exact
+CHK|isprop_own|logical[1 10] [0 0 0 0 0 0 0 0 0 0]|div=0220|diverges|logical[1 10] [1 1 1 1 1 1 1 1 1 1]
+CHK|isprop_polar_on_axes|logical[1 3] [0 0 0]|div=0220|diverges|logical[1 3] [1 1 1]
+CHK|get_own_axes|char[1 93]'MATLAB:hg:InvalidProperty / Unrecognized property ZOrder for class matlab.graphics.axis.Axes.'|div=0220|diverges|char[1 3]'ran'
+CHK|get_unknown_figure|MATLAB:hg:InvalidProperty|exact
+CHK|get_unknown_figure_msg|Unrecognized property Bogus for class matlab.ui.Figure.|exact
+CHK|set_unknown_figure|char[1 73]'MATLAB:hg:InvalidProperty / Unrecognized property Bogus for class Figure.'|exact
+CHK|get_unknown_text|MATLAB:hg:InvalidProperty|exact
+CHK|get_unknown_text_msg|Unrecognized property Bogus for class matlab.graphics.primitive.Text.|exact
+CHK|isprop_hidden|logical[1 7] [1 1 1 1 1 1 1]|exact
+CHK|listed_hidden|logical[1 6] [0 0 0 0 0 0]|exact
+CHK|listed_own|logical[1 4] [0 0 0 0]|exact
+CHK|prefix_ambiguous|MATLAB:hg:InvalidProperty|exact
+CHK|prefix_ambiguous_msg|Unrecognized property X for class matlab.graphics.axis.Axes.|exact
+CHK|prefix_one_letter|MATLAB:hg:InvalidProperty|exact
+CHK|prefix_one_letter_msg|Unrecognized property C for class matlab.graphics.chart.primitive.Line.|exact
+CHK|isprop_polar_line|logical[1 2] [1 1]|exact
+CHK|isprop_polar_names_cartesian_line|logical[1 1] 0|div=0220|diverges|logical[1 1] 1
+CHK|listed_polar_names_cartesian_line|logical[1 1] 0|exact
+CHK|get_polar_line|double[1 3] [1 2 3]|exact
+CHK|isprop_polar_axes|logical[1 2] [1 1]|exact
+CHK|hggroup_parent_first|cell[1 2]{char[1 7]'hggroup';logical[1 1] 1}|exact
+CHK|hgtransform_parent_first|cell[1 2]{char[1 11]'hgtransform';logical[1 1] 1}|exact
+CHK|figure_name|char[0 0]''|exact
+CHK|figure_name_get|char[0 0]''|exact
+CHK|uifigure_name|char[0 0]''|exact
+CHK|figure_name_given|char[1 7]'Results'|exact

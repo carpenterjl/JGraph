@@ -157,6 +157,7 @@ public class MatlabPolarAxesTests : IDisposable
             polaraxes('ThetaDirction', 'clockwise');
             """);
 
-        Assert.Contains("ThetaDirection", message, StringComparison.Ordinal);
+        // R2025b's sentence for a recorded class (ADR 0220).
+        Assert.Contains("Unrecognized property ThetaDirction", message, StringComparison.Ordinal);
     }
 }

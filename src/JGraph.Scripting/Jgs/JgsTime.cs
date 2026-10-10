@@ -31,7 +31,10 @@ internal enum JgsTimeKind : byte
 /// <param name="Kind">Datetime or duration.</param>
 /// <param name="Format">The display format, in MATLAB's own tokens.</param>
 /// <param name="TimeZone">The zone name for a zoned datetime, or null for an unzoned one.</param>
-internal sealed record JgsTimeTag(JgsTimeKind Kind, string Format, string? TimeZone = null);
+/// <param name="FormatSet">Whether a script gave the format (<c>d.Format = …</c>, <c>'Format'</c> to the
+/// constructor), which R2025b keeps through a write and a concatenation; a default one is worked out
+/// again from the moments (open item 66).</param>
+internal sealed record JgsTimeTag(JgsTimeKind Kind, string Format, string? TimeZone = null, bool FormatSet = false);
 
 /// <summary>
 /// The arithmetic, formatting and parsing behind <c>datetime</c> and <c>duration</c> (M64).
@@ -96,9 +99,18 @@ internal static class JgsTime
     /// the finest thing a <see cref="DateTime"/> can hold, and the storage carries the fraction to
     /// meet it. What used to lose sub-millisecond precision was never this conversion but the readers
     /// past it, which asked a <see cref="DateTime"/> for its whole-number <c>Millisecond</c> (M82).
+    /// <para>
+    /// The whole milliseconds and the fraction are turned into ticks apart: a moment near year 9999 is
+    /// about 2.5e14 milliseconds, ten thousand times that is past where a double holds every tick, and
+    /// the product lost thirteen microseconds of a whole second (open item 66).
+    /// </para>
     /// </remarks>
-    public static DateTime ToDateTime(double ms) =>
-        Epoch.AddTicks((long)System.Math.Round(ms * TimeSpan.TicksPerMillisecond));
+    public static DateTime ToDateTime(double ms)
+    {
+        double whole = System.Math.Floor(ms);
+        return Epoch.AddTicks(((long)whole * TimeSpan.TicksPerMillisecond)
+            + (long)System.Math.Round((ms - whole) * TimeSpan.TicksPerMillisecond));
+    }
 
     /// <summary>The storage value for <paramref name="moment"/>.</summary>
     public static double FromDateTime(DateTime moment) =>
@@ -256,9 +268,45 @@ internal static class JgsTime
         return ToDateTime(ms) + OffsetAt(ms, zone);
     }
 
+    /// <summary>The milliseconds in four hundred Gregorian years, after which the calendar repeats.</summary>
+    private const double CycleMs = 146097 * MsPerDay;
+
+    /// <summary>
+    /// The wall clock of a moment .NET may have no <see cref="DateTime"/> for (year 0, year 10000 and
+    /// beyond): read <paramref name="cycles"/> whole four-hundred-year cycles back, so that its month,
+    /// day, weekday, week and time of day are the moment's own and its year is
+    /// <c>Year + 400 * cycles</c> (open item 66). A moment .NET can hold is read where it is.
+    /// </summary>
+    public static DateTime WallClock(double ms, JgsTimeTag? tag, out int cycles)
+    {
+        double earliest = (DateTime.MinValue - Epoch).TotalMilliseconds + MsPerDay;
+        double latest = (DateTime.MaxValue - Epoch).TotalMilliseconds - MsPerDay;
+        cycles = 0;
+        while (ms < earliest)
+        {
+            ms += CycleMs;
+            cycles--;
+        }
+
+        while (ms > latest)
+        {
+            ms -= CycleMs;
+            cycles++;
+        }
+
+        return WallClock(ms, tag);
+    }
+
+    /// <summary>The year of a wall clock read <paramref name="cycles"/> cycles back.</summary>
+    public static int YearOf(DateTime wall, int cycles) => wall.Year + (400 * cycles);
+
+    /// <summary>The storage of a wall clock read <paramref name="cycles"/> cycles back, moved home.</summary>
+    public static double FromWallClock(DateTime wall, JgsTimeTag? tag, int cycles) =>
+        FromWallClock(wall, tag) + (cycles * CycleMs);
+
     /// <summary>The storage value for a wall-clock moment read in <paramref name="tag"/>'s zone.</summary>
     /// <remarks>
-    /// The inverse of <see cref="WallClock"/>, and the asymmetry is real: the offset that applies is
+    /// The inverse of <see cref="WallClock(double, JgsTimeTag?)"/>, and the asymmetry is real: the offset that applies is
     /// the one for the <em>local</em> reading, which is what <see cref="TimeZoneInfo.GetUtcOffset(DateTime)"/>
     /// answers for a moment of unspecified kind. An hour that a spring-forward skipped has no reading,
     /// and .NET resolves it the way MATLAB does — to the moment the clock jumped to.
@@ -837,7 +885,7 @@ internal static class JgsTime
             // sitting on midnight in its own zone stores an offset instant, and testing the storage
             // would make every zoned date print a time of day it does not have (M82).
             anyMoment = true;
-            if (WallClock(InNetRange(ms), zoned).TimeOfDay != TimeSpan.Zero)
+            if (WallClock(ms, zoned, out _).TimeOfDay != TimeSpan.Zero)
             {
                 return zoned;
             }
@@ -848,36 +896,15 @@ internal static class JgsTime
         return anyMoment ? new JgsTimeTag(JgsTimeKind.Datetime, DateOnlyFormat, timeZone) : zoned;
     }
 
-    /// <summary>The tag a freshly built duration takes.</summary>
     /// <summary>
-    /// A moment moved by whole blocks of four hundred years — which the Gregorian calendar repeats
-    /// exactly, so the month, day and time of day are kept — into the years .NET's DateTime has.
-    /// </summary>
-    private static double InNetRange(double ms)
-    {
-        double earliest = (DateTime.MinValue - Epoch).TotalMilliseconds + MsPerDay;
-        double latest = (DateTime.MaxValue - Epoch).TotalMilliseconds - MsPerDay;
-        while (ms < earliest)
-        {
-            ms += 146097 * MsPerDay;
-        }
-
-        while (ms > latest)
-        {
-            ms -= 146097 * MsPerDay;
-        }
-
-        return ms;
-    }
-
-    /// <summary>
-    /// The tag a concatenation of datetimes carries (U9): when every piece shows one of the default
-    /// formats the format is worked out again from all the moments, as R2025b does — <c>[d1 d2]</c>
-    /// shows the time of day only <c>d2</c> has — and otherwise the first piece's is kept.
+    /// The tag a concatenation of datetimes carries (U9): the first piece's when a script set its
+    /// format, and otherwise the default worked out again from all the moments, whatever the later
+    /// pieces show — <c>[d1 d2]</c> shows the time of day only <c>d2</c> has, and <c>[d1 y]</c> with
+    /// <c>y.Format = 'yyyy'</c> shows <c>d1</c>'s date (open item 66, probe_66b).
     /// </summary>
     internal static JgsTimeTag ConcatTag(JgsTimeTag first, IEnumerable<JgsValue> pieces)
     {
-        if (first.Kind != JgsTimeKind.Datetime)
+        if (first.Kind != JgsTimeKind.Datetime || first.FormatSet || first.Format is not (DefaultDatetimeFormat or DateOnlyFormat))
         {
             return first;
         }
@@ -885,7 +912,7 @@ internal static class JgsTime
         var moments = new List<double>();
         foreach (JgsValue piece in pieces)
         {
-            if (piece.TimeTag is not { } tag || tag.Format is not (DefaultDatetimeFormat or DateOnlyFormat) || tag.TimeZone != first.TimeZone)
+            if (piece.TimeTag is not { } tag || tag.TimeZone != first.TimeZone)
             {
                 return first;
             }
@@ -896,6 +923,7 @@ internal static class JgsTime
         return DatetimeTag(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(moments), first.TimeZone);
     }
 
+    /// <summary>The tag a freshly built duration takes.</summary>
     public static JgsTimeTag DurationTag(string format = DefaultDurationFormat) =>
         new(JgsTimeKind.Duration, format);
 }

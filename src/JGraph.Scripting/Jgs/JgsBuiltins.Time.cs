@@ -377,9 +377,9 @@ internal static partial class JgsBuiltins
         }
 
         JgsTimeTag tag = JgsTime.DatetimeTag(values, timeZone);
-        if (displayFormat is not null)
+        if (displayFormat is not null and not "default")
         {
-            tag = tag with { Format = displayFormat };
+            tag = tag with { Format = displayFormat, FormatSet = true };
         }
 
         JgsValue built = Numbers(values);
@@ -683,7 +683,24 @@ internal static partial class JgsBuiltins
         JgsTimeTag tag = value.TimeTag!;
         if (field == "Format")
         {
-            return value.WithTimeTag(tag with { Format = TextOfArgument("Format", written, line, col) });
+            string format = TextOfArgument("Format", written, line, col);
+            if (value.IsDatetime)
+            {
+                // 'default' goes back to the format worked out from the moments, and nothing is no
+                // format at all (open item 66, probe_66b).
+                if (format == "default")
+                {
+                    return value.WithTimeTag(JgsTime.DatetimeTag(TimeMs(value), tag.TimeZone));
+                }
+
+                if (format.Length == 0)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:datetime:UnrecognizedFormat",
+                        "The format '' is not valid. See the <a href=\"matlab:doc('datetime.Format')\">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.");
+                }
+            }
+
+            return value.WithTimeTag(tag with { Format = format, FormatSet = true });
         }
 
         if (value.IsDatetime && field is "Year" or "Month" or "Day" or "Hour" or "Minute" or "Second")
@@ -766,9 +783,9 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
-            DateTime wall = JgsTime.WallClock(source[i], tag);
+            DateTime wall = JgsTime.WallClock(source[i], tag, out int cycles);
             double part = given.Length == 1 ? given[0] : given[i];
-            double year = wall.Year, month = wall.Month, day = wall.Day, hour = wall.Hour, minute = wall.Minute;
+            double year = JgsTime.YearOf(wall, cycles), month = wall.Month, day = wall.Day, hour = wall.Hour, minute = wall.Minute;
             double second = JgsTime.SecondsOf(wall);
             switch (field)
             {

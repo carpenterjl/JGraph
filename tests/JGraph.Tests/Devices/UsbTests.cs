@@ -13,6 +13,7 @@ namespace JGraph.Tests.Devices;
 /// Windows writes, and the enumeration and the script functions on whatever this machine has.
 /// </summary>
 [SupportedOSPlatform("windows")]
+[Collection("JG facade")]
 public class UsbTests
 {
     private static byte[] Hex(string text) => Convert.FromHexString(text);

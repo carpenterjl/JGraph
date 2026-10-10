@@ -508,20 +508,21 @@ public class MatlabM77PlotPropertyTests : IDisposable
     [InlineData("LatitudeVariable")]
     [InlineData("LongitudeVariable")]
     public Task TheGeographicFamilyIsNotAnswered(string name) =>
-        Refuses($"s = scatter([1 2], [1 2]); get(s, '{name}');", "no property");
+        Refuses($"s = scatter([1 2], [1 2]); get(s, '{name}');", "Unrecognized property"); // R2025b's words (ADR 0220)
 
     // --- The whole table ------------------------------------------------------------------------
 
     /// <summary>
     /// The census the coverage table measures, asserted here so a name that quietly stops being
-    /// served fails a test rather than only moving a number in a document.
+    /// served fails a test rather than only moving a number in a document. Since ADR 0220 a MATLAB
+    /// script's <c>get(h)</c> lists only the names R2025b lists too, so these are those.
     /// </summary>
     [Theory]
-    [InlineData("h = plot([1 2 3]);", 48)]
-    [InlineData("h = histogram([1 2 2 3]);", 46)]
+    [InlineData("h = plot([1 2 3]);", 44)]
+    [InlineData("h = histogram([1 2 2 3]);", 41)]
     [InlineData("h = bar([1 2 3]);", 44)]
     [InlineData("h = stem([1 2 3]);", 43)]
-    [InlineData("h = errorbar([1 2 3], [1 2 3], [.1 .1 .1]);", 52)]
+    [InlineData("h = errorbar([1 2 3], [1 2 3], [.1 .1 .1]);", 48)]
     [InlineData("h = scatter([1 2 3], [1 2 3]);", 59)]
     [InlineData("h = area([1 2 3], [1 2 3]);", 39)]
     [InlineData("h = stairs([1 2 3]);", 38)]
