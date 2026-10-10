@@ -91,6 +91,12 @@ public enum GraphicsEventKind
 
     /// <summary>A button of a dialog over a figure was pressed (U5).</summary>
     OverlayAnswered,
+
+    /// <summary>
+    /// The window changed an object whose properties a <c>PostSet</c> listener watches — a zoom, a pan
+    /// (open item 56). Delivering it reads the watched properties again and tells those that changed.
+    /// </summary>
+    PropertyWatch,
 }
 
 /// <summary>

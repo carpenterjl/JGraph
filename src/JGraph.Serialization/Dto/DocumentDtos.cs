@@ -23,6 +23,12 @@ public sealed class FigureDto
 
     public Color Background { get; set; }
 
+    /// <summary>Whether a script chose the colour and the title style, which a theme leaves alone (open item 40); absent before it.</summary>
+    public bool BackgroundManual { get; set; }
+
+    /// <summary>See <see cref="BackgroundManual"/>.</summary>
+    public bool TitleStyleManual { get; set; }
+
     public SizeDto Size { get; set; } = new(640, 480);
 
     public string Title { get; set; } = string.Empty;
@@ -240,6 +246,12 @@ public sealed class AxesDto
     public string Title { get; set; } = string.Empty;
 
     public TextStyleDto? TitleStyle { get; set; }
+
+    /// <summary>Whether a script chose the colour and the title style, which a theme leaves alone (open item 40); absent before it.</summary>
+    public bool BackgroundManual { get; set; }
+
+    /// <summary>See <see cref="BackgroundManual"/>.</summary>
+    public bool TitleStyleManual { get; set; }
 
     public string Subtitle { get; set; } = string.Empty;
 

@@ -233,8 +233,31 @@ public class MatlabLinalgProviderM89Tests : IDisposable
         RunAsserting("""
             A = [0 5 2; 3 1 4; 1 2 6];
             Y = lu(A);
-            [L, U] = lu(A);
-            assert(max(max(abs(Y - (L + U - eye(3))))) < 1e-12);
+            [L, U, P] = lu(A);
+            % R2025b's one output is LAPACK's matrix, L - I + U with the permutation dropped, so
+            % its triangles are the three-output factors bit for bit.
+            assert(isequal(tril(Y, -1), tril(L, -1)));
+            assert(isequal(triu(Y), U));
+            assert(~isequal(P, eye(3)));
+            """);
+    }
+
+    [Fact]
+    public void LuTwoOutputLowerIsThePermutedLowerBitForBit()
+    {
+        RunAsserting("""
+            for n = [1 2 3 7 64 257]
+                A = mod((1:n)' * (1:n) + 3 * (1:n)', 11) - 5 + eye(n);
+                if n >= 7
+                    A(:, 3) = A(:, 2);   % rank-deficient: a zero pivot along the way
+                end
+                [L, U, P] = lu(A);
+                [L2, U2] = lu(A);
+                assert(isequal(L2, P' * L));
+                assert(isequal(U2, U));
+                Y = lu(A);
+                assert(isequal(tril(Y, -1), tril(L, -1)) && isequal(triu(Y), U));
+            end
             """);
     }
 

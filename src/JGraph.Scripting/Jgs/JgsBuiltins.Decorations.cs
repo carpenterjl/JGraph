@@ -75,7 +75,11 @@ internal static partial class JgsBuiltins
                 "sgtitle", rest, line, col,
                 text => figure.Title = text,
                 () => figure.TitleStyle,
-                style => figure.TitleStyle = style);
+                style =>
+                {
+                    figure.TitleStyle = style;
+                    figure.TitleStyleManual = true; // the theme leaves it alone (open item 40)
+                });
         });
 
         // A label names one ruler, so a handle on a ruler labels that one rather than whichever side

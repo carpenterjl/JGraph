@@ -9325,7 +9325,17 @@ internal sealed partial class Interpreter
                 return ObjectMember(state.Self, field, member, autoCall);
             }
 
-            return JgsBuiltins.GetHandleProperty(handle, field, member.Line, member.Column);
+            // A name that is no property but one of the class's methods calls the builtin of that
+            // name with the handle first, as obj.area does on a user object (open item 68): t.expand(),
+            // h.sendEventToHTMLSource('x', 1), ln.delete.
+            if (!JgsGraphicsProperties.Answers(handle, field) && JgsGraphicsProperties.IsMethodOf(handle.Target, field)
+                && Globals.Builtins.TryGet(field, out JgsValue method) && method.Type == JgsType.Function)
+            {
+                var bound = new BoundMethod(method.AsCallable, target);
+                return autoCall ? bound.Call([], member.Line, member.Column) : JgsValue.Function(bound);
+            }
+
+            return JgsBuiltins.GetHandleProperty(handle, field, member.Line, member.Column, dot: true);
         }
 
         // Class-constructor statics (M42): uint8.empty(0, 5) reads a builtin off a builtin —
@@ -9469,7 +9479,7 @@ internal sealed partial class Interpreter
                 return value;
             }
 
-            JgsBuiltins.SetHandleProperty(handle, FieldName(member, env), value, member.Line, member.Column);
+            JgsBuiltins.SetHandleProperty(handle, FieldName(member, env), value, member.Line, member.Column, dot: true);
             return value;
         }
 

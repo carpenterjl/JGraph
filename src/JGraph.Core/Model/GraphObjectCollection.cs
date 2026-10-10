@@ -29,6 +29,7 @@ public sealed class GraphObjectCollection<T> : ObservableCollection<T>
         item.SetParent(_owner);
         base.InsertItem(index, item);
         _owner.Invalidate(InvalidationKind.Structure);
+        GraphObjectLifecycle.NotifyAdopted(item);
     }
 
     protected override void SetItem(int index, T item)

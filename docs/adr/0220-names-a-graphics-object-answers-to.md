@@ -166,14 +166,8 @@ returns to the worked-out default, and `d.Format = ''` is `MATLAB:datetime:Unrec
   and are refused here (open item 86, which records the cases a shortest-start rule gets wrong).
 - **A figure named 'Figure' by hand reads '' in the MATLAB dialect**, and `findobj` for an empty
   `Name` finds it, because the model's default name and that one are the same text.
-- **An axes' `BubbleSizeLimits` and `BubbleSizeRange`** are `MATLAB:class:GetProhibited` in R2025b
-  (they exist, without public get access) and `MATLAB:hg:InvalidProperty` here.
-- **A dot on a graphics handle with a name nothing answers** is `MATLAB:hg:InvalidProperty` in the
-  `get` sentence; R2025b's dot is `MATLAB:noSuchMethodOrField` (open item 68).
 - **`pagesetupdlg`** is kept, with its page setup window, where R2025b has removed it
   (`MATLAB:pagesetupdlg:FunctionRemovedWeb`); decided by the user for item 84.
-- **R2025b names JGraph does not answer** (61 in the sweep: a figure's `Theme`, an axes'
-  `GridLineWidth`, a bar's labels) are open item 88, and `set(h)` leaves them out with them.
 - **`set(h)`'s on/off words are text**, `{'on'; 'off'}`, where R2025b's are `OnOffSwitchState`
   values, as for components since U3.
 - **A datetime picked out of a default-format array keeps the array's format** (`e = d(2)` shows the

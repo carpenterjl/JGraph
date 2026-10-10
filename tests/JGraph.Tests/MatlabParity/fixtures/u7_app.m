@@ -39,7 +39,7 @@ u2_chk('running_file', @() u7_ext(fig.RunningInstanceFullFileName));
 u2_chk('running_get', @() get(fig, 'RunningAppInstance') == app);
 other = uifigure('Visible', 'off');
 u2_chk('isprop_running_plain', @() isprop(other, 'RunningAppInstance'));
-fprintf('CHK|running_plain|%s|div=ADR0204\n', u7_id(@() other.RunningAppInstance));
+fprintf('CHK|running_plain|%s|exact\n', u7_id(@() other.RunningAppInstance)); % open item 68: the dot's words
 u5_run('running_write', @() u6_setp(fig, 'RunningAppInstance', 5));
 delete(other);
 
@@ -177,7 +177,7 @@ delete(app);
 app = U7Plain('callback');
 seen = strsplit(app.Seen);
 u2_chk('callback_seen', @() [seen{1} ' ' seen{3}]);
-fprintf('CHK|callback_seen_current|%s|div=ADR0204\n', seen{2});
+fprintf('CHK|callback_seen_current|%s|exact\n', seen{2}); % open item 55: current while it starts
 u2_chk('callback_handlevisibility', @() app.UIFigure.HandleVisibility);
 u6_log();
 

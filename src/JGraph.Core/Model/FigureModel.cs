@@ -227,6 +227,17 @@ public sealed class FigureModel : GraphObject, IUiContainer
         set => SetProperty(ref _background, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// Whether a script chose <see cref="Background"/> (its <c>Color</c>): a theme then leaves it alone,
+    /// as it leaves a manual grid colour (open item 40).
+    /// </summary>
+    [Browsable(false)]
+    public bool BackgroundManual { get; set; }
+
+    /// <summary>Whether a script chose <see cref="TitleStyle"/>: a theme then leaves it alone (open item 40).</summary>
+    [Browsable(false)]
+    public bool TitleStyleManual { get; set; }
+
     /// <summary>The nominal figure size in device-independent units (used for export and defaults).</summary>
     [Category("Appearance")]
     public Size2D Size

@@ -40,7 +40,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Bool(IsObjectValue(args[0]));
         });
 
-        Define("properties", (args, line, col) =>
+        JgsValue Properties(IReadOnlyList<JgsValue> args, int line, int col)
         {
             Arity("properties", args, 1, line, col);
             JgsValue names = CellColumn(PropertyNames("properties", args[0], interpreter, line, col));
@@ -50,7 +50,23 @@ internal static partial class JgsBuiltins
             }
 
             return names;
-        });
+        }
+
+        // Asked for nothing, a graphics handle's names are printed as R2025b prints them (open item 68).
+        env.Builtins.Register("properties", JgsValue.Function(new BuiltinFunction("properties", Properties)
+        {
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                if (wanted == 0 && args.Count == 1 && HandleMembers(args[0]) is { } members && interpreter.Host is { } host)
+                {
+                    host.WriteOut(JgsGraphicsProperties.PropertiesListing(members));
+                    return [];
+                }
+
+                return [Properties(args, line, col)];
+            },
+        }));
 
         // methods(x) answers the names as a cell column; methods(x, '-full') a .NET type's signatures.
         // Asked for nothing, a .NET type's listing is printed as R2025b prints it (stage 2, ADR 0175);
@@ -149,6 +165,12 @@ internal static partial class JgsBuiltins
                     }
                 }
 
+                if (wanted == 0 && args.Count == 1 && HandleMembers(args[0]) is { } members && interpreter.Host is { } handleHost)
+                {
+                    handleHost.WriteOut(JgsGraphicsProperties.MethodsListing(members)); // open item 68
+                    return [];
+                }
+
                 if (wanted == 0 && interpreter.Host is { } listingHost)
                 {
                     string? listing = MethodsSubject(args[0]) switch
@@ -236,7 +258,7 @@ internal static partial class JgsBuiltins
                     Net.NetInvoke.HasMethod(net.Type, name, instance: true),
                 JgsType.External when args[0].AsExternal is Devices.DeviceObject device =>
                     device.Class.MethodListing.Contains(name, StringComparer.Ordinal),
-                _ => false,
+                _ => HandleMembers(args[0]) is { } members && members.Methods.Contains(name, StringComparer.Ordinal),
             });
         });
 
@@ -430,9 +452,21 @@ internal static partial class JgsBuiltins
             return value.AsStructArray.FieldNames;
         }
 
+        // A graphics handle's, R2025b's in its order, or this build's own where none were recorded (open item 68).
+        if (JgsHandleRegistry.TryGet(value, out JgsHandleEntry? handle))
+        {
+            return HandleMembers(value)?.Properties ?? JgsGraphicsProperties.NamesOf(handle.Target);
+        }
+
         throw new JgsRuntimeException(line, col,
             $"{builtin}: a {value.TypeName} has no properties to list.");
     }
+
+    /// <summary>R2025b's recorded members of the graphics object a handle names, or null.</summary>
+    private static JgsGraphicsProperties.MatlabMembers? HandleMembers(JgsValue value) =>
+        value.Type is JgsType.Number && JgsHandleRegistry.TryGet(value, out JgsHandleEntry? handle)
+            ? JgsGraphicsProperties.MembersOf(handle.Target)
+            : null;
 
     /// <summary>The method names of whatever <paramref name="value"/> is, in declaration order.</summary>
     private static IEnumerable<string> MethodNames(
@@ -468,6 +502,11 @@ internal static partial class JgsBuiltins
         if (NamedClass(value, interpreter) is { } definition)
         {
             return definition.MethodNames;
+        }
+
+        if (HandleMembers(value) is { } members)
+        {
+            return members.Methods; // a graphics handle's, R2025b's (open item 68)
         }
 
         // A plain struct and a function handle answer R2025b's names before this (open item 14); a

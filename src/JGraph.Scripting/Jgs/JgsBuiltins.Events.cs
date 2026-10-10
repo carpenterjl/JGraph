@@ -256,9 +256,10 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// <c>addlistener(h, 'ObjectBeingDestroyed', @cb)</c> on a graphics handle (U7): the listener
-    /// joins the object's list and is told, with the handle and an <c>event.EventData</c>, as the
-    /// object is deleted. No other event of a graphics object can be listened to here.
+    /// <c>addlistener(h, 'Event', @cb)</c> on a graphics handle: <c>ObjectBeingDestroyed</c> (U7), told
+    /// as the object is deleted, or any other event R2025b's class defines (open item 56), told where
+    /// the matching callback runs; and <c>addlistener(h, 'Prop', 'PostSet', @cb)</c>, told whenever the
+    /// property changes (see <see cref="AddGraphicsPropertyListener"/>).
     /// </summary>
     private static JgsValue AddGraphicsListener(
         string verb, JGraphScriptGlobals host, JgsHandleEntry entry, JgsValue sourceValue,
@@ -266,9 +267,7 @@ internal static partial class JgsBuiltins
     {
         if (args.Count == 4)
         {
-            throw new JgsRuntimeException(line, col,
-                $"{verb}: a property listener on a graphics object is not supported; "
-                + $"'{JgsClass.ObjectBeingDestroyed}' is the event that can be listened to on one.");
+            return AddGraphicsPropertyListener(verb, host, entry, sourceValue, args, line, col);
         }
 
         JgsValue callback = args[^1];
@@ -278,7 +277,9 @@ internal static partial class JgsBuiltins
         }
 
         string eventName = TextOf(args[1]);
-        if (eventName != JgsClass.ObjectBeingDestroyed)
+        bool known = eventName == JgsClass.ObjectBeingDestroyed
+            || JgsGraphicsProperties.MembersOf(entry.Target) is { } members && members.Listens.Contains(eventName);
+        if (!known)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:class:invalidEvent",
                 $"Event '{eventName}' is not defined for class '{JgsGraphicsClasses.ClassOf(entry.Target)}'.");
@@ -309,8 +310,162 @@ internal static partial class JgsBuiltins
         listener.AsStructArray.Scanned = state.FromListenerFunction;
         JgsLifetime.Pin(callback); // the listener holds its callback for as long as it lives
         ListenerStates.Add(listener.AsStructArray, state);
-        (entry.DestroyListeners ??= new List<JgsListener>()).Add(state);
+        if (eventName == JgsClass.ObjectBeingDestroyed)
+        {
+            (entry.DestroyListeners ??= new List<JgsListener>()).Add(state);
+        }
+        else
+        {
+            (entry.EventListeners ??= new List<JgsListener>()).Add(state);
+        }
+
         return listener;
+    }
+
+    /// <summary>
+    /// <c>addlistener(h, 'Prop' or {props}, 'PreSet' or 'PostSet', @cb)</c> on a graphics handle (open
+    /// item 56), refused in R2025b's words for a name the object does not answer to and for one its
+    /// class does not make SetObservable. The listener is told by a write through <c>set</c> or the dot,
+    /// and, for <c>PostSet</c>, by any other change the property sees (<c>xlim</c>, the window's zoom):
+    /// see <see cref="GraphicsPropertyWatch"/>.
+    /// </summary>
+    private static JgsValue AddGraphicsPropertyListener(
+        string verb, JGraphScriptGlobals host, JgsHandleEntry entry, JgsValue sourceValue,
+        IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        JgsValue callback = args[^1];
+        if (callback.Type != JgsType.Function || !IsTextScalar(args[2]))
+        {
+            throw new JgsRuntimeException(line, col, $"Invalid input argument for function '{verb}'.");
+        }
+
+        string className = JgsGraphicsClasses.ClassOf(entry.Target);
+        string kind = TextOf(args[2]);
+        string[] asked = PropertyNamesArgument(verb, args[1], line, col);
+        var properties = new string[asked.Length];
+        for (int i = 0; i < asked.Length; i++)
+        {
+            if (!JgsGraphicsProperties.TryFindListed(entry, asked[i], out string? named))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidProperty",
+                    $"The name '{asked[i]}' is not an accessible property for an instance of class '{className}'.");
+            }
+
+            if (kind is not ("PreSet" or "PostSet"))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:class:invalidEvent",
+                    $"Event '{kind}' is not defined for class '{className}'.");
+            }
+
+            if (JgsGraphicsProperties.MembersOf(entry.Target) is { } members && !members.Observable.Contains(named))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:class:nonSetObservableProp",
+                    $"While adding a {kind} listener, property '{named}' in class '{className}' is not defined to be SetObservable.");
+            }
+
+            properties[i] = named;
+        }
+
+        JgsValue listener = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Object"] = JgsValue.Cell([sourceValue]),
+            [EventSourceField] = JgsValue.Cell([.. properties.Select(MetaProperty)]),
+            [EventNameField] = JgsValue.Str(kind),
+            ["Callback"] = callback,
+            ["Enabled"] = JgsValue.Bool(true),
+            ["Recursive"] = JgsValue.Bool(false),
+        });
+        listener.SetClassName(PropListenerClassName);
+        var state = new JgsListener
+        {
+            Value = listener,
+            Graphics = entry,
+            SourceValue = sourceValue,
+            Host = host,
+            EventName = kind,
+            Properties = properties,
+            Callback = callback,
+            FromListenerFunction = verb == "listener",
+        };
+
+        JgsLifetime.Unscan(listener);
+        listener.AsStructArray.External = true;
+        listener.AsStructArray.Scanned = state.FromListenerFunction;
+        JgsLifetime.Pin(callback);
+        ListenerStates.Add(listener.AsStructArray, state);
+        (entry.EventListeners ??= new List<JgsListener>()).Add(state);
+        if (kind == "PostSet")
+        {
+            GraphicsPropertyWatch.For(entry).Watch(properties);
+        }
+
+        return listener;
+    }
+
+    /// <summary>
+    /// Tells a graphics object's listeners for <paramref name="eventName"/> (open item 56), newest
+    /// first, each with the handle and <paramref name="data"/>. Nothing runs on an object nobody listens to.
+    /// </summary>
+    internal static void FireGraphicsEvent(JgsHandleEntry entry, string eventName, JgsValue data)
+    {
+        if (entry.EventListeners is not { Count: > 0 } listeners)
+        {
+            return;
+        }
+
+        JgsListener[] due = [.. listeners.Where(l => !l.IsProperty && l.EventName == eventName)];
+        for (int i = due.Length - 1; i >= 0; i--)
+        {
+            JgsListener listener = due[i];
+            if (listener.Deleted || !listener.Enabled || (listener.Depth > 0 && !listener.Recursive))
+            {
+                continue;
+            }
+
+            RunListener(listener, listener.SourceValue, data,
+                $"for event {eventName} defined for class {JgsGraphicsClasses.ClassOf(entry.Target)}");
+        }
+    }
+
+    /// <summary>
+    /// A graphics object's <c>PreSet</c> or <c>PostSet</c> listeners on one property (open item 56),
+    /// newest first, as a classdef object's are: the property's metadata first and an
+    /// <c>event.PropertyEvent</c> whose <c>AffectedObject</c> is the handle.
+    /// </summary>
+    internal static void FireGraphicsPropertyEvent(JgsHandleEntry entry, string property, bool post)
+    {
+        if (entry.EventListeners is not { Count: > 0 } listeners)
+        {
+            return;
+        }
+
+        string kind = post ? "PostSet" : "PreSet";
+        JgsListener[] due = [.. listeners.Where(l => l.EventName == kind && l.Properties is { } watched && watched.Contains(property, StringComparer.OrdinalIgnoreCase))];
+        if (due.Length == 0)
+        {
+            return;
+        }
+
+        JgsValue source = JgsHandleRegistry.For(entry.Target);
+        JgsValue meta = MetaProperty(property);
+        JgsValue evt = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["AffectedObject"] = source,
+            [EventSourceField] = meta,
+            [EventNameField] = JgsValue.Str(kind),
+        });
+        evt.SetClassName(PropertyEventClassName);
+        for (int i = due.Length - 1; i >= 0; i--)
+        {
+            JgsListener listener = due[i];
+            if (listener.Deleted || !listener.Enabled || (listener.Depth > 0 && !listener.Recursive))
+            {
+                continue;
+            }
+
+            RunListener(listener, meta, evt,
+                $"for the {JgsGraphicsClasses.ClassOf(entry.Target)} class {property} property {kind} event");
+        }
     }
 
     /// <summary>
@@ -696,6 +851,13 @@ internal static partial class JgsBuiltins
             if (asked.Type == JgsType.Struct)
             {
                 return EventColumn([]);
+            }
+
+            // A graphics handle's, R2025b's (open item 56).
+            if (asked.Type == JgsType.Number && JgsHandleRegistry.TryGet(asked, out JgsHandleEntry? graphics)
+                && JgsGraphicsProperties.MembersOf(graphics.Target) is { } members)
+            {
+                return EventColumn(members.Events);
             }
 
             throw new JgsRuntimeException(line, col, $"events: a {asked.TypeName} has no events to list.");

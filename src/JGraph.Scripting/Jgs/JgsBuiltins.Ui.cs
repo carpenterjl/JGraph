@@ -101,7 +101,10 @@ internal static partial class JgsBuiltins
         {
             if (name.Equals("Parent", StringComparison.OrdinalIgnoreCase))
             {
-                parent = ComponentParent(value, pairsWithFocus: false, positional: false, line, col, control);
+                // 'Parent', [] makes one that belongs to nothing yet (open item 48).
+                parent = JgsDetachedComponents.MeansNoParent(value) && !control
+                    ? JgsDetachedComponents.Holder
+                    : ComponentParent(value, pairsWithFocus: false, positional: false, line, col, control);
             }
         }
 
@@ -328,6 +331,13 @@ internal static partial class JgsBuiltins
 
         // The size it was made with is the size its first resize is measured from.
         JgsGraphicsProperties.RememberSize(figure);
+
+        // One made with its handle visible is the current figure, as in R2025b (open item 55): gcf,
+        // the root's CurrentFigure, gca and a bare plot reach it until another figure is raised.
+        if (entry.HandleVisible)
+        {
+            JG.Figure(number);
+        }
 
         // A CreateFcn among the options runs once the others are set (open item 80, measured).
         JgsCallbackDispatcher.Current?.FireCreateFcn(figure);

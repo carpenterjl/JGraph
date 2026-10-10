@@ -532,6 +532,14 @@ public sealed class AxesModel : GraphObject
         set => SetProperty(ref _background, value, InvalidationKind.Render);
     }
 
+    /// <summary>Whether a script chose <see cref="Background"/> (its <c>Color</c>): a theme then leaves it alone (open item 40).</summary>
+    [Browsable(false)]
+    public bool BackgroundManual { get; set; }
+
+    /// <summary>Whether a script chose <see cref="TitleStyle"/>: a theme then leaves it alone (open item 40).</summary>
+    [Browsable(false)]
+    public bool TitleStyleManual { get; set; }
+
     /// <summary>
     /// The fill behind this axes' whole cell, or null to let the figure show through (M84).
     /// </summary>

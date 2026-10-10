@@ -215,12 +215,14 @@ public class MatlabBubbleChartTests : IDisposable
             set(h, 'SizeData', [0 5 10]);
             disp(get(h, 'SizeData'));
 
-            set(gca, 'BubbleSizeLimits', [0 10]);
-            disp(get(gca, 'BubbleSizeLimits'));
-            disp(get(gca, 'BubbleSizeRange'));
+            % R2025b keeps the axes' bubble limits and sizes behind bubblelim and bubblesize; its get
+            % and set refuse the names (open item 88).
+            bubblelim([0 10]);
+            disp(bubblelim);
+            disp(bubblesize);
             disp(get(h, 'BubbleDiameters'));
 
-            set(gca, 'BubbleSizeRange', [10 20]);
+            bubblesize([10 20]);
             disp(bubblesize);
             """);
 

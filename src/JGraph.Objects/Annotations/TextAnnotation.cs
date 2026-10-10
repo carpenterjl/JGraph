@@ -299,12 +299,20 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         DrawAt(context, state, () => projection.ProjectPoint(_position.X, _position.Y, _z), () => null);
     }
 
-    /// <summary>Where a device-unit anchor falls: so far right of, and above, the plot box's lower left corner.</summary>
+    /// <summary>
+    /// Where a device-unit anchor falls: so far right of, and above, the plot box's lower left corner;
+    /// a pixel position counts from 1 there, as R2025b's do, and a normalized one is a fraction of the
+    /// plot box (open item 46).
+    /// </summary>
     private Point2D DeviceAnchor(Rect2D plotArea, UiUnits units)
     {
         (double fx, double fy) = UiUnitConverter.PixelsPer(units, new Size2D(plotArea.Width, plotArea.Height));
-        return new Point2D(plotArea.Left + (_position.X * fx), plotArea.Bottom - (_position.Y * fy));
+        double origin = units == UiUnits.Pixels ? 1 : 0;
+        return new Point2D(plotArea.Left + ((_position.X - origin) * fx), plotArea.Bottom - ((_position.Y - origin) * fy));
     }
+
+    /// <summary>Whether the label is placed and sized in device units — a normalized one is sized as a data label is.</summary>
+    private bool InDeviceUnits => _deviceUnits is not null and not UiUnits.Normalized;
 
     private void DrawAt(IRenderContext context, RenderState state, Func<Point2D> anchorAt, Func<Rect2D?> boxAt)
     {
@@ -320,8 +328,8 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         Color ink = _color ?? state.SeriesColor;
         // A label placed in device units is sized in points and sits on its anchor with no margin
         // of its own unless it has a box to keep the text off.
-        double fontSize = _deviceUnits is null ? _fontSize : _fontSize * 96.0 / 72;
-        double padding = _deviceUnits is not null && _background is null && _borderColor is null ? 0 : _padding;
+        double fontSize = InDeviceUnits ? _fontSize * 96.0 / 72 : _fontSize;
+        double padding = InDeviceUnits && _background is null && _borderColor is null ? 0 : _padding;
         var style = new TextStyle(ink, fontSize, _fontFamily, _bold, _italic, _interpreter, _smoothing);
         Size2D textSize = context.MeasureText(_text, style);
 

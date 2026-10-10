@@ -216,10 +216,6 @@ dialogs' `CloseFcn` were read from R2025b's installed source.
 - **`uiconfirm` always waits.** R2025b's waits only when its answer is asked for; a builtin here
   cannot tell. A script that calls it for its `CloseFcn` alone is held until it is answered.
 - **`uiconfirm` runs without a display when a test answers it**, which R2025b never does.
-- **A component cannot be made without a parent.** `uibutton('Parent', [])` is refused; R2025b
-  makes one that belongs to nothing.
-- **`matlab.ui.layout.GridLayoutOptions` cannot be constructed.** `Layout` is read, and written
-  through `Layout.Row` and `Layout.Column`.
 - **A component's handle is a number.** `class(b)` is `double`, as for every graphics object
   here, where R2025b's is `matlab.ui.control.Button`.
 - **A property a component lacks is refused in the words `get` uses** when it is read with a

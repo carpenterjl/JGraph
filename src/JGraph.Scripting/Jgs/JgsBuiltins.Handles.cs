@@ -188,12 +188,12 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>Reads one property off a handle.</summary>
-    internal static JgsValue GetHandleProperty(JgsHandleEntry entry, string name, int line, int col) =>
-        JgsGraphicsProperties.Get(entry, name, line, col);
+    internal static JgsValue GetHandleProperty(JgsHandleEntry entry, string name, int line, int col, bool dot = false) =>
+        JgsGraphicsProperties.Get(entry, name, line, col, dot);
 
     /// <summary>Writes one property through a handle.</summary>
-    internal static void SetHandleProperty(JgsHandleEntry entry, string name, JgsValue value, int line, int col) =>
-        JgsGraphicsProperties.Set(entry, name, value, line, col);
+    internal static void SetHandleProperty(JgsHandleEntry entry, string name, JgsValue value, int line, int col, bool dot = false) =>
+        JgsGraphicsProperties.Set(entry, name, value, line, col, dot);
 
     // --- Shared vocabulary ----------------------------------------------------------------------
 

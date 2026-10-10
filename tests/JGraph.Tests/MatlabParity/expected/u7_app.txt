@@ -25,7 +25,7 @@ CHK|running_is_app|logical [1 1] 1|exact
 CHK|running_file|U7App.m|exact
 CHK|running_get|logical [1 1] 1|exact
 CHK|isprop_running_plain|logical [1 1] 0|exact
-CHK|running_plain|MATLAB:noSuchMethodOrField|div=ADR0204|diverges|MATLAB:hg:InvalidProperty
+CHK|running_plain|MATLAB:noSuchMethodOrField|exact
 CHK|running_write|ran|exact
 CHK|callback_class|function_handle|exact
 CHK|callback_nargin|double [1 1] 2|exact
@@ -103,7 +103,7 @@ CHK|plain_seen|off 0|exact
 CHK|plain_seen_current|1|exact
 CHK|plain_handlevisibility|off|exact
 CHK|callback_seen|on 1|exact
-CHK|callback_seen_current|0|div=ADR0204|diverges|1
+CHK|callback_seen_current|0|exact
 CHK|callback_handlevisibility|callback|exact
 CHK|wrap_class|function_handle|exact
 CHK|wrap_event_log|noted 2;|exact

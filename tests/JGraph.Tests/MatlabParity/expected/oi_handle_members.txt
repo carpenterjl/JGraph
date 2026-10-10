@@ -1,0 +1,52 @@
+CHK|dot_tree_expand|char[1 3]'ran'|exact
+CHK|dot_node_collapse|char[1 3]'ran'|exact
+CHK|dot_html_send|char[1 3]'ran'|exact
+CHK|dot_get|char[1 4]'none'|exact
+CHK|dot_set|char[1 3]'ran'|exact
+CHK|dot_set_read|double[1 1] 9|exact
+CHK|dot_isvalid|logical[1 1] 1|exact
+CHK|dot_isprop|logical[1 1] 1|exact
+CHK|dot_unknown_read_html|char[1 112]'MATLAB:noSuchMethodOrField / Unrecognized method, property, or field 'Bogus' for class 'matlab.ui.control.HTML'.'|exact
+CHK|dot_unknown_write_html|char[1 96]'MATLAB:noPublicFieldForClass / Unrecognized property 'Bogus' for class 'matlab.ui.control.HTML'.'|exact
+CHK|dot_unknown_read_line|char[1 126]'MATLAB:noSuchMethodOrField / Unrecognized method, property, or field 'Bogus' for class 'matlab.graphics.chart.primitive.Line'.'|exact
+CHK|dot_unknown_write_line|char[1 110]'MATLAB:noPublicFieldForClass / Unrecognized property 'Bogus' for class 'matlab.graphics.chart.primitive.Line'.'|exact
+CHK|methods_line|char[1 131]'Line addlistener addprop delete double eq findobj findprop ge get gt isprop isvalid java le listener loadobj lt ne notify reset set'|exact
+CHK|methods_tree|char[1 181]'Tree addStyle addlistener addprop collapse delete double eq expand findobj findprop focus ge get gt isprop isvalid java le listener loadobj lt ne notify removeStyle reset scroll set'|exact
+CHK|methods_figure|char[1 161]'Figure addlistener addprop delete double eq findobj findprop focus ge get gt isInScrollView isprop isvalid java le listener loadobj lt ne notify reset scroll set'|exact
+CHK|properties_line|char[1 548]'XData XDataMode XVariable YData YDataMode YVariable ZData ZDataMode ZVariable XDataSource YDataSource ZDataSource Color ColorMode LineStyle LineStyleMode LineWidth Marker MarkerMode MarkerSize MarkerEdgeColor MarkerFaceColor Clipping MarkerIndices AlignVertexCenters LineJoin Children Parent Visible HandleVisibility ButtonDownFcn ContextMenu BusyAction BeingDeleted Interruptible CreateFcn DeleteFcn Type Tag UserData Selected SelectionHighlight HitTest PickableParts DisplayName Annotation SeriesIndex DataTipTemplate SourceTable AffectAutoLimits'|exact
+CHK|properties_html|char[1 223]'Data HTMLSource DataChangedFcn HTMLEventReceivedFcn Parent HandleVisibility ContextMenu BusyAction BeingDeleted Interruptible CreateFcn DeleteFcn Type Tag UserData InnerPosition Position OuterPosition Visible Tooltip Layout'|exact
+CHK|properties_button|char[1 342]'ButtonPushedFcn Parent HandleVisibility ContextMenu BusyAction BeingDeleted Interruptible CreateFcn DeleteFcn Type Tag UserData Icon IconAlignment HorizontalAlignment VerticalAlignment Text WordWrap BackgroundColor FontName FontSize FontWeight FontAngle FontColor InnerPosition Position OuterPosition Enable Visible Tooltip Layout Interpreter'|exact
+CHK|ismethod_line|logical[1 3] [1 0 1]|exact
+CHK|methods_listing_line|char[1 300]'Methods for class matlab.graphics.chart.primitive.Line: Line addlistener addprop double eq findobj get isprop java ne reset set Static methods: loadobj <a href="matlab: methods handle">Methods</a> of matlab.graphics.chart.primitive.Line inherited from <a href="matlab:helpPopup('handle')">handle</a>.'|div=0222|diverges|char[1 222]'Methods for class matlab.graphics.chart.primitive.Line: Line addlistener addprop double eq findobj get isprop java ne reset set Static methods: loadobj Methods of matlab.graphics.chart.primitive.Line inherited from handle.'
+CHK|properties_listing_line|char[1 607]'Properties for class matlab.graphics.chart.primitive.Line: XData XDataMode XVariable YData YDataMode YVariable ZData ZDataMode ZVariable XDataSource YDataSource ZDataSource Color ColorMode LineStyle LineStyleMode LineWidth Marker MarkerMode MarkerSize MarkerEdgeColor MarkerFaceColor Clipping MarkerIndices AlignVertexCenters LineJoin Children Parent Visible HandleVisibility ButtonDownFcn ContextMenu BusyAction BeingDeleted Interruptible CreateFcn DeleteFcn Type Tag UserData Selected SelectionHighlight HitTest PickableParts DisplayName Annotation SeriesIndex DataTipTemplate SourceTable AffectAutoLimits'|exact
+CHK|rect_type|char[1 9]'rectangle'|exact
+CHK|rect_position|double[1 4] [1 2 3 4]|exact
+CHK|rect_curvature|double[1 1] 0.5|exact
+CHK|rect_position_set|double[1 4] [0 0 2 2]|exact
+CHK|anim_type|char[1 12]'animatedline'|exact
+CHK|anim_cap|double[1 1] 1000000|exact
+CHK|anim_kept|double[1 3] [3 4 5]|exact
+CHK|grid_width|cell[1 2]{double[1 1] 0.5;char[1 4]'auto'}|exact
+CHK|grid_width_set|cell[1 2]{double[1 1] 2;char[1 6]'manual'}|exact
+CHK|bar_labels|cell[1 4]{char[1 6]'string';double[1 2] [1 0];double[1 1] 0.80000000000000004;char[1 11]'end-outside'}|exact
+CHK|line_affects_limits|onoff on|exact
+CHK|legend_direction|char[1 6]'normal'|exact
+CHK|bubble_limits_get|char[1 89]'MATLAB:class:GetProhibited / No public property 'BubbleSizeLimits_IS' for class ''Axes''.'|exact
+CHK|bubble_range_set|char[1 106]'MATLAB:class:SetProhibited / Setting the 'BubbleSizeRange_IS' property of class ''Axes'' is not supported.'|exact
+CHK|bubble_limits_dot|char[1 126]'MATLAB:noSuchMethodOrField / Unrecognized method, property, or field 'BubbleSizeLimits' for class 'matlab.graphics.axis.Axes'.'|exact
+CHK|histogram_in_axes|double[1 1] 3|exact
+CHK|heatmap_in_figure|char[1 6]'double'|exact
+CHK|names_line|double[1 1] 50|div=0222|diverges|double[1 1] 49
+CHK|names_text|double[1 1] 44|exact
+CHK|names_rectangle|char[1 315]'AlignVertexCenters BeingDeleted BusyAction ButtonDownFcn Children Clipping ContextMenu CreateFcn Curvature DeleteFcn EdgeColor EdgeColorMode FaceAlpha FaceColor HandleVisibility HitTest Interruptible LineStyle LineWidth Parent PickableParts Position Selected SelectionHighlight SeriesIndex Tag Type UserData Visible'|exact
+CHK|names_animatedline|char[1 383]'AlignVertexCenters Annotation BeingDeleted BusyAction ButtonDownFcn Children Clipping Color ColorMode ContextMenu CreateFcn DeleteFcn DisplayName HandleVisibility HitTest Interruptible LineStyle LineStyleMode LineWidth Marker MarkerEdgeColor MarkerFaceColor MarkerMode MarkerSize MaximumNumPoints Parent PickableParts Selected SelectionHighlight SeriesIndex Tag Type UserData Visible'|exact
+CHK|events_axes|char[1 50]'ObjectBeingDestroyed PropertyAdded PropertyRemoved'|exact
+CHK|events_line|char[1 50]'ObjectBeingDestroyed PropertyAdded PropertyRemoved'|exact
+CHK|events_button|char[1 63]'ButtonPushed ObjectBeingDestroyed PropertyAdded PropertyRemoved'|exact
+CHK|postset_hits|char[1 26]'PostSet XLim; PostSet XLim'|exact
+CHK|postset_class|char[1 18]'event.proplistener'|exact
+CHK|hit_listener|char[1 14]'event.listener'|exact
+CHK|pushed_listener|char[1 14]'event.listener'|exact
+CHK|bad_event|char[1 106]'MATLAB:class:invalidEvent / Event 'Bogus' is not defined for class 'matlab.graphics.chart.primitive.Line'.'|exact
+CHK|bad_property|char[1 142]'MATLAB:class:InvalidProperty / The name 'Bogus' is not an accessible property for an instance of class 'matlab.graphics.chart.primitive.Line'.'|exact
+CHK|not_observable|char[1 168]'MATLAB:class:nonSetObservableProp / While adding a PostSet listener, property 'Type' in class 'matlab.graphics.chart.primitive.Line' is not defined to be SetObservable.'|exact

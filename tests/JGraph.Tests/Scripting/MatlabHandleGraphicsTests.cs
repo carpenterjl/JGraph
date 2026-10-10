@@ -155,7 +155,7 @@ public class MatlabHandleGraphicsTests : IDisposable
             p = plot(1:5, 1:5);
             p.Widthness = 3;
         catch err
-            ok = ok + ~isempty(strfind(err.message, "Unrecognized property Widthness"));
+            ok = ok + ~isempty(strfind(err.message, "Unrecognized property 'Widthness'")); % the dot's words (open item 68)
         end
         assert(ok == 2);
         """);

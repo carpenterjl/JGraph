@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Reflection;
 using JGraph.Api;
@@ -158,6 +158,7 @@ internal static partial class JgsGraphicsProperties
         // A stairstep is a line with one property set, and MATLAB still names it separately — which
         // is the one place a type name here depends on the object rather than only on its class.
         LinePlot { Steps: not StepMode.None } => "stair",
+        PlotObject animated when JgsBuiltins.AnimatedCapOf(animated) is not null => "animatedline", // open item 88
         LinePlot or Line3DPlot => "line",
         ScatterPlot or Scatter3DPlot => "scatter",
         BarPlot => "bar",
@@ -176,6 +177,7 @@ internal static partial class JgsGraphicsProperties
         ErrorBarPlot => "errorbar",
         SurfacePlot => "surface",
         ContourPlot => "contour",
+        PatchPlot rectangle when JgsBuiltins.RectangleShapeOf(rectangle) is not null => "rectangle", // open item 88
         PatchPlot => "patch",
         QuiverPlot => "quiver",
         ImagePlot or RgbImagePlot => "image",
@@ -599,45 +601,24 @@ internal static partial class JgsGraphicsProperties
         var names = TableFor(target.GetType()).Values
             .Where(p => p.Listed && (p.OnlyWhen is null || p.OnlyWhen(target)) && !UnlistedForMatlab(target, p))
             .Select(static p => p.Name)
+            .Concat(RecordedNames(target)) // R2025b's names the model lacks (open item 88)
             .ToList();
         names.Sort(StringComparer.OrdinalIgnoreCase);
         return names;
     }
 
     public static bool TryFind(GraphObject target, string name, out GraphicsProperty property) =>
-        TableFor(target.GetType()).TryGetValue(name.ToLowerInvariant(), out property!)
-        && (property.OnlyWhen is null || property.OnlyWhen(target))
-        && !NotMatlabs(target, property);
+        (TableFor(target.GetType()).TryGetValue(name.ToLowerInvariant(), out property!)
+            && (property.OnlyWhen is null || property.OnlyWhen(target))
+            && !NotMatlabs(target, property))
+        || TryRecorded(target, name, out property);
 
-    public static JgsValue Get(JgsHandleEntry entry, string name, int line, int col)
+    /// <summary>
+    /// Reads a property. <paramref name="dot"/> is a read through the dot, which in the MATLAB dialect
+    /// refuses a name nothing answers to in the dot's words rather than <c>get</c>'s (open item 68).
+    /// </summary>
+    public static JgsValue Get(JgsHandleEntry entry, string name, int line, int col, bool dot = false)
     {
-        if (name.Equals("factory",StringComparison.OrdinalIgnoreCase))
-        {
-            var fields=new Dictionary<string,JgsValue>();
-            foreach (var pair in new Dictionary<string,GraphObject> { ["Line"]=new LinePlot([],[]), ["Axes"]=new AxesModel(), ["Figure"]=new FigureModel() })
-                foreach (var item in TableFor(pair.Value.GetType()).Values)
-                    if (item.Write is not null && item.Name is not ("Parent" or "Children") && TryFind(pair.Value, item.Name, out _))
-                        fields["factory"+pair.Key+item.Name]=Get(new JgsHandleEntry(pair.Value),"factory"+pair.Key+item.Name,line,col);
-            return JgsValue.Struct(fields);
-        }
-        if (name.Equals("default",StringComparison.OrdinalIgnoreCase)) return JgsValue.EmptyStruct();
-        string prefix = name.StartsWith("factory",StringComparison.OrdinalIgnoreCase) ? "factory" : name.StartsWith("default",StringComparison.OrdinalIgnoreCase) ? "default" : "";
-        if (prefix.Length > 0)
-        {
-            string key=name[prefix.Length..];
-            GraphObject? fresh=null; int length=0;
-            if (key.StartsWith("line",StringComparison.OrdinalIgnoreCase)) { fresh=new LinePlot([],[]); length=4; }
-            else if (key.StartsWith("axes",StringComparison.OrdinalIgnoreCase)) { fresh=new AxesModel(); length=4; }
-            else if (key.StartsWith("figure",StringComparison.OrdinalIgnoreCase)) { fresh=new FigureModel(); length=6; }
-            else if (key.StartsWith("text",StringComparison.OrdinalIgnoreCase)) { fresh=JgsTextLabel.For(new AxesModel(),"Title"); length=4; }
-            else if (key.StartsWith("uicontrol",StringComparison.OrdinalIgnoreCase)) { fresh=new UiControlModel(); length=9; } // U11: GUIDE's CreateFcn template asks for the BackgroundColor
-            if (fresh is not null)
-            {
-                if (key.Equals("LineColor",StringComparison.OrdinalIgnoreCase)) return Row(33.0/255,33.0/255,33.0/255);
-                return Get(new JgsHandleEntry(fresh),key[length..],line,col);
-            }
-        }
-
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
             if (entry.AddedProperties is { } added && added.TryGetValue(name, out JgsValue? held))
@@ -645,13 +626,20 @@ internal static partial class JgsGraphicsProperties
                 return held;
             }
 
-            throw Unknown(entry.Target, name, line, col, reading: true);
+            // Default, Factory and their <Class><Prop> names (open item 44).
+            if (TryGetDefaultName(entry, name, line, col, out JgsValue defaulted))
+            {
+                return defaulted;
+            }
+
+            throw Unknown(entry.Target, name, line, col, reading: true, dot: dot);
         }
 
         return property.Read(entry);
     }
 
-    public static void Set(JgsHandleEntry entry, string name, JgsValue value, int line, int col)
+    /// <summary>Writes a property; <paramref name="dot"/> as <see cref="Get"/>'s.</summary>
+    public static void Set(JgsHandleEntry entry, string name, JgsValue value, int line, int col, bool dot = false)
     {
         // A string scalar is text to every property but a uicontrol's Value, which refuses it as
         // a string (U3).
@@ -671,7 +659,18 @@ internal static partial class JgsGraphicsProperties
                 return;
             }
 
-            throw Unknown(entry.Target, name, line, col);
+            if (TrySetDefaultName(entry, name, value, line, col)) // open item 44
+            {
+                return;
+            }
+
+            throw Unknown(entry.Target, name, line, col, dot: dot);
+        }
+
+        // 'factory' and 'default' as a value (open item 44).
+        if (property.Write is not null && ResolveDefaultWord(entry, property, value, line, col) is { } worded)
+        {
+            value = worded;
         }
 
         if (property.Write is null)
@@ -689,15 +688,57 @@ internal static partial class JgsGraphicsProperties
             return;
         }
 
-        property.Write(entry, value, line, col);
+        if (entry.EventListeners is not { Count: > 0 })
+        {
+            property.Write(entry, value, line, col);
+            return;
+        }
+
+        // A write a listener hears (open item 56): PreSet, the write with the watch quiet, PostSet, and
+        // then whatever else the write changed that someone watches.
+        JgsBuiltins.FireGraphicsPropertyEvent(entry, property.Name, post: false);
+        using (GraphicsPropertyWatch.Quiet())
+        {
+            property.Write(entry, value, line, col);
+        }
+
+        entry.Watch?.Refresh(property.Name);
+        JgsBuiltins.FireGraphicsPropertyEvent(entry, property.Name, post: true);
+        entry.Watch?.Check();
+    }
+
+    /// <summary>
+    /// Whether the object answers to <paramref name="name"/> as a property a listener may name, and the
+    /// property's own spelling (open item 56).
+    /// </summary>
+    internal static bool TryFindListed(JgsHandleEntry entry, string name, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out string? named)
+    {
+        named = TryFind(entry.Target, name, out GraphicsProperty property) ? property.Name : null;
+        return named is not null;
     }
 
     /// <summary>
     /// The error for a name nothing answers to. It lists the near spellings rather than the whole
     /// surface, because a table of eighty names is not an answer to "you meant which of these?".
     /// </summary>
-    private static JgsRuntimeException Unknown(GraphObject target, string name, int line, int col, bool reading = false)
+    private static JgsRuntimeException Unknown(GraphObject target, string name, int line, int col, bool reading = false, bool dot = false)
     {
+        // Through the dot R2025b answers as for any object: no method, property or field when
+        // reading, no public property when writing, the class named in full (open item 68).
+        if (dot && JgsRunningDialect.ThreadIsMatlab && MatlabClassOf(target) is { } dotted)
+        {
+            return reading
+                ? new JgsRuntimeException(line, col, "MATLAB:noSuchMethodOrField",
+                    $"Unrecognized method, property, or field '{name}' for class '{dotted}'.")
+                : new JgsRuntimeException(line, col, "MATLAB:noPublicFieldForClass",
+                    $"Unrecognized property '{name}' for class '{dotted}'.");
+        }
+
+        if (!dot && ProhibitedBubbleName(target, name, reading, line, col) is { } prohibited)
+        {
+            return prohibited;
+        }
+
         // A component answers in R2025b's words (U1); the hint below is this build's own. R2025b
         // names the class in full when reading and by its last word when writing (U2).
         if (SpeaksAsComponent(target))
@@ -860,7 +901,9 @@ internal static partial class JgsGraphicsProperties
         // property table understands works for every drawn object at once, where a construction
         // option would have to be taught to each of the drawing verbs one at a time.
         Put(table, "Parent",
-            entry => ParentOf(entry.Target) is { } parent
+            entry => JgsDetachedComponents.IsHolder(ParentOf(entry.Target))
+                ? JgsValue.Array([]) // made with 'Parent', [] and not placed yet (open item 48)
+                : ParentOf(entry.Target) is { } parent
                 ? JgsComponentContainers.ValueFor(parent) // inside a custom component, the component (U10)
                 : GroupOwning(entry.Target) is { } group
                     ? JgsHandleRegistry.For(group)
@@ -2011,11 +2054,15 @@ internal static partial class JgsGraphicsProperties
                     ? JgsValue.Str("none")
                     : ColorRow(((FigureModel)entry.Target).Background),
                 (entry, value, line, col) =>
-                    ((FigureModel)entry.Target).Background =
+                {
+                    var figure = (FigureModel)entry.Target;
+                    figure.Background =
                         value.Type == JgsType.String
                         && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
                             ? JGraph.Core.Drawing.Colors.Transparent
-                            : JgsBuiltins.OptionColor(value, line, col, "figure"));
+                            : JgsBuiltins.OptionColor(value, line, col, "figure");
+                    figure.BackgroundManual = true; // the theme leaves it alone (open item 40)
+                });
             Put(table, "CurrentAxes", entry => ((FigureModel)entry.Target).Axes.Count > 0
                 ? JgsHandleRegistry.For(JG.CurrentAxesOrNull is { } current && current.Parent == entry.Target ? current : ((FigureModel)entry.Target).Axes[^1])
                 : JgsValue.Array([]));
@@ -2472,8 +2519,11 @@ internal static partial class JgsGraphicsProperties
 
         Put(table, "Color",
             entry => ColorRow(Axes(entry).Background),
-            (entry, value, line, col) => Axes(entry).Background =
-                JgsBuiltins.OptionColor(value, line, col, "axes"));
+            (entry, value, line, col) =>
+            {
+                Axes(entry).Background = JgsBuiltins.OptionColor(value, line, col, "axes");
+                Axes(entry).BackgroundManual = true; // the theme leaves it alone (open item 40)
+            });
 
         Put(table, "Box",
             entry => OnOff(Axes(entry).FrameVisible),

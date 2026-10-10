@@ -786,6 +786,11 @@ internal static partial class JgsBuiltins
                         _ => VerticalAlignment.Bottom,
                     };
                     break;
+                // text(x, y, s, 'Units', u): x and y were given in u, so nothing moves (open item 46).
+                case "units":
+                    JgsGraphicsProperties.SetTextUnits(
+                        JgsHandleRegistry.EntryFor(annotation), StrOf("text: Units", value, line, col).ToLowerInvariant(), convert: false, line, col);
+                    break;
                 default:
                     JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(annotation), name, value, line, col);
                     break;

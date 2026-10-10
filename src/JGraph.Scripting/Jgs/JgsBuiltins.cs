@@ -1605,6 +1605,7 @@ internal static partial class JgsBuiltins
                     line, col, "figure: every property after the figure number needs a value.");
             }
 
+            bool fresh = requested is not { } existing || !JG.TryGetFigure(existing, out _);
             if (requested is { } number)
             {
                 JG.Figure(number);
@@ -1616,6 +1617,11 @@ internal static partial class JgsBuiltins
 
             FigureModel made = JG.CurrentFigure;
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(made);
+            if (fresh)
+            {
+                JgsGraphicsProperties.ApplyFigureDefaults(made); // the root's DefaultFigure* (open item 44)
+            }
+
             for (int i = first; i < args.Count; i += 2)
             {
                 JgsGraphicsProperties.Set(entry, Str("figure", args, i, line, col), args[i + 1], line, col);
@@ -2187,7 +2193,7 @@ internal static partial class JgsBuiltins
         DefineSilent("plot", (args, line, col) => Plot(args, dialect, line, col));
         DefineSilent("scatter", (args, line, col) => Scatter(args, line, col));
         DefineSilent("stem", OnNamedAxes((args, line, col) => Stem(args, dialect, line, col)));
-        DefineSilent("histogram", (args, line, col) => Histogram(args, line, col));
+        DefineSilent("histogram", OnNamedAxes((args, line, col) => Histogram(args, line, col))); // histogram(ax, x)
 
         // hist draws when nobody wanted the numbers and counts when somebody did, which is why it
         // is told when its answer is thrown away (M53 wave J's rule for ecdf).

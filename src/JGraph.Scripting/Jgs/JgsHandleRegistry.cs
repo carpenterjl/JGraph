@@ -278,6 +278,15 @@ internal sealed class JgsHandleEntry
     public List<JgsListener>? DestroyListeners { get; set; }
 
     /// <summary>
+    /// The listeners on any other event of this object, and its <c>PreSet</c>/<c>PostSet</c> listeners,
+    /// oldest first (open item 56).
+    /// </summary>
+    public List<JgsListener>? EventListeners { get; set; }
+
+    /// <summary>The properties <c>PostSet</c> listeners watch on this object, with their last values (open item 56).</summary>
+    public GraphicsPropertyWatch? Watch { get; set; }
+
+    /// <summary>
     /// Properties added to this one object (U7): what <c>matlab.apps.AppBase.registerApp</c>
     /// gives an app's figure - <c>RunningAppInstance</c> and <c>RunningInstanceFullFileName</c> -
     /// where R2025b uses <c>addprop</c>. Read, written and found by <c>isprop</c>; not listed.
@@ -547,6 +556,8 @@ internal static class JgsHandleRegistry
             JgsComponentContainers.Clear();
             JgsGraphicsCallbackState.Clear();
             JgsGraphicsProperties.ForgetGroups();
+            JgsGraphicsProperties.ForgetDefaults(); // open item 44: a new run's root holds none
+            JgsDetachedComponents.Clear(); // open item 48: nor any component waiting for a parent
         }
     }
 

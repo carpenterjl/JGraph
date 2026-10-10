@@ -191,7 +191,6 @@ layouts of the three blocking dialogs come from U1's window session (`u1w_dialog
   window usable.** R2025b's modal figure blocks the whole desktop. The IDE is where Stop is.
 - **`WindowStyle` `'docked'` is taken and remembered and docks nothing**: there is no figure dock.
 - **`exportapp` writes `.png`, `.jpg`, `.tif` and `.bmp` and refuses `.pdf`** (open item 45).
-- **A text's `'normalized'` unit is a fraction of the figure**, not of the plot box (open item 46).
 - **The blocking dialogs and the system's refuse, with R2025b's identifier, only when nobody can
   answer**; under a test's stand-in they run without a display, which R2025b never does.
 

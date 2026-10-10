@@ -142,6 +142,24 @@ internal sealed partial class Interpreter
         }
         else if (!NetTypes.IsNamespace(root.Name))
         {
+            // A builtin known by its whole dotted name — a MATLAB class constructor such as
+            // matlab.ui.layout.GridLayoutOptions (open item 48) — then any members after it.
+            for (int upTo = names.Length; upTo >= 1; upTo--)
+            {
+                string dotted = root.Name + "." + string.Join(".", names[..upTo]);
+                if (Globals.Builtins.TryGet(dotted, out JgsValue builtin) && builtin.Type == JgsType.Function)
+                {
+                    bool whole = upTo == names.Length;
+                    value = whole && !autoCall ? builtin : builtin.AsCallable.Call([], member.Line, member.Column);
+                    for (int i = upTo; i < names.Length; i++)
+                    {
+                        value = MemberOf(value, names[i], chain[i], i == names.Length - 1 ? autoCall : true);
+                    }
+
+                    return true;
+                }
+            }
+
             // Nothing claims the head, so the name cannot be resolved; R2025b says so with the whole
             // dotted name (MATLAB:undefinedVarOrClass).
             throw Unresolved(root.Name + "." + string.Join(".", names), member);

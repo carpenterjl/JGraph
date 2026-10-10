@@ -39,6 +39,28 @@ internal static partial class JgsGraphicsProperties
             ? full ? first : first[(first.LastIndexOf('.') + 1)..]
             : null;
 
+    /// <summary>The two axes names R2025b's <c>get</c> and <c>set</c> refuse as not public rather than unknown.</summary>
+    private static bool IsProhibitedBubbleName(string name) =>
+        name.Equals("BubbleSizeLimits", StringComparison.OrdinalIgnoreCase)
+        || name.Equals("BubbleSizeRange", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// R2025b's refusal of a bubble size name through <c>get</c> or <c>set</c> (measured): its internal
+    /// <c>_IS</c> twin is what the sentence names, with the class in doubled quotes. Null for anything else.
+    /// </summary>
+    private static JgsRuntimeException? ProhibitedBubbleName(GraphObject target, string name, bool reading, int line, int col)
+    {
+        if (!JgsRunningDialect.ThreadIsMatlab || target is not AxesModel { IsUiAxes: false, IsPolar: false } || !IsProhibitedBubbleName(name))
+        {
+            return null;
+        }
+
+        string inner = (name.Equals("BubbleSizeLimits", StringComparison.OrdinalIgnoreCase) ? "BubbleSizeLimits" : "BubbleSizeRange") + "_IS";
+        return reading
+            ? new JgsRuntimeException(line, col, "MATLAB:class:GetProhibited", $"No public property '{inner}' for class ''Axes''.")
+            : new JgsRuntimeException(line, col, "MATLAB:class:SetProhibited", $"Setting the '{inner}' property of class ''Axes'' is not supported.");
+    }
+
     /// <summary>Whether a MATLAB-dialect script must not reach this property on this object.</summary>
     private static bool NotMatlabs(GraphObject target, GraphicsProperty property) =>
         SightOf(target, property) == MatlabSight.Absent;
@@ -52,6 +74,12 @@ internal static partial class JgsGraphicsProperties
         if (!JgsRunningDialect.ThreadIsMatlab || R2025bClassesOf(target) is not { } classes)
         {
             return MatlabSight.Shown;
+        }
+
+        // R2025b keeps an axes' bubble size limits behind bubblelim and refuses the name (open item 88).
+        if (target is AxesModel && IsProhibitedBubbleName(property.Name))
+        {
+            return MatlabSight.Absent;
         }
 
         MatlabSight sight = MatlabSight.Shown;
@@ -170,8 +198,9 @@ internal static partial class JgsGraphicsProperties
     /// The R2025b classes an object stands for, among those <c>graphics_class_names.m</c> recorded, or
     /// null. The object is read as <c>TypeNameOf</c> reads it. A model that makes more than one class
     /// answers with all of them, and a name any of them defines is the object's: a line is also what
-    /// <c>fplot</c> and <c>animatedline</c> make, a patch also what <c>rectangle</c> makes, and a line or
-    /// scatter in polar axes gains the polar names. A shape whose class is ambiguous answers null.
+    /// <c>fplot</c> makes, and a line or scatter in polar axes gains the polar names. What <c>rectangle</c>
+    /// and <c>animatedline</c> make is a patch and a line marked as theirs, and answers as their class
+    /// alone (open item 88). A shape whose class is ambiguous answers null.
     /// </summary>
     private static string[]? R2025bClassesOf(GraphObject target) => target switch
     {
@@ -187,9 +216,10 @@ internal static partial class JgsGraphicsProperties
         JgsGraphicsGroup => [Primitive + "Group"],
         JgsTextLabel => [Primitive + "Text"],
         LinePlot { Steps: not StepMode.None } => [Chart + "Stair"],
+        PlotObject animated when JgsBuiltins.AnimatedCapOf(animated) is not null => ["matlab.graphics.animation.AnimatedLine"],
         LinePlot or Line3DPlot => InPolar(target)
             ? [Chart + "Line", Chart + "Line" + InPolarAxes]
-            : [Chart + "Line", "matlab.graphics.animation.AnimatedLine", "matlab.graphics.function.FunctionLine",
+            : [Chart + "Line", "matlab.graphics.function.FunctionLine",
                 "matlab.graphics.function.ImplicitFunctionLine", "matlab.graphics.function.ParameterizedFunctionLine"],
         ScatterPlot { BubbleSizing: true } => [Chart + "BubbleChart"],
         ScatterPlot or Scatter3DPlot => InPolar(target)
@@ -203,7 +233,8 @@ internal static partial class JgsGraphicsProperties
         ErrorBarPlot => [Chart + "ErrorBar"],
         SurfacePlot => [Primitive + "Surface"],
         ContourPlot => [Chart + "Contour"],
-        PatchPlot => [Primitive + "Patch", Primitive + "Rectangle"],
+        PatchPlot patch when JgsBuiltins.RectangleShapeOf(patch) is not null => [Primitive + "Rectangle"],
+        PatchPlot => [Primitive + "Patch"],
         QuiverPlot => [Chart + "Quiver"],
         ImagePlot or RgbImagePlot => [Primitive + "Image"],
         HeatmapPlot => ["matlab.graphics.chart.HeatmapChart"],

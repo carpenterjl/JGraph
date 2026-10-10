@@ -187,13 +187,6 @@ figure, and the process ended.
   'matlab.graphics.Graphics')` is false here.
 - **A property typed with a graphics class holds an empty `double`, and takes `[]`.** R2025b's
   default is an empty of the class, for which `isa` is true, and it refuses `[]`.
-- **A graphics object raises one event a script can listen to.** `ObjectBeingDestroyed` is
-  heard; any other event name is refused as not defined for the class, in R2025b's sentence, and a
-  property listener (`addlistener(h, 'XLim', 'PostSet', …)`) is refused as unsupported.
-- **A `uifigure` is never the current figure.** With `HandleVisibility` `'on'` R2025b's is what
-  `gcf` and the root's `CurrentFigure` answer; here `findobj` finds it and those two do not.
-- **An unknown property read by a dot on a figure is refused in this build's words**, without
-  R2025b's `MATLAB:noSuchMethodOrField`.
 - **`func2str` of a callback from `createCallbackFcn` keeps its spaces**, as every anonymous
   function's text does here (open item 54).
 - **An app's figure has `RunningAppInstance` and `RunningInstanceFullFileName` unlisted.** They

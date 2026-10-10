@@ -226,6 +226,13 @@ internal static partial class JgsBuiltins
         }));
         DefineMaker("uiprogressdlg", UiProgressDlg);
         DefineQuiet("focus", Focus);
+
+        // A grid child's place as a value of its own (open item 48), reached by its dotted name.
+        env.Builtins.Register(JgsGraphicsProperties.GridLayoutOptionsClass, JgsValue.Function(new BuiltinFunction(
+            JgsGraphicsProperties.GridLayoutOptionsClass, JgsGraphicsProperties.NewGridLayoutOptions)
+        {
+            AutoCallsBare = true,
+        }));
     }
 
     // --- one component -------------------------------------------------------------------------------
@@ -375,7 +382,10 @@ internal static partial class JgsBuiltins
             string property = PropertyNamed(component, name, word, line, col);
             if (property.Equals("Parent", StringComparison.OrdinalIgnoreCase))
             {
-                parent = ContainerNamed(value, word, noParent, line, col);
+                // 'Parent', [] makes one that belongs to nothing yet (open item 48).
+                parent = JgsDetachedComponents.MeansNoParent(value) && !maker.InGroup
+                    ? JgsDetachedComponents.Holder
+                    : ContainerNamed(value, word, noParent, line, col);
             }
             else
             {
@@ -566,7 +576,9 @@ internal static partial class JgsBuiltins
             string property = PropertyNamed(grid, name, word, line, col);
             if (property.Equals("Parent", StringComparison.OrdinalIgnoreCase))
             {
-                parent = ContainerNamed(value, word, NeedsAParent, line, col);
+                parent = JgsDetachedComponents.MeansNoParent(value)
+                    ? JgsDetachedComponents.Holder // open item 48
+                    : ContainerNamed(value, word, NeedsAParent, line, col);
             }
             else
             {
@@ -617,7 +629,10 @@ internal static partial class JgsBuiltins
         {
             if (TextOf(args[i]).Equals("Parent", StringComparison.OrdinalIgnoreCase))
             {
-                parent = ParentOfAxes(args[i + 1]);
+                // 'Parent', [] makes one that belongs to nothing yet (open item 48).
+                parent = JgsDetachedComponents.MeansNoParent(args[i + 1])
+                    ? JgsDetachedComponents.HolderFigure
+                    : ParentOfAxes(args[i + 1]);
             }
         }
 

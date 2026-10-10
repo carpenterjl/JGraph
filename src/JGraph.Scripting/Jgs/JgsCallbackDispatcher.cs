@@ -296,6 +296,17 @@ internal sealed class JgsCallbackDispatcher
         // and then runs its DeleteFcn (U7, measured in R2025b). The DeleteFcn is read before the
         // listeners run: one of them may finish the deletion - an app's delete deletes its figure -
         // and the callback is owed all the same.
+        // A change the window made to a watched object: its PostSet listeners hear it now (open item 56).
+        if (graphicsEvent.Kind == GraphicsEventKind.PropertyWatch)
+        {
+            if (JgsHandleRegistry.TryGetEntry(graphicsEvent.Target, out JgsHandleEntry? watched))
+            {
+                watched.Watch?.Check();
+            }
+
+            return;
+        }
+
         bool resolved = TryResolve(graphicsEvent, out JgsHandleEntry? entry, out JgsValue callback);
         if (graphicsEvent.Kind == GraphicsEventKind.ObjectDeleted
             && JgsHandleRegistry.TryGetEntry(graphicsEvent.Target, out JgsHandleEntry? leaving))
@@ -305,6 +316,12 @@ internal sealed class JgsCallbackDispatcher
 
         if (!resolved || entry is null)
         {
+            // An event with no callback still reaches the listeners on it (open item 56).
+            if (graphicsEvent.Kind != GraphicsEventKind.ObjectDeleted)
+            {
+                TellListeners(graphicsEvent, null);
+            }
+
             // A close request whose callback vanished between the click and its delivery still
             // means the window should close — the cancelled close was standing in for this moment.
             if (graphicsEvent is { Kind: GraphicsEventKind.CloseRequest, Target: FigureModel figure })
@@ -320,8 +337,30 @@ internal sealed class JgsCallbackDispatcher
         }
 
         JgsValue source = JgsHandleRegistry.For(graphicsEvent.Target);
+        JgsValue eventData = EventDataFor(graphicsEvent, source);
         Run(graphicsEvent.Target, graphicsEvent.Clicked, entry.Interruptible, callback,
-            EventDataFor(graphicsEvent, source), CallbackNameOf(graphicsEvent.Kind));
+            eventData, CallbackNameOf(graphicsEvent.Kind));
+        TellListeners(graphicsEvent, eventData);
+    }
+
+    /// <summary>
+    /// The listeners on the event a callback stands for (open item 56): a button's <c>ButtonPushedFcn</c>
+    /// is its <c>ButtonPushed</c> event, a component's <c>ValueChangedFcn</c> its <c>ValueChanged</c>. They
+    /// hear the callback's own event data, after the callback (the order is not recorded).
+    /// </summary>
+    private static void TellListeners(GraphicsEvent graphicsEvent, JgsValue? eventData)
+    {
+        if (!JgsHandleRegistry.TryGetEntry(graphicsEvent.Target, out JgsHandleEntry? entry) || entry.EventListeners is not { Count: > 0 })
+        {
+            return;
+        }
+
+        string callbackName = graphicsEvent.Kind == GraphicsEventKind.ComponentUser ? graphicsEvent.Action : CallbackNameOf(graphicsEvent.Kind);
+        if (callbackName.EndsWith("Fcn", StringComparison.Ordinal))
+        {
+            JgsBuiltins.FireGraphicsEvent(entry, callbackName[..^3],
+                eventData ?? EventDataFor(graphicsEvent, JgsHandleRegistry.For(graphicsEvent.Target)));
+        }
     }
 
     /// <summary>

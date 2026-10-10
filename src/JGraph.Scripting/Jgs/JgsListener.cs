@@ -33,6 +33,7 @@ internal sealed class JgsListener
         Source?.Listeners?.Remove(this);
         NetEvent?.Remove(this);
         Graphics?.DestroyListeners?.Remove(this);
+        Graphics?.EventListeners?.Remove(this);
     }
 
     /// <summary>The source as a value, which is what every callback is handed first (a handle: the one object).</summary>

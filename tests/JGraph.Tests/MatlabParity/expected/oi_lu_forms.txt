@@ -1,0 +1,27 @@
+CHK|two_output_lower_n1|logical[1 1] 1|exact
+CHK|two_output_upper_n1|logical[1 1] 1|exact
+CHK|one_output_lower_n1|logical[1 1] 1|exact
+CHK|one_output_upper_n1|logical[1 1] 1|exact
+CHK|two_output_lower_n2|logical[1 1] 1|exact
+CHK|two_output_upper_n2|logical[1 1] 1|exact
+CHK|one_output_lower_n2|logical[1 1] 1|exact
+CHK|one_output_upper_n2|logical[1 1] 1|exact
+CHK|two_output_lower_n3|logical[1 1] 1|exact
+CHK|two_output_upper_n3|logical[1 1] 1|exact
+CHK|one_output_lower_n3|logical[1 1] 1|exact
+CHK|one_output_upper_n3|logical[1 1] 1|exact
+CHK|two_output_lower_n7|logical[1 1] 1|exact
+CHK|two_output_upper_n7|logical[1 1] 1|exact
+CHK|one_output_lower_n7|logical[1 1] 1|exact
+CHK|one_output_upper_n7|logical[1 1] 1|exact
+CHK|two_output_lower_n64|logical[1 1] 1|exact
+CHK|two_output_upper_n64|logical[1 1] 1|exact
+CHK|one_output_lower_n64|logical[1 1] 1|exact
+CHK|one_output_upper_n64|logical[1 1] 1|exact
+CHK|two_output_lower_n257|logical[1 1] 1|exact
+CHK|two_output_upper_n257|logical[1 1] 1|exact
+CHK|one_output_lower_n257|logical[1 1] 1|exact
+CHK|one_output_upper_n257|logical[1 1] 1|exact
+CHK|one_output_is_not_permuted|logical[1 1] 0|exact
+CHK|one_output_diagonal_is_u|logical[1 1] 1|exact
+CHK|one_output_shape|double[1 2] [3 3]|exact

@@ -845,6 +845,16 @@ internal static partial class JgsBuiltins
     private static JgsValue HeatmapChart(IReadOnlyList<JgsValue> args, int line, int col)
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+
+        // heatmap(fig, cdata): R2025b's chart takes a figure as its parent and fills it, so it gets
+        // an axes of its own there.
+        if (named is null && args.Count > 1 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? parent)
+            && parent.Target is FigureModel figure)
+        {
+            named = figure.AddAxes();
+            rest = args.Skip(1).ToList();
+        }
+
         return OnAxes(named, () =>
         {
             if (rest.Count == 0)

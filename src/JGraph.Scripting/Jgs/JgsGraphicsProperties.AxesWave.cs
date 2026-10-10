@@ -109,6 +109,7 @@ internal static partial class JgsGraphicsProperties
                 }
 
                 axes.TitleStyle = axes.TitleStyle.WithFamily(family);
+                axes.TitleStyleManual = true; // open item 40
                 axes.SubtitleStyle = axes.SubtitleStyle.WithFamily(family);
             });
 
@@ -185,6 +186,7 @@ internal static partial class JgsGraphicsProperties
                 axes.TitleFontSizeMultiplier = Numbers("TitleFontSizeMultiplier", value, 1, line, col)[0];
                 axes.TitleStyle = axes.TitleStyle.WithSize(
                     axes.PrimaryXAxis.TickLabelStyle.FontSize * axes.TitleFontSizeMultiplier);
+                axes.TitleStyleManual = true; // open item 40
             });
 
         Put(table, "LabelFontSizeMultiplier",
@@ -202,8 +204,11 @@ internal static partial class JgsGraphicsProperties
 
         Put(table, "TitleFontWeight",
             entry => JgsValue.Str(Axes(entry).TitleStyle.Bold ? "bold" : "normal"),
-            (entry, value, line, col) => Axes(entry).TitleStyle =
-                Axes(entry).TitleStyle.WithBold(ToWeight("TitleFontWeight", value, line, col)));
+            (entry, value, line, col) =>
+            {
+                Axes(entry).TitleStyle = Axes(entry).TitleStyle.WithBold(ToWeight("TitleFontWeight", value, line, col));
+                Axes(entry).TitleStyleManual = true; // open item 40
+            });
 
         Put(table, "SubtitleFontWeight",
             entry => JgsValue.Str(Axes(entry).SubtitleStyle.Bold ? "bold" : "normal"),
@@ -236,6 +241,7 @@ internal static partial class JgsGraphicsProperties
         }
 
         axes.TitleStyle = axes.TitleStyle.WithSize(size * axes.TitleFontSizeMultiplier);
+        axes.TitleStyleManual = true; // the theme leaves a size a script chose alone (open item 40)
         axes.SubtitleStyle = axes.SubtitleStyle.WithSize(size);
     }
 

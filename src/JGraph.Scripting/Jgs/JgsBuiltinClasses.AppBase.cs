@@ -1,3 +1,4 @@
+using JGraph.Api;
 using JGraph.Core.Model;
 
 namespace JGraph.Scripting.Jgs;
@@ -130,6 +131,12 @@ internal static partial class JgsBuiltinClasses
         if (shown)
         {
             figure!.HandleVisibility = "on";
+
+            // And current, so the startup function's gcf, gca and bare plot reach it (open item 55).
+            if (figure.Target is FigureModel model && JG.GetFigureNumber(model) is > 0 and var number)
+            {
+                JG.Figure(number);
+            }
         }
 
         try

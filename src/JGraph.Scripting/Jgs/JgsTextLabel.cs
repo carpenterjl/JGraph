@@ -43,8 +43,9 @@ internal sealed class JgsTextLabel : GraphObject
         get => Owner switch { AxisModel r => r.LabelStyle, ColorbarModel b => b.LabelStyle,
             AxesModel a => Role == "Subtitle" ? a.SubtitleStyle : a.TitleStyle, FigureModel f => f.TitleStyle, _ => new TextStyle(Colors.Black, 11) };
         set { switch (Owner) { case AxisModel r: r.LabelStyle = value; break; case ColorbarModel b: b.LabelStyle = value; break;
-            case AxesModel a: if (Role == "Subtitle") a.SubtitleStyle = value; else a.TitleStyle = value; break;
-            case FigureModel f: f.TitleStyle = value; break; } }
+            // A title style a script wrote is manual: the theme leaves it alone (open item 40).
+            case AxesModel a: if (Role == "Subtitle") a.SubtitleStyle = value; else { a.TitleStyle = value; a.TitleStyleManual = true; } break;
+            case FigureModel f: f.TitleStyle = value; f.TitleStyleManual = true; break; } }
     }
     public double Rotation
     {

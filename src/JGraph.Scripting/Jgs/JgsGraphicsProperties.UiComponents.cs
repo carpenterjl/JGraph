@@ -757,6 +757,50 @@ internal static partial class JgsGraphicsProperties
         PlaceInGrid(grid, entry.Target, new UiGridCell(row, rowEnd, column, columnEnd));
     }
 
+    /// <summary>
+    /// <c>matlab.ui.layout.GridLayoutOptions('Row', r, 'Column', c)</c> (open item 48): the value a
+    /// <c>Layout</c> write takes whole, its <c>Row</c> and <c>Column</c> checked as that write checks
+    /// them; either left out is 1.
+    /// </summary>
+    internal static JgsValue NewGridLayoutOptions(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count % 2 != 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:InputParser:ParamMissingValue",
+                "Specify inputs as one or more name-value arguments.");
+        }
+
+        JgsValue row = JgsValue.Number(1);
+        JgsValue column = JgsValue.Number(1);
+        for (int i = 0; i < args.Count; i += 2)
+        {
+            string name = JgsBuiltins.StrOf("GridLayoutOptions", args[i], line, col);
+            if (name.Equals("Row", StringComparison.OrdinalIgnoreCase))
+            {
+                (int from, int to) = Span(args[i + 1], "Row", line, col);
+                row = SpanValue(from, to);
+            }
+            else if (name.Equals("Column", StringComparison.OrdinalIgnoreCase))
+            {
+                (int from, int to) = Span(args[i + 1], "Column", line, col);
+                column = SpanValue(from, to);
+            }
+            else
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidProperty",
+                    $"Unrecognized property '{name}' for class '{GridLayoutOptionsClass}'.");
+            }
+        }
+
+        JgsValue options = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Row"] = row,
+            ["Column"] = column,
+        });
+        options.SetClassName(GridLayoutOptionsClass);
+        return options;
+    }
+
     /// <summary>R2025b's <c>Row</c> and <c>Column</c>: a positive whole number, or two that increase.</summary>
     private static (int From, int To) Span(JgsValue value, string name, int line, int col)
     {

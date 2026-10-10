@@ -522,19 +522,17 @@ internal static partial class JgsBuiltins
         double[] input = SquareColumnMajorOf("lu", args[0], out int n, line, col);
         LuDecomposition lu = LuDecomposition.FactorAdopting(input, n);
 
-        // Row r of A became row `factored[r]` of the factorization, so folding the permutation back
-        // into L is a row move rather than the multiply by a permutation matrix it used to be —
+        // Row r of A became row `order[r]`'s place in the factorization, so folding the permutation
+        // back into L is a row move rather than the multiply by a permutation matrix it used to be —
         // 2·n³ flops at n = 2000 to shuffle rows, which is the same answer the long way round.
-        ReadOnlySpan<int> order = lu.RowPermutation;
-        var factored = new int[n];
-        for (int i = 0; i < n; i++)
-        {
-            factored[order[i]] = i;
-        }
+        int[] order = lu.RowPermutation.ToArray();
 
         if (wanted <= 1)
         {
-            return [BuildColumnMajor(n, n, span => FillCombined(lu, factored, n, span))];
+            // R2025b's one output is LAPACK's own matrix, L − I + U with the permutation dropped,
+            // so it is the factors as they stand. Building it as PᵀL + U − I moved rows that are not
+            // moved and added and took away a one on the diagonal, which lost U's low bits.
+            return [BuildColumnMajor(n, n, span => lu.Factors.CopyTo(span))];
         }
 
         if (wanted == 2)
@@ -542,14 +540,14 @@ internal static partial class JgsBuiltins
             // [L, U] folds the permutation into L, so L*U still reassembles A.
             return
             [
-                BuildColumnMajor(n, n, span => FillLower(lu, factored, n, span)),
+                BuildColumnMajor(n, n, span => FillLower(lu, order, n, span)),
                 BuildColumnMajor(n, n, span => FillUpper(lu, n, span)),
             ];
         }
 
         var outputs = new List<JgsValue>
         {
-            BuildColumnMajor(n, n, span => FillLower(lu, rows: null, n, span)),
+            BuildColumnMajor(n, n, span => FillLower(lu, order: null, n, span)),
             BuildColumnMajor(n, n, span => FillUpper(lu, n, span)),
             PermutationValue(order.ToArray(), form, n),
         };
@@ -570,53 +568,29 @@ internal static partial class JgsBuiltins
         return [.. outputs];
     }
 
-    /// <summary>MATLAB's one-output <c>lu</c>: the two factors in one matrix, PᵀL + U − I.</summary>
-    private static void FillCombined(LuDecomposition lu, int[] rows, int n, Span<double> combined)
-    {
-        ReadOnlySpan<double> factors = lu.Factors;
-        for (int c = 0; c < n; c++)
-        {
-            int origin = c * n;
-            for (int r = 0; r < n; r++)
-            {
-                int source = rows[r];
-                double lower = c < source ? factors[origin + source] : (c == source ? 1 : 0);
-                double upper = c >= r ? factors[origin + r] : 0;
-                combined[origin + r] = lower + upper - (r == c ? 1 : 0);
-            }
-        }
-    }
-
     /// <summary>
     /// The unit-lower-triangular L, optionally with its rows moved back to the order A had them in
-    /// — which is what the two-output form's PᵀL is. The destination arrives zeroed.
+    /// — which is what the two-output form's PᵀL is. The destination arrives zeroed, so a column
+    /// writes only its one and the factored entries below it; with an order, factored row s lands
+    /// on A's row <c>order[s]</c>.
     /// </summary>
-    private static void FillLower(LuDecomposition lu, int[]? rows, int n, Span<double> lower)
+    private static void FillLower(LuDecomposition lu, int[]? order, int n, Span<double> lower)
     {
         ReadOnlySpan<double> factors = lu.Factors;
         for (int c = 0; c < n; c++)
         {
             int origin = c * n;
-            if (rows is null)
+            if (order is null)
             {
-                // Column c of L is a one on the diagonal and the factored column below it; above it
-                // the zeros the destination came with are already the answer.
                 lower[origin + c] = 1;
                 factors.Slice(origin + c + 1, n - c - 1).CopyTo(lower[(origin + c + 1)..]);
                 continue;
             }
 
-            for (int r = 0; r < n; r++)
+            lower[origin + order[c]] = 1;
+            for (int s = c + 1; s < n; s++)
             {
-                int source = rows[r];
-                if (c < source)
-                {
-                    lower[origin + r] = factors[origin + source];
-                }
-                else if (c == source)
-                {
-                    lower[origin + r] = 1;
-                }
+                lower[origin + order[s]] = factors[origin + s];
             }
         }
     }

@@ -450,11 +450,22 @@ public class AppDesignerU7Tests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task APropertyListenerOnAGraphicsObjectIsRefusedAsUnsupported()
+    public async Task APropertyListenerOnAGraphicsObjectHearsEveryWrite()
     {
-        string message = await Fails("f = uifigure('Visible', 'off'); addlistener(f, 'Name', 'PostSet', @(s, e) 1);");
+        // Open item 56: R2025b's figure Name is SetObservable, and each write raises one PostSet whose
+        // first argument is the property's metadata.
+        await Exec("""
+            f = uifigure('Visible', 'off');
+            setappdata(f, 'heard', {});
+            lh = addlistener(f, 'Name', 'PostSet', @(s, e) setappdata(f, 'heard', [getappdata(f, 'heard'), {[e.EventName ':' s.Name]}]));
+            f.Name = 'one';
+            set(f, 'Name', 'two');
+            assert(isequal(getappdata(f, 'heard'), {'PostSet:Name', 'PostSet:Name'}));
+            assert(strcmp(class(lh), 'event.proplistener'));
+            """);
 
-        Assert.Contains("a property listener on a graphics object is not supported", message, StringComparison.Ordinal);
+        string message = await Fails("g = uifigure('Visible', 'off'); addlistener(g, 'Type', 'PostSet', @(s, e) 1);");
+        Assert.Contains("is not defined to be SetObservable", message, StringComparison.Ordinal);
     }
 
     // --- the package reader --------------------------------------------------------------------------

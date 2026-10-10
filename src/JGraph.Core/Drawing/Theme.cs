@@ -158,17 +158,31 @@ public sealed class Theme : ITheme
 
         // A uifigure keeps MATLAB's own look whatever the theme (app-building plan, section G): its
         // components draw in their own colours, and a themed page behind them would not match.
-        if (!figure.IsUiFigure)
+        // A colour or title style a script chose is manual and survives the theme (open item 40), as a
+        // grid colour does: figure('Color', ...) on a GUI script, the grey a GUIDE figure was saved
+        // with, waitbar's plain 10-point title.
+        if (!figure.IsUiFigure && !figure.BackgroundManual)
         {
             figure.Background = FigureBackground;
         }
 
-        figure.TitleStyle = Restyle(figure.TitleStyle, Title, FigureTitleFontSize, BoldTitles);
+        if (!figure.TitleStyleManual)
+        {
+            figure.TitleStyle = Restyle(figure.TitleStyle, Title, FigureTitleFontSize, BoldTitles);
+        }
 
         foreach (AxesModel axes in figure.Axes)
         {
-            axes.Background = AxesBackground;
-            axes.TitleStyle = Restyle(axes.TitleStyle, Title, AxesTitleFontSize, BoldTitles);
+            if (!axes.BackgroundManual)
+            {
+                axes.Background = AxesBackground;
+            }
+
+            if (!axes.TitleStyleManual)
+            {
+                axes.TitleStyle = Restyle(axes.TitleStyle, Title, AxesTitleFontSize, BoldTitles);
+            }
+
             // A grid color a script chose is manual and survives the theme; an automatic one
             // follows it — which is the whole observable meaning of GridColorMode.
             if (!axes.Grid.MajorColorManual)

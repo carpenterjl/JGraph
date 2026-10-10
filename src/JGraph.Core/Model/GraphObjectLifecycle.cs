@@ -22,6 +22,22 @@ public static class GraphObjectLifecycle
     public static event Action<GraphObject>? Deleting;
 
     /// <summary>
+    /// Raised as an object joins a parent's children — how the scripting layer gives a new object the
+    /// <c>Default*</c> values its ancestors hold (open item 44) before the call that made it applies its
+    /// own. A move (<see cref="SuppressNotifications"/>) raises nothing.
+    /// </summary>
+    public static event Action<GraphObject>? Adopted;
+
+    /// <summary>Raises <see cref="Adopted"/> for an object just put among a parent's children.</summary>
+    internal static void NotifyAdopted(GraphObject child)
+    {
+        if (_suppressed == 0)
+        {
+            Adopted?.Invoke(child);
+        }
+    }
+
+    /// <summary>
     /// Marks the start of an object's deletion and raises <see cref="Deleting"/> — once. The
     /// <see cref="GraphObject.BeingDeleted"/> flag is the guard: a deletion that finds it already
     /// set (a child of a subtree already being torn down, a second <c>delete(h)</c>) does nothing,

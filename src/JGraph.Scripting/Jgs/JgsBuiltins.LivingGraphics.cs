@@ -65,6 +65,27 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static readonly ConditionalWeakTable<PlotObject, StrongBox<int>> AnimatedCaps = new();
 
+    /// <summary>R2025b's <c>MaximumNumPoints</c> for an animated line nobody capped (measured).</summary>
+    private const int DefaultAnimatedCap = 1_000_000;
+
+    /// <summary>How many points an animated line keeps, or null for a line that is not one.</summary>
+    internal static int? AnimatedCapOf(GraphObject target) =>
+        target is PlotObject plot && AnimatedCaps.TryGetValue(plot, out StrongBox<int>? cap) ? cap.Value : null;
+
+    /// <summary>Caps an animated line at a new count and drops the points it no longer keeps.</summary>
+    internal static void SetAnimatedCap(PlotObject target, JgsValue value, int line, int col)
+    {
+        double keep = ScalarOf("animatedline: MaximumNumPoints", value, line, col);
+        if (!(keep >= 1))
+        {
+            throw new JgsRuntimeException(line, col,
+                "animatedline: 'MaximumNumPoints' is how many points to keep, so it has to be at least one.");
+        }
+
+        AnimatedCaps.AddOrUpdate(target, new StrongBox<int>((int)System.Math.Min(keep, int.MaxValue)));
+        TrimToCap(target);
+    }
+
     private static JgsValue AnimatedLine(IReadOnlyList<JgsValue> args, int line, int col)
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
@@ -101,17 +122,12 @@ internal static partial class JgsBuiltins
             // An empty animated line is flat, exactly as MATLAB's is: the dimensionality is fixed when
             // the object is made, so addpoints with a z on a line created without one is refused by
             // name rather than quietly dropping the third coordinate.
+            // Every animated line is marked, with R2025b's default cap of a million points, so that it
+            // answers as an AnimatedLine rather than as a line (open item 88).
+            AnimatedCaps.AddOrUpdate(drawn, new StrongBox<int>(DefaultAnimatedCap));
             if (parsed.Named("MaximumNumPoints") is { } cap)
             {
-                int keep = (int)ScalarOf("animatedline: MaximumNumPoints", cap, line, col);
-                if (keep < 1)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        "animatedline: 'MaximumNumPoints' is how many points to keep, so it has to be at least one.");
-                }
-
-                AnimatedCaps.AddOrUpdate(drawn, new StrongBox<int>(keep));
-                TrimToCap(drawn);
+                SetAnimatedCap(drawn, cap, line, col);
             }
 
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(drawn);
@@ -264,6 +280,39 @@ internal static partial class JgsBuiltins
     /// <summary>How many segments a fully rounded corner is drawn with.</summary>
     private const int CornerSegments = 12;
 
+    /// <summary>A rectangle's box and curvature, which its outline is drawn from.</summary>
+    internal sealed record RectangleShape(double[] Box, double[] Curvature);
+
+    /// <summary>
+    /// The patches <c>rectangle</c> made, with the box and curvature each was drawn from: what makes
+    /// one answer as a Rectangle, and what <c>Position</c> and <c>Curvature</c> read and redraw (open item 88).
+    /// </summary>
+    private static readonly ConditionalWeakTable<PatchPlot, RectangleShape> RectangleShapes = new();
+
+    /// <summary>The shape of a patch <c>rectangle</c> made, or null for any other patch.</summary>
+    internal static RectangleShape? RectangleShapeOf(PatchPlot patch) =>
+        RectangleShapes.TryGetValue(patch, out RectangleShape? shape) ? shape : null;
+
+    /// <summary>Redraws a rectangle's outline for a new box or curvature, refused as <c>rectangle</c> refuses them.</summary>
+    internal static void ReshapeRectangle(PatchPlot patch, double[] box, double[] curvature, int line, int col)
+    {
+        if (box.Length != 4 || !(box[2] > 0) || !(box[3] > 0))
+        {
+            throw new JgsRuntimeException(line, col, "rectangle: 'Position' is [x y width height], with a positive width and height.");
+        }
+
+        double[] both = curvature.Length switch
+        {
+            1 => [curvature[0], curvature[0]],
+            2 => curvature,
+            _ => throw new JgsRuntimeException(line, col, "rectangle: 'Curvature' is one number, or [horizontal vertical]."),
+        };
+
+        (double[] xs, double[] ys) = RectangleOutline(box, both, line, col);
+        patch.SetData(xs, ys, new double[xs.Length], [Enumerable.Range(0, xs.Length).ToArray()]);
+        RectangleShapes.AddOrUpdate(patch, new RectangleShape(box, curvature));
+    }
+
     /// <summary>
     /// <c>rectangle</c> draws in the data's own coordinates, which is what tells it apart from the
     /// <c>annotation('rectangle', …)</c> this build already had: that one is placed on the figure and
@@ -301,15 +350,15 @@ internal static partial class JgsBuiltins
                     "rectangle: a rectangle needs a positive width and height.");
             }
 
-            double[] curvature = parsed.Named("Curvature") is { } bend
+            double[] written = parsed.Named("Curvature") is { } bend
                 ? ToDoubles("rectangle: Curvature", bend, line, col)
                 : [0, 0];
-            curvature = curvature.Length switch
+            double[] curvature = written.Length switch
             {
                 // One number curves both directions by the same fraction of the shorter side, which
                 // is how MATLAB reads a scalar curvature.
-                1 => [curvature[0], curvature[0]],
-                2 => curvature,
+                1 => [written[0], written[0]],
+                2 => written,
                 _ => throw new JgsRuntimeException(line, col,
                     "rectangle: 'Curvature' is one number, or [horizontal vertical]."),
             };
@@ -317,6 +366,7 @@ internal static partial class JgsBuiltins
             (double[] xs, double[] ys) = RectangleOutline(box, curvature, line, col);
             PatchPlot patch = JG.Fill(xs, ys, Colors.Transparent);
             patch.Name = "Rectangle";
+            RectangleShapes.AddOrUpdate(patch, new RectangleShape(box, written)); // a scalar reads back as written
             patch.FaceVisible = false;
             patch.EdgeColor = Colors.Black;
 

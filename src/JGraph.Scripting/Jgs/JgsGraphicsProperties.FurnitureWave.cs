@@ -1865,32 +1865,13 @@ internal static partial class JgsGraphicsProperties
         // MATLAB spells with these two words.
         // A label is anchored among the data, in the figure, or — since U4 — so far in device units
         // from the lower left corner of its axes, which is how MATLAB's dialogs place their text.
+        // In an axes 'normalized' is a fraction of the plot box, as in R2025b (open item 46); a text in a
+        // figure (an annotation's) keeps it a fraction of the figure. A change of unit moves Position
+        // into the new one, so the text stays where it was.
         AddWordProperty(table, "Units",
             entry => Label(entry).DeviceUnits is { } units ? UiUnitConverter.Words[(int)units]
                 : Label(entry).Space == AnnotationSpace.Figure ? "normalized" : "data",
-            (entry, word, line, col) =>
-            {
-                TextAnnotation label = Label(entry);
-                switch (word)
-                {
-                    case "data":
-                        label.DeviceUnits = null;
-                        label.Space = AnnotationSpace.Data;
-                        break;
-                    case "normalized":
-                        label.DeviceUnits = null;
-                        label.Space = AnnotationSpace.Figure;
-                        break;
-                    case "pixels" or "points" or "inches" or "centimeters" or "characters":
-                        label.Space = AnnotationSpace.Data;
-                        label.DeviceUnits = (UiUnits)UiUnitConverter.Words.ToList().IndexOf(word);
-                        break;
-                    default:
-                        throw new JgsRuntimeException(line, col, "MATLAB:datatypes:InvalidEnumValue",
-                            $"Error setting property 'Units' of class 'Text':\n'{word}' is not a valid value. Use one of these values: "
-                            + "'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels' | 'data'.");
-                }
-            });
+            (entry, word, line, col) => SetTextUnits(entry, word, convert: true, line, col));
 
         // Typing into a label in the figure is the plot browser's business, not a script's, and there
         // is no in-place editor to switch on — so the word answers and only the false one is accepted.
@@ -1913,6 +1894,114 @@ internal static partial class JgsGraphicsProperties
     }
 
     /// <summary>
+    /// Puts a text in <paramref name="word"/>'s unit (open item 46). With <paramref name="convert"/> its
+    /// <c>Position</c> is moved into the new unit through the fraction of the plot box it stands at —
+    /// the limits for data, the plot box's size for the device units, pixels counting from 1 — which is
+    /// R2025b's arithmetic; without, the numbers stay and mean the new unit, as a <c>Units</c> given to
+    /// <c>text</c> itself does.
+    /// </summary>
+    internal static void SetTextUnits(JgsHandleEntry entry, string word, bool convert, int line, int col)
+    {
+        var label = (TextAnnotation)entry.Target;
+        UiUnits? device = word switch
+        {
+            "data" => null,
+            "normalized" or "pixels" or "points" or "inches" or "centimeters" or "characters" =>
+                (UiUnits)UiUnitConverter.Words.ToList().IndexOf(word),
+            _ => throw new JgsRuntimeException(line, col, "MATLAB:datatypes:InvalidEnumValue",
+                $"Error setting property 'Units' of class 'Text':\n'{word}' is not a valid value. Use one of these values: "
+                + "'inches' | 'centimeters' | 'characters' | 'normalized' | 'points' | 'pixels' | 'data'."),
+        };
+
+        if (label.Parent is not AxesModel axes)
+        {
+            // A text in a figure: normalized is the figure's fraction, as it always was here.
+            label.DeviceUnits = device == UiUnits.Normalized ? null : device;
+            label.Space = device == UiUnits.Normalized ? AnnotationSpace.Figure : AnnotationSpace.Data;
+            return;
+        }
+
+        if (convert && label.Space == AnnotationSpace.Data && label.DeviceUnits != device)
+        {
+            (double fx, double fy) = FractionOfPlotBox(axes, label.Position, label.DeviceUnits);
+            label.Position = FromFractionOfPlotBox(axes, fx, fy, device);
+        }
+
+        label.Space = AnnotationSpace.Data;
+        label.DeviceUnits = device;
+    }
+
+    /// <summary>Where a point in <paramref name="units"/> (data when null) stands as fractions of the plot box.</summary>
+    private static (double X, double Y) FractionOfPlotBox(AxesModel axes, Point2D at, UiUnits? units)
+    {
+        if (units is null)
+        {
+            return (DataFraction(axes, "XLim", axes.PrimaryXAxis, at.X), DataFraction(axes, "YLim", axes.PrimaryYAxis, at.Y));
+        }
+
+        Size2D box = PlotBoxPixels(axes);
+        (double px, double py) = UiUnitConverter.PixelsPer(units.Value, box);
+        double x = units == UiUnits.Pixels ? at.X - 1 : at.X * px;
+        double y = units == UiUnits.Pixels ? at.Y - 1 : at.Y * py;
+        return (box.Width > 0 ? x / box.Width : 0, box.Height > 0 ? y / box.Height : 0);
+    }
+
+    /// <summary>The point in <paramref name="units"/> (data when null) at fractions of the plot box.</summary>
+    private static Point2D FromFractionOfPlotBox(AxesModel axes, double fx, double fy, UiUnits? units)
+    {
+        if (units is null)
+        {
+            return new Point2D(DataAt(axes, "XLim", axes.PrimaryXAxis, fx), DataAt(axes, "YLim", axes.PrimaryYAxis, fy));
+        }
+
+        Size2D box = PlotBoxPixels(axes);
+        (double px, double py) = UiUnitConverter.PixelsPer(units.Value, box);
+        double x = fx * box.Width;
+        double y = fy * box.Height;
+        return units == UiUnits.Pixels
+            ? new Point2D(x + 1, y + 1)
+            : new Point2D(px > 0 ? x / px : 0, py > 0 ? y / py : 0);
+    }
+
+    /// <summary>The plot box's size in pixels: as last drawn, or as it would be drawn now.</summary>
+    internal static Size2D PlotBoxPixels(AxesModel axes)
+    {
+        Rect2D area = LayoutOf(axes).PlotAreaPx;
+        return new Size2D(area.Width, area.Height);
+    }
+
+    /// <summary>A data value's fraction along a ruler's limits as the axes reads them back, logs and reversals included.</summary>
+    private static double DataFraction(AxesModel axes, string limits, AxisModel ruler, double value)
+    {
+        (double low, double high) = LimitsOf(axes, limits);
+        double fraction = ruler.Scale == AxisScaleType.Logarithmic && low > 0 && high > 0 && value > 0
+            ? (System.Math.Log10(value) - System.Math.Log10(low)) / (System.Math.Log10(high) - System.Math.Log10(low))
+            : (value - low) / (high - low);
+        return ruler.Inverted ? 1 - fraction : fraction;
+    }
+
+    /// <summary>The data value at a fraction along a ruler's limits (see <see cref="DataFraction"/>).</summary>
+    private static double DataAt(AxesModel axes, string limits, AxisModel ruler, double fraction)
+    {
+        (double low, double high) = LimitsOf(axes, limits);
+        if (ruler.Inverted)
+        {
+            fraction = 1 - fraction;
+        }
+
+        return ruler.Scale == AxisScaleType.Logarithmic && low > 0 && high > 0
+            ? System.Math.Pow(10, System.Math.Log10(low) + (fraction * (System.Math.Log10(high) - System.Math.Log10(low))))
+            : low + (fraction * (high - low));
+    }
+
+    /// <summary>An axes' limits along one ruler, read as a script reads them (automatic ones worked out).</summary>
+    private static (double Low, double High) LimitsOf(AxesModel axes, string name)
+    {
+        JgsValue row = Get(JgsHandleRegistry.EntryFor(axes), name, 0, 0);
+        return (row.ElementAt(0).AsNumber, row.ElementAt(1).AsNumber);
+    }
+
+    /// <summary>
     /// The label's rendered rectangle in the units it is placed in. Pixels come back through the plot
     /// box the renderer last reported, inverted one ruler at a time so a log or reversed direction
     /// reads back the value that was drawn there.
@@ -1925,7 +2014,8 @@ internal static partial class JgsGraphicsProperties
         if (label.DeviceUnits is { } units)
         {
             Size2D size = MeasuredPixels(label);
-            (double fx, double fy) = UiUnitConverter.PixelsPer(units, new Size2D(1, 1));
+            (double fx, double fy) = UiUnitConverter.PixelsPer(
+                units, units == UiUnits.Normalized && label.Parent is AxesModel axesOf ? PlotBoxPixels(axesOf) : new Size2D(1, 1));
             double width = size.Width / fx;
             double height = size.Height / fy;
             double startX = label.HorizontalAlignment switch
