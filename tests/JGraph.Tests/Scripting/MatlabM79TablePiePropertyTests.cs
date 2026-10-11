@@ -102,13 +102,13 @@ public class MatlabM79TablePiePropertyTests : IDisposable
             set(s, 'ColorVariable', 'Var4');
             colours = get(s, 'CData');
             set(s, 'ColorVariable', '');
-            cleared = numel(get(s, 'CData'));
+            cleared = get(s, 'CDataMode');
             """);
 
         Succeeded(result);
         Assert.Equal([10, 20, 30], Row(result, "sizes"));
         Assert.Equal([7, 8, 9], Row(result, "colours"));
-        Assert.Equal(0, Number(result, "cleared"));
+        Assert.Equal("auto", Text(result, "cleared"));
     }
 
     /// <summary>

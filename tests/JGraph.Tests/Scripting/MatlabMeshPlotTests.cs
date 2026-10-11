@@ -189,7 +189,7 @@ public class MatlabMeshPlotTests : IDisposable
             % A colour per tetrahedron replaces the numbering, and the patch options come through.
             h2 = tetramesh(T, X, [5 9], 'FaceAlpha', 0.25);
             disp(get(h2, 'ColorRange'));
-            disp(get(h2, 'Opacity'));
+            disp(get(h2, 'FaceAlpha'));
             """);
 
         Assert.Equal(

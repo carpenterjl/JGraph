@@ -15,7 +15,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static readonly HashSet<string> PatchOptionNames = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Faces", "Vertices", "FaceColor", "EdgeColor", "LineWidth", "FaceAlpha",
+        "Faces", "Vertices", "FaceColor", "EdgeColor", "LineWidth", "FaceAlpha", "EdgeAlpha",
         "FaceVertexCData", "CData", "DisplayName", "LineStyle", "FaceLighting",
     };
 
@@ -192,6 +192,13 @@ internal static partial class JgsBuiltins
             positional.Add(value);
         }
 
+        // A colour word straight after the coordinates is c, not a size, as R2025b reads
+        // scatter3(x, y, z, 'g') (open item 101); the default size stands in front of it.
+        if (positional.Count == 4 && positional[3].Type == JgsType.String)
+        {
+            positional.Insert(3, JgsMatrix.FromColumnMajor([], 0, 0));
+        }
+
         if (positional.Count is < 3 or > 5)
         {
             throw new JgsRuntimeException(line, col,
@@ -290,6 +297,12 @@ internal static partial class JgsBuiltins
     private static void ApplySizeData(string verb, Scatter3DPlot plot, JgsValue value, int line, int col)
     {
         double[] sizes = Numbers($"{verb}: sizes", value, line, col);
+        if (sizes.Length == 0)
+        {
+            // [] is MATLAB's placeholder for the default size, written to reach the colour after it.
+            return;
+        }
+
         if (plot.BubbleSizing)
         {
             // A bubble's size is a reading, so one of them is a reading every bubble shares rather
@@ -706,8 +719,13 @@ internal static partial class JgsBuiltins
                     }
 
                     break;
+                // The patch's own two alphas, which its handle reads back; this wrote the object's
+                // opacity until open item 102, so the value drew but read back as 1.
                 case "facealpha":
-                    patch.Opacity = NumOf($"{verb}: FaceAlpha", value, line, col);
+                    patch.FaceAlpha = NumOf($"{verb}: FaceAlpha", value, line, col);
+                    break;
+                case "edgealpha":
+                    patch.EdgeAlpha = NumOf($"{verb}: EdgeAlpha", value, line, col);
                     break;
                 case "facevertexcdata":
                 case "cdata":

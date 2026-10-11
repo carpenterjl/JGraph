@@ -427,7 +427,7 @@ internal static partial class JgsBuiltins
         BarPlot bars => bars.FillColor ?? PaletteColorFor(plot),
         AreaPlot band => band.FaceColor ?? PaletteColorFor(plot),
         StemPlot stems => stems.Color ?? PaletteColorFor(plot),
-        ScatterPlot points => points.Color ?? PaletteColorFor(plot),
+        ScatterPlot points => points.DataColor ?? PaletteColorFor(plot),
         _ => PaletteColorFor(plot),
     };
 

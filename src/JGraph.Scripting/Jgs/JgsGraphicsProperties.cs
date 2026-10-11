@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Reflection;
 using JGraph.Api;
@@ -1211,10 +1211,11 @@ internal static partial class JgsGraphicsProperties
 
         if (typeof(ScatterPlot).IsAssignableFrom(type))
         {
+            // The cloud's colour, a JGraph name beside MATLAB's: what scatter's colour argument wrote.
             Put(table, "Color",
-                entry => ColorRow(((ScatterPlot)entry.Target).Color ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
+                entry => ColorRow(((ScatterPlot)entry.Target).DataColor ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
                 (entry, value, line, col) =>
-                    ((ScatterPlot)entry.Target).Color = JgsBuiltins.OptionColor(value, line, col, "scatter"));
+                    ((ScatterPlot)entry.Target).DataColor = JgsBuiltins.OptionColor(value, line, col, "scatter"));
 
             // The per-point channels are plain arrays, which reflection does not carry, and the five
             // names MATLAB spells differently than the model does. A bubble chart is a scatter with
@@ -1228,13 +1229,14 @@ internal static partial class JgsGraphicsProperties
                 (entry, value, line, col) => ((ScatterPlot)entry.Target).ColorData =
                     JgsBuiltins.ToDoubles("ColorData", value, line, col));
 
-            // CData is what MATLAB calls the same channel, and what scatter's own fourth argument
-            // writes — a value a call can set but a handle cannot read back is the gap M54 exists to
-            // close, so the name the verb takes is the name the handle answers to.
+            // CData is what MATLAB calls the colour channel, and what scatter's own colour argument
+            // writes: a value per point, or the one colour the cloud is drawn in — the series colour
+            // until one is given, as R2025b answers (open item 101).
             Put(table, "CData",
-                entry => Row([.. ((ScatterPlot)entry.Target).ColorData ?? []]),
-                (entry, value, line, col) => ((ScatterPlot)entry.Target).ColorData =
-                    JgsBuiltins.ToDoubles("CData", value, line, col));
+                entry => ((ScatterPlot)entry.Target) is { ColorData: { } values }
+                    ? Row([.. values])
+                    : ColorRow(((ScatterPlot)entry.Target).DataColor ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
+                (entry, value, line, col) => JgsBuiltins.MarkerCData("scatter", (ScatterPlot)entry.Target, value, line, col));
             Put(table, "Marker",
                 entry => JgsValue.Str(JgsBuiltins.MarkerWord(((ScatterPlot)entry.Target).Marker)),
                 (entry, value, line, col) =>
@@ -1243,33 +1245,30 @@ internal static partial class JgsGraphicsProperties
                     plot.Marker = JgsBuiltins.ParseMarkerWord(
                         JgsBuiltins.StrOf("Marker", value, line, col), plot.Marker);
                 });
-            Put(table, "MarkerFaceColor",
-                entry => ColorRow(((ScatterPlot)entry.Target).Fill
-                    ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
-                (entry, value, line, col) =>
-                {
-                    var plot = (ScatterPlot)entry.Target;
-                    plot.Fill = JgsBuiltins.WithAlpha(
-                        JgsBuiltins.OptionColor(value, line, col, "scatter"), (plot.Fill?.A ?? 255) / 255.0);
-                });
-            Put(table, "MarkerEdgeColor",
-                entry => ColorRow(((ScatterPlot)entry.Target).Color
-                    ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
-                (entry, value, line, col) =>
-                {
-                    var plot = (ScatterPlot)entry.Target;
-                    plot.Color = JgsBuiltins.WithAlpha(
-                        JgsBuiltins.OptionColor(value, line, col, "scatter"), (plot.Color?.A ?? 255) / 255.0);
-                });
 
-            // MATLAB keeps the transparency in its own property; here it is the colour's own alpha,
-            // so the two names read and write the same byte from opposite directions.
-            AddAlpha(table, "MarkerFaceAlpha",
-                entry => ((ScatterPlot)entry.Target).Fill,
-                (entry, color) => ((ScatterPlot)entry.Target).Fill = color);
-            AddAlpha(table, "MarkerEdgeAlpha",
-                entry => ((ScatterPlot)entry.Target).Color,
-                (entry, color) => ((ScatterPlot)entry.Target).Color = color);
+            // R2025b's words: an edge follows the data ('flat') until it is given a colour or 'none',
+            // and an interior is open ('none') until it is given a colour or 'flat'.
+            Put(table, "MarkerFaceColor",
+                entry => ((ScatterPlot)entry.Target) switch
+                {
+                    { FillFollowsData: true } => JgsValue.Str("flat"),
+                    { Fill: { } fill } => ColorRow(fill),
+                    _ => JgsValue.Str("none"),
+                },
+                (entry, value, line, col) => JgsBuiltins.MarkerFace("scatter", (ScatterPlot)entry.Target, value, line, col));
+            Put(table, "MarkerEdgeColor",
+                entry => ((ScatterPlot)entry.Target).Color is { } edge ? ColorRow(edge) : JgsValue.Str("flat"),
+                (entry, value, line, col) => JgsBuiltins.MarkerEdge("scatter", (ScatterPlot)entry.Target, value, line, col));
+
+            // The two transparencies, kept as written rather than in a colour's alpha byte (open item 102).
+            Put(table, "MarkerFaceAlpha",
+                entry => MarkerAlphaValue(((ScatterPlot)entry.Target).FaceAlpha),
+                (entry, value, line, col) => ((ScatterPlot)entry.Target).FaceAlpha =
+                    JgsBuiltins.MarkerAlpha("MarkerFaceAlpha", value, line, col));
+            Put(table, "MarkerEdgeAlpha",
+                entry => MarkerAlphaValue(((ScatterPlot)entry.Target).EdgeAlpha),
+                (entry, value, line, col) => ((ScatterPlot)entry.Target).EdgeAlpha =
+                    JgsBuiltins.MarkerAlpha("MarkerEdgeAlpha", value, line, col));
 
             Put(table, "LineWidth",
                 entry => JgsValue.Number(((ScatterPlot)entry.Target).EdgeWidth),
@@ -1402,10 +1401,46 @@ internal static partial class JgsGraphicsProperties
                 entry => Row([.. ((Scatter3DPlot)entry.Target).SizeData ?? []]),
                 (entry, value, line, col) => ((Scatter3DPlot)entry.Target).SizeData =
                     JgsBuiltins.ToDoubles("SizeData", value, line, col));
+            // CData is a value per point or the cloud's one colour, the series colour until one is
+            // given; the edges follow it, and the interiors too once filled (open item 101).
             Put(table, "CData",
-                entry => Row([.. ((Scatter3DPlot)entry.Target).ColorData ?? []]),
-                (entry, value, line, col) => ((Scatter3DPlot)entry.Target).ColorData =
-                    JgsBuiltins.ToDoubles("CData", value, line, col));
+                entry => ((Scatter3DPlot)entry.Target) is { ColorData: { } values }
+                    ? Row([.. values])
+                    : ColorRow(((Scatter3DPlot)entry.Target).Color ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
+                (entry, value, line, col) =>
+                {
+                    var cloud = (Scatter3DPlot)entry.Target;
+                    double[] given = JgsBuiltins.ToDoubles("CData", value, line, col);
+                    if (given.Length == 3 && cloud.X.Count != 3)
+                    {
+                        cloud.Color = JgsBuiltins.OptionColor(value, line, col, "scatter3");
+                        cloud.ColorData = null;
+                    }
+                    else
+                    {
+                        cloud.ColorData = given;
+                    }
+                });
+            AddNullableMode(table, "CDataMode",
+                entry => ((Scatter3DPlot)entry.Target) is { ColorData: not null } or { Color: not null },
+                entry => ((Scatter3DPlot)entry.Target).Color ??= JgsBuiltins.PaletteColorFor((PlotObject)entry.Target),
+                entry =>
+                {
+                    var cloud = (Scatter3DPlot)entry.Target;
+                    cloud.ColorData = null;
+                    cloud.Color = null;
+                });
+            Put(table, "Marker",
+                entry => JgsValue.Str(JgsBuiltins.MarkerWord(((Scatter3DPlot)entry.Target).Marker)),
+                (entry, value, line, col) =>
+                {
+                    var cloud = (Scatter3DPlot)entry.Target;
+                    cloud.Marker = JgsBuiltins.ParseMarkerWord(JgsBuiltins.StrOf("Marker", value, line, col), cloud.Marker);
+                });
+            Put(table, "MarkerEdgeColor",
+                entry => JgsValue.Str(((Scatter3DPlot)entry.Target).Filled ? "none" : "flat"));
+            Put(table, "MarkerFaceColor",
+                entry => JgsValue.Str(((Scatter3DPlot)entry.Target).Filled ? "flat" : "none"));
             Put(table, "BubbleDiameters", entry => Row(
                 [.. Enumerable.Range(0, ((Scatter3DPlot)entry.Target).SizeData?.Count ?? 0)
                     .Select(((Scatter3DPlot)entry.Target).DiameterAt)]));
@@ -1692,10 +1727,9 @@ internal static partial class JgsGraphicsProperties
                 (entry, value, line, col) =>
                     JgsBuiltins.SetCellLabelColor((HeatmapPlot)entry.Target, value, line, col));
             Put(table, "CellLabelFormat",
-                entry => JgsValue.Str(((HeatmapPlot)entry.Target).CellLabelFormat ?? "auto"),
+                entry => JgsValue.Str(((HeatmapPlot)entry.Target).CellLabelFormat ?? HeatmapPlot.DefaultCellLabelFormat),
                 (entry, value, line, col) => ((HeatmapPlot)entry.Target).CellLabelFormat =
-                    JgsRulerTicks.ToNetFormat(
-                        "CellLabelFormat", JgsBuiltins.StrOf("CellLabelFormat", value, line, col), line, col));
+                    JgsRulerTicks.CellFormat(value, line, col));
             Put(table, "FontSize",
                 entry => JgsValue.Number(((HeatmapPlot)entry.Target).CellLabelStyle.FontSize),
                 (entry, value, line, col) =>
@@ -2487,6 +2521,14 @@ internal static partial class JgsGraphicsProperties
         color is { } present ? ColorRow(present) : JgsValue.Str("none");
 
     /// <summary>A colour or the word 'none', which is how MATLAB turns a fill or an edge off.</summary>
+    /// <summary>A marker chart's face or edge alpha as R2025b reads it: the number written, or 'flat' (NaN).</summary>
+    private static JgsValue MarkerAlphaValue(double alpha) =>
+        double.IsNaN(alpha) ? JgsValue.Str("flat") : JgsValue.Number(alpha);
+
+    /// <summary>Whether a value is the word 'auto'.</summary>
+    private static bool IsAutoWord(JgsValue value) =>
+        value.Type == JgsType.String && value.AsString.Equals("auto", StringComparison.OrdinalIgnoreCase);
+
     private static Color? NoneOrColor(JgsValue value, int line, int col, string verb) =>
         value.Type == JgsType.String && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
             ? null
@@ -3076,8 +3118,10 @@ internal static partial class JgsGraphicsProperties
         throw new JgsRuntimeException(line, col, $"{what} is 'on' or 'off', but got '{word}'.");
     }
 
-    internal static JgsValue ColorRow(Color color) =>
-        JgsMatrix.FromColumnMajor([color.R / 255.0, color.G / 255.0, color.B / 255.0], 1, 3);
+    /// <summary>A colour as an [r g b] row, or the word 'none' for the no-colour <c>OptionColor</c> gives it.</summary>
+    internal static JgsValue ColorRow(Color color) => color == Colors.Transparent
+        ? JgsValue.Str("none")
+        : JgsMatrix.FromColumnMajor([color.R / 255.0, color.G / 255.0, color.B / 255.0], 1, 3);
 
     internal static JgsValue Row(params double[] values) =>
         JgsMatrix.FromColumnMajor(values, 1, values.Length);

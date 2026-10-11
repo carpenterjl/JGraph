@@ -12,12 +12,20 @@ public sealed class ExponentTickGenerator : ITickGenerator
 {
     private readonly ITickGenerator _inner;
     private readonly int? _exponent;
+    private readonly bool _eachLabel;
 
-    public ExponentTickGenerator(ITickGenerator inner, int? exponent)
+    /// <param name="inner">The generator whose ticks are relabelled.</param>
+    /// <param name="exponent">The ruler's power, or null for <see cref="Auto"/>'s.</param>
+    /// <param name="eachLabel">
+    /// Whether every label carries the power itself, as R2025b writes a polar r ruler's
+    /// (<c>1\times10^{4}</c>, probe_104), rather than one mark standing for the row.
+    /// </param>
+    public ExponentTickGenerator(ITickGenerator inner, int? exponent, bool eachLabel = false)
     {
         ArgumentNullException.ThrowIfNull(inner);
         _inner = inner;
         _exponent = exponent;
+        _eachLabel = eachLabel;
     }
 
     public AxisScaleType ScaleType => _inner.ScaleType;
@@ -34,12 +42,14 @@ public sealed class ExponentTickGenerator : ITickGenerator
         double scale = System.Math.Pow(10, exponent);
         string[] labels = TickFormats.Labels(raw.MajorTicks.Select(t => t.Value / scale).ToArray(), labelFormat);
         var relabelled = new Tick[raw.MajorTicks.Count];
+        string power = "\\times10^{" + exponent.ToString(System.Globalization.CultureInfo.InvariantCulture) + "}";
         for (int i = 0; i < relabelled.Length; i++)
         {
-            relabelled[i] = new Tick(raw.MajorTicks[i].Value, labels[i]);
+            string label = _eachLabel && raw.MajorTicks[i].Value != 0 ? labels[i] + power : labels[i];
+            relabelled[i] = new Tick(raw.MajorTicks[i].Value, label);
         }
 
-        return new TickSet(relabelled, raw.MinorTicks, raw.Step) { Exponent = exponent };
+        return new TickSet(relabelled, raw.MinorTicks, raw.Step) { Exponent = _eachLabel ? 0 : exponent };
     }
 
     /// <summary>

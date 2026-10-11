@@ -520,6 +520,22 @@ internal static partial class JgsBuiltins
 
     private static JgsValue Alpha(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        // alpha(obj, value) sets the one object's transparency (open item 102).
+        if (args.Count == 2 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? target)
+            && target.Target is PlotObject)
+        {
+            JgsValue setting = JgsValue.Number(System.Math.Clamp(AlphaValue(args[1], line, col), 0, 1));
+            string? name = new[] { "FaceAlpha", "MarkerFaceAlpha" }
+                .FirstOrDefault(n => JgsGraphicsProperties.TableFor(target.Target.GetType()).ContainsKey(n));
+            if (name is null)
+            {
+                throw new JgsRuntimeException(line, col, "alpha: this object has no faces to make transparent.");
+            }
+
+            JgsGraphicsProperties.Set(target, name, setting, line, col);
+            return JgsValue.Null;
+        }
+
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () =>
         {
@@ -566,15 +582,7 @@ internal static partial class JgsBuiltins
                 return JgsValue.Null;
             }
 
-            double value = rest[0].Type == JgsType.String
-                ? StrOf("alpha", rest[0], line, col).ToLowerInvariant() switch
-                {
-                    "opaque" => 1,
-                    "clear" => 0,
-                    var word => throw new JgsRuntimeException(line, col,
-                        $"alpha: '{word}' is not one of opaque, clear."),
-                }
-                : ScalarOf("alpha", rest[0], line, col);
+            double value = AlphaValue(rest[0], line, col);
 
             // Every plot that has a face gets the value and every plot that has not is left alone,
             // which is the difference between "this axes is half transparent" and an error about
@@ -592,6 +600,18 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
     }
+
+    /// <summary>One transparency for <c>alpha</c>: a number, or the word 'opaque' or 'clear'.</summary>
+    private static double AlphaValue(JgsValue value, int line, int col) =>
+        value.Type == JgsType.String
+            ? StrOf("alpha", value, line, col).ToLowerInvariant() switch
+            {
+                "opaque" => 1,
+                "clear" => 0,
+                var word => throw new JgsRuntimeException(line, col,
+                    $"alpha: '{word}' is not one of opaque, clear."),
+            }
+            : ScalarOf("alpha", value, line, col);
 
     /// <summary>
     /// <c>alim</c>: the alpha-data limits this axes spreads its alphamap over. Reading answers the

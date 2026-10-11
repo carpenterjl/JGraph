@@ -389,6 +389,7 @@ internal static partial class JgsBuiltins
 
             ScatterPlot cloud = points.AddScatter(gx, gy);
             cloud.Color = PaletteColorFor(cloud);
+            cloud.FillFollowsData = true;
             cloud.Marker = MarkerType.Circle;
             cloud.MarkerSize = 5;
             if (groups is not null)

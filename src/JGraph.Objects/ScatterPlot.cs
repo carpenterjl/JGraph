@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using JGraph.Core.Data;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
@@ -33,6 +33,10 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
     private MarkerType _marker = MarkerType.Circle;
     private double _markerSize = 7;
     private Color? _fill;
+    private Color? _dataColor;
+    private bool _fillFollowsData;
+    private double _faceAlpha = 1;
+    private double _edgeAlpha = 1;
     private double _edgeWidth = 1.0;
 
     private double[]? _sizeData;
@@ -62,12 +66,56 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
     {
     }
 
-    /// <summary>Explicit marker edge color, or null to use the auto series color.</summary>
+    /// <summary>
+    /// Explicit marker edge color, or null for an edge that follows the data — the colormapped value
+    /// of each point, or <see cref="DataColor"/> (MATLAB's <c>'flat'</c>). Transparent is no edge.
+    /// </summary>
     [Category("Appearance")]
     public Color? Color
     {
         get => _color;
         set => SetProperty(ref _color, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The one colour the cloud's data is drawn in when it has no <see cref="ColorData"/> — MATLAB's
+    /// <c>CData</c> given as a colour — or null for the series colour.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Data color")]
+    public Color? DataColor
+    {
+        get => _dataColor;
+        set => SetProperty(ref _dataColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Whether the marker interiors are painted in the data's colour, as the edges are by default
+    /// (MATLAB's <c>'flat'</c> face, what <c>'filled'</c> asks for), rather than in <see cref="Fill"/>.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Fill follows data")]
+    public bool FillFollowsData
+    {
+        get => _fillFollowsData;
+        set => SetProperty(ref _fillFollowsData, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The opacity of the marker interiors, kept as written (MATLAB's <c>MarkerFaceAlpha</c>), or NaN
+    /// for MATLAB's <c>'flat'</c>, which leaves the opacity to <see cref="AlphaData"/>.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Face alpha")]
+    public double FaceAlpha
+    {
+        get => _faceAlpha;
+        set => SetProperty(ref _faceAlpha, double.IsNaN(value) ? value : System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+    }
+
+    /// <summary>The opacity of the marker edges, as <see cref="FaceAlpha"/> is of the interiors.</summary>
+    [Category("Appearance"), DisplayName("Edge alpha")]
+    public double EdgeAlpha
+    {
+        get => _edgeAlpha;
+        set => SetProperty(ref _edgeAlpha, double.IsNaN(value) ? value : System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
     }
 
     [Category("Appearance")]
@@ -84,7 +132,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
         set => SetProperty(ref _markerSize, System.Math.Max(0, value), InvalidationKind.Render);
     }
 
-    /// <summary>Marker interior color, or null for open markers.</summary>
+    /// <summary>Marker interior color, or null for open markers, unless <see cref="FillFollowsData"/>.</summary>
     [Category("Appearance")]
     public Color? Fill
     {
@@ -249,7 +297,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
     public (double Min, double Max) ColorRange => ResolveColorRange();
 
     /// <inheritdoc />
-    Color? IBubbleData.BubbleFaceColor => _fill ?? _color;
+    Color? IBubbleData.BubbleFaceColor => _fillFollowsData ? _dataColor : _fill ?? _color;
 
     /// <summary>
     /// The scale this plot's bubbles are drawn against: the axes' when it is in one, and one read off
@@ -364,14 +412,15 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(state);
 
-        Color color = _color ?? state.SeriesColor;
+        Color data = _dataColor ?? state.SeriesColor;
         IDataSeries drawn = Displayed;
         if (_sizeData is null && _colorData is null && _alphaData is null)
         {
             // One uniform style: the whole cloud goes out as a single call, as it did before there
             // were per-point channels at all.
-            var marker = new MarkerStyle(_marker, _markerSize, _fill ?? color, color, _edgeWidth);
-            SeriesRenderer.DrawMarkers(context, state, drawn, marker, color, ref _pixelBuffer);
+            Color edge = EdgeFor(data);
+            var marker = new MarkerStyle(_marker, _markerSize, FillFor(data), edge, _edgeWidth);
+            SeriesRenderer.DrawMarkers(context, state, drawn, marker, edge, ref _pixelBuffer);
             return;
         }
 
@@ -389,20 +438,21 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
                 continue;
             }
 
-            Color point = _colorData is { } values ? _colormap.Sample(values[i], min, max, logColor) : color;
-            Color fill = _colorData is null ? _fill ?? color : point;
+            Color point = _colorData is { } values ? _colormap.Sample(values[i], min, max, logColor) : data;
+            Color? fill = FillFor(point);
+            Color edge = EdgeFor(point);
 
             // The per-point transparency, read the way the axes' alpha map says to read it — the
             // same AlphaResolver a surface and an image have used since M74.
             if (_alphaData is { } alphas && i < alphas.Length)
             {
                 double opacity = OpacityOf(alphas[i], alpha);
-                fill = fill.WithOpacity(opacity);
-                point = point.WithOpacity(opacity);
+                fill = fill?.WithOpacity(opacity);
+                edge = edge.WithOpacity(opacity);
             }
 
             one[0] = mapper.DataToPixel(x, y);
-            context.DrawMarkers(one, new MarkerStyle(_marker, DiameterAt(i), fill, point, _edgeWidth), point);
+            context.DrawMarkers(one, new MarkerStyle(_marker, DiameterAt(i), fill, edge, _edgeWidth), edge);
         }
     }
 
@@ -474,10 +524,20 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
     /// <inheritdoc />
     public LegendKey GetLegendKey(Color seriesColor)
     {
-        Color color = _color ?? seriesColor;
-        var marker = new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _fill ?? color, color, _edgeWidth);
+        Color data = _dataColor ?? seriesColor;
+        var marker = new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), FillFor(data), EdgeFor(data), _edgeWidth);
         return new LegendKey(line: null, marker, swatch: null);
     }
+
+    /// <summary>The interior a marker drawn in the data colour <paramref name="data"/> gets, or null for none.</summary>
+    private Color? FillFor(Color data) =>
+        (_fillFollowsData ? data : _fill) is { } fill ? fill.WithOpacity(AlphaOpacity(_faceAlpha)) : null;
+
+    /// <summary>The edge a marker drawn in the data colour <paramref name="data"/> gets.</summary>
+    private Color EdgeFor(Color data) => (_color ?? data).WithOpacity(AlphaOpacity(_edgeAlpha));
+
+    /// <summary>A face or edge alpha as an opacity; MATLAB's 'flat' (NaN) leaves it to AlphaData.</summary>
+    private static double AlphaOpacity(double alpha) => double.IsNaN(alpha) ? 1 : alpha;
 
     /// <summary>One coordinate of every sample, as an array the spread can be worked out over.</summary>
     private double[] Column(bool x)

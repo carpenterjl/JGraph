@@ -493,6 +493,12 @@ public sealed class AxisDto
     /// <summary>A ruler's chosen power of ten, or null for automatic. Defaulted, so older documents still load.</summary>
     public int? Exponent { get; set; }
 
+    /// <summary>The text drawn for that power, or null for the automatic one; null in older documents.</summary>
+    public string? ExponentLabel { get; set; }
+
+    /// <summary>Whether that text is drawn; true in older documents.</summary>
+    public bool ShowExponentLabel { get; set; } = true;
+
     public string[]? Categories { get; set; }
 
     /// <summary>Manual tick placement, or null for automatic. Defaulted, so v5 documents still load.</summary>

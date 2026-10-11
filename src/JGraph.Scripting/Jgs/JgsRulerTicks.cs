@@ -141,12 +141,7 @@ internal static class JgsRulerTicks
 
         if (asProperty)
         {
-            throw problem == TickFormatProblem.UnsupportedType
-                ? new JgsRuntimeException(line, col, "MATLAB:datatypes:PrintfFormatDataType:UnsupportedType",
-                    "Error setting property 'TickLabelFormat' of class 'NumericRuler':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.")
-                : new JgsRuntimeException(line, col, "MATLAB:datatypes:PrintfFormatDataType:InvalidFormat",
-                    "Error setting property 'TickLabelFormat' of class 'NumericRuler':\nValue must be a supported tick label format specification. "
-                    + "For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.");
+            throw PrintfRefusal(problem, "TickLabelFormat", "NumericRuler", line, col);
         }
 
         _ = ToNetFormat(what, format, line, col); // says what is wrong in JGraph's words
@@ -155,9 +150,41 @@ internal static class JgsRulerTicks
     }
 
     /// <summary>
+    /// A heatmap's <c>CellLabelFormat</c> as written, once it is a format R2025b takes: one number
+    /// conversion with any text around it, and no named format (open item 103, probe_103).
+    /// </summary>
+    public static string CellFormat(JgsValue value, int line, int col)
+    {
+        string format = JgsBuiltins.StrOf("CellLabelFormat", value, line, col);
+        TickFormatProblem problem = TickFormats.Check(format);
+        return problem == TickFormatProblem.None
+            ? format
+            : throw PrintfRefusal(problem, "CellLabelFormat", "HeatmapChart", line, col);
+    }
+
+    /// <summary>R2025b's refusal of a printf format property, identifier and words.</summary>
+    private static JgsRuntimeException PrintfRefusal(
+        TickFormatProblem problem, string property, string cls, int line, int col)
+    {
+        string setting = $"Error setting property '{property}' of class '{cls}':\n";
+        return problem switch
+        {
+            TickFormatProblem.UnsupportedType => new JgsRuntimeException(line, col,
+                "MATLAB:datatypes:PrintfFormatDataType:UnsupportedType",
+                setting + "Format type must be %f, %F, %g, %G, %e, %E, %d or %i."),
+            TickFormatProblem.DynamicNumber => new JgsRuntimeException(line, col,
+                "MATLAB:datatypes:PrintfFormatDataType:DynamicNumber",
+                setting + "Width and precision must be numeric literals."),
+            _ => new JgsRuntimeException(line, col, "MATLAB:datatypes:PrintfFormatDataType:InvalidFormat",
+                setting + "Value must be a supported tick label format specification. "
+                + "For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'."),
+        };
+    }
+
+    /// <summary>
     /// Translates MATLAB's tick format — a named one such as 'usd' or 'degrees', or a printf spec such
-    /// as '%.2f' with any literal text around it — into a .NET numeric format. A heatmap's
-    /// <c>CellLabelFormat</c> is still kept this way; a ruler keeps the printf format itself (open item 97).
+    /// as '%.2f' with any literal text around it — into a .NET numeric format. Nothing keeps a format
+    /// this way any more (open items 97 and 103); it is how the xtickformat family words a refusal.
     /// </summary>
     public static string? ToNetFormat(string what, string format, int line, int col)
     {

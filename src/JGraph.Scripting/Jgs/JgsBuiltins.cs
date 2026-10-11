@@ -951,6 +951,11 @@ internal static partial class JgsBuiltins
 
         Define("numel", (args, line, col) =>
         {
+            if (args.Count > 1)
+            {
+                return JgsValue.Number(NumelIndexed(args, line, col));
+            }
+
             Arity("numel", args, 1, line, col);
             return args[0].Type switch
             {
@@ -3397,12 +3402,22 @@ internal static partial class JgsBuiltins
         };
     }
 
-    /// <summary>A plot option color: a spec letter, a common color name, or an [r g b] triplet in [0, 1].</summary>
+    /// <summary>
+    /// A plot option color: a spec letter, a common color name, an [r g b] triplet in [0, 1], or
+    /// <c>'none'</c> — R2025b's word for no colour at all, which it also takes as <c>'n'</c> or
+    /// <c>'no'</c> (open item 100). No colour is <see cref="JGraph.Core.Drawing.Colors.Transparent"/>,
+    /// which draws nothing and which <c>ColorRow</c> reads back as <c>'none'</c>.
+    /// </summary>
     internal static JGraph.Core.Drawing.Color OptionColor(JgsValue value, int line, int col, string what = "plot")
     {
         if (value.Type == JgsType.String)
         {
             string text = value.AsString;
+            if (IsNoneColorWord(text))
+            {
+                return JGraph.Core.Drawing.Colors.Transparent;
+            }
+
             string letter = text.ToLowerInvariant() switch
             {
                 "red" => "r", "green" => "g", "blue" => "b", "cyan" => "c",
@@ -3422,15 +3437,80 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{what}: unknown color '{text}'.");
         }
 
+        // R2025b also takes [r g b a], drawing at that alpha and reading back [r g b] (open item 102).
         double[] triplet = ToDoubles($"{what}: Color", value, line, col);
-        if (triplet.Length != 3)
+        if (triplet.Length is not (3 or 4))
         {
             throw new JgsRuntimeException(line, col, $"{what}: a numeric Color is an [r g b] triplet in [0, 1].");
         }
 
         static byte Level(double v) => (byte)System.Math.Round(System.Math.Clamp(v, 0, 1) * 255);
-        return JGraph.Core.Drawing.Color.FromRgb(Level(triplet[0]), Level(triplet[1]), Level(triplet[2]));
+        return new JGraph.Core.Drawing.Color(
+            Level(triplet[0]), Level(triplet[1]), Level(triplet[2]), triplet.Length == 4 ? Level(triplet[3]) : (byte)255);
     }
+
+    /// <summary>
+    /// The legacy <c>numel(A, idx1, idx2, …)</c>: how many elements <c>A(idx1, idx2, …)</c> would
+    /// have, which is what a struct array's <c>numel(s.f)</c> spreads into (open item 104, probe_104).
+    /// R2025b counts each subscript without checking it — a number or a char row by its elements, a
+    /// logical by its trues — and a colon by the extent it spans, the last one folding every
+    /// dimension after it; a string or a cell is refused.
+    /// </summary>
+    private static double NumelIndexed(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        int[] dims = SizeDims(args[0]);
+        int count = args.Count - 1;
+        double total = 1;
+        for (int k = 0; k < count; k++)
+        {
+            JgsValue index = args[k + 1];
+            if (index.Type == JgsType.String && index.AsString == ":")
+            {
+                double span = 1;
+                for (int d = k; d < (k == count - 1 ? dims.Length : k + 1); d++)
+                {
+                    span *= d < dims.Length ? dims[d] : 1;
+                }
+
+                total *= span;
+            }
+            else if (index.Type == JgsType.String && !index.IsStringArray)
+            {
+                total *= index.AsString.Length;
+            }
+            else if (index.Type is JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.Array
+                && !index.IsStringArray)
+            {
+                total *= IsLogicalValue(index) ? CountTrue(index) : SizeDims(index).Aggregate(1.0, static (a, d) => a * d);
+            }
+            else
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:numel:BadSubscriptingIndex", "Bad subscripting index.");
+            }
+        }
+
+        return total;
+
+        static double CountTrue(JgsValue mask)
+        {
+            if (mask.Type == JgsType.Bool)
+            {
+                return mask.IsTruthy ? 1 : 0;
+            }
+
+            double trues = 0;
+            for (int i = 0; i < mask.ArrayLength; i++)
+            {
+                trues += mask.ElementAt(i).IsTruthy ? 1 : 0;
+            }
+
+            return trues;
+        }
+    }
+
+    /// <summary>Whether a colour word is <c>'none'</c> or a start of it, as R2025b reads one.</summary>
+    internal static bool IsNoneColorWord(string text) =>
+        text.Length > 0 && "none".StartsWith(text, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// A <c>#RRGGBB</c> or <c>#RGB</c> string as a colour, or null if it is not one. MATLAB accepts

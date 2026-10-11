@@ -39,9 +39,11 @@ public static class TickGenerators
             : new ManualTickGenerator(automatic, axis.TickPositions, axis.TickLabelOverrides);
 
         // A linear ruler's numbers are written over a power of ten when they are large or small
-        // enough (open item 97); labels the axis was given are its own words and are left alone.
+        // enough (open item 97); labels the axis was given are its own words and are left alone. A
+        // polar r ruler writes the power into each label instead of once beside them (open item 104).
+        bool polarR = axis.Parent is AxesModel owner && ReferenceEquals(owner.RAxis, axis);
         return axis.Scale == AxisScaleType.Linear && axis.DurationFormat is null && axis.TickLabelOverrides is null
-            ? new ExponentTickGenerator(chosen, axis.Exponent)
+            ? new ExponentTickGenerator(chosen, axis.Exponent, eachLabel: polarR)
             : chosen;
     }
 }

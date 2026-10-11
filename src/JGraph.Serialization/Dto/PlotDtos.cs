@@ -144,6 +144,18 @@ public sealed class ScatterPlotDto : PlotDto
 
     public Color? Fill { get; set; }
 
+    /// <summary>The cloud's one data colour (MATLAB's <c>CData</c> as a colour), or null for the series colour.</summary>
+    public Color? DataColor { get; set; }
+
+    /// <summary>Whether the interiors take the data colour (MATLAB's <c>'flat'</c> face).</summary>
+    public bool FillFollowsData { get; set; }
+
+    /// <summary>The interiors' opacity as written, NaN for MATLAB's <c>'flat'</c>; 1 in older files.</summary>
+    public double FaceAlpha { get; set; } = 1;
+
+    /// <summary>The edges' opacity as written, NaN for MATLAB's <c>'flat'</c>; 1 in older files.</summary>
+    public double EdgeAlpha { get; set; } = 1;
+
     public double EdgeWidth { get; set; } = 1.0;
 
     /// <summary>Per-point sizes, or null for a uniform <see cref="MarkerSize"/>.</summary>

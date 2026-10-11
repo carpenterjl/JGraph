@@ -311,11 +311,16 @@ internal static partial class JgsGraphicsProperties
         Put(table, "MarkerFaceColor",
             entry => Line(entry).MarkerFaceColor is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
             (entry, value, line, col) => Line(entry).MarkerFaceColor = NoneOrColor(value, line, col, "line"));
+        // An edge left to follow the line reads R2025b's 'auto' in the MATLAB dialect (open item 100);
+        // the JGS dialect keeps answering the colour it is drawn in.
         Put(table, "MarkerEdgeColor",
-            entry => ColorRow(Line(entry).MarkerEdgeColor ?? Line(entry).Color
-                ?? JgsBuiltins.PaletteColorFor(Line(entry))),
-            (entry, value, line, col) => Line(entry).MarkerEdgeColor =
-                JgsBuiltins.OptionColor(value, line, col, "line"));
+            entry => Line(entry).MarkerEdgeColor is null && JgsRunningDialect.ThreadIsMatlab
+                ? JgsValue.Str("auto")
+                : ColorRow(Line(entry).MarkerEdgeColor ?? Line(entry).Color
+                    ?? JgsBuiltins.PaletteColorFor(Line(entry))),
+            (entry, value, line, col) => Line(entry).MarkerEdgeColor = IsAutoWord(value)
+                ? null
+                : JgsBuiltins.OptionColor(value, line, col, "line"));
 
         // Counted from one at the surface and from zero underneath, like every other index here.
         Put(table, "MarkerIndices",
@@ -948,9 +953,24 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static void AddScatterModeBlock(IDictionary<string, GraphicsProperty> table)
     {
-        AddChannelMode(table, "CDataMode", "CData",
-            entry => ((ScatterPlot)entry.Target).ColorData,
-            entry => ((ScatterPlot)entry.Target).ColorData = null);
+        // CData is a colour or a value per point, and is automatic only while it is the series
+        // colour; freezing that colour keeps it (open item 101).
+        AddNullableMode(table, "CDataMode",
+            entry => ((ScatterPlot)entry.Target) is { ColorData: not null } or { DataColor: not null },
+            entry =>
+            {
+                var cloud = (ScatterPlot)entry.Target;
+                if (cloud.ColorData is null && cloud.DataColor is null)
+                {
+                    cloud.DataColor = JgsBuiltins.PaletteColorFor(cloud);
+                }
+            },
+            entry =>
+            {
+                var cloud = (ScatterPlot)entry.Target;
+                cloud.ColorData = null;
+                cloud.DataColor = null;
+            });
         AddChannelMode(table, "SizeDataMode", "SizeData",
             entry => ((ScatterPlot)entry.Target).SizeData,
             entry => ((ScatterPlot)entry.Target).SizeData = null);

@@ -488,7 +488,6 @@ public class MatlabM77PlotPropertyTests : IDisposable
     [InlineData("h = plot([1 2 3]); set(h, 'ZData', [1 2 3]);", "spatial")]
     [InlineData("h = plot([1 2 3]); set(h, 'ThetaData', [1 2 3]);", "polar axes")]
     [InlineData("s = scatter([1 2], [1 2]); set(s, 'ZJitter', 'rand');", "third direction")]
-    [InlineData("s = scatter([1 2], [1 2]); set(s, 'CDataMode', 'manual');", "CData")]
     public Task TheNamesThatCannotActRefuseByName(string code, string fragment) =>
         Refuses(code, fragment);
 

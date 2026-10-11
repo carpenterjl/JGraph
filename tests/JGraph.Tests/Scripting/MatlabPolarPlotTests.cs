@@ -183,7 +183,8 @@ public class MatlabPolarPlotTests : IDisposable
             disp(get(gca, 'Type'));
             disp(get(s, 'Type'));
             disp(get(s, 'SizeData'));
-            disp(round(get(s, 'MarkerFaceColor') * 100) / 100);
+            disp(round(get(s, 'CData') * 100) / 100);
+            disp(get(s, 'MarkerFaceColor'));
 
             figure(2);
             c = polarscatter([0 1 2], [1 2 3], 30, [4 5 6], 'Marker', 's');
@@ -194,7 +195,7 @@ public class MatlabPolarPlotTests : IDisposable
         Assert.Equal(
             new[]
             {
-                "polaraxes", "scatter", "[60, 60, 60]", "[0, 0.45, 0.74]", "square", "[4, 5, 6]",
+                "polaraxes", "scatter", "[60, 60, 60]", "[0, 0.45, 0.74]", "flat", "square", "[4, 5, 6]",
             },
             _output.NormalLines);
     }
@@ -211,13 +212,14 @@ public class MatlabPolarPlotTests : IDisposable
             ax = gca;
             s = scatter(ax, [1 2 3], [4 5 6], 50, 'r', 'filled', 'LineWidth', 1.5);
             disp(get(gca, 'Type'));
+            disp(get(s, 'CData'));
             disp(get(s, 'MarkerFaceColor'));
             disp(get(s, 'LineWidth'));
             disp(get(s, 'SizeData'));
             """);
 
         Assert.Equal(
-            new[] { "axes", "[1, 0, 0]", "1.5", "[50, 50, 50]" },
+            new[] { "axes", "[1, 0, 0]", "flat", "1.5", "[50, 50, 50]" },
             _output.NormalLines);
     }
 

@@ -14,6 +14,9 @@ public enum TickFormatProblem
 
     /// <summary>No conversion at all, more than one, or one cut off in the middle.</summary>
     Invalid,
+
+    /// <summary>A width or precision given as <c>*</c>, to be read from an argument.</summary>
+    DynamicNumber,
 }
 
 /// <summary>
@@ -126,7 +129,11 @@ public static class TickFormats
         return written == "-0" ? "0" : written;
     }
 
-    /// <summary>What R2025b would refuse a ruler's <c>TickLabelFormat</c> for.</summary>
+    /// <summary>
+    /// What R2025b would refuse a ruler's <c>TickLabelFormat</c> or a heatmap's <c>CellLabelFormat</c>
+    /// for (probe_103): a printf conversion that writes no number (<c>%s</c>, <c>%x</c>) is the wrong
+    /// type, a <c>*</c> width is not a literal, and anything else that is not one conversion is invalid.
+    /// </summary>
     public static TickFormatProblem Check(string format)
     {
         int conversions = 0;
@@ -149,9 +156,14 @@ public static class TickFormats
                 return TickFormatProblem.Invalid;
             }
 
+            if (format[cursor] == '*')
+            {
+                return TickFormatProblem.DynamicNumber;
+            }
+
             if ("fFgGeEdi".IndexOf(format[cursor]) < 0)
             {
-                return char.IsLetter(format[cursor]) ? TickFormatProblem.UnsupportedType : TickFormatProblem.Invalid;
+                return "ouxXcs".IndexOf(format[cursor]) >= 0 ? TickFormatProblem.UnsupportedType : TickFormatProblem.Invalid;
             }
 
             conversions++;
@@ -167,7 +179,19 @@ public static class TickFormats
     /// precision honoured. <c>%e</c> writes the power as R2025b's tick labels do, <c>1.5\times10^{3}</c>,
     /// which the TeX the labels are drawn through shows as a superscript.
     /// </summary>
-    public static string Printf(double value, string format, int autoDecimals = -1)
+    public static string Printf(double value, string format, int autoDecimals = -1) =>
+        Write(value, format, autoDecimals, plain: false);
+
+    /// <summary>
+    /// One value as R2025b's <c>sprintf</c> writes it, which is how a heatmap writes its cell labels
+    /// (open item 103, probe_103): <c>%e</c> is <c>1.500000e+03</c>, <c>%E</c> and <c>%G</c> write a capital
+    /// E, a <c>%d</c> or <c>%i</c> given a value with a fraction writes it as <c>%e</c> does, and
+    /// <c>\n</c> and <c>\t</c> are a newline and a tab.
+    /// </summary>
+    public static string Sprintf(double value, string format) =>
+        Write(value, format, autoDecimals: -1, plain: true);
+
+    private static string Write(double value, string format, int autoDecimals, bool plain)
     {
         var sb = new StringBuilder(format.Length + 8);
         for (int i = 0; i < format.Length; i++)
@@ -175,7 +199,7 @@ public static class TickFormats
             char c = format[i];
             if (c == '\\' && i + 1 < format.Length)
             {
-                i = Escape(format, i, sb);
+                i = Escape(format, i, sb, plain);
                 continue;
             }
 
@@ -199,7 +223,7 @@ public static class TickFormats
                 break;
             }
 
-            sb.Append(Convert(value, format[(i + 1)..cursor], format[cursor], autoDecimals));
+            sb.Append(Convert(value, format[(i + 1)..cursor], format[cursor], autoDecimals, plain));
             i = cursor;
         }
 
@@ -216,13 +240,22 @@ public static class TickFormats
         return at;
     }
 
-    /// <summary>A backslash escape: <c>\x</c> with its hex digits, or a backslash before itself.</summary>
-    private static int Escape(string format, int at, StringBuilder sb)
+    /// <summary>
+    /// A backslash escape: <c>\x</c> with its hex digits, or a backslash before itself; and, written as
+    /// <c>sprintf</c> writes, <c>\n</c>, <c>\t</c> and <c>\r</c>.
+    /// </summary>
+    private static int Escape(string format, int at, StringBuilder sb, bool plain)
     {
         char next = format[at + 1];
         if (next == '\\')
         {
             sb.Append('\\');
+            return at + 1;
+        }
+
+        if (plain && next is 'n' or 't' or 'r')
+        {
+            sb.Append(next switch { 'n' => '\n', 't' => '\t', _ => '\r' });
             return at + 1;
         }
 
@@ -245,8 +278,14 @@ public static class TickFormats
         return at;
     }
 
-    private static string Convert(double value, string spec, char conversion, int autoDecimals)
+    private static string Convert(double value, string spec, char conversion, int autoDecimals, bool plain)
     {
+        // sprintf writes a whole-number conversion given a fraction as %e at its default precision.
+        if (plain && conversion is 'd' or 'i' && double.IsFinite(value) && value != System.Math.Round(value))
+        {
+            conversion = 'e';
+        }
+
         bool plus = false, space = false, left = false, zero = false, alternate = false, group = false;
         int i = 0;
         for (; i < spec.Length && "+- 0#,".IndexOf(spec[i]) >= 0; i++)
@@ -295,10 +334,11 @@ public static class TickFormats
             body = conversion switch
             {
                 'f' or 'F' => Group(magnitude.ToString("F" + (precision < 0 ? 6 : precision), CultureInfo.InvariantCulture), group),
+                'e' or 'E' when plain => Scientific(magnitude, precision < 0 ? 6 : precision, conversion == 'E'),
                 'e' or 'E' => Exponential(magnitude, precision < 0 ? 6 : precision),
                 // A %g with no precision over a row of ticks is R2025b's automatic rule (Labels).
                 'g' or 'G' when precision < 0 && autoDecimals >= 0 => Group(Fixed(magnitude, autoDecimals), group),
-                'g' or 'G' => General(magnitude, precision < 0 ? 6 : System.Math.Max(precision, 1), alternate),
+                'g' or 'G' => General(magnitude, precision < 0 ? 6 : System.Math.Max(precision, 1), alternate, plain && conversion == 'G'),
                 _ => Group(System.Math.Round(magnitude, MidpointRounding.AwayFromZero).ToString("F0", CultureInfo.InvariantCulture), group),
             };
 
@@ -353,8 +393,18 @@ public static class TickFormats
         return written[..e] + "\\times10^{" + power.ToString(CultureInfo.InvariantCulture) + "}";
     }
 
+    /// <summary>C's <c>%e</c>: <c>1.500000e+03</c>, the power signed and at least two digits.</summary>
+    private static string Scientific(double magnitude, int precision, bool upper)
+    {
+        string written = magnitude.ToString("E" + precision, CultureInfo.InvariantCulture); // 1.50E+003
+        int e = written.IndexOf('E');
+        int power = int.Parse(written.AsSpan(e + 1), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+        return written[..e] + (upper ? "E" : "e") + (power < 0 ? "-" : "+")
+            + System.Math.Abs(power).ToString("00", CultureInfo.InvariantCulture);
+    }
+
     /// <summary>C's <c>%g</c>: fixed or exponential by the power, trailing zeros dropped unless <c>#</c>.</summary>
-    private static string General(double magnitude, int precision, bool alternate)
+    private static string General(double magnitude, int precision, bool alternate, bool upper = false)
     {
         if (magnitude == 0)
         {
@@ -367,7 +417,7 @@ public static class TickFormats
         if (power < -4 || power >= precision)
         {
             string mantissa = rounded[..rounded.IndexOf('E')];
-            written = (alternate ? mantissa : Trim(mantissa)) + "e" + (power < 0 ? "-" : "+")
+            written = (alternate ? mantissa : Trim(mantissa)) + (upper ? "E" : "e") + (power < 0 ? "-" : "+")
                 + System.Math.Abs(power).ToString("00", CultureInfo.InvariantCulture);
         }
         else

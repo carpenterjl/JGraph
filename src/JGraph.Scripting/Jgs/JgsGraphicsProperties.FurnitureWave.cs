@@ -1472,24 +1472,14 @@ internal static partial class JgsGraphicsProperties
 
         // 'flat' is MATLAB's word for a curve coloured by its own level, which is what an unset ink
         // means here — so the word reads and writes the null rather than a colour standing in for it.
+        // 'none' is no ink, which R2025b takes on an unfilled contour too (open item 100).
         Put(table, "LineColor",
             entry => Map(entry).LineColor is { } ink ? ColorRow(ink) : JgsValue.Str("flat"),
             (entry, value, line, col) =>
             {
                 if (value.Type == JgsType.String
-                    && JgsBuiltins.StrOf("LineColor", value, line, col) is { } word
-                    && (word.Equals("flat", StringComparison.OrdinalIgnoreCase)
-                        || word.Equals("none", StringComparison.OrdinalIgnoreCase)))
+                    && value.AsString.Equals("flat", StringComparison.OrdinalIgnoreCase))
                 {
-                    // 'none' hides the curves, which this build says with the fill switch: a contour
-                    // with no lines and no bands would be an object that draws nothing at all.
-                    if (word.Equals("none", StringComparison.OrdinalIgnoreCase) && !Map(entry).Filled)
-                    {
-                        throw new JgsRuntimeException(line, col,
-                            "LineColor 'none' on an unfilled contour would draw nothing — turn Fill on "
-                            + "first, or give the curves a colour.");
-                    }
-
                     Map(entry).LineColor = null;
                     return;
                 }

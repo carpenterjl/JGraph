@@ -3,6 +3,7 @@ using System.Globalization;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
+using JGraph.Maths.Ticks;
 using JGraph.Rendering;
 
 namespace JGraph.Objects;
@@ -258,8 +259,9 @@ public sealed class HeatmapPlot : PlotObject, IDrawable, IColorMapped
     }
 
     /// <summary>
-    /// A .NET numeric format for the cell labels, or null for a general four-digit one. Scripts write
-    /// this as a printf spec and it is translated on the way in, the same as a tick format.
+    /// MATLAB's printf format for the cell labels, kept as written, or null for R2025b's
+    /// <see cref="DefaultCellLabelFormat"/>. A figure saved before open item 103 holds a .NET numeric
+    /// format here instead, which is still honoured.
     /// </summary>
     [Browsable(false)]
     public string? CellLabelFormat
@@ -387,19 +389,28 @@ public sealed class HeatmapPlot : PlotObject, IDrawable, IColorMapped
         return double.IsNaN(fraction) ? _missingDataColor : _colormap.Sample(fraction);
     }
 
-    /// <summary>What is written in cell <c>(r, c)</c>.</summary>
+    /// <summary>
+    /// What is written in cell <c>(r, c)</c>: the value as R2025b's <c>sprintf</c> writes it in
+    /// <see cref="CellLabelFormat"/>, <c>'%0.4g'</c> by default, and nothing in a missing cell — R2025b
+    /// leaves those blank, and names them <see cref="MissingDataLabel"/> in a colorbar entry this build
+    /// does not draw (open item 103, probe_103). A .NET format a figure saved before then is still honoured.
+    /// </summary>
     public string CellLabel(int row, int column)
     {
         double value = _colorData[row, column];
-        if (!double.IsFinite(value))
+        if (double.IsNaN(value))
         {
-            return _missingDataLabel;
+            return string.Empty;
         }
 
-        return _cellLabelFormat is { } format
-            ? value.ToString(format, CultureInfo.CurrentCulture)
-            : value.ToString("G4", CultureInfo.CurrentCulture);
+        string format = _cellLabelFormat ?? DefaultCellLabelFormat;
+        return TickFormats.IsPrintf(format)
+            ? TickFormats.Sprintf(value, format).TrimEnd('\n', '\r')
+            : value.ToString(format, CultureInfo.CurrentCulture);
     }
+
+    /// <summary>R2025b's cell label format until one is chosen.</summary>
+    public const string DefaultCellLabelFormat = "%0.4g";
 
     /// <inheritdoc />
     public override DataRange GetXDataBounds() =>

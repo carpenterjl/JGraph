@@ -80,17 +80,18 @@ public class HeatmapLayoutTests
     }
 
     [Fact]
-    public void ACellSaysItsValueOrThatThereIsNoneToSay()
+    public void ACellSaysItsValueOrNothingWhenItHasNone()
     {
         var heatmap = new HeatmapPlot(new double[,] { { 1.23456, double.NaN } });
 
+        // R2025b leaves a missing cell blank whatever its MissingDataLabel (open item 103, probe_103).
         Assert.Equal("1.235", heatmap.CellLabel(0, 0));
-        Assert.Equal("NaN", heatmap.CellLabel(0, 1));
+        Assert.Equal(string.Empty, heatmap.CellLabel(0, 1));
 
         heatmap.CellLabelFormat = "0.0";
         heatmap.MissingDataLabel = "-";
         Assert.Equal("1.2", heatmap.CellLabel(0, 0));
-        Assert.Equal("-", heatmap.CellLabel(0, 1));
+        Assert.Equal(string.Empty, heatmap.CellLabel(0, 1));
     }
 
     [Fact]

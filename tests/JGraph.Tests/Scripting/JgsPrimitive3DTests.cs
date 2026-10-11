@@ -246,7 +246,7 @@ public class JgsPrimitive3DTests : IDisposable
         await Succeeds("patch([0, 1, 1], [0, 0, 1], 'r', 'FaceAlpha', 0.25, 'LineWidth', 2)");
 
         PatchPlot patch = Single<PatchPlot>();
-        Assert.Equal(0.25, patch.Opacity, 6);
+        Assert.Equal(0.25, patch.FaceAlpha, 6);
         Assert.Equal(2, patch.EdgeWidth);
     }
 

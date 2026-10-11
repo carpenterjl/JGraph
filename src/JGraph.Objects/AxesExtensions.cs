@@ -69,7 +69,8 @@ public static class AxesExtensions
         ArgumentNullException.ThrowIfNull(axes);
         ArgumentNullException.ThrowIfNull(sizes);
 
-        var plot = new ScatterPlot(xs, ys) { BubbleSizing = true };
+        // Filled in the data's colour and part-transparent, as R2025b draws a bubble chart.
+        var plot = new ScatterPlot(xs, ys) { BubbleSizing = true, FillFollowsData = true, FaceAlpha = 0.6 };
         plot.SizeData = sizes;
         axes.Plots.Add(plot);
         return plot;

@@ -114,11 +114,12 @@ public class BubbleChartLayoutTests
         var context = new RecordingRenderContext(new Size2D(400, 400));
         ((IDrawable)chart).Render(context, State());
 
-        // Three markers in three colours, the ends being the ends of the colormap.
+        // Three markers in three colours, the ends being the ends of the colormap. An unfilled marker
+        // shows its colour on its edge, as R2025b's 'flat' edge does (open item 101).
         Assert.Equal(3, context.MarkerStyles.Count);
-        Assert.Equal(chart.Colormap.Sample(0, 0, 10), context.MarkerStyles[0].Fill);
-        Assert.Equal(chart.Colormap.Sample(10, 0, 10), context.MarkerStyles[2].Fill);
-        Assert.NotEqual(context.MarkerStyles[0].Fill, context.MarkerStyles[1].Fill);
+        Assert.Equal(chart.Colormap.Sample(0, 0, 10), context.MarkerStyles[0].Edge);
+        Assert.Equal(chart.Colormap.Sample(10, 0, 10), context.MarkerStyles[2].Edge);
+        Assert.NotEqual(context.MarkerStyles[0].Edge, context.MarkerStyles[1].Edge);
     }
 
     [Fact]

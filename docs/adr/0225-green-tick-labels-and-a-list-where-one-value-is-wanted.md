@@ -58,7 +58,7 @@ is unchanged: it is the model's named web colour, which saved figures and the in
   labels over 10ᵉ — the given power, or the rule batch 11 fitted, now in `JGraph.Math` — and says e
   on the `TickSet`. The renderer draws `×10ᵉ` once per ruler: past the 2-D x ruler's right end, above
   a y ruler's top (the yyaxis side rulers' too), past a 3-D floor ruler's high end, above the 3-D z
-  ruler and past the polar r labels' spoke. Labels a ruler was given turn the power off, as R2025b's do.
+  ruler ~~and past the polar r labels' spoke~~ (a polar r ruler writes the power into each label instead, ADR 0226). Labels a ruler was given turn the power off, as R2025b's do.
 - `XTickLabel`, the ruler's `TickLabels` and the `xticklabels` query read as a column in the MATLAB
   dialect.
 
@@ -87,11 +87,11 @@ empty cell value's shape to the empty struct array.
 - **Which ticks a ruler chooses is this build's**: R2025b takes about twice as many (`[0 50000]` in
   steps of 5000 where this build steps 10000), and where the ticks differ the labels do. The fixture
   sets its ticks by hand for that reason; open item 99.
-- **A ruler's hidden `SecondaryLabel`**, the text object R2025b draws the `×10ⁿ` with, is not answered.
+- ~~**A ruler's hidden `SecondaryLabel`**, the text object R2025b draws the `×10ⁿ` with, is not answered.~~ Lifted by ADR 0226.
 - **The `×10ⁿ` mark is placed by this build's layout**: above a y ruler's top even when the ruler is
   reversed, and in 3-D past the high end of each floor ruler; where R2025b puts it in those cases was
   not measured.
-- **`numel(A, idx...)`**, the legacy form `numel(u.f)` spreads into, is refused; R2025b answers it.
+- ~~**`numel(A, idx...)`**, the legacy form `numel(u.f)` spreads into, is refused; R2025b answers it.~~ Lifted by ADR 0226.
 - **A list on both sides of one operator** (`c0{:} + c2{:}`, which R2025b reads as `plus(1, 2)`) is
   refused by its first side's count.
 - **The JGS dialect's tick labels follow the new rule too** (`0, 0.5, 1`, `10ⁿ` decades, the `×10ⁿ`

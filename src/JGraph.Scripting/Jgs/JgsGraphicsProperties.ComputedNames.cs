@@ -74,12 +74,70 @@ internal static partial class JgsGraphicsProperties
         {
             AddExponent(table);
             AddMinorTickValues(table);
+            Put(table, "SecondaryLabel",
+                entry => JgsHandleRegistry.For(JgsTextLabel.For(entry.Target, JgsTextLabel.SecondaryRole)));
         }
 
         if (type == typeof(JgsTextLabel))
         {
             AddLabelPlace(table);
+            AddSecondaryLabelNames(table);
         }
+    }
+
+    /// <summary>
+    /// What a ruler's <c>SecondaryLabel</c>, the text R2025b draws its ×10ⁿ with, answers beyond an
+    /// ordinary label's (open item 104, probe_104): hiding it hides the mark, a <c>String</c> written to
+    /// it stays through later powers (<c>StringMode</c> manual), and <c>'auto'</c> gives the power back.
+    /// Every other label answers as before.
+    /// </summary>
+    private static void AddSecondaryLabelNames(IDictionary<string, GraphicsProperty> table)
+    {
+        table.TryGetValue("Visible", out GraphicsProperty? visible);
+        Put(table, "Visible",
+            entry => entry.Target is JgsTextLabel { IsSecondary: true } label
+                ? OnOff(((AxisModel)label.Owner).ShowExponentLabel)
+                : visible?.Read(entry) ?? OnOff(true),
+            (entry, value, line, col) =>
+            {
+                if (entry.Target is JgsTextLabel { IsSecondary: true } label)
+                {
+                    ((AxisModel)label.Owner).ShowExponentLabel = ToOnOff("Visible", value, line, col);
+                }
+                else if (visible?.Write is { } write)
+                {
+                    write(entry, value, line, col);
+                }
+            });
+
+        table.TryGetValue("StringMode", out GraphicsProperty? stringMode);
+        Put(table, "StringMode",
+            entry => entry.Target is JgsTextLabel { IsSecondary: true } label
+                ? JgsValue.Str(((AxisModel)label.Owner).ExponentLabel is null ? "auto" : "manual")
+                : stringMode?.Read(entry) ?? JgsValue.Str("auto"),
+            (entry, value, line, col) =>
+            {
+                if (entry.Target is not JgsTextLabel { IsSecondary: true } label)
+                {
+                    stringMode?.Write?.Invoke(entry, value, line, col);
+                    return;
+                }
+
+                var ruler = (AxisModel)label.Owner;
+                string mode = JgsBuiltins.StrOf("StringMode", value, line, col).ToLowerInvariant();
+                if (mode == "auto")
+                {
+                    ruler.ExponentLabel = null;
+                }
+                else if (mode == "manual")
+                {
+                    ruler.ExponentLabel = label.Text;
+                }
+                else
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:datatypes:InvalidEnumValue", "StringMode must be 'auto' or 'manual'.");
+                }
+            });
     }
 
     // --- SourceTable -----------------------------------------------------------------------------
@@ -260,6 +318,10 @@ internal static partial class JgsGraphicsProperties
                 }
             });
     }
+
+    /// <summary>The power a ruler's labels are written over: the one set, or the automatic one.</summary>
+    internal static int RulerExponent(AxisModel ruler) =>
+        ruler.Exponent ?? AutoExponent(JgsHandleRegistry.EntryFor(ruler));
 
     private static int AutoExponent(JgsHandleEntry entry)
     {

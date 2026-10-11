@@ -91,6 +91,7 @@ public class MatlabBubbleChartTests : IDisposable
         await RunAsserting("""
             figure(1);
             named = bubblechart([1 2 3 4], [1 2 3 4], [1 2 3 4], 'r');
+            disp(get(named, 'CData'));
             disp(get(named, 'MarkerEdgeColor'));
 
             figure(2);
@@ -100,12 +101,12 @@ public class MatlabBubbleChartTests : IDisposable
             % A colour still reads as a colour when options follow it.
             figure(3);
             both = bubblechart([1 2], [1 2], [1 2], [0 0 1], 'LineWidth', 3);
-            disp(get(both, 'MarkerEdgeColor'));
+            disp(get(both, 'CData'));
             disp(get(both, 'LineWidth'));
             """);
 
         Assert.Equal(
-            new[] { "[1, 0, 0]", "[10, 20, 30, 40]", "[0, 0, 1]", "3" },
+            new[] { "[1, 0, 0]", "flat", "[10, 20, 30, 40]", "[0, 0, 1]", "3" },
             _output.NormalLines);
     }
 
@@ -126,7 +127,7 @@ public class MatlabBubbleChartTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "[0, 1, 0]", "0.25098039215686274", "0.8", "2", "square", "runs" },
+            new[] { "[0, 1, 0]", "0.25", "0.8", "2", "square", "runs" },
             _output.NormalLines);
     }
 

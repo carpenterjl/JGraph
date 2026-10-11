@@ -25,6 +25,8 @@ public sealed class AxisModel : GraphObject
     private int _targetMajorTickCount = 5;
     private string? _tickLabelFormat;
     private int? _exponent;
+    private string? _exponentLabel;
+    private bool _showExponentLabel = true;
     private TextStyle _labelStyle = new(Colors.Black, 13);
     private TextStyle _tickLabelStyle = new(Colors.DarkGray, 11);
     private IReadOnlyList<string>? _categories;
@@ -209,6 +211,34 @@ public sealed class AxisModel : GraphObject
         get => _exponent;
         set => SetProperty(ref _exponent, value, InvalidationKind.Layout);
     }
+
+    /// <summary>
+    /// The text drawn beside the labels for the power they are written over (MATLAB's hidden
+    /// <c>SecondaryLabel</c>), or null for the automatic <c>\times10^{n}</c> (open item 104).
+    /// </summary>
+    [Category("Ticks"), DisplayName("Exponent label")]
+    public string? ExponentLabel
+    {
+        get => _exponentLabel;
+        set => SetProperty(ref _exponentLabel, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether that text is drawn, which is how a script hides the ×10ⁿ mark.</summary>
+    [Category("Ticks"), DisplayName("Show exponent label")]
+    public bool ShowExponentLabel
+    {
+        get => _showExponentLabel;
+        set => SetProperty(ref _showExponentLabel, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// What is drawn beside labels written over <paramref name="exponent"/>: the text chosen, or
+    /// <c>\times10^{n}</c>, or nothing when the mark is hidden or there is no power to say.
+    /// </summary>
+    public string ExponentMark(int exponent) =>
+        !_showExponentLabel ? string.Empty
+        : _exponentLabel ?? (exponent == 0 ? string.Empty
+            : "\\times10^{" + exponent.ToString(System.Globalization.CultureInfo.InvariantCulture) + "}");
 
     /// <summary>Label rotation in degrees counterclockwise; null uses the ruler default.</summary>
     [Category("General"), DisplayName("Label rotation")]

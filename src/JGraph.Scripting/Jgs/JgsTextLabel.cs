@@ -23,13 +23,23 @@ internal sealed class JgsTextLabel : GraphObject
     }
     public static IEnumerable<GraphObject> Existing(GraphObject owner) =>
         Labels.TryGetValue(owner, out var labels) ? labels.Values : [];
+    /// <summary>A ruler's ×10ⁿ text, R2025b's hidden <c>SecondaryLabel</c> (open item 104).</summary>
+    public const string SecondaryRole = "SecondaryLabel";
+    public bool IsSecondary => Role == SecondaryRole && Owner is AxisModel;
     public string Text
     {
-        get => Owner switch { AxisModel r => r.Label, ColorbarModel b => b.Label ?? "",
+        get => Owner switch { AxisModel r when IsSecondary => r.ExponentLabel ?? AutoExponentText(r), AxisModel r => r.Label, ColorbarModel b => b.Label ?? "",
             AxesModel a => Role == "Subtitle" ? a.Subtitle : a.Title, FigureModel f => f.Title, _ => "" };
-        set { switch (Owner) { case AxisModel r: r.Label = value; break; case ColorbarModel b: b.Label = value; break;
+        set { switch (Owner) { case AxisModel r when IsSecondary: r.ExponentLabel = value; break; case AxisModel r: r.Label = value; break; case ColorbarModel b: b.Label = value; break;
             case AxesModel a: if (Role == "Subtitle") a.Subtitle = value; else a.Title = value; break;
             case FigureModel f: f.Title = value; break; } }
+    }
+    /// <summary>The text R2025b gives a ruler's SecondaryLabel: its power, or nothing on a polar r ruler or at 10⁰.</summary>
+    private static string AutoExponentText(AxisModel ruler)
+    {
+        int power = ruler.Parent is AxesModel owner && ReferenceEquals(owner.RAxis, ruler) ? 0
+            : JgsGraphicsProperties.RulerExponent(ruler);
+        return power == 0 ? "" : "\\times10^{" + power.ToString(System.Globalization.CultureInfo.InvariantCulture) + "}";
     }
     public JgsValue ReadString() => stored is not null && rendered == Text ? stored : JgsValue.Str(Text);
     public void WriteString(JgsValue value, int line, int col)
@@ -45,16 +55,17 @@ internal sealed class JgsTextLabel : GraphObject
     }
     public TextStyle Style
     {
-        get => Owner switch { AxisModel r => r.LabelStyle, ColorbarModel b => b.LabelStyle,
+        get => Owner switch { AxisModel r when IsSecondary => r.TickLabelStyle, AxisModel r => r.LabelStyle, ColorbarModel b => b.LabelStyle,
             AxesModel a => Role == "Subtitle" ? a.SubtitleStyle : a.TitleStyle, FigureModel f => f.TitleStyle, _ => new TextStyle(Colors.Black, 11) };
-        set { switch (Owner) { case AxisModel r: r.LabelStyle = value; break; case ColorbarModel b: b.LabelStyle = value; break;
+        // A ruler's ×10ⁿ is drawn in its tick labels' font; a style written to it is not kept (open item 104).
+        set { switch (Owner) { case AxisModel when IsSecondary: break; case AxisModel r: r.LabelStyle = value; break; case ColorbarModel b: b.LabelStyle = value; break;
             // A title style a script wrote is manual: the theme leaves it alone (open item 40).
             case AxesModel a: if (Role == "Subtitle") a.SubtitleStyle = value; else { a.TitleStyle = value; a.TitleStyleManual = true; } break;
             case FigureModel f: f.TitleStyle = value; f.TitleStyleManual = true; break; } }
     }
     public double Rotation
     {
-        get => Owner is AxisModel r ? r.LabelRotation ?? (r.Orientation == AxisOrientation.Vertical ? 90 : 0) : 0;
-        set { if (Owner is AxisModel r) r.LabelRotation = value; }
+        get => Owner is AxisModel r && !IsSecondary ? r.LabelRotation ?? (r.Orientation == AxisOrientation.Vertical ? 90 : 0) : 0;
+        set { if (Owner is AxisModel r && !IsSecondary) r.LabelRotation = value; }
     }
 }

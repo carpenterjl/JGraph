@@ -61,7 +61,7 @@ internal static partial class JgsBuiltins
     /// <summary>The properties <c>area</c> accepts after its data, in MATLAB's spellings.</summary>
     private static readonly string[] AreaOptionNames =
     [
-        "FaceColor", "EdgeColor", "FaceAlpha", "LineWidth", "LineStyle",
+        "FaceColor", "EdgeColor", "FaceAlpha", "EdgeAlpha", "LineWidth", "LineStyle",
         "BaseValue", "ShowBaseLine", "DisplayName",
     ];
 
@@ -135,7 +135,7 @@ internal static partial class JgsBuiltins
     /// <summary>The properties <c>bar</c> and <c>barh</c> accept after their data.</summary>
     private static readonly string[] BarOptionNames =
     [
-        "FaceColor", "EdgeColor", "FaceAlpha", "LineWidth", "LineStyle",
+        "FaceColor", "EdgeColor", "FaceAlpha", "EdgeAlpha", "LineWidth", "LineStyle",
         "BarWidth", "BaseValue", "Horizontal", "DisplayName",
     ];
 
@@ -303,6 +303,9 @@ internal static partial class JgsBuiltins
                         break;
                     case "facealpha":
                         plot.FaceAlpha = NumOf($"{name}: FaceAlpha", value, line, col);
+                        break;
+                    case "edgealpha":
+                        plot.EdgeAlpha = NumOf($"{name}: EdgeAlpha", value, line, col);
                         break;
                     case "linewidth":
                         plot.EdgeWidth = NumOf($"{name}: LineWidth", value, line, col);
@@ -965,9 +968,7 @@ internal static partial class JgsBuiltins
                     SetCellLabelColor(plot, value, line, col);
                     break;
                 case "celllabelformat":
-                    plot.CellLabelFormat = JgsRulerTicks.ToNetFormat(
-                        "heatmap: CellLabelFormat", StrOf("heatmap: CellLabelFormat", value, line, col),
-                        line, col);
+                    plot.CellLabelFormat = JgsRulerTicks.CellFormat(value, line, col);
                     break;
                 case "fontname":
                     plot.CellLabelStyle = new TextStyle(
@@ -1435,7 +1436,8 @@ internal static partial class JgsBuiltins
         // the last word over the verb that implied one.
         plot.XJitter = jitter;
 
-        if (sizes is not null)
+        // An empty size is MATLAB's placeholder for the default, written to reach the colour after it.
+        if (sizes is { Length: > 0 })
         {
             // One size for every point is a legal call and says "these are all the same".
             plot.SizeData = sizes.Length == 1 && xs.Length != 1
@@ -1453,9 +1455,11 @@ internal static partial class JgsBuiltins
             MarkerColors(verb, plot, c, line, col);
         }
 
+        // R2025b's 'filled' paints the interiors in the data's colour and leaves the edges off.
         if (filled)
         {
-            plot.Fill = plot.Color;
+            plot.FillFollowsData = true;
+            plot.Color = Colors.Transparent;
         }
 
         MarkerChartOptions(verb, plot, Pairs(verb, args, i, line, col), line, col);
@@ -1679,16 +1683,17 @@ internal static partial class JgsBuiltins
                 + $"{string.Join(", ", MarkerChartOptionNames)}.");
         }
 
+        // A colour in the spec is the cloud's data colour (R2025b's CData), which its edges follow.
         if (ColorWords.Contains(word, StringComparer.OrdinalIgnoreCase))
         {
-            plot.Color = OptionColor(JgsValue.Str(word), line, col, verb);
+            plot.DataColor = OptionColor(JgsValue.Str(word), line, col, verb);
             return;
         }
 
         LineSpec spec = LineSpec.Parse(word);
         if (spec.Color is { } color)
         {
-            plot.Color = color;
+            plot.DataColor = color;
         }
 
         if (spec.Marker is { } marker)
@@ -1815,12 +1820,12 @@ internal static partial class JgsBuiltins
         }
 
         ScatterPlot plot = JG.BubbleChart(xs, ys, sizes);
-        Color seriesColor = SeatSeries(plot).Color;
-        plot.Color = seriesColor;
+        SeatSeries(plot);
 
-        // MATLAB draws bubbles part-transparent by default, and it is not a decoration: overlapping
-        // bubbles are the normal case, and opaque ones would hide each other.
-        plot.Fill = WithAlpha(seriesColor, 0.6);
+        // MATLAB draws bubbles filled in the data's colour and part-transparent by default, and it is
+        // not a decoration: overlapping bubbles are the normal case, and opaque ones would hide each other.
+        plot.FillFollowsData = true;
+        plot.FaceAlpha = 0.6;
 
         if (colorArg is { } c)
         {
@@ -1842,12 +1847,12 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void MarkerColors(string verb, ScatterPlot plot, JgsValue value, int line, int col)
     {
+        // One colour is the cloud's data colour (R2025b's CData), which a 'flat' edge or face follows.
         int count = plot.Data.Count;
         if (value.Type == JgsType.String)
         {
-            Color named = OptionColor(value, line, col, verb);
-            plot.Color = named;
-            plot.Fill = plot.Fill is null ? null : WithAlpha(named, plot.Fill.Value.A / 255.0);
+            plot.DataColor = OptionColor(value, line, col, verb);
+            plot.ColorData = null;
             return;
         }
 
@@ -1855,9 +1860,8 @@ internal static partial class JgsBuiltins
         bool couldBeColor = numbers.Length == 3 && Array.TrueForAll(numbers, v => v is >= 0 and <= 1);
         if (numbers.Length == 3 && (count != 3 || couldBeColor))
         {
-            Color rgb = OptionColor(value, line, col, verb);
-            plot.Color = rgb;
-            plot.Fill = plot.Fill is null ? null : WithAlpha(rgb, plot.Fill.Value.A / 255.0);
+            plot.DataColor = OptionColor(value, line, col, verb);
+            plot.ColorData = null;
             return;
         }
 
@@ -1882,22 +1886,16 @@ internal static partial class JgsBuiltins
             switch (name.ToLowerInvariant())
             {
                 case "markerfacecolor":
-                    plot.Fill = WithAlpha(
-                        OptionColor(value, line, col, verb), (plot.Fill?.A ?? 255) / 255.0);
+                    MarkerFace(verb, plot, value, line, col);
                     break;
                 case "markeredgecolor":
-                    plot.Color = WithAlpha(
-                        OptionColor(value, line, col, verb), (plot.Color?.A ?? 255) / 255.0);
+                    MarkerEdge(verb, plot, value, line, col);
                     break;
                 case "markerfacealpha":
-                    plot.Fill = WithAlpha(
-                        plot.Fill ?? plot.Color ?? PaletteColorFor(plot),
-                        Fraction($"{verb}: MarkerFaceAlpha", value, line, col));
+                    plot.FaceAlpha = MarkerAlpha($"{verb}: MarkerFaceAlpha", value, line, col);
                     break;
                 case "markeredgealpha":
-                    plot.Color = WithAlpha(
-                        plot.Color ?? PaletteColorFor(plot),
-                        Fraction($"{verb}: MarkerEdgeAlpha", value, line, col));
+                    plot.EdgeAlpha = MarkerAlpha($"{verb}: MarkerEdgeAlpha", value, line, col);
                     break;
                 case "linewidth":
                     plot.EdgeWidth = NumOf($"{verb}: LineWidth", value, line, col);
@@ -1910,7 +1908,7 @@ internal static partial class JgsBuiltins
                     plot.SizeData = ToDoubles($"{verb}: SizeData", value, line, col);
                     break;
                 case "cdata":
-                    MarkerColors(verb, plot, value, line, col);
+                    MarkerCData(verb, plot, value, line, col);
                     break;
                 case "xjitter":
                     plot.XJitter = ParseJitter($"{verb}: XJitter", value, line, col);
@@ -1939,6 +1937,50 @@ internal static partial class JgsBuiltins
             }
         }
     }
+
+    /// <summary>
+    /// A marker chart's <c>CData</c> written by name: one colour as numbers, or a value per point.
+    /// R2025b takes a colour name only as the verb's own argument, and refuses one here.
+    /// </summary>
+    internal static void MarkerCData(string verb, ScatterPlot plot, JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.String)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:scatter:InvalidCData",
+                "Color must be one RGB triplet, an m-by-3 matrix of RGB triplets with one color per scatter "
+                + "point, or an m-by-1 vector with one value per scatter point.");
+        }
+
+        MarkerColors(verb, plot, value, line, col);
+    }
+
+    /// <summary>
+    /// A marker chart's <c>MarkerFaceColor</c>: <c>'flat'</c> paints the interiors in the data's colour,
+    /// <c>'none'</c> leaves them open, and a colour is that colour (R2025b's three, open item 101).
+    /// </summary>
+    internal static void MarkerFace(string verb, ScatterPlot plot, JgsValue value, int line, int col)
+    {
+        if (IsWord(value, "flat"))
+        {
+            plot.FillFollowsData = true;
+            return;
+        }
+
+        Color face = OptionColor(value, line, col, verb);
+        plot.FillFollowsData = false;
+        plot.Fill = face == Colors.Transparent ? null : face;
+    }
+
+    /// <summary>A marker chart's <c>MarkerEdgeColor</c>: <c>'flat'</c> follows the data, else a colour or <c>'none'</c>.</summary>
+    internal static void MarkerEdge(string verb, ScatterPlot plot, JgsValue value, int line, int col) =>
+        plot.Color = IsWord(value, "flat") ? null : OptionColor(value, line, col, verb);
+
+    /// <summary>A marker chart's face or edge alpha: a fraction kept as written, or <c>'flat'</c> (NaN).</summary>
+    internal static double MarkerAlpha(string what, JgsValue value, int line, int col) =>
+        IsWord(value, "flat") ? double.NaN : Fraction(what, value, line, col);
+
+    private static bool IsWord(JgsValue value, string word) =>
+        value.Type == JgsType.String && value.AsString.Equals(word, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>A colour at a stated alpha, rather than at its own alpha scaled by one.</summary>
     internal static Color WithAlpha(Color color, double alpha) => new(
@@ -2250,6 +2292,9 @@ internal static partial class JgsBuiltins
                         break;
                     case "facealpha":
                         plot.FaceAlpha = NumOf("area: FaceAlpha", value, line, col);
+                        break;
+                    case "edgealpha":
+                        plot.EdgeAlpha = NumOf("area: EdgeAlpha", value, line, col);
                         break;
                     case "linewidth":
                         plot.LineWidth = NumOf("area: LineWidth", value, line, col);

@@ -1,0 +1,147 @@
+CHK|none_line|char[1 4]'none'|exact
+CHK|none_line_get_all|char[1 4]'none'|exact
+CHK|none_prefixes|cell[1 4]{char[1 4]'none';char[1 4]'none';char[1 4]'none';char[1 4]'none'}|exact
+CHK|none_string|char[1 4]'none'|exact
+CHK|none_then_red|double[1 3] [1 0 0]|exact
+CHK|none_isequal|logical[1 1] 1|exact
+CHK|none_plot|char[1 4]'none'|exact
+CHK|none_plot3|char[1 4]'none'|exact
+CHK|none_stem|char[1 4]'none'|exact
+CHK|none_stairs|char[1 4]'none'|exact
+CHK|none_errorbar|char[1 4]'none'|exact
+CHK|none_xline|char[1 4]'none'|exact
+CHK|none_animatedline|char[1 4]'none'|exact
+CHK|none_marker_edge|char[1 4]'none'|exact
+CHK|marker_edge_auto|cell[1 2]{char[1 4]'auto';char[1 4]'none'}|exact
+CHK|none_text|char[1 4]'none'|exact
+CHK|none_scatter_edge|char[1 4]'none'|exact
+CHK|rgba_line|double[1 3] [1 0 0]|exact
+CHK|rgba_rectangle|double[1 3] [0 0 1]|exact
+CHK|none_contour|char[1 4]'none'|exact
+CHK|none_axes|char[1 4]'none'|exact
+CHK|none_xcolor|char[1 4]'none'|exact
+CHK|scatter_g|cell[1 4]{double[1 3] [0 1 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_og|cell[1 4]{double[1 3] [0 1 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_star|cell[1 4]{char[1 13]'series colour';char[1 4]'auto';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_plain|cell[1 4]{char[1 13]'series colour';char[1 4]'auto';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_filled|cell[1 4]{char[1 13]'series colour';char[1 4]'auto';char[1 4]'none';char[1 4]'flat'}|exact
+CHK|scatter_r_filled|cell[1 4]{double[1 3] [1 0 0];char[1 6]'manual';char[1 4]'none';char[1 4]'flat'}|exact
+CHK|scatter_empty_size|cell[1 4]{double[1 3] [0 1 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_size_r|cell[1 4]{double[1 3] [1 0 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_size_red|cell[1 4]{double[1 3] [1 0 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_size_string|cell[1 4]{double[1 3] [0 1 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_size_rgb|cell[1 4]{double[1 3] [1 0 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_size_values|cell[1 4]{double[1 3] [1 2 3];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_size_values_filled|cell[1 4]{double[1 3] [1 2 3];char[1 6]'manual';char[1 4]'none';char[1 4]'flat'}|exact
+CHK|scatter_edge_g|cell[1 4]{char[1 13]'series colour';char[1 4]'auto';double[1 3] [0 1 0];char[1 4]'none'}|exact
+CHK|scatter_face_g|cell[1 4]{char[1 13]'series colour';char[1 4]'auto';char[1 4]'flat';double[1 3] [0 1 0]}|exact
+CHK|scatter_face_flat|cell[1 4]{char[1 13]'series colour';char[1 4]'auto';char[1 4]'flat';char[1 4]'flat'}|exact
+CHK|scatter_spec_and_face|cell[1 4]{double[1 3] [0 1 0];char[1 6]'manual';char[1 4]'flat';double[1 3] [1 0 0]}|exact
+CHK|scatter_cdata_option|cell[1 4]{double[1 3] [0 0 1];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_swarm_g|cell[1 4]{double[1 3] [0 1 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_scatter3_g|cell[1 4]{double[1 3] [0 1 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_scatter3_size_m|cell[1 4]{double[1 3] [1 0 1];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_scatter3_plain|cell[1 4]{char[1 13]'series colour';char[1 4]'auto';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_scatter3_filled_k|cell[1 4]{double[1 3] [0 0 0];char[1 6]'manual';char[1 4]'none';char[1 4]'flat'}|exact
+CHK|scatter_set_rgb|cell[1 4]{double[1 3] [1 0 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_set_edge|cell[1 4]{double[1 3] [1 0 0];char[1 6]'manual';double[1 3] [0 0 0];char[1 4]'none'}|exact
+CHK|scatter_set_flat|cell[1 4]{double[1 3] [1 0 0];char[1 6]'manual';char[1 4]'flat';char[1 4]'flat'}|exact
+CHK|scatter_set_auto|cell[1 4]{char[1 13]'series colour';char[1 4]'auto';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_set_values|cell[1 4]{double[1 3] [3 2 1];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|scatter_set_word_refused|char[1 27]'MATLAB:scatter:InvalidCData'|exact
+CHK|scatter_option_word_refused|char[1 27]'MATLAB:scatter:InvalidCData'|exact
+CHK|bubble_defaults|cell[1 4]{double[1 1] 0.59999999999999998;double[1 1] 1;char[1 4]'flat';char[1 4]'flat'}|exact
+CHK|bubble_written|cell[1 2]{double[1 1] 0.25;double[1 1] 0.29999999999999999}|exact
+CHK|bubble_third|double[1 1] 0.33333333333333331|exact
+CHK|bubble_flat|char[1 4]'flat'|exact
+CHK|bubble_option|double[1 1] 0.25|exact
+CHK|scatter_alphas|cell[1 2]{double[1 1] 0.29999999999999999;double[1 1] 0.69999999999999996}|exact
+CHK|scatter_alpha_default|cell[1 2]{double[1 1] 1;double[1 1] 1}|exact
+CHK|swarm_alpha|double[1 1] 0.29999999999999999|exact
+CHK|patch_alphas|cell[1 2]{double[1 1] 0.29999999999999999;double[1 1] 0.45000000000000001}|exact
+CHK|fill_alpha|double[1 1] 0.29999999999999999|exact
+CHK|area_alphas|cell[1 2]{double[1 1] 0.34999999999999998;double[1 1] 0.14999999999999999}|exact
+CHK|bar_alphas|cell[1 2]{double[1 1] 0.33000000000000002;double[1 1] 0.66000000000000003}|exact
+CHK|surf_alphas|cell[1 2]{double[1 1] 0.29999999999999999;double[1 1] 0.40000000000000002}|exact
+CHK|alpha_of_object|double[1 1] 0.55000000000000004|exact
+CHK|cell_format_default|char[1 5]'%0.4g'|exact
+CHK|cell_format_1|char[1 4]'%.2f'|exact
+CHK|cell_format_2|char[1 4]'%g%%'|exact
+CHK|cell_format_3|char[1 3]'%+g'|exact
+CHK|cell_format_4|char[1 5]'%5.1f'|exact
+CHK|cell_format_5|char[1 2]'%d'|exact
+CHK|cell_format_6|char[1 2]'%e'|exact
+CHK|cell_format_7|char[1 4]'%.0e'|exact
+CHK|cell_format_8|char[1 4]'%g V'|exact
+CHK|cell_format_9|char[1 4]'%.3g'|exact
+CHK|cell_format_10|char[1 2]'%i'|exact
+CHK|cell_format_11|char[1 2]'%G'|exact
+CHK|cell_format_12|char[1 2]'%E'|exact
+CHK|cell_format_13|char[1 4]'%f%%'|exact
+CHK|cell_format_14|char[1 7]'%-8.2f/'|exact
+CHK|cell_format_15|char[1 6]'%08.2f'|exact
+CHK|cell_format_16|char[1 3]'% g'|exact
+CHK|cell_format_17|char[1 3]'%#g'|exact
+CHK|cell_format_18|char[1 8]'\x00B0%g'|exact
+CHK|cell_format_refused_1|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|cell_format_refused_2|char[1 175]'MATLAB:datatypes:PrintfFormatDataType:UnsupportedType / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.'|exact
+CHK|cell_format_refused_3|char[1 175]'MATLAB:datatypes:PrintfFormatDataType:UnsupportedType / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.'|exact
+CHK|cell_format_refused_4|char[1 175]'MATLAB:datatypes:PrintfFormatDataType:UnsupportedType / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.'|exact
+CHK|cell_format_refused_5|char[1 175]'MATLAB:datatypes:PrintfFormatDataType:UnsupportedType / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.'|exact
+CHK|cell_format_refused_6|char[1 175]'MATLAB:datatypes:PrintfFormatDataType:UnsupportedType / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.'|exact
+CHK|cell_format_refused_7|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|cell_format_refused_8|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|cell_format_refused_9|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|cell_format_refused_10|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|cell_format_refused_11|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|cell_format_refused_12|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|cell_format_refused_13|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|cell_format_refused_14|char[1 165]'MATLAB:datatypes:PrintfFormatDataType:DynamicNumber / Error setting property 'CellLabelFormat' of class 'HeatmapChart':\nWidth and precision must be numeric literals.'|exact
+CHK|cell_format_string|cell[1 2]{char[1 4]'char';char[1 4]'%.3f'}|exact
+CHK|cell_format_option|char[1 4]'%.2f'|exact
+CHK|ruler_format_q|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|ruler_format_star|char[1 165]'MATLAB:datatypes:PrintfFormatDataType:DynamicNumber / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nWidth and precision must be numeric literals.'|exact
+CHK|numel_1|double[1 1] 1|exact
+CHK|numel_2|double[1 1] 3|exact
+CHK|numel_3|double[1 1] 8|exact
+CHK|numel_4|double[1 1] 1|exact
+CHK|numel_5|double[1 1] 3|exact
+CHK|numel_6|double[1 1] 12|exact
+CHK|numel_7|double[1 1] 12|exact
+CHK|numel_8|double[1 1] 4|exact
+CHK|numel_9|double[1 1] 0|exact
+CHK|numel_10|double[1 1] 1|exact
+CHK|numel_11|double[1 1] 2|exact
+CHK|numel_12|double[1 1] 1|exact
+CHK|numel_13|double[1 1] 1|exact
+CHK|numel_14|double[1 1] 1|exact
+CHK|numel_15|double[1 1] 1|exact
+CHK|numel_16|double[1 1] 1|exact
+CHK|numel_17|double[1 1] 3|exact
+CHK|numel_18|double[1 1] 2|exact
+CHK|numel_19|double[1 1] 3|exact
+CHK|numel_20|double[1 1] 2|exact
+CHK|numel_21|double[1 1] 6|exact
+CHK|numel_22|double[1 1] 1|exact
+CHK|numel_23|double[1 1] 1|exact
+CHK|numel_24|double[1 1] 4|exact
+CHK|numel_25|double[1 1] 2|exact
+CHK|numel_cell_subscript|MATLAB:numel:BadSubscriptingIndex|exact
+CHK|numel_cell_subscript_msg|Bad subscripting index.|exact
+CHK|numel_string_subscript|MATLAB:numel:BadSubscriptingIndex|exact
+CHK|numel_string_subscript_msg|Bad subscripting index.|exact
+CHK|numel_list|double[1 1] 1|exact
+CHK|numel_brace_list|double[1 1] 1|exact
+CHK|secondary_strings|cell[1 5]{char[1 12]'\times10^{4}';char[1 13]'\times10^{-5}';onoff on;char[1 4]'auto';char[1 3]'tex'}|exact
+CHK|secondary_named|char[1 13]'\times10^{-5}'|exact
+CHK|secondary_hidden_name|cell[1 3]{logical[1 1] 1;logical[1 1] 0;logical[1 1] 0}|exact
+CHK|secondary_hide|cell[1 2]{onoff off;char[1 12]'\times10^{4}'}|exact
+CHK|secondary_custom|cell[1 2]{char[1 6]'custom';char[1 6]'manual'}|exact
+CHK|secondary_custom_kept|cell[1 2]{char[1 6]'custom';cell[1 6]{char[1 1]'0';char[1 2]'10';char[1 2]'20';char[1 2]'30';char[1 2]'40';char[1 2]'50'}}|exact
+CHK|secondary_auto_again|char[1 12]'\times10^{3}'|exact
+CHK|secondary_zero|char[0 0]''|exact
+CHK|secondary_same_handle|logical[1 1] 1|exact
+CHK|secondary_yyaxis|char[1 12]'\times10^{6}'|exact
+CHK|secondary_log|char[0 0]''|exact
+CHK|secondary_z|char[1 12]'\times10^{5}'|exact
+CHK|polar_r|cell[1 3]{int32[1 1] 4;char[0 0]'';cell[1 6]{char[1 1]'0';char[1 13]'1\times10^{4}';char[1 13]'2\times10^{4}';char[1 13]'3\times10^{4}';char[1 13]'4\times10^{4}';char[1 13]'5\times10^{4}'}}|exact

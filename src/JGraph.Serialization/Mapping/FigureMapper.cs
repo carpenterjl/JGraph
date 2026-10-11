@@ -806,6 +806,8 @@ internal static class FigureMapper
         TargetMajorTickCount = axis.TargetMajorTickCount,
         TickLabelFormat = axis.TickLabelFormat,
         Exponent = axis.Exponent,
+        ExponentLabel = axis.ExponentLabel,
+        ShowExponentLabel = axis.ShowExponentLabel,
         Categories = axis.Categories?.ToArray(),
         TickPositions = axis.TickPositions?.ToArray(),
         TickLabelOverrides = axis.TickLabelOverrides?.ToArray(),
@@ -839,6 +841,8 @@ internal static class FigureMapper
         axis.TargetMajorTickCount = dto.TargetMajorTickCount;
         axis.TickLabelFormat = dto.TickLabelFormat;
         axis.Exponent = dto.Exponent;
+        axis.ExponentLabel = dto.ExponentLabel;
+        axis.ShowExponentLabel = dto.ShowExponentLabel;
 
         if (dto.Categories is not null)
         {
