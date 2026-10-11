@@ -101,8 +101,8 @@ internal static partial class JgsBuiltins
         {
             if (name.Equals("Parent", StringComparison.OrdinalIgnoreCase))
             {
-                // 'Parent', [] makes one that belongs to nothing yet (open item 48).
-                parent = JgsDetachedComponents.MeansNoParent(value) && !control
+                // 'Parent', [] makes one that belongs to nothing yet (open items 48 and 94).
+                parent = JgsDetachedComponents.MeansNoParent(value)
                     ? JgsDetachedComponents.Holder
                     : ComponentParent(value, pairsWithFocus: false, positional: false, line, col, control);
             }
@@ -306,6 +306,7 @@ internal static partial class JgsBuiltins
         int number = JG.RegisterHiddenFigure(figure);
         JgsHandleEntry entry = JgsHandleRegistry.EntryFor(figure);
         entry.HandleVisibility = "off";
+        JgsGraphicsProperties.ApplyFigureDefaults(figure); // the root's DefaultFigure*, as R2025b's uifigure takes (open item 93)
         try
         {
             foreach ((string name, JgsValue value) in options)

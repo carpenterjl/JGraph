@@ -341,7 +341,7 @@ CHK|numeric_name|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
 CHK|bare_word|MATLAB:hgbuiltins:object_creation:InvalidArgs|exact
 CHK|struct_form|text from struct|exact
 CHK|deleted_isgraphics|0|exact
-CHK|set_on_deleted|MATLAB:class:InvalidHandle|div=ADR0198|diverges|
+CHK|set_on_deleted|MATLAB:class:InvalidHandle|exact
 CHK|veto_text_alive|1|exact
 CHK|veto_cell_alive|1|exact
 CHK|veto_handle_alive|1|exact

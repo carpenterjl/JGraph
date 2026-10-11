@@ -262,6 +262,11 @@ internal static partial class JgsBuiltins
             });
         });
 
+        // findprop(obj, name): the metaproperty of the property of exactly that name, or an empty
+        // matlab.metadata.Property — on a graphics handle (open item 91, probe_91b) or an object of a
+        // handle class; a deleted handle answers the empty one, as R2025b's does.
+        Define("findprop", (args, line, col) => FindProp(args, line, col));
+
         // superclasses(obj) or superclasses('Name'): each superclass followed by its own, a column
         // (U6, measured: {'U6Mid'; 'U6Base'; 'handle'}); a value of a built-in class has none.
         // Asked for nothing it prints R2025b's listing instead (open item 27, measured): a blank line,
@@ -340,6 +345,103 @@ internal static partial class JgsBuiltins
             built.AsStruct["cause"] = column;
             return built;
         });
+    }
+
+    /// <summary><c>findprop(obj, name)</c> (open item 91); see its registration.</summary>
+    private static JgsValue FindProp(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count < 2)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        Arity("findprop", args, 2, line, col);
+        JgsValue obj = args[0];
+        bool handleNumbers = obj.Type is JgsType.Number || (obj.Type == JgsType.Array && obj.ArrayLength > 0
+            && JgsHandleRegistry.TryGet(obj.ElementAt(0), out _));
+        if (handleNumbers && obj.Type == JgsType.Array && obj.ArrayLength != 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:RequireScalar", "Invalid input for argument 1 (object):\nValue must be a scalar.");
+        }
+
+        string name = StrOf("findprop", args[1], line, col);
+        if (obj.Type == JgsType.Object && obj.AsObject.Class.IsHandle)
+        {
+            JgsObject instance = obj.AsObject;
+            return !instance.Deleted && instance.Class.Property(name) is { } declared && declared.Spec.Name == name
+                ? UserMetaProperty(declared)
+                : EmptyMetaProperty();
+        }
+
+        if (obj.Type is JgsType.Number or JgsType.Array && JgsHandleRegistry.TryGetOrRoot(obj.Type == JgsType.Array ? obj.ElementAt(0) : obj, out JgsHandleEntry? entry))
+        {
+            return JgsGraphicsProperties.MetaPropertyOf(entry, name) ?? EmptyMetaProperty();
+        }
+
+        if (JgsHandleRegistry.RetiredClassOf(obj) is not null)
+        {
+            return EmptyMetaProperty();
+        }
+
+        throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
+            $"Undefined function 'findprop' for input arguments of type '{ClassOf(obj, JgsDialect.Matlab)}'.");
+    }
+
+    /// <summary>The 0-by-0 <c>matlab.metadata.Property</c> <c>findprop</c> answers for a name it does not find.</summary>
+    private static JgsValue EmptyMetaProperty()
+    {
+        // It has the fields, so that findprop(h, 'Bogus').Name is a list of nothing, as in R2025b.
+        string[] fields =
+        [
+            "Name", "Description", "DetailedDescription", "GetAccess", "SetAccess", "Dependent", "Constant",
+            "Abstract", "Transient", "Hidden", "GetObservable", "SetObservable", "AbortSet", "NonCopyable",
+            "WeakHandle", "PartialMatchPriority", "HasDefault", "DefaultValue", "GetMethod", "SetMethod",
+            "Validation", "DefiningClass",
+        ];
+        JgsValue empty = JgsValue.StructArray(new JgsStructArray([], fields), 0, 0);
+        empty.SetClassName(MetaPropertyClassName);
+        return empty;
+    }
+
+    /// <summary>A user class's property as a <c>matlab.metadata.Property</c>, its fields in R2025b's order.</summary>
+    private static JgsValue UserMetaProperty(ClassProperty property)
+    {
+        static JgsValue Access(MemberAccess access) => access.Kind == MemberAccessKind.List
+            ? JgsValue.Cell([.. (access.Classes ?? []).Select(JgsValue.Str)])
+            : JgsValue.Str(access.Kind.ToString().ToLowerInvariant());
+
+        JgsValue definer = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Name"] = JgsValue.Str(property.Owner?.Name ?? ""),
+        });
+        definer.SetClassName("matlab.metadata.Class");
+        JgsValue meta = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Name"] = JgsValue.Str(property.Spec.Name),
+            ["Description"] = JgsValue.Str(""),
+            ["DetailedDescription"] = JgsValue.Str(""),
+            ["GetAccess"] = Access(property.GetAccess),
+            ["SetAccess"] = Access(property.SetAccess),
+            ["Dependent"] = JgsValue.Bool(property.Dependent),
+            ["Constant"] = JgsValue.Bool(property.Constant),
+            ["Abstract"] = JgsValue.Bool(property.Abstract),
+            ["Transient"] = JgsValue.Bool(property.Transient),
+            ["Hidden"] = JgsValue.Bool(property.Hidden),
+            ["GetObservable"] = JgsValue.Bool(property.Observable),
+            ["SetObservable"] = JgsValue.Bool(property.Observable),
+            ["AbortSet"] = JgsValue.Bool(property.AbortSet),
+            ["NonCopyable"] = JgsValue.Bool(property.NonCopyable),
+            ["WeakHandle"] = JgsValue.Bool(false),
+            ["PartialMatchPriority"] = JgsValue.Number(1),
+            ["HasDefault"] = JgsValue.Bool(property.Spec.Default is not null),
+            ["DefaultValue"] = JgsEmpty.Zero(),
+            ["GetMethod"] = JgsEmpty.Zero(),
+            ["SetMethod"] = JgsEmpty.Zero(),
+            ["Validation"] = JgsEmpty.Zero(),
+            ["DefiningClass"] = definer,
+        });
+        meta.SetClassName(MetaPropertyClassName);
+        return meta;
     }
 
     /// <summary>The <c>meta.class</c> of a user class named rather than instantiated: <c>?Circle</c>.</summary>
@@ -458,15 +560,25 @@ internal static partial class JgsBuiltins
             return HandleMembers(value)?.Properties ?? JgsGraphicsProperties.NamesOf(handle.Target);
         }
 
+        // A deleted object's handle still lists its class's (open item 91).
+        if (HandleMembers(value) is { } retired)
+        {
+            return retired.Properties;
+        }
+
         throw new JgsRuntimeException(line, col,
             $"{builtin}: a {value.TypeName} has no properties to list.");
     }
 
-    /// <summary>R2025b's recorded members of the graphics object a handle names, or null.</summary>
+    /// <summary>
+    /// R2025b's recorded members of the graphics object a handle names, a deleted one's class
+    /// included (open item 91), or null.
+    /// </summary>
     private static JgsGraphicsProperties.MatlabMembers? HandleMembers(JgsValue value) =>
-        value.Type is JgsType.Number && JgsHandleRegistry.TryGet(value, out JgsHandleEntry? handle)
-            ? JgsGraphicsProperties.MembersOf(handle.Target)
-            : null;
+        value.Type is not JgsType.Number ? null
+        : JgsHandleRegistry.TryGet(value, out JgsHandleEntry? handle) ? JgsGraphicsProperties.MembersOf(handle.Target)
+        : JgsRunningDialect.ThreadIsMatlab ? JgsGraphicsProperties.RetiredMembers(value)
+        : null;
 
     /// <summary>The method names of whatever <paramref name="value"/> is, in declaration order.</summary>
     private static IEnumerable<string> MethodNames(

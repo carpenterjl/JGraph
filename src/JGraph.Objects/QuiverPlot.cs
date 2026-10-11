@@ -198,6 +198,23 @@ public sealed class QuiverPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, 
     [Browsable(false)]
     public double EffectiveScale => _resolvedScale ??= ResolveScale();
 
+    /// <summary>
+    /// The rows and columns of the grid the positions were given on, when they were a matrix; the
+    /// flat auto-scale rule divides the spans by them (MATLAB's quiver).
+    /// </summary>
+    [Browsable(false)]
+    public (int Rows, int Columns)? GridShape
+    {
+        get => _gridShape;
+        set
+        {
+            _gridShape = value;
+            _resolvedScale = null;
+        }
+    }
+
+    private (int Rows, int Columns)? _gridShape;
+
     /// <summary>The dash pattern of the shafts (MATLAB <c>LineStyle</c>).</summary>
     [Category("Appearance"), DisplayName("Line style")]
     public DashStyle LineDash
@@ -469,6 +486,33 @@ public sealed class QuiverPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, 
         double spanX = Span(_x);
         double spanY = Span(_y);
         double spanZ = Span(_z);
+
+        // A flat field follows MATLAB's quiver: the cell is the span over the grid's columns by the
+        // span over its rows (a vector's a square of √n), and the longest arrow, measured in cells,
+        // is fitted to the factor (open item 95, probe_95: six of R2025b's ScaleFactors to 6 digits).
+        if (spanZ == 0 && _w.All(static w => w == 0 || double.IsNaN(w)))
+        {
+            (double rows, double columns) = _gridShape is { Rows: > 1, Columns: > 1 } grid
+                ? (grid.Rows, grid.Columns)
+                : (System.Math.Sqrt(count), System.Math.Sqrt(count));
+            double across = spanX / columns, down = spanY / rows;
+            double cell = (across * across) + (down * down);
+            double most = 0;
+            if (cell > 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    double reach = System.Math.Sqrt(((_u[i] * _u[i]) + (_v[i] * _v[i])) / cell);
+                    if (reach > most)
+                    {
+                        most = reach;
+                    }
+                }
+            }
+
+            return most > 0 ? _autoScaleFactor / most : _autoScaleFactor;
+        }
+
         double step = spanZ > 0
             ? System.Math.Cbrt(System.Math.Max(spanX, spanZ) * System.Math.Max(spanY, spanZ) * spanZ / count)
             : System.Math.Sqrt(System.Math.Max(spanX * spanY, 0) / count);

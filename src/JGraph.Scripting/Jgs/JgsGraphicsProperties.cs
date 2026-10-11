@@ -289,8 +289,73 @@ internal static partial class JgsGraphicsProperties
     /// refused by name rather than silently ignored, because a script that reparents and gets no
     /// error will believe it happened.
     /// </summary>
+    /// <summary>
+    /// <c>Parent = []</c> (open item 94, probe <c>probe_94</c>): moves the object, and what it holds,
+    /// to the holder that object waits in (<see cref="JgsDetachedComponents"/>), which no window shows.
+    /// False for an object R2025b's answer for was not recorded (a tree node), which keeps its refusal.
+    /// </summary>
+    private static bool Detach(JgsHandleEntry entry, int line, int col)
+    {
+        GraphObject target = entry.Target;
+        if (JgsDetachedComponents.IsHolder(ParentOf(target)))
+        {
+            return true;
+        }
+
+        switch (target)
+        {
+            case UiTreeNodeModel:
+                return false;
+            case AxesModel:
+                return TryReparentIntoContainer(entry, JgsHandleRegistry.EntryFor(JgsDetachedComponents.HolderFigure), line, col);
+            case UiObject:
+                return TryReparentIntoContainer(entry, JgsHandleRegistry.EntryFor(JgsDetachedComponents.Holder), line, col);
+        }
+
+        FigureModel? left = FigureOf(target);
+        FigureModel holder = JgsDetachedComponents.HolderFigure;
+        using (GraphObjectLifecycle.SuppressNotifications())
+        {
+            switch (target)
+            {
+                case ContextMenuModel menu:
+                    (menu.Parent as FigureModel)?.ContextMenus.Remove(menu);
+                    holder.ContextMenus.Add(menu);
+                    break;
+                case MenuItemModel item:
+                    RemoveMenuItem(item);
+                    holder.Menus.Add(item);
+                    break;
+                case UiToolbarModel bar:
+                    (bar.Parent as FigureModel)?.Toolbars.Remove(bar);
+                    holder.Toolbars.Add(bar);
+                    break;
+                case UiToolModel tool:
+                    (tool.Parent as UiToolbarModel)?.Tools.Remove(tool);
+                    JgsDetachedComponents.HolderToolbar.Tools.Add(tool);
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        if (left is not null)
+        {
+            JG.TouchFigure(left); // its window loses the menu or the bar
+        }
+
+        return true;
+    }
+
     private static void Reparent(JgsHandleEntry entry, JgsValue value, int line, int col)
     {
+        // Parent = [] takes an object out of its figure to wait for another, as R2025b does (open
+        // item 94): a component, a panel, a grid, an axes, a menu, a context menu, a toolbar or a tool.
+        if (JgsDetachedComponents.MeansNoParent(value) && Detach(entry, line, col))
+        {
+            return;
+        }
+
         if (entry.Target is UiObject or AxesModel or UiTreeNodeModel && !JgsHandleRegistry.TryGetOrRoot(value, out _))
         {
             throw value.Type == JgsType.Array && value.ArrayLength == 0
@@ -1479,6 +1544,13 @@ internal static partial class JgsGraphicsProperties
 
         if (typeof(StemPlot).IsAssignableFrom(type))
         {
+            // A stem left to the axes' ColorOrder reads the colour it is drawn in, as a bar's face
+            // does, rather than the model's empty 'none' (open item 93).
+            Put(table, "Color",
+                entry => ColorRow(((StemPlot)entry.Target).Color ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
+                (entry, value, line, col) =>
+                    ((StemPlot)entry.Target).Color = JgsBuiltins.OptionColor(value, line, col, "stem"));
+
             // MATLAB's stem calls the floor BaseValue and the model calls it Baseline. Both names
             // answer, rather than one of them being a near miss a script has to discover.
             Put(table, "BaseValue",
@@ -2136,6 +2208,7 @@ internal static partial class JgsGraphicsProperties
                 (e,v,l,c) => JgsTextLabel.For(e.Target).WriteString(v,l,c));
 
         AddPlotWaveNested(type, table);
+        AddComputedNames(type, table); // open item 95
     }
 
     /// <summary>

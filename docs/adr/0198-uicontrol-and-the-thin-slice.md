@@ -222,9 +222,10 @@ cleared the field. The pump then looked busy for ever and delivered nothing more
   `'normalized'`, `'characters'`, `'points'`, `'inches'` and `'centimeters'`; JGraph refuses them by
   name (`units_normalized`).~~
   — **retired 2026-10-04 by U2 (ADR 0199)**, which brought the units engine.
-- **A deleted handle is refused without R2025b's identifier.** R2025b raises
+- ~~**A deleted handle is refused without R2025b's identifier.** R2025b raises
   `MATLAB:class:InvalidHandle` ("Invalid or deleted object."); the registry cannot tell a deleted
-  handle from a number that never was one (`set_on_deleted`).
+  handle from a number that never was one (`set_on_deleted`).~~
+  — **retired 2026-10-11 by open item 91 (ADR 0224)**: the registry keeps a deleted handle's class.
 - ~~**`Children` puts a figure's components before its axes**, whichever was made first. R2025b lists
   them newest first across kinds; U2 gives the figure one tree of children.~~
   — **retired 2026-10-04, never a divergence.** R2025b lists every component before every axes too,

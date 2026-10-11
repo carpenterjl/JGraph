@@ -85,10 +85,6 @@ the window's thread it queues a `PropertyWatch` event, delivered at the next dra
 
 ## Divergences
 
-- **R2025b's names whose values are objects, tables or layout measurements are still missing**:
-  `Theme`, `InteractionOptions`, `Annotation` on a group, `SourceTable`, a ruler's `Exponent`
-  (int32) and `MinorTickValues`, a title's `Position` and `Extent`, a quiver's `ScaleFactor`
-  (`oi_handle_members`, `names_line`).
 - **The names the model lacked change nothing that is drawn** (a bar's `Labels`, an axes'
   `GridLineWidth`, a legend's `Direction`): each reads and writes R2025b's value and keeps what a
   script writes, unchecked. A rectangle's `Position` and `Curvature` and an animated line's
@@ -97,10 +93,6 @@ the window's thread it queues a `PropertyWatch` event, delivered at the next dra
   hyperlinks (`methods_listing_line`), as for a user class since ADR 0216.
 - **A rectangle and an animated line still answer the patch's and the line's names when named**
   (`isprop(r, 'Faces')` is 1), as JGraph's other extras do (ADR 0220).
-- **`findprop` through the dot is refused**, as there is no `findprop`; R2025b answers a
-  `GraphicsMetaProperty`.
-- **A deleted handle forgets its class**: `methods(h)` and a dot on it are refused as on a number,
-  where R2025b still lists a `Line`'s methods and refuses the dot in its own words.
 - **A change the window makes is heard at the next drain point** (`drawnow`, `pause`, an idle session),
   and one noticed by the watch only when the value changed; R2025b raises `PostSet` inside every set,
   of the same value too.
@@ -119,5 +111,7 @@ Tests: `OpenItemsBatch10Tests` (a rectangle's redraw, a window change queued), t
 
 ## Still open
 
-- A deleted handle's class and members; `findprop` on a graphics handle.
 - The component-callback and listener order, in a MATLAB window session.
+
+The object-, table- and layout-valued names, `findprop` and a deleted handle's members followed in
+ADR 0224.

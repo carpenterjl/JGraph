@@ -9338,6 +9338,12 @@ internal sealed partial class Interpreter
             return JgsBuiltins.GetHandleProperty(handle, field, member.Line, member.Column, dot: true);
         }
 
+        // A deleted object's handle still names its class (open item 91).
+        if (JgsGraphicsProperties.DotOnRetired(target, field, reading: true, member.Line, member.Column) is { } retired)
+        {
+            throw retired;
+        }
+
         // Class-constructor statics (M42): uint8.empty(0, 5) reads a builtin off a builtin —
         // the dot never was a struct access.
         if (target.Type == JgsType.Function && target.AsCallable is BuiltinFunction builtinTarget
@@ -9481,6 +9487,13 @@ internal sealed partial class Interpreter
 
             JgsBuiltins.SetHandleProperty(handle, FieldName(member, env), value, member.Line, member.Column, dot: true);
             return value;
+        }
+
+        // A write onto a deleted object's handle is refused as R2025b refuses it (open item 91).
+        if (member.Target is VariableExpr retiredTarget && LookUp(retiredTarget.Name, env, out JgsValue retiredHeld)
+            && JgsGraphicsProperties.DotOnRetired(retiredHeld, FieldName(member, env), reading: false, member.Line, member.Column) is { } retired)
+        {
+            throw retired;
         }
 
         // A dotted write onto an instance of a user class sets a declared property, checked against

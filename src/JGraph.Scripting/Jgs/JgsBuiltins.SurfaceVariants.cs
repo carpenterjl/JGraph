@@ -339,18 +339,31 @@ internal static partial class JgsBuiltins
         }
 
         double[] Zeros() => new double[count];
-        double[] Index()
+
+        // Components alone are placed on the grid their own shape implies, as MATLAB does for
+        // quiver(U, V): x the column number and y the row number, both from 1 (probe_q; this put
+        // every arrow on y = 0 at x counted from 0 before open item 95).
+        int gridRows = System.Math.Max(1, JgsMatrix.RowCount(positional[0]));
+        double[] Across()
         {
-            // Components alone are placed on the grid their own shape implies, exactly as MATLAB
-            // does for quiver(U, V): column index across, row index down.
-            var indices = new double[count];
-            int rows = height > 1 ? height : count;
+            var x = new double[count];
             for (int i = 0; i < count; i++)
             {
-                indices[i] = i % rows;
+                x[i] = (i / gridRows) + 1;
             }
 
-            return indices;
+            return x;
+        }
+
+        double[] Down()
+        {
+            var y = new double[count];
+            for (int i = 0; i < count; i++)
+            {
+                y[i] = (i % gridRows) + 1;
+            }
+
+            return y;
         }
 
         QuiverPlot plot;
@@ -361,18 +374,23 @@ internal static partial class JgsBuiltins
                     ? JG.Quiver3(fields[0], fields[1], fields[2], fields[3], fields[4], fields[5])
                     : JG.Quiver(fields[0], fields[1], fields[2], fields[3])
                 : three
-                    ? JG.Quiver3(Index(), Zeros(), Zeros(), fields[0], fields[1], fields[2])
-                    : JG.Quiver(Index(), Zeros(), fields[0], fields[1]);
+                    ? JG.Quiver3(Across(), Down(), Zeros(), fields[0], fields[1], fields[2])
+                    : JG.Quiver(Across(), Down(), fields[0], fields[1]);
         }
         catch (ArgumentException ex)
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
 
+        if (height > 1)
+        {
+            plot.GridShape = (height, width); // the grid MATLAB's auto-scale divides by (open item 95)
+        }
+
         if (scale is { } factor)
         {
-            // MATLAB reads quiver(..., 0) as "leave the components alone", and any other number as a
-            // multiplier on top of the automatic fit.
+            // MATLAB reads quiver(..., 0) as "leave the components alone", and any other number as the
+            // AutoScaleFactor in place of 0.9 (R2025b reads it back as given, probe_95).
             plot.AutoScale = factor != 0;
             if (factor == 0)
             {
@@ -380,7 +398,7 @@ internal static partial class JgsBuiltins
             }
             else
             {
-                plot.AutoScaleFactor = 0.9 * factor;
+                plot.AutoScaleFactor = factor;
             }
         }
 

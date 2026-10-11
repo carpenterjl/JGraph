@@ -36,7 +36,7 @@ CHK|bubble_range_set|char[1 106]'MATLAB:class:SetProhibited / Setting the 'Bubbl
 CHK|bubble_limits_dot|char[1 126]'MATLAB:noSuchMethodOrField / Unrecognized method, property, or field 'BubbleSizeLimits' for class 'matlab.graphics.axis.Axes'.'|exact
 CHK|histogram_in_axes|double[1 1] 3|exact
 CHK|heatmap_in_figure|char[1 6]'double'|exact
-CHK|names_line|double[1 1] 50|div=0222|diverges|double[1 1] 49
+CHK|names_line|double[1 1] 50|exact
 CHK|names_text|double[1 1] 44|exact
 CHK|names_rectangle|char[1 315]'AlignVertexCenters BeingDeleted BusyAction ButtonDownFcn Children Clipping ContextMenu CreateFcn Curvature DeleteFcn EdgeColor EdgeColorMode FaceAlpha FaceColor HandleVisibility HitTest Interruptible LineStyle LineWidth Parent PickableParts Position Selected SelectionHighlight SeriesIndex Tag Type UserData Visible'|exact
 CHK|names_animatedline|char[1 383]'AlignVertexCenters Annotation BeingDeleted BusyAction ButtonDownFcn Children Clipping Color ColorMode ContextMenu CreateFcn DeleteFcn DisplayName HandleVisibility HitTest Interruptible LineStyle LineStyleMode LineWidth Marker MarkerEdgeColor MarkerFaceColor MarkerMode MarkerSize MaximumNumPoints Parent PickableParts Selected SelectionHighlight SeriesIndex Tag Type UserData Visible'|exact

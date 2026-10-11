@@ -197,8 +197,6 @@ stage:
 - **`StyleConfigurations` is an empty table of three text variables.** R2025b's holds a
   categorical, a cell and a style object.
 - **A table cannot be the parent of a table.** R2025b's `uitable(t)` makes one.
-- **An object of U8 cannot be made without a parent.** `uimenu('Parent', [])` is refused;
-  R2025b makes one that belongs to nothing.
 - **`SelectedTab` of a group with no tabs is an empty double.** R2025b's is an empty
   `GraphicsPlaceholder`; a handle is a number here.
 - **A table's `Extent` is its own size and 40 pixels.** That is what R2025b answered for every

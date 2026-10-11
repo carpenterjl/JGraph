@@ -228,7 +228,7 @@ fprintf('CHK|struct_form|%s %s|exact\n', c3.Style, c3.String);
 delete(c3);
 delete(c1);
 fprintf('CHK|deleted_isgraphics|%d|exact\n', isgraphics(c1));
-try, c1.String = 'x'; catch err, fprintf('CHK|set_on_deleted|%s|div=ADR0198\n', err.identifier); end
+try, c1.String = 'x'; catch err, fprintf('CHK|set_on_deleted|%s|exact\n', err.identifier); end
 
 % --- a text CloseRequestFcn other than closereq vetoes the close ---------------------------------
 U1LOG = {};

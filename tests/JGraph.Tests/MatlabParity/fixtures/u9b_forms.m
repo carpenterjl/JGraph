@@ -39,7 +39,7 @@ u9b_chk('flags', @() double([isprop(uihtml(uf), 'Units') isgraphics(uihtml(uf)) 
     isa(uihtml(uf), 'matlab.graphics.Graphics') isa(uihtml(uf), 'matlab.ui.control.HTML') isa(uihtml(uf), 'handle')]));
 u9b_chk('parent_figure', @() reparent(uihtml(uf), f));
 % A component with no parent cannot be kept here (ADR 0202, open item 48).
-u9b_chkdiv('parent_none', @() unparent(uihtml(uf)), 'ADR0202');
+u9b_chk('parent_none', @() unparent(uihtml(uf)));
 u9b_chk('parent_panel', @() reparent(uihtml(uf), uipanel(uf)));
 u9b_chk('parent_axes', @() reparent(uihtml(uf), ax));
 u9b_chk('in_panel_position', @() get(uihtml(uipanel(uf)), 'Position'));

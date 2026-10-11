@@ -21,9 +21,44 @@ internal static class JgsDetachedComponents
     /// </summary>
     public static FigureModel HolderFigure { get; private set; } = NewHolderFigure();
 
+    /// <summary>
+    /// The toolbar a detached push or toggle tool waits in (open item 94), made when first needed in
+    /// <see cref="HolderFigure"/>, whose menus, context menus and toolbars are the detached ones.
+    /// </summary>
+    public static UiToolbarModel HolderToolbar
+    {
+        get
+        {
+            if (_holderToolbar is null || !ReferenceEquals(_holderToolbar.Parent, HolderFigure))
+            {
+                _holderToolbar = new UiToolbarModel();
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    HolderFigure.Toolbars.Add(_holderToolbar);
+                }
+            }
+
+            return _holderToolbar;
+        }
+    }
+
+    private static UiToolbarModel? _holderToolbar;
+
     /// <summary>Whether <paramref name="target"/> is where detached objects wait.</summary>
     public static bool IsHolder(GraphObject? target) =>
-        target is not null && (ReferenceEquals(target, Holder) || ReferenceEquals(target, HolderFigure));
+        target is not null && (ReferenceEquals(target, Holder) || ReferenceEquals(target, HolderFigure)
+            || ReferenceEquals(target, _holderToolbar));
+
+    /// <summary>
+    /// The holder a maker that <paramref name="accepts"/> some parents makes a parentless object in:
+    /// the panel for a component, the figure for a menu, a context menu or a toolbar, the toolbar for
+    /// a tool; null for a maker none of them suits (a tab, whose holder would be a tab group).
+    /// </summary>
+    public static GraphObject? HolderAccepted(Func<GraphObject, bool> accepts) =>
+        accepts(Holder) ? Holder
+        : accepts(HolderFigure) ? HolderFigure
+        : accepts(HolderToolbar) ? HolderToolbar
+        : null;
 
     /// <summary>Whether a <c>Parent</c> given to a maker is the empty one that means none.</summary>
     public static bool MeansNoParent(JgsValue value) =>
@@ -34,6 +69,7 @@ internal static class JgsDetachedComponents
     {
         Holder = new UiPanelModel();
         HolderFigure = NewHolderFigure();
+        _holderToolbar = null;
     }
 
     private static FigureModel NewHolderFigure() => new() { IsUiFigure = true, IntegerHandle = false };

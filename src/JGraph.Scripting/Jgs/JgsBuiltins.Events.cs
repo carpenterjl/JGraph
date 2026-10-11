@@ -853,9 +853,8 @@ internal static partial class JgsBuiltins
                 return EventColumn([]);
             }
 
-            // A graphics handle's, R2025b's (open item 56).
-            if (asked.Type == JgsType.Number && JgsHandleRegistry.TryGet(asked, out JgsHandleEntry? graphics)
-                && JgsGraphicsProperties.MembersOf(graphics.Target) is { } members)
+            // A graphics handle's, R2025b's (open item 56), a deleted one's class's too (open item 91).
+            if (HandleMembers(asked) is { } members)
             {
                 return EventColumn(members.Events);
             }

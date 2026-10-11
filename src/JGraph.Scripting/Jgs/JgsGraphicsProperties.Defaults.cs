@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using JGraph.Api;
 using JGraph.Core.Model;
 using JGraph.Objects;
 using JGraph.Objects.Annotations;
@@ -30,6 +31,9 @@ internal static partial class JgsGraphicsProperties
         new("Line", static () => new LinePlot([], [])),
         new("Text", static () => new TextAnnotation()),
         new("Patch", static () => new PatchPlot([], [], [])),
+        new("Stem", static () => new StemPlot([], [])),
+        new("Scatter", static () => new ScatterPlot([], [])),
+        new("Bar", static () => new BarPlot([], [])),
         new("Surface", static () => new SurfacePlot(new double[2, 2])),
         new("Image", static () => new ImagePlot(new double[1, 1])),
         new("Light", static () => new LightModel()),
@@ -52,7 +56,47 @@ internal static partial class JgsGraphicsProperties
     /// <summary>Whether any object holds a default — what keeps a new object's adoption free when none does.</summary>
     private static bool s_anyDefaults;
 
-    static JgsGraphicsProperties() => GraphObjectLifecycle.Adopted += ApplyDefaults;
+    /// <summary>
+    /// Whether the object being made comes from a low-level, name-value-only form (<c>line('XData',
+    /// …)</c>), which takes the defaults the high-level makers leave to the axes' orders.
+    /// </summary>
+    [ThreadStatic]
+    private static bool t_lowLevelMaking;
+
+    static JgsGraphicsProperties()
+    {
+        GraphObjectLifecycle.Adopted += ApplyDefaults;
+        JG.FigureMade = ApplyDefaults; // a figure made by plot, axes, gcf or gca takes the root's too (open item 93)
+    }
+
+    /// <summary>Makes an object through a low-level form, which takes every default (open item 93).</summary>
+    internal static T MakingLowLevel<T>(Func<T> make)
+    {
+        bool was = t_lowLevelMaking;
+        t_lowLevelMaking = true;
+        try
+        {
+            return make();
+        }
+        finally
+        {
+            t_lowLevelMaking = was;
+        }
+    }
+
+    /// <summary>
+    /// A default the high-level makers pass over, because they set the property from the axes'
+    /// <c>ColorOrder</c> and <c>LineStyleOrder</c> themselves (measured in R2025b, probe <c>probe_93b</c>):
+    /// <c>plot</c> and <c>line(x, y)</c> a line's colour, style and marker, <c>stem</c> its colour,
+    /// <c>bar</c> its face colour. Only a low-level form takes them.
+    /// </summary>
+    private static bool SetByTheOrders(string cls, string property) => cls switch
+    {
+        "Line" => property is "Color" or "LineStyle" or "Marker",
+        "Stem" => property == "Color",
+        "Bar" => property == "FaceColor",
+        _ => false,
+    };
 
     /// <summary>Forgets every default the root holds (a new run's root has none).</summary>
     internal static void ForgetDefaults()
@@ -217,10 +261,7 @@ internal static partial class JgsGraphicsProperties
                     continue;
                 }
 
-                // A line's colour comes from its axes' ColorOrder, which R2025b's plot sets over the
-                // default (measured); this build's lines are all plot's, so DefaultLineColor is held
-                // and read back but given to none.
-                if (cls.Word == "Line" && held.Property.Equals("Color", StringComparison.OrdinalIgnoreCase))
+                if (!t_lowLevelMaking && SetByTheOrders(cls.Word, held.Property))
                 {
                     continue;
                 }
@@ -235,9 +276,70 @@ internal static partial class JgsGraphicsProperties
                 }
             }
         }
+
     }
 
-    /// <summary>The root's defaults for figures, given to a figure the <c>figure</c> verb has just made.</summary>
+    /// <summary>
+    /// An axes' title and a ruler's label are texts R2025b makes when a script first reaches them,
+    /// and they take the text defaults held then (probes <c>probe_93b</c>, <c>probe_93e</c>): the
+    /// title its colour, each its interpreter. Their sizes, angles and the labels' colours follow the
+    /// axes, so those defaults are not theirs. This build makes their handles at the same moment.
+    /// </summary>
+    internal static void LabelMade(JgsTextLabel label)
+    {
+        if (!s_anyDefaults)
+        {
+            return;
+        }
+
+        bool title = label.Owner is AxesModel && label.Role == "Title";
+        GraphObject? from = label.Owner switch
+        {
+            AxesModel axes when title => axes,
+            AxisModel ruler => ruler.Parent ?? JgsGraphicsRoot.Instance,
+            _ => null,
+        };
+        if (from is null)
+        {
+            return;
+        }
+
+        JgsValue? colour = title ? NearestDefault(from, "Text", "Color") : null;
+        JgsValue? interpreter = NearestDefault(from, "Text", "Interpreter");
+        JgsHandleEntry? entry = null;
+        try
+        {
+            if (colour is not null)
+            {
+                Set(entry ??= JgsHandleRegistry.EntryFor(label), "Color", colour, 0, 0);
+            }
+
+            if (interpreter is not null)
+            {
+                Set(entry ??= JgsHandleRegistry.EntryFor(label), "Interpreter", interpreter, 0, 0);
+            }
+        }
+        catch (JgsException)
+        {
+            // As for an object's own defaults: one a label cannot take is passed over.
+        }
+    }
+
+    /// <summary>The default for a class's property held nearest an object, the object itself first, or null when none is.</summary>
+    private static JgsValue? NearestDefault(GraphObject from, string cls, string property)
+    {
+        for (GraphObject? holder = from; holder is not null; holder = HolderAbove(holder))
+        {
+            if (StoreOf(holder, create: false) is { } store && store.TryGetValue(Key(cls, property), out var held))
+            {
+                return held.Value;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>The root's defaults for figures, given to a <c>uifigure</c>, which has no number to be made under.</summary>
     internal static void ApplyFigureDefaults(FigureModel figure) => ApplyDefaults(figure);
 
     /// <summary>The object above this one that may hold defaults for it: its parent, and above a figure the root.</summary>

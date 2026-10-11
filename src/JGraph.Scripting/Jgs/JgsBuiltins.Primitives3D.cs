@@ -32,7 +32,7 @@ internal static partial class JgsBuiltins
         "Color", "LineWidth", "LineStyle", "Marker", "MarkerSize", "DisplayName",
 
         // M86. plot3 and line make Line objects, and MATLAB documents both marker colours for a
-        // Line — so a call that named either of them was refused by a verb that draws markers.
+        // Line â€” so a call that named either of them was refused by a verb that draws markers.
         "MarkerFaceColor", "MarkerEdgeColor",
     };
 
@@ -72,13 +72,13 @@ internal static partial class JgsBuiltins
     /// <summary>Which coordinate forms a fill/patch verb accepts.</summary>
     private enum Dimensions
     {
-        /// <summary>(x, y, c) only — <c>fill</c>.</summary>
+        /// <summary>(x, y, c) only â€” <c>fill</c>.</summary>
         Two,
 
-        /// <summary>(x, y, z, c) only — <c>fill3</c>.</summary>
+        /// <summary>(x, y, z, c) only â€” <c>fill3</c>.</summary>
         Three,
 
-        /// <summary>Either, decided by whether a fourth data argument is present — <c>patch</c>.</summary>
+        /// <summary>Either, decided by whether a fourth data argument is present â€” <c>patch</c>.</summary>
         Either,
     }
 
@@ -284,7 +284,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// The sizes of a marker chart in space. A bubble chart's are data values and go through as they
-    /// are; everyone else's are areas in points squared, so the diameter is their square root — and a
+    /// are; everyone else's are areas in points squared, so the diameter is their square root â€” and a
     /// single one of either is the whole cloud's.
     /// </summary>
     private static void ApplySizeData(string verb, Scatter3DPlot plot, JgsValue value, int line, int col)
@@ -293,7 +293,7 @@ internal static partial class JgsBuiltins
         if (plot.BubbleSizing)
         {
             // A bubble's size is a reading, so one of them is a reading every bubble shares rather
-            // than a marker size for the whole cloud — the scale still has to see it as data.
+            // than a marker size for the whole cloud â€” the scale still has to see it as data.
             double[] values = sizes.Length == 1 && plot.X.Count != 1
                 ? [.. Enumerable.Repeat(sizes[0], plot.X.Count)]
                 : sizes;
@@ -360,12 +360,30 @@ internal static partial class JgsBuiltins
     private static JgsValue FillPatch(
         string verb, IReadOnlyList<JgsValue> args, int line, int col, Dimensions dimensions)
     {
+        if (verb == "patch" && PatchCoordinatesByName(args, line, col) is { } byName)
+        {
+            PatchPlot made = FromCoordinates(verb, byName.Coordinates, line, col, dimensions, coloured: false);
+            ApplyPatchOptions(verb, made, byName.Options, line, col);
+            JgsHandleEntry entry = JgsHandleRegistry.EntryFor(made);
+            foreach ((string name, JgsValue value) in byName.Others)
+            {
+                JgsGraphicsProperties.Set(entry, name, value, line, col);
+            }
+
+            if (made.Z.Any(z => double.IsFinite(z) && z != 0))
+            {
+                JG.Gca().Is3D = true;
+            }
+
+            return Handle(made);
+        }
+
         (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) =
             SplitTrailingOptions(args, PatchOptionNames);
 
-        // patch(fv) — a struct holding faces and vertices, which is what every verb in the M59 volume
+        // patch(fv) â€” a struct holding faces and vertices, which is what every verb in the M59 volume
         // family hands back when a script asks for the shape instead of the drawing. Reading it here
-        // is what closes the loop between 'fv = isosurface(…)' and 'patch(fv)'.
+        // is what closes the loop between 'fv = isosurface(â€¦)' and 'patch(fv)'.
         if (data.Count == 1 && data[0].Type == JgsType.Struct)
         {
             foreach ((string name, JgsValue value) in FaceVertexFields(verb, data[0], line, col))
@@ -434,7 +452,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// The <c>patch('Faces', F, 'Vertices', V, …)</c> form. V is n-by-2 or n-by-3; F is one row per
+    /// The <c>patch('Faces', F, 'Vertices', V, â€¦)</c> form. V is n-by-2 or n-by-3; F is one row per
     /// face, holding 1-based vertex numbers as MATLAB writes them.
     /// </summary>
     private static PatchPlot FromFacesAndVertices(
@@ -499,20 +517,66 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
+    /// <c>patch()</c> and <c>patch('XData', x, 'YData', y, …)</c>, the low-level form whose
+    /// coordinates are properties (open item 93, probe <c>probe_93d</c>): the coordinates, R2025b's
+    /// triangle for one left out; the names the patch verbs read; and the other properties. Null for
+    /// any other form, the <c>'Faces'</c>/<c>'Vertices'</c> one included.
+    /// </summary>
+    private static (JgsValue[] Coordinates, List<(string Name, JgsValue Value)> Options, List<(string Name, JgsValue Value)> Others)?
+        PatchCoordinatesByName(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count > 0 && !IsTextScalar(args[0]))
+        {
+            return null;
+        }
+
+        if (args.Count % 2 != 0)
+        {
+            return null;
+        }
+
+        JgsValue x = Column(new double[] { 0, 1, 0 }), y = Column(new double[] { 0, 0, 1 });
+        JgsValue? z = null;
+        bool named = args.Count == 0;
+        var options = new List<(string Name, JgsValue Value)>();
+        var others = new List<(string Name, JgsValue Value)>();
+        for (int i = 0; i < args.Count; i += 2)
+        {
+            string name = StrOf("patch", args[i], line, col);
+            switch (name.ToLowerInvariant())
+            {
+                case "faces":
+                case "vertices":
+                    return null;
+                case "xdata": x = args[i + 1]; named = true; break;
+                case "ydata": y = args[i + 1]; named = true; break;
+                case "zdata": z = args[i + 1]; named = true; break;
+                default:
+                    (PatchOptionNames.Contains(name) ? options : others).Add((name, args[i + 1]));
+                    break;
+            }
+        }
+
+        return named ? (z is null ? [x, y] : [x, y, z], options, others) : null;
+    }
+
+    /// <summary>
     /// The coordinate form. A vector argument is one polygon; a matrix is one polygon per column,
-    /// which is how <c>fill</c> draws several at once.
+    /// which is how <c>fill</c> draws several at once. Without <paramref name="coloured"/> the data
+    /// is the coordinates alone (the low-level form).
     /// </summary>
     private static PatchPlot FromCoordinates(
-        string verb, IReadOnlyList<JgsValue> data, int line, int col, Dimensions dimensions)
+        string verb, IReadOnlyList<JgsValue> data, int line, int col, Dimensions dimensions, bool coloured = true)
     {
+        int colour = coloured ? 1 : 0;
         bool threeD = dimensions switch
         {
             Dimensions.Two => false,
             Dimensions.Three => true,
-            _ => data.Count >= 4,
+            _ => data.Count >= 3 + colour,
         };
 
-        int needed = threeD ? 4 : 3;
+        int needed = (threeD ? 3 : 2) + colour;
         if (data.Count != needed)
         {
             string shape = threeD ? "(x, y, z, c)" : "(x, y, c)";
@@ -566,7 +630,11 @@ internal static partial class JgsBuiltins
             JG.Gca().Is3D = true;
         }
 
-        ApplyPatchColor(verb, patch, data[needed - 1], line, col);
+        if (coloured)
+        {
+            ApplyPatchColor(verb, patch, data[needed - 1], line, col);
+        }
+
         return patch;
     }
 
@@ -655,13 +723,20 @@ internal static partial class JgsBuiltins
     // --- line and text ------------------------------------------------------------------------
 
     /// <summary>
-    /// MATLAB's low-level <c>line(x, y[, z])</c>. Unlike <c>plot</c> it does not clear the axes — it
-    /// is the primitive every high-level verb is built on — so it goes straight to the current axes
+    /// MATLAB's low-level <c>line(x, y[, z])</c>. Unlike <c>plot</c> it does not clear the axes â€” it
+    /// is the primitive every high-level verb is built on â€” so it goes straight to the current axes
     /// rather than through the replace-on-new-plot path.
     /// </summary>
     private static JgsValue LinePrimitive(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        // The coordinates are numbers, so the first text after them begins the options — any
+        // line() and line('XData', x, 'YData', y, â€¦) are the low-level form, which takes every
+        // default, its colour, style and marker among them (open item 93, probe_93d).
+        if (args.Count == 0 || IsTextScalar(args[0]))
+        {
+            return JgsGraphicsProperties.MakingLowLevel(() => LineFromProperties(args, line, col));
+        }
+
+        // The coordinates are numbers, so the first text after them begins the options â€” any
         // property a line has, not only the ones this verb reads itself (U4).
         (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) = SplitOptionsAt(args, 2);
         if (data.Count is < 2 or > 3)
@@ -669,6 +744,40 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "line expects (x, y) or (x, y, z), then 'Name', value options.");
         }
 
+        return MakeLine(data, options, line, col);
+    }
+
+    /// <summary>
+    /// <c>line('XData', x, 'YData', y, â€¦)</c>: the coordinates are properties like any other, and one
+    /// left out is R2025b's <c>[0 1]</c>.
+    /// </summary>
+    private static JgsValue LineFromProperties(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count % 2 != 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:plot:minrhs", "Not enough input arguments.");
+        }
+
+        JgsValue x = Row([0, 1]), y = Row([0, 1]);
+        JgsValue? z = null;
+        var options = new List<(string Name, JgsValue Value)>();
+        for (int i = 0; i < args.Count; i += 2)
+        {
+            string name = StrOf("line", args[i], line, col);
+            switch (name.ToLowerInvariant())
+            {
+                case "xdata": x = args[i + 1]; break;
+                case "ydata": y = args[i + 1]; break;
+                case "zdata": z = args[i + 1]; break;
+                default: options.Add((name, args[i + 1])); break;
+            }
+        }
+
+        return MakeLine(z is null ? [x, y] : [x, y, z], options, line, col);
+    }
+
+    private static JgsValue MakeLine(IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options, int line, int col)
+    {
         AxesModel axes = JG.Gca();
         double[] x = DoubleArray("line", data, 0, line, col);
         double[] y = DoubleArray("line", data, 1, line, col);
@@ -718,7 +827,7 @@ internal static partial class JgsBuiltins
     /// <summary><c>text(x, y, str)</c> or <c>text(x, y, z, str)</c>, plus 'Name', value options.</summary>
     private static JgsValue TextPrimitive(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        // The label is the first text; whatever follows it is options — any property a text has,
+        // The label is the first text; whatever follows it is options â€” any property a text has,
         // not only the ones this verb reads itself (U4).
         bool heightGiven = args.Count > 3
             && (args[2].Type is JgsType.Number or JgsType.Bool || (args[2].Type == JgsType.Array && !args[2].IsStringArray));
@@ -797,8 +906,8 @@ internal static partial class JgsBuiltins
             }
         }
 
-        // A text is an annotation rather than a series, so it does not go through Handle — but a
-        // handle is a handle, and set(t, 'String', …) has to reach it like anything else.
+        // A text is an annotation rather than a series, so it does not go through Handle â€” but a
+        // handle is a handle, and set(t, 'String', â€¦) has to reach it like anything else.
         return JgsHandleRegistry.For(annotation);
     }
 
@@ -867,7 +976,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// A marker fill, where <c>'none'</c> is an unfilled marker rather than a colour — the same
+    /// A marker fill, where <c>'none'</c> is an unfilled marker rather than a colour â€” the same
     /// reading the property table gives the name, so a verb and a <c>set</c> agree.
     /// </summary>
     private static Color? NoneOrOptionColor(JgsValue value, int line, int col, string verb) =>
@@ -880,12 +989,12 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// Splits trailing 'Name', value pairs off an argument list. Options begin at the first string
-    /// that names one — the same rule <c>plot</c> uses, so a spec string or a color word before them
+    /// that names one â€” the same rule <c>plot</c> uses, so a spec string or a color word before them
     /// stays data.
     /// </summary>
     /// <summary>
     /// Splits a call into its data and its options where the options begin at the first text at or
-    /// after <paramref name="from"/> — the form of a primitive whose data are all numbers.
+    /// after <paramref name="from"/> â€” the form of a primitive whose data are all numbers.
     /// </summary>
     private static (IReadOnlyList<JgsValue> Data, List<(string Name, JgsValue Value)> Options) SplitOptionsAt(
         IReadOnlyList<JgsValue> args, int from)
@@ -994,9 +1103,9 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// Whether a color argument names one color rather than carrying mapped data: a string always
-    /// does, and a numeric triple does when its components are all in [0, 1] — which is the RGB range
-    /// MATLAB uses. The one thing this cannot tell apart is a three-element data vector whose values
-    /// happen to lie in [0, 1]; pass those through <c>'CData'</c>.
+    /// does, and a numeric triple does when its components are all in [0, 1] â€” which is the RGB range
+    /// MATLAB uses. With three points a row is the colour and a column the data, as R2025b reads them
+    /// (probe <c>probe_93d</c>).
     /// </summary>
     private static bool IsSingleColor(JgsValue value, int points)
     {
@@ -1005,7 +1114,7 @@ internal static partial class JgsBuiltins
             return true;
         }
 
-        if (value.Type != JgsType.Array || value.ArrayLength != 3 || points == 3)
+        if (value.Type != JgsType.Array || value.ArrayLength != 3 || (points == 3 && value.Rows != 1))
         {
             return false;
         }
@@ -1031,7 +1140,7 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// A numeric argument as an array, whether it arrived as one or as a bare scalar. A scalar
     /// <see cref="JgsValue"/> has no element buffer at all, so handing one to <c>ToDoubles</c> is a
-    /// null reference rather than a friendly error — which is exactly what <c>scatter3(x, y, z, 36)</c>
+    /// null reference rather than a friendly error â€” which is exactly what <c>scatter3(x, y, z, 36)</c>
     /// would hit.
     /// </summary>
     private static double[] Numbers(string what, JgsValue value, int line, int col) =>

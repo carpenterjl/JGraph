@@ -159,7 +159,8 @@ public class JgsSurfaceVariantTests : IDisposable
 
         QuiverPlot plot = Single<QuiverPlot>();
         Assert.Equal(3, plot.U.Count);
-        Assert.Equal([0, 1, 2], plot.X);
+        Assert.Equal([1, 2, 3], plot.X); // the column numbers, from 1, as R2025b's (open item 95)
+        Assert.Equal([1, 1, 1], plot.Y);
     }
 
     /// <summary>A trailing zero is MATLAB's "leave the components alone", not a scale of nothing.</summary>

@@ -44,7 +44,7 @@ CHK|url_source_msg|You have specified a URL, which is not supported. Specify HTM
 CHK|data_pair|double[1 1] 5|exact
 CHK|flags|double[1 6] [0 1 1 1 1 1]|exact
 CHK|parent_figure|char[1 6]'figure'|exact
-CHK|parent_none|char[1 4]'none'|div=ADR0202|diverges|char[1 101]'refused: An object with no parent cannot be kept in this build; delete it, or give it another parent.'
+CHK|parent_none|char[1 4]'none'|exact
 CHK|parent_panel|char[1 7]'uipanel'|exact
 CHK|parent_axes|MATLAB:gbtobjects:Component|exact
 CHK|parent_axes_msg|Axes cannot be a parent.|exact

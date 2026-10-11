@@ -2126,7 +2126,8 @@ public static class JgsBuiltinCatalog
         Add("methods", "The method names of an object, or of a class named by its name, as a cell column; a .NET type's listing is printed when the answer is not asked for, and -full gives its signatures.", P("x"), Opt("option"));
         Add("isprop", "Whether an object, a built-in object or a graphics handle has a property of that name: isprop(obj, 'Radius').", P("obj"), P("name"));
         Add("metaclass", "A description of a value's class: its name, its properties, and its methods.", P("x"));
-        Add("ismethod", "Whether an object's class has a method of that name, a .NET object's static methods included.", P("obj"), P("name"));
+        Add("findprop", "The metaproperty of an object's property of exactly that name, or an empty one: findprop(h, 'Color').Name, p.SetObservable.", P("obj"), P("name"));
+        Add("ismethod","Whether an object's class has a method of that name, a .NET object's static methods included.", P("obj"), P("name"));
         Add("superclasses", "The classes an object's class inherits from, nearest first, as a cell column: superclasses(obj) or superclasses('ClassName').", P("obj"));
 
         // --- .NET (interop plan, stage 1, ADR 0174) -------------------------------------------------

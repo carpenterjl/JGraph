@@ -321,6 +321,9 @@ internal static class JgsHandleRegistry
 
     private static readonly object Gate = new();
     private static readonly Dictionary<double, JgsHandleEntry> Entries = new();
+
+    /// <summary>The R2025b class of each handle whose object was deleted, by handle (open item 91).</summary>
+    private static readonly Dictionary<double, string> RetiredClasses = new();
     private static readonly Dictionary<GraphObject, double> Handles = new(ReferenceEquality.Instance);
 
     private static double _next = FirstHandle;
@@ -549,6 +552,7 @@ internal static class JgsHandleRegistry
         {
             Entries.Clear();
             Handles.Clear();
+            RetiredClasses.Clear();
             FigureEntries.Clear();
             IssuedFigureNumbers.Clear();
             _next = FirstHandle;
@@ -585,6 +589,7 @@ internal static class JgsHandleRegistry
             live.Add(group);
         }
 
+        var retired = new List<(double Handle, GraphObject Target)>();
         lock (Gate)
         {
             var dead = new List<double>();
@@ -594,6 +599,7 @@ internal static class JgsHandleRegistry
                 {
                     dead.Add(handle);
                     Handles.Remove(entry.Target);
+                    retired.Add((handle, entry.Target));
                 }
             }
 
@@ -609,6 +615,33 @@ internal static class JgsHandleRegistry
                     FigureEntries.Remove(figure);
                 }
             }
+        }
+
+        // A deleted handle still names its class in R2025b: methods(h) lists it and a dot on it is
+        // refused in its words (open item 91). Only the name is kept, not the object.
+        foreach ((double handle, GraphObject target) in retired)
+        {
+            if (JgsGraphicsProperties.MatlabClassOf(target) is { } name)
+            {
+                lock (Gate)
+                {
+                    RetiredClasses[handle] = name;
+                }
+            }
+        }
+    }
+
+    /// <summary>The R2025b class a deleted object's handle names, or null for any other value (open item 91).</summary>
+    public static string? RetiredClassOf(JgsValue value)
+    {
+        if (value.Type != JgsType.Number)
+        {
+            return null;
+        }
+
+        lock (Gate)
+        {
+            return !Entries.ContainsKey(value.AsNumber) && RetiredClasses.TryGetValue(value.AsNumber, out string? name) ? name : null;
         }
     }
 

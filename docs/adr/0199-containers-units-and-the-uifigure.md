@@ -215,8 +215,6 @@ Callbacks are script-side state and are not saved, as with every other object.
   `allchild_count_with_furniture`).
 - **`Scrollable` is kept and nothing scrolls.** R2025b shows scroll bars in a `uifigure` container
   whose children overflow it. It arrives with the grid (U5).
-- **A component cannot be left with no parent.** R2025b takes `Parent = []` and keeps the object;
-  JGraph refuses, because a handle's life is its place in a figure.
 - **A `uifigure` cannot be given a figure number.** R2025b's `IntegerHandle 'on'` numbers it;
   JGraph refuses. A classic figure whose `IntegerHandle` is turned off keeps its slot — the next
   `figure` does not reuse its number, and the number still names it, so that a script's variables

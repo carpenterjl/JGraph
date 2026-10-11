@@ -75,16 +75,16 @@ public static class JG
     /// <summary>Creates a new figure under the next unused number, makes it current, and returns it.</summary>
     public static FigureModel Figure()
     {
+        int number = 1;
         lock (Registry)
         {
-            int number = 1;
             while (Figures.ContainsKey(number))
             {
                 number++;
             }
-
-            return Figure(number);
         }
+
+        return Figure(number);
     }
 
     /// <summary>
@@ -98,20 +98,29 @@ public static class JG
             throw new ArgumentOutOfRangeException(nameof(number), "Figure numbers are 1-based.");
         }
 
+        bool made = false;
+        FigureModel? figure;
         lock (Registry)
         {
-            if (!Figures.TryGetValue(number, out FigureModel? figure))
+            if (!Figures.TryGetValue(number, out figure))
             {
                 figure = CreateFigure();
                 Figures[number] = figure;
+                made = true;
             }
 
             _currentFigure = figure;
             _currentNumber = number;
             _currentAxes = figure.Axes.Count > 0 ? figure.Axes[^1] : null;
             Touch(number);
-            return figure;
         }
+
+        if (made)
+        {
+            FigureMade?.Invoke(figure);
+        }
+
+        return figure;
     }
 
     /// <summary>
@@ -130,6 +139,13 @@ public static class JG
     /// <c>HandleVisibility</c>; with nothing installed every figure may.
     /// </summary>
     public static Func<FigureModel, bool>? CanBeCurrent { get; set; }
+
+    /// <summary>
+    /// Told of each figure made under a number, once it is registered and current — however it was
+    /// made (<c>figure</c>, or a plot, <c>gcf</c> or <c>gca</c> that needed one). The script layer gives
+    /// it the root's figure defaults.
+    /// </summary>
+    public static Action<FigureModel>? FigureMade { get; set; }
 
     /// <summary>
     /// Registers a figure that has no number (a <c>uifigure</c>) under a key of the hidden range,

@@ -67,7 +67,7 @@ u9b_chk('bubble_range_set', @() as_statement(@() set(ax, 'BubbleSizeRange', [1 2
 u9b_chk('bubble_limits_dot', @() as_statement(@() ax.BubbleSizeLimits));
 u9b_chk('histogram_in_axes', @() get(histogram(axes(figure('Visible', 'off')), [1 2 2 3]), 'NumBins'));
 u9b_chk('heatmap_in_figure', @() class(get(heatmap(figure('Visible', 'off'), magic(3)), 'ColorData')));
-u9b_chkdiv('names_line', @() numel(fieldnames(get(ln))), '0222');
+u9b_chk('names_line', @() numel(fieldnames(get(ln))));
 u9b_chk('names_text', @() numel(fieldnames(get(text(ax, 1, 1, 'z')))));
 u9b_chk('names_rectangle', @() strjoin(sort(fieldnames(get(r)))', ' '));
 u9b_chk('names_animatedline', @() strjoin(sort(fieldnames(get(a)))', ' '));

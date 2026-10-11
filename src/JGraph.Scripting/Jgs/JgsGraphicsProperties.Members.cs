@@ -33,11 +33,104 @@ internal static partial class JgsGraphicsProperties
         MatlabClassOf(target) is { } name && R2025bMembers.ByClass.TryGetValue(name, out MatlabMembers? members) ? members : null;
 
     /// <summary>
+    /// The recorded members of the class a deleted object's handle still names (open item 91): R2025b's
+    /// <c>methods(h)</c>, <c>properties(h)</c> and <c>events(h)</c> answer them after <c>delete(h)</c>.
+    /// </summary>
+    internal static MatlabMembers? RetiredMembers(JgsValue value) =>
+        JgsHandleRegistry.RetiredClassOf(value) is { } name && R2025bMembers.ByClass.TryGetValue(name, out MatlabMembers? members) ? members : null;
+
+    /// <summary>
+    /// A dot on a deleted object's handle, in the MATLAB dialect (probe <c>probe_91</c>): a name the
+    /// class has is the dead handle's refusal, any other the dot's own, naming the class. Null for a
+    /// value that is no deleted handle.
+    /// </summary>
+    internal static JgsRuntimeException? DotOnRetired(JgsValue value, string name, bool reading, int line, int col)
+    {
+        if (!JgsRunningDialect.ThreadIsMatlab || RetiredMembers(value) is not { } members)
+        {
+            return null;
+        }
+
+        bool known = members.Properties.Contains(name, StringComparer.OrdinalIgnoreCase) || Array.IndexOf(members.Methods, name) >= 0;
+        return known
+            ? new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.")
+            : reading
+                ? new JgsRuntimeException(line, col, "MATLAB:noSuchMethodOrField",
+                    $"Unrecognized method, property, or field '{name}' for class '{members.ClassName}'.")
+                : new JgsRuntimeException(line, col, "MATLAB:noPublicFieldForClass",
+                    $"Unrecognized property '{name}' for class '{members.ClassName}'.");
+    }
+
+    /// <summary>
     /// Whether <paramref name="name"/> is one of the object's methods, a property not being one (the
     /// caller asks the properties first). Method names are case-sensitive, as R2025b's are.
     /// </summary>
     internal static bool IsMethodOf(GraphObject target, string name) =>
         MembersOf(target) is { } members && Array.IndexOf(members.Methods, name) >= 0;
+
+    /// <summary>The class a graphics object's metaproperty wears, and its metaclass's (probe <c>probe_91b</c>).</summary>
+    internal const string GraphicsMetaPropertyClass = "matlab.graphics.internal.GraphicsMetaProperty";
+
+    private const string GraphicsMetaClassClass = "matlab.graphics.internal.GraphicsMetaClass";
+
+    /// <summary>
+    /// <c>findprop(h, name)</c> on a graphics object (open item 91): the property of exactly that name
+    /// as R2025b's metaproperty, its fields in R2025b's order, or null when the object has none — the
+    /// name is matched with its case, as R2025b's is. A component's is a plain
+    /// <c>matlab.metadata.Property</c>, without the four graphics fields. The name, the access, whether
+    /// it is hidden and whether it is observable are R2025b's; the other flags vary by property in
+    /// R2025b and are this build's reading (a recorded divergence).
+    /// </summary>
+    internal static JgsValue? MetaPropertyOf(JgsHandleEntry entry, string name)
+    {
+        GraphObject target = entry.Target;
+        if (!TryFind(target, name, out GraphicsProperty property) || !property.Name.Equals(name, StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        MatlabMembers? members = MembersOf(target);
+        bool component = SpeaksAsComponent(target);
+        bool writable = property.Write is not null;
+        bool observable = members?.Observable.Contains(name) ?? false;
+        string owner = MatlabClassOf(target) ?? FullClassOf(target);
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        if (!component)
+        {
+            fields["AffectsObject"] = JgsValue.Bool(false);
+            fields["AffectsDataLimits"] = JgsValue.Bool(false);
+            fields["AffectsLegend"] = JgsValue.Bool(false);
+            fields["InternalComponent"] = JgsValue.Bool(false);
+        }
+
+        JgsValue definer = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Name"] = JgsValue.Str(owner) });
+        definer.SetClassName(component ? "matlab.metadata.Class" : GraphicsMetaClassClass);
+        fields["Name"] = JgsValue.Str(property.Name);
+        fields["Description"] = JgsValue.Str(component ? "" : property.Name + " PropInfo");
+        fields["DetailedDescription"] = JgsValue.Str("");
+        fields["GetAccess"] = JgsValue.Str("public");
+        fields["SetAccess"] = JgsValue.Str(writable ? "public" : target is JgsGraphicsRoot ? "private" : "protected");
+        fields["Dependent"] = JgsValue.Bool(writable);
+        fields["Constant"] = JgsValue.Bool(false);
+        fields["Abstract"] = JgsValue.Bool(false);
+        fields["Transient"] = JgsValue.Bool(false);
+        fields["Hidden"] = JgsValue.Bool(members is not null && Array.IndexOf(members.Properties, property.Name) < 0);
+        fields["GetObservable"] = JgsValue.Bool(observable);
+        fields["SetObservable"] = JgsValue.Bool(observable);
+        fields["AbortSet"] = JgsValue.Bool(true);
+        fields["NonCopyable"] = JgsValue.Bool(false);
+        fields["WeakHandle"] = JgsValue.Bool(false);
+        fields["PartialMatchPriority"] = JgsValue.Number(1);
+        fields["HasDefault"] = JgsValue.Bool(false);
+        fields["DefaultValue"] = JgsEmpty.Zero();
+        fields["GetMethod"] = JgsEmpty.Zero();
+        fields["SetMethod"] = JgsEmpty.Zero();
+        fields["Validation"] = JgsEmpty.Zero();
+        fields["DefiningClass"] = definer;
+        JgsValue meta = JgsValue.Struct(fields);
+        meta.SetClassName(component ? JgsBuiltins.MetaPropertyClassName : GraphicsMetaPropertyClass);
+        return meta;
+    }
 
     /// <summary>The listing <c>methods(h)</c> prints: R2025b's instance names, its static ones, and handle's line.</summary>
     internal static string MethodsListing(MatlabMembers members)

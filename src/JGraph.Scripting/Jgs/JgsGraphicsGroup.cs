@@ -53,6 +53,28 @@ internal sealed class JgsGraphicsGroup : GraphObject
     /// </summary>
     public AxesModel? Home { get; }
 
+    /// <summary>
+    /// R2025b's <c>Annotation</c>, whose <c>LegendInformation.IconDisplayStyle</c> a group starts
+    /// with <c>'off'</c> (open item 95, probe <c>probe_95</c>). It is kept and read back; the legend
+    /// still lists the members, not the group.
+    /// </summary>
+    [System.ComponentModel.Browsable(false)]
+    public PlotAnnotationModel Annotation
+    {
+        get
+        {
+            if (_annotation is null)
+            {
+                _annotation = new PlotAnnotationModel();
+                _annotation.LegendInformation.IconDisplayStyle = LegendIconDisplay.Off;
+            }
+
+            return _annotation;
+        }
+    }
+
+    private PlotAnnotationModel? _annotation;
+
     /// <summary>The members, in the order they joined.</summary>
     public IReadOnlyList<PlotObject> Members => _members;
 

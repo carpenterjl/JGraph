@@ -94,6 +94,12 @@ internal static partial class JgsBuiltins
         {
             if (!positional && value.Type == JgsType.Array && value.ArrayLength == 0)
             {
+                // 'Parent', [] makes one that belongs to nothing yet, as R2025b does (open item 94).
+                if (JgsDetachedComponents.MeansNoParent(value) && JgsDetachedComponents.HolderAccepted(maker.Accepts) is { } holder)
+                {
+                    return (holder, null);
+                }
+
                 throw new JgsRuntimeException(line, col,
                     $"{maker.Verb}: an object with no parent cannot be made in this build; name the figure or the container it goes in.");
             }

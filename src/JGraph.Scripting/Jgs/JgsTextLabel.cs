@@ -13,9 +13,14 @@ internal sealed class JgsTextLabel : GraphObject
     private JgsValue? stored;
     private string? rendered;
     private JgsTextLabel(GraphObject owner, string role) { Owner = owner; Role = role; }
-    public static JgsTextLabel For(GraphObject owner, string role = "Label") =>
-        Labels.GetOrCreateValue(owner).TryGetValue(role, out var label) ? label
-            : Labels.GetOrCreateValue(owner)[role] = new JgsTextLabel(owner, role);
+    public static JgsTextLabel For(GraphObject owner, string role = "Label")
+    {
+        Dictionary<string, JgsTextLabel> labels = Labels.GetOrCreateValue(owner);
+        if (labels.TryGetValue(role, out var label)) return label;
+        label = labels[role] = new JgsTextLabel(owner, role);
+        JgsGraphicsProperties.LabelMade(label); // made when first reached, it takes the text defaults then (open item 93)
+        return label;
+    }
     public static IEnumerable<GraphObject> Existing(GraphObject owner) =>
         Labels.TryGetValue(owner, out var labels) ? labels.Values : [];
     public string Text

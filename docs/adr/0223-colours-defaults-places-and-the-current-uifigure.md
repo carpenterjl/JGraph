@@ -85,16 +85,11 @@ hidden-handle rule `gcf` already followed (U2) does the rest.
   `[0.251 0.502 0.749]` (`figure_colour_default`), as every colour here does.
 - **R2025b's root starts holding three defaults** (`defaultFigureMenuBar`, `defaultFigurePosition`,
   the machine's own, and `defaultFigurePaperPositionMode`); this build's starts with none.
-- **`DefaultLineColor` is held but given to no line**, since every line here is `plot`'s, whose colour
-  comes from the `ColorOrder` (R2025b's `line` takes it).
-- **A figure a plot makes for itself takes no `DefaultFigure*`**; only `figure` gives them.
 - **A bad default value is refused in this build's words** (`LineWidth expects a number`), where R2025b
   says `MATLAB:datatypes:invalidPositive`; and `get(0, 'Factory')` covers ten classes, not R2025b's 2402 names.
 - **A normalized or data text's z reads 0** where R2025b's reads 7.1e-15 after a conversion.
 - **A detached component's `Parent` is `[]`, a double**, where R2025b's is an empty
   `GraphicsPlaceholder`; this build's placeholders are numbers (`gobjects`).
-- **A component cannot be detached by writing `Parent = []`**, and a menu or toolbar cannot be made
-  without a parent (ADRs 0199 and 0206, unchanged).
 
 ## Consequences
 
@@ -109,5 +104,5 @@ exact). The divergences ADRs 0201, 0202 and 0204 recorded for these are lifted f
 
 ## Still open
 
-- `Parent = []` on a placed component, and `uimenu('Parent', [])` (ADRs 0199, 0206).
-- `DefaultLineColor` for `line`, and `DefaultFigure*` for a figure a plot makes.
+None: `Parent = []` on a placed object, the parentless menus and tools, which defaults each maker
+takes, and a figure a plot makes followed in ADR 0224.

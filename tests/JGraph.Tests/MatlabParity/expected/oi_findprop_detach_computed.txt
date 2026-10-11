@@ -1,0 +1,80 @@
+CHK|findprop_line|cell[1 8]{char[1 45]'matlab.graphics.internal.GraphicsMetaProperty';char[1 5]'Color';char[1 6]'public';char[1 6]'public';logical[1 1] 1;logical[1 1] 0;char[1 42]'matlab.graphics.internal.GraphicsMetaClass';char[1 36]'matlab.graphics.chart.primitive.Line'}|exact
+CHK|findprop_through_dot|char[1 9]'LineWidth'|exact
+CHK|findprop_read_only|char[1 9]'protected'|exact
+CHK|findprop_axes|cell[1 2]{char[1 4]'XLim';logical[1 1] 1}|exact
+CHK|findprop_unknown|cell[1 2]{char[1 24]'matlab.metadata.Property';double[1 2] [0 0]}|exact
+CHK|findprop_case|logical[1 1] 1|exact
+CHK|findprop_root|char[1 13]'CurrentFigure'|exact
+CHK|findprop_two|char[1 91]'MATLAB:class:RequireScalar / Invalid input for argument 1 (object):\nValue must be a scalar.'|exact
+CHK|findprop_number|char[1 94]'MATLAB:UndefinedFunction / Undefined function 'findprop' for input arguments of type 'double'.'|exact
+CHK|findprop_component|cell[1 2]{char[1 24]'matlab.metadata.Property';char[1 4]'Text'}|exact
+CHK|deleted_members|double[1 3] [22 50 3]|exact
+CHK|deleted_ismethod|logical[1 2] [1 0]|exact
+CHK|deleted_dot_known|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|deleted_dot_unknown|char[1 126]'MATLAB:noSuchMethodOrField / Unrecognized method, property, or field 'Bogus' for class 'matlab.graphics.chart.primitive.Line'.'|exact
+CHK|deleted_dot_method|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|deleted_write|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|deleted_get|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|deleted_findprop|logical[1 1] 1|exact
+CHK|line_xy_leaves_orders|cell[1 2]{char[1 4]'none';char[1 1]'-'}|exact
+CHK|line_named_takes|cell[1 2]{char[1 1]'o';char[1 1]':'}|exact
+CHK|line_colour|logical[1 2] [0 1]|exact
+CHK|line_named_defaults|cell[1 2]{double[1 2] [0 1];double[1 3] [1 2 3]}|exact
+CHK|line_named_odd|char[1 48]'MATLAB:plot:minrhs / Not enough input arguments.'|exact
+CHK|patch_named_takes|double[1 3] [0 0 1]|exact
+CHK|patch_named_given|double[1 3] [1 0 0]|exact
+CHK|patch_row_is_rgb|double[1 3] [0 1 0]|exact
+CHK|stem_defaults|cell[1 2]{logical[1 1] 0;char[1 6]'square'}|exact
+CHK|bar_defaults|cell[1 2]{logical[1 1] 0;double[1 1] 0.40000000000000002}|exact
+CHK|scatter_default|char[1 6]'square'|exact
+CHK|title_takes_text_colour|double[1 3] [0 0 1]|exact
+CHK|xlabel_does_not|logical[1 1] 0|exact
+CHK|labels_take_interpreter|cell[1 3]{char[1 4]'none';char[1 4]'none';char[1 4]'none'}|exact
+CHK|plot_figure_takes|double[1 3] [1 0 0]|exact
+CHK|axes_figure_takes|double[1 3] [1 0 0]|exact
+CHK|gcf_figure_takes|double[1 3] [1 0 0]|exact
+CHK|uifigure_takes|double[1 3] [1 0 0]|exact
+CHK|plot_figure_name|char[1 4]'held'|exact
+CHK|detach|cell[1 4]{logical[1 1] 1;double[1 1] 0;char[1 2]'go';logical[1 1] 1}|exact
+CHK|reattach|double[1 1] 1|exact
+CHK|set_detach|double[1 1] 0|exact
+CHK|panel_detach_keeps_children|double[1 3] [0 1 1]|exact
+CHK|grid_child_detach|double[1 1] 0|exact
+CHK|grid_child_back|double[1 1] 1|exact
+CHK|grid_and_uiaxes_detach|logical[1 2] [1 1]|exact
+CHK|menu_no_parent|cell[1 2]{logical[1 1] 1;char[0 0]''}|exact
+CHK|menu_placed|double[1 2] [1 1]|exact
+CHK|menu_detach_keeps_children|double[1 2] [1 1]|exact
+CHK|contextmenu_no_parent|logical[1 1] 1|exact
+CHK|contextmenu_placed|logical[1 1] 1|exact
+CHK|bars_no_parent|logical[1 3] [1 1 1]|exact
+CHK|bars_placed|double[1 2] [1 1]|exact
+CHK|uicontrol_detach|logical[1 1] 1|exact
+CHK|uicontrol_no_parent|logical[1 1] 1|exact
+CHK|menu_in_panel_refused|char[1 85]'MATLAB:uimenu:InvalidParent / Parent must be a Figure, UIContextMenu, or another Menu'|exact
+CHK|detached_delete|logical[1 1] 0|exact
+CHK|theme|cell[1 4]{char[1 35]'matlab.graphics.theme.GraphicsTheme';char[1 11]'Light Theme';char[1 5]'light';char[1 4]'auto'}|exact
+CHK|theme_written|cell[1 3]{char[1 10]'Dark Theme';char[1 4]'dark';char[1 6]'manual'}|exact
+CHK|interaction_options|cell[1 3]{char[1 78]'matlab.graphics.interaction.interactionoptions.CartesianAxesInteractionOptions';cell[1 17]{char[1 16]'LimitsDimensions';char[1 12]'OuterXLimits';char[1 12]'OuterYLimits';char[1 12]'OuterZLimits';char[1 12]'PanSupported';char[1 13]'ZoomSupported';char[1 15]'RotateSupported';char[1 14]'BrushSupported';char[1 15]'RestoredXLimits';char[1 15]'RestoredYLimits';char[1 15]'RestoredZLimits';char[1 12]'RestoredView';char[1 16]'PanLimitsBounded';char[1 17]'ZoomLimitsBounded';char[1 15]'RotateIndicator';char[1 17]'DatatipsSupported';char[1 23]'DatatipsPlacementMethod'};string[1 1]"xyz"}|exact
+CHK|interaction_options_written|string[1 1]"x"|exact
+CHK|polar_interaction_options|cell[1 2]{char[1 74]'matlab.graphics.interaction.interactionoptions.PolarAxesInteractionOptions';cell[1 2]{char[1 17]'DatatipsSupported';char[1 23]'DatatipsPlacementMethod'}}|exact
+CHK|group_annotation|onoff off|exact
+CHK|group_annotation_written|onoff on|exact
+CHK|transform_annotation|onoff off|exact
+CHK|source_table|cell[1 3]{char[1 5]'table';double[1 2] [0 0];double[1 2] [0 0]}|exact
+CHK|exponent|cell[1 3]{char[1 5]'int32';int32[1 1] 4;char[1 4]'auto'}|exact
+CHK|exponent_small|int32[1 1] -3|exact
+CHK|exponent_none|int32[1 1] 0|exact
+CHK|exponent_written|cell[1 3]{char[1 5]'int32';int32[1 1] 2;char[1 6]'manual'}|exact
+CHK|exponent_refused|char[1 122]'MATLAB:class:RequireNumeric / Error setting property 'Exponent' of class 'NumericRuler':\nValue must be numeric or logical.'|exact
+CHK|exponent_auto_again|int32[1 1] 5|exact
+CHK|minor_fifths|double[1 20] [0.20000000000000001 0.40000000000000002 0.60000000000000009 0.80000000000000004 1.2000000000000002 1.4000000000000001 1.6000000000000001 1.8 2.2000000000000002 2.4000000000000004 2.6000000000000001 2.8000000000000003 3.2000000000000002 3.4000000000000004 3.6000000000000001 3.8000000000000003 4.2000000000000002 4.4000000000000004 4.6000000000000005 4.8000000000000007]|exact
+CHK|minor_quarters|double[1 15] [0.5 1 1.5 2.5 3 3.5 4.5 5 5.5 6.5 7 7.5 8.5 9 9.5]|exact
+CHK|minor_log|double[1 28] [1 2 3 4 5 6 7 8 9 10 20 30 40 50 60 70 80 90 100 200 300 400 500 600 700 800 900 1000]|exact
+CHK|minor_written|cell[1 2]{double[1 2] [0.5 1.5];char[1 6]'manual'}|exact
+CHK|title_position|double[1 3] [5 100.47 0.5]|div=0224|diverges|double[1 3] [5 100.90000000000001 0.5]
+CHK|title_position_mode|char[1 4]'auto'|exact
+CHK|title_position_written|cell[1 2]{double[1 3] [2 50 0];char[1 6]'manual'}|exact
+CHK|quiver_scale|double[1 5] [0.28460498899999997 0.15811388300000001 0.5 1 0.358560877]|exact
+CHK|quiver_components_alone|cell[1 3]{double[1 3] [1 2 3];double[1 2] [1 2];double[1 1] 0.12329924}|exact
+CHK|quiver_components_xdata|double[1 3] [1 2 3]|div=0224|diverges|double[1 6] [1 1 2 2 3 3]

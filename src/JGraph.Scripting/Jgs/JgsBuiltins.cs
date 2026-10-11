@@ -1605,7 +1605,7 @@ internal static partial class JgsBuiltins
                     line, col, "figure: every property after the figure number needs a value.");
             }
 
-            bool fresh = requested is not { } existing || !JG.TryGetFigure(existing, out _);
+            // A new figure takes the root's DefaultFigure* as it is made (JG.FigureMade, open items 44 and 93).
             if (requested is { } number)
             {
                 JG.Figure(number);
@@ -1617,10 +1617,6 @@ internal static partial class JgsBuiltins
 
             FigureModel made = JG.CurrentFigure;
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(made);
-            if (fresh)
-            {
-                JgsGraphicsProperties.ApplyFigureDefaults(made); // the root's DefaultFigure* (open item 44)
-            }
 
             for (int i = first; i < args.Count; i += 2)
             {
