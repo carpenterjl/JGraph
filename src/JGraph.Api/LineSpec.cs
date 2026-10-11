@@ -107,7 +107,7 @@ public readonly struct LineSpec
         color = c switch
         {
             'b' => Colors.Blue,
-            'g' => Colors.Green,
+            'g' => JGraph.Core.Drawing.Color.FromRgb(0x00, 0xFF, 0x00), // MATLAB's [0 1 0], not the web's half-bright Colors.Green (open item 96)
             'r' => Colors.Red,
             'c' => Colors.Cyan,
             'm' => Colors.Magenta,

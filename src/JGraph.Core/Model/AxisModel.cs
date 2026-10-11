@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Primitives;
 
@@ -24,6 +24,7 @@ public sealed class AxisModel : GraphObject
     private bool _showTickLabels = true;
     private int _targetMajorTickCount = 5;
     private string? _tickLabelFormat;
+    private int? _exponent;
     private TextStyle _labelStyle = new(Colors.Black, 13);
     private TextStyle _tickLabelStyle = new(Colors.DarkGray, 11);
     private IReadOnlyList<string>? _categories;
@@ -187,12 +188,26 @@ public sealed class AxisModel : GraphObject
     [Browsable(false)]
     public string? DurationFormat { get; set; }
 
-    /// <summary>A .NET numeric format string for tick labels, or null to format automatically.</summary>
+    /// <summary>
+    /// The tick label format: MATLAB's printf kind (<c>%.2f</c>, <c>$%,.2f</c>) or a .NET numeric
+    /// format string, or null to format automatically (open item 97).
+    /// </summary>
     [Category("Ticks"), DisplayName("Tick label format")]
     public string? TickLabelFormat
     {
         get => _tickLabelFormat;
         set => SetProperty(ref _tickLabelFormat, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The power of ten a linear ruler's labels are written over (MATLAB's <c>Exponent</c>), or null
+    /// to choose it from the ticks (open item 97).
+    /// </summary>
+    [Category("Ticks"), DisplayName("Exponent")]
+    public int? Exponent
+    {
+        get => _exponent;
+        set => SetProperty(ref _exponent, value, InvalidationKind.Layout);
     }
 
     /// <summary>Label rotation in degrees counterclockwise; null uses the ruler default.</summary>

@@ -181,10 +181,10 @@ public class MatlabSetOperationTests : IDisposable
         """);
 
     [Fact]
-    public Task ACellsColonSpreadsWhereAListFitsAndIsRefusedWhereOneDoesNot() => RunAsserting("""
+    public Task ACellsColonSpreadsWhereAListFitsAndGivesItsFirstToAnAssignment() => RunAsserting("""
         % c{:} is a comma-separated list. M61 gives it the three places one fits — an argument list,
-        % a bracket, and a multiple assignment — and keeps refusing it where a single value is
-        % wanted, which is what this test used to assert of every position.
+        % a bracket, and a multiple assignment; an assignment of one takes its first value, and a
+        % list of none is refused in R2025b's words (open item 98, probe_98c).
         c = {1, 2, 3};
         assert(isequal([c{:}], [1 2 3]));
         assert(numel({c{:}}) == 3);
@@ -193,12 +193,15 @@ public class MatlabSetOperationTests : IDisposable
         [a, b] = c{1:2};
         assert(a == 1 && b == 2);
 
+        d = c{:};
+        assert(d == 1);
+
         caught = '';
         try
-            d = c{:};
+            e = c{1:0};
         catch err
-            caught = err.message;
+            caught = err.identifier;
         end
-        assert(contains(caught, 'where one value is wanted'));
+        assert(strcmp(caught, 'MATLAB:TooManyOutputsDueToMissingBraces'));
         """);
 }

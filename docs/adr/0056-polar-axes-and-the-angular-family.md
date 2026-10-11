@@ -125,8 +125,8 @@ nine-name gap the registered-but-refusing rulers opened is closed, because they 
 - **`polar` draws on a polar axes.** MATLAB's legacy `polar` draws its own grid on a hidden Cartesian
   axes, which is why its ticks cannot be spoken to; here it is `polarplot` under the old name, so the
   ruler verbs work on its chart — strictly an improvement, but an observable one.
-- **`rtickformat`/`thetatickformat` queries answer the .NET format spelling**, the same divergence
-  `xtickformat` has carried since M54, for the same reason.
+- ~~**`rtickformat`/`thetatickformat` queries answer the .NET format spelling**, the same divergence
+  `xtickformat` has carried since M54, for the same reason.~~ Lifted by ADR 0225.
 **Retired in M83 — wheel zoom and pan do not speak polar yet.** Deleted from the list above rather
 than struck through, because the harvest lifts every bullet under this heading whole and a
 struck-through one still counts (the lesson M74 recorded).

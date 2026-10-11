@@ -49,7 +49,7 @@ public class JGFacadeTests
         JG.Figure();
         LinePlot line = JG.Plot(new double[] { 0, 1 }, new double[] { 0, 1 }, "go");
 
-        Assert.Equal(Colors.Green, line.Color);
+        Assert.Equal(Color.FromRgb(0, 255, 0), line.Color); // MATLAB's 'g' is [0 1 0] (open item 96)
         Assert.Equal(MarkerType.Circle, line.Marker);
         Assert.Equal(DashStyle.None, line.DashStyle); // marker only => no line
     }

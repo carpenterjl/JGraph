@@ -135,8 +135,8 @@ saying so.
 **Divergences**, all recorded in the coverage doc's graphics section: `findobj` matches properties,
 `'flat'` and `'-depth'` only and refuses the logical operator words by name; `gobjects` fills with
 handle 0; `ax.YAxis` answers the active ruler rather than both, and the active side is not serialized;
-gridlines follow the left ruler and the side rulers are suppressed on 3-D axes; `xtickformat` queries
-answer in this build's format spelling; tick label angles are 2-D only; a single-output `contour(…)`
+gridlines follow the left ruler and the side rulers are suppressed on 3-D axes; ~~`xtickformat` queries
+answer in this build's format spelling~~ (lifted, ADR 0225); tick label angles are 2-D only; a single-output `contour(…)`
 returns the handle, and contour labels are 2-D with `'manual'` refused; a cell-array title joins to one
 line and the titling verbs return nothing; `texlabel` covers the documented subset; `camproj` always
 reports orthographic; `orient` always reports portrait and `opengl` is an accepted no-op; `colorcube`'s

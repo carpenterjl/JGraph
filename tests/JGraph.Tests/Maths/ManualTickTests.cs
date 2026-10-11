@@ -17,10 +17,20 @@ public class ManualTickTests
         Range = new DataRange(0, 10),
     };
 
+    /// <summary>
+    /// The scale's own generator, wrapped only to write large and small numbers over a power of ten
+    /// (open item 97): ticks of 0 to 10 come out exactly as the scale places and writes them.
+    /// </summary>
     [Fact]
-    public void AnAxisWithNothingToSayGetsItsScalesOwnGenerator()
+    public void AnAxisWithNothingToSayGetsItsScalesOwnTicks()
     {
-        Assert.Same(LinearTickGenerator.Instance, TickGenerators.For(Axis()));
+        AxisModel axis = Axis();
+        TickSet own = LinearTickGenerator.Instance.Generate(axis.Range, axis.TargetMajorTickCount);
+        TickSet chosen = TickGenerators.For(axis).Generate(axis.Range, axis.TargetMajorTickCount);
+
+        Assert.IsType<ExponentTickGenerator>(TickGenerators.For(axis));
+        Assert.Equal(own.MajorTicks.Select(t => t.Label), chosen.MajorTicks.Select(t => t.Label));
+        Assert.Equal(0, chosen.Exponent);
     }
 
     [Fact]
@@ -109,14 +119,18 @@ public class ManualTickTests
         Assert.All(ticks.MajorTicks, t => Assert.Equal("x", t.Label));
     }
 
+    /// <summary>
+    /// Named values are written as R2025b writes them, trailing zeros dropped (open item 97,
+    /// probe_97b: [0 0.25 0.5 1.75] reads 0, 0.25, 0.5, 1.75).
+    /// </summary>
     [Fact]
-    public void ManualValuesAreLabelledWithEnoughDecimalsForTheirSpacing()
+    public void ManualValuesAreLabelledAsR2025bWritesThem()
     {
         AxisModel axis = Axis();
         axis.TickPositions = new[] { 0.0, 0.25, 0.5 };
 
         TickSet ticks = TickGenerators.For(axis).Generate(new DataRange(0, 1), 5);
 
-        Assert.Equal(new[] { "0.00", "0.25", "0.50" }, ticks.MajorTicks.Select(t => t.Label));
+        Assert.Equal(new[] { "0", "0.25", "0.5" }, ticks.MajorTicks.Select(t => t.Label));
     }
 }

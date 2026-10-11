@@ -695,7 +695,20 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
     {
         JgsValue[] outputs = CallMultiple(arguments, wanted: 1, line, column);
-        return outputs.Length > 0 ? outputs[0] : JgsValue.Null;
+        if (outputs.Length > 0)
+        {
+            return outputs[0];
+        }
+
+        // v = g() with g = @() s.f over an empty struct array: a list of none has no answer to give
+        // (open item 98, measured).
+        if (_declaration.Dialect.IsMatlab && _declaration.Body is MemberExpr or BraceIndexExpr)
+        {
+            throw new JgsRuntimeException(line, column, "MATLAB:needMoreRhsOutputs",
+                "Insufficient number of outputs from right hand side of equal sign to satisfy assignment.");
+        }
+
+        return JgsValue.Null;
     }
 
     /// <summary>

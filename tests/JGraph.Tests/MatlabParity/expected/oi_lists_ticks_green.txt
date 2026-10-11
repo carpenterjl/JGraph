@@ -1,0 +1,89 @@
+CHK|green_spec|double[1 3] [0 1 0]|exact
+CHK|green_letter|double[1 3] [0 1 0]|exact
+CHK|green_name|double[1 3] [0 1 0]|exact
+CHK|green_string|double[1 3] [0 1 0]|exact
+CHK|green_marker|double[1 3] [0 1 0]|exact
+CHK|green_patch|double[1 3] [0 1 0]|exact
+CHK|green_text|double[1 3] [0 1 0]|exact
+CHK|green_bar|double[1 3] [0 1 0]|exact
+CHK|green_validatecolor|double[1 3] [0 1 0]|exact
+CHK|other_letters|cell[1 7]{double[1 3] [0 0 1];double[1 3] [1 0 0];double[1 3] [0 1 1];double[1 3] [1 0 1];double[1 3] [1 1 0];double[1 3] [0 0 0];double[1 3] [1 1 1]}|exact
+CHK|exp_auto|cell[1 4]{int32[1 1] 4;char[1 5]'int32';char[1 4]'auto';cell[1 6]{char[1 1]'0';char[1 1]'1';char[1 1]'2';char[1 1]'3';char[1 1]'4';char[1 1]'5'}}|exact
+CHK|exp_three|cell[1 2]{char[1 6]'manual';cell[1 6]{char[1 1]'0';char[1 2]'10';char[1 2]'20';char[1 2]'30';char[1 2]'40';char[1 2]'50'}}|exact
+CHK|exp_zero|cell[1 6]{char[1 1]'0';char[1 5]'10000';char[1 5]'20000';char[1 5]'30000';char[1 5]'40000';char[1 5]'50000'}|exact
+CHK|exp_uneven|cell[1 2]{int32[1 1] 4;cell[1 3]{char[1 1]'0';char[1 6]'1.2345';char[1 1]'5'}}|exact
+CHK|exp_long|cell[1 3]{char[1 1]'0';char[1 6]'1.2346';char[1 1]'5'}|exact
+CHK|exp_labels_given|cell[1 2]{int32[1 1] 0;cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}}|exact
+CHK|exp_small|cell[1 2]{int32[1 1] -4;cell[1 11]{char[1 2]'-3';char[1 2]'-2';char[1 2]'-1';char[1 1]'0';char[1 1]'1';char[1 1]'2';char[1 1]'3';char[1 1]'4';char[1 1]'5';char[1 1]'6';char[1 1]'7'}}|exact
+CHK|exp_offset|cell[1 2]{int32[1 1] 5;cell[1 9]{char[1 7]'1.23456';char[1 8]'1.234565';char[1 7]'1.23457';char[1 8]'1.234575';char[1 7]'1.23458';char[1 8]'1.234585';char[1 7]'1.23459';char[1 8]'1.234595';char[1 6]'1.2346'}}|exact
+CHK|auto_third|cell[1 4]{char[1 1]'0';char[1 6]'0.3333';char[1 1]'2';char[1 1]'7'}|exact
+CHK|auto_quarters|cell[1 4]{char[1 1]'0';char[1 4]'0.25';char[1 3]'0.5';char[1 4]'1.75'}|exact
+CHK|format_default|cell[1 3]{char[1 2]'%g';char[1 2]'%g';char[1 2]'%g'}|exact
+CHK|format_1|cell[1 3]{char[1 4]'%.1f';char[1 4]'%.1f';cell[1 3]{char[1 3]'0.0';char[1 3]'1.0';char[1 3]'2.0'}}|exact
+CHK|format_2|cell[1 3]{char[1 3]'usd';char[1 6]'$%,.2f';cell[1 3]{char[1 5]'$0.00';char[1 5]'$1.00';char[1 5]'$2.00'}}|exact
+CHK|format_3|cell[1 3]{char[1 3]'eur';char[1 11]'\x20AC%,.2f';cell[1 3]{char[1 5]'€0.00';char[1 5]'€1.00';char[1 5]'€2.00'}}|exact
+CHK|format_4|cell[1 3]{char[1 3]'gbp';char[1 11]'\x00A3%,.2f';cell[1 3]{char[1 5]'£0.00';char[1 5]'£1.00';char[1 5]'£2.00'}}|exact
+CHK|format_5|cell[1 3]{char[1 3]'jpy';char[1 9]'\x00A5%,d';cell[1 3]{char[1 2]'¥0';char[1 2]'¥1';char[1 2]'¥2'}}|exact
+CHK|format_6|cell[1 3]{char[1 7]'degrees';char[1 8]'%g\x00B0';cell[1 3]{char[1 2]'0°';char[1 2]'1°';char[1 2]'2°'}}|exact
+CHK|format_7|cell[1 3]{char[1 10]'percentage';char[1 4]'%g%%';cell[1 3]{char[1 2]'0%';char[1 2]'1%';char[1 2]'2%'}}|exact
+CHK|format_8|cell[1 3]{char[1 5]'%,.2f';char[1 5]'%,.2f';cell[1 3]{char[1 4]'0.00';char[1 4]'1.00';char[1 4]'2.00'}}|exact
+CHK|format_9|cell[1 3]{char[1 3]'%+g';char[1 3]'%+g';cell[1 3]{char[1 2]'+0';char[1 2]'+1';char[1 2]'+2'}}|exact
+CHK|format_10|cell[1 3]{char[1 2]'%d';char[1 2]'%d';cell[1 3]{char[1 1]'0';char[1 1]'1';char[1 1]'2'}}|exact
+CHK|format_11|cell[1 3]{char[1 4]'%.0e';char[1 4]'%.0e';cell[1 3]{char[1 13]'0\times10^{0}';char[1 13]'1\times10^{0}';char[1 13]'2\times10^{0}'}}|exact
+CHK|format_12|cell[1 3]{char[1 5]'%5.1f';char[1 5]'%5.1f';cell[1 3]{char[1 5]'  0.0';char[1 5]'  1.0';char[1 5]'  2.0'}}|exact
+CHK|format_13|cell[1 3]{char[1 8]'x = %g m';char[1 8]'x = %g m';cell[1 3]{char[1 7]'x = 0 m';char[1 7]'x = 1 m';char[1 7]'x = 2 m'}}|exact
+CHK|format_14|cell[1 3]{char[1 4]'%%%g';char[1 4]'%%%g';cell[1 3]{char[1 2]'%0';char[1 2]'%1';char[1 2]'%2'}}|exact
+CHK|format_15|cell[1 3]{char[1 2]'%G';char[1 2]'%G';cell[1 3]{char[1 1]'0';char[1 1]'1';char[1 1]'2'}}|exact
+CHK|format_16|cell[1 3]{char[1 2]'%i';char[1 2]'%i';cell[1 3]{char[1 1]'0';char[1 1]'1';char[1 1]'2'}}|exact
+CHK|format_property_words|cell[1 3]{char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.';char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.';char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'}|exact
+CHK|format_auto_again|char[1 2]'%g'|exact
+CHK|format_grouping|cell[1 3]{char[1 4]'0.00';char[1 8]'1,500.00';char[1 8]'3,000.00'}|exact
+CHK|format_over_exponent|cell[1 2]{int32[1 1] 4;cell[1 6]{char[1 4]'0.00';char[1 4]'1.00';char[1 4]'2.00';char[1 4]'3.00';char[1 4]'4.00';char[1 4]'5.00'}}|exact
+CHK|format_refused_1|char[1 175]'MATLAB:datatypes:PrintfFormatDataType:UnsupportedType / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.'|exact
+CHK|format_refused_2|char[1 175]'MATLAB:datatypes:PrintfFormatDataType:UnsupportedType / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.'|exact
+CHK|format_refused_3|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|format_refused_4|char[1 274]'MATLAB:datatypes:PrintfFormatDataType:InvalidFormat / Error setting property 'TickLabelFormat' of class 'NumericRuler':\nValue must be a supported tick label format specification. For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.'|exact
+CHK|log_decades|cell[1 6]{char[1 6]'10^{0}';char[1 6]'10^{1}';char[1 6]'10^{2}';char[1 6]'10^{3}';char[1 6]'10^{4}';char[1 6]'10^{5}'}|exact
+CHK|polar_formats|cell[1 4]{char[1 2]'%g';char[1 2]'%g';char[1 3]'%g°';char[1 3]'%g°'}|exact
+CHK|dot_assign_first|double[1 1] 1|exact
+CHK|dot_assign_none|char[1 116]'MATLAB:needMoreRhsOutputs / Insufficient number of outputs from right hand side of equal sign to satisfy assignment.'|exact
+CHK|brace_assign_first|double[1 1] 1|exact
+CHK|brace_assign_none|char[1 110]'MATLAB:TooManyOutputsDueToMissingBraces / Unable to perform assignment with 0 elements on the right-hand side.'|exact
+CHK|paren_first|double[1 1] 1|exact
+CHK|nested_first|double[1 1] 1|exact
+CHK|deep_first|double[1 1] 1|exact
+CHK|operator_many|char[1 41]'MATLAB:maxrhs / Too many input arguments.'|exact
+CHK|operator_none|char[1 43]'MATLAB:minrhs / Not enough input arguments.'|exact
+CHK|unary_many|char[1 41]'MATLAB:maxrhs / Too many input arguments.'|exact
+CHK|unary_none|char[1 43]'MATLAB:minrhs / Not enough input arguments.'|exact
+CHK|transpose_many|char[1 41]'MATLAB:maxrhs / Too many input arguments.'|exact
+CHK|if_many|char[1 163]'MATLAB:index:expected_one_output_from_reference / A dot '.' indexing expression produced a comma-separated list with 2 values where only a single value is allowed.'|exact
+CHK|if_none|char[1 166]'MATLAB:index:expected_one_output_from_reference / A brace '{}' indexing expression produced a comma-separated list with 0 values where only a single value is allowed.'|exact
+CHK|while_none|char[1 163]'MATLAB:index:expected_one_output_from_reference / A dot '.' indexing expression produced a comma-separated list with 0 values where only a single value is allowed.'|exact
+CHK|switch_many|char[1 166]'MATLAB:index:expected_one_output_from_reference / A brace '{}' indexing expression produced a comma-separated list with 2 values where only a single value is allowed.'|exact
+CHK|for_many|char[1 163]'MATLAB:index:expected_one_output_from_reference / A dot '.' indexing expression produced a comma-separated list with 2 values where only a single value is allowed.'|exact
+CHK|andand_many|char[1 163]'MATLAB:index:expected_one_output_from_reference / A dot '.' indexing expression produced a comma-separated list with 2 values where only a single value is allowed.'|exact
+CHK|oror_none|char[1 166]'MATLAB:index:expected_one_output_from_reference / A brace '{}' indexing expression produced a comma-separated list with 0 values where only a single value is allowed.'|exact
+CHK|index_after_many|char[1 222]'MATLAB:index:expected_one_output_from_intermediate_indexing / Intermediate dot '.' indexing produced a comma-separated list with 2 values, but it must produce a single value when followed by subsequent indexing operations.'|exact
+CHK|index_after_none|char[1 222]'MATLAB:index:expected_one_output_from_intermediate_indexing / Intermediate dot '.' indexing produced a comma-separated list with 0 values, but it must produce a single value when followed by subsequent indexing operations.'|exact
+CHK|brace_after_many|char[1 225]'MATLAB:index:expected_one_output_from_intermediate_indexing / Intermediate brace '{}' indexing produced a comma-separated list with 2 values, but it must produce a single value when followed by subsequent indexing operations.'|exact
+CHK|dot_after_none|char[1 222]'MATLAB:index:expected_one_output_from_intermediate_indexing / Intermediate dot '.' indexing produced a comma-separated list with 0 values, but it must produce a single value when followed by subsequent indexing operations.'|exact
+CHK|colon_spread|double[1 2] [1 2]|exact
+CHK|colon_spread_brace|double[1 2] [1 3]|exact
+CHK|colon_none|char[1 43]'MATLAB:minrhs / Not enough input arguments.'|exact
+CHK|subscripts_spread|double[1 1] 20|exact
+CHK|subscripts_brace|double[1 3] [3 5 7]|exact
+CHK|subscripts_none|double[1 3] [10 20 30]|exact
+CHK|write_spread|double[3 3] [8 1 6;0 0 0;4 9 2]|exact
+CHK|write_spread_dot|double[2 2] [10 5;30 40]|exact
+CHK|write_none|char[1 66]'MATLAB:atLeastOneIndexIsRequired / At least one index is required.'|exact
+CHK|char_colon|double[1 9] [8 3 4 1 5 9 6 7 2]|exact
+CHK|anon_first|double[1 1] 1|exact
+CHK|anon_none|char[1 116]'MATLAB:needMoreRhsOutputs / Insufficient number of outputs from right hand side of equal sign to satisfy assignment.'|exact
+CHK|function_first|double[1 1] 1|exact
+CHK|function_none|char[1 116]'MATLAB:needMoreRhsOutputs / Insufficient number of outputs from right hand side of equal sign to satisfy assignment.'|exact
+CHK|function_brace_none|char[1 110]'MATLAB:TooManyOutputsDueToMissingBraces / Unable to perform assignment with 0 elements on the right-hand side.'|exact
+CHK|bare_none|cell[1 2]{char[0 0]'';char[1 9]'untouched'}|exact
+CHK|spread_still|cell[1 4]{double[1 2] [1 2];cell[1 2]{double[1 1] 1;double[1 1] 2};double[1 1] 0;double[1 2] [0 0]}|exact
+CHK|findprop_none|char[1 116]'MATLAB:needMoreRhsOutputs / Insufficient number of outputs from right hand side of equal sign to satisfy assignment.'|exact
+CHK|struct_empty_shapes|cell[1 4]{double[1 2] [0 3];double[1 2] [3 0];double[1 2] [0 0];double[1 2] [1 0]}|exact

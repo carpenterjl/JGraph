@@ -1479,7 +1479,7 @@ internal sealed partial class Interpreter
                 return Completion.Normal;
 
             case IfStmt ifStmt:
-                if (Evaluate(ifStmt.Condition, env).IsTruthy)
+                if (EvaluateOne(ifStmt.Condition, env, ListUse.Condition).IsTruthy)
                 {
                     return ExecuteBlock(ifStmt.Then, BlockScope(env));
                 }
@@ -1713,8 +1713,9 @@ internal sealed partial class Interpreter
         }
 
         // A comma-separated list written as a statement shows each value as ans, ans keeping the
-        // last: `s.f` on a 1-by-2 struct array, `c{:}` on a 1-by-2 cell (open item 30, measured).
-        if (Dialect.IsMatlab && ListLength(expression, env) > 1)
+        // last: `s.f` on a 1-by-2 struct array, `c{:}` on a 1-by-2 cell (open item 30, measured);
+        // a list of none shows nothing and leaves ans as it was (open item 98, measured).
+        if (Dialect.IsMatlab && ListLength(expression, env) != 1)
         {
             foreach (JgsValue each in EvaluateAll([expression], env))
             {
@@ -1910,12 +1911,13 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue EvaluateCallee(Expr callee, JgsEnvironment env)
     {
+        // What a callee names is then called or indexed, so a list there must be one (open item 98).
         if (callee is MemberExpr dotted)
         {
-            return EvaluateMember(dotted, env, autoCall: false);
+            return EvaluateMember(dotted, env, autoCall: false, use: ListUse.Intermediate);
         }
 
-        return Evaluate(callee, env);
+        return EvaluateOne(callee, env, ListUse.Intermediate);
     }
 
     /// <summary>
@@ -2217,7 +2219,7 @@ internal sealed partial class Interpreter
     /// </summary>
     private Completion ExecuteSwitch(SwitchStmt statement, JgsEnvironment env)
     {
-        JgsValue subject = Evaluate(statement.Subject, env);
+        JgsValue subject = EvaluateOne(statement.Subject, env, ListUse.Condition);
         foreach (SwitchCase arm in statement.Cases)
         {
             JgsValue candidate = Evaluate(arm.Value, env);
@@ -2720,7 +2722,7 @@ internal sealed partial class Interpreter
             return compiled;
         }
 
-        while (Evaluate(statement.Condition, env).IsTruthy)
+        while (EvaluateOne(statement.Condition, env, ListUse.Condition).IsTruthy)
         {
             IterationTick();
             Completion completion = ExecuteBlock(statement.Body, BlockScope(env));
@@ -2754,7 +2756,7 @@ internal sealed partial class Interpreter
         // body writing gm(1, :) = 7 still binds the columns gm had (#9), and a `clear` in the body
         // cannot free what the loop has yet to visit (#15). The body is script code, so the source
         // is always held; the share is given back when the loop ends, however it ends.
-        JgsValue source = Evaluate(statement.Iterable, env);
+        JgsValue source = EvaluateOne(statement.Iterable, env, ListUse.Condition);
         var holds = new ScopeHolds();
         try
         {
@@ -3237,6 +3239,11 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue EvaluateRange(RangeExpr range, JgsEnvironment env)
     {
+        if (RangeOfList(range, env) is { } listed)
+        {
+            return listed; // 1:s.f, c{:}:3 - a list's values are colon's arguments (open item 98)
+        }
+
         JgsValue startValue = Evaluate(range.Start, env);
         JgsValue stepValue = range.Step is null ? JgsValue.Number(1) : Evaluate(range.Step, env);
         JgsValue stopValue = Evaluate(range.Stop, env);
@@ -4186,7 +4193,7 @@ internal sealed partial class Interpreter
 
     private JgsValue EvaluateUnary(UnaryExpr unary, JgsEnvironment env, out bool owned)
     {
-        JgsValue operand = Evaluate(unary.Operand, env);
+        JgsValue operand = EvaluateOne(unary.Operand, env, ListUse.Operand);
         JgsValue answer = ApplyUnary(unary, operand);
         owned = OwnsFreshResult(answer, operand, null);
         return answer;
@@ -4246,14 +4253,14 @@ internal sealed partial class Interpreter
 
     private JgsValue EvaluateLogical(LogicalExpr logical, JgsEnvironment env)
     {
-        JgsValue left = Evaluate(logical.Left, env);
+        JgsValue left = EvaluateOne(logical.Left, env, ListUse.Condition);
         if (logical.Op == TokenType.AmpAmp)
         {
-            return left.IsTruthy ? JgsValue.Bool(Evaluate(logical.Right, env).IsTruthy) : JgsValue.False;
+            return left.IsTruthy ? JgsValue.Bool(EvaluateOne(logical.Right, env, ListUse.Condition).IsTruthy) : JgsValue.False;
         }
 
         // ||
-        return left.IsTruthy ? JgsValue.True : JgsValue.Bool(Evaluate(logical.Right, env).IsTruthy);
+        return left.IsTruthy ? JgsValue.True : JgsValue.Bool(EvaluateOne(logical.Right, env, ListUse.Condition).IsTruthy);
     }
 
     private JgsValue EvaluateBinary(BinaryExpr binary, JgsEnvironment env) =>
@@ -4521,11 +4528,13 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue EvaluateOperand(Expr expr, JgsEnvironment env, out bool fresh)
     {
-        // An operator handed a list of several values is a call of plus with too many arguments in
-        // R2025b: `s.f + 1` on a 1-by-2 struct array is MATLAB:maxrhs (open item 30, measured).
-        if (Dialect.IsMatlab && expr is MemberExpr or BraceIndexExpr && ListLength(expr, env) > 1)
+        // An operator handed a list is a call of plus with the list as its arguments in R2025b:
+        // `s.f + 1` on a 1-by-2 struct array is MATLAB:maxrhs (open item 30), on an empty one
+        // MATLAB:minrhs (open item 98, measured).
+        if (Dialect.IsMatlab && expr is MemberExpr or BraceIndexExpr)
         {
-            throw new JgsRuntimeException(expr.Line, expr.Column, "MATLAB:maxrhs", "Too many input arguments.");
+            fresh = false;
+            return EvaluateOne(expr, env, ListUse.Operand);
         }
 
         switch (expr)
@@ -5924,6 +5933,19 @@ internal sealed partial class Interpreter
             _ => (((IndexExpr)target).Target, ((IndexExpr)target).Indices),
         };
 
+        // B(idx{:}) = 0 spreads the list into the subscripts; m(s.f) = 5 over an empty struct array
+        // leaves none, which R2025b refuses (open item 98, measured).
+        if (Dialect.IsMatlab && subscripts.Count > 0
+            && SpreadSubscripts(subscripts, env) is var spread && !ReferenceEquals(spread, subscripts))
+        {
+            if (spread.Count == 0)
+            {
+                throw new JgsRuntimeException(assign.Line, assign.Column, "MATLAB:atLeastOneIndexIsRequired", "At least one index is required.");
+            }
+
+            subscripts = spread;
+        }
+
         // 'end' reads the container before the write creates anything (M16 step 2): a cleared global
         // refuses here, a name never bound counts as empty, and a dot or brace on a value that has
         // neither is refused as the read it is, where the write itself would have created the field.
@@ -7072,7 +7094,7 @@ internal sealed partial class Interpreter
     /// even though <c>f(x)</c> would invoke it — that distinction is the two forms' only difference.</summary>
     private JgsValue EvaluateIndex(IndexExpr indexExpr, JgsEnvironment env)
     {
-        JgsValue target = Evaluate(indexExpr.Target, env);
+        JgsValue target = EvaluateOne(indexExpr.Target, env, ListUse.Intermediate);
         if (target.Type == JgsType.Table)
         {
             return IndexTableParen(target, indexExpr.Indices, indexExpr, env);
@@ -7181,6 +7203,18 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue CallOrIndex(JgsValue callee, CallExpr call, JgsEnvironment env)
     {
+        // A(idx{:}), m(s.f): a list among the subscripts spreads into its place (open item 98).
+        if (Dialect.IsMatlab && callee.Type != JgsType.Function
+            && SpreadSubscripts(call.Arguments, env) is var spread && !ReferenceEquals(spread, call.Arguments))
+        {
+            if (spread.Count == 0)
+            {
+                return callee; // m(s.f) over an empty struct array is m(), which is m (measured)
+            }
+
+            call = new CallExpr(call.Callee, spread) { Line = call.Line, Column = call.Column };
+        }
+
         // "Calling" an array, string, or image with subscripts is indexing, identical to the bracket
         // form — a scalar lookup, a bool-mask filter, an index-array/range gather, 'end', or ':'.
         if (callee.Type is JgsType.Array or JgsType.String or JgsType.Image)
@@ -8130,9 +8164,18 @@ internal sealed partial class Interpreter
             // A lone true or false is a one-element mask, as MATLAB reads it: x(true) is x(1) and
             // x(false) is empty (ADR 0174 met it in ix_flat, whose filter of one line is a scalar).
             JgsValue index = Evaluate(argument, env);
-            return index.Type == JgsType.Bool && Dialect.IsMatlab
-                ? JgsValue.Shaped([index], 1, 1, JgsPackedKind.Bool)
-                : index;
+            if (!Dialect.IsMatlab)
+            {
+                return index;
+            }
+
+            // The char ':' is the colon, as in A(idx{:}) with idx = {2, ':'} (open item 98).
+            if (index.Type == JgsType.String && !index.IsStringArray && index.AsString == ":")
+            {
+                return null;
+            }
+
+            return index.Type == JgsType.Bool ? JgsValue.Shaped([index], 1, 1, JgsPackedKind.Bool) : index;
         }
         finally
         {
@@ -8809,15 +8852,15 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>Reads <c>c{i}</c> — the contents of a cell, where <c>c(i)</c> would give a cell back.</summary>
-    private JgsValue EvaluateBraceIndex(BraceIndexExpr brace, JgsEnvironment env)
+    private JgsValue EvaluateBraceIndex(BraceIndexExpr brace, JgsEnvironment env, ListUse use = ListUse.Value)
     {
-        JgsValue target = Evaluate(brace.Target, env);
+        JgsValue target = EvaluateOne(brace.Target, env, ListUse.Intermediate);
         if (Dialect.CopyOnAssign && IsHoldable(target) && !AllInert(brace.Indices, env))
         {
             var holds = new ScopeHolds(); // M5's index-target scope, as for a paren read
             try
             {
-                JgsValue read = BraceRead(Hold(target, ref holds), brace, env);
+                JgsValue read = BraceRead(Hold(target, ref holds), brace, env, use);
                 holds.Keep(read);
                 return read;
             }
@@ -8827,11 +8870,11 @@ internal sealed partial class Interpreter
             }
         }
 
-        return BraceRead(target, brace, env);
+        return BraceRead(target, brace, env, use);
     }
 
     /// <summary><see cref="EvaluateBraceIndex"/> once its target is in hand.</summary>
-    private JgsValue BraceRead(JgsValue target, BraceIndexExpr brace, JgsEnvironment env)
+    private JgsValue BraceRead(JgsValue target, BraceIndexExpr brace, JgsEnvironment env, ListUse use = ListUse.Value)
     {
         if (target.Type == JgsType.Table)
         {
@@ -8878,6 +8921,12 @@ internal sealed partial class Interpreter
         // assignment has room for — saying which of those is missing is more use than "bad index".
         if (slots.Length != 1)
         {
+            // In the MATLAB dialect it is R2025b's list, and where the brace stands decides (open item 98).
+            if (Dialect.IsMatlab)
+            {
+                return OneOfList(slots.Length, slots.Length > 0 ? elements[slots[0]] : null, brace, brace: true, use);
+            }
+
             throw new JgsRuntimeException(brace.Line, brace.Column,
                 $"This brace index names {slots.Length} elements where one value is wanted. A list of " +
                 "several only fits an argument list, a bracket, or a multiple assignment.");
@@ -8903,7 +8952,7 @@ internal sealed partial class Interpreter
     {
         if (expr is BraceIndexExpr brace)
         {
-            JgsValue target = Evaluate(brace.Target, env);
+            JgsValue target = EvaluateOne(brace.Target, env, ListUse.Intermediate);
             if (target.Type == JgsType.Cell)
             {
                 // M5's index-target scope: the slots are read out of the cell as it was when the
@@ -8969,7 +9018,7 @@ internal sealed partial class Interpreter
             // Read once: the path is walked here, and if what it named is not a struct array after
             // all — h.list(2).b picks one element — the dot finishes on the value in hand rather
             // than sending the whole path round again, which would run a subscript's call twice.
-            JgsValue owner = Evaluate(member.Target, env);
+            JgsValue owner = EvaluateOne(member.Target, env, ListUse.Intermediate);
             string field = FieldName(member, env);
             return owner.IsStructArray
                 ? StructArrayFieldValues(owner, field, member)
@@ -9242,7 +9291,8 @@ internal sealed partial class Interpreter
     /// dotted name stands for a value, and false in callee position, where the parentheses that
     /// follow are the call.
     /// </param>
-    private JgsValue EvaluateMember(MemberExpr member, JgsEnvironment env, bool autoCall = true)
+    /// <param name="use">Where the dot stands, which decides a struct array's field (open item 98).</param>
+    private JgsValue EvaluateMember(MemberExpr member, JgsEnvironment env, bool autoCall = true, ListUse use = ListUse.Value)
     {
         // `Circle.unit()` and `Circle.Sides` name the class, not an instance of it — and that has to
         // be settled before the target is evaluated, because evaluating a class name *builds* one
@@ -9282,15 +9332,17 @@ internal sealed partial class Interpreter
             return constructorMember;
         }
 
-        return MemberOf(Evaluate(member.Target, env), field, member, autoCall);
+        return MemberOf(EvaluateOne(member.Target, env, ListUse.Intermediate), field, member, autoCall, use);
     }
 
     /// <summary>
     /// What a dot names on a target that has already been read. Split out of
     /// <see cref="EvaluateMember"/> so a caller that had to read the target to find out what it is
     /// — the comma-separated list does — can finish the read rather than walk the path again.
+    /// <paramref name="use"/> is where the dot stands, which decides what a struct array's field,
+    /// a list, answers in the MATLAB dialect.
     /// </summary>
-    private JgsValue MemberOf(JgsValue target, string field, MemberExpr member, bool autoCall)
+    private JgsValue MemberOf(JgsValue target, string field, MemberExpr member, bool autoCall, ListUse use = ListUse.Value)
     {
         // A table's dot reads a variable's column (M43): numeric columns come back as column
         // vectors, text columns as cells so T.Code{2} braces in.
@@ -9389,9 +9441,16 @@ internal sealed partial class Interpreter
         }
 
         // S.field on an array reads that field across every element (M65). A 1-by-1 falls through to
-        // the ordinary field read below, which is the same expression meaning the same thing.
+        // the ordinary field read below, which is the same expression meaning the same thing. In the
+        // MATLAB dialect the field is a list, and where it stands decides its one value (open item 98).
         if (target.IsStructArray)
         {
+            if (Dialect.IsMatlab)
+            {
+                JgsValue[] listed = StructArrayFieldValues(target, field, member);
+                return OneOfList(listed.Length, listed.Length > 0 ? listed[0] : null, member, brace: false, use);
+            }
+
             return StructArrayField(target, field, member);
         }
 
@@ -10215,7 +10274,7 @@ internal sealed partial class Interpreter
 
     private JgsValue EvaluateTranspose(TransposeExpr transpose, JgsEnvironment env, out bool owned)
     {
-        JgsValue value = Evaluate(transpose.Operand, env);
+        JgsValue value = EvaluateOne(transpose.Operand, env, ListUse.Operand);
         JgsValue answer = ApplyTranspose(transpose, value);
         owned = OwnsFreshResult(answer, value, null);
         return answer;

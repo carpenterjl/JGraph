@@ -183,6 +183,7 @@ internal sealed partial class Interpreter
     /// </summary>
     private IReadOnlyList<Expr> PreEvaluateSubscripts(Expr container, IReadOnlyList<Expr> subscripts, JgsEnvironment env)
     {
+        subscripts = SpreadSubscripts(subscripts, env); // B(idx{:}) = 0 (open item 98)
         if (subscripts.Count == 0)
         {
             return subscripts;
@@ -204,10 +205,12 @@ internal sealed partial class Interpreter
                 continue;
             }
 
-            JgsValue value = MentionsEnd(subscript)
-                ? EvaluateIndexArgument(subscript, () => WriteExtents(container, count, env), i, env)!
-                : EvaluateIndexArgument(subscript, none, i, env)!;
-            prepared[i] = new PreEvaluated(value) { Line = subscript.Line, Column = subscript.Column };
+            JgsValue? value = MentionsEnd(subscript)
+                ? EvaluateIndexArgument(subscript, () => WriteExtents(container, count, env), i, env)
+                : EvaluateIndexArgument(subscript, none, i, env);
+            prepared[i] = value is null
+                ? new AllExpr { Line = subscript.Line, Column = subscript.Column } // the char ':'
+                : new PreEvaluated(value) { Line = subscript.Line, Column = subscript.Column };
         }
 
         return prepared;

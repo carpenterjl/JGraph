@@ -149,7 +149,7 @@ public class MatlabRulerTickTests : IDisposable
             disp(xtickformat);
             """);
 
-        Assert.Equal(new[] { "2.00", "$2.00", "2°", "auto" }, _output.NormalLines);
+        Assert.Equal(new[] { "2.00", "$2.00", "2°", "%g" }, _output.NormalLines);
     }
 
     [Fact]

@@ -838,6 +838,30 @@ public sealed class FigureRenderer
             }
         }
 
+        // Each ruler's power of ten, once, beyond its labels' far end: past the high end of a floor
+        // ruler and above the top of the z ruler (open item 97).
+        if (decorated && xAxis.ShowTickLabels && xTicks.Exponent != 0)
+        {
+            EdgeLabel(ExponentMark(xTicks.Exponent), projection.ProjectPoint(xr.Max, yNear, zFar), yOut, xAxis.TickLabelStyle, TickLabelPush * 3);
+        }
+
+        if (decorated && yAxis.ShowTickLabels && yTicks.Exponent != 0)
+        {
+            EdgeLabel(ExponentMark(yTicks.Exponent), projection.ProjectPoint(xNear, yr.Max, zFar), xOut, yAxis.TickLabelStyle, TickLabelPush * 3);
+        }
+
+        if (decorated && zAxis.ShowTickLabels && zTicks.Exponent != 0)
+        {
+            Point2D top = projection.ProjectPoint(zx, zy, zr.Max);
+            double rise = context.MeasureText("0", zAxis.TickLabelStyle).Height;
+            context.DrawText(
+                ExponentMark(zTicks.Exponent),
+                new Point2D(top.X - ZTickLabelPush, top.Y - rise),
+                zAxis.TickLabelStyle,
+                HorizontalAlignment.Right,
+                VerticalAlignment.Bottom);
+        }
+
         // Axis titles at the edge midpoints, pushed further out than the tick labels.
         if (decorated && !string.IsNullOrEmpty(xAxis.Label))
         {
@@ -1006,6 +1030,13 @@ public sealed class FigureRenderer
                     HorizontalAlignment.Center,
                     VerticalAlignment.Bottom,
                     rAxis.TickLabelAngle);
+            }
+
+            // The power of ten the r labels are written over, just past the rim on their spoke (open item 97).
+            if (rTicks.Exponent != 0)
+            {
+                Point2D rim = polar.Rim(along, polar.PixelRadius * 1.06);
+                context.DrawText(ExponentMark(rTicks.Exponent), rim, rAxis.TickLabelStyle, HorizontalAlignment.Center, VerticalAlignment.Bottom);
             }
         }
     }
@@ -1194,6 +1225,17 @@ public sealed class FigureRenderer
                         VerticalAlignment.Middle,
                         ruler.Axis.TickLabelAngle);
                 }
+            }
+
+            // Its labels' power of ten, above its top as on the left ruler (open item 97).
+            if (ruler.Axis.ShowTickLabels && ruler.Ticks.Exponent != 0)
+            {
+                context.DrawText(
+                    ExponentMark(ruler.Ticks.Exponent),
+                    new Point2D(edge, plotArea.Top - LabelPadding),
+                    Tinted(ruler.Axis.TickLabelStyle, ruler.Tint),
+                    HorizontalAlignment.Left,
+                    VerticalAlignment.Bottom);
             }
 
             if (!string.IsNullOrEmpty(ruler.Axis.Label))
@@ -1618,7 +1660,24 @@ public sealed class FigureRenderer
                     angle);
             }
         }
+
+        // Labels written over a power of ten say which once, at the ruler's far end beyond them, as
+        // R2025b does (open item 97); the TeX the text is drawn through raises the power.
+        if (xAxis.ShowTickLabels && xTicks.Exponent != 0)
+        {
+            double below = outward + LabelPadding + context.MeasureText("0", labelStyle).Height;
+            context.DrawText(
+                ExponentMark(xTicks.Exponent),
+                new Point2D(plotArea.Right, edge + (sign * below)),
+                labelStyle,
+                HorizontalAlignment.Right,
+                onTop ? VerticalAlignment.Bottom : VerticalAlignment.Top);
+        }
     }
+
+    /// <summary>The ×10ⁿ a ruler's labels are written over, in R2025b's TeX spelling.</summary>
+    private static string ExponentMark(int exponent) =>
+        "\\times10^{" + exponent.ToString(System.Globalization.CultureInfo.InvariantCulture) + "}";
 
     private static void DrawYTicks(
         IRenderContext context,
@@ -1663,6 +1722,17 @@ public sealed class FigureRenderer
                     VerticalAlignment.Middle,
                     yAxis.TickLabelAngle);
             }
+        }
+
+        // The ×10ⁿ of a y ruler stands above the plot box's top, over the ruler (open item 97).
+        if (yAxis.ShowTickLabels && yTicks.Exponent != 0)
+        {
+            context.DrawText(
+                ExponentMark(yTicks.Exponent),
+                new Point2D(edge, plotArea.Top - LabelPadding),
+                Tinted(yAxis.TickLabelStyle, ink),
+                onRight ? HorizontalAlignment.Right : HorizontalAlignment.Left,
+                VerticalAlignment.Bottom);
         }
     }
 

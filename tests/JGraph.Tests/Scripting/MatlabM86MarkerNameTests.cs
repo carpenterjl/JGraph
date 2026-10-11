@@ -135,7 +135,7 @@ public class MatlabM86MarkerNameTests : IDisposable
 
         Line3DPlot drawn = Assert.Single(JG.Gca().Plots.OfType<Line3DPlot>());
         Assert.Equal(Colors.Red, drawn.MarkerFaceColor);
-        Assert.Equal(Colors.Green, drawn.MarkerEdgeColor);
+        Assert.Equal(Color.FromRgb(0, 255, 0), drawn.MarkerEdgeColor);
     }
 
     /// <summary>
@@ -150,7 +150,7 @@ public class MatlabM86MarkerNameTests : IDisposable
             "h = stem3([1 2], [1 2], [1 2], 'MarkerEdgeColor', 'g');"));
 
         Stem3DPlot drawn = Assert.Single(JG.Gca().Plots.OfType<Stem3DPlot>());
-        Assert.Equal(Colors.Green, drawn.MarkerEdgeColor);
+        Assert.Equal(Color.FromRgb(0, 255, 0), drawn.MarkerEdgeColor);
         Assert.Null(drawn.Color);
     }
 

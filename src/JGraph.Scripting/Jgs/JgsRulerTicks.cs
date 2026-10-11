@@ -53,11 +53,20 @@ internal static class JgsRulerTicks
 
     // --- Tick labels ----------------------------------------------------------------------------
 
-    /// <summary>What the ticks read, as a cell of char — MATLAB's shape for this answer.</summary>
+    /// <summary>
+    /// What the ticks read, as a cell of char — MATLAB's shape for this answer, a column in the
+    /// MATLAB dialect as R2025b's is (open item 97, measured).
+    /// </summary>
     public static JgsValue ReadLabels(AxisModel ruler)
     {
         IReadOnlyList<string> labels = ruler.TickLabelOverrides ?? Current(ruler).Select(static t => t.Label).ToArray();
-        return JgsValue.Cell(labels.Select(JgsValue.Str).ToArray());
+        JgsValue cell = JgsValue.Cell(labels.Select(JgsValue.Str).ToArray());
+        if (JgsRunningDialect.ThreadIsMatlab && labels.Count > 0)
+        {
+            cell.Reshape(labels.Count, 1);
+        }
+
+        return cell;
     }
 
     public static void WriteLabels(string what, AxisModel ruler, JgsValue value, int line, int col)
@@ -89,18 +98,66 @@ internal static class JgsRulerTicks
     }
 
     /// <summary>
-    /// The format the tick labels are written with. This answers in the .NET spelling the axis stores,
-    /// not the printf one a script may have handed over — a recorded divergence, and the reason is that
-    /// one format string is the model's own property, editable in the inspector and saved in the file.
+    /// The format the tick labels are written with, in R2025b's spelling: the printf format the axis
+    /// holds, a named one as R2025b expands it (<c>'usd'</c> is <c>'$%,.2f'</c>), and <c>'%g'</c> —
+    /// <c>'%g°'</c> on a θ ruler — when the labels are automatic (open item 97, probe_97c). A .NET
+    /// format a figure saved before then answers as it is.
     /// </summary>
-    public static JgsValue ReadFormat(AxisModel ruler) => JgsValue.Str(ruler.TickLabelFormat ?? "auto");
+    public static JgsValue ReadFormat(AxisModel ruler) => JgsValue.Str(ruler.TickLabelFormat
+        ?? (ruler.Parent is AxesModel owner && ReferenceEquals(owner.ThetaAxis, ruler) ? "%g°" : "%g"));
 
+    /// <summary>The <c>xtickformat</c> family's write: a refusal is said in JGraph's words.</summary>
     public static void WriteFormat(string what, AxisModel ruler, JgsValue value, int line, int col) =>
-        ruler.TickLabelFormat = ToNetFormat(what, JgsBuiltins.StrOf(what, value, line, col), line, col);
+        ruler.TickLabelFormat = RulerFormat(what, JgsBuiltins.StrOf(what, value, line, col), asProperty: false, line, col);
+
+    /// <summary>A ruler's <c>TickLabelFormat</c> property: a refusal is R2025b's, identifier and words.</summary>
+    public static void WriteFormatProperty(AxisModel ruler, JgsValue value, int line, int col) =>
+        ruler.TickLabelFormat = RulerFormat("TickLabelFormat", JgsBuiltins.StrOf("TickLabelFormat", value, line, col), asProperty: true, line, col);
+
+    /// <summary>
+    /// What a ruler keeps for a format a script wrote: null for <c>'auto'</c>, R2025b's printf
+    /// expansion of a named format, and a printf format as it was written once it is one R2025b takes —
+    /// a single conversion of f, F, g, G, e, E, d or i, with any text around it.
+    /// </summary>
+    private static string? RulerFormat(string what, string format, bool asProperty, int line, int col)
+    {
+        // The named formats are the verb's words; the property takes a printf format only (measured).
+        switch (asProperty ? string.Empty : format.ToLowerInvariant())
+        {
+            case "auto": return null;
+            case "usd": return "$%,.2f";
+            case "eur": return "\\x20AC%,.2f";
+            case "gbp": return "\\x00A3%,.2f";
+            case "jpy" or "yen": return "\\x00A5%,d";
+            case "degrees": return "%g\\x00B0";
+            case "percentage": return "%g%%";
+        }
+
+        TickFormatProblem problem = TickFormats.Check(format);
+        if (problem == TickFormatProblem.None)
+        {
+            return format;
+        }
+
+        if (asProperty)
+        {
+            throw problem == TickFormatProblem.UnsupportedType
+                ? new JgsRuntimeException(line, col, "MATLAB:datatypes:PrintfFormatDataType:UnsupportedType",
+                    "Error setting property 'TickLabelFormat' of class 'NumericRuler':\nFormat type must be %f, %F, %g, %G, %e, %E, %d or %i.")
+                : new JgsRuntimeException(line, col, "MATLAB:datatypes:PrintfFormatDataType:InvalidFormat",
+                    "Error setting property 'TickLabelFormat' of class 'NumericRuler':\nValue must be a supported tick label format specification. "
+                    + "For example '%.2f m' formats with 2 digits after the decimal point and appends the suffix ' m'.");
+        }
+
+        _ = ToNetFormat(what, format, line, col); // says what is wrong in JGraph's words
+        throw new JgsRuntimeException(line, col,
+            $"{what}: '{format}' is not a tick format. It holds one number conversion, such as '%.2f' or 'x = %g m'.");
+    }
 
     /// <summary>
     /// Translates MATLAB's tick format — a named one such as 'usd' or 'degrees', or a printf spec such
-    /// as '%.2f' with any literal text around it — into the .NET numeric format the axis holds.
+    /// as '%.2f' with any literal text around it — into a .NET numeric format. A heatmap's
+    /// <c>CellLabelFormat</c> is still kept this way; a ruler keeps the printf format itself (open item 97).
     /// </summary>
     public static string? ToNetFormat(string what, string format, int line, int col)
     {

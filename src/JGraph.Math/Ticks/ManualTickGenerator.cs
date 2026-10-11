@@ -39,22 +39,33 @@ public sealed class ManualTickGenerator : ITickGenerator
 
         IReadOnlyList<double> values = _positions ?? automatic.MajorTicks.Select(static t => t.Value).ToArray();
         double step = _positions is null ? automatic.Step : SpacingOf(_positions);
-        int decimals = LinearTickGenerator.DecimalsFor(step);
 
         // A tick outside the visible range is skipped rather than dropped from the axis, and the label
         // for a position keeps that position's index, so which label belongs to which tick does not
         // change when the axis is zoomed.
         double epsilon = System.Math.Max(System.Math.Abs(range.Length), 1) * 1e-9;
-        var majors = new List<Tick>(values.Count);
+        var shown = new List<int>(values.Count);
         for (int i = 0; i < values.Count; i++)
         {
             double value = values[i];
-            if (!double.IsFinite(value) || value < range.Min - epsilon || value > range.Max + epsilon)
+            if (double.IsFinite(value) && value >= range.Min - epsilon && value <= range.Max + epsilon)
             {
-                continue;
+                shown.Add(i);
             }
+        }
 
-            majors.Add(new Tick(value, LabelFor(i, value, decimals, labelFormat, automatic)));
+        // Named positions are written as a row, the way the generator writes its own (open item 97).
+        double[] named = _labels is null && _positions is not null ? shown.Select(i => values[i]).ToArray() : [];
+        string[]? written = _labels is null && _positions is not null
+            ? _automatic.ScaleType == AxisScaleType.Logarithmic
+                ? LogarithmicTickGenerator.Labels(named, labelFormat)
+                : TickFormats.Labels(named, labelFormat)
+            : null;
+        var majors = new List<Tick>(shown.Count);
+        for (int k = 0; k < shown.Count; k++)
+        {
+            int i = shown[k];
+            majors.Add(new Tick(values[i], written?[k] ?? LabelFor(i, automatic)));
         }
 
         return new TickSet(
@@ -63,13 +74,11 @@ public sealed class ManualTickGenerator : ITickGenerator
             step);
     }
 
-    private string LabelFor(int index, double value, int decimals, string? labelFormat, TickSet automatic)
+    private string LabelFor(int index, TickSet automatic)
     {
         if (_labels is null)
         {
-            return _positions is null
-                ? automatic.MajorTicks[index].Label
-                : LinearTickGenerator.FormatValue(value, decimals, labelFormat);
+            return automatic.MajorTicks[index].Label;
         }
 
         // MATLAB cycles a short list of labels over a long row of ticks, and an empty list blanks them.

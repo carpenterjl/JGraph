@@ -71,7 +71,7 @@ public static class PolarSpokes
         double shown = units == AngleUnits.Radians ? degrees * System.Math.PI / 180 : degrees;
         if (thetaAxis.TickLabelFormat is { } format)
         {
-            return shown.ToString(format, CultureInfo.CurrentCulture);
+            return TickFormats.Apply(shown, format);
         }
 
         return units == AngleUnits.Radians

@@ -39,4 +39,10 @@ public sealed class TickSet
 
     /// <summary>The spacing between major ticks (data units), or 0 when there are none.</summary>
     public double Step { get; }
+
+    /// <summary>
+    /// The power of ten the labels are written over, drawn once at the ruler's end as ×10ⁿ; 0 when
+    /// the labels are the values themselves (open item 97).
+    /// </summary>
+    public int Exponent { get; init; }
 }

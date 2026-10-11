@@ -3,6 +3,7 @@ using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Data;
+using JGraph.Maths.Ticks;
 using JGraph.Objects;
 
 namespace JGraph.Scripting.Jgs;
@@ -223,14 +224,13 @@ internal static partial class JgsGraphicsProperties
 
     /// <summary>
     /// A ruler's <c>Exponent</c>, an int32: what a script wrote, or the power of ten R2025b factors out
-    /// of the tick labels. The rule is fitted to R2025b's answers at twenty limits (probe_95c), not its
-    /// algorithm: large values take the power of their mean size, from 10^4 up; small ones that of the
-    /// largest, from 10^-3 down; a log ruler none. This build's tick labels do not factor it out.
+    /// of the tick labels (<see cref="ExponentTickGenerator.Auto"/>, a fitted rule); none on a log
+    /// ruler or one whose labels were given. The labels and the ×10ⁿ mark follow it (open item 97).
     /// </summary>
     private static void AddExponent(IDictionary<string, GraphicsProperty> table)
     {
         Put(table, "Exponent",
-            entry => JgsNumericClasses.Stamp(JgsValue.Number(WrittenValue(entry.Target, "Exponent") is { } held ? held.AsNumber : AutoExponent(entry)), JgsNumericClass.Int32),
+            entry => JgsNumericClasses.Stamp(JgsValue.Number(((AxisModel)entry.Target).Exponent ?? AutoExponent(entry)), JgsNumericClass.Int32),
             (entry, value, line, col) =>
             {
                 if (value.Type is not (JgsType.Number or JgsType.Bool or JgsType.Array) || value.IsCharMatrix || value.IsStringArray)
@@ -239,20 +239,20 @@ internal static partial class JgsGraphicsProperties
                         "Error setting property 'Exponent' of class 'NumericRuler':\nValue must be numeric or logical.");
                 }
 
-                Write(entry.Target, "Exponent", JgsValue.Number(System.Math.Round(JgsBuiltins.NumOf("Exponent", value, line, col))));
+                ((AxisModel)entry.Target).Exponent = (int)System.Math.Round(JgsBuiltins.NumOf("Exponent", value, line, col));
             });
         Put(table, "ExponentMode",
-            entry => JgsValue.Str(WrittenValue(entry.Target, "Exponent") is null ? "auto" : "manual"),
+            entry => JgsValue.Str(((AxisModel)entry.Target).Exponent is null ? "auto" : "manual"),
             (entry, value, line, col) =>
             {
                 string mode = JgsBuiltins.StrOf("ExponentMode", value, line, col).ToLowerInvariant();
                 if (mode == "auto")
                 {
-                    Write(entry.Target, "Exponent", null);
+                    ((AxisModel)entry.Target).Exponent = null;
                 }
                 else if (mode == "manual")
                 {
-                    Write(entry.Target, "Exponent", JgsValue.Number(AutoExponent(entry)));
+                    ((AxisModel)entry.Target).Exponent = AutoExponent(entry);
                 }
                 else
                 {
@@ -263,25 +263,10 @@ internal static partial class JgsGraphicsProperties
 
     private static int AutoExponent(JgsHandleEntry entry)
     {
-        if (((AxisModel)entry.Target).Scale == AxisScaleType.Logarithmic)
-        {
-            return 0;
-        }
-
-        double[] ticks = [.. RulerTicks(entry).Where(double.IsFinite).Select(System.Math.Abs)];
-        if (ticks.Length == 0)
-        {
-            return 0;
-        }
-
-        double mean = ticks.Average();
-        double largest = ticks.Max();
-        if (mean > 0 && System.Math.Floor(System.Math.Log10(mean)) is var big && big >= 4)
-        {
-            return (int)big;
-        }
-
-        return largest > 0 && System.Math.Floor(System.Math.Log10(largest)) is var small && small <= -3 ? (int)small : 0;
+        var ruler = (AxisModel)entry.Target;
+        return ruler.Scale != AxisScaleType.Linear || ruler.TickLabelOverrides is not null
+            ? 0
+            : ExponentTickGenerator.Auto(RulerTicks(entry));
     }
 
     private static double[] RulerTicks(JgsHandleEntry entry) =>

@@ -490,6 +490,9 @@ public sealed class AxisDto
 
     public string? TickLabelFormat { get; set; }
 
+    /// <summary>A ruler's chosen power of ten, or null for automatic. Defaulted, so older documents still load.</summary>
+    public int? Exponent { get; set; }
+
     public string[]? Categories { get; set; }
 
     /// <summary>Manual tick placement, or null for automatic. Defaulted, so v5 documents still load.</summary>

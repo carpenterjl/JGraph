@@ -93,7 +93,7 @@ public class MatlabPolarRulerTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "[0, 5]", "[0, 2, 4]", "hi", "0.0", "45", "[0, 3]" },
+            new[] { "[0, 5]", "[0, 2, 4]", "hi", "%.1f", "45", "[0, 3]" },
             _output.NormalLines);
     }
 

@@ -1116,7 +1116,9 @@ internal static partial class JgsBuiltins
             elements[e] = fields;
         }
 
-        return JgsValue.StructArray(new JgsStructArray(elements, names), count == 0 ? 0 : rows, count == 0 ? 0 : cols);
+        // An empty cell value gives its shape to the empty struct array: struct('f', cell(0, 3)) is
+        // 0-by-3 (open item 98, measured).
+        return JgsValue.StructArray(new JgsStructArray(elements, names), rows, cols);
     }
 
     /// <summary>One field name, or a cell of them — the shape <c>rmfield</c> and friends accept.</summary>

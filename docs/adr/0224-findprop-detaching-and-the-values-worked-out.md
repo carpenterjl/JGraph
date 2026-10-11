@@ -103,13 +103,13 @@ places each arrow at its column and row number.
   `Validation` are `[]`.
 - **A deleted handle's `class` is `'double'`**, as a live one's is (ADR 0051); its members and its
   dot are R2025b's.
-- **A dot on an empty struct array is `zeros(1,0)`, not a list of nothing**, so
-  `x = findprop(h, 'Bogus').Name` assigns an empty where R2025b refuses for want of an output.
+- ~~**A dot on an empty struct array is `zeros(1,0)`, not a list of nothing**, so
+  `x = findprop(h, 'Bogus').Name` assigns an empty where R2025b refuses for want of an output.~~ Lifted by ADR 0225.
 - **A title's and a label's `Position` and `Extent` are worked out from this build's layout**, whose
   figure, plot box and font sizes are its own (`title_position`); a written `Position` does not move
   the drawn text.
 - **A ruler's automatic `Exponent` is a rule fitted to R2025b's answers at twenty limits**, not its
-  algorithm, and the tick labels do not factor it out; `MinorTickValues` follow this build's ticks,
+  algorithm (~~and the tick labels do not factor it out~~, lifted by ADR 0225); `MinorTickValues` follow this build's ticks,
   which differ from R2025b's at some limits, and nothing draws a written one.
 - **`Theme`, `InteractionOptions`, `SourceTable` and a group's `Annotation` are kept and read back but
   change nothing drawn or done**: every figure is drawn in the application's theme, the window's

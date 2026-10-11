@@ -151,28 +151,27 @@ public class MatlabCommaSeparatedListTests : IDisposable
     // --- The refusals: a list is not a value -------------------------------------------------------
 
     [Fact]
-    public Task AListIsRefusedWhereOneValueIsWanted() => RunAsserting("""
-        % This is the test that fails if a comma-separated list ever becomes a storable value.
+    public Task AListWhereOneValueIsWantedGivesItsFirstAndNeverItself() => RunAsserting("""
+        % This is the test that fails if a comma-separated list ever becomes a storable value: an
+        % assignment of one takes the first, as R2025b's does (open item 98, probe_98c).
         c = {1, 2, 3};
-        caught = '';
-        try
-            x = c{:};
-        catch err
-            caught = err.message;
-        end
-        assert(contains(caught, 'where one value is wanted'));
+        x = c{:};
+        assert(isequal(x, 1));
+        assert(isa(x, 'double'));
         """);
 
     [Fact]
-    public Task AListCannotBeAssignedToAName() => RunAsserting("""
+    public Task AListOfNoneCannotBeAssignedToAName() => RunAsserting("""
         c = {1, 2};
+        x = c{[1 2]};
+        assert(isequal(x, 1));
         caught = '';
         try
-            x = c{[1 2]};
+            y = c{[]};
         catch err
-            caught = err.message;
+            caught = err.identifier;
         end
-        assert(contains(caught, '2 elements'));
+        assert(strcmp(caught, 'MATLAB:TooManyOutputsDueToMissingBraces'));
         """);
 
     [Fact]
@@ -219,20 +218,19 @@ public class MatlabCommaSeparatedListTests : IDisposable
         """);
 
     [Fact]
-    public Task AStructArrayFieldStillCollectsWhereOneValueIsWanted() => RunAsserting("""
-        % Where a list has no room to go the field is the collected row, which is what M41 built and
-        % what a script reading a regionprops result relies on.
+    public Task AStructArrayFieldTakesItsFirstValueWhereOneIsWanted() => RunAsserting("""
+        % Where a list has no room to go an assignment takes its first value, as R2025b does (open
+        % item 98, probe_98: x = u.f on a 1-by-2 struct array is 1). The collected row M41 gave here
+        % is the JGS dialect's alone.
         s(1).a = 10;
         s(2).a = 20;
         x = s.a;
-        assert(isequal(x, [10 20]));
+        assert(isequal(x, 10));
 
-        % A cell when the values are not all numbers.
         t(1).name = 'first';
         t(2).name = 'second';
         y = t.name;
-        assert(iscell(y));
-        assert(strcmp(y{2}, 'second'));
+        assert(strcmp(y, 'first'));
 
         % iscell(t.name) is not this: there the field spreads and iscell hears two arguments, which
         % is MATLAB's answer too. Reading a list where one value belongs is the caller's mistake.

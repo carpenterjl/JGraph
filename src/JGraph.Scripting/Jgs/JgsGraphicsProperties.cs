@@ -2683,6 +2683,12 @@ internal static partial class JgsGraphicsProperties
             entry => JgsRulerTicks.ReadAngle(Ruler(entry)),
             (entry, value, line, col) => JgsRulerTicks.WriteAngle("TickLabelRotation", Ruler(entry), value, line, col));
 
+        // Reached the model's .NET format property by reflection until open item 97, which wrote
+        // '%.1f' into it raw and drew labels such as %10000001f.
+        Put(table, "TickLabelFormat",
+            entry => JgsRulerTicks.ReadFormat(Ruler(entry)),
+            (entry, value, line, col) => JgsRulerTicks.WriteFormatProperty(Ruler(entry), value, line, col));
+
         Put(table, "Scale",
             entry => JgsValue.Str(Ruler(entry).Scale == AxisScaleType.Logarithmic ? "log" : "linear"),
             (entry, value, line, col) => Ruler(entry).Scale =

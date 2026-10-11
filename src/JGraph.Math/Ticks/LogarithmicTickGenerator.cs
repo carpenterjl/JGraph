@@ -37,7 +37,7 @@ public sealed class LogarithmicTickGenerator : ITickGenerator
         // Thin decades so the number of labeled majors stays near the target.
         int decadeStride = System.Math.Max(1, (int)System.Math.Ceiling(decadeSpan / (double)System.Math.Max(2, targetCount)));
 
-        var majors = new List<Tick>();
+        var decades = new List<int>();
         var minors = new List<double>();
         double epsilon = min * 1e-9;
 
@@ -48,7 +48,7 @@ public sealed class LogarithmicTickGenerator : ITickGenerator
             if ((decade - lowDecade) % decadeStride == 0 &&
                 decadeValue >= min - epsilon && decadeValue <= max + epsilon)
             {
-                majors.Add(new Tick(decadeValue, FormatValue(decadeValue, labelFormat)));
+                decades.Add(decade);
             }
 
             // Minor ticks at 2..9 within this decade (only meaningful when decades aren't thinned).
@@ -65,23 +65,40 @@ public sealed class LogarithmicTickGenerator : ITickGenerator
             }
         }
 
+        double[] values = decades.Select(static d => System.Math.Pow(10, d)).ToArray();
+        string[] labels = Labels(values, labelFormat);
+        var majors = new List<Tick>(values.Length);
+        for (int i = 0; i < values.Length; i++)
+        {
+            majors.Add(new Tick(values[i], labels[i]));
+        }
+
         double step = decadeStride; // decades per major tick
         return new TickSet(majors, minors, step);
     }
 
-    private static string FormatValue(double value, string? labelFormat)
+    /// <summary>
+    /// A log ruler's labels. R2025b writes a decade as its power, 10^{2}, automatically and under
+    /// '%g' alike, whether it chose the tick or was given it (probe_97, open item 97); the TeX the
+    /// labels are drawn through raises it. Any other value, or any other format, is written plainly.
+    /// </summary>
+    internal static string[] Labels(IReadOnlyList<double> values, string? labelFormat)
     {
-        if (!string.IsNullOrEmpty(labelFormat))
+        string[] labels = TickFormats.Labels(values, labelFormat);
+        if (!string.IsNullOrEmpty(labelFormat) && !labelFormat.Equals("%g", StringComparison.OrdinalIgnoreCase))
         {
-            return value.ToString(labelFormat, CultureInfo.CurrentCulture);
+            return labels;
         }
 
-        double abs = System.Math.Abs(value);
-        if (abs != 0 && (abs >= 1e5 || abs < 1e-3))
+        for (int i = 0; i < labels.Length; i++)
         {
-            return value.ToString("0.###e+0", CultureInfo.CurrentCulture);
+            double power = System.Math.Round(System.Math.Log10(values[i]));
+            if (values[i] > 0 && double.IsFinite(power) && System.Math.Pow(10, power) == values[i])
+            {
+                labels[i] = "10^{" + ((int)power).ToString(CultureInfo.InvariantCulture) + "}";
+            }
         }
 
-        return value.ToString("0.######", CultureInfo.CurrentCulture);
+        return labels;
     }
 }

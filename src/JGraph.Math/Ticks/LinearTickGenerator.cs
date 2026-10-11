@@ -28,9 +28,8 @@ public sealed class LinearTickGenerator : ITickGenerator
         }
 
         double first = System.Math.Ceiling(range.Min / step) * step;
-        int decimals = DecimalsFor(step);
 
-        var majors = new List<Tick>();
+        var values = new List<double>();
         var minors = new List<double>();
         double minorStep = step / minorSubdivisions;
 
@@ -39,8 +38,15 @@ public sealed class LinearTickGenerator : ITickGenerator
 
         for (double value = first; value <= range.Max + epsilon; value += step)
         {
-            double snapped = Snap(value, step);
-            majors.Add(new Tick(snapped, FormatValue(snapped, decimals, labelFormat)));
+            values.Add(Snap(value, step));
+        }
+
+        // The row is labelled at once: how many decimals R2025b writes depends on every tick (open item 97).
+        string[] labels = TickFormats.Labels(values, labelFormat);
+        var majors = new List<Tick>(values.Count);
+        for (int i = 0; i < values.Count; i++)
+        {
+            majors.Add(new Tick(values[i], labels[i]));
         }
 
         // Minor ticks span the full range, including partial intervals at the ends.
@@ -95,50 +101,5 @@ public sealed class LinearTickGenerator : ITickGenerator
         double snapped = System.Math.Round(value / step) * step;
         // Guard against -0.0 in output.
         return snapped == 0 ? 0 : snapped;
-    }
-
-    /// <summary>
-    /// How many decimals a step of this size needs — enough to write the step itself exactly. Shared
-    /// with manual tick placement.
-    /// <para>
-    /// The obvious ceil(-log10(step)) is one short for the 2.5 steps this generator chooses: it labels
-    /// a tick sitting at 2.5 as "2", which is not where the tick is.
-    /// </para>
-    /// </summary>
-    internal static int DecimalsFor(double step)
-    {
-        if (step <= 0)
-        {
-            return 0;
-        }
-
-        for (int decimals = 0; decimals < 12; decimals++)
-        {
-            if (System.Math.Abs(System.Math.Round(step, decimals) - step) <= System.Math.Abs(step) * 1e-9)
-            {
-                return decimals;
-            }
-        }
-
-        return 12;
-    }
-
-    /// <summary>The label a value earns at this many decimals. Shared with manual tick placement.</summary>
-    internal static string FormatValue(double value, int decimals, string? labelFormat)
-    {
-        if (!string.IsNullOrEmpty(labelFormat))
-        {
-            return value.ToString(labelFormat, CultureInfo.CurrentCulture);
-        }
-
-        double abs = System.Math.Abs(value);
-
-        // Fall back to scientific notation for very large or very small magnitudes.
-        if (abs != 0 && (abs >= 1e6 || abs < 1e-4))
-        {
-            return value.ToString("0.###e+0", CultureInfo.CurrentCulture);
-        }
-
-        return value.ToString("F" + decimals, CultureInfo.CurrentCulture);
     }
 }

@@ -34,8 +34,14 @@ public static class TickGenerators
         // Ticks the axis names itself win over the ones a scale would choose. Deciding that here means
         // every caller honours it: the renderer generates ticks in five places and none of them has to
         // know that an axis can be told where its ticks go.
-        return axis.TickPositions is null && axis.TickLabelOverrides is null
+        ITickGenerator chosen = axis.TickPositions is null && axis.TickLabelOverrides is null
             ? automatic
             : new ManualTickGenerator(automatic, axis.TickPositions, axis.TickLabelOverrides);
+
+        // A linear ruler's numbers are written over a power of ten when they are large or small
+        // enough (open item 97); labels the axis was given are its own words and are left alone.
+        return axis.Scale == AxisScaleType.Linear && axis.DurationFormat is null && axis.TickLabelOverrides is null
+            ? new ExponentTickGenerator(chosen, axis.Exponent)
+            : chosen;
     }
 }
