@@ -48,9 +48,17 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     internal static IReadOnlyList<GraphObject> VisibleChildrenOf(GraphObject target)
     {
+        // Under yyaxis an axes' Children are the active side's plots, as R2025b's are; findobj still
+        // sees both sides (open item 106).
+        int side = target is AxesModel { YAxes.Count: > 1 } twoSided ? twoSided.ActiveYAxisIndex : -1;
         var shown = new List<GraphObject>();
         foreach (GraphObject child in ChildrenOf(target))
         {
+            if (side >= 0 && child is PlotObject plot && plot.YAxisIndex != side)
+            {
+                continue;
+            }
+
             if (!JgsHandleRegistry.TryGetEntry(child, out JgsHandleEntry? entry) || entry.HandleVisible)
             {
                 shown.Add(child);

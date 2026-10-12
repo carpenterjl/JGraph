@@ -114,6 +114,10 @@ internal static partial class JgsBuiltins
         DefineSilent("xline", (args, line, col) => ConstantLine("xline", args, line, col, vertical: true));
         DefineSilent("yline", (args, line, col) => ConstantLine("yline", args, line, col, vertical: false));
 
+        // The shaded bands beside them (open item 108).
+        DefineSilent("xregion", (args, line, col) => ConstantRegion("xregion", args, line, col, vertical: true));
+        DefineSilent("yregion", (args, line, col) => ConstantRegion("yregion", args, line, col, vertical: false));
+
         // --- Contour labels -----------------------------------------------------------------------
         DefineSilent("clabel", (args, line, col) => Clabel(args, line, col));
 

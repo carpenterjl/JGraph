@@ -1,3 +1,4 @@
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Data;
@@ -1525,6 +1526,12 @@ public static class JG
     /// <summary>Adds a reference line across the current axes at one Y (MATLAB <c>yline</c>).</summary>
     public static ConstantLinePlot YLine(double y) => Gca().AddYLine(y);
 
+    /// <summary>Shades the current axes between two X values (MATLAB <c>xregion</c>).</summary>
+    public static ConstantRegionPlot XRegion(double x1, double x2) => Gca().AddXRegion(x1, x2);
+
+    /// <summary>Shades the current axes between two Y values (MATLAB <c>yregion</c>).</summary>
+    public static ConstantRegionPlot YRegion(double y1, double y2) => Gca().AddYRegion(y1, y2);
+
     /// <summary>Sets the current X axis label.</summary>
     public static void XLabel(string text) => Gca().PrimaryXAxis.Label = text;
 
@@ -1536,7 +1543,39 @@ public static class JG
     /// creating the right-hand ruler on first use. Everything y-facing — the label, the limits, the
     /// ticks, and the plots drawn next — follows the active side.
     /// </summary>
-    public static AxisModel YyAxis(bool right) => Gca().UseYAxis(right ? 1 : 0);
+    public static AxisModel YyAxis(bool right)
+    {
+        AxesModel axes = Gca();
+        if (axes.YAxes.Count == 1)
+        {
+            // R2025b's yyaxis makes both sides at once, whichever it names (open item 106): each
+            // ruler is inked in the colour order's entry for its side — the left one only when the
+            // axes holds nothing yet, since plots already there keep the colours they were drawn in —
+            // and the line-style order becomes the one each side steps through a plot at a time.
+            IReadOnlyList<Color> palette = axes.ColorOrder is { Count: > 0 } chosen ? chosen : Colors.DefaultSeriesOrder;
+            if (axes.Plots.Count == 0 && axes.PrimaryYAxis.RulerColor is null)
+            {
+                axes.PrimaryYAxis.Ink(palette[0]);
+            }
+
+            axes.AddYAxis().Ink(palette[1 % palette.Count]);
+            axes.LineStyleOrder ??= YyLineStyleOrder;
+        }
+
+        return axes.UseYAxis(right ? 1 : 0);
+    }
+
+    /// <summary>R2025b's line-style order under yyaxis: <c>- -- : -. o- ^- *-</c>.</summary>
+    private static readonly SeriesLineStyle[] YyLineStyleOrder =
+    [
+        new(DashStyle.Solid, MarkerType.None),
+        new(DashStyle.Dash, MarkerType.None),
+        new(DashStyle.Dot, MarkerType.None),
+        new(DashStyle.DashDot, MarkerType.None),
+        new(DashStyle.Solid, MarkerType.Circle),
+        new(DashStyle.Solid, MarkerType.TriangleUp),
+        new(DashStyle.Solid, MarkerType.Star),
+    ];
 
     /// <summary>Turns the current axes grid on or off.</summary>
     public static void Grid(bool on = true)
@@ -1858,6 +1897,7 @@ public static class JG
             }
 
             ResetAxis(axes.ActiveYAxis);
+            axes.RestartSideSeries(active);
             return;
         }
 

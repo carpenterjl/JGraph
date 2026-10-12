@@ -100,7 +100,7 @@ public class MatlabM79TablePiePropertyTests : IDisposable
             set(s, 'SizeVariable', 'Var3');
             sizes = get(s, 'SizeData');
             set(s, 'ColorVariable', 'Var4');
-            colours = get(s, 'CData');
+            colours = get(s, 'CData')'; % a column, as R2025b reads a table variable back (ADR 0227)
             set(s, 'ColorVariable', '');
             cleared = get(s, 'CDataMode');
             """);

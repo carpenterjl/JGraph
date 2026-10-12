@@ -943,6 +943,11 @@ internal static partial class JgsGraphicsProperties
         }
 
         IReadOnlyList<SeriesLineStyle> order = axes.LineStyleOrder!;
+        if (plot.SeriesSide >= 0)
+        {
+            return order[plot.SeriesIndex % order.Count]; // a yyaxis side steps a style a plot (item 106)
+        }
+
         int colors = (axes.ColorOrder ?? Colors.DefaultSeriesOrder).Count;
         return order[plot.SeriesIndex / System.Math.Max(1, colors) % order.Count];
     }
@@ -956,11 +961,12 @@ internal static partial class JgsGraphicsProperties
         // CData is a colour or a value per point, and is automatic only while it is the series
         // colour; freezing that colour keeps it (open item 101).
         AddNullableMode(table, "CDataMode",
-            entry => ((ScatterPlot)entry.Target) is { ColorData: not null } or { DataColor: not null },
+            entry => ((ScatterPlot)entry.Target) is { ColorData: not null } or { DataColor: not null }
+                or { PointColors: not null } or { WrittenColorData: not null },
             entry =>
             {
                 var cloud = (ScatterPlot)entry.Target;
-                if (cloud.ColorData is null && cloud.DataColor is null)
+                if (cloud.ColorData is null && cloud.DataColor is null && cloud.PointColors is null)
                 {
                     cloud.DataColor = JgsBuiltins.PaletteColorFor(cloud);
                 }
@@ -969,6 +975,7 @@ internal static partial class JgsGraphicsProperties
             {
                 var cloud = (ScatterPlot)entry.Target;
                 cloud.ColorData = null;
+                cloud.PointColors = null;
                 cloud.DataColor = null;
             });
         AddChannelMode(table, "SizeDataMode", "SizeData",

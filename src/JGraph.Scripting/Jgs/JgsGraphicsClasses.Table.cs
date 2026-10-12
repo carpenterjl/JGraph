@@ -137,6 +137,7 @@ internal static partial class JgsGraphicsClasses
         "matlab.graphics.chart.primitive.BubbleChart",
         "matlab.graphics.primitive.Rectangle",
         "matlab.graphics.chart.decoration.ConstantLine",
+        "matlab.graphics.chart.decoration.ConstantRegion",
         "matlab.graphics.function.FunctionLine",
         "matlab.graphics.function.mixin.Legendable",
         "matlab.graphics.GraphicsPlaceholder",
@@ -240,9 +241,10 @@ internal static partial class JgsGraphicsClasses
         ("bubblechart", [129, 1, 2, 3, 4, 5, 6, 7, 8, 46, 49, 30, 21, 47, 52, 23, 9, 25, 26, 13, 14]),
         ("rectangleprim", [130, 1, 2, 3, 4, 5, 6, 7, 8, 46, 30, 21, 47, 23, 9, 25, 26, 13, 14]),
         ("constantline", [131, 1, 2, 3, 4, 5, 6, 7, 8, 16, 46, 49, 30, 21, 47, 23, 9, 25, 26, 13, 14]),
-        ("fplot", [132, 1, 2, 3, 4, 5, 6, 7, 8, 133, 46, 49, 30, 21, 47, 23, 9, 25, 26, 13, 14]),
-        ("gobjects", [134, 1, 2, 3, 4, 5, 6, 7, 8, 14]),
-        ("buttonlayout", [135]),
-        ("uihtml", [136, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14]),
+        ("constantregion", [132, 1, 2, 3, 4, 5, 6, 7, 8, 46, 49, 30, 21, 47, 23, 9, 25, 26, 13, 14]),
+        ("fplot", [133, 1, 2, 3, 4, 5, 6, 7, 8, 134, 46, 49, 30, 21, 47, 23, 9, 25, 26, 13, 14]),
+        ("gobjects", [135, 1, 2, 3, 4, 5, 6, 7, 8, 14]),
+        ("buttonlayout", [136]),
+        ("uihtml", [137, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14]),
     ];
 }

@@ -17,6 +17,7 @@ public abstract class PlotObject : GraphObject
     private int _xAxisIndex;
     private int _yAxisIndex;
     private int _seriesIndex = -1;
+    private int _seriesSide = -1;
     private bool _clipping = true;
     private PlotAnnotationModel? _annotation;
     private DataTipTemplateModel? _dataTipTemplate;
@@ -72,6 +73,19 @@ public abstract class PlotObject : GraphObject
     {
         get => _seriesIndex;
         set => SetProperty(ref _seriesIndex, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The y ruler whose colour this plot's seat takes, or -1 for a seat in the shared cycle. Under
+    /// yyaxis each side's plots all take the colour order's entry for that side and step through the
+    /// line-style order one plot at a time (R2025b's rule, open item 106), so the seat alone no longer
+    /// says the colour.
+    /// </summary>
+    [Browsable(false)]
+    public int SeriesSide
+    {
+        get => _seriesSide;
+        set => SetProperty(ref _seriesSide, value, InvalidationKind.Render);
     }
 
     /// <summary>

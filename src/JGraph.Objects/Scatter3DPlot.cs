@@ -26,6 +26,11 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
     private double[]? _colorData;
 
     private Color? _color;
+    private Color? _edgeColor;
+    private Color? _faceColor;
+    private Color[]? _pointColors;
+    private double _faceAlpha = 1;
+    private double _edgeAlpha = 1;
     private MarkerType _marker = MarkerType.Circle;
     private double _markerSize = 7;
     private bool _filled;
@@ -107,17 +112,86 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
         set
         {
             _colorData = Checked(value, nameof(ColorData));
+            WrittenColorData = null;
             Invalidate(InvalidationKind.Render);
         }
     }
 
-    /// <summary>Explicit marker color, or null to use the auto series color.</summary>
+    /// <summary>
+    /// The one colour the cloud's data is drawn in — MATLAB's <c>CData</c> as a colour — or null for
+    /// the series colour. The edges follow it, and the interiors too when <see cref="Filled"/>.
+    /// </summary>
     [Category("Appearance")]
     public Color? Color
     {
         get => _color;
-        set => SetProperty(ref _color, value, InvalidationKind.Render);
+        set
+        {
+            WrittenColorData = null; // the numbers as written no longer say what is drawn
+            SetProperty(ref _color, value, InvalidationKind.Render);
+        }
     }
+
+    /// <summary>
+    /// The marker edges' own colour, or null for edges that follow the data (MATLAB's <c>'flat'</c>);
+    /// Transparent is no edge (open item 107).
+    /// </summary>
+    [Category("Appearance"), DisplayName("Edge color")]
+    public Color? EdgeColor
+    {
+        get => _edgeColor;
+        set => SetProperty(ref _edgeColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The marker interiors' own colour when not <see cref="Filled"/>, or null for open markers.</summary>
+    [Category("Appearance"), DisplayName("Face color")]
+    public Color? FaceColor
+    {
+        get => _faceColor;
+        set => SetProperty(ref _faceColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The interiors' opacity as written (MATLAB's <c>MarkerFaceAlpha</c>), NaN for <c>'flat'</c>.</summary>
+    [Category("Appearance"), DisplayName("Face alpha")]
+    public double FaceAlpha
+    {
+        get => _faceAlpha;
+        set => SetProperty(ref _faceAlpha, double.IsNaN(value) ? value : System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+    }
+
+    /// <summary>The edges' opacity, as <see cref="FaceAlpha"/> is the interiors'.</summary>
+    [Category("Appearance"), DisplayName("Edge alpha")]
+    public double EdgeAlpha
+    {
+        get => _edgeAlpha;
+        set => SetProperty(ref _edgeAlpha, double.IsNaN(value) ? value : System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// A colour per point — MATLAB's <c>CData</c> as an m-by-3 matrix — or null. It wins over
+    /// <see cref="ColorData"/> and <see cref="Color"/>. Must have one entry per point.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<Color>? PointColors
+    {
+        get => _pointColors;
+        set
+        {
+            if (value is not null && value.Count != _x.Length)
+            {
+                throw new ArgumentException(
+                    $"{nameof(PointColors)} needs one entry per point ({_x.Length}), but got {value.Count}.", nameof(value));
+            }
+
+            _pointColors = value?.ToArray();
+            WrittenColorData = null;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>The colour data as the script wrote it, which <c>CData</c> reads back (open item 107).</summary>
+    [Browsable(false)]
+    public WrittenColorData? WrittenColorData { get; set; }
 
     [Category("Appearance")]
     public MarkerType Marker
@@ -416,10 +490,11 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
         }
 
         Color color = (_color ?? state.SeriesColor).WithOpacity(Opacity);
-        if (_colorData is null && _sizeData is null)
+        if (_colorData is null && _sizeData is null && _pointColors is null)
         {
             // One uniform style: the whole cloud goes out as a single call.
-            context.DrawMarkers(_sorted.AsSpan(0, visible), StyleFor(color), color);
+            MarkerStyle uniform = StyleFor(color);
+            context.DrawMarkers(_sorted.AsSpan(0, visible), uniform, uniform.Edge ?? color);
             return;
         }
 
@@ -428,11 +503,11 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
         for (int i = 0; i < visible; i++)
         {
             int source = _order[i];
-            Color point = _colorData is { } values
-                ? _colormap.Sample(values[source], min, max, logColor).WithOpacity(Opacity)
+            Color point = _pointColors is { } rgb && source < rgb.Length ? rgb[source].WithOpacity(Opacity)
+                : _colorData is { } values ? _colormap.Sample(values[source], min, max, logColor).WithOpacity(Opacity)
                 : color;
-            double size = DiameterAt(source);
-            context.DrawMarkers(_sorted.AsSpan(i, 1), StyleFor(point, size), point);
+            MarkerStyle style = StyleFor(point, DiameterAt(source));
+            context.DrawMarkers(_sorted.AsSpan(i, 1), style, style.Edge ?? point);
         }
     }
 
@@ -583,8 +658,19 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
 
     private MarkerStyle StyleFor(Color color) => StyleFor(color, _markerSize);
 
-    private MarkerStyle StyleFor(Color color, double size) =>
-        new(_marker, size, _filled ? color : null, color, _edgeWidth);
+    /// <summary>
+    /// A marker drawn in the data colour <paramref name="color"/>: the interior is that colour when
+    /// filled, else the face colour or open; the edge is its own colour or the data's; each at its
+    /// alpha, NaN ('flat') counting as opaque.
+    /// </summary>
+    private MarkerStyle StyleFor(Color color, double size)
+    {
+        Color? fill = (_filled ? color : _faceColor)?.WithOpacity(Alpha(_faceAlpha));
+        Color edge = (_edgeColor ?? color).WithOpacity(Alpha(_edgeAlpha));
+        return new(_marker, size, fill, edge, _edgeWidth);
+    }
+
+    private static double Alpha(double alpha) => double.IsNaN(alpha) ? 1 : alpha;
 
     private (double Min, double Max) ResolveColorRange()
     {

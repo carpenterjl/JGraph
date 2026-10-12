@@ -98,6 +98,14 @@ public sealed class AxisModel : GraphObject
         set => SetProperty(ref _rulerColor, value, InvalidationKind.Render);
     }
 
+    /// <summary>Inks the whole ruler — line, ticks, tick labels and label — in one colour.</summary>
+    public void Ink(Color ink)
+    {
+        RulerColor = ink;
+        TickLabelStyle = TickLabelStyle.WithColor(ink);
+        LabelStyle = LabelStyle.WithColor(ink);
+    }
+
     /// <summary>How auto-scaling turns this ruler's data extent into limits (MATLAB <c>XLimitMethod</c>).</summary>
     [Category("General"), DisplayName("Limit method")]
     public LimitMethod LimitMethod

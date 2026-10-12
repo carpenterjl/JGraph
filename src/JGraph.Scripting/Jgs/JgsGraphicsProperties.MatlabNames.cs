@@ -240,6 +240,7 @@ internal static partial class JgsGraphicsProperties
         HeatmapPlot => ["matlab.graphics.chart.HeatmapChart"],
         BoxChartPlot => [Chart + "BoxChart"],
         ConstantLinePlot => ["matlab.graphics.chart.decoration.ConstantLine"],
+        ConstantRegionPlot => ["matlab.graphics.chart.decoration.ConstantRegion"],
         TextAnnotation { Box: not null } => ["matlab.graphics.shape.TextBox"],
         TextAnnotation => [Primitive + "Text"],
         ArrowAnnotation { Text.Length: > 0 } => ["matlab.graphics.shape.TextArrow"],

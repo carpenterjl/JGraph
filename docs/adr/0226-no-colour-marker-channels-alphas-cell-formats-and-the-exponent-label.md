@@ -91,16 +91,16 @@ conversion (`%q`) invalid rather than of the wrong type, and a `*` width `Dynami
   in probe_co) where this build keeps the classic one, and a histogram's default `FaceAlpha` is 0.6
   there and 1 here. Both change how every figure looks; open item 105. The fixture reads an automatic
   scatter colour as a word for that reason.
-- **Under `yyaxis`, `ax.YAxis` is one ruler here**, the active side; R2025b's is both. Open item 106.
-- **A scatter's `CData` as an m-by-3 colour per point is refused**, and a column of values reads back
+- ~~**Under `yyaxis`, `ax.YAxis` is one ruler here**, the active side; R2025b's is both. Open item 106.~~ Lifted by ADR 0227.
+- ~~**A scatter's `CData` as an m-by-3 colour per point is refused**, and a column of values reads back
   as a row. A patch's `FaceAlpha` does not take `'flat'`; `scatter3` and `bubblechart3` keep no alphas
-  and a `scatter3`'s `MarkerEdgeColor` option paints the whole cloud. Open item 107.
-- **`xregion` and `yregion`** are not built (open item 108); `polyshape` is ADR 0134's.
+  and a `scatter3`'s `MarkerEdgeColor` option paints the whole cloud. Open item 107.~~ Lifted by ADR 0227.
+- ~~**`xregion` and `yregion`** are not built (open item 108); `polyshape` is ADR 0134's.~~ Lifted by ADR 0227.
 - **A `SecondaryLabel` answers an ordinary label's** alignment, `Position`, font and
   `HandleVisibility`; a style written to it is not kept (it is drawn in the tick labels' font);
   assigning a text object to the property is refused where R2025b takes it; and a datetime ruler's
   (R2025b's shows the year) is empty.
-- **Out-of-range alphas and `scatter(x, y, 20, 'q')`** are refused in JGraph's words.
+- ~~**Out-of-range alphas and `scatter(x, y, 20, 'q')`** are refused in JGraph's words.~~ Lifted by ADR 0227.
 - **A heatmap's `'%,.2f'`** is taken and written with grouping; R2025b takes it but its drawn labels
   could not be read (its label grid kept the previous strings).
 - **`[0 0 0 0]`**, black at no opacity, reads back `'none'`.

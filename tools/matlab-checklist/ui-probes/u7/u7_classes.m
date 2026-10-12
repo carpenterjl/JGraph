@@ -101,6 +101,7 @@ m = {
  'bubblechart', @() bubblechart(ax, 1:3, 1:3, 1:3)
  'rectangleprim', @() rectangle(ax)
  'constantline', @() xline(ax, 1)
+ 'constantregion', @() xregion(ax, 1, 2)
  'fplot', @() fplot(ax, @sin)
  'gobjects', @() gobjects(1)
  'buttonlayout', @() u7_layout(g)

@@ -247,8 +247,8 @@ public class MatlabPolarPlotTests : IDisposable
             polarscatter([0 1 2], [1 2 3], 20, 'zz');
             """);
 
-        Assert.Contains("not a colour, a marker, or an option", message, StringComparison.Ordinal);
-        Assert.Contains("MarkerFaceColor", message, StringComparison.Ordinal);
+        // R2025b: MATLAB:checkpvpairs:UnrecognizedLineStyleParameter (ADR 0227).
+        Assert.Contains("Error in color/linetype argument.", message, StringComparison.Ordinal);
     }
 
     [Fact]

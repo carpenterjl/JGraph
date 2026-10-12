@@ -596,6 +596,15 @@ internal sealed partial class Interpreter
                 return result;
             }
 
+            // ...and so is one that answered several (ax.YAxis(2).Color = c under yyaxis, open item 106),
+            // when the write goes on to a property of the one it picks: p.YData(2) = 9 is a write into
+            // numbers, however much [1 2 3] looks like figures 1, 2 and 3.
+            if (handle is not null && WritesPastSubscript(target, level) && IsHandleArrayValue(current)
+                && SameHandles(current, written))
+            {
+                return result;
+            }
+
             // A scalar property read as a one-by-one goes back as the scalar it is (p.LineWidth(1) = 3).
             if (current.Type is JgsType.Number or JgsType.Bool && written.Type == JgsType.Array && written.ArrayLength == 1
                 && !written.IsStringArray)
@@ -685,6 +694,39 @@ internal sealed partial class Interpreter
 
         JgsBuiltins.WriteMatFileVariable(holder, field, written, level.Line, level.Column);
         return result;
+    }
+
+    /// <summary>Whether the write names a property again somewhere past <paramref name="level"/>.</summary>
+    private static bool WritesPastSubscript(Expr target, Expr level)
+    {
+        for (Expr? at = target; at is not null && !ReferenceEquals(at, level); at = InnerOf(at))
+        {
+            if (at is MemberExpr)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>Whether two arrays of handles name the same objects in the same places.</summary>
+    private static bool SameHandles(JgsValue first, JgsValue second)
+    {
+        if (second.Type != JgsType.Array || second.ArrayLength != first.ArrayLength)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < first.ArrayLength; i++)
+        {
+            if (second.ElementAt(i).Type != JgsType.Number || first.ElementAt(i).AsNumber != second.ElementAt(i).AsNumber)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>The get half of a property level: the graphics getter, or the time value's property.</summary>

@@ -44,6 +44,10 @@ internal static class PlotMapper
                 EdgeWidth = p.EdgeWidth,
                 SizeData = p.SizeData?.ToArray(),
                 ColorData = p.ColorData?.ToArray(),
+                PointColors = p.PointColors?.ToArray(),
+                WrittenColorValues = p.WrittenColorData?.Values,
+                WrittenColorRows = p.WrittenColorData?.Rows ?? 0,
+                WrittenColorColumns = p.WrittenColorData?.Columns ?? 0,
                 BubbleSizing = p.BubbleSizing,
                 XJitter = p.XJitter,
                 YJitter = p.YJitter,
@@ -341,6 +345,19 @@ internal static class PlotMapper
                 LabelVerticalAlignment = p.LabelVerticalAlignment,
                 LabelOrientation = p.LabelOrientation,
             },
+            ConstantRegionPlot p => new ConstantRegionPlotDto
+            {
+                Direction = p.Direction,
+                First = p.First,
+                Second = p.Second,
+                FaceColor = p.FaceColor,
+                FaceAlpha = p.FaceAlpha,
+                EdgeColor = p.EdgeColor,
+                EdgeAlpha = p.EdgeAlpha,
+                LineWidth = p.LineWidth,
+                Dash = p.Dash,
+                OnTop = p.OnTop,
+            },
             Line3DPlot p => new Line3DPlotDto
             {
                 X = p.X.ToArray(),
@@ -362,6 +379,14 @@ internal static class PlotMapper
                 SizeData = p.SizeData?.ToArray(),
                 ColorData = p.ColorData?.ToArray(),
                 Color = p.Color,
+                EdgeColor = p.EdgeColor,
+                FaceColor = p.FaceColor,
+                FaceAlpha = p.FaceAlpha,
+                EdgeAlpha = p.EdgeAlpha,
+                PointColors = p.PointColors?.ToArray(),
+                WrittenColorValues = p.WrittenColorData?.Values,
+                WrittenColorRows = p.WrittenColorData?.Rows ?? 0,
+                WrittenColorColumns = p.WrittenColorData?.Columns ?? 0,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
                 Filled = p.Filled,
@@ -436,6 +461,10 @@ internal static class PlotMapper
                 EdgeColor = p.EdgeColor,
                 EdgeVisible = p.EdgeColor is not null,
                 EdgeWidth = p.EdgeWidth,
+                FaceAlpha = p.FaceAlpha,
+                EdgeAlpha = p.EdgeAlpha,
+                FaceAlphaSource = p.FaceAlphaSource,
+                EdgeAlphaSource = p.EdgeAlphaSource,
                 Shading = p.Shading,
                 Colormap = DtoConvert.ToDto(p.Colormap),
                 AutoScaleColor = p.AutoScaleColor,
@@ -543,6 +572,8 @@ internal static class PlotMapper
                 EdgeWidth = d.EdgeWidth,
                 SizeData = d.SizeData,
                 ColorData = d.ColorData,
+                PointColors = d.PointColors,
+                WrittenColorData = Written(d.WrittenColorValues, d.WrittenColorRows, d.WrittenColorColumns),
                 BubbleSizing = d.BubbleSizing,
                 XJitter = d.XJitter,
                 YJitter = d.YJitter,
@@ -687,6 +718,16 @@ internal static class PlotMapper
                 LabelVerticalAlignment = d.LabelVerticalAlignment,
                 LabelOrientation = d.LabelOrientation,
             },
+            ConstantRegionPlotDto d => new ConstantRegionPlot(d.Direction, d.First, d.Second)
+            {
+                FaceColor = d.FaceColor,
+                FaceAlpha = d.FaceAlpha,
+                EdgeColor = d.EdgeColor,
+                EdgeAlpha = d.EdgeAlpha,
+                LineWidth = d.LineWidth,
+                Dash = d.Dash,
+                OnTop = d.OnTop,
+            },
             Line3DPlotDto d => new Line3DPlot(d.X, d.Y, d.Z)
             {
                 Color = d.Color,
@@ -701,7 +742,13 @@ internal static class PlotMapper
             {
                 SizeData = d.SizeData,
                 ColorData = d.ColorData,
+                PointColors = d.PointColors,
                 Color = d.Color,
+                WrittenColorData = Written(d.WrittenColorValues, d.WrittenColorRows, d.WrittenColorColumns),
+                EdgeColor = d.EdgeColor,
+                FaceColor = d.FaceColor,
+                FaceAlpha = d.FaceAlpha,
+                EdgeAlpha = d.EdgeAlpha,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
                 Filled = d.Filled,
@@ -764,6 +811,10 @@ internal static class PlotMapper
                 FaceVisible = d.FaceVisible,
                 EdgeColor = d.EdgeVisible ? d.EdgeColor ?? JGraph.Core.Drawing.Colors.Black : null,
                 EdgeWidth = d.EdgeWidth,
+                FaceAlpha = d.FaceAlpha,
+                EdgeAlpha = d.EdgeAlpha,
+                FaceAlphaSource = d.FaceAlphaSource,
+                EdgeAlphaSource = d.EdgeAlphaSource,
                 Shading = d.Shading,
                 Colormap = DtoConvert.ToColormap(d.Colormap),
                 AutoScaleColor = d.AutoScaleColor,
@@ -860,6 +911,7 @@ internal static class PlotMapper
         dto.XAxisIndex = plot.XAxisIndex;
         dto.YAxisIndex = plot.YAxisIndex;
         dto.SeriesIndex = plot.SeriesIndex;
+        dto.SeriesSide = plot.SeriesSide;
         dto.Clipping = plot.Clipping;
         dto.ShowsInLegend = plot.ShowsInLegend;
         dto.Tag = string.IsNullOrEmpty(plot.Tag) ? null : plot.Tag;
@@ -876,6 +928,7 @@ internal static class PlotMapper
         plot.XAxisIndex = dto.XAxisIndex;
         plot.YAxisIndex = dto.YAxisIndex;
         plot.SeriesIndex = dto.SeriesIndex;
+        plot.SeriesSide = dto.SeriesSide;
         plot.Clipping = dto.Clipping;
         if (dto.Tag is { } tag)
         {
@@ -887,6 +940,10 @@ internal static class PlotMapper
             plot.Annotation.LegendInformation.IconDisplayStyle = LegendIconDisplay.Off;
         }
     }
+
+    /// <summary>A marker chart's colour data as written, or null when the file has none (or a bad shape).</summary>
+    private static WrittenColorData? Written(double[]? values, int rows, int columns) =>
+        values is not null && rows * columns == values.Length ? new WrittenColorData(values, rows, columns) : null;
 
     /// <summary>
     /// Rebuilds a bar series. The baseline is applied after the object exists rather than in an

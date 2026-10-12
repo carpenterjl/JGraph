@@ -225,8 +225,10 @@ internal static partial class JgsBuiltins
             return new SeriesSlot(0, Colors.DefaultSeriesOrder[0], SeriesLineStyle.Solid);
         }
 
-        SeriesSlot slot = axes.TakeSeriesSlot();
+        // Under yyaxis the seat is the side's (open item 106): its colour is the side's entry.
+        SeriesSlot slot = axes.TakeSeriesSlot(plot.YAxisIndex);
         plot.SeriesIndex = slot.Index;
+        plot.SeriesSide = axes.YAxes.Count > 1 ? System.Math.Clamp(plot.YAxisIndex, 0, axes.YAxes.Count - 1) : -1;
         return slot;
     }
 

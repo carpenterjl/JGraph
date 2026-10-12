@@ -1058,6 +1058,23 @@ internal static partial class JgsBuiltins
 
     private static void ClearAxes(AxesModel axes, bool reset)
     {
+        // Under yyaxis a plain cla empties the active side and leaves the other's plots, as R2025b's
+        // does (open item 106); the side's line styles start over.
+        if (!reset && axes.YAxes.Count > 1)
+        {
+            int side = axes.ActiveYAxisIndex;
+            for (int i = axes.Plots.Count - 1; i >= 0; i--)
+            {
+                if (axes.Plots[i].YAxisIndex == side)
+                {
+                    axes.Plots.RemoveAt(i);
+                }
+            }
+
+            axes.RestartSideSeries(side);
+            return;
+        }
+
         axes.Plots.Clear();
         axes.Annotations.Clear();
         axes.Lights.Clear();
@@ -1073,6 +1090,22 @@ internal static partial class JgsBuiltins
         axes.Title = string.Empty;
         axes.Hold = false;
         axes.Colorbar.Visible = false;
+
+        // ...and an axes yyaxis gave two sides is one-sided again, with the plain style cycle (item 106).
+        if (axes.YAxes.Count > 1)
+        {
+            axes.ActiveYAxisIndex = 0;
+            while (axes.YAxes.Count > 1)
+            {
+                axes.YAxes.RemoveAt(axes.YAxes.Count - 1);
+            }
+
+            JgsGraphicsProperties.Unink(axes.PrimaryYAxis);
+            axes.LineStyleOrder = null;
+            axes.RestartSideSeries(0);
+            axes.RestartSideSeries(1);
+        }
+
         foreach (AxisModel ruler in axes.XAxes.Concat(axes.YAxes).Append(axes.ZAxis))
         {
             ruler.Label = string.Empty;

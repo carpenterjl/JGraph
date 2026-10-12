@@ -302,10 +302,10 @@ internal static partial class JgsBuiltins
                         plot.EdgeColor = OptionColor(value, line, col, name);
                         break;
                     case "facealpha":
-                        plot.FaceAlpha = NumOf($"{name}: FaceAlpha", value, line, col);
+                        plot.FaceAlpha = CheckedAlpha("FaceAlpha", "Bar", value, AlphaRefusal.Datatypes, line, col);
                         break;
                     case "edgealpha":
-                        plot.EdgeAlpha = NumOf($"{name}: EdgeAlpha", value, line, col);
+                        plot.EdgeAlpha = CheckedAlpha("EdgeAlpha", "Bar", value, AlphaRefusal.Datatypes, line, col);
                         break;
                     case "linewidth":
                         plot.EdgeWidth = NumOf($"{name}: LineWidth", value, line, col);
@@ -1620,6 +1620,13 @@ internal static partial class JgsBuiltins
                 plot.SizeData = Channel(table, source.SizeVariable, "SizeVariable", xs.Length, line, col);
                 plot.ColorData = Channel(table, source.ColorVariable, "ColorVariable", xs.Length, line, col);
                 plot.AlphaData = Channel(table, source.AlphaVariable, "AlphaVariable", xs.Length, line, col);
+
+                // A table's variable is a column, and CData reads it back as one (R2025b, item 107).
+                if (plot.ColorData is { } fed)
+                {
+                    plot.WrittenColorData = new WrittenColorData([.. fed], fed.Count, 1);
+                }
+
                 break;
         }
     }
@@ -1678,9 +1685,13 @@ internal static partial class JgsBuiltins
     {
         if (!IsLineSpecWord(word))
         {
-            throw new JgsRuntimeException(line, col,
-                $"{verb}: '{word}' is not a colour, a marker, or an option. Options are "
-                + $"{string.Join(", ", MarkerChartOptionNames)}.");
+            // R2025b's words for it (probe_107: scatter(x, y, 20, 'q')); JGS keeps its own.
+            throw JgsRunningDialect.ThreadIsMatlab
+                ? new JgsRuntimeException(line, col, "MATLAB:checkpvpairs:UnrecognizedLineStyleParameter",
+                    "Error in color/linetype argument.")
+                : new JgsRuntimeException(line, col,
+                    $"{verb}: '{word}' is not a colour, a marker, or an option. Options are "
+                    + $"{string.Join(", ", MarkerChartOptionNames)}.");
         }
 
         // A colour in the spec is the cloud's data colour (R2025b's CData), which its edges follow.
@@ -1845,33 +1856,134 @@ internal static partial class JgsBuiltins
     /// thing they cannot be.
     /// </para>
     /// </summary>
-    private static void MarkerColors(string verb, ScatterPlot plot, JgsValue value, int line, int col)
+    private static void MarkerColors(string verb, ScatterPlot plot, JgsValue value, int line, int col) =>
+        ApplyMarkerColors(plot, ReadMarkerColors(verb, value, plot.Data.Count, strict: true, line, col));
+
+    /// <summary>
+    /// What one colour-data value sets on a marker chart: one colour (the cloud's data colour, which a
+    /// 'flat' edge or face follows), a value per point through the colormap, or a colour per point —
+    /// and, beside whichever it is, the numbers as written, which <c>CData</c> reads back.
+    /// </summary>
+    internal readonly record struct MarkerColorChoice(
+        Color? One, double[]? Values, Color[]? Points, WrittenColorData? Written);
+
+    /// <summary>
+    /// Reads a marker chart's colour data, R2025b's three shapes (open item 107): an RGB triplet — any
+    /// three numbers, unless there are three points and they are a column or cannot be a colour; an
+    /// m-by-3 matrix with a row per point; or a vector with a value per point. A colour name is the
+    /// verb's own spelling. The verb (<paramref name="strict"/>) refuses any other shape with R2025b's
+    /// <c>MATLAB:scatter:InvalidCData</c>; the property keeps it as written and draws the data colour.
+    /// </summary>
+    internal static MarkerColorChoice ReadMarkerColors(string verb, JgsValue value, int count, bool strict, int line, int col)
     {
-        // One colour is the cloud's data colour (R2025b's CData), which a 'flat' edge or face follows.
-        int count = plot.Data.Count;
         if (value.Type == JgsType.String)
         {
-            plot.DataColor = OptionColor(value, line, col, verb);
-            plot.ColorData = null;
-            return;
+            return new(OptionColor(value, line, col, verb), null, null, null);
         }
 
-        double[] numbers = ToDoubles(verb, value, line, col);
-        bool couldBeColor = numbers.Length == 3 && Array.TrueForAll(numbers, v => v is >= 0 and <= 1);
-        if (numbers.Length == 3 && (count != 3 || couldBeColor))
+        int rows = JgsMatrix.RowCount(value);
+        int cols = JgsMatrix.ColCount(value);
+        var written = new double[rows * cols];
+        for (int c = 0; c < cols; c++)
         {
-            plot.DataColor = OptionColor(value, line, col, verb);
-            plot.ColorData = null;
-            return;
+            for (int r = 0; r < rows; r++)
+            {
+                written[r + c * rows] = JgsMatrix.At(value, r, c).AsNumber;
+            }
         }
 
-        if (numbers.Length != count)
+        var asWritten = new WrittenColorData(written, rows, cols);
+        bool vector = rows == 1 || cols == 1;
+        bool couldBeColor = Array.TrueForAll(written, v => v is >= 0 and <= 1);
+        if (written.Length == 3 && vector && (count != 3 || (rows == 1 && couldBeColor)))
         {
-            throw new JgsRuntimeException(line, col,
-                $"{verb}: c is one colour, or one value per point ({count}), but got {numbers.Length}.");
+            return new(ColorOf(written[0], written[1], written[2]), null, null, asWritten);
         }
 
-        plot.ColorData = numbers;
+        if (cols == 3 && rows == count && rows > 1)
+        {
+            var points = new Color[rows];
+            for (int r = 0; r < rows; r++)
+            {
+                points[r] = ColorOf(written[r], written[r + rows], written[r + 2 * rows]);
+            }
+
+            return new(null, null, points, asWritten);
+        }
+
+        if (vector && written.Length == count)
+        {
+            return new(null, written, null, asWritten);
+        }
+
+        if (strict)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:scatter:InvalidCData",
+                "Color must be one RGB triplet, an m-by-3 matrix of RGB triplets with one color per scatter "
+                + "point, or an m-by-1 vector with one value per scatter point.");
+        }
+
+        return new(null, null, null, asWritten);
+    }
+
+    /// <summary>One colour from three channel values, each kept to [0, 1] for drawing.</summary>
+    private static Color ColorOf(double r, double g, double b) =>
+        Color.FromScRgb(System.Math.Clamp(r, 0, 1), System.Math.Clamp(g, 0, 1), System.Math.Clamp(b, 0, 1));
+
+    /// <summary>Writes a reading onto a 2-D marker chart, the as-written numbers last (each channel's setter drops them).</summary>
+    internal static void ApplyMarkerColors(ScatterPlot plot, MarkerColorChoice choice)
+    {
+        plot.PointColors = choice.Points;
+        plot.ColorData = choice.Values;
+        if (choice.One is { } one)
+        {
+            plot.DataColor = one;
+        }
+
+        plot.WrittenColorData = choice.Written;
+    }
+
+    /// <summary>The same onto a marker chart in space.</summary>
+    internal static void ApplyMarkerColors(Scatter3DPlot cloud, MarkerColorChoice choice)
+    {
+        cloud.PointColors = choice.Points;
+        cloud.ColorData = choice.Values;
+        if (choice.One is { } one)
+        {
+            cloud.Color = one;
+        }
+
+        cloud.WrittenColorData = choice.Written;
+    }
+
+    /// <summary>
+    /// What a marker chart's <c>CData</c> reads: the numbers as written while the chart is still drawn
+    /// from them, else what it is drawn from — a colour per point, a value per point, or one colour.
+    /// </summary>
+    internal static JgsValue MarkerCDataValue(
+        WrittenColorData? written, IReadOnlyList<Color>? points, IReadOnlyList<double>? values, Color one)
+    {
+        if (written is not null)
+        {
+            return JgsMatrix.FromColumnMajor([.. written.Values], written.Rows, written.Columns);
+        }
+
+        if (points is not null)
+        {
+            var table = new double[points.Count * 3];
+            for (int r = 0; r < points.Count; r++)
+            {
+                table[r] = points[r].R / 255.0;
+                table[r + points.Count] = points[r].G / 255.0;
+                table[r + 2 * points.Count] = points[r].B / 255.0;
+            }
+
+            return JgsMatrix.FromColumnMajor(table, points.Count, 3);
+        }
+
+        return values is not null
+            ? JgsGraphicsProperties.Row([.. values])
+            : JgsGraphicsProperties.ColorRow(one);
     }
 
     private static void MarkerChartOptions(
@@ -1892,10 +2004,10 @@ internal static partial class JgsBuiltins
                     MarkerEdge(verb, plot, value, line, col);
                     break;
                 case "markerfacealpha":
-                    plot.FaceAlpha = MarkerAlpha($"{verb}: MarkerFaceAlpha", value, line, col);
+                    plot.FaceAlpha = MarkerAlpha("MarkerFaceAlpha", value, line, col, MarkerClass(plot));
                     break;
                 case "markeredgealpha":
-                    plot.EdgeAlpha = MarkerAlpha($"{verb}: MarkerEdgeAlpha", value, line, col);
+                    plot.EdgeAlpha = MarkerAlpha("MarkerEdgeAlpha", value, line, col, MarkerClass(plot));
                     break;
                 case "linewidth":
                     plot.EdgeWidth = NumOf($"{verb}: LineWidth", value, line, col);
@@ -1942,7 +2054,20 @@ internal static partial class JgsBuiltins
     /// A marker chart's <c>CData</c> written by name: one colour as numbers, or a value per point.
     /// R2025b takes a colour name only as the verb's own argument, and refuses one here.
     /// </summary>
-    internal static void MarkerCData(string verb, ScatterPlot plot, JgsValue value, int line, int col)
+    internal static void MarkerCData(string verb, ScatterPlot plot, JgsValue value, int line, int col, bool strict = true)
+    {
+        RefuseCDataWord(value, line, col);
+        ApplyMarkerColors(plot, ReadMarkerColors(verb, value, plot.Data.Count, strict, line, col));
+    }
+
+    /// <summary>The same for a marker chart in space.</summary>
+    internal static void MarkerCData(string verb, Scatter3DPlot cloud, JgsValue value, int line, int col, bool strict = true)
+    {
+        RefuseCDataWord(value, line, col);
+        ApplyMarkerColors(cloud, ReadMarkerColors(verb, value, cloud.X.Count, strict, line, col));
+    }
+
+    private static void RefuseCDataWord(JgsValue value, int line, int col)
     {
         if (value.Type == JgsType.String)
         {
@@ -1950,8 +2075,6 @@ internal static partial class JgsBuiltins
                 "Color must be one RGB triplet, an m-by-3 matrix of RGB triplets with one color per scatter "
                 + "point, or an m-by-1 vector with one value per scatter point.");
         }
-
-        MarkerColors(verb, plot, value, line, col);
     }
 
     /// <summary>
@@ -1975,9 +2098,81 @@ internal static partial class JgsBuiltins
     internal static void MarkerEdge(string verb, ScatterPlot plot, JgsValue value, int line, int col) =>
         plot.Color = IsWord(value, "flat") ? null : OptionColor(value, line, col, verb);
 
-    /// <summary>A marker chart's face or edge alpha: a fraction kept as written, or <c>'flat'</c> (NaN).</summary>
-    internal static double MarkerAlpha(string what, JgsValue value, int line, int col) =>
-        IsWord(value, "flat") ? double.NaN : Fraction(what, value, line, col);
+    /// <summary>The same for a marker chart in space, whose edge colour no longer paints the cloud (item 107).</summary>
+    internal static void MarkerEdge(string verb, Scatter3DPlot cloud, JgsValue value, int line, int col) =>
+        cloud.EdgeColor = IsWord(value, "flat") ? null : OptionColor(value, line, col, verb);
+
+    /// <summary>A marker chart in space's <c>MarkerFaceColor</c>, read as the 2-D chart's is.</summary>
+    internal static void MarkerFace(string verb, Scatter3DPlot cloud, JgsValue value, int line, int col)
+    {
+        if (IsWord(value, "flat"))
+        {
+            cloud.Filled = true;
+            return;
+        }
+
+        Color face = OptionColor(value, line, col, verb);
+        cloud.Filled = false;
+        cloud.FaceColor = face == Colors.Transparent ? null : face;
+    }
+
+    /// <summary>
+    /// A marker chart's face or edge alpha: a fraction kept as written, or <c>'flat'</c> (NaN), refused
+    /// in R2025b's words for the class it is set on (open item 107).
+    /// </summary>
+    internal static double MarkerAlpha(string property, JgsValue value, int line, int col, string cls = "Scatter") =>
+        IsWord(value, "flat") ? double.NaN : CheckedAlpha(property, cls, value, AlphaRefusal.Datatypes, line, col);
+
+    /// <summary>R2025b's short class name for a marker chart, which its refusals name.</summary>
+    internal static string MarkerClass(PlotObject plot) =>
+        plot is ScatterPlot { BubbleSizing: true } or Scatter3DPlot { BubbleSizing: true } ? "BubbleChart" : "Scatter";
+
+    /// <summary>Which of R2025b's two families refuses an alpha: the charts' datatypes check, or a patch's.</summary>
+    internal enum AlphaRefusal
+    {
+        /// <summary>Scatter, Bar, ConstantRegion: <c>MATLAB:datatypes:OutsideRangeNaN0to1</c>.</summary>
+        Datatypes,
+
+        /// <summary>Patch: <c>MATLAB:hg:dt_conv:Matrix_to_Real:ValueOutsideRange</c>.</summary>
+        Patch,
+    }
+
+    /// <summary>
+    /// One alpha, a number from 0 to 1, refused as R2025b refuses it on <paramref name="cls"/>: a word
+    /// or other non-number is not numeric, more than one number is not a scalar, and NaN or a number
+    /// outside [0, 1] is out of range (probe_107).
+    /// </summary>
+    internal static double CheckedAlpha(
+        string property, string cls, JgsValue value, AlphaRefusal family, int line, int col)
+    {
+        string lead = $"Error setting property '{property}' of class '{cls}':\n";
+        bool numeric = value.Type is JgsType.Number or JgsType.Bool
+            || (value.Type == JgsType.Array && !value.IsStringArray && !value.IsCharMatrix);
+        if (!numeric)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:hg:dt_conv:Matrix_to_Real:ExpectedNumeric1",
+                lead + "Value must be numeric");
+        }
+
+        double[] numbers = ToDoubles(property, value, line, col);
+        if (numbers.Length != 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:hg:dt_conv:Matrix_to_Real:ExpectedScalar",
+                lead + "Value must be scalar");
+        }
+
+        double alpha = numbers[0];
+        if (!(alpha is >= 0 and <= 1))
+        {
+            throw family == AlphaRefusal.Patch
+                ? new JgsRuntimeException(line, col, "MATLAB:hg:dt_conv:Matrix_to_Real:ValueOutsideRange",
+                    lead + "Alpha value must be between 0.0 and 1.0")
+                : new JgsRuntimeException(line, col, "MATLAB:datatypes:OutsideRangeNaN0to1",
+                    lead + "Value is NaN, or out of range 0.0 <= value <= 1.0");
+        }
+
+        return alpha;
+    }
 
     private static bool IsWord(JgsValue value, string word) =>
         value.Type == JgsType.String && value.AsString.Equals(word, StringComparison.OrdinalIgnoreCase);
@@ -1985,18 +2180,6 @@ internal static partial class JgsBuiltins
     /// <summary>A colour at a stated alpha, rather than at its own alpha scaled by one.</summary>
     internal static Color WithAlpha(Color color, double alpha) => new(
         color.R, color.G, color.B, (byte)System.Math.Clamp(System.Math.Round(alpha * 255), 0, 255));
-
-    /// <summary>A number that has to be a fraction, because an alpha outside [0, 1] means nothing.</summary>
-    private static double Fraction(string what, JgsValue value, int line, int col)
-    {
-        double number = NumOf(what, value, line, col);
-        if (number is < 0 or > 1)
-        {
-            throw new JgsRuntimeException(line, col, $"{what} is between 0 and 1, but got {number:G6}.");
-        }
-
-        return number;
-    }
 
     /// <summary>
     /// <c>bubblesize</c> and <c>bubblelim</c>: the diameters bubbles are drawn between, and the values

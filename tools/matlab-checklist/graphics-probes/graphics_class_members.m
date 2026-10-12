@@ -26,6 +26,7 @@ h{end+1} = quiver(ax, 1:3, 1:3, 1:3, 1:3);
 [~, h{end+1}] = contour(ax, magic(4));
 h{end+1} = rectangle(ax);
 h{end+1} = xline(ax, 1);
+h{end+1} = xregion(ax, 1, 2);
 h{end+1} = animatedline(ax);
 h{end+1} = fplot(ax, @sin);
 h{end+1} = legend(ax);

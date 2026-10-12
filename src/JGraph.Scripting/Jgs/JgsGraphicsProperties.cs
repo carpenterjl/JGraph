@@ -1232,11 +1232,13 @@ internal static partial class JgsGraphicsProperties
             // CData is what MATLAB calls the colour channel, and what scatter's own colour argument
             // writes: a value per point, or the one colour the cloud is drawn in — the series colour
             // until one is given, as R2025b answers (open item 101).
+            // As written while the chart is drawn from it, a colour per point included (open item 107).
             Put(table, "CData",
-                entry => ((ScatterPlot)entry.Target) is { ColorData: { } values }
-                    ? Row([.. values])
-                    : ColorRow(((ScatterPlot)entry.Target).DataColor ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
-                (entry, value, line, col) => JgsBuiltins.MarkerCData("scatter", (ScatterPlot)entry.Target, value, line, col));
+                entry => ((ScatterPlot)entry.Target) is var plot
+                    ? JgsBuiltins.MarkerCDataValue(plot.WrittenColorData, plot.PointColors, plot.ColorData,
+                        plot.DataColor ?? JgsBuiltins.PaletteColorFor(plot))
+                    : JgsValue.Null,
+                (entry, value, line, col) => JgsBuiltins.MarkerCData("scatter", (ScatterPlot)entry.Target, value, line, col, strict: false));
             Put(table, "Marker",
                 entry => JgsValue.Str(JgsBuiltins.MarkerWord(((ScatterPlot)entry.Target).Marker)),
                 (entry, value, line, col) =>
@@ -1264,11 +1266,11 @@ internal static partial class JgsGraphicsProperties
             Put(table, "MarkerFaceAlpha",
                 entry => MarkerAlphaValue(((ScatterPlot)entry.Target).FaceAlpha),
                 (entry, value, line, col) => ((ScatterPlot)entry.Target).FaceAlpha =
-                    JgsBuiltins.MarkerAlpha("MarkerFaceAlpha", value, line, col));
+                    JgsBuiltins.MarkerAlpha("MarkerFaceAlpha", value, line, col, JgsBuiltins.MarkerClass((PlotObject)entry.Target)));
             Put(table, "MarkerEdgeAlpha",
                 entry => MarkerAlphaValue(((ScatterPlot)entry.Target).EdgeAlpha),
                 (entry, value, line, col) => ((ScatterPlot)entry.Target).EdgeAlpha =
-                    JgsBuiltins.MarkerAlpha("MarkerEdgeAlpha", value, line, col));
+                    JgsBuiltins.MarkerAlpha("MarkerEdgeAlpha", value, line, col, JgsBuiltins.MarkerClass((PlotObject)entry.Target)));
 
             Put(table, "LineWidth",
                 entry => JgsValue.Number(((ScatterPlot)entry.Target).EdgeWidth),
@@ -1302,6 +1304,23 @@ internal static partial class JgsGraphicsProperties
             // missing while 'Faces' answered — so `patch('Faces', F, 'Vertices', V)` could be read
             // back only halfway. It is the same n-by-3 table the verb was handed.
             Put(table, "Vertices", entry => VertexTable(PatchOf(entry)));
+
+            // A number, or 'flat' or 'interp' to take the opacity from FaceVertexAlphaData, refused
+            // as R2025b's patch refuses (open item 107).
+            AddPatchAlpha(table, "FaceAlpha",
+                patch => (patch.FaceAlpha, patch.FaceAlphaSource),
+                (patch, alpha, source) =>
+                {
+                    patch.FaceAlpha = alpha;
+                    patch.FaceAlphaSource = source;
+                });
+            AddPatchAlpha(table, "EdgeAlpha",
+                patch => (patch.EdgeAlpha, patch.EdgeAlphaSource),
+                (patch, alpha, source) =>
+                {
+                    patch.EdgeAlpha = alpha;
+                    patch.EdgeAlphaSource = source;
+                });
         }
 
         if (typeof(SurfacePlot).IsAssignableFrom(type))
@@ -1404,30 +1423,19 @@ internal static partial class JgsGraphicsProperties
             // CData is a value per point or the cloud's one colour, the series colour until one is
             // given; the edges follow it, and the interiors too once filled (open item 101).
             Put(table, "CData",
-                entry => ((Scatter3DPlot)entry.Target) is { ColorData: { } values }
-                    ? Row([.. values])
-                    : ColorRow(((Scatter3DPlot)entry.Target).Color ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
-                (entry, value, line, col) =>
-                {
-                    var cloud = (Scatter3DPlot)entry.Target;
-                    double[] given = JgsBuiltins.ToDoubles("CData", value, line, col);
-                    if (given.Length == 3 && cloud.X.Count != 3)
-                    {
-                        cloud.Color = JgsBuiltins.OptionColor(value, line, col, "scatter3");
-                        cloud.ColorData = null;
-                    }
-                    else
-                    {
-                        cloud.ColorData = given;
-                    }
-                });
+                entry => ((Scatter3DPlot)entry.Target) is var cloud
+                    ? JgsBuiltins.MarkerCDataValue(cloud.WrittenColorData, cloud.PointColors, cloud.ColorData,
+                        cloud.Color ?? JgsBuiltins.PaletteColorFor(cloud))
+                    : JgsValue.Null,
+                (entry, value, line, col) => JgsBuiltins.MarkerCData("scatter3", (Scatter3DPlot)entry.Target, value, line, col, strict: false));
             AddNullableMode(table, "CDataMode",
-                entry => ((Scatter3DPlot)entry.Target) is { ColorData: not null } or { Color: not null },
+                entry => ((Scatter3DPlot)entry.Target) is { ColorData: not null } or { Color: not null } or { PointColors: not null },
                 entry => ((Scatter3DPlot)entry.Target).Color ??= JgsBuiltins.PaletteColorFor((PlotObject)entry.Target),
                 entry =>
                 {
                     var cloud = (Scatter3DPlot)entry.Target;
                     cloud.ColorData = null;
+                    cloud.PointColors = null;
                     cloud.Color = null;
                 });
             Put(table, "Marker",
@@ -1437,10 +1445,27 @@ internal static partial class JgsGraphicsProperties
                     var cloud = (Scatter3DPlot)entry.Target;
                     cloud.Marker = JgsBuiltins.ParseMarkerWord(JgsBuiltins.StrOf("Marker", value, line, col), cloud.Marker);
                 });
+            // The 2-D chart's words and alphas (open item 107): an edge follows the data ('flat') until
+            // it is given a colour or 'none'; an interior is open until given a colour or 'flat'.
             Put(table, "MarkerEdgeColor",
-                entry => JgsValue.Str(((Scatter3DPlot)entry.Target).Filled ? "none" : "flat"));
+                entry => ((Scatter3DPlot)entry.Target).EdgeColor is { } edge ? ColorRow(edge) : JgsValue.Str("flat"),
+                (entry, value, line, col) => JgsBuiltins.MarkerEdge("scatter3", (Scatter3DPlot)entry.Target, value, line, col));
             Put(table, "MarkerFaceColor",
-                entry => JgsValue.Str(((Scatter3DPlot)entry.Target).Filled ? "flat" : "none"));
+                entry => ((Scatter3DPlot)entry.Target) switch
+                {
+                    { Filled: true } => JgsValue.Str("flat"),
+                    { FaceColor: { } face } => ColorRow(face),
+                    _ => JgsValue.Str("none"),
+                },
+                (entry, value, line, col) => JgsBuiltins.MarkerFace("scatter3", (Scatter3DPlot)entry.Target, value, line, col));
+            Put(table, "MarkerFaceAlpha",
+                entry => MarkerAlphaValue(((Scatter3DPlot)entry.Target).FaceAlpha),
+                (entry, value, line, col) => ((Scatter3DPlot)entry.Target).FaceAlpha =
+                    JgsBuiltins.MarkerAlpha("MarkerFaceAlpha", value, line, col, JgsBuiltins.MarkerClass((PlotObject)entry.Target)));
+            Put(table, "MarkerEdgeAlpha",
+                entry => MarkerAlphaValue(((Scatter3DPlot)entry.Target).EdgeAlpha),
+                (entry, value, line, col) => ((Scatter3DPlot)entry.Target).EdgeAlpha =
+                    JgsBuiltins.MarkerAlpha("MarkerEdgeAlpha", value, line, col, JgsBuiltins.MarkerClass((PlotObject)entry.Target)));
             Put(table, "BubbleDiameters", entry => Row(
                 [.. Enumerable.Range(0, ((Scatter3DPlot)entry.Target).SizeData?.Count ?? 0)
                     .Select(((Scatter3DPlot)entry.Target).DiameterAt)]));
@@ -1508,6 +1533,16 @@ internal static partial class JgsGraphicsProperties
                     plot.Dash = JgsBuiltins.ParseDashWord(
                         JgsBuiltins.StrOf("LineStyle", value, line, col), plot.Dash);
                 });
+
+            // Refused out of range as R2025b refuses it, where the model would quietly clamp (item 107).
+            Put(table, "FaceAlpha",
+                entry => JgsValue.Number(((BarPlot)entry.Target).FaceAlpha),
+                (entry, value, line, col) => ((BarPlot)entry.Target).FaceAlpha =
+                    JgsBuiltins.CheckedAlpha("FaceAlpha", "Bar", value, JgsBuiltins.AlphaRefusal.Datatypes, line, col));
+            Put(table, "EdgeAlpha",
+                entry => JgsValue.Number(((BarPlot)entry.Target).EdgeAlpha),
+                (entry, value, line, col) => ((BarPlot)entry.Target).EdgeAlpha =
+                    JgsBuiltins.CheckedAlpha("EdgeAlpha", "Bar", value, JgsBuiltins.AlphaRefusal.Datatypes, line, col));
         }
 
         if (typeof(AreaPlot).IsAssignableFrom(type))
@@ -2096,6 +2131,11 @@ internal static partial class JgsGraphicsProperties
                 });
         }
 
+        if (typeof(ConstantRegionPlot).IsAssignableFrom(type))
+        {
+            AddConstantRegionBlock(table);
+        }
+
         if (typeof(AxesModel).IsAssignableFrom(type))
         {
             AddAxesAliases(table);
@@ -2613,7 +2653,10 @@ internal static partial class JgsGraphicsProperties
                 });
 
         Put(table, "XAxis", entry => JgsHandleRegistry.For(Axes(entry).PrimaryXAxis));
-        Put(table, "YAxis", entry => JgsHandleRegistry.For(Axes(entry).ActiveYAxis));
+        // Under yyaxis both rulers, left first, as a column (R2025b, open item 106).
+        Put(table, "YAxis", entry => Axes(entry).YAxes.Count > 1
+            ? HandleColumn([.. Axes(entry).YAxes])
+            : JgsHandleRegistry.For(Axes(entry).PrimaryYAxis));
         Put(table, "ZAxis", entry => JgsHandleRegistry.For(Axes(entry).ZAxis));
         Put(table, "RAxis", entry => JgsHandleRegistry.For(Axes(entry).RAxis));
         Put(table, "ThetaAxis", entry => JgsHandleRegistry.For(Axes(entry).ThetaAxis));
@@ -2741,14 +2784,28 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => Ruler(entry).Inverted =
                 DirectionOf(JgsBuiltins.StrOf("Direction", value, line, col), line, col));
 
+        // The same ink the axes' {X}Color spelling reads and writes, so ax.YAxis(2).Color and the
+        // right side's YColor agree (open item 106).
         Put(table, "Color",
-            entry => ColorRow(Ruler(entry).TickLabelStyle.Color),
+            entry => ColorRow(Ruler(entry).RulerColor ?? Ruler(entry).TickLabelStyle.Color),
+            (entry, value, line, col) => Ruler(entry).Ink(JgsBuiltins.OptionColor(value, line, col, "ruler")));
+        Put(table, "ColorMode",
+            entry => AutoManual(Ruler(entry).RulerColor is not null),
+            (entry, value, line, col) => SetRulerColorMode(Ruler(entry), "ColorMode", value, line, col));
+
+        // Limits written by hand freeze the ruler, as XLimMode says on the axes.
+        Put(table, "LimitsMode",
+            entry => AutoManual(!Ruler(entry).AutoScale),
             (entry, value, line, col) =>
             {
                 AxisModel ruler = Ruler(entry);
-                Color color = JgsBuiltins.OptionColor(value, line, col, "ruler");
-                ruler.TickLabelStyle = ruler.TickLabelStyle.WithColor(color);
-                ruler.LabelStyle = ruler.LabelStyle.WithColor(color);
+                bool manual = ToAutoManual("LimitsMode", value, line, col);
+                if (manual && ruler.AutoScale && ruler.Parent is AxesModel owner)
+                {
+                    owner.RecomputeDataBounds();
+                }
+
+                ruler.AutoScale = !manual;
             });
 
         Put(table, "Label",

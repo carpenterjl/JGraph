@@ -2395,6 +2395,8 @@ public static class JgsBuiltinCatalog
         Add("box", "Turns the rectangular frame around the axes on (default) or off.", Opt("on"));
         Add("xline", "Draws a vertical reference line at x, or one per value: xline(0), xline([1 2], '--r', 'limit').", P("x"), Opt("linespec"), Opt("label"));
         Add("yline", "Draws a horizontal reference line at y, or one per value: yline(mean(v), '-k', 'mean').", P("y"), Opt("linespec"), Opt("label"));
+        Add("xregion", "Shades a band down the axes between two x values, or one per pair: xregion(2, 4), xregion([1 5], [2 6], 'FaceColor', 'r').", P("x1"), Opt("x2"));
+        Add("yregion", "Shades a band across the axes between two y values, or one per pair: yregion(lo, hi, 'FaceAlpha', 0.1).", P("y1"), Opt("y2"));
         Add("clabel", "Writes each contour level's value into its own curve: [C, h] = contour(X, Y, Z); clabel(C, h).", P("C"), Opt("h"), Opt("levels"));
         Add("texlabel", "The TeX an expression written in plain characters would have been: texlabel('lambda12^(3y)').", P("expression"), Opt("literal"));
         Add("xlim", "The x-axis range: xlim([0 10]), xlim(0, 10), xlim('auto'), xlim('manual'), or xlim to read it back.", Opt("ax"), Opt("limits"), Opt("max"));

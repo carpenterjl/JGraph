@@ -24,7 +24,8 @@ internal static class SeriesPalette
             return Colors.Black;
         }
 
-        int index = plot.SeriesIndex >= 0 ? plot.SeriesIndex : positional;
+        // A seat on a yyaxis side takes that side's entry, whatever its place on the side (item 106).
+        int index = plot.SeriesSide >= 0 ? plot.SeriesSide : plot.SeriesIndex >= 0 ? plot.SeriesIndex : positional;
         return palette[index % palette.Count];
     }
 }

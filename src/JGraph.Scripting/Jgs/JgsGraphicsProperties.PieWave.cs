@@ -158,6 +158,48 @@ internal static partial class JgsGraphicsProperties
         AddMaterialNumber(table, name, read, write);
 
     /// <summary>
+    /// A patch's FaceAlpha or EdgeAlpha: a number kept as written, or the word <c>'flat'</c> or
+    /// <c>'interp'</c>, which takes the opacity from FaceVertexAlphaData (the number standing at 1);
+    /// anything else refused in R2025b's patch words (open item 107).
+    /// </summary>
+    private static void AddPatchAlpha(
+        IDictionary<string, GraphicsProperty> table,
+        string name,
+        Func<PatchPlot, (double Alpha, PatchAlphaSource Source)> read,
+        Action<PatchPlot, double, PatchAlphaSource> write)
+    {
+        string spelling = name;
+        Put(table, spelling,
+            entry => read(PatchOf(entry)) switch
+            {
+                (_, PatchAlphaSource.Flat) => JgsValue.Str("flat"),
+                (_, PatchAlphaSource.Interp) => JgsValue.Str("interp"),
+                var (alpha, _) => JgsValue.Number(alpha),
+            },
+            (entry, value, line, col) =>
+            {
+                if (value.Type == JgsType.String)
+                {
+                    PatchAlphaSource? source = value.AsString.ToLowerInvariant() switch
+                    {
+                        "flat" => PatchAlphaSource.Flat,
+                        "interp" => PatchAlphaSource.Interp,
+                        _ => null,
+                    };
+                    if (source is { } word)
+                    {
+                        write(PatchOf(entry), 1, word);
+                        return;
+                    }
+                }
+
+                write(PatchOf(entry),
+                    JgsBuiltins.CheckedAlpha(spelling, "Patch", value, JgsBuiltins.AlphaRefusal.Patch, line, col),
+                    PatchAlphaSource.Value);
+            });
+    }
+
+    /// <summary>
     /// A pie's mesh is worked out from its values, so writing one is refused by name — and the
     /// refusal says which properties do move it, since that is the question behind the write.
     /// </summary>

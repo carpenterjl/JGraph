@@ -1,0 +1,135 @@
+CHK|yaxis_plain|double[1 2] [1 1]|exact
+CHK|yaxis_left|double[1 2] [2 1]|exact
+CHK|ruler_colours|cell[1 2]{logical[1 1] 1;logical[1 1] 1}|exact
+CHK|side_colours|cell[1 4]{logical[1 1] 1;logical[1 1] 1;logical[1 1] 1;logical[1 1] 1}|exact
+CHK|side_styles|cell[1 6]{char[1 1]'-';char[1 2]'--';char[1 1]'-';char[1 2]'--';char[1 1]':';char[1 2]'-.'}|exact
+CHK|side_series_index|double[1 4] [1 2 1 2]|exact
+CHK|style_index_right|double[1 1] 5|exact
+CHK|colour_index|double[1 1] 1|exact
+CHK|children_right|double[1 1] 4|exact
+CHK|location_right|char[1 5]'right'|exact
+CHK|children_left|double[1 1] 2|exact
+CHK|style_index_left|double[1 1] 3|exact
+CHK|location_left|char[1 4]'left'|exact
+CHK|findobj_both|double[1 1] 6|exact
+CHK|parent_is_axes|logical[1 1] 1|exact
+CHK|limits_left|double[1 2] [-5 5]|exact
+CHK|limits_right|double[1 2] [0 100]|exact
+CHK|limits_both|cell[2 1]{double[1 2] [-5 5];double[1 2] [0 100]}|exact
+CHK|limits_mode|cell[1 2]{char[1 6]'manual';char[1 6]'manual'}|exact
+CHK|ycolor_right|double[1 3] [1 0 0]|exact
+CHK|ycolor_left_kept|logical[1 1] 1|exact
+CHK|ycolor_left_set|double[1 3] [0 1 0]|exact
+CHK|colour_list|double[1 2] [1 2]|exact
+CHK|end_ruler|double[1 3] [1 0 0]|exact
+CHK|third_ruler|char[1 19]'MATLAB:badsubscript'|exact
+CHK|labels|cell[1 3]{char[1 4]'Left';char[1 5]'Right';char[1 5]'Right'}|exact
+CHK|scale_direction|cell[1 4]{char[1 6]'linear';char[1 3]'log';char[1 6]'normal';char[1 7]'reverse'}|exact
+CHK|ticks_right|double[1 3] [1 10 100]|exact
+CHK|visible|cell[1 2]{onoff on;onoff off}|exact
+CHK|cla_right|cell[1 2]{double[1 1] 0;double[1 2] [2 1]}|exact
+CHK|cla_left_kept|double[1 1] 2|exact
+CHK|cla_reset|cell[1 2]{double[1 2] [1 1];double[1 1] 1}|exact
+CHK|delete_continues|char[1 1]':'|exact
+CHK|stem_style|cell[1 2]{char[1 2]'-.';logical[1 1] 1}|exact
+CHK|replace_restarts|char[1 1]'-'|exact
+CHK|legend_left_first|cell[1 2]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|bad_side|char[1 58]'MATLAB:axis:UnknownOption / Unknown command option middle.'|exact
+CHK|polar_refused|char[1 113]'MATLAB:graphics:yyaxis:NotAxesArgument / Axes argument must be a Cartesian Axes of type matlab.graphics.axis.Axes'|exact
+CHK|existing_left_ink|cell[1 2]{logical[1 1] 1;logical[1 1] 1}|exact
+CHK|existing_children|double[1 1] 0|exact
+CHK|rgb_channels|cell[1 4]{double[3 3] [1 0 0;0 1 0;0 0 1];char[1 6]'manual';char[1 4]'flat';char[1 4]'none'}|exact
+CHK|rgb_filled|cell[1 3]{double[3 3] [1 0 0;0 1 0;0 0 1];char[1 4]'flat';char[1 4]'none'}|exact
+CHK|rgb_option|double[3 3] [1 0 0;0 1 0;0 0 1]|exact
+CHK|rgb_wrong_rows|char[1 181]'MATLAB:scatter:InvalidCData / Color must be one RGB triplet, an m-by-3 matrix of RGB triplets with one color per scatter point, or an m-by-1 vector with one value per scatter point.'|exact
+CHK|rgb_wrong_rows_set|cell[1 2]{double[2 3] [1 0 0;0 1 0];char[1 6]'manual'}|exact
+CHK|rgb_set|double[3 3] [1 0 0;0 1 0;0 0 1]|exact
+CHK|rgb_released|cell[1 2]{double[1 2] [1 3];char[1 4]'auto'}|exact
+CHK|rgb_out_of_range|double[3 3] [2 0 0;0 1 0;0 0 1]|exact
+CHK|three_points_row|double[1 3] [0.10000000000000001 0.5 0.90000000000000002]|exact
+CHK|three_points_column|double[3 1] [0.10000000000000001;0.5;0.90000000000000002]|exact
+CHK|values_column|double[4 1] [1;2;3;4]|exact
+CHK|values_row|double[1 4] [1 2 3 4]|exact
+CHK|values_column_xy|double[4 1] [1;2;3;4]|exact
+CHK|triplet_out_of_range|double[1 3] [1 2 3]|exact
+CHK|values_column_set|double[4 1] [1;2;3;4]|exact
+CHK|word_q|char[1 86]'MATLAB:checkpvpairs:UnrecognizedLineStyleParameter / Error in color/linetype argument.'|exact
+CHK|word_qo|char[1 50]'MATLAB:checkpvpairs:UnrecognizedLineStyleParameter'|exact
+CHK|word_hex|char[1 50]'MATLAB:checkpvpairs:UnrecognizedLineStyleParameter'|exact
+CHK|word_red|double[1 3] [1 0 0]|exact
+CHK|scatter_alpha_refused_1|char[1 149]'MATLAB:datatypes:OutsideRangeNaN0to1 / Error setting property 'MarkerFaceAlpha' of class 'Scatter':\nValue is NaN, or out of range 0.0 <= value <= 1.0'|exact
+CHK|scatter_alpha_refused_2|char[1 149]'MATLAB:datatypes:OutsideRangeNaN0to1 / Error setting property 'MarkerEdgeAlpha' of class 'Scatter':\nValue is NaN, or out of range 0.0 <= value <= 1.0'|exact
+CHK|scatter_alpha_refused_3|char[1 149]'MATLAB:datatypes:OutsideRangeNaN0to1 / Error setting property 'MarkerFaceAlpha' of class 'Scatter':\nValue is NaN, or out of range 0.0 <= value <= 1.0'|exact
+CHK|scatter_alpha_refused_4|char[1 134]'MATLAB:hg:dt_conv:Matrix_to_Real:ExpectedNumeric1 / Error setting property 'MarkerFaceAlpha' of class 'Scatter':\nValue must be numeric'|exact
+CHK|scatter_alpha_refused_5|char[1 131]'MATLAB:hg:dt_conv:Matrix_to_Real:ExpectedScalar / Error setting property 'MarkerFaceAlpha' of class 'Scatter':\nValue must be scalar'|exact
+CHK|scatter_alpha_option_refused|char[1 149]'MATLAB:datatypes:OutsideRangeNaN0to1 / Error setting property 'MarkerFaceAlpha' of class 'Scatter':\nValue is NaN, or out of range 0.0 <= value <= 1.0'|exact
+CHK|bar_alpha_refused|char[1 139]'MATLAB:datatypes:OutsideRangeNaN0to1 / Error setting property 'FaceAlpha' of class 'Bar':\nValue is NaN, or out of range 0.0 <= value <= 1.0'|exact
+CHK|s3_defaults|cell[1 4]{double[1 1] 1;double[1 1] 1;char[1 4]'flat';char[1 4]'none'}|exact
+CHK|s3_alphas_set|cell[1 2]{double[1 1] 0.40000000000000002;char[1 4]'flat'}|exact
+CHK|s3_alpha_options|cell[1 2]{double[1 1] 0.25;double[1 1] 0.34999999999999998}|exact
+CHK|s3_edge|cell[1 3]{double[1 3] [1 0 0];char[1 4]'none';logical[1 1] 0}|exact
+CHK|s3_face|cell[1 2]{double[1 3] [0 1 0];char[1 4]'flat'}|exact
+CHK|s3_filled_edge|cell[1 2]{double[1 3] [0 0 0];char[1 4]'flat'}|exact
+CHK|s3_filled|cell[1 2]{char[1 4]'none';char[1 4]'flat'}|exact
+CHK|s3_rgb|double[3 3] [1 0 0;0 1 0;0 0 1]|exact
+CHK|s3_values|double[1 3] [5 6 7]|exact
+CHK|s3_word_q|char[1 86]'MATLAB:checkpvpairs:UnrecognizedLineStyleParameter / Error in color/linetype argument.'|exact
+CHK|s3_words_set|cell[1 2]{double[1 3] [0 0 1];char[1 4]'flat'}|exact
+CHK|b3_defaults|cell[1 4]{double[1 1] 0.59999999999999998;double[1 1] 1;char[1 4]'flat';char[1 4]'flat'}|exact
+CHK|b3_edge_alpha|double[1 1] 0.5|exact
+CHK|b3_refused|char[1 153]'MATLAB:datatypes:OutsideRangeNaN0to1 / Error setting property 'MarkerFaceAlpha' of class 'BubbleChart':\nValue is NaN, or out of range 0.0 <= value <= 1.0'|exact
+CHK|b3_option|double[1 1] 0.25|exact
+CHK|patch_defaults|cell[1 4]{double[1 1] 1;double[1 1] 1;double[0 0];char[1 6]'scaled'}|exact
+CHK|patch_words|cell[1 2]{char[1 4]'flat';char[1 6]'interp'}|exact
+CHK|patch_number_again|double[1 1] 0.59999999999999998|exact
+CHK|patch_options|cell[1 2]{char[1 6]'interp';char[1 4]'flat'}|exact
+CHK|patch_vertex_alpha|cell[1 2]{char[1 4]'flat';double[1 1] 0.29999999999999999}|exact
+CHK|fill_flat|char[1 4]'flat'|exact
+CHK|patch_word_refused|char[1 73]'MATLAB:hg:dt_conv:Matrix_to_Real:ExpectedNumeric1 / Value must be numeric'|exact
+CHK|patch_big_refused|char[1 92]'MATLAB:hg:dt_conv:Matrix_to_Real:ValueOutsideRange / Alpha value must be between 0.0 and 1.0'|exact
+CHK|patch_set_big_refused|char[1 145]'MATLAB:hg:dt_conv:Matrix_to_Real:ValueOutsideRange / Error setting property 'FaceAlpha' of class 'Patch':\nAlpha value must be between 0.0 and 1.0'|exact
+CHK|patch_set_negative_refused|char[1 145]'MATLAB:hg:dt_conv:Matrix_to_Real:ValueOutsideRange / Error setting property 'EdgeAlpha' of class 'Patch':\nAlpha value must be between 0.0 and 1.0'|exact
+CHK|region_properties|cell[1 31]{char[1 5]'Value';char[1 13]'InterceptAxis';char[1 9]'LineWidth';char[1 9]'EdgeColor';char[1 9]'EdgeAlpha';char[1 9]'LineStyle';char[1 9]'FaceColor';char[1 9]'FaceAlpha';char[1 5]'Layer';char[1 13]'FaceColorMode';char[1 8]'Children';char[1 6]'Parent';char[1 7]'Visible';char[1 16]'HandleVisibility';char[1 11]'DisplayName';char[1 10]'Annotation';char[1 13]'ButtonDownFcn';char[1 11]'ContextMenu';char[1 10]'BusyAction';char[1 12]'BeingDeleted';char[1 13]'Interruptible';char[1 9]'CreateFcn';char[1 9]'DeleteFcn';char[1 4]'Type';char[1 3]'Tag';char[1 8]'UserData';char[1 8]'Selected';char[1 18]'SelectionHighlight';char[1 7]'HitTest';char[1 13]'PickableParts';char[1 11]'SeriesIndex'}|exact
+CHK|region_defaults|cell[1 15]{double[1 2] [1 2];char[1 1]'x';double[1 1] 0.5;char[1 4]'none';double[1 1] 1;char[1 1]'-';double[1 3] [0.49019607843137253 0.49019607843137253 0.49019607843137253];double[1 1] 0.29999999999999999;char[1 6]'bottom';char[1 4]'auto';onoff on;onoff on;char[0 0]'';char[1 14]'constantregion';char[1 4]'none'}|exact
+CHK|yregion_defaults|cell[1 5]{double[1 2] [1 2];char[1 1]'y';double[1 3] [0.49019607843137253 0.49019607843137253 0.49019607843137253];double[1 1] 0.29999999999999999;char[1 14]'constantregion'}|exact
+CHK|region_parent|logical[1 1] 1|exact
+CHK|region_isgraphics|cell[1 3]{logical[1 1] 1;logical[1 1] 1;logical[1 1] 1}|exact
+CHK|region_pair|cell[1 2]{double[1 2] [1 1];cell[1 1]{double[1 2] [1 2]}}|exact
+CHK|region_pairs|cell[1 2]{double[1 2] [2 1];cell[1 2]{double[1 2] [1 2];double[1 2] [3 4]}}|exact
+CHK|region_two_rows|cell[1 2]{double[1 2] [2 1];cell[1 2]{double[1 2] [1 3];double[1 2] [2 4]}}|exact
+CHK|region_two_rows_wide|cell[1 2]{double[1 2] [3 1];cell[1 3]{double[1 2] [1 4];double[1 2] [2 5];double[1 2] [3 6]}}|exact
+CHK|region_three_rows|cell[1 2]{double[1 2] [3 1];cell[1 3]{double[1 2] [1 2];double[1 2] [3 4];double[1 2] [5 6]}}|exact
+CHK|region_row|cell[1 2]{double[1 2] [1 1];cell[1 1]{double[1 2] [1 2]}}|exact
+CHK|region_column|cell[1 2]{double[1 2] [1 1];cell[1 1]{double[1 2] [1 2]}}|exact
+CHK|region_reversed|cell[1 2]{double[1 2] [1 1];cell[1 1]{double[1 2] [2 1]}}|exact
+CHK|region_equal|cell[1 2]{double[1 2] [1 1];cell[1 1]{double[1 2] [2 2]}}|exact
+CHK|region_nan|cell[1 2]{double[1 2] [1 1];cell[1 1]{double[1 2] [NaN 2]}}|exact
+CHK|region_inf|cell[1 2]{double[1 2] [1 1];cell[1 1]{double[1 2] [-Inf 2]}}|exact
+CHK|region_two_values|cell[2 1]{double[1 2] [1 2];double[1 2] [3 4]}|exact
+CHK|region_options|cell[1 7]{double[1 3] [1 0 0];char[1 6]'manual';double[1 3] [0 0 0];double[1 1] 2;char[1 2]'--';char[1 4]'band';double[1 1] 0.5}|exact
+CHK|region_set_value|double[1 2] [5 6]|exact
+CHK|region_set_reversed|double[1 2] [6 5]|exact
+CHK|region_set_words|cell[1 4]{char[1 1]'y';char[1 3]'top';char[1 4]'none';double[1 1] 2}|exact
+CHK|region_set_colour|cell[1 2]{double[1 3] [0 0 1];char[1 6]'manual'}|exact
+CHK|region_series_colour|logical[1 1] 1|exact
+CHK|region_refused_value_one|char[1 172]'MATLAB:graphics:constantline:ValueMustBeTwoElements / Error setting property 'Value' of class 'matlab.graphics.chart.decoration.ConstantRegion'. Value must be a 1x2 vector.'|exact
+CHK|region_refused_value_three|char[1 172]'MATLAB:graphics:constantline:ValueMustBeTwoElements / Error setting property 'Value' of class 'matlab.graphics.chart.decoration.ConstantRegion'. Value must be a 1x2 vector.'|exact
+CHK|region_refused_face_alpha_big|char[1 150]'MATLAB:datatypes:OutsideRangeNaN0to1 / Error setting property 'FaceAlpha' of class 'ConstantRegion':\nValue is NaN, or out of range 0.0 <= value <= 1.0'|exact
+CHK|region_refused_face_alpha_flat|char[1 124]'MATLAB:datatypes:invalidZeroToOne / Error setting property 'FaceAlpha' of class 'ConstantRegion':\nValue not a numeric scalar'|exact
+CHK|region_refused_edge_alpha_flat|char[1 124]'MATLAB:datatypes:invalidZeroToOne / Error setting property 'EdgeAlpha' of class 'ConstantRegion':\nValue not a numeric scalar'|exact
+CHK|region_refused_layer|char[1 167]'MATLAB:datatypes:InvalidEnumValue / Error setting property 'Layer' of class 'ConstantRegion':\n'middle' is not a valid value. Use one of these values: 'bottom' / 'top'.'|exact
+CHK|region_refused_line_style|char[1 183]'MATLAB:datatypes:InvalidEnumValue / Error setting property 'LineStyle' of class 'ConstantRegion':\n'zz' is not a valid value. Use one of these values: '-' / '--' / ':' / '-.' / 'none'.'|exact
+CHK|region_refused_scalar|char[1 79]'MATLAB:graphics:constantline:TooFewInput / Specify a minimum and maximum value.'|exact
+CHK|region_refused_uneven|char[1 75]'MATLAB:graphics:constantline:UnevenVectors / Vectors must have same length.'|exact
+CHK|region_refused_empty|char[1 89]'MATLAB:graphics:constantline:EmptyInputs / The minimum and maximum value cannot be empty.'|exact
+CHK|region_refused_text|char[1 221]'MATLAB:graphics:constantline:InvalidData / Error setting property 'Value' of class 'matlab.graphics.chart.decoration.ConstantRegion'. Value must be one of the following: 'numeric' / 'datetime' / 'categorical' / 'duration''|exact
+CHK|region_refused_bogus_option|char[1 81]'MATLAB:hg:InvalidProperty / Unrecognized property Bogus for class ConstantRegion.'|exact
+CHK|region_refused_odd_options|char[1 73]'MATLAB:class:BadParamValuePairs / Invalid parameter/value pair arguments.'|exact
+CHK|region_no_args|char[1 32]'MATLAB:narginchk:notEnoughInputs'|exact
+CHK|region_polar|char[1 106]'MATLAB:handle_graphics:exceptions:HandleGraphicsException / ConstantRegion cannot be a child of PolarAxes.'|exact
+CHK|region_keeps_plot|double[1 1] 2|exact
+CHK|region_first_child|char[1 14]'constantregion'|exact
+CHK|region_legend|cell[1 2]{char[1 4]'line';char[1 4]'band'}|exact
+CHK|region_both|double[1 1] 2|exact
+CHK|region_replaced|double[1 1] 1|exact
+CHK|region_deleted|double[1 1] 1|exact

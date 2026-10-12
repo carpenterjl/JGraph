@@ -739,13 +739,19 @@ internal static partial class JgsGraphicsProperties
                 Shape(entry).ColorData = given.Length == 0 ? null : given;
             });
 
+        // R2025b's empty is 0-by-0, and one value is the whole patch's (probe_107).
         Put(table, "FaceVertexAlphaData",
-            entry => Row(Shape(entry).VertexAlpha ?? []),
+            entry => Shape(entry).VertexAlpha switch
+            {
+                [double one] => JgsValue.Number(one),
+                { } alphas => Row(alphas),
+                null => JgsMatrix.FromColumnMajor([], 0, 0),
+            },
             (entry, value, line, col) =>
             {
                 var shape = Shape(entry);
                 double[] given = JgsBuiltins.ToDoubles("FaceVertexAlphaData", value, line, col);
-                if (given.Length != 0 && given.Length != shape.X.Count && given.Length != shape.Faces.Count)
+                if (given.Length > 1 && given.Length != shape.X.Count && given.Length != shape.Faces.Count)
                 {
                     throw new JgsRuntimeException(line, col,
                         $"FaceVertexAlphaData is one value per vertex ({shape.X.Count}) or per face "

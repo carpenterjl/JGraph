@@ -41,6 +41,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
 
     private double[]? _sizeData;
     private double[]? _colorData;
+    private Color[]? _pointColors;
     private bool _bubbleSizing;
 
     private readonly JitterChannel _xJitter = new();
@@ -85,7 +86,11 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
     public Color? DataColor
     {
         get => _dataColor;
-        set => SetProperty(ref _dataColor, value, InvalidationKind.Render);
+        set
+        {
+            WrittenColorData = null; // the numbers as written no longer say what is drawn
+            SetProperty(ref _dataColor, value, InvalidationKind.Render);
+        }
     }
 
     /// <summary>
@@ -174,9 +179,39 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
         set
         {
             _colorData = Checked(value, nameof(ColorData));
+            WrittenColorData = null;
             Invalidate(InvalidationKind.Render);
         }
     }
+
+    /// <summary>
+    /// A colour per point — MATLAB's <c>CData</c> as an m-by-3 matrix (open item 107) — or null. It
+    /// wins over <see cref="ColorData"/> and <see cref="DataColor"/>. Must have one entry per sample.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<Color>? PointColors
+    {
+        get => _pointColors;
+        set
+        {
+            if (value is not null && value.Count != Data.Count)
+            {
+                throw new ArgumentException(
+                    $"{nameof(PointColors)} needs one entry per point ({Data.Count}), but got {value.Count}.", nameof(value));
+            }
+
+            _pointColors = value?.ToArray();
+            WrittenColorData = null;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
+    /// The colour data as the script wrote it, which <c>CData</c> reads back while the drawn channels
+    /// still say the same thing, or null (open item 107).
+    /// </summary>
+    [Browsable(false)]
+    public WrittenColorData? WrittenColorData { get; set; }
 
     /// <summary>
     /// Whether <see cref="SizeData"/> is read as bubble values against the axes' scale rather than as
@@ -414,7 +449,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
 
         Color data = _dataColor ?? state.SeriesColor;
         IDataSeries drawn = Displayed;
-        if (_sizeData is null && _colorData is null && _alphaData is null)
+        if (_sizeData is null && _colorData is null && _pointColors is null && _alphaData is null)
         {
             // One uniform style: the whole cloud goes out as a single call, as it did before there
             // were per-point channels at all.
@@ -438,7 +473,9 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
                 continue;
             }
 
-            Color point = _colorData is { } values ? _colormap.Sample(values[i], min, max, logColor) : data;
+            Color point = _pointColors is { } rgb && i < rgb.Length ? rgb[i]
+                : _colorData is { } values ? _colormap.Sample(values[i], min, max, logColor)
+                : data;
             Color? fill = FillFor(point);
             Color edge = EdgeFor(point);
 

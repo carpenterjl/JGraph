@@ -9009,6 +9009,28 @@ internal sealed partial class Interpreter
             return gathered;
         }
 
+        // {ax.YAxis.Color} under yyaxis: a property that answers several handles spreads the same
+        // way (open item 106). Every step is a property read, so asking cannot run anything.
+        if (Dialect.IsMatlab
+            && expr is MemberExpr overList
+            && overList.Target is MemberExpr listed
+            && TryResolveHandleTarget(listed.Target, env) is { } listOwner
+            && JgsGraphicsProperties.TryFind(listOwner.Target, FieldName(listed, env), out _)
+            && JgsGraphicsProperties.Get(listOwner, FieldName(listed, env), listed.Line, listed.Column) is { } listedHandles
+            && IsHandleArrayValue(listedHandles)
+            && listedHandles.ArrayLength != 1)
+        {
+            string property = FieldName(overList, env);
+            var gathered = new JgsValue[listedHandles.ArrayLength];
+            for (int i = 0; i < gathered.Length; i++)
+            {
+                JgsHandleEntry entry = JgsHandleRegistry.Require(listedHandles.ElementAt(i), overList.Line, overList.Column);
+                gathered[i] = JgsGraphicsProperties.Get(entry, property, overList.Line, overList.Column);
+            }
+
+            return gathered;
+        }
+
         if (Dialect.IsMatlab
             && expr is MemberExpr member
             && RootName(member.Target) is { } root
@@ -9764,8 +9786,13 @@ internal sealed partial class Interpreter
             && holder.AsStruct.TryGetValue(field, out value!);
     }
 
+    // A property's one handle is an array of one: ax.XAxis(1).Color = c names it once the property's
+    // value is in the scratch slot (open item 106). A variable holding 1 is left a number — figure 1
+    // is handle 1, and v(1).f = x must not reach the figure.
     private bool IsHandleArray(VariableExpr variable, JgsEnvironment env) =>
-        LookUp(variable.Name, env, out JgsValue value) && IsHandleArrayValue(value);
+        LookUp(variable.Name, env, out JgsValue value)
+        && (IsHandleArrayValue(value)
+            || (variable.Name == LevelSlot && value.Type == JgsType.Number && JgsHandleRegistry.TryGet(value, out _)));
 
     /// <summary>
     /// The struct a dotted write lands in.

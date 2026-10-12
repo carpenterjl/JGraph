@@ -17,11 +17,13 @@ internal static partial class JgsBuiltins
     {
         "Faces", "Vertices", "FaceColor", "EdgeColor", "LineWidth", "FaceAlpha", "EdgeAlpha",
         "FaceVertexCData", "CData", "DisplayName", "LineStyle", "FaceLighting",
+        "FaceVertexAlphaData", "AlphaDataMapping",
     };
 
     private static readonly HashSet<string> Scatter3OptionNames = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Marker", "MarkerFaceColor", "MarkerEdgeColor", "SizeData", "CData", "DisplayName", "LineWidth",
+        "Marker", "MarkerFaceColor", "MarkerEdgeColor", "MarkerFaceAlpha", "MarkerEdgeAlpha",
+        "SizeData", "CData", "DisplayName", "LineWidth",
 
         // The spread properties belong to every marker chart in space, not only to swarmchart3.
         "XJitter", "YJitter", "ZJitter", "XJitterWidth", "YJitterWidth", "ZJitterWidth",
@@ -219,7 +221,19 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, ex.Message);
         }
 
-        plot.Filled = filled;
+        // 'filled' paints the interiors in the data's colour and leaves the edges off, as the 2-D
+        // chart's does; a bubble chart is filled at 0.6 with its edges following the data (item 107).
+        plot.Filled = filled || bubbles;
+        if (filled && !bubbles)
+        {
+            plot.EdgeColor = Colors.Transparent;
+        }
+
+        if (bubbles)
+        {
+            plot.FaceAlpha = 0.6;
+        }
+
         plot.BubbleSizing = bubbles;
         if (verb == "swarmchart3")
         {
@@ -246,12 +260,18 @@ internal static partial class JgsBuiltins
                 case "marker":
                     plot.Marker = ParseMarker(verb, value, line, col);
                     break;
+                // The marker words a 2-D chart takes, which no longer paint the whole cloud (item 107).
                 case "markerfacecolor":
-                    plot.Filled = true;
-                    plot.Color = OptionColor(value, line, col, verb);
+                    MarkerFace(verb, plot, value, line, col);
                     break;
                 case "markeredgecolor":
-                    plot.Color = OptionColor(value, line, col, verb);
+                    MarkerEdge(verb, plot, value, line, col);
+                    break;
+                case "markerfacealpha":
+                    plot.FaceAlpha = MarkerAlpha("MarkerFaceAlpha", value, line, col, MarkerClass(plot));
+                    break;
+                case "markeredgealpha":
+                    plot.EdgeAlpha = MarkerAlpha("MarkerEdgeAlpha", value, line, col, MarkerClass(plot));
                     break;
                 case "sizedata":
                     ApplySizeData(verb, plot, value, line, col);
@@ -344,9 +364,9 @@ internal static partial class JgsBuiltins
     private static void ApplyScatterColor(
         string verb, Scatter3DPlot plot, JgsValue value, int line, int col)
     {
-        if (IsSingleColor(value, plot.X.Count))
+        if (value.Type == JgsType.String)
         {
-            plot.Color = OptionColor(value, line, col, verb);
+            plot.Color = SpecColor(verb, value, line, col);
             return;
         }
 
@@ -355,16 +375,28 @@ internal static partial class JgsBuiltins
         {
             // A scalar c is one colormap index for the whole cloud, which the model expresses as the
             // same value at every point rather than as a separate mode.
-            values = Enumerable.Repeat(values[0], plot.X.Count).ToArray();
+            plot.ColorData = Enumerable.Repeat(values[0], plot.X.Count).ToArray();
+            return;
         }
 
+        // R2025b's three shapes, a colour per point among them (open item 107).
+        ApplyMarkerColors(plot, ReadMarkerColors(verb, value, plot.X.Count, strict: true, line, col));
+    }
+
+    /// <summary>
+    /// A colour named in a marker chart's own arguments, refused in R2025b's words when it is not one
+    /// (probe_107: <c>scatter(x, y, 20, 'q')</c>).
+    /// </summary>
+    internal static Color SpecColor(string verb, JgsValue value, int line, int col)
+    {
         try
         {
-            plot.ColorData = values;
+            return OptionColor(value, line, col, verb);
         }
-        catch (ArgumentException ex)
+        catch (JgsRuntimeException) when (JgsRunningDialect.ThreadIsMatlab)
         {
-            throw new JgsRuntimeException(line, col, ex.Message);
+            throw new JgsRuntimeException(line, col, "MATLAB:checkpvpairs:UnrecognizedLineStyleParameter",
+                "Error in color/linetype argument.");
         }
     }
 
@@ -721,11 +753,23 @@ internal static partial class JgsBuiltins
                     break;
                 // The patch's own two alphas, which its handle reads back; this wrote the object's
                 // opacity until open item 102, so the value drew but read back as 1.
+                // ...and since open item 107, the property's own reading: 'flat' and 'interp' taken,
+                // R2025b's refusals; the per-vertex alphas those words read come the same way.
                 case "facealpha":
-                    patch.FaceAlpha = NumOf($"{verb}: FaceAlpha", value, line, col);
-                    break;
                 case "edgealpha":
-                    patch.EdgeAlpha = NumOf($"{verb}: EdgeAlpha", value, line, col);
+                case "facevertexalphadata":
+                case "alphadatamapping":
+                    try
+                    {
+                        JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(patch), name, value, line, col);
+                    }
+                    catch (JgsRuntimeException refused) when (refused.Identifier.StartsWith("MATLAB:hg:dt_conv", StringComparison.Ordinal))
+                    {
+                        // Given with the call, R2025b's patch says only the reason, not which property.
+                        throw new JgsRuntimeException(line, col, refused.Identifier,
+                            refused.Message[(refused.Message.IndexOf('\n') + 1)..]);
+                    }
+
                     break;
                 case "facevertexcdata":
                 case "cdata":

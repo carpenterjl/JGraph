@@ -8,6 +8,19 @@ using JGraph.Rendering;
 
 namespace JGraph.Objects;
 
+/// <summary>Where a patch's fill or outline opacity comes from (MATLAB <c>FaceAlpha</c>/<c>EdgeAlpha</c>).</summary>
+public enum PatchAlphaSource
+{
+    /// <summary>The number <see cref="PatchPlot.FaceAlpha"/> or <see cref="PatchPlot.EdgeAlpha"/>.</summary>
+    Value,
+
+    /// <summary>MATLAB's <c>'flat'</c>: a value per face from <see cref="PatchPlot.VertexAlpha"/>.</summary>
+    Flat,
+
+    /// <summary>MATLAB's <c>'interp'</c>: the per-vertex readings shaded across the face.</summary>
+    Interp,
+}
+
 /// <summary>How a patch face takes its color from <see cref="PatchPlot.ColorData"/>.</summary>
 public enum PatchShading
 {
@@ -47,6 +60,8 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     private double _edgeWidth = 0.75;
     private double _faceAlpha = 1;
     private double _edgeAlpha = 1;
+    private PatchAlphaSource _faceAlphaSource;
+    private PatchAlphaSource _edgeAlphaSource;
 
     private SurfaceLighting _faceLighting = SurfaceLighting.Flat;
     private double _ambientStrength = 0.3;
@@ -403,6 +418,26 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     {
         get => _edgeAlpha;
         set => SetProperty(ref _edgeAlpha, System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Whether the fill's opacity is <see cref="FaceAlpha"/> or MATLAB's <c>'flat'</c> or <c>'interp'</c>,
+    /// which take it from <see cref="VertexAlpha"/> (open item 107). Under either word the number stands
+    /// at 1, so the per-vertex readings alone decide; the two are drawn alike, a value per face.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Face alpha source")]
+    public PatchAlphaSource FaceAlphaSource
+    {
+        get => _faceAlphaSource;
+        set => SetProperty(ref _faceAlphaSource, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The same for the outline's opacity (MATLAB <c>EdgeAlpha</c>'s two words).</summary>
+    [Category("Appearance"), DisplayName("Edge alpha source")]
+    public PatchAlphaSource EdgeAlphaSource
+    {
+        get => _edgeAlphaSource;
+        set => SetProperty(ref _edgeAlphaSource, value, InvalidationKind.Render);
     }
 
     /// <summary>The face outline color, or null for no outline (MATLAB <c>'EdgeColor', 'none'</c>).</summary>
@@ -875,6 +910,12 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         if (_vertexAlpha is not { Length: > 0 } alphas)
         {
             return 1;
+        }
+
+        // One value is the whole patch's, as R2025b takes it.
+        if (alphas.Length == 1)
+        {
+            return double.IsFinite(alphas[0]) ? ReadAlpha(alphas[0]) : 1;
         }
 
         double total = 0;

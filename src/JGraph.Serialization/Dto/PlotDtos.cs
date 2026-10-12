@@ -38,6 +38,7 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(SurfacePlotDto), "surface")]
 [JsonDerivedType(typeof(ContourPlotDto), "contour")]
 [JsonDerivedType(typeof(ConstantLinePlotDto), "constantline")]
+[JsonDerivedType(typeof(ConstantRegionPlotDto), "constantregion")]
 [JsonDerivedType(typeof(Line3DPlotDto), "line3d")]
 [JsonDerivedType(typeof(Scatter3DPlotDto), "scatter3d")]
 [JsonDerivedType(typeof(Stem3DPlotDto), "stem3d")]
@@ -68,6 +69,9 @@ public abstract class PlotDto
 
     /// <summary>The seat this plot took in the series cycle, or -1 (the pre-M73 default) for none.</summary>
     public int SeriesIndex { get; set; } = -1;
+
+    /// <summary>The yyaxis side whose colour the seat takes, or -1 for the shared cycle (open item 106).</summary>
+    public int SeriesSide { get; set; } = -1;
 
     /// <summary>Whether the object is trimmed to the plot box (M77). Documents before it clipped.</summary>
     public bool Clipping { get; set; } = true;
@@ -163,6 +167,17 @@ public sealed class ScatterPlotDto : PlotDto
 
     /// <summary>Per-point colormapped values, or null for a single-colored cloud.</summary>
     public double[]? ColorData { get; set; }
+
+    /// <summary>A colour per point (MATLAB's m-by-3 <c>CData</c>), or null (open item 107).</summary>
+    public Color[]? PointColors { get; set; }
+
+    /// <summary>The <c>CData</c> numbers as the script wrote them, column by column, or null.</summary>
+    public double[]? WrittenColorValues { get; set; }
+
+    /// <summary>The rows and columns <see cref="WrittenColorValues"/> came in.</summary>
+    public int WrittenColorRows { get; set; }
+
+    public int WrittenColorColumns { get; set; }
 
     /// <summary>
     /// Whether <see cref="SizeData"/> is read as bubble values rather than as marker areas — the one
@@ -865,6 +880,31 @@ public sealed class ConstantLinePlotDto : PlotDto
     public ConstantLineLabelOrientation LabelOrientation { get; set; } = ConstantLineLabelOrientation.Aligned;
 }
 
+/// <summary>The serialized form of a <see cref="ConstantRegionPlot"/> — an xregion or a yregion (open item 108).</summary>
+public sealed class ConstantRegionPlotDto : PlotDto
+{
+    public ConstantLineDirection Direction { get; set; }
+
+    public double First { get; set; }
+
+    public double Second { get; set; }
+
+    /// <summary>The fill, or null for R2025b's automatic grey.</summary>
+    public Color? FaceColor { get; set; }
+
+    public double FaceAlpha { get; set; } = 0.3;
+
+    public Color EdgeColor { get; set; } = Colors.Transparent;
+
+    public double EdgeAlpha { get; set; } = 1;
+
+    public double LineWidth { get; set; } = 0.5;
+
+    public DashStyle Dash { get; set; } = DashStyle.Solid;
+
+    public bool OnTop { get; set; }
+}
+
 /// <summary>The serialized form of a <see cref="Line3DPlot"/>.</summary>
 public sealed class Line3DPlotDto : PlotDto
 {
@@ -908,6 +948,28 @@ public sealed class Scatter3DPlotDto : PlotDto
     public double[]? ColorData { get; set; }
 
     public Color? Color { get; set; }
+
+    /// <summary>The edges' own colour, null for edges that follow the data (open item 107).</summary>
+    public Color? EdgeColor { get; set; }
+
+    /// <summary>The interiors' own colour when not filled, null for open markers.</summary>
+    public Color? FaceColor { get; set; }
+
+    /// <summary>The interiors' opacity as written, NaN for MATLAB's <c>'flat'</c>; 1 in older files.</summary>
+    public double FaceAlpha { get; set; } = 1;
+
+    /// <summary>The edges' opacity as written, NaN for MATLAB's <c>'flat'</c>; 1 in older files.</summary>
+    public double EdgeAlpha { get; set; } = 1;
+
+    /// <summary>A colour per point (MATLAB's m-by-3 <c>CData</c>), or null.</summary>
+    public Color[]? PointColors { get; set; }
+
+    /// <summary>The <c>CData</c> numbers as the script wrote them, column by column, or null.</summary>
+    public double[]? WrittenColorValues { get; set; }
+
+    public int WrittenColorRows { get; set; }
+
+    public int WrittenColorColumns { get; set; }
 
     public MarkerType Marker { get; set; } = MarkerType.Circle;
 
@@ -1074,6 +1136,17 @@ public sealed class PatchPlotDto : PlotDto
     public bool EdgeVisible { get; set; } = true;
 
     public double EdgeWidth { get; set; } = 0.75;
+
+    /// <summary>The fill's opacity as written (open items 102 and 107); 1 in older files.</summary>
+    public double FaceAlpha { get; set; } = 1;
+
+    /// <summary>The outline's opacity as written; 1 in older files.</summary>
+    public double EdgeAlpha { get; set; } = 1;
+
+    /// <summary>Whether the fill's opacity is the number or MATLAB's 'flat' or 'interp'.</summary>
+    public PatchAlphaSource FaceAlphaSource { get; set; }
+
+    public PatchAlphaSource EdgeAlphaSource { get; set; }
 
     public PatchShading Shading { get; set; }
 

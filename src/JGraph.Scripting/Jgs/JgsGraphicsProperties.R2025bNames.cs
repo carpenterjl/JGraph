@@ -191,6 +191,21 @@ internal static partial class JgsGraphicsProperties
             "~SelectionHighlightMode ~Serializable ~SerializableMode SeriesIndex ~SeriesIndexMode Tag " +
             "~TagMode Type ~UIContextMenu UserData Value Visible ~VisibleMode ~XLimInclude " +
             "~XLimIncludeMode ~YLimInclude ~YLimIncludeMode ~ZLimInclude ~ZLimIncludeMode"),
+        ("matlab.graphics.chart.decoration.ConstantRegion",
+            "~ALimInclude ~ALimIncludeMode Annotation ~ApplicationData BeingDeleted BusyAction " +
+            "ButtonDownFcn ~ButtonDownFcnMode Children ~ChildrenMode ~CLimInclude ~CLimIncludeMode " +
+            "ContextMenu ~Copyable CreateFcn ~CreateFcnMode ~DefaultPropMap_Internal DeleteFcn " +
+            "~DeleteFcnMode ~Description ~DescriptionMode ~DimensionNames ~DimensionNamesMode " +
+            "DisplayName ~DisplayNameMode EdgeAlpha ~EdgeAlphaMode EdgeColor ~EdgeColorMode " +
+            "~ErrorCallback ~ErrorCallbackMode FaceAlpha ~FaceAlphaMode FaceColor FaceColorMode " +
+            "HandleVisibility ~HandleVisibilityMode HitTest ~HitTestMode InterceptAxis ~Internal " +
+            "Interruptible ~IsContainer ~IsContainerMode Layer ~LayerMode ~LegendDisplay " +
+            "~LegendDisplayMode LineStyle ~LineStyleMode LineWidth ~LineWidthMode ~NodeChildren " +
+            "~NodeParent Parent ~ParentMode PickableParts ~PickablePartsMode ~PrimitiveChildEnabled " +
+            "~PrimitiveChildEnabledMode Selected ~SelectedMode SelectionHighlight " +
+            "~SelectionHighlightMode ~Serializable ~SerializableMode SeriesIndex ~SeriesIndexMode Tag " +
+            "~TagMode Type ~UIContextMenu UserData Value Visible ~VisibleMode ~XLimInclude " +
+            "~XLimIncludeMode ~YLimInclude ~YLimIncludeMode ~ZLimInclude ~ZLimIncludeMode"),
         ("matlab.graphics.chart.HeatmapChart",
             "~ActivePositionProperty ~ApplicationData ~BeingDeleted ~CausesLayoutUpdate " +
             "CellLabelColor CellLabelFormat ~ChartDecorationInset ColorbarVisible ColorData " +
@@ -1548,6 +1563,21 @@ internal static partial class JgsGraphicsProperties
         ("matlab.graphics.chart.decoration.ConstantLine", "HitTest", "on\toff"),
         ("matlab.graphics.chart.decoration.ConstantLine", "PickableParts", "visible\tnone\tall"),
         ("matlab.graphics.chart.decoration.ConstantLine", "SeriesIndex", "none"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "InterceptAxis", "x\ty"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "EdgeColor", ""),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "LineStyle", "-\t--\t:\t-.\tnone"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "FaceColor", ""),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "Layer", "bottom\ttop"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "FaceColorMode", "auto\tmanual"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "Visible", "on\toff"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "HandleVisibility", "on\tcallback\toff"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "BusyAction", "queue\tcancel"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "Interruptible", "on\toff"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "Selected", "on\toff"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "SelectionHighlight", "on\toff"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "HitTest", "on\toff"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "PickableParts", "visible\tnone\tall"),
+        ("matlab.graphics.chart.decoration.ConstantRegion", "SeriesIndex", "none"),
         ("matlab.graphics.animation.AnimatedLine", "Color", ""),
         ("matlab.graphics.animation.AnimatedLine", "ColorMode", "auto\tmanual"),
         ("matlab.graphics.animation.AnimatedLine", "LineStyle", "-\t--\t:\t-.\tnone"),

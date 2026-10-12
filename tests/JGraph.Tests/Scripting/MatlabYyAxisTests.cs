@@ -108,9 +108,10 @@ public class MatlabYyAxisTests : IDisposable
     }
 
     [Fact]
-    public async Task AMisspelledSideSaysWhichSidesThereAre()
+    public async Task AMisspelledSideIsRefusedInR2025bsWords()
     {
-        Assert.Contains("'left' or 'right'", await RunExpectingFailure("""
+        // R2025b: MATLAB:axis:UnknownOption, "Unknown command option middle." (open item 106).
+        Assert.Contains("Unknown command option middle.", await RunExpectingFailure("""
             figure(1);
             plot(1:10, 1:10);
             yyaxis middle;

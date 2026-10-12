@@ -49,6 +49,7 @@ public sealed class AxesModel : GraphObject
     private Vector3D? _dataAspectRatio;
     private IReadOnlyList<SeriesLineStyle>? _lineStyleOrder;
     private int _nextSeriesIndex;
+    private readonly List<int> _sideSeries = [];
     private Vector3D? _cameraPosition;
     private Vector3D? _cameraTarget;
     private Vector3D? _cameraUpVector;
@@ -120,6 +121,13 @@ public sealed class AxesModel : GraphObject
             if (Plots.Count == 0)
             {
                 _nextSeriesIndex = 0;
+
+                // A yyaxis side counts on through a delete, as R2025b's does; replacing and cla
+                // restart it themselves (RestartSideSeries).
+                if (YAxes.Count < 2)
+                {
+                    _sideSeries.Clear();
+                }
             }
 
             if (e.NewItems is not null)
@@ -222,13 +230,60 @@ public sealed class AxesModel : GraphObject
     }
 
     /// <summary>
+    /// Hands out the next slot on one side of a yyaxis axes (two or more Y rulers): every plot on a
+    /// side takes the colour order's entry for that side, and the line-style order steps one entry a
+    /// plot — R2025b's rule (open item 106). Each side counts on its own, from the first plot drawn on
+    /// it since it was last emptied, and the shared count (ColorOrderIndex) does not move. An axes
+    /// with one Y ruler hands out the shared slot.
+    /// </summary>
+    public SeriesSlot TakeSeriesSlot(int yAxisIndex)
+    {
+        if (YAxes.Count < 2)
+        {
+            return TakeSeriesSlot();
+        }
+
+        int side = System.Math.Clamp(yAxisIndex, 0, YAxes.Count - 1);
+        while (_sideSeries.Count <= side)
+        {
+            _sideSeries.Add(0);
+        }
+
+        int index = _sideSeries[side]++;
+        IReadOnlyList<Color> palette = _colorOrder is { Count: > 0 } chosen ? chosen : Colors.DefaultSeriesOrder;
+        SeriesLineStyle style = _lineStyleOrder is { Count: > 0 } order ? order[index % order.Count] : SeriesLineStyle.Solid;
+        return new SeriesSlot(index, palette[side % palette.Count], style);
+    }
+
+    /// <summary>How many slots one yyaxis side has handed out since it last started over.</summary>
+    public int SideSeriesCount(int yAxisIndex) =>
+        yAxisIndex >= 0 && yAxisIndex < _sideSeries.Count ? _sideSeries[yAxisIndex] : 0;
+
+    /// <summary>
+    /// Starts one side's count again, as a replacing plot or <c>cla</c> on that side does; the other
+    /// side's plots keep their seats.
+    /// </summary>
+    public void RestartSideSeries(int yAxisIndex)
+    {
+        if (yAxisIndex >= 0 && yAxisIndex < _sideSeries.Count)
+        {
+            _sideSeries[yAxisIndex] = 0;
+        }
+    }
+
+    /// <summary>
     /// The palette color a plot's slot resolves to today, without advancing anything. A plot that
     /// never took a slot (built through the API rather than a script) answers by its position, which
-    /// is how those plots have always been colored.
+    /// is how those plots have always been colored; one seated on a yyaxis side answers that side's.
     /// </summary>
     public Color PeekSeriesColor(PlotObject plot)
     {
         IReadOnlyList<Color> palette = _colorOrder is { Count: > 0 } chosen ? chosen : Colors.DefaultSeriesOrder;
+        if (plot.SeriesSide >= 0)
+        {
+            return palette[plot.SeriesSide % palette.Count];
+        }
+
         int index = plot.SeriesIndex;
         if (index < 0)
         {

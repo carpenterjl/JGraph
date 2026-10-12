@@ -224,7 +224,16 @@ public sealed class LegendModel : GraphObject
         {
             if (!Entries.Any(e => ReferenceEquals(e.Plot, plot)))
             {
-                Entries.Add(new LegendEntryModel { Plot = plot });
+                // A new row goes after the last row of its own y ruler or an earlier one: under
+                // yyaxis the left side's rows come first, as R2025b lists them (open item 106), and
+                // on one ruler this is the end.
+                int at = Entries.Count;
+                while (at > 0 && Entries[at - 1].Plot is { } before && before.YAxisIndex > plot.YAxisIndex)
+                {
+                    at--;
+                }
+
+                Entries.Insert(at, new LegendEntryModel { Plot = plot });
                 changed = true;
             }
         }

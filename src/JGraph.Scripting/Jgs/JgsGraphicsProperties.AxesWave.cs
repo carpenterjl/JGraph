@@ -437,9 +437,10 @@ internal static partial class JgsGraphicsProperties
                         line, col, $"XAxisLocation is 'bottom' or 'top', but got '{word}'."),
                 });
 
+        // Under yyaxis it names the side that is active, as R2025b's does (open item 106).
         Put(table, "YAxisLocation",
             entry => JgsValue.Str(
-                Axes(entry).PrimaryYAxis.Position == AxisPosition.Right ? "right" : "left"),
+                Axes(entry).ActiveYAxis.Position == AxisPosition.Right ? "right" : "left"),
             (entry, value, line, col) =>
             {
                 AxesModel axes = Axes(entry);
@@ -461,6 +462,27 @@ internal static partial class JgsGraphicsProperties
             });
     }
 
+    /// <summary>A ruler's colour mode: 'manual' freezes the ink showing, 'auto' hands back the built-in inks.</summary>
+    internal static void SetRulerColorMode(AxisModel ruler, string name, JgsValue value, int line, int col)
+    {
+        if (ToAutoManual(name, value, line, col))
+        {
+            ruler.RulerColor ??= ruler.TickLabelStyle.Color;
+        }
+        else if (ruler.RulerColor is not null)
+        {
+            Unink(ruler);
+        }
+    }
+
+    /// <summary>Hands a ruler back the theme's line and its built-in text inks.</summary>
+    internal static void Unink(AxisModel ruler)
+    {
+        ruler.RulerColor = null;
+        ruler.TickLabelStyle = ruler.TickLabelStyle.WithColor(Colors.DarkGray);
+        ruler.LabelStyle = ruler.LabelStyle.WithColor(Colors.Black);
+    }
+
     private static void AddRulerWave(
         IDictionary<string, GraphicsProperty> table, string letter, Func<AxesModel, AxisModel> chosen)
     {
@@ -474,29 +496,12 @@ internal static partial class JgsGraphicsProperties
             },
             (entry, value, line, col) =>
             {
-                AxisModel ruler = chosen(Axes(entry));
-                Color ink = JgsBuiltins.OptionColor(value, line, col, letter + "Color");
-                ruler.RulerColor = ink;
-                ruler.TickLabelStyle = ruler.TickLabelStyle.WithColor(ink);
-                ruler.LabelStyle = ruler.LabelStyle.WithColor(ink);
+                chosen(Axes(entry)).Ink(JgsBuiltins.OptionColor(value, line, col, letter + "Color"));
             });
 
         Put(table, letter + "ColorMode",
             entry => AutoManual(chosen(Axes(entry)).RulerColor is not null),
-            (entry, value, line, col) =>
-            {
-                AxisModel ruler = chosen(Axes(entry));
-                if (ToAutoManual(letter + "ColorMode", value, line, col))
-                {
-                    ruler.RulerColor ??= ruler.TickLabelStyle.Color;
-                }
-                else if (ruler.RulerColor is not null)
-                {
-                    ruler.RulerColor = null;
-                    ruler.TickLabelStyle = ruler.TickLabelStyle.WithColor(Colors.DarkGray);
-                    ruler.LabelStyle = ruler.LabelStyle.WithColor(Colors.Black);
-                }
-            });
+            (entry, value, line, col) => SetRulerColorMode(chosen(Axes(entry)), letter + "ColorMode", value, line, col));
 
         // The mode spellings are derived words over the nullable-means-auto state the rulers have
         // always carried; 'manual' freezes what is showing, exactly as xlim('manual') does.
@@ -626,6 +631,13 @@ internal static partial class JgsGraphicsProperties
                 AxesModel axes = Axes(entry);
                 int colors = (axes.ColorOrder ?? Colors.DefaultSeriesOrder).Count;
                 int styles = axes.LineStyleOrder?.Count ?? 1;
+
+                // Under yyaxis the active side's own count, a style a plot (open item 106).
+                if (axes.YAxes.Count > 1)
+                {
+                    return JgsValue.Number((axes.SideSeriesCount(axes.ActiveYAxisIndex) % styles) + 1);
+                }
+
                 return JgsValue.Number((axes.NextSeriesIndex / System.Math.Max(1, colors) % styles) + 1);
             });
     }

@@ -369,6 +369,27 @@ public static class AxesExtensions
         return plot;
     }
 
+    /// <summary>
+    /// Adds a shaded band across the whole axes between two X values (MATLAB <c>xregion</c>). Unlike a
+    /// constant line it enters the auto-scale, as R2025b's does, so the band is in view.
+    /// </summary>
+    public static ConstantRegionPlot AddXRegion(this AxesModel axes, double x1, double x2)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new ConstantRegionPlot(ConstantLineDirection.Vertical, x1, x2);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>Adds a shaded band across the whole axes between two Y values (MATLAB <c>yregion</c>).</summary>
+    public static ConstantRegionPlot AddYRegion(this AxesModel axes, double y1, double y2)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new ConstantRegionPlot(ConstantLineDirection.Horizontal, y1, y2);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
     /// <summary>Adds a histogram over the given raw sample values and returns it.</summary>
     public static HistogramPlot AddHistogram(this AxesModel axes, double[] values, int binCount = 10)
     {

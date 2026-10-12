@@ -2389,19 +2389,41 @@ internal static partial class JgsBuiltins
         DefineOnAxes("xlabel", (args, line, col) => { Arity("xlabel", args, 1, line, col); JG.XLabel(Str("xlabel", args, 0, line, col)); return JgsValue.Null; });
         DefineOnAxes("ylabel", (args, line, col) => { Arity("ylabel", args, 1, line, col); JG.YLabel(Str("ylabel", args, 0, line, col)); return JgsValue.Null; });
 
-        DefineOnAxes("yyaxis", (args, line, col) =>
+        // Peeled here rather than by DefineOnAxes: R2025b refuses a polar axes in different words
+        // when it was named than when it is merely current (probe_106).
+        Define("yyaxis", (all, line, col) =>
+        {
+            (AxesModel? named, IReadOnlyList<JgsValue> args) = PeelAxes(all);
+            if (named is { IsPolar: true })
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:graphics:yyaxis:NotAxesArgument",
+                    "Axes argument must be a Cartesian Axes of type matlab.graphics.axis.Axes");
+            }
+
+            return OnAxes(named, () => YyAxisOnCurrent(args, line, col));
+        });
+
+        JgsValue YyAxisOnCurrent(IReadOnlyList<JgsValue> args, int line, int col)
         {
             Arity("yyaxis", args, 1, line, col);
             string side = Str("yyaxis", args, 0, line, col);
             bool right = side.Equals("right", StringComparison.OrdinalIgnoreCase);
             if (!right && !side.Equals("left", StringComparison.OrdinalIgnoreCase))
             {
-                throw new JgsRuntimeException(line, col, $"yyaxis expects 'left' or 'right', but got '{side}'.");
+                throw dialect.IsMatlab
+                    ? new JgsRuntimeException(line, col, "MATLAB:axis:UnknownOption", $"Unknown command option {side}.")
+                    : new JgsRuntimeException(line, col, $"yyaxis expects 'left' or 'right', but got '{side}'.");
+            }
+
+            if (JG.Gca().IsPolar)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:graphics:yyaxis:NotAxesGCA",
+                    "The current Axes must be a Cartesian Axes of type matlab.graphics.axis.Axes");
             }
 
             JG.YyAxis(right);
             return JgsValue.Null;
-        });
+        }
 
         DefineOnAxes("grid", (args, line, col) =>
         {
@@ -3232,7 +3254,8 @@ internal static partial class JgsBuiltins
         // LineStyleOrder styles the seat's lap of the palette, but never overrides a linespec.
         foreach (LinePlot plot in created)
         {
-            if (plot.Color is not null)
+            // Under yyaxis a line given its colour still steps its side's line style (item 106).
+            if (plot.Color is not null && plot.Axes is not { YAxes.Count: > 1 })
             {
                 continue;
             }
@@ -3657,7 +3680,15 @@ internal static partial class JgsBuiltins
                         : ToDoubles("stem", x, line, col);
                 StemPlot plot = JG.Stem(positions, heights);
                 plot.XImplied = x is null;
+
+                // Under yyaxis a stem takes its side's colour and steps its line style (item 106).
+                SeriesSlot? sideSeat = plot.Axes is { YAxes.Count: > 1 } ? SeatSeries(plot) : null;
                 ApplyStemOptions(plot, spec, parsed, line, col);
+                if (sideSeat is { } seat && parsed.Text("LineStyle") is null
+                    && (spec is null || LineSpec.Parse(spec).Dash is null))
+                {
+                    plot.DashStyle = seat.Style.Dash;
+                }
                 created.Add(plot); JG.Hold(true);
             }
         }
