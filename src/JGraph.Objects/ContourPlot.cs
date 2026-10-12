@@ -21,6 +21,25 @@ namespace JGraph.Objects;
 /// A filled contour has no single height per band, so in 3D it draws its iso-lines instead of its
 /// bands.
 /// </summary>
+/// <summary>Where a contour's curves sit in a 3-D axes (<see cref="ContourPlot.ZLocation"/>).</summary>
+public enum ContourZLocation
+{
+    /// <summary>Each curve at the height of its own level (<c>contour3</c>).</summary>
+    Levels,
+
+    /// <summary>All on the plane z = 0.</summary>
+    Zero,
+
+    /// <summary>All at the bottom of the data (R2025b's 'zmin').</summary>
+    Min,
+
+    /// <summary>All at the top of the data (R2025b's 'zmax').</summary>
+    Max,
+
+    /// <summary>All at <see cref="ContourPlot.ZLocationHeight"/>.</summary>
+    Height,
+}
+
 public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, IColorMapped
 {
     private double[,] _z;
@@ -42,7 +61,9 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     private double? _levelStep;
     private double? _textStep;
     private double _labelSpacing = 144;
-    private bool _contoursAtZero;
+    private ContourZLocation _zLocation = ContourZLocation.Levels;
+    private double _zLocationHeight;
+    private bool _roundLevels;
     private bool _xImplied;
     private bool _yImplied;
 
@@ -127,9 +148,24 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
         set
         {
             _levels = value;
+            _levelsFromCount = false;
             Invalidate(InvalidationKind.Render);
         }
     }
+
+    /// <summary>
+    /// True when <see cref="Levels"/> was spaced out from a count the verb was given rather than
+    /// listed by a script: R2025b's filled contour lists its minimum before those too. Cleared by
+    /// the next <see cref="Levels"/> write.
+    /// </summary>
+    [Browsable(false)]
+    public bool LevelsFromCount
+    {
+        get => _levelsFromCount;
+        set => _levelsFromCount = value;
+    }
+
+    private bool _levelsFromCount;
 
     /// <summary>The number of automatic levels when <see cref="Levels"/> is null.</summary>
     [Category("Appearance"), DisplayName("Level count")]
@@ -246,15 +282,180 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     }
 
     /// <summary>
-    /// True when the curves lie on the floor of a 3-D axes rather than each at its own height
-    /// (MATLAB <c>ZLocation</c> 'zero'). Only consulted in a 3-D axes; a flat contour is flat either
-    /// way.
+    /// True when the curves lie on the floor of a 3-D axes at z = 0 rather than each at its own
+    /// height. Only consulted in a 3-D axes; a flat contour is flat either way. The same switch as
+    /// <see cref="ZLocation"/> being <see cref="ContourZLocation.Zero"/>, kept for the callers and
+    /// documents that spoke of it before the other places existed.
     /// </summary>
     [Category("Appearance"), DisplayName("Contours at zero")]
     public bool ContoursAtZero
     {
-        get => _contoursAtZero;
-        set => SetProperty(ref _contoursAtZero, value, InvalidationKind.Render);
+        get => _zLocation == ContourZLocation.Zero;
+        set => ZLocation = value ? ContourZLocation.Zero : ContourZLocation.Levels;
+    }
+
+    /// <summary>
+    /// Where the curves sit in a 3-D axes: each at its own level (<c>contour3</c>), on z = 0, at the
+    /// bottom or the top of the data (R2025b's <c>ZLocation</c> 'zmin' and 'zmax', which is where
+    /// <c>meshc</c> and <c>surfc</c> put theirs), or at <see cref="ZLocationHeight"/>.
+    /// </summary>
+    [Browsable(false)]
+    public ContourZLocation ZLocation
+    {
+        get => _zLocation;
+        set => SetProperty(ref _zLocation, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The height the curves sit at when <see cref="ZLocation"/> is <see cref="ContourZLocation.Height"/>.</summary>
+    [Browsable(false)]
+    public double ZLocationHeight
+    {
+        get => _zLocationHeight;
+        set => SetProperty(ref _zLocationHeight, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// True when the automatic levels are R2025b's rather than <see cref="LevelCount"/> evenly spaced
+    /// ones: the multiples of a round step chosen so that at most eleven of them span the data,
+    /// from the first above the minimum to the maximum. A <see cref="LevelStep"/> then reaches the
+    /// maximum too, and a filled contour lists the minimum first. The MATLAB-dialect verbs set it;
+    /// the model's own default keeps the even spacing it always had.
+    /// </summary>
+    [Browsable(false)]
+    public bool RoundLevels
+    {
+        get => _roundLevels;
+        set
+        {
+            _roundLevels = value;
+            _lines = null;
+            _bands = null;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
+    /// The step R2025b would choose for this data (the one <see cref="RoundLevels"/> draws): the
+    /// first of the 1, 2, 5 ladder whose levels number at most eleven. Zero for a flat or empty field.
+    /// </summary>
+    [Browsable(false)]
+    public double AutomaticStep => RoundStepFor(ZBounds());
+
+    /// <summary>R2025b's drawn levels number at most this many.</summary>
+    public const int DrawnLevelLimit = 11;
+
+    /// <summary>
+    /// R2025b's automatic contour step for data from <paramref name="min"/> to <paramref name="max"/>
+    /// (probe_113 to probe_113c): the first step of the 1, 2, 5 times a power of ten ladder whose
+    /// levels — <see cref="MultiplesInside"/> with <paramref name="inclusive"/> — number at most
+    /// <paramref name="limit"/>. For data from zero that is the smallest round step past a twelfth of
+    /// the range (the mantissa decides between 1, 2, 5 and 10 at 1.2, 2.4 and 6).
+    /// </summary>
+    public static double RoundStepFor(double min, double max, int limit = DrawnLevelLimit, bool inclusive = true)
+    {
+        double range = max - min;
+        if (!double.IsFinite(range) || range <= 0)
+        {
+            return 0;
+        }
+
+        int exponent = (int)System.Math.Floor(System.Math.Log10(range / limit));
+        for (int k = exponent - 1; k < exponent + 4; k++)
+        {
+            double scale = System.Math.Pow(10, k);
+            foreach (double unit in (double[])[1, 2, 5])
+            {
+                double step = unit * scale;
+                if (MultiplesInside(min, max, step, inclusive).Length <= limit)
+                {
+                    return step;
+                }
+            }
+        }
+
+        return System.Math.Pow(10, exponent + 4);
+    }
+
+    /// <summary>The step for data from zero to <paramref name="range"/>.</summary>
+    public static double RoundStepFor(double range) => RoundStepFor(0, range);
+
+    private static double RoundStepFor(DataRange bounds) =>
+        bounds.IsValid ? RoundStepFor(bounds.Min, bounds.Max) : 0;
+
+    /// <summary>
+    /// The multiples of <paramref name="step"/> inside the range. When <paramref name="inclusive"/>
+    /// (R2025b's drawn levels) they reach the maximum and a negative minimum counts, where a zero or
+    /// positive minimum does not — measured, not explained (probe_113c: −magic(4) lists −16, a field
+    /// from 0 to 1 starts at 0.1); otherwise (its <c>contourc</c>) they lie strictly inside. The
+    /// comparisons carry a little slack so that a maximum of 0.7 keeps the level 0.7 a step of 0.1
+    /// lands a rounding error past.
+    /// </summary>
+    public static double[] MultiplesInside(double min, double max, double step, bool inclusive)
+    {
+        if (!(step > 0) || !double.IsFinite(step) || !(max > min))
+        {
+            return [];
+        }
+
+        const double Slack = 1e-9;
+        long first;
+        long last;
+        if (inclusive)
+        {
+            first = (long)System.Math.Ceiling((min / step) - Slack);
+            if (min >= 0 && System.Math.Abs((first * step) - min) <= Slack * System.Math.Max(1, System.Math.Abs(min)))
+            {
+                first++;
+            }
+
+            last = (long)System.Math.Floor((max / step) + Slack);
+        }
+        else
+        {
+            first = (long)System.Math.Floor((min / step) + Slack) + 1;
+            last = (long)System.Math.Ceiling((max / step) - Slack) - 1;
+        }
+
+        if (last < first)
+        {
+            return [];
+        }
+
+        var levels = new double[last - first + 1];
+        for (long k = first; k <= last; k++)
+        {
+            levels[k - first] = k * step;
+        }
+
+        return levels;
+    }
+
+    /// <summary>
+    /// The levels a script reads as <c>LevelList</c>: <see cref="ResolvedLevels"/>, with the data's
+    /// minimum in front when a filled contour chose its own round levels, as R2025b lists it.
+    /// </summary>
+    [Browsable(false)]
+    public double[] LevelList
+    {
+        get
+        {
+            double[] levels = ResolvedLevels;
+            if (!_filled || !_roundLevels || (_levels is not null && !_levelsFromCount))
+            {
+                return levels;
+            }
+
+            DataRange bounds = ZBounds();
+            if (!bounds.IsValid || (levels.Length > 0 && levels[0] <= bounds.Min))
+            {
+                return levels;
+            }
+
+            var listed = new double[levels.Length + 1];
+            listed[0] = bounds.Min;
+            levels.CopyTo(listed, 1);
+            return listed;
+        }
     }
 
     /// <summary>True when the x positions were counted out from the grid rather than given.</summary>
@@ -428,11 +629,19 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
             // makes this contour3 rather than a contour drawn on the floor. Levels go out in
             // ascending order; the curves are hairlines with nothing to occlude, so no depth sort
             // buys anything.
-            // ZLocation 'zero' lays the whole set on the floor of the box instead, which is how a
-            // contour drawn under a surface is read against it.
-            bool onFloor = _contoursAtZero;
+            // ZLocation lays the whole set at one height instead — the floor of the box, the top
+            // or the bottom of the data, or a height a script named — which is how a contour drawn
+            // under a surface is read against it.
+            double? flat = _zLocation switch
+            {
+                ContourZLocation.Zero => 0,
+                ContourZLocation.Min => zBounds.Min,
+                ContourZLocation.Max => zBounds.Max,
+                ContourZLocation.Height => _zLocationHeight,
+                _ => null,
+            };
             DrawLines(
-                context, (x, y, level) => projection.ProjectPoint(x, y, onFloor ? 0 : level),
+                context, (x, y, level) => projection.ProjectPoint(x, y, flat ?? level),
                 ResolveLevels(zBounds, exclusive), colorMin, colorMax, Opacity, exclusive);
         }
         finally
@@ -803,30 +1012,29 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
 
     private double[] ResolveLevels(DataRange zBounds, bool exclusive)
     {
-        if (_levels is { Length: > 0 })
+        // A list a script wrote is the answer, an empty one included: R2025b's contour(Z, 0) lists
+        // no level and draws nothing.
+        if (_levels is not null)
         {
             return _levels;
         }
 
         // A chosen step outranks a chosen count: it says where the levels are rather than how many,
-        // so the answer is the multiples of it that fall strictly inside the data. Scratch is not
-        // reused here because the count depends on the data range rather than on a fixed field.
+        // so the answer is the multiples of it that fall inside the data — up to the maximum under
+        // R2025b's rule, short of it under the model's own. Scratch is not reused here because the
+        // count depends on the data range rather than on a fixed field.
         if (_levelStep is { } step && step > 0)
         {
-            var stepped = new List<double>();
-            double first = System.Math.Ceiling(zBounds.Min / step) * step;
-            for (double level = first; level < zBounds.Max; level += step)
+            double[] stepped = MultiplesInside(zBounds.Min, zBounds.Max, step, inclusive: _roundLevels);
+            if (stepped.Length > 0 || _roundLevels)
             {
-                if (level > zBounds.Min)
-                {
-                    stepped.Add(level);
-                }
+                return stepped;
             }
+        }
 
-            if (stepped.Count > 0)
-            {
-                return [.. stepped];
-            }
+        if (_roundLevels)
+        {
+            return MultiplesInside(zBounds.Min, zBounds.Max, RoundStepFor(zBounds), inclusive: true);
         }
 
         // Evenly spaced interior levels, excluding the exact extremes (which produce no geometry).

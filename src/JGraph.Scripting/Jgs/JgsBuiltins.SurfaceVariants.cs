@@ -31,8 +31,11 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        Define("surfc", OnNamedAxes((args, line, col) => Surface3D("surfc", args, line, col,
-            (x, y, z) => JG.SurfC(x, y, z), z => JG.SurfC(z), (x, y, z) => JG.SurfC(x, y, z))));
+        // R2025b's surfc is a surface and a contour on the floor (open item 112).
+        Define("surfc", OnNamedAxes((args, line, col) => JgsRunningDialect.ThreadIsMatlab
+            ? MatlabSurfaceWithContour("surfc", wireframe: false, args, line, col)
+            : Surface3D("surfc", args, line, col,
+                (x, y, z) => JG.SurfC(x, y, z), z => JG.SurfC(z), (x, y, z) => JG.SurfC(x, y, z))));
 
         Define("meshz", OnNamedAxes((args, line, col) => Surface3D("meshz", args, line, col,
             (x, y, z) => JG.MeshZ(x, y, z), z => JG.MeshZ(z), (x, y, z) => JG.MeshZ(x, y, z))));

@@ -91,6 +91,19 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         set => SetProperty(ref _text, value ?? string.Empty, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// A name a script gives the label (MATLAB <c>DisplayName</c>), which R2025b's text carries
+    /// although no legend lists it; kept so a script can read back what it wrote.
+    /// </summary>
+    [Browsable(false)]
+    public string DisplayName
+    {
+        get => _displayName;
+        set => SetProperty(ref _displayName, value ?? string.Empty, InvalidationKind.None);
+    }
+
+    private string _displayName = string.Empty;
+
     [Category("Appearance"), DisplayName("Font size")]
     public double FontSize
     {

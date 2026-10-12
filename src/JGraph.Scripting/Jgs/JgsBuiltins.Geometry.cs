@@ -2,6 +2,7 @@ using System.Numerics;
 using JGraph.Core.Primitives;
 using JGraph.Maths.Contours;
 using JGraph.Maths.Geometry;
+using JGraph.Objects;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -135,16 +136,47 @@ internal static partial class JgsBuiltins
             // number asks for that many chosen automatically. MATLAB gives the same argument both
             // readings, and a caller wanting a single named level writes it twice.
             int levelIndex = gridded ? 3 : 1;
-            double[] levels = AutomaticLevels(z, 10);
+            bool matlab = JgsRunningDialect.ThreadIsMatlab;
+            double[] levels = matlab ? ContourcLevels(z) : AutomaticLevels(z, 10);
             if (levelIndex < args.Count)
             {
                 levels = args[levelIndex].Type is JgsType.Number or JgsType.Bool
-                    ? AutomaticLevels(z, Count("contourc", args, levelIndex, line, col))
+                    ? matlab
+                        ? CountedLevels(z, (int)System.Math.Floor(Num("contourc", args, levelIndex, line, col)))
+                        : AutomaticLevels(z, Count("contourc", args, levelIndex, line, col))
                     : ToDoubles("contourc", args[levelIndex], line, col);
             }
 
             return ContourMatrix(x, y, z, levels);
         });
+    }
+
+    /// <summary>
+    /// R2025b's <c>contourc(Z)</c> levels (probe_113 to probe_113c): the multiples of the first step
+    /// of the 1, 2, 5 ladder that puts at most nine of them strictly inside the data — a rule a little
+    /// different from the drawn contour's, which allows eleven and reaches the maximum
+    /// (<see cref="ContourPlot.RoundStepFor(double, double, int, bool)"/>).
+    /// </summary>
+    private static double[] ContourcLevels(double[,] z)
+    {
+        double min = double.PositiveInfinity;
+        double max = double.NegativeInfinity;
+        foreach (double v in z)
+        {
+            if (double.IsFinite(v))
+            {
+                min = Math.Min(min, v);
+                max = Math.Max(max, v);
+            }
+        }
+
+        if (!double.IsFinite(min) || !double.IsFinite(max) || !(max > min))
+        {
+            return [];
+        }
+
+        double step = ContourPlot.RoundStepFor(min, max, limit: 9, inclusive: false);
+        return ContourPlot.MultiplesInside(min, max, step, inclusive: false);
     }
 
     /// <summary>1, 2, … n — the implied grid coordinates when contourc is given only a matrix.</summary>

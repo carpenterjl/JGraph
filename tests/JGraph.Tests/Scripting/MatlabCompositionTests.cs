@@ -151,9 +151,11 @@ public class MatlabCompositionTests : IDisposable
             disp(get(H(1, 2), 'Type'));
             disp(get(P(1), 'Type'));
 
-            % A column against itself would draw a straight line and say nothing, so the diagonal
-            % carries no scatter at all.
-            disp(H(2, 2));
+            % A column against itself would draw a straight line and say nothing, so the diagonal's
+            % scatter is hidden under the histogram — but it is there, as R2025b's is under its
+            % histogram axes, so the matrix of handles is full (open item 112).
+            disp(get(H(2, 2), 'Type'));
+            disp(get(H(2, 2), 'Visible'));
 
             % MATLAB's BigAx is an invisible axes that exists only to hang a title on. An invisible
             % axes here draws nothing, its title included, so the slot answers with nothing and
@@ -162,7 +164,7 @@ public class MatlabCompositionTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "[3, 3]", "[3, 3]", "[1, 3]", "[1, 3]", "scatter", "histogram", "0", "0" },
+            new[] { "[3, 3]", "[3, 3]", "[1, 3]", "[1, 3]", "scatter", "histogram", "scatter", "off", "0" },
             _output.NormalLines);
     }
 

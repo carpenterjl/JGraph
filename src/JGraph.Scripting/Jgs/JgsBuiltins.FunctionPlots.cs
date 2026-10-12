@@ -77,6 +77,40 @@ internal static partial class JgsBuiltins
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () =>
         {
+            // fplot({f, g}) draws a line per function in R2025b (open item 112): each is drawn as
+            // fplot(f) with the same tail, the first replacing the axes and the rest added.
+            if (!spatial && JgsRunningDialect.ThreadIsMatlab && rest.Count > 0 && rest[0].Type == JgsType.Cell)
+            {
+                JgsValue[] functions = rest[0].AsCell;
+                if (functions.Length == 0 || functions.Any(f => f.Type != JgsType.Function))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{verb}(f) takes a function of x, or {verb}(fx, fy) two functions of one parameter, with an optional interval.");
+                }
+
+                bool holding = JG.IsHolding;
+                var made = new List<LinePlot>();
+                try
+                {
+                    foreach (JgsValue f in functions)
+                    {
+                        JgsValue drawn = FunctionLine(verb, spatial, [f, .. rest.Skip(1)], line, col);
+                        if (JgsHandleRegistry.Require(drawn, line, col).Target is LinePlot one)
+                        {
+                            made.Add(one);
+                        }
+
+                        JG.Hold(true);
+                    }
+                }
+                finally
+                {
+                    JG.Hold(holding);
+                }
+
+                return HandlesFor(made);
+            }
+
             CurveRequest request = ReadCurveRequest(verb, spatial, rest, line, col);
             AdaptiveSamples samples = SampleCurve(verb, request, line, col);
 
@@ -97,6 +131,17 @@ internal static partial class JgsBuiltins
                 parametric ? samples.Components[0] : samples.Parameters,
                 parametric ? samples.Components[1] : samples.Values,
                 request.Spec);
+
+            // R2025b names the line after its function, in braces — {sin} — unless the script named
+            // it (open item 112); an anonymous function's body is left unnamed here.
+            if (JgsRunningDialect.ThreadIsMatlab && !parametric
+                && request.Functions[0].Name is { Length: > 0 } called
+                && called.All(static c => char.IsLetterOrDigit(c) || c == '_')
+                && !request.Options.Any(static o => o.Name.Equals("DisplayName", StringComparison.OrdinalIgnoreCase)))
+            {
+                SetDisplayName(plot, "{" + called + "}");
+            }
+
             foreach ((string name, JgsValue value) in request.Options)
             {
                 ApplyLineOption(verb, plot, name, value, line, col);
@@ -412,11 +457,21 @@ internal static partial class JgsBuiltins
                 verb, request.Functions[0], xs, ys,
                 PoleFactorFor(verb, request.Options, line, col), line, col);
 
-            double[]? levels = LevelsFor(verb, request.Options, z, line, col);
+            bool matlab = JgsRunningDialect.ThreadIsMatlab;
+            double[]? levels = LevelsFor(verb, request.Options, z, line, col, out double? step);
             bool filled = Option(request.Options, "Fill") is { } fill
                 && JgsGraphicsProperties.ToOnOff($"{verb}: Fill", fill, line, col);
 
-            ContourPlot contour = filled ? JG.ContourF(xs, ys, z, levels) : JG.Contour(xs, ys, z, levels);
+            // R2025b keeps a LevelStep as the step (LevelStepMode manual, the list automatic);
+            // JGS spells the step out as the list it makes.
+            ContourPlot contour = filled ? JG.ContourF(xs, ys, z, matlab ? levels : levels ?? SteppedLevels(z, step))
+                : JG.Contour(xs, ys, z, matlab ? levels : levels ?? SteppedLevels(z, step));
+            contour.RoundLevels = matlab;
+            if (matlab && step is { } spacing)
+            {
+                contour.LevelStep = spacing;
+            }
+
             ApplyProperties(verb, contour, request.Options, line, col);
             return HandlesFor<ContourPlot>([contour]);
         });
@@ -504,10 +559,14 @@ internal static partial class JgsBuiltins
         return z;
     }
 
-    /// <summary>The levels <c>fcontour</c> was told to draw, or none to let the axes choose.</summary>
+    /// <summary>
+    /// The levels <c>fcontour</c> was told to draw, or none to let the axes choose; a
+    /// <c>LevelStep</c> comes back as <paramref name="step"/> for the caller to spell out.
+    /// </summary>
     private static double[]? LevelsFor(
-        string verb, List<(string Name, JgsValue Value)> options, double[,] z, int line, int col)
+        string verb, List<(string Name, JgsValue Value)> options, double[,] z, int line, int col, out double? step)
     {
+        step = null;
         if (Option(options, "LevelList") is { } list)
         {
             double[] levels = ToDoubles($"{verb}: LevelList", list, line, col);
@@ -516,18 +575,29 @@ internal static partial class JgsBuiltins
                 : throw new JgsRuntimeException(line, col, $"{verb}: LevelList needs at least one level.");
         }
 
-        if (Option(options, "LevelStep") is not { } step)
+        if (Option(options, "LevelStep") is not { } given)
         {
             return null;
         }
 
-        double spacing = NumOf($"{verb}: LevelStep", step, line, col);
+        double spacing = NumOf($"{verb}: LevelStep", given, line, col);
         if (!(spacing > 0) || !double.IsFinite(spacing))
         {
             throw new JgsRuntimeException(line, col, $"{verb}: LevelStep is a positive spacing.");
         }
 
-        // A step is a list once the readings say how far it has to reach.
+        step = spacing;
+        return null;
+    }
+
+    /// <summary>A step as the list of its multiples across the readings, which is how JGS keeps it.</summary>
+    private static double[]? SteppedLevels(double[,] z, double? step)
+    {
+        if (step is not { } spacing)
+        {
+            return null;
+        }
+
         double low = double.PositiveInfinity, high = double.NegativeInfinity;
         foreach (double value in z)
         {

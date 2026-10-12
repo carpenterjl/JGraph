@@ -468,6 +468,12 @@ internal static partial class JgsBuiltins
             data = [];
         }
 
+        // R2025b's fill and fill3 are a patch per polygon (open item 112); patch stays one object.
+        if (JgsRunningDialect.ThreadIsMatlab && verb is "fill" or "fill3" && data.Count > 0)
+        {
+            return MatlabFillPolygons(verb, data, options, dimensions == Dimensions.Three, line, col);
+        }
+
         PatchPlot patch = data.Count == 0
             ? FromFacesAndVertices(verb, options, line, col)
             : FromCoordinates(verb, data, line, col, dimensions);

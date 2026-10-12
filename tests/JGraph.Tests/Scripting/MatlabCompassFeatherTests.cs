@@ -7,10 +7,11 @@ using Xunit;
 namespace JGraph.Tests.Scripting;
 
 /// <summary>
-/// M56 wave D: the four verbs that draw what the object model already had. <c>compass</c> and
-/// <c>feather</c> are arrow fields with their automatic scaling switched off, <c>polar</c> is
-/// <c>polarplot</c> under its older name, and <c>polarbubblechart</c> is <c>bubblechart</c>'s sizing
-/// read round a circle — so what these check is the arranging, which is the only new thing.
+/// M56 wave D: the four verbs that draw what the object model already had. Since open item 112
+/// (ADR 0229) <c>compass</c> and <c>feather</c> are R2025b's: a line per arrow, five points each
+/// from <c>compass.m</c>'s arrow, on one colour-order seat, with <c>feather</c>'s baseline;
+/// <c>polar</c> is <c>polarplot</c> under its older name, and <c>polarbubblechart</c> is
+/// <c>bubblechart</c>'s sizing read round a circle.
 /// </summary>
 [Collection("JG facade")]
 public class MatlabCompassFeatherTests : IDisposable
@@ -43,24 +44,31 @@ public class MatlabCompassFeatherTests : IDisposable
     }
 
     /// <summary>
-    /// The components are Cartesian and the chart is not, so the verb's whole job is the conversion:
-    /// every arrow starts in the middle, points along its bearing, and reaches its own length.
+    /// A line per arrow, each the five points of compass.m's arrow turned and scaled by its reading,
+    /// read on the polar axes as angles and radii; all of them on the first one's seat.
     /// </summary>
     [Fact]
-    public async Task CompassTurnsComponentsIntoBearingsAndLengthsFromTheMiddle()
+    public async Task CompassDrawsALinePerArrowFromTheMiddleOnOneSeat()
     {
         await RunAsserting("""
             figure(1);
             h = compass([1 0 -1], [0 2 0]);
             disp(get(gca, 'Type'));
-            disp(round(get(h, 'XData') * 1000) / 1000);
-            disp(get(h, 'YData'));
-            disp(get(h, 'UData'));
-            disp(get(h, 'VData'));
+            disp(size(h));
+            disp(get(h(1), 'Type'));
+            disp(numel(get(h(1), 'XData')));
+            disp(round(get(h(2), 'YData') * 1000) / 1000);
+            disp(round(get(h(2), 'XData') * 1000) / 1000);
+            disp(isequal(get(h(1), 'Color'), get(h(3), 'Color')));
+            disp(get(h(3), 'SeriesIndex'));
             """);
 
         Assert.Equal(
-            new[] { "polaraxes", "[0, 1.571, 3.142]", "[0, 0, 0]", "[0, 0, 0]", "[1, 2, 1]" },
+            new[]
+            {
+                "polaraxes", "[3, 1]", "line", "5", "[0, 2, 1.608, 2, 1.608]",
+                "[0, 1.571, 1.67, 1.571, 1.471]", "true", "1",
+            },
             _output.NormalLines);
     }
 
@@ -74,8 +82,11 @@ public class MatlabCompassFeatherTests : IDisposable
         await RunAsserting("""
             figure(1);
             c = compass([1+1i, -2]);
-            disp(round(get(c, 'XData') * 1000) / 1000);
-            disp(round(get(c, 'VData') * 1000) / 1000);
+            disp(numel(c));
+            r = get(c(1), 'YData');
+            disp(round(r(2) * 1000) / 1000);
+            r = get(c(2), 'YData');
+            disp(r(2));
 
             figure(2);
             p = polarplot([1+1i, -2]);
@@ -83,13 +94,14 @@ public class MatlabCompassFeatherTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "[0.785, 3.142]", "[1.414, 2]", "[0.785, 3.142]" },
+            new[] { "2", "1.414", "2", "[0.785, 3.142]" },
             _output.NormalLines);
     }
 
     /// <summary>
     /// The arrows are the readings, not a sample of a field, so nothing is scaled to fit: an arrow of
-    /// length two is two units long, and a feather's arrows sit one per sample along the x axis.
+    /// length two is two units long, a feather's arrows sit one per sample along the x axis with a
+    /// NaN between shaft and head, and a baseline runs under them.
     /// </summary>
     [Fact]
     public async Task FeatherLaysTheSameArrowsAlongTheXAxisOnSquarePaperAndScalesNothing()
@@ -98,15 +110,20 @@ public class MatlabCompassFeatherTests : IDisposable
             figure(1);
             f = feather([1 2 3], [1 -1 0]);
             disp(get(gca, 'Type'));
-            disp(get(f, 'XData'));
-            disp(get(f, 'YData'));
-            disp(get(f, 'UData'));
-            disp(get(f, 'VData'));
-            disp(get(f, 'AutoScale'));
+            disp(size(f));
+            disp(round(get(f(1), 'XData') * 100) / 100);
+            disp(round(get(f(1), 'YData') * 100) / 100);
+            disp(get(f(4), 'XData'));
+            disp(get(f(4), 'YData'));
+            disp(get(gca, 'ColorOrderIndex'));
             """);
 
         Assert.Equal(
-            new[] { "axes", "[1, 2, 3]", "[0, 0, 0]", "[1, 2, 3]", "[1, -1, 0]", "off" },
+            new[]
+            {
+                "axes", "[4, 1]", "[1, 2, NaN, 1.72, 2, 1.88]", "[0, 1, NaN, 0.88, 1, 0.72]",
+                "[1, 3]", "[0, 0]", "2",
+            },
             _output.NormalLines);
     }
 
@@ -122,43 +139,38 @@ public class MatlabCompassFeatherTests : IDisposable
 
             h = compass(first, [1 1], [1 -1], 'LineWidth', 3, 'ShowArrowHead', 'off');
             disp(gca == second);
-            disp(get(h, 'LineWidth'));
-            disp(get(h, 'ShowArrowHead'));
+            disp(get(h(2), 'LineWidth'));
+            disp(numel(get(h(1), 'XData')));
             disp(numel(get(first, 'Children')));
 
             figure(2);
             spec = compass([1 1], [1 -1], 'r');
-            disp(get(spec, 'Color'));
+            disp(get(spec(2), 'Color'));
             """);
 
         Assert.Equal(
-            new[] { "true", "3", "off", "1", "[1, 0, 0]" },
+            new[] { "true", "3", "2", "2", "[1, 0, 0]" },
             _output.NormalLines);
     }
 
     /// <summary>
-    /// The six arrays only mean anything together, so one may be replaced and a replacement of the
-    /// wrong length is refused rather than leaving a field half rewritten.
+    /// compass.m leaves the colour count where its lines took it, so a second compass on hold takes
+    /// the colour after them all; feather.m hands the next plot the seat after its own.
     /// </summary>
     [Fact]
-    public async Task AnArrowFieldsArraysCanBeWrittenBackThroughItsHandle()
+    public async Task ASecondCompassOnHoldTakesTheColourAfterAllTheArrows()
     {
         await RunAsserting("""
             figure(1);
             h = compass([1 2], [0 0]);
-            set(h, 'VData', [5 6]);
-            disp(get(h, 'VData'));
+            hold on;
+            k = compass(1, 1);
+            disp(get(h(1), 'SeriesIndex'));
+            disp(get(h(2), 'SeriesIndex'));
+            disp(get(k, 'SeriesIndex'));
             """);
 
-        Assert.Equal(new[] { "[5, 6]" }, _output.NormalLines);
-
-        string message = await RunExpectingFailure("""
-            figure(2);
-            h = compass([1 2], [0 0]);
-            set(h, 'VData', [1 2 3]);
-            """);
-
-        Assert.Contains("VData", message, StringComparison.Ordinal);
+        Assert.Equal(new[] { "1", "1", "3" }, _output.NormalLines);
     }
 
     /// <summary>The older name for the same chart, line spec and all.</summary>
@@ -217,14 +229,13 @@ public class MatlabCompassFeatherTests : IDisposable
     }
 
     [Fact]
-    public async Task AMisspelledOptionNamesTheOnesThatExist()
+    public async Task AMisspelledOptionIsRefusedByName()
     {
         string message = await RunExpectingFailure("""
             figure(1);
             feather([1 2], [1 2], 'Colour', 'r');
             """);
 
-        Assert.Contains("'Colour'", message, StringComparison.Ordinal);
-        Assert.Contains("ShowArrowHead", message, StringComparison.Ordinal);
+        Assert.Contains("Colour", message, StringComparison.Ordinal);
     }
 }

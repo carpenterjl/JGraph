@@ -179,71 +179,67 @@ public class MatlabM79TablePiePropertyTests : IDisposable
     // --- The pie, answered as the patch MATLAB draws it with --------------------------------------
 
     /// <summary>
-    /// A pie's mesh: one face per value, and a fan of vertices in each. Reading it is how a script
-    /// checks the chart it asked for, and it is the half of the patch surface that is derived rather
-    /// than chosen.
+    /// A slice's mesh: one face, a fan of vertices. Since open item 112 (ADR 0229) each slice is its
+    /// own patch, as R2025b's is, so the mesh a script reads is the slice's.
     /// </summary>
     [Fact]
-    public async Task APieAnswersWithTheMeshItsWedgesAreMadeOf()
+    public async Task APieSliceAnswersWithTheMeshItsWedgeIsMadeOf()
     {
         ScriptRunResult result = await RunMatlab("""
             p = pie([1 2 3]);
-            faces = size(get(p, 'Faces'), 1);
-            vertices = size(get(p, 'Vertices'), 2);
-            coordinates = numel(get(p, 'XData'));
-            offPlane = sum(abs(get(p, 'ZData')));
+            faces = size(get(p(1), 'Faces'), 1);
+            vertices = size(get(p(1), 'Vertices'), 2);
+            coordinates = numel(get(p(1), 'XData'));
+            offPlane = sum(abs(get(p(1), 'ZData')));
+            slices = numel(findobj(gcf, 'Type', 'patch'));
             """);
 
         Succeeded(result);
-        Assert.Equal(3, Number(result, "faces"));
+        Assert.Equal(1, Number(result, "faces"));
         Assert.Equal(3, Number(result, "vertices"));
-        Assert.True(Number(result, "coordinates") > 3, "a wedge is a fan, not a triangle");
+        Assert.Equal(20, Number(result, "coordinates"));
         Assert.Equal(0, Number(result, "offPlane"));
+        Assert.Equal(3, Number(result, "slices"));
     }
 
-    /// <summary>
-    /// The wedges keep what a script chose about them when the values move: the geometry is rebuilt
-    /// and nothing else is. A styling that had to be set again after every write would make the
-    /// property surface a thing to work around rather than a thing to use.
-    /// </summary>
+    /// <summary>A slice takes the whole patch surface, which is what makes it a patch.</summary>
     [Fact]
-    public async Task ThePieKeepsItsStylingWhenItsValuesChange()
+    public async Task APieSliceTakesThePatchSurface()
     {
         ScriptRunResult result = await RunMatlab("""
             p = pie([1 2 3]);
-            set(p, 'LineStyle', ':');
-            set(p, 'Marker', 'o');
-            set(p, 'AmbientStrength', 0.8);
-            set(p, 'Values', [1 1 1 1]);
-            faces = size(get(p, 'Faces'), 1);
-            dash = get(p, 'LineStyle');
-            marker = get(p, 'Marker');
-            ambient = get(p, 'AmbientStrength');
+            set(p(1), 'LineStyle', ':');
+            set(p(1), 'Marker', 'o');
+            set(p(1), 'AmbientStrength', 0.8);
+            dash = get(p(1), 'LineStyle');
+            marker = get(p(1), 'Marker');
+            ambient = get(p(1), 'AmbientStrength');
+            untouched = get(p(3), 'LineStyle');
             """);
 
         Succeeded(result);
-        Assert.Equal(4, Number(result, "faces"));
         Assert.Equal(":", Text(result, "dash"));
         Assert.Equal("o", Text(result, "marker"));
         Assert.Equal(0.8, Number(result, "ambient"));
+        Assert.Equal("-", Text(result, "untouched"));
     }
 
     /// <summary>
-    /// A pie's faces take a colour each out of the colormap unless a script names one, and MATLAB's
-    /// word for that is <c>'flat'</c> — the reading a surface's own <c>FaceColor</c> takes here.
+    /// A slice takes its colour out of the colormap unless a script names one, and MATLAB's word for
+    /// that is <c>'flat'</c> — the reading a surface's own <c>FaceColor</c> takes here.
     /// </summary>
     [Fact]
-    public async Task APiesFaceColourIsFlatUntilOneIsChosen()
+    public async Task APieSlicesFaceColourIsFlatUntilOneIsChosen()
     {
         ScriptRunResult result = await RunMatlab("""
             p = pie([1 2 3]);
-            before = get(p, 'FaceColor');
-            set(p, 'FaceColor', [1 0 0]);
-            chosen = get(p, 'FaceColor');
-            set(p, 'FaceColor', 'flat');
-            after = get(p, 'FaceColor');
-            set(p, 'FaceColor', 'none');
-            hidden = get(p, 'FaceColor');
+            before = get(p(1), 'FaceColor');
+            set(p(1), 'FaceColor', [1 0 0]);
+            chosen = get(p(1), 'FaceColor');
+            set(p(1), 'FaceColor', 'flat');
+            after = get(p(1), 'FaceColor');
+            set(p(1), 'FaceColor', 'none');
+            hidden = get(p(1), 'FaceColor');
             """);
 
         Succeeded(result);
@@ -254,22 +250,22 @@ public class MatlabM79TablePiePropertyTests : IDisposable
     }
 
     /// <summary>
-    /// The material block a pie is lit by, and the two normals it works out rather than keeps. The
-    /// normals are the patch's own answer, so a pie has them for the same reason a patch does.
+    /// The material block a slice is lit by, and the normal it works out rather than keeps. The
+    /// normal is the patch's own answer, so a slice has it for the same reason a patch does.
     /// </summary>
     [Fact]
-    public async Task APieCarriesThePatchMaterialAndItsComputedNormals()
+    public async Task APieSliceCarriesThePatchMaterialAndItsComputedNormal()
     {
         ScriptRunResult result = await RunMatlab("""
             p = pie([1 2 3]);
-            lighting = get(p, 'FaceLighting');
-            ambient = get(p, 'AmbientStrength');
-            diffuse = get(p, 'DiffuseStrength');
-            specular = get(p, 'SpecularStrength');
-            exponent = get(p, 'SpecularExponent');
-            reflect = get(p, 'SpecularColorReflectance');
-            normals = size(get(p, 'FaceNormals'), 1);
-            mode = get(p, 'FaceNormalsMode');
+            lighting = get(p(1), 'FaceLighting');
+            ambient = get(p(1), 'AmbientStrength');
+            diffuse = get(p(1), 'DiffuseStrength');
+            specular = get(p(1), 'SpecularStrength');
+            exponent = get(p(1), 'SpecularExponent');
+            reflect = get(p(1), 'SpecularColorReflectance');
+            normals = size(get(p(1), 'FaceNormals'), 1);
+            mode = get(p(1), 'FaceNormalsMode');
             """);
 
         Succeeded(result);
@@ -279,7 +275,7 @@ public class MatlabM79TablePiePropertyTests : IDisposable
         Assert.Equal(0.9, Number(result, "specular"));
         Assert.Equal(10, Number(result, "exponent"));
         Assert.Equal(1, Number(result, "reflect"));
-        Assert.Equal(3, Number(result, "normals"));
+        Assert.Equal(1, Number(result, "normals"));
         Assert.Equal("auto", Text(result, "mode"));
     }
 
@@ -380,9 +376,7 @@ public class MatlabM79TablePiePropertyTests : IDisposable
             ("s = scatter([1 2], [1 2]); set(s, 'ZVariable', 'a');", "draw it with scatter3"),
             ("s = scatter3([1 2], [1 2], [1 2]); set(s, 'AlphaVariable', 'a');",
                 "no per-point transparency"),
-            ("p = pie([1 2 3]); set(p, 'Faces', [1 2 3]);", "set Values, Explode"),
-            ("p = pie([1 2 3]); set(p, 'XData', [1 2 3]);", "set Values, Explode"),
-            ("p = pie([1 2 3]); set(p, 'AmbientStrength', 5);", "from 0 through 1"),
+            ("p = pie([1 2 3]); set(p(1), 'AmbientStrength', 5);", "from 0 through 1"),
             ("xline(1, 'Label', 'x', 'LabelOrientation', 'sideways');",
                 "is 'aligned' or 'horizontal'"));
 
@@ -399,10 +393,11 @@ public class MatlabM79TablePiePropertyTests : IDisposable
     /// <summary>
     /// What each kind answers, counted the way the coverage probe counts it. These are the numbers
     /// the milestone claims, pinned so that a later wave cannot quietly lose one. Since ADR 0220 a
-    /// MATLAB script's <c>get(h)</c> lists only the names R2025b lists too (a pie is not recorded).
+    /// MATLAB script's <c>get(h)</c> lists only the names R2025b lists too; since ADR 0229 a pie's
+    /// first handle is a patch.
     /// </summary>
     [Theory]
-    [InlineData("h = pie([1 2 3]);", 75)]
+    [InlineData("h = pie([1 2 3]); h = h(1);", 55)]
     [InlineData("h = scatter([1 2 3], [1 2 3]);", 60)]
     [InlineData("h = bubblechart([1 2], [1 2], [10 20]);", 59)]
     [InlineData("h = xline(1);", 36)]

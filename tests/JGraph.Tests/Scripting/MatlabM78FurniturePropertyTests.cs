@@ -591,7 +591,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
             dash = c.LineStyle;
             c.LabelSpacing = 200;
             spacing = c.LabelSpacing;
-            c.ZLocation = 'zero';
+            c.ZLocation = 'zmin';
             where = c.ZLocation;
             beforeStep = c.LevelStepMode;
             c.LevelStep = 2;
@@ -606,7 +606,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
         Assert.Equal([0, 0, 0], Row(result, "ink"));
         Assert.Equal("--", Text(result, "dash"));
         Assert.Equal(200, Number(result, "spacing"));
-        Assert.Equal("zero", Text(result, "where"));
+        Assert.Equal("zmin", Text(result, "where"));
         Assert.Equal("auto", Text(result, "beforeStep"));
         Assert.Equal("manual", Text(result, "afterStep"));
         Assert.Equal(2, Number(result, "step"));
@@ -868,7 +868,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
             ("plot([1 2 3]); set(legend('a'), 'Orientation', 'sideways');", "Orientation is"),
             ("surf(peaks(8)); set(colorbar, 'Location', 'sideways');", "Location is one of"),
             ("set(surf(peaks(8)), 'MeshStyle', 'diagonal');", "MeshStyle is"),
-            ("[~, c] = contour(peaks(8)); set(c, 'ZLocation', 'floor');", "ZLocation is"));
+            ("[~, c] = contour(peaks(8)); set(c, 'ZLocation', 'floor');", "ZLocation value must be"));
 
     /// <summary>
     /// The four refusals that are decisions rather than typos. Each names what this build does not

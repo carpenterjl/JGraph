@@ -721,6 +721,42 @@ internal static partial class JgsGraphicsProperties
         // every other patch property does rather than through a second copy of itself.
         static PatchPlot Shape(JgsHandleEntry entry) => PatchOf(entry);
 
+        // A patch coloured through its CData reads 'flat' or 'interp', as R2025b's does, until a
+        // colour is chosen; the words hand the colouring back to the data (open item 112).
+        Put(table, "FaceColor",
+            entry => Shape(entry) is var shape && !shape.FaceVisible ? JgsValue.Str("none")
+                : shape.FaceColor is { } chosen ? ColorRow(chosen)
+                : shape.ColorData is not null
+                    ? JgsValue.Str(shape.Shading == PatchShading.Interp ? "interp" : "flat")
+                    : ColorRow(JgsBuiltins.PaletteColorFor(shape)),
+            (entry, value, line, col) =>
+            {
+                PatchPlot shape = Shape(entry);
+                if (JgsBuiltins.IsTextScalar(value))
+                {
+                    string word = JgsBuiltins.TextOf(value);
+                    if (word.Equals("none", StringComparison.OrdinalIgnoreCase))
+                    {
+                        shape.FaceVisible = false;
+                        return;
+                    }
+
+                    if (word.Equals("flat", StringComparison.OrdinalIgnoreCase)
+                        || word.Equals("interp", StringComparison.OrdinalIgnoreCase))
+                    {
+                        shape.FaceColor = null;
+                        shape.FaceVisible = true;
+                        shape.Shading = word.Equals("interp", StringComparison.OrdinalIgnoreCase)
+                            ? PatchShading.Interp
+                            : PatchShading.Flat;
+                        return;
+                    }
+                }
+
+                shape.FaceColor = JgsBuiltins.OptionColor(value, line, col, "patch");
+                shape.FaceVisible = true;
+            });
+
         Put(table, "CData",
             entry => Row([.. Shape(entry).ColorData ?? []]),
             (entry, value, line, col) =>
@@ -1405,12 +1441,18 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => Map(entry).Filled = ToOnOff("Fill", value, line, col));
 
         AddNullableMode(table, "LevelListMode",
-            entry => Map(entry).Levels is { Length: > 0 },
+            entry => Map(entry).Levels is not null,
             entry => Map(entry).Levels = Map(entry).ResolvedLevels,
             entry => Map(entry).Levels = null);
 
+        // Under R2025b's rule the automatic step is the data's round step whatever list is drawn
+        // (open item 113: contour(Z, 3) still reads LevelStep 2); the model's own is the spacing of
+        // the levels it drew.
+        static double AutomaticStepOf(ContourPlot map) =>
+            map.RoundLevels ? map.AutomaticStep : StepOf(map.ResolvedLevels);
+
         Put(table, "LevelStep",
-            entry => JgsValue.Number(Map(entry).LevelStep ?? StepOf(Map(entry).ResolvedLevels)),
+            entry => JgsValue.Number(Map(entry).LevelStep ?? AutomaticStepOf(Map(entry))),
             (entry, value, line, col) =>
             {
                 double step = Numbers("LevelStep", value, 1, line, col)[0];
@@ -1427,7 +1469,7 @@ internal static partial class JgsGraphicsProperties
 
         AddNullableMode(table, "LevelStepMode",
             entry => Map(entry).LevelStep is not null,
-            entry => Map(entry).LevelStep ??= StepOf(Map(entry).ResolvedLevels),
+            entry => Map(entry).LevelStep ??= AutomaticStepOf(Map(entry)),
             entry => Map(entry).LevelStep = null);
 
         // MATLAB's word for the levels that carry text; the model has always called them label levels.
@@ -1498,15 +1540,44 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => Map(entry).LineDash =
                 ToDash("LineStyle", JgsBuiltins.StrOf("LineStyle", value, line, col), line, col));
 
-        AddWordProperty(table, "ZLocation",
-            entry => Map(entry).ContoursAtZero ? "zero" : "auto",
-            (entry, word, line, col) => Map(entry).ContoursAtZero = word switch
+        // R2025b's ZLocation is 'zmin', 'zmax' or a height, 0 until one is written (contour3 lifts
+        // its curves whatever it says); JGS's words 'auto' and 'zero' are still taken (open item 113).
+        Put(table, "ZLocation",
+            entry => Map(entry).ZLocation switch
             {
-                "auto" => false,
-                "zero" => true,
-                _ => throw new JgsRuntimeException(
-                    line, col, $"ZLocation is 'auto' or 'zero', but got '{word}'."),
+                ContourZLocation.Min => JgsValue.Str("zmin"),
+                ContourZLocation.Max => JgsValue.Str("zmax"),
+                ContourZLocation.Height => JgsValue.Number(Map(entry).ZLocationHeight),
+                ContourZLocation.Zero when !JgsRunningDialect.ThreadIsMatlab => JgsValue.Str("zero"),
+                ContourZLocation.Levels when !JgsRunningDialect.ThreadIsMatlab => JgsValue.Str("auto"),
+                _ => JgsValue.Number(0),
+            },
+            (entry, value, line, col) =>
+            {
+                ContourPlot map = Map(entry);
+                if (value.Type is JgsType.Number or JgsType.Bool)
+                {
+                    map.ZLocationHeight = value.AsNumber;
+                    map.ZLocation = ContourZLocation.Height;
+                    return;
+                }
+
+                string word = JgsBuiltins.IsTextScalar(value) ? JgsBuiltins.TextOf(value).ToLowerInvariant() : "";
+                map.ZLocation = word switch
+                {
+                    "zmin" => ContourZLocation.Min,
+                    "zmax" => ContourZLocation.Max,
+                    "zero" when !JgsRunningDialect.ThreadIsMatlab => ContourZLocation.Zero,
+                    "auto" when !JgsRunningDialect.ThreadIsMatlab => ContourZLocation.Levels,
+                    _ => throw new JgsRuntimeException(line, col, "MATLAB:datatypes:InvalidZLocationValue",
+                        "Error setting property 'ZLocation' of class 'Contour':\n"
+                        + "ZLocation value must be 'zmin', 'zmax', or a numeric scalar."),
+                };
             });
+        AddNullableMode(table, "ZLocationMode",
+            entry => Map(entry).ZLocation is ContourZLocation.Min or ContourZLocation.Max or ContourZLocation.Height,
+            entry => { },
+            entry => Map(entry).ZLocation = ContourZLocation.Levels);
 
         // The matrix a script reads the curves out of, in the two-row form clabel and contourc use.
         Put(table, "ContourMatrix", entry => JgsBuiltins.ContourMatrixFor(Map(entry)));

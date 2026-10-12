@@ -1408,9 +1408,54 @@ internal static partial class JgsGraphicsProperties
 
         if (typeof(ContourPlot).IsAssignableFrom(type))
         {
-            Put(table, "XData", entry => Row(((ContourPlot)entry.Target).X));
-            Put(table, "YData", entry => Row(((ContourPlot)entry.Target).Y));
-            Put(table, "ZData", entry => Grid(((ContourPlot)entry.Target).Z));
+            // Writable since open item 113: R2025b redraws a contour whose ZData is replaced, and
+            // counts its positions out again when they were counted in the first place.
+            Put(table, "XData",
+                entry => Row(((ContourPlot)entry.Target).X),
+                (entry, value, line, col) =>
+                {
+                    var map = (ContourPlot)entry.Target;
+                    double[] x = JgsBuiltins.ToDoubles("XData", value, line, col);
+                    if (x.Length != map.Z.GetLength(1))
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            $"XData needs one value per column of ZData ({map.Z.GetLength(1)}), but got {x.Length}.");
+                    }
+
+                    map.SetData(x, map.Y, map.Z);
+                    map.XImplied = false;
+                });
+            Put(table, "YData",
+                entry => Row(((ContourPlot)entry.Target).Y),
+                (entry, value, line, col) =>
+                {
+                    var map = (ContourPlot)entry.Target;
+                    double[] y = JgsBuiltins.ToDoubles("YData", value, line, col);
+                    if (y.Length != map.Z.GetLength(0))
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            $"YData needs one value per row of ZData ({map.Z.GetLength(0)}), but got {y.Length}.");
+                    }
+
+                    map.SetData(map.X, y, map.Z);
+                    map.YImplied = false;
+                });
+            Put(table, "ZData",
+                entry => Grid(((ContourPlot)entry.Target).Z),
+                (entry, value, line, col) =>
+                {
+                    var map = (ContourPlot)entry.Target;
+                    double[,] z = JgsBuiltins.Matrix("ZData", [value], 0, line, col);
+                    double[] x = map.XImplied || map.X.Length != z.GetLength(1) ? Counted(z.GetLength(1)) : map.X;
+                    double[] y = map.YImplied || map.Y.Length != z.GetLength(0) ? Counted(z.GetLength(0)) : map.Y;
+                    if ((!map.XImplied && x.Length != map.X.Length) || (!map.YImplied && y.Length != map.Y.Length))
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            $"ZData is {z.GetLength(0)}x{z.GetLength(1)} but the grid is {map.Y.Length}x{map.X.Length}; write XData and YData first.");
+                    }
+
+                    map.SetData(x, y, z);
+                });
             AddContourBlock(table);
         }
 
@@ -2070,6 +2115,7 @@ internal static partial class JgsGraphicsProperties
                 "patch",
                 entry => ((PatchPlot)entry.Target).FaceVisible,
                 (entry, on) => ((PatchPlot)entry.Target).FaceVisible = on);
+            AddPatchMaterialBlock(table);
             AddPatchBlock(table);
         }
 
@@ -2102,8 +2148,9 @@ internal static partial class JgsGraphicsProperties
                 });
             // MATLAB calls the levels LevelList, and answers with the ones actually drawn rather than
             // with nothing when they were chosen automatically — which is what clabel needs to see.
+            // A filled contour lists its minimum first (open item 113).
             Put(table, "LevelList",
-                entry => Row(((ContourPlot)entry.Target).ResolvedLevels),
+                entry => Row(((ContourPlot)entry.Target).LevelList),
                 (entry, value, line, col) => ((ContourPlot)entry.Target).Levels =
                     JgsBuiltins.ToDoubles("LevelList", value, line, col));
         }
@@ -2359,6 +2406,12 @@ internal static partial class JgsGraphicsProperties
                 entry => JgsValue.Str(((TextAnnotation)entry.Target).FontFamily),
                 (entry, value, line, col) => ((TextAnnotation)entry.Target).FontFamily =
                     JgsBuiltins.StrOf("FontName", value, line, col));
+
+            // R2025b's text carries a DisplayName though no legend lists it (open item 112).
+            Put(table, "DisplayName",
+                entry => JgsValue.Str(((TextAnnotation)entry.Target).DisplayName),
+                (entry, value, line, col) => ((TextAnnotation)entry.Target).DisplayName =
+                    JgsBuiltins.StrOf("DisplayName", value, line, col));
 
             // Reflection would reach the enum under its own name and answer 'tex' either way, but
             // MATLAB's three words are the property's whole vocabulary and a wrong one should say so

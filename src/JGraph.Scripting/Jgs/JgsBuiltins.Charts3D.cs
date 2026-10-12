@@ -17,7 +17,7 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    private static void RegisterChart3DBuiltins(JgsEnvironment env)
+    private static void RegisterChart3DBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(
@@ -26,7 +26,7 @@ internal static partial class JgsBuiltins
         DefineSilent("stem3", (args, line, col) => Stem3(args, line, col));
         DefineSilent("bar3", (args, line, col) => Bar3("bar3", horizontal: false, args, line, col));
         DefineSilent("bar3h", (args, line, col) => Bar3("bar3h", horizontal: true, args, line, col));
-        DefineSilent("pie3", (args, line, col) => Pie3(args, line, col));
+        DefineSilent("pie3", (args, line, col) => Pie3(args, host, line, col));
     }
 
     // --- stem3 ------------------------------------------------------------------------------------
@@ -209,9 +209,9 @@ internal static partial class JgsBuiltins
     /// name/value pairs. <c>bar3h</c> is the same chart with the bars laid along X, which is a
     /// property of the plot rather than a kind of its own — so the two verbs are one function.
     /// <para>
-    /// The whole matrix becomes one plot and one handle. MATLAB answers with a surface per column;
-    /// this is the same divergence <c>tetramesh</c> makes, and for the same reason — the boxes are
-    /// painted back to front, and the sort has to see all of them.
+    /// In JGS the whole matrix becomes one plot and one handle, because the boxes are painted back
+    /// to front and the sort has to see all of them. The MATLAB dialect answers as R2025b does, with
+    /// a surface per column (open item 112), and the renderer's per-object depth sort orders them.
     /// </para>
     /// </summary>
     private static JgsValue Bar3(
@@ -268,6 +268,13 @@ internal static partial class JgsBuiltins
                         $"{verb} has no option '{word}'. It takes {string.Join(", ", Bar3OptionNames)}, "
                             + $"and the layout words {string.Join(", ", Bar3StyleWords)}.");
                 }
+            }
+
+            // R2025b's bar3 is a surface per column (open item 112).
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                return MatlabBar3(verb, horizontal, heights, rows, width, style ?? Bar3DStyle.Detached, face,
+                    rest, optionStart, line, col);
             }
 
             Bar3DPlot plot = JG.Bar3(heights, rows);
@@ -364,7 +371,7 @@ internal static partial class JgsBuiltins
     /// The two optional positions tell themselves apart by type rather than by counting, exactly as
     /// the flat <c>pie</c> does.
     /// </summary>
-    private static JgsValue Pie3(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue Pie3(IReadOnlyList<JgsValue> args, JGraphScriptGlobals host, int line, int col)
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () =>
@@ -372,6 +379,12 @@ internal static partial class JgsBuiltins
             if (rest.Count == 0)
             {
                 throw new JgsRuntimeException(line, col, "pie3 expects the values to divide: pie3(x).");
+            }
+
+            // R2025b's pie3 is a patch, a surface, a patch and a text per slice (open item 112).
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                return MatlabPieVerb("pie3", rest, host, Pie3OptionNames, line, col);
             }
 
             double[] values = ToDoubles("pie3", rest[0], line, col);

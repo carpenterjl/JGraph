@@ -24,7 +24,7 @@ internal static partial class JgsBuiltins
         "Color", "FontSize", "FontName", "FontWeight", "FontAngle", "Interpreter",
     ];
 
-    private static void RegisterDecorationBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
+    private static void RegisterDecorationBuiltins(JgsEnvironment env, JgsRunningDialect dialect, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -128,7 +128,7 @@ internal static partial class JgsBuiltins
         {
             // The peel is here rather than around Single so both the one-output and the
             // [C, h] = contour(ax, Z) paths see the same argument list.
-            var body = OnNamedAxes((args, line, col) => Contour(name, args, line, col, filled, elevated));
+            var body = OnNamedAxes((args, line, col) => Contour(name, args, host, line, col, filled, elevated));
 
             JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
             {

@@ -2215,15 +2215,19 @@ internal static partial class JgsBuiltins
             (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z))));
         DefineSilent("mesh", OnNamedAxes((args, line, col) => Surface3D("mesh", args, line, col,
             (x, y, z) => JG.Mesh(x, y, z), z => JG.Mesh(z), (x, y, z) => JG.Mesh(x, y, z))));
-        DefineSilent("meshc", OnNamedAxes((args, line, col) => Surface3D("meshc", args, line, col,
-            (x, y, z) => JG.MeshC(x, y, z),
-            z =>
-            {
-                SurfacePlot surface = JG.Mesh(z);
-                surface.ShowContourBelow = true;
-                return surface;
-            },
-            (x, y, z) => JG.MeshC(x, y, z))));
+        // R2025b's meshc is a mesh and a contour on the floor (open item 112); JGS's one surface
+        // draws its own floor contours.
+        DefineSilent("meshc", OnNamedAxes((args, line, col) => JgsRunningDialect.ThreadIsMatlab
+            ? MatlabSurfaceWithContour("meshc", wireframe: true, args, line, col)
+            : Surface3D("meshc", args, line, col,
+                (x, y, z) => JG.MeshC(x, y, z),
+                z =>
+                {
+                    SurfacePlot surface = JG.Mesh(z);
+                    surface.ShowContourBelow = true;
+                    return surface;
+                },
+                (x, y, z) => JG.MeshC(x, y, z))));
 
         // contour, contourf and contour3 are registered by RegisterDecorationBuiltins, which runs
         // later and wins. The pair that stood here was shadowed and never ran — found by M70 when
@@ -2584,10 +2588,10 @@ internal static partial class JgsBuiltins
         RegisterUiTableAndBarBuiltins(env);
         RegisterRulerBuiltins(env);
         RegisterSurfaceVariantBuiltins(env, dialect);
-        RegisterGraphics2DBuiltins(env, dialect);
+        RegisterGraphics2DBuiltins(env, dialect, host);
         RegisterPolarBuiltins(env, dialect);
         RegisterMeshPlotBuiltins(env);
-        RegisterChart3DBuiltins(env);
+        RegisterChart3DBuiltins(env, host);
         RegisterDensityBuiltins(env);
         RegisterSwarmBuiltins(env);
         RegisterCompositionBuiltins(env);
@@ -2610,7 +2614,7 @@ internal static partial class JgsBuiltins
 
         // After the plotting verbs it re-declares: the titling family gains its text options here,
         // and contour learns to answer with its matrix as well as its handle.
-        RegisterDecorationBuiltins(env, dialect);
+        RegisterDecorationBuiltins(env, dialect, host);
 
         // The camera verbs M45 left out, and the appearance commands that predate figure properties.
         RegisterCameraExtraBuiltins(env);
@@ -3176,13 +3180,19 @@ internal static partial class JgsBuiltins
 
         bool matrixY = y.Type == JgsType.Array
             && JgsMatrix.RowCount(y) > 1 && JgsMatrix.ColCount(y) > 1;
-        if (matrixY && (xs is null || xs.Length == JgsMatrix.RowCount(y)))
+
+        // A matrix of x the shape of the matrix of y pairs column with column, as R2025b's plot
+        // and polarplot do (open item 112).
+        bool pairedX = dialect.IsMatlab && matrixY && x is { Type: JgsType.Array }
+            && JgsMatrix.RowCount(x) == JgsMatrix.RowCount(y) && JgsMatrix.ColCount(x) == JgsMatrix.ColCount(y);
+        if (matrixY && (xs is null || pairedX || xs.Length == JgsMatrix.RowCount(y)))
         {
             int rows = JgsMatrix.RowCount(y);
             int columns = JgsMatrix.ColCount(y);
             for (int c = 0; c < columns; c++)
             {
                 var series = new double[rows];
+                double[]? paired = pairedX ? new double[rows] : null;
                 for (int r = 0; r < rows; r++)
                 {
                     JgsValue element = JgsMatrix.At(y, r, c);
@@ -3193,9 +3203,13 @@ internal static partial class JgsBuiltins
                     }
 
                     series[r] = element.AsNumber;
+                    if (paired is not null)
+                    {
+                        paired[r] = JgsMatrix.At(x!, r, c).AsNumber;
+                    }
                 }
 
-                LinePlot column = JG.Plot(xs ?? Implicit(rows), series, spec);
+                LinePlot column = JG.Plot(paired ?? xs ?? Implicit(rows), series, spec);
                 column.XImplied = xs is null;
                 created.Add(column);
                 JG.Hold(true);
@@ -4372,77 +4386,112 @@ internal static partial class JgsBuiltins
         var rest = new List<JgsValue>(named.Positional);
 
         ArityRange("errorbar", rest, 2, 6, line, col);
-        double[] first = DoubleArray("errorbar", rest, 0, line, col);
-        double[] second = DoubleArray("errorbar", rest, 1, line, col);
-
-        // errorbar(y, err) puts the samples at 1, 2, 3, ... — MATLAB's implicit x, and the same one
-        // plot(y) uses. The dialect's index base does not enter into it: these are coordinates.
-        (double[] xs, double[] ys, double[] neg, double[] pos) = rest.Count switch
-        {
-            2 => (Ramp1(first.Length), first, second, second),
-            3 => (first, second, DoubleArray("errorbar", rest, 2, line, col),
-                  DoubleArray("errorbar", rest, 2, line, col)),
-            _ => (first, second, DoubleArray("errorbar", rest, 2, line, col),
-                  DoubleArray("errorbar", rest, 3, line, col)),
-        };
-
-        // errorbar(x, y, yneg, ypos, xneg, xpos) — the six-vector form, whose last pair reaches
-        // sideways. The three-and-four-argument forms mean the direction word instead.
-        double[]? left = rest.Count == 6 ? DoubleArray("errorbar", rest, 4, line, col) : null;
-        double[]? right = rest.Count == 6 ? DoubleArray("errorbar", rest, 5, line, col) : null;
         if (rest.Count == 5)
         {
             throw new JgsRuntimeException(line, col,
                 "errorbar takes the sideways reaches in twos: errorbar(x, y, yneg, ypos, xneg, xpos).");
         }
 
-        if (direction != "vertical" && left is null)
+        // A matrix of y draws a series per column, as R2025b's does (open item 112): every matrix
+        // argument lends its column, a vector is shared by all. errorbar(y, err) puts the samples at
+        // 1, 2, 3, ... — MATLAB's implicit x, and the same one plot(y) uses. The dialect's index
+        // base does not enter into it: these are coordinates.
+        JgsValue yValue = rest[rest.Count == 2 ? 0 : 1];
+        int series = JgsMatrix.RowCount(yValue) > 1 && JgsMatrix.ColCount(yValue) > 1 ? JgsMatrix.ColCount(yValue) : 1;
+        double[] Column(int index, int n)
         {
-            // 'horizontal' reads the one pair of magnitudes sideways instead of upright; 'both'
-            // reads them in both directions, which is what MATLAB draws for a single err vector.
-            left = neg;
-            right = pos;
-            if (direction == "horizontal")
+            JgsValue value = rest[index];
+            if (series > 1 && JgsMatrix.RowCount(value) > 1 && JgsMatrix.ColCount(value) == series)
             {
-                (neg, pos) = (new double[xs.Length], new double[xs.Length]);
+                int rows = JgsMatrix.RowCount(value);
+                var column = new double[rows];
+                for (int r = 0; r < rows; r++)
+                {
+                    column[r] = JgsMatrix.At(value, r, n).AsNumber;
+                }
+
+                return column;
             }
+
+            return DoubleArray("errorbar", rest, index, line, col);
         }
 
-        ErrorBarPlot plot = JG.ErrorBar(xs, ys, neg, pos);
-        plot.XImplied = rest.Count == 2;
-        if (left is not null)
+        var made = new List<ErrorBarPlot>();
+        bool wasHolding = JG.IsHolding;
+        try
         {
-            plot.ErrorLeft = left;
-            plot.ErrorRight = right ?? left;
+            for (int n = 0; n < series; n++)
+            {
+                double[] first = Column(0, n);
+                double[] second = Column(1, n);
+                (double[] xs, double[] ys, double[] neg, double[] pos) = rest.Count switch
+                {
+                    2 => (Ramp1(first.Length), first, second, second),
+                    3 => (first, second, Column(2, n), Column(2, n)),
+                    _ => (first, second, Column(2, n), Column(3, n)),
+                };
+
+                // errorbar(x, y, yneg, ypos, xneg, xpos) — the six-vector form, whose last pair
+                // reaches sideways. The three-and-four-argument forms mean the direction word instead.
+                double[]? left = rest.Count == 6 ? Column(4, n) : null;
+                double[]? right = rest.Count == 6 ? Column(5, n) : null;
+                if (direction != "vertical" && left is null)
+                {
+                    // 'horizontal' reads the one pair of magnitudes sideways instead of upright;
+                    // 'both' reads them in both directions, which is what MATLAB draws for a
+                    // single err vector.
+                    left = neg;
+                    right = pos;
+                    if (direction == "horizontal")
+                    {
+                        (neg, pos) = (new double[xs.Length], new double[xs.Length]);
+                    }
+                }
+
+                ErrorBarPlot plot = JG.ErrorBar(xs, ys, neg, pos);
+                JG.Hold(true);
+                plot.XImplied = rest.Count == 2;
+                if (left is not null)
+                {
+                    plot.ErrorLeft = left;
+                    plot.ErrorRight = right ?? left;
+                }
+
+                if (spec is not null)
+                {
+                    LineSpec parsed = LineSpec.Parse(spec);
+                    if (parsed.Color is { } color)
+                    {
+                        plot.Color = color;
+                    }
+
+                    if (parsed.Dash is { } dash)
+                    {
+                        plot.DashStyle = dash;
+                    }
+
+                    if (parsed.Marker is { } marker)
+                    {
+                        plot.Marker = marker;
+                    }
+
+                    // 'o' alone is markers with no line, the same rule plot follows.
+                    if (parsed.Dash is null && parsed.Marker is not null)
+                    {
+                        plot.ShowLine = false;
+                    }
+                }
+
+                ApplyErrorBarOptions(plot, named, line, col);
+                made.Add(plot);
+            }
+        }
+        finally
+        {
+            JG.Hold(wasHolding);
         }
 
-        if (spec is not null)
-        {
-            LineSpec parsed = LineSpec.Parse(spec);
-            if (parsed.Color is { } color)
-            {
-                plot.Color = color;
-            }
-
-            if (parsed.Dash is { } dash)
-            {
-                plot.DashStyle = dash;
-            }
-
-            if (parsed.Marker is { } marker)
-            {
-                plot.Marker = marker;
-            }
-
-            // 'o' alone is markers with no line, the same rule plot follows.
-            if (parsed.Dash is null && parsed.Marker is not null)
-            {
-                plot.ShowLine = false;
-            }
-        }
-
-        ApplyErrorBarOptions(plot, named, line, col);
-        return Handle(plot);
+        return PieceRow(made);
     }
 
     /// <summary>
@@ -4670,7 +4719,7 @@ internal static partial class JgsBuiltins
     /// flat lines, flat bands, or lines lifted to the height of the level each one traces.
     /// </summary>
     private static JgsValue Contour(
-        string name, IReadOnlyList<JgsValue> args, int line, int col, bool filled, bool elevated = false)
+        string name, IReadOnlyList<JgsValue> args, JGraphScriptGlobals host, int line, int col, bool filled, bool elevated = false)
     {
         int firstWord = args.ToList().FindIndex(v => v.Type == JgsType.String);
         IReadOnlyList<JgsValue> options = firstWord < 0 ? [] : args.Skip(firstWord).ToArray();
@@ -4698,31 +4747,45 @@ internal static partial class JgsBuiltins
                 : ToDoubles(name, args[levelSlot], line, col)
             : null;
 
-        // A scalar fourth argument is a level COUNT: n evenly spaced levels across z's range.
-        if (levels is { Length: 1 } && levels[0] >= 2 && levels[0] == System.Math.Floor(levels[0]))
+        // A scalar fourth argument is a level COUNT: n evenly spaced levels across z's range. R2025b
+        // reads every scalar as a count — floor(n) levels, none for 0, a refusal below — where JGS
+        // keeps 1 and a fraction as a level of that value (open item 113).
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+        bool counted = false;
+        if (levels is { Length: 1 } && args[levelSlot].Type is JgsType.Number or JgsType.Bool
+            && (matlab || (levels[0] >= 2 && levels[0] == System.Math.Floor(levels[0]))))
         {
-            double zMin = double.PositiveInfinity, zMax = double.NegativeInfinity;
-            foreach (double v in z)
+            if (matlab && levels[0] < 0)
             {
-                if (!double.IsNaN(v))
-                {
-                    zMin = System.Math.Min(zMin, v);
-                    zMax = System.Math.Max(zMax, v);
-                }
+                throw new JgsRuntimeException(line, col, "MATLAB:contour:NMustNotBeNegative",
+                    "Number of contour levels must not be negative.");
             }
 
-            int n = (int)levels[0];
-            levels = new double[n];
-            for (int i = 0; i < n; i++)
-            {
-                levels[i] = zMin + ((zMax - zMin) * (i + 1) / (n + 1));
-            }
+            levels = CountedLevels(z, (int)System.Math.Floor(levels[0]));
+            counted = true;
         }
+
+        // R2025b lists a level once however often the vector names it ([5 5] is one level), and
+        // says so when there is nothing to draw (open item 113).
+        if (matlab && levels is not null && !counted)
+        {
+            levels = levels.Distinct().ToArray();
+        }
+
+        if (matlab && IsConstantField(z))
+        {
+            Warn(host, "MATLAB:contour:ConstantData", "Contour not rendered for constant ZData");
+        }
+
         try
         {
             ContourPlot drawn = elevated ? JG.Contour3(x, y, z, levels)
                 : filled ? JG.ContourF(x, y, z, levels)
                 : JG.Contour(x, y, z, levels);
+
+            // R2025b's automatic levels are the multiples of a round step (open item 113).
+            drawn.RoundLevels = matlab;
+            drawn.LevelsFromCount = counted;
 
             // Whether the positions were counted out of the grid is what XDataMode reports, and the
             // one-matrix form is exactly the case where they were.
@@ -4742,6 +4805,53 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
+    }
+
+    /// <summary>
+    /// <paramref name="count"/> levels spaced evenly strictly inside the finite range of
+    /// <paramref name="z"/> — what <c>contour(Z, n)</c> and <c>contourc(Z, n)</c> draw (R2025b's
+    /// <c>linspace(min, max, n + 2)</c> without its ends), and nothing for a count of zero.
+    /// </summary>
+    internal static double[] CountedLevels(double[,] z, int count)
+    {
+        double zMin = double.PositiveInfinity, zMax = double.NegativeInfinity;
+        foreach (double v in z)
+        {
+            if (double.IsFinite(v))
+            {
+                zMin = System.Math.Min(zMin, v);
+                zMax = System.Math.Max(zMax, v);
+            }
+        }
+
+        if (count <= 0 || !double.IsFinite(zMin) || !double.IsFinite(zMax))
+        {
+            return [];
+        }
+
+        var levels = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            levels[i] = zMin + ((zMax - zMin) * (i + 1) / (count + 1));
+        }
+
+        return levels;
+    }
+
+    /// <summary>Whether every finite value of <paramref name="z"/> is the same one, or there is none.</summary>
+    private static bool IsConstantField(double[,] z)
+    {
+        double zMin = double.PositiveInfinity, zMax = double.NegativeInfinity;
+        foreach (double v in z)
+        {
+            if (double.IsFinite(v))
+            {
+                zMin = System.Math.Min(zMin, v);
+                zMax = System.Math.Max(zMax, v);
+            }
+        }
+
+        return !(zMax > zMin);
     }
 
     /// <summary>1, 2, … n — the coordinates a grid has when a verb was given heights and nothing else.</summary>

@@ -275,6 +275,17 @@ internal static partial class JgsBuiltins
                     bars.FaceColor = style.Color ?? PaletteColorFor(bars);
                     distributions.Add(JgsHandleRegistry.For(bars).AsNumber);
                     diagonal.Add(cells[(c * rows) + r]);
+
+                    // R2025b scatters the column against itself under the histogram's own axes, so
+                    // its matrix of handles is full; here the scatter is hidden under the bars
+                    // (open item 112). JGS keeps the slot at 0.
+                    if (JgsRunningDialect.ThreadIsMatlab)
+                    {
+                        ScatterPlot hidden = cell.AddScatter(xs[c], xs[c]);
+                        hidden.Visible = false;
+                        scatters[(c * rows) + r] = JgsHandleRegistry.For(hidden).AsNumber;
+                    }
+
                     continue;
                 }
 

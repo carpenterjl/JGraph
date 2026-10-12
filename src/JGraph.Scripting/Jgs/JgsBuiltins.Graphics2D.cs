@@ -20,7 +20,7 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    private static void RegisterGraphics2DBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
+    private static void RegisterGraphics2DBuiltins(JgsEnvironment env, JgsRunningDialect dialect, JGraphScriptGlobals host)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(
@@ -30,7 +30,7 @@ internal static partial class JgsBuiltins
         DefineSilent("bar", (args, line, col) => BarChart("bar", horizontal: false, args, line, col));
         DefineSilent("barh", (args, line, col) => BarChart("barh", horizontal: true, args, line, col));
 
-        DefineSilent("pie", (args, line, col) => Pie(args, line, col));
+        DefineSilent("pie", (args, line, col) => Pie(args, host, line, col));
         DefineSilent("bubblechart", (args, line, col) => BubbleChart(args, line, col));
         DefineSilent("bubblelegend", (args, line, col) => BubbleLegendVerb(args, line, col));
 
@@ -354,7 +354,7 @@ internal static partial class JgsBuiltins
     /// by — the model itself takes a distance, the way the bar chart takes a slot shift.
     /// </para>
     /// </summary>
-    private static JgsValue Pie(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue Pie(IReadOnlyList<JgsValue> args, JGraphScriptGlobals host, int line, int col)
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () =>
@@ -362,6 +362,12 @@ internal static partial class JgsBuiltins
             if (rest.Count == 0)
             {
                 throw new JgsRuntimeException(line, col, "pie expects the values to divide: pie(x).");
+            }
+
+            // R2025b's pie is a patch and a text per slice, read in its words (open item 112).
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                return MatlabPieVerb("pie", rest, host, PieOptionNames, line, col);
             }
 
             double[] values = ToDoubles("pie", rest[0], line, col);
@@ -2420,10 +2426,11 @@ internal static partial class JgsBuiltins
             return [handles];
         }
 
+        // Element by element: a column of handles is a packed array (open item 112).
         var list = new List<JgsValue>();
-        foreach (JgsValue handle in handles.AsArray)
+        for (int i = 0; i < handles.ArrayLength; i++)
         {
-            list.Add(handle);
+            list.Add(handles.ElementAt(i));
         }
 
         return list;

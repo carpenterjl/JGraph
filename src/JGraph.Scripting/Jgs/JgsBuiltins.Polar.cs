@@ -126,6 +126,12 @@ internal static partial class JgsBuiltins
         (double[] u, double[] v, IReadOnlyList<JgsValue> tail) =
             ArrowComponents("compass", rest, line, col);
 
+        // R2025b's compass is a line per arrow (open item 112).
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            return OnAxes(named, () => OnPolarAxes(() => MatlabArrowLines("compass", u, v, tail, line, col)));
+        }
+
         var bearings = new double[u.Length];
         var lengths = new double[u.Length];
         for (int i = 0; i < u.Length; i++)
@@ -149,6 +155,12 @@ internal static partial class JgsBuiltins
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         (double[] u, double[] v, IReadOnlyList<JgsValue> tail) =
             ArrowComponents("feather", rest, line, col);
+
+        // R2025b's feather is a line per arrow and a baseline (open item 112).
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            return OnAxes(named, () => MatlabArrowLines("feather", u, v, tail, line, col));
+        }
 
         return OnAxes(named, () => Handle(Arrows(
             "feather", Ramp1(u.Length), new double[u.Length], u, v, tail, line, col)));

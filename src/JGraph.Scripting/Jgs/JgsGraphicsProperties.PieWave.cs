@@ -86,6 +86,17 @@ internal static partial class JgsGraphicsProperties
             entry => PatchOf(entry).EdgeAlpha,
             (entry, alpha) => PatchOf(entry).EdgeAlpha = alpha);
 
+        AddPatchMaterialBlock(table);
+        AddPatchBlock(table);
+    }
+
+    /// <summary>
+    /// The lighting a patch answers to, with R2025b's refusals: the four fractions are refused out
+    /// of range rather than clamped, and the exponent has to be positive. A pie's slices and every
+    /// other patch share it (open item 112).
+    /// </summary>
+    private static void AddPatchMaterialBlock(IDictionary<string, GraphicsProperty> table)
+    {
         AddWordProperty(table, "FaceLighting",
             entry => LightingWord(PatchOf(entry).FaceLighting),
             (entry, word, line, col) => PatchOf(entry).FaceLighting =
@@ -119,8 +130,6 @@ internal static partial class JgsGraphicsProperties
 
                 PatchOf(entry).SpecularExponent = given;
             });
-
-        AddPatchBlock(table);
     }
 
     /// <summary>

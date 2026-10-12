@@ -853,6 +853,14 @@ public sealed class ContourPlotDto : PlotDto
 
     public bool ContoursAtZero { get; set; }
 
+    /// <summary>Where the curves sit in a 3-D axes (a ContourZLocation name); null is the older ContoursAtZero.</summary>
+    public string? ZLocation { get; set; }
+
+    public double ZLocationHeight { get; set; }
+
+    /// <summary>True when the automatic levels follow R2025b's round-step rule.</summary>
+    public bool RoundLevels { get; set; }
+
     public bool XImplied { get; set; }
 
     public bool YImplied { get; set; }
@@ -1198,6 +1206,19 @@ public sealed class PatchPlotDto : PlotDto
     public SurfaceLighting EdgeLighting { get; set; } = SurfaceLighting.None;
 
     public BackFaceLighting BackFaceLighting { get; set; } = BackFaceLighting.ReverseLit;
+
+    /// <summary>The material a patch is lit by (ADR 0229); a document written before it carries the defaults.</summary>
+    public SurfaceLighting FaceLighting { get; set; } = SurfaceLighting.Flat;
+
+    public double AmbientStrength { get; set; } = 0.3;
+
+    public double DiffuseStrength { get; set; } = 0.6;
+
+    public double SpecularStrength { get; set; } = 0.9;
+
+    public double SpecularColorReflectance { get; set; } = 1;
+
+    public double SpecularExponent { get; set; } = 10;
 
     public bool AlignVertexCenters { get; set; }
 

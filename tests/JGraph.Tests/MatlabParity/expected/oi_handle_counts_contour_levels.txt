@@ -1,0 +1,230 @@
+CHK|pie_count|double[1 2] [1 6]|exact
+CHK|pie_types|cell[1 6]{char[1 5]'patch';char[1 4]'text';char[1 5]'patch';char[1 4]'text';char[1 5]'patch';char[1 4]'text'}|exact
+CHK|pie_one|double[1 2] [1 2]|exact
+CHK|pie3_count|double[1 2] [1 12]|exact
+CHK|pie3_types|cell[1 12]{char[1 5]'patch';char[1 7]'surface';char[1 5]'patch';char[1 4]'text';char[1 5]'patch';char[1 7]'surface';char[1 5]'patch';char[1 4]'text';char[1 5]'patch';char[1 7]'surface';char[1 5]'patch';char[1 4]'text'}|exact
+CHK|meshc_count|double[1 2] [2 1]|exact
+CHK|meshc_types|cell[1 2]{char[1 7]'surface';char[1 7]'contour'}|exact
+CHK|surfc_types|cell[1 2]{char[1 7]'surface';char[1 7]'contour'}|exact
+CHK|bar3_count|double[1 2] [1 3]|exact
+CHK|bar3_types|cell[1 3]{char[1 7]'surface';char[1 7]'surface';char[1 7]'surface'}|exact
+CHK|bar3_vector|double[1 2] [1 1]|exact
+CHK|bar3h_count|double[1 2] [1 3]|exact
+CHK|compass_count|double[1 2] [2 1]|exact
+CHK|compass_types|cell[1 2]{char[1 4]'line';char[1 4]'line'}|exact
+CHK|feather_count|double[1 2] [3 1]|exact
+CHK|feather_one|double[1 2] [2 1]|exact
+CHK|errorbar_matrix|double[1 2] [1 3]|exact
+CHK|errorbar_groups|double[1 2] [1 2]|exact
+CHK|errorbar_xvec|double[1 2] [1 3]|exact
+CHK|errorbar_vector|double[1 2] [1 1]|exact
+CHK|fill_matrix|double[1 2] [2 1]|exact
+CHK|fill_groups|double[1 2] [2 1]|exact
+CHK|fill_vector|double[1 2] [1 1]|exact
+CHK|polarplot_matrix|double[1 2] [2 1]|exact
+CHK|plot_matrices|double[1 2] [3 1]|exact
+CHK|fplot_cell|double[1 2] [2 1]|exact
+CHK|fplot_cell_interval|double[1 2] [2 1]|exact
+CHK|fplot_cell_spec|double[1 2] [2 1]|exact
+CHK|fplot_one|double[1 2] [1 1]|exact
+CHK|fplot_name|char[1 5]'{sin}'|exact
+CHK|fplot_cell_names|cell[1 2]{char[1 5]'{sin}';char[1 5]'{cos}'}|exact
+CHK|stairs_matrix|double[1 2] [3 1]|exact
+CHK|stairs_x_matrix|double[1 2] [3 1]|exact
+CHK|plotmatrix_valid|double[1 6] [9 9 9 9 1 1]|exact
+CHK|plotmatrix_xy_valid|double[1 6] [9 9 9 9 1 1]|exact
+CHK|pie_xdata_count|double[1 1] 20|exact
+CHK|pie_xdata_first|double[1 3] [0 -0.061560999999999998 -0.122888]|exact
+CHK|pie_ydata_last|double[1 1] 1|exact
+CHK|pie_cdata|double[1 1] 2|exact
+CHK|pie_facecolor|char[1 4]'flat'|exact
+CHK|pie_strings|cell[1 3]{char[1 3]'17%';char[1 3]'33%';char[1 3]'50%'}|exact
+CHK|pie_text1|cell[1 3]{double[1 2] [-0.55000000000000004 0.95262800000000003];char[1 5]'right';char[1 6]'bottom'}|exact
+CHK|pie_text3|cell[1 3]{double[1 2] [-0.95262800000000003 -0.55000000000000004];char[1 5]'right';char[1 3]'top'}|exact
+CHK|pie_text5|cell[1 3]{double[1 2] [1.1000000000000001 0];char[1 4]'left';char[1 6]'middle'}|exact
+CHK|pie_axes|cell[1 4]{double[1 2] [-1.2 1.2];double[1 2] [-1.2 1.2];onoff off;double[1 2] [1 3]}|exact
+CHK|pie_displayname|char[0 0]''|exact
+CHK|pie_explode|double[1 2] [-0.086602999999999999 -0.95262800000000003]|exact
+CHK|pie_labels|cell[1 3]{char[1 1]'a';char[1 1]'a';char[1 1]'c'}|exact
+CHK|pie_format|cell[1 2]{char[1 5]'16.7%';char[1 5]'50.0%'}|exact
+CHK|pie_partial|cell[1 2]{char[1 3]'25%';double[1 1] -1}|exact
+CHK|pie_tiny|cell[1 2]{char[1 4]'< 1%';char[1 4]'100%'}|exact
+CHK|pie_negative|double[1 1] 4 WARN MATLAB:pie:NegativeData|exact
+CHK|pie_negative_labels|cell[1 4]{double[1 1] 4;char[1 1]'a';char[1 1]'c';double[1 2] [-0.070710999999999996 -0.13350100000000001]} WARN MATLAB:pie:NegativeData|exact
+CHK|pie_all_negative|MATLAB:pie:NoNonNegatveData|exact
+CHK|pie_all_negative_msg|At least 1 value must be nonnegative.|exact
+CHK|pie_labels_short|MATLAB:pie:StringLengthMismatch|exact
+CHK|pie_labels_short_msg|Labels must have the same number of elements as X or be a valid format string.|exact
+CHK|pie_word|MATLAB:pie:StringLengthMismatch|exact
+CHK|pie_word_msg|Labels must have the same number of elements as X or be a valid format string.|exact
+CHK|pie_explode_short|MATLAB:pie:ExplodeLengthMismatch|exact
+CHK|pie_explode_short_msg|X and EXPLODE must be the same length.|exact
+CHK|pie_nan|MATLAB:pie:NonFiniteData|exact
+CHK|pie_nan_msg|All data must be finite in pie chart.|exact
+CHK|pie_cell|MATLAB:pie:NonNumericData|exact
+CHK|pie_cell_msg|Must have numeric data in the pie chart.|exact
+CHK|pie3_bottom_z|double[1 1] 0|exact
+CHK|pie3_side|cell[1 2]{double[1 2] [20 2];double[1 2] [0 0.34999999999999998]}|exact
+CHK|pie3_top_z|double[1 1] 0.34999999999999998|exact
+CHK|pie3_texts|cell[1 3]{double[1 3] [-0.625 1.082532 0.34999999999999998];double[1 3] [-1.082532 -0.625 0];double[1 3] [1.25 0 0.34999999999999998]}|exact
+CHK|pie3_strings|cell[1 3]{char[1 3]'17%';char[1 3]'33%';char[1 3]'50%'}|exact
+CHK|pie3_axes|cell[1 2]{double[1 2] [-37.5 30];double[1 2] [-1.2 1.2]}|exact
+CHK|pie3_labels|cell[1 4]{double[1 1] 12;char[1 1]'a';char[1 1]'b';logical[1 1] 0}|exact
+CHK|pie3_labels_short|MATLAB:pie3:StringLengthMismatch|exact
+CHK|pie3_labels_short_msg|Cell array of character vectors must be the same length as X.|exact
+CHK|pie3_explode_short|MATLAB:pie3:ExplodeLengthMismatch|exact
+CHK|pie3_explode_short_msg|X and EXPLODE must be the same length.|exact
+CHK|pie3_all_negative|MATLAB:pie:NoNonNegatveData|exact
+CHK|pie3_all_negative_msg|At least 1 value must be nonnegative.|exact
+CHK|pie3_negative|double[1 1] 8 WARN MATLAB:pie:NegativeData|exact
+CHK|bar3_sizes|cell[1 3]{double[1 2] [18 4];double[1 2] [18 4];double[1 2] [18 4]}|exact
+CHK|bar3_xdata|double[6 4] [NaN 0.59999999999999998 1.3999999999999999 NaN;0.59999999999999998 0.59999999999999998 1.3999999999999999 1.3999999999999999;0.59999999999999998 0.59999999999999998 1.3999999999999999 1.3999999999999999;NaN 0.59999999999999998 1.3999999999999999 NaN;NaN 0.59999999999999998 1.3999999999999999 NaN;NaN NaN NaN NaN]|exact
+CHK|bar3_ydata|double[6 4] [NaN 0.59999999999999998 0.59999999999999998 NaN;0.59999999999999998 0.59999999999999998 0.59999999999999998 0.59999999999999998;1.3999999999999999 1.3999999999999999 1.3999999999999999 1.3999999999999999;NaN 1.3999999999999999 1.3999999999999999 NaN;NaN 0.59999999999999998 0.59999999999999998 NaN;NaN NaN NaN NaN]|exact
+CHK|bar3_zdata|double[6 4] [NaN 0 0 NaN;0 8 8 0;0 8 8 0;NaN 0 0 NaN;NaN 0 0 NaN;NaN NaN NaN NaN]|exact
+CHK|bar3_second|cell[1 3]{double[1 4] [1.6000000000000001 1.6000000000000001 2.3999999999999999 2.3999999999999999];double[1 4] [2 2 2 2];char[1 4]'flat'}|exact
+CHK|bar3_axes|cell[1 6]{double[1 2] [0.59999999999999998 3.3999999999999999];char[1 7]'reverse';double[1 2] [-37.5 30];double[1 3] [1 2 3];double[1 3] [1 2 3];double[1 2] [1 3]}|exact
+CHK|bar3_grouped|cell[1 3]{double[1 4] [0.911111 0.911111 1.088889 1.088889];double[1 4] [0.911111 0.911111 0.911111 0.911111];double[1 2] [0.86666699999999997 1.1333329999999999]}|exact
+CHK|bar3_stacked|double[3 4] [NaN 8 8 NaN;8 9 9 8;8 9 9 8]|exact
+CHK|bar3_positions|cell[1 2]{double[6 4] [NaN 6 6 NaN;6 6 6 6;14 14 14 14;NaN 14 14 NaN;NaN 6 6 NaN;NaN NaN NaN NaN];double[1 3] [10 20 40]}|exact
+CHK|bar3h|cell[1 2]{double[3 4] [NaN 0 0 NaN;0 8 8 0;0 8 8 0];double[3 4] [NaN 0.59999999999999998 0.59999999999999998 NaN;0.59999999999999998 0.59999999999999998 0.59999999999999998 0.59999999999999998;1.3999999999999999 1.3999999999999999 1.3999999999999999 1.3999999999999999]}|exact
+CHK|bar3_red|double[1 3] [1 0 0]|exact
+CHK|bar3_vector_clim|cell[1 2]{double[1 2] [1 2];double[1 4] [0.59999999999999998 0.59999999999999998 1.3999999999999999 1.3999999999999999]}|exact
+CHK|compass_seats|double[1 2] [1 1]|exact
+CHK|compass_same_colour|logical[1 1] 1|exact
+CHK|compass_points|double[1 1] 5|exact
+CHK|compass_spec|cell[1 2]{double[1 3] [1 0 0];char[1 2]'--'}|exact
+CHK|compass_second_seat|double[1 1] 3|exact
+CHK|feather_arrow|cell[1 2]{double[1 6] [1 2 NaN 1.72 2 1.8799999999999999];double[1 6] [0 1 NaN 0.88 1 0.71999999999999997]}|exact
+CHK|feather_baseline|cell[1 2]{double[1 2] [1 2];double[1 2] [0 0]}|exact
+CHK|feather_seats|double[1 3] [1 1 1]|exact
+CHK|feather_next|double[1 1] 2|exact
+CHK|feather_options|double[1 3] [3 3 3]|exact
+CHK|fill_colour|cell[1 2]{double[1 3] [1 0 0];double[1 3] [1 2 2]}|exact
+CHK|fill_flat|cell[1 3]{char[1 4]'flat';double[1 1] 3;double[1 1] 7}|exact
+CHK|fill_interp|cell[1 2]{char[1 6]'interp';double[1 3] [2 4 6]}|exact
+CHK|fill_group_colours|cell[1 2]{double[1 3] [1 0 0];double[1 3] [0 0 1]}|exact
+CHK|errorbar_columns|cell[1 3]{double[1 3] [8 3 4];double[1 3] [6 7 2];double[1 3] [1 2 3]}|exact
+CHK|errorbar_colvec|cell[1 2]{double[1 3] [2 4 6];double[1 3] [1 1 1]}|exact
+CHK|polarplot_columns|cell[1 2]{double[1 2] [1 2];double[1 2] [2 3]}|exact
+CHK|plot_paired|cell[1 2]{double[1 3] [1 5 9];double[1 3] [3 5 7]}|exact
+CHK|stairs_columns|double[1 3] [1 5 9]|exact
+CHK|meshc_contour|cell[1 4]{char[1 4]'zmin';char[1 6]'manual';double[1 8] [2 4 6 8 10 12 14 16];double[1 1] 2}|exact
+CHK|surfc_contour|cell[1 3]{double[1 4] [1 2 3 4];double[1 4] [10 20 30 40];double[1 8] [2 4 6 8 10 12 14 16]}|exact
+CHK|surfc_contour_set|cell[1 2]{double[1 1] 2;double[1 7] [-6 -4 -2 0 2 4 6]}|exact
+CHK|text_displayname|char[0 0]''|exact
+CHK|replace_after_pieces|double[1 1] 1|exact
+CHK|levels_magic3|cell[1 5]{double[1 8] [2 3 4 5 6 7 8 9];double[1 1] 1;char[1 4]'auto';char[1 4]'auto';double[1 7] [2 3 4 5 6 7 8]}|exact
+CHK|contourc_magic3|double[1 7] [2 3 4 5 6 7 8]|exact
+CHK|levels_magic4|cell[1 5]{double[1 8] [2 4 6 8 10 12 14 16];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 7] [2 4 6 8 10 12 14]}|exact
+CHK|contourc_magic4|double[1 7] [2 4 6 8 10 12 14]|exact
+CHK|levels_magic5|cell[1 5]{double[1 5] [5 10 15 20 25];double[1 1] 5;char[1 4]'auto';char[1 4]'auto';double[1 4] [5 10 15 20]}|exact
+CHK|contourc_magic5|double[1 4] [5 10 15 20]|exact
+CHK|levels_magic6|cell[1 5]{double[1 7] [5 10 15 20 25 30 35];double[1 1] 5;char[1 4]'auto';char[1 4]'auto';double[1 7] [5 10 15 20 25 30 35]}|exact
+CHK|contourc_magic6|double[1 7] [5 10 15 20 25 30 35]|exact
+CHK|levels_magic8|cell[1 5]{double[1 6] [10 20 30 40 50 60];double[1 1] 10;char[1 4]'auto';char[1 4]'auto';double[1 6] [10 20 30 40 50 60]}|exact
+CHK|contourc_magic8|double[1 6] [10 20 30 40 50 60]|exact
+CHK|levels_peaks20|cell[1 5]{double[1 7] [-6 -4 -2 0 2 4 6];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 7] [-6 -4 -2 0 2 4 6]}|exact
+CHK|contourc_peaks20|double[1 7] [-6 -4 -2 0 2 4 6]|exact
+CHK|levels_peaks49|cell[1 5]{double[1 8] [-6 -4 -2 0 2 4 6 8];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 8] [-6 -4 -2 0 2 4 6 8]}|exact
+CHK|contourc_peaks49|double[1 8] [-6 -4 -2 0 2 4 6 8]|exact
+CHK|levels_m4x100|cell[1 5]{double[1 8] [200 400 600 800 1000 1200 1400 1600];double[1 1] 200;char[1 4]'auto';char[1 4]'auto';double[1 7] [200 400 600 800 1000 1200 1400]}|exact
+CHK|contourc_m4x100|double[1 7] [200 400 600 800 1000 1200 1400]|exact
+CHK|levels_m4d1000|cell[1 5]{double[1 8] [0.002 0.0040000000000000001 0.0060000000000000001 0.0080000000000000002 0.01 0.012 0.014 0.016];double[1 1] 0.002;char[1 4]'auto';char[1 4]'auto';double[1 7] [0.002 0.0040000000000000001 0.0060000000000000001 0.0080000000000000002 0.01 0.012 0.014]}|exact
+CHK|contourc_m4d1000|double[1 7] [0.002 0.0040000000000000001 0.0060000000000000001 0.0080000000000000002 0.01 0.012 0.014]|exact
+CHK|levels_m4p05|cell[1 5]{double[1 8] [2 4 6 8 10 12 14 16];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 8] [2 4 6 8 10 12 14 16]}|exact
+CHK|contourc_m4p05|double[1 8] [2 4 6 8 10 12 14 16]|exact
+CHK|levels_negm4|cell[1 5]{double[1 8] [-16 -14 -12 -10 -8 -6 -4 -2];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 7] [-14 -12 -10 -8 -6 -4 -2]}|exact
+CHK|contourc_negm4|double[1 7] [-14 -12 -10 -8 -6 -4 -2]|exact
+CHK|levels_unit|cell[1 5]{double[1 10] [0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002 1];double[1 1] 0.10000000000000001;char[1 4]'auto';char[1 4]'auto';double[1 9] [0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]}|exact
+CHK|contourc_unit|double[1 9] [0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|levels_r3|cell[1 5]{double[1 6] [0.5 1 1.5 2 2.5 3];double[1 1] 0.5;char[1 4]'auto';char[1 4]'auto';double[1 5] [0.5 1 1.5 2 2.5]}|exact
+CHK|contourc_r3|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|levels_r11|cell[1 5]{double[1 11] [1 2 3 4 5 6 7 8 9 10 11];double[1 1] 1;char[1 4]'auto';char[1 4]'auto';double[1 10] [1 2 3 4 5 6 7 8 9 10]}|exact
+CHK|contourc_r11|double[1 5] [2 4 6 8 10]|exact
+CHK|levels_r12|cell[1 5]{double[1 6] [2 4 6 8 10 12];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 5] [2 4 6 8 10]}|exact
+CHK|contourc_r12|double[1 5] [2 4 6 8 10]|exact
+CHK|levels_r21|cell[1 5]{double[1 10] [2 4 6 8 10 12 14 16 18 20];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 10] [2 4 6 8 10 12 14 16 18 20]}|exact
+CHK|contourc_r21|double[1 4] [5 10 15 20]|exact
+CHK|levels_r22|cell[1 5]{double[1 11] [2 4 6 8 10 12 14 16 18 20 22];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 10] [2 4 6 8 10 12 14 16 18 20]}|exact
+CHK|contourc_r22|double[1 4] [5 10 15 20]|exact
+CHK|levels_r24|cell[1 5]{double[1 4] [5 10 15 20];double[1 1] 5;char[1 4]'auto';char[1 4]'auto';double[1 4] [5 10 15 20]}|exact
+CHK|contourc_r24|double[1 4] [5 10 15 20]|exact
+CHK|levels_r50|cell[1 5]{double[1 10] [5 10 15 20 25 30 35 40 45 50];double[1 1] 5;char[1 4]'auto';char[1 4]'auto';double[1 9] [5 10 15 20 25 30 35 40 45]}|exact
+CHK|contourc_r50|double[1 9] [5 10 15 20 25 30 35 40 45]|exact
+CHK|levels_r56|cell[1 5]{double[1 11] [5 10 15 20 25 30 35 40 45 50 55];double[1 1] 5;char[1 4]'auto';char[1 4]'auto';double[1 11] [5 10 15 20 25 30 35 40 45 50 55]}|exact
+CHK|contourc_r56|double[1 5] [10 20 30 40 50]|exact
+CHK|levels_r60|cell[1 5]{double[1 6] [10 20 30 40 50 60];double[1 1] 10;char[1 4]'auto';char[1 4]'auto';double[1 5] [10 20 30 40 50]}|exact
+CHK|contourc_r60|double[1 5] [10 20 30 40 50]|exact
+CHK|levels_r0p1|cell[1 5]{double[1 10] [0.01 0.02 0.029999999999999999 0.040000000000000001 0.050000000000000003 0.059999999999999998 0.070000000000000007 0.080000000000000002 0.089999999999999997 0.10000000000000001];double[1 1] 0.01;char[1 4]'auto';char[1 4]'auto';double[1 9] [0.01 0.02 0.029999999999999999 0.040000000000000001 0.050000000000000003 0.059999999999999998 0.070000000000000007 0.080000000000000002 0.089999999999999997]}|exact
+CHK|contourc_r0p1|double[1 9] [0.01 0.02 0.029999999999999999 0.040000000000000001 0.050000000000000003 0.059999999999999998 0.070000000000000007 0.080000000000000002 0.089999999999999997]|exact
+CHK|levels_r0p7|cell[1 5]{double[1 7] [0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996];double[1 1] 0.10000000000000001;char[1 4]'auto';char[1 4]'auto';double[1 6] [0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998]}|exact
+CHK|contourc_r0p7|double[1 6] [0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998]|exact
+CHK|levels_off5|cell[1 5]{double[1 10] [5.0499999999999998 5.0999999999999996 5.1500000000000004 5.2000000000000002 5.25 5.2999999999999998 5.3499999999999996 5.4000000000000004 5.4500000000000002 5.5];double[1 1] 0.050000000000000003;char[1 4]'auto';char[1 4]'auto';double[1 9] [5.0499999999999998 5.0999999999999996 5.1500000000000004 5.2000000000000002 5.25 5.2999999999999998 5.3499999999999996 5.4000000000000004 5.4500000000000002]}|exact
+CHK|contourc_off5|double[1 9] [5.0499999999999998 5.0999999999999996 5.1500000000000004 5.2000000000000002 5.25 5.2999999999999998 5.3499999999999996 5.4000000000000004 5.4500000000000002]|exact
+CHK|levels_off1000|cell[1 5]{double[1 8] [1002 1004 1006 1008 1010 1012 1014 1016];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 7] [1002 1004 1006 1008 1010 1012 1014]}|exact
+CHK|contourc_off1000|double[1 7] [1002 1004 1006 1008 1010 1012 1014]|exact
+CHK|levels_tiny|cell[1 5]{double[1 10] [0 0 0 0 1.0000000000000001e-09 1.0000000000000001e-09 1.0000000000000001e-09 1.0000000000000001e-09 1.0000000000000001e-09 1.0000000000000001e-09];double[1 1] 0;char[1 4]'auto';char[1 4]'auto';double[1 4] [0 0 0 0]}|exact
+CHK|contourc_tiny|double[1 4] [0 0 0 0]|exact
+CHK|levels_huge|cell[1 5]{double[1 10] [100000 200000 300000 400000 500000 600000 700000 800000 900000 1000000];double[1 1] 100000;char[1 4]'auto';char[1 4]'auto';double[1 9] [100000 200000 300000 400000 500000 600000 700000 800000 900000]}|exact
+CHK|contourc_huge|double[1 9] [100000 200000 300000 400000 500000 600000 700000 800000 900000]|exact
+CHK|levels_withnan|cell[1 5]{double[1 8] [2 4 6 8 10 12 14 16];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';char[1 7]'skipped'}|exact
+CHK|levels_withinf|cell[1 5]{double[1 8] [2 4 6 8 10 12 14 16];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';char[1 7]'skipped'}|exact
+CHK|levels_neg|cell[1 5]{double[1 7] [-3 -2 -1 0 1 2 3];double[1 1] 1;char[1 4]'auto';char[1 4]'auto';double[1 5] [-2 -1 0 1 2]}|exact
+CHK|contourc_neg|double[1 5] [-2 -1 0 1 2]|exact
+CHK|levels_negonly|cell[1 5]{double[1 6] [-30 -25 -20 -15 -10 -5];double[1 1] 5;char[1 4]'auto';char[1 4]'auto';double[1 5] [-25 -20 -15 -10 -5]}|exact
+CHK|contourc_negonly|double[1 5] [-25 -20 -15 -10 -5]|exact
+CHK|levels_r0p115|cell[1 5]{double[1 11] [0.01 0.02 0.029999999999999999 0.040000000000000001 0.050000000000000003 0.059999999999999998 0.070000000000000007 0.080000000000000002 0.089999999999999997 0.10000000000000001 0.11];double[1 1] 0.01;char[1 4]'auto';char[1 4]'auto';double[1 11] [0.01 0.02 0.029999999999999999 0.040000000000000001 0.050000000000000003 0.059999999999999998 0.070000000000000007 0.080000000000000002 0.089999999999999997 0.10000000000000001 0.11]}|exact
+CHK|contourc_r0p115|double[1 5] [0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001]|exact
+CHK|levels_r0p12|cell[1 5]{double[1 6] [0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12];double[1 1] 0.02;char[1 4]'auto';char[1 4]'auto';double[1 5] [0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001]}|exact
+CHK|contourc_r0p12|double[1 5] [0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001]|exact
+CHK|levels_r2p3|cell[1 5]{double[1 11] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1 1.2 1.3999999999999999 1.6000000000000001 1.8 2 2.2000000000000002];double[1 1] 0.20000000000000001;char[1 4]'auto';char[1 4]'auto';double[1 11] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1 1.2 1.3999999999999999 1.6000000000000001 1.8 2 2.2000000000000002]}|exact
+CHK|contourc_r2p3|double[1 4] [0.5 1 1.5 2]|exact
+CHK|levels_r2p4|cell[1 5]{double[1 4] [0.5 1 1.5 2];double[1 1] 0.5;char[1 4]'auto';char[1 4]'auto';double[1 4] [0.5 1 1.5 2]}|exact
+CHK|contourc_r2p4|double[1 4] [0.5 1 1.5 2]|exact
+CHK|levels_o3to16|cell[1 5]{double[1 7] [4 6 8 10 12 14 16];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 6] [4 6 8 10 12 14]}|exact
+CHK|contourc_o3to16|double[1 6] [4 6 8 10 12 14]|exact
+CHK|levels_o2p5to17p5|cell[1 5]{double[1 7] [4 6 8 10 12 14 16];double[1 1] 2;char[1 4]'auto';char[1 4]'auto';double[1 7] [4 6 8 10 12 14 16]}|exact
+CHK|contourc_o2p5to17p5|double[1 7] [4 6 8 10 12 14 16]|exact
+CHK|levels_constant|cell[1 5]{double[1 0];double[1 1] 0;char[1 4]'auto';char[1 4]'auto';double[1 0]} WARN MATLAB:contour:ConstantData|exact
+CHK|contour3_levels|cell[1 3]{double[1 8] [2 4 6 8 10 12 14 16];double[1 1] 2;double[1 7] [2 4 6 8 10 12 14]}|exact
+CHK|contourf_levels|cell[1 3]{double[1 9] [1 2 4 6 8 10 12 14 16];double[1 1] 2;double[1 7] [2 4 6 8 10 12 14]}|exact
+CHK|contourf_peaks|cell[1 3]{double[1 8] [-6.3605020000000003 -6 -4 -2 0 2 4 6];double[1 1] 2;double[1 7] [-6 -4 -2 0 2 4 6]}|exact
+CHK|count_0|cell[1 5]{double[1 0];double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 0]}|exact
+CHK|contourc_count_0|double[1 0]|exact
+CHK|count_1|cell[1 5]{double[1 1] 8.5;double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 1] 8.5}|exact
+CHK|contourc_count_1|double[1 1] 8.5|exact
+CHK|count_2|cell[1 5]{double[1 2] [6 11];double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 2] [6 11]}|exact
+CHK|contourc_count_2|double[1 2] [6 11]|exact
+CHK|count_2.5|cell[1 5]{double[1 2] [6 11];double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 2] [6 11]}|exact
+CHK|contourc_count_2.5|double[1 2] [6 11]|exact
+CHK|count_3|cell[1 5]{double[1 3] [4.75 8.5 12.25];double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 3] [4.75 8.5 12.25]}|exact
+CHK|contourc_count_3|double[1 3] [4.75 8.5 12.25]|exact
+CHK|count_5|cell[1 5]{double[1 5] [3.5 6 8.5 11 13.5];double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 5] [3.5 6 8.5 11 13.5]}|exact
+CHK|contourc_count_5|double[1 5] [3.5 6 8.5 11 13.5]|exact
+CHK|count_8|cell[1 5]{double[1 8] [2.6666666669999999 4.3333333329999997 6 7.6666666670000003 9.3333333330000006 11 12.666666666999999 14.333333333000001];double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 8] [2.6666666669999999 4.3333333329999997 6 7.6666666670000003 9.3333333330000006 11 12.666666666999999 14.333333333000001]}|exact
+CHK|contourc_count_8|double[1 8] [2.6666666669999999 4.3333333329999997 6 7.6666666670000003 9.3333333330000006 11 12.666666666999999 14.333333333000001]|exact
+CHK|count_negative|MATLAB:contour:NMustNotBeNegative|exact
+CHK|count_negative_msg|Number of contour levels must not be negative.|exact
+CHK|contourf_count|cell[1 3]{double[1 4] [1 4.75 8.5 12.25];char[1 6]'manual';double[1 1] 2}|exact
+CHK|level_pair|cell[1 5]{double[1 1] 5;double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 1] 5}|exact
+CHK|level_list|cell[1 5]{double[1 3] [3 7 11];double[1 1] 2;char[1 6]'manual';char[1 4]'auto';double[1 3] [3 7 11]}|exact
+CHK|step_option|cell[1 5]{double[1 5] [3 6 9 12 15];double[1 1] 3;char[1 4]'auto';char[1 6]'manual';double[1 5] [3 6 9 12 15]}|exact
+CHK|step_option_2p5|cell[1 5]{double[1 6] [2.5 5 7.5 10 12.5 15];double[1 1] 2.5;char[1 4]'auto';char[1 6]'manual';double[1 6] [2.5 5 7.5 10 12.5 15]}|exact
+CHK|contourf_step|cell[1 2]{double[1 6] [1 3 6 9 12 15];char[1 4]'auto'}|exact
+CHK|contourf_list|cell[1 2]{double[1 3] [4 8 12];char[1 6]'manual'}|exact
+CHK|set_step_then_list|cell[1 8]{double[1 4] [4 8 12 16];double[1 1] 4;char[1 4]'auto';char[1 6]'manual';double[1 2] [1 8];double[1 1] 4;char[1 6]'manual';char[1 6]'manual'}|exact
+CHK|modes_back_to_auto|cell[1 8]{double[1 4] [4 8 12 16];double[1 1] 4;char[1 4]'auto';char[1 6]'manual';double[1 8] [2 4 6 8 10 12 14 16];double[1 1] 2;char[1 4]'auto';char[1 4]'auto'}|exact
+CHK|zdata_rewrite|cell[1 8]{double[1 7] [-6 -4 -2 0 2 4 6];double[1 1] 2;char[1 4]'auto';double[1 2] [1 20];double[1 2] [0 2];double[1 1] 2;char[1 6]'manual';double[1 2] [1 4]}|exact
+CHK|fcontour_levels|cell[1 4]{double[1 10] [5 10 15 20 25 30 35 40 45 50];double[1 1] 5;char[1 4]'auto';char[1 4]'auto'}|exact
+CHK|fcontour_sincos|cell[1 4]{double[1 9] [-0.80000000000000004 -0.59999999999999998 -0.40000000000000002 -0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004];double[1 1] 0.20000000000000001;char[1 4]'auto';char[1 4]'auto'}|exact
+CHK|fcontour_step|cell[1 4]{double[1 7] [7 14 21 28 35 42 49];double[1 1] 7;char[1 4]'auto';char[1 6]'manual'}|exact
+CHK|fcontour_fill|cell[1 2]{double[1 11] [0 5 10 15 20 25 30 35 40 45 50];double[1 1] 5}|exact
+CHK|fcontour_list|cell[1 3]{double[1 2] [3 9];double[1 1] 5;char[1 6]'manual'}|exact
+CHK|zlocation_default|MATLAB:class:InvalidHandle|exact
+CHK|zlocation_default_msg|Invalid or deleted object.|exact
+CHK|zlocation_words|cell[1 5]{char[1 4]'zmax';char[1 6]'manual';double[1 1] 2;char[1 6]'manual';char[1 4]'zmin'}|exact
+CHK|zlocation_zero|MATLAB:datatypes:InvalidZLocationValue|exact
+CHK|zlocation_zero_msg|Error setting property 'ZLocation' of class 'Contour': ZLocation value must be 'zmin', 'zmax', or a numeric scalar.|exact
+CHK|zlocation_auto|MATLAB:datatypes:InvalidZLocationValue|exact
+CHK|zlocation_auto_msg|Error setting property 'ZLocation' of class 'Contour': ZLocation value must be 'zmin', 'zmax', or a numeric scalar.|exact
+CHK|zlocation_option|char[1 4]'zmax'|exact
