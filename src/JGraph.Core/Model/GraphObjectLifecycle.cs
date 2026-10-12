@@ -69,8 +69,11 @@ public static class GraphObjectLifecycle
         return true;
     }
 
-    /// <summary>Clears the deletion mark — an undo putting an object back is the one road back.</summary>
-    internal static void Revive(GraphObject target) => target.BeingDeleted = false;
+    /// <summary>
+    /// Clears the deletion mark. An undo putting an object back is one road back; the other is a
+    /// legend made anew on an axes whose legend was deleted, since a legend is its axes' part for life.
+    /// </summary>
+    public static void Revive(GraphObject target) => target.BeingDeleted = false;
 
     /// <summary>Silences <see cref="Deleting"/> on this thread for the returned scope — for
     /// removals that are moves, not deletions.</summary>

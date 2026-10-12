@@ -307,6 +307,10 @@ internal sealed class JgsCallbackDispatcher
             return;
         }
 
+        // A DeleteFcn queued from the window runs after its object left the tree; it may still read it.
+        using IDisposable? delivering = graphicsEvent.Kind == GraphicsEventKind.ObjectDeleted
+            ? JgsHandleRegistry.DeliveringDeletionOf(graphicsEvent.Target)
+            : null;
         bool resolved = TryResolve(graphicsEvent, out JgsHandleEntry? entry, out JgsValue callback);
         if (graphicsEvent.Kind == GraphicsEventKind.ObjectDeleted
             && JgsHandleRegistry.TryGetEntry(graphicsEvent.Target, out JgsHandleEntry? leaving))

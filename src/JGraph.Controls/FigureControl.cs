@@ -217,7 +217,7 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         for (int i = infos.Count - 1; i >= 0; i--)
         {
             AxesRenderInfo info = infos[i];
-            if (info.Axes.Legend.Visible && info.Legend is { } legend && legend.Box.Contains(pixel))
+            if (info.Axes.Legend.Shown && info.Legend is { } legend && legend.Box.Contains(pixel))
             {
                 axes = info.Axes;
                 plotArea = info.PlotArea;

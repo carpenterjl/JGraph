@@ -502,6 +502,11 @@ internal static class FigureMapper
         dto.LineStyleOrder = axes.LineStyleOrder is { } styles
             ? styles.Select(static entry => new SeriesLineStyleDto(entry.Dash, entry.Marker)).ToList()
             : null;
+        dto.LineStyleOrderWords = axes.LineStyleOrderWords is { } words ? [.. words] : null;
+        dto.LineStyleOrderIsList = axes.LineStyleOrderIsList;
+        dto.SideColorOrders = axes.YAxes.Count > 1
+            ? [.. Enumerable.Range(0, axes.YAxes.Count).Select(side => axes.SideColorOrder(side) is { } own ? own.ToList() : null)]
+            : null;
         return dto;
     }
 
@@ -755,9 +760,16 @@ internal static class FigureMapper
             axes.AlphaScale = alphaScale;
         }
 
-        axes.LineStyleOrder = dto.LineStyleOrder is { Count: > 0 } styleDtos
-            ? styleDtos.Select(static entry => new SeriesLineStyle(entry.Dash, entry.Marker)).ToArray()
-            : null;
+        axes.SetLineStyleOrder(
+            dto.LineStyleOrder is { Count: > 0 } styleDtos
+                ? styleDtos.Select(static entry => new SeriesLineStyle(entry.Dash, entry.Marker)).ToArray()
+                : null,
+            dto.LineStyleOrderWords,
+            dto.LineStyleOrderIsList);
+        for (int side = 0; side < (dto.SideColorOrders?.Count ?? 0); side++)
+        {
+            axes.SetSideColorOrder(side, dto.SideColorOrders![side]);
+        }
 
         // A held figure keeps cycling from where it stopped: the next seat is one past the highest
         // seat any reloaded plot holds, and at least the plot count for documents without seats.
@@ -817,6 +829,7 @@ internal static class FigureMapper
         TickDirection = axis.TickDirection?.ToString(),
         TickLength = axis.TickLength is { } tickLength ? [tickLength.X, tickLength.Y] : null,
         RulerColor = axis.RulerColor,
+        RulerColorAutomatic = axis.InkIsAutomatic,
         LimitMethod = axis.LimitMethod == LimitMethod.Padded ? null : axis.LimitMethod.ToString(),
     };
 
@@ -873,6 +886,7 @@ internal static class FigureMapper
             ? new Vector2D(tickLength[0], tickLength[1])
             : null;
         axis.RulerColor = dto.RulerColor;
+        axis.InkIsAutomatic = dto.RulerColorAutomatic;
         axis.LimitMethod = Enum.TryParse(dto.LimitMethod, out LimitMethod limitMethod)
             ? limitMethod
             : LimitMethod.Padded;
@@ -992,6 +1006,8 @@ internal static class FigureMapper
             Orientation = legend.Orientation,
             Columns = legend.Columns,
             AutoUpdate = legend.AutoUpdate,
+            Hidden = legend.Hidden,
+            NamesUnnamed = legend.NamesUnnamed,
             FigureBox = legend.FigureBox is { } box ? DtoConvert.ToDto(box) : null,
         };
 
@@ -1032,6 +1048,8 @@ internal static class FigureMapper
         legend.Orientation = dto.Orientation;
         legend.Columns = dto.Columns;
         legend.AutoUpdate = dto.AutoUpdate;
+        legend.Hidden = dto.Hidden;
+        legend.NamesUnnamed = dto.NamesUnnamed;
         legend.FigureBox = dto.FigureBox is { } box ? DtoConvert.ToRect(box) : null;
     }
 

@@ -1076,6 +1076,14 @@ internal static partial class JgsGraphicsProperties
             "~WindowButtonUpFcnMode WindowKeyPressFcn ~WindowKeyPressFcnMode WindowKeyReleaseFcn " +
             "~WindowKeyReleaseFcnMode WindowScrollWheelFcn ~WindowScrollWheelFcnMode WindowState " +
             "WindowStyle ~WindowStyleMode ~XLimInclude ~YLimInclude ~ZLimInclude"),
+        ("matlab.ui.Root",
+            "~ApplicationData ~BlackAndWhite ~BlackAndWhiteMode CallbackObject Children ~ChildrenMode " +
+            "~ControllerMode ~Copyable CurrentFigure ~CurrentFigureMode ~DefaultPropMap_Internal " +
+            "FixedWidthFontName ~FixedWidthFontNameMode HandleVisibility ~HandleVisibilityMode " +
+            "~Internal MonitorPositions ~NodeChildren ~NodeParent Parent ~ParentMode PointerLocation " +
+            "~PointerLocationMode ScreenDepth ~ScreenDepthMode ScreenPixelsPerInch ScreenSize " +
+            "ShowHiddenHandles ~ShowHiddenHandlesMode Tag ~TagMode Type Units ~UnitsMode UserData " +
+            "~ValidateChildFcnMode"),
     ];
 
     /// <summary>The words R2025b's set(h) gives each property that takes some, tab-separated.</summary>
@@ -1110,6 +1118,9 @@ internal static partial class JgsGraphicsProperties
         ("matlab.ui.Figure", "PaperOrientation", "portrait\tlandscape\trotated"),
         ("matlab.ui.Figure", "ThemeMode", "auto\tmanual"),
         ("matlab.ui.Figure", "AutoResizeChildren", "on\toff"),
+        ("matlab.ui.Root", "Units", "inches\tcentimeters\tcharacters\tnormalized\tpoints\tpixels"),
+        ("matlab.ui.Root", "ShowHiddenHandles", "on\toff"),
+        ("matlab.ui.Root", "HandleVisibility", "on\tcallback\toff"),
         ("matlab.graphics.axis.Axes", "CameraPositionMode", "auto\tmanual"),
         ("matlab.graphics.axis.Axes", "CameraTargetMode", "auto\tmanual"),
         ("matlab.graphics.axis.Axes", "CameraUpVectorMode", "auto\tmanual"),

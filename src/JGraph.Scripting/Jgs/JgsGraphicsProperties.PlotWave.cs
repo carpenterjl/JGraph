@@ -51,6 +51,7 @@ internal static partial class JgsGraphicsProperties
         if (typeof(Scatter3DPlot).IsAssignableFrom(type))
         {
             AddScatterSourceBlock(table, spatial: true);
+            AddSpatialAlphaBlock(table);
         }
 
         // M86: plot3 and stem3 make the same MATLAB classes plot and stem make — Line and Stem — so
@@ -155,6 +156,14 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) =>
             {
                 double seat = Numbers("SeriesIndex", value, 1, line, col)[0];
+
+                // R2025b takes 0 as well, which reads back 0 (open item 111): no seat.
+                if (seat == 0 && JgsRunningDialect.ThreadIsMatlab)
+                {
+                    ((PlotObject)entry.Target).SeriesIndex = -1;
+                    return;
+                }
+
                 if (seat < 1 || !double.IsFinite(seat))
                 {
                     throw new JgsRuntimeException(
@@ -209,6 +218,59 @@ internal static partial class JgsGraphicsProperties
 
 
     /// <summary>
+    /// The transparency channel of a marker chart in space (open item 111, probe <c>probe_111</c>):
+    /// R2025b's <c>scatter3</c> and <c>bubblechart3</c> answer <c>AlphaData</c> (a row, 1-by-0 unset)
+    /// and <c>AlphaDataMapping</c> ('scaled'), read when an alpha is 'flat'.
+    /// </summary>
+    private static void AddSpatialAlphaBlock(IDictionary<string, GraphicsProperty> table)
+    {
+        static Scatter3DPlot Cloud(JgsHandleEntry entry) => (Scatter3DPlot)entry.Target;
+
+        Put(table, "AlphaData",
+            entry => Row(Cloud(entry).AlphaData ?? []),
+            (entry, value, line, col) =>
+            {
+                double[] alphas = MarkerAlphaData(value, line, col);
+                Cloud(entry).AlphaData = alphas.Length == 0 ? null : alphas;
+            });
+
+        AddWordProperty(table, "AlphaDataMapping",
+            entry => Cloud(entry).AlphaDataMapping.ToString().ToLowerInvariant(),
+            (entry, word, line, col) => Cloud(entry).AlphaDataMapping = MarkerAlphaMapping(entry, word, line, col));
+    }
+
+    /// <summary>
+    /// A marker chart's <c>AlphaData</c>: numbers, refused otherwise in R2025b's words, and a vector
+    /// (probe <c>probe_111b</c>).
+    /// </summary>
+    private static double[] MarkerAlphaData(JgsValue value, int line, int col)
+    {
+        if (value.Type is JgsType.String or JgsType.Cell || value.IsStringArray || value.IsCharMatrix)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:hg:shaped_arrays:NumericMatrixType",
+                "Value must be a scalar, vector or array of numeric type.");
+        }
+
+        if (value.Dims.Count(static d => d != 1) > 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:graphics:chart:MustBeVector", "Alpha data must be a vector.");
+        }
+
+        return JgsBuiltins.ToDoubles("AlphaData", value, line, col);
+    }
+
+    /// <summary>A marker chart's <c>AlphaDataMapping</c>, refused as R2025b refuses a word not among its three.</summary>
+    private static AlphaMapping MarkerAlphaMapping(JgsHandleEntry entry, string word, int line, int col) => word switch
+    {
+        "none" => AlphaMapping.None,
+        "scaled" => AlphaMapping.Scaled,
+        "direct" => AlphaMapping.Direct,
+        _ => throw new JgsRuntimeException(line, col, "MATLAB:datatypes:InvalidEnumValue",
+            $"Error setting property 'AlphaDataMapping' of class '{MatlabClassWord(entry.Target, full: false) ?? "Scatter"}':\n"
+            + $"'{word}' is not a valid value. Use one of these values: 'none' | 'scaled' | 'direct'."),
+    };
+
+    /// <summary>
     /// The scatter's transparency channel and the spatial names a flat cloud answers about but does
     /// not have. AlphaData is the third per-point channel beside size and colour, and reads through
     /// the axes' alpha map exactly as CData reads through its colormap.
@@ -221,20 +283,13 @@ internal static partial class JgsGraphicsProperties
             entry => Row(Cloud(entry).AlphaData ?? []),
             (entry, value, line, col) =>
             {
-                double[] alphas = JgsBuiltins.ToDoubles("AlphaData", value, line, col);
+                double[] alphas = MarkerAlphaData(value, line, col);
                 Cloud(entry).AlphaData = alphas.Length == 0 ? null : alphas;
             });
 
         AddWordProperty(table, "AlphaDataMapping",
             entry => Cloud(entry).AlphaDataMapping.ToString().ToLowerInvariant(),
-            (entry, word, line, col) => Cloud(entry).AlphaDataMapping = word switch
-            {
-                "none" => AlphaMapping.None,
-                "scaled" => AlphaMapping.Scaled,
-                "direct" => AlphaMapping.Direct,
-                _ => throw new JgsRuntimeException(line, col,
-                    $"AlphaDataMapping is 'none', 'scaled' or 'direct', but got '{word}'."),
-            });
+            (entry, word, line, col) => Cloud(entry).AlphaDataMapping = MarkerAlphaMapping(entry, word, line, col));
 
         AddChannelMode(table, "AlphaDataMode", "AlphaData",
             entry => Cloud(entry).AlphaData,

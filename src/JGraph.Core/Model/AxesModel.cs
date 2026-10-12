@@ -198,8 +198,58 @@ public sealed class AxesModel : GraphObject
     public IReadOnlyList<SeriesLineStyle>? LineStyleOrder
     {
         get => _lineStyleOrder;
-        set => SetProperty(ref _lineStyleOrder, value, InvalidationKind.Render);
+        set
+        {
+            LineStyleOrderWords = null;
+            LineStyleOrderIsList = false;
+            SetProperty(ref _lineStyleOrder, value, InvalidationKind.Render);
+        }
     }
+
+    /// <summary>
+    /// The <see cref="LineStyleOrder"/> as it was written — R2025b reads it back so, <c>o-</c> as
+    /// <c>o-</c> — and whether it was written as a list rather than as text (open item 111); null when
+    /// the styles say it all.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<string>? LineStyleOrderWords { get; private set; }
+
+    /// <summary>Whether <see cref="LineStyleOrderWords"/> were written as a list (a cell or string array).</summary>
+    [Browsable(false)]
+    public bool LineStyleOrderIsList { get; private set; }
+
+    /// <summary>Sets the line-style order with the words it was written in.</summary>
+    public void SetLineStyleOrder(IReadOnlyList<SeriesLineStyle>? styles, IReadOnlyList<string>? words, bool asList)
+    {
+        LineStyleOrder = styles;
+        LineStyleOrderWords = styles is null ? null : words;
+        LineStyleOrderIsList = styles is not null && asList;
+    }
+
+    private readonly List<IReadOnlyList<Color>?> _sideColorOrders = [];
+
+    /// <summary>
+    /// The colour order one side of a yyaxis axes cycles through, or null when it has none of its own
+    /// (open item 111): R2025b gives each side its own, one colour long when yyaxis makes it, and
+    /// <c>ax.ColorOrder</c> and <c>colororder</c> read and write the active side's.
+    /// </summary>
+    public IReadOnlyList<Color>? SideColorOrder(int yAxisIndex) =>
+        yAxisIndex >= 0 && yAxisIndex < _sideColorOrders.Count ? _sideColorOrders[yAxisIndex] : null;
+
+    /// <summary>Gives one yyaxis side its colour order; its auto-coloured plots follow it.</summary>
+    public void SetSideColorOrder(int yAxisIndex, IReadOnlyList<Color>? order)
+    {
+        while (_sideColorOrders.Count <= yAxisIndex)
+        {
+            _sideColorOrders.Add(null);
+        }
+
+        _sideColorOrders[yAxisIndex] = order is { Count: > 0 } ? order : null;
+        Invalidate(InvalidationKind.Render);
+    }
+
+    /// <summary>Forgets the sides' colour orders, as an axes made one-sided again does.</summary>
+    public void ClearSideColorOrders() => _sideColorOrders.Clear();
 
     /// <summary>
     /// How many series slots this axes has handed out since it was last empty — the 0-based seat of
@@ -250,6 +300,18 @@ public sealed class AxesModel : GraphObject
         }
 
         int index = _sideSeries[side]++;
+
+        // A side with its own colour order cycles it as any axes cycles its colours, the style
+        // stepping each time the colours come round (open item 111); one colour long, as yyaxis
+        // makes it, that is a style a plot.
+        if (SideColorOrder(side) is { } own)
+        {
+            SeriesLineStyle stepped = _lineStyleOrder is { Count: > 0 } styles
+                ? styles[index / own.Count % styles.Count]
+                : SeriesLineStyle.Solid;
+            return new SeriesSlot(index, own[index % own.Count], stepped);
+        }
+
         IReadOnlyList<Color> palette = _colorOrder is { Count: > 0 } chosen ? chosen : Colors.DefaultSeriesOrder;
         SeriesLineStyle style = _lineStyleOrder is { Count: > 0 } order ? order[index % order.Count] : SeriesLineStyle.Solid;
         return new SeriesSlot(index, palette[side % palette.Count], style);
@@ -281,7 +343,9 @@ public sealed class AxesModel : GraphObject
         IReadOnlyList<Color> palette = _colorOrder is { Count: > 0 } chosen ? chosen : Colors.DefaultSeriesOrder;
         if (plot.SeriesSide >= 0)
         {
-            return palette[plot.SeriesSide % palette.Count];
+            return SideColorOrder(plot.SeriesSide) is { } own
+                ? own[System.Math.Max(0, plot.SeriesIndex) % own.Count]
+                : palette[plot.SeriesSide % palette.Count];
         }
 
         int index = plot.SeriesIndex;

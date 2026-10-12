@@ -22,12 +22,35 @@ public abstract class PlotObject : GraphObject
     private PlotAnnotationModel? _annotation;
     private DataTipTemplateModel? _dataTipTemplate;
 
-    /// <summary>The name shown for this object in a legend (MATLAB "DisplayName").</summary>
+    /// <summary>The name shown for this object in a legend (MATLAB "DisplayName"). Setting it names the object for good.</summary>
     [Category("General"), DisplayName("Display name")]
     public string DisplayName
     {
         get => _displayName;
-        set => SetProperty(ref _displayName, value ?? string.Empty, InvalidationKind.Render);
+        set
+        {
+            DisplayNameIsManual = true;
+            SetProperty(ref _displayName, value ?? string.Empty, InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
+    /// Whether <see cref="DisplayName"/> was given rather than left to a legend (MATLAB's
+    /// <c>DisplayNameMode</c>): a MATLAB legend names the rest <c>data1</c>, <c>data2</c>, …
+    /// (<see cref="LegendModel.NameUnnamedRows"/>) and takes the names back when it is deleted.
+    /// </summary>
+    [Browsable(false)]
+    public bool DisplayNameIsManual { get; private set; }
+
+    /// <summary>Gives the object a legend's name for it, leaving it unnamed by its owner.</summary>
+    public void NameAutomatically(string name) =>
+        SetProperty(ref _displayName, name ?? string.Empty, InvalidationKind.Render);
+
+    /// <summary>Puts back a saved name with the mode it was saved in.</summary>
+    public void RestoreDisplayName(string name, bool manual)
+    {
+        NameAutomatically(name);
+        DisplayNameIsManual = manual;
     }
 
     /// <summary>Overall opacity in [0, 1] applied on top of any per-element alpha.</summary>

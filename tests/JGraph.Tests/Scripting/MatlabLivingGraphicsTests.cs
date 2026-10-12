@@ -294,7 +294,7 @@ public class MatlabLivingGraphicsTests : IDisposable
     public void AGroupCollectsTheObjectsGivenToIt()
     {
         Assert.Equal("hggroup 2\n", RunAndRead("""
-            figure(1); a = plot(1:3); b = plot(4:6);
+            figure(1); hold on; a = plot(1:3); b = plot(4:6);
             g = hggroup;
             set(a, 'Parent', g); set(b, 'Parent', g);
             fprintf('%s %d\n', get(g, 'Type'), numel(get(g, 'Children')));

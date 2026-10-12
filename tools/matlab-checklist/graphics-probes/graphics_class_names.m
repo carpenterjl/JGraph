@@ -6,6 +6,7 @@ ax = axes(f);
 hold(ax, 'on');
 h = {};
 h{end+1} = f;
+h{end+1} = groot; % the root's names and order (open item 109)
 h{end+1} = ax;
 h{end+1} = plot(ax, 1:3);
 h{end+1} = text(ax, 1, 1, 'a');

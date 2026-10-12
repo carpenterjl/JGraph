@@ -94,17 +94,21 @@ the user's decision (2026-10-11). The default colour order is still open item 10
 ## Divergences
 
 - **A histogram is solid by default** (`FaceAlpha` 1); R2025b's is 0.6. Kept by decision.
-- **Under `yyaxis`, `ax.ColorOrder` is the whole order**; R2025b's holds only the active side's colour.
-  `colororder` after `yyaxis` leaves a side's plots in the side's colour where R2025b recolours them.
-- **A ruler `yyaxis` inked reads `ColorMode` `'manual'`**; R2025b's reads `'auto'`.
-- **The yyaxis line-style order reads `-o`, `-^`, `-*`** where R2025b writes `o-`, `^-`, `*-`, and it
-  has seven entries even when the axes held plots already (R2025b's then has fourteen).
-- **`ax.YAxis = …` is refused in JGraph's words**; R2025b's is `MATLAB:class:SetProhibited`.
-- **`scatter3` and `bubblechart3` answer no `AlphaData` or `AlphaDataMapping`.**
+- ~~**Under `yyaxis`, `ax.ColorOrder` is the whole order**; R2025b's holds only the active side's colour.
+  `colororder` after `yyaxis` leaves a side's plots in the side's colour where R2025b recolours them.~~
+  Lifted by ADR 0228.
+- ~~**A ruler `yyaxis` inked reads `ColorMode` `'manual'`**; R2025b's reads `'auto'`.~~ Lifted by ADR 0228.
+- ~~**The yyaxis line-style order reads `-o`, `-^`, `-*`** where R2025b writes `o-`, `^-`, `*-`, and it
+  has seven entries even when the axes held plots already (R2025b's then has fourteen).~~ Lifted by
+  ADR 0228; the fourteen was `numel` of R2025b's 7-by-2 char matrix, not a longer order.
+- ~~**`ax.YAxis = …` is refused in JGraph's words**; R2025b's is `MATLAB:class:SetProhibited`.~~ Lifted
+  by ADR 0228.
+- ~~**`scatter3` and `bubblechart3` answer no `AlphaData` or `AlphaDataMapping`.**~~ Lifted by ADR 0228.
 - **A `CData` property written with the wrong count of rows is drawn in the chart's one colour.**
 - **A patch draws `'interp'` alpha as `'flat'`**, a value per face.
-- **A region's `Value` written as a column reads back as a row**; **`FaceColorMode` `'auto'` puts the
-  grey back** where R2025b keeps the colour; **datetime and duration bands are refused**.
+- ~~**A region's `Value` written as a column reads back as a row**; **`FaceColorMode` `'auto'` puts the
+  grey back** where R2025b keeps the colour; **datetime and duration bands are refused**.~~ Lifted by
+  ADR 0228 (a categorical band is still refused there).
 - **Padded limits (ADR 0073) take regions into account** as they take any data.
 
 ## Consequences

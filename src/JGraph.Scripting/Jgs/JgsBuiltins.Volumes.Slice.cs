@@ -111,20 +111,25 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "slice: every plane list is empty, so there is nothing to cut.");
         }
 
+        // The first plane replaces what the axes held, as the call does; the rest join it. Each one
+        // replaced the one before until a replaced handle was refused (open item 110), so only the
+        // last plane of a slice was ever drawn.
         var drawn = new List<JgsValue>();
-        foreach (double x in sx)
+        bool holding = JG.IsHolding;
+        try
         {
-            drawn.Add(Handle(CutPlane(field, Axis.X, x)));
+            foreach ((Axis normal, double[] planes) in new[] { (Axis.X, sx), (Axis.Y, sy), (Axis.Z, sz) })
+            {
+                foreach (double plane in planes)
+                {
+                    drawn.Add(Handle(CutPlane(field, normal, plane)));
+                    JG.Hold(true);
+                }
+            }
         }
-
-        foreach (double y in sy)
+        finally
         {
-            drawn.Add(Handle(CutPlane(field, Axis.Y, y)));
-        }
-
-        foreach (double z in sz)
-        {
-            drawn.Add(Handle(CutPlane(field, Axis.Z, z)));
+            JG.Hold(holding);
         }
 
         AxesModel axes = JG.Gca();

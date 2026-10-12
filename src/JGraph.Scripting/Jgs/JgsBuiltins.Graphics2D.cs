@@ -663,18 +663,30 @@ internal static partial class JgsBuiltins
             bucket.Values.Add(values[i]);
         }
 
+        // The first group replaces what the axes held, as the call does; the rest join it. Each call
+        // replaced the one before until a replaced handle was refused (open item 110), so only the
+        // last colour group was ever drawn.
         var created = new List<BoxChartPlot>(levels.Count);
-        foreach ((double level, (List<double> groupPositions, List<double> groupValues)) in levels)
+        bool holding = JG.IsHolding;
+        try
         {
-            BoxChartPlot plot = JG.BoxChart([.. groupPositions], [.. groupValues]);
+            foreach ((double level, (List<double> groupPositions, List<double> groupValues)) in levels)
+            {
+                BoxChartPlot plot = JG.BoxChart([.. groupPositions], [.. groupValues]);
+                JG.Hold(true);
 
-            // Each colour group is its own series, so it takes its own colour from the palette and
-            // its own legend entry — which is the whole point of asking for one.
-            plot.BoxFaceColor ??= PaletteColorFor(plot);
-            plot.DisplayName = colorNames is not null && level >= 0 && level < colorNames.Length
-                ? colorNames[(int)level]
-                : FormatNumber(level);
-            created.Add(plot);
+                // Each colour group is its own series, so it takes its own colour from the palette and
+                // its own legend entry — which is the whole point of asking for one.
+                plot.BoxFaceColor ??= PaletteColorFor(plot);
+                plot.DisplayName = colorNames is not null && level >= 0 && level < colorNames.Length
+                    ? colorNames[(int)level]
+                    : FormatNumber(level);
+                created.Add(plot);
+            }
+        }
+        finally
+        {
+            JG.Hold(holding);
         }
 
         return created;

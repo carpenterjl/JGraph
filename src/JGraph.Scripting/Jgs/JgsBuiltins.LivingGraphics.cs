@@ -364,7 +364,13 @@ internal static partial class JgsBuiltins
             };
 
             (double[] xs, double[] ys) = RectangleOutline(box, curvature, line, col);
-            PatchPlot patch = JG.Fill(xs, ys, Colors.Transparent);
+
+            // R2025b's rectangle adds to the axes without newplot (open item 110); JGS's replaces.
+            PatchPlot patch;
+            using (JgsRunningDialect.ThreadIsMatlab ? JG.AddingWithoutReplace() : null)
+            {
+                patch = JG.Fill(xs, ys, Colors.Transparent);
+            }
             patch.Name = "Rectangle";
             RectangleShapes.AddOrUpdate(patch, new RectangleShape(box, written)); // a scalar reads back as written
             patch.FaceVisible = false;

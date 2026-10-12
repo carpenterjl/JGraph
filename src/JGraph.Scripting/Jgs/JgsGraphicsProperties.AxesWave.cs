@@ -468,17 +468,26 @@ internal static partial class JgsGraphicsProperties
         if (ToAutoManual(name, value, line, col))
         {
             ruler.RulerColor ??= ruler.TickLabelStyle.Color;
+            ruler.InkIsAutomatic = false;
         }
-        else if (ruler.RulerColor is not null)
+        else if (ruler.RulerColor is not null && !ruler.InkIsAutomatic)
         {
             Unink(ruler);
         }
     }
 
+    /// <summary>
+    /// A ruler's colour mode: 'manual' once a script inked it; a ruler yyaxis inked in its side's
+    /// colour is still 'auto', as R2025b's is (open item 111).
+    /// </summary>
+    internal static JgsValue RulerColorMode(AxisModel ruler) =>
+        AutoManual(ruler.RulerColor is not null && !ruler.InkIsAutomatic);
+
     /// <summary>Hands a ruler back the theme's line and its built-in text inks.</summary>
     internal static void Unink(AxisModel ruler)
     {
         ruler.RulerColor = null;
+        ruler.InkIsAutomatic = false;
         ruler.TickLabelStyle = ruler.TickLabelStyle.WithColor(Colors.DarkGray);
         ruler.LabelStyle = ruler.LabelStyle.WithColor(Colors.Black);
     }
@@ -500,7 +509,7 @@ internal static partial class JgsGraphicsProperties
             });
 
         Put(table, letter + "ColorMode",
-            entry => AutoManual(chosen(Axes(entry)).RulerColor is not null),
+            entry => RulerColorMode(chosen(Axes(entry))),
             (entry, value, line, col) => SetRulerColorMode(chosen(Axes(entry)), letter + "ColorMode", value, line, col));
 
         // The mode spellings are derived words over the nullable-means-auto state the rulers have
@@ -590,17 +599,31 @@ internal static partial class JgsGraphicsProperties
 
     private static void AddSeriesBlock(IDictionary<string, GraphicsProperty> table)
     {
+        // Under yyaxis a MATLAB script reads and writes the active side's own order (open item 111).
         Put(table, "ColorOrder",
-            entry => ColorTable(Axes(entry).ColorOrder ?? Colors.DefaultSeriesOrder),
+            entry => ColorTable(JgsBuiltins.SideColorOrderOf(Axes(entry)) ?? Axes(entry).ColorOrder ?? Colors.DefaultSeriesOrder),
             (entry, value, line, col) =>
-                Axes(entry).ColorOrder = ParseColorList("ColorOrder", value, line, col));
+            {
+                AxesModel axes = Axes(entry);
+                IReadOnlyList<Color>? colors = ParseColorList("ColorOrder", value, line, col);
+                if (JgsBuiltins.SideColorOrderOf(axes) is not null && colors is not null)
+                {
+                    axes.SetSideColorOrder(axes.ActiveYAxisIndex, colors);
+                    return;
+                }
+
+                axes.ColorOrder = colors;
+            });
 
         // Both index spellings are the same 1-based counter; NextSeriesIndex is the R2023b name.
         foreach (string name in new[] { "ColorOrderIndex", "NextSeriesIndex" })
         {
             string spelling = name;
+            // Under yyaxis a MATLAB script reads the active side's own place in its colours (item 111).
             Put(table, spelling,
-                entry => JgsValue.Number(Axes(entry).NextSeriesIndex + 1),
+                entry => JgsBuiltins.SideColorOrderOf(Axes(entry)) is { } own
+                    ? JgsValue.Number((Axes(entry).SideSeriesCount(Axes(entry).ActiveYAxisIndex) % own.Count) + 1)
+                    : JgsValue.Number(Axes(entry).NextSeriesIndex + 1),
                 (entry, value, line, col) =>
                 {
                     double seat = Numbers(spelling, value, 1, line, col)[0];
@@ -614,16 +637,33 @@ internal static partial class JgsGraphicsProperties
                 });
         }
 
+        // A MATLAB script reads the order back as it was written: text as a char matrix, a list as a
+        // cell, and R2025b's own orders - '-', and yyaxis's - as text (open item 111). JGS reads a cell.
         Put(table, "LineStyleOrder",
             entry =>
             {
-                IReadOnlyList<SeriesLineStyle> order =
-                    Axes(entry).LineStyleOrder ?? new[] { SeriesLineStyle.Solid };
-                return JgsValue.Cell(order.Select(static entry2 =>
-                    JgsValue.Str(LineStyleWord(entry2))).ToArray());
+                AxesModel axes = Axes(entry);
+                IReadOnlyList<string> words = axes.LineStyleOrderWords
+                    ?? (axes.LineStyleOrder ?? new[] { SeriesLineStyle.Solid }).Select(LineStyleWord).ToArray();
+                if (JgsRunningDialect.ThreadIsMatlab && !axes.LineStyleOrderIsList)
+                {
+                    return words.Count == 1 ? JgsValue.Str(words[0]) : JgsValue.CharMatrix([.. words]);
+                }
+
+                // R2025b keeps a list as a column, however it was written.
+                JgsValue list = JgsValue.Cell([.. words.Select(JgsValue.Str)]);
+                if (JgsRunningDialect.ThreadIsMatlab)
+                {
+                    list.Reshape(words.Count, 1);
+                }
+
+                return list;
             },
             (entry, value, line, col) =>
-                Axes(entry).LineStyleOrder = ParseLineStyleOrder(value, line, col));
+            {
+                (IReadOnlyList<SeriesLineStyle>? styles, string[] words, bool asList) = ParseLineStyleOrder(value, line, col);
+                Axes(entry).SetLineStyleOrder(styles, words, asList);
+            });
 
         Put(table, "LineStyleOrderIndex",
             entry =>
@@ -632,10 +672,12 @@ internal static partial class JgsGraphicsProperties
                 int colors = (axes.ColorOrder ?? Colors.DefaultSeriesOrder).Count;
                 int styles = axes.LineStyleOrder?.Count ?? 1;
 
-                // Under yyaxis the active side's own count, a style a plot (open item 106).
+                // Under yyaxis the active side's own count, stepping a style each time the side's
+                // colours come round (open items 106 and 111).
                 if (axes.YAxes.Count > 1)
                 {
-                    return JgsValue.Number((axes.SideSeriesCount(axes.ActiveYAxisIndex) % styles) + 1);
+                    int laps = axes.SideColorOrder(axes.ActiveYAxisIndex)?.Count ?? 1;
+                    return JgsValue.Number((axes.SideSeriesCount(axes.ActiveYAxisIndex) / laps % styles) + 1);
                 }
 
                 return JgsValue.Number((axes.NextSeriesIndex / System.Math.Max(1, colors) % styles) + 1);
@@ -710,20 +752,31 @@ internal static partial class JgsGraphicsProperties
         return dash == "none" ? marker : dash + marker;
     }
 
-    private static IReadOnlyList<SeriesLineStyle>? ParseLineStyleOrder(JgsValue value, int line, int col)
+    /// <summary>
+    /// A line-style order as written: a cell or a string array is a list, one word or a char matrix of
+    /// them (a row each, the padding dropped) text (open item 111). Answers the styles, the words, and
+    /// whether they came as a list.
+    /// </summary>
+    private static (IReadOnlyList<SeriesLineStyle>? Styles, string[] Words, bool AsList) ParseLineStyleOrder(
+        JgsValue value, int line, int col)
     {
-        IReadOnlyList<JgsValue> specs = value.Type == JgsType.Cell
-            ? value.AsCell
-            : new[] { value };
-        if (specs.Count == 0)
+        bool asList = value.Type == JgsType.Cell || (value.IsStringArray && !JgsBuiltins.IsTextScalar(value));
+        string[] texts = value.Type == JgsType.Cell
+            ? [.. value.AsCell.Select(spec => JgsBuiltins.StrOf("LineStyleOrder", spec, line, col))]
+            : value.IsCharMatrix
+                ? [.. value.CharMatrixRows().Select(static row => row.TrimEnd())]
+                : value.IsStringArray && JgsBuiltins.TextElementsOf(value) is { } strings
+                    ? strings
+                    : [JgsBuiltins.StrOf("LineStyleOrder", value, line, col)];
+        if (texts.Length == 0)
         {
-            return null;
+            return (null, [], false);
         }
 
-        var order = new SeriesLineStyle[specs.Count];
-        for (int i = 0; i < specs.Count; i++)
+        var order = new SeriesLineStyle[texts.Length];
+        for (int i = 0; i < texts.Length; i++)
         {
-            string text = JgsBuiltins.StrOf("LineStyleOrder", specs[i], line, col);
+            string text = texts[i];
             LineSpec spec = LineSpec.Parse(text);
             if (spec.Color is not null)
             {
@@ -737,7 +790,7 @@ internal static partial class JgsGraphicsProperties
             order[i] = new SeriesLineStyle(dash, spec.Marker ?? MarkerType.None);
         }
 
-        return order;
+        return (order, texts, asList);
     }
 
     // --- Axes-level color mapping ----------------------------------------------------------------

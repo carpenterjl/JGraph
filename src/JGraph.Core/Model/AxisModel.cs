@@ -98,13 +98,22 @@ public sealed class AxisModel : GraphObject
         set => SetProperty(ref _rulerColor, value, InvalidationKind.Render);
     }
 
-    /// <summary>Inks the whole ruler — line, ticks, tick labels and label — in one colour.</summary>
-    public void Ink(Color ink)
+    /// <summary>
+    /// Inks the whole ruler — line, ticks, tick labels and label — in one colour.
+    /// <paramref name="automatic"/> marks the ink as the axes' own choice rather than a script's:
+    /// yyaxis inks each side so, and R2025b's <c>ColorMode</c> then still reads 'auto' (open item 111).
+    /// </summary>
+    public void Ink(Color ink, bool automatic = false)
     {
         RulerColor = ink;
         TickLabelStyle = TickLabelStyle.WithColor(ink);
         LabelStyle = LabelStyle.WithColor(ink);
+        InkIsAutomatic = automatic;
     }
+
+    /// <summary>Whether <see cref="RulerColor"/> was put there by the axes itself (yyaxis) rather than chosen.</summary>
+    [Browsable(false)]
+    public bool InkIsAutomatic { get; set; }
 
     /// <summary>How auto-scaling turns this ruler's data extent into limits (MATLAB <c>XLimitMethod</c>).</summary>
     [Category("General"), DisplayName("Limit method")]

@@ -357,6 +357,12 @@ internal static class PlotMapper
                 LineWidth = p.LineWidth,
                 Dash = p.Dash,
                 OnTop = p.OnTop,
+                FaceColorManual = p.FaceColorManual,
+                ValueKind = p.ValueKind,
+                TimeFormat = p.TimeFormat,
+                TimeFormatSet = p.TimeFormatSet,
+                TimeZone = p.TimeZone,
+                ValueIsColumn = p.ValueIsColumn,
             },
             Line3DPlot p => new Line3DPlotDto
             {
@@ -383,6 +389,8 @@ internal static class PlotMapper
                 FaceColor = p.FaceColor,
                 FaceAlpha = p.FaceAlpha,
                 EdgeAlpha = p.EdgeAlpha,
+                AlphaData = p.AlphaData?.ToArray(),
+                AlphaDataMapping = p.AlphaDataMapping,
                 PointColors = p.PointColors?.ToArray(),
                 WrittenColorValues = p.WrittenColorData?.Values,
                 WrittenColorRows = p.WrittenColorData?.Rows ?? 0,
@@ -727,6 +735,12 @@ internal static class PlotMapper
                 LineWidth = d.LineWidth,
                 Dash = d.Dash,
                 OnTop = d.OnTop,
+                FaceColorManual = d.FaceColorManual ?? d.FaceColor is not null,
+                ValueKind = d.ValueKind,
+                TimeFormat = d.TimeFormat,
+                TimeFormatSet = d.TimeFormatSet,
+                TimeZone = d.TimeZone,
+                ValueIsColumn = d.ValueIsColumn,
             },
             Line3DPlotDto d => new Line3DPlot(d.X, d.Y, d.Z)
             {
@@ -749,6 +763,8 @@ internal static class PlotMapper
                 FaceColor = d.FaceColor,
                 FaceAlpha = d.FaceAlpha,
                 EdgeAlpha = d.EdgeAlpha,
+                AlphaData = d.AlphaData,
+                AlphaDataMapping = d.AlphaDataMapping,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
                 Filled = d.Filled,
@@ -904,6 +920,7 @@ internal static class PlotMapper
     {
         dto.Name = plot.Name;
         dto.DisplayName = plot.DisplayName;
+        dto.DisplayNameManual = plot.DisplayNameIsManual;
         dto.Visible = plot.Visible;
         dto.ZOrder = plot.ZOrder;
         dto.Opacity = plot.Opacity;
@@ -920,7 +937,7 @@ internal static class PlotMapper
     private static void ApplyCommon(PlotDto dto, PlotObject plot)
     {
         plot.Name = dto.Name;
-        plot.DisplayName = dto.DisplayName;
+        plot.RestoreDisplayName(dto.DisplayName, dto.DisplayNameManual ?? dto.DisplayName.Length > 0);
         plot.Visible = dto.Visible;
         plot.ZOrder = dto.ZOrder;
         plot.Opacity = dto.Opacity;

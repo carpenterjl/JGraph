@@ -438,7 +438,7 @@ public sealed class FigureRenderer
 
             DrawTitleBlock(context, axes, plotArea);
 
-            LegendLayout? legendBox = axes.Legend.Visible
+            LegendLayout? legendBox = axes.Legend.Shown
                 ? LegendRenderer.Draw(context, axes, plotArea, content, theme)
                 : null;
 
@@ -464,7 +464,7 @@ public sealed class FigureRenderer
 
             DrawTitleBlock(context, axes, plotArea);
 
-            LegendLayout? polarLegend = axes.Legend.Visible
+            LegendLayout? polarLegend = axes.Legend.Shown
                 ? LegendRenderer.Draw(context, axes, plotArea, content, theme)
                 : null;
 
@@ -560,7 +560,7 @@ public sealed class FigureRenderer
         DrawAxisTitles(context, axes, xAxis, yAxis, plotArea, metrics, leftTint);
 
         // Legend.
-        LegendLayout? legendBounds = axes.Legend.Visible
+        LegendLayout? legendBounds = axes.Legend.Shown
             ? LegendRenderer.Draw(context, axes, plotArea, content, theme)
             : null;
 

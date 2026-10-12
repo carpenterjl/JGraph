@@ -1,0 +1,120 @@
+CHK|get_order_line|logical[1 1] 1|exact
+CHK|get_order_axes|logical[1 1] 1|exact
+CHK|get_order_text|logical[1 1] 1|exact
+CHK|get_order_patch|logical[1 1] 1|exact
+CHK|get_order_scatter|logical[1 1] 1|exact
+CHK|get_order_region|logical[1 1] 1|exact
+CHK|get_order_legend|logical[1 1] 1|exact
+CHK|get_order_figure|logical[1 1] 1|exact
+CHK|get_root|cell[1 16]{char[1 13]'CurrentFigure';char[1 5]'Units';char[1 11]'ScreenDepth';char[1 15]'PointerLocation';char[1 14]'CallbackObject';char[1 18]'FixedWidthFontName';char[1 17]'ShowHiddenHandles';char[1 19]'ScreenPixelsPerInch';char[1 16]'MonitorPositions';char[1 10]'ScreenSize';char[1 8]'Children';char[1 6]'Parent';char[1 16]'HandleVisibility';char[1 4]'Type';char[1 3]'Tag';char[1 8]'UserData'}|exact
+CHK|props_root|double[1 1] 16|exact
+CHK|get_first_line|char[1 67]'XData,XDataMode,XVariable,YData,YDataMode,YVariable,ZData,ZDataMode'|exact
+CHK|set_first_line|char[1 51]'XData,XDataMode,XVariable,YData,YDataMode,YVariable'|exact
+CHK|userdata_line|double[1 2] [0 0]|exact
+CHK|userdata_axes|double[1 2] [0 0]|exact
+CHK|userdata_figure|double[1 2] [0 0]|exact
+CHK|userdata_root|double[1 2] [0 0]|exact
+CHK|userdata_class|char[1 6]'double'|exact
+CHK|userdata_reset|double[1 2] [0 0]|exact
+CHK|get_several|cell[1 2]{char[1 6]'struct';double[1 2] [2 1]}|exact
+CHK|get_several_one|cell[1 2]{char[1 4]'cell';double[1 2] [2 1]}|exact
+CHK|legend_two|cell[1 5]{cell[1 2]{char[0 0]'';char[0 0]''};cell[1 2]{char[1 5]'data1';char[1 5]'data2'};char[1 5]'data1';char[1 5]'data2';char[1 4]'cell'}|exact
+CHK|legend_third|cell[1 2]{cell[1 3]{char[1 5]'data1';char[1 5]'data2';char[1 5]'data3'};char[1 5]'data3'}|exact
+CHK|legend_named_first|cell[1 2]{char[1 1]'n';char[1 5]'data1'}|exact
+CHK|legend_named_second|cell[1 2]{char[1 5]'data1';char[1 1]'n'}|exact
+CHK|legend_rename|cell[1 3]{cell[1 2]{char[0 0]'';char[1 5]'data1'};char[0 0]'';char[1 5]'data1'}|exact
+CHK|legend_rename_x|cell[1 3]{cell[1 2]{char[1 1]'x';char[1 5]'data1'};char[1 1]'x';char[1 5]'data1'}|exact
+CHK|legend_one_name|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 5]'data1'};char[1 1]'a';char[0 0]'';char[1 5]'data1'}|exact
+CHK|legend_handle|cell[1 3]{cell[1 1]{char[1 5]'data1'};char[0 0]'';char[1 5]'data1'}|exact
+CHK|legend_handles_cell|cell[1 3]{cell[1 2]{char[1 1]'x';char[1 1]'y'};char[1 1]'y';char[1 1]'x'}|exact
+CHK|legend_off|cell[1 6]{logical[1 1] 0;logical[1 1] 1;char[0 0]'';char[0 0]'';logical[1 1] 1;cell[1 2]{char[1 5]'data1';char[1 5]'data2'}}|exact
+CHK|legend_show|cell[1 3]{cell[1 2]{char[1 5]'data1';char[1 5]'data2'};onoff on;onoff on}|exact
+CHK|legend_toggle|cell[1 3]{cell[1 2]{char[1 5]'data1';char[1 5]'data2'};onoff on;onoff on}|exact
+CHK|legend_boxoff|cell[1 3]{cell[1 2]{char[1 5]'data1';char[1 5]'data2'};onoff on;onoff off}|exact
+CHK|legend_hide|cell[1 5]{logical[1 1] 1;onoff off;char[1 5]'data1';onoff on;onoff off}|exact
+CHK|legend_options|cell[1 5]{cell[1 2]{char[1 1]'a';char[1 1]'b'};char[1 9]'northwest';double[1 1] 14;cell[1 2]{char[1 1]'c';char[1 1]'d'};char[1 10]'horizontal'}|exact
+CHK|legend_location_only|cell[1 2]{cell[1 2]{char[1 5]'data1';char[1 5]'data2'};char[1 5]'south'}|exact
+CHK|legend_autoupdate_off|cell[1 2]{cell[1 2]{char[1 5]'data1';char[1 5]'data2'};char[0 0]''}|exact
+CHK|legend_more_names|cell[1 2]{char[1 1]'a';char[1 1]'b'} WARN MATLAB:legend:IgnoringExtraEntries|exact
+CHK|legend_string_set|cell[1 3]{cell[1 2]{char[1 1]'u';char[1 1]'v'};char[1 1]'u';char[1 1]'v'}|exact
+CHK|legend_string_fewer|cell[1 3]{cell[1 1]{char[1 1]'u'};char[1 1]'u';char[1 5]'data2'}|exact
+CHK|legend_string_char|cell[1 3]{cell[1 1]{char[1 1]'u'};char[1 1]'u';char[1 5]'data2'}|exact
+CHK|legend_kinds|cell[1 3]{char[1 5]'data1';char[1 5]'data2';char[1 5]'data3'}|exact
+CHK|legend_delete_renumbers|cell[1 3]{cell[1 2]{char[1 5]'data1';char[1 5]'data2'};char[1 5]'data1';char[1 5]'data2'}|exact
+CHK|legend_replot|cell[1 4]{logical[1 1] 0;logical[1 1] 1;char[0 0]'';cell[1 1]{char[1 5]'data1'}}|exact
+CHK|legend_again|cell[1 4]{cell[1 1]{char[1 1]'x'};char[1 1]'x';char[0 0]'';cell[1 2]{char[1 1]'a';char[1 1]'b'}}|exact
+CHK|legend_cla|cell[1 2]{logical[1 1] 1;double[1 1] 0}|exact
+CHK|legend_plotchildren|cell[1 3]{double[1 1] 1;logical[1 1] 1;double[1 1] 1}|exact
+CHK|legend_none_property|cell[1 2]{logical[1 1] 1;logical[1 1] 1}|exact
+CHK|patch_adds|double[1 1] 2|exact
+CHK|patch_twice|double[1 1] 3|exact
+CHK|patch_by_name|double[1 1] 2|exact
+CHK|patch_faces|double[1 1] 2|exact
+CHK|surface_adds|double[1 1] 2|exact
+CHK|rectangle_adds|double[1 1] 2|exact
+CHK|fill_replaces|double[1 1] 1|exact
+CHK|patch3_view|cell[1 2]{double[1 2] [0 90];double[1 2] [0 90]}|exact
+CHK|surface_view|cell[1 2]{double[1 2] [0 90];double[1 2] [0 90]}|exact
+CHK|plot_view|cell[1 2]{double[1 2] [0 90];double[1 2] [0 90]}|exact
+CHK|patch_keeps_title|cell[1 3]{char[1 1]'T';double[1 2] [0 9];logical[1 1] 0}|exact
+CHK|view_written|cell[1 3]{double[1 2] [30 40];double[1 2] [30 40];double[1 2] [0 90]}|exact
+CHK|replaced_valid|cell[1 3]{logical[1 1] 0;logical[1 1] 0;logical[1 1] 0}|exact
+CHK|replaced_dot_set|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|replaced_set|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|replaced_dot_get|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|replaced_get|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|replaced_delete|char[1 3]'ran'|exact
+CHK|cleared_set|char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'|exact
+CHK|replaced_in_list|cell[1 2]{logical[1 3] [0 0 1];char[1 55]'MATLAB:class:InvalidHandle / Invalid or deleted object.'}|exact
+CHK|replaced_axes_kept|logical[1 1] 1|exact
+CHK|side_orders|cell[1 5]{double[1 2] [1 3];logical[1 1] 1;double[1 2] [1 3];logical[1 1] 1;double[1 2] [1 3]}|exact
+CHK|side_orders_after_plots|cell[1 3]{logical[1 1] 1;logical[1 1] 1;logical[1 1] 1}|exact
+CHK|side_order_set|cell[1 6]{logical[1 1] 1;double[1 3] [1 0 0];double[2 3] [1 0 0;0 1 0];logical[1 1] 1;logical[1 1] 1;logical[1 1] 1}|exact
+CHK|side_order_set_fn|cell[1 6]{logical[1 1] 1;double[1 3] [1 0 0];double[2 3] [1 0 0;0 1 0];logical[1 1] 1;logical[1 1] 1;logical[1 1] 1}|exact
+CHK|side_order_cycle|cell[1 4]{double[3 3] [1 0 0;0 1 0;1 0 0];cell[1 3]{char[1 1]'-';char[1 1]'-';char[1 2]'--'};double[1 1] 2;double[1 1] 2}|exact
+CHK|side_order_before|cell[1 3]{double[1 3] [1 0 0];double[1 3] [0 1 0];double[1 3] [0 1 0]}|exact
+CHK|side_order_cla|cell[1 3]{logical[1 1] 1;double[1 2] [7 3];double[1 2] [1 1]}|exact
+CHK|ruler_modes|cell[1 4]{char[1 4]'auto';char[1 4]'auto';char[1 4]'auto';char[1 4]'auto'}|exact
+CHK|ruler_modes_set|cell[1 4]{char[1 6]'manual';char[1 4]'auto';char[1 6]'manual';char[1 6]'manual'}|exact
+CHK|style_order_fresh|cell[1 2]{char[1 4]'char';char[1 1]'-'}|exact
+CHK|style_order_yyaxis|cell[1 5]{char[1 4]'char';double[1 2] [7 2];char[1 2]'o-';char[1 2]'- ';double[1 1] 14}|exact
+CHK|style_order_written|cell[1 7]{char[1 4]'char';char[1 4]'char';double[1 2] [2 2];char[1 4]'cell';cell[2 1]{char[1 1]'-';char[1 2]'o-'};cell[2 1]{char[1 2]'--';char[1 1]':'};cell[2 1]{char[1 2]'--';char[1 1]':'}}|exact
+CHK|yaxis_set|char[1 106]'MATLAB:class:SetProhibited / Unable to set the 'YAxis' property of class ''Axes'' because it is read-only.'|exact
+CHK|xaxis_same|char[1 3]'ran'|exact
+CHK|xaxis_other|char[1 110]'MATLAB:hg:TryingToReparentConnectedObject / Trying to reparent an already connected internal component object.'|exact
+CHK|type_line|char[1 105]'MATLAB:class:SetProhibited / Unable to set the 'Type' property of class ''Line'' because it is read-only.'|exact
+CHK|type_text|char[1 105]'MATLAB:class:SetProhibited / Unable to set the 'Type' property of class ''Text'' because it is read-only.'|exact
+CHK|type_axes|char[1 105]'MATLAB:class:SetProhibited / Unable to set the 'Type' property of class ''Axes'' because it is read-only.'|exact
+CHK|beingdeleted_set|char[1 113]'MATLAB:class:SetProhibited / Unable to set the 'BeingDeleted' property of class ''Line'' because it is read-only.'|exact
+CHK|series_index_zero|cell[1 2]{double[1 1] 0;double[1 1] 0}|exact
+CHK|s3_alpha_default|cell[1 2]{double[1 2] [1 0];char[1 6]'scaled'}|exact
+CHK|s3_alpha_column|double[1 3] [0.10000000000000001 0.5 1]|exact
+CHK|s3_alpha_scalar|double[1 1] 0.5|exact
+CHK|s3_alpha_matrix|char[1 65]'MATLAB:graphics:chart:MustBeVector / Alpha data must be a vector.'|exact
+CHK|s3_alpha_text|char[1 100]'MATLAB:hg:shaped_arrays:NumericMatrixType / Value must be a scalar, vector or array of numeric type.'|exact
+CHK|s3_mapping|char[1 4]'none'|exact
+CHK|s3_mapping_bad|char[1 182]'MATLAB:datatypes:InvalidEnumValue / Error setting property 'AlphaDataMapping' of class 'Scatter': 'bogus' is not a valid value. Use one of these values: 'none' / 'scaled' / 'direct'.'|exact
+CHK|s3_alpha_options|cell[1 3]{double[1 3] [0.10000000000000001 0.5 1];char[1 4]'flat';char[1 6]'scaled'}|exact
+CHK|b3_alpha|cell[1 3]{double[1 2] [1 0];char[1 6]'scaled';double[1 3] [0.20000000000000001 0.40000000000000002 0.59999999999999998]}|exact
+CHK|s2_alpha_matrix|char[1 65]'MATLAB:graphics:chart:MustBeVector / Alpha data must be a vector.'|exact
+CHK|band_value_column|double[2 1] [5;6]|exact
+CHK|band_value_back|cell[1 2]{double[1 2] [8 7];double[1 2] [1 2]}|exact
+CHK|band_auto_keeps|cell[1 3]{double[1 3] [1 0 0];char[1 4]'auto';double[1 3] [0.49019607843137253 0.49019607843137253 0.49019607843137253]}|exact
+CHK|band_auto_series|logical[1 1] 1|exact
+CHK|band_series_zero|cell[1 2]{double[1 1] 0;double[1 3] [0.49019607843137253 0.49019607843137253 0.49019607843137253]}|exact
+CHK|band_datetime|cell[1 4]{char[1 8]'datetime';char[2 11]'02-Jan-2020;03-Jan-2020';double[1 2] [1 2];char[1 8]'datetime'}|exact
+CHK|band_duration|cell[1 3]{char[1 8]'duration';char[2 5]'1 sec;2 sec';char[1 1]'s'}|exact
+CHK|band_datetime_format|cell[1 2]{char[1 10]'yyyy-MM-dd';char[2 10]'2020-01-02;2020-01-03'}|exact
+CHK|band_duration_format|char[1 1]'m'|exact
+CHK|band_datetime_hours|char[2 20]'02-Jan-2020 06:00:00;02-Jan-2020 18:00:00'|exact
+CHK|band_datetime_pairs|cell[1 2]{double[1 2] [2 1];char[2 11]'05-Jan-2020;06-Jan-2020'}|exact
+CHK|band_datetime_on_dates|cell[1 2]{char[1 8]'datetime';double[1 1] 2}|exact
+CHK|band_numbers_on_dates|double[1 2] [1 2]|exact
+CHK|band_dates_on_numbers|char[1 179]'MATLAB:graphics:configureAxes:Mixing / Data inputs must match the axis configuration. A numeric axis must have numeric data inputs or data inputs which can be converted to double.'|exact
+CHK|band_dates_on_spans|char[1 160]'MATLAB:graphics:configureAxes:MixingOther / At least one axis dimension is configured for duration values. To create duration values, use the duration function.'|exact
+CHK|band_spans_on_dates|char[1 160]'MATLAB:graphics:configureAxes:MixingOther / At least one axis dimension is configured for datetime values. To create datetime values, use the datetime function.'|exact
+CHK|band_dates_and_number|char[1 124]'MATLAB:datetime:cat:InvalidConcatenation / All inputs must be datetimes or date/time character vectors or date/time strings.'|exact
+CHK|band_set_numbers|cell[1 2]{char[1 6]'double';double[1 2] [1 2]}|exact
+CHK|band_set_spans|cell[1 2]{char[1 8]'duration';char[2 5]'1 sec;2 sec'}|exact
+CHK|band_set_dates|cell[1 2]{char[1 8]'datetime';char[2 11]'02-Jan-2020;03-Jan-2020'}|exact
+CHK|band_dates_column|double[1 2] [2 1]|exact

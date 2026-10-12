@@ -360,7 +360,7 @@ public class MatlabHandleGraphicsVerbTests : IDisposable
     [Fact]
     public async Task WritingAReadOnlyPropertySaysSoRatherThanDoingNothing()
     {
-        Assert.Contains("read but not written", await RunExpectingFailure("""
+        Assert.Contains("Unable to set the 'Type' property of class ''Line'' because it is read-only.", await RunExpectingFailure("""
             figure(1);
             set(plot(1:3, [1 2 3]), 'Type', 'bar');
             """), StringComparison.Ordinal);

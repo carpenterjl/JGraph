@@ -24,7 +24,13 @@ internal static class SeriesPalette
             return Colors.Black;
         }
 
-        // A seat on a yyaxis side takes that side's entry, whatever its place on the side (item 106).
+        // A seat on a yyaxis side cycles that side's own colour order (item 111), or takes the side's
+        // entry of the axes' order when it has none (item 106).
+        if (plot.SeriesSide >= 0 && plot.Axes?.SideColorOrder(plot.SeriesSide) is { } own)
+        {
+            return own[System.Math.Max(0, plot.SeriesIndex) % own.Count];
+        }
+
         int index = plot.SeriesSide >= 0 ? plot.SeriesSide : plot.SeriesIndex >= 0 ? plot.SeriesIndex : positional;
         return palette[index % palette.Count];
     }

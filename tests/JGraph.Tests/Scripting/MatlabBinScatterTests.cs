@@ -143,6 +143,6 @@ public class MatlabBinScatterTests : IDisposable
             set(h, 'Values', 1);
             """);
 
-        Assert.Contains("'Values' can be read but not written", error);
+        Assert.Contains("Unable to set the 'Values' property of class ''Binscatter'' because it is read-only.", error); // R2025b's words (ADR 0228)
     }
 }

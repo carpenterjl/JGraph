@@ -205,6 +205,7 @@ internal static partial class JgsGraphicsProperties
     private static string[]? R2025bClassesOf(GraphObject target) => target switch
     {
         FigureModel => ["matlab.ui.Figure"],
+        JgsGraphicsRoot => ["matlab.ui.Root"],
         AxesModel { IsUiAxes: true } => ["matlab.ui.control.UIAxes"],
         AxesModel { IsPolar: true } => ["matlab.graphics.axis.PolarAxes"],
         AxesModel => ["matlab.graphics.axis.Axes"],

@@ -6,6 +6,19 @@ using JGraph.Rendering;
 
 namespace JGraph.Objects;
 
+/// <summary>What a <see cref="ConstantRegionPlot"/>'s two values are (MATLAB's <c>Value</c> class).</summary>
+public enum RegionValueKind
+{
+    /// <summary>Plain numbers.</summary>
+    Number,
+
+    /// <summary>Datetimes, held as days the way a datetime ruler holds them.</summary>
+    Datetime,
+
+    /// <summary>Durations, held as days the way a duration ruler holds them.</summary>
+    Duration,
+}
+
 /// <summary>
 /// A shaded band across the whole axes between two values (MATLAB <c>xregion</c>/<c>yregion</c>, open
 /// item 108): a working range, a tolerance, the time something lasted.
@@ -126,6 +139,34 @@ public sealed class ConstantRegionPlot : PlotObject, IDrawable, ILegendItem
             }
         }
     }
+
+    /// <summary>
+    /// Whether <see cref="FaceColor"/> was chosen (MATLAB <c>FaceColorMode</c> 'manual'). Back in
+    /// 'auto' a band keeps the colour it had until a <see cref="PlotObject.SeriesIndex"/> names one,
+    /// as R2025b's does (open item 111).
+    /// </summary>
+    [Browsable(false)]
+    public bool FaceColorManual { get; set; }
+
+    /// <summary>What the two values are: numbers, or times the axis holds as days (open item 111).</summary>
+    [Browsable(false)]
+    public RegionValueKind ValueKind { get; set; }
+
+    /// <summary>The display format a datetime or duration band's values were written in.</summary>
+    [Browsable(false)]
+    public string? TimeFormat { get; set; }
+
+    /// <summary>Whether that format was chosen rather than left to the type's default.</summary>
+    [Browsable(false)]
+    public bool TimeFormatSet { get; set; }
+
+    /// <summary>The time zone a datetime band's values were written in, if any.</summary>
+    [Browsable(false)]
+    public string? TimeZone { get; set; }
+
+    /// <summary>Whether <c>Value</c> reads back as a column, as a script wrote it (R2025b keeps the shape).</summary>
+    [Browsable(false)]
+    public bool ValueIsColumn { get; set; }
 
     /// <inheritdoc />
     public string LegendLabel => DisplayName;

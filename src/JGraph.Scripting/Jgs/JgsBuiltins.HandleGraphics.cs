@@ -262,7 +262,19 @@ internal static partial class JgsBuiltins
         if (args.Count == 1)
         {
             JgsValue[] listings = targets.Select(AllProperties).ToArray();
-            return listings.Length == 1 ? listings[0] : JgsValue.Cell(listings);
+            if (listings.Length == 1)
+            {
+                return listings[0];
+            }
+
+            // Several objects of one kind are R2025b's struct column (open item 109).
+            if (JgsRunningDialect.ThreadIsMatlab
+                && listings.All(l => l.AsStruct.Keys.SequenceEqual(listings[0].AsStruct.Keys, StringComparer.Ordinal)))
+            {
+                return JgsValue.StructArray(new JgsStructArray([.. listings.Select(static l => l.AsStruct)]), listings.Length, 1);
+            }
+
+            return JgsValue.Cell(listings);
         }
 
         if (args[1].Type == JgsType.Cell)
@@ -1079,7 +1091,18 @@ internal static partial class JgsBuiltins
         axes.Annotations.Clear();
         axes.Lights.Clear();
         axes.Legend.Entries.Clear();
-        axes.Legend.Visible = false;
+
+        // R2025b's cla leaves the legend, which is no child of the axes, empty but there (open item
+        // 109); cla reset deletes it. JGS's cla always took it away.
+        if (reset || !JgsRunningDialect.ThreadIsMatlab)
+        {
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                DeleteLegend(axes.Legend);
+            }
+
+            axes.Legend.Visible = false;
+        }
 
         if (!reset)
         {
@@ -1102,6 +1125,7 @@ internal static partial class JgsBuiltins
 
             JgsGraphicsProperties.Unink(axes.PrimaryYAxis);
             axes.LineStyleOrder = null;
+            axes.ClearSideColorOrders();
             axes.RestartSideSeries(0);
             axes.RestartSideSeries(1);
         }
@@ -1241,8 +1265,7 @@ internal static partial class JgsBuiltins
             // deleting one is hiding it — but the deletion is real to the script, so it is announced
             // as one. An ordinary set(h, 'Visible', 'off') never comes through here and fires nothing.
             case LegendModel legend:
-                GraphObjectLifecycle.NotifyDeleting(legend);
-                legend.Visible = false;
+                DeleteLegend(legend);
                 return;
 
             case ColorbarModel colorbar:

@@ -23,7 +23,7 @@ internal static partial class JgsBuiltins
     private static readonly HashSet<string> Scatter3OptionNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "Marker", "MarkerFaceColor", "MarkerEdgeColor", "MarkerFaceAlpha", "MarkerEdgeAlpha",
-        "SizeData", "CData", "DisplayName", "LineWidth",
+        "SizeData", "CData", "DisplayName", "LineWidth", "AlphaData", "AlphaDataMapping",
 
         // The spread properties belong to every marker chart in space, not only to swarmchart3.
         "XJitter", "YJitter", "ZJitter", "XJitterWidth", "YJitterWidth", "ZJitterWidth",
@@ -67,8 +67,22 @@ internal static partial class JgsBuiltins
 
         // MATLAB's low-level `surface` is `surf` without the axes reset. It shares the dispatcher, so
         // the meshgrid collapse and the parametric path behave identically.
-        Define("surface", OnNamedAxes((args, line, col) => Surface3D("surface", args, line, col,
-            (x, y, z) => JG.Surf(x, y, z), JG.Surf, (x, y, z) => JG.Surf(x, y, z))));
+        Define("surface", OnNamedAxes((args, line, col) =>
+        {
+            if (!AddsWithoutReplace("surface"))
+            {
+                return Surface3D("surface", args, line, col, (x, y, z) => JG.Surf(x, y, z), JG.Surf, (x, y, z) => JG.Surf(x, y, z));
+            }
+
+            // R2025b's surface leaves a flat axes flat (open item 110): view(3) is what turns it.
+            using IDisposable lowLevel = JG.AddingWithoutReplace();
+            AxesModel axes = JG.Gca();
+            bool was3D = axes.Is3D, grid = axes.Grid.ShowMajor;
+            JgsValue made = Surface3D("surface", args, line, col, (x, y, z) => JG.Surf(x, y, z), JG.Surf, (x, y, z) => JG.Surf(x, y, z));
+            axes.Is3D = was3D;
+            axes.Grid.ShowMajor = grid;
+            return made;
+        }));
     }
 
     /// <summary>Which coordinate forms a fill/patch verb accepts.</summary>
@@ -303,6 +317,12 @@ internal static partial class JgsBuiltins
                 case "displayname":
                     plot.DisplayName = StrOf($"{verb}: DisplayName", value, line, col);
                     break;
+
+                // The transparency channel takes the property's own words and refusals (open item 111).
+                case "alphadata":
+                case "alphadatamapping":
+                    JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(plot), name, value, line, col);
+                    break;
             }
         }
 
@@ -402,9 +422,18 @@ internal static partial class JgsBuiltins
 
     // --- fill, fill3, patch -------------------------------------------------------------------
 
+    /// <summary>
+    /// Whether a verb is MATLAB's low-level one, in a MATLAB-dialect script: R2025b's <c>patch</c> and
+    /// <c>surface</c> add to the axes without newplot and leave its view alone (open item 110). JGS's
+    /// replace, as they always did.
+    /// </summary>
+    private static bool AddsWithoutReplace(string verb) =>
+        JgsRunningDialect.ThreadIsMatlab && verb is "patch" or "surface";
+
     private static JgsValue FillPatch(
         string verb, IReadOnlyList<JgsValue> args, int line, int col, Dimensions dimensions)
     {
+        using IDisposable? lowLevel = AddsWithoutReplace(verb) ? JG.AddingWithoutReplace() : null;
         if (verb == "patch" && PatchCoordinatesByName(args, line, col) is { } byName)
         {
             PatchPlot made = FromCoordinates(verb, byName.Coordinates, line, col, dimensions, coloured: false);
@@ -415,7 +444,7 @@ internal static partial class JgsBuiltins
                 JgsGraphicsProperties.Set(entry, name, value, line, col);
             }
 
-            if (made.Z.Any(z => double.IsFinite(z) && z != 0))
+            if (lowLevel is null && made.Z.Any(z => double.IsFinite(z) && z != 0))
             {
                 JG.Gca().Is3D = true;
             }
@@ -450,7 +479,7 @@ internal static partial class JgsBuiltins
         // patch(isosurface(...)) stayed flat -- view(3) wrote angles nothing then read, and the
         // camera never moved. Zero heights are how a two-dimensional patch spells 'no z', so they
         // leave a plain fill alone.
-        if (patch.Z.Any(z => double.IsFinite(z) && z != 0))
+        if (lowLevel is null && patch.Z.Any(z => double.IsFinite(z) && z != 0))
         {
             JG.Gca().Is3D = true;
         }
@@ -511,7 +540,7 @@ internal static partial class JgsBuiltins
                 $"{verb} needs coordinates, or both 'Faces' and 'Vertices'.");
         }
 
-        double[,] vertices = Matrix(verb, [verticesValue], 0, line, col);
+        double[,] vertices = RowsOf(verb, verticesValue, line, col);
         int count = vertices.GetLength(0);
         int components = vertices.GetLength(1);
         if (components is < 2 or > 3)
@@ -530,7 +559,7 @@ internal static partial class JgsBuiltins
             z[i] = components == 3 ? vertices[i, 2] : 0;
         }
 
-        double[,] faceRows = Matrix(verb, [facesValue], 0, line, col);
+        double[,] faceRows = RowsOf(verb, facesValue, line, col);
         var faces = new int[faceRows.GetLength(0)][];
         for (int f = 0; f < faces.Length; f++)
         {
@@ -559,6 +588,27 @@ internal static partial class JgsBuiltins
         }
 
         return JG.Patch(x, y, z, faces);
+    }
+
+    /// <summary>
+    /// A face table or a vertex list: a matrix, or one row written as a vector — a patch of one face,
+    /// <c>patch('Faces', [1 2 3], …)</c>, which was refused as no matrix (open item 110).
+    /// </summary>
+    private static double[,] RowsOf(string verb, JgsValue value, int line, int col)
+    {
+        if (JgsMatrix.IsMatrix(value))
+        {
+            return Matrix(verb, [value], 0, line, col);
+        }
+
+        double[] row = ToDoubles(verb, value, line, col);
+        var one = new double[1, row.Length];
+        for (int k = 0; k < row.Length; k++)
+        {
+            one[0, k] = row[k];
+        }
+
+        return one;
     }
 
     /// <summary>
@@ -670,7 +720,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, ex.Message);
         }
 
-        if (threeD)
+        if (threeD && !AddsWithoutReplace(verb))
         {
             JG.Gca().Is3D = true;
         }

@@ -211,7 +211,10 @@ internal static partial class JgsBuiltins
 
         if (args.Count == 0)
         {
-            return Numbers([axes.Azimuth, axes.Elevation]);
+            // A flat axes looks straight down (open item 110), as its View property says.
+            return JgsRunningDialect.ThreadIsMatlab && !axes.Is3D && !axes.IsPolar
+                ? Numbers([0, 90])
+                : Numbers([axes.Azimuth, axes.Elevation]);
         }
 
         if (args.Count == 2)
@@ -627,7 +630,7 @@ internal static partial class JgsBuiltins
         {
             // With no override the theme decides, and the theme lives above this layer — so what is
             // reported is the palette a themeless render would use, which is that default.
-            return ColormapTable(JG.GetColorOrder() ?? Colors.DefaultSeriesOrder);
+            return ColormapTable(SideColorOrderOf(JG.Gca()) ?? JG.GetColorOrder() ?? Colors.DefaultSeriesOrder);
         }
 
         var colors = new List<Color>();
@@ -665,9 +668,23 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "colororder: needs at least one color.");
         }
 
+        if (SideColorOrderOf(JG.Gca()) is not null)
+        {
+            AxesModel axes = JG.Gca();
+            axes.SetSideColorOrder(axes.ActiveYAxisIndex, colors);
+            return JgsValue.Null;
+        }
+
         JG.ColorOrder(colors);
         return JgsValue.Null;
     }
+
+    /// <summary>
+    /// The colour order a MATLAB script reads and writes on a yyaxis axes: the active side's own
+    /// (open item 111); null on a one-sided axes, or in JGS.
+    /// </summary>
+    internal static IReadOnlyList<Color>? SideColorOrderOf(AxesModel axes) =>
+        JgsRunningDialect.ThreadIsMatlab && axes.YAxes.Count > 1 ? axes.SideColorOrder(axes.ActiveYAxisIndex) : null;
 
     /// <summary>
     /// <c>surfl</c>: a surface lit from beside the camera. MATLAB's default source sits 45 degrees

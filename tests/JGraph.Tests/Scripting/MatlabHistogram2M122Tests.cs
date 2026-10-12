@@ -77,6 +77,7 @@ public class MatlabHistogram2M122Tests : IDisposable
     public Task TheBinsCanBeAskedForFourWays() => Task.Run(() =>
     {
         string bins = Run(Readings + """
+            hold on
             a = histogram2(xv, yv, 4);
             b = histogram2(xv, yv, [3 4]);
             c = histogram2(xv, yv, 'NumBins', [2 5]);
@@ -94,6 +95,7 @@ public class MatlabHistogram2M122Tests : IDisposable
     public Task AGridCanBeHandedOverAlreadyCounted() => Task.Run(() =>
     {
         string given = Run("""
+            hold on
             a = histogram2('XBinEdges', [0 1], 'YBinEdges', [0 1], 'BinCounts', 5);
             b = histogram2('XBinEdges', [0 1], 'YBinEdges', [0 1 2 3], 'BinCounts', [1 2 3]);
             fprintf('%s %s | %s %s', mat2str(get(a, 'BinCounts')), mat2str(size(get(a, 'BinCounts'))), ...
@@ -111,6 +113,7 @@ public class MatlabHistogram2M122Tests : IDisposable
     public Task FaceColorRemembersWhichWordItWasGiven() => Task.Run(() =>
     {
         string words = Run(Readings + """
+            hold on
             a = histogram2(xv, yv);
             b = histogram2(xv, yv, 'FaceColor', 'flat');
             c = histogram2(xv, yv, 'FaceColor', 'none');

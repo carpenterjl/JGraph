@@ -23,9 +23,13 @@ internal static class LegendRenderer
     /// Reconciles the legend's rows with the plots that can appear in one. Kept here because deciding
     /// which plots those are needs <see cref="ILegendItem"/>, which the model layer cannot see.
     /// </summary>
-    public static bool SyncEntries(AxesModel axes) =>
-        axes.Legend.SyncEntries(
+    public static bool SyncEntries(AxesModel axes)
+    {
+        bool changed = axes.Legend.SyncEntries(
             axes.Plots.Where(static p => p is ILegendItem && p.ShowsInLegend));
+        axes.Legend.NameUnnamedRows(); // a MATLAB legend's data1, data2, … (open item 109)
+        return changed;
+    }
 
     /// <summary>
     /// Draws the legend and returns where it landed, or null when nothing was drawn. Each row's own

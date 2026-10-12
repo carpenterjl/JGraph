@@ -1552,18 +1552,32 @@ public static class JG
             // ruler is inked in the colour order's entry for its side — the left one only when the
             // axes holds nothing yet, since plots already there keep the colours they were drawn in —
             // and the line-style order becomes the one each side steps through a plot at a time.
+            // Each side gets a colour order of its own, one colour long (open item 111): the left the
+            // colour it was inked in, or its ruler's colour when plots were there; the right the next
+            // colour in the cycle. Both inks are the axes' own, so a ruler's ColorMode stays 'auto'.
             IReadOnlyList<Color> palette = axes.ColorOrder is { Count: > 0 } chosen ? chosen : Colors.DefaultSeriesOrder;
-            if (axes.Plots.Count == 0 && axes.PrimaryYAxis.RulerColor is null)
+            bool empty = axes.Plots.Count == 0;
+            AxisModel left = axes.PrimaryYAxis;
+            if (empty && left.RulerColor is null)
             {
-                axes.PrimaryYAxis.Ink(palette[0]);
+                left.Ink(palette[0], automatic: true);
             }
 
-            axes.AddYAxis().Ink(palette[1 % palette.Count]);
-            axes.LineStyleOrder ??= YyLineStyleOrder;
+            Color next = palette[(empty ? 1 : axes.NextSeriesIndex) % palette.Count];
+            axes.AddYAxis().Ink(next, automatic: true);
+            axes.SetSideColorOrder(0, [left.RulerColor ?? left.TickLabelStyle.Color]);
+            axes.SetSideColorOrder(1, [next]);
+            if (axes.LineStyleOrder is null)
+            {
+                axes.SetLineStyleOrder(YyLineStyleOrder, YyLineStyleWords, asList: false);
+            }
         }
 
         return axes.UseYAxis(right ? 1 : 0);
     }
+
+    /// <summary>The yyaxis line-style order as R2025b writes it, the markers first.</summary>
+    private static readonly string[] YyLineStyleWords = ["-", "--", ":", "-.", "o-", "^-", "*-"];
 
     /// <summary>R2025b's line-style order under yyaxis: <c>- -- : -. o- ^- *-</c>.</summary>
     private static readonly SeriesLineStyle[] YyLineStyleOrder =
@@ -1606,7 +1620,15 @@ public static class JG
             }
         }
 
-        axes.Legend.Visible = true;
+        ShowLegend(axes.Legend);
+    }
+
+    /// <summary>Puts a legend on its axes, a deleted one coming back as a live object.</summary>
+    private static void ShowLegend(LegendModel legend)
+    {
+        GraphObjectLifecycle.Revive(legend);
+        legend.Hidden = false;
+        legend.Visible = true;
     }
 
     /// <summary>
@@ -1645,7 +1667,7 @@ public static class JG
             }
         }
 
-        legend.Visible = true;
+        ShowLegend(legend);
         Touch(GetFigureNumber(axes.Parent as FigureModel ?? CurrentFigure));
         return legend;
     }
@@ -1814,9 +1836,42 @@ public static class JG
             && System.Math.Abs(a.Height - b.Height) < tol;
     }
 
+    [ThreadStatic]
+    private static int _addingWithoutReplace;
+
+    /// <summary>
+    /// For as long as the scope is held, a drawing call adds to the current axes as MATLAB's low-level
+    /// <c>patch</c>, <c>surface</c> and <c>rectangle</c> do: they never call newplot, so neither the
+    /// axes nor the figure is replaced, whatever hold says (open item 110).
+    /// </summary>
+    public static IDisposable AddingWithoutReplace()
+    {
+        _addingWithoutReplace++;
+        return new WithoutReplaceScope();
+    }
+
+    private sealed class WithoutReplaceScope : IDisposable
+    {
+        private bool _disposed;
+
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                _disposed = true;
+                _addingWithoutReplace--;
+            }
+        }
+    }
+
     /// <summary>Returns the current axes, resetting it first when not holding.</summary>
     private static AxesModel PrepareAxes()
     {
+        if (_addingWithoutReplace > 0)
+        {
+            return Gca();
+        }
+
         ApplyFigureNextPlot();
         AxesModel axes = Gca();
         if (!IsHolding)
@@ -1929,6 +1984,7 @@ public static class JG
             axes.YAxes.RemoveAt(axes.YAxes.Count - 1);
         }
 
+        axes.ClearSideColorOrders();
         ResetAxis(axes.PrimaryXAxis);
         ResetAxis(axes.PrimaryYAxis);
         ResetAxis(axes.ZAxis);
@@ -1939,7 +1995,16 @@ public static class JG
 
         axes.Grid.ShowMajor = false;
         axes.Grid.ShowMinor = false;
+
+        // Replacing deletes the legend, as R2025b's newplot does: a handle to it dies (open item 110).
+        if (axes.Legend.Visible)
+        {
+            GraphObjectLifecycle.NotifyDeleting(axes.Legend);
+        }
+
         axes.Legend.Visible = false;
+        axes.Legend.Hidden = false;
+        axes.Legend.NamesUnnamed = false;
         axes.Colorbar.Visible = false;
         axes.EqualAspect = false;
         axes.FrameVisible = true;

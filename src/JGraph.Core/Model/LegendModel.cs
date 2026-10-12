@@ -33,7 +33,7 @@ public enum LegendOrientation
 /// <summary>
 /// The legend of an <see cref="AxesModel"/>: placement, styling, and an ordered list of
 /// <see cref="Entries"/>, one per legended series. The entries are kept in step with the plots by
-/// <see cref="SyncEntries"/>, which the renderer runs before each layout; between syncs they are the
+/// <see cref="SyncEntries(IEnumerable{PlotObject})"/>, which the renderer runs before each layout; between syncs they are the
 /// user's to rename, hide and reorder. Legends are hidden by default and shown via the API (for
 /// example <c>JG.Legend()</c>) or the plot browser.
 /// </summary>
@@ -186,6 +186,68 @@ public sealed class LegendModel : GraphObject
     [Browsable(false)]
     public Rect2D? LastBox { get; set; }
 
+    private bool _hidden;
+
+    /// <summary>
+    /// Whether a legend that is there is kept out of the drawing (MATLAB's <c>Visible</c> 'off', and
+    /// <c>legend hide</c>). <see cref="GraphObject.Visible"/> says whether the axes has a legend at all.
+    /// </summary>
+    [Browsable(false)]
+    public bool Hidden
+    {
+        get => _hidden;
+        set => SetProperty(ref _hidden, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>Whether the legend is drawn: it is there and not hidden.</summary>
+    public bool Shown => Visible && !_hidden;
+
+    /// <summary>
+    /// Whether a series in the legend with no name of its own is named <c>data1</c>, <c>data2</c>, …,
+    /// as R2025b's legend names them; a legend MATLAB code made does (open item 109).
+    /// </summary>
+    [Browsable(false)]
+    public bool NamesUnnamed { get; set; }
+
+    /// <summary>
+    /// Names the legended series a script left unnamed <c>data1</c>, <c>data2</c>, … in row order,
+    /// counting only those, as R2025b does each time its legend updates — so naming one renumbers the
+    /// rest. A series out of the legend keeps whatever name it last had.
+    /// </summary>
+    public void NameUnnamedRows()
+    {
+        if (!NamesUnnamed || !Visible)
+        {
+            return;
+        }
+
+        int count = 0;
+        foreach (LegendEntryModel entry in Entries)
+        {
+            if (entry.Visible && entry.Plot is { DisplayNameIsManual: false } plot)
+            {
+                plot.NameAutomatically($"data{++count}");
+            }
+        }
+    }
+
+    /// <summary>Takes back the names <see cref="NameUnnamedRows"/> gave, as deleting R2025b's legend does.</summary>
+    public void ClearUnnamedRows()
+    {
+        if (!NamesUnnamed)
+        {
+            return;
+        }
+
+        foreach (LegendEntryModel entry in Entries)
+        {
+            if (entry.Visible && entry.Plot is { DisplayNameIsManual: false } plot)
+            {
+                plot.NameAutomatically(string.Empty);
+            }
+        }
+    }
+
     /// <summary>
     /// Reconciles <see cref="Entries"/> with the legendable plots: appends a row for each plot that
     /// has none, drops rows whose plot is gone, and otherwise leaves the order, labels and inclusion
@@ -198,11 +260,17 @@ public sealed class LegendModel : GraphObject
     /// Callers pass only the plots that can appear in a legend; deciding that needs the rendering
     /// layer's <c>ILegendItem</c>, which this layer cannot see.
     /// </summary>
-    public bool SyncEntries(IEnumerable<PlotObject> plots)
+    public bool SyncEntries(IEnumerable<PlotObject> plots) => SyncEntries(plots, whenFixed: false);
+
+    /// <summary>
+    /// <see cref="SyncEntries(IEnumerable{PlotObject})"/>, and with <paramref name="whenFixed"/> even
+    /// while <see cref="AutoUpdate"/> is off: a legend being made takes the plots there are.
+    /// </summary>
+    public bool SyncEntries(IEnumerable<PlotObject> plots, bool whenFixed)
     {
         ArgumentNullException.ThrowIfNull(plots);
 
-        if (!_autoUpdate)
+        if (!_autoUpdate && !whenFixed)
         {
             return false;
         }

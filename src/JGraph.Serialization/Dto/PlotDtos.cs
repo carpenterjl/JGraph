@@ -55,6 +55,9 @@ public abstract class PlotDto
 
     public string DisplayName { get; set; } = string.Empty;
 
+    /// <summary>Whether the name was given; null in a document from before, where a name was given if there was one.</summary>
+    public bool? DisplayNameManual { get; set; }
+
     public bool Visible { get; set; } = true;
 
     public int ZOrder { get; set; }
@@ -903,6 +906,21 @@ public sealed class ConstantRegionPlotDto : PlotDto
     public DashStyle Dash { get; set; } = DashStyle.Solid;
 
     public bool OnTop { get; set; }
+
+    /// <summary>Whether the fill was chosen; null in a file from before, where a fill was chosen if there was one.</summary>
+    public bool? FaceColorManual { get; set; }
+
+    /// <summary>Numbers, or datetimes or durations held as days.</summary>
+    public RegionValueKind ValueKind { get; set; }
+
+    public string? TimeFormat { get; set; }
+
+    public bool TimeFormatSet { get; set; }
+
+    public string? TimeZone { get; set; }
+
+    /// <summary>Whether Value reads back as a column.</summary>
+    public bool ValueIsColumn { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="Line3DPlot"/>.</summary>
@@ -960,6 +978,12 @@ public sealed class Scatter3DPlotDto : PlotDto
 
     /// <summary>The edges' opacity as written, NaN for MATLAB's <c>'flat'</c>; 1 in older files.</summary>
     public double EdgeAlpha { get; set; } = 1;
+
+    /// <summary>A transparency per point, read when an alpha is 'flat', or null.</summary>
+    public double[]? AlphaData { get; set; }
+
+    /// <summary>How AlphaData becomes opacities.</summary>
+    public AlphaMapping AlphaDataMapping { get; set; } = AlphaMapping.Scaled;
 
     /// <summary>A colour per point (MATLAB's m-by-3 <c>CData</c>), or null.</summary>
     public Color[]? PointColors { get; set; }

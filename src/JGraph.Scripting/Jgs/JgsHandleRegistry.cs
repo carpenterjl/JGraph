@@ -491,10 +491,18 @@ internal static class JgsHandleRegistry
         double handle = value.AsNumber;
         lock (Gate)
         {
-            if (Entries.TryGetValue(handle, out entry))
+            if (Entries.TryGetValue(handle, out entry) && !IsGone(entry.Target))
             {
                 return true;
             }
+        }
+
+        // An object a replacing plot or cla deleted is gone as soon as it is touched (open item 110).
+        if (entry is not null)
+        {
+            Retire(entry.Target);
+            entry = null;
+            return false;
         }
 
 
@@ -624,6 +632,58 @@ internal static class JgsHandleRegistry
             if (JgsGraphicsProperties.MatlabClassOf(target) is { } name)
             {
                 lock (Gate)
+                {
+                    RetiredClasses[handle] = name;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Whether a MATLAB-dialect script's handle names an object that was deleted without a sweep:
+    /// what a replacing plot or <c>cla</c> took out of its axes, marked as being deleted and parented
+    /// nowhere, or a legend so deleted, hidden but still its axes' part. R2025b refuses either as
+    /// invalid (open item 110). The object's own <c>DeleteFcn</c> still reads it: one run at the
+    /// deletion runs while it is parented, and one queued from the window is let through by
+    /// <see cref="DeliveringDeletionOf"/>. A figure is never in the book by object.
+    /// </summary>
+    private static bool IsGone(GraphObject target) =>
+        target.BeingDeleted
+        && JgsRunningDialect.ThreadIsMatlab
+        && target is not FigureModel
+        && (target.Parent is null || target is LegendModel { Visible: false })
+        && !ReferenceEquals(target, _delivering);
+
+    [ThreadStatic]
+    private static GraphObject? _delivering;
+
+    /// <summary>Lets a queued <c>DeleteFcn</c> read the object it runs for, for as long as the scope is held.</summary>
+    public static IDisposable DeliveringDeletionOf(GraphObject target)
+    {
+        GraphObject? outer = _delivering;
+        _delivering = target;
+        return new Delivery(outer);
+    }
+
+    private sealed class Delivery(GraphObject? outer) : IDisposable
+    {
+        public void Dispose() => _delivering = outer;
+    }
+
+    /// <summary>
+    /// Lets go of an object's handle now, keeping its class for a dot on the dead number (open item
+    /// 91): the sweep's work for one object it cannot see is gone. A legend made anew after its
+    /// deletion is given a new number this way, as R2025b's new legend is a new object.
+    /// </summary>
+    public static void Retire(GraphObject target)
+    {
+        string? name = JgsGraphicsProperties.MatlabClassOf(target);
+        lock (Gate)
+        {
+            if (Handles.Remove(target, out double handle))
+            {
+                Entries.Remove(handle);
+                if (name is not null)
                 {
                     RetiredClasses[handle] = name;
                 }

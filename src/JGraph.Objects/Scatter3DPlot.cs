@@ -31,6 +31,8 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
     private Color[]? _pointColors;
     private double _faceAlpha = 1;
     private double _edgeAlpha = 1;
+    private double[]? _alphaData;
+    private AlphaMapping _alphaDataMapping = AlphaMapping.Scaled;
     private MarkerType _marker = MarkerType.Circle;
     private double _markerSize = 7;
     private bool _filled;
@@ -490,7 +492,8 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
         }
 
         Color color = (_color ?? state.SeriesColor).WithOpacity(Opacity);
-        if (_colorData is null && _sizeData is null && _pointColors is null)
+        bool alphaPerPoint = _alphaData is not null && (double.IsNaN(_faceAlpha) || double.IsNaN(_edgeAlpha));
+        if (_colorData is null && _sizeData is null && _pointColors is null && !alphaPerPoint)
         {
             // One uniform style: the whole cloud goes out as a single call.
             MarkerStyle uniform = StyleFor(color);
@@ -500,6 +503,7 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
 
         (double min, double max) = ResolveColorRange();
         bool logColor = this.LogColorScale();
+        AlphaLookup lookup = this.ResolveAlpha(AlphaBounds());
         for (int i = 0; i < visible; i++)
         {
             int source = _order[i];
@@ -507,8 +511,81 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
                 : _colorData is { } values ? _colormap.Sample(values[source], min, max, logColor).WithOpacity(Opacity)
                 : color;
             MarkerStyle style = StyleFor(point, DiameterAt(source));
+
+            // 'flat' takes a point's transparency from AlphaData, read the way the axes' alpha map
+            // says to (open item 111), as a flat cloud's is.
+            if (alphaPerPoint && _alphaData is { } alphas)
+            {
+                // One reading is every point's, as R2025b takes a scalar; a point past the end is opaque.
+                double opacity = OpacityOf(alphas.Length == 1 ? alphas[0] : source < alphas.Length ? alphas[source] : double.NaN, lookup);
+                style = new MarkerStyle(style.Type, style.Size,
+                    double.IsNaN(_faceAlpha) ? style.Fill?.WithOpacity(opacity) : style.Fill,
+                    double.IsNaN(_edgeAlpha) ? style.Edge?.WithOpacity(opacity) : style.Edge,
+                    style.EdgeWidth);
+            }
+
             context.DrawMarkers(_sorted.AsSpan(i, 1), style, style.Edge ?? point);
         }
+    }
+
+    /// <summary>
+    /// A transparency per point (MATLAB <c>AlphaData</c>), read when an alpha is <c>'flat'</c>, or
+    /// null for none; <see cref="AlphaDataMapping"/> says how the numbers become opacities. Kept at
+    /// whatever length it was written, as R2025b keeps it: one number is every point's.
+    /// </summary>
+    [Browsable(false)]
+    public double[]? AlphaData
+    {
+        get => _alphaData;
+        set => SetProperty(ref _alphaData, value?.ToArray(), InvalidationKind.Render);
+    }
+
+    /// <summary>Whether AlphaData is scaled through the axes' map, taken as it stands, or read as an index.</summary>
+    [Category("Appearance"), DisplayName("Alpha data mapping")]
+    public AlphaMapping AlphaDataMapping
+    {
+        get => _alphaDataMapping;
+        set => SetProperty(ref _alphaDataMapping, value, InvalidationKind.Render);
+    }
+
+    /// <summary>One alpha reading as an opacity, the three ways a flat scatter reads one.</summary>
+    private double OpacityOf(double raw, AlphaLookup scaled)
+    {
+        if (!double.IsFinite(raw))
+        {
+            return 1;
+        }
+
+        switch (_alphaDataMapping)
+        {
+            case AlphaMapping.None:
+                return System.Math.Clamp(raw, 0, 1);
+
+            case AlphaMapping.Direct:
+            {
+                IReadOnlyList<double> map = Axes?.ResolveAlphamap() ?? AlphaSampler.DefaultMap;
+                int index = System.Math.Clamp((int)System.Math.Round(raw) - 1, 0, map.Count - 1);
+                return System.Math.Clamp(map[index], 0, 1);
+            }
+
+            default:
+                return System.Math.Clamp(scaled.Sample(raw), 0, 1);
+        }
+    }
+
+    /// <summary>The spread the alpha map is stretched over: the readings themselves.</summary>
+    private DataRange AlphaBounds()
+    {
+        DataRange bounds = DataRange.Empty;
+        foreach (double value in _alphaData ?? [])
+        {
+            if (double.IsFinite(value))
+            {
+                bounds = bounds.Include(value);
+            }
+        }
+
+        return bounds;
     }
 
     /// <inheritdoc />

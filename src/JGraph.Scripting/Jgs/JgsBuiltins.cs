@@ -2252,8 +2252,20 @@ internal static partial class JgsBuiltins
         }));
 
         Define("zlabel", (args, line, col) => { Arity("zlabel", args, 1, line, col); JG.ZLabel(Str("zlabel", args, 0, line, col)); return JgsValue.Null; });
+        // [az, el] = view(…) answers the two angles apart (open item 110).
         env.Builtins.Register("view", JgsValue.Function(
-            new BuiltinFunction("view", OnNamedAxes(View)) { AutoCallsBare = true }));
+            new BuiltinFunction("view", OnNamedAxes(View))
+            {
+                AutoCallsBare = true,
+                TakesOutputCount = true,
+                MultiOutput = OnNamedAxesOutputs((args, wanted, line, col) =>
+                {
+                    JgsValue angles = View(args, line, col);
+                    return wanted < 2 || angles.Type != JgsType.Array
+                        ? [angles]
+                        : [JgsValue.Number(angles.ElementAt(0).AsNumber), JgsValue.Number(angles.ElementAt(1).AsNumber)];
+                }),
+            }));
 
         // Bare `m = colormap` is the read, the way `x = eps` is a number (M37's AutoCallsBare);
         // the callee position stays exempt, so colormap(jet) still calls.
@@ -2454,7 +2466,9 @@ internal static partial class JgsBuiltins
         DefineSilent("legend", (args, line, col) =>
         {
             (AxesModel? axes, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
-            return OnAxes(axes, () => Legend(rest, line, col));
+            return OnAxes(axes, () => JgsRunningDialect.ThreadIsMatlab
+                ? MatlabLegend(rest, host, line, col) // R2025b's verb (open item 109)
+                : Legend(rest, line, col));
         });
 
         Define("linkaxes", (args, line, col) =>

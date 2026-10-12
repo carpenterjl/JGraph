@@ -660,7 +660,11 @@ internal static partial class JgsGraphicsProperties
 
     // --- Reading and writing --------------------------------------------------------------------
 
-    /// <summary>Every property name an object answers to, alphabetically.</summary>
+    /// <summary>
+    /// Every property name an object answers to: in a MATLAB-dialect script, in the order R2025b's
+    /// <c>properties(h)</c> lists them, which is the order its <c>get(h)</c> and <c>set(h)</c> use too
+    /// (open item 109); otherwise alphabetically.
+    /// </summary>
     public static IReadOnlyList<string> NamesOf(GraphObject target)
     {
         var names = TableFor(target.GetType()).Values
@@ -669,6 +673,18 @@ internal static partial class JgsGraphicsProperties
             .Concat(RecordedNames(target)) // R2025b's names the model lacks (open item 88)
             .ToList();
         names.Sort(StringComparer.OrdinalIgnoreCase);
+        if (JgsRunningDialect.ThreadIsMatlab && MembersOf(target) is { } members)
+        {
+            // A name R2025b does not list (a polar line's own) keeps its alphabetical place after them.
+            var order = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < members.Properties.Length; i++)
+            {
+                order.TryAdd(members.Properties[i], i);
+            }
+
+            return [.. names.OrderBy(n => order.TryGetValue(n, out int at) ? at : int.MaxValue)];
+        }
+
         return names;
     }
 
@@ -740,10 +756,11 @@ internal static partial class JgsGraphicsProperties
 
         if (property.Write is null)
         {
-            // A component, a figure and the root refuse in R2025b's words (U2).
-            throw SpeaksAsComponent(entry.Target) || entry.Target is FigureModel or JgsGraphicsRoot
+            // A component, a figure and the root refuse in R2025b's words (U2), and in a MATLAB-dialect
+            // script so does every other object (open item 111).
+            throw SpeaksAsComponent(entry.Target) || entry.Target is FigureModel or JgsGraphicsRoot || JgsRunningDialect.ThreadIsMatlab
                 ? new JgsRuntimeException(line, col, "MATLAB:class:SetProhibited",
-                    $"Unable to set the '{property.Name}' property of class ''{JgsGraphicsCallbackValues.ClassWord(entry.Target)}'' because it is read-only.")
+                    $"Unable to set the '{property.Name}' property of class ''{MatlabClassWord(entry.Target, full: false) ?? JgsGraphicsCallbackValues.ClassWord(entry.Target)}'' because it is read-only.")
                 : new JgsRuntimeException(line, col,
                     $"'{property.Name}' can be read but not written on a {TypeNameOf(entry.Target)}.");
         }
@@ -944,8 +961,10 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => entry.Target.Tag = JgsBuiltins.StrOf("Tag", value, line, col));
         // M2: UserData is an entry, so it holds a counted share of what was set — through the
         // dotted write, which already shares, and through set(h, 'UserData', v), which did not.
+        // Unset, it is R2025b's [] - 0-by-0 - in a MATLAB-dialect script (open item 109).
         Put(table, "UserData",
-            entry => entry.Target.UserData is JgsValue stored ? stored : JgsValue.Array([]),
+            entry => entry.Target.UserData is JgsValue stored ? stored
+                : JgsRunningDialect.ThreadIsMatlab ? JgsEmpty.Zero() : JgsValue.Array([]),
             (entry, value, _, _) => entry.Target.UserData = JgsValue.Share(value));
         // Three states (U2): on, callback — seen only while a callback runs — and off. A figure
         // whose handle is hidden cannot stay the current one.
@@ -1163,8 +1182,18 @@ internal static partial class JgsGraphicsProperties
         {
             // DisplayName is the legend text in MATLAB and the browser label here; a script naming a
             // series means both, which is why this one is not left to reflection.
+            // In a MATLAB legend an unnamed series reads the name the legend gives it (open item 109).
             Put(table, "DisplayName",
-                entry => JgsValue.Str(((PlotObject)entry.Target).DisplayName),
+                entry =>
+                {
+                    var plot = (PlotObject)entry.Target;
+                    if (JgsRunningDialect.ThreadIsMatlab && plot.Axes is { Legend.NamesUnnamed: true } axes)
+                    {
+                        JgsBuiltins.RefreshLegend(axes.Legend);
+                    }
+
+                    return JgsValue.Str(plot.DisplayName);
+                },
                 (entry, value, line, col) => JgsBuiltins.SetDisplayName(
                     (PlotObject)entry.Target, JgsBuiltins.StrOf("DisplayName", value, line, col)));
 
@@ -2242,12 +2271,22 @@ internal static partial class JgsGraphicsProperties
                     legend.SyncEntries(owner.Plots.Where(static p => p is JGraph.Rendering.ILegendItem && p.ShowsInLegend));
                 }
 
+                // A MATLAB script reads the rows the legend shows, each unnamed series by the name the
+                // legend gives it (open item 109).
+                bool matlab = JgsRunningDialect.ThreadIsMatlab;
+                if (matlab)
+                {
+                    legend.NameUnnamedRows();
+                }
+
                 return JgsValue.Cell(legend.Entries
+                    .Where(e => !matlab || e.Visible)
                     .Select(e => JgsValue.Str(
                         e.Label is { Length: > 0 } written ? written : e.Plot?.DisplayName ?? string.Empty))
                     .ToArray());
-            });
+            }, (entry, value, line, col) => WriteLegendString((LegendModel)entry.Target, value, line, col));
             AddLegendBlock(table);
+            AddMatlabLegendBlock(table);
         }
 
         if (typeof(ColorbarModel).IsAssignableFrom(type))
@@ -2652,15 +2691,23 @@ internal static partial class JgsGraphicsProperties
                         $"ThetaDir is clockwise or counterclockwise, but got '{word}'."),
                 });
 
-        Put(table, "XAxis", entry => JgsHandleRegistry.For(Axes(entry).PrimaryXAxis));
+        // R2025b takes an axes' own x or z ruler back and refuses any other, which belongs elsewhere
+        // (open item 111); its YAxis is read-only.
+        Put(table, "XAxis", entry => JgsHandleRegistry.For(Axes(entry).PrimaryXAxis),
+            (entry, value, line, col) => KeepRuler(Axes(entry).PrimaryXAxis, "XAxis", value, line, col));
         // Under yyaxis both rulers, left first, as a column (R2025b, open item 106).
         Put(table, "YAxis", entry => Axes(entry).YAxes.Count > 1
             ? HandleColumn([.. Axes(entry).YAxes])
             : JgsHandleRegistry.For(Axes(entry).PrimaryYAxis));
-        Put(table, "ZAxis", entry => JgsHandleRegistry.For(Axes(entry).ZAxis));
+        Put(table, "ZAxis", entry => JgsHandleRegistry.For(Axes(entry).ZAxis),
+            (entry, value, line, col) => KeepRuler(Axes(entry).ZAxis, "ZAxis", value, line, col));
         Put(table, "RAxis", entry => JgsHandleRegistry.For(Axes(entry).RAxis));
         Put(table, "ThetaAxis", entry => JgsHandleRegistry.For(Axes(entry).ThetaAxis));
-        Put(table, "Legend", entry => JgsHandleRegistry.For(Axes(entry).Legend));
+
+        // An axes without a legend answers [] in a MATLAB-dialect script, as R2025b's does (open item 109).
+        Put(table, "Legend", entry => JgsRunningDialect.ThreadIsMatlab && !Axes(entry).Legend.Visible
+            ? JgsEmpty.Zero()
+            : JgsHandleRegistry.For(Axes(entry).Legend));
 
         // MATLAB always answers with limits, so the automatic ones are worked out rather than reported
         // as absent — and setting them is what makes them stop moving with the data.
@@ -2687,12 +2734,21 @@ internal static partial class JgsGraphicsProperties
             entry => OnOff(Axes(entry).FrameVisible),
             (entry, value, line, col) => Axes(entry).FrameVisible = ToOnOff("Box", value, line, col));
 
+        // A flat axes looks straight down, which R2025b's View says: [0 90] (open item 110). The angles
+        // a 3-D verb or view(3) would use are kept for when it does. Written, the view is a 3-D one
+        // unless it is that one, as view(2) and view(3) decide.
         Put(table, "View",
-            entry => Row(Axes(entry).Azimuth, Axes(entry).Elevation),
+            entry => JgsRunningDialect.ThreadIsMatlab && !Axes(entry).Is3D && !Axes(entry).IsPolar
+                ? Row(0, 90)
+                : Row(Axes(entry).Azimuth, Axes(entry).Elevation),
             (entry, value, line, col) =>
             {
                 double[] angles = Numbers("View", value, 2, line, col);
                 Axes(entry).SetViewAngles(angles[0], angles[1]);
+                if (JgsRunningDialect.ThreadIsMatlab && !Axes(entry).IsPolar)
+                {
+                    Axes(entry).Is3D = !(angles[0] == 0 && angles[1] == 90);
+                }
             });
 
         Put(table, "NextPlot",
@@ -2731,6 +2787,26 @@ internal static partial class JgsGraphicsProperties
         AddAxesWave(table);
         AddAxesWaveTwo(table);
         AddAxesLayout(table);
+    }
+
+    /// <summary>
+    /// <c>ax.XAxis = r</c> (open item 111, probe <c>probe_111b</c>): R2025b takes the axes' own ruler
+    /// back and refuses another, which is connected elsewhere already.
+    /// </summary>
+    private static void KeepRuler(AxisModel own, string name, JgsValue value, int line, int col)
+    {
+        if (JgsHandleRegistry.TryGet(value, out JgsHandleEntry? given) && ReferenceEquals(given.Target, own))
+        {
+            return;
+        }
+
+        if (given?.Target is AxisModel)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:hg:TryingToReparentConnectedObject",
+                "Trying to reparent an already connected internal component object.");
+        }
+
+        throw new JgsRuntimeException(line, col, $"'{name}' takes a ruler, the one the axes has.");
     }
 
     private static void AddRulerAliases(IDictionary<string, GraphicsProperty> table)
@@ -2790,7 +2866,7 @@ internal static partial class JgsGraphicsProperties
             entry => ColorRow(Ruler(entry).RulerColor ?? Ruler(entry).TickLabelStyle.Color),
             (entry, value, line, col) => Ruler(entry).Ink(JgsBuiltins.OptionColor(value, line, col, "ruler")));
         Put(table, "ColorMode",
-            entry => AutoManual(Ruler(entry).RulerColor is not null),
+            entry => RulerColorMode(Ruler(entry)),
             (entry, value, line, col) => SetRulerColorMode(Ruler(entry), "ColorMode", value, line, col));
 
         // Limits written by hand freeze the ruler, as XLimMode says on the axes.

@@ -422,6 +422,15 @@ public sealed class AxesDto
     /// <summary>The line-style cycle, or null for the default single solid entry.</summary>
     public List<SeriesLineStyleDto>? LineStyleOrder { get; set; }
 
+    /// <summary>The line-style order's words as a script wrote them, or null.</summary>
+    public List<string>? LineStyleOrderWords { get; set; }
+
+    /// <summary>Whether those words were written as a list rather than as text.</summary>
+    public bool LineStyleOrderIsList { get; set; }
+
+    /// <summary>A yyaxis axes' colour order for each side, null for a side without one of its own.</summary>
+    public List<List<Color>?>? SideColorOrders { get; set; }
+
     /// <summary>Everything below is null or defaulted in documents written before M74.</summary>
     public Point3Dto? CameraPosition { get; set; }
 
@@ -521,6 +530,9 @@ public sealed class AxisDto
 
     /// <summary>The ruler's own ink (MATLAB <c>XColor</c>/<c>YColor</c>), or null for the theme's.</summary>
     public Color? RulerColor { get; set; }
+
+    /// <summary>Whether the ruler's colour is the one yyaxis gave it rather than a chosen one.</summary>
+    public bool RulerColorAutomatic { get; set; }
 
     /// <summary>How auto-scaling fits the limits; null in every document written before M73.</summary>
     public string? LimitMethod { get; set; }
@@ -688,6 +700,12 @@ public sealed class LegendDto
     public int? Columns { get; set; }
 
     public bool AutoUpdate { get; set; } = true;
+
+    /// <summary>A legend that is there but not drawn (MATLAB's legend hide).</summary>
+    public bool Hidden { get; set; }
+
+    /// <summary>Whether the legend names unnamed series data1, data2, … (a MATLAB legend).</summary>
+    public bool NamesUnnamed { get; set; }
 
     public RectDto? FigureBox { get; set; }
 
