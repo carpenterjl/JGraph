@@ -49,6 +49,15 @@ internal sealed class JgsTableState
     public string FontWeight { get; set; } = "normal";
 
     public string FontAngle { get; set; } = "normal";
+
+    /// <summary>
+    /// The data row each display row shows, from 0, once a person has sorted the table or a script
+    /// has written <c>DisplayRowOrder</c> (open item 60); null while the rows show in data order.
+    /// </summary>
+    public int[]? RowOrder { get; set; }
+
+    /// <summary>The data column each display column shows, from 0; null while the columns show in data order.</summary>
+    public int[]? ColumnOrder { get; set; }
 }
 
 /// <summary>
@@ -166,6 +175,8 @@ internal static class JgsUiTables
                 InkIsNone = state.InkIsNone,
                 FontWeight = state.FontWeight,
                 FontAngle = state.FontAngle,
+                RowOrder = state.RowOrder,
+                ColumnOrder = state.ColumnOrder,
             };
             return;
         }
@@ -222,9 +233,254 @@ internal static class JgsUiTables
         }
     }
 
+    // --- the display order (open item 60) --------------------------------------------------------
+
+    /// <summary>The data row a display row shows, both from 0.</summary>
+    public static int DataRow(JgsTableState state, int displayRow) =>
+        state.RowOrder is { } order && displayRow >= 0 && displayRow < order.Length ? order[displayRow] : displayRow;
+
+    /// <summary>The data column a display column shows, both from 0.</summary>
+    public static int DataColumn(JgsTableState state, int displayColumn) =>
+        state.ColumnOrder is { } order && displayColumn >= 0 && displayColumn < order.Length ? order[displayColumn] : displayColumn;
+
+    /// <summary>The display row a data row shows in, both from 0.</summary>
+    public static int DisplayRow(JgsTableState state, int dataRow)
+    {
+        if (state.RowOrder is not { } order)
+        {
+            return dataRow;
+        }
+
+        int at = Array.IndexOf(order, dataRow);
+        return at < 0 ? dataRow : at;
+    }
+
+    /// <summary>The display column a data column shows in, both from 0.</summary>
+    public static int DisplayColumn(JgsTableState state, int dataColumn)
+    {
+        if (state.ColumnOrder is not { } order)
+        {
+            return dataColumn;
+        }
+
+        int at = Array.IndexOf(order, dataColumn);
+        return at < 0 ? dataColumn : at;
+    }
+
+    /// <summary>Whether the rows or the columns show in another order than the data's.</summary>
+    public static bool Reordered(JgsTableState state) => state.RowOrder is not null || state.ColumnOrder is not null;
+
+    /// <summary>
+    /// <c>DisplayData</c>: the data as the table shows it — the rows and columns in display order —
+    /// and the data itself while nothing is reordered.
+    /// </summary>
+    public static JgsValue DisplayData(JgsTableState state)
+    {
+        if (!Reordered(state))
+        {
+            return state.Data;
+        }
+
+        (int rows, int columns) = SizeOf(state.Data);
+        int[] rowOrder = state.RowOrder ?? Enumerable.Range(0, rows).ToArray();
+        int[] columnOrder = state.ColumnOrder ?? Enumerable.Range(0, columns).ToArray();
+        switch (state.Data.Type)
+        {
+            case JgsType.Table:
+                return JgsValue.Table(state.Data.AsTable.Select(rowOrder, columnOrder));
+
+            case JgsType.Cell:
+            {
+                var picked = new JgsValue[rows * columns];
+                for (int c = 0; c < columns; c++)
+                {
+                    for (int r = 0; r < rows; r++)
+                    {
+                        picked[r + (c * rows)] = JgsValue.Share(state.Data.AsCell[rowOrder[r] + (columnOrder[c] * rows)]);
+                    }
+                }
+
+                JgsValue cell = JgsValue.Cell(picked);
+                cell.Reshape(rows, columns);
+                return cell;
+            }
+
+            case JgsType.Array:
+            {
+                var picked = new JgsValue[rows * columns];
+                for (int c = 0; c < columns; c++)
+                {
+                    for (int r = 0; r < rows; r++)
+                    {
+                        picked[r + (c * rows)] = JgsMatrix.At(state.Data, rowOrder[r], columnOrder[c]);
+                    }
+                }
+
+                if (state.Data.IsStringArray)
+                {
+                    return JgsValue.StringArray(picked, rows, columns);
+                }
+
+                JgsValue array = JgsMatrix.FromElements(picked, rows, columns);
+                if (state.Data.NumericClass != JgsNumericClass.Double)
+                {
+                    array.SetNumericClass(state.Data.NumericClass);
+                }
+
+                return Interpreter.CarryValueTags(state.Data, array);
+            }
+
+            default:
+                return state.Data;
+        }
+    }
+
+    /// <summary>
+    /// A person sorted the table by a display column (the window's <c>sorted</c>): the rows take
+    /// the order the column's cells sort into — numbers by value with NaN last, text by its letters
+    /// without regard to case, ticks after blanks — rising or falling, the ties in data order.
+    /// </summary>
+    public static void Sort(JgsHandleEntry entry, int displayColumn, bool descending)
+    {
+        JgsTableState state = StateOf(entry);
+        (int rows, int columns) = SizeOf(state.Data);
+        int column = DataColumn(state, displayColumn);
+        if (column < 0 || column >= columns)
+        {
+            return;
+        }
+
+        var keys = new JgsValue[rows];
+        for (int r = 0; r < rows; r++)
+        {
+            keys[r] = CellOf(state.Data, r, column);
+        }
+
+        int[] order = Enumerable.Range(0, rows).ToArray();
+        Comparison<int> compare = (a, b) =>
+        {
+            int ordered = CompareCells(keys[a], keys[b]);
+            return ordered != 0 ? (descending ? -ordered : ordered) : a.CompareTo(b);
+        };
+        Array.Sort(order, compare);
+        state.RowOrder = order;
+        Rebuild(entry);
+    }
+
+    /// <summary>A person dragged a column (the window's <c>rearranged</c>): the data column each display column now shows.</summary>
+    public static void Rearrange(JgsHandleEntry entry, int[] displayOrder)
+    {
+        JgsTableState state = StateOf(entry);
+        (int _, int columns) = SizeOf(state.Data);
+        if (displayOrder.Length != columns)
+        {
+            return;
+        }
+
+        var order = new int[columns];
+        for (int c = 0; c < columns; c++)
+        {
+            order[c] = DataColumn(state, displayOrder[c]);
+        }
+
+        state.ColumnOrder = IsIdentity(order) ? null : order;
+        Rebuild(entry);
+    }
+
+    /// <summary>Whether an order leaves every position where it was.</summary>
+    public static bool IsIdentity(int[] order)
+    {
+        for (int i = 0; i < order.Length; i++)
+        {
+            if (order[i] != i)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static int CompareCells(JgsValue a, JgsValue b)
+    {
+        static double? NumberOf(JgsValue cell) => cell.Type switch
+        {
+            JgsType.Number => cell.AsNumber,
+            JgsType.Bool => cell.AsBool ? 1 : 0,
+            _ => null,
+        };
+        double? x = NumberOf(a);
+        double? y = NumberOf(b);
+        if (x is { } left && y is { } right)
+        {
+            if (double.IsNaN(left) || double.IsNaN(right))
+            {
+                return double.IsNaN(left) ? (double.IsNaN(right) ? 0 : 1) : -1;
+            }
+
+            return left.CompareTo(right);
+        }
+
+        if (x is not null || y is not null)
+        {
+            return x is null ? 1 : -1; // numbers before text
+        }
+
+        string s = a.Type == JgsType.String ? a.AsString : a.IsStringArray && a.ArrayLength == 1 ? JgsBuiltins.TextOf(a.ElementAt(0)) : a.Display();
+        string t = b.Type == JgsType.String ? b.AsString : b.IsStringArray && b.ArrayLength == 1 ? JgsBuiltins.TextOf(b.ElementAt(0)) : b.Display();
+        return string.Compare(s, t, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>The headings each display row and column shows, for <c>DisplayDataChangedData</c>.</summary>
+    public static (IReadOnlyList<string> Rows, IReadOnlyList<string> Columns) DisplayNames(JgsTableState state)
+    {
+        (int rows, int columns) = SizeOf(state.Data);
+        IReadOnlyList<string> headers = DisplayHeaders(state, columns);
+        IReadOnlyList<string>? rowHeaders = DisplayRowHeaders(state, rows);
+        return (rowHeaders ?? [], headers);
+    }
+
+    private static IReadOnlyList<string> DisplayHeaders(JgsTableState state, int columns)
+    {
+        IReadOnlyList<string> headers = Headers(state.ColumnName, columns, state.Data.Type == JgsType.Table ? state.Data.AsTable.ColumnNames : null);
+        if (state.ColumnOrder is not { } order)
+        {
+            return headers;
+        }
+
+        var shown = new string[columns];
+        for (int c = 0; c < columns; c++)
+        {
+            shown[c] = headers[order[c]];
+        }
+
+        return shown;
+    }
+
+    private static IReadOnlyList<string>? DisplayRowHeaders(JgsTableState state, int rows)
+    {
+        IReadOnlyList<string>? headers = RowHeaders(state.RowName, rows,
+            state.Data.Type == JgsType.Table ? state.Data.AsTable.RowNames : null, state.Data.Type == JgsType.Table);
+        if (headers is null || state.RowOrder is not { } order)
+        {
+            return headers;
+        }
+
+        var shown = new string[rows];
+        for (int r = 0; r < rows; r++)
+        {
+            shown[r] = headers[order[r]];
+        }
+
+        return shown;
+    }
+
     // --- the picture -----------------------------------------------------------------------------
 
-    /// <summary>Works the table's picture out again from its data and column properties.</summary>
+    /// <summary>
+    /// Works the table's picture out again from its data and column properties: the cells in
+    /// display order, with the column properties following their data column (open item 60).
+    /// </summary>
     public static void Rebuild(JgsHandleEntry entry)
     {
         var table = (UiTableModel)entry.Target;
@@ -233,32 +489,33 @@ internal static class JgsUiTables
         IReadOnlyList<string>? formats = FormatWords(state.ColumnFormat, columns, out IReadOnlyList<IReadOnlyList<string>?> choices);
 
         var shown = new UiTableColumn[columns];
-        IReadOnlyList<string> headers = Headers(state.ColumnName, columns, state.Data.Type == JgsType.Table ? state.Data.AsTable.ColumnNames : null);
+        IReadOnlyList<string> headers = DisplayHeaders(state, columns);
         for (int c = 0; c < columns; c++)
         {
+            int data = DataColumn(state, c);
             UiGridTrack width = state.OneWidthForAll
                 ? state.Widths[0]
-                : c < state.Widths.Count ? state.Widths[c] : new UiGridTrack(UiGridTrackKind.Weight, 1);
+                : data < state.Widths.Count ? state.Widths[data] : new UiGridTrack(UiGridTrackKind.Weight, 1);
             shown[c] = new UiTableColumn(
                 headers[c],
                 width,
-                FlagFor(state.Editable, state.EditableIsScalar, c),
-                FlagFor(state.Sortable, state.SortableIsScalar, c),
-                choices[c]);
+                FlagFor(state.Editable, state.EditableIsScalar, data),
+                FlagFor(state.Sortable, state.SortableIsScalar, data),
+                choices[data]);
         }
 
         var cells = new UiTableCell[rows * columns];
         for (int r = 0; r < rows; r++)
         {
+            int dataRow = DataRow(state, r);
             for (int c = 0; c < columns; c++)
             {
-                cells[(r * columns) + c] = Show(CellOf(state.Data, r, c), formats?[c]);
+                int data = DataColumn(state, c);
+                cells[(r * columns) + c] = Show(CellOf(state.Data, dataRow, data), formats?[data]);
             }
         }
 
-        IReadOnlyList<string>? rowHeaders = RowHeaders(state.RowName, rows,
-            state.Data.Type == JgsType.Table ? state.Data.AsTable.RowNames : null, state.Data.Type == JgsType.Table);
-        table.Content = new UiTableContent(rows, shown, cells, rowHeaders);
+        table.Content = new UiTableContent(rows, shown, cells, DisplayRowHeaders(state, rows));
         table.Bold = state.FontWeight is "bold" or "demi";
         table.Italic = state.FontAngle is "italic" or "oblique";
     }

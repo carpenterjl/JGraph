@@ -207,7 +207,7 @@ public sealed partial class UiComponentLayer : Canvas
 
         // In a uifigure a press on a component is the window's too: WindowButtonDownFcn runs for it
         // and the component still answers (R2025b, window session u1w_uitest).
-        if (_figure is { IsUiFigure: true } && UiComponentAt(e.GetPosition(this)) is not null)
+        if (_figure is { IsUiFigure: true } && UiComponentAt(e.GetPosition(this)) is { } pressed)
         {
             Point over = e.GetPosition(this);
             SelectionKind gesture = e.ClickCount > 1 ? SelectionKind.Open
@@ -215,6 +215,20 @@ public sealed partial class UiComponentLayer : Canvas
                 : e.ChangedButton == MouseButton.Middle || Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) ? SelectionKind.Extend
                 : SelectionKind.Normal;
             ScriptGraphicsCallbacks.NotifyWindowButton(_figure, pressed: true, gesture, (over.X, over.Y));
+
+            // A table keeps a ButtonDownFcn of its own (open item 60): a press anywhere on it runs it,
+            // after the window's, beside the cell callbacks the grid raises.
+            if (pressed is UiTableModel table)
+            {
+                int pressedButton = e.ChangedButton switch
+                {
+                    MouseButton.Middle => 2,
+                    MouseButton.Right => 3,
+                    _ => 1,
+                };
+                ScriptGraphicsCallbacks.NotifyButtonDown(_figure, table, null, null, pressedButton);
+            }
+
             _reportedDown = gesture;
             return;
         }

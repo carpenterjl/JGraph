@@ -286,29 +286,41 @@ internal static partial class JgsGraphicsProperties
 
     /// <summary>
     /// <c>StyleConfigurations</c>: a table of the styles added, one row each, in order — the target
-    /// word, the index given, and the style object (U9). R2025b's <c>Target</c> is categorical;
-    /// here it is text, and its <c>Style</c> column is a cell of style objects.
+    /// word, the index given, and the style object (U9, open item 65). R2025b's <c>Target</c> is a
+    /// categorical over the component's four target words; here it is a string array, so
+    /// <c>T.Target == 'row'</c>, <c>string(T.Target)</c> and <c>cellstr(T.Target)</c> answer as they
+    /// do there. <c>Style</c> is an n-by-1 array of style objects, read as <c>T.Style(1).FontWeight</c>.
     /// </summary>
     internal static JgsValue StyleConfigurationsValue(JgsHandleEntry entry)
     {
         List<JgsStyleRow> rows = entry.Styles ?? [];
-        var targets = new string?[rows.Count];
+        var targets = new JgsValue[rows.Count];
         var indices = new JgsValue[rows.Count];
-        var styles = new JgsValue[rows.Count];
+        var styles = new JgsObject[rows.Count];
         for (int i = 0; i < rows.Count; i++)
         {
-            targets[i] = rows[i].Target;
+            targets[i] = JgsValue.Str(rows[i].Target);
             indices[i] = rows[i].TargetIndex;
-            styles[i] = rows[i].Style;
+            styles[i] = rows[i].Style.AsObject;
+            JgsHolders.Share(styles[i]); // the row still holds it; a write through the table's copy detaches
         }
 
+        JgsValue targetColumn = JgsValue.StringArray(targets, rows.Count, 1);
         JgsValue indexColumn = JgsValue.Cell(indices);
         indexColumn.Reshape(rows.Count, 1);
-        JgsValue styleColumn = JgsValue.Cell(styles);
-        styleColumn.Reshape(rows.Count, 1);
+        JgsClass? style = rows.Count > 0 ? styles[0].Class : JgsCallbackDispatcher.Current?.Interpreter?.BuiltinClass(JgsBuiltinClasses.Style);
+        // An empty table's Style is a 0-by-0 array of the class (fixture oi_axes_box_styles_tables_scroll).
+        JgsValue styleColumn = style is null
+            ? JgsValue.Cell([]) // no interpreter to name the class: an empty cell, as before
+            : JgsValue.ObjectArray(new JgsObjectArray(style, styles), rows.Count, rows.Count == 0 ? 0 : 1);
+        if (style is null)
+        {
+            styleColumn.Reshape(0, 1);
+        }
+
         var table = new Table(
         [
-            new TextColumn("Target", targets),
+            new JgsValueColumn("Target", targetColumn),
             new JgsValueColumn("TargetIndex", indexColumn),
             new JgsValueColumn("Style", styleColumn),
         ]);

@@ -13,6 +13,9 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsGraphicsProperties
 {
+    /// <summary>The <c>XLimitMethod</c> words, in <see cref="LimitMethod"/>'s order.</summary>
+    private static readonly string[] LimitMethodWords = ["padded", "tight", "tickaligned"];
+
     private static void AddAxesWave(IDictionary<string, GraphicsProperty> table)
     {
         AddFontBlock(table);
@@ -536,19 +539,23 @@ internal static partial class JgsGraphicsProperties
             });
 
         Put(table, letter + "LimitMethod",
-            entry => JgsValue.Str(chosen(Axes(entry)).LimitMethod.ToString().ToLowerInvariant()),
+            entry => JgsValue.Str(LimitMethodWords[(int)chosen(Axes(entry)).LimitMethod]),
             (entry, value, line, col) =>
             {
                 AxesModel axes = Axes(entry);
                 AxisModel ruler = chosen(axes);
-                ruler.LimitMethod = JgsBuiltins
-                    .StrOf(letter + "LimitMethod", value, line, col).ToLowerInvariant() switch
+
+                // The word in any case, or a start of it that only one word has; anything else is
+                // refused in R2025b's words (open item 87, probe_87). The limits themselves stay
+                // JGraph's: the default method reads 'padded' where R2025b's is 'tickaligned'.
+                string typed = JgsBuiltins.StrOf(letter + "LimitMethod", value, line, col);
+                ruler.LimitMethod = Matching(typed.Trim(), LimitMethodWords) switch
                 {
                     "padded" => LimitMethod.Padded,
                     "tight" => LimitMethod.Tight,
                     "tickaligned" => LimitMethod.Tickaligned,
-                    var word => throw new JgsRuntimeException(line, col,
-                        $"{letter}LimitMethod is 'tickaligned', 'tight', or 'padded', but got '{word}'."),
+                    _ => throw new JgsRuntimeException(line, col, "MATLAB:datatypes:InvalidEnumValue",
+                        $"Error setting property '{letter}LimitMethod' of class 'Axes':\n'{typed}' is not a valid value. Use one of these values: 'tickaligned' | 'tight' | 'padded'."),
                 };
                 if (ruler.AutoScale)
                 {

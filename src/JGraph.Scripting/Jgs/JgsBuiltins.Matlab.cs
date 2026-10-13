@@ -297,6 +297,7 @@ internal static partial class JgsBuiltins
             // one whose getter refuses (open item 29, measured). R2025b warns MATLAB:structOnObject
             // first, and answers an array of objects from its first, 1-by-1 (measured).
             JgsObject? instance = args.Count != 1 ? null
+                : args[0].IsObjectArray ? (args[0].ArrayLength > 0 ? args[0].AsObjectArray.Elements[0] : null) // an array of value objects: its first (open item 65)
                 : args[0].Type == JgsType.Object ? args[0].AsObject
                 : args[0].Type == JgsType.Array && args[0].ArrayLength > 0 && args[0].ElementAt(0).Type == JgsType.Object
                     ? args[0].ElementAt(0).AsObject
@@ -368,7 +369,7 @@ internal static partial class JgsBuiltins
             // On an object it is the property names, Dependent ones included, and runs no getter (V6, #28).
             // A .NET object's are its properties and fields, as properties lists them (ADR 0174).
             IEnumerable<string> listed = args[0].Type == JgsType.Object
-                ? args[0].AsObject.Class.ListedProperties.Select(static p => p.Spec.Name)
+                ? args[0].ObjectClass.ListedProperties.Select(static p => p.Spec.Name)
                 : args[0].AsExternalOrNull() is NetObject net
                     ? Net.NetDisplay.MemberNames(net)
                     : IsLibValue(args[0].AsExternalOrNull())

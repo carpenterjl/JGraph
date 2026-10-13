@@ -135,6 +135,9 @@ public sealed class FigureModel : GraphObject, IUiContainer
     private UiUnits _units = UiUnits.Pixels;
     private bool _autoResizeChildren;
     private bool _scrollable;
+    private double _scrollX;
+    private double _scrollY;
+    private Point2D? _viewportLocationWritten;
     private bool _integerHandle = true;
 
     /// <summary>
@@ -168,12 +171,40 @@ public sealed class FigureModel : GraphObject, IUiContainer
         set => SetProperty(ref _autoResizeChildren, value, InvalidationKind.None);
     }
 
-    /// <summary>MATLAB's <c>Scrollable</c>. Kept; nothing scrolls until the grid stage (U5).</summary>
+    /// <summary>MATLAB's <c>Scrollable</c>: a <c>uifigure</c> that scrolls its components (open item 47).</summary>
     [Browsable(false)]
     public bool Scrollable
     {
         get => _scrollable;
-        set => SetProperty(ref _scrollable, value, InvalidationKind.None);
+        set => SetProperty(ref _scrollable, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>How far a scrollable figure is scrolled, in pixels from the left of what it holds; the layout keeps it within range.</summary>
+    [Browsable(false)]
+    public double ScrollX
+    {
+        get => _scrollX;
+        set => SetProperty(ref _scrollX, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// How far a scrollable figure is scrolled, in pixels from the top of what it holds. A figure
+    /// starts at its top once its layout has settled, as a panel does (fixture
+    /// <c>oi_axes_box_styles_tables_scroll</c>; probe_47 read it before it had).
+    /// </summary>
+    [Browsable(false)]
+    public double ScrollY
+    {
+        get => _scrollY;
+        set => SetProperty(ref _scrollY, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>The pair a script last wrote to <c>ScrollableViewportLocation</c>, read back as written until the figure scrolls again.</summary>
+    [Browsable(false)]
+    public Point2D? ViewportLocationWritten
+    {
+        get => _viewportLocationWritten;
+        set => SetProperty(ref _viewportLocationWritten, value, InvalidationKind.None);
     }
 
     /// <summary>

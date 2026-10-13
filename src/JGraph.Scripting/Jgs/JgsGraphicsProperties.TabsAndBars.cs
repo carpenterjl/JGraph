@@ -387,6 +387,7 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Scrollable",
             entry => OnOff(Tab(entry).Scrollable),
             (entry, value, line, col) => Tab(entry).Scrollable = OnOffState(entry, "Scrollable", value, line, col));
+        AddScrollableViewportLocation(table); // open item 47
         Put(table, "AutoResizeChildren",
             entry => OnOff(Tab(entry).AutoResizeChildren),
             (entry, value, line, col) =>

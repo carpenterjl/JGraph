@@ -301,8 +301,9 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static TableColumn TableColumnFrom(string verb, string columnName, JgsValue value, int line, int col)
     {
-        if (value.IsDatetime) return new DateTimeColumn(columnName, TimeMs(value).Select(ms => ms / JgsTime.MsPerDay).ToArray());
-        if (value.IsDuration) return new JgsTimeColumn(columnName, TimeMs(value), value.TimeTag!);
+        // A datetime variable keeps its tag — its Format above all (open item 60: a date-only column
+        // read back with a time of day) — as a duration and a timetable's row times already did.
+        if (value.IsDatetime || value.IsDuration) return new JgsTimeColumn(columnName, TimeMs(value), value.TimeTag!);
 
         // V6: a value the plain kinds would give back as something else — an integer, single or
         // logical array, a cell that is not all text, a struct array — is held as it is.

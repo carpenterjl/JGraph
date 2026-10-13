@@ -80,23 +80,43 @@ public sealed class FigureRenderer
             ? UiLayout.Compute(figure.FrameForRender(), size)
             : null;
 
-        var infos = new List<AxesRenderInfo>();
-        foreach (AxesModel axes in figure.Axes.InDrawOrder())
+        // A scrollable uifigure's own axes sit in the content it scrolls, under its viewport (open item 47).
+        Rect2D axesArea = content;
+        bool scrolled = false;
+        if (containers?.FigureScroll is { } scroll)
         {
-            // An axes placed in a panel is drawn with its panel, over the panel's background and
-            // clipped to it. One whose panel the frame does not hold yet is drawn in the figure.
-            if (containers?.Find(axes.Container) is not null)
-            {
-                continue;
-            }
+            axesArea = new Rect2D(content.X - scroll.ScrollX, content.Y - scroll.ScrollY, scroll.Content.Width, scroll.Content.Height);
+            context.PushClip(new Rect2D(content.X + scroll.Viewport.X, content.Y + scroll.Viewport.Y, scroll.Viewport.Width, scroll.Viewport.Height));
+            scrolled = true;
+        }
 
-            // Every axes is drawn, visible or not: MATLAB's Visible governs the axes' own furniture
-            // — background, rulers, ticks, grid and the two axis labels — and never its children,
-            // so `axis off` leaves the surface on the page with nothing drawn around it.
-            AxesRenderInfo? info = RenderAxes(axes, context, theme, content);
-            if (info is not null)
+        var infos = new List<AxesRenderInfo>();
+        try
+        {
+            foreach (AxesModel axes in figure.Axes.InDrawOrder())
             {
-                infos.Add(info);
+                // An axes placed in a panel is drawn with its panel, over the panel's background and
+                // clipped to it. One whose panel the frame does not hold yet is drawn in the figure.
+                if (containers?.Find(axes.Container) is not null)
+                {
+                    continue;
+                }
+
+                // Every axes is drawn, visible or not: MATLAB's Visible governs the axes' own furniture
+                // — background, rulers, ticks, grid and the two axis labels — and never its children,
+                // so `axis off` leaves the surface on the page with nothing drawn around it.
+                AxesRenderInfo? info = RenderAxes(axes, context, theme, axesArea);
+                if (info is not null)
+                {
+                    infos.Add(info);
+                }
+            }
+        }
+        finally
+        {
+            if (scrolled)
+            {
+                context.PopClip();
             }
         }
 
@@ -386,7 +406,9 @@ public sealed class FigureRenderer
             outer = Inflate(outer, metrics.Margins);
         }
 
-        AxesLayout layout = LayoutEngine.Compute(axes, outer, metrics.Margins);
+        // A MATLAB-dialect axes keeps R2025b's default plot box inside its cell unless the
+        // decorations need more room than that leaves (open item 87).
+        AxesLayout layout = LayoutEngine.Compute(axes, outer, axes.MarginsWithin(metrics.Margins, outer));
         Rect2D plotArea = layout.PlotArea;
 
         // The component background a uiaxes has and a plain axes does not (M84): the whole cell, drawn

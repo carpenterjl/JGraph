@@ -28,6 +28,9 @@ public abstract class UiContainerModel : UiObject, IUiContainer
 {
     private bool _autoResizeChildren;
     private bool _scrollable;
+    private double _scrollX;
+    private double _scrollY;
+    private Point2D? _viewportLocationWritten;
 
     protected UiContainerModel()
     {
@@ -46,12 +49,46 @@ public abstract class UiContainerModel : UiObject, IUiContainer
         set => SetProperty(ref _autoResizeChildren, value, InvalidationKind.None);
     }
 
-    /// <summary>MATLAB's <c>Scrollable</c>. Kept; nothing scrolls until the grid stage (U5).</summary>
+    /// <summary>MATLAB's <c>Scrollable</c>: a grid scrolls its tracks (U5); a panel, a tab and a button group their children (open item 47).</summary>
     [Browsable(false)]
     public bool Scrollable
     {
         get => _scrollable;
         set => SetProperty(ref _scrollable, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// How far a scrollable container is scrolled, in pixels from the left of what it holds. The
+    /// layout keeps it within what there is to scroll (<see cref="UiScrolling"/>).
+    /// </summary>
+    [Browsable(false)]
+    public double ScrollX
+    {
+        get => _scrollX;
+        set => SetProperty(ref _scrollX, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// How far a scrollable container is scrolled, in pixels from the top of what it holds — zero
+    /// shows the top, which is where a panel starts (probe_47); a grid's tracks hang from its top too.
+    /// </summary>
+    [Browsable(false)]
+    public double ScrollY
+    {
+        get => _scrollY;
+        set => SetProperty(ref _scrollY, value, InvalidationKind.Ui);
+    }
+
+    /// <summary>
+    /// The pair a script last wrote to <c>ScrollableViewportLocation</c>, which reads back as
+    /// written until the container is scrolled again (probe_47: <c>[1 99999]</c> reads back as
+    /// <c>[1 99999]</c>); null once <c>scroll</c>, a bar or the wheel has moved it.
+    /// </summary>
+    [Browsable(false)]
+    public Point2D? ViewportLocationWritten
+    {
+        get => _viewportLocationWritten;
+        set => SetProperty(ref _viewportLocationWritten, value, InvalidationKind.None);
     }
 
     /// <summary>How far the inner area stands in from each edge, in pixels.</summary>

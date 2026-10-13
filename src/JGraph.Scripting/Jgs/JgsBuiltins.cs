@@ -600,6 +600,7 @@ internal static partial class JgsBuiltins
                 // A struct with no fields is still one element, so it is not empty; a 0-by-0 struct
                 // array is (M65). Before the type had a size there was nothing else to ask.
                 JgsType.Struct => args[0].AsStructArray.Length == 0,
+                JgsType.Object => args[0].IsObjectArray && args[0].ArrayLength == 0, // a 0-by-1 array of objects is (open item 65)
                 JgsType.String => args[0].AsString.Length == 0,
                 JgsType.Table => args[0].AsTable.RowCount == 0,
                 JgsType.Sparse => args[0].AsSparse.Rows == 0 || args[0].AsSparse.Cols == 0,
@@ -898,6 +899,8 @@ internal static partial class JgsBuiltins
                 JgsType.Struct when args[0].ClassName == MapClassName => JgsValue.Number(EntryCount(args[0])),
                 // A struct is a 1-by-1 struct array (M65), so it has a length like anything else.
                 JgsType.Struct => JgsValue.Number(System.Math.Max(args[0].Rows, args[0].Cols)),
+                // An object is 1-by-1 and an array of objects its shape (open item 65).
+                JgsType.Object => JgsValue.Number(args[0].IsObjectArray ? (args[0].ArrayLength == 0 ? 0 : System.Math.Max(args[0].Rows, args[0].Cols)) : 1),
                 // A scalar is 1-by-1, so its longest dimension is 1 — the same answer size(7) gives.
                 JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1),
                 _ => throw new JgsRuntimeException(line, col, $"length expects an array, cell, or string, but got a {args[0].TypeName}."),
@@ -965,6 +968,7 @@ internal static partial class JgsBuiltins
                 JgsType.Image => JgsValue.Number(args[0].AsImage.SampleCount),
                 JgsType.Sparse => JgsValue.Number((double)args[0].AsSparse.Rows * args[0].AsSparse.Cols),
                 JgsType.Struct => JgsValue.Number(args[0].AsStructArray.Length), // a struct is 1-by-1 (M65)
+                JgsType.Object => JgsValue.Number(args[0].IsObjectArray ? args[0].ArrayLength : 1), // an object is 1-by-1, an array its elements (open item 65)
                 JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1), // a scalar is one element
                 JgsType.External => JgsValue.Number(1), // a .NET object, a .NET array included, is 1-by-1 (ADR 0174)
                 _ => throw new JgsRuntimeException(line, col, $"numel expects an array, cell, or string, but got a {args[0].TypeName}."),
@@ -6327,6 +6331,7 @@ internal static partial class JgsBuiltins
         JgsType.String => value.AsString.Length == 0 ? [0, 0] : [1, value.AsString.Length],
         JgsType.Cell => value.IsNd ? value.Dims : [value.Rows, value.Cols], // a cell grown into a third dimension (V6)
         JgsType.Struct => [value.Rows, value.Cols], // a struct is 1-by-1 and a struct array is its shape (M65)
+        JgsType.Object when value.IsObjectArray => [value.Rows, value.Cols], // an array of objects is its shape (open item 65)
         JgsType.Sparse => [value.AsSparse.Rows, value.AsSparse.Cols],
         JgsType.Table => [value.AsTable.RowCount, value.AsTable.ColumnCount],
         _ => [1, 1],

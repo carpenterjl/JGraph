@@ -1,0 +1,154 @@
+CHK|ax_position|double[1 4] [0.13 0.11 0.77500000000000002 0.81499999999999995]|exact
+CHK|ax_inner|double[1 4] [0.13 0.11 0.77500000000000002 0.81499999999999995]|exact
+CHK|ax_outer|double[1 4] [0 0 1 1]|exact
+CHK|ax_constraint|char[1 13]'outerposition'|exact
+CHK|ax_position_labelled|double[1 4] [0.13 0.11 0.77500000000000002 0.81499999999999995]|exact
+CHK|ax_xlim_plot13|double[1 2] [1 3]|div=ADR0230|diverges|double[1 2] [0.90000000000000002 3.1000000000000001]
+CHK|ax_limit_method_default|char[1 11]'tickaligned'|div=ADR0230|diverges|char[1 6]'padded'
+CHK|ax_limit_method_prefix|char[1 11]'tickaligned'|exact
+CHK|ax_limit_method_string|char[1 6]'padded'|exact
+CHK|ax_limit_method_tight|double[1 2] [1 3]|exact
+CHK|ax_limit_method_bogus|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|ax_limit_method_bogus_msg|Error setting property 'XLimitMethod' of class 'Axes': 'bogus' is not a valid value. Use one of these values: 'tickaligned' / 'tight' / 'padded'.|exact
+CHK|ax_limit_method_t|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|ax_limit_method_t_msg|Error setting property 'XLimitMethod' of class 'Axes': 't' is not a valid value. Use one of these values: 'tickaligned' / 'tight' / 'padded'.|exact
+CHK|ax_outer_written|double[1 4] [0.065000000000000002 0.11 0.38750000000000001 0.81499999999999995]|exact
+CHK|ax_outer_constraint|char[1 13]'outerposition'|exact
+CHK|ax_inner_written|double[1 4] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|ax_inner_constraint|char[1 13]'innerposition'|exact
+CHK|subplot_position|double[1 4] [0.13 0.58379999999999999 0.77500000000000002 0.3412]|exact
+CHK|uiaxes_position|double[1 4] [10 10 400 300]|exact
+CHK|uiaxes_limit_method|char[1 11]'tickaligned'|div=ADR0230|diverges|char[1 6]'padded'
+CHK|arr_size|double[1 2] [1 2]|exact
+CHK|arr_class|char[1 21]'matlab.ui.style.Style'|exact
+CHK|arr_numel|double[1 1] 2|exact
+CHK|arr_isempty|logical[1 1] 0|exact
+CHK|arr_isobject|logical[1 1] 1|exact
+CHK|arr_isa|logical[1 1] 1|exact
+CHK|arr_read|char[1 5]'Arial'|exact
+CHK|arr_end|char[1 6]'italic'|exact
+CHK|arr_write|cell[1 2]{char[1 6]'normal';char[1 4]'bold'}|exact
+CHK|arr_column|double[1 2] [2 1]|exact
+CHK|arr_four|double[1 2] [1 4]|exact
+CHK|arr_stack|double[1 2] [2 2]|exact
+CHK|arr_pick|double[1 2] [1 3]|exact
+CHK|arr_pick_class|char[1 21]'matlab.ui.style.Style'|exact
+CHK|arr_none|double[1 2] [0 0]|exact
+CHK|arr_mixed|MATLAB:class:NoConversionDefined|exact
+CHK|arr_mixed_msg|Cannot convert from 'double' to heterogeneous class 'matlab.ui.style.Style'. Either 'matlab.ui.style.internal.ComponentStyle' does not define static method 'convertObject' or its 'convertObject' method does not support converting 'double' to 'matlab.ui.style.Style'.|exact
+CHK|scalar_two|MATLAB:badsubscript|exact
+CHK|scalar_two_msg|Index exceeds the number of array elements. Index must not exceed 1.|exact
+CHK|scalar_one|char[1 21]'matlab.ui.style.Style'|exact
+CHK|scalar_numel|double[1 2] [1 0]|exact
+CHK|arr_grown|double[1 2] [1 3]|exact
+CHK|arr_grown_read|char[1 5]'Arial'|exact
+CHK|arr_shrunk|double[1 2] [1 2]|exact
+CHK|arr_disp|char[1 203]'  1x2 Style array with properties:\n\n    BackgroundColor\n    FontColor\n    FontWeight\n    FontAngle\n    FontName\n    HorizontalAlignment\n    HorizontalClipping\n    IconAlignment\n    Interpreter\n    Icon\n\n'|exact
+CHK|style_disp|char[1 60]'  Style with properties:\n\n    FontWeight: 'bold'\n\n  FOOTER\n\n'|exact
+CHK|style_disp_empty|char[1 307]'  Style with properties:\n\n        BackgroundColor: []\n              FontColor: []\n             FontWeight: ''\n              FontAngle: ''\n               FontName: ''\n    HorizontalAlignment: ''\n     HorizontalClipping: ''\n                   Icon: ''\n          IconAlignment: ''\n            Interpreter: ''\n\n'|exact
+CHK|style_disp_full|char[1 356]'  Style with properties:\n\n        BackgroundColor: [0 0 1]\n              FontColor: [0 1 0]\n             FontWeight: 'bold'\n              FontAngle: 'italic'\n               FontName: 'Arial'\n    HorizontalAlignment: 'center'\n     HorizontalClipping: 'left'\n                   Icon: 'error'\n          IconAlignment: 'right'\n            Interpreter: 'html'\n\n'|exact
+CHK|style_disp_cube|char[1 62]'  Style with properties:\n\n    Icon: [4x4x3 double]\n\n  FOOTER\n\n'|exact
+CHK|arr_loop|double[1 1] 2|exact
+CHK|sc_size|double[1 2] [3 3]|exact
+CHK|sc_style_class|char[1 21]'matlab.ui.style.Style'|exact
+CHK|sc_style_size|double[1 2] [3 1]|exact
+CHK|sc_style_read|char[1 4]'bold'|exact
+CHK|sc_style_colour|double[1 3] [1 0 0]|exact
+CHK|sc_style_brace|MATLAB:cellRefFromNonCell|exact
+CHK|sc_style_brace_msg|Brace indexing is not supported for variables of this type.|exact
+CHK|sc_target_class|char[1 11]'categorical'|div=ADR0230|diverges|char[1 6]'string'
+CHK|sc_target_eq|logical[3 1] [1;0;0]|exact
+CHK|sc_target_eq_string|logical[3 1] [0;1;0]|exact
+CHK|sc_target_string|string[1 3]"row","cell","table"|exact
+CHK|sc_target_char|char[1 3]'row'|exact
+CHK|sc_target_cellstr|cell[1 3]{char[1 3]'row';char[1 4]'cell';char[1 5]'table'}|exact
+CHK|sc_target_rows|double[1 2] [1 3]|exact
+CHK|sc_target_ismember|logical[1 1] 1|exact
+CHK|sc_target_strcmp|logical[1 1] 0|div=ADR0230|diverges|logical[3 1] [1;0;0]
+CHK|sc_target_brace|char[1 42]'MATLAB:categorical:CellReferenceNotAllowed'|div=ADR0230|diverges|char[1 3]'row'
+CHK|sc_index|cell[1 3]{double[1 1] 1;double[1 2] [2 2];char[0 0]''}|exact
+CHK|sc_whole|cell[1 2]{char[1 21]'matlab.ui.style.Style';double[1 2] [3 1]}|exact
+CHK|sc_copy|cell[1 2]{char[1 6]'normal';char[1 4]'bold'}|exact
+CHK|sc_add_array|MATLAB:ui:Table:invalidStyleObject|exact
+CHK|sc_add_array_msg|Invalid Style object.|exact
+CHK|sc_empty|cell[1 4]{double[1 2] [0 3];char[1 21]'matlab.ui.style.Style';double[1 2] [0 0];char[1 4]'cell'}|exact
+CHK|dd_isprop|logical[1 3] [1 1 0]|exact
+CHK|dd_order_default|cell[1 2]{double[0 0];double[0 0]}|exact
+CHK|dd_data_default|logical[1 1] 1|exact
+CHK|dd_selection_default|double[1 2] [2 3]|exact
+CHK|dd_rows_reversed|double[5 5] [11 18 25 2 9;10 12 19 21 3;4 6 13 20 22;23 5 7 14 16;17 24 1 8 15]|exact
+CHK|dd_selection_rows|cell[1 2]{double[1 2] [2 3];double[1 2] [2 3]}|exact
+CHK|dd_both_reversed|double[5 5] [9 2 25 18 11;3 21 19 12 10;22 20 13 6 4;16 14 7 5 23;15 8 1 24 17]|exact
+CHK|dd_selection_both|cell[1 2]{double[1 2] [2 3];double[1 2] [2 3]}|exact
+CHK|dd_orders|cell[1 2]{double[1 5] [5 4 3 2 1];double[1 5] [5 4 3 2 1]}|exact
+CHK|dd_rows_back|double[5 5] [15 8 1 24 17;16 14 7 5 23;22 20 13 6 4;3 21 19 12 10;9 2 25 18 11]|exact
+CHK|dd_new_data|cell[1 3]{double[0 0];double[0 0];logical[1 1] 1}|exact
+CHK|dd_set_data|MATLAB:class:SetProhibited|exact
+CHK|dd_set_data_msg|Unable to set the 'DisplayData' property of class ''Table'' because it is read-only.|exact
+CHK|dd_set_selection|MATLAB:class:SetProhibited|exact
+CHK|dd_set_selection_msg|Unable to set the 'DisplaySelection' property of class ''Table'' because it is read-only.|exact
+CHK|dd_set_extent|MATLAB:class:SetProhibited|exact
+CHK|dd_set_extent_msg|Unable to set the 'Extent' property of class ''Table'' because it is read-only.|exact
+CHK|dd_fcn_default|char[0 0]''|exact
+CHK|dd_table_rows|cell[1 3]{char[1 5]'table';double[1 3] [1 2 3];cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}}|exact
+CHK|dd_table_columns|cell[1 2]{char[1 1]'s';char[1 1]'n'}|exact
+CHK|table_extent|double[1 4] [0 0 340 340]|div=ADR0230|diverges|double[1 4] [0 0 440 190]
+CHK|table_datetime_edit|cell[1 2]{char[1 11]'05-May-2025';char[1 11]'dd-MMM-uuuu'}|exact
+CHK|table_scroll_words|cell[1 3]{char[1 3]'ran';char[1 3]'ran';char[1 3]'ran'}|exact
+CHK|table_scroll_bad_row|MATLAB:ui:Table:invalidRowTargetIndex|exact
+CHK|table_scroll_bad_row_msg|Option for 'row' must be a positive integer within the range of data.|exact
+CHK|g_off|double[1 2] [1 1]|exact
+CHK|g_off_warning|char[1 32]'MATLAB:uicontainer:ScrollableOff'|exact
+CHK|g_on|double[1 2] [1 1]|exact
+CHK|g_bottom|double[1 2] [1 -409]|exact
+CHK|g_top|double[1 2] [1 1]|exact
+CHK|g_xy|double[1 2] [1 1]|exact
+CHK|g_pair|double[1 2] [1 1]|exact
+CHK|g_zero|double[1 2] [1 0]|exact
+CHK|g_negative|double[1 2] [1 -5]|exact
+CHK|g_fraction|double[1 2] [1 1]|exact
+CHK|g_right|double[1 2] [1 1]|exact
+CHK|g_written|double[1 2] [1 50]|exact
+CHK|g_written_huge|double[1 2] [1 99999]|exact
+CHK|g_written_column|double[1 2] [0 0]|exact
+CHK|g_written_int|cell[1 2]{char[1 6]'double';double[1 2] [1 5]}|exact
+CHK|g_written_text|MATLAB:datatypes:Point2dDataType:ArrayClass|exact
+CHK|g_written_text_msg|Error setting property 'ScrollableViewportLocation' of class 'GridLayout': Input is unsupported class|exact
+CHK|g_written_three|MATLAB:datatypes:Point2dDataType:ArrayShape|exact
+CHK|g_written_three_msg|Error setting property 'ScrollableViewportLocation' of class 'GridLayout': Input must be 1x2|exact
+CHK|g_written_nan|MATLAB:datatypes:Point2dDataType:ArrayData|exact
+CHK|g_written_nan_msg|Error setting property 'ScrollableViewportLocation' of class 'GridLayout': Input must be finite numbers|exact
+CHK|g_middle|MATLAB:uicontainer:InvalidScrollTarget|exact
+CHK|g_middle_msg|Invalid location|exact
+CHK|g_bottom_one|MATLAB:uicontainer:InvalidScrollTarget|exact
+CHK|g_bottom_one_msg|Invalid location|exact
+CHK|g_one|MATLAB:uicontainer:InvalidScrollTarget|exact
+CHK|g_one_msg|Invalid location|exact
+CHK|g_three|MATLAB:uicontainer:InvalidScrollTarget|exact
+CHK|g_three_msg|Invalid location|exact
+CHK|g_upper|MATLAB:uicontainer:InvalidScrollTarget|exact
+CHK|g_upper_msg|Invalid location|exact
+CHK|g_string|double[1 2] [1 -409]|exact
+CHK|g_off_again|double[1 2] [1 1]|exact
+CHK|g_names|logical[1 3] [1 0 0]|exact
+CHK|p_start_x|double[1 1] 1|exact
+CHK|p_start_y|double[1 1] 108.765625|div=ADR0230|diverges|double[1 1] 100
+CHK|p_right_x|double[1 1] 219|exact
+CHK|p_left_x|double[1 1] 1|exact
+CHK|p_bottom_x|double[1 1] 1|exact
+CHK|p_bottom_y|double[1 1] 0.765625|div=ADR0230|diverges|double[1 1] 1
+CHK|p_pair_x|double[1 1] 50|exact
+CHK|p_pair_y|double[1 1] 50.765625|div=ADR0230|diverges|double[1 1] 50
+CHK|p_fits|double[1 2] [1 1]|exact
+CHK|p_off|double[1 2] [1 1]|exact
+CHK|tab_right_x|double[1 1] 149|exact
+CHK|tab_right_y|double[1 1] 18|div=ADR0230|diverges|double[1 1] 17
+CHK|g2_right|double[1 2] [273 1]|exact
+CHK|g2_bottom|double[1 2] [273 1]|exact
+CHK|g4_bottom|double[1 2] [1 -158]|exact
+CHK|g4_bottom_right|double[1 2] [210 -158]|exact
+CHK|g4_top_right|double[1 2] [210 1]|exact
+CHK|g4_pair|double[1 2] [30 1]|exact
+CHK|fig_negative|cell[1 2]{double[1 2] [1 1];double[1 2] [1 1]}|exact
+CHK|classic_scrollable|onoff off|exact
+CHK|classic_scroll_warning|char[1 32]'MATLAB:uicontainer:ScrollableOff'|exact

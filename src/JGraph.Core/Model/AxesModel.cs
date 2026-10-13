@@ -63,6 +63,7 @@ public sealed class AxesModel : GraphObject
     private Vector3D _currentPointFront;
     private Vector3D _currentPointBack;
     private Rect2D? _innerTarget;
+    private Thickness? _plotBoxMargins;
     private PositionConstraintType _positionConstraint = PositionConstraintType.OuterPosition;
     private int? _layoutTile;
     private int _layoutRowSpan = 1;
@@ -1127,6 +1128,53 @@ public sealed class AxesModel : GraphObject
     {
         get => _innerTarget;
         set => SetProperty(ref _innerTarget, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// R2025b's default plot box: the margins a new axes keeps between its cell and its plot box,
+    /// as fractions of the cell — <c>Position [0.13 0.11 0.775 0.815]</c> in an
+    /// <c>OuterPosition</c> of <c>[0 0 1 1]</c> (open item 87, probe <c>probe_87</c>), measured
+    /// left, top, right, bottom. The margins grow when the ticks, labels and title need more.
+    /// </summary>
+    public static readonly Thickness MatlabPlotBoxMargins = new(0.13, 1 - 0.11 - 0.815, 1 - 0.13 - 0.775, 0.11);
+
+    /// <summary>
+    /// The least margins the plot box keeps inside its cell while the cell is what was asked for, as
+    /// fractions of the cell (left, top, right, bottom), or null for the tight layout JGraph has
+    /// always drawn: the plot box as large as the decorations leave it. A MATLAB-dialect axes takes
+    /// <see cref="MatlabPlotBoxMargins"/> when it is made, so its <c>Position</c> reads what R2025b's
+    /// does; a pinned plot box (<see cref="InnerTarget"/>) ignores it, and so does a <c>uiaxes</c>.
+    /// </summary>
+    [Browsable(false)]
+    public Thickness? PlotBoxMargins
+    {
+        get => _plotBoxMargins;
+        set => SetProperty(ref _plotBoxMargins, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// Whether <see cref="PlotBoxMargins"/> place this axes' plot box: the cell is what was asked
+    /// for, the axes is not a <c>uiaxes</c>, and the margins are set.
+    /// </summary>
+    public bool KeepsPlotBoxMargins => _plotBoxMargins is not null && _innerTarget is null && !_positionIsOuter;
+
+    /// <summary>
+    /// The decoration margins an axes of <paramref name="cell"/>'s size keeps clear: the measured
+    /// ones, each widened to the <see cref="PlotBoxMargins"/> fraction of the cell when that is more.
+    /// </summary>
+    public Thickness MarginsWithin(Thickness measured, Rect2D cell)
+    {
+        if (!KeepsPlotBoxMargins)
+        {
+            return measured;
+        }
+
+        Thickness keep = _plotBoxMargins!.Value;
+        return new Thickness(
+            System.Math.Max(measured.Left, keep.Left * cell.Width),
+            System.Math.Max(measured.Top, keep.Top * cell.Height),
+            System.Math.Max(measured.Right, keep.Right * cell.Width),
+            System.Math.Max(measured.Bottom, keep.Bottom * cell.Height));
     }
 
     /// <summary>

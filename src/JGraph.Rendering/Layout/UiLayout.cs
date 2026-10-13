@@ -77,7 +77,27 @@ public sealed record UiPanelPlacement(
 
     /// <inheritdoc cref="VerticalBar" />
     public double ScrollY { get; init; }
+
+    /// <summary>
+    /// For a scrollable panel whose children do not fit (open item 47): the part of its inner area
+    /// that shows them, the bars aside. <see cref="Inner"/> is then the whole of the content, moved
+    /// under the viewport, which is where the children and the panel's axes are placed.
+    /// </summary>
+    public Rect2D? Viewport { get; init; }
 }
+
+/// <summary>
+/// A scrollable <c>uifigure</c> whose components do not fit (open item 47): the viewport, the size
+/// of everything it holds, the bars along its edges, and how far it is scrolled from the left and
+/// the top. The components and the figure's own axes are placed in the content, moved under the viewport.
+/// </summary>
+public readonly record struct UiScrollPlacement(
+    Rect2D Viewport,
+    Size2D Content,
+    Rect2D? VerticalBar,
+    Rect2D? HorizontalBar,
+    double ScrollX,
+    double ScrollY);
 
 /// <summary>The layout of one frame at one figure size.</summary>
 public sealed class UiLayoutResult
@@ -110,6 +130,9 @@ public sealed class UiLayoutResult
     /// <summary>The figure's own panels, back to front; each holds the panels inside it.</summary>
     public IReadOnlyList<UiPanelPlacement> Panels { get; }
 
+    /// <summary>How a scrollable figure is scrolled, or null when the figure does not scroll (open item 47).</summary>
+    public UiScrollPlacement? FigureScroll { get; init; }
+
     /// <summary>The placement of a container, when the frame holds it.</summary>
     public UiPanelPlacement? Find(UiContainerModel? container) =>
         container is not null && _bySource.TryGetValue(container, out UiPanelPlacement? placement) ? placement : null;
@@ -133,7 +156,31 @@ public static class UiLayout
         ArgumentNullException.ThrowIfNull(frame);
         var surface = new Rect2D(0, 0, figure.Width, figure.Height);
         var walk = new Walk();
-        IReadOnlyList<UiPanelPlacement> roots = walk.Place(frame.Roots, surface, surface, surface, visible: true, depth: 0, [], null);
+
+        // A scrollable uifigure places its components in the whole of what it holds, moved under
+        // the viewport its bars leave (open item 47); it starts at its top, as a panel does.
+        Rect2D area = surface;
+        Rect2D clip = surface;
+        UiScrollPlacement? figureScroll = null;
+        if (frame.FigureScrollable)
+        {
+            (double right, double top) = ChildrenExtent(frame.Roots, figure);
+            UiScrollMeasure measure = UiScrolling.Measure(figure, right, top);
+            double scrollX = measure.ClampX(frame.FigureScrollX);
+            double scrollY = measure.ClampY(frame.FigureScrollY);
+            var viewport = new Rect2D(0, 0, measure.Viewport.Width, measure.Viewport.Height);
+            area = new Rect2D(-scrollX, -scrollY, measure.Content.Width, measure.Content.Height);
+            clip = viewport;
+            figureScroll = new UiScrollPlacement(
+                viewport,
+                measure.Content,
+                measure.Vertical ? new Rect2D(viewport.Width, 0, figure.Width - viewport.Width, viewport.Height) : null,
+                measure.Horizontal ? new Rect2D(0, viewport.Height, viewport.Width, figure.Height - viewport.Height) : null,
+                scrollX,
+                scrollY);
+        }
+
+        IReadOnlyList<UiPanelPlacement> roots = walk.Place(frame.Roots, area, area, clip, visible: true, depth: 0, [], null);
 
         // A panel painted after a control, and not one of its ancestors, lies over it: the control is
         // a window element above the drawn surface, so it has to be cut away where the panel crosses.
@@ -171,7 +218,32 @@ public static class UiLayout
             strips.Add(placement with { Occluders = Over(placement.Box, placement.Order, ancestors) });
         }
 
-        return new UiLayoutResult(controls, components, roots, walk.BySource, strips);
+        return new UiLayoutResult(controls, components, roots, walk.BySource, strips) { FigureScroll = figureScroll };
+    }
+
+    /// <summary>
+    /// How far right and how far up a container's children reach, in pixels from its inner area's
+    /// bottom-left corner — what a scrollable container has to show (open item 47). A grid fills
+    /// its parent and has no place of its own.
+    /// </summary>
+    private static (double Right, double Top) ChildrenExtent(IReadOnlyList<IUiNodeFrame> nodes, Size2D inner)
+    {
+        double right = 0;
+        double top = 0;
+        foreach (IUiNodeFrame node in nodes)
+        {
+            if (node is UiGridFrame)
+            {
+                continue;
+            }
+
+            // The far edge is the position plus the size, as R2025b counts it (UiScrolling.Extent).
+            Rect2D box = UiUnitConverter.ToPixels(node.Position, node.Units, inner);
+            right = System.Math.Max(right, box.X + box.Width);
+            top = System.Math.Max(top, box.Y + box.Height);
+        }
+
+        return (right, top);
     }
 
     /// <summary>The controls of <see cref="Compute"/>, for a caller that wants nothing else.</summary>
@@ -352,13 +424,36 @@ public static class UiLayout
                     }
 
                     case UiPanelFrame panel:
+                    {
                         Thickness inset = panel.Insets;
                         var inner = new Rect2D(
                             box.X + inset.Left,
                             box.Y + inset.Top,
                             System.Math.Max(0, box.Width - inset.Left - inset.Right),
                             System.Math.Max(0, box.Height - inset.Top - inset.Bottom));
-                        Rect2D innerClip = Intersect(clip, inner);
+
+                        // A scrollable panel shows its children through a viewport in the top-left of
+                        // its inner area, with a bar along each edge they overflow, and places them in
+                        // the whole of what they reach, moved under it (open item 47). It starts at
+                        // the top (probe_47).
+                        Rect2D viewport = inner;
+                        Rect2D childArea = inner;
+                        UiScrollMeasure? scrolled = null;
+                        double scrollX = 0;
+                        double scrollY = 0;
+                        if (panel.Scrollable)
+                        {
+                            var innerSize = new Size2D(inner.Width, inner.Height);
+                            (double right, double top) = ChildrenExtent(panel.Children, innerSize);
+                            UiScrollMeasure measure = UiScrolling.Measure(innerSize, right, top);
+                            scrollX = measure.ClampX(panel.ScrollX);
+                            scrollY = measure.ClampY(panel.ScrollY);
+                            viewport = new Rect2D(inner.X, inner.Y, measure.Viewport.Width, measure.Viewport.Height);
+                            childArea = new Rect2D(inner.X - scrollX, inner.Y - scrollY, measure.Content.Width, measure.Content.Height);
+                            scrolled = measure;
+                        }
+
+                        Rect2D innerClip = Intersect(clip, viewport);
                         var inside = new List<UiPanelFrame>(ancestors) { panel };
                         int slot = Panels.Count;
                         Panels.Add((null!, order));
@@ -369,12 +464,25 @@ public static class UiLayout
                             System.Math.Max(0, box.Width - forGrid.Left - forGrid.Right),
                             System.Math.Max(0, box.Height - forGrid.Top - forGrid.Bottom));
                         IReadOnlyList<UiPanelPlacement> children =
-                            Place(panel.Children, inner, gridInner, innerClip, shown, depth + 1, inside, null);
-                        var placement = new UiPanelPlacement(panel, box, inner, clip, shown, depth, children);
+                            Place(panel.Children, childArea, scrolled is null ? gridInner : childArea, innerClip, shown, depth + 1, inside, null);
+                        var placement = new UiPanelPlacement(panel, box, childArea, clip, shown, depth, children)
+                        {
+                            Viewport = scrolled is null ? null : viewport,
+                            Content = scrolled?.Content ?? default,
+                            VerticalBar = scrolled is { Vertical: true }
+                                ? new Rect2D(viewport.X + viewport.Width, viewport.Y, inner.Width - viewport.Width, viewport.Height)
+                                : null,
+                            HorizontalBar = scrolled is { Horizontal: true }
+                                ? new Rect2D(viewport.X, viewport.Y + viewport.Height, viewport.Width, inner.Height - viewport.Height)
+                                : null,
+                            ScrollX = scrollX,
+                            ScrollY = scrollY,
+                        };
                         Panels[slot] = (placement, order);
                         BySource[panel.Source] = placement;
                         panels.Add(placement);
                         break;
+                    }
                 }
             }
 

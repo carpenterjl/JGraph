@@ -331,8 +331,6 @@ public sealed class UiGridLayoutModel : UiContainerModel
     private string _rowSpacingClass = "double";
     private string _columnSpacingClass = "double";
     private UiColor _background = UiPanelModel.DefaultBackground;
-    private double _scrollX;
-    private double _scrollY;
 
     public UiGridLayoutModel()
     {
@@ -416,22 +414,20 @@ public sealed class UiGridLayoutModel : UiContainerModel
     public override Thickness Insets() => new(0);
 
     /// <summary>
-    /// How far a scrollable grid is scrolled, in pixels from the left of what it holds. The layout
-    /// keeps it within what there is to scroll.
+    /// This grid laid out to scroll in its own rectangle (open item 47): its tracks, the viewport
+    /// its bars leave, and which bars it shows — what <c>scroll</c> and
+    /// <c>ScrollableViewportLocation</c> measure against on the script's side.
     /// </summary>
-    [Browsable(false)]
-    public double ScrollX
+    public UiGridScrolled Scrolled()
     {
-        get => _scrollX;
-        set => SetProperty(ref _scrollX, value, InvalidationKind.Ui);
-    }
+        IReadOnlyList<GraphObject> placed = Placed();
+        var items = new UiGridItem[placed.Count];
+        for (int i = 0; i < placed.Count; i++)
+        {
+            items[i] = new UiGridItem(CellOf(placed[i]), UiFit.Of(placed[i]));
+        }
 
-    /// <summary>How far a scrollable grid is scrolled, in pixels from the top of what it holds.</summary>
-    [Browsable(false)]
-    public double ScrollY
-    {
-        get => _scrollY;
-        set => SetProperty(ref _scrollY, value, InvalidationKind.Ui);
+        return UiGridMath.ArrangeScrolling(Rows, Columns, _padding, _rowSpacing, _columnSpacing, OwnSize(), items);
     }
 
     /// <summary>Everything placed in the grid, components first and then axes, each in its own order.</summary>

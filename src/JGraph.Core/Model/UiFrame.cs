@@ -97,6 +97,15 @@ public sealed record UiPanelFrame(
     /// <summary>Whether the panel fills the area its parent gives its children: a tab does (U8).</summary>
     public bool FillsParent { get; init; }
 
+    /// <summary>Whether the panel scrolls its children (open item 47), and how far it is scrolled from the left and the top of them.</summary>
+    public bool Scrollable { get; init; }
+
+    /// <inheritdoc cref="Scrollable" />
+    public double ScrollX { get; init; }
+
+    /// <inheritdoc cref="Scrollable" />
+    public double ScrollY { get; init; }
+
     /// <summary>Whether the panel has no background of its own: a tab whose colour is <c>'none'</c>.</summary>
     public bool Clear { get; init; }
 }
@@ -212,6 +221,15 @@ public sealed class UiFrame
     /// <summary>The context menus a script has asked to open (<c>open(cm, x, y)</c>; U9), with how often and where.</summary>
     public IReadOnlyList<UiMenuOpenFrame> MenuOpens { get; private init; } = [];
 
+    /// <summary>Whether the figure scrolls its components (open item 47), and how far it is scrolled from the left and the top of them.</summary>
+    public bool FigureScrollable { get; private init; }
+
+    /// <inheritdoc cref="FigureScrollable" />
+    public double FigureScrollX { get; private init; }
+
+    /// <inheritdoc cref="FigureScrollable" />
+    public double FigureScrollY { get; private init; }
+
     private static long _sequence;
 
     /// <summary>Copies the figure's components. Call on the thread that writes the model.</summary>
@@ -222,6 +240,9 @@ public sealed class UiFrame
         {
             return new UiFrame(figure, Interlocked.Increment(ref _sequence), TakeNodes(figure.Components))
             {
+                FigureScrollable = figure.IsUiFigure && figure.Scrollable,
+                FigureScrollX = figure.ScrollX,
+                FigureScrollY = figure.ScrollY,
                 Overlays = [.. figure.Overlays.Select(static overlay => overlay.Snapshot())],
                 Menus = TakeMenus(figure.Menus),
                 MenuOpens =
@@ -343,6 +364,9 @@ public sealed class UiFrame
                         {
                             FillsParent = true,
                             Clear = page.BackgroundColor is null,
+                            Scrollable = page.Scrollable,
+                            ScrollX = page.ScrollX,
+                            ScrollY = page.ScrollY,
                         });
                     }
 
@@ -390,7 +414,12 @@ public sealed class UiFrame
                         (panel as UiProgressIndicatorModel)?.ProgressColor,
                         cell,
                         fit,
-                        panel.GridInsets()));
+                        panel.GridInsets())
+                    {
+                        Scrollable = panel.Scrollable,
+                        ScrollX = panel.ScrollX,
+                        ScrollY = panel.ScrollY,
+                    });
                     break;
             }
         }

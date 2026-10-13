@@ -81,12 +81,15 @@ public class MatlabM75FigurePropertyTests : IDisposable
         double[] outer = Row(result, "outer");
         double[] inset = Row(result, "inset");
 
-        // The three rectangles are one statement said three ways, and this is the statement.
-        Assert.Equal(inner[0] - inset[0], outer[0], 9);
-        Assert.Equal(inner[1] - inset[1], outer[1], 9);
-        Assert.Equal(inner[2] + inset[0] + inset[2], outer[2], 9);
-        Assert.Equal(inner[3] + inset[1] + inset[3], outer[3], 9);
-
+        // R2025b's statement (open item 87, ADR 0230): a MATLAB-dialect axes keeps its default plot
+        // box inside the whole figure, and the text's own margin fits inside the box's.
+        Assert.Equal(new[] { 0.0, 0.0, 1.0, 1.0 }, outer);
+        Assert.Equal(0.13, inner[0], 9);
+        Assert.Equal(0.11, inner[1], 9);
+        Assert.Equal(0.775, inner[2], 9);
+        Assert.Equal(0.815, inner[3], 9);
+        Assert.True(inset[0] <= inner[0] && inset[1] <= inner[1], "the text's margin fits inside the default box");
+        Assert.True(inset[0] + inset[2] + inset[1] + inset[3] > 0, "the text claims some margin");
     }
 
     [Fact]

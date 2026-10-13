@@ -188,6 +188,36 @@ public sealed partial class UiComponentLayer
                 Tell(shown, "cellselect", SelectionOf(grid, table.SelectionType));
             }
         };
+
+        // A click on a sortable heading sorts the data on the script side (open item 60): the grid
+        // keeps its rows as the next frame hands them, and shows which way the column is sorted.
+        grid.Sorting += (_, e) =>
+        {
+            e.Handled = true;
+            if (shown.Applying)
+            {
+                return;
+            }
+
+            ListSortDirection next = e.Column.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+            foreach (DataGridColumn other in grid.Columns)
+            {
+                other.SortDirection = null;
+            }
+
+            e.Column.SortDirection = next;
+            Tell(shown, "sorted", new[] { grid.Columns.IndexOf(e.Column), next == ListSortDirection.Ascending ? 1 : -1 });
+        };
+
+        // A column dragged to another place: the script side rebuilds the columns in the new order.
+        grid.ColumnReordered += (_, _) =>
+        {
+            if (!shown.Applying)
+            {
+                int[] order = [.. grid.Columns.OrderBy(static column => column.DisplayIndex).Select(column => grid.Columns.IndexOf(column))];
+                Tell(shown, "rearranged", order);
+            }
+        };
         grid.PreviewMouseLeftButtonUp += (_, e) =>
         {
             if (CellUnder(grid, e.OriginalSource as DependencyObject) is { } at)

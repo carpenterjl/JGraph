@@ -2033,10 +2033,21 @@ internal sealed partial class Interpreter
 
         // A class that defines disp says how its instances look, and the echo of a bare name has to
         // ask it too — otherwise `obj` and `disp(obj)` show different things (M68).
-        if (AnyClasses && value.Type == JgsType.Object && value.AsObject.Class.TryMethod("disp", out _))
+        if (AnyClasses && value.Type == JgsType.Object && !value.IsObjectArray && value.AsObject.Class.TryMethod("disp", out _))
         {
             _echo($"{name} =");
             TryObjectDisplay(value, statement.Line, statement.Column);
+            return;
+        }
+
+        // An array of objects, and a uistyle, show on lines of their own as R2025b shows them
+        // (open item 65): the name, a blank line, the display, a blank line.
+        if (value.Type == JgsType.Object && (value.IsObjectArray || value.AsObject.Class.Name == JgsBuiltinClasses.Style))
+        {
+            _echo($"{name} = ");
+            _echo(string.Empty);
+            _echo(value.Display().TrimEnd('\n'));
+            _echo(string.Empty);
             return;
         }
 
@@ -2783,6 +2794,12 @@ internal sealed partial class Interpreter
             return ExecuteForOverStructs(statement, iterable, env);
         }
 
+        // An array of objects walks its elements, a row's one at a time (open item 65).
+        if (iterable.Type == JgsType.Object && iterable.IsObjectArray)
+        {
+            return ExecuteForOverObjects(statement, iterable, env);
+        }
+
         // A char row walks its characters (V6.17): each pass binds a 1-by-1 char, the column a
         // one-row char array has, so `for c = 'abc'` is the loop over letters a MATLAB script writes.
         if (iterable.Type == JgsType.String)
@@ -3476,6 +3493,12 @@ internal sealed partial class Interpreter
             return ConcatenateStructs(rows, matrix);
         }
 
+        // Objects concatenate into an array of objects (open item 65), for the same reason.
+        if (Dialect.ConcatenatesBrackets && AnyObject(rows))
+        {
+            return ConcatenateObjects(rows, matrix);
+        }
+
         // A cell joins as a container too, and for the same reason (M68): the block measurement below
         // reads a cell as one element whatever its size, so [{}, {x}] came back with a phantom
         // element. Asked after structs because a bracket cannot sensibly hold both.
@@ -3688,6 +3711,14 @@ internal sealed partial class Interpreter
             && Array.Exists(joinable, static e => e.Type == JgsType.Struct))
         {
             return ConcatenateStructs([joinable], array);
+        }
+
+        // A bracket holding any object makes an array of objects (open item 65): [s s2] is 1-by-2,
+        // [s 1] is R2025b's refusal, and [s] is s.
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0
+            && Array.Exists(joinable, static e => IsValueObject(e)))
+        {
+            return ConcatenateObjects([joinable], array);
         }
 
         // A bracket holding any cell joins the cells (M68), which the block machinery below cannot do:
@@ -5156,6 +5187,11 @@ internal sealed partial class Interpreter
         // it (M68).
         if (value.Type == JgsType.Object)
         {
+            if (value.IsObjectArray)
+            {
+                return JgsValue.Share(value); // an array of value objects is a value: a counted share, copied on the first write (open item 65)
+            }
+
             if (value.AsObject.Class.IsHandle)
             {
                 return value;
@@ -6631,6 +6667,16 @@ internal sealed partial class Interpreter
             return AssignIntoStruct(target, callee, subscripts, rhs, at, env);
         }
 
+        // a(k) = s on an object or an array of them, a(k) = [] off one, and a(2) = s with a = []
+        // or no a at all (open item 65): the element list is rebuilt and stored back.
+        if (op == TokenType.Assign && Dialect.IsMatlab
+            && ((callee.Type == JgsType.Object && !callee.ObjectClass.IsHandle)
+                || (rhs.Type == JgsType.Object && !rhs.ObjectClass.IsHandle
+                    && callee.Type == JgsType.Array && callee.ArrayLength == 0 && !callee.IsStringArray && !callee.IsTime)))
+        {
+            return AssignIntoObjectArray(target, callee, subscripts, rhs, at, env);
+        }
+
         // c(k) = 'x' on a char row and c(k) = {v} on a cell are writes of their own kind; a string
         // array is an array underneath, and only has to be handed a plain element (audit 6.1).
         if (Dialect.IsMatlab && callee.Type == JgsType.String && subscripts.Count is 1 or 2)
@@ -7368,11 +7414,11 @@ internal sealed partial class Interpreter
         }
 
         // obj(1), obj(1, 1), obj(end), obj(:) and obj() on one object are that object, as on any
-        // one-element array (U12: the property probe's h(1) on a uistyle). Arrays of objects are
-        // open item 65, so a subscript that would make one is refused rather than guessed at.
+        // one-element array (U12: the property probe's h(1) on a uistyle); a(2) and a(1:2) on an
+        // array of objects pick its elements (open item 65).
         if (callee.Type == JgsType.Object)
         {
-            return IndexScalarObject(callee, call, env);
+            return IndexObject(callee, call, env);
         }
 
         if (callee.Type != JgsType.Function)
@@ -7406,29 +7452,6 @@ internal sealed partial class Interpreter
     /// The one-by-one array a scalar is, kept in whatever numeric class the scalar was in so that
     /// <c>class(x(1))</c> answers what <c>class(x)</c> does.
     /// </summary>
-    /// <summary>
-    /// A paren subscript of one object. The subscripts are applied to a stand-in one-element array, so
-    /// <c>end</c>, a colon, a mask and every refusal (<c>s(2)</c>, <c>s(0)</c>) are exactly what a
-    /// one-element array answers; a pick of the one element is the object itself. A pick of none or
-    /// of several would make an array of objects, which this build does not have yet (open item 65).
-    /// </summary>
-    private JgsValue IndexScalarObject(JgsValue callee, CallExpr call, JgsEnvironment env)
-    {
-        if (call.Arguments.Count == 0)
-        {
-            return callee;
-        }
-
-        JgsValue picked = IndexInto(OneElementArray(JgsValue.Number(0)), call.Arguments, call, env);
-        if (picked.Type is JgsType.Number || (picked.Type == JgsType.Array && picked.ArrayLength == 1))
-        {
-            return callee;
-        }
-
-        throw new JgsRuntimeException(call.Line, call.Column,
-            $"Indexing a {callee.TypeName} this way makes an array of objects, which JGraph does not support yet.");
-    }
-
     private static JgsValue OneElementArray(JgsValue scalar)
     {
         JgsValue array = JgsNumericClasses.Stamp(JgsValue.Array([scalar]), scalar.NumericClass);
@@ -9378,6 +9401,14 @@ internal sealed partial class Interpreter
         // area(obj) the same call written two ways — and what lets the bare obj.area run it.
         if (target.Type == JgsType.Object)
         {
+            // a.p on an array of objects is a comma-separated list in MATLAB; here it is refused
+            // until that list is built (open item 65), rather than answered with one element.
+            if (target.IsObjectArray)
+            {
+                throw new JgsRuntimeException(member.Line, member.Column,
+                    $"'.{field}' on a {target.Rows}x{target.Cols} array of {target.ClassName} would be a comma-separated list, which this build does not support yet; index one element first.");
+            }
+
             return ObjectMember(target, field, member, autoCall);
         }
 

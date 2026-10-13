@@ -565,7 +565,7 @@ internal sealed class JgsNameResolver
                     return dominant;
                 }
             }
-            else if (arguments[i].Type == JgsType.Object && arguments[i].AsObject.Class.Dominates(dominant.AsObject.Class))
+            else if (arguments[i].Type == JgsType.Object && arguments[i].ObjectClass.Dominates(dominant.ObjectClass))
             {
                 dominant = arguments[i];
             }
@@ -597,7 +597,7 @@ internal sealed class JgsNameResolver
 
         for (int i = 0; i < arguments.Count; i++)
         {
-            if (arguments[i].Type == JgsType.Object && arguments[i].AsObject.Class.IsA(owner.Name))
+            if (arguments[i].Type == JgsType.Object && arguments[i].ObjectClass.IsA(owner.Name))
             {
                 return false;
             }
@@ -618,7 +618,7 @@ internal sealed class JgsNameResolver
         // own code is the whole destruction - the listeners, each class's delete, the mark - and
         // not a bare call of the method's body.
         return DominantObject(arguments) is { Type: JgsType.Object } instance
-            && (!ReferenceEquals(instance.AsObject.Class, owner) || name == "delete")
+            && (!ReferenceEquals(instance.ObjectClass, owner) || name == "delete")
             && _interpreter.TryUserMethod(name, instance, owner, true, out IJgsCallable? method)
             ? method
             : null;

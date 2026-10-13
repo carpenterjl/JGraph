@@ -402,6 +402,7 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Scrollable",
             entry => OnOff(Figure(entry).Scrollable),
             (entry, value, line, col) => Figure(entry).Scrollable = ComponentOnOff(entry, "Scrollable", value, line, col));
+        AddScrollableViewportLocation(table); // open item 47
 
         Put(table, "IntegerHandle",
             entry => OnOff(Figure(entry).IntegerHandle),
@@ -791,6 +792,7 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Scrollable",
             entry => OnOff(Panel(entry).Scrollable),
             (entry, value, line, col) => Panel(entry).Scrollable = ComponentOnOff(entry, "Scrollable", value, line, col));
+        AddScrollableViewportLocation(table); // open item 47
         Put(table, "AutoResizeChildren",
             entry => OnOff(Panel(entry).AutoResizeChildren),
             (entry, value, line, col) =>

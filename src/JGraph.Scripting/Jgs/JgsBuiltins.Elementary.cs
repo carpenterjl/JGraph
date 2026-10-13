@@ -349,14 +349,14 @@ internal static partial class JgsBuiltins
                 // Every handle is a 'handle' (V6): a classdef … < handle instance, and the builtin
                 // handle classes — a timer, a containers.Map, a VideoWriter.
                 "handle" => IsHandleClass(args[0]) || JgsUiEventData.IsBuiltinEventData(args[0])
-                    || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsHandle),
+                    || (args[0].Type == JgsType.Object && args[0].ObjectClass.IsHandle),
                 // A class written < event.EventData is one (V6, #106), as the default event is.
                 EventDataClassName => string.Equals(actual, wanted, StringComparison.Ordinal)
                     || JgsUiEventData.IsBuiltinEventData(args[0])
-                    || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsEventData),
+                    || (args[0].Type == JgsType.Object && args[0].ObjectClass.IsEventData),
                 // An instance is one of each of its superclasses too (U6).
                 _ => string.Equals(actual, wanted, StringComparison.Ordinal)
-                    || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsA(wanted)),
+                    || (args[0].Type == JgsType.Object && args[0].ObjectClass.IsA(wanted)),
             });
         });
 

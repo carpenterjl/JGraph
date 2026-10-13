@@ -2533,6 +2533,7 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Scrollable",
             entry => OnOff(Grid(entry).Scrollable),
             (entry, value, line, col) => Grid(entry).Scrollable = OnOffState(entry, "Scrollable", value, line, col));
+        AddScrollableViewportLocation(table); // open item 47
         Put(table, "BackgroundColor",
             entry => UiColorValue(Grid(entry).BackgroundColor),
             (entry, value, line, col) => Grid(entry).BackgroundColor =

@@ -65,8 +65,23 @@ internal static partial class JgsGraphicsProperties
 
     static JgsGraphicsProperties()
     {
+        GraphObjectLifecycle.Adopted += GiveMatlabPlotBox;
         GraphObjectLifecycle.Adopted += ApplyDefaults;
         JG.FigureMade = ApplyDefaults; // a figure made by plot, axes, gcf or gca takes the root's too (open item 93)
+    }
+
+    /// <summary>
+    /// An axes a MATLAB-dialect script makes keeps R2025b's default plot box inside its cell (open
+    /// item 87): <c>Position [0.13 0.11 0.775 0.815]</c> in an <c>OuterPosition</c> of <c>[0 0 1 1]</c>,
+    /// scaled with the cell, and grown only when the decorations need more. The JGS dialect keeps the
+    /// tight plot box it has always drawn. An axes read from a document keeps what the document says.
+    /// </summary>
+    private static void GiveMatlabPlotBox(GraphObject child)
+    {
+        if (child is AxesModel { PlotBoxMargins: null, InnerTarget: null } axes && JgsRunningDialect.ThreadIsMatlab)
+        {
+            axes.PlotBoxMargins = AxesModel.MatlabPlotBoxMargins;
+        }
     }
 
     /// <summary>Makes an object through a low-level form, which takes every default (open item 93).</summary>

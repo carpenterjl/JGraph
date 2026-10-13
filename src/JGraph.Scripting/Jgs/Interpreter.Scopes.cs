@@ -313,7 +313,7 @@ internal sealed partial class Interpreter
     {
         JgsType.Array or JgsType.Cell => true,
         JgsType.Struct => !JgsBuiltins.IsHandleClass(value),
-        JgsType.Object => !value.AsObject.Class.IsHandle,
+        JgsType.Object => value.IsObjectArray || !value.AsObject.Class.IsHandle, // an array of objects is a value (open item 65)
         _ => false,
     };
 

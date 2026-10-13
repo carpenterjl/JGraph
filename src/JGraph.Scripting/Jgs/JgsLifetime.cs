@@ -95,7 +95,7 @@ internal sealed class JgsLifetime
     /// </summary>
     internal static bool MayTrack(JgsValue value) => value.Type switch
     {
-        JgsType.Object => value.AsObject.Class.IsHandle || value.AsObject.Scanned,
+        JgsType.Object => !value.IsObjectArray && (value.AsObject.Class.IsHandle || value.AsObject.Scanned),
         JgsType.Cell or JgsType.Array => value.Tracked,
         JgsType.Struct => value.AsStructArray.Scanned,
         JgsType.Function => TracksCallable(value.AsCallable),
@@ -114,7 +114,7 @@ internal sealed class JgsLifetime
 
     /// <summary>A handle: released before the containers beside it (measured order).</summary>
     private static bool IsHandleLike(JgsValue value) =>
-        (value.Type == JgsType.Object && value.AsObject.Class.IsHandle)
+        (value.Type == JgsType.Object && !value.IsObjectArray && value.AsObject.Class.IsHandle)
         || (value.Type == JgsType.External && value.AsExternal is Devices.DeviceObject)
         || (value.Type == JgsType.Struct && JgsBuiltins.IsHandleClass(value));
 
@@ -122,7 +122,7 @@ internal sealed class JgsLifetime
     private static bool IsCountedContainer(JgsValue value) => value.Type switch
     {
         JgsType.Cell or JgsType.Array or JgsType.Struct => true,
-        JgsType.Object => !value.AsObject.Class.IsHandle,
+        JgsType.Object => value.IsObjectArray || !value.AsObject.Class.IsHandle,
         _ => false,
     };
 
@@ -196,7 +196,7 @@ internal sealed class JgsLifetime
     {
         switch (value.Type)
         {
-            case JgsType.Object:
+            case JgsType.Object when !value.IsObjectArray: // an array of value objects is not tracked (open item 65)
             {
                 JgsObject instance = value.AsObject;
                 if (instance.Exact > 0 && --instance.Exact == 0)
@@ -358,7 +358,7 @@ internal sealed class JgsLifetime
                 (tracker ?? device.Interpreter.Lifetimes).Defer(device);
                 return;
 
-            case JgsType.Object:
+            case JgsType.Object when !value.IsObjectArray:
             {
                 JgsObject instance = value.AsObject;
                 if (instance.Wrapped)
@@ -436,7 +436,7 @@ internal sealed class JgsLifetime
     {
         foreach (JgsValue child in slots)
         {
-            if (child is { Type: JgsType.Object } && child.AsObject.Class.IsHandle)
+            if (child is { Type: JgsType.Object, IsObjectArray: false } && child.AsObject.Class.IsHandle)
             {
                 return true;
             }
@@ -454,7 +454,7 @@ internal sealed class JgsLifetime
     {
         foreach (KeyValuePair<string, JgsValue> field in fields)
         {
-            if (field.Value is { Type: JgsType.Object } && field.Value.AsObject.Class.IsHandle)
+            if (field.Value is { Type: JgsType.Object, IsObjectArray: false } && field.Value.AsObject.Class.IsHandle)
             {
                 return true;
             }
@@ -679,7 +679,7 @@ internal sealed class JgsLifetime
                 return;
             }
 
-            case JgsType.Object:
+            case JgsType.Object when !container.IsObjectArray:
             {
                 JgsObject instance = container.AsObject;
                 if (instance.Scanned)

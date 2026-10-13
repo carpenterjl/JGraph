@@ -58,10 +58,77 @@ internal static partial class JgsGraphicsProperties
             entry => JgsUiTables.StateOf(entry).Data,
             (entry, value, line, col) =>
             {
-                JgsUiTables.StateOf(entry).Data = TableData(entry, value, line, col);
+                JgsTableState state = JgsUiTables.StateOf(entry);
+                state.Data = TableData(entry, value, line, col);
+
+                // New data shows in its own order: a sort or a drag of the old is forgotten.
+                state.RowOrder = null;
+                state.ColumnOrder = null;
                 JgsUiTables.Rebuild(entry);
             });
-        Put(table, "DisplayData", entry => JgsUiTables.StateOf(entry).Data);
+
+        // The data as shown (open item 60): rows and columns in the order a sort or a drag left them.
+        Put(table, "DisplayData", entry => JgsUiTables.DisplayData(JgsUiTables.StateOf(entry)));
+
+        // R2025b's hidden pair behind DisplayData: the data row each display row shows and the data
+        // column each display column shows, from 1, or [] while the order is the data's own. Written
+        // by a script as a permutation, or [] to show the data in its own order.
+        foreach (string name in new[] { "DisplayRowOrder", "DisplayColumnOrder" })
+        {
+            bool rowsOf = name == "DisplayRowOrder";
+            Put(table, name,
+                entry =>
+                {
+                    int[]? order = rowsOf ? JgsUiTables.StateOf(entry).RowOrder : JgsUiTables.StateOf(entry).ColumnOrder;
+                    return order is null ? JgsMatrix.FromColumnMajor([], 0, 0) : Row([.. order.Select(static index => (double)(index + 1))]);
+                },
+                (entry, value, line, col) =>
+                {
+                    JgsTableState state = JgsUiTables.StateOf(entry);
+                    (int rows, int columns) = JgsUiTables.SizeOf(state.Data);
+                    int extent = rowsOf ? rows : columns;
+                    int[]? order = null;
+                    if (!(IsEmptyValue(value) && !value.IsStringArray))
+                    {
+                        double[] given = value.Type is JgsType.Number or JgsType.Array && !value.IsStringArray
+                            ? JgsBuiltins.ToDoubles(name, value, line, col)
+                            : throw ComponentError(entry, name, "MATLAB:ui:Table:invalidDisplayOrder",
+                                $"'{name}' must be a permutation of 1:{extent}, or [].", line, col);
+                        order = new int[given.Length];
+                        var seen = new bool[extent];
+                        for (int i = 0; i < given.Length; i++)
+                        {
+                            if (given.Length != extent || given[i] < 1 || given[i] > extent || given[i] != System.Math.Floor(given[i]) || seen[(int)given[i] - 1])
+                            {
+                                throw ComponentError(entry, name, "MATLAB:ui:Table:invalidDisplayOrder",
+                                    $"'{name}' must be a permutation of 1:{extent}, or [].", line, col);
+                            }
+
+                            seen[(int)given[i] - 1] = true;
+                            order[i] = (int)given[i] - 1;
+                        }
+
+                        if (JgsUiTables.IsIdentity(order))
+                        {
+                            order = null;
+                        }
+                    }
+
+                    if (rowsOf)
+                    {
+                        state.RowOrder = order;
+                    }
+                    else
+                    {
+                        state.ColumnOrder = order;
+                    }
+
+                    // The selection stays where the window shows it: R2025b does not move
+                    // DisplaySelection for a write of these (fixture oi_axes_box_styles_tables_scroll).
+                    JgsUiTables.Rebuild(entry);
+                });
+            Unlist(table, name);
+        }
 
         foreach (string name in new[] { "ColumnName", "RowName" })
         {
@@ -255,12 +322,12 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Multiselect",
             entry => OnOff(TableOf(entry).Multiselect),
             (entry, value, line, col) => TableOf(entry).Multiselect = OnOffState(entry, "Multiselect", value, line, col));
-        foreach (string name in new[] { "Selection", "DisplaySelection" })
-        {
-            Put(table, name,
-                entry => JgsUiTables.StateOf(entry).Selection ?? JgsMatrix.FromColumnMajor([], 0, 0),
-                name == "DisplaySelection" ? null : (entry, value, line, col) => SetTableSelection(entry, value, line, col));
-        }
+        Put(table, "Selection",
+            entry => JgsUiTables.StateOf(entry).Selection ?? JgsMatrix.FromColumnMajor([], 0, 0),
+            (entry, value, line, col) => SetTableSelection(entry, value, line, col));
+
+        // The selection as shown (open item 60): the same cells, rows or columns in display positions.
+        Put(table, "DisplaySelection", entry => JgsUiComponentEvents.DisplaySelectionOf(TableOf(entry), JgsUiTables.StateOf(entry)));
 
         // The styles added with addStyle (U9).
         Put(table, "StyleConfigurations", StyleConfigurationsValue);
@@ -720,6 +787,8 @@ internal static partial class JgsGraphicsProperties
         JgsValue kept = JgsValue.Share(value);
         JgsLifetime.Pin(kept);
         state.Selection = kept;
-        model.Selection = picked;
+
+        // The window shows the selection where the rows and columns now are (open item 60).
+        model.Selection = JgsUiComponentEvents.ShownSelection(model, state);
     }
 }

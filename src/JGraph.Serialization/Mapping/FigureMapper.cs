@@ -499,6 +499,9 @@ internal static class FigureMapper
         dto.PositionConstraint = axes.PositionConstraint == PositionConstraintType.OuterPosition
             ? null
             : axes.PositionConstraint.ToString();
+        dto.PlotBoxMargins = axes.PlotBoxMargins is { } margins
+            ? [margins.Left, margins.Top, margins.Right, margins.Bottom]
+            : null;
         dto.LineStyleOrder = axes.LineStyleOrder is { } styles
             ? styles.Select(static entry => new SeriesLineStyleDto(entry.Dash, entry.Marker)).ToList()
             : null;
@@ -754,6 +757,9 @@ internal static class FigureMapper
 
         axes.InnerTarget = dto.InnerTarget is { } inner ? DtoConvert.ToRect(inner) : null;
         axes.PositionConstraint = ParseOr(dto.PositionConstraint, PositionConstraintType.OuterPosition);
+        axes.PlotBoxMargins = dto.PlotBoxMargins is { Length: 4 } kept
+            ? new Thickness(kept[0], kept[1], kept[2], kept[3])
+            : null;
 
         if (Enum.TryParse(dto.AlphaScale, out ColorScaleType alphaScale))
         {

@@ -200,6 +200,7 @@ internal sealed class JgsValue
         JgsPackedComplex complex => complex.Length,
         JgsValue[] elements => elements.Length,
         JgsStructArray structs => structs.Length,
+        JgsObjectArray objects => objects.Length,
         _ => 0,
     };
 
@@ -311,8 +312,37 @@ internal sealed class JgsValue
     /// <summary>Wraps an instance of a user class (M68). The instance is held, not copied.</summary>
     public static JgsValue Object(JgsObject instance) => Minted(new(JgsType.Object, 0, instance));
 
-    /// <summary>The object payload (valid only for <see cref="JgsType.Object"/>).</summary>
-    public JgsObject AsObject => (JgsObject)_reference!;
+    /// <summary>
+    /// The object payload (valid only for <see cref="JgsType.Object"/> holding one object). An array
+    /// of objects (open item 65) has no one object to answer with, and says so rather than picking one.
+    /// </summary>
+    public JgsObject AsObject => _reference as JgsObject
+        ?? throw new JgsRuntimeException(0, 0, "MATLAB:class:ObjectArrayNotSupported",
+            $"This operation takes one object, but got a {_rows}x{_cols} array of {ClassName}; index one element first.");
+
+    /// <summary>
+    /// Wraps an array of objects of one value class as a <paramref name="rows"/>-by-<paramref name="cols"/>
+    /// value (open item 65). The payload is used directly. One object is never wrapped this way: a
+    /// 1-by-1 is the object itself, which is what <see cref="JgsObjectArray.ValueOf"/> decides.
+    /// </summary>
+    public static JgsValue ObjectArray(JgsObjectArray elements, int rows, int cols) =>
+        new(JgsType.Object, elements, JgsPackedKind.Number, rows, cols);
+
+    /// <summary>Whether this is an object value holding none or several objects (open item 65).</summary>
+    public bool IsObjectArray => _reference is JgsObjectArray;
+
+    /// <summary>The object-array payload (valid only when <see cref="IsObjectArray"/>).</summary>
+    public JgsObjectArray AsObjectArray => (JgsObjectArray)_reference!;
+
+    /// <summary>The class of an object value, one object or an array of them.</summary>
+    public JgsClass ObjectClass => _reference is JgsObjectArray objects ? objects.Class : AsObject.Class;
+
+    /// <summary>M7: the object array, ready for an element to be replaced, added or removed.</summary>
+    internal JgsObjectArray WritableObjectArray()
+    {
+        Detach();
+        return (JgsObjectArray)_reference!;
+    }
 
     /// <summary>Wraps a value that lives outside the language (ADR 0174). The payload is held, not copied.</summary>
     public static JgsValue External(IJgsExternal payload) => new(JgsType.External, 0, payload);
@@ -359,6 +389,7 @@ internal sealed class JgsValue
             case JgsValue[]:
             case JgsStructArray:
             case JgsObject:
+            case JgsObjectArray:
                 JgsHolders.Share(value._reference);
                 return new JgsValue(value);
             default:
@@ -371,7 +402,7 @@ internal sealed class JgsValue
 
     /// <summary>The payload a scope's share was counted against (M5), or null for an immutable value.</summary>
     internal object? ScopePayload => _reference is NumericBuffer or JgsPackedComplex or JgsValue[]
-        or JgsStructArray or JgsObject ? _reference : null;
+        or JgsStructArray or JgsObject or JgsObjectArray ? _reference : null;
 
     /// <summary>
     /// M5's release: a scope that held this share lets go of <paramref name="payload"/>. A wrapper
@@ -490,6 +521,20 @@ internal sealed class JgsValue
                 }
 
                 return copy;
+            }
+
+            case JgsObjectArray objects:
+            {
+                // The elements are payloads of their own (open item 65), shared into the copy as a
+                // struct array's element dictionaries are.
+                var elements = new JgsObject[objects.Length];
+                for (int i = 0; i < elements.Length; i++)
+                {
+                    elements[i] = objects.Elements[i];
+                    JgsHolders.Share(elements[i]);
+                }
+
+                return new JgsObjectArray(objects.Class, elements);
             }
 
             default:
@@ -853,6 +898,7 @@ internal sealed class JgsValue
         // nothing noticed while every caller was asking about a numeric array — and stopped being
         // true the moment a calendarDuration wore a time tag over struct storage.
         JgsStructArray structs => structs.Length,
+        JgsObjectArray objects => objects.Length, // an array of objects counts its elements too (open item 65)
         _ => AsArray.Length,
     };
 
@@ -953,6 +999,7 @@ internal sealed class JgsValue
     public string? ClassName => _reference switch
     {
         JgsObject instance => instance.Class.Name,
+        JgsObjectArray objects => objects.Class.Name, // an array of objects is its class too (open item 65)
         IJgsExternal external => external.ClassName,
         _ => _className,
     };
@@ -1425,10 +1472,92 @@ internal sealed class JgsValue
         JgsType.Struct when _time is not null => FormatTime(this),
         JgsType.Struct => FormatStructValue(this),
         JgsType.Sparse => FormatSparse(AsSparse),
+        JgsType.Object when _reference is JgsObjectArray objects => FormatObjectArray(objects, _rows, _cols),
         JgsType.Object => FormatObject(AsObject),
         JgsType.External => AsExternal.Display(),
         _ => "value",
     };
+
+    /// <summary>
+    /// An array of objects as R2025b shows one (open item 65, probe <c>probe_65</c>): its size and
+    /// short class name, then the property names and no values.
+    /// </summary>
+    private static string FormatObjectArray(JgsObjectArray objects, int rows, int cols)
+    {
+        var sb = new StringBuilder();
+        sb.Append("  ").Append(rows).Append('×').Append(cols).Append(' ')
+            .Append(ShortClassName(objects.Class.Name)).Append(" array with properties:\n");
+        foreach (ClassProperty property in objects.Class.ListedProperties)
+        {
+            sb.Append("\n    ").Append(property.Spec.Name);
+        }
+
+        return sb.Append('\n').ToString();
+    }
+
+    /// <summary>The last part of a dotted class name: <c>Style</c> for <c>matlab.ui.style.Style</c>.</summary>
+    private static string ShortClassName(string name) => name[(name.LastIndexOf('.') + 1)..];
+
+    /// <summary>
+    /// A <c>uistyle</c> as R2025b shows it (open item 65, probe <c>probe_65</c>): only the properties
+    /// that are set, in its own order, and an offer of the rest — or every property when none or all
+    /// of them are set.
+    /// </summary>
+    private static string FormatStyle(JgsObject style)
+    {
+        string[] order =
+        [
+            "BackgroundColor", "FontColor", "FontWeight", "FontAngle", "FontName", "HorizontalAlignment", "HorizontalClipping", "Icon", "IconAlignment", "Interpreter",
+        ];
+        static bool IsSet(JgsValue held) => held.Type switch
+        {
+            JgsType.String => held.AsString.Length > 0,
+            JgsType.Array => held.ArrayLength > 0,
+            _ => true,
+        };
+        static string Shown(JgsValue held) => held.Type switch
+        {
+            JgsType.String => "'" + held.AsString + "'",
+            JgsType.Array when held.ArrayLength == 0 => "[]",
+            JgsType.Array when held.Dims.Length == 3 => $"[{held.Dims[0]}×{held.Dims[1]}×{held.Dims[2]} double]",
+            JgsType.Array when held.Rows == 1 && !held.IsStringArray && !held.IsCharMatrix =>
+                "[" + string.Join(" ", Enumerable.Range(0, held.ArrayLength).Select(i => FormatNumber(held.ElementAt(i).AsNumber))) + "]",
+            _ => Truncate(held.Display()),
+        };
+
+        var listed = new List<(string Name, JgsValue Held)>();
+        foreach (string name in order)
+        {
+            if (style.Fields.TryGetValue(name, out JgsValue? held) && IsSet(held))
+            {
+                listed.Add((name, held));
+            }
+        }
+
+        bool partial = listed.Count > 0 && listed.Count < order.Length;
+        if (!partial)
+        {
+            listed.Clear();
+            foreach (string name in order)
+            {
+                listed.Add((name, style.Fields.TryGetValue(name, out JgsValue? held) ? held : Str(string.Empty)));
+            }
+        }
+
+        int widest = listed.Max(static entry => entry.Name.Length);
+        var sb = new StringBuilder("  Style with properties:\n");
+        foreach ((string name, JgsValue held) in listed)
+        {
+            sb.Append('\n').Append(' ', 4 + widest - name.Length).Append(name).Append(": ").Append(Shown(held));
+        }
+
+        if (partial)
+        {
+            sb.Append("\n\n   Use properties to show all properties");
+        }
+
+        return sb.Append('\n').ToString();
+    }
 
     /// <summary>
     /// Formats an object as its class name followed by its properties, which is what MATLAB shows for
@@ -1437,6 +1566,11 @@ internal sealed class JgsValue
     /// </summary>
     private static string FormatObject(JgsObject instance)
     {
+        if (instance.Class.Name == JgsBuiltinClasses.Style)
+        {
+            return FormatStyle(instance);
+        }
+
         var sb = new StringBuilder(instance.Class.Name);
         sb.Append(" with properties:");
 

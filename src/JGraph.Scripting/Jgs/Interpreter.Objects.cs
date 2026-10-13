@@ -166,7 +166,7 @@ internal sealed partial class Interpreter
     /// <summary>Whether a value names something rather than holding it: a handle object, a graphics handle, a built-in handle class, a .NET or device object.</summary>
     private static bool IsReference(JgsValue value) =>
         value.Type == JgsType.External
-        || (value.Type == JgsType.Object && value.AsObject.Class.IsHandle)
+        || (value.Type == JgsType.Object && value.ObjectClass.IsHandle)
         || JgsBuiltins.IsHandleClass(value)
         || (value.Type == JgsType.Number && JgsHandleRegistry.TryGet(value, out _));
 
@@ -748,6 +748,12 @@ internal sealed partial class Interpreter
                 return slot >= 0 && slot < slots.Length ? slots[slot] : null;
             }
 
+            // a(k).p = v on an array of value objects, or on one object (open item 65): the element,
+            // writable inside the array the variable holds.
+            case CallExpr { Arguments.Count: 1, Callee: VariableExpr objectArray } call
+                when ResolveObjectElementForWrite(objectArray, call.Arguments[0], call, env) is { } element:
+                return element;
+
             case CallExpr { Arguments.Count: 1 } call when IsEntryPath(call.Callee, env)
                 && TryElementOfEntry(call.Callee, call.Arguments[0], env, out JgsValue? ofCall, out _):
                 return ofCall;
@@ -794,7 +800,7 @@ internal sealed partial class Interpreter
             return false;
         }
 
-        JgsClass definition = dominant.AsObject.Class;
+        JgsClass definition = dominant.ObjectClass; // one object or an array of them (open item 65)
         MethodAnswer answer = FindMethod(definition, name, context, contextKnown, out ClassMethod? method);
         if (answer == MethodAnswer.Missing || method is null || method.Static)
         {
@@ -810,7 +816,7 @@ internal sealed partial class Interpreter
         // A handle class's own delete is its destructor: once it has run, the object is deleted for
         // every alias (V6, #104), and a second delete runs nothing. The mark is made after the body
         // so the body may still read its own properties.
-        callable = name == "delete" && definition.IsHandle
+        callable = name == "delete" && definition.IsHandle && !dominant.IsObjectArray
             ? new DestructorCall(dominant.AsObject)
             : definition.Callable(method);
         return true;
@@ -912,8 +918,8 @@ internal sealed partial class Interpreter
 
         // The left operand chooses when it is an object, which is MATLAB's own precedence for two
         // classes of equal standing and the only sensible reading of `obj + 1`.
-        JgsClass definition = left.Type == JgsType.Object ? left.AsObject.Class : right.AsObject.Class;
-        if (left.Type == JgsType.Object && right.Type == JgsType.Object && right.AsObject.Class.Dominates(definition))
+        JgsClass definition = left.Type == JgsType.Object ? left.ObjectClass : right.ObjectClass;
+        if (left.Type == JgsType.Object && right.Type == JgsType.Object && right.ObjectClass.Dominates(definition))
         {
             definition = right.AsObject.Class; // InferiorClasses (U6): the right operand's class said so
         }
@@ -925,7 +931,7 @@ internal sealed partial class Interpreter
             // has without defining one. A class that defines its own has decided otherwise above.
             if (wanted is "eq" or "ne"
                 && left.Type == JgsType.Object && right.Type == JgsType.Object
-                && left.AsObject.Class.IsHandle && right.AsObject.Class.IsHandle)
+                && left.ObjectClass.IsHandle && right.ObjectClass.IsHandle)
             {
                 bool same = ReferenceEquals(left.AsObject, right.AsObject);
                 result = JgsValue.Bool(wanted == "eq" ? same : !same);
@@ -991,7 +997,7 @@ internal sealed partial class Interpreter
     /// </summary>
     internal bool TryObjectDisplay(JgsValue value, int line, int col)
     {
-        if (value.Type != JgsType.Object || !value.AsObject.Class.TryMethod("disp", out ClassMethod? method)
+        if (value.Type != JgsType.Object || value.IsObjectArray || !value.AsObject.Class.TryMethod("disp", out ClassMethod? method)
             || method.Static)
         {
             return false;

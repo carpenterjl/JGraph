@@ -426,6 +426,20 @@ public partial class FigureWindow : Window
     private (string KeyName, List<string> Modifiers, string Guess)? _pendingPress;
 
     /// <summary>
+    /// The wheel over a scrollable container moves it before the canvas zooms (open item 47): the
+    /// component layer has no background of its own, so a wheel over a grid's bare background
+    /// never reached it, and the canvas below took the turn for a zoom.
+    /// </summary>
+    protected override void OnPreviewMouseWheel(System.Windows.Input.MouseWheelEventArgs e)
+    {
+        base.OnPreviewMouseWheel(e);
+        if (!e.Handled && ComponentLayer.ScrollWheelAt(e.GetPosition(ComponentLayer), e.Delta))
+        {
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>
     /// Keys reach the script before the control's own shortcuts, and are never marked handled, so
     /// Escape, Delete and Ctrl+Z keep working while a KeyPressFcn also hears them.
     /// </summary>

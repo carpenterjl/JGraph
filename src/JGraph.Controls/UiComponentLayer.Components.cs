@@ -25,8 +25,9 @@ public sealed partial class UiComponentLayer
     private readonly Dictionary<UiComponentModel, Shown> _components = new(ReferenceEqualityComparer.Instance);
     private IReadOnlyList<UiComponentPlacement> _componentPlacements = [];
     private readonly Dictionary<UiOverlayModel, FrameworkElement> _overlays = new(ReferenceEqualityComparer.Instance);
-    private readonly Dictionary<(UiContainerModel Grid, bool Vertical), ScrollBar> _scrollBars = [];
+    private readonly Dictionary<(object Source, bool Vertical), ScrollBar> _scrollBars = [];
     private readonly List<UiPanelPlacement> _scrolling = [];
+    private UiScrollPlacement? _figureScroll;
     private bool _arrangingBars;
     private Grid? _overlayHost;
 
@@ -264,22 +265,43 @@ public sealed partial class UiComponentLayer
         }
 
         Collect(layout.Panels);
-        var wanted = new HashSet<(UiContainerModel, bool)>();
+        var wanted = new HashSet<(object, bool)>();
         _arrangingBars = true;
         try
         {
             foreach (UiPanelPlacement panel in _scrolling)
             {
+                // A grid's viewport is its inner area; a scrollable panel's is the part of it the
+                // bars leave (open item 47).
+                Rect2D viewport = panel.Viewport ?? panel.Inner;
                 if (panel.VerticalBar is { } right)
                 {
                     wanted.Add((panel.Panel.Source, true));
-                    PlaceBar(panel, vertical: true, right, panel.Content.Height, panel.Inner.Height, panel.ScrollY);
+                    PlaceBar(panel.Panel.Source, panel.Clip, vertical: true, right, panel.Content.Height, viewport.Height, panel.ScrollY);
                 }
 
                 if (panel.HorizontalBar is { } bottom)
                 {
                     wanted.Add((panel.Panel.Source, false));
-                    PlaceBar(panel, vertical: false, bottom, panel.Content.Width, panel.Inner.Width, panel.ScrollX);
+                    PlaceBar(panel.Panel.Source, panel.Clip, vertical: false, bottom, panel.Content.Width, viewport.Width, panel.ScrollX);
+                }
+            }
+
+            // A scrollable uifigure's bars lie along the window's own edges (open item 47).
+            _figureScroll = layout.FigureScroll;
+            if (layout.FigureScroll is { } figureScroll && _frame is { } frame)
+            {
+                var whole = new Rect2D(0, 0, ActualWidth, ActualHeight);
+                if (figureScroll.VerticalBar is { } right)
+                {
+                    wanted.Add((frame.Figure, true));
+                    PlaceBar(frame.Figure, whole, vertical: true, right, figureScroll.Content.Height, figureScroll.Viewport.Height, figureScroll.ScrollY);
+                }
+
+                if (figureScroll.HorizontalBar is { } bottom)
+                {
+                    wanted.Add((frame.Figure, false));
+                    PlaceBar(frame.Figure, whole, vertical: false, bottom, figureScroll.Content.Width, figureScroll.Viewport.Width, figureScroll.ScrollX);
                 }
             }
         }
@@ -288,17 +310,16 @@ public sealed partial class UiComponentLayer
             _arrangingBars = false;
         }
 
-        foreach ((UiContainerModel, bool) gone in _scrollBars.Keys.Where(key => !wanted.Contains(key)).ToList())
+        foreach ((object, bool) gone in _scrollBars.Keys.Where(key => !wanted.Contains(key)).ToList())
         {
             Children.Remove(_scrollBars[gone]);
             _scrollBars.Remove(gone);
         }
     }
 
-    private void PlaceBar(UiPanelPlacement panel, bool vertical, Rect2D box, double content, double viewport, double offset)
+    private void PlaceBar(GraphObject source, Rect2D clip, bool vertical, Rect2D box, double content, double viewport, double offset)
     {
-        UiContainerModel grid = panel.Panel.Source;
-        if (!_scrollBars.TryGetValue((grid, vertical), out ScrollBar? bar))
+        if (!_scrollBars.TryGetValue((source, vertical), out ScrollBar? bar))
         {
             bar = new ScrollBar
             {
@@ -315,15 +336,15 @@ public sealed partial class UiComponentLayer
                     return;
                 }
 
-                double x = _scrollBars.TryGetValue((grid, false), out ScrollBar? across) ? across.Value : 0;
-                double y = _scrollBars.TryGetValue((grid, true), out ScrollBar? down) ? down.Value : 0;
-                ScriptGraphicsCallbacks.NotifyComponent(grid, "value", new[] { x, y });
+                double x = _scrollBars.TryGetValue((source, false), out ScrollBar? across) ? across.Value : 0;
+                double y = _scrollBars.TryGetValue((source, true), out ScrollBar? down) ? down.Value : 0;
+                ScriptGraphicsCallbacks.NotifyComponent(source, "value", new[] { x, y });
             };
-            _scrollBars[(grid, vertical)] = bar;
+            _scrollBars[(source, vertical)] = bar;
             Children.Add(bar);
         }
 
-        Rect2D seen = UiLayout.Intersect(panel.Clip, box);
+        Rect2D seen = UiLayout.Intersect(clip, box);
         SetLeft(bar, box.X);
         SetTop(bar, box.Y);
         bar.Width = System.Math.Max(0, box.Width);
@@ -347,18 +368,40 @@ public sealed partial class UiComponentLayer
     protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
     {
         base.OnPreviewMouseWheel(e);
-        Point at = e.GetPosition(this);
+        if (ScrollWheelAt(e.GetPosition(this), e.Delta))
+        {
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>
+    /// Turns the wheel at a point of the layer: the innermost scrollable container under it moves,
+    /// three lines a notch, and the figure when none does (open item 47). The window asks before
+    /// the canvas below hears of it, so a grid's bare background scrolls as its components do: the
+    /// layer has no background of its own and a wheel over nothing never reaches it.
+    /// </summary>
+    public bool ScrollWheelAt(Point at, int delta)
+    {
         for (int i = _scrolling.Count - 1; i >= 0; i--)
         {
             UiPanelPlacement panel = _scrolling[i];
             if (Contains(panel.Box, at) && Contains(panel.Clip, at)
                 && _scrollBars.TryGetValue((panel.Panel.Source, panel.VerticalBar is not null), out ScrollBar? bar))
             {
-                bar.Value = System.Math.Clamp(bar.Value - (e.Delta / 120.0 * 48), bar.Minimum, bar.Maximum);
-                e.Handled = true;
-                return;
+                bar.Value = System.Math.Clamp(bar.Value - (delta / 120.0 * 48), bar.Minimum, bar.Maximum);
+                return true;
             }
         }
+
+        // Over nothing that scrolls of its own, a scrollable figure moves (open item 47).
+        if (_figureScroll is { } figureScroll && _frame is { } frame
+            && _scrollBars.TryGetValue((frame.Figure, figureScroll.VerticalBar is not null), out ScrollBar? figureBar))
+        {
+            figureBar.Value = System.Math.Clamp(figureBar.Value - (delta / 120.0 * 48), figureBar.Minimum, figureBar.Maximum);
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>The <c>uifigure</c> component showing at a point of the layer, or null.</summary>

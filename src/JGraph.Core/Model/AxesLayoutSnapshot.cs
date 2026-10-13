@@ -63,7 +63,8 @@ public readonly record struct AxesLayoutSnapshot(
                 placed.Width + inset.Horizontal,
                 placed.Height + inset.Vertical);
 
-        return new AxesLayoutSnapshot(outer, outer.Deflate(inset), inset, canvas);
+        // The plot box keeps its MATLAB-dialect margins here as it does when drawn (open item 87).
+        return new AxesLayoutSnapshot(outer, outer.Deflate(axes.MarginsWithin(inset, outer)), inset, canvas);
     }
 
     /// <summary>

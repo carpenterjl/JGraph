@@ -457,8 +457,10 @@ internal static partial class JgsBuiltins
 
             default:
             {
-                // A container: a grid scrolls here; a panel, a tab and a figure keep Scrollable and
-                // scroll nothing yet (open item 47). One not scrollable warns, as R2025b's does.
+                // A container: a grid, a panel, a tab, a button group or a uifigure (U5, open item
+                // 47). The words are R2025b's own case ('BOTTOM' is refused, probe_47); a pair is
+                // the location to show, kept within what there is to scroll. One not scrollable
+                // warns, as R2025b's does.
                 bool scrollable = named.Target switch
                 {
                     UiContainerModel container => container.Scrollable,
@@ -470,6 +472,7 @@ internal static partial class JgsBuiltins
                     throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
                 }
 
+                string? exact = IsTextScalar(args[1]) && !args[1].IsCharMatrix ? TextOf(args[1]) : null;
                 double[]? pair = null;
                 if (args.Count == 3)
                 {
@@ -477,9 +480,9 @@ internal static partial class JgsBuiltins
                     double? y = args[2].Type == JgsType.Number ? args[2].AsNumber : null;
                     pair = x is { } px && y is { } py ? [px, py] : throw new JgsRuntimeException(line, col, "MATLAB:uicontainer:InvalidScrollTarget", "Invalid location");
                 }
-                else if (place is not ("top" or "bottom" or "left" or "right"))
+                else if (exact is not ("top" or "bottom" or "left" or "right"))
                 {
-                    pair = args[1].Type == JgsType.Array && args[1].ArrayLength == 2 && !args[1].IsStringArray
+                    pair = args[1].Type == JgsType.Array && args[1].ArrayLength == 2 && !args[1].IsStringArray && !args[1].IsCharMatrix
                         ? ToDoubles("scroll", args[1], line, col)
                         : throw new JgsRuntimeException(line, col, "MATLAB:uicontainer:InvalidScrollTarget", "Invalid location");
                 }
@@ -494,33 +497,7 @@ internal static partial class JgsBuiltins
                     break;
                 }
 
-                if (named.Target is UiGridLayoutModel grid)
-                {
-                    if (pair is not null)
-                    {
-                        grid.ScrollX = System.Math.Max(0, pair[0] - 1);
-                        grid.ScrollY = System.Math.Max(0, pair[1] - 1);
-                    }
-                    else
-                    {
-                        switch (place)
-                        {
-                            case "top":
-                                grid.ScrollY = 0;
-                                break;
-                            case "bottom":
-                                grid.ScrollY = double.MaxValue;
-                                break;
-                            case "left":
-                                grid.ScrollX = 0;
-                                break;
-                            default:
-                                grid.ScrollX = double.MaxValue;
-                                break;
-                        }
-                    }
-                }
-
+                JgsGraphicsProperties.ScrollTo(named.Target, pair is null ? exact : null, pair);
                 break;
             }
         }
@@ -657,7 +634,8 @@ internal static partial class JgsBuiltins
         JgsHandleEntry entry = StyleTarget("addStyle", args, line, col);
         string word = JgsGraphicsCallbackValues.ClassWord(entry.Target);
         JgsRuntimeException Refuse(string id, string text) => new(line, col, $"MATLAB:ui:{word}:{id}", text);
-        if (args[1].Type != JgsType.Object || !args[1].AsObject.Class.IsA(JgsBuiltinClasses.Style))
+        // One style: an array of them is refused as R2025b refuses it (probe_65, addarray).
+        if (args[1].Type != JgsType.Object || args[1].IsObjectArray || !args[1].AsObject.Class.IsA(JgsBuiltinClasses.Style))
         {
             throw Refuse("invalidStyleObject", "Invalid Style object.");
         }

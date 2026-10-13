@@ -181,14 +181,25 @@ internal sealed class JgsCallbackDispatcher
                 return;
             }
 
-            // A scrollable grid's bars (U5): where it is scrolled to is the grid's own, and no
-            // callback hears of it.
-            if (next.Target is UiGridLayoutModel scrolledGrid)
+            // A scrollable container's bars (U5, open item 47): where a grid, a panel, a tab, a
+            // button group or a figure is scrolled to is its own, and no callback hears of it.
+            if (next.Target is UiGridLayoutModel || (next.Action == "value" && next.Target is UiContainerModel or FigureModel))
             {
-                if (next.UserValue is double[] { Length: 2 } offset && !scrolledGrid.BeingDeleted)
+                if (next.UserValue is double[] { Length: 2 } offset && !next.Target.BeingDeleted)
                 {
-                    scrolledGrid.ScrollX = offset[0];
-                    scrolledGrid.ScrollY = offset[1];
+                    switch (next.Target)
+                    {
+                        case UiContainerModel container:
+                            container.ScrollX = offset[0];
+                            container.ScrollY = offset[1];
+                            container.ViewportLocationWritten = null;
+                            break;
+                        case FigureModel figure:
+                            figure.ScrollX = offset[0];
+                            figure.ScrollY = offset[1];
+                            figure.ViewportLocationWritten = null;
+                            break;
+                    }
                 }
 
                 continue;

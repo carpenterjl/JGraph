@@ -30,6 +30,7 @@ internal sealed class JgsValueColumn : TableColumn
     public static bool Needs(JgsValue value) => value.Type switch
     {
         JgsType.Struct => true,
+        JgsType.Object => true, // an object, or an array of them (open item 65)
         JgsType.Bool => true,
         JgsType.Number => value.NumericClass != JgsNumericClass.Double,
         JgsType.Cell => value.AsCell.Any(element => element.Type != JgsType.String),
@@ -47,6 +48,7 @@ internal sealed class JgsValueColumn : TableColumn
     {
         JgsType.Array or JgsType.Cell => value.Rows,
         JgsType.Struct => value.AsStructArray.Length == 1 ? 1 : value.Rows,
+        JgsType.Object => value.IsObjectArray ? value.Rows : 1,
         _ => 1,
     };
 
@@ -77,6 +79,7 @@ internal sealed class JgsValueColumn : TableColumn
     {
         JgsType.Array => TextOfElement(Value.ElementAt(row)),
         JgsType.Cell => TextOfElement(Value.AsCell[row]),
+        JgsType.Object => $"1×1 {Value.ClassName}", // as R2025b's table display writes an object cell (probe_65)
         _ => Value.Display(),
     };
 
@@ -136,6 +139,28 @@ internal sealed class JgsValueColumn : TableColumn
                 }
 
                 return JgsValue.StructArray(new JgsStructArray(elements, source.FieldNames), count, 1);
+            }
+
+            case JgsType.Object:
+            {
+                // An array of objects, one object a row (open item 65): the rows picked are shares
+                // of the instances, and a new row is the class's default object.
+                JgsObject[] source = value.IsObjectArray ? value.AsObjectArray.Elements : [value.AsObject];
+                JgsClass definition = value.ObjectClass;
+                var elements = new JgsObject[count];
+                for (int r = 0; r < count; r++)
+                {
+                    if (rows[r] < 0)
+                    {
+                        elements[r] = definition.NewDefault(0, 0);
+                        continue;
+                    }
+
+                    elements[r] = source[rows[r]];
+                    JgsHolders.Share(elements[r]);
+                }
+
+                return JgsObjectArray.ValueOf(definition, elements, count, count == 0 ? 0 : 1);
             }
 
             case JgsType.Cell:

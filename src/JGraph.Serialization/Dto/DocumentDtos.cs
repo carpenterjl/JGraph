@@ -465,6 +465,12 @@ public sealed class AxesDto
     /// <summary>Null means the outer rectangle is what a placement fixes, as it always was.</summary>
     public string? PositionConstraint { get; set; }
 
+    /// <summary>
+    /// The least margins the plot box keeps inside its cell, as fractions of it — left, top, right,
+    /// bottom — or null for the tight layout (open item 87). Null in every document written before it.
+    /// </summary>
+    public double[]? PlotBoxMargins { get; set; }
+
     public LegendDto Legend { get; set; } = new();
 
     public List<PlotDto> Plots { get; set; } = new();

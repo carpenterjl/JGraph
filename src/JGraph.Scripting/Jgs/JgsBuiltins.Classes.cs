@@ -365,7 +365,7 @@ internal static partial class JgsBuiltins
         }
 
         string name = StrOf("findprop", args[1], line, col);
-        if (obj.Type == JgsType.Object && obj.AsObject.Class.IsHandle)
+        if (obj.Type == JgsType.Object && obj.ObjectClass.IsHandle)
         {
             JgsObject instance = obj.AsObject;
             return !instance.Deleted && instance.Class.Property(name) is { } declared && declared.Spec.Name == name
@@ -513,7 +513,7 @@ internal static partial class JgsBuiltins
     {
         if (value.Type == JgsType.Object)
         {
-            return value.AsObject.Class.ListedProperties.Select(static p => p.Spec.Name); // public and not hidden (U6)
+            return value.ObjectClass.ListedProperties.Select(static p => p.Spec.Name); // public and not hidden (U6)
         }
 
         // A .NET object's readable properties and fields (ADR 0174); an assembly's seven lists; a

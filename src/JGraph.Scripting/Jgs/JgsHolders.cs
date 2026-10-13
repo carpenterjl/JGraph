@@ -52,6 +52,8 @@ internal static class JgsHolders
                 return Read(structs.HolderSlot);
             case JgsObject instance:
                 return Read(instance.HolderSlot);
+            case JgsObjectArray objects:
+                return Read(objects.HolderSlot);
             default:
                 return Counts.TryGetValue(payload, out StrongBox<int>? box) ? Read(box.Value) : 1;
         }
@@ -111,6 +113,8 @@ internal static class JgsHolders
                 return ref structs.HolderSlot;
             case JgsObject instance:
                 return ref instance.HolderSlot;
+            case JgsObjectArray objects:
+                return ref objects.HolderSlot;
             default:
                 if (create)
                 {
