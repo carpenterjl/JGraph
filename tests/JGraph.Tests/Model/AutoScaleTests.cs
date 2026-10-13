@@ -28,6 +28,7 @@ public class AutoScaleTests
         var figure = new FigureModel();
         AxesModel axes = figure.AddAxes();
         axes.AutoScalePadding = 0.1;
+        axes.PrimaryXAxis.LimitMethod = LimitMethod.Padded; // the default aligns to ticks (open item 99)
         axes.Plots.Add(new TestPlot(new DataRange(0, 10), new DataRange(0, 10)));
 
         axes.RecomputeDataBounds();

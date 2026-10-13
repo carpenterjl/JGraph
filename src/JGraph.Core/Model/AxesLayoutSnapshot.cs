@@ -63,8 +63,17 @@ public readonly record struct AxesLayoutSnapshot(
                 placed.Width + inset.Horizontal,
                 placed.Height + inset.Vertical);
 
-        // The plot box keeps its MATLAB-dialect margins here as it does when drawn (open item 87).
-        return new AxesLayoutSnapshot(outer, outer.Deflate(axes.MarginsWithin(inset, outer)), inset, canvas);
+        // The plot box keeps its MATLAB-dialect margins here as it does when drawn (open item 87). The
+        // estimate's own inset is not held against it: R2025b's box stays put under ordinary ticks and
+        // labels, and the renderer measures the real text before deciding it needs more (open item 99).
+        Thickness margins = axes.KeepsPlotBoxMargins
+            ? new Thickness(
+                axes.PlotBoxMargins!.Value.Left * outer.Width,
+                axes.PlotBoxMargins.Value.Top * outer.Height,
+                axes.PlotBoxMargins.Value.Right * outer.Width,
+                axes.PlotBoxMargins.Value.Bottom * outer.Height)
+            : inset;
+        return new AxesLayoutSnapshot(outer, outer.Deflate(margins), inset, canvas);
     }
 
     /// <summary>

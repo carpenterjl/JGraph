@@ -277,7 +277,7 @@ public class MatlabM73AxesPropertyTests : IDisposable
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.Equal("padded", Text(result, "word0"));
+        Assert.Equal("tickaligned", Text(result, "word0"));
         Assert.Equal("tight", Text(result, "word1"));
         Assert.Equal(new Core.Primitives.DataRange(4, 6), JG.Gca().PrimaryYAxis.Range);
     }

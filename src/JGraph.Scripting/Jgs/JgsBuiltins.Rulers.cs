@@ -197,6 +197,23 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{verb}: the second limit must exceed the first, but got [{low:G6} {high:G6}].");
         }
 
+        // A listener on the limits hears the verb as it hears set, PreSet and PostSet alike (open
+        // item 56), and hears it whether or not the pair changes anything: with limits already aligned
+        // to the ticks it often does not (open item 99).
+        if (aimed is null && JgsHandleRegistry.TryGetEntry(axes, out JgsHandleEntry? entry) && entry.EventListeners is { Count: > 0 })
+        {
+            string name = side switch
+            {
+                RulerSide.X => "XLim",
+                RulerSide.Y => "YLim",
+                RulerSide.R => "RLim",
+                RulerSide.Theta => "ThetaLim",
+                _ => "ZLim",
+            };
+            JgsGraphicsProperties.Set(entry, name, JgsGraphicsProperties.Row(low, high), line, col);
+            return JgsValue.Null;
+        }
+
         ruler.AutoScale = false;
         ruler.Range = new Core.Primitives.DataRange(low, high);
         return JgsValue.Null;

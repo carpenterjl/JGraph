@@ -31,10 +31,10 @@ public sealed class ManualTickGenerator : ITickGenerator
 
     public AxisScaleType ScaleType => _automatic.ScaleType;
 
-    public TickSet Generate(DataRange range, int targetCount, string? labelFormat = null)
+    public TickSet Generate(DataRange range, TickBudget budget, string? labelFormat = null)
     {
         TickSet automatic = _positions is null
-            ? _automatic.Generate(range, targetCount, labelFormat)
+            ? _automatic.Generate(range, budget, labelFormat)
             : TickSet.Empty;
 
         IReadOnlyList<double> values = _positions ?? automatic.MajorTicks.Select(static t => t.Value).ToArray();

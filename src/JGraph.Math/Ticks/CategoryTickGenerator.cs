@@ -17,7 +17,7 @@ public sealed class CategoryTickGenerator : ITickGenerator
 
     public AxisScaleType ScaleType => AxisScaleType.Category;
 
-    public TickSet Generate(DataRange range, int targetCount, string? labelFormat = null)
+    public TickSet Generate(DataRange range, TickBudget budget, string? labelFormat = null)
     {
         int n = _categories.Count;
         if (n == 0)
@@ -25,7 +25,7 @@ public sealed class CategoryTickGenerator : ITickGenerator
             return TickSet.Empty;
         }
 
-        int stride = System.Math.Max(1, (int)System.Math.Ceiling(n / (double)System.Math.Max(2, targetCount)));
+        int stride = System.Math.Max(1, (int)System.Math.Ceiling(n / (double)System.Math.Max(2, budget.Target)));
         var majors = new List<Tick>();
         const double epsilon = 1e-9;
         for (int i = 0; i < n; i += stride)

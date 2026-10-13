@@ -172,6 +172,10 @@ public class DecorationRenderTests
         };
         axes.Plots.Add(contour);
 
+        // The rulers would otherwise write 5 and 15 themselves (R2025b's count, open item 99).
+        axes.PrimaryXAxis.TickPositions = [0, 20, 40];
+        axes.PrimaryYAxis.TickPositions = [0, 20, 40];
+
         var context = new RecordingRenderContext(new Size2D(500, 400));
         new FigureRenderer().Render(figure, context, Theme.Light);
 

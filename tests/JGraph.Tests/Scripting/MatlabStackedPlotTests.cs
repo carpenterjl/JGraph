@@ -86,7 +86,7 @@ public class MatlabStackedPlotTests : IDisposable
             disp(isequal(get(ax(1), 'YLim'), get(ax(2), 'YLim')));
             """);
 
-        Assert.Equal(new[] { "true", "[0.75, 6.25]", "false" }, _output.NormalLines);
+        Assert.Equal(new[] { "true", "[1, 6]", "false" }, _output.NormalLines);
     }
 
     [Fact]

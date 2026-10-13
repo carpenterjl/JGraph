@@ -5,8 +5,10 @@ using JGraph.Core.Primitives;
 namespace JGraph.Maths.Ticks;
 
 /// <summary>
-/// Generates "nice" evenly spaced ticks for a linear axis using the classic 1-2-2.5-5-10 step
-/// selection, so tick values land on visually round numbers close to the requested count.
+/// Generates evenly spaced ticks for a linear axis. A ruler that was measured takes R2025b's rule
+/// (<see cref="TickRule"/>, open item 99): steps of 1, 2 and 5 times a power of ten, as many as the
+/// ruler's length and font allow, preferring the step whose ticks reach furthest toward both limits.
+/// A ruler nobody measured keeps the classic 1-2-5-10 ladder driven by a target count.
 /// </summary>
 public sealed class LinearTickGenerator : ITickGenerator
 {
@@ -14,14 +16,30 @@ public sealed class LinearTickGenerator : ITickGenerator
 
     public AxisScaleType ScaleType => AxisScaleType.Linear;
 
-    public TickSet Generate(DataRange range, int targetCount, string? labelFormat = null)
+    public TickSet Generate(DataRange range, TickBudget budget, string? labelFormat = null)
     {
-        if (!range.IsValid || targetCount < 2)
+        if (!range.IsValid)
         {
             return TickSet.Empty;
         }
 
-        double step = NiceStep(range.Length / targetCount, out int minorSubdivisions);
+        double step;
+        int minorSubdivisions;
+        if (budget.HasCaps)
+        {
+            step = TickRule.ChooseStep(range.Min, range.Max, budget);
+            minorSubdivisions = SubdivisionsOf(step);
+        }
+        else
+        {
+            if (budget.Target < 2)
+            {
+                return TickSet.Empty;
+            }
+
+            step = NiceStep(range.Length / budget.Target, out minorSubdivisions);
+        }
+
         if (step <= 0 || !double.IsFinite(step))
         {
             return TickSet.Empty;
@@ -62,6 +80,14 @@ public sealed class LinearTickGenerator : ITickGenerator
         }
 
         return new TickSet(majors, minors, step);
+    }
+
+    /// <summary>How many minor intervals a major step of the 1-2-5 ladder is cut into.</summary>
+    private static int SubdivisionsOf(double step)
+    {
+        double magnitude = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(step) + 1e-9));
+        double mantissa = step / magnitude;
+        return mantissa < 1.5 ? 5 : mantissa < 3.5 ? 4 : 5;
     }
 
     /// <summary>Rounds a step to the nearest 1, 2, 2.5, or 5 times a power of ten.</summary>

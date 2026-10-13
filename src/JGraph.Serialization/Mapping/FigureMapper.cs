@@ -836,7 +836,7 @@ internal static class FigureMapper
         TickLength = axis.TickLength is { } tickLength ? [tickLength.X, tickLength.Y] : null,
         RulerColor = axis.RulerColor,
         RulerColorAutomatic = axis.InkIsAutomatic,
-        LimitMethod = axis.LimitMethod == LimitMethod.Padded ? null : axis.LimitMethod.ToString(),
+        LimitMethod = axis.LimitMethod == LimitMethod.Tickaligned ? null : axis.LimitMethod.ToString(),
     };
 
     private static AxisModel ToModel(AxisDto dto)
@@ -895,7 +895,7 @@ internal static class FigureMapper
         axis.InkIsAutomatic = dto.RulerColorAutomatic;
         axis.LimitMethod = Enum.TryParse(dto.LimitMethod, out LimitMethod limitMethod)
             ? limitMethod
-            : LimitMethod.Padded;
+            : LimitMethod.Tickaligned;
     }
 
     private static ColorbarDto ToDto(ColorbarModel colorbar) => new()

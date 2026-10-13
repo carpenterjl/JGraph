@@ -37,7 +37,7 @@ public sealed class AxisModel : GraphObject
     private TickDirection? _tickDirection;
     private Vector2D? _tickLength;
     private Color? _rulerColor;
-    private LimitMethod _limitMethod = LimitMethod.Padded;
+    private LimitMethod _limitMethod = LimitMethod.Tickaligned;
 
     public AxisModel(AxisOrientation orientation, AxisPosition position)
     {

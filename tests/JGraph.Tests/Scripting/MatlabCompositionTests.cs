@@ -230,7 +230,7 @@ public class MatlabCompositionTests : IDisposable
         Assert.Equal(
             new[]
             {
-                "[1, 2]", "numericruler", "[0.9, 3.1]", "[90, 310]",
+                "[1, 2]", "numericruler", "[1, 3]", "[100, 300]",
                 "[true, true, true]", "[true, true, true]",
             },
             _output.NormalLines);

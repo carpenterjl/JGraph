@@ -18,8 +18,9 @@ public sealed class DateTimeTickGenerator : ITickGenerator
 
     public AxisScaleType ScaleType => AxisScaleType.DateTime;
 
-    public TickSet Generate(DataRange range, int targetCount, string? labelFormat = null)
+    public TickSet Generate(DataRange range, TickBudget budget, string? labelFormat = null)
     {
+        int targetCount = budget.Target;
         if (!range.IsValid || targetCount < 2)
         {
             return TickSet.Empty;

@@ -117,7 +117,7 @@ public class MatlabHandleSurfaceTests : IDisposable
             disp(p.Opacity);
             """);
 
-        Assert.Equal(new[] { "1", "0.05", "off", "0.5" }, _output.NormalLines);
+        Assert.Equal(new[] { "1", "0.07", "off", "0.5" }, _output.NormalLines);
     }
 
     [Fact]

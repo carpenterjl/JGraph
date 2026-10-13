@@ -30,9 +30,9 @@ public sealed class ExponentTickGenerator : ITickGenerator
 
     public AxisScaleType ScaleType => _inner.ScaleType;
 
-    public TickSet Generate(DataRange range, int targetCount, string? labelFormat = null)
+    public TickSet Generate(DataRange range, TickBudget budget, string? labelFormat = null)
     {
-        TickSet raw = _inner.Generate(range, targetCount, labelFormat);
+        TickSet raw = _inner.Generate(range, budget, labelFormat);
         int exponent = _exponent ?? Auto(raw.MajorTicks.Select(static t => t.Value));
         if (exponent == 0 || raw.MajorTicks.Count == 0)
         {

@@ -3,8 +3,8 @@
 % (87); arrays of uistyle objects and StyleConfigurations as a table of them (65); a uitable's
 % display order, DisplayData and DisplaySelection, and a datetime variable edited in place (60);
 % scroll and ScrollableViewportLocation on a grid, a panel, a tab and a uifigure (47). Probes
-% probe_87, probe_65, probe_60, probe_60b and probe_47 (open-items scratch). The limits themselves
-% stay JGraph's padded ones by decision, and the lines that read them are recorded divergences.
+% probe_87, probe_65, probe_60, probe_60b and probe_47 (open-items scratch). The limits were padded
+% by decision when this was recorded and are tick-aligned since open item 99 (ADR 0231).
 close all force
 
 % --- item 87: the plot box
@@ -16,8 +16,8 @@ u9b_chk('ax_outer', @() round(ax.OuterPosition, 4));
 u9b_chk('ax_constraint', @() ax.PositionConstraint);
 plot(ax, 1:3); title(ax, 'T'); xlabel(ax, 'x'); ylabel(ax, 'y'); drawnow;
 u9b_chk('ax_position_labelled', @() round(ax.Position, 4));
-u9b_chkdiv('ax_xlim_plot13', @() ax.XLim, 'ADR0230');
-u9b_chkdiv('ax_limit_method_default', @() ax.XLimitMethod, 'ADR0230');
+u9b_chk('ax_xlim_plot13', @() ax.XLim);
+u9b_chk('ax_limit_method_default', @() ax.XLimitMethod);
 ax.XLimitMethod = 'tick';
 u9b_chk('ax_limit_method_prefix', @() ax.XLimitMethod);
 ax.XLimitMethod = "Padded";
@@ -37,7 +37,7 @@ u9b_chk('subplot_position', @() round(s1.Position, 4));
 uf = uifigure('Visible', 'off', 'Position', [100 100 560 420]);
 ua = uiaxes(uf);
 u9b_chk('uiaxes_position', @() ua.Position);
-u9b_chkdiv('uiaxes_limit_method', @() ua.XLimitMethod, 'ADR0230');
+u9b_chk('uiaxes_limit_method', @() ua.XLimitMethod);
 
 % --- item 65: arrays of styles and StyleConfigurations
 s = uistyle('FontWeight', 'bold');

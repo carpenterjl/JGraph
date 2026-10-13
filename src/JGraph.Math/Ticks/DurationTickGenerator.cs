@@ -7,9 +7,9 @@ namespace JGraph.Maths.Ticks;
 public sealed class DurationTickGenerator(string format) : ITickGenerator
 {
     public AxisScaleType ScaleType => AxisScaleType.Linear;
-    public TickSet Generate(DataRange range, int targetCount, string? labelFormat = null)
+    public TickSet Generate(DataRange range, TickBudget budget, string? labelFormat = null)
     {
-        TickSet seconds = LinearTickGenerator.Instance.Generate(new DataRange(range.Min * 86400, range.Max * 86400), targetCount);
+        TickSet seconds = LinearTickGenerator.Instance.Generate(new DataRange(range.Min * 86400, range.Max * 86400), budget);
         return new TickSet(seconds.MajorTicks.Select(t => new Tick(t.Value / 86400, Format(t.Value, format))).ToArray(),
             seconds.MinorTicks.Select(t => t / 86400).ToArray(), seconds.Step / 86400);
     }

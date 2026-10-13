@@ -115,9 +115,9 @@ public enum TitleHorizontalAlignment
 
 /// <summary>
 /// How an auto-scaling ruler turns its data extent into limits (MATLAB <c>XLimitMethod</c>).
-/// Padded — the JGraph default, which every existing figure was fitted under — leaves a margin of
-/// <see cref="AxesModel.AutoScalePadding"/> around the data; Tight puts the limits exactly at the
-/// data; Tickaligned pushes them outward to round numbers a tick would land on.
+/// Tickaligned — the default, R2025b's and since open item 99 JGraph's — pushes them outward to the
+/// ticks the ruler would carry; Padded leaves a margin of <see cref="AxesModel.AutoScalePadding"/>
+/// around the data, snapped to a tick when one is near; Tight puts the limits exactly at the data.
 /// </summary>
 public enum LimitMethod
 {

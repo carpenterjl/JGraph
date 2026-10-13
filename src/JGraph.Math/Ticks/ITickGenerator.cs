@@ -14,11 +14,22 @@ public interface ITickGenerator
     AxisScaleType ScaleType { get; }
 
     /// <summary>
-    /// Generates ticks for <paramref name="range"/>, aiming for approximately
-    /// <paramref name="targetCount"/> major ticks.
+    /// Generates ticks for <paramref name="range"/> within <paramref name="budget"/>: R2025b's
+    /// bounded count for a linear ruler that was measured, and the classic target count otherwise.
     /// </summary>
     /// <param name="range">The visible data range.</param>
-    /// <param name="targetCount">The desired number of major ticks (a hint, not a guarantee).</param>
+    /// <param name="budget">How many ticks the ruler may carry.</param>
     /// <param name="labelFormat">An optional .NET numeric format string overriding automatic formatting.</param>
-    TickSet Generate(DataRange range, int targetCount, string? labelFormat = null);
+    TickSet Generate(DataRange range, TickBudget budget, string? labelFormat = null);
+}
+
+/// <summary>The count-only call every generator took before rulers were measured (open item 99).</summary>
+public static class TickGeneratorExtensions
+{
+    /// <summary>Generates ticks aiming for approximately <paramref name="targetCount"/> majors.</summary>
+    public static TickSet Generate(this ITickGenerator generator, DataRange range, int targetCount, string? labelFormat = null)
+    {
+        ArgumentNullException.ThrowIfNull(generator);
+        return generator.Generate(range, TickBudget.Of(targetCount), labelFormat);
+    }
 }

@@ -15,7 +15,7 @@ public sealed class LogarithmicTickGenerator : ITickGenerator
 
     public AxisScaleType ScaleType => AxisScaleType.Logarithmic;
 
-    public TickSet Generate(DataRange range, int targetCount, string? labelFormat = null)
+    public TickSet Generate(DataRange range, TickBudget budget, string? labelFormat = null)
     {
         double min = range.Min;
         double max = range.Max;
@@ -35,7 +35,7 @@ public sealed class LogarithmicTickGenerator : ITickGenerator
         int decadeSpan = System.Math.Max(1, highDecade - lowDecade);
 
         // Thin decades so the number of labeled majors stays near the target.
-        int decadeStride = System.Math.Max(1, (int)System.Math.Ceiling(decadeSpan / (double)System.Math.Max(2, targetCount)));
+        int decadeStride = System.Math.Max(1, (int)System.Math.Ceiling(decadeSpan / (double)System.Math.Max(2, budget.Target)));
 
         var decades = new List<int>();
         var minors = new List<double>();

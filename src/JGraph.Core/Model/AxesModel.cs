@@ -18,7 +18,7 @@ public sealed class AxesModel : GraphObject
     private Color _background = Colors.White;
     private Color? _backgroundColor;
     private Rect2D _normalizedBounds = new(0, 0, 1, 1);
-    private double _autoScalePadding = 0.05;
+    private double _autoScalePadding = 0.07;
     private bool _equalAspect;
     private bool _frameVisible = true;
     private bool _is3D;
@@ -794,7 +794,10 @@ public sealed class AxesModel : GraphObject
     public Size2D ReferenceSize() =>
         _container?.InnerPixelSize ?? (Parent as FigureModel)?.Size ?? new Size2D(560, 420);
 
-    /// <summary>Fractional padding added around the data extent when an axis auto-scales.</summary>
+    /// <summary>
+    /// Fractional padding added around the data extent when a ruler auto-scales under the
+    /// <c>padded</c> limit method: about 7%, as R2025b pads (open item 99).
+    /// </summary>
     [Category("Behavior"), DisplayName("Auto-scale padding")]
     public double AutoScalePadding
     {
@@ -1613,27 +1616,38 @@ public sealed class AxesModel : GraphObject
 
     /// <summary>
     /// Turns a ruler's data extent into its visible limits under its <see cref="LimitMethod"/>:
-    /// padded by <see cref="AutoScalePadding"/> (the default every existing figure was fitted
-    /// under), exactly tight, or pushed outward to tick-friendly round numbers.
+    /// aligned to its ticks as R2025b's default is (open item 99), padded by
+    /// <see cref="AutoScalePadding"/> with R2025b's snap to a tick, or exactly tight. The first two
+    /// depend on how many ticks the ruler can carry, so they are fitted against the pixels the
+    /// renderer last measured, or an estimate of them before the first frame; the renderer then
+    /// refits against the frame's own pixels through <see cref="RefitRulers"/>.
     /// </summary>
-    private void FitRange(AxisModel axis, DataRange bounds)
+    private void FitRange(AxisModel axis, DataRange bounds) => FitRange(axis, bounds, BudgetFor(axis));
+
+    private void FitRange(AxisModel axis, DataRange bounds, TickBudget budget)
     {
-        DataRange fitted = bounds.IsEmpty ? DataRange.Unit : bounds.EnsureValid();
+        DataRange fitted = bounds.IsEmpty ? DataRange.Unit : bounds;
+        bool decades = axis.Scale == AxisScaleType.Logarithmic && fitted.Min > 0 && fitted.Max > 0;
         switch (axis.LimitMethod)
         {
             case LimitMethod.Tight:
+                fitted = TickRule.AroundValue(fitted).EnsureValid();
                 break;
             case LimitMethod.Tickaligned:
-                if (fitted.IsValid)
-                {
-                    fitted = AlignToTicks(fitted, axis.Scale);
-                }
-
+                fitted = decades ? AlignToDecades(fitted.EnsureValid()) : TickRule.Align(fitted, budget).EnsureValid();
                 break;
             default:
-                if (_autoScalePadding > 0 && fitted.IsValid)
+                if (decades)
                 {
-                    fitted = ExpandForScale(fitted, axis.Scale, _autoScalePadding);
+                    fitted = fitted.EnsureValid();
+                    if (_autoScalePadding > 0)
+                    {
+                        fitted = ExpandForScale(fitted, axis.Scale, _autoScalePadding);
+                    }
+                }
+                else
+                {
+                    fitted = TickRule.Pad(fitted, _autoScalePadding, budget).EnsureValid();
                 }
 
                 break;
@@ -1643,32 +1657,92 @@ public sealed class AxesModel : GraphObject
     }
 
     /// <summary>
-    /// Pushes a fitted range outward to the nearest multiples of a nice tick step. The 1-2-5 ladder
-    /// is re-said here because Core cannot reach the tick generators in JGraph.Maths; the arithmetic
-    /// in TickGenerators is this method's twin. A log ruler snaps to whole decades instead.
+    /// The ticks a ruler may carry (open item 99): R2025b's count for the ruler's pixel length and
+    /// font, with the length taken from the plot box the renderer last measured for this axes or,
+    /// before any frame, an estimate of it. The angular rulers of a polar axes were not measured and
+    /// keep their target count.
     /// </summary>
-    private static DataRange AlignToTicks(DataRange range, AxisScaleType scale)
+    public TickBudget BudgetFor(AxisModel ruler)
     {
-        if (scale == AxisScaleType.Logarithmic && range.Min > 0 && range.Max > 0)
-        {
-            return new DataRange(
-                System.Math.Pow(10, System.Math.Floor(System.Math.Log10(range.Min))),
-                System.Math.Pow(10, System.Math.Ceiling(System.Math.Log10(range.Max))));
-        }
-
-        double span = range.Max - range.Min;
-        if (span <= 0 || !double.IsFinite(span))
-        {
-            return range;
-        }
-
-        double raw = span / 5;
-        double magnitude = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(raw)));
-        double step = magnitude * (raw / magnitude) switch { <= 1 => 1, <= 2 => 2, <= 5 => 5, _ => 10 };
-        double min = System.Math.Floor(range.Min / step) * step;
-        double max = System.Math.Ceiling(range.Max / step) * step;
-        return min == max ? new DataRange(min - step, max + step) : new DataRange(min, max);
+        ArgumentNullException.ThrowIfNull(ruler);
+        Rect2D plot = (LastLayout ?? AxesLayoutSnapshot.Estimate(this, ReferenceSize())).PlotAreaPx;
+        return BudgetFor(ruler, plot.Width, plot.Height);
     }
+
+    /// <summary>The same budget for a plot box of known size.</summary>
+    public TickBudget BudgetFor(AxisModel ruler, double plotWidth, double plotHeight)
+    {
+        ArgumentNullException.ThrowIfNull(ruler);
+        int target = ruler.TargetMajorTickCount;
+        if (ReferenceEquals(ruler, RAxis) || ReferenceEquals(ruler, ThetaAxis))
+        {
+            return TickBudget.Of(target);
+        }
+
+        double font = ruler.TickLabelStyle.FontSize;
+        if (_is3D)
+        {
+            // A 3-D ruler is budgeted by the longer of its edge's run across the page and rise up it,
+            // with the box stretched to fill the plot area as R2025b draws it (probe_99c).
+            var edges = TickRule.EdgePixels3D(plotWidth, plotHeight, Azimuth, Elevation);
+            (double pixels, bool upward) = ReferenceEquals(ruler, ZAxis) ? edges.Z
+                : ruler.Orientation == AxisOrientation.Horizontal ? edges.X
+                : edges.Y;
+            return TickBudget.ForRuler(pixels, font, upward, target);
+        }
+
+        bool vertical = ReferenceEquals(ruler, ZAxis) || ruler.Orientation != AxisOrientation.Horizontal;
+        return TickBudget.ForRuler(vertical ? plotHeight : plotWidth, font, vertical, target);
+    }
+
+    /// <summary>
+    /// Refits every auto-scaling ruler against the plot box the renderer has just laid out and says
+    /// whether any limit moved. Aligned and padded limits depend on how many ticks fit, and the
+    /// frame's own pixels are the ones that count (open item 99).
+    /// </summary>
+    public bool RefitRulers(double plotWidth, double plotHeight)
+    {
+        if (_isPolar)
+        {
+            return false;
+        }
+
+        bool moved = false;
+        foreach (AxisModel axis in XAxes)
+        {
+            moved |= Refit(axis, plotWidth, plotHeight);
+        }
+
+        foreach (AxisModel axis in YAxes)
+        {
+            moved |= Refit(axis, plotWidth, plotHeight);
+        }
+
+        if (_is3D)
+        {
+            moved |= Refit(ZAxis, plotWidth, plotHeight);
+        }
+
+        return moved;
+    }
+
+    private bool Refit(AxisModel axis, double plotWidth, double plotHeight)
+    {
+        if (!axis.AutoScale || axis.LimitMethod == LimitMethod.Tight)
+        {
+            return false;
+        }
+
+        DataRange before = axis.Range;
+        FitRange(axis, axis.DataBounds, BudgetFor(axis, plotWidth, plotHeight));
+        return axis.Range != before;
+    }
+
+    /// <summary>A log ruler's aligned limits are whole decades.</summary>
+    private static DataRange AlignToDecades(DataRange range) =>
+        new(
+            System.Math.Pow(10, System.Math.Floor(System.Math.Log10(range.Min))),
+            System.Math.Pow(10, System.Math.Ceiling(System.Math.Log10(range.Max))));
 
     /// <summary>
     /// Expands a fitted range by a fraction of its span for auto-scale padding. On a logarithmic axis

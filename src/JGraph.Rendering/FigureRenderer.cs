@@ -391,25 +391,58 @@ public sealed class FigureRenderer
         AxisModel xAxis = axes.PrimaryXAxis;
         AxisModel yAxis = axes.PrimaryYAxis;
 
-        // Ticks depend only on range and target count, so they can be generated before the plot area
-        // is known and then used to measure the margins that determine the plot area.
-        TickSet xTicks = TickGenerators.For(xAxis).Generate(xAxis.Range, xAxis.TargetMajorTickCount, xAxis.TickLabelFormat);
-        TickSet yTicks = TickGenerators.For(yAxis).Generate(yAxis.Range, yAxis.TargetMajorTickCount, yAxis.TickLabelFormat);
-
-        // Rulers past the first are yyaxis' work: they stand outside the right edge, each one clear of
-        // the one before it, and they are measured before the layout so the plot area makes room.
-        IReadOnlyList<SideRuler> sideRulers = MeasureSideRulers(axes, context, theme);
-
-        DecorationMetrics metrics = MeasureDecorations(axes, context, xAxis, yAxis, xTicks, yTicks, sideRulers, outer);
-        if (axes.InnerTarget is not null)
+        // The ticks a ruler takes depend on its pixel length (open item 99), and the plot box depends
+        // on the ticks through the margins their labels claim. The first pass works from the box the
+        // last frame measured, or an estimate of it; another runs only when the laid-out box changes
+        // a ruler's budget or moves an aligned limit, and a third settles the rare flip-flop.
+        Rect2D askedCell = outer;
+        Rect2D guess = axes.LastLayout?.PlotAreaPx
+            ?? outer.Deflate(axes.MarginsWithin(AxesLayoutSnapshot.EstimateInset(axes), outer));
+        TickBudget xBudget = axes.BudgetFor(xAxis, guess.Width, guess.Height);
+        TickBudget yBudget = axes.BudgetFor(yAxis, guess.Width, guess.Height);
+        TickSet xTicks;
+        TickSet yTicks;
+        IReadOnlyList<SideRuler> sideRulers;
+        DecorationMetrics metrics;
+        AxesLayout layout;
+        Rect2D plotArea;
+        for (int pass = 0; ; pass++)
         {
-            outer = Inflate(outer, metrics.Margins);
-        }
+            outer = askedCell;
+            xTicks = TickGenerators.For(xAxis).Generate(xAxis.Range, xBudget, xAxis.TickLabelFormat);
+            yTicks = TickGenerators.For(yAxis).Generate(yAxis.Range, yBudget, yAxis.TickLabelFormat);
 
-        // A MATLAB-dialect axes keeps R2025b's default plot box inside its cell unless the
-        // decorations need more room than that leaves (open item 87).
-        AxesLayout layout = LayoutEngine.Compute(axes, outer, axes.MarginsWithin(metrics.Margins, outer));
-        Rect2D plotArea = layout.PlotArea;
+            // Rulers past the first are yyaxis' work: they stand outside the right edge, each one clear
+            // of the one before it, and they are measured before the layout so the plot area makes room.
+            sideRulers = MeasureSideRulers(axes, context, theme, guess.Height);
+
+            metrics = MeasureDecorations(axes, context, xAxis, yAxis, xTicks, yTicks, sideRulers, outer);
+            if (axes.InnerTarget is not null)
+            {
+                outer = Inflate(outer, metrics.Margins);
+            }
+
+            // A MATLAB-dialect axes keeps R2025b's default plot box inside its cell unless the
+            // decorations need more room than that leaves (open item 87).
+            layout = LayoutEngine.Compute(axes, outer, axes.MarginsWithin(metrics.Margins, outer));
+            plotArea = layout.PlotArea;
+            if (pass == 2 || plotArea.IsEmpty)
+            {
+                break;
+            }
+
+            bool moved = axes.RefitRulers(plotArea.Width, plotArea.Height);
+            TickBudget nextX = axes.BudgetFor(xAxis, plotArea.Width, plotArea.Height);
+            TickBudget nextY = axes.BudgetFor(yAxis, plotArea.Width, plotArea.Height);
+            if (!moved && nextX == xBudget && nextY == yBudget)
+            {
+                break;
+            }
+
+            xBudget = nextX;
+            yBudget = nextY;
+            guess = plotArea;
+        }
 
         // The component background a uiaxes has and a plain axes does not (M84): the whole cell, drawn
         // under the ticks and labels as well as under the plot box, which is the difference between it
@@ -635,9 +668,10 @@ public sealed class FigureRenderer
                 axes.EffectiveCameraPosition(), axes.EffectiveCameraTarget(), axes.EffectiveCameraUpVector(),
                 axes.CameraViewAngle, axes.Projection == ProjectionType.Perspective);
 
-        TickSet xTicks = TickGenerators.For(xAxis).Generate(xr, xAxis.TargetMajorTickCount, xAxis.TickLabelFormat);
-        TickSet yTicks = TickGenerators.For(yAxis).Generate(yr, yAxis.TargetMajorTickCount, yAxis.TickLabelFormat);
-        TickSet zTicks = TickGenerators.For(zAxis).Generate(zr, zAxis.TargetMajorTickCount, zAxis.TickLabelFormat);
+        // Each ruler is budgeted by its edge's run across or up the page (open item 99).
+        TickSet xTicks = TickGenerators.For(xAxis).Generate(xr, axes.BudgetFor(xAxis, plotArea.Width, plotArea.Height), xAxis.TickLabelFormat);
+        TickSet yTicks = TickGenerators.For(yAxis).Generate(yr, axes.BudgetFor(yAxis, plotArea.Width, plotArea.Height), yAxis.TickLabelFormat);
+        TickSet zTicks = TickGenerators.For(zAxis).Generate(zr, axes.BudgetFor(zAxis, plotArea.Width, plotArea.Height), zAxis.TickLabelFormat);
 
         // The far value of each axis is the one whose face center sits deeper (painter order: the
         // three far faces carry the grid; plots draw over them; labels go on the near edges).
@@ -1136,7 +1170,7 @@ public sealed class FigureRenderer
     /// An axes with one Y ruler — every figure that has never seen yyaxis — measures nothing here and
     /// lays out exactly as it did before.
     /// </summary>
-    private static IReadOnlyList<SideRuler> MeasureSideRulers(AxesModel axes, IRenderContext context, ITheme theme)
+    private static IReadOnlyList<SideRuler> MeasureSideRulers(AxesModel axes, IRenderContext context, ITheme theme, double plotHeight)
     {
         if (axes.YAxes.Count < 2 || axes.Is3D || axes.IsPolar)
         {
@@ -1148,7 +1182,7 @@ public sealed class FigureRenderer
         for (int i = 1; i < axes.YAxes.Count; i++)
         {
             AxisModel axis = axes.YAxes[i];
-            TickSet ticks = TickGenerators.For(axis).Generate(axis.Range, axis.TargetMajorTickCount, axis.TickLabelFormat);
+            TickSet ticks = TickGenerators.For(axis).Generate(axis.Range, axes.BudgetFor(axis, 0, plotHeight), axis.TickLabelFormat);
 
             double tickWidth = 0;
             if (axis.ShowTickLabels)

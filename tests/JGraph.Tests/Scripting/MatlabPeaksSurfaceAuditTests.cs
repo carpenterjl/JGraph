@@ -1,3 +1,4 @@
+using JGraph.Maths.Ticks;
 using JGraph.Api;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;

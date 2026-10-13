@@ -276,13 +276,17 @@ internal static class JgsRulerTicks
     /// </summary>
     public static IReadOnlyList<Tick> Current(AxisModel ruler)
     {
-        if (ruler.AutoScale && ruler.Parent is AxesModel owner)
+        AxesModel? owner = ruler.Parent as AxesModel;
+        if (ruler.AutoScale && owner is not null)
         {
             owner.RecomputeDataBounds();
         }
 
+        // The budget is R2025b's for the ruler's pixel length (open item 99): the box the renderer
+        // last measured, or the estimate a script gets before the first frame.
+        TickBudget budget = owner?.BudgetFor(ruler) ?? TickBudget.Of(ruler.TargetMajorTickCount);
         return TickGenerators.For(ruler)
-            .Generate(ruler.Range, ruler.TargetMajorTickCount, ruler.TickLabelFormat)
+            .Generate(ruler.Range, budget, ruler.TickLabelFormat)
             .MajorTicks;
     }
 
