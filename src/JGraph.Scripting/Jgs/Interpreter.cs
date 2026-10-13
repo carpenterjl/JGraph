@@ -2059,6 +2059,23 @@ internal sealed partial class Interpreter
             return;
         }
 
+        // A categorical shows its size and class, then its names in R2025b's columns (open item 115).
+        if (value.IsCategorical)
+        {
+            _echo($"{name} = ");
+            _echo(string.Empty);
+            _echo("  " + JgsCategorical.Header(value));
+            _echo(string.Empty);
+            string body = JgsCategorical.Format(value);
+            if (body.Length > 0)
+            {
+                _echo(body.TrimEnd('\n'));
+                _echo(string.Empty);
+            }
+
+            return;
+        }
+
         _echo($"{name} = {EchoDisplay(value)}");
     }
 
@@ -2209,6 +2226,21 @@ internal sealed partial class Interpreter
     /// </summary>
     private static bool SwitchMatches(JgsValue subject, JgsValue candidate, Node at)
     {
+        if (subject.Type == JgsType.Object && !subject.ObjectClass.IsHandle && !subject.ObjectClass.TryMethod("eq", out _))
+        {
+            // R2025b refuses a switch on a value object with no eq (open item 116).
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:badSwitchExpressionNoEq",
+                $"SWITCH expressions cannot be of class {subject.ObjectClass.Name} because '==' (eq) is not defined for this class.");
+        }
+
+        if (subject.IsCategorical || candidate.IsCategorical)
+        {
+            // case 'a' on a categorical subject matches by name, as R2025b's switch does (open item 115).
+            string?[]? these = JgsCategorical.TextNames(subject);
+            string?[]? those = JgsCategorical.TextNames(candidate);
+            return these is { Length: 1 } && those is { Length: 1 } && these[0] is not null && these[0] == those[0];
+        }
+
         if (subject.Type != JgsType.External && candidate.Type != JgsType.External)
         {
             return JgsValue.AreEqual(subject, candidate);
@@ -2466,6 +2498,11 @@ internal sealed partial class Interpreter
     private bool TryExpandFieldTargets(MemberExpr member, JgsEnvironment env, out List<Expr> targets)
     {
         targets = [];
+        if (TryExpandGridFieldTargets(member, env, out targets))
+        {
+            return true;
+        }
+
         Expr container = member.Target;
         Expr? subscript = null;
         switch (member.Target)
@@ -2486,7 +2523,7 @@ internal sealed partial class Interpreter
         }
 
         bool exists = LookUp(root, env, out JgsValue rootValue);
-        if (exists && rootValue.Type is not (JgsType.Struct or JgsType.Cell) && !IsHandleArrayValue(rootValue)
+        if (exists && rootValue.Type is not (JgsType.Struct or JgsType.Cell or JgsType.Object) && !IsHandleArrayValue(rootValue)
             && rootValue.AsExternalOrNull() is not IJgsExternalArray)
         {
             return false;
@@ -2512,6 +2549,10 @@ internal sealed partial class Interpreter
             else if (IsHandleArrayValue(owner))
             {
                 length = owner.ArrayLength;
+            }
+            else if (owner.Type == JgsType.Object)
+            {
+                length = owner.IsObjectArray ? owner.ArrayLength : 1; // [a.p] = deal(...) over an array of objects (open item 116)
             }
             else if (owner.AsExternalOrNull() is IJgsExternalArray objects)
             {
@@ -2568,6 +2609,54 @@ internal sealed partial class Interpreter
         foreach (int position in positions)
         {
             var element = new IndexExpr(container, [new PreEvaluated(JgsValue.Number(position + Dialect.IndexBase))])
+            {
+                Line = member.Line,
+                Column = member.Column,
+            };
+            targets.Add(new MemberExpr(element, field, null) { Line = member.Line, Column = member.Column });
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// <c>[b(:, 1).p] = deal(v)</c> over a grid of objects (open item 116): the two subscripts are
+    /// applied to a stand-in of the element positions, and each position picked is one target,
+    /// <c>b(k).p</c> in linear order.
+    /// </summary>
+    private bool TryExpandGridFieldTargets(MemberExpr member, JgsEnvironment env, out List<Expr> targets)
+    {
+        targets = [];
+        if (!Dialect.IsMatlab)
+        {
+            return false;
+        }
+
+        (Expr? root, IReadOnlyList<Expr>? indices) = member.Target switch
+        {
+            IndexExpr { Indices.Count: 2 } indexed => (indexed.Target, indexed.Indices),
+            CallExpr { Arguments.Count: 2 } call => (call.Callee, call.Arguments),
+            _ => (null, null),
+        };
+        if (root is not VariableExpr named || indices is null
+            || !LookUp(named.Name, env, out JgsValue held) || held.Type != JgsType.Object || !held.IsObjectArray)
+        {
+            return false;
+        }
+
+        var positions = new JgsValue[held.ArrayLength];
+        for (int i = 0; i < positions.Length; i++)
+        {
+            positions[i] = JgsValue.Number(i);
+        }
+
+        JgsValue picked = IndexInto(JgsMatrix.FromElements(positions, held.Rows, held.Cols), indices, member, env);
+        int count = picked.Type == JgsType.Number ? 1 : picked.ArrayLength;
+        string field = FieldName(member, env);
+        for (int i = 0; i < count; i++)
+        {
+            int position = (int)(picked.Type == JgsType.Number ? picked : picked.ElementAt(i)).AsNumber;
+            var element = new IndexExpr(root, [new PreEvaluated(JgsValue.Number(position + Dialect.IndexBase))])
             {
                 Line = member.Line,
                 Column = member.Column,
@@ -3307,6 +3396,12 @@ internal sealed partial class Interpreter
     private JgsValue RangeFromValues(RangeExpr range, JgsValue startValue, JgsValue stepValue, JgsValue stopValue)
     {
         JgsNumericClass carried = JgsNumericClass.Double;
+        if (startValue.IsCategorical || stopValue.IsCategorical || stepValue.IsCategorical)
+        {
+            throw new JgsRuntimeException(range.Line, range.Column, "MATLAB:colon:inputsMustBeNumericCharLogical",
+                "Inputs must be numeric, char, or logical."); // open item 115
+        }
+
         JgsTimeTag? time = startValue.TimeTag ?? stopValue.TimeTag ?? stepValue.TimeTag;
         double start = RangeBoundValue(startValue, range.Start, "start", ref carried);
         double step = RangeBoundValue(stepValue, range.Step ?? range.Start, "step", ref carried);
@@ -3416,6 +3511,12 @@ internal sealed partial class Interpreter
 
         if (!IsNumericScalar(value))
         {
+            if (value.Type == JgsType.Object && JgsRunningDialect.ThreadIsMatlab)
+            {
+                throw new JgsRuntimeException(bound.Line, bound.Column, "MATLAB:colon:inputsMustBeNumericCharLogical",
+                    "Inputs must be numeric, char, or logical."); // R2025b's words (open item 116)
+            }
+
             throw new JgsRuntimeException(bound.Line, bound.Column,
                 $"The {what} of a range must be a number, but got a {value.TypeName}.");
         }
@@ -3486,17 +3587,24 @@ internal sealed partial class Interpreter
             return ConcatenateTables(rows, matrix);
         }
 
+        // Objects concatenate into an array of objects (open item 65), and a struct beside one is
+        // converted through the class's constructor (open item 116), so objects are asked first.
+        if (Dialect.ConcatenatesBrackets && AnyObject(rows))
+        {
+            return ConcatenateObjects(rows, matrix);
+        }
+
+        // A categorical beside text or another categorical is a categorical (open item 115).
+        if (Dialect.ConcatenatesBrackets && AnyCategorical(rows))
+        {
+            return ConcatenateCategoricals(rows, matrix);
+        }
+
         // Structs concatenate into a struct array (M65) rather than through the numeric block
         // machinery, which read them as one element apiece and answered with a double.
         if (AnyStruct(rows))
         {
             return ConcatenateStructs(rows, matrix);
-        }
-
-        // Objects concatenate into an array of objects (open item 65), for the same reason.
-        if (Dialect.ConcatenatesBrackets && AnyObject(rows))
-        {
-            return ConcatenateObjects(rows, matrix);
         }
 
         // A cell joins as a container too, and for the same reason (M68): the block measurement below
@@ -3716,9 +3824,14 @@ internal sealed partial class Interpreter
         // A bracket holding any object makes an array of objects (open item 65): [s s2] is 1-by-2,
         // [s 1] is R2025b's refusal, and [s] is s.
         if (Dialect.ConcatenatesBrackets && joinable.Length > 0
-            && Array.Exists(joinable, static e => IsValueObject(e)))
+            && Array.Exists(joinable, static e => e.Type == JgsType.Object))
         {
             return ConcatenateObjects([joinable], array);
+        }
+
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0 && Array.Exists(joinable, static e => e.IsCategorical))
+        {
+            return ConcatenateCategoricals([joinable], array); // open item 115
         }
 
         // A bracket holding any cell joins the cells (M68), which the block machinery below cannot do:
@@ -4245,6 +4358,11 @@ internal sealed partial class Interpreter
             return negated;
         }
 
+        if (operand.IsCategorical)
+        {
+            throw JgsCategorical.NotNumeric(unary.Line, unary.Column); // -c and ~c are R2025b's refusal (open item 115)
+        }
+
         if (AnyClasses && TryUnaryOverload(unary.Op, operand, unary, out JgsValue overloaded))
         {
             return overloaded;
@@ -4628,6 +4746,13 @@ internal sealed partial class Interpreter
     private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at,
                                  JgsReuse.Operands reuse = JgsReuse.Operands.None)
     {
+        // A categorical compares by name and refuses arithmetic (open item 115); asked before a char
+        // operand is read as its codes.
+        if (left.IsCategorical || right.IsCategorical)
+        {
+            return JgsCategorical.Compare(op, left, right, at.Line, at.Column);
+        }
+
         // An operator with a .NET value on either side is the type's own (ADR 0174): == and ~=
         // through op_Equality where the type defines one, reference identity otherwise.
         if (left.Type == JgsType.External || right.Type == JgsType.External)
@@ -4797,6 +4922,9 @@ internal sealed partial class Interpreter
             case MemberExpr { Target: VariableExpr owner } when LookUp(owner.Name, env, out JgsValue held)
                 && held.Type == JgsType.Struct && held.IsStructArray:
                 return held.AsStructArray.Length;
+            case MemberExpr { Target: VariableExpr objectOwner } when LookUp(objectOwner.Name, env, out JgsValue objects)
+                && objects.Type == JgsType.Object && objects.IsObjectArray:
+                return objects.ArrayLength; // a.p over an array of objects (open item 116)
             case BraceIndexExpr { Target: VariableExpr owner, Indices.Count: 1 } brace when LookUp(owner.Name, env, out JgsValue cell)
                 && cell.Type == JgsType.Cell:
                 if (brace.Indices[0] is AllExpr)
@@ -5466,6 +5594,11 @@ internal sealed partial class Interpreter
             copy.MarkTime(time);
         }
 
+        if (source.CategoricalTag is { } categories)
+        {
+            copy.MarkCategorical(categories); // a copy of a categorical is one (open item 115)
+        }
+
         // A char value with one row is a char row, never a one-row char matrix — there is one
         // representation of a char row here and it is JgsType.String. Only a transpose can reach this
         // with a single row (A(:, 2)' is 1-by-2), and without the collapse it came back as an array no
@@ -5494,6 +5627,11 @@ internal sealed partial class Interpreter
         if (source.TimeTag is JgsTimeTag time)
         {
             copy.MarkTime(time);
+        }
+
+        if (source.CategoricalTag is { } categories)
+        {
+            copy.MarkCategorical(categories); // and through the shape-keeping copy (open item 115)
         }
 
         return copy;
@@ -6066,12 +6204,15 @@ internal sealed partial class Interpreter
         var holds = new ScopeHolds();
         try
         {
-            JgsValue written = subscripts.Count switch
-            {
-                2 => AssignTwoSubscripts(container, subscripts, op, rhs, at, env, ref holds),
-                > 2 => AssignNSubscripts(container, subscripts, op, rhs, at, env, ref holds),
-                _ => AssignThroughIndex(container, subscripts, op, rhs, at, env, ref holds),
-            };
+            // b(r, c) = s on an array of objects takes the object road, which knows a grid (open item 116).
+            JgsValue written = subscripts.Count == 2 && op == TokenType.Assign && Dialect.IsMatlab && (WritesObjects(container, rhs, env) || WritesCategorical(container, rhs, env))
+                ? AssignThroughIndex(container, subscripts, op, rhs, at, env, ref holds)
+                : subscripts.Count switch
+                {
+                    2 => AssignTwoSubscripts(container, subscripts, op, rhs, at, env, ref holds),
+                    > 2 => AssignNSubscripts(container, subscripts, op, rhs, at, env, ref holds),
+                    _ => AssignThroughIndex(container, subscripts, op, rhs, at, env, ref holds),
+                };
 
             // A datetime's default display follows what it holds (V6, #129): read back through the
             // same entry the road wrote, which is the grown wrapper when the write grew it.
@@ -6443,6 +6584,11 @@ internal sealed partial class Interpreter
             rebuilt.MarkTime(time); // and a grown datetime or duration is still one (V6)
         }
 
+        if (source.CategoricalTag is { } categories)
+        {
+            rebuilt.MarkCategorical(categories); // and a grown categorical (open item 115)
+        }
+
         if (source.IsCharMatrix)
         {
             rebuilt.MarkCharMatrix(); // the boxed road's rebuild; the packed one grows in place
@@ -6605,11 +6751,41 @@ internal sealed partial class Interpreter
     /// right-hand side broadcasts over the selection, an array right-hand side must match its length.
     /// Compound operators apply per element.
     /// </summary>
+    /// <summary>Whether an indexed write lands on an object or an array of them: the variable holds one, or holds nothing and an object is written (open item 116).</summary>
+    private bool WritesObjects(Expr container, JgsValue rhs, JgsEnvironment env)
+    {
+        if (container is not VariableExpr named)
+        {
+            return false;
+        }
+
+        if (!LookUp(named.Name, env, out JgsValue held))
+        {
+            return rhs.Type == JgsType.Object;
+        }
+
+        return held.Type == JgsType.Object
+            || (rhs.Type == JgsType.Object && held.Type == JgsType.Array && held.ArrayLength == 0 && !held.IsStringArray && !held.IsTime);
+    }
+
     private JgsValue AssignThroughIndex(
         Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env,
         ref ScopeHolds holds)
     {
         JgsValue callee = EvaluateForWrite(target, env);
+
+        // c(k) = 'name' on a categorical rebuilds the codes and the categories together (open item 115);
+        // q(3) = categorical(...) with no q, or q = [], starts one.
+        if (callee.IsCategorical && op == TokenType.Assign)
+        {
+            return AssignIntoCategorical(target, callee, subscripts, rhs, at, env);
+        }
+
+        if (rhs.IsCategorical && op == TokenType.Assign
+            && callee.Type == JgsType.Array && callee.ArrayLength == 0 && !callee.IsStringArray && !callee.IsTime)
+        {
+            return AssignIntoCategorical(target, JgsCategorical.FromCodes([], 0, 0, rhs.CategoricalTag!), subscripts, rhs, at, env);
+        }
 
         // m(key) = value on a keyed collection writes the entry rather than an element (M64). It
         // writes in place, which is right for both: a Map is shared by every name bound to it, and a
@@ -6667,11 +6843,12 @@ internal sealed partial class Interpreter
             return AssignIntoStruct(target, callee, subscripts, rhs, at, env);
         }
 
-        // a(k) = s on an object or an array of them, a(k) = [] off one, and a(2) = s with a = []
-        // or no a at all (open item 65): the element list is rebuilt and stored back.
+        // a(k) = s on an object or an array of them, handles included, a(k) = [] off one, and
+        // a(2) = s with a = [] or no a at all (open items 65 and 116): the element list is rebuilt
+        // and stored back.
         if (op == TokenType.Assign && Dialect.IsMatlab
-            && ((callee.Type == JgsType.Object && !callee.ObjectClass.IsHandle)
-                || (rhs.Type == JgsType.Object && !rhs.ObjectClass.IsHandle
+            && (callee.Type == JgsType.Object
+                || (rhs.Type == JgsType.Object
                     && callee.Type == JgsType.Array && callee.ArrayLength == 0 && !callee.IsStringArray && !callee.IsTime)))
         {
             return AssignIntoObjectArray(target, callee, subscripts, rhs, at, env);
@@ -7455,7 +7632,8 @@ internal sealed partial class Interpreter
     private static JgsValue OneElementArray(JgsValue scalar)
     {
         JgsValue array = JgsNumericClasses.Stamp(JgsValue.Array([scalar]), scalar.NumericClass);
-        return scalar.TimeTag is { } time ? array.MarkTime(time) : array; // a lone datetime grows as one (V6)
+        JgsValue grown = scalar.TimeTag is { } time ? array.MarkTime(time) : array; // a lone datetime grows as one (V6)
+        return scalar.CategoricalTag is { } categories ? grown.MarkCategorical(categories) : grown; // and a lone categorical (open item 115)
     }
 
     /// <summary>
@@ -7534,6 +7712,12 @@ internal sealed partial class Interpreter
         if (target.TimeTag is JgsTimeTag time)
         {
             return JgsBuiltins.WrapTime(IndexIntoCore(target, subscripts, at, env), time);
+        }
+
+        // A selection out of a categorical is a categorical over the same categories (open item 115).
+        if (target.CategoricalTag is { } categories)
+        {
+            return JgsCategorical.Wrap(IndexIntoCore(target, subscripts, at, env), categories);
         }
 
         return IndexIntoCore(target, subscripts, at, env);
@@ -8926,6 +9110,13 @@ internal sealed partial class Interpreter
                 "Brace indexing is not supported for variables of this type.");
         }
 
+        if (target.IsCategorical)
+        {
+            // R2025b's own identifier for a categorical (open item 115).
+            throw new JgsRuntimeException(brace.Line, brace.Column, "MATLAB:categorical:CellReferenceNotAllowed",
+                "Cell contents reference from a non-cell array object.");
+        }
+
         if (target.Type != JgsType.Cell)
         {
             // R2025b's words for every other kind in the MATLAB dialect (open item 16).
@@ -9067,7 +9258,48 @@ internal sealed partial class Interpreter
             string field = FieldName(member, env);
             return owner.IsStructArray
                 ? StructArrayFieldValues(owner, field, member)
-                : [MemberOf(owner, field, member, autoCall: true)];
+                : owner.Type == JgsType.Object && owner.IsObjectArray
+                    ? ObjectArrayFieldValues(owner, field, member) // [st.list.p] over objects a struct holds (open item 116)
+                    : [MemberOf(owner, field, member, autoCall: true)];
+        }
+
+        // [f(x).p] over what a call answers: an array of structs or objects spreads, anything else is
+        // its one member (open item 116). The call runs once, here.
+        if (Dialect.IsMatlab && expr is MemberExpr answered
+            && answered.Target is CallExpr { Callee: VariableExpr fn, Arguments.Count: > 0 }
+            && (!LookUp(fn.Name, env, out JgsValue called) || called.Type == JgsType.Function))
+        {
+            JgsValue owner = EvaluateOne(answered.Target, env, ListUse.Intermediate);
+            string field = FieldName(answered, env);
+            return owner.IsStructArray
+                ? StructArrayFieldValues(owner, field, answered)
+                : owner.Type == JgsType.Object && owner.IsObjectArray
+                    ? ObjectArrayFieldValues(owner, field, answered)
+                    : [MemberOf(owner, field, answered, autoCall: true)];
+        }
+
+        // a.p over an array of objects is one property read an element (open item 116). The path is
+        // read once here, so a get method runs once, and a lone object's dot finishes on that read.
+        if (Dialect.IsMatlab && expr is MemberExpr objectMember
+            && RootName(objectMember.Target) is { } objectRoot
+            && LookUp(objectRoot, env, out JgsValue objectHolder) && objectHolder.Type == JgsType.Object)
+        {
+            JgsValue owner = EvaluateOne(objectMember.Target, env, ListUse.Intermediate);
+            string property = FieldName(objectMember, env);
+            return owner.Type == JgsType.Object && owner.IsObjectArray
+                ? ObjectArrayFieldValues(owner, property, objectMember)
+                : owner.IsStructArray
+                    ? StructArrayFieldValues(owner, property, objectMember) // [v.list.f] over a struct array an object holds
+                    : [MemberOf(owner, property, objectMember, autoCall: true)];
+        }
+
+        // [Class.empty.p] over what a class's static member answers (open item 116).
+        if (Dialect.IsMatlab && expr is MemberExpr classMember && classMember.Target is MemberExpr inFront
+            && inFront.Target is VariableExpr classRoot && !LookUp(classRoot.Name, env, out _)
+            && TryClassInFront(inFront, env, autoCall: true, out JgsValue answeredByClass)
+            && answeredByClass.Type == JgsType.Object && answeredByClass.IsObjectArray)
+        {
+            return ObjectArrayFieldValues(answeredByClass, FieldName(classMember, env), classMember);
         }
 
         // [msgs.Timestamp] over a midimsg array (device classes plan, stage D10b).
@@ -9401,12 +9633,11 @@ internal sealed partial class Interpreter
         // area(obj) the same call written two ways — and what lets the bare obj.area run it.
         if (target.Type == JgsType.Object)
         {
-            // a.p on an array of objects is a comma-separated list in MATLAB; here it is refused
-            // until that list is built (open item 65), rather than answered with one element.
+            // a.p on an array of objects is a comma-separated list, and a.m() a method over the
+            // whole array (open item 116).
             if (target.IsObjectArray)
             {
-                throw new JgsRuntimeException(member.Line, member.Column,
-                    $"'.{field}' on a {target.Rows}x{target.Cols} array of {target.ClassName} would be a comma-separated list, which this build does not support yet; index one element first.");
+                return ObjectArrayMember(target, field, member, autoCall, use);
             }
 
             return ObjectMember(target, field, member, autoCall);
@@ -10341,6 +10572,16 @@ internal sealed partial class Interpreter
     /// <summary>The transpose itself, on an already-evaluated operand.</summary>
     private JgsValue ApplyTranspose(TransposeExpr transpose, JgsValue value)
     {
+        if (value.Type == JgsType.Object)
+        {
+            return JgsBuiltins.TransposeObjects(value); // a' over an array of objects (open item 116)
+        }
+
+        if (value.CategoricalTag is { } categories)
+        {
+            return JgsCategorical.Wrap(ApplyTranspose(transpose, JgsCategorical.ToDouble(value)), categories); // open item 115
+        }
+
         if (value.AsExternalOrNull() is IJgsExternalArray objects)
         {
             return JgsValue.External(ExternalArrays.Transposed(objects)); // a' on a midimsg array (stage D10b)

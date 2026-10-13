@@ -37,7 +37,7 @@ internal static partial class JgsBuiltins
         Define("isobject", (args, line, col) =>
         {
             Arity("isobject", args, 1, line, col);
-            return JgsValue.Bool(IsObjectValue(args[0]));
+            return JgsValue.Bool(IsObjectValue(args[0]) || args[0].IsCategorical); // a categorical is an object (open item 115)
         });
 
         JgsValue Properties(IReadOnlyList<JgsValue> args, int line, int col)
@@ -114,7 +114,7 @@ internal static partial class JgsBuiltins
         {
             if (value.Type == JgsType.Object)
             {
-                return (value.AsObject.Class, null, null, null);
+                return (value.ObjectClass, null, null, null); // one object or an array of them
             }
 
             if (NamedClass(value, interpreter) is { } named)
@@ -209,8 +209,17 @@ internal static partial class JgsBuiltins
             JgsValue target = args[0];
             if (target.Type == JgsType.Object)
             {
-                // Any property, whoever may read it (U6, measured: isprop of a private one is true).
-                return JgsValue.Bool(target.AsObject.Class.Property(name) is not null);
+                // Any property, whoever may read it (U6, measured: isprop of a private one is true);
+                // an array answers one flag an element (open item 116).
+                bool has = target.ObjectClass.Property(name) is not null;
+                if (!target.IsObjectArray)
+                {
+                    return JgsValue.Bool(has);
+                }
+
+                var flags = new JgsValue[target.ArrayLength];
+                Array.Fill(flags, JgsValue.Bool(has));
+                return JgsMatrix.FromElements(flags, target.Rows, target.Cols);
             }
 
             if (target.Type == JgsType.External && IsDeviceValue(target.AsExternal))
@@ -253,7 +262,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Bool(args[0].Type switch
             {
                 // The methods a listing shows (U6, measured: a private, protected or hidden one is not one).
-                JgsType.Object => args[0].AsObject.Class.MethodNames.Contains(name, StringComparer.Ordinal),
+                JgsType.Object => args[0].ObjectClass.MethodNames.Contains(name, StringComparer.Ordinal),
                 JgsType.External when args[0].AsExternal is NetObject net =>
                     Net.NetInvoke.HasMethod(net.Type, name, instance: true),
                 JgsType.External when args[0].AsExternal is Devices.DeviceObject device =>
@@ -294,7 +303,7 @@ internal static partial class JgsBuiltins
         (JgsValue Column, string[] Names, string ClassName) Superclasses(IReadOnlyList<JgsValue> args, int line, int col)
         {
             Arity("superclasses", args, 1, line, col);
-            JgsClass? asked = args[0].Type == JgsType.Object ? args[0].AsObject.Class
+            JgsClass? asked = args[0].Type == JgsType.Object ? args[0].ObjectClass
                 : IsTextScalar(args[0]) ? interpreter.ClassForLoad(TextOf(args[0])) ?? interpreter.BuiltinClass(TextOf(args[0]))
                 : null;
             string className = asked?.Name ?? (IsTextScalar(args[0]) ? TextOf(args[0]) : ClassOf(args[0], JgsDialect.Matlab));
@@ -309,7 +318,7 @@ internal static partial class JgsBuiltins
             Arity("metaclass", args, 1, line, col);
             if (args[0].Type == JgsType.Object)
             {
-                return MetaClassOf(args[0].AsObject.Class);
+                return MetaClassOf(args[0].ObjectClass);
             }
 
             JgsValue described = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
@@ -586,7 +595,7 @@ internal static partial class JgsBuiltins
     {
         if (value.Type == JgsType.Object)
         {
-            return value.AsObject.Class.MethodNames;
+            return value.ObjectClass.MethodNames; // an array's class too (open item 116)
         }
 
         // A .NET object's, or a .NET type's named as text: methods('JGTest.Members') (ADR 0174).

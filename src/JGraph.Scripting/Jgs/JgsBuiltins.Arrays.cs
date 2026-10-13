@@ -120,7 +120,8 @@ internal static partial class JgsBuiltins
 
             if (gathered < 0)
             {
-                gathered = Math.Min(answers.Length, 1);
+                // A verb that answers nothing (arrayfun(@delete, h)) collects nothing (open item 116).
+                gathered = answers.Length > 0 && answers[0].Type != JgsType.Null ? 1 : 0;
             }
 
             if (answers.Length < gathered)
@@ -131,10 +132,13 @@ internal static partial class JgsBuiltins
 
             for (int o = 0; o < gathered; o++)
             {
-                if (uniform && answers[o].Type is not (JgsType.Number or JgsType.Bool))
+                if (uniform && (answers[o].Type is not (JgsType.Number or JgsType.Bool or JgsType.Object) || (answers[o].Type == JgsType.Object && answers[o].IsObjectArray)))
                 {
-                    throw new JgsRuntimeException(line, col,
-                        "arrayfun: the function returned something that is not a number — pass 'UniformOutput', false.");
+                    throw JgsRunningDialect.ThreadIsMatlab
+                        ? new JgsRuntimeException(line, col, "MATLAB:arrayfun:NotAScalarOutput",
+                            $"Non-scalar in Uniform output, at index {k + 1}, output {o + 1}. Set 'UniformOutput' to false.")
+                        : new JgsRuntimeException(line, col,
+                            "arrayfun: the function returned something that is not a number — pass 'UniformOutput', false.");
                 }
 
                 collected[o][k] = JgsValue.Share(answers[o]); // M2, as cellfun: the slot is an entry
@@ -145,8 +149,11 @@ internal static partial class JgsBuiltins
         for (int o = 0; o < outputs.Length; o++)
         {
             // The uniform result takes the first array's shape — 2-D or N-D — the way MATLAB's does.
+            // Objects collected uniformly are an array of objects (open item 116).
             outputs[o] = uniform
-                ? JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
+                ? ObjectsAsArray("arrayfun", collected[o], 1, length, line, col) is { } objects
+                    ? JgsMatrix.Like(args[1], objects)
+                    : JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
                 : JgsMatrix.Like(args[1], JgsValue.Cell(collected[o]));
         }
 
@@ -202,7 +209,9 @@ internal static partial class JgsBuiltins
 
         if (uniform)
         {
-            return [JgsValue.Array(results.ToArray())];
+            return [JgsRunningDialect.ThreadIsMatlab
+                ? JgsMatrix.FromElements(results.ToArray(), results.Count, 1) // a column, as R2025b's structfun answers (open item 116)
+                : JgsValue.Array(results.ToArray())];
         }
 
         var mapped = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
@@ -323,12 +332,14 @@ internal static partial class JgsBuiltins
     /// <summary>A value's elements as a boxed list; a scalar is a one-element list.</summary>
     private static JgsValue[] ElementsOf(string name, JgsValue value) => value.Type switch
     {
+        JgsType.Array when value.IsCategorical => Elements(value), // one-element categoricals (open item 115)
         JgsType.Array => value.BoxedElements(),
         JgsType.Cell => value.AsCell,
 
         // A struct array walks element by element (M65), so arrayfun(@(s) s.a, stats) works — the
         // idiom for pulling one measurement out of a regionprops result.
         JgsType.Struct => StructElementValues(value),
+        JgsType.Object => ObjectElementValues(value), // an array of objects, element by element (open item 116)
         _ => [value],
     };
 

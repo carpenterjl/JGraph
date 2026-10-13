@@ -175,7 +175,7 @@ public class GuiRoundGapsTests : IDisposable
         ScriptRunResult result = RunMatlab("c = categorical([1 2], [1 2], {'A'});");
 
         Assert.False(result.Success);
-        Assert.Contains("value set has 2 values but there are 1 category names", result.Message);
+        Assert.Contains("CATEGORYNAMES and VALUESET must have the same length.", result.Message); // R2025b's words (open item 115)
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public class GuiRoundGapsTests : IDisposable
         ScriptRunResult result = RunMatlab("c = categorical([1 2], [1 1], {'A', 'B'});");
 
         Assert.False(result.Success);
-        Assert.Contains("appears more than once in the value set", result.Message);
+        Assert.Contains("VALUESET contains duplicated values.", result.Message); // R2025b's words (open item 115)
     }
 
     // --- the grouped bar layout ------------------------------------------------------------------

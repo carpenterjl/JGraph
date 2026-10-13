@@ -77,6 +77,29 @@ internal static partial class JgsGraphicsProperties
     /// glyph in pixels or inches, and a property that accepted the word without honouring it would
     /// report a size that is not the size drawn.
     /// </remarks>
+    /// <summary>A colour written as three fractions, refused outside 0..1 (FaceVertexCData rows).</summary>
+    private static Color RgbRow(double r, double g, double b, int line, int col)
+    {
+        if (r is < 0 or > 1 || g is < 0 or > 1 || b is < 0 or > 1)
+        {
+            throw new JgsRuntimeException(line, col, "FaceVertexCData colours are RGB fractions between 0 and 1.");
+        }
+
+        return Color.FromScRgb(r, g, b);
+    }
+
+    /// <summary>A FontSize value: one positive finite number.</summary>
+    private static double PositiveFontSize(JgsValue value, int line, int col)
+    {
+        double size = Numbers("FontSize", value, 1, line, col)[0];
+        if (size <= 0 || !double.IsFinite(size))
+        {
+            throw new JgsRuntimeException(line, col, $"FontSize is a positive number, but got {size:G6}.");
+        }
+
+        return size;
+    }
+
     private static void AddTextStyleBlock(
         IDictionary<string, GraphicsProperty> table,
         Func<JgsHandleEntry, TextStyle> read,
@@ -170,6 +193,26 @@ internal static partial class JgsGraphicsProperties
             entry => Box(entry).TextStyle,
             (entry, style) => Box(entry).TextStyle = style,
             colorName: "TextColor");
+
+        // The size follows the axes font until a script writes it (R2025b's FontSizeMode, open item 118).
+        Put(table, "FontSize",
+            entry =>
+            {
+                (Box(entry).Parent as AxesModel)?.ApplyAutoFont();
+                return JgsValue.Number(Box(entry).TextStyle.FontSize);
+            },
+            (entry, value, line, col) =>
+            {
+                Box(entry).TextStyle = Box(entry).TextStyle.WithSize(PositiveFontSize(value, line, col));
+                Box(entry).FontSizeManual = true;
+            });
+        Put(table, "FontSizeMode",
+            entry => AutoManual(Box(entry).FontSizeManual),
+            (entry, value, line, col) =>
+            {
+                Box(entry).FontSizeManual = ToAutoManual("FontSizeMode", value, line, col);
+                (Box(entry).Parent as AxesModel)?.SyncFurnitureFonts();
+            });
 
         Put(table, "Color",
             entry => ColorRow(Box(entry).Background),
@@ -710,6 +753,87 @@ internal static partial class JgsGraphicsProperties
     // --- The patch ------------------------------------------------------------------------------
 
     /// <summary>
+    /// Writes a patch's colour data and the shading it implies: a value per vertex interpolates, a
+    /// value per face or one value is flat, as R2025b reads <c>FaceColor</c> back (open item 114).
+    /// </summary>
+    internal static void SetPatchColorData(PatchPlot patch, double[] given)
+    {
+        patch.ColorTable = null;
+        patch.VertexColors = null;
+        patch.ColorData = given.Length == 0 ? null : given;
+        if (given.Length > 0)
+        {
+            patch.Shading = given.Length == patch.X.Count && given.Length != patch.Faces.Count && given.Length > 1
+                ? PatchShading.Interp
+                : PatchShading.Flat;
+        }
+    }
+
+    /// <summary>A patch's colour data in R2025b's shape (open item 114, probe_114); see the CData entry.</summary>
+    private static JgsValue PatchColorData(PatchPlot patch, bool asCData)
+    {
+        IReadOnlyList<double>? data = patch.ColorData;
+        if (data is null && patch.ColorTable is { Count: > 0 } table)
+        {
+            // Colours written as RGB rows read back as the table they were, and as CData with the
+            // rows down the third dimension: 1-by-1-by-3 for one, n-by-1-by-3 per vertex (probe_114c).
+            int rows = table.Count / 3;
+            double[] rgb = [.. table];
+            if (!asCData)
+            {
+                return JgsMatrix.FromColumnMajor(rgb, rows, 3);
+            }
+
+            return patch.VertexColors is not null
+                ? JgsMatrix.FromColumnMajorDims(rgb, [rows, 1, 3])
+                : JgsMatrix.FromColumnMajorDims(rgb, [1, rows, 3]);
+        }
+
+        if (data is null)
+        {
+            Color ink = Colors.DarkGray;
+            double[] rgb = [ink.R / 255.0, ink.G / 255.0, ink.B / 255.0];
+            return asCData ? JgsMatrix.FromColumnMajorDims(rgb, [1, 1, 3]) : JgsMatrix.FromColumnMajor(rgb, 1, 3);
+        }
+
+        if (data.Count == 1)
+        {
+            return JgsValue.Number(data[0]);
+        }
+
+        int faces = patch.Faces.Count;
+        if (asCData && faces > 1 && data.Count == patch.X.Count && data.Count != faces && UniformFaceSize(patch) is { } perFace)
+        {
+            var byFace = new double[perFace * faces];
+            for (int f = 0; f < faces; f++)
+            {
+                for (int v = 0; v < perFace; v++)
+                {
+                    byFace[v + (f * perFace)] = data[patch.Faces[f][v]];
+                }
+            }
+
+            return JgsMatrix.FromColumnMajor(byFace, perFace, faces);
+        }
+
+        return JgsMatrix.FromColumnMajor([.. data], data.Count, 1);
+    }
+
+    private static int? UniformFaceSize(PatchPlot patch)
+    {
+        int size = patch.Faces[0].Length;
+        foreach (int[] face in patch.Faces)
+        {
+            if (face.Length != size)
+            {
+                return null;
+            }
+        }
+
+        return size;
+    }
+
+    /// <summary>
     /// A patch answers to almost exactly the surface's block, because it is the same thing said with
     /// an explicit vertex list: faces, edges, markers and lights. The two names that are its own are
     /// the vertex-indexed ones — MATLAB spells them <c>FaceVertexCData</c> and
@@ -757,22 +881,57 @@ internal static partial class JgsGraphicsProperties
                 shape.FaceVisible = true;
             });
 
+        // R2025b's shapes (open item 114): a patch coloured by a colour answers the ink, CData as a
+        // 1-by-1-by-3 and FaceVertexCData as a row; one value is a scalar; a value per face is a
+        // column; a value per vertex is a column, and in CData a column per face when the faces
+        // are of one size.
         Put(table, "CData",
-            entry => Row([.. Shape(entry).ColorData ?? []]),
+            entry => PatchColorData(Shape(entry), asCData: true),
             (entry, value, line, col) =>
             {
                 double[] given = JgsBuiltins.ToDoubles("CData", value, line, col);
-                Shape(entry).ColorData = given.Length == 0 ? null : given;
+                SetPatchColorData(Shape(entry), given);
             });
 
         // The same array under the name that says what indexes it. One property, two spellings, as
         // MATLAB has them — CData is the short way of naming a patch's colours and this is the long.
         Put(table, "FaceVertexCData",
-            entry => Row([.. Shape(entry).ColorData ?? []]),
+            entry => PatchColorData(Shape(entry), asCData: false),
             (entry, value, line, col) =>
             {
+                PatchPlot patch = Shape(entry);
+                if (value.Type == JgsType.Array && value.Cols == 3 && value.Rows >= 1 && !value.IsStringArray
+                    && (value.Rows == 1 || value.Rows == patch.Faces.Count || value.Rows == patch.X.Count))
+                {
+                    // Three columns are RGB rows: one colour for the patch, one per face, or one per
+                    // vertex (R2025b, probe_114c).
+                    double[] rgb = JgsBuiltins.ToDoubles("FaceVertexCData", value, line, col);
+                    var colours = new Color[value.Rows];
+                    for (int r = 0; r < value.Rows; r++)
+                    {
+                        colours[r] = RgbRow(rgb[r], rgb[r + value.Rows], rgb[r + (2 * value.Rows)], line, col);
+                    }
+
+                    patch.ColorData = null;
+                    patch.ColorTable = rgb;
+                    if (value.Rows == 1 || value.Rows == patch.Faces.Count)
+                    {
+                        patch.VertexColors = null;
+                        patch.FaceColors = colours;
+                        patch.FaceColor = null;
+                    }
+                    else
+                    {
+                        patch.FaceColors = null;
+                        patch.VertexColors = colours;
+                        patch.FaceColor = colours[0];
+                    }
+
+                    return;
+                }
+
                 double[] given = JgsBuiltins.ToDoubles("FaceVertexCData", value, line, col);
-                Shape(entry).ColorData = given.Length == 0 ? null : given;
+                SetPatchColorData(patch, given);
             });
 
         // R2025b's empty is 0-by-0, and one value is the whole patch's (probe_107).
@@ -1623,6 +1782,26 @@ internal static partial class JgsGraphicsProperties
             entry => Bar(entry).TickLabelStyle,
             (entry, style) => Bar(entry).TickLabelStyle = style);
 
+        // The size follows the axes font until a script writes it (R2025b's FontSizeMode, open item 118).
+        Put(table, "FontSize",
+            entry =>
+            {
+                (Bar(entry).Parent as AxesModel)?.ApplyAutoFont();
+                return JgsValue.Number(Bar(entry).TickLabelStyle.FontSize);
+            },
+            (entry, value, line, col) =>
+            {
+                Bar(entry).TickLabelStyle = Bar(entry).TickLabelStyle.WithSize(PositiveFontSize(value, line, col));
+                Bar(entry).FontSizeManual = true;
+            });
+        Put(table, "FontSizeMode",
+            entry => AutoManual(Bar(entry).FontSizeManual),
+            (entry, value, line, col) =>
+            {
+                Bar(entry).FontSizeManual = ToAutoManual("FontSizeMode", value, line, col);
+                (Bar(entry).Parent as AxesModel)?.SyncFurnitureFonts();
+            });
+
         // MATLAB spells the interpreter of a ruler's labels out in full, and it is the same choice the
         // shared block writes — so the long name is put over the short one rather than beside it.
         GraphicsProperty markup = table["Interpreter"];
@@ -1838,7 +2017,24 @@ internal static partial class JgsGraphicsProperties
     private static double[] GeneratedTicks(ColorbarModel bar)
     {
         DataRange span = SpanOf(bar);
-        return [.. new LinearTickGenerator().Generate(span, 6).MajorTicks.Select(static t => t.Value)];
+        return [.. new LinearTickGenerator().Generate(span, ColorbarBudget(bar)).MajorTicks.Select(static t => t.Value)];
+    }
+
+    /// <summary>
+    /// The colorbar's tick budget (open item 119): R2025b counts a colorbar's ticks by its length,
+    /// which is the plot box's height (or width, lying down), at nine tenths of the axes font. The
+    /// box is the one the renderer last laid out, or an estimate before any frame.
+    /// </summary>
+    private static TickBudget ColorbarBudget(ColorbarModel bar)
+    {
+        if (bar.Parent is not AxesModel axes)
+        {
+            return TickBudget.Of(6);
+        }
+
+        Rect2D box = (axes.LastLayout ?? AxesLayoutSnapshot.Estimate(axes, axes.ReferenceSize())).PlotAreaPx;
+        double length = bar.IsHorizontal ? box.Width : box.Height;
+        return length > 0 ? TickBudget.ForRuler(length, bar.TickLabelStyle.FontSize * 0.9, !bar.IsHorizontal, 6) : TickBudget.Of(6);
     }
 
     /// <summary>The labels the strip shows: the chosen ones, or the numbers under the generated ticks.</summary>
@@ -1883,7 +2079,7 @@ internal static partial class JgsGraphicsProperties
             {
                 TextAnnotation label = Label(entry);
                 return new TextStyle(
-                    label.Color ?? Colors.Black, label.FontSize, label.FontFamily,
+                    label.Color ?? Colors.DarkGray, label.FontSize, label.FontFamily, // the ink (open item 114)
                     label.Bold, label.Italic, label.Interpreter, label.Smoothing);
             },
             (entry, style) =>
@@ -1896,6 +2092,18 @@ internal static partial class JgsGraphicsProperties
                 label.Interpreter = style.Interpreter;
                 label.Smoothing = style.Antialias;
             });
+
+        // A written size is manual, as R2025b's FontSizeMode says (open item 114).
+        Put(table, "FontSize",
+            entry => JgsValue.Number(Label(entry).FontSize),
+            (entry, value, line, col) =>
+            {
+                Label(entry).FontSize = PositiveFontSize(value, line, col);
+                Label(entry).FontSizeManual = true;
+            });
+        Put(table, "FontSizeMode",
+            entry => AutoManual(Label(entry).FontSizeManual),
+            (entry, value, line, col) => Label(entry).FontSizeManual = ToAutoManual("FontSizeMode", value, line, col));
 
         Put(table, "Margin",
             entry => JgsValue.Number(Label(entry).Padding),

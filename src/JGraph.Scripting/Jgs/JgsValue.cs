@@ -121,6 +121,11 @@ internal sealed class JgsValue
     // underneath goes on behaving exactly as it did. Mutable ONLY by MarkTime, at mint time.
     private JgsTimeTag? _time;
 
+    // What categories this array's codes count into (open item 115): null for every array that is
+    // not a categorical. Like the time tag, the numeric storage underneath goes on behaving as it
+    // did; the tag is the whole of what makes one a categorical. Mutable ONLY by MarkCategorical, at mint time.
+    private JgsCategoricalTag? _categorical;
+
     // N-D shape (M41, ADR 0044): null for every 2-D value. When set (always length >= 3, trailing
     // singletons trimmed), it is the true size of the array, and _rows/_cols hold MATLAB's own 2-D
     // view of it — dims[0] rows by prod(dims[1..]) columns — so every two-subscript reader sees
@@ -189,6 +194,7 @@ internal sealed class JgsValue
         _isStringArray = source._isStringArray;
         _isCharMatrix = source._isCharMatrix;
         _time = source._time;
+        _categorical = source._categorical;
         _dims = source._dims; // replaced, never written through, so the two may share the array
         _exposed = source._exposed;
         _tracked = source._tracked;
@@ -1155,6 +1161,19 @@ internal sealed class JgsValue
     /// <summary>Whether this value is a <c>duration</c>.</summary>
     public bool IsDuration => _time is { Kind: JgsTimeKind.Duration };
 
+    /// <summary>The categories this array's codes count into, or null when it is not a categorical (open item 115).</summary>
+    public JgsCategoricalTag? CategoricalTag => _categorical;
+
+    /// <summary>Whether this value is a <c>categorical</c>.</summary>
+    public bool IsCategorical => _categorical is not null;
+
+    /// <summary>Marks a freshly-minted numeric array as a categorical and hands it back. Mint-time only, like <see cref="MarkTime"/>.</summary>
+    public JgsValue MarkCategorical(JgsCategoricalTag tag)
+    {
+        _categorical = tag;
+        return this;
+    }
+
     /// <summary>
     /// Marks a freshly-minted array as a time and hands it back. Mint-time only, like
     /// <see cref="MarkStringArray"/> and <see cref="SetNumericClass"/>.
@@ -1330,7 +1349,11 @@ internal sealed class JgsValue
     /// non-empty and every element is truthy (MATLAB semantics), so `if mask { … }` asks "all matched?"
     /// rather than "is the mask non-empty?". Use `length(a) &gt; 0` to test emptiness.
     /// </summary>
-    public bool IsTruthy => Type switch
+    public bool IsTruthy => _categorical is not null
+        ? throw new JgsRuntimeException(0, 0, "MATLAB:invalidConversion", "Conversion to logical from categorical is not possible.")
+        : Type == JgsType.Object && JgsRunningDialect.ThreadIsMatlab
+        ? throw new JgsRuntimeException(0, 0, "MATLAB:invalidConversion", $"Conversion to logical from {ClassName} is not possible.") // if obj (open item 116)
+        : Type switch
     {
         JgsType.Null => false,
         JgsType.Bool => _number != 0,
@@ -1437,6 +1460,7 @@ internal sealed class JgsValue
         JgsType.Complex => "complex",
         JgsType.Bool => "bool",
         JgsType.String => "string",
+        JgsType.Array when _categorical is not null => "categorical",
         JgsType.Array when _time is { Kind: JgsTimeKind.Datetime } => "datetime",
         JgsType.Array when _time is not null => "duration",
         JgsType.Array => _isStringArray ? "string array" : "array",
@@ -1446,7 +1470,7 @@ internal sealed class JgsValue
         JgsType.Cell => "cell",
         JgsType.Struct => "struct",
         JgsType.Sparse => "sparse",
-        JgsType.Object => AsObject.Class.Name,
+        JgsType.Object => ObjectClass.Name, // one object's class, or an array's (open item 116)
         JgsType.External => AsExternal.ClassName,
         _ => "value",
     };
@@ -1459,6 +1483,7 @@ internal sealed class JgsValue
         JgsType.Complex => FormatComplex(AsComplex),
         JgsType.Bool => _number != 0 ? "true" : "false",
         JgsType.String => AsString,
+        JgsType.Array when _categorical is not null => JgsCategorical.Format(this),
         JgsType.Array when _time is not null => FormatTime(this),
         JgsType.Array when _isCharMatrix => FormatCharMatrix(this),
         JgsType.Array => _isStringArray ? FormatStringArray(this) : FormatArray(this),
@@ -1571,6 +1596,11 @@ internal sealed class JgsValue
             return FormatStyle(instance);
         }
 
+        if (instance.Class.IsHandle && instance.Deleted)
+        {
+            return "  handle to deleted " + ShortClassName(instance.Class.Name) + "\n"; // R2025b's line (probe_116b)
+        }
+
         var sb = new StringBuilder(instance.Class.Name);
         sb.Append(" with properties:");
 
@@ -1594,7 +1624,9 @@ internal sealed class JgsValue
             // An object inside an object is shown as MATLAB shows it, [1x1 Class], rather than
             // unfolded: a handle whose property holds itself would otherwise unfold for ever (V6, #111).
             string shown = held.Type == JgsType.Object
-                ? $"[1x1 {held.AsObject.Class.Name}]"
+                ? held.IsObjectArray
+                    ? $"[{held.Rows}×{held.Cols} {held.ObjectClass.Name}]" // an array of objects inside one (open item 116)
+                    : $"[1x1 {held.AsObject.Class.Name}]"
                 : held.Type == JgsType.String ? "'" + Truncate(held.AsString) + "'" // a char row, as R2025b shows one
                 : Truncate(held.Display());
             sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(shown);

@@ -663,7 +663,34 @@ internal static partial class JgsBuiltins
             {
                 ["Size"] = JgsValue.Array([JgsValue.Number(column.RowCount), JgsValue.Number(1)]),
             };
-            if (column.Type == ColumnType.Text)
+            if (column is JgsValueColumn { Value.IsCategorical: true } categoricalColumn)
+            {
+                // R2025b's description of a categorical variable (open item 115, probe_115s).
+                JgsCategoricalTag tag = categoricalColumn.Value.CategoricalTag!;
+                double[] codes = JgsCategorical.CodesOf(categoricalColumn.Value);
+                var counts = new double[tag.Categories.Length];
+                int missing = 0;
+                foreach (double code in codes)
+                {
+                    if (double.IsNaN(code))
+                    {
+                        missing++;
+                    }
+                    else
+                    {
+                        counts[(int)code - 1]++;
+                    }
+                }
+
+                info["Type"] = JgsValue.Str("categorical");
+                info["Description"] = JgsValue.Str(string.Empty);
+                info["Units"] = JgsValue.Str(string.Empty);
+                info["Continuity"] = JgsMatrix.FromColumnMajor([], 0, 0);
+                info["Categories"] = JgsCategorical.CategoriesColumn(tag);
+                info["Counts"] = JgsMatrix.FromColumnMajor(counts, counts.Length, 1);
+                info["NumMissing"] = JgsValue.Number(missing);
+            }
+            else if (column.Type == ColumnType.Text)
             {
                 info["Type"] = JgsValue.Str("cell");
             }

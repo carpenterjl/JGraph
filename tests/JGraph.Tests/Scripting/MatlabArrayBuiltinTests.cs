@@ -52,7 +52,7 @@ public class MatlabArrayBuiltinTests : IDisposable
     public Task StructHelpers_MoveBetweenStructsAndCells() => RunAsserting("""
         s.a = 1;
         s.b = 2;
-        assert(isequal(structfun(@(x) x * 10, s), [10 20]));
+        assert(isequal(structfun(@(x) x * 10, s), [10; 20])); % a column, as R2025b answers (open item 116)
 
         c = struct2cell(s);
         assert(iscell(c));

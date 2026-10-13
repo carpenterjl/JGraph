@@ -777,7 +777,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
             p.Marker = 's';
             marker = p.Marker;
             p.CData = [1 2 3];
-            colours = p.FaceVertexCData;
+            colours = p.FaceVertexCData'; % a column in R2025b (open item 114)
             p.FaceVertexAlphaData = [1 0.5 0.2];
             alphas = p.FaceVertexAlphaData;
             p.CDataMapping = 'direct';

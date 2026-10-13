@@ -50,7 +50,7 @@ public readonly record struct PieSlice(int Index, double Start, double Sweep, do
 /// </summary>
 public sealed class PiePlot : PlotObject, IDrawable, I3DDrawable, ILegendItem
 {
-    private readonly PatchPlot _patch = new([0], [0], [0], [[0]]);
+    private readonly PatchPlot _patch = new([0], [0], [0], [[0]]) { IsFlat = true };
 
     private double[] _values;
     private double[]? _explode;

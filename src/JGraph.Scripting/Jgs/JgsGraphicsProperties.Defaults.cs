@@ -81,6 +81,8 @@ internal static partial class JgsGraphicsProperties
         if (child is AxesModel { PlotBoxMargins: null, InnerTarget: null } axes && JgsRunningDialect.ThreadIsMatlab)
         {
             axes.PlotBoxMargins = AxesModel.MatlabPlotBoxMargins;
+            axes.FurnitureFontFactor = 0.9; // the legend and colorbar at nine tenths of the axes font (open item 118)
+            axes.SyncFurnitureFonts();
         }
     }
 

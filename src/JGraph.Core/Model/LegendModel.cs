@@ -102,6 +102,13 @@ public sealed class LegendModel : GraphObject
         set => SetProperty(ref _showBorder, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// True once a script wrote the legend's <c>FontSize</c>; until then the size follows the axes
+    /// font through <see cref="AxesModel.SyncFurnitureFonts"/> (MATLAB <c>FontSizeMode</c>, open item 118).
+    /// </summary>
+    [Browsable(false)]
+    public bool FontSizeManual { get; set; }
+
     [Category("Appearance"), DisplayName("Text style")]
     public TextStyle TextStyle
     {

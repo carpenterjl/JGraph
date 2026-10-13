@@ -1,0 +1,578 @@
+CHK|patch_xdata|double[4 1] [0;1;1;0]|exact
+CHK|patch_ydata|double[4 1] [0;0;1;1]|exact
+CHK|patch_zdata|double[0 0]|exact
+CHK|patch_cdata|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 1 3] nd [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patch_vertices|double[4 2] [0 0;1 0;1 1;0 1]|exact
+CHK|patch_faces|double[1 4] [1 2 3 4]|exact
+CHK|patch_fvcd|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 3] [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patch_facecolor|double[1 3] [1 0 0]|exact
+CHK|patchcol_xdata|double[4 1] [0;1;1;0]|exact
+CHK|patchcol_cdata|double[4 1] [1;2;3;4]|exact
+CHK|patchcol_vertices|double[4 2] [0 0;1 0;1 1;0 1]|exact
+CHK|patchcol_fvcd|double[4 1] [1;2;3;4]|exact
+CHK|patchcol_facecolor|char[1 6]'interp'|exact
+CHK|patchscalarc_cdata|double[1 1] 5|exact
+CHK|patchscalarc_fvcd|double[1 1] 5|exact
+CHK|patchscalarc_facecolor|char[1 4]'flat'|exact
+CHK|patchrgb_cdata|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 1 3] nd [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patchrgb_fvcd|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 3] [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patchrgb_facecolor|double[1 3] [0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|patchz_zdata|double[4 1] [0;0;1;1]|exact
+CHK|patchz_vertices|double[4 3] [0 0 0;1 0 0;1 1 1;0 1 1]|exact
+CHK|patchz_xdata|double[4 1] [0;1;1;0]|exact
+CHK|patchm_xdata|double[3 2] [0 1;1 2;1 2]|exact
+CHK|patchm_faces|double[2 3] [1 2 3;4 5 6]|exact
+CHK|patchm_vertices|double[6 2] [0 0;1 0;1 1;1 0;2 0;2 1]|exact
+CHK|patchm_cdata|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 1 3] nd [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patchm_fvcd|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 3] [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patchm2_cdata|double[2 1] [1;2]|exact
+CHK|patchm2_fvcd|double[2 1] [1;2]|exact
+CHK|patchm2_facecolor|char[1 4]'flat'|exact
+CHK|patchm3_cdata|double[3 2] [1 2;3 4;5 6]|exact
+CHK|patchm3_fvcd|double[6 1] [1;3;5;2;4;6]|exact
+CHK|patchm3_facecolor|char[1 6]'interp'|exact
+CHK|patchfv_xdata|double[3 1] [0;1;1]|exact
+CHK|patchfv_zdata|double[0 0]|exact
+CHK|patchfv_vertices|double[3 2] [0 0;1 0;1 1]|exact
+CHK|patchfv_cdata|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 1 3] nd [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patchfv_fvcd|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 3] [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patchfv3_zdata|double[3 1] [0;0;0]|exact
+CHK|patchfv3_vertices|double[3 3] [0 0 0;1 0 0;1 1 0]|exact
+CHK|patchfv4_xdata|double[3 2] [0 1;1 1;1 0]|exact
+CHK|patchfv4_cdata|double[3 2] [1 2;2 3;3 4]|exact
+CHK|patchfv4_fvcd|double[4 1] [1;2;3;4]|exact
+CHK|patchfv5_cdata|double[2 1] [1;2]|exact
+CHK|patchfv5_fvcd|double[2 1] [1;2]|exact
+CHK|patchxy_xdata|double[3 1] [0;1;1]|exact
+CHK|patchxy_vertices|double[3 2] [0 0;1 0;1 1]|exact
+CHK|patchxy_faces|double[1 3] [1 2 3]|exact
+CHK|patchxy_cdata|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 1 3] nd [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patchxy_facecolor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 3] [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|patchxyz_zdata|double[3 1] [1;1;1]|exact
+CHK|patchxyz_vertices|double[3 3] [0 0 1;1 0 1;1 1 1]|exact
+CHK|patch2f_xdata|double[4 2] [0 2;1 3;1 3;0 2]|exact
+CHK|patch2f_faces|double[2 4] [1 2 3 4;5 6 7 8]|exact
+CHK|patch2f_vertices|double[1 2] [8 2]|exact
+CHK|patch2f_written_row|char[1 31]'[4 1] [5;6;7;8] [1 2 3 4] [8 2]'|exact
+CHK|patch2f_written_col|char[1 31]'[4 1] [5;6;7;8] [1 2 3 4] [8 2]'|div=ADR0232|diverges|char[1 31]'[4 1] [5;6;7;8] [1 2 3 4] [4 2]'
+CHK|patch2f_written_mat|char[1 47]'[4 2] [5 1;6 2;7 3;8 4] [1 2 3 4;5 6 7 8] [8 2]'|exact
+CHK|patch_vert3|char[1 29]'[3 3] [0;1;1] [1;1;1] [1 2 3]'|exact
+CHK|patch_vert_grow|char[1 24]'[4 2] [0;1;1] [] [1 2 3]'|exact
+CHK|patch_faces_written|char[1 33]'[1 2 3;1 3 4] [0 0;1 1;1 0] [4 2]'|exact
+CHK|patch_xdata_grow|char[1 27]'[3 1] [0;1;1] [1 2 3] [4 2]'|exact
+CHK|patch_xdata_grow_ydata|double[3 1] [0;0;1]|exact
+CHK|patch_xdata_grow_vertices|double[4 2] [0 0;1 0;1 1;0 NaN]|exact
+CHK|patch_xdata_grow_faces|double[1 3] [1 2 3]|exact
+CHK|patch_cdata_write_rgb|char[1 25]'[3 1] [0.1 0.2 0.3] [3 1]'|exact
+CHK|patch_cdata_write_scalar|char[1 13]'[1 1] 7 [1 1]'|exact
+CHK|patch_cdata_write_col|char[1 19]'[3 1] [1 2 3] [3 1]'|exact
+CHK|patch_cdata_write_row|char[1 19]'[3 1] [1 2 3] [3 1]'|exact
+CHK|patch_fvcd_write_col|char[1 19]'[3 1] [3 1] [4 5 6]'|exact
+CHK|patch_fvcd_write_rgb|char[1 27]'[1 3] [1 1 3] [0.1 0.2 0.3]'|exact
+CHK|patch_fvcd_write_rgb_rows|char[1 51]'[3 3] [3 1 3] [0.1 0.4 0.7;0.2 0.5 0.8;0.3 0.6 0.9]'|exact
+CHK|pie_xdata_size|double[1 2] [20 1]|exact
+CHK|pie_zdata|double[0 0]|exact
+CHK|pie_vertices_size|double[1 2] [20 2]|exact
+CHK|pie_cdata|double[20 1] [1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]|exact
+CHK|pie_faces_size|double[1 2] [1 20]|exact
+CHK|pie_cat|double[1 2] [57 1]|exact
+CHK|pie_cat2|MATLAB:catenate:dimensionMismatch|exact
+CHK|pie_cat2_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|pie_text_fontsize|double[1 1] 10|exact
+CHK|pie_text_color|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|char[1 4]'none'
+CHK|fill_xdata|double[3 1] [0;1;1]|exact
+CHK|fill_cdata|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|double[1 1 3] nd [0.25098039215686274 0.25098039215686274 0.25098039215686274]
+CHK|fill_vertices|double[3 2] [0 0;1 0;1 1]|exact
+CHK|fill_faces|double[1 3] [1 2 3]|exact
+CHK|fillc_cdata|double[3 1] [1;2;3]|exact
+CHK|fillc_fvcd|double[3 1] [1;2;3]|exact
+CHK|fillc_facecolor|char[1 6]'interp'|exact
+CHK|fillm_n|double[1 1] 2|exact
+CHK|fillm_xdata|double[3 1] [0;1;1]|exact
+CHK|fill3_zdata|double[3 1] [0;0;1]|exact
+CHK|fill3_vertices|double[3 3] [0 0 0;1 0 0;1 1 1]|exact
+CHK|fill3_xdata|double[3 1] [0;1;1]|exact
+CHK|text_fontsize|double[1 1] 10|exact
+CHK|text_fontsizemode|char[1 4]'auto'|exact
+CHK|text_color|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|div=ADR0232|diverges|char[1 4]'none'
+CHK|factory_text_fs|double[1 1] 10|exact
+CHK|font_w100|double[1 1] 0.80000000000000004|exact
+CHK|font_w130|double[1 1] 0.80000000000000004|exact
+CHK|font_w132|double[1 1] 0.84999999999999998|exact
+CHK|font_w150|double[1 1] 0.84999999999999998|exact
+CHK|font_w178|double[1 1] 0.84999999999999998|exact
+CHK|font_w180|double[1 1] 0.90000000000000002|exact
+CHK|font_w200|double[1 1] 0.90000000000000002|exact
+CHK|font_w226|double[1 1] 0.90000000000000002|exact
+CHK|font_w228|double[1 1] 0.94999999999999996|exact
+CHK|font_w250|double[1 1] 0.94999999999999996|exact
+CHK|font_w274|double[1 1] 0.94999999999999996|exact
+CHK|font_w276|double[1 1] 1|exact
+CHK|font_w300|double[1 1] 1|exact
+CHK|font_h80|double[1 1] 0.80000000000000004|exact
+CHK|font_h104|double[1 1] 0.80000000000000004|exact
+CHK|font_h106|double[1 1] 0.84999999999999998|exact
+CHK|font_h120|double[1 1] 0.84999999999999998|exact
+CHK|font_h142|double[1 1] 0.84999999999999998|exact
+CHK|font_h144|double[1 1] 0.90000000000000002|exact
+CHK|font_h160|double[1 1] 0.90000000000000002|exact
+CHK|font_h180|double[1 1] 0.90000000000000002|exact
+CHK|font_h182|double[1 1] 0.94999999999999996|exact
+CHK|font_h200|double[1 1] 0.94999999999999996|exact
+CHK|font_h220|double[1 1] 0.94999999999999996|exact
+CHK|font_h222|double[1 1] 1|exact
+CHK|font_h260|double[1 1] 1|exact
+CHK|font_w120_h90|double[1 1] 0.80000000000000004|exact
+CHK|font_w120_h130|double[1 1] 0.80000000000000004|exact
+CHK|font_w120_h190|double[1 1] 0.80000000000000004|exact
+CHK|font_w120_h230|double[1 1] 0.80000000000000004|exact
+CHK|font_w160_h90|double[1 1] 0.80000000000000004|exact
+CHK|font_w160_h130|double[1 1] 0.84999999999999998|exact
+CHK|font_w160_h190|double[1 1] 0.84999999999999998|exact
+CHK|font_w160_h230|double[1 1] 0.84999999999999998|exact
+CHK|font_w200_h90|double[1 1] 0.80000000000000004|exact
+CHK|font_w200_h130|double[1 1] 0.84999999999999998|exact
+CHK|font_w200_h190|double[1 1] 0.90000000000000002|exact
+CHK|font_w200_h230|double[1 1] 0.90000000000000002|exact
+CHK|font_w280_h90|double[1 1] 0.80000000000000004|exact
+CHK|font_w280_h130|double[1 1] 0.84999999999999998|exact
+CHK|font_w280_h190|double[1 1] 0.94999999999999996|exact
+CHK|font_w280_h230|double[1 1] 1|exact
+CHK|font_mode|char[1 4]'auto'|exact
+CHK|font_small_title|double[1 1] 1.1000000000000001|div=ADR0232|diverges|double[1 1] 1.363636364
+CHK|font_small_xlabel|double[1 1] 1.1000000000000001|div=ADR0232|diverges|double[1 1] 1.181818182
+CHK|font_small_ticklabel|double[1 1] 0.84999999999999998|exact
+CHK|font_small_legend|double[1 1] 0.90000000000000002|exact
+CHK|font_small_colorbar|double[1 1] 0.90000000000000002|exact
+CHK|font_small_legend_mode|char[1 4]'auto'|exact
+CHK|font_small_colorbar_mode|char[1 4]'auto'|exact
+CHK|font_manual|double[1 1] 12|exact
+CHK|font_manual_mode|char[1 6]'manual'|exact
+CHK|font_manual_legend|double[1 1] 10.800000000000001|exact
+CHK|font_manual_colorbar|double[1 1] 10.800000000000001|exact
+CHK|font_auto_again|double[1 1] 0.80000000000000004|div=ADR0232|diverges|double[1 1] 0.84999999999999998
+CHK|fig_240_180_fs|double[1 1] 0.90000000000000002|exact
+CHK|fig_240_180_xt|double[1 3] [0 5 10]|div=ADR0232|diverges|double[1 6] [0 2 4 6 8 10]
+CHK|fig_240_180_yt|double[1 5] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|div=ADR0232|diverges|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]
+CHK|fig_240_180_ylim|double[1 2] [0 0.80000000000000004]|div=ADR0232|diverges|double[1 2] [0 0.69999999999999996]
+CHK|fig_320_240_fs|double[1 1] 0.94999999999999996|exact
+CHK|fig_320_240_xt|double[1 6] [0 2 4 6 8 10]|exact
+CHK|fig_320_240_yt|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|fig_320_240_ylim|double[1 2] [0 0.69999999999999996]|exact
+CHK|fig_200_160_fs|double[1 1] 0.84999999999999998|exact
+CHK|fig_200_160_xt|double[1 3] [0 5 10]|exact
+CHK|fig_200_160_yt|double[1 5] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|fig_200_160_ylim|double[1 2] [0 0.80000000000000004]|exact
+CHK|fig_400_300_fs|double[1 1] 1|exact
+CHK|fig_400_300_xt|double[1 6] [0 2 4 6 8 10]|exact
+CHK|fig_400_300_yt|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|fig_400_300_ylim|double[1 2] [0 0.69999999999999996]|exact
+CHK|fig_300_200_fs|double[1 1] 0.90000000000000002|exact
+CHK|fig_300_200_xt|double[1 6] [0 2 4 6 8 10]|exact
+CHK|fig_300_200_yt|double[1 5] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|div=ADR0232|diverges|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]
+CHK|fig_300_200_ylim|double[1 2] [0 0.80000000000000004]|div=ADR0232|diverges|double[1 2] [0 0.69999999999999996]
+CHK|fig_560_420_fs|double[1 1] 1|exact
+CHK|fig_560_420_xt|double[1 10] [1 2 3 4 5 6 7 8 9 10]|exact
+CHK|fig_560_420_yt|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|fig_560_420_ylim|double[1 2] [0 0.69999999999999996]|exact
+CHK|sub33_fs|double[1 1] 0.84999999999999998|div=ADR0232|diverges|double[1 1] 0.80000000000000004
+CHK|sub33_xt|double[1 3] [0 5 10]|exact
+CHK|sub33_yt|double[1 5] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|uiaxes_small_fs|double[1 1] 12|div=ADR0232|diverges|double[1 1] 11
+CHK|sq60_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq60_y_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq60_x_0_2|double[1 3] [0 1 2]|exact
+CHK|sq60_y_0_2|double[1 3] [0 1 2]|exact
+CHK|sq60_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq60_y_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq60_x_0_4|double[1 3] [0 2 4]|exact
+CHK|sq60_y_0_4|double[1 3] [0 2 4]|exact
+CHK|sq60_x_0_5|double[1 2] [0 5]|exact
+CHK|sq60_y_0_5|double[1 2] [0 5]|exact
+CHK|sq60_x_0_6|double[1 2] [0 5]|div=ADR0232|diverges|double[1 4] [0 2 4 6]
+CHK|sq60_y_0_6|double[1 2] [0 5]|div=ADR0232|diverges|double[1 4] [0 2 4 6]
+CHK|sq60_x_0_7|double[1 2] [0 5]|exact
+CHK|sq60_y_0_7|double[1 2] [0 5]|div=ADR0232|diverges|double[1 4] [0 2 4 6]
+CHK|sq60_x_0_8|double[1 2] [0 5]|exact
+CHK|sq60_y_0_8|double[1 2] [0 5]|div=ADR0232|diverges|double[1 5] [0 2 4 6 8]
+CHK|sq60_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq60_y_0_10|double[1 3] [0 5 10]|exact
+CHK|sq60_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq60_y_0_12|double[1 3] [0 5 10]|exact
+CHK|sq60_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq60_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq60_x_0_20|double[1 3] [0 10 20]|exact
+CHK|sq60_y_0_20|double[1 3] [0 10 20]|exact
+CHK|sq60_x_0_21|double[1 3] [0 10 20]|exact
+CHK|sq60_y_0_21|double[1 3] [0 10 20]|div=ADR0232|diverges|double[1 5] [0 5 10 15 20]
+CHK|sq60_x_0_25|double[1 3] [0 10 20]|exact
+CHK|sq60_y_0_25|double[1 3] [0 10 20]|exact
+CHK|sq60_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq60_y_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq60_x_0_50|double[1 2] [0 50]|exact
+CHK|sq60_y_0_50|double[1 2] [0 50]|exact
+CHK|sq60_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq60_y_0_100|double[1 3] [0 50 100]|exact
+CHK|sq60_x_0_0p7|double[1 2] [0 0.5]|exact
+CHK|sq60_y_0_0p7|double[1 2] [0 0.5]|div=ADR0232|diverges|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]
+CHK|sq60_x_0_0p5|double[1 2] [0 0.5]|exact
+CHK|sq60_y_0_0p5|double[1 2] [0 0.5]|exact
+CHK|sq60_x_0_0p3|double[1 3] [0 0.10000000000000001 0.20000000000000001]|div=ADR0232|diverges|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]
+CHK|sq60_y_0_0p3|double[1 3] [0 0.10000000000000001 0.20000000000000001]|div=ADR0232|diverges|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]
+CHK|sq60_x_0_0p15|double[1 3] [0 0.050000000000000003 0.10000000000000001]|div=ADR0232|diverges|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]
+CHK|sq60_y_0_0p15|double[1 3] [0 0.050000000000000003 0.10000000000000001]|div=ADR0232|diverges|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]
+CHK|sq60_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|div=ADR0232|diverges|double[1 1] 0.5
+CHK|sq60_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq60_x_1_10|double[1 2] [5 10]|exact
+CHK|sq60_y_1_10|double[1 2] [5 10]|div=ADR0232|diverges|double[1 5] [2 4 6 8 10]
+CHK|sq60_x_m1_1|double[1 3] [-1 0 1]|exact
+CHK|sq60_y_m1_1|double[1 3] [-1 0 1]|exact
+CHK|sq60_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq60_y_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq60_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq60_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq60_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq60_y_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq60_x_0_0p0004|double[1 3] [0 0.00020000000000000001 0.00040000000000000002]|exact
+CHK|sq60_y_0_0p0004|double[1 3] [0 0.00020000000000000001 0.00040000000000000002]|exact
+CHK|sq100_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq100_y_0_1|double[1 3] [0 0.5 1]|div=ADR0232|diverges|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]
+CHK|sq100_x_0_2|double[1 3] [0 1 2]|exact
+CHK|sq100_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq100_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq100_y_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq100_x_0_4|double[1 3] [0 2 4]|exact
+CHK|sq100_y_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq100_x_0_5|double[1 2] [0 5]|exact
+CHK|sq100_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq100_x_0_6|double[1 2] [0 5]|div=ADR0232|diverges|double[1 4] [0 2 4 6]
+CHK|sq100_y_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq100_x_0_7|double[1 2] [0 5]|div=ADR0232|diverges|double[1 4] [0 2 4 6]
+CHK|sq100_y_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq100_x_0_8|double[1 2] [0 5]|div=ADR0232|diverges|double[1 5] [0 2 4 6 8]
+CHK|sq100_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq100_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq100_y_0_10|double[1 3] [0 5 10]|div=ADR0232|diverges|double[1 6] [0 2 4 6 8 10]
+CHK|sq100_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq100_y_0_12|double[1 3] [0 5 10]|div=ADR0232|diverges|double[1 7] [0 2 4 6 8 10 12]
+CHK|sq100_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq100_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq100_x_0_20|double[1 3] [0 10 20]|exact
+CHK|sq100_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq100_x_0_21|double[1 3] [0 10 20]|div=ADR0232|diverges|double[1 5] [0 5 10 15 20]
+CHK|sq100_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq100_x_0_25|double[1 3] [0 10 20]|exact
+CHK|sq100_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq100_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq100_y_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq100_x_0_50|double[1 2] [0 50]|exact
+CHK|sq100_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq100_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq100_y_0_100|double[1 3] [0 50 100]|div=ADR0232|diverges|double[1 6] [0 20 40 60 80 100]
+CHK|sq100_x_0_0p7|double[1 2] [0 0.5]|div=ADR0232|diverges|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]
+CHK|sq100_y_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq100_x_0_0p5|double[1 2] [0 0.5]|exact
+CHK|sq100_y_0_0p5|double[1 5] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002]|div=ADR0232|diverges|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]
+CHK|sq100_x_0_0p3|double[1 3] [0 0.10000000000000001 0.20000000000000001]|div=ADR0232|diverges|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]
+CHK|sq100_y_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq100_x_0_0p15|double[1 3] [0 0.050000000000000003 0.10000000000000001]|div=ADR0232|diverges|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]
+CHK|sq100_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq100_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq100_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq100_x_1_10|double[1 2] [5 10]|div=ADR0232|diverges|double[1 5] [2 4 6 8 10]
+CHK|sq100_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq100_x_m1_1|double[1 3] [-1 0 1]|exact
+CHK|sq100_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq100_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq100_y_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq100_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq100_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq100_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq100_y_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq100_x_0_0p0004|double[1 3] [0 0.00020000000000000001 0.00040000000000000002]|exact
+CHK|sq100_y_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq140_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq140_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq140_x_0_2|double[1 3] [0 1 2]|exact
+CHK|sq140_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq140_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq140_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|sq140_x_0_4|double[1 3] [0 2 4]|exact
+CHK|sq140_y_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq140_x_0_5|double[1 3] [0 2 4]|div=ADR0232|diverges|double[1 2] [0 5]
+CHK|sq140_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq140_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq140_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|sq140_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq140_y_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|sq140_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq140_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq140_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq140_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq140_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq140_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq140_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq140_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq140_x_0_20|double[1 3] [0 10 20]|exact
+CHK|sq140_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq140_x_0_21|double[1 3] [0 10 20]|div=ADR0232|diverges|double[1 5] [0 5 10 15 20]
+CHK|sq140_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq140_x_0_25|double[1 3] [0 10 20]|exact
+CHK|sq140_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq140_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq140_y_0_30|double[1 7] [0 5 10 15 20 25 30]|exact
+CHK|sq140_x_0_50|double[1 3] [0 20 40]|div=ADR0232|diverges|double[1 2] [0 50]
+CHK|sq140_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq140_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq140_y_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq140_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq140_y_0_0p7|double[1 7] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998]|div=ADR0232|diverges|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]
+CHK|sq140_x_0_0p5|double[1 3] [0 0.20000000000000001 0.40000000000000002]|div=ADR0232|diverges|double[1 2] [0 0.5]
+CHK|sq140_y_0_0p5|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq140_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq140_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|sq140_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq140_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq140_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq140_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|div=ADR0232|diverges|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]
+CHK|sq140_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq140_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq140_x_m1_1|double[1 3] [-1 0 1]|exact
+CHK|sq140_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq140_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq140_y_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|sq140_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq140_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq140_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq140_y_10_11p3|double[1 7] [10 10.199999999999999 10.4 10.6 10.800000000000001 11 11.199999999999999]|exact
+CHK|sq140_x_0_0p0004|double[1 3] [0 0.00020000000000000001 0.00040000000000000002]|exact
+CHK|sq140_y_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq180_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq180_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq180_x_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq180_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq180_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq180_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|sq180_x_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq180_y_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq180_x_0_5|double[1 6] [0 1 2 3 4 5]|div=ADR0232|diverges|double[1 2] [0 5]
+CHK|sq180_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq180_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq180_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|sq180_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq180_y_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|sq180_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq180_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq180_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq180_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq180_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq180_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq180_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq180_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq180_x_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq180_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq180_x_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq180_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq180_x_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq180_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq180_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq180_y_0_30|double[1 7] [0 5 10 15 20 25 30]|exact
+CHK|sq180_x_0_50|double[1 6] [0 10 20 30 40 50]|div=ADR0232|diverges|double[1 2] [0 50]
+CHK|sq180_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq180_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq180_y_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq180_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq180_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|sq180_x_0_0p5|double[1 5] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002]|div=ADR0232|diverges|double[1 2] [0 0.5]
+CHK|sq180_y_0_0p5|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq180_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq180_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|sq180_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq180_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq180_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq180_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|sq180_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq180_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq180_x_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq180_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq180_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq180_y_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|sq180_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq180_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq180_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq180_y_10_11p3|double[1 7] [10 10.199999999999999 10.4 10.6 10.800000000000001 11 11.199999999999999]|exact
+CHK|sq180_x_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq180_y_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq217_x_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq217_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq217_x_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq217_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq217_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq217_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|sq217_x_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq217_y_0_4|double[1 9] [0 0.5 1 1.5 2 2.5 3 3.5 4]|exact
+CHK|sq217_x_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq217_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq217_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq217_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|sq217_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq217_y_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|sq217_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq217_y_0_8|double[1 9] [0 1 2 3 4 5 6 7 8]|exact
+CHK|sq217_x_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq217_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq217_x_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq217_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq217_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq217_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq217_x_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq217_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq217_x_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq217_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq217_x_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq217_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq217_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq217_y_0_30|double[1 7] [0 5 10 15 20 25 30]|exact
+CHK|sq217_x_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq217_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq217_x_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq217_y_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq217_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq217_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|sq217_x_0_0p5|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq217_y_0_0p5|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq217_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq217_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|sq217_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq217_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq217_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq217_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|sq217_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq217_y_1_10|double[1 10] [1 2 3 4 5 6 7 8 9 10]|exact
+CHK|sq217_x_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq217_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq217_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq217_y_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|sq217_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq217_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq217_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq217_y_10_11p3|double[1 7] [10 10.199999999999999 10.4 10.6 10.800000000000001 11 11.199999999999999]|exact
+CHK|sq217_x_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq217_y_0_0p0004|double[1 9] [0 5.0000000000000002e-05 0.0001 0.00014999999999999999 0.00020000000000000001 0.00025000000000000001 0.00029999999999999997 0.00035 0.00040000000000000002]|exact
+CHK|sq255_x_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq255_y_0_1|double[1 11] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002 1]|exact
+CHK|sq255_x_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq255_y_0_2|double[1 11] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1 1.2 1.3999999999999999 1.6000000000000001 1.8 2]|exact
+CHK|sq255_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq255_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|sq255_x_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq255_y_0_4|double[1 9] [0 0.5 1 1.5 2 2.5 3 3.5 4]|exact
+CHK|sq255_x_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq255_y_0_5|double[1 11] [0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5]|exact
+CHK|sq255_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq255_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|sq255_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq255_y_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|sq255_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq255_y_0_8|double[1 9] [0 1 2 3 4 5 6 7 8]|exact
+CHK|sq255_x_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq255_y_0_10|double[1 11] [0 1 2 3 4 5 6 7 8 9 10]|exact
+CHK|sq255_x_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq255_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq255_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq255_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq255_x_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq255_y_0_20|double[1 11] [0 2 4 6 8 10 12 14 16 18 20]|exact
+CHK|sq255_x_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq255_y_0_21|double[1 11] [0 2 4 6 8 10 12 14 16 18 20]|exact
+CHK|sq255_x_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq255_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq255_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq255_y_0_30|double[1 7] [0 5 10 15 20 25 30]|exact
+CHK|sq255_x_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq255_y_0_50|double[1 11] [0 5 10 15 20 25 30 35 40 45 50]|exact
+CHK|sq255_x_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq255_y_0_100|double[1 11] [0 10 20 30 40 50 60 70 80 90 100]|exact
+CHK|sq255_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq255_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|sq255_x_0_0p5|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq255_y_0_0p5|double[1 11] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999 0.34999999999999998 0.40000000000000002 0.45000000000000001 0.5]|exact
+CHK|sq255_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq255_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|sq255_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq255_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq255_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq255_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|sq255_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq255_y_1_10|double[1 10] [1 2 3 4 5 6 7 8 9 10]|exact
+CHK|sq255_x_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq255_y_m1_1|double[1 11] [-1 -0.80000000000000004 -0.59999999999999998 -0.40000000000000002 -0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq255_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq255_y_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|sq255_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq255_y_m5_5|double[1 11] [-5 -4 -3 -2 -1 0 1 2 3 4 5]|exact
+CHK|sq255_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq255_y_10_11p3|double[1 7] [10 10.199999999999999 10.4 10.6 10.800000000000001 11 11.199999999999999]|exact
+CHK|sq255_x_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq255_y_0_0p0004|double[1 9] [0 5.0000000000000002e-05 0.0001 0.00014999999999999999 0.00020000000000000001 0.00025000000000000001 0.00029999999999999997 0.00035 0.00040000000000000002]|exact
+CHK|polar_default_rt|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|polar_default_tt|double[1 13] [0 30 60 90 120 150 180 210 240 270 300 330 360]|exact
+CHK|polar_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|polar_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|polar_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|polar_0_7|double[1 4] [0 2 4 6]|exact
+CHK|polar_0_12|double[1 3] [0 5 10]|div=ADR0232|diverges|double[1 7] [0 2 4 6 8 10 12]
+CHK|polar_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|polar_0_25|double[1 3] [0 10 20]|div=ADR0232|diverges|double[1 6] [0 5 10 15 20 25]
+CHK|polar_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|polar_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|polar_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|polar_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|polar_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|polar_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|polar_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|polar_m3_11|double[1 3] [0 5 10]|exact
+CHK|polar_m5_5|double[1 5] [-4 -2 0 2 4]|div=ADR0232|diverges|double[1 3] [-5 0 5]
+CHK|polar_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|polar_small_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|polar_small_0_7|double[1 4] [0 2 4 6]|exact
+CHK|polar_small_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|polar_small_0_25|double[1 3] [0 10 20]|div=ADR0232|diverges|double[1 6] [0 5 10 15 20 25]
+CHK|polar_small_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|polar_small_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|cb_560_420_0_1|double[1 11] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002 1]|exact
+CHK|cb_560_420_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|cb_560_420_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|cb_560_420_0_21|double[1 11] [0 2 4 6 8 10 12 14 16 18 20]|exact
+CHK|cb_560_420_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|cb_560_420_1_16|double[1 8] [2 4 6 8 10 12 14 16]|exact
+CHK|cb_560_420_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|cb_560_420_0_100|double[1 11] [0 10 20 30 40 50 60 70 80 90 100]|exact
+CHK|cb_560_420_south_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|cb_560_420_south_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|cb_560_420_south_0_21|double[1 11] [0 2 4 6 8 10 12 14 16 18 20]|exact
+CHK|cb_560_420_south_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|cb_280_210_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|cb_280_210_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|cb_280_210_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|cb_280_210_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|cb_280_210_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|cb_280_210_1_16|double[1 8] [2 4 6 8 10 12 14 16]|exact
+CHK|cb_280_210_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|cb_280_210_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|cb_280_210_south_0_7|double[1 4] [0 2 4 6]|exact
+CHK|cb_280_210_south_0_13|double[1 3] [0 5 10]|exact
+CHK|cb_280_210_south_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|cb_280_210_south_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|cb_900_700_0_1|double[1 11] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002 1]|exact
+CHK|cb_900_700_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|cb_900_700_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|cb_900_700_0_21|double[1 11] [0 2 4 6 8 10 12 14 16 18 20]|exact
+CHK|cb_900_700_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|cb_900_700_1_16|double[1 8] [2 4 6 8 10 12 14 16]|exact
+CHK|cb_900_700_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|cb_900_700_0_100|double[1 11] [0 10 20 30 40 50 60 70 80 90 100]|exact
+CHK|cb_900_700_south_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|cb_900_700_south_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|cb_900_700_south_0_21|double[1 11] [0 2 4 6 8 10 12 14 16 18 20]|exact
+CHK|cb_900_700_south_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact

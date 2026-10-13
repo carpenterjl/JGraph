@@ -436,10 +436,161 @@ public sealed class AxesModel : GraphObject
 
     /// <summary>
     /// True once a script has chosen the axes font size (MATLAB <c>FontSizeMode</c> 'manual').
-    /// Setting the mode back to automatic restores the built-in sizes.
+    /// Setting the mode back to automatic restores the built-in sizes. Either way the sizes are
+    /// fresh when this is written, so the automatic scaling starts over (open item 118).
     /// </summary>
     [Browsable(false)]
-    public bool FontSizeManual { get; set; }
+    public bool FontSizeManual
+    {
+        get => _fontSizeManual;
+        set
+        {
+            _fontSizeManual = value;
+            _autoFontScale = 1;
+        }
+    }
+
+    private bool _fontSizeManual;
+    private double _autoFontScale = 1;
+
+    /// <summary>
+    /// How far the automatic font sizes are scaled for the plot box's size (open item 118): 1 at full
+    /// size, 0.8 at the smallest. The styles hold the scaled sizes, so a script reads the size that is
+    /// drawn; this remembers the factor so a new box can scale them again from where they are.
+    /// </summary>
+    [Browsable(false)]
+    public double AutoFontScale => _autoFontScale;
+
+    /// <summary>
+    /// Scales the automatic font sizes to a plot box as R2025b does (open item 118, <see cref="AxesFontRule"/>)
+    /// and says whether any size changed. A size a script chose, a <c>uiaxes</c> and an axes in a
+    /// <c>uifigure</c> keep theirs; a title or subtitle style a script chose keeps its size too.
+    /// </summary>
+    public bool ApplyAutoFont(double plotWidthPx, double plotHeightPx)
+    {
+        bool fixedSize = _fontSizeManual || IsUiAxes || (Parent as FigureModel)?.IsUiFigure == true
+            || !(plotWidthPx > 0) || !(plotHeightPx > 0);
+        double target = fixedSize ? 1 : AxesFontRule.AutoScale(plotWidthPx, plotHeightPx);
+        if (System.Math.Abs(target - _autoFontScale) < 1e-9)
+        {
+            SyncFurnitureFonts();
+            return false;
+        }
+
+        double ratio = target / _autoFontScale;
+        static double Scaled(double size, double by) => System.Math.Round(size * by, 6);
+        foreach (AxisModel ruler in RulersForFont())
+        {
+            ruler.TickLabelStyle = ruler.TickLabelStyle.WithSize(Scaled(ruler.TickLabelStyle.FontSize, ratio));
+            ruler.LabelStyle = ruler.LabelStyle.WithSize(Scaled(ruler.LabelStyle.FontSize, ratio));
+        }
+
+        if (!TitleStyleManual)
+        {
+            TitleStyle = TitleStyle.WithSize(Scaled(TitleStyle.FontSize, ratio));
+            SubtitleStyle = SubtitleStyle.WithSize(Scaled(SubtitleStyle.FontSize, ratio));
+        }
+
+        _autoFontScale = target;
+        SyncFurnitureFonts();
+        return true;
+    }
+
+    /// <summary>
+    /// Forgets the automatic scaling: for sizes that have just been set afresh by a theme, so the next
+    /// frame scales them from their built-in values again.
+    /// </summary>
+    public void ResetAutoFont() => _autoFontScale = 1;
+
+    /// <summary>
+    /// Puts the automatic scaling back so the sizes are the built-in ones again: what a document
+    /// saves, so a figure loaded into a frame of its own is not shrunk twice (open item 118).
+    /// </summary>
+    public void UndoAutoFont()
+    {
+        if (System.Math.Abs(_autoFontScale - 1) < 1e-9)
+        {
+            return;
+        }
+
+        double ratio = 1 / _autoFontScale;
+        static double Scaled(double size, double by) => System.Math.Round(size * by, 6);
+        foreach (AxisModel ruler in RulersForFont())
+        {
+            ruler.TickLabelStyle = ruler.TickLabelStyle.WithSize(Scaled(ruler.TickLabelStyle.FontSize, ratio));
+            ruler.LabelStyle = ruler.LabelStyle.WithSize(Scaled(ruler.LabelStyle.FontSize, ratio));
+        }
+
+        if (!TitleStyleManual)
+        {
+            TitleStyle = TitleStyle.WithSize(Scaled(TitleStyle.FontSize, ratio));
+            SubtitleStyle = SubtitleStyle.WithSize(Scaled(SubtitleStyle.FontSize, ratio));
+        }
+
+        _autoFontScale = 1;
+        SyncFurnitureFonts();
+    }
+
+    /// <summary>
+    /// How large the legend's and the colorbar's text is against the axes font while a script has not
+    /// chosen their size: 1 for this library's look, 0.9 for the MATLAB dialect, where R2025b draws
+    /// both at nine tenths of the axes font and shrinks them with it (open item 118).
+    /// </summary>
+    [Browsable(false)]
+    public double FurnitureFontFactor { get; set; } = 1;
+
+    /// <summary>
+    /// Gives the legend and the colorbar the axes font times <see cref="FurnitureFontFactor"/>, unless
+    /// a script wrote their <c>FontSize</c>. Called whenever the axes font settles: after the
+    /// automatic scaling and after a written <c>FontSize</c>.
+    /// </summary>
+    public void SyncFurnitureFonts()
+    {
+        double size = System.Math.Round(PrimaryXAxis.TickLabelStyle.FontSize * FurnitureFontFactor, 6);
+        if (!Legend.FontSizeManual && Legend.TextStyle.FontSize != size)
+        {
+            Legend.TextStyle = Legend.TextStyle.WithSize(size);
+        }
+
+        if (!Colorbar.FontSizeManual && Colorbar.TickLabelStyle.FontSize != size)
+        {
+            Colorbar.TickLabelStyle = Colorbar.TickLabelStyle.WithSize(size);
+        }
+    }
+
+    /// <summary>
+    /// <see cref="ApplyAutoFont(double, double)"/> for the plot box the renderer last laid out or,
+    /// before any frame, an estimate of it: what a script reading the font before a draw sees.
+    /// </summary>
+    public bool ApplyAutoFont()
+    {
+        Rect2D plot = (LastLayout ?? AxesLayoutSnapshot.Estimate(this, ReferenceSize())).PlotAreaPx;
+        return ApplyAutoFont(plot.Width, plot.Height);
+    }
+
+    private IEnumerable<AxisModel> RulersForFont()
+    {
+        foreach (AxisModel ruler in XAxes)
+        {
+            yield return ruler;
+        }
+
+        foreach (AxisModel ruler in YAxes)
+        {
+            yield return ruler;
+        }
+
+        yield return ZAxis;
+        if (RAxis is { } r)
+        {
+            yield return r;
+        }
+
+        if (ThetaAxis is { } theta)
+        {
+            yield return theta;
+        }
+    }
 
     /// <summary>
     /// True once a script has chosen the plot box aspect (MATLAB <c>PlotBoxAspectRatioMode</c>
@@ -1665,6 +1816,7 @@ public sealed class AxesModel : GraphObject
     public TickBudget BudgetFor(AxisModel ruler)
     {
         ArgumentNullException.ThrowIfNull(ruler);
+        ApplyAutoFont(); // the font the budget is read at follows the box (open item 118)
         Rect2D plot = (LastLayout ?? AxesLayoutSnapshot.Estimate(this, ReferenceSize())).PlotAreaPx;
         return BudgetFor(ruler, plot.Width, plot.Height);
     }
@@ -1674,7 +1826,12 @@ public sealed class AxesModel : GraphObject
     {
         ArgumentNullException.ThrowIfNull(ruler);
         int target = ruler.TargetMajorTickCount;
-        if (ReferenceEquals(ruler, RAxis) || ReferenceEquals(ruler, ThetaAxis))
+        if (ReferenceEquals(ruler, RAxis))
+        {
+            return TickRule.PolarRadius(target); // the same at every size (open item 119)
+        }
+
+        if (ReferenceEquals(ruler, ThetaAxis))
         {
             return TickBudget.Of(target);
         }

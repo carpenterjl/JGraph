@@ -1324,15 +1324,23 @@ internal static partial class JgsGraphicsProperties
             // M58: a patch's vertices were unreachable, which fimplicit3 makes worth having — the
             // surface it draws is the whole answer, and a script can only check it by reading the
             // vertices back. Faces are answered the way a script wrote them, counting from one.
-            Put(table, "XData", entry => Row([.. PatchOf(entry).X]));
-            Put(table, "YData", entry => Row([.. PatchOf(entry).Y]));
-            Put(table, "ZData", entry => Row([.. PatchOf(entry).Z]));
-            Put(table, "Faces", entry => FaceTable(PatchOf(entry)));
+            // R2025b's shapes (open item 114, probe_114): one face is a column, several faces of one
+            // size a column per face, a flat patch's ZData is empty, and each is written as R2025b
+            // takes it: a vector makes one face over as many vertices as every coordinate has, a
+            // matrix a face per column, and a longer coordinate grows the vertex list.
+            Put(table, "XData", entry => PatchCoordinates(PatchOf(entry), 0),
+                (entry, value, line, col) => WritePatchCoordinates(entry, value, 0, line, col));
+            Put(table, "YData", entry => PatchCoordinates(PatchOf(entry), 1),
+                (entry, value, line, col) => WritePatchCoordinates(entry, value, 1, line, col));
+            Put(table, "ZData", entry => PatchCoordinates(PatchOf(entry), 2),
+                (entry, value, line, col) => WritePatchCoordinates(entry, value, 2, line, col));
+            Put(table, "Faces", entry => FaceTable(PatchOf(entry)), WritePatchFaces);
 
             // M59: 'Vertices' is the other half of the pair a script writes a patch with, and it was
             // missing while 'Faces' answered — so `patch('Faces', F, 'Vertices', V)` could be read
-            // back only halfway. It is the same n-by-3 table the verb was handed.
-            Put(table, "Vertices", entry => VertexTable(PatchOf(entry)));
+            // back only halfway. It is the table the verb was handed: n-by-2 for a flat patch, n-by-3
+            // for one in space (open item 114).
+            Put(table, "Vertices", entry => VertexTable(PatchOf(entry)), WritePatchVertices);
 
             // A number, or 'flat' or 'interp' to take the opacity from FaceVertexAlphaData, refused
             // as R2025b's patch refuses (open item 107).
@@ -2351,7 +2359,7 @@ internal static partial class JgsGraphicsProperties
             Put(table, "Parent", e => JgsHandleRegistry.For(((JgsTextLabel)e.Target).Owner is AxisModel ruler ? ruler.Parent! : ((JgsTextLabel)e.Target).Owner));
             Put(table, "String", e => ((JgsTextLabel)e.Target).ReadString(),
                 (e,v,l,c) => ((JgsTextLabel)e.Target).WriteString(v,l,c));
-            AddTextStyleBlock(table, e => ((JgsTextLabel)e.Target).Style, (e,v) => ((JgsTextLabel)e.Target).Style = v);
+            AddTextStyleBlock(table, e => ((JgsTextLabel)e.Target).CurrentStyle(), (e,v) => ((JgsTextLabel)e.Target).Style = v);
             Put(table, "Color", e => ColorRow(((JgsTextLabel)e.Target).Style.Color),
                 (e,v,l,c) => ((JgsTextLabel)e.Target).Style = ((JgsTextLabel)e.Target).Style.WithColor(JgsBuiltins.OptionColor(v,l,c,"Color")));
             Put(table, "Rotation", e => JgsValue.Number(((JgsTextLabel)e.Target).Rotation),
@@ -3345,19 +3353,233 @@ internal static partial class JgsGraphicsProperties
         return Grid(table);
     }
 
-    /// <summary>A patch's vertices as the n-by-3 table a script writes them in.</summary>
+    /// <summary>A patch's vertices as the table a script writes them in: n-by-2 flat, n-by-3 in space.</summary>
     private static JgsValue VertexTable(PatchPlot patch)
     {
         int count = patch.X.Count;
-        var table = new double[count, 3];
+        int columns = patch.IsFlat ? 2 : 3;
+        var table = new double[count, columns];
         for (int r = 0; r < count; r++)
         {
             table[r, 0] = patch.X[r];
             table[r, 1] = patch.Y[r];
-            table[r, 2] = patch.Z[r];
+            if (columns == 3)
+            {
+                table[r, 2] = patch.Z[r];
+            }
         }
 
         return Grid(table);
+    }
+
+    /// <summary>How many vertices every face has, or null when the faces differ or there are none.</summary>
+    private static int? UniformFaces(PatchPlot patch)
+    {
+        if (patch.Faces.Count == 0)
+        {
+            return null;
+        }
+
+        int size = patch.Faces[0].Length;
+        foreach (int[] face in patch.Faces)
+        {
+            if (face.Length != size)
+            {
+                return null;
+            }
+        }
+
+        return size;
+    }
+
+    /// <summary>
+    /// A patch's coordinates as R2025b answers them (open item 114): one face is a column, several
+    /// faces of one size a column per face (each face's own vertices, so a shared vertex appears in
+    /// every face that uses it), and a flat patch's ZData is empty.
+    /// </summary>
+    private static JgsValue PatchCoordinates(PatchPlot patch, int which)
+    {
+        if (which == 2 && patch.IsFlat)
+        {
+            return JgsMatrix.FromColumnMajor([], 0, 0);
+        }
+
+        IReadOnlyList<double> values = which switch { 0 => patch.X, 1 => patch.Y, _ => patch.Z };
+        if (patch.Faces.Count > 1 && UniformFaces(patch) is { } perFace)
+        {
+            var byFace = new double[perFace * patch.Faces.Count];
+            for (int f = 0; f < patch.Faces.Count; f++)
+            {
+                for (int v = 0; v < perFace; v++)
+                {
+                    byFace[v + (f * perFace)] = values[patch.Faces[f][v]];
+                }
+            }
+
+            return JgsMatrix.FromColumnMajor(byFace, perFace, patch.Faces.Count);
+        }
+
+        if (patch.Faces.Count == 1)
+        {
+            int[] face = patch.Faces[0];
+            var own = new double[face.Length];
+            for (int v = 0; v < face.Length; v++)
+            {
+                own[v] = values[face[v]];
+            }
+
+            return JgsMatrix.FromColumnMajor(own, own.Length, 1);
+        }
+
+        return JgsMatrix.FromColumnMajor([.. values], values.Count, values.Count == 0 ? 0 : 1);
+    }
+
+    /// <summary>
+    /// Writes one coordinate of a patch as R2025b takes it (open item 114, probe_114c): a matrix is a
+    /// face per column over consecutive vertices; a vector is one face over as many vertices as
+    /// every coordinate has, the vertex list grown to the longest with NaN where a coordinate is
+    /// short. A ZData write makes a flat patch one in space.
+    /// </summary>
+    private static void WritePatchCoordinates(JgsHandleEntry entry, JgsValue value, int which, int line, int col)
+    {
+        PatchPlot patch = PatchOf(entry);
+        string name = which switch { 0 => "XData", 1 => "YData", _ => "ZData" };
+        double[] written = JgsBuiltins.ToDoubles(name, value, line, col);
+        double[][] coordinates = [[.. patch.X], [.. patch.Y], [.. patch.Z]];
+        bool matrix = value.Type == JgsType.Array && value.Rows > 1 && value.Cols > 1;
+        int perFace = matrix ? value.Rows : written.Length;
+        int faceCount = matrix ? value.Cols : 1;
+
+        // The other coordinates are read by face too, so a face-by-face write lands on the same
+        // consecutive vertices every coordinate is rebuilt over.
+        var rebuilt = new double[3][];
+        for (int c = 0; c < 3; c++)
+        {
+            rebuilt[c] = c == which ? written : FlattenByFace(patch, coordinates[c]);
+        }
+
+        int longest = System.Math.Max(rebuilt[0].Length, System.Math.Max(rebuilt[1].Length, rebuilt[2].Length));
+        int shortest = System.Math.Min(rebuilt[0].Length, System.Math.Min(rebuilt[1].Length, which == 2 || !patch.IsFlat ? rebuilt[2].Length : int.MaxValue));
+        for (int c = 0; c < 3; c++)
+        {
+            if (rebuilt[c].Length < longest)
+            {
+                var padded = new double[longest];
+                System.Array.Fill(padded, c == 2 && patch.IsFlat && which != 2 ? 0 : double.NaN);
+                System.Array.Copy(rebuilt[c], padded, rebuilt[c].Length);
+                rebuilt[c] = padded;
+            }
+        }
+
+        int[][] faces;
+        if (matrix)
+        {
+            faces = new int[faceCount][];
+            for (int f = 0; f < faceCount; f++)
+            {
+                faces[f] = [.. Enumerable.Range(f * perFace, perFace)];
+            }
+        }
+        else
+        {
+            faces = [[.. Enumerable.Range(0, System.Math.Min(shortest, longest))]];
+        }
+
+        try
+        {
+            patch.SetData(rebuilt[0], rebuilt[1], rebuilt[2], faces);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
+
+        if (which == 2)
+        {
+            patch.IsFlat = false;
+        }
+    }
+
+    /// <summary>One coordinate laid out face by face, which is the order a write counts vertices in.</summary>
+    private static double[] FlattenByFace(PatchPlot patch, double[] values)
+    {
+        if (patch.Faces.Count == 0)
+        {
+            return values;
+        }
+
+        var flat = new List<double>();
+        foreach (int[] face in patch.Faces)
+        {
+            foreach (int vertex in face)
+            {
+                flat.Add(values[vertex]);
+            }
+        }
+
+        return [.. flat];
+    }
+
+    /// <summary>Writes a patch's face table, counting vertices from one as a script does (open item 114).</summary>
+    private static void WritePatchFaces(JgsHandleEntry entry, JgsValue value, int line, int col)
+    {
+        PatchPlot patch = PatchOf(entry);
+        double[][] rows = JgsMatrix.ToRows("Faces", value, line, col);
+        var faces = new int[rows.Length][];
+        for (int f = 0; f < rows.Length; f++)
+        {
+            var indices = new List<int>();
+            foreach (double raw in rows[f])
+            {
+                if (double.IsNaN(raw))
+                {
+                    continue;
+                }
+
+                int index = (int)System.Math.Round(raw) - 1;
+                if (index < 0 || index >= patch.X.Count)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"Faces: face {f + 1} refers to vertex {raw}, but there are only {patch.X.Count}.");
+                }
+
+                indices.Add(index);
+            }
+
+            faces[f] = [.. indices];
+        }
+
+        patch.SetData([.. patch.X], [.. patch.Y], [.. patch.Z], faces);
+    }
+
+    /// <summary>
+    /// Writes a patch's vertex table (open item 114): n-by-2 makes it flat, n-by-3 a patch in space;
+    /// the faces are kept while they still fit the list, and otherwise become one face over it.
+    /// </summary>
+    private static void WritePatchVertices(JgsHandleEntry entry, JgsValue value, int line, int col)
+    {
+        PatchPlot patch = PatchOf(entry);
+        double[][] rows = JgsMatrix.ToRows("Vertices", value, line, col);
+        int columns = rows.Length == 0 ? 2 : rows[0].Length;
+        if (columns is < 2 or > 3)
+        {
+            throw new JgsRuntimeException(line, col, $"Vertices has {columns} columns; it needs 2 (x, y) or 3 (x, y, z).");
+        }
+
+        var x = new double[rows.Length];
+        var y = new double[rows.Length];
+        var z = new double[rows.Length];
+        for (int r = 0; r < rows.Length; r++)
+        {
+            x[r] = rows[r][0];
+            y[r] = rows[r][1];
+            z[r] = columns == 3 ? rows[r][2] : 0;
+        }
+
+        bool facesFit = patch.Faces.Count > 0 && patch.Faces.All(face => face.All(v => v < rows.Length));
+        int[][] faces = facesFit ? [.. patch.Faces] : [[.. Enumerable.Range(0, rows.Length)]];
+        patch.SetData(x, y, z, faces);
+        patch.IsFlat = columns == 2;
     }
 
     /// <summary>

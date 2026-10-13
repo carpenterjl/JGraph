@@ -201,6 +201,8 @@ public sealed class Theme : ITheme
                 axes.Grid.MinorLineStyle = axes.Grid.MinorLineStyle.WithColor(minor);
             }
 
+            // The sizes are built-in again, so the automatic scaling starts over (open item 118).
+            axes.ResetAutoFont();
             foreach (AxisModel axis in axes.XAxes)
             {
                 ApplyAxis(axis);

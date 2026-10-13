@@ -53,6 +53,23 @@ internal sealed class JgsTextLabel : GraphObject
         }
         Text = rendered;
     }
+    /// <summary>
+    /// <see cref="Style"/> after the owning axes has applied its automatic font, so a title or label
+    /// read before a frame sees the size the frame will draw (open item 118).
+    /// </summary>
+    public TextStyle CurrentStyle()
+    {
+        AxesModel? axes = Owner switch
+        {
+            AxisModel r => r.Parent as AxesModel,
+            AxesModel a => a,
+            ColorbarModel b => b.Parent as AxesModel,
+            _ => null,
+        };
+        axes?.ApplyAutoFont();
+        return Style;
+    }
+
     public TextStyle Style
     {
         get => Owner switch { AxisModel r when IsSecondary => r.TickLabelStyle, AxisModel r => r.LabelStyle, ColorbarModel b => b.LabelStyle,

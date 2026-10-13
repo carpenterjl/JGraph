@@ -47,8 +47,11 @@ public readonly record struct TickBudget(int Target, int MaxLanding, int MaxFree
 /// data's own step when one is within 3% of the range.</item>
 /// </list>
 /// The caps are a table read off the probes rather than MATLAB's algorithm, which scores candidates
-/// against a length-and-font density target; below about 250 pixels the two part company now and
-/// then, and the divergence list records where.
+/// against a length-and-font density target; on rulers under about 200 pixels the two part company
+/// now and then (R2025b takes <c>[0 5]</c> for <c>[0 6]</c> on a 100-pixel ruler and <c>[0 2 4]</c>
+/// for <c>[0 5]</c> on a 150-pixel one), and the divergence list records where. Batch 19 refitted the
+/// table at a fixed font (probe_119): the batch 18 sweep had let R2025b's font shrink with the box
+/// (open item 118), which the first table absorbed.
 /// </summary>
 public static class TickRule
 {
@@ -61,7 +64,8 @@ public static class TickRule
     /// <summary>
     /// The tick font the caps were fitted against: R2025b's default axes font of 10 points, which a
     /// JGraph axes draws at its own built-in 11, so a figure at default fonts takes R2025b's
-    /// default-figure counts and a larger or smaller font scales the length by the same ratio.
+    /// default-figure counts and a larger or smaller font scales the length by the same ratio. The
+    /// table's lengths are R2025b pixels at its 10 points, which are JGraph pixels at 11.
     /// </summary>
     public const double ReferenceFontPoints = 11;
 
@@ -72,15 +76,23 @@ public static class TickRule
     /// </summary>
     private static readonly (double Below, int Landing, int Free)[] HorizontalCaps =
     [
-        (115, 4, 3), (190, 5, 5), (210, 6, 5), (275, 7, 6), (325, 8, 7), (375, 8, 8), (417, 10, 9), (467, 10, 10),
+        (105, 4, 3), (165, 5, 5), (205, 6, 5), (290, 7, 6), (330, 8, 7), (380, 8, 8), (420, 10, 9), (470, 10, 10),
         (double.PositiveInfinity, 12, 11),
     ];
 
     /// <summary>The caps for a ruler standing up the page, whose labels stack by their height.</summary>
     private static readonly (double Below, int Landing, int Free)[] VerticalCaps =
     [
-        (60, 3, 3), (110, 6, 5), (145, 8, 7), (230, 8, 8), (275, 10, 10), (double.PositiveInfinity, 12, 11),
+        (65, 4, 3), (85, 5, 5), (105, 6, 5), (125, 7, 6), (155, 8, 7), (205, 8, 8), (230, 10, 9), (252, 10, 10),
+        (double.PositiveInfinity, 12, 11),
     ];
+
+    /// <summary>
+    /// The caps of R2025b's polar r ruler, which answered the same at every size and font measured
+    /// (probe_119): <c>[0 1]</c> in fifths, <c>[0 6]</c> in twos, <c>[0 11]</c> in fives. Seven when
+    /// both limits sit on ticks keeps the tie from flipping a six-tick landing step to a coarser one.
+    /// </summary>
+    public static TickBudget PolarRadius(int target) => new(target, 7, 5);
 
     /// <summary>
     /// The most ticks a ruler of <paramref name="pixels"/> takes at <paramref name="fontPoints"/>,
@@ -134,9 +146,19 @@ public static class TickRule
     /// how many, and the first and last of them. A limit a hair short of a tick, as 0.7 is of 7 × 0.1,
     /// still counts the tick.
     /// </summary>
-    public static int CountWithin(double min, double max, double step, out double first, out double last)
+    public static int CountWithin(double min, double max, double step, out double first, out double last) =>
+        Count(min, max, step, step * 1e-9, out first, out last);
+
+    /// <summary>
+    /// The same count in R2025b's own double arithmetic, where 3 × 0.1 overshoots 0.3: the reading a
+    /// ruler falls back on when the tolerant one holds too many ticks, so <c>[0 0.3]</c> on a short
+    /// ruler is drawn in tenths with three ticks (probe_119).
+    /// </summary>
+    public static int CountExactly(double min, double max, double step, out double first, out double last) =>
+        Count(min, max, step, 0, out first, out last);
+
+    private static int Count(double min, double max, double step, double slack, out double first, out double last)
     {
-        double slack = step * 1e-9;
         double lowIndex = System.Math.Ceiling((min - slack) / step);
         double highIndex = System.Math.Floor((max + slack) / step);
         first = lowIndex * step;
@@ -161,6 +183,7 @@ public static class TickRule
         double bestStep = 0;
         bool bestAtLandingCap = false;
         double widest = 0;
+        double widestPair = 0; // the coarsest step with two ticks inside, for a ruler nothing fits
         for (int z = exponent - 2; z <= exponent + 1; z++)
         {
             foreach (int mantissa in (ReadOnlySpan<int>)[1, 2, 5])
@@ -173,11 +196,24 @@ public static class TickRule
                 }
 
                 widest = step;
+                if (count >= 2)
+                {
+                    widestPair = step;
+                }
+
                 bool lands = Lands(min, step) && Lands(max, step);
                 int cap = lands ? budget.MaxLanding : budget.MaxFree;
                 if (count > cap)
                 {
-                    continue;
+                    // Too many by the tolerant reading: the exact one may lose the last tick to
+                    // floating point and fit after all, under the free cap (probe_119).
+                    count = CountExactly(min, max, step, out first, out last);
+                    if (count == 0 || count > budget.MaxFree)
+                    {
+                        continue;
+                    }
+
+                    lands = false;
                 }
 
                 // Equal coverage goes to the finer step, which was seen first, unless that step sits
@@ -195,8 +231,9 @@ public static class TickRule
             }
         }
 
-        // Nothing fitted under the cap: the coarsest step that still puts one tick inside.
-        return bestStep > 0 ? bestStep : widest;
+        // Nothing fitted under the cap: the coarsest step that still puts two ticks inside, as
+        // R2025b draws [0.123 0.987] on a 50-pixel ruler in fifths (probe_119), else one tick.
+        return bestStep > 0 ? bestStep : widestPair > 0 ? widestPair : widest;
     }
 
     /// <summary>

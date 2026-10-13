@@ -626,6 +626,7 @@ internal static partial class JgsBuiltins
         : value.IsCharMatrix ? "char"
         // A time is asked about next, and for exactly the same reason: it is an array of milliseconds
         // underneath, so every question below would answer 'double' for it (M64).
+        : value.IsCategorical ? "categorical" // the codes underneath are storage (open item 115)
         : value.IsTime ? TimeClassName(value)
         // A mask has to be asked about before the numeric class is, because logical is not one of
         // them: masks are structural (a Bool element, or a packed buffer of them), and adding a
@@ -662,6 +663,7 @@ internal static partial class JgsBuiltins
         // And a time is excluded for the same reason (M64): isnumeric(datetime) is false in MATLAB,
         // because the milliseconds underneath are storage rather than the value's meaning.
         && !value.IsTime
+        && !value.IsCategorical
         && value.Type is JgsType.Number or JgsType.Complex or JgsType.Bool or JgsType.Array or JgsType.Sparse;
 
     /// <summary>
@@ -735,6 +737,11 @@ internal static partial class JgsBuiltins
         if (value.Type == JgsType.Struct)
         {
             return value.Rows == 1 || value.Cols == 1;
+        }
+
+        if (value.Type == JgsType.Object)
+        {
+            return !value.IsObjectArray || (value.ArrayLength > 0 && (value.Rows == 1 || value.Cols == 1)); // an array of objects by its shape (open item 116)
         }
 
         if (value.Type is not (JgsType.Array or JgsType.Cell))

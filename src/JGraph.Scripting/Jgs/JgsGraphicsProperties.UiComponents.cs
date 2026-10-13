@@ -1689,6 +1689,11 @@ internal static partial class JgsGraphicsProperties
             entry => RowCell(Items(entry).Items),
             (entry, value, line, col) =>
             {
+                if (value.IsCategorical)
+                {
+                    value = JgsCategorical.ToCellstr(value); // a categorical's names (open item 115)
+                }
+
                 WarnDatetimeAgainstText(value, Items(entry).Items.Count > 0);
                 if (value.Type == JgsType.Cell && value.Rows > 1 && value.Cols > 1 && !isSwitch && !isDial)
                 {

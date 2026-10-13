@@ -196,7 +196,7 @@ public class MatlabM79TablePiePropertyTests : IDisposable
 
         Succeeded(result);
         Assert.Equal(1, Number(result, "faces"));
-        Assert.Equal(3, Number(result, "vertices"));
+        Assert.Equal(2, Number(result, "vertices")); // a flat wedge's vertices are n-by-2 in R2025b (open item 114)
         Assert.Equal(20, Number(result, "coordinates"));
         Assert.Equal(0, Number(result, "offPlane"));
         Assert.Equal(3, Number(result, "slices"));

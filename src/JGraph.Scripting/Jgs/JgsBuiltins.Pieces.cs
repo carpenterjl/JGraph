@@ -430,6 +430,7 @@ internal static partial class JgsBuiltins
                 }
 
                 PatchPlot patch = JG.Patch(sx, sy, sz, [face]);
+                patch.IsFlat = !raised; // a pie's wedge lies in the plane; a pie3's stands (open item 114)
                 JG.Hold(true);
                 var colour = new double[sx.Length];
                 Array.Fill(colour, index + 1);
@@ -940,6 +941,7 @@ internal static partial class JgsBuiltins
                         throw new JgsRuntimeException(line, col, ex.Message);
                     }
 
+                    patch.IsFlat = !threeD; // fill's polygons lie in the plane (open item 114)
                     JG.Hold(true);
                     lifted |= pz.Any(z => double.IsFinite(z) && z != 0);
                     ColourPolygon(verb, patch, colour, p, polygons, line, col);

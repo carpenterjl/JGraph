@@ -1,0 +1,614 @@
+CHK|a_class|char[1 6]'Val116'|exact
+CHK|a_size|double[1 2] [1 3]|exact
+CHK|cs_bracket|double[1 3] [1 2 3]|exact
+CHK|cs_brace|cell[1 3]{double[1 1] 1;double[1 1] 2;double[1 1] 3}|exact
+CHK|cs_brace_name|cell[1 3]{char[1 1]'x';char[1 1]'x';char[1 1]'x'}|exact
+CHK|cs_bracket_name|char[1 3]'xxx'|exact
+CHK|cs_vertcat|double[3 1] [1;2;3]|exact
+CHK|cs_numel|double[1 1] 1|exact
+CHK|cs_max|double[1 1] 3|exact
+CHK|cs_plus_args|double[1 1] 3|exact
+CHK|cs_single_out|double[1 1] 1|exact
+CHK|cs_two_out|double[1 2] [1 2]|exact
+CHK|cs_three_out|double[1 3] [1 2 3]|exact
+CHK|cs_four_out|MATLAB:needMoreRhsOutputs|exact
+CHK|cs_four_out_msg|Insufficient number of outputs from right hand side of equal sign to satisfy assignment.|exact
+CHK|cs_deal|double[1 3] [7 7 7]|exact
+CHK|cs_deal_each|double[1 3] [4 5 6]|exact
+CHK|cs_deal_wrong_count|MATLAB:deal:narginNargoutMismatch|exact
+CHK|cs_deal_wrong_count_msg|The number of outputs should match the number of inputs.|exact
+CHK|cs_assign_list|double[1 3] [8 9 3]|exact
+CHK|cs_sub|double[1 2] [2 3]|exact
+CHK|cs_sub_logical|double[1 2] [1 3]|exact
+CHK|cs_empty|double[0 0]|exact
+CHK|cs_empty_size|double[1 2] [0 0]|exact
+CHK|cs_empty_brace|double[1 2] [0 0]|exact
+CHK|cs_nested|double[1 3] [1 2 3]|exact
+CHK|cs_in_cell|cell[1 4]{double[1 1] 1;double[1 1] 2;double[1 1] 3;double[1 1] 9}|exact
+CHK|cs_dot_on_scalar|double[1 1] 1|exact
+CHK|dot_on_array_assign|MATLAB:index:expected_one_output_for_assignment|exact
+CHK|dot_on_array_assign_msg|Assigning to 3 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|dot_colon_assign|MATLAB:index:expected_one_output_for_assignment|exact
+CHK|dot_colon_assign_msg|Assigning to 3 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|dot_colon_deal|double[1 3] [1 1 1]|exact
+CHK|cs_index_into|double[1 1] 2|exact
+CHK|cs_arr_index|double[1 1] 2|exact
+CHK|cs_arr_index_write|char[1 1]'Z'|exact
+CHK|cs_arr_field_grow|double[1 5] [120 0 0 0 90]|exact
+CHK|cs_struct_like_name|char[1 3]'xxx'|exact
+CHK|a_p_end|double[1 1] 3|exact
+CHK|a_p_deref_end|char[1 1]'x'|exact
+CHK|cs_method_cs_arg|double[1 1] 6|exact
+CHK|cs_in_struct_field|double[1 3] [1 2 3]|exact
+CHK|cs_from_cell_holder|double[1 3] [1 2 3]|exact
+CHK|cs_isempty|logical[1 1] 0|exact
+CHK|cs_func_handle|double[1 1] 3|exact
+CHK|cs_cell_write|cell[1 3]{double[1 1] 1;double[1 1] 2;double[1 1] 3}|exact
+CHK|cs_as_args_to_zeros|double[1 2] [1 2]|exact
+CHK|cs_in_bracket_mixed|double[1 4] [1 2 3 10]|exact
+CHK|cs_in_bracket_mixed_rows|double[2 3] [1 2 3;10 20 30]|exact
+CHK|cs_dot_chain|char[1 3]'xxx'|exact
+CHK|cs_dot_dot|double[1 1] 5|exact
+CHK|cs_dot_end|char[1 47]'MATLAB:index:expected_one_output_from_reference'|div=ADR0232|diverges|char[1 59]'MATLAB:index:expected_one_output_from_intermediate_indexing'
+CHK|b_size|double[1 2] [2 2]|exact
+CHK|b_12|double[1 1] 2|exact
+CHK|b_21|double[1 1] 3|exact
+CHK|b_row|double[1 2] [1 2]|exact
+CHK|b_col|double[1 2] [2 1]|exact
+CHK|b_lin|double[1 4] [1 3 2 1]|exact
+CHK|b_end|double[1 1] 1|exact
+CHK|b_end2|double[1 1] 1|exact
+CHK|b_assign_2d|double[1 4] [1 3 9 1]|exact
+CHK|b_assign_grow_2d|double[1 2] [3 3]|exact
+CHK|b_assign_grow_2d_vals|double[1 9] [1 3 1 2 1 1 1 1 9]|exact
+CHK|b_delete_row|double[1 2] [1 2]|exact
+CHK|b_delete_lin|double[1 2] [1 3]|exact
+CHK|b_delete_col|double[1 2] [2 1]|exact
+CHK|b_delete_all|char[1 12]'Val116 [0 0]'|exact
+CHK|b_reshape|double[1 2] [1 4]|exact
+CHK|b_reshape_vals|double[1 4] [1 3 2 1]|exact
+CHK|b_transpose_vals|double[1 4] [1 2 3 1]|exact
+CHK|b_transpose_size|double[1 2] [2 2]|exact
+CHK|b_ctranspose|double[1 2] [2 2]|exact
+CHK|b_cat_dim1|double[1 2] [4 2]|exact
+CHK|b_horzcat|double[1 2] [1 6]|exact
+CHK|b_vertcat|double[1 2] [2 3]|exact
+CHK|b_vertcat_mismatch|MATLAB:catenate:dimensionMismatch|exact
+CHK|b_vertcat_mismatch_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|b_cat3|double[1 3] [1 3 2]|div=ADR0232|diverges|double[1 2] [1 6]
+CHK|b_repmat|double[1 2] [2 6]|exact
+CHK|b_repmat_vals|double[1 6] [1 2 3 1 2 3]|exact
+CHK|b_fliplr|double[1 3] [3 2 1]|exact
+CHK|b_flipud|double[1 4] [3 1 1 2]|exact
+CHK|b_circshift|double[1 3] [3 1 2]|exact
+CHK|b_rot90|double[1 4] [2 1 1 3]|exact
+CHK|b_colon|double[1 2] [4 1]|exact
+CHK|b_isrow|logical[1 1] 1|exact
+CHK|b_iscolumn|logical[1 1] 1|exact
+CHK|b_isvector|logical[1 1] 0|exact
+CHK|b_isscalar|logical[1 1] 1|exact
+CHK|b_isempty|logical[1 1] 0|exact
+CHK|b_numel|double[1 1] 4|exact
+CHK|b_length|double[1 1] 2|exact
+CHK|b_ndims|double[1 1] 2|exact
+CHK|b_size_dim|double[1 1] 3|exact
+CHK|b_numel_idx|double[1 1] 1|exact
+CHK|b_squeeze|double[1 2] [2 2]|exact
+CHK|b_permute|double[1 2] [2 2]|exact
+CHK|b_3d|double[1 3] [2 2 2]|div=ADR0232|diverges|double[1 2] [2 4]
+CHK|b_3d_index|double[1 1] 2|div=ADR0232|diverges|char[1 19]'MATLAB:badsubscript'
+CHK|b_3d_cs|double[1 4] [1 3 2 1]|div=ADR0232|diverges|char[1 19]'MATLAB:badsubscript'
+CHK|b_index_2d_range|double[1 2] [2 1]|exact
+CHK|b_index_logical_2d|double[1 2] [1 1]|exact
+CHK|b_index_out|MATLAB:badsubscript|exact
+CHK|b_index_out_msg|Index in position 1 exceeds array bounds. Index must not exceed 2.|exact
+CHK|b_index_zero|MATLAB:badsubscript|exact
+CHK|b_index_zero_msg|Array indices must be positive integers or logical values.|exact
+CHK|b_index_frac|MATLAB:badsubscript|exact
+CHK|b_index_frac_msg|Array indices must be positive integers or logical values.|exact
+CHK|b_index_colon_colon|double[1 2] [2 2]|exact
+CHK|b_index_end_arith|double[1 1] 2|exact
+CHK|b_index_matrix_idx|double[1 2] [2 2]|exact
+CHK|b_index_1d_on_2d|double[1 3] [1 3 2]|exact
+CHK|b_linear_assign_2d|double[1 4] [1 3 7 1]|exact
+CHK|gap_fill|double[1 5] [1 2 3 1 5]|exact
+CHK|gap_fill_class|char[1 6]'Val116'|exact
+CHK|gap_fill_sub|char[1 21]'Sub116 Sub116 [7 7 7]'|exact
+CHK|gap_fill_ctor_called|double[1 1] 3|exact
+CHK|gap_fill_ctor_called_2d|double[1 1] 3|exact
+CHK|gap_fill_2d|double[1 5] [2 3 1 3 1]|exact
+CHK|gap_fill_empty_start|char[1 14]'Val116 [1 1 3]'|exact
+CHK|gap_fill_noargs_ctor|char[1 13]'MATLAB:minrhs'|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|gap_fill_dot|double[1 5] [1 2 3 1 9]|exact
+CHK|gap_fill_dot_vals|cell[1 5]{char[1 1]'x';char[1 1]'x';char[1 1]'x';char[1 1]'x';char[1 1]'q'}|exact
+CHK|gap_fill_default_prop|char[1 3]'1 x'|exact
+CHK|gap_fill_mixed|char[1 20]'Val116 Val116 Val116'|exact
+CHK|gap_fill_from_empty_static|char[1 11]'[1 2] [1 2]'|exact
+CHK|gap_fill_from_zero_by_zero|char[1 15]'[2 2] [1 1 1 2]'|exact
+CHK|isequal_same|logical[1 1] 1|exact
+CHK|isequal_diff|logical[1 1] 0|exact
+CHK|isequal_shape|logical[1 1] 0|exact
+CHK|isequal_scalar|logical[1 1] 1|exact
+CHK|isequal_class|logical[1 1] 0|exact
+CHK|isequal_len|logical[1 1] 0|exact
+CHK|isequal_struct|logical[1 1] 0|exact
+CHK|isequal_nested|logical[1 1] 1|exact
+CHK|isequal_nested_obj|logical[1 1] 1|exact
+CHK|isequaln|logical[1 1] 1|exact
+CHK|isequal_three|logical[1 1] 1|exact
+CHK|eq_op|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|eq_op_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|eq_op_arr|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|eq_op_arr_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|ne_op|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|ne_op_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|lt_op|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|lt_op_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|plus_op|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|plus_op_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uminus_op|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uminus_op_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|not_op|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|not_op_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|and_op|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|and_op_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|colon_op|MATLAB:colon:inputsMustBeNumericCharLogical|exact
+CHK|colon_op_msg|Inputs must be numeric, char, or logical.|exact
+CHK|transpose_scalar|double[1 2] [1 1]|exact
+CHK|eq_struct|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|eq_struct_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|eq_num|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|eq_num_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|num_eq_obj|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|num_eq_obj_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|plus_num_obj|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|plus_num_obj_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|mtimes|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|mtimes_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|abs_obj|char[1 38]'MATLAB:math:mustBeNumericCharOrLogical'|div=ADR0232|diverges|char[0 0]''
+CHK|double_obj|char[1 24]'MATLAB:invalidConversion'|div=ADR0232|diverges|char[0 0]''
+CHK|logical_obj|char[1 24]'MATLAB:invalidConversion'|div=ADR0232|diverges|char[0 0]''
+CHK|cell_obj|char[1 24]'MATLAB:invalidConversion'|div=ADR0232|diverges|char[0 0]''
+CHK|struct_obj|struct[1 1]{(p=double[1 1] 1,name=char[1 1]'x')} WARN MATLAB:structOnObject|exact
+CHK|num2str_obj|char[1 30]'MATLAB:num2str:nonNumericInput'|div=ADR0232|diverges|char[0 0]''
+CHK|mat2str_obj|char[1 27]'MATLAB:mat2str:NumericInput'|div=ADR0232|diverges|char[0 0]''
+CHK|sprintf_obj|char[1 24]'MATLAB:invalidConversion'|div=ADR0232|diverges|char[0 0]''
+CHK|sum_obj|char[1 21]'MATLAB:sum:wrongInput'|div=ADR0232|diverges|char[0 0]''
+CHK|max_obj|char[1 21]'MATLAB:max:wrongInput'|div=ADR0232|diverges|char[0 0]''
+CHK|ismember_obj|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|ismember_obj_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|any_obj|char[1 21]'MATLAB:any:wrongInput'|div=ADR0232|diverges|char[0 0]''
+CHK|nnz_obj|char[1 38]'MATLAB:math:mustBeNumericCharOrLogical'|div=ADR0232|diverges|char[0 0]''
+CHK|cumsum_obj|char[1 24]'MATLAB:cumsum:wrongInput'|div=ADR0232|diverges|char[0 0]''
+CHK|mean_obj|char[1 21]'MATLAB:sum:wrongInput'|div=ADR0232|diverges|char[0 0]''
+CHK|numel_obj_args|double[1 1] 1|exact
+CHK|length_obj|double[1 1] 3|exact
+CHK|if_obj|MATLAB:invalidConversion|exact
+CHK|if_obj_msg|Conversion to logical from Val116 is not possible.|exact
+CHK|while_obj|MATLAB:invalidConversion|exact
+CHK|while_obj_msg|Conversion to logical from Val116 is not possible.|exact
+CHK|obj_in_switch|MATLAB:badSwitchExpressionNoEq|exact
+CHK|obj_in_switch_msg|SWITCH expressions cannot be of class Val116 because '==' (eq) is not defined for this class.|exact
+CHK|arrayfun_p|double[1 3] [1 2 3]|exact
+CHK|arrayfun_obj|<Val116[1 3]>|exact
+CHK|arrayfun_obj_class|char[1 6]'Val116'|exact
+CHK|arrayfun_nonuni|cell[1 3]{char[1 1]'x';char[1 1]'x';char[1 1]'x'}|exact
+CHK|arrayfun_2d|double[2 2] [1 2;3 1]|exact
+CHK|arrayfun_2d_size|double[1 2] [2 2]|exact
+CHK|arrayfun_newobj|<Val116[1 3]>|exact
+CHK|arrayfun_newobj_class|char[1 6]'Val116'|exact
+CHK|arrayfun_newobj_size|double[1 2] [1 3]|exact
+CHK|arrayfun_newobj_cs|double[1 3] [1 2 3]|exact
+CHK|arrayfun_obj_two_out|double[1 6] [1 2 3 2 4 6]|exact
+CHK|arrayfun_obj_err|MATLAB:arrayfun:NotAScalarOutput|exact
+CHK|arrayfun_obj_err_msg|Non-scalar in Uniform output, at index 1, output 1. Set 'UniformOutput' to false.|exact
+CHK|arrayfun_empty|double[1 2] [0 0]|exact
+CHK|arrayfun_empty_obj|char[1 6]'double'|exact
+CHK|arrayfun_obj_handle|char[1 6]'Hnd116'|exact
+CHK|arrayfun_obj_handle_size|double[1 2] [1 2]|exact
+CHK|arrayfun_mixed_class|MATLAB:arrayfun:MismatchInOutputTypes|exact
+CHK|arrayfun_mixed_class_msg|Mismatch in type of outputs, at index 2, output 1 (Val116 versus Sub116). Set 'UniformOutput' to false.|exact
+CHK|cellfun_on_arr|double[1 2] [1 2]|exact
+CHK|cellfun_class|cell[1 2]{char[1 6]'Val116';char[1 6]'Val116'}|exact
+CHK|cellfun_obj_out|char[1 6]'Val116'|exact
+CHK|cellfun_obj_out_size|double[1 2] [1 2]|exact
+CHK|num2cell|char[1 4]'cell'|exact
+CHK|num2cell_size|double[1 2] [1 3]|exact
+CHK|num2cell_el|char[1 6]'Val116'|exact
+CHK|num2cell_2d|double[1 2] [2 2]|exact
+CHK|cell2mat_obj|<Val116[1 2]>|exact
+CHK|cat_cell_of_obj|char[1 4]'cell'|exact
+CHK|horzcat_cells|char[1 4]'cell'|div=ADR0232|diverges|char[0 0]''
+CHK|cellfun_isobject|logical[1 2] [1 0]|exact
+CHK|structfun_obj|double[2 1] [1;2]|exact
+CHK|mat_of_obj_in_cell|double[1 2] [2 3]|div=ADR0232|diverges|char[1 32]'MATLAB:cell2mat:NotAScalarOutput'
+CHK|properties_arr|cell[2 1]{char[1 1]'p';char[1 4]'name'}|exact
+CHK|methods_arr|cell[3 1]{char[1 6]'Val116';char[1 4]'bump';char[1 5]'total'}|exact
+CHK|fieldnames_arr|cell[2 1]{char[1 1]'p';char[1 4]'name'}|exact
+CHK|isprop_arr|logical[1 3] [1 1 1]|exact
+CHK|isprop_arr_size|double[1 2] [1 3]|exact
+CHK|ismethod_arr|logical[1 1] 1|exact
+CHK|struct_arr|struct[1 1]{(p=double[1 1] 1,name=char[1 1]'x')} WARN MATLAB:structOnObject|exact
+CHK|struct_arr_size|double[1 2] [1 1] WARN MATLAB:structOnObject|exact
+CHK|struct_arr_vals|double[1 1] 1 WARN MATLAB:structOnObject|exact
+CHK|isa_arr|logical[1 1] 1|exact
+CHK|isobject_arr|logical[1 1] 1|exact
+CHK|isstruct_arr|logical[1 1] 0|exact
+CHK|class_empty|char[1 6]'Val116'|exact
+CHK|empty_size|double[1 2] [0 0]|exact
+CHK|empty_static|double[1 2] [0 0]|exact
+CHK|empty_static_03|double[1 2] [0 3]|exact
+CHK|empty_static_class|char[1 6]'Val116'|exact
+CHK|empty_static_bad|MATLAB:class:emptyMustBeZero|exact
+CHK|empty_static_bad_msg|At least one dimension must be zero.|exact
+CHK|isempty_static|logical[1 1] 1|exact
+CHK|empty_cs|double[1 2] [0 0]|exact
+CHK|empty_cat|double[1 2] [1 1]|exact
+CHK|empty_cat_class|char[1 6]'Val116'|exact
+CHK|metaclass_arr|char[1 21]'matlab.metadata.Class'|div=ADR0232|diverges|char[1 10]'meta.class'
+CHK|isfield_obj|logical[1 1] 0|exact
+CHK|getfield_obj|double[1 1] 1|exact
+CHK|setfield_obj|double[1 1] 5|div=ADR0232|diverges|char[0 0]''
+CHK|rmfield_obj|char[1 33]'MATLAB:rmfield:Arg1NotStructArray'|div=ADR0232|diverges|char[0 0]''
+CHK|orderfields_obj|char[1 32]'MATLAB:orderfields:arg1NotStruct'|div=ADR0232|diverges|char[0 0]''
+CHK|isequal_prop_list|logical[1 1] 1|exact
+CHK|method_on_arr|double[1 3] [2 3 4]|exact
+CHK|method_on_arr_dot|double[1 3] [2 3 4]|exact
+CHK|method_scalar|double[1 1] 2|exact
+CHK|method_on_arr_dot_noparen|double[1 3] [2 3 4]|exact
+CHK|method_total|double[1 1] 6|exact
+CHK|method_total_dot|double[1 1] 6|div=ADR0232|diverges|function_handle total
+CHK|method_on_2d|double[1 2] [2 2]|exact
+CHK|method_on_empty|double[1 2] [0 0]|exact
+CHK|method_on_arr_elem|double[1 1] 3|exact
+CHK|for_row|double[1 3] [1 1 1]|exact
+CHK|for_2d|double[1 2] [2 2]|exact
+CHK|for_col|double[1 1] 3|exact
+CHK|for_empty|double[0 0]|exact
+CHK|for_3d|double[1 6] [1 1 1 1 1 1]|exact
+CHK|for_row_vals|double[1 3] [1 2 3]|exact
+CHK|for_cell_of_obj|double[1 2] [1 1]|exact
+CHK|while_numel|double[1 1] 2|exact
+CHK|sub_array|char[1 6]'Sub116'|exact
+CHK|sub_cs|double[1 2] [7 7]|exact
+CHK|mixed_sub_val|char[1 27]'MATLAB:mat2str:NumericInput'|div=ADR0232|diverges|char[0 0]''
+CHK|mixed_val_sub|char[1 27]'MATLAB:mat2str:NumericInput'|div=ADR0232|diverges|char[0 0]''
+CHK|mixed_sub_val_cs|MATLAB:noSuchMethodOrField|exact
+CHK|mixed_sub_val_cs_msg|Unrecognized method, property, or field 'q' for class 'Val116'.|exact
+CHK|assign_sub_into_val|char[1 13]'Val116 Val116'|exact
+CHK|assign_val_into_sub|char[1 13]'Sub116 Sub116'|exact
+CHK|assign_wrong_class|char[1 6]'Val116'|exact
+CHK|assign_struct|char[1 6]'Val116'|exact
+CHK|assign_num|char[1 6]'Val116'|exact
+CHK|assign_cell|char[1 6]'Val116'|exact
+CHK|assign_empty_cell|double[1 2] [1 3]|exact
+CHK|assign_empty_str|double[1 2] [1 2]|exact
+CHK|assign_scalar_to_range|double[1 3] [7 7 3]|exact
+CHK|assign_arr_to_range|double[1 3] [7 8 3]|exact
+CHK|assign_arr_to_range_mismatch|char[1 42]'MATLAB:matrix:singleSubscriptNumelMismatch'|div=ADR0232|diverges|char[1 30]'MATLAB:subsassignnumelmismatch'
+CHK|a_logical_mask_write|double[1 3] [0 2 0]|exact
+CHK|assign_colon|double[1 3] [0 0 0]|exact
+CHK|assign_colon_arr|double[1 3] [7 8 9]|exact
+CHK|assign_end_plus|double[1 4] [1 2 3 4]|exact
+CHK|assign_whole_from_scalar|char[1 12]'Val116 [1 1]'|exact
+CHK|assign_zero_index|MATLAB:badsubscript|exact
+CHK|assign_zero_index_msg|Array indices must be positive integers or logical values.|exact
+CHK|assign_two_idx_on_row|double[1 2] [1 3]|exact
+CHK|assign_two_idx_on_row_vals|double[1 3] [1 9 3]|exact
+CHK|assign_elem_prop_on_shared|double[1 2] [1 99]|exact
+CHK|nested_obj|double[1 2] [2 3]|exact
+CHK|nested_obj_write|double[1 2] [2 9]|div=ADR0232|diverges|char[0 0]''
+CHK|deal_struct_like|cell[1 2]{char[1 1]'u';char[1 1]'v'}|exact
+CHK|deal_name|cell[1 3]{char[1 1]'z';char[1 1]'z';char[1 1]'z'}|exact
+CHK|assign_cs_from_cs|double[1 3] [1 2 3]|exact
+CHK|assign_cs_from_vector|MATLAB:needMoreRhsOutputs|exact
+CHK|assign_cs_from_vector_msg|Insufficient number of outputs from right hand side of equal sign to satisfy assignment.|exact
+CHK|assign_cs_from_cell|double[1 3] [7 8 9]|exact
+CHK|assign_cs_logical|double[1 3] [0 2 0]|exact
+CHK|assign_cs_end|double[1 3] [1 2 0]|exact
+CHK|assign_cs_one_elem|double[1 3] [1 0 3]|exact
+CHK|assign_cs_grow|double[1 5] [1 2 3 0 0]|exact
+CHK|assign_cs_2d|double[1 4] [0 3 0 1]|exact
+CHK|assign_cs_nested_field|cell[1 3]{char[1 1]'r';char[1 1]'r';char[1 2]'qq'}|exact
+CHK|assign_cs_method_result|double[1 3] [1 1 1]|exact
+CHK|struct_to_obj_array|char[1 6]'Val116'|exact
+CHK|obj_array_props_order|cell[3 1]{char[1 1]'q';char[1 1]'p';char[1 4]'name'}|exact
+CHK|obj_array_in_struct_cs|<Val116[1 2]>|exact
+CHK|obj_cs_as_struct_arg|struct[1 3]{(f=double[1 1] 1)(f=double[1 1] 2)(f=double[1 1] 3)}|exact
+CHK|obj_cs_as_struct_arg_size|double[1 2] [1 3]|exact
+CHK|obj_cs_cellfun|double[1 3] [2 4 6]|exact
+CHK|obj_cs_sum_brackets|double[1 1] 6|exact
+CHK|obj_cs_in_sprintf|char[1 6]'1,2,3,'|exact
+CHK|obj_cs_in_fprintf_names|char[1 6]'x,x,x,'|exact
+CHK|obj_cs_in_max_two_args|double[1 1] 2|exact
+CHK|obj_cs_in_horzcat_fn|double[1 3] [1 2 3]|exact
+CHK|obj_cs_in_cat_fn|double[3 1] [1;2;3]|exact
+CHK|obj_cs_strjoin|char[1 5]'x-x-x'|exact
+CHK|obj_cs_in_cellarray_literal_2d|double[1 2] [2 3]|exact
+CHK|obj_cs_in_index|double[1 1] 11|div=ADR0232|diverges|double[1 1] 10
+CHK|obj_cs_in_anon|double[1 1] 3|exact
+CHK|obj_cs_sub_dot_index|MATLAB:index:expected_one_output_from_intermediate_indexing|exact
+CHK|obj_cs_sub_dot_index_msg|Intermediate dot '.' indexing produced a comma-separated list with 2 values, but it must produce a single value when followed by subsequent indexing operations.|exact
+CHK|obj_cs_numel_dot|double[1 1] 1|exact
+CHK|h_class|char[1 6]'Hnd116'|exact
+CHK|h_size|double[1 2] [1 3]|exact
+CHK|h_cs|double[1 3] [1 2 3]|exact
+CHK|h_cs_brace|cell[1 3]{char[1 1]'x';char[1 1]'x';char[1 1]'x'}|exact
+CHK|h_write_through|double[1 1] 20|exact
+CHK|h_elem_write_shares|double[1 1] 30|exact
+CHK|h_copy_write_through|double[1 2] [40 40]|exact
+CHK|h_eq|logical[1 1] 1|exact
+CHK|h_eq_arr|logical[1 3] [1 0 0]|exact
+CHK|h_eq_other|logical[1 1] 0|exact
+CHK|h_ne|logical[1 3] [0 1 1]|exact
+CHK|h_isequal|logical[1 1] 0|exact
+CHK|h_isequal_same|logical[1 1] 1|exact
+CHK|h_isequal_arr|logical[1 1] 1|exact
+CHK|h_isequal_arr_other|logical[1 1] 0|exact
+CHK|h_eq_arr_arr|logical[1 3] [1 1 1]|exact
+CHK|h_eq_mismatch|MATLAB:dimagree|exact
+CHK|h_eq_mismatch_msg|Matrix dimensions must agree.|exact
+CHK|h_lt|logical[1 1] 1|exact
+CHK|h_eq_num|logical[1 1] 0|exact
+CHK|h_eq_val|logical[1 1] 0|exact
+CHK|h_2d|double[1 2] [2 2]|exact
+CHK|h_2d_same|double[1 1] 55|exact
+CHK|h_assign_grow|char[1 11]'Hnd116 true'|exact
+CHK|h_assign_grow_valid|double[1 1] 1|exact
+CHK|h_delete_elem|double[1 2] [55 40]|exact
+CHK|h_delete_elem_valid|logical[1 1] 1|exact
+CHK|h_isvalid|logical[1 3] [1 1 1]|exact
+CHK|h_delete_obj|logical[1 2] [0 1]|exact
+CHK|h_delete_obj_cs|MATLAB:class:InvalidHandle|exact
+CHK|h_delete_obj_cs_msg|Invalid or deleted object.|exact
+CHK|h_delete_obj_display|char[1 127]'\nhh = \n\n  1×2 <a href="matlab:helpPopup('Hnd116')" style="font-weight:bold">Hnd116</a> array with properties:\n\n    p\n    name\n\n'|div=ADR0232|diverges|char[1 60]'hh = \n\n  1×2 Hnd116 array with properties:\n\n    p\n    name\n\n'
+CHK|h_delete_obj_class|char[1 6]'Hnd116'|exact
+CHK|h_delete_obj_prop|MATLAB:class:InvalidHandle|exact
+CHK|h_delete_obj_prop_msg|Invalid or deleted object.|exact
+CHK|h_cs_deal|double[1 3] [0 0 0]|exact
+CHK|h_arrayfun|double[1 3] [0 0 0]|exact
+CHK|h_for|double[1 3] [1 1 1]|exact
+CHK|h_for_write|double[1 3] [0 0 0]|exact
+CHK|h_find|double[1 0]|exact
+CHK|h_cat_val|<Hnd116[1 2]>|exact
+CHK|h_cat_sub|char[1 6]'Val116'|exact
+CHK|h_cat_sub_rev|char[1 6]'Sub116'|exact
+CHK|h_cat_num|<Hnd116[1 2]>|exact
+CHK|h_cat_empty|double[1 2] [1 1]|exact
+CHK|h_cat_cell|<Hnd116[1 2]>|exact
+CHK|h_empty|double[1 2] [0 0]|exact
+CHK|h_empty_class|char[1 6]'Hnd116'|exact
+CHK|h_empty_isvalid|double[1 2] [0 0]|exact
+CHK|h_method_arr|double[1 3] [1 1 1]|exact
+CHK|h_method_arr_after|double[1 3] [1 1 1]|exact
+CHK|h_method_dot|double[1 3] [2 2 2]|exact
+CHK|h_gap_fill|double[1 2] [1 3]|exact
+CHK|h_gap_fill_class|char[1 6]'Hnd116'|exact
+CHK|h_gap_fill_valid|logical[1 1] 1|exact
+CHK|h_gap_fill_same|logical[1 1] 0|exact
+CHK|h_gap_fill_p|double[1 1] 1|exact
+CHK|h_gap_fill_dot|double[1 3] [1 1 9]|exact
+CHK|h_gap_ctor_count|char[1 27]'[true true true true] false'|exact
+CHK|h_repmat|double[1 2] [1 3]|exact
+CHK|h_repmat_same|logical[1 1] 1|exact
+CHK|h_repmat_write|double[1 2] [77 77]|exact
+CHK|h_unique|double[1 2] [1 3]|exact
+CHK|h_unique_dup|double[1 2] [1 2]|exact
+CHK|h_ismember|logical[1 1] 1|exact
+CHK|h_sort|<Hnd116[1 3]>|exact
+CHK|h_setdiff|double[1 2] [1 2]|exact
+CHK|h_numel|double[1 1] 3|exact
+CHK|h_colon|double[1 2] [3 1]|exact
+CHK|h_end|double[1 1] 2|exact
+CHK|h_logical|double[1 2] [77 2]|exact
+CHK|h_reshape|double[1 2] [3 1]|exact
+CHK|h_transpose|double[1 2] [3 1]|exact
+CHK|h_cs_assign|double[1 2] [5 6]|exact
+CHK|h_props_arr|cell[2 1]{char[1 1]'p';char[1 4]'name'}|exact
+CHK|h_methods_arr|cell[15 1]{char[1 6]'Hnd116';char[1 11]'addlistener';char[1 4]'bump';char[1 6]'delete';char[1 2]'eq';char[1 7]'findobj';char[1 8]'findprop';char[1 2]'ge';char[1 2]'gt';char[1 7]'isvalid';char[1 2]'le';char[1 8]'listener';char[1 2]'lt';char[1 2]'ne';char[1 6]'notify'}|exact
+CHK|h_findobj|char[1 6]'Hnd116'|exact
+CHK|h_findobj_size|double[1 2] [2 1]|exact
+CHK|h_set_get|MATLAB:graphics:SetMethodUnknown|exact
+CHK|h_set_get_msg|Cannot find 'set' method for Hnd116 class.|exact
+CHK|h_set_get_arr|char[1 32]'MATLAB:graphics:SetMethodUnknown'|div=ADR0232|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|h_get_struct|MATLAB:graphics:GetMethodUnknown|exact
+CHK|h_get_struct_msg|Cannot find 'get' method for Hnd116 class.|exact
+CHK|h_in_cell|char[1 4]'cell'|exact
+CHK|h_struct|double[1 2] [1 1] WARN MATLAB:structOnObject|exact
+CHK|h_addlistener_arr|char[1 33]'MATLAB:class:nonSetObservableProp'|div=ADR0232|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|h_isequal_after_write|logical[1 1] 0|exact
+CHK|h_assign_val_into|char[1 6]'Hnd116'|exact
+CHK|h_assign_other_handle|double[1 3] [77 50 2]|exact
+CHK|h_assign_empty|double[1 2] [1 2]|exact
+CHK|h_assign_num|char[1 6]'Hnd116'|exact
+CHK|h_cs_dot_assign|MATLAB:index:expected_one_output_for_assignment|exact
+CHK|h_cs_dot_assign_msg|Assigning to 3 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|h_colon_dot_deal|double[1 3] [3 3 3]|exact
+CHK|h_arr_elem_dot_write_shared|double[1 2] [123 123]|exact
+CHK|h_arr_in_prop_of_val|double[1 1] 321|exact
+CHK|h_isa|logical[1 1] 1|exact
+CHK|h_isobject|logical[1 1] 1|exact
+CHK|h_ishandle|logical[1 3] [0 0 0]|exact
+CHK|h_isgraphics|logical[1 3] [0 0 0]|div=ADR0232|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|h_class_handle_arr|char[1 6]'Hnd116'|exact
+CHK|h_eq_deleted|logical[1 1] 1|exact
+CHK|h_cs_deleted|MATLAB:class:InvalidHandle|exact
+CHK|h_cs_deleted_msg|Invalid or deleted object.|exact
+CHK|h_isvalid_shape|double[1 2] [2 2]|exact
+CHK|h_arrayfun_delete|logical[1 2] [0 0]|exact
+CHK|h_cs_in_fn|char[1 27]'MATLAB:max:caseNotSupported'|div=ADR0232|diverges|double[1 1] 321
+CHK|h_numel_after_delete_elem|double[1 1] 3|exact
+CHK|h_handle_prop_cs|double[1 2] [2 3]|exact
+CHK|h_delete_all|logical[1 3] [0 0 0]|exact
+CHK|h_cs_after_delete_all|MATLAB:class:InvalidHandle|exact
+CHK|h_cs_after_delete_all_msg|Invalid or deleted object.|exact
+CHK|h_isvalid_after_delete_all|logical[1 3] [0 0 0]|exact
+CHK|h_class_after_delete_all|char[1 6]'Hnd116'|exact
+CHK|h_size_after_delete_all|double[1 2] [1 3]|exact
+CHK|h_eq_after_delete_all|logical[1 3] [1 1 1]|exact
+CHK|h_methods_after_delete_all|double[1 1] 15|exact
+CHK|h_cat_after_delete_all|double[1 2] [1 4]|exact
+CHK|h_cat_after_delete_all_valid|logical[1 4] [0 0 0 1]|exact
+CHK|h_findobj_graphics|char[1 14]'matlab.ui.Root'|div=ADR0232|diverges|char[1 6]'double'
+CHK|v_holds_h|double[1 1] 6|exact
+CHK|h_holds_v|double[1 1] 6|exact
+CHK|ctor_count_final|double[1 1] 106|div=ADR0232|diverges|double[1 1] 108
+CHK|DISP_ARR|  1×3 Val116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_ARR|a = \n\n  1×3 Val116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_2D|b = \n\n  2×2 Val116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_EMPTY|e = \n\n  0×0 Val116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_EMPTY_03|e3 = \n\n  0×3 Val116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_SCALAR|s1 = \n\n  Val116 with properties:\n\n       p: 1\n    name: 'x'\n\n|div=ADR0232|diverges|s1 = Val116 with properties:\n    p: 1\n    name: 'x'\n
+CHK|DISP_SCALAR|  Val116 with properties:\n\n       p: 1\n    name: 'x'\n\n|div=ADR0232|diverges|Val116 with properties:\n    p: 1\n    name: 'x'\n
+CHK|DISPLAY_COL|ac = \n\n  3×1 Val116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_3D|t3 = \n\n  1×3×2 Val116 array with properties:\n\n    p\n    name\n\n|div=ADR0232|diverges|t3 = \n\n  1×6 Val116 array with properties:\n\n    p\n    name\n\n
+CHK|DISPLAY_SUB_ARR|sa = \n\n  1×2 Sub116 array with properties:\n\n    q\n    p\n    name\n\n|exact
+CHK|DISPLAY_OBJ_PROP|nn = \n\n  Val116 with properties:\n\n       p: [1×3 Val116]\n    name: 'x'\n\n|div=ADR0232|diverges|nn = struct(p:   1×3 Val116 array with properties:\n\n    p\n    name\n)\n
+CHK|DISPLAY_H_ARR|ha = \n\n  1×3 Hnd116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_H_SCALAR|h1 = \n\n  Hnd116 with properties:\n\n       p: 1\n    name: 'x'\n\n|div=ADR0232|diverges|h1 = Hnd116 with properties:\n    p: 1\n    name: 'x'\n
+CHK|DISPLAY_H_2D|hb = \n\n  2×2 Hnd116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_H_EMPTY|he = \n\n  0×0 Hnd116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_H_DELETED_SCALAR|hd = \n\n  handle to deleted Hnd116\n\n|div=ADR0232|diverges|hd =   handle to deleted Hnd116\n\n
+CHK|DISPLAY_H_DELETED_ARR|hd2 = \n\n  1×2 Hnd116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISP_H_DELETED|  handle to deleted Hnd116\n\n|exact
+CHK|DISPLAY_ARR_PROPS_OBJ|po = \n\n  Val116 with properties:\n\n       p: 1\n    name: [1×2 Val116]\n\n|div=ADR0232|diverges|po = Val116 with properties:\n    p: 1\n    name: [1×2 Val116]\n
+CHK|DISPLAY_EMPTY_H_03|eh = \n\n  0×3 Hnd116 array with properties:\n\n    p\n    name\n\n|exact
+CHK|DISPLAY_EMPTY_SUB|es = \n\n  0×0 Sub116 array with properties:\n\n    q\n    p\n    name\n\n|exact
+CHK|DISPLAY_1x1_FROM_ARR|one = \n\n  Val116 with properties:\n\n       p: 2\n    name: 'x'\n\n|div=ADR0232|diverges|one = Val116 with properties:\n    p: 2\n    name: 'x'\n
+CHK|DISPLAY_NOARG|na = \n\n  NoArg116 with properties:\n\n    p: 5\n\n|div=ADR0232|diverges|na = NoArg116 with properties:\n    p: 5\n
+CHK|DISPLAY_ZERO|za = \n\n  1×2 Zero116 array with properties:\n\n    p\n\n|exact
+CHK|mixed_sub_val_class|char[1 6]'Val116'|exact
+CHK|mixed_sub_val_elem_classes|char[1 13]'Val116 Val116'|exact
+CHK|mixed_sub_val_ps|char[1 12]'1 Sub116 p=2'|exact
+CHK|mixed_val_sub_class|char[1 6]'Sub116'|exact
+CHK|mixed_val_sub_elem_classes|char[1 13]'Sub116 Sub116'|exact
+CHK|mixed_val_sub_ps|char[1 12]'2 Val116 p=1'|exact
+CHK|mixed_val_sub_q|char[1 3]'7 7'|exact
+CHK|cat_val_num|<Val116[1 2]>|exact
+CHK|cat_val_num_class|char[1 6]'Val116'|exact
+CHK|cat_val_num_p|double[1 2] [1 5]|exact
+CHK|cat_num_val|<Val116[1 2]>|exact
+CHK|cat_num_val_class|char[1 6]'Val116'|exact
+CHK|cat_val_char|char[1 2]'q'|exact
+CHK|cat_val_str|char[1 6]'Val116'|exact
+CHK|cat_val_cell|char[1 6]'Val116'|exact
+CHK|cat_val_struct|char[1 6]'Val116'|div=ADR0232|diverges|char[0 0]''
+CHK|cat_val_handle|char[1 6]'Val116'|exact
+CHK|cat_val_handle_p|char[1 13]'Val116 Hnd116'|exact
+CHK|cat_handle_val|char[1 6]'Hnd116'|exact
+CHK|cat_handle_val_p|char[1 13]'Hnd116 Val116'|exact
+CHK|cat_zero_num|MATLAB:UnableToConvert|exact
+CHK|cat_zero_num_msg|The following error occurred converting from double to Zero116: Too many input arguments.|exact
+CHK|cat_zero_val|MATLAB:UnableToConvert|exact
+CHK|cat_zero_val_msg|The following error occurred converting from Val116 to Zero116: Too many input arguments.|exact
+CHK|cat_noarg_num|double[1 2] [5 1]|exact
+CHK|cat_noarg_cell|char[1 8]'NoArg116'|exact
+CHK|cat_val_logical|double[1 2] [1 1]|exact
+CHK|cat_val_empty_cell|double[1 2] [1 1]|exact
+CHK|cat_val_empty_str|double[1 2] [1 1]|exact
+CHK|cat_val_empty_string|double[1 2] [1 2]|div=ADR0232|diverges|char[1 13]'MATLAB:minrhs'
+CHK|cat_val_empty_struct|double[1 2] [1 1]|div=ADR0232|diverges|char[0 0]''
+CHK|cat_sub_num|char[1 6]'Sub116'|exact
+CHK|cat_sub_num_q|double[1 2] [7 7]|exact
+CHK|cat_val_sub_num|char[1 6]'Val116'|exact
+CHK|cat_vert_val_sub|char[1 6]'Val116'|exact
+CHK|assign_num_p|char[1 8]'Val116 5'|exact
+CHK|assign_struct_p|char[1 13]'Val116 p,name'|exact
+CHK|assign_cell_p|char[1 17]'Val116 Val116 p=5'|exact
+CHK|assign_zero_num|MATLAB:UnableToConvert|exact
+CHK|assign_zero_num_msg|Unable to perform assignment because value of type 'double' is not convertible to 'Zero116'.|exact
+CHK|assign_sub_into_val_q|char[1 17]'Val116 Sub116 p=5'|exact
+CHK|assign_val_into_sub_q|char[1 19]'Sub116 Val116 p=3 7'|exact
+CHK|assign_val_into_sub_class_elem|char[1 6]'Sub116'|exact
+CHK|assign_handle_into_val|char[1 13]'Val116 Hnd116'|exact
+CHK|assign_val_into_handle|char[1 13]'Hnd116 Val116'|exact
+CHK|assign_num_into_handle|char[1 8]'Hnd116 7'|exact
+CHK|h_max|char[1 21]'MATLAB:max:wrongInput'|div=ADR0232|diverges|char[0 0]''
+CHK|h_min|char[1 21]'MATLAB:min:wrongInput'|div=ADR0232|diverges|char[0 0]''
+CHK|h_eq_num_arr|logical[1 3] [0 0 0]|exact
+CHK|h_eq_cell|logical[1 1] 0|exact
+CHK|h_sum|char[1 21]'MATLAB:sum:wrongInput'|div=ADR0232|diverges|char[0 0]''
+CHK|h_cs_find_p2|double[1 1] 2|exact
+CHK|cs_first_only|double[1 1] 1|exact
+CHK|cs_first_only_name|char[1 1]'x'|exact
+CHK|cs_paren_single|double[1 1] 1|exact
+CHK|cs_anon_return|double[1 1] 1|exact
+CHK|cs_in_if|MATLAB:index:expected_one_output_from_reference|exact
+CHK|cs_in_if_msg|A dot '.' indexing expression produced a comma-separated list with 3 values where only a single value is allowed.|exact
+CHK|cs_while|MATLAB:index:expected_one_output_from_reference|exact
+CHK|cs_while_msg|A dot '.' indexing expression produced a comma-separated list with 3 values where only a single value is allowed.|exact
+CHK|cs_switch|MATLAB:index:expected_one_output_from_reference|exact
+CHK|cs_switch_msg|A dot '.' indexing expression produced a comma-separated list with 3 values where only a single value is allowed.|exact
+CHK|cs_and|MATLAB:index:expected_one_output_from_reference|exact
+CHK|cs_and_msg|A dot '.' indexing expression produced a comma-separated list with 3 values where only a single value is allowed.|exact
+CHK|cs_unary|MATLAB:maxrhs|exact
+CHK|cs_unary_msg|Too many input arguments.|exact
+CHK|cs_binary|MATLAB:maxrhs|exact
+CHK|cs_binary_msg|Too many input arguments.|exact
+CHK|cs_binary_rev|MATLAB:maxrhs|exact
+CHK|cs_binary_rev_msg|Too many input arguments.|exact
+CHK|cs_transpose|MATLAB:maxrhs|exact
+CHK|cs_transpose_msg|Too many input arguments.|exact
+CHK|cs_power|MATLAB:maxrhs|exact
+CHK|cs_power_msg|Too many input arguments.|exact
+CHK|cs_range|MATLAB:maxrhs|exact
+CHK|cs_range_msg|Too many input arguments.|exact
+CHK|cs_paren_index|MATLAB:index:expected_one_output_from_intermediate_indexing|exact
+CHK|cs_paren_index_msg|Intermediate dot '.' indexing produced a comma-separated list with 3 values, but it must produce a single value when followed by subsequent indexing operations.|exact
+CHK|cs_brace_after|MATLAB:index:expected_one_output_from_intermediate_indexing|exact
+CHK|cs_brace_after_msg|Intermediate dot '.' indexing produced a comma-separated list with 3 values, but it must produce a single value when followed by subsequent indexing operations.|exact
+CHK|cs_field_after|MATLAB:index:expected_one_output_from_intermediate_indexing|exact
+CHK|cs_field_after_msg|Intermediate dot '.' indexing produced a comma-separated list with 3 values, but it must produce a single value when followed by subsequent indexing operations.|exact
+CHK|cs_call_after|MATLAB:index:expected_one_output_from_intermediate_indexing|exact
+CHK|cs_call_after_msg|Intermediate dot '.' indexing produced a comma-separated list with 3 values, but it must produce a single value when followed by subsequent indexing operations.|exact
+CHK|cs_sub2_dot_end|char[1 47]'MATLAB:index:expected_one_output_from_reference'|div=ADR0232|diverges|char[1 59]'MATLAB:index:expected_one_output_from_intermediate_indexing'
+CHK|cs_one_elem_dot_index|double[1 1] 2|exact
+CHK|cs_colon_dot_index|double[1 1] 1|exact
+CHK|cs_empty_dot_value|MATLAB:needMoreRhsOutputs|exact
+CHK|cs_empty_dot_value_msg|Insufficient number of outputs from right hand side of equal sign to satisfy assignment.|exact
+CHK|cs_empty_dot_bracket|double[1 2] [0 0]|exact
+CHK|cs_struct_arg_two|struct[1 3]{(p=double[1 1] 1,q=double[1 1] 4)(p=double[1 1] 2,q=double[1 1] 5)(p=double[1 1] 3,q=double[1 1] 6)}|exact
+CHK|cs_deal_one_to_many|double[1 3] [9 9 9]|exact
+CHK|cs_deal_cell_spread|double[1 3] [7 8 9]|exact
+CHK|cs_deal_mismatch_names|double[1 3] [1 1 1]|exact
+CHK|cs_assign_from_fn_multi|double[1 3] [4 5 3]|exact
+CHK|cs_assign_from_cs_other_arr|double[1 3] [7 8 9]|exact
+CHK|cs_assign_sub_range_from_cs|double[1 3] [1 1 2]|exact
+CHK|cs_assign_shape|double[1 2] [2 2]|exact
+CHK|cs_assign_shape_vals|double[1 4] [0 0 2 1]|exact
+CHK|cs_2d_bracket|double[1 4] [1 3 2 1]|exact
+CHK|cs_2d_brace_size|double[1 2] [1 4]|exact
+CHK|cs_2d_bracket_size|double[1 2] [1 4]|exact
+CHK|cs_2d_sub|double[1 2] [3 1]|exact
+CHK|cs_vert_bracket|char[3 1]'x;x;x'|div=ADR0232|diverges|char[0 0]''
+CHK|cs_vert_bracket_literal|char[2 3]'xxx;yyy'|exact
+CHK|cs_char_cat_size|double[1 2] [1 3]|exact
+CHK|cs_name_strcat|char[1 3]'xxx'|exact
+CHK|cs_cellfun_over_brace|double[1 3] [1 1 1]|exact
+CHK|cs_nargin|double[1 1] 3|exact
+CHK|cs_numel_fn|double[1 1] 1|exact
+CHK|cs_size_fn|double[1 2] [1 1]|exact
+CHK|cs_isempty_fn|MATLAB:maxrhs|exact
+CHK|cs_isempty_fn_msg|Too many input arguments.|exact
+CHK|cs_class_fn|char[1 37]'MATLAB:dispatcher:invalidClassContext'|div=ADR0232|diverges|char[1 13]'MATLAB:maxrhs'
+CHK|cs_fprintf|char[1 6]'1-2-3-'|exact
+CHK|cs_ismember|logical[1 1] 1|exact
+CHK|cs_any_eq|logical[1 1] 1|exact
+CHK|cs_logical_mask|<Val116[1 2]>|exact
+CHK|cs_logical_mask_p|double[1 2] [2 3]|exact
+CHK|cs_sort_by|double[1 3] [3 2 1]|exact
+CHK|cs_handle_mask|double[1 2] [2 3]|exact
+CHK|cs_handle_mask_write|double[1 3] [1 0 0]|exact
+CHK|cs_method_each|double[1 3] [1 2 3]|exact
+CHK|cs_name_write_grow|cell[1 3]{char[1 6]'longer';char[1 6]'longer';char[1 6]'longer'}|exact
+CHK|cs_name_write_shrink|double[1 2] [0 0]|exact
+CHK|cs_nested_arr_cs|double[1 2] [2 3]|exact
+CHK|cs_handle_in_val_cs|double[1 2] [2 3]|exact
+CHK|cs_struct_in_obj_cs|double[1 2] [1 2]|exact
+CHK|cs_cell_in_obj_brace|double[1 2] [1 2]|exact
+CHK|cs_end_in_dot_index|char[1 1]'x'|exact
+CHK|cs_end_in_arr_index|double[1 1] 3|exact
+CHK|cs_end_arith|double[1 1] 2|exact
+CHK|cs_end_in_bracket|double[1 2] [2 3]|exact
+CHK|cs_end_in_brace|cell[1 2]{double[1 1] 1;double[1 1] 2}|exact
+CHK|ctor_count_final_2|double[1 1] 77|div=ADR0232|diverges|double[1 1] 75

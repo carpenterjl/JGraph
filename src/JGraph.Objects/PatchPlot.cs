@@ -245,6 +245,14 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     [Browsable(false)]
     public IReadOnlyList<int[]> Faces => _faces;
 
+    /// <summary>
+    /// Whether the patch lies in the plane: MATLAB's patch given no z, whose <c>ZData</c> answers
+    /// empty and whose <c>Vertices</c> has two columns (open item 114). A z given at construction,
+    /// a <c>ZData</c> write or a three-column <c>Vertices</c> write make it a patch in space.
+    /// </summary>
+    [Browsable(false)]
+    public bool IsFlat { get; set; }
+
     /// <inheritdoc />
     /// <remarks>
     /// M87. A patch is faces, and a click inside one is a click on the patch — so each face is tested
@@ -372,6 +380,22 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
             Invalidate(InvalidationKind.Render);
         }
     }
+
+    /// <summary>
+    /// A colour written for each vertex (MATLAB's <c>FaceVertexCData</c> as a table with one row per
+    /// vertex). Kept for what a script reads back; the faces are drawn in the first vertex's colour
+    /// (a divergence, open item 114).
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<Color>? VertexColors { get; set; }
+
+    /// <summary>
+    /// The RGB rows a script wrote as <c>FaceVertexCData</c>, column-major n-by-3, kept as written so
+    /// they read back exactly; <see cref="FaceColors"/> or <see cref="VertexColors"/> carry them to
+    /// the renderer. Null when the colours came from anywhere else.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<double>? ColorTable { get; set; }
 
     /// <summary>
     /// The chart this patch is drawn on behalf of, when it is not in the figure tree itself. A pie is
@@ -1015,7 +1039,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         }
 
         double[] values = _colorData!;
-        double faceOpacity = Opacity * _faceAlpha;
+        double faceOpacity = Opacity * _faceAlpha * VertexOpacity(face); // the face's own transparency fades an interpolated fill too (stess_50 §28)
 
         bool logColor = (Host ?? (PlotObject)this).LogColorScale();
 

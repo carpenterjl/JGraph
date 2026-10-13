@@ -443,6 +443,11 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue Find(string verb, IReadOnlyList<JgsValue> args, int line, int col, bool hidden)
     {
+        if (args.Count > 0 && args[0].Type == JgsType.Object && !args[0].ObjectClass.IsComponentContainer)
+        {
+            return FindAmongObjects(verb, args, line, col);
+        }
+
         int first = 0;
         var roots = new List<GraphObject>();
 
@@ -588,12 +593,60 @@ internal static partial class JgsBuiltins
 
     // --- the predicates -------------------------------------------------------------------------
 
+    /// <summary>
+    /// <c>findobj(objects, 'Name', value, …)</c> over handle objects (open item 116): the elements
+    /// whose named properties equal the values, as a column, R2025b's shape.
+    /// </summary>
+    private static JgsValue FindAmongObjects(string verb, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        JgsClass definition = args[0].ObjectClass;
+        if (!definition.IsHandle)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction", $"Undefined function '{verb}' for input arguments of type '{definition.Name}'.");
+        }
+
+        if ((args.Count - 1) % 2 != 0)
+        {
+            throw new JgsRuntimeException(line, col, $"{verb}: property names and values come in pairs.");
+        }
+
+        JgsObject[] elements = args[0].IsObjectArray ? args[0].AsObjectArray.Elements : [args[0].AsObject];
+        var kept = new List<JgsObject>();
+        foreach (JgsObject element in elements)
+        {
+            bool matches = true;
+            for (int i = 1; i + 1 < args.Count; i += 2)
+            {
+                string name = Str(verb, args, i, line, col);
+                if (!element.Fields.TryGetValue(name, out JgsValue? held) || !JgsStdlib.DeepEquals(held, args[i + 1]))
+                {
+                    matches = false;
+                    break;
+                }
+            }
+
+            if (matches)
+            {
+                kept.Add(element);
+            }
+        }
+
+        return JgsValue.ObjectArray(new JgsObjectArray(definition, [.. kept]), kept.Count, kept.Count == 0 ? 0 : 1);
+    }
+
     private static JgsValue IsHandle(string verb, IReadOnlyList<JgsValue> args, int line, int col)
     {
         Arity(verb, args, 1, line, col);
-        if (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsComponentContainer)
+        if (args[0].Type == JgsType.Object && !args[0].IsObjectArray && args[0].ObjectClass.IsComponentContainer)
         {
             return JgsValue.Bool(JgsComponentContainers.TryEntry(args[0], out _)); // a custom component is a graphics object (U10)
+        }
+
+        if (args[0].IsObjectArray)
+        {
+            var none = new JgsValue[args[0].ArrayLength];
+            Array.Fill(none, JgsValue.False);
+            return JgsMatrix.FromElements(none, args[0].Rows, args[0].Cols); // none of an array of objects is a graphics handle (open item 116)
         }
 
         if (args[0].Type is JgsType.Struct or JgsType.Object or JgsType.Cell or JgsType.Function)
@@ -653,10 +706,9 @@ internal static partial class JgsBuiltins
 
         if (asked.Type == JgsType.Object)
         {
-            JgsObject instance = asked.AsObject;
-            if (instance.Class.IsHandle)
+            if (asked.ObjectClass.IsHandle)
             {
-                return JgsValue.Bool(!instance.Deleted && !instance.Destroying);
+                return IsValidObjects(asked); // one flag an element over an array (open item 116)
             }
         }
         else if (asked.Type is JgsType.Number or JgsType.Bool)
@@ -696,17 +748,45 @@ internal static partial class JgsBuiltins
             return false;
         }
 
-        JgsObject instance = value.AsObject;
-        if (!instance.Class.IsHandle)
+        if (!value.ObjectClass.IsHandle)
         {
             throw new JgsRuntimeException(line, col,
-                $"Undefined function 'delete' for input arguments of type '{instance.Class.Name}'.");
+                $"Undefined function 'delete' for input arguments of type '{value.ObjectClass.Name}'.");
         }
 
-        instance.MarkDeleted();
-        FireObjectBeingDestroyed(instance); // after the mark: isvalid is already false inside (V6, #106)
-        JgsLifetime.ObjectDeleted(instance); // V10: the properties' contents go with the object
+        // An array of handles is deleted element by element (open item 116); one already gone is passed over.
+        foreach (JgsObject instance in value.IsObjectArray ? value.AsObjectArray.Elements : [value.AsObject])
+        {
+            if (instance.Deleted)
+            {
+                continue;
+            }
+
+            instance.MarkDeleted();
+            FireObjectBeingDestroyed(instance); // after the mark: isvalid is already false inside (V6, #106)
+            JgsLifetime.ObjectDeleted(instance); // V10: the properties' contents go with the object
+        }
+
         return true;
+    }
+
+    /// <summary><c>isvalid</c> over a handle object or an array of them: one flag an element, in the array's shape (open item 116).</summary>
+    internal static JgsValue IsValidObjects(JgsValue objects)
+    {
+        if (!objects.IsObjectArray)
+        {
+            JgsObject one = objects.AsObject;
+            return JgsValue.Bool(!one.Deleted && !one.Destroying);
+        }
+
+        JgsObject[] elements = objects.AsObjectArray.Elements;
+        var flags = new JgsValue[elements.Length];
+        for (int i = 0; i < elements.Length; i++)
+        {
+            flags[i] = JgsValue.Bool(!elements[i].Deleted && !elements[i].Destroying);
+        }
+
+        return JgsMatrix.FromElements(flags, objects.Rows, objects.Cols);
     }
 
     // --- ancestor -------------------------------------------------------------------------------

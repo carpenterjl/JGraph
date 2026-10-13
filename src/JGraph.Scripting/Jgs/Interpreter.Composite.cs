@@ -176,7 +176,7 @@ internal sealed partial class Interpreter
 
                 // o.p(6).f = 9: the walk goes on through an object's property (V6), so a level
                 // past it is created here and stored back through the property's setter.
-                if (held is { Type: JgsType.Object } && held.AsObject.Fields.TryGetValue(field, out JgsValue? property))
+                if (held is { Type: JgsType.Object, IsObjectArray: false } && held.AsObject.Fields.TryGetValue(field, out JgsValue? property))
                 {
                     RequirePassThrough(held, field, step); // U6
                     next = property;
@@ -405,7 +405,7 @@ internal sealed partial class Interpreter
                 return false;
             }
 
-            JgsClass definition = holder.AsObject.Class;
+            JgsClass definition = holder.ObjectClass;
             if (definition.Property(field) is not { } property)
             {
                 return false;
@@ -414,7 +414,7 @@ internal sealed partial class Interpreter
             return property.Dependent
                 || (definition.TryGetter(field, out _) && !InAccessor(definition.GetterTag(field)))
                 || (definition.TrySetter(field, out _) && !InAccessor(definition.SetterTag(field)))
-                || (property.Observable && holder.AsObject.HasPropertyListener(field));
+                || (property.Observable && !holder.IsObjectArray && holder.AsObject.HasPropertyListener(field));
         }
 
         return holder.Type == JgsType.Number && !ReferenceEquals(step, target) && JgsHandleRegistry.TryGet(holder, out _);
@@ -464,7 +464,7 @@ internal sealed partial class Interpreter
                 return false;
 
             case MemberExpr { Field: { } property } when held.Type == JgsType.Object:
-                if (held.AsObject.Fields.TryGetValue(property, out JgsValue? holds))
+                if (!held.IsObjectArray && held.AsObject.Fields.TryGetValue(property, out JgsValue? holds))
                 {
                     next = holds;
                     return true;
@@ -637,6 +637,13 @@ internal sealed partial class Interpreter
     private JgsValue WriteThroughObjectProperty(
         JgsValue holder, string field, MemberExpr level, Expr target, AssignExpr assign, JgsValue rhs, JgsEnvironment env)
     {
+        if (holder.IsObjectArray)
+        {
+            // a.p = v over an array is R2025b's refusal; [a.p] = deal(v) is the road (open item 116).
+            throw new JgsRuntimeException(level.Line, level.Column, "MATLAB:index:expected_one_output_for_assignment",
+                $"Assigning to {holder.ArrayLength} elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.");
+        }
+
         JgsObject instance = holder.AsObject;
         RequireLive(instance, level.Line, level.Column);
         JgsClass definition = instance.Class;

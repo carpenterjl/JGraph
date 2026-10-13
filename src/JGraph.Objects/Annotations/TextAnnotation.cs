@@ -22,7 +22,10 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
     private Point2D _position;
     private double _z;
     private string _text = string.Empty;
-    private double _fontSize = 12;
+    private double _fontSize = 10; // R2025b's text font (open item 114)
+
+    /// <summary>True once a script wrote <see cref="FontSize"/> (MATLAB <c>FontSizeMode</c> 'manual').</summary>
+    public bool FontSizeManual { get; set; }
     private string _fontFamily = "Segoe UI";
     private bool _bold;
     private bool _italic;

@@ -658,7 +658,7 @@ internal sealed class JgsClass
         {
             if (arguments.Count > 0 && _supers.Count != 1)
             {
-                throw _supers.Count == 0
+                throw _supers.Count == 0 && !JgsRunningDialect.ThreadIsMatlab // R2025b: too many inputs (open item 116)
                     ? new JgsRuntimeException(line, col, $"'{Name}' has no constructor, so it takes no arguments.")
                     : new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
             }
@@ -1015,8 +1015,17 @@ internal sealed class JgsObject
     public JgsObject(JgsClass definition)
     {
         Class = definition;
+        Serial = Interlocked.Increment(ref _nextSerial);
         JgsLifetime.Register(this);
     }
+
+    private static long _nextSerial;
+
+    /// <summary>
+    /// The order this object was made in: what <c>&lt;</c>, <c>sort</c> and <c>unique</c> order handles
+    /// by here, where R2025b orders them by an address it does not publish (open item 116, a divergence).
+    /// </summary>
+    public long Serial { get; }
 
     /// <summary>The holder count's storage (M1); zero means one holder.</summary>
     public ref int HolderSlot => ref _holders;

@@ -100,6 +100,13 @@ public sealed class ColorbarModel : GraphObject
     [Category("Appearance"), DisplayName("Label style")]
     public TextStyle LabelStyle { get => _labelStyle; set => SetProperty(ref _labelStyle,value,InvalidationKind.Layout); }
 
+    /// <summary>
+    /// True once a script wrote the colorbar's <c>FontSize</c>; until then the tick label size follows
+    /// the axes font through <see cref="AxesModel.SyncFurnitureFonts"/> (MATLAB <c>FontSizeMode</c>, open item 118).
+    /// </summary>
+    [Browsable(false)]
+    public bool FontSizeManual { get; set; }
+
     [Category("Ticks"), DisplayName("Tick label style")]
     public TextStyle TickLabelStyle
     {

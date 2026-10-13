@@ -197,7 +197,7 @@ public static class ColorbarRenderer
         double tickPixels = TickPixels(bar, LongSideOf(strip, horizontal));
         bool labelsFar = !bar.LabelsInside;
 
-        IReadOnlyList<(double Value, string Label)> ticks = Ticks(bar, min, max, logScale);
+        IReadOnlyList<(double Value, string Label)> ticks = Ticks(bar, min, max, logScale, LongSideOf(strip, horizontal), !horizontal);
         for (int i = 0; i < ticks.Count; i++)
         {
             (double value, string label) = ticks[i];
@@ -285,8 +285,7 @@ public static class ColorbarRenderer
     }
 
     /// <summary>The values and labels the scale shows: the chosen ones, or the generated ones.</summary>
-    private static IReadOnlyList<(double Value, string Label)> Ticks(
-        ColorbarModel bar, double min, double max, bool logScale)
+    private static IReadOnlyList<(double Value, string Label)> Ticks(ColorbarModel bar, double min, double max, bool logScale, double lengthPx = 0, bool vertical = true)
     {
         var rows = new List<(double, string)>();
         if (bar.TickValues is { } chosen)
@@ -299,7 +298,7 @@ public static class ColorbarRenderer
             return rows;
         }
 
-        TickSet generated = logScale ? GenerateLogTicks(min, max) : GenerateTicks(min, max);
+        TickSet generated = logScale ? GenerateLogTicks(min, max) : GenerateTicks(min, max, lengthPx, bar.TickLabelStyle.FontSize, vertical);
         int index = 0;
         foreach (Tick tick in generated.MajorTicks)
         {
@@ -354,7 +353,9 @@ public static class ColorbarRenderer
         (double min, double max) = Span(bar, source);
         bool logScale = UsesLogScale(axes, min, max);
         double band = 0;
-        foreach ((double _, string label) in Ticks(bar, min, max, logScale))
+        Rect2D? box = axes.LastLayout?.PlotAreaPx;
+        double length = box is { } known ? (bar.IsHorizontal ? known.Width : known.Height) : 0;
+        foreach ((double _, string label) in Ticks(bar, min, max, logScale, length, !bar.IsHorizontal))
         {
             Size2D size = context.MeasureText(label, bar.TickLabelStyle);
             band = System.Math.Max(band, bar.IsHorizontal ? size.Height : size.Width);
@@ -363,8 +364,18 @@ public static class ColorbarRenderer
         return band;
     }
 
-    private static TickSet GenerateTicks(double min, double max) =>
-        new LinearTickGenerator().Generate(new DataRange(min, max > min ? max : min + 1), 6);
+    /// <summary>
+    /// The linear ticks for a colorbar of a known length, under R2025b's count for that length
+    /// (open item 119, probe_119). R2025b draws a colorbar's labels at nine tenths of the axes font
+    /// and counts its ticks at that size; this build draws them at the axes size, so the budget is
+    /// read as if they were the smaller. A bar of no known length keeps the classic target.
+    /// </summary>
+    private static TickSet GenerateTicks(double min, double max, double lengthPx, double fontPoints, bool vertical)
+    {
+        var range = new DataRange(min, max > min ? max : min + 1);
+        TickBudget budget = lengthPx > 0 ? TickBudget.ForRuler(lengthPx, fontPoints * 0.9, vertical, 6) : TickBudget.Of(6);
+        return new LinearTickGenerator().Generate(range, budget);
+    }
 
     /// <summary>Decade ticks for a log-scaled colorbar, from the same generator the log rulers use.</summary>
     private static TickSet GenerateLogTicks(double min, double max) =>

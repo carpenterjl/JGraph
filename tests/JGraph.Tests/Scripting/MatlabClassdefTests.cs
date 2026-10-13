@@ -283,7 +283,7 @@ public class MatlabClassdefTests : IDisposable
     {
         WriteClass("Bare", "classdef Bare\n properties\n  A = 1\n end\nend\n");
         Assert.Equal("1\n", RunAndRead("b = Bare; disp(b.A);"));
-        Assert.Contains("no constructor", Error("b = Bare(2);"), StringComparison.Ordinal);
+        Assert.Contains("Too many input arguments", Error("b = Bare(2);"), StringComparison.Ordinal); // R2025b's words (open item 116)
     }
 
     // --- Operators and display ----------------------------------------------------------------------
@@ -305,8 +305,7 @@ public class MatlabClassdefTests : IDisposable
     {
         WriteMoney();
         string message = Error("a = Money(3) * Money(2);");
-        Assert.Contains("not defined for Money", message, StringComparison.Ordinal);
-        Assert.Contains("mtimes", message, StringComparison.Ordinal);
+        Assert.Contains("Invalid data type", message, StringComparison.Ordinal); // R2025b's refusal for an operator a value class leaves undefined (open item 116)
     }
 
     [Fact]

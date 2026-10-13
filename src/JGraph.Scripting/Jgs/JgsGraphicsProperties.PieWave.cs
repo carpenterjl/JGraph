@@ -40,9 +40,9 @@ internal static partial class JgsGraphicsProperties
     {
         // The mesh, read as a patch's and refused as a pie's: these five describe the wedges rather
         // than decide them, and the four properties named in the refusal are what decides them.
-        Put(table, "XData", entry => Row([.. PatchOf(entry).X]), RefuseShape("XData"));
-        Put(table, "YData", entry => Row([.. PatchOf(entry).Y]), RefuseShape("YData"));
-        Put(table, "ZData", entry => Row([.. PatchOf(entry).Z]), RefuseShape("ZData"));
+        Put(table, "XData", entry => PatchCoordinates(PatchOf(entry), 0), RefuseShape("XData"));
+        Put(table, "YData", entry => PatchCoordinates(PatchOf(entry), 1), RefuseShape("YData"));
+        Put(table, "ZData", entry => PatchCoordinates(PatchOf(entry), 2), RefuseShape("ZData"));
         Put(table, "Faces", entry => FaceTable(PatchOf(entry)), RefuseShape("Faces"));
         Put(table, "Vertices", entry => VertexTable(PatchOf(entry)), RefuseShape("Vertices"));
 

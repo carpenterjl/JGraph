@@ -475,6 +475,15 @@ internal static partial class JgsBuiltins
         Define("getfield", (args, line, col) =>
         {
             ArityRange("getfield", args, 2, 2, line, col);
+            if (args[0].Type == JgsType.Object && !args[0].IsObjectArray)
+            {
+                // getfield(obj, 'p') reads the property, as R2025b's does (open item 116).
+                string property = Str("getfield", args, 1, line, col);
+                return args[0].AsObject.Fields.TryGetValue(property, out JgsValue? read)
+                    ? read
+                    : throw new JgsRuntimeException(line, col, "MATLAB:noSuchMethodOrField", $"Unrecognized method, property, or field '{property}' for class '{args[0].ObjectClass.Name}'.");
+            }
+
             Dictionary<string, JgsValue> fields = StructOf("getfield", args[0], line, col);
             string name = Str("getfield", args, 1, line, col);
             return fields.TryGetValue(name, out JgsValue? held)
@@ -501,8 +510,14 @@ internal static partial class JgsBuiltins
 
             // M2: over a cell the elements are the argument's own children, and each slot of the
             // answer is an entry, so it takes a share; over an array they are fresh numbers, for
-            // which a share is the value itself.
-            return JgsValue.Cell(Elements("num2cell", args[0], line, col).Select(JgsValue.Share).ToArray());
+            // which a share is the value itself. A 2-D argument keeps its shape (open item 116).
+            JgsValue cells = JgsValue.Cell(Elements("num2cell", args[0], line, col).Select(JgsValue.Share).ToArray());
+            if (args[0].Rows > 1 && args[0].Cols > 1 && cells.AsCell.Length == args[0].Rows * args[0].Cols)
+            {
+                cells.Reshape(args[0].Rows, args[0].Cols);
+            }
+
+            return cells;
         });
 
         Define("cell2mat", (args, line, col) =>
@@ -511,6 +526,13 @@ internal static partial class JgsBuiltins
             if (args[0].Type != JgsType.Cell)
             {
                 throw new JgsRuntimeException(line, col, $"cell2mat expects a cell array, but got a {args[0].TypeName}.");
+            }
+
+            // A cell of objects of one class joins into an array of them (open item 116).
+            if (args[0].AsCell.Length > 0 && args[0].AsCell.All(static v => v.Type == JgsType.Object)
+                && ObjectsAsArray("cell2mat", args[0].AsCell, args[0].Rows, args[0].Cols, line, col) is { } objects)
+            {
+                return objects;
             }
 
             var flat = new List<JgsValue>();
@@ -1047,6 +1069,11 @@ internal static partial class JgsBuiltins
         if (value.Type == JgsType.Cell)
         {
             return value.AsCell;
+        }
+
+        if (value.Type == JgsType.Object)
+        {
+            return ObjectElementValues(value); // num2cell over an array of objects (open item 116)
         }
 
         if (value.Type != JgsType.Array)

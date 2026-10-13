@@ -2775,6 +2775,8 @@ internal static partial class JgsBuiltins
         // the string-array marks are applied last.
         KeepCharMatrixKind(env);
         RegisterTableCompatibility(env, host);
+        WrapShapeVerbsOverObjects(env); // after every verb is in, so an array of objects reaches each (open item 116)
+        RegisterCategoricalBuiltins(env, text => host.print(text)); // over the verbs it teaches (open item 115)
 
         return env;
     }
@@ -3078,7 +3080,7 @@ internal static partial class JgsBuiltins
         bool anyTime = false;
         foreach (JgsValue arg in args)
         {
-            if (arg.IsTime)
+            if (arg.IsTime || arg.IsCategorical)
             {
                 anyTime = true;
                 break;
@@ -3090,10 +3092,12 @@ internal static partial class JgsBuiltins
             return (args, false, false);
         }
 
+        // A categorical goes to a chart as its codes, one a category (open item 115); the category
+        // ruler R2025b draws over them is still open.
         var converted = new JgsValue[args.Count];
         for (int i = 0; i < args.Count; i++)
         {
-            converted[i] = args[i].IsTime ? AxisNumbersFor(args[i]) : args[i];
+            converted[i] = args[i].IsTime ? AxisNumbersFor(args[i]) : args[i].IsCategorical ? JgsCategorical.ToDouble(args[i]) : args[i];
         }
 
         // With one argument the values are y and the sample numbers are x; with two or more the

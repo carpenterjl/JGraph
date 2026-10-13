@@ -1,0 +1,746 @@
+CHK|ctor_cell|<categorical[1 4]>|exact
+CHK|class|char[1 11]'categorical'|exact
+CHK|iscategorical|logical[1 1] 1|exact
+CHK|isa|logical[1 1] 1|exact
+CHK|cats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|countcats|double[1 3] [2 1 1]|exact
+CHK|isordinal|logical[1 1] 0|exact
+CHK|isprotected|logical[1 1] 0|exact
+CHK|ctor_col|<categorical[2 1]>|exact
+CHK|ctor_num|<categorical[1 4]>|exact
+CHK|ctor_num_cats|cell[3 1]{char[1 1]'1';char[1 1]'2';char[1 1]'3'}|exact
+CHK|ctor_string|<categorical[1 3]>|exact
+CHK|ctor_char|MATLAB:categorical:CharData|exact
+CHK|ctor_char_msg|Conversion from character array not supported. First, convert the character array to a cell array of character vectors using cellstr. Then convert the cell array using categorical.|exact
+CHK|ctor_char_col|MATLAB:categorical:CharData|exact
+CHK|ctor_char_col_msg|Conversion from character array not supported. First, convert the character array to a cell array of character vectors using cellstr. Then convert the cell array using categorical.|exact
+CHK|ctor_logical|<categorical[1 2]>|exact
+CHK|ctor_valueset|<categorical[1 2]>|exact
+CHK|ctor_valueset_cats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|ctor_valueset_names|<categorical[1 4]>|exact
+CHK|ctor_not_in_set|<categorical[1 2]>|exact
+CHK|ctor_ordinal|<categorical[1 3]>|exact
+CHK|ord_isordinal|logical[1 1] 1|exact
+CHK|ord_lt|logical[1 1] 1|exact
+CHK|ord_max|<categorical[1 1]>|exact
+CHK|ord_min|<categorical[1 1]>|exact
+CHK|ord_sort|<categorical[1 3]>|exact
+CHK|ord_sortd|<categorical[1 3]>|exact
+CHK|ord_ge|logical[1 3] [0 1 1]|exact
+CHK|ord_cmp_str|logical[1 3] [0 1 1]|exact
+CHK|ord_median|<categorical[1 1]>|exact
+CHK|ord_cats|cell[3 1]{char[1 2]'lo';char[1 3]'mid';char[1 2]'hi'}|exact
+CHK|nonord_lt|MATLAB:categorical:NotOrdinal|exact
+CHK|nonord_lt_msg|Relational comparisons are not allowed for categorical arrays that are not ordinal.|exact
+CHK|nonord_max|MATLAB:categorical:NotOrdinal|exact
+CHK|nonord_max_msg|Relational comparisons are not allowed for categorical arrays that are not ordinal.|exact
+CHK|nonord_min|MATLAB:categorical:NotOrdinal|exact
+CHK|nonord_min_msg|Relational comparisons are not allowed for categorical arrays that are not ordinal.|exact
+CHK|ctor_protected|logical[1 1] 1|exact
+CHK|ctor_missing|<categorical[1 2]>|exact
+CHK|ctor_missing_str|<categorical[1 2]>|exact
+CHK|ctor_nan|<categorical[1 3]>|exact
+CHK|ctor_empty|<categorical[0 0]>|exact
+CHK|ctor_empty2|<categorical[0 0]>|exact
+CHK|ctor_empty_cats|cell[0 0]{}|exact
+CHK|ctor_cats_dup|MATLAB:categorical:DuplicatedValues|exact
+CHK|ctor_cats_dup_msg|VALUESET contains duplicated values.|exact
+CHK|ctor_matrix|<categorical[2 2]>|exact
+CHK|ctor_undef|MATLAB:categorical:UndefinedLabelCategoryName|exact
+CHK|ctor_undef_msg|Unable to create a category name equal to the text '<undefined>'. Specify category names using the CATEGORYNAMES input argument.|exact
+CHK|ctor_num_names|<categorical[1 2]>|exact
+CHK|ctor_names_bad_count|MATLAB:categorical:WrongNumCategoryNamesValueset|exact
+CHK|ctor_names_bad_count_msg|CATEGORYNAMES and VALUESET must have the same length.|exact
+CHK|ctor_ordinal_num|logical[1 1] 1|exact
+CHK|ctor_of_cat|<categorical[1 4]>|exact
+CHK|ctor_of_cat_cats|cell[2 1]{char[1 1]'c';char[1 1]'a'}|exact
+CHK|cats_order_num|cell[3 1]{char[1 1]'2';char[1 2]'10';char[1 2]'33'}|exact
+CHK|cats_order_str|cell[4 1]{char[1 1]'A';char[1 1]'B';char[1 1]'a';char[1 1]'b'}|exact
+CHK|cat_num_names|string[1 6]"1.5","2","1e+06","0.1","1e+05","1.2346e+08"|exact
+CHK|cat_datetime|cell[2 1]{char[1 11]'01-Jan-2020';char[1 11]'02-Jan-2020'}|div=ADR0232|diverges|cell[2 1]{char[1 13]'3786998400000';char[1 13]'3787084800000'}
+CHK|cat_bool_names|cell[2 1]{char[1 5]'false';char[1 4]'true'}|exact
+CHK|cat_cell_ctor_num|MATLAB:categorical:UniqueMethodFailedData|exact
+CHK|cat_cell_ctor_num_msg|Could not find unique values in DATA using the UNIQUE function.|exact
+CHK|cat_mixed_cell|MATLAB:categorical:UniqueMethodFailedData|exact
+CHK|cat_mixed_cell_msg|Could not find unique values in DATA using the UNIQUE function.|exact
+CHK|cat_nested|MATLAB:categorical:UniqueMethodFailedData|exact
+CHK|cat_nested_msg|Could not find unique values in DATA using the UNIQUE function.|exact
+CHK|string_ctor_dupes|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|valueset_string|<categorical[1 2]>|exact
+CHK|valueset_num_names_str|<categorical[1 2]>|exact
+CHK|strings_in_cats_ws|cell[1 1]{char[1 1]'a'}|exact
+CHK|cats_case|cell[2 1]{char[1 1]'A';char[1 1]'a'}|exact
+CHK|cats_num_text|cell[3 1]{char[1 1]'1';char[1 2]'10';char[1 1]'2'}|exact
+CHK|cats_valueset_order|cell[2 1]{char[1 1]'b';char[1 1]'a'}|exact
+CHK|cats_valueset_dup_names|<categorical[1 3]>|exact
+CHK|cats_valueset_dup_names_cats|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|cat_of_logical_matrix|<categorical[2 2]>|exact
+CHK|cat_int|cell[2 1]{char[1 1]'1';char[1 1]'3'}|exact
+CHK|cat_single|cell[2 1]{char[1 3]'1.5';char[1 1]'2'}|exact
+CHK|cat_cellstr_num_mixed_names|<categorical[1 2]>|exact
+CHK|cat_cellstr_num_mixed_names_val|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|eq_char|logical[1 4] [1 0 1 0]|exact
+CHK|eq_str|logical[1 4] [1 0 1 0]|exact
+CHK|ne_char|logical[1 4] [0 1 0 1]|exact
+CHK|eq_cat|logical[1 4] [1 1 1 1]|exact
+CHK|eq_cat2|logical[1 4] [1 0 0 1]|exact
+CHK|eq_other_cats|logical[1 4] [1 0 1 0]|exact
+CHK|eq_num|MATLAB:categorical:InvalidComparisonTypes|exact
+CHK|eq_num_msg|Comparison is not defined between categorical and double arrays.|exact
+CHK|eq_cell|logical[1 4] [1 0 1 0]|exact
+CHK|eq_cell_many|logical[1 4] [1 1 1 1]|exact
+CHK|eq_scalar_expand|logical[1 4] [1 0 1 0]|exact
+CHK|strcmp|logical[1 1] 0|exact
+CHK|strcmp_cell|logical[1 4] [0 0 0 0]|exact
+CHK|strcmpi|logical[1 1] 0|exact
+CHK|ismember|logical[1 4] [1 0 1 0]|exact
+CHK|ismember2|logical[1 1] 1|exact
+CHK|ismember3|logical[1 4] [1 1 1 0]|exact
+CHK|ismember_cat|logical[1 4] [1 0 1 0]|exact
+CHK|ismember_loc|double[1 4] [2 0 2 1]|exact
+CHK|isequal|logical[1 1] 1|exact
+CHK|isequal_cell|logical[1 1] 1|exact
+CHK|isequal_diffcats|logical[1 1] 1|exact
+CHK|isequal_ord|logical[1 1] 0|exact
+CHK|isequaln|logical[1 1] 1|exact
+CHK|isequal_undef|logical[1 1] 0|exact
+CHK|eq_undef|logical[1 2] [1 0]|exact
+CHK|ismember_undef|logical[1 2] [1 0]|exact
+CHK|ord_lt_nonord|MATLAB:categorical:NotOrdinal|exact
+CHK|ord_lt_nonord_msg|Relational comparisons are not allowed for categorical arrays that are not ordinal.|exact
+CHK|ord_eq_other_ord|logical[1 3] [1 1 1]|exact
+CHK|ord_eq_other_ord_cats|MATLAB:categorical:InvalidOrdinalComparison|exact
+CHK|ord_eq_other_ord_cats_msg|Ordinal arrays must have the same categories, including their order.|exact
+CHK|string|string[1 4]"a","b","a","c"|exact
+CHK|char|char[4 1]'a;b;a;c'|exact
+CHK|cellstr|cell[1 4]{char[1 1]'a';char[1 1]'b';char[1 1]'a';char[1 1]'c'}|exact
+CHK|double|double[1 4] [1 2 1 3]|exact
+CHK|single|single[1 4] [1 2 1 3]|exact
+CHK|int32|int32[1 4] [1 2 1 3]|exact
+CHK|uint8|uint8[1 4] [1 2 1 3]|exact
+CHK|logical|MATLAB:invalidConversion|exact
+CHK|logical_msg|Conversion to logical from categorical is not possible.|exact
+CHK|string_undef|string[1 2]"a","<missing>"|exact
+CHK|cellstr_undef|cell[1 2]{char[1 1]'a';char[1 11]'<undefined>'}|exact
+CHK|double_undef|double[1 2] [1 NaN]|exact
+CHK|char_undef|char[2 11]'a          ;<undefined>'|exact
+CHK|num2str|MATLAB:num2str:nonNumericInput|exact
+CHK|num2str_msg|Input to num2str must be numeric.|exact
+CHK|mat2str|MATLAB:mat2str:NumericInput|exact
+CHK|mat2str_msg|Input matrix must be a numeric array, character array, or string array.|exact
+CHK|sprintf|char[1 4]'abac'|exact
+CHK|sprintf_d|char[1 4]'1213'|exact
+CHK|sprintf_one|char[1 1]'a'|exact
+CHK|isundefined|logical[1 2] [0 1]|exact
+CHK|ismissing|logical[1 2] [0 1]|exact
+CHK|ismissing_string|logical[1 2] [1 0]|exact
+CHK|iscategory|logical[1 1] 1|exact
+CHK|iscategory2|logical[1 2] [1 0]|exact
+CHK|double_shape|double[1 2] [4 1]|exact
+CHK|string_shape|double[1 2] [4 1]|exact
+CHK|char_shape|double[1 2] [4 1]|exact
+CHK|cellstr_shape|double[1 2] [4 1]|exact
+CHK|matrix_cellstr|cell[2 2]{char[1 1]'a';char[1 1]'c';char[1 1]'b';char[1 1]'a'}|exact
+CHK|matrix_char|char[4 2]'a ;c ;bb;a '|exact
+CHK|mat_string|string[2 2]"a","c","b","a"|exact
+CHK|cellstr_cats_class|char[1 4]'cell'|exact
+CHK|cats_shape|double[1 2] [3 1]|exact
+CHK|countcats_shape|double[1 2] [1 3]|exact
+CHK|countcats_col|double[3 1] [2;1;1]|exact
+CHK|categorical_to_cat_double_codes|double[1 2] [1 2]|exact
+CHK|datestr_like|char[1 34]'MATLAB:datestr:ConvertToDateNumber'|div=ADR0232|diverges|char[0 0]''
+CHK|str2double|double[1 1] NaN|exact
+CHK|str2num|char[1 30]'MATLAB:str2num:InvalidArgument'|div=ADR0232|diverges|char[0 0]''
+CHK|int_cast_back|<categorical[1 4]>|exact
+CHK|jsonencode|char[1 17]'["a","b","a","c"]'|exact
+CHK|idx1|<categorical[1 1]>|exact
+CHK|idx_range|<categorical[1 2]>|exact
+CHK|idx_logical|<categorical[1 2]>|exact
+CHK|idx_end|<categorical[1 1]>|exact
+CHK|idx_colon|<categorical[4 1]>|exact
+CHK|transpose|<categorical[4 1]>|exact
+CHK|idx_out|MATLAB:badsubscript|exact
+CHK|idx_out_msg|Index exceeds the number of array elements. Index must not exceed 4.|exact
+CHK|idx_zero|MATLAB:badsubscript|exact
+CHK|idx_zero_msg|Array indices must be positive integers or logical values.|exact
+CHK|end_in_cats|<categorical[1 2]>|exact
+CHK|colon_cat|MATLAB:colon:inputsMustBeNumericCharLogical|exact
+CHK|colon_cat_msg|Inputs must be numeric, char, or logical.|exact
+CHK|idx_2d|<categorical[2 2]>|exact
+CHK|idx_2d_el|<categorical[1 1]>|exact
+CHK|idx_2d_row|<categorical[1 2]>|exact
+CHK|assign_existing|<categorical[1 4]>|exact
+CHK|assign_new|<categorical[1 4]>|exact
+CHK|assign_new_cats|cell[4 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c';char[1 1]'z'}|exact
+CHK|assign_grow|<categorical[1 6]>|exact
+CHK|assign_grow_undef|logical[1 6] [0 0 0 0 1 0]|exact
+CHK|delete|<categorical[1 3]>|exact
+CHK|assign_cat|<categorical[1 4]>|exact
+CHK|assign_string|<categorical[1 4]>|exact
+CHK|assign_missing|<categorical[1 4]>|exact
+CHK|assign_undef_text|<categorical[1 4]>|exact
+CHK|assign_num|MATLAB:categorical:InvalidRHS|exact
+CHK|assign_num_msg|Right hand side of an assignment to a categorical array must be a categorical or text representing a category name.|exact
+CHK|assign_num_code|MATLAB:categorical:InvalidRHS|exact
+CHK|assign_num_code_msg|Right hand side of an assignment to a categorical array must be a categorical or text representing a category name.|exact
+CHK|assign_protected|<categorical[1 1]>|exact
+CHK|assign_protected_new|MATLAB:categorical:ProtectedForAssign|exact
+CHK|assign_protected_new_msg|Cannot add a new category 'q' to this categorical array because its categories are protected. Use ADDCATS to add the new category.|exact
+CHK|assign_other_cat|<categorical[1 2]>|exact
+CHK|assign_other_cat_cats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'q'}|exact
+CHK|assign_ord_text|<categorical[1 3]>|exact
+CHK|assign_ord_new|MATLAB:categorical:ProtectedForAssign|exact
+CHK|assign_ord_new_msg|Cannot add a new category 'zz' to this categorical array because its categories are protected. Use ADDCATS to add the new category.|exact
+CHK|assign_range_scalar|<categorical[1 4]>|exact
+CHK|assign_range_cell|<categorical[1 4]>|exact
+CHK|assign_logical|<categorical[1 4]>|exact
+CHK|assign_int|MATLAB:categorical:InvalidRHS|exact
+CHK|assign_int_msg|Right hand side of an assignment to a categorical array must be a categorical or text representing a category name.|exact
+CHK|assign_empty_to_make|<categorical[1 3]>|exact
+CHK|assign_cell_many|<categorical[1 4]>|exact
+CHK|assign_colon|<categorical[1 4]>|exact
+CHK|cat_same|<categorical[1 8]>|exact
+CHK|cat_diff|<categorical[1 5]>|exact
+CHK|cat_diff_cats|cell[4 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c';char[1 1]'z'}|exact
+CHK|cat_vert|<categorical[2 4]>|exact
+CHK|cat_char|<categorical[1 5]>|exact
+CHK|cat_cell|<categorical[1 5]>|exact
+CHK|cat_string|<categorical[1 5]>|exact
+CHK|cat_num|MATLAB:categorical:cat:TypeMismatch|exact
+CHK|cat_num_msg|Unable to concatenate a double array and a categorical array.|exact
+CHK|cat_missing|<categorical[1 5]>|exact
+CHK|cat_char_cats|cell[4 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c';char[1 1]'z'}|exact
+CHK|cat_string_cats|cell[4 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c';char[1 1]'z'}|exact
+CHK|cat_ord_nonord|MATLAB:categorical:OrdinalMismatchConcatenate|exact
+CHK|cat_ord_nonord_msg|Unable to concatenate a categorical array that is ordinal with one that is not.|exact
+CHK|cat_ord_ord|<categorical[1 6]>|exact
+CHK|cat_ord_diffcats|MATLAB:categorical:OrdinalCategoriesMismatch|exact
+CHK|cat_ord_diffcats_msg|Ordinal arrays must have the same categories, including their order.|exact
+CHK|horzcat|<categorical[1 8]>|exact
+CHK|vertcat|<categorical[2 4]>|exact
+CHK|cat3|double[1 3] [1 4 2]|exact
+CHK|vertcat_mismatch|MATLAB:catenate:dimensionMismatch|exact
+CHK|vertcat_mismatch_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|cat_empty|<categorical[1 4]>|exact
+CHK|cat_empty_cats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|cat_empty_double|<categorical[1 4]>|exact
+CHK|repmat|<categorical[2 4]>|exact
+CHK|reshape|<categorical[2 2]>|exact
+CHK|fliplr|<categorical[1 4]>|exact
+CHK|circshift|<categorical[1 4]>|exact
+CHK|flipud|<categorical[4 1]>|exact
+CHK|permute|double[1 2] [2 2]|exact
+CHK|cat_prot_nonprot|MATLAB:categorical:ProtectedForCombination|exact
+CHK|cat_prot_nonprot_msg|One or more of the arrays is categorical and either ordinal or protected, and the arrays do not all have the same sets of categories. Use ADDCATS to add new categories.|exact
+CHK|cat_prot_same|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|cat_cats_order|cell[2 1]{char[1 1]'b';char[1 1]'a'}|exact
+CHK|cat_cats_order2|cell[3 1]{char[1 1]'b';char[1 1]'c';char[1 1]'a'}|exact
+CHK|addcats|cell[4 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c';char[1 1]'z'}|exact
+CHK|addcats_after|cell[4 1]{char[1 1]'a';char[1 1]'z';char[1 1]'b';char[1 1]'c'}|exact
+CHK|addcats_before|cell[4 1]{char[1 1]'z';char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|addcats_dup|<categorical[1 4]>|exact
+CHK|addcats_many|cell[5 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c';char[1 1]'y';char[1 1]'z'}|exact
+CHK|addcats_string|cell[5 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c';char[1 1]'y';char[1 1]'z'}|exact
+CHK|removecats|<categorical[1 4]>|exact
+CHK|removecats_cats|cell[2 1]{char[1 1]'b';char[1 1]'c'}|exact
+CHK|removecats_unused|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|removecats_missing|<categorical[1 4]>|exact
+CHK|mergecats|<categorical[1 4]>|exact
+CHK|mergecats_cats|cell[2 1]{char[1 1]'a';char[1 1]'c'}|exact
+CHK|mergecats_name|cell[2 1]{char[1 2]'ab';char[1 1]'c'}|exact
+CHK|mergecats_name_val|<categorical[1 4]>|exact
+CHK|mergecats_order|cell[2 1]{char[1 1]'c';char[1 1]'b'}|exact
+CHK|renamecats|<categorical[1 4]>|exact
+CHK|renamecats_all|cell[3 1]{char[1 1]'A';char[1 1]'B';char[1 1]'C'}|exact
+CHK|renamecats_bad|MATLAB:categorical:renamecats:InvalidNames|exact
+CHK|renamecats_bad_msg|OLDNAMES must be a subset of the existing categories.|exact
+CHK|renamecats_dup|MATLAB:categorical:renamecats:DuplicateNames|exact
+CHK|renamecats_dup_msg|Unable to rename the category 'a' to 'b' because that category name exists already.|exact
+CHK|reordercats|cell[3 1]{char[1 1]'c';char[1 1]'b';char[1 1]'a'}|exact
+CHK|reordercats_sorted|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|reordercats_partial|MATLAB:categorical:reordercats:InvalidNeworder|exact
+CHK|reordercats_partial_msg|The new order must be a permutation of the existing categories.|exact
+CHK|reordercats_ord|cell[3 1]{char[1 2]'hi';char[1 3]'mid';char[1 2]'lo'}|exact
+CHK|reordercats_ord_lt|logical[1 3] [0 1 0]|exact
+CHK|setcats|<categorical[1 4]>|exact
+CHK|setcats_cats|cell[2 1]{char[1 1]'a';char[1 1]'z'}|exact
+CHK|sort|<categorical[1 4]>|exact
+CHK|sort_desc|<categorical[1 4]>|exact
+CHK|sort_undef|<categorical[1 3]>|exact
+CHK|sort_undef_desc|<categorical[1 3]>|exact
+CHK|sort_idx|double[1 4] [1 3 2 4]|exact
+CHK|sort_matrix|<categorical[2 2]>|exact
+CHK|sort_dim2|<categorical[2 2]>|exact
+CHK|sortrows_cat|<categorical[2 2]>|exact
+CHK|unique|<categorical[1 3]>|exact
+CHK|unique_cats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|unique_stable|<categorical[1 2]>|exact
+CHK|unique_undef|<categorical[1 4]>|exact
+CHK|unique_ia|double[3 1] [1;2;4]|exact
+CHK|unique_ic|double[4 1] [1;2;1;3]|exact
+CHK|countcats_matrix|double[2 2] [2 1;0 1]|exact
+CHK|countcats_dim|double[2 2] [1 1;2 0]|exact
+CHK|countcats_undef|double[1 1] 1|exact
+CHK|histcounts|double[1 3] [2 1 1]|exact
+CHK|histcounts_cats|cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|histcounts_undef|double[1 1] 1|exact
+CHK|nnz|double[1 1] 2|exact
+CHK|sum|double[1 1] 2|exact
+CHK|any|logical[1 1] 1|exact
+CHK|find|double[1 2] [1 3]|exact
+CHK|numel|double[1 1] 4|exact
+CHK|length|double[1 1] 4|exact
+CHK|size|double[1 2] [1 4]|exact
+CHK|isempty|logical[1 1] 0|exact
+CHK|ndims|double[1 1] 2|exact
+CHK|isrow|logical[1 1] 1|exact
+CHK|isvector|logical[1 1] 1|exact
+CHK|isscalar|logical[1 1] 1|exact
+CHK|width|double[1 1] 4|exact
+CHK|height|double[1 1] 1|exact
+CHK|ischar|logical[1 1] 0|exact
+CHK|isstring|logical[1 1] 0|exact
+CHK|iscell|logical[1 1] 0|exact
+CHK|iscellstr|logical[1 1] 0|exact
+CHK|isnumeric|logical[1 1] 0|exact
+CHK|isobject|logical[1 1] 1|exact
+CHK|islogical|logical[1 1] 0|exact
+CHK|isreal|logical[1 1] 0|exact
+CHK|isfloat|logical[1 1] 0|exact
+CHK|isinteger|logical[1 1] 0|exact
+CHK|isenum|logical[1 1] 0|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|isdiscrete_like_istabular|logical[1 1] 0|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|plus|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|plus_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|minus|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|minus_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|times|char[1 37]'MATLAB:categorical:times:TypeMismatch'|div=ADR0232|diverges|char[1 38]'MATLAB:math:mustBeNumericCharOrLogical'
+CHK|uminus|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uminus_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|not|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|not_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|and|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|and_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|colon_num|MATLAB:colon:inputsMustBeNumericCharLogical|exact
+CHK|colon_num_msg|Inputs must be numeric, char, or logical.|exact
+CHK|abs|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|abs_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|length_cats|double[1 1] 3|exact
+CHK|mode|<categorical[1 1]>|exact
+CHK|mean|MATLAB:sum:wrongInput|exact
+CHK|mean_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|median_nonord|MATLAB:categorical:median:NotOrdinal|exact
+CHK|median_nonord_msg|Input categorical must be ordinal.|exact
+CHK|max_two|MATLAB:categorical:NotOrdinal|exact
+CHK|max_two_msg|Relational comparisons are not allowed for categorical arrays that are not ordinal.|exact
+CHK|ord_max_two|<categorical[1 3]>|exact
+CHK|lower|<categorical[1 4]>|exact
+CHK|upper|<categorical[1 4]>|exact
+CHK|strcat|MATLAB:strcat:InvalidInputType|exact
+CHK|strcat_msg|Inputs must be character vectors, cell arrays of character vectors, or string arrays.|exact
+CHK|regexprep|char[1 27]'MATLAB:REGEXP:invalidInputs'|div=ADR0232|diverges|char[0 0]''
+CHK|strlength|MATLAB:string:MustBeCharCellArrayOrString|exact
+CHK|strlength_msg|First argument must be text.|exact
+CHK|contains|MATLAB:string:MustBeCharCellArrayOrString|exact
+CHK|contains_msg|First argument must be text.|exact
+CHK|startsWith|MATLAB:string:MustBeCharCellArrayOrString|exact
+CHK|startsWith_msg|First argument must be text.|exact
+CHK|strjoin|char[1 30]'MATLAB:strjoin:InvalidCellType'|div=ADR0232|diverges|char[1 30]'MATLAB:strjoin:InvalidCstrType'
+CHK|join|MATLAB:string:MustBeCharCellArrayOrString|exact
+CHK|join_msg|First argument must be text.|exact
+CHK|strsplit|char[1 33]'MATLAB:strsplit:InvalidStringType'|div=ADR0232|diverges|char[0 0]''
+CHK|strtrim|char[1 25]'MATLAB:strtrim:InputClass'|div=ADR0232|diverges|char[1 41]'MATLAB:string:MustBeCharCellArrayOrString'
+CHK|regexp|char[1 27]'MATLAB:REGEXP:invalidInputs'|div=ADR0232|diverges|char[0 0]''
+CHK|cellfun|char[1 23]'MATLAB:cellfun:NotACell'|div=ADR0232|diverges|char[0 0]''
+CHK|arrayfun|double[1 4] [1 2 1 3]|div=ADR0232|diverges|char[1 32]'MATLAB:arrayfun:NotAScalarOutput'
+CHK|arrayfun_cat|<categorical[1 4]>|div=ADR0232|diverges|char[1 32]'MATLAB:arrayfun:NotAScalarOutput'
+CHK|arrayfun_nonuni|cell[1 4]{char[1 1]'a';char[1 1]'b';char[1 1]'a';char[1 1]'c'}|exact
+CHK|num2cell|cell[1 4]{<categorical[1 1]>;<categorical[1 1]>;<categorical[1 1]>;<categorical[1 1]>}|exact
+CHK|num2cell_class|char[1 11]'categorical'|exact
+CHK|cell_from_cat|MATLAB:invalidConversion|exact
+CHK|cell_from_cat_msg|Conversion to cell from categorical is not possible.|exact
+CHK|brace|MATLAB:categorical:CellReferenceNotAllowed|exact
+CHK|brace_msg|Cell contents reference from a non-cell array object.|exact
+CHK|dot|char[1 43]'MATLAB:categorical:FieldReferenceNotAllowed'|div=ADR0232|diverges|char[0 0]''
+CHK|fieldnames|char[1 36]'MATLAB:categorical:UndefinedFunction'|div=ADR0232|diverges|char[0 0]''
+CHK|properties|cell[0 1]{}|div=ADR0232|diverges|char[0 0]''
+CHK|methods_count|double[1 1] 73|div=ADR0232|diverges|char[0 0]''
+CHK|methods_list|char[1 551]'addcats,cat,categorical,categories,cellstr,char,countcats,ctranspose,double,eq,ge,gt,histcounts,horzcat,int16,int32,int64,int8,intersect,iscategory,iscolumn,isempty,isequal,isequaln,ismatrix,ismember,isordinal,isprotected,isrow,isscalar,issorted,issortedrows,isundefined,isvector,keyHash,keyMatch,le,length,lt,max,maxk,median,mergecats,min,mink,mode,ndims,ne,numel,permute,removecats,renamecats,reordercats,reshape,setcats,setdiff,setxor,single,size,sort,sortrows,string,summary,times,topkrows,transpose,uint16,uint32,uint64,uint8,union,unique,vertcat'|div=ADR0232|diverges|char[0 0]''
+CHK|struct|struct[1 1]{(f=<categorical[1 4]>)}|exact
+CHK|struct_field_class|char[1 11]'categorical'|exact
+CHK|summary_out|struct[1 1]{(Size=double[1 2] [1 4],Type=char[1 11]'categorical',Categories=cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'},Counts=double[1 3] [2 1 1],NumMissing=double[1 1] 0)}|exact
+CHK|summary_out_undef|struct[1 1]{(Size=double[1 2] [1 2],Type=char[1 11]'categorical',Categories=cell[1 1]{char[1 1]'a'},Counts=double[1 1] 1,NumMissing=double[1 1] 1)}|exact
+CHK|summary_out_ord|struct[1 1]{(Size=double[1 2] [1 3],Type=char[1 11]'categorical',Categories=cell[3 1]{char[1 2]'lo';char[1 3]'mid';char[1 2]'hi'},Counts=double[1 3] [1 1 1],NumMissing=double[1 1] 0,Min=<categorical[1 1]>,Median=<categorical[1 1]>,Max=<categorical[1 1]>)}|exact
+CHK|disp_matrix|char[1 31]'     a      b \n     c      a \n\n'|exact
+CHK|display_long|char[1 259]'  Columns 1 through 17\n\n     alpha      beta      gamma      delta      epsilon      zeta      eta      theta      iota      kappa      lambda      mu      nu      xi      omicron      pi      rho \n\n  Columns 18 through 20\n\n     sigma      tau      upsilon \n\n'|div=ADR0232|diverges|char[1 208]'     alpha      beta      gamma      delta      epsilon      zeta      eta      theta      iota      kappa      lambda      mu      nu      xi      omicron      pi      rho      sigma      tau      upsilon \n\n'
+CHK|display_mixed_len|char[1 45]'     a        bbbbbb \n     ccc      d      \n\n'|exact
+CHK|mat2str_cat|MATLAB:mat2str:NumericInput|exact
+CHK|mat2str_cat_msg|Input matrix must be a numeric array, character array, or string array.|exact
+CHK|cat_in_if|MATLAB:invalidConversion|exact
+CHK|cat_in_if_msg|Conversion to logical from categorical is not possible.|exact
+CHK|switch_cat|char[1 9]'matched a'|exact
+CHK|logical_cat_direct|logical[1 4] [1 1 1 0]|exact
+CHK|while_eq|logical[1 1] 1|exact
+CHK|fillmissing|<categorical[1 2]>|exact
+CHK|rmmissing|<categorical[1 1]>|exact
+CHK|standardizeMissing|<categorical[1 4]>|exact
+CHK|issorted|logical[1 1] 1|exact
+CHK|issorted_unsorted|logical[1 1] 0|exact
+CHK|save_load|char[1 19]'categorical a,b,a,c'|div=ADR0232|diverges|char[1 16]'double [1 2 1 3]'
+CHK|nnz_cats|double[1 1] 3|exact
+CHK|accumarray_like_grouping|double[1 3] [2 1 1]|exact
+CHK|findgroups_g|double[1 4] [1 2 1 3]|exact
+CHK|findgroups_gn|<categorical[1 3]>|exact
+CHK|findgroups_gn_class|char[1 11]'categorical'|exact
+CHK|grp2idx_absent|double[1 1] 0|div=ADR0232|diverges|double[1 1] 5
+CHK|discretize_cat|<categorical[1 3]>|exact
+CHK|discretize_cat_names|cell[3 1]{char[1 2]'lo';char[1 3]'mid';char[1 2]'hi'}|exact
+CHK|discretize_cat_ord|logical[1 1] 1|exact
+CHK|cat_from_string_missing|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|isequal_string|logical[1 1] 0|exact
+CHK|cat_logical_index_assign_cell|<categorical[1 4]>|exact
+CHK|intersect|<categorical[1 1]>|exact
+CHK|union|<categorical[1 4]>|exact
+CHK|setdiff|<categorical[1 2]>|exact
+CHK|intersect_cell|<categorical[1 2]>|exact
+CHK|ismember_rows|logical[4 1] [1;0;1;0]|exact
+CHK|cat_colon_syntax|<categorical[1 4]>|exact
+CHK|numel_categories_after_delete|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|cat_double_index_assign|MATLAB:categorical:InvalidRHS|exact
+CHK|cat_double_index_assign_msg|Right hand side of an assignment to a categorical array must be a categorical or text representing a category name.|exact
+CHK|min_max_undef|<categorical[1 1]>|exact
+CHK|cat_eq_undef_vs_undef_text|logical[1 1] 0|exact
+CHK|cat_eq_missing|logical[1 1] 0|exact
+CHK|cat_num_eq|logical[1 2] [1 0]|exact
+CHK|cat_num_eq_num|MATLAB:categorical:InvalidComparisonTypes|exact
+CHK|cat_num_eq_num_msg|Comparison is not defined between categorical and double arrays.|exact
+CHK|table_var_class|char[1 11]'categorical'|exact
+CHK|table_summary_out|struct[1 1]{(n=struct[1 1]{(Size=double[1 2] [3 1],Type=char[1 6]'double',Description=char[0 0]'',Units=char[0 0]'',Continuity=double[0 0],NumMissing=double[1 1] 0,Min=double[1 1] 1,Median=double[1 1] 2,Max=double[1 1] 3,Mean=double[1 1] 2,Std=double[1 1] 1)},kind=struct[1 1]{(Size=double[1 2] [3 1],Type=char[1 11]'categorical',Description=char[0 0]'',Units=char[0 0]'',Continuity=double[0 0],Categories=cell[2 1]{char[1 1]'x';char[1 1]'y'},Counts=double[2 1] [2;1],NumMissing=double[1 1] 0)})}|div=ADR0232|diverges|struct[1 1]{(n=struct[1 1]{(Size=double[1 2] [3 1],Type=char[1 6]'double',Min=double[1 1] 1,Max=double[1 1] 3,Mean=double[1 1] 2)},kind=struct[1 1]{(Size=double[1 2] [3 1],Type=char[1 11]'categorical',Description=char[0 0]'',Units=char[0 0]'',Continuity=double[0 0],Categories=cell[2 1]{char[1 1]'x';char[1 1]'y'},Counts=double[2 1] [2;1],NumMissing=double[1 1] 0)})}
+CHK|table_summary_out_kind|cell[8 1]{char[1 4]'Size';char[1 4]'Type';char[1 11]'Description';char[1 5]'Units';char[1 10]'Continuity';char[1 10]'Categories';char[1 6]'Counts';char[1 10]'NumMissing'}|exact
+CHK|table_rows|<table[2 2]>|exact
+CHK|table_rows_n|double[2 1] [1;3]|exact
+CHK|table_assign|<categorical[3 1]>|exact
+CHK|table_assign_new|<categorical[3 1]>|exact
+CHK|table_assign_new_cats|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 2]'zz'}|exact
+CHK|table_brace|MATLAB:categorical:CellReferenceNotAllowed|exact
+CHK|table_brace_msg|Cell contents reference from a non-cell array object.|exact
+CHK|table_sortrows|<categorical[3 1]>|exact
+CHK|table_sortrows_desc|<categorical[3 1]>|exact
+CHK|table_sortrows_two|double[3 1] [2;1;3]|div=ADR0232|diverges|char[0 0]''
+CHK|table_unique|<categorical[2 1]>|exact
+CHK|table_groupsummary|<table[2 2]>|exact
+CHK|table_groupsummary_kind_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 4]'cell'
+CHK|table_groupcounts|<table[2 3]>|exact
+CHK|splitapply|double[2 1] [4;2]|exact
+CHK|table_cat_in_ctor|char[1 11]'categorical'|exact
+CHK|array2table|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|table_varfun|<table[2 1]>|exact
+CHK|table_rowfun|<table[3 1]>|exact
+CHK|table_writeread|char[1 10]'cell x/y/x'|exact
+CHK|table_kind_string_write|char[1 6]'string'|exact
+CHK|table_kind_cell_write|char[1 4]'cell'|exact
+CHK|table_kind_num_write|MATLAB:categorical:InvalidRHS|exact
+CHK|table_kind_num_write_msg|Right hand side of an assignment to a categorical array must be a categorical or text representing a category name.|exact
+CHK|table_vartype|double[1 2] [3 1]|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|table_convertvars|char[1 11]'categorical'|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|table_convertvars_vals|<categorical[3 1]>|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|table_ismember|logical[3 1] [1;0;1]|exact
+CHK|table_cat_eq_in_index|double[1 1] 2|exact
+CHK|table2cell|char[1 11]'categorical'|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|table2struct|char[1 11]'categorical'|div=ADR0232|diverges|char[1 4]'char'
+CHK|T_parens_kind|<categorical[3 1]>|exact
+CHK|T_parens_kind_class|char[1 11]'categorical'|exact
+CHK|T_kind_1_class|char[1 11]'categorical'|exact
+CHK|T_mixed_brace|char[1 32]'MATLAB:table:ExtractDataCatError'|div=ADR0232|diverges|char[0 0]''
+CHK|table_join|double[1 2] [3 3]|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|table_join_w|double[3 1] [10;10;20]|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|table_stack|char[1 6]'double'|div=ADR0232|diverges|char[1 24]'MATLAB:UndefinedFunction'
+CHK|timetable_cat|char[1 11]'categorical'|exact
+CHK|table_cat_isundefined|logical[2 1] [0;1]|div=ADR0232|diverges|char[0 0]''
+CHK|table_fillmissing|<categorical[2 1]>|div=ADR0232|diverges|char[0 0]''
+CHK|bar_cat_xdata|<categorical[1 3]>|div=ADR0232|diverges|double[1 3] [1 2 3]
+CHK|bar_cat_xdata_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|bar_cat_xtick|<categorical[1 3]>|div=ADR0232|diverges|double[1 7] [0.5 1 1.5 2 2.5 3 3.5]
+CHK|bar_cat_xtick_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|bar_cat_xticklabel|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|div=ADR0232|diverges|cell[7 1]{char[1 3]'0.5';char[1 1]'1';char[1 3]'1.5';char[1 1]'2';char[1 3]'2.5';char[1 1]'3';char[1 3]'3.5'}
+CHK|bar_cat_xlim|<categorical[1 2]>|div=ADR0232|diverges|double[1 2] [0.5 3.5]
+CHK|bar_cat_xlim_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|bar_cat_xruler|char[1 47]'matlab.graphics.axis.decorator.CategoricalRuler'|div=ADR0232|diverges|char[1 6]'double'
+CHK|bar_cat_cats|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|div=ADR0232|diverges|char[1 26]'MATLAB:noSuchMethodOrField'
+CHK|bar_cat_xend|double[1 3] [1 2 3]|exact
+CHK|bar_cat_xlim_num|double[1 2] [1 3]|div=ADR0232|diverges|double[1 2] [0.5 3.5]
+CHK|bar_cat_xlim_set|<categorical[1 2]>|div=ADR0232|diverges|double[1 2] [1 2]
+CHK|bar_cat_xlim_set_num|char[1 39]'MATLAB:graphics:CategoricalRuler:Limits'|div=ADR0232|diverges|double[1 2] [0.5 2.5]
+CHK|bar_cat_xtick_set|<categorical[1 1]>|div=ADR0232|diverges|double[1 1] 1
+CHK|bar_cat_xticklabel_set|cell[3 1]{char[1 1]'A';char[1 1]'B';char[1 1]'C'}|exact
+CHK|bar_cat_text|char[1 6]'double'|exact
+CHK|bar_cat_hold_plot|char[1 17]'categorical A/B/C'|div=ADR0232|diverges|char[1 12]'double A/B/C'
+CHK|bar_cat_hold_plot_num|char[1 12]'double A/B/C'|exact
+CHK|bar_cat_two|double[1 2] [1 2]|div=ADR0232|diverges|double[1 2] [2 1]
+CHK|bar_cat_order|<categorical[1 2]>|div=ADR0232|diverges|double[1 2] [2 1]
+CHK|bar_cat_order_ticks|cell[3 1]{char[1 1]'A';char[1 1]'B';char[1 1]'C'}|exact
+CHK|bar_cat_reorder|<categorical[1 2]>|div=ADR0232|diverges|double[1 2] [1 2]
+CHK|bar_cat_reorder_ticks|cell[3 1]{char[1 1]'A';char[1 1]'B';char[1 1]'C'}|exact
+CHK|bar_cat_y|char[1 36]'MATLAB:graphics:configureAxes:Mixing'|div=ADR0232|diverges|char[1 6]'double'
+CHK|barh_cat_yruler|char[1 43]'matlab.graphics.axis.decorator.NumericRuler'|div=ADR0232|diverges|char[1 6]'double'
+CHK|bar_cat_undef|<categorical[1 2]>|div=ADR0232|diverges|double[1 2] [1 NaN]
+CHK|pie_cat_n|double[1 1] 4|div=ADR0232|diverges|double[1 1] 6
+CHK|pie_cat_labels|char[1 15]'x (67%),y (33%)'|div=ADR0232|diverges|char[1 11]'25%,50%,25%'
+CHK|hist_cat_values|double[1 2] [2 1]|exact
+CHK|hist_cat_cats|cell[1 2]{char[1 1]'x';char[1 1]'y'}|div=ADR0232|diverges|cell[1 0]{}
+CHK|hist_cat_class|char[1 53]'matlab.graphics.chart.primitive.categorical.Histogram'|div=ADR0232|diverges|char[1 6]'double'
+CHK|hist_cat_xruler|char[1 47]'matlab.graphics.axis.decorator.CategoricalRuler'|div=ADR0232|diverges|char[1 6]'double'
+CHK|hist_cat_data|<categorical[1 3]>|div=ADR0232|diverges|double[1 3] [1 2 1]
+CHK|hist_cat_numbins|double[1 1] 2|exact
+CHK|hist_cat_barwidth|double[1 1] 0.90000000000000002|div=ADR0232|diverges|double[1 1] 1
+CHK|scatter_cat_xdata|<categorical[1 2]>|div=ADR0232|diverges|double[1 2] [1 2]
+CHK|scatter_cat_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|scatter_cat_ruler|char[1 47]'matlab.graphics.axis.decorator.CategoricalRuler'|div=ADR0232|diverges|char[1 6]'double'
+CHK|plot_cat_xdata|<categorical[1 2]>|div=ADR0232|diverges|double[1 2] [1 2]
+CHK|plot_cat_ruler|char[1 47]'matlab.graphics.axis.decorator.CategoricalRuler'|div=ADR0232|diverges|char[1 6]'double'
+CHK|plot_cat_xtick|<categorical[1 2]>|div=ADR0232|diverges|double[1 1] 1
+CHK|plot_cat_xlim|<categorical[1 2]>|div=ADR0232|diverges|double[1 2] [1 2]
+CHK|plot_cat_y|<categorical[1 3]>|div=ADR0232|diverges|double[1 3] [1 2 1]
+CHK|plot_cat_yruler|char[1 47]'matlab.graphics.axis.decorator.CategoricalRuler'|div=ADR0232|diverges|char[1 6]'double'
+CHK|plot_cat_ytick|<categorical[1 2]>|div=ADR0232|diverges|double[1 11] [1 1.1000000000000001 1.2000000000000002 1.3 1.4000000000000001 1.5 1.6000000000000001 1.7000000000000002 1.8 1.9000000000000001 2]
+CHK|stem_cat_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|area_cat_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|swarm_cat_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|boxchart_class|char[1 40]'matlab.graphics.chart.primitive.BoxChart'|div=ADR0232|diverges|char[1 6]'double'
+CHK|boxchart_xdata|<categorical[1 3]>|div=ADR0232|diverges|double[1 3] [1 2 1]
+CHK|heatmap_cat|cell[2 1]{char[1 1]'x';char[1 1]'y'}|div=ADR0232|diverges|cell[1 2]{char[1 1]'x';char[1 1]'y'}
+CHK|heatmap_color|double[2 2] [2 0;0 1]|exact
+CHK|hold_plot_other_cats|char[1 5]'x/y/q'|div=ADR0232|diverges|char[1 35]'0.6/0.8/1/1.2/1.4/1.6/1.8/2/2.2/2.4'
+CHK|xline_num|char[1 45]'matlab.graphics.chart.decoration.ConstantLine'|div=ADR0232|diverges|char[1 6]'double'
+CHK|xline_cat|char[1 45]'matlab.graphics.chart.decoration.ConstantLine'|div=ADR0232|diverges|char[1 6]'double'
+CHK|xline_cat_value|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|xregion_cat|char[1 47]'matlab.graphics.chart.decoration.ConstantRegion'|div=ADR0232|diverges|char[1 6]'double'
+CHK|errorbar_cat_class|char[1 11]'categorical'|div=ADR0232|diverges|char[1 6]'double'
+CHK|uitable_data_class|char[1 5]'table'|exact
+CHK|uitable_kind|<categorical[3 1]>|exact
+CHK|uitable_colformat|cell[0 0]{}|exact
+CHK|uitable_coleditable|logical[0 0]|exact
+CHK|uitable_colname|cell[2 1]{char[1 1]'n';char[1 4]'kind'}|exact
+CHK|uitable_edit|<categorical[3 1]>|exact
+CHK|uitable_edit_new|<categorical[3 1]>|exact
+CHK|uitable_edit_new_cats|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 2]'zz'}|exact
+CHK|uitable_display_data|char[1 5]'table'|exact
+CHK|uitable_display_kind|<categorical[3 1]>|exact
+CHK|uitable_cell_colformat|cell[0 0]{}|exact
+CHK|uitable_cat_direct|char[1 29]'MATLAB:hg:uitable:BadDataType'|exact
+CHK|uitable_colformat_set|cell[1 2]{double[0 0];cell[1 3]{char[1 1]'x';char[1 1]'y';char[1 1]'w'}}|exact
+CHK|uidropdown_cat_items|char[1 4]'cell'|exact
+CHK|style_target|<categorical[1 1]>|exact
+CHK|style_target_class|char[1 11]'categorical'|exact
+CHK|style_target_cats|cell[2 1]{char[1 7]'listbox';char[1 4]'item'}|exact
+CHK|style_target_prot|logical[1 1] 1|exact
+CHK|style_target_ord|logical[1 1] 0|exact
+CHK|style_target_eq|logical[1 1] 1|exact
+CHK|style_target_str|string[1 1]"item"|exact
+CHK|style_target_brace|MATLAB:categorical:CellReferenceNotAllowed|exact
+CHK|style_target_brace_msg|Cell contents reference from a non-cell array object.|exact
+CHK|cat_in_cellfun_uniform|double[1 2] [4 3]|exact
+CHK|cat_eq_with_cell_elementwise|logical[1 4] [1 1 0 0]|exact
+CHK|cat_dims|double[1 1] 6|exact
+CHK|isequal_shape_diff|logical[1 1] 0|exact
+CHK|cat_count_class|char[1 6]'double'|exact
+CHK|cat_label_num|logical[1 2] [1 0]|exact
+CHK|ord_compare_to_text_not_cat|MATLAB:categorical:ProtectedForCombination|exact
+CHK|ord_compare_to_text_not_cat_msg|One or more of the arrays is categorical and either ordinal or protected, and the arrays do not all have the same sets of categories. Use ADDCATS to add new categories.|exact
+CHK|nonord_compare_text|MATLAB:categorical:NotOrdinal|exact
+CHK|nonord_compare_text_msg|Relational comparisons are not allowed for categorical arrays that are not ordinal.|exact
+CHK|cat_plus_string|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|cat_plus_string_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|cat_strcat_string|string[1 4]"ax","bx","ax","cx"|exact
+CHK|cat_disp_in_fprintf|char[1 1]'a'|exact
+CHK|cat_sprintf_string|char[1 4]'abac'|exact
+CHK|cat_mat2str_string|char[1 17]'["a" "b" "a" "c"]'|exact
+CHK|cat_char_of_matrix|double[1 2] [4 1]|exact
+CHK|cat_vertcat_char|MATLAB:catenate:dimensionMismatch|exact
+CHK|cat_vertcat_char_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|cat_repmat_undef|<categorical[1 2]>|exact
+CHK|cat_of_cat_ordinal_kept|logical[1 1] 0|exact
+CHK|cat_of_cat_ordinal_cats|cell[2 1]{char[1 2]'hi';char[1 2]'lo'}|exact
+CHK|cat_of_cat_ordinal_off|logical[1 1] 0|exact
+CHK|addcats_ordinal|MATLAB:categorical:addcats:NoBeforeOrAfter|exact
+CHK|addcats_ordinal_msg|You must specify either 'Before' or 'After' for an ordinal array.|exact
+CHK|removecats_ordinal|<categorical[1 3]>|exact
+CHK|mergecats_ordinal|<categorical[1 3]>|exact
+CHK|mergecats_ordinal_nonadjacent|MATLAB:categorical:mergecats:NonconsecutiveCategories|exact
+CHK|mergecats_ordinal_nonadjacent_msg|Cannot merge nonconsecutive categories when the categories are ordinal.|exact
+CHK|countcats_ordinal|double[1 3] [1 1 1]|exact
+CHK|ord_lt_scalar|logical[1 3] [1 0 1]|exact
+CHK|ord_sort_undef|<categorical[1 3]>|exact
+CHK|ord_issorted|logical[1 1] 0|exact
+CHK|ord_double|double[1 3] [1 3 2]|exact
+CHK|ord_min_undef|<categorical[1 1]>|exact
+CHK|ord_max_omit|<categorical[1 1]>|exact
+CHK|ord_max_include|<categorical[1 1]>|exact
+CHK|cat_protected_assign_cat_other|<categorical[1 1]>|exact
+CHK|cat_protected_cat_with_other|<categorical[1 2]>|exact
+CHK|cat_protected_cat_with_other_cats|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|cat_protected_addcats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|cat_protected_removecats|cell[1 1]{char[1 1]'a'}|exact
+CHK|cat_protected_display|char[1 37]'MATLAB:err_static_workspace_violation'|div=ADR0232|diverges|char[1 31]'pp = \n\n  categorical\n\n     a \n\n'
+CHK|cat_protected_cats_after_cat|logical[1 1] 1|exact
+CHK|cat_ord_display_ordering|char[1 24]'MATLAB:UndefinedFunction'|div=ADR0232|diverges|char[1 201]'\n1×3 ordinal categorical\n\n     lo      mid      hi      <undefined> \n     1       1        1       0           \n\nAdditional statistics:\n\n    Min         lo  \n    Median      mid \n    Max         hi  \n\n'
+CHK|cat_num_input_valueset_missing|<categorical[1 3]>|exact
+CHK|cat_valueset_undefined_text|MATLAB:categorical:EmptyCategoryName|exact
+CHK|cat_valueset_undefined_text_msg|Unable to create a category name from empty or missing text. Specify category names using the CATEGORYNAMES input argument.|exact
+CHK|cat_valueset_undefined_cats|MATLAB:categorical:UndefinedLabelCategoryName|exact
+CHK|cat_valueset_undefined_cats_msg|Unable to create a category name equal to the text '<undefined>'. Specify category names using the CATEGORYNAMES input argument.|exact
+CHK|cat_string_valueset_missing|char[1 36]'MATLAB:categorical:EmptyCategoryName'|div=ADR0232|diverges|char[1 27]'MATLAB:categorical:CharData'
+CHK|cat_isundefined_count|double[1 1] 2|exact
+CHK|cat_pct|double[1 3] [50 25 25]|exact
+CHK|uitable_colformat_set_2|cell[1 2]{double[0 0];cell[1 3]{char[1 1]'x';char[1 1]'y';char[1 1]'w'}}|exact
+CHK|uitable_display_data_kind_class|char[1 11]'categorical'|exact
+CHK|uitable_cats_unused|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|uitable_cats_colformat|cell[0 0]{}|exact
+CHK|uidropdown_cat_items_2|char[1 4]'cell'|exact
+CHK|style_target_2|<categorical[1 1]>|exact
+CHK|style_target_class_2|char[1 11]'categorical'|exact
+CHK|style_target_cats_2|cell[2 1]{char[1 7]'listbox';char[1 4]'item'}|exact
+CHK|style_target_prot_2|logical[1 1] 1|exact
+CHK|style_target_ord_2|logical[1 1] 0|exact
+CHK|style_target_eq_2|logical[1 1] 1|exact
+CHK|style_target_str_2|string[1 1]"item"|exact
+CHK|style_target_brace_2|MATLAB:categorical:CellReferenceNotAllowed|exact
+CHK|style_target_brace_2_msg|Cell contents reference from a non-cell array object.|exact
+CHK|style_table_cats|cell[4 1]{char[1 5]'table';char[1 6]'column';char[1 3]'row';char[1 4]'cell'}|exact
+CHK|style_table_prot|logical[1 1] 1|exact
+CHK|style_tree_cats|cell[4 1]{char[1 4]'tree';char[1 4]'node';char[1 5]'level';char[1 7]'subtree'}|exact
+CHK|style_dropdown_cats|cell[2 1]{char[1 8]'dropdown';char[1 4]'item'}|exact
+CHK|style_empty_cats|cell[2 1]{char[1 7]'listbox';char[1 4]'item'}|exact
+CHK|style_empty_size|double[1 2] [0 0]|exact
+CHK|style_empty_class|char[1 11]'categorical'|exact
+CHK|cat_in_cellfun_uniform_2|double[1 2] [4 3]|exact
+CHK|cat_eq_with_cell_elementwise_2|logical[1 4] [1 1 0 0]|exact
+CHK|cat_dims_2|double[1 1] 6|exact
+CHK|isequal_shape_diff_2|logical[1 1] 0|exact
+CHK|cat_count_class_2|char[1 6]'double'|exact
+CHK|cat_label_num_2|logical[1 2] [1 0]|exact
+CHK|ord_compare_to_text_not_cat_2|MATLAB:categorical:ProtectedForCombination|exact
+CHK|ord_compare_to_text_not_cat_2_msg|One or more of the arrays is categorical and either ordinal or protected, and the arrays do not all have the same sets of categories. Use ADDCATS to add new categories.|exact
+CHK|nonord_compare_text_2|MATLAB:categorical:NotOrdinal|exact
+CHK|nonord_compare_text_2_msg|Relational comparisons are not allowed for categorical arrays that are not ordinal.|exact
+CHK|cat_plus_string_2|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|cat_plus_string_2_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|cat_strcat_string_2|string[1 4]"ax","bx","ax","cx"|exact
+CHK|cat_disp_in_fprintf_2|char[1 1]'a'|exact
+CHK|cat_sprintf_string_2|char[1 4]'abac'|exact
+CHK|cat_mat2str_string_2|char[1 17]'["a" "b" "a" "c"]'|exact
+CHK|cat_char_of_matrix_2|double[1 2] [4 1]|exact
+CHK|cat_char_of_col|char[2 2]'a ;bb'|exact
+CHK|cat_char_of_col_size|double[1 2] [2 2]|exact
+CHK|cat_vertcat_char_2|MATLAB:catenate:dimensionMismatch|exact
+CHK|cat_vertcat_char_2_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|cat_repmat_undef_2|<categorical[1 2]>|exact
+CHK|cat_of_cat_ordinal_kept_2|logical[1 1] 0|exact
+CHK|cat_of_cat_ordinal_cats_2|cell[2 1]{char[1 2]'hi';char[1 2]'lo'}|exact
+CHK|cat_of_cat_ordinal_off_2|logical[1 1] 0|exact
+CHK|addcats_ordinal_2|MATLAB:categorical:addcats:NoBeforeOrAfter|exact
+CHK|addcats_ordinal_2_msg|You must specify either 'Before' or 'After' for an ordinal array.|exact
+CHK|removecats_ordinal_2|<categorical[1 3]>|exact
+CHK|mergecats_ordinal_2|<categorical[1 3]>|exact
+CHK|mergecats_ordinal_nonadjacent_2|MATLAB:categorical:mergecats:NonconsecutiveCategories|exact
+CHK|mergecats_ordinal_nonadjacent_2_msg|Cannot merge nonconsecutive categories when the categories are ordinal.|exact
+CHK|countcats_ordinal_2|double[1 3] [1 1 1]|exact
+CHK|ord_lt_scalar_2|logical[1 3] [1 0 1]|exact
+CHK|ord_sort_undef_2|<categorical[1 3]>|exact
+CHK|ord_issorted_2|logical[1 1] 0|exact
+CHK|ord_double_2|double[1 3] [1 3 2]|exact
+CHK|ord_min_undef_2|<categorical[1 1]>|exact
+CHK|ord_max_omit_2|<categorical[1 1]>|exact
+CHK|ord_max_include_2|<categorical[1 1]>|exact
+CHK|cat_protected_assign_cat_other_2|<categorical[1 1]>|exact
+CHK|cat_protected_cat_with_other_2|<categorical[1 2]>|exact
+CHK|cat_protected_cat_with_other_cats_2|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|cat_protected_addcats_2|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|cat_protected_removecats_2|cell[1 1]{char[1 1]'a'}|exact
+CHK|cat_protected_cats_after_cat_2|logical[1 1] 1|exact
+CHK|cat_num_input_valueset_missing_2|<categorical[1 3]>|exact
+CHK|cat_valueset_undefined_text_2|MATLAB:categorical:EmptyCategoryName|exact
+CHK|cat_valueset_undefined_text_2_msg|Unable to create a category name from empty or missing text. Specify category names using the CATEGORYNAMES input argument.|exact
+CHK|cat_valueset_undefined_cats_2|MATLAB:categorical:UndefinedLabelCategoryName|exact
+CHK|cat_valueset_undefined_cats_2_msg|Unable to create a category name equal to the text '<undefined>'. Specify category names using the CATEGORYNAMES input argument.|exact
+CHK|cat_string_valueset_missing_2|char[1 36]'MATLAB:categorical:EmptyCategoryName'|div=ADR0232|diverges|char[1 27]'MATLAB:categorical:CharData'
+CHK|cat_isundefined_count_2|double[1 1] 2|exact
+CHK|cat_pct_2|double[1 3] [50 25 25]|exact
+CHK|ismember_cats_order|logical[1 2] [1 1]|exact
+CHK|cat_ordinal_cats_from_num_order|cell[3 1]{char[1 1]'c';char[1 1]'a';char[1 1]'b'}|exact
+CHK|cat_valueset_sorts|cell[2 1]{char[1 1]'b';char[1 1]'a'}|exact
+CHK|cat_valueset_num_unsorted|cell[2 1]{char[1 1]'2';char[1 1]'1'}|exact
+CHK|cat_valueset_num_names|cell[2 1]{char[1 3]'two';char[1 3]'one'}|exact
+CHK|cat_ctor_string_missing_cats|<categorical[1 2]>|exact
+CHK|cat_cat_vert_mixed_cats|cell[2 1]{char[1 1]'b';char[1 1]'a'}|exact
+CHK|cat_num_display_names|cell[8 1]{char[1 5]'1e-05';char[1 8]'0.000123';char[1 3]'0.1';char[1 4]'0.25';char[1 7]'0.33333';char[1 7]'0.66667';char[1 10]'1.2346e+05';char[1 10]'1.2346e+06'}|exact
+CHK|cat_num_display_names2|cell[6 1]{char[1 4]'-Inf';char[1 2]'-2';char[1 6]'1.2346';char[1 5]'100.5';char[1 5]'1e+10';char[1 3]'Inf'}|exact
+CHK|cat_num_display_int|cell[2 1]{char[1 2]'-3';char[1 1]'5'}|exact
+CHK|cat_num_display_logical|cell[1 1]{char[1 4]'true'}|exact
+CHK|cat_num_display_single|cell[2 1]{char[1 3]'0.1';char[1 7]'0.33333'}|exact
+CHK|cat_num_valueset_mismatch_type|MATLAB:categorical:TypeMismatchValueset|exact
+CHK|cat_num_valueset_mismatch_type_msg|VALUESET must be the same class as DATA.|exact
+CHK|cat_num_valueset_text|MATLAB:categorical:NumericTypeMismatchValueSet|exact
+CHK|cat_num_valueset_text_msg|VALUESET must be numeric when DATA is numeric.|exact
+CHK|cat_num_valueset_text_val|MATLAB:categorical:NumericTypeMismatchValueSet|exact
+CHK|cat_num_valueset_text_val_msg|VALUESET must be numeric when DATA is numeric.|exact
+CHK|cat_cellnum_valueset|MATLAB:categorical:TypeMismatchValueset|exact
+CHK|cat_cellnum_valueset_msg|VALUESET must be the same class as DATA.|exact
+CHK|cat_ctor_sort_numeric_text|cell[3 1]{char[1 1]'a';char[1 3]'b10';char[1 2]'b2'}|exact
+CHK|cat_ctor_4args|MATLAB:categorical:UnprotectedOrdinal|exact
+CHK|cat_ctor_4args_msg|An ordinal array must be protected.|exact
+CHK|cat_ctor_4args_prot|MATLAB:categorical:UnprotectedOrdinal|exact
+CHK|cat_ctor_4args_prot_msg|An ordinal array must be protected.|exact
+CHK|cat_ctor_bad_option|MATLAB:categorical:InvalidNames|exact
+CHK|cat_ctor_bad_option_msg|CATEGORYNAMES must be a string array or cell array of character vectors containing non-blank category names.|exact
+CHK|cat_ctor_too_many|MATLAB:table:parseArgs:WrongNumberArgs|exact
+CHK|cat_ctor_too_many_msg|Incorrect number of arguments.|exact
+CHK|cat_ctor_valueset_cell_num|MATLAB:categorical:UniqueMethodFailedValueset|exact
+CHK|cat_ctor_valueset_cell_num_msg|Could not find unique values in VALUESET using the UNIQUE function.|exact
+CHK|cat_ctor_names_dup_case|<categorical[1 2]>|exact
+CHK|cat_ctor_names_empty|MATLAB:categorical:EmptyName|exact
+CHK|cat_ctor_names_empty_msg|CATEGORYNAMES contains an empty character vector or zero-length string.|exact
+CHK|cat_ctor_names_undef|MATLAB:categorical:UndefinedLabel|exact
+CHK|cat_ctor_names_undef_msg|CATEGORYNAMES contains an invalid name '<undefined>'.|exact
+CHK|cat_ctor_names_ws|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|cat_ctor_data_ws|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|cat_ctor_data_ws_val|cell[1 2]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|cat_ctor_empty_valueset|<categorical[1 1]>|exact
+CHK|cat_ctor_empty_valueset_cats|cell[0 0]{}|exact
+CHK|cat_ctor_empty_data_valueset|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|cat_ctor_string_col|<categorical[2 1]>|exact
+CHK|cat_ctor_3d|double[1 3] [2 2 2]|exact
+CHK|cat_ctor_3d_disp|char[1 88]'\n(:,:,1) = \n\n     1      1 \n     1      1 \n\n\n(:,:,2) = \n\n     1      1 \n     1      1 \n\n'|div=ADR0232|diverges|char[1 59]'     1      1      1      1 \n     1      1      1      1 \n\n'
+CHK|DISP_ROW|     a      b      a      c \n\n|exact
+CHK|DISP_COL|     a \n     b \n     a \n     c \n\n|exact
+CHK|DISPLAY_ROW|c = \n\n  1×4 categorical array\n\n     a      b      a      c \n\n|exact
+CHK|DISPLAY_COL|cc = \n\n  4×1 categorical array\n\n     a \n     b \n     a \n     c \n\n|exact
+CHK|DISPLAY_ORD|o = \n\n  1×3 categorical array\n\n     lo      hi      mid \n\n|exact
+CHK|DISPLAY_SCALAR|q = \n\n  categorical\n\n     a \n\n|exact
+CHK|DISPLAY_EMPTY|e = \n\n  0×0 empty categorical array\n\n|exact
+CHK|DISPLAY_EMPTY_0x1|ee = \n\n  0×1 empty categorical array\n\n|exact
+CHK|DISPLAY_EMPTY_1x0|ee = \n\n  1×0 empty categorical array\n\n|exact
+CHK|DISPLAY_UNDEF|u = \n\n  1×2 categorical array\n\n     a      <undefined> \n\n|exact
+CHK|DISPLAY_1x1_UNDEF|uu = \n\n  categorical\n\n     <undefined> \n\n|exact
+CHK|DISPLAY_NUM|nn = \n\n  1×3 categorical array\n\n     1      2      3 \n\n|exact
+CHK|DISPLAY_MATRIX|mm = \n\n  2×2 categorical array\n\n     a        bbbbbb \n     ccc      d      \n\n|exact
+CHK|DISPLAY_3D|  2×2×2 categorical array\n\nm3(:,:,1) = \n\n     1      1 \n     1      1 \n\n\nm3(:,:,2) = \n\n     1      1 \n     1      1 \n\n|div=ADR0232|diverges|m3 = \n\n  2×4 categorical array\n\n     1      1      1      1 \n     1      1      1      1 \n\n
+CHK|DISPLAY_CATS|ans =\n\n  3×1 cell array\n\n    {'a'}\n    {'b'}\n    {'c'}\n\n|div=ADR0232|diverges|ans = {'a', 'b', 'c'}\n
+CHK|DISPLAY_IN_CELL|cl =\n\n  1×1 cell array\n\n    {[a    b    a    c]}\n\n|div=ADR0232|diverges|cl = {     a      b      a      c \n}\n
+CHK|DISPLAY_IN_CELL_SCALAR|cl2 =\n\n  1×1 cell array\n\n    {[a]}\n\n|div=ADR0232|diverges|cl2 = {     a \n}\n
+CHK|DISPLAY_IN_STRUCT|st = \n\n  struct with fields:\n\n    f: [a    b    a    c]\n\n|div=ADR0232|diverges|st = struct(f:      a      b      a      c \n)\n
+CHK|DISPLAY_IN_STRUCT_SCALAR|st2 = \n\n  struct with fields:\n\n    f: a\n\n|div=ADR0232|diverges|st2 = struct(f:      a \n)\n
+CHK|SUMMARY_OUT_ORD|     lo \n\n     mid \n\n     hi \n\ncategorical\n|exact
+CHK|CAT_FPRINTF|a\nb\na\nc\n|exact
+CHK|CAT_FPRINTF_D|1\n2\n1\n3\n|exact
+CHK|CAT_DISP_SINGLE|     b \n\n|exact
+CHK|CAT_FORMAT_LONG|     a      b      a      c \n\n|exact
+CHK|CAT_DISP_WIDE|  Columns 1 through 8\n\n     abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij \n\n  Columns 9 through 12\n\n     abcdefghij      abcdefghij      abcdefghij      abcdefghij \n\n|div=ADR0232|diverges|abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij \n\n
+CHK|CAT_DISP_WIDE2|  Columns 1 through 5\n\n     abcdefghijklmnopqr…      abcdefghijklmnopqr…      abcdefghijklmnopqr…      abcdefghijklmnopqr…      abcdefghijklmnopqr… \n\n  Column 6\n\n     abcdefghijklmnopqr… \n\n|div=ADR0232|diverges|abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz \n\n
+CHK|CAT_DISP_MIXED|     a       bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb      c      \n     dd      e                                       ffffff \n\n|exact
+CHK|CAT_DISP_UNDEF_MATRIX|     a                <undefined> \n     <undefined>      bb          \n\n|exact
+CHK|CAT_DISPLAY_LONGROW|lr = \n\n  1×12 categorical array\n\n  Columns 1 through 8\n\n     abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij \n\n  Columns 9 through 12\n\n     abcdefghij      abcdefghij      abcdefghij      abcdefghij \n\n|div=ADR0232|diverges|lr = \n\n  1×12 categorical array\n\n     abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij      abcdefghij \n\n
+CHK|CAT_DISPLAY_PROT|pp = \n\n  categorical\n\n     a \n\n|exact
+CHK|CAT_ANS_DISPLAY|ans = \n\n  categorical\n\n     b \n\n|exact
+CHK|CAT_ANS_DISPLAY2|ans = \n\n  categorical\n\n     z \n\n|exact
+CHK|MISSING_DISPLAY|ans = \n\n  categorical\n\n     <undefined> \n\n|exact

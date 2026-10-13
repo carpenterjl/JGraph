@@ -56,7 +56,7 @@ CHK|sc_style_read|char[1 4]'bold'|exact
 CHK|sc_style_colour|double[1 3] [1 0 0]|exact
 CHK|sc_style_brace|MATLAB:cellRefFromNonCell|exact
 CHK|sc_style_brace_msg|Brace indexing is not supported for variables of this type.|exact
-CHK|sc_target_class|char[1 11]'categorical'|div=ADR0230|diverges|char[1 6]'string'
+CHK|sc_target_class|char[1 11]'categorical'|exact
 CHK|sc_target_eq|logical[3 1] [1;0;0]|exact
 CHK|sc_target_eq_string|logical[3 1] [0;1;0]|exact
 CHK|sc_target_string|string[1 3]"row","cell","table"|exact
@@ -64,8 +64,8 @@ CHK|sc_target_char|char[1 3]'row'|exact
 CHK|sc_target_cellstr|cell[1 3]{char[1 3]'row';char[1 4]'cell';char[1 5]'table'}|exact
 CHK|sc_target_rows|double[1 2] [1 3]|exact
 CHK|sc_target_ismember|logical[1 1] 1|exact
-CHK|sc_target_strcmp|logical[1 1] 0|div=ADR0230|diverges|logical[3 1] [1;0;0]
-CHK|sc_target_brace|char[1 42]'MATLAB:categorical:CellReferenceNotAllowed'|div=ADR0230|diverges|char[1 3]'row'
+CHK|sc_target_strcmp|logical[1 1] 0|exact
+CHK|sc_target_brace|char[1 42]'MATLAB:categorical:CellReferenceNotAllowed'|exact
 CHK|sc_index|cell[1 3]{double[1 1] 1;double[1 2] [2 2];char[0 0]''}|exact
 CHK|sc_whole|cell[1 2]{char[1 21]'matlab.ui.style.Style';double[1 2] [3 1]}|exact
 CHK|sc_copy|cell[1 2]{char[1 6]'normal';char[1 4]'bold'}|exact

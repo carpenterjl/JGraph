@@ -36,7 +36,7 @@ internal sealed class JgsValueColumn : TableColumn
         JgsType.Cell => value.AsCell.Any(element => element.Type != JgsType.String),
 
         // A string array stays a string array (V6, table forms): it read back as a cell of char.
-        JgsType.Array => value.IsStringArray
+        JgsType.Array => value.IsStringArray || value.IsCategorical
             || (!value.IsTime && (value.NumericClass != JgsNumericClass.Double || IsLogical(value))),
         _ => false,
     };
@@ -53,7 +53,7 @@ internal sealed class JgsValueColumn : TableColumn
     };
 
     private bool HasNumbers => Value.Type is JgsType.Number or JgsType.Bool
-        || (Value.Type == JgsType.Array && !Value.IsStringArray);
+        || (Value.Type == JgsType.Array && !Value.IsStringArray && !Value.IsCategorical);
 
     public override ColumnType Type => HasNumbers ? ColumnType.Number : ColumnType.Text;
 
@@ -77,6 +77,7 @@ internal sealed class JgsValueColumn : TableColumn
 
     public override string GetText(int row) => Value.Type switch
     {
+        JgsType.Array when Value.IsCategorical => JgsCategorical.NameOf(Value.CategoricalTag!, Value.ElementAt(row).AsNumber), // open item 115
         JgsType.Array => TextOfElement(Value.ElementAt(row)),
         JgsType.Cell => TextOfElement(Value.AsCell[row]),
         JgsType.Object => $"1×1 {Value.ClassName}", // as R2025b's table display writes an object cell (probe_65)

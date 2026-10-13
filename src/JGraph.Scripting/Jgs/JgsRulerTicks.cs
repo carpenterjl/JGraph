@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 using JGraph.Maths.Ticks;
 
 namespace JGraph.Scripting.Jgs;
@@ -282,12 +283,37 @@ internal static class JgsRulerTicks
             owner.RecomputeDataBounds();
         }
 
+        if (owner is not null && ReferenceEquals(owner.ThetaAxis, ruler))
+        {
+            return ThetaTicks(ruler.Range, owner.ThetaAxisUnits == AngleUnits.Radians);
+        }
+
         // The budget is R2025b's for the ruler's pixel length (open item 99): the box the renderer
         // last measured, or the estimate a script gets before the first frame.
         TickBudget budget = owner?.BudgetFor(ruler) ?? TickBudget.Of(ruler.TargetMajorTickCount);
         return TickGenerators.For(ruler)
             .Generate(ruler.Range, budget, ruler.TickLabelFormat)
             .MajorTicks;
+    }
+
+    /// <summary>
+    /// R2025b's theta ticks: every 30 degrees over a span of 90 or more, every 15 over 45 or more,
+    /// every 5 under that, both limits included when they sit on the step (probe_119, open item 119).
+    /// </summary>
+    private static IReadOnlyList<Tick> ThetaTicks(DataRange range, bool radians)
+    {
+        double toDegrees = radians ? 180 / System.Math.PI : 1;
+        double spanDegrees = (range.Max - range.Min) * toDegrees;
+        double stepDegrees = spanDegrees >= 90 ? 30 : spanDegrees >= 45 ? 15 : 5;
+        double step = stepDegrees / toDegrees;
+        var ticks = new List<Tick>();
+        for (double k = System.Math.Ceiling((range.Min / step) - 1e-9); k * step <= range.Max + (step * 1e-9); k++)
+        {
+            double value = radians ? k * stepDegrees * System.Math.PI / 180 : k * stepDegrees;
+            ticks.Add(new Tick(value, value.ToString("G10", CultureInfo.InvariantCulture)));
+        }
+
+        return ticks;
     }
 
     /// <summary>'auto' or 'manual' if that is what was said, null if a value was given instead.</summary>

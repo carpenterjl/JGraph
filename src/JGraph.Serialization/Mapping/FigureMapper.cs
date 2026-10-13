@@ -387,6 +387,7 @@ internal static class FigureMapper
 
     private static AxesDto ToDto(AxesModel axes)
     {
+        axes.UndoAutoFont(); // the document holds the built-in sizes; a frame scales them again (open item 118)
         var dto = new AxesDto
         {
             Name = axes.Name,

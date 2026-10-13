@@ -74,7 +74,7 @@ public class MatlabStressM43Tests : IDisposable
         string output = RunAndRead("""
             c = categorical({'high', 'low', 'medium', 'high'});
             s = summary(c);
-            fprintf('%d %d\n', s.high, s.low);
+            fprintf('%d %d\n', s.Counts(1), s.Counts(2)); % R2025b's summary struct: Categories in order, Counts beside them (open item 115)
             """);
 
         Assert.Contains("2 1", output, StringComparison.Ordinal);

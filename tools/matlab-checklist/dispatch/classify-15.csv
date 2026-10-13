@@ -1,0 +1,14 @@
+name,kind,method_classes
+addcats,mfile,categorical;codistributed;distributed;tall
+categories,mfile,categorical;codistributed;tall
+countcats,mfile,categorical;codistributed;tall
+iscategorical,mfile,codistributed;distributed
+iscategory,mfile,categorical;codistributed;tall
+isordinal,mfile,categorical;codistributed;tall
+isprotected,mfile,categorical;codistributed;tall
+isundefined,mfile,categorical;codistributed;tall
+mergecats,mfile,categorical;codistributed;distributed;tall
+removecats,mfile,categorical;codistributed;distributed;tall
+renamecats,mfile,categorical;codistributed;distributed;tall
+reordercats,mfile,categorical;codistributed;distributed;tall
+setcats,mfile,categorical;codistributed;distributed;tall

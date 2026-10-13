@@ -431,10 +431,13 @@ public sealed class FigureRenderer
                 break;
             }
 
+            // The automatic font follows the laid-out box (open item 118), and a changed font changes
+            // the budgets and the margins, so it is another pass.
+            bool refont = axes.ApplyAutoFont(plotArea.Width, plotArea.Height);
             bool moved = axes.RefitRulers(plotArea.Width, plotArea.Height);
             TickBudget nextX = axes.BudgetFor(xAxis, plotArea.Width, plotArea.Height);
             TickBudget nextY = axes.BudgetFor(yAxis, plotArea.Width, plotArea.Height);
-            if (!moved && nextX == xBudget && nextY == yBudget)
+            if (!refont && !moved && nextX == xBudget && nextY == yBudget)
             {
                 break;
             }

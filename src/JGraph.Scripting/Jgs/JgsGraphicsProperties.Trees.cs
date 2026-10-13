@@ -305,7 +305,23 @@ internal static partial class JgsGraphicsProperties
             JgsHolders.Share(styles[i]); // the row still holds it; a write through the table's copy detaches
         }
 
-        JgsValue targetColumn = JgsValue.StringArray(targets, rows.Count, 1);
+        // R2025b's Target is a protected categorical over the component's target words (open item 115).
+        string[] targetWords = entry.Target switch
+        {
+            JGraph.Core.Model.UiTableModel => ["table", "column", "row", "cell"],
+            JGraph.Core.Model.UiTreeModel => ["tree", "node", "level", "subtree"],
+            JGraph.Core.Model.UiDropDownModel => ["dropdown", "item"],
+            _ => ["listbox", "item"],
+        };
+        var targetTag = new JgsCategoricalTag(targetWords, Ordinal: false, Protected: true);
+        var targetCodes = new double[rows.Count];
+        for (int i = 0; i < rows.Count; i++)
+        {
+            int code = targetTag.CodeOf(rows[i].Target);
+            targetCodes[i] = code == 0 ? double.NaN : code;
+        }
+
+        JgsValue targetColumn = JgsCategorical.FromCodes(targetCodes, rows.Count, rows.Count == 0 ? 0 : 1, targetTag);
         JgsValue indexColumn = JgsValue.Cell(indices);
         indexColumn.Reshape(rows.Count, 1);
         JgsClass? style = rows.Count > 0 ? styles[0].Class : JgsCallbackDispatcher.Current?.Interpreter?.BuiltinClass(JgsBuiltinClasses.Style);

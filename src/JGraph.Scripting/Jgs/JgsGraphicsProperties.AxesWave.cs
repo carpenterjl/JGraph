@@ -64,7 +64,11 @@ internal static partial class JgsGraphicsProperties
         // style and writes fan out: every ruler's tick and label styles, and the title pair through
         // their multipliers. A title() call with its own FontSize still overrides afterward.
         Put(table, "FontSize",
-            entry => JgsValue.Number(Axes(entry).PrimaryXAxis.TickLabelStyle.FontSize),
+            entry =>
+            {
+                Axes(entry).ApplyAutoFont(); // the size follows the plot box (open item 118)
+                return JgsValue.Number(Axes(entry).PrimaryXAxis.TickLabelStyle.FontSize);
+            },
             (entry, value, line, col) =>
             {
                 double size = Numbers("FontSize", value, 1, line, col)[0];
@@ -97,6 +101,10 @@ internal static partial class JgsGraphicsProperties
                 }
 
                 axes.FontSizeManual = manual;
+                if (!manual)
+                {
+                    axes.ApplyAutoFont(); // and shrink with the plot box again (open item 118)
+                }
             });
 
         Put(table, "FontName",
@@ -246,6 +254,7 @@ internal static partial class JgsGraphicsProperties
         axes.TitleStyle = axes.TitleStyle.WithSize(size * axes.TitleFontSizeMultiplier);
         axes.TitleStyleManual = true; // the theme leaves a size a script chose alone (open item 40)
         axes.SubtitleStyle = axes.SubtitleStyle.WithSize(size);
+        axes.SyncFurnitureFonts(); // the legend and colorbar follow (open item 118)
     }
 
     private static bool ToWeight(string name, JgsValue value, int line, int col) =>

@@ -41,7 +41,7 @@ public sealed class TextAnnotationDto : AnnotationDto
     /// <summary>The name a script gave the label (MATLAB <c>DisplayName</c>).</summary>
     public string DisplayName { get; set; } = string.Empty;
 
-    public double FontSize { get; set; } = 12;
+    public double FontSize { get; set; } = 10;
 
     public string FontFamily { get; set; } = "Segoe UI";
 

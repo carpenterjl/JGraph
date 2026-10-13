@@ -11,8 +11,8 @@ namespace JGraph.Scripting.Jgs;
 /// Each element is a payload of its own with a holder count, so a selection (<c>a(2)</c>) shares
 /// the instance and a later property write through either side copies first — the value
 /// semantics R2025b gives an array of a value class (probe <c>probe_65</c>: <c>a(1).FontWeight =
-/// 'normal'</c> leaves <c>s</c> bold). Handle classes are not kept here: a handle array is still
-/// outside this build.
+/// 'normal'</c> leaves <c>s</c> bold). A handle class's elements are the objects themselves, so a
+/// write through any array or alias lands on the one object (open item 116).
 /// </remarks>
 internal sealed class JgsObjectArray
 {
@@ -45,9 +45,9 @@ internal sealed class JgsObjectArray
     public JgsObject WritableElement(int index)
     {
         JgsObject element = Elements[index];
-        if (!JgsHolders.IsShared(element))
+        if (Class.IsHandle || !JgsHolders.IsShared(element))
         {
-            return element;
+            return element; // a handle is written where it is, for every alias (open item 116)
         }
 
         JgsObject copy = SharedCopy(element);

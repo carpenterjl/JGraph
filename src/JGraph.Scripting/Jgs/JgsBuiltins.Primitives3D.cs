@@ -437,6 +437,16 @@ internal static partial class JgsBuiltins
         if (verb == "patch" && PatchCoordinatesByName(args, line, col) is { } byName)
         {
             PatchPlot made = FromCoordinates(verb, byName.Coordinates, line, col, dimensions, coloured: false);
+            static bool Named(IEnumerable<(string Name, JgsValue Value)> pairs, string name) =>
+                pairs.Any(o => o.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (!Named(byName.Options, "FaceColor") && !Named(byName.Options, "CData") && !Named(byName.Options, "FaceVertexCData")
+                && !Named(byName.Options, "Parent") && !Named(byName.Others, "Parent"))
+            {
+                // No colour named: R2025b fills with the ink when the axes came first (probe_114),
+                // and with the colour order's blue when the axes came as 'Parent' (oi_findprop_detach_computed).
+                made.FaceColor = Colors.DarkGray;
+            }
+
             ApplyPatchOptions(verb, made, byName.Options, line, col);
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(made);
             foreach ((string name, JgsValue value) in byName.Others)
@@ -593,7 +603,9 @@ internal static partial class JgsBuiltins
             faces[f] = indices.ToArray();
         }
 
-        return JG.Patch(x, y, z, faces);
+        PatchPlot built = JG.Patch(x, y, z, faces);
+        built.IsFlat = components == 2; // two columns: a patch in the plane (open item 114)
+        return built;
     }
 
     /// <summary>
@@ -726,6 +738,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, ex.Message);
         }
 
+        patch.IsFlat = !threeD; // no z: a patch in the plane (open item 114)
         if (threeD && !AddsWithoutReplace(verb))
         {
             JG.Gca().Is3D = true;
@@ -760,7 +773,7 @@ internal static partial class JgsBuiltins
                     + $"{patch.Faces.Count} faces and {patch.X.Count} vertices.");
         }
 
-        patch.ColorData = values;
+        JgsGraphicsProperties.SetPatchColorData(patch, values); // and the shading the data implies (open item 114)
     }
 
     private static void ApplyPatchOptions(

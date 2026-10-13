@@ -58,6 +58,12 @@ internal static partial class JgsGraphicsProperties
             entry => JgsUiTables.StateOf(entry).Data,
             (entry, value, line, col) =>
             {
+                if (value.IsCategorical)
+                {
+                    // R2025b's refusal: a categorical goes in a table variable, not as the data itself (open item 115).
+                    throw new JgsRuntimeException(line, col, "MATLAB:hg:uitable:BadDataType", "Data must be a numeric, logical, string, cell, or table array");
+                }
+
                 JgsTableState state = JgsUiTables.StateOf(entry);
                 state.Data = TableData(entry, value, line, col);
 

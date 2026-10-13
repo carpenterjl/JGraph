@@ -601,6 +601,11 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(word.ToString());
         }
 
+        if (ObjectsAsArray(name, values, rows, columns, line, col) is { } objects)
+        {
+            return objects; // objects collected uniformly are an array of objects (open item 116)
+        }
+
         for (int i = 0; i < values.Length; i++)
         {
             if (values[i].Type is not (JgsType.Number or JgsType.Bool))
@@ -1106,7 +1111,7 @@ internal static partial class JgsBuiltins
 
         if (args.Count != outputs)
         {
-            throw new JgsRuntimeException(line, col, "The number of outputs should match the number of inputs.");
+            throw new JgsRuntimeException(line, col, "MATLAB:deal:narginNargoutMismatch", "The number of outputs should match the number of inputs.");
         }
 
         return [.. args];

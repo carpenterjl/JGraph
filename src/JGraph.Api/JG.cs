@@ -739,6 +739,7 @@ public static class JG
         AxesModel axes = PrepareAxes();
         PatchPlot patch = axes.AddPatch(x, y, new double[x.Length]);
         patch.FaceColor = color;
+        patch.IsFlat = true;
         return patch;
     }
 

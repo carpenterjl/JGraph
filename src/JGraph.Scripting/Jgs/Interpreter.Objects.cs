@@ -471,8 +471,43 @@ internal sealed partial class Interpreter
             return true;
         }
 
+        // Class.empty and Class.empty(0, n): the empty array of the class, every class has (open item 116).
+        if (field == "empty")
+        {
+            IJgsCallable maker = new BuiltinFunction("empty", (args, line, col) => EmptyObjects(definition, args, line, col));
+            value = autoCall ? maker.Call([], member.Line, member.Column) : JgsValue.Function(maker);
+            return true;
+        }
+
         value = JgsValue.Null;
         return false;
+    }
+
+    /// <summary>The empty array <c>Class.empty(r, c)</c> names: 0-by-0 with no size, and otherwise a size with a zero in it.</summary>
+    private static JgsValue EmptyObjects(JgsClass definition, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        var dims = new List<int>();
+        foreach (JgsValue argument in args)
+        {
+            foreach (double dim in JgsBuiltins.ToDoubles("empty", argument, line, col))
+            {
+                dims.Add((int)dim);
+            }
+        }
+
+        if (dims.Count == 1)
+        {
+            dims.Add(dims[0]);
+        }
+
+        if (dims.Count > 0 && dims.All(static d => d != 0))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:emptyMustBeZero", "At least one dimension must be zero.");
+        }
+
+        int rows = dims.Count > 0 ? dims[0] : 0;
+        int cols = dims.Count > 1 ? dims[1] : 0;
+        return JgsValue.ObjectArray(new JgsObjectArray(definition, []), rows, cols);
     }
 
     /// <summary>
@@ -498,6 +533,13 @@ internal sealed partial class Interpreter
         if (ResolveObjectTarget(member.Target, env) is not { } holder)
         {
             return false;
+        }
+
+        if (holder.IsObjectArray)
+        {
+            // a.p = v over an array is R2025b's refusal; [a.p] = deal(v) is the road (open item 116).
+            throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:index:expected_one_output_for_assignment",
+                $"Assigning to {holder.ArrayLength} elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.");
         }
 
         JgsObject instance = holder.AsObject;
@@ -673,7 +715,33 @@ internal sealed partial class Interpreter
 
         if (ResolveEntry(expr, env) is not { Type: JgsType.Object } held)
         {
+            // v.list(2).p = x, m(2, 2).p = x: a handle reached by any path is the one object every
+            // holder shares, so the write lands on it (open item 116). The path is read for that.
+            if (expr is CallExpr or IndexExpr or MemberExpr)
+            {
+                JgsValue? reached;
+                try
+                {
+                    reached = EvaluateOne(expr, env, ListUse.Intermediate);
+                }
+                catch (JgsRuntimeException)
+                {
+                    reached = null; // not a path that can be read yet: the struct roads grow it
+                }
+
+                if (reached is { Type: JgsType.Object, IsObjectArray: false } && reached.ObjectClass.IsHandle)
+                {
+                    RequireLive(reached.AsObject, expr.Line, expr.Column);
+                    return reached;
+                }
+            }
+
             return null;
+        }
+
+        if (held.IsObjectArray)
+        {
+            return held; // the dot write refuses an array in R2025b's words (open item 116)
         }
 
         RequireLive(held.AsObject, expr.Line, expr.Column);
@@ -748,11 +816,16 @@ internal sealed partial class Interpreter
                 return slot >= 0 && slot < slots.Length ? slots[slot] : null;
             }
 
-            // a(k).p = v on an array of value objects, or on one object (open item 65): the element,
-            // writable inside the array the variable holds.
+            // a(k).p = v on an array of objects, or on one object (open items 65 and 116): the
+            // element, writable inside the array the variable holds. [a.p] = deal(v) spells the
+            // same element as an index expression with its position ready-made.
             case CallExpr { Arguments.Count: 1, Callee: VariableExpr objectArray } call
                 when ResolveObjectElementForWrite(objectArray, call.Arguments[0], call, env) is { } element:
                 return element;
+
+            case IndexExpr { Indices.Count: 1, Target: VariableExpr objectList } listed
+                when ResolveObjectElementForWrite(objectList, listed.Indices[0], listed, env) is { } listedElement:
+                return listedElement;
 
             case CallExpr { Arguments.Count: 1 } call when IsEntryPath(call.Callee, env)
                 && TryElementOfEntry(call.Callee, call.Arguments[0], env, out JgsValue? ofCall, out _):
@@ -816,8 +889,10 @@ internal sealed partial class Interpreter
         // A handle class's own delete is its destructor: once it has run, the object is deleted for
         // every alias (V6, #104), and a second delete runs nothing. The mark is made after the body
         // so the body may still read its own properties.
-        callable = name == "delete" && definition.IsHandle && !dominant.IsObjectArray
-            ? new DestructorCall(dominant.AsObject)
+        callable = name == "delete" && definition.IsHandle
+            ? dominant.IsObjectArray
+                ? new ArrayDestructorCall(dominant.AsObjectArray.Elements) // every element in turn (open item 116)
+                : new DestructorCall(dominant.AsObject)
             : definition.Callable(method);
         return true;
     }
@@ -927,6 +1002,30 @@ internal sealed partial class Interpreter
         string? wanted = OperatorMethodName(op);
         if (wanted is null || !definition.TryMethod(wanted, out ClassMethod? method) || method.Static)
         {
+            // An array of handles against a handle, another array or anything else: element by
+            // element, a scalar expanded, a number never equal (open item 116).
+            bool widget = (left.Type == JgsType.Object && left.ObjectClass.IsComponentContainer)
+                || (right.Type == JgsType.Object && right.ObjectClass.IsComponentContainer); // a custom component keeps its road below (U10)
+            static bool HandleSide(JgsValue side) => side.Type == JgsType.Object && side.ObjectClass.IsHandle;
+            static bool OtherKind(JgsValue side) => side.Type != JgsType.Object || !side.ObjectClass.IsHandle;
+            if (wanted is "eq" or "ne" && !widget
+                && ((HandleSide(left) && (left.IsObjectArray || OtherKind(right)))
+                    || (HandleSide(right) && (right.IsObjectArray || OtherKind(left)))))
+            {
+                result = HandleArrayEquality(wanted == "eq", left, right, at);
+                return true;
+            }
+
+            // Two handles order by creation here (open item 116): R2025b orders them too, by an
+            // address it does not publish, so which comes first is a divergence.
+            if (wanted is "lt" or "gt" or "le" or "ge" && HandleSide(left) && HandleSide(right)
+                && !left.IsObjectArray && !right.IsObjectArray)
+            {
+                long a = left.AsObject.Serial, b = right.AsObject.Serial;
+                result = JgsValue.Bool(wanted switch { "lt" => a < b, "gt" => a > b, "le" => a <= b, _ => a >= b });
+                return true;
+            }
+
             // Two handles are equal when they are the one object (V6, #140): the eq a handle class
             // has without defining one. A class that defines its own has decided otherwise above.
             if (wanted is "eq" or "ne"
@@ -949,6 +1048,13 @@ internal sealed partial class Interpreter
                     result = ApplyBinary(op, left.Type == JgsType.Object ? handle : left, right.Type == JgsType.Object ? handle : right, at);
                     return true;
                 }
+            }
+
+            if (JgsRunningDialect.ThreadIsMatlab && !definition.IsHandle)
+            {
+                // R2025b's refusal for an operator on a value object (open item 116, probe_116).
+                throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:math:mustBeNumericCharOrLogical",
+                    "Invalid data type. Argument must be numeric, char, or logical.");
             }
 
             throw new JgsRuntimeException(at.Line, at.Column,
@@ -981,6 +1087,12 @@ internal sealed partial class Interpreter
 
         if (!definition.TryMethod(wanted, out ClassMethod? method) || method.Static)
         {
+            if (JgsRunningDialect.ThreadIsMatlab && !definition.IsHandle)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:math:mustBeNumericCharOrLogical",
+                    "Invalid data type. Argument must be numeric, char, or logical."); // R2025b (open item 116)
+            }
+
             throw new JgsRuntimeException(at.Line, at.Column,
                 $"'{OperatorSymbol(op)}' is not defined for {definition.Name}; "
                 + $"give the class a '{wanted}' method to define it.");

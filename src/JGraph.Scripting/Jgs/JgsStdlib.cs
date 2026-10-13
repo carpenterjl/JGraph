@@ -166,13 +166,66 @@ internal static class JgsStdlib
             return Net.NetEquality.DeepEquals(left, right, nanEqual);
         }
 
+        // Two categoricals are equal name by name in one shape, whatever their category lists; a cell
+        // of the same names is equal to one too, and an undefined element never is (open item 115).
+        if (left.IsCategorical || right.IsCategorical)
+        {
+            string?[]? these = JgsCategorical.TextNames(left);
+            string?[]? those = JgsCategorical.TextNames(right);
+            if (these is null || those is null || these.Length != those.Length || (left.IsCategorical && right.IsCategorical && (left.Rows != right.Rows || left.Cols != right.Cols)))
+            {
+                return false;
+            }
+
+            if (left.IsStringArray || right.IsStringArray)
+            {
+                return false; // a string array is never equal to a categorical, where a cell of the names is (probe_115)
+            }
+
+            if (left.IsCategorical && right.IsCategorical && left.CategoricalTag!.Ordinal != right.CategoricalTag!.Ordinal)
+            {
+                return false; // an ordinal array is never equal to one that is not (probe_115)
+            }
+
+            for (int i = 0; i < these.Length; i++)
+            {
+                if (these[i] is null || those[i] is null ? !(nanEqual && these[i] is null && those[i] is null) : these[i] != those[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         // Two objects are equal when they are one object, or of one class with equal properties
         // (U6, measured: isequal(U6Square(2), U6Square(2)) is true).
         if (left.Type == JgsType.Object || right.Type == JgsType.Object)
         {
-            if (left.Type != right.Type || !ReferenceEquals(left.AsObject.Class, right.AsObject.Class))
+            if (left.Type != right.Type || !ReferenceEquals(left.ObjectClass, right.ObjectClass))
             {
                 return false;
+            }
+
+            // Two arrays of objects are equal element by element, in one shape (open item 116).
+            if (left.IsObjectArray || right.IsObjectArray)
+            {
+                if (!left.IsObjectArray || !right.IsObjectArray || left.Rows != right.Rows || left.Cols != right.Cols)
+                {
+                    return false;
+                }
+
+                JgsObject[] these = left.AsObjectArray.Elements;
+                JgsObject[] those = right.AsObjectArray.Elements;
+                for (int i = 0; i < these.Length; i++)
+                {
+                    if (!DeepEquals(JgsValue.Object(these[i]), JgsValue.Object(those[i]), nanEqual))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
 
             JgsObject one = left.AsObject;

@@ -796,6 +796,31 @@ internal static partial class JgsBuiltins
     private static JgsValue Reshape(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("reshape", args, 2, int.MaxValue, line, col);
+
+        // A cell reshapes as its slots, in column-major order (open item 115, where a probe reshaped
+        // a cellstr): the size rules are the numeric ones over a stand-in of the slot numbers.
+        if (args[0].Type == JgsType.Cell)
+        {
+            JgsValue[] slots = args[0].AsCell;
+            var positions = new double[slots.Length];
+            for (int i = 0; i < positions.Length; i++)
+            {
+                positions[i] = i;
+            }
+
+            var standIn = new List<JgsValue>(args) { [0] = JgsMatrix.FromColumnMajor(positions, args[0].Rows, args[0].Cols) };
+            JgsValue turned = Reshape(standIn, line, col);
+            var picked = new JgsValue[slots.Length];
+            for (int i = 0; i < picked.Length; i++)
+            {
+                picked[i] = JgsValue.Share(slots[(int)(turned.Type == JgsType.Number ? turned.AsNumber : turned.ElementAt(i).AsNumber)]);
+            }
+
+            JgsValue cell = JgsValue.Cell(picked);
+            cell.Reshape(turned.Type == JgsType.Number ? 1 : turned.Rows, turned.Type == JgsType.Number ? 1 : turned.Cols);
+            return cell;
+        }
+
         double[] flat = FlattenColumnMajor("reshape", args[0], line, col);
 
         // Collect the requested size; -1 marks the (at most one) [] wildcard.
@@ -2782,6 +2807,11 @@ internal static partial class JgsBuiltins
         int width = blocks[0][0].Length;
         if (blocks.Any(b => b.Any(row => row.Length != width)))
         {
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:catenate:dimensionMismatch", "Dimensions of arrays being concatenated are not consistent.");
+            }
+
             throw new JgsRuntimeException(line, col, $"{name}: every piece must have the same number of columns.");
         }
 

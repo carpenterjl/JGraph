@@ -126,7 +126,7 @@ internal static partial class JgsBuiltins
                 // MATLAB spells two verbs with one name: deleting a file and deleting a figure
                 // object. A handle is a number, a path is a string, so which one is meant is never
                 // in doubt — and a number that names nothing still complains about not being a path.
-                if (args[i].Type != JgsType.String && TryDeleteGraphics(args[i], host))
+                if (args[i].Type != JgsType.String && !args[i].IsObjectArray && TryDeleteGraphics(args[i], host))
                 {
                     continue;
                 }

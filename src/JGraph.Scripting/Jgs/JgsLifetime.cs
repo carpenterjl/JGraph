@@ -133,7 +133,7 @@ internal sealed class JgsLifetime
     {
         switch (value.Type)
         {
-            case JgsType.Object:
+            case JgsType.Object when !value.IsObjectArray: // an array of objects is not counted (open item 116)
                 value.AsObject.Exact++;
                 break;
             case JgsType.Struct:
@@ -1051,7 +1051,7 @@ internal sealed class JgsLifetime
             case JgsType.External when value.AsExternal is Devices.DeviceObject device:
                 return device.Interpreter.Lifetimes;
             case JgsType.Object:
-                return value.AsObject.Class.Interpreter.Lifetimes;
+                return value.ObjectClass.Interpreter.Lifetimes;
             case JgsType.Function:
                 return value.AsCallable switch
                 {
