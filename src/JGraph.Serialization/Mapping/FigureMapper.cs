@@ -828,6 +828,7 @@ internal static class FigureMapper
         ExponentLabel = axis.ExponentLabel,
         ShowExponentLabel = axis.ShowExponentLabel,
         Categories = axis.Categories?.ToArray(),
+        RulerCategories = axis.RulerCategories?.ToArray(),
         TickPositions = axis.TickPositions?.ToArray(),
         TickLabelOverrides = axis.TickLabelOverrides?.ToArray(),
         TickLabelAngle = axis.TickLabelAngle,
@@ -868,6 +869,8 @@ internal static class FigureMapper
         {
             axis.Categories = dto.Categories;
         }
+
+        axis.RulerCategories = dto.RulerCategories;
 
         // Null means automatic, which is also what a document written before these fields existed
         // says by omitting them — so a v5 figure loads with the ticks it always had.

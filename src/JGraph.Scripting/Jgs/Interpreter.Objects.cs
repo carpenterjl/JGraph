@@ -507,7 +507,13 @@ internal sealed partial class Interpreter
 
         int rows = dims.Count > 0 ? dims[0] : 0;
         int cols = dims.Count > 1 ? dims[1] : 0;
-        return JgsValue.ObjectArray(new JgsObjectArray(definition, []), rows, cols);
+        JgsValue made = JgsValue.ObjectArray(new JgsObjectArray(definition, []), rows, cols);
+        if (dims.Count > 2)
+        {
+            made.ReshapeDims(dims); // Class.empty(0, 2, 3) (open item 121)
+        }
+
+        return made;
     }
 
     /// <summary>
@@ -826,6 +832,11 @@ internal sealed partial class Interpreter
             case IndexExpr { Indices.Count: 1, Target: VariableExpr objectList } listed
                 when ResolveObjectElementForWrite(objectList, listed.Indices[0], listed, env) is { } listedElement:
                 return listedElement;
+
+            // t(1, 1, 2).p = v and b(2, 1).p = v: one element named by several subscripts (open item 121).
+            case CallExpr { Arguments.Count: > 1, Callee: VariableExpr gridArray } gridCall
+                when ResolveObjectGridElementForWrite(gridArray, gridCall.Arguments, gridCall, env) is { } gridElement:
+                return gridElement;
 
             case CallExpr { Arguments.Count: 1 } call when IsEntryPath(call.Callee, env)
                 && TryElementOfEntry(call.Callee, call.Arguments[0], env, out JgsValue? ofCall, out _):

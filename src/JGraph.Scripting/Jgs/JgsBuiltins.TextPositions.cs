@@ -423,7 +423,9 @@ internal static partial class JgsBuiltins
     {
         if (value.IsCharMatrix)
         {
-            throw new JgsRuntimeException(line, col, "strrep: char inputs must be row vectors.");
+            throw JgsRunningDialect.ThreadIsMatlab
+                ? new JgsRuntimeException(line, col, "MATLAB:strrep:MultiRowInput", "Char inputs must be row vectors.")
+                : new JgsRuntimeException(line, col, "strrep: char inputs must be row vectors.");
         }
 
         if (TryReadText(value, out TextBundle bundle))

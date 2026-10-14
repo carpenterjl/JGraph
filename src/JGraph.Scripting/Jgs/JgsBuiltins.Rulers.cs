@@ -122,9 +122,16 @@ internal static partial class JgsBuiltins
 
         AxisModel ruler = aimed ?? RulerOf(axes, side);
 
+        // A categorical ruler's ticks and labels are its categories (open item 120).
+        string part = verb.EndsWith("ticks", StringComparison.Ordinal) ? "Tick" : verb.EndsWith("ticklabels", StringComparison.Ordinal) ? "TickLabel" : string.Empty;
         if (rest.Count == 0)
         {
-            return read(ruler);
+            return part.Length > 0 && JgsCategoricalCharts.TryReadRuler(ruler, part, out JgsValue categoricalTicks) ? categoricalTicks : read(ruler);
+        }
+
+        if (part == "Tick" && JgsCategoricalCharts.TryWriteRuler(ruler, part, rest[0], line, col))
+        {
+            return JgsValue.Null;
         }
 
         write(verb, ruler, rest[0], line, col);
@@ -158,7 +165,14 @@ internal static partial class JgsBuiltins
                 axes.RecomputeDataBounds();
             }
 
-            return JgsGraphicsProperties.Row(ruler.Range.Min, ruler.Range.Max);
+            return JgsCategoricalCharts.TryReadRuler(ruler, "Lim", out JgsValue categorical) ? categorical
+                : JgsGraphicsProperties.Row(ruler.Range.Min, ruler.Range.Max);
+        }
+
+        // xlim(c) on a categorical ruler names the categories it runs between (open item 120).
+        if (rest.Count == 1 && rest[0].Type != JgsType.String && JgsCategoricalCharts.TryWriteRuler(ruler, "Lim", rest[0], line, col))
+        {
+            return JgsValue.Null;
         }
 
         if (rest.Count == 1 && rest[0].Type == JgsType.String)
@@ -374,12 +388,13 @@ internal static partial class JgsBuiltins
     private static JgsValue SameValue(string verb, IReadOnlyList<JgsValue> args, int line, int col)
     {
         Arity(verb, args, 2, line, col);
-        if (!JgsHandleRegistry.TryGet(args[1], out JgsHandleEntry? entry) || entry.Target is not AxisModel)
+        if (!JgsHandleRegistry.TryGet(args[1], out JgsHandleEntry? entry) || entry.Target is not AxisModel ruler)
         {
             throw new JgsRuntimeException(line, col,
                 $"{verb} wants a ruler as its second argument, such as ax.XAxis.");
         }
 
-        return args[0];
+        // A categorical ruler converts between categories and positions (open item 120).
+        return JgsCategoricalCharts.TryConvert(verb, ruler, args[0], line, col, out JgsValue converted) ? converted : args[0];
     }
 }

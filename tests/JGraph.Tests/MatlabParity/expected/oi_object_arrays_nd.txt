@@ -1,0 +1,111 @@
+CHK|nd_size|double[1 3] [1 3 2]|exact
+CHK|nd_numel|double[1 1] 6|exact
+CHK|nd_ndims|double[1 1] 3|exact
+CHK|nd_class|char[1 6]'Val116'|exact
+CHK|nd_p|double[1 6] [1 2 3 1 2 3]|exact
+CHK|nd_page|double[1 2] [1 3]|exact
+CHK|nd_page_p|double[1 3] [1 2 3]|exact
+CHK|nd_el|double[1 1] 2|exact
+CHK|nd_lin|double[1 1] 2|exact
+CHK|nd_colon|double[1 2] [6 1]|exact
+CHK|nd_size3|double[1 1] 2|exact
+CHK|nd_end|double[1 1] 3|exact
+CHK|nd_end3|double[1 1] 1|exact
+CHK|nd_cat3_b|double[1 3] [2 2 2]|exact
+CHK|nd_cat3_b_p|double[1 4] [1 3 2 1]|exact
+CHK|nd_reshape|double[1 3] [1 1 3]|exact
+CHK|nd_reshape_p|double[1 3] [1 2 3]|exact
+CHK|nd_permute|double[1 3] [2 1 3]|exact
+CHK|nd_squeeze|double[1 2] [3 2]|exact
+CHK|nd_squeeze_p|double[1 6] [1 2 3 1 2 3]|exact
+CHK|nd_write|double[1 6] [1 2 3 1 9 3]|exact
+CHK|nd_grow|double[1 3] [1 3 2]|exact
+CHK|nd_grow_p|double[1 6] [1 2 3 1 9 1]|exact
+CHK|nd_delete_page|double[1 2] [1 3]|exact
+CHK|nd_dot_write|double[1 6] [1 2 3 7 2 3]|exact
+CHK|nd_for|double[1 6] [1 1 1 1 1 1]|exact
+CHK|nd_arrayfun|double[1 3 2] nd [1 2 3 1 2 3]|exact
+CHK|nd_arrayfun_size|double[1 3] [1 3 2]|exact
+CHK|nd_isequal|logical[1 1] 1|exact
+CHK|nd_isempty|logical[1 1] 0|exact
+CHK|nd_cat_mismatch|MATLAB:catenate:dimensionMismatch|exact
+CHK|nd_cat_mismatch_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|nd_handle|double[1 3] [1 3 2]|exact
+CHK|nd_handle_valid|logical[1 3 2] nd [1 1 1 1 1 1]|exact
+CHK|nd_handle_eq|logical[1 3 2] nd [1 0 0 1 0 0]|exact
+CHK|nd_cs_name|cell[1 2]{char[1 1]'x';char[1 1]'x'}|exact
+CHK|nd_num2cell|double[1 3] [1 3 2]|exact
+CHK|nd_flip|double[1 6] [1 2 3 1 2 3]|exact
+CHK|nd_repmat|double[1 3] [1 2 2]|div=ADR0233|diverges|char[0 0]''
+CHK|nd_empty3|double[1 3] [0 2 3]|exact
+CHK|nd_cat4|double[1 4] [1 1 1 2]|exact
+CHK|nd_horzcat_3d|double[1 3] [1 6 2]|exact
+CHK|nd_vertcat_3d|double[1 3] [2 3 2]|exact
+CHK|nd_index_two|double[1 2] [1 1]|exact
+CHK|nd_index_two_p|double[1 1] 1|exact
+CHK|nest_write|double[1 2] [2 9]|exact
+CHK|nest_grow|double[1 4] [2 3 1 4]|exact
+CHK|nest_replace|double[1 2] [2 7]|exact
+CHK|nest_name_char|char[1 1]'Q'|exact
+CHK|nest_cs|double[1 2] [5 5]|exact
+CHK|nest_struct|double[1 2] [2 9]|div=ADR0233|diverges|char[0 0]''
+CHK|nest_cell|double[1 2] [2 9]|div=ADR0233|diverges|char[0 0]''
+CHK|nest_handle|double[1 2] [9 9]|exact
+CHK|nest_deep|double[1 2] [8 5]|exact
+CHK|nest_handle_val|double[1 2] [2 9]|exact
+CHK|nest_delete|double[1 1] 3|exact
+CHK|nest_end|double[1 2] [2 6]|exact
+CHK|nest_in_arr|double[1 2] [0 6]|div=ADR0233|diverges|char[0 0]''
+CHK|m_arr|double[1 1] 6|exact
+CHK|m_scalar|double[1 1] 1|exact
+CHK|m_arr_paren|double[1 1] 6|exact
+CHK|m_fn|double[1 1] 6|exact
+CHK|m_bump|double[1 3] [2 3 4]|exact
+CHK|m_bump_s|double[1 1] 2|exact
+CHK|m_sub|double[1 1] 3|exact
+CHK|m_class|char[1 6]'Val116'|exact
+CHK|m_h_bump|double[1 3] [2 3 4]|exact
+CHK|m_in_expr|double[1 1] 7|exact
+CHK|m_handle_noout|double[1 1] 3|exact
+CHK|m_paren_arg|double[1 1] 2|exact
+CHK|ls_v|double[1 1] 11|exact
+CHK|ls_m|double[1 1] 2|exact
+CHK|ls_m3|double[1 1] 2|exact
+CHK|ls_all|MATLAB:badsubscript|exact
+CHK|ls_all_msg|Index in position 3 exceeds array bounds. Index must not exceed 1.|exact
+CHK|ls_cell|double[1 1] 2|exact
+CHK|ls_fn|double[1 1] 2|exact
+CHK|ls_fn3|double[1 1] 3|exact
+CHK|ls_struct|double[1 1] 1|exact
+CHK|ls_brace|double[1 1] 20|exact
+CHK|ls_write|double[2 2] [0 5;0 0]|exact
+CHK|ls_one|double[1 1] 10|exact
+CHK|ls_zeros|double[1 2] [2 3]|exact
+CHK|fp_struct|char[1 6]'Val116'|exact
+CHK|fp_struct_p|char[1 6]'struct'|exact
+CHK|fp_struct_size|double[1 2] [1 2]|exact
+CHK|fp_struct2|double[1 2] [1 2]|exact
+CHK|fp_struct_first|char[1 6]'Val116'|exact
+CHK|fp_string_empty|double[1 2] [1 2]|exact
+CHK|fp_string_empty_p|char[1 12]'string [0 0]'|exact
+CHK|fp_struct_empty|double[1 2] [1 1]|exact
+CHK|fp_empty|double[1 2] [1 1]|exact
+CHK|fp_cell_empty|double[1 2] [1 1]|exact
+CHK|fp_zeros|double[1 2] [1 1]|exact
+CHK|fp_char_empty|double[1 2] [1 1]|exact
+CHK|fp_char|double[1 2] [1 2]|exact
+CHK|fp_num|double[1 2] [1 2]|exact
+CHK|fp_numvec|double[1 2] [1 2]|exact
+CHK|fp_numvec_p|double[1 2] [5 6]|exact
+CHK|fp_string|double[1 2] [1 2]|exact
+CHK|fp_logical|double[1 2] [1 2]|exact
+CHK|fp_vert_struct|double[1 2] [2 1]|exact
+CHK|fp_ctor_count|double[1 2] [3 3]|exact
+CHK|c2m_col|double[1 2] [2 3]|exact
+CHK|c2m_row|double[1 2] [1 6]|exact
+CHK|c2m_scalars|double[1 2] [1 2]|exact
+CHK|c2m_class|char[1 6]'Val116'|exact
+CHK|c2m_p|double[1 3] [1 2 3]|exact
+CHK|c2m_handle|double[1 2] [2 3]|exact
+CHK|c2m_mixed|char[1 6]'Val116'|exact
+CHK|c2m_one|char[1 6]'Val116'|exact

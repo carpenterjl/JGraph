@@ -16,6 +16,9 @@ internal static partial class JgsBuiltins
     internal static IReadOnlyList<string> EvalBuiltinNames { get; } =
     [
         "eval", "evalc", "evalin", "assignin", "str2func", "str2num",
+
+        // Open item 122: the table verbs that convert and join through the interpreter.
+        "vartype", "convertvars", "table2cell", "innerjoin", "stack",
         "exist", "who", "which", "builtin", "narginchk", "nargoutchk", "nargchk",
 
         // M145: feval resolves the name it is handed through the interpreter, so it moved here.
@@ -148,6 +151,10 @@ internal static partial class JgsBuiltins
         RegisterSharedLibraryBuiltins(env, interpreter);
         RegisterDeviceBuiltins(env, interpreter, host);
         RegisterFigFileBuiltins(env, interpreter, host); // U11
+        RegisterTableVerbs(env, interpreter); // open item 122
+        JgsCategoricalCharts.Register(env); // open item 120: over every wrapper of the chart verbs
+        RegisterBracketVerbs(env, interpreter); // open item 124: last, over every wrapper of the three
+        RegisterR2025bRefusals(env, interpreter, host); // open item 123: over every wrapper of the verbs it guards
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.

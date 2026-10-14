@@ -46,3 +46,4 @@ matlab.io.MatFile,struct,never swept; a handle object with methods of its own
 matlab.io.matfile.Properties,struct,never swept; the Properties of a matfile object
 matlab.metadata.Property,struct,never swept; a metaclass's property description
 categorical,categorical,a type of its own since open item 115 (ADR 0232); the sweep measured it as a pattern class
+vartype,struct,never swept; a table subscript that is a tagged struct (open item 122; ADR 0233)

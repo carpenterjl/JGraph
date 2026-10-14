@@ -6,9 +6,9 @@
 % hold the objects themselves (a write through a(2) reaches the object, == is identity, delete and
 % isvalid take the array); Class.empty; isequal, arrayfun, cellfun, num2cell, cell2mat and the
 % shape verbs over objects; properties, methods and isprop of an array. The classes Val116, Hnd116,
-% Sub116, NoArg116 and Zero116 live in helpers/. Lines marked div=ADR0232 keep this build's own
-% words where R2025b's message names an internal (an operator on a value object, an N-D cat, the
-% order a sort gives handles).
+% Sub116, NoArg116 and Zero116 live in helpers/. Lines marked div=ADR0232 are the display of one
+% object, set, get and addlistener over an array of handles, findobj on the root, and how often a
+% constructor ran; ADR 0233 made the N-D arrays, the conversions and the refusals exact.
 global VAL116_CTOR
 global VAL116_CTOR
 VAL116_CTOR = 0;
@@ -30,19 +30,19 @@ u9b_chk('cs_isempty', @() isempty([a.p])); u9b_chk('cs_func_handle', @() feval(@
 u9b_chk('cs_cell_write', @() cswrite(a)); u9b_chk('cs_as_args_to_zeros', @() size(zeros(a(1:2).p)));
 u9b_chk('cs_in_bracket_mixed', @() [a.p 10]); u9b_chk('cs_in_bracket_mixed_rows', @() [a.p; 10 20 30]);
 u9b_chk('cs_dot_chain', @() [a.name]); u9b_chk('cs_dot_dot', @() dotdot());
-u9b_chkdiv('cs_dot_end', @() oi_try( @() a.p(end)), 'ADR0232');
+u9b_chk('cs_dot_end', @() a.p(end));
 u9b_chk('b_size', @() size(b)); u9b_chk('b_12', @() b(1, 2).p); u9b_chk('b_21', @() b(2, 1).p); u9b_chk('b_row', @() [b(1, :).p]); u9b_chk('b_col', @() [b(:, 2).p]); u9b_chk('b_lin', @() [b(:).p]); u9b_chk('b_end', @() b(end, end).p); u9b_chk('b_end2', @() b(end).p);
 u9b_chk('b_assign_2d', @() assign2d(b)); u9b_chk('b_assign_grow_2d', @() assigngrow2d(b)); u9b_chk('b_assign_grow_2d_vals', @() assigngrow2dvals(b)); u9b_chk('b_delete_row', @() delrow(b)); u9b_chk('b_delete_lin', @() dellin(b)); u9b_chk('b_delete_col', @() delcol(b)); u9b_chk('b_delete_all', @() delall(b));
 u9b_chk('b_reshape', @() size(reshape(b, 1, 4))); u9b_chk('b_reshape_vals', @() [reshape(b, 1, 4).p]); u9b_chk('b_transpose_vals', @() transposevals(b)); u9b_chk('b_transpose_size', @() size(b')); u9b_chk('b_ctranspose', @() size(b.'));
 u9b_chk('b_cat_dim1', @() size(cat(1, b, b))); u9b_chk('b_horzcat', @() size(horzcat(a, a))); u9b_chk('b_vertcat', @() size(vertcat(a, a))); u9b_chk('b_vertcat_mismatch', @() vertcat(a, a(1:2)));
-u9b_chkdiv('b_cat3', @() oi_try( @() size(cat(3, a, a))), 'ADR0232'); u9b_chk('b_repmat', @() size(repmat(a, 2, 2))); u9b_chk('b_repmat_vals', @() [repmat(a, 1, 2).p]); u9b_chk('b_fliplr', @() [fliplr(a).p]); u9b_chk('b_flipud', @() [flipud(b).p]); u9b_chk('b_circshift', @() [circshift(a, 1).p]); u9b_chk('b_rot90', @() [rot90(b).p]);
+u9b_chk('b_cat3', @() size(cat(3, a, a))); u9b_chk('b_repmat', @() size(repmat(a, 2, 2))); u9b_chk('b_repmat_vals', @() [repmat(a, 1, 2).p]); u9b_chk('b_fliplr', @() [fliplr(a).p]); u9b_chk('b_flipud', @() [flipud(b).p]); u9b_chk('b_circshift', @() [circshift(a, 1).p]); u9b_chk('b_rot90', @() [rot90(b).p]);
 u9b_chk('b_colon', @() size(b(:))); u9b_chk('b_isrow', @() isrow(a)); u9b_chk('b_iscolumn', @() iscolumn(a')); u9b_chk('b_isvector', @() isvector(b)); u9b_chk('b_isscalar', @() isscalar(s1)); u9b_chk('b_isempty', @() isempty(a)); u9b_chk('b_numel', @() numel(b)); u9b_chk('b_length', @() length(b)); u9b_chk('b_ndims', @() ndims(b)); u9b_chk('b_size_dim', @() size(a, 2)); u9b_chk('b_numel_idx', @() numel(a, 1));
-u9b_chk('b_squeeze', @() size(squeeze(b))); u9b_chk('b_permute', @() size(permute(b, [2 1]))); u9b_chkdiv('b_3d', @() oi_try( @() size(cat(3, b, b))), 'ADR0232'); u9b_chkdiv('b_3d_index', @() oi_try( @() threed(b)), 'ADR0232'); u9b_chkdiv('b_3d_cs', @() oi_try( @() threedcs(b)), 'ADR0232');
+u9b_chk('b_squeeze', @() size(squeeze(b))); u9b_chk('b_permute', @() size(permute(b, [2 1]))); u9b_chk('b_3d', @() size(cat(3, b, b))); u9b_chk('b_3d_index', @() threed(b)); u9b_chk('b_3d_cs', @() threedcs(b));
 u9b_chk('b_index_2d_range', @() size(b(1:2, 1))); u9b_chk('b_index_logical_2d', @() [b(logical([1 0; 0 1])).p]); u9b_chk('b_index_out', @() b(3, 1)); u9b_chk('b_index_zero', @() b(0)); u9b_chk('b_index_frac', @() b(1.5));
 u9b_chk('b_index_colon_colon', @() size(b(:, :))); u9b_chk('b_index_end_arith', @() b(end - 1).p); u9b_chk('b_index_matrix_idx', @() size(a([1 2; 2 3])));
 u9b_chk('b_index_1d_on_2d', @() [b(1:3).p]); u9b_chk('b_linear_assign_2d', @() linassign2d(b));
 u9b_chk('gap_fill', @() gapfill(a)); u9b_chk('gap_fill_class', @() gapclass(a)); u9b_chk('gap_fill_sub', @() gapsub()); u9b_chk('gap_fill_ctor_called', @() gapctor()); u9b_chk('gap_fill_ctor_called_2d', @() gapctor2d());
-u9b_chk('gap_fill_2d', @() gap2d(a)); u9b_chk('gap_fill_empty_start', @() gapempty()); u9b_chkdiv('gap_fill_noargs_ctor', @() oi_try( @() gapnoargs()), 'ADR0232'); u9b_chk('gap_fill_dot', @() gapdot(a)); u9b_chk('gap_fill_dot_vals', @() gapdotvals(a));
+u9b_chk('gap_fill_2d', @() gap2d(a)); u9b_chk('gap_fill_empty_start', @() gapempty()); u9b_chk('gap_fill_noargs_ctor', @() gapnoargs()); u9b_chk('gap_fill_dot', @() gapdot(a)); u9b_chk('gap_fill_dot_vals', @() gapdotvals(a));
 u9b_chk('gap_fill_default_prop', @() gapdefault()); u9b_chk('gap_fill_mixed', @() gapmixed());
 u9b_chk('gap_fill_from_empty_static', @() gapfromstatic());
 u9b_chk('gap_fill_from_zero_by_zero', @() gapfromzero());
@@ -51,7 +51,7 @@ u9b_chk('isequal_nested', @() isequal({a}, {[s1 s2 s3]})); u9b_chk('isequal_nest
 u9b_chk('isequaln', @() isequaln(a, a)); u9b_chk('isequal_three', @() isequal(a, a, a));
 u9b_chk('eq_op', @() s1 == s2); u9b_chk('eq_op_arr', @() a == a); u9b_chk('ne_op', @() s1 ~= s2); u9b_chk('lt_op', @() s1 < s2); u9b_chk('plus_op', @() s1 + s2); u9b_chk('uminus_op', @() -s1); u9b_chk('not_op', @() ~s1); u9b_chk('and_op', @() s1 & s2); u9b_chk('colon_op', @() s1:s2); u9b_chk('transpose_scalar', @() size(s1'));
 u9b_chk('eq_struct', @() s1 == struct('p', 1)); u9b_chk('eq_num', @() s1 == 1); u9b_chk('num_eq_obj', @() 1 == s1);
-u9b_chk('plus_num_obj', @() 1 + s1); u9b_chk('mtimes', @() s1 * 2); u9b_chkdiv('abs_obj', @() oi_try( @() abs(s1)), 'ADR0232'); u9b_chkdiv('double_obj', @() oi_try( @() double(s1)), 'ADR0232'); u9b_chkdiv('logical_obj', @() oi_try( @() logical(s1)), 'ADR0232'); u9b_chkdiv('cell_obj', @() oi_try( @() cell(s1)), 'ADR0232'); u9b_chk('struct_obj', @() struct(s1)); u9b_chkdiv('num2str_obj', @() oi_try( @() num2str(s1)), 'ADR0232'); u9b_chkdiv('mat2str_obj', @() oi_try( @() mat2str(s1)), 'ADR0232'); u9b_chkdiv('sprintf_obj', @() oi_try( @() sprintf('%d', s1)), 'ADR0232'); u9b_chkdiv('sum_obj', @() oi_try( @() sum(a)), 'ADR0232'); u9b_chkdiv('max_obj', @() oi_try( @() max(a)), 'ADR0232'); u9b_chk('ismember_obj', @() ismember(s1, a)); u9b_chkdiv('any_obj', @() oi_try( @() any(a)), 'ADR0232'); u9b_chkdiv('nnz_obj', @() oi_try( @() nnz(a)), 'ADR0232'); u9b_chkdiv('cumsum_obj', @() oi_try( @() cumsum(a)), 'ADR0232'); u9b_chkdiv('mean_obj', @() oi_try( @() mean(a)), 'ADR0232'); u9b_chk('numel_obj_args', @() numel(a, 1, 2)); u9b_chk('length_obj', @() length(a));
+u9b_chk('plus_num_obj', @() 1 + s1); u9b_chk('mtimes', @() s1 * 2); u9b_chk('abs_obj', @() abs(s1)); u9b_chk('double_obj', @() double(s1)); u9b_chk('logical_obj', @() logical(s1)); u9b_chk('cell_obj', @() cell(s1)); u9b_chk('struct_obj', @() struct(s1)); u9b_chk('num2str_obj', @() num2str(s1)); u9b_chk('mat2str_obj', @() mat2str(s1)); u9b_chk('sprintf_obj', @() sprintf('%d', s1)); u9b_chk('sum_obj', @() sum(a)); u9b_chk('max_obj', @() max(a)); u9b_chk('ismember_obj', @() ismember(s1, a)); u9b_chk('any_obj', @() any(a)); u9b_chk('nnz_obj', @() nnz(a)); u9b_chk('cumsum_obj', @() cumsum(a)); u9b_chk('mean_obj', @() mean(a)); u9b_chk('numel_obj_args', @() numel(a, 1, 2)); u9b_chk('length_obj', @() length(a));
 u9b_chk('if_obj', @() ifobj(s1)); u9b_chk('while_obj', @() s1 && true); u9b_chk('obj_in_switch', @() switchobj(s1));
 u9b_chk('arrayfun_p', @() arrayfun(@(o) o.p, a)); u9b_chk('arrayfun_obj', @() arrayfun(@(o) o, a)); u9b_chk('arrayfun_obj_class', @() class(arrayfun(@(o) o, a))); u9b_chk('arrayfun_nonuni', @() arrayfun(@(o) o.name, a, 'UniformOutput', false)); u9b_chk('arrayfun_2d', @() arrayfun(@(o) o.p, b)); u9b_chk('arrayfun_2d_size', @() size(arrayfun(@(o) o.p, b)));
 u9b_chk('arrayfun_newobj', @() arrayfun(@(k) Val116(k), 1:3)); u9b_chk('arrayfun_newobj_class', @() class(arrayfun(@(k) Val116(k), 1:3))); u9b_chk('arrayfun_newobj_size', @() size(arrayfun(@(k) Val116(k), 1:3))); u9b_chk('arrayfun_newobj_cs', @() [arrayfun(@(k) Val116(k), 1:3).p]);
@@ -60,28 +60,28 @@ u9b_chk('arrayfun_obj_handle', @() class(arrayfun(@(k) Hnd116(k), 1:2))); u9b_ch
 u9b_chk('arrayfun_mixed_class', @() arrayfun(@(k) iff(k), 1:2));
 u9b_chk('cellfun_on_arr', @() cellfun(@(o) o.p, {s1, s2})); u9b_chk('cellfun_class', @() cellfun(@class, {s1, a}, 'UniformOutput', false)); u9b_chk('cellfun_obj_out', @() class(cellfun(@(o) o, {s1, s2}))); u9b_chk('cellfun_obj_out_size', @() size(cellfun(@(o) o, {s1, s2})));
 u9b_chk('num2cell', @() class(num2cell(a))); u9b_chk('num2cell_size', @() size(num2cell(a))); u9b_chk('num2cell_el', @() class(num2cellel(a))); u9b_chk('num2cell_2d', @() size(num2cell(b)));
-u9b_chk('cell2mat_obj', @() cell2mat({s1, s2})); u9b_chk('cat_cell_of_obj', @() class([{s1} {s2}])); u9b_chkdiv('horzcat_cells', @() oi_try( @() class(horzcat({s1}, {s2}))), 'ADR0232');
+u9b_chk('cell2mat_obj', @() cell2mat({s1, s2})); u9b_chk('cat_cell_of_obj', @() class([{s1} {s2}])); u9b_chk('horzcat_cells', @() class(horzcat({s1}, {s2})));
 u9b_chk('cellfun_isobject', @() cellfun(@isobject, {s1, 1}));
 u9b_chk('structfun_obj', @() structfun(@(x) x.p, struct('a', s1, 'b', s2)));
-u9b_chkdiv('mat_of_obj_in_cell', @() oi_try( @() size(cell2mat({a; a}))), 'ADR0232');
+u9b_chk('mat_of_obj_in_cell', @() size(cell2mat({a; a})));
 u9b_chk('properties_arr', @() properties(a)); u9b_chk('methods_arr', @() methods(a)); u9b_chk('fieldnames_arr', @() fieldnames(a)); u9b_chk('isprop_arr', @() isprop(a, 'p')); u9b_chk('isprop_arr_size', @() size(isprop(a, 'p'))); u9b_chk('ismethod_arr', @() ismethod(a, 'bump')); u9b_chk('struct_arr', @() struct(a)); u9b_chk('struct_arr_size', @() size(struct(a))); u9b_chk('struct_arr_vals', @() [struct(a).p]);
 u9b_chk('isa_arr', @() isa(a, 'Val116')); u9b_chk('isobject_arr', @() isobject(a)); u9b_chk('isstruct_arr', @() isstruct(a)); u9b_chk('class_empty', @() class(a([]))); u9b_chk('empty_size', @() size(a([]))); u9b_chk('empty_static', @() size(Val116.empty)); u9b_chk('empty_static_03', @() size(Val116.empty(0, 3))); u9b_chk('empty_static_class', @() class(Val116.empty)); u9b_chk('empty_static_bad', @() Val116.empty(1, 2));
 u9b_chk('isempty_static', @() isempty(Val116.empty)); u9b_chk('empty_cs', @() size([Val116.empty.p])); u9b_chk('empty_cat', @() size([Val116.empty s1])); u9b_chk('empty_cat_class', @() class([Val116.empty s1]));
-u9b_chkdiv('metaclass_arr', @() oi_try( @() class(metaclass(a))), 'ADR0232');
-u9b_chk('isfield_obj', @() isfield(s1, 'p')); u9b_chk('getfield_obj', @() getfield(s1, 'p')); u9b_chkdiv('setfield_obj', @() oi_try( @() setfield(s1, 'p', 5).p), 'ADR0232'); u9b_chkdiv('rmfield_obj', @() oi_try( @() rmfield(s1, 'p')), 'ADR0232'); u9b_chkdiv('orderfields_obj', @() oi_try( @() orderfields(s1)), 'ADR0232');
+u9b_chk('metaclass_arr', @() class(metaclass(a)));
+u9b_chk('isfield_obj', @() isfield(s1, 'p')); u9b_chk('getfield_obj', @() getfield(s1, 'p')); u9b_chk('setfield_obj', @() setfield(s1, 'p', 5).p); u9b_chk('rmfield_obj', @() rmfield(s1, 'p')); u9b_chk('orderfields_obj', @() orderfields(s1));
 u9b_chk('isequal_prop_list', @() isequal(properties(a), properties(s1)));
 u9b_chk('method_on_arr', @() [bump(a).p]); u9b_chk('method_on_arr_dot', @() [a.bump().p]); u9b_chk('method_scalar', @() s1.bump().p); u9b_chk('method_on_arr_dot_noparen', @() [a.bump.p]);
-u9b_chk('method_total', @() total(a)); u9b_chkdiv('method_total_dot', @() oi_try( @() a.total), 'ADR0232');
+u9b_chk('method_total', @() total(a)); u9b_chk('method_total_dot', @() a.total);
 u9b_chk('method_on_2d', @() size(bump(b))); u9b_chk('method_on_empty', @() size(bump(a([]))));
 u9b_chk('method_on_arr_elem', @() a(2).bump().p);
 u9b_chk('for_row', @() forrow(a)); u9b_chk('for_2d', @() for2d(b)); u9b_chk('for_col', @() forrow(a')); u9b_chk('for_empty', @() forrow(a([]))); u9b_chk('for_3d', @() forrow(cat(3, a, a)));
 u9b_chk('for_row_vals', @() forvals(a)); u9b_chk('for_cell_of_obj', @() forrow({s1, s2}));
 u9b_chk('while_numel', @() whilearr(a));
-u9b_chk('sub_array', @() class([Sub116(1) Sub116(2)])); u9b_chk('sub_cs', @() subcs()); u9b_chkdiv('mixed_sub_val', @() oi_try( @() mixed()), 'ADR0232'); u9b_chkdiv('mixed_val_sub', @() oi_try( @() mixedrev()), 'ADR0232'); u9b_chk('mixed_sub_val_cs', @() mixedcs());
+u9b_chk('sub_array', @() class([Sub116(1) Sub116(2)])); u9b_chk('sub_cs', @() subcs()); u9b_chk('mixed_sub_val', @() mixed()); u9b_chk('mixed_val_sub', @() mixedrev()); u9b_chk('mixed_sub_val_cs', @() mixedcs());
 u9b_chk('assign_sub_into_val', @() subintoval(a)); u9b_chk('assign_val_into_sub', @() valintosub()); u9b_chk('assign_wrong_class', @() wrongclass(a)); u9b_chk('assign_struct', @() assignstruct(a)); u9b_chk('assign_num', @() assignnum(a)); u9b_chk('assign_cell', @() assigncell(a)); u9b_chk('assign_empty_cell', @() assignemptycell(a)); u9b_chk('assign_empty_str', @() assignemptystr(a));
-u9b_chk('assign_scalar_to_range', @() rangeassign(a)); u9b_chk('assign_arr_to_range', @() rangeassignarr(a)); u9b_chkdiv('assign_arr_to_range_mismatch', @() oi_try( @() rangeassignbad(a)), 'ADR0232'); u9b_chk('a_logical_mask_write', @() maskwrite(a)); u9b_chk('assign_colon', @() colonassign(a)); u9b_chk('assign_colon_arr', @() colonassignarr(a)); u9b_chk('assign_end_plus', @() endplus(a));
+u9b_chk('assign_scalar_to_range', @() rangeassign(a)); u9b_chk('assign_arr_to_range', @() rangeassignarr(a)); u9b_chk('assign_arr_to_range_mismatch', @() rangeassignbad(a)); u9b_chk('a_logical_mask_write', @() maskwrite(a)); u9b_chk('assign_colon', @() colonassign(a)); u9b_chk('assign_colon_arr', @() colonassignarr(a)); u9b_chk('assign_end_plus', @() endplus(a));
 u9b_chk('assign_whole_from_scalar', @() wholefromscalar(a)); u9b_chk('assign_zero_index', @() zeroindex(a)); u9b_chk('assign_two_idx_on_row', @() twoidxrow(a)); u9b_chk('assign_two_idx_on_row_vals', @() twoidxrowvals(a));
-u9b_chk('assign_elem_prop_on_shared', @() sharedwrite(a)); u9b_chk('nested_obj', @() nestedobj()); u9b_chkdiv('nested_obj_write', @() oi_try( @() nestedwrite()), 'ADR0232');
+u9b_chk('assign_elem_prop_on_shared', @() sharedwrite(a)); u9b_chk('nested_obj', @() nestedobj()); u9b_chk('nested_obj_write', @() nestedwrite());
 u9b_chk('deal_struct_like', @() dealstruct()); u9b_chk('deal_name', @() dealname(a));
 u9b_chk('assign_cs_from_cs', @() csfromcs(a));
 u9b_chk('assign_cs_from_vector', @() csfromvec(a));
@@ -107,7 +107,7 @@ u9b_chk('obj_cs_in_horzcat_fn', @() horzcat(a.p));
 u9b_chk('obj_cs_in_cat_fn', @() cat(1, a.p));
 u9b_chk('obj_cs_strjoin', @() strjoin({a.name}, '-'));
 u9b_chk('obj_cs_in_cellarray_literal_2d', @() size({a.p; a.p}));
-u9b_chkdiv('obj_cs_in_index', @() oi_try( @() csindex(a)), 'ADR0232');
+u9b_chk('obj_cs_in_index', @() csindex(a));
 u9b_chk('obj_cs_in_anon', @() feval(@(varargin) nargin, a.p));
 u9b_chk('obj_cs_sub_dot_index', @() a(2:3).name(1));
 u9b_chk('obj_cs_numel_dot', @() numel(a(2:3).name));
@@ -116,7 +116,7 @@ ha = [h1 h2 h3];
 u9b_chk('h_class', @() class(ha)); u9b_chk('h_size', @() size(ha)); u9b_chk('h_cs', @() [ha.p]); u9b_chk('h_cs_brace', @() {ha.name});
 u9b_chk('h_write_through', @() hwrite(ha, h2)); u9b_chk('h_elem_write_shares', @() helem(ha, h1)); u9b_chk('h_copy_write_through', @() hcopy(ha, h3));
 u9b_chk('h_eq', @() ha(1) == h1); u9b_chk('h_eq_arr', @() ha == h1); u9b_chk('h_eq_other', @() h1 == h2); u9b_chk('h_ne', @() ha ~= h1); u9b_chk('h_isequal', @() isequal(h1, Hnd116(1))); u9b_chk('h_isequal_same', @() isequal(h1, h1)); u9b_chk('h_isequal_arr', @() isequal(ha, [h1 h2 h3])); u9b_chk('h_isequal_arr_other', @() isequal(ha, [Hnd116(1) Hnd116(2) Hnd116(3)]));
-u9b_chk('h_eq_arr_arr', @() ha == ha); u9b_chk('h_eq_mismatch', @() ha == ha(1:2)); u9b_chk('h_lt', @() h1 < h2); u9b_chk('h_eq_num', @() h1 == 1); u9b_chk('h_eq_val', @() h1 == s1);
+u9b_chk('h_eq_arr_arr', @() ha == ha); u9b_chk('h_eq_mismatch', @() ha == ha(1:2)); u9b_chk('h_eq_num', @() h1 == 1); u9b_chk('h_eq_val', @() h1 == s1);
 u9b_chk('h_2d', @() size([h1 h2; h3 h1])); u9b_chk('h_2d_same', @() h2d(h1)); u9b_chk('h_assign_grow', @() hgrow(ha)); u9b_chk('h_assign_grow_valid', @() hgrowvalid(ha)); u9b_chk('h_delete_elem', @() hdel(ha)); u9b_chk('h_delete_elem_valid', @() hdelvalid(ha, h2));
 u9b_chk('h_isvalid', @() isvalid(ha)); u9b_chk('h_delete_obj', @() hdelobj()); u9b_chk('h_delete_obj_cs', @() hdelobjcs()); u9b_chkdiv('h_delete_obj_display', @() oi_try( @() hdelobjdisp()), 'ADR0232'); u9b_chk('h_delete_obj_class', @() hdelobjclass()); u9b_chk('h_delete_obj_prop', @() hdelobjprop());
 u9b_chk('h_cs_deal', @() hdeal(ha)); u9b_chk('h_arrayfun', @() arrayfun(@(o) o.p, ha)); u9b_chk('h_for', @() forrow(ha)); u9b_chk('h_for_write', @() hforwrite(ha)); u9b_chk('h_find', @() hfind(ha));
@@ -133,10 +133,10 @@ u9b_chk('h_assign_val_into', @() hassignval(ha)); u9b_chk('h_assign_other_handle
 u9b_chk('h_cs_dot_assign', @() hdotassign(ha)); u9b_chk('h_colon_dot_deal', @() hcolondeal(ha));
 u9b_chk('h_arr_elem_dot_write_shared', @() hshared(ha));
 u9b_chk('h_arr_in_prop_of_val', @() harrinval(ha));
-u9b_chk('h_isa', @() isa(ha, 'handle')); u9b_chk('h_isobject', @() isobject(ha)); u9b_chk('h_ishandle', @() ishandle(ha)); u9b_chkdiv('h_isgraphics', @() oi_try( @() isgraphics(ha)), 'ADR0232'); u9b_chk('h_class_handle_arr', @() class(ha(1:2)));
+u9b_chk('h_isa', @() isa(ha, 'handle')); u9b_chk('h_isobject', @() isobject(ha)); u9b_chk('h_ishandle', @() ishandle(ha)); u9b_chk('h_isgraphics', @() isgraphics(ha)); u9b_chk('h_class_handle_arr', @() class(ha(1:2)));
 u9b_chk('h_eq_deleted', @() heqdeleted()); u9b_chk('h_cs_deleted', @() hcsdeleted()); u9b_chk('h_isvalid_shape', @() size(isvalid([h1 h2; h3 h1])));
 u9b_chk('h_arrayfun_delete', @() harrayfundel());
-u9b_chkdiv('h_cs_in_fn', @() oi_try( @() hfn(ha)), 'ADR0232');
+u9b_chk('h_cs_in_fn', @() hfn(ha));
 u9b_chk('h_numel_after_delete_elem', @() hnumel(ha));
 u9b_chk('h_handle_prop_cs', @() hpropcs());
 u9b_chk('h_delete_all', @() hdelall(ha)); u9b_chk('h_cs_after_delete_all', @() [ha.p]); u9b_chk('h_isvalid_after_delete_all', @() isvalid(ha)); u9b_chk('h_class_after_delete_all', @() class(ha)); u9b_chk('h_size_after_delete_all', @() size(ha)); u9b_chk('h_eq_after_delete_all', @() ha == ha); u9b_chk('h_methods_after_delete_all', @() numel(methods(ha))); u9b_chk('h_cat_after_delete_all', @() size([ha Hnd116(9)])); u9b_chk('h_cat_after_delete_all_valid', @() isvalid([ha Hnd116(9)]));
@@ -160,7 +160,7 @@ fprintf('CHK|DISPLAY_EMPTY_03|%s|exact\n', strrep(strrep(regexprep(evalc('e3 = V
 fprintf('CHK|DISPLAY_SCALAR|%s|div=ADR0232\n', strrep(strrep(regexprep(evalc('s1'), '^\n|<a [^>]*>|</a>', ''), newline, '\n'), '|', '/'));
 fprintf('CHK|DISP_SCALAR|%s|div=ADR0232\n', strrep(strrep(regexprep(evalc('disp(s1)'), '^\n|<a [^>]*>|</a>', ''), newline, '\n'), '|', '/'));
 fprintf('CHK|DISPLAY_COL|%s|exact\n', strrep(strrep(regexprep(evalc('ac = a'''), '^\n|<a [^>]*>|</a>', ''), newline, '\n'), '|', '/'));
-fprintf('CHK|DISPLAY_3D|%s|div=ADR0232\n', strrep(strrep(regexprep(evalc('t3 = cat(3, a, a)'), '^\n|<a [^>]*>|</a>', ''), newline, '\n'), '|', '/'));
+fprintf('CHK|DISPLAY_3D|%s|exact\n', strrep(strrep(regexprep(evalc('t3 = cat(3, a, a)'), '^\n|<a [^>]*>|</a>', ''), newline, '\n'), '|', '/'));
 fprintf('CHK|DISPLAY_SUB_ARR|%s|exact\n', strrep(strrep(regexprep(evalc('sa = [Sub116(1) Sub116(2)]'), '^\n|<a [^>]*>|</a>', ''), newline, '\n'), '|', '/'));
 fprintf('CHK|DISPLAY_OBJ_PROP|%s|div=ADR0232\n', strrep(strrep(regexprep(evalc('nn = Val116(a)'), '^\n|<a [^>]*>|</a>', ''), newline, '\n'), '|', '/'));
 fprintf('CHK|DISPLAY_H_ARR|%s|exact\n', strrep(strrep(regexprep(evalc('ha'), '^\n|<a [^>]*>|</a>', ''), newline, '\n'), '|', '/'));
@@ -185,7 +185,7 @@ u9b_chk('mixed_val_sub_ps', @() mixedrevps());
 u9b_chk('mixed_val_sub_q', @() mixedrevq());
 u9b_chk('cat_val_num', @() [s1 5]); u9b_chk('cat_val_num_class', @() class([s1 5])); u9b_chk('cat_val_num_p', @() ps([s1 5]));
 u9b_chk('cat_num_val', @() [5 s1]); u9b_chk('cat_num_val_class', @() class([5 s1]));
-u9b_chk('cat_val_char', @() ps([s1 'q'])); u9b_chk('cat_val_str', @() class([s1 "q"])); u9b_chk('cat_val_cell', @() class([s1 {1}])); u9b_chkdiv('cat_val_struct', @() oi_try( @() class([s1 struct('p', 1)])), 'ADR0232');
+u9b_chk('cat_val_char', @() ps([s1 'q'])); u9b_chk('cat_val_str', @() class([s1 "q"])); u9b_chk('cat_val_cell', @() class([s1 {1}])); u9b_chk('cat_val_struct', @() class([s1 struct('p', 1)]));
 u9b_chk('cat_val_handle', @() class([s1 h1])); u9b_chk('cat_val_handle_p', @() catvh(s1, h1));
 u9b_chk('cat_handle_val', @() class([h1 s1])); u9b_chk('cat_handle_val_p', @() cathv(h1, s1));
 u9b_chk('cat_zero_num', @() [Zero116 1]);
@@ -195,8 +195,8 @@ u9b_chk('cat_noarg_cell', @() class([NoArg116(5) {1}]));
 u9b_chk('cat_val_logical', @() ps([s1 true]));
 u9b_chk('cat_val_empty_cell', @() size([s1 {}]));
 u9b_chk('cat_val_empty_str', @() size([s1 '']));
-u9b_chkdiv('cat_val_empty_string', @() oi_try( @() size([s1 string.empty])), 'ADR0232');
-u9b_chkdiv('cat_val_empty_struct', @() oi_try( @() size([s1 struct([])])), 'ADR0232');
+u9b_chk('cat_val_empty_string', @() size([s1 string.empty]));
+u9b_chk('cat_val_empty_struct', @() size([s1 struct([])]));
 u9b_chk('cat_sub_num', @() class([Sub116(1) 5])); u9b_chk('cat_sub_num_q', @() qs([Sub116(1) 5]));
 u9b_chk('cat_val_sub_num', @() class([s1 Sub116(1) 5]));
 u9b_chk('cat_vert_val_sub', @() class([s1; Sub116(1)]));
@@ -208,9 +208,9 @@ u9b_chk('assign_val_into_sub_class_elem', @() valintosubclass());
 u9b_chk('assign_handle_into_val', @() handleintoval(a));
 u9b_chk('assign_val_into_handle', @() valintohandle());
 u9b_chk('assign_num_into_handle', @() numintohandle());
-u9b_chkdiv('h_max', @() oi_try( @() max(ha)), 'ADR0232'); u9b_chkdiv('h_min', @() oi_try( @() min(ha)), 'ADR0232');
+u9b_chk('h_max', @() max(ha)); u9b_chk('h_min', @() min(ha));
 u9b_chk('h_eq_num_arr', @() ha == 1); u9b_chk('h_eq_cell', @() h1 == {h1});
-u9b_chkdiv('h_sum', @() oi_try( @() sum(ha)), 'ADR0232');
+u9b_chk('h_sum', @() sum(ha));
 u9b_chk('h_cs_find_p2', @() find([ha.p] == 2));
 u9b_chk('cs_first_only', @() firstonly(a)); u9b_chk('cs_first_only_name', @() firstonlyname(a));
 u9b_chk('cs_paren_single', @() parensingle(a));
@@ -229,7 +229,7 @@ u9b_chk('cs_paren_index', @() a.p(1));
 u9b_chk('cs_brace_after', @() bracecs(a));
 u9b_chk('cs_field_after', @() a.name.x);
 u9b_chk('cs_call_after', @() a.name(1));
-u9b_chkdiv('cs_sub2_dot_end', @() oi_try( @() a(1:2).p(end)), 'ADR0232');
+u9b_chk('cs_sub2_dot_end', @() a(1:2).p(end));
 u9b_chk('cs_one_elem_dot_index', @() a(2).p(end));
 u9b_chk('cs_colon_dot_index', @() a(:).p);
 u9b_chk('cs_empty_dot_value', @() emptydot(a));
@@ -247,7 +247,7 @@ u9b_chk('cs_2d_bracket', @() [b.p]);
 u9b_chk('cs_2d_brace_size', @() size({b.p}));
 u9b_chk('cs_2d_bracket_size', @() size([b.p]));
 u9b_chk('cs_2d_sub', @() [b(2, :).p]);
-u9b_chkdiv('cs_vert_bracket', @() oi_try( @() vertcat(a.name)), 'ADR0232');
+u9b_chk('cs_vert_bracket', @() vertcat(a.name));
 u9b_chk('cs_vert_bracket_literal', @() [a.name; 'yyy']);
 u9b_chk('cs_char_cat_size', @() size([a.name]));
 u9b_chk('cs_name_strcat', @() strcat(a.name));
@@ -256,7 +256,7 @@ u9b_chk('cs_nargin', @() nargin_count(a.p));
 u9b_chk('cs_numel_fn', @() numel(a.p));
 u9b_chk('cs_size_fn', @() size(a.p));
 u9b_chk('cs_isempty_fn', @() isempty(a.p));
-u9b_chkdiv('cs_class_fn', @() oi_try( @() class(a.p)), 'ADR0232');
+u9b_chk('cs_class_fn', @() class(a.p));
 u9b_chk('cs_fprintf', @() sprintf('%d-', a.p));
 u9b_chk('cs_ismember', @() ismember(2, [a.p]));
 u9b_chk('cs_any_eq', @() any([a.p] == 2));
@@ -277,7 +277,7 @@ u9b_chk('cs_end_in_arr_index', @() a(end).p);
 u9b_chk('cs_end_arith', @() a(end - 1).p);
 u9b_chk('cs_end_in_bracket', @() [a(2:end).p]);
 u9b_chk('cs_end_in_brace', @() {a(1:end - 1).p});
-u9b_chkdiv('ctor_count_final_2', @() oi_try( @() VAL116_CTOR), 'ADR0232');
+u9b_chk('ctor_count_final_2', @() VAL116_CTOR);
 
 
 

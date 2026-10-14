@@ -1,0 +1,311 @@
+CHK|o_double|MATLAB:invalidConversion|exact
+CHK|o_double_msg|Conversion to double from Val116 is not possible.|exact
+CHK|o_double_arr|MATLAB:invalidConversion|exact
+CHK|o_double_arr_msg|Conversion to double from Val116 is not possible.|exact
+CHK|o_single|MATLAB:invalidConversion|exact
+CHK|o_single_msg|Conversion to single from Val116 is not possible.|exact
+CHK|o_int8|MATLAB:invalidConversion|exact
+CHK|o_int8_msg|Conversion to int8 from Val116 is not possible.|exact
+CHK|o_logical|MATLAB:invalidConversion|exact
+CHK|o_logical_msg|Conversion to logical from Val116 is not possible.|exact
+CHK|o_char|MATLAB:invalidConversion|exact
+CHK|o_char_msg|Conversion to char from Val116 is not possible.|exact
+CHK|o_string|MATLAB:invalidConversion|exact
+CHK|o_string_msg|Conversion to string from Val116 is not possible.|exact
+CHK|o_cell|MATLAB:invalidConversion|exact
+CHK|o_cell_msg|Conversion to cell from Val116 is not possible.|exact
+CHK|o_cellstr|MATLAB:invalidConversion|exact
+CHK|o_cellstr_msg|Conversion to cellstr from Val116 is not possible.|exact
+CHK|o_num2str|MATLAB:num2str:nonNumericInput|exact
+CHK|o_num2str_msg|Input to num2str must be numeric.|exact
+CHK|o_mat2str|MATLAB:mat2str:NumericInput|exact
+CHK|o_mat2str_msg|Input matrix must be a numeric array, character array, or string array.|exact
+CHK|o_int2str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|o_int2str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|o_disp_sprintf_d|MATLAB:invalidConversion|exact
+CHK|o_disp_sprintf_d_msg|Conversion to int64 from Val116 is not possible.|exact
+CHK|o_sprintf_s|MATLAB:invalidConversion|exact
+CHK|o_sprintf_s_msg|Conversion to text from Val116 is not possible.|exact
+CHK|o_sprintf_f|MATLAB:invalidConversion|exact
+CHK|o_sprintf_f_msg|Conversion to double from Val116 is not possible.|exact
+CHK|o_fprintf|MATLAB:invalidConversion|exact
+CHK|o_fprintf_msg|Conversion to int64 from Val116 is not possible.|exact
+CHK|o_sum|MATLAB:sum:wrongInput|exact
+CHK|o_sum_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_prod|MATLAB:prod:wrongInput|exact
+CHK|o_prod_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_max|MATLAB:max:wrongInput|exact
+CHK|o_max_msg|First input array is an invalid data type.|exact
+CHK|o_min|MATLAB:min:wrongInput|exact
+CHK|o_min_msg|First input array is an invalid data type.|exact
+CHK|o_any|MATLAB:any:wrongInput|exact
+CHK|o_any_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_all|MATLAB:all:wrongInput|exact
+CHK|o_all_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_cumsum|MATLAB:cumsum:wrongInput|exact
+CHK|o_cumsum_msg|Invalid data type. First input argument must be numeric or logical.|exact
+CHK|o_cumprod|MATLAB:cumprod:wrongInput|exact
+CHK|o_cumprod_msg|Invalid data type. First input argument must be numeric or logical.|exact
+CHK|o_mean|MATLAB:sum:wrongInput|exact
+CHK|o_mean_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_std|MATLAB:sum:wrongInput|exact
+CHK|o_std_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_var|MATLAB:sum:wrongInput|exact
+CHK|o_var_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_nnz|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|o_nnz_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|o_abs|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|o_abs_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|o_round|MATLAB:round:FirstArg|exact
+CHK|o_round_msg|First argument must be a numeric, logical, or char array.|exact
+CHK|o_sqrt|MATLAB:math:mustBeFloat|exact
+CHK|o_sqrt_msg|Invalid data type. Argument must be double or single.|exact
+CHK|o_isnan|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|o_isnan_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|o_diff|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|o_diff_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|o_norm|MATLAB:norm:inputType|exact
+CHK|o_norm_msg|First argument must be single or double.|exact
+CHK|o_floor|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|o_floor_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|o_setfield|double[1 1] 5|exact
+CHK|o_setfield_new|MATLAB:noPublicFieldForClass|exact
+CHK|o_setfield_new_msg|Unrecognized property 'zz' for class 'Val116'.|exact
+CHK|o_getfield_bad|MATLAB:noSuchMethodOrField|exact
+CHK|o_getfield_bad_msg|Unrecognized method, property, or field 'zz' for class 'Val116'.|exact
+CHK|o_rmfield|MATLAB:rmfield:Arg1NotStructArray|exact
+CHK|o_rmfield_msg|S must be a structure array.|exact
+CHK|o_orderfields|MATLAB:orderfields:arg1NotStruct|exact
+CHK|o_orderfields_msg|First argument must be a struct.|exact
+CHK|o_isfield|logical[1 1] 0|exact
+CHK|o_fieldnames|cell[2 1]{char[1 1]'p';char[1 4]'name'}|exact
+CHK|o_struct|char[1 6]'struct' WARN MATLAB:structOnObject|exact
+CHK|o_af_uniform|<Val116[1 3]>|exact
+CHK|o_af_uniform_char|char[1 2]'xx'|exact
+CHK|o_af_nonscalar|MATLAB:arrayfun:NotAScalarOutput|exact
+CHK|o_af_nonscalar_msg|Non-scalar in Uniform output, at index 1, output 1. Set 'UniformOutput' to false.|exact
+CHK|o_cs_end|MATLAB:index:expected_one_output_from_reference|exact
+CHK|o_cs_end_msg|A dot '.' indexing expression produced a comma-separated list with 3 values where only a single value is allowed.|exact
+CHK|o_cs_sub_end|MATLAB:index:expected_one_output_from_reference|exact
+CHK|o_cs_sub_end_msg|A dot '.' indexing expression produced a comma-separated list with 2 values where only a single value is allowed.|exact
+CHK|o_cs_index|MATLAB:index:expected_one_output_from_intermediate_indexing|exact
+CHK|o_cs_index_msg|Intermediate dot '.' indexing produced a comma-separated list with 3 values, but it must produce a single value when followed by subsequent indexing operations.|exact
+CHK|o_cs_index_sub|MATLAB:index:expected_one_output_from_intermediate_indexing|exact
+CHK|o_cs_index_sub_msg|Intermediate dot '.' indexing produced a comma-separated list with 2 values, but it must produce a single value when followed by subsequent indexing operations.|exact
+CHK|o_deal|MATLAB:deal:narginNargoutMismatch|exact
+CHK|o_deal_msg|The number of outputs should match the number of inputs.|exact
+CHK|o_deal_more|MATLAB:deal:narginNargoutMismatch|exact
+CHK|o_deal_more_msg|The number of outputs should match the number of inputs.|exact
+CHK|o_class_cs|MATLAB:dispatcher:invalidClassContext|exact
+CHK|o_class_cs_msg|When called from outside a class constructor, the CLASS function must be called with one input.|exact
+CHK|o_class_cs2|MATLAB:dispatcher:invalidClassContext|exact
+CHK|o_class_cs2_msg|When called from outside a class constructor, the CLASS function must be called with one input.|exact
+CHK|o_minrhs_ctor|MATLAB:minrhs|exact
+CHK|o_minrhs_ctor_msg|Not enough input arguments.|exact
+CHK|o_minrhs_fn|MATLAB:minrhs|exact
+CHK|o_minrhs_fn_msg|Not enough input arguments.|exact
+CHK|o_minrhs_fn2|MATLAB:minrhs|exact
+CHK|o_minrhs_fn2_msg|Not enough input arguments.|exact
+CHK|o_minrhs_ctor_direct|MATLAB:minrhs|exact
+CHK|o_minrhs_ctor_direct_msg|Not enough input arguments.|exact
+CHK|o_minrhs_nested|MATLAB:minrhs|exact
+CHK|o_minrhs_nested_msg|Not enough input arguments.|exact
+CHK|o_minrhs_if|MATLAB:minrhs|exact
+CHK|o_minrhs_if_msg|Not enough input arguments.|exact
+CHK|o_minrhs_nargin|double[1 1] 0|exact
+CHK|o_minrhs_exist|double[1 1] 0|exact
+CHK|o_h_sum|MATLAB:sum:wrongInput|exact
+CHK|o_h_sum_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_h_max|MATLAB:max:wrongInput|exact
+CHK|o_h_max_msg|First input array is an invalid data type.|exact
+CHK|o_h_min|MATLAB:min:wrongInput|exact
+CHK|o_h_min_msg|First input array is an invalid data type.|exact
+CHK|o_h_double|MATLAB:invalidConversion|exact
+CHK|o_h_double_msg|Conversion to double from Hnd116 is not possible.|exact
+CHK|o_h_mean|MATLAB:sum:wrongInput|exact
+CHK|o_h_mean_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|o_h_abs|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|o_h_abs_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|o_h_set|char[1 32]'MATLAB:graphics:SetMethodUnknown'|div=ADR0233|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|o_h_get|MATLAB:graphics:GetMethodUnknown|exact
+CHK|o_h_get_msg|Cannot find 'get' method for Hnd116 class.|exact
+CHK|o_h_addlistener|char[1 33]'MATLAB:class:nonSetObservableProp'|div=ADR0233|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|o_h_max_cs|double[1 1] 2|exact
+CHK|o_max_cs3|MATLAB:max:caseNotSupported|exact
+CHK|o_max_cs3_msg|Specifying the operating dimension is not supported for two input arrays.|exact
+CHK|o_mixed_mat2str|MATLAB:mat2str:NumericInput|exact
+CHK|o_mixed_mat2str_msg|Input matrix must be a numeric array, character array, or string array.|exact
+CHK|o_assign_mismatch|MATLAB:matrix:singleSubscriptNumelMismatch|exact
+CHK|o_assign_mismatch_msg|Unable to perform assignment because the left and right sides have a different number of elements.|exact
+CHK|o_assign_mismatch_num|MATLAB:matrix:singleSubscriptNumelMismatch|exact
+CHK|o_assign_mismatch_num_msg|Unable to perform assignment because the left and right sides have a different number of elements.|exact
+CHK|o_h_isgraphics|logical[1 2] [0 0]|exact
+CHK|o_isgraphics_val|logical[1 3] [0 0 0]|exact
+CHK|o_metaclass|char[1 21]'matlab.metadata.Class'|exact
+CHK|o_metaclass_name|char[1 6]'Val116'|exact
+CHK|o_meta_q|char[1 21]'matlab.metadata.Class'|exact
+CHK|c_times|MATLAB:categorical:times:TypeMismatch|exact
+CHK|c_times_msg|Inputs must be categorical arrays, character vectors, or scalar strings.|exact
+CHK|c_mtimes|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_mtimes_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_plus|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_plus_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_minus|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_minus_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_rdivide|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_rdivide_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_power|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_power_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_uminus|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_uminus_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_not|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_not_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_and|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_and_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_times_cat|<categorical[1 4]>|div=ADR0233|diverges|char[1 38]'MATLAB:math:mustBeNumericCharOrLogical'
+CHK|c_plus_cat|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_plus_cat_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_abs|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_abs_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_sum|MATLAB:sum:wrongInput|exact
+CHK|c_sum_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|c_mean|MATLAB:sum:wrongInput|exact
+CHK|c_mean_msg|Invalid data type. First argument must be numeric or logical.|exact
+CHK|c_cumsum|MATLAB:cumsum:wrongInput|exact
+CHK|c_cumsum_msg|Invalid data type. First input argument must be numeric or logical.|exact
+CHK|c_round|MATLAB:round:FirstArg|exact
+CHK|c_round_msg|First argument must be a numeric, logical, or char array.|exact
+CHK|c_regexp|MATLAB:REGEXP:invalidInputs|exact
+CHK|c_regexp_msg|The 'STRING' input must be either a char row vector, a cell array of char row vectors, or a string array.|exact
+CHK|c_regexprep|MATLAB:REGEXP:invalidInputs|exact
+CHK|c_regexprep_msg|The 'STRING' input must be either a char row vector, a cell array of char row vectors, or a string array.|exact
+CHK|c_regexpi|MATLAB:REGEXP:invalidInputs|exact
+CHK|c_regexpi_msg|The 'STRING' input must be either a char row vector, a cell array of char row vectors, or a string array.|exact
+CHK|c_strjoin|MATLAB:strjoin:InvalidCellType|exact
+CHK|c_strjoin_msg|First input must be a string array or cell array of character vectors.|exact
+CHK|c_strsplit|MATLAB:strsplit:InvalidStringType|exact
+CHK|c_strsplit_msg|First input must be either a character vector or a string scalar.|exact
+CHK|c_strtrim|MATLAB:strtrim:InputClass|exact
+CHK|c_strtrim_msg|Input should be a string, character array, or a cell array of character arrays.|exact
+CHK|c_cellfun|MATLAB:cellfun:NotACell|exact
+CHK|c_cellfun_msg|Input #2 expected to be a cell array, was categorical instead.|exact
+CHK|c_str2num|MATLAB:str2num:InvalidArgument|exact
+CHK|c_str2num_msg|Input must be a character vector or string scalar.|exact
+CHK|c_str2double|double[1 1] NaN|exact
+CHK|c_datestr|MATLAB:datestr:ConvertToDateNumber|exact
+CHK|c_datestr_msg|Unable to convert input to specified date string. Failed to convert input to date numbers.|exact
+CHK|c_fieldnames|MATLAB:categorical:UndefinedFunction|exact
+CHK|c_fieldnames_msg|Undefined function 'fieldnames' for input arguments of type 'categorical'.|exact
+CHK|c_dot|MATLAB:categorical:FieldReferenceNotAllowed|exact
+CHK|c_dot_msg|Attempt to reference field of non-structure array.|exact
+CHK|c_dot_write|MATLAB:categorical:FieldAssignmentNotAllowed|exact
+CHK|c_dot_write_msg|Attempt to assign field of non-structure array.|exact
+CHK|c_strrep|char[1 132]'categorical / MATLAB:strrep:InvalidInputType / Inputs must be character vectors, cell arrays of character vectors, or string arrays.' WARN MATLAB:strrep:InvalidInputType|exact
+CHK|c_strfind|double[0 0]|exact
+CHK|c_upper|<categorical[1 4]>|exact
+CHK|c_num2str|MATLAB:num2str:nonNumericInput|exact
+CHK|c_num2str_msg|Input to num2str must be numeric.|exact
+CHK|c_mat2str|MATLAB:mat2str:NumericInput|exact
+CHK|c_mat2str_msg|Input matrix must be a numeric array, character array, or string array.|exact
+CHK|c_sprintf_d|char[1 4]'1213'|exact
+CHK|c_int2str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_int2str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|c_empty_name|MATLAB:categorical:EmptyCategoryName|exact
+CHK|c_empty_name_msg|Unable to create a category name from empty or missing text. Specify category names using the CATEGORYNAMES input argument.|exact
+CHK|c_empty_name2|MATLAB:categorical:EmptyCategoryName|exact
+CHK|c_empty_name2_msg|Unable to create a category name from empty or missing text. Specify category names using the CATEGORYNAMES input argument.|exact
+CHK|c_empty_name3|MATLAB:categorical:EmptyName|exact
+CHK|c_empty_name3_msg|CATEGORYNAMES contains an empty character vector or zero-length string.|exact
+CHK|c_missing_names|MATLAB:categorical:EmptyName|exact
+CHK|c_missing_names_msg|CATEGORYNAMES contains an empty character vector or zero-length string.|exact
+CHK|c_brace|MATLAB:categorical:CellReferenceNotAllowed|exact
+CHK|c_brace_msg|Cell contents reference from a non-cell array object.|exact
+CHK|c_isfield|logical[1 1] 0|exact
+CHK|c_struct|struct[1 1]{(defaultCodesClass=char[1 5]'uint8',missingLabel=char[1 9]'<missing>',undefCode=double[1 1] 0,undefLabel=char[1 11]'<undefined>',maxNumCategories=double[1 1] 281474976710655,categoryNames=cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'},codes=uint8[1 4] [1 2 1 3],isProtected=logical[1 1] 0,isOrdinal=logical[1 1] 0)}|div=ADR0233|diverges|char[0 0]''
+CHK|c_cell|MATLAB:invalidConversion|exact
+CHK|c_cell_msg|Conversion to cell from categorical is not possible.|exact
+CHK|c_logical|MATLAB:invalidConversion|exact
+CHK|c_logical_msg|Conversion to logical from categorical is not possible.|exact
+CHK|c_char_mat|double[1 2] [2 2]|exact
+CHK|c_setfield|MATLAB:categorical:FieldAssignmentNotAllowed|exact
+CHK|c_setfield_msg|Attempt to assign field of non-structure array.|exact
+CHK|c_rmfield|MATLAB:rmfield:Arg1NotStructArray|exact
+CHK|c_rmfield_msg|S must be a structure array.|exact
+CHK|c_sort_cell|MATLAB:sort:InputType|exact
+CHK|c_sort_cell_msg|Input argument must be a cell array of character vectors.|exact
+CHK|c_contains_cat|MATLAB:string:MustBeCharCellArrayOrString|exact
+CHK|c_contains_cat_msg|First argument must be text.|exact
+CHK|c_strcmp|logical[1 1] 0|exact
+CHK|c_strcmpi|logical[1 1] 0|exact
+CHK|c_isspace|logical[1 1] 0|div=ADR0233|diverges|logical[1 4] [0 0 0 0]
+CHK|c_double_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|c_double_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|t_mixed_brace|MATLAB:table:ExtractDataCatError|exact
+CHK|t_mixed_brace_msg|Unable to concatenate the specified table variables.|exact
+CHK|t_mixed_brace_rows|MATLAB:table:ExtractDataCatError|exact
+CHK|t_mixed_brace_rows_msg|Unable to concatenate the specified table variables.|exact
+CHK|t_mixed_brace_num_char|MATLAB:table:ExtractDataIncompatibleTypeError|exact
+CHK|t_mixed_brace_num_char_msg|Unable to concatenate the table variables 'Var1' and 'Var2', because their types are double and cell.|exact
+CHK|hc_cells|cell[1 2]{double[1 1] 1;double[1 1] 2}|exact
+CHK|hc_cells_class|char[1 4]'cell'|exact
+CHK|vc_char|char[2 1]'x;x'|exact
+CHK|hc_char|char[1 4]'abcd'|exact
+CHK|vc_names|char[3 1]'x;x;x'|exact
+CHK|hc_names|char[1 3]'xxx'|exact
+CHK|hc_obj_cells|char[1 4]'cell'|exact
+CHK|hc_obj_struct_cells|double[1 2] [1 2]|exact
+CHK|hc_objects|char[1 6]'Val116'|exact
+CHK|vc_objects|double[1 2] [2 1]|exact
+CHK|hc_strings|string[1 2]"a","b"|exact
+CHK|vc_strings|string[2 1]"a","b"|exact
+CHK|hc_mixed|cell[1 2]{double[1 1] 1;double[1 1] 2}|exact
+CHK|vc_mixed_char_num|char[2 1]'a;B'|exact
+CHK|hc_cat|<categorical[1 8]>|exact
+CHK|vc_cat|double[1 2] [2 4]|exact
+CHK|hc_struct|double[1 2] [1 2]|exact
+CHK|vc_struct_bad|MATLAB:catenate:structFieldBad|exact
+CHK|vc_struct_bad_msg|Names of fields in structure arrays being concatenated do not match. Concatenation of structure arrays requires that these arrays have the same set of fields.|exact
+CHK|hc_none|double[0 0]|exact
+CHK|vc_none|double[0 0]|exact
+CHK|hc_one|cell[1 1]{double[1 1] 1}|exact
+CHK|vc_char_mismatch|MATLAB:catenate:dimensionMismatch|exact
+CHK|vc_char_mismatch_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|hc_table|double[1 2] [2 3]|exact
+CHK|vc_table|double[1 2] [4 2]|exact
+CHK|hc_logical_num|char[1 6]'double'|exact
+CHK|hc_int_double|char[1 4]'int8'|exact
+CHK|hc_char_num|char[1 2]'aB'|exact
+CHK|hc_cell_cs|double[1 2] [1 2]|exact
+CHK|vc_cs_struct|double[2 2] [1 2;3 4]|exact
+CHK|hc_handles|char[1 6]'Hnd116'|exact
+CHK|hc_empty_cells|double[1 2] [1 1]|exact
+CHK|vc_empty_char|char[1 2]'ab'|exact
+CHK|cat_cells|cell[1 2]{double[1 1] 1;double[1 1] 2}|exact
+CHK|cat_chars|char[2 1]'x;y'|exact
+CHK|hc_dim_mismatch|MATLAB:catenate:dimensionMismatch|exact
+CHK|hc_dim_mismatch_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|vc_dim_mismatch|MATLAB:catenate:dimensionMismatch|exact
+CHK|vc_dim_mismatch_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|isenum_cat|logical[1 1] 0|exact
+CHK|isenum_num|logical[1 1] 0|exact
+CHK|isenum_obj|logical[1 1] 0|exact
+CHK|isenum_char|logical[1 1] 0|exact
+CHK|isenum_enum|logical[1 1] 1|div=ADR0233|diverges|char[1 26]'MATLAB:undefinedVarOrClass'
+CHK|isenum_noarg|MATLAB:minrhs|exact
+CHK|isenum_noarg_msg|Not enough input arguments.|exact
+CHK|isenum_table|logical[1 1] 0|exact
+CHK|isenum_cell|logical[1 1] 0|exact
+CHK|istabular_t|logical[1 1] 1|exact
+CHK|istabular_tt|logical[1 1] 1|exact
+CHK|istabular_num|logical[1 1] 0|exact
+CHK|istabular_struct|logical[1 1] 0|exact
+CHK|istabular_cat|logical[1 1] 0|exact
+CHK|istabular_noarg|MATLAB:minrhs|exact
+CHK|istabular_noarg_msg|Not enough input arguments.|exact
+CHK|istabular_two|MATLAB:TooManyInputs|exact
+CHK|istabular_two_msg|Too many input arguments.|exact
+CHK|istabular_empty|logical[1 1] 1|exact
+CHK|isenum_two|MATLAB:maxrhs|exact
+CHK|isenum_two_msg|Too many input arguments.|exact
+CHK|exist_isenum|double[1 1] 5|exact
+CHK|exist_istabular|double[1 1] 2|div=ADR0233|diverges|double[1 1] 5

@@ -76,4 +76,36 @@ internal sealed class JgsObjectArray
         elements.Length == 1 && rows == 1 && cols == 1
             ? JgsValue.Object(elements[0])
             : JgsValue.ObjectArray(new JgsObjectArray(definition, elements), rows, cols);
+
+    /// <summary>
+    /// <see cref="ValueOf(JgsClass, JgsObject[], int, int)"/> in the shape of <paramref name="shapeOf"/>,
+    /// a third dimension and past included (open item 121).
+    /// </summary>
+    public static JgsValue ValueLike(JgsClass definition, JgsObject[] elements, JgsValue shapeOf)
+    {
+        JgsValue made = ValueOf(definition, elements, shapeOf.Rows, shapeOf.Cols);
+        if (shapeOf.IsNd && made.IsObjectArray)
+        {
+            made.ReshapeDims(shapeOf.Dims);
+        }
+
+        return made;
+    }
+
+    /// <summary>
+    /// A numeric stand-in for an object value: the positions <paramref name="offset"/> onward of its
+    /// elements, in its shape (2-D or N-D), for a verb or a subscript to rearrange (open item 121).
+    /// </summary>
+    public static JgsValue PositionsLike(JgsValue objects, int offset)
+    {
+        int count = objects.IsObjectArray ? objects.ArrayLength : 1;
+        var positions = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            positions[i] = offset + i;
+        }
+
+        int[] dims = objects.IsObjectArray ? objects.Dims : [1, 1];
+        return JgsMatrix.FromColumnMajorDims(positions, dims);
+    }
 }

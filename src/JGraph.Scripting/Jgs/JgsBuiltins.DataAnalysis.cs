@@ -1179,6 +1179,55 @@ internal static partial class JgsBuiltins
     /// from 1. Under JGS they are numbered from 0, where there is no negative zero to write, so the
     /// shorthand is refused by name and <c>'descend'</c> says the same thing.
     /// </remarks>
+    /// <summary>
+    /// The keys a table is sorted by, each with its direction: variables named (a name, names, a
+    /// string array) or numbered (negative for descending), then one direction for all or one each.
+    /// </summary>
+    private static (TableColumn Column, bool Descending)[] TableSortKeys(Table table, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        var keys = new List<(TableColumn Column, bool Descending)>();
+        if (args.Count > 1 && !IsEmpty(args[1]))
+        {
+            if (JgsRunningDialect.ThreadIsMatlab && (args[1].Type is JgsType.Number || args[1].Type == JgsType.Array)
+                && (args[1].Type is JgsType.Number || (args[1].Type == JgsType.Array && !args[1].IsStringArray && !args[1].IsCharMatrix && args[1].ArrayLength > 0 && args[1].ElementAt(0).Type == JgsType.Number)))
+            {
+                foreach (double position in ToDoubles("sortrows", args[1], line, col))
+                {
+                    int at = (int)Math.Abs(position) - 1;
+                    if (at < 0 || at >= table.ColumnCount)
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:table:VarIndexOutOfRange",
+                            $"Variable index exceeds table dimensions. Index must not exceed {table.ColumnCount}.");
+                    }
+
+                    keys.Add((table[at], position < 0));
+                }
+            }
+            else
+            {
+                keys.AddRange(FieldNameList("sortrows", args[1], line, col).Select(n => (table[n], false)));
+            }
+        }
+        else
+        {
+            keys.AddRange(table.RowTimes is { } times ? [(times, false)] : table.Columns.Select(static c => (c, false)));
+        }
+
+        if (args.Count > 2)
+        {
+            string[] directions = args[2].Type == JgsType.Cell
+                ? [.. args[2].AsCell.Select(static d => d.AsString)]
+                : [Str("sortrows", args, 2, line, col)];
+            for (int k = 0; k < keys.Count; k++)
+            {
+                string direction = directions[directions.Length == 1 ? 0 : Math.Min(k, directions.Length - 1)];
+                keys[k] = (keys[k].Column, direction.Equals("descend", StringComparison.OrdinalIgnoreCase));
+            }
+        }
+
+        return [.. keys];
+    }
+
     private static JgsValue[] SortedRows(
         IReadOnlyList<JgsValue> args, int wanted, JgsDialect dialect, int line, int col)
     {
@@ -1186,12 +1235,29 @@ internal static partial class JgsBuiltins
         if (args[0].Type == JgsType.Table)
         {
             Table table = args[0].AsTable;
-            TableColumn[] tableKeys = args.Count > 1 && !IsEmpty(args[1])
-                ? FieldNameList("sortrows", args[1], line, col).Select(n => table[n]).ToArray()
-                : table.RowTimes is { } times ? [times] : table.Columns.ToArray();
-            bool descending = args.Count > 2 && Str("sortrows", args, 2, line, col) == "descend";
+            (TableColumn Column, bool Descending)[] tableKeys = TableSortKeys(table, args, line, col);
             int[] tableOrder = Enumerable.Range(0, table.RowCount).ToArray();
-            Array.Sort(tableOrder, (a,b) => { foreach (TableColumn key in tableKeys) { int compare = key.Type == ColumnType.Text ? string.CompareOrdinal(key.GetText(a), key.GetText(b)) : key.GetNumber(a).CompareTo(key.GetNumber(b)); if (compare != 0) return descending ? -compare : compare; } return a.CompareTo(b); });
+
+            // A categorical key sorts by its categories' order, an undefined element or a NaN last
+            // (open item 122, probe_122); text by character code; numbers as numbers.
+            double[]?[] codes = [.. tableKeys.Select(static k => k.Column is JgsValueColumn { Value.IsCategorical: true } held ? JgsCategorical.CodesOf(held.Value) : null)];
+            static int Numbers(double a, double b) => double.IsNaN(a) ? (double.IsNaN(b) ? 0 : 1) : double.IsNaN(b) ? -1 : a.CompareTo(b);
+            Array.Sort(tableOrder, (a, b) =>
+            {
+                for (int k = 0; k < tableKeys.Length; k++)
+                {
+                    TableColumn key = tableKeys[k].Column;
+                    int compare = codes[k] is { } c ? Numbers(c[a], c[b])
+                        : key.Type == ColumnType.Text ? string.CompareOrdinal(key.GetText(a), key.GetText(b))
+                        : Numbers(key.GetNumber(a), key.GetNumber(b));
+                    if (compare != 0)
+                    {
+                        return tableKeys[k].Descending ? -compare : compare;
+                    }
+                }
+
+                return a.CompareTo(b);
+            });
             return [JgsValue.Table(table.Select(tableOrder, Enumerable.Range(0, table.ColumnCount).ToArray())), JgsMatrix.FromColumnMajorDims(tableOrder.Select(i => (double)(i + dialect.IndexBase)).ToArray(), [tableOrder.Length, 1])];
         }
         int[] dims = SizeDims(args[0]);

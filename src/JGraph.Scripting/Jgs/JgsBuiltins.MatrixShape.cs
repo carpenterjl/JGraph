@@ -135,6 +135,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(args[0].Type switch
             {
                 JgsType.Array => args[0].DimCount,
+                JgsType.Object or JgsType.Cell => args[0].DimCount, // an array of objects or a cell grown past two (open item 121)
                 JgsType.Image when args[0].AsImage.Channels > 1 => 3,
                 _ => 2,
             });
@@ -2670,8 +2671,15 @@ internal static partial class JgsBuiltins
             sizes[i] = Extend(JgsMatrix.DimsOf(part), dim);
         }
 
-        // Every dimension but the joined one has to agree, exactly as for rows and columns.
-        for (int d = 0; d < dim; d++)
+        // Every dimension but the joined one has to agree, exactly as for rows and columns — the
+        // ones past it included, every size padded to the longest (open item 121).
+        int longest = sizes.Max(static s => s.Length);
+        for (int i = 0; i < sizes.Length; i++)
+        {
+            sizes[i] = Extend(sizes[i], longest);
+        }
+
+        for (int d = 0; d < longest; d++)
         {
             if (d == dim - 1)
             {
@@ -2682,6 +2690,11 @@ internal static partial class JgsBuiltins
             {
                 if (sizes[i][d] != sizes[0][d])
                 {
+                    if (JgsRunningDialect.ThreadIsMatlab)
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:catenate:dimensionMismatch", "Dimensions of arrays being concatenated are not consistent.");
+                    }
+
                     throw new JgsRuntimeException(line, col,
                         $"{name} along dimension {dim}: piece {i + 1} is {sizes[i][d]} long in dimension " +
                         $"{d + 1} where the first is {sizes[0][d]}.");
@@ -2718,6 +2731,10 @@ internal static partial class JgsBuiltins
         dims[dim - 1] = joined;
         return JgsMatrix.FromColumnMajorDims(result, dims);
     }
+
+    /// <summary>Numbers joined along <paramref name="dim"/>, every dimension of every piece kept (open item 121).</summary>
+    internal static JgsValue CatAlong(int dim, JgsValue[] parts, int line, int col) =>
+        ConcatAlongDimension("cat", dim, parts, line, col);
 
     /// <summary>Pads a size vector with trailing ones, so a matrix has a third dimension of 1.</summary>
     private static int[] Extend(IReadOnlyList<int> dims, int length)

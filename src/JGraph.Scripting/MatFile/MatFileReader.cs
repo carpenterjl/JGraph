@@ -614,6 +614,22 @@ internal sealed class MatFileReader
     private JgsValue ReadObject(ref int at, int end, string name, int id, bool deleted)
     {
         string className = ReadText(ref at);
+        if (className == "categorical")
+        {
+            // What JGraph's writer makes of a categorical (open item 122): codes, names and flags.
+            Dictionary<string, JgsValue> saved = ReadFields(ref at, end, ReadFieldNames(ref at));
+            if (saved.TryGetValue("codes", out JgsValue? codes) && saved.TryGetValue("categoryNames", out JgsValue? categoryNames))
+            {
+                string[] categories = categoryNames.Type == JgsType.Cell ? [.. categoryNames.AsCell.Select(static c => c.AsString)] : [];
+                bool ordinal = saved.TryGetValue("isOrdinal", out JgsValue? o) && o.AsNumber != 0;
+                bool isProtected = saved.TryGetValue("isProtected", out JgsValue? p) && p.AsNumber != 0;
+                JgsValue shaped = codes.Type == JgsType.Array ? codes : JgsMatrix.FromColumnMajor([codes.AsNumber], 1, 1);
+                return JgsCategorical.FromCodesLike(JgsCategorical.CodesOf(shaped), shaped, new JgsCategoricalTag(categories, ordinal, isProtected));
+            }
+
+            throw new InvalidDataException($"MAT-file variable '{name}' holds a categorical this reader does not know.");
+        }
+
         if (_binder is null)
         {
             throw new InvalidDataException(

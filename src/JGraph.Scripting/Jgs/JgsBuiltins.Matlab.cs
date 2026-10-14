@@ -512,7 +512,11 @@ internal static partial class JgsBuiltins
             // answer is an entry, so it takes a share; over an array they are fresh numbers, for
             // which a share is the value itself. A 2-D argument keeps its shape (open item 116).
             JgsValue cells = JgsValue.Cell(Elements("num2cell", args[0], line, col).Select(JgsValue.Share).ToArray());
-            if (args[0].Rows > 1 && args[0].Cols > 1 && cells.AsCell.Length == args[0].Rows * args[0].Cols)
+            if (args[0].IsNd && args[0].Type == JgsType.Object && cells.AsCell.Length == args[0].ArrayLength)
+            {
+                cells.ReshapeDims(args[0].Dims); // an array of objects with a third dimension (open item 121)
+            }
+            else if (args[0].Rows > 1 && args[0].Cols > 1 && cells.AsCell.Length == args[0].Rows * args[0].Cols)
             {
                 cells.Reshape(args[0].Rows, args[0].Cols);
             }

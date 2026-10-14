@@ -2143,6 +2143,13 @@ internal static partial class JgsBuiltins
 
         BareValues bare = PrepStrip("groupsummary", args[0], line, col);
         (string[] keys, string[] order) = GroupKeys("groupsummary", args[1], bare.Values.Length, line, col);
+        if (args[1].IsCategorical)
+        {
+            // A categorical groups by name, in its categories' order, the undefined last (open item 122).
+            keys = JgsCategorical.NamesOf(args[1]);
+            order = [.. keys.Distinct(StringComparer.Ordinal).OrderBy(k => CategoryRank(args[1].CategoricalTag!, k))];
+        }
+
         string method = args.Count > 2
             ? SummaryMethod("groupsummary", args[2], line, col)
             : "count";
@@ -2169,7 +2176,27 @@ internal static partial class JgsBuiltins
             ? PrepDress(bare, summarised, [order.Length, order.Length == 0 ? 0 : 1])
             : JgsMatrix.FromColumnMajorDims(summarised, [order.Length, order.Length == 0 ? 0 : 1]);
 
-        return Outputs(wanted, answer, GroupLabels(args[1], order));
+        return Outputs(wanted, answer, args[1].IsCategorical ? CategoricalLabels(args[1].CategoricalTag!, order) : GroupLabels(args[1], order));
+    }
+
+    /// <summary>Where a name stands among a categorical's categories, the undefined after them all.</summary>
+    private static int CategoryRank(JgsCategoricalTag tag, string name)
+    {
+        int at = Array.IndexOf(tag.Categories, name);
+        return at < 0 ? int.MaxValue : at;
+    }
+
+    /// <summary>Group names as a categorical column under the grouping variable's own categories.</summary>
+    private static JgsValue CategoricalLabels(JgsCategoricalTag tag, IReadOnlyList<string> names)
+    {
+        var codes = new double[names.Count];
+        for (int i = 0; i < codes.Length; i++)
+        {
+            int at = Array.IndexOf(tag.Categories, names[i]);
+            codes[i] = at < 0 ? double.NaN : at + 1;
+        }
+
+        return JgsCategorical.FromCodes(codes, codes.Length, codes.Length == 0 ? 0 : 1, tag);
     }
 
     private static bool MethodKeepsUnits(string method) =>
@@ -2328,11 +2355,40 @@ internal static partial class JgsBuiltins
         var order = keys.Distinct(StringComparer.Ordinal).ToList();
         order.Sort(StringComparer.Ordinal);
 
+        // A categorical grouping variable orders its groups by its categories, the undefined last,
+        // and comes back a categorical (open item 122, probe_122).
+        JgsCategoricalTag?[] categoricalTags = [.. groupNames.Select(n =>
+            TableVariable("groupsummary", table, n, line, col) is JgsValueColumn { Value.IsCategorical: true } held ? held.Value.CategoricalTag : null)];
+        if (categoricalTags.Any(static g => g is not null))
+        {
+            order.Sort((a, b) =>
+            {
+                string[] left = a.Split(GroupKeySeparator);
+                string[] right = b.Split(GroupKeySeparator);
+                for (int g = 0; g < groupNames.Length; g++)
+                {
+                    int byGroup = categoricalTags[g] is { } tag
+                        ? CategoryRank(tag, left[g]).CompareTo(CategoryRank(tag, right[g]))
+                        : string.CompareOrdinal(left[g], right[g]);
+                    if (byGroup != 0)
+                    {
+                        return byGroup;
+                    }
+                }
+
+                return 0;
+            });
+        }
+
         var columns = new List<TableColumn>();
         for (int g = 0; g < groupNames.Length; g++)
         {
             TableColumn source = TableVariable("groupsummary", table, groupNames[g], line, col);
-            if (source.Type == ColumnType.Text)
+            if (categoricalTags[g] is { } groupTag)
+            {
+                columns.Add(new JgsValueColumn(groupNames[g], CategoricalLabels(groupTag, [.. order.Select(k => k.Split(GroupKeySeparator)[g])])));
+            }
+            else if (source.Type == ColumnType.Text)
             {
                 columns.Add(new TextColumn(groupNames[g], [.. order.Select(k => k.Split(GroupKeySeparator)[g])]));
             }

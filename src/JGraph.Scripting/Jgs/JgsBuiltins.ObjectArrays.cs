@@ -180,9 +180,11 @@ internal static partial class JgsBuiltins
             }
 
             pool.AddRange(elements);
-            standIns[i] = elements.Length == 0
-                ? JgsMatrix.FromColumnMajor([], rows, cols)
-                : JgsMatrix.FromElements(positions, rows, cols);
+            standIns[i] = argument.IsObjectArray && argument.IsNd
+                ? JgsObjectArray.PositionsLike(argument, pool.Count - elements.Length)
+                : elements.Length == 0
+                    ? JgsMatrix.FromColumnMajor([], rows, cols)
+                    : JgsMatrix.FromElements(positions, rows, cols);
         }
 
         JgsValue result = inner.Call(standIns, line, col);
@@ -200,7 +202,7 @@ internal static partial class JgsBuiltins
 
         return result.Type == JgsType.Number
             ? JgsObjectArray.ValueOf(definition!, chosen, 1, 1)
-            : JgsObjectArray.ValueOf(definition!, chosen, result.Rows, result.Cols);
+            : JgsObjectArray.ValueLike(definition!, chosen, result);
     }
 
     /// <summary>

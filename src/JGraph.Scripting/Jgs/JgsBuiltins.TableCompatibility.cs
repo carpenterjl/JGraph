@@ -44,6 +44,28 @@ internal static partial class JgsBuiltins
 
         // istable is false for a timetable, as in MATLAB (V6: found by the table_forms fixture).
         Define("istable", (args, line, col) => { Arity("istable", args, 1, line, col); return JgsValue.Bool(args[0].Type == JgsType.Table && args[0].AsTable.RowTimes is null); });
+
+        // istabular is true for a table and a timetable both; it is a file function in R2025b, so a
+        // second argument is MATLAB:TooManyInputs rather than the builtins' maxrhs (open item 125).
+        Define("istabular", (args, line, col) =>
+        {
+            if (args.Count > 1 && JgsRunningDialect.ThreadIsMatlab)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+            }
+
+            Arity("istabular", args, 1, line, col);
+            return JgsValue.Bool(args[0].Type == JgsType.Table);
+        });
+
+        // isenum is true for a member of an enumeration. JGraph has no enumeration classes of its
+        // own, so the members it knows are the device classes' (OnOffSwitchState and its kind) and
+        // midimsgtype, which answers for itself (open item 125).
+        Define("isenum", (args, line, col) =>
+        {
+            Arity("isenum", args, 1, line, col);
+            return JgsValue.Bool(args[0].AsExternalOrNull() is Devices.DeviceEnumValue);
+        });
         foreach (string name in new[] { "movmean", "movsum", "movmedian", "movmin", "movmax", "movstd", "movvar", "movprod" })
         {
             if (!env.TryGet(name, out JgsValue inner))

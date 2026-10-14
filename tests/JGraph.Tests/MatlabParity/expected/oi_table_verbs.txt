@@ -1,0 +1,180 @@
+CHK|vt_class|char[1 7]'vartype'|exact
+CHK|vt_disp|char[1 249]'	table <a href="matlab:doc('vartype')">vartype</a> subscript:\n\n		Select table variables matching the type 'numeric'\n\n	See <a href="matlab:helpview(fullfile(docroot,'matlab','matlab_prog','access-data-in-a-table.html'))">Access Data in a Table</a>.\n\n'|div=ADR0233|diverges|char[1 22]'struct(Type: numeric)\n'
+CHK|vt_num|cell[1 1]{char[1 1]'n'}|exact
+CHK|vt_cat|cell[1 1]{char[1 4]'kind'}|exact
+CHK|vt_cellstr|cell[1 1]{char[1 3]'txt'}|exact
+CHK|vt_string|cell[1 1]{char[1 3]'str'}|exact
+CHK|vt_logical|cell[1 1]{char[1 4]'flag'}|exact
+CHK|vt_double|cell[1 1]{char[1 1]'n'}|exact
+CHK|vt_cell|cell[1 1]{char[1 3]'txt'}|exact
+CHK|vt_none|double[1 2] [3 0]|div=ADR0233|diverges|double[1 2] [0 0]
+CHK|vt_brace|double[3 1] [1;2;3]|exact
+CHK|vt_brace_cat|<categorical[3 1]>|exact
+CHK|vt_rows|double[2 1] [2;3]|exact
+CHK|vt_bad|<vartype[1 1]>|exact
+CHK|vt_noarg|<vartype[1 1]>|exact
+CHK|vt_num_arg|MATLAB:vartype:InvalidType|exact
+CHK|vt_num_arg_msg|Invalid data type. Input must be a string or a character vector specifying a valid class name.|exact
+CHK|vt_string_arg|char[1 7]'vartype'|exact
+CHK|vt_assign|double[3 1] [7;8;9]|exact
+CHK|vt_dot|char[1 32]'MATLAB:table:IllegalVarSubscript'|div=ADR0233|diverges|char[0 0]''
+CHK|vt_isa|logical[1 1] 1|exact
+CHK|vt_table_type|cell[1 0]{}|exact
+CHK|vt_integer|double[1 2] [1 1]|exact
+CHK|vt_float|cell[1 1]{char[1 4]'Var2'}|exact
+CHK|cv_name_cat|char[1 11]'categorical'|exact
+CHK|cv_name_cat_vals|<categorical[3 1]>|exact
+CHK|cv_idx|char[1 11]'categorical'|exact
+CHK|cv_idx_vals|<categorical[3 1]>|exact
+CHK|cv_cell_names|char[1 6]'string'|exact
+CHK|cv_cell_names_vals|string[3 1]"1","2","3"|exact
+CHK|cv_logical_mask|char[1 6]'single'|exact
+CHK|cv_vartype|char[1 11]'categorical'|exact
+CHK|cv_fn_select|char[1 11]'categorical'|exact
+CHK|cv_fn_convert|double[3 1] [10;20;30]|exact
+CHK|cv_cat_to_string|char[1 6]'string'|exact
+CHK|cv_cat_to_cellstr|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'x'}|exact
+CHK|cv_cat_to_double|double[3 1] [1;2;1]|exact
+CHK|cv_string_to_double|double[2 1] [1;2]|exact
+CHK|cv_bad_type|MATLAB:table:convertvars:InvalidTextType|exact
+CHK|cv_bad_type_msg|Could not convert the type of the variable 'n' to 'nosuch'. Specify the data type as the name of a class, or a function handle.|exact
+CHK|cv_bad_var|MATLAB:table:UnrecognizedVarName|exact
+CHK|cv_bad_var_msg|Unrecognized table variable name 'zz'.|exact
+CHK|cv_order|cell[1 5]{char[1 1]'n';char[1 4]'kind';char[1 3]'txt';char[1 3]'str';char[1 4]'flag'}|exact
+CHK|cv_int|char[1 4]'int8'|exact
+CHK|cv_logical_to_double|double[3 1] [1;0;1]|exact
+CHK|cv_string_type|char[1 6]'string'|exact
+CHK|cv_cellstr_to_double|MATLAB:table:convertvars:VariableTypesConversionFailed|exact
+CHK|cv_cellstr_to_double_msg|Could not convert the type of the variable 'Var1' to 'double'. The following error occurred when calling the double function.|exact
+CHK|t2c_size|double[1 2] [3 5]|exact
+CHK|t2c_cat|char[1 11]'categorical'|exact
+CHK|t2c_txt|char[1 1]'q'|exact
+CHK|t2c_str|char[1 6]'string'|exact
+CHK|t2c_n|double[1 1] 3|exact
+CHK|t2c_all|cell[2 2]{double[1 1] 1;double[1 1] 2;char[1 1]'p';char[1 1]'q'}|exact
+CHK|t2c_multi|cell[2 2]{double[1 2] [1 2];double[1 2] [3 4];char[1 1]'a';char[1 1]'b'}|exact
+CHK|t2c_empty|double[1 2] [0 0]|exact
+CHK|t2c_rownames|cell[2 1]{double[1 1] 1;double[1 1] 2}|exact
+CHK|t2c_notable|MATLAB:table2cell:NonTable|exact
+CHK|t2c_notable_msg|Input argument must be a table.|exact
+CHK|t2c_struct_var|char[1 6]'struct'|exact
+CHK|j_size|double[1 2] [4 3]|exact
+CHK|j_w|double[4 1] [10;20;10;30]|exact
+CHK|j_names|cell[1 3]{char[1 4]'kind';char[1 1]'n';char[1 1]'w'}|exact
+CHK|j_kind|<categorical[4 1]>|exact
+CHK|j_missing|MATLAB:table:join:LeftKeyValueNotFound|exact
+CHK|j_missing_msg|The key variable for the right table must contain all values in the key variable for the left table.|exact
+CHK|j_dup|MATLAB:table:join:DuplicateRightKeyVarValues|exact
+CHK|j_dup_msg|The key variable for the right table must have unique values.|exact
+CHK|j_keys|double[4 1] [10;20;10;30]|exact
+CHK|j_keys_idx|double[4 1] [10;20;10;30]|exact
+CHK|j_lr_keys|cell[1 3]{char[1 4]'kind';char[1 1]'n';char[1 1]'w'}|exact
+CHK|j_keep|cell[1 3]{char[1 4]'kind';char[1 1]'n';char[1 1]'w'}|exact
+CHK|j_samevar|cell[1 3]{char[1 1]'k';char[1 6]'v_left';char[1 7]'v_right'}|exact
+CHK|j_samevar_vals|double[2 1] [8;7]|exact
+CHK|j_nokey|MATLAB:table:join:CantInferKey|exact
+CHK|j_nokey_msg|Unable to find a common table variable to use as a key variable.|exact
+CHK|j_num_keys|double[3 1] [200;100;200]|exact
+CHK|j_cellstr_key|double[2 1] [8;7]|exact
+CHK|j_string_key|double[2 1] [8;7]|exact
+CHK|j_two_keys|double[3 1] [30;10;20]|exact
+CHK|j_iright|double[4 1] [1;2;1;3]|exact
+CHK|j_cat_cats_differ|double[1 1] 2|exact
+CHK|ij_size|double[1 2] [4 3]|exact
+CHK|ij_w|double[4 1] [10;10;20;30]|exact
+CHK|ij_n|double[4 1] [1;3;2;4]|exact
+CHK|ij_kind|<categorical[4 1]>|exact
+CHK|ij_partial|double[3 1] [1;3;2]|exact
+CHK|ij_dup|double[6 1] [10;10;10;10;20;30]|exact
+CHK|ij_dup_n|double[6 1] [1;1;3;3;2;4]|exact
+CHK|ij_il|double[4 1] [1;3;2;4]|exact
+CHK|ij_ir|double[4 1] [1;1;2;3]|exact
+CHK|ij_keys|cell[1 3]{char[1 4]'kind';char[1 1]'n';char[1 1]'w'}|exact
+CHK|ij_leftvars|cell[1 2]{char[1 1]'n';char[1 1]'w'}|exact
+CHK|ij_rightvars|cell[1 2]{char[1 4]'kind';char[1 1]'n'}|exact
+CHK|ij_num|double[2 1] [2;3]|exact
+CHK|ij_samevar|cell[1 2]{char[1 1]'k';char[1 1]'v'}|exact
+CHK|ij_samevar2|cell[1 3]{char[1 1]'k';char[1 6]'v_left';char[1 7]'v_right'}|exact
+CHK|ij_cellstr_order|cell[2 1]{char[1 1]'b';char[1 1]'c'}|exact
+CHK|ij_cat_order|<categorical[3 1]>|exact
+CHK|ij_cat_cats|cell[3 1]{char[1 1]'c';char[1 1]'b';char[1 1]'a'}|exact
+CHK|ij_empty|double[1 2] [0 3]|exact
+CHK|st_size|double[1 2] [4 3]|exact
+CHK|st_names|cell[1 3]{char[1 2]'id';char[1 13]'a_b_Indicator';char[1 3]'a_b'}|exact
+CHK|st_ind|<categorical[4 1]>|exact
+CHK|st_ind_class|char[1 11]'categorical'|exact
+CHK|st_data|double[4 1] [3;5;4;6]|exact
+CHK|st_id|double[4 1] [1;1;2;2]|exact
+CHK|st_one|cell[1 4]{char[1 2]'id';char[1 1]'b';char[1 11]'a_Indicator';char[1 1]'a'}|exact
+CHK|st_one_n|double[3 1] [1;2;3]|exact
+CHK|st_one_ind|<categorical[3 1]>|exact
+CHK|st_cat_kept|char[1 11]'categorical'|exact
+CHK|st_cat_kept_vals|<categorical[3 1]>|exact
+CHK|st_idx|cell[1 3]{char[1 2]'id';char[1 13]'a_b_Indicator';char[1 3]'a_b'}|exact
+CHK|st_newname|cell[1 3]{char[1 2]'id';char[1 13]'val_Indicator';char[1 3]'val'}|exact
+CHK|st_indname|cell[1 3]{char[1 2]'id';char[1 5]'which';char[1 3]'a_b'}|exact
+CHK|st_constant|cell[1 3]{char[1 2]'id';char[1 13]'a_b_Indicator';char[1 3]'a_b'}|exact
+CHK|st_constant_none|cell[1 2]{char[1 13]'a_b_Indicator';char[1 3]'a_b'}|exact
+CHK|st_ind_cats|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|st_iu|double[4 1] [1;1;2;2]|exact
+CHK|st_mismatch|MATLAB:table:stack:InterleavingDataVarsFailed|exact
+CHK|st_mismatch_msg|Error when stacking data variable 'b'.|exact
+CHK|st_three|double[3 1] [2;3;4]|exact
+CHK|st_cat_stack|char[1 11]'categorical'|exact
+CHK|a2t_class|char[1 11]'categorical'|exact
+CHK|a2t_vals|<categorical[4 1]>|exact
+CHK|a2t_matrix|double[1 2] [4 2]|exact
+CHK|a2t_matrix_class|char[1 11]'categorical'|exact
+CHK|a2t_names|cell[1 1]{char[1 1]'k'}|exact
+CHK|t2s_class|char[1 11]'categorical'|exact
+CHK|t2s_size|double[1 2] [3 1]|exact
+CHK|t2s_scalar|char[1 11]'categorical'|exact
+CHK|t2s_txt|char[1 4]'char'|exact
+CHK|gs_kind_class|char[1 11]'categorical'|exact
+CHK|gs_kind|<categorical[2 1]>|exact
+CHK|gs_count|double[2 1] [2;1]|exact
+CHK|gs_mean|double[2 1] [2;2]|exact
+CHK|gs_names|cell[1 3]{char[1 4]'kind';char[1 10]'GroupCount';char[1 6]'mean_n'}|exact
+CHK|gs_unused|<categorical[2 1]>|exact
+CHK|gs_undef|<categorical[2 1]>|exact
+CHK|gs_vector|double[2 1] [4;2]|exact
+CHK|gs_vector_g|<categorical[2 1]>|exact
+CHK|sr_two|double[3 1] [1;3;2]|exact
+CHK|sr_one|double[3 1] [1;3;2]|exact
+CHK|sr_desc|double[3 1] [2;1;3]|exact
+CHK|sr_two_desc|double[3 1] [3;1;2]|exact
+CHK|sr_idx|double[3 1] [1;3;2]|exact
+CHK|sr_neg|double[3 1] [2;1;3]|exact
+CHK|sr_cat_col|<categorical[3 1]>|exact
+CHK|sr_cat_mat|<categorical[3 2]>|exact
+CHK|sr_cat_ord|double[3 1] [1;3;2]|exact
+CHK|sr_cat_undef|double[3 1] [3;1;2]|exact
+CHK|sr_cat_valueset|double[3 1] [3;1;2]|exact
+CHK|sr_index|double[3 1] [1;3;2]|exact
+CHK|sr_cellstr_two|double[3 1] [1;1;2]|exact
+CHK|sr_string_two|double[3 1] [1;1;2]|exact
+CHK|af_double|double[1 4] [1 2 1 3]|exact
+CHK|af_same|<categorical[1 4]>|exact
+CHK|af_same_class|char[1 11]'categorical'|exact
+CHK|af_char|cell[1 4]{char[1 1]'a';char[1 1]'b';char[1 1]'a';char[1 1]'c'}|exact
+CHK|af_char_uni|char[1 4]'abac'|exact
+CHK|af_eq|logical[1 4] [1 0 1 0]|exact
+CHK|af_class|string[1 1]"categorical"|exact
+CHK|af_size|double[1 4] [1 1 1 1]|exact
+CHK|af_cats|double[1 4] [3 3 3 3]|exact
+CHK|af_undef|logical[1 2] [0 1]|exact
+CHK|af_two|double[1 4] [2 4 4 7]|exact
+CHK|af_cat_col|double[1 2] [4 1]|exact
+CHK|af_cat_cats|cell[3 1]{char[1 1]'b';char[1 1]'a';char[1 1]'z'}|exact
+CHK|af_ord|logical[1 1] 1|exact
+CHK|af_mixed_cats|<categorical[1 2]>|exact
+CHK|cf_cat|<categorical[1 2]>|exact
+CHK|cf_cat_class|char[1 11]'categorical'|exact
+CHK|sl_class|char[1 25]'categorical a,b,a,c a/b/c'|exact
+CHK|sl_ord|logical[1 1] 1|exact
+CHK|sl_cats|char[1 5]'z/a/q'|exact
+CHK|sl_table|char[1 11]'categorical'|div=ADR0233|diverges|char[0 0]''
+CHK|sl_undef|char[1 27]'categorical a,<undefined> a'|exact
+CHK|sl_struct|char[1 11]'categorical'|exact
+CHK|sl_protected|logical[1 1] 1|exact
+CHK|sl_whos|char[1 11]'categorical'|div=ADR0233|diverges|char[0 0]''

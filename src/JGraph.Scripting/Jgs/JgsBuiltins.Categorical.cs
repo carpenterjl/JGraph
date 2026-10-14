@@ -50,7 +50,11 @@ internal static partial class JgsBuiltins
         }
         static JgsCategoricalTag TagOf(JgsValue value) => value.CategoricalTag!;
 
-        Define("categorical", (args, line, col) => Construct(args, line, col));
+        // A string scalar is text to categorical, not a char row (open item 123: categorical("a", ...)).
+        env.Builtins.Register("categorical", JgsValue.Function(new BuiltinFunction("categorical", (args, line, col) => Construct(
+            [.. args.Select(static a => BuiltinFunction.IsStringScalar(a) && a.ElementAt(0).AsString is var text
+                && (text.Equals("Ordinal", StringComparison.OrdinalIgnoreCase) || text.Equals("Protected", StringComparison.OrdinalIgnoreCase))
+                ? a.ElementAt(0) : a)], line, col)) { KeepsStringArguments = true }));
         Define("iscategorical", (args, line, col) => { Arity("iscategorical", args, 1, line, col); return JgsValue.Bool(args[0].IsCategorical); });
         Define("isordinal", (args, line, col) => { Arity("isordinal", args, 1, line, col); return JgsValue.Bool(RequireCategorical("isordinal", args[0], line, col).Ordinal); });
         Define("isprotected", (args, line, col) => { Arity("isprotected", args, 1, line, col); return JgsValue.Bool(RequireCategorical("isprotected", args[0], line, col).Protected); });
@@ -127,7 +131,10 @@ internal static partial class JgsBuiltins
 
         Wrap("string", (args, wanted, line, col) => args.Count == 1 && args[0].IsCategorical ? [JgsCategorical.ToStringArray(args[0])] : null);
         Wrap("cellstr", (args, wanted, line, col) => args.Count == 1 && args[0].IsCategorical ? [JgsCategorical.ToCellstr(args[0])] : null);
-        Wrap("char", (args, wanted, line, col) => args.Count == 1 && args[0].IsCategorical ? [JgsValue.CharMatrix(JgsCategorical.NamesOf(args[0]))] : null);
+        // One name is a char row, several a char matrix padded with blanks (open item 122: arrayfun's char(x)).
+        Wrap("char", (args, wanted, line, col) => args.Count == 1 && args[0].IsCategorical
+            ? [JgsCategorical.NamesOf(args[0]) is [string only] ? JgsValue.Str(only) : JgsValue.CharMatrix(JgsCategorical.NamesOf(args[0]))]
+            : null);
         Wrap("double", (args, wanted, line, col) => args.Count == 1 && args[0].IsCategorical ? [JgsCategorical.ToDouble(args[0])] : null);
         foreach (string numeric in (string[])["single", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64"])
         {
@@ -474,7 +481,17 @@ internal static partial class JgsBuiltins
         Wrap("sum", (args, wanted, line, col) => AnyCategorical(args)
             ? throw new JgsRuntimeException(line, col, "MATLAB:sum:wrongInput", "Invalid data type. First argument must be numeric or logical.")
             : null);
-        foreach (string arithmetic in (string[])["abs", "sqrt", "exp", "log", "log10", "round", "floor", "ceil", "fix", "sign", "cumsum", "prod", "diff", "mod", "rem", "power", "times", "plus", "minus", "rdivide", "mtimes"])
+        // R2025b's own words for three of the arithmetic verbs (open item 123, probe_123).
+        Wrap("cumsum", (args, wanted, line, col) => AnyCategorical(args)
+            ? throw new JgsRuntimeException(line, col, "MATLAB:cumsum:wrongInput", "Invalid data type. First input argument must be numeric or logical.")
+            : null);
+        Wrap("round", (args, wanted, line, col) => AnyCategorical(args)
+            ? throw new JgsRuntimeException(line, col, "MATLAB:round:FirstArg", "First argument must be a numeric, logical, or char array.")
+            : null);
+        Wrap("times", (args, wanted, line, col) => args.Count == 2 && args[0].IsCategorical != args[1].IsCategorical
+            ? throw JgsCategorical.TimesMismatch(line, col)
+            : AnyCategorical(args) ? throw JgsCategorical.NotNumeric(line, col) : null);
+        foreach (string arithmetic in (string[])["abs", "sqrt", "exp", "log", "log10", "floor", "ceil", "fix", "sign", "prod", "diff", "mod", "rem", "power", "plus", "minus", "rdivide", "mtimes"])
         {
             // The arithmetic verbs are R2025b's refusal on a categorical (probe_115b).
             Wrap(arithmetic, (args, wanted, line, col) => AnyCategorical(args)

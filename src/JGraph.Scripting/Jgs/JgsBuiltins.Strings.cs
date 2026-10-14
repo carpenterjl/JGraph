@@ -606,6 +606,13 @@ internal static partial class JgsBuiltins
             return objects; // objects collected uniformly are an array of objects (open item 116)
         }
 
+        // One categorical element apiece collects into a categorical (open item 122, probe_122).
+        if (JgsRunningDialect.ThreadIsMatlab && values.All(static v => v.IsCategorical && v.ArrayLength == 1)
+            && JgsCategorical.Gather(values, line, col) is { } gathered)
+        {
+            return JgsCategorical.FromCodes(gathered.Codes, rows, columns, gathered.Tag);
+        }
+
         for (int i = 0; i < values.Length; i++)
         {
             if (values[i].Type is not (JgsType.Number or JgsType.Bool))

@@ -305,6 +305,10 @@ internal sealed partial class Interpreter
                 extents[0] = held.Rows;
                 extents[1] = held.Cols;
                 break;
+            case JgsType.Object when held.IsObjectArray:
+                extents[0] = held.Rows;
+                extents[1] = held.Cols;
+                break;
         }
 
         return extents;
@@ -318,6 +322,7 @@ internal sealed partial class Interpreter
         JgsType.Struct => held.AsStructArray.Length,
         JgsType.String => held.AsString.Length,
         JgsType.Number or JgsType.Bool or JgsType.Complex => 1,
+        JgsType.Object => held.IsObjectArray ? held.ArrayLength : 1, // o.list(end).p = v (open item 121)
         _ => 0,
     };
 

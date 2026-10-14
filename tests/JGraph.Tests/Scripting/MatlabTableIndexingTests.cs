@@ -97,7 +97,7 @@ public class MatlabTableIndexingTests : IDisposable
         try
             T{:, [1 2]};
         catch err
-            ok = ok + ~isempty(strfind(err.message, 'cannot mix text with numbers'));
+            ok = ok + strcmp(err.identifier, 'MATLAB:table:ExtractDataIncompatibleTypeError'); % R2025b's words (ADR 0233)
         end
         try
             T{1};

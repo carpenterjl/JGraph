@@ -411,6 +411,15 @@ internal sealed partial class Interpreter
                 return false;
             }
 
+            // o.list(2).p = 9 with o.list an array of value objects (open item 121): the array is
+            // read into the slot, the element written there by the ordinary road, and the array set
+            // back through the property, as R2025b writes it.
+            if (!holder.IsObjectArray && holder.AsObject.Fields.TryGetValue(field, out JgsValue? held)
+                && held.Type == JgsType.Object && held.IsObjectArray && !held.ObjectClass.IsHandle)
+            {
+                return true;
+            }
+
             return property.Dependent
                 || (definition.TryGetter(field, out _) && !InAccessor(definition.GetterTag(field)))
                 || (definition.TrySetter(field, out _) && !InAccessor(definition.SetterTag(field)))

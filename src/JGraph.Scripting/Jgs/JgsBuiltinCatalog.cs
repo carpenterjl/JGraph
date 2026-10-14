@@ -552,6 +552,8 @@ public static class JgsBuiltinCatalog
         Add("readtimetable", "Reads a delimited table with date/time row coordinates in its first column.", P("filename"), Opt("options"));
         Add("istimetable", "Whether a value is a table with row time coordinates.", P("value"));
         Add("istable", "Whether a value is a table (a timetable is not one).", P("value"));
+        Add("istabular", "Whether a value is a table or a timetable.", P("value"));
+        Add("isenum", "Whether a value is a member of an enumeration.", P("value"));
         Add("imtile", "Arranges a cell of images in a grid, with borders, background and thumbnail sizing.", P("images"), Opt("options"));
         Add("timetable", "A table whose first variable is the row times: timetable(rowTimes, var1, …).", P("rowTimes"), P("var1"));
         Add("categorical", "A categorical array from text, numbers or logicals: c = categorical({'a', 'b', 'a'}); a value set and its category names relabel them, 'Ordinal', true orders the categories and 'Protected', true fixes them.", P("x"), Opt("valueset"), Opt("categorynames"), Opt("options"));
@@ -2073,7 +2075,7 @@ public static class JgsBuiltinCatalog
         Add("lower", "The text in lower case: a char row or matrix, a string array, or a cellstr element by element; anything else is handed back unchanged.", P("text"));
         Add("trim", "The string without leading/trailing whitespace.", P("text"));
         Add("split", "The pieces of text between occurrences of one or more delimiters, laid along a dimension; [pieces, delimiters] also answers what was cut on.", P("text"), Opt("delimiter"), Opt("dim"));
-        Add("join", "The elements of a string array or cell joined along a dimension with a delimiter between them; a delimiter array gives every gap its own.", P("array"), Opt("delimiter"), Opt("dim"));
+        Add("join", "The elements of a string array or cell joined along a dimension with a delimiter between them; a delimiter array gives every gap its own. Over two tables, the left table with the right one's variables matched by key.", P("array"), Opt("delimiter"), Opt("dim"));
         Add("startsWith", "Whether text starts with one of the prefixes, elementwise over a container, with 'IgnoreCase'.", P("text"), P("prefix"), Opt("options"));
         Add("endsWith", "Whether text ends with one of the suffixes, elementwise over a container, with 'IgnoreCase'.", P("text"), P("suffix"), Opt("options"));
         Add("replace", "text with every occurrence of old replaced by new.", P("text"), P("old"), P("new"));
@@ -2094,6 +2096,11 @@ public static class JgsBuiltinCatalog
         Add("dlmwrite", "Writes a matrix as delimited text with the given delimiter (the older spelling of writematrix).", P("path"), P("A"), Opt("delimiter"));
         Add("struct2table", "A struct array as a table, one row per element and one variable per field.", P("s"));
         Add("table2struct", "A table as a struct array, one element per row and one field per variable.", P("T"));
+        Add("table2cell", "A table as a cell array, one cell per row and variable.", P("T"));
+        Add("vartype", "A table subscript that picks the variables of a type: T(:, vartype('numeric')).", Opt("type"));
+        Add("convertvars", "A table with the named variables converted by a class name or a function.", P("T"), P("vars"), P("type"));
+        Add("innerjoin", "The rows of two tables whose keys match, every pair, sorted by key; the row numbers are further outputs.", P("Tleft"), P("Tright"), Opt("options"));
+        Add("stack", "A table with several variables stacked into one, an indicator naming where each value came from.", P("T"), P("vars"), Opt("options"));
         Add("column", "A table column as a numeric array.", P("table"), P("name"));
         Add("colnames", "The table's column names as a string array.", P("table"));
         Add("rowcount", "The number of data rows in the table.", P("table"));

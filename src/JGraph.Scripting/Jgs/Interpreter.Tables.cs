@@ -11,6 +11,10 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal sealed partial class Interpreter
 {
+    /// <summary>The class a table variable reads out as, in MATLAB's words.</summary>
+    private static string ColumnClass(Table table, TableColumn column, Node at) =>
+        JgsBuiltins.ClassOf(JgsBuiltins.TableColumnValue(table, column.Name, at.Line, at.Column), JgsDialect.Matlab);
+
     /// <summary>Reads <c>T{rows, vars}</c> — the selected variables' contents, side by side.</summary>
     private JgsValue IndexTableBrace(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
@@ -36,6 +40,23 @@ internal sealed partial class Interpreter
             {
                 anyOther = true;
             }
+        }
+
+        if (anyText && anyOther && Dialect.IsMatlab)
+        {
+            // R2025b's words (open item 123): a categorical among them cannot concatenate at all,
+            // and two other kinds name the first pair that disagree.
+            if (columns.Any(c => table[c] is JgsValueColumn { Value.IsCategorical: true }))
+            {
+                throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:ExtractDataCatError",
+                    "Unable to concatenate the specified table variables.");
+            }
+
+            TableColumn first = table[columns[0]];
+            TableColumn other = columns.Select(c => table[c]).First(c => (c.Type == ColumnType.Text) != (first.Type == ColumnType.Text));
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:ExtractDataIncompatibleTypeError",
+                $"Unable to concatenate the table variables '{first.Name}' and '{other.Name}', because their types are "
+                + $"{ColumnClass(table, first, at)} and {ColumnClass(table, other, at)}.");
         }
 
         if (anyText && anyOther)
@@ -107,6 +128,7 @@ internal sealed partial class Interpreter
         int[] extents = [table.RowCount, table.ColumnCount];
         JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
         JgsValue? columnIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+        columnIndex = JgsBuiltins.VartypeAsNames(table, columnIndex); // T(:, vartype(...)) (open item 122)
 
         int[] rows = rowIndex is null
             ? AllPositions(table.RowCount)
@@ -163,6 +185,7 @@ internal sealed partial class Interpreter
         int[] extents = [table.RowCount, table.ColumnCount];
         JgsValue? rowIndex = EvaluateIndexArgument(brace.Indices[0], extents, 0, env);
         JgsValue? columnIndex = EvaluateIndexArgument(brace.Indices[1], extents, 1, env);
+        columnIndex = JgsBuiltins.VartypeAsNames(table, columnIndex); // T(:, vartype(...)) (open item 122)
 
         Expr rowExpr;
         if (rowIndex is null)
@@ -317,6 +340,7 @@ internal sealed partial class Interpreter
         int[] extents = [table.RowCount, table.ColumnCount];
         JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
         JgsValue? columnIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+        columnIndex = JgsBuiltins.VartypeAsNames(table, columnIndex); // T(:, vartype(...)) (open item 122)
 
         if (IsDeletion(rhs))
         {

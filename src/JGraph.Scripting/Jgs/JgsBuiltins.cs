@@ -4075,6 +4075,18 @@ internal static partial class JgsBuiltins
         return [n, x];
     }
 
+    /// <summary>
+    /// A histogram of categories counted already (open item 120): the bars stand on the counting
+    /// numbers, one a category in the order given, and the options are histogram's own.
+    /// </summary>
+    internal static JgsValue CategoricalHistogram(
+        AxesModel? named, IReadOnlyList<JgsValue> options, string[] categories, double[] counts, int line, int col) =>
+        OnAxes(named, () =>
+        {
+            ParsedArgs parsed = HistogramChartOptions.Parse(options, 0, line, col);
+            return Handle(HistogramTail(JG.Histogram(HistogramPlot.FromCategories(categories, counts)), parsed, line, col));
+        });
+
     private static JgsValue Histogram(IReadOnlyList<JgsValue> args, int line, int col)
     {
         if (args.Count > 0 && args[0].Type == JgsType.Table)
@@ -6335,7 +6347,7 @@ internal static partial class JgsBuiltins
         JgsType.String => value.AsString.Length == 0 ? [0, 0] : [1, value.AsString.Length],
         JgsType.Cell => value.IsNd ? value.Dims : [value.Rows, value.Cols], // a cell grown into a third dimension (V6)
         JgsType.Struct => [value.Rows, value.Cols], // a struct is 1-by-1 and a struct array is its shape (M65)
-        JgsType.Object when value.IsObjectArray => [value.Rows, value.Cols], // an array of objects is its shape (open item 65)
+        JgsType.Object when value.IsObjectArray => value.IsNd ? value.Dims : [value.Rows, value.Cols], // its shape, N-D included (open items 65, 121)
         JgsType.Sparse => [value.AsSparse.Rows, value.AsSparse.Cols],
         JgsType.Table => [value.AsTable.RowCount, value.AsTable.ColumnCount],
         _ => [1, 1],

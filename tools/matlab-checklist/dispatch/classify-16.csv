@@ -1,0 +1,8 @@
+name,kind,method_classes
+convertvars,mfile,tabular
+innerjoin,mfile,tabular;tall
+isenum,builtin,
+istabular,mfile,codistributed;distributed;tall
+stack,mfile,InputOutputModel;dataset;network;tabular;tall
+table2cell,mfile,codistributed;tall
+vartype,mfile,

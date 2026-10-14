@@ -30,6 +30,7 @@ public sealed class AxisModel : GraphObject
     private TextStyle _labelStyle = new(Colors.Black, 13);
     private TextStyle _tickLabelStyle = new(Colors.DarkGray, 11);
     private IReadOnlyList<string>? _categories;
+    private IReadOnlyList<string>? _rulerCategories;
     private IReadOnlyList<double>? _tickPositions;
     private IReadOnlyList<string>? _tickLabelOverrides;
     private double _tickLabelAngle;
@@ -285,6 +286,19 @@ public sealed class AxisModel : GraphObject
     {
         get => _categories;
         set => SetProperty(ref _categories, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The categories of a MATLAB categorical ruler (open item 120), in the ruler's order, or null
+    /// for every other ruler. Category <c>k</c> stands at position <c>k</c> (1-based, as R2025b
+    /// places it); the ruler's ticks are its categories, and its automatic limits take in every
+    /// category and the data, half a category beyond each end.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<string>? RulerCategories
+    {
+        get => _rulerCategories;
+        set => SetProperty(ref _rulerCategories, value, InvalidationKind.Layout);
     }
 
     /// <summary>

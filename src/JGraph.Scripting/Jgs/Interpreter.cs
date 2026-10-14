@@ -1754,10 +1754,10 @@ internal sealed partial class Interpreter
     private bool TryExecuteCallStatement(ExprStmt statement, CallExpr call, JgsEnvironment env)
     {
         _readRanGetter = false;
-        JgsValue callee = EvaluateCallee(call.Callee, env);
+        JgsValue callee = EvaluateCallee(call.Callee, env, call.Arguments);
         if (_readRanGetter && call.Callee is MemberExpr && AnyMentionsEnd(call.Arguments))
         {
-            callee = EvaluateCallee(call.Callee, env); // get;get for x = o.p(end) (V6, #147), as EvaluateCall
+            callee = EvaluateCallee(call.Callee, env, call.Arguments); // get;get for x = o.p(end) (V6, #147), as EvaluateCall
         }
 
         if (callee.Type == JgsType.Function)
@@ -1863,6 +1863,11 @@ internal sealed partial class Interpreter
         // A name nothing holds errors before its arguments are evaluated, unless a user class is
         // loaded, in which case an object among the arguments could still answer with a method.
         JgsValue[]? early = null;
+        if (!resolved.Found && IsUnpassedParameter(name, env))
+        {
+            throw NotEnoughInputs(call.Callee);
+        }
+
         if (!resolved.Found && !AnyClasses && !AnyNet)
         {
             // R2025b evaluates the arguments first and names the first one's class (measured, ADR
@@ -1909,12 +1914,14 @@ internal sealed partial class Interpreter
     /// auto-call a bare mention gets: <c>containers.Map(k, v)</c> must hand the arguments to the
     /// constructor, not build an empty collection and then subscript it (M64).
     /// </summary>
-    private JgsValue EvaluateCallee(Expr callee, JgsEnvironment env)
+    private JgsValue EvaluateCallee(Expr callee, JgsEnvironment env, IReadOnlyList<Expr>? arguments = null)
     {
-        // What a callee names is then called or indexed, so a list there must be one (open item 98).
+        // What a callee names is then called or indexed, so a list there must be one (open item 98);
+        // a subscript reading end asks for it as a reference, in R2025b's words (open item 123).
         if (callee is MemberExpr dotted)
         {
-            return EvaluateMember(dotted, env, autoCall: false, use: ListUse.Intermediate);
+            ListUse use = arguments is not null && AnyMentionsEnd(arguments) ? ListUse.EndTarget : ListUse.Intermediate;
+            return EvaluateMember(dotted, env, autoCall: false, use: use);
         }
 
         return EvaluateOne(callee, env, ListUse.Intermediate);
@@ -2192,6 +2199,17 @@ internal sealed partial class Interpreter
             ? UndefinedError(name, at)
             : new JgsRuntimeException(at.Line, at.Column, "MATLAB:UndefinedFunction",
                 $"Undefined function '{name}' for input arguments of type '{JgsBuiltins.ClassOf(first, JgsDialect.Matlab)}'.");
+
+    /// <summary>
+    /// Whether <paramref name="name"/> is a parameter of the MATLAB function whose frame this is that
+    /// its caller did not pass: reading one is R2025b's MATLAB:minrhs (open item 123, measured).
+    /// </summary>
+    private bool IsUnpassedParameter(string name, JgsEnvironment env) =>
+        Dialect.IsMatlab && env.Function is { } function && name != "varargin"
+        && function.Parameters.Contains(name, StringComparer.Ordinal);
+
+    private static JgsRuntimeException NotEnoughInputs(Node at) =>
+        new(at.Line, at.Column, "MATLAB:minrhs", "Not enough input arguments.");
 
     /// <summary>The error for a name that resolves to nothing (see <see cref="Undefined"/>).</summary>
     private JgsRuntimeException UndefinedError(string name, Node at) =>
@@ -2731,7 +2749,7 @@ internal sealed partial class Interpreter
             }
             else
             {
-                held = EvaluateCallee(invocation.Callee, env);
+                held = EvaluateCallee(invocation.Callee, env, invocation.Arguments);
             }
 
             if (held.Type == JgsType.Function)
@@ -3246,6 +3264,7 @@ internal sealed partial class Interpreter
                     // was taken by 'clear global' (#158): R2025b says so, rather than "unknown".
                     throw env.IsGlobal(variable.Name)
                         ? ClearedVariable(variable.Name, variable)
+                        : IsUnpassedParameter(variable.Name, env) ? NotEnoughInputs(variable)
                         : UndefinedError(variable.Name, variable);
                 }
 
@@ -3812,6 +3831,15 @@ internal sealed partial class Interpreter
             return ConcatenateTables([joinable], array);
         }
 
+        // A bracket holding any object makes an array of objects (open item 65): [s s2] is 1-by-2,
+        // [s 1] holds Val116(1), and [s] is s. Asked before
+        // structs, because a struct beside an object goes through its constructor (open item 121).
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0
+            && Array.Exists(joinable, static e => e.Type == JgsType.Object))
+        {
+            return ConcatenateObjects([elements], array); // it leaves out its own empties: string.empty is converted
+        }
+
         // A bracket holding any struct concatenates into a struct array (M65). Asked before the
         // string and numeric joins for the same reason they are asked before each other: the type of
         // the pieces decides what the bracket means.
@@ -3819,14 +3847,6 @@ internal sealed partial class Interpreter
             && Array.Exists(joinable, static e => e.Type == JgsType.Struct))
         {
             return ConcatenateStructs([joinable], array);
-        }
-
-        // A bracket holding any object makes an array of objects (open item 65): [s s2] is 1-by-2,
-        // [s 1] is R2025b's refusal, and [s] is s.
-        if (Dialect.ConcatenatesBrackets && joinable.Length > 0
-            && Array.Exists(joinable, static e => e.Type == JgsType.Object))
-        {
-            return ConcatenateObjects([joinable], array);
         }
 
         if (Dialect.ConcatenatesBrackets && joinable.Length > 0 && Array.Exists(joinable, static e => e.IsCategorical))
@@ -4011,8 +4031,15 @@ internal sealed partial class Interpreter
                     continue;
                 }
 
+                // A number stacked with char rows is the character it codes for: ['a'; 66] is the
+                // 2-by-1 char 'a';'B' (open item 124, measured).
                 if (piece.Type != JgsType.String && !piece.IsCharMatrix)
                 {
+                    if (IsPlainNumberRow(piece))
+                    {
+                        continue;
+                    }
+
                     return false;
                 }
 
@@ -4022,6 +4049,23 @@ internal sealed partial class Interpreter
         }
 
         return anyChar && (anyMatrix || rows.Count > 1);
+    }
+
+    /// <summary>A row of numbers as the characters they code for.</summary>
+    private static string CharsOfNumberRow(JgsValue piece)
+    {
+        if (piece.Type == JgsType.Number)
+        {
+            return ((char)(int)piece.AsNumber).ToString();
+        }
+
+        var text = new StringBuilder(piece.ArrayLength);
+        for (int i = 0; i < piece.ArrayLength; i++)
+        {
+            text.Append((char)(int)piece.ElementAt(i).AsNumber);
+        }
+
+        return text.ToString();
     }
 
     /// <summary>Whether a bracket piece contributes nothing, and so is omitted from the join.</summary>
@@ -4062,9 +4106,9 @@ internal sealed partial class Interpreter
                     continue;
                 }
 
-                string[] block = piece.Type == JgsType.String
-                    ? [piece.AsString]
-                    : piece.CharMatrixRows();
+                string[] block = piece.Type == JgsType.String ? [piece.AsString]
+                    : piece.IsCharMatrix ? piece.CharMatrixRows()
+                    : [CharsOfNumberRow(piece)];
 
                 if (band is null)
                 {
@@ -4925,6 +4969,9 @@ internal sealed partial class Interpreter
             case MemberExpr { Target: VariableExpr objectOwner } when LookUp(objectOwner.Name, env, out JgsValue objects)
                 && objects.Type == JgsType.Object && objects.IsObjectArray:
                 return objects.ArrayLength; // a.p over an array of objects (open item 116)
+            case MemberExpr { Target: CallExpr or IndexExpr } picked when RootName(picked.Target) is { } root
+                && LookUp(root, env, out JgsValue whole) && (whole.IsObjectArray || whole.IsStructArray):
+                return -1; // a(1:2).p: how many the subscript picks is known once it is read (open item 121)
             case BraceIndexExpr { Target: VariableExpr owner, Indices.Count: 1 } brace when LookUp(owner.Name, env, out JgsValue cell)
                 && cell.Type == JgsType.Cell:
                 if (brace.Indices[0] is AllExpr)
@@ -6205,7 +6252,9 @@ internal sealed partial class Interpreter
         try
         {
             // b(r, c) = s on an array of objects takes the object road, which knows a grid (open item 116).
-            JgsValue written = subscripts.Count == 2 && op == TokenType.Assign && Dialect.IsMatlab && (WritesObjects(container, rhs, env) || WritesCategorical(container, rhs, env))
+            // So does t(r, c, p) = s, past two subscripts (open item 121).
+            JgsValue written = subscripts.Count >= 2 && op == TokenType.Assign && Dialect.IsMatlab
+                && (WritesObjects(container, rhs, env) || (subscripts.Count == 2 && WritesCategorical(container, rhs, env)))
                 ? AssignThroughIndex(container, subscripts, op, rhs, at, env, ref holds)
                 : subscripts.Count switch
                 {
@@ -7367,7 +7416,7 @@ internal sealed partial class Interpreter
         else
         {
             _readRanGetter = false;
-            callee = EvaluateCallee(call.Callee, env);
+            callee = EvaluateCallee(call.Callee, env, call.Arguments);
 
             // x = o.p(end) on a property with a get method: R2025b reads the property once for the
             // end and once for the value (get;get), and the value is the second reading's (V6, #147).
@@ -9128,7 +9177,10 @@ internal sealed partial class Interpreter
         }
 
         JgsValue[] elements = target.AsCell;
-        int[] slots = BraceSlots(target, brace.Indices, brace, env);
+
+        // c{a(1:2).p} spreads the list into the subscripts, as a parenthesis does (open item 121).
+        IReadOnlyList<Expr> indices = Dialect.IsMatlab ? SpreadSubscripts(brace.Indices, env) : brace.Indices;
+        int[] slots = BraceSlots(target, indices, brace, env);
 
         // One value is wanted here and the subscripts must name one. A brace that names several is a
         // comma-separated list, which is a thing only an argument list, a bracket, or a multiple
@@ -9606,7 +9658,10 @@ internal sealed partial class Interpreter
             && constructorValue.AsCallable is BuiltinFunction constructorBuiltin
             && JgsBuiltins.TryGetBuiltinStatic(constructorBuiltin.Name, field, out JgsValue constructorMember))
         {
-            return constructorMember;
+            // Read bare, double.empty is the empty itself, as in R2025b (open item 121).
+            return autoCall && Dialect.IsMatlab && constructorMember.AsCallable is BuiltinFunction { AutoCallsBare: true } maker
+                ? maker.Call([], member.Line, member.Column)
+                : constructorMember;
         }
 
         return MemberOf(EvaluateOne(member.Target, env, ListUse.Intermediate), field, member, autoCall, use);
@@ -9740,6 +9795,12 @@ internal sealed partial class Interpreter
 
         if (target.Type != JgsType.Struct)
         {
+            if (Dialect.IsMatlab && target.IsCategorical)
+            {
+                throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:categorical:FieldReferenceNotAllowed",
+                    "Attempt to reference field of non-structure array."); // open item 123
+            }
+
             throw new JgsRuntimeException(member.Line, member.Column,
                 $"'.{field}' needs a struct, but this is a {target.TypeName}.");
         }
@@ -10084,6 +10145,12 @@ internal sealed partial class Interpreter
                         return started;
                     }
 
+                    if (existing.Type != JgsType.Struct && Dialect.IsMatlab && existing.IsCategorical)
+                    {
+                        throw new JgsRuntimeException(variable.Line, variable.Column, "MATLAB:categorical:FieldAssignmentNotAllowed",
+                            "Attempt to assign field of non-structure array."); // open item 123
+                    }
+
                     if (existing.Type != JgsType.Struct)
                     {
                         throw new JgsRuntimeException(variable.Line, variable.Column, RefusesDots(existing)
@@ -10194,6 +10261,12 @@ internal sealed partial class Interpreter
                 if (evaluated.Type == JgsType.Struct && !evaluated.IsStructArray)
                 {
                     return evaluated;
+                }
+
+                if (Dialect.IsMatlab && evaluated.IsCategorical)
+                {
+                    throw new JgsRuntimeException(expr.Line, expr.Column, "MATLAB:categorical:FieldAssignmentNotAllowed",
+                        "Attempt to assign field of non-structure array."); // open item 123
                 }
 
                 throw new JgsRuntimeException(expr.Line, expr.Column,

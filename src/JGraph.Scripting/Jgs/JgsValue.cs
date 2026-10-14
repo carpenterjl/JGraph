@@ -1497,7 +1497,7 @@ internal sealed class JgsValue
         JgsType.Struct when _time is not null => FormatTime(this),
         JgsType.Struct => FormatStructValue(this),
         JgsType.Sparse => FormatSparse(AsSparse),
-        JgsType.Object when _reference is JgsObjectArray objects => FormatObjectArray(objects, _rows, _cols),
+        JgsType.Object when _reference is JgsObjectArray objects => FormatObjectArray(objects, Dims),
         JgsType.Object => FormatObject(AsObject),
         JgsType.External => AsExternal.Display(),
         _ => "value",
@@ -1507,10 +1507,10 @@ internal sealed class JgsValue
     /// An array of objects as R2025b shows one (open item 65, probe <c>probe_65</c>): its size and
     /// short class name, then the property names and no values.
     /// </summary>
-    private static string FormatObjectArray(JgsObjectArray objects, int rows, int cols)
+    private static string FormatObjectArray(JgsObjectArray objects, int[] dims)
     {
         var sb = new StringBuilder();
-        sb.Append("  ").Append(rows).Append('×').Append(cols).Append(' ')
+        sb.Append("  ").Append(string.Join('×', dims)).Append(' ')
             .Append(ShortClassName(objects.Class.Name)).Append(" array with properties:\n");
         foreach (ClassProperty property in objects.Class.ListedProperties)
         {

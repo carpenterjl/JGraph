@@ -1,0 +1,229 @@
+CHK|b_xdata|<categorical[1 3]>|exact
+CHK|b_ydata|double[1 3] [1 2 3]|exact
+CHK|b_xend|double[1 3] [1 2 3]|exact
+CHK|b_yend|double[1 3] [1 2 3]|exact
+CHK|b_xtick|<categorical[1 3]>|exact
+CHK|b_xticklabel|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|exact
+CHK|b_xlim|<categorical[1 2]>|exact
+CHK|b_xlimmode|char[1 4]'auto'|exact
+CHK|b_xtickmode|char[1 4]'auto'|exact
+CHK|b_cats|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|exact
+CHK|b_limits|<categorical[1 2]>|exact
+CHK|b_tickvalues|<categorical[1 3]>|exact
+CHK|b_r2n|double[1 2] [1 3]|exact
+CHK|b_r2n_one|double[1 1] 2|exact
+CHK|b_r2n_cell|MATLAB:graphics:CategoricalRuler:NonNumericType|exact
+CHK|b_r2n_cell_msg|Value to convert must be a numeric or categorical array.|exact
+CHK|b_n2r|<categorical[1 1]>|exact
+CHK|b_n2r_frac|<categorical[1 1]>|exact
+CHK|b_n2r_out|<categorical[1 1]>|exact
+CHK|b_ylim|double[1 2] [0 3]|exact
+CHK|b_ytick|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|b_get_xlim|<categorical[1 2]>|exact
+CHK|b_get_xdata|<categorical[1 3]>|exact
+CHK|b_ticklabel_rot|double[1 1] 0|exact
+CHK|b_barwidth|double[1 1] 0.80000000000000004|exact
+CHK|set_xlim_cat|<categorical[1 2]>|exact
+CHK|set_xlim_cat_tick|<categorical[1 2]>|exact
+CHK|set_xlim_cat_mode|char[1 6]'manual'|exact
+CHK|set_xlim_cellstr|<categorical[1 2]>|exact
+CHK|set_xlim_string|<categorical[1 2]>|exact
+CHK|set_xlim_rev|MATLAB:graphics:CategoricalRuler:Limits|exact
+CHK|set_xlim_rev_msg|Value must be a 2-element vector of increasing or equal categorical values as ordered by the ruler Categories property.|exact
+CHK|set_xlim_unknown|MATLAB:graphics:CategoricalRuler:Limits|exact
+CHK|set_xlim_unknown_msg|Value must be a 2-element vector of increasing or equal categorical values as ordered by the ruler Categories property.|exact
+CHK|set_xlim_num|MATLAB:graphics:CategoricalRuler:Limits|exact
+CHK|set_xlim_num_msg|Value must be a 2-element vector of increasing or equal categorical values as ordered by the ruler Categories property.|exact
+CHK|set_xlim_auto|char[1 4]'auto'|exact
+CHK|set_xlim_auto_lim|<categorical[1 2]>|exact
+CHK|xlim_fn|char[1 6]'manual'|exact
+CHK|xlim_fn_read|<categorical[1 2]>|exact
+CHK|set_xtick_cat|<categorical[1 2]>|exact
+CHK|set_xtick_cat_label|cell[2 1]{char[1 1]'x';char[1 1]'z'}|exact
+CHK|set_xtick_mode|char[1 6]'manual'|exact
+CHK|set_xtick_cell|<categorical[1 1]>|exact
+CHK|set_xtick_num|MATLAB:graphics:CategoricalRuler:Ticks|exact
+CHK|set_xtick_num_msg|Value must be a vector of increasing categorical values as ordered by the ruler Categories property.|exact
+CHK|set_xtick_empty|<categorical[1 0]>|exact
+CHK|set_xticklabel|cell[3 1]{char[1 1]'A';char[1 1]'B';char[1 1]'C'}|exact
+CHK|set_xticklabel_tick|<categorical[1 3]>|exact
+CHK|set_cats|cell[3 1]{char[1 1]'z';char[1 1]'y';char[1 1]'x'}|exact
+CHK|set_cats_label|cell[3 1]{char[1 1]'z';char[1 1]'y';char[1 1]'x'}|exact
+CHK|set_cats_xdata|<categorical[1 3]>|exact
+CHK|set_cats_lim|<categorical[1 2]>|exact
+CHK|set_cats_drop|cell[2 1]{char[1 1]'z';char[1 1]'y'}|exact
+CHK|set_cats_add|cell[4 1]{char[1 1]'z';char[1 1]'y';char[1 1]'x';char[1 1]'w'}|exact
+CHK|set_cats_add_lim|<categorical[1 2]>|exact
+CHK|set_cats_add_tick|<categorical[1 4]>|exact
+CHK|xdata_write|<categorical[1 3]>|exact
+CHK|xdata_write_label|cell[4 1]{char[1 1]'z';char[1 1]'y';char[1 1]'x';char[1 1]'w'}|exact
+CHK|xdata_write_num|<categorical[1 3]>|exact
+CHK|xdata_write_new|<categorical[1 3]>|exact
+CHK|xdata_write_new_cats|cell[4 1]{char[1 1]'z';char[1 1]'y';char[1 1]'x';char[1 1]'w'}|exact
+CHK|unused_cats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|unused_tick|<categorical[1 3]>|exact
+CHK|unused_lim|<categorical[1 2]>|exact
+CHK|undef_cats|cell[1 1]{char[1 1]'a'}|exact
+CHK|undef_tick|<categorical[1 1]>|exact
+CHK|undef_lim|<categorical[1 2]>|exact
+CHK|undef_xdata|<categorical[1 2]>|exact
+CHK|many_tick_n|double[1 1] 30|exact
+CHK|many_tick|<categorical[1 30]>|exact
+CHK|many_lim|<categorical[1 2]>|exact
+CHK|many_rot|double[1 1] 90|div=ADR0233|diverges|double[1 1] 0
+CHK|order_cats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
+CHK|order_valueset|cell[3 1]{char[1 1]'c';char[1 1]'b';char[1 1]'a'}|exact
+CHK|ordinal_cats|cell[2 1]{char[1 2]'lo';char[1 2]'hi'}|exact
+CHK|ordinal_xdata|logical[1 1] 1|exact
+CHK|grp_n|double[1 1] 2|exact
+CHK|grp_xdata|<categorical[1 2]>|exact
+CHK|grp_xend|double[1 2] [1.1428571428571428 2.1428571428571428]|exact
+CHK|grp_lim|<categorical[1 2]>|exact
+CHK|stk_xend|double[1 2] [1 2]|exact
+CHK|pl_xdata|<categorical[1 2]>|exact
+CHK|pl_xtick|<categorical[1 2]>|exact
+CHK|pl_xlim|<categorical[1 2]>|exact
+CHK|pl_cats|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|pl_ylim|double[1 2] [1 2]|exact
+CHK|pl_rep_xdata|<categorical[1 3]>|exact
+CHK|pl_rep_cats|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|pl_mat_n|double[1 1] 2|exact
+CHK|pl_mat_xdata|<categorical[1 2]>|exact
+CHK|ply_ydata|<categorical[1 3]>|exact
+CHK|ply_ytick|<categorical[1 2]>|exact
+CHK|ply_ylim|<categorical[1 2]>|exact
+CHK|ply_xlim|double[1 2] [1 3]|exact
+CHK|ply_ycats|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|plxy_x|<categorical[1 2]>|exact
+CHK|plxy_y|<categorical[1 2]>|exact
+CHK|sc_xdata|<categorical[1 2]>|exact
+CHK|sc_lim|<categorical[1 2]>|exact
+CHK|st_xdata|<categorical[1 2]>|exact
+CHK|st_lim|<categorical[1 2]>|exact
+CHK|ar_xdata|<categorical[1 2]>|exact
+CHK|ar_lim|<categorical[1 2]>|exact
+CHK|eb_xdata|<categorical[1 2]>|exact
+CHK|eb_lim|<categorical[1 2]>|exact
+CHK|line_xdata|<categorical[1 2]>|exact
+CHK|sw_xdata|<categorical[1 3]>|exact
+CHK|sw_lim|<categorical[1 2]>|exact
+CHK|bx_xdata|<categorical[1 3]>|exact
+CHK|bx_lim|<categorical[1 2]>|exact
+CHK|bx_tick|<categorical[1 2]>|exact
+CHK|bh_xdata|<categorical[1 2]>|exact
+CHK|bh_ytick|<categorical[1 2]>|exact
+CHK|bh_ylim|<categorical[1 2]>|exact
+CHK|bh_xlim|double[1 2] [0 2]|exact
+CHK|stairs_xdata|<categorical[1 2]>|exact
+CHK|plot3_cat|char[1 11]'categorical'|exact
+CHK|fill_cat|char[1 31]'matlab.graphics.primitive.Patch'|div=ADR0233|diverges|char[1 6]'double'
+CHK|patch_cat|char[1 31]'matlab.graphics.primitive.Patch'|div=ADR0233|diverges|char[1 6]'double'
+CHK|semilogy_cat|char[1 11]'categorical'|exact
+CHK|loglog_cat|char[1 25]'MATLAB:PolarAxes:LogScale'|div=ADR0233|diverges|char[1 6]'double'
+CHK|mix_num_on_cat|char[1 6]'double'|exact
+CHK|mix_num_on_cat_cats|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|exact
+CHK|mix_cat_y_on_num|MATLAB:graphics:configureAxes:Mixing|exact
+CHK|mix_cat_y_on_num_msg|Data inputs must match the axis configuration. A numeric axis must have numeric data inputs or data inputs which can be converted to double.|exact
+CHK|mix_cat_on_num|MATLAB:graphics:configureAxes:Mixing|exact
+CHK|mix_cat_on_num_msg|Data inputs must match the axis configuration. A numeric axis must have numeric data inputs or data inputs which can be converted to double.|exact
+CHK|mix_cat_on_num_nohold|char[1 11]'categorical'|exact
+CHK|mix_nohold_cats|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|exact
+CHK|mix_replace_num|char[1 6]'double'|exact
+CHK|mix_replace_ruler|char[1 43]'matlab.graphics.axis.decorator.NumericRuler'|div=ADR0233|diverges|char[1 6]'double'
+CHK|mix_replace_xlim|double[1 2] [1 2]|exact
+CHK|mix_ruler_after_reset|char[1 43]'matlab.graphics.axis.decorator.NumericRuler'|div=ADR0233|diverges|char[1 6]'double'
+CHK|mix_lim_after_reset|double[1 2] [0 1]|exact
+CHK|hold_add_cats|cell[4 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z';char[1 1]'q'}|exact
+CHK|hold_add_lim|<categorical[1 2]>|exact
+CHK|hold_add_tick|<categorical[1 4]>|exact
+CHK|hold_add_unused|cell[6 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z';char[1 1]'q';char[1 1]'a';char[1 2]'zz'}|exact
+CHK|xline_value|<categorical[1 1]>|exact
+CHK|xline_cell|MATLAB:graphics:constantline:InvalidData|exact
+CHK|xline_cell_msg|Value must be one of the following: 'numeric' / 'datetime' / 'categorical' / 'duration'|exact
+CHK|xline_num_on_cat|double[1 1] 2|exact
+CHK|xregion_value|<categorical[1 2]>|exact
+CHK|text_pos|double[1 3] [2 2 0]|exact
+CHK|yline_on_cat|char[1 45]'matlab.graphics.chart.decoration.ConstantLine'|div=ADR0233|diverges|char[1 6]'double'
+CHK|h_values|double[1 2] [2 1]|exact
+CHK|h_cats|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_data|<categorical[1 3]>|exact
+CHK|h_bw|double[1 1] 0.90000000000000002|exact
+CHK|h_norm|char[1 5]'count'|exact
+CHK|h_ndb|double[1 1] 2|exact
+CHK|h_order|char[1 4]'data'|exact
+CHK|h_xtick|<categorical[1 2]>|exact
+CHK|h_xlim|<categorical[1 2]>|exact
+CHK|h_cats_ax|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_ylim|double[1 2] [0 2]|exact
+CHK|h_orient|char[1 8]'vertical'|exact
+CHK|h_binedges|MATLAB:noSuchMethodOrField|exact
+CHK|h_binedges_msg|Unrecognized method, property, or field 'BinEdges' for class 'matlab.graphics.chart.primitive.categorical.Histogram'.|exact
+CHK|h_numbins|MATLAB:noSuchMethodOrField|exact
+CHK|h_numbins_msg|Unrecognized method, property, or field 'NumBins' for class 'matlab.graphics.chart.primitive.categorical.Histogram'.|exact
+CHK|h_bincounts|double[1 2] [2 1]|exact
+CHK|h_props|char[1 449]'Data,BinCounts,Categories,NumDisplayBins,DisplayOrder,Normalization,ShowOthers,FaceColor,EdgeColor,LineWidth,LineStyle,BinCountsMode,Orientation,DisplayStyle,BarWidth,FaceAlpha,EdgeAlpha,Values,OthersValue,Children,Parent,Visible,HandleVisibility,DisplayName,Annotation,DataTipTemplate,Selected,SelectionHighlight,HitTest,PickableParts,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,SeriesIndex'|div=ADR0233|diverges|char[1 438]'Data,BinCounts,NumBins,BinEdges,BinWidth,BinMethod,BinLimits,Normalization,FaceColor,EdgeColor,LineWidth,LineStyle,BinCountsMode,BinLimitsMode,Orientation,DisplayStyle,FaceAlpha,EdgeAlpha,Values,Children,Parent,Visible,HandleVisibility,DisplayName,Annotation,DataTipTemplate,Selected,SelectionHighlight,HitTest,PickableParts,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,SeriesIndex'
+CHK|h_set_norm|char[1 11]'probability'|exact
+CHK|h_set_norm_vals|double[1 2] [0.66666666666666663 0.33333333333333331]|exact
+CHK|h_set_order|char[1 7]'descend'|exact
+CHK|h_set_order_cats|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_set_order_ax|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_set_bw|double[1 1] 0.5|exact
+CHK|h_sub_vals|double[1 2] [1 2]|exact
+CHK|h_sub_cats|cell[1 2]{char[1 1]'y';char[1 1]'x'}|exact
+CHK|h_sub_ax|cell[2 1]{char[1 1]'y';char[1 1]'x'}|exact
+CHK|h_undef_vals|double[1 2] [1 1]|exact
+CHK|h_undef_cats|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_undef_ax|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_counts_vals|double[1 2] [3 5]|exact
+CHK|h_counts_data|<categorical[0 0]>|exact
+CHK|h_horiz_ytick|<categorical[1 2]>|exact
+CHK|h_horiz_ycats|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_unused_vals|double[1 3] [2 1 0]|exact
+CHK|h_unused_cats|cell[1 3]{char[1 1]'x';char[1 1]'y';char[1 1]'w'}|exact
+CHK|h_pdf_vals|double[1 2] [0.66666666666666663 0.33333333333333331]|exact
+CHK|h_asc_cats|cell[1 3]{char[1 1]'y';char[1 1]'x';char[1 1]'z'}|exact
+CHK|h_asc_vals|double[1 3] [1 2 3]|exact
+CHK|h_ndb2_cats|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_ndb2_vals|double[1 2] [2 1]|exact
+CHK|h_ndb2_other|double[1 1] 3|exact
+CHK|h_ndb2_showothers|onoff off|exact
+CHK|h_others_cats|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|h_others_ax|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 6]'Others'}|exact
+CHK|h_numbins_cat|MATLAB:histogram:invalidType|exact
+CHK|h_numbins_cat_msg|Expected input number 2, categories, to be one of these types: string, cell, categorical, pattern Instead its type was double.|exact
+CHK|h_binmethod_cat|char[1 31]'MATLAB:unrecognizedStringChoice'|div=ADR0233|diverges|char[1 6]'double'
+CHK|histcounts_cat|double[1 2] [2 1]|exact
+CHK|histcounts_cat2|double[1 1] 1|exact
+CHK|histcounts_cats_out|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|pie_n|double[1 1] 4|exact
+CHK|pie_labels|char[1 15]'x (67%),y (33%)'|exact
+CHK|pie3_labels|char[1 23]'a (50%),b (25%),c (25%)'|exact
+CHK|pie_unused_n|double[1 1] 6|exact
+CHK|pie_unused_labels|char[1 22]'a (50%),b (50%),c (0%)'|exact
+CHK|pie_undef_n|double[1 1] 2|exact
+CHK|pie_undef_labels|char[1 8]'a (100%)'|exact
+CHK|pie_explode_n|double[1 1] 4|exact
+CHK|pie_explode_num|double[1 1] 4|exact
+CHK|pie_lbls|MATLAB:pie:InvalidExplodeName|exact
+CHK|pie_lbls_msg|Explode contains invalid category names.|exact
+CHK|pie_text_cat_1|char[1 23]'a (17%),b (33%),c (50%)'|exact
+CHK|pie_text_cat_round|char[1 15]'a (14%),b (86%)'|exact
+CHK|pie3_cat|MATLAB:pie:NonNumericData|exact
+CHK|pie3_cat_msg|Must have numeric data in the pie chart.|exact
+CHK|hm_xlabels|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|hm_ylabels|cell[2 1]{char[1 1]'p';char[1 1]'q'}|exact
+CHK|hm_xdata|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|hm_xdata_class|char[1 4]'cell'|exact
+CHK|hm_num_xlabels|cell[2 1]{char[1 1]'1';char[1 1]'2'}|exact
+CHK|hm_num_xdata|cell[2 1]{char[1 1]'1';char[1 1]'2'}|exact
+CHK|bar_cell_x|char[1 35]'matlab.graphics.chart.primitive.Bar'|div=ADR0233|diverges|char[1 6]'double'
+CHK|plot_string_x|char[1 13]'MATLAB:minrhs'|div=ADR0233|diverges|char[0 0]''
+CHK|bar_string_x|char[1 11]'categorical'|exact
+CHK|xticklabels_fn|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
+CHK|xticks_fn|<categorical[1 2]>|exact
+CHK|xticks_set_fn|<categorical[1 1]>|exact
+CHK|axis_fn|char[1 19]'MATLAB:axis:Mixed2D'|div=ADR0233|diverges|double[1 4] [0.099999999999999978 2.8999999999999999 0 2]
+CHK|axis_tight|<categorical[1 2]>|exact
+CHK|get_ruler_props|char[1 419]'Categories,Scale,Direction,Limits,LimitsMode,TickValues,TickValuesMode,TickLabelRotation,TickLabelRotationMode,Color,TickLabelColor,MinorTick,MinorTickValues,MinorTickValuesMode,TickDirection,TickDirectionMode,TickLength,LineWidth,TickLabels,TickLabelsMode,FontSmoothing,FontName,FontSize,FontAngle,FontWeight,Label,LabelHorizontalAlignment,LimitsChangedFcn,TickLabelInterpreter,Children,Parent,Visible,HandleVisibility'|div=ADR0233|diverges|char[1 446]'Exponent,ExponentMode,TickLabelFormat,Scale,Direction,Limits,LimitsMode,TickValues,TickValuesMode,TickLabelRotation,TickLabelRotationMode,Color,TickLabelColor,MinorTick,MinorTickValues,MinorTickValuesMode,TickDirection,TickDirectionMode,TickLength,LineWidth,TickLabels,TickLabelsMode,FontSmoothing,FontName,FontSize,FontAngle,FontWeight,Label,LabelHorizontalAlignment,LimitsChangedFcn,TickLabelInterpreter,Children,Parent,Visible,HandleVisibility'
+CHK|ruler_tlf|char[1 26]'MATLAB:noSuchMethodOrField'|div=ADR0233|diverges|char[1 2]'%g'
+CHK|zoom_set_num_via_axis|char[1 19]'MATLAB:axis:Mixed2D'|div=ADR0233|diverges|<categorical[1 2]>

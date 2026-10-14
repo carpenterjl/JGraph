@@ -516,6 +516,9 @@ public sealed class AxisDto
 
     public string[]? Categories { get; set; }
 
+    /// <summary>A MATLAB categorical ruler's categories (open item 120), or null for any other ruler.</summary>
+    public string[]? RulerCategories { get; set; }
+
     /// <summary>Manual tick placement, or null for automatic. Defaulted, so v5 documents still load.</summary>
     public double[]? TickPositions { get; set; }
 

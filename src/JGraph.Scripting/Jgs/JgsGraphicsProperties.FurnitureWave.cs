@@ -1469,8 +1469,16 @@ internal static partial class JgsGraphicsProperties
         return -1;
     }
 
-    private static JgsValue Words(IReadOnlyList<string> names) =>
-        JgsValue.Cell([.. names.Select(JgsValue.Str)]);
+    private static JgsValue Words(IReadOnlyList<string> names)
+    {
+        JgsValue cell = JgsValue.Cell([.. names.Select(JgsValue.Str)]);
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            cell.Reshape(names.Count, names.Count == 0 ? 0 : 1); // a column in R2025b (open item 120, probe_120)
+        }
+
+        return cell;
+    }
 
     /// <summary>A row of labels, one per cell, or null to clear the overrides.</summary>
     private static string[]? LabelRow(string what, JgsValue value, int wanted, int line, int col)

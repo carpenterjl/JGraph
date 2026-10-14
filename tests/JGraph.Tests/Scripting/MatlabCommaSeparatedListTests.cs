@@ -68,7 +68,7 @@ public class MatlabCommaSeparatedListTests : IDisposable
     public Task AVarargInIsForwardedBySpreadingIt() => RunAsserting("""
         % The forwarding idiom: a wrapper hands its own arguments on without knowing how many.
         assert(wrapper(4, 9) == 9);
-        assert(wrapper(4, 9, 2) == 9);
+        assert(wrapper([4 9], [], 2) == 9); % max(4, 9, 2) is R2025b's MATLAB:max:caseNotSupported (ADR 0233)
 
         function m = wrapper(varargin)
             m = max(varargin{:});

@@ -95,6 +95,46 @@ internal static class JgsCategorical
         return numeric.Type == JgsType.Array ? numeric.MarkCategorical(tag) : numeric;
     }
 
+    /// <summary>Each element of a categorical as a 1-by-1 categorical of its own, in storage order (open item 122).</summary>
+    public static JgsValue[] Elements(JgsValue value)
+    {
+        JgsCategoricalTag tag = value.CategoricalTag!;
+        double[] codes = CodesOf(value);
+        var elements = new JgsValue[codes.Length];
+        for (int i = 0; i < codes.Length; i++)
+        {
+            elements[i] = FromCodes([codes[i]], 1, 1, tag);
+        }
+
+        return elements;
+    }
+
+    /// <summary>
+    /// One categorical out of several, each one element or more, their categories merged in order:
+    /// what a uniform <c>arrayfun</c> or <c>cellfun</c> collects. Null when not all are categorical.
+    /// </summary>
+    public static (double[] Codes, JgsCategoricalTag Tag)? Gather(IReadOnlyList<JgsValue> values, int line, int col)
+    {
+        if (values.Count == 0 || !values.All(static v => v.IsCategorical))
+        {
+            return null;
+        }
+
+        JgsCategoricalTag tag = values[0].CategoricalTag!;
+        for (int i = 1; i < values.Count; i++)
+        {
+            tag = Merge(tag, values[i].CategoricalTag!, line, col);
+        }
+
+        var codes = new List<double>(values.Count);
+        foreach (JgsValue value in values)
+        {
+            codes.AddRange(Remap(CodesOf(value), value.CategoricalTag!, tag));
+        }
+
+        return ([.. codes], tag);
+    }
+
     /// <summary>The category names as a cell column, as <c>categories</c> answers.</summary>
     public static JgsValue CategoriesColumn(JgsCategoricalTag tag)
     {
@@ -367,6 +407,11 @@ internal static class JgsCategorical
     public static JgsValue Compare(TokenType op, JgsValue left, JgsValue right, int line, int col)
     {
         bool ordering = op is TokenType.Less or TokenType.LessEqual or TokenType.Greater or TokenType.GreaterEqual;
+        if (op == TokenType.DotStar && left.IsCategorical != right.IsCategorical)
+        {
+            throw TimesMismatch(line, col); // c .* 2 is R2025b's own refusal (open item 123)
+        }
+
         if (op is not (TokenType.EqualEqual or TokenType.BangEqual) && !ordering)
         {
             throw NotNumeric(line, col);
@@ -475,6 +520,10 @@ internal static class JgsCategorical
 
         return names;
     }
+
+    /// <summary>R2025b's refusal of <c>times</c> between a categorical and anything but a categorical or text.</summary>
+    public static JgsRuntimeException TimesMismatch(int line, int col) =>
+        new(line, col, "MATLAB:categorical:times:TypeMismatch", "Inputs must be categorical arrays, character vectors, or scalar strings.");
 
     /// <summary>R2025b's refusal of arithmetic, a logical conversion and the like on a categorical.</summary>
     public static JgsRuntimeException NotNumeric(int line, int col) =>

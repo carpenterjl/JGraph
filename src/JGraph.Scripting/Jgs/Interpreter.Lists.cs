@@ -37,6 +37,9 @@ internal sealed partial class Interpreter
 
         /// <summary>A target that a subscript, a dot or a brace goes on to index.</summary>
         Intermediate,
+
+        /// <summary>A target whose subscript reads <c>end</c>, which asks the list for its one value first.</summary>
+        EndTarget,
     }
 
     /// <summary>
@@ -77,7 +80,7 @@ internal sealed partial class Interpreter
                     ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:minrhs", "Not enough input arguments.")
                     : new JgsRuntimeException(at.Line, at.Column, "MATLAB:maxrhs", "Too many input arguments.");
 
-            case ListUse.Condition:
+            case ListUse.Condition or ListUse.EndTarget:
                 if (count == 1)
                 {
                     return first!;

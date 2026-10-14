@@ -199,6 +199,9 @@ internal static class MatFileWriter
             case JgsType.String:
                 WriteChar(w, name, [value.AsString]);
                 break;
+            case JgsType.Array when value.IsCategorical:
+                WriteCategorical(session, w, name, value);
+                break;
             case JgsType.Array:
                 WriteArray(w, name, value);
                 break;
@@ -465,6 +468,32 @@ internal static class MatFileWriter
         {
             WriteFields(session, w, names, instance.Fields);
         }
+    }
+
+    /// <summary>
+    /// A categorical (open item 122): an object element of class <c>categorical</c> whose fields are
+    /// the codes in the array's shape, the category names as a column, and the two flags. JGraph
+    /// reads it back as the categorical it was; MATLAB keeps its own categoricals in the subsystem
+    /// this writer does not write, so it reads this as an old-style object at best.
+    /// </summary>
+    private static void WriteCategorical(Session session, BinaryWriter w, string name, JgsValue value)
+    {
+        JgsCategoricalTag tag = value.CategoricalTag!;
+        JgsValue codes = JgsCategorical.ToDouble(value);
+        JgsValue names = JgsCategorical.CategoriesColumn(tag);
+        WriteFlags(w, MxObject);
+        WriteDimensions(w, [1, 1]);
+        WriteName(w, name);
+        WriteDataElement(w, MiInt8, Encoding.ASCII.GetBytes("categorical"));
+        string[] fields = ["codes", "categoryNames", "isOrdinal", "isProtected"];
+        WriteFieldNames(w, fields);
+        WriteFields(session, w, fields, new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["codes"] = codes,
+            ["categoryNames"] = names,
+            ["isOrdinal"] = JgsValue.Bool(tag.Ordinal),
+            ["isProtected"] = JgsValue.Bool(tag.Protected),
+        });
     }
 
     /// <summary>

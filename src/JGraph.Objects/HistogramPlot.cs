@@ -670,6 +670,13 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
             positions[i] = i + 1;
         }
 
+        if (ruler.RulerCategories is not null)
+        {
+            ruler.RulerCategories = names; // a MATLAB categorical ruler names its own ticks (open item 120)
+            axes.RecomputeDataBounds();
+            return;
+        }
+
         ruler.TickPositions = positions;
         ruler.TickLabelOverrides = names;
     }

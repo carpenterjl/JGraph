@@ -531,7 +531,7 @@ internal sealed partial class Interpreter
     {
         if (Dialect.IsMatlab && fields.Count > 0 && !SameFieldSet([.. fields], brought))
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:catenate:structFieldBad",
                 "Names of fields in structure arrays being concatenated do not match. "
                 + "Concatenation of structure arrays requires that these arrays have the same set of fields.");
         }

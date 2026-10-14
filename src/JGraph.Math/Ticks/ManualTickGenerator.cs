@@ -57,7 +57,9 @@ public sealed class ManualTickGenerator : ITickGenerator
         // Named positions are written as a row, the way the generator writes its own (open item 97).
         double[] named = _labels is null && _positions is not null ? shown.Select(i => values[i]).ToArray() : [];
         string[]? written = _labels is null && _positions is not null
-            ? _automatic.ScaleType == AxisScaleType.Logarithmic
+            ? _automatic is CategoricalRulerTickGenerator categorical
+                ? [.. named.Select(categorical.NameAt)] // a categorical ruler's ticks are named by its categories (open item 120)
+                : _automatic.ScaleType == AxisScaleType.Logarithmic
                 ? LogarithmicTickGenerator.Labels(named, labelFormat)
                 : TickFormats.Labels(named, labelFormat)
             : null;

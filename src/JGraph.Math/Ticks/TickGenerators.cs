@@ -28,6 +28,7 @@ public static class TickGenerators
             AxisScaleType.Logarithmic => LogarithmicTickGenerator.Instance,
             AxisScaleType.DateTime => DateTimeTickGenerator.Instance,
             AxisScaleType.Category => new CategoryTickGenerator(axis.Categories),
+            _ when axis.RulerCategories is { } named => new CategoricalRulerTickGenerator(named),
             _ => LinearTickGenerator.Instance,
         };
 
@@ -42,7 +43,7 @@ public static class TickGenerators
         // enough (open item 97); labels the axis was given are its own words and are left alone. A
         // polar r ruler writes the power into each label instead of once beside them (open item 104).
         bool polarR = axis.Parent is AxesModel owner && ReferenceEquals(owner.RAxis, axis);
-        return axis.Scale == AxisScaleType.Linear && axis.DurationFormat is null && axis.TickLabelOverrides is null
+        return axis.Scale == AxisScaleType.Linear && axis.DurationFormat is null && axis.TickLabelOverrides is null && axis.RulerCategories is null
             ? new ExponentTickGenerator(chosen, axis.Exponent, eachLabel: polarR)
             : chosen;
     }

@@ -700,6 +700,11 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     public static JgsValue Get(JgsHandleEntry entry, string name, int line, int col, bool dot = false)
     {
+        if (JgsCategoricalCharts.TryRead(entry, name, line, col, dot, out JgsValue categorical))
+        {
+            return categorical; // a categorical ruler's readings (open item 120)
+        }
+
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
             if (entry.AddedProperties is { } added && added.TryGetValue(name, out JgsValue? held))
@@ -729,6 +734,11 @@ internal static partial class JgsGraphicsProperties
             && !KeepsStringScalar(entry.Target, name))
         {
             value = value.ElementAt(0);
+        }
+
+        if (JgsCategoricalCharts.TryWrite(entry, name, value, line, col))
+        {
+            return; // a categorical ruler's writes (open item 120)
         }
 
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
@@ -1809,10 +1819,10 @@ internal static partial class JgsGraphicsProperties
                     plot.Axes?.LabelCells(plot);
                 });
             Put(table, "XData",
-                entry => JgsValue.Cell(((HeatmapPlot)entry.Target).ColumnLabels().Select(JgsValue.Str).ToArray()),
+                entry => Words(((HeatmapPlot)entry.Target).ColumnLabels()), // a column in R2025b (open item 120)
                 (entry, value, line, col) => Rename(entry, value, line, col, x: true));
             Put(table, "YData",
-                entry => JgsValue.Cell(((HeatmapPlot)entry.Target).RowLabels().Select(JgsValue.Str).ToArray()),
+                entry => Words(((HeatmapPlot)entry.Target).RowLabels()),
                 (entry, value, line, col) => Rename(entry, value, line, col, x: false));
             Put(table, "Colormap",
                 entry => ValueBridge.ToValue(((HeatmapPlot)entry.Target).Colormap),

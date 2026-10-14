@@ -328,7 +328,7 @@ internal static partial class JgsBuiltins
                 ["MethodList"] = CellColumn(MethodNames("metaclass", args[0], interpreter, line, col)),
             });
 
-            described.SetClassName(MetaClassName);
+            described.SetClassName(JgsRunningDialect.ThreadIsMatlab ? "matlab.metadata.Class" : MetaClassName); // R2025b's name (open item 123)
             return described;
         });
 
@@ -467,7 +467,7 @@ internal static partial class JgsBuiltins
             ["SuperclassList"] = SuperclassList(definition),
         });
 
-        described.SetClassName(MetaClassName);
+        described.SetClassName(JgsRunningDialect.ThreadIsMatlab ? "matlab.metadata.Class" : MetaClassName); // R2025b's name (open item 123)
         return described;
     }
 

@@ -536,7 +536,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static bool TryGetBuiltinStatic(string owner, string member, out JgsValue value)
     {
-        if (member == "empty" && (owner is "double" or "single" or "logical" or "char" or "datetime" or "duration" ||
+        if (member == "empty" && (owner is "double" or "single" or "logical" or "char" or "datetime" or "duration" or "string" or "cell" ||
             Array.IndexOf(IntegerClassNames, owner) >= 0))
         {
             value = JgsValue.Function(new BuiltinFunction($"{owner}.empty", (args, line, col) =>
@@ -565,14 +565,25 @@ internal static partial class JgsBuiltins
                         $"{owner}.empty: at least one dimension must be zero.");
                 }
 
+                if (owner == "cell")
+                {
+                    JgsValue cell = JgsValue.Cell([]);
+                    cell.Reshape(dims[0], dims[1]); // cell.empty is an empty cell (open item 121)
+                    return cell;
+                }
+
                 JgsValue nothing = JgsMatrix.FromColumnMajorDims([], dims);
                 return owner switch
                 {
                     "datetime" => nothing.MarkTime(new JgsTimeTag(JgsTimeKind.Datetime, JgsTime.DefaultDatetimeFormat)),
                     "duration" => nothing.MarkTime(JgsTime.DurationTag()),
+                    "string" => nothing.MarkStringArray(), // string.empty, a 0-by-0 string (open item 121)
                     _ => nothing,
                 };
-            }));
+            })
+            {
+                AutoCallsBare = true, // double.empty with no parentheses is the empty, not the maker
+            });
             return true;
         }
 

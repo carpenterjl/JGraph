@@ -1777,6 +1777,16 @@ public sealed class AxesModel : GraphObject
 
     private void FitRange(AxisModel axis, DataRange bounds, TickBudget budget)
     {
+        // A categorical ruler takes in every category and the data, half a category beyond each
+        // end (open item 120, measured: three bars stand in [0.1 3.9], two points in [0.5 2.5]).
+        if (axis.RulerCategories is { Count: > 0 } categories)
+        {
+            DataRange spanned = new(1, categories.Count);
+            spanned = bounds.IsEmpty ? spanned : spanned.Union(bounds);
+            axis.Range = new DataRange(spanned.Min - 0.5, spanned.Max + 0.5);
+            return;
+        }
+
         DataRange fitted = bounds.IsEmpty ? DataRange.Unit : bounds;
         bool decades = axis.Scale == AxisScaleType.Logarithmic && fitted.Min > 0 && fitted.Max > 0;
         switch (axis.LimitMethod)

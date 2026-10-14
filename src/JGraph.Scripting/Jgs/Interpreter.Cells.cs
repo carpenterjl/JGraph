@@ -62,11 +62,28 @@ internal sealed partial class Interpreter
         int cols = 0;
         foreach (JgsValue piece in pieces)
         {
+            // Anything else beside a cell is one element of it, as R2025b joins [{1} 2] into {1, 2}
+            // and horzcat({1}, 2) with it; an empty numeric array is left out (open item 124).
             if (piece.Type != JgsType.Cell)
             {
-                throw new JgsRuntimeException(at.Line, at.Column,
-                    $"A cell can only be concatenated with another cell, not with a {piece.TypeName}; "
-                    + "wrap the value in braces to make it one.");
+                if (piece.Type == JgsType.Array && piece.ArrayLength == 0 && !piece.IsStringArray && !piece.IsCharMatrix)
+                {
+                    continue;
+                }
+
+                if (rows < 0)
+                {
+                    rows = 1;
+                }
+                else if (rows != 1)
+                {
+                    throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:catenate:dimensionMismatch",
+                        "Dimensions of arrays being concatenated are not consistent.");
+                }
+
+                elements.Add(JgsValue.Share(piece));
+                cols++;
+                continue;
             }
 
             JgsValue[] held = piece.AsCell;

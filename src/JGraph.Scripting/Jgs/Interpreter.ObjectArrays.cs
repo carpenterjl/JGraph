@@ -61,6 +61,42 @@ internal sealed partial class Interpreter
             throw new JgsRuntimeException(at.Line, at.Column, "A bracket of objects needs an object.");
         }
 
+        // A piece with a third dimension joins by the numeric bracket over stand-ins of its
+        // positions, which knows every shape rule there is (open item 121: [t3 t3] is 1-by-6-by-2).
+        if (rows.Any(static row => row.Any(static piece => piece.IsObjectArray && piece.IsNd)))
+        {
+            var pool = new List<JgsObject>();
+            var standInRows = new List<JgsValue[]>(rows.Count);
+            foreach (IReadOnlyList<JgsValue> row in rows)
+            {
+                var standIns = new List<JgsValue>(row.Count);
+                foreach (JgsValue piece in row)
+                {
+                    if (IsDroppedInBracket(piece))
+                    {
+                        continue;
+                    }
+
+                    JgsValue member = AsMemberOf(piece, definition, at, assigning: false);
+                    standIns.Add(JgsObjectArray.PositionsLike(member, pool.Count));
+                    pool.AddRange(ElementsOf(member).Elements);
+                }
+
+                standInRows.Add([.. standIns]);
+            }
+
+            JgsValue[] bands = [.. standInRows.Where(static r => r.Length > 0).Select(r => r.Length == 1 ? r[0] : JgsBuiltins.CatAlong(2, r, at.Line, at.Column))];
+            JgsValue joined = bands.Length == 1 ? bands[0] : JgsBuiltins.CatAlong(1, bands, at.Line, at.Column);
+            var picked = new JgsObject[joined.Type == JgsType.Number ? 1 : joined.ArrayLength];
+            for (int i = 0; i < picked.Length; i++)
+            {
+                picked[i] = pool[(int)(joined.Type == JgsType.Number ? joined : joined.ElementAt(i)).AsNumber];
+                HoldElement(definition, picked[i]);
+            }
+
+            return joined.Type == JgsType.Number ? JgsObjectArray.ValueOf(definition, picked, 1, 1) : JgsObjectArray.ValueLike(definition, picked, joined);
+        }
+
         var joinedRows = new List<(JgsObject[] Elements, int Rows, int Cols)>();
         foreach (IReadOnlyList<JgsValue> row in rows)
         {
@@ -150,7 +186,8 @@ internal sealed partial class Interpreter
     private static bool IsDroppedInBracket(JgsValue piece) =>
         (piece.Type == JgsType.Array && piece.ArrayLength == 0 && !piece.IsStringArray && !piece.IsTime)
         || (piece.Type == JgsType.Cell && piece.AsCell.Length == 0)
-        || (piece.Type == JgsType.String && piece.AsString.Length == 0);
+        || (piece.Type == JgsType.String && piece.AsString.Length == 0)
+        || (piece.Type == JgsType.Struct && piece.ArrayLength == 0); // struct([]) joins as nothing (probe_121)
 
     /// <summary>
     /// A piece as a member of an array of <paramref name="definition"/>: an object of that class
@@ -234,7 +271,9 @@ internal sealed partial class Interpreter
             positions[i] = JgsValue.Number(i);
         }
 
-        JgsValue standIn = elements.Length == 1 ? OneElementArray(positions[0]) : JgsMatrix.FromElements(positions, rows, cols);
+        JgsValue standIn = elements.Length == 1 ? OneElementArray(positions[0])
+            : callee.IsNd ? JgsObjectArray.PositionsLike(callee, 0)
+            : JgsMatrix.FromElements(positions, rows, cols);
         JgsValue picked = IndexInto(standIn, call.Arguments, call, env);
         if (picked.Type == JgsType.Number)
         {
@@ -249,7 +288,7 @@ internal sealed partial class Interpreter
             HoldElement(definition, chosen[i]); // the selection is a second holder
         }
 
-        return JgsObjectArray.ValueOf(definition, chosen, picked.Rows, picked.Cols);
+        return JgsObjectArray.ValueLike(definition, chosen, picked);
     }
 
     /// <summary>
@@ -268,6 +307,16 @@ internal sealed partial class Interpreter
     {
         (JgsObject[] elements, int _, int _) = ElementsOf(array);
         JgsClass definition = array.ObjectClass;
+
+        // A method the dot names is called once over the whole array, as a.total is total(a) in
+        // R2025b (open item 121); only a property spreads into a list.
+        if (definition.Property(field) is null
+            && FindMethod(definition, field, null, false, out ClassMethod? method) == MethodAnswer.Found && method is not null && !method.Static)
+        {
+            JgsValue answered = ObjectArrayMember(array, field, member, autoCall: true, ListUse.Value);
+            return answered.Type == JgsType.Null ? [] : [answered];
+        }
+
         var gathered = new JgsValue[elements.Length];
         for (int i = 0; i < elements.Length; i++)
         {
@@ -348,7 +397,8 @@ internal sealed partial class Interpreter
             flags[i] = JgsValue.Bool(equal ? same : !same);
         }
 
-        return count == 1 ? flags[0] : JgsMatrix.FromElements(flags, rows, cols);
+        JgsValue shapeOf = leftCount >= rightCount ? left : right;
+        return count == 1 ? flags[0] : JgsMatrix.Like(shapeOf, JgsMatrix.FromElements(flags, rows, cols)); // N-D too (open item 121)
     }
 
     /// <summary>
@@ -386,12 +436,6 @@ internal sealed partial class Interpreter
     private JgsValue AssignIntoObjectArray(
         Expr target, JgsValue existing, IReadOnlyList<Expr> subscripts, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        if (subscripts.Count is not (1 or 2))
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "An element of an array of objects is written with one or two subscripts.");
-        }
-
         bool deleting = (rhs.Type == JgsType.Array && rhs.ArrayLength == 0 && !rhs.IsStringArray)
             || (rhs.Type == JgsType.String && rhs.AsString.Length == 0); // a(2) = '' deletes too (R2025b, probe_116)
         JgsClass definition = existing.Type == JgsType.Object ? existing.ObjectClass : rhs.ObjectClass;
@@ -402,7 +446,9 @@ internal sealed partial class Interpreter
 
         (JgsObject[] elements, int rows, int cols) = existing.Type == JgsType.Object ? ElementsOf(existing) : ([], 0, 0);
         bool shared = existing.Type == JgsType.Object && existing.IsShared;
-        JgsValue written = subscripts.Count == 1
+        JgsValue written = subscripts.Count > 2 || (existing.IsObjectArray && existing.IsNd)
+            ? AssignByStandIn(definition, existing, elements, shared, deleting, subscripts, rhs, at, env)
+            : subscripts.Count == 1
             ? AssignLinear(definition, elements, rows, cols, shared, deleting, subscripts[0], rhs, at, env)
             : AssignGrid(definition, elements, rows, cols, shared, deleting, subscripts[0], subscripts[1], rhs, at, env);
         StoreBack(target, written, at, env);
@@ -458,7 +504,7 @@ internal sealed partial class Interpreter
         (JgsObject[] source, int _, int _) = ElementsOf(rhs);
         if (source.Length != 1 && source.Length != picks.Length)
         {
-            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:subsassignnumelmismatch",
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:matrix:singleSubscriptNumelMismatch",
                 "Unable to perform assignment because the left and right sides have a different number of elements.");
         }
 
@@ -620,6 +666,66 @@ internal sealed partial class Interpreter
         return JgsObjectArray.ValueOf(definition, grown, newRows, newCols);
     }
 
+    /// <summary>
+    /// A write with three subscripts or more, or into an array that has a third dimension (open item
+    /// 121): the write is made on a numeric stand-in of the positions (1 onward, the right-hand
+    /// side's after them), so growth, deletion, <c>end</c> and every refusal are the numeric road's;
+    /// a 0 the growth left is a gap the constructor fills.
+    /// </summary>
+    private JgsValue AssignByStandIn(
+        JgsClass definition, JgsValue existing, JgsObject[] elements, bool shared, bool deleting,
+        IReadOnlyList<Expr> subscripts, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        JgsValue standIn = existing.Type == JgsType.Object
+            ? JgsObjectArray.PositionsLike(existing, 1)
+            : JgsMatrix.FromColumnMajor([], 0, 0);
+        JgsObject[] source = deleting ? [] : ElementsOf(rhs).Elements;
+        JgsValue markers = deleting ? JgsMatrix.FromColumnMajor([], 0, 0)
+            : source.Length == 1 ? JgsValue.Number(elements.Length + 1)
+            : JgsObjectArray.PositionsLike(rhs, elements.Length + 1);
+
+        var scratch = new JgsEnvironment(env);
+        scratch.Declare(LevelSlot, standIn);
+        var slot = new VariableExpr(LevelSlot) { Line = at.Line, Column = at.Column };
+        var inner = new AssignExpr(new CallExpr(slot, subscripts) { Line = at.Line, Column = at.Column }, TokenType.Assign,
+            new PreEvaluated(markers) { Line = at.Line, Column = at.Column })
+        {
+            Line = at.Line,
+            Column = at.Column,
+        };
+        EvaluateAssign(inner, scratch);
+        scratch.TryGet(LevelSlot, out JgsValue written);
+
+        int count = written.Type == JgsType.Number ? 1 : written.ArrayLength;
+        var laid = new JgsObject[count];
+        JgsObject? filler = null;
+        for (int i = 0; i < count; i++)
+        {
+            int position = (int)(written.Type == JgsType.Number ? written : written.ElementAt(i)).AsNumber;
+            if (position == 0)
+            {
+                laid[i] = GapFiller(definition, ref filler, at);
+            }
+            else if (position <= elements.Length)
+            {
+                laid[i] = elements[position - 1];
+                if (shared)
+                {
+                    HoldElement(definition, laid[i]);
+                }
+            }
+            else
+            {
+                laid[i] = source[position - elements.Length - 1];
+                HoldElement(definition, laid[i]);
+            }
+        }
+
+        return written.Type == JgsType.Number
+            ? JgsObjectArray.ValueOf(definition, laid, 1, 1)
+            : JgsObjectArray.ValueLike(definition, laid, written);
+    }
+
     /// <summary>The element list grown to <paramref name="needed"/>, the gap filled with default objects.</summary>
     private JgsObject[] Grown(JgsClass definition, JgsObject[] elements, int needed, Node at)
     {
@@ -662,6 +768,29 @@ internal sealed partial class Interpreter
     /// handle itself, so the write lands on the object every alias shares. Null when the variable
     /// holds no object, so the other roads answer.
     /// </summary>
+    private JgsValue? ResolveObjectGridElementForWrite(VariableExpr variable, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    {
+        if (!LookUp(variable.Name, env, out JgsValue existing) || !existing.IsObjectArray || (subscripts.Count == 2 && !existing.IsNd))
+        {
+            return null; // two subscripts on a grid keep the road they had
+        }
+
+        // The subscripts pick out of a stand-in of the positions, so end, a colon and the refusals
+        // are an array's; one position named is the element written.
+        JgsValue picked = IndexInto(JgsObjectArray.PositionsLike(existing, 0), subscripts, at, env);
+        if (picked.Type != JgsType.Number)
+        {
+            int named = picked.ArrayLength;
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:index:expected_one_output_for_assignment",
+                $"Assigning to {named} elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.");
+        }
+
+        int slot = (int)picked.AsNumber;
+        return existing.ObjectClass.IsHandle
+            ? JgsValue.Object(existing.AsObjectArray.Elements[slot])
+            : JgsValue.Object(existing.WritableObjectArray().WritableElement(slot));
+    }
+
     private JgsValue? ResolveObjectElementForWrite(VariableExpr variable, Expr subscript, Node at, JgsEnvironment env)
     {
         if (!LookUp(variable.Name, env, out JgsValue existing) || existing.Type != JgsType.Object)

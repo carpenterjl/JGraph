@@ -786,7 +786,7 @@ internal static partial class JgsBuiltins
             flags[i] = JgsValue.Bool(!elements[i].Deleted && !elements[i].Destroying);
         }
 
-        return JgsMatrix.FromElements(flags, objects.Rows, objects.Cols);
+        return JgsMatrix.Like(objects, JgsMatrix.FromElements(flags, objects.Rows, objects.Cols)); // N-D too (open item 121)
     }
 
     // --- ancestor -------------------------------------------------------------------------------
@@ -1216,6 +1216,7 @@ internal static partial class JgsBuiltins
             ruler.AutoScale = true;
             ruler.Inverted = false;
             ruler.Scale = AxisScaleType.Linear;
+            ruler.RulerCategories = null; // a numeric ruler again (open item 120)
         }
     }
 

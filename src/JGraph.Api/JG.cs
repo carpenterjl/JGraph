@@ -2031,6 +2031,7 @@ public static class JG
         axis.Label = string.Empty;
         axis.AutoScale = true;
         axis.Scale = AxisScaleType.Linear;
+        axis.RulerCategories = null; // a plot that replaces another starts a numeric ruler (open item 120)
     }
 
     private static void ApplyLineSpec(LinePlot plot, LineSpec spec)

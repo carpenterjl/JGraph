@@ -260,6 +260,13 @@ internal static partial class JgsBuiltins
             columnCount -= 2;
         }
 
+        // The interpreter names a table's variables after the arguments it was handed, so a call
+        // with none arrives as an empty name list.
+        if (columnCount == 0 && JgsRunningDialect.ThreadIsMatlab && names is not { Length: > 0 } && rowNames is null)
+        {
+            return JgsValue.Table(new Table([])); // table() is R2025b's 0-by-0 table (open item 125)
+        }
+
         if (columnCount == 0)
         {
             throw new JgsRuntimeException(line, col, $"{name} needs at least one variable.");

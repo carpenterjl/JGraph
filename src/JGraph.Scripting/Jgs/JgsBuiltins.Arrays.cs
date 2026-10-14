@@ -50,7 +50,8 @@ internal static partial class JgsBuiltins
         int i = 1;
         while (i < args.Count && args[i].Type != JgsType.String)
         {
-            inputs.Add(ElementsOf("arrayfun", args[i]));
+            // A categorical is walked one categorical element at a time, not code by code (open item 122).
+            inputs.Add(args[i].IsCategorical ? JgsCategorical.Elements(args[i]) : ElementsOf("arrayfun", args[i]));
             i++;
         }
 
@@ -132,7 +133,7 @@ internal static partial class JgsBuiltins
 
             for (int o = 0; o < gathered; o++)
             {
-                if (uniform && (answers[o].Type is not (JgsType.Number or JgsType.Bool or JgsType.Object) || (answers[o].Type == JgsType.Object && answers[o].IsObjectArray)))
+                if (uniform && !IsUniformScalar(answers[o]))
                 {
                     throw JgsRunningDialect.ThreadIsMatlab
                         ? new JgsRuntimeException(line, col, "MATLAB:arrayfun:NotAScalarOutput",
@@ -153,11 +154,88 @@ internal static partial class JgsBuiltins
             outputs[o] = uniform
                 ? ObjectsAsArray("arrayfun", collected[o], 1, length, line, col) is { } objects
                     ? JgsMatrix.Like(args[1], objects)
-                    : JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
+                    : UniformTextOrCategorical(collected[o], args[1], line, col)
+                        ?? JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
                 : JgsMatrix.Like(args[1], JgsValue.Cell(collected[o]));
         }
 
         return outputs;
+    }
+
+    /// <summary>
+    /// Whether a uniform <c>arrayfun</c> or <c>cellfun</c> takes this answer: a number, a logical, one
+    /// object, one character or one categorical element (R2025b collects the last two into a char
+    /// and a categorical; open items 122 and 123, probe_122/123).
+    /// </summary>
+    internal static bool IsUniformScalar(JgsValue answer) =>
+        answer.Type is JgsType.Number or JgsType.Bool
+        || (answer.Type == JgsType.Object && !answer.IsObjectArray)
+        || (JgsRunningDialect.ThreadIsMatlab && answer.Type == JgsType.Array && answer.ArrayLength == 1 && !answer.IsCategorical && !answer.IsCharMatrix
+            && answer.ElementAt(0).Type is JgsType.Number or JgsType.Bool or JgsType.String)
+        || (JgsRunningDialect.ThreadIsMatlab && answer.Type == JgsType.String && !answer.IsStringArray && answer.AsString.Length == 1)
+        || (JgsRunningDialect.ThreadIsMatlab && answer.IsCategorical && answer.ArrayLength == 1);
+
+    /// <summary>
+    /// The uniform answers as one char array or one categorical in the shape of
+    /// <paramref name="shapeOf"/>, when every one is a character or every one a categorical; else null.
+    /// </summary>
+    internal static JgsValue? UniformTextOrCategorical(JgsValue[] answers, JgsValue shapeOf, int line, int col)
+    {
+        if (answers.Length == 0)
+        {
+            return null;
+        }
+
+        if (answers.All(static a => a.IsStringArray && a.ArrayLength == 1))
+        {
+            // A string apiece is a string array in the walked array's shape (probe_122).
+            return JgsValue.StringArray([.. answers.Select(static a => a.ElementAt(0))], shapeOf.Rows, shapeOf.Cols);
+        }
+
+        if (answers.Any(static a => a.Type == JgsType.Array && !a.IsStringArray && !a.IsCategorical && a.ArrayLength == 1))
+        {
+            // A one-element array apiece (double of a categorical element) is its number.
+            var numbers = new JgsValue[answers.Length];
+            for (int i = 0; i < answers.Length; i++)
+            {
+                numbers[i] = answers[i].Type == JgsType.Array && !answers[i].IsCategorical && answers[i].ArrayLength == 1 ? answers[i].ElementAt(0) : answers[i];
+            }
+
+            return JgsMatrix.Like(shapeOf, JgsMatrix.FromElements(numbers, 1, numbers.Length));
+        }
+
+        if (answers.All(static a => a.Type == JgsType.String && !a.IsStringArray))
+        {
+            var text = new System.Text.StringBuilder(answers.Length);
+            foreach (JgsValue answer in answers)
+            {
+                text.Append(answer.AsString);
+            }
+
+            return shapeOf.Rows == 1 || answers.Length == 1 ? JgsValue.Str(text.ToString()) : CharMatrixOf(text.ToString(), shapeOf.Rows, shapeOf.Cols);
+        }
+
+        return JgsCategorical.Gather(answers, line, col) is { } gathered
+            ? JgsCategorical.FromCodesLike(gathered.Codes, shapeOf, gathered.Tag)
+            : null;
+    }
+
+    /// <summary>Characters laid out column-major as a <paramref name="rows"/>-by-<paramref name="cols"/> char matrix.</summary>
+    private static JgsValue CharMatrixOf(string columnMajor, int rows, int cols)
+    {
+        var lines = new string[rows];
+        for (int r = 0; r < rows; r++)
+        {
+            var line = new char[cols];
+            for (int c = 0; c < cols; c++)
+            {
+                line[c] = columnMajor[r + (c * rows)];
+            }
+
+            lines[r] = new string(line);
+        }
+
+        return JgsValue.CharMatrix(lines);
     }
 
     /// <summary>
