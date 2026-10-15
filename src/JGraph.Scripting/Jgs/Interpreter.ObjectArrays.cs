@@ -791,6 +791,52 @@ internal sealed partial class Interpreter
             : JgsValue.Object(existing.WritableObjectArray().WritableElement(slot));
     }
 
+    /// <summary>
+    /// The one element a write such as <c>st.list(2).p = 9</c> goes through, out of an array of value
+    /// objects that is not a variable's own (open item 127): a share of the element, or a default
+    /// object from the constructor when one subscript names the place just past the end or beyond
+    /// it, which the paren road then grows the array to. False when the subscripts name several
+    /// elements or none, so the ordinary roads answer with their refusal.
+    /// </summary>
+    private bool TryValueObjectElement(
+        JgsValue held, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env, out JgsValue? element, out int? linear)
+    {
+        element = null;
+        linear = null;
+        (JgsObject[] elements, _, _) = ElementsOf(held);
+        JgsClass definition = held.ObjectClass;
+        if (subscripts.Count == 1)
+        {
+            JgsValue? index = EvaluateIndexArgument(subscripts[0], elements.Length, env);
+            if (index is not { Type: JgsType.Number } || index.AsNumber != Math.Floor(index.AsNumber))
+            {
+                return false;
+            }
+
+            int slot = (int)index.AsNumber - Dialect.IndexBase;
+            if (slot < 0)
+            {
+                return false;
+            }
+
+            element = slot < elements.Length
+                ? ElementValue(definition, elements[slot])
+                : definition.Construct([], at.Line, at.Column);
+            return true;
+        }
+
+        JgsValue standIn = held.IsObjectArray ? JgsObjectArray.PositionsLike(held, 0) : OneElementArray(JgsValue.Number(0));
+        JgsValue picked = IndexInto(standIn, subscripts, at, env);
+        if (picked.Type != JgsType.Number)
+        {
+            return false;
+        }
+
+        linear = (int)picked.AsNumber;
+        element = ElementValue(definition, elements[linear.Value]);
+        return true;
+    }
+
     private JgsValue? ResolveObjectElementForWrite(VariableExpr variable, Expr subscript, Node at, JgsEnvironment env)
     {
         if (!LookUp(variable.Name, env, out JgsValue existing) || existing.Type != JgsType.Object)

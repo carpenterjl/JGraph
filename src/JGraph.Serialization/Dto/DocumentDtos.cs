@@ -527,6 +527,9 @@ public sealed class AxisDto
 
     public double TickLabelAngle { get; set; }
 
+    /// <summary>Whether the tick labels choose their own angle (open item 126); absent in older documents.</summary>
+    public bool? TickLabelAngleAuto { get; set; }
+
     public TextStyleDto? LabelStyle { get; set; }
 
     public TextStyleDto? TickLabelStyle { get; set; }

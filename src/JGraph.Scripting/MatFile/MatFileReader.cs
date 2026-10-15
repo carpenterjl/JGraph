@@ -630,6 +630,18 @@ internal sealed class MatFileReader
             throw new InvalidDataException($"MAT-file variable '{name}' holds a categorical this reader does not know.");
         }
 
+        // What JGraph's writer makes of a table and of the strings and times inside one (open item 128).
+        if (className is "table" or "timetable" or "string" or "datetime" or "duration")
+        {
+            Dictionary<string, JgsValue> saved = ReadFields(ref at, end, ReadFieldNames(ref at));
+            return className switch
+            {
+                "string" => SavedStrings(saved, name),
+                "datetime" or "duration" => SavedTimes(saved, className, name),
+                _ => SavedTable(saved, name),
+            };
+        }
+
         if (_binder is null)
         {
             throw new InvalidDataException(
@@ -651,6 +663,83 @@ internal sealed class MatFileReader
 
         _binder.SetProperties(instance, ReadFields(ref at, end, names));
         return instance;
+    }
+
+    /// <summary>The texts of a saved string array, the missing ones the missing string again.</summary>
+    private static JgsValue SavedStrings(Dictionary<string, JgsValue> saved, string name)
+    {
+        if (!saved.TryGetValue("text", out JgsValue? text) || text.Type != JgsType.Cell)
+        {
+            throw new InvalidDataException($"MAT-file variable '{name}' holds strings this reader does not know.");
+        }
+
+        JgsValue[] texts = text.AsCell;
+        JgsValue? missing = saved.TryGetValue("missing", out JgsValue? m) ? m : null;
+        var elements = new JgsValue[texts.Length];
+        for (int i = 0; i < elements.Length; i++)
+        {
+            bool gone = missing is not null && (missing.Type == JgsType.Array ? missing.ElementAt(i).AsNumber != 0 : missing.AsNumber != 0);
+            elements[i] = JgsValue.Str(gone ? JgsBuiltins.MissingSentinel : texts[i].AsString);
+        }
+
+        return JgsValue.StringArray(elements, text.Rows, text.Cols);
+    }
+
+    /// <summary>A saved datetime or duration: its milliseconds in their shape, wearing the tag they were saved with.</summary>
+    private static JgsValue SavedTimes(Dictionary<string, JgsValue> saved, string className, string name)
+    {
+        if (!saved.TryGetValue("data", out JgsValue? data))
+        {
+            throw new InvalidDataException($"MAT-file variable '{name}' holds a {className} this reader does not know.");
+        }
+
+        string format = saved.TryGetValue("format", out JgsValue? f) && f.Type == JgsType.String ? f.AsString
+            : className == "datetime" ? JgsTime.DefaultDatetimeFormat : JgsTime.DefaultDurationFormat;
+        string? zone = saved.TryGetValue("timeZone", out JgsValue? z) && z.Type == JgsType.String && z.AsString.Length > 0 ? z.AsString : null;
+        bool formatSet = saved.TryGetValue("formatSet", out JgsValue? s) && s.AsNumber != 0;
+        double[] ms = data.Type == JgsType.Array ? JgsBuiltins.TimeMs(data) : [data.AsNumber];
+        int[] dims = data.Type == JgsType.Array ? data.Dims : [1, 1];
+        var tag = new JgsTimeTag(className == "datetime" ? JgsTimeKind.Datetime : JgsTimeKind.Duration, format, zone, formatSet);
+        return JgsMatrix.FromColumnMajorDims(ms, dims).MarkTime(tag);
+    }
+
+    /// <summary>A saved table or timetable: its variables, row names, row times and properties as they were.</summary>
+    private static JgsValue SavedTable(Dictionary<string, JgsValue> saved, string name)
+    {
+        static string[] Texts(Dictionary<string, JgsValue> fields, string key) =>
+            fields.TryGetValue(key, out JgsValue? value) && value.Type == JgsType.Cell ? [.. value.AsCell.Select(static e => e.AsString)] : [];
+
+        string[] variables = Texts(saved, "varNames");
+        JgsValue[] data = saved.TryGetValue("data", out JgsValue? held) && held.Type == JgsType.Cell ? held.AsCell : [];
+        if (data.Length != variables.Length)
+        {
+            throw new InvalidDataException($"MAT-file variable '{name}' holds a table this reader does not know.");
+        }
+
+        var columns = new JGraph.Data.TableColumn[variables.Length];
+        for (int v = 0; v < columns.Length; v++)
+        {
+            columns[v] = JgsBuiltins.TableColumnFrom("load", variables[v], data[v], 0, 0);
+        }
+
+        int rows = saved.TryGetValue("nrows", out JgsValue? count) ? (int)count.AsNumber : columns.Length > 0 ? columns[0].RowCount : 0;
+        string[] rowNames = Texts(saved, "rowNames");
+        string[] units = Texts(saved, "units");
+        string[] descriptions = Texts(saved, "descriptions");
+        string[] dimensions = Texts(saved, "dimNames");
+        string description = saved.TryGetValue("description", out JgsValue? d) && d.Type == JgsType.String ? d.AsString : string.Empty;
+        JGraph.Data.TableColumn? rowTimes = saved.TryGetValue("rowTimes", out JgsValue? times) && times.IsTime
+            ? new JgsTimeColumn(saved.TryGetValue("rowTimesName", out JgsValue? timesName) && timesName.Type == JgsType.String ? timesName.AsString : "Time", JgsBuiltins.TimeMs(times), times.TimeTag!)
+            : null;
+        return JgsValue.Table(new JGraph.Data.Table(columns, rows)
+        {
+            RowNames = rowNames.Length == 0 ? null : rowNames,
+            RowTimes = rowTimes,
+            DimensionNames = dimensions.Length == 2 ? dimensions : null,
+            VariableUnits = units.Length == 0 ? null : units,
+            VariableDescriptions = descriptions.Length == 0 ? null : descriptions,
+            Description = description.Length == 0 ? null : description,
+        });
     }
 
     /// <summary>A function element (V6, #113): the struct <c>functions</c> reports, handed to the binder to re-make.</summary>

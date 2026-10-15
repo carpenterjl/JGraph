@@ -80,13 +80,13 @@ internal sealed partial class Interpreter
 
                 if (held is null || !IsComputedHolder(held, step, target))
                 {
-                    switch (ClassifyLevel(held, chain, k + 1, env, out JgsValue? next, out JgsValue? start))
+                    switch (ClassifyLevel(held, chain, k + 1, env, out JgsValue? next, out JgsValue? start, out Expr? backTo))
                     {
                         case LevelKind.Continue:
                             held = next;
                             continue;
                         case LevelKind.Create:
-                            result = WriteThroughAbsentLevel(chain, k + 1, held, start, target, assign, rhs, env);
+                            result = WriteThroughAbsentLevel(chain, k + 1, held, start, target, assign, rhs, env, backTo);
                             return true;
                         default:
                             return false;
@@ -155,10 +155,11 @@ internal sealed partial class Interpreter
     /// <c>c{3}.f</c>, <c>s.c{2}(3)</c>, <c>c{2}.a(2).b</c> - is created here, one level at a time.
     /// </summary>
     private LevelKind ClassifyLevel(
-        JgsValue? held, List<Expr> chain, int level, JgsEnvironment env, out JgsValue? next, out JgsValue? start)
+        JgsValue? held, List<Expr> chain, int level, JgsEnvironment env, out JgsValue? next, out JgsValue? start, out Expr? backTo)
     {
         next = null;
         start = null;
+        backTo = null;
         Expr step = chain[level];
         int rest = chain.Count - (level + 1);
         bool nothing = held is null
@@ -203,6 +204,19 @@ internal sealed partial class Interpreter
                     return LevelKind.Continue;
                 }
 
+                // c{end}(end).p = 1 (open item 127): an end in the brace is the cell's own, and the
+                // slot it names is read as a literal one would be.
+                if (!nothing && Dialect.IsMatlab && brace.Indices.Count == 1 && MentionsEnd(brace.Indices[0])
+                    && EvaluateIndexArgument(brace.Indices[0], held!.AsCell.Length, env) is { Type: JgsType.Number } named
+                    && named.AsNumber == Math.Floor(named.AsNumber)
+                    && (int)named.AsNumber - Dialect.IndexBase is int named0 && named0 >= 0 && named0 < held.AsCell.Length
+                    && held.AsCell[named0] is var inSlot
+                    && !(inSlot.Type == JgsType.Array && inSlot.ArrayLength == 0 && !inSlot.IsStringArray))
+                {
+                    next = inSlot;
+                    return LevelKind.Continue;
+                }
+
                 // c{3}(2) = 9 is the ordinary roads' own conjuring, from a name or a field path.
                 return rest == 1 && chain[^1] is CallExpr or IndexExpr && brace.Indices.Count == 1
                        && chain[level - 1] is VariableExpr or MemberExpr
@@ -229,6 +243,29 @@ internal sealed partial class Interpreter
                     return LevelKind.Create;
                 }
 
+                // st.list(2).p = 9, c{1}(2).p = 9, a(2).name(1).p = 0 (open item 127): one element of
+                // an array of value objects reached through a field, a cell or another object is read
+                // out - or made by the constructor, past the end - the rest of the path is written
+                // into it, and the element goes back by the paren road, which grows the array as
+                // R2025b does. An array a variable holds keeps its own road for a(2).p = v.
+                if (!nothing && Dialect.IsMatlab && rest >= 1 && chain[level + 1] is MemberExpr
+                    && held!.Type == JgsType.Object && !held.ObjectClass.IsHandle
+                    && (chain[level - 1] is not VariableExpr || rest > 1)
+                    && TryValueObjectElement(held, subscripts, step, env, out start, out int? linear))
+                {
+                    // Several subscripts go back as the one position they named: st.list(1, 2, 2).
+                    if (linear is int linearAt && subscripts.Count > 1)
+                    {
+                        backTo = new CallExpr(chain[level - 1], [new PreEvaluated(JgsValue.Number(linearAt + Dialect.IndexBase)) { Line = step.Line, Column = step.Column }])
+                        {
+                            Line = step.Line,
+                            Column = step.Column,
+                        };
+                    }
+
+                    return LevelKind.Create;
+                }
+
                 if (!nothing && !plainStruct)
                 {
                     return LevelKind.Ordinary;
@@ -238,6 +275,15 @@ internal sealed partial class Interpreter
                     && position >= 0 && position < held!.AsStructArray.Length)
                 {
                     next = JgsValue.Struct(held.AsStructArray.Elements[position]); // a peek, never written through
+                    return LevelKind.Continue;
+                }
+
+                // r(1, 1, 2).a = 5 (open item 127): several subscripts name an element of the struct
+                // array through its positions, and the ordinary road writes it there.
+                if (plainStruct && Dialect.IsMatlab && subscripts.Count > 1
+                    && StructPositionWithin(held!, subscripts, step, env) is { } gridAt)
+                {
+                    next = JgsValue.Struct(held!.AsStructArray.Elements[(int)gridAt.AsNumber]); // a peek, never written through
                     return LevelKind.Continue;
                 }
 
@@ -299,7 +345,7 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue WriteThroughAbsentLevel(
         List<Expr> chain, int level, JgsValue? holder, JgsValue? start, Expr target, AssignExpr assign, JgsValue rhs,
-        JgsEnvironment env)
+        JgsEnvironment env, Expr? backTo = null)
     {
         Expr at = chain[level];
         var scratch = new JgsEnvironment(env);
@@ -333,7 +379,7 @@ internal sealed partial class Interpreter
             }
         }
 
-        var outer = new AssignExpr(at, TokenType.Assign, new PreEvaluated(written) { Line = at.Line, Column = at.Column })
+        var outer = new AssignExpr(backTo ?? at, TokenType.Assign, new PreEvaluated(written) { Line = at.Line, Column = at.Column })
         {
             Line = assign.Line,
             Column = assign.Column,
@@ -544,7 +590,10 @@ internal sealed partial class Interpreter
             JgsValue value = assign.Op == TokenType.Assign
                 ? rhs
                 : ApplyBinary(UnderlyingOp(assign.Op), JgsBuiltins.TableColumnValue(table, field, level.Line, level.Column), rhs, assign);
-            StoreBack(holderExpr, JgsValue.Table(SetTableMember(table, field, value, whole: true, level)), assign, env);
+            Table rewritten = Dialect.IsMatlab && TableDimensionDot(table, field) == 1
+                ? WriteTableVariablesWhole(table, value, level, env) // T.Variables = v (open item 128)
+                : SetTableMember(table, field, value, whole: true, level);
+            StoreBack(holderExpr, JgsValue.Table(rewritten), assign, env);
             return value;
         }
 

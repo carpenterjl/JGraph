@@ -1,13 +1,13 @@
 % record: -noFigureWindows
-% Open item 115 (ADR 0232): categorical as a type of its own, in the MATLAB dialect: the
-% constructor forms and their refusals, display and summary, comparison by name and by order,
-% concatenation that merges categories, indexed writes of names, the category verbs, the
-% conversions, sort/unique/min/max/median/mode, the set verbs, missing handling, findgroups and
-% discretize, a table's categorical variable, and StyleConfigurations.Target as a protected
-% categorical. Lines marked div=ADR0232 are where this build keeps its own display of a cell,
-% struct, table or N-D array, a handle's class name (a double here), a categorical's method and
-% property lists, ismissing and fillmissing over a table, grp2idx (a JGraph extra) and a table's
-% summary struct; ADR 0233 made the charts, the table verbs and the refusals exact.
+% Open item 115 (ADR 0232): categorical as a type of its own, in the MATLAB dialect: the constructor
+% forms and their refusals, display and summary, comparison by name and by order, concatenation that
+% merges categories, indexed writes of names, the category verbs, the conversions,
+% sort/unique/min/max/median/mode, the set verbs, missing handling, findgroups and discretize, a
+% table's categorical variable, and StyleConfigurations.Target as a protected categorical. Lines
+% marked div=ADR0232 are where this build keeps its own display of a cell, struct, table or N-D array,
+% a handle's class name (a double here), a categorical's method and property lists, and grp2idx (a
+% JGraph extra); ADR 0233 made the charts, the table verbs and the refusals exact, and ADR 0234
+% ismissing and fillmissing over a table and a table's summary struct.
 close all force
 c = categorical({'a', 'b', 'a', 'c'});
 o = categorical([1 3 2], [1 2 3], {'lo', 'mid', 'hi'}, 'Ordinal', true);
@@ -180,7 +180,7 @@ u9b_chk('cat_num_eq', @() categorical([1 2]) == '1');
 u9b_chk('cat_num_eq_num', @() categorical([1 2]) == 1);
 T = table([1; 2; 3], categorical({'x'; 'y'; 'x'}), 'VariableNames', {'n', 'kind'});
 u9b_chk('table_var_class', @() class(T.kind));
-u9b_chkdiv('table_summary_out', @() oi_try( @() summary(T)), 'ADR0232'); u9b_chk('table_summary_out_kind', @() fieldnames(getfield(summary(T), 'kind')));
+u9b_chk('table_summary_out', @() summary(T)); u9b_chk('table_summary_out_kind', @() fieldnames(getfield(summary(T), 'kind')));
 u9b_chk('table_rows', @() T(T.kind == 'x', :)); u9b_chk('table_rows_n', @() T.n(T.kind == 'x'));
 u9b_chk('table_assign', @() tassign(T, 1, 'y'));
 u9b_chk('table_assign_new', @() tassign(T, 1, 'zz')); u9b_chk('table_assign_new_cats', @() categories(tassign(T, 1, 'zz')));
@@ -211,8 +211,8 @@ u9b_chk('table_join', @() size(innerjoin(T, table(categorical({'x'; 'y'}), [10; 
 u9b_chk('table_join_w', @() innerjoin(T, table(categorical({'x'; 'y'}), [10; 20], 'VariableNames', {'kind', 'w'})).w);
 u9b_chk('table_stack', @() class(stack(T, 'n').n));
 u9b_chk('timetable_cat', @() class(timetable(seconds([1; 2]), categorical({'a'; 'b'})).Var1));
-u9b_chkdiv('table_cat_isundefined', @() oi_try( @() ismissing(table(categorical({'a'; ''})))), 'ADR0232');
-u9b_chkdiv('table_fillmissing', @() oi_try( @() fillmissing(table(categorical({'a'; ''})), 'constant', {'z'}).Var1), 'ADR0232');
+u9b_chk('table_cat_isundefined', @() ismissing(table(categorical({'a'; ''}))));
+u9b_chk('table_fillmissing', @() fillmissing(table(categorical({'a'; ''})), 'constant', {'z'}).Var1);
 f = figure('Visible', 'off'); ax = axes(f);
 b = bar(ax, categorical({'x', 'y', 'z'}), [1 2 3]); drawnow;
 u9b_chk('bar_cat_xdata', @() b.XData); u9b_chk('bar_cat_xdata_class', @() class(b.XData)); u9b_chk('bar_cat_xtick', @() ax.XTick); u9b_chk('bar_cat_xtick_class', @() class(ax.XTick)); u9b_chk('bar_cat_xticklabel', @() ax.XTickLabel); u9b_chk('bar_cat_xlim', @() ax.XLim); u9b_chk('bar_cat_xlim_class', @() class(ax.XLim)); u9b_chkdiv('bar_cat_xruler', @() oi_try( @() class(ax.XAxis)), 'ADR0232'); u9b_chk('bar_cat_cats', @() ax.XAxis.Categories); u9b_chk('bar_cat_xend', @() b.XEndPoints);

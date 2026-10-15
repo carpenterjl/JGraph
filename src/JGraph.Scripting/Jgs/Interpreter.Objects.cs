@@ -371,6 +371,14 @@ internal sealed partial class Interpreter
             return false;
         }
 
+        // matlab.lang.OnOffSwitchState, its members and its constructor (open item 129).
+        if (Dialect.IsMatlab && JgsBuiltins.OnOffStatic(dotted, autoCall, member.Line, member.Column) is { } onOff)
+        {
+            NoteNet(); // a call with a member among its arguments must now look for the member's methods
+            value = onOff;
+            return true;
+        }
+
         if (BuiltinClass(dotted) is { } whole)
         {
             value = autoCall ? whole.ConstructorValue.AsCallable.Call([], member.Line, member.Column) : whole.ConstructorValue;

@@ -1088,7 +1088,7 @@ public sealed class FigureRenderer
                     rAxis.TickLabelStyle,
                     HorizontalAlignment.Center,
                     VerticalAlignment.Bottom,
-                    rAxis.TickLabelAngle);
+                    rAxis.DrawnTickLabelAngle);
             }
         }
     }
@@ -1193,7 +1193,7 @@ public sealed class FigureRenderer
                 foreach (Tick tick in ticks.MajorTicks)
                 {
                     Size2D size = context.MeasureText(tick.Label, axis.TickLabelStyle);
-                    tickWidth = System.Math.Max(tickWidth, RotatedExtent(size, axis.TickLabelAngle, horizontal: true));
+                    tickWidth = System.Math.Max(tickWidth, RotatedExtent(size, axis.DrawnTickLabelAngle, horizontal: true));
                 }
             }
 
@@ -1275,7 +1275,7 @@ public sealed class FigureRenderer
                         Tinted(ruler.Axis.TickLabelStyle, ruler.Tint),
                         HorizontalAlignment.Left,
                         VerticalAlignment.Middle,
-                        ruler.Axis.TickLabelAngle);
+                        ruler.Axis.DrawnTickLabelAngle);
                 }
             }
 
@@ -1402,7 +1402,7 @@ public sealed class FigureRenderer
             foreach (Tick tick in yTicks.MajorTicks)
             {
                 Size2D size = context.MeasureText(tick.Label, yAxis.TickLabelStyle);
-                yTickWidth = System.Math.Max(yTickWidth, RotatedExtent(size, yAxis.TickLabelAngle, horizontal: true));
+                yTickWidth = System.Math.Max(yTickWidth, RotatedExtent(size, yAxis.DrawnTickLabelAngle, horizontal: true));
             }
 
             if (yOnRight)
@@ -1429,12 +1429,22 @@ public sealed class FigureRenderer
             }
         }
 
+        // R2025b turns a crowded horizontal ruler's labels by itself (open item 126): the angle follows
+        // the closest ticks' spacing across the plot box this layout gives, whose width the x labels
+        // do not change.
+        if (xAxis.TickLabelAngleAuto)
+        {
+            xAxis.ChosenTickLabelAngle = decorated && xAxis.ShowTickLabels && !axes.Is3D
+                ? ChooseTickLabelAngle(axes, xAxis, xTicks, outer, left, right)
+                : 0;
+        }
+
         double xTickHeight = 0;
         if (decorated && xAxis.ShowTickLabels)
         {
             // Upright labels are all one line tall, so one measurement answers for the row. A rotated
             // one stands as tall as its longest text is wide, so the row has to be measured.
-            if (xAxis.TickLabelAngle == 0)
+            if (xAxis.DrawnTickLabelAngle == 0)
             {
                 xTickHeight = context.MeasureText("0", xAxis.TickLabelStyle).Height;
             }
@@ -1443,7 +1453,7 @@ public sealed class FigureRenderer
                 foreach (Tick tick in xTicks.MajorTicks)
                 {
                     Size2D size = context.MeasureText(tick.Label, xAxis.TickLabelStyle);
-                    xTickHeight = System.Math.Max(xTickHeight, RotatedExtent(size, xAxis.TickLabelAngle, horizontal: false));
+                    xTickHeight = System.Math.Max(xTickHeight, RotatedExtent(size, xAxis.DrawnTickLabelAngle, horizontal: false));
                 }
             }
 
@@ -1511,6 +1521,20 @@ public sealed class FigureRenderer
             xTickOutward,
             yTickOutward,
             extrasRight);
+    }
+
+    /// <summary>
+    /// The angle a horizontal ruler's labels turn to on their own (open item 126): the closest ticks'
+    /// spacing across the plot box the margins leave, against the widest label and the line height.
+    /// </summary>
+    private static double ChooseTickLabelAngle(
+        AxesModel axes, AxisModel xAxis, TickSet xTicks, Rect2D outer, double left, double right)
+    {
+        Thickness kept = axes.MarginsWithin(new Thickness(left, 0, right, 0), outer);
+        double width = outer.Width - kept.Left - kept.Right;
+        return TickLabelTurn.ForLabels(
+            [.. xTicks.MajorTicks.Select(static t => t.Label)], xTicks.MajorTicks.Select(static t => t.Value), xAxis.Range, outer.X + kept.Left,
+            width, xAxis.Scale == AxisScaleType.Logarithmic, xAxis.TickLabelStyle, !axes.FontSizeManual, xAxis.RulerCategories is not null);
     }
 
     /// <summary>
@@ -1702,7 +1726,7 @@ public sealed class FigureRenderer
             {
                 // A rotated label hangs off one end instead of straddling the tick, so the end nearest
                 // the axis is the one pinned to it — otherwise the text swings across the plot.
-                double angle = xAxis.TickLabelAngle;
+                double angle = xAxis.DrawnTickLabelAngle;
                 context.DrawText(
                     tick.Label,
                     new Point2D(px, edge + (sign * (outward + LabelPadding))),
@@ -1768,7 +1792,7 @@ public sealed class FigureRenderer
                     Tinted(yAxis.TickLabelStyle, ink),
                     onRight ? HorizontalAlignment.Left : HorizontalAlignment.Right,
                     VerticalAlignment.Middle,
-                    yAxis.TickLabelAngle);
+                    yAxis.DrawnTickLabelAngle);
             }
         }
 

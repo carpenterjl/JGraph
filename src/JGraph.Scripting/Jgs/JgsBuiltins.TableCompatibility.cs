@@ -64,7 +64,7 @@ internal static partial class JgsBuiltins
         Define("isenum", (args, line, col) =>
         {
             Arity("isenum", args, 1, line, col);
-            return JgsValue.Bool(args[0].AsExternalOrNull() is Devices.DeviceEnumValue);
+            return JgsValue.Bool(args[0].AsExternalOrNull() is Devices.DeviceEnumValue or OnOffSwitchStateValue);
         });
         foreach (string name in new[] { "movmean", "movsum", "movmedian", "movmin", "movmax", "movstd", "movvar", "movprod" })
         {

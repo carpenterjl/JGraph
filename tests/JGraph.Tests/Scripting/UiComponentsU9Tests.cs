@@ -123,10 +123,12 @@ public class UiComponentsU9Tests : IAsyncLifetime
     [Fact]
     public async Task ADatePickerTakesADateTypedInItsFormat_OrPicked_AndKeepsItsDateWhenTheTextIsNone()
     {
+        // The callback prints char of the datetime: string(NaT) is a missing string, which R2025b's
+        // char refuses (open item 128).
         await Exec("""
             f = uifigure('Visible', 'off');
             p = uidatepicker(f, 'Tag', 'p', 'DisplayFormat', 'dd/MM/uuuu', 'Value', datetime(2024, 1, 15), ...
-                'ValueChangedFcn', @(src, e) fprintf('date %s %s<-%s\n', class(e.Value), char(string(e.Value)), char(string(e.PreviousValue))));
+                'ValueChangedFcn', @(src, e) fprintf('date %s %s<-%s\n', class(e.Value), char(e.Value), char(e.PreviousValue)));
             """);
         UiDatePickerModel picker = Tagged<UiDatePickerModel>("p");
         double picked = UiDatePickerModel.FromDateTime(new DateTime(2024, 3, 5));

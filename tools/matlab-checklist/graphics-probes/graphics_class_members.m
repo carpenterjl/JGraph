@@ -33,6 +33,9 @@ h{end+1} = fplot(ax, @sin);
 h{end+1} = legend(ax);
 h{end+1} = colorbar(ax);
 h{end+1} = ax.XAxis;
+cf = figure('Visible', 'off'); cax = axes(cf); bar(cax, categorical({'a', 'b'}), [1 2]);
+h{end+1} = cax.XAxis; % a categorical ruler (open item 126)
+h{end+1} = histogram(axes(figure('Visible', 'off')), categorical({'a', 'b', 'a'})); % a categorical histogram (open item 126)
 h{end+1} = histogram(axes(figure('Visible', 'off')), randn(1, 10));
 h{end+1} = histogram2(axes(figure('Visible', 'off')), randn(1, 10), randn(1, 10));
 h{end+1} = bubblechart(axes(figure('Visible', 'off')), 1:3, 1:3, 1:3);

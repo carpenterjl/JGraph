@@ -2663,6 +2663,12 @@ internal static partial class JgsBuiltins
 
             if (part.Type != JgsType.Array || JgsMatrix.IsNested(part))
             {
+                // Function handles have no arrays, along any dimension (open item 129).
+                if (part.Type == JgsType.Function && JgsRunningDialect.ThreadIsMatlab)
+                {
+                    throw NonScalarFunctionHandles(line, col);
+                }
+
                 throw new JgsRuntimeException(line, col,
                     $"{name} along dimension {dim} joins numeric arrays, but piece {i + 1} is a {part.TypeName}.");
             }

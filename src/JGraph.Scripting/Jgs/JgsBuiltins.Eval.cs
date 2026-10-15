@@ -152,6 +152,7 @@ internal static partial class JgsBuiltins
         RegisterDeviceBuiltins(env, interpreter, host);
         RegisterFigFileBuiltins(env, interpreter, host); // U11
         RegisterTableVerbs(env, interpreter); // open item 122
+        RegisterTableLeftovers(env, interpreter, host); // open item 128: over the missing-value verbs and summary
         JgsCategoricalCharts.Register(env); // open item 120: over every wrapper of the chart verbs
         RegisterBracketVerbs(env, interpreter); // open item 124: last, over every wrapper of the three
         RegisterR2025bRefusals(env, interpreter, host); // open item 123: over every wrapper of the verbs it guards
@@ -713,8 +714,9 @@ internal static partial class JgsBuiltins
                     return JgsValue.Number(8);
                 }
 
-                // The classes of the NET package JGraph answers with (probe3, ADR 0176).
-                if (kind != "dir" && name is "NET.NetException" or "NET.Assembly")
+                // The classes of the NET package JGraph answers with (probe3, ADR 0176), and
+                // matlab.lang.OnOffSwitchState (open item 129).
+                if (kind != "dir" && name is "NET.NetException" or "NET.Assembly" or OnOffSwitchStateValue.Name)
                 {
                     return JgsValue.Number(8);
                 }

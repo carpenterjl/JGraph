@@ -1,5 +1,5 @@
 CHK|vt_class|char[1 7]'vartype'|exact
-CHK|vt_disp|char[1 249]'	table <a href="matlab:doc('vartype')">vartype</a> subscript:\n\n		Select table variables matching the type 'numeric'\n\n	See <a href="matlab:helpview(fullfile(docroot,'matlab','matlab_prog','access-data-in-a-table.html'))">Access Data in a Table</a>.\n\n'|div=ADR0233|diverges|char[1 22]'struct(Type: numeric)\n'
+CHK|vt_disp|char[1 249]'	table <a href="matlab:doc('vartype')">vartype</a> subscript:\n\n		Select table variables matching the type 'numeric'\n\n	See <a href="matlab:helpview(fullfile(docroot,'matlab','matlab_prog','access-data-in-a-table.html'))">Access Data in a Table</a>.\n\n'|exact
 CHK|vt_num|cell[1 1]{char[1 1]'n'}|exact
 CHK|vt_cat|cell[1 1]{char[1 4]'kind'}|exact
 CHK|vt_cellstr|cell[1 1]{char[1 3]'txt'}|exact
@@ -7,7 +7,7 @@ CHK|vt_string|cell[1 1]{char[1 3]'str'}|exact
 CHK|vt_logical|cell[1 1]{char[1 4]'flag'}|exact
 CHK|vt_double|cell[1 1]{char[1 1]'n'}|exact
 CHK|vt_cell|cell[1 1]{char[1 3]'txt'}|exact
-CHK|vt_none|double[1 2] [3 0]|div=ADR0233|diverges|double[1 2] [0 0]
+CHK|vt_none|double[1 2] [3 0]|exact
 CHK|vt_brace|double[3 1] [1;2;3]|exact
 CHK|vt_brace_cat|<categorical[3 1]>|exact
 CHK|vt_rows|double[2 1] [2;3]|exact
@@ -17,7 +17,8 @@ CHK|vt_num_arg|MATLAB:vartype:InvalidType|exact
 CHK|vt_num_arg_msg|Invalid data type. Input must be a string or a character vector specifying a valid class name.|exact
 CHK|vt_string_arg|char[1 7]'vartype'|exact
 CHK|vt_assign|double[3 1] [7;8;9]|exact
-CHK|vt_dot|char[1 32]'MATLAB:table:IllegalVarSubscript'|div=ADR0233|diverges|char[0 0]''
+CHK|vt_dot|MATLAB:table:IllegalVarSubscript|exact
+CHK|vt_dot_msg|A table variable name must be a string scalar or a character vector.|exact
 CHK|vt_isa|logical[1 1] 1|exact
 CHK|vt_table_type|cell[1 0]{}|exact
 CHK|vt_integer|double[1 2] [1 1]|exact
@@ -173,8 +174,8 @@ CHK|cf_cat_class|char[1 11]'categorical'|exact
 CHK|sl_class|char[1 25]'categorical a,b,a,c a/b/c'|exact
 CHK|sl_ord|logical[1 1] 1|exact
 CHK|sl_cats|char[1 5]'z/a/q'|exact
-CHK|sl_table|char[1 11]'categorical'|div=ADR0233|diverges|char[0 0]''
+CHK|sl_table|char[1 11]'categorical'|exact
 CHK|sl_undef|char[1 27]'categorical a,<undefined> a'|exact
 CHK|sl_struct|char[1 11]'categorical'|exact
 CHK|sl_protected|logical[1 1] 1|exact
-CHK|sl_whos|char[1 11]'categorical'|div=ADR0233|diverges|char[0 0]''
+CHK|sl_whos|char[1 11]'categorical'|exact

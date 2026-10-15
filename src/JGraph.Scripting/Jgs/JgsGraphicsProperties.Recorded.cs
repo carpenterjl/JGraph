@@ -100,7 +100,7 @@ internal static partial class JgsGraphicsProperties
     /// <summary>The recorded rows as name maps per class, built on first use (see <see cref="R2025bNames"/>).</summary>
     private static class R2025bDefaults
     {
-        public static readonly Dictionary<string, Dictionary<string, (string Name, Func<JgsValue> Value)>> ByClass = R2025bDefaultRows
+        public static readonly Dictionary<string, Dictionary<string, (string Name, Func<JgsValue> Value)>> ByClass = WithTwins(R2025bDefaultRows
             .GroupBy(static row => row.Class)
             .ToDictionary(
                 static group => group.Key,
@@ -108,6 +108,33 @@ internal static partial class JgsGraphicsProperties
                     static row => row.Name,
                     static row => (row.Name, row.Value),
                     StringComparer.OrdinalIgnoreCase),
-                StringComparer.Ordinal);
+                StringComparer.Ordinal));
+
+        /// <summary>
+        /// The categorical ruler and histogram take their numeric twins' recorded defaults for the
+        /// names the two share (open item 126): the defaults were recorded for the numeric classes only.
+        /// </summary>
+        private static Dictionary<string, Dictionary<string, (string Name, Func<JgsValue> Value)>> WithTwins(
+            Dictionary<string, Dictionary<string, (string Name, Func<JgsValue> Value)>> byClass)
+        {
+            (string Class, string Twin)[] twins =
+            [
+                ("matlab.graphics.axis.decorator.CategoricalRuler", "matlab.graphics.axis.decorator.NumericRuler"),
+                ("matlab.graphics.chart.primitive.categorical.Histogram", "matlab.graphics.chart.primitive.Histogram"),
+            ];
+            foreach ((string cls, string twin) in twins)
+            {
+                if (byClass.ContainsKey(cls) || !byClass.TryGetValue(twin, out var twinNames)
+                    || !R2025bNames.ByClass.TryGetValue(cls, out Dictionary<string, bool>? own))
+                {
+                    continue;
+                }
+
+                byClass[cls] = twinNames.Where(pair => own.ContainsKey(pair.Key))
+                    .ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+            }
+
+            return byClass;
+        }
     }
 }

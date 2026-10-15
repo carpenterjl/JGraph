@@ -1,24 +1,24 @@
 % record: -noFigureWindows
 % Open item 122 (ADR 0233): the table verbs a categorical needs, in the MATLAB dialect: vartype as a
 % table subscript, convertvars, table2cell, join and innerjoin (keys inferred or named, the second
-% outputs), stack; array2table, table2struct (ToScalar too), groupsummary (the key in category
-% order, undefined last) and sortrows (several keys, directions, numbered variables) keeping a
-% categorical one; arrayfun walking a categorical element by element and collecting characters,
-% strings and categoricals; save and load of a categorical. Lines marked div=ADR0233 are the
-% display of a vartype, a table of no variables keeping its rows, a table saved to a MAT-file, and
-% whos('-file').
+% outputs), stack; array2table, table2struct (ToScalar too), groupsummary (the key in category order,
+% undefined last) and sortrows (several keys, directions, numbered variables) keeping a categorical
+% one; arrayfun walking a categorical element by element and collecting characters, strings and
+% categoricals; save and load of a categorical. ADR 0234 made the display of a vartype, a table of no
+% variables keeping its rows, a vartype through a dot, a table saved to a MAT-file and whos('-file')
+% exact.
 c = categorical({'a', 'b', 'a', 'c'});
 T = table([1; 2; 3], categorical({'x'; 'y'; 'x'}), {'p'; 'q'; 'r'}, ["s1"; "s2"; "s3"], [true; false; true], 'VariableNames', {'n', 'kind', 'txt', 'str', 'flag'});
 u9b_chk('vt_class', @() class(vartype('numeric')));
-u9b_chkdiv('vt_disp', @() oi_try( @() evalc('disp(vartype(''numeric''))')), 'ADR0233');
+u9b_chk('vt_disp', @() evalc('disp(vartype(''numeric''))'));
 u9b_chk('vt_num', @() T(:, vartype('numeric')).Properties.VariableNames); u9b_chk('vt_cat', @() T(:, vartype('categorical')).Properties.VariableNames);
 u9b_chk('vt_cellstr', @() T(:, vartype('cellstr')).Properties.VariableNames); u9b_chk('vt_string', @() T(:, vartype('string')).Properties.VariableNames);
 u9b_chk('vt_logical', @() T(:, vartype('logical')).Properties.VariableNames); u9b_chk('vt_double', @() T(:, vartype('double')).Properties.VariableNames);
-u9b_chk('vt_cell', @() T(:, vartype('cell')).Properties.VariableNames); u9b_chkdiv('vt_none', @() oi_try( @() size(T(:, vartype('datetime')))), 'ADR0233');
+u9b_chk('vt_cell', @() T(:, vartype('cell')).Properties.VariableNames); u9b_chk('vt_none', @() size(T(:, vartype('datetime'))));
 u9b_chk('vt_brace', @() T{:, vartype('numeric')}); u9b_chk('vt_brace_cat', @() T{:, vartype('categorical')});
 u9b_chk('vt_rows', @() T(2:3, vartype('numeric')).n); u9b_chk('vt_bad', @() vartype('nosuchtype')); u9b_chk('vt_noarg', @() vartype());
 u9b_chk('vt_num_arg', @() vartype(3)); u9b_chk('vt_string_arg', @() class(vartype("numeric")));
-u9b_chk('vt_assign', @() vtassign(T)); u9b_chkdiv('vt_dot', @() oi_try( @() T.(vartype('numeric'))), 'ADR0233');
+u9b_chk('vt_assign', @() vtassign(T)); u9b_chk('vt_dot', @() T.(vartype('numeric')));
 u9b_chk('vt_isa', @() isa(vartype('numeric'), 'vartype'));
 u9b_chk('vt_table_type', @() T(:, vartype('table')).Properties.VariableNames);
 TI = table(int8(1), 2.5); u9b_chk('vt_integer', @() size(TI(:, vartype('integer'))));
@@ -118,9 +118,9 @@ u9b_chk('af_ord', @() isordinal(arrayfun(@(x) x, categorical({'b', 'a'}, {'b', '
 u9b_chk('af_mixed_cats', @() arrayfun(@(k) categorical({sprintf('n%d', k)}), 1:2));
 u9b_chk('cf_cat', @() cellfun(@(x) x, {categorical({'a'}), categorical({'b'})}));
 u9b_chk('cf_cat_class', @() class(cellfun(@(x) x, {categorical({'a'}), categorical({'b'})})));
-u9b_chk('sl_class', @() saveload(c)); u9b_chk('sl_ord', @() saveloadord()); u9b_chk('sl_cats', @() saveloadcats()); u9b_chkdiv('sl_table', @() oi_try( @() saveloadtable(T)), 'ADR0233'); u9b_chk('sl_undef', @() saveload(categorical({'a', ''})));
+u9b_chk('sl_class', @() saveload(c)); u9b_chk('sl_ord', @() saveloadord()); u9b_chk('sl_cats', @() saveloadcats()); u9b_chk('sl_table', @() saveloadtable(T)); u9b_chk('sl_undef', @() saveload(categorical({'a', ''})));
 u9b_chk('sl_struct', @() saveloadstruct(c)); u9b_chk('sl_protected', @() saveloadprot());
-u9b_chkdiv('sl_whos', @() oi_try( @() saveloadwhos(c)), 'ADR0233');
+u9b_chk('sl_whos', @() saveloadwhos(c));
 
 
 

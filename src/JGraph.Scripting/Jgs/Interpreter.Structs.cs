@@ -45,6 +45,28 @@ internal sealed partial class Interpreter
                 new JgsStructArray(grid, payload.EmptyFields), rowPicks.Length, colPicks.Length);
         }
 
+        // r(1, 1, 2) and r(:, :, 2) (open item 127): three subscripts or more pick out of a stand-in
+        // of the positions, so end, a colon and the refusals are an array's.
+        if (subscripts.Count > 2 && Dialect.IsMatlab)
+        {
+            JgsValue gridPicks = IndexInto(StructPositions(target), subscripts, at, env);
+            int count = gridPicks.Type == JgsType.Number ? 1 : gridPicks.ArrayLength;
+            var elements = new Dictionary<string, JgsValue>[count];
+            for (int i = 0; i < count; i++)
+            {
+                elements[i] = payload.Elements[(int)(gridPicks.Type == JgsType.Number ? gridPicks : gridPicks.ElementAt(i)).AsNumber];
+                JgsHolders.Share(elements[i]); // M2: the selection is a second holder
+            }
+
+            JgsValue selection = JgsValue.StructArray(new JgsStructArray(elements, payload.FieldNames), 1, count);
+            if (gridPicks.Type != JgsType.Number)
+            {
+                selection.ReshapeDims(gridPicks.Dims);
+            }
+
+            return selection;
+        }
+
         if (subscripts.Count != 1)
         {
             throw new JgsRuntimeException(at.Line, at.Column,

@@ -139,7 +139,7 @@ internal sealed partial class Interpreter
 
         var columns = new List<TableColumn>(a.Columns);
         columns.AddRange(b.Columns);
-        return new Table(columns)
+        return new Table(columns, a.RowCount)
         {
             RowNames = a.RowNames ?? b.RowNames,
             RowTimes = a.RowTimes ?? b.RowTimes,
@@ -177,7 +177,7 @@ internal sealed partial class Interpreter
     {
         if (a.ColumnCount != b.ColumnCount)
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
+            throw new JgsRuntimeException(at.Line, at.Column, Dialect.IsMatlab ? "MATLAB:table:vertcat:SizeMismatch" : string.Empty,
                 "All tables being vertically concatenated must have the same number of variables.");
         }
 
@@ -202,7 +202,7 @@ internal sealed partial class Interpreter
             columns[i] = JgsBuiltins.TableColumnFrom("vertcat", name, StackValues(above, below, at), at.Line, at.Column);
         }
 
-        return a.WithColumns(columns).WithRowLabels(StackedRowNames(a, b, at), StackedRowTimes(a, b, at));
+        return a.WithColumns(columns, a.RowCount + b.RowCount).WithRowLabels(StackedRowNames(a, b, at), StackedRowTimes(a, b, at));
     }
 
     /// <summary>Two column values one above the other: times by their milliseconds, everything else by the bracket.</summary>

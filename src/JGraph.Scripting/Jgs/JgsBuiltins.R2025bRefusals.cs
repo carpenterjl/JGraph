@@ -220,6 +220,37 @@ internal static partial class JgsBuiltins
                 ? throw new JgsRuntimeException(line, col, "MATLAB:dispatcher:invalidClassContext", "When called from outside a class constructor, the CLASS function must be called with one input.")
                 : null);
 
+        // isspace and isletter ask about characters (open item 129, probe_129): anything that is not
+        // text answers false - one false for a categorical, a table or a time value, whose builtin
+        // size is one object, and a false a place for numbers, cells, structs and arrays of objects.
+        foreach (string characterClass in (string[])["isspace", "isletter"])
+        {
+            Guard(characterClass, (args, line, col) =>
+            {
+                if (args.Count != 1 || args[0].Type == JgsType.String || args[0].IsCharMatrix || args[0].IsStringArray)
+                {
+                    return null;
+                }
+
+                JgsValue subject = args[0];
+                if (subject.IsCategorical || subject.IsTime || subject.Type is JgsType.Table or JgsType.Function or JgsType.External)
+                {
+                    return JgsValue.False;
+                }
+
+                int[] dims = SizeDims(subject);
+                int count = dims.Aggregate(1, static (p, n) => p * n);
+                var flags = new JgsValue[count];
+                Array.Fill(flags, JgsValue.False);
+                return count == 1 ? JgsValue.False : JgsMatrix.FromElementsDims(flags, dims);
+            });
+        }
+
+        Guard("isstrprop", (args, line, col) =>
+            args.Count >= 1 && args[0].IsCategorical
+                ? throw new JgsRuntimeException(line, col, "MATLAB:isstrprop:UnexpectedType", "Unexpected data type.")
+                : null);
+
         // max(a, b, dim) names a dimension R2025b does not take for two arrays.
         foreach (string extreme in (string[])["max", "min"])
         {

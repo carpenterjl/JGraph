@@ -126,10 +126,12 @@ CHK|o_h_mean|MATLAB:sum:wrongInput|exact
 CHK|o_h_mean_msg|Invalid data type. First argument must be numeric or logical.|exact
 CHK|o_h_abs|MATLAB:math:mustBeNumericCharOrLogical|exact
 CHK|o_h_abs_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
-CHK|o_h_set|char[1 32]'MATLAB:graphics:SetMethodUnknown'|div=ADR0233|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|o_h_set|MATLAB:graphics:SetMethodUnknown|exact
+CHK|o_h_set_msg|Cannot find 'set' method for Hnd116 class.|exact
 CHK|o_h_get|MATLAB:graphics:GetMethodUnknown|exact
 CHK|o_h_get_msg|Cannot find 'get' method for Hnd116 class.|exact
-CHK|o_h_addlistener|char[1 33]'MATLAB:class:nonSetObservableProp'|div=ADR0233|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|o_h_addlistener|MATLAB:class:nonSetObservableProp|exact
+CHK|o_h_addlistener_msg|While adding a PostSet listener, property 'p' in class 'Hnd116' is not defined to be SetObservable.|exact
 CHK|o_h_max_cs|double[1 1] 2|exact
 CHK|o_max_cs3|MATLAB:max:caseNotSupported|exact
 CHK|o_max_cs3_msg|Specifying the operating dimension is not supported for two input arrays.|exact
@@ -162,7 +164,7 @@ CHK|c_not|MATLAB:math:mustBeNumericCharOrLogical|exact
 CHK|c_not_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
 CHK|c_and|MATLAB:math:mustBeNumericCharOrLogical|exact
 CHK|c_and_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
-CHK|c_times_cat|<categorical[1 4]>|div=ADR0233|diverges|char[1 38]'MATLAB:math:mustBeNumericCharOrLogical'
+CHK|c_times_cat|<categorical[1 4]>|exact
 CHK|c_plus_cat|MATLAB:math:mustBeNumericCharOrLogical|exact
 CHK|c_plus_cat_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
 CHK|c_abs|MATLAB:math:mustBeNumericCharOrLogical|exact
@@ -221,7 +223,7 @@ CHK|c_missing_names_msg|CATEGORYNAMES contains an empty character vector or zero
 CHK|c_brace|MATLAB:categorical:CellReferenceNotAllowed|exact
 CHK|c_brace_msg|Cell contents reference from a non-cell array object.|exact
 CHK|c_isfield|logical[1 1] 0|exact
-CHK|c_struct|struct[1 1]{(defaultCodesClass=char[1 5]'uint8',missingLabel=char[1 9]'<missing>',undefCode=double[1 1] 0,undefLabel=char[1 11]'<undefined>',maxNumCategories=double[1 1] 281474976710655,categoryNames=cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'},codes=uint8[1 4] [1 2 1 3],isProtected=logical[1 1] 0,isOrdinal=logical[1 1] 0)}|div=ADR0233|diverges|char[0 0]''
+CHK|c_struct|struct[1 1]{(defaultCodesClass=char[1 5]'uint8',missingLabel=char[1 9]'<missing>',undefCode=double[1 1] 0,undefLabel=char[1 11]'<undefined>',maxNumCategories=double[1 1] 281474976710655,categoryNames=cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'},codes=uint8[1 4] [1 2 1 3],isProtected=logical[1 1] 0,isOrdinal=logical[1 1] 0)} WARN MATLAB:structOnObject|exact
 CHK|c_cell|MATLAB:invalidConversion|exact
 CHK|c_cell_msg|Conversion to cell from categorical is not possible.|exact
 CHK|c_logical|MATLAB:invalidConversion|exact
@@ -237,7 +239,7 @@ CHK|c_contains_cat|MATLAB:string:MustBeCharCellArrayOrString|exact
 CHK|c_contains_cat_msg|First argument must be text.|exact
 CHK|c_strcmp|logical[1 1] 0|exact
 CHK|c_strcmpi|logical[1 1] 0|exact
-CHK|c_isspace|logical[1 1] 0|div=ADR0233|diverges|logical[1 4] [0 0 0 0]
+CHK|c_isspace|logical[1 1] 0|exact
 CHK|c_double_str|MATLAB:math:mustBeNumericCharOrLogical|exact
 CHK|c_double_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
 CHK|t_mixed_brace|MATLAB:table:ExtractDataCatError|exact
@@ -290,7 +292,7 @@ CHK|isenum_cat|logical[1 1] 0|exact
 CHK|isenum_num|logical[1 1] 0|exact
 CHK|isenum_obj|logical[1 1] 0|exact
 CHK|isenum_char|logical[1 1] 0|exact
-CHK|isenum_enum|logical[1 1] 1|div=ADR0233|diverges|char[1 26]'MATLAB:undefinedVarOrClass'
+CHK|isenum_enum|logical[1 1] 1|exact
 CHK|isenum_noarg|MATLAB:minrhs|exact
 CHK|isenum_noarg_msg|Not enough input arguments.|exact
 CHK|isenum_table|logical[1 1] 0|exact

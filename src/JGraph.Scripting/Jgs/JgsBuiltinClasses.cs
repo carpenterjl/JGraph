@@ -111,13 +111,76 @@ internal static partial class JgsBuiltinClasses
     }
 
     /// <summary>
-    /// <c>set(obj, name, value, …)</c> and <c>set(obj, struct)</c> on a <c>matlab.mixin.SetGet</c>
-    /// object: each name matched without regard to case and by any unambiguous beginning, each
-    /// write made as a dot would make it.
+    /// The objects a <c>set</c> or <c>get</c> on a <c>matlab.mixin.SetGet</c> class is made over: the one
+    /// object, or every element of an array of them in order (open item 129).
+    /// </summary>
+    private static JgsObject[] Receivers(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count == 0 || args[0].Type != JgsType.Object)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        JgsObject[] all = args[0].IsObjectArray ? args[0].AsObjectArray.Elements : [args[0].AsObject];
+        if (all.Any(static o => o.Deleted))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object.");
+        }
+
+        return all;
+    }
+
+    /// <summary>
+    /// <c>set(obj, name, value, …)</c>, <c>set(obj, struct)</c> and <c>set(obj, {names}, {values})</c>
+    /// on a <c>matlab.mixin.SetGet</c> object or an array of them: each name matched without regard
+    /// to case and by any unambiguous beginning, each write made to every element as a dot would make
+    /// it, the cell form one row of values an element (open item 129). <c>set(obj)</c> answers the
+    /// names that can be set, each with no fixed choices.
     /// </summary>
     private static JgsValue Set(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
     {
-        JgsObject target = Receiver("set", args, line, col);
+        JgsObject[] targets = Receivers(args, line, col);
+        JgsClass definition = args[0].ObjectClass;
+        string Named(string asked) => Match(definition, asked)
+            ?? throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidProperty",
+                $"The name '{asked}' is not an accessible property for an instance of class '{definition.Name}'.");
+
+        JgsValue Holder(JgsObject target) => args[0].IsObjectArray ? JgsValue.Object(target) : args[0];
+
+        if (args.Count == 1)
+        {
+            var settable = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+            foreach (ClassProperty property in definition.ListedProperties)
+            {
+                if (property.SetAccess.IsPublic && !property.Constant)
+                {
+                    settable[property.Spec.Name] = JgsValue.Cell([]);
+                }
+            }
+
+            return JgsValue.Struct(settable);
+        }
+
+        if (args.Count == 3 && args[1].Type == JgsType.Cell)
+        {
+            string[] names = [.. args[1].AsCell.Select(name => Named(JgsBuiltins.TextOf(name)))];
+            if (args[2].Type != JgsType.Cell || args[2].Rows != targets.Length || args[2].Cols != names.Length)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:class:ValueCellDimension",
+                    "Value cell array handle dimension must match handle vector length.");
+            }
+
+            for (int row = 0; row < targets.Length; row++)
+            {
+                for (int column = 0; column < names.Length; column++)
+                {
+                    interpreter.WriteProperty(Holder(targets[row]), names[column], args[2].AsCell[row + (column * targets.Length)], line, col);
+                }
+            }
+
+            return JgsValue.Null;
+        }
+
         var pairs = new List<(string Name, JgsValue Value)>();
         if (args.Count == 2 && args[1].Type == JgsType.Struct && args[1].ClassName is null && !args[1].IsStructArray)
         {
@@ -146,10 +209,11 @@ internal static partial class JgsBuiltinClasses
 
         foreach ((string asked, JgsValue value) in pairs)
         {
-            string name = Match(target.Class, asked)
-                ?? throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidProperty",
-                    $"The name '{asked}' is not an accessible property for an instance of class '{target.Class.Name}'.");
-            interpreter.WriteProperty(args[0], name, value, line, col);
+            string name = Named(asked);
+            foreach (JgsObject target in targets)
+            {
+                interpreter.WriteProperty(Holder(target), name, value, line, col);
+            }
         }
 
         return JgsValue.Null;
@@ -158,42 +222,74 @@ internal static partial class JgsBuiltinClasses
     /// <summary>
     /// <c>get(obj, name)</c>, <c>get(obj, {names})</c> and <c>get(obj)</c> on a
     /// <c>matlab.mixin.SetGet</c> object: one value, a cell row of them, or a struct of every
-    /// property a listing shows.
+    /// property a listing shows; over an array of them, a column of answers an element - the values
+    /// in a cell, the structs a struct array (open item 129).
     /// </summary>
     private static JgsValue Get(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
     {
-        JgsObject target = Receiver("get", args, line, col);
+        JgsObject[] targets = Receivers(args, line, col);
+        JgsClass definition = args[0].ObjectClass;
         if (args.Count > 2)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
         }
 
-        JgsValue One(string asked)
-        {
-            string name = Match(target.Class, asked)
-                ?? throw new JgsRuntimeException(line, col, "MATLAB:class:setgetPropertyNotFound",
-                    $"Property {asked} not found in class {target.Class.Name}, or is not present in all elements of the "
-                    + $"array of class {target.Class.Name}.");
-            return interpreter.ReadProperty(args[0], name, line, col);
-        }
+        JgsValue Holder(JgsObject target) => args[0].IsObjectArray ? JgsValue.Object(target) : args[0];
+        string Named(string asked) => Match(definition, asked)
+            ?? throw new JgsRuntimeException(line, col, "MATLAB:class:setgetPropertyNotFound",
+                $"Property {asked} not found in class {definition.Name}, or is not present in all elements of the "
+                + $"array of class {definition.Name}.");
 
         if (args.Count == 1)
         {
-            var all = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-            foreach (ClassProperty property in target.Class.ListedProperties)
+            string[] listed = [.. definition.ListedProperties.Select(static p => p.Spec.Name)];
+            var structs = new Dictionary<string, JgsValue>[targets.Length];
+            for (int i = 0; i < targets.Length; i++)
             {
-                all[property.Spec.Name] = JgsValue.Share(interpreter.ReadProperty(args[0], property.Spec.Name, line, col));
+                structs[i] = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach (string name in listed)
+                {
+                    structs[i][name] = JgsValue.Share(interpreter.ReadProperty(Holder(targets[i]), name, line, col));
+                }
             }
 
-            return JgsValue.Struct(all);
+            return targets.Length == 1
+                ? JgsValue.Struct(structs[0])
+                : JgsValue.StructArray(new JgsStructArray(structs, listed), targets.Length, targets.Length == 0 ? 0 : 1);
         }
 
         if (args[1].Type == JgsType.Cell)
         {
-            return JgsValue.Cell([.. args[1].AsCell.Select(name => JgsValue.Share(One(JgsBuiltins.TextOf(name))))]);
+            string[] names = [.. args[1].AsCell.Select(name => Named(JgsBuiltins.TextOf(name)))];
+            var values = new JgsValue[targets.Length * names.Length];
+            for (int row = 0; row < targets.Length; row++)
+            {
+                for (int column = 0; column < names.Length; column++)
+                {
+                    values[row + (column * targets.Length)] = JgsValue.Share(interpreter.ReadProperty(Holder(targets[row]), names[column], line, col));
+                }
+            }
+
+            JgsValue grid = JgsValue.Cell(values);
+            grid.Reshape(targets.Length, names.Length);
+            return grid;
         }
 
-        return One(JgsBuiltins.TextOf(args[1]));
+        string one = Named(JgsBuiltins.TextOf(args[1]));
+        if (targets.Length == 1)
+        {
+            return interpreter.ReadProperty(args[0], one, line, col);
+        }
+
+        var answers = new JgsValue[targets.Length];
+        for (int i = 0; i < answers.Length; i++)
+        {
+            answers[i] = JgsValue.Share(interpreter.ReadProperty(Holder(targets[i]), one, line, col));
+        }
+
+        JgsValue answerColumn = JgsValue.Cell(answers);
+        answerColumn.Reshape(answers.Length, answers.Length == 0 ? 0 : 1);
+        return answerColumn;
     }
 
     /// <summary>

@@ -172,6 +172,7 @@ internal static partial class JgsGraphicsProperties
         // a script that looks for either goes looking for surfaces. Each of these is one object
         // rather than that handful, but the name it answers to is still the one MATLAB uses.
         Bar3DPlot or Pie3DPlot => "surface",
+        HistogramPlot counted when JgsCategoricalCharts.IsCategoricalHistogram(counted) => "categoricalhistogram", // open item 126
         HistogramPlot => "histogram",
         PolarHistogramPlot => "histogram",
         ErrorBarPlot => "errorbar",
@@ -671,6 +672,7 @@ internal static partial class JgsGraphicsProperties
             .Where(p => p.Listed && (p.OnlyWhen is null || p.OnlyWhen(target)) && !UnlistedForMatlab(target, p))
             .Select(static p => p.Name)
             .Concat(RecordedNames(target)) // R2025b's names the model lacks (open item 88)
+            .Distinct(StringComparer.OrdinalIgnoreCase) // a recorded name the model came to keep is listed once
             .ToList();
         names.Sort(StringComparer.OrdinalIgnoreCase);
         if (JgsRunningDialect.ThreadIsMatlab && MembersOf(target) is { } members)
@@ -734,6 +736,12 @@ internal static partial class JgsGraphicsProperties
             && !KeepsStringScalar(entry.Target, name))
         {
             value = value.ElementAt(0);
+        }
+
+        // An OnOffSwitchState member is the 'on' or 'off' it names to every on/off property (open item 129).
+        if (value.AsExternalOrNull() is OnOffSwitchStateValue { States.Length: 1 } member)
+        {
+            value = JgsValue.Str(member.Names[0]);
         }
 
         if (JgsCategoricalCharts.TryWrite(entry, name, value, line, col))
@@ -824,6 +832,16 @@ internal static partial class JgsGraphicsProperties
                     $"Unrecognized method, property, or field '{name}' for class '{dotted}'.")
                 : new JgsRuntimeException(line, col, "MATLAB:noPublicFieldForClass",
                     $"Unrecognized property '{name}' for class '{dotted}'.");
+        }
+
+        // A ruler is got and set in R2025b's SetGet words, not a graphics primitive's (probe_126b).
+        if (!dot && JgsRunningDialect.ThreadIsMatlab && target is AxisModel && MatlabClassOf(target) is { } rulerClass)
+        {
+            return reading
+                ? new JgsRuntimeException(line, col, "MATLAB:class:setgetPropertyNotFound",
+                    $"Property {name} not found in class {rulerClass}, or is not present in all elements of the array of class {rulerClass}.")
+                : new JgsRuntimeException(line, col, "MATLAB:class:InvalidProperty",
+                    $"The name '{name}' is not an accessible property for an instance of class '{rulerClass}'.");
         }
 
         if (!dot && ProhibitedBubbleName(target, name, reading, line, col) is { } prohibited)
@@ -2904,6 +2922,15 @@ internal static partial class JgsGraphicsProperties
                 ruler.Range = new DataRange(limits[0], limits[1]);
             });
 
+        // A categorical ruler's first name (open item 126): its categories, read and written where the
+        // categorical ruler's readings are (JgsCategoricalCharts).
+        table["Categories"] = new GraphicsProperty("Categories",
+            entry => JgsCategorical.CategoriesColumn(new JgsCategoricalTag([.. Ruler(entry).RulerCategories ?? []], false, false)),
+            (entry, value, line, col) => JgsCategoricalCharts.TryWrite(entry, "Categories", value, line, col))
+        {
+            OnlyWhen = static target => JgsRunningDialect.ThreadIsMatlab && target is AxisModel { RulerCategories: not null },
+        };
+
         // The same six answers the tick verbs give, under the names a ruler wears in MATLAB.
         Put(table, "TickValues",
             entry => JgsRulerTicks.ReadValues(Ruler(entry)),
@@ -2914,6 +2941,12 @@ internal static partial class JgsGraphicsProperties
         Put(table, "TickLabelRotation",
             entry => JgsRulerTicks.ReadAngle(Ruler(entry)),
             (entry, value, line, col) => JgsRulerTicks.WriteAngle("TickLabelRotation", Ruler(entry), value, line, col));
+        table["TickLabelRotationMode"] = new GraphicsProperty("TickLabelRotationMode",
+            entry => JgsRulerTicks.ReadAngleMode(Ruler(entry)),
+            (entry, value, line, col) => JgsRulerTicks.WriteAngleMode("TickLabelRotationMode", Ruler(entry), value, line, col))
+        {
+            OnlyWhen = static _ => JgsRunningDialect.ThreadIsMatlab, // the labels' own turning (open item 126)
+        };
 
         // Reached the model's .NET format property by reflection until open item 97, which wrote
         // '%.1f' into it raw and drew labels such as %10000001f.
@@ -2924,7 +2957,7 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Scale",
             entry => JgsValue.Str(Ruler(entry).Scale == AxisScaleType.Logarithmic ? "log" : "linear"),
             (entry, value, line, col) => Ruler(entry).Scale =
-                ScaleOf(JgsBuiltins.StrOf("Scale", value, line, col), line, col));
+                RulerScale(Ruler(entry), JgsBuiltins.StrOf("Scale", value, line, col), line, col));
 
         Put(table, "Direction",
             entry => JgsValue.Str(Ruler(entry).Inverted ? "reverse" : "normal"),
@@ -3251,6 +3284,13 @@ internal static partial class JgsGraphicsProperties
             entry => JgsRulerTicks.ReadAngle(chosen(Axes(entry))),
             (entry, value, line, col) =>
                 JgsRulerTicks.WriteAngle(letter + "TickLabelRotation", chosen(Axes(entry)), value, line, col));
+        table[letter + "TickLabelRotationMode"] = new GraphicsProperty(letter + "TickLabelRotationMode",
+            entry => JgsRulerTicks.ReadAngleMode(chosen(Axes(entry))),
+            (entry, value, line, col) =>
+                JgsRulerTicks.WriteAngleMode(letter + "TickLabelRotationMode", chosen(Axes(entry)), value, line, col))
+        {
+            OnlyWhen = static _ => JgsRunningDialect.ThreadIsMatlab, // the labels' own turning (open item 126)
+        };
     }
 
     private static void AddLabel(
@@ -3269,7 +3309,7 @@ internal static partial class JgsGraphicsProperties
         Put(table, name,
             entry => JgsValue.Str(chosen(Axes(entry)).Scale == AxisScaleType.Logarithmic ? "log" : "linear"),
             (entry, value, line, col) => chosen(Axes(entry)).Scale =
-                ScaleOf(JgsBuiltins.StrOf(name, value, line, col), line, col));
+                RulerScale(chosen(Axes(entry)), JgsBuiltins.StrOf(name, value, line, col), line, col));
     }
 
     private static void AddDirection(
@@ -3281,6 +3321,19 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => chosen(Axes(entry)).Inverted =
                 DirectionOf(JgsBuiltins.StrOf(name, value, line, col), line, col));
     }
+
+    /// <summary>A ruler's scale as written; a categorical ruler refuses a log one as R2025b's does (open item 126).</summary>
+    private static AxisScaleType RulerScale(AxisModel ruler, string word, int line, int col)
+    {
+        AxisScaleType scale = ScaleOf(word, line, col);
+        return scale == AxisScaleType.Logarithmic && ruler.RulerCategories is not null && JgsRunningDialect.ThreadIsMatlab
+            ? throw LogScaleRefused(line, col)
+            : scale;
+    }
+
+    /// <summary>R2025b's refusal of a log scale on a ruler that cannot take one (probe_126).</summary>
+    internal static JgsRuntimeException LogScaleRefused(int line, int col) =>
+        new(line, col, "MATLAB:PolarAxes:LogScale", "The coordinate system or ruler class does not support log axis scale.");
 
     private static AxisScaleType ScaleOf(string word, int line, int col) => word.ToLowerInvariant() switch
     {

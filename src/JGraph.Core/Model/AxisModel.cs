@@ -34,6 +34,7 @@ public sealed class AxisModel : GraphObject
     private IReadOnlyList<double>? _tickPositions;
     private IReadOnlyList<string>? _tickLabelOverrides;
     private double _tickLabelAngle;
+    private bool _tickLabelAngleAuto;
     private AxisPosition _position;
     private TickDirection? _tickDirection;
     private Vector2D? _tickLength;
@@ -332,6 +333,28 @@ public sealed class AxisModel : GraphObject
         get => _tickLabelAngle;
         set => SetProperty(ref _tickLabelAngle, value, InvalidationKind.Layout);
     }
+
+    /// <summary>
+    /// Whether the tick labels choose their own angle as R2025b's do when they crowd (open item 126):
+    /// level while every label fits its tick spacing, then 30, 45 and 90 degrees. A MATLAB-dialect
+    /// axes turns it on for its horizontal rulers; writing an angle turns it off.
+    /// </summary>
+    [Browsable(false)]
+    public bool TickLabelAngleAuto
+    {
+        get => _tickLabelAngleAuto;
+        set => SetProperty(ref _tickLabelAngleAuto, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The angle the last layout chose while <see cref="TickLabelAngleAuto"/> is on: a measurement the
+    /// renderer reports, never part of the document, so writing it invalidates nothing.
+    /// </summary>
+    [Browsable(false)]
+    public double ChosenTickLabelAngle { get; set; }
+
+    /// <summary>The angle the tick labels are drawn at: the chosen one while automatic, the one set otherwise.</summary>
+    public double DrawnTickLabelAngle => _tickLabelAngleAuto ? ChosenTickLabelAngle : _tickLabelAngle;
 
     /// <summary>True when this axis maps data along the horizontal device direction.</summary>
     public bool IsHorizontal => Orientation == AxisOrientation.Horizontal;

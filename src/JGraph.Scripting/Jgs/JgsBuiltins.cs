@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -602,7 +602,7 @@ internal static partial class JgsBuiltins
                 JgsType.Struct => args[0].AsStructArray.Length == 0,
                 JgsType.Object => args[0].IsObjectArray && args[0].ArrayLength == 0, // a 0-by-1 array of objects is (open item 65)
                 JgsType.String => args[0].AsString.Length == 0,
-                JgsType.Table => args[0].AsTable.RowCount == 0,
+                JgsType.Table => args[0].AsTable.RowCount == 0 || args[0].AsTable.ColumnCount == 0, // a 3-by-0 table is empty (open item 128)
                 JgsType.Sparse => args[0].AsSparse.Rows == 0 || args[0].AsSparse.Cols == 0,
                 _ => false,
             });
@@ -612,12 +612,19 @@ internal static partial class JgsBuiltins
         {
             Arity("disp", args, 1, line, col);
 
+            // A table of no variables shows nothing (open item 128, probe_128b).
+            if (dialect.IsMatlab && args[0].Type == JgsType.Table && args[0].AsTable.ColumnCount == 0)
+            {
+                return JgsValue.Null;
+            }
+
             // A char matrix shows its rows, one per line, the way MATLAB's disp does and the way a
             // char row here already showed its bare text — the bracketed one-liner Display() gives is
             // for a value inside a larger message, not for the whole of what disp was asked to print.
             host.print(args[0].IsCharMatrix
                 ? string.Join(System.Environment.NewLine, args[0].CharMatrixRows())
                 : args[0].AsExternalOrNull() is IJgsOwnDisp own ? own.Disp() // a class's own disp (device classes plan, stage D10b)
+                : dialect.IsMatlab && IsVartype(args[0]) ? VartypeDisplay(args[0])[..^1] // R2025b's subscript text (open item 128)
                 : args[0].Display());
             return JgsValue.Null;
         });
@@ -971,6 +978,7 @@ internal static partial class JgsBuiltins
                 JgsType.Object => JgsValue.Number(args[0].IsObjectArray ? args[0].ArrayLength : 1), // an object is 1-by-1, an array its elements (open item 65)
                 JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1), // a scalar is one element
                 JgsType.External => JgsValue.Number(1), // a .NET object, a .NET array included, is 1-by-1 (ADR 0174)
+                JgsType.Table when dialect.IsMatlab => JgsValue.Number((double)args[0].AsTable.RowCount * args[0].AsTable.ColumnCount), // height times width (open item 128)
                 _ => throw new JgsRuntimeException(line, col, $"numel expects an array, cell, or string, but got a {args[0].TypeName}."),
             };
         });
@@ -6346,7 +6354,7 @@ internal static partial class JgsBuiltins
         // but nothing here can tell the two apart, and '' is overwhelmingly the one scripts write.
         JgsType.String => value.AsString.Length == 0 ? [0, 0] : [1, value.AsString.Length],
         JgsType.Cell => value.IsNd ? value.Dims : [value.Rows, value.Cols], // a cell grown into a third dimension (V6)
-        JgsType.Struct => [value.Rows, value.Cols], // a struct is 1-by-1 and a struct array is its shape (M65)
+        JgsType.Struct => value.IsNd ? value.Dims : [value.Rows, value.Cols], // a struct is 1-by-1 and a struct array is its shape (M65), N-D included (open item 127)
         JgsType.Object when value.IsObjectArray => value.IsNd ? value.Dims : [value.Rows, value.Cols], // its shape, N-D included (open items 65, 121)
         JgsType.Sparse => [value.AsSparse.Rows, value.AsSparse.Cols],
         JgsType.Table => [value.AsTable.RowCount, value.AsTable.ColumnCount],

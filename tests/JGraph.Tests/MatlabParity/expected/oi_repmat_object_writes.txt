@@ -1,0 +1,92 @@
+CHK|rm_vec3|double[2 4 2] nd [1 3 2 4 1 3 2 4 1 3 2 4 1 3 2 4]|exact
+CHK|rm_vec3_size|double[1 3] [2 4 2]|exact
+CHK|rm_args3|double[2 4 2] nd [1 3 2 4 1 3 2 4 1 3 2 4 1 3 2 4]|exact
+CHK|rm_scalar3|double[1 3] [2 3 4]|exact
+CHK|rm_char3|char[1 4 2]'abababab'|exact
+CHK|rm_char3_size|double[1 3] [1 4 2]|exact
+CHK|rm_cell3|double[1 3] [1 2 2]|exact
+CHK|rm_cell3_class|char[1 4]'cell'|exact
+CHK|rm_cell3_v|cell[1 2 2]{double[1 1] 1;char[1 1]'a';double[1 1] 1;char[1 1]'a'}|exact
+CHK|rm_struct3|double[1 3] [1 2 2]|exact
+CHK|rm_string3|double[1 3] [2 1 2]|exact
+CHK|rm_string3_v|string[1 2 2]"a","b","a","b"|exact
+CHK|rm_cat3|double[1 3] [1 2 2]|exact
+CHK|rm_cat3_v|<categorical[1 2 2]>|exact
+CHK|rm_obj3|double[1 3] [1 2 2]|exact
+CHK|rm_obj3_p|double[1 4] [4 4 4 4]|exact
+CHK|rm_obj3_class|char[1 6]'Val116'|exact
+CHK|rm_h3|double[1 3] [1 2 2]|exact
+CHK|rm_h3_same|double[1 2] [7 7]|exact
+CHK|rm_int3|int8[1 1 3] nd [3 3 3]|exact
+CHK|rm_logical3|logical[1 1 2] nd [1 1]|exact
+CHK|rm_4d|double[1 4] [1 3 1 2]|exact
+CHK|rm_trailing1|double[1 2] [4 4]|exact
+CHK|rm_zero3|double[1 3] [0 4 2]|exact
+CHK|rm_neg|double[1 2] [0 4]|exact
+CHK|rm_neg3|double[1 3] [2 0 2]|exact
+CHK|rm_frac|char[1 108]'MATLAB:repmat:invalidReplications / Replication factors must be a row vector of integers or integer scalars.'|exact
+CHK|rm_frac3|char[1 108]'MATLAB:repmat:invalidReplications / Replication factors must be a row vector of integers or integer scalars.'|exact
+CHK|rm_mixed|char[1 108]'MATLAB:repmat:invalidReplications / Replication factors must be a row vector of integers or integer scalars.'|exact
+CHK|rm_mixed2|char[1 108]'MATLAB:repmat:invalidReplications / Replication factors must be a row vector of integers or integer scalars.'|exact
+CHK|rm_nd_in|double[1 3] [4 4 2]|exact
+CHK|rm_nd_in2|double[1 3] [2 2 4]|exact
+CHK|rm_nd_in3|double[1 3] [2 4 2]|exact
+CHK|rm_nd_vals|double[2 2 2] nd [1 1 2 2 3 3 4 4]|exact
+CHK|rm_sparse3|char[1 74]'MATLAB:repmat:NdSparseOutput / N-D sparse output arrays are not supported.'|exact
+CHK|rm_sparse2|logical[1 1] 1|exact
+CHK|rm_table3|char[1 195]'MATLAB:table:NDSubscript / Subscripting into a table using three or more subscripts (as in t(i,j,k)) is not supported. Always specify a row subscript and a variable subscript, as in t(rows,vars).'|exact
+CHK|rm_table2|double[1 2] [2 2]|exact
+CHK|rm_fh|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|rm_fh1|MATLAB:err_non_scalar_function_handles|exact
+CHK|rm_fh1_msg|Nonscalar arrays of function handles are not allowed; use cell arrays instead.|exact
+CHK|rm_empty_in|double[1 3] [0 6 2]|exact
+CHK|rm_one_arg|char[1 43]'MATLAB:minrhs / Not enough input arguments.'|exact
+CHK|rm_count_empty|char[1 108]'MATLAB:repmat:invalidReplications / Replication factors must be a row vector of integers or integer scalars.'|exact
+CHK|rm_count_one|double[1 2] [6 6]|exact
+CHK|rm_count_col|MATLAB:repmat:invalidReplications|exact
+CHK|rm_count_col_msg|Replication factors must be a row vector of integers or integer scalars.|exact
+CHK|rm_count_char|char[1 75]'MATLAB:repmat:nonNumericReplications / Replication factors must be numeric.'|exact
+CHK|rm_count_logical|double[1 2] [2 4]|exact
+CHK|rm_count_nan|char[1 108]'MATLAB:repmat:invalidReplications / Replication factors must be a row vector of integers or integer scalars.'|exact
+CHK|rm_count_inf|char[1 108]'MATLAB:repmat:invalidReplications / Replication factors must be a row vector of integers or integer scalars.'|exact
+CHK|rm_complex|double[1 1 2] nd [1-2i 1-2i]|exact
+CHK|rm_single|char[1 6]'single'|exact
+CHK|rm_args4|double[1 4] [1 2 3 4]|exact
+CHK|rm_args_vec|char[1 108]'MATLAB:repmat:invalidReplications / Replication factors must be a row vector of integers or integer scalars.'|exact
+CHK|rm_struct3_v|double[1 2] [1 5]|exact
+CHK|rm_ctor_count|double[1 1] 1|exact
+CHK|ns_struct|double[1 2] [2 9]|exact
+CHK|ns_struct_grow|double[1 4] [2 3 1 9]|exact
+CHK|ns_struct_deep|double[1 2] [7 3]|exact
+CHK|ns_struct_arr|double[1 2] [2 8]|exact
+CHK|ns_struct_name|cell[1 2]{char[1 1]'x';char[1 2]'zz'}|exact
+CHK|ns_struct_replace|double[1 2] [2 5]|exact
+CHK|ns_struct_idx|double[1 3] [3 0 5]|exact
+CHK|ns_struct_end|double[1 2] [2 6]|exact
+CHK|ns_struct_endp1|double[1 3] [2 3 6]|exact
+CHK|ns_struct_delete|double[1 1] 3|exact
+CHK|ns_struct_ctor|double[1 1] 4|exact
+CHK|ns_cell|double[1 2] [2 9]|exact
+CHK|ns_cell_grow|double[1 3] [2 3 9]|exact
+CHK|ns_cell_name|char[1 2]'xq'|exact
+CHK|ns_cell_scalar|double[1 1] 9|exact
+CHK|ns_cell_deep|double[1 2] [0 3]|exact
+CHK|ns_cell_delete|double[1 1] 2|exact
+CHK|ns_cell_end|double[1 2] [2 1]|exact
+CHK|ns_cell_paren|double[1 2] [0 8]|exact
+CHK|ns_elem|double[1 2] [0 6]|exact
+CHK|ns_elem_grow|double[1 3] [5 6 7]|exact
+CHK|ns_elem_name|char[1 1]'w'|exact
+CHK|ns_elem_deep|double[1 2] [7 1]|exact
+CHK|ns_obj_struct|double[1 2] [2 9]|exact
+CHK|ns_obj_cell|double[1 2] [9 3]|exact
+CHK|ns_handle_struct|double[1 2] [9 9]|exact
+CHK|ns_handle_cell|double[1 2] [9 9]|exact
+CHK|ns_handle_alias|double[1 2] [4 4]|exact
+CHK|ns_struct_cs|double[1 2] [4 4]|exact
+CHK|ns_cell_cs|double[1 2] [5 5]|exact
+CHK|ns_struct_nd|double[1 4] [2 3 4 0]|exact
+CHK|ns_mixed_cell_struct|double[1 2] [2 9]|exact
+CHK|ns_struct_in_obj_arr|double[1 2] [5 0]|exact
+CHK|ns_bad_prop|char[1 77]'MATLAB:noPublicFieldForClass / Unrecognized property 'zz' for class 'Val116'.'|exact
+CHK|ns_bad_index|char[1 80]'MATLAB:badsubscript / Array indices must be positive integers or logical values.'|exact

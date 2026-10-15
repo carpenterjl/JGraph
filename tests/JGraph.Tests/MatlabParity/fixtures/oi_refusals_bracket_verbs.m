@@ -1,13 +1,13 @@
 % record: -noFigureWindows
 % Open items 123 to 125 (ADR 0233), in the MATLAB dialect. 123: R2025b's identifiers and words when a
-% verb meets an object of a script's class (the conversions, the reductions, num2str, mat2str,
-% sprintf by its conversion, setfield, rmfield, orderfields), a list where one value is wanted
-% (a.p(end), class(a.p)), a parameter the caller did not pass (MATLAB:minrhs), and a categorical
-% handed to times, cumsum, round, the text verbs, cellfun, fieldnames or a dot. 124: horzcat,
-% vertcat and cat(1|2, ...) join as the bracket does, cells, char rows, structs, strings and objects
-% included. 125: isenum and istabular. Lines marked div=ADR0233 are set and addlistener over an
-% array of handles, the product of two categoricals, struct(categorical), isspace of one, a row of
-% function handles, an enumeration member, and where which and exist say a name lives.
+% verb meets an object of a script's class (the conversions, the reductions, num2str, mat2str, sprintf
+% by its conversion, setfield, rmfield, orderfields), a list where one value is wanted (a.p(end),
+% class(a.p)), a parameter the caller did not pass (MATLAB:minrhs), and a categorical handed to times,
+% cumsum, round, the text verbs, cellfun, fieldnames or a dot. 124: horzcat, vertcat and cat(1|2, ...)
+% join as the bracket does, cells, char rows, structs, strings and objects included. 125: isenum and
+% istabular. Lines marked div=ADR0233 are where exist says a name lives; ADR 0234 made set and
+% addlistener over an array of handles, the product of two categoricals, struct(categorical), isspace
+% of one and an enumeration member exact.
 s1 = Val116(1); s2 = Val116(2); s3 = Val116(3); a = [s1 s2 s3];
 h1 = Hnd116(1); h2 = Hnd116(2); ha = [h1 h2];
 c = categorical({'a', 'b', 'a', 'c'});
@@ -30,22 +30,22 @@ u9b_chk('o_minrhs_ctor', @() gapnoargs()); u9b_chk('o_minrhs_fn', @() needsarg()
 u9b_chk('o_minrhs_nested', @() callsneeds()); u9b_chk('o_minrhs_if', @() needsif()); u9b_chk('o_minrhs_nargin', @() needsnargin());
 u9b_chk('o_minrhs_exist', @() needsexist());
 u9b_chk('o_h_sum', @() sum(ha)); u9b_chk('o_h_max', @() max(ha)); u9b_chk('o_h_min', @() min(ha)); u9b_chk('o_h_double', @() double(h1)); u9b_chk('o_h_mean', @() mean(ha)); u9b_chk('o_h_abs', @() abs(h1));
-u9b_chkdiv('o_h_set', @() oi_try( @() set(ha, 'p', 1)), 'ADR0233'); u9b_chk('o_h_get', @() get(h1, 'p')); u9b_chkdiv('o_h_addlistener', @() oi_try( @() class(addlistener(ha, 'p', 'PostSet', @(s, e) 1))), 'ADR0233');
+u9b_chk('o_h_set', @() set(ha, 'p', 1)); u9b_chk('o_h_get', @() get(h1, 'p')); u9b_chk('o_h_addlistener', @() class(addlistener(ha, 'p', 'PostSet', @(s, e) 1)));
 u9b_chk('o_h_max_cs', @() max(ha.p)); u9b_chk('o_max_cs3', @() max(a.p));
 u9b_chk('o_mixed_mat2str', @() mat2str([Val116(1) Sub116(2)]));
 u9b_chk('o_assign_mismatch', @() rangeassignbad(a)); u9b_chk('o_assign_mismatch_num', @() numassignbad());
 u9b_chk('o_h_isgraphics', @() isgraphics(ha)); u9b_chk('o_isgraphics_val', @() isgraphics(a));
 u9b_chk('o_metaclass', @() class(metaclass(s1))); u9b_chk('o_metaclass_name', @() metaclass(s1).Name); u9b_chk('o_meta_q', @() class(?Val116));
 u9b_chk('c_times', @() c .* 2); u9b_chk('c_mtimes', @() c * 2); u9b_chk('c_plus', @() c + 1); u9b_chk('c_minus', @() c - 1); u9b_chk('c_rdivide', @() c ./ 2); u9b_chk('c_power', @() c .^ 2); u9b_chk('c_uminus', @() -c); u9b_chk('c_not', @() ~c);
-u9b_chk('c_and', @() c & true); u9b_chkdiv('c_times_cat', @() oi_try( @() c .* c), 'ADR0233'); u9b_chk('c_plus_cat', @() c + c); u9b_chk('c_abs', @() abs(c)); u9b_chk('c_sum', @() sum(c)); u9b_chk('c_mean', @() mean(c)); u9b_chk('c_cumsum', @() cumsum(c)); u9b_chk('c_round', @() round(c));
+u9b_chk('c_and', @() c & true); u9b_chk('c_times_cat', @() c .* c); u9b_chk('c_plus_cat', @() c + c); u9b_chk('c_abs', @() abs(c)); u9b_chk('c_sum', @() sum(c)); u9b_chk('c_mean', @() mean(c)); u9b_chk('c_cumsum', @() cumsum(c)); u9b_chk('c_round', @() round(c));
 u9b_chk('c_regexp', @() regexp(c, 'a')); u9b_chk('c_regexprep', @() regexprep(c, 'a', 'b')); u9b_chk('c_regexpi', @() regexpi(c, 'a')); u9b_chk('c_strjoin', @() strjoin(c, ',')); u9b_chk('c_strsplit', @() strsplit(c(1))); u9b_chk('c_strtrim', @() strtrim(c));
 u9b_chk('c_cellfun', @() cellfun(@(x) x, c)); u9b_chk('c_str2num', @() str2num(c)); u9b_chk('c_str2double', @() str2double(c)); u9b_chk('c_datestr', @() datestr(c)); u9b_chk('c_fieldnames', @() fieldnames(c)); u9b_chk('c_dot', @() dotcat(c)); u9b_chk('c_dot_write', @() dotwrite(c));
 u9b_chk('c_strrep', @() strrepw(c)); u9b_chk('c_strfind', @() strfind(c, 'a')); u9b_chk('c_upper', @() upper(c)); u9b_chk('c_num2str', @() num2str(c)); u9b_chk('c_mat2str', @() mat2str(c)); u9b_chk('c_sprintf_d', @() sprintf('%d', c)); u9b_chk('c_int2str', @() int2str(c));
 u9b_chk('c_empty_name', @() categorical(["a" missing], ["a" missing])); u9b_chk('c_empty_name2', @() categorical({'a', 'b'}, {'a', ''}));
 u9b_chk('c_empty_name3', @() categorical({'a'}, {'a', 'b'}, {'x', ''})); u9b_chk('c_missing_names', @() categorical([1 2], [1 2], ["x" missing]));
-u9b_chk('c_brace', @() bracecat(c)); u9b_chk('c_isfield', @() isfield(c, 'a')); u9b_chkdiv('c_struct', @() oi_try( @() struct(c)), 'ADR0233'); u9b_chk('c_cell', @() cell(c)); u9b_chk('c_logical', @() logical(c)); u9b_chk('c_char_mat', @() size(char(categorical({'ab'; 'c'}))));
+u9b_chk('c_brace', @() bracecat(c)); u9b_chk('c_isfield', @() isfield(c, 'a')); u9b_chk('c_struct', @() struct(c)); u9b_chk('c_cell', @() cell(c)); u9b_chk('c_logical', @() logical(c)); u9b_chk('c_char_mat', @() size(char(categorical({'ab'; 'c'}))));
 u9b_chk('c_setfield', @() setfield(c, 'a', 1)); u9b_chk('c_rmfield', @() rmfield(c, 'a')); u9b_chk('c_sort_cell', @() sort({c}));
-u9b_chk('c_contains_cat', @() contains(c, categorical({'a'}))); u9b_chk('c_strcmp', @() strcmp(c, 'a')); u9b_chk('c_strcmpi', @() strcmpi(c, 'A')); u9b_chkdiv('c_isspace', @() oi_try( @() isspace(c)), 'ADR0233');
+u9b_chk('c_contains_cat', @() contains(c, categorical({'a'}))); u9b_chk('c_strcmp', @() strcmp(c, 'a')); u9b_chk('c_strcmpi', @() strcmpi(c, 'A')); u9b_chk('c_isspace', @() isspace(c));
 u9b_chk('c_double_str', @() double("a") + c);
 u9b_chk('t_mixed_brace', @() T{:, :}); u9b_chk('t_mixed_brace_rows', @() T{1, :});
 u9b_chk('t_mixed_brace_num_char', @() table1brace());
@@ -62,7 +62,7 @@ u9b_chk('hc_empty_cells', @() size(horzcat({}, {1}))); u9b_chk('vc_empty_char', 
 u9b_chk('cat_cells', @() cat(2, {1}, {2})); u9b_chk('cat_chars', @() cat(1, 'x', 'y'));
 u9b_chk('hc_dim_mismatch', @() horzcat([1; 2], [1 2 3]));
 u9b_chk('vc_dim_mismatch', @() vertcat([1 2], [1 2 3]));
-u9b_chk('isenum_cat', @() isenum(c)); u9b_chk('isenum_num', @() isenum(1)); u9b_chk('isenum_obj', @() isenum(s1)); u9b_chk('isenum_char', @() isenum('a')); u9b_chkdiv('isenum_enum', @() oi_try( @() isenum(matlab.lang.OnOffSwitchState.on)), 'ADR0233');
+u9b_chk('isenum_cat', @() isenum(c)); u9b_chk('isenum_num', @() isenum(1)); u9b_chk('isenum_obj', @() isenum(s1)); u9b_chk('isenum_char', @() isenum('a')); u9b_chk('isenum_enum', @() isenum(matlab.lang.OnOffSwitchState.on));
 u9b_chk('isenum_noarg', @() isenum()); u9b_chk('isenum_table', @() isenum(T)); u9b_chk('isenum_cell', @() isenum({}));
 u9b_chk('istabular_t', @() istabular(T)); u9b_chk('istabular_tt', @() istabular(timetable(seconds([1; 2]), [1; 2]))); u9b_chk('istabular_num', @() istabular(1)); u9b_chk('istabular_struct', @() istabular(struct('a', 1)));
 u9b_chk('istabular_cat', @() istabular(c)); u9b_chk('istabular_noarg', @() istabular()); u9b_chk('istabular_two', @() istabular(T, T)); u9b_chk('istabular_empty', @() istabular(table()));

@@ -86,6 +86,12 @@ internal static partial class JgsBuiltins
         // four-element row instead of a 4-by-2.
         Define("repmat", (args, line, col) =>
         {
+            // MATLAB code takes any number of counts and R2025b's checks (open item 127).
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                return RepmatMatlab(args, line, col);
+            }
+
             ArityRange("repmat", args, 2, 3, line, col);
             int down;
             int across;
@@ -271,10 +277,11 @@ internal static partial class JgsBuiltins
                 (rows, cols) = (1, rows);
             }
 
+            // Each element is R2025b's 0-by-0 double (open item 128: whos counts them as never set).
             var elements = new JgsValue[rows * cols];
             for (int i = 0; i < elements.Length; i++)
             {
-                elements[i] = JgsValue.Array(System.Array.Empty<JgsValue>());
+                elements[i] = JgsRunningDialect.ThreadIsMatlab ? JgsEmpty.Zero() : JgsValue.Array(System.Array.Empty<JgsValue>());
             }
 
             JgsValue built = JgsValue.Cell(elements);
@@ -289,6 +296,28 @@ internal static partial class JgsBuiltins
             if (args.Count == 1 && args[0].Type == JgsType.Array && args[0].ArrayLength == 0 && !args[0].IsStringArray)
             {
                 return JgsValue.StructArray(new JgsStructArray([]), 0, 0);
+            }
+
+            // struct(c) of a categorical is R2025b's own storage, with the warning any object gives
+            // (open item 129, probe_129): the codes in the narrowest unsigned class that holds the
+            // category count, 0 for an undefined element, and the category names as a column.
+            // struct(on) of an OnOffSwitchState is its logical Data, with the same warning (probe_129b).
+            if (args.Count == 1 && args[0].AsExternalOrNull() is OnOffSwitchStateValue states && JgsRunningDialect.ThreadIsMatlab)
+            {
+                Warn(host, "MATLAB:structOnObject",
+                    "Calling STRUCT on an object prevents the object from hiding its implementation details and should " +
+                    "thus be avoided. Use DISP or DISPLAY to see the visible public details of an object. See 'help " +
+                    "struct' for more information.");
+                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Data"] = states.Logical() });
+            }
+
+            if (args.Count == 1 && args[0].IsCategorical && JgsRunningDialect.ThreadIsMatlab)
+            {
+                Warn(host, "MATLAB:structOnObject",
+                    "Calling STRUCT on an object prevents the object from hiding its implementation details and should " +
+                    "thus be avoided. Use DISP or DISPLAY to see the visible public details of an object. See 'help " +
+                    "struct' for more information.");
+                return CategoricalStorage(args[0]);
             }
 
             // struct(obj) is a struct of the object's properties, each read as a dot would read it,
@@ -766,7 +795,10 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void RegisterMultiOutputForms(JgsEnvironment env, JgsRunningDialect dialect)
     {
-        void Wrap(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both, bool takesCount = false)
+        // A guard runs before either road, one answer or several, so a refusal is the same for both.
+        void Wrap(
+            string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both, bool takesCount = false,
+            Action<IReadOnlyList<JgsValue>, int, int>? guard = null)
         {
             if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
             {
@@ -774,8 +806,22 @@ internal static partial class JgsBuiltins
             }
 
             IJgsCallable single = existing.AsCallable;
+            Func<IReadOnlyList<JgsValue>, int, int, JgsValue> one = guard is null
+                ? single.Call
+                : (args, line, col) =>
+                {
+                    guard(args, line, col);
+                    return single.Call(args, line, col);
+                };
+            Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> several = guard is null
+                ? both
+                : (args, wanted, line, col) =>
+                {
+                    guard(args, line, col);
+                    return both(args, wanted, line, col);
+                };
             env.Builtins.Register(name, JgsValue.Function(
-                new BuiltinFunction(name, single.Call) { MultiOutput = both, TakesOutputCount = takesCount }));
+                new BuiltinFunction(name, one) { MultiOutput = several, TakesOutputCount = takesCount }));
         }
 
         // deal exists only to feed several outputs at once, so it is declared where the several-output
@@ -800,6 +846,19 @@ internal static partial class JgsBuiltins
                 : throw new JgsRuntimeException(line, col,
                     $"getpoints: this line has {coordinates.Length} coordinates, not {wanted}.");
         });
+
+        // A dimension that is not a number is R2025b's refusal, in its words (open item 129), asked for
+        // one answer or several: size(lh.Source) over a column of listeners hands size a cell. A
+        // matfile's size(m, 'v') names a variable.
+        static void RefuseTextDimensions(IReadOnlyList<JgsValue> args, int line, int col)
+        {
+            if (JgsRunningDialect.ThreadIsMatlab && !(args.Count == 2 && IsMatFile(args[0]))
+                && args.Skip(1).Any(static a => a.Type is not (JgsType.Number or JgsType.Bool or JgsType.Array) || a.IsStringArray || a.IsCharMatrix))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:size:invalidDim",
+                    "Dimension argument must be a positive integer scalar or a vector of positive integers. When an empty dimension argument is specified, it must be a 0-by-0, 1-by-0, or 0-by-1 array.");
+            }
+        }
 
         Wrap("size", (args, wanted, line, col) =>
         {
@@ -846,7 +905,7 @@ internal static partial class JgsBuiltins
             }
 
             return outputs;
-        });
+        }, guard: RefuseTextDimensions);
 
         Wrap("max", (args, _, line, col) => ExtremeWithIndex(env, "max", args, dialect, line, col));
         Wrap("min", (args, _, line, col) => ExtremeWithIndex(env, "min", args, dialect, line, col));

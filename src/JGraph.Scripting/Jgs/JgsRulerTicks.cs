@@ -85,7 +85,8 @@ internal static class JgsRulerTicks
 
     // --- Angle and format -----------------------------------------------------------------------
 
-    public static JgsValue ReadAngle(AxisModel ruler) => JgsValue.Number(ruler.TickLabelAngle);
+    public static JgsValue ReadAngle(AxisModel ruler) =>
+        JgsValue.Number(ruler.TickLabelAngleAuto ? AutomaticAngle(ruler) : ruler.TickLabelAngle);
 
     public static void WriteAngle(string what, AxisModel ruler, JgsValue value, int line, int col)
     {
@@ -96,6 +97,49 @@ internal static class JgsRulerTicks
         }
 
         ruler.TickLabelAngle = angle;
+        ruler.TickLabelAngleAuto = false; // an angle written is the manual one (probe_126b)
+    }
+
+    /// <summary>A ruler's <c>TickLabelRotationMode</c>: whether its labels turn by themselves (open item 126).</summary>
+    public static JgsValue ReadAngleMode(AxisModel ruler) => JgsValue.Str(ruler.TickLabelAngleAuto ? "auto" : "manual");
+
+    public static void WriteAngleMode(string what, AxisModel ruler, JgsValue value, int line, int col)
+    {
+        string word = JgsBuiltins.StrOf(what, value, line, col).ToLowerInvariant();
+        if (word is not ("auto" or "manual"))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:datatypes:onoffboolean:IncorrectValue",
+                $"Invalid enum value. Use one of these values: 'auto' | 'manual'.");
+        }
+
+        if (word == "manual")
+        {
+            ruler.TickLabelAngle = ReadAngle(ruler).AsNumber; // what showed is what stays
+        }
+
+        ruler.TickLabelAngleAuto = word == "auto";
+    }
+
+    /// <summary>
+    /// The angle a ruler that turns its own labels has now (open item 126, measured: R2025b answers
+    /// before anything is drawn): only an axes' horizontal ruler in a flat axes turns, by
+    /// <see cref="TickLabelTurn"/> over the plot box the last frame measured, or the one a script gets
+    /// before the first frame, at the labels' own font.
+    /// </summary>
+    private static double AutomaticAngle(AxisModel ruler)
+    {
+        if (ruler.Parent is not AxesModel owner || owner.Is3D || owner.IsPolar || !ruler.IsHorizontal
+            || !ruler.ShowTickLabels || !owner.Visible)
+        {
+            return 0;
+        }
+
+        IReadOnlyList<Tick> ticks = Current(ruler);
+        IReadOnlyList<string> labels = ruler.TickLabelOverrides ?? ticks.Select(static t => t.Label).ToArray();
+        Rect2D plot = owner.PlotAreaPixels();
+        return TickLabelTurn.ForLabels(
+            labels, ruler.TickPositions ?? ticks.Select(static t => t.Value), ruler.Range, plot.X, plot.Width,
+            ruler.Scale == AxisScaleType.Logarithmic, ruler.TickLabelStyle, !owner.FontSizeManual, ruler.RulerCategories is not null);
     }
 
     /// <summary>

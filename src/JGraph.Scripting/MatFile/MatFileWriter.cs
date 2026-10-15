@@ -150,6 +150,23 @@ internal static class MatFileWriter
             };
         }
 
+        // A table is written as JGraph's own object element (open item 128), its string and time
+        // variables inside it; any other variable is asked about as itself.
+        if (value.Type == JgsType.Table)
+        {
+            JGraph.Data.Table table = value.AsTable;
+            foreach (JGraph.Data.TableColumn column in table.Columns)
+            {
+                JgsValue held = JgsBuiltins.TableColumnValue(table, column.Name, 0, 0);
+                if (!held.IsStringArray && !held.IsDatetime && !held.IsDuration && WhyNotWritable(held, asking) is { } why)
+                {
+                    return why;
+                }
+            }
+
+            return null;
+        }
+
         // A class name means the value is standing in for a built-in object — a containers.Map, an
         // MException. Version 5 has no element for one, and the storage underneath is an
         // implementation detail that would come back as a bare number, so the name is what the
@@ -184,8 +201,26 @@ internal static class MatFileWriter
         using var buffer = new MemoryStream();
         using var w = new BinaryWriter(buffer);
 
+        // Reached only inside a table, which is the one place they are written (open item 128).
+        if (value.IsStringArray)
+        {
+            WriteStringArray(session, w, name, value);
+            w.Flush();
+            return buffer.ToArray();
+        }
+
+        if (value.IsDatetime || value.IsDuration)
+        {
+            WriteTime(session, w, name, value);
+            w.Flush();
+            return buffer.ToArray();
+        }
+
         switch (value.Type)
         {
+            case JgsType.Table:
+                WriteTable(session, w, name, value.AsTable);
+                break;
             case JgsType.Number:
                 WriteNumeric(w, name, [value.AsNumber], null, [1, 1], value.NumericClass);
                 break;
@@ -494,6 +529,101 @@ internal static class MatFileWriter
             ["isOrdinal"] = JgsValue.Bool(tag.Ordinal),
             ["isProtected"] = JgsValue.Bool(tag.Protected),
         });
+    }
+
+    /// <summary>
+    /// A table or timetable (open item 128): an object element of its class whose fields are the
+    /// variable names, a cell of the variables' values, the row names, the row count, the row times,
+    /// and the properties a script can set. JGraph reads it back as the table it was; MATLAB keeps its
+    /// own tables in the subsystem this writer does not write, so it reads this as an old-style object
+    /// at best, as it does a categorical.
+    /// </summary>
+    private static void WriteTable(Session session, BinaryWriter w, string name, JGraph.Data.Table table)
+    {
+        static JgsValue Row(IEnumerable<string> texts)
+        {
+            JgsValue[] cells = [.. texts.Select(JgsValue.Str)];
+            JgsValue cell = JgsValue.Cell(cells);
+            cell.Reshape(cells.Length == 0 ? 0 : 1, cells.Length);
+            return cell;
+        }
+
+        JgsValue data = JgsValue.Cell([.. table.Columns.Select(c => JgsBuiltins.TableColumnValue(table, c.Name, 0, 0))]);
+        data.Reshape(table.ColumnCount == 0 ? 0 : 1, table.ColumnCount);
+        JgsValue rowNames = Row(table.RowNames ?? []);
+        if (table.RowNames is { Count: > 0 })
+        {
+            rowNames.Reshape(table.RowNames.Count, 1);
+        }
+
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["varNames"] = Row(table.ColumnNames),
+            ["data"] = data,
+            ["rowNames"] = rowNames,
+            ["nrows"] = JgsValue.Number(table.RowCount),
+            ["rowTimes"] = table.RowTimes is { } times ? JgsBuiltins.TableColumnValue(new JGraph.Data.Table([times]), times.Name, 0, 0) : JgsValue.Array([]),
+            ["rowTimesName"] = JgsValue.Str(table.RowTimes?.Name ?? string.Empty),
+            ["description"] = JgsValue.Str(table.Description ?? string.Empty),
+            ["units"] = Row(table.VariableUnits ?? []),
+            ["descriptions"] = Row(table.VariableDescriptions ?? []),
+            ["dimNames"] = Row(table.DimensionNames ?? []),
+        };
+
+        WriteFlags(w, MxObject);
+        WriteDimensions(w, [1, 1]);
+        WriteName(w, name);
+        WriteDataElement(w, MiInt8, Encoding.ASCII.GetBytes(table.RowTimes is null ? "table" : "timetable"));
+        string[] names = [.. fields.Keys];
+        WriteFieldNames(w, names);
+        WriteFields(session, w, names, fields);
+    }
+
+    /// <summary>A string array inside a table: an object element of class <c>string</c> holding its texts and which are missing.</summary>
+    private static void WriteStringArray(Session session, BinaryWriter w, string name, JgsValue value)
+    {
+        int count = value.ArrayLength;
+        var texts = new JgsValue[count];
+        var missing = new JgsValue[count];
+        for (int i = 0; i < count; i++)
+        {
+            string text = value.ElementAt(i).AsString;
+            missing[i] = JgsValue.Bool(text == JgsBuiltins.MissingSentinel);
+            texts[i] = JgsValue.Str(text == JgsBuiltins.MissingSentinel ? string.Empty : text);
+        }
+
+        JgsValue textCell = JgsValue.Cell(texts);
+        textCell.Reshape(value.Rows, value.Cols);
+        JgsValue mask = count == 0 ? JgsValue.Array([]) : JgsMatrix.FromElements(missing, value.Rows, value.Cols);
+        WriteFlags(w, MxObject);
+        WriteDimensions(w, [1, 1]);
+        WriteName(w, name);
+        WriteDataElement(w, MiInt8, Encoding.ASCII.GetBytes("string"));
+        string[] names = ["text", "missing"];
+        WriteFieldNames(w, names);
+        WriteFields(session, w, names, new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["text"] = textCell, ["missing"] = mask });
+    }
+
+    /// <summary>A datetime or duration inside a table: an object element of its class holding its milliseconds and its tag.</summary>
+    private static void WriteTime(Session session, BinaryWriter w, string name, JgsValue value)
+    {
+        JgsTimeTag tag = value.TimeTag!;
+        double[] ms = JgsBuiltins.TimeMs(value);
+        int[] dims = value.Type == JgsType.Array ? value.Dims : [1, 1];
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["data"] = JgsMatrix.FromColumnMajorDims(ms, dims),
+            ["format"] = JgsValue.Str(tag.Format),
+            ["timeZone"] = JgsValue.Str(tag.TimeZone ?? string.Empty),
+            ["formatSet"] = JgsValue.Bool(tag.FormatSet),
+        };
+        WriteFlags(w, MxObject);
+        WriteDimensions(w, [1, 1]);
+        WriteName(w, name);
+        WriteDataElement(w, MiInt8, Encoding.ASCII.GetBytes(tag.Kind == JgsTimeKind.Datetime ? "datetime" : "duration"));
+        string[] names = [.. fields.Keys];
+        WriteFieldNames(w, names);
+        WriteFields(session, w, names, fields);
     }
 
     /// <summary>

@@ -69,6 +69,13 @@ internal sealed class JgsListener
     /// </summary>
     public bool FromListenerFunction { get; set; }
 
+    /// <summary>
+    /// Whether this listener is one element of a column made over an array of handles (open item
+    /// 129): the column is the handle a script holds, so only the column's going ends it, never the
+    /// element's own struct, which nothing holds once its fields are in the column.
+    /// </summary>
+    public bool Grouped { get; set; }
+
     /// <summary>How many of this listener's callbacks are on the stack, for <see cref="Recursive"/>.</summary>
     public int Depth { get; set; }
 

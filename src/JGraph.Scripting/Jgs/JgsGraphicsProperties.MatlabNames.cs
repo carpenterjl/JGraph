@@ -1,4 +1,4 @@
-﻿using JGraph.Core.Drawing;
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Objects;
 using JGraph.Objects.Annotations;
@@ -114,11 +114,31 @@ internal static partial class JgsGraphicsProperties
         // isprop(h, 'Name') is how GUI code tells a figure from anything else.
         if (recorded && sight == MatlabSight.Absent)
         {
+            // A categorical ruler or histogram has none of its numeric twin's own names, nor the numeric
+            // one the categorical one's, and each refuses the other's as R2025b's does (open item 126):
+            // they are R2025b's, not this build's extras - but a numeric histogram's BarWidth is one.
+            if (classes is [var first, ..] && TwinOf(first) is { } twin
+                && R2025bNames.ByClass.TryGetValue(twin, out Dictionary<string, bool>? twinNames) && twinNames.ContainsKey(property.Name)
+                && !(first == Chart + "Histogram" && property.Name == "BarWidth"))
+            {
+                return MatlabSight.Absent;
+            }
+
             return property.Name == "Name" && target is not FigureModel ? MatlabSight.Absent : MatlabSight.Hidden;
         }
 
         return recorded ? sight : MatlabSight.Shown;
     }
+
+    /// <summary>The class a categorical graphics class stands beside, and the other way round (open item 126), or null.</summary>
+    private static string? TwinOf(string className) => className switch
+    {
+        "matlab.graphics.axis.decorator.CategoricalRuler" => "matlab.graphics.axis.decorator.NumericRuler",
+        "matlab.graphics.axis.decorator.NumericRuler" => "matlab.graphics.axis.decorator.CategoricalRuler",
+        Chart + "categorical.Histogram" => Chart + "Histogram",
+        Chart + "Histogram" => Chart + "categorical.Histogram",
+        _ => null,
+    };
 
     /// <summary>
     /// The recorded rows as name-to-hidden maps, built on first use: the rows sit in another part of
@@ -209,6 +229,7 @@ internal static partial class JgsGraphicsProperties
         AxesModel { IsUiAxes: true } => ["matlab.ui.control.UIAxes"],
         AxesModel { IsPolar: true } => ["matlab.graphics.axis.PolarAxes"],
         AxesModel => ["matlab.graphics.axis.Axes"],
+        AxisModel { RulerCategories: not null } => ["matlab.graphics.axis.decorator.CategoricalRuler"], // open item 126
         AxisModel => ["matlab.graphics.axis.decorator.NumericRuler"],
         LegendModel => ["matlab.graphics.illustration.Legend"],
         ColorbarModel => ["matlab.graphics.illustration.ColorBar"],
@@ -229,6 +250,7 @@ internal static partial class JgsGraphicsProperties
         BarPlot => [Chart + "Bar"],
         AreaPlot => [Chart + "Area"],
         StemPlot or Stem3DPlot => [Chart + "Stem"],
+        HistogramPlot counted when JgsCategoricalCharts.IsCategoricalHistogram(counted) => [Chart + "categorical.Histogram"], // open item 126
         HistogramPlot or PolarHistogramPlot => [Chart + "Histogram"],
         Histogram2Plot => [Chart + "Histogram2"],
         ErrorBarPlot => [Chart + "ErrorBar"],

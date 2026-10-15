@@ -96,6 +96,33 @@ internal static partial class JgsGraphicsProperties
             "~ZLimitMethodMode ZLimMode ~ZLimSpec ~ZLimSpecMode ZMinorGrid ~ZMinorGridMode ZMinorTick " +
             "~ZMinorTickMode ~ZRuler ~ZRulerMode ZScale ~ZScaleMode ZTick ZTickLabel ZTickLabelMode " +
             "ZTickLabelRotation ZTickLabelRotationMode ~ZTickLabels ~ZTickLabelsMode ZTickMode"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler",
+            "~ApplicationData ~AxesLayer ~AxesLayerMode ~Axis ~AxisMode ~Axle ~BuiltinLimitPadding " +
+            "Categories Children ~ChildrenMode ~ClientSideLabelLayout ~ClientSideLabelLayoutMode " +
+            "Color ~ColorMode ~Copyable ~DefaultPropMap_Internal ~Description ~DescriptionMode " +
+            "Direction ~DirectionMode ~ErrorCallback ~ErrorCallbackMode ~FirstCrossoverAxis " +
+            "~FirstCrossoverAxisMode ~FirstCrossoverValue ~FirstCrossoverValueMode FontAngle " +
+            "~FontAngleMode FontName ~FontNameMode FontSize ~FontSizeMode FontSmoothing " +
+            "~FontSmoothingMode FontWeight ~FontWeightMode HandleVisibility ~HandleVisibilityMode " +
+            "~HideEndTicksIfOutside ~HideEndTicksIfOutsideMode ~HorizontalLabelGap " +
+            "~HorizontalLabelGapMode ~Internal ~IntervalLineChild ~IntervalTickLabelChildren " +
+            "~InverseCrossoverValue Label ~Label_IS ~LabelFontSizeMultiplier " +
+            "~LabelFontSizeMultiplierMode LabelHorizontalAlignment ~LabelHorizontalAlignmentMode " +
+            "~LabelMode ~LabelPosition_IS Limits LimitsChangedFcn ~LimitsChangedFcnMode LimitsMode " +
+            "LineWidth ~LineWidthMode ~MajorTickChild MinorTick ~MinorTick_IS ~MinorTickChild " +
+            "~MinorTickMode MinorTickValues MinorTickValuesMode ~MirrorVisible ~MirrorVisibleMode " +
+            "~NodeChildren ~NodeParent ~NumericLimits ~NumericMinorTickValues " +
+            "~NumericMinorTickValuesMode ~NumericTickValues ~NumericTickValuesMode Parent ~ParentMode " +
+            "~PlaceLabelsInward ~PlaceLabelsInwardMode ~PrimitiveChild ~PrimitiveChildEnabled " +
+            "~PrimitiveChildEnabledMode ~RulerLocation2D ~RulerLocation2DMode Scale ~ScaleMode " +
+            "~SecondaryLabel ~SecondaryLabel_IS ~SecondaryLabelMode ~SecondCrossoverValue " +
+            "~SecondCrossoverValueMode ~Serializable ~SerializableMode TickDirection " +
+            "TickDirectionMode ~TickLabel ~TickLabelChild TickLabelColor ~TickLabelColorMode " +
+            "~TickLabelGapMultiplier ~TickLabelGapMultiplierMode ~TickLabelGapOffset " +
+            "~TickLabelGapOffsetMode TickLabelInterpreter ~TickLabelInterpreterMode ~TickLabelMode " +
+            "TickLabelRotation TickLabelRotationMode TickLabels TickLabelsMode TickLength " +
+            "~TickLengthMode TickValues TickValuesMode ~VerticalLabelGap ~VerticalLabelGapMode " +
+            "Visible ~VisibleMode"),
         ("matlab.graphics.axis.decorator.NumericRuler",
             "~ApplicationData ~AxesLayer ~AxesLayerMode ~Axis ~AxisMode ~Axle ~BuiltinLimitPadding " +
             "Children ~ChildrenMode ~ClientSideLabelLayout ~ClientSideLabelLayoutMode Color " +
@@ -316,6 +343,23 @@ internal static partial class JgsGraphicsProperties
             "YJitterWidth ~YJitterWidthMode ~YLimInclude ~YLimIncludeMode YVariable ZData ~ZDataCache " +
             "ZDataMode ZDataSource ~ZDataSourceMode ZJitter ZJitterDirection ~ZJitterDirectionMode " +
             "~ZJitterMode ZJitterWidth ~ZJitterWidthMode ~ZLimInclude ~ZLimIncludeMode ZVariable"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram",
+            "~ALimInclude ~ALimIncludeMode Annotation ~ApplicationData ~AutoColor BarWidth ~Behavior " +
+            "~BehaviorMode BeingDeleted BinCounts BinCountsMode BusyAction ButtonDownFcn " +
+            "~ButtonDownFcnMode Categories Children ~ChildrenMode ~CLimInclude ~CLimIncludeMode " +
+            "ContextMenu ~Copyable CreateFcn ~CreateFcnMode Data DataTipTemplate ~DataTipTemplate_IS " +
+            "~DefaultPropMap_Internal DeleteFcn ~DeleteFcnMode ~Description ~DescriptionMode " +
+            "~DimensionNames ~DimensionNamesMode DisplayName ~DisplayNameMode DisplayOrder " +
+            "DisplayStyle EdgeAlpha EdgeColor ~EdgeColorMode ~EraseMode ~ErrorCallback " +
+            "~ErrorCallbackMode FaceAlpha FaceColor HandleVisibility ~HandleVisibilityMode " +
+            "~HelpTopicKey ~HelpTopicKeyMode ~HG1Erase ~HG1EraseMode HitTest ~HitTestMode ~Internal " +
+            "Interruptible ~IsContainer ~IsContainerMode ~LegendDisplay ~LegendDisplayMode LineStyle " +
+            "LineWidth ~NodeChildren ~NodeParent Normalization NumDisplayBins Orientation OthersValue " +
+            "Parent ~ParentMode PickableParts ~PickablePartsMode Selected ~SelectedMode " +
+            "SelectionHighlight ~SelectionHighlightMode ~Serializable ~SerializableMode SeriesIndex " +
+            "~SeriesIndexMode ShowOthers Tag ~TagMode Type ~UIContextMenu UserData Values Visible " +
+            "~VisibleMode ~XLimInclude ~XLimIncludeMode ~YLimInclude ~YLimIncludeMode ~ZLimInclude " +
+            "~ZLimIncludeMode"),
         ("matlab.graphics.chart.primitive.Contour",
             "~ALimInclude ~ALimIncludeMode Annotation ~ApplicationData ~Behavior ~BehaviorMode " +
             "BeingDeleted BusyAction ButtonDownFcn ~ButtonDownFcnMode Children ~ChildrenMode " +
@@ -2135,5 +2179,42 @@ internal static partial class JgsGraphicsProperties
         ("matlab.ui.control.UIAxes", "SelectionHighlight", "on\toff"),
         ("matlab.ui.control.UIAxes", "HitTest", "on\toff"),
         ("matlab.ui.control.UIAxes", "PickableParts", "visible\tnone\tall"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "Scale", "linear\tlog"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "Direction", "normal\treverse"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "LimitsMode", "auto\tmanual"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "TickValuesMode", "auto\tmanual"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "TickLabelRotationMode", "auto\tmanual"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "Color", ""),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "TickLabelColor", ""),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "MinorTick", "on\toff"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "MinorTickValuesMode", "auto\tmanual"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "TickDirection", "in\tout\tboth\tnone"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "TickDirectionMode", "auto\tmanual"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "TickLabelsMode", "auto\tmanual"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "FontSmoothing", "on\toff"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "FontAngle", "normal\titalic"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "FontWeight", "normal\tbold"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "LabelHorizontalAlignment", "left\tcenter\tright"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "TickLabelInterpreter", "none\ttex\tlatex"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "Visible", "on\toff"),
+        ("matlab.graphics.axis.decorator.CategoricalRuler", "HandleVisibility", "on\tcallback\toff"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "DisplayOrder", "ascend\tdescend\tdata"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "Normalization", "count\tcountdensity\tcumcount\tprobability\tpercentage\tpdf\tcdf"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "ShowOthers", "on\toff"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "FaceColor", "auto\tnone"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "EdgeColor", "auto\tnone"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "LineStyle", "-\t--\t:\t-.\tnone"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "BinCountsMode", "auto\tmanual"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "Orientation", "vertical\thorizontal"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "DisplayStyle", "bar\tstairs"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "Visible", "on\toff"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "HandleVisibility", "on\tcallback\toff"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "Selected", "on\toff"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "SelectionHighlight", "on\toff"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "HitTest", "on\toff"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "PickableParts", "visible\tnone\tall"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "BusyAction", "queue\tcancel"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "Interruptible", "on\toff"),
+        ("matlab.graphics.chart.primitive.categorical.Histogram", "SeriesIndex", "none"),
     ];
 }

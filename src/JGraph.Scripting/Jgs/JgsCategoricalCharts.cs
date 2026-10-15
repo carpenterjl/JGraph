@@ -46,6 +46,7 @@ internal static class JgsCategoricalCharts
         ["area"] = Layout.XThenY, ["stairs"] = Layout.XThenY, ["errorbar"] = Layout.XThenY, ["swarmchart"] = Layout.XThenY,
         ["boxchart"] = Layout.XThenY, ["bar"] = Layout.XThenY, ["plot3"] = Layout.XThenY, ["semilogy"] = Layout.XThenY,
         ["text"] = Layout.XThenY, ["barh"] = Layout.Horizontal,
+        ["loglog"] = Layout.XThenY, ["semilogx"] = Layout.XThenY, ["fill"] = Layout.XThenY, ["patch"] = Layout.XThenY, // open item 126
         ["xline"] = Layout.AllX, ["xregion"] = Layout.AllX, ["yline"] = Layout.AllY, ["yregion"] = Layout.AllY,
     };
 
@@ -93,8 +94,170 @@ internal static class JgsCategoricalCharts
             throw new JgsRuntimeException(line, col, "MATLAB:pie:NonNumericData", "Must have numeric data in the pie chart."));
         Wrap(env, "histcounts", HistCounts);
 
-        Wrap(env, "histogram", Histogram, alsoWhen: static args => args.Any(static a => a.Type == JgsType.String && a.AsString.Equals("Categories", StringComparison.OrdinalIgnoreCase)));
+        // Every histogram with a name in it is asked about its names first (open item 126).
+        Wrap(env, "histogram", Histogram, alsoWhen: static args => args.Any(static a => a.Type == JgsType.String));
         Wrap(env, "pie", Pie);
+
+        // Text where the data goes is R2025b's refusal, verb by verb (open item 126, probe_126).
+        foreach (string textVerb in (string[])["plot", "scatter", "area", "stem", "line"])
+        {
+            string verb = textVerb;
+            Wrap(env, verb, (inner, args, wanted, line, col) =>
+            {
+                RefuseTextData(verb, args, line, col);
+                return null;
+            }, alsoWhen: static args => args.Any(static a => a.Type is JgsType.Cell or JgsType.String || a.IsStringArray));
+        }
+
+        // axis asks its rulers first (open item 126, probe_126 and probe_126b).
+        if (env.Builtins.TryGet("axis", out JgsValue axisVerb) && axisVerb.Type == JgsType.Function)
+        {
+            IJgsCallable plain = axisVerb.AsCallable;
+            JgsValue[] Axis(IReadOnlyList<JgsValue> args, int wanted, int line, int col) => AxisOverRulers(plain, args, wanted, line, col);
+            env.Builtins.Register("axis", JgsValue.Function(new BuiltinFunction("axis", (args, line, col) =>
+            {
+                JgsValue[] answers = Axis(args, 1, line, col);
+                return answers.Length > 0 ? answers[0] : JgsValue.Null;
+            })
+            {
+                MultiOutput = Axis,
+                TakesOutputCount = true,
+                KeepsStringArguments = plain is BuiltinFunction { KeepsStringArguments: true },
+            }));
+        }
+    }
+
+    /// <summary>
+    /// R2025b's refusal of text standing where a chart's data goes (probe_126): <c>plot</c> reads text
+    /// first as a line specification and runs out of arguments, or names the argument it cannot read;
+    /// <c>scatter</c>, <c>area</c> and <c>stem</c> want numbers, times or categories; <c>line</c> reads
+    /// its arguments as names and values.
+    /// </summary>
+    private static void RefuseTextData(string verb, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        int start = args.Count > 0 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? entry) && entry.Target is AxesModel ? 1 : 0;
+        if (start >= args.Count)
+        {
+            return;
+        }
+
+        JgsValue first = args[start];
+        bool firstText = first.Type == JgsType.String || first.IsStringArray;
+        bool listText = first.Type == JgsType.Cell || (first.IsStringArray && first.ArrayLength > 1);
+        switch (verb)
+        {
+            case "plot" when first.Type == JgsType.Cell || (firstText && args.Count - start == 1):
+                throw new JgsRuntimeException(line, col, "MATLAB:plot:InvalidFirstInput", "Invalid data argument.");
+            case "plot" when firstText:
+                throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            case "plot" when start + 1 < args.Count && (args[start + 1].Type == JgsType.Cell || (args[start + 1].IsStringArray && args[start + 1].ArrayLength > 1)):
+                throw new JgsRuntimeException(line, col, "MATLAB:plot:InvalidSecondInput", "Invalid data argument.");
+            case "scatter" or "area" or "stem" when listText || (first.IsStringArray && args.Count - start > 1):
+                throw new JgsRuntimeException(line, col, "MATLAB:specgraph:private:specgraph:nonNumericInputRulers",
+                    "Input arguments must be numeric, datetime, duration, or categorical.");
+            case "line" when listText:
+                throw new JgsRuntimeException(line, col, "MATLAB:set:BadPVPair2", "Invalid parameter/value pair arguments");
+        }
+    }
+
+    /// <summary>
+    /// <c>axis</c> in the MATLAB dialect (probe_126, probe_126b): a query or a limits vector over a
+    /// categorical ruler beside a numeric one is <c>MATLAB:axis:Mixed2D</c> (<c>Mixed3D</c> in 3-D),
+    /// <c>equal</c>, <c>image</c> and <c>fill</c> want numeric rulers, several options apply in turn,
+    /// <c>auto x</c> frees the rulers named and keeps the others' limits, <c>tickaligned</c> is a limit
+    /// method like <c>tight</c> and <c>padded</c>, an option asked for an answer is too many outputs,
+    /// and the old three-output form leaves its outputs unassigned. Everything else is the verb as it was.
+    /// </summary>
+    private static JgsValue[] AxisOverRulers(IJgsCallable plain, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        JgsValue[] Plain(IReadOnlyList<JgsValue> given)
+        {
+            JgsValue answer = plain.Call(given, line, col);
+            return answer.Type == JgsType.Null ? [] : [answer];
+        }
+
+        if (!JgsRunningDialect.ThreadIsMatlab)
+        {
+            return wanted == 0 ? Plain(args) : [plain.Call(args, line, col)];
+        }
+
+        int start = args.Count > 0 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? named) && named.Target is AxesModel ? 1 : 0;
+        AxesModel axes = start == 1 ? (AxesModel)JgsHandleRegistry.Require(args[0], line, col).Target : JG.Gca();
+        IReadOnlyList<JgsValue> rest = [.. args.Skip(start)];
+        bool words = rest.Count > 0 && rest.All(static a => a.Type == JgsType.String);
+        AxisModel[] rulers = axes.Is3D ? [axes.PrimaryXAxis, axes.PrimaryYAxis, axes.ZAxis] : [axes.PrimaryXAxis, axes.PrimaryYAxis];
+        int categorical = rulers.Count(static r => r.RulerCategories is not null);
+        bool mixed = categorical > 0 && categorical < rulers.Length;
+
+        if (words && wanted >= 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:nargoutchk:tooManyOutputs", "Too many output arguments.");
+        }
+
+        if (!words && mixed && !axes.IsPolar)
+        {
+            throw axes.Is3D
+                ? new JgsRuntimeException(line, col, "MATLAB:axis:Mixed3D",
+                    "x-axis, y-axis and z-axis limits have different data types. Use <a href=\"matlab:helpview([docroot '/matlab/ref/xlim.html'])\">xlim</a>, "
+                    + "<a href=\"matlab:helpview([docroot '/matlab/ref/ylim.html'])\">ylim</a> and <a href=\"matlab:helpview([docroot '/matlab/ref/zlim.html'])\">zlim</a> functions instead.")
+                : new JgsRuntimeException(line, col, "MATLAB:axis:Mixed2D",
+                    "x-axis and y-axis limits have different data types. Use <a href=\"matlab:helpview([docroot '/matlab/ref/xlim.html'])\">xlim</a> and "
+                    + "<a href=\"matlab:helpview([docroot '/matlab/ref/ylim.html'])\">ylim</a> functions instead.");
+        }
+
+        if (!words)
+        {
+            if (wanted >= 2)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:unassignedOutputs",
+                    "Output argument \"varargout{2}\" (and possibly others) not assigned a value in the execution with \"axis\" function.");
+            }
+
+            return wanted == 0 && rest.Count > 0 ? Plain(args) : [plain.Call(args, line, col)];
+        }
+
+        IReadOnlyList<JgsValue> head = [.. args.Take(start)];
+        foreach (JgsValue option in rest)
+        {
+            string word = option.AsString.Trim();
+            string lower = word.ToLowerInvariant();
+            if (lower is "equal" or "image" or "fill" && categorical > 0)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:axis:NumericAxes", $"Command option {word} is only available for numeric axes.");
+            }
+
+            // A limit method frees the limits it fits, as R2025b's do (probe_126: modes auto after tight).
+            if (lower is "tickaligned" or "tight" or "padded")
+            {
+                foreach (AxisModel ruler in axes.XAxes.Concat(axes.YAxes).Append(axes.ZAxis))
+                {
+                    ruler.LimitMethod = lower == "tight" ? LimitMethod.Tight : lower == "padded" ? LimitMethod.Padded : LimitMethod.Tickaligned;
+                    ruler.AutoScale = true;
+                }
+
+                axes.RecomputeDataBounds();
+                continue;
+            }
+
+            if (lower.Split(' ', StringSplitOptions.RemoveEmptyEntries) is [var mode and ("auto" or "manual"), var letters] && letters.All(static c => c is 'x' or 'y' or 'z'))
+            {
+                // The rulers named take the mode; the others keep the limits they show (probe_126b).
+                axes.RecomputeDataBounds();
+                foreach ((char letter, IEnumerable<AxisModel> side) in (IEnumerable<(char, IEnumerable<AxisModel>)>)[('x', axes.XAxes), ('y', axes.YAxes), ('z', [axes.ZAxis])])
+                {
+                    foreach (AxisModel ruler in side)
+                    {
+                        ruler.AutoScale = letters.Contains(letter) ? mode == "auto" : mode != "auto" && ruler.AutoScale;
+                    }
+                }
+
+                continue;
+            }
+
+            Plain([.. head, JgsValue.Str(lower == "fill" ? "normal" : word)]);
+        }
+
+        return [];
     }
 
     private delegate JgsValue[]? Body(IJgsCallable inner, IReadOnlyList<JgsValue> args, int wanted, int line, int col);
@@ -165,7 +328,7 @@ internal static class JgsCategoricalCharts
 
         JgsValue text = args[at];
         string[] names = text.Type == JgsType.Cell ? [.. text.AsCell.Select(static c => c.AsString)] : [.. text.BoxedElements().Select(static c => c.AsString)];
-        string[] categories = JgsCategorical.SortedNames(names.Distinct(StringComparer.Ordinal), false);
+        string[] categories = [.. names.Distinct(StringComparer.Ordinal)]; // in the order given (probe_126: bar({'b', 'a'}, y))
         double[] codes = [.. names.Select(n => (double)(Array.IndexOf(categories, n) + 1))];
         var given = args.ToArray();
         given[at] = JgsCategorical.FromCodes(codes, text.Rows, text.Cols, new JgsCategoricalTag(categories, false, false));
@@ -338,7 +501,90 @@ internal static class JgsCategoricalCharts
             Remember(answered[0], sides);
         }
 
+        // loglog and the semilogs set the x scale and then the y one once the chart is drawn, and a
+        // categorical ruler refuses a log scale (probe_126: the line stays, both scales linear when x
+        // refused).
+        if (verb is "loglog" or "semilogx" or "semilogy")
+        {
+            bool xLog = verb is "loglog" or "semilogx";
+            bool yLog = verb is "loglog" or "semilogy";
+            if (xLog && axes.PrimaryXAxis.RulerCategories is not null)
+            {
+                axes.PrimaryXAxis.Scale = AxisScaleType.Linear;
+                if (yLog)
+                {
+                    axes.PrimaryYAxis.Scale = AxisScaleType.Linear;
+                }
+
+                throw JgsGraphicsProperties.LogScaleRefused(line, col);
+            }
+
+            if (yLog && axes.PrimaryYAxis.RulerCategories is not null)
+            {
+                axes.PrimaryYAxis.Scale = AxisScaleType.Linear;
+                throw JgsGraphicsProperties.LogScaleRefused(line, col);
+            }
+        }
+
         return answered;
+    }
+
+    /// <summary>Whether a histogram counted a categorical: R2025b's <c>categorical.Histogram</c> (open item 126).</summary>
+    internal static bool IsCategoricalHistogram(HistogramPlot histogram) =>
+        HistogramData.TryGetValue(histogram, out _) || histogram.CategoryNames.Length > 0; // names counted, a cellstr's too
+
+    /// <summary>The names a categorical histogram takes as R2025b's lists them (probe_126).</summary>
+    private static readonly string[] CategoricalHistogramNames =
+    [
+        "BarWidth", "BinCounts", "BinCountsMode", "BusyAction", "ButtonDownFcn", "Categories", "ContextMenu", "CreateFcn", "Data",
+        "DataTipTemplate", "DeleteFcn", "DisplayName", "DisplayOrder", "DisplayStyle", "EdgeAlpha", "EdgeColor", "FaceAlpha",
+        "FaceColor", "HandleVisibility", "HitTest", "Interruptible", "LineStyle", "LineWidth", "Normalization", "NumDisplayBins",
+        "Orientation", "Parent", "PickableParts", "Selected", "SelectionHighlight", "SeriesIndex", "ShowOthers", "Tag", "UserData",
+        "Visible",
+    ];
+
+    /// <summary>The names a numeric histogram takes as R2025b's lists them, its creation-only Categories last (probe_126).</summary>
+    private static readonly string[] NumericHistogramNames =
+    [
+        "BinCounts", "BinCountsMode", "BinEdges", "BinLimits", "BinLimitsMode", "BinMethod", "BinWidth", "BusyAction", "ButtonDownFcn",
+        "ContextMenu", "CreateFcn", "Data", "DataTipTemplate", "DeleteFcn", "DisplayName", "DisplayStyle", "EdgeAlpha", "EdgeColor",
+        "FaceAlpha", "FaceColor", "HandleVisibility", "HitTest", "Interruptible", "LineStyle", "LineWidth", "Normalization", "NumBins",
+        "Orientation", "Parent", "PickableParts", "Selected", "SelectionHighlight", "SeriesIndex", "Tag", "UserData", "Visible",
+        "Categories",
+    ];
+
+    /// <summary>
+    /// R2025b's refusal of a histogram name its kind does not take (probe_126): every name the kind
+    /// takes, and the one that matched none. A numeric histogram keeps the names this build adds to it
+    /// (<c>BarWidth</c>) and refuses only the categorical ones and the names nothing knows.
+    /// </summary>
+    private static void CheckHistogramNames(IReadOnlyList<JgsValue> args, int from, bool categorical, int line, int col)
+    {
+        string[] valid = categorical ? CategoricalHistogramNames : NumericHistogramNames;
+        for (int i = from; i < args.Count; i += 2)
+        {
+            if (args[i].Type != JgsType.String)
+            {
+                continue;
+            }
+
+            string name = args[i].AsString;
+            bool taken = valid.Contains(name, StringComparer.OrdinalIgnoreCase)
+                || (!categorical && name.Equals("BarWidth", StringComparison.OrdinalIgnoreCase));
+            if (!taken)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:unrecognizedStringChoice",
+                    $"Expected input to match one of these values:\n\n{string.Join(", ", valid.Select(static v => $"'{v}'"))}\n\n"
+                    + $"The input, '{name}', did not match any of the valid values.");
+            }
+        }
+
+        if (categorical && OptionValue(args, from, "BinCountsMode") is { } mode && mode.Type == JgsType.String
+            && mode.AsString.Equals("manual", StringComparison.OrdinalIgnoreCase) && OptionValue(args, from, "BinCounts") is null)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:categorical:histogram:EmptyBinCountsManualMode",
+                "When 'BinCountsMode' is set to 'manual', 'BinCounts' must be set.");
+        }
     }
 
     private static void Remember(JgsValue handles, List<(string Property, JgsCategoricalTag Tag, bool OnY)> sides)
@@ -370,16 +616,35 @@ internal static class JgsCategoricalCharts
     private static JgsValue[]? Histogram(IJgsCallable inner, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         (AxesModel axes, int start) = Target(args);
+
+        // The names a histogram takes are its kind's (open item 126): a numeric one is checked here
+        // and drawn by the verb as it was.
+        bool countsCategories = start < args.Count && (args[start].IsCategorical
+            || (args[start].Type == JgsType.String && OptionValue(args, start, "Categories") is not null));
+        if (!countsCategories)
+        {
+            int namesFrom = start;
+            while (namesFrom < args.Count && args[namesFrom].Type != JgsType.String)
+            {
+                namesFrom++;
+            }
+
+            CheckHistogramNames(args, namesFrom, categorical: false, line, col);
+            return null;
+        }
+
         if (start < args.Count && args[start].Type == JgsType.String
             && OptionValue(args, start, "Categories") is { } given && OptionValue(args, start, "BinCounts") is { } binCounts)
         {
             // histogram('Categories', names, 'BinCounts', counts): the counting done already (probe_120).
+            CheckHistogramNames(args, start, categorical: true, line, col);
             string[] listed = given.Type == JgsType.Cell ? [.. given.AsCell.Select(static c => c.AsString)] : [.. given.BoxedElements().Select(static c => c.AsString)];
             double[] counted = JgsCategorical.CodesOf(binCounts);
             var others = new List<JgsValue>();
             for (int i = start; i + 1 < args.Count; i += 2)
             {
-                if (!(args[i].AsString.Equals("Categories", StringComparison.OrdinalIgnoreCase) || args[i].AsString.Equals("BinCounts", StringComparison.OrdinalIgnoreCase)))
+                if (!(args[i].AsString.Equals("Categories", StringComparison.OrdinalIgnoreCase) || args[i].AsString.Equals("BinCounts", StringComparison.OrdinalIgnoreCase)
+                    || args[i].AsString.Equals("BinCountsMode", StringComparison.OrdinalIgnoreCase))) // counts given are the manual mode (probe_126b)
                 {
                     others.Add(args[i]);
                     others.Add(args[i + 1]);
@@ -417,6 +682,7 @@ internal static class JgsCategoricalCharts
                 $"Expected input number 2, categories, to be one of these types:  string, cell, categorical, pattern  Instead its type was {JgsBuiltins.ClassOf(args[rest], JgsDialect.Matlab)}.");
         }
 
+        CheckHistogramNames(args, rest, categorical: true, line, col);
         string[] names = JgsCategorical.NamesOf(data);
         var counts = new double[categories.Length];
         foreach (string name in names)
@@ -434,7 +700,7 @@ internal static class JgsCategoricalCharts
             throw Mixing(line, col);
         }
 
-        JgsValue[] answered = [JgsBuiltins.CategoricalHistogram(start == 1 ? axes : null, [.. args.Skip(rest)], categories, counts, line, col)];
+        JgsValue[] answered = [JgsBuiltins.CategoricalHistogram(start == 1 ? axes : null, WithoutOption(args.Skip(rest).ToArray(), "BinCountsMode"), categories, counts, line, col)];
         if (answered.Length > 0 && JgsHandleRegistry.TryGet(answered[0], out JgsHandleEntry? entry) && entry.Target is HistogramPlot histogram)
         {
             HistogramData.AddOrUpdate(histogram, data);
@@ -453,6 +719,24 @@ internal static class JgsCategoricalCharts
         standsOn.TickPositions = null;
         standsOn.TickLabelOverrides = null;
         axes.RecomputeDataBounds();
+    }
+
+    /// <summary>A name/value tail without one name and its value.</summary>
+    private static JgsValue[] WithoutOption(JgsValue[] tail, string option)
+    {
+        var kept = new List<JgsValue>();
+        for (int i = 0; i < tail.Length; i++)
+        {
+            if (i + 1 < tail.Length && tail[i].Type == JgsType.String && tail[i].AsString.Equals(option, StringComparison.OrdinalIgnoreCase))
+            {
+                i++;
+                continue;
+            }
+
+            kept.Add(tail[i]);
+        }
+
+        return [.. kept];
     }
 
     /// <summary>The value after a name in a name/value tail, or null.</summary>
@@ -615,6 +899,13 @@ internal static class JgsCategoricalCharts
                 if (name.Equals("Categories", StringComparison.OrdinalIgnoreCase))
                 {
                     value = JgsCategorical.CategoriesColumn(new JgsCategoricalTag([.. categories], false, false));
+                    return true;
+                }
+
+                // A categorical ruler has no minor ticks: an empty categorical row (probe_126b).
+                if (name.Equals("MinorTickValues", StringComparison.OrdinalIgnoreCase))
+                {
+                    value = JgsCategorical.FromCodes([], 1, 0, new JgsCategoricalTag([.. categories], false, false));
                     return true;
                 }
 

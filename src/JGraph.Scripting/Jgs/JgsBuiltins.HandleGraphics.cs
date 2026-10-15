@@ -247,15 +247,16 @@ internal static partial class JgsBuiltins
 
         // A custom component is a graphics object (U10); any other object whose class did not
         // inherit get from matlab.mixin.SetGet has none (U6, measured).
-        if (args[0].Type == JgsType.Object && JgsComponentContainers.TryState(args[0].AsObject, out JgsComponentContainerState? component))
+        if (args[0].Type == JgsType.Object && !args[0].IsObjectArray && JgsComponentContainers.TryState(args[0].AsObject, out JgsComponentContainerState? component))
         {
             return JgsComponentContainers.Get(component, args, line, col);
         }
 
+        // An array of them refuses as one does (open item 129).
         if (args[0].Type == JgsType.Object)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:graphics:GetMethodUnknown",
-                $"Cannot find 'get' method for {args[0].AsObject.Class.Name} class.");
+                $"Cannot find 'get' method for {args[0].ObjectClass.Name} class.");
         }
         List<JgsHandleEntry> targets = HandleList("get", args[0], line, col);
 
@@ -324,15 +325,18 @@ internal static partial class JgsBuiltins
 
         // A custom component is a graphics object (U10); any other object whose class did not
         // inherit set from matlab.mixin.SetGet has none (U6; a uistyle, U9).
-        if (args[0].Type == JgsType.Object && JgsComponentContainers.TryState(args[0].AsObject, out JgsComponentContainerState? component))
+        if (args[0].Type == JgsType.Object && !args[0].IsObjectArray && JgsComponentContainers.TryState(args[0].AsObject, out JgsComponentContainerState? component))
         {
             return JgsComponentContainers.Set(component, args, line, col);
         }
 
+        // An array of them refuses as one does, and an empty one has nothing to set (open item 129).
         if (args[0].Type == JgsType.Object)
         {
-            throw new JgsRuntimeException(line, col, "MATLAB:graphics:SetMethodUnknown",
-                $"Cannot find 'set' method for {args[0].AsObject.Class.Name} class.");
+            return args[0].IsObjectArray && args[0].ArrayLength == 0
+                ? JgsValue.Null
+                : throw new JgsRuntimeException(line, col, "MATLAB:graphics:SetMethodUnknown",
+                    $"Cannot find 'set' method for {args[0].ObjectClass.Name} class.");
         }
 
         List<JgsHandleEntry> targets = HandleList("set", args[0], line, col);

@@ -96,6 +96,40 @@ public static class UiFonts
         return (text.Length * sizePixels * 0.55, sizePixels * 1.15);
     }
 
+    /// <summary>
+    /// How far the family <see cref="Family"/> answers for <paramref name="fontName"/> reaches above
+    /// and below its baseline at <paramref name="sizePixels"/>, in pixels of 1/96 inch.
+    /// </summary>
+    public static (double Ascent, double Descent) Reach(string? fontName, double sizePixels, bool bold = false, bool italic = false)
+    {
+        if (!(sizePixels > 0) || !double.IsFinite(sizePixels))
+        {
+            return (0, 0);
+        }
+
+        string family = Family(fontName);
+        if (OperatingSystem.IsWindows())
+        {
+            lock (Gate)
+            {
+                try
+                {
+                    if (MeasureWithGdi(string.Empty, family, bold, italic) is { } measured)
+                    {
+                        double scale = sizePixels / MeasureEm;
+                        return (measured.Ascent * scale, measured.Descent * scale);
+                    }
+                }
+                catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+                {
+                    // No GDI here: Arial's below.
+                }
+            }
+        }
+
+        return (sizePixels * 1854 / 2048, sizePixels * 434 / 2048);
+    }
+
     private static readonly Dictionary<(string Family, bool Bold, bool Italic), Dictionary<uint, int>> Kerns = new();
 
     /// <summary>
@@ -246,7 +280,7 @@ public static class UiFonts
         return _dc;
     }
 
-    private static (double Width, double Line)? MeasureWithGdi(string text, string family, bool bold, bool italic)
+    private static (double Width, double Line, double Ascent, double Descent)? MeasureWithGdi(string text, string family, bool bold, bool italic)
     {
         IntPtr dc = Dc();
         if (dc == IntPtr.Zero)
@@ -286,7 +320,7 @@ public static class UiFonts
                 width = size.cx;
             }
 
-            return (width, metrics.tmHeight + metrics.tmExternalLeading);
+            return (width, metrics.tmHeight + metrics.tmExternalLeading, metrics.tmAscent, metrics.tmDescent);
         }
         finally
         {

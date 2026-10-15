@@ -425,7 +425,7 @@ public class ArithmeticReuseM173Tests : IDisposable
     }
 
     [Fact]
-    public async Task AJgsAliasKeepsItsValueWhenAMatlabScriptUpdatesTheVariable()
+    public void AJgsAliasKeepsItsValueWhenAMatlabScriptUpdatesTheVariable()
     {
         // c15: a JGS binding takes no counted share (M17) and marks the payload exposed (M6), so a
         // MATLAB `a = a - 1` on a payload sitting at one holder must still allocate.

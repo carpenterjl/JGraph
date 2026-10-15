@@ -4,9 +4,9 @@
 % num2cell, isvalid and == keep the shape; a value-object array held in a property is written through
 % (o.list(2).p = 9); a method named after a dot on an array is called (a.total); a comma-separated
 % list spreads into subscripts (v(a(1:2).p)); a struct or an empty string beside an object goes
-% through the constructor; cell2mat joins objects. The classes Val116 and Hnd116 live in helpers/.
-% Lines marked div=ADR0233 are repmat with three counts and writes through a struct, a cell or an
-% element of an array on the way to the array.
+% through the constructor; cell2mat joins objects. The classes Val116 and Hnd116 live in helpers/. ADR
+% 0234 made repmat with three counts and the writes through a struct, a cell or an element of an array
+% on the way to the array exact.
 global VAL116_CTOR
 VAL116_CTOR = 0;
 s1 = Val116(1); s2 = Val116(2); s3 = Val116(3);
@@ -25,15 +25,15 @@ u9b_chk('nd_dot_write', @() nddot(t3)); u9b_chk('nd_for', @() ndfor(t3)); u9b_ch
 u9b_chk('nd_isequal', @() isequal(t3, t3)); u9b_chk('nd_isempty', @() isempty(t3)); u9b_chk('nd_cat_mismatch', @() size(cat(3, a, b)));
 u9b_chk('nd_handle', @() size(cat(3, ha, ha))); u9b_chk('nd_handle_valid', @() isvalid(cat(3, ha, ha))); u9b_chk('nd_handle_eq', @() cat(3, ha, ha) == h1);
 u9b_chk('nd_cs_name', @() {t3(:, 2, :).name}); u9b_chk('nd_num2cell', @() size(num2cell(t3))); u9b_chk('nd_flip', @() [flip(t3, 3).p]);
-u9b_chkdiv('nd_repmat', @() oi_try( @() size(repmat(s1, [1 2 2]))), 'ADR0233'); u9b_chk('nd_empty3', @() size(Val116.empty(0, 2, 3)));
+u9b_chk('nd_repmat', @() size(repmat(s1, [1 2 2]))); u9b_chk('nd_empty3', @() size(Val116.empty(0, 2, 3)));
 u9b_chk('nd_cat4', @() size(cat(4, s1, s2)));
 u9b_chk('nd_horzcat_3d', @() size([t3 t3]));
 u9b_chk('nd_vertcat_3d', @() size([t3; t3]));
 u9b_chk('nd_index_two', @() size(t3(1, 4)));
 u9b_chk('nd_index_two_p', @() t3(1, 4).p);
 u9b_chk('nest_write', @() nest1()); u9b_chk('nest_grow', @() nest2()); u9b_chk('nest_replace', @() nest3()); u9b_chk('nest_name_char', @() nest4()); u9b_chk('nest_cs', @() nest5());
-u9b_chkdiv('nest_struct', @() oi_try( @() nest6()), 'ADR0233'); u9b_chkdiv('nest_cell', @() oi_try( @() nest7()), 'ADR0233'); u9b_chk('nest_handle', @() nest8()); u9b_chk('nest_deep', @() nest9()); u9b_chk('nest_handle_val', @() nest10());
-u9b_chk('nest_delete', @() nest11()); u9b_chk('nest_end', @() nest12()); u9b_chkdiv('nest_in_arr', @() oi_try( @() nest13()), 'ADR0233');
+u9b_chk('nest_struct', @() nest6()); u9b_chk('nest_cell', @() nest7()); u9b_chk('nest_handle', @() nest8()); u9b_chk('nest_deep', @() nest9()); u9b_chk('nest_handle_val', @() nest10());
+u9b_chk('nest_delete', @() nest11()); u9b_chk('nest_end', @() nest12()); u9b_chk('nest_in_arr', @() nest13());
 u9b_chk('m_arr', @() a.total); u9b_chk('m_scalar', @() s1.total); u9b_chk('m_arr_paren', @() a.total()); u9b_chk('m_fn', @() total(a)); u9b_chk('m_bump', @() [a.bump.p]); u9b_chk('m_bump_s', @() s1.bump.p);
 u9b_chk('m_sub', @() a(1:2).total); u9b_chk('m_class', @() class(a.bump)); u9b_chk('m_h_bump', @() hbump(ha)); u9b_chk('m_in_expr', @() a.total + 1);
 u9b_chk('m_handle_noout', @() hstate(h1));

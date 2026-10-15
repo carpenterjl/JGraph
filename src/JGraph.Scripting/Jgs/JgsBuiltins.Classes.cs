@@ -308,6 +308,10 @@ internal static partial class JgsBuiltins
                 : null;
             string className = asked?.Name ?? (IsTextScalar(args[0]) ? TextOf(args[0]) : ClassOf(args[0], JgsDialect.Matlab));
             string[] names = asked is null ? [] : [.. asked.SuperclassNames];
+            if (asked is null && className == OnOffSwitchStateValue.Name)
+            {
+                names = ["logical"]; // an enumeration of logical (open item 129)
+            }
             JgsValue column = JgsValue.Cell([.. names.Select(JgsValue.Str)]);
             column.Reshape(names.Length, 1);
             return (column, names, className);

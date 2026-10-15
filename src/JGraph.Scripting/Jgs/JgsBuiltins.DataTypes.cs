@@ -81,7 +81,10 @@ internal static partial class JgsBuiltins
                 var texts = new JgsValue[input.ArrayLength];
                 for (int i = 0; i < texts.Length; i++)
                 {
-                    texts[i] = JgsValue.Str(TimeText(input, i));
+                    // A missing time is the missing string in R2025b (open item 128: string(NaT)).
+                    texts[i] = JgsValue.Str(JgsRunningDialect.ThreadIsMatlab && double.IsNaN(input.ElementAt(i).AsNumber) && input.TimeTag!.Kind != JgsTimeKind.CalendarDuration
+                        ? MissingSentinel
+                        : TimeText(input, i));
                 }
 
                 return ShapedLike(input, texts).MarkStringArray();
@@ -321,7 +324,8 @@ internal static partial class JgsBuiltins
             return new TextColumn(columnName, Array.ConvertAll(elements, v => (string?)StringOf(v).AsString));
         }
 
-        if (value.Type == JgsType.Array && value.Cols > 1)
+        // A variable of no columns keeps its rows (open item 128: table(zeros(2, 0)) is 2-by-1).
+        if (value.Type == JgsType.Array && (value.Cols > 1 || (value.Cols == 0 && value.Rows > 0)))
             return new NumberMatrixColumn(columnName, FlattenColumnMajor(verb, value, line, col), value.Rows, value.Cols);
         return new NumberColumn(columnName, ToDoubles(verb, value, line, col));
     }
@@ -348,10 +352,16 @@ internal static partial class JgsBuiltins
             table = GrownTo(table, column.RowCount);
         }
 
-        if (column.RowCount != table.RowCount)
+        // The 0-by-0 table takes its height from its first variable; any other height is the
+        // table's, rows but no variables included (open item 128: T(:, []).x = 5 is refused).
+        bool unsized = table.ColumnCount == 0 && table.RowCount == 0 && JgsRunningDialect.ThreadIsMatlab;
+        if (column.RowCount != table.RowCount && !unsized)
         {
-            throw new JgsRuntimeException(line, col,
-                $"To assign to or create a variable in a table, the number of rows must match the table's ({column.RowCount} given, {table.RowCount} expected).");
+            throw JgsRunningDialect.ThreadIsMatlab
+                ? new JgsRuntimeException(line, col, "MATLAB:table:RowDimensionMismatch",
+                    "To assign to or create a variable in a table, the number of rows must match the height of the table.")
+                : new JgsRuntimeException(line, col,
+                    $"To assign to or create a variable in a table, the number of rows must match the table's ({column.RowCount} given, {table.RowCount} expected).");
         }
 
         var columns = new List<TableColumn>(table.Columns);
@@ -376,6 +386,9 @@ internal static partial class JgsBuiltins
 
         return table.WithColumns(columns);
     }
+
+    /// <summary><c>T.Row</c>: the row names as a column of chars (open item 128).</summary>
+    internal static JgsValue TableRowNamesValue(Table table) => RowNameCell(table.RowNames);
 
     /// <summary><paramref name="table"/> without the variable <paramref name="name"/> — what <c>T.Var = []</c> means.</summary>
     internal static Table WithoutColumn(Table table, string name) =>

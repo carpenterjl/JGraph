@@ -406,7 +406,8 @@ internal static class JgsHandleRegistry
 
             double handle = _next;
             _next += 1;
-            Entries[handle] = new JgsHandleEntry(target);
+            // A ruler's handle is hidden in R2025b (probe_126b: HandleVisibility 'off').
+            Entries[handle] = new JgsHandleEntry(target) { HandleVisibility = target is AxisModel && JgsRunningDialect.ThreadIsMatlab ? "off" : "on" };
             Handles[target] = handle;
             return JgsValue.Number(handle);
         }

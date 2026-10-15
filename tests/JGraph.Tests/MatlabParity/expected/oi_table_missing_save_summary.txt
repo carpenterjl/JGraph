@@ -1,0 +1,340 @@
+CHK|vt_class|char[1 7]'vartype'|exact
+CHK|vt_isstruct|logical[1 1] 0|exact
+CHK|vt_isobject|logical[1 1] 1|exact
+CHK|vt_disp|char[1 249]'	table <a href="matlab:doc('vartype')">vartype</a> subscript:\n\n		Select table variables matching the type 'numeric'\n\n	See <a href="matlab:helpview(fullfile(docroot,'matlab','matlab_prog','access-data-in-a-table.html'))">Access Data in a Table</a>.\n\n'|exact
+CHK|vt_none_arg|char[1 8]'no error'|exact
+CHK|vt_bad|char[1 123]'MATLAB:vartype:InvalidType / Invalid data type. Input must be a string or a character vector specifying a valid class name.'|exact
+CHK|vt_fields|char[1 8]'no error'|exact
+CHK|vt_size|double[1 2] [1 1]|exact
+CHK|vt_props|cell[0 1]{}|exact
+CHK|vt_isequal|logical[1 1] 1|exact
+CHK|vt_none|double[1 2] [3 0]|exact
+CHK|vt_none_names|cell[1 0]{}|exact
+CHK|vt_none_disp|char[1 90]'T0 =\n\n  3×0 empty <a href="matlab:helpPopup('table')" style="font-weight:bold">table</a>\n\n'|exact
+CHK|vt_none_height|double[1 1] 3|exact
+CHK|vt_none_width|double[1 1] 0|exact
+CHK|vt_none_isempty|logical[1 1] 1|exact
+CHK|t0_empty_idx|double[1 2] [3 0]|exact
+CHK|t0_logical|double[1 2] [3 0]|exact
+CHK|t0_cell|double[1 2] [3 0]|exact
+CHK|t0_add|cell[1 2]{double[1 2] [3 1];double[3 1] [7;8;9]}|exact
+CHK|t0_add_scalar|MATLAB:table:RowDimensionMismatch|exact
+CHK|t0_add_scalar_msg|To assign to or create a variable in a table, the number of rows must match the height of the table.|exact
+CHK|t0_cat|double[1 2] [3 1]|exact
+CHK|t0_vcat|double[1 2] [6 0]|exact
+CHK|t0_size_ctor|double[1 2] [3 0]|exact
+CHK|t0_rows|double[1 2] [0 5]|exact
+CHK|t0_rows_disp|char[1 189]'\nT0 =\n\n  0×2 empty <a href="matlab:helpPopup('table')" style="font-weight:bold">table</a>\n\n    <strong>n</strong>    <strong>kind</strong>\n    <strong>_</strong>    <strong>____</strong>\n\n\n'|div=ADR0234|diverges|char[1 16]'T0 = table[0x2]\n'
+CHK|t0_brace|double[1 2] [3 0]|exact
+CHK|t0_brace_class|char[1 6]'double'|exact
+CHK|t0_table2array|double[1 2] [3 0]|exact
+CHK|t0_rownames|cell[1 2]{double[1 2] [2 0];cell[2 1]{char[1 2]'r1';char[1 2]'r2'}}|exact
+CHK|t0_summary|char[1 8]'no error'|exact
+CHK|t0_sortrows|double[1 2] [3 0]|exact
+CHK|t0_index_rows|double[1 2] [2 0]|exact
+CHK|t0_disp_rownames|char[1 90]'T0 =\n\n  2×0 empty <a href="matlab:helpPopup('table')" style="font-weight:bold">table</a>\n\n'|exact
+CHK|vt_dot|char[1 103]'MATLAB:table:IllegalVarSubscript / A table variable name must be a string scalar or a character vector.'|exact
+CHK|vt_dot_write|char[1 103]'MATLAB:table:IllegalVarSubscript / A table variable name must be a string scalar or a character vector.'|exact
+CHK|cv_char_warn|char[1 342]'MATLAB:table:convertvars:ConvertCharWarning / Converting to data type 'char' converts variables into cell arrays of character vectors rather than a character array. Storing text data as character arrays in a table is not recommended. When working with text data in a table or a timetable, consider using a string array or a categorical array.' WARN MATLAB:table:convertvars:ConvertCharWarning|exact
+CHK|cv_char_class|char[1 4]'cell' WARN MATLAB:table:convertvars:ConvertCharWarning|exact
+CHK|cv_char_warn_cellstr|char[1 342]'MATLAB:table:convertvars:ConvertCharWarning / Converting to data type 'char' converts variables into cell arrays of character vectors rather than a character array. Storing text data as character arrays in a table is not recommended. When working with text data in a table or a timetable, consider using a string array or a categorical array.' WARN MATLAB:table:convertvars:ConvertCharWarning|exact
+CHK|cv_string_nowarn|char[1 3]' / '|exact
+CHK|sl_class|char[1 5]'table'|exact
+CHK|sl_vars|cell[1 5]{char[1 1]'n';char[1 4]'kind';char[1 4]'name';char[1 3]'str';char[1 4]'flag'}|exact
+CHK|sl_kind|cell[1 5]{char[1 11]'categorical';cell[1 3]{char[1 1]'a';char[1 11]'<undefined>';char[1 1]'a'};char[1 4]'cell';char[1 6]'string';char[1 7]'logical'}|exact
+CHK|sl_equal|logical[1 1] 1|exact
+CHK|sl_str|string[3 1]"p","<missing>","r"|exact
+CHK|sl_rownames|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|sl_props|cell[1 3]{cell[1 2]{char[1 1]'m';char[1 1]'s'};char[1 3]'two';cell[1 2]{char[1 5]'first';char[0 0]''}}|exact
+CHK|sl_whos_name|char[1 1]'T'|exact
+CHK|sl_whos_size|double[0 0]|exact
+CHK|sl_whos_class|char[1 5]'table'|exact
+CHK|sl_whos_fields|cell[9 1]{char[1 4]'name';char[1 4]'size';char[1 5]'bytes';char[1 5]'class';char[1 6]'global';char[1 6]'sparse';char[1 7]'complex';char[1 7]'nesting';char[1 10]'persistent'}|exact
+CHK|sl_whos_two|cell[2 3]{char[1 1]'T';char[1 5]'table';char[1 1]'c';char[1 11]'categorical';char[1 1]'x';char[1 6]'double'}|exact
+CHK|sl_whos_disp|char[1 167]'  Name      Size            Bytes  Class     Attributes\n\n  T          -               B  table               \n  x         1xB                 B  double              \n\n'|div=ADR0234|diverges|char[1 168]'  Name      Size            Bytes  Class     Attributes\n\n  T          -                B  table               \n  x         1xB                 B  double              \n\n'
+CHK|sl_cat_alone|cell[1 4]{char[1 11]'categorical';cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'c'};logical[1 1] 1;double[1 3] [1 2 1]}|exact
+CHK|sl_whos_cat|cell[1 3]{char[1 1]'c';double[0 0];char[1 11]'categorical'}|exact
+CHK|sl_whos_num|cell[1 8]{char[1 1]'x';double[1 2] [3 3];double[1 1] 72;char[1 6]'double';logical[1 1] 0;logical[1 1] 0;logical[1 1] 0;logical[1 1] 0}|exact
+CHK|sl_whos_struct|cell[1 4]{char[1 1]'s';double[1 2] [1 2];double[1 1] 281;char[1 6]'struct'}|exact
+CHK|sl_whos_cell|cell[1 4]{char[1 1]'c';double[1 2] [2 2];double[1 1] 508;char[1 4]'cell'}|exact
+CHK|sl_whos_bytes_num|cell[4 6]{char[1 1]'b';double[1 1] 4;logical[1 1] 0;logical[1 1] 0;char[1 1]'q';double[1 1] 16;logical[1 1] 1;logical[1 1] 0;char[1 2]'sp';double[1 1] 56;logical[1 1] 0;logical[1 1] 1;char[1 1]'x';double[1 1] 80;logical[1 1] 0;logical[1 1] 0;char[1 1]'y';double[1 1] 6;logical[1 1] 0;logical[1 1] 0;char[1 1]'z';double[1 1] 4;logical[1 1] 0;logical[1 1] 0}|exact
+CHK|sl_whos_pattern|cell[1 2]{char[1 1]'x';char[1 2]'xx'}|exact
+CHK|sl_whos_missing|char[1 65]'MATLAB:whos:fileIsNotThere / Could not find no_such_file_128.mat.'|exact
+CHK|sl_whos_v73|char[1 8]'no error'|div=ADR0234|diverges|char[1 104]' / save writes version 5 MAT-files only; version 7.3 is an HDF5 format that can be read but not written.'
+CHK|sl_dates|char[1 8]'no error'|div=ADR0234|diverges|char[1 103]' / save: 'd' is a datetime, which a version 5 MAT-file cannot hold — convert it with datenum or string.'
+CHK|im_table|logical[3 5] [0 0 0 0 0;1 1 1 1 0;0 0 0 0 0]|exact
+CHK|im_size|double[1 2] [3 5]|exact
+CHK|im_two_col|logical[2 1] [1;0]|exact
+CHK|im_indicator|logical[3 1] [0;1;0]|exact
+CHK|im_indicator_cell|char[1 8]'no error'|exact
+CHK|im_int|logical[2 1] [0;0]|exact
+CHK|im_char_var|logical[2 1] [0;1]|exact
+CHK|am_table|logical[1 1] 1|exact
+CHK|am_none|logical[1 1] 0|exact
+CHK|fm_constant|char[1 108]'MATLAB:fillmissing:ConstantInvalidTypeForTableVariable / Invalid fill constant type for table variable kind.'|exact
+CHK|fm_constant_n|double[3 1] [1;0;3]|exact
+CHK|fm_previous|cell[1 4]{double[1 3] [1 1 3];cell[1 3]{char[1 1]'a';char[1 1]'a';char[1 1]'a'};cell[1 3]{char[1 1]'x';char[1 1]'x';char[1 1]'z'};string[1 3]"p","p","r"}|exact
+CHK|fm_next|cell[1 4]{double[1 3] [1 3 3];cell[1 3]{char[1 1]'a';char[1 1]'a';char[1 1]'a'};cell[1 3]{char[1 1]'x';char[1 1]'z';char[1 1]'z'};string[1 3]"p","r","r"}|exact
+CHK|fm_cells|cell[1 4]{double[1 3] [1 0 3];cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'a'};cell[1 3]{char[1 1]'x';char[1 1]'w';char[1 1]'z'};string[1 3]"p","s","r"}|exact
+CHK|fm_linear|char[1 141]'MATLAB:fillmissing:InterpolationInvalidTableVariable / Table contains variables of types for which the 'linear' fill method is not supported.'|exact
+CHK|fm_linear_n|double[3 1] [1;2;3]|exact
+CHK|fm_nearest|cell[1 2]{double[1 3] [1 3 3];cell[1 3]{char[1 1]'a';char[1 1]'a';char[1 1]'a'}}|exact
+CHK|fm_tf|logical[3 5] [0 0 0 0 0;1 1 1 1 0;0 0 0 0 0]|exact
+CHK|fm_cat_const|cell[1 3]{char[1 1]'a';char[1 1]'a';char[1 1]'a'}|exact
+CHK|fm_bad_const|char[1 105]'MATLAB:fillmissing:ConstantInvalidTypeForTableVariable / Invalid fill constant type for table variable n.'|exact
+CHK|fm_replace_off|char[1 8]'no error'|exact
+CHK|fm_movmean|double[5 1] [1;2;3;4;5]|exact
+CHK|fm_vartype|double[3 1] [1;7;3]|exact
+CHK|rm_table|double[1 2] [2 5]|exact
+CHK|rm_table_rows|double[2 1] [1;3]|exact
+CHK|rm_min2|double[1 2] [2 5]|exact
+CHK|rm_datavars|double[1 2] [2 5]|exact
+CHK|rm_tf|logical[3 1] [0;1;0]|exact
+CHK|rm_cols|cell[1 1]{char[1 4]'flag'}|exact
+CHK|sm_table|double[3 2] [1 NaN;NaN 2;3 2]|exact
+CHK|sm_datavars|double[2 2] [1 -99;NaN 2]|exact
+CHK|sm_cell|cell[2 1]{char[1 1]'a';char[0 0]''}|exact
+CHK|su_fields|cell[5 1]{char[1 1]'n';char[1 4]'kind';char[1 4]'name';char[1 3]'str';char[1 4]'flag'}|exact
+CHK|su_n|cell[11 1]{char[1 4]'Size';char[1 4]'Type';char[1 11]'Description';char[1 5]'Units';char[1 10]'Continuity';char[1 10]'NumMissing';char[1 3]'Min';char[1 6]'Median';char[1 3]'Max';char[1 4]'Mean';char[1 3]'Std'}|exact
+CHK|su_n_v|char[1 242]'Size=double[1 2]:[3 1];Type=char[1 6]:'double';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:1;Min=double[1 1]:1;Median=double[1 1]:2;Max=double[1 1]:3;Mean=double[1 1]:2;Std=double[1 1]:1.41421;'|exact
+CHK|su_kind|cell[8 1]{char[1 4]'Size';char[1 4]'Type';char[1 11]'Description';char[1 5]'Units';char[1 10]'Continuity';char[1 10]'Categories';char[1 6]'Counts';char[1 10]'NumMissing'}|exact
+CHK|su_kind_v|char[1 196]'Size=double[1 2]:[3 1];Type=char[1 11]:'categorical';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];Categories=cell[1 1]:{'a'};Counts=double[1 1]:2;NumMissing=double[1 1]:1;'|exact
+CHK|su_name|cell[6 1]{char[1 4]'Size';char[1 4]'Type';char[1 11]'Description';char[1 5]'Units';char[1 10]'Continuity';char[1 10]'NumMissing'}|exact
+CHK|su_name_v|char[1 140]'Size=double[1 2]:[3 1];Type=char[1 4]:'cell';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:1;'|exact
+CHK|su_str|cell[6 1]{char[1 4]'Size';char[1 4]'Type';char[1 11]'Description';char[1 5]'Units';char[1 10]'Continuity';char[1 10]'NumMissing'}|exact
+CHK|su_str_v|char[1 142]'Size=double[1 2]:[3 1];Type=char[1 6]:'string';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:1;'|exact
+CHK|su_flag|cell[7 1]{char[1 4]'Size';char[1 4]'Type';char[1 11]'Description';char[1 5]'Units';char[1 10]'Continuity';char[1 4]'True';char[1 5]'False'}|exact
+CHK|su_flag_v|char[1 157]'Size=double[1 2]:[3 1];Type=char[1 7]:'logical';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];True=double[1 1]:2;False=double[1 1]:1;'|exact
+CHK|su_units|char[1 254]'Size=double[1 2]:[2 1];Type=char[1 6]:'double';Description=char[1 6]:'length';Units=char[1 1]:'m';Continuity=double[0 0]:[];NumMissing=double[1 1]:0;Min=double[1 1]:1;Median=double[1 1]:1.5;Max=double[1 1]:2;Mean=double[1 1]:1.5;Std=double[1 1]:0.707107;'|exact
+CHK|su_disp|char[1 1152]'\n<strong>T</strong>: 3×5 table\n\nVariables:\n\n    <strong>n</strong>: double\n    <strong>kind</strong>: categorical (<a href="matlab:if exist('T','var') && istabular(T) && ismember('kind',T.Properties.VariableNames) && iscategorical(T.('kind')),displayWholeSummary(T.('kind')),fprintf(matlab.internal.display.lineSpacingCharacter),else,fprintf('Unable to display counts for ''kind'' because ''T'' has changed.\n');end">1 categories</a>)\n    <strong>name</strong>: cell array of character vectors\n    <strong>str</strong>: string\n    <strong>flag</strong>: logical (2 true)\n\nStatistics for applicable variables:\n\n            <strong>NumMissing</strong>     <strong>Min</strong>     <strong>Median</strong>     <strong>Max</strong>     <strong>Mean</strong>        <strong>Std</strong>    \n\n    <strong>n   </strong>        1           1        2         3        2        1.4142  \n    <strong>kind</strong>        1                                                        \n    <strong>name</strong>        1                                                        \n    <strong>str </strong>        1                                                        \n\n'|div=ADR0234|diverges|char[1 1144]'\n<strong>T</strong>: 3×5 table\n\nVariables:\n\n    <strong>n</strong>: double\n    <strong>kind</strong>: categorical (<a href="matlab:if exist('T','var') && istabular(T) && ismember('kind',T.Properties.VariableNames) && iscategorical(T.('kind')),displayWholeSummary(T.('kind')),fprintf(matlab.internal.display.lineSpacingCharacter),else,fprintf('Unable to display counts for ''kind'' because ''T'' has changed.\n');end">1 categories</a>)\n    <strong>name</strong>: cell array of character vectors\n    <strong>str</strong>: string\n    <strong>flag</strong>: logical (2 true)\n\nStatistics for applicable variables:\n\n            <strong>NumMissing</strong>     <strong>Min</strong>     <strong>Median</strong>     <strong>Max</strong>     <strong>Mean</strong>      <strong>Std</strong>      \n\n    <strong>n   </strong>        1           1        2         3       2       1.4142  \n    <strong>kind</strong>        1                                                      \n    <strong>name</strong>        1                                                      \n    <strong>str </strong>        1                                                      \n\n'
+CHK|su_int|char[1 210]'Size=double[1 2]:[3 1];Type=char[1 4]:'int8';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:0;Min=int8[1 1]:1;Median=int8[1 1]:2;Max=int8[1 1]:9;Mean=double[1 1]:4;'|exact
+CHK|su_two_col|char[1 272]'Size=double[1 2]:[2 2];Type=char[1 6]:'double';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 2]:[0 0];Min=double[1 2]:[1 2];Median=double[1 2]:[2 3];Max=double[1 2]:[3 4];Mean=double[1 2]:[2 3];Std=double[1 2]:[1.41421 1.41421];'|exact
+CHK|su_rownames|char[1 864]'\n<strong>T</strong>: 2×2 table\n\nVariables:\n\n    <strong>Var1</strong>: double\n    <strong>Var2</strong>: categorical (<a href="matlab:if exist('T','var') && istabular(T) && ismember('Var2',T.Properties.VariableNames) && iscategorical(T.('Var2')),displayWholeSummary(T.('Var2')),fprintf(matlab.internal.display.lineSpacingCharacter),else,fprintf('Unable to display counts for ''Var2'' because ''T'' has changed.\n');end">2 categories</a>)\n\nStatistics for applicable variables:\n\n            <strong>NumMissing</strong>     <strong>Min</strong>       <strong>Median</strong>       <strong>Max</strong>        <strong>Mean</strong>          <strong>Std</strong>    \n\n    <strong>Var1</strong>        0           1        1.5000        2        1.5000        0.7071  \n    <strong>Var2</strong>        0                                                                 \n\n'|div=ADR0234|diverges|char[1 839]'\n<strong>T</strong>: 2×2 table\n\nVariables:\n\n    <strong>Var1</strong>: double\n    <strong>Var2</strong>: categorical (<a href="matlab:if exist('T','var') && istabular(T) && ismember('Var2',T.Properties.VariableNames) && iscategorical(T.('Var2')),displayWholeSummary(T.('Var2')),fprintf(matlab.internal.display.lineSpacingCharacter),else,fprintf('Unable to display counts for ''Var2'' because ''T'' has changed.\n');end">2 categories</a>)\n\nStatistics for applicable variables:\n\n            <strong>NumMissing</strong>     <strong>Min</strong>     <strong>Median</strong>     <strong>Max</strong>      <strong>Mean</strong>       <strong>Std</strong>      \n\n    <strong>Var1</strong>        0           1      1.5000      2      1.5000     0.7071  \n    <strong>Var2</strong>        0                                                        \n\n'
+CHK|su_empty|char[1 260]'Size=double[1 2]:[0 1];Type=char[1 6]:'double';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:0;Min=double[0 1]:zeros(0,1);Median=double[1 1]:NaN;Max=double[0 1]:zeros(0,1);Mean=double[1 1]:NaN;Std=double[1 1]:NaN;'|exact
+CHK|vt_display_cellstr|char[1 255]'v = \n\n	table <a href="matlab:doc('vartype')">vartype</a> subscript:\n\n		Select table variables matching the type 'cellstr'\n\n	See <a href="matlab:helpview(fullfile(docroot,'matlab','matlab_prog','access-data-in-a-table.html'))">Access Data in a Table</a>.\n\n'|exact
+CHK|vt_display_double|char[1 254]'v = \n\n	table <a href="matlab:doc('vartype')">vartype</a> subscript:\n\n		Select table variables matching the type 'double'\n\n	See <a href="matlab:helpview(fullfile(docroot,'matlab','matlab_prog','access-data-in-a-table.html'))">Access Data in a Table</a>.\n\n'|exact
+CHK|vt_display_noarg|char[1 248]'v = \n\n	table <a href="matlab:doc('vartype')">vartype</a> subscript:\n\n		Select table variables matching the type ''\n\n	See <a href="matlab:helpview(fullfile(docroot,'matlab','matlab_prog','access-data-in-a-table.html'))">Access Data in a Table</a>.\n\n'|exact
+CHK|vt_disp_noarg|char[1 242]'	table <a href="matlab:doc('vartype')">vartype</a> subscript:\n\n		Select table variables matching the type ''\n\n	See <a href="matlab:helpview(fullfile(docroot,'matlab','matlab_prog','access-data-in-a-table.html'))">Access Data in a Table</a>.\n\n'|exact
+CHK|vt_fieldnames|cell[0 1]{}|exact
+CHK|vt_class_noarg|char[1 7]'vartype'|exact
+CHK|vt_brace|double[1 2] [3 1]|exact
+CHK|vt_logical|double[1 2] [3 0]|exact
+CHK|vt_char_table|cell[1 1]{char[1 4]'name'}|exact
+CHK|wf_disp|char[1 307]'  Name      Size            Bytes  Class          Attributes\n\n  T          -               1988  table                    \n  c          -                125  categorical              \n  s         1x2                 4  char                     \n  x         1x1                 8  double                   \n\n'|div=ADR0234|diverges|char[1 307]'  Name      Size            Bytes  Class          Attributes\n\n  T          -                393  table                    \n  c          -                  3  categorical              \n  s         1x2                 4  char                     \n  x         1x1                 8  double                   \n\n'
+CHK|wf_bytes_table|cell[1 3]{double[1 1] 1988;double[0 0];char[1 5]'table'}|div=ADR0234|diverges|cell[1 3]{double[1 1] 393;double[0 0];char[1 5]'table'}
+CHK|wf_bytes_cat|cell[1 3]{double[1 1] 249;double[0 0];char[1 11]'categorical'}|div=ADR0234|diverges|cell[1 3]{double[1 1] 7;double[0 0];char[1 11]'categorical'}
+CHK|wf_struct_disp|cell[1 7]{logical[1 1] 0;logical[1 1] 0;logical[1 1] 0;logical[1 1] 0;char[1 6]'struct';cell[1 2]{char[1 8]'function';char[1 5]'level'};double[1 2] [1 1]}|exact
+CHK|wf_nargout0_bytes|cell[2 3]{char[1 1]'x';double[1 1] 24;char[1 1]'y';double[1 1] 128;char[1 1]'z';double[1 1] 153}|exact
+CHK|t0_disp_table|char[0 0]''|exact
+CHK|t0_disp_col|char[1 148]'    <strong>n</strong>    <strong>kind</strong>    <strong>name</strong>\n    <strong>_</strong>    <strong>____</strong>    <strong>____</strong>\n\n\n'|div=ADR0234|diverges|char[1 11]'table[0x3]\n'
+CHK|t0_summary_disp|char[1 34]'\n<strong>T0</strong>: 3×0 table\n\n\n'|exact
+CHK|ctor_direct_grow|cell[1 2]{double[1 1] 1;double[1 5] [2 3 1 1 9]}|exact
+CHK|ctor_direct_grow_far|cell[1 2]{double[1 1] 2;double[1 5] [2 3 1 1 9]}|exact
+CHK|ctor_struct_grow|cell[1 2]{double[1 1] 2;double[1 5] [2 3 1 1 9]}|exact
+CHK|ctor_cell_grow|cell[1 2]{double[1 1] 2;double[1 4] [2 3 1 9]}|exact
+CHK|fp_n|char[1 19]'double[3 1]:[1;1;3]'|exact
+CHK|fp_kind|char[1 22]'categorical[3 1]:a,a,a'|exact
+CHK|fp_name|char[1 23]'cell[3 1]:{'x'/'x'/'z'}'|exact
+CHK|fp_str|char[1 17]'string[3 1]:p,p,r'|exact
+CHK|fp_flag|char[1 30]'logical[3 1]:[true;false;true]'|exact
+CHK|fn_n|char[1 19]'double[3 1]:[1;3;3]'|exact
+CHK|fn_kind|char[1 22]'categorical[3 1]:a,a,a'|exact
+CHK|fn_name|char[1 23]'cell[3 1]:{'x'/'z'/'z'}'|exact
+CHK|fn_str|char[1 17]'string[3 1]:p,r,r'|exact
+CHK|fc_n|char[1 19]'double[3 1]:[1;0;3]'|exact
+CHK|fc_kind|char[1 22]'categorical[3 1]:a,b,a'|exact
+CHK|fc_kind_cats|cell[1 2]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|fc_name|char[1 23]'cell[3 1]:{'x'/'w'/'z'}'|exact
+CHK|fc_str|char[1 17]'string[3 1]:p,s,r'|exact
+CHK|fc_count|char[1 87]'MATLAB:fillmissing:SizeConstant / Fill constant must be a scalar or a 4-element vector.'|exact
+CHK|fc_flag_num|char[1 30]'logical[3 1]:[true;false;true]'|exact
+CHK|fc_name_char|char[1 23]'cell[3 1]:{'x'/'q'/'z'}'|exact
+CHK|fc_name_str|MATLAB:fillmissing:ConstantInvalidTypeForTableVariable|exact
+CHK|fc_name_str_msg|Invalid fill constant type for table variable name.|exact
+CHK|fc_str_char|MATLAB:fillmissing:ConstantInvalidTypeForTableVariable|exact
+CHK|fc_str_char_msg|Invalid fill constant type for table variable str.|exact
+CHK|fc_str_num|char[1 107]'MATLAB:fillmissing:ConstantInvalidTypeForTableVariable / Invalid fill constant type for table variable str.'|exact
+CHK|fc_kind_cat|char[1 22]'categorical[3 1]:a,a,a'|exact
+CHK|fc_name_num|char[1 108]'MATLAB:fillmissing:ConstantInvalidTypeForTableVariable / Invalid fill constant type for table variable name.'|exact
+CHK|fr_names|cell[1 6]{char[1 1]'n';char[1 4]'kind';char[1 4]'name';char[1 3]'str';char[1 4]'flag';char[1 8]'n_filled'}|exact
+CHK|fr_new|double[3 1] [1;0;3]|exact
+CHK|fr_two|cell[1 7]{char[1 1]'n';char[1 4]'kind';char[1 4]'name';char[1 3]'str';char[1 4]'flag';char[1 8]'n_filled';char[1 11]'kind_filled'}|exact
+CHK|fr_tf|logical[3 6] [0 0 0 0 0 0;0 0 0 0 0 1;0 0 0 0 0 0]|exact
+CHK|fm_movmean_err|char[1 142]'MATLAB:fillmissing:InterpolationInvalidTableVariable / Table contains variables of types for which the 'movmean' fill method is not supported.'|exact
+CHK|fm_spline_err|char[1 141]'MATLAB:fillmissing:InterpolationInvalidTableVariable / Table contains variables of types for which the 'spline' fill method is not supported.'|exact
+CHK|fm_endvalues|double[3 1] [2;2;2]|exact
+CHK|fm_two_col|double[3 2] [1 NaN;1 4;5 6]|exact
+CHK|fm_tf_datavars|logical[3 5] [0 0 0 0 0;1 1 0 0 0;0 0 0 0 0]|exact
+CHK|fm_badvar|char[1 79]'MATLAB:fillmissing:DataVariablesTableSubscript / Invalid 'DataVariables' value.'|exact
+CHK|fm_nomethod|char[1 43]'MATLAB:minrhs / Not enough input arguments.'|exact
+CHK|fm_rownames|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|im_cell_ind|logical[3 5] [0 0 0 0 0;0 1 1 0 0;0 0 0 0 0]|exact
+CHK|im_num_ind|logical[3 5] [0 0 0 0 0;0 0 0 0 0;0 0 0 0 0]|exact
+CHK|im_nan_ind|logical[3 5] [0 0 0 0 0;1 0 0 0 0;0 0 0 0 0]|exact
+CHK|im_str_ind|logical[3 5] [0 0 0 1 0;0 0 0 0 0;0 0 0 0 0]|exact
+CHK|im_char_ind|logical[3 5] [0 0 1 0 0;0 0 0 0 0;0 0 0 0 0]|exact
+CHK|im_two_ind|logical[3 2] [0 0;1 1;0 0]|exact
+CHK|im_cat_ind|logical[3 5] [0 1 0 0 0;0 0 0 0 0;0 1 0 0 0]|exact
+CHK|im_mixed_ind|logical[3 5] [0 0 0 0 0;1 1 1 0 0;0 0 0 0 0]|exact
+CHK|im_nd|double[1 2] [2 1]|exact
+CHK|am_flag|logical[1 1] 0|exact
+CHK|am_empty|logical[1 1] 0|exact
+CHK|rm_min5|double[1 2] [3 5]|exact
+CHK|rm_min4|double[1 2] [2 5]|exact
+CHK|rm_cols_tf|cell[1 2]{cell[1 1]{char[1 4]'flag'};logical[1 5] [1 1 1 1 0]}|exact
+CHK|rm_names|cell[1 5]{char[1 1]'n';char[1 4]'kind';char[1 4]'name';char[1 3]'str';char[1 4]'flag'}|exact
+CHK|rm_two_col|double[1 2] [1 1]|exact
+CHK|rm_rownames|cell[1 1]{char[1 1]'a'}|exact
+CHK|rm_dv_tf|logical[3 1] [0;0;0]|exact
+CHK|sm_text|char[1 21]'cell[3 1]:{''/''/'z'}'|exact
+CHK|sm_str|char[1 33]'string[3 1]:<missing>,<missing>,r'|div=ADR0234|diverges|char[1 21]'string[3 1]:<missing>'
+CHK|sm_mixed|char[1 18]'cell[2 1]:{'a'/''}'|exact
+CHK|sm_mixed_num|char[1 19]'double[2 1]:[1;NaN]'|exact
+CHK|sm_cat|char[1 52]'categorical[3 1]:<undefined>,<undefined>,<undefined>'|exact
+CHK|tv_num|double[2 2] [1 3;2 4]|exact
+CHK|tv_mixed|char[1 87]'MATLAB:table:ExtractDataCatError / Unable to concatenate the specified table variables.'|exact
+CHK|tv_text|cell[2 2]{char[1 1]'a';char[1 1]'b';char[1 1]'c';char[1 1]'d'}|exact
+CHK|tv_write|double[2 2] [5 6;7 8]|exact
+CHK|tv_write_bad|char[1 155]'MATLAB:table:WrongNumberRHSCols / The value on the right-hand side of the assignment has the wrong width. The assignment requires a value whose width is 2.'|exact
+CHK|tv_cat|<categorical[2 2]>|exact
+CHK|tv_empty|double[1 2] [3 0]|exact
+CHK|tv_int|char[1 4]'int8'|exact
+CHK|tv_props|logical[1 1] 1|exact
+CHK|ts_double|char[1 17]'double[2 1]:[0;0]'|exact
+CHK|ts_single|char[1 17]'single[2 1]:[0;0]'|exact
+CHK|ts_int8|char[1 15]'int8[2 1]:[0;0]'|exact
+CHK|ts_uint16|char[1 17]'uint16[2 1]:[0;0]'|exact
+CHK|ts_logical|char[1 26]'logical[2 1]:[false;false]'|exact
+CHK|ts_string|char[1 31]'string[2 1]:<missing>,<missing>'|div=ADR0234|diverges|char[1 21]'string[2 1]:<missing>'
+CHK|ts_cellstr|char[1 17]'cell[2 1]:{''/''}'|exact
+CHK|ts_cell|char[1 17]'cell[2 1]:{[]/[]}'|exact
+CHK|ts_categorical|char[1 40]'categorical[2 1]:<undefined>,<undefined>'|exact
+CHK|ts_char|char[1 17]'cell[2 1]:{''/''}' WARN MATLAB:table:PreallocateCharWarning|exact
+CHK|ts_datetime|char[1 15]'datetime[2 1]:,'|exact
+CHK|ts_duration|char[1 31]'duration[2 1]:00:00:00,00:00:00'|exact
+CHK|ts_struct|char[1 19]'struct[2 1]:struct:'|exact
+CHK|ts_names|cell[1 2]{char[1 4]'Var1';char[1 4]'Var2'}|exact
+CHK|ts_named|cell[1 2]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|ts_notypes|char[1 103]'MATLAB:table:MissingVariableTypes / Specify variable types when creating a table with a specified size.'|exact
+CHK|ts_mismatch|char[1 126]'MATLAB:table:VariableTypesAndSizeMismatch / Number of variable types must match the number of variables specified in the size.'|exact
+CHK|ts_badtype|char[1 126]'MATLAB:table:PreAllocationUndefinedClass / Unable to create a variable of type 'nope'. There is no class named 'nope' defined.'|exact
+CHK|ts_badsize|char[1 149]'MATLAB:table:InvalidSize / Size must be a two-element vector of nonnegative integer values specifying the number of rows and the number of variables.'|exact
+CHK|ts_rows_mismatch|char[1 111]'MATLAB:table:IncorrectNumberOfRowNames / The RowNames property must contain one name for each row in the table.'|exact
+CHK|ts_string_types|double[1 1] 0|exact
+CHK|ts_with_data|char[1 223]'MATLAB:table:InvalidSizeSyntax / Specifying both size and input data variables is not supported. See the <a href="matlab:helpview(fullfile(docroot,'matlab','ref','table.html'))">table documentation</a> for more information.'|exact
+CHK|ts_names_count|char[1 121]'MATLAB:table:IncorrectNumberOfVarNames / The VariableNames property must contain one name for each variable in the table.'|exact
+CHK|ts_zero_rows|double[1 2] [0 2]|exact
+CHK|ts_zero_rows_cls|char[1 6]'string'|exact
+CHK|t0x_scalar_full|MATLAB:table:RowDimensionMismatch|exact
+CHK|t0x_scalar_full_msg|To assign to or create a variable in a table, the number of rows must match the height of the table.|exact
+CHK|t0x_row|char[1 136]'MATLAB:table:RowDimensionMismatch / To assign to or create a variable in a table, the number of rows must match the height of the table.'|exact
+CHK|t0x_col2|double[1 2] [3 1]|exact
+CHK|t0_isempty|logical[1 1] 1|exact
+CHK|t0_numel|double[1 1] 0|exact
+CHK|t0_brace_rows|double[1 2] [2 0]|exact
+CHK|t0_paren_write|cell[1 2]{double[1 2] [3 1];double[1 3] [7 7 7]}|exact
+CHK|t0_delete_all|double[1 2] [0 5]|exact
+CHK|t0_vertcat_mixed|char[1 116]'MATLAB:table:vertcat:SizeMismatch / All tables being vertically concatenated must have the same number of variables.'|exact
+CHK|t0_rows_index|double[1 2] [1 0]|exact
+CHK|t0_row_names|cell[1 2]{double[1 2] [2 0];cell[1 2]{char[1 1]'a';char[1 1]'b'}}|exact
+CHK|vt_noarg_sel|double[1 2] [3 0]|exact
+CHK|vt_brace_none|double[1 2] [3 0]|exact
+CHK|vt_isequal_diff|logical[1 1] 0|exact
+CHK|vt_string_arg|double[1 2] [3 1]|exact
+CHK|vt_methods|cell[1 3]{char[1 7]'keyHash';char[1 8]'keyMatch';char[1 7]'vartype'}|exact
+CHK|wh_ws|cell[2 3]{char[1 1]'c';double[1 1] 128;char[1 1]'s';double[1 1] 153;char[1 1]'x';double[1 1] 24}|exact
+CHK|wh_ws_fields|cell[1 2]{cell[1 9]{char[1 4]'name';char[1 4]'size';char[1 5]'bytes';char[1 5]'class';char[1 6]'global';char[1 6]'sparse';char[1 7]'complex';char[1 7]'nesting';char[1 10]'persistent'};struct[1 1]{(function=char[1 5]'whwsf',level=double[1 1] 1)}}|exact
+CHK|wh_file_01|cell[1 5]{double[1 2] [1 1];double[1 1] 154;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_01|cell[1 3]{double[1 2] [1 1];double[1 1] 154;char[1 6]'struct'}|exact
+CHK|wh_file_02|cell[1 5]{double[1 2] [1 1];double[1 1] 290;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_02|cell[1 3]{double[1 2] [1 1];double[1 1] 290;char[1 6]'struct'}|exact
+CHK|wh_file_03|cell[1 5]{double[1 2] [1 1];double[1 1] 155;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_03|cell[1 3]{double[1 2] [1 1];double[1 1] 155;char[1 6]'struct'}|exact
+CHK|wh_file_04|cell[1 5]{double[1 2] [1 1];double[1 1] 292;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_04|cell[1 3]{double[1 2] [1 1];double[1 1] 292;char[1 6]'struct'}|exact
+CHK|wh_file_05|cell[1 5]{double[1 2] [0 0];double[1 1] 0;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_05|cell[1 3]{double[1 2] [0 0];double[1 1] 0;char[1 4]'cell'}|exact
+CHK|wh_file_06|cell[1 5]{double[1 2] [1 1];double[1 1] 248;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_06|cell[1 3]{double[1 2] [1 1];double[1 1] 248;char[1 4]'cell'}|exact
+CHK|wh_file_07|cell[1 5]{double[1 2] [1 1];double[1 1] 126;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_07|cell[1 3]{double[1 2] [1 1];double[1 1] 126;char[1 4]'cell'}|exact
+CHK|wh_file_08|cell[1 5]{double[1 2] [0 0];double[1 1] 0;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_08|cell[1 3]{double[1 2] [0 0];double[1 1] 0;char[1 6]'struct'}|exact
+CHK|wh_file_09|cell[1 5]{double[1 2] [1 1];double[1 1] 0;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_09|cell[1 3]{double[1 2] [1 1];double[1 1] 0;char[1 6]'struct'}|exact
+CHK|wh_file_10|cell[1 5]{double[1 2] [1 1];double[1 1] 298;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_10|cell[1 3]{double[1 2] [1 1];double[1 1] 298;char[1 6]'struct'}|exact
+CHK|wh_file_11|cell[1 5]{double[1 2] [1 1];double[1 1] 121;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_11|cell[1 3]{double[1 2] [1 1];double[1 1] 121;char[1 4]'cell'}|exact
+CHK|wh_file_12|cell[1 5]{double[1 2] [2 2];double[1 1] 42;char[1 7]'logical';logical[1 1] 0;logical[1 1] 1}|div=ADR0234|diverges|cell[1 5]{double[1 2] [2 2];double[1 1] 56;char[1 6]'double';logical[1 1] 0;logical[1 1] 1}
+CHK|wh_mem_12|cell[1 3]{double[1 2] [2 2];double[1 1] 42;char[1 7]'logical'}|div=ADR0234|diverges|cell[1 3]{double[1 2] [2 2];double[1 1] 56;char[1 6]'double'}
+CHK|wh_file_13|cell[1 5]{double[1 2] [2 2];double[1 1] 72;char[1 6]'double';logical[1 1] 1;logical[1 1] 1}|div=ADR0234|diverges|char[0 0]''
+CHK|wh_mem_13|cell[1 3]{double[1 2] [2 2];double[1 1] 72;char[1 6]'double'}|div=ADR0234|diverges|char[0 0]''
+CHK|wh_file_14|cell[1 5]{double[1 2] [0 0];double[1 1] 0;char[1 6]'double';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_14|cell[1 3]{double[1 2] [0 0];double[1 1] 0;char[1 6]'double'}|exact
+CHK|wh_file_15|cell[1 5]{double[1 2] [2 2];double[1 1] 8;char[1 4]'char';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_15|cell[1 3]{double[1 2] [2 2];double[1 1] 8;char[1 4]'char'}|exact
+CHK|wh_file_16|cell[1 5]{double[1 3] [2 3 4];double[1 1] 192;char[1 6]'double';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_16|cell[1 3]{double[1 3] [2 3 4];double[1 1] 192;char[1 6]'double'}|exact
+CHK|wh_file_17|cell[1 5]{double[1 2] [1 2];double[1 1] 256;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_17|cell[1 3]{double[1 2] [1 2];double[1 1] 256;char[1 4]'cell'}|exact
+CHK|wh_file_18|cell[1 5]{double[1 2] [2 2];double[1 1] 32;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_18|cell[1 3]{double[1 2] [2 2];double[1 1] 32;char[1 4]'cell'}|exact
+CHK|wh_file_19|cell[1 5]{double[1 2] [0 0];double[1 1] 25;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_19|cell[1 3]{double[1 2] [0 0];double[1 1] 25;char[1 6]'struct'}|exact
+CHK|wh_file_20|cell[1 5]{double[1 2] [1 1];double[1 1] 273;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_20|cell[1 3]{double[1 2] [1 1];double[1 1] 273;char[1 4]'cell'}|exact
+CHK|wh_file_21|cell[1 5]{double[1 2] [1 1];double[1 1] 1;char[1 7]'logical';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_21|cell[1 3]{double[1 2] [1 1];double[1 1] 1;char[1 7]'logical'}|exact
+CHK|wh_file_22|cell[1 5]{double[1 2] [1 1];double[1 1] 4;char[1 6]'single';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_22|cell[1 3]{double[1 2] [1 1];double[1 1] 4;char[1 6]'single'}|exact
+CHK|wh_file_23|cell[1 5]{double[1 2] [1 3];double[1 1] 24;char[1 5]'int64';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_23|cell[1 3]{double[1 2] [1 3];double[1 1] 24;char[1 5]'int64'}|exact
+CHK|wh_file_24|cell[1 5]{double[1 2] [1 0];double[1 1] 0;char[1 6]'double';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_24|cell[1 3]{double[1 2] [1 0];double[1 1] 0;char[1 6]'double'}|exact
+CHK|wh_file_25|cell[1 5]{double[1 2] [1 3];double[1 1] 409;char[1 6]'struct';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_25|cell[1 3]{double[1 2] [1 3];double[1 1] 409;char[1 6]'struct'}|exact
+CHK|wh_file_26|cell[1 5]{double[1 2] [1 1];double[1 1] 144;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_26|cell[1 3]{double[1 2] [1 1];double[1 1] 144;char[1 4]'cell'}|exact
+CHK|wh_file_27|cell[1 5]{double[1 2] [3 3];double[1 1] 48;char[1 6]'double';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|wh_mem_27|cell[1 3]{double[1 2] [3 3];double[1 1] 48;char[1 6]'double'}|exact
+CHK|wh_file_28|cell[1 5]{double[1 2] [1 1];double[1 1] 120;char[1 4]'cell';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|wh_mem_28|cell[1 3]{double[1 2] [1 1];double[1 1] 120;char[1 4]'cell'}|exact
+CHK|wh_disp_order|char[1 282]'  Name      Size            Bytes  Class     Attributes\n\n  Ab        1x2                 4  char                \n  B         2x2                 4  int8                \n  ab        1x1               128  cell                \n  zz        1x1                 8  double              \n\n'|exact
+CHK|wh_disp_wide|char[1 314]'  Name                        Size                Bytes  Class     Attributes\n\n  a_long_variable_name      100x2000            1600000  double              \n  q                           1x1                    16  double    complex   \n  s                           2x2                    56  double    sparse    \n\n'|exact
+CHK|wh_noout_none|char[0 0]''|exact
+CHK|props_table|cell[8 1]{char[1 1]'n';char[1 4]'kind';char[1 4]'name';char[1 3]'str';char[1 4]'flag';char[1 10]'Properties';char[1 3]'Row';char[1 9]'Variables'}|exact
+CHK|props_rownames|cell[4 1]{char[1 4]'Var1';char[1 10]'Properties';char[1 3]'Row';char[1 9]'Variables'}|exact
+CHK|fieldnames_table|cell[8 1]{char[1 1]'n';char[1 4]'kind';char[1 4]'name';char[1 3]'str';char[1 4]'flag';char[1 10]'Properties';char[1 3]'Row';char[1 9]'Variables'}|exact
+CHK|prealloc_char_warn|char[1 350]'MATLAB:table:PreallocateCharWarning / Preallocation using data type 'char' creates a table variable that is a cell array of character vectors rather than a character array. Storing text data as character arrays in a table is not recommended. When working with text data in a table or a timetable, consider using a string array or a categorical array.' WARN MATLAB:table:PreallocateCharWarning|exact
+CHK|dot_number|<categorical[3 1]>|div=ADR0234|diverges|char[0 0]''
+CHK|dot_number_write|double[1 3] [7 8 9]|div=ADR0234|diverges|char[0 0]''
+CHK|dot_row|cell[1 2]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|su_dt|char[1 317]'Size=double[1 2]:[3 1];Type=char[1 8]:'datetime';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];TimeZone=char[0 0]:'';NumMissing=double[1 1]:0;Min=datetime[1 1]:01-Jan-2020;Median=datetime[1 1]:02-Jan-2020;Max=datetime[1 1]:03-Jan-2020;Mean=datetime[1 1]:02-Jan-2020;Std=duration[1 1]:24:00:00;'|exact
+CHK|su_dur|char[1 273]'Size=double[1 2]:[3 1];Type=char[1 8]:'duration';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:1;Min=duration[1 1]:1 sec;Median=duration[1 1]:2 sec;Max=duration[1 1]:3 sec;Mean=duration[1 1]:2 sec;Std=duration[1 1]:1.4142 sec;'|div=ADR0234|diverges|char[1 279]'Size=double[1 2]:[3 1];Type=char[1 8]:'duration';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:1;Min=duration[1 1]:1 sec;Median=duration[1 1]:2 sec;Max=duration[1 1]:3 sec;Mean=duration[1 1]:2 sec;Std=duration[1 1]:1.4142135624 sec;'
+CHK|su_char|char[1 144]'Size=double[1 2]:[2 2];Type=char[1 4]:'char';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 2]:[0 0];'|exact
+CHK|su_cell|char[1 140]'Size=double[1 2]:[2 1];Type=char[1 4]:'cell';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:0;'|exact
+CHK|su_struct|char[1 8]'no error'|exact
+CHK|su_single|char[1 247]'Size=double[1 2]:[3 1];Type=char[1 6]:'single';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];NumMissing=double[1 1]:1;Min=single[1 1]:1;Median=single[1 1]:1.5;Max=single[1 1]:2;Mean=single[1 1]:1.5;Std=single[1 1]:0.707107;'|exact
+CHK|su_cat_ord|char[1 276]'Size=double[1 2]:[2 1];Type=char[1 11]:'categorical';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];Categories=cell[2 1]:{'b'/'a'};Counts=double[2 1]:[1;1];NumMissing=double[1 1]:0;Min=categorical[1 1]:b;Median=categorical[1 1]:a;Max=categorical[1 1]:a;'|exact
+CHK|su_logical2|char[1 165]'Size=double[1 2]:[2 2];Type=char[1 7]:'logical';Description=char[0 0]:'';Units=char[0 0]:'';Continuity=double[0 0]:[];True=double[1 2]:[1 0];False=double[1 2]:[1 2];'|exact
+CHK|su_nested|char[1 8]'no error'|exact
+CHK|su_rowtimes|cell[2 1]{char[1 4]'Time';char[1 4]'Var1'}|exact
+CHK|br_int|char[1 6]'double'|exact
+CHK|br_int8_double|char[1 19]'int8[2 2] int8[2 2]'|exact
+CHK|br_cat_cat|char[1 33]'categorical[2 2] categorical[2 2]'|exact
+CHK|br_str_str|char[1 23]'string[2 2] string[2 2]'|exact
+CHK|br_str_cellstr|char[1 23]'string[2 2] string[2 2]'|exact
+CHK|br_logical_double|char[1 23]'double[2 2] double[2 2]'|exact
+CHK|br_char_double|char[1 8]'no error'|exact
+CHK|vw_int8|cell[1 4]{char[1 4]'int8';int8[1 2] [6 7];char[1 6]'double';double[1 2] [6 8]}|exact
+CHK|vw_height|char[1 136]'MATLAB:table:RowDimensionMismatch / To assign to or create a variable in a table, the number of rows must match the height of the table.'|exact
+CHK|vw_cat|char[1 147]'MATLAB:categorical:InvalidRHS / Right hand side of an assignment to a categorical array must be a categorical or text representing a category name.'|exact
+CHK|vw_text|cell[1 4]{char[1 1]'e';char[1 1]'g';char[1 1]'f';char[1 1]'h'}|exact
+CHK|wh_global|cell[1 2]{logical[1 1] 1;char[1 114]'  Name      Size            Bytes  Class     Attributes\n\n  G128      1x1                 8  double    global    \n\n'}|exact
+CHK|su_noout_ans|double[1 1] 0|exact
+CHK|vt_disp_cat|cell[1 3]{char[1 7]'vartype';logical[1 1] 1;logical[1 1] 1}|exact
+CHK|table_size_names_str|cell[1 1]{char[1 1]'a'}|exact
+CHK|cv_char_cat|cell[1 2]{char[1 4]'cell';char[1 43]'MATLAB:table:convertvars:ConvertCharWarning'} WARN MATLAB:table:convertvars:ConvertCharWarning|exact
+CHK|cv_char_num|MATLAB:table:convertvars:VariableTypesConversionFailed|exact
+CHK|cv_char_num_msg|Could not convert the type of the variable 'n' to 'cellstr'. The following error occurred when calling the cellstr function.|exact

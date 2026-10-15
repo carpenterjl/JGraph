@@ -832,6 +832,7 @@ internal static class FigureMapper
         TickPositions = axis.TickPositions?.ToArray(),
         TickLabelOverrides = axis.TickLabelOverrides?.ToArray(),
         TickLabelAngle = axis.TickLabelAngle,
+        TickLabelAngleAuto = axis.TickLabelAngleAuto ? true : null,
         LabelStyle = DtoConvert.ToDto(axis.LabelStyle),
         TickLabelStyle = DtoConvert.ToDto(axis.TickLabelStyle),
         TickDirection = axis.TickDirection?.ToString(),
@@ -877,6 +878,7 @@ internal static class FigureMapper
         axis.TickPositions = dto.TickPositions;
         axis.TickLabelOverrides = dto.TickLabelOverrides;
         axis.TickLabelAngle = dto.TickLabelAngle;
+        axis.TickLabelAngleAuto = dto.TickLabelAngleAuto ?? false;
 
         if (dto.LabelStyle is not null)
         {

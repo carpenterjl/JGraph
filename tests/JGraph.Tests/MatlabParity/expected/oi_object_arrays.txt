@@ -429,12 +429,14 @@ CHK|h_findobj|char[1 6]'Hnd116'|exact
 CHK|h_findobj_size|double[1 2] [2 1]|exact
 CHK|h_set_get|MATLAB:graphics:SetMethodUnknown|exact
 CHK|h_set_get_msg|Cannot find 'set' method for Hnd116 class.|exact
-CHK|h_set_get_arr|char[1 32]'MATLAB:graphics:SetMethodUnknown'|div=ADR0232|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|h_set_get_arr|MATLAB:graphics:SetMethodUnknown|exact
+CHK|h_set_get_arr_msg|Cannot find 'set' method for Hnd116 class.|exact
 CHK|h_get_struct|MATLAB:graphics:GetMethodUnknown|exact
 CHK|h_get_struct_msg|Cannot find 'get' method for Hnd116 class.|exact
 CHK|h_in_cell|char[1 4]'cell'|exact
 CHK|h_struct|double[1 2] [1 1] WARN MATLAB:structOnObject|exact
-CHK|h_addlistener_arr|char[1 33]'MATLAB:class:nonSetObservableProp'|div=ADR0232|diverges|char[1 36]'MATLAB:class:ObjectArrayNotSupported'
+CHK|h_addlistener_arr|MATLAB:class:nonSetObservableProp|exact
+CHK|h_addlistener_arr_msg|While adding a PostSet listener, property 'p' in class 'Hnd116' is not defined to be SetObservable.|exact
 CHK|h_isequal_after_write|logical[1 1] 0|exact
 CHK|h_assign_val_into|char[1 6]'Hnd116'|exact
 CHK|h_assign_other_handle|double[1 3] [77 50 2]|exact

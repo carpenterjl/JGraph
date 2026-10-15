@@ -325,6 +325,12 @@ internal sealed partial class Interpreter
     /// </summary>
     internal bool InScript => _inScript;
 
+    /// <summary>
+    /// The name of the function whose body is running, or empty in a script or at the top: what
+    /// whos answers as each variable's <c>nesting.function</c> (open item 128).
+    /// </summary>
+    internal string RunningFunctionName => _inScript ? string.Empty : _currentFunction?.Name ?? string.Empty;
+
     private bool _inScript;
 
     /// <summary>The file a piece of code came from, or the main script's path for code with no file.</summary>
@@ -2058,6 +2064,37 @@ internal sealed partial class Interpreter
             return;
         }
 
+        // An OnOffSwitchState shows as R2025b's enumerations do (open item 129): the name, a blank
+        // line, the header and the members, a blank line.
+        if (value.AsExternalOrNull() is OnOffSwitchStateValue states)
+        {
+            _echo($"{name} = ");
+            _echo(string.Empty);
+            _echo(states.Display());
+            _echo(string.Empty);
+            return;
+        }
+
+        // A table of no variables is R2025b's empty line under its name (open item 128, probe_128).
+        if (Dialect.IsMatlab && value.Type == JgsType.Table && value.AsTable.ColumnCount == 0)
+        {
+            _echo($"{name} =");
+            _echo(string.Empty);
+            _echo($"  {value.AsTable.RowCount}×0 empty <a href=\"matlab:helpPopup('table')\" style=\"font-weight:bold\">table</a>");
+            _echo(string.Empty);
+            return;
+        }
+
+        // A vartype shows R2025b's description of the subscript under its name (open item 128).
+        if (Dialect.IsMatlab && JgsBuiltins.IsVartype(value))
+        {
+            _echo($"{name} = ");
+            _echo(string.Empty);
+            _echo(JgsBuiltins.VartypeDisplay(value).TrimEnd('\n'));
+            _echo(string.Empty);
+            return;
+        }
+
         // A value with a disp of its own echoes as a class that defines disp does (device classes plan, stage D10b).
         if (value.AsExternalOrNull() is IJgsOwnDisp own)
         {
@@ -2139,6 +2176,9 @@ internal sealed partial class Interpreter
         CurrentFrame.IsGlobal(name)
             ? _globalWorkspace.Contains(name)
             : CurrentFrame.TryGet(name, out JgsValue found) && found.Type != JgsType.Function;
+
+    /// <summary>Reads a variable of the current frame, a global it declared included (whos, open item 128).</summary>
+    internal bool TryReadVariable(string name, out JgsValue value) => LookUp(name, CurrentFrame, out value);
 
     /// <summary>Reads a name, honouring any <c>global</c> declaration that redirects it.</summary>
     private bool LookUp(string name, JgsEnvironment env, out JgsValue value)
@@ -2262,6 +2302,12 @@ internal sealed partial class Interpreter
         if (subject.Type != JgsType.External && candidate.Type != JgsType.External)
         {
             return JgsValue.AreEqual(subject, candidate);
+        }
+
+        // case 'on', case true and case {'on', 'off'} on an OnOffSwitchState (open item 129).
+        if ((subject.AsExternalOrNull() ?? candidate.AsExternalOrNull()) is OnOffSwitchStateValue { States.Length: 1 } state)
+        {
+            return state.Equal(subject.AsExternalOrNull() is OnOffSwitchStateValue ? candidate : subject) is { Type: JgsType.Bool } said && said.AsBool;
         }
 
         // case midimsgtype.NoteOn, and case 'NoteOn', on a member (device classes plan, stage D10b).
@@ -3587,6 +3633,12 @@ internal sealed partial class Interpreter
 
     private JgsValue AssembleMatrix(Node matrix, List<JgsValue[]> rows)
     {
+        // [on 'off'] is text: the members join as their names (open item 129).
+        if (Dialect.IsMatlab && JgsBuiltins.TryOnOffWithText(rows, out IReadOnlyList<JgsValue[]> asText))
+        {
+            rows = [.. asText];
+        }
+
         if (JoinExternalArrays(rows, matrix) is { } joined)
         {
             return joined; // [a; b] of midimsgs (device classes plan, stage D10b)
@@ -3611,6 +3663,14 @@ internal sealed partial class Interpreter
         if (Dialect.ConcatenatesBrackets && AnyObject(rows))
         {
             return ConcatenateObjects(rows, matrix);
+        }
+
+        // A function handle is a class with no arrays (open item 129): a bracket holding one, empties
+        // aside, is that handle; two are R2025b's refusal; a number, text or struct beside one is the
+        // conversion R2025b tries and refuses.
+        if (Dialect.ConcatenatesBrackets && Dialect.IsMatlab && rows.Any(static row => Array.Exists(row, static e => e.Type == JgsType.Function)))
+        {
+            return JoinFunctionHandles(rows, matrix);
         }
 
         // A categorical beside text or another categorical is a categorical (open item 115).
@@ -3673,6 +3733,23 @@ internal sealed partial class Interpreter
         return height == 0 || width == 0
             ? StampLiteral(EmptyJoin(shapes), rows, matrix)
             : StampLiteral(AssembleLiteral(rows, shapes, height, width), rows, matrix);
+    }
+
+    /// <summary>
+    /// A bracket with a function handle in it (open item 129, probe_129): the empties leave, one
+    /// handle alone is itself, two or more are <c>MATLAB:err_non_scalar_function_handles</c>, and
+    /// anything else is R2025b's failed conversion to a handle, in its words.
+    /// </summary>
+    private static JgsValue JoinFunctionHandles(List<JgsValue[]> rows, Node at)
+    {
+        JgsValue[] kept = [.. rows.SelectMany(static row => row).Where(static piece => !IsDroppedInBracket(piece))];
+        if (Array.Find(kept, static piece => piece.Type != JgsType.Function) is { } other)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:UnableToConvert",
+                $"The following error occurred converting from {JgsBuiltins.ClassOf(other, JgsDialect.Matlab)} to function_handle:\nToo many output arguments.");
+        }
+
+        return kept.Length == 1 ? kept[0] : throw JgsBuiltins.NonScalarFunctionHandles(at.Line, at.Column);
     }
 
     /// <summary>What a bracket with nothing in it is worth (M96b).</summary>
@@ -3785,6 +3862,12 @@ internal sealed partial class Interpreter
 
     private JgsValue BuildArrayLiteral(ArrayLiteral array, JgsValue[] elements, JgsEnvironment env)
     {
+        // [on 'off'] is text: the members join as their names (open item 129).
+        if (Dialect.IsMatlab && JgsBuiltins.TryOnOffWithText([elements], out IReadOnlyList<JgsValue[]> asText))
+        {
+            elements = asText[0];
+        }
+
         if (JoinExternalArrays([elements], array) is { } joined)
         {
             return joined;
@@ -3838,6 +3921,13 @@ internal sealed partial class Interpreter
             && Array.Exists(joinable, static e => e.Type == JgsType.Object))
         {
             return ConcatenateObjects([elements], array); // it leaves out its own empties: string.empty is converted
+        }
+
+        // A function handle is a class with no arrays (open item 129): one alone is itself, more are
+        // R2025b's refusal. Asked before structs, which R2025b tries to convert to a handle.
+        if (Dialect.ConcatenatesBrackets && Dialect.IsMatlab && Array.Exists(joinable, static e => e.Type == JgsType.Function))
+        {
+            return JoinFunctionHandles([joinable], array);
         }
 
         // A bracket holding any struct concatenates into a struct array (M65). Asked before the
@@ -4407,6 +4497,18 @@ internal sealed partial class Interpreter
             throw JgsCategorical.NotNumeric(unary.Line, unary.Column); // -c and ~c are R2025b's refusal (open item 115)
         }
 
+        // ~on is off, a member still; -on is logical's minus (open item 129, probe_129b).
+        if (operand.AsExternalOrNull() is OnOffSwitchStateValue states)
+        {
+            operand = unary.Op == TokenType.Bang
+                ? OnOffSwitchStateValue.Of([.. states.States.Select(static s => !s)], states.Rows, states.Columns)
+                : states.Logical();
+            if (unary.Op == TokenType.Bang)
+            {
+                return operand;
+            }
+        }
+
         if (AnyClasses && TryUnaryOverload(unary.Op, operand, unary, out JgsValue overloaded))
         {
             return overloaded;
@@ -4801,6 +4903,12 @@ internal sealed partial class Interpreter
         // through op_Equality where the type defines one, reference identity otherwise.
         if (left.Type == JgsType.External || right.Type == JgsType.External)
         {
+            // An OnOffSwitchState compares by name and is logical's otherwise (open item 129).
+            if (JgsBuiltins.TryOnOffOperator(op, left, right, at.Line, at.Column, (o, l, r) => ApplyBinary(o, l, r, at), out JgsValue onOff))
+            {
+                return onOff;
+            }
+
             // A midimsgtype member is an int32 with a name; a midimsg has no operators (stage D10b).
             if (JgsBuiltins.TryMidiOperator(op, left, right, at.Line, at.Column, (o, l, r) => ApplyBinary(o, l, r, at), out JgsValue midi))
             {
@@ -9680,6 +9788,15 @@ internal sealed partial class Interpreter
         // vectors, text columns as cells so T.Code{2} braces in.
         if (target.Type == JgsType.Table)
         {
+            // T.Variables is every variable side by side, and T.Row the row names: the two
+            // dimension names a dot answers to beside the variables (open item 128, probe_128d).
+            if (Dialect.IsMatlab && TableDimensionDot(target.AsTable, field) is int dimension)
+            {
+                return dimension == 1
+                    ? TableBraceValue(target.AsTable, AllPositions(target.AsTable.RowCount), AllPositions(target.AsTable.ColumnCount), member)
+                    : JgsBuiltins.TableRowNamesValue(target.AsTable);
+            }
+
             return JgsBuiltins.TableColumnValue(target.AsTable, field, member.Line, member.Column);
         }
 
@@ -9848,6 +9965,13 @@ internal sealed partial class Interpreter
         JgsValue name = Evaluate(member.FieldName!, env);
         if (name.Type != JgsType.String)
         {
+            // A vartype is a subscript for parentheses and braces only (open item 128, probe_128).
+            if (Dialect.IsMatlab && JgsBuiltins.IsVartype(name))
+            {
+                throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:table:IllegalVarSubscript",
+                    "A table variable name must be a string scalar or a character vector.");
+            }
+
             throw new JgsRuntimeException(member.Line, member.Column,
                 $"A dynamic field name must be a string, but got a {name.TypeName}.");
         }
@@ -9931,8 +10055,12 @@ internal sealed partial class Interpreter
         if (member.Target is VariableExpr tableTarget
             && LookUp(tableTarget.Name, env, out JgsValue heldTable) && heldTable.Type == JgsType.Table)
         {
-            Rebind(tableTarget.Name,
-                JgsValue.Table(SetTableMember(heldTable.AsTable, FieldName(member, env), value, whole: true, member)), env);
+            // T.Variables = v writes every variable at once (open item 128).
+            string tableField = FieldName(member, env);
+            Table rewritten = Dialect.IsMatlab && TableDimensionDot(heldTable.AsTable, tableField) == 1
+                ? WriteTableVariablesWhole(heldTable.AsTable, value, member, env)
+                : SetTableMember(heldTable.AsTable, tableField, value, whole: true, member);
+            Rebind(tableTarget.Name, JgsValue.Table(rewritten), env);
             return value;
         }
 
@@ -10242,6 +10370,16 @@ internal sealed partial class Interpreter
             // building struct arrays.
             case CallExpr { Arguments.Count: 1 } call when call.Callee is VariableExpr:
                 return ResolveStructElementForWrite((VariableExpr)call.Callee, call.Arguments[0], call, env, out owner);
+
+            // r(1, 1, 2).a = 5 (open item 127): several subscripts name one element of a struct
+            // array through a stand-in of its positions, and the write goes on at that position.
+            case CallExpr { Arguments.Count: > 1, Callee: VariableExpr gridName } grid
+                when Dialect.IsMatlab && LookUp(gridName.Name, env, out JgsValue gridHeld) && gridHeld.Type == JgsType.Struct
+                    && StructPositionWithin(gridHeld, grid.Arguments, grid, env) is { } gridPosition:
+                return ResolveStructElementForWrite(
+                    gridName,
+                    new PreEvaluated(JgsValue.Number(gridPosition.AsNumber + Dialect.IndexBase)) { Line = grid.Line, Column = grid.Column },
+                    grid, env, out owner);
             case IndexExpr { Indices.Count: 1 } indexed when indexed.Target is VariableExpr:
                 return ResolveStructElementForWrite((VariableExpr)indexed.Target, indexed.Indices[0], indexed, env, out owner);
 
@@ -10274,6 +10412,36 @@ internal sealed partial class Interpreter
                         ? "Cannot set one field across a whole struct array — name an element first, like S(1).field = v."
                         : RefusesDots(evaluated) ? DotNotSupported
                         : $"Cannot set a field on a {evaluated.TypeName}.");
+        }
+    }
+
+    /// <summary>0 to n-1 laid out in a struct array's own shape, a third dimension included: what several subscripts pick out of.</summary>
+    private static JgsValue StructPositions(JgsValue structs)
+    {
+        int count = structs.AsStructArray.Length;
+        var positions = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            positions[i] = i;
+        }
+
+        return count == 1 ? OneElementArray(JgsValue.Number(0)) : JgsMatrix.FromColumnMajorDims(positions, structs.Dims);
+    }
+
+    /// <summary>
+    /// The one position several subscripts name inside a struct array, or null when they pick more
+    /// than one or reach past it: <c>t(2, 3).a = 5</c> on a 1-by-1 struct grows it on the roads that
+    /// create, as it did before open item 127, and they say what a bad subscript is.
+    /// </summary>
+    private JgsValue? StructPositionWithin(JgsValue structs, IReadOnlyList<Expr> subscripts, Expr at, JgsEnvironment env)
+    {
+        try
+        {
+            return IndexInto(StructPositions(structs), subscripts, at, env) is { Type: JgsType.Number } position ? position : null;
+        }
+        catch (JgsRuntimeException)
+        {
+            return null;
         }
     }
 

@@ -1,0 +1,274 @@
+CHK|set_scalar|char[1 77]'MATLAB:graphics:SetMethodUnknown / Cannot find 'set' method for Hnd116 class.'|exact
+CHK|get_scalar|char[1 77]'MATLAB:graphics:GetMethodUnknown / Cannot find 'get' method for Hnd116 class.'|exact
+CHK|set_arr|char[1 77]'MATLAB:graphics:SetMethodUnknown / Cannot find 'set' method for Hnd116 class.'|exact
+CHK|get_arr|char[1 77]'MATLAB:graphics:GetMethodUnknown / Cannot find 'get' method for Hnd116 class.'|exact
+CHK|get_arr_all|char[1 77]'MATLAB:graphics:GetMethodUnknown / Cannot find 'get' method for Hnd116 class.'|exact
+CHK|set_arr_all|char[1 77]'MATLAB:graphics:SetMethodUnknown / Cannot find 'set' method for Hnd116 class.'|exact
+CHK|get_scalar_all|char[1 77]'MATLAB:graphics:GetMethodUnknown / Cannot find 'get' method for Hnd116 class.'|exact
+CHK|set_val|char[1 77]'MATLAB:graphics:SetMethodUnknown / Cannot find 'set' method for Val116 class.'|exact
+CHK|get_val|char[1 77]'MATLAB:graphics:GetMethodUnknown / Cannot find 'get' method for Val116 class.'|exact
+CHK|get_val_arr|char[1 77]'MATLAB:graphics:GetMethodUnknown / Cannot find 'get' method for Val116 class.'|exact
+CHK|set_empty_h|char[1 8]'no error'|exact
+CHK|sg_set_arr|double[1 2] [7 7]|exact
+CHK|sg_get_arr|cell[2 1]{double[1 1] 7;double[1 1] 7}|exact
+CHK|sg_get_two|cell[2 2]{double[1 1] 7;double[1 1] 7;char[1 1]'x';char[1 1]'x'}|exact
+CHK|sg_get_all|struct[2 1]{(p=double[1 1] 7,name=char[1 1]'x')(p=double[1 1] 7,name=char[1 1]'x')}|exact
+CHK|sg_get_all_size|double[1 2] [2 1]|exact
+CHK|sg_set_cells|double[1 2] [3 4]|exact
+CHK|sg_set_struct|cell[1 4]{double[1 1] 9;double[1 1] 9;char[1 1]'z';char[1 1]'z'}|exact
+CHK|sg_get_scalar|double[1 1] 9|exact
+CHK|sg_set_out|char[1 6]'struct'|exact
+CHK|sg_set_out_f|cell[2 1]{char[1 1]'p';char[1 4]'name'}|exact
+CHK|sg_set_cells_bad|char[1 100]'MATLAB:class:ValueCellDimension / Value cell array handle dimension must match handle vector length.'|exact
+CHK|sg_get_bad|char[1 138]'MATLAB:class:setgetPropertyNotFound / Property zz not found in class SG129, or is not present in all elements of the array of class SG129.'|exact
+CHK|sg_set_bad|char[1 108]'MATLAB:class:InvalidProperty / The name 'zz' is not an accessible property for an instance of class 'SG129'.'|exact
+CHK|sg_set_pairs|cell[1 4]{double[1 1] 11;double[1 1] 11;char[1 1]'q';char[1 1]'q'}|exact
+CHK|sg_get_col|double[1 2] [2 1]|exact
+CHK|sg_get_matrix|double[1 2] [4 1]|exact
+CHK|sg_get_disp|char[1 28]'       p: 11\n    name: 'q'\n\n'|div=ADR0234|diverges|char[1 29]'ans = struct(p: 11, name: q)\n'
+CHK|sg_set_disp|char[1 27]'       p: {}\n    name: {}\n\n'|div=ADR0234|diverges|char[0 0]''
+CHK|sg_get_empty|double[1 2] [0 0]|exact
+CHK|sg_partial|char[1 1]'q'|exact
+CHK|al_arr_nonobs|char[1 135]'MATLAB:class:nonSetObservableProp / While adding a PostSet listener, property 'p' in class 'Hnd116' is not defined to be SetObservable.'|exact
+CHK|al_scalar_nonobs|char[1 135]'MATLAB:class:nonSetObservableProp / While adding a PostSet listener, property 'p' in class 'Hnd116' is not defined to be SetObservable.'|exact
+CHK|al_arr_obs|double[1 1] 2|exact
+CHK|al_arr_obs_class|char[1 18]'event.proplistener'|exact
+CHK|al_arr_obs_size|double[1 2] [2 1]|exact
+CHK|al_arr_event|double[1 1] 3|exact
+CHK|al_arr_event_size|MATLAB:size:invalidDim|exact
+CHK|al_arr_event_size_msg|Dimension argument must be a positive integer scalar or a vector of positive integers. When an empty dimension argument is specified, it must be a 0-by-0, 1-by-0, or 0-by-1 array.|exact
+CHK|listener_arr|cell[1 2]{double[1 1] 2;char[1 14]'event.listener'}|exact
+CHK|listener_arr_live|cell[1 2]{double[1 1] 2;logical[1 1] 1}|exact
+CHK|al_arr_nosuch|char[1 75]'MATLAB:class:invalidEvent / Event 'Nope' is not defined for class 'Obs129'.'|exact
+CHK|al_arr_q|char[1 135]'MATLAB:class:nonSetObservableProp / While adding a PostSet listener, property 'q' in class 'Obs129' is not defined to be SetObservable.'|exact
+CHK|notify_arr|double[1 1] 2|exact
+CHK|al_mixed|char[1 135]'MATLAB:class:nonSetObservableProp / While adding a PostSet listener, property 'q' in class 'Obs129' is not defined to be SetObservable.'|exact
+CHK|al_cell_props|double[1 1] 2|exact
+CHK|ct_ab|<categorical[1 4]>|exact
+CHK|ct_ab_cats|cell[6 1]{char[1 3]'a x';char[1 3]'a y';char[1 3]'b x';char[1 3]'b y';char[1 3]'c x';char[1 3]'c y'}|exact
+CHK|ct_aa|<categorical[1 4]>|exact
+CHK|ct_aa_cats|cell[9 1]{char[1 3]'a a';char[1 3]'a b';char[1 3]'a c';char[1 3]'b a';char[1 3]'b b';char[1 3]'b c';char[1 3]'c a';char[1 3]'c b';char[1 3]'c c'}|exact
+CHK|ct_times|cell[6 1]{char[1 3]'a x';char[1 3]'a y';char[1 3]'b x';char[1 3]'b y';char[1 3]'c x';char[1 3]'c y'}|exact
+CHK|ct_scalar|<categorical[1 4]>|exact
+CHK|ct_scalar_cats|cell[3 1]{char[1 3]'a z';char[1 3]'b z';char[1 3]'c z'}|exact
+CHK|ct_undef|logical[1 2] [0 1]|exact
+CHK|ct_ord|logical[1 1] 1|exact
+CHK|ct_ord_mix|char[1 8]'no error'|exact
+CHK|ct_ord_cats|cell[4 1]{char[1 3]'a x';char[1 3]'a y';char[1 3]'b x';char[1 3]'b y'}|exact
+CHK|ct_prot|logical[1 1] 1|exact
+CHK|ct_char|char[1 8]'no error'|exact
+CHK|ct_cellstr|char[1 8]'no error'|exact
+CHK|ct_string|char[1 8]'no error'|exact
+CHK|ct_num|char[1 112]'MATLAB:categorical:times:TypeMismatch / Inputs must be categorical arrays, character vectors, or scalar strings.'|exact
+CHK|ct_num_first|char[1 112]'MATLAB:categorical:times:TypeMismatch / Inputs must be categorical arrays, character vectors, or scalar strings.'|exact
+CHK|ct_size|char[1 83]'MATLAB:sizeDimensionsMustMatch / Arrays have incompatible sizes for this operation.'|exact
+CHK|ct_mtimes|char[1 103]'MATLAB:math:mustBeNumericCharOrLogical / Invalid data type. Argument must be numeric, char, or logical.'|exact
+CHK|ct_expand|double[1 2] [4 4]|exact
+CHK|ct_expand_cats|cell[6 1]{char[1 3]'a x';char[1 3]'a y';char[1 3]'b x';char[1 3]'b y';char[1 3]'c x';char[1 3]'c y'}|exact
+CHK|ct_unused|cell[4 1]{char[1 3]'a x';char[1 3]'a y';char[1 3]'b x';char[1 3]'b y'}|exact
+CHK|ct_class|char[1 11]'categorical'|exact
+CHK|ct_three|cell[12 1]{char[1 5]'a x u';char[1 5]'a x v';char[1 5]'a y u';char[1 5]'a y v';char[1 5]'b x u';char[1 5]'b x v';char[1 5]'b y u';char[1 5]'b y v';char[1 5]'c x u';char[1 5]'c x v';char[1 5]'c y u';char[1 5]'c y v'}|exact
+CHK|ct_empty|double[1 2] [0 0]|exact
+CHK|ct_matrix|double[1 2] [2 2]|exact
+CHK|ct_names_num|cell[4 1]{char[1 3]'1 3';char[1 3]'1 4';char[1 3]'2 3';char[1 3]'2 4'}|exact
+CHK|cs_fields|cell[9 1]{char[1 17]'defaultCodesClass';char[1 12]'missingLabel';char[1 9]'undefCode';char[1 10]'undefLabel';char[1 16]'maxNumCategories';char[1 13]'categoryNames';char[1 5]'codes';char[1 11]'isProtected';char[1 9]'isOrdinal'} WARN MATLAB:structOnObject|exact
+CHK|cs_warn|char[1 246]'MATLAB:structOnObject / Calling STRUCT on an object prevents the object from hiding its implementation details and should thus be avoided. Use DISP or DISPLAY to see the visible public details of an object. See 'help struct' for more information.' WARN MATLAB:structOnObject|exact
+CHK|cs_codes|uint8[1 4] [1 2 1 3] WARN MATLAB:structOnObject|exact
+CHK|cs_codes_class|char[1 6]'uint16' WARN MATLAB:structOnObject|exact
+CHK|cs_ord|logical[1 1] 1 WARN MATLAB:structOnObject|exact
+CHK|cs_names|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'} WARN MATLAB:structOnObject|exact
+CHK|cs_undef|double[1 1] 0 WARN MATLAB:structOnObject|exact
+CHK|cs_max|double[1 1] 281474976710655 WARN MATLAB:structOnObject|exact
+CHK|cs_default|char[1 5]'uint8' WARN MATLAB:structOnObject|exact
+CHK|cs_missing|char[1 9]'<missing>' WARN MATLAB:structOnObject|exact
+CHK|cs_undeflabel|char[1 11]'<undefined>' WARN MATLAB:structOnObject|exact
+CHK|cs_size|double[1 2] [1 1] WARN MATLAB:structOnObject|exact
+CHK|cs_undefined|uint8[1 2] [1 0] WARN MATLAB:structOnObject|exact
+CHK|cs_codes_big|char[1 6]'uint32' WARN MATLAB:structOnObject|exact
+CHK|is_cat|logical[1 1] 0|exact
+CHK|is_cat_space|logical[1 1] 0|exact
+CHK|is_num|logical[1 3] [0 0 0]|exact
+CHK|is_cell|logical[1 1] 0|exact
+CHK|is_struct|logical[1 1] 0|exact
+CHK|is_string|logical[1 3] [0 1 0]|exact
+CHK|is_obj|logical[1 1] 0|exact
+CHK|is_objarr|logical[1 2] [0 0]|exact
+CHK|is_logical|logical[1 3] [0 0 0]|exact
+CHK|is_int|logical[1 2] [0 0]|exact
+CHK|is_table|logical[1 1] 0|exact
+CHK|is_handle|logical[1 2] [0 0]|exact
+CHK|il_cat|logical[1 1] 0|exact
+CHK|il_cell|logical[1 1] 0|exact
+CHK|il_num|logical[1 2] [0 0]|exact
+CHK|il_string|logical[1 2] [1 1]|exact
+CHK|isp_cat|char[1 55]'MATLAB:isstrprop:UnexpectedType / Unexpected data type.'|exact
+CHK|is_empty_cat|logical[1 1] 0|exact
+CHK|fh_row|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|fh_horzcat|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|fh_vertcat|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|fh_col|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|fh_cat|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|fh_one|char[1 15]'function_handle'|exact
+CHK|fh_empty|char[1 15]'function_handle'|exact
+CHK|fh_cell|char[1 15]'function_handle'|exact
+CHK|fh_repmat|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|fh_anon|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|fh_num|char[1 123]'MATLAB:UnableToConvert / The following error occurred converting from double to function_handle:\nToo many output arguments.'|exact
+CHK|fh_horzcat_one|char[1 15]'function_handle'|exact
+CHK|fh_cat3|char[1 119]'MATLAB:err_non_scalar_function_handles / Nonscalar arrays of function handles are not allowed; use cell arrays instead.'|exact
+CHK|fh_char|char[1 121]'MATLAB:UnableToConvert / The following error occurred converting from char to function_handle:\nToo many output arguments.'|exact
+CHK|fh_struct|char[1 123]'MATLAB:UnableToConvert / The following error occurred converting from struct to function_handle:\nToo many output arguments.'|exact
+CHK|fh_obj|char[1 8]'no error'|exact
+CHK|fh_empty_first|char[1 15]'function_handle'|exact
+CHK|fh_zeros|char[1 8]'no error'|exact
+CHK|oo_class|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|oo_isenum|logical[1 1] 1|exact
+CHK|oo_logical|logical[1 1] 1|exact
+CHK|oo_char|onoff off|exact
+CHK|oo_string|string[1 1]"on"|exact
+CHK|oo_double|char[1 8]'no error'|exact
+CHK|oo_eq_char|logical[1 1] 1|exact
+CHK|oo_eq_true|logical[1 1] 1|exact
+CHK|oo_eq_str|logical[1 1] 0|exact
+CHK|oo_not|onoff off|exact
+CHK|oo_and|logical[1 1] 0|exact
+CHK|oo_or|logical[1 1] 1|exact
+CHK|oo_ctor_char|onoff off|exact
+CHK|oo_ctor_true|onoff on|exact
+CHK|oo_ctor_num|onoff off|exact
+CHK|oo_ctor_bad|char[1 137]'MATLAB:class:CannotConvert / 'maybe' is not a member of enumeration 'matlab.lang.OnOffSwitchState'. Value must be one of:\n    off\n    on\n'|exact
+CHK|oo_ctor_two|char[1 8]'no error'|exact
+CHK|oo_ctor_str|onoff on|exact
+CHK|oo_ctor_vec|double[1 2] [1 3]|exact
+CHK|oo_enum|cell[1 3]{char[1 28]'matlab.lang.OnOffSwitchState';double[1 2] [2 1];cell[2 1]{onoff off;onoff on}}|exact
+CHK|oo_enum_names|cell[2 1]{onoff off;onoff on}|exact
+CHK|oo_isequal|logical[1 1] 1|exact
+CHK|oo_isequal2|logical[1 1] 1|exact
+CHK|oo_strcmp|logical[1 1] 1|exact
+CHK|oo_ismember|logical[1 1] 1|exact
+CHK|oo_if|char[1 3]'yes'|exact
+CHK|oo_if_off|char[1 2]'no'|exact
+CHK|oo_switch|char[1 6]'was on'|exact
+CHK|oo_row|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|oo_row_size|double[1 2] [1 2]|exact
+CHK|oo_row_logical|logical[1 3] [1 0 1]|exact
+CHK|oo_disp2|char[1 9]'    off\n\n'|exact
+CHK|oo_methods|cell[153 1]{char[1 16]'OnOffSwitchState';char[1 3]'abs';char[1 10]'accumarray';char[1 3]'all';char[1 9]'allfinite';char[1 3]'amd';char[1 3]'and';char[1 3]'any';char[1 10]'anymissing';char[1 6]'anynan';char[1 6]'bitand';char[1 6]'bitcmp';char[1 6]'bitget';char[1 5]'bitor';char[1 6]'bitset';char[1 8]'bitshift';char[1 6]'bitxor';char[1 6]'bsxfun';char[1 3]'cat';char[1 4]'ceil';char[1 4]'cell';char[1 7]'cellstr';char[1 4]'char';char[1 9]'circshift';char[1 7]'complex';char[1 4]'conj';char[1 5]'conv2';char[1 10]'ctranspose';char[1 6]'cummax';char[1 6]'cummin';char[1 7]'cumprod';char[1 6]'cumsum';char[1 4]'diag';char[1 4]'diff';char[1 6]'dmperm';char[1 6]'double';char[1 17]'enable_repository';char[1 3]'end';char[1 2]'eq';char[1 3]'fft';char[1 4]'fftn';char[1 6]'filter';char[1 4]'find';char[1 3]'fix';char[1 4]'flip';char[1 5]'floor';char[1 4]'full';char[1 15]'function_handle';char[1 2]'ge';char[1 2]'gt';char[1 7]'horzcat';char[1 4]'ifft';char[1 5]'ifftn';char[1 4]'imag';char[1 5]'int16';char[1 5]'int32';char[1 5]'int64';char[1 4]'int8';char[1 9]'intersect';char[1 8]'iscolumn';char[1 6]'isdiag';char[1 7]'isempty';char[1 7]'isequal';char[1 8]'isequaln';char[1 8]'isfinite';char[1 7]'isfloat';char[1 5]'isinf';char[1 9]'isinteger';char[1 9]'islogical';char[1 8]'ismatrix';char[1 8]'ismember';char[1 5]'isnan';char[1 9]'isnumeric';char[1 6]'isreal';char[1 5]'isrow';char[1 8]'isscalar';char[1 8]'issorted';char[1 12]'issortedrows';char[1 8]'issparse';char[1 6]'istril';char[1 6]'istriu';char[1 8]'isvector';char[1 7]'ldivide';char[1 2]'le';char[1 6]'length';char[1 8]'linsolve';char[1 2]'lt';char[1 3]'max';char[1 4]'maxk';char[1 3]'min';char[1 4]'mink';char[1 5]'minus';char[1 8]'mldivide';char[1 3]'mod';char[1 8]'mrdivide';char[1 6]'mtimes';char[1 5]'ndims';char[1 2]'ne';char[1 3]'nnz';char[1 8]'nonzeros';char[1 4]'norm';char[1 3]'not';char[1 5]'numel';char[1 5]'nzmax';char[1 2]'or';char[1 7]'permute';char[1 4]'plus';char[1 5]'power';char[1 4]'prod';char[1 7]'rdivide';char[1 4]'real';char[1 3]'rem';char[1 7]'repelem';char[1 21]'replaceEDWithWebScope';char[1 24]'replaceScopeWithWebScope';char[1 35]'replaceSpectrumAnalyzerWithWebScope';char[1 40]'replaceWirelessScopeWithWirelessWebScope';char[1 6]'repmat';char[1 7]'reshape';char[1 5]'round';char[1 21]'set_nonblocking_state';char[1 7]'setdiff';char[1 6]'setxor';char[1 4]'sign';char[1 6]'single';char[1 4]'size';char[1 4]'sort';char[1 9]'sortrowsc';char[1 6]'strcmp';char[1 7]'strcmpi';char[1 6]'string';char[1 7]'strncmp';char[1 8]'strncmpi';char[1 8]'subsasgn';char[1 9]'subsindex';char[1 7]'subsref';char[1 3]'sum';char[1 13]'superiorfloat';char[1 6]'symrcm';char[1 5]'times';char[1 9]'transpose';char[1 4]'tril';char[1 4]'triu';char[1 6]'uint16';char[1 6]'uint32';char[1 6]'uint64';char[1 5]'uint8';char[1 6]'uminus';char[1 14]'underlyingType';char[1 5]'union';char[1 5]'uplus';char[1 7]'vertcat';char[1 3]'xor'}|div=ADR0234|diverges|char[0 0]''
+CHK|oo_superclasses|cell[1 1]{char[1 7]'logical'}|exact
+CHK|oo_plus|char[1 8]'no error'|exact
+CHK|oo_cellstr|cell[1 1]{onoff on}|exact
+CHK|oo_isa|logical[1 1] 1|exact
+CHK|oo_islogical|logical[1 1] 1|exact
+CHK|oo_isobject|logical[1 1] 1|exact
+CHK|oo_isnumeric|logical[1 1] 0|exact
+CHK|oo_mixed_char|char[1 8]'no error'|exact
+CHK|oo_mixed_logical|char[1 8]'no error'|exact
+CHK|oo_sort|char[1 8]'no error'|exact
+CHK|oo_eq_bad|char[1 8]'no error'|exact
+CHK|oo_eq_num|logical[1 1] 1|exact
+CHK|oo_ne|logical[1 1] 1|exact
+CHK|oo_fieldnames|char[1 8]'no error'|exact
+CHK|oo_properties|cell[0 1]{}|exact
+CHK|oo_struct|char[1 8]'no error' WARN MATLAB:structOnObject|exact
+CHK|oo_num2str|char[1 8]'no error'|exact
+CHK|oo_sprintf|char[1 8]'no error'|exact
+CHK|oo_sprintf_d|char[1 8]'no error'|exact
+CHK|oo_ax_visible|char[1 28]'matlab.lang.OnOffSwitchState'|div=ADR0234|diverges|char[1 4]'char'
+CHK|oo_ax_visible_eq|logical[1 1] 1|div=ADR0234|diverges|logical[1 2] [1 1]
+CHK|oo_ax_isenum|logical[1 1] 1|div=ADR0234|diverges|logical[1 1] 0
+CHK|oo_ax_strcmp|logical[1 1] 1|exact
+CHK|oo_ax_set|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff on}|div=ADR0234|diverges|cell[1 2]{char[1 4]'char';onoff on}
+CHK|oo_isenum_char|logical[1 1] 0|exact
+CHK|oo_isenum_class|logical[1 1] 0|exact
+CHK|oo_enum_char_class|char[1 8]'no error'|exact
+CHK|oo_matlab_lang|double[1 1] 8|exact
+CHK|oo_which|char[1 4]'char'|exact
+CHK|ex_istabular|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_isenum|double[1 1] 5|exact
+CHK|ex_vartype|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_convertvars|double[1 1] 0|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_table2cell|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_innerjoin|double[1 1] 0|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_stack|double[1 1] 0|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_join|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_repmat|double[1 1] 5|exact
+CHK|ex_fillmissing|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_ismissing|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_whos|double[1 1] 5|exact
+CHK|ex_summary|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_categorical|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_table|double[1 1] 2|div=ADR0234|diverges|double[1 1] 5
+CHK|ex_isspace|double[1 1] 5|exact
+CHK|d_scalar|char[1 134]'x = \n\n  <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on\n\n'|exact
+CHK|d_row|char[1 152]'x = \n\n  1×2 <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration array\n\n    on     off\n\n'|exact
+CHK|d_col|char[1 153]'x = \n\n  2×1 <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration array\n\n    on \n    off\n\n'|exact
+CHK|d_empty|char[1 137]'x = \n\n  0×0 empty <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration.\n\n'|exact
+CHK|d_disp_row|char[1 16]'    on     off\n\n'|exact
+CHK|d_enum_list|char[1 80]'\nEnumeration members for class 'matlab.lang.OnOffSwitchState':\n\n    off\n    on\n\n'|exact
+CHK|d_ax_visible|char[1 137]'\nans = \n\n  <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on\n\n'|div=ADR0234|diverges|char[1 9]'ans = on\n'
+CHK|d_in_struct|char[1 107]'\ns = \n\n  <a href="matlab:helpPopup('struct')" style="font-weight:bold">struct</a> with fields:\n\n    v: on\n\n'|div=ADR0234|diverges|char[1 142]'s = struct(v:   <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on)\n'
+CHK|d_in_cell|char[1 100]'\nc =\n\n  1×1 <a href="matlab:helpPopup('cell')" style="font-weight:bold">cell</a> array\n\n    {[on]}\n\n'|div=ADR0234|diverges|char[1 133]'c = {  <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on}\n'
+CHK|a_mixed_char|char[1 4]'char'|exact
+CHK|a_mixed_char_v|char[1 5]'onoff'|exact
+CHK|a_mixed_logical|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|a_mixed_num|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|a_mixed_num2|char[1 8]'no error'|exact
+CHK|a_first_char|char[1 4]'char'|exact
+CHK|a_sort|cell[1 3]{onoff off;onoff on;onoff on}|exact
+CHK|a_char_row|char[1 8]'no error'|exact
+CHK|a_string_row|string[1 2]"on","off"|exact
+CHK|a_cellstr_row|cell[1 2]{onoff on;onoff off}|exact
+CHK|a_index|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|a_index_v|onoff off|exact
+CHK|a_assign|cell[1 2]{onoff on;onoff on}|exact
+CHK|a_assign_bad|char[1 137]'MATLAB:class:CannotConvert / 'maybe' is not a member of enumeration 'matlab.lang.OnOffSwitchState'. Value must be one of:\n    off\n    on\n'|exact
+CHK|a_grow|cell[1 3]{onoff on;onoff off;onoff on}|exact
+CHK|a_numel|double[1 1] 3|exact
+CHK|c_num2str|char[1 1]'1'|exact
+CHK|c_sprintf_s|onoff on|exact
+CHK|c_sprintf_d|char[1 1]'1'|exact
+CHK|c_struct|struct[1 1]{(Data=logical[1 1] 1)} WARN MATLAB:structOnObject|exact
+CHK|c_fieldnames|cell[0 1]{}|exact
+CHK|c_plus|double[1 1] 2|exact
+CHK|c_minus|double[1 1] -1|exact
+CHK|c_times|double[1 1] 2|exact
+CHK|c_eq2|logical[1 1] 0|exact
+CHK|c_double_row|double[1 2] [1 0]|exact
+CHK|c_isequal_1|logical[1 1] 1|exact
+CHK|c_isequal_true|logical[1 1] 1|exact
+CHK|c_not_row|cell[1 2]{onoff off;onoff on}|exact
+CHK|c_not_class|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|c_xor|char[1 7]'logical'|exact
+CHK|c_any|logical[1 1] 1|exact
+CHK|c_find|double[1 2] [1 3]|exact
+CHK|c_sum|double[1 1] 2|exact
+CHK|c_ctor_case|char[1 8]'no error'|exact
+CHK|c_ctor_two|onoff on|exact
+CHK|c_ctor_empty|double[1 2] [0 0]|exact
+CHK|c_ctor_nan|char[1 65]'MATLAB:nologicalnan / NaN values cannot be converted to logicals.'|exact
+CHK|c_ctor_cell|double[1 2] [1 2]|exact
+CHK|c_ctor_string_row|double[1 2] [1 2]|exact
+CHK|c_ctor_none|char[1 126]'MATLAB:class:OutsideEnumBlock / Input does not correspond to a member of the enumeration class 'matlab.lang.OnOffSwitchState'.'|exact
+CHK|c_isa_handle|logical[1 1] 0|exact
+CHK|c_isempty|logical[1 1] 0|exact
+CHK|c_strcmp_row|logical[1 2] [1 0]|exact
+CHK|c_strcmp_str|logical[1 1] 1|exact
+CHK|c_strcmpi|logical[1 1] 1|exact
+CHK|c_ismember_rev|logical[1 1] 1|exact
+CHK|c_switch_true|char[1 9]'true case'|exact
+CHK|c_switch_cell|char[1 9]'cell case'|exact
+CHK|c_switch_logical_value|char[1 5]'other'|exact
+CHK|c_isequal_str|logical[1 1] 1|exact
+CHK|c_eq_str_row|logical[1 2] [1 0]|exact
+CHK|c_eq_cell|char[1 8]'no error'|exact
+CHK|c_while|double[1 1] 3|exact
+CHK|c_and_class|char[1 7]'logical'|exact
+CHK|c_or_logical|logical[1 1] 0|exact
+CHK|c_bare_ctor|char[1 126]'MATLAB:class:OutsideEnumBlock / Input does not correspond to a member of the enumeration class 'matlab.lang.OnOffSwitchState'.'|exact
+CHK|c_methods_n|double[1 1] 153|div=ADR0234|diverges|double[1 1] 1
+CHK|c_isprop|logical[1 1] 0|exact
+CHK|c_isenum_row|logical[1 1] 1|exact
+CHK|c_class_row|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|c_logical_class|char[1 7]'logical'|exact
+CHK|c_abs|char[1 6]'double'|exact
+CHK|c_enum_wrong|char[1 8]'no error'|exact

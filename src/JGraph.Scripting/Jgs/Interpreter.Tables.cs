@@ -20,7 +20,78 @@ internal sealed partial class Interpreter
     {
         Table table = target.AsTable;
         (int[] rows, int[] columns) = ResolveTableSubscripts(table, subscripts, at, env, "{}");
+        return TableBraceValue(table, rows, columns, at);
+    }
 
+    /// <summary>
+    /// Which of a table's two dimension names a dot names when no variable has it: 0 for the rows
+    /// (<c>T.Row</c>, a timetable's row times being a name of their own), 1 for the variables
+    /// (<c>T.Variables</c>), null otherwise (open item 128).
+    /// </summary>
+    private static int? TableDimensionDot(Table table, string field)
+    {
+        if (table.TryGetColumn(field, out TableColumn named) && string.Equals(named.Name, field, StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        IReadOnlyList<string> dimensions = table.DimensionNames ?? [table.RowTimes?.Name ?? "Row", "Variables"];
+        return field == dimensions[1] ? 1 : field == dimensions[0] && table.RowTimes is null ? 0 : null;
+    }
+
+    /// <summary>
+    /// <c>T.Variables = v</c> (open item 128, probe_128c and probe_128d): every variable written
+    /// whole from its columns of the right-hand side, as <c>T{:, :} = v</c> writes them - converted
+    /// into each variable's class - after R2025b's checks of the height and the width.
+    /// </summary>
+    private Table WriteTableVariablesWhole(Table table, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        int rows = rhs.Type is JgsType.Array or JgsType.Cell ? rhs.Rows : 1;
+        if (rows != table.RowCount)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:RowDimensionMismatch",
+                "To assign to or create a variable in a table, the number of rows must match the height of the table.");
+        }
+
+        var widths = new int[table.ColumnCount];
+        int total = 0;
+        for (int v = 0; v < widths.Length; v++)
+        {
+            widths[v] = table[v] is NumberMatrixColumn matrix ? matrix.Width : 1;
+            total += widths[v];
+        }
+
+        int given = rhs.Type is JgsType.Array or JgsType.Cell ? rhs.Cols : 1;
+        if (given != total)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:WrongNumberRHSCols",
+                $"The value on the right-hand side of the assignment has the wrong width. The assignment requires a value whose width is {total}.");
+        }
+
+        var variables = new (string Name, bool Existing)[table.ColumnCount];
+        var parts = new JgsValue[table.ColumnCount];
+        int offset = 0;
+        for (int v = 0; v < variables.Length; v++)
+        {
+            variables[v] = (table[v].Name, true);
+            parts[v] = total == widths[v] ? rhs : RightHandColumns(rhs, offset, widths[v], at, env);
+            offset += widths[v];
+        }
+
+        return WriteTableVariables(table, variables, parts, new AllExpr { Line = at.Line, Column = at.Column }, zeroStart: true, at, env);
+    }
+
+    /// <summary>A cell of char rows as the string array of its shape.</summary>
+    private static JgsValue CellAsStrings(JgsValue cell)
+    {
+        JgsValue strings = JgsValue.Array([.. cell.AsCell.Select(static e => JgsValue.Str(e.AsString))]);
+        strings.TakeShapeOf(cell);
+        return strings.MarkStringArray();
+    }
+
+    /// <summary>The selected variables' rows side by side: <c>T{rows, vars}</c>, and <c>T.Variables</c> over all of them.</summary>
+    private JgsValue TableBraceValue(Table table, int[] rows, int[] columns, Node at)
+    {
         // One variable that holds its value as it is (V6) answers with those rows of it, in its
         // own class: an int8 variable reads out int8, a cell variable a cell.
         if (columns.Length == 1 && table[columns[0]] is JgsValueColumn held)
@@ -32,7 +103,8 @@ internal sealed partial class Interpreter
         bool anyOther = false;
         foreach (int c in columns)
         {
-            if (table[c].Type == ColumnType.Text)
+            // A char variable joins numbers as the bracket joins them, into chars (probe_128d).
+            if (table[c].Type == ColumnType.Text && !(Dialect.IsMatlab && table[c] is JgsValueColumn { Value.IsCharMatrix: true }))
             {
                 anyText = true;
             }
@@ -68,7 +140,37 @@ internal sealed partial class Interpreter
         int count = rows.Length * columns.Length;
         if (count == 0)
         {
+            // The empty keeps the selection's shape in R2025b: T{:, []} of three rows is 3-by-0 (open item 128).
+            if (Dialect.IsMatlab)
+            {
+                if (!anyText)
+                {
+                    return JgsMatrix.FromColumnMajorDims([], [rows.Length, columns.Length]);
+                }
+
+                JgsValue none = JgsValue.Cell([]);
+                none.Reshape(rows.Length, columns.Length);
+                return none;
+            }
+
             return anyText ? JgsValue.Cell([]) : JgsValue.Array([]);
+        }
+
+        // Variables that hold their own class - an integer, a logical, a categorical, a string - join
+        // by the bracket's rules, as R2025b's braces do (open item 128, probe_128d: int8 beside double
+        // is int8, a categorical beside a categorical one categorical, a string beside a cellstr string).
+        if (Dialect.IsMatlab && columns.Length > 1 && columns.Any(c => table[c] is JgsValueColumn))
+        {
+            JgsValue[] pieces = [.. columns.Select(c => JgsValueColumn.RowsOfValue(
+                JgsBuiltins.TableColumnValue(table, table[c].Name, at.Line, at.Column), rows))];
+
+            // Beside a string, a cell of text is strings (probe_128d: a string and a cellstr are a string matrix).
+            if (pieces.Any(static p => p.IsStringArray))
+            {
+                pieces = [.. pieces.Select(static p => p.Type == JgsType.Cell ? CellAsStrings(p) : p)];
+            }
+
+            return Concatenate([pieces], at);
         }
 
         if (anyText)

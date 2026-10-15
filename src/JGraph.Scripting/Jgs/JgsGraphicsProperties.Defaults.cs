@@ -83,6 +83,13 @@ internal static partial class JgsGraphicsProperties
             axes.PlotBoxMargins = AxesModel.MatlabPlotBoxMargins;
             axes.FurnitureFontFactor = 0.9; // the legend and colorbar at nine tenths of the axes font (open item 118)
             axes.SyncFurnitureFonts();
+
+            // Each ruler's labels choose their angle until one is written; a crowded horizontal ruler's
+            // turn (open item 126).
+            foreach (AxisModel ruler in axes.XAxes.Concat(axes.YAxes).Append(axes.ZAxis))
+            {
+                ruler.TickLabelAngleAuto = true;
+            }
         }
     }
 

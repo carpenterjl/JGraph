@@ -1368,8 +1368,10 @@ internal sealed class JgsValue
             _ => AllTruthy(AsArray),
         },
 
-        // A .NET object is no condition: `if obj` refuses as R2025b's conversion to logical does,
-        // rather than reading true as a value of unknown kind would (ADR 0174).
+        // An OnOffSwitchState is the logical it is (open item 129). A .NET object is no condition:
+        // `if obj` refuses as R2025b's conversion to logical does, rather than reading true as a
+        // value of unknown kind would (ADR 0174).
+        JgsType.External when _reference is OnOffSwitchStateValue states => states.AllOn,
         JgsType.External => throw new JgsRuntimeException(0, 0, "MATLAB:invalidConversion",
             $"Conversion to logical from {AsExternal.ClassName} is not possible."),
         _ => true,

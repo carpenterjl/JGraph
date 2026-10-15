@@ -19,13 +19,24 @@ public sealed class Table
     /// </summary>
     /// <exception cref="ArgumentException">Columns differ in length or share a name.</exception>
     public Table(IReadOnlyList<TableColumn> columns)
+        : this(columns, 0)
+    {
+    }
+
+    /// <summary>
+    /// Creates a table from <paramref name="columns"/> as the constructor above does, with
+    /// <paramref name="emptyRowCount"/> rows when there are no columns: a table can keep its rows
+    /// after losing every variable (R2025b's <c>T(:, [])</c> is 3-by-0).
+    /// </summary>
+    /// <exception cref="ArgumentException">Columns differ in length or share a name.</exception>
+    public Table(IReadOnlyList<TableColumn> columns, int emptyRowCount)
     {
         ArgumentNullException.ThrowIfNull(columns);
 
         _columns = new TableColumn[columns.Count];
         _byName = new Dictionary<string, int>(columns.Count, StringComparer.OrdinalIgnoreCase);
 
-        int rowCount = columns.Count > 0 ? columns[0].RowCount : 0;
+        int rowCount = columns.Count > 0 ? columns[0].RowCount : Math.Max(emptyRowCount, 0);
         for (int i = 0; i < columns.Count; i++)
         {
             TableColumn column = columns[i] ?? throw new ArgumentException("Columns cannot be null.", nameof(columns));
@@ -75,12 +86,13 @@ public sealed class Table
     /// A table of <paramref name="columns"/> that is otherwise this one: the row names, row times,
     /// dimension names, description and user data carry over, and the per-variable units and
     /// descriptions follow their columns by name (a new column has none). The caller answers for
-    /// the row labels matching the new row count — see <see cref="WithRowLabels"/>.
+    /// the row labels matching the new row count — see <see cref="WithRowLabels"/>. With no columns
+    /// the table keeps <paramref name="emptyRowCount"/> rows, its own count when that is not given.
     /// </summary>
-    public Table WithColumns(IReadOnlyList<TableColumn> columns)
+    public Table WithColumns(IReadOnlyList<TableColumn> columns, int? emptyRowCount = null)
     {
         ArgumentNullException.ThrowIfNull(columns);
-        return new Table(columns)
+        return new Table(columns, emptyRowCount ?? RowCount)
         {
             RowNames = RowNames,
             RowTimes = RowTimes,
@@ -94,7 +106,7 @@ public sealed class Table
 
     /// <summary>This table with other row names and row times, everything else kept.</summary>
     public Table WithRowLabels(IReadOnlyList<string>? rowNames, TableColumn? rowTimes) =>
-        new(_columns)
+        new(_columns, RowCount)
         {
             RowNames = rowNames,
             RowTimes = rowTimes,
@@ -188,7 +200,7 @@ public sealed class Table
             picked[c] = SelectRows(_columns[index], rows, RowCount);
         }
 
-        return WithColumns(picked).WithRowLabels(
+        return WithColumns(picked, rows.Count).WithRowLabels(
             RowNames is null ? null : rows.Select(r => RowNames[CheckRow(r, RowCount)]).ToArray(),
             RowTimes is null ? null : SelectRows(RowTimes, rows, RowCount));
     }

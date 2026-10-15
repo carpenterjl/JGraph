@@ -417,7 +417,8 @@ internal static class JgsRunner
             environment.Builtins.Register(constructor, JgsValue.Function(new BuiltinFunction(constructor, (args, line, col) =>
             {
                 var given = args.ToList();
-                if (interpreter.PendingCall is { } call && !args.Any(a => a.Type == JgsType.String && a.AsString == "VariableNames"))
+                if (interpreter.PendingCall is { } call && !args.Any(a => a.Type == JgsType.String && a.AsString == "VariableNames")
+                    && (constructor != "table" || JgsBuiltins.PreallocationSizeAt(args) is null)) // table('Size', ...) names its own (open item 128)
                 {
                     int count = constructor == "array2table" ? (args.Count > 0 ? args[0].Cols : 0) : args.Count;
                     if (constructor == "table") for (int i = 0; i + 1 < args.Count; i++) if (args[i].Type == JgsType.String && args[i].AsString == "RowNames") { count = i; break; }
@@ -680,7 +681,52 @@ internal static class JgsRunner
         DefineClear("clear");
         DefineClear("clearvars");
 
+        // The workspace R2025b's whos lists: the frame's variables without a function's nargin and
+        // nargout, and the globals it declared (open item 128, probe_128c and probe_128d).
+        IEnumerable<(string Name, JgsValue Value)> WhosWorkspace()
+        {
+            var listed = new HashSet<string>(StringComparer.Ordinal);
+            foreach ((string name, JgsValue value) in UserVariables())
+            {
+                if (name is not ("nargin" or "nargout") && listed.Add(name))
+                {
+                    yield return (name, value);
+                }
+            }
+
+            foreach (JgsEnvironment scope in ActiveFrames())
+            {
+                foreach (string name in scope.GlobalLinks.Order(StringComparer.Ordinal))
+                {
+                    if (listed.Add(name) && interpreter.TryReadVariable(name, out JgsValue value))
+                    {
+                        yield return (name, value);
+                    }
+                }
+            }
+        }
+
+        // In the MATLAB dialect whos answers R2025b's struct when asked and prints its listing when
+        // not, over the workspace or a MAT-file (open item 128); JGS keeps its own listing.
+        JgsValue[] WhosOf(IReadOnlyList<JgsValue> args, int wanted, int line, int column) =>
+            args.Count == 1 && JgsBuiltins.IsMatFile(args[0]) ? [JgsBuiltins.MatFileWhos(args[0], line, column)]
+            : JgsRunningDialect.ThreadIsMatlab
+                ? JgsBuiltins.WhosMatlab(args, wanted, WhosWorkspace(), interpreter.CurrentFrame.IsGlobal, interpreter.RunningFunctionName,
+                    text => { if (interpreter.Host is { } host) host.print(text); else output.WriteLine(text); },
+                    path => interpreter.Host?.Resolve(path) ?? path, line, column)
+                : [WhosListing(args, line, column)];
+
         environment.Builtins.Register("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
+        {
+            JgsValue[] answers = WhosOf(args, 1, line, column);
+            return answers.Length > 0 ? answers[0] : JgsValue.Null;
+        })
+        {
+            MultiOutput = WhosOf,
+            KnowsWhenDiscarded = true,
+        }));
+
+        JgsValue WhosListing(IReadOnlyList<JgsValue> args, int line, int column)
         {
             if (args.Count == 1 && JgsBuiltins.IsMatFile(args[0]))
             {
@@ -716,7 +762,7 @@ internal static class JgsRunner
             }
 
             return JgsValue.Null;
-        })));
+        }
     }
 
     /// <summary>The size column of <c>whos</c> and the Workspace pane.</summary>

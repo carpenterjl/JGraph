@@ -36,7 +36,7 @@ CHK|nd_handle_eq|logical[1 3 2] nd [1 0 0 1 0 0]|exact
 CHK|nd_cs_name|cell[1 2]{char[1 1]'x';char[1 1]'x'}|exact
 CHK|nd_num2cell|double[1 3] [1 3 2]|exact
 CHK|nd_flip|double[1 6] [1 2 3 1 2 3]|exact
-CHK|nd_repmat|double[1 3] [1 2 2]|div=ADR0233|diverges|char[0 0]''
+CHK|nd_repmat|double[1 3] [1 2 2]|exact
 CHK|nd_empty3|double[1 3] [0 2 3]|exact
 CHK|nd_cat4|double[1 4] [1 1 1 2]|exact
 CHK|nd_horzcat_3d|double[1 3] [1 6 2]|exact
@@ -48,14 +48,14 @@ CHK|nest_grow|double[1 4] [2 3 1 4]|exact
 CHK|nest_replace|double[1 2] [2 7]|exact
 CHK|nest_name_char|char[1 1]'Q'|exact
 CHK|nest_cs|double[1 2] [5 5]|exact
-CHK|nest_struct|double[1 2] [2 9]|div=ADR0233|diverges|char[0 0]''
-CHK|nest_cell|double[1 2] [2 9]|div=ADR0233|diverges|char[0 0]''
+CHK|nest_struct|double[1 2] [2 9]|exact
+CHK|nest_cell|double[1 2] [2 9]|exact
 CHK|nest_handle|double[1 2] [9 9]|exact
 CHK|nest_deep|double[1 2] [8 5]|exact
 CHK|nest_handle_val|double[1 2] [2 9]|exact
 CHK|nest_delete|double[1 1] 3|exact
 CHK|nest_end|double[1 2] [2 6]|exact
-CHK|nest_in_arr|double[1 2] [0 6]|div=ADR0233|diverges|char[0 0]''
+CHK|nest_in_arr|double[1 2] [0 6]|exact
 CHK|m_arr|double[1 1] 6|exact
 CHK|m_scalar|double[1 1] 1|exact
 CHK|m_arr_paren|double[1 1] 6|exact

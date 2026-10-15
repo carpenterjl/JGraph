@@ -234,7 +234,10 @@ internal static partial class JgsBuiltins
             JgsValue argument = args[i];
             if (argument.IsCategorical)
             {
-                plain[i] = JgsMatrix.FromColumnMajor(JgsCategorical.Remap(JgsCategorical.CodesOf(argument), argument.CategoricalTag!, tag!), argument.Rows, argument.Cols);
+                double[] codes = JgsCategorical.Remap(JgsCategorical.CodesOf(argument), argument.CategoricalTag!, tag!);
+                plain[i] = argument.IsNd
+                    ? JgsMatrix.FromColumnMajorDims(codes, argument.Dims) // a third dimension keeps its place (open item 127)
+                    : JgsMatrix.FromColumnMajor(codes, argument.Rows, argument.Cols);
             }
             else if (concatenation && i >= firstPiece && !(argument.Type == JgsType.Array && argument.ArrayLength == 0 && !argument.IsStringArray))
             {

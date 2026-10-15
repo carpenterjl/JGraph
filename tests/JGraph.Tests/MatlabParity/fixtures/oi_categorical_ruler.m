@@ -1,13 +1,14 @@
 % record: -noFigureWindows
 % Open item 120 (ADR 0233): R2025b's CategoricalRuler, in the MATLAB dialect. A categorical handed to
-% bar, barh, plot, scatter, stem, area, stairs, errorbar, line, swarmchart, boxchart, xline, xregion or
-% text puts its categories on the ruler the values stand along, category k at position k; the chart's
-% data, the axes' XLim and XTick read back as categoricals and XTickLabel as a column of names; limits
-% and ticks are written as categories, never as numbers; a held axes adds new categories at the end,
-% a categorical onto a numeric ruler that holds data is refused, and numbers onto a categorical ruler
-% are positions; histogram and pie of a categorical count its categories; ruler2num and num2ruler
-% convert. Lines marked div=ADR0233 are a handle's class name (a double here), the turned labels of
-% a crowded ruler, axis() over mixed rulers, loglog, and the property listings.
+% bar, barh, plot, scatter, stem, area, stairs, errorbar, line, swarmchart, boxchart, xline, xregion
+% or text puts its categories on the ruler the values stand along, category k at position k; the
+% chart's data, the axes' XLim and XTick read back as categoricals and XTickLabel as a column of
+% names; limits and ticks are written as categories, never as numbers; a held axes adds new categories
+% at the end, a categorical onto a numeric ruler that holds data is refused, and numbers onto a
+% categorical ruler are positions; histogram and pie of a categorical count its categories; ruler2num
+% and num2ruler convert. Lines marked div=ADR0233 are a handle's class name (a double here); ADR 0234
+% made the turned labels of a crowded ruler, axis() over mixed rulers, loglog and the property
+% listings exact.
 close all force
 f = figure('Visible', 'off', 'Position', [100 100 560 420]); ax = axes(f);
 c3 = categorical({'x', 'y', 'z'});
@@ -48,7 +49,7 @@ cla(ax, 'reset'); b3 = bar(ax, categorical({'a', ''}), [1 2]);
 u9b_chk('undef_cats', @() ax.XAxis.Categories); u9b_chk('undef_tick', @() ax.XTick); u9b_chk('undef_lim', @() ax.XLim); u9b_chk('undef_xdata', @() b3.XData);
 cla(ax, 'reset'); nm120 = arrayfun(@(k) sprintf('cat%02d', k), 1:30, 'UniformOutput', false);
 bar(ax, categorical(nm120), 1:30); drawnow;
-u9b_chk('many_tick_n', @() numel(ax.XTick)); u9b_chk('many_tick', @() ax.XTick); u9b_chk('many_lim', @() ax.XLim); u9b_chkdiv('many_rot', @() oi_try( @() ax.XTickLabelRotation), 'ADR0233');
+u9b_chk('many_tick_n', @() numel(ax.XTick)); u9b_chk('many_tick', @() ax.XTick); u9b_chk('many_lim', @() ax.XLim); u9b_chk('many_rot', @() ax.XTickLabelRotation);
 cla(ax, 'reset'); bar(ax, categorical({'b', 'a', 'c'}), [1 2 3]);
 u9b_chk('order_cats', @() ax.XAxis.Categories);
 cla(ax, 'reset'); bar(ax, categorical({'b', 'a', 'c'}, {'c', 'b', 'a'}), [1 2 3]);
@@ -77,7 +78,7 @@ cla(ax, 'reset'); u9b_chk('plot3_cat', @() class(plot3(ax, categorical({'x', 'y'
 cla(ax, 'reset'); u9b_chkdiv('fill_cat', @() oi_try( @() class(fill(ax, categorical({'x', 'y', 'x'}), [1 2 3], 'r'))), 'ADR0233');
 cla(ax, 'reset'); u9b_chkdiv('patch_cat', @() oi_try( @() class(patch(ax, categorical({'x', 'y', 'x'}), [1 2 3], 'r'))), 'ADR0233');
 cla(ax, 'reset'); u9b_chk('semilogy_cat', @() class(semilogy(ax, categorical({'x', 'y'}), [1 2]).XData));
-cla(ax, 'reset'); u9b_chkdiv('loglog_cat', @() oi_try( @() class(loglog(ax, categorical({'x', 'y'}), [1 2]).XData)), 'ADR0233');
+cla(ax, 'reset'); u9b_chk('loglog_cat', @() class(loglog(ax, categorical({'x', 'y'}), [1 2]).XData));
 cla(ax, 'reset'); hold(ax, 'on'); bar(ax, c3, [1 2 3]); u9b_chk('mix_num_on_cat', @() class(plot(ax, [1 2], [3 4]).XData)); u9b_chk('mix_num_on_cat_cats', @() ax.XAxis.Categories);
 u9b_chk('mix_cat_y_on_num', @() class(plot(ax, [1 2], categorical({'a', 'b'})).YData));
 hold(ax, 'off'); cla(ax, 'reset'); hold(ax, 'on'); plot(ax, [1 2], [3 4]); u9b_chk('mix_cat_on_num', @() class(bar(ax, c3, [1 2 3]).XData));
@@ -96,7 +97,7 @@ cla(ax, 'reset'); hh = histogram(ax, categorical({'x', 'y', 'x'})); drawnow;
 u9b_chk('h_values', @() hh.Values); u9b_chk('h_cats', @() hh.Categories); u9b_chk('h_data', @() hh.Data); u9b_chk('h_bw', @() hh.BarWidth); u9b_chk('h_norm', @() hh.Normalization); u9b_chk('h_ndb', @() hh.NumDisplayBins); u9b_chk('h_order', @() hh.DisplayOrder);
 u9b_chk('h_xtick', @() ax.XTick); u9b_chk('h_xlim', @() ax.XLim); u9b_chk('h_cats_ax', @() ax.XAxis.Categories); u9b_chk('h_ylim', @() ax.YLim); u9b_chk('h_orient', @() hh.Orientation);
 u9b_chk('h_binedges', @() hh.BinEdges); u9b_chk('h_numbins', @() hh.NumBins); u9b_chk('h_bincounts', @() hh.BinCounts);
-u9b_chkdiv('h_props', @() oi_try( @() strjoin(fieldnames(get(hh))', ',')), 'ADR0233');
+u9b_chk('h_props', @() strjoin(fieldnames(get(hh))', ','));
 u9b_chk('h_set_norm', @() setp(hh, 'Normalization', 'probability')); u9b_chk('h_set_norm_vals', @() hh.Values);
 u9b_chk('h_set_order', @() setp(hh, 'DisplayOrder', 'descend')); u9b_chk('h_set_order_cats', @() hh.Categories); u9b_chk('h_set_order_ax', @() ax.XAxis.Categories);
 u9b_chk('h_set_bw', @() setp(hh, 'BarWidth', 0.5));
@@ -110,7 +111,7 @@ cla(ax, 'reset'); hh8 = histogram(ax, categorical({'x', 'y', 'x', 'z', 'z', 'z'}
 cla(ax, 'reset'); hh9 = histogram(ax, categorical({'x', 'y', 'x', 'z', 'z', 'z'}), 'NumDisplayBins', 2); u9b_chk('h_ndb2_cats', @() hh9.Categories); u9b_chk('h_ndb2_vals', @() hh9.Values); u9b_chk('h_ndb2_other', @() hh9.OthersValue); u9b_chk('h_ndb2_showothers', @() hh9.ShowOthers);
 cla(ax, 'reset'); hh10 = histogram(ax, categorical({'x', 'y', 'x', 'z', 'z', 'z'}), 'ShowOthers', 'on', 'NumDisplayBins', 2); u9b_chk('h_others_cats', @() hh10.Categories); u9b_chk('h_others_ax', @() ax.XAxis.Categories);
 cla(ax, 'reset'); u9b_chk('h_numbins_cat', @() class(histogram(ax, categorical({'x'}), 3)));
-u9b_chkdiv('h_binmethod_cat', @() oi_try( @() class(histogram(ax, categorical({'x'}), 'BinMethod', 'auto'))), 'ADR0233');
+u9b_chk('h_binmethod_cat', @() class(histogram(ax, categorical({'x'}), 'BinMethod', 'auto')));
 u9b_chk('histcounts_cat', @() histcounts(categorical({'x', 'y', 'x'})));
 u9b_chk('histcounts_cat2', @() histcounts(categorical({'x', 'y', 'x'}), {'y'}));
 [nn, cc] = histcounts(categorical({'x', 'y', 'x'})); u9b_chk('histcounts_cats_out', @() cc);
@@ -131,15 +132,15 @@ hm2 = heatmap(f, [1 2; 3 4]); u9b_chk('hm_num_xlabels', @() hm2.XDisplayLabels);
 close all force
 f2 = figure('Visible', 'off'); ax2 = axes(f2);
 u9b_chkdiv('bar_cell_x', @() oi_try( @() class(bar(ax2, {'a', 'b'}, [1 2]))), 'ADR0233');
-u9b_chkdiv('plot_string_x', @() oi_try( @() class(plot(ax2, ["a" "b"], [1 2]).XData)), 'ADR0233');
+u9b_chk('plot_string_x', @() class(plot(ax2, ["a" "b"], [1 2]).XData));
 u9b_chk('bar_string_x', @() class(bar(ax2, ["a" "b"], [1 2]).XData));
 cla(ax2, 'reset'); bar(ax2, categorical({'x', 'y'}), [1 2]); u9b_chk('xticklabels_fn', @() xticklabels(ax2)); u9b_chk('xticks_fn', @() xticks(ax2));
 u9b_chk('xticks_set_fn', @() xtfn(ax2, categorical({'y'})));
-u9b_chkdiv('axis_fn', @() oi_try( @() axis(ax2)), 'ADR0233');
+u9b_chk('axis_fn', @() axis(ax2));
 u9b_chk('axis_tight', @() axtight(ax2));
-u9b_chkdiv('get_ruler_props', @() oi_try( @() strjoin(fieldnames(get(ax2.XAxis))', ',')), 'ADR0233');
-u9b_chkdiv('ruler_tlf', @() oi_try( @() ax2.XAxis.TickLabelFormat), 'ADR0233');
-u9b_chkdiv('zoom_set_num_via_axis', @() oi_try( @() axset(ax2, [0 3 0 3])), 'ADR0233');
+u9b_chk('get_ruler_props', @() strjoin(fieldnames(get(ax2.XAxis))', ','));
+u9b_chk('ruler_tlf', @() ax2.XAxis.TickLabelFormat);
+u9b_chk('zoom_set_num_via_axis', @() axset(ax2, [0 3 0 3]));
 close all force
 
 

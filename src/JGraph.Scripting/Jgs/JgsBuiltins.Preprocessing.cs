@@ -851,7 +851,8 @@ internal static partial class JgsBuiltins
             {
                 "previous" => slice[before],
                 "next" => slice[after],
-                "nearest" => i - before <= after - i ? slice[before] : slice[after],
+                // A tie goes to the value after in R2025b (open item 128: [1 NaN 3] fills 3); JGS keeps the one before.
+                "nearest" => i - before < after - i || (i - before == after - i && !JgsRunningDialect.ThreadIsMatlab) ? slice[before] : slice[after],
                 _ => slice[before] + ((slice[after] - slice[before]) * (i - before) / (double)(after - before)),
             };
         }
@@ -957,7 +958,7 @@ internal static partial class JgsBuiltins
                 "constant" => constant,
                 "previous" => before >= 0 ? texts[before] : string.Empty,
                 "next" => after >= 0 ? texts[after] : string.Empty,
-                _ => before >= 0 && (after < 0 || i - before <= after - i) ? texts[before]
+                _ => before >= 0 && (after < 0 || i - before < after - i || (i - before == after - i && !JgsRunningDialect.ThreadIsMatlab)) ? texts[before]
                     : after >= 0 ? texts[after]
                     : string.Empty,
             };

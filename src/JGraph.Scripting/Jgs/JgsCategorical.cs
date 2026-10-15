@@ -407,9 +407,11 @@ internal static class JgsCategorical
     public static JgsValue Compare(TokenType op, JgsValue left, JgsValue right, int line, int col)
     {
         bool ordering = op is TokenType.Less or TokenType.LessEqual or TokenType.Greater or TokenType.GreaterEqual;
-        if (op == TokenType.DotStar && left.IsCategorical != right.IsCategorical)
+        // c .* d pairs the categories (open item 129); c .* 2 is R2025b's own refusal (open item 123).
+        if (op == TokenType.DotStar)
         {
-            throw TimesMismatch(line, col); // c .* 2 is R2025b's own refusal (open item 123)
+            return JgsRunningDialect.ThreadIsMatlab ? Times(left, right, line, col)
+                : left.IsCategorical != right.IsCategorical ? throw TimesMismatch(line, col) : throw NotNumeric(line, col);
         }
 
         if (op is not (TokenType.EqualEqual or TokenType.BangEqual) && !ordering)
@@ -524,6 +526,148 @@ internal static class JgsCategorical
     /// <summary>R2025b's refusal of <c>times</c> between a categorical and anything but a categorical or text.</summary>
     public static JgsRuntimeException TimesMismatch(int line, int col) =>
         new(line, col, "MATLAB:categorical:times:TypeMismatch", "Inputs must be categorical arrays, character vectors, or scalar strings.");
+
+    /// <summary>
+    /// <c>a .* b</c> and <c>times(a, b)</c> with a categorical (open item 129), as R2025b's
+    /// <c>categorical/times</c> computes it: the categories are every pairing of the left's with the
+    /// right's, left-major, joined by a space (<c>'a x'</c>); each element is its pair, undefined when
+    /// either side is; the shapes expand as arithmetic's do. Text stands for the categorical it names
+    /// (a cell of names takes their sorted set), and the answer is then ordinal and protected as the
+    /// categorical side is; two categoricals give an ordinal answer when both are and a protected one
+    /// when either is. A numeric 1 is the identity; any other number, and a string array of more
+    /// than one element, are R2025b's refusals.
+    /// </summary>
+    public static JgsValue Times(JgsValue left, JgsValue right, int line, int col)
+    {
+        static bool IsNumericOne(JgsValue v) =>
+            !v.IsCategorical && v.Type == JgsType.Number && v.AsNumber == 1
+            || (v.Type == JgsType.Array && !v.IsCategorical && !v.IsStringArray && !v.IsCharMatrix && v.ArrayLength == 1
+                && v.ElementAt(0) is { Type: JgsType.Number } only && only.AsNumber == 1);
+
+        if (IsNumericOne(left) && right.IsCategorical)
+        {
+            return right;
+        }
+
+        if (IsNumericOne(right) && left.IsCategorical)
+        {
+            return left;
+        }
+
+        (double[] Codes, string[] Names, int[] Dims) Categorical(JgsValue value) =>
+            (CodesOf(value), value.CategoricalTag!.Categories, value.Type == JgsType.Array ? value.Dims : [1, 1]);
+
+        (double[] Codes, string[] Names, int[] Dims) a;
+        (double[] Codes, string[] Names, int[] Dims) b;
+        bool ordinal;
+        bool isProtected;
+        if (left.IsCategorical && right.IsCategorical)
+        {
+            a = Categorical(left);
+            b = Categorical(right);
+            ordinal = left.CategoricalTag!.Ordinal && right.CategoricalTag!.Ordinal;
+            isProtected = left.CategoricalTag!.Protected || right.CategoricalTag!.Protected;
+        }
+        else
+        {
+            JgsValue categorical = left.IsCategorical ? left : right;
+            var text = TextSide(left.IsCategorical ? right : left, line, col);
+            a = left.IsCategorical ? Categorical(left) : text;
+            b = left.IsCategorical ? text : Categorical(right);
+            ordinal = categorical.CategoricalTag!.Ordinal;
+            isProtected = categorical.CategoricalTag!.Protected;
+        }
+
+        int na = a.Names.Length;
+        int nb = b.Names.Length;
+        var names = new string[na * nb];
+        for (int k = 0; k < names.Length; k++)
+        {
+            names[k] = a.Names[k / nb] + " " + b.Names[k % nb];
+        }
+
+        int rank = Math.Max(a.Dims.Length, b.Dims.Length);
+        var dims = new int[rank];
+        for (int d = 0; d < rank; d++)
+        {
+            int da = d < a.Dims.Length ? a.Dims[d] : 1;
+            int db = d < b.Dims.Length ? b.Dims[d] : 1;
+            if (da != db && da != 1 && db != 1)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:sizeDimensionsMustMatch", "Arrays have incompatible sizes for this operation.");
+            }
+
+            dims[d] = da == 1 ? db : da;
+        }
+
+        int count = dims.Aggregate(1, static (p, n) => p * n);
+        var codes = new double[count];
+        var sub = new int[rank];
+        for (int i = 0; i < count; i++)
+        {
+            int rest = i;
+            for (int d = 0; d < rank; d++)
+            {
+                sub[d] = rest % dims[d];
+                rest /= dims[d];
+            }
+
+            double ca = a.Codes[Expanded(a.Dims, sub)];
+            double cb = b.Codes[Expanded(b.Dims, sub)];
+            codes[i] = double.IsNaN(ca) || double.IsNaN(cb) ? double.NaN : cb + (nb * (ca - 1));
+        }
+
+        var tag = new JgsCategoricalTag(names, ordinal, isProtected || ordinal);
+        JgsValue made = JgsMatrix.FromColumnMajorDims(codes, dims);
+        return (made.Type == JgsType.Array ? made : JgsValue.Array([made])).MarkCategorical(tag);
+    }
+
+    /// <summary>The linear position in an array of <paramref name="dims"/> that an expanded subscript reads.</summary>
+    private static int Expanded(int[] dims, int[] sub)
+    {
+        int at = 0;
+        int stride = 1;
+        for (int d = 0; d < dims.Length; d++)
+        {
+            at += (dims[d] == 1 ? 0 : sub[d]) * stride;
+            stride *= dims[d];
+        }
+
+        return at;
+    }
+
+    /// <summary>
+    /// Text beside a categorical in <c>times</c> as the codes and categories it names (R2025b's
+    /// <c>strings2codes</c>): a char row or a string scalar is one category, or undefined when blank or
+    /// <c>&lt;undefined&gt;</c>; a cell of char rows is the sorted set of its trimmed names, blanks undefined.
+    /// </summary>
+    private static (double[] Codes, string[] Names, int[] Dims) TextSide(JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.String || (value.IsStringArray && value.ArrayLength == 1))
+        {
+            JgsValue element = value.IsStringArray ? value.ElementAt(0) : value;
+            string? text = element.Type == JgsType.String && !(value.IsStringArray && element.AsString == JgsBuiltins.MissingSentinel) ? element.AsString.Trim() : null;
+            return text is null or "" or Undefined
+                ? ([double.NaN], [], [1, 1])
+                : ([1], [text], [1, 1]);
+        }
+
+        if (value.IsStringArray)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:categorical:times:TypeMismatchString",
+                "Inputs must be categorical arrays, character vectors, or scalar strings. Multiple categorical values represented as a string array are not converted automatically. Convert using the categorical function.");
+        }
+
+        if (value.Type == JgsType.Cell && value.AsCell.All(static e => e.Type == JgsType.String))
+        {
+            string[] trimmed = [.. value.AsCell.Select(static e => e.AsString.Trim())];
+            string[] set = [.. trimmed.Where(static t => t.Length > 0 && t != Undefined).Distinct(StringComparer.Ordinal).OrderBy(static t => t, StringComparer.Ordinal)];
+            double[] codes = [.. trimmed.Select(t => t.Length == 0 || t == Undefined ? double.NaN : Array.IndexOf(set, t) + 1.0)];
+            return (codes, set, value.Dims);
+        }
+
+        throw TimesMismatch(line, col);
+    }
 
     /// <summary>R2025b's refusal of arithmetic, a logical conversion and the like on a categorical.</summary>
     public static JgsRuntimeException NotNumeric(int line, int col) =>

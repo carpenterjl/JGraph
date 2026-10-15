@@ -56,6 +56,17 @@ internal static partial class JgsGraphicsClasses
     /// <summary>R2025b's class of an object, then each class it derives from.</summary>
     public static IReadOnlyList<string> ChainOf(GraphObject target)
     {
+        // The two categorical classes ride on their numeric twins' chains (open item 126, probe_126b).
+        if (target is AxisModel { RulerCategories: not null } && JgsRunningDialect.ThreadIsMatlab)
+        {
+            return ["matlab.graphics.axis.decorator.CategoricalRuler", .. Chains["numericruler"].Skip(1).Where(static c => c != "matlab.graphics.axis.decorator.ScalableAxisRuler")];
+        }
+
+        if (target is HistogramPlot counted && JgsCategoricalCharts.IsCategoricalHistogram(counted))
+        {
+            return ["matlab.graphics.chart.primitive.categorical.Histogram", .. Chains["histogram"].Skip(1)];
+        }
+
         if (Chains.TryGetValue(KeyOf(target), out string[]? chain))
         {
             return chain;

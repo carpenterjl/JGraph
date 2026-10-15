@@ -30,6 +30,13 @@ internal static partial class JgsBuiltins
     internal static bool TryExternalArrayMethod(Interpreter interpreter, string name, JgsValue dominant, out IJgsCallable? callable)
     {
         callable = null;
+
+        // matlab.lang.OnOffSwitchState answers its own verbs and logical's (open item 129).
+        if (TryOnOffMethod(interpreter, name, dominant, out callable))
+        {
+            return true;
+        }
+
         if (dominant.AsExternalOrNull() is MidiTypeValue && MidiTypeMethods.Contains(name))
         {
             callable = new TypeMethod(interpreter, name);

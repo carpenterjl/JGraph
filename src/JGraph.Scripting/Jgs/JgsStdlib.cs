@@ -381,6 +381,43 @@ internal static class JgsStdlib
             return ImagesEqual(left.AsImage, right.AsImage);
         }
 
+        // Two tables are equal when their variables are - names, order and values - and their row
+        // names and row times are (open item 128: a table saved and loaded is isequal to itself).
+        if (left.Type == JgsType.Table && right.Type == JgsType.Table)
+        {
+            JGraph.Data.Table a = left.AsTable;
+            JGraph.Data.Table b = right.AsTable;
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            if (a.RowCount != b.RowCount || a.ColumnCount != b.ColumnCount
+                || !a.ColumnNames.SequenceEqual(b.ColumnNames, StringComparer.Ordinal)
+                || !(a.RowNames ?? []).SequenceEqual(b.RowNames ?? [], StringComparer.Ordinal)
+                || (a.RowTimes is null) != (b.RowTimes is null))
+            {
+                return false;
+            }
+
+            if (a.RowTimes is { } aTimes && b.RowTimes is { } bTimes
+                && !DeepEquals(JgsBuiltins.TableColumnValue(new JGraph.Data.Table([aTimes]), aTimes.Name, 0, 0),
+                    JgsBuiltins.TableColumnValue(new JGraph.Data.Table([bTimes]), bTimes.Name, 0, 0), nanEqual))
+            {
+                return false;
+            }
+
+            for (int v = 0; v < a.ColumnCount; v++)
+            {
+                if (!DeepEquals(JgsBuiltins.TableColumnValue(a, a[v].Name, 0, 0), JgsBuiltins.TableColumnValue(b, b[v].Name, 0, 0), nanEqual))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         // MATLAB's isequal compares logicals and doubles by value: isequal(true, 1) is true,
         // so a mask can be checked against a plain [1 0] literal. NaN is the exception — it matches
         // nothing, itself included, unless the caller asked for the isequaln reading.

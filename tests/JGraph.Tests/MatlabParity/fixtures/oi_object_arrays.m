@@ -1,14 +1,14 @@
 % record: -noFigureWindows
-% Open item 116 (ADR 0232): object arrays past the first cut, in the MATLAB dialect. a.p on an
-% array is a comma-separated list ([a.p], {a.name}, [a.p] = deal(...), x = a.p takes the first);
-% a(r, c) reads, writes and deletes; a gap a(5) = s opens is filled by the class's no-argument
-% constructor; a foreign piece in a bracket goes through the class constructor; handle arrays
-% hold the objects themselves (a write through a(2) reaches the object, == is identity, delete and
-% isvalid take the array); Class.empty; isequal, arrayfun, cellfun, num2cell, cell2mat and the
-% shape verbs over objects; properties, methods and isprop of an array. The classes Val116, Hnd116,
-% Sub116, NoArg116 and Zero116 live in helpers/. Lines marked div=ADR0232 are the display of one
-% object, set, get and addlistener over an array of handles, findobj on the root, and how often a
-% constructor ran; ADR 0233 made the N-D arrays, the conversions and the refusals exact.
+% Open item 116 (ADR 0232): object arrays past the first cut, in the MATLAB dialect. a.p on an array
+% is a comma-separated list ([a.p], {a.name}, [a.p] = deal(...), x = a.p takes the first); a(r, c)
+% reads, writes and deletes; a gap a(5) = s opens is filled by the class's no-argument constructor; a
+% foreign piece in a bracket goes through the class constructor; handle arrays hold the objects
+% themselves (a write through a(2) reaches the object, == is identity, delete and isvalid take the
+% array); Class.empty; isequal, arrayfun, cellfun, num2cell, cell2mat and the shape verbs over
+% objects; properties, methods and isprop of an array. The classes Val116, Hnd116, Sub116, NoArg116
+% and Zero116 live in helpers/. Lines marked div=ADR0232 are the display of one object, findobj on the
+% root, and how often a constructor ran; ADR 0233 made the N-D arrays, the conversions and the
+% refusals exact, and ADR 0234 set, get and addlistener over an array of handles.
 global VAL116_CTOR
 global VAL116_CTOR
 VAL116_CTOR = 0;
@@ -127,8 +127,8 @@ u9b_chk('h_gap_fill', @() hgap()); u9b_chk('h_gap_fill_class', @() hgapclass());
 u9b_chk('h_repmat', @() size(repmat(h1, 1, 3))); u9b_chk('h_repmat_same', @() hrepmatsame(h1)); u9b_chk('h_repmat_write', @() hrepmatwrite(h1));
 u9b_chk('h_unique', @() size(unique(ha))); u9b_chk('h_unique_dup', @() size(unique([h1 h1 h2]))); u9b_chk('h_ismember', @() ismember(h2, ha)); u9b_chk('h_sort', @() sort(ha)); u9b_chk('h_setdiff', @() size(setdiff(ha, h1)));
 u9b_chk('h_numel', @() numel(ha)); u9b_chk('h_colon', @() size(ha(:))); u9b_chk('h_end', @() ha(end).p); u9b_chk('h_logical', @() [ha([true false true]).p]); u9b_chk('h_reshape', @() size(reshape(ha, 3, 1))); u9b_chk('h_transpose', @() size(ha'));
-u9b_chk('h_cs_assign', @() hcsassign()); u9b_chk('h_props_arr', @() properties(ha)); u9b_chk('h_methods_arr', @() methods(ha)); u9b_chk('h_findobj', @() class(findobj(ha, 'p', 2))); u9b_chk('h_findobj_size', @() size(findobj(ha, 'p', 2))); u9b_chk('h_set_get', @() hsetget(ha)); u9b_chkdiv('h_set_get_arr', @() oi_try( @() hsetgetarr(ha)), 'ADR0232'); u9b_chk('h_get_struct', @() class(get(h1)));
-u9b_chk('h_in_cell', @() class({ha})); u9b_chk('h_struct', @() size(struct(ha))); u9b_chkdiv('h_addlistener_arr', @() oi_try( @() haddl(ha)), 'ADR0232'); u9b_chk('h_isequal_after_write', @() hisequalwrite());
+u9b_chk('h_cs_assign', @() hcsassign()); u9b_chk('h_props_arr', @() properties(ha)); u9b_chk('h_methods_arr', @() methods(ha)); u9b_chk('h_findobj', @() class(findobj(ha, 'p', 2))); u9b_chk('h_findobj_size', @() size(findobj(ha, 'p', 2))); u9b_chk('h_set_get', @() hsetget(ha)); u9b_chk('h_set_get_arr', @() hsetgetarr(ha)); u9b_chk('h_get_struct', @() class(get(h1)));
+u9b_chk('h_in_cell', @() class({ha})); u9b_chk('h_struct', @() size(struct(ha))); u9b_chk('h_addlistener_arr', @() haddl(ha)); u9b_chk('h_isequal_after_write', @() hisequalwrite());
 u9b_chk('h_assign_val_into', @() hassignval(ha)); u9b_chk('h_assign_other_handle', @() hassignother(ha)); u9b_chk('h_assign_empty', @() hassignempty(ha)); u9b_chk('h_assign_num', @() hassignnum(ha));
 u9b_chk('h_cs_dot_assign', @() hdotassign(ha)); u9b_chk('h_colon_dot_deal', @() hcolondeal(ha));
 u9b_chk('h_arr_elem_dot_write_shared', @() hshared(ha));

@@ -10,6 +10,44 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
+    /// <summary>
+    /// What <c>struct(c)</c> answers for a categorical in R2025b (open item 129, probe_129): its storage,
+    /// field for field - the codes in the narrowest unsigned class that holds the category count (0
+    /// for an undefined element, in the array's shape), the category names as a column, and the
+    /// class's constants.
+    /// </summary>
+    private static JgsValue CategoricalStorage(JgsValue c)
+    {
+        JgsCategoricalTag tag = c.CategoricalTag!;
+        double[] codes = JgsCategorical.CodesOf(c);
+        for (int i = 0; i < codes.Length; i++)
+        {
+            if (double.IsNaN(codes[i]))
+            {
+                codes[i] = 0;
+            }
+        }
+
+        JgsNumericClass codeClass = tag.Categories.Length < byte.MaxValue ? JgsNumericClass.UInt8
+            : tag.Categories.Length < ushort.MaxValue ? JgsNumericClass.UInt16
+            : JgsNumericClass.UInt32;
+        JgsValue codeArray = c.IsNd ? JgsMatrix.FromColumnMajorDims(codes, c.Dims) : JgsMatrix.FromColumnMajor(codes, c.Rows, c.Cols);
+        JgsValue names = JgsValue.Cell([.. tag.Categories.Select(JgsValue.Str)]);
+        names.Reshape(tag.Categories.Length, tag.Categories.Length == 0 ? 0 : 1);
+        return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["defaultCodesClass"] = JgsValue.Str("uint8"),
+            ["missingLabel"] = JgsValue.Str(MissingSentinel),
+            ["undefCode"] = JgsValue.Number(0),
+            ["undefLabel"] = JgsValue.Str(JgsCategorical.Undefined),
+            ["maxNumCategories"] = JgsValue.Number(281474976710655),
+            ["categoryNames"] = names,
+            ["codes"] = JgsNumericClasses.Stamp(codeArray, codeClass),
+            ["isProtected"] = JgsValue.Bool(tag.Protected),
+            ["isOrdinal"] = JgsValue.Bool(tag.Ordinal),
+        });
+    }
+
     private static void RegisterCategoricalBuiltins(JgsEnvironment env, Action<string> print)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
@@ -488,9 +526,12 @@ internal static partial class JgsBuiltins
         Wrap("round", (args, wanted, line, col) => AnyCategorical(args)
             ? throw new JgsRuntimeException(line, col, "MATLAB:round:FirstArg", "First argument must be a numeric, logical, or char array.")
             : null);
-        Wrap("times", (args, wanted, line, col) => args.Count == 2 && args[0].IsCategorical != args[1].IsCategorical
-            ? throw JgsCategorical.TimesMismatch(line, col)
-            : AnyCategorical(args) ? throw JgsCategorical.NotNumeric(line, col) : null);
+        // times(c, d) is c .* d: the categories paired (open item 129).
+        Wrap("times", (args, wanted, line, col) => args.Count == 2 && AnyCategorical(args) && JgsRunningDialect.ThreadIsMatlab
+            ? [JgsCategorical.Times(args[0], args[1], line, col)]
+            : args.Count == 2 && args[0].IsCategorical != args[1].IsCategorical
+                ? throw JgsCategorical.TimesMismatch(line, col)
+                : AnyCategorical(args) ? throw JgsCategorical.NotNumeric(line, col) : null);
         foreach (string arithmetic in (string[])["abs", "sqrt", "exp", "log", "log10", "floor", "ceil", "fix", "sign", "prod", "diff", "mod", "rem", "power", "plus", "minus", "rdivide", "mtimes"])
         {
             // The arithmetic verbs are R2025b's refusal on a categorical (probe_115b).
@@ -831,12 +872,26 @@ internal static partial class JgsBuiltins
         }
 
         string[] categories = [.. categoryNames.Distinct(StringComparer.Ordinal)];
+
+        // Each value's place found by name in a table, not by a search: seventy thousand distinct
+        // values took twenty seconds searched (open item 129's struct(c) of a big categorical).
+        var valueAt = new Dictionary<string, int>(valueNames.Length, StringComparer.Ordinal);
+        for (int v = 0; v < valueNames.Length; v++)
+        {
+            valueAt.TryAdd(valueNames[v], v); // the first of a repeated name, as a search finds it
+        }
+
+        var categoryAt = new Dictionary<string, int>(categories.Length, StringComparer.Ordinal);
+        for (int c = 0; c < categories.Length; c++)
+        {
+            categoryAt.TryAdd(categories[c], c);
+        }
+
         var codes = new double[read.Names.Length];
         for (int i = 0; i < codes.Length; i++)
         {
             string? name = read.Names[i];
-            int at = name is null ? -1 : Array.IndexOf(valueNames, name);
-            codes[i] = at < 0 ? double.NaN : Array.IndexOf(categories, categoryNames[at]) + 1;
+            codes[i] = name is not null && valueAt.TryGetValue(name, out int at) ? categoryAt[categoryNames[at]] + 1 : double.NaN;
         }
 
         bool isOrdinal = ordinal ?? false;

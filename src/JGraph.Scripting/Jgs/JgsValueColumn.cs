@@ -30,13 +30,15 @@ internal sealed class JgsValueColumn : TableColumn
     public static bool Needs(JgsValue value) => value.Type switch
     {
         JgsType.Struct => true,
+        JgsType.Table => true, // a table inside a table (open item 128)
         JgsType.Object => true, // an object, or an array of them (open item 65)
         JgsType.Bool => true,
         JgsType.Number => value.NumericClass != JgsNumericClass.Double,
         JgsType.Cell => value.AsCell.Any(element => element.Type != JgsType.String),
 
         // A string array stays a string array (V6, table forms): it read back as a cell of char.
-        JgsType.Array => value.IsStringArray || value.IsCategorical
+        // A char matrix stays one rather than becoming its codes (open item 128: summary's 'char').
+        JgsType.Array => value.IsStringArray || value.IsCategorical || value.IsCharMatrix
             || (!value.IsTime && (value.NumericClass != JgsNumericClass.Double || IsLogical(value))),
         _ => false,
     };
@@ -48,12 +50,13 @@ internal sealed class JgsValueColumn : TableColumn
     {
         JgsType.Array or JgsType.Cell => value.Rows,
         JgsType.Struct => value.AsStructArray.Length == 1 ? 1 : value.Rows,
+        JgsType.Table => value.AsTable.RowCount,
         JgsType.Object => value.IsObjectArray ? value.Rows : 1,
         _ => 1,
     };
 
     private bool HasNumbers => Value.Type is JgsType.Number or JgsType.Bool
-        || (Value.Type == JgsType.Array && !Value.IsStringArray && !Value.IsCategorical);
+        || (Value.Type == JgsType.Array && !Value.IsStringArray && !Value.IsCategorical && !Value.IsCharMatrix);
 
     public override ColumnType Type => HasNumbers ? ColumnType.Number : ColumnType.Text;
 
@@ -78,9 +81,12 @@ internal sealed class JgsValueColumn : TableColumn
     public override string GetText(int row) => Value.Type switch
     {
         JgsType.Array when Value.IsCategorical => JgsCategorical.NameOf(Value.CategoricalTag!, Value.ElementAt(row).AsNumber), // open item 115
+        JgsType.Array when Value.IsCharMatrix => Value.CharMatrixRows()[row], // a row of a char variable is its text
+        JgsType.String => Value.AsString,
         JgsType.Array => TextOfElement(Value.ElementAt(row)),
         JgsType.Cell => TextOfElement(Value.AsCell[row]),
         JgsType.Object => $"1×1 {Value.ClassName}", // as R2025b's table display writes an object cell (probe_65)
+        JgsType.Table => $"1×{Value.AsTable.ColumnCount} table",
         _ => Value.Display(),
     };
 
@@ -118,6 +124,15 @@ internal sealed class JgsValueColumn : TableColumn
         int count = rows.Count;
         switch (value.Type)
         {
+            case JgsType.Table:
+            {
+                // The rows of a table inside a table; a new row grows it with its kinds' defaults.
+                JGraph.Data.Table nested = value.AsTable;
+                int[] kept = [.. rows.Where(static r => r >= 0)];
+                JGraph.Data.Table picked = nested.Select(kept, [.. Enumerable.Range(0, nested.ColumnCount)]);
+                return JgsValue.Table(kept.Length < count ? JgsBuiltins.GrownTo(picked, count) : picked);
+            }
+
             case JgsType.Struct:
             {
                 JgsStructArray source = value.AsStructArray;

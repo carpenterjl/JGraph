@@ -1826,9 +1826,19 @@ public sealed class AxesModel : GraphObject
     public TickBudget BudgetFor(AxisModel ruler)
     {
         ArgumentNullException.ThrowIfNull(ruler);
-        ApplyAutoFont(); // the font the budget is read at follows the box (open item 118)
-        Rect2D plot = (LastLayout ?? AxesLayoutSnapshot.Estimate(this, ReferenceSize())).PlotAreaPx;
+        Rect2D plot = PlotAreaPixels();
         return BudgetFor(ruler, plot.Width, plot.Height);
+    }
+
+    /// <summary>
+    /// The plot box in pixels: the one the renderer last measured, or the estimate a script gets
+    /// before the first frame - what a ruler's tick budget and its labels' automatic angle are read
+    /// against (open items 99 and 126).
+    /// </summary>
+    public Rect2D PlotAreaPixels()
+    {
+        ApplyAutoFont(); // the font is read at the box it follows (open item 118)
+        return (LastLayout ?? AxesLayoutSnapshot.Estimate(this, ReferenceSize())).PlotAreaPx;
     }
 
     /// <summary>The same budget for a plot box of known size.</summary>

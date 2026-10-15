@@ -75,7 +75,7 @@ internal static partial class JgsBuiltins
         Define("vartype", (args, line, col) =>
         {
             ArityRange("vartype", args, 0, 1, line, col);
-            string type = "numeric";
+            string type = JgsRunningDialect.ThreadIsMatlab ? string.Empty : "numeric"; // vartype() matches nothing in R2025b (open item 128)
             if (args.Count == 1)
             {
                 if (VerbText(args[0]) is not { } text)
@@ -339,7 +339,7 @@ internal static partial class JgsBuiltins
         catch (JgsRuntimeException)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:table:convertvars:VariableTypesConversionFailed",
-                $"Could not convert the type of the variable '{name}' to '{target}'. The following error occurred when calling the {target} function.");
+                $"Could not convert the type of the variable '{name}' to '{verb}'. The following error occurred when calling the {verb} function.");
         }
     }
 

@@ -778,6 +778,10 @@ internal static partial class JgsGraphicsProperties
         // What is drawn, as opposed to what was counted: the same numbers only while the
         // normalization is 'count'.
         Put(table, "Values", entry => Row(Histogram(entry).BinHeights));
+        table["OthersValue"] = new GraphicsProperty("OthersValue", static _ => JgsValue.Number(0)) // a categorical histogram's is its own reading (open item 126)
+        {
+            OnlyWhen = static _ => JgsRunningDialect.ThreadIsMatlab,
+        };
 
         Put(table, "LineStyle",
             entry => JgsValue.Str(JgsBuiltins.DashWord(Histogram(entry).LineStyle)),

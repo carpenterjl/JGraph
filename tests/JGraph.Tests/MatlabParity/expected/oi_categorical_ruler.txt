@@ -70,7 +70,7 @@ CHK|undef_xdata|<categorical[1 2]>|exact
 CHK|many_tick_n|double[1 1] 30|exact
 CHK|many_tick|<categorical[1 30]>|exact
 CHK|many_lim|<categorical[1 2]>|exact
-CHK|many_rot|double[1 1] 90|div=ADR0233|diverges|double[1 1] 0
+CHK|many_rot|double[1 1] 90|exact
 CHK|order_cats|cell[3 1]{char[1 1]'a';char[1 1]'b';char[1 1]'c'}|exact
 CHK|order_valueset|cell[3 1]{char[1 1]'c';char[1 1]'b';char[1 1]'a'}|exact
 CHK|ordinal_cats|cell[2 1]{char[1 2]'lo';char[1 2]'hi'}|exact
@@ -119,7 +119,8 @@ CHK|plot3_cat|char[1 11]'categorical'|exact
 CHK|fill_cat|char[1 31]'matlab.graphics.primitive.Patch'|div=ADR0233|diverges|char[1 6]'double'
 CHK|patch_cat|char[1 31]'matlab.graphics.primitive.Patch'|div=ADR0233|diverges|char[1 6]'double'
 CHK|semilogy_cat|char[1 11]'categorical'|exact
-CHK|loglog_cat|char[1 25]'MATLAB:PolarAxes:LogScale'|div=ADR0233|diverges|char[1 6]'double'
+CHK|loglog_cat|MATLAB:PolarAxes:LogScale|exact
+CHK|loglog_cat_msg|The coordinate system or ruler class does not support log axis scale.|exact
 CHK|mix_num_on_cat|char[1 6]'double'|exact
 CHK|mix_num_on_cat_cats|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|exact
 CHK|mix_cat_y_on_num|MATLAB:graphics:configureAxes:Mixing|exact
@@ -161,7 +162,7 @@ CHK|h_binedges_msg|Unrecognized method, property, or field 'BinEdges' for class 
 CHK|h_numbins|MATLAB:noSuchMethodOrField|exact
 CHK|h_numbins_msg|Unrecognized method, property, or field 'NumBins' for class 'matlab.graphics.chart.primitive.categorical.Histogram'.|exact
 CHK|h_bincounts|double[1 2] [2 1]|exact
-CHK|h_props|char[1 449]'Data,BinCounts,Categories,NumDisplayBins,DisplayOrder,Normalization,ShowOthers,FaceColor,EdgeColor,LineWidth,LineStyle,BinCountsMode,Orientation,DisplayStyle,BarWidth,FaceAlpha,EdgeAlpha,Values,OthersValue,Children,Parent,Visible,HandleVisibility,DisplayName,Annotation,DataTipTemplate,Selected,SelectionHighlight,HitTest,PickableParts,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,SeriesIndex'|div=ADR0233|diverges|char[1 438]'Data,BinCounts,NumBins,BinEdges,BinWidth,BinMethod,BinLimits,Normalization,FaceColor,EdgeColor,LineWidth,LineStyle,BinCountsMode,BinLimitsMode,Orientation,DisplayStyle,FaceAlpha,EdgeAlpha,Values,Children,Parent,Visible,HandleVisibility,DisplayName,Annotation,DataTipTemplate,Selected,SelectionHighlight,HitTest,PickableParts,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,SeriesIndex'
+CHK|h_props|char[1 449]'Data,BinCounts,Categories,NumDisplayBins,DisplayOrder,Normalization,ShowOthers,FaceColor,EdgeColor,LineWidth,LineStyle,BinCountsMode,Orientation,DisplayStyle,BarWidth,FaceAlpha,EdgeAlpha,Values,OthersValue,Children,Parent,Visible,HandleVisibility,DisplayName,Annotation,DataTipTemplate,Selected,SelectionHighlight,HitTest,PickableParts,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,SeriesIndex'|exact
 CHK|h_set_norm|char[1 11]'probability'|exact
 CHK|h_set_norm_vals|double[1 2] [0.66666666666666663 0.33333333333333331]|exact
 CHK|h_set_order|char[1 7]'descend'|exact
@@ -191,7 +192,8 @@ CHK|h_others_cats|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
 CHK|h_others_ax|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 6]'Others'}|exact
 CHK|h_numbins_cat|MATLAB:histogram:invalidType|exact
 CHK|h_numbins_cat_msg|Expected input number 2, categories, to be one of these types: string, cell, categorical, pattern Instead its type was double.|exact
-CHK|h_binmethod_cat|char[1 31]'MATLAB:unrecognizedStringChoice'|div=ADR0233|diverges|char[1 6]'double'
+CHK|h_binmethod_cat|MATLAB:unrecognizedStringChoice|exact
+CHK|h_binmethod_cat_msg|Expected input to match one of these values: 'BarWidth', 'BinCounts', 'BinCountsMode', 'BusyAction', 'ButtonDownFcn', 'Categories', 'ContextMenu', 'CreateFcn', 'Data', 'DataTipTemplate', 'DeleteFcn', 'DisplayName', 'DisplayOrder', 'DisplayStyle', 'EdgeAlpha', 'EdgeColor', 'FaceAlpha', 'FaceColor', 'HandleVisibility', 'HitTest', 'Interruptible', 'LineStyle', 'LineWidth', 'Normalization', 'NumDisplayBins', 'Orientation', 'Parent', 'PickableParts', 'Selected', 'SelectionHighlight', 'SeriesIndex', 'ShowOthers', 'Tag', 'UserData', 'Visible' The input, 'BinMethod', did not match any of the valid values.|exact
 CHK|histcounts_cat|double[1 2] [2 1]|exact
 CHK|histcounts_cat2|double[1 1] 1|exact
 CHK|histcounts_cats_out|cell[1 2]{char[1 1]'x';char[1 1]'y'}|exact
@@ -217,13 +219,17 @@ CHK|hm_xdata_class|char[1 4]'cell'|exact
 CHK|hm_num_xlabels|cell[2 1]{char[1 1]'1';char[1 1]'2'}|exact
 CHK|hm_num_xdata|cell[2 1]{char[1 1]'1';char[1 1]'2'}|exact
 CHK|bar_cell_x|char[1 35]'matlab.graphics.chart.primitive.Bar'|div=ADR0233|diverges|char[1 6]'double'
-CHK|plot_string_x|char[1 13]'MATLAB:minrhs'|div=ADR0233|diverges|char[0 0]''
+CHK|plot_string_x|MATLAB:minrhs|exact
+CHK|plot_string_x_msg|Not enough input arguments.|exact
 CHK|bar_string_x|char[1 11]'categorical'|exact
 CHK|xticklabels_fn|cell[2 1]{char[1 1]'x';char[1 1]'y'}|exact
 CHK|xticks_fn|<categorical[1 2]>|exact
 CHK|xticks_set_fn|<categorical[1 1]>|exact
-CHK|axis_fn|char[1 19]'MATLAB:axis:Mixed2D'|div=ADR0233|diverges|double[1 4] [0.099999999999999978 2.8999999999999999 0 2]
+CHK|axis_fn|MATLAB:axis:Mixed2D|exact
+CHK|axis_fn_msg|x-axis and y-axis limits have different data types. Use <a href="matlab:helpview([docroot '/matlab/ref/xlim.html'])">xlim</a> and <a href="matlab:helpview([docroot '/matlab/ref/ylim.html'])">ylim</a> functions instead.|exact
 CHK|axis_tight|<categorical[1 2]>|exact
-CHK|get_ruler_props|char[1 419]'Categories,Scale,Direction,Limits,LimitsMode,TickValues,TickValuesMode,TickLabelRotation,TickLabelRotationMode,Color,TickLabelColor,MinorTick,MinorTickValues,MinorTickValuesMode,TickDirection,TickDirectionMode,TickLength,LineWidth,TickLabels,TickLabelsMode,FontSmoothing,FontName,FontSize,FontAngle,FontWeight,Label,LabelHorizontalAlignment,LimitsChangedFcn,TickLabelInterpreter,Children,Parent,Visible,HandleVisibility'|div=ADR0233|diverges|char[1 446]'Exponent,ExponentMode,TickLabelFormat,Scale,Direction,Limits,LimitsMode,TickValues,TickValuesMode,TickLabelRotation,TickLabelRotationMode,Color,TickLabelColor,MinorTick,MinorTickValues,MinorTickValuesMode,TickDirection,TickDirectionMode,TickLength,LineWidth,TickLabels,TickLabelsMode,FontSmoothing,FontName,FontSize,FontAngle,FontWeight,Label,LabelHorizontalAlignment,LimitsChangedFcn,TickLabelInterpreter,Children,Parent,Visible,HandleVisibility'
-CHK|ruler_tlf|char[1 26]'MATLAB:noSuchMethodOrField'|div=ADR0233|diverges|char[1 2]'%g'
-CHK|zoom_set_num_via_axis|char[1 19]'MATLAB:axis:Mixed2D'|div=ADR0233|diverges|<categorical[1 2]>
+CHK|get_ruler_props|char[1 419]'Categories,Scale,Direction,Limits,LimitsMode,TickValues,TickValuesMode,TickLabelRotation,TickLabelRotationMode,Color,TickLabelColor,MinorTick,MinorTickValues,MinorTickValuesMode,TickDirection,TickDirectionMode,TickLength,LineWidth,TickLabels,TickLabelsMode,FontSmoothing,FontName,FontSize,FontAngle,FontWeight,Label,LabelHorizontalAlignment,LimitsChangedFcn,TickLabelInterpreter,Children,Parent,Visible,HandleVisibility'|exact
+CHK|ruler_tlf|MATLAB:noSuchMethodOrField|exact
+CHK|ruler_tlf_msg|Unrecognized method, property, or field 'TickLabelFormat' for class 'matlab.graphics.axis.decorator.CategoricalRuler'.|exact
+CHK|zoom_set_num_via_axis|MATLAB:axis:Mixed2D|exact
+CHK|zoom_set_num_via_axis_msg|x-axis and y-axis limits have different data types. Use <a href="matlab:helpview([docroot '/matlab/ref/xlim.html'])">xlim</a> and <a href="matlab:helpview([docroot '/matlab/ref/ylim.html'])">ylim</a> functions instead.|exact

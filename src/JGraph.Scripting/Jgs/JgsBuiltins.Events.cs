@@ -59,19 +59,31 @@ internal static partial class JgsBuiltins
 
     private static readonly ConditionalWeakTable<JgsStructArray, JgsListener> ListenerStates = new();
 
+    /// <summary>
+    /// The listeners an array of handles was given, one an element (open item 129): R2025b's
+    /// <c>addlistener</c> over an array answers a column of listeners, and <c>delete</c>, <c>isvalid</c>
+    /// and a dot reach every one of them through the column's payload.
+    /// </summary>
+    private static readonly ConditionalWeakTable<JgsStructArray, JgsListener[]> ListenerGroups = new();
+
     /// <summary>Whether a value is a listener of either kind, deleted or not.</summary>
     internal static bool IsListener(JgsValue value) =>
         value.Type == JgsType.Struct && value.ClassName is ListenerClassName or PropListenerClassName;
 
     /// <summary>Whether a value is a listener that <c>delete</c> has ended — what <c>isvalid</c> asks.</summary>
     internal static bool IsDeletedListener(JgsValue value) =>
-        IsListener(value) && ListenerStates.TryGetValue(value.AsStructArray, out JgsListener? state) && state.Deleted;
+        IsListener(value)
+        && (ListenerGroups.TryGetValue(value.AsStructArray, out JgsListener[]? group)
+            ? group.Length > 0 && group.All(static l => l.Deleted)
+            : ListenerStates.TryGetValue(value.AsStructArray, out JgsListener? state) && state.Deleted);
 
     private static JgsListener ListenerStateOf(JgsValue listener, int line, int col) =>
         ListenerStates.TryGetValue(listener.AsStructArray, out JgsListener? state)
             ? state
-            : throw new JgsRuntimeException(line, col,
-                "this listener has lost track of its source — it was copied out of the run that made it.");
+            : ListenerGroups.TryGetValue(listener.AsStructArray, out JgsListener[]? group) && group.Length > 0
+                ? group[0]
+                : throw new JgsRuntimeException(line, col,
+                    "this listener has lost track of its source — it was copied out of the run that made it.");
 
     /// <summary>Registers <c>addlistener</c>, <c>listener</c>, <c>notify</c> and <c>events</c>.</summary>
     internal static void RegisterEventBuiltins(JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host)
@@ -139,6 +151,12 @@ internal static partial class JgsBuiltins
             return AddNetListener(verb, host, net, sourceValue, args, line, col);
         }
 
+        // An array of handles takes one listener an element, answered as a column (open item 129).
+        if (sourceValue.Type == JgsType.Object && sourceValue.IsObjectArray && sourceValue.ObjectClass.IsHandle)
+        {
+            return AddListenerOverArray(verb, host, args, line, col);
+        }
+
         if (sourceValue.Type != JgsType.Object || !sourceValue.AsObject.Class.IsHandle)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:addlistener:invalidinput",
@@ -197,21 +215,23 @@ internal static partial class JgsBuiltins
             string kind = TextOf(args[2]);
             foreach (string property in properties)
             {
+                // R2025b's identifiers in MATLAB code (open item 129); JGS keeps its sentences bare.
+                bool matlab = JgsRunningDialect.ThreadIsMatlab;
                 if (source.Class.Property(property) is not { } declared)
                 {
-                    throw new JgsRuntimeException(line, col,
+                    throw new JgsRuntimeException(line, col, matlab ? "MATLAB:class:InvalidProperty" : string.Empty,
                         $"The name '{property}' is not an accessible property for an instance of class '{source.Class.Name}'.");
                 }
 
                 if (kind is not ("PreSet" or "PostSet"))
                 {
-                    throw new JgsRuntimeException(line, col,
+                    throw new JgsRuntimeException(line, col, matlab ? "MATLAB:class:invalidEvent" : string.Empty,
                         $"Event '{kind}' is not defined for class '{source.Class.Name}'.");
                 }
 
                 if (!declared.Observable)
                 {
-                    throw new JgsRuntimeException(line, col,
+                    throw new JgsRuntimeException(line, col, matlab ? "MATLAB:class:nonSetObservableProp" : string.Empty,
                         $"While adding a {kind} listener, property '{property}' in class '{source.Class.Name}' is not defined to be SetObservable.");
                 }
             }
@@ -253,6 +273,41 @@ internal static partial class JgsBuiltins
         ListenerStates.Add(listener.AsStructArray, state);
         (source.Listeners ??= new List<JgsListener>()).Add(state);
         return listener;
+    }
+
+    /// <summary>
+    /// <c>addlistener(ha, …)</c> and <c>listener(ha, …)</c> over an array of handles (open item 129): a
+    /// listener on each element, made as one would be, answered as a column of them - R2025b's
+    /// <c>event.listener</c> or <c>event.proplistener</c> array, of which each element is told by its
+    /// own object.
+    /// </summary>
+    private static JgsValue AddListenerOverArray(
+        string verb, JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        JgsObject[] elements = args[0].AsObjectArray.Elements;
+        var states = new JgsListener[elements.Length];
+        var fields = new Dictionary<string, JgsValue>[elements.Length];
+        string className = args.Count == 3 ? ListenerClassName : PropListenerClassName;
+        for (int i = 0; i < elements.Length; i++)
+        {
+            JgsValue[] each = [.. args];
+            each[0] = JgsValue.Object(elements[i]);
+            JgsValue one = AddListener(verb, host, each, line, col);
+            states[i] = ListenerStates.TryGetValue(one.AsStructArray, out JgsListener? state)
+                ? state
+                : throw new JgsRuntimeException(line, col, $"{verb} made a listener it cannot find.");
+            state.Grouped = true; // its column, not its own struct, is what a script holds
+            fields[i] = one.AsStructArray.Elements[0];
+            className = one.ClassName ?? className;
+        }
+
+        JgsValue column = JgsValue.StructArray(new JgsStructArray(fields), elements.Length, elements.Length == 0 ? 0 : 1);
+        column.SetClassName(className);
+        JgsLifetime.Unscan(column);
+        column.AsStructArray.External = true;
+        column.AsStructArray.Scanned = verb == "listener";
+        ListenerGroups.Add(column.AsStructArray, states);
+        return column;
     }
 
     /// <summary>
@@ -602,6 +657,20 @@ internal static partial class JgsBuiltins
         }
 
         JgsValue sourceValue = args[0];
+
+        // notify over an array of handles tells each element's listeners in turn (open item 129).
+        if (sourceValue.Type == JgsType.Object && sourceValue.IsObjectArray && sourceValue.ObjectClass.IsHandle)
+        {
+            foreach (JgsObject element in sourceValue.AsObjectArray.Elements)
+            {
+                JgsValue[] each = [.. args];
+                each[0] = JgsValue.Object(element);
+                Notify(each, line, col);
+            }
+
+            return JgsValue.Null;
+        }
+
         if (sourceValue.Type != JgsType.Object || !sourceValue.AsObject.Class.IsHandle)
         {
             throw new JgsRuntimeException(line, col,
@@ -903,12 +972,26 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static bool OnListenerUnreferenced(JgsStructArray payload)
     {
+        if (ListenerGroups.TryGetValue(payload, out JgsListener[]? group))
+        {
+            foreach (JgsListener member in group)
+            {
+                if (member.FromListenerFunction && !member.Deleted)
+                {
+                    member.Deleted = true;
+                    member.Detach();
+                }
+            }
+
+            return true;
+        }
+
         if (!ListenerStates.TryGetValue(payload, out JgsListener? state))
         {
             return false;
         }
 
-        if (state.FromListenerFunction && !state.Deleted)
+        if (state.FromListenerFunction && !state.Deleted && !state.Grouped)
         {
             state.Deleted = true;
             state.Detach();
@@ -1019,6 +1102,18 @@ internal static partial class JgsBuiltins
         if (!IsListener(value))
         {
             return false;
+        }
+
+        // A column of listeners (open item 129) is ended element by element.
+        if (ListenerGroups.TryGetValue(value.AsStructArray, out JgsListener[]? group))
+        {
+            foreach (JgsListener member in group.Where(static m => !m.Deleted))
+            {
+                member.Deleted = true;
+                member.Detach();
+            }
+
+            return true;
         }
 
         JgsListener state = ListenerStateOf(value, line, col);

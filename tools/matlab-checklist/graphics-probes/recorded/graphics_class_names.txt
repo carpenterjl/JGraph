@@ -9177,3 +9177,346 @@ matlab.graphics.chart.primitive.Scatter@polaraxes|scatter|ThetaDataMode|0
 matlab.graphics.chart.primitive.Scatter@polaraxes|scatter|ThetaJitterWidth|0
 matlab.graphics.chart.primitive.Scatter@polaraxes|scatter|RData|0
 matlab.graphics.chart.primitive.Scatter@polaraxes|scatter|ThetaVariable|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|Categories|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|Scale|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|ScaleMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Scale_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Direction|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|DirectionMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Direction_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Limits|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|LimitsMode|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|Limits_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NumericLimits|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|PrimitiveChild|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NumericTickValues|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NumericTickValuesMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NumericTickValues_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickValues|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickValuesMode|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickValues_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelRotation|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelRotationMode|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelRotation_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Color|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|ColorMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Color_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelColor|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelColorMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelColor_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MinorTick|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|MinorTickMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MinorTick_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MinorTick_IS|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NumericMinorTickValues|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NumericMinorTickValuesMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NumericMinorTickValues_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MinorTickValues|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|MinorTickValuesMode|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|MinorTickValues_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MirrorVisible|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MirrorVisibleMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MirrorVisible_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelGapOffset|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelGapOffsetMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelGapOffset_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickDirection|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickDirectionMode|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickDirection_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickDir_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLength|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLengthMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLength_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LineWidth|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|LineWidthMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LineWidth_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabel|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabel_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabels|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelsMode|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabels_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|PlaceLabelsInward|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|PlaceLabelsInwardMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|PlaceLabelsInward_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|HideEndTicksIfOutside|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|HideEndTicksIfOutsideMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|HideEndTicksIfOutside_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontSmoothing|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontSmoothingMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontSmoothing_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontName|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontNameMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontName_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontSize|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontSizeMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontSize_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontAngle|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontAngleMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontAngle_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontWeight|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontWeightMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FontWeight_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Axle|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MajorTickChild|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|MinorTickChild|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelChild|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Label|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|LabelMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Label_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LabelHorizontalAlignment|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|LabelHorizontalAlignmentMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LabelHorizontalAlignment_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Label_IS|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LabelPosition_IS|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|SecondaryLabel|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|SecondaryLabelMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|SecondaryLabel_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|SecondaryLabel_IS|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LimitsChangedFcn|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|LimitsChangedFcnMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LimitsChangedFcn_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|IntervalTickLabelChildren|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|IntervalLineChild|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|PrimitiveChildEnabled|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|PrimitiveChildEnabledMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|PrimitiveChildEnabled_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|RulerLocation2D|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|RulerLocation2DMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|RulerLocation2D_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|ClientSideLabelLayout|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|ClientSideLabelLayoutMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|ClientSideLabelLayout_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelGapMultiplierMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelGapMultiplier_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelGapMultiplier|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LabelFontSizeMultiplierMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LabelFontSizeMultiplier_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|LabelFontSizeMultiplier|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelInterpreterMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelInterpreter_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|TickLabelInterpreter|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|VerticalLabelGapMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|VerticalLabelGap_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|VerticalLabelGap|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|HorizontalLabelGapMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|HorizontalLabelGap_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|HorizontalLabelGap|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|BuiltinLimitPadding|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FirstCrossoverValueMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FirstCrossoverValue_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FirstCrossoverValue|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FirstCrossoverAxisMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FirstCrossoverAxis_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|FirstCrossoverAxis|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|SecondCrossoverValueMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|SecondCrossoverValue_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|SecondCrossoverValue|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|InverseCrossoverValue|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|AxisMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Axis_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Axis|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|AxesLayerMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|AxesLayer_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|AxesLayer|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|ChildrenMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Children_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Children|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|Description|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|DescriptionMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Description_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Parent|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|ParentMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Parent_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Visible|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|VisibleMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Visible_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Serializable|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|SerializableMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Serializable_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|HandleVisibility|0
+matlab.graphics.axis.decorator.CategoricalRuler|-|HandleVisibilityMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|HandleVisibility_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|ErrorCallback|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|ErrorCallbackMode|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|ErrorCallback_I|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Internal|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|ApplicationData|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|DefaultPropMap_Internal|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|Copyable|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NodeParent|1
+matlab.graphics.axis.decorator.CategoricalRuler|-|NodeChildren|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Data|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|BinCounts|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Categories|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|NumDisplayBins|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DisplayOrder|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Normalization|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ShowOthers|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|FaceColor|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|EdgeColor|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|LineWidth|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|LineStyle|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|BinCountsMode|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Orientation|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DisplayStyle|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|BarWidth|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|FaceAlpha|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|EdgeAlpha|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Values|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|OthersValue|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Data_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|BinCounts_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Categories_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DisplayOrder_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Normalization_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ShowOthers_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Orientation_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|EdgeColorMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|FaceColor_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|EdgeColor_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|EdgeColorStairs_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|LineWidth_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|LineStyle_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|BinCountsMode_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|CategoriesMode_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|NumDisplayBinsMode_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|AutoColor|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DimensionNames|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DimensionNamesMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DimensionNames_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|XLimIncludeMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|XLimInclude_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|XLimInclude|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|YLimIncludeMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|YLimInclude_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|YLimInclude|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ZLimIncludeMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ZLimInclude_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ZLimInclude|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|CLimIncludeMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|CLimInclude_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|CLimInclude|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ALimIncludeMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ALimInclude_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ALimInclude|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ChildrenMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Children_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Children|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Description|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DescriptionMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Description_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Parent|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ParentMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Parent_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Visible|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|VisibleMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Visible_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Serializable|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|SerializableMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Serializable_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HandleVisibility|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HandleVisibilityMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HandleVisibility_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ErrorCallback|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ErrorCallbackMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ErrorCallback_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Internal|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ApplicationData|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DefaultPropMap_Internal|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Copyable|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|NodeParent|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|NodeChildren|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DisplayName|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DisplayNameMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DisplayName_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Annotation|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|LegendDisplayMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|LegendDisplay_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|LegendDisplay|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|IsContainerMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|IsContainer_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|IsContainer|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DataTipTemplate|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DataTipTemplate_IS|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Selected|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|SelectedMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Selected_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|SelectionHighlight|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|SelectionHighlightMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|SelectionHighlight_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HitTestMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HitTest_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HitTest|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|PickablePartsMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|PickableParts_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|PickableParts|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HG1Erase|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HG1EraseMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HG1Erase_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|EraseMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Behavior|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|BehaviorMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Behavior_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HelpTopicKey|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HelpTopicKeyMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|HelpTopicKey_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ButtonDownFcnMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ButtonDownFcn_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ButtonDownFcn|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|ContextMenu|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|UIContextMenu|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|BusyAction|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|BeingDeleted|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Interruptible|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|CreateFcnMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|CreateFcn_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|CreateFcn|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DeleteFcnMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DeleteFcn_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|DeleteFcn|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Type|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|TagMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Tag_I|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|Tag|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|UserData|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|SeriesIndex|0
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|SeriesIndexMode|1
+matlab.graphics.chart.primitive.categorical.Histogram|categoricalhistogram|SeriesIndex_I|1
+SET|matlab.graphics.axis.decorator.CategoricalRuler|Scale|linear	log
+SET|matlab.graphics.axis.decorator.CategoricalRuler|Direction|normal	reverse
+SET|matlab.graphics.axis.decorator.CategoricalRuler|LimitsMode|auto	manual
+SET|matlab.graphics.axis.decorator.CategoricalRuler|TickValuesMode|auto	manual
+SET|matlab.graphics.axis.decorator.CategoricalRuler|TickLabelRotationMode|auto	manual
+SET|matlab.graphics.axis.decorator.CategoricalRuler|Color|
+SET|matlab.graphics.axis.decorator.CategoricalRuler|TickLabelColor|
+SET|matlab.graphics.axis.decorator.CategoricalRuler|MinorTick|on	off
+SET|matlab.graphics.axis.decorator.CategoricalRuler|MinorTickValuesMode|auto	manual
+SET|matlab.graphics.axis.decorator.CategoricalRuler|TickDirection|in	out	both	none
+SET|matlab.graphics.axis.decorator.CategoricalRuler|TickDirectionMode|auto	manual
+SET|matlab.graphics.axis.decorator.CategoricalRuler|TickLabelsMode|auto	manual
+SET|matlab.graphics.axis.decorator.CategoricalRuler|FontSmoothing|on	off
+SET|matlab.graphics.axis.decorator.CategoricalRuler|FontAngle|normal	italic
+SET|matlab.graphics.axis.decorator.CategoricalRuler|FontWeight|normal	bold
+SET|matlab.graphics.axis.decorator.CategoricalRuler|LabelHorizontalAlignment|left	center	right
+SET|matlab.graphics.axis.decorator.CategoricalRuler|TickLabelInterpreter|none	tex	latex
+SET|matlab.graphics.axis.decorator.CategoricalRuler|Visible|on	off
+SET|matlab.graphics.axis.decorator.CategoricalRuler|HandleVisibility|on	callback	off
+SET|matlab.graphics.chart.primitive.categorical.Histogram|DisplayOrder|ascend	descend	data
+SET|matlab.graphics.chart.primitive.categorical.Histogram|Normalization|count	countdensity	cumcount	probability	percentage	pdf	cdf
+SET|matlab.graphics.chart.primitive.categorical.Histogram|ShowOthers|on	off
+SET|matlab.graphics.chart.primitive.categorical.Histogram|FaceColor|auto	none
+SET|matlab.graphics.chart.primitive.categorical.Histogram|EdgeColor|auto	none
+SET|matlab.graphics.chart.primitive.categorical.Histogram|LineStyle|-	--	:	-.	none
+SET|matlab.graphics.chart.primitive.categorical.Histogram|BinCountsMode|auto	manual
+SET|matlab.graphics.chart.primitive.categorical.Histogram|Orientation|vertical	horizontal
+SET|matlab.graphics.chart.primitive.categorical.Histogram|DisplayStyle|bar	stairs
+SET|matlab.graphics.chart.primitive.categorical.Histogram|Visible|on	off
+SET|matlab.graphics.chart.primitive.categorical.Histogram|HandleVisibility|on	callback	off
+SET|matlab.graphics.chart.primitive.categorical.Histogram|Selected|on	off
+SET|matlab.graphics.chart.primitive.categorical.Histogram|SelectionHighlight|on	off
+SET|matlab.graphics.chart.primitive.categorical.Histogram|HitTest|on	off
+SET|matlab.graphics.chart.primitive.categorical.Histogram|PickableParts|visible	none	all
+SET|matlab.graphics.chart.primitive.categorical.Histogram|BusyAction|queue	cancel
+SET|matlab.graphics.chart.primitive.categorical.Histogram|Interruptible|on	off
+SET|matlab.graphics.chart.primitive.categorical.Histogram|SeriesIndex|none
