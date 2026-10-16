@@ -147,8 +147,8 @@ internal static partial class JgsUiComponentEvents
                 {
                     ["Node"] = node is not null && tree.Holds(node) ? JgsHandleRegistry.For(node) : Empty,
                     ["Level"] = node is not null && tree.Holds(node) ? JgsValue.Number(node.Level) : Empty,
-                    ["Location"] = Empty,
-                    ["ScreenLocation"] = Empty,
+                    ["Location"] = Where(raised.Location),
+                    ["ScreenLocation"] = OnScreen(tree, raised.Location),
                 });
                 information.SetClassName(Prefix + "TreeInteraction");
                 return raised with

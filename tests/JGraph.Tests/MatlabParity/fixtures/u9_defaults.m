@@ -5,10 +5,13 @@
 % as.
 kinds = {'Knob', 'DiscreteKnob', 'Switch', 'RockerSwitch', 'ToggleSwitch', 'Gauge', 'LinearGauge', 'NinetyDegreeGauge', ...
     'SemicircularGauge', 'Lamp', 'DatePicker', 'ColorPicker', 'Tree', 'CheckBoxTree', 'TreeNode'};
-% Left out: handles, which have no text; a tree's style table; the minor ticks and the outer
-% rectangle of a dial or a switch, which R2025b works out some time after the component is made.
+% Left out: handles, which have no text; a tree's style table; the minor ticks, the automatic
+% major ticks and the outer rectangle of a dial or a switch, which R2025b works out some time
+% after the component is made (this build answers the settled values at once, ADR 0236; the
+% settled ticks are fixture oi_scale_settled_ticks's).
 skip = {'Parent', 'Children', 'ContextMenu', 'Layout', 'StyleConfigurations', 'UserData', 'SelectedNodes', 'CheckedNodes', 'MinorTicks'};
 outer = {'Knob', 'DiscreteKnob', 'Switch', 'RockerSwitch', 'ToggleSwitch'};
+dials = {'Knob', 'Gauge', 'LinearGauge', 'NinetyDegreeGauge', 'SemicircularGauge'};
 for q = 1:2
     if q == 1
         p = figure('Visible', 'off', 'Position', [100 100 560 420]); w = 'F';
@@ -24,7 +27,8 @@ for q = 1:2
         fprintf('CHK|%s_get_names|%s|exact\n', label, strjoin(names', ' '));
         fprintf('CHK|%s_set_names|%s|exact\n', label, strjoin(sort(fieldnames(set(h)))', ' '));
         for n = 1:numel(names)
-            unsettled = any(strcmp(kind, outer)) && strcmp(names{n}, 'OuterPosition');
+            unsettled = (any(strcmp(kind, outer)) && strcmp(names{n}, 'OuterPosition')) ...
+                || (any(strcmp(kind, dials)) && any(strcmp(names{n}, {'MajorTicks', 'MajorTickLabels'})));
             if ~any(strcmp(names{n}, skip)) && ~unsettled
                 fprintf('CHK|%s_default_%s|%s|exact\n', label, names{n}, u9_text(get(h, names{n})));
             end

@@ -1,0 +1,659 @@
+EVT matlab.ui.eventdata.ValueChangedData : props=Value,PreviousValue,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.ValueChangingData : props=Value,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.NodeExpandedData : props=Node,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.NodeCollapsedData : props=Node,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.NodeTextChangedData : props=Node,Text,PreviousText,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.SelectedNodesChangedData : props=SelectedNodes,PreviousSelectedNodes,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.CheckedNodesChangedData : props=CheckedNodes,PreviousCheckedNodes,ParentCheckedNodes,PreviousParentCheckedNodes,LeafCheckedNodes,PreviousLeafCheckedNodes,IndeterminateCheckedNodes,PreviousIndeterminateCheckedNodes,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.ClickedData : props=InteractionInformation,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.DoubleClickedData : props=InteractionInformation,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.TreeInteraction : props=Node,Level,Location,ScreenLocation supers=matlab.ui.eventdata.internal.Interaction handle=0
+EVT matlab.ui.eventdata.ListBoxInteraction : props=Item,Location,ScreenLocation supers=matlab.ui.eventdata.internal.Interaction handle=0
+EVT matlab.ui.eventdata.ComponentInteraction : props=Location,ScreenLocation supers=matlab.ui.eventdata.internal.Interaction handle=0
+EVT matlab.ui.eventdata.DropDownInteraction : props=Item,Location,ScreenLocation supers=matlab.ui.eventdata.internal.Interaction handle=0
+EVT matlab.ui.eventdata.ContextMenuOpeningData : props=ContextObject,InteractionInformation,Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.ValueChangeData : props=Source,EventName supers=handle,event.EventData handle=1
+EVT matlab.ui.eventdata.ImageClickedData : props=Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.HyperlinkClickedData : props=Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.ButtonPushedData : props=Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.DropDownOpeningData : props=Source,EventName supers=matlab.ui.eventdata.internal.AbstractEventData handle=1
+EVT matlab.ui.eventdata.internal.Interaction : props=Location,ScreenLocation supers= handle=0
+construct ValueChangedData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct ValueChangedData (1) : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct ValueChangedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ValueChangedData'.
+construct ValueChangedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ValueChangedData' for input arguments of type 'double'.
+construct ValueChangingData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct ValueChangingData (1) : 'matlab.ui.eventdata.ValueChangingData'
+construct ValueChangingData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ValueChangingData'.
+construct ValueChangingData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ValueChangingData' for input arguments of type 'double'.
+construct NodeExpandedData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct NodeExpandedData (1) : 'matlab.ui.eventdata.NodeExpandedData'
+construct NodeExpandedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.NodeExpandedData'.
+construct NodeExpandedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.NodeExpandedData' for input arguments of type 'double'.
+construct NodeCollapsedData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct NodeCollapsedData (1) : 'matlab.ui.eventdata.NodeCollapsedData'
+construct NodeCollapsedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.NodeCollapsedData'.
+construct NodeCollapsedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.NodeCollapsedData' for input arguments of type 'double'.
+construct NodeTextChangedData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct NodeTextChangedData (1) : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct NodeTextChangedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.NodeTextChangedData'.
+construct NodeTextChangedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.NodeTextChangedData' for input arguments of type 'double'.
+construct SelectedNodesChangedData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct SelectedNodesChangedData (1) : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct SelectedNodesChangedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.SelectedNodesChangedData'.
+construct SelectedNodesChangedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.SelectedNodesChangedData' for input arguments of type 'double'.
+construct CheckedNodesChangedData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct CheckedNodesChangedData (1) : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct CheckedNodesChangedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.CheckedNodesChangedData'.
+construct CheckedNodesChangedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.CheckedNodesChangedData' for input arguments of type 'double'.
+construct ClickedData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct ClickedData (1) : 'matlab.ui.eventdata.ClickedData'
+construct ClickedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ClickedData'.
+construct ClickedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ClickedData' for input arguments of type 'double'.
+construct DoubleClickedData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct DoubleClickedData (1) : 'matlab.ui.eventdata.DoubleClickedData'
+construct DoubleClickedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.DoubleClickedData'.
+construct DoubleClickedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.DoubleClickedData' for input arguments of type 'double'.
+construct TreeInteraction : ERR MATLAB:minrhs | Not enough input arguments.
+construct TreeInteraction (1) : ERR MATLAB:structRefFromNonStruct | Dot indexing is not supported for variables of this type.
+construct TreeInteraction : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.TreeInteraction'.
+construct TreeInteraction (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.TreeInteraction' for input arguments of type 'double'.
+construct ListBoxInteraction : ERR MATLAB:minrhs | Not enough input arguments.
+construct ListBoxInteraction (1) : ERR MATLAB:structRefFromNonStruct | Dot indexing is not supported for variables of this type.
+construct ListBoxInteraction : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ListBoxInteraction'.
+construct ListBoxInteraction (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ListBoxInteraction' for input arguments of type 'double'.
+construct ComponentInteraction : ERR MATLAB:minrhs | Not enough input arguments.
+construct ComponentInteraction (1) : ERR MATLAB:structRefFromNonStruct | Dot indexing is not supported for variables of this type.
+construct ComponentInteraction : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ComponentInteraction'.
+construct ComponentInteraction (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ComponentInteraction' for input arguments of type 'double'.
+construct DropDownInteraction : ERR MATLAB:minrhs | Not enough input arguments.
+construct DropDownInteraction (1) : ERR MATLAB:structRefFromNonStruct | Dot indexing is not supported for variables of this type.
+construct DropDownInteraction : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.DropDownInteraction'.
+construct DropDownInteraction (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.DropDownInteraction' for input arguments of type 'double'.
+construct ContextMenuOpeningData : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+construct ContextMenuOpeningData (1) : ERR MATLAB:minrhs | Not enough input arguments.
+construct ContextMenuOpeningData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ContextMenuOpeningData'.
+construct ContextMenuOpeningData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ContextMenuOpeningData' for input arguments of type 'double'.
+construct ValueChangeData : ERR MATLAB:class:MethodRestricted | Cannot access method 'ValueChangeData' in class 'matlab.ui.eventdata.ValueChangeData'.
+construct ValueChangeData (1) : ERR MATLAB:class:MethodRestricted | Cannot access method 'ValueChangeData' in class 'matlab.ui.eventdata.ValueChangeData'.
+construct ValueChangeData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ValueChangeData'.
+construct ValueChangeData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ValueChangeData' for input arguments of type 'double'.
+construct ImageClickedData : 'matlab.ui.eventdata.ImageClickedData'
+construct ImageClickedData (1) : ERR MATLAB:TooManyInputs | Too many input arguments.
+construct ImageClickedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ImageClickedData'.
+construct ImageClickedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ImageClickedData' for input arguments of type 'double'.
+construct HyperlinkClickedData : 'matlab.ui.eventdata.HyperlinkClickedData'
+construct HyperlinkClickedData (1) : ERR MATLAB:TooManyInputs | Too many input arguments.
+construct HyperlinkClickedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.HyperlinkClickedData'.
+construct HyperlinkClickedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.HyperlinkClickedData' for input arguments of type 'double'.
+construct ButtonPushedData : 'matlab.ui.eventdata.ButtonPushedData'
+construct ButtonPushedData (1) : ERR MATLAB:TooManyInputs | Too many input arguments.
+construct ButtonPushedData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.ButtonPushedData'.
+construct ButtonPushedData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.ButtonPushedData' for input arguments of type 'double'.
+construct DropDownOpeningData : 'matlab.ui.eventdata.DropDownOpeningData'
+construct DropDownOpeningData (1) : ERR MATLAB:TooManyInputs | Too many input arguments.
+construct DropDownOpeningData : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.internal.DropDownOpeningData'.
+construct DropDownOpeningData (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.internal.DropDownOpeningData' for input arguments of type 'double'.
+construct Interaction : ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'matlab.ui.eventdata.Interaction'.
+construct Interaction (1) : ERR MATLAB:UndefinedFunction | Undefined function 'matlab.ui.eventdata.Interaction' for input arguments of type 'double'.
+construct Interaction : ERR MATLAB:minrhs | Not enough input arguments.
+construct Interaction (1) : ERR MATLAB:structRefFromNonStruct | Dot indexing is not supported for variables of this type.
+TreeInteraction(n, 2) : ERR MATLAB:TooManyInputs | Too many input arguments.
+ListBoxInteraction(2) : ERR MATLAB:structRefFromNonStruct | Dot indexing is not supported for variables of this type.
+ClickedData(interaction) : ERR MATLAB:structRefFromNonStruct | Dot indexing is not supported for variables of this type.
+tree Children empty : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+tree Children order : 'n1(2) .c1(0) .c2(0) n2(0) n3(0) '
+tree Children class size : '<matlab.ui.container.TreeNode [3 1]>'
+node Children : '<matlab.ui.container.TreeNode [2 1]>'
+node Parent : 'matlab.ui.container.TreeNode'
+leaf Children : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+uf.Children with tree : '<matlab.ui.container.Tree [1 1]>'
+findobj uitreenode : double 5
+findobj Text c1 : double 1
+findall uitreenode : double 5
+allchild(tr) : '<matlab.ui.container.TreeNode [3 1]>'
+allchild(n1) : '<matlab.ui.container.TreeNode [2 1]>'
+isa node : logical [true true true true true true]
+ancestor(c1, figure) : 'matlab.ui.Figure'
+ancestor(c1, uitree) : 'matlab.ui.container.Tree'
+SelectedNodes default : 'double [0 0]'
+SelectedNodes <- n1 : '<matlab.ui.container.TreeNode [1 1]>'
+SelectedNodes <- [n1 n2] single : ERR MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff | When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.
+SelectedNodes <- [] : 'double [0 0]'
+SelectedNodes <- {n1} : ERR MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff | When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.
+SelectedNodes <- 5 : ERR MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff | When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.
+SelectedNodes <- tr : ERR MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff | When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.
+SelectedNodes <- other tree node : ERR MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOff | When 'Multiselect' is 'off', 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the Tree.
+SelectedNodes <- c1 nested : '<matlab.ui.container.TreeNode [1 1]>'
+Multiselect on : 'OnOff on'
+SelectedNodes <- [n1 n2] multi : '<matlab.ui.container.TreeNode [2 1]>'
+SelectedNodes <- [n1; n2] column : '<matlab.ui.container.TreeNode [2 1]>'
+SelectedNodes <- [n1 n1] dup : '<matlab.ui.container.TreeNode [1 1]>'
+SelectedNodes <- [n2 n1 c1] order : '[3 1] [n2,n1,c1]'
+SelectedNodes <- [n1 other] : ERR MATLAB:ui:Tree:selectedNodesInvalidInputMultiSelectOn | When 'Multiselect' is 'on', 'SelectedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.
+Multiselect off with two : '[1 1] [n2]'
+SelectedNodes after delete selected : '[1 1] [n2] -> empty [0 0]'
+SelectedNodes after delete parent of selected : '[1 1] [c1] -> empty [0 0]'
+texts after deletes : 'n3(0) '
+SelectedNodes after node moved out : 'empty [0 0] | other empty [0 0]'
+node Text <- 5 : ERR MATLAB:ui:TreeNode:invalidText | 'Text' must be a character vector or a string scalar.
+node Text <- "s" : ''s''
+node Text <- {a} : ERR MATLAB:ui:TreeNode:invalidText | 'Text' must be a character vector or a string scalar.
+node Text <- empty : ''''
+node Text <- ["a" "b"] : ERR MATLAB:ui:TreeNode:invalidText | 'Text' must be a character vector or a string scalar.
+node Text <- char matrix : ERR MATLAB:ui:TreeNode:invalidText | 'Text' must be a character vector or a string scalar.
+node Text <- sprintf newline : ''a
+b''
+node NodeData <- struct : 'struct a'
+node NodeData <- handle : '<matlab.ui.Figure [1 1]>'
+node NodeData <- cell : 'cell [1 2] {double 1,'a'}'
+node NodeData <- "s" : '"s"'
+[Warning: File 'nofile.png' is not on the MATLAB or specified path.] 
+node Icon <- nofile.png : ''''
+node Icon <- error : ERR MATLAB:ui:TreeNode:invalidIconFile | You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.
+node Icon <- zeros(4,4,3) : 'double size [4 4 3]'
+node Icon <- 5 : ERR MATLAB:ui:TreeNode:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+node Icon <- empty : ''''
+node Icon <- [] : ''''
+node Icon <- "s" : ERR MATLAB:ui:TreeNode:invalidIconFile | You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.
+node Icon <- ones(2,2) : ERR MATLAB:ui:TreeNode:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+node Icon <- uint8 cube : 'uint8 size [2 2 3]'
+node Icon <- 2 x 2 x 3 doubles over 1 : 'double size [2 2 3]'
+node Visible : ERR MATLAB:hg:InvalidProperty | Unrecognized property Visible for class matlab.ui.container.TreeNode.
+node Position : ERR MATLAB:hg:InvalidProperty | Unrecognized property Position for class matlab.ui.container.TreeNode.
+node Enable : ERR MATLAB:hg:InvalidProperty | Unrecognized property Enable for class matlab.ui.container.TreeNode.
+node Layout : ERR MATLAB:hg:InvalidProperty | Unrecognized property Layout for class matlab.ui.container.TreeNode.
+tree Editable on : 'OnOff on'
+delete(tr) then nodes : 'tree valid 0 node valid 0'
+tree in grid Position : double [20 20 150 300]
+tree in grid Layout : <matlab.ui.layout.GridLayoutOptions>
+node Parent write to grid : ERR MATLAB:ui:TreeNode:invalidParent | 'Parent' must be a valid Tree object or TreeNode object.
+CheckedNodes default : 'double [0 0]'
+CheckedNodes <- p1 : '[4 1] [p1,k1,k2,k3]'
+CheckedNodes <- k1 only : '[2 1] [k1,k3]'
+CheckedNodes <- [k1 k2] all children : '[4 1] [k1,k2,k3,p1]'
+CheckedNodes <- k3 deepest : '[2 1] [k3,k1]'
+CheckedNodes <- [k3 k2] : '[3 1] [k3,k2,k1]'
+CheckedNodes <- [p2 k1] : '[3 1] [p2,k1,k3]'
+CheckedNodes <- [p1; p2] column : '[5 1] [p1,p2,k1,k2,k3]'
+CheckedNodes <- [p1 p1] dup : '[4 1] [p1,k1,k2,k3]'
+CheckedNodes <- [] : 'double [0 0]'
+CheckedNodes <- 5 : ERR MATLAB:ui:CheckBoxTree:checkedNodesInvalid | 'CheckedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.
+CheckedNodes <- other tree node : ERR MATLAB:ui:CheckBoxTree:checkedNodesInvalid | 'CheckedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.
+CheckedNodes <- plain tree node : ERR MATLAB:ui:CheckBoxTree:checkedNodesInvalid | 'CheckedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.
+CheckedNodes <- ct : ERR MATLAB:ui:CheckBoxTree:checkedNodesInvalid | 'CheckedNodes' must be an empty array or an array of TreeNode objects that are children in the Tree.
+CheckedNodes on plain tree : ERR MATLAB:hg:InvalidProperty | Unrecognized property CheckedNodes for class Tree.
+CheckedNodes read plain tree : ERR MATLAB:hg:InvalidProperty | Unrecognized property CheckedNodes for class matlab.ui.container.Tree.
+Multiselect on checkbox tree : ERR MATLAB:hg:InvalidProperty | Unrecognized property Multiselect for class matlab.ui.container.CheckBoxTree.
+SelectedNodes <- [p1 p2] on checkbox tree : ERR MATLAB:ui:CheckBoxTree:selectedCheckBoxTreeNodes | 'SelectedNodes' must be an empty array or a 1-by-1 TreeNode object that is a child in the CheckBoxTree.
+CheckedNodes after new child of checked : '[2 1] [p2,newborn]'
+CheckedNodes after delete checked : '[3 1] [k2,k3,k1] -> [5 1] [k2,k3,k1,doomed,p1] -> [4 1] [k2,k3,k1,p1]'
+CheckedNodes after move checked out : 'empty [0 0] | other empty [0 0]'
+texts checkbox tree : 'p1(2) .k1(1) ..k3(0) .k2(0) p2(0) '
+dk Items <- {a,b,c} : 'Value='a' ValueIndex=double 1'
+dk Value <- b : 'Value='b' ValueIndex=double 2'
+dk Value <- B case : ERR MATLAB:ui:DiscreteKnob:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+dk Value <- zz : ERR MATLAB:ui:DiscreteKnob:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+dk Value <- 2 : ERR MATLAB:ui:DiscreteKnob:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+dk Value <- {b} : ''b''
+dk Value <- "c" : 'Value='c' ValueIndex=double 3'
+dk ValueIndex <- 1 : 'Value='a' ValueIndex=double 1'
+dk ValueIndex <- 9 : ERR MATLAB:ui:DiscreteKnob:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+dk ValueIndex <- 0 : ERR MATLAB:ui:DiscreteKnob:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+dk ValueIndex <- [] : ERR MATLAB:ui:DiscreteKnob:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+dk Items <- {}  : ERR MATLAB:ui:DiscreteKnob:invalidText | 'Items' must have at least 2 elements.
+dk Items <- {x} after empty : ERR MATLAB:ui:DiscreteKnob:invalidText | 'Items' must have at least 2 elements.
+dk Items <- {a;b} column : 'Items=cell [1 2] {'a','b'} Value='a''
+dk Items <- ["s" "t"] : 'Items=cell [1 2] {'s','t'} Value='s''
+dk Items <- {a, 5} : ERR MATLAB:ui:DiscreteKnob:invalidText | 'Items' must be a 1-by-N cell array of character vectors or a string array.
+dk Items <- abc char : ERR MATLAB:ui:DiscreteKnob:invalidText | 'Items' must be a 1-by-N cell array of character vectors or a string array.
+dk ItemsData <- [10 20] : 'Value=double 10 ItemsData=double [10 20]'
+dk Value <- 20 with data : 'Value=double 20 ValueIndex=double 2'
+dk Value <- t text with data : ERR MATLAB:ui:DiscreteKnob:valueNotInItemsData | 'Value' must be an element defined in the 'ItemsData' property.
+dk ItemsData <- {a,b} : 'Value='x' ItemsData=cell [1 2] {'x','y'}'
+dk ItemsData <- [] : 'Value='s' ItemsData=double [0 0]'
+dk keeps value when Items still has it : 'b 2 | x 1'
+knob Items : ERR MATLAB:hg:InvalidProperty | Unrecognized property Items for class matlab.ui.control.Knob.
+knob ValueIndex : ERR MATLAB:hg:InvalidProperty | Unrecognized property ValueIndex for class matlab.ui.control.Knob.
+dk Limits : ERR MATLAB:hg:InvalidProperty | Unrecognized property Limits for class matlab.ui.control.DiscreteKnob.
+sw Value <- On : 'Value='On' ValueIndex=double 2'
+sw Value <- on case : ERR MATLAB:ui:Switch:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+sw Value <- OFF : ERR MATLAB:ui:Switch:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+sw Value <- true : ERR MATLAB:ui:Switch:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+sw Value <- 1 : ERR MATLAB:ui:Switch:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+sw Value <- Maybe : ERR MATLAB:ui:Switch:valueNotInText | 'Value' must be an element defined in the 'Items' property.
+sw Value <- "On" : 'Value='On' ValueIndex=double 2'
+sw Items <- {a,b,c} : ERR MATLAB:ui:Switch:invalidText | 'Items' must have 2 elements.
+sw Items <- {a} : ERR MATLAB:ui:Switch:invalidText | 'Items' must have 2 elements.
+sw Items <- {} : ERR MATLAB:ui:Switch:invalidText | 'Items' must have 2 elements.
+sw Items <- {Lo,Hi} : 'Value='Lo' ValueIndex=double 1'
+sw Value <- Hi : 'Value='Hi' ValueIndex=double 2'
+sw Items <- {Hi,Lo} swapped keeps value : 'Value='Hi' ValueIndex=double 1'
+sw Items <- ["p";"q"] : 'Items=cell [1 2] {'p','q'} Value='p''
+sw ItemsData <- [0 1] : 'Value=double 0 ItemsData=double [0 1]'
+sw Value <- 1 with data : 'Value=double 1 ValueIndex=double 2'
+sw Value <- true with data : 'Value=double 1 ValueIndex=double 2'
+sw ItemsData <- [1 2 3] : ERR MATLAB:ui:Switch:invalidItemsData | 'ItemsData' must have at most 2 elements.
+sw ItemsData <- {a} : ERR MATLAB:ui:Switch:invalidItemsData | 'ItemsData' must have at least 2 elements.
+sw ValueIndex <- 2 : 'Value=double 1 ValueIndex=double 2'
+sw ValueIndex <- 3 : ERR MATLAB:ui:Switch:invalidValueIndex | 'ValueIndex' must be a positive integer representing an index in 'Items'.
+sw Orientation <- vertical : ''vertical''
+rocker Orientation <- horizontal : ''horizontal''
+toggle Orientation <- horizontal : ''horizontal''
+knob Value <- 150 : ERR MATLAB:ui:Knob:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+knob Value <- -1 : ERR MATLAB:ui:Knob:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+knob Value <- NaN : ERR MATLAB:ui:Knob:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+knob Value <- 50 : 'double 50'
+knob Limits <- [0 10] with Value 50 : 'Limits=double [0 10] Value=double 10'
+knob Limits <- [60 100] with Value : 'Limits=double [60 100] Value=double 60'
+knob Limits <- [10 0] : ERR MATLAB:ui:Knob:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+knob Limits <- [5 5] : ERR MATLAB:ui:Knob:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+knob Limits <- [0 Inf] : ERR MATLAB:ui:Knob:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+knob Limits <- [-Inf 0] : ERR MATLAB:ui:Knob:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+knob Limits <- [0 NaN] : ERR MATLAB:ui:Knob:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+knob Limits <- [0;100] : 'double [0 100]'
+knob Limits <- int8 : ERR MATLAB:ui:Knob:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+knob Limits <- single : ERR MATLAB:ui:Knob:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+knob Value <- int8(3) : ERR MATLAB:ui:Knob:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+knob Value <- single : ERR MATLAB:ui:Knob:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+knob Value <- true : ERR MATLAB:ui:Knob:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+knob Value <- [1 2] : ERR MATLAB:ui:Knob:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+knob Value <- 5 char : ERR MATLAB:ui:Knob:invalidValue | 'Value' must be a double scalar within the range of 'Limits'.
+knob MajorTicks <- [0 50 100] : 'MajorTicks=double [0 50 100] MajorTicksMode='manual''
+knob MajorTickLabels after ticks : 'cell [1 3] {'0','50','100'} auto'
+knob MajorTicks <- [100 0 50] unsorted : 'double [0 50 100]'
+knob MajorTicks <- [0 500] : 'double [0 500]'
+knob MajorTicks <- [] : 'MajorTicks=double [0 0] MajorTickLabels=cell [0 0] {}'
+knob MajorTicksMode <- auto : 'MajorTicks=double [0 0] MajorTickLabels=cell [0 0] {}'
+knob MajorTickLabels <- {a,b} : 'MajorTickLabels=cell [1 2] {'a','b'} MajorTickLabelsMode='manual''
+knob MajorTickLabels <- ["a" "b"] : 'cell [1 2] {'a','b'}'
+knob MajorTickLabels <- 1:3 : ERR MATLAB:ui:Knob:invalidMajorTickLabels | 'MajorTickLabels' must be a 1-by-N array of the following type: cell array of character vectors, string, or categorical.
+knob MajorTickLabels <- {} : 'cell [0 0] {}'
+knob MajorTickLabelsMode <- auto : 'MajorTickLabels=cell [0 0] {} MajorTickLabelsMode='auto''
+knob MinorTicks <- 0:10:100 : 'MinorTicks=double [0 10 20 30 40 50 60 70 80 90 100] MinorTicksMode='manual''
+knob MinorTicks <- [] : 'double [0 0]'
+knob MinorTicksMode <- auto : 'MinorTicks=double [0 0] MinorTicksMode='auto''
+gauge Value <- 150 : 'double 150'
+gauge Value <- -5 : 'double -5'
+gauge Value <- NaN : ERR MATLAB:ui:Gauge:invalidValue | 'Value' must be a finite numeric, such as 10.
+gauge Value <- Inf : ERR MATLAB:ui:Gauge:invalidValue | 'Value' must be a finite numeric, such as 10.
+gauge Value <- int8(3) : 'double 3'
+gauge Value <- true : ERR MATLAB:ui:Gauge:invalidValue | 'Value' must be a finite numeric, such as 10.
+gauge Value <- [1 2] : ERR MATLAB:ui:Gauge:invalidValue | 'Value' must be a finite numeric, such as 10.
+gauge Limits <- [0 10] with Value : 'Limits=double [0 10] Value=double 3'
+gauge Limits <- [10 0] : ERR MATLAB:ui:Gauge:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+gauge Limits <- [5 5] : ERR MATLAB:ui:Gauge:invalidFiniteScaleLimits | 'Limits' must be a 1-by-2 array of finite, increasing double values.
+gauge ScaleColors <- [1 0 0; 0 1 0] : 'ScaleColors=double [1 0 0;0 1 0] ScaleColorLimits=double [0 5;5 10]'
+gauge ScaleColors <- {red,green} : 'ScaleColors=double [1 0 0;0 1 0] ScaleColorLimits=double [0 5;5 10]'
+gauge ScaleColors <- red : ERR MATLAB:ui:Gauge:invalidScaleColors | 'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+gauge ScaleColors <- ["red" "green"] : 'ScaleColors=double [1 0 0;0 1 0] ScaleColorLimits=double [0 5;5 10]'
+gauge ScaleColors <- [1 0 0] : 'ScaleColors=double [1 0 0] ScaleColorLimits=double [0 10]'
+gauge ScaleColors <- rgb : ERR MATLAB:ui:Gauge:invalidScaleColors | 'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+gauge ScaleColors <- {r,g,b} : 'ScaleColors=double [1 0 0;0 1 0;0 0 1] ScaleColorLimits=double [0 3.3333333;3.3333333 6.6666667;6.6666667 10]'
+gauge ScaleColors <- [1 0 0 0.5] : ERR MATLAB:ui:Gauge:invalidScaleColors | 'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+gauge ScaleColors <- [2 0 0] : ERR MATLAB:ui:Gauge:invalidScaleColors | 'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+gauge ScaleColors <- none : ERR MATLAB:ui:Gauge:invalidScaleColors | 'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+gauge ScaleColors <- {red, 5} : ERR MATLAB:ui:Gauge:invalidScaleColors | 'ScaleColors' value must be an n-by-3 array of RGB triplets, or a 1-D array of color names or hexadecimal color codes.
+gauge ScaleColorLimits <- [0 50; 50 100] with 3 colours : 'ScaleColors=double [1 0 0;0 1 0;0 0 1] ScaleColorLimits=double [0 50;50 100]'
+gauge ScaleColorLimits <- [0 30; 30 60; 60 100] : 'ScaleColors=double [1 0 0;0 1 0;0 0 1] ScaleColorLimits=double [0 30;30 60;60 100]'
+gauge ScaleColorLimits <- [50 0] : ERR MATLAB:ui:Gauge:nonIncreasingScaleColorLimits | 'ScaleColorLimits' must be a n-by-2 array, where each element in the first column is less than the corresponding element in the second column.
+gauge ScaleColorLimits <- [0 500] : 'ScaleColors=double [1 0 0;0 1 0;0 0 1] ScaleColorLimits=double [0 500]'
+gauge ScaleColorLimits <- [] : 'ScaleColors=double [1 0 0;0 1 0;0 0 1] ScaleColorLimits=double [0 0]'
+gauge ScaleColorLimits <- [0 50 100] : ERR MATLAB:ui:Gauge:invalidScaleColorLimits | 'ScaleColorLimits' must be a n-by-2 array, such as [0 10; 80 90; 90 100];
+gauge ScaleColors <- []  : 'ScaleColors=double [0 0] ScaleColorLimits=double [0 0]'
+gauge ScaleColorLimits <- [0 50] no colours : 'ScaleColors=double [0 0] ScaleColorLimits=double [0 50]'
+gauge ScaleColors <- [1 0 0; 0 1 0] with one limit row : 'ScaleColors=double [1 0 0;0 1 0] ScaleColorLimits=double [0 50]'
+gauge ScaleDirection <- counterclockwise : ''counterclockwise''
+gauge ScaleDirection <- counter : ERR MATLAB:ui:Gauge:invalidScaleDirection | 'ScaleDirection' value must be 'clockwise' or 'counterclockwise'.
+gauge MajorTicks <- [0 50 100] : 'MajorTicks=double [0 50 100] MajorTickLabels=cell [1 3] {'0','50','100'}'
+gauge MajorTicks <- [] : 'MajorTicks=double [0 0] MajorTickLabels=cell [0 0] {}'
+gauge MajorTicksMode <- auto : 'MajorTicks=double [0 0] MajorTickLabels=cell [0 0] {}'
+linear Orientation <- vertical : ''vertical''
+linear Orientation <- north : ERR MATLAB:ui:LinearGauge:invalidOrientation | 'Orientation' value must be 'horizontal' or 'vertical'.
+ninety Orientation <- southeast : ''southeast''
+ninety Orientation <- north : ERR MATLAB:ui:NinetyDegreeGauge:invalidOrientation | 'Orientation' value must be 'northwest', 'northeast', 'southwest', or 'southeast'.
+semi Orientation <- south : ''south''
+semi Orientation <- east : ''east''
+semi Orientation <- northwest : ERR MATLAB:ui:SemicircularGauge:invalidOrientation | 'Orientation' value must be 'north', 'south', 'east', or 'west'.
+gauge Orientation : ERR MATLAB:hg:InvalidProperty | Unrecognized property Orientation for class matlab.ui.control.Gauge.
+linear ScaleDirection : ERR MATLAB:hg:InvalidProperty | Unrecognized property ScaleDirection for class matlab.ui.control.LinearGauge.
+TICKS knob [0 100] : major=[0 10 20 30 40 50 60 70 80 90 100] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100] labels=cell [1 11] {'0','10','20','30','40','50','60','70','80','90','100'}
+TICKS knob [0 1] : major=[0 0.1425 0.285 0.4275 0.57 0.7125 0.855 1] minor=[0 0.035625 0.07125 0.106875 0.1425 0.178125 0.21375 0.249375 0.285 0.320625 0.35625 0.391875 0.4275 0.463125 0.49875 0.534375 0.57 0.605625 0.64125 0.676875 0.7125 0.748125 0.78375 0.819375 0.855 0.890625 0.92625 0.961875 1] labels=cell [1 8] {'0','0.1425','0.285','0.4275','0.57','0.7125','0.855','1'}
+TICKS knob [0 10] : major=[0 1 2 3 4 5 6 7 8 9 10] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10] labels=cell [1 11] {'0','1','2','3','4','5','6','7','8','9','10'}
+TICKS knob [0 1000] : major=[0 125 250 375 500 625 750 875 1000] minor=[0 125 250 375 500 625 750 875 1000] labels=cell [1 9] {'0','125','250','375','500','625','750','875','1000'}
+TICKS knob [-50 50] : major=[-50 -40 -30 -20 -10 0 10 20 30 40 50] minor=[-50 -45 -40 -35 -30 -25 -20 -15 -10 -5 0 5 10 15 20 25 30 35 40 45 50] labels=cell [1 11] {'-50','-40','-30','-20','-10','0','10','20','30','40','50'}
+TICKS knob [0 7] : major=[0 1 2 3 4 5 6 7] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7] labels=cell [1 8] {'0','1','2','3','4','5','6','7'}
+TICKS knob [1 12] : major=[1 2.5 4 5.5 7 8.5 10 12] minor=[1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12] labels=cell [1 8] {'1','2.5','4','5.5','7','8.5','10','12'}
+TICKS knob [0 0.5] : major=[0 0.1 0.2 0.3 0.4 0.5] minor=[0 0.02 0.04 0.06 0.08 0.1 0.12 0.14 0.16 0.18 0.2 0.22 0.24 0.26 0.28 0.3 0.32 0.34 0.36 0.38 0.4 0.42 0.44 0.46 0.48 0.5] labels=cell [1 6] {'0','0.1','0.2','0.3','0.4','0.5'}
+TICKS knob [0 360] : major=[0 45 90 135 180 225 270 315 360] minor=[0 15 30 45 60 75 90 105 120 135 150 165 180 195 210 225 240 255 270 285 300 315 330 345 360] labels=cell [1 9] {'0','45','90','135','180','225','270','315','360'}
+TICKS knob [0 255] : major=[0 51 102 153 204 255] minor=[0 17 34 51 68 85 102 119 136 153 170 187 204 221 238 255] labels=cell [1 6] {'0','51','102','153','204','255'}
+TICKS knob [0 5] : major=[0 0.71 1.42 2.13 2.84 3.55 4.26 5] minor=[0 0.71 1.42 2.13 2.84 3.55 4.26 5] labels=cell [1 8] {'0','0.71','1.42','2.13','2.84','3.55','4.26','5'}
+TICKS knob [0 50] : major=[0 5 10 15 20 25 30 35 40 45 50] minor=[0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50] labels=cell [1 11] {'0','5','10','15','20','25','30','35','40','45','50'}
+TICKS knob [10 20] : major=[10 11 12 13 14 15 16 17 18 19 20] minor=[10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15 15.5 16 16.5 17 17.5 18 18.5 19 19.5 20] labels=cell [1 11] {'10','11','12','13','14','15','16','17','18','19','20'}
+TICKS knob [0 3] : major=[0 0.5 1 1.5 2 2.5 3] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3] labels=cell [1 7] {'0','0.5','1','1.5','2','2.5','3'}
+TICKS knob [0 2] : major=[0 0.29 0.58 0.87 1.16 1.45 1.74 2] minor=[0 0.29 0.58 0.87 1.16 1.45 1.74 2] labels=cell [1 8] {'0','0.29','0.58','0.87','1.16','1.45','1.74','2'}
+TICKS knob [-1 1] : major=[-1 -0.6 -0.2 0.2 0.6 1] minor=[-1 -0.92 -0.84 -0.76 -0.68 -0.6 -0.52 -0.44 -0.36 -0.28 -0.2 -0.12 -0.04 0.04 0.12 0.2 0.28 0.36 0.44 0.52 0.6 0.68 0.76 0.84 0.92 1] labels=cell [1 6] {'-1','-0.6','-0.2','0.2','0.6','1'}
+TICKS knob [0 1000000] : major=[0 200000 400000 600000 800000 1000000] minor=[0 40000 80000 120000 160000 200000 240000 280000 320000 360000 400000 440000 480000 520000 560000 600000 640000 680000 720000 760000 800000 840000 880000 920000 960000 1000000] labels=cell [1 6] {'0','2e+05','4e+05','6e+05','8e+05','1e+06'}
+TICKS knob [0.01 0.99] : major=[0.01 0.15 0.29 0.43 0.57 0.71 0.85 0.99] minor=[0.01 0.045 0.08 0.115 0.15 0.185 0.22 0.255 0.29 0.325 0.36 0.395 0.43 0.465 0.5 0.535 0.57 0.605 0.64 0.675 0.71 0.745 0.78 0.815 0.85 0.885 0.92 0.955 0.99] labels=cell [1 8] {'0.01','0.15','0.29','0.43','0.57','0.71','0.85','0.99'}
+TICKS knob [0 60] : major=[0 6 12 18 24 30 36 42 48 54 60] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60] labels=cell [1 11] {'0','6','12','18','24','30','36','42','48','54','60'}
+TICKS knob [0 24] : major=[0 3 6 9 12 15 18 21 24] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24] labels=cell [1 9] {'0','3','6','9','12','15','18','21','24'}
+TICKS knob [0 200] : major=[0 25 50 75 100 125 150 175 200] minor=[0 25 50 75 100 125 150 175 200] labels=cell [1 9] {'0','25','50','75','100','125','150','175','200'}
+TICKS knob [0 15] : major=[0 2.5 5 7.5 10 12.5 15] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15] labels=cell [1 7] {'0','2.5','5','7.5','10','12.5','15'}
+TICKS knob [0 25] : major=[0 3 6 9 12 15 18 21 25] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25] labels=cell [1 9] {'0','3','6','9','12','15','18','21','25'}
+TICKS knob [0 30] : major=[0 3 6 9 12 15 18 21 24 27 30] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30] labels=cell [1 11] {'0','3','6','9','12','15','18','21','24','27','30'}
+TICKS knob [0 40] : major=[0 4 8 12 16 20 24 28 32 36 40] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40] labels=cell [1 11] {'0','4','8','12','16','20','24','28','32','36','40'}
+TICKS knob [0 80] : major=[0 8 16 24 32 40 48 56 64 72 80] minor=[0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80] labels=cell [1 11] {'0','8','16','24','32','40','48','56','64','72','80'}
+TICKS knob [20 80] : major=[20 26 32 38 44 50 56 62 68 74 80] minor=[20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80] labels=cell [1 11] {'20','26','32','38','44','50','56','62','68','74','80'}
+TICKS knob [0 9] : major=[0 1 2 3 4 5 6 7 8 9] minor=[0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5 5.25 5.5 5.75 6 6.25 6.5 6.75 7 7.25 7.5 7.75 8 8.25 8.5 8.75 9] labels=cell [1 10] {'0','1','2','3','4','5','6','7','8','9'}
+TICKS knob [0 11] : major=[0 1.5 3 4.5 6 7.5 9 11] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11] labels=cell [1 8] {'0','1.5','3','4.5','6','7.5','9','11'}
+TICKS knob [0 0.001] : major=[0 0.0002 0.0004 0.0006 0.0008 0.001] minor=[0 4e-05 8e-05 0.00012 0.00016 0.0002 0.00024 0.00028 0.00032 0.00036 0.0004 0.00044 0.00048 0.00052 0.00056 0.0006 0.00064 0.00068 0.00072 0.00076 0.0008 0.00084 0.00088 0.00092 0.00096 0.001] labels=cell [1 6] {'0','0.0002','0.0004','0.0006','0.0008','0.001'}
+TICKS knob [-100 100] : major=[-100 -75 -50 -25 0 25 50 75 100] minor=[-100 -75 -50 -25 0 25 50 75 100] labels=cell [1 9] {'-100','-75','-50','-25','0','25','50','75','100'}
+TICKS knob [0 120] : major=[0 15 30 45 60 75 90 105 120] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120] labels=cell [1 9] {'0','15','30','45','60','75','90','105','120'}
+TICKS knob [0 150] : major=[0 25 50 75 100 125 150] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150] labels=cell [1 7] {'0','25','50','75','100','125','150'}
+TICKS knob [0 4] : major=[0 0.5 1 1.5 2 2.5 3 3.5 4] minor=[0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4] labels=cell [1 9] {'0','0.5','1','1.5','2','2.5','3','3.5','4'}
+TICKS knob [0 6] : major=[0 1 2 3 4 5 6] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6] labels=cell [1 7] {'0','1','2','3','4','5','6'}
+TICKS knob [0 8] : major=[0 1 2 3 4 5 6 7 8] minor=[0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5 5.25 5.5 5.75 6 6.25 6.5 6.75 7 7.25 7.5 7.75 8] labels=cell [1 9] {'0','1','2','3','4','5','6','7','8'}
+TICKS gauge [0 100] : major=[0 20 40 60 80 100] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100] labels=cell [1 6] {'0','20','40','60','80','100'}
+TICKS gauge [0 1] : major=[0 0.2 0.4 0.6 0.8 1] minor=[0 0.02 0.04 0.06 0.08 0.1 0.12 0.14 0.16 0.18 0.2 0.22 0.24 0.26 0.28 0.3 0.32 0.34 0.36 0.38 0.4 0.42 0.44 0.46 0.48 0.5 0.52 0.54 0.56 0.58 0.6 0.62 0.64 0.66 0.68 0.7 0.72 0.74 0.76 0.78 0.8 0.82 0.84 0.86 0.88 0.9 0.92 0.94 0.96 0.98 1] labels=cell [1 6] {'0','0.2','0.4','0.6','0.8','1'}
+TICKS gauge [0 10] : major=[0 2 4 6 8 10] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7 7.2 7.4 7.6 7.8 8 8.2 8.4 8.6 8.8 9 9.2 9.4 9.6 9.8 10] labels=cell [1 6] {'0','2','4','6','8','10'}
+TICKS gauge [0 1000] : major=[0 200 400 600 800 1000] minor=[0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 360 380 400 420 440 460 480 500 520 540 560 580 600 620 640 660 680 700 720 740 760 780 800 820 840 860 880 900 920 940 960 980 1000] labels=cell [1 6] {'0','200','400','600','800','1000'}
+TICKS gauge [-50 50] : major=[-50 -30 -10 10 30 50] minor=[-50 -48 -46 -44 -42 -40 -38 -36 -34 -32 -30 -28 -26 -24 -22 -20 -18 -16 -14 -12 -10 -8 -6 -4 -2 0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50] labels=cell [1 6] {'-50','-30','-10','10','30','50'}
+TICKS gauge [0 7] : major=[0 1 2 3 4 5 6 7] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4 4.1 4.2 4.3 4.4 4.5 4.6 4.7 4.8 4.9 5 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8 5.9 6 6.1 6.2 6.3 6.4 6.5 6.6 6.7 6.8 6.9 7] labels=cell [1 8] {'0','1','2','3','4','5','6','7'}
+TICKS gauge [1 12] : major=[1 2.5 4 5.5 7 8.5 10 12] minor=[1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5 5.25 5.5 5.75 6 6.25 6.5 6.75 7 7.25 7.5 7.75 8 8.25 8.5 8.75 9 9.25 9.5 9.75 10 10.25 10.5 10.75 11 11.25 11.5 11.75 12] labels=cell [1 8] {'1','2.5','4','5.5','7','8.5','10','12'}
+TICKS gauge [0 0.5] : major=[0 0.1 0.2 0.3 0.4 0.5] minor=[0 0.01 0.02 0.03 0.04 0.05 0.06 0.07 0.08 0.09 0.1 0.11 0.12 0.13 0.14 0.15 0.16 0.17 0.18 0.19 0.2 0.21 0.22 0.23 0.24 0.25 0.26 0.27 0.28 0.29 0.3 0.31 0.32 0.33 0.34 0.35 0.36 0.37 0.38 0.39 0.4 0.41 0.42 0.43 0.44 0.45 0.46 0.47 0.48 0.49 0.5] labels=cell [1 6] {'0','0.1','0.2','0.3','0.4','0.5'}
+TICKS gauge [0 360] : major=[0 60 120 180 240 300 360] minor=[0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240 246 252 258 264 270 276 282 288 294 300 306 312 318 324 330 336 342 348 354 360] labels=cell [1 7] {'0','60','120','180','240','300','360'}
+TICKS gauge [0 255] : major=[0 51 102 153 204 255] minor=[0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124 128 132 136 140 144 148 152 156 160 164 168 172 176 180 184 188 192 196 200 204 208 212 216 220 224 228 232 236 240 244 248 252 255] labels=cell [1 6] {'0','51','102','153','204','255'}
+TICKS gauge [0 5] : major=[0 1 2 3 4 5] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4 4.1 4.2 4.3 4.4 4.5 4.6 4.7 4.8 4.9 5] labels=cell [1 6] {'0','1','2','3','4','5'}
+TICKS gauge [0 50] : major=[0 10 20 30 40 50] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50] labels=cell [1 6] {'0','10','20','30','40','50'}
+TICKS gauge [10 20] : major=[10 12 14 16 18 20] minor=[10 10.2 10.4 10.6 10.8 11 11.2 11.4 11.6 11.8 12 12.2 12.4 12.6 12.8 13 13.2 13.4 13.6 13.8 14 14.2 14.4 14.6 14.8 15 15.2 15.4 15.6 15.8 16 16.2 16.4 16.6 16.8 17 17.2 17.4 17.6 17.8 18 18.2 18.4 18.6 18.8 19 19.2 19.4 19.6 19.8 20] labels=cell [1 6] {'10','12','14','16','18','20'}
+TICKS gauge [0 3] : major=[0 0.5 1 1.5 2 2.5 3] minor=[0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95 1 1.05 1.1 1.15 1.2 1.25 1.3 1.35 1.4 1.45 1.5 1.55 1.6 1.65 1.7 1.75 1.8 1.85 1.9 1.95 2 2.05 2.1 2.15 2.2 2.25 2.3 2.35 2.4 2.45 2.5 2.55 2.6 2.65 2.7 2.75 2.8 2.85 2.9 2.95 3] labels=cell [1 7] {'0','0.5','1','1.5','2','2.5','3'}
+TICKS gauge [0 2] : major=[0 0.4 0.8 1.2 1.6 2] minor=[0 0.04 0.08 0.12 0.16 0.2 0.24 0.28 0.32 0.36 0.4 0.44 0.48 0.52 0.56 0.6 0.64 0.68 0.72 0.76 0.8 0.84 0.88 0.92 0.96 1 1.04 1.08 1.12 1.16 1.2 1.24 1.28 1.32 1.36 1.4 1.44 1.48 1.52 1.56 1.6 1.64 1.68 1.72 1.76 1.8 1.84 1.88 1.92 1.96 2] labels=cell [1 6] {'0','0.4','0.8','1.2','1.6','2'}
+TICKS gauge [-1 1] : major=[-1 -0.6 -0.2 0.2 0.6 1] minor=[-1 -0.96 -0.92 -0.88 -0.84 -0.8 -0.76 -0.72 -0.68 -0.64 -0.6 -0.56 -0.52 -0.48 -0.44 -0.4 -0.36 -0.32 -0.28 -0.24 -0.2 -0.16 -0.12 -0.08 -0.04 0 0.04 0.0800000000000001 0.12 0.16 0.2 0.24 0.28 0.32 0.36 0.4 0.44 0.48 0.52 0.56 0.6 0.64 0.68 0.72 0.76 0.8 0.84 0.88 0.92 0.96 1] labels=cell [1 6] {'-1','-0.6','-0.2','0.2','0.6','1'}
+TICKS gauge [0 1000000] : major=[0 500000 1000000] minor=[0 15625 31250 46875 62500 78125 93750 109375 125000 140625 156250 171875 187500 203125 218750 234375 250000 265625 281250 296875 312500 328125 343750 359375 375000 390625 406250 421875 437500 453125 468750 484375 500000 515625 531250 546875 562500 578125 593750 609375 625000 640625 656250 671875 687500 703125 718750 734375 750000 765625 781250 796875 812500 828125 843750 859375 875000 890625 906250 921875 937500 953125 968750 984375 1000000] labels=cell [1 3] {'0','5e+05','1e+06'}
+TICKS gauge [0.01 0.99] : major=[0.01 0.337 0.664 0.99] minor=[0.01 0.0397 0.0694 0.0991 0.1288 0.1585 0.1882 0.2179 0.2476 0.2773 0.307 0.3367 0.3664 0.3961 0.4258 0.4555 0.4852 0.5149 0.5446 0.5743 0.604 0.6337 0.6634 0.6931 0.7228 0.7525 0.7822 0.8119 0.8416 0.8713 0.901 0.9307 0.9604 0.99] labels=cell [1 4] {'0.01','0.337','0.664','0.99'}
+TICKS gauge [0 60] : major=[0 10 20 30 40 50 60] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60] labels=cell [1 7] {'0','10','20','30','40','50','60'}
+TICKS gauge [0 24] : major=[0 3 6 9 12 15 18 21 24] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15 15.5 16 16.5 17 17.5 18 18.5 19 19.5 20 20.5 21 21.5 22 22.5 23 23.5 24] labels=cell [1 9] {'0','3','6','9','12','15','18','21','24'}
+TICKS gauge [0 200] : major=[0 40 80 120 160 200] minor=[0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124 128 132 136 140 144 148 152 156 160 164 168 172 176 180 184 188 192 196 200] labels=cell [1 6] {'0','40','80','120','160','200'}
+TICKS gauge [0 15] : major=[0 2.5 5 7.5 10 12.5 15] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15] labels=cell [1 7] {'0','2.5','5','7.5','10','12.5','15'}
+TICKS gauge [0 25] : major=[0 5 10 15 20 25] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15 15.5 16 16.5 17 17.5 18 18.5 19 19.5 20 20.5 21 21.5 22 22.5 23 23.5 24 24.5 25] labels=cell [1 6] {'0','5','10','15','20','25'}
+TICKS gauge [0 30] : major=[0 5 10 15 20 25 30] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15 15.5 16 16.5 17 17.5 18 18.5 19 19.5 20 20.5 21 21.5 22 22.5 23 23.5 24 24.5 25 25.5 26 26.5 27 27.5 28 28.5 29 29.5 30] labels=cell [1 7] {'0','5','10','15','20','25','30'}
+TICKS gauge [0 40] : major=[0 5 10 15 20 25 30 35 40] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40] labels=cell [1 9] {'0','5','10','15','20','25','30','35','40'}
+TICKS gauge [0 80] : major=[0 10 20 30 40 50 60 70 80] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80] labels=cell [1 9] {'0','10','20','30','40','50','60','70','80'}
+TICKS gauge [20 80] : major=[20 30 40 50 60 70 80] minor=[20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80] labels=cell [1 7] {'20','30','40','50','60','70','80'}
+TICKS gauge [0 9] : major=[0 1.5 3 4.5 6 7.5 9] minor=[0 0.15 0.3 0.45 0.6 0.75 0.9 1.05 1.2 1.35 1.5 1.65 1.8 1.95 2.1 2.25 2.4 2.55 2.7 2.85 3 3.15 3.3 3.45 3.6 3.75 3.9 4.05 4.2 4.35 4.5 4.65 4.8 4.95 5.1 5.25 5.4 5.55 5.7 5.85 6 6.15 6.3 6.45 6.6 6.75 6.9 7.05 7.2 7.35 7.5 7.65 7.8 7.95 8.1 8.25 8.4 8.55 8.7 8.85 9] labels=cell [1 7] {'0','1.5','3','4.5','6','7.5','9'}
+TICKS gauge [0 11] : major=[0 1.5 3 4.5 6 7.5 9 11] minor=[0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5 5.25 5.5 5.75 6 6.25 6.5 6.75 7 7.25 7.5 7.75 8 8.25 8.5 8.75 9 9.25 9.5 9.75 10 10.25 10.5 10.75 11] labels=cell [1 8] {'0','1.5','3','4.5','6','7.5','9','11'}
+TICKS gauge [0 0.001] : major=[0 0.0005 0.001] minor=[0 2e-05 4e-05 6e-05 8e-05 0.0001 0.00012 0.00014 0.00016 0.00018 0.0002 0.00022 0.00024 0.00026 0.00028 0.0003 0.00032 0.00034 0.00036 0.00038 0.0004 0.00042 0.00044 0.00046 0.00048 0.0005 0.00052 0.00054 0.00056 0.00058 0.0006 0.00062 0.00064 0.00066 0.00068 0.0007 0.00072 0.00074 0.00076 0.00078 0.0008 0.00082 0.00084 0.00086 0.00088 0.0009 0.00092 0.00094 0.00096 0.00098 0.001] labels=cell [1 3] {'0','0.0005','0.001'}
+TICKS gauge [-100 100] : major=[-100 -60 -20 20 60 100] minor=[-100 -96 -92 -88 -84 -80 -76 -72 -68 -64 -60 -56 -52 -48 -44 -40 -36 -32 -28 -24 -20 -16 -12 -8 -4 0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100] labels=cell [1 6] {'-100','-60','-20','20','60','100'}
+TICKS gauge [0 120] : major=[0 20 40 60 80 100 120] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100 102 104 106 108 110 112 114 116 118 120] labels=cell [1 7] {'0','20','40','60','80','100','120'}
+TICKS gauge [0 150] : major=[0 25 50 75 100 125 150] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150] labels=cell [1 7] {'0','25','50','75','100','125','150'}
+TICKS gauge [0 4] : major=[0 0.5 1 1.5 2 2.5 3 3.5 4] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4] labels=cell [1 9] {'0','0.5','1','1.5','2','2.5','3','3.5','4'}
+TICKS gauge [0 6] : major=[0 1 2 3 4 5 6] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4 4.1 4.2 4.3 4.4 4.5 4.6 4.7 4.8 4.9 5 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8 5.9 6] labels=cell [1 7] {'0','1','2','3','4','5','6'}
+TICKS gauge [0 8] : major=[0 1 2 3 4 5 6 7 8] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7 7.2 7.4 7.6 7.8 8] labels=cell [1 9] {'0','1','2','3','4','5','6','7','8'}
+TICKS linear [0 100] : major=[0 20 40 60 80 100] minor=[0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100] labels=cell [1 6] {'0','20','40','60','80','100'}
+TICKS linear [0 1] : major=[0 0.2 0.4 0.6 0.8 1] minor=[0 0.04 0.08 0.12 0.16 0.2 0.24 0.28 0.32 0.36 0.4 0.44 0.48 0.52 0.56 0.6 0.64 0.68 0.72 0.76 0.8 0.84 0.88 0.92 0.96 1] labels=cell [1 6] {'0','0.2','0.4','0.6','0.8','1'}
+TICKS linear [0 10] : major=[0 2 4 6 8 10] minor=[0 0.4 0.8 1.2 1.6 2 2.4 2.8 3.2 3.6 4 4.4 4.8 5.2 5.6 6 6.4 6.8 7.2 7.6 8 8.4 8.8 9.2 9.6 10] labels=cell [1 6] {'0','2','4','6','8','10'}
+TICKS linear [0 1000] : major=[0 200 400 600 800 1000] minor=[0 40 80 120 160 200 240 280 320 360 400 440 480 520 560 600 640 680 720 760 800 840 880 920 960 1000] labels=cell [1 6] {'0','200','400','600','800','1000'}
+TICKS linear [-50 50] : major=[-50 -30 -10 10 30 50] minor=[-50 -46 -42 -38 -34 -30 -26 -22 -18 -14 -10 -6 -2 2 6 10 14 18 22 26 30 34 38 42 46 50] labels=cell [1 6] {'-50','-30','-10','10','30','50'}
+TICKS linear [0 7] : major=[0 1.4 2.8 4.2 5.6 7] minor=[0 0.35 0.7 1.05 1.4 1.75 2.1 2.45 2.8 3.15 3.5 3.85 4.2 4.55 4.9 5.25 5.6 5.95 6.3 6.65 7] labels=cell [1 6] {'0','1.4','2.8','4.2','5.6','7'}
+TICKS linear [1 12] : major=[1 4.75 8.5 12] minor=[1 1.42 1.84 2.26 2.68 3.1 3.52 3.94 4.36 4.78 5.2 5.62 6.04 6.46 6.88 7.3 7.72 8.14 8.56 8.98 9.4 9.82 10.24 10.66 11.08 11.5 12] labels=cell [1 4] {'1','4.75','8.5','12'}
+TICKS linear [0 0.5] : major=[0 0.1 0.2 0.3 0.4 0.5] minor=[0 0.02 0.04 0.06 0.08 0.1 0.12 0.14 0.16 0.18 0.2 0.22 0.24 0.26 0.28 0.3 0.32 0.34 0.36 0.38 0.4 0.42 0.44 0.46 0.48 0.5] labels=cell [1 6] {'0','0.1','0.2','0.3','0.4','0.5'}
+TICKS linear [0 360] : major=[0 72 144 216 288 360] minor=[0 12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204 216 228 240 252 264 276 288 300 312 324 336 348 360] labels=cell [1 6] {'0','72','144','216','288','360'}
+TICKS linear [0 255] : major=[0 51 102 153 204 255] minor=[0 17 34 51 68 85 102 119 136 153 170 187 204 221 238 255] labels=cell [1 6] {'0','51','102','153','204','255'}
+TICKS linear [0 5] : major=[0 1 2 3 4 5] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5] labels=cell [1 6] {'0','1','2','3','4','5'}
+TICKS linear [0 50] : major=[0 10 20 30 40 50] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50] labels=cell [1 6] {'0','10','20','30','40','50'}
+TICKS linear [10 20] : major=[10 12 14 16 18 20] minor=[10 10.4 10.8 11.2 11.6 12 12.4 12.8 13.2 13.6 14 14.4 14.8 15.2 15.6 16 16.4 16.8 17.2 17.6 18 18.4 18.8 19.2 19.6 20] labels=cell [1 6] {'10','12','14','16','18','20'}
+TICKS linear [0 3] : major=[0 0.5 1 1.5 2 2.5 3] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3] labels=cell [1 7] {'0','0.5','1','1.5','2','2.5','3'}
+TICKS linear [0 2] : major=[0 0.4 0.8 1.2 1.6 2] minor=[0 0.08 0.16 0.24 0.32 0.4 0.48 0.56 0.64 0.72 0.8 0.88 0.96 1.04 1.12 1.2 1.28 1.36 1.44 1.52 1.6 1.68 1.76 1.84 1.92 2] labels=cell [1 6] {'0','0.4','0.8','1.2','1.6','2'}
+TICKS linear [-1 1] : major=[-1 -0.6 -0.2 0.2 0.6 1] minor=[-1 -0.92 -0.84 -0.76 -0.68 -0.6 -0.52 -0.44 -0.36 -0.28 -0.2 -0.12 -0.04 0.04 0.12 0.2 0.28 0.36 0.44 0.52 0.6 0.68 0.76 0.84 0.92 1] labels=cell [1 6] {'-1','-0.6','-0.2','0.2','0.6','1'}
+TICKS linear [0 1000000] : major=[0 500000 1000000] minor=[0 50000 100000 150000 200000 250000 300000 350000 400000 450000 500000 550000 600000 650000 700000 750000 800000 850000 900000 950000 1000000] labels=cell [1 3] {'0','5e+05','1e+06'}
+TICKS linear [0.01 0.99] : major=[0.01 0.5 0.99] minor=[0.01 0.08 0.15 0.22 0.29 0.36 0.43 0.5 0.57 0.64 0.71 0.78 0.85 0.92 0.99] labels=cell [1 3] {'0.01','0.5','0.99'}
+TICKS linear [0 60] : major=[0 10 20 30 40 50 60] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60] labels=cell [1 7] {'0','10','20','30','40','50','60'}
+TICKS linear [0 24] : major=[0 4 8 12 16 20 24] minor=[0 0.8 1.6 2.4 3.2 4 4.8 5.6 6.4 7.2 8 8.8 9.6 10.4 11.2 12 12.8 13.6 14.4 15.2 16 16.8 17.6 18.4 19.2 20 20.8 21.6 22.4 23.2 24] labels=cell [1 7] {'0','4','8','12','16','20','24'}
+TICKS linear [0 200] : major=[0 40 80 120 160 200] minor=[0 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120 128 136 144 152 160 168 176 184 192 200] labels=cell [1 6] {'0','40','80','120','160','200'}
+TICKS linear [0 15] : major=[0 2.5 5 7.5 10 12.5 15] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15] labels=cell [1 7] {'0','2.5','5','7.5','10','12.5','15'}
+TICKS linear [0 25] : major=[0 5 10 15 20 25] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25] labels=cell [1 6] {'0','5','10','15','20','25'}
+TICKS linear [0 30] : major=[0 5 10 15 20 25 30] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30] labels=cell [1 7] {'0','5','10','15','20','25','30'}
+TICKS linear [0 40] : major=[0 8 16 24 32 40] minor=[0 1.6 3.2 4.8 6.4 8 9.6 11.2 12.8 14.4 16 17.6 19.2 20.8 22.4 24 25.6 27.2 28.8 30.4 32 33.6 35.2 36.8 38.4 40] labels=cell [1 6] {'0','8','16','24','32','40'}
+TICKS linear [0 80] : major=[0 16 32 48 64 80] minor=[0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80] labels=cell [1 6] {'0','16','32','48','64','80'}
+TICKS linear [20 80] : major=[20 30 40 50 60 70 80] minor=[20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80] labels=cell [1 7] {'20','30','40','50','60','70','80'}
+TICKS linear [0 9] : major=[0 1.5 3 4.5 6 7.5 9] minor=[0 0.3 0.6 0.9 1.2 1.5 1.8 2.1 2.4 2.7 3 3.3 3.6 3.9 4.2 4.5 4.8 5.1 5.4 5.7 6 6.3 6.6 6.9 7.2 7.5 7.8 8.1 8.4 8.7 9] labels=cell [1 7] {'0','1.5','3','4.5','6','7.5','9'}
+TICKS linear [0 11] : major=[0 3.75 7.5 11] minor=[0 0.42 0.84 1.26 1.68 2.1 2.52 2.94 3.36 3.78 4.2 4.62 5.04 5.46 5.88 6.3 6.72 7.14 7.56 7.98 8.4 8.82 9.24 9.66 10.08 10.5 11] labels=cell [1 4] {'0','3.75','7.5','11'}
+TICKS linear [0 0.001] : major=[0 0.0005 0.001] minor=[0 5e-05 0.0001 0.00015 0.0002 0.00025 0.0003 0.00035 0.0004 0.00045 0.0005 0.00055 0.0006 0.00065 0.0007 0.00075 0.0008 0.00085 0.0009 0.00095 0.001] labels=cell [1 3] {'0','0.0005','0.001'}
+TICKS linear [-100 100] : major=[-100 -60 -20 20 60 100] minor=[-100 -92 -84 -76 -68 -60 -52 -44 -36 -28 -20 -12 -4 4 12 20 28 36 44 52 60 68 76 84 92 100] labels=cell [1 6] {'-100','-60','-20','20','60','100'}
+TICKS linear [0 120] : major=[0 20 40 60 80 100 120] minor=[0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120] labels=cell [1 7] {'0','20','40','60','80','100','120'}
+TICKS linear [0 150] : major=[0 25 50 75 100 125 150] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150] labels=cell [1 7] {'0','25','50','75','100','125','150'}
+TICKS linear [0 4] : major=[0 0.8 1.6 2.4 3.2 4] minor=[0 0.16 0.32 0.48 0.64 0.8 0.96 1.12 1.28 1.44 1.6 1.76 1.92 2.08 2.24 2.4 2.56 2.72 2.88 3.04 3.2 3.36 3.52 3.68 3.84 4] labels=cell [1 6] {'0','0.8','1.6','2.4','3.2','4'}
+TICKS linear [0 6] : major=[0 1 2 3 4 5 6] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6] labels=cell [1 7] {'0','1','2','3','4','5','6'}
+TICKS linear [0 8] : major=[0 1.6 3.2 4.8 6.4 8] minor=[0 0.4 0.8 1.2 1.6 2 2.4 2.8 3.2 3.6 4 4.4 4.8 5.2 5.6 6 6.4 6.8 7.2 7.6 8] labels=cell [1 6] {'0','1.6','3.2','4.8','6.4','8'}
+TICKS ninety [0 100] : major=[0 25 50 75 100] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100] labels=cell [1 5] {'0','25','50','75','100'}
+TICKS ninety [0 1] : major=[0 0.5 1] minor=[0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95 1] labels=cell [1 3] {'0','0.5','1'}
+TICKS ninety [0 10] : major=[0 2.5 5 7.5 10] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10] labels=cell [1 5] {'0','2.5','5','7.5','10'}
+TICKS ninety [0 1000] : major=[0 500 1000] minor=[0 50 100 150 200 250 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000] labels=cell [1 3] {'0','500','1000'}
+TICKS ninety [-50 50] : major=[-50 -25 0 25 50] minor=[-50 -45 -40 -35 -30 -25 -20 -15 -10 -5 0 5 10 15 20 25 30 35 40 45 50] labels=cell [1 5] {'-50','-25','0','25','50'}
+TICKS ninety [0 7] : major=[0 3.5 7] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7] labels=cell [1 3] {'0','3.5','7'}
+TICKS ninety [1 12] : major=[1 6.5 12] minor=[1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12] labels=cell [1 3] {'1','6.5','12'}
+TICKS ninety [0 0.5] : major=[0 0.25 0.5] minor=[0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5] labels=cell [1 3] {'0','0.25','0.5'}
+TICKS ninety [0 360] : major=[0 120 240 360] minor=[0 15 30 45 60 75 90 105 120 135 150 165 180 195 210 225 240 255 270 285 300 315 330 345 360] labels=cell [1 4] {'0','120','240','360'}
+TICKS ninety [0 255] : major=[0 85 170 255] minor=[0 17 34 51 68 85 102 119 136 153 170 187 204 221 238 255] labels=cell [1 4] {'0','85','170','255'}
+TICKS ninety [0 5] : major=[0 2.5 5] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5] labels=cell [1 3] {'0','2.5','5'}
+TICKS ninety [0 50] : major=[0 25 50] minor=[0 5 10 15 20 25 30 35 40 45 50] labels=cell [1 3] {'0','25','50'}
+TICKS ninety [10 20] : major=[10 15 20] minor=[10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15 15.5 16 16.5 17 17.5 18 18.5 19 19.5 20] labels=cell [1 3] {'10','15','20'}
+TICKS ninety [0 3] : major=[0 1 2 3] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3] labels=cell [1 4] {'0','1','2','3'}
+TICKS ninety [0 2] : major=[0 0.5 1 1.5 2] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2] labels=cell [1 5] {'0','0.5','1','1.5','2'}
+TICKS ninety [-1 1] : major=[-1 -0.5 0 0.5 1] minor=[-1 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1] labels=cell [1 5] {'-1','-0.5','0','0.5','1'}
+TICKS ninety [0 1000000] : major=[0 500000 1000000] minor=[0 50000 100000 150000 200000 250000 300000 350000 400000 450000 500000 550000 600000 650000 700000 750000 800000 850000 900000 950000 1000000] labels=cell [1 3] {'0','5e+05','1e+06'}
+TICKS ninety [0.01 0.99] : major=[0.01 0.5 0.99] minor=[0.01 0.08 0.15 0.22 0.29 0.36 0.43 0.5 0.57 0.64 0.71 0.78 0.85 0.92 0.99] labels=cell [1 3] {'0.01','0.5','0.99'}
+TICKS ninety [0 60] : major=[0 15 30 45 60] minor=[0 2.5 5 7.5 10 12.5 15 17.5 20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60] labels=cell [1 5] {'0','15','30','45','60'}
+TICKS ninety [0 24] : major=[0 6 12 18 24] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24] labels=cell [1 5] {'0','6','12','18','24'}
+TICKS ninety [0 200] : major=[0 100 200] minor=[0 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180 190 200] labels=cell [1 3] {'0','100','200'}
+TICKS ninety [0 15] : major=[0 5 10 15] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15] labels=cell [1 4] {'0','5','10','15'}
+TICKS ninety [0 25] : major=[0 6 12 18 25] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25] labels=cell [1 5] {'0','6','12','18','25'}
+TICKS ninety [0 30] : major=[0 10 20 30] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30] labels=cell [1 4] {'0','10','20','30'}
+TICKS ninety [0 40] : major=[0 10 20 30 40] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40] labels=cell [1 5] {'0','10','20','30','40'}
+TICKS ninety [0 80] : major=[0 20 40 60 80] minor=[0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80] labels=cell [1 5] {'0','20','40','60','80'}
+TICKS ninety [20 80] : major=[20 35 50 65 80] minor=[20 22.5 25 27.5 30 32.5 35 37.5 40 42.5 45 47.5 50 52.5 55 57.5 60 62.5 65 67.5 70 72.5 75 77.5 80] labels=cell [1 5] {'20','35','50','65','80'}
+TICKS ninety [0 9] : major=[0 3 6 9] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9] labels=cell [1 4] {'0','3','6','9'}
+TICKS ninety [0 11] : major=[0 5.5 11] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11] labels=cell [1 3] {'0','5.5','11'}
+TICKS ninety [0 0.001] : major=[0 0.0005 0.001] minor=[0 5e-05 0.0001 0.00015 0.0002 0.00025 0.0003 0.00035 0.0004 0.00045 0.0005 0.00055 0.0006 0.00065 0.0007 0.00075 0.0008 0.00085 0.0009 0.00095 0.001] labels=cell [1 3] {'0','0.0005','0.001'}
+TICKS ninety [-100 100] : major=[-100 0 100] minor=[-100 -90 -80 -70 -60 -50 -40 -30 -20 -10 0 10 20 30 40 50 60 70 80 90 100] labels=cell [1 3] {'-100','0','100'}
+TICKS ninety [0 120] : major=[0 30 60 90 120] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120] labels=cell [1 5] {'0','30','60','90','120'}
+TICKS ninety [0 150] : major=[0 50 100 150] minor=[0 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150] labels=cell [1 4] {'0','50','100','150'}
+TICKS ninety [0 4] : major=[0 1 2 3 4] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4] labels=cell [1 5] {'0','1','2','3','4'}
+TICKS ninety [0 6] : major=[0 1.5 3 4.5 6] minor=[0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5 5.25 5.5 5.75 6] labels=cell [1 5] {'0','1.5','3','4.5','6'}
+TICKS ninety [0 8] : major=[0 2 4 6 8] minor=[0 0.4 0.8 1.2 1.6 2 2.4 2.8 3.2 3.6 4 4.4 4.8 5.2 5.6 6 6.4 6.8 7.2 7.6 8] labels=cell [1 5] {'0','2','4','6','8'}
+TICKS semi [0 100] : major=[0 20 40 60 80 100] minor=[0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100] labels=cell [1 6] {'0','20','40','60','80','100'}
+TICKS semi [0 1] : major=[0 0.2 0.4 0.6 0.8 1] minor=[0 0.04 0.08 0.12 0.16 0.2 0.24 0.28 0.32 0.36 0.4 0.44 0.48 0.52 0.56 0.6 0.64 0.68 0.72 0.76 0.8 0.84 0.88 0.92 0.96 1] labels=cell [1 6] {'0','0.2','0.4','0.6','0.8','1'}
+TICKS semi [0 10] : major=[0 2 4 6 8 10] minor=[0 0.4 0.8 1.2 1.6 2 2.4 2.8 3.2 3.6 4 4.4 4.8 5.2 5.6 6 6.4 6.8 7.2 7.6 8 8.4 8.8 9.2 9.6 10] labels=cell [1 6] {'0','2','4','6','8','10'}
+TICKS semi [0 1000] : major=[0 250 500 750 1000] minor=[0 25 50 75 100 125 150 175 200 225 250 275 300 325 350 375 400 425 450 475 500 525 550 575 600 625 650 675 700 725 750 775 800 825 850 875 900 925 950 975 1000] labels=cell [1 5] {'0','250','500','750','1000'}
+TICKS semi [-50 50] : major=[-50 -30 -10 10 30 50] minor=[-50 -46 -42 -38 -34 -30 -26 -22 -18 -14 -10 -6 -2 2 6 10 14 18 22 26 30 34 38 42 46 50] labels=cell [1 6] {'-50','-30','-10','10','30','50'}
+TICKS semi [0 7] : major=[0 1.4 2.8 4.2 5.6 7] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7] labels=cell [1 6] {'0','1.4','2.8','4.2','5.6','7'}
+TICKS semi [1 12] : major=[1 6.5 12] minor=[1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12] labels=cell [1 3] {'1','6.5','12'}
+TICKS semi [0 0.5] : major=[0 0.1 0.2 0.3 0.4 0.5] minor=[0 0.02 0.04 0.06 0.08 0.1 0.12 0.14 0.16 0.18 0.2 0.22 0.24 0.26 0.28 0.3 0.32 0.34 0.36 0.38 0.4 0.42 0.44 0.46 0.48 0.5] labels=cell [1 6] {'0','0.1','0.2','0.3','0.4','0.5'}
+TICKS semi [0 360] : major=[0 90 180 270 360] minor=[0 9 18 27 36 45 54 63 72 81 90 99 108 117 126 135 144 153 162 171 180 189 198 207 216 225 234 243 252 261 270 279 288 297 306 315 324 333 342 351 360] labels=cell [1 5] {'0','90','180','270','360'}
+TICKS semi [0 255] : major=[0 85 170 255] minor=[0 17 34 51 68 85 102 119 136 153 170 187 204 221 238 255] labels=cell [1 4] {'0','85','170','255'}
+TICKS semi [0 5] : major=[0 1 2 3 4 5] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5] labels=cell [1 6] {'0','1','2','3','4','5'}
+TICKS semi [0 50] : major=[0 10 20 30 40 50] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50] labels=cell [1 6] {'0','10','20','30','40','50'}
+TICKS semi [10 20] : major=[10 12 14 16 18 20] minor=[10 10.4 10.8 11.2 11.6 12 12.4 12.8 13.2 13.6 14 14.4 14.8 15.2 15.6 16 16.4 16.8 17.2 17.6 18 18.4 18.8 19.2 19.6 20] labels=cell [1 6] {'10','12','14','16','18','20'}
+TICKS semi [0 3] : major=[0 0.6 1.2 1.8 2.4 3] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3] labels=cell [1 6] {'0','0.6','1.2','1.8','2.4','3'}
+TICKS semi [0 2] : major=[0 0.4 0.8 1.2 1.6 2] minor=[0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95 1 1.05 1.1 1.15 1.2 1.25 1.3 1.35 1.4 1.45 1.5 1.55 1.6 1.65 1.7 1.75 1.8 1.85 1.9 1.95 2] labels=cell [1 6] {'0','0.4','0.8','1.2','1.6','2'}
+TICKS semi [-1 1] : major=[-1 -0.5 0 0.5 1] minor=[-1 -0.95 -0.9 -0.85 -0.8 -0.75 -0.7 -0.65 -0.6 -0.55 -0.5 -0.45 -0.4 -0.35 -0.3 -0.25 -0.2 -0.15 -0.1 -0.05 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95 1] labels=cell [1 5] {'-1','-0.5','0','0.5','1'}
+TICKS semi [0 1000000] : major=[0 500000 1000000] minor=[0 25000 50000 75000 100000 125000 150000 175000 200000 225000 250000 275000 300000 325000 350000 375000 400000 425000 450000 475000 500000 525000 550000 575000 600000 625000 650000 675000 700000 725000 750000 775000 800000 825000 850000 875000 900000 925000 950000 975000 1000000] labels=cell [1 3] {'0','5e+05','1e+06'}
+TICKS semi [0.01 0.99] : major=[0.01 0.5 0.99] minor=[0.01 0.0406 0.0712 0.1018 0.1324 0.163 0.1936 0.2242 0.2548 0.2854 0.316 0.3466 0.3772 0.4078 0.4384 0.469 0.4996 0.5302 0.5608 0.5914 0.622 0.6526 0.6832 0.7138 0.7444 0.775 0.8056 0.8362 0.8668 0.8974 0.928 0.9586 0.99] labels=cell [1 3] {'0.01','0.5','0.99'}
+TICKS semi [0 60] : major=[0 10 20 30 40 50 60] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60] labels=cell [1 7] {'0','10','20','30','40','50','60'}
+TICKS semi [0 24] : major=[0 4 8 12 16 20 24] minor=[0 0.8 1.6 2.4 3.2 4 4.8 5.6 6.4 7.2 8 8.8 9.6 10.4 11.2 12 12.8 13.6 14.4 15.2 16 16.8 17.6 18.4 19.2 20 20.8 21.6 22.4 23.2 24] labels=cell [1 7] {'0','4','8','12','16','20','24'}
+TICKS semi [0 200] : major=[0 50 100 150 200] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150 155 160 165 170 175 180 185 190 195 200] labels=cell [1 5] {'0','50','100','150','200'}
+TICKS semi [0 15] : major=[0 3 6 9 12 15] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15] labels=cell [1 6] {'0','3','6','9','12','15'}
+TICKS semi [0 25] : major=[0 5 10 15 20 25] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25] labels=cell [1 6] {'0','5','10','15','20','25'}
+TICKS semi [0 30] : major=[0 5 10 15 20 25 30] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30] labels=cell [1 7] {'0','5','10','15','20','25','30'}
+TICKS semi [0 40] : major=[0 8 16 24 32 40] minor=[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40] labels=cell [1 6] {'0','8','16','24','32','40'}
+TICKS semi [0 80] : major=[0 16 32 48 64 80] minor=[0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80] labels=cell [1 6] {'0','16','32','48','64','80'}
+TICKS semi [20 80] : major=[20 30 40 50 60 70 80] minor=[20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80] labels=cell [1 7] {'20','30','40','50','60','70','80'}
+TICKS semi [0 9] : major=[0 1.8 3.6 5.4 7.2 9] minor=[0 0.3 0.6 0.9 1.2 1.5 1.8 2.1 2.4 2.7 3 3.3 3.6 3.9 4.2 4.5 4.8 5.1 5.4 5.7 6 6.3 6.6 6.9 7.2 7.5 7.8 8.1 8.4 8.7 9] labels=cell [1 6] {'0','1.8','3.6','5.4','7.2','9'}
+TICKS semi [0 11] : major=[0 5.5 11] minor=[0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10 10.5 11] labels=cell [1 3] {'0','5.5','11'}
+TICKS semi [0 0.001] : major=[0 0.0005 0.001] minor=[0 5e-05 0.0001 0.00015 0.0002 0.00025 0.0003 0.00035 0.0004 0.00045 0.0005 0.00055 0.0006 0.00065 0.0007 0.00075 0.0008 0.00085 0.0009 0.00095 0.001] labels=cell [1 3] {'0','0.0005','0.001'}
+TICKS semi [-100 100] : major=[-100 -50 0 50 100] minor=[-100 -95 -90 -85 -80 -75 -70 -65 -60 -55 -50 -45 -40 -35 -30 -25 -20 -15 -10 -5 0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100] labels=cell [1 5] {'-100','-50','0','50','100'}
+TICKS semi [0 120] : major=[0 24 48 72 96 120] minor=[0 3 6 9 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66 69 72 75 78 81 84 87 90 93 96 99 102 105 108 111 114 117 120] labels=cell [1 6] {'0','24','48','72','96','120'}
+TICKS semi [0 150] : major=[0 50 100 150] minor=[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150] labels=cell [1 4] {'0','50','100','150'}
+TICKS semi [0 4] : major=[0 0.8 1.6 2.4 3.2 4] minor=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4] labels=cell [1 6] {'0','0.8','1.6','2.4','3.2','4'}
+TICKS semi [0 6] : major=[0 1 2 3 4 5 6] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6] labels=cell [1 7] {'0','1','2','3','4','5','6'}
+TICKS semi [0 8] : major=[0 1.6 3.2 4.8 6.4 8] minor=[0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4 4.2 4.4 4.6 4.8 5 5.2 5.4 5.6 5.8 6 6.2 6.4 6.6 6.8 7 7.2 7.4 7.6 7.8 8] labels=cell [1 6] {'0','1.6','3.2','4.8','6.4','8'}
+dp Value default : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]'
+dp Value isnat : logical true
+dp Value <- d1 : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'
+dp Value <- d2 with time : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [05-Mar-2024]'
+dp Value <- NaT : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]'
+dp Value <- char : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Value <- "s" : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Value <- number : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Value <- [] : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Value <- [d1 d2] : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Value <- datetime.empty : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Value <- zoned : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'
+dp Value <- formatted : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'
+dp Value Format after : 'dd-MMM-uuuu'
+dp Value <- year 0 : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [01-Jan-0000]'
+dp Value <- year -1 : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Value <- year 10000 : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Limits default : 'datetime [1 2] fmt=dd-MMM-uuuu tz=- [01-Jan-0000,31-Dec-9999]'
+dp Limits <- [d1 d2] : 'datetime [1 2] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'
+dp Value <- outside limits : ERR MATLAB:ui:DatePicker:valueNotValid | 'Value' must be a finite datetime object within the range of 'Limits' or NaT.
+dp Value <- inside limits : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [01-Feb-2024]'
+dp Limits <- [d2 d1] reversed : ERR MATLAB:ui:DatePicker:dateLimitsInvalid | 'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.
+dp Limits <- [d1 d1] : 'datetime [1 2] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,15-Jan-2024]'
+dp Limits <- excludes value : 'Limits=datetime [1 2] fmt=dd-MMM-uuuu tz=- [01-Jan-2025,01-Feb-2025] Value=datetime [1 1] fmt=dd-MMM-uuuu HH:mm:ss tz=- [NaT]'
+dp Limits <- [d1 NaT] : ERR MATLAB:ui:DatePicker:dateLimitsInvalid | 'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.
+dp Limits <- d1 scalar : ERR MATLAB:ui:DatePicker:dateLimitsInvalid | 'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.
+dp Limits <- chars : ERR MATLAB:ui:DatePicker:dateLimitsInvalid | 'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.
+dp Limits <- [d1; d2] : 'datetime [1 2] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'
+dp Limits <- [] : ERR MATLAB:ui:DatePicker:dateLimitsInvalid | 'Limits' value must be a 1-by-2 datetime array that is increasing and within the years 0000 to 9999.
+dp Limits <- zoned : 'datetime [1 2] fmt=dd-MMM-uuuu tz=- [01-Jan-2024,01-Feb-2024]'
+dp DisabledDates <- d1 : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'
+dp DisabledDates <- [d1 d2] : 'datetime [2 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'
+dp DisabledDates <- [d1; d2] : 'datetime [2 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'
+dp DisabledDates <- [d1 d1] : 'datetime [1 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024]'
+dp DisabledDates <- [d2 d1] unsorted : 'datetime [2 1] fmt=dd-MMM-uuuu tz=- [15-Jan-2024,05-Mar-2024]'
+dp DisabledDates <- [] : ERR MATLAB:ui:DatePicker:disabledDatesInvalid | 'DisabledDates' value must be an array of datetime objects or datetime.empty().
+dp DisabledDates <- NaT : ERR MATLAB:ui:DatePicker:disabledDatesContainsNaT | 'DisabledDaysOfWeek' value must not contain NaT.
+dp DisabledDates <- char : ERR MATLAB:ui:DatePicker:disabledDatesInvalid | 'DisabledDates' value must be an array of datetime objects or datetime.empty().
+dp DisabledDates <- value date : 'DisabledDates=datetime [1 1] fmt=dd-MMM-uuuu tz=- [01-Feb-2024] Value=datetime [1 1] fmt=dd-MMM-uuuu HH:mm:ss tz=- [NaT]'
+dp DisabledDaysOfWeek <- 1 : 'double 1'
+dp DisabledDaysOfWeek <- [1 7] : 'double [1 7]'
+dp DisabledDaysOfWeek <- [7 1] : 'double [1 7]'
+dp DisabledDaysOfWeek <- [1 1] : 'double 1'
+dp DisabledDaysOfWeek <- 1:7 : 'double [1 2 3 4 5 6 7]'
+dp DisabledDaysOfWeek <- 8 : ERR MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid | 'DisabledDaysOfWeek' value must be an array of numbers from 1 to 7, or an array of day names.
+dp DisabledDaysOfWeek <- 0 : ERR MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid | 'DisabledDaysOfWeek' value must be an array of numbers from 1 to 7, or an array of day names.
+dp DisabledDaysOfWeek <- 1.5 : ERR MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid | 'DisabledDaysOfWeek' value must be an array of numbers from 1 to 7, or an array of day names.
+dp DisabledDaysOfWeek <- Monday : 'double 2'
+dp DisabledDaysOfWeek <- {Monday,Sunday} : 'double [1 2]'
+dp DisabledDaysOfWeek <- ["Sat" "Sun"] : 'double [1 7]'
+dp DisabledDaysOfWeek <- [1;7] : 'double [1 7]'
+dp DisabledDaysOfWeek <- [] : 'double [0 0]'
+dp DisabledDaysOfWeek <- true : ERR MATLAB:ui:DatePicker:disabledDaysOfWeekInvalid | 'DisabledDaysOfWeek' value must be an array of numbers from 1 to 7, or an array of day names.
+dp DisabledDaysOfWeek <- int8(2) : 'int8 2'
+dp DisabledDaysOfWeek <- value day : ERR MATLAB:ui:DatePicker:valueConflictsWithDisabledDaysOfWeek | 'Value' must not be a day in 'DisabledDaysOfWeek'.
+dp DisplayFormat <- dd/MM/uuuu : 'DisplayFormat='dd/MM/uuuu' Value=datetime [1 1] fmt=dd/MM/uuuu tz=- [NaT]'
+dp DisplayFormat <- MM/dd/yyyy : 'DisplayFormat='MM/dd/yyyy' Value=datetime [1 1] fmt=MM/dd/yyyy tz=- [NaT]'
+dp DisplayFormat <- uuuu-MM-dd : 'DisplayFormat='uuuu-MM-dd' Value=datetime [1 1] fmt=uuuu-MM-dd tz=- [NaT]'
+dp DisplayFormat <- MMM d, uuuu : 'DisplayFormat='MMM d, uuuu' Value=datetime [1 1] fmt=MMM d, uuuu tz=- [NaT]'
+dp DisplayFormat <- MMMM d : 'DisplayFormat='MMMM d' Value=datetime [1 1] fmt=MMMM d tz=- [NaT]'
+dp DisplayFormat <- uuuu : 'DisplayFormat='uuuu' Value=datetime [1 1] fmt=uuuu tz=- [NaT]'
+dp DisplayFormat <- dd-MMM-uuuu HH:mm : 'DisplayFormat='dd-MMM-uuuu' Value=datetime [1 1] fmt=dd-MMM-uuuu tz=- [NaT]'
+dp DisplayFormat <- HH:mm : ERR MATLAB:ui:DatePicker:displayFormatInvalid | 'DisplayFormat' value specifies a time instead of a date. For more information on valid letter identifiers, see the documentation for DatePicker.DisplayFormat.
+dp DisplayFormat <- bogus : ERR MATLAB:ui:DatePicker:displayFormatInvalid | 'DisplayFormat' contains an unsupported format symbol.
+dp DisplayFormat <- empty : ERR MATLAB:ui:DatePicker:displayFormatInvalid | 'DisplayFormat' value must be a nonempty character vector or string scalar.
+dp DisplayFormat <- 5 : ERR MATLAB:ui:DatePicker:displayFormatInvalid | 'DisplayFormat' value must be a nonempty character vector or string scalar.
+dp DisplayFormat <- "dd/MM/uuuu" : ''dd/MM/uuuu''
+dp DisplayFormat <- eeee : 'DisplayFormat='eeee' Value=datetime [1 1] fmt=eeee tz=- [NaT]'
+dp DisplayFormat <- QQQ uuuu : 'DisplayFormat='QQQ uuuu' Value=datetime [1 1] fmt=QQQ uuuu tz=- [NaT]'
+dp DisplayFormat <- DDD : 'DisplayFormat='DDD' Value=datetime [1 1] fmt=DDD tz=- [NaT]'
+dp DisplayFormat <- yyyy only : 'DisplayFormat='yyyy' Value=datetime [1 1] fmt=yyyy tz=- [NaT]'
+dp DisplayFormat <- dd.MM.yy : 'DisplayFormat='dd.MM.yy' Value=datetime [1 1] fmt=dd.MM.yy tz=- [NaT]'
+dp DisplayFormat <- d/M/u : 'DisplayFormat='d/M/u' Value=datetime [1 1] fmt=d/M/u tz=- [NaT]'
+dp DisplayFormat <- MM : 'DisplayFormat='MM' Value=datetime [1 1] fmt=MM tz=- [NaT]'
+dp DisplayFormat <- dd : 'DisplayFormat='dd' Value=datetime [1 1] fmt=dd tz=- [NaT]'
+dp DisplayFormat <- with quotes : 'DisplayFormat=''Date:' dd-MMM-uuuu' Value=datetime [1 1] fmt='Date:' dd-MMM-uuuu tz=- [NaT]'
+dp Value NaT Format : 'Value=datetime [1 1] fmt='Date:' dd-MMM-uuuu tz=- [NaT] DisplayFormat=''Date:' dd-MMM-uuuu''
+dp Limits Format : ''Date:' dd-MMM-uuuu'
+dp DisabledDates Format : ''Date:' dd-MMM-uuuu'
+dp Editable <- off : 'OnOff off'
+dp Placeholder <- pick : ''pick''
+cp Value <- red : 'double [1 0 0]'
+cp Value <- #00FF00 : 'double [0 1 0]'
+cp Value <- #0f0 : 'double [0 1 0]'
+cp Value <- [0 0 1] : 'double [0 0 1]'
+cp Value <- [0;0;1] : 'double [0 0 1]'
+cp Value <- none : ERR MATLAB:datatypes:RGBColor:ParseError | Error setting property 'Value' of class 'ColorPicker': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+cp Value <- [1 0 0 0.5] : ERR MATLAB:datatypes:RGBColor:ValueMustBe3ElementVector | Error setting property 'Value' of class 'ColorPicker': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+cp Value <- [2 0 0] : ERR MATLAB:hg:ColorBase:BadColorValue | Error setting property 'Value' of class 'ColorPicker': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+cp Value <- k : 'double [0 0 0]'
+cp Value <- "blue" : 'double [0 0 1]'
+cp Value <- bogus : ERR MATLAB:datatypes:RGBColor:ParseError | Error setting property 'Value' of class 'ColorPicker': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+cp Value <- [] : ERR MATLAB:datatypes:RGBColor:ValueMustBe3ElementVector | Error setting property 'Value' of class 'ColorPicker': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+cp Value <- uint8([255 0 0]) : 'double [1 0 0]'
+cp Value <- single : 'double [0 1 0]'
+cp Value <- [true false false] : 'double [1 0 0]'
+cp Icon <- error : ERR MATLAB:ui:ColorPicker:invalidIconFile | You have specified a file that cannot be found or is not an image. Specify a file name that is on the MATLAB path, or use a full or relative path.
+[Warning: File 'nofile.png' is not on the MATLAB or specified path.] 
+cp Icon <- nofile.png : ''''
+cp Icon <- zeros(4,4,3) : 'double size [4 4 3]'
+cp Icon <- 5 : ERR MATLAB:ui:ColorPicker:invalidIconCData | You have specified an invalid CData. Specify an RGB image as an m-by-n-by-3 array of type double, single, uint8, or uint16.
+cp Icon <- empty : ''''
+cp BackgroundColor <- red : 'double [1 0 0]'
+cp BackgroundColor <- none : ERR MATLAB:datatypes:RGBColor:ParseError | Error setting property 'BackgroundColor' of class 'ColorPicker': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+lamp Color <- r : 'double [1 0 0]'
+lamp Color <- none : ERR MATLAB:datatypes:RGBColor:ParseError | Error setting property 'Color' of class 'Lamp': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+lamp Color <- [1 0 0 0.5] : ERR MATLAB:datatypes:RGBColor:ValueMustBe3ElementVector | Error setting property 'Color' of class 'Lamp': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+lamp Color <- zz : ERR MATLAB:datatypes:RGBColor:ParseError | Error setting property 'Color' of class 'Lamp': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', and 'white'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.
+lamp Color <- #ff0000 : 'double [1 0 0]'
+lamp Color <- [] : ERR MATLAB:datatypes:RGBColor:ValueMustBe3ElementVector | Error setting property 'Color' of class 'Lamp': Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+lamp BackgroundColor : ERR MATLAB:hg:InvalidProperty | Unrecognized property BackgroundColor for class matlab.ui.control.Lamp.
+lamp FontSize : ERR MATLAB:hg:InvalidProperty | Unrecognized property FontSize for class matlab.ui.control.Lamp.
+b.ContextMenu default : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+b.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+b.ContextMenu <- cm of other figure : ERR MATLAB:hg:InvalidObject | The UIContextMenu's parent figure is not the same as the parent figure of this object.
+b.ContextMenu <- uimenu : ERR MATLAB:hgutils:InvalidContextMenu | Handle must be a uicontextmenu.
+b.ContextMenu <- [] : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+b.ContextMenu <- 5 : ERR MATLAB:datatypes:handleoremptydatatype:InvalidHGHandle | Error setting property 'ContextMenu' of class 'Button': The value set for this property must be a valid HG handle.
+b.ContextMenu <- [cm cm] : '<matlab.ui.container.ContextMenu [1 1]>'
+b.UIContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+b.ContextMenu after UIContextMenu : '<matlab.ui.container.ContextMenu [1 1]>'
+b.ContextMenu after delete(cm) : 'matlab.graphics.GraphicsPlaceholder empty [0 0]'
+knob.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+tree.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+node.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+node.ContextMenu <- cm of other figure : ERR MATLAB:hg:InvalidObject | The UIContextMenu's parent figure is not the same as the parent figure of this object.
+lamp.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+grid.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+uf.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+uiaxes.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+open(cm, 10, 10) : 'ok'
+open(cm) : ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+open(cm, [10 10]) : 'ok'
+cm.ContextMenuOpeningFcn : ''''
+cm Position : 'double [10 10]'
+cm.ContextMenu <- cm : '<matlab.ui.container.ContextMenu [1 1]>'
+RECT knob : Position=[100 100 60 60] Inner=[100 100 60 60] Outer=[75.140625 79.1781250000004 108.71875 102.478125]
+RECT knob long labels : Position=[100 100 60 60] Inner=[100 100 60 60] Outer=[36.484375 79.1781250000004 140.015625 96.9781249999996]
+RECT knob FontSize 20 : Position=[100 100 60 60] Inner=[100 100 60 60] Outer=[66.25 75.609375 126.5 107.9375]
+RECT knob 120 wide : Position=[100 100 120 120] Inner=[100 100 120 120] Outer=[64.09375 68.7567382812504 189.8125 183.025]
+RECT dknob : Position=[100 100 60 60] Inner=[100 100 60 60] Outer=[71.203125 100 126.484375 78.3125]
+RECT dknob long items : Position=[100 100 60 60] Inner=[100 100 60 60] Outer=[56.296875 100 187.421875 78.3125]
+RECT dknob 2 items : Position=[100 100 60 60] Inner=[100 100 60 60] Outer=[92.921875 100 74.15625 71.46875]
+RECT dknob 8 items : Position=[100 100 60 60] Inner=[100 100 60 60] Outer=[80.59375 88.53125 98.8125 93.125]
+RECT switch : Position=[100 100 45 20] Inner=[100 100 45 20] Outer=[78.203125 100 89 20]
+RECT switch long : Position=[100 100 45 20] Inner=[100 100 45 20] Outer=[49.28125 100 147 20]
+RECT switch vertical : Position=[100 100 20 45] Inner=[100 100 20 45] Outer=[100 79.234375 20 87]
+RECT rocker : Position=[100 100 20 45] Inner=[100 100 20 45] Outer=[100 79.234375 20 87]
+RECT rocker horizontal : Position=[100 100 45 20] Inner=[100 100 45 20] Outer=[78.203125 100 89 20]
+RECT toggle : Position=[100 100 20 45] Inner=[100 100 20 45] Outer=[100 79.234375 20 87]
+RECT gauge : Position=[100 100 120 120] Inner=[100 100 120 120] Outer=[100 100 120 120]
+RECT linear : Position=[100 100 120 40] Inner=[100 100 120 40] Outer=[100 100 120 40]
+RECT linear vertical : Position=[100 100 40 120] Inner=[100 100 40 120] Outer=[100 100 40 120]
+RECT ninety : Position=[100 100 90 90] Inner=[100 100 90 90] Outer=[100 100 90 90]
+RECT semi : Position=[100 100 120 65] Inner=[100 100 120 65] Outer=[100 100 120 65]
+RECT lamp : Position=[100 100 20 20] Inner=[100 100 20 20] Outer=[100 100 20 20]
+RECT datepicker : Position=[100 100 150 22] Inner=[100 100 150 22] Outer=[100 100 150 22]
+RECT colorpicker : Position=[100 100 38 22] Inner=[100 100 38 22] Outer=[100 100 38 22]
+RECT tree : Position=[20 20 150 300] Inner=[20 20 150 300] Outer=[20 20 150 300]
+RECT checkbox tree : Position=[20 20 150 300] Inner=[20 20 150 300] Outer=[20 20 150 300]

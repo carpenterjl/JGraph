@@ -1,0 +1,79 @@
+== choose cell [1 1]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=[1 1] PreviousSelection=[] SelectionType='cell' DisplaySelection=[1 1] PreviousDisplaySelection=[] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[1 1] DisplayIndices=[1 1] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=1 DisplayColumn=1 Row=1 Column=1 RowHeader=false ColumnHeader=false Location=[107 401] ScreenLocation=[307 601]> EventName='Clicked'
+== type 99 into cell [1 1]
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=1 DisplayColumn=1 Row=1 Column=1 RowHeader=false ColumnHeader=false Location=[107 401] ScreenLocation=[307 601]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=1 DisplayColumn=1 Row=1 Column=1 RowHeader=false ColumnHeader=false Location=[107 402] ScreenLocation=[307 602]> EventName='Clicked'
+t.CellEditCallback: class=matlab.ui.eventdata.CellEditData Indices=[1 1] DisplayIndices=[1 1] PreviousData=1.5 EditData='99' NewData=99 Error=[] EventName='CellEdit'
+t.DisplayDataChangedFcn: class=matlab.ui.eventdata.DisplayDataChangedData DisplayRowName='numbered' DisplayColumnName={'Num','Text','Tick','Pick'} DisplaySelection=[1 1] PreviousDisplaySelection=[1 1] Interaction='edit' InteractionColumn=1 InteractionDisplayColumn=1 InteractionVariable='' EventName='DisplayDataChanged'
+== type xyz into numeric cell [2 1]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=[2 1] PreviousSelection=[1 1] SelectionType='cell' DisplaySelection=[2 1] PreviousDisplaySelection=[1 1] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[2 1] DisplayIndices=[2 1] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=1 Row=2 Column=1 RowHeader=false ColumnHeader=false Location=[107 378] ScreenLocation=[307 578]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=1 Row=2 Column=1 RowHeader=false ColumnHeader=false Location=[107 378] ScreenLocation=[307 578]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=1 Row=2 Column=1 RowHeader=false ColumnHeader=false Location=[107 379] ScreenLocation=[307 579]> EventName='Clicked'
+t.CellEditCallback: class=matlab.ui.eventdata.CellEditData Indices=[2 1] DisplayIndices=[2 1] PreviousData=42 EditData='xyz' NewData=NaN Error=[] EventName='CellEdit'
+t.DisplayDataChangedFcn: class=matlab.ui.eventdata.DisplayDataChangedData DisplayRowName='numbered' DisplayColumnName={'Num','Text','Tick','Pick'} DisplaySelection=[2 1] PreviousDisplaySelection=[2 1] Interaction='edit' InteractionColumn=1 InteractionDisplayColumn=1 InteractionVariable='' EventName='DisplayDataChanged'
+== type new over text cell [1 2]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=[1 2] PreviousSelection=[2 1] SelectionType='cell' DisplaySelection=[1 2] PreviousDisplaySelection=[2 1] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[1 2] DisplayIndices=[1 2] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=1 DisplayColumn=2 Row=1 Column=2 RowHeader=false ColumnHeader=false Location=[202 401] ScreenLocation=[402 601]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=1 DisplayColumn=2 Row=1 Column=2 RowHeader=false ColumnHeader=false Location=[202 401] ScreenLocation=[402 601]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=1 DisplayColumn=2 Row=1 Column=2 RowHeader=false ColumnHeader=false Location=[202 402] ScreenLocation=[402 602]> EventName='Clicked'
+t.CellEditCallback: class=matlab.ui.eventdata.CellEditData Indices=[1 2] DisplayIndices=[1 2] PreviousData='abc' EditData='new' NewData='new' Error=[] EventName='CellEdit'
+t.DisplayDataChangedFcn: class=matlab.ui.eventdata.DisplayDataChangedData DisplayRowName='numbered' DisplayColumnName={'Num','Text','Tick','Pick'} DisplaySelection=[1 2] PreviousDisplaySelection=[1 2] Interaction='edit' InteractionColumn=2 InteractionDisplayColumn=2 InteractionVariable='' EventName='DisplayDataChanged'
+== type 5 over text cell [2 2]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=[2 2] PreviousSelection=[1 2] SelectionType='cell' DisplaySelection=[2 2] PreviousDisplaySelection=[1 2] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[2 2] DisplayIndices=[2 2] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=2 Row=2 Column=2 RowHeader=false ColumnHeader=false Location=[202 378] ScreenLocation=[402 578]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=2 Row=2 Column=2 RowHeader=false ColumnHeader=false Location=[202 378] ScreenLocation=[402 578]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=2 Row=2 Column=2 RowHeader=false ColumnHeader=false Location=[202 379] ScreenLocation=[402 579]> EventName='Clicked'
+t.CellEditCallback: class=matlab.ui.eventdata.CellEditData Indices=[2 2] DisplayIndices=[2 2] PreviousData='def' EditData='5' NewData='5' Error=[] EventName='CellEdit'
+t.DisplayDataChangedFcn: class=matlab.ui.eventdata.DisplayDataChangedData DisplayRowName='numbered' DisplayColumnName={'Num','Text','Tick','Pick'} DisplaySelection=[2 2] PreviousDisplaySelection=[2 2] Interaction='edit' InteractionColumn=2 InteractionDisplayColumn=2 InteractionVariable='' EventName='DisplayDataChanged'
+== press the check box cell [2 3]
+ERR MATLAB:TooManyInputs Invalid argument at position 2. Function requires exactly 1 positional input(s).
+== choose three in the pick cell [2 4]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=[2 4] PreviousSelection=[2 2] SelectionType='cell' DisplaySelection=[2 4] PreviousDisplaySelection=[2 2] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[2 4] DisplayIndices=[2 4] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=4 Row=2 Column=4 RowHeader=false ColumnHeader=false Location=[391 378] ScreenLocation=[591 578]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=4 Row=2 Column=4 RowHeader=false ColumnHeader=false Location=[391 378] ScreenLocation=[591 578]> EventName='Clicked'
+t.CellEditCallback: class=matlab.ui.eventdata.CellEditData Indices=[2 4] DisplayIndices=[2 4] PreviousData='one' EditData='three' NewData='three' Error=[] EventName='CellEdit'
+t.DisplayDataChangedFcn: class=matlab.ui.eventdata.DisplayDataChangedData DisplayRowName='numbered' DisplayColumnName={'Num','Text','Tick','Pick'} DisplaySelection=[2 4] PreviousDisplaySelection=[2 4] Interaction='edit' InteractionColumn=4 InteractionDisplayColumn=4 InteractionVariable='' EventName='DisplayDataChanged'
+== choose cells [1 1; 2 1]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=[1 1] PreviousSelection=[2 4] SelectionType='cell' DisplaySelection=[1 1] PreviousDisplaySelection=[2 4] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[1 1] DisplayIndices=[1 1] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=1 DisplayColumn=1 Row=1 Column=1 RowHeader=false ColumnHeader=false Location=[107 401] ScreenLocation=[307 601]> EventName='Clicked'
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=[1 1;2 1] PreviousSelection=[1 1] SelectionType='cell' DisplaySelection=[1 1;2 1] PreviousDisplaySelection=[1 1] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[1 1;2 1] DisplayIndices=[1 1;2 1] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=1 Row=2 Column=1 RowHeader=false ColumnHeader=false Location=[107 378] ScreenLocation=[307 578]> EventName='Clicked'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=1 Row=2 Column=1 RowHeader=false ColumnHeader=false Location=[107 378] ScreenLocation=[307 578]> EventName='Clicked'
+t.Data now: {99,NaN,-7,'new','5','ghi',true,false,true,'two','three','three'}
+t.Selection now: [1 1;2 1]
+== row selection: set SelectionType row
+== choose row 2
+ERR MATLAB:incorrectSize Invalid argument at position 2. Expected input to be of size Mx2, but it is of size 1x1.
+== column selection: set SelectionType column
+== choose column 3
+ERR MATLAB:incorrectSize Invalid argument at position 2. Expected input to be of size Mx2, but it is of size 1x1.
+== press the Open menu entry
+menu.Probe.MenuSelectedFcn: class=matlab.ui.eventdata.ActionData EventName='MenuSelected'
+menu.Open.MenuSelectedFcn: class=matlab.ui.eventdata.ActionData EventName='MenuSelected'
+== context menu on the label: choose Do it
+cm.ContextMenuOpeningFcn: class=matlab.ui.eventdata.ContextMenuOpeningData ContextObject=<matlab.ui.control.Label> InteractionInformation=<matlab.ui.eventdata.ComponentInteraction Location=[540 411] ScreenLocation=[740 611]> EventName='ContextMenuOpening'
+cm.DoIt.MenuSelectedFcn: class=matlab.ui.eventdata.MenuSelectedData ContextObject=<matlab.ui.control.Label> InteractionInformation=<matlab.ui.eventdata.ComponentInteraction Location=[540 411] ScreenLocation=[740 611]> EventName='MenuSelected'
+== press the push tool
+push.ClickedCallback: class=matlab.ui.eventdata.ActionData EventName='ToolClicked'
+== press the toggle tool (goes down)
+toggle.OnCallback: class=matlab.ui.eventdata.ActionData EventName='On'
+toggle.ClickedCallback: class=matlab.ui.eventdata.ActionData EventName='ToolClicked'
+toggle State now: matlab.lang.OnOffSwitchState.on
+== press the toggle tool (comes up)
+toggle.OffCallback: class=matlab.ui.eventdata.ActionData EventName='Off'
+toggle.ClickedCallback: class=matlab.ui.eventdata.ActionData EventName='ToolClicked'
+toggle State now: matlab.lang.OnOffSwitchState.off
+formats picture written: u8w_formats.png
+classic figure Position=[150 150 420 320] frame=420x320 (scale 1)
+tab One content in frame pixels: x=[21 318] y=[126 300] (y from the top)
+tabgroup Position=[20 20 300 200] InnerPosition(t1)=[0 0 1 1]
+tab picture written: u8w_tab.png

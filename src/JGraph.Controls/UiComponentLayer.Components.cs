@@ -422,20 +422,66 @@ public sealed partial class UiComponentLayer
 
     // --- making ----------------------------------------------------------------------------------
 
-    private static void Tell(Shown shown, string action, object? value = null)
+    private static void Tell(Shown shown, string action, object? value = null, (double X, double Y)? location = null)
     {
         if (shown.Applying)
         {
             return;
         }
 
-        long seq = ScriptGraphicsCallbacks.NotifyComponent(shown.Source, action, value);
+        long seq = ScriptGraphicsCallbacks.NotifyComponent(shown.Source, action, value, location);
         if (action is "value" or "celledit" or "nodeselect" or "nodecheck" or "nodetext")
         {
             shown.PendingSeq = seq;
         }
 
         ScriptUiTrace.Write($"layer: {shown.Kind} {action} [{value}] as {seq}");
+    }
+
+    /// <summary>
+    /// Where the pointer is, in the figure's pixels from its bottom-left corner — what a Clicked
+    /// event's interaction information reports (probe u5w_events).
+    /// </summary>
+    private (double X, double Y) PointerPlace()
+    {
+        Point at = Mouse.GetPosition(this);
+        return (at.X, ActualHeight - at.Y);
+    }
+
+    /// <summary>The same, from a static handler: the layer is found above the element handled.</summary>
+    private static (double X, double Y)? PointerPlaceOver(DependencyObject? element)
+    {
+        for (DependencyObject? walk = element; walk is not null;)
+        {
+            if (walk is UiComponentLayer layer)
+            {
+                return layer.PointerPlace();
+            }
+
+            walk = walk is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetParent(walk) : LogicalTreeHelper.GetParent(walk);
+        }
+
+        return null;
+    }
+
+    /// <summary>The place of the list or drop-down row a mouse event landed on, from 0; -1 off any row.</summary>
+    private static int RowUnder(ItemsControl holder, MouseEventArgs e)
+    {
+        for (DependencyObject? walk = e.OriginalSource as DependencyObject; walk is not null && !ReferenceEquals(walk, holder);)
+        {
+            if (walk is ListBoxItem or ComboBoxItem)
+            {
+                int at = holder.ItemContainerGenerator.IndexFromContainer(walk);
+                if (at >= 0)
+                {
+                    return at;
+                }
+            }
+
+            walk = walk is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetParent(walk) : LogicalTreeHelper.GetParent(walk);
+        }
+
+        return -1;
     }
 
     private Shown Make(UiComponentFrame frame)
@@ -579,6 +625,10 @@ public sealed partial class UiComponentLayer
                         : current.HasNumber ? current.Number : 0;
                     double stepped = from + (direction * current.Step);
                     shown.Committed = box.Text;
+
+                    // R2025b's spinner says the value is changing, then that it changed, for an
+                    // arrow press as for typing (probe u5w_events).
+                    Tell(shown, "changing", stepped);
                     Tell(shown, "value", stepped);
                 }
 
@@ -612,7 +662,14 @@ public sealed partial class UiComponentLayer
                         Tell(shown, "value", combo.SelectedIndex);
                     }
                 };
-                combo.PreviewMouseLeftButtonUp += (_, _) => Tell(shown, "clicked", combo.SelectedIndex);
+                // The head's click reports no item; one in the open list reports the item, after
+                // the value has settled — hence the deferral (probe u5w_events).
+                combo.PreviewMouseLeftButtonUp += (_, e) =>
+                {
+                    int item = RowUnder(combo, e);
+                    (double X, double Y) place = PointerPlace();
+                    Dispatcher.BeginInvoke(() => Tell(shown, "clicked", item, place));
+                };
                 void CommitTyped()
                 {
                     if (combo.IsEditable && !shown.Applying && combo.Text != shown.Committed)
@@ -652,8 +709,10 @@ public sealed partial class UiComponentLayer
 
                     Tell(shown, "value", picked.ToArray());
                 };
-                list.PreviewMouseLeftButtonUp += (_, _) => Dispatcher.BeginInvoke(() => Tell(shown, "clicked", list.SelectedIndex));
-                list.MouseDoubleClick += (_, _) => Tell(shown, "doubleclicked", list.SelectedIndex);
+                // R2025b's ClickedFcn carries the item hit and runs before ValueChangedFcn
+                // (probe u5w_events); the press, not the release, is what fires it.
+                list.PreviewMouseLeftButtonDown += (_, e) => Tell(shown, "clicked", RowUnder(list, e), PointerPlace());
+                list.MouseDoubleClick += (_, e) => Tell(shown, "doubleclicked", RowUnder(list, e), PointerPlace());
                 return shown;
             }
 
@@ -787,6 +846,13 @@ public sealed partial class UiComponentLayer
         }
 
         shown.Committed = box.Text;
+        if (shown.Kind == UiComponentKind.Spinner)
+        {
+            // A spinner's typing commits as an arrow press does: changing, then the value
+            // (probe u5w_events). The numeric field says nothing on the way.
+            Tell(shown, "changing", box.Text);
+        }
+
         Tell(shown, "value", shown.Kind == UiComponentKind.TextArea
             ? box.Text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n')
             : box.Text);

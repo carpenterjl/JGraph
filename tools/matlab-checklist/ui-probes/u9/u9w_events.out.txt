@@ -1,0 +1,72 @@
+== drag the knob 0 to 60
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=1.4486368 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=10.027368 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=17.466632 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=21.88795 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=23.134936 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=25.720487 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=27.118454 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=29.396154 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=30.496971 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=31.727145 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=33.140818 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=34.043488 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=37.656476 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=39.070834 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=41.371971 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=42.791819 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=45.415878 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=46.786229 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=47.408518 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=48.668554 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=49.940287 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=51.21255 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=53.839198 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=55.085876 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=56.497813 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=57.682561 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=58.520325 EventName='ValueChanging'
+knob.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=59.947021 EventName='ValueChanging'
+knob.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=59.947021 Value=59.947021 PreviousValue=0 EventName='ValueChanged'
+== choose High on the discrete knob
+dknob.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='High' Value='High' PreviousValue='Low' EventName='ValueChanged' ValueIndex=3 PreviousValueIndex=1
+== press the switch
+switch.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='On' Value='On' PreviousValue='Off' EventName='ValueChanged' ValueIndex=2 PreviousValueIndex=1
+== choose On on the rocker
+rocker.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='On' Value='On' PreviousValue='Off' EventName='ValueChanged' ValueIndex=2 PreviousValueIndex=1
+== press the toggle switch
+toggle.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='On' Value='On' PreviousValue='Off' EventName='ValueChanged' ValueIndex=2 PreviousValueIndex=1
+== type a date into the date picker
+date.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=dt 2026-03-05 00:00:00 Value=dt 2026-03-05 00:00:00 PreviousValue=NaT EventName='ValueChanged'
+== choose a date in the date picker
+ERR MATLAB:uiautomation:Driver:GestureNotSupportedForClass "choose" gesture does not support objects of class "matlab.ui.control.DatePicker".
+== choose red on the colour picker
+ERR MATLAB:uiautomation:Driver:GestureNotSupportedForClass "choose" gesture does not support objects of class "matlab.ui.control.ColorPicker".
+== press the colour picker (open its palette)
+ERR MATLAB:uiautomation:Driver:GestureNotSupportedForClass "press" gesture does not support objects of class "matlab.ui.control.ColorPicker".
+palette capture written: u9w_palette.png
+== press Escape to shut the palette
+== choose node Alpha one
+ERR MATLAB:uiautomation:Driver:GestureNotSupportedForClass "choose" gesture does not support objects of class "matlab.ui.container.Tree".
+== collapse node Alpha
+ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'collapse' for class 'matlab.uitest.InteractiveTestCase'.
+== expand node Alpha
+ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'expand' for class 'matlab.uitest.InteractiveTestCase'.
+== collapse all (no node argument)
+ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'collapse' for class 'matlab.uitest.InteractiveTestCase'.
+== expand all
+ERR MATLAB:noSuchMethodOrField Unrecognized method, property, or field 'expand' for class 'matlab.uitest.InteractiveTestCase'.
+== choose checkbox node Gamma one (check)
+ERR MATLAB:uiautomation:Driver:GestureNotSupportedForClass "choose" gesture does not support objects of class "matlab.ui.container.CheckBoxTree".
+== press checkbox node Gamma (check whole branch?)
+ERR MATLAB:uiautomation:Driver:GestureNotSupportedForClass "press" gesture does not support objects of class "matlab.ui.container.CheckBoxTree".
+== press checkbox node Gamma one
+ERR MATLAB:uiautomation:Driver:GestureNotSupportedForClass "press" gesture does not support objects of class "matlab.ui.container.CheckBoxTree".
+== context menu on the knob: choose Act
+cm.ContextMenuOpeningFcn: class=matlab.ui.eventdata.ContextMenuOpeningData ContextObject=<matlab.ui.control.Knob [1 1]> InteractionInformation=<matlab.ui.eventdata.ComponentInteraction Location=[94 451] ScreenLocation=[294 651]> EventName='ContextMenuOpening'
+cm.Act.MenuSelectedFcn: class=matlab.ui.eventdata.MenuSelectedData ContextObject=<matlab.ui.control.Knob [1 1]> InteractionInformation=<matlab.ui.eventdata.ComponentInteraction Location=[94 451] ScreenLocation=[294 651]> EventName='MenuSelected'
+WINDOW TICKS knob [0 100] : major=[0 10 20 30 40 50 60 70 80 90 100] labels={0,10,20,30,40,50,60,70,80,90,100}
+WINDOW TICKS ninety [0 100] : major=[0 25 50 75 100] labels={0,25,50,75,100}
+WINDOW TICKS knob [0 1000] : major=[0 125 250 375 500 625 750 875 1000] labels={0,125,250,375,500,625,750,875,1000}
+WINDOW ASPECT knob <- [.. 100 30] : warn id=[] msg=[] Position=[480 400 30 30]
+looks picture written: u9w_looks.png

@@ -1,0 +1,48 @@
+== click Alpha text (select) at [90 329]
+tree.SelectionChangedFcn: class=matlab.ui.eventdata.SelectedNodesChangedData SelectedNodes=<matlab.ui.container.TreeNode 'Alpha'> PreviousSelectedNodes=[] EventName='SelectionChanged'
+tree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Alpha'> Level=1 Location=[91 331] ScreenLocation=[291 531]> EventName='Clicked'
+== click Alpha chevron (collapse) at [52 329]
+tree.NodeCollapsedFcn: class=matlab.ui.eventdata.NodeCollapsedData Node=<matlab.ui.container.TreeNode 'Alpha'> EventName='NodeCollapsed'
+tree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Alpha'> Level=1 Location=[53 331] ScreenLocation=[253 531]> EventName='Clicked'
+== click Alpha chevron (expand) at [52 329]
+tree.NodeExpandedFcn: class=matlab.ui.eventdata.NodeExpandedData Node=<matlab.ui.container.TreeNode 'Alpha'> EventName='NodeExpanded'
+tree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Alpha'> Level=1 Location=[53 331] ScreenLocation=[253 531]> EventName='Clicked'
+== click Beta text (select) at [90 263]
+tree.SelectionChangedFcn: class=matlab.ui.eventdata.SelectedNodesChangedData SelectedNodes=<matlab.ui.container.TreeNode 'Beta'> PreviousSelectedNodes=<matlab.ui.container.TreeNode 'Alpha'> EventName='SelectionChanged'
+tree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Beta'> Level=1 Location=[91 265] ScreenLocation=[291 465]> EventName='Clicked'
+== click Beta text again (begin edit) at [90 263]
+tree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Beta'> Level=1 Location=[91 265] ScreenLocation=[291 465]> EventName='Clicked'
+tree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Beta'> Level=1 Location=[91 265] ScreenLocation=[291 465]> EventName='Clicked'
+tree.DoubleClickedFcn: class=matlab.ui.eventdata.DoubleClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Beta'> Level=1 Location=[91 265] ScreenLocation=[291 465]> EventName='DoubleClicked'
+== type Bravo and Enter
+tree.NodeTextChangedFcn: class=matlab.ui.eventdata.NodeTextChangedData Node=<matlab.ui.container.TreeNode 'bravo'> Text='bravo' PreviousText='Beta' EventName='NodeTextChanged'
+Beta text now [bravo]
+== click Gamma one checkbox (leaf tick) at [292 307]
+ctree.SelectionChangedFcn: class=matlab.ui.eventdata.SelectedNodesChangedData SelectedNodes=<matlab.ui.container.TreeNode 'Gamma one'> PreviousSelectedNodes=[] EventName='SelectionChanged'
+ctree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Gamma one'> Level=2 Location=[293 309] ScreenLocation=[493 509]> EventName='Clicked'
+== click Gamma checkbox (branch tick) at [292 329]
+ctree.SelectionChangedFcn: class=matlab.ui.eventdata.SelectedNodesChangedData SelectedNodes=<matlab.ui.container.TreeNode 'Gamma'> PreviousSelectedNodes=<matlab.ui.container.TreeNode 'Gamma one'> EventName='SelectionChanged'
+ctree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Gamma'> Level=1 Location=[293 331] ScreenLocation=[493 531]> EventName='Clicked'
+ctree.CheckedNodesChangedFcn: class=matlab.ui.eventdata.CheckedNodesChangedData CheckedNodes=<matlab.ui.container.TreeNode [3 1]> PreviousCheckedNodes=[] ParentCheckedNodes=<matlab.ui.container.TreeNode 'Gamma'> PreviousParentCheckedNodes=<matlab.graphics.GraphicsPlaceholder empty [0 1]> LeafCheckedNodes=<matlab.ui.container.TreeNode [2 1]> PreviousLeafCheckedNodes=<matlab.graphics.GraphicsPlaceholder empty [0 1]> IndeterminateCheckedNodes=<matlab.graphics.GraphicsPlaceholder empty [0 1]> PreviousIndeterminateCheckedNodes=<matlab.graphics.GraphicsPlaceholder empty [0 1]> EventName='CheckedNodesChanged'
+== click Gamma one checkbox (untick under a ticked branch) at [292 307]
+ctree.SelectionChangedFcn: class=matlab.ui.eventdata.SelectedNodesChangedData SelectedNodes=<matlab.ui.container.TreeNode 'Gamma one'> PreviousSelectedNodes=<matlab.ui.container.TreeNode 'Gamma'> EventName='SelectionChanged'
+ctree.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TreeInteraction Node=<matlab.ui.container.TreeNode 'Gamma one'> Level=2 Location=[293 309] ScreenLocation=[493 509]> EventName='Clicked'
+== click colour picker swatch (open the palette) at [500 431]
+palette capture written: u9w_palette.png
+== click a palette swatch (just under the picker) at [500 395]
+colour Value now [1 0 0]
+== click row 2 header (row selection) at [55 262]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=2 PreviousSelection=[] SelectionType='row' DisplaySelection=2 PreviousDisplaySelection=[] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[2 1;2 2;2 3] DisplayIndices=[2 1;2 2;2 3] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=[] Row=2 Column=[] RowHeader=true ColumnHeader=false Location=[56 264] ScreenLocation=[256 464]> EventName='Clicked'
+t.Selection now 2
+== click column 2 header (column selection) at [132 284]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=1 PreviousSelection=[] SelectionType='column' DisplaySelection=1 PreviousDisplaySelection=[] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[1 1;2 1;3 1] DisplayIndices=[1 1;2 1;3 1] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=1 DisplayColumn=1 Row=1 Column=1 RowHeader=false ColumnHeader=false Location=[133 286] ScreenLocation=[333 486]> EventName='Clicked'
+t.Selection now 1
+== click check box cell [2 3] (tick off->on) at [192 262]
+t.SelectionChangedFcn: class=matlab.ui.eventdata.TableSelectionChangedData Selection=[2 2] PreviousSelection=[] SelectionType='cell' DisplaySelection=[2 2] PreviousDisplaySelection=[] EventName='SelectionChanged'
+t.CellSelectionCallback: class=matlab.ui.eventdata.CellSelectionChangeData Indices=[2 2] DisplayIndices=[2 2] EventName='CellSelection'
+t.ClickedFcn: class=matlab.ui.eventdata.ClickedData InteractionInformation=<matlab.ui.eventdata.TableInteraction DisplayRow=2 DisplayColumn=2 Row=2 Column=2 RowHeader=false ColumnHeader=false Location=[193 264] ScreenLocation=[393 464]> EventName='Clicked'
+t.Data now: 1,2,3,'a','b','c',true,false,true

@@ -225,9 +225,14 @@ internal static class JgsUiEventData
         return data;
     }
 
-    /// <summary>One event data value: the class's own fields first, then <c>Source</c> and <c>EventName</c>.</summary>
+    /// <summary>
+    /// One event data value: the class's own fields first, then <c>Source</c> and <c>EventName</c>,
+    /// then the fields R2025b lists after them (a <c>ValueChangedData</c>'s <c>ValueIndex</c> and
+    /// friends, probes <c>u5w_events</c> and <c>u9w_events</c>).
+    /// </summary>
     public static JgsValue Make(
-        string className, JgsValue source, string eventName, Dictionary<string, JgsValue>? own = null)
+        string className, JgsValue source, string eventName, Dictionary<string, JgsValue>? own = null,
+        Dictionary<string, JgsValue>? trailing = null)
     {
         var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
         foreach ((string name, JgsValue value) in own ?? [])
@@ -237,6 +242,11 @@ internal static class JgsUiEventData
 
         fields["Source"] = source;
         fields["EventName"] = JgsValue.Str(eventName);
+        foreach ((string name, JgsValue value) in trailing ?? [])
+        {
+            fields[name] = value;
+        }
+
         JgsValue data = JgsValue.Struct(fields);
         data.SetClassName(className);
         return data;

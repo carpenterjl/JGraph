@@ -26,9 +26,11 @@ internal static partial class JgsGraphicsProperties
     // --- ticks of every scale --------------------------------------------------------------------
 
     /// <summary>
-    /// The ticks a scale leaves to itself. A slider's follow the pixels its track has (U5); a knob's
-    /// and a gauge's follow a rule of round steps that agrees with R2025b's view on the common
-    /// ranges and not on all (probe <c>u9_behave</c>, <c>TICKS</c>; the ADR has the count).
+    /// The ticks a scale leaves to itself. Every kind follows the slider's rule over the length
+    /// its own scale runs — a knob's three-quarter ring, a gauge's arc, a linear gauge's bar —
+    /// which is the settled answer R2025b's view re-ticks to (probes <c>u9_behave</c> and
+    /// <c>u9_settle</c>; before the view settles R2025b still reads the stale defaults, which a
+    /// synchronous engine does not keep, ADR 0236). What differs by kind is the minor density.
     /// </summary>
     internal static void RefreshTicks(UiScaleModel scale)
     {
@@ -46,34 +48,16 @@ internal static partial class JgsGraphicsProperties
             return;
         }
 
-        // The counts are what R2025b reads before its view has settled, which is what a script
-        // reads at once and what the fixtures hold; the view re-ticks a knob to ten intervals and
-        // a ninety-degree gauge to four some time later (probe u9_behave, TICKS).
-        (int most, int fallback, int minorPer) = scale switch
+        int minorPer = scale switch
         {
-            UiKnobModel => (8, 7, 2),
-            UiGaugeModel { Style: UiGaugeStyle.NinetyDegree } => (2, 2, 5),
-            UiGaugeModel { Style: UiGaugeStyle.Linear } => (8, 5, 5),
-            UiGaugeModel { Style: UiGaugeStyle.Semicircular } => (8, 5, 5),
-            _ => (8, 5, 10),
+            UiKnobModel => 2,
+            UiGaugeModel { Style: UiGaugeStyle.Circular } => 10,
+            _ => 5,
         };
 
         if (!scale.MajorTicksManual)
         {
-            // The most intervals, up to the kind's most, whose step is a round number; failing
-            // that, the kind's own count, with the ticks rounded to four significant digits.
-            double[]? best = null;
-            for (int intervals = most; intervals >= 2 && best is null; intervals--)
-            {
-                double step = span / intervals;
-                if (IsRoundStep(step))
-                {
-                    best = Even(low, high, intervals, span);
-                }
-            }
-
-            best ??= [.. Even(low, high, fallback, span).Select(static t => RoundSignificant(t, 4))];
-            best[^1] = high;
+            double[] best = AutoMajorTicks(low, high, EffectiveTrack(scale), scale.FontName, scale.FontSize, scale.Bold, scale.Italic);
             if (!scale.MajorTicks.SequenceEqual(best))
             {
                 scale.MajorTicks = best;
@@ -113,15 +97,24 @@ internal static partial class JgsGraphicsProperties
         }
     }
 
-    private static double[] Even(double low, double high, int intervals, double span)
+    /// <summary>
+    /// The pixels a scale's run of ticks takes, fitted against R2025b's settled answers over its
+    /// sizes (probe <c>u9_settle</c>, <c>SIZETICKS</c>): a knob's labels ring three quarters of a
+    /// circle nine pixels outside its dial; the gauges' arcs and the linear gauge's bar grow with
+    /// their boxes.
+    /// </summary>
+    private static double EffectiveTrack(UiScaleModel scale)
     {
-        var ticks = new double[intervals + 1];
-        for (int i = 0; i <= intervals; i++)
+        double width = scale.Position.Width;
+        double height = scale.Position.Height;
+        return System.Math.Max(1, scale switch
         {
-            ticks[i] = i == intervals ? high : RoundTick(low + (span * i / intervals), span);
-        }
-
-        return ticks;
+            UiKnobModel => 1.5 * System.Math.PI * ((width / 2) + 12),
+            UiGaugeModel { Style: UiGaugeStyle.NinetyDegree } => 0.88 * width,
+            UiGaugeModel { Style: UiGaugeStyle.Semicircular } => 0.9 * width,
+            UiGaugeModel { Style: UiGaugeStyle.Linear } => 1.15 * System.Math.Max(width, height),
+            _ => (1.475 * width) - 30.5,
+        });
     }
 
     /// <summary>Whether a step is one of the round sizes a scale is marked in: 1, 1.5, 2, 2.5, 3, 4, 5, 6 or 8 times a power of ten.</summary>

@@ -484,6 +484,14 @@ internal static partial class JgsBuiltins
             JoinGroup(group, button);
         }
 
+        // A fresh scale's automatic ticks are worked out for the size and limits it was made with
+        // (open item 64): the defaults a knob's fields carry are the pre-settle values R2025b
+        // only keeps until its view answers.
+        if (component is UiScaleModel scale)
+        {
+            JgsGraphicsProperties.RefreshTicks(scale);
+        }
+
         if (component.Figure is { } home)
         {
             JG.TouchFigure(home);

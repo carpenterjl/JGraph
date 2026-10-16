@@ -1,0 +1,77 @@
+numeric ValueChangingFcn refused: MATLAB:noPublicFieldForClass Unrecognized property 'ValueChangingFcn' for class 'matlab.ui.control.NumericEditField'.
+== press button
+btn.ButtonPushedFcn: class=matlab.ui.eventdata.ButtonPushedData EventName='ButtonPushed'
+== press state button
+state.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=true Value=true PreviousValue=false EventName='ValueChanged'
+== press state button again
+state.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=false Value=false PreviousValue=true EventName='ValueChanged'
+== press checkbox
+check.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=true Value=true PreviousValue=false EventName='ValueChanged'
+== press radio 2
+group.SelectionChangedFcn: class=matlab.ui.eventdata.SelectionChangedData OldValue=<matlab.ui.control.RadioButton> NewValue=<matlab.ui.control.RadioButton> EventName='SelectionChanged'
+== press radio 2 again (already selected)
+== press radio 1
+group.SelectionChangedFcn: class=matlab.ui.eventdata.SelectionChangedData OldValue=<matlab.ui.control.RadioButton> NewValue=<matlab.ui.control.RadioButton> EventName='SelectionChanged'
+== type ab into the edit field
+edit.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value='' Value='a' EventName='ValueChanging'
+edit.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value='' Value='ab' EventName='ValueChanging'
+edit.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='ab' Value='ab' PreviousValue='' EventName='ValueChanged'
+== type 42.5 into the numeric field
+num.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=42.5 Value=42.5 PreviousValue=0 EventName='ValueChanged'
+== type 7 into the spinner
+spin.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=7 EventName='ValueChanging'
+spin.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=7 Value=7 PreviousValue=0 EventName='ValueChanged'
+== spinner up (press sp up)
+spin.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=7 Value=8 EventName='ValueChanging'
+spin.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=8 Value=8 PreviousValue=7 EventName='ValueChanged'
+== spinner down (press sp down)
+spin.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=8 Value=7 EventName='ValueChanging'
+spin.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=7 Value=7 PreviousValue=8 EventName='ValueChanged'
+== drag the slider 0 to 30
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=0.5 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=5.5 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=7 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=11 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=11.5 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=12.5 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=16.5 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=17 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=18 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=21 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=22 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=26.5 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=27.5 EventName='ValueChanging'
+slider.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value=0 Value=30 EventName='ValueChanging'
+slider.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value=30 Value=30 PreviousValue=0 EventName='ValueChanged'
+== drag the range slider thumb 20 to 60
+ERR MATLAB:uiautomation:Driver:GestureNotSupportedForClass "drag" gesture does not support objects of class "matlab.ui.control.RangeSlider".
+== choose B in the dropdown
+drop.DropDownOpeningFcn: class=matlab.ui.eventdata.DropDownOpeningData s.Value='A' EventName='DropDownOpening'
+drop.ClickedFcn: class=matlab.ui.eventdata.ClickedData s.Value='A' InteractionInformation=<matlab.ui.eventdata.DropDownInteraction Item=[] Location=[65 321] ScreenLocation=[265 521]> EventName='Clicked'
+drop.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='B' Value='B' PreviousValue='A' EventName='ValueChanged' PreviousValueIndex=1 Edited=false ValueIndex=2
+drop.ClickedFcn: class=matlab.ui.eventdata.ClickedData s.Value='B' InteractionInformation=<matlab.ui.eventdata.DropDownInteraction Item=2 Location=[65 273] ScreenLocation=[265 473]> EventName='Clicked'
+== type mauve into the editable dropdown
+dropedit.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='mauve' Value='mauve' PreviousValue='red' EventName='ValueChanged' PreviousValueIndex=1 Edited=true ValueIndex=[]
+== choose two in the list
+list.ClickedFcn: class=matlab.ui.eventdata.ClickedData s.Value='one' InteractionInformation=<matlab.ui.eventdata.ListBoxInteraction Item=2 Location=[76 262] ScreenLocation=[276 462]> EventName='Clicked'
+list.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='two' Value='two' PreviousValue='one' EventName='ValueChanged' PreviousValueIndex=1 ValueIndex=2
+== choose item 3 in the list by index
+list.ClickedFcn: class=matlab.ui.eventdata.ClickedData s.Value='two' InteractionInformation=<matlab.ui.eventdata.ListBoxInteraction Item=3 Location=[76 244] ScreenLocation=[276 444]> EventName='Clicked'
+list.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='three' Value='three' PreviousValue='two' EventName='ValueChanged' PreviousValueIndex=2 ValueIndex=3
+== press the image
+image.ImageClickedFcn: class=matlab.ui.eventdata.ImageClickedData EventName='ImageClicked'
+== press the hyperlink
+link.HyperlinkClickedFcn: class=matlab.ui.eventdata.HyperlinkClickedData EventName='HyperlinkClicked'
+== type two lines into the text area
+area.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value={''} Value={'l'} EventName='ValueChanging'
+area.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value={''} Value={'line1'} EventName='ValueChanging'
+area.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value={''} Value={'line1','li'} EventName='ValueChanging'
+area.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value={''} Value={'line1','line2'} EventName='ValueChanging'
+area.ValueChangingFcn: class=matlab.ui.eventdata.ValueChangingData s.Value={''} Value={'line1','line2'} EventName='ValueChanging'
+area.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value={'line1','line2'} Value={'line1','line2'} PreviousValue={''} EventName='ValueChanged'
+== front the figure
+== robot double click on list row 2
+list.ClickedFcn: class=matlab.ui.eventdata.ClickedData s.Value='three' InteractionInformation=<matlab.ui.eventdata.ListBoxInteraction Item=2 Location=[62 259] ScreenLocation=[262 459]> EventName='Clicked'
+list.ValueChangedFcn: class=matlab.ui.eventdata.ValueChangedData s.Value='two' Value='two' PreviousValue='three' EventName='ValueChanged' PreviousValueIndex=3 ValueIndex=2
+list.ClickedFcn: class=matlab.ui.eventdata.ClickedData s.Value='two' InteractionInformation=<matlab.ui.eventdata.ListBoxInteraction Item=2 Location=[62 259] ScreenLocation=[262 459]> EventName='Clicked'
+list.DoubleClickedFcn: class=matlab.ui.eventdata.DoubleClickedData s.Value='two' InteractionInformation=<matlab.ui.eventdata.ListBoxInteraction Item=2 Location=[62 259] ScreenLocation=[262 459]> EventName='DoubleClicked'

@@ -608,7 +608,8 @@ internal static class JgsUiTables
                 return new UiTableCell(value.IsTruthy ? "1" : "0", format == "char" ? UiTableCellKind.Text : UiTableCellKind.Number);
 
             case JgsType.Number when format == "logical":
-                return new UiTableCell(string.Empty, value.AsNumber != 0 ? UiTableCellKind.Checked : UiTableCellKind.Unchecked);
+                // R2025b's box stays clear for a number whatever its value (probe u8w_events).
+                return new UiTableCell(string.Empty, UiTableCellKind.Unchecked);
 
             case JgsType.Number:
                 return new UiTableCell(NumberText(value.AsNumber, format), format == "char" ? UiTableCellKind.Text : UiTableCellKind.Number);
@@ -654,58 +655,86 @@ internal static class JgsUiTables
             return value > 0 ? "Inf" : "-Inf";
         }
 
+        // R2025b's uifigure table writes only short, long, bank, +, rat and char distinctly; the
+        // e, g and eng words all render as short does (probe u8w_events, picture u8w_formats).
         CultureInfo plain = CultureInfo.InvariantCulture;
         bool whole = value == System.Math.Floor(value) && System.Math.Abs(value) < 1e10;
+        double size = System.Math.Abs(value);
         switch (format)
         {
             case "long":
-                return whole ? value.ToString("F0", plain) : Fixed(value, 15);
-            case "shorte":
-                return value.ToString("0.0000e+00", plain);
-            case "longe":
-                return value.ToString("0.000000000000000e+00", plain);
-            case "shortg":
-                return value.ToString("G5", plain);
-            case "longg":
-                return value.ToString("G15", plain);
-            case "shorteng" or "longeng":
-            {
-                if (value == 0)
+                if (whole)
                 {
-                    return "0";
+                    return value.ToString("F0", plain);
                 }
 
-                int power = (int)System.Math.Floor(System.Math.Log10(System.Math.Abs(value)) / 3) * 3;
-                string mantissa = (value / System.Math.Pow(10, power)).ToString(format == "shorteng" ? "0.0000" : "0.00000000000000", plain);
-                return $"{mantissa}e{(power < 0 ? "-" : "+")}{System.Math.Abs(power).ToString("000", plain)}";
-            }
+                return size > 0.001 && size < 100
+                    ? value.ToString("F15", plain)
+                    : value.ToString("0.000000000000000e+00", plain);
 
             case "bank":
-                return value.ToString("F2", plain);
+                return value == 0 ? "0" : value.ToString("F2", plain);
             case "+":
                 return value > 0 ? "+" : value < 0 ? "-" : string.Empty;
+            case "rat":
+                return Rational(value);
+            case "char":
+                return JgsSprintf.FormatMatlab("%.14g", [JgsValue.Number(value)]);
             default:
                 if (whole)
                 {
                     return value.ToString("F0", plain);
                 }
 
-                double size = System.Math.Abs(value);
-                return size is >= 0.001 and < 1000 ? value.ToString("F4", plain) : value.ToString("0.0000e+00", plain);
+                return size > 0.001 && size < 1000 ? value.ToString("F4", plain) : value.ToString("0.0000e+00", plain);
         }
     }
 
-    /// <summary>A number in fixed notation with so many significant digits.</summary>
-    private static string Fixed(double value, int digits)
+    /// <summary>
+    /// The <c>'rat'</c> format's text (probe u8w_events): the fraction <c>rat</c> finds within a
+    /// millionth of the value, or a <c>*</c> when it comes out too long to be worth showing.
+    /// </summary>
+    private static string Rational(double value)
     {
-        double size = System.Math.Abs(value);
-        if (size is < 0.001 or >= 1e5)
+        if (value == 0)
         {
-            return value.ToString("0." + new string('0', digits) + "e+00", CultureInfo.InvariantCulture);
+            return "0";
         }
 
-        int before = System.Math.Max(1, (int)System.Math.Floor(System.Math.Log10(size)) + 1);
-        return value.ToString("F" + System.Math.Max(0, digits - before), CultureInfo.InvariantCulture);
+        // A continued fraction, stopped within a millionth of the value — an absolute tolerance,
+        // which is what leaves 355/113 for pi and a * for 1234567.891 (picture u8w_formats).
+        double target = System.Math.Abs(value);
+        const double tolerance = 1e-6;
+        long p0 = 0, q0 = 1, p1 = 1, q1 = 0;
+        double rest = target;
+        for (int turn = 0; turn < 24; turn++)
+        {
+            double floor = System.Math.Floor(rest);
+            if (floor > long.MaxValue / 2)
+            {
+                return "*";
+            }
+
+            long whole = (long)floor;
+            (p0, p1) = (p1, (whole * p1) + p0);
+            (q0, q1) = (q1, (whole * q1) + q0);
+            if (q1 != 0 && System.Math.Abs(target - ((double)p1 / q1)) <= tolerance)
+            {
+                break;
+            }
+
+            double fraction = rest - floor;
+            if (fraction < 1e-12)
+            {
+                break;
+            }
+
+            rest = 1 / fraction;
+        }
+
+        string sign = value < 0 ? "-" : string.Empty;
+        string text = q1 == 1 ? $"{sign}{p1}" : $"{sign}{p1}/{q1}";
+        return text.Length > 10 ? "*" : text;
     }
 
     // --- an edit ---------------------------------------------------------------------------------

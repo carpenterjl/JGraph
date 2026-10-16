@@ -418,15 +418,27 @@ public sealed partial class UiComponentLayer
         };
         tree.PreviewMouseLeftButtonUp += (_, e) =>
         {
+            // A check box's own click reports itself with the tick, in R2025b's order.
+            for (DependencyObject? walk = e.OriginalSource as DependencyObject; walk is not null && walk is not TreeViewItem;)
+            {
+                if (walk is CheckBox)
+                {
+                    return;
+                }
+
+                walk = walk is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetParent(walk) : LogicalTreeHelper.GetParent(walk);
+            }
+
             UiTreeNodeModel? node = (NodeItemUnder(e.OriginalSource as DependencyObject)?.Tag) as UiTreeNodeModel;
-            Dispatcher.BeginInvoke(() => Tell(shown, "clicked", node));
+            (double X, double Y) place = PointerPlace();
+            Dispatcher.BeginInvoke(() => Tell(shown, "clicked", node, place));
         };
         tree.MouseDoubleClick += (_, e) =>
         {
             TreeViewItem? item = NodeItemUnder(e.OriginalSource as DependencyObject);
             if (item?.Tag is UiTreeNodeModel node)
             {
-                Tell(shown, "doubleclicked", node);
+                Tell(shown, "doubleclicked", node, PointerPlace());
                 if (shown.Frame is { Editable: true })
                 {
                     BeginNodeEdit(shown, item, node);
@@ -635,6 +647,10 @@ public sealed partial class UiComponentLayer
             {
                 if (!shown.Applying)
                 {
+                    // A click on the box also selects its node, and the tick is told last:
+                    // SelectionChanged, Clicked, then CheckedNodesChanged (probe u9w_tree).
+                    Tell(shown, JgsTreeActions.NodeSelect, new[] { node.Source });
+                    Tell(shown, "clicked", node.Source, PointerPlaceOver(check));
                     Tell(shown, JgsTreeActions.NodeCheck, new object[] { node.Source, check.IsChecked == true });
                 }
             };

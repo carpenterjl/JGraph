@@ -128,16 +128,24 @@ public sealed class UiKnobModel : UiScaleModel
     public override UiComponentKind Kind => UiComponentKind.Knob;
 
     /// <summary>
-    /// The rectangle the dial, its ticks and its labels take together: the dial grown by the ring
-    /// and by the widest label on each side, and by a line of text above and below. R2025b's own
-    /// rule was not measured (its labels are placed by its view); this is where this build puts them.
+    /// The rectangle the dial, its ticks and its labels take together, as R2025b's view measures
+    /// it (probe <c>u9_settle</c>, <c>OUTER</c>): each label sits just outside the tick ring at
+    /// its own angle — the scale runs three quarters of a circle, from the lower left round the
+    /// top to the lower right — and the outer box is the hull of the dial and every label.
     /// </summary>
     public Rect2D OuterOf(Rect2D dial)
     {
-        double ring = TickGap + MajorTickLength + TickGap;
-        double across = WidestLabel() + ring;
-        double down = UiFit.LineHeight(FontSize) + ring;
-        return new Rect2D(dial.X - across, dial.Y - down, dial.Width + (2 * across), dial.Height + (2 * down));
+        double span = Upper - Lower;
+        var places = new List<(double Fraction, string Text)>();
+        IReadOnlyList<double> ticks = MajorTicks;
+        IReadOnlyList<string> labels = MajorTickLabels;
+        for (int i = 0; i < labels.Count; i++)
+        {
+            double fraction = span > 0 && i < ticks.Count ? (ticks[i] - Lower) / span : labels.Count > 1 ? (double)i / (labels.Count - 1) : 0;
+            places.Add((System.Math.Clamp(fraction, 0, 1), labels[i]));
+        }
+
+        return UiRing.Hull(dial, places, startDegrees: 225, sweepDegrees: -270, FontName, FontSize, Bold, Italic);
     }
 
     /// <inheritdoc />
@@ -145,6 +153,53 @@ public sealed class UiKnobModel : UiScaleModel
 
     /// <inheritdoc />
     public override UiComponentFrame Snapshot() => ScaleFrame();
+}
+
+/// <summary>
+/// The labels ringed round a dial, and the box they take with it (U9, open item 64). R2025b's
+/// view anchors each label just outside the tick ring along its own angle; the eleven-pixel
+/// stand-off was fitted against its measured outer boxes (probe <c>u9_settle</c>, <c>OUTER</c>).
+/// </summary>
+public static class UiRing
+{
+    /// <summary>The gap between a dial's edge and the near edge of its labels.</summary>
+    public const double StandOff = 11;
+
+    /// <summary>
+    /// The hull of a dial and its labels. A label's place runs over the arc from
+    /// <paramref name="startDegrees"/> through <paramref name="sweepDegrees"/>; its box sits
+    /// outside the circle <see cref="StandOff"/> past the dial, pushed out along its own ray by
+    /// half its extent in that direction.
+    /// </summary>
+    public static Rect2D Hull(
+        Rect2D dial, IReadOnlyList<(double Fraction, string Text)> places,
+        double startDegrees, double sweepDegrees, string fontName, double fontSize, bool bold, bool italic)
+    {
+        double radius = (dial.Width / 2) + StandOff;
+        double line = UiFit.LineHeight(fontSize);
+        double cx = dial.X + (dial.Width / 2);
+        double cy = dial.Y + (dial.Height / 2);
+        double xMin = dial.X;
+        double xMax = dial.Right;
+        double yMin = dial.Y;
+        double yMax = dial.Bottom;
+        foreach ((double fraction, string text) in places)
+        {
+            double angle = (startDegrees + (sweepDegrees * fraction)) * System.Math.PI / 180;
+            double cos = System.Math.Cos(angle);
+            double sin = System.Math.Sin(angle);
+            double width = UiFit.TextWidth([text], fontName, fontSize, bold, italic);
+            double reach = radius + ((System.Math.Abs(cos) * width / 2) + (System.Math.Abs(sin) * line / 2));
+            double x = cx + (cos * reach);
+            double y = cy + (sin * reach);
+            xMin = System.Math.Min(xMin, x - (width / 2));
+            xMax = System.Math.Max(xMax, x + (width / 2));
+            yMin = System.Math.Min(yMin, y - (line / 2));
+            yMax = System.Math.Max(yMax, y + (line / 2));
+        }
+
+        return new Rect2D(xMin, yMin, xMax - xMin, yMax - yMin);
+    }
 }
 
 /// <summary>The four looks of a <c>uigauge</c>, each a class of its own in MATLAB.</summary>
@@ -340,14 +395,20 @@ public sealed class UiDiscreteKnobModel : UiItemsModel
     /// <inheritdoc />
     public override UiComponentKind Kind => UiComponentKind.DiscreteKnob;
 
-    /// <summary>The dial grown by the widest item on each side and a line of text above and below (see <see cref="UiKnobModel.OuterOf"/>).</summary>
+    /// <summary>
+    /// The dial and its items together: the items ring the top half, from left level round to
+    /// right level, and the outer box is their hull with the dial (probe <c>u9_settle</c>,
+    /// <c>OUTER</c> — a discrete knob never reaches below its dial).
+    /// </summary>
     public Rect2D OuterOf(Rect2D dial)
     {
-        double ring = UiKnobModel.TickGap + UiKnobModel.MajorTickLength + UiKnobModel.TickGap;
-        double widest = Items.Count == 0 ? 0 : Items.Max(item => UiFit.TextWidth([item], FontName, FontSize, Bold, Italic));
-        double across = widest + ring;
-        double down = UiFit.LineHeight(FontSize) + ring;
-        return new Rect2D(dial.X - across, dial.Y - down, dial.Width + (2 * across), dial.Height + (2 * down));
+        var places = new List<(double Fraction, string Text)>();
+        for (int i = 0; i < Items.Count; i++)
+        {
+            places.Add((Items.Count > 1 ? (double)i / (Items.Count - 1) : 0, Items[i]));
+        }
+
+        return UiRing.Hull(dial, places, startDegrees: 180, sweepDegrees: -180, FontName, FontSize, Bold, Italic);
     }
 
     /// <inheritdoc />

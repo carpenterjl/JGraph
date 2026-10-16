@@ -66,18 +66,24 @@ internal static partial class JgsUiComponentEvents
 
             case UiToolModel { BeingDeleted: false } tool when raised.Action == Pushed && JgsHandleRegistry.TryGetEntry(tool, out _):
             {
+                // The events are ActionData named for what happened: ToolClicked for the shared
+                // callback, On or Off for a toggle's own (probe u8w_events).
                 JgsValue source = JgsHandleRegistry.For(tool);
                 tool.UserWriteSeq = raised.UserSeq;
                 if (!tool.IsToggle)
                 {
-                    return raised with { Action = "ClickedCallback", Interim = JgsUiEventData.Action(source) };
+                    return raised with { Action = "ClickedCallback", Interim = JgsUiEventData.Make(JgsUiEventData.ActionDataClass, source, "ToolClicked") };
                 }
 
                 // A toggle tool goes down or comes up, runs the callback of that, and then the one
                 // it shares with a push tool.
                 tool.State = !tool.State;
-                Then(raised with { Action = "ClickedCallback", Interim = JgsUiEventData.Action(source) });
-                return raised with { Action = tool.State ? "OnCallback" : "OffCallback", Interim = JgsUiEventData.Action(source) };
+                Then(raised with { Action = "ClickedCallback", Interim = JgsUiEventData.Make(JgsUiEventData.ActionDataClass, source, "ToolClicked") });
+                return raised with
+                {
+                    Action = tool.State ? "OnCallback" : "OffCallback",
+                    Interim = JgsUiEventData.Make(JgsUiEventData.ActionDataClass, source, tool.State ? "On" : "Off"),
+                };
             }
 
             default:
@@ -104,6 +110,17 @@ internal static partial class JgsUiComponentEvents
 
                 JgsUiTables.Edit made = JgsUiTables.Apply(entry, row, column, edit[2]);
                 JgsValue indices = JgsGraphicsProperties.Row(row + 1, column + 1);
+                if (made.Stored is not null)
+                {
+                    // After the edit lands R2025b also tells DisplayDataChangedFcn, naming the
+                    // interaction 'edit' and the column it was in (probe u8w_events).
+                    Then(raised with
+                    {
+                        Action = "DisplayDataChangedFcn",
+                        Interim = DisplayChanged(table, state, source, "edit", column, shownColumn),
+                    });
+                }
+
                 return raised with
                 {
                     Action = "CellEditCallback",
@@ -138,9 +155,10 @@ internal static partial class JgsUiComponentEvents
                     ["Column"] = Data(1, JgsUiTables.DataColumn),
                     ["RowHeader"] = JgsValue.Bool(at.Length > 2 && at[2] == 1),
                     ["ColumnHeader"] = JgsValue.Bool(at.Length > 2 && at[2] == 2),
-                    ["Location"] = Empty,
-                    ["ScreenLocation"] = Empty,
+                    ["Location"] = Where(raised.Location),
+                    ["ScreenLocation"] = OnScreen(table, raised.Location),
                 });
+                information.SetClassName(Prefix + "TableInteraction");
                 return raised with
                 {
                     Action = twice ? "DoubleClickedFcn" : "ClickedFcn",
@@ -185,24 +203,11 @@ internal static partial class JgsUiComponentEvents
                 table.UserWriteSeq = raised.UserSeq;
                 table.Selection = ShownSelection(table, state);
                 int dataColumn = JgsUiTables.DataColumn(state, displayColumn);
-                (IReadOnlyList<string> rowNames, IReadOnlyList<string> columnNames) = JgsUiTables.DisplayNames(state);
-                string variable = state.Data.Type == JgsType.Table && dataColumn < state.Data.AsTable.ColumnCount
-                    ? state.Data.AsTable.ColumnNames[dataColumn]
-                    : string.Empty;
                 return raised with
                 {
                     Action = "DisplayDataChangedFcn",
-                    Interim = JgsUiEventData.Make(Prefix + "DisplayDataChangedData", source, "DisplayDataChanged", new()
-                    {
-                        ["DisplayRowName"] = CellColumnOf(rowNames),
-                        ["DisplayColumnName"] = CellRowOf(columnNames),
-                        ["DisplaySelection"] = DisplaySelectionOf(table, state),
-                        ["PreviousDisplaySelection"] = selectionBefore,
-                        ["Interaction"] = JgsValue.Str(raised.Action == Sorted ? "sort" : "rearrange"),
-                        ["InteractionColumn"] = JgsValue.Number(dataColumn + 1),
-                        ["InteractionDisplayColumn"] = JgsValue.Number(displayColumn + 1),
-                        ["InteractionVariable"] = JgsValue.Str(variable),
-                    }),
+                    Interim = DisplayChanged(table, state, source, raised.Action == Sorted ? "sort" : "rearrange",
+                        dataColumn, displayColumn, selectionBefore),
                 };
             }
 
@@ -214,6 +219,36 @@ internal static partial class JgsUiComponentEvents
     /// <summary>The actions a window reports when a person sorts a table's rows or drags a column (open item 60).</summary>
     public const string Sorted = "sorted";
     public const string Rearranged = "rearranged";
+
+    /// <summary>
+    /// R2025b's <c>DisplayDataChangedData</c> (probe <c>u8w_events</c>): the headings as shown —
+    /// the word <c>'numbered'</c> itself while the rows are numbered by default — the selection as
+    /// shown now and before, the interaction's name, and the column it was on, in both reckonings.
+    /// </summary>
+    private static JgsValue DisplayChanged(
+        UiTableModel table, JgsTableState state, JgsValue source, string interaction,
+        int dataColumn, int displayColumn, JgsValue? selectionBefore = null)
+    {
+        (IReadOnlyList<string> rowNames, IReadOnlyList<string> columnNames) = JgsUiTables.DisplayNames(state);
+        string variable = state.Data.Type == JgsType.Table && dataColumn < state.Data.AsTable.ColumnCount
+            ? state.Data.AsTable.ColumnNames[dataColumn]
+            : string.Empty;
+        bool numbered = state.RowName is null
+            ? state.Data.Type != JgsType.Table || state.Data.AsTable.RowNames is not { Count: > 0 }
+            : state.RowName.Form == UiTextForm.CharRow && state.RowName.Lines.Count == 1 && state.RowName.Lines[0] == "numbered";
+        JgsValue shownSelection = DisplaySelectionOf(table, state);
+        return JgsUiEventData.Make(Prefix + "DisplayDataChangedData", source, "DisplayDataChanged", new()
+        {
+            ["DisplayRowName"] = numbered ? JgsValue.Str("numbered") : CellColumnOf(rowNames),
+            ["DisplayColumnName"] = CellRowOf(columnNames),
+            ["DisplaySelection"] = shownSelection,
+            ["PreviousDisplaySelection"] = selectionBefore ?? shownSelection,
+            ["Interaction"] = JgsValue.Str(interaction),
+            ["InteractionColumn"] = JgsValue.Number(dataColumn + 1),
+            ["InteractionDisplayColumn"] = JgsValue.Number(displayColumn + 1),
+            ["InteractionVariable"] = JgsValue.Str(variable),
+        });
+    }
 
     private static JgsValue CellColumnOf(IReadOnlyList<string> names)
     {

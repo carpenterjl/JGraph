@@ -663,7 +663,8 @@ internal static partial class JgsGraphicsProperties
 
         // A round component, a switch and a semicircular gauge keep their proportions (probe
         // u9_extra): the rectangle asked for is shrunk to the largest of that shape inside it.
-        // R2025b's view warns about it later, off the script's thread; this build does not (ADR 0207).
+        // R2025b does it silently — no warning headless or with a window (probes u9_settle,
+        // u9w_events), so none is raised here either.
         if (AspectRatioOf(component) is { } ratio && System.Math.Abs(box.Width - (box.Height * ratio)) > 1e-9)
         {
             double width = System.Math.Min(box.Width, box.Height * ratio);
@@ -2073,31 +2074,8 @@ internal static partial class JgsGraphicsProperties
 
         if (!slider.MajorTicksManual && span > 0 && double.IsFinite(span))
         {
-            // The most equal intervals, each at least 18 pixels long, whose ticks are all short
-            // numbers and whose labels do not run into their neighbours'.
-            double length = System.Math.Max(1, slider.TrackLength());
-            double[] best = [low, high];
-            for (int intervals = 2; intervals <= 50 && length / intervals >= 18; intervals++)
-            {
-                double room = length / intervals;
-                var ticks = new double[intervals + 1];
-                bool sound = true;
-                double before = 0;
-                for (int i = 0; i <= intervals && sound; i++)
-                {
-                    ticks[i] = i == intervals ? high : RoundTick(low + (span * i / intervals), span);
-                    double width = UiFit.TextWidth([TickLabel(ticks[i])], slider.FontName, slider.FontSize, slider.Bold, slider.Italic);
-                    sound = (IsFourDigits(ticks[i]) || i == 0 || i == intervals)
-                        && (i == 0 || ((before + width) / 2) + 2 <= room);
-                    before = width;
-                }
-
-                if (sound)
-                {
-                    best = ticks;
-                }
-            }
-
+            double[] best = AutoMajorTicks(
+                low, high, System.Math.Max(1, slider.TrackLength()), slider.FontName, slider.FontSize, slider.Bold, slider.Italic);
             if (!slider.MajorTicks.SequenceEqual(best))
             {
                 slider.MajorTicks = best;
@@ -2165,6 +2143,43 @@ internal static partial class JgsGraphicsProperties
         {
             Walk(figure.Components);
         }
+    }
+
+    /// <summary>
+    /// The ticks an automatic scale settles on over a run of pixels: the most equal intervals,
+    /// each at least 18 pixels long, whose ticks are all short numbers and whose labels do not run
+    /// into their neighbours'. Fitted against R2025b's settled answers over 855 slider rows and
+    /// the knob and gauge sweeps (probes <c>u5_ticks2</c>, <c>u9_settle</c>; the ADR has the
+    /// counts — R2025b's view keeps a few rounded-step walks of its own that no equal division
+    /// reaches, which stay recorded divergences).
+    /// </summary>
+    internal static double[] AutoMajorTicks(
+        double low, double high, double length, string fontName, double fontSize, bool bold, bool italic)
+    {
+        double span = high - low;
+        double[] best = [low, high];
+        for (int intervals = 2; intervals <= 50 && length / intervals >= 18; intervals++)
+        {
+            double room = length / intervals;
+            var ticks = new double[intervals + 1];
+            bool sound = true;
+            double before = 0;
+            for (int i = 0; i <= intervals && sound; i++)
+            {
+                ticks[i] = i == intervals ? high : RoundTick(low + (span * i / intervals), span);
+                double width = UiFit.TextWidth([TickLabel(ticks[i])], fontName, fontSize, bold, italic);
+                sound = (IsFourDigits(ticks[i]) || i == 0 || i == intervals)
+                    && (i == 0 || ((before + width) / 2) + 2 <= room);
+                before = width;
+            }
+
+            if (sound)
+            {
+                best = ticks;
+            }
+        }
+
+        return best;
     }
 
     /// <summary>A tick's value with the arithmetic's last-place noise taken off.</summary>

@@ -612,11 +612,31 @@ internal sealed class JgsCallbackDispatcher
                 });
 
             case GraphicsEventKind.MenuSelected:
-                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                // A menu bar entry's event is an ActionData named MenuSelected; a context menu
+                // entry's is a MenuSelectedData carrying what was right-clicked and where
+                // (probe u8w_events).
+                ContextMenuModel? held = null;
+                for (GraphObject? up = graphicsEvent.Target; up is not null; up = up.Parent)
                 {
-                    ["Source"] = source,
-                    ["EventName"] = JgsValue.Str("Action"),
+                    if (up is ContextMenuModel menu)
+                    {
+                        held = menu;
+                        break;
+                    }
+                }
+
+                if (held is null)
+                {
+                    return JgsUiEventData.Make(JgsUiEventData.ActionDataClass, source, "MenuSelected");
+                }
+
+                return JgsUiEventData.Make("matlab.ui.eventdata.MenuSelectedData", source, "MenuSelected", new()
+                {
+                    ["ContextObject"] = held.LastContext is { } opened ? JgsHandleRegistry.For(opened) : JgsValue.Array([]),
+                    ["InteractionInformation"] = ComponentInteraction(held.LastContext ?? held, held.LastLocation),
                 });
+            }
 
             case GraphicsEventKind.ToolbarSelectionChanged:
                 return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
@@ -633,15 +653,15 @@ internal sealed class JgsCallbackDispatcher
 
             case GraphicsEventKind.ContextMenuOpening:
             {
-                (double x, double y) = graphicsEvent.Location ?? (double.NaN, double.NaN);
-                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                // R2025b's ContextMenuOpeningData: the object right-clicked and a
+                // ComponentInteraction saying where, in the figure and on the screen (u8w_events).
+                return JgsUiEventData.Make("matlab.ui.eventdata.ContextMenuOpeningData", source, "ContextMenuOpening", new()
                 {
-                    ["Source"] = source,
-                    ["EventName"] = JgsValue.Str("ContextMenuOpening"),
                     ["ContextObject"] = graphicsEvent.ContextObject is { } context
                         ? JgsHandleRegistry.For(context)
                         : JgsValue.Array([]),
-                    ["Location"] = JgsValue.Array([JgsValue.Number(x), JgsValue.Number(y)]),
+                    ["InteractionInformation"] = ComponentInteraction(
+                        graphicsEvent.ContextObject ?? graphicsEvent.Target, graphicsEvent.Location),
                 });
             }
 
@@ -719,6 +739,21 @@ internal sealed class JgsCallbackDispatcher
                 // reads CurrentPoint and SelectionType meanwhile.
                 return JgsValue.Array([]);
         }
+    }
+
+    /// <summary>
+    /// R2025b's <c>ComponentInteraction</c> (probe <c>u8w_events</c>): where a right-click landed,
+    /// in the figure's pixels and on the screen.
+    /// </summary>
+    private static JgsValue ComponentInteraction(GraphObject near, (double X, double Y)? location)
+    {
+        JgsValue information = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Location"] = JgsUiComponentEvents.Where(location),
+            ["ScreenLocation"] = JgsUiComponentEvents.OnScreen(near, location),
+        });
+        information.SetClassName("matlab.ui.eventdata.ComponentInteraction");
+        return information;
     }
 
     private static string CallbackNameOf(GraphicsEventKind kind) => kind switch

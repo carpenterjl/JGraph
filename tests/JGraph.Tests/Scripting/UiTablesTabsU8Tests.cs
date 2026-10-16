@@ -386,7 +386,7 @@ public class UiTablesTabsU8Tests : IAsyncLifetime
         await Drain();
 
         Assert.Equal(
-            ["push matlab.ui.eventdata.ActionData Action", "on on", "clicked on", "off off", "clicked off"],
+            ["push matlab.ui.eventdata.ActionData ToolClicked", "on on", "clicked on", "off off", "clicked off"],
             _output.NormalLines);
         Assert.False(bar.Tools[1].State);
 

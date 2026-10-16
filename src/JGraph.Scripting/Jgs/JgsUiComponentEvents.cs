@@ -77,6 +77,18 @@ internal static partial class JgsUiComponentEvents
                 return ApplyValue(raised, component, entry, source);
 
             case Changing:
+                // A spinner's typed text is told as the number it reads as; text that is no
+                // number never reaches the callback (probe u5w_events).
+                if (component is UiSpinnerModel && raised.Interim is string typedText)
+                {
+                    if (ParseTyped(typedText) is not { } number || double.IsNaN(number))
+                    {
+                        return null;
+                    }
+
+                    raised = raised with { Interim = number };
+                }
+
                 return raised with
                 {
                     Action = "ValueChangingFcn",
@@ -105,13 +117,17 @@ internal static partial class JgsUiComponentEvents
 
             case Clicked or DoubleClicked:
             {
+                // R2025b's interaction classes name the kind (probe u5w_events): a list's is a
+                // ListBoxInteraction, a drop-down's a DropDownInteraction, each with the item hit
+                // (empty for a drop-down's closed head), where in the figure, and on the screen.
                 bool twice = raised.Action == DoubleClicked;
                 JgsValue information = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
                 {
                     ["Item"] = raised.Interim is int item && item >= 0 ? JgsValue.Number(item + 1) : JgsMatrix.FromColumnMajor([], 0, 0),
-                    ["ScreenLocation"] = JgsMatrix.FromColumnMajor([], 0, 0),
-                    ["Location"] = JgsMatrix.FromColumnMajor([], 0, 0),
+                    ["Location"] = Where(raised.Location),
+                    ["ScreenLocation"] = OnScreen(component, raised.Location),
                 });
+                information.SetClassName(Prefix + (component is UiDropDownModel ? "DropDownInteraction" : "ListBoxInteraction"));
                 return raised with
                 {
                     Action = twice ? "DoubleClickedFcn" : "ClickedFcn",
@@ -123,6 +139,23 @@ internal static partial class JgsUiComponentEvents
             default:
                 return null;
         }
+    }
+
+    /// <summary>Where a click landed, in the figure's pixels from its bottom left, or empty unsaid.</summary>
+    internal static JgsValue Where((double X, double Y)? location) => location is { } at
+        ? JgsGraphicsProperties.Row(System.Math.Round(at.X), System.Math.Round(at.Y))
+        : JgsMatrix.FromColumnMajor([], 0, 0);
+
+    /// <summary>The same place on the screen: the figure's own corner plus the click (probe u5w_events).</summary>
+    internal static JgsValue OnScreen(GraphObject component, (double X, double Y)? location)
+    {
+        if (location is not { } at || JgsGraphicsProperties.FigureOf(component) is not { } figure)
+        {
+            return JgsMatrix.FromColumnMajor([], 0, 0);
+        }
+
+        return JgsGraphicsProperties.Row(
+            System.Math.Round(figure.Position.X + at.X), System.Math.Round(figure.Position.Y + at.Y));
     }
 
     /// <summary>A value on its way, as the callback sees it: a number, two for a range, or the text typed so far.</summary>
@@ -175,6 +208,8 @@ internal static partial class JgsUiComponentEvents
         }
 
         JgsValue before = Read(entry);
+        int? indexBefore = component is UiItemsModel wasItems && wasItems.Selected.Count == 1 ? wasItems.Selected[0] : null;
+        bool typed = component is UiDropDownModel && raised.UserValue is string;
         switch (component)
         {
             case UiCaptionModel caption when raised.UserValue is bool on:
@@ -206,9 +241,9 @@ internal static partial class JgsUiComponentEvents
 
                 break;
 
-            case UiDropDownModel drop when raised.UserValue is string typed:
+            case UiDropDownModel drop when raised.UserValue is string written:
             {
-                int at = drop.Items.ToList().IndexOf(typed);
+                int at = drop.Items.ToList().IndexOf(written);
                 if (at >= 0)
                 {
                     drop.Typed = null;
@@ -216,7 +251,7 @@ internal static partial class JgsUiComponentEvents
                 }
                 else if (drop.Editable)
                 {
-                    drop.Typed = typed;
+                    drop.Typed = written;
                 }
 
                 break;
@@ -272,8 +307,48 @@ internal static partial class JgsUiComponentEvents
             {
                 ["Value"] = after,
                 ["PreviousValue"] = before,
-            }),
+            }, ValueIndices(component, indexBefore, typed)),
         };
+    }
+
+    /// <summary>
+    /// The fields R2025b's <c>ValueChangedData</c> carries after <c>EventName</c> for a component
+    /// whose value is one of its items (probes <c>u5w_events</c>, <c>u9w_events</c>): the item's
+    /// place and the one before, from 1, empty for a typed text that is no item; a drop-down also
+    /// says whether the value was typed. A list and a drop-down put the previous place first, a
+    /// discrete knob and a switch the new one.
+    /// </summary>
+    private static Dictionary<string, JgsValue>? ValueIndices(UiComponentModel component, int? indexBefore, bool typed)
+    {
+        static JgsValue Place(int? index) => index is { } at ? JgsValue.Number(at + 1) : JgsMatrix.FromColumnMajor([], 0, 0);
+        switch (component)
+        {
+            case UiListBoxModel list:
+            {
+                int? now = list.Selected.Count == 1 ? list.Selected[0] : null;
+                return new() { ["PreviousValueIndex"] = Place(indexBefore), ["ValueIndex"] = Place(now) };
+            }
+
+            case UiDropDownModel drop:
+            {
+                int? now = drop.Typed is null && drop.Selected.Count == 1 ? drop.Selected[0] : null;
+                return new()
+                {
+                    ["PreviousValueIndex"] = Place(indexBefore),
+                    ["Edited"] = JgsValue.Bool(typed),
+                    ["ValueIndex"] = Place(now),
+                };
+            }
+
+            case UiDiscreteKnobModel or UiSwitchModel when component is UiItemsModel picks:
+            {
+                int? now = picks.Selected.Count == 1 ? picks.Selected[0] : null;
+                return new() { ["ValueIndex"] = Place(now), ["PreviousValueIndex"] = Place(indexBefore) };
+            }
+
+            default:
+                return null;
+        }
     }
 
     /// <summary>A numeric field's new value from what was typed, or from its arrows.</summary>

@@ -96,7 +96,7 @@ public class MatlabUiMenuTests : IAsyncLifetime
         """);
 
     [Fact]
-    public async Task APickedEntry_RunsItsCallback_WithMatlabsActionEvent()
+    public async Task APickedEntry_RunsItsCallback_WithMatlabsMenuSelectedEvent()
     {
         await Exec("""
             cm = uicontextmenu;
@@ -109,7 +109,7 @@ public class MatlabUiMenuTests : IAsyncLifetime
         ScriptGraphicsCallbacks.NotifyMenuSelected(item);
         await Drain();
 
-        Assert.Contains(_output.NormalLines, static line => line.Contains("Action 1"));
+        Assert.Contains(_output.NormalLines, static line => line.Contains("MenuSelected 1"));
     }
 
     [Fact]
@@ -119,8 +119,9 @@ public class MatlabUiMenuTests : IAsyncLifetime
             p = plot(1:3);
             cm = uicontextmenu;
             set(p, 'ContextMenu', cm);
-            set(cm, 'ContextMenuOpeningFcn', @(src, event) fprintf('%s ctx%d at %g %g\n', ...
-                event.EventName, event.ContextObject == p, event.Location));
+            set(cm, 'ContextMenuOpeningFcn', @(src, event) fprintf('%s ctx%d at %g %g %s\n', ...
+                event.EventName, event.ContextObject == p, event.InteractionInformation.Location, ...
+                class(event.InteractionInformation)));
             """);
         AxesModel axes = JG.Gca();
         PlotObject plot = axes.Plots[0];
@@ -131,7 +132,7 @@ public class MatlabUiMenuTests : IAsyncLifetime
         await Drain();
 
         Assert.Contains(_output.NormalLines,
-            static line => line.Contains("ContextMenuOpening ctx1 at 120 80"));
+            static line => line.Contains("ContextMenuOpening ctx1 at 120 80 matlab.ui.eventdata.ComponentInteraction"));
     }
 
     [Fact]

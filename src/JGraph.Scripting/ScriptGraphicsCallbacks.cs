@@ -164,15 +164,17 @@ public static class ScriptGraphicsCallbacks
     /// a <see cref="double"/> for a slider and a spinner's arrows, and a <c>double[]</c> of two for a
     /// range slider. For <c>"changing"</c>, the value so far; for a click on a list, the item's
     /// position.</param>
+    /// <param name="location">For a click, where it landed, in the figure's pixels from its
+    /// bottom-left corner; null when the action is no click or the place is not known.</param>
     /// <returns>The sequence number of a settled value, which the window holds on to.</returns>
-    public static long NotifyComponent(GraphObject component, string action, object? value = null)
+    public static long NotifyComponent(GraphObject component, string action, object? value = null, (double X, double Y)? location = null)
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentNullException.ThrowIfNull(action);
         long seq = Interlocked.Increment(ref _userSeq);
         bool settles = action == "value";
         var raised = new GraphicsEvent(
-            GraphicsEventKind.ComponentUser, component, Clicked: component,
+            GraphicsEventKind.ComponentUser, component, Clicked: component, Location: location,
             UserValue: settles ? value : null, UserSeq: seq, Action: action, Interim: settles ? null : value);
         if (action == "changing")
         {
@@ -388,6 +390,11 @@ public static class ScriptGraphicsCallbacks
         ContextMenuModel menu, GraphObject? contextObject, (double X, double Y) location)
     {
         ArgumentNullException.ThrowIfNull(menu);
+
+        // The entries' MenuSelectedData names what was right-clicked and where, whether or not
+        // anyone listens to the opening itself (probe u8w_events).
+        menu.LastContext = contextObject;
+        menu.LastLocation = location;
         if (HasCallback(menu, GraphicsEventKind.ContextMenuOpening))
         {
             ScriptEventQueue.Enqueue(new GraphicsEvent(

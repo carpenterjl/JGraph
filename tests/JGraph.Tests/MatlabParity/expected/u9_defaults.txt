@@ -15,9 +15,7 @@ CHK|F_Knob_default_HandleVisibility|onoff on|exact
 CHK|F_Knob_default_InnerPosition|double [1 4] 100 100 60 60|exact
 CHK|F_Knob_default_Interruptible|onoff on|exact
 CHK|F_Knob_default_Limits|double [1 2] 0 100|exact
-CHK|F_Knob_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
 CHK|F_Knob_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|F_Knob_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
 CHK|F_Knob_default_MajorTicksMode|char 'auto'|exact
 CHK|F_Knob_default_MinorTicksMode|char 'auto'|exact
 CHK|F_Knob_default_Position|double [1 4] 100 100 60 60|exact
@@ -203,9 +201,7 @@ CHK|F_Gauge_default_HandleVisibility|onoff on|exact
 CHK|F_Gauge_default_InnerPosition|double [1 4] 100 100 120 120|exact
 CHK|F_Gauge_default_Interruptible|onoff on|exact
 CHK|F_Gauge_default_Limits|double [1 2] 0 100|exact
-CHK|F_Gauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
 CHK|F_Gauge_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|F_Gauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
 CHK|F_Gauge_default_MajorTicksMode|char 'auto'|exact
 CHK|F_Gauge_default_MinorTicksMode|char 'auto'|exact
 CHK|F_Gauge_default_OuterPosition|double [1 4] 100 100 120 120|exact
@@ -246,9 +242,7 @@ CHK|F_LinearGauge_default_HandleVisibility|onoff on|exact
 CHK|F_LinearGauge_default_InnerPosition|double [1 4] 100 100 120 40|exact
 CHK|F_LinearGauge_default_Interruptible|onoff on|exact
 CHK|F_LinearGauge_default_Limits|double [1 2] 0 100|exact
-CHK|F_LinearGauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
 CHK|F_LinearGauge_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|F_LinearGauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
 CHK|F_LinearGauge_default_MajorTicksMode|char 'auto'|exact
 CHK|F_LinearGauge_default_MinorTicksMode|char 'auto'|exact
 CHK|F_LinearGauge_default_Orientation|char 'horizontal'|exact
@@ -289,9 +283,7 @@ CHK|F_NinetyDegreeGauge_default_HandleVisibility|onoff on|exact
 CHK|F_NinetyDegreeGauge_default_InnerPosition|double [1 4] 100 100 90 90|exact
 CHK|F_NinetyDegreeGauge_default_Interruptible|onoff on|exact
 CHK|F_NinetyDegreeGauge_default_Limits|double [1 2] 0 100|exact
-CHK|F_NinetyDegreeGauge_default_MajorTickLabels|cell [1 3] {char '0', char '50', char '100'}|exact
 CHK|F_NinetyDegreeGauge_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|F_NinetyDegreeGauge_default_MajorTicks|double [1 3] 0 50 100|exact
 CHK|F_NinetyDegreeGauge_default_MajorTicksMode|char 'auto'|exact
 CHK|F_NinetyDegreeGauge_default_MinorTicksMode|char 'auto'|exact
 CHK|F_NinetyDegreeGauge_default_Orientation|char 'northwest'|exact
@@ -333,9 +325,7 @@ CHK|F_SemicircularGauge_default_HandleVisibility|onoff on|exact
 CHK|F_SemicircularGauge_default_InnerPosition|double [1 4] 100 100 120 65|exact
 CHK|F_SemicircularGauge_default_Interruptible|onoff on|exact
 CHK|F_SemicircularGauge_default_Limits|double [1 2] 0 100|exact
-CHK|F_SemicircularGauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
 CHK|F_SemicircularGauge_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|F_SemicircularGauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
 CHK|F_SemicircularGauge_default_MajorTicksMode|char 'auto'|exact
 CHK|F_SemicircularGauge_default_MinorTicksMode|char 'auto'|exact
 CHK|F_SemicircularGauge_default_Orientation|char 'north'|exact
@@ -587,9 +577,7 @@ CHK|U_Knob_default_HandleVisibility|onoff on|exact
 CHK|U_Knob_default_InnerPosition|double [1 4] 100 100 60 60|exact
 CHK|U_Knob_default_Interruptible|onoff on|exact
 CHK|U_Knob_default_Limits|double [1 2] 0 100|exact
-CHK|U_Knob_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
 CHK|U_Knob_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|U_Knob_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
 CHK|U_Knob_default_MajorTicksMode|char 'auto'|exact
 CHK|U_Knob_default_MinorTicksMode|char 'auto'|exact
 CHK|U_Knob_default_Position|double [1 4] 100 100 60 60|exact
@@ -775,9 +763,7 @@ CHK|U_Gauge_default_HandleVisibility|onoff on|exact
 CHK|U_Gauge_default_InnerPosition|double [1 4] 100 100 120 120|exact
 CHK|U_Gauge_default_Interruptible|onoff on|exact
 CHK|U_Gauge_default_Limits|double [1 2] 0 100|exact
-CHK|U_Gauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
 CHK|U_Gauge_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|U_Gauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
 CHK|U_Gauge_default_MajorTicksMode|char 'auto'|exact
 CHK|U_Gauge_default_MinorTicksMode|char 'auto'|exact
 CHK|U_Gauge_default_OuterPosition|double [1 4] 100 100 120 120|exact
@@ -818,9 +804,7 @@ CHK|U_LinearGauge_default_HandleVisibility|onoff on|exact
 CHK|U_LinearGauge_default_InnerPosition|double [1 4] 100 100 120 40|exact
 CHK|U_LinearGauge_default_Interruptible|onoff on|exact
 CHK|U_LinearGauge_default_Limits|double [1 2] 0 100|exact
-CHK|U_LinearGauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
 CHK|U_LinearGauge_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|U_LinearGauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
 CHK|U_LinearGauge_default_MajorTicksMode|char 'auto'|exact
 CHK|U_LinearGauge_default_MinorTicksMode|char 'auto'|exact
 CHK|U_LinearGauge_default_Orientation|char 'horizontal'|exact
@@ -861,9 +845,7 @@ CHK|U_NinetyDegreeGauge_default_HandleVisibility|onoff on|exact
 CHK|U_NinetyDegreeGauge_default_InnerPosition|double [1 4] 100 100 90 90|exact
 CHK|U_NinetyDegreeGauge_default_Interruptible|onoff on|exact
 CHK|U_NinetyDegreeGauge_default_Limits|double [1 2] 0 100|exact
-CHK|U_NinetyDegreeGauge_default_MajorTickLabels|cell [1 3] {char '0', char '50', char '100'}|exact
 CHK|U_NinetyDegreeGauge_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|U_NinetyDegreeGauge_default_MajorTicks|double [1 3] 0 50 100|exact
 CHK|U_NinetyDegreeGauge_default_MajorTicksMode|char 'auto'|exact
 CHK|U_NinetyDegreeGauge_default_MinorTicksMode|char 'auto'|exact
 CHK|U_NinetyDegreeGauge_default_Orientation|char 'northwest'|exact
@@ -905,9 +887,7 @@ CHK|U_SemicircularGauge_default_HandleVisibility|onoff on|exact
 CHK|U_SemicircularGauge_default_InnerPosition|double [1 4] 100 100 120 65|exact
 CHK|U_SemicircularGauge_default_Interruptible|onoff on|exact
 CHK|U_SemicircularGauge_default_Limits|double [1 2] 0 100|exact
-CHK|U_SemicircularGauge_default_MajorTickLabels|cell [1 6] {char '0', char '20', char '40', char '60', char '80', char '100'}|exact
 CHK|U_SemicircularGauge_default_MajorTickLabelsMode|char 'auto'|exact
-CHK|U_SemicircularGauge_default_MajorTicks|double [1 6] 0 20 40 60 80 100|exact
 CHK|U_SemicircularGauge_default_MajorTicksMode|char 'auto'|exact
 CHK|U_SemicircularGauge_default_MinorTicksMode|char 'auto'|exact
 CHK|U_SemicircularGauge_default_Orientation|char 'north'|exact

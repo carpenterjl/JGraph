@@ -27,6 +27,14 @@ public sealed class ContextMenuModel : GraphObject
     [Browsable(false)]
     public (double X, double Y) OpenAt { get; private set; }
 
+    /// <summary>The object whose right-click last opened the menu, for the entries' event data.</summary>
+    [Browsable(false)]
+    public GraphObject? LastContext { get; set; }
+
+    /// <summary>Where that right-click landed, in pixels from the figure's lower-left corner.</summary>
+    [Browsable(false)]
+    public (double X, double Y)? LastLocation { get; set; }
+
     /// <summary>Asks the window to show the menu at a point of its figure.</summary>
     public void RequestOpen(double x, double y)
     {

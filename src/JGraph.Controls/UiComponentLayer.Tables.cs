@@ -222,14 +222,15 @@ public sealed partial class UiComponentLayer
         {
             if (CellUnder(grid, e.OriginalSource as DependencyObject) is { } at)
             {
-                Dispatcher.BeginInvoke(() => Tell(shown, "clicked", at));
+                (double X, double Y) place = PointerPlace();
+                Dispatcher.BeginInvoke(() => Tell(shown, "clicked", at, place));
             }
         };
         grid.MouseDoubleClick += (_, e) =>
         {
             if (CellUnder(grid, e.OriginalSource as DependencyObject) is { } at)
             {
-                Tell(shown, "doubleclicked", at);
+                Tell(shown, "doubleclicked", at, PointerPlace());
             }
         };
         return shown;
