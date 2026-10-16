@@ -90,7 +90,7 @@ public class MatlabDecorationTests : IDisposable
             disp(get(ax, 'Box'));
             """);
 
-        Assert.Equal(new[] { "on", "off", "on", "off" }, _output.NormalLines);
+        Assert.Equal(new[] { "    on", "    off", "    on", "    off" }, _output.NormalLines);
     }
 
     [Fact]
@@ -171,7 +171,7 @@ public class MatlabDecorationTests : IDisposable
             """);
 
         // Nine levels: R2025b's round step across [-0.43, 0.43] is 0.1 (open item 113).
-        Assert.Equal(new[] { "2", "contour", "off", "on", "9" }, _output.NormalLines);
+        Assert.Equal(new[] { "2", "contour", "    off", "    on", "9" }, _output.NormalLines);
     }
 
     [Fact]
@@ -228,7 +228,7 @@ public class MatlabDecorationTests : IDisposable
             disp(numel(get(first, 'Children')));
             """);
 
-        Assert.Equal(new[] { "true", "top", "under it", "off", "1" }, _output.NormalLines);
+        Assert.Equal(new[] { "true", "top", "under it", "    off", "1" }, _output.NormalLines);
     }
 
     /// <summary>

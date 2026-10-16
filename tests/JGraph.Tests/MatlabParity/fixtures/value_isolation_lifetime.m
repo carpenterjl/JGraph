@@ -29,7 +29,7 @@ run_case('a111_save_handle_load_is_new', @a111_save_handle_load_is_new);
 run_case('a111_save_handle_aliases_one_identity', @a111_save_handle_aliases_one_identity);
 run_case('a111_save_value_object', @a111_save_value_object);
 run_case('a112_matfile_read_alias', @a112_matfile_read_alias);
-run_case('a146_matfile_indexed_write', @a146_matfile_indexed_write, 'div=ADR0167');
+run_case('a146_matfile_indexed_write', @a146_matfile_indexed_write);
 run_case('g_save_append', @g_save_append);
 run_case('a113_save_captured_handle', @a113_save_captured_handle);
 run_case('g_save_complex_alias', @g_save_complex_alias);
@@ -49,8 +49,8 @@ run_case('a105_timer_callback_order', @a105_timer_callback_order);
 run_case('a105_timer_error_fcn', @a105_timer_error_fcn);
 
 function run_case(name, fn, rule)
-% The rule is exact unless a case names its accepted divergence: a146 (this build writes version
-% 5 MAT-files only, so save -v7.3 is refused).
+% The rule is exact unless a case names its accepted divergence (a146's, save -v7.3 refused, closed
+% by ADR 0235).
 if nargin < 3
     rule = 'exact';
 end

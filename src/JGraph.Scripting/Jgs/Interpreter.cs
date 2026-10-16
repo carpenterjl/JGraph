@@ -2129,7 +2129,9 @@ internal sealed partial class Interpreter
     /// </summary>
     private static string EchoDisplay(JgsValue value)
     {
-        if (value.Type != JgsType.Array)
+        // A datetime or duration echoes through its own format: the budgeted run below reads its
+        // elements without their tag and wrote a duration's milliseconds (open item 134).
+        if (value.Type != JgsType.Array || (value.IsTime && JgsRunningDialect.ThreadIsMatlab))
         {
             return value.Display();
         }
@@ -9784,6 +9786,9 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue MemberOf(JgsValue target, string field, MemberExpr member, bool autoCall, ListUse use = ListUse.Value)
     {
+        // T.(2) names the second variable; a number names nothing else (open item 130).
+        field = target.Type == JgsType.Table ? TableVariableAt(target.AsTable, field, member, writing: false) : RefuseNumberedField(field, member);
+
         // A table's dot reads a variable's column (M43): numeric columns come back as column
         // vectors, text columns as cells so T.Code{2} braces in.
         if (target.Type == JgsType.Table)
@@ -9972,12 +9977,87 @@ internal sealed partial class Interpreter
                     "A table variable name must be a string scalar or a character vector.");
             }
 
+            if (Dialect.IsMatlab)
+            {
+                // A string scalar names a field as a char row does; anything else is a table's
+                // variable number, or a subscript a table refuses in its own words, settled where the
+                // dot meets what it is on (open item 130, probe_b22a).
+                if (name.IsStringArray && name.ArrayLength == 1 && name.ElementAt(0).AsString != JgsBuiltins.MissingSentinel)
+                {
+                    return name.ElementAt(0).AsString;
+                }
+
+                return name.Type == JgsType.Number && !name.IsTime
+                    ? NumberedField + "#" + name.AsNumber.ToString("R", System.Globalization.CultureInfo.InvariantCulture)
+                    : name.Type == JgsType.Array && !name.IsStringArray && !name.IsCharMatrix && !name.IsTime && !name.IsCategorical
+                        && Enumerable.Range(0, name.ArrayLength).All(i => name.ElementAt(i).Type == JgsType.Number)
+                        ? NumberedField + "V"
+                        : NumberedField + "S";
+            }
+
             throw new JgsRuntimeException(member.Line, member.Column,
                 $"A dynamic field name must be a string, but got a {name.TypeName}.");
         }
 
         return name.AsString;
     }
+
+    /// <summary>
+    /// What <see cref="FieldName"/> answers for a dynamic name that is not text in the MATLAB dialect:
+    /// this character (which no field name can hold), then <c>#</c> and the number, <c>V</c> for
+    /// numbers that are not one, or <c>S</c> for anything else (open item 130).
+    /// </summary>
+    internal const string NumberedField = "\u0001";
+
+    /// <summary>
+    /// The variable a numbered dot names on <paramref name="table"/> (open item 130, probe_b22a):
+    /// <c>T.(2)</c> is the second variable, and a write one past the last makes <c>Var</c>n; the
+    /// refusals are R2025b's. A field that is a name is handed back as it is.
+    /// </summary>
+    private static string TableVariableAt(Table table, string field, Node at, bool writing)
+    {
+        if (!field.StartsWith(NumberedField, StringComparison.Ordinal))
+        {
+            return field;
+        }
+
+        if (field[1] == 'S')
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:IllegalVarSubscript",
+                "A table variable name must be a string scalar or a character vector.");
+        }
+
+        double index = field[1] == '#' ? double.Parse(field[2..], System.Globalization.CultureInfo.InvariantCulture) : double.NaN;
+        if (!(index >= 1) || index != Math.Floor(index) || double.IsInfinity(index))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:IllegalVarIndex",
+                "A variable index must be a real positive integer.");
+        }
+
+        int width = table.ColumnCount;
+        if (index <= width)
+        {
+            return table.ColumnNames[(int)index - 1];
+        }
+
+        if (!writing)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:VarIndexOutOfRange",
+                "Variable index exceeds table dimensions.");
+        }
+
+        return index == width + 1
+            ? "Var" + ((int)index).ToString(System.Globalization.CultureInfo.InvariantCulture)
+            : throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:DiscontiguousVars",
+                "Cannot create a table variable with a discontiguous index.");
+    }
+
+    /// <summary>A numbered dot on anything but a table: R2025b's refusal of a field name that is not text (open item 130).</summary>
+    private static string RefuseNumberedField(string field, Node at) =>
+        field.StartsWith(NumberedField, StringComparison.Ordinal)
+            ? throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mustBeFieldName",
+                "Argument to dynamic structure reference must evaluate to a valid field name.")
+            : field;
 
     private static Expr Single(IReadOnlyList<Expr> subscripts, Node at, string what)
     {
@@ -10056,7 +10136,7 @@ internal sealed partial class Interpreter
             && LookUp(tableTarget.Name, env, out JgsValue heldTable) && heldTable.Type == JgsType.Table)
         {
             // T.Variables = v writes every variable at once (open item 128).
-            string tableField = FieldName(member, env);
+            string tableField = TableVariableAt(heldTable.AsTable, FieldName(member, env), member, writing: true); // T.(2) = v (open item 130)
             Table rewritten = Dialect.IsMatlab && TableDimensionDot(heldTable.AsTable, tableField) == 1
                 ? WriteTableVariablesWhole(heldTable.AsTable, value, member, env)
                 : SetTableMember(heldTable.AsTable, tableField, value, whole: true, member);
@@ -10098,7 +10178,7 @@ internal sealed partial class Interpreter
         }
 
         JgsValue container = ResolveStructForWrite(member.Target, env, out JgsStructArray? owner);
-        string field = FieldName(member, env);
+        string field = RefuseNumberedField(FieldName(member, env), member);
         Dictionary<string, JgsValue> fields = container.WritableStruct(); // M7: the write gate
         fields.TryGetValue(field, out JgsValue? replaced);
         fields[field] = value;

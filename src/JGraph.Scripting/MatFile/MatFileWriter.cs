@@ -14,10 +14,11 @@ namespace JGraph.Scripting.MatFile;
 /// </summary>
 /// <remarks>
 /// <para>
-/// Version 5 is the only format written, and always will be: v7.3 is HDF5, and a hand-rolled writer
-/// for it would risk producing files MATLAB silently mis-reads. Types v5 has no room for — string
-/// arrays, datetimes, maps — are refused by name rather than flattened into numbers, which is the
-/// failure this wave found and fixed.
+/// This writes version 5; version 7.3 is <see cref="MatV73Writer"/>'s, for MATLAB code only (ADR
+/// 0235, lifting ADR 0065's refusal once R2025b had loaded its files). Types this writer has no
+/// element for — maps, .NET values — are refused by name rather than flattened into numbers; a
+/// string array, a datetime and a duration are JGraph's own object elements, written in MATLAB code
+/// (ADR 0235) and refused in JGS.
 /// </para>
 /// <para>
 /// An instance of a user class and a function handle are written too (V6, ADR 0167, appendix A
@@ -113,19 +114,28 @@ internal static class MatFileWriter
             return $"a {value.AsExternal.ClassName}, a .NET value, which a MAT-file cannot hold";
         }
 
-        if (value.IsStringArray)
+        // In the MATLAB dialect a string array, a datetime and a duration are written anywhere as the
+        // object elements a table's have been since open item 128 (open item 131: R2025b saves them
+        // bare); the JGS dialect keeps refusing them.
+        bool ownElements = JgsRunningDialect.ThreadIsMatlab;
+        if (value.IsStringArray && !ownElements)
         {
             return "a string array, which only version 7.3 MAT-files can hold — convert it with cellstr or char";
         }
 
-        if (value.IsDatetime)
+        if (value.IsDatetime && !ownElements)
         {
             return "a datetime, which a version 5 MAT-file cannot hold — convert it with datenum or string";
         }
 
-        if (value.IsDuration)
+        if (value.IsDuration && !ownElements)
         {
             return "a duration, which a version 5 MAT-file cannot hold — convert it with seconds or string";
+        }
+
+        if (value.IsStringArray || value.IsDatetime || value.IsDuration)
+        {
+            return null;
         }
 
         // An instance of a user class is written as its properties, so it is refused only for what
@@ -212,6 +222,33 @@ internal static class MatFileWriter
         if (value.IsDatetime || value.IsDuration)
         {
             WriteTime(session, w, name, value);
+            w.Flush();
+            return buffer.ToArray();
+        }
+
+        // A calendarDuration was written as the struct it is kept in and came back a struct (open
+        // item 131); in the MATLAB dialect it is an object element of its class, read back as itself.
+        if (JgsBuiltins.IsCalendarDuration(value) && JgsRunningDialect.ThreadIsMatlab)
+        {
+            WriteFlags(w, MxObject);
+            WriteDimensions(w, [1, 1]);
+            WriteName(w, name);
+            WriteDataElement(w, MiInt8, Encoding.ASCII.GetBytes("calendarDuration"));
+            string[] names = ["components", "format"];
+            WriteFieldNames(w, names);
+
+            // The components are the struct the value is kept in, written as one.
+            using (var nested = new MemoryStream())
+            using (var inner = new BinaryWriter(nested))
+            {
+                WriteStruct(session, inner, string.Empty, value);
+                inner.Flush();
+                w.Write(MiMatrix);
+                w.Write((int)nested.Length);
+                w.Write(nested.ToArray());
+            }
+
+            WriteNested(session, w, JgsValue.Str(value.TimeTag!.Format));
             w.Flush();
             return buffer.ToArray();
         }

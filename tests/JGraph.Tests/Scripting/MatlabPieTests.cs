@@ -126,7 +126,7 @@ public class MatlabPieTests : IDisposable
             disp(get(ax, 'CLim'));
             """);
 
-        Assert.Equal(new[] { "off", "[-1.2, 1.2]", "[-1.2, 1.2]", "[1, 3]" }, _output.NormalLines);
+        Assert.Equal(new[] { "    off", "[-1.2, 1.2]", "[-1.2, 1.2]", "[1, 3]" }, _output.NormalLines);
     }
 
     [Fact]

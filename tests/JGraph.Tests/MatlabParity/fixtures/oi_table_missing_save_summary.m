@@ -4,9 +4,10 @@
 % warning, table('Size', ...) with its defaults and refusals, T.Variables read and written, saving and
 % loading a table and whos('-file') with R2025b's byte rules, ismissing, anymissing, fillmissing,
 % rmmissing and standardizeMissing over a table, and summary's struct. Lines marked div=ADR0234 are
-% this build's display of a table with variables and of summary's statistics, a duration's text,
-% whos's byte counts for objects, saving to -v7.3 and a bare datetime, logical and complex sparse, a
-% number through a dot, and the probe printer's missing strings (ADR 0156).
+% this build's display of a table with variables and of summary's statistics, whos's byte counts for
+% objects, saving a table to -v7.3, logical and complex sparse, and the probe printer's missing
+% strings (ADR 0156); ADR 0235 made a duration's text, a bare datetime saved and a number through a
+% dot exact.
 T = table([1; NaN; 3], categorical({'a'; ''; 'a'}), {'x'; ''; 'z'}, ["p"; missing; "r"], [true; false; true], ...
 'VariableNames', {'n', 'kind', 'name', 'str', 'flag'});
 u9b_chk('vt_class', @() class(vartype('numeric'))); u9b_chk('vt_isstruct', @() isstruct(vartype('numeric'))); u9b_chk('vt_isobject', @() isobject(vartype('numeric')));
@@ -32,7 +33,7 @@ u9b_chk('sl_whos_size', @() slwhos(T, 'size')); u9b_chk('sl_whos_class', @() slw
 u9b_chk('sl_whos_two', @() slwhos2(T)); u9b_chkdiv('sl_whos_disp', @() oi_try( @() slwhosdisp(T)), 'ADR0234'); u9b_chk('sl_cat_alone', @() slcat()); u9b_chk('sl_whos_cat', @() slwhoscat());
 u9b_chk('sl_whos_num', @() slwhosnum()); u9b_chk('sl_whos_struct', @() slwhosstruct()); u9b_chk('sl_whos_cell', @() slwhoscell()); u9b_chk('sl_whos_bytes_num', @() slwhosbytes());
 u9b_chk('sl_whos_pattern', @() slwhospat()); u9b_chk('sl_whos_missing', @() msgof(@() whos('-file', 'no_such_file_128.mat')));
-u9b_chkdiv('sl_whos_v73', @() oi_try( @() msgof(@() slv73(T))), 'ADR0234'); u9b_chkdiv('sl_dates', @() oi_try( @() msgof(@() sldates())), 'ADR0234');
+u9b_chkdiv('sl_whos_v73', @() oi_try( @() msgof(@() slv73(T))), 'ADR0234'); u9b_chk('sl_dates', @() msgof(@() sldates()));
 u9b_chk('im_table', @() ismissing(T)); u9b_chk('im_size', @() size(ismissing(T))); u9b_chk('im_two_col', @() ismissing(table([1 NaN; 2 3])));
 u9b_chk('im_indicator', @() ismissing(table([1; -99; 3]), -99)); u9b_chk('im_indicator_cell', @() msgof(@() ismissing(T, {''})));
 u9b_chk('im_int', @() ismissing(table(int8([1; 2])))); u9b_chk('im_char_var', @() ismissing(table(['ab'; '  '])));
@@ -185,11 +186,11 @@ u9b_chk('props_table', @() properties(T));
 u9b_chk('props_rownames', @() properties(table([1; 2], 'RowNames', {'a', 'b'})));
 u9b_chk('fieldnames_table', @() fieldnames(T));
 u9b_chk('prealloc_char_warn', @() prewarn());
-u9b_chkdiv('dot_number', @() oi_try( @() T.(2)), 'ADR0234');
-u9b_chkdiv('dot_number_write', @() oi_try( @() dotnumw(T)), 'ADR0234');
+u9b_chk('dot_number', @() T.(2));
+u9b_chk('dot_number_write', @() dotnumw(T));
 u9b_chk('dot_row', @() rowdot());
 u9b_chk('su_dt', @() sudeep(summary(table(datetime(2020, 1, [1; 2; 3]))).Var1));
-u9b_chkdiv('su_dur', @() oi_try( @() sudeep(summary(table(seconds([1; NaN; 3]))).Var1)), 'ADR0234');
+u9b_chk('su_dur', @() sudeep(summary(table(seconds([1; NaN; 3]))).Var1));
 u9b_chk('su_char', @() sudeep(summary(table(['ab'; 'cd'])).Var1));
 u9b_chk('su_cell', @() sudeep(summary(table({1; 'a'})).Var1));
 u9b_chk('su_struct', @() msgof(@() sudeep(summary(table(struct('a', {1; 2}))).Var1)));

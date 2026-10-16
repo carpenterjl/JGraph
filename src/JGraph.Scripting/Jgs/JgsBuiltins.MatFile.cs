@@ -330,20 +330,30 @@ internal static partial class JgsBuiltins
 
         RequireMatFileWritable(matfile, field, line, col);
         (string source, _) = MatFileSettings(matfile);
-        if (MatFileWriter.WhyNotWritable(value) is string why)
+
+        // A version 7.3 file is written as one in the MATLAB dialect (open item 131, ADR 0235).
+        bool hdf5 = File.Exists(source) && Hdf5File.Looks(File.ReadAllBytes(source));
+        if ((hdf5 && JgsRunningDialect.ThreadIsMatlab ? MatV73Writer.WhyNotWritable(value) : MatFileWriter.WhyNotWritable(value)) is string why)
         {
             throw new JgsRuntimeException(line, col, $"matfile: '{field}' is {why}.");
         }
 
         try
         {
-            if (File.Exists(source) && Hdf5File.Looks(File.ReadAllBytes(source)))
+            if (hdf5 && !JgsRunningDialect.ThreadIsMatlab)
             {
                 throw new JgsRuntimeException(line, col,
                     $"'{source}' is a version 7.3 MAT-file, which this build reads but does not write.");
             }
 
-            MatFileWriter.Append(source, [(field, value)]);
+            if (hdf5)
+            {
+                MatV73Writer.Append(source, [(field, value)]);
+            }
+            else
+            {
+                MatFileWriter.Append(source, [(field, value)]);
+            }
         }
         catch (Exception ex) when (
             ex is IOException or UnauthorizedAccessException or NotSupportedException or InvalidDataException)

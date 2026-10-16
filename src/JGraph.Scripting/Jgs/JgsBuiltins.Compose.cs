@@ -156,6 +156,13 @@ internal static partial class JgsBuiltins
             return ([data.IsCharMatrix ? JgsValue.Str(data.CharMatrixText()) : data], 1, 1);
         }
 
+        // A datetime or duration composes as its text (open item 134).
+        if (data.IsTime && JgsRunningDialect.ThreadIsMatlab && !IsCalendarDuration(data))
+        {
+            JgsValue[] texts = [.. Enumerable.Range(0, data.ArrayLength).Select(i => JgsValue.Str(TimeText(data, i)))];
+            return (texts, data.Rows, data.Cols);
+        }
+
         if (data.Type == JgsType.Array)
         {
             return (data.BoxedElements(), data.Rows, data.Cols);

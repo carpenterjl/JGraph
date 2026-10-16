@@ -164,7 +164,7 @@ public class MatlabCompositionTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "[3, 3]", "[3, 3]", "[1, 3]", "[1, 3]", "scatter", "histogram", "scatter", "off", "0" },
+            new[] { "[3, 3]", "[3, 3]", "[1, 3]", "[1, 3]", "scatter", "histogram", "scatter", "    off", "0" },
             _output.NormalLines);
     }
 

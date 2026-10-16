@@ -643,6 +643,12 @@ internal static partial class JgsBuiltins
                 $"num2str takes numeric, logical or char input, not a {subject.AsExternal.ClassName}."); // ADR 0174
         }
 
+        // A datetime or duration is not a number to R2025b (open item 134, probe_b22a).
+        if (subject.IsTime && JgsRunningDialect.ThreadIsMatlab)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:num2str:nonNumericInput", "Input to num2str must be numeric.");
+        }
+
         if (subject.Type == JgsType.String)
         {
             return subject; // MATLAB hands char straight back rather than describing it

@@ -12,8 +12,8 @@ namespace JGraph.Scripting.MatFile;
 /// way round from MATLAB.
 /// </summary>
 /// <remarks>
-/// Reading only. Version 5 stays the only format JGraph writes (ADR 0065): a hand-rolled HDF5
-/// writer would produce files MATLAB might silently mis-read, and nothing is gained by the risk.
+/// Reading only; <see cref="MatV73Writer"/> writes the same layout for MATLAB code (ADR 0235), and
+/// this reads what it writes and what R2025b writes alike.
 /// </remarks>
 internal static class MatV73Reader
 {
@@ -78,11 +78,16 @@ internal static class MatV73Reader
 
         if (node.Attributes.TryGetValue("MATLAB_empty", out Hdf5Attribute? empty) && empty.AsNumber() != 0)
         {
-            return matlabClass == "char" ? JgsValue.Str(string.Empty) : JgsValue.Array([]);
+            return ReadEmpty(node, matlabClass);
         }
 
         if (node.IsGroup)
         {
+            if (node.Attributes.ContainsKey("MATLAB_sparse"))
+            {
+                return ReadSparse(node, name);
+            }
+
             return matlabClass == "struct"
                 ? ReadStruct(node, name)
                 : throw new InvalidDataException(
@@ -101,6 +106,79 @@ internal static class MatV73Reader
             _ => throw new InvalidDataException(
                 $"MAT-file variable '{name}' holds a {matlabClass}, which cannot be loaded."),
         };
+    }
+
+    /// <summary>
+    /// An empty value: its data is the list of its dimensions (R2025b, probe_h5b: zeros(0, 3) is
+    /// [0; 3]), and its class says what it is an empty of (open item 131).
+    /// </summary>
+    private static JgsValue ReadEmpty(Hdf5Object node, string matlabClass)
+    {
+        int[] dims = node.IsGroup || node.Datatype.Class == Hdf5Datatype.ClassReference
+            ? [0, 0]
+            : [.. Numbers(node).Select(static d => (int)d)];
+        if (dims.Length < 2)
+        {
+            dims = [0, 0];
+        }
+
+        JgsValue Shaped(JgsValue value)
+        {
+            if (dims.Length > 2)
+            {
+                value.ReshapeDims(dims);
+            }
+            else
+            {
+                value.Reshape(dims[0], dims[1]);
+            }
+
+            return value;
+        }
+
+        switch (matlabClass)
+        {
+            case "char":
+                return JgsValue.Str(string.Empty);
+            case "cell":
+                return Shaped(JgsValue.Cell([]));
+            case "struct":
+            {
+                string[] fields = node.Attributes.TryGetValue("MATLAB_fields", out Hdf5Attribute? declared) ? [.. declared.Texts()] : [];
+                return JgsValue.StructArray(new JgsStructArray([], fields), dims[0], dims[1]);
+            }
+
+            case "double" or "single" or "int8" or "uint8" or "int16" or "uint16" or "int32" or "uint32" or "int64" or "uint64":
+            {
+                JgsValue value = Shaped(JgsValue.Array([]));
+                value.SetNumericClass(NumericClassOf(matlabClass));
+                return value;
+            }
+
+            default:
+                return JgsValue.Array([]);
+        }
+    }
+
+    /// <summary>A sparse matrix: its column starts, row indices and values, and its row count in <c>MATLAB_sparse</c> (open item 131).</summary>
+    private static JgsValue ReadSparse(Hdf5Object node, string name)
+    {
+        int rows = (int)node.Attributes["MATLAB_sparse"].AsNumber();
+        Hdf5Object jc = node.Child("jc") ?? throw new InvalidDataException($"MAT-file variable '{name}' holds a sparse matrix with no columns.");
+        double[] starts = Numbers(jc);
+        double[] rowIndices = node.Child("ir") is { } ir ? Numbers(ir) : [];
+        double[] values = node.Child("data") is { } data ? Numbers(data) : [];
+        int cols = starts.Length - 1;
+        var triplets = new List<(int Row, int Col, double Value)>(values.Length);
+        for (int c = 0; c < cols; c++)
+        {
+            for (int k = (int)starts[c]; k < (int)starts[c + 1] && k < values.Length; k++)
+            {
+                triplets.Add(((int)rowIndices[k], c, values[k]));
+            }
+        }
+
+        return JgsValue.Sparse(JGraph.Numerics.Sparse.CscMatrix.FromTriplets(rows, Math.Max(cols, 0), triplets));
     }
 
     /// <summary>
@@ -153,7 +231,9 @@ internal static class MatV73Reader
 
     private static JgsValue ReadNumeric(Hdf5Object node, string matlabClass)
     {
-        if (node.Attributes.TryGetValue("MATLAB_complex", out Hdf5Attribute? complex) && complex.AsNumber() != 0)
+        // R2025b marks a complex variable by its compound type alone (probe_h5: no MATLAB_complex).
+        if ((node.Attributes.TryGetValue("MATLAB_complex", out Hdf5Attribute? complex) && complex.AsNumber() != 0)
+            || node.Datatype.Class == Hdf5Datatype.ClassCompound)
         {
             return ReadComplex(node);
         }
@@ -247,9 +327,8 @@ internal static class MatV73Reader
             lines[r] = JgsValue.Str(new string(row));
         }
 
-        JgsValue matrix = JgsValue.Array(lines);
-        matrix.Reshape(rows, 1);
-        return matrix;
+        // A char matrix says so (M105), or it is a column of texts and equal to nothing (open item 131).
+        return JgsValue.CharMatrix([.. lines.Select(static l => l.AsString)]);
     }
 
     private static JgsValue ReadCell(Hdf5Object node)
@@ -344,7 +423,10 @@ internal static class MatV73Reader
         int[]? shape = null;
         foreach ((string _, Hdf5Object child) in children)
         {
-            if (child.IsGroup || child.Datatype.Class != Hdf5Datatype.ClassReference || child.ElementCount <= 1)
+            // A struct array's fields carry no class of their own; a scalar struct's cell field says
+            // 'cell' (R2025b, probe_h5), which settles the ambiguity ADR 0065 recorded (open item 131).
+            if (child.IsGroup || child.Datatype.Class != Hdf5Datatype.ClassReference || child.ElementCount <= 1
+                || child.Attributes.ContainsKey("MATLAB_class"))
             {
                 return null;
             }

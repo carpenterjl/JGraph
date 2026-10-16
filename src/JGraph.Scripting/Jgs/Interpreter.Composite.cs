@@ -567,6 +567,7 @@ internal sealed partial class Interpreter
         JgsEnvironment env)
     {
         string field = FieldName(level, env);
+        field = holder.Type == JgsType.Table ? TableVariableAt(holder.AsTable, field, level, writing: true) : RefuseNumberedField(field, level); // open item 130
         if (holder.Type == JgsType.Object)
         {
             return WriteThroughObjectProperty(holder, field, level, target, assign, rhs, env);

@@ -36,6 +36,14 @@ internal sealed partial class Interpreter
     /// </summary>
     internal bool AnyNet { get; private set; }
 
+    /// <summary>
+    /// Whether a call must look among its arguments for a method of an external value: .NET has been
+    /// touched, or this thread has made an OnOffSwitchState, which a graphics on/off property answers
+    /// where no interpreter is in hand (open item 132). Kept apart from <see cref="AnyNet"/>, which
+    /// also says whether .NET is loaded (dotnetenv).
+    /// </summary>
+    internal bool AnyExternalMethods => AnyNet || OnOffSwitchStateValue.MintedOnThread;
+
     /// <summary>Records that .NET values are about, from a built-in that made one.</summary>
     internal void NoteNet() => AnyNet = true;
 

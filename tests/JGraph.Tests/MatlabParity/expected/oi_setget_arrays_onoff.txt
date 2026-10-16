@@ -173,11 +173,11 @@ CHK|oo_struct|char[1 8]'no error' WARN MATLAB:structOnObject|exact
 CHK|oo_num2str|char[1 8]'no error'|exact
 CHK|oo_sprintf|char[1 8]'no error'|exact
 CHK|oo_sprintf_d|char[1 8]'no error'|exact
-CHK|oo_ax_visible|char[1 28]'matlab.lang.OnOffSwitchState'|div=ADR0234|diverges|char[1 4]'char'
-CHK|oo_ax_visible_eq|logical[1 1] 1|div=ADR0234|diverges|logical[1 2] [1 1]
-CHK|oo_ax_isenum|logical[1 1] 1|div=ADR0234|diverges|logical[1 1] 0
+CHK|oo_ax_visible|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|oo_ax_visible_eq|logical[1 1] 1|exact
+CHK|oo_ax_isenum|logical[1 1] 1|exact
 CHK|oo_ax_strcmp|logical[1 1] 1|exact
-CHK|oo_ax_set|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff on}|div=ADR0234|diverges|cell[1 2]{char[1 4]'char';onoff on}
+CHK|oo_ax_set|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff on}|exact
 CHK|oo_isenum_char|logical[1 1] 0|exact
 CHK|oo_isenum_class|logical[1 1] 0|exact
 CHK|oo_enum_char_class|char[1 8]'no error'|exact
@@ -205,9 +205,9 @@ CHK|d_col|char[1 153]'x = \n\n  2×1 <a href="matlab:helpPopup('matlab.lang.OnOf
 CHK|d_empty|char[1 137]'x = \n\n  0×0 empty <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration.\n\n'|exact
 CHK|d_disp_row|char[1 16]'    on     off\n\n'|exact
 CHK|d_enum_list|char[1 80]'\nEnumeration members for class 'matlab.lang.OnOffSwitchState':\n\n    off\n    on\n\n'|exact
-CHK|d_ax_visible|char[1 137]'\nans = \n\n  <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on\n\n'|div=ADR0234|diverges|char[1 9]'ans = on\n'
-CHK|d_in_struct|char[1 107]'\ns = \n\n  <a href="matlab:helpPopup('struct')" style="font-weight:bold">struct</a> with fields:\n\n    v: on\n\n'|div=ADR0234|diverges|char[1 142]'s = struct(v:   <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on)\n'
-CHK|d_in_cell|char[1 100]'\nc =\n\n  1×1 <a href="matlab:helpPopup('cell')" style="font-weight:bold">cell</a> array\n\n    {[on]}\n\n'|div=ADR0234|diverges|char[1 133]'c = {  <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on}\n'
+CHK|d_ax_visible|char[1 137]'\nans = \n\n  <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on\n\n'|div=ADR0234|diverges|char[1 136]'ans = \n\n  <a href="matlab:helpPopup('matlab.lang.OnOffSwitchState')" style="font-weight:bold">OnOffSwitchState</a> enumeration\n\n    on\n\n'
+CHK|d_in_struct|char[1 107]'\ns = \n\n  <a href="matlab:helpPopup('struct')" style="font-weight:bold">struct</a> with fields:\n\n    v: on\n\n'|div=ADR0234|diverges|char[1 18]'s = struct(v: on)\n'
+CHK|d_in_cell|char[1 100]'\nc =\n\n  1×1 <a href="matlab:helpPopup('cell')" style="font-weight:bold">cell</a> array\n\n    {[on]}\n\n'|div=ADR0234|diverges|char[1 9]'c = {on}\n'
 CHK|a_mixed_char|char[1 4]'char'|exact
 CHK|a_mixed_char_v|char[1 5]'onoff'|exact
 CHK|a_mixed_logical|char[1 28]'matlab.lang.OnOffSwitchState'|exact

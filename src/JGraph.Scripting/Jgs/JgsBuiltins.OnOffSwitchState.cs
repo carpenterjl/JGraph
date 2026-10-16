@@ -224,14 +224,30 @@ internal static partial class JgsBuiltins
                 return [mask];
             }
 
-            case "sprintf":
+            case "sprintf" or "fprintf":
             {
-                // A member printed by %s is its name, by a number conversion its truth (probe_129b).
-                bool text = args.Count > 0 && args[0].Type == JgsType.String && FirstConversionTarget(args[0].AsString) == "text";
-                JgsValue[] given = [.. args.Select(a => OnOff(a) is { } m
-                    ? text && m.States.Length == 1 ? JgsValue.Str(m.Names[0]) : m.Logical()
-                    : a)];
-                return CallBuiltinNamed(interpreter, name, given, Math.Max(wanted, 1), line, col);
+                // A member printed by %s is its name, by a number conversion its truth (probe_129b),
+                // each by the conversion it meets: sprintf('%d %s', n, h.Visible) prints the name
+                // (open item 132: a GUIDE file's log).
+                int formatAt = name == "fprintf" && args.Count > 1 && args[0].Type is JgsType.Number && args[1].Type == JgsType.String ? 1 : 0;
+                bool[] texts = args.Count > formatAt && args[formatAt].Type == JgsType.String ? ConversionsAreText(args[formatAt].AsString) : [];
+                int consumed = 0;
+                var given = new JgsValue[args.Count];
+                for (int i = 0; i < args.Count; i++)
+                {
+                    JgsValue a = args[i];
+                    if (i <= formatAt)
+                    {
+                        given[i] = a;
+                        continue;
+                    }
+
+                    bool text = texts.Length > 0 && texts[consumed % texts.Length];
+                    given[i] = OnOff(a) is { } m ? text && m.States.Length == 1 ? JgsValue.Str(m.Names[0]) : m.Logical() : a;
+                    consumed += OnOff(a) is { } counted ? counted.States.Length : a.Type == JgsType.String ? 1 : Math.Max(1, a.Type == JgsType.Array ? a.ArrayLength : 1);
+                }
+
+                return CallBuiltinNamed(interpreter, name, given, name == "fprintf" ? wanted : Math.Max(wanted, 1), line, col);
             }
         }
 

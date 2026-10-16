@@ -189,8 +189,9 @@ public class MatlabPreprocessingTests : IDisposable
     [Fact]
     public void TextIsFilledFromTextAndNeverInvented()
     {
+        // Only <missing> is missing in a string array; "" is a value (R2025b, open item 135).
         Assert.Equal("a a c\n", RunAndRead("""
-            s = fillmissing(["a" "" "c"], 'previous');
+            s = fillmissing(["a" missing "c"], 'previous');
             fprintf('%s %s %s\n', s(1), s(2), s(3));
             """));
     }
@@ -198,7 +199,7 @@ public class MatlabPreprocessingTests : IDisposable
     [Fact]
     public void AMethodThatWouldHaveToInventAStringSaysSo()
     {
-        Assert.Contains("invent a string", Error("fillmissing([\"a\" \"\" \"c\"], 'linear');"));
+        Assert.Contains("'linear' fill method not supported for string arrays", Error("fillmissing([\"a\" \"\" \"c\"], 'linear');"));
     }
 
     [Fact]

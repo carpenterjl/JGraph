@@ -704,7 +704,7 @@ internal static partial class JgsGraphicsProperties
     {
         if (JgsCategoricalCharts.TryRead(entry, name, line, col, dot, out JgsValue categorical))
         {
-            return categorical; // a categorical ruler's readings (open item 120)
+            return AsSwitchState(entry.Target, name, categorical); // a categorical ruler's readings (open item 120)
         }
 
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
@@ -723,7 +723,41 @@ internal static partial class JgsGraphicsProperties
             throw Unknown(entry.Target, name, line, col, reading: true, dot: dot);
         }
 
-        return property.Read(entry);
+        return AsSwitchState(entry.Target, property.Name, property.Read(entry));
+    }
+
+    /// <summary>
+    /// The on/off properties R2025b answers as <c>matlab.lang.OnOffSwitchState</c> (open item 132,
+    /// probe_b22c over forty kinds of graphics object and probe_b22e over the app components): every
+    /// property JGraph reads as 'on' or 'off' but HandleVisibility (which can be 'callback') and a
+    /// uicontrol's or uitable's Enable (which can be 'inactive'), both char in R2025b.
+    /// </summary>
+    private static readonly HashSet<string> SwitchProperties = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "AffectAutoLimits", "AlignVertexCenters", "AllowEmpty", "AutoResizeChildren", "AutoScale", "AutoUpdate",
+        "BeingDeleted", "Box", "Checked", "Clipping", "ColorbarVisible", "ColumnRearrangeable", "DockControls",
+        "Editable", "Editing", "Enable", "Fill", "FitBoxToText", "FontSmoothing", "GraphicsSmoothing", "HitTest",
+        "Horizontal", "IntegerHandle", "Interruptible", "InvertHardcopy", "LowerLimitInclusive", "MinorTick",
+        "Multiselect", "NumberTitle", "RGrid", "RMinorGrid", "RMinorTick", "Resize", "RoundFractionalValues",
+        "RowStriping", "Scrollable", "Selected", "SelectionHighlight", "Separator", "ShowArrowHead",
+        "ShowBaseLine", "ShowEmptyBins", "ShowHiddenHandles", "ShowOthers", "ShowText", "SnapToDataVertex",
+        "State", "ThetaGrid", "ThetaMinorGrid", "ThetaMinorTick", "UpperLimitInclusive", "Visible", "WordWrap",
+        "XGrid", "XMinorGrid", "XMinorTick", "YGrid", "YMinorGrid", "YMinorTick", "ZGrid", "ZMinorGrid", "ZMinorTick",
+    };
+
+    /// <summary>A property's reading as the MATLAB dialect answers it: an on/off word becomes the OnOffSwitchState member it names (open item 132).</summary>
+    internal static JgsValue AsSwitchState(GraphObject target, string name, JgsValue value)
+    {
+        if (!JgsRunningDialect.ThreadIsMatlab || value.Type != JgsType.String || value.IsStringArray
+            || value.AsString is not ("on" or "off"))
+        {
+            return value;
+        }
+
+        bool switches = SwitchProperties.Contains(name)
+            ? !(name.Equals("Enable", StringComparison.OrdinalIgnoreCase) && target is UiControlModel or UiTableModel)
+            : name.Equals("Value", StringComparison.OrdinalIgnoreCase) && target is AxesToolbarButtonModel;
+        return switches ? OnOffSwitchStateValue.Of(value.AsString == "on") : value;
     }
 
     /// <summary>Writes a property; <paramref name="dot"/> as <see cref="Get"/>'s.</summary>

@@ -630,6 +630,19 @@ internal sealed class MatFileReader
             throw new InvalidDataException($"MAT-file variable '{name}' holds a categorical this reader does not know.");
         }
 
+        // What JGraph's writer makes of a calendarDuration (open item 131): its components and format.
+        if (className == "calendarDuration")
+        {
+            Dictionary<string, JgsValue> saved = ReadFields(ref at, end, ReadFieldNames(ref at));
+            if (!saved.TryGetValue("components", out JgsValue? components) || components.Type != JgsType.Struct)
+            {
+                throw new InvalidDataException($"MAT-file variable '{name}' holds a calendarDuration this reader does not know.");
+            }
+
+            string format = saved.TryGetValue("format", out JgsValue? f) && f.Type == JgsType.String ? f.AsString : "ymdt";
+            return components.MarkTime(new JgsTimeTag(JgsTimeKind.CalendarDuration, format));
+        }
+
         // What JGraph's writer makes of a table and of the strings and times inside one (open item 128).
         if (className is "table" or "timetable" or "string" or "datetime" or "duration")
         {

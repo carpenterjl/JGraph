@@ -55,7 +55,7 @@ public class MatlabBarAndStairsTests : IDisposable
             disp(get(h, 'Horizontal'));
             """);
 
-        Assert.Equal(new[] { "bar", "0.8", "0", "1", "-", "off" }, _output.NormalLines);
+        Assert.Equal(new[] { "bar", "0.8", "0", "1", "-", "    off" }, _output.NormalLines);
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public class MatlabBarAndStairsTests : IDisposable
             disp(xl(2) >= 3);
             """);
 
-        Assert.Equal(new[] { "on", "bar", "true" }, _output.NormalLines);
+        Assert.Equal(new[] { "    on", "bar", "true" }, _output.NormalLines);
     }
 
     [Fact]

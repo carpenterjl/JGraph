@@ -349,7 +349,7 @@ internal static partial class JgsBuiltins
             JgsValue current = JgsGraphicsProperties.Get(entry, property, line, col);
             return args.Count == 3
                 ? WaitedValueReached(current, args[2])
-                : !JgsStdlib.DeepEquals(current, watched!, nanEqual: true);
+                : !JgsStdlib.DeepEquals(PlainSwitch(current), PlainSwitch(watched!), nanEqual: true);
         }
 
         if (!Done())
@@ -368,8 +368,17 @@ internal static partial class JgsBuiltins
     /// Whether a property has reached the value a <c>waitfor</c> names. Numbers compare as numbers
     /// whatever their class — a <c>Value</c> of 0 is reached by <c>false</c> — and text as text.
     /// </summary>
+    /// <summary>
+    /// An on/off property answers an OnOffSwitchState in the MATLAB dialect (open item 132), a fresh
+    /// one at every read: it is compared by the member's name, so it has reached 'off' when it is off
+    /// and has changed only when the member has.
+    /// </summary>
+    private static JgsValue PlainSwitch(JgsValue value) =>
+        value.AsExternalOrNull() is OnOffSwitchStateValue { States.Length: 1 } state ? JgsValue.Str(state.Summary()!) : value;
+
     private static bool WaitedValueReached(JgsValue current, JgsValue wanted)
     {
+        (current, wanted) = (PlainSwitch(current), PlainSwitch(wanted));
         if (JgsStdlib.DeepEquals(current, wanted, nanEqual: true))
         {
             return true;

@@ -86,7 +86,13 @@ internal static partial class JgsBuiltins
         Define("normalize", PreprocessNormalize);
         Define("rescale", PreprocessRescale);
         DefineBoth("discretize", (args, wanted, line, col) => Discretized(args, wanted, dialect, line, col));
-        DefineBoth("fillmissing", FilledMissing);
+        // fillmissing takes its string arguments as written, so a string array's constant can be told
+        // from a char one (open item 135); FilledMissing demotes the rest itself.
+        env.Builtins.Register("fillmissing", JgsValue.Function(new BuiltinFunction("fillmissing", (args, line, col) => FilledMissing(args, 1, line, col)[0])
+        {
+            MultiOutput = FilledMissing,
+            KeepsStringArguments = true,
+        }));
         DefineBoth("rmmissing", RemovedMissing);
         DefineBoth("islocalmax", (args, wanted, line, col) => LocalExtrema("islocalmax", args, wanted, true, line, col));
         DefineBoth("islocalmin", (args, wanted, line, col) => LocalExtrema("islocalmin", args, wanted, false, line, col));
@@ -673,6 +679,17 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "fillmissing needs some data.");
         }
 
+        // A string scalar is the char row it stands for, as at any builtin, except where the
+        // difference is the answer: the data, and in the MATLAB dialect a string array's constant.
+        bool constantKept = JgsRunningDialect.ThreadIsMatlab && args.Count >= 3 && IsTextScalar(args[1])
+            && TextOf(args[1]).Equals("constant", StringComparison.OrdinalIgnoreCase);
+        args = [.. args.Select((a, i) => (i == 0 && JgsRunningDialect.ThreadIsMatlab) || (i == 2 && constantKept) || !(a.IsStringArray && a.ArrayLength == 1) ? a : a.ElementAt(0))];
+
+        if (JgsRunningDialect.ThreadIsMatlab && FilledMissingTextMatlab(args, wanted, line, col) is { } filledText)
+        {
+            return filledText;
+        }
+
         if (TextElementsOf(args[0]) is { } texts)
         {
             return FilledMissingText(args, wanted, texts, line, col);
@@ -732,19 +749,22 @@ internal static partial class JgsBuiltins
         int? dim = PrepDim("fillmissing", parsed.Positional, 0, line, col);
         (double[][] slices, int chosen) = PrepSlices(bare, dim);
 
-        var mask = new bool[bare.Values.Length];
-        for (int i = 0; i < mask.Length; i++)
-        {
-            mask[i] = double.IsNaN(bare.Values[i]);
-        }
-
         var done = new double[slices.Length][];
         for (int s = 0; s < slices.Length; s++)
         {
             done[s] = FillSlice(slices[s], method, constant, window, endValues, endConstant);
         }
 
-        return Outputs(wanted, PrepJoin(bare, done, chosen), PrepMask(mask, bare.Dims));
+        // The second output marks what was filled: in R2025b a gap left missing (an end under
+        // 'none', a lone value 'linear' cannot extrapolate from) is not marked (open item 135).
+        (double[] joined, int[] shape) = JgsMatrix.JoinAlong(done, bare.Dims, chosen);
+        var mask = new bool[bare.Values.Length];
+        for (int i = 0; i < mask.Length; i++)
+        {
+            mask[i] = double.IsNaN(bare.Values[i]) && (!JgsRunningDialect.ThreadIsMatlab || !double.IsNaN(joined[i]));
+        }
+
+        return Outputs(wanted, PrepDress(bare, joined, shape), PrepMask(mask, bare.Dims));
     }
 
     /// <summary>The method word and how many leading arguments it and its parameter used up.</summary>
@@ -786,6 +806,11 @@ internal static partial class JgsBuiltins
     private static double[] FillSlice(
         double[] slice, string method, double constant, int window, string endValues, double endConstant)
     {
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            return FillSliceMatlab(slice, method, constant, window, endValues, endConstant);
+        }
+
         var result = (double[])slice.Clone();
         if (method == "constant")
         {
@@ -883,9 +908,85 @@ internal static partial class JgsBuiltins
             },
         };
 
-        // 'extrap' for linear would mean continuing the last slope past the data. MATLAB's default
-        // for the ends is to hold the nearest value, and holding it is the answer a measurement log
-        // wants; the sloped continuation is left out rather than guessed at.
+        // 'extrap' for linear would mean continuing the last slope past the data. The JGS dialect holds
+        // the nearest value, the answer a measurement log wants; R2025b continues the slope, which the
+        // MATLAB dialect does (FillSliceMatlab, open item 135).
+    }
+
+    /// <summary>
+    /// One slice filled as R2025b fills it (open item 135, probe_b22a/b). A gap with present values on
+    /// both sides takes the method's value; one that runs off an end takes what EndValues says, and
+    /// under the default 'extrap' the method's own reach: 'linear' continues the line through the two
+    /// present values nearest that end (no line through one value, so a lone value fills nothing),
+    /// 'nearest' copies the one value there is, 'previous' and 'next' fill only the end they reach,
+    /// and 'constant', 'movmean' and 'movmedian' fill an end as they fill a gap.
+    /// </summary>
+    private static double[] FillSliceMatlab(
+        double[] slice, string method, double constant, int window, string endValues, double endConstant)
+    {
+        var result = (double[])slice.Clone();
+        int first = Array.FindIndex(slice, static v => !double.IsNaN(v));
+        int last = Array.FindLastIndex(slice, static v => !double.IsNaN(v));
+        for (int i = 0; i < result.Length; i++)
+        {
+            if (!double.IsNaN(slice[i]))
+            {
+                continue;
+            }
+
+            int before = PreviousPresent(slice, i);
+            int after = NextPresent(slice, i);
+            bool end = before < 0 || after < 0;
+            if (end && endValues != "extrap")
+            {
+                result[i] = endValues switch
+                {
+                    "constant" => endConstant,
+                    "previous" => before >= 0 ? slice[before] : double.NaN,
+                    "next" => after >= 0 ? slice[after] : double.NaN,
+                    "nearest" => before >= 0 ? slice[before] : after >= 0 ? slice[after] : double.NaN,
+                    _ => double.NaN, // 'none'
+                };
+                continue;
+            }
+
+            result[i] = method switch
+            {
+                "constant" => constant,
+                "movmean" or "movmedian" => MovingFill(slice, i, window, method),
+                "previous" => before >= 0 ? slice[before] : double.NaN,
+                "next" => after >= 0 ? slice[after] : double.NaN,
+                // A tie goes to the value after (open item 128: [1 NaN 3] fills 3).
+                "nearest" => before < 0 ? (after < 0 ? double.NaN : slice[after])
+                    : after < 0 || i - before < after - i ? slice[before] : slice[after],
+                _ => !end ? slice[before] + ((slice[after] - slice[before]) * (i - before) / (double)(after - before))
+                    : before < 0 ? Extrapolated(slice, first, NextPresent(slice, first), i)
+                    : Extrapolated(slice, PreviousPresent(slice, last), last, i),
+            };
+        }
+
+        return result;
+    }
+
+    /// <summary>The line through the present values at <paramref name="a"/> and <paramref name="b"/>, read at <paramref name="at"/>; NaN without two of them.</summary>
+    private static double Extrapolated(double[] slice, int a, int b, int at) =>
+        a < 0 || b < 0 || a == b ? double.NaN : slice[a] + ((slice[b] - slice[a]) * (at - a) / (double)(b - a));
+
+    /// <summary>The mean or median of the present values in the window centred on <paramref name="at"/>; NaN when there are none.</summary>
+    private static double MovingFill(double[] slice, int at, int window, string method)
+    {
+        int behind = window / 2;
+        int ahead = (window - 1) / 2;
+        var seen = new List<double>(window);
+        for (int j = Math.Max(0, at - behind); j <= Math.Min(slice.Length - 1, at + ahead); j++)
+        {
+            if (!double.IsNaN(slice[j]))
+            {
+                seen.Add(slice[j]);
+            }
+        }
+
+        return seen.Count == 0 ? double.NaN : method == "movmean" ? seen.Average() : MedianOf([.. seen]);
     }
 
     private static int PreviousPresent(double[] slice, int from)
@@ -972,6 +1073,128 @@ internal static partial class JgsBuiltins
         return Outputs(wanted, answer, PrepMask(mask, SizeDims(args[0])));
     }
 
+    /// <summary>
+    /// fillmissing over text as R2025b fills it (open item 135, probe_b22a/b/d), or null when the data
+    /// is not text. In a string array only <c>&lt;missing&gt;</c> is missing (<c>""</c> is a value); in a
+    /// cellstr the empty char; a char array has no missing characters at all, so it comes back as it
+    /// went in. The fill runs along a dimension as the numeric one does, EndValues decides the ends,
+    /// a string array's constant is a string (one, or one per slice) and a cellstr's is char, and the
+    /// second output marks only what was filled.
+    /// </summary>
+    private static JgsValue[]? FilledMissingTextMatlab(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        JgsValue data = args[0];
+        bool strings = data.IsStringArray;
+        bool cellstr = data.Type == JgsType.Cell && Array.TrueForAll(data.AsCell, static e => e.Type == JgsType.String && !e.IsStringArray);
+        bool chars = !strings && (data.Type == JgsType.String || data.IsCharMatrix);
+        if (data.Type == JgsType.Cell && !cellstr)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:fillmissing:FirstInputInvalid",
+                "First argument must be numeric, logical, datetime, duration, calendarDuration, string, categorical, char, cellstr, table, or timetable.");
+        }
+
+        if (!strings && !cellstr && !chars)
+        {
+            return null;
+        }
+
+        if (args.Count < 2)
+        {
+            // R2025b has no default method (the numeric default here is JGraph's own); text has no
+            // default the numeric one could stand for.
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        (string method, int consumed) = FillMethod("fillmissing", args, line, col);
+        if (method is "linear" or "movmean" or "movmedian")
+        {
+            string kind = strings ? "string arrays" : chars ? "character arrays" : "cell arrays of character vectors";
+            throw new JgsRuntimeException(line, col, "MATLAB:fillmissing:InterpolationInvalidArray",
+                $"'{method}' fill method not supported for {kind}.");
+        }
+
+        ParsedArgs parsed = FillMissingOptions.Parse(OptionTail(args, consumed), positionalMax: 1, line, col);
+        int[] dims = SizeDims(data);
+        string[] constants = [];
+        if (method == "constant")
+        {
+            JgsValue given = args.Count >= 3 ? args[2] : throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            if (strings && !given.IsStringArray)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:fillmissing:ConstantString", "Fill constant must be a string or a string array.");
+            }
+
+            if (!strings && given.IsStringArray)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:fillmissing:ConstantCellstr",
+                    "Fill constant must be a character row vector or a cell array of character row vectors.");
+            }
+
+            constants = TextElementsOf(given) ?? throw new JgsRuntimeException(line, col, "MATLAB:fillmissing:ConstantCellstr",
+                "Fill constant must be a character row vector or a cell array of character row vectors.");
+        }
+
+        if (chars)
+        {
+            // Nothing in a char array is missing (R2025b: ismissing('a b') is all false).
+            var none = new bool[data.Type == JgsType.String ? data.AsString.Length : dims.Aggregate(1, static (p, d) => p * d)];
+            return Outputs(wanted, data, PrepMask(none, dims));
+        }
+
+        string endValues = parsed.Named("EndValues") is null
+            ? "extrap"
+            : parsed.Word("EndValues", "extrap", "extrap", "none", "nearest", "previous", "next");
+        JgsValue[] elements = strings ? data.BoxedElements() : data.AsCell;
+        string?[] texts = [.. elements.Select(e => strings && e.AsString == MissingSentinel ? null : !strings && e.AsString.Length == 0 ? null : e.AsString)];
+        int dim = PrepDim("fillmissing", parsed.Positional, 0, line, col) ?? JgsMatrix.DefaultDim(dims);
+        double[] positions = [.. Enumerable.Range(0, texts.Length).Select(static i => (double)i)];
+        (double[][] slices, _) = JgsMatrix.SlicesAlong(positions, dims, dim);
+        if (constants.Length > 1 && constants.Length != slices.Length)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:fillmissing:SizeConstant",
+                "Fill constant must be a scalar or a vector with one element per vector being filled.");
+        }
+
+        string?[] filled = (string?[])texts.Clone();
+        for (int s = 0; s < slices.Length; s++)
+        {
+            int[] at = [.. slices[s].Select(static p => (int)p)];
+            bool[] gap = [.. at.Select(i => texts[i] is null)];
+            for (int k = 0; k < at.Length; k++)
+            {
+                if (!gap[k])
+                {
+                    continue;
+                }
+
+                int before = PreviousText(gap, k);
+                int after = NextText(gap, k);
+                string? Of(int index) => index >= 0 ? texts[at[index]] : null;
+                bool end = before < 0 || after < 0;
+                string rule = end && endValues != "extrap" ? endValues : method;
+                filled[at[k]] = rule switch
+                {
+                    "constant" => constants.Length == 0 ? null : constants[constants.Length == 1 ? 0 : s],
+                    "previous" => Of(before),
+                    "next" => Of(after),
+                    "nearest" => before < 0 ? Of(after) : after < 0 || k - before < after - k ? Of(before) : Of(after),
+                    _ => null, // 'none'
+                };
+            }
+        }
+
+        var mask = new bool[texts.Length];
+        for (int i = 0; i < mask.Length; i++)
+        {
+            mask[i] = texts[i] is null && filled[i] is not null;
+        }
+
+        JgsValue[] boxed = [.. filled.Select(t => JgsValue.Str(t ?? (strings ? MissingSentinel : string.Empty)))];
+        JgsValue answer = strings ? JgsValue.StringArray(boxed) : JgsValue.Cell(boxed);
+        answer.TakeShapeOf(data);
+        return Outputs(wanted, answer, PrepMask(mask, dims));
+    }
+
     private static int PreviousText(bool[] missing, int from)
     {
         for (int i = from - 1; i >= 0; i--)
@@ -1014,11 +1237,20 @@ internal static partial class JgsBuiltins
 
         if (TextElementsOf(args[0]) is { } texts)
         {
+            // R2025b (open item 135): a string array's missing is <missing>, not "", and a char array
+            // has nothing missing; the JGS dialect keeps the empty text as its missing.
+            bool matlab = JgsRunningDialect.ThreadIsMatlab;
+            if (matlab && !args[0].IsStringArray && args[0].Type != JgsType.Cell)
+            {
+                int count = args[0].Type == JgsType.String ? args[0].AsString.Length : SizeDims(args[0]).Aggregate(1, static (p, d) => p * d);
+                return Outputs(wanted, args[0], PrepMask(new bool[count], SizeDims(args[0])));
+            }
+
             var keptText = new List<string>(texts.Length);
             var textMask = new bool[texts.Length];
             for (int i = 0; i < texts.Length; i++)
             {
-                textMask[i] = texts[i].Length == 0;
+                textMask[i] = matlab && args[0].IsStringArray ? texts[i] == MissingSentinel : texts[i].Length == 0;
                 if (!textMask[i])
                 {
                     keptText.Add(texts[i]);

@@ -55,7 +55,7 @@ public class MatlabAreaChartTests : IDisposable
             disp(numel(get(h, 'YData')));
             """);
 
-        Assert.Equal(new[] { "area", "0", "on", "1", "-", "5" }, _output.NormalLines);
+        Assert.Equal(new[] { "area", "0", "    on", "1", "-", "5" }, _output.NormalLines);
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public class MatlabAreaChartTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "0.5", "0.5", ":", "off", "3", "true" },
+            new[] { "0.5", "0.5", ":", "    off", "3", "true" },
             _output.NormalLines);
     }
 

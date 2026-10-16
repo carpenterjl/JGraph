@@ -442,15 +442,18 @@ public class SaveLoadM167Tests : IDisposable
     }
 
     [Fact]
-    public void AVersion73FileIsReadAndNeverWritten()
+    public void AVersion73FileIsReadAndWrittenInMatlabCode()
     {
+        // MATLAB code writes version 7.3 since ADR 0235 (open item 131): a matfile write keeps the
+        // file's version, and save -v7.3 makes one that loads back.
         string path = MatV73Fixture.Write(_folder, "v73_plain.mat");
         string literal = "'" + path.Replace("'", "''") + "'";
         Assert.Equal("double", RunAndRead($"m = matfile({literal}); d = whos(m); disp(d(1).class);"));
-        Assert.Contains("is a version 7.3 MAT-file, which this build reads but does not write.",
-            RunExpectingError($"m = matfile({literal}, 'Writable', true); m.x = 1;"));
-        Assert.Contains("save writes version 5 MAT-files only",
-            RunExpectingError($"v = 1; save({File("v.mat")}, 'v', '-v7.3');"));
+        RunAndRead($"m = matfile({literal}, 'Writable', true); m.x = 1;");
+        Assert.True(MatV73Writer.IsVersion73(path));
+        Assert.Contains(MatFileReader.Read(path), static v => v.Name == "x");
+        Assert.Contains("[1 2 3]", RunAndRead($"v = [1 2 3]; save({File("v.mat")}, 'v', '-v7.3'); S = load({File("v.mat")}); disp(mat2str(S.v));"));
+        Assert.True(MatV73Writer.IsVersion73(Path.Combine(_folder, "v.mat")));
     }
 
     // --- the format --------------------------------------------------------------------------------

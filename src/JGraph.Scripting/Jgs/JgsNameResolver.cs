@@ -543,7 +543,7 @@ internal sealed class JgsNameResolver
     /// </summary>
     private JgsValue? DominantObject(IReadOnlyList<JgsValue> arguments)
     {
-        if (!_interpreter.AnyClasses && !_interpreter.AnyNet)
+        if (!_interpreter.AnyClasses && !_interpreter.AnyExternalMethods)
         {
             return null;
         }

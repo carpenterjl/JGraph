@@ -1,0 +1,141 @@
+CHK|oc_figure|char[1 195]'AutoResizeChildren:S,BeingDeleted:S,Clipping:S,DockControls:S,GraphicsSmoothing:S,HandleVisibility:C,IntegerHandle:S,Interruptible:S,InvertHardcopy:S,NumberTitle:S,Resize:S,Scrollable:S,Visible:S'|exact
+CHK|oc_axes|char[1 236]'BeingDeleted:S,Box:S,Clipping:S,FontSmoothing:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S,XGrid:S,XMinorGrid:S,XMinorTick:S,YGrid:S,YMinorGrid:S,YMinorTick:S,ZGrid:S,ZMinorGrid:S,ZMinorTick:S'|exact
+CHK|oc_line|char[1 152]'AffectAutoLimits:S,AlignVertexCenters:S,BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_scatter|char[1 112]'BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_bar|char[1 140]'BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Horizontal:S,Interruptible:S,Selected:S,SelectionHighlight:S,ShowBaseLine:S,Visible:S'|exact
+CHK|oc_area|char[1 148]'AlignVertexCenters:S,BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,ShowBaseLine:S,Visible:S'|exact
+CHK|oc_errorbar|char[1 133]'AlignVertexCenters:S,BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_stem|char[1 127]'BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,ShowBaseLine:S,Visible:S'|exact
+CHK|oc_stairs|char[1 112]'BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_quiver|char[1 161]'AlignVertexCenters:S,AutoScale:S,BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,ShowArrowHead:S,Visible:S'|exact
+CHK|oc_patch|char[1 133]'AlignVertexCenters:S,BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_text|char[1 157]'AffectAutoLimits:S,BeingDeleted:S,Clipping:S,Editing:S,FontSmoothing:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_rectangle|char[1 133]'AlignVertexCenters:S,BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_colorbar|char[1 107]'BeingDeleted:S,Box:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_legend|char[1 120]'AutoUpdate:S,BeingDeleted:S,Box:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_hggroup|char[1 101]'BeingDeleted:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_xline|char[1 101]'BeingDeleted:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_surface|char[1 133]'AlignVertexCenters:S,BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_contour|char[1 123]'BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,ShowText:S,Visible:S'|exact
+CHK|oc_light|char[1 101]'BeingDeleted:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_image|char[1 112]'BeingDeleted:S,Clipping:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_histogram|char[1 101]'BeingDeleted:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_histogram2|char[1 117]'BeingDeleted:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,ShowEmptyBins:S,Visible:S'|exact
+CHK|oc_uicontrol|char[1 68]'BeingDeleted:S,Enable:C,HandleVisibility:C,Interruptible:S,Visible:S'|exact
+CHK|oc_uipanel|char[1 113]'AutoResizeChildren:S,BeingDeleted:S,Clipping:S,Enable:S,HandleVisibility:C,Interruptible:S,Scrollable:S,Visible:S'|exact
+CHK|oc_uimenu|char[1 101]'BeingDeleted:S,Checked:S,Clipping:S,Enable:S,HandleVisibility:C,Interruptible:S,Separator:S,Visible:S'|exact
+CHK|oc_uitoggletool|char[1 99]'BeingDeleted:S,Clipping:S,Enable:S,HandleVisibility:C,Interruptible:S,Separator:S,State:S,Visible:S'|exact
+CHK|oc_xruler|char[1 56]'FontSmoothing:S,HandleVisibility:C,MinorTick:S,Visible:S'|exact
+CHK|oc_title|char[1 157]'AffectAutoLimits:S,BeingDeleted:S,Clipping:S,Editing:S,FontSmoothing:S,HandleVisibility:C,HitTest:S,Interruptible:S,Selected:S,SelectionHighlight:S,Visible:S'|exact
+CHK|oc_root|char[1 38]'HandleVisibility:C,ShowHiddenHandles:S'|exact
+CHK|oc_uifigure|char[1 195]'AutoResizeChildren:S,BeingDeleted:S,Clipping:S,DockControls:S,GraphicsSmoothing:S,HandleVisibility:C,IntegerHandle:S,Interruptible:S,InvertHardcopy:S,NumberTitle:S,Resize:S,Scrollable:S,Visible:S'|exact
+CHK|oc_uibutton|char[1 79]'BeingDeleted:S,Enable:S,HandleVisibility:C,Interruptible:S,Visible:S,WordWrap:S'|exact
+CHK|oc_uitable|char[1 118]'BeingDeleted:S,ColumnRearrangeable:S,Enable:C,HandleVisibility:C,Interruptible:S,Multiselect:S,RowStriping:S,Visible:S'|exact
+CHK|oc_uispinner|char[1 160]'AllowEmpty:S,BeingDeleted:S,Editable:S,Enable:S,HandleVisibility:C,Interruptible:S,LowerLimitInclusive:S,RoundFractionalValues:S,UpperLimitInclusive:S,Visible:S'|exact
+CHK|oc_uitree|char[1 93]'BeingDeleted:S,Editable:S,Enable:S,HandleVisibility:C,Interruptible:S,Multiselect:S,Visible:S'|exact
+CHK|oc_uilistbox|char[1 82]'BeingDeleted:S,Enable:S,HandleVisibility:C,Interruptible:S,Multiselect:S,Visible:S'|exact
+CHK|ob_class|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_get_class|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_get_cell|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';char[1 28]'matlab.lang.OnOffSwitchState'}|exact
+CHK|ob_get_struct|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_get_array|cell[2 1]{char[1 28]'matlab.lang.OnOffSwitchState';char[1 28]'matlab.lang.OnOffSwitchState'}|exact
+CHK|ob_dot_array|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_dot_array_size|double[1 2] [1 2]|exact
+CHK|ob_isequal|logical[1 1] 1|exact
+CHK|ob_isequal_true|logical[1 1] 1|exact
+CHK|ob_eq_char|logical[1 1] 1|exact
+CHK|ob_eq_off|logical[1 1] 0|exact
+CHK|ob_eq_str|logical[1 1] 1|exact
+CHK|ob_ne|logical[1 1] 0|exact
+CHK|ob_strcmp|logical[1 1] 1|exact
+CHK|ob_strcmpi|logical[1 1] 1|exact
+CHK|ob_ismember|logical[1 1] 1|exact
+CHK|ob_contains|char[1 72]'MATLAB:string:MustBeCharCellArrayOrString / First argument must be text.'|exact
+CHK|ob_cat_char|char[1 8]'no error'|exact
+CHK|ob_cat_char2|char[1 8]'no error'|exact
+CHK|ob_sprintf|onoff on|exact
+CHK|ob_sprintf_d|char[1 1]'1'|exact
+CHK|ob_upper|char[1 8]'no error'|exact
+CHK|ob_string|string[1 1]"on"|exact
+CHK|ob_char|onoff on|exact
+CHK|ob_logical|logical[1 1] 1|exact
+CHK|ob_not|onoff off|exact
+CHK|ob_plus|char[1 8]'no error'|exact
+CHK|ob_double|double[1 1] 1|exact
+CHK|ob_if|char[1 3]'yes'|exact
+CHK|ob_switch|char[1 7]'on-case'|exact
+CHK|ob_switch_cell|char[1 7]'on-case'|exact
+CHK|ob_num2str|char[1 8]'no error'|exact
+CHK|ob_isempty|logical[1 1] 0|exact
+CHK|ob_numel|double[1 1] 1|exact
+CHK|ob_ischar|logical[1 1] 0|exact
+CHK|ob_islogical|logical[1 1] 1|exact
+CHK|ob_isa|logical[1 1] 1|exact
+CHK|ob_set_true|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff on}|exact
+CHK|ob_set_one|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff on}|exact
+CHK|ob_set_zero|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff off}|exact
+CHK|ob_set_str|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff off}|exact
+CHK|ob_set_two|char[1 8]'no error'|exact
+CHK|ob_set_member|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff off}|exact
+CHK|ob_findobj|double[1 1] 16|div=ADR0235|diverges|double[1 1] 17
+CHK|ob_grid|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_hold|char[1 4]'char'|exact
+CHK|ob_figure_visible|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_handlevis|char[1 4]'char'|exact
+CHK|ob_clipping|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_uic_enable|char[1 4]'char'|exact
+CHK|ob_cellfun_strcmp|logical[2 1] [1;1]|exact
+CHK|ob_struct_field|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_cell_store|char[1 4]'cell'|exact
+CHK|ob_cat_two|char[1 28]'matlab.lang.OnOffSwitchState'|exact
+CHK|ob_lower|char[1 8]'no error'|exact
+CHK|ob_mat2str|char[1 8]'no error'|exact
+CHK|ob_isequal_two|logical[1 1] 1|exact
+CHK|ob_tf_any|logical[1 1] 1|exact
+CHK|sv_string|cell[1 3]{char[1 6]'string';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|sv_string_arr|cell[1 3]{char[1 6]'string';logical[1 1] 0;double[1 2] [2 2]}|exact
+CHK|sv_datetime|cell[1 3]{char[1 8]'datetime';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|sv_datetime_zone|cell[1 3]{char[1 8]'datetime';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|sv_duration|cell[1 3]{char[1 8]'duration';logical[1 1] 1;double[1 2] [1 2]}|exact
+CHK|sv_duration_fmt|cell[1 3]{char[1 8]'duration';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|sv_nat|cell[1 3]{char[1 8]'datetime';logical[1 1] 0;double[1 2] [1 1]}|exact
+CHK|sv_cell_string|cell[1 3]{char[1 4]'cell';logical[1 1] 1;double[1 2] [1 2]}|exact
+CHK|sv_struct_dt|cell[1 3]{char[1 6]'struct';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|sv_categorical|cell[1 3]{char[1 11]'categorical';logical[1 1] 1;double[1 2] [1 2]}|exact
+CHK|sv_caldur|cell[1 3]{char[1 16]'calendarDuration';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|sv_whos_string|cell[1 2]{char[1 6]'string';double[0 0]}|exact
+CHK|sv_whos_dt|cell[1 2]{char[1 8]'datetime';double[0 0]}|exact
+CHK|sv_whos_dur|cell[1 2]{char[1 8]'duration';double[0 0]}|exact
+CHK|sv_v7|cell[1 1]{char[1 6]'string'}|exact
+CHK|sv_v6|cell[1 1]{char[1 6]'string'}|exact
+CHK|sv_v4|char[1 127]'MATLAB:load:notBinaryFile / Unable to read file 'C:\Users\Carpe\AppData\Local\Temp\tp502243e3_8a79_4dfb_b3f9_c0a4c4bfdf5e.mat'.'|div=ADR0235|diverges|char[1 42]' / save does not support the option '-v4'.'
+CHK|v73_double|cell[1 3]{char[1 6]'double';logical[1 1] 1;double[1 2] [3 3]}|exact
+CHK|v73_scalar|cell[1 3]{char[1 6]'double';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|v73_row|cell[1 3]{char[1 6]'double';logical[1 1] 1;double[1 2] [1 4]}|exact
+CHK|v73_nd|cell[1 3]{char[1 6]'double';logical[1 1] 1;double[1 3] [2 3 4]}|exact
+CHK|v73_single|cell[1 3]{char[1 6]'single';logical[1 1] 1;double[1 2] [1 2]}|exact
+CHK|v73_int8|cell[1 3]{char[1 4]'int8';logical[1 1] 1;double[1 2] [1 2]}|exact
+CHK|v73_uint64|cell[1 3]{char[1 6]'uint64';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|v73_complex|cell[1 3]{char[1 6]'double';logical[1 1] 1;double[1 2] [1 2]}|exact
+CHK|v73_logical|cell[1 3]{char[1 7]'logical';logical[1 1] 1;double[1 2] [2 2]}|exact
+CHK|v73_char|cell[1 3]{char[1 4]'char';logical[1 1] 1;double[1 2] [1 5]}|exact
+CHK|v73_charmat|cell[1 3]{char[1 4]'char';logical[1 1] 1;double[1 2] [2 2]}|exact
+CHK|v73_empty|cell[1 3]{char[1 6]'double';logical[1 1] 1;double[1 2] [0 0]}|exact
+CHK|v73_empty_char|cell[1 3]{char[1 4]'char';logical[1 1] 1;double[1 2] [0 0]}|exact
+CHK|v73_zeros3|cell[1 3]{char[1 6]'double';logical[1 1] 1;double[1 2] [0 3]}|exact
+CHK|v73_cell|cell[1 3]{char[1 4]'cell';logical[1 1] 1;double[1 2] [2 2]}|exact
+CHK|v73_empty_cell|cell[1 3]{char[1 4]'cell';logical[1 1] 1;double[1 2] [0 0]}|exact
+CHK|v73_struct|cell[1 3]{char[1 6]'struct';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|v73_struct_arr|cell[1 3]{char[1 6]'struct';logical[1 1] 1;double[1 2] [1 3]}|exact
+CHK|v73_struct_nested|cell[1 3]{char[1 6]'struct';logical[1 1] 1;double[1 2] [1 1]}|exact
+CHK|v73_empty_struct|cell[1 3]{char[1 6]'struct';logical[1 1] 1;double[1 2] [0 0]}|exact
+CHK|v73_sparse|cell[1 3]{char[1 6]'double';logical[1 1] 1;double[1 2] [2 2]}|exact
+CHK|v73_string|cell[1 3]{char[1 6]'string';logical[1 1] 1;double[1 2] [1 1]}|div=ADR0235|diverges|char[0 0]''
+CHK|v73_datetime|cell[1 3]{char[1 8]'datetime';logical[1 1] 1;double[1 2] [1 1]}|div=ADR0235|diverges|char[0 0]''
+CHK|v73_handle|cell[1 3]{char[1 15]'function_handle';logical[1 1] 1;double[1 2] [1 1]}|div=ADR0235|diverges|char[0 0]''
+CHK|v73_unicode|cell[1 3]{char[1 4]'char';logical[1 1] 1;double[1 2] [1 5]}|exact
+CHK|v73_whos|cell[2 4]{char[1 1]'a';char[1 6]'double';char[1 1]'b';char[1 4]'char';char[1 1]'c';char[1 4]'cell';char[1 1]'s';char[1 6]'struct'}|exact
+CHK|v73_header|cell[1 2]{char[1 19]'MATLAB 7.3 MAT-file';uint8[1 4] [0 2 73 77]}|exact
+CHK|v73_append|cell[1 2]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|v73_many|cell[1 2]{double[1 1] 40;double[1 1] 37}|exact
+CHK|v73_load_vars|cell[1 2]{char[1 1]'b';char[1 1]'c'}|exact

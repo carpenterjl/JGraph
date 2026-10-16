@@ -1506,6 +1506,15 @@ internal sealed class JgsValue
     };
 
     /// <summary>
+    /// A value shown inside a struct or a cell: a single OnOffSwitchState is its member's name there,
+    /// as R2025b shows <c>v: on</c> and <c>{[on]}</c> (open item 132), not its block display.
+    /// </summary>
+    private static string NestedDisplay(JgsValue value) =>
+        value._reference is OnOffSwitchStateValue { States.Length: 1 } state && value.Type == JgsType.External
+            ? state.Summary()!
+            : value.Display();
+
+    /// <summary>
     /// An array of objects as R2025b shows one (open item 65, probe <c>probe_65</c>): its size and
     /// short class name, then the property names and no values.
     /// </summary>
@@ -1686,7 +1695,7 @@ internal sealed class JgsValue
                 sb.Append(", ");
             }
 
-            sb.Append(elements[i].Type == JgsType.String ? $"'{elements[i].AsString}'" : elements[i].Display());
+            sb.Append(elements[i].Type == JgsType.String ? $"'{elements[i].AsString}'" : NestedDisplay(elements[i]));
         }
 
         if (shown < elements.Length)
@@ -1729,7 +1738,7 @@ internal sealed class JgsValue
             }
 
             first = false;
-            sb.Append(name).Append(": ").Append(value.Display());
+            sb.Append(name).Append(": ").Append(NestedDisplay(value));
         }
 
         return sb.Append(')').ToString();

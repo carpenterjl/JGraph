@@ -262,6 +262,40 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>The type the first conversion of a format turns its value into, in R2025b's words.</summary>
+    /// <summary>For each conversion of <paramref name="format"/> in order, whether it prints text (%s, %c).</summary>
+    private static bool[] ConversionsAreText(string format)
+    {
+        var texts = new List<bool>();
+        for (int i = 0; i < format.Length - 1; i++)
+        {
+            if (format[i] != '%')
+            {
+                continue;
+            }
+
+            int j = i + 1;
+            if (format[j] == '%')
+            {
+                i = j;
+                continue;
+            }
+
+            while (j < format.Length && "+-# 0123456789.*".Contains(format[j]))
+            {
+                j++;
+            }
+
+            if (j < format.Length)
+            {
+                texts.Add(format[j] is 's' or 'c');
+            }
+
+            i = j;
+        }
+
+        return [.. texts];
+    }
+
     private static string FirstConversionTarget(string format)
     {
         for (int i = 0; i < format.Length - 1; i++)

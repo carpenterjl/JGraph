@@ -1,0 +1,187 @@
+CHK|dn_read1|double[3 1] [1;2;3]|exact
+CHK|dn_read2|<categorical[3 1]>|exact
+CHK|dn_read3|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|exact
+CHK|dn_read_int8|double[3 1] [1;2;3]|exact
+CHK|dn_read_single|cell[3 1]{char[1 1]'x';char[1 1]'y';char[1 1]'z'}|exact
+CHK|dn_read_logical|MATLAB:table:IllegalVarSubscript|exact
+CHK|dn_read_logical_msg|A table variable name must be a string scalar or a character vector.|exact
+CHK|dn_read0|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_read0_msg|A variable index must be a real positive integer.|exact
+CHK|dn_read4|MATLAB:table:VarIndexOutOfRange|exact
+CHK|dn_read4_msg|Variable index exceeds table dimensions.|exact
+CHK|dn_read_frac|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_read_frac_msg|A variable index must be a real positive integer.|exact
+CHK|dn_read_neg|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_read_neg_msg|A variable index must be a real positive integer.|exact
+CHK|dn_read_vec|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_read_vec_msg|A variable index must be a real positive integer.|exact
+CHK|dn_read_empty|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_read_empty_msg|A variable index must be a real positive integer.|exact
+CHK|dn_read_nan|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_read_nan_msg|A variable index must be a real positive integer.|exact
+CHK|dn_read_str|double[3 1] [1;2;3]|exact
+CHK|dn_read_cell|MATLAB:table:IllegalVarSubscript|exact
+CHK|dn_read_cell_msg|A table variable name must be a string scalar or a character vector.|exact
+CHK|dn_read_index|double[1 1] 2|exact
+CHK|dn_read_brace|char[1 1]'y'|exact
+CHK|dn_write1|cell[1 2]{cell[1 3]{char[1 1]'n';char[1 4]'kind';char[1 4]'name'};double[1 2] [3 3]}|exact
+CHK|dn_write3|cell[1 2]{cell[1 3]{char[1 1]'n';char[1 4]'kind';char[1 4]'name'};double[1 2] [3 3]}|exact
+CHK|dn_write_new|cell[1 2]{cell[1 4]{char[1 1]'n';char[1 4]'kind';char[1 4]'name';char[1 4]'Var4'};double[1 2] [3 4]}|exact
+CHK|dn_write_new5|MATLAB:table:DiscontiguousVars|exact
+CHK|dn_write_new5_msg|Cannot create a table variable with a discontiguous index.|exact
+CHK|dn_write0|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_write0_msg|A variable index must be a real positive integer.|exact
+CHK|dn_write_frac|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_write_frac_msg|A variable index must be a real positive integer.|exact
+CHK|dn_write_rows|MATLAB:table:RowDimensionMismatch|exact
+CHK|dn_write_rows_msg|To assign to or create a variable in a table, the number of rows must match the height of the table.|exact
+CHK|dn_write_scalar|MATLAB:table:RowDimensionMismatch|exact
+CHK|dn_write_scalar_msg|To assign to or create a variable in a table, the number of rows must match the height of the table.|exact
+CHK|dn_write_elem|double[1 3] [1 50 3]|exact
+CHK|dn_write_delete|cell[1 2]{char[1 1]'n';char[1 4]'name'}|exact
+CHK|dn_tt_read|double[1 2] [5 6]|exact
+CHK|dn_tt_write|double[1 2] [8 9]|exact
+CHK|dn_tt_read0|MATLAB:table:IllegalVarIndex|exact
+CHK|dn_tt_read0_msg|A variable index must be a real positive integer.|exact
+CHK|dn_struct|MATLAB:mustBeFieldName|exact
+CHK|dn_struct_msg|Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|dn_nested|double[1 2] [3 4]|exact
+CHK|du_s1|string[1 1]"1.4142 sec"|exact
+CHK|du_c1|char[1 10]'1.4142 sec'|exact
+CHK|du_cellstr|cell[1 2]{char[1 10]'1.4142 sec';char[1 5]'2 sec'}|exact
+CHK|du_min|string[1 1]"1.2346 min"|exact
+CHK|du_hr|string[1 1]"2.5 hr"|exact
+CHK|du_hr2|string[1 1]"0.66667 hr"|exact
+CHK|du_day|string[1 1]"0.33333 days"|exact
+CHK|du_yr|string[1 1]"1.2346 yrs"|exact
+CHK|du_small|string[1 1]"1e-05 sec"|exact
+CHK|du_tiny|string[1 1]"1.2346e-09 sec"|exact
+CHK|du_big|string[1 1]"1.2346e+05 sec"|exact
+CHK|du_huge|string[1 1]"1.2346e+12 sec"|exact
+CHK|du_neg|string[1 1]"-1.4142 sec"|exact
+CHK|du_specials|string[1 4]"1.5 sec","<missing>","Inf sec","-Inf sec"|exact
+CHK|du_int|string[1 1]"3 sec"|exact
+CHK|du_round5|string[1 1]"2 sec"|exact
+CHK|du_round4|string[1 1]"100000 sec"|exact
+CHK|du_hms|string[1 1]"01:02:03"|exact
+CHK|du_hms_sss|string[1 1]"01:02:03.456"|exact
+CHK|du_dhms|string[1 1]"01:02:02:03"|exact
+CHK|du_fmt_s|string[1 1]"1.4142 sec"|exact
+CHK|du_fmt_m|string[1 1]"1.5 min"|exact
+CHK|du_fmt_h|string[1 1]"1.3333 hr"|exact
+CHK|du_fmt_d|string[1 1]"1.25 days"|exact
+CHK|du_fmt_y|string[1 1]"1.0267 yrs"|exact
+CHK|du_matrix|string[2 2]"1.1111 sec","333.33 sec","22.222 sec","4444.4 sec"|exact
+CHK|du_compose|string[1 1]"1.4142 sec"|exact
+CHK|du_num2str|char[1 66]'MATLAB:num2str:nonNumericInput / Input to num2str must be numeric.'|exact
+CHK|du_sprintf|char[1 10]'1.4142 sec'|exact
+CHK|du_cat_char|char[1 12]'t=1.2346 min'|exact
+CHK|du_cal|string[1 1]"2mo"|exact
+CHK|dg_99999_4|string[1 1]"99999 sec"|exact
+CHK|dg_99999_5|string[1 1]"100000 sec"|exact
+CHK|dg_1e5|string[1 1]"1e+05 sec"|exact
+CHK|dg_123456|string[1 1]"1.2346e+05 sec"|exact
+CHK|dg_9_99995|string[1 1]"10 sec"|exact
+CHK|dg_9_99994|string[1 1]"9.9999 sec"|exact
+CHK|dg_1e4|string[1 1]"0.0001 sec"|exact
+CHK|dg_9e5|string[1 1]"9.9999e-05 sec"|exact
+CHK|dg_0_00012345678|string[1 1]"0.00012346 sec"|exact
+CHK|dg_12345_6|string[1 1]"12346 sec"|exact
+CHK|dg_0|string[1 1]"0 sec"|exact
+CHK|dg_negzero|string[1 1]"0 sec"|exact
+CHK|dg_half|string[1 1]"0.5 sec"|exact
+CHK|dg_1_23455|string[1 1]"1.2346 sec"|exact
+CHK|dg_2_5e_5|string[1 1]"2.5e-05 sec"|exact
+CHK|un_day1|string[1 1]"1 day"|exact
+CHK|un_day2|string[1 1]"2 days"|exact
+CHK|un_daym1|string[1 1]"-1 day"|exact
+CHK|un_day0|string[1 1]"0 days"|exact
+CHK|un_day_half|string[1 1]"0.5 days"|exact
+CHK|un_day_1_5|string[1 1]"1.5 days"|exact
+CHK|un_yr1|string[1 1]"1 yr"|exact
+CHK|un_yr2|string[1 1]"2 yrs"|exact
+CHK|un_yr0|string[1 1]"0 yrs"|exact
+CHK|un_hr1|string[1 1]"1 hr"|exact
+CHK|un_hr2|string[1 1]"2 hr"|exact
+CHK|un_min2|string[1 1]"2 min"|exact
+CHK|un_sec1|string[1 1]"1 sec"|exact
+CHK|un_nan|string[1 1]"<missing>"|exact
+CHK|un_nan_char|char[1 7]'NaN sec'|exact
+CHK|un_inf_hms|string[1 1]"Inf"|exact
+CHK|un_nan_hms|char[1 3]'NaN'|exact
+CHK|un_cellstr|cell[1 2]{char[1 10]'1.4142 sec';char[1 7]'NaN sec'}|exact
+CHK|hm_round|string[1 1]"01:02:03"|exact
+CHK|hm_round59|string[1 1]"01:02:59"|exact
+CHK|hm_neg|string[1 1]"-01:02:03"|exact
+CHK|hm_big|string[1 1]"123:02:03"|exact
+CHK|hm_sss|string[1 1]"01:02:03.456"|exact
+CHK|hm_ss|string[1 1]"01:02:03.45"|exact
+CHK|hm_ssss|string[1 1]"01:02:03.4567"|exact
+CHK|hm_mmss|string[1 1]"62:03"|exact
+CHK|hm_mmss_s|string[1 1]"02:03.4"|exact
+CHK|hm_hhmm|string[1 1]"01:02"|exact
+CHK|hm_dd|string[1 1]"02:01:02:03"|exact
+CHK|hm_dd_sss|string[1 1]"02:01:02:03.456"|exact
+CHK|fs_prev|string[1 3]"a","a","c"|exact
+CHK|fs_next|string[1 3]"b","b","<missing>"|exact
+CHK|fs_near|string[1 3]"a","c","c"|exact
+CHK|fs_near2|string[1 4]"a","a","d","d"|exact
+CHK|fs_const|string[1 3]"a","z",""|exact
+CHK|fs_const_char|char[1 85]'MATLAB:fillmissing:ConstantString / Fill constant must be a string or a string array.'|exact
+CHK|fs_const_vec|string[2 2]"a","y","z","b"|exact
+CHK|fs_tf|logical[1 4] [0 1 0 0]|exact
+CHK|fs_col|string[3 1]"a","a","c"|exact
+CHK|fs_mat|string[2 2]"a","a","<missing>","d"|exact
+CHK|fs_mat2|string[2 2]"a","<missing>","a","d"|exact
+CHK|fs_ends|string[1 3]"<missing>","b","b"|exact
+CHK|fs_ends_extrap|string[1 3]"b","b","b"|exact
+CHK|fs_endvalues_none|string[1 3]"<missing>","b","<missing>"|exact
+CHK|fs_rmmissing|string[1 2]"a",""|exact
+CHK|fs_std|string[1 3]"a","","<missing>"|exact
+CHK|fs_cell_const|cell[1 2]{char[1 1]'a';char[1 1]'z'}|exact
+CHK|fs_cell_const_str|MATLAB:fillmissing:ConstantCellstr|exact
+CHK|fs_cell_const_str_msg|Fill constant must be a character row vector or a cell array of character row vectors.|exact
+CHK|fs_char|char[1 8]'no error'|exact
+CHK|fs_cell_mixed|char[1 174]'MATLAB:fillmissing:FirstInputInvalid / First argument must be numeric, logical, datetime, duration, calendarDuration, string, categorical, char, cellstr, table, or timetable.'|exact
+CHK|fs_table_str|string[3 1]"a","a","c"|exact
+CHK|fe_ends_two|double[1 5] [0 1 2 10 18]|exact
+CHK|fe_tf_one|logical[1 3] [0 0 0]|exact
+CHK|fe_tf_none|double[2 3] [NaN NaN NaN;0 0 0]|exact
+CHK|fe_near_tf|logical[1 3] [0 0 0]|exact
+CHK|fe_int|int8[1 3] [1 2 3]|exact
+CHK|fe_logical|char[1 8]'no error'|exact
+CHK|fe_extrap_prev|double[1 5] [NaN 2 2 4 4]|exact
+CHK|fe_near_next|double[1 5] [2 2 4 4 NaN]|exact
+CHK|fe_mov_none|double[1 5] [NaN 2 3 4 NaN]|exact
+CHK|fe_mov_const|double[1 7] [7 7 2 3 4 7 7]|exact
+CHK|fe_const_endnone|double[1 5] [NaN 2 9 4 NaN]|exact
+CHK|fe_complex|double[1 3] [0-1i 1+1i 2+3i]|div=ADR0235|diverges|char[0 0]''
+CHK|fl_lin_start|double[1 3] [1 2 3]|exact
+CHK|fl_lin_end|double[1 4] [1 2 3 4]|exact
+CHK|fl_lin_both|double[1 5] [-2 0 2 4 6]|exact
+CHK|fl_lin_one|double[1 3] [NaN 2 NaN]|exact
+CHK|fl_lin_gap|double[1 5] [-1 1 3 5 7]|exact
+CHK|fl_lin_default|char[1 13]'MATLAB:minrhs'|div=ADR0235|diverges|double[1 4] [1 2 3 4]
+CHK|fl_lin_none|double[1 4] [NaN 2 3 NaN]|exact
+CHK|fl_lin_nearest|double[1 4] [2 2 3 3]|exact
+CHK|fl_lin_prev|double[1 4] [NaN 2 3 3]|exact
+CHK|fl_lin_next|double[1 4] [2 2 3 NaN]|exact
+CHK|fl_lin_const|double[1 4] [0 2 3 0]|exact
+CHK|fl_lin_extrap|double[1 4] [1 2 3 4]|exact
+CHK|fl_lin_col|double[4 2] [1 -1;2 1;3 3;4 5]|exact
+CHK|fl_lin_dim2|double[2 3] [1 2 3;1 NaN NaN]|exact
+CHK|fl_lin_sp|double[1 4] [1.5 2 3 5]|div=ADR0235|diverges|char[0 0]''
+CHK|fl_near_ends|double[1 4] [2 2 3 3]|exact
+CHK|fl_prev_ends|double[1 4] [NaN 2 3 3]|exact
+CHK|fl_next_ends|double[1 4] [2 2 3 NaN]|exact
+CHK|fl_mov_ends|double[1 4] [2 2 3 3]|exact
+CHK|fl_const_ends|double[1 4] [9 2 3 9]|exact
+CHK|fl_prev_extrap|double[1 4] [NaN 2 3 3]|exact
+CHK|fl_near_none|double[1 4] [NaN 2 3 NaN]|exact
+CHK|fl_single|single[1 3] [1 2 3]|exact
+CHK|fl_table|double[2 3] [1 2 3;1 NaN NaN]|exact
+CHK|fl_dt|string[1 3]"01-Jan-2020","02-Jan-2020","03-Jan-2020"|exact
+CHK|fl_dur|double[1 4] [1 2 3 4]|exact
+CHK|fl_lin_tf|cell[1 2]{double[1 5] [NaN 2 3 4 NaN];logical[1 5] [0 0 1 0 0]}|exact
+CHK|fm_ismissing_str|logical[1 3] [0 0 1]|exact
+CHK|fm_any_str|logical[1 1] 0|exact

@@ -78,13 +78,21 @@ internal static partial class JgsBuiltins
             // each moment into the number it is stored as.
             if (input.IsTime)
             {
-                var texts = new JgsValue[input.ArrayLength];
+                // A calendarDuration keeps its elements in a struct array, so its count and texts are
+                // read from there (open item 134: string(calmonths(2)) is "2mo", and failed here).
+                bool calendar = IsCalendarDuration(input);
+                var texts = new JgsValue[calendar ? input.AsStructArray.Length : input.ArrayLength];
                 for (int i = 0; i < texts.Length; i++)
                 {
                     // A missing time is the missing string in R2025b (open item 128: string(NaT)).
-                    texts[i] = JgsValue.Str(JgsRunningDialect.ThreadIsMatlab && double.IsNaN(input.ElementAt(i).AsNumber) && input.TimeTag!.Kind != JgsTimeKind.CalendarDuration
+                    texts[i] = JgsValue.Str(JgsRunningDialect.ThreadIsMatlab && !calendar && double.IsNaN(input.ElementAt(i).AsNumber)
                         ? MissingSentinel
                         : TimeText(input, i));
+                }
+
+                if (calendar)
+                {
+                    return texts.Length == 1 ? JgsValue.StringArray(texts) : JgsValue.StringArray(texts, JgsMatrix.RowCount(input), JgsMatrix.ColCount(input));
                 }
 
                 return ShapedLike(input, texts).MarkStringArray();

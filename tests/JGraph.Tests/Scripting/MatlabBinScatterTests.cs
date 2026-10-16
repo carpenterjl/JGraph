@@ -91,7 +91,7 @@ public class MatlabBinScatterTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "[4, 4]", "[0, 5]", "on", "[3, 3]", "[3, 3]" },
+            new[] { "[4, 4]", "[0, 5]", "    on", "[3, 3]", "[3, 3]" },
             _output.NormalLines);
     }
 

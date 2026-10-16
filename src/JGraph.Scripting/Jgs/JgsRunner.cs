@@ -851,6 +851,9 @@ internal static class JgsRunner
         JgsType.Array when value.AsArray.All(static e => e.Type == JgsType.Number) =>
             value.AsArray.Select(static e => e.AsNumber).ToArray(),
 
+        // A single OnOffSwitchState is the name of its member to the host, as text it can grid; the
+        // variable's type still says what it is (open item 132).
+        JgsType.External when value.AsExternal is OnOffSwitchStateValue { States.Length: 1 } member => member.Summary(),
         JgsType.External => new ScriptExternalValue(value.AsExternal.ClassName, value.AsExternal.Summary(), value.AsExternal.Kind),
         JgsType.Cell => CellGrid(value.AsCell),
         JgsType.Struct => StructGrid(value.AsStruct),

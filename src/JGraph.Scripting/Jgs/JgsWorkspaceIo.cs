@@ -69,6 +69,7 @@ internal static class JgsWorkspaceIo
         string? path = null;
         bool ascii = false;
         bool append = false;
+        bool v73 = false;
         string? structName = null;
         bool structNamePending = false;
         var names = new List<string>();
@@ -105,8 +106,11 @@ internal static class JgsWorkspaceIo
             }
             else if (word.Equals("-v7.3", StringComparison.OrdinalIgnoreCase))
             {
-                throw new JgsRuntimeException(line, col,
-                    "save writes version 5 MAT-files only; version 7.3 is an HDF5 format that can be read but not written.");
+                // The MATLAB dialect writes version 7.3 (open item 131, ADR 0235); JGS keeps to version 5.
+                v73 = JgsRunningDialect.ThreadIsMatlab
+                    ? true
+                    : throw new JgsRuntimeException(line, col,
+                        "save writes version 5 MAT-files only; version 7.3 is an HDF5 format that can be read but not written.");
             }
             else if (word is "-v6" or "-v7" or "-V6" or "-V7" || word.Equals("-mat", StringComparison.OrdinalIgnoreCase))
             {
@@ -201,15 +205,25 @@ internal static class JgsWorkspaceIo
             }
             else
             {
+                // -append keeps the file's own version, as R2025b does (probe_h5b).
+                bool hdf5 = v73 || (append && JgsRunningDialect.ThreadIsMatlab && MatV73Writer.IsVersion73(target));
                 foreach ((string name, JgsValue value) in selected)
                 {
-                    if (MatFileWriter.WhyNotWritable(value) is string why)
+                    if ((hdf5 ? MatV73Writer.WhyNotWritable(value) : MatFileWriter.WhyNotWritable(value)) is string why)
                     {
                         throw new JgsRuntimeException(line, col, $"save: '{name}' is {why}.");
                     }
                 }
 
-                if (append)
+                if (append && hdf5)
+                {
+                    MatV73Writer.Append(target, selected);
+                }
+                else if (hdf5)
+                {
+                    MatV73Writer.Write(target, selected);
+                }
+                else if (append)
                 {
                     MatFileWriter.Append(target, selected);
                 }

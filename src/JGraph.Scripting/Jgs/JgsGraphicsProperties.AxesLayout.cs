@@ -153,9 +153,110 @@ internal static partial class JgsGraphicsProperties
     /// What the renderer measured last frame, or what it would measure if it drew now. An axes that
     /// has never been drawn still has to answer, and an estimate is the only answer there is.
     /// </summary>
-    private static AxesLayoutSnapshot LayoutOf(AxesModel axes) =>
-        axes.LastLayout ?? AxesLayoutSnapshot.Estimate(
+    private static AxesLayoutSnapshot LayoutOf(AxesModel axes)
+    {
+        if (axes.LastLayout is { } measured)
+        {
+            return measured;
+        }
+
+        AxesLayoutSnapshot estimate = AxesLayoutSnapshot.Estimate(
             axes, axes.Parent is FigureModel ? axes.ReferenceSize() : new Size2D(640, 480));
+        return JgsRunningDialect.ThreadIsMatlab && axes.KeepsPlotBoxMargins && !axes.Is3D && !axes.IsPolar
+            ? R2025bEstimate(axes, estimate)
+            : estimate;
+    }
+
+    /// <summary>
+    /// The tight inset and plot box R2025b reads before anything is drawn (open item 133, probe_box over
+    /// category counts, label lengths, angles, fonts and labels): below the box, the tick labels'
+    /// extent at their angle — the widest rounded up to a pixel times |sin|, a label's height times
+    /// |cos| — and 5.33 pixels, then an xlabel's height and 1.33 more; left of it, the widest y label
+    /// rounded up and 5.33, then a ylabel's height and 4 more; above it, half a y label's height (the
+    /// top label's overhang), or a title's height and 3.67; and the first and last x labels' overhang
+    /// past the box ends, if more. The box keeps its default margins until the inset outgrows one,
+    /// and then that edge moves to the inset and the default margin's fraction of a pixel.
+    /// </summary>
+    private static AxesLayoutSnapshot R2025bEstimate(AxesModel axes, AxesLayoutSnapshot estimate)
+    {
+        AxisModel x = axes.PrimaryXAxis;
+        AxisModel y = axes.PrimaryYAxis;
+        bool automatic = !axes.FontSizeManual;
+        static IReadOnlyList<string> Labels(AxisModel ruler) =>
+            ruler.TickLabelOverrides ?? JgsRulerTicks.Current(ruler).Select(static t => t.Label).ToArray();
+        // An axis label and a title are measured at R2025b's sizes: its axes font times the multiplier, the title bold.
+        double basePoints = x.TickLabelStyle.FontSize * (automatic ? 10.0 / 11 : 1);
+        double Height(string text, JGraph.Core.Drawing.TextStyle style, double multiplier, bool bold) =>
+            TickLabelTurn.Measure([text], style.WithSize(basePoints * multiplier).WithBold(bold), automaticFont: false).Height;
+
+        double bottom = 0;
+        double turnedLeft = 0;
+        double right = 0;
+        if (x.ShowTickLabels && Labels(x) is { Count: > 0 } xLabels)
+        {
+            (double widest, double height, _) = TickLabelTurn.Measure(xLabels, x.TickLabelStyle, automatic);
+            double radians = JgsRulerTicks.ReadAngle(x).AsNumber * Math.PI / 180;
+            double sin = Math.Abs(Math.Sin(radians));
+            double cos = Math.Abs(Math.Cos(radians));
+            bottom = (Math.Ceiling(widest) * sin) + (height * cos) + (16.0 / 3);
+
+            // How far the first and last labels stand past the box: a level label is centred on its
+            // tick, a turned one hangs down-left from it, its width (rounded) times |cos| to the left
+            // and its height times |sin| to the right (probe_box: 0, 15, 30 and 45 degrees).
+            double[] shown = [.. (x.TickPositions ?? JgsRulerTicks.Current(x).Select(static t => t.Value))
+                .Where(t => t >= Math.Min(x.Range.Min, x.Range.Max) - 1e-9 && t <= Math.Max(x.Range.Min, x.Range.Max) + 1e-9)];
+            if (shown.Length > 0 && x.Range.Max != x.Range.Min && x.Scale != AxisScaleType.Logarithmic)
+            {
+                double width = estimate.PlotAreaPx.Width;
+                double firstIn = Math.Abs(shown.Min() - x.Range.Min) / Math.Abs(x.Range.Max - x.Range.Min) * width;
+                double lastIn = Math.Abs(x.Range.Max - shown.Max()) / Math.Abs(x.Range.Max - x.Range.Min) * width;
+                double rounded = Math.Round(widest, MidpointRounding.AwayFromZero);
+                bool level = sin < 1e-9;
+                turnedLeft = (level ? rounded / 2 : rounded * cos) - firstIn;
+                // Upright (90 degrees), a label is centred across its tick, half its height either side.
+                right = Math.Max(0, (level ? rounded / 2 : sin > 1 - 1e-9 ? height / 2 : height * sin) - lastIn);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(x.Label))
+        {
+            bottom += Height(x.Label, x.LabelStyle, axes.LabelFontSizeMultiplier, bold: false) + (4.0 / 3);
+        }
+
+        double left = 0;
+        double top = 0;
+        if (y.ShowTickLabels && Labels(y) is { Count: > 0 } yLabels)
+        {
+            (double widest, double height, _) = TickLabelTurn.Measure(yLabels, y.TickLabelStyle, automatic);
+            left = Math.Ceiling(widest) + (16.0 / 3);
+            top = height / 2;
+        }
+
+        if (!string.IsNullOrEmpty(y.Label))
+        {
+            left += Height(y.Label, y.LabelStyle, axes.LabelFontSizeMultiplier, bold: false) + 4;
+        }
+
+        if (!string.IsNullOrEmpty(axes.Title))
+        {
+            top = Math.Max(top, Height(axes.Title, axes.TitleStyle, axes.TitleFontSizeMultiplier, bold: true) + (11.0 / 3));
+        }
+
+        var inset = new Thickness(Math.Max(left, turnedLeft), top, right, bottom);
+        Rect2D outer = estimate.OuterPx;
+        Rect2D plot = estimate.PlotAreaPx;
+        static double Edge(double margin, double needed) => needed > margin ? needed + (margin - Math.Floor(margin)) : margin;
+        double marginLeft = Edge(plot.X - outer.X, inset.Left);
+        double marginTop = Edge(plot.Y - outer.Y, inset.Top);
+        double marginRight = Edge(outer.Right - plot.Right, inset.Right);
+        double marginBottom = Edge(outer.Bottom - plot.Bottom, inset.Bottom);
+        var box = new Rect2D(
+            outer.X + marginLeft,
+            outer.Y + marginTop,
+            Math.Max(1, outer.Width - marginLeft - marginRight),
+            Math.Max(1, outer.Height - marginTop - marginBottom));
+        return new AxesLayoutSnapshot(outer, box, inset, estimate.CanvasPx);
+    }
 
     /// <summary>Reads a four-element rectangle, refusing a width or height that is not positive.</summary>
     private static Rect2D Box(string what, JgsValue value, int line, int col)

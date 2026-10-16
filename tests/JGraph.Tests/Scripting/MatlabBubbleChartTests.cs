@@ -201,7 +201,7 @@ public class MatlabBubbleChartTests : IDisposable
         Assert.Equal(
             new[]
             {
-                "bubblelegend", "Population", "northwest", "4", "telescopic", "on", "off",
+                "bubblelegend", "Population", "northwest", "4", "telescopic", "on", "    off",
                 "[10, 36.666666666666664, 63.33333333333333, 90]",
             },
             _output.NormalLines);

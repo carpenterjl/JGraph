@@ -705,6 +705,11 @@ internal static class JgsTime
 
     private static string FormatDuration(double ms, string format)
     {
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            return FormatDurationMatlab(ms, format);
+        }
+
         if (double.IsNaN(ms))
         {
             return "NaN";
@@ -766,6 +771,126 @@ internal static class JgsTime
     /// </summary>
     private static string Trimmed(double value) =>
         value.ToString("0.##########", CultureInfo.InvariantCulture);
+
+    /// <summary>
+    /// A duration's text as R2025b writes it (open item 134, probe_b22a/b/d). A single-unit format is
+    /// the number at five significant digits under format short (fifteen under long), fixed while the
+    /// unrounded magnitude is in [1e-4, 1e5) and scientific outside it, so 99999.5 seconds is
+    /// <c>100000 sec</c> and 1e5 is <c>1e+05 sec</c>; days and years take a plural except at exactly
+    /// one. A clock format shows as many fraction digits as it has S letters, cut rather than rounded
+    /// (3.7 seconds under hh:mm:ss is 03), and Inf and NaN stand alone.
+    /// </summary>
+    private static string FormatDurationMatlab(double ms, string format)
+    {
+        double? perUnit = format switch
+        {
+            "s" => MsPerSecond,
+            "m" => MsPerMinute,
+            "h" => MsPerHour,
+            "d" => MsPerDay,
+            "y" => MsPerDay * 365.2425,
+            _ => null,
+        };
+        if (perUnit is { } unit)
+        {
+            double value = ms / unit;
+            string number = ShortNumber(value);
+            bool one = System.Math.Abs(value) == 1;
+            string name = format switch
+            {
+                "s" => "sec",
+                "m" => "min",
+                "h" => "hr",
+                "d" => one ? "day" : "days",
+                _ => one ? "yr" : "yrs",
+            };
+            return number + " " + name;
+        }
+
+        if (double.IsNaN(ms))
+        {
+            return "NaN";
+        }
+
+        if (double.IsInfinity(ms))
+        {
+            return ms > 0 ? "Inf" : "-Inf";
+        }
+
+        int dot = format.IndexOf('.');
+        string clock = dot < 0 ? format : format[..dot];
+        int places = dot < 0 ? 0 : format.Length - dot - 1;
+        string sign = ms < 0 ? "-" : string.Empty;
+        decimal total = System.Math.Round((decimal)System.Math.Abs(ms), 6);
+        decimal wholeSeconds = decimal.Floor(total / 1000m);
+        decimal fractionMs = total - (wholeSeconds * 1000m);
+        long seconds = (long)(wholeSeconds % 60m);
+        long totalMinutes = (long)(wholeSeconds / 60m);
+        long minutes = totalMinutes % 60;
+        long totalHours = totalMinutes / 60;
+        string fraction = places == 0
+            ? string.Empty
+            : "." + ((long)decimal.Floor(fractionMs * Pow10(places) / 1000m)).ToString(CultureInfo.InvariantCulture).PadLeft(places, '0');
+        string text = clock switch
+        {
+            "hh:mm" => $"{totalHours:00}:{minutes:00}",
+            "mm:ss" => $"{totalMinutes:00}:{seconds:00}{fraction}",
+            "dd:hh:mm:ss" => $"{totalHours / 24:00}:{totalHours % 24:00}:{minutes:00}:{seconds:00}{fraction}",
+            _ => $"{totalHours:00}:{minutes:00}:{seconds:00}{fraction}",
+        };
+        return sign + text;
+
+        static decimal Pow10(int n)
+        {
+            decimal p = 1m;
+            for (int i = 0; i < n; i++)
+            {
+                p *= 10m;
+            }
+
+            return p;
+        }
+    }
+
+    /// <summary>A duration's number as R2025b's display writes it: see <see cref="FormatDurationMatlab"/>.</summary>
+    private static string ShortNumber(double value)
+    {
+        if (double.IsNaN(value))
+        {
+            return "NaN";
+        }
+
+        if (double.IsInfinity(value))
+        {
+            return value > 0 ? "Inf" : "-Inf";
+        }
+
+        if (value == 0)
+        {
+            return "0";
+        }
+
+        int digits = JgsNumberFormat.Temporal is JgsNumberFormat.Mode.Long or JgsNumberFormat.Mode.LongE ? 15 : 5;
+        double magnitude = System.Math.Abs(value);
+        int exponent = (int)System.Math.Floor(System.Math.Log10(magnitude));
+        if (System.Math.Pow(10, exponent) > magnitude)
+        {
+            exponent--; // Log10 rounded up across a power of ten
+        }
+
+        if (exponent >= -4 && exponent < digits)
+        {
+            string fixedText = magnitude.ToString("F" + System.Math.Max(0, digits - 1 - exponent).ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
+            if (fixedText.Contains('.'))
+            {
+                fixedText = fixedText.TrimEnd('0').TrimEnd('.');
+            }
+
+            return (value < 0 ? "-" : string.Empty) + fixedText;
+        }
+
+        return (value < 0 ? "-" : string.Empty) + JgsSprintf.FormatAtPrecision(magnitude, digits);
+    }
 
     // --- Parsing -----------------------------------------------------------------------------
 

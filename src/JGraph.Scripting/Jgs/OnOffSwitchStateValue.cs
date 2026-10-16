@@ -48,11 +48,29 @@ internal sealed class OnOffSwitchStateValue : IJgsExternalArray
     /// <summary>A member's name.</summary>
     public static string NameOf(bool state) => state ? "on" : "off";
 
+    /// <summary>
+    /// Whether this thread has made a member: a call with one among its arguments must look for the
+    /// class's methods, which the interpreter only does once it knows external values are about.
+    /// </summary>
+    [ThreadStatic]
+    private static bool t_minted;
+
+    /// <summary>Whether this thread has made a member (open item 132).</summary>
+    public static bool MintedOnThread => t_minted;
+
     /// <summary>One member as a script value.</summary>
-    public static JgsValue Of(bool state) => JgsValue.External(new OnOffSwitchStateValue([state], 1, 1));
+    public static JgsValue Of(bool state)
+    {
+        t_minted = true;
+        return JgsValue.External(new OnOffSwitchStateValue([state], 1, 1));
+    }
 
     /// <summary>Members in a shape, as a script value.</summary>
-    public static JgsValue Of(bool[] states, int rows, int columns) => JgsValue.External(new OnOffSwitchStateValue(states, rows, columns));
+    public static JgsValue Of(bool[] states, int rows, int columns)
+    {
+        t_minted = true;
+        return JgsValue.External(new OnOffSwitchStateValue(states, rows, columns));
+    }
 
     /// <summary>The members as the logical array they are underneath, in their shape.</summary>
     public JgsValue Logical()

@@ -93,7 +93,8 @@ internal static partial class JgsBuiltins
                 for (int i = 0; i < texts.Length; i++)
                 {
                     texts[i] = JgsTime.Format(time.ElementAt(i).AsNumber, tag, culture);
-                    if (time.IsDuration && tag.Format is "s" or "m" or "h" or "d" or "y")
+                    // The MATLAB dialect's formatter writes R2025b's digits and units itself (open item 134).
+                    if (time.IsDuration && tag.Format is "s" or "m" or "h" or "d" or "y" && !JgsRunningDialect.ThreadIsMatlab)
                     {
                         double divisor = tag.Format switch { "s" => JgsTime.MsPerSecond, "m" => JgsTime.MsPerMinute, "h" => JgsTime.MsPerHour, "d" => JgsTime.MsPerDay, _ => JgsTime.MsPerDay * 365.2425 };
                         string suffix = tag.Format switch { "s" => " sec", "m" => " min", "h" => " hr", "d" => " day", _ => " yr" };

@@ -59,13 +59,24 @@ public static class TickLabelTurn
         TextStyle style, bool automaticFont, bool categorical = false)
     {
         ArgumentNullException.ThrowIfNull(labels);
+        (double widest, double height, double fontPixels) = Measure(labels, style, automaticFont);
+        int shown = Shown(ticks, range, logarithmic);
+        double spacing = shown < 2 ? double.PositiveInfinity : WholePixels(startPixels, lengthPixels) / shown;
+        return Angle(spacing, widest, height, fontPixels, tiesTurn: categorical && shown is >= 8 and <= 31);
+    }
 
-        // The rule is R2025b's at its font: this build's automatic axes font is 11 where R2025b's is 10;
-        // a size a script wrote is R2025b's size as it stands.
+    /// <summary>
+    /// The widest of <paramref name="labels"/> and a label's height, in pixels, as R2025b's text extents
+    /// give them, and the font's pixel size. The rule is R2025b's at its font: this build's automatic
+    /// axes font is 11 where R2025b's is 10, and a size a script wrote is R2025b's size as it stands.
+    /// The labels are measured in R2025b's face while the axes keeps this build's default one: its
+    /// Helvetica, which is Arial here, kerned as R2025b's text extents are (m126_rot3). The height is
+    /// the face's ascent and descent, each rounded to a pixel.
+    /// </summary>
+    public static (double Widest, double Height, double FontPixels) Measure(IReadOnlyList<string> labels, TextStyle style, bool automaticFont)
+    {
+        ArgumentNullException.ThrowIfNull(labels);
         double fontPixels = style.FontSize * (automaticFont ? 10.0 / 11 : 1) * 96.0 / 72;
-
-        // The labels are measured in R2025b's face while the axes keeps this build's default one: its
-        // Helvetica, which is Arial here, kerned as R2025b's text extents are (m126_rot3).
         string face = style.FontFamily == DefaultFace ? "Helvetica" : style.FontFamily;
         double widest = 0;
         foreach (string label in labels)
@@ -77,9 +88,7 @@ public static class TickLabelTurn
 
         (double ascent, double descent) = UiFonts.Reach(face, fontPixels, style.Bold, style.Italic);
         double height = Math.Round(ascent, MidpointRounding.AwayFromZero) + Math.Round(descent, MidpointRounding.AwayFromZero);
-        int shown = Shown(ticks, range, logarithmic);
-        double spacing = shown < 2 ? double.PositiveInfinity : WholePixels(startPixels, lengthPixels) / shown;
-        return Angle(spacing, widest, height, fontPixels, tiesTurn: categorical && shown is >= 8 and <= 31);
+        return (widest, height, fontPixels);
     }
 
     /// <summary>

@@ -121,9 +121,8 @@ public class MatFileV73Tests : IDisposable
         // so this is the one read that genuinely transposes.
         JgsValue read = Load("v73_plain.mat")["T"];
 
-        Assert.Equal(2, read.ArrayLength);
-        Assert.Equal("adx", read.ElementAt(0).AsString);
-        Assert.Equal("bey", read.ElementAt(1).AsString);
+        Assert.True(read.IsCharMatrix); // a char matrix says so (M105), as a version 5 file's does
+        Assert.Equal(["adx", "bey"], read.CharMatrixRows());
     }
 
     [Fact]

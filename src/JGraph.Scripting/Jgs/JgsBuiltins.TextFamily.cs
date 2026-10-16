@@ -848,6 +848,17 @@ internal static partial class JgsBuiltins
         // (U9, ADR 0207): cellstr(NaT) is {'NaT'}, and an empty one is an empty cell of its size.
         if (input.IsTime)
         {
+            // A cell in the MATLAB dialect (open item 134: this answered an array of texts, which
+            // displayed and indexed as one), and a calendarDuration's elements counted where they are.
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                bool calendar = IsCalendarDuration(input);
+                JgsValue[] texts = [.. Enumerable.Range(0, calendar ? input.AsStructArray.Length : input.ArrayLength).Select(i => JgsValue.Str(TimeText(input, i)))];
+                JgsValue cell = JgsValue.Cell(texts);
+                cell.Reshape(JgsMatrix.RowCount(input), JgsMatrix.ColCount(input));
+                return cell;
+            }
+
             var moments = new JgsValue[input.ArrayLength];
             for (int i = 0; i < moments.Length; i++)
             {

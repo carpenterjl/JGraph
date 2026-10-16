@@ -48,6 +48,16 @@ internal static class JgsSprintf
             {
                 stream.Add(JgsValue.Str(arg.CharMatrixText()));
             }
+            else if (arg.IsTime)
+            {
+                // A datetime or duration prints as its text, one piece per element (open item 134:
+                // sprintf('%s', seconds(1.4142135624)) is '1.4142 sec' in R2025b).
+                int count = JgsBuiltins.IsCalendarDuration(arg) ? arg.AsStructArray.Length : arg.ArrayLength;
+                for (int i = 0; i < count; i++)
+                {
+                    stream.Add(JgsValue.Str(JgsBuiltins.TimeText(arg, i)));
+                }
+            }
             else if (arg.Type == JgsType.Array)
             {
                 stream.AddRange(arg.BoxedElements());

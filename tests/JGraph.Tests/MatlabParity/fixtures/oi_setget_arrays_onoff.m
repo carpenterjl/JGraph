@@ -4,8 +4,8 @@
 % categorical products, struct of a categorical, isspace, isletter and isstrprop over things that are
 % not text, rows of function handles refused, and matlab.lang.OnOffSwitchState's values, conversions,
 % arrays and operators, in the MATLAB dialect. Lines marked div=ADR0234 are the display of get and set
-% with no output, of a struct and of a cell, OnOffSwitchState's 153 methods, a graphics property's on
-% and off read as char, and where exist says a name lives.
+% with no output, of a struct and of a cell, OnOffSwitchState's 153 methods, and where exist says a
+% name lives; ADR 0235 made a graphics property's on and off read as an OnOffSwitchState exact.
 global OBS129_COUNT
 h1 = Hnd116(1); h2 = Hnd116(2); ha = [h1 h2];
 u9b_chk('set_scalar', @() msgof(@() set(h1, 'p', 5))); u9b_chk('get_scalar', @() msgof(@() get(h1, 'p')));
@@ -82,9 +82,9 @@ u9b_chk('oo_mixed_logical', @() msgof(@() class([on true]))); u9b_chk('oo_sort',
 u9b_chk('oo_eq_bad', @() msgof(@() on == 'maybe')); u9b_chk('oo_eq_num', @() on == 1); u9b_chk('oo_ne', @() on ~= 'off');
 u9b_chk('oo_fieldnames', @() msgof(@() fieldnames(on))); u9b_chk('oo_properties', @() properties(on)); u9b_chk('oo_struct', @() msgof(@() struct(on)));
 u9b_chk('oo_num2str', @() msgof(@() num2str(on))); u9b_chk('oo_sprintf', @() msgof(@() sprintf('%s', on))); u9b_chk('oo_sprintf_d', @() msgof(@() sprintf('%d', on)));
-u9b_chkdiv('oo_ax_visible', @() oi_try( @() class(axes(figure('Visible', 'off')).Visible)), 'ADR0234'); u9b_chkdiv('oo_ax_visible_eq', @() oi_try( @() axes(figure('Visible', 'off')).Visible == 'on'), 'ADR0234');
-u9b_chkdiv('oo_ax_isenum', @() oi_try( @() isenum(axes(figure('Visible', 'off')).Visible)), 'ADR0234'); u9b_chk('oo_ax_strcmp', @() strcmp(axes(figure('Visible', 'off')).Visible, 'on'));
-u9b_chkdiv('oo_ax_set', @() oi_try( @() axset(on)), 'ADR0234'); u9b_chk('oo_isenum_char', @() isenum('on')); u9b_chk('oo_isenum_class', @() isenum(Val116(1)));
+u9b_chk('oo_ax_visible', @() class(axes(figure('Visible', 'off')).Visible)); u9b_chk('oo_ax_visible_eq', @() axes(figure('Visible', 'off')).Visible == 'on');
+u9b_chk('oo_ax_isenum', @() isenum(axes(figure('Visible', 'off')).Visible)); u9b_chk('oo_ax_strcmp', @() strcmp(axes(figure('Visible', 'off')).Visible, 'on'));
+u9b_chk('oo_ax_set', @() axset(on)); u9b_chk('oo_isenum_char', @() isenum('on')); u9b_chk('oo_isenum_class', @() isenum(Val116(1)));
 u9b_chk('oo_enum_char_class', @() msgof(@() enumeration('Val116'))); u9b_chk('oo_matlab_lang', @() exist('matlab.lang.OnOffSwitchState'));
 u9b_chk('oo_which', @() class(which('matlab.lang.OnOffSwitchState')));
 u9b_chkdiv('ex_istabular', @() oi_try( @() exist('istabular')), 'ADR0234'); u9b_chk('ex_isenum', @() exist('isenum')); u9b_chkdiv('ex_vartype', @() oi_try( @() exist('vartype')), 'ADR0234'); u9b_chkdiv('ex_convertvars', @() oi_try( @() exist('convertvars')), 'ADR0234');

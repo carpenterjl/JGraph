@@ -152,7 +152,7 @@ public class MatlabHeatmapTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "counts", "on", "counts", "across", "down" },
+            new[] { "counts", "    on", "counts", "across", "down" },
             _output.NormalLines);
     }
 

@@ -23,7 +23,7 @@ CHK|a111_save_handle_load_is_new|[1 2] 0|exact
 CHK|a111_save_handle_aliases_one_identity|5 1|exact
 CHK|a111_save_value_object|ValueBox 3|exact
 CHK|a112_matfile_read_alias|[1 2 3]|exact
-CHK|a146_matfile_indexed_write|[1 8 3]|div=ADR0167|diverges|ERR save writes version 5 MAT-files only; version 7.3 is an HDF5 format that can be read but not written.
+CHK|a146_matfile_indexed_write|[1 8 3]|exact
 CHK|g_save_append|u,v|exact
 CHK|a113_save_captured_handle|[1 2 3]|exact
 CHK|g_save_complex_alias|1 0|exact
