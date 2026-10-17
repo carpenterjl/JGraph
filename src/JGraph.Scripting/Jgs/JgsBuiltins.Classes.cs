@@ -241,7 +241,7 @@ internal static partial class JgsBuiltins
             {
                 try
                 {
-                    _ = GetHandleProperty(handle, name, line, col);
+                    _ = GetHandleProperty(handle, name, line, col, dot: true); // whole names only: isprop(ax, 'Pos') is false (open item 86)
                     return JgsValue.Bool(true);
                 }
                 catch (JgsRuntimeException)

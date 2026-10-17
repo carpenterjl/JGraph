@@ -149,7 +149,7 @@ public class MatlabHandleGraphicsTests : IDisposable
         try
             plot(1:5, 1:5, 'LineWidth', 2, 'Colour', 'r');
         catch err
-            ok = ok + ~isempty(strfind(err.message, "unknown option 'Colour'"));
+            ok = ok + ~isempty(strfind(err.message, "Unrecognized property Colour for class Line.")); % R2025b's words (open item 86)
         end
         try
             p = plot(1:5, 1:5);

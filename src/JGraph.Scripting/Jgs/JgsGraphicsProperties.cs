@@ -702,6 +702,11 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     public static JgsValue Get(JgsHandleEntry entry, string name, int line, int col, bool dot = false)
     {
+        if (!dot)
+        {
+            name = WholeName(entry.Target, name); // a start of a name through get (open item 86)
+        }
+
         if (JgsCategoricalCharts.TryRead(entry, name, line, col, dot, out JgsValue categorical))
         {
             return AsSwitchState(entry.Target, name, categorical); // a categorical ruler's readings (open item 120)
@@ -763,6 +768,11 @@ internal static partial class JgsGraphicsProperties
     /// <summary>Writes a property; <paramref name="dot"/> as <see cref="Get"/>'s.</summary>
     public static void Set(JgsHandleEntry entry, string name, JgsValue value, int line, int col, bool dot = false)
     {
+        if (!dot)
+        {
+            name = WholeName(entry.Target, name); // a start of a name through set or a creating call (open item 86)
+        }
+
         // A string scalar is text to every property but a uicontrol's Value, which refuses it as
         // a string (U3).
         if (value.IsStringArray && value.ArrayLength == 1
@@ -3107,6 +3117,7 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     internal static JgsValue OptionsOf(JgsHandleEntry entry, string name, int line, int col)
     {
+        name = WholeName(entry.Target, name); // set(h, 'Pos') lists Position's words (open item 86)
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
             throw Unknown(entry.Target, name, line, col);

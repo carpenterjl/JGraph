@@ -3251,7 +3251,7 @@ internal static partial class JgsBuiltins
         int start = args.Count;
         for (int i = 0; i + 1 < args.Count; i++)
         {
-            if (args[i].Type == JgsType.String && PlotOptionNames.Contains(args[i].AsString))
+            if (args[i].Type == JgsType.String && StartsPlotOptions(args[i].AsString))
             {
                 start = i;
                 break;
@@ -3278,10 +3278,32 @@ internal static partial class JgsBuiltins
                     $"{verb} options come in name-value pairs, like {verb}(x, y, 'LineWidth', 2).");
             }
 
-            options.Add((args[i].AsString, args[i + 1]));
+            options.Add((WholePlotOptionName(args[i].AsString), args[i + 1]));
         }
 
         return (data, options);
+    }
+
+    /// <summary>
+    /// Whether a word opens <c>plot</c>'s option tail: one of its names, or in the MATLAB dialect the
+    /// start of one (R2025b takes <c>plot(x, y, 'LineW', 2)</c>, open item 86). A word a LineSpec could
+    /// be (<c>'co'</c>, cyan circles) stays a spec, and one letter is never a start.
+    /// </summary>
+    private static bool StartsPlotOptions(string word) =>
+        PlotOptionNames.Contains(word)
+        || (JgsRunningDialect.ThreadIsMatlab && word.Length >= 2 && !IsLineSpecWord(word)
+            && PlotOptionNames.Any(name => name.StartsWith(word, StringComparison.OrdinalIgnoreCase)));
+
+    /// <summary>The option a typed word means: itself, or the one name it starts; an ambiguous start is left for the property table to refuse in R2025b's words.</summary>
+    private static string WholePlotOptionName(string word)
+    {
+        if (PlotOptionNames.Contains(word) || !JgsRunningDialect.ThreadIsMatlab)
+        {
+            return word;
+        }
+
+        string[] starts = [.. PlotOptionNames.Where(name => name.StartsWith(word, StringComparison.OrdinalIgnoreCase))];
+        return starts.Length == 1 ? starts[0] : word;
     }
 
     /// <summary>
@@ -3389,8 +3411,16 @@ internal static partial class JgsBuiltins
                             name, value, line, col);
                         break;
                     default:
-                        // Unreachable through SplitPlotOptions, which only collects known names —
-                        // but a silent drop here is how a misspelling would go unnoticed.
+                        // A MATLAB-dialect start of a name that several names share ('Mark') reaches
+                        // the property table, which refuses it in R2025b's words (open item 86);
+                        // otherwise unreachable through SplitPlotOptions, which only collects known
+                        // names — but a silent drop here is how a misspelling would go unnoticed.
+                        if (JgsRunningDialect.ThreadIsMatlab)
+                        {
+                            JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(plot), name, value, line, col);
+                            break;
+                        }
+
                         throw new JgsRuntimeException(line, col,
                             $"{verb}: unknown option '{name}'. Use {string.Join(", ", PlotOptionNames)}.");
                 }

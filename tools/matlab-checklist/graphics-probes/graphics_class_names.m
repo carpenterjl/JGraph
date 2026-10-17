@@ -1,6 +1,8 @@
 % graphics_class_names.m -- every public-readable property of each graphics class, hidden ones
-% included, as class|Type|name|hidden lines (open item 82). gen_graphics_class_names.ps1 runs it in
-% R2025b and writes src/JGraph.Scripting/Jgs/JgsGraphicsProperties.R2025bNames.cs from the output.
+% included, as class|Type|name|hidden|settable lines (open items 82 and 86; settable is 1 when
+% SetAccess is public, which is what tells a start of a name which property it means).
+% gen_graphics_class_names.ps1 runs it in R2025b and writes
+% src/JGraph.Scripting/Jgs/JgsGraphicsProperties.R2025bNames.cs from the output.
 f = figure('Visible', 'off');
 ax = axes(f);
 hold(ax, 'on');
@@ -78,7 +80,7 @@ for k = 1:numel(h)
         if isprop(obj, 'Type'), ty = get(obj, 'Type'); else, ty = '-'; end
         for p = mc.PropertyList'
             if ischar(p.GetAccess) && strcmp(p.GetAccess, 'public')
-                fprintf('%s|%s|%s|%d\n', mc.Name, ty, p.Name, p.Hidden);
+                fprintf('%s|%s|%s|%d|%d\n', mc.Name, ty, p.Name, p.Hidden, ischar(p.SetAccess) && strcmp(p.SetAccess, 'public'));
             end
         end
     end
@@ -115,7 +117,7 @@ polar = {polarplot(polaraxes(figure('Visible', 'off')), 1:3, 1:3), ...
 for k = 1:numel(polar)
     names = fieldnames(get(polar{k}));
     for j = 1:numel(names)
-        fprintf('%s@polaraxes|%s|%s|0\n', class(polar{k}), get(polar{k}, 'Type'), names{j});
+        fprintf('%s@polaraxes|%s|%s|0|1\n', class(polar{k}), get(polar{k}, 'Type'), names{j});
     end
 end
 close all force

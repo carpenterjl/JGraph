@@ -123,7 +123,7 @@ for s = 1:numel(sizes)
 end
 f.Position = [100 100 560 420]; drawnow;
 ax = subplot(2, 2, 1, 'Parent', f); plot(ax, 1:10, linspace(0.123, 0.987, 10)); drawnow;
-u9b_chkdiv('subplot', @() oi_r([ax.XLim ax.XTick ax.YLim ax.YTick]), 'ADR0232'); % the font shrinks with the subplot and R2025b scores the short x ruler (open item 119)
+u9b_chk('subplot', @() oi_r([ax.XLim ax.XTick ax.YLim ax.YTick])); % the font shrinks with the subplot and R2025b scores the short x ruler (open item 119, ADR 0238)
 delete(ax);
 
 % --- 3-D: each ruler by the run of its edge across or up the page

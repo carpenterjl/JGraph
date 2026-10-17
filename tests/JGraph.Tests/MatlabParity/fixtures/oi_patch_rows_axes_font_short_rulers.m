@@ -8,9 +8,11 @@
 % 1.1 of it, a legend and colorbar at 0.9, while FontSizeMode stays auto; a manual FontSize holds.
 % 119: the tick count caps of ADR 0231 refitted at a fixed font so short rulers, the polar r ruler
 % (caps 7 and 5, whatever the size) and the colorbar (the axes caps at its own length and 0.9 of
-% the font) count as R2025b does. Lines marked div=ADR0232 are where R2025b scores density on a
-% ruler under ~200 px, where its text ink is [0.1294 0.1294 0.1294] and this build's is 0.251, or
-% where a polar axes' Units cannot be pixels here. Tick values are rounded to nine decimals.
+% the font) count as R2025b does. Lines marked div=ADR0232 are where its text ink is
+% [0.1294 0.1294 0.1294] and this build's is 0.251, where a polar axes' Units cannot be pixels here,
+% or where R2025b's own double arithmetic drops a landing tick; the short-ruler rows that scored
+% density under ~200 px were lifted by ADR 0238 (open item 119), which also marks the one row where
+% a shrunk 9-point font moves a band's edge (sq217_y_0_0p15). Tick values are rounded to nine decimals.
 close all force
 
 % --- 114: patch reads
@@ -194,7 +196,7 @@ function d = oi_divs()
 % 0.251 (open item 105); a two-face patch keeps stale vertices after a column write; a uiaxes'
 % font is 12 there and 11 here; a subplot's box is a few pixels wider there; and the short-ruler
 % and polar tick counts under R2025b's density score (open item 119, still open).
-d = {'fig_240_180_xt', 'fig_240_180_ylim', 'fig_240_180_yt', 'fig_300_200_ylim', 'fig_300_200_yt', 'fill_cdata', 'font_auto_again', 'font_small_title', 'font_small_xlabel', 'patch2f_written_col', 'patch_cdata', 'patch_fvcd', 'patchfv_cdata', 'patchfv_fvcd', 'patchm_cdata', 'patchm_fvcd', 'patchrgb_cdata', 'patchrgb_fvcd', 'patchxy_cdata', 'patchxy_facecolor', 'pie_text_color', 'polar_0_12', 'polar_0_25', 'polar_m5_5', 'polar_small_0_25', 'sq100_x_0_0p15', 'sq100_x_0_0p3', 'sq100_x_0_0p7', 'sq100_x_0_21', 'sq100_x_0_6', 'sq100_x_0_7', 'sq100_x_0_8', 'sq100_x_1_10', 'sq100_y_0_0p5', 'sq100_y_0_1', 'sq100_y_0_10', 'sq100_y_0_100', 'sq100_y_0_12', 'sq140_x_0_0p5', 'sq140_x_0_21', 'sq140_x_0_5', 'sq140_x_0_50', 'sq140_y_0_0p7', 'sq140_y_0p123_0p987', 'sq180_x_0_0p5', 'sq180_x_0_5', 'sq180_x_0_50', 'sq60_x_0_0p15', 'sq60_x_0_0p3', 'sq60_x_0_6', 'sq60_x_0p123_0p987', 'sq60_y_0_0p15', 'sq60_y_0_0p3', 'sq60_y_0_0p7', 'sq60_y_0_21', 'sq60_y_0_6', 'sq60_y_0_7', 'sq60_y_0_8', 'sq60_y_1_10', 'sub33_fs', 'text_color', 'uiaxes_small_fs'}; % OI_DIVS
+d = {'fig_300_200_ylim', 'fig_300_200_yt', 'fill_cdata', 'font_auto_again', 'font_small_title', 'font_small_xlabel', 'patch2f_written_col', 'patch_cdata', 'patch_fvcd', 'patchfv_cdata', 'patchfv_fvcd', 'patchm_cdata', 'patchm_fvcd', 'patchrgb_cdata', 'patchrgb_fvcd', 'patchxy_cdata', 'patchxy_facecolor', 'pie_text_color', 'polar_0_25', 'polar_small_0_25', 'sq100_y_0_0p5', 'sq180_x_0_0p5', 'sq217_y_0_0p15', 'sub33_fs', 'text_color', 'uiaxes_small_fs'}; % OI_DIVS
 end
 
 function out = xwrite(p, v)

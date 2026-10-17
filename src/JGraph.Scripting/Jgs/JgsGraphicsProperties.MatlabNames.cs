@@ -149,9 +149,19 @@ internal static partial class JgsGraphicsProperties
         public static readonly Dictionary<string, Dictionary<string, bool>> ByClass = R2025bNameRows.ToDictionary(
             static row => row.Class,
             static row => row.Names.Split(' ').ToDictionary(
-                static word => word.TrimStart('~'),
+                static word => word.TrimStart('~', '^'),
                 static word => word.StartsWith('~'),
                 StringComparer.OrdinalIgnoreCase));
+
+        /// <summary>The listed names whose set access is not public (marked ^), per class (open item 86).</summary>
+        private static readonly Dictionary<string, HashSet<string>> ReadOnlyByClass = R2025bNameRows.ToDictionary(
+            static row => row.Class,
+            static row => new HashSet<string>(
+                row.Names.Split(' ').Where(static word => word.StartsWith('^')).Select(static word => word[1..]),
+                StringComparer.OrdinalIgnoreCase));
+
+        public static bool ReadOnly(string cls, string name) =>
+            ReadOnlyByClass.TryGetValue(cls, out HashSet<string>? names) && names.Contains(name);
     }
 
     /// <summary>

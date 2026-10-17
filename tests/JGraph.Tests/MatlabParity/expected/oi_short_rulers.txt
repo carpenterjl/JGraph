@@ -1,0 +1,926 @@
+CHK|sq60_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq60_y_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq60_x_0_2|double[1 3] [0 1 2]|exact
+CHK|sq60_y_0_2|double[1 3] [0 1 2]|exact
+CHK|sq60_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq60_y_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq60_x_0_4|double[1 3] [0 2 4]|exact
+CHK|sq60_y_0_4|double[1 3] [0 2 4]|exact
+CHK|sq60_x_0_5|double[1 2] [0 5]|exact
+CHK|sq60_y_0_5|double[1 2] [0 5]|exact
+CHK|sq60_x_0_6|double[1 2] [0 5]|exact
+CHK|sq60_y_0_6|double[1 2] [0 5]|exact
+CHK|sq60_x_0_7|double[1 2] [0 5]|exact
+CHK|sq60_y_0_7|double[1 2] [0 5]|exact
+CHK|sq60_x_0_8|double[1 2] [0 5]|exact
+CHK|sq60_y_0_8|double[1 2] [0 5]|exact
+CHK|sq60_x_0_9|double[1 2] [0 5]|exact
+CHK|sq60_y_0_9|double[1 2] [0 5]|exact
+CHK|sq60_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq60_y_0_10|double[1 3] [0 5 10]|exact
+CHK|sq60_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq60_y_0_12|double[1 3] [0 5 10]|exact
+CHK|sq60_x_0_13|double[1 3] [0 5 10]|exact
+CHK|sq60_y_0_13|double[1 3] [0 5 10]|exact
+CHK|sq60_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq60_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq60_x_0_17|double[1 2] [0 10]|exact
+CHK|sq60_y_0_17|double[1 2] [0 10]|exact
+CHK|sq60_x_0_20|double[1 3] [0 10 20]|exact
+CHK|sq60_y_0_20|double[1 3] [0 10 20]|exact
+CHK|sq60_x_0_21|double[1 3] [0 10 20]|exact
+CHK|sq60_y_0_21|double[1 3] [0 10 20]|exact
+CHK|sq60_x_0_25|double[1 3] [0 10 20]|exact
+CHK|sq60_y_0_25|double[1 3] [0 10 20]|exact
+CHK|sq60_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq60_y_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq60_x_0_35|double[1 2] [0 20]|exact
+CHK|sq60_y_0_35|double[1 2] [0 20]|exact
+CHK|sq60_x_0_45|double[1 3] [0 20 40]|exact
+CHK|sq60_y_0_45|double[1 3] [0 20 40]|exact
+CHK|sq60_x_0_50|double[1 2] [0 50]|exact
+CHK|sq60_y_0_50|double[1 2] [0 50]|exact
+CHK|sq60_x_0_55|double[1 2] [0 50]|exact
+CHK|sq60_y_0_55|double[1 2] [0 50]|exact
+CHK|sq60_x_0_60|double[1 2] [0 50]|exact
+CHK|sq60_y_0_60|double[1 2] [0 50]|exact
+CHK|sq60_x_0_90|double[1 2] [0 50]|exact
+CHK|sq60_y_0_90|double[1 2] [0 50]|exact
+CHK|sq60_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq60_y_0_100|double[1 3] [0 50 100]|exact
+CHK|sq60_x_0_0p7|double[1 2] [0 0.5]|exact
+CHK|sq60_y_0_0p7|double[1 2] [0 0.5]|exact
+CHK|sq60_x_0_0p55|double[1 2] [0 0.5]|exact
+CHK|sq60_y_0_0p55|double[1 2] [0 0.5]|exact
+CHK|sq60_x_0_0p3|double[1 3] [0 0.10000000000000001 0.20000000000000001]|exact
+CHK|sq60_y_0_0p3|double[1 3] [0 0.10000000000000001 0.20000000000000001]|exact
+CHK|sq60_x_0_0p15|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq60_y_0_0p15|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq60_x_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq60_y_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq60_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq60_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq60_x_1_10|double[1 2] [5 10]|exact
+CHK|sq60_y_1_10|double[1 2] [5 10]|exact
+CHK|sq60_x_2_9|double[1 4] [2 4 6 8]|exact
+CHK|sq60_y_2_9|double[1 4] [2 4 6 8]|exact
+CHK|sq60_x_m1_1|double[1 3] [-1 0 1]|exact
+CHK|sq60_y_m1_1|double[1 3] [-1 0 1]|exact
+CHK|sq60_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq60_y_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq60_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq60_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq60_x_1p5_3p5|double[1 2] [2 3]|exact
+CHK|sq60_y_1p5_3p5|double[1 2] [2 3]|exact
+CHK|sq60_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq60_y_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq60_x_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|div=ADR0238|diverges|double[1 2] [12360 12380]
+CHK|sq60_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|div=ADR0238|diverges|double[1 2] [12360 12380]
+CHK|sq60_x_0_0p0004|double[1 3] [0 0.00020000000000000001 0.00040000000000000002]|exact
+CHK|sq60_y_0_0p0004|double[1 3] [0 0.00020000000000000001 0.00040000000000000002]|exact
+CHK|sq60_x_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq60_y_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq60_x_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq60_y_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq60_x_m2_7|double[1 5] [-2 0 2 4 6]|div=ADR0238|diverges|double[1 2] [0 5]
+CHK|sq60_y_m2_7|double[1 5] [-2 0 2 4 6]|div=ADR0238|diverges|double[1 2] [0 5]
+CHK|sq60_x_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|div=ADR0238|diverges|double[1 2] [0 0.5]
+CHK|sq60_y_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|div=ADR0238|diverges|double[1 2] [0 0.5]
+CHK|sq60_x_3_17|double[1 3] [5 10 15]|exact
+CHK|sq60_y_3_17|double[1 3] [5 10 15]|exact
+CHK|sq60_x_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|div=ADR0238|diverges|double[1 2] [1 2]
+CHK|sq60_y_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|div=ADR0238|diverges|double[1 2] [1 2]
+CHK|sq60_x_m15_85|double[1 5] [0 20 40 60 80]|div=ADR0238|diverges|double[1 2] [0 50]
+CHK|sq60_y_m15_85|double[1 5] [0 20 40 60 80]|div=ADR0238|diverges|double[1 2] [0 50]
+CHK|sq60_x_2p5_7p5|double[1 2] [4 6]|exact
+CHK|sq60_y_2p5_7p5|double[1 2] [4 6]|exact
+CHK|sq120_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq120_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq120_x_0_2|double[1 3] [0 1 2]|exact
+CHK|sq120_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq120_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq120_y_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq120_x_0_4|double[1 3] [0 2 4]|exact
+CHK|sq120_y_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq120_x_0_5|double[1 3] [0 2 4]|exact
+CHK|sq120_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq120_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq120_y_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq120_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq120_y_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq120_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq120_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq120_x_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq120_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq120_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq120_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq120_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq120_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq120_x_0_13|double[1 3] [0 5 10]|exact
+CHK|sq120_y_0_13|double[1 3] [0 5 10]|exact
+CHK|sq120_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq120_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq120_x_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq120_y_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq120_x_0_20|double[1 3] [0 10 20]|exact
+CHK|sq120_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq120_x_0_21|double[1 3] [0 10 20]|exact
+CHK|sq120_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq120_x_0_25|double[1 3] [0 10 20]|exact
+CHK|sq120_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq120_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq120_y_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq120_x_0_35|double[1 4] [0 10 20 30]|exact
+CHK|sq120_y_0_35|double[1 4] [0 10 20 30]|exact
+CHK|sq120_x_0_45|double[1 3] [0 20 40]|exact
+CHK|sq120_y_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|sq120_x_0_50|double[1 3] [0 20 40]|exact
+CHK|sq120_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq120_x_0_55|double[1 3] [0 20 40]|exact
+CHK|sq120_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq120_x_0_60|double[1 4] [0 20 40 60]|exact
+CHK|sq120_y_0_60|double[1 4] [0 20 40 60]|exact
+CHK|sq120_x_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq120_y_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq120_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq120_y_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq120_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq120_y_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq120_x_0_0p55|double[1 3] [0 0.20000000000000001 0.40000000000000002]|exact
+CHK|sq120_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq120_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq120_y_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq120_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq120_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq120_x_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq120_y_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq120_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq120_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq120_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq120_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq120_x_2_9|double[1 4] [2 4 6 8]|exact
+CHK|sq120_y_2_9|double[1 4] [2 4 6 8]|exact
+CHK|sq120_x_m1_1|double[1 3] [-1 0 1]|exact
+CHK|sq120_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq120_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq120_y_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq120_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq120_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq120_x_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq120_y_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq120_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq120_y_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq120_x_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq120_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq120_x_0_0p0004|double[1 3] [0 0.00020000000000000001 0.00040000000000000002]|exact
+CHK|sq120_y_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq120_x_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq120_y_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq120_x_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq120_y_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq120_x_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq120_y_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq120_x_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq120_y_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq120_x_3_17|double[1 3] [5 10 15]|exact
+CHK|sq120_y_3_17|double[1 3] [5 10 15]|exact
+CHK|sq120_x_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq120_y_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq120_x_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq120_y_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq120_x_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq120_y_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq140_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq140_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq140_x_0_2|double[1 3] [0 1 2]|exact
+CHK|sq140_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq140_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq140_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|sq140_x_0_4|double[1 3] [0 2 4]|exact
+CHK|sq140_y_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq140_x_0_5|double[1 3] [0 2 4]|exact
+CHK|sq140_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq140_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq140_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|sq140_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq140_y_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|sq140_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq140_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq140_x_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq140_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq140_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq140_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq140_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq140_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq140_x_0_13|double[1 3] [0 5 10]|exact
+CHK|sq140_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq140_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq140_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq140_x_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq140_y_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq140_x_0_20|double[1 3] [0 10 20]|exact
+CHK|sq140_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq140_x_0_21|double[1 3] [0 10 20]|exact
+CHK|sq140_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq140_x_0_25|double[1 3] [0 10 20]|exact
+CHK|sq140_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq140_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq140_y_0_30|double[1 7] [0 5 10 15 20 25 30]|exact
+CHK|sq140_x_0_35|double[1 4] [0 10 20 30]|exact
+CHK|sq140_y_0_35|double[1 8] [0 5 10 15 20 25 30 35]|exact
+CHK|sq140_x_0_45|double[1 3] [0 20 40]|exact
+CHK|sq140_y_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|sq140_x_0_50|double[1 3] [0 20 40]|exact
+CHK|sq140_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq140_x_0_55|double[1 3] [0 20 40]|exact
+CHK|sq140_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq140_x_0_60|double[1 4] [0 20 40 60]|exact
+CHK|sq140_y_0_60|double[1 7] [0 10 20 30 40 50 60]|exact
+CHK|sq140_x_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq140_y_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq140_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq140_y_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq140_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq140_y_0_0p7|double[1 7] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998]|exact
+CHK|sq140_x_0_0p55|double[1 3] [0 0.20000000000000001 0.40000000000000002]|exact
+CHK|sq140_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq140_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq140_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|sq140_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq140_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq140_x_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq140_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|sq140_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq140_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq140_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq140_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq140_x_2_9|double[1 4] [2 4 6 8]|exact
+CHK|sq140_y_2_9|double[1 8] [2 3 4 5 6 7 8 9]|exact
+CHK|sq140_x_m1_1|double[1 3] [-1 0 1]|exact
+CHK|sq140_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq140_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq140_y_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|sq140_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq140_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq140_x_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq140_y_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq140_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq140_y_10_11p3|double[1 7] [10 10.199999999999999 10.4 10.6 10.800000000000001 11 11.199999999999999]|exact
+CHK|sq140_x_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq140_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq140_x_0_0p0004|double[1 3] [0 0.00020000000000000001 0.00040000000000000002]|exact
+CHK|sq140_y_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq140_x_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq140_y_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq140_x_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq140_y_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq140_x_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq140_y_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq140_x_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq140_y_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq140_x_3_17|double[1 3] [5 10 15]|exact
+CHK|sq140_y_3_17|double[1 7] [4 6 8 10 12 14 16]|exact
+CHK|sq140_x_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq140_y_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq140_x_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq140_y_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq140_x_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq140_y_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq180_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq180_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq180_x_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq180_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq180_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq180_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|sq180_x_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq180_y_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq180_x_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq180_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq180_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq180_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|sq180_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq180_y_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|sq180_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq180_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq180_x_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq180_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq180_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq180_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq180_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq180_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq180_x_0_13|double[1 3] [0 5 10]|exact
+CHK|sq180_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq180_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq180_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq180_x_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq180_y_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq180_x_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq180_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq180_x_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq180_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq180_x_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq180_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq180_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq180_y_0_30|double[1 7] [0 5 10 15 20 25 30]|exact
+CHK|sq180_x_0_35|double[1 4] [0 10 20 30]|exact
+CHK|sq180_y_0_35|double[1 8] [0 5 10 15 20 25 30 35]|exact
+CHK|sq180_x_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|sq180_y_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|sq180_x_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq180_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq180_x_0_55|double[1 3] [0 20 40]|exact
+CHK|sq180_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq180_x_0_60|double[1 4] [0 20 40 60]|exact
+CHK|sq180_y_0_60|double[1 7] [0 10 20 30 40 50 60]|exact
+CHK|sq180_x_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq180_y_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq180_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq180_y_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq180_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq180_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|sq180_x_0_0p55|double[1 3] [0 0.20000000000000001 0.40000000000000002]|exact
+CHK|sq180_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq180_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq180_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|sq180_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq180_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq180_x_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq180_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|sq180_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq180_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|sq180_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq180_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq180_x_2_9|double[1 4] [2 4 6 8]|exact
+CHK|sq180_y_2_9|double[1 8] [2 3 4 5 6 7 8 9]|exact
+CHK|sq180_x_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq180_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq180_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq180_y_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|sq180_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq180_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq180_x_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq180_y_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq180_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq180_y_10_11p3|double[1 7] [10 10.199999999999999 10.4 10.6 10.800000000000001 11 11.199999999999999]|exact
+CHK|sq180_x_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq180_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq180_x_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq180_y_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq180_x_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq180_y_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq180_x_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq180_y_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq180_x_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq180_y_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq180_x_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq180_y_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq180_x_3_17|double[1 3] [5 10 15]|exact
+CHK|sq180_y_3_17|double[1 7] [4 6 8 10 12 14 16]|exact
+CHK|sq180_x_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq180_y_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq180_x_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq180_y_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq180_x_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq180_y_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq200_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|sq200_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq200_x_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq200_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq200_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq200_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|sq200_x_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq200_y_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq200_x_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq200_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq200_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq200_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|sq200_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq200_y_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|sq200_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq200_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq200_x_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq200_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq200_x_0_10|double[1 3] [0 5 10]|exact
+CHK|sq200_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq200_x_0_12|double[1 3] [0 5 10]|exact
+CHK|sq200_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq200_x_0_13|double[1 3] [0 5 10]|exact
+CHK|sq200_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq200_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq200_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq200_x_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq200_y_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq200_x_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq200_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq200_x_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq200_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq200_x_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq200_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq200_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq200_y_0_30|double[1 7] [0 5 10 15 20 25 30]|exact
+CHK|sq200_x_0_35|double[1 4] [0 10 20 30]|exact
+CHK|sq200_y_0_35|double[1 8] [0 5 10 15 20 25 30 35]|exact
+CHK|sq200_x_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|sq200_y_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|sq200_x_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq200_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq200_x_0_55|double[1 3] [0 20 40]|exact
+CHK|sq200_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq200_x_0_60|double[1 4] [0 20 40 60]|exact
+CHK|sq200_y_0_60|double[1 7] [0 10 20 30 40 50 60]|exact
+CHK|sq200_x_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq200_y_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq200_x_0_100|double[1 3] [0 50 100]|exact
+CHK|sq200_y_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq200_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq200_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|sq200_x_0_0p55|double[1 3] [0 0.20000000000000001 0.40000000000000002]|exact
+CHK|sq200_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq200_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq200_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|sq200_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq200_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq200_x_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq200_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|sq200_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq200_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|sq200_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq200_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq200_x_2_9|double[1 4] [2 4 6 8]|exact
+CHK|sq200_y_2_9|double[1 8] [2 3 4 5 6 7 8 9]|exact
+CHK|sq200_x_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq200_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq200_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq200_y_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|sq200_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq200_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq200_x_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq200_y_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq200_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq200_y_10_11p3|double[1 7] [10 10.199999999999999 10.4 10.6 10.800000000000001 11 11.199999999999999]|exact
+CHK|sq200_x_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq200_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq200_x_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq200_y_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq200_x_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq200_y_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq200_x_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq200_y_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq200_x_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq200_y_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq200_x_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq200_y_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq200_x_3_17|double[1 3] [5 10 15]|exact
+CHK|sq200_y_3_17|double[1 7] [4 6 8 10 12 14 16]|exact
+CHK|sq200_x_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq200_y_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq200_x_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq200_y_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq200_x_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq200_y_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq250_x_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq250_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|sq250_x_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq250_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|sq250_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|sq250_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|sq250_x_0_4|double[1 5] [0 1 2 3 4]|exact
+CHK|sq250_y_0_4|double[1 9] [0 0.5 1 1.5 2 2.5 3 3.5 4]|exact
+CHK|sq250_x_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq250_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|sq250_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|sq250_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|sq250_x_0_7|double[1 4] [0 2 4 6]|exact
+CHK|sq250_y_0_7|double[1 8] [0 1 2 3 4 5 6 7]|exact
+CHK|sq250_x_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|sq250_y_0_8|double[1 9] [0 1 2 3 4 5 6 7 8]|exact
+CHK|sq250_x_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|sq250_y_0_9|double[1 10] [0 1 2 3 4 5 6 7 8 9]|exact
+CHK|sq250_x_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq250_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|sq250_x_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq250_y_0_12|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq250_x_0_13|double[1 3] [0 5 10]|exact
+CHK|sq250_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|sq250_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq250_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|sq250_x_0_17|double[1 4] [0 5 10 15]|exact
+CHK|sq250_y_0_17|double[1 9] [0 2 4 6 8 10 12 14 16]|exact
+CHK|sq250_x_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq250_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|sq250_x_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq250_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|sq250_x_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq250_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|sq250_x_0_30|double[1 4] [0 10 20 30]|exact
+CHK|sq250_y_0_30|double[1 7] [0 5 10 15 20 25 30]|exact
+CHK|sq250_x_0_35|double[1 4] [0 10 20 30]|exact
+CHK|sq250_y_0_35|double[1 8] [0 5 10 15 20 25 30 35]|exact
+CHK|sq250_x_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|sq250_y_0_45|double[1 10] [0 5 10 15 20 25 30 35 40 45]|exact
+CHK|sq250_x_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq250_y_0_50|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq250_x_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq250_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|sq250_x_0_60|double[1 4] [0 20 40 60]|exact
+CHK|sq250_y_0_60|double[1 7] [0 10 20 30 40 50 60]|exact
+CHK|sq250_x_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|sq250_y_0_90|double[1 10] [0 10 20 30 40 50 60 70 80 90]|exact
+CHK|sq250_x_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq250_y_0_100|double[1 6] [0 20 40 60 80 100]|exact
+CHK|sq250_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|sq250_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|sq250_x_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq250_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|sq250_x_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|sq250_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|sq250_x_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq250_y_0_0p15|double[1 4] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999]|exact
+CHK|sq250_x_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|sq250_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|sq250_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq250_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|sq250_x_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|sq250_y_1_10|double[1 10] [1 2 3 4 5 6 7 8 9 10]|exact
+CHK|sq250_x_2_9|double[1 4] [2 4 6 8]|exact
+CHK|sq250_y_2_9|double[1 8] [2 3 4 5 6 7 8 9]|exact
+CHK|sq250_x_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq250_y_m1_1|double[1 5] [-1 -0.5 0 0.5 1]|exact
+CHK|sq250_x_m3_11|double[1 3] [0 5 10]|exact
+CHK|sq250_y_m3_11|double[1 7] [-2 0 2 4 6 8 10]|exact
+CHK|sq250_x_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq250_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|sq250_x_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq250_y_1p5_3p5|double[1 5] [1.5 2 2.5 3 3.5]|exact
+CHK|sq250_x_10_11p3|double[1 3] [10 10.5 11]|exact
+CHK|sq250_y_10_11p3|double[1 7] [10 10.199999999999999 10.4 10.6 10.800000000000001 11 11.199999999999999]|exact
+CHK|sq250_x_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq250_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|sq250_x_0_0p0004|double[1 5] [0 0.0001 0.00020000000000000001 0.00029999999999999997 0.00040000000000000002]|exact
+CHK|sq250_y_0_0p0004|double[1 9] [0 5.0000000000000002e-05 0.0001 0.00014999999999999999 0.00020000000000000001 0.00025000000000000001 0.00029999999999999997 0.00035 0.00040000000000000002]|exact
+CHK|sq250_x_0p5_9p5|double[1 4] [2 4 6 8]|exact
+CHK|sq250_y_0p5_9p5|double[1 9] [1 2 3 4 5 6 7 8 9]|exact
+CHK|sq250_x_1_99|double[1 4] [20 40 60 80]|exact
+CHK|sq250_y_1_99|double[1 9] [10 20 30 40 50 60 70 80 90]|exact
+CHK|sq250_x_m2_7|double[1 5] [-2 0 2 4 6]|exact
+CHK|sq250_y_m2_7|double[1 10] [-2 -1 0 1 2 3 4 5 6 7]|exact
+CHK|sq250_x_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq250_y_m0p3_0p9|double[1 6] [-0.20000000000000001 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|sq250_x_3_17|double[1 3] [5 10 15]|exact
+CHK|sq250_y_3_17|double[1 7] [4 6 8 10 12 14 16]|exact
+CHK|sq250_x_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq250_y_0p3_2p7|double[1 5] [0.5 1 1.5 2 2.5]|exact
+CHK|sq250_x_m15_85|double[1 5] [0 20 40 60 80]|exact
+CHK|sq250_y_m15_85|double[1 10] [-10 0 10 20 30 40 50 60 70 80]|exact
+CHK|sq250_x_2p5_7p5|double[1 5] [3 4 5 6 7]|exact
+CHK|sq250_y_2p5_7p5|double[1 11] [2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5]|exact
+CHK|tall75_y_0_1|double[1 3] [0 0.5 1]|exact
+CHK|tall75_y_0_2|double[1 3] [0 1 2]|exact
+CHK|tall75_y_0_3|double[1 4] [0 1 2 3]|exact
+CHK|tall75_y_0_5|double[1 3] [0 2 4]|exact
+CHK|tall75_y_0_6|double[1 4] [0 2 4 6]|exact
+CHK|tall75_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|tall75_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|tall75_y_0_10|double[1 3] [0 5 10]|exact
+CHK|tall75_y_0_13|double[1 3] [0 5 10]|exact
+CHK|tall75_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall75_y_0_20|double[1 3] [0 10 20]|exact
+CHK|tall75_y_0_21|double[1 3] [0 10 20]|exact
+CHK|tall75_y_0_25|double[1 3] [0 10 20]|exact
+CHK|tall75_y_0_55|double[1 3] [0 20 40]|exact
+CHK|tall75_y_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|tall75_y_0_0p55|double[1 3] [0 0.20000000000000001 0.40000000000000002]|exact
+CHK|tall75_y_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|tall75_y_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|tall75_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|tall75_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|tall75_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|tall75_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|tall100_y_0_1|double[1 3] [0 0.5 1]|exact
+CHK|tall100_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|tall100_y_0_3|double[1 4] [0 1 2 3]|exact
+CHK|tall100_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|tall100_y_0_6|double[1 4] [0 2 4 6]|exact
+CHK|tall100_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|tall100_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|tall100_y_0_10|double[1 3] [0 5 10]|exact
+CHK|tall100_y_0_13|double[1 3] [0 5 10]|exact
+CHK|tall100_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall100_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|tall100_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|tall100_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|tall100_y_0_55|double[1 3] [0 20 40]|exact
+CHK|tall100_y_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|tall100_y_0_0p55|double[1 3] [0 0.20000000000000001 0.40000000000000002]|exact
+CHK|tall100_y_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|tall100_y_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|tall100_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|tall100_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|tall100_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|tall100_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|tall120_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|tall120_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|tall120_y_0_3|double[1 4] [0 1 2 3]|exact
+CHK|tall120_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|tall120_y_0_6|double[1 4] [0 2 4 6]|exact
+CHK|tall120_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|tall120_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|tall120_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|tall120_y_0_13|double[1 3] [0 5 10]|exact
+CHK|tall120_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall120_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|tall120_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|tall120_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|tall120_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|tall120_y_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|tall120_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|tall120_y_0_0p3|double[1 4] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999]|exact
+CHK|tall120_y_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|tall120_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|tall120_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|tall120_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|tall120_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|tall140_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|tall140_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|tall140_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|tall140_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|tall140_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|tall140_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|tall140_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|tall140_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|tall140_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|tall140_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall140_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|tall140_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|tall140_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|tall140_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|tall140_y_0_0p7|double[1 7] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998]|exact
+CHK|tall140_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|tall140_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|tall140_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|tall140_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|tall140_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|tall140_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|tall140_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|tall165_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|tall165_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|tall165_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|tall165_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|tall165_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|tall165_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|tall165_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|tall165_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|tall165_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|tall165_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall165_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|tall165_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|tall165_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|tall165_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|tall165_y_0_0p7|double[1 7] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998]|div=ADR0238|diverges|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]
+CHK|tall165_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|tall165_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|tall165_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|tall165_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|div=ADR0238|diverges|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]
+CHK|tall165_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|tall165_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|tall165_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|tall190_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|tall190_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|tall190_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|tall190_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|tall190_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|tall190_y_0_8|double[1 5] [0 2 4 6 8]|exact
+CHK|tall190_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|tall190_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|tall190_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|tall190_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall190_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|tall190_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|tall190_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|tall190_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|tall190_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|tall190_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|tall190_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|tall190_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|tall190_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|tall190_y_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|tall190_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|tall190_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|tall215_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|tall215_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|tall215_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|tall215_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|tall215_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|tall215_y_0_8|double[1 9] [0 1 2 3 4 5 6 7 8]|exact
+CHK|tall215_y_0_9|double[1 10] [0 1 2 3 4 5 6 7 8 9]|exact
+CHK|tall215_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|tall215_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|tall215_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall215_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|tall215_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|tall215_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|tall215_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|tall215_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|tall215_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|tall215_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|tall215_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|tall215_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|tall215_y_1_10|double[1 10] [1 2 3 4 5 6 7 8 9 10]|exact
+CHK|tall215_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|tall215_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|tall240_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|tall240_y_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|tall240_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|tall240_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|tall240_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|tall240_y_0_8|double[1 9] [0 1 2 3 4 5 6 7 8]|exact
+CHK|tall240_y_0_9|double[1 10] [0 1 2 3 4 5 6 7 8 9]|exact
+CHK|tall240_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|tall240_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|tall240_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall240_y_0_20|double[1 5] [0 5 10 15 20]|exact
+CHK|tall240_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|tall240_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|tall240_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|tall240_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|tall240_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|exact
+CHK|tall240_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|tall240_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|tall240_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|tall240_y_1_10|double[1 10] [1 2 3 4 5 6 7 8 9 10]|exact
+CHK|tall240_y_m5_5|double[1 3] [-5 0 5]|exact
+CHK|tall240_y_12345_12399|double[1 5] [12350 12360 12370 12380 12390]|exact
+CHK|tall270_y_0_1|double[1 11] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002 1]|exact
+CHK|tall270_y_0_2|double[1 11] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1 1.2 1.3999999999999999 1.6000000000000001 1.8 2]|exact
+CHK|tall270_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|tall270_y_0_5|double[1 11] [0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5]|exact
+CHK|tall270_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|tall270_y_0_8|double[1 9] [0 1 2 3 4 5 6 7 8]|exact
+CHK|tall270_y_0_9|double[1 10] [0 1 2 3 4 5 6 7 8 9]|exact
+CHK|tall270_y_0_10|double[1 11] [0 1 2 3 4 5 6 7 8 9 10]|exact
+CHK|tall270_y_0_13|double[1 7] [0 2 4 6 8 10 12]|exact
+CHK|tall270_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|tall270_y_0_20|double[1 11] [0 2 4 6 8 10 12 14 16 18 20]|exact
+CHK|tall270_y_0_21|double[1 11] [0 2 4 6 8 10 12 14 16 18 20]|exact
+CHK|tall270_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|tall270_y_0_55|double[1 12] [0 5 10 15 20 25 30 35 40 45 50 55]|exact
+CHK|tall270_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|tall270_y_0_0p55|double[1 6] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5]|div=ADR0238|diverges|double[1 12] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999 0.34999999999999998 0.40000000000000002 0.45000000000000001 0.5 0.55000000000000004]
+CHK|tall270_y_0_0p3|double[1 7] [0 0.050000000000000003 0.10000000000000001 0.14999999999999999 0.20000000000000001 0.25 0.29999999999999999]|exact
+CHK|tall270_y_0_0p123|double[1 7] [0 0.02 0.040000000000000001 0.059999999999999998 0.080000000000000002 0.10000000000000001 0.12]|exact
+CHK|tall270_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|tall270_y_1_10|double[1 10] [1 2 3 4 5 6 7 8 9 10]|exact
+CHK|tall270_y_m5_5|double[1 11] [-5 -4 -3 -2 -1 0 1 2 3 4 5]|exact
+CHK|tall270_y_12345_12399|double[1 11] [12345 12350 12355 12360 12365 12370 12375 12380 12385 12390 12395]|exact
+CHK|slide140_m4_1|double[1 3] [-4 -2 0]|exact
+CHK|slide140_m3p875_1p125|double[1 5] [-3 -2 -1 0 1]|exact
+CHK|slide140_m2_3|double[1 3] [-2 0 2]|exact
+CHK|slide140_m1p875_3p125|double[1 5] [-1 0 1 2 3]|exact
+CHK|slide140_m1_4|double[1 3] [0 2 4]|exact
+CHK|slide140_0_5|double[1 3] [0 2 4]|exact
+CHK|slide140_0p125_5p125|double[1 5] [1 2 3 4 5]|exact
+CHK|slide140_1_6|double[1 3] [2 4 6]|exact
+CHK|slide140_2p125_7p125|double[1 5] [3 4 5 6 7]|exact
+CHK|slide140_3_8|double[1 3] [4 6 8]|exact
+CHK|slide60_m4_1|double[1 3] [-4 -2 0]|exact
+CHK|slide60_m3p875_1p125|double[1 5] [-3 -2 -1 0 1]|div=ADR0238|diverges|double[1 2] [-2 0]
+CHK|slide60_m2_3|double[1 3] [-2 0 2]|exact
+CHK|slide60_m1p875_3p125|double[1 5] [-1 0 1 2 3]|div=ADR0238|diverges|double[1 2] [0 2]
+CHK|slide60_m1_4|double[1 3] [0 2 4]|exact
+CHK|slide60_0_5|double[1 2] [0 5]|exact
+CHK|slide60_0p125_5p125|double[1 2] [2 4]|exact
+CHK|slide60_1_6|double[1 3] [2 4 6]|exact
+CHK|slide60_2p125_7p125|double[1 2] [4 6]|exact
+CHK|slide60_3_8|double[1 3] [4 6 8]|exact
+CHK|fs8_x_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|fs8_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|fs8_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|fs8_y_0_3|double[1 7] [0 0.5 1 1.5 2 2.5 3]|exact
+CHK|fs8_x_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|fs8_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|fs8_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|fs8_y_0_6|double[1 7] [0 1 2 3 4 5 6]|exact
+CHK|fs8_x_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|fs8_y_0_9|double[1 10] [0 1 2 3 4 5 6 7 8 9]|exact
+CHK|fs8_x_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|fs8_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|fs8_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|fs8_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|fs8_x_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|fs8_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|fs8_x_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|fs8_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|fs8_x_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|fs8_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|fs8_x_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|fs8_y_0_0p7|double[1 8] [0 0.10000000000000001 0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996]|exact
+CHK|fs8_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|fs8_y_0p123_0p987|double[1 8] [0.20000000000000001 0.29999999999999999 0.40000000000000002 0.5 0.59999999999999998 0.69999999999999996 0.80000000000000004 0.90000000000000002]|exact
+CHK|fs13_x_0_1|double[1 3] [0 0.5 1]|exact
+CHK|fs13_y_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|fs13_x_0_3|double[1 4] [0 1 2 3]|exact
+CHK|fs13_y_0_3|double[1 4] [0 1 2 3]|exact
+CHK|fs13_x_0_5|double[1 3] [0 2 4]|exact
+CHK|fs13_y_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|fs13_x_0_6|double[1 4] [0 2 4 6]|exact
+CHK|fs13_y_0_6|double[1 4] [0 2 4 6]|exact
+CHK|fs13_x_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|fs13_y_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|fs13_x_0_10|double[1 3] [0 5 10]|exact
+CHK|fs13_y_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|fs13_x_0_15|double[1 4] [0 5 10 15]|exact
+CHK|fs13_y_0_15|double[1 4] [0 5 10 15]|exact
+CHK|fs13_x_0_21|double[1 3] [0 10 20]|exact
+CHK|fs13_y_0_21|double[1 5] [0 5 10 15 20]|exact
+CHK|fs13_x_0_25|double[1 3] [0 10 20]|exact
+CHK|fs13_y_0_25|double[1 6] [0 5 10 15 20 25]|exact
+CHK|fs13_x_0_55|double[1 3] [0 20 40]|exact
+CHK|fs13_y_0_55|double[1 6] [0 10 20 30 40 50]|exact
+CHK|fs13_x_0_0p7|double[1 2] [0 0.5]|div=ADR0238|diverges|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]
+CHK|fs13_y_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|fs13_x_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|fs13_y_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|auto60_0_7|double[1 4] [0 7 0 5]|exact
+CHK|auto60_0_13|double[1 5] [0 13 0 5 10]|exact
+CHK|auto60_m3_11|double[1 5] [-3 11 0 5 10]|exact
+CHK|auto60_0p123_0p987|double[1 5] [0 1 0 0.5 1]|exact
+CHK|auto60_2_97|double[1 5] [0 100 0 50 100]|exact
+CHK|auto60_m1_1000|double[1 5] [-1 1000 0 500 1000]|exact
+CHK|auto60_0p5_9p5|double[1 5] [0 10 0 5 10]|exact
+CHK|auto60_1_10|double[1 5] [0 10 0 5 10]|exact
+CHK|auto140_0_7|double[1 7] [0 8 0 2 4 6 8]|exact
+CHK|auto140_0_13|double[1 6] [0 15 0 5 10 15]|exact
+CHK|auto140_m3_11|double[1 6] [-5 11 -5 0 5 10]|exact
+CHK|auto140_0p123_0p987|double[1 8] [0 1 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|auto140_2_97|double[1 8] [0 100 0 20 40 60 80 100]|exact
+CHK|auto140_m1_1000|double[1 9] [-200 1000 -200 0 200 400 600 800 1000]|exact
+CHK|auto140_0p5_9p5|double[1 8] [0 10 0 2 4 6 8 10]|exact
+CHK|auto140_1_10|double[1 8] [0 10 0 2 4 6 8 10]|exact
+CHK|auto200_0_7|double[1 10] [0 7 0 1 2 3 4 5 6 7]|exact
+CHK|auto200_0_13|double[1 10] [0 14 0 2 4 6 8 10 12 14]|exact
+CHK|auto200_m3_11|double[1 6] [-5 11 -5 0 5 10]|exact
+CHK|auto200_0p123_0p987|double[1 8] [0 1 0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|auto200_2_97|double[1 8] [0 100 0 20 40 60 80 100]|exact
+CHK|auto200_m1_1000|double[1 9] [-200 1000 -200 0 200 400 600 800 1000]|exact
+CHK|auto200_0p5_9p5|double[1 8] [0 10 0 2 4 6 8 10]|exact
+CHK|auto200_1_10|double[1 8] [0 10 0 2 4 6 8 10]|exact
+CHK|polar150_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|polar150_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|polar150_0_3|double[1 4] [0 1 2 3]|exact
+CHK|polar150_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|polar150_0_6|double[1 4] [0 2 4 6]|exact
+CHK|polar150_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|polar150_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|polar150_0_13|double[1 3] [0 5 10]|exact
+CHK|polar150_0_15|double[1 4] [0 5 10 15]|exact
+CHK|polar150_0_21|double[1 3] [0 10 20]|div=ADR0238|diverges|double[1 5] [0 5 10 15 20]
+CHK|polar150_0_25|double[1 3] [0 10 20]|div=ADR0238|diverges|double[1 6] [0 5 10 15 20 25]
+CHK|polar150_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|polar150_0_55|double[1 3] [0 20 40]|div=ADR0238|diverges|double[1 6] [0 10 20 30 40 50]
+CHK|polar150_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|polar150_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|polar150_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|polar150_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|polar150_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|polar150_m5_5|double[1 5] [-4 -2 0 2 4]|exact
+CHK|polar150_12345_12399|double[1 2] [12360 12380]|div=ADR0238|diverges|double[1 5] [12350 12360 12370 12380 12390]
+CHK|polar300_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|polar300_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|polar300_0_3|double[1 4] [0 1 2 3]|exact
+CHK|polar300_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|polar300_0_6|double[1 4] [0 2 4 6]|exact
+CHK|polar300_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|polar300_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|polar300_0_13|double[1 3] [0 5 10]|exact
+CHK|polar300_0_15|double[1 4] [0 5 10 15]|exact
+CHK|polar300_0_21|double[1 3] [0 10 20]|div=ADR0238|diverges|double[1 5] [0 5 10 15 20]
+CHK|polar300_0_25|double[1 3] [0 10 20]|div=ADR0238|diverges|double[1 6] [0 5 10 15 20 25]
+CHK|polar300_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|polar300_0_55|double[1 3] [0 20 40]|div=ADR0238|diverges|double[1 6] [0 10 20 30 40 50]
+CHK|polar300_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|polar300_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|polar300_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|polar300_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|polar300_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|polar300_m5_5|double[1 5] [-4 -2 0 2 4]|exact
+CHK|polar300_12345_12399|double[1 2] [12360 12380]|div=ADR0238|diverges|double[1 5] [12350 12360 12370 12380 12390]
+CHK|polar500_0_1|double[1 6] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004 1]|exact
+CHK|polar500_0_2|double[1 5] [0 0.5 1 1.5 2]|exact
+CHK|polar500_0_3|double[1 4] [0 1 2 3]|exact
+CHK|polar500_0_5|double[1 6] [0 1 2 3 4 5]|exact
+CHK|polar500_0_6|double[1 4] [0 2 4 6]|exact
+CHK|polar500_0_9|double[1 5] [0 2 4 6 8]|exact
+CHK|polar500_0_10|double[1 6] [0 2 4 6 8 10]|exact
+CHK|polar500_0_13|double[1 3] [0 5 10]|exact
+CHK|polar500_0_15|double[1 4] [0 5 10 15]|exact
+CHK|polar500_0_21|double[1 3] [0 10 20]|div=ADR0238|diverges|double[1 5] [0 5 10 15 20]
+CHK|polar500_0_25|double[1 3] [0 10 20]|div=ADR0238|diverges|double[1 6] [0 5 10 15 20 25]
+CHK|polar500_0_45|double[1 5] [0 10 20 30 40]|exact
+CHK|polar500_0_55|double[1 3] [0 20 40]|div=ADR0238|diverges|double[1 6] [0 10 20 30 40 50]
+CHK|polar500_0_90|double[1 5] [0 20 40 60 80]|exact
+CHK|polar500_0_0p7|double[1 4] [0 0.20000000000000001 0.40000000000000002 0.59999999999999998]|exact
+CHK|polar500_0_0p123|double[1 3] [0 0.050000000000000003 0.10000000000000001]|exact
+CHK|polar500_0p123_0p987|double[1 4] [0.20000000000000001 0.40000000000000002 0.59999999999999998 0.80000000000000004]|exact
+CHK|polar500_1_10|double[1 5] [2 4 6 8 10]|exact
+CHK|polar500_m5_5|double[1 5] [-4 -2 0 2 4]|exact
+CHK|polar500_12345_12399|double[1 2] [12360 12380]|div=ADR0238|diverges|double[1 5] [12350 12360 12370 12380 12390]

@@ -1856,7 +1856,10 @@ public sealed class AxesModel : GraphObject
             return TickBudget.Of(target);
         }
 
-        double font = ruler.TickLabelStyle.FontSize;
+        // The scored bands read the nominal font, before the automatic shrink of a small axes; the
+        // capped bands beyond them read the drawn one (probe_119d, open item 119).
+        double drawn = ruler.TickLabelStyle.FontSize;
+        double font = drawn / AutoFontScale;
         if (_is3D)
         {
             // A 3-D ruler is budgeted by the longer of its edge's run across the page and rise up it,
@@ -1865,11 +1868,11 @@ public sealed class AxesModel : GraphObject
             (double pixels, bool upward) = ReferenceEquals(ruler, ZAxis) ? edges.Z
                 : ruler.Orientation == AxisOrientation.Horizontal ? edges.X
                 : edges.Y;
-            return TickBudget.ForRuler(pixels, font, upward, target);
+            return TickBudget.ForRuler(pixels, font, upward, target, drawn);
         }
 
         bool vertical = ReferenceEquals(ruler, ZAxis) || ruler.Orientation != AxisOrientation.Horizontal;
-        return TickBudget.ForRuler(vertical ? plotHeight : plotWidth, font, vertical, target);
+        return TickBudget.ForRuler(vertical ? plotHeight : plotWidth, font, vertical, target, drawn);
     }
 
     /// <summary>

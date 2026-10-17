@@ -1,0 +1,135 @@
+CHK|get_pos|logical[1 1] 1|exact
+CHK|get_case|logical[1 1] 1|exact
+CHK|get_cell|logical[1 1] 1|exact
+CHK|get_cell_bad|MATLAB:hg:InvalidProperty|exact
+CHK|get_cell_bad_msg|Unrecognized property Tit for class matlab.graphics.axis.Axes.|exact
+CHK|get_xli|double[1 2] [0 3]|exact
+CHK|get_xlimm|char[1 4]'auto'|exact
+CHK|get_xlimi|MATLAB:hg:InvalidProperty|exact
+CHK|get_xlimi_msg|Unrecognized property XLimi for class matlab.graphics.axis.Axes.|exact
+CHK|get_positionc|MATLAB:hg:InvalidProperty|exact
+CHK|get_positionc_msg|Unrecognized property PositionC for class matlab.graphics.axis.Axes.|exact
+CHK|get_positionconstraint|char[1 13]'outerposition'|exact
+CHK|get_tit|MATLAB:hg:InvalidProperty|exact
+CHK|get_tit_msg|Unrecognized property Tit for class matlab.graphics.axis.Axes.|exact
+CHK|get_col_axes|MATLAB:hg:InvalidProperty|exact
+CHK|get_col_axes_msg|Unrecognized property Col for class matlab.graphics.axis.Axes.|exact
+CHK|get_bo|MATLAB:hg:InvalidProperty|exact
+CHK|get_bo_msg|Unrecognized property Bo for class matlab.graphics.axis.Axes.|exact
+CHK|get_u_axes|MATLAB:hg:InvalidProperty|exact
+CHK|get_u_axes_msg|Unrecognized property U for class matlab.graphics.axis.Axes.|exact
+CHK|get_ya|char[1 4]'left'|exact
+CHK|get_xa|MATLAB:hg:InvalidProperty|exact
+CHK|get_xa_msg|Unrecognized property XA for class matlab.graphics.axis.Axes.|exact
+CHK|get_n|char[1 7]'replace'|exact
+CHK|get_pa|logical[1 1] 1|exact
+CHK|get_ta|char[0 0]''|exact
+CHK|get_ty|char[1 4]'axes'|exact
+CHK|get_xd_axes|char[1 6]'normal'|exact
+CHK|get_camerap|logical[1 1] 1|exact
+CHK|get_tickd|logical[1 1] 1|exact
+CHK|get_lay|MATLAB:hg:InvalidProperty|exact
+CHK|get_lay_msg|Unrecognized property Lay for class matlab.graphics.axis.Axes.|exact
+CHK|get_fonts|MATLAB:hg:InvalidProperty|exact
+CHK|get_fonts_msg|Unrecognized property FontS for class matlab.graphics.axis.Axes.|exact
+CHK|get_fontsi|logical[1 1] 1|exact
+CHK|get_empty|MATLAB:hg:InvalidProperty|exact
+CHK|get_empty_msg|Unrecognized property for class matlab.graphics.axis.Axes.|exact
+CHK|get_space|MATLAB:hg:InvalidProperty|exact
+CHK|get_space_msg|Unrecognized property Pos for class matlab.graphics.axis.Axes.|exact
+CHK|line_col|logical[1 1] 1|exact
+CHK|line_lines|char[1 1]'-'|exact
+CHK|line_linew|logical[1 1] 1|exact
+CHK|line_mark|MATLAB:hg:InvalidProperty|exact
+CHK|line_mark_msg|Unrecognized property Mark for class matlab.graphics.chart.primitive.Line.|exact
+CHK|line_markers|double[1 1] 6|exact
+CHK|line_markere|char[1 4]'auto'|exact
+CHK|line_xd|MATLAB:hg:InvalidProperty|exact
+CHK|line_xd_msg|Unrecognized property XD for class matlab.graphics.chart.primitive.Line.|exact
+CHK|line_xdatam|char[1 4]'auto'|exact
+CHK|line_u|double[0 0]|exact
+CHK|line_dis|char[0 0]''|exact
+CHK|line_seriesi|double[1 1] 1|exact
+CHK|text_fonts|MATLAB:hg:InvalidProperty|exact
+CHK|text_fonts_msg|Unrecognized property FontS for class matlab.graphics.primitive.Text.|exact
+CHK|text_str|char[1 1]'a'|exact
+CHK|text_hor|char[1 4]'left'|exact
+CHK|text_t|char[0 0]''|exact
+CHK|patch_facec|double[1 3] [1 0 0]|exact
+CHK|patch_facev|MATLAB:hg:InvalidProperty|exact
+CHK|patch_facev_msg|Unrecognized property FaceV for class matlab.graphics.primitive.Patch.|exact
+CHK|patch_t|char[0 0]''|exact
+CHK|surface_cdatam|char[1 6]'scaled'|exact
+CHK|surface_xd|double[1 2] [1 3]|exact
+CHK|bar_barw|double[1 1] 0.80000000000000004|exact
+CHK|bar_facec|logical[1 1] 1|exact
+CHK|bar_cdatamo|char[1 4]'auto'|exact
+CHK|fig_nam|char[0 0]''|exact
+CHK|fig_num|onoff on|exact
+CHK|fig_men|char[1 6]'figure'|exact
+CHK|fig_uni|char[1 6]'pixels'|exact
+CHK|fig_colorm|double[1 1] 3|exact
+CHK|fig_col|MATLAB:hg:InvalidProperty|exact
+CHK|fig_col_msg|Unrecognized property Col for class matlab.ui.Figure.|exact
+CHK|fig_win|MATLAB:hg:InvalidProperty|exact
+CHK|fig_win_msg|Unrecognized property Win for class matlab.ui.Figure.|exact
+CHK|fig_windowst|MATLAB:hg:InvalidProperty|exact
+CHK|fig_windowst_msg|Unrecognized property WindowSt for class matlab.ui.Figure.|exact
+CHK|fig_pos|double[1 1] 4|exact
+CHK|fig_paperp|double[1 1] 4|exact
+CHK|root_screens|double[1 1] 4|exact
+CHK|root_un|char[1 6]'pixels'|exact
+CHK|root_scr|MATLAB:hg:InvalidProperty|exact
+CHK|root_scr_msg|Unrecognized property Scr for class matlab.ui.Root.|exact
+CHK|uicontrol_str|char[0 0]''|exact
+CHK|uicontrol_sty|char[1 4]'text'|exact
+CHK|uicontrol_pos|double[1 1] 4|exact
+CHK|uicontrol_fon|MATLAB:hg:InvalidProperty|exact
+CHK|uicontrol_fon_msg|Unrecognized property Fon for class matlab.ui.control.UIControl.|exact
+CHK|set_pos|double[1 4] [0.20000000000000001 0.20000000000000001 0.5 0.5]|exact
+CHK|set_cellcell|double[1 4] [0.29999999999999999 0.29999999999999999 0.40000000000000002 0.40000000000000002]|exact
+CHK|set_many|double[1 4] [1 5 2 6]|exact
+CHK|set_linew|double[1 1] 3|exact
+CHK|set_tit|MATLAB:hg:InvalidProperty|exact
+CHK|set_tit_msg|Unrecognized property Tit for class Axes.|exact
+CHK|set_mark|MATLAB:hg:InvalidProperty|exact
+CHK|set_mark_msg|Unrecognized property Mark for class Line.|exact
+CHK|set_struct_start|double[1 4] [0.10000000000000001 0.10000000000000001 0.59999999999999998 0.59999999999999998]|exact
+CHK|set_struct_whole|double[1 4] [0.10000000000000001 0.10000000000000001 0.59999999999999998 0.59999999999999998]|exact
+CHK|set_listing_pos|cell[0 0]{}|exact
+CHK|set_listing_box|MATLAB:hg:InvalidProperty|exact
+CHK|set_listing_box_msg|Unrecognized property Bo for class Axes.|exact
+CHK|set_listing_boxs|cell[2 1]{char[1 4]'full';char[1 4]'back'}|exact
+CHK|set_ya|char[1 5]'right'|exact
+CHK|set_uicontrol_str|char[1 1]'y'|exact
+CHK|plot_linew|double[1 1] 2|exact
+CHK|plot_col|double[1 3] [1 0 0]|exact
+CHK|plot_mark|MATLAB:hg:InvalidProperty|exact
+CHK|plot_mark_msg|Unrecognized property Mark for class Line.|exact
+CHK|plot_spec_then_start|double[1 1] 2|exact
+CHK|plot_markers|double[1 1] 9|exact
+CHK|line_col_made|double[1 3] [0 1 0]|exact
+CHK|text_fontsi_made|double[1 1] 12|exact
+CHK|text_fonts_made|MATLAB:hg:InvalidProperty|exact
+CHK|text_fonts_made_msg|Unrecognized property FontS for class Text.|exact
+CHK|figure_nam|char[1 1]'x'|exact
+CHK|figure_visi|onoff off|exact
+CHK|axes_pos|double[1 4] [0 0 0.5 0.5]|exact
+CHK|axes_xli|double[1 2] [2 5]|exact
+CHK|axes_col|MATLAB:hg:InvalidProperty|exact
+CHK|axes_col_msg|Unrecognized property Col for class Axes.|exact
+CHK|uicontrol_str_made|char[1 1]'x'|exact
+CHK|uicontrol_sty_made|char[1 4]'text'|exact
+CHK|dot_get|MATLAB:noSuchMethodOrField|exact
+CHK|dot_get_msg|Unrecognized method, property, or field 'Pos' for class 'matlab.graphics.axis.Axes'.|exact
+CHK|dot_set|MATLAB:noPublicFieldForClass|exact
+CHK|dot_set_msg|Unrecognized property 'Pos' for class 'matlab.graphics.axis.Axes'.|exact
+CHK|isprop_start|logical[1 1] 0|exact
+CHK|isprop_case|logical[1 1] 1|exact
+CHK|findobj_typ|double[1 1] 3|exact
+CHK|findobj_sty|double[1 1] 2|exact
+CHK|findobj_prop|double[1 1] 0|exact
+CHK|findobj_prop_whole|logical[1 1] 1|exact
+CHK|hidden_start|MATLAB:hg:InvalidProperty|exact
+CHK|hidden_start_msg|Unrecognized property Title_ for class matlab.graphics.axis.Axes.|exact
+CHK|hidden_only|char[1 35]'matlab.graphics.GraphicsPlaceholder'|div=ADR0238|diverges|char[1 25]'MATLAB:hg:InvalidProperty'

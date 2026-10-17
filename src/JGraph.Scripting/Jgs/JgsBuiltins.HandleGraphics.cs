@@ -379,6 +379,7 @@ internal static partial class JgsBuiltins
 
         if (args.Count == 2 && args[1].Type == JgsType.Struct)
         {
+            // A struct's field is a name as the pair form's is, a start of one included (open item 86).
             foreach (var pair in args[1].AsStruct) foreach (var target in targets)
                 JgsGraphicsProperties.Set(target,pair.Key,pair.Value,line,col);
             return JgsValue.Null;
@@ -578,7 +579,8 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static bool Matches(JgsHandleEntry entry, string name, JgsValue wanted)
     {
-        if (!JgsGraphicsProperties.TryFind(entry.Target, name, out GraphicsProperty property))
+        // findobj(f, 'Typ', 'axes') finds by Type, as R2025b's does (open item 86).
+        if (!JgsGraphicsProperties.TryFind(entry.Target, JgsGraphicsProperties.WholeName(entry.Target, name), out GraphicsProperty property))
         {
             return false;
         }

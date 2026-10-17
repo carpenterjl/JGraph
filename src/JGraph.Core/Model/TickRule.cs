@@ -3,55 +3,77 @@ using JGraph.Core.Primitives;
 namespace JGraph.Core.Model;
 
 /// <summary>
-/// How many ticks a ruler may carry: the hint the scale-specific generators aim for, and the two
-/// counts R2025b's linear rule is bounded by (open item 99). A budget without caps asks for the
-/// classic ladder a target count drove, which is what a caller with no pixels to measure still gets.
+/// How R2025b weighs a candidate tick step on a ruler of a given length (open items 99 and 119).
+/// A candidate holding more ticks than <see cref="MaxLanding"/> (both limits on ticks) or
+/// <see cref="MaxFree"/> (otherwise) is out; among the rest the score is the coverage of the range
+/// by the ticks, less <see cref="Under"/> per tick short of <see cref="Target"/> and <see cref="Over"/>
+/// per tick past it, plus <see cref="Landing"/> when both limits sit on ticks. The best score wins;
+/// an equal score goes to the finer step unless that step sits on both limits at its landing cap.
+/// A cap of 0 is no cap. <see cref="FitCap"/> is the most ticks a tick-aligned limit may move out
+/// to hold: the free cap where there is one, and on a scored band the count past which the
+/// over-penalty outweighs the landing allowance.
+/// </summary>
+public readonly record struct TickScore(double Target, double Under, double Over, double Landing, int MaxLanding = 0, int MaxFree = 0, int FitCap = 0)
+{
+    /// <summary>The batch 18 rule alone: caps and coverage, no target.</summary>
+    public static TickScore Caps(int landing, int free) => new(0, 0, 0, 0, landing, free, free);
+
+    /// <summary>The same score with the landing allowance withdrawn, which is how limits are fitted.</summary>
+    public TickScore WithoutLanding() => this with { Landing = 0, MaxLanding = MaxFree };
+}
+
+/// <summary>
+/// How many ticks a ruler may carry: the hint the scale-specific generators aim for, and the score
+/// R2025b's linear rule weighs candidate steps by (open items 99 and 119). A budget without a score
+/// asks for the classic ladder a target count drove, which is what a caller with no pixels to
+/// measure still gets.
 /// </summary>
 /// <param name="Target">The count the logarithmic, date and category generators aim near.</param>
-/// <param name="MaxLanding">The most ticks allowed when both limits sit on ticks; 0 for no cap.</param>
-/// <param name="MaxFree">The most ticks allowed otherwise; 0 for no cap.</param>
-public readonly record struct TickBudget(int Target, int MaxLanding, int MaxFree)
+/// <param name="Score">R2025b's score for the ruler's length and font, or null for the classic ladder.</param>
+public readonly record struct TickBudget(int Target, TickScore? Score)
 {
     /// <summary>A budget with only the classic target count, for a ruler nobody has measured.</summary>
-    public static TickBudget Of(int target) => new(target, 0, 0);
+    public static TickBudget Of(int target) => new(target, null);
 
-    /// <summary>Whether R2025b's bounded count applies.</summary>
-    public bool HasCaps => MaxFree > 0;
+    /// <summary>Whether R2025b's scored choice applies.</summary>
+    public bool HasCaps => Score is not null;
 
     /// <summary>
     /// R2025b's budget for a ruler of a given pixel length and font, keeping <paramref name="target"/>
-    /// for the generators that do not read caps.
+    /// for the generators that do not read scores.
     /// </summary>
-    public static TickBudget ForRuler(double pixels, double fontPoints, bool vertical, int target) =>
-        new(target, TickRule.MaxTicks(pixels, fontPoints, vertical, landing: true), TickRule.MaxTicks(pixels, fontPoints, vertical, landing: false));
-
-    /// <summary>The same caps with the landing allowance withdrawn, which is how limits are fitted.</summary>
-    public TickBudget WithoutLanding() => new(Target, MaxFree, MaxFree);
+    public static TickBudget ForRuler(double pixels, double fontPoints, bool vertical, int target, double drawnFontPoints = double.NaN) =>
+        new(target, TickRule.ScoreFor(pixels, fontPoints, vertical, drawnFontPoints));
 }
 
 /// <summary>
 /// R2025b's choice of linear ticks and of the limits around them, as a rule fitted to its answers
-/// (open item 99; probe_99, probe_99b, probe_99c in the batch 17 and 18 scratch). The arithmetic:
+/// (open items 99 and 119; probe_99, probe_99b, probe_99c in the batch 17 and 18 scratch, probe_119
+/// in batch 19, probe_119b and probe_119c in batch 25). The arithmetic:
 /// <list type="bullet">
 /// <item>Candidate steps are 1, 2 and 5 times a power of ten.</item>
-/// <item>A candidate is allowed while its ticks inside the limits do not exceed a cap that grows
-/// with the ruler's pixel length over its font size and stops at eleven (twelve when both limits
-/// sit on ticks).</item>
-/// <item>Among the allowed, the one whose first and last tick span most of the range wins; a tie
-/// goes to the finer step. This is what prefers 5 over 2 on <c>[0 15]</c> and 0.1 over 0.2 on
-/// <c>[0.123 0.987]</c>.</item>
+/// <item>A ruler's length in pixels puts it in a band whose edges were measured at 8, 10 and 13
+/// points. On the shorter rulers (under 290 pixels across, 230 up, at 10 points) each candidate is
+/// scored: the span of its ticks over the range, less a penalty for every tick it falls short of a
+/// target count and a larger one for every tick over it, plus an allowance when both limits sit on
+/// ticks; the target rises from three to nine through the bands, and the vertical bands come sooner
+/// because labels stack by their height. On the longer rulers a count cap replaces the target
+/// (twelve when both limits sit on ticks, eleven otherwise, at the top) and the best coverage wins;
+/// a tie goes to the finer step unless it sits on both limits at its landing cap. A candidate is
+/// counted tolerantly (a limit a hair past a tick still counts it), and one that then exceeds its
+/// cap, or a scored band's whole target, is counted again in R2025b's own double arithmetic, where
+/// 3 × 0.1 overshoots 0.3, and drawn by that count.</item>
 /// <item>A <c>tickaligned</c> limit moves outward to the next tick when that is at most a quarter of
-/// the data range away, and a step whose ticks then overflow the cap gives way to the next coarser
-/// one. A single value gets a unit either side.</item>
+/// the data range away, and a step whose moved limits then prefer a coarser one gives way to it. A
+/// single value gets a unit either side.</item>
 /// <item>A <c>padded</c> limit sits about 7% outside the data and snaps to a tick multiple of the
 /// data's own step when one is within 3% of the range.</item>
 /// </list>
-/// The caps are a table read off the probes rather than MATLAB's algorithm, which scores candidates
-/// against a length-and-font density target; on rulers under about 200 pixels the two part company
-/// now and then (R2025b takes <c>[0 5]</c> for <c>[0 6]</c> on a 100-pixel ruler and <c>[0 2 4]</c>
-/// for <c>[0 5]</c> on a 150-pixel one), and the divergence list records where. Batch 19 refitted the
-/// table at a fixed font (probe_119): the batch 18 sweep had let R2025b's font shrink with the box
-/// (open item 118), which the first table absorbed.
+/// The scored bands reproduce 99 to 100 per cent of the 22,000 answers recorded at a fixed font; the
+/// capped ones 99 per cent from 217 pixels up. On the shortest rulers (under 110 pixels across, 65
+/// up) R2025b also reads the sign of the limits, taking more ticks when zero lies inside a range than
+/// when it does not, which no score of counts and coverage expresses; that band reproduces 96 per
+/// cent of the ranges that start at zero, and the divergence list records the rest.
 /// </summary>
 public static class TickRule
 {
@@ -62,60 +84,171 @@ public static class TickRule
     public const double PaddedSnap = 0.03;
 
     /// <summary>
-    /// The tick font the caps were fitted against: R2025b's default axes font of 10 points, which a
-    /// JGraph axes draws at its own built-in 11, so a figure at default fonts takes R2025b's
-    /// default-figure counts and a larger or smaller font scales the length by the same ratio. The
-    /// table's lengths are R2025b pixels at its 10 points, which are JGraph pixels at 11.
+    /// The tick font the tables were measured against: R2025b's default axes font of 10 points,
+    /// which a JGraph axes draws at its own built-in 11, so a figure at default fonts takes R2025b's
+    /// default-figure counts and every other font is read as ten elevenths of itself. Only a written
+    /// font counts: the automatic shrink of a small axes (open item 118) leaves R2025b's ticks
+    /// exactly where the unshrunk font puts them (probe_119d), so a caller passes the nominal font
+    /// for an automatic one.
     /// </summary>
     public const double ReferenceFontPoints = 11;
 
+    /// <summary>R2025b's default axes font, the points the tables are written in.</summary>
+    private const double TablePoints = 10;
+
     /// <summary>
-    /// The caps for a ruler lying across the page, by the pixels it has at the reference font: below
-    /// each bound, the count allowed when both limits sit on ticks and the count allowed otherwise.
-    /// The landing count steps up first and the other catches up a little further along.
+    /// The scores of a ruler lying across the page, from the shortest band up: the target count
+    /// rises from three to five and a half. Fitted to probe_119b and probe_119c (181 ranges at every
+    /// five pixels, ranges slid and stretched).
     /// </summary>
-    private static readonly (double Below, int Landing, int Free)[] HorizontalCaps =
+    private static readonly TickScore[] HorizontalScores =
     [
-        (105, 4, 3), (165, 5, 5), (205, 6, 5), (290, 7, 6), (330, 8, 7), (380, 8, 8), (420, 10, 9), (470, 10, 10),
-        (double.PositiveInfinity, 12, 11),
+        new(3, 0.08, 0.40, 0, FitCap: 3),
+        new(3.5, 0.40, 0.24, 0, FitCap: 5),
+        new(4.5, 0.32, 0.48, 0.30, FitCap: 5),
+        new(5.5, 0.16, 0.48, 0.30, FitCap: 6),
     ];
 
-    /// <summary>The caps for a ruler standing up the page, whose labels stack by their height.</summary>
-    private static readonly (double Below, int Landing, int Free)[] VerticalCaps =
+    /// <summary>The scores of a ruler standing up the page, whose labels stack by their height.</summary>
+    private static readonly TickScore[] VerticalScores =
     [
-        (65, 4, 3), (85, 5, 5), (105, 6, 5), (125, 7, 6), (155, 8, 7), (205, 8, 8), (230, 10, 9), (252, 10, 10),
-        (double.PositiveInfinity, 12, 11),
+        new(3, 0.08, 0.40, 0, FitCap: 3),
+        new(3.5, 0.40, 0.24, 0, FitCap: 5),
+        new(4.5, 0.32, 0.48, 0.30, FitCap: 5),
+        new(5.5, 0.16, 0.48, 0.30, FitCap: 6),
+        new(7, 0.08, 0.64, 0.30, FitCap: 7),
+        new(7.5, 0.08, 0.48, 0.30, FitCap: 8),
+        new(9, 0.08, 0.48, 0.30, FitCap: 9),
     ];
 
     /// <summary>
-    /// The caps of R2025b's polar r ruler, which answered the same at every size and font measured
-    /// (probe_119): <c>[0 1]</c> in fifths, <c>[0 6]</c> in twos, <c>[0 11]</c> in fives. Seven when
-    /// both limits sit on ticks keeps the tie from flipping a six-tick landing step to a coarser one.
+    /// Where the scored bands end, in pixels, at each font R2025b was measured at (probe_119b at 8,
+    /// 10 and 13 points): the length below which a ruler takes the band's score, one entry per
+    /// score, the last being where the capped bands begin. The edges do not scale with the font:
+    /// the first horizontal one stays near 110 pixels from 8 to 10 points and only then moves, and
+    /// the vertical ones hardly move below 10 points. Between measured fonts the edges are
+    /// interpolated; past 13 points they scale with the font, and under 8 they stay. The 13-point
+    /// sweep ended at 260 pixels, so its later edges are the 10-point ones scaled.
     /// </summary>
-    public static TickBudget PolarRadius(int target) => new(target, 7, 5);
+    private static readonly (double Points, double[] Edges)[] HorizontalEdges =
+    [
+        (8, [105, 145, 175, 215]),
+        (10, [110, 170, 210, 290]),
+        (13, [175, 235, 273, 377]),
+    ];
+
+    /// <summary>The vertical bands' edges by font, as <see cref="HorizontalEdges"/>.</summary>
+    private static readonly (double Points, double[] Edges)[] VerticalEdges =
+    [
+        (8, [65, 85, 105, 125, 155, 175, 215]),
+        (10, [65, 90, 110, 130, 155, 205, 230]),
+        (13, [105, 145, 175, 215, 255, 266, 299]),
+    ];
 
     /// <summary>
-    /// The most ticks a ruler of <paramref name="pixels"/> takes at <paramref name="fontPoints"/>,
-    /// the caps being read at <see cref="ReferenceFontPoints"/>; both limits on ticks are allowed
-    /// one more over part of each band.
+    /// The capped bands of the longer horizontal rulers: below each length in pixels at
+    /// <see cref="TablePoints"/>, scaled by the font, the caps (landing, free). Measured at every
+    /// five pixels from 260 to 500 at a written 10 points (probe_119d, 181 ranges a length): each
+    /// band reproduces every range but the two or three where R2025b's own double arithmetic reads
+    /// a limit as off its tick (<c>[0 0.55]</c> in twentieths).
     /// </summary>
-    public static int MaxTicks(double pixels, double fontPoints, bool vertical, bool landing)
+    private static readonly (double Below, TickScore Score)[] HorizontalCaps =
+    [
+        (338, TickScore.Caps(8, 7)),
+        (383, TickScore.Caps(8, 8)),
+        (433, TickScore.Caps(10, 9)),
+        (478, TickScore.Caps(11, 10)),
+        (double.PositiveInfinity, TickScore.Caps(12, 11)),
+    ];
+
+    /// <summary>The capped bands of the longer vertical rulers (probe_119d, 230 to 350 pixels).</summary>
+    private static readonly (double Below, TickScore Score)[] VerticalCaps =
+    [
+        (243, TickScore.Caps(10, 9)),
+        (268, TickScore.Caps(11, 10)),
+        (double.PositiveInfinity, TickScore.Caps(12, 11)),
+    ];
+
+    /// <summary>
+    /// The score of R2025b's polar r ruler, which answers the same at every size and font measured
+    /// (probe_119, probe_119b: 21 radii from 100 to 600 pixels): a target of five with a steep
+    /// penalty past it. It reproduces 86 per cent of the ranges; the rest prefer or refuse a step
+    /// by its leading digit in a way no score of counts expresses.
+    /// </summary>
+    public static TickBudget PolarRadius(int target) => new(target, new TickScore(5, 0.40, 0.68, 0.15));
+
+    /// <summary>
+    /// The score a ruler of <paramref name="pixels"/> takes at <paramref name="fontPoints"/>, the
+    /// nominal font, which places the scored bands' edges; the capped bands beyond them scale with
+    /// <paramref name="drawnFontPoints"/>, the font the labels are drawn at (the same unless the
+    /// axes shrank it automatically), which is where R2025b's automatic shrink does count: a
+    /// 255-pixel square axes at its 9.5 points takes eleven ticks on <c>[0 1]</c> where a 255-pixel
+    /// ruler at a written 10 takes six (probe_119d, oi_patch_rows_axes_font_short_rulers).
+    /// </summary>
+    public static TickScore ScoreFor(double pixels, double fontPoints, bool vertical, double drawnFontPoints = double.NaN)
     {
-        double scaled = fontPoints > 0 ? pixels * ReferenceFontPoints / fontPoints : pixels;
-        if (!double.IsFinite(scaled) || scaled < 0)
+        if (!double.IsFinite(pixels) || pixels < 0)
         {
-            scaled = 0;
+            pixels = 0;
         }
 
-        foreach ((double below, int atLanding, int atFree) in vertical ? VerticalCaps : HorizontalCaps)
+        double points = PointsOf(fontPoints);
+        TickScore[] scores = vertical ? VerticalScores : HorizontalScores;
+        (double Points, double[] Edges)[] edges = vertical ? VerticalEdges : HorizontalEdges;
+        for (int i = 0; i < scores.Length; i++)
         {
-            if (scaled < below)
+            if (pixels < EdgeAt(edges, i, points))
             {
-                return landing ? atLanding : atFree;
+                return scores[i];
             }
         }
 
-        return landing ? 12 : 11;
+        double scaled = pixels * TablePoints / PointsOf(double.IsNaN(drawnFontPoints) ? fontPoints : drawnFontPoints);
+        foreach ((double below, TickScore score) in vertical ? VerticalCaps : HorizontalCaps)
+        {
+            if (scaled < below)
+            {
+                return score;
+            }
+        }
+
+        return TickScore.Caps(12, 11);
+    }
+
+    /// <summary>A JGraph font in the tables' points: ten elevenths of it, or the table's own for none.</summary>
+    private static double PointsOf(double fontPoints) =>
+        fontPoints > 0 && double.IsFinite(fontPoints) ? fontPoints * TablePoints / ReferenceFontPoints : TablePoints;
+
+    /// <summary>
+    /// The <paramref name="index"/>th band edge at <paramref name="points"/>: interpolated between
+    /// the measured fonts, held under the smallest and scaled past the largest.
+    /// </summary>
+    private static double EdgeAt((double Points, double[] Edges)[] edges, int index, double points)
+    {
+        (double smallest, double[] first) = edges[0];
+        if (points <= smallest)
+        {
+            return first[index];
+        }
+
+        (double largest, double[] last) = edges[^1];
+        if (points >= largest)
+        {
+            return last[index] * points / largest;
+        }
+
+        for (int i = 1; i < edges.Length; i++)
+        {
+            (double upper, double[] above) = edges[i];
+            if (points <= upper)
+            {
+                (double lower, double[] below) = edges[i - 1];
+                double t = (points - lower) / (upper - lower);
+                return below[index] + (t * (above[index] - below[index]));
+            }
+        }
+
+        return last[index];
     }
 
     /// <summary>Whether a limit sits exactly on a multiple of the step, in double arithmetic as R2025b tests it.</summary>
@@ -170,16 +303,27 @@ public static class TickRule
     /// The step R2025b takes for the limits <paramref name="min"/>..<paramref name="max"/> under
     /// <paramref name="budget"/>, or 0 when the range is not one ticks can be placed on.
     /// </summary>
-    public static double ChooseStep(double min, double max, TickBudget budget)
+    public static double ChooseStep(double min, double max, TickBudget budget) =>
+        ChooseStep(min, max, budget, out _);
+
+    /// <summary>
+    /// <see cref="ChooseStep(double, double, TickBudget)"/>, also saying whether the step's ticks are
+    /// to be counted in exact double arithmetic (<paramref name="exactly"/>): a limit a hair short of
+    /// a tick then loses it, as [0 0.3] on a 60-pixel ruler is drawn 0, 0.1, 0.2 while on a 250-pixel
+    /// one it is drawn to 0.3 (probe_119b).
+    /// </summary>
+    public static double ChooseStep(double min, double max, TickBudget budget, out bool exactly)
     {
+        exactly = false;
         double span = max - min;
         if (!(span > 0) || !double.IsFinite(span))
         {
             return 0;
         }
 
+        TickScore score = budget.Score ?? TickScore.Caps(12, 11);
         int exponent = (int)System.Math.Floor(System.Math.Log10(span));
-        double bestCoverage = -1;
+        double best = double.NegativeInfinity;
         double bestStep = 0;
         bool bestAtLandingCap = false;
         double widest = 0;
@@ -202,45 +346,63 @@ public static class TickRule
                 }
 
                 bool lands = Lands(min, step) && Lands(max, step);
-                int cap = lands ? budget.MaxLanding : budget.MaxFree;
-                if (count > cap)
+                int cap = lands ? score.MaxLanding : score.MaxFree;
+                bool countedExactly = false;
+                if (cap > 0 ? count > cap : count > System.Math.Ceiling(score.Target))
                 {
-                    // Too many by the tolerant reading: the exact one may lose the last tick to
-                    // floating point and fit after all, under the free cap (probe_119).
+                    // Too many by the tolerant reading, for the cap or for a scored band's whole
+                    // target: the exact one may lose the last tick to floating point and fit after
+                    // all, under the free cap (probe_119), and is then the count drawn: [0 0.3] on
+                    // a 60-pixel ruler at 10 points is drawn 0, 0.1, 0.2, at 8 points to 0.3.
                     count = CountExactly(min, max, step, out first, out last);
-                    if (count == 0 || count > budget.MaxFree)
+                    if (count == 0 || (cap > 0 && score.MaxFree > 0 && count > score.MaxFree))
                     {
                         continue;
                     }
 
-                    lands = false;
+                    countedExactly = true;
+                    if (cap > 0)
+                    {
+                        lands = false;
+                    }
                 }
 
-                // Equal coverage goes to the finer step, which was seen first, unless that step sits
-                // on both limits with exactly as many ticks as it may have: [0 6] on a 217-pixel ruler
-                // takes 2 over 1, while [0 6] on a 300-pixel one takes 1 (probe_99b).
                 double coverage = (last - first) / span;
-                bool better = coverage > bestCoverage + 1e-12
-                    || (System.Math.Abs(coverage - bestCoverage) <= 1e-12 && bestAtLandingCap);
+                double penalty = count < score.Target ? score.Under * (score.Target - count) : score.Over * (count - score.Target);
+                double scored = coverage - penalty + (lands ? score.Landing : 0);
+
+                // Equal scores go to the finer step, which was seen first, unless that step sits on
+                // both limits with exactly as many ticks as its cap allows: [0 6] on a 217-pixel ruler
+                // takes 2 over 1, while [0 6] on a 300-pixel one takes 1 (probe_99b).
+                bool better = scored > best + 1e-12
+                    || (System.Math.Abs(scored - best) <= 1e-12 && bestAtLandingCap);
                 if (better)
                 {
-                    bestCoverage = coverage;
+                    best = scored;
                     bestStep = step;
-                    bestAtLandingCap = lands && count >= budget.MaxLanding;
+                    exactly = countedExactly;
+                    bestAtLandingCap = lands && score.MaxLanding > 0 && count >= score.MaxLanding;
                 }
             }
         }
 
+        if (bestStep > 0)
+        {
+            return bestStep;
+        }
+
         // Nothing fitted under the cap: the coarsest step that still puts two ticks inside, as
         // R2025b draws [0.123 0.987] on a 50-pixel ruler in fifths (probe_119), else one tick.
-        return bestStep > 0 ? bestStep : widestPair > 0 ? widestPair : widest;
+        exactly = false;
+        return widestPair > 0 ? widestPair : widest;
     }
 
     /// <summary>
     /// R2025b's <c>tickaligned</c> limits for a data extent: the step the extent would take, each
     /// limit moved outward to its next tick when that is within <see cref="AlignmentReach"/> of the
-    /// range, and the step given up for a coarser one when the moved limits hold too many ticks. The
-    /// landing allowance does not apply here, which is why <c>[-1 1000]</c> ends in steps of 200.
+    /// range, and the step given up for a coarser one when the moved limits hold more ticks than
+    /// the band's <see cref="TickScore.FitCap"/>. The landing allowance does not apply here, which
+    /// is why <c>[-1 1000]</c> ends in steps of 200 at <c>[-200 1000]</c>, not 100.
     /// </summary>
     public static DataRange Align(DataRange data, TickBudget budget)
     {
@@ -253,44 +415,57 @@ public static class TickRule
             }
         }
 
-        if (!budget.HasCaps)
+        if (budget.Score is not { } score)
         {
             return ClassicAlign(data);
         }
 
-        TickBudget free = budget.WithoutLanding();
+        TickBudget free = budget with { Score = score.WithoutLanding() };
         double step = ChooseStep(data.Min, data.Max, free);
         if (!(step > 0))
         {
             return data;
         }
 
-        double span = data.Length;
+        // A coarser step moves the data's own limits afresh: [-3 11] on a 60-pixel ruler at 10
+        // points stays [-3 11] with ticks 0, 5, 10, since its fives would hold four ticks there
+        // and its tens reach neither limit (oi_short_rulers).
         for (int attempt = 0; attempt < 8; attempt++)
         {
-            // A limit a hair past a tick is read as on it, and a limit is never moved inward: R2025b
-            // leaves plot(1, -1e-7)'s lower limit at -1.0000001 rather than at -1 or -1.2 (probe_99b).
-            double low = System.Math.Floor((data.Min / step) + 1e-6) * step;
-            if (low > data.Min || data.Min - low > AlignmentReach * span * (1 + 1e-9))
+            DataRange moved = MoveToTicks(data, step);
+            if (score.FitCap <= 0 || CountWithin(moved.Min, moved.Max, step, out _, out _) <= score.FitCap)
             {
-                low = data.Min;
-            }
-
-            double high = System.Math.Ceiling((data.Max / step) - 1e-6) * step;
-            if (high < data.Max || high - data.Max > AlignmentReach * span * (1 + 1e-9))
-            {
-                high = data.Max;
-            }
-
-            if (CountWithin(low, high, step, out _, out _) <= free.MaxFree)
-            {
-                return new DataRange(low, high);
+                return moved;
             }
 
             step = Coarser(step);
         }
 
         return data;
+    }
+
+    /// <summary>
+    /// Each limit moved outward to the next multiple of <paramref name="step"/> when that is within
+    /// <see cref="AlignmentReach"/> of the range. A limit a hair past a tick is read as on it, and a
+    /// limit is never moved inward: R2025b leaves plot(1, -1e-7)'s lower limit at -1.0000001 rather
+    /// than at -1 or -1.2 (probe_99b).
+    /// </summary>
+    private static DataRange MoveToTicks(DataRange data, double step)
+    {
+        double span = data.Length;
+        double low = System.Math.Floor((data.Min / step) + 1e-6) * step;
+        if (low > data.Min || data.Min - low > AlignmentReach * span * (1 + 1e-9))
+        {
+            low = data.Min;
+        }
+
+        double high = System.Math.Ceiling((data.Max / step) - 1e-6) * step;
+        if (high < data.Max || high - data.Max > AlignmentReach * span * (1 + 1e-9))
+        {
+            high = data.Max;
+        }
+
+        return new DataRange(low, high);
     }
 
     /// <summary>A single value gets a unit either side, as R2025b gives plot(1, 5) the limits [4 6].</summary>

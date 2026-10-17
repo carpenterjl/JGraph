@@ -25,9 +25,10 @@ public sealed class LinearTickGenerator : ITickGenerator
 
         double step;
         int minorSubdivisions;
+        bool exactly = false;
         if (budget.HasCaps)
         {
-            step = TickRule.ChooseStep(range.Min, range.Max, budget);
+            step = TickRule.ChooseStep(range.Min, range.Max, budget, out exactly);
             minorSubdivisions = SubdivisionsOf(step);
         }
         else
@@ -45,18 +46,19 @@ public sealed class LinearTickGenerator : ITickGenerator
             return TickSet.Empty;
         }
 
-        double first = System.Math.Ceiling(range.Min / step) * step;
-
         var values = new List<double>();
         var minors = new List<double>();
         double minorStep = step / minorSubdivisions;
 
-        // A small tolerance so a tick landing exactly on the range edge is not dropped by rounding.
+        // A small tolerance so a tick landing exactly on the range edge is not dropped by rounding,
+        // unless the rule counted the step in R2025b's exact arithmetic, where it is dropped.
         double epsilon = step * 1e-9;
-
-        for (double value = first; value <= range.Max + epsilon; value += step)
+        int count = exactly
+            ? TickRule.CountExactly(range.Min, range.Max, step, out double first, out _)
+            : TickRule.CountWithin(range.Min, range.Max, step, out first, out _);
+        for (int i = 0; i < count; i++)
         {
-            values.Add(Snap(value, step));
+            values.Add(Snap(first + (i * step), step));
         }
 
         // The row is labelled at once: how many decimals R2025b writes depends on every tick (open item 97).
