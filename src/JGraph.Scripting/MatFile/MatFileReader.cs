@@ -395,7 +395,7 @@ internal sealed class MatFileReader
         {
             MxChar => ReadChar(ref at, rows, (int)count),
             MxCell => ReadCellArray(ref at, end, (int)count, dims),
-            MxStruct => ReadStruct(ref at, end, (int)count),
+            MxStruct => ReadStruct(ref at, end, (int)count, dims),
             MxSparse => ReadSparse(ref at, rows, cols, isComplex),
             MxObject => ReadObject(ref at, end, name, second, (flags & FlagDeletedHandle) != 0),
             MxFunction => ReadFunction(ref at, end, name),
@@ -590,7 +590,7 @@ internal sealed class MatFileReader
         return cell;
     }
 
-    private JgsValue ReadStruct(ref int at, int end, int count)
+    private JgsValue ReadStruct(ref int at, int end, int count, int[] dims)
     {
         string[] names = ReadFieldNames(ref at);
         var elements = new Dictionary<string, JgsValue>[Math.Max(count, 0)];
@@ -599,9 +599,15 @@ internal sealed class MatFileReader
             elements[e] = ReadFields(ref at, end, names);
         }
 
-        return count == 1
-            ? JgsValue.Struct(elements[0])
-            : JgsValue.StructArray(new JgsStructArray(elements, names), count == 0 ? 0 : 1, count);
+        if (count == 1)
+        {
+            return JgsValue.Struct(elements[0]);
+        }
+
+        // A struct array keeps the shape the file gives it: a figure file's children stand in a
+        // column (open item 77); an N-D shape is read as a row, as it was.
+        (int rows, int cols) = dims.Length == 2 && dims[0] * dims[1] == count ? (dims[0], dims[1]) : (count == 0 ? 0 : 1, count);
+        return JgsValue.StructArray(new JgsStructArray(elements, names), rows, cols);
     }
 
     /// <summary>
@@ -790,10 +796,22 @@ internal sealed class MatFileReader
             ? function.AsString
             : throw new InvalidDataException($"MAT-file variable '{name}' is a function handle with no function.");
         string type = body.TryGetValue("type", out JgsValue? kind) && kind.Type == JgsType.String ? kind.AsString : "simple";
-        IReadOnlyDictionary<string, JgsValue>? workspace =
-            body.TryGetValue("workspace", out JgsValue? captured) && captured.Type == JgsType.Struct && !captured.IsStructArray
-                ? captured.AsStruct
-                : null;
+
+        // The captured variables: a struct (this build's form), or the cell of one struct that
+        // functions() answers and this build's MATLAB-form writer puts there (open item 77).
+        IReadOnlyDictionary<string, JgsValue>? workspace = null;
+        if (body.TryGetValue("workspace", out JgsValue? captured))
+        {
+            if (captured.Type == JgsType.Cell && captured.AsCell.Length == 1)
+            {
+                captured = captured.AsCell[0];
+            }
+
+            if (captured.Type == JgsType.Struct && !captured.IsStructArray)
+            {
+                workspace = captured.AsStruct;
+            }
+        }
         return _binder.Function(text, type, workspace, name);
     }
 

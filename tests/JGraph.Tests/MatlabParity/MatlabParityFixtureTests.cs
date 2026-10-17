@@ -258,7 +258,10 @@ public class MatlabParityFixtureTests : IDisposable
     {
         string fixtures = Path.GetDirectoryName(script)!;
         var output = new RecordingScriptOutput();
-        var context = new ScriptContext(output, (_, _) => { }, fixtures) { ScriptPath = script };
+
+        // The figure file services the app has (open item 77): a fixture can savefig and openfig a
+        // figure of its own, as it can in MATLAB.
+        var context = new ScriptContext(output, (_, _) => { }, fixtures, resolvePath: null, figureFiles: new TestFigureFiles()) { ScriptPath = script };
         JgsDialect dialect = Path.GetExtension(script) == ".jgs" ? JgsDialect.Jgs : JgsDialect.Matlab;
         ScriptRunResult result = JgsRunner.Run(
             File.ReadAllText(script), context, default, sourceId: script, hook: null, dialect,

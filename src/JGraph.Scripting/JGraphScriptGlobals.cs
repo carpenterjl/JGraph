@@ -452,6 +452,29 @@ public sealed class JGraphScriptGlobals
         return figure;
     }
 
+    /// <summary>
+    /// Loads the <c>.graph</c> document a MATLAB <c>.fig</c> this build wrote carries inside it
+    /// (open item 77), from its text, and registers it as a new numbered figure as
+    /// <see cref="loadfigure(string)"/> does. <paramref name="origin"/> is the file it came from,
+    /// named in a refusal.
+    /// </summary>
+    internal FigureModel loadfigure(string document, string origin)
+    {
+        RequireFigureFiles("openfig");
+        FigureModel figure;
+        try
+        {
+            figure = JGraph.Serialization.GraphFormat.Deserialize(document);
+        }
+        catch (JGraph.Serialization.GraphFormatException ex)
+        {
+            throw new InvalidOperationException($"The copy of the figure inside '{origin}' could not be read: {ex.Message}", ex);
+        }
+
+        JG.RegisterFigure(figure);
+        return figure;
+    }
+
     /// <summary>Exports the current figure as an image; the format follows the extension.</summary>
     public void exportfigure(string path) => exportfigure(path, JG.CurrentFigure);
 

@@ -1,0 +1,47 @@
+CHK|file_current|logical [1 1] 1|exact
+CHK|file_visible|off|exact
+CHK|file_figure|cell [1 5] {char 'oi77', char 'oi77', double [1 3] 1 1 0.90000000000000002, double [1 4] 100 100 640 400, char 'off'}|exact
+CHK|file_axes|cell [4 1] {char 'shapes', char 'charts', char 'right', char 'left'}|exact
+CHK|file_left|cell [1 8] {double [1 4] 0.13 0.58379999999999999 0.3347 0.3412, char 'Top', char 'X', char 'Y', char 'on', double [1 2] 0 6, char 'manual', char 'auto'}|exact
+CHK|file_first|cell [1 6] {double [1 3] 1 0 0, char '-', char 'o', double [1 1] 2, double [1 5] 1 2 3 4 5, double [1 5] 1 4 2 5 3}|exact
+CHK|file_second|cell [1 3] {double [1 3] 0 0 1, char '--', double [1 5] 2 2 3 3 4}|exact
+CHK|file_line_order|cell [2 1] {char 'second', char 'first'}|exact
+CHK|file_note|cell [1 3] {char 'note', double [1 3] 2 3 0, double [1 3] 0 0.59999999999999998 0}|exact
+CHK|file_legend|cell [1 3] {double [1 1] 1, cell [1 2] {char 'a', char 'b'}, char 'northwest'}|exact
+CHK|file_image|cell [1 3] {double [1 2] 4 4, double [1 4] 16 2 3 13, double [1 2] 1 16}|exact
+CHK|file_image_position|double[1 4] [0.57030000000000003 0.58379999999999999 0.2412 0.3412]|div=0230|diverges|double[1 4] [0.57030000000000003 0.58379999999999999 0.3347 0.3412]
+CHK|file_colorbar|cell [1 3] {double [1 1] 1, double [1 2] 1 16, char 'eastoutside'}|exact
+CHK|file_colormap|cell [1 2] {double [1 2] 16 3, double [1 3] 1 1 1}|exact
+CHK|file_charts|cell [1 3] {double [1 4] 0.13 0.11 0.3347 0.3412, char 'on', cell [3 1] {char 'stair', char 'scatter', char 'bar'}}|exact
+CHK|file_bar|cell [1 2] {double [1 3] 3 1 2, double [1 3] 0.20000000000000001 0.59999999999999998 0.20000000000000001}|exact
+CHK|file_scatter|cell [1 4] {double [1 3] 1 2 3, double [1 3] 2 3 1, double [1 1] 60, double [1 3] 0.80000000000000004 0 0}|exact
+CHK|file_stairs|cell [1 2] {double [1 4] 1 3 2 4, double [1 3] 0 0 0.80000000000000004}|exact
+CHK|file_patch|cell [1 4] {double [1 3] 0 1 0, double [1 1] 0.5, double [4 2] 0 1 1 0 0 0 1 1, double [2 3] 1 1 2 3 3 4}|exact
+CHK|file_shapes|cell [1 3] {double [1 2] 0 1, double [1 2] 0 1, double [1 1] 2}|exact
+CHK|file_edit|cell [1 4] {char 'edit', char 'abc', double [1 4] 10 10 80 24, char 'pixels'}|exact
+CHK|file_popup|cell [1 3] {char 'popupmenu', cell [3 1] {char 'one', char 'two', char 'three'}, double [1 1] 2}|exact
+CHK|file_textbox|cell [1 2] {double [1 1] 1, char 'box'}|exact
+CHK|file_textbox_position|double[1 4] [0.40000000000000002 0.01 0.068000000000000005 0.0625]|div=0240|diverges|double[1 4] [0.40000000000000002 0.01 0.20000000000000001 0.050000000000000003]
+CHK|live_saved|logical [1 1] 1|exact
+CHK|live_figure|cell [1 5] {char 'oi77', char 'oi77', double [1 3] 1 1 0.90000000000000002, double [1 4] 100 100 640 400, char 'off'}|exact
+CHK|live_axes|cell [4 1] {char 'shapes', char 'charts', char 'right', char 'left'}|exact
+CHK|live_left|cell [1 8] {double [1 4] 0.13 0.58379999999999999 0.3347 0.3412, char 'Top', char 'X', char 'Y', char 'on', double [1 2] 0 6, char 'manual', char 'auto'}|exact
+CHK|live_first|cell [1 6] {double [1 3] 1 0 0, char '-', char 'o', double [1 1] 2, double [1 5] 1 2 3 4 5, double [1 5] 1 4 2 5 3}|exact
+CHK|live_second|cell [1 3] {double [1 3] 0 0 1, char '--', double [1 5] 2 2 3 3 4}|exact
+CHK|live_line_order|cell [2 1] {char 'second', char 'first'}|exact
+CHK|live_note|cell [1 3] {char 'note', double [1 3] 2 3 0, double [1 3] 0 0.59999999999999998 0}|exact
+CHK|live_legend|cell [1 3] {double [1 1] 1, cell [1 2] {char 'a', char 'b'}, char 'northwest'}|exact
+CHK|live_image|cell [1 3] {double [1 2] 4 4, double [1 4] 16 2 3 13, double [1 2] 1 16}|exact
+CHK|live_image_position|double[1 4] [0.57030000000000003 0.58379999999999999 0.2452 0.3412]|div=0230|diverges|double[1 4] [0.57030000000000003 0.58379999999999999 0.3347 0.3412]
+CHK|live_colorbar|cell [1 3] {double [1 1] 1, double [1 2] 1 16, char 'eastoutside'}|exact
+CHK|live_colormap|cell [1 2] {double [1 2] 16 3, double [1 3] 1 1 1}|exact
+CHK|live_charts|cell [1 3] {double [1 4] 0.13 0.11 0.3347 0.3412, char 'on', cell [3 1] {char 'stair', char 'scatter', char 'bar'}}|exact
+CHK|live_bar|cell [1 2] {double [1 3] 3 1 2, double [1 3] 0.20000000000000001 0.59999999999999998 0.20000000000000001}|exact
+CHK|live_scatter|cell [1 4] {double [1 3] 1 2 3, double [1 3] 2 3 1, double [1 1] 60, double [1 3] 0.80000000000000004 0 0}|exact
+CHK|live_stairs|cell [1 2] {double [1 4] 1 3 2 4, double [1 3] 0 0 0.80000000000000004}|exact
+CHK|live_patch|cell [1 4] {double [1 3] 0 1 0, double [1 1] 0.5, double [4 2] 0 1 1 0 0 0 1 1, double [2 3] 1 1 2 3 3 4}|exact
+CHK|live_shapes|cell [1 3] {double [1 2] 0 1, double [1 2] 0 1, double [1 1] 2}|exact
+CHK|live_edit|cell [1 4] {char 'edit', char 'abc', double [1 4] 10 10 80 24, char 'pixels'}|exact
+CHK|live_popup|cell [1 3] {char 'popupmenu', cell [3 1] {char 'one', char 'two', char 'three'}, double [1 1] 2}|exact
+CHK|live_textbox|cell [1 2] {double [1 1] 1, char 'box'}|exact
+CHK|live_textbox_position|double [1 4] 0.4 0.01 0.2 0.05|exact

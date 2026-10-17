@@ -183,8 +183,14 @@ internal static partial class JgsBuiltins
         JGraphScriptGlobals host, string verb, FigureModel figure, string path,
         double resolution, int line, int col)
     {
-        if (Path.GetExtension(path).Equals(".fig", StringComparison.OrdinalIgnoreCase)
-            || Path.GetExtension(path).Equals(".graph", StringComparison.OrdinalIgnoreCase))
+        // A .fig is MATLAB's figure file (open item 77), as MATLAB's own saveas writes one; a .graph
+        // is this build's document.
+        if (IsFigName(path))
+        {
+            return Attempt(() => SaveMatlabFig(host, verb, figure, path, line, col), line, col);
+        }
+
+        if (Path.GetExtension(path).Equals(".graph", StringComparison.OrdinalIgnoreCase))
         {
             return Attempt(() =>
             {

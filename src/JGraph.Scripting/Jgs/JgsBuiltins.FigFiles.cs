@@ -168,6 +168,39 @@ internal static partial class JgsBuiltins
         bool savedVisible;
         if (JgsFigFile.IsMatFile(path))
         {
+            // A .fig this build wrote carries its own document beside the tree (open item 77): the
+            // document is the whole figure, where the tree holds what MATLAB's form can take.
+            string? document;
+            try
+            {
+                document = JgsFigFile.Document(path);
+            }
+            catch (InvalidDataException)
+            {
+                document = null;
+            }
+
+            if (document is not null)
+            {
+                try
+                {
+                    figure = host.loadfigure(document, path);
+                }
+                catch (Exception ex) when (ex is not (JgsException or OperationCanceledException))
+                {
+                    throw new JgsRuntimeException(line, col, ex.Message);
+                }
+
+                figure.FileName = path;
+                savedVisible = figure.Visible;
+                if (visible is bool asked)
+                {
+                    JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(figure), "Visible", JgsValue.Str(asked ? "on" : "off"), line, col);
+                }
+
+                return (figure, savedVisible);
+            }
+
             FigNode root;
             try
             {

@@ -43,9 +43,10 @@ internal static partial class JgsBuiltins
         DefineSilent("annotation", Annotation);
 
         // --- Figures as files -------------------------------------------------------------------
-        // MATLAB's four names for two operations. `.fig` is the extension a script writes and the
-        // one these accept; what lands in it is this build's own `.graph` document, because a real
-        // MAT-file-of-handle-objects is a format for a different program's object model.
+        // MATLAB's four names for two operations. A `.fig` is a MATLAB figure file since open item
+        // 77 (ADR 0240): the struct tree every MATLAB release rebuilds a figure from, with this
+        // build's own `.graph` document beside it in the same MAT-file, which openfig here reads
+        // back whole. A `.graph` name still writes the document alone.
         DefineSilent("savefig", (args, line, col) => SaveFigure(host, "savefig", args, line, col));
         DefineSilent("hgsave", (args, line, col) => SaveFigure(host, "hgsave", args, line, col));
         Define("openfig", (args, line, col) => OpenFigure(host, "openfig", args, line, col));
@@ -136,8 +137,8 @@ internal static partial class JgsBuiltins
         // the same shape PeelFigure already leaves behind — so there is nothing extra to read.
         string path = FilePath(verb, rest, 0, ".fig", line, col);
 
-        // 'compact' and 'compactv7.3' name a MAT-file variant, and this document format has one
-        // spelling, so the words are accepted and change nothing.
+        // 'compact' and 'compactv7.3' name MAT-file variants newer releases alone read; the file
+        // written here is the form every release reads, so the words are accepted and change nothing.
         for (int i = 1; i < rest.Count; i++)
         {
             OneOfWord(verb, rest[i], ["compact", "compactv7.3", "-v7.3", "-v7"], line, col);
@@ -147,9 +148,39 @@ internal static partial class JgsBuiltins
         // by a script that wants to save again over the same file.
         return Attempt(() =>
         {
-            host.savefigure(path, figure);
-            figure.FileName = path;
+            if (IsFigName(path))
+            {
+                SaveMatlabFig(host, verb, figure, path, line, col);
+            }
+            else
+            {
+                host.savefigure(path, figure);
+                figure.FileName = path;
+            }
         }, line, col);
+    }
+
+    /// <summary>Whether a file name is a MATLAB figure file's, by its extension.</summary>
+    private static bool IsFigName(string path) => Path.GetExtension(path).Equals(".fig", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Writes a figure as a MATLAB <c>.fig</c> (open item 77, ADR 0240): the struct tree MATLAB
+    /// rebuilds the figure from, and this build's own document beside it in the same file. Objects
+    /// the tree has no node for are left out of MATLAB's copy and named in one warning; the
+    /// document keeps them, so <c>openfig</c> here gives the figure back whole.
+    /// </summary>
+    internal static void SaveMatlabFig(JGraphScriptGlobals host, string verb, FigureModel figure, string path, int line, int col)
+    {
+        RequireFigureFiles(host, verb, line, col); // a host that cannot keep a figure file cannot keep one in this form either
+        string full = Path.GetFullPath(host.ResolveForWrite(path));
+        IReadOnlyList<string> skipped = JgsFigFile.Write(full, figure, JGraph.Serialization.GraphFormat.Serialize(figure));
+        figure.FileName = path; // as ADR 0060 had it; R2025b's savefig leaves FileName empty (a kept extra, ADR 0240)
+        if (skipped.Count > 0)
+        {
+            Warn(host, "JGraph:savefig:NotInMatlabCopy",
+                $"'{Path.GetFileName(full)}' holds what MATLAB's form of a figure file cannot carry ({string.Join(", ", skipped)}); "
+                + "MATLAB opens the file without it, and this build's own copy inside the file keeps it.");
+        }
     }
 
     private static JgsValue OpenFigure(

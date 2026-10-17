@@ -54,9 +54,10 @@ internal sealed class FigNode(string type)
 /// R2025b, whose <c>savefig</c> writes an empty <c>hgS_080000</c> and keeps everything in
 /// <c>hgM_080000</c>. Both forms read into <see cref="FigNode"/>s, and one builder makes the
 /// figure from them through this build's own makers and property table, so a file can set nothing
-/// a script could not.
+/// a script could not. The writing half - the struct tree <c>savefig</c> writes for MATLAB, with
+/// this build's own document beside it (open item 77, ADR 0240) - is <c>JgsFigFile.Write.cs</c>.
 /// </summary>
-internal static class JgsFigFile
+internal static partial class JgsFigFile
 {
     /// <summary>What every level-5 MAT-file's text header starts with.</summary>
     private const string MatHeader = "MATLAB 5.0 MAT-file";
@@ -101,7 +102,10 @@ internal static class JgsFigFile
         {
             if (name.StartsWith("hgS_", StringComparison.Ordinal) && value.Type == JgsType.Struct && !value.IsStructArray)
             {
-                return FromStruct(value.AsStruct);
+                var menus = new List<(double Menu, double[] Users)>();
+                FigNode root = FromStruct(value.AsStruct, menus);
+                AttachMenus(root, menus);
+                return root;
             }
         }
 
@@ -166,14 +170,33 @@ internal static class JgsFigFile
         "FileName", "CurrentAxes", "CurrentObject", "PlotChildren", "PeerAxes", "Internal",
     };
 
-    private static FigNode FromStruct(IReadOnlyDictionary<string, JgsValue> saved)
+    /// <summary>
+    /// Reads one node of the struct tree. A context menu's <c>special</c> holds the handles of the
+    /// objects that use it (hgsave's form, which this build's writer follows: open item 77); they
+    /// are gathered in <paramref name="menus"/> and attached once the whole tree is read.
+    /// </summary>
+    private static FigNode FromStruct(IReadOnlyDictionary<string, JgsValue> saved, List<(double Menu, double[] Users)> menus)
     {
         string type = saved.TryGetValue("type", out JgsValue? word) && JgsBuiltins.IsTextScalar(word) ? JgsBuiltins.TextOf(word) : "?";
+        // The old graphics system's words, as hgsave writes them (and this build's own writer, open
+        // item 77), under the type words the builder knows; a chart word names a kind the builder
+        // does not make yet (open item 76) and is left out by that name.
         var node = new FigNode(type switch
         {
             "graph2d.lineseries" => "line",
             "scribe.legend" => "legend",
             "scribe.colorbar" => "colorbar",
+            "specgraph.barseries" => "bar",
+            "specgraph.scattergroup" => "scatter",
+            "specgraph.stairseries" => "stair",
+            "specgraph.stemseries" => "stem",
+            "specgraph.areaseries" => "area",
+            "specgraph.errorbarseries" => "errorbar",
+            "specgraph.quivergroup" => "quiver",
+            "specgraph.contourgroup" => "contour",
+            "graph3d.surfaceplot" => "surface",
+            "uitools.uibuttongroup" => "uibuttongroup",
+            "matlab.graphics.axis.PolarAxes" => "polaraxes",
             _ => type,
         });
         if (saved.TryGetValue("handle", out JgsValue? handle) && handle.Type == JgsType.Number)
@@ -210,7 +233,18 @@ internal static class JgsFigFile
                 : [children.AsStruct];
             foreach (IReadOnlyDictionary<string, JgsValue> child in each)
             {
-                node.Children.Add(FromStruct(child));
+                node.Children.Add(FromStruct(child, menus));
+            }
+        }
+
+        if (node.Type == "uicontextmenu" && !double.IsNaN(node.Key) && saved.TryGetValue("special", out JgsValue? users))
+        {
+            double[] handles = users.Type == JgsType.Number ? [users.AsNumber]
+                : users.Type == JgsType.Array && users.Rows > 0 && users.Cols > 0 ? Devices.DeviceChecks.NumberArray(users)
+                : [];
+            if (handles.Length > 0)
+            {
+                menus.Add((node.Key, handles));
             }
         }
 
@@ -239,6 +273,28 @@ internal static class JgsFigFile
         // u11_guide: a tree saved with Children M1,C2,P1,A2,A1 holds A1,A2,P1,C2,M1).
         node.Children.Reverse();
         return node;
+    }
+
+    /// <summary>Gives each object a context menu's <c>special</c> named the link to that menu.</summary>
+    private static void AttachMenus(FigNode node, List<(double Menu, double[] Users)> menus)
+    {
+        if (menus.Count == 0)
+        {
+            return;
+        }
+
+        foreach ((double menu, double[] users) in menus)
+        {
+            if (!double.IsNaN(node.Key) && Array.Exists(users, user => user == node.Key))
+            {
+                node.Links.Add(("ContextMenu", menu));
+            }
+        }
+
+        foreach (FigNode child in node.Children)
+        {
+            AttachMenus(child, menus);
+        }
     }
 
     // --- The subsystem's objects --------------------------------------------------------------
@@ -960,9 +1016,11 @@ internal static class JgsFigFile
             {
                 JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(target), name, value, line, col);
             }
-            catch (JgsException)
+            catch (Exception ex) when (ex is not (OperationCanceledException or OutOfMemoryException))
             {
-                // left at its default: a name this build does not have, or a value it refuses
+                // left at its default: a name this build does not have, or a value it refuses - in
+                // its own words or, for a value a saved file holds that no script could write, in a
+                // model's (R2025b's loader passes over such a property too: probe oi77_hand)
             }
         }
 

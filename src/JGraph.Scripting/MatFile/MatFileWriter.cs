@@ -34,17 +34,29 @@ namespace JGraph.Scripting.MatFile;
 /// </remarks>
 internal static class MatFileWriter
 {
-    /// <summary>What one <see cref="Write"/> remembers across its elements: the handle objects met so far, by element id.</summary>
+    /// <summary>What one write remembers across its elements: the handle objects met so far, by element id, and the function form.</summary>
     private sealed class Session
     {
         public readonly Dictionary<JgsObject, int> Handles = new(ReferenceEqualityComparer.Instance);
+
+        /// <summary>Whether a function handle is written in MATLAB's own form (<see cref="WriteMatlabFunction"/>) rather than this build's.</summary>
+        public bool MatlabFunctions;
     }
 
     /// <summary>Writes <paramref name="variables"/> to <paramref name="path"/>, in order.</summary>
     /// <exception cref="NotSupportedException">A value has no MAT representation.</exception>
-    public static void Write(string path, IEnumerable<(string Name, JgsValue Value)> variables)
+    public static void Write(string path, IEnumerable<(string Name, JgsValue Value)> variables) =>
+        Write(path, variables, matlabFunctions: false);
+
+    /// <summary>
+    /// <see cref="Write(string, IEnumerable{ValueTuple{string, JgsValue}})"/>, with function handles
+    /// in MATLAB's own form when <paramref name="matlabFunctions"/> is set: the form MATLAB reads,
+    /// which a figure file for it needs (open item 77), where this build's own form is refused by
+    /// MATLAB's loader whole ("Cannot read file").
+    /// </summary>
+    public static void Write(string path, IEnumerable<(string Name, JgsValue Value)> variables, bool matlabFunctions)
     {
-        var session = new Session();
+        var session = new Session { MatlabFunctions = matlabFunctions };
         using var stream = new FileStream(path, FileMode.Create, FileAccess.Write);
         using var writer = new BinaryWriter(stream);
 
@@ -671,6 +683,12 @@ internal static class MatFileWriter
     /// </summary>
     private static void WriteFunction(Session session, BinaryWriter w, string name, JgsValue value)
     {
+        if (session.MatlabFunctions)
+        {
+            WriteMatlabFunction(session, w, name, value);
+            return;
+        }
+
         var body = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
         switch (value.AsCallable)
         {
@@ -704,6 +722,51 @@ internal static class MatFileWriter
         string[] names = [.. body.Keys];
         WriteFieldNames(w, names);
         WriteFields(session, w, names, body);
+    }
+
+    /// <summary>
+    /// A function handle as R2025b writes one (probe <c>oi77_fh</c>, read off a <c>-v6</c> file): the
+    /// function element holds one nested struct of <c>matlabroot</c>, <c>separator</c>, <c>sentinel</c>
+    /// (<c>'@'</c>) and <c>function_handle</c>, itself the struct <c>functions</c> reports - the
+    /// name or text, the kind, the file (none here: the handle is re-made where it is loaded) and,
+    /// for an anonymous function, an empty <c>within_file_path</c>. MATLAB keeps an anonymous
+    /// function's workspace as an object of its own in the subsystem; the cell of one struct that
+    /// <c>functions</c> answers in its place is an access violation in R2025b's loader (probe
+    /// <c>oi77_verify</c>), so no workspace is written and a captured variable is lost to MATLAB.
+    /// </summary>
+    private static void WriteMatlabFunction(Session session, BinaryWriter w, string name, JgsValue value)
+    {
+        var described = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        switch (value.AsCallable)
+        {
+            case AnonymousFunction anonymous:
+                described["function"] = JgsValue.Str(anonymous.Text);
+                described["type"] = JgsValue.Str("anonymous");
+                described["file"] = JgsValue.Str(string.Empty);
+                described["within_file_path"] = JgsValue.Str(string.Empty);
+                break;
+
+            case NamedHandle or UserFunction or BuiltinFunction:
+                described["function"] = JgsValue.Str(value.AsCallable.Name);
+                described["type"] = JgsValue.Str("simple");
+                described["file"] = JgsValue.Str(string.Empty);
+                break;
+            default:
+                throw new NotSupportedException("A function handle with no name or text to save it by cannot be saved to a MAT-file.");
+        }
+
+        var outer = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["matlabroot"] = JgsValue.Str(string.Empty),
+            ["separator"] = JgsValue.Str("\\"),
+            ["sentinel"] = JgsValue.Str("@"),
+            ["function_handle"] = JgsValue.Struct(described),
+        };
+
+        WriteFlags(w, MxFunction);
+        WriteDimensions(w, [1, 1]);
+        WriteName(w, name);
+        WriteNested(session, w, JgsValue.Struct(outer));
     }
 
     /// <summary>Field name length (a small element), then the names in fixed 32-byte slots.</summary>
