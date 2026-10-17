@@ -29,6 +29,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `u7/` | The U7 probes (ADR 0204): headless `u7_*`, the class table generator, and `mlapp/`, which builds the text-only `.mlapp` fixtures. |
 | `u7b/` | The U7b probes (ADR 0205): headless `u7b_*`. `u7b_build` writes the fixture app `U7bApp.mlapp` with R2025b's own serializer; `u7b_verify` reads what JGraph saved. `rt/` (ignored) holds what they write, copies of shipped apps included. |
 | `u8/` | The U8 probes (ADR 0206): headless `u8_*` for tables, tabs, menus and toolbar tools. `summarize.py` prints one kind of `u8_matrix.out` property by property. |
+| `oi57/` | Open items 57 and 58 (ADR 0239): headless. `oi57_build` writes the fixture app `U7bApp73.mlapp` with R2025b's serializer under the version 7.3 MAT-file preference (an HDF5 model); `oi57_verify` loads, reads and runs the apps JGraph spliced an edit into (the shipped one with a version 7.3 model among them) and puts a code-only `.mlapp` to App Designer's readers. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
 

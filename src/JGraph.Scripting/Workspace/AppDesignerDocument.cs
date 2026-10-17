@@ -84,6 +84,39 @@ public static partial class AppDesignerDocument
     }
 
     /// <summary>
+    /// What to add to "Saved ..." when a class that was never an App Designer file's was saved as a
+    /// new <c>.mlapp</c> (open item 58).
+    /// </summary>
+    public const string CodeOnlyNote =
+        " The file holds the code alone: it runs here and in MATLAB and opens here, but MATLAB's App Designer "
+        + "cannot open it, since it has no component tree, which only App Designer writes.";
+
+    /// <summary>
+    /// Saves <paramref name="text"/>, a class that was never an App Designer file's - an exported
+    /// <c>.m</c> app, a class written by hand - as the new <c>.mlapp</c> <paramref name="target"/>
+    /// (open item 58). The package holds the code and nothing else (<see cref="JgsMlapp.WritePackage"/>),
+    /// and the class takes the file's name, since a class file must carry the name of its class.
+    /// </summary>
+    /// <returns>The text as saved, which differs from <paramref name="text"/> when the class was renamed.</returns>
+    /// <exception cref="IOException">The text is not a class, the name is not one a class can have, or the file could not be written.</exception>
+    public static string SaveNew(string target, string text)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(text);
+        string name = ClassNameFor(target);
+        if (JgsMlappLayout.Of(text).ClassName.Length == 0)
+        {
+            throw new IOException(
+                $"'{Path.GetFileName(target)}' would hold no class: an App Designer file is a class file, and this "
+                + "document is not a class. Save it as a .m file instead.");
+        }
+
+        string saved = JgsMlapp.ExportedCode(text, name);
+        JgsMlapp.WritePackage(target, saved);
+        return saved;
+    }
+
+    /// <summary>
     /// Writes an app's class as the <c>.m</c> file <paramref name="path"/>, as MATLAB's "Export to
     /// .m File" does: the same text under the new file's name. The <c>.mlapp</c> is not touched.
     /// </summary>

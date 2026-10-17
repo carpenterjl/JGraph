@@ -117,6 +117,12 @@ internal sealed class Hdf5File
         return (int)absolute;
     }
 
+    /// <summary>The file address - relative to the superblock, as HDF5 counts them - of an index into the bytes.</summary>
+    public long Rel(int absolute) => absolute - _baseAddress;
+
+    /// <summary>The index into the bytes where the superblock starts.</summary>
+    public int SuperblockAt => FindSignature(Bytes);
+
     public bool IsUndefined(long address) => address == -1 || address == (1L << (8 * OffsetSize)) - 1;
 
     public long ReadOffset(ref int at)
@@ -154,7 +160,14 @@ internal sealed class Hdf5File
     public string Ascii(int at, int length) => Encoding.ASCII.GetString(Bytes, at, length);
 
     /// <summary>Walks a symbol-table B-tree, yielding every (name, object header address) pair under it.</summary>
-    public void WalkGroupTree(long treeAddress, long heapAddress, List<(string Name, int Header)> into)
+    public void WalkGroupTree(long treeAddress, long heapAddress, List<(string Name, int Header)> into) =>
+        WalkGroupTree(treeAddress, heapAddress, (name, header, _) => into.Add((name, header)));
+
+    /// <summary>
+    /// Walks a symbol-table B-tree, visiting every entry under it with its name, the object header
+    /// it points at, and where in the bytes the entry itself sits (which a splice patches, open item 57).
+    /// </summary>
+    public void WalkGroupTree(long treeAddress, long heapAddress, Action<string, int, int> visit)
     {
         int heap = Abs(heapAddress);
         if (Ascii(heap, 4) != "HEAP")
@@ -166,10 +179,24 @@ internal sealed class Hdf5File
         _ = ReadLength(ref cursor);
         _ = ReadLength(ref cursor);
         int names = Abs(ReadOffset(ref cursor));
-        WalkNode(Abs(treeAddress), names, into);
+        WalkNode(Abs(treeAddress), names, visit);
     }
 
-    private void WalkNode(int node, int names, List<(string, int)> into)
+    /// <summary>Where in the bytes the entry named <paramref name="name"/> sits in the group whose symbol table is given; -1 when it has none.</summary>
+    public int FindEntry(long treeAddress, long heapAddress, string name)
+    {
+        int found = -1;
+        WalkGroupTree(treeAddress, heapAddress, (entryName, _, entry) =>
+        {
+            if (found < 0 && string.Equals(entryName, name, StringComparison.Ordinal))
+            {
+                found = entry;
+            }
+        });
+        return found;
+    }
+
+    private void WalkNode(int node, int names, Action<string, int, int> visit)
     {
         if (Ascii(node, 4) != "TREE")
         {
@@ -185,16 +212,16 @@ internal sealed class Hdf5File
             int child = Abs(ReadOffset(ref at));
             if (level > 0)
             {
-                WalkNode(child, names, into);
+                WalkNode(child, names, visit);
             }
             else
             {
-                ReadSymbolTableNode(child, names, into);
+                ReadSymbolTableNode(child, names, visit);
             }
         }
     }
 
-    private void ReadSymbolTableNode(int node, int names, List<(string, int)> into)
+    private void ReadSymbolTableNode(int node, int names, Action<string, int, int> visit)
     {
         if (Ascii(node, 4) != "SNOD")
         {
@@ -205,6 +232,7 @@ internal sealed class Hdf5File
         int at = node + 8;
         for (int i = 0; i < count; i++)
         {
+            int entry = at;
             long nameOffset = ReadOffset(ref at);
             long header = ReadOffset(ref at);
             int cacheType = I32(at);
@@ -215,7 +243,7 @@ internal sealed class Hdf5File
                 continue;
             }
 
-            into.Add((NullTerminated(names + (int)nameOffset), Abs(header)));
+            visit(NullTerminated(names + (int)nameOffset), Abs(header), entry);
         }
     }
 

@@ -36,10 +36,17 @@ internal sealed class Hdf5Object
     {
         _file = file;
         Name = name;
+        Address = file.Rel(header);
         ReadHeader(header);
     }
 
     public string Name { get; }
+
+    /// <summary>The file address of the object's header, which is what a reference to it holds.</summary>
+    public long Address { get; }
+
+    /// <summary>An old-style group's symbol table: the addresses of its B-tree and its name heap; null for a dataset or a new-style group.</summary>
+    public (long Tree, long Heap)? SymbolTable { get; private set; }
 
     /// <summary>A group is an object that holds links and no data of its own.</summary>
     public bool IsGroup => _datatype is null;
@@ -221,6 +228,7 @@ internal sealed class Hdf5Object
                 int cursor = at;
                 long tree = _file.ReadOffset(ref cursor);
                 long heap = _file.ReadOffset(ref cursor);
+                SymbolTable = (tree, heap);
                 _file.WalkGroupTree(tree, heap, _links);
                 break;
             }

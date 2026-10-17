@@ -310,28 +310,32 @@ public partial class ScriptWorkspaceWindow
     private bool TrySaveAs(DocumentEntry entry)
     {
         // An app is saved under a new name as an app, the way App Designer's Save As does it; its
-        // class alone is saved through Export, or by picking the .m type here.
+        // class alone is saved through Export, or by picking the .m type here. A MATLAB class that
+        // never was an app can be saved as a new .mlapp holding the code alone (open item 58).
         bool app = entry.Model.IsAppDesignerFile;
+        var types = new List<(string Filter, string Language)>();
+        if (app || entry.Model.Language == "MATLAB")
+        {
+            types.Add(("App Designer file (*.mlapp)|*.mlapp", "App"));
+        }
+
+        types.Add(("JGS script (*.jgs)|*.jgs", "JGS"));
+        types.Add(("MATLAB script (*.m)|*.m", "MATLAB"));
+        types.Add(("C# script (*.csx)|*.csx", "C#"));
+        types.Add(("Python script (*.py)|*.py", "Python"));
+        types.Add(("All files (*.*)|*.*", string.Empty));
+        int chosen = types.FindIndex(t => t.Language == (app ? "App" : entry.Model.Language));
         var dialog = new SaveFileDialog
         {
             Title = "Save script",
-            Filter = (app ? "App Designer file (*.mlapp)|*.mlapp|" : string.Empty)
-                + "JGS script (*.jgs)|*.jgs|MATLAB script (*.m)|*.m|C# script (*.csx)|*.csx|"
-                + "Python script (*.py)|*.py|All files (*.*)|*.*",
+            Filter = string.Join('|', types.Select(static t => t.Filter)),
             InitialDirectory = Path.GetDirectoryName(entry.Model.FilePath)
                 ?? _workspace?.RootPath ?? DefaultScriptDirectory(),
 
             // The tab is already named for the language it was created as ("NewScript.py"), so the
             // dialog only has to agree with it — name and filter both follow the document.
             FileName = entry.Model.FileName,
-            FilterIndex = app ? 1 : entry.Model.Language switch
-            {
-                "JGS" => 1,
-                "MATLAB" => 2,
-                "C#" => 3,
-                "Python" => 4,
-                _ => 5,
-            },
+            FilterIndex = (chosen < 0 ? types.Count : chosen + 1),
         };
         if (dialog.ShowDialog(this) != true)
         {
@@ -369,16 +373,10 @@ public partial class ScriptWorkspaceWindow
     {
         // An .mlapp is a package holding the code, not the code: text written over it would
         // destroy the app. Code goes back into the package it came out of (U7b), or into a copy of
-        // that package under a new name; there is no package to put any other document's text in.
+        // that package under a new name; a class that never was an app gets a new package holding
+        // the code alone, and the status line says what that means (open item 58).
         bool intoApp = JGraph.Scripting.Jgs.JgsMlapp.IsMlapp(path);
-        if (intoApp && !entry.Model.IsAppDesignerFile)
-        {
-            MessageBox.Show(this,
-                $"'{Path.GetFileName(path)}' would be an App Designer file, which holds an app's components beside "
-                + "its code. Only the code of an App Designer file can be saved as one.\n\nSave this as a .m file instead.",
-                "App Designer file", MessageBoxButton.OK, MessageBoxImage.Information);
-            return SaveOutcome.Failed;
-        }
+        bool newPackage = intoApp && !entry.Model.IsAppDesignerFile;
 
         try
         {
@@ -408,7 +406,11 @@ public partial class ScriptWorkspaceWindow
 
             string text = entry.Editor.ScriptText;
             JGraph.Scripting.Jgs.MlappSaveResult? saved = null;
-            if (intoApp)
+            if (newPackage)
+            {
+                text = AppDesignerDocument.SaveNew(path, text);
+            }
+            else if (intoApp)
             {
                 (text, saved) = AppDesignerDocument.Save(entry.Model.FilePath!, path, text);
             }
@@ -430,7 +432,8 @@ public partial class ScriptWorkspaceWindow
             entry.Model.SetText(text);
             entry.Model.MarkSaved();
             entry.Document.Title = entry.Model.FileName;
-            SetStatus(saved is null ? $"Saved {path}" : $"Saved {path}.{AppDesignerDocument.StatusNote(saved)}");
+            SetStatus(newPackage ? $"Saved {path}.{AppDesignerDocument.CodeOnlyNote}"
+                : saved is null ? $"Saved {path}" : $"Saved {path}.{AppDesignerDocument.StatusNote(saved)}");
             if (saved is { HasDesignCopy: true, DesignCopyInStep: true, GeneratedCodeChanged: true } && !_generatedCodeNoticeShown)
             {
                 _generatedCodeNoticeShown = true;

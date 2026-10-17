@@ -612,9 +612,9 @@ public class AppDesignerU7bTests : IAsyncLifetime
 
         string? outFolder = Environment.GetEnvironmentVariable("JGRAPH_U7B_OUT");
         var unaccounted = new List<string>();
-        var unreadable = new List<string>();
         var wide = new List<string>();
         int apps = 0;
+        int version73 = 0;
         foreach (string source in Directory.EnumerateFiles(Root, "*.mlapp", SearchOption.AllDirectories))
         {
             apps++;
@@ -627,18 +627,13 @@ public class AppDesignerU7bTests : IAsyncLifetime
             string text = JgsMlapp.ReadCode(copyPath);
             JgsMlappLayout layout = JgsMlappLayout.Of(text);
             Assert.True(layout.IsAppLayout && layout.IsComplete, name);
-            if (JgsMlappModel.Read(Parts(copyPath)[Model]) is not { } copy)
+            byte[] model = Parts(copyPath)[Model];
+            if (Encoding.ASCII.GetString(model, 0, 10) == "MATLAB 7.3")
             {
-                // A model kept as a version 7.3 MAT-file: the code is saved, the copy is left and said to be.
-                unreadable.Add(name);
-                byte[] kept = Parts(copyPath)[Model];
-                MlappSaveResult left = JgsMlapp.WriteCode(copyPath, text + "\n% saved");
-                Assert.Equal(new MlappSaveResult(HasDesignCopy: true, DesignCopyInStep: false, GeneratedCodeChanged: true), left);
-                Assert.True(kept.AsSpan().SequenceEqual(Parts(copyPath)[Model]));
-                Assert.Equal(text + "\n% saved", JgsMlapp.ReadCode(copyPath));
-                continue;
+                version73++; // one shipped app keeps its model as HDF5 (open item 57); its copy reads and is rewritten like the others'
             }
 
+            MlappCodeCopy copy = JgsMlappModel.Read(model) ?? throw new InvalidOperationException($"{name}: no code copy");
             Assert.Equal(layout.ClassName, copy.ClassName);
             if (!layout.EditableSectionCode.SequenceEqual(copy.EditableSection ?? []))
             {
@@ -677,7 +672,7 @@ public class AppDesignerU7bTests : IAsyncLifetime
         }
 
         Assert.True(apps >= 40, $"{apps} apps");
-        Assert.True(unreadable.Count <= 1, string.Join(' ', unreadable));
+        Assert.True(version73 >= 1, "no shipped app keeps a version 7.3 model");
         Assert.True(wide.Count <= 1, string.Join(' ', wide));
 
         // The one body App Designer records in another form is the one it generates itself.

@@ -134,19 +134,36 @@ internal static class MatV73Writer
     }
 
     /// <summary>One header message: its type, its bytes, and where in them the global heap's address goes.</summary>
-    private sealed record Message(int Type, byte[] Data, int[] HeapPatches);
+    internal sealed record Message(int Type, byte[] Data, int[] HeapPatches);
 
-    /// <summary>The file as it grows: addresses are relative to the superblock, as HDF5 counts them.</summary>
-    private sealed class Builder
+    /// <summary>
+    /// The file as it grows: addresses are relative to the superblock, as HDF5 counts them. A
+    /// builder either starts a file, its bytes beginning with the userblock and the superblock, or
+    /// continues one from a given position (<see cref="MatV73Splice"/>, open item 57), its bytes
+    /// being what is appended there.
+    /// </summary>
+    internal sealed class Builder
     {
         private readonly MemoryStream _bytes = new();
         private readonly List<byte[]> _heapObjects = [];
         private readonly List<long> _heapPatches = [];
+        private readonly long _start;
         private int _refCount;
 
         public Builder()
         {
             _bytes.Write(new byte[UserBlock + SuperblockSize]);
+        }
+
+        /// <summary>A builder whose first byte lands at <paramref name="start"/> in the file, a multiple of eight past its superblock.</summary>
+        public Builder(long start)
+        {
+            if (start < UserBlock + SuperblockSize || start % 8 != 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
+            _start = start;
         }
 
         /// <summary>The objects a cell or a struct array points at, as the #refs# group lists them.</summary>
@@ -156,7 +173,7 @@ internal static class MatV73Writer
         private long Put(byte[] data)
         {
             Align();
-            long at = _bytes.Position - UserBlock;
+            long at = _start + _bytes.Position - UserBlock;
             _bytes.Write(data);
             return at;
         }
@@ -408,6 +425,29 @@ internal static class MatV73Writer
             }
         }
 
+        /// <summary>
+        /// A dataset of object references to objects already written: a cell over them when
+        /// <paramref name="cell"/>, else a struct array's field, which has no class of its own;
+        /// <paramref name="dims"/> are MATLAB's (open item 57).
+        /// </summary>
+        public long References(IReadOnlyList<long> addresses, int[] dims, bool cell = false)
+        {
+            var data = new byte[addresses.Count * 8];
+            for (int i = 0; i < addresses.Count; i++)
+            {
+                BinaryPrimitives.WriteInt64LittleEndian(data.AsSpan(i * 8), addresses[i]);
+            }
+
+            return Dataset(Reference(), Reversed(dims), data, cell ? [ClassAttribute("cell")] : []);
+        }
+
+        /// <summary>
+        /// A struct's group over objects already written, its fields in the order given, which is
+        /// the order MATLAB lists them in (open item 57).
+        /// </summary>
+        public long StructGroup(IReadOnlyList<(string Name, long Header)> fields, out long tree, out long heap) =>
+            Group([.. fields], [ClassAttribute("struct"), FieldsAttribute([.. fields.Select(static f => f.Name)])], out tree, out heap);
+
         // --- Objects --------------------------------------------------------------------------
 
         private long Dataset(byte[] datatype, long[] dims, byte[] data, IReadOnlyList<Message> attributes)
@@ -542,7 +582,7 @@ internal static class MatV73Writer
             }
 
             long address = Put(header);
-            _heapPatches.AddRange(patches.Select(p => UserBlock + address + p));
+            _heapPatches.AddRange(patches.Select(p => UserBlock + address + p - _start)); // where in these bytes
             return address;
         }
 
@@ -604,6 +644,48 @@ internal static class MatV73Writer
         /// <summary>Writes the global heap, patches the addresses that point at it, then the userblock and superblock.</summary>
         public byte[] Finish(long rootHeader, long rootTree, long rootHeap)
         {
+            WriteGlobalHeap();
+            Align();
+            byte[] file = _bytes.ToArray();
+            string description = "MATLAB 7.3 MAT-file, Platform: PCWIN64, Created on: "
+                + DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyyy", System.Globalization.CultureInfo.InvariantCulture)
+                + " HDF5 schema 1.00 .";
+            byte[] text = Encoding.ASCII.GetBytes(description.PadRight(116));
+            Array.Copy(text, file, 116);
+            file[124] = 0x00;
+            file[125] = 0x02;
+            file[126] = (byte)'I';
+            file[127] = (byte)'M';
+
+            Span<byte> super = file.AsSpan(UserBlock, SuperblockSize);
+            ReadOnlySpan<byte> signature = [0x89, (byte)'H', (byte)'D', (byte)'F', 0x0D, 0x0A, 0x1A, 0x0A];
+            signature.CopyTo(super);
+            super[13] = 8; // size of offsets
+            super[14] = 8; // size of lengths
+            BinaryPrimitives.WriteUInt16LittleEndian(super[16..], LeafK);
+            BinaryPrimitives.WriteUInt16LittleEndian(super[18..], InternalK);
+            BinaryPrimitives.WriteInt64LittleEndian(super[24..], UserBlock); // base address: the superblock
+            BinaryPrimitives.WriteInt64LittleEndian(super[32..], Undefined); // no free-space info
+            BinaryPrimitives.WriteInt64LittleEndian(super[40..], file.Length); // end of file: absolute, unlike every other address (R2025b's own, probe_h5)
+            BinaryPrimitives.WriteInt64LittleEndian(super[48..], Undefined); // no driver info
+            BinaryPrimitives.WriteInt64LittleEndian(super[56..], 0); // the root's name: the empty one
+            BinaryPrimitives.WriteInt64LittleEndian(super[64..], rootHeader);
+            BinaryPrimitives.WriteInt32LittleEndian(super[72..], 1); // cached: the root's tree and heap
+            BinaryPrimitives.WriteInt64LittleEndian(super[80..], rootTree);
+            BinaryPrimitives.WriteInt64LittleEndian(super[88..], rootHeap);
+            return file;
+        }
+
+        /// <summary>The bytes a continuing builder appends to its file: its objects and their global heap, whole eights.</summary>
+        public byte[] Appendix()
+        {
+            WriteGlobalHeap();
+            Align();
+            return _bytes.ToArray();
+        }
+
+        private void WriteGlobalHeap()
+        {
             if (_heapObjects.Count > 0)
             {
                 using var collection = new MemoryStream();
@@ -641,36 +723,6 @@ internal static class MatV73Writer
 
                 _bytes.Position = _bytes.Length;
             }
-
-            Align();
-            byte[] file = _bytes.ToArray();
-            string description = "MATLAB 7.3 MAT-file, Platform: PCWIN64, Created on: "
-                + DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyyy", System.Globalization.CultureInfo.InvariantCulture)
-                + " HDF5 schema 1.00 .";
-            byte[] text = Encoding.ASCII.GetBytes(description.PadRight(116));
-            Array.Copy(text, file, 116);
-            file[124] = 0x00;
-            file[125] = 0x02;
-            file[126] = (byte)'I';
-            file[127] = (byte)'M';
-
-            Span<byte> super = file.AsSpan(UserBlock, SuperblockSize);
-            ReadOnlySpan<byte> signature = [0x89, (byte)'H', (byte)'D', (byte)'F', 0x0D, 0x0A, 0x1A, 0x0A];
-            signature.CopyTo(super);
-            super[13] = 8; // size of offsets
-            super[14] = 8; // size of lengths
-            BinaryPrimitives.WriteUInt16LittleEndian(super[16..], LeafK);
-            BinaryPrimitives.WriteUInt16LittleEndian(super[18..], InternalK);
-            BinaryPrimitives.WriteInt64LittleEndian(super[24..], UserBlock); // base address: the superblock
-            BinaryPrimitives.WriteInt64LittleEndian(super[32..], Undefined); // no free-space info
-            BinaryPrimitives.WriteInt64LittleEndian(super[40..], file.Length); // end of file: absolute, unlike every other address (R2025b's own, probe_h5)
-            BinaryPrimitives.WriteInt64LittleEndian(super[48..], Undefined); // no driver info
-            BinaryPrimitives.WriteInt64LittleEndian(super[56..], 0); // the root's name: the empty one
-            BinaryPrimitives.WriteInt64LittleEndian(super[64..], rootHeader);
-            BinaryPrimitives.WriteInt32LittleEndian(super[72..], 1); // cached: the root's tree and heap
-            BinaryPrimitives.WriteInt64LittleEndian(super[80..], rootTree);
-            BinaryPrimitives.WriteInt64LittleEndian(super[88..], rootHeap);
-            return file;
         }
     }
 

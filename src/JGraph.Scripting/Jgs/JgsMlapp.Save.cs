@@ -88,6 +88,51 @@ public static partial class JgsMlapp
     }
 
     /// <summary>
+    /// Writes a new <c>.mlapp</c> holding <paramref name="text"/> and nothing else (open item 58): the
+    /// three parts MATLAB needs to run an app - the content types, the relationships and the
+    /// document - as the U7 fixtures' builder writes them (<c>build_mlapp.py</c>, research C). Such a
+    /// package runs here and in MATLAB and opens in this editor; MATLAB's App Designer cannot open
+    /// it, since it has no component tree, which only App Designer writes. The file is replaced only
+    /// once the new one is complete.
+    /// </summary>
+    /// <exception cref="IOException">The file could not be written or replaced.</exception>
+    public static void WritePackage(string path, string text)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentNullException.ThrowIfNull(text);
+        string code = text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
+        string document = DocumentHead + "<![CDATA[" + code.Replace("]]>", "]]]]><![CDATA[>", StringComparison.Ordinal) + "]]>" + DocumentTail;
+        DateTimeOffset now = DateTimeOffset.Now;
+        var utf8 = new UTF8Encoding(false);
+        List<Part> parts =
+        [
+            new() { Name = "[Content_Types].xml", Bytes = utf8.GetBytes(ContentTypes), Written = now, Stored = false, Attributes = 0 },
+            new() { Name = "_rels/.rels", Bytes = utf8.GetBytes(PackageRelationships), Written = now, Stored = false, Attributes = 0 },
+            new() { Name = DocumentPart, Bytes = utf8.GetBytes(document), Written = now, Stored = false, Attributes = 0 },
+        ];
+        Replace(path, parts, null);
+    }
+
+    private const string DocumentPart = "matlab/document.xml";
+
+    private const string ContentTypes = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
+        + "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">\n"
+        + "  <Default ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" Extension=\"rels\"/>\n"
+        + "  <Default ContentType=\"application/vnd.mathworks.matlab.code.document+xml;plaincode=true\" Extension=\"xml\"/>\n"
+        + "</Types>";
+
+    private const string PackageRelationships = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
+        + "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">\n"
+        + "  <Relationship Id=\"rId1\" Target=\"" + DocumentPart + "\" Type=\"http://schemas.mathworks.com/matlab/code/2013/relationships/document\"/>\n"
+        + "</Relationships>";
+
+    private const string DocumentHead = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><w:document "
+        + "xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"><w:body><w:p>"
+        + "<w:pPr><w:pStyle w:val=\"code\"/></w:pPr><w:r><w:t>";
+
+    private const string DocumentTail = "</w:t></w:r></w:p></w:body></w:document>";
+
+    /// <summary>
     /// The class file an <c>.mlapp</c> holds, as the <c>.m</c> file MATLAB's "Export to .m file"
     /// writes: the same text under the name <paramref name="className"/>, which is the name the
     /// exported file must carry. The class line and the constructor are the two places the name is.

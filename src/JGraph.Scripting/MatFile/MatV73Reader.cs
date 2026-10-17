@@ -70,6 +70,9 @@ internal static class MatV73Reader
         return described;
     }
 
+    /// <summary>The MATLAB value one object holds, under MATLAB's conventions; <paramref name="name"/> names it in a refusal.</summary>
+    internal static JgsValue ValueOf(Hdf5Object node, string name) => ToValue(node, name);
+
     private static JgsValue ToValue(Hdf5Object node, string name)
     {
         string matlabClass = node.Attributes.TryGetValue("MATLAB_class", out Hdf5Attribute? tag)
