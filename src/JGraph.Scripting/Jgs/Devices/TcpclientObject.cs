@@ -63,6 +63,20 @@ internal sealed class TcpclientObject : DeviceObject
 
         if (args.Count == 1)
         {
+            // R2025b validates the address before it counts the arguments: tcpclient(u1) names the
+            // udpport's class (probe_dev_arrays, mixed_udp), tcpclient("x") wants more arguments.
+            try
+            {
+                JgsValue address = TransportClient.Str2Char(args[0]);
+                var who = new DeviceChecks.Subject("tcpclient", "ADDRESS", 1);
+                DeviceChecks.Classes(address, ["char"], who, line, col);
+                DeviceChecks.Attributes(address, ["nonempty"], who, line, col);
+            }
+            catch (JgsRuntimeException refused)
+            {
+                throw Cannot(line, col, refused.Message);
+            }
+
             throw Cannot(line, col, "Not enough input arguments.");
         }
 

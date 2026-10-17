@@ -270,7 +270,10 @@ internal sealed class TcpserverObject : DeviceObject
             ["TCPServer", "addlistener", "configureCallback", "configureTerminator", "delete", "eq", "findobj", "findprop", "flush", "ge",
              "get", "gt", "isvalid", "le", "listener", "lt", "ne", "notify", "read", "readbinblock", "readline", "set", "write",
              "writebinblock", "writeline"],
-            ["ServerAddress", "ServerPort", "Connected", "ClientAddress", "ClientPort", "Tag", "NumBytesAvailable"]);
+            ["ServerAddress", "ServerPort", "Connected", "ClientAddress", "ClientPort", "Tag", "NumBytesAvailable"])
+        {
+            Constructor = "tcpserver",
+        };
     }
 
     protected override void OnDelete() => _server.Dispose();

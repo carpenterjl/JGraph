@@ -613,6 +613,15 @@ internal static partial class JgsBuiltins
             return JgsCategorical.FromCodes(gathered.Codes, rows, columns, gathered.Tag);
         }
 
+        // One string scalar apiece collects into a string array, as R2025b's arrayfun over a device
+        // array's Ports answers (open item 36, probe_dev_arrays: cellfun row).
+        if (JgsRunningDialect.ThreadIsMatlab && values.All(static v => v.IsStringArray && v.ArrayLength == 1))
+        {
+            JgsValue strings = JgsValue.StringArray([.. values.Select(static v => v.ElementAt(0))]);
+            strings.Reshape(rows, columns);
+            return strings;
+        }
+
         for (int i = 0; i < values.Length; i++)
         {
             if (values[i].Type is not (JgsType.Number or JgsType.Bool))

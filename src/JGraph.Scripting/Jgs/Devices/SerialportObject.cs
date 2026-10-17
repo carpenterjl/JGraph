@@ -588,7 +588,13 @@ internal sealed class SerialportObject : DeviceObject, ILegacyTransport
                 "ge", "get", "getpinstatus", "gt", "isvalid", "le", "listener", "lt", "ne", "notify", "read", "readbinblock", "readline",
                 "serialbreak", "set", "setDTR", "setRTS", "write", "writebinblock", "writeline", "writeread",
             ],
-            ["Port", "BaudRate", "Tag", "NumBytesAvailable"]);
+            ["Port", "BaudRate", "Tag", "NumBytesAvailable"])
+        {
+            // An array of serialports converts a joined value through serialport(value), and fills a
+            // growth's gap with the default object serialport() makes (open item 36).
+            Constructor = "serialport",
+            GapFill = "serialport",
+        };
     }
 
     /// <summary>A method with no output: asked for one, it is MATLAB's TooManyOutputs.</summary>

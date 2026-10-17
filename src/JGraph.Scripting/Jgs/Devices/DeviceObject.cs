@@ -139,6 +139,18 @@ internal sealed class DeviceClass
     /// <summary>What <c>[a b]</c> of this class's objects throws, when it is not R2025b's general refusal.</summary>
     public (string Identifier, string Message)? ConcatenationRefusal { get; init; }
 
+    /// <summary>The builtin whose call converts a joined value into this class (<c>serialport</c> for <c>internal.Serialport</c>); the class name when null.</summary>
+    public string? Constructor { get; init; }
+
+    /// <summary>
+    /// The builtin an array growth fills a gap with (serialport's default object); null for a class
+    /// with none, R2025b's <c>MATLAB:class:MissingGetDefaultScalarElement</c> (probe_dev_arrays2).
+    /// </summary>
+    public string? GapFill { get; init; }
+
+    /// <summary>The superclass the gap refusal names (<c>udpport.UDPPortBase</c>); the class itself when null.</summary>
+    public string? DefaultElementOwner { get; init; }
+
     /// <summary>
     /// Whether the class is a plain handle rather than a matlab.mixin.SetGet, so that <c>get</c> and
     /// <c>set</c> find no method for it (mididevice, midicontrols).
@@ -257,6 +269,21 @@ internal abstract class DeviceObject : IJgsExternal
         }
 
         sb.Append("\n\n  Show all properties, functions");
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// The display-property block an element shows inside an array's display (probe_dev_arrays2,
+    /// disp_row): the short display's lines without the header or the "Show all properties" footer.
+    /// </summary>
+    public string ArrayElementDisplay()
+    {
+        var sb = new StringBuilder();
+        foreach (string name in Class.DisplayProperties)
+        {
+            sb.Append("\n    ").Append(name).Append(": ").Append(Shown(ReadForDisplay(name)));
+        }
+
         return sb.ToString();
     }
 

@@ -239,12 +239,40 @@ internal static class ExternalArrays
         var cells = new JgsValue[count];
         for (int i = 0; i < count; i++)
         {
-            cells[i] = JgsValue.External(Element(array, i));
+            cells[i] = Value(Element(array, i)); // a device element is the handle itself
         }
 
         JgsValue cell = JgsValue.Cell(cells);
         cell.Reshape(array.Rows, array.Columns);
         return cell;
+    }
+
+    /// <summary>
+    /// The array as a value: a one-element array of device handles is the handle itself, since a
+    /// scalar object array IS the object in MATLAB and the scalar machinery (methods, get/set,
+    /// callbacks) runs on <see cref="Devices.DeviceObject"/> (open item 36). A value class's 1-by-1
+    /// (midimsg) stays an array, as it always was.
+    /// </summary>
+    public static JgsValue Value(IJgsExternalArray array) =>
+        array is Devices.DeviceArray { Items: [{ } only] } ? JgsValue.External(only) : JgsValue.External(array);
+
+    /// <summary>The array with dimension <paramref name="dim"/> (1 rows, 2 columns) reversed (flip, fliplr, flipud).</summary>
+    public static IJgsExternalArray Flipped(IJgsExternalArray array, int dim)
+    {
+        int rows = array.Rows;
+        int columns = array.Columns;
+        var elements = new (IJgsExternalArray, int)?[rows * columns];
+        for (int c = 0; c < columns; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                int fromRow = dim == 1 ? rows - 1 - r : r;
+                int fromColumn = dim == 2 ? columns - 1 - c : c;
+                elements[(c * rows) + r] = (array, (fromColumn * rows) + fromRow);
+            }
+        }
+
+        return array.Build(elements, rows, columns);
     }
 
     /// <summary>The array with its rows and columns swapped.</summary>

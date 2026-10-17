@@ -18,7 +18,7 @@ internal sealed partial class Interpreter
         }
 
         JgsValue picked = IndexInto(ExternalArrays.Proxy(array.Rows, array.Columns), subscripts, at, env);
-        return JgsValue.External(ExternalArrays.Picked(array, picked, at.Line, at.Column));
+        return ExternalArrays.Value(ExternalArrays.Picked(array, picked, at.Line, at.Column));
     }
 
     /// <summary>
@@ -37,22 +37,27 @@ internal sealed partial class Interpreter
         }
 
         bool has = LookUp(variable.Name, env, out bound);
-        bool holds = has && bound.AsExternalOrNull() is IJgsExternalArray;
-        if (has && !holds && rhs.AsExternalOrNull() is IJgsExternalArray stored
+        bool holds = has && bound.AsExternalOrNull() is IJgsExternalArray or Devices.DeviceObject;
+        if (has && !holds && (rhs.AsExternalOrNull() is IJgsExternalArray or Devices.DeviceObject)
             && bound.Type is JgsType.Array or JgsType.Number or JgsType.Bool && !bound.IsStringArray)
         {
             throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:UnableToConvert",
-                $"Unable to perform assignment because value of type '{stored.ClassName}' is not convertible to '{JgsBuiltins.ClassOf(bound, JgsDialect.Matlab)}'.");
+                $"Unable to perform assignment because value of type '{rhs.AsExternal.ClassName}' is not convertible to '{JgsBuiltins.ClassOf(bound, JgsDialect.Matlab)}'.");
         }
 
         named = variable;
-        return holds || (!has && rhs.AsExternalOrNull() is IJgsExternalArray);
+        return holds || (!has && rhs.AsExternalOrNull() is IJgsExternalArray or Devices.DeviceObject);
     }
 
     /// <summary><c>a(i, …) = b</c>, <c>a(i) = []</c> and growth, on an array of external values.</summary>
     private JgsValue ExternalArrayWrite(VariableExpr named, JgsValue bound, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        IJgsExternalArray left = bound.AsExternalOrNull() as IJgsExternalArray ?? ((IJgsExternalArray)rhs.AsExternal).Build([], 0, 0);
+        IJgsExternalArray left = bound.AsExternalOrNull() switch
+        {
+            IJgsExternalArray array => array,
+            Devices.DeviceObject device => Devices.DeviceArray.Over(device), // a scalar handle grows into an array (open item 36)
+            _ => Kind(rhs).Build([], 0, 0),
+        };
         if (op != TokenType.Assign)
         {
             throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:UndefinedFunction",
@@ -68,7 +73,10 @@ internal sealed partial class Interpreter
         else
         {
             right = rhs.AsExternalOrNull() is IJgsExternalArray same && same.ClassName == left.ClassName
-                ? same : left.Coerce(rhs, at.Line, at.Column);
+                ? same
+                : left is Devices.DeviceArray devices
+                    ? devices.CoerceForStore(rhs, at.Line, at.Column) // the assignment refuses flat (probe_dev_arrays2, foreign_write)
+                    : left.Coerce(rhs, at.Line, at.Column);
             rhsProxy = ExternalArrays.Proxy(right.Rows, right.Columns, ExternalArrays.Count(left));
         }
 
@@ -84,9 +92,17 @@ internal sealed partial class Interpreter
         }
 
         LookUp(named.Name, env, out JgsValue written);
-        Rebind(named.Name, JgsValue.External(ExternalArrays.Written(left, right, written, at.Line, at.Column)), env);
+        Rebind(named.Name, ExternalArrays.Value(ExternalArrays.Written(left, right, written, at.Line, at.Column)), env);
         return rhs;
     }
+
+    /// <summary>The array class a fresh write conjures an empty of: the right side's.</summary>
+    private static IJgsExternalArray Kind(JgsValue rhs) => rhs.AsExternalOrNull() switch
+    {
+        IJgsExternalArray array => array,
+        Devices.DeviceObject device => Devices.DeviceArray.Over(device),
+        _ => throw new InvalidOperationException("an external array write without an external side"),
+    };
 
     /// <summary>
     /// <c>a.name = v</c>, <c>a(k).name = v</c> (growing the array when <c>k</c> is past its end) and
@@ -115,7 +131,16 @@ internal sealed partial class Interpreter
                 return TryAssignToHeldExternal(member, value, env);
         }
 
-        if (holder is null || !LookUp(holder.Name, env, out JgsValue held) || held.AsExternalOrNull() is not IJgsExternalArray array)
+        if (holder is null || !LookUp(holder.Name, env, out JgsValue held))
+        {
+            return false;
+        }
+
+        // A subscripted member write on a scalar handle grows it as a 1-by-1 array would
+        // (g(3).Timeout = 5 on one serialport); the plain a.Timeout = 5 stays on the scalar road.
+        IJgsExternalArray? array = held.AsExternalOrNull() as IJgsExternalArray
+            ?? (subscripts is not null && held.AsExternalOrNull() is Devices.DeviceObject scalar ? Devices.DeviceArray.Over(scalar) : null);
+        if (array is null)
         {
             return false;
         }
@@ -145,7 +170,7 @@ internal sealed partial class Interpreter
         }
 
         IJgsExternalArray changed = WithOneMember(array, positions, member, value, env);
-        Rebind(holder.Name, JgsValue.External(changed), env);
+        Rebind(holder.Name, ExternalArrays.Value(changed), env);
         return true;
     }
 
@@ -234,7 +259,12 @@ internal sealed partial class Interpreter
         return [MemberOf(owner, field, member, autoCall: true)];
     }
 
-    /// <summary>A bracket whose pieces include an array of external values joins as that class; null otherwise.</summary>
+    /// <summary>
+    /// A bracket whose pieces include an array of external values, or a device object (which joins
+    /// into an array of its class, open item 36), joins as that class; null otherwise. A class that
+    /// overrides its brackets away (audioplayer's ConcatenationRefusal) is left for
+    /// <see cref="RefuseExternalJoin"/> to answer.
+    /// </summary>
     private JgsValue? JoinExternalArrays(IReadOnlyList<JgsValue[]> rows, Node at)
     {
         if (!Dialect.IsMatlab)
@@ -246,9 +276,14 @@ internal sealed partial class Interpreter
         {
             foreach (JgsValue piece in row)
             {
-                if (piece.AsExternalOrNull() is IJgsExternalArray kind)
+                switch (piece.AsExternalOrNull())
                 {
-                    return JgsValue.External(ExternalArrays.Join(kind, rows, at.Line, at.Column));
+                    case Devices.DeviceArray { Class.ConcatenationRefusal: not null }:
+                        return null;
+                    case IJgsExternalArray kind:
+                        return ExternalArrays.Value(ExternalArrays.Join(kind, rows, at.Line, at.Column));
+                    case Devices.DeviceObject { Class.ConcatenationRefusal: null } device:
+                        return ExternalArrays.Value(ExternalArrays.Join(Devices.DeviceArray.Over(device), rows, at.Line, at.Column));
                 }
             }
         }
@@ -274,7 +309,7 @@ internal sealed partial class Interpreter
 
             Tick();
             JgsEnvironment local = BlockScope(env);
-            local.Declare(statement.Variable, JgsValue.External(array.Build(elements, array.Rows, 1)));
+            local.Declare(statement.Variable, ExternalArrays.Value(array.Build(elements, array.Rows, 1)));
             Completion completion = ExecuteBlock(statement.Body, local);
             if (completion.Kind == CompletionKind.Break)
             {

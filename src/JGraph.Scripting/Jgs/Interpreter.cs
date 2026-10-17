@@ -4911,6 +4911,13 @@ internal sealed partial class Interpreter
                 return onOff;
             }
 
+            // Identity, element by element, for == on device objects and their arrays (open item 36) —
+            // before the midi road, whose general external-array refusal would otherwise take them.
+            if (JgsBuiltins.IsDeviceValue(left.AsExternalOrNull()) || JgsBuiltins.IsDeviceValue(right.AsExternalOrNull()))
+            {
+                return JgsBuiltins.DeviceOperator(op, left, right, at.Line, at.Column);
+            }
+
             // A midimsgtype member is an int32 with a name; a midimsg has no operators (stage D10b).
             if (JgsBuiltins.TryMidiOperator(op, left, right, at.Line, at.Column, (o, l, r) => ApplyBinary(o, l, r, at), out JgsValue midi))
             {
@@ -4921,12 +4928,6 @@ internal sealed partial class Interpreter
             if (JgsBuiltins.IsLibValue(left.AsExternalOrNull()) || JgsBuiltins.IsLibValue(right.AsExternalOrNull()))
             {
                 return JgsBuiltins.LibOperator(op, left, right, at.Line, at.Column);
-            }
-
-            // Identity for == on a serialport and the other device objects (device classes plan).
-            if (JgsBuiltins.IsDeviceValue(left.AsExternalOrNull()) || JgsBuiltins.IsDeviceValue(right.AsExternalOrNull()))
-            {
-                return JgsBuiltins.DeviceOperator(op, left, right, at.Line, at.Column);
             }
 
             return Net.NetOperators.Apply(op, left, right, at.Line, at.Column);
@@ -5035,7 +5036,13 @@ internal sealed partial class Interpreter
         if (pieces.Length > 1 && Array.Exists(pieces, static p => p.Type == JgsType.External))
         {
             JgsValue first = Array.Find(pieces, static p => p.Type == JgsType.External)!;
-            if (first.AsExternal is Devices.DeviceObject { Class.ConcatenationRefusal: { } refusal })
+            (string Identifier, string Message)? overridden = first.AsExternal switch
+            {
+                Devices.DeviceObject { Class.ConcatenationRefusal: { } ofScalar } => ofScalar,
+                Devices.DeviceArray { Class.ConcatenationRefusal: { } ofArray } => ofArray,
+                _ => null,
+            };
+            if (overridden is { } refusal)
             {
                 throw new JgsRuntimeException(at.Line, at.Column, refusal.Identifier, refusal.Message);
             }
@@ -7709,7 +7716,14 @@ internal sealed partial class Interpreter
         // and m() is the object itself (ADR 0174).
         if (callee.Type == JgsType.External)
         {
-            // a(i, …) on a midimsg array: the elements picked (device classes plan, stage D10b).
+            // f(k) on the row serialportfind answers, in the JGS dialect: one whole number, as it
+            // was before the row became an object array (ADR 0197; the JGS dialect is frozen).
+            if (!Dialect.IsMatlab && callee.AsExternal is Devices.DeviceArray row)
+            {
+                return JgsBuiltins.DeviceArrayIndex(row, EvaluateAll(call.Arguments, env), call.Line, call.Column);
+            }
+
+            // a(i, …) on a midimsg or device object array: the elements picked (stage D10b, open item 36).
             if (callee.AsExternal is IJgsExternalArray objects)
             {
                 return ExternalArrayRead(objects, callee, call.Arguments, call, env);
@@ -7721,16 +7735,20 @@ internal sealed partial class Interpreter
                 return Net.NetArrays.Read(netArray, array, NetSubscripts(call.Arguments, call, env), Dialect.IndexBase, NetTypes, call.Line, call.Column);
             }
 
-            // f(k) on the row serialportfind answers; s(1) on one device object is itself (device classes plan).
-            if (callee.AsExternal is Devices.DeviceArray devices)
+            // s([1 1]) on one device object indexes it as the 1-by-1 array it is, a([1 1]) being
+            // 1-by-2 of the same handle (probe_dev_arrays2, scalar_index_twice); in the JGS dialect
+            // s(1) stays itself and nothing else indexes it.
+            if (callee.AsExternal is Devices.DeviceObject one && call.Arguments.Count > 0)
             {
-                return JgsBuiltins.DeviceArrayIndex(devices, EvaluateAll(call.Arguments, env), call.Line, call.Column);
-            }
+                if (Dialect.IsMatlab)
+                {
+                    return ExternalArrayRead(Devices.DeviceArray.Over(one), callee, call.Arguments, call, env);
+                }
 
-            if (callee.AsExternal is Devices.DeviceObject && call.Arguments.Count > 0
-                && EvaluateAll(call.Arguments, env).All(static i => i.Type is JgsType.Number or JgsType.Bool && i.AsNumber == 1))
-            {
-                return callee;
+                if (EvaluateAll(call.Arguments, env).All(static i => i.Type is JgsType.Number or JgsType.Bool && i.AsNumber == 1))
+                {
+                    return callee;
+                }
             }
 
             // d(x) on a .NET delegate: its Invoke, u() included (ADR 0178, probe5b).
@@ -10905,7 +10923,12 @@ internal sealed partial class Interpreter
 
         if (value.AsExternalOrNull() is IJgsExternalArray objects)
         {
-            return JgsValue.External(ExternalArrays.Transposed(objects)); // a' on a midimsg array (stage D10b)
+            return ExternalArrays.Value(ExternalArrays.Transposed(objects)); // a' on a midimsg array (stage D10b)
+        }
+
+        if (Dialect.IsMatlab && value.AsExternalOrNull() is Devices.DeviceObject)
+        {
+            return value; // s' on one device object is itself, the 1-by-1 transposed (probe_dev_arrays2)
         }
 
         if (value.Type == JgsType.Struct && JgsBuiltins.TryDecompositionUnary(

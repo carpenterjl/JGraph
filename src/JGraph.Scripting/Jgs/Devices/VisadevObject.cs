@@ -1650,7 +1650,7 @@ internal sealed class VisadevObject : DeviceObject, ILegacyTransport
             _ => ["ResourceName", "Alias", "Vendor", "Model", "Tag"],
         };
 
-        return new DeviceClass(cls, shortName, bases, properties, methods, listing, display);
+        return new DeviceClass(cls, shortName, bases, properties, methods, listing, display) { Constructor = "visadev" };
     }
 
     private static void Unsupported(DeviceCall call, string key, string name) =>

@@ -684,7 +684,11 @@ internal sealed class UdpportObject : DeviceObject
                 ["UDPPort", "addlistener", "configureCallback", "configureMulticast", "configureTerminator", "delete", "eq", "findobj",
                  "findprop", "flush", "ge", "get", "gt", "isvalid", "le", "listener", "lt", "ne", "notify", "read", "readline", "set",
                  "write", "writeline"],
-                ["IPAddressVersion", "LocalHost", "LocalPort", "Tag", "NumBytesAvailable"]);
+                ["IPAddressVersion", "LocalHost", "LocalPort", "Tag", "NumBytesAvailable"])
+            {
+                Constructor = "udpport",
+                DefaultElementOwner = "udpport.UDPPortBase", // a growth's gap refusal names it (probe_dev_arrays2, udp_grow)
+            };
         }
 
         var dgProperties = new List<DeviceProperty>();
@@ -715,7 +719,11 @@ internal sealed class UdpportObject : DeviceObject
         return new DeviceClass("udpport.datagram.UDPPort", "UDPPort", superclasses, dgProperties, dgMethods,
             ["UDPPort", "addlistener", "configureCallback", "configureMulticast", "delete", "eq", "findobj", "findprop", "flush", "ge", "get",
              "gt", "isvalid", "le", "listener", "lt", "ne", "notify", "read", "set", "write"],
-            ["IPAddressVersion", "LocalHost", "LocalPort", "Tag", "NumDatagramsAvailable"]);
+            ["IPAddressVersion", "LocalHost", "LocalPort", "Tag", "NumDatagramsAvailable"])
+        {
+            Constructor = "udpport",
+            DefaultElementOwner = "udpport.UDPPortBase",
+        };
     }
 
     protected override void OnDelete() => _udp.Dispose();

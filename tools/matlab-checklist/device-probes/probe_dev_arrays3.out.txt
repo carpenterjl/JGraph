@@ -1,0 +1,12 @@
+ap_hcat	ERR MATLAB:audiovideo:audioplayer:noconcatenation | Audioplayer objects cannot be concatenated.
+ap_vcat	ERR MATLAB:audiovideo:audioplayer:noconcatenation | Audioplayer objects cannot be concatenated.
+ap_horzcat_fn	ERR MATLAB:audiovideo:audioplayer:noconcatenation | Audioplayer objects cannot be concatenated.
+ap_vertcat_fn	ERR MATLAB:audiovideo:audioplayer:noconcatenation | Audioplayer objects cannot be concatenated.
+ap_repmat	audioplayer [1 2]
+ap_cat_fn	audioplayer [1 2]
+ap_index_twice	audioplayer [1 2]
+ap_self_join	ERR MATLAB:audiovideo:audioplayer:noconcatenation | Audioplayer objects cannot be concatenated.
+ap_empty_join	ERR MATLAB:audiovideo:audioplayer:noconcatenation | Audioplayer objects cannot be concatenated.
+ar_hcat	ERR MATLAB:audiovideo:audiorecorder:noconcatenation | Audiorecorder objects cannot be concatenated.
+ar_mixed	ERR MATLAB:audiovideo:audioplayer:noconcatenation | Audioplayer objects cannot be concatenated.
+ar_number	ERR MATLAB:audiovideo:audiorecorder:noconcatenation | Audiorecorder objects cannot be concatenated.

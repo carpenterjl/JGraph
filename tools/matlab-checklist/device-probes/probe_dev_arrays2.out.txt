@@ -1,0 +1,54 @@
+disp_row	  1×2 <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> array with properties: /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM20" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM21" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  / 
+echo_row	 / v =  /  /   1×2 <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> array with properties: /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM20" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM21" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  / 
+disp_square	  2×2 <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> array with properties: /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM20" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM20" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM21" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM21" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  / 
+disp_empty	  0×0 <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> array with properties: /  /     Port /     BaudRate /     Timeout /     FlowControl /     Parity /     StopBits /     DataBits /     ByteOrder /     UserData /     Terminator /     BytesAvailableFcnCount /     BytesAvailableFcnMode /     BytesAvailableFcn /     ErrorOccurredFcn /     NumBytesAvailable /     NumBytesWritten /     Tag /  / 
+echo_empty	 / v =  /  /   0×0 <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> array with properties: /  /     Port /     BaudRate /     Timeout /     FlowControl /     Parity /     StopBits /     DataBits /     ByteOrder /     UserData /     Terminator /     BytesAvailableFcnCount /     BytesAvailableFcnMode /     BytesAvailableFcn /     ErrorOccurredFcn /     NumBytesAvailable /     NumBytesWritten /     Tag /  / 
+disp_column	  2×1 <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> array with properties: /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM20" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  /    <a href="matlab:helpPopup('internal.Serialport')" style="font-weight:bold">Serialport</a> with properties: /  /                  Port: "COM21" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  / 
+scalar_index_twice	internal.Serialport [1 2]
+scalar_transpose	internal.Serialport [1 1]
+scalar_colon	internal.Serialport [1 1]
+scalar_logical	internal.Serialport [1 1]
+scalar_row_same	1 1
+get_struct	struct [2 1]
+get_two_names	cell [2 2]
+get_one_name	cell [2 1] string COM20,COM21
+set_row	[] 3 3
+properties_row	cell [17 1]
+isprop_row	1 10 0
+methods_row	cell [30 1]
+flush_row	ERR MATLAB:flush:invalidType | Expected input number 2, buffer, to be one of these types: /  / char, string /  / Instead its type was internal.SerialportClient.
+cfg_row	ERR serialport:serialport:InvalidTerminator | Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.
+writeline_row	ERR serialport:serialport:IncorrectInputArgumentsSingular | Invalid number of input arguments for 'writeline'. Valid syntax is writeline(s,DATA).
+char_row	ERR MATLAB:invalidConversion | Conversion to char from internal.Serialport is not possible.
+string_row	ERR MATLAB:invalidConversion | Conversion to string from internal.Serialport is not possible.
+double_row	ERR MATLAB:invalidConversion | Conversion to double from internal.Serialport is not possible.
+cellstr_row	ERR MATLAB:invalidConversion | Conversion to cellstr from internal.Serialport is not possible.
+num2cell_first	internal.Serialport 1
+arrayfun_objects	cell [1 2]
+eq_number	[false false]
+eq_text	[false false]
+eq_mismatch	ERR MATLAB:dimagree | Matrix dimensions must agree.
+eq_empty	[]
+ne_scalar	[false true]
+eq_square	[true true;true true]
+grow_far	ERR serialport:serialport:NoSavedPreferences | Unable to create the default serialport object. Specify the 'Port' and 'BaudRate' input arguments.
+member_grow	ERR serialport:serialport:NoSavedPreferences | Unable to create the default serialport object. Specify the 'Port' and 'BaudRate' input arguments.
+member_set_one	internal.Serialport [1 2] 3 7 7
+member_set_all	ERR MATLAB:index:expected_one_output_for_assignment | Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.
+index_assign_same	internal.Serialport [1 2] COM21 1
+join_number_first	ERR MATLAB:UnableToConvert | The following error occurred converting from double to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)
+bracket_list	string [1 2]
+fliplr_row	COM21
+flip_row	COM21
+foreign_write	ERR MATLAB:UnableToConvert | Unable to perform assignment because value of type 'tcpclient' is not convertible to 'internal.Serialport'.
+eq_foreign	false
+eq_foreign_row	[false false]
+tcp_disp	  1×2 <a href="matlab:helpPopup('tcpclient')" style="font-weight:bold">tcpclient</a> array with properties: /  /    <a href="matlab:helpPopup('tcpclient')" style="font-weight:bold">tcpclient</a> with properties: /  /               Address: '127.0.0.1' /                  Port: 53512 /                   Tag: "" /     NumBytesAvailable: 0 /  /    <a href="matlab:helpPopup('tcpclient')" style="font-weight:bold">tcpclient</a> with properties: /  /               Address: '127.0.0.1' /                  Port: 53512 /                   Tag: "" /     NumBytesAvailable: 0 /  / 
+udp_grow	ERR MATLAB:class:MissingGetDefaultScalarElement | During array expansion: /  No default is defined for class 'udpport.byte.UDPPort'. /  Method 'getDefaultScalarElement' in superclass udpport.UDPPortBase is missing or incorrectly defined.
+held_after_clear	2
+held_ports_open	[true true]
+released	double [0 0]
+delete_noout	0 0 0
+disp_deleted	1x2 Invalid or deleted object / 
+index_deleted	internal.Serialport
+dot_deleted	ERR MATLAB:class:InvalidHandle | Invalid or deleted object.

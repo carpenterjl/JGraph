@@ -99,7 +99,10 @@ internal sealed class JgsLifetime
         JgsType.Cell or JgsType.Array => value.Tracked,
         JgsType.Struct => value.AsStructArray.Scanned,
         JgsType.Function => TracksCallable(value.AsCallable),
-        JgsType.External => value.AsExternal is Devices.DeviceObject, // a serialport closes with its last holder
+
+        // A serialport closes with its last holder, and an array of device objects holds each
+        // element open (open item 36: f = serialportfind; clear a b leaves the ports open).
+        JgsType.External => value.AsExternal is Devices.DeviceObject or Devices.DeviceArray { Items.Count: > 0 },
         _ => false,
     };
 
@@ -115,7 +118,7 @@ internal sealed class JgsLifetime
     /// <summary>A handle: released before the containers beside it (measured order).</summary>
     private static bool IsHandleLike(JgsValue value) =>
         (value.Type == JgsType.Object && !value.IsObjectArray && value.AsObject.Class.IsHandle)
-        || (value.Type == JgsType.External && value.AsExternal is Devices.DeviceObject)
+        || (value.Type == JgsType.External && value.AsExternal is Devices.DeviceObject or Devices.DeviceArray)
         || (value.Type == JgsType.Struct && JgsBuiltins.IsHandleClass(value));
 
     /// <summary>Whether a wrapper's payload has a count of its own (a handle's is on its instance).</summary>
@@ -155,6 +158,13 @@ internal sealed class JgsLifetime
                 break;
             case JgsType.External when value.AsExternal is Devices.DeviceObject device:
                 device.Exact++;
+                break;
+            case JgsType.External when value.AsExternal is Devices.DeviceArray array:
+                foreach (Devices.DeviceObject item in array.Items)
+                {
+                    item.Exact++;
+                }
+
                 break;
         }
 
@@ -236,6 +246,16 @@ internal sealed class JgsLifetime
                 if (device.Exact > 0 && --device.Exact == 0)
                 {
                     Defer(device);
+                }
+
+                break;
+            case JgsType.External when value.AsExternal is Devices.DeviceArray array:
+                foreach (Devices.DeviceObject item in array.Items)
+                {
+                    if (item.Exact > 0 && --item.Exact == 0)
+                    {
+                        Defer(item);
+                    }
                 }
 
                 break;
@@ -441,7 +461,7 @@ internal sealed class JgsLifetime
                 return true;
             }
 
-            if (child is { Type: JgsType.External } && child.AsExternal is Devices.DeviceObject)
+            if (child is { Type: JgsType.External } && child.AsExternal is Devices.DeviceObject or Devices.DeviceArray)
             {
                 return true;
             }
@@ -459,7 +479,7 @@ internal sealed class JgsLifetime
                 return true;
             }
 
-            if (field.Value is { Type: JgsType.External } && field.Value.AsExternal is Devices.DeviceObject)
+            if (field.Value is { Type: JgsType.External } && field.Value.AsExternal is Devices.DeviceObject or Devices.DeviceArray)
             {
                 return true;
             }
@@ -1050,6 +1070,8 @@ internal sealed class JgsLifetime
         {
             case JgsType.External when value.AsExternal is Devices.DeviceObject device:
                 return device.Interpreter.Lifetimes;
+            case JgsType.External when value.AsExternal is Devices.DeviceArray array:
+                return array.Interpreter.Lifetimes;
             case JgsType.Object:
                 return value.ObjectClass.Interpreter.Lifetimes;
             case JgsType.Function:

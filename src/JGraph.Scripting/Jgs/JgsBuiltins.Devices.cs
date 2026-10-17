@@ -330,12 +330,35 @@ internal static partial class JgsBuiltins
             switch (name)
             {
                 case "isvalid":
-                    result = JgsValue.Array(array.Items.Select(static d => JgsValue.Bool(!d.Deleted)).ToArray());
+                {
+                    JgsValue mask = JgsValue.Array(array.Items.Select(static d => JgsValue.Bool(!d.Deleted)).ToArray());
+                    mask.Reshape(array.Rows, array.Columns);
+                    result = mask;
                     return true;
+                }
+
                 case "delete":
+                    if (wanted > 0)
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:maxlhs", "Too many output arguments.");
+                    }
+
                     foreach (DeviceObject item in array.Items)
                     {
                         item.Delete();
+                    }
+
+                    return true;
+                case "get":
+                {
+                    result = DeviceArrayGet(array, args, line, col);
+                    return true;
+                }
+
+                case "set":
+                    foreach (DeviceObject item in array.Items)
+                    {
+                        RunDeviceVerb(item, "set", [args[0], .. args.Skip(1)], 0, line, col);
                     }
 
                     return true;
@@ -381,6 +404,49 @@ internal static partial class JgsBuiltins
                 DeviceSet(device, call);
                 return [];
         }
+    }
+
+    /// <summary>
+    /// <c>get</c> on an array of device objects (probe_dev_arrays2): no name asked, a struct an
+    /// element, N-by-1; names asked, a cell with the elements down and the names across.
+    /// </summary>
+    private static JgsValue DeviceArrayGet(DeviceArray array, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        DeviceCall CallOn(DeviceObject item) => new() { Target = item, Args = [], Wanted = 1, Line = line, Column = col };
+        if (args.Count == 1)
+        {
+            var elements = new Dictionary<string, JgsValue>[array.Items.Count];
+            for (int i = 0; i < elements.Length; i++)
+            {
+                var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach (string property in array.Class.VisibleNames)
+                {
+                    fields[property] = array.Items[i].GetProperty(property, CallOn(array.Items[i]));
+                }
+
+                elements[i] = fields;
+            }
+
+            return JgsValue.StructArray(new JgsStructArray(elements, [.. array.Class.VisibleNames]), elements.Length, elements.Length == 0 ? 0 : 1);
+        }
+
+        JgsValue asked = args[1];
+        string[] names = asked.Type == JgsType.Cell
+            ? [.. asked.AsCell.Select(static n => IsTextScalar(n) ? TextOf(n) : "")]
+            : [IsTextScalar(asked) ? TextOf(asked) : ""];
+        int down = array.Items.Count;
+        var values = new JgsValue[down * names.Length];
+        for (int j = 0; j < names.Length; j++)
+        {
+            for (int i = 0; i < down; i++)
+            {
+                values[(j * down) + i] = array.Items[i].GetProperty(names[j], CallOn(array.Items[i]));
+            }
+        }
+
+        JgsValue cell = JgsValue.Cell(values);
+        cell.Reshape(down, names.Length);
+        return cell;
     }
 
     private static JgsValue DeviceGet(DeviceObject device, DeviceCall call)
@@ -457,7 +523,7 @@ internal static partial class JgsBuiltins
     internal static IEnumerable<string> DevicePropertyNames(IJgsExternal target) => target switch
     {
         DeviceObject device => device.Class.VisibleNames,
-        DeviceArray array => array.Items[0].Class.VisibleNames,
+        DeviceArray array => array.Class.VisibleNames,
         _ => [],
     };
 
@@ -465,7 +531,7 @@ internal static partial class JgsBuiltins
     internal static IEnumerable<string> DeviceMethodNames(IJgsExternal target) => target switch
     {
         DeviceObject device => device.Class.MethodListing,
-        DeviceArray array => array.Items[0].Class.MethodListing,
+        DeviceArray array => array.Class.MethodListing,
         _ => [],
     };
 
@@ -473,7 +539,7 @@ internal static partial class JgsBuiltins
     internal static bool DeviceHasProperty(IJgsExternal target, string name) => target switch
     {
         DeviceObject device => device.Class.Find(name) is not null,
-        DeviceArray array => array.Items[0].Class.Find(name) is not null,
+        DeviceArray array => array.Class.Find(name) is not null,
         _ => false,
     };
 
@@ -484,6 +550,21 @@ internal static partial class JgsBuiltins
     internal static bool TryDeviceMethod(string name, JgsValue dominant, out IJgsCallable? callable)
     {
         callable = null;
+
+        // A class method called on an array of device objects errors in R2025b too, each method
+        // through its own argument validation (probe_dev_arrays2: flush_row, cfg_row); JGraph
+        // refuses in one stable voice (divergence, ADR 0237).
+        if (dominant.AsExternalOrNull() is DeviceArray row)
+        {
+            if (row.Class.Methods.ContainsKey(name) && !DeviceVerbs.Contains(name))
+            {
+                callable = new ScalarOnlyMethod(name, row.Class.Name);
+                return true;
+            }
+
+            return false;
+        }
+
         if (dominant.AsExternalOrNull() is not DeviceObject device)
         {
             return false;
@@ -508,6 +589,16 @@ internal static partial class JgsBuiltins
         }
 
         return false;
+    }
+
+    /// <summary>A class method called on an array of device objects: it runs on one at a time.</summary>
+    private sealed class ScalarOnlyMethod(string name, string className) : IJgsCallable
+    {
+        public string Name => name;
+
+        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
+            throw new JgsRuntimeException(line, column, "JGraph:deviceArray:ScalarMethod",
+                $"'{name}' runs on one {className} at a time; index the array.");
     }
 
     /// <summary>A method some other device class has, called on one whose class has none.</summary>
@@ -547,21 +638,70 @@ internal static partial class JgsBuiltins
         }
     }
 
-    /// <summary>An operator with a device object on either side: identity under == and ~=, R2025b's refusal otherwise.</summary>
+    /// <summary>
+    /// An operator with a device object or an array of them on either side: identity under == and
+    /// ~=, element by element with a scalar broadcast (probe_dev_arrays2: a number or foreign class
+    /// is simply never equal, mismatched shapes are MATLAB:dimagree), R2025b's refusal otherwise.
+    /// </summary>
     internal static JgsValue DeviceOperator(TokenType op, JgsValue left, JgsValue right, int line, int col)
     {
-        if (op is TokenType.EqualEqual or TokenType.BangEqual)
+        if (op is not (TokenType.EqualEqual or TokenType.BangEqual))
         {
-            bool same = left.AsExternalOrNull() is DeviceEnumValue leftMember ? leftMember.Matches(right)
-                : right.AsExternalOrNull() is DeviceEnumValue rightMember ? rightMember.Matches(left)
-                : left.AsExternalOrNull() is { } a && ReferenceEquals(a, right.AsExternalOrNull());
-            return JgsValue.Bool(op == TokenType.EqualEqual ? same : !same);
+            IJgsExternal device = left.AsExternalOrNull() is { } l && IsDeviceValue(l) ? l : right.AsExternal;
+            throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
+                $"Operator '{OperatorWord(op)}' is not supported for operands of type '{device.ClassName}'.");
         }
 
-        IJgsExternal device = left.AsExternalOrNull() is { } l && IsDeviceValue(l) ? l : right.AsExternal;
-        throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
-            $"Operator '{OperatorWord(op)}' is not supported for operands of type '{device.ClassName}'.");
+        if (left.AsExternalOrNull() is DeviceEnumValue leftMember)
+        {
+            return JgsValue.Bool(op == TokenType.EqualEqual ? leftMember.Matches(right) : !leftMember.Matches(right));
+        }
+
+        if (right.AsExternalOrNull() is DeviceEnumValue rightMember)
+        {
+            return JgsValue.Bool(op == TokenType.EqualEqual ? rightMember.Matches(left) : !rightMember.Matches(left));
+        }
+
+        (DeviceObject?[] Items, int Rows, int Columns) a = DeviceSide(left);
+        (DeviceObject?[] Items, int Rows, int Columns) b = DeviceSide(right);
+        (int rows, int columns) = a.Items.Length == 1 ? (b.Rows, b.Columns)
+            : b.Items.Length == 1 ? (a.Rows, a.Columns)
+            : a.Rows == b.Rows && a.Columns == b.Columns ? (a.Rows, a.Columns)
+            : throw new JgsRuntimeException(line, col, "MATLAB:dimagree", "Matrix dimensions must agree.");
+        var same = new JgsValue[rows * columns];
+        for (int i = 0; i < same.Length; i++)
+        {
+            DeviceObject? one = a.Items[a.Items.Length == 1 ? 0 : i];
+            DeviceObject? other = b.Items[b.Items.Length == 1 ? 0 : i];
+            bool equal = one is not null && ReferenceEquals(one, other);
+            same[i] = JgsValue.Bool(op == TokenType.EqualEqual ? equal : !equal);
+        }
+
+        if (same.Length == 1 && a.Rows * a.Columns == 1 && b.Rows * b.Columns == 1)
+        {
+            return same[0];
+        }
+
+        if (same.Length == 0)
+        {
+            return EmptyLogical(rows, columns); // an empty's kind is all that can say logical
+        }
+
+        JgsValue mask = JgsValue.Array(same);
+        mask.Reshape(rows, columns);
+        return mask;
     }
+
+    /// <summary>One side of a device ==: its elements (null for a value no device can equal) and its shape.</summary>
+    private static (DeviceObject?[] Items, int Rows, int Columns) DeviceSide(JgsValue side) => side.AsExternalOrNull() switch
+    {
+        DeviceObject device => ([device], 1, 1),
+        DeviceArray array => ([.. array.Items], array.Rows, array.Columns),
+        _ => side.Type == JgsType.Array && !IsTextScalar(side) && side.ArrayLength != 1
+            ? (new DeviceObject?[side.ArrayLength],
+                side.ArrayLength == 0 ? 0 : JgsMatrix.RowCount(side), side.ArrayLength == 0 ? 0 : JgsMatrix.ColCount(side))
+            : ([null], 1, 1),
+    };
 
     private static string OperatorWord(TokenType op) => op switch
     {

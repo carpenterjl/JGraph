@@ -16,9 +16,18 @@ internal static partial class JgsBuiltins
     [
         "size", "numel", "length", "isempty", "ndims", "isscalar", "isvector", "isrow", "iscolumn", "ismatrix",
         "isequal", "isequaln", "repmat", "reshape", "transpose", "ctranspose", "horzcat", "vertcat", "cat",
-        "num2cell", "arrayfun", "disp", "display", "properties", "fieldnames", "methods", "isprop",
+        "flip", "fliplr", "flipud", "num2cell", "arrayfun", "disp", "display", "properties", "fieldnames", "methods", "isprop",
         "double", "single", "logical", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "char",
+        "string", "cellstr",
     ];
+
+    /// <summary>
+    /// The verbs that take one device object as the 1-by-1 array it is (probe_dev_arrays2: even
+    /// audioplayer's repmat, cat and indexing build arrays). The shape questions, disp and the
+    /// conversions keep their scalar roads.
+    /// </summary>
+    private static readonly HashSet<string> ScalarRearrangers =
+        ["repmat", "reshape", "transpose", "ctranspose", "horzcat", "vertcat", "cat", "flip", "fliplr", "flipud"];
 
     private static readonly HashSet<string> MidiTypeMethods =
     [
@@ -49,40 +58,16 @@ internal static partial class JgsBuiltins
             return true;
         }
 
-        if (dominant.AsExternalOrNull() is DeviceArray && DeviceRowMethods.Contains(name))
+        // repmat(s, 1, 3), cat(2, a, b) and the other rearrangers take one device object as the
+        // 1-by-1 array it is (open item 36) — audioplayer and audiorecorder included, whose
+        // overridden horzcat and vertcat refuse inside the call.
+        if (dominant.AsExternalOrNull() is DeviceObject && ScalarRearrangers.Contains(name))
         {
-            callable = new DeviceRowMethod(interpreter, name);
+            callable = new ArrayMethod(interpreter, name);
             return true;
         }
 
         return false;
-    }
-
-    /// <summary>
-    /// The questions about its shape that the row <c>serialportfind</c> answers takes (ADR 0197): R2025b's
-    /// is a 1-by-N object array (probe_dev_arrays), so <c>numel</c> is N where an external value's is 1.
-    /// </summary>
-    private static readonly HashSet<string> DeviceRowMethods =
-        ["size", "numel", "length", "isempty", "ndims", "isscalar", "isvector", "isrow", "iscolumn", "ismatrix"];
-
-    /// <summary>Answers a shape question about a row of device objects by asking it of a 1-by-N row of numbers.</summary>
-    private sealed class DeviceRowMethod(Interpreter interpreter, string name) : IJgsCallable, IJgsMultiCallable
-    {
-        public string Name => name;
-
-        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
-            CallMultiple(arguments, 1, line, column) is [var first, ..] ? first : JgsValue.Null;
-
-        public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
-        {
-            JgsValue[] shaped =
-            [
-                .. arguments.Select(static v => v.AsExternalOrNull() is DeviceArray row
-                    ? JgsMatrix.FromColumnMajor(new double[row.Items.Count], 1, row.Items.Count)
-                    : v),
-            ];
-            return CallBuiltinNamed(interpreter, name, shaped, wanted, line, column);
-        }
     }
 
     private sealed class ArrayMethod(Interpreter interpreter, string name) : IJgsCallable, IJgsMultiCallable
@@ -107,7 +92,7 @@ internal static partial class JgsBuiltins
             MidiTypeCall(interpreter, name, arguments, line, column);
     }
 
-    private static JgsValue Wrap(IJgsExternalArray array) => JgsValue.External(array);
+    private static JgsValue Wrap(IJgsExternalArray array) => ExternalArrays.Value(array);
 
     private static int[] ShapeArgs(string name, IReadOnlyList<JgsValue> args, int from, int count, int line, int col)
     {
@@ -148,12 +133,21 @@ internal static partial class JgsBuiltins
         return [.. dims];
     }
 
-    private static JgsValue[] ExternalArrayCall(Interpreter interpreter, string name, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    private static JgsValue[] ExternalArrayCall(Interpreter interpreter, string name, IReadOnlyList<JgsValue> rawArgs, int wanted, int line, int col)
     {
+        // One device object is the 1-by-1 array it is (open item 36): repmat(s, 1, 3) tiles it.
+        IReadOnlyList<JgsValue> args = [.. rawArgs.Select(static v => v.AsExternalOrNull() is DeviceObject device
+            ? JgsValue.External(DeviceArray.Over(device)) : v)];
         IJgsExternalArray a = args.Select(static v => v.AsExternalOrNull()).OfType<IJgsExternalArray>().First();
         int count = ExternalArrays.Count(a);
         int rows = a.Rows;
         int columns = a.Columns;
+        if (a is DeviceArray { Class.ConcatenationRefusal: { } refusal } && name is "horzcat" or "vertcat")
+        {
+            // audioplayer's own horzcat and vertcat (probe_dev_arrays3); its cat and repmat join.
+            throw new JgsRuntimeException(line, col, refusal.Identifier, refusal.Message);
+        }
+
         JgsValue Bool(bool b) => JgsValue.Bool(b);
         IJgsExternalArray First() => args[0].AsExternalOrNull() as IJgsExternalArray
             ?? throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
@@ -239,6 +233,17 @@ internal static partial class JgsBuiltins
 
             case "transpose" or "ctranspose":
                 return [Wrap(ExternalArrays.Transposed(First()))];
+            case "fliplr":
+                return [Wrap(ExternalArrays.Flipped(First(), 2))];
+            case "flipud":
+                return [Wrap(ExternalArrays.Flipped(First(), 1))];
+            case "flip":
+            {
+                IJgsExternalArray flipped = First();
+                int dim = args.Count > 1 ? (int)ToDoubles("flip", args[1], line, col).FirstOrDefault() : flipped.Rows > 1 ? 1 : 2;
+                return [Wrap(ExternalArrays.Flipped(flipped, dim))];
+            }
+
             case "horzcat":
                 return [Wrap(ExternalArrays.Join(a, [args.ToArray()], line, col))];
             case "vertcat":
@@ -278,7 +283,12 @@ internal static partial class JgsBuiltins
                 return [];
             case "properties" or "fieldnames":
             {
-                string[] names = a is MidiMsgValue ? MidiMsgs.PropertyNames : [];
+                string[] names = a switch
+                {
+                    MidiMsgValue => MidiMsgs.PropertyNames,
+                    DeviceArray devices => [.. devices.Class.VisibleNames],
+                    _ => [],
+                };
                 if (wanted == 0 && name == "properties")
                 {
                     interpreter.Host?.print($"\nProperties for class {a.ClassName}:\n\n" + string.Concat(names.Select(static n => $"    {n}\n")));
@@ -292,16 +302,25 @@ internal static partial class JgsBuiltins
 
             case "methods":
             {
-                string[] names = [a.ClassName];
+                string[] names = a is DeviceArray listed ? [.. listed.Class.MethodListing] : [a.ClassName];
                 if (wanted == 0)
                 {
-                    interpreter.Host?.print($"\nMethods for class {a.ClassName}:\n\n{a.ClassName}  \n");
+                    interpreter.Host?.print($"\nMethods for class {a.ClassName}:\n\n" + string.Concat(names.Select(static n => $"{n}  \n")));
                     return [];
                 }
 
                 JgsValue cell = JgsValue.Cell(names.Select(JgsValue.Str).ToArray());
                 cell.Reshape(names.Length, 1);
                 return [cell];
+            }
+
+            case "isprop" when a is DeviceArray asked:
+            {
+                // One logical an element (probe_dev_arrays2, isprop_row).
+                bool has = args.Count == 2 && IsTextScalar(args[1]) && asked.Class.Find(TextOf(args[1])) is not null;
+                JgsValue mask = JgsValue.Array(Enumerable.Repeat(JgsValue.Bool(has), count).ToArray());
+                mask.Reshape(rows, columns);
+                return [mask];
             }
 
             case "isprop":

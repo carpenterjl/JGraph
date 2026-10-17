@@ -1,0 +1,107 @@
+CHK|hcat|internal.Serialport [1 2]|exact
+CHK|vcat|internal.Serialport [2 1]|exact
+CHK|hcat3|internal.Serialport [1 3]|exact
+CHK|hcat_row_scalar|internal.Serialport [1 3]|exact
+CHK|vcat_rows|internal.Serialport [2 2]|exact
+CHK|transpose|internal.Serialport [2 1]|exact
+CHK|empty_join|internal.Serialport [1 1] and internal.Serialport [1 1]|exact
+CHK|shape|0 0 1 1 0 1 2 2|exact
+CHK|class_row|internal.Serialport 1 1 1|exact
+CHK|same_twice|internal.Serialport [1 2]|exact
+CHK|join_cell|cell [1 2]|exact
+CHK|join_number|MATLAB:UnableToConvert ## The following error occurred converting from double to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)|exact
+CHK|join_text|MATLAB:UnableToConvert ## The following error occurred converting from char to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)|exact
+CHK|join_struct|MATLAB:UnableToConvert ## The following error occurred converting from struct to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)|exact
+CHK|join_number_first|MATLAB:UnableToConvert ## The following error occurred converting from double to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)|exact
+CHK|index_scalar|COM21 COM21 internal.Serialport [1 1]|exact
+CHK|index_vector|internal.Serialport [1 2] COM21|exact
+CHK|index_range|internal.Serialport [1 1]|exact
+CHK|index_colon|internal.Serialport [2 1]|exact
+CHK|index_logical|internal.Serialport [1 1]|exact
+CHK|index_two|internal.Serialport [1 1]|exact
+CHK|index_out|MATLAB:badsubscript ## Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|index_zero|MATLAB:badsubscript ## Array indices must be positive integers or logical values.|exact
+CHK|index_empty|internal.Serialport [0 0]|exact
+CHK|end_arith|string:COM20|exact
+CHK|scalar_index_twice|internal.Serialport [1 2] 1 1|exact
+CHK|scalar_transpose|internal.Serialport [1 1]|exact
+CHK|scalar_colon|internal.Serialport [1 1]|exact
+CHK|scalar_logical|internal.Serialport [1 1]|exact
+CHK|loop|[internal.Serialport [1 1] COM20][internal.Serialport [1 1] COM21]|exact
+CHK|loop_column|[internal.Serialport [2 1] COM20+COM21]|exact
+CHK|dot_on_row|string:COM20|exact
+CHK|dot_list|double:2|exact
+CHK|bracket_list|string [1 2]|exact
+CHK|eq|[true false]|exact
+CHK|eq_rows|[true true]|exact
+CHK|ne_scalar|[false true]|exact
+CHK|eq_number|[false false]|exact
+CHK|eq_text|[false false]|exact
+CHK|eq_mismatch|MATLAB:dimagree ## Matrix dimensions must agree.|exact
+CHK|eq_empty|logical [0 0]|exact
+CHK|eq_square|[true true;true true]|exact
+CHK|isequal_rows|1 1 0|exact
+CHK|isvalid_row|[true true]|exact
+CHK|get_struct|struct [2 1]|exact
+CHK|get_one_name|cell [2 1] string COM20,COM21|exact
+CHK|get_two_names|cell [2 2]|exact
+CHK|set_both|5 5|exact
+CHK|properties_row|cell [17 1]|exact
+CHK|methods_row|cell [30 1]|exact
+CHK|isprop_row|logical:[true true]|exact
+CHK|isprop_none|logical:[false false]|exact
+CHK|repmat_scalar|internal.Serialport [1 3]|exact
+CHK|horzcat_fn|internal.Serialport [1 2]|exact
+CHK|vertcat_fn|internal.Serialport [2 1]|exact
+CHK|cat_fn|internal.Serialport [1 2]|exact
+CHK|reshape_fn|internal.Serialport [2 1]|exact
+CHK|fliplr_fn|COM21|exact
+CHK|flip_fn|COM21|exact
+CHK|num2cell_fn|cell [1 2] internal.Serialport 1|exact
+CHK|arrayfun_ports|string:COM20,COM21|exact
+CHK|arrayfun_objects|cell [1 2]|exact
+CHK|grow_far|serialport:serialport:NoSavedPreferences ## Unable to create the default serialport object. Specify the 'Port' and 'BaudRate' input arguments.|exact
+CHK|member_grow|serialport:serialport:NoSavedPreferences ## Unable to create the default serialport object. Specify the 'Port' and 'BaudRate' input arguments.|exact
+CHK|member_set_one|internal.Serialport [1 2] 5 7 7|exact
+CHK|member_set_all|MATLAB:index:expected_one_output_for_assignment ## Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|assign_same|internal.Serialport [1 2] COM21 1|exact
+CHK|assign_delete|internal.Serialport [1 1] COM21|exact
+CHK|char_row|MATLAB:invalidConversion ## Conversion to char from internal.Serialport is not possible.|exact
+CHK|string_row|MATLAB:invalidConversion ## Conversion to string from internal.Serialport is not possible.|exact
+CHK|double_row|MATLAB:invalidConversion ## Conversion to double from internal.Serialport is not possible.|exact
+CHK|cellstr_row|MATLAB:invalidConversion ## Conversion to cellstr from internal.Serialport is not possible.|exact
+CHK|flush_row|MATLAB:flush:invalidType ## Expected input number 2, buffer, to be one of these types: / char, string / Instead its type was internal.SerialportClient.|div=ADR0237|diverges|JGraph:deviceArray:ScalarMethod ## 'flush' runs on one internal.Serialport at a time; index the array.
+CHK|cfg_row|serialport:serialport:InvalidTerminator ## Terminator value must be "LF", "CR", "CR/LF", or an integer from 0 to 255, inclusive.|div=ADR0237|diverges|JGraph:deviceArray:ScalarMethod ## 'configureTerminator' runs on one internal.Serialport at a time; index the array.
+CHK|disp_head|1×2 Serialport array with properties:|exact
+CHK|disp_full|  1×2 Serialport array with properties: /  /    Serialport with properties: /  /                  Port: "COM20" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  /    Serialport with properties: /  /                  Port: "COM21" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  / |div=ADR0237|diverges|1×2 Serialport array with properties: /  /    Serialport with properties: /  /     Port: "COM20" /     BaudRate: 9600 /     Tag: "" /     NumBytesAvailable: 0 /  /    Serialport with properties: /  /     Port: "COM21" /     BaudRate: 9600 /     Tag: "" /     NumBytesAvailable: 0 /  /
+CHK|disp_empty|  0×0 Serialport array with properties: /  /     Port /     BaudRate /     Timeout /     FlowControl /     Parity /     StopBits /     DataBits /     ByteOrder /     UserData /     Terminator /     BytesAvailableFcnCount /     BytesAvailableFcnMode /     BytesAvailableFcn /     ErrorOccurredFcn /     NumBytesAvailable /     NumBytesWritten /     Tag /  / |exact
+CHK|tcp_hcat|tcpclient [1 2]|exact
+CHK|tcp_find|tcpclient [1 2]|exact
+CHK|tcp_disp_head|1×2 tcpclient array with properties:|exact
+CHK|udp_hcat|udpport.byte.UDPPort [1 2]|exact
+CHK|mixed|MATLAB:UnableToConvert ## The following error occurred converting from tcpclient to internal.Serialport: / Invalid number of input arguments for 'serialport'. Valid syntaxes are / s = serialport() / s = serialport(PORT,BAUDRATE) / s = serialport(PORT,BAUDRATE,NAME,VALUE)|exact
+CHK|mixed_udp|MATLAB:UnableToConvert ## The following error occurred converting from udpport.byte.UDPPort to tcpclient: / Expected input number 1, ADDRESS, to be one of these types: / char / Instead its type was udpport.byte.UDPPort.|exact
+CHK|udp_grow|MATLAB:class:MissingGetDefaultScalarElement ## During array expansion: / No default is defined for class 'udpport.byte.UDPPort'. / Method 'getDefaultScalarElement' in superclass udpport.UDPPortBase is missing or incorrectly defined.|exact
+CHK|foreign_write|MATLAB:UnableToConvert ## Unable to perform assignment because value of type 'tcpclient' is not convertible to 'internal.Serialport'.|exact
+CHK|eq_foreign|false|exact
+CHK|eq_foreign_row|[false false]|exact
+CHK|ap_hcat|MATLAB:audiovideo:audioplayer:noconcatenation ## Audioplayer objects cannot be concatenated.|exact
+CHK|ap_horzcat_fn|MATLAB:audiovideo:audioplayer:noconcatenation ## Audioplayer objects cannot be concatenated.|exact
+CHK|ap_repmat|audioplayer [1 2]|exact
+CHK|ap_cat_fn|audioplayer [1 2]|exact
+CHK|ap_index_twice|audioplayer [1 2]|exact
+CHK|ap_empty_join|MATLAB:audiovideo:audioplayer:noconcatenation ## Audioplayer objects cannot be concatenated.|exact
+CHK|ar_mixed|MATLAB:audiovideo:audioplayer:noconcatenation ## Audioplayer objects cannot be concatenated.|exact
+CHK|ar_number|MATLAB:audiovideo:audiorecorder:noconcatenation ## Audiorecorder objects cannot be concatenated.|exact
+CHK|held_after_clear|2|exact
+CHK|held_ports_open|[true true]|exact
+CHK|released|double:[] [0 0]|exact
+CHK|cell_holds|1|exact
+CHK|cell_released|double:[] [0 0]|exact
+CHK|delete_row_out|MATLAB:maxlhs ## Too many output arguments.|exact
+CHK|isvalid_mixed|[true false]|exact
+CHK|disp_mixed|  1×2 Serialport array with properties: /  /    Serialport with properties: /  /                  Port: "COM20" /              BaudRate: 9600 /                   Tag: "" /     NumBytesAvailable: 0 /  / Invalid or deleted object. / |div=ADR0237|diverges|1×2 Serialport array with properties: /  /    Serialport with properties: /  /     Port: "COM20" /     BaudRate: 9600 /     Tag: "" /     NumBytesAvailable: 0 /  / Invalid or deleted object. /  /
+CHK|deleted_all|0 0 0|exact
+CHK|disp_deleted|1x2 Invalid or deleted object / |exact
+CHK|index_deleted|internal.Serialport|exact
+CHK|dot_deleted|MATLAB:class:InvalidHandle ## Invalid or deleted object.|exact
