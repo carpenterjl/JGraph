@@ -189,8 +189,23 @@ What the tree cannot hold is listed in `DesignTreeResult.Problems`, and the rest
     - in two apps, callbacks the class names but no component in `createComponents` uses are bound
       to nothing;
     - the fixture's image, whose full path changes when the app is saved elsewhere.
-  - For the two Simulink apps, the code's tree cannot be built headless; their written trees open
-    with no findings.
+  - This probe checks each tree against itself before the round trip, so the two Simulink apps
+    open with no findings. Their missing Simulink components show only against the code's tree
+    (`ds1b_verify`, above, and the window check below).
+- **App Designer's window** (`ds1b_viewbuild`, `ds1b_view`, `ds1b_viewdiff.py`; window session
+  with the user's leave, 2026-10-18). Each app was saved twice by App Designer's serializer with
+  its class text: once from JGraph's tree and once, as the control, from its code's tree. Both
+  were opened in R2025b's App Designer window through its document API, and the window captured
+  and compared pixel for pixel, title bar aside.
+  - All 88 open, in 4.6 to 16.4 s.
+  - App Designer marks every one modified on opening, control included.
+  - 40 of the 44 apps match their control. Of the other four:
+    - `MultiPaneSimApp` and `aurora` lack the Simulink run controls, variable tuner and progress
+      bar that the writer leaves out;
+    - `ASAP2CDFGen` and `mlexpdlg`, the first app opened in each of the two runs, differ by a
+      1-pixel shift of the app inspector panel; their canvases match.
+  - The serializer re-saves the objects JGraph's file loads as, so the component bytes in these
+    `.mlapp` files are R2025b's. JGraph writing the whole `appModel.mat` itself is DS6.
 - **Load artifacts.** A tree loaded from any saved file has `ParentMode` `'auto'` and
   `HasAppBuildingDefaults` `'off'`, MATLAB's own included, since neither is stored. The
   comparisons skip them.
@@ -205,8 +220,6 @@ What the tree cannot hold is listed in `DesignTreeResult.Problems`, and the rest
 
 ## Not measured
 
-- **App Designer's window** showing a JGraph-written tree. The full load is headless; a window
-  session needs the user's leave.
 - **The rest of `appModel.mat`.** App Designer's file also holds `code` (the code view's copy, ADR
   0239), `appData` (an `AppData` object with three empty properties and
   `MinimumSupportedVersion`), and `components.Groups`, its component groups. Writing these with

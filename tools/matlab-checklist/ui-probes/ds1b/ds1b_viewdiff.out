@@ -1,0 +1,45 @@
+ASAP2CDFGen: 5305 pixels differ in x 1108..1407, y 649..806
+AddEditParameterDialog: same
+AddEditTapsDialog: same
+ApplicationInspector: same
+CTLEFitter: same
+ClassContainer: same
+ClockDomainEditor: same
+ColumnTransformationDialog: same
+CustomFunctionDialog: same
+DCOffsetDialog: same
+DataExport: same
+DataImport: same
+DesignerSpecApp: same
+EditCustomFunctionsDialog: same
+GUIDEAppMaintenanceOptions: same
+IbisAmiManager: same
+ImportDataUI: same
+InstrumentationVisualizer: same
+MetadataUI: same
+ModelDiscViewer: same
+ModulationDialog: same
+MultiPaneSimApp: 9668 pixels differ in x 368..1405, y 291..800
+ReportDialog: same
+RxJitter: same
+SLSimApp2: same
+SiToolBoxConsole: same
+SignalIntegrityLink: same
+SimAppTemplate: same
+SystemLogViewer: same
+TestSuitesManager: same
+TreePanel: same
+TxJitter: same
+addRuleDialog: same
+app1: same
+aurora: 55326 pixels differ in x 360..1405, y 264..800
+bertool: same
+borrowLicenses: same
+mlexpdlg: 5314 pixels differ in x 1108..1407, y 649..806
+reportDlgBox: same
+rowTimesDialog: same
+sParameterFitter: same
+slCustomizedCrashWindowApp: same
+slrtInstrumentPanelTemplate: same
+template: same
+same 40, differs 4
