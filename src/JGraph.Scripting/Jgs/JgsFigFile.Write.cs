@@ -168,6 +168,15 @@ internal static partial class JgsFigFile
         /// <summary>The words for a callback MATLAB's copy cannot carry (an anonymous function's workspace is MATLAB's own object).</summary>
         private const string CapturingCallback = "a callback capturing variables";
 
+        /// <summary>The words for a cell callback holding an anonymous function (the cell's handle cannot be a char command).</summary>
+        private const string CellAnonymousCallback = "an anonymous function in a cell callback";
+
+        /// <summary>
+        /// How many elements a captured value may have and still be written into the callback's
+        /// text (open item 139): a table's worth is a command, a picture's worth is not.
+        /// </summary>
+        private const int LiteralElements = 256;
+
         public Dictionary<string, JgsValue> Root(FigureModel figure)
         {
             HandleOf(figure);
@@ -272,11 +281,14 @@ internal static partial class JgsFigFile
             }
 
             // An axes' special is four places (an empty one is an access violation in R2025b's
-            // loader: oi77_hand); a polar axes' labels are not written, its title untried there.
+            // loader: oi77_hand). hgsave's own tree has no place for a subtitle, a polar axes'
+            // title or (a JGraph extra) a polar axes' labels - R2025b's hgsave writes none and
+            // reopens its own tree without them, and no hand-built form is taken (open item 139,
+            // probe oi139_shapes) - so they are named as left out when they say something.
             var special = new double[4];
+            JgsHandleEntry entry = JgsHandleRegistry.EntryFor(axes);
             if (!axes.IsPolar)
             {
-                JgsHandleEntry entry = JgsHandleRegistry.EntryFor(axes);
                 string[] roles = ["Title", "XLabel", "YLabel", "ZLabel"];
                 for (int i = 0; i < roles.Length; i++)
                 {
@@ -285,6 +297,23 @@ internal static partial class JgsFigFile
                         children.Add(Node(label, "text", [], null));
                         special[i] = children.Count;
                     }
+                }
+
+                if (Label(entry, "Subtitle") is not null)
+                {
+                    Skipped.Add("an axes' subtitle");
+                }
+            }
+            else
+            {
+                if (Label(entry, "Title") is not null)
+                {
+                    Skipped.Add("a polar axes' title");
+                }
+
+                if (Label(entry, "RLabel") is not null)
+                {
+                    Skipped.Add("a polar axes' label");
                 }
             }
 
@@ -346,6 +375,11 @@ internal static partial class JgsFigFile
                 return null;
             }
 
+            if (!string.IsNullOrEmpty(legend.Title))
+            {
+                Skipped.Add("a legend's title"); // hgsave's tree has no place for one (open item 139, oi139_shapes)
+            }
+
             JgsValue children = JgsMatrix.FromColumnMajor([.. plots], plots.Count, 1);
             props.Remove("String");
             props["String"] = strings;
@@ -370,6 +404,11 @@ internal static partial class JgsFigFile
         {
             Dictionary<string, JgsValue> props = Properties(bar);
             PlaceByLocation(props);
+            if (!string.IsNullOrEmpty(bar.Label))
+            {
+                Skipped.Add("a colour bar's label"); // hgsave's tree has no place for one (open item 139, oi139_shapes)
+            }
+
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(bar);
             JgsValue limits = Read(entry, "Limits") ?? JgsMatrix.FromColumnMajor([0, 1], 1, 2);
             double[] span = Devices.DeviceChecks.NumberArray(limits);
@@ -596,17 +635,17 @@ internal static partial class JgsFigFile
 
                 if (value.Type == JgsType.Function && value.AsCallable is AnonymousFunction anonymous)
                 {
-                    if (anonymous.CapturedVariables.Any())
+                    if (CommandText(anonymous) is not { } command)
                     {
                         Skipped.Add(CapturingCallback);
                         continue;
                     }
 
-                    value = JgsValue.Str(CallbackCommand(anonymous.Text));
+                    value = JgsValue.Str(CallbackCommand(command));
                 }
                 else if (value.Type == JgsType.Cell && value.AsCell.Any(static held => held.Type == JgsType.Function && held.AsCallable is AnonymousFunction))
                 {
-                    Skipped.Add(CapturingCallback);
+                    Skipped.Add(CellAnonymousCallback); // a cell's first element must be a handle, and MATLAB's form of an anonymous one has no workspace
                     continue;
                 }
 
@@ -740,5 +779,58 @@ internal static partial class JgsFigFile
         /// </summary>
         private static string CallbackCommand(string text) =>
             "feval(str2func('" + text.Replace("'", "''") + "'), gcbo, [])";
+
+        /// <summary>
+        /// The text that re-makes an anonymous callback in MATLAB: its own when it captured nothing,
+        /// else its text with each captured variable's value written in the variable's place as a
+        /// literal (open item 139: MATLAB's form keeps a workspace as an object of its own, which a
+        /// file written here cannot hold, probe <c>oi77_fh</c>). Null when a capture is not a
+        /// literal - a struct, a cell, an object, a handle, a value past <see cref="LiteralElements"/>
+        /// elements - or is indexed, called or reached into in the body, where a literal cannot stand.
+        /// </summary>
+        private static string? CommandText(AnonymousFunction anonymous)
+        {
+            var literals = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach ((string name, JgsValue value) in anonymous.CapturedVariables)
+            {
+                if (LiteralText(value) is not { } literal)
+                {
+                    return null;
+                }
+
+                literals[name] = literal;
+            }
+
+            return literals.Count == 0 ? anonymous.Text : AstPrinter.Print(anonymous.Declaration, literals);
+        }
+
+        /// <summary>A value as MATLAB reads it back from text (<c>mat2str</c>'s spelling), or null for one that has none.</summary>
+        private static string? LiteralText(JgsValue value)
+        {
+            if (value.IsStringArray)
+            {
+                return value.ArrayLength == 1 ? "\"" + value.ElementAt(0).AsString.Replace("\"", "\"\"") + "\"" : null;
+            }
+
+            if (value.IsCategorical || value.IsObjectArray || value.Type is not (JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.String or JgsType.Array))
+            {
+                return null;
+            }
+
+            if (value.Type == JgsType.Array && (value.Dims.Length > 2 || value.ArrayLength > LiteralElements))
+            {
+                return null;
+            }
+
+            try
+            {
+                string text = JgsBuiltins.MatrixText([value], 0, 0).AsString;
+                return text.StartsWith('-') ? "(" + text + ")" : text; // a negative number keeps its sign to itself: x^-3 reads, 2*-3 does not everywhere
+            }
+            catch (JgsException)
+            {
+                return null;
+            }
+        }
     }
 }

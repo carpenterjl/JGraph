@@ -226,17 +226,21 @@ internal static class JgsCategoricalCharts
                 throw new JgsRuntimeException(line, col, "MATLAB:axis:NumericAxes", $"Command option {word} is only available for numeric axes.");
             }
 
-            // A limit method frees the limits it fits, as R2025b's do (probe_126: modes auto after tight).
-            if (lower is "tickaligned" or "tight" or "padded")
+            // A limit method frees the limits it fits, as R2025b's do (probe_126: modes auto after
+            // tight); axis image is tight and then the aspect (oi138_image A19: modes auto after it).
+            if (lower is "tickaligned" or "tight" or "padded" or "image")
             {
                 foreach (AxisModel ruler in axes.XAxes.Concat(axes.YAxes).Append(axes.ZAxis))
                 {
-                    ruler.LimitMethod = lower == "tight" ? LimitMethod.Tight : lower == "padded" ? LimitMethod.Padded : LimitMethod.Tickaligned;
+                    ruler.LimitMethod = lower is "tight" or "image" ? LimitMethod.Tight : lower == "padded" ? LimitMethod.Padded : LimitMethod.Tickaligned;
                     ruler.AutoScale = true;
                 }
 
                 axes.RecomputeDataBounds();
-                continue;
+                if (lower != "image")
+                {
+                    continue;
+                }
             }
 
             if (lower.Split(' ', StringSplitOptions.RemoveEmptyEntries) is [var mode and ("auto" or "manual"), var letters] && letters.All(static c => c is 'x' or 'y' or 'z'))

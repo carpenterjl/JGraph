@@ -891,7 +891,7 @@ internal static partial class JgsBuiltins
     /// <c>eval</c> would turn back into the same value. Fifteen significant digits is MATLAB's
     /// default, which is what makes the round trip exact for a double.
     /// </remarks>
-    private static JgsValue MatrixText(IReadOnlyList<JgsValue> args, int line, int col)
+    internal static JgsValue MatrixText(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("mat2str", args, 1, 3, line, col);
         JgsValue subject = ImageNumbers(args[0]);

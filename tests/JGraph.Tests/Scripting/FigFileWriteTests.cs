@@ -225,7 +225,7 @@ public class FigFileWriteTests : IDisposable
         Assert.False(control.ContainsKey("UIContextMenu"));
         Assert.False(control.ContainsKey("ContextMenu"));
         Assert.Equal([children[3]["handle"].AsNumber], Numbers(children[2]["special"]));
-        Assert.False(control.ContainsKey("Callback")); // it captured k, which MATLAB's copy cannot carry
+        Assert.Equal("feval(str2func('@(s, e) disp(4)'), gcbo, [])", control["Callback"].AsString); // k's value written in its place (open item 139)
         Assert.Equal("Ctx", Props(Child(children[2], "uimenu"))["Text"].AsString);
     }
 
@@ -371,22 +371,95 @@ public class FigFileWriteTests : IDisposable
     }
 
     [Fact]
-    public void AnAnonymousCallbackBecomesTheCommandThatRemakesIt_AndACapturingOneIsLeftOut()
+    public void AnAnonymousCallbackBecomesTheCommandThatRemakesIt_WithItsCapturedLiteralsInPlace()
     {
+        // Open item 139 (ADR 0241): a captured value that is a literal - a number, a char, a
+        // string, a logical, a matrix - is written into the function's text where the variable
+        // stood; one that is not, or that the body indexes, calls or reaches into, leaves the
+        // callback out as before.
         Ok(Run("""
             f = figure('Tag', 'cb');
             uicontrol(f, 'Style', 'pushbutton', 'Tag', 'free', 'Callback', @(s, e) disp('free'));
             k = 4;
             uicontrol(f, 'Style', 'pushbutton', 'Tag', 'held', 'Callback', @(s, e) disp(k));
+            name = 'it''s';
+            m = [1 2; 3 4];
+            on = true;
+            word = "two";
+            uicontrol(f, 'Style', 'pushbutton', 'Tag', 'many', 'Callback', @(s, e) fprintf('%s %d %s\n', name, on, word));
+            uicontrol(f, 'Style', 'pushbutton', 'Tag', 'mat', 'Callback', @(s, e) disp(m));
+            neg = -3;
+            uicontrol(f, 'Style', 'pushbutton', 'Tag', 'neg', 'Callback', @(s, e) disp(2 ^ neg));
+            uicontrol(f, 'Style', 'pushbutton', 'Tag', 'shadow', 'Callback', @(s, e) arrayfun(@(k) disp(k), 1:k));
+            st.a = 1;
+            uicontrol(f, 'Style', 'pushbutton', 'Tag', 'struct', 'Callback', @(s, e) disp(st.a));
+            v = [5 6 7];
+            uicontrol(f, 'Style', 'pushbutton', 'Tag', 'indexed', 'Callback', @(s, e) disp(v(2)));
+            uicontrol(f, 'Style', 'pushbutton', 'Tag', 'incell', 'Callback', {@(s, e, n) disp(n), 3});
             uicontrol(f, 'Style', 'pushbutton', 'Tag', 'named', 'Callback', @disp);
             uicontrol(f, 'Style', 'pushbutton', 'Tag', 'text', 'Callback', 'disp(''text'')');
             savefig(f, 'cb.fig');
             """));
-        Assert.Contains("cannot carry (a callback capturing variables)", _output.ErrorText + _output.NormalText);
+        Assert.Contains("cannot carry (a callback capturing variables, an anonymous function in a cell callback)", _output.ErrorText + _output.NormalText);
         IReadOnlyDictionary<string, JgsValue> root = Tree(Saved("cb.fig"));
         Assert.Equal("feval(str2func('@(s, e) disp(''free'')'), gcbo, [])", Props(Child(root, "uicontrol", "free"))["Callback"].AsString);
-        Assert.False(Props(Child(root, "uicontrol", "held")).ContainsKey("Callback"));
+        Assert.Equal("feval(str2func('@(s, e) disp(4)'), gcbo, [])", Props(Child(root, "uicontrol", "held"))["Callback"].AsString);
+        Assert.Equal(
+            "feval(str2func('@(s, e) fprintf(''%s %d %s\\n'', ''it''''s'', true, \"two\")'), gcbo, [])",
+            Props(Child(root, "uicontrol", "many"))["Callback"].AsString);
+        Assert.Equal("feval(str2func('@(s, e) disp([1 2;3 4])'), gcbo, [])", Props(Child(root, "uicontrol", "mat"))["Callback"].AsString);
+        Assert.Equal("feval(str2func('@(s, e) disp(2 ^ (-3))'), gcbo, [])", Props(Child(root, "uicontrol", "neg"))["Callback"].AsString);
+        Assert.Equal("feval(str2func('@(s, e) arrayfun(@(k) disp(k), 1:4)'), gcbo, [])", Props(Child(root, "uicontrol", "shadow"))["Callback"].AsString);
+        Assert.False(Props(Child(root, "uicontrol", "struct")).ContainsKey("Callback"));
+        Assert.False(Props(Child(root, "uicontrol", "indexed")).ContainsKey("Callback"));
+        Assert.False(Props(Child(root, "uicontrol", "incell")).ContainsKey("Callback"));
         Assert.Equal("@simple:disp", Props(Child(root, "uicontrol", "named"))["Callback"].AsString);
         Assert.Equal("disp('text')", Props(Child(root, "uicontrol", "text"))["Callback"].AsString);
+    }
+
+    [Fact]
+    public void WhatHgsavesTreeHasNoPlaceForIsLeftOutAndNamed()
+    {
+        // Open item 139 (ADR 0241): R2025b's own hgsave writes no colour bar label, legend title,
+        // axes subtitle or polar axes title into its tree and reopens its own tree without them
+        // (probe oi139_shapes), so this build writes none and names them in the save's warning.
+        Ok(Run("""
+            f = figure('Tag', 'left');
+            ax = axes(f);
+            plot(ax, 1:5, [1 4 2 5 3]); hold(ax, 'on'); plot(ax, 1:5, [2 2 3 3 4]);
+            title(ax, 'Main'); subtitle(ax, 'Below the main'); xlabel(ax, 'X');
+            lg = legend(ax, 'a', 'b'); title(lg, 'Series');
+            set(ax, 'Tag', 'left');
+            g = figure('Tag', 'right');
+            ax2 = axes(g);
+            imagesc(ax2, magic(4));
+            cb = colorbar(ax2); cb.Label.String = 'Heat';
+            set(ax2, 'Tag', 'right');
+            p = figure('Tag', 'polar');
+            pax = polaraxes(p); polarplot(pax, linspace(0, 2 * pi, 20), 1:20); title(pax, 'Polar');
+            savefig(f, 'left.fig');
+            savefig(g, 'right.fig');
+            savefig(p, 'polar.fig');
+            """));
+        string said = _output.ErrorText + _output.NormalText;
+        Assert.Contains("'left.fig' holds what MATLAB's form of a figure file cannot carry (a legend's title, an axes' subtitle)", said); // in the order met: the legend is the axes' child
+        Assert.Contains("'right.fig' holds what MATLAB's form of a figure file cannot carry (a colour bar's label)", said);
+        Assert.Contains("'polar.fig' holds what MATLAB's form of a figure file cannot carry (a polar axes' title)", said);
+
+        IReadOnlyDictionary<string, JgsValue> left = Tree(Saved("left.fig"));
+        IReadOnlyDictionary<string, JgsValue> axes = Child(left, "axes", "left");
+        Assert.Equal([3, 4, 0, 0], Numbers(axes["special"])); // the title and the x label, as before; no fifth place
+        Assert.Equal(4, Children(axes).Count);
+        Assert.DoesNotContain(Children(axes), c => Type(c) == "text" && Props(c)["String"].AsString == "Below the main");
+        Assert.False(Props(Child(left, "scribe.legend")).ContainsKey("Title"));
+
+        IReadOnlyDictionary<string, JgsValue> right = Tree(Saved("right.fig"));
+        IReadOnlyDictionary<string, JgsValue> bar = Child(right, "scribe.colorbar");
+        Assert.Empty(Children(bar));
+        Assert.False(Props(bar).ContainsKey("Label"));
+
+        // The document copy keeps all of it.
+        FigureModel copy = GraphFormat.Deserialize(JgsFigFile.Document(Saved("left.fig")) ?? throw new Xunit.Sdk.XunitException("no document"));
+        Assert.Equal("Below the main", Assert.Single(copy.Axes).Subtitle);
     }
 }

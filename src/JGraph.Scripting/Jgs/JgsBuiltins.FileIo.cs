@@ -264,9 +264,26 @@ internal static partial class JgsBuiltins
         if (y is not null) JgsGraphicsProperties.Set(entry, "YData", y, line, col);
         if (highLevel && !holding)
         {
-            (named ?? JG.Gca()).ActiveYAxis.Inverted = true;
-            (named ?? JG.Gca()).Layer = JGraph.Core.Model.AxesLayer.Top;
-            (named ?? JG.Gca()).SetViewAngles(0, 90);
+            JGraph.Core.Model.AxesModel target = named ?? JG.Gca();
+            target.ActiveYAxis.Inverted = true;
+            target.Layer = JGraph.Core.Model.AxesLayer.Top;
+            target.SetViewAngles(0, 90);
+
+            // R2025b's image and imagesc set the axes' limits by hand to the pixel edges - the
+            // span the pixels cover, half a pixel beyond the first and last centre - so the picture
+            // fills the box without the automatic limits' margin (open item 138, probe oi138_image:
+            // [0.5 4.5] for four columns, [1.5 5.5] for XData [2 5], [-0.5 11.5] for [1 2 10]). An
+            // image of no pixels sets none. R2025b leaves a uiaxes' limits automatic at the same
+            // values (its replacechildren, A27); this build's automatic rule over a uiaxes' smaller
+            // box lands on [0 5], so the edges are set there too (a recorded divergence of the mode).
+            plot.UpdateImageExtents();
+            if (plot.Rows > 0 && plot.Columns > 0)
+            {
+                target.PrimaryXAxis.AutoScale = false;
+                target.PrimaryXAxis.Range = plot.XExtent;
+                target.ActiveYAxis.AutoScale = false;
+                target.ActiveYAxis.Range = plot.YExtent;
+            }
         }
         foreach (var property in properties) JgsGraphicsProperties.Set(entry, property.Name, property.Value, line, col);
         if (scaled && plot.TrueColors is null)

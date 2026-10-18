@@ -727,7 +727,9 @@ internal static partial class JgsGraphicsProperties
         value = JgsBuiltins.ImageNumbers(value);
         var picture = (ImagePlot)entry.Target;
         if (JgsMatrix.IsNested(value)) value = JgsMatrix.FromRows(JgsMatrix.ToRows("CData", value, line, col));
-        int[] dims = JgsMatrix.DimsOf(value);
+        // A lone number is one pixel: its value carries no shape of its own, and reading one as a
+        // 1-by-0 drew nothing (found in open-items batch 28, image(7)).
+        int[] dims = value.Type is JgsType.Number or JgsType.Bool or JgsType.Complex ? [1, 1] : JgsMatrix.DimsOf(value);
         if (dims.Length > 3 || dims.Length == 3 && dims[2] != 3)
             throw new JgsRuntimeException(line, col, "CData must be an M-by-N or M-by-N-by-3 numeric array.");
         int rows = dims[0], cols = dims[1];

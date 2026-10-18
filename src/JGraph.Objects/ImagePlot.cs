@@ -29,10 +29,23 @@ public sealed class ImagePlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     private double[]? _xData, _yData;
     public double[] XData { get => _xData ?? [1, Columns]; set { _xData = value; _pixels = null; UpdateImageExtents(); Invalidate(InvalidationKind.Render); } }
     public double[] YData { get => _yData ?? [1, Rows]; set { _yData = value; _pixels = null; UpdateImageExtents(); Invalidate(InvalidationKind.Render); } }
+    /// <summary>
+    /// The span <paramref name="count"/> pixels cover when their centres run from the first to the
+    /// last of <paramref name="data"/> (a lone number puts them one apart from it): half a pixel
+    /// beyond each end. A single pixel given two ends spans twice the distance between them, as
+    /// R2025b's <c>image([2 5], y, column)</c> reads <c>[-1 8]</c> (open item 138, probe <c>oi138_image</c>).
+    /// </summary>
     private static DataRange PixelExtent(double[] data, int count)
     {
+        if (data.Length == 0)
+        {
+            data = [1];
+        }
+
         double first = data[0], last = data.Length == 1 ? first + count - 1 : data[^1];
-        double half = count > 1 ? Math.Abs(last - first) / (count - 1) / 2 : .5;
+        double half = count > 1 ? Math.Abs(last - first) / (count - 1) / 2
+            : data.Length > 1 && last != first ? Math.Abs(last - first)
+            : .5;
         return new DataRange(Math.Min(first, last) - half, Math.Max(first, last) + half);
     }
     public void UpdateImageExtents()
@@ -256,10 +269,10 @@ public sealed class ImagePlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         }
     }
 
-    public override DataRange GetXDataBounds() => _xExtent;
+    public override DataRange GetXDataBounds() => Rows == 0 || Columns == 0 ? DataRange.Empty : _xExtent;
 
     /// <inheritdoc />
-    public override DataRange GetYDataBounds() => _yExtent;
+    public override DataRange GetYDataBounds() => Rows == 0 || Columns == 0 ? DataRange.Empty : _yExtent; // an image of no pixels asks nothing of the limits (R2025b: [0 1])
 
     /// <summary>
     /// A transparency for every pixel, looked up through the axes' alphamap (MATLAB

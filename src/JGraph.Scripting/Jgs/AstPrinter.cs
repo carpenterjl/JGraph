@@ -20,7 +20,7 @@ internal static class AstPrinter
     public static string Print(Expr expression)
     {
         var text = new StringBuilder();
-        Write(text, expression);
+        Write(text, expression, null);
         return text.ToString();
     }
 
@@ -28,7 +28,101 @@ internal static class AstPrinter
     public static string Print(AnonymousFnExpr function) =>
         $"@({string.Join(", ", function.Parameters)}) {Print(function.Body)}";
 
-    private static void Write(StringBuilder text, Expr expression)
+    /// <summary>
+    /// The <c>@(args) body</c> text of an anonymous function with each name in
+    /// <paramref name="literals"/> written as the text it maps to - a captured variable's value as
+    /// a literal, which is how a <c>.fig</c> carries a capturing callback to MATLAB (open item 139).
+    /// Null when such a name is called, indexed, assigned or reached into in the body, where a
+    /// literal cannot stand; a parameter of the function or of a nested one shadows the name.
+    /// </summary>
+    public static string? Print(AnonymousFnExpr function, IReadOnlyDictionary<string, string> literals)
+    {
+        Dictionary<string, string>? scope = Shadow(new Dictionary<string, string>(literals, StringComparer.Ordinal), function.Parameters);
+        if (!CanStandIn(function.Body, scope))
+        {
+            return null;
+        }
+
+        var text = new StringBuilder();
+        text.Append("@(").Append(string.Join(", ", function.Parameters)).Append(") ");
+        Write(text, function.Body, scope);
+        return text.ToString();
+    }
+
+    /// <summary>The substitutions less the names <paramref name="parameters"/> shadow; null once none is left.</summary>
+    private static Dictionary<string, string>? Shadow(Dictionary<string, string>? scope, IReadOnlyList<string> parameters)
+    {
+        if (scope is null)
+        {
+            return null;
+        }
+
+        Dictionary<string, string> inner = scope;
+        foreach (string parameter in parameters)
+        {
+            if (inner.ContainsKey(parameter))
+            {
+                if (ReferenceEquals(inner, scope))
+                {
+                    inner = new Dictionary<string, string>(scope, StringComparer.Ordinal);
+                }
+
+                inner.Remove(parameter);
+            }
+        }
+
+        return inner.Count == 0 ? null : inner;
+    }
+
+    private static bool Substituted(Expr expression, Dictionary<string, string>? scope) =>
+        scope is not null && expression is VariableExpr variable && scope.ContainsKey(variable.Name);
+
+    /// <summary>Whether every substituted name in <paramref name="expression"/> stands where a literal can.</summary>
+    private static bool CanStandIn(Expr? expression, Dictionary<string, string>? scope)
+    {
+        if (scope is null || expression is null)
+        {
+            return true;
+        }
+
+        switch (expression)
+        {
+            case CallExpr call:
+                return !Substituted(call.Callee, scope) && CanStandIn(call.Callee, scope) && call.Arguments.All(a => CanStandIn(a, scope));
+            case IndexExpr index:
+                return !Substituted(index.Target, scope) && CanStandIn(index.Target, scope) && index.Indices.All(i => CanStandIn(i, scope));
+            case BraceIndexExpr brace:
+                return !Substituted(brace.Target, scope) && CanStandIn(brace.Target, scope) && brace.Indices.All(i => CanStandIn(i, scope));
+            case MemberExpr member:
+                return !Substituted(member.Target, scope) && CanStandIn(member.Target, scope) && CanStandIn(member.FieldName, scope);
+            case AssignExpr assign:
+                return !Substituted(assign.Target, scope) && CanStandIn(assign.Target, scope) && CanStandIn(assign.Value, scope);
+            case IncDecExpr incDec:
+                return !Substituted(incDec.Target, scope) && CanStandIn(incDec.Target, scope);
+            case UnaryExpr unary:
+                return CanStandIn(unary.Operand, scope);
+            case TransposeExpr transpose:
+                return CanStandIn(transpose.Operand, scope);
+            case BinaryExpr binary:
+                return CanStandIn(binary.Left, scope) && CanStandIn(binary.Right, scope);
+            case LogicalExpr logical:
+                return CanStandIn(logical.Left, scope) && CanStandIn(logical.Right, scope);
+            case RangeExpr range:
+                return CanStandIn(range.Start, scope) && CanStandIn(range.Step, scope) && CanStandIn(range.Stop, scope);
+            case ArrayLiteral array:
+                return array.Elements.All(e => CanStandIn(e, scope));
+            case MatrixLiteral matrix:
+                return matrix.Rows.All(row => row.All(e => CanStandIn(e, scope)));
+            case CellLiteral cell:
+                return cell.Rows.All(row => row.All(e => CanStandIn(e, scope)));
+            case AnonymousFnExpr nested:
+                return CanStandIn(nested.Body, Shadow(scope, nested.Parameters));
+            default:
+                return true;
+        }
+    }
+
+    private static void Write(StringBuilder text, Expr expression, Dictionary<string, string>? scope)
     {
         switch (expression)
         {
@@ -50,7 +144,7 @@ internal static class AstPrinter
                 break;
 
             case VariableExpr variable:
-                text.Append(variable.Name);
+                text.Append(scope is not null && scope.TryGetValue(variable.Name, out string? standing) ? standing : variable.Name);
                 break;
 
             case EndExpr:
@@ -63,80 +157,80 @@ internal static class AstPrinter
 
             case ArrayLiteral array:
                 text.Append('[');
-                WriteList(text, array.Elements);
+                WriteList(text, array.Elements, scope);
                 text.Append(']');
                 break;
 
             case MatrixLiteral matrix:
                 text.Append('[');
-                WriteRows(text, matrix.Rows);
+                WriteRows(text, matrix.Rows, scope);
                 text.Append(']');
                 break;
 
             case CellLiteral cell:
                 text.Append('{');
-                WriteRows(text, cell.Rows);
+                WriteRows(text, cell.Rows, scope);
                 text.Append('}');
                 break;
 
             case RangeExpr range:
-                Write(text, range.Start);
+                Write(text, range.Start, scope);
                 text.Append(':');
                 if (range.Step is not null)
                 {
-                    Write(text, range.Step);
+                    Write(text, range.Step, scope);
                     text.Append(':');
                 }
 
-                Write(text, range.Stop);
+                Write(text, range.Stop, scope);
                 break;
 
             case UnaryExpr unary:
                 text.Append(Operator(unary.Op));
-                WriteNested(text, unary.Operand);
+                WriteNested(text, unary.Operand, scope);
                 break;
 
             case BinaryExpr binary:
-                WriteNested(text, binary.Left);
+                WriteNested(text, binary.Left, scope);
                 text.Append(' ').Append(Operator(binary.Op)).Append(' ');
-                WriteNested(text, binary.Right);
+                WriteNested(text, binary.Right, scope);
                 break;
 
             case LogicalExpr logical:
-                WriteNested(text, logical.Left);
+                WriteNested(text, logical.Left, scope);
                 text.Append(' ').Append(Operator(logical.Op)).Append(' ');
-                WriteNested(text, logical.Right);
+                WriteNested(text, logical.Right, scope);
                 break;
 
             case AssignExpr assign:
-                Write(text, assign.Target);
+                Write(text, assign.Target, scope);
                 text.Append(' ').Append(Operator(assign.Op)).Append(' ');
-                Write(text, assign.Value);
+                Write(text, assign.Value, scope);
                 break;
 
             case CallExpr call:
-                Write(text, call.Callee);
+                Write(text, call.Callee, scope);
                 text.Append('(');
-                WriteList(text, call.Arguments);
+                WriteList(text, call.Arguments, scope);
                 text.Append(')');
                 break;
 
             case IndexExpr index:
-                Write(text, index.Target);
+                Write(text, index.Target, scope);
                 text.Append('[');
-                WriteList(text, index.Indices);
+                WriteList(text, index.Indices, scope);
                 text.Append(']');
                 break;
 
             case BraceIndexExpr brace:
-                Write(text, brace.Target);
+                Write(text, brace.Target, scope);
                 text.Append('{');
-                WriteList(text, brace.Indices);
+                WriteList(text, brace.Indices, scope);
                 text.Append('}');
                 break;
 
             case MemberExpr member:
-                Write(text, member.Target);
+                Write(text, member.Target, scope);
                 text.Append('.');
                 if (member.Field is not null)
                 {
@@ -145,14 +239,14 @@ internal static class AstPrinter
                 else if (member.FieldName is not null)
                 {
                     text.Append('(');
-                    Write(text, member.FieldName);
+                    Write(text, member.FieldName, scope);
                     text.Append(')');
                 }
 
                 break;
 
             case TransposeExpr transpose:
-                WriteNested(text, transpose.Operand);
+                WriteNested(text, transpose.Operand, scope);
                 text.Append(transpose.Conjugate ? "'" : ".'");
                 break;
 
@@ -160,18 +254,19 @@ internal static class AstPrinter
                 if (incDec.Prefix)
                 {
                     text.Append(incDec.Increment ? "++" : "--");
-                    Write(text, incDec.Target);
+                    Write(text, incDec.Target, scope);
                 }
                 else
                 {
-                    Write(text, incDec.Target);
+                    Write(text, incDec.Target, scope);
                     text.Append(incDec.Increment ? "++" : "--");
                 }
 
                 break;
 
             case AnonymousFnExpr anonymous:
-                text.Append(Print(anonymous));
+                text.Append("@(").Append(string.Join(", ", anonymous.Parameters)).Append(") ");
+                Write(text, anonymous.Body, Shadow(scope, anonymous.Parameters));
                 break;
 
             case FunctionHandleExpr handle:
@@ -202,7 +297,7 @@ internal static class AstPrinter
     /// precedence exactly would drop some of these, but a redundant pair changes nothing about what
     /// the text means, where a missing one changes the answer.
     /// </summary>
-    private static void WriteNested(StringBuilder text, Expr expression)
+    private static void WriteNested(StringBuilder text, Expr expression, Dictionary<string, string>? scope)
     {
         bool needsBrackets = expression is BinaryExpr or LogicalExpr or RangeExpr or AssignExpr or UnaryExpr;
         if (needsBrackets)
@@ -210,7 +305,7 @@ internal static class AstPrinter
             text.Append('(');
         }
 
-        Write(text, expression);
+        Write(text, expression, scope);
 
         if (needsBrackets)
         {
@@ -218,7 +313,7 @@ internal static class AstPrinter
         }
     }
 
-    private static void WriteList(StringBuilder text, IReadOnlyList<Expr> items)
+    private static void WriteList(StringBuilder text, IReadOnlyList<Expr> items, Dictionary<string, string>? scope)
     {
         for (int i = 0; i < items.Count; i++)
         {
@@ -227,11 +322,11 @@ internal static class AstPrinter
                 text.Append(", ");
             }
 
-            Write(text, items[i]);
+            Write(text, items[i], scope);
         }
     }
 
-    private static void WriteRows(StringBuilder text, IReadOnlyList<IReadOnlyList<Expr>> rows)
+    private static void WriteRows(StringBuilder text, IReadOnlyList<IReadOnlyList<Expr>> rows, Dictionary<string, string>? scope)
     {
         for (int r = 0; r < rows.Count; r++)
         {
@@ -240,7 +335,7 @@ internal static class AstPrinter
                 text.Append("; ");
             }
 
-            WriteList(text, rows[r]);
+            WriteList(text, rows[r], scope);
         }
     }
 

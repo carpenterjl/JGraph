@@ -1,0 +1,52 @@
+CHK|im_sc|cell [1 5] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_image|cell [1 5] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_xy|cell [1 5] {double [1 2] 1.5 5.5, char 'manual', double [1 2] 5 45, char 'manual', char 'reverse'}|exact
+CHK|im_scalar|cell [1 5] {double [1 2] 2.5 6.5, char 'manual', double [1 2] 6.5 10.5, char 'manual', char 'reverse'}|exact
+CHK|im_one|cell [1 5] {double [1 2] 0.5 1.5, char 'manual', double [1 2] 0.5 1.5, char 'manual', char 'reverse'}|exact
+CHK|im_3x5|cell [1 5] {double [1 2] 0.5 5.5, char 'manual', double [1 2] 0.5 3.5, char 'manual', char 'reverse'}|exact
+CHK|im_down|cell [1 5] {double [1 2] 1.5 5.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_uneven|cell [1 5] {double [1 2] -0.5 11.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_column|cell [1 5] {double [1 2] -1 8, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_rgb|cell [1 5] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_low|cell [1 5] {double [1 2] 0.5 4.5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'normal'}|exact
+CHK|im_low_xdata|cell [1 5] {double [1 2] 1.5 5.5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'normal'}|exact
+CHK|im_clims|cell [1 5] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_named|cell [1 5] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_vectors|cell [1 5] {double [1 2] 0.5 5.5, char 'manual', double [1 2] 0.5 3.5, char 'manual', char 'reverse'}|exact
+CHK|im_empty|cell [1 5] {double [1 2] 0 1, char 'auto', double [1 2] 0 1, char 'auto', char 'reverse'}|exact
+CHK|im_set_cdata|cell [1 5] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_plot_after|cell [1 5] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|im_into_held|cell [1 5] {double [1 2] 0.5 4.5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'normal'}|exact
+CHK|im_held|cell [1 3] {char 'auto', char 'auto', char 'normal'}|exact
+CHK|au_alone|cell [1 5] {double [1 2] 0.5 4.5, char 'auto', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|au_modes|cell [1 5] {double [1 2] 0.5 4.5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|au_tight|cell [1 5] {double [1 2] 0.5 4.5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|au_image|cell [1 5] {double [1 2] 0.5 4.5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|au_uneven|cell [1 5] {double [1 2] -2 12, char 'auto', double [1 2] 0.5 4.5, char 'manual', char 'reverse'}|exact
+CHK|au_inside|cell [1 5] {double [1 2] 0.5 4.5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|au_47|cell [1 5] {double [1 2] 0.5 5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|au_08|cell [1 5] {double [1 2] 0 8, char 'auto', double [1 2] 0 8, char 'auto', char 'reverse'}|exact
+CHK|au_y6|cell [1 5] {double [1 2] 0.5 4.5, char 'auto', double [1 2] 0 6, char 'auto', char 'reverse'}|exact
+CHK|au_7|cell [1 5] {double [1 2] 0 7, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|au_12|cell [1 5] {double [1 2] 0 12, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|au_neg|cell [1 5] {double [1 2] -2 5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|au_two|cell [1 5] {double [1 2] 0 10, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
+CHK|rt_legend_title_class|char[1 40]'matlab.graphics.illustration.legend.Text'|div=0241|diverges|char[1 4]'char'
+CHK|rt_save_warning|char[0 0]''|div=0241|diverges|char[1 30]'JGraph:savefig:NotInMatlabCopy'
+CHK|rt_title|Main|exact
+CHK|rt_subtitle|Below the main|exact
+CHK|rt_xlabel|X|exact
+CHK|rt_legend|cell [1 2] {char 'a', char 'b'}|exact
+CHK|rt_legend_title|Series|exact
+CHK|rt_cb_label|Heat|exact
+CHK|rt_cb_limits|double [1 2] 1 16|exact
+CHK|rt_right_limits|cell [1 4] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual'}|exact
+CHK|tree_title|Main|exact
+CHK|tree_subtitle||exact
+CHK|tree_xlabel|X|exact
+CHK|tree_lines|double [1 1] 2|exact
+CHK|tree_legend|cell [1 2] {double [1 1] 1, cell [1 2] {char 'a', char 'b'}}|exact
+CHK|tree_legend_title||exact
+CHK|tree_cb_label|cell [1 2] {double [1 1] 1, char ''}|exact
+CHK|tree_cb_limits|double [1 2] 1 16|exact
+CHK|tree_right_limits|cell [1 4] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual'}|exact

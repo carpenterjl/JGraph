@@ -65,7 +65,7 @@ u2_chk([p '_popup'], @() {pop.Style, pop.String, pop.Value});
 tb = findall(h, 'String', 'box');
 u2_chk([p '_textbox'], @() {numel(tb), tb.String});
 if strcmp(p, 'file')
-    u9b_chkdiv([p '_textbox_position'], @() round(tb.Position, 4), '0240'); % FitBoxToText is not carried into the tree (open item 139)
+    u9b_chkdiv([p '_textbox_position'], @() round(tb.Position, 4), '0240'); % MATLAB fits the box to its own text metrics on reading the tree (ADR 0240)
 else
     u2_chk([p '_textbox_position'], @() round(tb.Position, 4));
 end

@@ -39,6 +39,12 @@ internal static partial class JgsGraphicsProperties
             JgsBuiltins.RefreshLegend(legend);
             return HandleColumn([.. legend.Entries.Where(static e => e.Visible).Select(static e => e.Plot).OfType<GraphObject>()]);
         });
+
+        // The legend's title as its words (R2025b's is a text object, open item 141); it read as an
+        // empty double before open-items batch 28.
+        Put(table, "Title",
+            entry => JgsValue.Str(((LegendModel)entry.Target).Title ?? string.Empty),
+            (entry, value, line, col) => ((LegendModel)entry.Target).Title = JgsBuiltins.TitleText("Title", value, line, col));
     }
 
     /// <summary>

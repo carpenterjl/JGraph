@@ -44,6 +44,15 @@ internal static partial class JgsBuiltins
         // --- The titling family --------------------------------------------------------------
         JgsValue[] Titles(IReadOnlyList<JgsValue> args, int line, int col)
         {
+            // title(lg, 'words') titles the legend (R2025b's legend Title is a text object; this
+            // build keeps the words, open item 141). Before this the legend's handle number was
+            // read as the current axes' title text (found in open-items batch 28).
+            if (args.Count >= 2 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? held) && held.Target is LegendModel legend)
+            {
+                legend.Title = TitleText("title", args[1], line, col);
+                return [JgsValue.Str(legend.Title)];
+            }
+
             var (axes, rest) = PeelAxes(args);
             return OnAxes(axes, () =>
             {
