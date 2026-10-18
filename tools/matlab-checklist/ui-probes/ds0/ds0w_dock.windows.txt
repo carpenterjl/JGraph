@@ -1,0 +1,2 @@
+﻿1: 'App Designer' class WindowClass process MATLAB (19828) rect [252 145 1416 839] owner 0
+2: 'MATLAB R2025b' class WindowClass process MATLAB (19828) rect [-8 -8 1936 1168] owner 0

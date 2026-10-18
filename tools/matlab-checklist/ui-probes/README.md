@@ -35,7 +35,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `oi140/` | Open item 140 (ADR 0242): headless. `oi140_tags` tags 23 kinds of object (a text, a rectangle, a light, a group, a legend, a colour bar, seven annotations, …) and prints each one's `findobj` and `findall` count and `Type` by tag before and after `savefig`/`openfig`, with the rectangle's shape and the `UserData` after. |
 | `oi141/` | Open item 141 (ADR 0242): headless. `oi141_title` records what a legend's `Title` is (class, properties, `get`, defaults, `title(lg, …)`, the words' shapes, the refusals, display, delete, a legend made again, the box under it, `savefig`); `oi141_font` and `oi141_follow` what its size, weight, angle, font, interpreter and colour follow, read after the legend's update; `oi141_classes` prints its rows in the three recorded class tables' formats. |
 | `oi142/` | Open item 142 (ADR 0242): headless. `oi142_imshow` records what 50 forms of `imshow` do to the figure, the axes and the image (each class, true colour, indexed, display ranges, every option, a named axes, subplot, hold, replaced, twice, a file, a panel, a uiaxes); `oi142_errors` its refusals and warnings word for word, and exports two pictures (`rt/`) showing that labels written after `imshow` are drawn on its invisible axes while a plain invisible axes draws none. |
-| `ds0/` | Stage DS0 of the designer plan: headless. `ds0_stale` writes apps whose component tree disagrees with their code and shows what App Designer's load and the class make of each; `ds0_shipped` reads the 44 shipped apps' trees against their `createComponents`; `ds0_codegen` runs App Designer's component code generator over them; `ds0_tree` saves component trees for `ds0_tree_dump.py` to list their subsystem objects; `ds0_plaintext` writes a plain-text `.m` app and loads and runs it with the feature off and on. `rt/` (ignored) holds what they write. |
+| `ds0/` | Stage DS0 of the designer plan: headless. `ds0_stale` writes apps whose component tree disagrees with their code and shows what App Designer's load and the class make of each; `ds0_shipped` reads the 44 shipped apps' trees against their `createComponents`; `ds0_codegen` runs App Designer's component code generator over them; `ds0_tree` saves component trees for `ds0_tree_dump.py` to list their subsystem objects; `ds0_plaintext` writes a plain-text `.m` app and loads and runs it with the feature off and on; the window session `ds0w_dock` (`.m` + `.ps1`, user's leave) opens App Designer in the full desktop and lists and captures MATLAB's windows. `rt/` (ignored) holds what they write. |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -919,9 +919,19 @@ name). The feature `AppDesignerPlainTextFileFormat` is 0 by default.
 - App Designer's own file checks admit `.m` only with the feature on
   (`validateAppFileExtension`, `DesignTimeController`).
 
+**App Designer is its own window** (`ds0w_dock.m` + `ds0w_dock.ps1`, a window session run with the
+user's leave on 2026-10-18; captures in `rt/`, ignored). The desktop was started with `-r ds0w_dock`
+and App Designer opened with no app. MATLAB's process then showed two top-level windows: `MATLAB
+R2025b`, the desktop, maximised; and `App Designer`, 1416 by 839, with no owner, showing the start
+page. The App Designer window had a plain title bar (minimise, maximise, close) and no dock
+control. The source agrees: `AppDesignerWindowController.startBrowser` launches its own browser
+window titled from `MATLAB:appdesigner:appdesigner:AppDesigner`, and stores its position and state
+under the preference group `appdesigner` so the next launch reopens it there. Nothing under
+`toolbox/matlab/appdesigner` mentions docking.
+
 Not measured:
-- App Designer opening any of these in its window;
+- App Designer opening any of these apps in its window;
 - whether `load` accepts a component tree that saves fewer internal names than R2025b writes;
 - the mapping from each public property to the internal names a class saves;
-- whether App Designer's window can dock in R2025b's desktop (decision DD3);
+- App Designer with an app open, and its tabs when several are open;
 - any release but R2025b.
