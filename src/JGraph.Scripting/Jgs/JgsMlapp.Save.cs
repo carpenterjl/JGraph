@@ -12,10 +12,15 @@ namespace JGraph.Scripting.Jgs;
 /// it had.
 /// </param>
 /// <param name="GeneratedCodeChanged">
-/// Whether the save changed code App Designer generates from its component tree. The edit runs;
-/// App Designer writes its own version over it the next time it saves the app.
+/// Whether the save changed code App Designer generates from its component tree. The edit runs.
+/// A change to <c>createComponents</c> is carried into the tree (<paramref name="Tree"/>); App
+/// Designer writes its own version of the rest of that code the next time it saves the app.
 /// </param>
-public sealed record MlappSaveResult(bool HasDesignCopy, bool DesignCopyInStep, bool GeneratedCodeChanged);
+/// <param name="Tree">
+/// What the save did to App Designer's component tree when it changed generated code (designer
+/// plan DS6, ADR 0245); null when it did not, or the file has no model.
+/// </param>
+public sealed record MlappSaveResult(bool HasDesignCopy, bool DesignCopyInStep, bool GeneratedCodeChanged, JGraph.Scripting.Designer.DesignTreeUpdate? Tree = null);
 
 /// <content>Writing code back into an App Designer file (app-building plan U7b, ADR 0205).</content>
 public static partial class JgsMlapp
@@ -73,6 +78,8 @@ public static partial class JgsMlapp
         JgsMlappLayout was = JgsMlappLayout.Of(before);
         JgsMlappLayout now = JgsMlappLayout.Of(written);
         bool inStep = false;
+        bool generated = !was.SameGeneratedCode(now);
+        JGraph.Scripting.Designer.DesignTreeUpdate? tree = null;
         if (model is not null)
         {
             Part design = parts.First(p => p.Name == model);
@@ -81,10 +88,22 @@ public static partial class JgsMlapp
             {
                 design.Bytes = updated;
             }
+
+            // The component tree follows createComponents (DS6): what the edit changed is written
+            // into it, and every component it did not change stays as App Designer saved it. Text
+            // that cannot be read as an app leaves the tree, as it leaves the copy of the code.
+            if (generated && now.IsAppLayout && now.IsComplete)
+            {
+                tree = UpdateTree(design.Bytes, written, Path.GetDirectoryName(Path.GetFullPath(path)));
+                if (tree.Bytes is { } bytes)
+                {
+                    design.Bytes = bytes;
+                }
+            }
         }
 
         Replace(path, parts, beforeReplace);
-        return new MlappSaveResult(model is not null, inStep, !was.SameGeneratedCode(now));
+        return new MlappSaveResult(model is not null, inStep, generated, tree);
     }
 
     /// <summary>

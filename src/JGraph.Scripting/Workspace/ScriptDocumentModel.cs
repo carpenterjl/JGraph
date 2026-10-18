@@ -39,8 +39,14 @@ public sealed class ScriptDocumentModel
     /// as ("NewScript.jgs"), so the tab and the Save dialog's suggested name already agree.
     /// </summary>
     public string FileName => FilePath is null
-        ? "NewScript" + ExtensionForLanguage(Language)
+        ? IsNewApp ? "NewApp" + Jgs.JgsMlapp.Extension : "NewScript" + ExtensionForLanguage(Language)
         : Path.GetFileName(FilePath);
+
+    /// <summary>
+    /// Whether the document is a new app not yet saved (File > New Script > MATLAB app, designer plan
+    /// DS6): a MATLAB class that Save offers to write as an <c>.mlapp</c>, with App Designer's model.
+    /// </summary>
+    public bool IsNewApp { get; init; }
 
     /// <summary>The scripting language, decided by the file extension (JGS when unknown).</summary>
     public string Language { get; private set; }

@@ -73,6 +73,26 @@ internal static partial class JgsMlappModel
         return true;
     }
 
+    /// <summary>
+    /// The <c>code</c> variable of a new model, as a level-5 matrix element (designer plan DS6, ADR
+    /// 0245): App Designer's copy of <paramref name="now"/>, made by the rules a save follows when it
+    /// has no old text to hold the copy against - the class name, the editable section, each callback
+    /// and the startup function with their bodies, the input parameters, each field present only when
+    /// it holds something. Null when the text is not laid out as an app.
+    /// </summary>
+    public static byte[]? NewCode(JgsMlappLayout now)
+    {
+        ArgumentNullException.ThrowIfNull(now);
+        if (!now.IsAppLayout || !now.IsComplete)
+        {
+            return null;
+        }
+
+        var fields = new CodeFields([("ClassName", new TextValue(string.Empty, null))]);
+        Rewrite(fields, JgsMlappLayout.Of(string.Empty), now);
+        return Level5Copy.NewElement(fields);
+    }
+
     /// <summary>What the MAT-file's <c>code</c> variable holds, or null when it has none that can be read.</summary>
     /// <exception cref="InvalidDataException">The bytes are a MAT-file that ends inside an element.</exception>
     public static MlappCodeCopy? Read(byte[] mat)

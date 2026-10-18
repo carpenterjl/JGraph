@@ -38,6 +38,13 @@ public partial class ScriptWorkspaceWindow
             });
         }
 
+        NewScriptMenu.Items.Add(new MenuItem
+        {
+            Header = "MATLAB app (.mlapp)",
+            Command = WorkspaceCommands.NewScript,
+            CommandParameter = NewAppLanguage,
+            IsEnabled = engines.Any(static e => e.Language == "MATLAB"),
+        });
         NewScriptMenu.Items.Add(new Separator());
         NewScriptMenu.Items.Add(new MenuItem
         {
@@ -46,6 +53,9 @@ public partial class ScriptWorkspaceWindow
             CommandParameter = "Text",
         });
     }
+
+    /// <summary>The New Script entry for a blank app, which is a MATLAB class saved as an <c>.mlapp</c>.</summary>
+    private const string NewAppLanguage = "App";
 
     /// <summary>The language a blank New Script opens in: the user's preference when it names an
     /// available engine, otherwise MATLAB — the same default the console prompt starts on.</summary>
@@ -66,6 +76,14 @@ public partial class ScriptWorkspaceWindow
 
     private void OpenNewScript(string language)
     {
+        if (language == NewAppLanguage)
+        {
+            // A blank app, as App Designer makes one (designer plan DS6): saved, it is an .mlapp
+            // App Designer opens with its canvas.
+            AddDocument(new ScriptDocumentModel(path: null, AppDesignerDocument.NewAppText(), "MATLAB") { IsNewApp = true }, activate: true);
+            return;
+        }
+
         // A near-blank stub (M21): a comment header the user fills in, dated at creation time. Text
         // documents get nothing — there is no comment syntax to write it in.
         string? comment = language switch
@@ -131,7 +149,7 @@ public partial class ScriptWorkspaceWindow
         {
             ScriptLanguage = model.Language,
             ScriptText = model.Text,
-            ShadeGeneratedCode = model.IsAppDesignerFile,
+            ShadeGeneratedCode = model.IsAppDesignerFile || model.IsNewApp,
         };
         var document = new LayoutDocument
         {
@@ -312,7 +330,7 @@ public partial class ScriptWorkspaceWindow
         // An app is saved under a new name as an app, the way App Designer's Save As does it; its
         // class alone is saved through Export, or by picking the .m type here. A MATLAB class that
         // never was an app can be saved as a new .mlapp holding the code alone (open item 58).
-        bool app = entry.Model.IsAppDesignerFile;
+        bool app = entry.Model.IsAppDesignerFile || entry.Model.IsNewApp;
         var types = new List<(string Filter, string Language)>();
         if (app || entry.Model.Language == "MATLAB")
         {
@@ -406,9 +424,10 @@ public partial class ScriptWorkspaceWindow
 
             string text = entry.Editor.ScriptText;
             JGraph.Scripting.Jgs.MlappSaveResult? saved = null;
+            JGraph.Scripting.Jgs.MlappWriteResult? created = null;
             if (newPackage)
             {
-                text = AppDesignerDocument.SaveNew(path, text);
+                (text, created) = AppDesignerDocument.SaveNew(path, text);
             }
             else if (intoApp)
             {
@@ -432,7 +451,7 @@ public partial class ScriptWorkspaceWindow
             entry.Model.SetText(text);
             entry.Model.MarkSaved();
             entry.Document.Title = entry.Model.FileName;
-            SetStatus(newPackage ? $"Saved {path}.{AppDesignerDocument.CodeOnlyNote}"
+            SetStatus(created is not null ? $"Saved {path}.{AppDesignerDocument.NewFileNote(created)}"
                 : saved is null ? $"Saved {path}" : $"Saved {path}.{AppDesignerDocument.StatusNote(saved)}");
             if (saved is { HasDesignCopy: true, DesignCopyInStep: true, GeneratedCodeChanged: true } && !_generatedCodeNoticeShown)
             {

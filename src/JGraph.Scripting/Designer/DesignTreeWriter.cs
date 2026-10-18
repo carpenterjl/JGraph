@@ -39,7 +39,7 @@ public sealed record DesignTreeResult(byte[] Bytes, IReadOnlyList<string> Proble
 /// the component's <c>Icon</c> or <c>ImageSource</c> from it.
 /// </para>
 /// </remarks>
-public static class DesignTreeWriter
+public static partial class DesignTreeWriter
 {
     /// <summary>The variable App Designer keeps the tree in.</summary>
     public const string Variable = "components";
@@ -124,13 +124,33 @@ public static class DesignTreeWriter
 
     private static void Fill(
         AppDesign design, DesignComponent component, McosObject o, Dictionary<DesignComponent, McosObject> objects,
-        DesignCodeStyle style, string? appFolder, List<string> problems)
+        DesignCodeStyle style, string? appFolder, List<string> problems, Dictionary<string, List<string>>? setBy = null,
+        IReadOnlyList<(string Name, DesignValue Value)>? properties = null)
     {
+        // What each property stored, by name, for a save that copies only some properties onto an
+        // object App Designer saved (DS6).
+        void Put(string property, string name, McosValue value)
+        {
+            o.Set(name, value);
+            if (setBy is not null)
+            {
+                if (!setBy.TryGetValue(property, out List<string>? names))
+                {
+                    setBy[property] = names = [];
+                }
+
+                if (!names.Contains(name))
+                {
+                    names.Add(name);
+                }
+            }
+        }
+
         string? image = null;
         double[]? row = null;
         double[]? column = null;
         var late = new List<(string Name, McosValue Value)>();
-        foreach ((string name, DesignValue value) in DesignCodeWriter.WrittenProperties(component, style.Theme))
+        foreach ((string name, DesignValue value) in properties ?? DesignCodeWriter.WrittenProperties(component, style.Theme))
         {
             switch (name)
             {
@@ -149,7 +169,7 @@ public static class DesignTreeWriter
                 image = file.RelativePath;
                 if (appFolder is not null)
                 {
-                    o.Set(name, new McosValue.Value(MatData.Text(Path.Combine([appFolder, .. file.Parts]))));
+                    Put(name, name, new McosValue.Value(MatData.Text(Path.Combine([appFolder, .. file.Parts]))));
                 }
 
                 continue;
@@ -168,7 +188,7 @@ public static class DesignTreeWriter
                 McosObject part = Build(recorded);
                 McosObject label = where.InRuler && part.Get("Label_IS") is McosValue.Refs { Objects: [var inRuler] } ? inRuler : part;
                 label.Set("String_I", new McosValue.Value(text));
-                o.Set(where.Part, new McosValue.Refs([part]));
+                Put(name, where.Part, new McosValue.Refs([part]));
                 continue;
             }
 
@@ -194,8 +214,8 @@ public static class DesignTreeWriter
                 toolbar.Set("VisibleMode", new McosValue.Word("manual"));
                 toolbar.Set("Visible_I", new McosValue.Word("off"));
                 toolbar.Set("SerializableMode", new McosValue.Word("manual"));
-                o.Set("Toolbar_IS", new McosValue.Refs([toolbar]));
-                o.Set("ToolbarMode", new McosValue.Value(MatData.Text("manual")));
+                Put(name, "Toolbar_IS", new McosValue.Refs([toolbar]));
+                Put(name, "ToolbarMode", new McosValue.Value(MatData.Text("manual")));
                 continue;
             }
 
@@ -221,10 +241,10 @@ public static class DesignTreeWriter
                 continue;
             }
 
-            o.Set(name == "AD_AliasedThemeChangedFcn" ? "ThemeChangedFcn" : name, stored);
+            Put(name, name == "AD_AliasedThemeChangedFcn" ? "ThemeChangedFcn" : name, stored);
             if (component.Class?.Property(name) is { HasMode: true })
             {
-                o.Set(name + "Mode", new McosValue.Word("manual"));
+                Put(name, name + "Mode", new McosValue.Word("manual"));
             }
         }
 
@@ -233,13 +253,7 @@ public static class DesignTreeWriter
         // places stores no place but the design's.
         if (component.Type == Axes && o.Has("Position"))
         {
-            foreach (string stale in o.Entries.Select(static e => e.Name)
-                .Where(static n => n is "Position_I" or "InnerPosition_I" or "OuterPosition_I"
-                    || n.EndsWith(".OuterPositionStorage", StringComparison.Ordinal) || n.EndsWith(".InnerPositionStorage", StringComparison.Ordinal))
-                .ToArray())
-            {
-                o.Remove(stale);
-            }
+            DropAxesPlace(o);
         }
 
         if (row is not null || column is not null)
@@ -247,7 +261,8 @@ public static class DesignTreeWriter
             var options = new McosObject(GridOptions);
             options.Set("Row", new McosValue.Value(new MatData.Numbers("double", [1, (row ?? [1]).Length], row ?? [1])));
             options.Set("Column", new McosValue.Value(new MatData.Numbers("double", [1, (column ?? [1]).Length], column ?? [1])));
-            o.Set("Layout", new McosValue.Refs([options]));
+            Put("Layout.Row", "Layout", new McosValue.Refs([options]));
+            Put("Layout.Column", "Layout", new McosValue.Refs([options]));
         }
 
         if (component.Get("ContextMenu") is ComponentsValue { CodeNames: [string menu] }
@@ -256,21 +271,9 @@ public static class DesignTreeWriter
             o.Set("ContextMenu", new McosValue.Refs([menuObject]));
         }
 
-        // A tab's size is its tab group's when the tab is made (the code positions the group first),
-        // held in its two position stores; the base holds a fresh group's.
         if (component.Type == "matlab.ui.container.Tab")
         {
-            double[] size = component.Parent?.Get("Position") is NumericValue { Data.Count: 4 } groupPosition
-                && component.Parent.IsInGrid is false
-                ? [groupPosition.Data[2], groupPosition.Data[3]]
-                : [250, 210];
-            foreach (string store in (string[])["StorageUnitPos", "matlab.ui.internal.mixin.ReadOnlyPositionable.OuterPositionStorage"])
-            {
-                if (o.Get(store) is McosValue.Refs { Objects: [var unitPos] })
-                {
-                    unitPos.Set("matlab.ui.internal.UnitPos.PositionCache", new McosValue.Value(MatData.Row(1, 1, size[0], size[1])));
-                }
-            }
+            TabSize(component, o);
         }
 
         // MATLAB's Children order, the last made first: load puts each in front as it attaches it.
@@ -289,7 +292,7 @@ public static class DesignTreeWriter
 
         foreach ((string name, McosValue value) in late)
         {
-            o.Set(name, value);
+            Put(name, name, value);
         }
 
         var fields = new List<(string, MatData)>
@@ -303,7 +306,55 @@ public static class DesignTreeWriter
             fields.Add(("ImageRelativePath", MatData.Text(image ?? string.Empty)));
         }
 
+        // A responsive app's grid on the figure and the panels in it are App Designer's own
+        // responsive containers; its reader refuses a responsive app without them
+        // (MLAPPResponsiveAppValidator: "IncompatibleAppVersion", found by ds6_verify).
+        if (design.IsResponsive && IsResponsiveContainer(design, component))
+        {
+            fields.Add(("AppTypeProperties", MatData.Struct(("IsResponsiveContainer", new MatData.Numbers("logical", [1, 1], [1])))));
+        }
+
         o.Dynamic.Add(DynamicProperty("DesignTimeProperties", MatData.Struct([.. fields])));
+    }
+
+    /// <summary>The grid a responsive app's figure holds, or a container in it.</summary>
+    private static bool IsResponsiveContainer(AppDesign design, DesignComponent component) =>
+        component.Type == "matlab.ui.container.GridLayout" && ReferenceEquals(component.Parent, design.Figure)
+        || (component.Parent is { Type: "matlab.ui.container.GridLayout" } grid && ReferenceEquals(grid.Parent, design.Figure)
+            && component.Type == "matlab.ui.container.Panel");
+
+    /// <summary>
+    /// Takes out an axes' own position stores, which load applies after the stored names: an axes
+    /// the design places stores no place but the design's.
+    /// </summary>
+    private static void DropAxesPlace(McosObject o)
+    {
+        foreach (string stale in o.Entries.Select(static e => e.Name)
+            .Where(static n => n is "Position_I" or "InnerPosition_I" or "OuterPosition_I"
+                || n.EndsWith(".OuterPositionStorage", StringComparison.Ordinal) || n.EndsWith(".InnerPositionStorage", StringComparison.Ordinal))
+            .ToArray())
+        {
+            o.Remove(stale);
+        }
+    }
+
+    /// <summary>
+    /// A tab's size is its tab group's when the tab is made (the code positions the group first),
+    /// held in its two position stores; the base holds a fresh group's.
+    /// </summary>
+    private static void TabSize(DesignComponent component, McosObject o)
+    {
+        double[] size = component.Parent?.Get("Position") is NumericValue { Data.Count: 4 } groupPosition
+            && component.Parent.IsInGrid is false
+            ? [groupPosition.Data[2], groupPosition.Data[3]]
+            : [250, 210];
+        foreach (string store in (string[])["StorageUnitPos", "matlab.ui.internal.mixin.ReadOnlyPositionable.OuterPositionStorage"])
+        {
+            if (o.Get(store) is McosValue.Refs { Objects: [var unitPos] })
+            {
+                unitPos.Set("matlab.ui.internal.UnitPos.PositionCache", new McosValue.Value(MatData.Row(1, 1, size[0], size[1])));
+            }
+        }
     }
 
     /// <summary>A value as the tree stores it, or null when it has no stored form here.</summary>

@@ -329,6 +329,17 @@ public static class DesignCodeWriter
             && value is CellValue { Items: [var only] } && DesignValueText.IsEqual(only, defaultValue);
     }
 
+    /// <summary>
+    /// The line that sets <paramref name="name"/> to <paramref name="value"/> as App Designer stores
+    /// it in <c>DesignTimeProperties.ComponentCode</c> (see <see cref="StoredComponentCode"/>).
+    /// </summary>
+    public static string StoredPropertyLine(DesignComponent component, string name, DesignValue value, string? appFolder = null)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        ArgumentNullException.ThrowIfNull(value);
+        return PropertyLine(App + ".ad_CODENAME_ad", component.Type, name, value, stored: true, appFolder);
+    }
+
     /// <summary>The line that sets <paramref name="name"/> to <paramref name="value"/>, unindented.</summary>
     public static string PropertyLine(DesignComponent component, string name, DesignValue value)
     {

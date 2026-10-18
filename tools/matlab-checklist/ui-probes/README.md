@@ -38,6 +38,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `ds0/` | Stage DS0 of the designer plan: headless. `ds0_stale` writes apps whose component tree disagrees with their code and shows what App Designer's load and the class make of each; `ds0_shipped` reads the 44 shipped apps' trees against their `createComponents`; `ds0_codegen` runs App Designer's component code generator over them; `ds0_tree` saves component trees for `ds0_tree_dump.py` to list their subsystem objects; `ds0_plaintext` writes a plain-text `.m` app and loads and runs it with the feature off and on; the window session `ds0w_dock` (`.m` + `.ps1`, user's leave) opens App Designer in the full desktop and lists and captures MATLAB's windows. `rt/` (ignored) holds what they write. |
 | `ds1/` | Stage DS1 of the designer plan (ADR 0243): headless. `ds1_catalog` records, per uifigure component class, App Designer's generated property order, mode siblings and themed run-time defaults into `ds1_catalog.json`, which the build embeds; `ds1_oracle` runs R2025b's generator over every component of the 44 shipped apps into `rt/ds1_oracle.txt` (ignored: MathWorks' lines, read by the local test); `ds1_generate` runs the fixture app `tests/JGraph.Tests/Scripting/Designer/DesignerSpecApp.m` through the generator and writes `DesignerSpecApp.generated.txt` beside it; `ds1_quirks` tries two generator branches that write code which does not read back on 15 real properties. |
 | `ds1b/` | Stage DS1b of the designer plan (ADR 0244): headless. `ds1b_mcos.py` reads and writes a level-5 MAT-file's MCOS subsystem as a model (byte for byte); `ds1b_reduce.py` + `ds1b_reduced`, `ds1b_rules.py` + `ds1b_rules` and `ds1b_setsaves` learn what `load` does with a tree that stores fewer or other names; `ds1b_fresh` saves a fresh component of each of the 45 classes (and an axes' labelled parts) into `rt/fresh`, `ds1b_blank.py` + `ds1b_blanked` load each with nothing stored, `ds1b_transcribe.py` + `ds1b_scratch` (over `ds1b_build.py`) rewrite saved trees from scratch, and `ds1b_base.py` records the bases into `ds1b_base.json`, which the build embeds; `ds1b_dates`, `ds1b_tabs` and `ds1b_cmap` record a datetime's stored form, a tab's size and App Designer's colormap names; `ds1b_verify` (with `ds1b_reference`, `ds1b_appsource`, `ds1b_objdiff`) loads every tree JGraph writes against the tree its code makes, and `ds1b_appdesigner` runs each through App Designer's serializer and reader against the same for the code's tree; `ds1b_viewbuild` saves both as `.mlapp` files for the window session `ds1b_view` (`.m` + `.ps1`, user's leave), which opens each in App Designer's window and captures it for `ds1b_viewdiff.py`. `rt/` (ignored) holds the files, the trees JGraph writes among them (`rt/jgraph`, left by the local test `AppDesignerTreeWriterTests`). |
+| `ds6/` | Stage DS6 of the designer plan (ADR 0245): headless. `ds6_verify` opens, through App Designer's own reader, the files the local test `AppDesignerModelSaveTests` leaves in `rt/` when run with `JGRAPH_DS6_OUT`: each shipped app as R2025b ships it and as JGraph saved it after an edit (`rt/edits`), and apps JGraph wrote whole (`rt/new`) against a control saved by App Designer's serializer from the code's own tree (`rt/control`). `DS6_PART` (`edits` or `new`), `DS6_ONLY` and `DS6_SHARD` pick what runs (`ds6_new1`-`ds6_new3` run the new apps in three shards); `ds6_verify_edits.out` and `ds6_verify_new.out` keep the results. `rt/` (ignored) holds the files. |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -1098,3 +1099,56 @@ made every component, then `closeNoPrompt`), and the window was captured with Pr
   the scrolled content in both.
 - The `.mlapp` files hold R2025b's re-save of the loaded objects, not JGraph's bytes. A first
   build stopped at the 900 s limit after 37 apps; a build skips apps already written.
+
+## DS6 findings (designer plan, R2025b, headless)
+
+The probe in `ds6/` backs stage DS6: App Designer's whole model written by JGraph, and a save of an
+app made in MATLAB that keeps what App Designer saved (ADR 0245, `MatMcosFile`,
+`DesignTreeWriter.Update`, `JgsMlapp.WriteApp`). Every file is opened as it is, through App
+Designer's own reader (`DeserializerFactory.createDeserializer(fn).getAppData()`), with no
+serializer in between: unlike DS1b's checks, R2025b never re-saves what JGraph wrote.
+
+**Edits to shipped apps** (part 1, `ds6_verify_edits.out`). In each of the 43 apps with a level-5
+model, the local test changes the first label's, button's or check box's `Text`, removes the last
+label no other component names, adds a button to the figure, regenerates the code and saves it
+through the editor's save. All 43 load as saved: every component the edit did not touch (923 in
+all) has every property, hidden ones included, as the original's (`ds1b_objdiff`). The changed one
+differs in its `Text` alone, the removed one is gone, and the added button has its text and place.
+The changed and added components' stored code is R2025b's generator's on the loaded component.
+Callbacks are bound as before, and there is no warning the original lacks. The two Simulink apps'
+Simulink components, which DS1b cannot write, come through the save untouched.
+
+**What the save must state** (found on the way):
+
+- **A file MATLAB saved keeps each class's values at saving**, beside each object's stored names.
+  An object whose hook stores a public name for its `_I` storage lists the storage as renamed (the
+  table's last segment, per object id). A new button that stores `FontColor` without that list,
+  in a file whose button class keeps `FontColor_I`, makes R2025b warn that the name "already
+  exists in the serialization content".
+- **Old tables.** Nine shipped models have a version 3 table (two per-class cells, no
+  renamed-names segment). One version 4 table leaves that segment out (its offsets are zero).
+- **Older saves** stored a grid child's `Position` in its component code, and some containers'
+  children in the order made.
+
+**New apps** (part 2, `ds6_verify_new.out`). The local test writes 46 apps whole: the shipped
+apps' code, the fixture app and the blank app. Each is opened as written, from its source app's
+folder, where an image or page named without a path is found. It is held against a control: the
+tree that `createComponents`, as App Designer's generator writes it, makes when run, saved by App
+Designer's serializer with the same callbacks and opened the same way. 41 of the 46 have no
+finding the control lacks. Of the other five:
+- two Simulink apps lack the Simulink components;
+- two apps' axes differ in the last digits of the camera view angle and plot-box ratio (DS1b's
+  finding);
+- the responsive app holds App Designer's responsive-container record, which the control lacks.
+
+The first run found that App Designer's reader refuses a responsive app
+(`MLAPPResponsiveAppValidator`, "IncompatibleAppVersion") unless the grid on its figure, and each
+panel in that grid, has `DesignTimeProperties.AppTypeProperties.IsResponsiveContainer` true.
+It also found that an image or HTML page named in the code without a path loads only from the
+app's folder. The part takes about three minutes an app, so it runs in three shards
+(`ds6_new1`-`ds6_new3`, `DS6_SHARD`).
+
+**What the headless reader does not show.** App Designer's reader does not lay out a grid, so a
+grid child's position is whatever its tree holds: for a new component, its base's placeholder,
+which the canvas replaces. The comparison leaves a grid child's position family out. App
+Designer's window over these files is open item 149.

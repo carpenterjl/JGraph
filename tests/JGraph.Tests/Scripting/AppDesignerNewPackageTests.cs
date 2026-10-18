@@ -92,8 +92,10 @@ public class AppDesignerNewPackageTests : IAsyncLifetime
         string text = JgsMlapp.ReadCode(Helper("U7bApp.mlapp"));
         string target = Path.Combine(_directory, "FreshApp.mlapp");
 
-        string saved = AppDesignerDocument.SaveNew(target, text);
+        (string saved, MlappWriteResult written) = AppDesignerDocument.SaveNew(target, text);
 
+        // An app App Designer lays out is written whole (DS6): App Designer's model goes with it.
+        Assert.True(written.HasDesign, string.Join(" ", written.Problems));
         Assert.StartsWith("classdef FreshApp < matlab.apps.AppBase\n", saved, StringComparison.Ordinal);
         Assert.Contains("        function app = FreshApp(varargin)", saved, StringComparison.Ordinal);
         Assert.Equal(saved, JgsMlapp.ReadCode(target));
@@ -105,9 +107,9 @@ public class AppDesignerNewPackageTests : IAsyncLifetime
         Assert.Contains("startup", _output.NormalLines.Select(static l => l.Trim()));
         Assert.Contains("4", _output.NormalLines.Select(static l => l.Trim()));
 
-        // From then on it is an App Designer file with no design copy: a save goes back into it.
+        // From then on it is an App Designer file with its design copy: a save goes back into it.
         MlappSaveResult result = JgsMlapp.WriteCode(target, saved + "\n% saved again");
-        Assert.Equal(new MlappSaveResult(HasDesignCopy: false, DesignCopyInStep: false, GeneratedCodeChanged: true), result);
+        Assert.True(result.HasDesignCopy);
         Assert.Equal(saved + "\n% saved again", JgsMlapp.ReadCode(target));
     }
 
@@ -117,7 +119,9 @@ public class AppDesignerNewPackageTests : IAsyncLifetime
         string target = Path.Combine(_directory, "Plain.mlapp");
         File.WriteAllText(target, "not a package");
 
-        string saved = AppDesignerDocument.SaveNew(target, "classdef Other < handle\r\n    properties\r\n        X = 1\r\n    end\r\nend\r\n");
+        (string saved, MlappWriteResult written) = AppDesignerDocument.SaveNew(target, "classdef Other < handle\r\n    properties\r\n        X = 1\r\n    end\r\nend\r\n");
+        Assert.False(written.HasDesign);
+        Assert.Equal(AppDesignerDocument.CodeOnlyNote, AppDesignerDocument.NewFileNote(written));
 
         Assert.Equal("classdef Plain < handle\n    properties\n        X = 1\n    end\nend\n", JgsMlapp.ReadCode(target));
         Assert.Equal(saved.Replace("\r\n", "\n", StringComparison.Ordinal), JgsMlapp.ReadCode(target));

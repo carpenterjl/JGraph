@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using static JGraph.Scripting.MatFile.MatConstants;
 
@@ -7,7 +8,8 @@ namespace JGraph.Scripting.MatFile;
 
 /// <summary>
 /// A plain value as a level-5 matrix element holds it, for <see cref="MatMcosWriter"/>: a number
-/// array of one class, a char array, a cell array or a struct array, each with its size.
+/// array of one class, a char array, a cell array or a struct array, each with its size; an object
+/// of the subsystem; or an element kept as another file held it.
 /// </summary>
 internal abstract record MatData(int[] Size)
 {
@@ -23,6 +25,16 @@ internal abstract record MatData(int[] Size)
     /// <summary>A struct array: its field names in order, and each element's values in that order.</summary>
     public sealed record Structs(int[] Size, string[] Fields, MatData[][] Elements) : MatData(Size);
 
+    /// <summary>A subsystem object, as MATLAB stores one in a variable: an opaque element of its class holding a reference to it.</summary>
+    public sealed record Object(McosObject Target) : MatData([1, 1]);
+
+    /// <summary>
+    /// A matrix element kept as the file it came from held it (designer plan DS6, ADR 0245): its
+    /// bytes, and where in them it refers to subsystem objects, which are written as the ids those
+    /// objects have in the new file.
+    /// </summary>
+    public sealed record Kept(byte[] Element, IReadOnlyList<McosReference> References) : MatData([]);
+
     /// <summary>A 1-by-1 double.</summary>
     public static Numbers Scalar(double value) => new("double", [1, 1], [value]);
 
@@ -36,6 +48,13 @@ internal abstract record MatData(int[] Size)
     public static Structs Struct(params (string Name, MatData Value)[] fields) =>
         new([1, 1], fields.Select(static f => f.Name).ToArray(), [fields.Select(static f => f.Value).ToArray()]);
 }
+
+/// <summary>
+/// One reference to subsystem objects inside a kept element: where its first object id is, the
+/// objects in id order (null for an id that named no object, which is written as it was), and
+/// where its class id is. The class id is rewritten only when <paramref name="ClassName"/> is given.
+/// </summary>
+internal sealed record McosReference(int IdsAt, IReadOnlyList<McosObject?> Targets, int ClassAt, string? ClassName = null);
 
 /// <summary>What one stored name of a subsystem object holds.</summary>
 internal abstract record McosValue
@@ -69,6 +88,15 @@ internal sealed class McosObject(string className)
     /// <summary>The instance's dynamic properties, as <c>meta.DynamicProperty</c> objects.</summary>
     public List<McosObject> Dynamic { get; } = [];
 
+    /// <summary>
+    /// Whether the object was saved through its class's <c>saveobj</c>, which MATLAB keeps in a list
+    /// of its own (a string is); a file read keeps the form each object had.
+    /// </summary>
+    public bool SavedForm { get; set; }
+
+    /// <summary>The names the object's serialization hook stored under another name, which MATLAB lists for each object (a public name stored for its <c>_I</c> storage).</summary>
+    public List<string> Renamed { get; } = [];
+
     /// <summary>Stores <paramref name="name"/>: in the place it already has, or last. <c>load</c> assigns a name once, so a name is never stored twice.</summary>
     public McosObject Set(string name, McosValue value)
     {
@@ -85,6 +113,14 @@ internal sealed class McosObject(string className)
         return this;
     }
 
+    /// <summary>Stores <paramref name="name"/> last, wherever it was before, so that <c>load</c> assigns it after everything else.</summary>
+    public McosObject SetLast(string name, McosValue value)
+    {
+        Remove(name);
+        _entries.Add((name, value));
+        return this;
+    }
+
     /// <summary>What <paramref name="name"/> holds, or null when it is not stored.</summary>
     public McosValue? Get(string name) => _entries.Find(e => e.Name == name).Value;
 
@@ -96,9 +132,31 @@ internal sealed class McosObject(string className)
 }
 
 /// <summary>
-/// Writes a level-5 MAT-file whose one variable is a struct holding a MATLAB class instance - the
-/// shape of App Designer's <c>components</c> - with the instance and every object it refers to in
-/// MATLAB's subsystem (designer plan DS1b, ADR 0244).
+/// What a file read for rewriting brings to the new subsystem (designer plan DS6, ADR 0245): its
+/// names and classes, kept in their places because the per-class values and MATLAB's enumeration
+/// records name them by index, the three per-class cells, and the bytes around the object table.
+/// </summary>
+/// <param name="Names">The name table; the first is the empty name.</param>
+/// <param name="Classes">The class table (a package name's index and a class name's index); the first is the empty class.</param>
+/// <param name="ClassCells">The first per-class cell's items, one per class.</param>
+/// <param name="ClassNumbers">The second per-class cell, an <c>int32</c> per class.</param>
+/// <param name="ClassDefaults">The third per-class cell's items: each class's values at the time of saving.</param>
+/// <param name="Header">The file's 116-byte description text.</param>
+/// <param name="Trailer">The subsystem stream's bytes after the <c>FileWrapper__</c> struct.</param>
+internal sealed record McosSeed(
+    IReadOnlyList<string> Names,
+    IReadOnlyList<(int Package, int Name)> Classes,
+    IReadOnlyList<MatData> ClassCells,
+    IReadOnlyList<double> ClassNumbers,
+    IReadOnlyList<MatData> ClassDefaults,
+    byte[] Header,
+    byte[] Trailer);
+
+/// <summary>
+/// Writes a level-5 MAT-file whose variables hold MATLAB class instances - App Designer's
+/// <c>components</c> and <c>appData</c> beside the plain <c>code</c> - with every object they
+/// refer to in MATLAB's subsystem (designer plan DS1b, ADR 0244; several variables and files read
+/// for rewriting, DS6, ADR 0245).
 /// </summary>
 /// <remarks>
 /// <para>
@@ -107,26 +165,33 @@ internal sealed class McosObject(string className)
 /// a <c>uint8</c> variable whose bytes are a small MAT stream - a struct whose field <c>MCOS</c>
 /// holds the opaque <c>FileWrapper__</c> cell, then a second stream whose <c>MCOS</c> is empty.
 /// The cell is the byte table, an empty element, the stored values, and three cells with one entry
-/// per class. The table holds the names, the classes (package and name), the objects (a class, a
-/// property list, and a dependency id that indexes the dynamic properties), the property lists
-/// (a name, a kind - 0 a word from the names, 1 a stored value, 2 a literal - and the datum), the
-/// dynamic-property lists, a list per object of names its serialization hook renamed, and a last
-/// segment of <c>1</c> and its own offset plus eight.
+/// per class. The table holds the names, the classes (package and name), the property lists of
+/// objects saved through <c>saveobj</c>, the objects (a class, the property list in one of the two
+/// forms, and a dependency id that indexes the dynamic properties), the other property lists (a
+/// name, a kind - 0 a word from the names, 1 a stored value, 2 a literal - and the datum), the
+/// dynamic-property lists, and for each object whose serialization hook stored a name under another
+/// the names it renamed.
 /// </para>
 /// <para>
-/// What this leaves out, and R2025b still loads the same: every class's saved-time defaults (the
-/// three per-class cells are written empty), and so the enumeration objects those defaults refer
-/// to; the renamed-names lists; and any object not reachable from the root. Without the defaults,
-/// <c>load</c> assigns exactly the names stored, each through the class's own set methods and
-/// serialization hooks, in the order stored; a name the file does not store keeps the class's own
-/// default. Strings are not written (MATLAB saves them through <c>saveobj</c>); a char takes their
-/// place.
+/// What a new file leaves out, and R2025b still loads the same: every class's saved-time defaults
+/// (the three per-class cells are written empty), and so the enumeration objects those defaults
+/// refer to; the renamed-names lists; and any object not reachable from the variables. Without the
+/// defaults, <c>load</c> assigns exactly the names stored, each through the class's own set methods
+/// and serialization hooks, in the order stored; a name the file does not store keeps the class's
+/// own default. Strings are not made here (MATLAB saves them through <c>saveobj</c>); a char takes
+/// their place. A file read for rewriting (<see cref="McosSeed"/>) keeps all of that: its names and
+/// classes in their places, its per-class cells, each object's form and renamed names, and every
+/// value it held as its bytes, the object ids inside them written anew. Objects are numbered as
+/// they are reached from the variables, and each object's dependency id is its own id.
 /// </para>
 /// </remarks>
 internal static class MatMcosWriter
 {
     /// <summary>The first word of every reference to subsystem objects.</summary>
-    private const uint ReferenceMark = 0xDD000000;
+    private const uint ReferenceMark = MatRaw.ReferenceMark;
+
+    /// <summary>The description text of a file this writes.</summary>
+    private const string Description = "MATLAB 5.0 MAT-file, Platform: PCWIN64, Created by JGraph's designer";
 
     /// <summary>
     /// The MAT-file whose variable <paramref name="variable"/> is a 1-by-1 struct with the field
@@ -135,30 +200,74 @@ internal static class MatMcosWriter
     public static byte[] Write(McosObject root, string variable, string field)
     {
         ArgumentNullException.ThrowIfNull(root);
-        var table = new Table();
-        byte[] subsystem = table.Subsystem(root);
-        byte[] figure = Opaque(string.Empty, root.ClassName,
-            Uint32Column([ReferenceMark, 2, 1, 1, 1, (uint)table.ClassId(root.ClassName)]));
-        byte[] body = StructElement(variable, [field], [[figure]], [1, 1]);
+        return WriteFile([(variable, MatData.Struct((field, new MatData.Object(root))))], null, compress: false);
+    }
+
+    /// <summary>
+    /// The MAT-file holding <paramref name="variables"/> in order, each a value under its name (a
+    /// kept element carries its own name), with every object they reach in the subsystem. A
+    /// <paramref name="seed"/> brings a read file's tables; <paramref name="compress"/> writes each
+    /// element compressed, as MATLAB does.
+    /// </summary>
+    public static byte[] WriteFile(IReadOnlyList<(string Name, MatData Value)> variables, McosSeed? seed, bool compress)
+    {
+        ArgumentNullException.ThrowIfNull(variables);
+        var table = new Table(seed);
+        List<Built> roots = variables.Select(static v => v.Value is MatData.Kept kept ? new Built(kept.Element, kept.References) : Build(v.Name, v.Value)).ToList();
+        byte[] subsystem = table.Subsystem(roots, seed, out List<byte[]> patched);
 
         using var stream = new MemoryStream();
         var header = new byte[116];
         Array.Fill(header, (byte)' ');
-        byte[] text = Encoding.ASCII.GetBytes("MATLAB 5.0 MAT-file, Platform: PCWIN64, Created by JGraph's designer");
-        Array.Copy(text, header, text.Length);
+        if (seed is not null)
+        {
+            Array.Copy(seed.Header, header, Math.Min(116, seed.Header.Length));
+        }
+        else
+        {
+            byte[] text = Encoding.ASCII.GetBytes(Description);
+            Array.Copy(text, header, text.Length);
+        }
+
         stream.Write(header);
-        Span<byte> tail = stackalloc byte[12];
-        BinaryPrimitives.WriteInt64LittleEndian(tail, 128 + body.Length);
-        BinaryPrimitives.WriteUInt16LittleEndian(tail[8..], 0x0100);
-        tail[10] = (byte)'I';
-        tail[11] = (byte)'M';
-        stream.Write(tail);
-        stream.Write(body);
-        stream.Write(Uint8Row(subsystem));
-        return stream.ToArray();
+        stream.Write(new byte[12]);
+        foreach (byte[] root in patched)
+        {
+            stream.Write(Packed(root, compress));
+        }
+
+        long subsystemAt = stream.Position;
+        stream.Write(Packed(Uint8Row(subsystem), compress));
+        byte[] file = stream.ToArray();
+        BinaryPrimitives.WriteInt64LittleEndian(file.AsSpan(116), subsystemAt);
+        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(124), 0x0100);
+        file[126] = (byte)'I';
+        file[127] = (byte)'M';
+        return file;
     }
 
-    /// <summary>The names, classes, objects and stored values of one file, gathered as the root is walked.</summary>
+    /// <summary>An element as it goes into the file: compressed with zlib inside a <c>miCOMPRESSED</c> element, or as it is.</summary>
+    private static byte[] Packed(byte[] element, bool compress)
+    {
+        if (!compress)
+        {
+            return element;
+        }
+
+        using var packed = new MemoryStream();
+        using (var zlib = new ZLibStream(packed, CompressionLevel.Optimal, leaveOpen: true))
+        {
+            zlib.Write(element);
+        }
+
+        var tagged = new byte[8 + packed.Length];
+        BinaryPrimitives.WriteInt32LittleEndian(tagged, MiCompressed);
+        BinaryPrimitives.WriteInt32LittleEndian(tagged.AsSpan(4), (int)packed.Length);
+        packed.ToArray().CopyTo(tagged, 8);
+        return tagged;
+    }
+
+    /// <summary>The names, classes, objects and stored values of one file, gathered as the variables are walked.</summary>
     private sealed class Table
     {
         private readonly List<string> _names = [string.Empty];
@@ -166,6 +275,33 @@ internal static class MatMcosWriter
         private readonly List<(int Package, int Name)> _classes = [(0, 0)];
         private readonly Dictionary<string, int> _classIds = new(StringComparer.Ordinal);
         private readonly List<byte[]> _cells = [];
+        private readonly Dictionary<McosObject, int> _ids = new(ReferenceEqualityComparer.Instance);
+
+        public Table(McosSeed? seed)
+        {
+            if (seed is null)
+            {
+                return;
+            }
+
+            _names.Clear();
+            _nameIds.Clear();
+            for (int i = 0; i < seed.Names.Count; i++)
+            {
+                _names.Add(seed.Names[i]);
+                _nameIds.TryAdd(seed.Names[i], i);
+            }
+
+            _classes.Clear();
+            _classes.AddRange(seed.Classes);
+            for (int i = 1; i < _classes.Count; i++)
+            {
+                _classIds.TryAdd(QualifiedName(_classes[i]), i);
+            }
+        }
+
+        private string QualifiedName((int Package, int Name) c) =>
+            c.Package > 0 ? $"{_names[c.Package]}.{_names[c.Name]}" : _names[c.Name];
 
         public int ClassId(string className)
         {
@@ -190,37 +326,87 @@ internal static class MatMcosWriter
             return id;
         }
 
-        /// <summary>The subsystem's bytes: the <c>FileWrapper__</c> stream for every object reachable from <paramref name="root"/>, the root first.</summary>
-        public byte[] Subsystem(McosObject root)
+        /// <summary>A built element with every object it refers to written as that object's id, and its class where the reference names it.</summary>
+        public byte[] Patch(Built built)
+        {
+            if (built.References.Count == 0)
+            {
+                return built.Bytes;
+            }
+
+            byte[] bytes = (byte[])built.Bytes.Clone();
+            foreach (McosReference reference in built.References)
+            {
+                for (int i = 0; i < reference.Targets.Count; i++)
+                {
+                    if (reference.Targets[i] is { } target)
+                    {
+                        BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan(reference.IdsAt + (4 * i)), (uint)_ids[target]);
+                    }
+                }
+
+                if (reference.ClassName is { } className)
+                {
+                    BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan(reference.ClassAt), (uint)ClassId(className));
+                }
+            }
+
+            return bytes;
+        }
+
+        /// <summary>
+        /// The subsystem's bytes: the <c>FileWrapper__</c> stream for every object reachable from
+        /// <paramref name="roots"/>; and the roots with their references written, before the table is.
+        /// </summary>
+        public byte[] Subsystem(List<Built> roots, McosSeed? seed, out List<byte[]> patchedRoots)
         {
             var order = new List<McosObject>();
-            var ids = new Dictionary<McosObject, int>(ReferenceEqualityComparer.Instance);
-            Visit(root);
+            var pending = new Stack<McosObject>();
+
+            void Reach(IEnumerable<McosObject?> targets)
+            {
+                foreach (McosObject? t in targets)
+                {
+                    if (t is not null && !_ids.ContainsKey(t))
+                    {
+                        Visit(t);
+                    }
+                }
+            }
 
             void Visit(McosObject o)
             {
-                if (ids.ContainsKey(o))
+                if (_ids.ContainsKey(o))
                 {
                     return;
                 }
 
-                ids[o] = order.Count + 1;
+                _ids[o] = order.Count + 1;
                 order.Add(o);
                 foreach ((_, McosValue value) in o.Entries)
                 {
-                    if (value is McosValue.Refs refs)
+                    switch (value)
                     {
-                        foreach (McosObject other in refs.Objects)
-                        {
-                            Visit(other);
-                        }
+                        case McosValue.Refs refs:
+                            Reach(refs.Objects);
+                            break;
+                        case McosValue.Value v:
+                            Reach(Targets(v.Data));
+                            break;
                     }
                 }
 
-                foreach (McosObject d in o.Dynamic)
-                {
-                    Visit(d);
-                }
+                Reach(o.Dynamic);
+            }
+
+            foreach (Built root in roots)
+            {
+                Reach(root.References.SelectMany(static r => r.Targets));
+            }
+
+            if (seed is not null)
+            {
+                Reach(seed.ClassCells.Concat(seed.ClassDefaults).SelectMany(Targets));
             }
 
             foreach (McosObject o in order)
@@ -228,7 +414,10 @@ internal static class MatMcosWriter
                 ClassId(o.ClassName);
             }
 
-            var lists = new List<(int Name, int Kind, uint Datum)[]> { Array.Empty<(int, int, uint)>() };
+            patchedRoots = roots.Select(Patch).ToList();
+            var saved = new List<(int Name, int Kind, uint Datum)[]> { Array.Empty<(int, int, uint)>() };
+            var plain = new List<(int Name, int Kind, uint Datum)[]> { Array.Empty<(int, int, uint)>() };
+            var records = new List<uint>(new uint[6]);
             foreach (McosObject o in order)
             {
                 var list = new List<(int, int, uint)>(o.Entries.Count);
@@ -238,31 +427,52 @@ internal static class MatMcosWriter
                     {
                         McosValue.Word w => (Name(name), 0, (uint)Name(w.Text)),
                         McosValue.Literal l => (Name(name), 2, (uint)l.Number),
-                        McosValue.Value v => (Name(name), 1, Store(Element(v.Data))),
-                        McosValue.Refs r => (Name(name), 1, Store(Reference(r, ids))),
+                        McosValue.Value v => (Name(name), 1, Store(Patch(Build(string.Empty, v.Data)))),
+                        McosValue.Refs r => (Name(name), 1, Store(Patch(Reference(r)))),
                         _ => throw new InvalidOperationException("Unknown stored value."),
                     });
                 }
 
-                lists.Add([.. list]);
+                List<(int, int, uint)[]> into = o.SavedForm ? saved : plain;
+                into.Add([.. list]);
+                int id = _ids[o];
+                records.AddRange([(uint)ClassId(o.ClassName), 0, 0,
+                    o.SavedForm ? (uint)(into.Count - 1) : 0, o.SavedForm ? 0 : (uint)(into.Count - 1), (uint)id]);
             }
 
             // The dependency id is the object's own id; it indexes the dynamic-property lists.
             var dynamic = new List<int[]> { Array.Empty<int>() };
-            dynamic.AddRange(order.Select(o => o.Dynamic.Select(d => ids[d]).ToArray()));
-            byte[] table = TableBytes(order, lists, dynamic);
+            dynamic.AddRange(order.Select(o => o.Dynamic.Select(d => _ids[d]).ToArray()));
+            var renamed = new List<uint>();
+            int renamedCount = 0;
+            foreach (McosObject o in order.Where(static o => o.Renamed.Count > 0))
+            {
+                renamed.AddRange([(uint)_ids[o], (uint)o.Renamed.Count, .. o.Renamed.Select(n => (uint)Name(n))]);
+                renamedCount++;
+            }
+
+            renamed.Insert(0, (uint)renamedCount);
+            if (renamed.Count % 2 != 0)
+            {
+                renamed.Add(0);
+            }
+
+            byte[] table = TableBytes(saved, records, plain, dynamic, renamed);
 
             int classes = _classes.Count;
             byte[] emptyStruct = StructElement(string.Empty, [], [], [1, 0]);
+            byte[] PerClass(IReadOnlyList<MatData>? kept, int i) =>
+                kept is not null && i < kept.Count ? Patch(Build(string.Empty, kept[i])) : emptyStruct;
             var cells = new List<byte[]> { Uint8Column(table), EmptyElement() };
             cells.AddRange(_cells);
-            cells.Add(CellElement(Enumerable.Repeat(emptyStruct, classes).ToArray(), [classes, 1]));
-            cells.Add(NumericElement(new MatData.Numbers("int32", [classes, 1], new double[classes])));
-            cells.Add(CellElement(Enumerable.Repeat(emptyStruct, classes).ToArray(), [classes, 1]));
+            cells.Add(CellElement(Enumerable.Range(0, classes).Select(i => PerClass(seed?.ClassCells, i)).ToArray(), [classes, 1]));
+            cells.Add(Build(string.Empty, new MatData.Numbers("int32", [classes, 1],
+                Enumerable.Range(0, classes).Select(i => seed is not null && i < seed.ClassNumbers.Count ? seed.ClassNumbers[i] : 0).ToArray())).Bytes);
+            cells.Add(CellElement(Enumerable.Range(0, classes).Select(i => PerClass(seed?.ClassDefaults, i)).ToArray(), [classes, 1]));
 
             byte[] wrapper = Opaque(string.Empty, "FileWrapper__", CellElement([.. cells], [cells.Count, 1]));
             byte[] holder = StructElement(string.Empty, ["MCOS"], [[wrapper]], [1, 1]);
-            byte[] trailer = Uint8Row([.. StreamHead, .. StructElement(string.Empty, ["MCOS"], [[EmptyElement()]], [1, 1])]);
+            byte[] trailer = seed?.Trailer ?? Uint8Row([.. StreamHead, .. StructElement(string.Empty, ["MCOS"], [[EmptyElement()]], [1, 1])]);
             return [.. StreamHead, .. holder, .. trailer];
         }
 
@@ -272,18 +482,9 @@ internal static class MatMcosWriter
             return (uint)(_cells.Count - 1);
         }
 
-        private byte[] Reference(McosValue.Refs refs, Dictionary<McosObject, int> ids)
-        {
-            string className = refs.Objects.Count > 0 ? refs.Objects[0].ClassName
-                : refs.EmptyClass ?? throw new InvalidOperationException("An empty reference needs its class.");
-            var words = new List<uint> { ReferenceMark, 2 };
-            words.AddRange(refs.Objects.Count > 0 ? [1, (uint)refs.Objects.Count] : [0, 0]);
-            words.AddRange(refs.Objects.Select(o => (uint)ids[o]));
-            words.Add((uint)ClassId(className));
-            return Uint32Column([.. words]);
-        }
-
-        private byte[] TableBytes(List<McosObject> order, List<(int Name, int Kind, uint Datum)[]> lists, List<int[]> dynamic)
+        private byte[] TableBytes(
+            List<(int Name, int Kind, uint Datum)[]> saved, List<uint> records, List<(int Name, int Kind, uint Datum)[]> plain,
+            List<int[]> dynamic, List<uint> renamed)
         {
             using var names = new MemoryStream();
             foreach (string n in _names.Skip(1))
@@ -300,12 +501,12 @@ internal static class MatMcosWriter
             var segments = new List<byte[]>
             {
                 Words(_classes.SelectMany(static c => new uint[] { (uint)c.Package, (uint)c.Name, 0, 0 })),
-                Array.Empty<byte>(),
-                Words(new uint[6].Concat(order.SelectMany((o, i) => new uint[] { (uint)ClassId(o.ClassName), 0, 0, 0, (uint)(i + 1), (uint)(i + 1) }))),
-                PropertyLists(lists),
+                PropertyLists(saved.Count > 1 ? saved : []),
+                Words(records),
+                PropertyLists(plain),
                 IdLists(dynamic),
                 Array.Empty<byte>(),
-                Words([0, 0]),
+                Words(renamed),
             };
 
             var offsets = new uint[8];
@@ -330,6 +531,16 @@ internal static class MatMcosWriter
             return table.ToArray();
         }
     }
+
+    /// <summary>The objects a value refers to, at any depth.</summary>
+    private static IEnumerable<McosObject?> Targets(MatData data) => data switch
+    {
+        MatData.Kept kept => kept.References.SelectMany(static r => r.Targets),
+        MatData.Object o => [o.Target],
+        MatData.Cells c => c.Items.SelectMany(Targets),
+        MatData.Structs s => s.Elements.SelectMany(static e => e).SelectMany(Targets),
+        _ => [],
+    };
 
     private static readonly byte[] StreamHead = [0x00, 0x01, (byte)'I', (byte)'M', 0, 0, 0, 0];
 
@@ -383,17 +594,62 @@ internal static class MatMcosWriter
 
     // --- Elements --------------------------------------------------------------------------------
 
-    /// <summary>A stored value's matrix element, with no name.</summary>
-    public static byte[] Element(MatData data) => data switch
+    /// <summary>An element's bytes and where in them it refers to subsystem objects.</summary>
+    internal sealed record Built(byte[] Bytes, IReadOnlyList<McosReference> References)
     {
-        MatData.Numbers n => NumericElement(n),
-        MatData.Chars c => CharElement(c),
-        MatData.Cells c => CellElement(c.Items.Select(Element).ToArray(), c.Size),
-        MatData.Structs s => StructElement(string.Empty, s.Fields, s.Elements.Select(e => e.Select(Element).ToArray()).ToArray(), s.Size),
+        public static Built Plain(byte[] bytes) => new(bytes, []);
+    }
+
+    /// <summary>A stored value's matrix element, with no name; for a value that refers to no object.</summary>
+    public static byte[] Element(MatData data) => Build(string.Empty, data).Bytes;
+
+    /// <summary>A value's matrix element under <paramref name="name"/>, with its references.</summary>
+    private static Built Build(string name, MatData data) => data switch
+    {
+        MatData.Kept kept => new Built(kept.Element, kept.References),
+        MatData.Object o => Matrix([Built.Plain(Flags(MxOpaque)), Built.Plain(Sub(MiInt8, Encoding.ASCII.GetBytes(name))),
+            Built.Plain(Sub(MiInt8, "MCOS"u8.ToArray())), Built.Plain(Sub(MiInt8, Encoding.ASCII.GetBytes(o.Target.ClassName))),
+            Reference(new McosValue.Refs([o.Target]))]),
+        MatData.Numbers n => Built.Plain(NumericElement(name, n)),
+        MatData.Chars c => Built.Plain(Matrix(Flags(MxChar), Dimensions(c.Size), Sub(MiInt8, Encoding.ASCII.GetBytes(name)),
+            Sub(MiUtf8, Encoding.UTF8.GetBytes(c.Characters)))),
+        MatData.Cells c => Matrix([Built.Plain(Flags(MxCell)), Built.Plain(Dimensions(c.Size)),
+            Built.Plain(Sub(MiInt8, Encoding.ASCII.GetBytes(name))), .. c.Items.Select(i => Build(string.Empty, i))]),
+        MatData.Structs s => StructBuilt(name, s),
         _ => throw new InvalidOperationException("Unknown value."),
     };
 
-    private static byte[] NumericElement(MatData.Numbers n)
+    private static Built StructBuilt(string name, MatData.Structs s)
+    {
+        int width = s.Fields.Length == 0 ? 1 : s.Fields.Max(static f => Encoding.ASCII.GetByteCount(f)) + 1;
+        var packed = new byte[width * s.Fields.Length];
+        for (int i = 0; i < s.Fields.Length; i++)
+        {
+            Encoding.ASCII.GetBytes(s.Fields[i]).CopyTo(packed, i * width);
+        }
+
+        var widthBytes = new byte[4];
+        BinaryPrimitives.WriteInt32LittleEndian(widthBytes, width);
+        return Matrix([Built.Plain(Flags(MxStruct)), Built.Plain(Dimensions(s.Size)), Built.Plain(Sub(MiInt8, Encoding.ASCII.GetBytes(name))),
+            Built.Plain(Sub(MiInt32, widthBytes)), Built.Plain(Sub(MiInt8, packed)),
+            .. s.Elements.SelectMany(static e => e).Select(v => Build(string.Empty, v))]);
+    }
+
+    /// <summary>A reference column to <paramref name="refs"/>' objects, with its ids and class written when the file is.</summary>
+    private static Built Reference(McosValue.Refs refs)
+    {
+        string className = refs.Objects.Count > 0 ? refs.Objects[0].ClassName
+            : refs.EmptyClass ?? throw new InvalidOperationException("An empty reference needs its class.");
+        var words = new List<uint> { ReferenceMark, 2 };
+        words.AddRange(refs.Objects.Count > 0 ? [1, (uint)refs.Objects.Count] : [0, 0]);
+        words.AddRange(refs.Objects.Select(static _ => 0u));
+        words.Add(0);
+        byte[] column = Uint32Column([.. words]);
+        int dataAt = column.Length - (((words.Count * 4) + 7) / 8 * 8);
+        return new Built(column, [new McosReference(dataAt + 16, refs.Objects, dataAt + (4 * (words.Count - 1)), className)]);
+    }
+
+    private static byte[] NumericElement(string name, MatData.Numbers n)
     {
         (int arrayClass, int dataType, int width, int flagBits) = n.ClassName switch
         {
@@ -430,11 +686,8 @@ internal static class MatMcosWriter
             }
         }
 
-        return Matrix(Flags(arrayClass | flagBits), Dimensions(n.Size), Sub(MiInt8, []), Sub(dataType, data));
+        return Matrix(Flags(arrayClass | flagBits), Dimensions(n.Size), Sub(MiInt8, Encoding.ASCII.GetBytes(name)), Sub(dataType, data));
     }
-
-    private static byte[] CharElement(MatData.Chars c) =>
-        Matrix(Flags(MxChar), Dimensions(c.Size), Sub(MiInt8, []), Sub(MiUtf8, Encoding.UTF8.GetBytes(c.Characters)));
 
     private static byte[] CellElement(byte[][] items, int[] size) =>
         Matrix([Flags(MxCell), Dimensions(size), Sub(MiInt8, []), .. items]);
@@ -474,20 +727,25 @@ internal static class MatMcosWriter
 
     private static byte[] Dimensions(int[] size) => Sub(MiInt32, Words(size.Select(static d => (uint)d)));
 
-    private static byte[] Matrix(params byte[][] parts)
+    private static byte[] Matrix(params byte[][] parts) => Matrix(parts.Select(Built.Plain).ToArray()).Bytes;
+
+    /// <summary>A matrix element of <paramref name="parts"/>, their references moved to where each part lands.</summary>
+    private static Built Matrix(Built[] parts)
     {
-        int length = parts.Sum(static p => p.Length);
+        int length = parts.Sum(static p => p.Bytes.Length);
         var element = new byte[8 + length];
         BinaryPrimitives.WriteInt32LittleEndian(element, MiMatrix);
         BinaryPrimitives.WriteInt32LittleEndian(element.AsSpan(4), length);
+        var references = new List<McosReference>();
         int at = 8;
-        foreach (byte[] part in parts)
+        foreach (Built part in parts)
         {
-            part.CopyTo(element, at);
-            at += part.Length;
+            part.Bytes.CopyTo(element, at);
+            references.AddRange(part.References.Select(r => r with { IdsAt = r.IdsAt + at, ClassAt = r.ClassAt + at }));
+            at += part.Bytes.Length;
         }
 
-        return element;
+        return new Built(element, references);
     }
 
     /// <summary>A data element: four bytes or fewer packed into its tag, as MATLAB packs them; longer data padded to eight.</summary>

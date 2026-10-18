@@ -1,0 +1,4 @@
+rt/
+*.err
+ds6_verify.out
+ds6_new?.out

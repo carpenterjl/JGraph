@@ -55,6 +55,10 @@ internal static partial class JgsMlappModel
             return new Level5Copy(mat, elements, at, new CodeFields(fields));
         }
 
+        /// <summary>A new <c>code</c> element holding <paramref name="fields"/>, for a model written from nothing.</summary>
+        public static byte[] NewElement(CodeFields fields) =>
+            Struct(Variable, [.. fields.All.Select(static f => f.Name)], 1, [.. fields.All.Select(static f => Encode(f.Value))]);
+
         public byte[] Write()
         {
             byte[] rewritten = Struct(Variable, [.. Fields.All.Select(static f => f.Name)], 1, [.. Fields.All.Select(static f => Encode(f.Value))]);
