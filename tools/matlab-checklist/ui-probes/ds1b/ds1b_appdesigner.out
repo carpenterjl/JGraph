@@ -1,0 +1,624 @@
+ASAP2CDFGen: same (35 components, 12 callbacks bound; 0 findings shared with the code's own tree)
+AddEditParameterDialog: same (40 components, 7 callbacks bound; 3 findings shared with the code's own tree)
+AddEditTapsDialog: same (13 components, 5 callbacks bound; 0 findings shared with the code's own tree)
+ApplicationInspector: same (26 components, 7 callbacks bound; 0 findings shared with the code's own tree)
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 29)
+        [found, components, bound] = roundTrip(app, S.components.UIFigure, P.components.UIFigure, src, fullfile(here, 'rt', 'ad'));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 29)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 29)
+        [found, components, bound] = roundTrip(app, S.components.UIFigure, P.components.UIFigure, src, fullfile(here, 'rt', 'ad'));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 29)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 29)
+        [found, components, bound] = roundTrip(app, S.components.UIFigure, P.components.UIFigure, src, fullfile(here, 'rt', 'ad'));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 29)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 29)
+        [found, components, bound] = roundTrip(app, S.components.UIFigure, P.components.UIFigure, src, fullfile(here, 'rt', 'ad'));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 36)
+            control = roundTrip(app, ref, plainRef, src, fullfile(here, 'rt', 'ad'));
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 36)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 36)
+            control = roundTrip(app, ref, plainRef, src, fullfile(here, 'rt', 'ad'));
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 36)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 36)
+            control = roundTrip(app, ref, plainRef, src, fullfile(here, 'rt', 'ad'));
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 36)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 36)
+            control = roundTrip(app, ref, plainRef, src, fullfile(here, 'rt', 'ad'));
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+CTLEFitter: same (57 components, 25 callbacks bound; 6 findings shared with the code's own tree)
+ClassContainer: same (1 components, 1 callbacks bound; 0 findings shared with the code's own tree)
+ClockDomainEditor: same (8 components, 8 callbacks bound; 0 findings shared with the code's own tree)
+ColumnTransformationDialog: same (16 components, 7 callbacks bound; 0 findings shared with the code's own tree)
+CustomFunctionDialog: same (17 components, 5 callbacks bound; 1 findings shared with the code's own tree)
+DCOffsetDialog: same (4 components, 2 callbacks bound; 0 findings shared with the code's own tree)
+DataExport: same (15 components, 3 callbacks bound; 0 findings shared with the code's own tree)
+DataImport: same (7 components, 4 callbacks bound; 0 findings shared with the code's own tree)
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+DesignerSpecApp: same (55 components, 8 callbacks bound; 2 findings shared with the code's own tree)
+EditCustomFunctionsDialog: same (8 components, 5 callbacks bound; 0 findings shared with the code's own tree)
+GUIDEAppMaintenanceOptions: same (24 components, 9 callbacks bound; 0 findings shared with the code's own tree)
+IbisAmiManager: same (61 components, 25 callbacks bound; 0 findings shared with the code's own tree)
+ImportDataUI: same (14 components, 4 callbacks bound; 1 findings shared with the code's own tree)
+InstrumentationVisualizer: same (18 components, 5 callbacks bound; 0 findings shared with the code's own tree)
+MetadataUI: same (21 components, 4 callbacks bound; 4 findings shared with the code's own tree)
+ModelDiscViewer: same (59 components, 21 callbacks bound; 3 findings shared with the code's own tree)
+ModulationDialog: same (7 components, 4 callbacks bound; 0 findings shared with the code's own tree)
+MultiPaneSimApp: same (51 components, 17 callbacks bound; 0 findings shared with the code's own tree)
+ReportDialog: same (7 components, 2 callbacks bound; 1 findings shared with the code's own tree)
+RxJitter: same (24 components, 5 callbacks bound; 0 findings shared with the code's own tree)
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+SLSimApp2: same (28 components, 9 callbacks bound; 0 findings shared with the code's own tree)
+SiToolBoxConsole: same (4 components, 3 callbacks bound; 0 findings shared with the code's own tree)
+SignalIntegrityLink: same (41 components, 19 callbacks bound; 0 findings shared with the code's own tree)
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+SimAppTemplate: same (30 components, 9 callbacks bound; 0 findings shared with the code's own tree)
+SystemLogViewer: same (9 components, 3 callbacks bound; 2 findings shared with the code's own tree)
+TestSuitesManager: same (33 components, 10 callbacks bound; 0 findings shared with the code's own tree)
+TreePanel: same (45 components, 9 callbacks bound; 0 findings shared with the code's own tree)
+TxJitter: same (17 components, 5 callbacks bound; 0 findings shared with the code's own tree)
+addRuleDialog: same (8 components, 6 callbacks bound; 0 findings shared with the code's own tree)
+app1: same (4 components, 2 callbacks bound; 0 findings shared with the code's own tree)
+aurora: same (52 components, 17 callbacks bound; 0 findings shared with the code's own tree)
+bertool: same (102 components, 44 callbacks bound; 0 findings shared with the code's own tree)
+borrowLicenses: same (20 components, 8 callbacks bound; 0 findings shared with the code's own tree)
+mlexpdlg: same (32 components, 11 callbacks bound; 5 findings shared with the code's own tree)
+reportDlgBox: same (13 components, 3 callbacks bound; 0 findings shared with the code's own tree)
+rowTimesDialog: same (30 components, 6 callbacks bound; 0 findings shared with the code's own tree)
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 29)
+        [found, components, bound] = roundTrip(app, S.components.UIFigure, P.components.UIFigure, src, fullfile(here, 'rt', 'ad'));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 29)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 29)
+        [found, components, bound] = roundTrip(app, S.components.UIFigure, P.components.UIFigure, src, fullfile(here, 'rt', 'ad'));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 29)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 29)
+        [found, components, bound] = roundTrip(app, S.components.UIFigure, P.components.UIFigure, src, fullfile(here, 'rt', 'ad'));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 29)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 29)
+        [found, components, bound] = roundTrip(app, S.components.UIFigure, P.components.UIFigure, src, fullfile(here, 'rt', 'ad'));
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 29)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 36)
+            control = roundTrip(app, ref, plainRef, src, fullfile(here, 'rt', 'ad'));
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 36)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 36)
+            control = roundTrip(app, ref, plainRef, src, fullfile(here, 'rt', 'ad'));
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 36)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 36)
+            control = roundTrip(app, ref, plainRef, src, fullfile(here, 'rt', 'ad'));
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 36)] 
+[Warning: While saving an object of class 'matlab.ui.control.UIAxes':
+Error setting property 'Alphamap_I' of class 'Axes':
+Value must be either:
+a vector of type single or double in the range [0 1]
+a vector of an integer or logical type.
+
+Error in matlab.ui.control.UIAxes/copyProperties
+
+Error in matlab.ui.control.UIAxes/convertAxes
+
+Error in matlab.ui.control.UIAxes/convertToAxes
+
+Error in matlab.ui.control.UIAxes/get.Axes
+
+Error in ds1b_appdesigner>roundTrip (line 84)
+    s.save();
+    ^^^^^^^^
+Error in ds1b_appdesigner (line 36)
+            control = roundTrip(app, ref, plainRef, src, fullfile(here, 'rt', 'ad'));
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^] 
+[> In ds1b_appdesigner>roundTrip (line 84)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_appdesigner>roundTrip (line 96)
+In ds1b_appdesigner (line 36)] 
+sParameterFitter: same (37 components, 8 callbacks bound; 6 findings shared with the code's own tree)
+slCustomizedCrashWindowApp: same (8 components, 3 callbacks bound; 0 findings shared with the code's own tree)
+slrtInstrumentPanelTemplate: same (23 components, 0 callbacks bound; 0 findings shared with the code's own tree)
+template: same (3 components, 2 callbacks bound; 0 findings shared with the code's own tree)
+       same: 44
+    differs: 0
+     failed: 0
+

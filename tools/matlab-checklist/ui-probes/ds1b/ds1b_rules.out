@@ -1,0 +1,25 @@
+colour__defaults_value.mat: differs in Button.FontColorMode="manual" (ref "auto")
+colour__defaults_value_then_auto.mat: differs in Button.BackgroundColor=["0.96078" "0.96078" "0.96078"] (ref ["1" "0" "0"]), Button.BackgroundColor_I=["0.96078" "0.96078" "0.96078"] (ref ["1" "0" "0"]), Button.BackgroundColorMode="auto" (ref "manual"), Button.FontColorMode="manual" (ref "auto")
+colour__second_value.mat: differs in Button.BackgroundColor=["0.96078" "0.96078" "0.96078"] (ref ["1" "0" "0"]), Button.BackgroundColor_I=["0.96078" "0.96078" "0.96078"] (ref ["1" "0" "0"]), Button.BackgroundColorMode="auto" (ref "manual")
+colour__value_and_char_mode.mat: same
+colour__value_and_word_mode.mat: same
+colour__value_in_place.mat: differs in Button.BackgroundColor=["0.96078" "0.96078" "0.96078"] (ref ["1" "0" "0"]), Button.BackgroundColor_I=["0.96078" "0.96078" "0.96078"] (ref ["1" "0" "0"]), Button.BackgroundColorMode="auto" (ref "manual")
+defaults_hyperlink__empty.mat: differs in Hyperlink.VisitedColorMode="manual" (ref "auto"), Hyperlink.FontColorMode="manual" (ref "auto")
+defaults_u7b__empty.mat: differs in GridLayout.BackgroundColorMode="manual" (ref "auto"), NumericEditField.FontColorMode="manual" (ref "auto"), Button.BackgroundColorMode="manual" (ref "auto"), Button.FontColorMode="manual" (ref "auto"); using matlab.ui.container.GridLayout fails: Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.
+order__items_then_value.mat: differs in DropDown.Value="B" (ref "Option 1"), DropDown.ValueIndex="2" (ref "1"), DropDown.Items=<cell [1 2]> (ref <cell [1 4]>)
+[Warning: While loading an object of class 'matlab.ui.control.DropDown':
+'Value' must be an element defined in the 'Items' property.] 
+[> In ds1b_compare (line 24)
+In ds1b_rules (line 3)] 
+order__value_then_items.mat: differs in DropDown.Value="A" (ref "Option 1"), DropDown.Items=<cell [1 2]> (ref <cell [1 4]>) [warning MATLAB:load:classError: While loading an object of class 'matlab.ui.control.DropDown':]
+order__value_twice.mat: differs in DropDown.Value="A" (ref "Option 1"), DropDown.Items=<cell [1 2]> (ref <cell [1 4]>)
+public__callback.mat: differs in Button.ButtonPushedFcn="GoPushed" (ref "")
+public__fontsize.mat: differs in Button.FontSize="20" (ref "12")
+public__position.mat: differs in Button.InnerPosition=["10" "20" "150" "30"] (ref ["100" "100" "100" "22"]), Button.Position=["10" "20" "150" "30"] (ref ["100" "100" "100" "22"]), Button.OuterPosition=["10" "20" "150" "30"] (ref ["100" "100" "100" "22"])
+public__text_beside.mat: differs in Button.Text="Hello" (ref "Button")
+public__text_in_place.mat: differs in Button.Text="Hello" (ref "Button")
+public__unknown.mat: same
+ticks__empty.mat: differs in SemicircularGauge.MinorTicks=strings(1,0) (ref strings(0,0)), SemicircularGauge.MinorTicksMode="manual" (ref "auto"), SemicircularGauge.FontColorMode="manual" (ref "auto")
+ticks__none.mat: differs in SemicircularGauge.FontColorMode="manual" (ref "auto")
+ticks__private_mode.mat: differs in SemicircularGauge.MinorTicksMode="manual" (ref "auto"), SemicircularGauge.FontColorMode="manual" (ref "auto")
+ticks__values.mat: differs in SemicircularGauge.MinorTicks=["5" "15"] (ref strings(0,0)), SemicircularGauge.MinorTicksMode="manual" (ref "auto"), SemicircularGauge.FontColorMode="manual" (ref "auto")

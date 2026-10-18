@@ -1,0 +1,63 @@
+ButtonGroup__x.mat: same
+Button__x.mat: same
+CheckBoxTree__x.mat: same
+CheckBox__x.mat: same
+ColorPicker__x.mat: same
+ContextMenu__x.mat: same
+DatePicker__x.mat: same
+DiscreteKnob__x.mat: same
+DropDown__x.mat: same
+EditField__x.mat: same
+Figure__x.mat: same
+Gauge__x.mat: same
+GridLayout__x.mat: same; using matlab.ui.container.GridLayout fails: Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.
+HTML__x.mat: same
+Hyperlink__x.mat: same
+Image__x.mat: same
+Knob__x.mat: same
+Label__x.mat: same
+Lamp__x.mat: same
+LinearGauge__x.mat: same
+ListBox__x.mat: same
+Menu__x.mat: same
+NinetyDegreeGauge__x.mat: same
+NumericEditField__x.mat: same
+Panel__x.mat: same
+PushTool__x.mat: same
+RadioButton__x.mat: same
+RangeSlider__x.mat: same
+RockerSwitch__x.mat: same
+SemicircularGauge__x.mat: same
+Slider__x.mat: same
+Spinner__x.mat: same
+StateButton__x.mat: same
+Switch__x.mat: same
+TabGroup__x.mat: same
+Tab__x.mat: same
+Table__x.mat: same
+TextArea__x.mat: same
+ToggleButton__x.mat: same
+ToggleSwitch__x.mat: same
+ToggleTool__x.mat: same
+Toolbar__x.mat: same
+TreeNode__x.mat: same
+Tree__x.mat: same
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_compare (line 41)
+In ds1b_scratch (line 3)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_compare (line 41)
+In ds1b_scratch (line 3)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_compare (line 41)
+In ds1b_scratch (line 3)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_compare (line 41)
+In ds1b_scratch (line 3)] 
+UIAxes__x.mat: differs in UIAxes.PositionMode="manual" (ref "auto"), UIAxes.PositionConstraintMode="manual" (ref "auto")
+shipped_dataexport__x.mat: same
+u7b_dtp__x.mat: same; using matlab.ui.container.GridLayout fails: Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.

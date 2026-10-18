@@ -1,0 +1,74 @@
+ButtonGroup__blank.mat: same
+Button__blank.mat: differs in Button.HorizontalAlignment="left" (ref "center"), Button.Text="" (ref "Button"), Button.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), Button.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), Button.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"])
+CheckBoxTree__blank.mat: differs in CheckBoxTree.ValidateChildFcnMode="auto" (ref "manual"), CheckBoxTree.Editable="on" (ref "off"), CheckBoxTree.InnerPosition=["100" "100" "20" "20"] (ref ["20" "20" "150" "300"]), CheckBoxTree.Position=["100" "100" "20" "20"] (ref ["20" "20" "150" "300"]), CheckBoxTree.OuterPosition=["100" "100" "20" "20"] (ref ["20" "20" "150" "300"])
+CheckBox__blank.mat: differs in CheckBox.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "84" "22"]), CheckBox.Position=["100" "100" "20" "20"] (ref ["100" "100" "84" "22"]), CheckBox.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "84" "22"]), CheckBox.Text="" (ref "Check Box")
+ColorPicker__blank.mat: differs in ColorPicker.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "38" "22"]), ColorPicker.Position=["100" "100" "20" "20"] (ref ["100" "100" "38" "22"]), ColorPicker.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "38" "22"])
+ContextMenu__blank.mat: same
+DatePicker__blank.mat: differs in DatePicker.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "150" "22"]), DatePicker.Position=["100" "100" "20" "20"] (ref ["100" "100" "150" "22"]), DatePicker.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "150" "22"])
+DiscreteKnob__blank.mat: differs in DiscreteKnob.Value=<cell [0 0]> (ref "Off"), DiscreteKnob.ValueIndex=strings(0,0) (ref "1"), DiscreteKnob.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "60" "60"]), DiscreteKnob.Position=["100" "100" "20" "20"] (ref ["100" "100" "60" "60"]), DiscreteKnob.OuterPosition=["100" "100" "20" "20"] (ref ["73" "100" "127" "78"])
+DropDown__blank.mat: differs in DropDown.Value=<cell [0 0]> (ref "Option 1"), DropDown.ValueIndex=strings(0,0) (ref "1"), DropDown.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), DropDown.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), DropDown.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"])
+EditField__blank.mat: differs in EditField.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), EditField.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), EditField.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"])
+Figure__blank.mat: differs (100 objects, reference 1) in Figure.Position=["363" "278" "1194" "719"] (ref ["680" "578" "560" "420"]), Figure.Position_I=["363" "278" "1194" "719"] (ref ["680" "578" "560" "420"]), Figure.OuterPosition=["363" "278" "1194" "719"] (ref ["680" "578" "560" "420"]), Figure.OuterPosition_I=["363" "278" "1194" "719"] (ref ["680" "578" "560" "420"]), Figure.InnerPosition=["363" "278" "1194" "719"] (ref ["680" "578" "560" "420"]), Figure.VisibleMode="auto" (ref "manual"), Figure.Visible_I="on" (ref "off"), Figure.Visible="on" (ref "off"), Figure.IntegerHandleMode="auto" (ref "manual"), Figure.IntegerHandle_I="on" (ref "off"), Figure.IntegerHandle="on" (ref "off"), Figure.DefaultTools_I="menusandtoolbar" (ref "none"), Figure.DefaultTools="menusandtoolbar" (ref "none"), Figure.MenuBar_I="figure" (ref "none"), Figure.MenuBar="figure" (ref "none"), Figure.ToolBar_I="auto" (ref "none"), Figure.ToolBar="auto" (ref "none"), Figure.NumberTitleMode="auto" (ref "manual"), Figure.NumberTitle_I="on" (ref "off"), Figure.NumberTitle="on" (ref "off"), Figure.Number_I="1" (ref strings(0,0)), Figure.ShowMenuBarForView="on" (ref "off"), Figure.NumToolBarsForView="1" (ref "0"), Figure.HandleVisibilityMode="auto" (ref "manual"), Figure.HandleVisibility_I="on" (ref "off"), Figure.HandleVisibility="on" (ref "off"), Figure.NodeChildren=<matlab.ui.container.Container [7 1]> (ref strings(0,0)), Figure.WindowStyleMode="auto" (ref "manual"), Figure.DockControlsMode="auto" (ref "manual"), Figure.DockControls_I="on" (ref "off"), Figure.DockControls="on" (ref "off"), Figure.PaperPosition=["-1.96875" "1.75521" "12.4375" "7.48958... (ref ["1.3333" "3.3125" "5.8333" "4.375"]), Figure.PaperPosition_I=["-1.96875" "1.75521" "12.4375" "7.48958... (ref ["1.3333" "3.3125" "5.8333" "4.375"]), Figure.AutoResizeChildrenMode="auto" (ref "manual"), Figure.AutoResizeChildren_I="off" (ref "on"), Figure.AutoResizeChildren="off" (ref "on")
+Gauge__blank.mat: differs in Gauge.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "120" "120"]), Gauge.Position=["100" "100" "20" "20"] (ref ["100" "100" "120" "120"]), Gauge.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "120" "120"]), Gauge.MajorTickLabels=<cell [0 0]> (ref <cell [1 6]>)
+GridLayout__blank.mat: same; using matlab.ui.container.GridLayout fails: Unable to set the 'Position' property of class ''GridLayout'' because it is read-only.
+HTML__blank.mat: differs in HTML.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "100"]), HTML.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "100"]), HTML.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "100"])
+[Warning: While loading an object of class 'matlab.ui.control.Hyperlink':
+During serialization customization, no appropriate property BackgroundColor in the serialization content of class
+matlab.ui.control.Hyperlink.] 
+[> In ds1b_compare (line 25)
+In ds1b_blanked (line 4)] 
+Hyperlink__blank.mat: differs in Hyperlink.Text="" (ref "Hyperlink"), Hyperlink.FontWeight="normal" (ref "bold"), Hyperlink.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "70" "22"]), Hyperlink.Position=["100" "100" "20" "20"] (ref ["100" "100" "70" "22"]), Hyperlink.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "70" "22"]) [warning MATLAB:loadsave:noSuchProperty: While loading an object of class 'matlab.ui.control.Hyperlink':]
+[Warning: While loading an object of class 'matlab.ui.control.Image':
+During serialization customization, no appropriate property BackgroundColor in the serialization content of class matlab.ui.control.Image.] 
+[> In ds1b_compare (line 25)
+In ds1b_blanked (line 4)] 
+Image__blank.mat: differs in Image.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "100"]), Image.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "100"]), Image.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "100"]), Image.HorizontalAlignment="left" (ref "center") [warning MATLAB:loadsave:noSuchProperty: While loading an object of class 'matlab.ui.control.Image':]
+Knob__blank.mat: differs in Knob.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "60" "60"]), Knob.Position=["100" "100" "20" "20"] (ref ["100" "100" "60" "60"]), Knob.OuterPosition=["100" "100" "20" "20"] (ref ["74" "81" "114" "103"]), Knob.MajorTickLabels=<cell [0 0]> (ref <cell [1 6]>)
+[Warning: While loading an object of class 'matlab.ui.control.Label':
+During serialization customization, no appropriate property BackgroundColor in the serialization content of class matlab.ui.control.Label.] 
+[> In ds1b_compare (line 25)
+In ds1b_blanked (line 4)] 
+Label__blank.mat: differs in Label.Text="" (ref "Label"), Label.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "31" "22"]), Label.Position=["100" "100" "20" "20"] (ref ["100" "100" "31" "22"]), Label.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "31" "22"]) [warning MATLAB:loadsave:noSuchProperty: While loading an object of class 'matlab.ui.control.Label':]
+Lamp__blank.mat: same
+LinearGauge__blank.mat: differs in LinearGauge.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "120" "40"]), LinearGauge.Position=["100" "100" "20" "20"] (ref ["100" "100" "120" "40"]), LinearGauge.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "120" "40"]), LinearGauge.MajorTickLabels=<cell [0 0]> (ref <cell [1 6]>)
+ListBox__blank.mat: differs in ListBox.Value=<cell [0 0]> (ref "Item 1"), ListBox.ValueIndex=strings(0,0) (ref "1"), ListBox.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "74"]), ListBox.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "74"]), ListBox.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "74"])
+Menu__blank.mat: same
+NinetyDegreeGauge__blank.mat: differs in NinetyDegreeGauge.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "90" "90"]), NinetyDegreeGauge.Position=["100" "100" "20" "20"] (ref ["100" "100" "90" "90"]), NinetyDegreeGauge.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "90" "90"]), NinetyDegreeGauge.MajorTicks=["0" "20" "40" "60" "80" "100"] (ref ["0" "50" "100"]), NinetyDegreeGauge.MajorTickLabels=<cell [0 0]> (ref <cell [1 3]>)
+NumericEditField__blank.mat: differs in NumericEditField.HorizontalAlignment="left" (ref "right"), NumericEditField.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), NumericEditField.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), NumericEditField.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"])
+Panel__blank.mat: same
+PushTool__blank.mat: same
+RadioButton__blank.mat: differs in RadioButton.InnerPosition=["100" "100" "20" "20"] (ref ["10" "10" "91" "22"]), RadioButton.Position=["100" "100" "20" "20"] (ref ["10" "10" "91" "22"]), RadioButton.OuterPosition=["100" "100" "20" "20"] (ref ["10" "10" "91" "22"]), RadioButton.Text="" (ref "Radio Button")
+RangeSlider__blank.mat: differs in RangeSlider.MajorTickLabels=<cell [0 0]> (ref <cell [1 6]>), RangeSlider.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "150" "3"]), RangeSlider.Position=["100" "100" "20" "20"] (ref ["100" "100" "150" "3"]), RangeSlider.OuterPosition=["100" "100" "20" "20"] (ref ["93" "70" "166" "39"])
+RockerSwitch__blank.mat: differs in RockerSwitch.Value=<cell [0 0]> (ref "Off"), RockerSwitch.ValueIndex=strings(0,0) (ref "1"), RockerSwitch.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "20" "45"]), RockerSwitch.Position=["100" "100" "20" "20"] (ref ["100" "100" "20" "45"]), RockerSwitch.OuterPosition=["100" "100" "20" "20"] (ref ["100" "79" "20" "87"])
+SemicircularGauge__blank.mat: differs in SemicircularGauge.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "120" "65"]), SemicircularGauge.Position=["100" "100" "20" "20"] (ref ["100" "100" "120" "65"]), SemicircularGauge.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "120" "65"]), SemicircularGauge.MajorTickLabels=<cell [0 0]> (ref <cell [1 6]>)
+Slider__blank.mat: differs in Slider.MajorTickLabels=<cell [0 0]> (ref <cell [1 6]>), Slider.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "150" "3"]), Slider.Position=["100" "100" "20" "20"] (ref ["100" "100" "150" "3"]), Slider.OuterPosition=["100" "100" "20" "20"] (ref ["93" "70" "166" "39"])
+Spinner__blank.mat: differs in Spinner.HorizontalAlignment="left" (ref "right"), Spinner.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), Spinner.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), Spinner.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"])
+StateButton__blank.mat: differs in StateButton.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), StateButton.Position=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), StateButton.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "100" "22"]), StateButton.HorizontalAlignment="left" (ref "center"), StateButton.Text="" (ref "State Button")
+Switch__blank.mat: differs in Switch.Value=<cell [0 0]> (ref "Off"), Switch.ValueIndex=strings(0,0) (ref "1"), Switch.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "45" "20"]), Switch.Position=["100" "100" "20" "20"] (ref ["100" "100" "45" "20"]), Switch.OuterPosition=["100" "100" "20" "20"] (ref ["79" "100" "88" "20"])
+TabGroup__blank.mat: same
+Tab__blank.mat: differs in Tab.Position=["1" "1" "1" "1"] (ref ["1" "1" "250" "210"]), Tab.InnerPosition=["1" "1" "1" "1"] (ref ["1" "1" "250" "210"]), Tab.OuterPosition=["1" "1" "1" "1"] (ref ["1" "1" "250" "210"])
+Table__blank.mat: same
+TextArea__blank.mat: differs in TextArea.WordWrap="off" (ref "on"), TextArea.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "150" "60"]), TextArea.Position=["100" "100" "20" "20"] (ref ["100" "100" "150" "60"]), TextArea.OuterPosition=["100" "100" "20" "20"] (ref ["100" "100" "150" "60"])
+ToggleButton__blank.mat: differs in ToggleButton.InnerPosition=["100" "100" "20" "20"] (ref ["10" "10" "100" "22"]), ToggleButton.Position=["100" "100" "20" "20"] (ref ["10" "10" "100" "22"]), ToggleButton.OuterPosition=["100" "100" "20" "20"] (ref ["10" "10" "100" "22"]), ToggleButton.HorizontalAlignment="left" (ref "center"), ToggleButton.Text="" (ref "Toggle Button")
+ToggleSwitch__blank.mat: differs in ToggleSwitch.Value=<cell [0 0]> (ref "Off"), ToggleSwitch.ValueIndex=strings(0,0) (ref "1"), ToggleSwitch.InnerPosition=["100" "100" "20" "20"] (ref ["100" "100" "20" "45"]), ToggleSwitch.Position=["100" "100" "20" "20"] (ref ["100" "100" "20" "45"]), ToggleSwitch.OuterPosition=["100" "100" "20" "20"] (ref ["100" "79" "20" "87"])
+ToggleTool__blank.mat: same
+Toolbar__blank.mat: same
+TreeNode__blank.mat: differs in TreeNode.ValidateChildFcnMode="auto" (ref "manual")
+Tree__blank.mat: differs in Tree.ValidateChildFcnMode="auto" (ref "manual"), Tree.Editable="on" (ref "off"), Tree.InnerPosition=["100" "100" "20" "20"] (ref ["20" "20" "150" "300"]), Tree.Position=["100" "100" "20" "20"] (ref ["20" "20" "150" "300"]), Tree.OuterPosition=["100" "100" "20" "20"] (ref ["20" "20" "150" "300"])
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_compare (line 42)
+In ds1b_blanked (line 4)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_compare (line 42)
+In ds1b_blanked (line 4)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_compare (line 42)
+In ds1b_blanked (line 4)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_compare (line 42)
+In ds1b_blanked (line 4)] 
+UIAxes__blank.mat: same

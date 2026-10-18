@@ -1,0 +1,132 @@
+ASAP2CDFGen: same (35 components)
+AddEditParameterDialog: same (40 components)
+AddEditTapsDialog: same (13 components)
+ApplicationInspector: same (26 components)
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+CTLEFitter: differs in UIAxesPR:UIAxes.CameraViewAngle="6.6086" (ref "6.6086"), UIAxesPR:UIAxes.CameraViewAngle_I="6.6086" (ref "6.6086"), UIAxesPR:UIAxes.PlotBoxAspectRatio=["1" "0.6411" "0.6411"] (ref ["1" "0.64094" "0.64094"]), UIAxesPR:UIAxes.PlotBoxAspectRatio_I=["1" "0.6411" "0.6411"] (ref ["1" "0.64094" "0.64094"]), UIAxesPlot:UIAxes.CameraViewAngle="6.6086" (ref "6.6086"), UIAxesPlot:UIAxes.CameraViewAngle_I="6.6086" (ref "6.6086"), UIAxesPlot:UIAxes.PlotBoxAspectRatio=["1" "0.6411" "0.6411"] (ref ["1" "0.64094" "0.64094"]), UIAxesPlot:UIAxes.PlotBoxAspectRatio_I=["1" "0.6411" "0.6411"] (ref ["1" "0.64094" "0.64094"])
+ClassContainer: same (1 components)
+ClockDomainEditor: same (8 components)
+ColumnTransformationDialog: same (16 components)
+CustomFunctionDialog: same (17 components)
+DCOffsetDialog: same (4 components)
+DataExport: same (15 components)
+DataImport: same (7 components)
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+DesignerSpecApp: same (55 components)
+EditCustomFunctionsDialog: same (8 components)
+GUIDEAppMaintenanceOptions: same (24 components)
+IbisAmiManager: same (61 components)
+ImportDataUI: same (14 components)
+InstrumentationVisualizer: same (18 components)
+MetadataUI: same (21 components)
+ModelDiscViewer: same (59 components)
+ModulationDialog: same (7 components)
+MultiPaneSimApp: differs in missing SimulationControls SimulationProgress VariableTuner, PrmsGL:GridLayout.Children=<matlab.graphics.GraphicsPlaceholder [0 0]> (ref <simulink.ui.control.VariableTuner [1 1]>), PrmsGL:GridLayout.Children_I=<matlab.graphics.GraphicsPlaceholder [0 0]> (ref <simulink.ui.control.VariableTuner [1 1]>), PrmsGL:GridLayout.NodeChildren=strings(0,0) (ref <simulink.ui.control.VariableTuner [1 1]>), PrmsGL: children  (ref VariableTuner), ProgressBarGL:GridLayout.Children=<matlab.graphics.GraphicsPlaceholder [0 0]> (ref <simulink.ui.control.SimulationProgress [1 1]>), ProgressBarGL:GridLayout.Children_I=<matlab.graphics.GraphicsPlaceholder [0 0]> (ref <simulink.ui.control.SimulationProgress [1 1]>), ProgressBarGL:GridLayout.NodeChildren=strings(0,0) (ref <simulink.ui.control.SimulationProgress [1 1]>), ProgressBarGL: children  (ref SimulationProgress), SimControlsGL:GridLayout.Children=<matlab.ui.control.WebComponent [3 1]> (ref <matlab.ui.control.WebComponent [4 1]>), SimControlsGL:GridLayout.Children_I=<matlab.ui.control.WebComponent [3 1]> (ref <matlab.ui.control.WebComponent [4 1]>), SimControlsGL:GridLayout.NodeChildren=<matlab.ui.control.WebComponent [3 1]> (ref <matlab.ui.control.WebComponent [4 1]>), SimControlsGL: children StopTimeGL StatusLabel SimTimeLabel (ref StopTimeGL StatusLabel SimTimeLabel SimulationControls)
+ReportDialog: same (7 components)
+RxJitter: same (24 components)
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+SLSimApp2: same (28 components)
+SiToolBoxConsole: same (4 components)
+SignalIntegrityLink: same (41 components)
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+SimAppTemplate: differs in UIAxes:UIAxes.CameraViewAngle="6.6086" (ref "6.6086"), UIAxes:UIAxes.CameraViewAngle_I="6.6086" (ref "6.6086"), UIAxes:UIAxes.PlotBoxAspectRatio=["1" "0.69548" "0.69548"] (ref ["1" "0.69705" "0.69705"]), UIAxes:UIAxes.PlotBoxAspectRatio_I=["1" "0.69548" "0.69548"] (ref ["1" "0.69705" "0.69705"])
+SystemLogViewer: same (9 components)
+TestSuitesManager: same (33 components)
+TreePanel: same (45 components)
+TxJitter: same (17 components)
+addRuleDialog: same (8 components)
+app1: same (4 components)
+aurora: differs in missing SimulationControls SimulationProgress VariableTuner, PrmsGL:GridLayout.Children=<matlab.graphics.GraphicsPlaceholder [0 0]> (ref <simulink.ui.control.VariableTuner [1 1]>), PrmsGL:GridLayout.Children_I=<matlab.graphics.GraphicsPlaceholder [0 0]> (ref <simulink.ui.control.VariableTuner [1 1]>), PrmsGL:GridLayout.NodeChildren=strings(0,0) (ref <simulink.ui.control.VariableTuner [1 1]>), PrmsGL: children  (ref VariableTuner), ProgressBarGL:GridLayout.Children=<matlab.graphics.GraphicsPlaceholder [0 0]> (ref <simulink.ui.control.SimulationProgress [1 1]>), ProgressBarGL:GridLayout.Children_I=<matlab.graphics.GraphicsPlaceholder [0 0]> (ref <simulink.ui.control.SimulationProgress [1 1]>), ProgressBarGL:GridLayout.NodeChildren=strings(0,0) (ref <simulink.ui.control.SimulationProgress [1 1]>), ProgressBarGL: children  (ref SimulationProgress), SimControlsGL:GridLayout.Children=<matlab.ui.control.WebComponent [3 1]> (ref <matlab.ui.control.WebComponent [4 1]>), SimControlsGL:GridLayout.Children_I=<matlab.ui.control.WebComponent [3 1]> (ref <matlab.ui.control.WebComponent [4 1]>), SimControlsGL:GridLayout.NodeChildren=<matlab.ui.control.WebComponent [3 1]> (ref <matlab.ui.control.WebComponent [4 1]>), SimControlsGL: children StopTimeGL StatusLabel SimTimeLabel (ref StopTimeGL StatusLabel SimTimeLabel SimulationControls)
+bertool: same (102 components)
+borrowLicenses: same (20 components)
+mlexpdlg: same (32 components)
+reportDlgBox: same (13 components)
+rowTimesDialog: same (30 components)
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The DrawMode property will be removed in a future release. Use the SortMethod property instead.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 26)
+In ds1b_verify (line 42)] 
+[Warning: The EraseMode property is no longer supported and will error in a future release.] 
+[> In ds1b_objdiff (line 27)
+In ds1b_verify (line 42)] 
+sParameterFitter: same (37 components)
+slCustomizedCrashWindowApp: same (8 components)
+slrtInstrumentPanelTemplate: same (23 components)
+template: same (3 components)
+       same: 40
+    differs: 4
+    skipped: 0
+

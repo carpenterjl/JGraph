@@ -189,12 +189,45 @@ public static class DesignCodeWriter
     {
         ArgumentNullException.ThrowIfNull(component);
         style ??= DesignCodeStyle.Default;
-        string parent = component.Parent is { } p ? $"{App}.{p.CodeName}" : string.Empty;
-        string creation = component.Class is { } cls
-            ? cls.CreationCall(parent)
-            : component.ExtraArguments.Length == 0 ? $"{component.Function}({parent})" : $"{component.Function}({parent}, {component.ExtraArguments})";
-        var lines = new List<string> { $"{App}.{component.CodeName} = {creation};" };
+        string target = $"{App}.{component.CodeName}";
+        var lines = new List<string> { $"{target} = {Creation(component, component.Parent is { } p ? $"{App}.{p.CodeName}" : string.Empty)};" };
+        lines.AddRange(WrittenProperties(component, style.Theme).Select(w => PropertyLine(target, component.Type, w.Name, w.Value, stored: false)));
+        return lines;
+    }
 
+    /// <summary>
+    /// One component's lines as App Designer keeps them in its <c>DesignTimeProperties.ComponentCode</c>
+    /// (designer plan DS1b): R2025b's generator's lines before the code model finishes them - the
+    /// component as <c>app.ad_CODENAME_ad</c>, its parent as <c>app.ad_PARENTCODENAME_ad</c>, a
+    /// callback as its method's name in quotes, an image beside the app as its full path in quotes
+    /// under <paramref name="appFolder"/> (its relative path when the folder is not known; the code
+    /// model replaces that line from the recorded relative path either way).
+    /// </summary>
+    public static IReadOnlyList<string> StoredComponentCode(DesignComponent component, DesignCodeStyle? style = null, string? appFolder = null)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        style ??= DesignCodeStyle.Default;
+        const string Target = App + ".ad_CODENAME_ad";
+        var lines = new List<string> { $"{Target} = {Creation(component, component.Parent is null ? string.Empty : App + ".ad_PARENTCODENAME_ad")};" };
+        lines.AddRange(WrittenProperties(component, style.Theme).Select(w => PropertyLine(Target, component.Type, w.Name, w.Value, stored: true, appFolder)));
+        return lines;
+    }
+
+    private static string Creation(DesignComponent component, string parent) => component.Class is { } cls
+        ? cls.CreationCall(parent)
+        : component.ExtraArguments.Length == 0 ? $"{component.Function}({parent})" : $"{component.Function}({parent}, {component.ExtraArguments})";
+
+    /// <summary>
+    /// The properties R2025b's generator writes for <paramref name="component"/> under
+    /// <paramref name="theme"/>, in its order: each catalog property that is set and not at its
+    /// default (a grid child's <c>Layout.Row</c> and <c>Layout.Column</c> in <c>Layout</c>'s place,
+    /// its <c>Position</c> never), then the properties the catalog does not order, as they were set.
+    /// A component's <c>ContextMenu</c> is not among them: the code model assigns it.
+    /// </summary>
+    public static IReadOnlyList<(string Name, DesignValue Value)> WrittenProperties(DesignComponent component, DesignTheme theme)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        var written = new List<(string, DesignValue)>();
         var placed = new HashSet<string>(StringComparer.Ordinal) { "ContextMenu" };
         if (component.Class is { } known)
         {
@@ -221,7 +254,7 @@ public static class DesignCodeWriter
                         {
                             if (component.Get(part) is { } place)
                             {
-                                lines.Add(PropertyLine(component, part, place));
+                                written.Add((part, place));
                             }
                         }
                     }
@@ -229,9 +262,9 @@ public static class DesignCodeWriter
                     continue;
                 }
 
-                if (component.Get(property.Name) is { } value && !IsDefault(component, property, value, style.Theme))
+                if (component.Get(property.Name) is { } value && !IsDefault(component, property, value, theme))
                 {
-                    lines.Add(PropertyLine(component, property.Name, value));
+                    written.Add((property.Name, value));
                 }
             }
         }
@@ -240,11 +273,11 @@ public static class DesignCodeWriter
         {
             if (!placed.Contains(name))
             {
-                lines.Add(PropertyLine(component, name, value));
+                written.Add((name, value));
             }
         }
 
-        return lines;
+        return written;
     }
 
     /// <summary>
@@ -301,24 +334,46 @@ public static class DesignCodeWriter
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentNullException.ThrowIfNull(value);
-        string target = $"{App}.{component.CodeName}";
+        return PropertyLine($"{App}.{component.CodeName}", component.Type, name, value, stored: false);
+    }
+
+    /// <summary>
+    /// The line that sets <paramref name="name"/> on <paramref name="target"/>; when
+    /// <paramref name="stored"/>, in the form App Designer stores (a callback's method name and an
+    /// image's relative path in quotes).
+    /// </summary>
+    private static string PropertyLine(string target, string type, string name, DesignValue value, bool stored, string? appFolder = null)
+    {
+        value = WrittenValue(type, name, value);
+        string text = stored && value is CallbackValue callback ? $"'{callback.Method}'"
+            : stored && value is ImageFileValue image ? DesignValueText.Format(new CharValue(ImagePath(image, appFolder)))
+            : DesignValueText.Format(value);
         if (DesignCodeReader.LabelAliases.FirstOrDefault(a => a.Value == name) is { Key: { } labelFunction })
         {
-            return $"{labelFunction}({target}, {DesignValueText.Format(value)})";
+            return $"{labelFunction}({target}, {text})";
         }
 
         switch (name)
         {
             case "AD_ColormapString":
-                return $"colormap({target}, {DesignValueText.Format(value)});";
+                return $"colormap({target}, {text});";
             case "ToolbarVisible":
-                return $"{target}.Toolbar.Visible = {DesignValueText.Format(value)};";
+                return $"{target}.Toolbar.Visible = {text};";
             case "AD_AliasedThemeChangedFcn":
-                return $"{target}.ThemeChangedFcn = {DesignValueText.Format(value)};";
-            case "Text" when TextUnwrapped.Contains(component.Type) && value is CellValue { Items: [var only] }:
-                return $"{target}.Text = {DesignValueText.Format(only)};";
+                return $"{target}.ThemeChangedFcn = {text};";
             default:
-                return $"{target}.{name} = {DesignValueText.Format(value)};";
+                return $"{target}.{name} = {text};";
         }
     }
+
+    /// <summary>
+    /// The value a property's line sets: a <c>Text</c> held as a one-element cell is set as its char
+    /// for the classes whose adapter writes it so; anything else as it is.
+    /// </summary>
+    internal static DesignValue WrittenValue(string type, string name, DesignValue value) =>
+        name == "Text" && TextUnwrapped.Contains(type) && value is CellValue { Items: [var only] } ? only : value;
+
+    /// <summary>An image beside the app as the generator writes it: its full path where the app's folder is known, else its relative path.</summary>
+    private static string ImagePath(ImageFileValue image, string? appFolder) =>
+        appFolder is null ? image.RelativePath : Path.Combine([appFolder, .. image.Parts]);
 }

@@ -1,0 +1,7 @@
+name refused: Error setting property 'Colormap' of class 'UIAxes':
+Value must be either:
+an Mx3 array of type single or double in the range [0 1]
+an Mx3 array of type uint8.
+colormap(ax,'hot') rows 256; hot() rows 256
+getColormapString: hot
+getColormapString 64: parula

@@ -31,6 +31,9 @@
          R2025b App Designer's generated property order, mode siblings and run-time defaults, as the
          probe ds1_catalog records them. One copy, kept beside the probe and read by DesignCatalog. -->
     <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds1\ds1_catalog.json" LogicalName="JGraph.Scripting.designer-catalog.json" />
+    <!-- Designer plan DS1b (ADR 0244): what a fresh component of each class stores in App Designer's
+         saved tree, as the probe ds1b_base records it from R2025b. Read by DesignTreeWriter. -->
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds1b\ds1b_base.json" LogicalName="JGraph.Scripting.designer-base.json" />
   </ItemGroup>
 
   <ItemGroup>

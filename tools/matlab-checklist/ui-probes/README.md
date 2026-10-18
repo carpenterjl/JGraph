@@ -37,6 +37,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `oi142/` | Open item 142 (ADR 0242): headless. `oi142_imshow` records what 50 forms of `imshow` do to the figure, the axes and the image (each class, true colour, indexed, display ranges, every option, a named axes, subplot, hold, replaced, twice, a file, a panel, a uiaxes); `oi142_errors` its refusals and warnings word for word, and exports two pictures (`rt/`) showing that labels written after `imshow` are drawn on its invisible axes while a plain invisible axes draws none. |
 | `ds0/` | Stage DS0 of the designer plan: headless. `ds0_stale` writes apps whose component tree disagrees with their code and shows what App Designer's load and the class make of each; `ds0_shipped` reads the 44 shipped apps' trees against their `createComponents`; `ds0_codegen` runs App Designer's component code generator over them; `ds0_tree` saves component trees for `ds0_tree_dump.py` to list their subsystem objects; `ds0_plaintext` writes a plain-text `.m` app and loads and runs it with the feature off and on; the window session `ds0w_dock` (`.m` + `.ps1`, user's leave) opens App Designer in the full desktop and lists and captures MATLAB's windows. `rt/` (ignored) holds what they write. |
 | `ds1/` | Stage DS1 of the designer plan (ADR 0243): headless. `ds1_catalog` records, per uifigure component class, App Designer's generated property order, mode siblings and themed run-time defaults into `ds1_catalog.json`, which the build embeds; `ds1_oracle` runs R2025b's generator over every component of the 44 shipped apps into `rt/ds1_oracle.txt` (ignored: MathWorks' lines, read by the local test); `ds1_generate` runs the fixture app `tests/JGraph.Tests/Scripting/Designer/DesignerSpecApp.m` through the generator and writes `DesignerSpecApp.generated.txt` beside it; `ds1_quirks` tries two generator branches that write code which does not read back on 15 real properties. |
+| `ds1b/` | Stage DS1b of the designer plan (ADR 0244): headless. `ds1b_mcos.py` reads and writes a level-5 MAT-file's MCOS subsystem as a model (byte for byte); `ds1b_reduce.py` + `ds1b_reduced`, `ds1b_rules.py` + `ds1b_rules` and `ds1b_setsaves` learn what `load` does with a tree that stores fewer or other names; `ds1b_fresh` saves a fresh component of each of the 45 classes (and an axes' labelled parts) into `rt/fresh`, `ds1b_blank.py` + `ds1b_blanked` load each with nothing stored, `ds1b_transcribe.py` + `ds1b_scratch` (over `ds1b_build.py`) rewrite saved trees from scratch, and `ds1b_base.py` records the bases into `ds1b_base.json`, which the build embeds; `ds1b_dates`, `ds1b_tabs` and `ds1b_cmap` record a datetime's stored form, a tab's size and App Designer's colormap names; `ds1b_verify` (with `ds1b_reference`, `ds1b_appsource`, `ds1b_objdiff`) loads every tree JGraph writes against the tree its code makes, and `ds1b_appdesigner` runs each through App Designer's serializer and reader against the same for the code's tree. `rt/` (ignored) holds the files, the trees JGraph writes among them (`rt/jgraph`, left by the local test `AppDesignerTreeWriterTests`). |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -990,3 +991,92 @@ be ones the components keep, because components coerce on set:
 `"a" + "b"`, and a cell the generator cannot write gets an empty line. No stock component reaches
 either one. In 15 cases, text properties kept a char and cells of strings became cells of char;
 the other values were refused, or their property is never generated.
+## DS1b findings (designer plan, R2025b, headless)
+
+The probes in `ds1b/` back stage DS1b: JGraph writing App Designer's saved component tree
+(`appModel.mat`'s `components`) as R2025b's MCOS objects (ADR 0244, `MatMcosWriter`,
+`DesignTreeWriter`).
+
+**The subsystem can be written from a model.** `ds1b_mcos.py` parses a level-5 file's subsystem into
+names, classes, objects, property lists, dynamic-property lists and stored values. It writes back
+R2025b's own trees byte for byte. Two parts `MatMcos` did not need are a second uint8 stream after
+the `FileWrapper__` struct (a struct whose `MCOS` is empty), and a last table segment of `1` and
+its own offset plus eight. In R2025b's files the int32 per-class cell holds, for
+`meta.DynamicProperty` alone, the name `matlab.metadata.DynamicProperty`. Written that way in a
+file without saved-time defaults, R2025b warns that `meta.DynamicProperty` "cannot be loaded as an
+enumeration". Written as zeros, the file loads without the warning.
+
+**What `load` does with stored names** (`ds1b_reduced`, `ds1b_rules`, `ds1b_setsaves`):
+
+- A tree that stores only some of an object's names loads, with no error. A name left out keeps the
+  storage's class default, not what the constructor sets: a button with nothing stored loads with
+  empty text and a 20-by-20 size, and a figure with nothing stored is a classic figure with menus.
+- Names are assigned in the order stored, through the class's set methods and serialization
+  hooks, so a public name works where MATLAB stores a private one. `Value` before `Items` is
+  refused as in code, and a name stored twice is assigned once.
+- The last per-class cell is each class's defaults at save time, and `load` re-applies them after
+  the stored names. Written empty, a stored colour turns its mode to `'manual'` (its setter); a
+  mode stored after it wins. The colour and font mixins' `modifyIncomingSerializationContent`
+  rename `BackgroundColor` to `BackgroundColor_I`, pick the mode from the value when none is
+  stored, and warn when the colour is missing.
+
+**What a fresh component stores** (`ds1b_fresh`, `ds1b_blanked`). Loaded with nothing stored, a
+component lacks only what its constructor sets: text, size, alignment, `Value`/`ValueIndex`, tick
+labels, a tree's editability, and the uifigure's settings (`IsAppBuilding`, `DefaultTools_I`, no
+menu bar, ...). Every MATLAB-saved tree loads with `ParentMode` `'auto'` and
+`HasAppBuildingDefaults` `'off'`, since neither is stored.
+
+**Trees written from scratch** (`ds1b_scratch`, over `ds1b_transcribe.py` and `ds1b_build.py`).
+They keep only the components, their plain stored values, children, Layout options, position
+stores and dynamic properties, with every class's defaults empty. They load as the trees they came
+from for 44 of the 45 classes, the U7b app and DataExport. A UIAxes' `PositionMode` and
+`PositionConstraintMode` come back `'manual'`.
+
+**What the bases needed beyond a fresh component's names** (found by `ds1b_verify`):
+
+- **The figure's default map.** A uifigure gives the panels, button groups, tab groups, tabs and
+  tables made in it its default-property map's values (`InternalDefaultPropMap`) with modes left
+  `'auto'`. A component loaded from a tree gets them only when the figure is its parent as it loads.
+- **Selection.** A fresh radio or toggle button is its group's selection; in a tree the last one
+  attached would win.
+- **A tab's size** is its group's when the tab is made, and is not worked out again headless
+  (`ds1b_tabs`).
+- **An axes** stores its camera and plot box for its default size. Its position stores are applied
+  after the stored names, so they would undo a `Position` stored by name.
+
+**Values in their stored forms:**
+
+- A datetime is an MCOS `datetime` storing `data`, milliseconds since 1970 (NaN for `NaT`), and
+  `fmt` only when set (`ds1b_dates`).
+- An axes' title and labels are text objects: `Title_IS`, `Subtitle_IS`, and each ruler's
+  `Label_IS`.
+- The default axes toolbar is not saved, so App Designer gives an axes whose toolbar is hidden a
+  custom `axtoolbar` (`DesignTimeUIAxesController`).
+- The colormap is `Colormap_I` with `ColormapMode` `'manual'`. App Designer names it by `isequal`
+  against the 256 rows of each of 19 maps; the setter refuses a name, and `hot(64)` reads as
+  `'parula'` (`ds1b_cmap`).
+
+**What App Designer stores per component.** `DesignTimeProperties` holds `CodeName`, `GroupId`,
+`ComponentCode` (an N-by-1 cell of the generator's lines before the code model finishes them:
+`app.ad_CODENAME_ad`, `app.ad_PARENTCODENAME_ad`, a callback's name in quotes), and
+`ImageRelativePath`. The last is added empty by App Designer's `ImageLoader` where missing, and
+used to reset `Icon`/`ImageSource`. A shipped `appModel.mat` also holds `code`, `appData` (an
+`AppData` object of three empty properties and `MinimumSupportedVersion`) and
+`components.Groups`.
+
+**Against the code** (`ds1b_verify`). 40 of the 44 apps (the fixture and 39 shipped, 937
+components) load the same as the tree their `createComponents` makes. The other four:
+
+- two Simulink apps, whose Simulink components are not written;
+- two apps where an axes' plot-box ratio differs in the fourth digit. The written tree's ratio is
+  its final size's; the code's tree keeps one worked out mid-way.
+
+**App Designer's full load** (`ds1b_appdesigner`). All 44 open through App Designer's serializer and
+reader with every code name: 1127 components and 372 callbacks bound, every stored
+`ComponentCode` equal to the generator's on the loaded component, and no warnings. Their findings
+are only the 34 that the code's own tree, run the same way, shares:
+
+- R2025b loses a scalar `Alphamap` when saving an axes;
+- a panel's inner position comes back as a fresh one's;
+- callbacks no component in `createComponents` uses are bound to nothing;
+- the fixture image's moved path.
