@@ -80,6 +80,12 @@
     <Content Include="Numerics\fft_reference.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- The visual designer's fixture app and what R2025b's component code generator writes for it
+       (designer plan DS1; the probe ds1_generate records the second from the first). -->
+  <ItemGroup>
+    <Content Include="Scripting\Designer\DesignerSpecApp.m;Scripting\Designer\DesignerSpecApp.generated.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Data\JGraph.Data.csproj" />

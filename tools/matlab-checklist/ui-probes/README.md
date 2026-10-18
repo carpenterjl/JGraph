@@ -36,6 +36,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `oi141/` | Open item 141 (ADR 0242): headless. `oi141_title` records what a legend's `Title` is (class, properties, `get`, defaults, `title(lg, …)`, the words' shapes, the refusals, display, delete, a legend made again, the box under it, `savefig`); `oi141_font` and `oi141_follow` what its size, weight, angle, font, interpreter and colour follow, read after the legend's update; `oi141_classes` prints its rows in the three recorded class tables' formats. |
 | `oi142/` | Open item 142 (ADR 0242): headless. `oi142_imshow` records what 50 forms of `imshow` do to the figure, the axes and the image (each class, true colour, indexed, display ranges, every option, a named axes, subplot, hold, replaced, twice, a file, a panel, a uiaxes); `oi142_errors` its refusals and warnings word for word, and exports two pictures (`rt/`) showing that labels written after `imshow` are drawn on its invisible axes while a plain invisible axes draws none. |
 | `ds0/` | Stage DS0 of the designer plan: headless. `ds0_stale` writes apps whose component tree disagrees with their code and shows what App Designer's load and the class make of each; `ds0_shipped` reads the 44 shipped apps' trees against their `createComponents`; `ds0_codegen` runs App Designer's component code generator over them; `ds0_tree` saves component trees for `ds0_tree_dump.py` to list their subsystem objects; `ds0_plaintext` writes a plain-text `.m` app and loads and runs it with the feature off and on; the window session `ds0w_dock` (`.m` + `.ps1`, user's leave) opens App Designer in the full desktop and lists and captures MATLAB's windows. `rt/` (ignored) holds what they write. |
+| `ds1/` | Stage DS1 of the designer plan (ADR 0243): headless. `ds1_catalog` records, per uifigure component class, App Designer's generated property order, mode siblings and themed run-time defaults into `ds1_catalog.json`, which the build embeds; `ds1_oracle` runs R2025b's generator over every component of the 44 shipped apps into `rt/ds1_oracle.txt` (ignored: MathWorks' lines, read by the local test); `ds1_generate` runs the fixture app `tests/JGraph.Tests/Scripting/Designer/DesignerSpecApp.m` through the generator and writes `DesignerSpecApp.generated.txt` beside it; `ds1_quirks` tries two generator branches that write code which does not read back on 15 real properties. |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -935,3 +936,57 @@ Not measured:
 - the mapping from each public property to the internal names a class saves;
 - App Designer with an app open, and its tabs when several are open;
 - any release but R2025b.
+
+## DS1 findings (designer plan, R2025b, headless)
+
+The probes in `ds1/` back stage DS1, the designer's model of an app's components and its
+`createComponents` reader and writer (ADR 0243, `src/JGraph.Scripting/Designer`).
+
+**What the generator knows** (`ds1_catalog`). App Designer offers 45 uifigure component classes in
+R2025b, and the probe records one entry for each. Each property list is the adapter's
+`getCodeGenPropertyNames` on a design-time component; they run from 6 entries (Toolbar) to 103
+(UIAxes). Many colour and tag properties have hidden `Mode` siblings, so they are written only once
+set. The light theme's defaults equal the unthemed ones. The dark theme changes 68 defaults, nearly
+all colours.
+
+**The theme.** With the WebUI on, `DesignTimeController` passes the generator the figure's
+`Theme.BaseColorStyle`. All 44 shipped apps loaded in R2025b report `light`.
+
+**The code around the components is JavaScript.** App Designer's code engine
+(`appdesigner/codegen/…` in `web/release/bundle.mwBundle.appdesigner.js`) writes the parts of
+`createComponents` the generator does not:
+
+- the comments and blank lines;
+- the figure's closing `Visible = 'on'`;
+- a check box tree's `CheckedNodes` after its nodes;
+- a context menu's assignments after its items, under an indented blank line;
+- `pathToMLAPP` and the `fullfile` image lines.
+
+It writes the components in the order the tree holds them, each before its children. It reuses a
+component's stored `ComponentCode` when the app was saved by the same release, and regenerates and
+marks the app dirty when that code differs.
+
+**The properties block lists components in the component browser's order**, not the creation order
+(measured over the 44 apps):
+
+- within a container, the most recently made first;
+- menus, a context menu's items, tabs, tree nodes and toolbar tools in the order made;
+- a figure's menus first and its context menus last;
+- a responsive app's panels in the order made.
+
+**The oracle** (`ds1_oracle`). R2025b's generator was run over all 1108 shipped components. In 1080,
+the saved tree and the code agree on what is set. In the other 28, the tree holds values the code
+never sets: older releases' unthemed defaults that the light theme no longer takes for defaults.
+
+**The fixture** (`ds1_generate`) runs a hand-written `createComponents` in R2025b. The values have to
+be ones the components keep, because components coerce on set:
+
+- `RoundFractionalValues` rounds;
+- `DisabledDates` becomes a column;
+- a button group selects one button;
+- checking a node's only child checks the node.
+
+**Two generator branches write broken code** (`ds1_quirks`): a string with a line break comes out as
+`"a" + "b"`, and a cell the generator cannot write gets an empty line. No stock component reaches
+either one. In 15 cases, text properties kept a char and cells of strings became cells of char;
+the other values were refused, or their property is never generated.

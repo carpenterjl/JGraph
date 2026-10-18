@@ -1,0 +1,15 @@
+ 1 matlab.ui.control.Label Text         keeps char [1 9]                   writes ['two' newline 'lines']                  reads back equal: 1
+ 2 matlab.ui.control.Button Text         keeps char [1 9]                   writes ['two' newline 'lines']                  reads back equal: 1
+ 3 matlab.ui.control.EditField Placeholder  keeps char [1 9]                   writes ['two' newline 'lines']                  reads back equal: 1
+ 4 matlab.ui.control.Button Tooltip      keeps char [1 9]                   writes ['two' newline 'lines']                  reads back equal: 1
+ 5 matlab.ui.control.Label Tooltip      keeps char [1 9]                   writes ['two' newline 'lines']                  reads back equal: 1
+ 6 matlab.ui.control.TextArea Value        keeps cell [2 1] of char           writes {'two'; 'lines'}                         reads back equal: 1
+ 7 matlab.ui.control.TextArea Placeholder  keeps char [1 9]                   writes ['two' newline 'lines']                  reads back equal: 1
+ 8 matlab.ui.control.ListBox Items        keeps cell [1 2] of char           writes {'a', 'b'}                               reads back equal: 1
+ 9 matlab.ui.control.DropDown Items        refused: MATLAB:ui:DropDown:invalidText
+10 matlab.ui.control.Table ColumnName   keeps cell [2 1] of char           writes {'A'; 'B'}                               reads back equal: 1
+11 matlab.ui.control.Table ColumnName   keeps cell [2 1] of char           writes {'A'; 'B'}                               reads back equal: 1
+12 matlab.ui.control.Table ColumnWidth  refused: MATLAB:hg:uitable:BadColumnWidthValue
+13 matlab.ui.control.Table ColumnFormat keeps cell [1 2] of cell/char      generator writes no line
+14 matlab.ui.container.GridLayout RowHeight    keeps cell [1 2] of char           writes {'1x', 'fit'}                            reads back equal: 1
+15 matlab.ui.control.TextArea Value        refused: MATLAB:ui:TextArea:invalidMultilineTextValue
