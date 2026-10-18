@@ -242,6 +242,7 @@ internal static partial class JgsGraphicsProperties
         AxisModel { RulerCategories: not null } => ["matlab.graphics.axis.decorator.CategoricalRuler"], // open item 126
         AxisModel => ["matlab.graphics.axis.decorator.NumericRuler"],
         LegendModel => ["matlab.graphics.illustration.Legend"],
+        JgsLegendTitle => [LegendTextClass], // open item 141
         ColorbarModel => ["matlab.graphics.illustration.ColorBar"],
         LightModel => [Primitive + "Light"],
         JgsGraphicsGroup { Transforms: true } => [Primitive + "Transform"],

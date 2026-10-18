@@ -160,6 +160,7 @@ internal static class AnnotationMapper
     private static void CaptureCommon(AnnotationObject annotation, AnnotationDto dto)
     {
         dto.Name = annotation.Name;
+        dto.Tag = string.IsNullOrEmpty(annotation.Tag) ? null : annotation.Tag; // open item 140
         dto.Visible = annotation.Visible;
         dto.ZOrder = annotation.ZOrder;
         dto.Space = annotation.Space;
@@ -169,6 +170,11 @@ internal static class AnnotationMapper
     private static void ApplyCommon(AnnotationDto dto, AnnotationObject annotation)
     {
         annotation.Name = dto.Name;
+        if (dto.Tag is { } tag)
+        {
+            annotation.Tag = tag;
+        }
+
         annotation.Visible = dto.Visible;
         annotation.ZOrder = dto.ZOrder;
         annotation.Space = dto.Space;

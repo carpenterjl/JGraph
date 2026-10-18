@@ -1355,6 +1355,11 @@ internal static partial class JgsBuiltins
                 DeleteLegend(legend);
                 return;
 
+            // R2025b empties a legend's title and keeps the object (open item 141, oi141_font F20).
+            case JgsLegendTitle title:
+                title.Clear();
+                return;
+
             case ColorbarModel colorbar:
                 GraphObjectLifecycle.NotifyDeleting(colorbar);
                 colorbar.Visible = false;

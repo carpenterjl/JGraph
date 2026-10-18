@@ -1,0 +1,248 @@
+CHK|tag_types_before|figure axes line text rectangle light legend colorbar|exact
+CHK|tag_shapes_before|double [1 7] 1 1 1 1 1 1 1|exact
+CHK|tag_types_after|figure axes line text rectangle light legend colorbar|exact
+CHK|tag_shapes_after|double [1 7] 1 1 1 1 1 1 1|exact
+CHK|tag_shape_types_after|char[1 96]'textboxshape rectangleshape ellipseshape lineshape arrowshape doubleendarrowshape textarrowshape'|div=0242|diverges|char[1 58]'textbox rectangle ellipse line arrow doublearrow textarrow'
+CHK|tag_shapes_findobj|double[1 7] [0 0 0 0 0 0 0]|div=0242|diverges|double[1 7] [1 1 1 1 1 1 1]
+CHK|tag_rect_after|cell [1 3] {char 'rectangle', double [1 4] 0.5 0.5 1 1, double [1 2] 0.29999999999999999 0.59999999999999998}|exact
+CHK|tag_text_after|note|exact
+CHK|tag_userdata_after|double[1 1] 11|div=0217|diverges|double[0 0]
+CHK|tag_rect_scalar|cell [1 4] {double [1 1] 1, double [1 4] 1 2 3 4, double [1 1] 0.5, double [1 3] 1 1 0}|exact
+CHK|lt_isa|cell [1 5] {logical [1 1] 1, logical [1 1] 1, logical [1 1] 0, logical [1 1] 1, logical [1 1] 1}|exact
+CHK|lt_class|char[1 40]'matlab.graphics.illustration.legend.Text'|div=0051|diverges|char[1 6]'double'
+CHK|lt_properties|cell [1 21] {char 'String', char 'Color', char 'FontAngle', char 'FontName', char 'FontSize', char 'FontWeight', char 'Interpreter', char 'ColorMode', char 'FontAngleMode', char 'FontNameMode', char 'FontSizeMode', char 'FontWeightMode', char 'InterpreterMode', char 'Children', char 'Parent', char 'Visible', char 'HandleVisibility', char 'Selected', char 'SelectionHighlight', char 'HitTest', char 'PickableParts'}|exact
+CHK|lt_get_fields|cell [1 21] {char 'String', char 'Color', char 'FontAngle', char 'FontName', char 'FontSize', char 'FontWeight', char 'Interpreter', char 'ColorMode', char 'FontAngleMode', char 'FontNameMode', char 'FontSizeMode', char 'FontWeightMode', char 'InterpreterMode', char 'Children', char 'Parent', char 'Visible', char 'HandleVisibility', char 'Selected', char 'SelectionHighlight', char 'HitTest', char 'PickableParts'}|exact
+CHK|lt_defaults|cell [1 7] {char '', char 'bold', char 'normal', char 'tex', logical [1 1] 1, logical [1 1] 1, logical [1 1] 1}|exact
+CHK|lt_modes|cell [1 6] {char 'auto', char 'auto', char 'auto', char 'auto', char 'auto', char 'auto'}|exact
+CHK|lt_switches|cell [1 6] {char 'on', char 'off', char 'visible', char 'on', char 'off', char 'on'}|exact
+CHK|lt_parent|cell [1 3] {logical [1 1] 1, logical [1 1] 1, logical [1 1] 1}|exact
+CHK|lt_title_returns|logical [1 1] 1|exact
+CHK|lt_string|Series|exact
+CHK|lt_options|cell [1 5] {char 'S', char 'normal', char 'manual', double [1 3] 1 0 0, char 'manual'}|exact
+CHK|lt_cell|cell [2 1] {char 'a', char 'b'}|exact
+CHK|lt_strings|cell [2 1] {char 'a', char 'b'}|exact
+CHK|lt_number|5|exact
+CHK|lt_string_scalar|s|exact
+CHK|lt_follow_size|cell [1 2] {double [1 1] 14, char 'auto'}|exact
+CHK|lt_follow_rest|cell [1 5] {char 'Arial', char 'latex', char 'italic', double [1 3] 1 0 0, char 'bold'}|exact
+CHK|lt_manual_size|cell [1 2] {double [1 1] 20, char 'manual'}|exact
+CHK|lt_none|cell [1 2] {char 'none', char 'manual'}|exact
+CHK|lt_color_auto|logical [1 1] 1|exact
+CHK|lt_partial|double [1 1] 12|exact
+CHK|lt_set_words|cell [1 3] {cell [1 2] {char 'normal', char 'bold'}, cell [1 3] {char 'none', char 'tex', char 'latex'}, cell [1 3] {char 'visible', char 'none', char 'all'}}|exact
+CHK|lt_err_type|MATLAB:class:setgetPropertyNotFound|exact
+CHK|lt_err_type_msg|Property Type not found in class matlab.graphics.illustration.legend.Text, or is not present in all elements of the array of class matlab.graphics.illustration.legend.Text.|exact
+CHK|lt_err_position|MATLAB:class:GetProhibited|exact
+CHK|lt_err_position_msg|No public property 'Position' for class ''Text''.|exact
+CHK|lt_err_bogus|MATLAB:class:InvalidProperty|exact
+CHK|lt_err_bogus_msg|The name 'Bogus' is not an accessible property for an instance of class 'matlab.graphics.illustration.legend.Text'.|exact
+CHK|lt_err_size|MATLAB:datatypes:OutsideRangeFiniteGreater0|exact
+CHK|lt_err_size_msg|Error setting property 'FontSize' of class 'Text': Value should be a finite number greater than 0|exact
+CHK|lt_err_weight|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|lt_err_weight_msg|Error setting property 'FontWeight' of class 'Text': 'heavy' is not a valid value. Use one of these values: 'normal' / 'bold'.|exact
+CHK|lt_err_parent|MATLAB:hg:TryingToReparentConnectedObject|exact
+CHK|lt_err_parent_msg|Trying to reparent an already connected internal component object.|exact
+CHK|lt_err_title|MATLAB:title:InvalidNumberOfInputs|exact
+CHK|lt_err_title_msg|Not enough input arguments.|exact
+CHK|lt_assign|char[1 34]'refused MATLAB:class:SetProhibited'|div=0242|diverges|char[1 8]'assigned'
+CHK|lt_deleted|cell [1 2] {logical [1 1] 1, char ''}|exact
+CHK|lt_legend_again|cell [1 2] {logical [1 1] 1, char 'Kept'}|exact
+CHK|lt_legend_remade|cell [1 2] {logical [1 1] 0, char ''}|exact
+CHK|lt_saved|cell [1 2] {char 'Saved', char 'normal'}|exact
+CHK|is_double_auto_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_double_auto_colour|cell [1 5] {double [1 2] 1 16, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_double_auto_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_double_auto_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_double_axes|cell [1 13] {double [1 2] 0.5 5.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_double_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_double_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 5, char 'scaled', double [1 2] 1 5, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_double_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_uint8_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_uint8_colour|cell [1 5] {double [1 2] 0 255, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_uint8_image|cell [1 9] {double [1 1] 1, char 'uint8', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_uint8_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_uint16_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_uint16_colour|cell [1 5] {double [1 2] 0 65535, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_uint16_image|cell [1 9] {double [1 1] 1, char 'uint16', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_uint16_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_int16_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_int16_colour|cell [1 5] {double [1 2] -32768 32767, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_int16_image|cell [1 9] {double [1 1] 1, char 'int16', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_int16_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_int8_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_int8_colour|cell [1 5] {double [1 2] -128 127, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_int8_image|cell [1 9] {double [1 1] 1, char 'int8', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_int8_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_logical_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_logical_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_logical_image|cell [1 9] {double [1 1] 1, char 'logical', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_logical_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_single_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_single_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_single_image|cell [1 9] {double [1 1] 1, char 'single', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_single_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_rgb_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_rgb_colour|cell [1 2] {double [1 2] 0 1, char 'auto'}|exact
+CHK|is_rgb_image|cell [1 9] {double [1 1] 1, char 'double', double [1 3] 4 4 3, char 'direct', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_rgb_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_rgb_uint8_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_rgb_uint8_colour|cell [1 2] {double [1 2] 0 1, char 'auto'}|exact
+CHK|is_rgb_uint8_image|cell [1 9] {double [1 1] 1, char 'uint8', double [1 3] 4 4 3, char 'direct', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_rgb_uint8_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_rgb_auto_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_rgb_auto_colour|cell [1 2] {double [1 2] 0 1, char 'manual'}|exact
+CHK|is_rgb_auto_image|cell [1 9] {double [1 1] 1, char 'double', double [1 3] 4 4 3, char 'direct', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_rgb_auto_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_rgb_clip_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_rgb_clip_colour|cell [1 2] {double [1 2] 0 1, char 'auto'}|exact
+CHK|is_rgb_clip_image|cell [1 9] {double [1 1] 1, char 'double', double [1 3] 4 4 3, char 'direct', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_rgb_clip_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_indexed_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_indexed_colour|cell [1 5] {double [1 2] 0.5 8, char 'auto', double [1 2] 8 3, double [1 3] 0 0 1, double [1 3] 1 1 1}|exact
+CHK|is_indexed_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'direct', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_indexed_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_indexed_uint8_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_indexed_uint8_colour|cell [1 5] {double [1 2] 0 7, char 'auto', double [1 2] 8 3, double [1 3] 0 0 1, double [1 3] 1 1 1}|exact
+CHK|is_indexed_uint8_image|cell [1 9] {double [1 1] 1, char 'uint8', double [1 2] 4 4, char 'direct', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_indexed_uint8_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_rgb_map_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_rgb_map_colour|cell [1 2] {double [1 2] 0 1, char 'auto'}|exact
+CHK|is_rgb_map_image|cell [1 9] {double [1 1] 1, char 'double', double [1 3] 4 4 3, char 'direct', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_rgb_map_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_range_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_range_colour|cell [1 5] {double [1 2] 0.20000000000000001 0.80000000000000004, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_range_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_range_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_range_named_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_range_named_colour|cell [1 5] {double [1 2] 0.20000000000000001 0.80000000000000004, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_range_named_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_range_named_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_range_abbrev_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_range_abbrev_colour|cell [1 5] {double [1 2] 0 2, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_range_abbrev_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_range_abbrev_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_range_empty_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_range_empty_colour|cell [1 5] {double [1 2] 0.25 4, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_range_empty_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_range_empty_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_xydata_axes|cell [1 13] {double [1 2] 8.3333329999999997 21.666667, char 'manual', double [1 2] 4.5 8.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_xydata_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_xydata_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 10 20, double [1 2] 5 8, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_xydata_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_xdata_axes|cell [1 13] {double [1 2] 8.3333329999999997 21.666667, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_xdata_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_xdata_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 10 20, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_xdata_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_colormap_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_colormap_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 16 3, double [1 3] 0 0 1, double [1 3] 0 0 1}|exact
+CHK|is_colormap_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_colormap_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_bilinear_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_bilinear_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_bilinear_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'bilinear', char 'cancel', char 'off'}|exact
+CHK|is_bilinear_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_constant_axes|cell [1 13] {double [1 2] 0.5 3.5, char 'manual', double [1 2] 0.5 3.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_constant_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_constant_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 3 3, char 'scaled', double [1 2] 1 3, double [1 2] 1 3, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_constant_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_int16_auto_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_int16_auto_colour|cell [1 5] {double [1 2] -700 800, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_int16_auto_image|cell [1 9] {double [1 1] 1, char 'int16', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_int16_auto_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_empty_axes|cell [1 13] {double [1 2] 0 1, char 'auto', double [1 2] 0 1, char 'auto', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_empty_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_empty_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 0 3, char 'scaled', double [1 0], double [1 0], char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_empty_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_held_axes|cell [1 13] {double [1 2] 0 10, char 'auto', double [1 2] 0 10, char 'auto', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'bottom'}|exact
+CHK|is_held_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_held_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_held_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 2}|exact
+CHK|is_replaced_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_replaced_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_replaced_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_replaced_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_subplot_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_subplot_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_subplot_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_subplot_figure|cell [1 3] {char 'add', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_fit_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_fit_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_fit_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_fit_figure|cell [1 3] {char 'add', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_fit_tight_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_fit_tight_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_fit_tight_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_fit_tight_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_twice_axes|cell [1 13] {double [1 2] 0.5 4.5, char 'manual', double [1 2] 0.5 4.5, char 'manual', char 'reverse', char 'out', char 'off', char 'off', double [1 3] 1 1 1, char 'manual', char 'auto', char 'off', char 'top'}|exact
+CHK|is_twice_colour|cell [1 5] {double [1 2] 0 1, char 'manual', double [1 2] 256 3, double [1 3] 0 0 0, double [1 3] 1 1 1}|exact
+CHK|is_twice_image|cell [1 9] {double [1 1] 1, char 'double', double [1 2] 4 4, char 'scaled', double [1 2] 1 4, double [1 2] 1 4, char 'nearest', char 'cancel', char 'off'}|exact
+CHK|is_twice_figure|cell [1 3] {char 'replacechildren', double [1 1] 1, double [1 1] 1}|exact
+CHK|is_place_subplot|double [1 4] 0.13 0.11 0.3347 0.815|exact
+CHK|is_place_fit|double [1 4] 0.13 0.11 0.775 0.815|exact
+CHK|is_place_fit_tight|double [1 4] 0 0 1 1|exact
+CHK|is_place_alone|cell[1 2]{double[1 2] [172 128];double[1 4] [0.4849 0.44790000000000002 0.023300000000000001 0.031300000000000001]}|div=0242|diverges|cell[1 2]{double[1 2] [640 480];double[1 4] [0.13 0.11 0.77500000000000002 0.81499999999999995]}
+CHK|is_rgb_map_colormap|cell [1 2] {double [1 2] 8 3, double [8 3] 0 0 0 1 1 1 0 1 0 1 1 1 0 0 0 1 1 1 0 0 0 1 0 1}|exact
+CHK|is_parent|cell [1 6] {logical [1 1] 1, double [1 2] 0.5 4.5, char 'manual', char 'off', char 'on', char 'image'}|exact
+CHK|is_complex|cell [1 3] {char 'images:imageDisplayValidateParams:displayingRealPart', char 'Displaying real part of complex input.', logical [1 1] 1}|exact
+CHK|is_rgb_colormap|cell [1 3] {char 'images:imageDisplayValidateParams:colormapWithTruecolor', char 'Ignoring 'Colormap' parameter provided with a truecolor image.', char 'auto'}|exact
+CHK|is_nextplot|replacechildren|exact
+CHK|is_then_plot|cell [1 7] {logical [1 1] 0, char 'on', char 'normal', char 'auto', char 'add', double [1 1] 1, char 'auto'}|exact
+CHK|is_subplot_then_plot|cell [1 6] {char 'on', char 'normal', char 'auto', char 'auto', char 'bottom', char 'auto'}|exact
+CHK|is_figure_nextplot_once|add|exact
+CHK|is_figure_nextplot_axes|double [1 1] 2|exact
+CHK|is_image_of_imread|cell [1 4] {char 'on', char 'uint8', double [1 3] 4 4 3, char 'direct'}|exact
+CHK|is_file|cell [1 4] {char 'uint8', double [1 3] 4 4 3, char 'direct', double [1 2] 0.5 4.5}|exact
+CHK|is_err_none|images:imshow:tooFewArgs|exact
+CHK|is_err_none_msg|IMSHOW expected at least 1 input argument but was called instead with 0 input arguments.|exact
+CHK|is_err_syntax|images:imshow:invalidSyntax|exact
+CHK|is_err_syntax_msg|Invalid IMSHOW syntax.|exact
+CHK|is_err_xy|images:imshow:invalidSyntax|exact
+CHK|is_err_xy_msg|Invalid IMSHOW syntax.|exact
+CHK|is_err_range|images:checkDisplayRange:badDisplayRangeValues|exact
+CHK|is_err_range_msg|HIGH must be greater than LOW.|exact
+CHK|is_err_param|images:imageDisplayParsePVPairs:unrecognizedParameter|exact
+CHK|is_err_param_msg|The parameter, Bogus, is not recognized by imageDisplayParsePVPairs|exact
+CHK|is_err_many|images:validate:tooManyInputs|exact
+CHK|is_err_many_msg|Too many input arguments were passed to imageDisplayParsePVPairs.|exact
+CHK|is_err_inputs|images:imageDisplayParsePVPairs:invalidInputs|exact
+CHK|is_err_inputs_msg|Invalid input arguments.|exact
+CHK|is_err_odd|images:imageDisplayParsePVPairs:oddNumberArgs|exact
+CHK|is_err_odd_msg|Function IMAGEDISPLAYPARSEPVPAIRS expected an even number of parameter/value arguments.|exact
+CHK|is_err_ambiguous|MATLAB:imageDisplayParsePVPairs:ambiguousStringChoice|exact
+CHK|is_err_ambiguous_msg|Expected input number 2, PARAM, to match one of these values: 'Colormap', 'DisplayRange', 'InitialMagnification', 'XData', 'YData', 'Interpolation', 'Parent', 'Border', 'Reduce' The input, 'In', matched more than one valid value.|exact
+CHK|is_err_later_param|MATLAB:imageDisplayParsePVPairs:unrecognizedStringChoice|exact
+CHK|is_err_later_param_msg|Expected input number 4, PARAM, to match one of these values: 'Colormap', 'DisplayRange', 'InitialMagnification', 'XData', 'YData', 'Interpolation', 'Parent', 'Border', 'Reduce' The input, 'Bogus', did not match any of the valid values.|exact
+CHK|is_err_interpolation|MATLAB:imageDisplayValidateParams:unrecognizedStringChoice|exact
+CHK|is_err_interpolation_msg|Expected Interpolation to match one of these values: 'nearest', 'bilinear' The input, 'cubic', did not match any of the valid values.|exact
+CHK|is_err_border|MATLAB:imshow:unrecognizedStringChoice|exact
+CHK|is_err_border_msg|Expected BORDER to match one of these values: 'loose', 'tight' The input, 'wide', did not match any of the valid values.|exact
+CHK|is_err_colormap|images:imageDisplayValidateParams:invalidColormap|exact
+CHK|is_err_colormap_msg|Colormap must be an m-by-3 numeric matrix.|exact
+CHK|is_err_colormap_name|images:imageDisplayValidateParams:invalidColormap|exact
+CHK|is_err_colormap_name_msg|Colormap must be an m-by-3 numeric matrix.|exact
+CHK|is_err_coords|images:imageDisplayValidateParams:need2Coords|exact
+CHK|is_err_coords_msg|XDATA must be a 2-element vector.|exact
+CHK|is_err_magnification|MATLAB:imshow:unrecognizedStringChoice|exact
+CHK|is_err_magnification_msg|Expected INITIAL_MAG to match one of these values: 'fit' The input, 'big', did not match any of the valid values.|exact
+CHK|is_err_type|MATLAB:imageDisplayValidateParams:invalidType|exact
+CHK|is_err_type_msg|Expected input number 1, I, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, logical Instead its type was cell.|exact
+CHK|is_err_indexed|images:imageDisplayValidateParams:invalidIndexedImage|exact
+CHK|is_err_indexed_msg|An indexed image can be uint8, uint16, double, single, or logical.|exact
+CHK|is_err_rgb_class|images:imageDisplayValidateParams:invalidRGBClass|exact
+CHK|is_err_rgb_class_msg|RGB images must be uint8, uint16, single, or double.|exact
+CHK|is_err_logical_3d|images:imageDisplayValidateParams:expected2D|exact
+CHK|is_err_logical_3d_msg|If input is logical (binary), it must be two-dimensional.|exact
+CHK|is_err_planes|images:imageDisplayValidateParams:unsupportedDimension|exact
+CHK|is_err_planes_msg|Multi-plane image inputs must be RGB images of size MxNx3.|exact
+CHK|is_err_file|images:getImageFromFile:fileDoesNotExist|exact
+CHK|is_err_file_msg|Cannot find the specified file: "nofile.png".|exact
+CHK|is_err_nan|MATLAB:imageDisplayValidateParams:expectedNonNaN|exact
+CHK|is_err_nan_msg|Expected input number 2, [LOW HIGH], to be non-NaN.|exact
+CHK|is_err_parent|images:imshow:invalidAxes|exact
+CHK|is_err_parent_msg|HAX must be a valid axes handle.|exact
+CHK|is_err_reduce|images:imshow:badReduceSyntax|exact
+CHK|is_err_reduce_msg|The Reduce parameter requires a filename syntax|exact
+CHK|is_err_range_one|images:checkDisplayRange:not2ElementVector|exact
+CHK|is_err_range_one_msg|[LOW HIGH] must be a 2-element vector.|exact
+CHK|is_err_map_values|MATLAB:hg:shaped_arrays:ColorMapType|exact
+CHK|is_err_map_values_msg|Error setting property 'Colormap' of class 'Axes': Value must be either: an Mx3 array of type single or double in the range [0 1] an Mx3 array of type uint8.|exact

@@ -1199,6 +1199,15 @@ public sealed class PatchPlotDto : PlotDto
     /// <summary>A transparency per vertex, or null for one opacity across the patch.</summary>
     public double[]? VertexAlpha { get; set; }
 
+    /// <summary>
+    /// The [x y w h] box a <c>rectangle</c> drew this patch from (open item 140), or null for any other
+    /// patch; with it the patch opens as the rectangle it was, its Position and Curvature answering.
+    /// </summary>
+    public double[]? RectanglePosition { get; set; }
+
+    /// <summary>The rectangle's curvature as written, one number or two; null with the box.</summary>
+    public double[]? RectangleCurvature { get; set; }
+
     public AlphaMapping AlphaDataMapping { get; set; } = AlphaMapping.Scaled;
 
     public ColorMapping CDataMapping { get; set; } = ColorMapping.Scaled;

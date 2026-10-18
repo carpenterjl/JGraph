@@ -40,11 +40,12 @@ internal static partial class JgsGraphicsProperties
             return HandleColumn([.. legend.Entries.Where(static e => e.Visible).Select(static e => e.Plot).OfType<GraphObject>()]);
         });
 
-        // The legend's title as its words (R2025b's is a text object, open item 141); it read as an
-        // empty double before open-items batch 28.
+        // The legend's title is a text object of its own, as R2025b's is (open item 141). Written
+        // words still title it: R2025b refuses the write as read-only, and this build keeps the
+        // assignment it has always taken (a JGraph extra, recorded in ADR 0242).
         Put(table, "Title",
-            entry => JgsValue.Str(((LegendModel)entry.Target).Title ?? string.Empty),
-            (entry, value, line, col) => ((LegendModel)entry.Target).Title = JgsBuiltins.TitleText("Title", value, line, col));
+            entry => JgsHandleRegistry.For(JgsLegendTitle.For((LegendModel)entry.Target)),
+            (entry, value, line, col) => JgsLegendTitle.For((LegendModel)entry.Target).WriteString(value, line, col));
     }
 
     /// <summary>

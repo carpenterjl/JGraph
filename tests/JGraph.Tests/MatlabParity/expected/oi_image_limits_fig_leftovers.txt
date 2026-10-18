@@ -31,7 +31,7 @@ CHK|au_7|cell [1 5] {double [1 2] 0 7, char 'auto', double [1 2] 0.5 4.5, char '
 CHK|au_12|cell [1 5] {double [1 2] 0 12, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
 CHK|au_neg|cell [1 5] {double [1 2] -2 5, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
 CHK|au_two|cell [1 5] {double [1 2] 0 10, char 'auto', double [1 2] 0.5 4.5, char 'auto', char 'reverse'}|exact
-CHK|rt_legend_title_class|char[1 40]'matlab.graphics.illustration.legend.Text'|div=0241|diverges|char[1 4]'char'
+CHK|rt_legend_title_isa|logical [1 1] 1|exact
 CHK|rt_save_warning|char[0 0]''|div=0241|diverges|char[1 30]'JGraph:savefig:NotInMatlabCopy'
 CHK|rt_title|Main|exact
 CHK|rt_subtitle|Below the main|exact

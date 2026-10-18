@@ -548,6 +548,9 @@ public sealed class AxisDto
 
     /// <summary>How auto-scaling fits the limits; null in every document written before M73.</summary>
     public string? LimitMethod { get; set; }
+
+    /// <summary>The label's own visibility as a script wrote it (open item 142), or null while it goes with the axes.</summary>
+    public bool? LabelVisible { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="GridModel"/>.</summary>
@@ -602,6 +605,9 @@ public sealed class ColorbarDto
 {
     public string? LayoutSide { get; set; }
     public bool Visible { get; set; }
+
+    /// <summary>The script's label for the colour bar (open item 140); absent from documents before it.</summary>
+    public string? Tag { get; set; }
 
     public double Width { get; set; } = 18;
 
@@ -675,6 +681,9 @@ public sealed class LightDto
 {
     public string Name { get; set; } = string.Empty;
 
+    /// <summary>The script's label for the light (open item 140); absent from documents before it.</summary>
+    public string? Tag { get; set; }
+
     public bool Visible { get; set; } = true;
 
     public LightStyle Style { get; set; }
@@ -692,6 +701,9 @@ public sealed class LegendDto
 {
     public bool Visible { get; set; }
 
+    /// <summary>The script's label for the legend (open item 140); absent from documents before it.</summary>
+    public string? Tag { get; set; }
+
     public LegendPosition Position { get; set; }
 
     public Color Background { get; set; }
@@ -703,6 +715,29 @@ public sealed class LegendDto
     public TextStyleDto? TextStyle { get; set; }
 
     public string? Title { get; set; }
+
+    /// <summary>
+    /// The title's written size (open item 141), or null while it follows the legend's: absent, with
+    /// the five below, from documents before it, which read back as a title that follows.
+    /// </summary>
+    public double? TitleFontSize { get; set; }
+
+    public bool? TitleBold { get; set; }
+
+    public bool? TitleItalic { get; set; }
+
+    public Color? TitleColor { get; set; }
+
+    /// <summary>Whether the title's colour was written as 'none'.</summary>
+    public bool TitleColorNone { get; set; }
+
+    public string? TitleFontFamily { get; set; }
+
+    /// <summary>The title's written markup, "tex", "latex" or "none", or null while it follows the legend's.</summary>
+    public string? TitleInterpreter { get; set; }
+
+    /// <summary>Whether the title is drawn; true in documents before it.</summary>
+    public bool TitleVisible { get; set; } = true;
 
     /// <summary>The custom placement, as a fraction of the plot area. Used only when <see cref="Position"/> is Custom.</summary>
     public double BorderWidth { get; set; } = 1;

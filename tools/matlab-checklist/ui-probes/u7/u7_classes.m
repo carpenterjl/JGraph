@@ -106,6 +106,7 @@ m = {
  'gobjects', @() gobjects(1)
  'buttonlayout', @() u7_layout(g)
  'uihtml', @() uihtml(uf)
+ 'legendtitle', @() u7_legendtitle(ax)
  };
 % superclasses leaves out the bases MATLAB builds in (isa(ax, 'matlab.graphics.axis.AbstractAxes') is
 % true and the name is not listed), so the known ones are asked about one by one.
@@ -151,4 +152,10 @@ end
 function h = u7_layout(g)
 b = uibutton(g);
 h = b.Layout;
+end
+
+function h = u7_legendtitle(ax)
+% A legend's Title is a text object of the legend's own (open item 141, oi141_classes).
+lg = legend(ax);
+h = lg.Title;
 end

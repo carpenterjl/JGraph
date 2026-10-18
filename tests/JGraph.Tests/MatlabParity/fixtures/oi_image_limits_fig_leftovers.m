@@ -64,7 +64,7 @@ imagesc(ax2, magic(4));
 cb = colorbar(ax2);
 cb.Label.String = 'Heat';
 set(ax2, 'Tag', 'right');
-u9b_chkdiv('rt_legend_title_class', @() class(lg.Title), '0241'); % a text object there, text here (open item 141)
+u2_chk('rt_legend_title_isa', @() isa(lg.Title, 'matlab.graphics.illustration.legend.Text')); % a text object of the legend's own in both (open item 141, ADR 0242)
 tmp1 = [tempname '.fig'];
 tmp2 = [tempname '.fig'];
 u9b_chkdiv('rt_save_warning', @() save_warning(f, tmp1), '0241'); % this build names what MATLAB's copy leaves out
@@ -150,7 +150,7 @@ axis auto;
 end
 
 function t = legend_title(lg)
-% A legend's Title is a text object in R2025b and text here (open item 141): the words either way.
+% A legend's Title is a text object (open item 141, ADR 0242): its words.
 t = lg.Title;
 if ~ischar(t) && ~isstring(t)
     t = t.String;

@@ -284,14 +284,20 @@ internal static partial class JgsBuiltins
     internal sealed record RectangleShape(double[] Box, double[] Curvature);
 
     /// <summary>
-    /// The patches <c>rectangle</c> made, with the box and curvature each was drawn from: what makes
-    /// one answer as a Rectangle, and what <c>Position</c> and <c>Curvature</c> read and redraw (open item 88).
+    /// The shape of a patch <c>rectangle</c> made, or null for any other patch: what makes one answer
+    /// as a Rectangle, and what <c>Position</c> and <c>Curvature</c> read and redraw (open item 88). It
+    /// is the model's own (<see cref="PatchPlot.RectanglePosition"/>), so a saved figure opens the
+    /// rectangle it was (open item 140).
     /// </summary>
-    private static readonly ConditionalWeakTable<PatchPlot, RectangleShape> RectangleShapes = new();
-
-    /// <summary>The shape of a patch <c>rectangle</c> made, or null for any other patch.</summary>
     internal static RectangleShape? RectangleShapeOf(PatchPlot patch) =>
-        RectangleShapes.TryGetValue(patch, out RectangleShape? shape) ? shape : null;
+        patch.RectanglePosition is { } box ? new RectangleShape(box, patch.RectangleCurvature ?? [0, 0]) : null;
+
+    /// <summary>Marks a patch as the rectangle drawn from this box and curvature.</summary>
+    private static void MarkRectangle(PatchPlot patch, double[] box, double[] curvature)
+    {
+        patch.RectanglePosition = box;
+        patch.RectangleCurvature = curvature;
+    }
 
     /// <summary>Redraws a rectangle's outline for a new box or curvature, refused as <c>rectangle</c> refuses them.</summary>
     internal static void ReshapeRectangle(PatchPlot patch, double[] box, double[] curvature, int line, int col)
@@ -310,7 +316,7 @@ internal static partial class JgsBuiltins
 
         (double[] xs, double[] ys) = RectangleOutline(box, both, line, col);
         patch.SetData(xs, ys, new double[xs.Length], [Enumerable.Range(0, xs.Length).ToArray()]);
-        RectangleShapes.AddOrUpdate(patch, new RectangleShape(box, curvature));
+        MarkRectangle(patch, box, curvature);
     }
 
     /// <summary>
@@ -372,7 +378,7 @@ internal static partial class JgsBuiltins
                 patch = JG.Fill(xs, ys, Colors.Transparent);
             }
             patch.Name = "Rectangle";
-            RectangleShapes.AddOrUpdate(patch, new RectangleShape(box, written)); // a scalar reads back as written
+            MarkRectangle(patch, box, written); // a scalar reads back as written
             patch.FaceVisible = false;
             patch.EdgeColor = Colors.Black;
 

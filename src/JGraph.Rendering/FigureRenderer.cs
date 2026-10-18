@@ -922,17 +922,17 @@ public sealed class FigureRenderer
         }
 
         // Axis titles at the edge midpoints, pushed further out than the tick labels.
-        if (decorated && !string.IsNullOrEmpty(xAxis.Label))
+        if (xAxis.LabelShown(decorated) && !string.IsNullOrEmpty(xAxis.Label))
         {
             EdgeLabel(xAxis.Label, projection.ProjectPoint(xMid, yNear, zFar), yOut, xAxis.LabelStyle, AxisTitlePush);
         }
 
-        if (decorated && !string.IsNullOrEmpty(yAxis.Label))
+        if (yAxis.LabelShown(decorated) && !string.IsNullOrEmpty(yAxis.Label))
         {
             EdgeLabel(yAxis.Label, projection.ProjectPoint(xNear, yMid, zFar), xOut, yAxis.LabelStyle, AxisTitlePush);
         }
 
-        if (decorated && !string.IsNullOrEmpty(zAxis.Label))
+        if (zAxis.LabelShown(decorated) && !string.IsNullOrEmpty(zAxis.Label))
         {
             Point2D p = projection.ProjectPoint(zx, zy, zMid);
             context.DrawText(
@@ -1416,7 +1416,7 @@ public sealed class FigureRenderer
         }
 
         double yLabelHeight = 0;
-        if (decorated && !string.IsNullOrEmpty(yAxis.Label))
+        if (yAxis.LabelShown(decorated) && !string.IsNullOrEmpty(yAxis.Label))
         {
             yLabelHeight = context.MeasureText(yAxis.Label, yAxis.LabelStyle).Height;
             if (yOnRight)
@@ -1468,7 +1468,7 @@ public sealed class FigureRenderer
         }
 
         double xLabelHeight = 0;
-        if (decorated && !string.IsNullOrEmpty(xAxis.Label))
+        if (xAxis.LabelShown(decorated) && !string.IsNullOrEmpty(xAxis.Label))
         {
             xLabelHeight = context.MeasureText(xAxis.Label, xAxis.LabelStyle).Height;
             if (xOnTop)
@@ -1817,7 +1817,7 @@ public sealed class FigureRenderer
         DecorationMetrics metrics,
         Color? yTint)
     {
-        if (axes.Visible && !string.IsNullOrEmpty(xAxis.Label))
+        if (xAxis.LabelShown(axes.Visible) && !string.IsNullOrEmpty(xAxis.Label))
         {
             bool onTop = xAxis.Position == AxisPosition.Top;
             double offset = metrics.XTickOutward + LabelPadding + metrics.XTickHeight + LabelPadding;
@@ -1829,7 +1829,7 @@ public sealed class FigureRenderer
                 onTop ? VerticalAlignment.Bottom : VerticalAlignment.Top);
         }
 
-        if (axes.Visible && !string.IsNullOrEmpty(yAxis.Label))
+        if (yAxis.LabelShown(axes.Visible) && !string.IsNullOrEmpty(yAxis.Label))
         {
             // For the rotated label, VerticalAlignment.Bottom places the glyph cell on the far side
             // of this x, clear of the tick labels between it and the plot.

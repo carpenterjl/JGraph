@@ -44,13 +44,31 @@ internal static partial class JgsBuiltins
         // --- The titling family --------------------------------------------------------------
         JgsValue[] Titles(IReadOnlyList<JgsValue> args, int line, int col)
         {
-            // title(lg, 'words') titles the legend (R2025b's legend Title is a text object; this
-            // build keeps the words, open item 141). Before this the legend's handle number was
-            // read as the current axes' title text (found in open-items batch 28).
-            if (args.Count >= 2 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? held) && held.Target is LegendModel legend)
+            // title(lg, 'words', ...) titles the legend and answers its title object, the options
+            // that object's (open item 141, oi141_title T13 to T22). Before open-items batch 28 the
+            // legend's handle number was read as the current axes' title text.
+            if (args.Count >= 1 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? held) && held.Target is LegendModel legend)
             {
-                legend.Title = TitleText("title", args[1], line, col);
-                return [JgsValue.Str(legend.Title)];
+                if (args.Count == 1)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:title:InvalidNumberOfInputs", "Not enough input arguments.");
+                }
+
+                JgsLegendTitle title = JgsLegendTitle.For(legend);
+                title.WriteString(args[1], line, col);
+                if (args.Count % 2 != 0)
+                {
+                    throw new JgsRuntimeException(line, col, "Text options require name/value pairs.");
+                }
+
+                JgsValue handle = JgsHandleRegistry.For(title);
+                JgsHandleEntry entry = JgsHandleRegistry.Require(handle, line, col);
+                for (int i = 2; i < args.Count; i += 2)
+                {
+                    JgsGraphicsProperties.Set(entry, StrOf("text option", args[i], line, col), args[i + 1], line, col);
+                }
+
+                return [handle];
             }
 
             var (axes, rest) = PeelAxes(args);

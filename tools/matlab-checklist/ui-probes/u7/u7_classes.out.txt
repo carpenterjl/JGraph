@@ -194,3 +194,5 @@ K|buttonlayout|matlab.ui.layout.GridLayoutOptions|
 I|buttonlayout|
 K|uihtml|matlab.ui.control.HTML|matlab.graphics.Graphics,matlab.mixin.SetGet,handle,dynamicprops,matlab.mixin.Heterogeneous,matlab.graphics.GraphicsDisplay,matlab.mixin.CustomDisplay,matlab.mixin.CustomCompactDisplayProvider,matlab.mixin.internal.JavaVisible
 I|uihtml|matlab.graphics.mixin.Themeable,matlab.ui.control.Component,matlab.ui.control.WebComponent,matlab.ui.control.internal.model.ComponentModel,matlab.graphics.internal.GraphicsBaseFunctions,matlab.graphics.internal.GraphicsCoreProperties,matlab.graphics.internal.GraphicsJavaVisible,JavaVisible,hgsetget
+K|legendtitle|matlab.graphics.illustration.legend.Text|matlab.graphics.Graphics,matlab.mixin.SetGet,handle,dynamicprops,matlab.mixin.Heterogeneous,matlab.graphics.GraphicsDisplay,matlab.mixin.CustomDisplay,matlab.mixin.CustomCompactDisplayProvider
+I|legendtitle|matlab.graphics.mixin.Selectable,matlab.graphics.mixin.GraphicsPickable,matlab.graphics.mixin.Themeable,matlab.graphics.primitive.world.Group,matlab.graphics.primitive.world.SceneNode,hgsetget

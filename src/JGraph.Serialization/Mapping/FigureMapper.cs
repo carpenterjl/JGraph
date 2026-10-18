@@ -582,6 +582,11 @@ internal static class FigureMapper
         if (dto.Colorbar is not null)
         {
             axes.Colorbar.Visible = dto.Colorbar.Visible;
+            if (dto.Colorbar.Tag is { } colorbarTag)
+            {
+                axes.Colorbar.Tag = colorbarTag;
+            }
+
             axes.Colorbar.Width = dto.Colorbar.Width;
             axes.Colorbar.Label = dto.Colorbar.Label;
             axes.Colorbar.Location = dto.Colorbar.Location;
@@ -793,6 +798,7 @@ internal static class FigureMapper
     private static LightDto ToDto(LightModel light) => new()
     {
         Name = light.Name,
+        Tag = string.IsNullOrEmpty(light.Tag) ? null : light.Tag, // open item 140
         Visible = light.Visible,
         Style = light.Style,
         Position = new Point3Dto(light.Position.X, light.Position.Y, light.Position.Z),
@@ -803,6 +809,7 @@ internal static class FigureMapper
     private static LightModel ToModel(LightDto dto) => new()
     {
         Name = dto.Name,
+        Tag = dto.Tag,
         Visible = dto.Visible,
         Style = dto.Style,
         Position = new Vector3D(dto.Position.X, dto.Position.Y, dto.Position.Z),
@@ -840,6 +847,7 @@ internal static class FigureMapper
         RulerColor = axis.RulerColor,
         RulerColorAutomatic = axis.InkIsAutomatic,
         LimitMethod = axis.LimitMethod == LimitMethod.Tickaligned ? null : axis.LimitMethod.ToString(),
+        LabelVisible = axis.LabelVisible,
     };
 
     private static AxisModel ToModel(AxisDto dto)
@@ -902,11 +910,13 @@ internal static class FigureMapper
         axis.LimitMethod = Enum.TryParse(dto.LimitMethod, out LimitMethod limitMethod)
             ? limitMethod
             : LimitMethod.Tickaligned;
+        axis.LabelVisible = dto.LabelVisible;
     }
 
     private static ColorbarDto ToDto(ColorbarModel colorbar) => new()
     {
         Visible = colorbar.Visible,
+        Tag = string.IsNullOrEmpty(colorbar.Tag) ? null : colorbar.Tag, // open item 140
         Width = colorbar.Width,
         Label = colorbar.Label,
         TickLabelStyle = DtoConvert.ToDto(colorbar.TickLabelStyle),
@@ -1006,12 +1016,27 @@ internal static class FigureMapper
         var dto = new LegendDto
         {
             Visible = legend.Visible,
+            Tag = string.IsNullOrEmpty(legend.Tag) ? null : legend.Tag, // open item 140
             Position = legend.Position,
             Background = legend.Background,
             BorderColor = legend.BorderColor,
             ShowBorder = legend.ShowBorder,
             TextStyle = DtoConvert.ToDto(legend.TextStyle),
             Title = legend.Title,
+            TitleFontSize = legend.TitleFontSize, // open item 141
+            TitleBold = legend.TitleBold,
+            TitleItalic = legend.TitleItalic,
+            TitleColor = legend.TitleColor,
+            TitleColorNone = legend.TitleColorNone,
+            TitleFontFamily = legend.TitleFontFamily,
+            TitleInterpreter = legend.TitleInterpreter switch
+            {
+                TextInterpreter.Tex => "tex",
+                TextInterpreter.Latex => "latex",
+                TextInterpreter.None => "none",
+                _ => null,
+            },
+            TitleVisible = legend.TitleVisible,
             LocationX = legend.Location.X,
             LocationY = legend.Location.Y,
             BorderWidth = legend.BorderWidth,
@@ -1055,6 +1080,27 @@ internal static class FigureMapper
         }
 
         legend.Title = dto.Title;
+        if (dto.Tag is { } tag)
+        {
+            legend.Tag = tag;
+        }
+
+        // The title's written style (open item 141); a document from before it has none, and its
+        // title follows the legend as it always drew.
+        legend.TitleFontSize = dto.TitleFontSize is > 0 and < double.PositiveInfinity ? dto.TitleFontSize : null;
+        legend.TitleBold = dto.TitleBold;
+        legend.TitleItalic = dto.TitleItalic;
+        legend.TitleColor = dto.TitleColor;
+        legend.TitleColorNone = dto.TitleColorNone;
+        legend.TitleFontFamily = dto.TitleFontFamily;
+        legend.TitleInterpreter = dto.TitleInterpreter switch
+        {
+            "tex" => TextInterpreter.Tex,
+            "latex" => TextInterpreter.Latex,
+            "none" => TextInterpreter.None,
+            _ => null,
+        };
+        legend.TitleVisible = dto.TitleVisible;
         legend.Location = new Core.Primitives.Point2D(dto.LocationX, dto.LocationY);
         legend.BorderWidth = dto.BorderWidth;
         legend.Orientation = dto.Orientation;

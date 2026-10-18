@@ -17,6 +17,12 @@ public abstract class AnnotationDto
 {
     public string Name { get; set; } = string.Empty;
 
+    /// <summary>
+    /// The script's label (open item 140): a text's in an axes and every annotation's on the figure.
+    /// Absent from documents before it, whose texts open untagged as they always did.
+    /// </summary>
+    public string? Tag { get; set; }
+
     public bool Visible { get; set; } = true;
 
     public int ZOrder { get; set; }

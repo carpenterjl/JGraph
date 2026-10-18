@@ -1917,10 +1917,16 @@ public static class JG
                 figure.Title = string.Empty;
                 figure.Colormap = null;
                 figure.Alphamap = null;
+
+                // Obeyed once: R2025b's newplot sets the figure back to 'add' after acting on it
+                // (observeFigureNextPlot.m; open item 142, oi142_imshow B26), so the next plot
+                // into the figure does not clear it again.
+                figure.NextPlot = FigureNextPlot.Add;
                 break;
 
             case FigureNextPlot.ReplaceChildren:
                 Clf();
+                figure.NextPlot = FigureNextPlot.Add;
                 break;
 
             default:
@@ -2009,6 +2015,13 @@ public static class JG
         axes.Colorbar.Visible = false;
         axes.EqualAspect = false;
         axes.FrameVisible = true;
+
+        // An axes imshow hid, gave a data aspect and drew over comes back as a fresh one does in
+        // R2025b's replacing newplot (open item 142); its colormap and colour limits are kept, as
+        // this build's colormap(map) writes the axes' own.
+        axes.Visible = true;
+        axes.DataAspectRatio = null;
+        axes.Layer = AxesLayer.Bottom;
         axes.Is3D = false;
         axes.Azimuth = -37.5;
         axes.Elevation = 30;
@@ -2031,6 +2044,12 @@ public static class JG
         axis.Label = string.Empty;
         axis.AutoScale = true;
         axis.Scale = AxisScaleType.Linear;
+
+        // What R2025b's replacing newplot resets and image, imagesc and imshow set: the direction,
+        // the ticks' side and a label's own visibility (open item 142).
+        axis.Inverted = false;
+        axis.TickDirection = null;
+        axis.LabelVisible = null;
         axis.RulerCategories = null; // a plot that replaces another starts a numeric ruler (open item 120)
     }
 

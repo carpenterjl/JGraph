@@ -132,8 +132,10 @@ current axes' title (`1E+06`) and `lg.Title` read an empty double; `title` now t
 
 ## Divergences
 
-- **A legend's `Title` is its words here, a text object in R2025b** (`matlab.graphics.illustration.legend.Text`;
-  fixture row `rt_legend_title_class`; open item 141).
+- ~~**A legend's `Title` is its words here, a text object in R2025b** (`matlab.graphics.illustration.legend.Text`;
+  fixture row `rt_legend_title_class`; open item 141).~~ — **lifted; see
+  [0242](0242-tags-legend-title-imshow.md).** It is that text object here too, and the fixture row is
+  now `rt_legend_title_isa`, exact; its handle's `class` answers `'double'` as every handle's does (ADR 0051).
 - **`savefig` warns here where R2025b saves silently** (`JGraph:savefig:NotInMatlabCopy`; fixture row
   `rt_save_warning`): this build names what MATLAB's form of the file leaves out, which R2025b's
   own `hgsave` leaves out without a word.

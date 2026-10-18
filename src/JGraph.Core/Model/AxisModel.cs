@@ -263,6 +263,19 @@ public sealed class AxisModel : GraphObject
     [Category("General"), DisplayName("Label rotation")]
     public double? LabelRotation { get => _labelRotation; set => SetProperty(ref _labelRotation,value,InvalidationKind.Layout); }
 
+    private bool? _labelVisible;
+
+    /// <summary>
+    /// Whether the label is drawn, as a script wrote its <c>Visible</c>, or null while it goes with the
+    /// axes. R2025b draws a label written visible even on an axes made invisible - <c>imshow</c> sets
+    /// its labels so - and not one left alone (open item 142, oi142_errors P1 and P2).
+    /// </summary>
+    [Browsable(false)]
+    public bool? LabelVisible { get => _labelVisible; set => SetProperty(ref _labelVisible, value, InvalidationKind.Layout); }
+
+    /// <summary>Whether the label is drawn on an axes that is, or is not, itself visible.</summary>
+    public bool LabelShown(bool axesVisible) => axesVisible ? _labelVisible != false : _labelVisible == true;
+
     [Category("General"), DisplayName("Label style")]
     public TextStyle LabelStyle
     {

@@ -598,6 +598,16 @@ internal static class JgsHandleRegistry
             live.Add(group);
         }
 
+        // A legend's title is not among its children - searches must not find it, as R2025b's do
+        // not - so it is alive while its legend is there (open item 141); a deleted legend's dies.
+        foreach (GraphObject alive in live.ToList())
+        {
+            if (alive is LegendModel { Visible: true } legend && JgsLegendTitle.Existing(legend) is { } title)
+            {
+                live.Add(title);
+            }
+        }
+
         var retired = new List<(double Handle, GraphObject Target)>();
         lock (Gate)
         {

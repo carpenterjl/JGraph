@@ -101,8 +101,17 @@ internal static class LegendRenderer
                 columnWidths[column], SwatchWidth + SwatchGap + labelWidths[i]);
         }
 
-        double boxWidth = Padding + Padding + columnWidths.Sum() + ((columns - 1) * ColumnGap);
-        double boxHeight = Padding + (perColumn * rowHeight) + ((perColumn - 1) * RowGap) + Padding;
+        // The title sits centred over the rows in its own style (open item 141): R2025b's box grows
+        // by the title's height and widens to it, and keeps that room while the title is hidden.
+        string? title = string.IsNullOrEmpty(legend.Title) ? null : legend.Title;
+        TextStyle titleStyle = legend.ResolveTitleStyle();
+        Size2D titleSize = title is null ? new Size2D(0, 0) : context.MeasureText(title, titleStyle);
+        double titleBlock = title is null ? 0 : titleSize.Height + RowGap;
+
+        double boxWidth = System.Math.Max(
+            Padding + Padding + columnWidths.Sum() + ((columns - 1) * ColumnGap),
+            title is null ? 0 : Padding + Padding + titleSize.Width);
+        double boxHeight = Padding + titleBlock + (perColumn * rowHeight) + ((perColumn - 1) * RowGap) + Padding;
 
         Rect2D box = PlaceBox(legend, plotArea, figureArea, boxWidth, boxHeight);
         legend.LastBox = box;
@@ -112,11 +121,21 @@ internal static class LegendRenderer
             : null;
         context.DrawRectangle(box, border, legend.Background);
 
+        if (title is not null && legend.TitleVisible && !legend.TitleColorNone)
+        {
+            context.DrawText(
+                title,
+                new Point2D(box.CenterX, box.Top + Padding + (titleSize.Height / 2)),
+                titleStyle,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Middle);
+        }
+
         var rows = new List<LegendRowBounds>(entries.Count);
         double columnLeft = box.Left + Padding;
         for (int column = 0; column < columns; column++)
         {
-            double y = box.Top + Padding;
+            double y = box.Top + Padding + titleBlock;
             for (int row = 0; row < perColumn; row++)
             {
                 int i = (column * perColumn) + row;

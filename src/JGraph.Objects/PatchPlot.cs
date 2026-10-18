@@ -189,6 +189,19 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         set => SetProperty(ref _vertexAlpha, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// The [x y w h] box MATLAB's <c>rectangle</c> drew this patch from, or null for any other patch
+    /// (open items 88 and 140). A rectangle is a patch here, since a rounded box is a polygon with a
+    /// fill and an edge; this is what tells it apart, answers its Position and redraws it, and it is
+    /// part of the model so that a saved figure opens the rectangle it was.
+    /// </summary>
+    [Browsable(false)]
+    public double[]? RectanglePosition { get; set; }
+
+    /// <summary>The rectangle's curvature as written, one number or two; set with <see cref="RectanglePosition"/>.</summary>
+    [Browsable(false)]
+    public double[]? RectangleCurvature { get; set; }
+
     /// <summary>Whether the vertex alphas are scaled through the axes' map, taken as they stand, or ignored.</summary>
     [Category("Appearance"), DisplayName("Alpha data mapping")]
     public AlphaMapping AlphaDataMapping

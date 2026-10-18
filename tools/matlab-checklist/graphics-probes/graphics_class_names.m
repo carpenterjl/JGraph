@@ -33,6 +33,7 @@ h{end+1} = animatedline(ax);
 h{end+1} = fplot(ax, @sin);
 h{end+1} = fimplicit(ax, @(x, y) x.^2 + y.^2 - 1);
 h{end+1} = legend(ax);
+h{end+1} = h{end}.Title; % a legend's own text object (open item 141)
 h{end+1} = colorbar(ax);
 h{end+1} = ax.XAxis;
 h{end+1} = ax.Title;

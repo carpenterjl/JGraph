@@ -123,6 +123,101 @@ public sealed class LegendModel : GraphObject
         set => SetProperty(ref _title, value, InvalidationKind.Layout);
     }
 
+    // --- The title's own style (open item 141) -------------------------------------------------------
+    // R2025b's legend title is a text object whose size, angle, font, interpreter and colour follow
+    // the legend's until a script writes them, and whose weight is bold until written (probes
+    // oi141_font, oi141_follow). Each is held here as the written value, or null while it follows.
+
+    private double? _titleFontSize;
+    private bool? _titleBold;
+    private bool? _titleItalic;
+    private Color? _titleColor;
+    private bool _titleColorNone;
+    private string? _titleFontFamily;
+    private TextInterpreter? _titleInterpreter;
+    private bool _titleVisible = true;
+
+    /// <summary>The title's size in points as written, or null to follow the legend's.</summary>
+    [Browsable(false)]
+    public double? TitleFontSize
+    {
+        get => _titleFontSize;
+        set => SetProperty(ref _titleFontSize, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>Whether the title is bold as written, or null for the bold it starts as.</summary>
+    [Browsable(false)]
+    public bool? TitleBold
+    {
+        get => _titleBold;
+        set => SetProperty(ref _titleBold, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>Whether the title is italic as written, or null to follow the legend.</summary>
+    [Browsable(false)]
+    public bool? TitleItalic
+    {
+        get => _titleItalic;
+        set => SetProperty(ref _titleItalic, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>The title's ink as written, or null to follow the legend's text colour.</summary>
+    [Browsable(false)]
+    public Color? TitleColor
+    {
+        get => _titleColor;
+        set => SetProperty(ref _titleColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether the title's colour was written as <c>'none'</c>: it keeps its place and draws nothing.</summary>
+    [Browsable(false)]
+    public bool TitleColorNone
+    {
+        get => _titleColorNone;
+        set => SetProperty(ref _titleColorNone, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The title's font family as written, or null to follow the legend's.</summary>
+    [Browsable(false)]
+    public string? TitleFontFamily
+    {
+        get => _titleFontFamily;
+        set => SetProperty(ref _titleFontFamily, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>The title's markup as written, or null to follow the legend's.</summary>
+    [Browsable(false)]
+    public TextInterpreter? TitleInterpreter
+    {
+        get => _titleInterpreter;
+        set => SetProperty(ref _titleInterpreter, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// Whether the title is drawn. A hidden title keeps its room in the box, as R2025b's does
+    /// (oi141_font F24).
+    /// </summary>
+    [Browsable(false)]
+    public bool TitleVisible
+    {
+        get => _titleVisible;
+        set => SetProperty(ref _titleVisible, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The style the title is drawn in: each written setting, and the legend's for the rest.</summary>
+    public TextStyle ResolveTitleStyle()
+    {
+        TextStyle legend = _textStyle;
+        return new TextStyle(
+            _titleColor ?? legend.Color,
+            _titleFontSize ?? legend.FontSize,
+            _titleFontFamily ?? legend.FontFamily,
+            _titleBold ?? true,
+            _titleItalic ?? legend.Italic,
+            _titleInterpreter ?? legend.Interpreter,
+            legend.Antialias);
+    }
+
     /// <summary>How thick the box's border is drawn (MATLAB <c>LineWidth</c>).</summary>
     [Category("Appearance"), DisplayName("Border width")]
     public double BorderWidth

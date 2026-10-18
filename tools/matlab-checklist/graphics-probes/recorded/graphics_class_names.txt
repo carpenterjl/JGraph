@@ -9702,3 +9702,77 @@ matlab.graphics.chart.primitive.Scatter@polaraxes|scatter|ThetaJitterDirection|0
 matlab.graphics.chart.primitive.Scatter@polaraxes|scatter|RDataSource|0|1
 matlab.graphics.chart.primitive.Scatter@polaraxes|scatter|RDataMode|0|1
 matlab.graphics.chart.primitive.Scatter@polaraxes|scatter|RJitter|0|1
+matlab.graphics.illustration.legend.Text|-|String|0|1
+matlab.graphics.illustration.legend.Text|-|Color|0|1
+matlab.graphics.illustration.legend.Text|-|FontAngle|0|1
+matlab.graphics.illustration.legend.Text|-|FontName|0|1
+matlab.graphics.illustration.legend.Text|-|FontSize|0|1
+matlab.graphics.illustration.legend.Text|-|FontWeight|0|1
+matlab.graphics.illustration.legend.Text|-|Interpreter|0|1
+matlab.graphics.illustration.legend.Text|-|ColorMode|0|1
+matlab.graphics.illustration.legend.Text|-|FontAngleMode|0|1
+matlab.graphics.illustration.legend.Text|-|FontNameMode|0|1
+matlab.graphics.illustration.legend.Text|-|FontSizeMode|0|1
+matlab.graphics.illustration.legend.Text|-|FontWeightMode|0|1
+matlab.graphics.illustration.legend.Text|-|InterpreterMode|0|1
+matlab.graphics.illustration.legend.Text|-|Color_I|1|1
+matlab.graphics.illustration.legend.Text|-|FontAngle_I|1|1
+matlab.graphics.illustration.legend.Text|-|FontName_I|1|1
+matlab.graphics.illustration.legend.Text|-|FontSize_I|1|1
+matlab.graphics.illustration.legend.Text|-|FontWeight_I|1|1
+matlab.graphics.illustration.legend.Text|-|Interpreter_I|1|1
+matlab.graphics.illustration.legend.Text|-|ChildrenMode|1|1
+matlab.graphics.illustration.legend.Text|-|Children_I|1|1
+matlab.graphics.illustration.legend.Text|-|Children|0|1
+matlab.graphics.illustration.legend.Text|-|Description|1|1
+matlab.graphics.illustration.legend.Text|-|DescriptionMode|1|1
+matlab.graphics.illustration.legend.Text|-|Description_I|1|1
+matlab.graphics.illustration.legend.Text|-|Parent|0|1
+matlab.graphics.illustration.legend.Text|-|ParentMode|1|1
+matlab.graphics.illustration.legend.Text|-|Parent_I|1|1
+matlab.graphics.illustration.legend.Text|-|Visible|0|1
+matlab.graphics.illustration.legend.Text|-|VisibleMode|1|1
+matlab.graphics.illustration.legend.Text|-|Visible_I|1|1
+matlab.graphics.illustration.legend.Text|-|Serializable|1|1
+matlab.graphics.illustration.legend.Text|-|SerializableMode|1|1
+matlab.graphics.illustration.legend.Text|-|Serializable_I|1|1
+matlab.graphics.illustration.legend.Text|-|HandleVisibility|0|1
+matlab.graphics.illustration.legend.Text|-|HandleVisibilityMode|1|1
+matlab.graphics.illustration.legend.Text|-|HandleVisibility_I|1|1
+matlab.graphics.illustration.legend.Text|-|ErrorCallback|1|1
+matlab.graphics.illustration.legend.Text|-|ErrorCallbackMode|1|1
+matlab.graphics.illustration.legend.Text|-|ErrorCallback_I|1|1
+matlab.graphics.illustration.legend.Text|-|Internal|1|1
+matlab.graphics.illustration.legend.Text|-|ApplicationData|1|1
+matlab.graphics.illustration.legend.Text|-|DefaultPropMap_Internal|1|1
+matlab.graphics.illustration.legend.Text|-|Copyable|1|0
+matlab.graphics.illustration.legend.Text|-|NodeParent|1|0
+matlab.graphics.illustration.legend.Text|-|NodeChildren|1|0
+matlab.graphics.illustration.legend.Text|-|Selected|0|1
+matlab.graphics.illustration.legend.Text|-|SelectedMode|1|1
+matlab.graphics.illustration.legend.Text|-|Selected_I|1|1
+matlab.graphics.illustration.legend.Text|-|SelectionHighlight|0|1
+matlab.graphics.illustration.legend.Text|-|SelectionHighlightMode|1|1
+matlab.graphics.illustration.legend.Text|-|SelectionHighlight_I|1|1
+matlab.graphics.illustration.legend.Text|-|HitTestMode|1|1
+matlab.graphics.illustration.legend.Text|-|HitTest_I|1|1
+matlab.graphics.illustration.legend.Text|-|HitTest|0|1
+matlab.graphics.illustration.legend.Text|-|PickablePartsMode|1|1
+matlab.graphics.illustration.legend.Text|-|PickableParts_I|1|1
+matlab.graphics.illustration.legend.Text|-|PickableParts|0|1
+SET|matlab.graphics.illustration.legend.Text|Color|
+SET|matlab.graphics.illustration.legend.Text|FontAngle|normal	italic
+SET|matlab.graphics.illustration.legend.Text|FontWeight|normal	bold
+SET|matlab.graphics.illustration.legend.Text|Interpreter|none	tex	latex
+SET|matlab.graphics.illustration.legend.Text|ColorMode|auto	manual
+SET|matlab.graphics.illustration.legend.Text|FontAngleMode|auto	manual
+SET|matlab.graphics.illustration.legend.Text|FontNameMode|auto	manual
+SET|matlab.graphics.illustration.legend.Text|FontSizeMode|auto	manual
+SET|matlab.graphics.illustration.legend.Text|FontWeightMode|auto	manual
+SET|matlab.graphics.illustration.legend.Text|InterpreterMode|auto	manual
+SET|matlab.graphics.illustration.legend.Text|Visible|on	off
+SET|matlab.graphics.illustration.legend.Text|HandleVisibility|on	callback	off
+SET|matlab.graphics.illustration.legend.Text|Selected|on	off
+SET|matlab.graphics.illustration.legend.Text|SelectionHighlight|on	off
+SET|matlab.graphics.illustration.legend.Text|HitTest|on	off
+SET|matlab.graphics.illustration.legend.Text|PickableParts|visible	none	all

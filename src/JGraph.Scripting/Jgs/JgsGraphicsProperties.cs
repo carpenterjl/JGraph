@@ -151,6 +151,7 @@ internal static partial class JgsGraphicsProperties
             ? "toolbarstatebutton"
             : "toolbarpushbutton",
         LegendModel => "legend",
+        JgsLegendTitle => "legendtitle", // R2025b's has no Type; this names its row of classes (open item 141)
         ColorbarModel => "colorbar",
         BubbleLegendModel => "bubblelegend",
         GridModel => "grid",
@@ -878,8 +879,17 @@ internal static partial class JgsGraphicsProperties
                     $"Unrecognized property '{name}' for class '{dotted}'.");
         }
 
-        // A ruler is got and set in R2025b's SetGet words, not a graphics primitive's (probe_126b).
-        if (!dot && JgsRunningDialect.ThreadIsMatlab && target is AxisModel && MatlabClassOf(target) is { } rulerClass)
+        // A legend's title keeps two names it does not let a script read (oi141_title T32, T35).
+        if (!dot && reading && JgsRunningDialect.ThreadIsMatlab && target is JgsLegendTitle
+            && (name.Equals("Position", StringComparison.OrdinalIgnoreCase) || name.Equals("HorizontalAlignment", StringComparison.OrdinalIgnoreCase)))
+        {
+            string kept = name.Equals("Position", StringComparison.OrdinalIgnoreCase) ? "Position" : "HorizontalAlignment";
+            return new JgsRuntimeException(line, col, "MATLAB:class:GetProhibited", $"No public property '{kept}' for class ''Text''.");
+        }
+
+        // A ruler and a legend's title are got and set in R2025b's SetGet words, not a graphics
+        // primitive's (probe_126b; oi141_title T3, T31).
+        if (!dot && JgsRunningDialect.ThreadIsMatlab && target is AxisModel or JgsLegendTitle && MatlabClassOf(target) is { } rulerClass)
         {
             return reading
                 ? new JgsRuntimeException(line, col, "MATLAB:class:setgetPropertyNotFound",
@@ -950,6 +960,13 @@ internal static partial class JgsGraphicsProperties
         if (typeof(UiOverlayModel).IsAssignableFrom(type))
         {
             AddOverlayBlock(table);
+            return table;
+        }
+
+        // So does a legend's title, to R2025b's 21 (open item 141): no Type, Tag or Position.
+        if (type == typeof(JgsLegendTitle))
+        {
+            AddLegendTitleBlock(table);
             return table;
         }
 
@@ -2436,6 +2453,23 @@ internal static partial class JgsGraphicsProperties
                 (e,v,l,c) => ((JgsTextLabel)e.Target).Style = ((JgsTextLabel)e.Target).Style.WithColor(JgsBuiltins.OptionColor(v,l,c,"Color")));
             Put(table, "Rotation", e => JgsValue.Number(((JgsTextLabel)e.Target).Rotation),
                 (e,v,l,c) => ((JgsTextLabel)e.Target).Rotation = Numbers("Rotation",v,1,l,c)[0]);
+
+            // A ruler's label written visible is drawn even on an invisible axes, as imshow's are in
+            // R2025b (open item 142); the ruler keeps the setting, so the renderer sees it.
+            Put(table, "Visible",
+                e => e.Target is JgsTextLabel { Owner: AxisModel ruler, IsSecondary: false } ? OnOff(ruler.LabelVisible ?? true) : OnOff(e.Target.Visible),
+                (e, v, l, c) =>
+                {
+                    bool on = ToOnOff("Visible", v, l, c);
+                    if (e.Target is JgsTextLabel { Owner: AxisModel ruler, IsSecondary: false })
+                    {
+                        ruler.LabelVisible = on;
+                    }
+                    else
+                    {
+                        e.Target.Visible = on;
+                    }
+                });
         }
         if (type == typeof(AxesModel))
         {

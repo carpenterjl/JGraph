@@ -132,8 +132,10 @@ internal static partial class JgsBuiltins
         }
         else if (legend.BeingDeleted)
         {
-            // A deleted legend's handle stays dead; the new one is a new object (R2025b).
+            // A deleted legend's handle stays dead; the new one is a new object (R2025b), with an
+            // empty title of its own (open item 141): a replacing plot deletes a legend too.
             JgsHandleRegistry.Retire(legend);
+            JgsLegendTitle.Forget(legend);
         }
 
         legend.NamesUnnamed = true;
@@ -188,5 +190,6 @@ internal static partial class JgsBuiltins
         legend.Hidden = false;
         legend.NamesUnnamed = false;
         JgsHandleRegistry.Retire(legend);
+        JgsLegendTitle.Forget(legend); // its title goes with it (open item 141)
     }
 }

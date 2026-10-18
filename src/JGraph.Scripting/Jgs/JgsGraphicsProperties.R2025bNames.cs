@@ -745,6 +745,14 @@ internal static partial class JgsGraphicsProperties
             "~TextPerformanceMode ^Title ~TitleMode ~TitleSeparator ~TitleSeparatorMode ^Type " +
             "~UIContextMenu Units ~UnitsMode UserData ~version Visible ~VisibleMode ~Width ~WidthMode " +
             "~WindowMouseReleaseListener ~WindowMouseReleaseListenerMode"),
+        ("matlab.graphics.illustration.legend.Text",
+            "~ApplicationData Children ~ChildrenMode Color ColorMode ~Copyable " +
+            "~DefaultPropMap_Internal ~Description ~DescriptionMode ~ErrorCallback ~ErrorCallbackMode " +
+            "FontAngle FontAngleMode FontName FontNameMode FontSize FontSizeMode FontWeight " +
+            "FontWeightMode HandleVisibility ~HandleVisibilityMode HitTest ~HitTestMode ~Internal " +
+            "Interpreter InterpreterMode ~NodeChildren ~NodeParent Parent ~ParentMode PickableParts " +
+            "~PickablePartsMode Selected ~SelectedMode SelectionHighlight ~SelectionHighlightMode " +
+            "~Serializable ~SerializableMode String Visible ~VisibleMode"),
         ("matlab.graphics.primitive.Group",
             "^Annotation ~ApplicationData ~Behavior ~BehaviorMode ^BeingDeleted BusyAction " +
             "ButtonDownFcn ~ButtonDownFcnMode Children ~ChildrenMode ~Clipping ~ClippingMode " +
@@ -2219,5 +2227,21 @@ internal static partial class JgsGraphicsProperties
         ("matlab.ui.control.UIAxes", "SelectionHighlight", "on\toff"),
         ("matlab.ui.control.UIAxes", "HitTest", "on\toff"),
         ("matlab.ui.control.UIAxes", "PickableParts", "visible\tnone\tall"),
+        ("matlab.graphics.illustration.legend.Text", "Color", ""),
+        ("matlab.graphics.illustration.legend.Text", "FontAngle", "normal\titalic"),
+        ("matlab.graphics.illustration.legend.Text", "FontWeight", "normal\tbold"),
+        ("matlab.graphics.illustration.legend.Text", "Interpreter", "none\ttex\tlatex"),
+        ("matlab.graphics.illustration.legend.Text", "ColorMode", "auto\tmanual"),
+        ("matlab.graphics.illustration.legend.Text", "FontAngleMode", "auto\tmanual"),
+        ("matlab.graphics.illustration.legend.Text", "FontNameMode", "auto\tmanual"),
+        ("matlab.graphics.illustration.legend.Text", "FontSizeMode", "auto\tmanual"),
+        ("matlab.graphics.illustration.legend.Text", "FontWeightMode", "auto\tmanual"),
+        ("matlab.graphics.illustration.legend.Text", "InterpreterMode", "auto\tmanual"),
+        ("matlab.graphics.illustration.legend.Text", "Visible", "on\toff"),
+        ("matlab.graphics.illustration.legend.Text", "HandleVisibility", "on\tcallback\toff"),
+        ("matlab.graphics.illustration.legend.Text", "Selected", "on\toff"),
+        ("matlab.graphics.illustration.legend.Text", "SelectionHighlight", "on\toff"),
+        ("matlab.graphics.illustration.legend.Text", "HitTest", "on\toff"),
+        ("matlab.graphics.illustration.legend.Text", "PickableParts", "visible\tnone\tall"),
     ];
 }

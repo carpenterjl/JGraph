@@ -95,9 +95,11 @@ internal static partial class JgsBuiltins
         env.Builtins.Register("image", JgsValue.Function(new BuiltinFunction(
             "image", OnNamedAxes((args, line, col) =>
             {
-                if (args.Count == 1 && args[0].Type == JgsType.Image)
+                if (args.Count == 1 && args[0].Type == JgsType.Image && !JgsRunningDialect.ThreadIsMatlab)
                 {
-                    // An image value displays exactly as imshow shows it.
+                    // An image value displays exactly as JGS's imshow shows it. A MATLAB-dialect
+                    // image takes it as the numbers it holds, as R2025b's image takes imread's
+                    // array (open item 142): imshow's axes set-up is imshow's own.
                     env.TryGet("imshow", out JgsValue imshow);
                     return imshow.AsCallable.Call(args, line, col);
                 }
@@ -105,6 +107,16 @@ internal static partial class JgsBuiltins
                 return DrawImage("image", args, scaled: false, line, col);
             }))
         { BindsAnsAsStatement = false }));
+
+        // imshow answers its picture to MATLAB-dialect code and sets up its axes as R2025b's does
+        // (open item 142); JGS keeps its own, which takes JGraph's image values. Neither echoes ans.
+        if (env.Builtins.TryGet("imshow", out JgsValue jgsImshow) && jgsImshow.Type == JgsType.Function)
+        {
+            IJgsCallable jgs = jgsImshow.AsCallable;
+            env.Builtins.Register("imshow", JgsValue.Function(new BuiltinFunction("imshow", (args, line, col) =>
+                JgsRunningDialect.ThreadIsMatlab ? MatlabImshow(host, args, line, col) : jgs.Call(args, line, col))
+            { BindsAnsAsStatement = false }));
+        }
     }
 
     /// <summary>

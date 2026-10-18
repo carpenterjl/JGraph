@@ -824,7 +824,7 @@ internal static partial class JgsGraphicsProperties
 
                 foreach (PlotObject plot in axes.Plots)
                 {
-                    if (plot is Rendering.IColorMapped mapped)
+                    if (plot is Rendering.IColorMapped mapped && !IsTrueColour(plot))
                     {
                         (double min, double max) = mapped.ColorRange;
                         return Row(min, max);
@@ -912,7 +912,7 @@ internal static partial class JgsGraphicsProperties
     {
         foreach (PlotObject plot in axes.Plots)
         {
-            if (plot is Rendering.IColorMapped mapped)
+            if (plot is Rendering.IColorMapped mapped && !IsTrueColour(plot))
             {
                 return mapped.ColorRange;
             }
@@ -920,6 +920,12 @@ internal static partial class JgsGraphicsProperties
 
         return (0, 1);
     }
+
+    /// <summary>
+    /// A true-colour image maps no colours, so the automatic colour limits pass it by: R2025b's axes
+    /// under <c>imshow(rgb)</c> reads [0 1] (open item 142, oi142_imshow B8).
+    /// </summary>
+    private static bool IsTrueColour(PlotObject plot) => plot is JGraph.Objects.ImagePlot { TrueColors: not null };
 
     private static Colormap? FirstMappedColormap(AxesModel axes)
     {

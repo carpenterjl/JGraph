@@ -31,6 +31,7 @@ h{end+1} = xregion(ax, 1, 2);
 h{end+1} = animatedline(ax);
 h{end+1} = fplot(ax, @sin);
 h{end+1} = legend(ax);
+h{end+1} = h{end}.Title; % a legend's own text object (open item 141)
 h{end+1} = colorbar(ax);
 h{end+1} = ax.XAxis;
 cf = figure('Visible', 'off'); cax = axes(cf); bar(cax, categorical({'a', 'b'}), [1 2]);

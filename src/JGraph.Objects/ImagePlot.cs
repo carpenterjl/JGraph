@@ -27,8 +27,11 @@ public sealed class ImagePlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         set { _trueColors = value; _pixels = null; Invalidate(InvalidationKind.Render); }
     }
     private double[]? _xData, _yData;
-    public double[] XData { get => _xData ?? [1, Columns]; set { _xData = value; _pixels = null; UpdateImageExtents(); Invalidate(InvalidationKind.Render); } }
-    public double[] YData { get => _yData ?? [1, Rows]; set { _yData = value; _pixels = null; UpdateImageExtents(); Invalidate(InvalidationKind.Render); } }
+
+    // An image of no pixels has no centres to place: R2025b's reads 1-by-0 for both (open item 142,
+    // oi142_imshow B41), where a sized one's are the first and last column and row.
+    public double[] XData { get => _xData ?? (Rows == 0 || Columns == 0 ? [] : [1, Columns]); set { _xData = value; _pixels = null; UpdateImageExtents(); Invalidate(InvalidationKind.Render); } }
+    public double[] YData { get => _yData ?? (Rows == 0 || Columns == 0 ? [] : [1, Rows]); set { _yData = value; _pixels = null; UpdateImageExtents(); Invalidate(InvalidationKind.Render); } }
     /// <summary>
     /// The span <paramref name="count"/> pixels cover when their centres run from the first to the
     /// last of <paramref name="data"/> (a lone number puts them one apart from it): half a pixel

@@ -499,6 +499,8 @@ internal static class PlotMapper
                 SpecularColorReflectance = p.SpecularColorReflectance,
                 SpecularExponent = p.SpecularExponent,
                 AlignVertexCenters = p.AlignVertexCenters,
+                RectanglePosition = p.RectanglePosition?.ToArray(),
+                RectangleCurvature = p.RectangleCurvature?.ToArray(),
             },
             QuiverPlot p => new QuiverPlotDto
             {
@@ -867,6 +869,8 @@ internal static class PlotMapper
                 SpecularColorReflectance = d.SpecularColorReflectance,
                 SpecularExponent = d.SpecularExponent,
                 AlignVertexCenters = d.AlignVertexCenters,
+                RectanglePosition = d.RectanglePosition is { Length: 4 } box ? [.. box] : null,
+                RectangleCurvature = d.RectanglePosition is { Length: 4 } && d.RectangleCurvature is { Length: 1 or 2 } bend ? [.. bend] : null,
             },
             QuiverPlotDto d => new QuiverPlot(d.X, d.Y, d.Z, d.U, d.V, d.W)
             {
