@@ -1,0 +1,30 @@
+=== DsS0: consistent: the tree is what the code makes
+canvas: 5 components in the tree, 5 with DesignTimeProperties: UIFigure,GridLayout,AmpField,GoButton,ClearButton
+canvas buttons: Go,Clear
+callback GoButtonPushed bound to: GoButton.ButtonPushedFcn
+callback ClearButtonPushed bound to: ClearButton.ButtonPushedFcn
+run: makes GridLayout,AmpField,GoButton,ClearButton; Go text Go
+=== DsS1: the code makes ClearButton, the tree lacks it
+canvas: 4 components in the tree, 4 with DesignTimeProperties: UIFigure,GridLayout,AmpField,GoButton
+canvas buttons: Go
+callback GoButtonPushed bound to: GoButton.ButtonPushedFcn
+callback ClearButtonPushed bound to: (none)
+run: makes GridLayout,AmpField,GoButton,ClearButton; Go text Go
+=== DsS2: the tree has MoreButton, the code does not make it
+canvas: 6 components in the tree, 6 with DesignTimeProperties: UIFigure,MoreButton,GridLayout,AmpField,GoButton,ClearButton
+canvas buttons: More,Go,Clear
+callback GoButtonPushed bound to: GoButton.ButtonPushedFcn
+callback ClearButtonPushed bound to: ClearButton.ButtonPushedFcn
+run: makes GridLayout,AmpField,GoButton,ClearButton; Go text Go
+=== DsS3: the tree says GoButton.Text Run, the code says Go
+canvas: 5 components in the tree, 5 with DesignTimeProperties: UIFigure,GridLayout,AmpField,GoButton,ClearButton
+canvas buttons: Run,Clear
+callback GoButtonPushed bound to: GoButton.ButtonPushedFcn
+callback ClearButtonPushed bound to: ClearButton.ButtonPushedFcn
+run: makes GridLayout,AmpField,GoButton,ClearButton; Go text Go
+=== DsS4: consistent, but no component carries DesignTimeProperties
+canvas: 5 components in the tree, 0 with DesignTimeProperties: 
+canvas buttons: Go,Clear
+callback GoButtonPushed bound to: (none)
+callback ClearButtonPushed bound to: (none)
+run: makes GridLayout,AmpField,GoButton,ClearButton; Go text Go

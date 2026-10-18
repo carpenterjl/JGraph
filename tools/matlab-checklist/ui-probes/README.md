@@ -35,6 +35,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `oi140/` | Open item 140 (ADR 0242): headless. `oi140_tags` tags 23 kinds of object (a text, a rectangle, a light, a group, a legend, a colour bar, seven annotations, …) and prints each one's `findobj` and `findall` count and `Type` by tag before and after `savefig`/`openfig`, with the rectangle's shape and the `UserData` after. |
 | `oi141/` | Open item 141 (ADR 0242): headless. `oi141_title` records what a legend's `Title` is (class, properties, `get`, defaults, `title(lg, …)`, the words' shapes, the refusals, display, delete, a legend made again, the box under it, `savefig`); `oi141_font` and `oi141_follow` what its size, weight, angle, font, interpreter and colour follow, read after the legend's update; `oi141_classes` prints its rows in the three recorded class tables' formats. |
 | `oi142/` | Open item 142 (ADR 0242): headless. `oi142_imshow` records what 50 forms of `imshow` do to the figure, the axes and the image (each class, true colour, indexed, display ranges, every option, a named axes, subplot, hold, replaced, twice, a file, a panel, a uiaxes); `oi142_errors` its refusals and warnings word for word, and exports two pictures (`rt/`) showing that labels written after `imshow` are drawn on its invisible axes while a plain invisible axes draws none. |
+| `ds0/` | Stage DS0 of the designer plan: headless. `ds0_stale` writes apps whose component tree disagrees with their code and shows what App Designer's load and the class make of each; `ds0_shipped` reads the 44 shipped apps' trees against their `createComponents`; `ds0_codegen` runs App Designer's component code generator over them; `ds0_tree` saves component trees for `ds0_tree_dump.py` to list their subsystem objects; `ds0_plaintext` writes a plain-text `.m` app and loads and runs it with the feature off and on. `rt/` (ignored) holds what they write. |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -848,3 +849,79 @@ Their event data are `matlab.graphics.controls.eventdata.ButtonPushedEventData` 
 
 Not measured: a press in a window, so which of a button's callback and the toolbar's
 `SelectionChangedFcn` runs first (open item 78).
+
+## DS0 findings (designer plan, R2025b, headless)
+
+The probes in `ds0/` answer the designer plan's DS0 questions (`docs/plans/app-designer-plan.md`,
+gitignored), with decision DD1 in force: an app must stay editable in both JGraph's designer and
+MATLAB's App Designer. R2025b's App Designer sources were read in place
+(`toolbox/matlab/appdesigner`, `toolbox/matlab/uicomponents/plugin/appdesigner`).
+
+**The canvas is the saved component tree, never the code.** `MLAPPDeserializer.getAppData` is
+`load` of `appModel.mat` passed through `Version2Loader`, which returns the data unchanged, and
+decorators that touch callbacks, images, modes and unknown components; nothing compares the tree
+with `createComponents`. `ds0_stale` built five apps with R2025b's own serializer from the U7b class
+text and a tree made here: a tree lacking a component the code makes (the canvas lacks it, and its
+callback is bound to nothing), a tree with a component the code does not make (the canvas has it),
+a button whose text differs (the canvas shows the tree's), and a tree with no
+`DesignTimeProperties` (no canvas component has a code name and no callback is bound). In every
+case the class itself runs from the code. So a layout change JGraph makes reaches App Designer only
+through `components`.
+
+**What App Designer's tree holds** (`ds0_shipped`, the 44 shipped apps). Every canvas component,
+the figure included, carries `DesignTimeProperties`, a dynamic property (`meta.DynamicProperty`)
+holding a struct: `CodeName`, `GroupId` (a char, empty in 815 of 1108), `ComponentCode` (a cell
+of the component's generated lines, never empty), and in some `ImageRelativePath`, `DirtyProps` or
+`AppTypeProperties`. The tree's code names are exactly the components `createComponents` makes in
+all 44. Objects without it are an axes' text children and annotation panes.
+
+**The code generator is MATLAB code** (`ds0_codegen`).
+`appdesigner.internal.codegeneration.ComponentCodeGenerator.getComponentGenerationCode` over the
+per-class adapters (`appdesigner.internal.componentadapter.uicomponents.adapter.*Adapter`) makes
+a component's lines. The adapters provide the constructor (`getCodeGenCreation`), the property
+order (`getCodeGenPropertyNames`: the adapter's `OrderSpecificProperties`, then `get`'s order,
+then `Position`, then the value property, less read-only, ignored and mode properties), and
+`isDefault` against `getComponentRunTimeDefaults`. Run headless over all 1108 components, it
+reproduces the stored `ComponentCode` and the file's lines in order for 987. A callback comes out
+as its name in quotes (`app.X.ButtonPushedFcn = 'XPushed';`), which the file writes as
+`createCallbackFcn(app, @XPushed, true)`. The rest differ in explainable ways:
+- the figure's final `Visible = 'on'` and a `ContextMenu` assignment are written by the code model,
+  not the component generator (48);
+- apps saved before R2025a store a `Position` for a grid layout's children, which R2025b no longer
+  generates (44);
+- 29 differ in the stored copy and the text both.
+
+`ds0_shipped` also compared each component with a fresh one of its class: the lines assigned are
+the properties that differ, except `Layout.Row`/`Column` (always written), properties that follow
+others (`InnerPosition`, `ValueIndex`, `OuterPosition`), and a grid child's `Position`.
+
+**The tree as MAT-file data** (`ds0_tree`, `ds0_tree_dump.py`). A saved component tree is MCOS
+objects in the subsystem, each saving its own internal storage rather than its public properties:
+a button saves 15-17 names such as `PrivateText`, `PrivateOuterPosition`, `PrivateInnerPosition`,
+`PrivateButtonPushedFcn`, `BackgroundColor`, `Layout`, `Internal` and `DirtyPropertyStrategy`; a
+figure 33 (`StoragePosition`, `Visible_I`, `SerializableChildren`, …). Helper objects ride along:
+two `UnitPos` per figure, a `GridLayoutOptions` per grid child, an `OnOffSwitchState` per on/off
+value, a `meta.DynamicProperty` per `DesignTimeProperties` (and two on every figure), dirty-property
+strategy objects. The U7b app's four components are 50 objects and 182 names. Each saved tree
+reloads as a `matlab.ui.Figure` with its code names.
+
+**The plain-text format already works in R2025b's loader** (`ds0_plaintext`). R2025b carries the
+format MathWorks announced for R2026b: an ordinary `classdef ... < matlab.apps.App` file ending in
+`%[appendix]` `%[app:layout]` and a `%{ … %}` block of XML (`<Components><UIFigure name="…">`,
+one element per component named by its class's short name, one child element per property holding
+its MATLAB value, `Children` elements for containers, a callback property holding the method's
+name). The feature `AppDesignerPlainTextFileFormat` is 0 by default.
+- With it off, the app refuses to run (`MATLABApp:unknownFileType`), but
+  `DeserializerFactory.createDeserializer('DsPlain.m').getAppData()` still builds the full canvas
+  (four components with code names, the callback bound) by generating and running
+  `createComponents` from the XML. No MAT-file and no MCOS are involved.
+- With it on, the app runs, and the callback is wired through `AppManagementService.executeCallback`.
+- App Designer's own file checks admit `.m` only with the feature on
+  (`validateAppFileExtension`, `DesignTimeController`).
+
+Not measured:
+- App Designer opening any of these in its window;
+- whether `load` accepts a component tree that saves fewer internal names than R2025b writes;
+- the mapping from each public property to the internal names a class saves;
+- whether App Designer's window can dock in R2025b's desktop (decision DD3);
+- any release but R2025b.

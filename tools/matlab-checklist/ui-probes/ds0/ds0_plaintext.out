@@ -1,0 +1,16 @@
+feature AppDesignerPlainTextFileFormat default: 0
+matlab.apps.App exists: 1
+component map: 45 tags; first Button,ButtonGroup,CheckBox,CheckBoxTree,ColorPicker,ContextMenu,Knob,DatePicker,DiscreteKnob,DropDown,EditField,Gauge
+NumericEditField -> uieditfield args numeric
+off: run ERROR MATLABApp:unknownFileType | Unknown FileType
+off: getAppData: canvas matlab.ui.Figure with 4 components: UIFigure,GridLayout,AmpField,GoButton
+off: getAppData: code fields ClassName,EditableSectionCode,Callbacks,StartupFcn,InputParameters,AppTypeData,codeFormatting,HelpComments; callbacks GoButtonPushed
+off: getAppData: button text Go, pushed fcn class char
+feature now: 1
+on: run: DsPlain
+on: run fields: AmpField 2, GoButton text Go, figure name DS0 plain
+on: ButtonPushedFcn function_handle: @(src,e)ad_ams.executeCallback(app,@(obj,event)app.GoButtonPushed(event),true,e)
+on: run inspect ERROR MATLAB:uiautomation:Driver:NoDisplay | Gestures on MATLAB Apps require figure display.
+on: getAppData: canvas matlab.ui.Figure with 4 components: UIFigure,GridLayout,AmpField,GoButton
+on: getAppData: code fields ClassName,EditableSectionCode,Callbacks,StartupFcn,InputParameters,AppTypeData,codeFormatting,HelpComments; callbacks GoButtonPushed
+on: getAppData: button text Go, pushed fcn class char

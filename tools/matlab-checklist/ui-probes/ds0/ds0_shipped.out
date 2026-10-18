@@ -1,0 +1,174 @@
+44 shipped .mlapp files
+--- tally (14 keys)
+ 1108  ComponentCode class=cell empty=0
+ 1108  DTP is matlab.metadata.DynamicProperty
+ 1108  DTP value class struct
+  815  GroupId class=char empty=1
+  732  DTP fields CodeName,GroupId,ComponentCode
+  354  DTP fields CodeName,GroupId,ComponentCode,ImageRelativePath
+  293  GroupId class=char empty=0
+   44  figure has DesignTimeProperties=1
+   44  no fresh matlab.ui.Figure
+   44  tree names == created set: 1
+   30  no DTP: matlab.graphics.primitive.Text
+   19  DTP fields CodeName,GroupId,ComponentCode,ImageRelativePath,DirtyProps
+    9  no DTP: matlab.graphics.shape.internal.AnnotationPane
+    3  DTP fields CodeName,GroupId,ComponentCode,AppTypeProperties
+--- assigned and differing (top) (228 keys)
+  265  Label.Text
+  152  Button.ButtonPushedFcn
+  152  Button.Text
+  152  Label.Position
+  123  GridLayout.RowHeight
+  123  Label.HorizontalAlignment
+  115  GridLayout.ColumnWidth
+  113  Label.Layout
+   93  GridLayout.Padding
+   76  Button.Layout
+   76  Button.Position
+   75  GridLayout.Layout
+   68  EditField.Position
+   67  CheckBox.Text
+   64  GridLayout.RowSpacing
+   62  CheckBox.Position
+   56  Menu.Text
+   51  GridLayout.ColumnSpacing
+   50  RadioButton.Position
+   50  RadioButton.Text
+   49  DropDown.Items
+   49  EditField.ValueChangedFcn
+   48  DropDown.Value
+   45  EditField.Value
+   44  Label.Tag
+   42  EditField.Tooltip
+   41  Button.Tag
+   38  Menu.MenuSelectedFcn
+   37  DropDown.ValueChangedFcn
+   33  Panel.Position
+   32  DropDown.Position
+   32  Label.FontWeight
+   30  GridLayout.BackgroundColor
+   29  EditField.Layout
+   29  Panel.BorderType
+   28  CheckBox.ValueChangedFcn
+   28  Label.Tooltip
+   26  CheckBox.Value
+   23  Label.VerticalAlignment
+   22  Panel.Title
+   21  Button.Enable
+   21  NumericEditField.Limits
+   21  Panel.Layout
+   20  Button.Tooltip
+   20  NumericEditField.Value
+   19  DropDown.Layout
+   19  EditField.Enable
+   18  EditField.Editable
+   18  Label.WordWrap
+   18  Tab.Title
+   16  ButtonGroup.SelectionChangedFcn
+   16  GridLayout.Scrollable
+   15  Button.IconAlignment
+   15  ButtonGroup.BorderType
+   15  Label.Enable
+   15  Label.Visible
+   15  RadioButton.Tooltip
+   14  Button.BackgroundColor
+   14  EditField.Visible
+   14  Label.FontColor
+--- assigned but equal to a fresh one (5 keys)
+   19  RadioButton.Value
+    2  DropDown.BackgroundColor
+    2  UIAxes.XTickLabelRotation
+    2  UIAxes.YTickLabelRotation
+    2  UIAxes.ZTickLabelRotation
+--- differing but not assigned (87 keys)
+  265  Label.InnerPosition
+  152  Button.InnerPosition
+  113  Label.Position
+   97  EditField.InnerPosition
+   76  Button.Position
+   67  CheckBox.InnerPosition
+   54  Panel.OuterPosition
+   51  DropDown.InnerPosition
+   50  RadioButton.InnerPosition
+   33  Menu.Position
+   31  RadioButton.Value
+   29  EditField.Position
+   24  NumericEditField.InnerPosition
+   22  DropDown.ValueIndex
+   21  Panel.Position
+   19  ButtonGroup.OuterPosition
+   19  ButtonGroup.SelectedObject
+   19  DropDown.Position
+   18  Image.InnerPosition
+   11  GridLayout.BackgroundColor
+   11  Image.Position
+   11  NumericEditField.Position
+   11  Spinner.InnerPosition
+   10  Spinner.Position
+   10  Table.InnerPosition
+   10  Table.OuterPosition
+   10  TextArea.InnerPosition
+    7  ButtonGroup.Position
+    7  TabGroup.OuterPosition
+    7  TabGroup.SelectedTab
+    6  UIAxes.CameraViewAngle
+    6  UIAxes.InnerPosition
+    6  UIAxes.OuterPosition
+    6  UIAxes.PlotBoxAspectRatio
+    6  UIAxes.Subtitle
+    6  UIAxes.Title
+    6  UIAxes.Toolbar
+    6  UIAxes.XAxis
+    6  UIAxes.XLabel
+    6  UIAxes.XTick
+    6  UIAxes.XTickLabel
+    6  UIAxes.YLabel
+    6  UIAxes.ZAxis
+    6  UIAxes.ZLabel
+    5  CheckBox.Position
+    5  Table.Position
+    4  HTML.InnerPosition
+    4  HTML.Position
+    4  ListBox.InnerPosition
+    4  ListBox.Position
+    4  TabGroup.Position
+    4  Tree.InnerPosition
+    4  UIAxes.Position
+    3  Label.FontColor
+    3  ListBox.ValueIndex
+    3  Tree.Position
+    2  SimulationControls.FontColor
+    2  SimulationControls.OuterPosition
+    2  SimulationControls.Position
+    2  SimulationProgress.OuterPosition
+    2  SimulationProgress.Position
+    2  Switch.InnerPosition
+    2  Tab.Tooltip
+    2  Table.ColumnWidth
+    2  TextArea.Position
+    2  UIAxes.XTickLabelRotationMode
+    2  UIAxes.YTick
+    2  UIAxes.YTickLabel
+    2  UIAxes.YTickLabelRotationMode
+    2  UIAxes.ZTickLabelRotationMode
+    2  VariableTuner.BackgroundColor
+    2  VariableTuner.FontColor
+    2  VariableTuner.OuterPosition
+    2  VariableTuner.Position
+    1  ButtonGroup.BackgroundColor
+    1  ButtonGroup.BorderColor
+    1  ButtonGroup.ForegroundColor
+    1  ButtonGroup.HighlightColor
+    1  DatePicker.InnerPosition
+    1  DatePicker.Position
+    1  DatePicker.Value
+    1  DropDown.BackgroundColor
+    1  DropDown.FontColor
+    1  Panel.BackgroundColor
+    1  Panel.ForegroundColor
+    1  Table.ColumnEditable
+    1  Table.ForegroundColor
+--- order (2 keys)
+  721  assigned lines in class order: 0
+  343  assigned lines in class order: 1
