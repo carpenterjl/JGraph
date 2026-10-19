@@ -574,6 +574,55 @@ internal static class JgsHandleRegistry
         }
     }
 
+    private static readonly HashSet<FigureModel> Kept = new(ReferenceEquality.Instance);
+
+    private static FigureModel[] KeptFigures()
+    {
+        lock (Gate)
+        {
+            return [.. Kept];
+        }
+    }
+
+    /// <summary>
+    /// Keeps the handles of <paramref name="figure"/>'s objects through <see cref="DropUnreachable"/>
+    /// although no figure number names it: the visual designer's canvas builds an app's components
+    /// in a figure of its own (designer plan DS2).
+    /// </summary>
+    internal static void Keep(FigureModel figure)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        lock (Gate)
+        {
+            Kept.Add(figure);
+        }
+    }
+
+    /// <summary>
+    /// Lets go of a figure <see cref="Keep"/> kept, and of the handles of every object in it: none
+    /// was ever a script's, so none is retired as a deleted one is.
+    /// </summary>
+    internal static void Release(FigureModel figure)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        var gone = new HashSet<GraphObject>(ReferenceEquality.Instance);
+        Collect(figure, gone);
+        gone.Add(figure);
+        lock (Gate)
+        {
+            Kept.Remove(figure);
+            foreach (GraphObject target in gone)
+            {
+                if (Handles.Remove(target, out double handle))
+                {
+                    Entries.Remove(handle);
+                }
+            }
+
+            FigureEntries.Remove(figure);
+        }
+    }
+
     /// <summary>
     /// Drops the handles of objects no longer reachable from a live figure. Closing a window retires
     /// its figure, and without this the entries — and through them the whole model subtree — would be
@@ -588,6 +637,12 @@ internal static class JgsHandleRegistry
             {
                 Collect(figure, live);
             }
+        }
+
+        // A figure kept by the visual designer has no number, and is live while the designer holds it.
+        foreach (FigureModel kept in KeptFigures())
+        {
+            Collect(kept, live);
         }
 
         // A group draws nothing, so it is not in the tree the walk above covers — and reading its

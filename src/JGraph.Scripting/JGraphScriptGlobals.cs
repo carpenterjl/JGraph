@@ -82,6 +82,9 @@ public sealed class JGraphScriptGlobals
     /// <summary>The host's device panes, or null when it has none (ADR 0197).</summary>
     internal IScriptDeviceWindows? DeviceWindows => _context.DeviceWindows;
 
+    /// <summary>The host's App Designer window, or null when it has none (designer plan DS2).</summary>
+    internal IScriptAppDesigner? AppDesigner => _context.AppDesigner;
+
     // --- Output -----------------------------------------------------------------------------------
 
     /// <summary>Writes a value followed by a newline to the output console (C# scripts).</summary>

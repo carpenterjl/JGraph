@@ -47,6 +47,7 @@ anovan	ERR:MATLAB:narginout:notValidMfile	0
 ansaribradley	ERR:MATLAB:narginout:notValidMfile	0
 any	1	5
 anymissing	1	5
+appdesigner	0	2
 append	1	2
 applylut	1	2
 arburg	3	2
@@ -2212,6 +2213,7 @@ xcov	2	2
 xlabel	1	2
 xlim	-1	2
 xline	1	2
+xregion	1	2
 xor	1	5
 xptread	3	2
 xspectrogram	-1	2
@@ -2235,6 +2237,7 @@ ytickangle	-1	2
 ytickformat	-1	2
 yticklabels	-1	2
 yticks	-1	2
+yregion	1	2
 yulewalk	2	2
 yyaxis	0	6
 yyyymmdd	1	0

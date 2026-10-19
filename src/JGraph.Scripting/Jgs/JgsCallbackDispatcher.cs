@@ -88,9 +88,44 @@ internal sealed class JgsCallbackDispatcher
 
     /// <summary>The live dispatcher, installed by the session that owns the interpreter. Builtins
     /// reach their drain point through this; null (a one-shot or batch run) makes draining a no-op.</summary>
-    public static JgsCallbackDispatcher? Current { get; private set; }
+    public static JgsCallbackDispatcher? Current
+    {
+        get => _isolated > 0 ? null : _current;
+        private set => _current = value;
+    }
+
+    private static JgsCallbackDispatcher? _current;
+
+    [ThreadStatic]
+    private static int _isolated;
 
     public static void Install(JgsCallbackDispatcher? dispatcher) => Current = dispatcher;
+
+    /// <summary>
+    /// Hides the live dispatcher from this thread while the scope is held: code run here reaches no
+    /// session - no <c>CreateFcn</c> fires into it, no warning is written to its console, no relative
+    /// path is resolved against its folder. The visual designer's interpreter runs an app's
+    /// component code so (designer plan DS2), beside whatever the console's session is running.
+    /// </summary>
+    internal static IDisposable Isolate()
+    {
+        _isolated++;
+        return new Isolation();
+    }
+
+    private sealed class Isolation : IDisposable
+    {
+        private bool _done;
+
+        public void Dispose()
+        {
+            if (!_done)
+            {
+                _done = true;
+                _isolated--;
+            }
+        }
+    }
 
     /// <summary>The cancellation token of the statement currently running, so <c>pause</c> and
     /// <c>waitfor</c> wake on Stop. The session sets it as each statement begins.</summary>

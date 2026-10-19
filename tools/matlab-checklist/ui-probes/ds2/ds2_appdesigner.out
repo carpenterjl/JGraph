@@ -1,0 +1,20 @@
+WebWindow supported: 1
+require: passes
+5                        !! MATLAB:appdesigner:appdesigner:InvalidInput | The input argument must be a full or partial file path, or a file name.
+"a","b"                  !! MATLAB:appdesigner:appdesigner:InvalidInput | The input argument must be a full or partial file path, or a file name.
+'for'                    !! MATLAB:appdesigner:appdesigner:FileNameFailsIsKeyword | Name cannot be a MATLAB keyword.  Rename file, and then open.
+'1abc'                   !! MATLAB:appdesigner:appdesigner:FileNameFailsIsVarName | File name '1abc' must start with a letter, contain only letters, numbers and underscores, and be shorter than 2048 characters.
+'NoSuchApp'              !! MATLAB:appdesigner:appdesigner:InvalidFileName | File 'NoSuchApp.mlapp' not found.
+'NoSuchApp.mlapp'        !! MATLAB:appdesigner:appdesigner:InvalidFileName | File 'NoSuchApp.mlapp' not found.
+'NotAnApp.txt'           !! MATLAB:appdesigner:appdesigner:InvalidFileExtension | 'NotAnApp.txt' file type must be a MATLAB App (*.mlapp).
+'BorrowCopy.MLAPP'       !! MATLAB:appdesigner:appdesigner:InvalidFileExtensionCase | 'BorrowCopy.MLAPP' file type must be a MATLAB App (*.mlapp).  The extension is case sensitive.
+'BorrowCopy'             -> <rt>\BorrowCopy.mlapp
+'BorrowCopy.mlapp'       -> <rt>\BorrowCopy.mlapp
+'borrowcopy.mlapp'       -> <rt>\BorrowCopy.mlapp
+'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\ds2\rt\BorrowCopy' -> <rt>\BorrowCopy.mlapp
+"BorrowCopy.mlapp"       -> <rt>\BorrowCopy.mlapp
+'BorrowCopy.m'           !! MATLAB:appdesigner:appdesigner:InvalidFileExtension | 'BorrowCopy.m' file type must be a MATLAB App (*.mlapp).
+appdesigner(NoSuchApp) !! MATLAB:appdesigner:appdesigner:InvalidFileName | File 'NoSuchApp.mlapp' not found.
+appdesigner(2 args) !! MATLAB:TooManyInputs | Too many input arguments.
+x = appdesigner !! MATLAB:TooManyOutputs | Too many output arguments.
+nargin 1 nargout 0

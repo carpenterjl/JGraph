@@ -785,7 +785,9 @@ public sealed partial class UiComponentLayer
             // blank rectangle and the script was told so once.
             case UiComponentKind.Html:
             {
-                FrameworkElement view = UiHtmlViews.Factory?.Create((UiHtmlModel)source) ?? new Border { Background = Brushes.White };
+                // On the designer's canvas a page is not run: the component is its blank rectangle.
+                FrameworkElement view = (DesignMode ? null : UiHtmlViews.Factory?.Create((UiHtmlModel)source))
+                    ?? new Border { Background = Brushes.White };
                 return new Shown(source, frame.Kind, view);
             }
 

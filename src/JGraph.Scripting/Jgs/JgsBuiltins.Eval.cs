@@ -80,6 +80,7 @@ internal static partial class JgsBuiltins
         // Device classes plan, stage 2: the serial port's objects belong to the session.
         "serialport", "serialportlist", "serialportfind", "internal",
         "serialExplorer", // Stage D13: the host's Serial Explorer pane
+        "appdesigner", // Designer plan DS2: the host's App Designer window
 
         // Stage D2: the network clients and servers, their finds, the echo servers and resolvehost.
         "tcpclient", "tcpserver", "udpport", "tcpclientfind", "tcpserverfind", "udpportfind", "echotcpip", "echoudp", "resolvehost",
@@ -150,6 +151,7 @@ internal static partial class JgsBuiltins
         RegisterNetCompile(env, interpreter);
         RegisterSharedLibraryBuiltins(env, interpreter);
         RegisterDeviceBuiltins(env, interpreter, host);
+        RegisterAppDesignerBuiltin(env, interpreter, host); // designer plan DS2
         RegisterFigFileBuiltins(env, interpreter, host); // U11
         RegisterTableVerbs(env, interpreter); // open item 122
         RegisterTableLeftovers(env, interpreter, host); // open item 128: over the missing-value verbs and summary

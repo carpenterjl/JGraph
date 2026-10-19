@@ -354,6 +354,17 @@ public partial class ScriptWorkspaceWindow
                 }
             }
 
+            // The designer's window asks about its own unsaved apps, and one Cancel there keeps JGraph open too.
+            if (_appDesigner is { } designer)
+            {
+                designer.Close();
+                if (_appDesigner is not null)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
             _shutdownApproved = true; // the per-tab Closing handlers must not re-prompt during teardown
         }
 

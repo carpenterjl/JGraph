@@ -261,6 +261,14 @@ public partial class ScriptWorkspaceWindow
     /// per-tab Closing handlers do not re-prompt while the window tears its documents down.</summary>
     private bool _shutdownApproved;
 
+    /// <summary>The visual designer's window, while it is open (designer plan DS2).</summary>
+    private AppDesignerWindow? _appDesigner;
+
+    /// <summary>The door <c>appdesigner</c> comes through (designer plan DS2).</summary>
+    private IScriptAppDesigner? _appDesignerHost;
+
+    private IScriptAppDesigner AppDesignerDoor => _appDesignerHost ??= new AppDesignerHost(this);
+
     private void SaveActive()
     {
         if (ActiveDocument is { } entry)
@@ -275,6 +283,83 @@ public partial class ScriptWorkspaceWindow
         {
             TrySaveAs(entry);
         }
+    }
+
+    /// <summary>
+    /// File > Open in App Designer: the active App Designer file on the visual designer's canvas, in
+    /// the designer's own window (designer plan DS2, DD3), made when first wanted. The designer opens
+    /// the file as saved; a tab here with unsaved changes keeps them, and is told so.
+    /// </summary>
+    private void OpenActiveInAppDesigner()
+    {
+        if (ActiveDocument is not { Model: { IsAppDesignerFile: true, FilePath: { } path } } entry)
+        {
+            return;
+        }
+
+        if (OpenInAppDesigner(path) is { } refused)
+        {
+            SetStatus($"Could not open '{path}' in App Designer: {refused}");
+            MessageBox.Show(this, refused, "App Designer", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        SetStatus(entry.Model.IsDirty
+            ? $"App Designer opened {path} as saved; this tab's unsaved changes are not in it."
+            : $"Opened {path} in App Designer.");
+    }
+
+    /// <summary>
+    /// Brings up the designer's window, made when first wanted, with <paramref name="path"/> open in
+    /// it (or as it is, for null): what File > Open in App Designer and <c>appdesigner</c> both do.
+    /// </summary>
+    /// <returns>Null when it opened, else why not.</returns>
+    private string? OpenInAppDesigner(string? path)
+    {
+        if (_appDesigner is null)
+        {
+            _appDesigner = new AppDesignerWindow();
+            _appDesigner.AppSaved += ReloadSavedApp;
+            _appDesigner.Closed += (_, _) => _appDesigner = null;
+        }
+
+        if (path is null)
+        {
+            _appDesigner.ShowWindow();
+            return null;
+        }
+
+        return _appDesigner.Open(path);
+    }
+
+    /// <summary>What <c>appdesigner</c> reaches from a script: the designer's window, opened on the UI thread.</summary>
+    private sealed class AppDesignerHost(ScriptWorkspaceWindow window) : IScriptAppDesigner
+    {
+        // Waits for the window, so that a design the canvas cannot read is the script's error.
+        public string? Open(string? path) => window.Dispatcher.Invoke(() => window.OpenInAppDesigner(path));
+    }
+
+    /// <summary>
+    /// The designer saved an app: a tab here showing it takes the new text when it has no unsaved
+    /// changes of its own, and is told otherwise.
+    /// </summary>
+    private void ReloadSavedApp(string path, string text)
+    {
+        if (_documents.FirstOrDefault(d => string.Equals(d.Model.FilePath, path, StringComparison.OrdinalIgnoreCase)) is not { } entry)
+        {
+            return;
+        }
+
+        if (entry.Model.IsDirty)
+        {
+            SetStatus($"App Designer saved {path}; this tab has unsaved changes and does not show the designer's.");
+            return;
+        }
+
+        entry.Editor.ScriptText = text;
+        entry.Model.SetText(text);
+        entry.Model.MarkSaved();
+        entry.Document.Title = entry.Model.FileName;
     }
 
     /// <summary>

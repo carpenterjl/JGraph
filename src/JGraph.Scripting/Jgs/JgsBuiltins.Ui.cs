@@ -256,6 +256,24 @@ internal static partial class JgsBuiltins
     private static readonly UiColor UiFigureColor = new(245 / 255.0, 245 / 255.0, 245 / 255.0);
 
     /// <summary>
+    /// A new <c>uifigure</c>'s model, with the app-building defaults and nothing registered: what
+    /// <c>uifigure</c> makes before it gives the figure a number, and what the visual designer's
+    /// canvas builds an app's components in (designer plan DS2).
+    /// </summary>
+    internal static FigureModel NewUiFigureModel() => new()
+    {
+        IsUiFigure = true,
+        IntegerHandle = false,
+        MenuBar = false,
+        AutoResizeChildren = true,
+        NumberTitle = false,
+        ToolBar = FigureToolBarMode.None,
+        Background = UiFigureColor.ToColor(),
+        Size = new Size2D(560, 420),
+        Name = string.Empty,
+    };
+
+    /// <summary>
     /// <c>uifigure</c>, <c>uifigure(Name, Value)</c> and <c>uifigure(s)</c>: a figure with the
     /// app-building defaults (U2). It has no figure number, its handle is hidden — so it is never
     /// <c>gcf</c> and <c>close all</c> leaves it — and its window is plain.
@@ -290,19 +308,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        var figure = new FigureModel
-        {
-            IsUiFigure = true,
-            IntegerHandle = false,
-            MenuBar = false,
-            AutoResizeChildren = true,
-            NumberTitle = false,
-            ToolBar = FigureToolBarMode.None,
-            Background = UiFigureColor.ToColor(),
-            Size = new Size2D(560, 420),
-            Name = string.Empty,
-        };
-
+        FigureModel figure = NewUiFigureModel();
         int number = JG.RegisterHiddenFigure(figure);
         JgsHandleEntry entry = JgsHandleRegistry.EntryFor(figure);
         entry.HandleVisibility = "off";

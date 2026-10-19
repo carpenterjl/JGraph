@@ -29,6 +29,9 @@ public static class WorkspaceCommands
     /// <summary>Writes the class of the active App Designer file as an <c>.m</c> file, leaving the <c>.mlapp</c> as it is.</summary>
     public static RoutedUICommand ExportAppCode { get; } = Create("Export to .m File…");
 
+    /// <summary>Opens the active App Designer file on the visual designer's canvas, in its own window (designer plan DS2).</summary>
+    public static RoutedUICommand OpenInAppDesigner { get; } = Create("Open in App Designer");
+
     /// <summary>Closes the active script tab.</summary>
     public static RoutedUICommand CloseTab { get; } = Create("Close Tab", Key.W, ModifierKeys.Control);
 

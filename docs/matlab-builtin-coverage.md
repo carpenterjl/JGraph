@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,230 of
-2,024** as of open-items batch 20 (ADR 0233), which added `isenum`, `istabular`, `vartype`,
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,231 of
+2,024** as of the designer plan's stage DS2 (ADR 0246), which added `appdesigner`; 1,230 as of
+open-items batch 20 (ADR 0233), which added `isenum`, `istabular`, `vartype`,
 `convertvars`, `table2cell` and `innerjoin` (`stack` is not among the 2,024); 1,224 as of open-items batch 19 (ADR 0232), which added `iscategorical` (the twelve other categorical verbs it
 added — `categories`, `isordinal`, `isprotected`, `isundefined`, `iscategory`, `countcats`, `addcats`,
 `removecats`, `mergecats`, `renamecats`, `reordercats`, `setcats` — are not among the 2,024); 1,223 as of open-items batch 5 (ADR 0216), which added `fileread` (and the undocumented `feature`,

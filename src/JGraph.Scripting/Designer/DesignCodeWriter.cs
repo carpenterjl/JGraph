@@ -87,6 +87,63 @@ public static class DesignCodeWriter
         return lines;
     }
 
+    /// <summary>
+    /// <paramref name="text"/>, an app's class, with its <c>createComponents</c> written again from
+    /// <paramref name="design"/> (designer plan DS2): what the visual designer saves. The component
+    /// properties block is written again too when it no longer declares the design's components;
+    /// when it does, it is kept in whatever order it has. Every other line - the user's code among
+    /// them - is kept as it was, and so are the text's line endings.
+    /// </summary>
+    /// <returns>The new text; null when the text has no properties block or no <c>createComponents</c> where App Designer puts them.</returns>
+    public static string? Splice(string text, AppDesign design, DesignCodeStyle? style = null)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        ArgumentNullException.ThrowIfNull(design);
+        style ??= DesignCodeStyle.Default;
+        string newline = text.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+        var lines = text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+
+        int comment = lines.FindIndex(static l => l.Trim() == DesignCodeReader.ComponentPropertiesComment);
+        if (comment < 0 || comment + 1 >= lines.Count || !lines[comment + 1].Trim().StartsWith("properties", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        int blockEnd = lines.FindIndex(comment + 2, static l => l.Trim() == "end");
+        int function = lines.FindIndex(static l => l.Trim() == "function createComponents(app)");
+        if (blockEnd < 0 || function < 0 || function < blockEnd)
+        {
+            return null;
+        }
+
+        string indent = lines[function][..(lines[function].Length - lines[function].TrimStart().Length)];
+        int methodEnd = lines.FindIndex(function + 1, l => l == indent + "end");
+        if (methodEnd < 0)
+        {
+            return null;
+        }
+
+        int methodStart = function > 0 && lines[function - 1].Trim() == "% Create UIFigure and components" ? function - 1 : function;
+
+        // The later span first, so that the earlier one's lines stay where they were found.
+        lines.RemoveRange(methodStart, methodEnd - methodStart + 1);
+        lines.InsertRange(methodStart, Method(design, style));
+        IReadOnlyList<string> block = PropertiesBlock(design, style);
+        if (!Declarations(lines.Skip(comment + 2).Take(blockEnd - comment - 2)).SequenceEqual(Declarations(block.Skip(2).SkipLast(1))))
+        {
+            lines.RemoveRange(comment, blockEnd - comment + 1);
+            lines.InsertRange(comment, block);
+        }
+
+        return string.Join(newline, lines);
+
+        // A block's declarations, name and class, in no particular order.
+        static IEnumerable<string> Declarations(IEnumerable<string> declared) =>
+            declared.Select(static l => string.Join(' ', l.Split(' ', StringSplitOptions.RemoveEmptyEntries)))
+                .Where(static l => l.Length > 0)
+                .Order(StringComparer.Ordinal);
+    }
+
     /// <summary>A container's children in the order App Designer's component browser lists them.</summary>
     private static IEnumerable<DesignComponent> BrowserOrder(AppDesign design, DesignComponent container)
     {

@@ -135,7 +135,7 @@ internal static partial class JgsGraphicsProperties
     /// The width over the height a component keeps whatever rectangle it is given (probe
     /// <c>u9_extra</c>): the round ones and the semicircular gauge their shape, a switch its track.
     /// </summary>
-    private static double? AspectRatioOf(UiObject component) => component switch
+    internal static double? AspectRatioOf(UiObject component) => component switch
     {
         UiKnobModel or UiDiscreteKnobModel or UiLampModel => 1,
         UiGaugeModel { Style: UiGaugeStyle.Circular or UiGaugeStyle.NinetyDegree } => 1,

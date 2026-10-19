@@ -63,6 +63,39 @@ public sealed partial class UiComponentLayer : Canvas
         }
     }
 
+    /// <summary>
+    /// Whether the layer shows a design on the visual designer's canvas (designer plan DS2) rather
+    /// than a running app: the canvas takes every press, and a <c>uihtml</c>'s page is not run. Set
+    /// before the first frame.
+    /// </summary>
+    public bool DesignMode { get; set; }
+
+    /// <summary>
+    /// The tab whose heading is under <paramref name="point"/> (on this layer), or null: what a
+    /// press there shows, which the designer's canvas asks since the layer takes no press itself.
+    /// </summary>
+    public UiTabModel? TabHeadingAt(Point point)
+    {
+        foreach (TabControl strip in _tabStrips.Values)
+        {
+            if (strip.Visibility != Visibility.Visible)
+            {
+                continue;
+            }
+
+            foreach (object entry in strip.Items)
+            {
+                if (entry is TabItem { Tag: UiTabModel tab, IsVisible: true } item && item.ActualWidth > 0
+                    && item.TransformToAncestor(this).TransformBounds(new Rect(item.RenderSize)).Contains(point))
+                {
+                    return tab;
+                }
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>The component with the keyboard, or null when none of this layer's controls has it.</summary>
     public UiControlModel? FocusedComponent
     {

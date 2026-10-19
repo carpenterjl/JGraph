@@ -48,10 +48,53 @@ public static class ScriptComponentFrames
     /// </summary>
     internal static void FlushIfChanged()
     {
-        if (_sink is not null && FigureModel.ComponentEpoch != _seenEpoch)
+        if (_sink is not null && _held == 0 && FigureModel.ComponentEpoch != _seenEpoch)
         {
             Flush(force: false);
         }
+    }
+
+    [ThreadStatic]
+    private static int _held;
+
+    /// <summary>
+    /// Sends nothing from this thread while the scope is held: the visual designer's interpreter
+    /// builds an app's components in a figure of its own (designer plan DS2), and its statement
+    /// boundaries must not take frames of the figures a script on another thread is writing.
+    /// </summary>
+    internal static IDisposable HoldOnThisThread()
+    {
+        _held++;
+        return new Hold();
+    }
+
+    private sealed class Hold : IDisposable
+    {
+        private bool _done;
+
+        public void Dispose()
+        {
+            if (!_done)
+            {
+                _done = true;
+                _held--;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Readies <paramref name="figure"/>'s components for a frame and takes it, as a flush does for
+    /// each figure it sends: a slider a grid has stretched works its ticks out again, and a
+    /// container resized or shown for the first time is told. For a figure no flush reaches - the
+    /// visual designer's (designer plan DS2). Call on the thread that writes the figure.
+    /// </summary>
+    internal static UiFrame TakeFrame(FigureModel figure)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        Jgs.JgsGraphicsProperties.SettleSliders(figure);
+        UiFrame frame = figure.TakeComponentFrame();
+        Jgs.JgsContainerResize.Settle(figure);
+        return frame;
     }
 
     /// <summary>Sends a frame for every dirty figure. Script thread only.</summary>
@@ -59,7 +102,7 @@ public static class ScriptComponentFrames
     /// run, and <c>drawnow</c>, whose frame must arrive whatever the timing.</param>
     internal static void Flush(bool force)
     {
-        if (_sink is not { } sink)
+        if (_sink is not { } sink || _held > 0)
         {
             return;
         }

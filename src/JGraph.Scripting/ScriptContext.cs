@@ -80,6 +80,12 @@ public sealed class ScriptContext
     /// </summary>
     public IScriptDeviceWindows? DeviceWindows { get; init; }
 
+    /// <summary>
+    /// The host's App Designer window, which <c>appdesigner</c> opens, or null when the host has no
+    /// windows and the call is refused (designer plan DS2).
+    /// </summary>
+    public IScriptAppDesigner? AppDesigner { get; init; }
+
     /// <summary>The directory relative file paths resolve against, or null for the process directory.</summary>
     public string? WorkingDirectory { get; }
 
