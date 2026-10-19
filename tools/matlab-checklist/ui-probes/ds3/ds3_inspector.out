@@ -1,0 +1,45 @@
+matlab.ui.Figure                            8 groups Window Appearance | Position | Plotting | Mouse Pointer | Interactivity | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.ButtonGroup             8 groups Title | Color and Styling | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.CheckBoxTree            6 groups Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.ContextMenu             6 groups Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.GridLayout              6 groups Grid Layout | Font and Color | Interactivity | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.Menu                    5 groups Menu | Interactivity | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.Panel                   8 groups Title | Color and Styling | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.Tab                     6 groups Title and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.TabGroup                7 groups Tabs | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.Toolbar                 6 groups Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.Tree                    6 groups Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.TreeNode                6 groups Node | Font | Interactivity | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.toolbar.PushTool        7 groups Push Tool | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.container.toolbar.ToggleTool      7 groups Toggle Tool | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Button                    7 groups Button | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.CheckBox                  7 groups Check Box | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.ColorPicker               7 groups Color Picker | Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.DatePicker                7 groups Date Picker | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.DiscreteKnob              7 groups Knob | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.DropDown                  7 groups Drop-Down | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.EditField                 7 groups Text | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Gauge                     8 groups Gauge | Ticks | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.HTML                      7 groups HTML | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Hyperlink                 7 groups Hyperlink | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Image                     7 groups Image | Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Knob                      8 groups Knob | Ticks | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Label                     7 groups Text | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Lamp                      7 groups Color | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.LinearGauge               8 groups Gauge | Ticks | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.ListBox                   7 groups List Box | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.NinetyDegreeGauge         8 groups Gauge | Ticks | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.NumericEditField          7 groups Value | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.RadioButton               7 groups Button | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.RangeSlider               8 groups Slider | Ticks | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.RockerSwitch              7 groups Switch | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.SemicircularGauge         8 groups Gauge | Ticks | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Slider                    8 groups Slider | Ticks | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Spinner                   7 groups Value | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.StateButton               7 groups Button | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Switch                    7 groups Switch | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.Table                     8 groups Table | Font | Interactivity | Color and Styling | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.TextArea                  7 groups Text | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.ToggleButton              7 groups Text | Font and Color | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.ToggleSwitch              7 groups Switch | Font | Interactivity | Position | Callback Execution Control | Parent / Child | Identifiers 
+matlab.ui.control.UIAxes                   14 groups Labels | Font | Ticks | Rulers | Grids | Multiple Plots | Color and Transparency Maps | Box Styling | Position | Viewing Angle | Interactivity | Callback Execution Control | Parent/Child | Identifiers 

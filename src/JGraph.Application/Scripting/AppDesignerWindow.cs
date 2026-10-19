@@ -13,7 +13,8 @@ namespace JGraph.Application.Scripting;
 /// The visual designer's window (designer plan DS2, decision DD3): like R2025b's App Designer, its own
 /// top-level window beside the desktop, with a tab per open app, each tab the app's canvas. The
 /// toolbar is App Designer's canvas tab: save, undo and redo, the grid (shown, snapped to, its
-/// interval) and the alignment guides.
+/// interval) and the alignment guides. DS3: App Designer's component library on the left, and its
+/// component browser over its inspector on the right, both showing the app in the tab chosen.
 /// </summary>
 internal sealed class AppDesignerWindow : Window
 {
@@ -23,6 +24,9 @@ internal sealed class AppDesignerWindow : Window
     private readonly ToggleButton _snap = new() { Content = "Snap to Grid", IsChecked = true, ToolTip = "Snap to the grid while it is shown" };
     private readonly ComboBox _interval = new() { Width = 56, ToolTip = "Grid interval, in pixels" };
     private readonly ToggleButton _hints = new() { Content = "Alignment Hints", IsChecked = true, ToolTip = "Show alignment guides and snap to them" };
+    private readonly DesignPaletteView _palette = new();
+    private readonly DesignBrowserView _browser = new();
+    private readonly DesignInspectorView _inspector = new();
 
     public AppDesignerWindow()
     {
@@ -53,6 +57,7 @@ internal sealed class AppDesignerWindow : Window
         toolbar.Items.Add(new Separator());
         toolbar.Items.Add(new Button { Content = "Undo", Command = ApplicationCommands.Undo, ToolTip = "Undo (Ctrl+Z)" });
         toolbar.Items.Add(new Button { Content = "Redo", Command = ApplicationCommands.Redo, ToolTip = "Redo (Ctrl+Y)" });
+        toolbar.Items.Add(new Button { Content = "Delete", Command = ApplicationCommands.Delete, ToolTip = "Delete the selected components (Delete)" });
         toolbar.Items.Add(new Separator());
         toolbar.Items.Add(_showGrid);
         toolbar.Items.Add(_snap);
@@ -61,22 +66,76 @@ internal sealed class AppDesignerWindow : Window
         toolbar.Items.Add(new Separator());
         toolbar.Items.Add(_hints);
 
+        // The toolbar's commands are the window's: routed from the focused element, Undo would reach
+        // an inspector text box's own (empty) undo instead of the design's.
+        foreach (Button button in toolbar.Items.OfType<Button>())
+        {
+            button.CommandTarget = this;
+        }
+
         var statusBar = new StatusBar();
         statusBar.Items.Add(new StatusBarItem { Content = _status });
+
+        // The library, the canvases, and the browser over the inspector, as App Designer lays them out.
+        var right = new Grid();
+        right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        right.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Star) });
+        var rowSplitter = new GridSplitter { Height = 4, HorizontalAlignment = HorizontalAlignment.Stretch };
+        Grid.SetRow(rowSplitter, 1);
+        Grid.SetRow(_inspector, 2);
+        right.Children.Add(_browser);
+        right.Children.Add(rowSplitter);
+        right.Children.Add(_inspector);
+
+        var body = new Grid();
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(190) });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(300) });
+        var leftSplitter = new GridSplitter { Width = 4, HorizontalAlignment = HorizontalAlignment.Stretch };
+        var rightSplitter = new GridSplitter { Width = 4, HorizontalAlignment = HorizontalAlignment.Stretch };
+        Grid.SetColumn(leftSplitter, 1);
+        Grid.SetColumn(_tabs, 2);
+        Grid.SetColumn(rightSplitter, 3);
+        Grid.SetColumn(right, 4);
+        body.Children.Add(_palette);
+        body.Children.Add(leftSplitter);
+        body.Children.Add(_tabs);
+        body.Children.Add(rightSplitter);
+        body.Children.Add(right);
 
         var root = new DockPanel();
         DockPanel.SetDock(toolbar, Dock.Top);
         DockPanel.SetDock(statusBar, Dock.Bottom);
         root.Children.Add(toolbar);
         root.Children.Add(statusBar);
-        root.Children.Add(_tabs);
+        root.Children.Add(body);
         Content = root;
+
+        _palette.ChosenChanged += (_, entry) =>
+        {
+            if (Active is { } app)
+            {
+                app.Canvas.DrawEntry = entry;
+                app.Canvas.Focus();
+            }
+            else
+            {
+                _palette.Chosen = null;
+            }
+        };
+        _inspector.Problem += (_, problem) => _status.Text = problem;
 
         _tabs.SelectionChanged += (_, e) =>
         {
             if (ReferenceEquals(e.OriginalSource, _tabs))
             {
                 ApplyCanvasOptions();
+                _palette.Chosen = null;
+                _browser.Document = Active?.Document;
+                _inspector.Document = Active?.Document;
                 ShowState();
             }
         };
@@ -88,6 +147,8 @@ internal sealed class AppDesignerWindow : Window
             (_, e) => e.CanExecute = Active is { Document.CanUndo: true }));
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (_, _) => Active?.Document.Redo(),
             (_, e) => e.CanExecute = Active is { Document.CanRedo: true }));
+        CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, (_, _) => Active?.Document.Delete(Active.Document.Selection),
+            (_, e) => e.CanExecute = Active is { } a && a.Document.Selection.Any(a.Document.CanDelete)));
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (_, _) => CloseTab(Active),
             (_, e) => e.CanExecute = Active is not null));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Close, Key.W, ModifierKeys.Control));
@@ -140,9 +201,18 @@ internal sealed class AppDesignerWindow : Window
 
             CommandManager.InvalidateRequerySuggested();
         };
+        canvas.DrawEnded += (_, _) =>
+        {
+            if (ReferenceEquals(Active, app))
+            {
+                _palette.Chosen = null;
+            }
+        };
         item.Header = app.Header;
         _tabs.Items.Add(item);
         _tabs.SelectedItem = item;
+        _browser.Document = document;
+        _inspector.Document = document;
         ApplyCanvasOptions();
         ShowState();
         Bring();
@@ -214,6 +284,18 @@ internal sealed class AppDesignerWindow : Window
                 : string.Empty),
             { Count: var n } => $"{n} components selected",
         };
+        if (Active.Canvas.Refusal is { } refused)
+        {
+            _status.Text = refused;
+            return;
+        }
+
+        if (Active.Canvas.DrawEntry is { } drawing)
+        {
+            _status.Text = $"{drawing.Name}: click on the canvas to place it, or drag to draw its size. Escape cancels.";
+            return;
+        }
+
         string note = !document.CanSave && document.ReadProblems.Count > 0
             ? $"  View only: createComponents has {document.ReadProblems.Count} line(s) the designer cannot place, so a save would lose them."
             : document.Runtime.Problems.Count > 0
@@ -273,6 +355,12 @@ internal sealed class AppDesignerWindow : Window
 
         _tabs.Items.Remove(app.Item);
         app.Canvas.Document = null;
+        if (ReferenceEquals(_inspector.Document, app.Document))
+        {
+            _inspector.Document = null;
+            _browser.Document = null;
+        }
+
         app.Document.Dispose();
         if (_tabs.Items.Count == 0)
         {
@@ -293,6 +381,8 @@ internal sealed class AppDesignerWindow : Window
             }
         }
 
+        _inspector.Document = null;
+        _browser.Document = null;
         foreach (AppTab app in Apps.ToList())
         {
             app.Canvas.Document = null;

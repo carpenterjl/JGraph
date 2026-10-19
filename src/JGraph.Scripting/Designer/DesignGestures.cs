@@ -31,6 +31,9 @@ public enum DesignKey
 
     /// <summary>Ctrl+A.</summary>
     SelectAll,
+
+    /// <summary>Delete or Backspace: deletes the selection (DS3).</summary>
+    Delete,
 }
 
 /// <summary>The pointer the canvas shows where the mouse is.</summary>
@@ -42,6 +45,9 @@ public enum DesignCursor
     SizeWestEast,
     SizeNorthWestSouthEast,
     SizeNorthEastSouthWest,
+
+    /// <summary>Drawing a component from the library (DS3).</summary>
+    Cross,
 }
 
 /// <summary>A resize handle of a selected component: its edges, and its square on the surface.</summary>
@@ -68,7 +74,11 @@ public readonly record struct DesignHandle(DesignComponent Component, ResizeEdge
 /// pressed.</item>
 /// <item>The arrow keys move the selection a pixel, ten with Shift; a run of them is one edit,
 /// ended when no arrow is held. Ctrl+A selects everything in the selection's container. Escape
-/// cancels a gesture under way.</item>
+/// cancels a gesture under way. Delete and Backspace delete the selection (DS3).</item>
+/// <item>With a library entry to draw (<see cref="DrawEntry"/>, App Designer's click-and-draw mode,
+/// DS3), a press adds the entry where it is: a click at its own size with its top-left corner there,
+/// a drag at the size drawn; then the mode ends. A library entry dropped on the canvas
+/// (<see cref="Drop"/>) is added where it lands. On a shown grid the corner snaps to it.</item>
 /// </list>
 /// </remarks>
 public sealed class DesignGestures
@@ -80,8 +90,10 @@ public sealed class DesignGestures
     public const double ContainerEdge = 6;
 
     private PressState _press;
+    private DesignPaletteEntry? _drawEntry;
     private Intent _intent;
     private Point2D _down;
+    private Point2D _drawFrom;
     private DesignComponent? _anchor;
     private ResizeEdges _edges;
     private IReadOnlyList<DesignComponent>? _clickSelects;
@@ -132,6 +144,27 @@ public sealed class DesignGestures
     /// <summary>The container a drag released here would move the selection into; null when it stays where it is.</summary>
     public DesignComponent? DropTarget { get; private set; }
 
+    /// <summary>
+    /// The library entry a press on the canvas adds (App Designer's click-and-draw mode, DS3); null
+    /// when none. Set by a click on the entry in the library, and ended by a placement or Escape.
+    /// </summary>
+    public DesignPaletteEntry? DrawEntry
+    {
+        get => _drawEntry;
+        set
+        {
+            _drawEntry = value;
+            Drawn = null;
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>The box being drawn for <see cref="DrawEntry"/>, on the surface; null when none.</summary>
+    public Rect2D? Drawn { get; private set; }
+
+    /// <summary>What the last add from the library refused (an entry the designer does not make yet); null when it went.</summary>
+    public string? Refusal { get; private set; }
+
     /// <summary>Raised when what the canvas draws over the components changed: guides, band, drop target.</summary>
     public event EventHandler? Changed;
 
@@ -144,6 +177,7 @@ public sealed class DesignGestures
         Moving,
         Resizing,
         Band,
+        Drawing,
     }
 
     private enum Intent
@@ -166,11 +200,27 @@ public sealed class DesignGestures
         }
 
         EndKeyMove();
+        Refusal = null;
         bool control = modifiers.HasFlag(DesignModifiers.Control);
         bool shift = modifiers.HasFlag(DesignModifiers.Shift);
         _down = at;
         _clickSelects = null;
         DesignDocument document = Document;
+
+        // Click and draw: the press begins the component's box.
+        if (_drawEntry is not null)
+        {
+            if (button != DesignButton.Left)
+            {
+                DrawEntry = null;
+                return false;
+            }
+
+            _down = SnapCorner(document.ContainerFor(_drawEntry, document.ComponentAt(at)), at);
+            _drawFrom = _down;
+            _press = PressState.Drawing;
+            return true;
+        }
 
         // A handle of a selected component resizes the selection.
         if (button == DesignButton.Left && HandleAt(at) is { } handle)
@@ -242,6 +292,13 @@ public sealed class DesignGestures
         }
 
         DesignDocument document = Document;
+        if (_press == PressState.Drawing)
+        {
+            Drawn = DrawnBox(at);
+            Changed?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
         if (_press == PressState.Pending)
         {
             if (System.Math.Abs(at.X - _down.X) < DragThreshold && System.Math.Abs(at.Y - _down.Y) < DragThreshold)
@@ -318,6 +375,12 @@ public sealed class DesignGestures
                 Banded = [];
                 document.Select(banded.Count > 0 ? banded : _anchor is { } pressed ? [pressed] : []);
                 break;
+            case PressState.Drawing when _drawEntry is { } entry:
+                Rect2D? drawn = Drawn is { Width: >= DesignGeometry.MinimumDrawn, Height: >= DesignGeometry.MinimumDrawn } box ? box : null;
+                Drawn = null;
+                _drawEntry = null;
+                AddFrom(entry, drawn is { } d ? new Point2D(d.X, d.Y) : _drawFrom, drawn is { } s ? new Size2D(s.Width, s.Height) : null);
+                break;
         }
 
         _clickSelects = null;
@@ -328,6 +391,7 @@ public sealed class DesignGestures
     public void Cancel()
     {
         _press = PressState.None;
+        Drawn = null;
         _keyMoving = false;
         Guides = [];
         Band = null;
@@ -459,6 +523,71 @@ public sealed class DesignGestures
             && at.Y >= inner.Y + ContainerEdge && at.Y <= inner.Y + inner.Height - ContainerEdge;
     }
 
+    // --- the library (DS3) -----------------------------------------------------------------------
+
+    /// <summary>
+    /// A library entry dropped at <paramref name="at"/> on the surface: added into the container there
+    /// that can hold it, its box's top-left corner where it landed (snapped to a shown grid).
+    /// </summary>
+    /// <returns>What was added; empty when the entry was refused (<see cref="Refusal"/> says why).</returns>
+    public IReadOnlyList<DesignComponent> Drop(DesignPaletteEntry entry, Point2D at)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        Cancel();
+        _drawEntry = null;
+        return AddFrom(entry, SnapCorner(Document.ContainerFor(entry, Document.ComponentAt(at)), at), null);
+    }
+
+    private IReadOnlyList<DesignComponent> AddFrom(DesignPaletteEntry entry, Point2D corner, Size2D? size)
+    {
+        Refusal = null;
+        try
+        {
+            return Document.Add(entry, Document.ComponentAt(corner), corner, size);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Refusal = ex.Message;
+            return [];
+        }
+        finally
+        {
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>A corner on the surface, snapped to the grid of <paramref name="container"/> when the grid is shown and snapped to.</summary>
+    private Point2D SnapCorner(DesignComponent container, Point2D at)
+    {
+        if (Grid is not { } grid)
+        {
+            return at;
+        }
+
+        Rect2D inner = Document.Runtime.InnerOnSurface(container);
+        return new Point2D(
+            inner.X + DesignGeometry.OnGrid(at.X - inner.X, grid),
+            inner.Y + DesignGeometry.OnGrid(at.Y - inner.Y, grid));
+    }
+
+    /// <summary>The box drawn from the press to <paramref name="at"/>, in whole pixels; its far corner on a shown grid as its near one is.</summary>
+    private Rect2D DrawnBox(Point2D at)
+    {
+        double x = at.X;
+        double y = at.Y;
+        if (Grid is { } grid)
+        {
+            x = _drawFrom.X + DesignGeometry.OnGrid(x - _drawFrom.X, grid);
+            y = _drawFrom.Y + DesignGeometry.OnGrid(y - _drawFrom.Y, grid);
+        }
+
+        double left = System.Math.Round(System.Math.Min(x, _drawFrom.X), MidpointRounding.AwayFromZero);
+        double top = System.Math.Round(System.Math.Min(y, _drawFrom.Y), MidpointRounding.AwayFromZero);
+        double right = System.Math.Round(System.Math.Max(x, _drawFrom.X), MidpointRounding.AwayFromZero);
+        double bottom = System.Math.Round(System.Math.Max(y, _drawFrom.Y), MidpointRounding.AwayFromZero);
+        return new Rect2D(left, top, right - left, bottom - top);
+    }
+
     // --- handles and the pointer -----------------------------------------------------------------
 
     /// <summary>The resize handles of the selection: eight on each component placed by its position, none along a side its shape fixes.</summary>
@@ -513,6 +642,11 @@ public sealed class DesignGestures
     /// <summary>The pointer for the mouse at <paramref name="at"/> with no press held.</summary>
     public DesignCursor CursorAt(Point2D at)
     {
+        if (_drawEntry is not null)
+        {
+            return DesignCursor.Cross;
+        }
+
         if (HandleAt(at) is { } handle)
         {
             return handle.Edges switch
@@ -539,6 +673,13 @@ public sealed class DesignGestures
         {
             case DesignKey.Escape when _press != PressState.None || _keyMoving:
                 Cancel();
+                return true;
+            case DesignKey.Escape when _drawEntry is not null:
+                DrawEntry = null;
+                return true;
+            case DesignKey.Delete when _press == PressState.None && document.Selection.Any(document.CanDelete):
+                EndKeyMove();
+                document.Delete(document.Selection);
                 return true;
             case DesignKey.Left or DesignKey.Right or DesignKey.Up or DesignKey.Down
                 when (modifiers & ~DesignModifiers.Shift) == DesignModifiers.None && _press == PressState.None:

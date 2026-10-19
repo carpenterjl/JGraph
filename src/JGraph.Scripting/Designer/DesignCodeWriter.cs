@@ -145,8 +145,10 @@ public static class DesignCodeWriter
     }
 
     /// <summary>A container's children in the order App Designer's component browser lists them.</summary>
-    private static IEnumerable<DesignComponent> BrowserOrder(AppDesign design, DesignComponent container)
+    public static IEnumerable<DesignComponent> BrowserOrder(AppDesign design, DesignComponent container)
     {
+        ArgumentNullException.ThrowIfNull(design);
+        ArgumentNullException.ThrowIfNull(container);
         IReadOnlyList<DesignComponent> children = container.Children;
         bool keepsOrder = container.Type is "matlab.ui.container.Menu" or "matlab.ui.container.ContextMenu"
                 or "matlab.ui.container.TabGroup" or "matlab.ui.container.Tree" or "matlab.ui.container.CheckBoxTree"

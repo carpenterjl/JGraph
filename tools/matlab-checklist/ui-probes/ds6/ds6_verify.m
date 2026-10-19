@@ -270,7 +270,8 @@ end
 function [folder, appType] = sourceOf(app, here)
     % Where the app's images are found from, and its type.
     appType = 'Standard';
-    if any(strcmp(app, {'DesignerSpecApp', 'NewApp'}))
+    % JGraph's own apps (PaletteApp: every library entry added in the designer, DS3).
+    if any(strcmp(app, {'DesignerSpecApp', 'NewApp', 'PaletteApp'}))
         folder = fullfile(here, '..', 'ds1b', 'rt', 'spec');
         if ~isfolder(fullfile(folder, 'img')), mkdir(fullfile(folder, 'img')); end
         if ~isfile(fullfile(folder, 'img', 'logo.png'))

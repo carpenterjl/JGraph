@@ -1,0 +1,580 @@
+{
+  "release": "2025b",
+  "classes": [
+    {
+      "type": "matlab.ui.Figure",
+      "position": [
+        100,
+        100,
+        640,
+        480
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uifigure('Visible', 'off');",
+        "app.ad_CODENAME_ad.Position = [100 100 640 480];"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.ButtonGroup",
+      "position": [
+        10,
+        10,
+        123,
+        106
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uibuttongroup(app.ad_PARENTCODENAME_ad);",
+        "app.ad_CODENAME_ad.Title = 'Button Group';",
+        "app.ad_CODENAME_ad.Position = [10 10 123 106];"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.CheckBoxTree",
+      "position": [
+        20,
+        20,
+        150,
+        300
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uitree(app.ad_PARENTCODENAME_ad, 'checkbox');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.ContextMenu",
+      "position": [
+        0,
+        0
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uicontextmenu(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.GridLayout",
+      "position": [
+        1,
+        1,
+        100,
+        100
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uigridlayout(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.Menu",
+      "position": 1,
+      "lines": [
+        "app.ad_CODENAME_ad = uimenu(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.Panel",
+      "position": [
+        10,
+        10,
+        260,
+        221
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uipanel(app.ad_PARENTCODENAME_ad);",
+        "app.ad_CODENAME_ad.Title = 'Panel';",
+        "app.ad_CODENAME_ad.Position = [10 10 260 221];"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.Tab",
+      "position": [
+        1,
+        1,
+        260,
+        221
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uitab(app.ad_PARENTCODENAME_ad);",
+        "app.ad_CODENAME_ad.Title = 'Tab';"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.TabGroup",
+      "position": [
+        10,
+        10,
+        260,
+        221
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uitabgroup(app.ad_PARENTCODENAME_ad);",
+        "app.ad_CODENAME_ad.Position = [10 10 260 221];"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.Toolbar",
+      "position": [],
+      "lines": [
+        "app.ad_CODENAME_ad = uitoolbar(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.Tree",
+      "position": [
+        20,
+        20,
+        150,
+        300
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uitree(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.TreeNode",
+      "position": [],
+      "lines": [
+        "app.ad_CODENAME_ad = uitreenode(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.toolbar.PushTool",
+      "position": [],
+      "lines": [
+        "app.ad_CODENAME_ad = uipushtool(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.container.toolbar.ToggleTool",
+      "position": [],
+      "lines": [
+        "app.ad_CODENAME_ad = uitoggletool(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Button",
+      "position": [
+        100,
+        100,
+        100,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uibutton(app.ad_PARENTCODENAME_ad, 'push');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.CheckBox",
+      "position": [
+        100,
+        100,
+        84,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uicheckbox(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.ColorPicker",
+      "position": [
+        100,
+        100,
+        38,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uicolorpicker(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.DatePicker",
+      "position": [
+        100,
+        100,
+        150,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uidatepicker(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.DiscreteKnob",
+      "position": [
+        100,
+        100,
+        60,
+        60
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uiknob(app.ad_PARENTCODENAME_ad, 'discrete');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.DropDown",
+      "position": [
+        100,
+        100,
+        100,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uidropdown(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.EditField",
+      "position": [
+        100,
+        100,
+        100,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uieditfield(app.ad_PARENTCODENAME_ad, 'text');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Gauge",
+      "position": [
+        100,
+        100,
+        120,
+        120
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uigauge(app.ad_PARENTCODENAME_ad, 'circular');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.HTML",
+      "position": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uihtml(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Hyperlink",
+      "position": [
+        100,
+        100,
+        70,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uihyperlink(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Image",
+      "position": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uiimage(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Knob",
+      "position": [
+        100,
+        100,
+        60,
+        60
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uiknob(app.ad_PARENTCODENAME_ad, 'continuous');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Label",
+      "position": [
+        100,
+        100,
+        31,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uilabel(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Lamp",
+      "position": [
+        100,
+        100,
+        20,
+        20
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uilamp(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.LinearGauge",
+      "position": [
+        100,
+        100,
+        120,
+        40
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uigauge(app.ad_PARENTCODENAME_ad, 'linear');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.ListBox",
+      "position": [
+        100,
+        100,
+        100,
+        74
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uilistbox(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.NinetyDegreeGauge",
+      "position": [
+        100,
+        100,
+        90,
+        90
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uigauge(app.ad_PARENTCODENAME_ad, 'ninetydegree');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.NumericEditField",
+      "position": [
+        100,
+        100,
+        100,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uieditfield(app.ad_PARENTCODENAME_ad, 'numeric');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.RadioButton",
+      "position": [
+        10,
+        10,
+        91,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uiradiobutton(app.ad_PARENTCODENAME_ad);",
+        "app.ad_CODENAME_ad.Value = true;"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.RangeSlider",
+      "position": [
+        100,
+        100,
+        150,
+        3
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uislider(app.ad_PARENTCODENAME_ad, 'range');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.RockerSwitch",
+      "position": [
+        100,
+        100,
+        20,
+        45
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uiswitch(app.ad_PARENTCODENAME_ad, 'rocker');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.SemicircularGauge",
+      "position": [
+        100,
+        100,
+        120,
+        65
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uigauge(app.ad_PARENTCODENAME_ad, 'semicircular');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Slider",
+      "position": [
+        100,
+        100,
+        150,
+        3
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uislider(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Spinner",
+      "position": [
+        100,
+        100,
+        100,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uispinner(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.StateButton",
+      "position": [
+        100,
+        100,
+        100,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uibutton(app.ad_PARENTCODENAME_ad, 'state');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Switch",
+      "position": [
+        100,
+        100,
+        45,
+        20
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uiswitch(app.ad_PARENTCODENAME_ad, 'slider');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.Table",
+      "position": [
+        0,
+        0,
+        302,
+        185
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uitable(app.ad_PARENTCODENAME_ad);",
+        "app.ad_CODENAME_ad.ColumnName = {'Column 1'; 'Column 2'; 'Column 3'; 'Column 4'};",
+        "app.ad_CODENAME_ad.RowName = '';",
+        "app.ad_CODENAME_ad.Position = [0 0 302 185];"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.TextArea",
+      "position": [
+        100,
+        100,
+        150,
+        60
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uitextarea(app.ad_PARENTCODENAME_ad);"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.ToggleButton",
+      "position": [
+        10,
+        10,
+        100,
+        22
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uitogglebutton(app.ad_PARENTCODENAME_ad);",
+        "app.ad_CODENAME_ad.Value = true;"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.ToggleSwitch",
+      "position": [
+        100,
+        100,
+        20,
+        45
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uiswitch(app.ad_PARENTCODENAME_ad, 'toggle');"
+      ],
+      "error": ""
+    },
+    {
+      "type": "matlab.ui.control.UIAxes",
+      "position": [
+        0,
+        0,
+        300,
+        185
+      ],
+      "lines": [
+        "app.ad_CODENAME_ad = uiaxes(app.ad_PARENTCODENAME_ad);",
+        "title(app.ad_CODENAME_ad, 'Title')",
+        "xlabel(app.ad_CODENAME_ad, 'X')",
+        "ylabel(app.ad_CODENAME_ad, 'Y')",
+        "zlabel(app.ad_CODENAME_ad, 'Z')",
+        "app.ad_CODENAME_ad.Position = [0 0 300 185];"
+      ],
+      "error": ""
+    }
+  ]
+}

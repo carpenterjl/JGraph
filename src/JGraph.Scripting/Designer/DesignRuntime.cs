@@ -41,6 +41,8 @@ public sealed class DesignRuntime : IDisposable
 {
     private const string ValueVariable = "designer__value";
 
+    private const string App = DesignValueText.AppObjectName;
+
     private readonly JgsEnvironment _environment;
     private readonly Interpreter _interpreter;
     private readonly Dictionary<DesignComponent, GraphObject> _objects = new(ReferenceEqualityComparer.Instance);
@@ -73,6 +75,12 @@ public sealed class DesignRuntime : IDisposable
     /// <summary>The design the components were made from.</summary>
     public AppDesign Design { get; }
 
+    /// <summary>
+    /// The theme the design's code is written under: a property at its default under it is not
+    /// written, so the component is left with its own.
+    /// </summary>
+    public DesignTheme Theme { get; private set; } = DesignTheme.Light;
+
     /// <summary>The app's folder, where its images are; null for an app not yet saved.</summary>
     public string? AppFolder { get; }
 
@@ -88,10 +96,11 @@ public sealed class DesignRuntime : IDisposable
     /// </summary>
     /// <param name="design">The design.</param>
     /// <param name="appFolder">The app's folder, which an image beside the app is read from.</param>
-    public static DesignRuntime Build(AppDesign design, string? appFolder)
+    /// <param name="theme">The theme the design's code is written under.</param>
+    public static DesignRuntime Build(AppDesign design, string? appFolder, DesignTheme theme = DesignTheme.Light)
     {
         ArgumentNullException.ThrowIfNull(design);
-        var runtime = new DesignRuntime(design, appFolder);
+        var runtime = new DesignRuntime(design, appFolder) { Theme = theme };
         runtime.Make();
         return runtime;
     }
@@ -138,15 +147,166 @@ public sealed class DesignRuntime : IDisposable
         return Numbers(component, name);
     }
 
-    /// <summary><see cref="ReadNumbers"/> within a scope already entered.</summary>
-    private double[]? Numbers(DesignComponent component, string name)
+    /// <summary>
+    /// What <paramref name="component"/>'s <paramref name="name"/> holds, as a design value (designer
+    /// plan DS3: what a component keeps of what it was given is what App Designer's generator writes);
+    /// null when it cannot be read or holds what no design value is - an object, another component, a
+    /// callback, a colormap's name. <paramref name="like"/>, the value set or the property's default,
+    /// says what kind an on/off property's text and a date are read as.
+    /// </summary>
+    public DesignValue? Read(DesignComponent component, string name, DesignValue? like = null)
     {
-        if (Run($"{ValueVariable} = app.{component.CodeName}.{name};") is not null
-            || !_environment.TryGet(ValueVariable, out JgsValue value))
+        ArgumentNullException.ThrowIfNull(component);
+        ArgumentNullException.ThrowIfNull(name);
+        if (!_objects.ContainsKey(component) || ReadExpression(component, name, like) is not { } expression)
         {
             return null;
         }
 
+        using Scope scope = Enter();
+        if (like is DatetimeValue)
+        {
+            return Dates(expression);
+        }
+
+        return Run($"{ValueVariable} = {expression};") is null && _environment.TryGet(ValueVariable, out JgsValue value)
+            ? ValueOf(value, like)
+            : null;
+    }
+
+    /// <summary>The expression that reads a design property from its component; null for one that is not read back.</summary>
+    private static string? ReadExpression(DesignComponent component, string name, DesignValue? like)
+    {
+        if (like is CallbackValue or ComponentsValue or ImageFileValue or ExpressionValue
+            || name is "AD_ColormapString" or "AD_AliasedThemeChangedFcn" or "ContextMenu" or "CheckedNodes" or "SelectedTab"
+            || name.EndsWith("Fcn", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        string target = $"{App}.{component.CodeName}";
+        if (DesignCodeReader.LabelAliases.FirstOrDefault(a => a.Value == name) is { Key: { } function })
+        {
+            string part = function switch
+            {
+                "title" => "Title",
+                "subtitle" => "Subtitle",
+                _ => char.ToUpperInvariant(function[0]) + function[1..2] + "Label", // xlabel -> XLabel
+            };
+            return $"{target}.{part}.String";
+        }
+
+        return name switch
+        {
+            "ToolbarVisible" => $"{target}.Toolbar.Visible",
+            "Theme" when component.Parent is null => $"{target}.Theme.BaseColorStyle", // as the generator writes a theme
+            _ => $"{target}.{name}",
+        };
+    }
+
+    /// <summary>A datetime array as its dates, <c>NaT</c> as null; null when it is not one.</summary>
+    private DatetimeValue? Dates(string expression)
+    {
+        if (Run($"{ValueVariable} = {expression}; {ValueVariable} = [size({ValueVariable}), "
+                + $"reshape([year({ValueVariable}(:)), month({ValueVariable}(:)), day({ValueVariable}(:))], 1, [])];") is not null
+            || Numbers(ValueVariable) is not { Length: >= 2 } read)
+        {
+            return null;
+        }
+
+        int rows = (int)read[0];
+        int cols = (int)read[1];
+        int count = rows * cols;
+        if (read.Length != 2 + (3 * count))
+        {
+            return null;
+        }
+
+        var dates = new DesignDate?[count];
+        for (int i = 0; i < count; i++)
+        {
+            double y = read[2 + i];
+            double m = read[2 + count + i];
+            double d = read[2 + (2 * count) + i];
+            dates[i] = double.IsNaN(y) ? null : new DesignDate((int)y, (int)m, (int)d);
+        }
+
+        return new DatetimeValue(rows, cols, dates);
+    }
+
+    /// <summary>A value of the language as a design value; null for one no design value is.</summary>
+    private static DesignValue? ValueOf(JgsValue value, DesignValue? like)
+    {
+        switch (JgsBuiltins.ClassOf(value, JgsDialect.Matlab))
+        {
+            case "char" when !value.IsCharMatrix && value.Type == JgsType.String:
+                string text = value.AsString;
+                return like is OnOffValue && text is "on" or "off" ? (text == "on" ? OnOffValue.On : OnOffValue.Off) : new CharValue(text);
+            case "char" when value.Type == JgsType.Array && value.ArrayLength == 0:
+                return new CharValue(string.Empty);
+            case "string" when value.ArrayLength == 1:
+                return new StringValue(value.ElementAt(0).AsString);
+            case "double" or "logical":
+                bool logical = JgsBuiltins.IsLogicalValue(value);
+                switch (value.Type)
+                {
+                    case JgsType.Number:
+                        return NumericValue.Scalar(value.AsNumber);
+                    case JgsType.Bool:
+                        return NumericValue.Logical(value.AsBool);
+                    case JgsType.Array when !value.IsNd && value.Rows * value.Cols == value.ArrayLength:
+                        var data = new double[value.ArrayLength];
+                        for (int i = 0; i < data.Length; i++)
+                        {
+                            JgsValue element = value.ElementAt(i);
+                            if (element.Type is not (JgsType.Number or JgsType.Bool))
+                            {
+                                return null;
+                            }
+
+                            data[i] = element.Type == JgsType.Bool ? (element.AsBool ? 1 : 0) : element.AsNumber;
+                        }
+
+                        return new NumericValue(value.Rows, value.Cols, data, logical);
+                    default:
+                        return null;
+                }
+
+            case "cell" when !value.IsNd:
+                JgsValue[] items = value.AsCell;
+                if (value.Rows * value.Cols != items.Length)
+                {
+                    return null;
+                }
+
+                var converted = new DesignValue[items.Length];
+                for (int i = 0; i < items.Length; i++)
+                {
+                    if (ValueOf(items[i], null) is not { } item)
+                    {
+                        return null;
+                    }
+
+                    converted[i] = item;
+                }
+
+                return new CellValue(value.Rows, value.Cols, converted);
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>The numbers a variable of the designer's interpreter holds; null when it is not numbers.</summary>
+    private double[]? Numbers(string variable) =>
+        _environment.TryGet(variable, out JgsValue value) ? NumbersOf(value) : null;
+
+    /// <summary><see cref="ReadNumbers"/> within a scope already entered.</summary>
+    private double[]? Numbers(DesignComponent component, string name) =>
+        Run($"{ValueVariable} = app.{component.CodeName}.{name};") is null ? Numbers(ValueVariable) : null;
+
+    /// <summary>A value's elements when it is a number or an array of them; null otherwise.</summary>
+    private static double[]? NumbersOf(JgsValue value)
+    {
         if (value.Type == JgsType.Number)
         {
             return [value.AsNumber];
@@ -363,50 +523,125 @@ public sealed class DesignRuntime : IDisposable
         _environment.Declare("pathToMLAPP", JgsValue.Str(AppFolder ?? string.Empty));
         foreach (DesignComponent component in Design.Components)
         {
-            if (!ReferenceEquals(component, Design.Figure))
-            {
-                string creation = DesignCodeWriter.ComponentCode(component)[0];
-                if (Run(creation) is { } refused)
-                {
-                    _problems.Add($"{component.CodeName}: {refused}");
-                    continue;
-                }
-
-                if (Made(component) is not { } made)
-                {
-                    _problems.Add($"{component.CodeName}: its creation made nothing.");
-                    continue;
-                }
-
-                _objects[component] = made;
-                _components[made] = component;
-            }
-
-            foreach ((string name, DesignValue value) in DesignCodeWriter.WrittenProperties(component, DesignTheme.Light))
-            {
-                // Design time: no callback is wired, and a hidden component is still shown. A check
-                // box tree's checked nodes name nodes made after it, so they wait for them.
-                if (value is CallbackValue || name == "Visible" || IsEnd(component, name))
-                {
-                    continue;
-                }
-
-                if (Run(DesignCodeWriter.PropertyLine(component, name, value)) is { } refused)
-                {
-                    _problems.Add($"{component.CodeName}.{name}: {refused}");
-                }
-            }
+            MakeOne(component, _problems);
         }
 
         foreach (DesignComponent component in Design.Components)
         {
-            foreach ((string name, DesignValue value) in DesignCodeWriter.WrittenProperties(component, DesignTheme.Light))
+            MakeEnd(component, _problems);
+        }
+    }
+
+    /// <summary>
+    /// Makes <paramref name="component"/>, just put in the design, and everything inside it, by their
+    /// generated lines, as <c>createComponents</c> would (designer plan DS3: a component added from
+    /// the palette, or one whose deletion is undone).
+    /// </summary>
+    /// <returns>What the runtime refused, one line each; empty when every line ran.</returns>
+    public IReadOnlyList<string> MakeNew(DesignComponent component)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        var problems = new List<string>();
+        using Scope scope = Enter();
+        DesignComponent[] made = Walk(component).ToArray();
+        foreach (DesignComponent c in made)
+        {
+            MakeOne(c, problems);
+        }
+
+        foreach (DesignComponent c in made)
+        {
+            MakeEnd(c, problems);
+        }
+
+        _problems.AddRange(problems);
+        return problems;
+    }
+
+    /// <summary>
+    /// Deletes <paramref name="component"/>'s object, and with it everything inside it, as a
+    /// component taken out of the design leaves.
+    /// </summary>
+    public void Remove(DesignComponent component)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        if (_objects.ContainsKey(component))
+        {
+            using Scope scope = Enter();
+            Run($"delete({App}.{component.CodeName});");
+        }
+
+        foreach (DesignComponent c in Walk(component))
+        {
+            if (_objects.Remove(c, out GraphObject? target))
             {
-                if (IsEnd(component, name) && _objects.ContainsKey(component)
-                    && Run(DesignCodeWriter.PropertyLine(component, name, value)) is { } refused)
-                {
-                    _problems.Add($"{component.CodeName}.{name}: {refused}");
-                }
+                _components.Remove(target);
+            }
+        }
+
+        _layout = null;
+    }
+
+    /// <summary>Sets the theme the design's code is written under; the components already made keep what they hold.</summary>
+    public void SetTheme(DesignTheme theme) => Theme = theme;
+
+    private void MakeOne(DesignComponent component, List<string> problems)
+    {
+        if (!ReferenceEquals(component, Design.Figure))
+        {
+            string creation = DesignCodeWriter.ComponentCode(component)[0];
+            if (Run(creation) is { } refused)
+            {
+                problems.Add($"{component.CodeName}: {refused}");
+                return;
+            }
+
+            if (Made(component) is not { } made)
+            {
+                problems.Add($"{component.CodeName}: its creation made nothing.");
+                return;
+            }
+
+            _objects[component] = made;
+            _components[made] = component;
+        }
+
+        foreach ((string name, DesignValue value) in DesignCodeWriter.WrittenProperties(component, Theme))
+        {
+            // Design time: no callback is wired, and a hidden component is still shown. A check
+            // box tree's checked nodes name nodes made after it, so they wait for them.
+            if (value is CallbackValue || name == "Visible" || IsEnd(component, name))
+            {
+                continue;
+            }
+
+            if (Run(DesignCodeWriter.PropertyLine(component, name, value)) is { } refused)
+            {
+                problems.Add($"{component.CodeName}.{name}: {refused}");
+            }
+        }
+    }
+
+    private void MakeEnd(DesignComponent component, List<string> problems)
+    {
+        foreach ((string name, DesignValue value) in DesignCodeWriter.WrittenProperties(component, Theme))
+        {
+            if (IsEnd(component, name) && _objects.ContainsKey(component)
+                && Run(DesignCodeWriter.PropertyLine(component, name, value)) is { } refused)
+            {
+                problems.Add($"{component.CodeName}.{name}: {refused}");
+            }
+        }
+    }
+
+    private static IEnumerable<DesignComponent> Walk(DesignComponent component)
+    {
+        yield return component;
+        foreach (DesignComponent child in component.Children)
+        {
+            foreach (DesignComponent c in Walk(child))
+            {
+                yield return c;
             }
         }
     }

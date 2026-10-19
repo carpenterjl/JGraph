@@ -798,4 +798,10 @@ probe found gaps recorded in none of the three.
 | [0246](adr/0246-the-designers-canvas-and-app-designers-window.md) | the designers canvas and app designers window | `appdesigner` with no file brings up the designer's window as it is |
 | [0246](adr/0246-the-designers-canvas-and-app-designers-window.md) | the designers canvas and app designers window | A design the canvas cannot read is refused |
 | [0246](adr/0246-the-designers-canvas-and-app-designers-window.md) | the designers canvas and app designers window | The canvas's marks are its own |
+| [0247](adr/0247-the-designers-library-inspector-and-names.md) | the designers library inspector and names | A component added is placed by its box's top-left corner |
+| [0247](adr/0247-the-designers-library-inspector-and-names.md) | the designers library inspector and names | Drawing a component shows no alignment guides |
+| [0247](adr/0247-the-designers-library-inspector-and-names.md) | the designers library inspector and names | A component dropped where it does not fit is moved inside its container |
+| [0247](adr/0247-the-designers-library-inspector-and-names.md) | the designers library inspector and names | A labelled component is its label's by their names |
+| [0247](adr/0247-the-designers-library-inspector-and-names.md) | the designers library inspector and names | The inspector shows one component at a time |
+| [0247](adr/0247-the-designers-library-inspector-and-names.md) | the designers library inspector and names | A rename changes every `app.Name` in the class's text |
 

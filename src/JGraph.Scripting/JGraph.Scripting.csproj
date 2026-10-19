@@ -34,6 +34,11 @@
     <!-- Designer plan DS1b (ADR 0244): what a fresh component of each class stores in App Designer's
          saved tree, as the probe ds1b_base records it from R2025b. Read by DesignTreeWriter. -->
     <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds1b\ds1b_base.json" LogicalName="JGraph.Scripting.designer-base.json" />
+    <!-- Designer plan DS3: App Designer's inspector per class (probe ds3_inspector) and what its
+         palette's design-time component of each class holds (probe ds3_palette). Read by
+         DesignInspector and DesignPalette. -->
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds3\ds3_inspector.json" LogicalName="JGraph.Scripting.designer-inspector.json" />
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds3\ds3_palette.json" LogicalName="JGraph.Scripting.designer-palette.json" />
   </ItemGroup>
 
   <ItemGroup>

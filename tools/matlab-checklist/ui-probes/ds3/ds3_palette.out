@@ -1,0 +1,107 @@
+matlab.ui.Figure                           [100 100 640 480]      
+    app.ad_CODENAME_ad = uifigure('Visible', 'off');
+    app.ad_CODENAME_ad.Position = [100 100 640 480];
+matlab.ui.container.ButtonGroup            [10 10 123 106]        
+    app.ad_CODENAME_ad = uibuttongroup(app.ad_PARENTCODENAME_ad);
+    app.ad_CODENAME_ad.Title = 'Button Group';
+    app.ad_CODENAME_ad.Position = [10 10 123 106];
+matlab.ui.container.CheckBoxTree           [20 20 150 300]        
+    app.ad_CODENAME_ad = uitree(app.ad_PARENTCODENAME_ad, 'checkbox');
+matlab.ui.container.ContextMenu            [0 0]                  
+    app.ad_CODENAME_ad = uicontextmenu(app.ad_PARENTCODENAME_ad);
+matlab.ui.container.GridLayout             [1 1 100 100]          
+    app.ad_CODENAME_ad = uigridlayout(app.ad_PARENTCODENAME_ad);
+matlab.ui.container.Menu                   1                      
+    app.ad_CODENAME_ad = uimenu(app.ad_PARENTCODENAME_ad);
+matlab.ui.container.Panel                  [10 10 260 221]        
+    app.ad_CODENAME_ad = uipanel(app.ad_PARENTCODENAME_ad);
+    app.ad_CODENAME_ad.Title = 'Panel';
+    app.ad_CODENAME_ad.Position = [10 10 260 221];
+matlab.ui.container.Tab                    [1 1 260 221]          
+    app.ad_CODENAME_ad = uitab(app.ad_PARENTCODENAME_ad);
+    app.ad_CODENAME_ad.Title = 'Tab';
+matlab.ui.container.TabGroup               [10 10 260 221]        
+    app.ad_CODENAME_ad = uitabgroup(app.ad_PARENTCODENAME_ad);
+    app.ad_CODENAME_ad.Position = [10 10 260 221];
+matlab.ui.container.Toolbar                []                     
+    app.ad_CODENAME_ad = uitoolbar(app.ad_PARENTCODENAME_ad);
+matlab.ui.container.Tree                   [20 20 150 300]        
+    app.ad_CODENAME_ad = uitree(app.ad_PARENTCODENAME_ad);
+matlab.ui.container.TreeNode               []                     
+    app.ad_CODENAME_ad = uitreenode(app.ad_PARENTCODENAME_ad);
+matlab.ui.container.toolbar.PushTool       []                     
+    app.ad_CODENAME_ad = uipushtool(app.ad_PARENTCODENAME_ad);
+matlab.ui.container.toolbar.ToggleTool     []                     
+    app.ad_CODENAME_ad = uitoggletool(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.Button                   [100 100 100 22]       
+    app.ad_CODENAME_ad = uibutton(app.ad_PARENTCODENAME_ad, 'push');
+matlab.ui.control.CheckBox                 [100 100 84 22]        
+    app.ad_CODENAME_ad = uicheckbox(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.ColorPicker              [100 100 38 22]        
+    app.ad_CODENAME_ad = uicolorpicker(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.DatePicker               [100 100 150 22]       
+    app.ad_CODENAME_ad = uidatepicker(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.DiscreteKnob             [100 100 60 60]        
+    app.ad_CODENAME_ad = uiknob(app.ad_PARENTCODENAME_ad, 'discrete');
+matlab.ui.control.DropDown                 [100 100 100 22]       
+    app.ad_CODENAME_ad = uidropdown(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.EditField                [100 100 100 22]       
+    app.ad_CODENAME_ad = uieditfield(app.ad_PARENTCODENAME_ad, 'text');
+matlab.ui.control.Gauge                    [100 100 120 120]      
+    app.ad_CODENAME_ad = uigauge(app.ad_PARENTCODENAME_ad, 'circular');
+matlab.ui.control.HTML                     [100 100 100 100]      
+    app.ad_CODENAME_ad = uihtml(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.Hyperlink                [100 100 70 22]        
+    app.ad_CODENAME_ad = uihyperlink(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.Image                    [100 100 100 100]      
+    app.ad_CODENAME_ad = uiimage(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.Knob                     [100 100 60 60]        
+    app.ad_CODENAME_ad = uiknob(app.ad_PARENTCODENAME_ad, 'continuous');
+matlab.ui.control.Label                    [100 100 31 22]        
+    app.ad_CODENAME_ad = uilabel(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.Lamp                     [100 100 20 20]        
+    app.ad_CODENAME_ad = uilamp(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.LinearGauge              [100 100 120 40]       
+    app.ad_CODENAME_ad = uigauge(app.ad_PARENTCODENAME_ad, 'linear');
+matlab.ui.control.ListBox                  [100 100 100 74]       
+    app.ad_CODENAME_ad = uilistbox(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.NinetyDegreeGauge        [100 100 90 90]        
+    app.ad_CODENAME_ad = uigauge(app.ad_PARENTCODENAME_ad, 'ninetydegree');
+matlab.ui.control.NumericEditField         [100 100 100 22]       
+    app.ad_CODENAME_ad = uieditfield(app.ad_PARENTCODENAME_ad, 'numeric');
+matlab.ui.control.RadioButton              [10 10 91 22]          
+    app.ad_CODENAME_ad = uiradiobutton(app.ad_PARENTCODENAME_ad);
+    app.ad_CODENAME_ad.Value = true;
+matlab.ui.control.RangeSlider              [100 100 150 3]        
+    app.ad_CODENAME_ad = uislider(app.ad_PARENTCODENAME_ad, 'range');
+matlab.ui.control.RockerSwitch             [100 100 20 45]        
+    app.ad_CODENAME_ad = uiswitch(app.ad_PARENTCODENAME_ad, 'rocker');
+matlab.ui.control.SemicircularGauge        [100 100 120 65]       
+    app.ad_CODENAME_ad = uigauge(app.ad_PARENTCODENAME_ad, 'semicircular');
+matlab.ui.control.Slider                   [100 100 150 3]        
+    app.ad_CODENAME_ad = uislider(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.Spinner                  [100 100 100 22]       
+    app.ad_CODENAME_ad = uispinner(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.StateButton              [100 100 100 22]       
+    app.ad_CODENAME_ad = uibutton(app.ad_PARENTCODENAME_ad, 'state');
+matlab.ui.control.Switch                   [100 100 45 20]        
+    app.ad_CODENAME_ad = uiswitch(app.ad_PARENTCODENAME_ad, 'slider');
+matlab.ui.control.Table                    [0 0 302 185]          
+    app.ad_CODENAME_ad = uitable(app.ad_PARENTCODENAME_ad);
+    app.ad_CODENAME_ad.ColumnName = {'Column 1'; 'Column 2'; 'Column 3'; 'Column 4'};
+    app.ad_CODENAME_ad.RowName = '';
+    app.ad_CODENAME_ad.Position = [0 0 302 185];
+matlab.ui.control.TextArea                 [100 100 150 60]       
+    app.ad_CODENAME_ad = uitextarea(app.ad_PARENTCODENAME_ad);
+matlab.ui.control.ToggleButton             [10 10 100 22]         
+    app.ad_CODENAME_ad = uitogglebutton(app.ad_PARENTCODENAME_ad);
+    app.ad_CODENAME_ad.Value = true;
+matlab.ui.control.ToggleSwitch             [100 100 20 45]        
+    app.ad_CODENAME_ad = uiswitch(app.ad_PARENTCODENAME_ad, 'toggle');
+matlab.ui.control.UIAxes                   [0 0 300 185]          
+    app.ad_CODENAME_ad = uiaxes(app.ad_PARENTCODENAME_ad);
+    title(app.ad_CODENAME_ad, 'Title')
+    xlabel(app.ad_CODENAME_ad, 'X')
+    ylabel(app.ad_CODENAME_ad, 'Y')
+    zlabel(app.ad_CODENAME_ad, 'Z')
+    app.ad_CODENAME_ad.Position = [0 0 300 185];

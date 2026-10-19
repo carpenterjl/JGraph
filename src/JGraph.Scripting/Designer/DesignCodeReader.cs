@@ -12,6 +12,21 @@ public sealed record DesignCodeStyle(string IndentUnit = "    ", DesignTheme The
 
     /// <summary><paramref name="depth"/> levels of indentation.</summary>
     public string Indent(int depth) => string.Concat(Enumerable.Repeat(IndentUnit, depth));
+
+    /// <summary>
+    /// The theme <paramref name="design"/>'s code is written under (designer plan DS3): its figure's
+    /// <c>Theme</c> when set, as App Designer's design-time controller takes the figure's theme for
+    /// its generator; else the light theme, R2025b's usual one.
+    /// </summary>
+    public static DesignTheme ThemeOf(AppDesign design)
+    {
+        ArgumentNullException.ThrowIfNull(design);
+        return design.Figure.Get("Theme") switch
+        {
+            CharValue { Text: "dark" } or StringValue { Text: "dark" } => DesignTheme.Dark,
+            _ => DesignTheme.Light,
+        };
+    }
 }
 
 /// <summary>What reading an app's code gave: the design, and every line the reader could not place.</summary>
@@ -159,6 +174,7 @@ public static partial class DesignCodeReader
         else
         {
             design.IsResponsive = Array.Exists(lines, static l => l.Trim() == ResponsivePropertiesComment);
+            style = style with { Theme = DesignCodeStyle.ThemeOf(design) };
         }
 
         return new DesignReadResult(design, style, problems);

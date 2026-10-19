@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using JGraph.Core.Primitives;
 using JGraph.Scripting.Jgs;
 using JGraph.Scripting.Workspace;
@@ -21,7 +22,7 @@ namespace JGraph.Scripting.Designer;
 /// (<see cref="Preview"/>) and becomes one edit when it ends (<see cref="EndGesture"/>).
 /// </para>
 /// </remarks>
-public sealed class DesignDocument : IDisposable
+public sealed partial class DesignDocument : IDisposable
 {
     private readonly List<Edit[]> _undo = [];
     private readonly List<Edit[]> _redo = [];
@@ -38,7 +39,7 @@ public sealed class DesignDocument : IDisposable
         Style = read.Style;
         Design = read.Design!;
         ReadProblems = read.Problems;
-        Runtime = DesignRuntime.Build(Design, path is null ? null : System.IO.Path.GetDirectoryName(path));
+        Runtime = DesignRuntime.Build(Design, path is null ? null : System.IO.Path.GetDirectoryName(path), Style.Theme);
     }
 
     /// <summary>Raised after the design, the selection or the saved state changed: the canvas draws again.</summary>
@@ -50,8 +51,14 @@ public sealed class DesignDocument : IDisposable
     /// <summary>The <c>.mlapp</c> the app is in; null for one that is not saved.</summary>
     public string? Path { get; }
 
-    /// <summary>How the app's code is laid out, which the save keeps.</summary>
-    public DesignCodeStyle Style { get; }
+    /// <summary>How the app's code is laid out, which the save keeps, and the theme it is written under (the figure's).</summary>
+    public DesignCodeStyle Style { get; private set; }
+
+    /// <summary>The theme the app's code is written under: its figure's <c>Theme</c>, else light.</summary>
+    public DesignTheme Theme => Style.Theme;
+
+    /// <summary>The component library the app's components are added from.</summary>
+    public DesignPalette Palette { get; } = DesignPalette.R2025b;
 
     /// <summary>The design.</summary>
     public AppDesign Design { get; }
@@ -412,13 +419,490 @@ public sealed class DesignDocument : IDisposable
         Settled(step);
     }
 
-    /// <summary>After an edit: the components it touched are selected, and the canvas draws again.</summary>
+    /// <summary>
+    /// After an edit: the components it touched and still in the design are selected (the figure when
+    /// none is), the theme follows the figure's, and the canvas draws again.
+    /// </summary>
     private void Settled(Edit[] step)
     {
         _boxes = null;
-        _selection = step.Select(static e => e.Component).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
+        DesignComponent[] touched = step.Where(static e => e.Selects).Select(static e => e.Component)
+            .Where(c => IsInDesign(c)).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
+        _selection = touched.Length > 0 ? touched : [Design.Figure];
+        DesignTheme theme = DesignCodeStyle.ThemeOf(Design);
+        if (theme != Style.Theme)
+        {
+            Style = Style with { Theme = theme };
+            Runtime.SetTheme(theme);
+        }
+
         OnChanged();
     }
+
+    /// <summary>Whether <paramref name="component"/> is in the design: the figure, or inside it.</summary>
+    private bool IsInDesign(DesignComponent component)
+    {
+        DesignComponent at = component;
+        while (at.Parent is { } up)
+        {
+            at = up;
+        }
+
+        return ReferenceEquals(at, Design.Figure);
+    }
+
+    // --- adding and deleting (DS3) ----------------------------------------------------------------
+
+    /// <summary>
+    /// Whether <paramref name="container"/> can hold a new component of <paramref name="type"/>: a
+    /// container that places its children by their positions, a radio or toggle button only in a
+    /// button group. Grids wait for the designer's grid editing (DS4).
+    /// </summary>
+    public static bool CanHoldNew(DesignComponent container, string type)
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        bool needsGroup = type is "matlab.ui.control.RadioButton" or "matlab.ui.control.ToggleButton";
+        return container.Type switch
+        {
+            "matlab.ui.container.ButtonGroup" => true,
+            "matlab.ui.Figure" or "matlab.ui.container.Panel" or "matlab.ui.container.Tab" => !needsGroup,
+            _ => false,
+        };
+    }
+
+    /// <summary>
+    /// The container a new component of <paramref name="entry"/> dropped on <paramref name="target"/>
+    /// goes into: the figure for the figure tools, else <paramref name="target"/> or the nearest
+    /// container around it that can hold it.
+    /// </summary>
+    public DesignComponent ContainerFor(DesignPaletteEntry entry, DesignComponent target)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        ArgumentNullException.ThrowIfNull(target);
+        if (entry.FigureOnly || entry.Type == "matlab.ui.container.Menu")
+        {
+            return Design.Figure;
+        }
+
+        for (DesignComponent? at = target; at is not null; at = at.Parent)
+        {
+            if (CanHoldNew(at, entry.Type))
+            {
+                return at;
+            }
+        }
+
+        return Design.Figure;
+    }
+
+    /// <summary>
+    /// Adds what <paramref name="entry"/> makes, as one edit (designer plan DS3): into the container
+    /// <see cref="ContainerFor"/> gives for <paramref name="target"/>, the top-left corner of its box at
+    /// <paramref name="topLeft"/> on the surface, in whole pixels, kept inside a container that is not
+    /// the figure; a drawn <paramref name="size"/> is the component's own. Named and made as App
+    /// Designer's palette names and makes them; what is added is selected.
+    /// </summary>
+    /// <returns>The components added to the container.</returns>
+    /// <exception cref="InvalidOperationException">The entry is one the designer does not make yet.</exception>
+    public IReadOnlyList<DesignComponent> Add(DesignPaletteEntry entry, DesignComponent target, Point2D topLeft, Size2D? size = null)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        ArgumentNullException.ThrowIfNull(target);
+        EndGesture(commit: false);
+        DesignComponent parent = ContainerFor(entry, target);
+        IReadOnlyList<(DesignComponent Component, int? Index)> made = Palette.Make(entry, Design, parent, new Point2D(0, 0), size);
+        Place(parent, made.Select(static m => m.Component).ToArray(), topLeft);
+
+        Edit[] step = made.Select(m => (Edit)new AddEdit(m.Component, parent, m.Index)).ToArray();
+        Do(step);
+        return made.Select(static m => m.Component).ToArray();
+    }
+
+    /// <summary>Moves new components, as one box, so that the box's top-left corner is at <paramref name="topLeft"/> on the surface.</summary>
+    private void Place(DesignComponent parent, IReadOnlyList<DesignComponent> made, Point2D topLeft)
+    {
+        var placed = made.Select(c => (Component: c, Box: c.Get("Position") as NumericValue))
+            .Where(static p => p.Box is { Data.Count: 4 })
+            .ToArray();
+        if (placed.Length == 0)
+        {
+            return;
+        }
+
+        double left = placed.Min(static p => p.Box!.Data[0]);
+        double bottom = placed.Min(static p => p.Box!.Data[1]);
+        double right = placed.Max(static p => p.Box!.Data[0] + p.Box!.Data[2]);
+        double top = placed.Max(static p => p.Box!.Data[1] + p.Box!.Data[3]);
+
+        // The corner in the container's pixels: from its inner area's bottom-left, which is pixel 1.
+        Rect2D inner = Runtime.InnerOnSurface(parent);
+        double wantLeft = System.Math.Round(topLeft.X - inner.X + 1, MidpointRounding.AwayFromZero);
+        double wantTop = System.Math.Round(inner.Y + inner.Height - topLeft.Y + 1, MidpointRounding.AwayFromZero);
+        double dx = wantLeft - left;
+        double dy = wantTop - top;
+        if (!ReferenceEquals(parent, Design.Figure))
+        {
+            // Kept inside the container, as App Designer clamps a drop to its parent.
+            double width = right - left;
+            double height = top - bottom;
+            dx = System.Math.Max(1 - left, System.Math.Min(dx, inner.Width + 1 - width - left));
+            dy = System.Math.Max(1 - bottom, System.Math.Min(dy, inner.Height + 1 - height - bottom));
+        }
+
+        foreach ((DesignComponent component, NumericValue? box) in placed)
+        {
+            component.Set("Position", NumericValue.Row(box!.Data[0] + dx, box.Data[1] + dy, box.Data[2], box.Data[3]));
+        }
+    }
+
+    /// <summary>Whether <paramref name="component"/> can be deleted: anything but the figure.</summary>
+    public bool CanDelete(DesignComponent component) => component.Parent is not null && IsInDesign(component);
+
+    /// <summary>
+    /// Deletes <paramref name="components"/> and everything inside them, as one edit; the figure is
+    /// never deleted. A context menu deleted is taken off the components it was assigned to, and a
+    /// deleted tree node out of its tree's checked nodes. Callbacks the components named stay in the
+    /// app's code, which is the user's.
+    /// </summary>
+    public void Delete(IReadOnlyList<DesignComponent> components)
+    {
+        ArgumentNullException.ThrowIfNull(components);
+        EndGesture(commit: false);
+        DesignComponent[] deletable = components.Where(CanDelete).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
+        DesignComponent[] gone = deletable.Where(c => !deletable.Any(other => !ReferenceEquals(other, c) && IsWithin(c, other))).ToArray();
+        if (gone.Length == 0)
+        {
+            return;
+        }
+
+        var names = new HashSet<string>(gone.SelectMany(static g => Walk(g)).Select(static c => c.CodeName), StringComparer.Ordinal);
+        var edits = new List<Edit>();
+        foreach (DesignComponent other in Design.Components)
+        {
+            if (gone.Any(g => IsWithin(other, g)))
+            {
+                continue;
+            }
+
+            foreach ((string name, DesignValue value) in other.Properties.ToArray())
+            {
+                if (value is ComponentsValue refs && refs.CodeNames.Any(names.Contains))
+                {
+                    string[] kept = refs.CodeNames.Where(n => !names.Contains(n)).ToArray();
+                    DesignValue? after = kept.Length == 0 ? null : new ComponentsValue(kept, refs.Bracketed);
+                    edits.Add(new PropertyEdit(other, name, value, after, RuntimeBefore: value, RuntimeAfter: null) { Selects = false });
+                }
+            }
+        }
+
+        foreach (DesignComponent component in gone)
+        {
+            DesignComponent parent = component.Parent!;
+            edits.Add(new DeleteEdit(component, parent, IndexIn(parent, component)));
+        }
+
+        Do([.. edits]);
+    }
+
+    private static IEnumerable<DesignComponent> Walk(DesignComponent component)
+    {
+        yield return component;
+        foreach (DesignComponent child in component.Children)
+        {
+            foreach (DesignComponent c in Walk(child))
+            {
+                yield return c;
+            }
+        }
+    }
+
+    // --- properties (DS3) ------------------------------------------------------------------------
+
+    /// <summary>
+    /// What <paramref name="component"/>'s <paramref name="name"/> is, for the inspector: what its
+    /// component holds, read back; else what the design holds, else the property's default.
+    /// </summary>
+    public DesignValue? ValueOf(DesignComponent component, string name)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        ArgumentNullException.ThrowIfNull(name);
+        DesignValue? held = component.Get(name);
+        DesignValue? fallback = held ?? component.Class?.Property(name)?.DefaultFor(Theme);
+        return Runtime.Read(component, name, fallback) ?? fallback;
+    }
+
+    /// <summary>
+    /// Sets <paramref name="name"/> on <paramref name="component"/> to <paramref name="value"/> - its
+    /// default when null - as one edit (designer plan DS3). The value goes through the component's own
+    /// set, and the design keeps what the component kept of it: read back, and unset when that is the
+    /// property's default under the app's theme. What follows from it is kept too: the component's
+    /// <c>Value</c> where its items or limits moved it, a button group's other buttons' selection, and
+    /// - when the text of a component named from its text changed - its code name, and a labelled
+    /// component's with its label's, as App Designer renames them. A null <c>ContextMenu</c> takes
+    /// the component's context menu off.
+    /// </summary>
+    /// <returns>Null when the component took the value; else what it said, and nothing changed.</returns>
+    public string? SetProperty(DesignComponent component, string name, DesignValue? value)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        ArgumentNullException.ThrowIfNull(name);
+        EndGesture(commit: false);
+        if (name == "ContextMenu" && value is null)
+        {
+            // A context menu taken off: the component's ContextMenu emptied, and its assignment gone.
+            if (component.Get(name) is not { } assigned)
+            {
+                return null;
+            }
+
+            Do([new PropertyEdit(component, name, assigned, null, assigned, new NumericValue(0, 0, []))]);
+            return null;
+        }
+
+        DesignProperty? property = component.Class?.Property(name);
+        DesignValue? defaultValue = property?.DefaultFor(Theme);
+        DesignValue? toSet = value ?? defaultValue;
+        if (toSet is null)
+        {
+            return $"{name} has no default to go back to.";
+        }
+
+        DesignValue? held = component.Get(name);
+        DesignValue? before = Runtime.Read(component, name, held ?? defaultValue ?? toSet) ?? held ?? defaultValue;
+        if (before is OpaqueValue)
+        {
+            before = null; // a recorded default the designer cannot write back (an object): undo leaves the component
+        }
+        var linked = Linked(component, name).Select(l => (l.Component, l.Name, Before: Runtime.Read(l.Component, l.Name, LikeOf(l.Component, l.Name))))
+            .ToArray();
+        string? oldText = TextOf(component);
+
+        if (Runtime.Set(component, name, toSet) is { } refused)
+        {
+            return refused;
+        }
+
+        DesignValue kept = Runtime.Read(component, name, toSet) ?? toSet;
+        var edits = new List<Edit>();
+
+        // Linked properties first: undoing the property they followed puts it back before them.
+        foreach ((DesignComponent other, string otherName, DesignValue? otherBefore) in linked)
+        {
+            if (Runtime.Read(other, otherName, LikeOf(other, otherName)) is not { } after)
+            {
+                continue;
+            }
+
+            DesignValue? designAfter = IsDefaultValue(other, otherName, after) ? null : after;
+            DesignValue? designBefore = other.Get(otherName);
+            if (!SameValue(designAfter, designBefore))
+            {
+                edits.Add(new PropertyEdit(other, otherName, designBefore, designAfter, otherBefore, RuntimeAfter: null) { Selects = ReferenceEquals(other, component) });
+            }
+        }
+
+        DesignValue? designValue = property is not null && IsDefaultValue(component, name, kept) ? null : kept;
+        edits.Add(new PropertyEdit(component, name, held, designValue, before, toSet));
+
+        // A component named from its text follows its text, as App Designer renames it.
+        if (oldText is not null && DesignNames.Of(component.Type)?.TextProperty == name && DesignPalette.Text(kept) is { } newText)
+        {
+            edits.AddRange(Renames(component, oldText, newText));
+        }
+
+        Do([.. edits]);
+        return null;
+    }
+
+    /// <summary>The properties that follow <paramref name="name"/> on <paramref name="component"/>: its value, and a button group's selection.</summary>
+    private static IEnumerable<(DesignComponent Component, string Name)> Linked(DesignComponent component, string name)
+    {
+        if (name != "Value" && component.Class?.Property("Value") is not null)
+        {
+            yield return (component, "Value");
+        }
+
+        if (component.Type is "matlab.ui.control.RadioButton" or "matlab.ui.control.ToggleButton" && component.Parent is { } group)
+        {
+            foreach (DesignComponent sibling in group.Children)
+            {
+                if (!ReferenceEquals(sibling, component) && sibling.Type == component.Type)
+                {
+                    yield return (sibling, "Value");
+                }
+            }
+        }
+    }
+
+    private DesignValue? LikeOf(DesignComponent component, string name) =>
+        component.Get(name) ?? component.Class?.Property(name)?.DefaultFor(Theme);
+
+    private bool IsDefaultValue(DesignComponent component, string name, DesignValue value) =>
+        component.Class?.Property(name) is { } property && DesignCodeWriter.IsDefault(component, property, value, Theme);
+
+    private static bool SameValue(DesignValue? a, DesignValue? b) =>
+        a is null ? b is null : b is not null && DesignValueText.IsEqual(a, b);
+
+    /// <summary>The text <paramref name="component"/> shows, in the property its class shows it in; null when it shows none.</summary>
+    private string? TextOf(DesignComponent component) =>
+        DesignNames.Of(component.Type)?.TextProperty is { } property && LikeOf(component, property) is { } value
+            ? DesignPalette.Text(value)
+            : null;
+
+    // --- names (DS3) -----------------------------------------------------------------------------
+
+    /// <summary>
+    /// The names a component's code name may not take: every component's, and
+    /// every function, property and the class the app's code declares.
+    /// </summary>
+    public IReadOnlyList<string> NamesInUse()
+    {
+        var names = new List<string>(Design.Components.Select(static c => c.CodeName));
+        names.AddRange(Design.Components.SelectMany(static c => c.Properties).Select(static p => p.Value).OfType<CallbackValue>().Select(static c => c.Method));
+        bool inProperties = false;
+        foreach (string raw in Text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n'))
+        {
+            string line = raw.Trim();
+            if (ClassLine().Match(line) is { Success: true } cls)
+            {
+                names.Add(cls.Groups[1].Value);
+            }
+            else if (FunctionLine().Match(line) is { Success: true } fn)
+            {
+                names.Add(fn.Groups[1].Value);
+            }
+            else if (line.StartsWith("properties", StringComparison.Ordinal))
+            {
+                inProperties = true;
+            }
+            else if (inProperties && line == "end")
+            {
+                inProperties = false;
+            }
+            else if (inProperties && PropertyLine().Match(line) is { Success: true } prop)
+            {
+                names.Add(prop.Groups[1].Value);
+            }
+        }
+
+        return names.Distinct(StringComparer.Ordinal).ToArray();
+    }
+
+    /// <summary>
+    /// Renames <paramref name="component"/> to <paramref name="name"/>, as one edit: the design's
+    /// references to it and the app's code's <c>app.Name</c> follow, as App Designer's rename does.
+    /// </summary>
+    /// <returns>Null when renamed; else why the name cannot be taken, and nothing changed.</returns>
+    public string? Rename(DesignComponent component, string name)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        ArgumentNullException.ThrowIfNull(name);
+        if (name == component.CodeName)
+        {
+            return null;
+        }
+
+        if (DesignNames.WhyNotName(name, component.CodeName, NamesInUse()) is { } why)
+        {
+            return why;
+        }
+
+        EndGesture(commit: false);
+        Do([new RenameEdit(component, component.CodeName, name)]);
+        return null;
+    }
+
+    /// <summary>
+    /// The component <paramref name="label"/> labels: one named as App Designer names a labelled
+    /// component's label, its own code name with <c>Label</c> after it, beside it in its container.
+    /// App Designer keeps the two as a group; until the designer does (open item 150), the names pair them.
+    /// </summary>
+    public DesignComponent? LabelledBy(DesignComponent label)
+    {
+        ArgumentNullException.ThrowIfNull(label);
+        if (label.Type != "matlab.ui.control.Label" || !label.CodeName.EndsWith("Label", StringComparison.Ordinal) || label.Parent is not { } parent)
+        {
+            return null;
+        }
+
+        string name = label.CodeName[..^"Label".Length];
+        return parent.Children.FirstOrDefault(c => c.CodeName == name && !ReferenceEquals(c, label));
+    }
+
+    /// <summary>
+    /// The renames a text edit brings (<c>ModifyCodeNameGenerator</c>): a component named from its old
+    /// text is named from its new one; a labelled component's label names the component, and the label
+    /// is named after it.
+    /// </summary>
+    private IEnumerable<Edit> Renames(DesignComponent component, string oldText, string newText)
+    {
+        var inUse = NamesInUse().ToList();
+        if (LabelledBy(component) is { } labelled && DesignNames.Of(labelled.Type) is { } naming)
+        {
+            string componentName = DesignNames.IsNamedByHand(oldText, naming.Text, labelled.CodeName, naming.CodeName)
+                ? labelled.CodeName
+                : DesignNames.ForEditedText(newText, naming.Text, labelled.CodeName, naming.CodeName, inUse);
+            if (componentName != labelled.CodeName)
+            {
+                inUse.Add(componentName);
+                yield return new RenameEdit(labelled, labelled.CodeName, componentName) { Selects = false };
+            }
+
+            string stem = ReplaceFirst(component.CodeName, "Label", string.Empty);
+            if (!DesignNames.IsNamedByHand(oldText, naming.Text, stem, naming.CodeName))
+            {
+                string from = componentName != labelled.CodeName ? componentName + "Label" : newText;
+                string labelName = DesignNames.ForEditedText(from, "Label", component.CodeName, "Label", inUse);
+                if (labelName != component.CodeName)
+                {
+                    yield return new RenameEdit(component, component.CodeName, labelName);
+                }
+            }
+
+            yield break;
+        }
+
+        if (DesignNames.Of(component.Type) is { } own && !DesignNames.IsNamedByHand(oldText, own.Text, component.CodeName, own.CodeName))
+        {
+            string renamed = DesignNames.ForEditedText(newText, own.Text, component.CodeName, own.CodeName, inUse);
+            if (renamed != component.CodeName)
+            {
+                yield return new RenameEdit(component, component.CodeName, renamed);
+            }
+        }
+    }
+
+    private static string ReplaceFirst(string text, string find, string with)
+    {
+        int at = text.IndexOf(find, StringComparison.Ordinal);
+        return at < 0 ? text : text[..at] + with + text[(at + find.Length)..];
+    }
+
+    /// <summary>Renames every reference to <paramref name="from"/> in the design and every <c>app.from</c> in the code.</summary>
+    private void RenameReferences(string from, string to)
+    {
+        foreach (DesignComponent c in Design.Components)
+        {
+            foreach ((string name, DesignValue value) in c.Properties.ToArray())
+            {
+                if (value is ComponentsValue refs && refs.CodeNames.Contains(from, StringComparer.Ordinal))
+                {
+                    c.Set(name, new ComponentsValue(refs.CodeNames.Select(n => n == from ? to : n).ToArray(), refs.Bracketed));
+                }
+            }
+        }
+
+        Text = Regex.Replace(Text, @"\b" + DesignValueText.AppObjectName + @"\." + Regex.Escape(from) + @"\b", DesignValueText.AppObjectName + "." + to);
+    }
+
+    [GeneratedRegex(@"^classdef\s+(?:\([^)]*\)\s*)?(\w+)")]
+    private static partial Regex ClassLine();
+
+    [GeneratedRegex(@"^function\s+(?:(?:\[[^\]]*\]|\w+)\s*=\s*)?(\w+)")]
+    private static partial Regex FunctionLine();
+
+    [GeneratedRegex(@"^([A-Za-z]\w*)\b")]
+    private static partial Regex PropertyLine();
 
     // --- saving ----------------------------------------------------------------------------------
 
@@ -481,6 +965,9 @@ public sealed class DesignDocument : IDisposable
     /// <summary>One change to the design and its component, which can be undone.</summary>
     private abstract record Edit(DesignComponent Component)
     {
+        /// <summary>Whether the component is selected once the edit is done or undone (not a sibling that followed it).</summary>
+        public bool Selects { get; init; } = true;
+
         public abstract void Do(DesignDocument document);
 
         public abstract void Undo(DesignDocument document);
@@ -531,6 +1018,95 @@ public sealed class DesignDocument : IDisposable
             document.Runtime.SetParent(Component, From);
             To.Remove(Component);
             From.Insert(System.Math.Min(Index, From.Children.Count), Component);
+        }
+    }
+
+    /// <summary>
+    /// A property set (DS3): what the design held before and after (null when unset), and the values
+    /// the runtime's component is set to - after, when done (null when another edit sets it), and
+    /// before, when undone (null when nothing needs putting back).
+    /// </summary>
+    private sealed record PropertyEdit(DesignComponent Component, string Name, DesignValue? Before, DesignValue? After, DesignValue? RuntimeBefore, DesignValue? RuntimeAfter)
+        : Edit(Component)
+    {
+        public override void Do(DesignDocument document)
+        {
+            if (RuntimeAfter is not null)
+            {
+                document.Runtime.Set(Component, Name, RuntimeAfter);
+            }
+
+            Put(After);
+        }
+
+        public override void Undo(DesignDocument document)
+        {
+            if (RuntimeBefore is not null)
+            {
+                document.Runtime.Set(Component, Name, RuntimeBefore);
+            }
+
+            Put(Before);
+        }
+
+        private void Put(DesignValue? value)
+        {
+            if (value is null)
+            {
+                Component.Unset(Name);
+            }
+            else
+            {
+                Component.Set(Name, value);
+            }
+        }
+    }
+
+    /// <summary>A component added to a container (DS3): at <paramref name="Index"/> among its children, or last.</summary>
+    private sealed record AddEdit(DesignComponent Component, DesignComponent Parent, int? Index) : Edit(Component)
+    {
+        public override void Do(DesignDocument document)
+        {
+            Parent.Insert(System.Math.Min(Index ?? Parent.Children.Count, Parent.Children.Count), Component);
+            document.Runtime.MakeNew(Component);
+        }
+
+        public override void Undo(DesignDocument document)
+        {
+            document.Runtime.Remove(Component);
+            Parent.Remove(Component);
+        }
+    }
+
+    /// <summary>A component deleted from its container, with everything inside it (DS3).</summary>
+    private sealed record DeleteEdit(DesignComponent Component, DesignComponent Parent, int Index) : Edit(Component)
+    {
+        public override void Do(DesignDocument document)
+        {
+            document.Runtime.Remove(Component);
+            Parent.Remove(Component);
+        }
+
+        public override void Undo(DesignDocument document)
+        {
+            Parent.Insert(System.Math.Min(Index, Parent.Children.Count), Component);
+            document.Runtime.MakeNew(Component);
+        }
+    }
+
+    /// <summary>A component renamed (DS3): its references in the design and in the app's code follow.</summary>
+    private sealed record RenameEdit(DesignComponent Component, string From, string To) : Edit(Component)
+    {
+        public override void Do(DesignDocument document)
+        {
+            Component.CodeName = To;
+            document.RenameReferences(From, To);
+        }
+
+        public override void Undo(DesignDocument document)
+        {
+            Component.CodeName = From;
+            document.RenameReferences(To, From);
         }
     }
 }

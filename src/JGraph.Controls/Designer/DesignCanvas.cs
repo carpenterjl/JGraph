@@ -14,7 +14,9 @@ namespace JGraph.Controls.Designer;
 /// Designer's design gestures over it (<see cref="DesignGestures"/>, which this turns the mouse and
 /// keys into and draws the marks of: the selection and its handles, the guides, the rubber band,
 /// the container a drop goes into, the grid, and a hidden component faded). Every edit is the
-/// <see cref="Document"/>'s, and undoes there.
+/// <see cref="Document"/>'s, and undoes there. DS3: a library entry chosen for click and draw
+/// (<see cref="DrawEntry"/>) is placed or drawn by the next press, one dragged from the library is
+/// added where it is dropped, and Delete deletes the selection.
 /// </summary>
 public sealed class DesignCanvas : UserControl
 {
@@ -38,6 +40,7 @@ public sealed class DesignCanvas : UserControl
     private bool _snapToGrid = true;
     private double _gridInterval = DesignGeometry.GridInterval;
     private bool _showAlignmentHints = true;
+    private bool _drawing;
 
     public DesignCanvas()
     {
@@ -53,7 +56,7 @@ public sealed class DesignCanvas : UserControl
         };
         _surface.Children.Add(_figure);
         _surface.Children.Add(_layer);
-        _overlay = new Overlay(this);
+        _overlay = new Overlay(this) { AllowDrop = true };
         _outer = new Grid { HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
         _outer.Children.Add(_surface);
         _outer.Children.Add(_overlay);
@@ -70,6 +73,25 @@ public sealed class DesignCanvas : UserControl
 
     /// <summary>Raised when the selection, the design or a gesture's state changed, for the window's status and commands.</summary>
     public event EventHandler? DesignChanged;
+
+    /// <summary>Raised when click and draw ended - a component placed, or Escape - so the library lets its entry go.</summary>
+    public event EventHandler? DrawEnded;
+
+    /// <summary>The library entry the next press places or draws (App Designer's click and draw); null when none.</summary>
+    public DesignPaletteEntry? DrawEntry
+    {
+        get => _gestures?.DrawEntry;
+        set
+        {
+            if (_gestures is { } gestures)
+            {
+                gestures.DrawEntry = value;
+            }
+        }
+    }
+
+    /// <summary>What the last add from the library refused; null when it went.</summary>
+    public string? Refusal => _gestures?.Refusal;
 
     /// <summary>The app on the canvas.</summary>
     public DesignDocument? Document
@@ -174,7 +196,14 @@ public sealed class DesignCanvas : UserControl
     {
         if (ReferenceEquals(sender, _gestures))
         {
+            if (_drawing && _gestures!.DrawEntry is null)
+            {
+                DrawEnded?.Invoke(this, EventArgs.Empty);
+            }
+
+            _drawing = _gestures!.DrawEntry is not null;
             _overlay.InvalidateVisual();
+            DesignChanged?.Invoke(this, EventArgs.Empty);
             return;
         }
 
@@ -251,6 +280,7 @@ public sealed class DesignCanvas : UserControl
             DesignCursor.SizeWestEast => Cursors.SizeWE,
             DesignCursor.SizeNorthWestSouthEast => Cursors.SizeNWSE,
             DesignCursor.SizeNorthEastSouthWest => Cursors.SizeNESW,
+            DesignCursor.Cross => Cursors.Cross,
             _ => Cursors.Arrow,
         };
     }
@@ -276,6 +306,7 @@ public sealed class DesignCanvas : UserControl
             Key.Down => DesignKey.Down,
             Key.Escape => DesignKey.Escape,
             Key.A when (Keyboard.Modifiers & ModifierKeys.Control) != 0 => DesignKey.SelectAll,
+            Key.Delete or Key.Back => DesignKey.Delete,
             _ => null,
         };
         if (!e.Handled && key is { } pressed && _gestures?.KeyDown(pressed, Modifiers()) == true)
@@ -304,6 +335,28 @@ public sealed class DesignCanvas : UserControl
     {
         base.OnLostKeyboardFocus(e);
         _gestures?.EndKeyMove();
+    }
+
+    /// <summary>A library entry dragged over the canvas can be dropped.</summary>
+    private void DraggedOver(DragEventArgs e)
+    {
+        e.Effects = e.Data.GetDataPresent(DesignPaletteView.EntryFormat) && _gestures is not null ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    /// <summary>A library entry dropped is added where it landed.</summary>
+    private void Dropped(DragEventArgs e)
+    {
+        if (_gestures is not { } gestures || _document is not { } document
+            || e.Data.GetData(DesignPaletteView.EntryFormat) is not string name || document.Palette.Find(name) is not { } entry)
+        {
+            return;
+        }
+
+        Point at = e.GetPosition(_overlay);
+        gestures.Drop(entry, new Point2D(at.X - Gutter, at.Y - Gutter));
+        Focus();
+        e.Handled = true;
     }
 
     // --- drawing ---------------------------------------------------------------------------------------
@@ -390,6 +443,11 @@ public sealed class DesignCanvas : UserControl
             dc.DrawRectangle(BandBrush, dashed, Inset(Wpf(band)));
         }
 
+        if (gestures.Drawn is { } drawn)
+        {
+            dc.DrawRectangle(BandBrush, outline, Inset(Wpf(drawn)));
+        }
+
         foreach (DesignGuide guide in gestures.Guides)
         {
             var pen = new Pen(guide.Fixed ? FixedGuideBrush : GuideBrush, 1);
@@ -441,6 +499,18 @@ public sealed class DesignCanvas : UserControl
             base.OnMouseUp(e);
             owner.OnReleased();
             e.Handled = true;
+        }
+
+        protected override void OnDragOver(DragEventArgs e)
+        {
+            base.OnDragOver(e);
+            owner.DraggedOver(e);
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+            owner.Dropped(e);
         }
 
         protected override void OnLostMouseCapture(MouseEventArgs e)

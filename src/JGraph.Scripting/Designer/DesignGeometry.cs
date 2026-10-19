@@ -52,6 +52,12 @@ public readonly record struct DesignSnap(double DX, double DY, IReadOnlyList<Des
 /// </summary>
 public static class DesignGeometry
 {
+    /// <summary>
+    /// The least side of a box drawn in click-and-draw mode (DS3); a smaller drag is a click, which
+    /// places the component at its own size, as App Designer's does below two pixels.
+    /// </summary>
+    public const double MinimumDrawn = 3;
+
     /// <summary>How near an edge or centre must come to another's to snap to it.</summary>
     public const double SnapDistance = 7;
 
