@@ -100,6 +100,11 @@ public sealed class DesignGestures
     private bool _keyMoving;
     private double _keyDX;
     private double _keyDY;
+    private DesignPlacement? _drawIn;
+    private GridSpanResize? _spanResize;
+    private DesignGridConfigure? _configure;
+    private Point2D _lastDrag;
+    private Point2D _pressAt;
 
     /// <summary>The gestures on <paramref name="document"/>.</summary>
     public DesignGestures(DesignDocument document)
@@ -165,8 +170,55 @@ public sealed class DesignGestures
     /// <summary>What the last add from the library refused (an entry the designer does not make yet); null when it went.</summary>
     public string? Refusal { get; private set; }
 
+    /// <summary>
+    /// Where a drag or a library drag would drop what it carries (DS4): in a grid, the cells each
+    /// component takes, which the canvas fills; null when nothing is dragged.
+    /// </summary>
+    public DesignPlacement? Placement { get; private set; }
+
+    /// <summary>The cells a component being drawn in a grid takes so far (DS4); null when none.</summary>
+    public (DesignComponent Grid, IReadOnlyList<GridSpan> Spans)? DrawnCells { get; private set; }
+
+    /// <summary>
+    /// A grid child's span being resized by a handle (DS4): the box App Designer previews - its
+    /// dragged edge following the pointer, unsnapped - and the cells it would take; null when none.
+    /// </summary>
+    public (DesignComponent Child, Rect2D Box, GridSpan Span)? SpanPreview { get; private set; }
+
+    /// <summary>
+    /// The grid being configured (App Designer's grid edit mode, DS4); null when none. Configuring
+    /// ends when it is ended, when the grid is gone, or when the selection it began with changes - App
+    /// Designer's deselection ends it (<c>SelectableController._visualize</c>) - and then it is over:
+    /// selecting the grid again does not bring it back.
+    /// </summary>
+    public DesignGridConfigure? Configuring
+    {
+        get
+        {
+            if (_configure is { } configure
+                && (Document.BoxOf(configure.Grid) is not { Shown: true }
+                    || !Document.Selection.SequenceEqual(_configureSelection, ReferenceEqualityComparer.Instance)))
+            {
+                _configure = null;
+                Hint = null;
+            }
+
+            return _configure;
+        }
+    }
+
+    private IReadOnlyList<DesignComponent> _configureSelection = [];
+
+    /// <summary>The row or column a context menu item or a popup button would add or delete, which the canvas shows; null when none.</summary>
+    public DesignGridHint? Hint { get; private set; }
+
+    /// <summary>Whether a drag, a library drag or a drawing is under way: every grid then shows its cells, as App Designer's drop hints.</summary>
+    public bool ShowsDropHints => _press is PressState.Moving or PressState.Drawing || _libraryDrag;
+
     /// <summary>Raised when what the canvas draws over the components changed: guides, band, drop target.</summary>
     public event EventHandler? Changed;
+
+    private bool _libraryDrag;
 
     private double? Grid => ShowGrid && SnapToGrid ? DesignGeometry.GridIntervalWithin(GridInterval) : null;
 
@@ -178,6 +230,7 @@ public sealed class DesignGestures
         Resizing,
         Band,
         Drawing,
+        Spanning,
     }
 
     private enum Intent
@@ -186,6 +239,7 @@ public sealed class DesignGestures
         Move,
         Resize,
         Band,
+        Span,
     }
 
     // --- the mouse -------------------------------------------------------------------------------
@@ -204,10 +258,43 @@ public sealed class DesignGestures
         bool control = modifiers.HasFlag(DesignModifiers.Control);
         bool shift = modifiers.HasFlag(DesignModifiers.Shift);
         _down = at;
+        _lastDrag = at;
+        _pressAt = at;
         _clickSelects = null;
         DesignDocument document = Document;
 
-        // Click and draw: the press begins the component's box.
+        // A grid being configured takes every press on its controls; a press elsewhere ends it (DS4).
+        if (Configuring is { } configure)
+        {
+            if (button == DesignButton.Left && ConfigureButton(configure.Grid) is { } exit && exit.Contains(at))
+            {
+                EndConfigure();
+                return false;
+            }
+
+            // Only the primary button picks a band (a click); another on the controls leaves them as they are.
+            if (configure.Takes(at))
+            {
+                if (button == DesignButton.Left)
+                {
+                    configure.Click(at);
+                    Changed?.Invoke(this, EventArgs.Empty);
+                }
+
+                return false;
+            }
+
+            EndConfigure();
+        }
+
+        // The button at a grid's top-left corner configures it.
+        if (button == DesignButton.Left && _drawEntry is null && ConfigureButtonAt(at) is { } toConfigure)
+        {
+            Configure(toConfigure);
+            return false;
+        }
+
+        // Click and draw: the press begins the component's box - or, in a grid, its cells.
         if (_drawEntry is not null)
         {
             if (button != DesignButton.Left)
@@ -216,22 +303,41 @@ public sealed class DesignGestures
                 return false;
             }
 
-            _down = SnapCorner(document.ContainerFor(_drawEntry, document.ComponentAt(at)), at);
-            _drawFrom = _down;
+            DesignPlacement drawIn = document.DrawPlacement(_drawEntry, at);
+            if (!drawIn.CanDrop || drawIn.Container is not { } container)
+            {
+                Refusal = $"{_drawEntry.Name} cannot be drawn there: in a grid, press in one of its cells.";
+                Changed?.Invoke(this, EventArgs.Empty);
+                return false;
+            }
+
+            _drawIn = drawIn;
+            if (document.IsGrid(container) && drawIn.Spans is { } spans)
+            {
+                _down = at;
+                _drawFrom = at;
+                DrawnCells = (container, spans);
+            }
+            else
+            {
+                _down = SnapCorner(container, at);
+                _drawFrom = _down;
+            }
+
             _press = PressState.Drawing;
             return true;
         }
 
-        // A handle of a selected component resizes the selection.
+        // A handle of a selected component resizes the selection; a grid child's spans it over cells.
         if (button == DesignButton.Left && HandleAt(at) is { } handle)
         {
-            return Begin(Intent.Resize, handle.Component, handle.Edges);
+            return Begin(document.IsGridChild(handle.Component) ? Intent.Span : Intent.Resize, handle.Component, handle.Edges);
         }
 
         // A tab's heading shows the tab and selects it.
         if (TabHeadingAt?.Invoke(at) is { } tab)
         {
-            document.Runtime.ShowTab(tab);
+            document.ShowTab(tab);
             document.Select([tab]);
             return false;
         }
@@ -291,10 +397,11 @@ public sealed class DesignGestures
             return;
         }
 
+        _lastDrag = at;
         DesignDocument document = Document;
         if (_press == PressState.Drawing)
         {
-            Drawn = DrawnBox(at);
+            DragDraw(at);
             Changed?.Invoke(this, EventArgs.Empty);
             return;
         }
@@ -307,16 +414,24 @@ public sealed class DesignGestures
             }
 
             IReadOnlyList<DesignComponent> movable = document.Selection.Where(document.IsMovable).ToArray();
+            IReadOnlyList<DesignComponent> draggable = document.Selection.Where(document.CanDrag).ToArray();
             switch (_intent)
             {
-                case Intent.Move when movable.Count == document.Selection.Count && movable.Count > 0:
+                case Intent.Move when draggable.Count == document.Selection.Count && draggable.Count > 0:
                     _clickSelects = null;
-                    document.BeginGesture(movable);
+                    document.BeginGesture(draggable);
                     _press = PressState.Moving;
                     break;
                 case Intent.Resize when movable.Count > 0:
                     document.BeginGesture(movable);
                     _press = PressState.Resizing;
+                    break;
+                case Intent.Span when _anchor is { Parent: { } grid } child && document.SpanOf(child) is { } span
+                    && document.CellsOf(grid) is { } cells && document.CellBoxOf(child) is { } box:
+                    // Only the component whose handle was grabbed spans (GridChildResizeServiceModel).
+                    _clickSelects = null;
+                    _spanResize = new GridSpanResize(cells, _edges, [new GridResizeEntry(span, box, CanResize: true, IsLabel: false)]);
+                    _press = PressState.Spanning;
                     break;
                 case Intent.Band:
                     _clickSelects = null;
@@ -333,10 +448,13 @@ public sealed class DesignGestures
         switch (_press)
         {
             case PressState.Moving:
-                DragMove(dx, dy);
+                DragMove(dx, dy, at);
                 break;
             case PressState.Resizing:
                 DragResize(dx, dy, modifiers);
+                break;
+            case PressState.Spanning when _spanResize is { } resize && _anchor is { } spanned:
+                SpanPreview = (spanned, resize.LiveBoxes(dx, dy)[0], resize.Spans(dx, dy)[0]);
                 break;
             case PressState.Band:
                 Rect2D band = new(System.Math.Min(at.X, _down.X), System.Math.Min(at.Y, _down.Y), System.Math.Abs(dx), System.Math.Abs(dy));
@@ -360,14 +478,25 @@ public sealed class DesignGestures
                 document.Select(selects);
                 break;
             case PressState.Moving:
-                DesignComponent? into = DropTarget;
+                DesignPlacement? placement = Placement;
                 Guides = [];
                 DropTarget = null;
-                document.EndGesture(commit: true, into);
+                Placement = null;
+                document.EndGesture(commit: true, placement);
                 break;
             case PressState.Resizing:
                 Guides = [];
                 document.EndGesture(commit: true);
+                break;
+            case PressState.Spanning:
+                (DesignComponent Child, Rect2D Box, GridSpan Span)? spanned = SpanPreview;
+                SpanPreview = null;
+                _spanResize = null;
+                if (spanned is { } s)
+                {
+                    document.SetGridSpan(s.Child, s.Span);
+                }
+
                 break;
             case PressState.Band:
                 IReadOnlyList<DesignComponent> banded = Banded;
@@ -376,10 +505,7 @@ public sealed class DesignGestures
                 document.Select(banded.Count > 0 ? banded : _anchor is { } pressed ? [pressed] : []);
                 break;
             case PressState.Drawing when _drawEntry is { } entry:
-                Rect2D? drawn = Drawn is { Width: >= DesignGeometry.MinimumDrawn, Height: >= DesignGeometry.MinimumDrawn } box ? box : null;
-                Drawn = null;
-                _drawEntry = null;
-                AddFrom(entry, drawn is { } d ? new Point2D(d.X, d.Y) : _drawFrom, drawn is { } s ? new Size2D(s.Width, s.Height) : null);
+                ReleaseDraw(entry);
                 break;
         }
 
@@ -392,24 +518,34 @@ public sealed class DesignGestures
     {
         _press = PressState.None;
         Drawn = null;
+        DrawnCells = null;
+        _drawIn = null;
         _keyMoving = false;
         Guides = [];
         Band = null;
         Banded = [];
         DropTarget = null;
+        Placement = null;
+        SpanPreview = null;
+        _spanResize = null;
         _clickSelects = null;
         Document.EndGesture(commit: false);
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Moves the gesture's components by the drag, snapped to the grid or to the guides.</summary>
-    private void DragMove(double dx, double dy)
+    /// <summary>
+    /// Moves the gesture's components by the drag, snapped to the grid or to the guides - none in or
+    /// over a grid, as App Designer clears its alignment hints there - and finds where they would drop.
+    /// </summary>
+    private void DragMove(double dx, double dy, Point2D at)
     {
         DesignDocument document = Document;
         IReadOnlyDictionary<DesignComponent, Rect2D> start = document.GestureStart;
         DesignComponent anchor = _anchor is not null && start.ContainsKey(_anchor) ? _anchor : start.Keys.First();
         Rect2D from = start[anchor];
         Guides = [];
+        // Over a grid there are no alignment guides; the canvas grid still snaps (ComponentMoveHelpers.calculateDragOffsets).
+        bool overGrid = Placement?.Container is { } over && document.IsGrid(over);
         if (Grid is { } grid && anchor.Parent is { } parent)
         {
             // The anchor's corner to the grid of the container it is in.
@@ -423,7 +559,7 @@ public sealed class DesignGestures
         {
             dx = System.Math.Round(dx, MidpointRounding.AwayFromZero);
             dy = System.Math.Round(dy, MidpointRounding.AwayFromZero);
-            if (ShowAlignmentHints)
+            if (ShowAlignmentHints && !overGrid)
             {
                 DesignSnap snap = DesignGeometry.Snap(Shifted(from, dx, dy), Others(start.Keys));
                 dx += snap.DX;
@@ -439,8 +575,10 @@ public sealed class DesignGestures
         }
 
         document.Preview(boxes);
-        DesignComponent target = document.DropTarget([.. start.Keys], boxes[anchor]);
-        DropTarget = ReferenceEquals(target, anchor.Parent) ? null : target;
+        DesignComponent[] moving = [.. start.Keys];
+        DesignPlacement placement = document.PlacementFor(moving, moving.Select(m => boxes[m]).ToArray(), at);
+        Placement = placement;
+        DropTarget = placement is { CanDrop: true, Spans: null, Container: { } target } && !ReferenceEquals(target, anchor.Parent) ? target : null;
     }
 
     /// <summary>Resizes the gesture's components by the drag on a handle, within their shapes, snapped.</summary>
@@ -535,15 +673,53 @@ public sealed class DesignGestures
         ArgumentNullException.ThrowIfNull(entry);
         Cancel();
         _drawEntry = null;
-        return AddFrom(entry, SnapCorner(Document.ContainerFor(entry, Document.ComponentAt(at)), at), null);
+        _libraryDrag = false;
+        DesignPlacement placement = Document.PlacementForNew(entry, at);
+        if (!placement.CanDrop || placement.Container is not { } container)
+        {
+            Refusal = $"{entry.Name} cannot be dropped there: in a grid it goes into the cells it covers.";
+            Changed?.Invoke(this, EventArgs.Empty);
+            return [];
+        }
+
+        return Document.IsGrid(container) && placement.Spans is { } spans
+            ? AddFrom(() => Document.AddToGrid(entry, container, spans))
+            : entry.Type == DesignDocument.GridType && !entry.FigureOnly
+                ? AddFrom(() => [Document.Gridify(container)])
+                : AddFrom(() => Document.Add(entry, container, SnapCorner(container, at), null));
     }
 
-    private IReadOnlyList<DesignComponent> AddFrom(DesignPaletteEntry entry, Point2D corner, Size2D? size)
+    /// <summary>
+    /// A library entry dragged over the canvas with its corner at <paramref name="at"/>: where it
+    /// would drop (<see cref="Placement"/>, <see cref="DropTarget"/>), and every grid's cells shown.
+    /// </summary>
+    public void DragOver(DesignPaletteEntry entry, Point2D at)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        _libraryDrag = true;
+        DesignPlacement placement = Document.PlacementForNew(entry, at);
+        Placement = placement;
+        DropTarget = placement is { CanDrop: true, Spans: null, Container: { } target } && !ReferenceEquals(target, Document.Design.Figure)
+            ? target
+            : null;
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>A library drag left the canvas.</summary>
+    public void DragLeave()
+    {
+        _libraryDrag = false;
+        Placement = null;
+        DropTarget = null;
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
+    private IReadOnlyList<DesignComponent> AddFrom(Func<IReadOnlyList<DesignComponent>> add)
     {
         Refusal = null;
         try
         {
-            return Document.Add(entry, Document.ComponentAt(corner), corner, size);
+            return add();
         }
         catch (InvalidOperationException ex)
         {
@@ -553,6 +729,77 @@ public sealed class DesignGestures
         finally
         {
             Changed?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>
+    /// The pointer moved while drawing: the box from the press - or, in a grid, the cells from the
+    /// pressed one to the pointer (App Designer reuses the span resize's snapping). A Grid Layout is
+    /// not drawn (its model's <c>CanDraw</c> is false): a drag shows nothing and adds nothing.
+    /// </summary>
+    private void DragDraw(Point2D at)
+    {
+        if (_drawEntry?.Type == DesignDocument.GridType)
+        {
+            Drawn = null;
+            return;
+        }
+
+        if (_drawIn is { Container: { } grid, Spans: { } spans } && Document.IsGrid(grid) && Document.CellsOf(grid) is { } cells)
+        {
+            if (spans is [var start])
+            {
+                DrawnCells = (grid, [DesignGridRules.DrawnSpan(cells, start, _down, at)]);
+            }
+            else if (spans is [var label, var field] && _drawEntry is { } entry)
+            {
+                (int dColumn, int dRow) = DesignDocument.LabelOffsetOf(entry.Label);
+                (GridSpan drawnLabel, GridSpan drawnField) = DesignGridRules.DrawnLabeledSpans(cells, label, field, dColumn, dRow, _down, at);
+                DrawnCells = (grid, [drawnLabel, drawnField]);
+            }
+
+            return;
+        }
+
+        if (_drawIn?.Spans is null)
+        {
+            Drawn = DrawnBox(at);
+        }
+    }
+
+    /// <summary>The press let go while drawing: what was drawn is added, and the mode ends.</summary>
+    private void ReleaseDraw(DesignPaletteEntry entry)
+    {
+        DesignPlacement? drawIn = _drawIn;
+        (DesignComponent Grid, IReadOnlyList<GridSpan> Spans)? cells = DrawnCells;
+        Rect2D? drawn = Drawn is { Width: >= DesignGeometry.MinimumDrawn, Height: >= DesignGeometry.MinimumDrawn } box ? box : null;
+        bool dragged = System.Math.Abs(_lastDrag.X - _pressAt.X) >= DragThreshold || System.Math.Abs(_lastDrag.Y - _pressAt.Y) >= DragThreshold;
+        Drawn = null;
+        DrawnCells = null;
+        _drawIn = null;
+        _drawEntry = null;
+        if (drawIn?.Container is not { } container)
+        {
+            return;
+        }
+
+        if (entry.Type == DesignDocument.GridType && dragged)
+        {
+            Refusal = "A Grid Layout is not drawn: click where it goes.";
+            return;
+        }
+
+        if (cells is { } c)
+        {
+            AddFrom(() => Document.AddToGrid(entry, c.Grid, c.Spans));
+        }
+        else if (entry.Type == DesignDocument.GridType && !entry.FigureOnly)
+        {
+            AddFrom(() => [Document.Gridify(container)]);
+        }
+        else
+        {
+            AddFrom(() => Document.Add(entry, container, drawn is { } d ? new Point2D(d.X, d.Y) : _drawFrom, drawn is { } s ? new Size2D(s.Width, s.Height) : null));
         }
     }
 
@@ -590,19 +837,29 @@ public sealed class DesignGestures
 
     // --- handles and the pointer -----------------------------------------------------------------
 
-    /// <summary>The resize handles of the selection: eight on each component placed by its position, none along a side its shape fixes.</summary>
+    /// <summary>
+    /// The resize handles of the selection: eight on each component placed by its position, none along
+    /// a side its shape fixes; a grid's child has the same, on its cells' edges (DS4), and a grid has
+    /// eight only in a grid's cells - one in any other container fills it. None while a grid is configured.
+    /// </summary>
     public IEnumerable<DesignHandle> Handles()
     {
         DesignDocument document = Document;
+        if (Configuring is not null)
+        {
+            yield break;
+        }
+
         foreach (DesignComponent component in document.Selection)
         {
-            if (!document.IsMovable(component) || document.BoxOf(component) is not { Shown: true } box)
+            bool inGrid = document.IsGridChild(component);
+            if ((!document.IsMovable(component) && !inGrid) || document.BoxOf(component) is not { Shown: true } box)
             {
                 continue;
             }
 
-            DesignShape shape = document.ShapeOf(component);
-            Rect2D b = box.Box;
+            DesignShape shape = component.Type == DesignDocument.GridType ? DesignShape.Free : document.ShapeOf(component);
+            Rect2D b = inGrid && document.CellBoxOf(component) is { } cells ? cells : box.Box;
             double h = HandleSize / 2;
             (ResizeEdges Edges, double X, double Y)[] points =
             [
@@ -616,6 +873,12 @@ public sealed class DesignGestures
                 bool vertical = edges.HasFlag(ResizeEdges.North) || edges.HasFlag(ResizeEdges.South);
                 bool horizontal = edges.HasFlag(ResizeEdges.East) || edges.HasFlag(ResizeEdges.West);
                 if ((shape.FixedHeight && vertical) || (shape.FixedWidth && horizontal))
+                {
+                    continue;
+                }
+
+                // A shape that keeps its ratio has its corners only (AbstractDesignTimeController._attachResizeHandles, DS4).
+                if (shape.Ratio is not null && !(vertical && horizontal))
                 {
                     continue;
                 }
@@ -659,7 +922,7 @@ public sealed class DesignGestures
         }
 
         DesignComponent hit = Document.ComponentAt(at);
-        return Document.Selection.Contains(hit) && Document.IsMovable(hit) && !IsBody(hit, at) ? DesignCursor.Move : DesignCursor.Arrow;
+        return Document.Selection.Contains(hit) && Document.CanDrag(hit) && !IsBody(hit, at) ? DesignCursor.Move : DesignCursor.Arrow;
     }
 
     // --- keys ------------------------------------------------------------------------------------
@@ -677,6 +940,9 @@ public sealed class DesignGestures
             case DesignKey.Escape when _drawEntry is not null:
                 DrawEntry = null;
                 return true;
+            case DesignKey.Escape when Configuring is not null:
+                EndConfigure();
+                return true;
             case DesignKey.Delete when _press == PressState.None && document.Selection.Any(document.CanDelete):
                 EndKeyMove();
                 document.Delete(document.Selection);
@@ -684,6 +950,13 @@ public sealed class DesignGestures
             case DesignKey.Left or DesignKey.Right or DesignKey.Up or DesignKey.Down
                 when (modifiers & ~DesignModifiers.Shift) == DesignModifiers.None && _press == PressState.None:
                 double step = modifiers.HasFlag(DesignModifiers.Shift) ? DesignGeometry.ShiftNudge : DesignGeometry.Nudge;
+
+                // App Designer's arrows move no grid's child, and no grid, but take the key (ArrowKeyMoveReorderPlugin).
+                if (document.Selection is [var first, ..] && (document.IsGridChild(first) || first.Type == DesignDocument.GridType))
+                {
+                    return true;
+                }
+
                 IReadOnlyList<DesignComponent> movable = document.Selection.Where(document.IsMovable).ToArray();
                 if (movable.Count == 0 || movable.Count != document.Selection.Count)
                 {
@@ -735,4 +1008,240 @@ public sealed class DesignGestures
             Document.EndGesture(commit: true);
         }
     }
+
+    // --- grids (DS4) -----------------------------------------------------------------------------
+
+    /// <summary>The side of a grid's configure button, its border in.</summary>
+    public const double ConfigureButtonSize = 22;
+
+    /// <summary>How far up and left of a grid its configure button stands (<c>left: -25px; top: -25px</c>).</summary>
+    public const double ConfigureButtonOffset = 25;
+
+    /// <summary>The button at a grid's top-left corner that configures it, or ends its configuring: 25 pixels up and left of the grid.</summary>
+    public Rect2D? ConfigureButton(DesignComponent grid)
+    {
+        ArgumentNullException.ThrowIfNull(grid);
+        return Document.BoxOf(grid) is { Shown: true } box
+            ? new Rect2D(box.Box.X - ConfigureButtonOffset, box.Box.Y - ConfigureButtonOffset, ConfigureButtonSize, ConfigureButtonSize)
+            : null;
+    }
+
+    /// <summary>The grid whose configure button is at <paramref name="at"/>: one showing it (<see cref="DesignGridMode.Simple"/>); null when none.</summary>
+    public DesignComponent? ConfigureButtonAt(Point2D at)
+    {
+        foreach ((DesignComponent grid, DesignGridMode mode) in GridModes())
+        {
+            if (mode == DesignGridMode.Simple && ConfigureButton(grid) is { } button && button.Contains(at))
+            {
+                return grid;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Starts configuring <paramref name="grid"/> (App Designer's grid edit mode): its rows and
+    /// columns become bands to pick, and the pick opens the popup that sets it.
+    /// </summary>
+    public void Configure(DesignComponent grid)
+    {
+        ArgumentNullException.ThrowIfNull(grid);
+        if (!Document.IsGrid(grid))
+        {
+            return;
+        }
+
+        Cancel();
+        _configure = new DesignGridConfigure(Document, grid);
+        _configureSelection = [.. Document.Selection];
+        _configure.Changed += (_, _) => Changed?.Invoke(this, EventArgs.Empty);
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Ends configuring a grid.</summary>
+    public void EndConfigure()
+    {
+        if (_configure is not null)
+        {
+            _configure = null;
+            Hint = null;
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>
+    /// A double click at <paramref name="at"/>: with one grid selected, configures it
+    /// (<c>GridRichEditPlugin.handleDoubleClick</c>).
+    /// </summary>
+    /// <returns>Whether it did.</returns>
+    public bool DoubleClick(Point2D at)
+    {
+        if (Document.Selection is [var grid] && Document.IsGrid(grid) && Configuring?.Grid != grid)
+        {
+            Configure(grid);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// How each grid shows (<c>SelectableController._visualize</c>): a selected grid, and the nearest
+    /// grid around a selected component, show their cells and the button that configures them; the
+    /// grids further out, and the grids inside one showing its button, show their cells; with the
+    /// figure selected, every grid not in a grid shows its button; the grid being configured is in
+    /// edit mode. Grids not listed show nothing.
+    /// </summary>
+    public IReadOnlyDictionary<DesignComponent, DesignGridMode> GridModes()
+    {
+        DesignDocument document = Document;
+        var modes = new Dictionary<DesignComponent, DesignGridMode>(ReferenceEqualityComparer.Instance);
+        foreach (DesignComponent selected in document.Selection)
+        {
+            bool first = true;
+            for (DesignComponent? up = selected; up?.Parent is not null; up = up.Parent)
+            {
+                if (document.IsGrid(up))
+                {
+                    modes[up] = first ? DesignGridMode.Simple : DesignGridMode.Layout;
+                    first = false;
+                }
+            }
+
+            Down(selected);
+        }
+
+        if (Configuring is { } configure)
+        {
+            modes[configure.Grid] = DesignGridMode.Edit;
+        }
+
+        return modes;
+
+        void Down(DesignComponent node)
+        {
+            if (document.IsGrid(node))
+            {
+                bool simpleAbove = false;
+                for (DesignComponent? up = node.Parent; up is not null; up = up.Parent)
+                {
+                    simpleAbove |= modes.TryGetValue(up, out DesignGridMode mode) && mode == DesignGridMode.Simple;
+                }
+
+                modes[node] = simpleAbove ? DesignGridMode.Layout : DesignGridMode.Simple;
+            }
+
+            foreach (DesignComponent child in node.Children)
+            {
+                Down(child);
+            }
+        }
+    }
+
+    /// <summary>Shows <paramref name="hint"/> - a row or column a menu item or popup button would add or delete - or none.</summary>
+    public void ShowHint(DesignGridHint? hint)
+    {
+        if (Hint != hint)
+        {
+            Hint = hint;
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>
+    /// The canvas's context menu for a right click at <paramref name="at"/>, with the selection the
+    /// press left (App Designer's <c>GridMenuItemProvider</c>, the delete item, and
+    /// <c>LayoutConversionMenuItemProvider</c>): for one grid selected, its configuring and the rows and
+    /// columns the point is in or between - in a cell, beside it; in a gap, into it; in the padding,
+    /// first or last - and removing its layout; Delete; and Apply Grid Layout for a figure, panel or tab.
+    /// </summary>
+    public IReadOnlyList<DesignMenuItem> MenuAt(Point2D at)
+    {
+        DesignDocument document = Document;
+        var items = new List<DesignMenuItem>();
+        if (document.Selection is [var grid] && document.IsGrid(grid) && document.CellsOf(grid) is { } cells)
+        {
+            int rows = document.TracksOf(grid, GridAxis.Row).Count;
+            int columns = document.TracksOf(grid, GridAxis.Column).Count;
+            int? above, below, before, after, deleteRow, deleteColumn;
+            if (rows == 0 || columns == 0)
+            {
+                // An empty list takes one track; nothing can be deleted.
+                above = below = rows == 0 ? 1 : null;
+                before = after = columns == 0 ? 1 : null;
+                deleteRow = deleteColumn = null;
+            }
+            else
+            {
+                GridPointInfo info = DesignGridRules.PointInfo(at, cells);
+                (above, below) = DesignGridRules.AddingRows(info);
+                (before, after) = DesignGridRules.AddingColumns(info);
+                deleteRow = info.Row;
+                deleteColumn = info.Column;
+            }
+
+            items.Add(new DesignMenuItem("Configure Grid Layout", Configuring?.Grid != grid, () => Configure(grid)));
+            items.Add(new DesignMenuItem("Add Row", above is not null || below is not null, Items:
+            [
+                Insert("Above", GridAxis.Row, above),
+                Insert("Below", GridAxis.Row, below),
+            ]));
+            items.Add(new DesignMenuItem("Add Column", before is not null || after is not null, Items:
+            [
+                Insert("Left", GridAxis.Column, before),
+                Insert("Right", GridAxis.Column, after),
+            ]));
+            items.Add(Remove("Delete Row", GridAxis.Row, deleteRow));
+            items.Add(Remove("Delete Column", GridAxis.Column, deleteColumn));
+            items.Add(new DesignMenuItem("Remove Grid Layout", true, () =>
+            {
+                EndConfigure();
+                document.Ungridify(grid);
+            }));
+
+            DesignMenuItem Insert(string label, GridAxis axis, int? index) =>
+                new(label, index is not null, index is { } i ? () => document.InsertTrack(grid, axis, i) : null,
+                    Hint: index is { } h ? new DesignGridHint(grid, axis, h, Insert: true) : null);
+
+            DesignMenuItem Remove(string label, GridAxis axis, int? index) =>
+                new(label, index is not null, index is { } i ? () => document.DeleteTrack(grid, axis, i) : null,
+                    Hint: index is { } h ? new DesignGridHint(grid, axis, h, Insert: false) : null);
+        }
+
+        if (document.Selection.Any(document.CanDelete))
+        {
+            if (items.Count > 0)
+            {
+                items.Add(DesignMenuItem.Separator);
+            }
+
+            items.Add(new DesignMenuItem("Delete", true, () => document.Delete(document.Selection)));
+        }
+
+        if (document.Selection is [var container, ..] && document.CanGridify(container))
+        {
+            if (items.Count > 0)
+            {
+                items.Add(DesignMenuItem.Separator);
+            }
+
+            items.Add(new DesignMenuItem("Apply Grid Layout", true, () => document.Gridify(container)));
+        }
+
+        return items;
+    }
+}
+
+/// <summary>
+/// An item of the canvas's context menu: its label, whether it is enabled, what it does, the items
+/// under it, and the row or column it would add or delete, which the canvas shows while it is pointed at.
+/// </summary>
+public sealed record DesignMenuItem(string Label, bool Enabled = true, Action? Run = null, IReadOnlyList<DesignMenuItem>? Items = null, DesignGridHint? Hint = null)
+{
+    /// <summary>A line between groups of items.</summary>
+    public static DesignMenuItem Separator { get; } = new("-", false);
+
+    /// <summary>Whether this is the line between groups.</summary>
+    public bool IsSeparator => ReferenceEquals(this, Separator);
 }

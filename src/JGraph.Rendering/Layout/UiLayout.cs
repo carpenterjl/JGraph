@@ -63,6 +63,21 @@ public sealed record UiPanelPlacement(
     public Size2D Content { get; init; }
 
     /// <summary>
+    /// For a grid: how its tracks were laid out — each one's size and where it begins — which the
+    /// visual designer draws the grid's cells from (designer plan, DS4).
+    /// </summary>
+    public UiGridArrangement? Grid { get; init; }
+
+    /// <summary>
+    /// For a grid: the rectangle on the surface its tracks are laid in — its viewport, moved by any
+    /// scrolling — whose top-left corner the padding and the track starts count from.
+    /// </summary>
+    public Rect2D GridOrigin { get; init; }
+
+    /// <summary>For a grid: its padding, MATLAB's <c>[left bottom right top]</c>.</summary>
+    public IReadOnlyList<double> GridPadding { get; init; } = [];
+
+    /// <summary>
     /// For a scrollable grid whose tracks do not fit: the bar along its right edge and the bar along
     /// its bottom, on the surface, and how far it is scrolled from the left and from the top. The
     /// part of it that shows what it holds is <see cref="Inner"/>.
@@ -330,15 +345,16 @@ public static class UiLayout
                         }
 
                         // A grid that scrolls shows what it holds through a viewport in its top-left
-                        // corner, with a bar along each edge it overflows, and is moved under it.
-                        UiGridScrolled scrolled = grid.Scrollable
+                        // corner, with a bar along each edge it overflows, and is moved under it. At
+                        // design time no grid scrolls, as in App Designer.
+                        UiGridScrolled scrolled = grid.Scrollable && !grid.DesignTime
                             ? UiGridMath.ArrangeScrolling(
                                 grid.Rows, grid.Columns, grid.Padding, grid.RowSpacing, grid.ColumnSpacing,
                                 new Size2D(box.Width, box.Height), items)
                             : new UiGridScrolled(
                                 UiGridMath.Arrange(
                                     grid.Rows, grid.Columns, grid.Padding, grid.RowSpacing, grid.ColumnSpacing,
-                                    new Size2D(box.Width, box.Height), items),
+                                    new Size2D(box.Width, box.Height), items, grid.DesignTime),
                                 new Size2D(box.Width, box.Height), false, false);
                         UiGridArrangement arrangement = scrolled.Arrangement;
                         var viewport = new Rect2D(box.X, box.Y, scrolled.Viewport.Width, scrolled.Viewport.Height);
@@ -355,7 +371,9 @@ public static class UiLayout
                             grid.Source, new Rect2D(1, 1, box.Width, box.Height), UiUnits.Pixels, grid.Visible, UiEnable.On,
                             string.Empty, UiTitlePosition.LeftTop, UiBorderType.None, 0, grid.Background, null, null, null,
                             grid.Background, string.Empty, 12, false, false, new Thickness(0), grid.Children);
-                        Rect2D gridClip = Intersect(clip, viewport);
+                        // At design time a grid's tracks are drawn past it when they overflow, as App
+                        // Designer draws them; a running grid clips them at its viewport.
+                        Rect2D gridClip = grid.DesignTime ? clip : Intersect(clip, viewport);
                         var within = new List<UiPanelFrame>(ancestors) { drawn };
                         int gridSlot = Panels.Count;
                         Panels.Add((null!, order));
@@ -372,6 +390,9 @@ public static class UiLayout
                         {
                             AxesCells = axesCells,
                             Content = arrangement.Content,
+                            Grid = arrangement,
+                            GridOrigin = moved,
+                            GridPadding = grid.Padding,
                             VerticalBar = scrolled.Vertical
                                 ? new Rect2D(box.X + viewport.Width, box.Y, box.Width - viewport.Width, viewport.Height)
                                 : null,

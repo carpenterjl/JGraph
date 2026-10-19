@@ -23,6 +23,7 @@ public sealed class DesignInspectorView : UserControl
     private readonly List<Row> _rows = [];
     private DesignDocument? _document;
     private DesignComponent? _shown;
+    private bool _shownInGrid;
     private bool _refreshing;
     private bool _queued;
     private TextBox? _name;
@@ -77,7 +78,8 @@ public sealed class DesignInspectorView : UserControl
         Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
         {
             _queued = false;
-            if (_document?.Selection is [var one] && ReferenceEquals(one, _shown))
+            // The same component, unless it went into or out of a grid, which changes what is edited.
+            if (_document?.Selection is [var one] && ReferenceEquals(one, _shown) && one.IsInGrid == _shownInGrid)
             {
                 RefreshValues();
             }
@@ -108,6 +110,7 @@ public sealed class DesignInspectorView : UserControl
         }
 
         _shown = component;
+        _shownInGrid = component.IsInGrid;
         var header = new DockPanel { Margin = new Thickness(0, 0, 0, 6) };
         _name = new TextBox { Text = component.CodeName, FontWeight = FontWeights.SemiBold, ToolTip = "The component's code name: app." + component.CodeName };
         _nameShown = component.CodeName;
@@ -135,8 +138,12 @@ public sealed class DesignInspectorView : UserControl
             var expander = new Expander { Header = group.Title, IsExpanded = group.Expanded, Content = grid };
             System.Windows.Automation.AutomationProperties.SetName(expander, group.Title);
             var groupRows = new List<Row>();
-            foreach (DesignEditor editor in group.Rows.SelectMany(static r => r.Editors))
+            foreach (DesignEditor shown in group.Rows.SelectMany(static r => r.Editors))
             {
+                // A grid's child shows its position and does not edit it (DS4).
+                DesignEditor editor = _document?.IsEditable(component, shown.Name) == false
+                    ? shown with { Kind = DesignEditorKind.ReadOnly }
+                    : shown;
                 Row row = Build(component, editor);
                 grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 int at = grid.RowDefinitions.Count - 1;
@@ -267,6 +274,23 @@ public sealed class DesignInspectorView : UserControl
                 string current = string.Empty;
                 Commits(box, () => current, text =>
                 {
+                    if (!plain && component.Type == DesignDocument.GridType && editor.Name is "RowHeight" or "ColumnWidth"
+                        && _document is { } document)
+                    {
+                        // A grid's tracks take App Designer's comma form too, and keep room for its components.
+                        (DesignValue? tracks, string? refused) = document.ParseTracks(
+                            component, editor.Name == "RowHeight" ? GridAxis.Row : GridAxis.Column, text);
+                        if (tracks is null)
+                        {
+                            Problem?.Invoke(this, $"{component.CodeName}.{editor.Name}: {refused}");
+                            RefreshValues();
+                            return;
+                        }
+
+                        Set(editor.Name, tracks);
+                        return;
+                    }
+
                     DesignValue value = plain ? new CharValue(text) : DesignValueText.Parse(text);
                     Set(editor.Name, value);
                 });

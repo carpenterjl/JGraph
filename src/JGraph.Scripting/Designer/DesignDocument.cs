@@ -19,7 +19,7 @@ namespace JGraph.Scripting.Designer;
 /// </para>
 /// <para>
 /// A gesture - a drag, a resize, a run of arrow keys - shows on the runtime's components as it goes
-/// (<see cref="Preview"/>) and becomes one edit when it ends (<see cref="EndGesture"/>).
+/// (<see cref="Preview"/>) and becomes one edit when it ends (<see cref="EndGesture(bool, DesignPlacement?)"/>).
 /// </para>
 /// </remarks>
 public sealed partial class DesignDocument : IDisposable
@@ -133,14 +133,28 @@ public sealed partial class DesignDocument : IDisposable
         IReadOnlyList<DesignBox> boxes = Boxes;
         for (int i = boxes.Count - 1; i >= 0; i--)
         {
+            // A grid's child is hit anywhere in its cells, App Designer's wrapper of it (DS4).
             DesignBox box = boxes[i];
-            if (box.Shown && box.Box.Contains(point) && box.Clip.Contains(point))
+            Rect2D hit = box.Component.IsInGrid ? CellBoxOf(box.Component) ?? box.Box : box.Box;
+            if (box.Shown && hit.Contains(point) && box.Clip.Contains(point))
             {
                 return box.Component;
             }
         }
 
         return Design.Figure;
+    }
+
+    /// <summary>
+    /// Shows <paramref name="tab"/> in its group on the canvas, as a click on its heading does; the
+    /// boxes - and the cells of grids in the tabs - are worked out again.
+    /// </summary>
+    public void ShowTab(DesignComponent tab)
+    {
+        ArgumentNullException.ThrowIfNull(tab);
+        Runtime.ShowTab(tab);
+        _boxes = null;
+        OnChanged();
     }
 
     /// <summary>Selects <paramref name="components"/>; an empty selection selects the figure, as App Designer's does.</summary>
@@ -157,7 +171,8 @@ public sealed partial class DesignDocument : IDisposable
 
     /// <summary>
     /// Whether <paramref name="component"/> is placed by its <c>Position</c>, so that the canvas can
-    /// move and resize it: not the figure, a tab, or a grid's child (grids are a later stage's).
+    /// move and resize it by pixels: not the figure, a tab, a grid, or a grid's child, which a drag
+    /// moves to other cells and a handle spans over more (DS4, <see cref="CanDrag"/>).
     /// </summary>
     public bool IsMovable(DesignComponent component) =>
         component.Parent is not null && !component.IsInGrid && component.Type != "matlab.ui.container.Tab"
@@ -237,7 +252,7 @@ public sealed partial class DesignDocument : IDisposable
 
     /// <summary>
     /// Starts a gesture on <paramref name="components"/>: their boxes as they stand are what
-    /// <see cref="Preview"/> moves them from, and what <see cref="EndGesture"/> puts back when the
+    /// <see cref="Preview"/> moves them from, and what <see cref="EndGesture(bool, DesignPlacement?)"/> puts back when the
     /// gesture is cancelled.
     /// </summary>
     public void BeginGesture(IReadOnlyList<DesignComponent> components)
@@ -247,9 +262,10 @@ public sealed partial class DesignDocument : IDisposable
         var start = new Dictionary<DesignComponent, Rect2D>(ReferenceEqualityComparer.Instance);
         foreach (DesignComponent component in components)
         {
-            if (IsMovable(component) && BoxOf(component) is { } box)
+            if (CanDrag(component) && BoxOf(component) is { } box)
             {
-                start[component] = box.Box;
+                // A grid's child moves by its cells' box, App Designer's wrapper of it (DS4).
+                start[component] = CellBoxOf(component) ?? box.Box;
             }
         }
 
@@ -261,8 +277,18 @@ public sealed partial class DesignDocument : IDisposable
         _gesture?.Start ?? (IReadOnlyDictionary<DesignComponent, Rect2D>)new Dictionary<DesignComponent, Rect2D>();
 
     /// <summary>
+    /// The boxes of the gesture's grid children where the drag has them (DS4): a grid places its
+    /// children by their cells, so they stay where they are while the canvas draws these.
+    /// </summary>
+    public IReadOnlyDictionary<DesignComponent, Rect2D> GestureGhosts =>
+        new Dictionary<DesignComponent, Rect2D>(
+            _gesture is { } gesture ? gesture.Last.Where(p => IsGridChild(p.Key)) : [],
+            ReferenceEqualityComparer.Instance);
+
+    /// <summary>
     /// Shows the gesture's components at <paramref name="boxes"/> (on the surface), on the runtime's
-    /// components only: nothing is in the design until the gesture ends.
+    /// components only: nothing is in the design until the gesture ends. A grid's child is not moved
+    /// but drawn where it would be (<see cref="GestureGhosts"/>).
     /// </summary>
     public void Preview(IReadOnlyDictionary<DesignComponent, Rect2D> boxes)
     {
@@ -276,8 +302,12 @@ public sealed partial class DesignDocument : IDisposable
         {
             if (_gesture.Start.ContainsKey(component) && component.Parent is { } parent)
             {
-                Rect2D position = Runtime.ToPosition(parent, box);
-                Runtime.Set(component, "Position", Row(position));
+                if (!IsGridChild(component))
+                {
+                    Rect2D position = Runtime.ToPosition(parent, box);
+                    Runtime.Set(component, "Position", Row(position));
+                }
+
                 _gesture.Last[component] = box;
             }
         }
@@ -290,7 +320,17 @@ public sealed partial class DesignDocument : IDisposable
     /// Ends the gesture. Committed, its components' last boxes become one edit - each moved into
     /// <paramref name="parent"/> first when one is given; cancelled, they go back to where they were.
     /// </summary>
-    public void EndGesture(bool commit, DesignComponent? parent = null)
+    public void EndGesture(bool commit, DesignComponent? parent = null) =>
+        EndGesture(commit, parent is null ? null : new DesignPlacement(parent, CanDrop: true));
+
+    /// <summary>
+    /// Ends the gesture with what it carries dropped at <paramref name="placement"/> (DS4). Into a
+    /// grid, each component takes the cells the placement gives it - and nothing changes when any of
+    /// them is in its cells already, as App Designer's move does nothing then; out of a grid, each is
+    /// placed where it was dropped at the size it had; a placement that refuses the drop changes
+    /// nothing. Cancelled, everything goes back to where it was.
+    /// </summary>
+    public void EndGesture(bool commit, DesignPlacement? placement)
     {
         if (_gesture is not { } gesture)
         {
@@ -298,20 +338,78 @@ public sealed partial class DesignDocument : IDisposable
         }
 
         _gesture = null;
-        var edits = new List<Edit>();
+
+        // Put back first, so that an edit begins from where each component stood.
+        var startPositions = new Dictionary<DesignComponent, Rect2D>(ReferenceEqualityComparer.Instance);
         foreach ((DesignComponent component, Rect2D start) in gesture.Start)
         {
-            DesignComponent from = component.Parent!;
-            Rect2D startPosition = Runtime.ToPosition(from, start);
+            if (!IsGridChild(component))
+            {
+                Rect2D startPosition = Runtime.ToPosition(component.Parent!, start);
+                startPositions[component] = startPosition;
+                Runtime.Set(component, "Position", Row(startPosition));
+            }
+        }
 
-            // Put back first, so that an edit begins from where the component stood.
-            Runtime.Set(component, "Position", Row(startPosition));
-            if (!commit || !gesture.Last.TryGetValue(component, out Rect2D box))
+        List<Edit> edits = commit && placement is not { CanDrop: false } ? GestureEdits(gesture, placement, startPositions) : [];
+        if (edits.Count > 0)
+        {
+            Do([.. edits]);
+        }
+        else
+        {
+            _boxes = null;
+            OnChanged();
+        }
+    }
+
+    private List<Edit> GestureEdits(Gesture gesture, DesignPlacement? placement, Dictionary<DesignComponent, Rect2D> startPositions)
+    {
+        var edits = new List<Edit>();
+        DesignComponent[] moving = [.. gesture.Start.Keys];
+        if (placement is { Container: { } grid, Spans: { } spans } && IsGrid(grid) && spans.Count == moving.Length)
+        {
+            // App Designer's GridLayoutCommandCreator: no move at all when one keeps its cells in the same grid.
+            for (int i = 0; i < moving.Length; i++)
+            {
+                if (ReferenceEquals(moving[i].Parent, grid) && SpanOf(moving[i]) == spans[i])
+                {
+                    return [];
+                }
+            }
+
+            for (int i = 0; i < moving.Length; i++)
+            {
+                edits.AddRange(IntoGrid(moving[i], grid, spans[i]));
+            }
+
+            return edits;
+        }
+
+        DesignComponent? target = placement?.Container;
+        foreach (DesignComponent component in moving)
+        {
+            DesignComponent from = component.Parent!;
+            if (!gesture.Last.TryGetValue(component, out Rect2D box))
             {
                 continue;
             }
 
-            DesignComponent into = parent is not null && !ReferenceEquals(parent, from) && CanHold(parent, component) ? parent : from;
+            DesignComponent into = target is not null && !ReferenceEquals(target, from) && !IsGrid(target) && CanHold(target, component) ? target : from;
+            if (IsGridChild(component))
+            {
+                if (!ReferenceEquals(into, from))
+                {
+                    // Placed where its drawn self was dragged - a slider or gauge is drawn smaller than its cells.
+                    Rect2D start = gesture.Start[component];
+                    Rect2D drawn = BoxOf(component)?.Box ?? start;
+                    edits.AddRange(OutOfGrid(component, into, new Rect2D(drawn.X + box.X - start.X, drawn.Y + box.Y - start.Y, drawn.Width, drawn.Height)));
+                }
+
+                continue;
+            }
+
+            Rect2D startPosition = startPositions[component];
             if (!ReferenceEquals(into, from))
             {
                 edits.Add(new ParentEdit(component, from, IndexIn(from, component), into));
@@ -324,15 +422,7 @@ public sealed partial class DesignDocument : IDisposable
             }
         }
 
-        if (edits.Count > 0)
-        {
-            Do([.. edits]);
-        }
-        else
-        {
-            _boxes = null;
-            OnChanged();
-        }
+        return edits;
     }
 
     /// <summary>
@@ -509,6 +599,26 @@ public sealed partial class DesignDocument : IDisposable
         ArgumentNullException.ThrowIfNull(entry);
         ArgumentNullException.ThrowIfNull(target);
         EndGesture(commit: false);
+        if (entry.Type == GridType)
+        {
+            // On a grid, a grid in the cells its avatar covers (GridifyCommand._addGridIntoGrid, DS4).
+            DesignComponent? grid = IsGrid(target) ? target : IsGridChild(target) ? target.Parent : null;
+            if (grid is not null && CellsOf(grid) is { } cells
+                && DesignGridRules.SpanOfBounds(new Rect2D(topLeft.X, topLeft.Y, GridAvatar.Width, GridAvatar.Height), cells) is { } span)
+            {
+                return [AddGridInGrid(grid, span)];
+            }
+
+            // Elsewhere it lays out the container it is added to (GridifyCommand).
+            DesignComponent container = target;
+            while (!CanGridify(container) && container.Parent is { } up)
+            {
+                container = up;
+            }
+
+            return CanGridify(container) ? [Gridify(container)] : [];
+        }
+
         DesignComponent parent = ContainerFor(entry, target);
         IReadOnlyList<(DesignComponent Component, int? Index)> made = Palette.Make(entry, Design, parent, new Point2D(0, 0), size);
         Place(parent, made.Select(static m => m.Component).ToArray(), topLeft);
@@ -568,11 +678,21 @@ public sealed partial class DesignDocument : IDisposable
     {
         ArgumentNullException.ThrowIfNull(components);
         EndGesture(commit: false);
+        List<Edit> edits = DeleteEdits(components);
+        if (edits.Count > 0)
+        {
+            Do([.. edits]);
+        }
+    }
+
+    /// <summary>The edits that delete <paramref name="components"/>: references to them taken off, then each deleted.</summary>
+    private List<Edit> DeleteEdits(IReadOnlyList<DesignComponent> components)
+    {
         DesignComponent[] deletable = components.Where(CanDelete).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
         DesignComponent[] gone = deletable.Where(c => !deletable.Any(other => !ReferenceEquals(other, c) && IsWithin(c, other))).ToArray();
         if (gone.Length == 0)
         {
-            return;
+            return [];
         }
 
         var names = new HashSet<string>(gone.SelectMany(static g => Walk(g)).Select(static c => c.CodeName), StringComparer.Ordinal);
@@ -601,7 +721,7 @@ public sealed partial class DesignDocument : IDisposable
             edits.Add(new DeleteEdit(component, parent, IndexIn(parent, component)));
         }
 
-        Do([.. edits]);
+        return edits;
     }
 
     private static IEnumerable<DesignComponent> Walk(DesignComponent component)
@@ -668,7 +788,11 @@ public sealed partial class DesignDocument : IDisposable
         }
 
         DesignValue? held = component.Get(name);
-        DesignValue? before = Runtime.Read(component, name, held ?? defaultValue ?? toSet) ?? held ?? defaultValue;
+
+        // A grid's tracks read back with the implicit '1x' rows its children reach; undo sets the ones the design holds (DS4).
+        DesignValue? before = component.Type == GridType && name is "RowHeight" or "ColumnWidth"
+            ? held ?? defaultValue
+            : Runtime.Read(component, name, held ?? defaultValue ?? toSet) ?? held ?? defaultValue;
         if (before is OpaqueValue)
         {
             before = null; // a recorded default the designer cannot write back (an object): undo leaves the component
@@ -1003,11 +1127,18 @@ public sealed partial class DesignDocument : IDisposable
         }
     }
 
-    /// <summary>A component moved into another container: last among its new siblings, as the last made.</summary>
+    /// <summary>
+    /// A component moved into another container: last among its new siblings, as the last made. Undone,
+    /// it goes back where it was when it moved - recorded then, since a step moving several children of
+    /// one container undoes them last to first.
+    /// </summary>
     private sealed record ParentEdit(DesignComponent Component, DesignComponent From, int Index, DesignComponent To) : Edit(Component)
     {
+        private int _at = -1;
+
         public override void Do(DesignDocument document)
         {
+            _at = IndexIn(From, Component);
             document.Runtime.SetParent(Component, To);
             From.Remove(Component);
             To.Add(Component);
@@ -1017,7 +1148,7 @@ public sealed partial class DesignDocument : IDisposable
         {
             document.Runtime.SetParent(Component, From);
             To.Remove(Component);
-            From.Insert(System.Math.Min(Index, From.Children.Count), Component);
+            From.Insert(System.Math.Min(_at >= 0 ? _at : Index, From.Children.Count), Component);
         }
     }
 
@@ -1078,19 +1209,34 @@ public sealed partial class DesignDocument : IDisposable
         }
     }
 
-    /// <summary>A component deleted from its container, with everything inside it (DS3).</summary>
+    /// <summary>A component deleted from its container, with everything inside it (DS3); undone, it goes back where it was when it was deleted.</summary>
     private sealed record DeleteEdit(DesignComponent Component, DesignComponent Parent, int Index) : Edit(Component)
     {
+        private int _at = -1;
+
         public override void Do(DesignDocument document)
         {
+            _at = IndexIn(Parent, Component);
             document.Runtime.Remove(Component);
             Parent.Remove(Component);
         }
 
         public override void Undo(DesignDocument document)
         {
-            Parent.Insert(System.Math.Min(Index, Parent.Children.Count), Component);
+            Parent.Insert(System.Math.Min(_at >= 0 ? _at : Index, Parent.Children.Count), Component);
             document.Runtime.MakeNew(Component);
+        }
+    }
+
+    /// <summary>Nothing changed, but <paramref name="Component"/> selected once the step is done or undone (DS4).</summary>
+    private sealed record SelectEdit(DesignComponent Component) : Edit(Component)
+    {
+        public override void Do(DesignDocument document)
+        {
+        }
+
+        public override void Undo(DesignDocument document)
+        {
         }
     }
 

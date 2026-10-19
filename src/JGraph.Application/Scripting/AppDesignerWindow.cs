@@ -208,6 +208,13 @@ internal sealed class AppDesignerWindow : Window
                 _palette.Chosen = null;
             }
         };
+        canvas.Problem += (_, problem) =>
+        {
+            if (ReferenceEquals(Active, app))
+            {
+                _status.Text = problem;
+            }
+        };
         item.Header = app.Header;
         _tabs.Items.Add(item);
         _tabs.SelectedItem = item;

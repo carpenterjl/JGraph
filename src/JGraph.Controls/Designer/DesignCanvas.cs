@@ -16,7 +16,9 @@ namespace JGraph.Controls.Designer;
 /// the container a drop goes into, the grid, and a hidden component faded). Every edit is the
 /// <see cref="Document"/>'s, and undoes there. DS3: a library entry chosen for click and draw
 /// (<see cref="DrawEntry"/>) is placed or drawn by the next press, one dragged from the library is
-/// added where it is dropped, and Delete deletes the selection.
+/// added where it is dropped, and Delete deletes the selection. DS4: a grid's cells as App Designer
+/// shows them, the cells a drop goes into, a grid child's span being resized, the configure button,
+/// a grid being configured with its bands and popup, and the context menu.
 /// </summary>
 public sealed class DesignCanvas : UserControl
 {
@@ -28,11 +30,30 @@ public sealed class DesignCanvas : UserControl
     private static readonly Brush GridBrush = Frozen(new SolidColorBrush(Color.FromArgb(0x40, 0x80, 0x80, 0x80)));
     private static readonly Brush BandBrush = Frozen(new SolidColorBrush(Color.FromArgb(0x20, 0x00, 0x76, 0xA8)));
 
+    // App Designer's grid look (uigridlayout.css, light | dark theme tokens).
+    private static readonly Brush CellLight = Frozen(new SolidColorBrush(Color.FromRgb(0xBF, 0xBF, 0xBF)));
+    private static readonly Brush CellDark = Frozen(new SolidColorBrush(Color.FromRgb(0x61, 0x61, 0x61)));
+    private static readonly Brush DropLight = Frozen(new SolidColorBrush(Color.FromArgb(0x99, 0xB4, 0xDE, 0xFF)));
+    private static readonly Brush DropDark = Frozen(new SolidColorBrush(Color.FromArgb(0x99, 0x0B, 0x2F, 0x5C)));
+    private static readonly Brush EditVeil = Frozen(new SolidColorBrush(Color.FromArgb(0x40, 0xE6, 0xE6, 0xE6)));
+    private static readonly Brush BandFill = Frozen(new SolidColorBrush(Color.FromArgb(0x59, 0xFF, 0xFF, 0xFF)));
+    private static readonly Brush BandHovered = Frozen(new SolidColorBrush(Color.FromArgb(0x59, 0x88, 0x88, 0x88)));
+    private static readonly Brush BandSelected = Frozen(new SolidColorBrush(Color.FromArgb(0x59, 0x54, 0xB6, 0xFF)));
+    private static readonly Brush BandSelectedEdge = Frozen(new SolidColorBrush(Color.FromRgb(0x10, 0x42, 0x80)));
+    private static readonly Brush TabFill = Frozen(new SolidColorBrush(Color.FromRgb(0xF5, 0xF5, 0xF5)));
+    private static readonly Brush FrameLine = Frozen(new SolidColorBrush(Color.FromRgb(0x80, 0x80, 0x80)));
+    private static readonly Brush DeleteHint = Frozen(new SolidColorBrush(Color.FromArgb(0x59, 0xFF, 0x45, 0x3A)));
+    private static readonly Brush InsertHint = Frozen(new SolidColorBrush(Color.FromArgb(0x59, 0x00, 0x80, 0x13)));
+    private static readonly Brush ButtonFill = Frozen(new SolidColorBrush(Color.FromRgb(0xF5, 0xF5, 0xF5)));
+    private static readonly Brush ButtonEdge = Frozen(new SolidColorBrush(Color.FromRgb(0xA6, 0xA6, 0xA6)));
+    private static readonly Brush GlyphBrush = Frozen(new SolidColorBrush(Color.FromRgb(0x40, 0x40, 0x40)));
+
     private readonly Grid _outer;
     private readonly Grid _surface;
     private readonly FigureControl _figure;
     private readonly UiComponentLayer _layer;
     private readonly Overlay _overlay;
+    private readonly DesignGridConfigPopup _popup;
 
     private DesignDocument? _document;
     private DesignGestures? _gestures;
@@ -57,6 +78,21 @@ public sealed class DesignCanvas : UserControl
         _surface.Children.Add(_figure);
         _surface.Children.Add(_layer);
         _overlay = new Overlay(this) { AllowDrop = true };
+        _popup = new DesignGridConfigPopup(_overlay);
+        _popup.Problem += (_, problem) => Problem?.Invoke(this, problem);
+
+        // The popup is a window of its own: it goes with the canvas when another app's tab is shown.
+        IsVisibleChanged += (_, _) =>
+        {
+            if (IsVisible)
+            {
+                ShowPopup();
+            }
+            else
+            {
+                _popup.Hide();
+            }
+        };
         _outer = new Grid { HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
         _outer.Children.Add(_surface);
         _outer.Children.Add(_overlay);
@@ -76,6 +112,9 @@ public sealed class DesignCanvas : UserControl
 
     /// <summary>Raised when click and draw ended - a component placed, or Escape - so the library lets its entry go.</summary>
     public event EventHandler? DrawEnded;
+
+    /// <summary>Raised with what a grid's configuring refused (a weight past 100, a size that is no number).</summary>
+    public event EventHandler<string>? Problem;
 
     /// <summary>The library entry the next press places or draws (App Designer's click and draw); null when none.</summary>
     public DesignPaletteEntry? DrawEntry
@@ -107,9 +146,12 @@ public sealed class DesignCanvas : UserControl
             if (_document is not null)
             {
                 _gestures?.Cancel();
+                _gestures?.EndConfigure();
                 _document.Changed -= OnChanged;
                 _gestures!.Changed -= OnChanged;
             }
+
+            _popup.Hide();
 
             _document = value;
             _gestures = null;
@@ -203,11 +245,28 @@ public sealed class DesignCanvas : UserControl
 
             _drawing = _gestures!.DrawEntry is not null;
             _overlay.InvalidateVisual();
+            ShowPopup();
             DesignChanged?.Invoke(this, EventArgs.Empty);
             return;
         }
 
+        // An edit from anywhere - undo, the inspector, the menu - shows in the popup.
+        _gestures?.Configuring?.Refresh();
         Refresh();
+        ShowPopup();
+    }
+
+    /// <summary>The configuring popup, shown for a grid's picked row or column, at the pick, while the canvas is.</summary>
+    private void ShowPopup()
+    {
+        if (IsVisible)
+        {
+            _popup.Show(_gestures, Gutter, Gutter);
+        }
+        else
+        {
+            _popup.Hide();
+        }
     }
 
     /// <summary>Draws the runtime's components as they stand, and the canvas's marks over them.</summary>
@@ -253,10 +312,92 @@ public sealed class DesignCanvas : UserControl
             MouseButton.Right => DesignButton.Right,
             _ => DesignButton.Middle,
         };
-        if (_gestures?.Press(OnSurface(e), button, Modifiers()) == true)
+        if (_gestures is not { } gestures)
+        {
+            return;
+        }
+
+        Point2D at = OnSurface(e);
+
+        // A double click on a selected grid configures it (DS4).
+        if (button == DesignButton.Left && e.ClickCount == 2 && gestures.DoubleClick(at))
+        {
+            return;
+        }
+
+        if (gestures.Press(at, button, Modifiers()))
         {
             _overlay.CaptureMouse();
         }
+        else if (button == DesignButton.Right)
+        {
+            ShowMenu(gestures, at);
+        }
+    }
+
+    /// <summary>
+    /// The context menu for a right click at <paramref name="at"/> (DS4): each item does what
+    /// <see cref="DesignGestures.MenuAt"/> says, and shows the row or column it would add or delete
+    /// while it is pointed at.
+    /// </summary>
+    private void ShowMenu(DesignGestures gestures, Point2D at)
+    {
+        IReadOnlyList<DesignMenuItem> items = gestures.MenuAt(at);
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        var menu = new ContextMenu { PlacementTarget = _overlay };
+        foreach (DesignMenuItem item in items)
+        {
+            menu.Items.Add(MenuEntry(gestures, item));
+        }
+
+        menu.Closed += (_, _) => gestures.ShowHint(null);
+        menu.IsOpen = true;
+    }
+
+    private object MenuEntry(DesignGestures gestures, DesignMenuItem item)
+    {
+        if (item.IsSeparator)
+        {
+            return new Separator();
+        }
+
+        var entry = new MenuItem { Header = item.Label, IsEnabled = item.Enabled };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(entry, "Menu." + item.Label.Replace(" ", string.Empty, StringComparison.Ordinal));
+        if (item.Items is { } children)
+        {
+            foreach (DesignMenuItem child in children)
+            {
+                entry.Items.Add(MenuEntry(gestures, child));
+            }
+        }
+        else if (item.Run is { } run)
+        {
+            entry.Click += (_, _) =>
+            {
+                gestures.ShowHint(null);
+                try
+                {
+                    run();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    // What App Designer's own code would fail on (a gridify it cannot work out) is said, not thrown.
+                    Problem?.Invoke(this, ex.Message);
+                }
+            };
+        }
+
+        if (item.Hint is { } hint)
+        {
+            entry.MouseEnter += (_, _) => gestures.ShowHint(hint);
+            entry.MouseLeave += (_, _) => gestures.ShowHint(null);
+        }
+
+        return entry;
     }
 
     private void OnMoved(MouseEventArgs e)
@@ -272,6 +413,8 @@ public sealed class DesignCanvas : UserControl
             gestures.Drag(at, Modifiers());
             return;
         }
+
+        gestures.Configuring?.Hover(at);
 
         _overlay.Cursor = gestures.CursorAt(at) switch
         {
@@ -341,8 +484,19 @@ public sealed class DesignCanvas : UserControl
     private void DraggedOver(DragEventArgs e)
     {
         e.Effects = e.Data.GetDataPresent(DesignPaletteView.EntryFormat) && _gestures is not null ? DragDropEffects.Copy : DragDropEffects.None;
+        if (_gestures is { } gestures && _document is { } document
+            && e.Data.GetData(DesignPaletteView.EntryFormat) is string name && document.Palette.Find(name) is { } entry)
+        {
+            // Where it would drop, and every grid's cells, as App Designer's drop hints (DS4).
+            Point at = e.GetPosition(_overlay);
+            gestures.DragOver(entry, new Point2D(at.X - Gutter, at.Y - Gutter));
+        }
+
         e.Handled = true;
     }
+
+    /// <summary>A library drag left the canvas.</summary>
+    private void DragLeft() => _gestures?.DragLeave();
 
     /// <summary>A library entry dropped is added where it landed.</summary>
     private void Dropped(DragEventArgs e)
@@ -413,6 +567,8 @@ public sealed class DesignCanvas : UserControl
             dc.DrawRectangle(null, pen, Wpf(document.Runtime.InnerOnSurface(target)));
         }
 
+        DrawGrids(dc, document, gestures, outline, dashed);
+
         foreach (DesignComponent selected in document.Selection)
         {
             if (selected.Parent is null)
@@ -421,7 +577,8 @@ public sealed class DesignCanvas : UserControl
             }
             else if (document.BoxOf(selected) is { Shown: true } box)
             {
-                dc.DrawRectangle(null, outline, Inset(Wpf(box.Box)));
+                // A grid's child is outlined on its cells (DS4).
+                dc.DrawRectangle(null, outline, Inset(Wpf(document.CellBoxOf(selected) ?? box.Box)));
             }
         }
 
@@ -463,6 +620,158 @@ public sealed class DesignCanvas : UserControl
         }
 
         dc.Pop();
+    }
+
+    /// <summary>
+    /// The grids' marks (DS4, App Designer's design-time grid): each grid's cells dashed as its mode
+    /// says - every grid's during a drag - the cells a drop or a drawing would take filled, a grid
+    /// child's span being resized, the configure buttons, and a grid being configured: veiled, its
+    /// frame dashed past its corners, its bands, and the row or column a menu item or button would
+    /// add or delete.
+    /// </summary>
+    private void DrawGrids(DrawingContext dc, DesignDocument document, DesignGestures gestures, Pen outline, Pen dashed)
+    {
+        bool dark = TryFindResource(ThemeKeys.ThemeIsDark) is true;
+        var cellPen = new Pen(dark ? CellDark : CellLight, 1) { DashStyle = DashStyles.Dash };
+        cellPen.Freeze();
+        Brush drop = dark ? DropDark : DropLight;
+        IReadOnlyDictionary<DesignComponent, DesignGridMode> modes = gestures.GridModes();
+        foreach (DesignBox box in document.Boxes)
+        {
+            DesignComponent grid = box.Component;
+            if (!box.Shown || !document.IsGrid(grid) || document.CellsOf(grid) is not { } cells)
+            {
+                continue;
+            }
+
+            DesignGridMode mode = modes.TryGetValue(grid, out DesignGridMode m) ? m : DesignGridMode.Quiet;
+            if (mode == DesignGridMode.Edit)
+            {
+                continue;
+            }
+
+            if (mode != DesignGridMode.Quiet || gestures.ShowsDropHints)
+            {
+                dc.PushClip(new RectangleGeometry(Wpf(box.Clip)));
+                for (int r = 1; r <= cells.Rows; r++)
+                {
+                    for (int c = 1; c <= cells.Columns; c++)
+                    {
+                        dc.DrawRectangle(null, cellPen, Inset(Wpf(cells.Cell(r, c))));
+                    }
+                }
+
+                dc.Pop();
+            }
+
+            if (mode == DesignGridMode.Simple && gestures.ConfigureButton(grid) is { } button)
+            {
+                DrawButton(dc, button, exit: false);
+            }
+        }
+
+        // The cells a drop or a drawing would take.
+        if (gestures.Placement is { CanDrop: true, Container: { } into, Spans: { } spans } && document.CellsOf(into) is { } target)
+        {
+            foreach (GridSpan span in spans)
+            {
+                dc.DrawRectangle(drop, null, Wpf(target.SpanRect(span)));
+            }
+        }
+
+        if (gestures.DrawnCells is { } drawn && document.CellsOf(drawn.Grid) is { } drawnIn)
+        {
+            foreach (GridSpan span in drawn.Spans)
+            {
+                dc.DrawRectangle(drop, outline, Inset(Wpf(drawnIn.SpanRect(span))));
+            }
+        }
+
+        // A grid child being moved shows where it is dragged; one being spanned, its dragged box.
+        foreach ((DesignComponent _, Rect2D ghost) in document.GestureGhosts)
+        {
+            dc.DrawRectangle(BandBrush, dashed, Inset(Wpf(ghost)));
+        }
+
+        if (gestures.SpanPreview is { } preview)
+        {
+            dc.DrawRectangle(BandBrush, outline, Inset(Wpf(preview.Box)));
+        }
+
+        if (gestures.Configuring is { } configure && document.BoxOf(configure.Grid) is { } configured)
+        {
+            Rect gridBox = Wpf(configured.Box);
+            dc.DrawRectangle(EditVeil, null, gridBox);
+            var frame = new Pen(FrameLine, 1) { DashStyle = DashStyles.Dash };
+            frame.Freeze();
+            double tab = DesignGridConfigure.TabWidth;
+            dc.DrawLine(frame, new Point(gridBox.Left - tab, gridBox.Top + 0.5), new Point(gridBox.Right + tab, gridBox.Top + 0.5));
+            dc.DrawLine(frame, new Point(gridBox.Left - tab, gridBox.Bottom - 0.5), new Point(gridBox.Right + tab, gridBox.Bottom - 0.5));
+            dc.DrawLine(frame, new Point(gridBox.Left + 0.5, gridBox.Top - tab), new Point(gridBox.Left + 0.5, gridBox.Bottom + tab));
+            dc.DrawLine(frame, new Point(gridBox.Right - 0.5, gridBox.Top - tab), new Point(gridBox.Right - 0.5, gridBox.Bottom + tab));
+
+            var bandEdge = new Pen(CellLight, 1);
+            bandEdge.Freeze();
+            var selectedEdge = new Pen(BandSelectedEdge, 1);
+            selectedEdge.Freeze();
+            IReadOnlyList<DesignGridBand> bands = configure.Bands();
+
+            // The kind beneath first, so that the kind on top and the picked band lie over it.
+            foreach (DesignGridBand band in bands.Where(static b => !b.Upper).Concat(bands.Where(static b => b.Upper)).OrderBy(static b => b.Selected))
+            {
+                Brush fill = band.Selected ? BandSelected : band.Hovered ? BandHovered : BandFill;
+                dc.DrawRectangle(fill, band.Selected ? selectedEdge : bandEdge, Inset(Wpf(band.Box)));
+                if (!band.Selected && !band.Hovered)
+                {
+                    // The tabs the band is picked by, outside the grid.
+                    Rect b = Wpf(band.Box);
+                    if (band.Axis == GridAxis.Row)
+                    {
+                        dc.DrawRectangle(TabFill, bandEdge, Inset(new Rect(b.Left, b.Top, tab, b.Height)));
+                        dc.DrawRectangle(TabFill, bandEdge, Inset(new Rect(b.Right - tab, b.Top, tab, b.Height)));
+                    }
+                    else
+                    {
+                        dc.DrawRectangle(TabFill, bandEdge, Inset(new Rect(b.Left, b.Top, b.Width, tab)));
+                        dc.DrawRectangle(TabFill, bandEdge, Inset(new Rect(b.Left, b.Bottom - tab, b.Width, tab)));
+                    }
+                }
+            }
+
+            if (gestures.ConfigureButton(configure.Grid) is { } exit)
+            {
+                DrawButton(dc, exit, exit: true);
+            }
+        }
+
+        if (gestures.Hint is { } hint && DesignGridConfigure.HintBox(document, hint) is { } hinted)
+        {
+            dc.DrawRectangle(hint.Insert ? InsertHint : DeleteHint, null, Wpf(hinted));
+        }
+    }
+
+    /// <summary>A grid's configure button - a grid with a pencil - or, configuring, the button that ends it - a cross.</summary>
+    private static void DrawButton(DrawingContext dc, Rect2D at, bool exit)
+    {
+        var edge = new Pen(ButtonEdge, 1);
+        edge.Freeze();
+        var glyph = new Pen(GlyphBrush, 1);
+        glyph.Freeze();
+        Rect box = Inset(Wpf(at));
+        dc.DrawRoundedRectangle(ButtonFill, edge, box, 5, 5);
+        double x = box.X + 5;
+        double y = box.Y + 5;
+        double s = box.Width - 10;
+        if (exit)
+        {
+            dc.DrawLine(glyph, new Point(x + 1, y + 1), new Point(x + s - 1, y + s - 1));
+            dc.DrawLine(glyph, new Point(x + s - 1, y + 1), new Point(x + 1, y + s - 1));
+            return;
+        }
+
+        dc.DrawRectangle(null, glyph, new Rect(x, y, s, s));
+        dc.DrawLine(glyph, new Point(x + (s / 2), y), new Point(x + (s / 2), y + s));
+        dc.DrawLine(glyph, new Point(x, y + (s / 2)), new Point(x + s, y + (s / 2)));
     }
 
     private static Rect Wpf(Rect2D r) => new(r.X, r.Y, System.Math.Max(0, r.Width), System.Math.Max(0, r.Height));
@@ -511,6 +820,12 @@ public sealed class DesignCanvas : UserControl
         {
             base.OnDrop(e);
             owner.Dropped(e);
+        }
+
+        protected override void OnDragLeave(DragEventArgs e)
+        {
+            base.OnDragLeave(e);
+            owner.DragLeft();
         }
 
         protected override void OnLostMouseCapture(MouseEventArgs e)

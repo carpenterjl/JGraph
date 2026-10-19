@@ -40,10 +40,7 @@ public sealed record DesignPaletteEntry(string Name, string Category, string Typ
     /// <summary>Whether it goes in the figure only, whatever the drop is over (the figure tools).</summary>
     public bool FigureOnly { get; init; }
 
-    /// <summary>
-    /// Why the designer does not make it yet; null when it does. A grid layout lays out what it holds
-    /// by rows and columns, which is a later stage's (DS4).
-    /// </summary>
+    /// <summary>Why the designer does not make it yet; null when it does (every entry is made since DS4).</summary>
     public string? NotYet { get; init; }
 }
 
@@ -139,7 +136,7 @@ public sealed class DesignPalette
             new("Toggle Button Group", "Common", "matlab.ui.container.ButtonGroup") { ChildType = "matlab.ui.control.ToggleButton", ChildCount = 3 },
             new("Tree", "Common", "matlab.ui.container.Tree") { ChildType = "matlab.ui.container.TreeNode", ChildCount = 4 },
             new("Tree (Check Box)", "Common", "matlab.ui.container.CheckBoxTree") { ChildType = "matlab.ui.container.TreeNode", ChildCount = 4 },
-            new("Grid Layout", "Containers", "matlab.ui.container.GridLayout") { NotYet = "Grid layouts come with the designer's grid editing (DS4)." },
+            new("Grid Layout", "Containers", "matlab.ui.container.GridLayout"),
             new("Panel", "Containers", "matlab.ui.container.Panel"),
             new("Tab Group", "Containers", "matlab.ui.container.TabGroup") { ChildType = "matlab.ui.container.Tab", ChildCount = 2 },
             new("Context Menu", "Figure Tools", "matlab.ui.container.ContextMenu") { ChildType = "matlab.ui.container.Menu", ChildCount = 2, FigureOnly = true },
@@ -231,6 +228,12 @@ public sealed class DesignPalette
         }
 
         DesignComponent made = MakeOne(entry.Type, names);
+        if (entry.Type == "matlab.ui.container.GridLayout")
+        {
+            // A grid has no position: it fills its container, or its cells in a grid (DS4).
+            return [(made, null)];
+        }
+
         if (entry.FigureOnly)
         {
             foreach (DesignComponent child in MakeChildren(entry.ChildType!, entry.ChildCount, names))

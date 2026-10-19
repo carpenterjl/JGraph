@@ -152,6 +152,15 @@ public sealed class FigureModel : GraphObject, IUiContainer
     }
 
     /// <summary>
+    /// Whether this figure is an app's design-time figure, the one the visual designer draws its
+    /// canvas with (designer plan, DS4): its grids lay out as App Designer's design time does,
+    /// with every empty <c>'fit'</c> track drawn and none scrolling (<see cref="UiGridMath.DesignTimeFit"/>).
+    /// No script sees it.
+    /// </summary>
+    [Browsable(false)]
+    public bool IsDesignTime { get; set; }
+
+    /// <summary>
     /// MATLAB's <c>Units</c> for this figure's position rectangles. The model keeps
     /// <see cref="Position"/> and <see cref="Size"/> in pixels whatever this says; the script surface
     /// converts against the screen as it reads and writes.

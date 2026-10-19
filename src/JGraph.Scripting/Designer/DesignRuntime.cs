@@ -67,6 +67,7 @@ public sealed class DesignRuntime : IDisposable
         JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, globals);
         _environment.Builtins.Seal();
         Figure = JgsBuiltins.NewUiFigureModel();
+        Figure.IsDesignTime = true;
         JgsHandleRegistry.Keep(Figure);
         _objects[design.Figure] = Figure;
         _components[Figure] = design.Figure;
@@ -398,9 +399,11 @@ public sealed class DesignRuntime : IDisposable
             else if (target is UiContainerModel container && layout.Find(container) is { } panel)
             {
                 boxes.Add(new DesignBox(component, panel.Box, panel.Clip, shown && panel.Visible, hidden));
+                // A grid's children are drawn past it at design time when its tracks overflow (UiLayout).
+                Rect2D within = panel.Grid is not null ? panel.Clip : Intersect(panel.Clip, panel.Viewport ?? panel.Inner);
                 foreach (DesignComponent child in PaintOrder(component))
                 {
-                    Place(child, Intersect(panel.Clip, panel.Viewport ?? panel.Inner), panel, shown && panel.Visible);
+                    Place(child, within, panel, shown && panel.Visible);
                 }
             }
             else if (target is AxesModel axes)
@@ -433,6 +436,44 @@ public sealed class DesignRuntime : IDisposable
         return layout.FigureScroll is { } scroll
             ? new Rect2D(-scroll.ScrollX, -scroll.ScrollY, scroll.Content.Width, scroll.Content.Height)
             : new Rect2D(0, 0, Figure.Size.Width, Figure.Size.Height);
+    }
+
+    /// <summary>
+    /// The cells of <paramref name="grid"/> as the canvas draws them (designer plan DS4): its box, and
+    /// each row's and column's place on the surface, as the shared layout laid them out at design
+    /// time; null for a grid not laid out.
+    /// </summary>
+    public GridCells? CellsOf(DesignComponent grid)
+    {
+        ArgumentNullException.ThrowIfNull(grid);
+        if (ObjectOf(grid) is not UiGridLayoutModel model)
+        {
+            return null;
+        }
+
+        using Scope scope = Enter();
+        if (Layout().Find(model) is not { Grid: { } arrangement } placement)
+        {
+            return null;
+        }
+
+        IReadOnlyList<double> padding = placement.GridPadding;
+        double left = padding.Count > 0 ? padding[0] : 0;
+        double top = padding.Count > 3 ? padding[3] : 0;
+        Rect2D origin = placement.GridOrigin;
+        var rows = new (double Start, double Size)[arrangement.RowHeights.Count];
+        for (int i = 0; i < rows.Length; i++)
+        {
+            rows[i] = (origin.Y + top + arrangement.RowStarts[i], arrangement.RowHeights[i]);
+        }
+
+        var columns = new (double Start, double Size)[arrangement.ColumnWidths.Count];
+        for (int i = 0; i < columns.Length; i++)
+        {
+            columns[i] = (origin.X + left + arrangement.ColumnStarts[i], arrangement.ColumnWidths[i]);
+        }
+
+        return new GridCells(placement.Box, padding, model.RowSpacing, model.ColumnSpacing, rows, columns);
     }
 
     /// <summary>The layout of the components as they stand, worked out again after anything changed them.</summary>

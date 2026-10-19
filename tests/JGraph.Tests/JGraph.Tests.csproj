@@ -84,6 +84,17 @@
        (designer plan DS1; the probe ds1_generate records the second from the first). -->
   <ItemGroup>
     <Content Include="Scripting\Designer\DesignerSpecApp.m;Scripting\Designer\DesignerSpecApp.generated.txt" CopyToOutputDirectory="PreserveNewest" />
+    <!-- App Designer's own "Apply Grid Layout" output on 308 scenes (designer plan DS4). -->
+    <Content Include="Scripting\Designer\gridify-golden.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- An independent check: App Designer's own gridifier and growth table on new scenes and trees (designer plan DS4). -->
+    <Content Include="Scripting\Designer\gridify-verify.jsonl;Scripting\Designer\gridify-verify-growth.jsonl;Scripting\Designer\gridify-verify-numbers.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- What R2025b's App Designer gives for its grid rules (designer plan DS4): its own client
+       modules, run unaltered under node over fixed and seeded-random grids. -->
+  <ItemGroup>
+    <Content Include="Scripting\Designer\GridRulesOracle.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Designer\GridRulesVerifyOracle.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -159,7 +159,8 @@ public sealed record UiGridFrame(
     UiGridCell? Cell = null,
     Size2D Fit = default,
     double ScrollX = 0,
-    double ScrollY = 0) : IUiNodeFrame
+    double ScrollY = 0,
+    bool DesignTime = false) : IUiNodeFrame
 {
     /// <summary>A grid has no place of its own: it fills the area its parent gives it.</summary>
     public Rect2D Position => new(1, 1, 0, 0);
@@ -316,7 +317,8 @@ public sealed class UiFrame
                         cell,
                         fit,
                         grid.ScrollX,
-                        grid.ScrollY));
+                        grid.ScrollY,
+                        grid.Figure?.IsDesignTime == true));
                     break;
 
                 case UiControlModel control:

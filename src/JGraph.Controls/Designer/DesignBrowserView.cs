@@ -129,7 +129,7 @@ public sealed class DesignBrowserView : UserControl
 
         if (component.Type == "matlab.ui.container.Tab")
         {
-            document.Runtime.ShowTab(component);
+            document.ShowTab(component);
         }
 
         document.Select([component]);

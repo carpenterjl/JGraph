@@ -45,7 +45,7 @@ public class AppDesignerPaletteTests(ITestOutputHelper output)
             ["Context Menu", "Menu Bar", "Toolbar"],
             palette.Entries.Where(static e => e.Category == "Figure Tools").Select(static e => e.Name));
         Assert.All(palette.Entries, e => Assert.NotNull(palette.Catalog.ByType(e.Type)));
-        Assert.NotNull(Entry("Grid Layout").NotYet);
+        Assert.All(palette.Entries, static e => Assert.Null(e.NotYet));
     }
 
     /// <summary>
@@ -300,7 +300,7 @@ public class AppDesignerPaletteTests(ITestOutputHelper output)
     /// <summary>
     /// App Designer's click and draw: with an entry chosen, a click places it at its own size with its
     /// corner there, a drag draws its size, and either ends the mode; Escape ends it with nothing
-    /// added. A dropped entry lands where it is dropped; one the designer does not make yet is refused.
+    /// added. A dropped entry lands where it is dropped.
     /// </summary>
     [Fact]
     public void ClickAndDrawPlacesOrDrawsTheChosenEntry()
@@ -329,8 +329,6 @@ public class AppDesignerPaletteTests(ITestOutputHelper output)
         IReadOnlyList<DesignComponent> dropped = gestures.Drop(Entry("Check Box"), new Point2D(123, 87));
         Rect2D landed = document.BoxOf(Assert.Single(dropped))!.Value.Box;
         Assert.Equal((120.0, 90.0), (landed.X, landed.Y));
-        Assert.Empty(gestures.Drop(Entry("Grid Layout"), new Point2D(10, 10)));
-        Assert.NotNull(gestures.Refusal);
 
         document.Select([document.Design.Find("Panel")!]);
         Assert.True(gestures.KeyDown(DesignKey.Delete, DesignModifiers.None));
@@ -561,7 +559,8 @@ public class AppDesignerPaletteTests(ITestOutputHelper output)
                 Assert.Null(document.SetProperty(document.Design.Figure, "Position", NumericValue.Row(100, 100, 1400, 900)));
                 double x = 10;
                 double y = 10;
-                foreach (DesignPaletteEntry entry in document.Palette.Entries.Where(static e => e.NotYet is null))
+                // A Grid Layout lays out the container it is added to: it has its own app (AppDesignerGridTests).
+                foreach (DesignPaletteEntry entry in document.Palette.Entries.Where(static e => e.Type != DesignDocument.GridType))
                 {
                     IReadOnlyList<DesignComponent> added = document.Add(entry, document.Design.Figure, new Point2D(x, y));
                     made += added.Count;

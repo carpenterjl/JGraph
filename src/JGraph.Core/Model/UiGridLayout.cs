@@ -54,7 +54,17 @@ public sealed record UiGridArrangement(
     IReadOnlyList<double> RowHeights,
     IReadOnlyList<double> ColumnWidths,
     IReadOnlyList<Rect2D> Cells,
-    Size2D Content);
+    Size2D Content)
+{
+    /// <summary>
+    /// Where each row begins, down from the top of the area inside the padding; a track that takes
+    /// no room sits where the next would. The designer draws a grid's cells from these.
+    /// </summary>
+    public IReadOnlyList<double> RowStarts { get; init; } = [];
+
+    /// <summary>Where each column begins, from the left of the area inside the padding.</summary>
+    public IReadOnlyList<double> ColumnStarts { get; init; } = [];
+}
 
 /// <summary>
 /// The arithmetic of <c>uigridlayout</c> (app-building plan, U5), measured on R2025b once its layout
@@ -80,6 +90,14 @@ public static class UiGridMath
 {
     /// <summary>The thickness of the scroll bar a scrollable grid shows when its tracks do not fit.</summary>
     public const double ScrollBarSize = 17;
+
+    /// <summary>
+    /// What an empty <c>'fit'</c> track comes to at design time, where App Designer draws it so that
+    /// it can be seen and dropped into (<c>uicomponents_appdesigner_plugin/controller/GridController
+    /// ._convertFitToPixels</c>: a <c>'fit'</c> track worked out to 0 is 10 pixels). A script's grid
+    /// gives such a track no room.
+    /// </summary>
+    public const double DesignTimeFit = 10;
 
     /// <summary>
     /// Lays out a grid that scrolls: at its size when everything fits, and otherwise in what a
@@ -121,7 +139,8 @@ public static class UiGridMath
     /// <summary>
     /// Lays a grid out. <paramref name="padding"/> is MATLAB's <c>[left bottom right top]</c>. With
     /// <paramref name="size"/> null the weighted tracks take nothing, which gives the size the grid
-    /// itself asks for when it sits in a <c>'fit'</c> track of another.
+    /// itself asks for when it sits in a <c>'fit'</c> track of another. At
+    /// <paramref name="designTime"/> an empty <c>'fit'</c> track is <see cref="DesignTimeFit"/>.
     /// </summary>
     public static UiGridArrangement Arrange(
         IReadOnlyList<UiGridTrack> rows,
@@ -130,7 +149,8 @@ public static class UiGridMath
         double rowSpacing,
         double columnSpacing,
         Size2D? size,
-        IReadOnlyList<UiGridItem> items)
+        IReadOnlyList<UiGridItem> items,
+        bool designTime = false)
     {
         ArgumentNullException.ThrowIfNull(rows);
         ArgumentNullException.ThrowIfNull(columns);
@@ -143,10 +163,10 @@ public static class UiGridMath
 
         (double[] widths, bool[] columnGone) = Sizes(
             columns, items, static cell => (cell.Column, cell.ColumnEnd), static fit => fit.Width,
-            columnSpacing, size is { } s ? s.Width - left - right : null);
+            columnSpacing, size is { } s ? s.Width - left - right : null, designTime);
         (double[] heights, bool[] rowGone) = Sizes(
             rows, items, static cell => (cell.Row, cell.RowEnd), static fit => fit.Height,
-            rowSpacing, size is { } z ? z.Height - top - bottom : null);
+            rowSpacing, size is { } z ? z.Height - top - bottom : null, designTime);
 
         double[] columnStart = Starts(widths, columnGone, columnSpacing, out double contentWidth);
         double[] rowStart = Starts(heights, rowGone, rowSpacing, out double contentHeight);
@@ -164,7 +184,11 @@ public static class UiGridMath
             cells[i] = new Rect2D(left + x + 1, height - top - y - h + 1, w, h);
         }
 
-        return new UiGridArrangement(heights, widths, cells, content);
+        return new UiGridArrangement(heights, widths, cells, content)
+        {
+            RowStarts = rowStart,
+            ColumnStarts = columnStart,
+        };
     }
 
     /// <summary>The sizes of one direction's tracks, and which of them take no room at all.</summary>
@@ -174,7 +198,8 @@ public static class UiGridMath
         Func<UiGridCell, (int From, int To)> span,
         Func<Size2D, double> along,
         double spacing,
-        double? available)
+        double? available,
+        bool designTime)
     {
         // Asked what it would like to be — no size given — a weighted track is as large as what
         // is in it, as a 'fit' one is: that is how a panel holding a grid finds its own size.
@@ -231,6 +256,18 @@ public static class UiGridMath
                 if (Fits(tracks[t]))
                 {
                     sizes[t] += missing / fits;
+                }
+            }
+        }
+
+        // At design time an empty 'fit' track is drawn, so that it can be seen and dropped into.
+        if (designTime)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (Fits(tracks[i]) && sizes[i] <= 0)
+                {
+                    sizes[i] = DesignTimeFit;
                 }
             }
         }
@@ -634,9 +671,11 @@ public sealed class UiGridLayoutModel : UiContainerModel
             items[i] = new UiGridItem(CellOf(placed[i]), UiFit.Of(placed[i]));
         }
 
-        if (size is not { } given || !Scrollable)
+        // At design time a grid draws its empty 'fit' tracks and never scrolls, as App Designer's does.
+        bool designTime = Figure?.IsDesignTime == true;
+        if (size is not { } given || !Scrollable || designTime)
         {
-            return UiGridMath.Arrange(Rows, Columns, _padding, _rowSpacing, _columnSpacing, size, items);
+            return UiGridMath.Arrange(Rows, Columns, _padding, _rowSpacing, _columnSpacing, size, items, designTime);
         }
 
         // A grid that scrolls lays out in its viewport, which is the top-left of its rectangle: a
