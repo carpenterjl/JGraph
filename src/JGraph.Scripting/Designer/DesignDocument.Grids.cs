@@ -8,7 +8,14 @@ namespace JGraph.Scripting.Designer;
 /// components were given; and whether it can be dropped there. A container that refuses a drop still
 /// holds the pointer, as a grid does, so that the drop does not fall through to what is behind it.
 /// </summary>
-public sealed record DesignPlacement(DesignComponent? Container, bool CanDrop, IReadOnlyList<GridSpan>? Spans = null);
+public sealed record DesignPlacement(DesignComponent? Container, bool CanDrop, IReadOnlyList<GridSpan>? Spans = null)
+{
+    /// <summary>
+    /// Whether a move is refused because it is over the edge of a responsive app's region, where App
+    /// Designer clears its alignment hints (<c>TemplateComponentMove</c>, DS4b).
+    /// </summary>
+    public bool OverRegionEdge { get; init; }
+}
 
 /// <summary>The grids of an app open in the designer (designer plan DS4).</summary>
 public sealed partial class DesignDocument
@@ -33,11 +40,13 @@ public sealed partial class DesignDocument
     /// <summary>
     /// Whether <paramref name="component"/> is the grid a responsive (auto-reflow) app's figure holds,
     /// which App Designer never edits as a grid: it shows no cells, takes no drop and is no target.
+    /// An app whose grid is not one of App Designer's templates has none: App Designer opens it as a
+    /// standard app (<c>FigureUtil.getTemplateName</c>).
     /// </summary>
     public bool IsResponsiveGrid(DesignComponent component)
     {
         ArgumentNullException.ThrowIfNull(component);
-        return Design.IsResponsive && component.Type == GridType && ReferenceEquals(component.Parent, Design.Figure);
+        return component.Type == GridType && IsResponsive && ReferenceEquals(component, DesignResponsive.Grid(Design));
     }
 
     /// <summary>Whether <paramref name="component"/> is a grid the canvas edits as one.</summary>
@@ -160,7 +169,8 @@ public sealed partial class DesignDocument
             return found;
         }
 
-        return Accepts(Design.Figure) ? new DesignPlacement(Design.Figure, CanDrop: true) : new DesignPlacement(Design.Figure, CanDrop: false);
+        // A responsive app's figure takes no new component outside its regions, which cover it (DS4b).
+        return Accepts(Design.Figure) && !IsResponsive ? new DesignPlacement(Design.Figure, CanDrop: true) : new DesignPlacement(Design.Figure, CanDrop: false);
     }
 
     /// <summary>Whether a component of <paramref name="type"/> can sit in a grid's cell: not a radio or toggle button, which need a button group, nor a tab.</summary>
@@ -221,9 +231,26 @@ public sealed partial class DesignDocument
         bool Accepts(DesignComponent container) =>
             moving.All(m => CanHold(container, m)) && !(movingGrid && container.Type == "matlab.ui.container.ButtonGroup");
         DesignPlacement? found = Search(moving, from, pointer, InGrid, Inside, Accepts);
+
+        // In a responsive app nothing straddles two regions: a move over a region's edge is refused (DS4b).
+        if (found is not { Container: { } into } || !IsGrid(into))
+        {
+            if (!movingGrid && IsOverRegionEdge(union))
+            {
+                return new DesignPlacement(found?.Container ?? Design.Figure, CanDrop: false) { OverRegionEdge = true };
+            }
+        }
+
         if (found is not null)
         {
             return found;
+        }
+
+        // A responsive app's figure holds its grid and nothing else: its regions cover it, and App
+        // Designer places no grid on it (PlacementUtil.canPlaceGrid) - what no region takes stays (DS4b).
+        if (IsResponsive)
+        {
+            return new DesignPlacement(from, CanDrop: false);
         }
 
         return moving.All(m => CanHold(Design.Figure, m))
@@ -280,7 +307,8 @@ public sealed partial class DesignDocument
             return found;
         }
 
-        return Accepts(Design.Figure) ? new DesignPlacement(Design.Figure, CanDrop: true) : new DesignPlacement(Design.Figure, CanDrop: false);
+        // A responsive app's figure takes no new component outside its regions, which cover it (DS4b).
+        return Accepts(Design.Figure) && !IsResponsive ? new DesignPlacement(Design.Figure, CanDrop: true) : new DesignPlacement(Design.Figure, CanDrop: false);
     }
 
     /// <summary>The label's and the component's cells of a labelled entry dropped in a grid, as <c>LabeledComponentEntryDefinition</c> gives them.</summary>
@@ -695,6 +723,23 @@ public sealed partial class DesignDocument
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentNullException.ThrowIfNull(name);
+        // A responsive app's grid is never the user's to edit, nor are what its regions and its figure
+        // keep from the template (ResponsiveAppGridLayoutModel, RegionPanelModel, UIFigureModel, DS4b).
+        if (IsResponsiveGrid(component))
+        {
+            return false;
+        }
+
+        if (IsRegion(component))
+        {
+            return name is not ("Position" or "Visible" or "AutoResizeChildren");
+        }
+
+        if (ReferenceEquals(component, Design.Figure) && IsResponsive)
+        {
+            return name is not ("Position" or "AutoResizeChildren");
+        }
+
         return !(name == "Position" && component.IsInGrid);
     }
 
@@ -798,7 +843,7 @@ public sealed partial class DesignDocument
         ArgumentNullException.ThrowIfNull(container);
         return container.Type switch
         {
-            "matlab.ui.Figure" => !Design.IsResponsive,
+            "matlab.ui.Figure" => !IsResponsive,
             "matlab.ui.container.Panel" or "matlab.ui.container.Tab" => true,
             _ => false,
         };

@@ -97,6 +97,12 @@
     <Content Include="Scripting\Designer\GridRulesVerifyOracle.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- What R2025b's App Designer gives for a responsive app's splitter dragged through a path of
+       pointer moves (designer plan DS4b): its own LayoutResizeEngine, run unaltered under node. -->
+  <ItemGroup>
+    <Content Include="Scripting\Designer\ResponsiveSplitterOracle.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Data\JGraph.Data.csproj" />

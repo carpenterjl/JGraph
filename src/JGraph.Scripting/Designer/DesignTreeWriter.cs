@@ -319,9 +319,8 @@ public static partial class DesignTreeWriter
 
     /// <summary>The grid a responsive app's figure holds, or a container in it.</summary>
     private static bool IsResponsiveContainer(AppDesign design, DesignComponent component) =>
-        component.Type == "matlab.ui.container.GridLayout" && ReferenceEquals(component.Parent, design.Figure)
-        || (component.Parent is { Type: "matlab.ui.container.GridLayout" } grid && ReferenceEquals(grid.Parent, design.Figure)
-            && component.Type == "matlab.ui.container.Panel");
+        DesignResponsive.Grid(design) is { } grid
+        && (ReferenceEquals(component, grid) || (component.Type == "matlab.ui.container.Panel" && ReferenceEquals(component.Parent, grid)));
 
     /// <summary>
     /// Takes out an axes' own position stores, which load applies after the stored names: an axes

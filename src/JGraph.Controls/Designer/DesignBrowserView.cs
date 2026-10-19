@@ -113,6 +113,17 @@ public sealed class DesignBrowserView : UserControl
         _items[component] = item;
         foreach (DesignComponent child in DesignCodeWriter.BrowserOrder(design, component))
         {
+            // A responsive app's grid is not listed: its regions are, under the figure (DS4b).
+            if (_document?.IsResponsiveGrid(child) == true)
+            {
+                foreach (DesignComponent region in DesignCodeWriter.BrowserOrder(design, child))
+                {
+                    item.Items.Add(Item(design, region));
+                }
+
+                continue;
+            }
+
             item.Items.Add(Item(design, child));
         }
 

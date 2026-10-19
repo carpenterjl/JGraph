@@ -105,6 +105,9 @@ public sealed class DesignGestures
     private DesignGridConfigure? _configure;
     private Point2D _lastDrag;
     private Point2D _pressAt;
+    private DesignSplitter? _splitter;
+    private DesignRegionResize? _regionResize;
+    private double _splitAnchor;
 
     /// <summary>The gestures on <paramref name="document"/>.</summary>
     public DesignGestures(DesignDocument document)
@@ -231,6 +234,7 @@ public sealed class DesignGestures
         Band,
         Drawing,
         Spanning,
+        Splitting,
     }
 
     private enum Intent
@@ -240,6 +244,7 @@ public sealed class DesignGestures
         Resize,
         Band,
         Span,
+        Split,
     }
 
     // --- the mouse -------------------------------------------------------------------------------
@@ -326,6 +331,15 @@ public sealed class DesignGestures
 
             _press = PressState.Drawing;
             return true;
+        }
+
+        // A responsive app's splitter resizes its regions (DS4b).
+        if (button == DesignButton.Left && SplitterAt(at) is { } splitter)
+        {
+            _splitter = splitter;
+            _regionResize = null;
+            _splitAnchor = System.Math.Round(at.X, MidpointRounding.AwayFromZero);
+            return Begin(Intent.Split, document.Design.Figure, ResizeEdges.None);
         }
 
         // A handle of a selected component resizes the selection; a grid child's spans it over cells.
@@ -437,6 +451,9 @@ public sealed class DesignGestures
                     _clickSelects = null;
                     _press = PressState.Band;
                     break;
+                case Intent.Split when _splitter is not null:
+                    _press = PressState.Splitting;
+                    break;
                 default:
                     _press = PressState.None;
                     return;
@@ -453,13 +470,25 @@ public sealed class DesignGestures
             case PressState.Resizing:
                 DragResize(dx, dy, modifiers);
                 break;
+            case PressState.Splitting when _splitter is { } dragged:
+                // App Designer's steps: each from where the last left the regions, by what the pointer
+                // moved past the part of the drag the regions took (_HandleDoingLayoutTemplateResize).
+                if (document.ResizeRegions(dragged, System.Math.Round(at.X, MidpointRounding.AwayFromZero) - _splitAnchor) is { } step)
+                {
+                    _splitAnchor += step.Used;
+                    _regionResize = step.After(_regionResize);
+                    document.PreviewRegions(_regionResize);
+                }
+
+                break;
             case PressState.Spanning when _spanResize is { } resize && _anchor is { } spanned:
                 SpanPreview = (spanned, resize.LiveBoxes(dx, dy)[0], resize.Spans(dx, dy)[0]);
                 break;
             case PressState.Band:
                 Rect2D band = new(System.Math.Min(at.X, _down.X), System.Math.Min(at.Y, _down.Y), System.Math.Abs(dx), System.Math.Abs(dy));
                 Band = band;
-                Banded = DesignGeometry.RubberBand(band, _down, document.Boxes);
+                // A responsive app's grid is never selected (SelectableController): its regions are the top.
+                Banded = DesignGeometry.RubberBand(band, _down, document.Boxes.Where(b => !document.IsResponsiveGrid(b.Component)));
                 break;
         }
 
@@ -487,6 +516,15 @@ public sealed class DesignGestures
             case PressState.Resizing:
                 Guides = [];
                 document.EndGesture(commit: true);
+                break;
+            case PressState.Splitting:
+                _splitter = null;
+                if (_regionResize is { } regions)
+                {
+                    _regionResize = null;
+                    document.CommitRegions(regions);
+                }
+
                 break;
             case PressState.Spanning:
                 (DesignComponent Child, Rect2D Box, GridSpan Span)? spanned = SpanPreview;
@@ -529,6 +567,13 @@ public sealed class DesignGestures
         SpanPreview = null;
         _spanResize = null;
         _clickSelects = null;
+        if (_regionResize is not null)
+        {
+            _regionResize = null;
+            Document.PreviewRegions(null);
+        }
+
+        _splitter = null;
         Document.EndGesture(commit: false);
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -543,6 +588,17 @@ public sealed class DesignGestures
         IReadOnlyDictionary<DesignComponent, Rect2D> start = document.GestureStart;
         DesignComponent anchor = _anchor is not null && start.ContainsKey(_anchor) ? _anchor : start.Keys.First();
         Rect2D from = start[anchor];
+        Dictionary<DesignComponent, Rect2D> Moved(double byX, double byY)
+        {
+            var moved = new Dictionary<DesignComponent, Rect2D>(ReferenceEqualityComparer.Instance);
+            foreach ((DesignComponent component, Rect2D box) in start)
+            {
+                moved[component] = Shifted(box, byX, byY);
+            }
+
+            return moved;
+        }
+
         Guides = [];
         // Over a grid there are no alignment guides; the canvas grid still snaps (ComponentMoveHelpers.calculateDragOffsets).
         bool overGrid = Placement?.Container is { } over && document.IsGrid(over);
@@ -568,15 +624,17 @@ public sealed class DesignGestures
             }
         }
 
-        var boxes = new Dictionary<DesignComponent, Rect2D>(ReferenceEqualityComparer.Instance);
-        foreach ((DesignComponent component, Rect2D box) in start)
+        DesignComponent[] moving = [.. start.Keys];
+        Dictionary<DesignComponent, Rect2D> boxes = Moved(dx, dy);
+        DesignPlacement placement = document.PlacementFor(moving, moving.Select(m => boxes[m]).ToArray(), at);
+        if (placement.OverRegionEdge)
         {
-            boxes[component] = Shifted(box, dx, dy);
+            // Over a responsive app's region edge App Designer hides its alignment hints, keeping the
+            // place they snapped the selection to, and refuses the move there (TemplateComponentMove).
+            Guides = [];
         }
 
         document.Preview(boxes);
-        DesignComponent[] moving = [.. start.Keys];
-        DesignPlacement placement = document.PlacementFor(moving, moving.Select(m => boxes[m]).ToArray(), at);
         Placement = placement;
         DropTarget = placement is { CanDrop: true, Spans: null, Container: { } target } && !ReferenceEquals(target, anchor.Parent) ? target : null;
     }
@@ -601,10 +659,16 @@ public sealed class DesignGestures
             Guides = snap.Guides;
         }
 
+        // In a responsive app's region each box is then held 6 pixels inside it, snapped or not
+        // (BeginTemplateComponentResize's offsets, applied by ResizeCalculator).
+        RegionLimits? limits = RegionLimitsOf(start);
         var boxes = new Dictionary<DesignComponent, Rect2D>(ReferenceEqualityComparer.Instance);
         foreach ((DesignComponent component, Rect2D box) in start)
         {
-            boxes[component] = DesignGeometry.Resize(box, _edges, dx, dy, document.ShapeOf(component), fromCentre, keepAspect, Grid);
+            DesignShape shape = document.ShapeOf(component);
+            Rect2D sized = DesignGeometry.Resize(box, _edges, dx, dy, shape, fromCentre, keepAspect, Grid);
+            double? ratio = shape.Ratio ?? (keepAspect && box.Height > 0 ? box.Width / box.Height : null);
+            boxes[component] = limits is { } l ? InRegion(box, sized, l, fromCentre, ratio) : sized;
         }
 
         document.Preview(boxes);
@@ -910,6 +974,11 @@ public sealed class DesignGestures
             return DesignCursor.Cross;
         }
 
+        if (SplitterAt(at) is not null)
+        {
+            return DesignCursor.SizeWestEast;
+        }
+
         if (HandleAt(at) is { } handle)
         {
             return handle.Edges switch
@@ -957,6 +1026,12 @@ public sealed class DesignGestures
                     return true;
                 }
 
+                // Nor a responsive app's region (ArrowKeyMoveReorderPlugin, DS4b).
+                if (document.Selection.Any(document.IsRegion))
+                {
+                    return true;
+                }
+
                 IReadOnlyList<DesignComponent> movable = document.Selection.Where(document.IsMovable).ToArray();
                 if (movable.Count == 0 || movable.Count != document.Selection.Count)
                 {
@@ -973,6 +1048,7 @@ public sealed class DesignGestures
 
                 _keyDX += key == DesignKey.Left ? -step : key == DesignKey.Right ? step : 0;
                 _keyDY += key == DesignKey.Up ? -step : key == DesignKey.Down ? step : 0;
+                (_keyDX, _keyDY) = InRegion(document.GestureStart, _keyDX, _keyDY);
                 var boxes = new Dictionary<DesignComponent, Rect2D>(ReferenceEqualityComparer.Instance);
                 foreach ((DesignComponent component, Rect2D box) in document.GestureStart)
                 {
@@ -983,7 +1059,8 @@ public sealed class DesignGestures
                 return true;
             case DesignKey.SelectAll:
                 DesignComponent container = document.Selection.Count > 0 && document.Selection[0].Parent is { } parent ? parent : document.Design.Figure;
-                document.Select(document.Boxes.Where(b => b.Shown && ReferenceEquals(b.Component.Parent, container)).Select(static b => b.Component).ToArray());
+                document.Select(document.Boxes.Where(b => b.Shown && ReferenceEquals(b.Component.Parent, container) && !document.IsResponsiveGrid(b.Component))
+                    .Select(static b => b.Component).ToArray());
                 return true;
             default:
                 return false;
@@ -1007,6 +1084,124 @@ public sealed class DesignGestures
             _keyMoving = false;
             Document.EndGesture(commit: true);
         }
+    }
+
+    // --- responsive apps (DS4b) -----------------------------------------------------------------
+
+    /// <summary>
+    /// The splitter being dragged and where the drag has the regions - with whether they stopped short
+    /// of the pointer, which App Designer shows on the splitter (<c>ad-template-resize-handle-alert</c>);
+    /// null when no splitter is dragged.
+    /// </summary>
+    public (DesignSplitter Splitter, DesignRegionResize Resize)? Splitting =>
+        _press == PressState.Splitting && _splitter is { } splitter && _regionResize is { } resize ? (splitter, resize) : null;
+
+    /// <summary>The splitter between a responsive app's regions at <paramref name="at"/>, or null.</summary>
+    public DesignSplitter? SplitterAt(Point2D at)
+    {
+        foreach (DesignSplitter splitter in Document.Splitters())
+        {
+            if (splitter.Box.Contains(at))
+            {
+                return splitter;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// How far a selection's edges may move in its responsive app's region (App Designer's
+    /// <c>LayoutTemplateUtils.getMaxNegativeOffsets</c> and <c>getMaxPositiveOffsets</c>, from the
+    /// region's box and the selection's): its left and top no further than 6 pixels inside the region's,
+    /// its right and bottom likewise. Null when the selection is in no region.
+    /// </summary>
+    private RegionLimits? RegionLimitsOf(IReadOnlyDictionary<DesignComponent, Rect2D> start)
+    {
+        DesignDocument document = Document;
+        if (start.Count == 0 || document.RegionOf(start.Keys.First()) is not { } region || document.BoxOf(region) is not { } box)
+        {
+            return null;
+        }
+
+        Rect2D r = box.Box;
+        double inset = DesignDocument.RegionInset;
+        return new RegionLimits(
+            r.Left - start.Values.Min(static b => b.Left) + inset,
+            r.Top - start.Values.Min(static b => b.Top) + inset,
+            r.Right - start.Values.Max(static b => b.Right) - inset,
+            r.Bottom - start.Values.Max(static b => b.Bottom) - inset);
+    }
+
+    /// <summary>The offsets a selection's left and top edges may go down to, and its right and bottom up to.</summary>
+    private readonly record struct RegionLimits(double Left, double Top, double Right, double Bottom);
+
+    /// <summary>
+    /// A move by the arrow keys of components in a responsive app's region, kept 6 pixels inside it
+    /// (<c>ArrowKeyMoveReorderPlugin._buildArrowData</c>); a selection already nearer its region's edge
+    /// is not pushed in.
+    /// </summary>
+    private (double DX, double DY) InRegion(IReadOnlyDictionary<DesignComponent, Rect2D> start, double dx, double dy)
+    {
+        if (RegionLimitsOf(start) is not { } limits)
+        {
+            return (dx, dy);
+        }
+
+        dx = System.Math.Max(System.Math.Min(dx, System.Math.Max(0, limits.Right)), System.Math.Min(0, limits.Left));
+        dy = System.Math.Max(System.Math.Min(dy, System.Math.Max(0, limits.Bottom)), System.Math.Min(0, limits.Top));
+        return (dx, dy);
+    }
+
+    /// <summary>
+    /// A box resized from <paramref name="start"/> to <paramref name="sized"/> - snapped to the guides
+    /// or the grid, or not - held inside its responsive app's region (App Designer's
+    /// <c>ResizeCalculator</c> with the offsets of <see cref="RegionLimitsOf"/>): the most any moved edge
+    /// passes its limit across, and the most down, is taken back from every edge that moved - from both
+    /// sides of a resize from the centre, and for a shape that keeps its ratio across and down together
+    /// through the ratio. An edge that did not move is not counted, where App Designer counts it too, so
+    /// that a box already nearer its region's edge than 6 pixels shrinks when dragged the other way.
+    /// </summary>
+    private static Rect2D InRegion(Rect2D start, Rect2D sized, RegionLimits limits, bool fromCentre, double? ratio)
+    {
+        double left = sized.Left - start.Left;
+        double top = sized.Top - start.Top;
+        double right = sized.Right - start.Right;
+        double bottom = sized.Bottom - start.Bottom;
+        double across = System.Math.Max(left != 0 ? System.Math.Max(0, limits.Left - left) : 0, right != 0 ? System.Math.Max(0, right - limits.Right) : 0);
+        double down = System.Math.Max(top != 0 ? System.Math.Max(0, limits.Top - top) : 0, bottom != 0 ? System.Math.Max(0, bottom - limits.Bottom) : 0);
+        if (across == 0 && down == 0)
+        {
+            return sized;
+        }
+
+        if (ratio is { } o && o > 0)
+        {
+            double back = System.Math.Max(down * o, across);
+            double backDown = System.Math.Round(back / o, MidpointRounding.AwayFromZero);
+            left += left != 0 ? back : 0;
+            top += top != 0 ? backDown : 0;
+            right -= right != 0 ? back : 0;
+            bottom -= bottom != 0 ? backDown : 0;
+        }
+        else if (fromCentre)
+        {
+            left += across;
+            right -= across;
+            top += down;
+            bottom -= down;
+        }
+        else
+        {
+            left += left != 0 ? across : 0;
+            top += top != 0 ? down : 0;
+            right -= right != 0 ? across : 0;
+            bottom -= bottom != 0 ? down : 0;
+        }
+
+        double width = start.Width + right - left;
+        double height = start.Height + bottom - top;
+        return width < 1 || height < 1 ? start : new Rect2D(start.Left + left, start.Top + top, width, height);
     }
 
     // --- grids (DS4) -----------------------------------------------------------------------------

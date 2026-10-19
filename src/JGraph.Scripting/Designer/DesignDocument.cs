@@ -40,6 +40,7 @@ public sealed partial class DesignDocument : IDisposable
         Design = read.Design!;
         ReadProblems = read.Problems;
         Runtime = DesignRuntime.Build(Design, path is null ? null : System.IO.Path.GetDirectoryName(path), Style.Theme);
+        LayOutRegions();
     }
 
     /// <summary>Raised after the design, the selection or the saved state changed: the canvas draws again.</summary>
@@ -82,10 +83,10 @@ public sealed partial class DesignDocument : IDisposable
     public IReadOnlyList<DesignComponent> Selection => _selection;
 
     /// <summary>Whether there is an edit to undo.</summary>
-    public bool CanUndo => _undo.Count > 0 && _gesture is null;
+    public bool CanUndo => _undo.Count > 0 && _gesture is null && !_regionPreview;
 
     /// <summary>Whether there is an edit to redo.</summary>
-    public bool CanRedo => _redo.Count > 0 && _gesture is null;
+    public bool CanRedo => _redo.Count > 0 && _gesture is null && !_regionPreview;
 
     /// <summary>Opens the App Designer file <paramref name="path"/>.</summary>
     /// <exception cref="System.IO.InvalidDataException">The file is not an app App Designer lays out.</exception>
@@ -134,9 +135,10 @@ public sealed partial class DesignDocument : IDisposable
         for (int i = boxes.Count - 1; i >= 0; i--)
         {
             // A grid's child is hit anywhere in its cells, App Designer's wrapper of it (DS4).
+            // A responsive app's grid is never hit: its regions cover it, and App Designer keeps it from the user (DS4b).
             DesignBox box = boxes[i];
             Rect2D hit = box.Component.IsInGrid ? CellBoxOf(box.Component) ?? box.Box : box.Box;
-            if (box.Shown && hit.Contains(point) && box.Clip.Contains(point))
+            if (box.Shown && hit.Contains(point) && box.Clip.Contains(point) && !IsResponsiveGrid(box.Component))
             {
                 return box.Component;
             }
@@ -666,7 +668,8 @@ public sealed partial class DesignDocument : IDisposable
     }
 
     /// <summary>Whether <paramref name="component"/> can be deleted: anything but the figure.</summary>
-    public bool CanDelete(DesignComponent component) => component.Parent is not null && IsInDesign(component);
+    public bool CanDelete(DesignComponent component) =>
+        component.Parent is not null && IsInDesign(component) && !IsRegion(component) && !IsResponsiveGrid(component);
 
     /// <summary>
     /// Deletes <paramref name="components"/> and everything inside them, as one edit; the figure is
@@ -1050,6 +1053,9 @@ public sealed partial class DesignDocument : IDisposable
 
         string text = DesignCodeWriter.Splice(Text, Design, Style)
             ?? throw new System.IO.IOException("The app's code does not have its component properties and createComponents where App Designer puts them.");
+
+        // A responsive app's generated callback and widths, as App Designer writes them again on every save (DS4b).
+        text = DesignResponsive.Splice(text, Design, Style, c => BoxOf(c) is { } box ? box.Box.Size : null);
         (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, text);
         Text = saved;
         _savedVersion = _version;

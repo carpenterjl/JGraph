@@ -98,12 +98,42 @@ public static partial class JgsMlapp
                 if (tree.Bytes is { } bytes)
                 {
                     design.Bytes = bytes;
+
+                    // So does the file's type, as far as a standard one, with the tree that has taken the
+                    // responsive flags off (DS4b); a tree left as it was keeps the type it has.
+                    if (JGraph.Scripting.Designer.DesignCodeReader.Read(written).Design is { } read)
+                    {
+                        FollowAppType(parts, read.IsResponsive);
+                    }
                 }
             }
         }
 
         Replace(path, parts, beforeReplace);
         return new MlappSaveResult(model is not null, inStep, generated, tree);
+    }
+
+    /// <summary>
+    /// A responsive app whose code no longer says it is one - its auto-reflow properties block taken
+    /// out - made a standard one in the package too (<c>appMetadata.xml</c>'s <c>AppType</c>, DS4b):
+    /// R2025b's <c>MLAPPResponsiveAppValidator</c> refuses a responsive file whose tree is not a
+    /// template's, and App Designer's loader opens a standard one as standard. The other way is left:
+    /// a standard app's tree has no responsive grid for a responsive type to name (App Designer's
+    /// Convert action, open item 154). The bytes are kept when nothing changes.
+    /// </summary>
+    private static void FollowAppType(List<Part> parts, bool responsive)
+    {
+        if (responsive || parts.FirstOrDefault(static p => p.Name == "metadata/appMetadata.xml") is not { } metadata)
+        {
+            return;
+        }
+
+        string xml = Encoding.UTF8.GetString(metadata.Bytes);
+        string updated = xml.Replace("<AppType>Responsive</AppType>", "<AppType>Standard</AppType>", StringComparison.Ordinal);
+        if (updated != xml)
+        {
+            metadata.Bytes = Encoding.UTF8.GetBytes(updated);
+        }
     }
 
     /// <summary>

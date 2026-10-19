@@ -173,7 +173,19 @@ public static partial class DesignCodeReader
         }
         else
         {
+            // Responsive when the code says so, by the properties block App Designer writes for one alone:
+            // the text's counterpart of the file's AppType, which App Designer never infers from the
+            // components (DS4b). The figure's SizeChangedFcn names the layout callback, as App Designer's
+            // template gives it on load (ResponsiveAppFactory.applyDesignTimeData), whatever the code
+            // says - where there is one: in a class that still has it, or in a template laid out as App
+            // Designer lays an app out, whose callback a save puts back (DesignResponsive.Splice).
             design.IsResponsive = Array.Exists(lines, static l => l.Trim() == ResponsivePropertiesComment);
+            if (design.IsResponsive && design.Figure.Get("SizeChangedFcn") is not CallbackValue
+                && (Array.Exists(lines, static l => LayoutFunction().IsMatch(l))
+                    || (DesignResponsive.IsTemplate(design) && JGraph.Scripting.Jgs.JgsMlappLayout.Of(text) is { IsAppLayout: true, IsComplete: true })))
+            {
+                design.Figure.Set("SizeChangedFcn", new CallbackValue(DesignResponsive.Callback));
+            }
             style = style with { Theme = DesignCodeStyle.ThemeOf(design) };
         }
 
@@ -276,6 +288,10 @@ public static partial class DesignCodeReader
 
     [GeneratedRegex(@"^(\s*)function createComponents\(app\)\s*$")]
     private static partial Regex CreateComponentsLine();
+
+    /// <summary>The signature of a responsive app's layout callback, its parameters however written.</summary>
+    [GeneratedRegex(@"^\s*function\s+updateAppLayout\s*\(")]
+    private static partial Regex LayoutFunction();
 
     [GeneratedRegex(@"^app\.(?<name>[A-Za-z]\w*) = (?<fn>[A-Za-z]\w*)\((?<args>.*)\);$")]
     private static partial Regex Creation();

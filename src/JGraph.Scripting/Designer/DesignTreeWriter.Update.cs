@@ -142,6 +142,27 @@ public static partial class DesignTreeWriter
             return Left("The design's figure cannot be written.");
         }
 
+        // A design that is not responsive keeps no responsive container among its saved components:
+        // App Designer's own conversion to a standard app takes the flag off (AppDataCopyUtil, DS4b).
+        bool unflagged = false;
+        if (!design.IsResponsive)
+        {
+            foreach (Plan plan in plans.Values)
+            {
+                if (plan.Saved.Fields.RemoveAll(static f => f.Name == "AppTypeProperties") == 0)
+                {
+                    continue;
+                }
+
+                unflagged = true;
+                if (!plan.Rebuild && plan.Changed is null)
+                {
+                    plan.Saved.DesignTime.Set("DynamicValue_", new McosValue.Value(new MatData.Structs(
+                        [1, 1], plan.Saved.Fields.Select(static f => f.Name).ToArray(), [plan.Saved.Fields.Select(static f => f.Value).ToArray()])));
+                }
+            }
+        }
+
         foreach ((DesignComponent component, McosObject o) in objects)
         {
             if (!plans.TryGetValue(component, out Plan? plan) || plan.Rebuild)
@@ -174,7 +195,7 @@ public static partial class DesignTreeWriter
             }
         }
 
-        bool touched = changed.Count + added.Count + rebuilt.Count + gone.Count > 0;
+        bool touched = changed.Count + added.Count + rebuilt.Count + gone.Count > 0 || unflagged;
         foreach ((DesignComponent component, McosObject o) in objects)
         {
             if (plans.TryGetValue(component, out Plan? plan) && !plan.Rebuild)

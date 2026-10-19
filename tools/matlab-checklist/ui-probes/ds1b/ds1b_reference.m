@@ -44,12 +44,20 @@ for i = 1:numel(names)
     if isfield(images, names{i}), d.ImageRelativePath = images.(names{i}); end
     h.DesignTimeProperties = d;
 end
+fig = app.(names{1});
+if strcmp(appType, 'Responsive')
+    % A responsive app's grid and its regions carry the flag App Designer's template gives them
+    % (ResponsiveAppTemplateData), which no line of code sets.
+    grid = findobj(fig.Children, 'flat', 'Type', 'uigridlayout');
+    for h = [grid; findobj(grid.Children, 'flat', 'Type', 'uipanel')]'
+        h.DesignTimeProperties.AppTypeProperties = struct('IsResponsiveContainer', true);
+    end
+end
 for i = 1:numel(names)
     h = app.(names{i});
     code = gen.getComponentGenerationCode(h, eval(adapters(class(h))), appType, 'light');
     h.DesignTimeProperties.ComponentCode = code(:);
 end
-fig = app.(names{1});
 end
 
 function name = createCallbackFcn(~, f, ~)

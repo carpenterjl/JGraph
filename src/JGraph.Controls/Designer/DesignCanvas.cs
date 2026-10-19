@@ -47,6 +47,8 @@ public sealed class DesignCanvas : UserControl
     private static readonly Brush ButtonFill = Frozen(new SolidColorBrush(Color.FromRgb(0xF5, 0xF5, 0xF5)));
     private static readonly Brush ButtonEdge = Frozen(new SolidColorBrush(Color.FromRgb(0xA6, 0xA6, 0xA6)));
     private static readonly Brush GlyphBrush = Frozen(new SolidColorBrush(Color.FromRgb(0x40, 0x40, 0x40)));
+    private static readonly Brush SplitterBrush = Frozen(new SolidColorBrush(Color.FromArgb(0x30, 0x60, 0x60, 0x60)));
+    private static readonly Brush SplitterAlertBrush = Frozen(new SolidColorBrush(Color.FromArgb(0xC0, 0xD3, 0x2F, 0x2F)));
 
     private readonly Grid _outer;
     private readonly Grid _surface;
@@ -568,6 +570,15 @@ public sealed class DesignCanvas : UserControl
         }
 
         DrawGrids(dc, document, gestures, outline, dashed);
+
+        // A responsive app's splitters between its regions (DS4b); the one dragged in the error colour
+        // while the regions stop short of the pointer (ad-template-resize-handle-alert).
+        (DesignSplitter Splitter, DesignRegionResize Resize)? splitting = gestures.Splitting;
+        foreach (DesignSplitter splitter in document.Splitters())
+        {
+            bool stopped = splitting is { Resize.Stopped: true } s && s.Splitter.Leading == splitter.Leading;
+            dc.DrawRectangle(stopped ? SplitterAlertBrush : SplitterBrush, null, Wpf(splitter.Box));
+        }
 
         foreach (DesignComponent selected in document.Selection)
         {

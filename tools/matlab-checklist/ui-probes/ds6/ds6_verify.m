@@ -156,6 +156,13 @@ for d = news'
         if contains(text, 'function startupFcn(app')
             s.StartupCallback = struct('Name', 'startupFcn', 'Code', {{}});
         end
+        if strcmp(appType, 'Responsive')
+            % saved as App Designer saves a responsive app, so that its validator reads the control too
+            meta = s.Metadata;
+            meta.AppType = 'Responsive';
+            meta.MinimumSupportedMATLABRelease = 'R2019a';
+            s.Metadata = meta;
+        end
         s.save();
         delete(ref);
         [C, cWarnings] = openApp(cfn);
@@ -271,8 +278,10 @@ function [folder, appType] = sourceOf(app, here)
     % Where the app's images are found from, and its type.
     appType = 'Standard';
     % JGraph's own apps (PaletteApp: every library entry added in the designer, DS3; GridApp:
-    % grids laid out, nested, spanned and given rows in the designer, DS4).
-    if any(strcmp(app, {'DesignerSpecApp', 'NewApp', 'PaletteApp', 'GridApp'}))
+    % grids laid out, nested, spanned and given rows in the designer, DS4; ResponsiveApp: a new
+    % 3-panel app with components in its regions and a splitter dragged, DS4b).
+    if strcmp(app, 'ResponsiveApp'), appType = 'Responsive'; end
+    if any(strcmp(app, {'DesignerSpecApp', 'NewApp', 'PaletteApp', 'GridApp', 'ResponsiveApp'}))
         folder = fullfile(here, '..', 'ds1b', 'rt', 'spec');
         if ~isfolder(fullfile(folder, 'img')), mkdir(fullfile(folder, 'img')); end
         if ~isfile(fullfile(folder, 'img', 'logo.png'))

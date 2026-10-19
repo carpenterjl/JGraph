@@ -153,8 +153,7 @@ public static class DesignCodeWriter
         bool keepsOrder = container.Type is "matlab.ui.container.Menu" or "matlab.ui.container.ContextMenu"
                 or "matlab.ui.container.TabGroup" or "matlab.ui.container.Tree" or "matlab.ui.container.CheckBoxTree"
                 or "matlab.ui.container.TreeNode" or "matlab.ui.container.Toolbar"
-            || (design.IsResponsive && ReferenceEquals(container.Parent, design.Figure)
-                && container.Type == "matlab.ui.container.GridLayout");
+            || ReferenceEquals(container, DesignResponsive.Grid(design));
         if (keepsOrder)
         {
             return children;

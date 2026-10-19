@@ -45,6 +45,22 @@ public partial class ScriptWorkspaceWindow
             CommandParameter = NewAppLanguage,
             IsEnabled = engines.Any(static e => e.Language == "MATLAB"),
         });
+
+        // App Designer's responsive templates (designer plan DS4b).
+        foreach ((string header, string parameter) in new[]
+        {
+            ("MATLAB 2-panel app with auto-reflow (.mlapp)", NewTwoPanelAppLanguage),
+            ("MATLAB 3-panel app with auto-reflow (.mlapp)", NewThreePanelAppLanguage),
+        })
+        {
+            NewScriptMenu.Items.Add(new MenuItem
+            {
+                Header = header,
+                Command = WorkspaceCommands.NewScript,
+                CommandParameter = parameter,
+                IsEnabled = engines.Any(static e => e.Language == "MATLAB"),
+            });
+        }
         NewScriptMenu.Items.Add(new Separator());
         NewScriptMenu.Items.Add(new MenuItem
         {
@@ -56,6 +72,12 @@ public partial class ScriptWorkspaceWindow
 
     /// <summary>The New Script entry for a blank app, which is a MATLAB class saved as an <c>.mlapp</c>.</summary>
     private const string NewAppLanguage = "App";
+
+    /// <summary>The New Script entries for App Designer's 2- and 3-panel apps with auto-reflow.</summary>
+    private const string NewTwoPanelAppLanguage = "App2";
+
+    /// <inheritdoc cref="NewTwoPanelAppLanguage"/>
+    private const string NewThreePanelAppLanguage = "App3";
 
     /// <summary>The language a blank New Script opens in: the user's preference when it names an
     /// available engine, otherwise MATLAB — the same default the console prompt starts on.</summary>
@@ -76,6 +98,14 @@ public partial class ScriptWorkspaceWindow
 
     private void OpenNewScript(string language)
     {
+        if (language is NewTwoPanelAppLanguage or NewThreePanelAppLanguage)
+        {
+            // A responsive app, as App Designer's start page makes one (designer plan DS4b).
+            string text = JGraph.Scripting.Designer.DesignResponsive.NewAppText(language == NewTwoPanelAppLanguage ? 2 : 3);
+            AddDocument(new ScriptDocumentModel(path: null, text, "MATLAB") { IsNewApp = true }, activate: true);
+            return;
+        }
+
         if (language == NewAppLanguage)
         {
             // A blank app, as App Designer makes one (designer plan DS6): saved, it is an .mlapp
