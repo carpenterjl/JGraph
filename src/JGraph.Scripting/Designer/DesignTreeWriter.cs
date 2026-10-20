@@ -102,9 +102,9 @@ public static partial class DesignTreeWriter
         var objects = new Dictionary<DesignComponent, McosObject>(ReferenceEqualityComparer.Instance);
         foreach (DesignComponent component in design.Components)
         {
-            if (Bases.Value.TryGetValue(component.Type, out JsonElement b))
+            if (BaseOf(component) is { } b)
             {
-                objects[component] = Build(b);
+                objects[component] = Build(b, component.Type);
             }
             else
             {
@@ -150,6 +150,8 @@ public static partial class DesignTreeWriter
         double[]? row = null;
         double[]? column = null;
         var late = new List<(string Name, McosValue Value)>();
+        bool user = DesignUserComponents.IsUserComponent(component);
+        var userCallbacks = new List<string>();
         foreach ((string name, DesignValue value) in properties ?? DesignCodeWriter.WrittenProperties(component, style.Theme))
         {
             switch (name)
@@ -160,6 +162,15 @@ public static partial class DesignTreeWriter
                 case "Layout.Column":
                     column = Numbers(value);
                     continue;
+            }
+
+            // A custom component's own callback properties are kept in one struct, as its
+            // HasCallbackProperty mixin saves them (DS7b, probe ds7_uac: SerializableCallbackPropertyFcns);
+            // the struct holds every one the design binds now, whichever changed.
+            if (user && IsOwnUserProperty(name) && name.EndsWith("Fcn", StringComparison.Ordinal))
+            {
+                userCallbacks.Add(name);
+                continue;
             }
 
             if (value is ImageFileValue file)
@@ -293,6 +304,32 @@ public static partial class DesignTreeWriter
         foreach ((string name, McosValue value) in late)
         {
             Put(name, name, value);
+        }
+
+        // A custom component's place is its own, never the recorded base's (which holds the probe
+        // gauge's): the design's position, or the described class's default, is stored whether or
+        // not the generator writes a line for it (DS7b).
+        if (user && properties is null && !o.Has("Position")
+            && (component.Get("Position") ?? component.Class?.Property("Position")?.DefaultFor(style.Theme)) is NumericValue { Data.Count: 4 } place
+            && Stored(place, design, objects) is { } placed)
+        {
+            Put("Position", "Position", placed);
+        }
+
+        // A custom component's bound callbacks, in the struct its mixin saves (DS7b): every own
+        // callback property the design binds, written again whenever any of them is set or set back,
+        // so that a save over a saved object carries the whole struct.
+        if (userCallbacks.Count > 0)
+        {
+            (string Name, MatData Value)[] bound = component.Properties
+                .Where(p => IsOwnUserProperty(p.Key) && p.Key.EndsWith("Fcn", StringComparison.Ordinal) && p.Value is CallbackValue)
+                .Select(static p => (p.Key, (MatData)MatData.Text(((CallbackValue)p.Value).Method)))
+                .ToArray();
+            var callbacks = new McosValue.Value(bound.Length > 0 ? MatData.Struct(bound) : new MatData.Structs([1, 1], [], [[]]));
+            foreach (string property in userCallbacks)
+            {
+                Put(property, "SerializableCallbackPropertyFcns", callbacks);
+            }
         }
 
         var fields = new List<(string, MatData)>
@@ -455,26 +492,52 @@ public static partial class DesignTreeWriter
             bases[c.GetProperty("class").GetString()!] = c.Clone();
         }
 
+        // What a custom component stores besides its own properties (DS7b, probe ds7_base).
+        using Stream containers = Assembly.GetExecutingAssembly().GetManifestResourceStream("JGraph.Scripting.designer-uac-base.json")
+            ?? throw new InvalidOperationException("The designer's custom component base is not embedded.");
+        using JsonDocument container = JsonDocument.Parse(containers);
+        foreach (JsonElement c in container.RootElement.GetProperty("classes").EnumerateArray())
+        {
+            bases[c.GetProperty("class").GetString()!] = c.Clone();
+        }
+
         return bases;
     }
 
-    /// <summary>A new object from a recorded base: its stored names in order, its helper objects and dynamic properties made anew.</summary>
-    private static McosObject Build(JsonElement b)
+    /// <summary>The class a custom component's saved object is built from: what every <c>ComponentContainer</c> subclass stores besides its own properties (DS7b).</summary>
+    private const string ContainerBase = "matlab.ui.componentcontainer.ComponentContainer";
+
+    /// <summary>
+    /// The recorded base <paramref name="component"/>'s object is built from: its class's, or the
+    /// container base for a custom component (DS7b); null for a class none was recorded for.
+    /// </summary>
+    private static JsonElement? BaseOf(DesignComponent component) =>
+        Bases.Value.TryGetValue(component.Type, out JsonElement own) ? own
+        : DesignUserComponents.IsUserComponent(component) && Bases.Value.TryGetValue(ContainerBase, out JsonElement container) ? container
+        : null;
+
+    /// <summary>Whether <paramref name="name"/> is a custom component's own property rather than one every <c>ComponentContainer</c> has.</summary>
+    private static bool IsOwnUserProperty(string name) =>
+        !JGraph.Scripting.Jgs.JgsBuiltinClasses.ComponentContainerProperties.Contains(name, StringComparer.Ordinal)
+        && name is not ("Layout.Row" or "Layout.Column" or "ContextMenu");
+
+    /// <summary>A new object from a recorded base: its stored names in order, its helper objects and dynamic properties made anew; of <paramref name="className"/> when given, else the base's class.</summary>
+    private static McosObject Build(JsonElement b, string? className = null)
     {
-        var o = new McosObject(b.GetProperty("class").GetString()!);
+        var o = new McosObject(className ?? b.GetProperty("class").GetString()!);
         foreach (JsonElement e in b.GetProperty("entries").EnumerateArray())
         {
             string name = e.GetProperty("n").GetString()!;
             McosValue value = e.TryGetProperty("word", out JsonElement w) ? new McosValue.Word(w.GetString()!)
                 : e.TryGetProperty("literal", out JsonElement l) ? new McosValue.Literal(l.GetInt32())
-                : e.TryGetProperty("refs", out JsonElement r) ? new McosValue.Refs(r.EnumerateArray().Select(Build).ToArray())
+                : e.TryGetProperty("refs", out JsonElement r) ? new McosValue.Refs(r.EnumerateArray().Select(static x => Build(x)).ToArray())
                 : new McosValue.Value(Decode(e.GetProperty("value")));
             o.Set(name, value);
         }
 
         if (b.TryGetProperty("dynamic", out JsonElement dynamic))
         {
-            o.Dynamic.AddRange(dynamic.EnumerateArray().Select(Build));
+            o.Dynamic.AddRange(dynamic.EnumerateArray().Select(static x => Build(x)));
         }
 
         return o;

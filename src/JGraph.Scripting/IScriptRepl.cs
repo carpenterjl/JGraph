@@ -63,6 +63,12 @@ public interface IScriptSession : IAsyncDisposable
     IReadOnlyList<ScriptVariable> GetVariables();
 
     /// <summary>
+    /// The folders the session's search path holds besides the current one (<c>addpath</c>'s), in
+    /// search order, for a host that finds files as the session does; empty for a language without one.
+    /// </summary>
+    IReadOnlyList<string> PathFolders => [];
+
+    /// <summary>
     /// Empties the workspace back to a pristine state: variables go, the buffers they held are released,
     /// and the figure registry is reset. This is what <c>clear</c> and <c>Clear Workspace</c> mean, and
     /// it is the only point besides disposal at which a long session gives memory back.

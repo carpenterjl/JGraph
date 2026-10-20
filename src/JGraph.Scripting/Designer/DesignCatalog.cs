@@ -209,6 +209,12 @@ public sealed class DesignComponentClass
     /// <summary>Whether this is the figure.</summary>
     public bool IsFigure => Type == "matlab.ui.Figure";
 
+    /// <summary>
+    /// Whether this is a custom component's class (designer plan DS7b): described from the running
+    /// class rather than recorded from R2025b, made by a call of its own name.
+    /// </summary>
+    public bool IsUserComponent { get; init; }
+
     /// <summary>The property named <paramref name="name"/>, or null when the generator never writes it.</summary>
     public DesignProperty? Property(string name) => _index.TryGetValue(name, out int i) ? Properties[i] : null;
 

@@ -38,8 +38,10 @@ internal static partial class JgsBuiltins
         }
 
         string? path = args.Count == 1 ? ValidatedAppFile(interpreter, host, args[0], line, col) : null;
-        if (designer.Open(path) is { } refused)
+        if (designer.Open(path) is { } refused && refused != "cancelled")
         {
+            // "cancelled": the user declined to open the app without its custom components
+            // (designer plan DS7b), which App Designer takes quietly too.
             throw new JgsRuntimeException(line, col, "JGraph:appdesigner:CannotOpen", refused);
         }
 

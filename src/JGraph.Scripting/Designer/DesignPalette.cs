@@ -42,6 +42,12 @@ public sealed record DesignPaletteEntry(string Name, string Category, string Typ
 
     /// <summary>Why the designer does not make it yet; null when it does (every entry is made since DS4).</summary>
     public string? NotYet { get; init; }
+
+    /// <summary>The custom component the entry makes (designer plan DS7b); null for one of App Designer's own.</summary>
+    public DesignUserComponent? UserComponent { get; init; }
+
+    /// <summary>What names the entry among every entry a document offers: its name, or its class for a custom component, whose name may be a built-in's.</summary>
+    public string Key => UserComponent is null ? Name : "user:" + UserComponent.ClassName;
 }
 
 /// <summary>

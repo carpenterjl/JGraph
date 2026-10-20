@@ -34,7 +34,7 @@ public sealed partial class DesignDocument : IDisposable
     private string _newline;
     private bool _trailingNewline;
 
-    private DesignDocument(string text, string? path, DesignReadResult read, DesignFileFormat format = DesignFileFormat.Mlapp, DesignPlainTextDetails? details = null)
+    private DesignDocument(string text, string? path, DesignReadResult read, DesignFileFormat format = DesignFileFormat.Mlapp, DesignPlainTextDetails? details = null, IReadOnlyList<string>? pathFolders = null)
     {
         Text = text;
         Path = path;
@@ -46,8 +46,126 @@ public sealed partial class DesignDocument : IDisposable
         Code = ReadCode(text, Design);
         _newline = text.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
         _trailingNewline = text.EndsWith('\n');
-        Runtime = DesignRuntime.Build(Design, path is null ? null : System.IO.Path.GetDirectoryName(path), Style.Theme);
+        string? folder = path is null ? null : System.IO.Path.GetDirectoryName(path);
+        Runtime = DesignRuntime.Build(Design, folder, Style.Theme, pathFolders);
+
+        // The custom components registered for the app: in its folder and on the session's path
+        // (designer plan DS7b), each as a library entry under its category.
+        UserComponents = DesignUserComponents.Discover(folder is null ? pathFolders ?? [] : [folder, .. pathFolders ?? []]);
+        UserPaletteEntries = DesignUserComponents.Sections(UserComponents)
+            .SelectMany(static s => s.Entries.Select(c => new DesignPaletteEntry(c.ComponentName, s.Title, c.ClassName) { UserComponent = c }))
+            .ToArray();
+        AttachUserClasses();
         LayOutRegions();
+    }
+
+    /// <summary>The custom components registered for the app (designer plan DS7b): those in its folder and on the session's path.</summary>
+    public IReadOnlyList<DesignUserComponent> UserComponents { get; }
+
+    /// <summary>The library entries the custom components make, section by section after App Designer's own, each section's entries by name.</summary>
+    public IReadOnlyList<DesignPaletteEntry> UserPaletteEntries { get; }
+
+    /// <summary>The library entry keyed <paramref name="key"/> (<see cref="DesignPaletteEntry.Key"/>): one of App Designer's, or a custom component's; null for none.</summary>
+    public DesignPaletteEntry? FindPaletteEntry(string key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        return Palette.Find(key) ?? UserPaletteEntries.FirstOrDefault(e => e.Key == key);
+    }
+
+    /// <summary>
+    /// The inspector's groups for <paramref name="component"/>: App Designer's for its class, or a
+    /// custom component's from its running class (designer plan DS7b); empty for a class neither knows.
+    /// </summary>
+    public IReadOnlyList<DesignInspectorGroup> InspectorGroupsOf(DesignComponent component)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        return component.Class is { IsUserComponent: true } && Runtime.UserClassOf(component.Type) is { } user
+            ? user.InspectorGroups
+            : DesignInspector.R2025b.GroupsOf(component.Type);
+    }
+
+    /// <summary>
+    /// Gives every component read as a call of a class the designer has no record of - a custom
+    /// component's constructor - its class, described from the running class (designer plan DS7b),
+    /// so that the generator, the inspector and the Callbacks tab know it; one whose class the
+    /// runtime cannot make stays as read.
+    /// </summary>
+    private void AttachUserClasses()
+    {
+        var missing = new List<string>();
+        var errored = new List<string>();
+        foreach (DesignComponent component in Design.Components)
+        {
+            if (component.Class is not null || !DesignUserComponents.IsUserComponent(component))
+            {
+                continue;
+            }
+
+            if (Runtime.UserClassOf(component.Type) is { } user)
+            {
+                component.Class = user.Class;
+            }
+            else
+            {
+                // As MLAPPUserComponentValidator tells them apart: a class MATLAB cannot find is
+                // missing; one it finds whose object could not be made (its setup failed) errored.
+                List<string> list = Runtime.KnowsClass(component.Type) ? errored : missing;
+                if (!list.Contains(component.Type, StringComparer.Ordinal))
+                {
+                    list.Add(component.Type);
+                }
+            }
+        }
+
+        MissingUserComponents = missing;
+        ErroredUserComponents = errored;
+    }
+
+    /// <summary>
+    /// The custom component classes the app names that are not on the app's folder or the path
+    /// (designer plan DS7b; App Designer's <c>MissingUserComponents</c> warning), each once, in the
+    /// design's order; empty when every class was found.
+    /// </summary>
+    public IReadOnlyList<string> MissingUserComponents { get; private set; } = [];
+
+    /// <summary>
+    /// The custom component classes the app names that were found but whose component could not be
+    /// made (App Designer's <c>ErroredUserComponents</c> warning: a class whose setup fails), each
+    /// once; empty when every component was made.
+    /// </summary>
+    public IReadOnlyList<string> ErroredUserComponents { get; private set; } = [];
+
+    /// <summary>
+    /// Takes out of the design every component of a missing or errored custom component class, as
+    /// App Designer's Open Anyway removes them before the app opens (<c>_removeComponentsFromLoadedData</c>):
+    /// the components and what names them go, the callback functions they named stay in the code,
+    /// unbound; nothing to undo, and the document is not changed by it - the next Save writes the
+    /// app without them.
+    /// </summary>
+    public void RemoveUnavailableUserComponents()
+    {
+        DesignComponent[] gone = Design.Components.Where(static c => c.Class is null && DesignUserComponents.IsUserComponent(c)).ToArray();
+        if (gone.Length > 0)
+        {
+            // The callback functions they named stay, whatever their code (App Designer leaves
+            // them unbound), so the deletion's callback edits are left out.
+            string[] names = gone.SelectMany(static g => Walk(g)).Select(static c => c.CodeName).ToArray();
+            Edit[] step = [.. DeleteEdits(gone).Where(static e => e is not CallbackListEdit)];
+            foreach (Edit edit in step)
+            {
+                edit.Do(this);
+            }
+
+            foreach (string name in names)
+            {
+                Runtime.ForgetProblemsOf(name);
+            }
+
+            Settled(step);
+        }
+
+        MissingUserComponents = [];
+        ErroredUserComponents = [];
     }
 
     /// <summary>The format the app is kept in: the <c>.mlapp</c> package, or App Designer's plain-text <c>.m</c> file (designer plan DS7a).</summary>
@@ -114,20 +232,21 @@ public sealed partial class DesignDocument : IDisposable
 
     /// <summary>Opens the App Designer file <paramref name="path"/>: an <c>.mlapp</c> package, or a plain-text <c>.m</c> app.</summary>
     /// <exception cref="System.IO.InvalidDataException">The file is not an app App Designer lays out.</exception>
-    public static DesignDocument Open(string path)
+    public static DesignDocument Open(string path, IReadOnlyList<string>? pathFolders = null)
     {
         ArgumentNullException.ThrowIfNull(path);
         return FormatOf(path) == DesignFileFormat.PlainText
-            ? FromPlainText(System.IO.File.ReadAllText(path), path)
-            : FromText(JgsMlapp.ReadCode(path), path);
+            ? FromPlainText(System.IO.File.ReadAllText(path), path, pathFolders)
+            : FromText(JgsMlapp.ReadCode(path), path, pathFolders);
     }
 
     /// <summary>
     /// Opens a plain-text app's <paramref name="text"/> (designer plan DS7a): its components from the
-    /// appendix, its code from the class; <paramref name="path"/> is the <c>.m</c> it saves into, if any.
+    /// appendix, its code from the class; <paramref name="path"/> is the <c>.m</c> it saves into, if any;
+    /// <paramref name="pathFolders"/> the session's path, where a custom component's class is found (DS7b).
     /// </summary>
     /// <exception cref="System.IO.InvalidDataException">The text is not a plain-text app.</exception>
-    public static DesignDocument FromPlainText(string text, string? path)
+    public static DesignDocument FromPlainText(string text, string? path, IReadOnlyList<string>? pathFolders = null)
     {
         ArgumentNullException.ThrowIfNull(text);
         DesignPlainTextReadResult read = DesignPlainText.Read(text);
@@ -137,12 +256,12 @@ public sealed partial class DesignDocument : IDisposable
                 $"The app's components cannot be read: {string.Join(" ", read.Read.Problems)}");
         }
 
-        return new DesignDocument(text, path, read.Read, DesignFileFormat.PlainText, read.Details);
+        return new DesignDocument(text, path, read.Read, DesignFileFormat.PlainText, read.Details, pathFolders);
     }
 
-    /// <summary>Opens an app's class text; <paramref name="path"/> is the <c>.mlapp</c> it saves into, if any.</summary>
+    /// <summary>Opens an app's class text; <paramref name="path"/> is the <c>.mlapp</c> it saves into, if any; <paramref name="pathFolders"/> the session's path (DS7b).</summary>
     /// <exception cref="System.IO.InvalidDataException">The text is not an app App Designer lays out.</exception>
-    public static DesignDocument FromText(string text, string? path)
+    public static DesignDocument FromText(string text, string? path, IReadOnlyList<string>? pathFolders = null)
     {
         ArgumentNullException.ThrowIfNull(text);
         DesignReadResult read = DesignCodeReader.Read(text);
@@ -152,7 +271,7 @@ public sealed partial class DesignDocument : IDisposable
                 $"The app's components cannot be read: {string.Join(" ", read.Problems)}");
         }
 
-        return new DesignDocument(text, path, read);
+        return new DesignDocument(text, path, read, pathFolders: pathFolders);
     }
 
     /// <summary>The boxes the canvas shows, back to front; worked out again after every change.</summary>
@@ -674,12 +793,34 @@ public sealed partial class DesignDocument : IDisposable
         }
 
         DesignComponent parent = ContainerFor(entry, target);
-        IReadOnlyList<(DesignComponent Component, int? Index)> made = Palette.Make(entry, Design, parent, new Point2D(0, 0), size);
+        IReadOnlyList<(DesignComponent Component, int? Index)> made = MakeFromEntry(entry, parent, size);
         Place(parent, made.Select(static m => m.Component).ToArray(), topLeft);
 
         Edit[] step = made.Select(m => (Edit)new AddEdit(m.Component, parent, m.Index)).ToArray();
         Do(step);
         return made.Select(static m => m.Component).ToArray();
+    }
+
+    /// <summary>What <paramref name="entry"/> makes for <paramref name="parent"/>: App Designer's palette's components, or a custom component (DS7b).</summary>
+    /// <exception cref="InvalidOperationException">The entry is one the designer does not make, or a custom component whose class the runtime cannot make.</exception>
+    private IReadOnlyList<(DesignComponent Component, int? Index)> MakeFromEntry(DesignPaletteEntry entry, DesignComponent parent, Size2D? size = null) =>
+        entry.UserComponent is { } user ? [(MakeUserComponent(user, size), null)] : Palette.Make(entry, Design, parent, new Point2D(0, 0), size);
+
+    /// <summary>
+    /// A new custom component (designer plan DS7b, <c>_UserComponentEntryDefinition._makeEntryData</c>):
+    /// of its class as the runtime describes it, named by the class's short name made unique among
+    /// the app's names, sized by its registration's default position (or as drawn), with no label.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The class is not on the path, or is no custom component the runtime can make.</exception>
+    private DesignComponent MakeUserComponent(DesignUserComponent user, Size2D? size)
+    {
+        DesignUserClass described = Runtime.UserClassOf(user.ClassName)
+            ?? throw new InvalidOperationException($"{user.ComponentName}: the class {user.ClassName} is not on the path, or is no custom component the designer can make.");
+        (string codeName, _) = DesignNames.ForNew(user.ClassName, [.. Design.Components.Select(static c => c.CodeName), .. NamesInUse()], []);
+        var component = new DesignComponent(codeName, described.Class);
+        (double width, double height) = user.DefaultSize;
+        component.Set("Position", NumericValue.Row(1, 1, size?.Width ?? width, size?.Height ?? height));
+        return component;
     }
 
     /// <summary>Moves new components, as one box, so that the box's top-left corner is at <paramref name="topLeft"/> on the surface.</summary>

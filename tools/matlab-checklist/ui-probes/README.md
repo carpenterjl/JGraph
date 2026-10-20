@@ -41,7 +41,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `ds2/` | Stage DS2 of the designer plan (ADR 0246): headless. `ds2_sizes` makes one component of each class App Designer offers and records its default `Position` and the `Position` it keeps after a set to `[10 10 200 50]` into `ds2_sizes.json` (the round components, switches and semicircular gauge keep their proportions, the sliders their height - the runtime's rule from `u9_extra`); `ds2_appdesigner` records what R2025b's `appdesigner` says before it opens anything - its web-window check under `-batch`, its file-name validator on each kind of name, its arity - without ever calling it where it would open App Designer. `rt/` (ignored) holds the copy of a shipped app it names. |
 | `ds3/` | Stage DS3 of the designer plan (ADR 0247): headless. `ds3_inspector` builds, for each class App Designer offers, the property view its inspector shows (`inspector.internal.<Class>PropertyView`) and records its groups in order - id, title, opened or not, rows (a property, an editor group, a sub-group) - and each row's property's class and members or enumerated values into `ds3_inspector.json`; `ds3_palette` asks each class's adapter for its design-time component and records R2025b's generated lines for it and its `Position` into `ds3_palette.json`. Both are embedded in JGraph.Scripting. |
 | `ds6/` | Stage DS6 of the designer plan (ADR 0245): headless. `ds6_verify` opens, through App Designer's own reader, the files the local test `AppDesignerModelSaveTests` leaves in `rt/` when run with `JGRAPH_DS6_OUT`: each shipped app as R2025b ships it and as JGraph saved it after an edit (`rt/edits`), and apps JGraph wrote whole (`rt/new`) against a control saved by App Designer's serializer from the code's own tree (`rt/control`). `DS6_PART` (`edits` or `new`), `DS6_ONLY` and `DS6_SHARD` pick what runs (`ds6_new1`-`ds6_new3` run the new apps in three shards); `ds6_verify_edits.out` and `ds6_verify_new.out` keep the results. `rt/` (ignored) holds the files. |
-| `ds7/` | Stage DS7a of the designer plan (ADR 0251): node and headless. `oracle/appendix.js` runs App Designer's own plain-text file writer - `PlainTextClassBehavior`, `XMLAppendixBehavior` and the XML builders, unmodified from the bundle through `amd.js` and `stubs.js` - over stub view models and writes `appendix.json` (34 cases: the sections, escaping, indentation, lists, whole files), which the tests' expected texts were taken from. `ds7_plain` opens, through App Designer's own reader (not gated by the feature), the plain-text apps the local test `AppDesignerPlainTextTests.TheProbesAppsAreWrittenWhenAsked` leaves in `rt/plain/` with `JGRAPH_DS7_OUT`, holds each against the `.mlapp` of the same design, then switches the feature `AppDesignerPlainTextFileFormat` on for the session and runs each app through `matlab.apps.App`. `DS7_ONLY` picks one app. `rt/` (ignored) holds the files. |
+| `ds7/` | Stage DS7a of the designer plan (ADR 0251): node and headless. `oracle/appendix.js` runs App Designer's own plain-text file writer - `PlainTextClassBehavior`, `XMLAppendixBehavior` and the XML builders, unmodified from the bundle through `amd.js` and `stubs.js` - over stub view models and writes `appendix.json` (34 cases: the sections, escaping, indentation, lists, whole files), which the tests' expected texts were taken from. `ds7_plain` opens, through App Designer's own reader (not gated by the feature), the plain-text apps the local test `AppDesignerPlainTextTests.TheProbesAppsAreWrittenWhenAsked` leaves in `rt/plain/` with `JGRAPH_DS7_OUT`, holds each against the `.mlapp` of the same design, then switches the feature `AppDesignerPlainTextFileFormat` on for the session and runs each app through `matlab.apps.App`. `DS7_ONLY` picks one app. Stage DS7b (ADR 0252): `ds7_uac` drives App Designer's MATLAB side over four custom component classes it writes (metadata registration, the adapter's class model, the inspector, apps saved with a gauge and their reader, an errored class, plain text, a missing class; `ds7_inflate.py` and `ds7_rename.py` beside it); `ds7_base.py` records the `ComponentContainer` base into `ds7_uac_base.json` (embedded); `ds7_uac_verify` reads, loads and runs the app this build saves with a gauge (`rt/uac/jgraph`, left by `AppDesignerUserComponentTests.TheProbesAppIsWrittenWhenAsked`). `rt/` (ignored) holds the files. |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -1231,6 +1231,70 @@ The loader and the runtime are MATLAB (`appdesigner.internal.artifactgenerator`,
 - **R2025b's run-side component map lacks a tree's `ClickedFcn` and `DoubleClickedFcn`** while
   its writer writes them like any callback: an app with either cannot run there (the generator
   evaluates `ClickedFcn=TreeClicked` as a call). This build writes and binds them (ADR 0251).
+
+## DS7b findings (designer plan, R2025b; headless)
+
+Custom (user-authored) components in the designer (ADR 0252). `ds7_uac` drives App Designer's MATLAB
+side without a window over four classes it writes into `rt/uac/` (`SpinnerGauge` and `U10Probe` from
+the test helpers, a packaged `ds7pkg.PkgGauge`, `Ds7Types` with one property of each kind, `SgFail`
+whose setup refuses): the metadata registration (`Model` + `MetadataUIViewModel`, no window), the
+adapter's class model, the inspector's property view and renderers, the design-time defaults, apps
+saved by `MLAPPSerializer` with a gauge (`UacLast`, `UacMid`) and their reader, an errored class, the
+plain-text format with such components, and a missing class. `ds7_base.py` records the
+`ComponentContainer` base from the gauge the probe saved plain (`ds7_uac_base.json`, embedded);
+`ds7_uac_verify` reads, loads and runs the app this build saves with a gauge (`rt/uac/jgraph`, left by
+`TheProbesAppIsWrittenWhenAsked`). `ds7_inflate.py` and `ds7_rename.py` are the probe's helpers.
+
+- **The metadata file.** `configureMetadata` writes `resources/appDesigner.json` beside the class's
+  root folder (a packaged class's above its `+pkg`): `components` as an array of `className,
+  componentName, description, icon, category, authorName, authorEmail, version, avatar, avatarDark,
+  defaultPosition`, then `schema: 3` and `MATLABRelease`, pretty-printed with one number per line and
+  no final newline; `version` a string `"1.0"`, `defaultPosition` four numbers (`[1 1 w h]`), the
+  description the class's help line, the category `My Components`, the icon the stock 24-by-24 PNG
+  as a data URI; headless the avatars are `""` with a warning. Removing the last class leaves
+  `"components": []`.
+- **The adapter's list** is `properties()` order less the never-generated names and the properties
+  only the class may set (`SetupCalls`, `UpdateCalls`, `Type`, `BeingDeleted`, dependents with a
+  getter alone), `Position` last; `SizeChangedFcn` is a callback property beside the class's own;
+  the modes of `Visible`, `BackgroundColor`, `SizeChangedFcn`, `HandleVisibility` and `Tag` are
+  `auto` on a fresh instance, `PositionMode` manual when the class's setup set a position. The
+  generated lines: the call of the class, the set properties in that order, callbacks quoted,
+  `Position` last or `Layout.Row`/`Layout.Column` in a grid.
+- **What the generator cannot write**: `int32`, `single` and `struct` properties produce no line and
+  make `getComponentDirtyProps` (the plain-text save) throw; a 2-D cell produces `app.X.P = ;`; a
+  string's line break is dropped and its inner quotes left (`"he said "hi"" + "x"`); a cell's numbers
+  are rounded to six digits.
+- **The inspector** shows the class's own public properties with a declared class or a non-empty
+  default under the class's short name (read-only ones such as `SetupCalls` included), then Color,
+  Interactivity, Position, Callback Execution Control, Parent / Child, Identifiers; a struct, a
+  datetime and anything else without an editor is dropped from the group; an enumeration gets a
+  drop-down.
+- **The saved tree** holds the gauge as an object of its class with 21 stored names: the
+  container's (position stores, `BackgroundColor_I`, `ValidateChildFcn`, the modes, the plumbing),
+  its own `Value`, `SetupCalls`, `UpdateCalls`, and `SerializableCallbackPropertyFcns`, a struct
+  holding each bound callback property's name (`ValueChangedFcn: 'GaugeValueChanged'`). The
+  package's metadata lists `<userComponents><userComponent class="SpinnerGauge"/></userComponents>`.
+  The validator's regexp token holds every declaration of the first properties block (not the last
+  alone, as its repeated group suggested).
+- **Missing and errored classes.** A class MATLAB cannot find (renamed, or off the path) is
+  reported `MissingUserComponents` and its component dropped from the tree, the callback's component
+  data emptied; a class found whose `setup` fails on load is `ErroredUserComponents`, with MATLAB's
+  own "Unable to execute 'setup' method" and "Default objects will be substituted" warnings. A
+  plain-text app with the class gone is refused (`AppAppendixUnknownComponent`): its deserializer has
+  no validators.
+- **Plain text.** A custom component element by its class's short name reads and runs with the
+  feature on (`AD_CodeName` given, the callback wrapped); a packaged class written by its last
+  segment - as the writer names every element - cannot be found (`Unrecognized component:
+  'PkgGauge'`), while a hand-written full-name element works: R2025b's own limitation, kept.
+- **This build's apps** (`ds7_uac_verify`): App Designer's reader loads `UacDesigned.mlapp` (saved
+  whole from its code) and `UacEdited.mlapp` (saved again over its tree with the gauge moved,
+  its value changed and its callback rebound) with no warning, the gauge of its class with its
+  values and bound callback, the callback's component data restored; each loaded gauge is the same
+  as one made in MATLAB with those values (`ds1b_objdiff`); each app runs and its callback runs;
+  the plain-text copy reads and runs the same. The first version of this build lost the callback on
+  the way (the struct was written only when the class was known; a save writes from the code
+  alone) and would have stored the recorded base's position for a component at its class default:
+  the edited app is what tells.
 
 ## DS5 findings (designer plan, R2025b; node and headless)
 

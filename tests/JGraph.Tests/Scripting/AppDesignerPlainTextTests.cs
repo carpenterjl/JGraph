@@ -406,12 +406,14 @@ public class AppDesignerPlainTextTests(ITestOutputHelper output)
             MinimumSupportedMatlabRelease = "R2018a",
         };
         details.RequiredProducts.Add("Signal Processing Toolbox");
-        details.UserComponents.AddRange(["SpinnerGauge", "pkg.Thing"]);
 
-        // The images listed are the design's (an image taken out of the app leaves the list).
+        // The images and the custom component classes listed are the design's (an image or a
+        // component taken out of the app leaves its list); the products are the file's.
         AppDesign design = NewFigure();
         Make("Logo", "matlab.ui.control.Image", design.Figure).Set("ImageSource", new ImageFileValue(["images", "logo.png"]));
         Make("Go", "matlab.ui.control.Button", design.Figure).Set("Icon", new ImageFileValue(["icons", "a.svg"]));
+        design.Figure.Add(new DesignComponent("Gauge", "SpinnerGauge", "SpinnerGauge", string.Empty));
+        design.Figure.Add(new DesignComponent("Thing", "pkg.Thing", "pkg.Thing", string.Empty));
         IReadOnlyList<string> lines = DesignPlainText.AppendixLines(design, new DesignCode("app1"), details);
         Assert.Equal(
         [

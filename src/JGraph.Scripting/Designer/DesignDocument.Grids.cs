@@ -437,6 +437,13 @@ public sealed partial class DesignDocument
             return [new Rect2D(topLeft.X, topLeft.Y, GridAvatar.Width, GridAvatar.Height)];
         }
 
+        if (entry.UserComponent is { } user)
+        {
+            // A custom component's avatar is its registration's default size (DS7b); nothing is made for it.
+            (double width, double height) = user.DefaultSize;
+            return [new Rect2D(topLeft.X, topLeft.Y, width, height)];
+        }
+
         NumericValue[] positions = Palette.Make(entry, Design, Design.Figure, new Point2D(0, 0))
             .Select(static m => m.Component.Get("Position"))
             .OfType<NumericValue>()
@@ -481,7 +488,7 @@ public sealed partial class DesignDocument
             return [AddGridInGrid(grid, spans[0])];
         }
 
-        IReadOnlyList<(DesignComponent Component, int? Index)> made = Palette.Make(entry, Design, grid, new Point2D(0, 0));
+        IReadOnlyList<(DesignComponent Component, int? Index)> made = MakeFromEntry(entry, grid);
         if (made.Count != spans.Count)
         {
             throw new ArgumentException($"The entry makes {made.Count} components, and {spans.Count} cells were given.", nameof(spans));

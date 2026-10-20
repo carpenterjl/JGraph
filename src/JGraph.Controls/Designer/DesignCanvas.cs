@@ -487,7 +487,7 @@ public sealed class DesignCanvas : UserControl
     {
         e.Effects = e.Data.GetDataPresent(DesignPaletteView.EntryFormat) && _gestures is not null ? DragDropEffects.Copy : DragDropEffects.None;
         if (_gestures is { } gestures && _document is { } document
-            && e.Data.GetData(DesignPaletteView.EntryFormat) is string name && document.Palette.Find(name) is { } entry)
+            && e.Data.GetData(DesignPaletteView.EntryFormat) is string name && document.FindPaletteEntry(name) is { } entry)
         {
             // Where it would drop, and every grid's cells, as App Designer's drop hints (DS4).
             Point at = e.GetPosition(_overlay);
@@ -504,7 +504,7 @@ public sealed class DesignCanvas : UserControl
     private void Dropped(DragEventArgs e)
     {
         if (_gestures is not { } gestures || _document is not { } document
-            || e.Data.GetData(DesignPaletteView.EntryFormat) is not string name || document.Palette.Find(name) is not { } entry)
+            || e.Data.GetData(DesignPaletteView.EntryFormat) is not string name || document.FindPaletteEntry(name) is not { } entry)
         {
             return;
         }

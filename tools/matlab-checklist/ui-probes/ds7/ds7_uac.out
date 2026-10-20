@@ -1,0 +1,707 @@
+setup: release 2025b, python C:\Users\Carpe\AppData\Local\Programs\Python\Python312\python.exe
+== 1 metadata
+SpinnerGauge: model directory <ds7>\rt\uac\sg, status Not Registered, valid 1
+SpinnerGauge: view model fields className,componentName,description,icon,category,authorName,authorEmail,version; status Not Registered; categories My Components
+SpinnerGauge: default description 'SPINNERGAUGE  A custom UI component: a spinner and a linear gauge kept in step.' | icon <matlabroot>\toolbox\matlab\appdesigner\appdesigner\+appdesigner\+internal\+usercomponent\+metadata\default_component_icon.png | category "My Components" (string) | version '1.0' (char)
+SpinnerGauge: icon data URI 502 chars, starts data:image/png;base64,iVBORw0KGgoAAAANS
+[Warning: Unable to capture UI component avatar. Users will be unable to see the component preview when dragging the UI component from the
+Component Library onto the canvas.] 
+SpinnerGauge: UpdateModelEvent Register; metadata fields className,componentName,description,icon,category,authorName,authorEmail,version,avatar,avatarDark,defaultPosition; avatar 0 chars, avatarDark 0 chars, defaultPosition [1 1 220 80]
+SpinnerGauge: warning MATLAB:appdesigner:usercomponentmetadata:AvatarNotCapturedInDesktopWarning | Unable to capture UI component avatar. Users will be unable to see the component preview when dragging the UI component from the Component Library onto the canvas.
+json <ds7>\rt\uac\sg\resources\appDesigner.json: 1012 chars, ends with newline 0, CR 0
+json| {
+json|   "components": [
+json|     {
+json|       "className": "SpinnerGauge",
+json|       "componentName": "SpinnerGauge",
+json|       "description": "SPINNERGAUGE  A custom UI component: a spinner and a linear gauge kept in step.",
+json|       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsSAAALEgHS3X78AAABGUlEQVRIiWNsaGj4z0ACqK+vZwS ...(519 chars)
+json|       "category": "My Components",
+json|       "authorName": "",
+json|       "authorEmail": "",
+json|       "version": "1.0",
+json|       "avatar": "",
+json|       "avatarDark": "",
+json|       "defaultPosition": [
+json|         1,
+json|         1,
+json|         220,
+json|         80
+json|       ]
+json|     }
+json|   ],
+json|   "schema": 3,
+json|   "MATLABRelease": "R2025b"
+json| }
+json decoded: top fields components,schema,MATLABRelease; components class struct
+re-read: status Registered, valid 1, categories My Components, fields status,className,componentName,description,icon,category,authorName,authorEmail,version,avatar,avatarDark,defaultPosition
+U10Probe: model directory <ds7>\rt\uac\cls, status Not Registered, valid 1
+U10Probe: view model fields className,componentName,description,icon,category,authorName,authorEmail,version; status Not Registered; categories My Components
+U10Probe: default description 'U10 fixtures: a custom component that logs its setup and update, with two callback events' | icon <matlabroot>\toolbox\matlab\appdesigner\appdesigner\+appdesigner\+internal\+usercomponent\+metadata\default_component_icon.png | category "My Components" (string) | version '1.0' (char)
+U10Probe: icon data URI 502 chars, starts data:image/png;base64,iVBORw0KGgoAAAANS
+[Warning: Unable to capture UI component avatar. Users will be unable to see the component preview when dragging the UI component from the
+Component Library onto the canvas.] 
+U10Probe: UpdateModelEvent Register; metadata fields className,componentName,description,icon,category,authorName,authorEmail,version,avatar,avatarDark,defaultPosition; avatar 0 chars, avatarDark 0 chars, defaultPosition [1 1 100 100]
+U10Probe: warning MATLAB:appdesigner:usercomponentmetadata:AvatarNotCapturedInDesktopWarning | Unable to capture UI component avatar. Users will be unable to see the component preview when dragging the UI component from the Component Library onto the canvas.
+Ds7Types: model directory <ds7>\rt\uac\cls, status Not Registered, valid 1
+Ds7Types: view model fields className,componentName,description,icon,category,authorName,authorEmail,version; status Not Registered; categories My Components
+Ds7Types: default description 'DS7TYPES  One property of each kind App Designer's generator and inspector meet.' | icon <matlabroot>\toolbox\matlab\appdesigner\appdesigner\+appdesigner\+internal\+usercomponent\+metadata\default_component_icon.png | category "My Components" (string) | version '1.0' (char)
+Ds7Types: icon data URI 502 chars, starts data:image/png;base64,iVBORw0KGgoAAAANS
+[Warning: Unable to capture UI component avatar. Users will be unable to see the component preview when dragging the UI component from the
+Component Library onto the canvas.] 
+Ds7Types: UpdateModelEvent Register; metadata fields className,componentName,description,icon,category,authorName,authorEmail,version,avatar,avatarDark,defaultPosition; avatar 0 chars, avatarDark 0 chars, defaultPosition [1 1 100 100]
+Ds7Types: warning MATLAB:appdesigner:usercomponentmetadata:AvatarNotCapturedInDesktopWarning | Unable to capture UI component avatar. Users will be unable to see the component preview when dragging the UI component from the Component Library onto the canvas.
+json <ds7>\rt\uac\cls\resources\appDesigner.json: 1953 chars, ends with newline 0, CR 0
+json| {
+json|   "components": [
+json|     {
+json|       "className": "U10Probe",
+json|       "componentName": "U10Probe",
+json|       "description": "U10 fixtures: a custom component that logs its setup and update, with two callback events",
+json|       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsSAAALEgHS3X78AAABGUlEQVRIiWNsaGj4z0ACqK+vZwS ...(519 chars)
+json|       "category": "My Components",
+json|       "authorName": "",
+json|       "authorEmail": "",
+json|       "version": "1.0",
+json|       "avatar": "",
+json|       "avatarDark": "",
+json|       "defaultPosition": [
+json|         1,
+json|         1,
+json|         100,
+json|         100
+json|       ]
+json|     },
+json|     {
+json|       "className": "Ds7Types",
+json|       "componentName": "Ds7Types",
+json|       "description": "DS7TYPES  One property of each kind App Designer's generator and inspector meet.",
+json|       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsSAAALEgHS3X78AAABGUlEQVRIiWNsaGj4z0ACqK+vZwS ...(519 chars)
+json|       "category": "My Components",
+json|       "authorName": "",
+json|       "authorEmail": "",
+json|       "version": "1.0",
+json|       "avatar": "",
+json|       "avatarDark": "",
+json|       "defaultPosition": [
+json|         1,
+json|         1,
+json|         100,
+json|         100
+json|       ]
+json|     }
+json|   ],
+json|   "schema": 3,
+json|   "MATLABRelease": "R2025b"
+json| }
+json decoded: top fields components,schema,MATLABRelease; components class struct
+removeMetadata Ds7Types: ok
+json <ds7>\rt\uac\cls\resources\appDesigner.json: 1015 chars, ends with newline 0, CR 0
+json| {
+json|   "components": [
+json|     {
+json|       "className": "U10Probe",
+json|       "componentName": "U10Probe",
+json|       "description": "U10 fixtures: a custom component that logs its setup and update, with two callback events",
+json|       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsSAAALEgHS3X78AAABGUlEQVRIiWNsaGj4z0ACqK+vZwS ...(519 chars)
+json|       "category": "My Components",
+json|       "authorName": "",
+json|       "authorEmail": "",
+json|       "version": "1.0",
+json|       "avatar": "",
+json|       "avatarDark": "",
+json|       "defaultPosition": [
+json|         1,
+json|         1,
+json|         100,
+json|         100
+json|       ]
+json|     }
+json|   ],
+json|   "schema": 3,
+json|   "MATLABRelease": "R2025b"
+json| }
+json decoded: top fields components,schema,MATLABRelease; components class struct
+removeMetadata U10Probe: ok
+json <ds7>\rt\uac\cls\resources\appDesigner.json: 66 chars, ends with newline 0, CR 0
+json| {
+json|   "components": [],
+json|   "schema": 3,
+json|   "MATLABRelease": "R2025b"
+json| }
+json decoded: top fields components,schema,MATLABRelease; components class double
+packaged: directory <ds7>\rt\uac\cls, className ds7pkg.PkgGauge, componentName PkgGauge
+validated file: <ds7>\rt\uac\sg\SpinnerGauge.m
+not a component ERROR MATLAB:appdesigner:usercomponentmetadata:NotCustomComponentClass | File D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\ds7\rt\uac\cls\Ds7Mode.m is not a valid custom UI component class because it does not inherit from matlab.ui.componentcontainer.ComponentContainer. | at getValidatedCustomComponentFile:57
+== 2 class model
+SpinnerGauge properties(): Value,Limits,SetupCalls,UpdateCalls,ValueChangedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout
+SpinnerGauge PropertyList order: Value,Limits,Grid,Spinner,Gauge,SetupCalls,UpdateCalls,ValueChangedFcn,SetupComplete,InUpdateFlag,ResizeFcn,VisibleMode,Visible_I,Visible,SerializableMode,Serializable_I,Serializable,BackgroundColorMode,BackgroundColor_I,BackgroundColor,JavaFrame,SizeChangedFcnMode,SizeChangedFcn_I,SizeChangedFcn,SizeChangedFcn_IS,Children,ChildrenMode,Children_I,ValidateChildFcnMode,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,ControllerMode,Controller_I,Parent,ParentMode,Parent_I,HandleVisibilityMode,HandleVisibility_I,HandleVisibility,Internal,ApplicationData,SerializableApplicationData,DefaultPropMap_Internal,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcnMode,ButtonDownFcn_I,ButtonDownFcn,ButtonDownFcn_IS,ContextMenu,UIContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcnMode,CreateFcn_I,CreateFcn,CreateFcn_IS,DeleteFcnMode,DeleteFcn_I,DeleteFcn,DeleteFcn_IS,Type,TagMode,Tag_I,Tag,UserData,SerializableUserData,Selected,SelectionHighlight,HitTest,Clipping,IncludeRenderer,HelpTopicKey,Behavior,OuterPositionStorage,InnerPositionStorage,Units,UnitsMode,Units_I,Position,PositionMode,Position_I,InnerPosition,OuterPosition,UnitsService,UnitsServiceStorage,ALimInclude,CLimInclude,XLimInclude,YLimInclude,ZLimInclude,Layout,SerializableCallbackPropertyFcns
+meta| SpinnerGauge.Value get=public set=public hidden=0 dep=0 transient=0 type=SpinnerGauge: (1,1) double default=0 setm=0 getm=0 by=SpinnerGauge
+meta| SpinnerGauge.Limits get=public set=public hidden=0 dep=0 transient=0 type=SpinnerGauge: (1,2) double default=[0 100] setm=0 getm=0 by=SpinnerGauge
+meta| SpinnerGauge.Grid get=private set=private hidden=0 dep=0 transient=1 type=SpinnerGauge: matlab.ui.container.GridLayout default=- setm=0 getm=0 by=SpinnerGauge
+meta| SpinnerGauge.Spinner get=private set=private hidden=0 dep=0 transient=1 type=SpinnerGauge: matlab.ui.control.Spinner default=- setm=0 getm=0 by=SpinnerGauge
+meta| SpinnerGauge.Gauge get=private set=private hidden=0 dep=0 transient=1 type=SpinnerGauge: matlab.ui.control.LinearGauge default=- setm=0 getm=0 by=SpinnerGauge
+meta| SpinnerGauge.SetupCalls get=public set=private hidden=0 dep=0 transient=0 type=any default=0 setm=0 getm=0 by=SpinnerGauge
+meta| SpinnerGauge.UpdateCalls get=public set=private hidden=0 dep=0 transient=0 type=any default=0 setm=0 getm=0 by=SpinnerGauge
+meta| SpinnerGauge.ValueChangedFcn get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default='' setm=0 getm=0 by=SpinnerGauge
+meta| SpinnerGauge.SetupComplete get=public set=public hidden=1 dep=0 transient=1 type=matlab.ui.componentcontainer.ComponentContainer: (1,1) logical default=false setm=0 getm=0 by=matlab.ui.componentcontainer.ComponentContainer
+meta| SpinnerGauge.InUpdateFlag get=public set=public hidden=1 dep=0 transient=1 type=matlab.ui.componentcontainer.ComponentContainer: (1,1) logical default=false setm=0 getm=0 by=matlab.ui.componentcontainer.ComponentContainer
+meta| SpinnerGauge.ResizeFcn get=public set=public hidden=1 dep=1 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.VisibleMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.Visible_I get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.Visible get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.SerializableMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.Serializable_I get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.Serializable get=public set=public hidden=1 dep=1 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.BackgroundColorMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.BackgroundColor_I get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.RGBAColor default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.BackgroundColor get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.RGBAColor default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.JavaFrame get=public set=protected hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.JavaPeer default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.SizeChangedFcnMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.SizeChangedFcn_I get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.SizeChangedFcn get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.SizeChangedFcn_IS get=protected set=private hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.ui.container.internal.UIContainer
+meta| SpinnerGauge.Children get=public set=public hidden=0 dep=1 transient=1 type=any default=- setm=0 getm=0 by=matlab.ui.container.Container
+meta| SpinnerGauge.ChildrenMode get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.container.Container
+meta| SpinnerGauge.Children_I get=public set=public hidden=1 dep=0 transient=1 type=any default=[] setm=0 getm=0 by=matlab.ui.container.Container
+meta| SpinnerGauge.ValidateChildFcnMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.container.Container
+meta| SpinnerGauge.ValidateChildFcn_I get=private set=protected hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.ui.container.Container
+meta| SpinnerGauge.ValidateChildFcn get=private set=protected hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.ui.container.Container
+meta| SpinnerGauge.ValidateChildFcn_IS get=protected set=private hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.ui.container.Container
+meta| SpinnerGauge.Controller get=protected set=protected hidden=0 dep=1 transient=1 type=matlab.graphics.datatype.HandleOrEmpty default=- setm=0 getm=0 by=matlab.ui.control.WebComponent
+meta| SpinnerGauge.ControllerMode get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.control.WebComponent
+meta| SpinnerGauge.Controller_I get=protected set=protected hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.HandleOrEmpty default=- setm=0 getm=0 by=matlab.ui.control.WebComponent
+meta| SpinnerGauge.Parent get=public set=public hidden=0 dep=1 transient=1 type=matlab.graphics.Graphics default=- setm=0 getm=0 by=matlab.ui.control.Component
+meta| SpinnerGauge.ParentMode get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.control.Component
+meta| SpinnerGauge.Parent_I get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.Graphics default=- setm=0 getm=0 by=matlab.ui.control.Component
+meta| SpinnerGauge.HandleVisibilityMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.control.Component
+meta| SpinnerGauge.HandleVisibility_I get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.HandleVisibility default=- setm=0 getm=0 by=matlab.ui.control.Component
+meta| SpinnerGauge.HandleVisibility get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.HandleVisibility default=- setm=0 getm=0 by=matlab.ui.control.Component
+meta| SpinnerGauge.Internal get=public set=public hidden=1 dep=0 transient=0 type=logical scalar default=- setm=0 getm=0 by=matlab.graphics.Graphics
+meta| SpinnerGauge.ApplicationData get=public set=public hidden=1 dep=0 transient=1 type=struct default=- setm=0 getm=0 by=matlab.graphics.Graphics
+meta| SpinnerGauge.SerializableApplicationData get=protected set=private hidden=1 dep=0 transient=0 type=struct default=- setm=0 getm=0 by=matlab.graphics.Graphics
+meta| SpinnerGauge.DefaultPropMap_Internal get=public set=public hidden=1 dep=0 transient=1 type=struct default=- setm=0 getm=0 by=matlab.graphics.Graphics
+meta| SpinnerGauge.Copyable get=public set=classlist hidden=1 dep=0 transient=0 type=logical scalar default=- setm=0 getm=0 by=matlab.graphics.mixin.internal.Copyable
+meta| SpinnerGauge.NodeParent get=public set=private hidden=1 dep=0 transient=1 type=matlab.graphics.Graphics default=- setm=0 getm=0 by=matlab.graphics.mixin.NodeParent
+meta| SpinnerGauge.CustomThemePropertyMappings get=protected set=private hidden=1 dep=0 transient=0 type=any default=- setm=0 getm=0 by=matlab.graphics.mixin.Themeable
+meta| SpinnerGauge.NodeChildren get=public set=private hidden=1 dep=0 transient=1 type=any default=- setm=0 getm=0 by=matlab.graphics.mixin.NodeChildren
+meta| SpinnerGauge.ButtonDownFcnMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsUIProperties
+meta| SpinnerGauge.ButtonDownFcn_I get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsUIProperties
+meta| SpinnerGauge.ButtonDownFcn get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsUIProperties
+meta| SpinnerGauge.ButtonDownFcn_IS get=protected set=private hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsUIProperties
+meta| SpinnerGauge.ContextMenu get=public set=public hidden=0 dep=0 transient=1 type=matlab.graphics.datatype.HandleOrEmpty default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.UIContextMenu get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.HandleOrEmpty default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.BusyAction get=public set=public hidden=0 dep=0 transient=0 type=matlab.graphics.datatype.BusyAction default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.BeingDeleted get=public set=protected hidden=0 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.Interruptible get=public set=public hidden=0 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.CreateFcnMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.CreateFcn_I get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.CreateFcn get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.CreateFcn_IS get=protected set=private hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.DeleteFcnMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.DeleteFcn_I get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.DeleteFcn get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.DeleteFcn_IS get=protected set=private hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.Callback default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsCoreProperties
+meta| SpinnerGauge.Type get=public set=protected hidden=0 dep=0 transient=1 type=matlab.graphics.datatype.TypeName default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsBaseFunctions
+meta| SpinnerGauge.TagMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsBaseFunctions
+meta| SpinnerGauge.Tag_I get=public set=public hidden=1 dep=0 transient=0 type=unicodeString default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsBaseFunctions
+meta| SpinnerGauge.Tag get=public set=public hidden=0 dep=1 transient=0 type=unicodeString default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsBaseFunctions
+meta| SpinnerGauge.UserData get=public set=public hidden=0 dep=0 transient=1 type=any default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsBaseFunctions
+meta| SpinnerGauge.SerializableUserData get=protected set=private hidden=1 dep=0 transient=0 type=any default=- setm=0 getm=0 by=matlab.graphics.internal.GraphicsBaseFunctions
+meta| SpinnerGauge.Selected get=public set=public hidden=1 dep=0 transient=1 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.Selectable
+meta| SpinnerGauge.SelectionHighlight get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.Selectable
+meta| SpinnerGauge.HitTest get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.Selectable
+meta| SpinnerGauge.Clipping get=public set=public hidden=0 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.Legacy
+meta| SpinnerGauge.IncludeRenderer get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.Legacy
+meta| SpinnerGauge.HelpTopicKey get=public set=public hidden=1 dep=0 transient=0 type=asciiString default=- setm=0 getm=0 by=matlab.ui.internal.mixin.Legacy
+meta| SpinnerGauge.Behavior get=public set=public hidden=1 dep=0 transient=0 type=any default=- setm=0 getm=0 by=matlab.ui.internal.mixin.Legacy
+meta| SpinnerGauge.OuterPositionStorage get=protected set=private hidden=0 dep=0 transient=0 type=matlab.ui.internal.UnitPos default=<matlab.ui.internal.UnitPos [0 0]> setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.InnerPositionStorage get=protected set=private hidden=0 dep=0 transient=0 type=matlab.ui.internal.UnitPos default=<matlab.ui.internal.UnitPos [0 0]> setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.Units get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Units default=- setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.UnitsMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.Units_I get=public set=public hidden=1 dep=1 transient=0 type=matlab.graphics.datatype.Units default='normalized' setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.Position get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Position default=- setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.PositionMode get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.AutoManual default=- setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.Position_I get=public set=public hidden=1 dep=1 transient=0 type=matlab.graphics.datatype.Position default=[0 0 1 1] setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.InnerPosition get=public set=protected hidden=0 dep=0 transient=1 type=matlab.graphics.datatype.Position default=[0 0 0 0] setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.OuterPosition get=public set=public hidden=0 dep=1 transient=1 type=matlab.graphics.datatype.Position default=- setm=0 getm=0 by=matlab.ui.internal.mixin.UIOuterPositionable
+meta| SpinnerGauge.UnitsService get=private set=protected hidden=0 dep=0 transient=1 type=matlab.ui.internal.UnitsService default=<matlab.ui.internal.UnitsService [0 0]> setm=0 getm=0 by=matlab.ui.internal.mixin.Positionable
+meta| SpinnerGauge.UnitsServiceStorage get=private set=protected hidden=0 dep=0 transient=1 type=matlab.ui.internal.UnitsServiceStorage default=<matlab.ui.internal.UnitsServiceStorage [0 0]> setm=0 getm=0 by=matlab.ui.internal.mixin.Positionable
+meta| SpinnerGauge.ALimInclude get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.AxesLimits
+meta| SpinnerGauge.CLimInclude get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.AxesLimits
+meta| SpinnerGauge.XLimInclude get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.AxesLimits
+meta| SpinnerGauge.YLimInclude get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.AxesLimits
+meta| SpinnerGauge.ZLimInclude get=public set=public hidden=1 dep=0 transient=0 type=matlab.graphics.datatype.on_off default=- setm=0 getm=0 by=matlab.ui.internal.mixin.AxesLimits
+meta| SpinnerGauge.Layout get=public set=public hidden=0 dep=0 transient=0 type=matlab.graphics.datatype.LayoutOrEmpty default=- setm=0 getm=0 by=matlab.graphics.mixin.Layoutable
+meta| SpinnerGauge.SerializableCallbackPropertyFcns get=protected set=protected hidden=1 dep=0 transient=0 type=matlab.graphics.chartcontainer.mixin.internal.GeneratedCallbackSaveLoadMixin: (1,1) struct default=- setm=1 getm=1 by=matlab.graphics.chartcontainer.mixin.internal.GeneratedCallbackSaveLoadMixin
+SpinnerGauge callbacks (extractCallbackPropertyNamesFromMetaClass): ValueChangedFcn,SizeChangedFcn
+U10Probe properties(): Value,Label,SetupCalls,UpdateCalls,ValueChangedFcn,ClickedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout
+U10Probe PropertyList order: Value,Label,Grid,Field,Hidden0,SetupCalls,UpdateCalls,ValueChangedFcn,ClickedFcn,SetupComplete,InUpdateFlag,ResizeFcn,VisibleMode,Visible_I,Visible,SerializableMode,Serializable_I,Serializable,BackgroundColorMode,BackgroundColor_I,BackgroundColor,JavaFrame,SizeChangedFcnMode,SizeChangedFcn_I,SizeChangedFcn,SizeChangedFcn_IS,Children,ChildrenMode,Children_I,ValidateChildFcnMode,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,ControllerMode,Controller_I,Parent,ParentMode,Parent_I,HandleVisibilityMode,HandleVisibility_I,HandleVisibility,Internal,ApplicationData,SerializableApplicationData,DefaultPropMap_Internal,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcnMode,ButtonDownFcn_I,ButtonDownFcn,ButtonDownFcn_IS,ContextMenu,UIContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcnMode,CreateFcn_I,CreateFcn,CreateFcn_IS,DeleteFcnMode,DeleteFcn_I,DeleteFcn,DeleteFcn_IS,Type,TagMode,Tag_I,Tag,UserData,SerializableUserData,Selected,SelectionHighlight,HitTest,Clipping,IncludeRenderer,HelpTopicKey,Behavior,OuterPositionStorage,InnerPositionStorage,Units,UnitsMode,Units_I,Position,PositionMode,Position_I,InnerPosition,OuterPosition,UnitsService,UnitsServiceStorage,ALimInclude,CLimInclude,XLimInclude,YLimInclude,ZLimInclude,Layout,SerializableCallbackPropertyFcns
+meta| U10Probe.Value get=public set=public hidden=0 dep=0 transient=0 type=U10Probe: (1,1) double default=1 setm=0 getm=0 by=U10Probe
+meta| U10Probe.Label get=public set=public hidden=0 dep=0 transient=0 type=U10Probe: char default='lbl' setm=0 getm=0 by=U10Probe
+meta| U10Probe.Grid get=private set=private hidden=0 dep=0 transient=0 type=any default=- setm=0 getm=0 by=U10Probe
+meta| U10Probe.Field get=private set=private hidden=0 dep=0 transient=0 type=any default=- setm=0 getm=0 by=U10Probe
+meta| U10Probe.Hidden0 get=private set=private hidden=0 dep=0 transient=0 type=any default=0 setm=0 getm=0 by=U10Probe
+meta| U10Probe.SetupCalls get=public set=private hidden=0 dep=0 transient=0 type=any default=0 setm=0 getm=0 by=U10Probe
+meta| U10Probe.UpdateCalls get=public set=private hidden=0 dep=0 transient=0 type=any default=0 setm=0 getm=0 by=U10Probe
+meta| U10Probe.ValueChangedFcn get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default='' setm=0 getm=0 by=U10Probe
+meta| U10Probe.ClickedFcn get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default='' setm=0 getm=0 by=U10Probe
+U10Probe callbacks (extractCallbackPropertyNamesFromMetaClass): ValueChangedFcn,ClickedFcn,SizeChangedFcn
+Ds7Types properties(): Count,Ratio,Flag,Note,Text,Names,Nums,Mode,NoDefaultMode,When,Grid2,Untyped,Data,Colors,Column,Twice,Prot,Fixed,ChangedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout
+Ds7Types PropertyList order: Count,Ratio,Flag,Note,Text,Names,Nums,Mode,NoDefaultMode,When,Grid2,Untyped,Data,Colors,Column,Twice,Secret,Prot,Fixed,ChangedFcn,SetupComplete,InUpdateFlag,ResizeFcn,VisibleMode,Visible_I,Visible,SerializableMode,Serializable_I,Serializable,BackgroundColorMode,BackgroundColor_I,BackgroundColor,JavaFrame,SizeChangedFcnMode,SizeChangedFcn_I,SizeChangedFcn,SizeChangedFcn_IS,Children,ChildrenMode,Children_I,ValidateChildFcnMode,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,ControllerMode,Controller_I,Parent,ParentMode,Parent_I,HandleVisibilityMode,HandleVisibility_I,HandleVisibility,Internal,ApplicationData,SerializableApplicationData,DefaultPropMap_Internal,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcnMode,ButtonDownFcn_I,ButtonDownFcn,ButtonDownFcn_IS,ContextMenu,UIContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcnMode,CreateFcn_I,CreateFcn,CreateFcn_IS,DeleteFcnMode,DeleteFcn_I,DeleteFcn,DeleteFcn_IS,Type,TagMode,Tag_I,Tag,UserData,SerializableUserData,Selected,SelectionHighlight,HitTest,Clipping,IncludeRenderer,HelpTopicKey,Behavior,OuterPositionStorage,InnerPositionStorage,Units,UnitsMode,Units_I,Position,PositionMode,Position_I,InnerPosition,OuterPosition,UnitsService,UnitsServiceStorage,ALimInclude,CLimInclude,XLimInclude,YLimInclude,ZLimInclude,Layout,SerializableCallbackPropertyFcns
+meta| Ds7Types.Count get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: int32 default=int32(1) setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Ratio get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: single default=single(1) setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Flag get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: logical default=false setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Note get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: string default="x" setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Text get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: char default='abc' setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Names get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: cell default=cell[1 2] ["a","b"] setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Nums get=public set=public hidden=0 dep=0 transient=0 type=any default=cell[1 2] [1,2] setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Mode get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: Ds7Mode default=Ds7Mode.Slow setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.NoDefaultMode get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: Ds7Mode default=- setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.When get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: datetime default=datetime 02-Jan-2020 setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Grid2 get=public set=public hidden=0 dep=0 transient=0 type=any default=cell[2 2] ["a","c","b","d"] setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Untyped get=public set=public hidden=0 dep=0 transient=0 type=any default=- setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Data get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: struct default=struct {"a":1} setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Colors get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: (1,3) double default=[1 0 0] setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Column get=public set=public hidden=0 dep=0 transient=0 type=Ds7Types: (:,1) double default=[1;2] setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Twice get=public set=public hidden=0 dep=1 transient=0 type=any default=- setm=0 getm=1 by=Ds7Types
+meta| Ds7Types.Secret get=public set=public hidden=1 dep=0 transient=0 type=any default=1 setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Prot get=public set=protected hidden=0 dep=0 transient=0 type=any default=2 setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.Fixed get=public set=immutable hidden=0 dep=0 transient=0 type=any default=3 setm=0 getm=0 by=Ds7Types
+meta| Ds7Types.ChangedFcn get=public set=public hidden=0 dep=1 transient=0 type=matlab.graphics.datatype.Callback default='' setm=0 getm=0 by=Ds7Types
+Ds7Types callbacks (extractCallbackPropertyNamesFromMetaClass): ChangedFcn,SizeChangedFcn
+SpinnerGauge [figure] codegen names: Value,Limits,ValueChangedFcn,Visible,BackgroundColor,SizeChangedFcn,HandleVisibility,BusyAction,Interruptible,Tag,Layout,Position
+SpinnerGauge [figure] non-public: Grid,Spinner,Gauge,SetupCalls,UpdateCalls,JavaFrame,SizeChangedFcn_IS,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,Controller_I,SerializableApplicationData,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcn_IS,BeingDeleted,CreateFcn_IS,DeleteFcn_IS,Type,SerializableUserData,OuterPositionStorage,InnerPositionStorage,InnerPosition,UnitsService,UnitsServiceStorage,SerializableCallbackPropertyFcns
+SpinnerGauge [figure] callback names (getCallbackPropertyNames): ValueChangedFcn,SizeChangedFcn
+SpinnerGauge [figure] mode siblings: VisibleMode='auto',BackgroundColorMode='auto',SizeChangedFcnMode='auto',HandleVisibilityMode='auto',TagMode='auto',PositionMode='manual'
+SpinnerGauge [figure] run-time defaults (unthemed): Value=0; Limits=[0 100]; ValueChangedFcn=''; Visible=onoff on; BackgroundColor=[0.960784 0.960784 0.960784]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='spinnergauge'; Tag=''; Units='pixels'; Position=[10 10 220 80]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+SpinnerGauge [figure] run-time defaults (light): Value=0; Limits=[0 100]; ValueChangedFcn=''; Visible=onoff on; BackgroundColor=[0.960784 0.960784 0.960784]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='spinnergauge'; Tag=''; Units='pixels'; Position=[10 10 220 80]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+SpinnerGauge [figure] run-time defaults (dark): Value=0; Limits=[0 100]; ValueChangedFcn=''; Visible=onoff on; BackgroundColor=[0.129412 0.129412 0.129412]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='spinnergauge'; Tag=''; Units='pixels'; Position=[10 10 220 80]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+SpinnerGauge [figure] run-time default fields: Value,Limits,SetupCalls,UpdateCalls,ValueChangedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout
+SpinnerGauge [figure] generated (light, 3 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged';
+SpinnerGauge [figure] generated (unthemed, 3 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged';
+SpinnerGauge [figure] generated for a UserComponentApp: comp.ad_CODENAME_ad = SpinnerGauge(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Value = 40; || comp.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged';
+SpinnerGauge [figure] dirty props: Value=40 ; ValueChangedFcn=GaugeValueChanged
+SpinnerGauge [figure moved] codegen names: Value,Limits,ValueChangedFcn,Visible,BackgroundColor,SizeChangedFcn,HandleVisibility,BusyAction,Interruptible,Tag,Layout,Position
+SpinnerGauge [figure moved] non-public: Grid,Spinner,Gauge,SetupCalls,UpdateCalls,JavaFrame,SizeChangedFcn_IS,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,Controller_I,SerializableApplicationData,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcn_IS,BeingDeleted,CreateFcn_IS,DeleteFcn_IS,Type,SerializableUserData,OuterPositionStorage,InnerPositionStorage,InnerPosition,UnitsService,UnitsServiceStorage,SerializableCallbackPropertyFcns
+SpinnerGauge [figure moved] callback names (getCallbackPropertyNames): ValueChangedFcn,SizeChangedFcn
+SpinnerGauge [figure moved] mode siblings: VisibleMode='auto',BackgroundColorMode='auto',SizeChangedFcnMode='auto',HandleVisibilityMode='auto',TagMode='auto',PositionMode='manual'
+SpinnerGauge [figure moved] generated (light, 4 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged';
+gen| app.ad_CODENAME_ad.Position = [20 30 220 80];
+SpinnerGauge [figure moved] generated (unthemed, 4 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged';
+gen| app.ad_CODENAME_ad.Position = [20 30 220 80];
+SpinnerGauge [figure moved] generated for a UserComponentApp: comp.ad_CODENAME_ad = SpinnerGauge(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Value = 40; || comp.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged'; || comp.ad_CODENAME_ad.Position = [20 30 220 80];
+SpinnerGauge [figure moved] dirty props: Value=40 ; ValueChangedFcn=GaugeValueChanged ; Position=[20 30 220 80]
+SpinnerGauge [grid] codegen names: Value,Limits,ValueChangedFcn,Visible,BackgroundColor,SizeChangedFcn,HandleVisibility,BusyAction,Interruptible,Tag,Layout,Position
+SpinnerGauge [grid] non-public: Grid,Spinner,Gauge,SetupCalls,UpdateCalls,JavaFrame,SizeChangedFcn_IS,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,Controller_I,SerializableApplicationData,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcn_IS,BeingDeleted,CreateFcn_IS,DeleteFcn_IS,Type,SerializableUserData,OuterPositionStorage,InnerPositionStorage,InnerPosition,UnitsService,UnitsServiceStorage,SerializableCallbackPropertyFcns
+SpinnerGauge [grid] callback names (getCallbackPropertyNames): ValueChangedFcn,SizeChangedFcn
+SpinnerGauge [grid] mode siblings: VisibleMode='auto',BackgroundColorMode='auto',SizeChangedFcnMode='auto',HandleVisibilityMode='auto',TagMode='auto',PositionMode='manual'
+SpinnerGauge [grid] generated (light, 5 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged';
+gen| app.ad_CODENAME_ad.Layout.Row = 1;
+gen| app.ad_CODENAME_ad.Layout.Column = 1;
+SpinnerGauge [grid] generated (unthemed, 5 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged';
+gen| app.ad_CODENAME_ad.Layout.Row = 1;
+gen| app.ad_CODENAME_ad.Layout.Column = 1;
+SpinnerGauge [grid] generated for a UserComponentApp: comp.ad_CODENAME_ad = SpinnerGauge(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Value = 40; || comp.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged'; || comp.ad_CODENAME_ad.Layout.Row = 1; || comp.ad_CODENAME_ad.Layout.Column = 1;
+SpinnerGauge [grid] dirty props: Value=40 ; ValueChangedFcn=GaugeValueChanged ; Layout.Row=1 ; Layout.Column=1
+SpinnerGauge [grid r2c[1 2] before] codegen names: Value,Limits,ValueChangedFcn,Visible,BackgroundColor,SizeChangedFcn,HandleVisibility,BusyAction,Interruptible,Tag,Layout,Position
+SpinnerGauge [grid r2c[1 2] before] non-public: Grid,Spinner,Gauge,SetupCalls,UpdateCalls,JavaFrame,SizeChangedFcn_IS,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,Controller_I,SerializableApplicationData,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcn_IS,BeingDeleted,CreateFcn_IS,DeleteFcn_IS,Type,SerializableUserData,OuterPositionStorage,InnerPositionStorage,InnerPosition,UnitsService,UnitsServiceStorage,SerializableCallbackPropertyFcns
+SpinnerGauge [grid r2c[1 2] before] callback names (getCallbackPropertyNames): ValueChangedFcn,SizeChangedFcn
+SpinnerGauge [grid r2c[1 2] before] mode siblings: VisibleMode='auto',BackgroundColorMode='auto',SizeChangedFcnMode='auto',HandleVisibilityMode='auto',TagMode='auto',PositionMode='manual'
+SpinnerGauge [grid r2c[1 2] before] generated (light, 4 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.Layout.Row = 1;
+gen| app.ad_CODENAME_ad.Layout.Column = 1;
+SpinnerGauge [grid r2c[1 2] before] generated (unthemed, 4 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.Layout.Row = 1;
+gen| app.ad_CODENAME_ad.Layout.Column = 1;
+SpinnerGauge [grid r2c[1 2] before] generated for a UserComponentApp: comp.ad_CODENAME_ad = SpinnerGauge(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Value = 40; || comp.ad_CODENAME_ad.Layout.Row = 1; || comp.ad_CODENAME_ad.Layout.Column = 1;
+SpinnerGauge [grid r2c[1 2] before] dirty props: Value=40 ; Layout.Row=1 ; Layout.Column=1
+SpinnerGauge [grid r2c[1 2]] generated (light, 4 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.Layout.Row = 2;
+gen| app.ad_CODENAME_ad.Layout.Column = [1 2];
+SpinnerGauge [grid r2c[1 2]] generated (unthemed, 4 lines)
+gen| app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.Layout.Row = 2;
+gen| app.ad_CODENAME_ad.Layout.Column = [1 2];
+SpinnerGauge [grid r2c[1 2]] generated for a UserComponentApp: comp.ad_CODENAME_ad = SpinnerGauge(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Value = 40; || comp.ad_CODENAME_ad.Layout.Row = 2; || comp.ad_CODENAME_ad.Layout.Column = [1 2];
+SpinnerGauge [grid r2c[1 2]] dirty props: Value=40 ; Layout.Row=2 ; Layout.Column=[1 2]
+U10Probe [figure] codegen names: Value,Label,ValueChangedFcn,ClickedFcn,Visible,BackgroundColor,SizeChangedFcn,HandleVisibility,BusyAction,Interruptible,Tag,Layout,Position
+U10Probe [figure] non-public: Grid,Field,Hidden0,SetupCalls,UpdateCalls,JavaFrame,SizeChangedFcn_IS,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,Controller_I,SerializableApplicationData,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcn_IS,BeingDeleted,CreateFcn_IS,DeleteFcn_IS,Type,SerializableUserData,OuterPositionStorage,InnerPositionStorage,InnerPosition,UnitsService,UnitsServiceStorage,SerializableCallbackPropertyFcns
+U10Probe [figure] callback names (getCallbackPropertyNames): ValueChangedFcn,ClickedFcn,SizeChangedFcn
+U10Probe [figure] mode siblings: VisibleMode='auto',BackgroundColorMode='auto',SizeChangedFcnMode='auto',HandleVisibilityMode='auto',TagMode='auto',PositionMode='auto'
+U10Probe [figure] run-time defaults (unthemed): Value=1; Label='lbl'; ValueChangedFcn=''; ClickedFcn=''; Visible=onoff on; BackgroundColor=[0.960784 0.960784 0.960784]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='u10probe'; Tag=''; Units='pixels'; Position=[100 100 100 100]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+U10Probe [figure] run-time defaults (light): Value=1; Label='lbl'; ValueChangedFcn=''; ClickedFcn=''; Visible=onoff on; BackgroundColor=[0.960784 0.960784 0.960784]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='u10probe'; Tag=''; Units='pixels'; Position=[100 100 100 100]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+U10Probe [figure] run-time defaults (dark): Value=1; Label='lbl'; ValueChangedFcn=''; ClickedFcn=''; Visible=onoff on; BackgroundColor=[0.129412 0.129412 0.129412]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='u10probe'; Tag=''; Units='pixels'; Position=[100 100 100 100]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+U10Probe [figure] run-time default fields: Value,Label,SetupCalls,UpdateCalls,ValueChangedFcn,ClickedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout
+U10Probe [figure] generated (light, 4 lines)
+gen| app.ad_CODENAME_ad = U10Probe(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'ProbeValueChanged';
+gen| app.ad_CODENAME_ad.Position = [10 10 220 80];
+U10Probe [figure] generated (unthemed, 4 lines)
+gen| app.ad_CODENAME_ad = U10Probe(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'ProbeValueChanged';
+gen| app.ad_CODENAME_ad.Position = [10 10 220 80];
+U10Probe [figure] generated for a UserComponentApp: comp.ad_CODENAME_ad = U10Probe(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Value = 40; || comp.ad_CODENAME_ad.ValueChangedFcn = 'ProbeValueChanged'; || comp.ad_CODENAME_ad.Position = [10 10 220 80];
+U10Probe [figure] dirty props: Value=40 ; ValueChangedFcn=ProbeValueChanged ; Position=[10 10 220 80]
+U10Probe log: setup Value=1 Pos=[100 100 100 100] Parent=figure / update Value=1 / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete / update Value=40 / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete
+U10Probe [grid] codegen names: Value,Label,ValueChangedFcn,ClickedFcn,Visible,BackgroundColor,SizeChangedFcn,HandleVisibility,BusyAction,Interruptible,Tag,Layout,Position
+U10Probe [grid] non-public: Grid,Field,Hidden0,SetupCalls,UpdateCalls,JavaFrame,SizeChangedFcn_IS,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,Controller_I,SerializableApplicationData,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcn_IS,BeingDeleted,CreateFcn_IS,DeleteFcn_IS,Type,SerializableUserData,OuterPositionStorage,InnerPositionStorage,InnerPosition,UnitsService,UnitsServiceStorage,SerializableCallbackPropertyFcns
+U10Probe [grid] callback names (getCallbackPropertyNames): ValueChangedFcn,ClickedFcn,SizeChangedFcn
+U10Probe [grid] mode siblings: VisibleMode='auto',BackgroundColorMode='auto',SizeChangedFcnMode='auto',HandleVisibilityMode='auto',TagMode='auto',PositionMode='auto'
+U10Probe [grid] generated (light, 5 lines)
+gen| app.ad_CODENAME_ad = U10Probe(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'ProbeValueChanged';
+gen| app.ad_CODENAME_ad.Layout.Row = 2;
+gen| app.ad_CODENAME_ad.Layout.Column = 1;
+U10Probe [grid] generated (unthemed, 5 lines)
+gen| app.ad_CODENAME_ad = U10Probe(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 40;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'ProbeValueChanged';
+gen| app.ad_CODENAME_ad.Layout.Row = 2;
+gen| app.ad_CODENAME_ad.Layout.Column = 1;
+U10Probe [grid] generated for a UserComponentApp: comp.ad_CODENAME_ad = U10Probe(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Value = 40; || comp.ad_CODENAME_ad.ValueChangedFcn = 'ProbeValueChanged'; || comp.ad_CODENAME_ad.Layout.Row = 2; || comp.ad_CODENAME_ad.Layout.Column = 1;
+U10Probe [grid] dirty props: Value=40 ; ValueChangedFcn=ProbeValueChanged ; Layout.Row=2 ; Layout.Column=1
+U10Probe log: setup Value=1 Pos=[100 100 100 100] Parent=uigridlayout / update Value=1 / update Value=40 / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete
+ds7pkg.PkgGauge [figure] codegen names: Value,ValueChangedFcn,Visible,BackgroundColor,SizeChangedFcn,HandleVisibility,BusyAction,Interruptible,Tag,Layout,Position
+ds7pkg.PkgGauge [figure] non-public: JavaFrame,SizeChangedFcn_IS,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,Controller_I,SerializableApplicationData,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcn_IS,BeingDeleted,CreateFcn_IS,DeleteFcn_IS,Type,SerializableUserData,OuterPositionStorage,InnerPositionStorage,InnerPosition,UnitsService,UnitsServiceStorage,SerializableCallbackPropertyFcns
+ds7pkg.PkgGauge [figure] callback names (getCallbackPropertyNames): ValueChangedFcn,SizeChangedFcn
+ds7pkg.PkgGauge [figure] mode siblings: VisibleMode='auto',BackgroundColorMode='auto',SizeChangedFcnMode='auto',HandleVisibilityMode='auto',TagMode='auto',PositionMode='manual'
+ds7pkg.PkgGauge [figure] run-time defaults (unthemed): Value=0; ValueChangedFcn=''; Visible=onoff on; BackgroundColor=[0.960784 0.960784 0.960784]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='ds7pkg.pkggauge'; Tag=''; Units='pixels'; Position=[10 10 120 40]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+ds7pkg.PkgGauge [figure] run-time defaults (light): Value=0; ValueChangedFcn=''; Visible=onoff on; BackgroundColor=[0.960784 0.960784 0.960784]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='ds7pkg.pkggauge'; Tag=''; Units='pixels'; Position=[10 10 120 40]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+ds7pkg.PkgGauge [figure] run-time defaults (dark): Value=0; ValueChangedFcn=''; Visible=onoff on; BackgroundColor=[0.129412 0.129412 0.129412]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='ds7pkg.pkggauge'; Tag=''; Units='pixels'; Position=[10 10 120 40]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+ds7pkg.PkgGauge [figure] run-time default fields: Value,ValueChangedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout
+ds7pkg.PkgGauge [figure] generated (light, 3 lines)
+gen| app.ad_CODENAME_ad = ds7pkg.PkgGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 5;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'PGValueChanged';
+ds7pkg.PkgGauge [figure] generated (unthemed, 3 lines)
+gen| app.ad_CODENAME_ad = ds7pkg.PkgGauge(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Value = 5;
+gen| app.ad_CODENAME_ad.ValueChangedFcn = 'PGValueChanged';
+ds7pkg.PkgGauge [figure] generated for a UserComponentApp: comp.ad_CODENAME_ad = ds7pkg.PkgGauge(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Value = 5; || comp.ad_CODENAME_ad.ValueChangedFcn = 'PGValueChanged';
+ds7pkg.PkgGauge [figure] dirty props: Value=5 ; ValueChangedFcn=PGValueChanged
+Ds7Types [figure] codegen names: Count,Ratio,Flag,Note,Text,Names,Nums,Mode,NoDefaultMode,When,Grid2,Untyped,Data,Colors,Column,ChangedFcn,Visible,BackgroundColor,SizeChangedFcn,HandleVisibility,BusyAction,Interruptible,Tag,Layout,Position
+Ds7Types [figure] non-public: Prot,Fixed,JavaFrame,SizeChangedFcn_IS,ValidateChildFcn_I,ValidateChildFcn,ValidateChildFcn_IS,Controller,Controller_I,SerializableApplicationData,Copyable,NodeParent,CustomThemePropertyMappings,NodeChildren,ButtonDownFcn_IS,BeingDeleted,CreateFcn_IS,DeleteFcn_IS,Type,SerializableUserData,OuterPositionStorage,InnerPositionStorage,InnerPosition,UnitsService,UnitsServiceStorage,SerializableCallbackPropertyFcns,Twice
+Ds7Types [figure] callback names (getCallbackPropertyNames): ChangedFcn,SizeChangedFcn
+Ds7Types [figure] mode siblings: VisibleMode='auto',BackgroundColorMode='auto',SizeChangedFcnMode='auto',HandleVisibilityMode='auto',TagMode='auto',PositionMode='auto'
+Ds7Types [figure] run-time defaults (unthemed): Count=int32(1); Ratio=single(1); Flag=false; Note="x"; Text='abc'; Names=cell[1 2] ["a","b"]; Nums=cell[1 2] [1,2]; Mode=Ds7Mode.Slow; NoDefaultMode=Ds7Mode.0×0 Ds7Mode; When=datetime 02-Jan-2020; Grid2=cell[2 2] ["a","c","b","d"]; Untyped=[]; Data=struct {"a":1}; Colors=[1 0 0]; Column=[1;2]; ChangedFcn=''; Visible=onoff on; BackgroundColor=[0.960784 0.960784 0.960784]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='ds7types'; Tag=''; Units='pixels'; Position=[100 100 100 100]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+Ds7Types [figure] run-time defaults (light): Count=int32(1); Ratio=single(1); Flag=false; Note="x"; Text='abc'; Names=cell[1 2] ["a","b"]; Nums=cell[1 2] [1,2]; Mode=Ds7Mode.Slow; NoDefaultMode=Ds7Mode.0×0 Ds7Mode; When=datetime 02-Jan-2020; Grid2=cell[2 2] ["a","c","b","d"]; Untyped=[]; Data=struct {"a":1}; Colors=[1 0 0]; Column=[1;2]; ChangedFcn=''; Visible=onoff on; BackgroundColor=[0.960784 0.960784 0.960784]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='ds7types'; Tag=''; Units='pixels'; Position=[100 100 100 100]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+Ds7Types [figure] run-time defaults (dark): Count=int32(1); Ratio=single(1); Flag=false; Note="x"; Text='abc'; Names=cell[1 2] ["a","b"]; Nums=cell[1 2] [1,2]; Mode=Ds7Mode.Slow; NoDefaultMode=Ds7Mode.0×0 Ds7Mode; When=datetime 02-Jan-2020; Grid2=cell[2 2] ["a","c","b","d"]; Untyped=[]; Data=struct {"a":1}; Colors=[1 0 0]; Column=[1;2]; ChangedFcn=''; Visible=onoff on; BackgroundColor=[0.129412 0.129412 0.129412]; SizeChangedFcn=''; HandleVisibility='on'; BusyAction='queue'; Interruptible=onoff on; Type='ds7types'; Tag=''; Units='pixels'; Position=[100 100 100 100]; Layout=<matlab.ui.layout.LayoutOptions [0 0]>
+Ds7Types [figure] run-time default fields: Count,Ratio,Flag,Note,Text,Names,Nums,Mode,NoDefaultMode,When,Grid2,Untyped,Data,Colors,Column,Twice,Prot,Fixed,ChangedFcn,Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility,ButtonDownFcn,ContextMenu,BusyAction,BeingDeleted,Interruptible,CreateFcn,DeleteFcn,Type,Tag,UserData,Clipping,Units,Position,InnerPosition,OuterPosition,Layout
+Ds7Types [figure] generated (light, 14 lines)
+gen| app.ad_CODENAME_ad = Ds7Types(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Flag = true;
+gen| app.ad_CODENAME_ad.Note = "he said "hi"" + "x";
+gen| app.ad_CODENAME_ad.Text = ['it''s' newline 'ok'];
+gen| app.ad_CODENAME_ad.Names = {'p'; 'q'};
+gen| app.ad_CODENAME_ad.Nums = {3.14159, 2};
+gen| app.ad_CODENAME_ad.Mode = 'Fast';
+gen| app.ad_CODENAME_ad.NoDefaultMode = 'Fast';
+gen| app.ad_CODENAME_ad.When = datetime([2021 3 4]);
+gen| app.ad_CODENAME_ad.Grid2 = ;
+gen| app.ad_CODENAME_ad.Untyped = 7;
+gen| app.ad_CODENAME_ad.Colors = [0 0.5 1];
+gen| app.ad_CODENAME_ad.Column = [3;4];
+gen| app.ad_CODENAME_ad.ChangedFcn = 'TypesChanged';
+Ds7Types [figure] generated (unthemed, 14 lines)
+gen| app.ad_CODENAME_ad = Ds7Types(app.ad_PARENTCODENAME_ad);
+gen| app.ad_CODENAME_ad.Flag = true;
+gen| app.ad_CODENAME_ad.Note = "he said "hi"" + "x";
+gen| app.ad_CODENAME_ad.Text = ['it''s' newline 'ok'];
+gen| app.ad_CODENAME_ad.Names = {'p'; 'q'};
+gen| app.ad_CODENAME_ad.Nums = {3.14159, 2};
+gen| app.ad_CODENAME_ad.Mode = 'Fast';
+gen| app.ad_CODENAME_ad.NoDefaultMode = 'Fast';
+gen| app.ad_CODENAME_ad.When = datetime([2021 3 4]);
+gen| app.ad_CODENAME_ad.Grid2 = ;
+gen| app.ad_CODENAME_ad.Untyped = 7;
+gen| app.ad_CODENAME_ad.Colors = [0 0.5 1];
+gen| app.ad_CODENAME_ad.Column = [3;4];
+gen| app.ad_CODENAME_ad.ChangedFcn = 'TypesChanged';
+Ds7Types [figure] generated for a UserComponentApp: comp.ad_CODENAME_ad = Ds7Types(comp.ad_PARENTCODENAME_ad); || comp.ad_CODENAME_ad.Flag = true; || comp.ad_CODENAME_ad.Note = "he said "hi"" + "x"; || comp.ad_CODENAME_ad.Text = ['it''s' newline 'ok']; || comp.ad_CODENAME_ad.Names = {'p'; 'q'}; || comp.ad_CODENAME_ad.Nums = {3.14159, 2}; || comp.ad_CODENAME_ad.Mode = 'Fast'; || comp.ad_CODENAME_ad.NoDefaultMode = 'Fast'; || comp.ad_CODENAME_ad.When = datetime([2021 3 4]); || comp.ad_CODENAME_ad.Grid2 = ; || comp.ad_CODENAME_ad.Untyped = 7; || comp.ad_CODENAME_ad.Colors = [0 0.5 1]; || comp.ad_CODENAME_ad.Column = [3;4]; || comp.ad_CODENAME_ad.ChangedFcn = 'TypesChanged';
+Ds7Types [figure] dirty props ERROR  | This compare class has not been implemented: int32 | at ComponentCodeGenerator.propertyValueToString:375
+Ds7Types Count: set line ERROR  | This compare class has not been implemented: int32 | value string ERROR  | This compare class has not been implemented: int32
+Ds7Types Ratio: set line ERROR  | This compare class has not been implemented: single | value string ERROR  | This compare class has not been implemented: single
+Ds7Types Flag: set line app.Types.Flag = true; | value string true
+Ds7Types Note: set line app.Types.Note = "he said "hi"" + "x"; | value string "he said "hi"" + "x"
+Ds7Types Text: set line app.Types.Text = ['it''s' newline 'ok']; | value string 'it's | ok'
+Ds7Types Names: set line app.Types.Names = {'p'; 'q'}; | value string {'p'; 'q'}
+Ds7Types Nums: set line app.Types.Nums = {3.14159, 2}; | value string {3.14159, 2}
+Ds7Types Mode: set line app.Types.Mode = 'Fast'; | value string 'Fast'
+Ds7Types NoDefaultMode: set line app.Types.NoDefaultMode = 'Fast'; | value string 'Fast'
+Ds7Types When: set line app.Types.When = datetime([2021 3 4]); | value string datetime([2021 3 4])
+Ds7Types Grid2: set line app.Types.Grid2 = ; | value string 
+Ds7Types Untyped: set line app.Types.Untyped = 7; | value string 7
+Ds7Types Data: set line ERROR  | This compare class has not been implemented: struct | value string ERROR  | This compare class has not been implemented: struct
+Ds7Types Colors: set line app.Types.Colors = [0 0.5 1]; | value string [0 0.5 1]
+Ds7Types Column: set line app.Types.Column = [3;4]; | value string [3;4]
+Ds7Types ChangedFcn: set line app.Types.ChangedFcn = 'TypesChanged'; | value string TypesChanged
+design-time flag: SetupCalls 1, UpdateCalls 0 before drawnow
+design-time flag: UpdateCalls 1 after drawnow; Position [10 10 220 80]
+== 3 inspector
+SpinnerGauge view properties: Visible,BackgroundColor,Tag,BusyAction,Interruptible,HandleVisibility,Type,Position,ContextMenu,Limits,UpdateCalls,Value,SetupCalls
+SpinnerGauge groups json (1448 chars): [{"type":"group","name":"SpinnerGauge","displayName":"SpinnerGauge","tooltip":"","expanded":true,"items":[{"type":"property","name":"Value"},{"type":"property","name":"Limits"},{"type":"property","name":"SetupCalls"},{"type":"property","name":"UpdateCalls"}]},{"type":"group","name":"MATLAB:ui:propertygroups:ColorGroup","displayName":"Color","tooltip":"","expanded":true,"items":[{"type":"property","name":"BackgroundColor"}]},{"type":"group","name":"MATLAB:ui:propertygroups:InteractivityGroup","displayName":"Interactivity","tooltip":"","expanded":false,"items":[{"type":"property","name":"Visible"},{"type":"property","name":"ContextMenu"}]},{"type":"group","name":"MATLAB:ui:propertygroups:PositionGroup","displayName":"Position","tooltip":"","expanded":false,"items":[{"type":"editorgroup","items":[{"type":"property","name":"Position"}]}]},{"type":"group","name":"MATLAB:ui:propertygroups:CallbackExecutionControlGroup","displayName":"Callback Execution Control","tooltip":"","expanded":false,"items":[{"type":"property","name":"Interruptible"},{"type":"property","name":"BusyAction"}]},{"type":"group","name":"MATLAB:ui:propertygroups:ParentChildGroup","displayName":"Parent / Child","tooltip":"","expanded":false,"items":[{"type":"property","name":"HandleVisibility"}]},{"type":"group","name":"MATLAB:ui:propertygroups:IdentifiersGroup","displayName":"Identifiers","tooltip":"","expanded":false,"items":[{"type":"property","name":"Tag"}]}]
+SpinnerGauge group 1: type='group' ; name='SpinnerGauge' ; displayName='SpinnerGauge' ; tooltip='' ; expanded=true ; items=Value,Limits,SetupCalls,UpdateCalls
+SpinnerGauge group 2: type='group' ; name='MATLAB:ui:propertygroups:ColorGroup' ; displayName='Color' ; tooltip='' ; expanded=true ; items=BackgroundColor
+SpinnerGauge group 3: type='group' ; name='MATLAB:ui:propertygroups:InteractivityGroup' ; displayName='Interactivity' ; tooltip='' ; expanded=false ; items=Visible,ContextMenu
+SpinnerGauge group 4: type='group' ; name='MATLAB:ui:propertygroups:PositionGroup' ; displayName='Position' ; tooltip='' ; expanded=false ; items=[Position]
+SpinnerGauge group 5: type='group' ; name='MATLAB:ui:propertygroups:CallbackExecutionControlGroup' ; displayName='Callback Execution Control' ; tooltip='' ; expanded=false ; items=Interruptible,BusyAction
+SpinnerGauge group 6: type='group' ; name='MATLAB:ui:propertygroups:ParentChildGroup' ; displayName='Parent / Child' ; tooltip='' ; expanded=false ; items=HandleVisibility
+SpinnerGauge group 7: type='group' ; name='MATLAB:ui:propertygroups:IdentifiersGroup' ; displayName='Identifiers' ; tooltip='' ; expanded=false ; items=Tag
+supported data types: double,single,int8,int16,int32,int64,uint8,uint16,uint32,uint64,logical,char,string,cell; multi-line: cell
+renderer| SpinnerGauge.Visible value=onoff on classType=matlab.lang.OnOffSwitchState propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='matlab.lang.OnOffSwitchState' matched='matlab.lang.OnOffSwitchState' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter='internal.matlab.editorconverters.OnOffSwitchStateEditor'
+renderer| SpinnerGauge.BackgroundColor value=[0.960784 0.960784 0.960784] classType=double propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.RGBColor' matched='matlab.graphics.datatype.RGBColor' editor='rendererseditors/editors/RGBColorEditor' cell='rendererseditors/editors/RGBColorEditor' converter='internal.matlab.editorconverters.ColorEditor'
+renderer| SpinnerGauge.Tag value='' classType=char propType=<matlab.metadata.Class [1 1]> catOrEnum=0 dataType='char' matched='char' editor='rendererseditors/editors/CharEditor' cell='rendererseditors/editors/CharEditor' converter=''
+renderer| SpinnerGauge.BusyAction value='queue' classType=char propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=1 dataType='matlab.graphics.datatype.BusyAction' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| SpinnerGauge.Interruptible value=onoff on classType=matlab.lang.OnOffSwitchState propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='matlab.lang.OnOffSwitchState' matched='matlab.lang.OnOffSwitchState' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter='internal.matlab.editorconverters.OnOffSwitchStateEditor'
+renderer| SpinnerGauge.HandleVisibility value='on' classType=char propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=1 dataType='matlab.graphics.datatype.HandleVisibility' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| SpinnerGauge.Type value=[] classType=double propType=<matlab.metadata.Type [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.TypeName' matched='' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| SpinnerGauge.Position value=[10 10 220 80] classType=double propType=<matlab.metadata.Type [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.Position' matched='matlab.graphics.datatype.Position' editor='rendererseditors/editors/ArrayOfValuesTextBoxEditor' cell='rendererseditors/editors/ArrayOfValuesTextBoxEditor' converter='internal.matlab.editorconverters.PositionalEditor'
+renderer| SpinnerGauge.ContextMenu value=inspector.internal.datatype.IconAlignment.0×0 IconAlignment classType=inspector.internal.datatype.IconAlignment propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='inspector.internal.datatype.IconAlignment' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| SpinnerGauge.Limits value=[0 100] classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| SpinnerGauge.UpdateCalls value=0 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| SpinnerGauge.Value value=0 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| SpinnerGauge.SetupCalls value=1 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+U10Probe view properties: Visible,BackgroundColor,Tag,BusyAction,Interruptible,HandleVisibility,Type,Position,ContextMenu,Label,UpdateCalls,Value,SetupCalls
+U10Probe groups json (1439 chars): [{"type":"group","name":"U10Probe","displayName":"U10Probe","tooltip":"","expanded":true,"items":[{"type":"property","name":"Value"},{"type":"property","name":"Label"},{"type":"property","name":"SetupCalls"},{"type":"property","name":"UpdateCalls"}]},{"type":"group","name":"MATLAB:ui:propertygroups:ColorGroup","displayName":"Color","tooltip":"","expanded":true,"items":[{"type":"property","name":"BackgroundColor"}]},{"type":"group","name":"MATLAB:ui:propertygroups:InteractivityGroup","displayName":"Interactivity","tooltip":"","expanded":false,"items":[{"type":"property","name":"Visible"},{"type":"property","name":"ContextMenu"}]},{"type":"group","name":"MATLAB:ui:propertygroups:PositionGroup","displayName":"Position","tooltip":"","expanded":false,"items":[{"type":"editorgroup","items":[{"type":"property","name":"Position"}]}]},{"type":"group","name":"MATLAB:ui:propertygroups:CallbackExecutionControlGroup","displayName":"Callback Execution Control","tooltip":"","expanded":false,"items":[{"type":"property","name":"Interruptible"},{"type":"property","name":"BusyAction"}]},{"type":"group","name":"MATLAB:ui:propertygroups:ParentChildGroup","displayName":"Parent / Child","tooltip":"","expanded":false,"items":[{"type":"property","name":"HandleVisibility"}]},{"type":"group","name":"MATLAB:ui:propertygroups:IdentifiersGroup","displayName":"Identifiers","tooltip":"","expanded":false,"items":[{"type":"property","name":"Tag"}]}]
+U10Probe group 1: type='group' ; name='U10Probe' ; displayName='U10Probe' ; tooltip='' ; expanded=true ; items=Value,Label,SetupCalls,UpdateCalls
+U10Probe group 2: type='group' ; name='MATLAB:ui:propertygroups:ColorGroup' ; displayName='Color' ; tooltip='' ; expanded=true ; items=BackgroundColor
+U10Probe group 3: type='group' ; name='MATLAB:ui:propertygroups:InteractivityGroup' ; displayName='Interactivity' ; tooltip='' ; expanded=false ; items=Visible,ContextMenu
+U10Probe group 4: type='group' ; name='MATLAB:ui:propertygroups:PositionGroup' ; displayName='Position' ; tooltip='' ; expanded=false ; items=[Position]
+U10Probe group 5: type='group' ; name='MATLAB:ui:propertygroups:CallbackExecutionControlGroup' ; displayName='Callback Execution Control' ; tooltip='' ; expanded=false ; items=Interruptible,BusyAction
+U10Probe group 6: type='group' ; name='MATLAB:ui:propertygroups:ParentChildGroup' ; displayName='Parent / Child' ; tooltip='' ; expanded=false ; items=HandleVisibility
+U10Probe group 7: type='group' ; name='MATLAB:ui:propertygroups:IdentifiersGroup' ; displayName='Identifiers' ; tooltip='' ; expanded=false ; items=Tag
+supported data types: double,single,int8,int16,int32,int64,uint8,uint16,uint32,uint64,logical,char,string,cell; multi-line: cell
+renderer| U10Probe.Visible value=onoff on classType=matlab.lang.OnOffSwitchState propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='matlab.lang.OnOffSwitchState' matched='matlab.lang.OnOffSwitchState' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter='internal.matlab.editorconverters.OnOffSwitchStateEditor'
+renderer| U10Probe.BackgroundColor value=[0.960784 0.960784 0.960784] classType=double propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.RGBColor' matched='matlab.graphics.datatype.RGBColor' editor='rendererseditors/editors/RGBColorEditor' cell='rendererseditors/editors/RGBColorEditor' converter='internal.matlab.editorconverters.ColorEditor'
+renderer| U10Probe.Tag value='' classType=char propType=<matlab.metadata.Class [1 1]> catOrEnum=0 dataType='char' matched='char' editor='rendererseditors/editors/CharEditor' cell='rendererseditors/editors/CharEditor' converter=''
+renderer| U10Probe.BusyAction value='queue' classType=char propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=1 dataType='matlab.graphics.datatype.BusyAction' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| U10Probe.Interruptible value=onoff on classType=matlab.lang.OnOffSwitchState propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='matlab.lang.OnOffSwitchState' matched='matlab.lang.OnOffSwitchState' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter='internal.matlab.editorconverters.OnOffSwitchStateEditor'
+renderer| U10Probe.HandleVisibility value='on' classType=char propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=1 dataType='matlab.graphics.datatype.HandleVisibility' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| U10Probe.Type value=[] classType=double propType=<matlab.metadata.Type [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.TypeName' matched='' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| U10Probe.Position value=[100 100 100 100] classType=double propType=<matlab.metadata.Type [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.Position' matched='matlab.graphics.datatype.Position' editor='rendererseditors/editors/ArrayOfValuesTextBoxEditor' cell='rendererseditors/editors/ArrayOfValuesTextBoxEditor' converter='internal.matlab.editorconverters.PositionalEditor'
+renderer| U10Probe.ContextMenu value=inspector.internal.datatype.IconAlignment.0×0 IconAlignment classType=inspector.internal.datatype.IconAlignment propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='inspector.internal.datatype.IconAlignment' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| U10Probe.Label value='lbl' classType=char propType='char' catOrEnum=0 dataType='char' matched='char' editor='rendererseditors/editors/CharEditor' cell='rendererseditors/editors/CharEditor' converter=''
+renderer| U10Probe.UpdateCalls value=0 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| U10Probe.Value value=1 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| U10Probe.SetupCalls value=1 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+Ds7Types view properties: Visible,BackgroundColor,Tag,BusyAction,Interruptible,HandleVisibility,Type,Position,ContextMenu,Fixed,Count,Note,Colors,Names,Mode,Flag,Data,Nums,Ratio,Text,Prot,When,Column
+Ds7Types groups json (1772 chars): [{"type":"group","name":"Ds7Types","displayName":"Ds7Types","tooltip":"","expanded":true,"items":[{"type":"property","name":"Count"},{"type":"property","name":"Ratio"},{"type":"property","name":"Flag"},{"type":"property","name":"Note"},{"type":"property","name":"Text"},{"type":"property","name":"Names"},{"type":"property","name":"Nums"},{"type":"property","name":"Mode"},{"type":"property","name":"When"},{"type":"property","name":"Data"},{"type":"property","name":"Colors"},{"type":"property","name":"Column"},{"type":"property","name":"Prot"},{"type":"property","name":"Fixed"}]},{"type":"group","name":"MATLAB:ui:propertygroups:ColorGroup","displayName":"Color","tooltip":"","expanded":true,"items":[{"type":"property","name":"BackgroundColor"}]},{"type":"group","name":"MATLAB:ui:propertygroups:InteractivityGroup","displayName":"Interactivity","tooltip":"","expanded":false,"items":[{"type":"property","name":"Visible"},{"type":"property","name":"ContextMenu"}]},{"type":"group","name":"MATLAB:ui:propertygroups:PositionGroup","displayName":"Position","tooltip":"","expanded":false,"items":[{"type":"editorgroup","items":[{"type":"property","name":"Position"}]}]},{"type":"group","name":"MATLAB:ui:propertygroups:CallbackExecutionControlGroup","displayName":"Callback Execution Control","tooltip":"","expanded":false,"items":[{"type":"property","name":"Interruptible"},{"type":"property","name":"BusyAction"}]},{"type":"group","name":"MATLAB:ui:propertygroups:ParentChildGroup","displayName":"Parent / Child","tooltip":"","expanded":false,"items":[{"type":"property","name":"HandleVisibility"}]},{"type":"group","name":"MATLAB:ui:propertygroups:IdentifiersGroup","displayName":"Identifiers","tooltip":"","expanded":false,"items":[{"type":"property","name":"Tag"}]}]
+Ds7Types group 1: type='group' ; name='Ds7Types' ; displayName='Ds7Types' ; tooltip='' ; expanded=true ; items=Count,Ratio,Flag,Note,Text,Names,Nums,Mode,When,Data,Colors,Column,Prot,Fixed
+Ds7Types group 2: type='group' ; name='MATLAB:ui:propertygroups:ColorGroup' ; displayName='Color' ; tooltip='' ; expanded=true ; items=BackgroundColor
+Ds7Types group 3: type='group' ; name='MATLAB:ui:propertygroups:InteractivityGroup' ; displayName='Interactivity' ; tooltip='' ; expanded=false ; items=Visible,ContextMenu
+Ds7Types group 4: type='group' ; name='MATLAB:ui:propertygroups:PositionGroup' ; displayName='Position' ; tooltip='' ; expanded=false ; items=[Position]
+Ds7Types group 5: type='group' ; name='MATLAB:ui:propertygroups:CallbackExecutionControlGroup' ; displayName='Callback Execution Control' ; tooltip='' ; expanded=false ; items=Interruptible,BusyAction
+Ds7Types group 6: type='group' ; name='MATLAB:ui:propertygroups:ParentChildGroup' ; displayName='Parent / Child' ; tooltip='' ; expanded=false ; items=HandleVisibility
+Ds7Types group 7: type='group' ; name='MATLAB:ui:propertygroups:IdentifiersGroup' ; displayName='Identifiers' ; tooltip='' ; expanded=false ; items=Tag
+supported data types: double,single,int8,int16,int32,int64,uint8,uint16,uint32,uint64,logical,char,string,cell; multi-line: cell
+renderer| Ds7Types.Visible value=onoff on classType=matlab.lang.OnOffSwitchState propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='matlab.lang.OnOffSwitchState' matched='matlab.lang.OnOffSwitchState' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter='internal.matlab.editorconverters.OnOffSwitchStateEditor'
+renderer| Ds7Types.BackgroundColor value=[0.960784 0.960784 0.960784] classType=double propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.RGBColor' matched='matlab.graphics.datatype.RGBColor' editor='rendererseditors/editors/RGBColorEditor' cell='rendererseditors/editors/RGBColorEditor' converter='internal.matlab.editorconverters.ColorEditor'
+renderer| Ds7Types.Tag value='' classType=char propType=<matlab.metadata.Class [1 1]> catOrEnum=0 dataType='char' matched='char' editor='rendererseditors/editors/CharEditor' cell='rendererseditors/editors/CharEditor' converter=''
+renderer| Ds7Types.BusyAction value='queue' classType=char propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=1 dataType='matlab.graphics.datatype.BusyAction' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| Ds7Types.Interruptible value=onoff on classType=matlab.lang.OnOffSwitchState propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='matlab.lang.OnOffSwitchState' matched='matlab.lang.OnOffSwitchState' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter='internal.matlab.editorconverters.OnOffSwitchStateEditor'
+renderer| Ds7Types.HandleVisibility value='on' classType=char propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=1 dataType='matlab.graphics.datatype.HandleVisibility' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| Ds7Types.Type value=[] classType=double propType=<matlab.metadata.Type [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.TypeName' matched='' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| Ds7Types.Position value=[100 100 100 100] classType=double propType=<matlab.metadata.Type [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.Position' matched='matlab.graphics.datatype.Position' editor='rendererseditors/editors/ArrayOfValuesTextBoxEditor' cell='rendererseditors/editors/ArrayOfValuesTextBoxEditor' converter='internal.matlab.editorconverters.PositionalEditor'
+renderer| Ds7Types.ContextMenu value=inspector.internal.datatype.IconAlignment.0×0 IconAlignment classType=inspector.internal.datatype.IconAlignment propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='inspector.internal.datatype.IconAlignment' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| Ds7Types.Fixed value=3 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| Ds7Types.Count value=int32(1) classType=int32 propType='int32' catOrEnum=0 dataType='int32' matched='int32' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| Ds7Types.Note value="x" classType=string propType='string' catOrEnum=0 dataType='string' matched='string' editor='rendererseditors/editors/TextBoxEditor' cell='rendererseditors/editors/TextBoxEditor' converter=''
+renderer| Ds7Types.Colors value=[1 0 0] classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| Ds7Types.Names value=cell[1 2] ["a","b"] classType=cell propType='cell' catOrEnum=0 dataType='cell' matched='cell' editor='rendererseditors/editors/TextAreaEditor' cell='rendererseditors/editors/TextBoxEditor' converter='internal.matlab.editorconverters.ItemsValueEditor'
+renderer| Ds7Types.Mode value=Ds7Mode.Slow classType=Ds7Mode propType='Ds7Mode' catOrEnum=1 dataType='Ds7Mode' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| Ds7Types.Flag value=false classType=logical propType='logical' catOrEnum=0 dataType='logical' matched='logical' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter=''
+renderer| Ds7Types.Data value=struct {"a":1} classType=struct propType='struct' catOrEnum=0 dataType='struct' matched='struct' editor='' cell='' converter=''
+renderer| Ds7Types.Nums value=cell[1 2] [1,2] classType=cell propType='cell' catOrEnum=0 dataType='cell' matched='cell' editor='rendererseditors/editors/TextAreaEditor' cell='rendererseditors/editors/TextBoxEditor' converter='internal.matlab.editorconverters.ItemsValueEditor'
+renderer| Ds7Types.Ratio value=single(1) classType=single propType='single' catOrEnum=0 dataType='single' matched='single' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| Ds7Types.Text value='abc' classType=char propType='char' catOrEnum=0 dataType='char' matched='char' editor='rendererseditors/editors/CharEditor' cell='rendererseditors/editors/CharEditor' converter=''
+renderer| Ds7Types.Prot value=2 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| Ds7Types.When value=datetime 02-Jan-2020 classType=datetime propType='datetime' catOrEnum=0 dataType='datetime' matched='datetime' editor='' cell='' converter=''
+renderer| Ds7Types.Column value=[1;2] classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+ds7pkg.PkgGauge view properties: Visible,BackgroundColor,Tag,BusyAction,Interruptible,HandleVisibility,Type,Position,ContextMenu,Value
+ds7pkg.PkgGauge groups json (1323 chars): [{"type":"group","name":"PkgGauge","displayName":"PkgGauge","tooltip":"","expanded":true,"items":[{"type":"property","name":"Value"}]},{"type":"group","name":"MATLAB:ui:propertygroups:ColorGroup","displayName":"Color","tooltip":"","expanded":true,"items":[{"type":"property","name":"BackgroundColor"}]},{"type":"group","name":"MATLAB:ui:propertygroups:InteractivityGroup","displayName":"Interactivity","tooltip":"","expanded":false,"items":[{"type":"property","name":"Visible"},{"type":"property","name":"ContextMenu"}]},{"type":"group","name":"MATLAB:ui:propertygroups:PositionGroup","displayName":"Position","tooltip":"","expanded":false,"items":[{"type":"editorgroup","items":[{"type":"property","name":"Position"}]}]},{"type":"group","name":"MATLAB:ui:propertygroups:CallbackExecutionControlGroup","displayName":"Callback Execution Control","tooltip":"","expanded":false,"items":[{"type":"property","name":"Interruptible"},{"type":"property","name":"BusyAction"}]},{"type":"group","name":"MATLAB:ui:propertygroups:ParentChildGroup","displayName":"Parent / Child","tooltip":"","expanded":false,"items":[{"type":"property","name":"HandleVisibility"}]},{"type":"group","name":"MATLAB:ui:propertygroups:IdentifiersGroup","displayName":"Identifiers","tooltip":"","expanded":false,"items":[{"type":"property","name":"Tag"}]}]
+ds7pkg.PkgGauge group 1: type='group' ; name='PkgGauge' ; displayName='PkgGauge' ; tooltip='' ; expanded=true ; items=Value
+ds7pkg.PkgGauge group 2: type='group' ; name='MATLAB:ui:propertygroups:ColorGroup' ; displayName='Color' ; tooltip='' ; expanded=true ; items=BackgroundColor
+ds7pkg.PkgGauge group 3: type='group' ; name='MATLAB:ui:propertygroups:InteractivityGroup' ; displayName='Interactivity' ; tooltip='' ; expanded=false ; items=Visible,ContextMenu
+ds7pkg.PkgGauge group 4: type='group' ; name='MATLAB:ui:propertygroups:PositionGroup' ; displayName='Position' ; tooltip='' ; expanded=false ; items=[Position]
+ds7pkg.PkgGauge group 5: type='group' ; name='MATLAB:ui:propertygroups:CallbackExecutionControlGroup' ; displayName='Callback Execution Control' ; tooltip='' ; expanded=false ; items=Interruptible,BusyAction
+ds7pkg.PkgGauge group 6: type='group' ; name='MATLAB:ui:propertygroups:ParentChildGroup' ; displayName='Parent / Child' ; tooltip='' ; expanded=false ; items=HandleVisibility
+ds7pkg.PkgGauge group 7: type='group' ; name='MATLAB:ui:propertygroups:IdentifiersGroup' ; displayName='Identifiers' ; tooltip='' ; expanded=false ; items=Tag
+supported data types: double,single,int8,int16,int32,int64,uint8,uint16,uint32,uint64,logical,char,string,cell; multi-line: cell
+renderer| ds7pkg.PkgGauge.Visible value=onoff on classType=matlab.lang.OnOffSwitchState propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='matlab.lang.OnOffSwitchState' matched='matlab.lang.OnOffSwitchState' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter='internal.matlab.editorconverters.OnOffSwitchStateEditor'
+renderer| ds7pkg.PkgGauge.BackgroundColor value=[0.960784 0.960784 0.960784] classType=double propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.RGBColor' matched='matlab.graphics.datatype.RGBColor' editor='rendererseditors/editors/RGBColorEditor' cell='rendererseditors/editors/RGBColorEditor' converter='internal.matlab.editorconverters.ColorEditor'
+renderer| ds7pkg.PkgGauge.Tag value='' classType=char propType=<matlab.metadata.Class [1 1]> catOrEnum=0 dataType='char' matched='char' editor='rendererseditors/editors/CharEditor' cell='rendererseditors/editors/CharEditor' converter=''
+renderer| ds7pkg.PkgGauge.BusyAction value='queue' classType=char propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=1 dataType='matlab.graphics.datatype.BusyAction' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| ds7pkg.PkgGauge.Interruptible value=onoff on classType=matlab.lang.OnOffSwitchState propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='matlab.lang.OnOffSwitchState' matched='matlab.lang.OnOffSwitchState' editor='rendererseditors/editors/CheckBoxEditor' cell='rendererseditors/editors/CheckBoxEditor' converter='internal.matlab.editorconverters.OnOffSwitchStateEditor'
+renderer| ds7pkg.PkgGauge.HandleVisibility value='on' classType=char propType=<matlab.metadata.EnumeratedType [1 1]> catOrEnum=1 dataType='matlab.graphics.datatype.HandleVisibility' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| ds7pkg.PkgGauge.Type value=[] classType=double propType=<matlab.metadata.Type [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.TypeName' matched='' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+renderer| ds7pkg.PkgGauge.Position value=[10 10 120 40] classType=double propType=<matlab.metadata.Type [1 1]> catOrEnum=0 dataType='matlab.graphics.datatype.Position' matched='matlab.graphics.datatype.Position' editor='rendererseditors/editors/ArrayOfValuesTextBoxEditor' cell='rendererseditors/editors/ArrayOfValuesTextBoxEditor' converter='internal.matlab.editorconverters.PositionalEditor'
+renderer| ds7pkg.PkgGauge.ContextMenu value=inspector.internal.datatype.IconAlignment.0×0 IconAlignment classType=inspector.internal.datatype.IconAlignment propType=<matlab.metadata.Class [1 1]> catOrEnum=1 dataType='inspector.internal.datatype.IconAlignment' matched='' editor='rendererseditors/editors/ComboBoxEditor' cell='rendererseditors/editors/ComboBoxEditor' converter='internal.matlab.editorconverters.ComboBoxEditor'
+renderer| ds7pkg.PkgGauge.Value value=0 classType=double propType='double' catOrEnum=0 dataType='double' matched='double' editor='rendererseditors/editors/BaseOpenvarEditor' cell='rendererseditors/editors/BaseOpenvarEditor' converter=''
+inferred| 40 -> className 'double', defaultValue '40', inferred 40, editor 'rendererseditors/editors/BaseOpenvarEditor'
+inferred| 'abc' -> className 'char', defaultValue ''abc'', inferred 'abc', editor 'rendererseditors/editors/CharEditor'
+inferred| "abc" -> className 'string', defaultValue '"abc"', inferred "abc", editor 'rendererseditors/editors/TextBoxEditor'
+inferred| true -> className 'logical', defaultValue 'true', inferred true, editor 'rendererseditors/editors/CheckBoxEditor'
+inferred| {'a','b'} -> className 'cell', defaultValue '{'a', 'b'}', inferred cell[1 2] ["a","b"], editor 'rendererseditors/editors/TextAreaEditor'
+inferred int8(3) ERROR  | This compare class has not been implemented: int8 | at ComponentCodeGenerator.propertyValueToString:375
+inferred| [1 2 3] -> className 'double', defaultValue '[1 2 3]', inferred [1 2 3], editor 'rendererseditors/editors/BaseOpenvarEditor'
+== 4 design-time defaults
+SpinnerGauge design-time defaults (22 fields): Location,Size,OuterLocation,OuterSize,AspectRatioLimits,IsSizeFixed,LayoutConstraints,ContextMenuID,IsUserComponent,CallbackPropertyNames,BackgroundColor,BusyAction,HandleVisibility,Interruptible,Position,Tag,Visible,BackgroundColorMode,HandleVisibilityMode,PositionMode,TagMode,VisibleMode
+SpinnerGauge design-time IsUserComponent = true
+SpinnerGauge design-time CallbackPropertyNames = cell[1 2] ["ValueChangedFcn","SizeChangedFcn"]
+SpinnerGauge design-time BackgroundColor = [0.960784 0.960784 0.960784]
+SpinnerGauge design-time Position = [10 10 220 80]
+SpinnerGauge design-time Visible = onoff on
+U10Probe log: update Value=40 / user delete / user delete / setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete
+U10Probe design-time defaults (22 fields): Location,Size,OuterLocation,OuterSize,AspectRatioLimits,IsSizeFixed,LayoutConstraints,ContextMenuID,IsUserComponent,CallbackPropertyNames,BackgroundColor,BusyAction,HandleVisibility,Interruptible,Position,Tag,Visible,BackgroundColorMode,HandleVisibilityMode,PositionMode,TagMode,VisibleMode
+U10Probe design-time IsUserComponent = true
+U10Probe design-time CallbackPropertyNames = cell[1 3] ["ValueChangedFcn","ClickedFcn","SizeChangedFcn"]
+U10Probe design-time BackgroundColor = [0.960784 0.960784 0.960784]
+U10Probe design-time Position = [100 100 100 100]
+U10Probe design-time Visible = onoff on
+U10Probe log: setup Value=1 Pos=[100 100 100 100] Parent=figure / user delete
+== 5 mlapp
+dump tree_uac.mat| == <out>\tree_uac.mat: 43 objects, 181 names, 144 stored values
+dump tree_uac.mat|   13 SpinnerGauge [plain, 21 props, kinds {1: 15, 0: 4, 2: 2}]: Value,SetupCalls,UpdateCalls,matlab.ui.container.internal.UIContainer.StorageUnitPos,BackgroundColor_I,matlab.ui.container.Container.SerializableChildren,ValidateChildFcnMode,ValidateChildFcn_IS,Internal,SerializableApplicationData,Copyable,CustomThemePropertyMappings,matlab.graphics.internal.GraphicsCoreProperties.TopLevelSerializedObject,BeingDeleted,OuterPositionStorage,InnerPositionStorage,PositionMode,matlab.ui.internal.mixin.OuterPositionable.OuterPositionStorage,matlab.ui.internal.mixin.OuterPositionable.InnerPositionStorage,Layout,SerializableCallbackPropertyFcns
+dump tree_uac.mat| per class: {'matlab.ui.Figure': 1, 'matlab.ui.internal.UnitPos': 7, 'matlab.ui.control.Button': 1, 'appdesservices.internal.interfaces.model.UpdateTimeFlushDirtyPropertyStrategy': 1, 'matlab.lang.OnOffSwitchState': 25, 'meta.DynamicProperty': 5, 'SpinnerGauge': 1, 'matlab.ui.internal.PaperPositionStorage': 1, 'matlab.ui.internal.PaperTypeStorage': 1}
+UacLast saved (SpinnerGauge order UIFigure,GoButton,Gauge); Gauge ComponentCode: app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad); || app.ad_CODENAME_ad.Value = 40; || app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged'; || app.ad_CODENAME_ad.Position = [20 20 220 80];
+UacLast validator regex token:         UIFigure matlab.ui.Figure\n        GoButton matlab.ui.control.Button\n        Gauge    SpinnerGauge\n
+UacMid saved (SpinnerGauge order UIFigure,Gauge,GoButton); Gauge ComponentCode: app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad); || app.ad_CODENAME_ad.Value = 40; || app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged'; || app.ad_CODENAME_ad.Position = [20 20 220 80];
+UacMid validator regex token:         UIFigure matlab.ui.Figure\n        Gauge    SpinnerGauge\n        GoButton matlab.ui.control.Button\n
+UacLast appMetadata.xml: <?xml version="1.0" encoding="UTF-8" standalone="yes" ?><metadata xmlns="http://schemas.mathworks.com/appDesigner/app/2017/appMetadata"><description></description><MLAPPVersion>2</MLAPPVersion><minimumSupportedMATLABRelease>R2018a</minimumSupportedMATLABRelease><screenshotMode>auto</screenshotMode><uuid>64f44d8f-4865-47c4-b160-871790bc744c</uuid><AppType>Standard</AppType><componentProducts/><imageRelativePaths/><userComponents><userComponent class="SpinnerGauge"/></userComponents></metadata>
+UacLast userComponents element: <userComponents><userComponent class="SpinnerGauge"/></userComponents>
+UacLast document.xml has the class line: 1
+UacLast appModel.mat header: MATLAB 5.0 MAT-file, Platform: PCWIN64, Created on: Tue Oct 20 00:37:48 2026
+UacLast appModel.mat variables: components,code,appData; components fields UIFigure; code fields ClassName,Callbacks
+UacLast loaded: class(UIFigure.Children) matlab.ui.control.WebComponent; each matlab.ui.control.Button,SpinnerGauge
+UacLast loaded gauge: Value 40, Limits [0 100], Position [20 20 220 80], SetupCalls 1, UpdateCalls 1, ValueChangedFcn 'GaugeValueChanged', has DTP 1
+UacLast loaded gauge after drawnow: UpdateCalls 2; DTP fields CodeName,GroupId,ComponentCode,ImageRelativePath
+UacLast inflate (0): inflated 8865 -> 60136 bytes; subsystem 564 -> 1032 | 
+dump UacLast appModel.mat| == <out>\UacLast_model_raw.mat: 44 objects, 189 names, 148 stored values
+dump UacLast appModel.mat|   13 SpinnerGauge [plain, 21 props, kinds {1: 15, 0: 4, 2: 2}]: Value,SetupCalls,UpdateCalls,matlab.ui.container.internal.UIContainer.StorageUnitPos,BackgroundColor_I,matlab.ui.container.Container.SerializableChildren,ValidateChildFcnMode,ValidateChildFcn_IS,Internal,SerializableApplicationData,Copyable,CustomThemePropertyMappings,matlab.graphics.internal.GraphicsCoreProperties.TopLevelSerializedObject,BeingDeleted,OuterPositionStorage,InnerPositionStorage,PositionMode,matlab.ui.internal.mixin.OuterPositionable.OuterPositionStorage,matlab.ui.internal.mixin.OuterPositionable.InnerPositionStorage,Layout,SerializableCallbackPropertyFcns
+dump UacLast appModel.mat| per class: {'matlab.ui.Figure': 1, 'matlab.ui.internal.UnitPos': 7, 'matlab.ui.control.Button': 1, 'appdesservices.internal.interfaces.model.UpdateTimeFlushDirtyPropertyStrategy': 1, 'matlab.lang.OnOffSwitchState': 25, 'meta.DynamicProperty': 5, 'SpinnerGauge': 1, 'matlab.ui.internal.PaperPositionStorage': 1, 'matlab.ui.internal.PaperTypeStorage': 1, 'appdesigner.internal.serialization.app.AppData': 1}
+UacLast read: no warnings
+UacLast read: components UIFigure,GoButton,Gauge
+UacLast read Gauge: class SpinnerGauge, Value 40, ValueChangedFcn 'GaugeValueChanged', Limits [0 100], SetupCalls 1, UpdateCalls 1
+UacLast read Gauge after drawnow: UpdateCalls 2
+UacLast read callback GaugeValueChanged -> {"CodeName":"Gauge","CallbackPropertyName":"ValueChangedFcn","ComponentType":"SpinnerGauge"}
+UacLast read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+UacMid appMetadata.xml: <?xml version="1.0" encoding="UTF-8" standalone="yes" ?><metadata xmlns="http://schemas.mathworks.com/appDesigner/app/2017/appMetadata"><description></description><MLAPPVersion>2</MLAPPVersion><minimumSupportedMATLABRelease>R2018a</minimumSupportedMATLABRelease><screenshotMode>auto</screenshotMode><uuid>b2536a3d-24bd-4e1f-ad46-961403f118ff</uuid><AppType>Standard</AppType><componentProducts/><imageRelativePaths/><userComponents><userComponent class="SpinnerGauge"/></userComponents></metadata>
+UacMid userComponents element: <userComponents><userComponent class="SpinnerGauge"/></userComponents>
+UacMid document.xml has the class line: 1
+UacMid appModel.mat header: MATLAB 5.0 MAT-file, Platform: PCWIN64, Created on: Tue Oct 20 00:37:49 2026
+UacMid appModel.mat variables: components,code,appData; components fields UIFigure; code fields ClassName,Callbacks
+UacMid loaded: class(UIFigure.Children) matlab.ui.control.WebComponent; each matlab.ui.control.Button,SpinnerGauge
+UacMid loaded gauge: Value 40, Limits [0 100], Position [20 20 220 80], SetupCalls 1, UpdateCalls 1, ValueChangedFcn 'GaugeValueChanged', has DTP 1
+UacMid loaded gauge after drawnow: UpdateCalls 2; DTP fields CodeName,GroupId,ComponentCode,ImageRelativePath
+UacMid inflate (0): inflated 8864 -> 60136 bytes; subsystem 563 -> 1032 | 
+dump UacMid appModel.mat| == <out>\UacMid_model_raw.mat: 44 objects, 189 names, 148 stored values
+dump UacMid appModel.mat|   13 SpinnerGauge [plain, 21 props, kinds {1: 15, 0: 4, 2: 2}]: Value,SetupCalls,UpdateCalls,matlab.ui.container.internal.UIContainer.StorageUnitPos,BackgroundColor_I,matlab.ui.container.Container.SerializableChildren,ValidateChildFcnMode,ValidateChildFcn_IS,Internal,SerializableApplicationData,Copyable,CustomThemePropertyMappings,matlab.graphics.internal.GraphicsCoreProperties.TopLevelSerializedObject,BeingDeleted,OuterPositionStorage,InnerPositionStorage,PositionMode,matlab.ui.internal.mixin.OuterPositionable.OuterPositionStorage,matlab.ui.internal.mixin.OuterPositionable.InnerPositionStorage,Layout,SerializableCallbackPropertyFcns
+dump UacMid appModel.mat| per class: {'matlab.ui.Figure': 1, 'matlab.ui.internal.UnitPos': 7, 'matlab.ui.control.Button': 1, 'appdesservices.internal.interfaces.model.UpdateTimeFlushDirtyPropertyStrategy': 1, 'matlab.lang.OnOffSwitchState': 25, 'meta.DynamicProperty': 5, 'SpinnerGauge': 1, 'matlab.ui.internal.PaperPositionStorage': 1, 'matlab.ui.internal.PaperTypeStorage': 1, 'appdesigner.internal.serialization.app.AppData': 1}
+UacMid read: no warnings
+UacMid read: components UIFigure,GoButton,Gauge
+UacMid read Gauge: class SpinnerGauge, Value 40, ValueChangedFcn 'GaugeValueChanged', Limits [0 100], SetupCalls 1, UpdateCalls 1
+UacMid read Gauge after drawnow: UpdateCalls 2
+UacMid read callback GaugeValueChanged -> {"CodeName":"Gauge","CallbackPropertyName":"ValueChangedFcn","ComponentType":"SpinnerGauge"}
+UacMid read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+run UacLast: UacLast, Gauge SpinnerGauge Value 40 SetupCalls 1
+== 6 errored class
+UacFail saved (SgFail order UIFigure,GoButton,Gauge); Gauge ComponentCode: app.ad_CODENAME_ad = SgFail(app.ad_PARENTCODENAME_ad); || app.ad_CODENAME_ad.Value = 40; || app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged'; || app.ad_CODENAME_ad.Position = [20 20 220 80];
+UacFail validator regex token:         UIFigure matlab.ui.Figure\n        GoButton matlab.ui.control.Button\n        Gauge    SgFail\n
+UacFail (setup refuses) read warning ErroredUserComponents: {"ClassNames":["SgFail"]}
+UacFail (setup refuses) read: components UIFigure,GoButton
+UacFail (setup refuses) read callback GaugeValueChanged -> []
+UacFail (setup refuses) read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+[Warning: While loading an object of class 'SgFail':
+Unable to execute 'setup' method.] 
+[Warning: Unable to load instances of class SgFail into a heterogeneous array. The definition of SgFail could be missing or contain an
+error. Default objects will be substituted.] 
+UacFail load(): children matlab.ui.control.Button; lastwarn MATLAB:class:DefaultObjectSubstitution | Unable to load instances of class SgFail into a heterogeneous array. The definition of SgFail could be missing or contain an error. Default objects will be substituted.
+== 7 plain text
+off: UacPlain read: deserializer appdesigner.internal.serialization.PlainTextDeserializer, warnings 0
+off: UacPlain read: components UIFigure:matlab.ui.Figure,GoButton:matlab.ui.control.Button,Probe:U10Probe,Gauge:SpinnerGauge
+off: UacPlain read Probe: Value 7, ValueChangedFcn 'ProbeValueChanged', Position [10 120 120 40]; DTP struct {"CodeName":"Probe"}
+off: UacPlain read Gauge: Value 40, ValueChangedFcn 'GaugeValueChanged', Position [10 10 220 80], Limits [0 100]; DTP struct {"CodeName":"Gauge"}
+off: UacPlain read callback GaugeValueChanged -> {"CodeName":"Gauge","CallbackPropertyName":"ValueChangedFcn","ComponentType":"SpinnerGauge"}
+off: UacPlain read callback ProbeValueChanged -> {"CodeName":"Probe","CallbackPropertyName":"ValueChangedFcn","ComponentType":"U10Probe"}
+off: UacPlain read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+off: UacPkgShort read ERROR MATLAB:appdesigner:appdesigner:AppAppendixUnknownComponent | Unrecognized component: 'PkgGauge'. | at plainRead:818
+off: UacPkgFull read: deserializer appdesigner.internal.serialization.PlainTextDeserializer, warnings 0
+off: UacPkgFull read: components UIFigure:matlab.ui.Figure,PG:ds7pkg.PkgGauge
+off: UacPkgFull read PG: Value 5, ValueChangedFcn '', Position [10 10 120 40]; DTP struct {"CodeName":"PG"}
+off: UacPkgBare read ERROR MATLAB:appdesigner:appdesigner:AppAppendixUnknownComponent | Unrecognized component: 'PkgGauge'. | at plainRead:818
+feature now 1
+on: run UacPlain; Gauge SpinnerGauge Value 40 Limits [0 100] Position [10 10 220 80] SetupCalls 1 UpdateCalls 0
+on: Gauge ValueChangedFcn @@(src,e)ad_ams.executeCallback(app,@(obj,event)app.GaugeValueChanged(event),true,e); AD_CodeName 1; DesignTimeProperties 0
+on: Gauge UpdateCalls after drawnow 1
+on: Probe Value 7, ValueChangedFcn @@(src,e)ad_ams.executeCallback(app,@(obj,event)app.ProbeValueChanged(event),true,e); log setup Value=1 Pos=[100 100 100 100] Parent=figure / update Value=7
+on: after Probe fire: app.Log 
+on: gauge callback by hand ERROR MATLAB:class:MethodRestricted | Cannot access method 'GaugeValueChanged' in class 'UacPlain'. | at ds7PlainText:788
+on: run UacPkgShort ERROR MATLAB:appdesigner:appdesigner:AppAppendixUnknownComponent | Unrecognized component: 'PkgGauge'. | at App.App:23
+on: run UacPkgFull: PG ds7pkg.PkgGauge Value 5
+on: run UacPkgBare ERROR MATLAB:appdesigner:appdesigner:AppAppendixUnknownComponent | Unrecognized component: 'PkgGauge'. | at App.App:23
+on: UacPlain read: deserializer appdesigner.internal.serialization.PlainTextDeserializer, warnings 0
+on: UacPlain read: components UIFigure:matlab.ui.Figure,GoButton:matlab.ui.control.Button,Probe:U10Probe,Gauge:SpinnerGauge
+on: UacPlain read Probe: Value 7, ValueChangedFcn 'ProbeValueChanged', Position [10 120 120 40]; DTP struct {"CodeName":"Probe"}
+on: UacPlain read Gauge: Value 40, ValueChangedFcn 'GaugeValueChanged', Position [10 10 220 80], Limits [0 100]; DTP struct {"CodeName":"Gauge"}
+on: UacPlain read callback GaugeValueChanged -> {"CodeName":"Gauge","CallbackPropertyName":"ValueChangedFcn","ComponentType":"SpinnerGauge"}
+on: UacPlain read callback ProbeValueChanged -> {"CodeName":"Probe","CallbackPropertyName":"ValueChangedFcn","ComponentType":"U10Probe"}
+on: UacPlain read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+== 8 missing class
+UacLastX rename (0): replaced {'[Content_Types].xml': 0, '_rels/.rels': 0, 'matlab/document.xml': 2, 'appdesigner/appModel.mat': 2, 'metadata/appMetadata.xml': 1, 'metadata/coreProperties.xml': 0, 'metadata/mwcoreProperties.xml': 0, 'metadata/mwcorePropertiesExtension.xml': 0, 'metadata/mwcorePropertiesReleaseInfo.xml': 0} | 
+UacLastX: meta.class.fromName('SpinnerGaugX') empty 1
+UacLastX (never loaded) read warning MissingUserComponents: {"ClassNames":["SpinnerGaugX"]}
+UacLastX (never loaded) read: components UIFigure,GoButton
+UacLastX (never loaded) read callback GaugeValueChanged -> []
+UacLastX (never loaded) read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+[Warning: Unable to load instances of class SpinnerGaugX into a heterogeneous array. The definition of SpinnerGaugX could be missing or
+contain an error. Default objects will be substituted.] 
+UacLastX load(): children matlab.ui.control.Button; lastwarn MATLAB:class:DefaultObjectSubstitution | Unable to load instances of class SpinnerGaugX into a heterogeneous array. The definition of SpinnerGaugX could be missing or contain an error. Default objects will be substituted.
+UacMidX rename (0): replaced {'[Content_Types].xml': 0, '_rels/.rels': 0, 'matlab/document.xml': 2, 'appdesigner/appModel.mat': 2, 'metadata/appMetadata.xml': 1, 'metadata/coreProperties.xml': 0, 'metadata/mwcoreProperties.xml': 0, 'metadata/mwcorePropertiesExtension.xml': 0, 'metadata/mwcorePropertiesReleaseInfo.xml': 0} | 
+UacMidX: meta.class.fromName('SpinnerGaugX') empty 1
+UacMidX (never loaded) read warning MissingUserComponents: {"ClassNames":["SpinnerGaugX"]}
+UacMidX (never loaded) read: components UIFigure,GoButton
+UacMidX (never loaded) read callback GaugeValueChanged -> []
+UacMidX (never loaded) read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+[Warning: Unable to load instances of class SpinnerGaugX into a heterogeneous array. The definition of SpinnerGaugX could be missing or
+contain an error. Default objects will be substituted.] 
+UacMidX load(): children matlab.ui.control.Button; lastwarn MATLAB:class:DefaultObjectSubstitution | Unable to load instances of class SpinnerGaugX into a heterogeneous array. The definition of SpinnerGaugX could be missing or contain an error. Default objects will be substituted.
+off path: exist 0, which , meta empty 1; lastwarn  | 
+UacLast (off path) read warning MissingUserComponents: {"ClassNames":["SpinnerGauge"]}
+UacLast (off path) read: components UIFigure,GoButton
+UacLast (off path) read callback GaugeValueChanged -> []
+UacLast (off path) read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+UacMid (off path) read warning MissingUserComponents: {"ClassNames":["SpinnerGauge"]}
+UacMid (off path) read: components UIFigure,GoButton
+UacMid (off path) read callback GaugeValueChanged -> []
+UacMid (off path) read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+off: UacPlain (off path) read ERROR MATLAB:appdesigner:appdesigner:AppAppendixUnknownComponent | Unrecognized component: 'SpinnerGauge'. | at plainRead:818
+done

@@ -185,6 +185,7 @@ internal sealed class AppDesignerWindow : Window
             {
                 ApplyCanvasOptions();
                 _palette.Chosen = null;
+                _palette.SetUserEntries(Active?.Document.UserPaletteEntries ?? []);
                 _browser.Document = Active?.Document;
                 _inspector.Document = Active?.Document;
                 _callbacks.Document = Active?.Document;
@@ -227,6 +228,16 @@ internal sealed class AppDesignerWindow : Window
 
     private AppTab? Active => (_tabs.SelectedItem as TabItem)?.Tag as AppTab;
 
+    /// <summary>What <see cref="Open"/> answers when the user declined to open the app (the dialog for its unavailable custom components, DS7b): no error, nothing opened.</summary>
+    public const string Cancelled = "cancelled";
+
+    /// <summary>
+    /// The session's path folders, asked for as an app opens: where a custom component's class and
+    /// its <c>resources/appDesigner.json</c> are found besides the app's folder (designer plan DS7b).
+    /// Null when the host has no session.
+    /// </summary>
+    public Func<IReadOnlyList<string>>? PathFolders { get; set; }
+
     private IEnumerable<AppTab> Apps => _tabs.Items.OfType<TabItem>().Select(static t => (AppTab)t.Tag);
 
     /// <summary>
@@ -247,11 +258,24 @@ internal sealed class AppDesignerWindow : Window
         DesignDocument document;
         try
         {
-            document = DesignDocument.Open(path);
+            document = DesignDocument.Open(path, PathFolders?.Invoke());
         }
         catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
         {
             return ex.Message;
+        }
+
+        // Custom components whose class is missing or errored: App Designer asks before it opens
+        // the app without them, and removes them when told to (designer plan DS7b).
+        if (document.MissingUserComponents.Count > 0 || document.ErroredUserComponents.Count > 0)
+        {
+            if (!AppDesignerDialogs.ConfirmUnavailableUserComponents(this, document.ErroredUserComponents, document.MissingUserComponents))
+            {
+                document.Dispose();
+                return Cancelled;
+            }
+
+            document.RemoveUnavailableUserComponents();
         }
 
         var canvas = new DesignCanvas { Document = document };
@@ -350,7 +374,7 @@ internal sealed class AppDesignerWindow : Window
             Filter = "MATLAB Apps (*.mlapp;*.m)|*.mlapp;*.m|MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
             InitialDirectory = Active?.Document.Path is { } current ? Path.GetDirectoryName(current) : null,
         };
-        if (dialog.ShowDialog(this) == true && Open(dialog.FileName) is { } refused)
+        if (dialog.ShowDialog(this) == true && Open(dialog.FileName) is { } refused && refused != Cancelled)
         {
             MessageBox.Show(this, refused, "App Designer", MessageBoxButton.OK, MessageBoxImage.Warning);
         }

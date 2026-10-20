@@ -104,6 +104,7 @@ public static partial class JgsMlapp
                     if (JGraph.Scripting.Designer.DesignCodeReader.Read(written).Design is { } read)
                     {
                         FollowAppType(parts, read.IsResponsive);
+                        FollowUserComponents(parts, JGraph.Scripting.Designer.DesignUserComponents.ClassesOf(read));
                     }
                 }
             }
@@ -121,6 +122,27 @@ public static partial class JgsMlapp
     /// a standard app's tree has no responsive grid for a responsive type to name (App Designer's
     /// Convert action, open item 154). The bytes are kept when nothing changes.
     /// </summary>
+    /// <summary>
+    /// The package's <c>userComponents</c> element brought to the custom component classes the
+    /// code uses now (designer plan DS7b), as App Designer's class tracker keeps its metadata; the
+    /// bytes are kept when nothing changes.
+    /// </summary>
+    private static void FollowUserComponents(List<Part> parts, IReadOnlyList<string> classes)
+    {
+        if (parts.FirstOrDefault(static p => p.Name == "metadata/appMetadata.xml") is not { } metadata)
+        {
+            return;
+        }
+
+        string xml = Encoding.UTF8.GetString(metadata.Bytes);
+        string updated = System.Text.RegularExpressions.Regex.Replace(
+            xml, @"<userComponents\s*/>|<userComponents>.*?</userComponents>", UserComponentsElement(classes), System.Text.RegularExpressions.RegexOptions.Singleline);
+        if (updated != xml)
+        {
+            metadata.Bytes = Encoding.UTF8.GetBytes(updated);
+        }
+    }
+
     private static void FollowAppType(List<Part> parts, bool responsive)
     {
         if (responsive || parts.FirstOrDefault(static p => p.Name == "metadata/appMetadata.xml") is not { } metadata)

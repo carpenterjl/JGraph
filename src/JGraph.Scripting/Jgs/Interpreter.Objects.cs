@@ -87,6 +87,9 @@ internal sealed partial class Interpreter
         return _classes.ContainsKey(name) || BuiltinClass(name) is not null;
     }
 
+    /// <summary>The class <paramref name="name"/> names, loading its file from the path when it is first met; null when there is none.</summary>
+    internal JgsClass? FindClass(string name) => KnowsClass(name) ? _classes.GetValueOrDefault(name) ?? BuiltinClass(name) : null;
+
     internal JgsClass? BuiltinClass(string name)
     {
         if (_builtinClasses.TryGetValue(name, out JgsClass? made))

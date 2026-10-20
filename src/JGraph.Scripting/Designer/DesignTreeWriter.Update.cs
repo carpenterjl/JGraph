@@ -93,7 +93,7 @@ public static partial class DesignTreeWriter
         List<string> kept = [], changed = [], added = [], rebuilt = [];
         foreach (DesignComponent component in design.Components)
         {
-            bool hasBase = Bases.Value.ContainsKey(component.Type);
+            bool hasBase = BaseOf(component) is not null;
             if (saved.TryGetValue(component.CodeName, out Saved? held) && held.Object.ClassName == component.Type
                 && !objects.ContainsValue(held.Object))
             {
@@ -115,7 +115,7 @@ public static partial class DesignTreeWriter
 
                 if (plan.Rebuild && hasBase)
                 {
-                    objects[component] = Build(Bases.Value[component.Type]);
+                    objects[component] = Build(BaseOf(component)!.Value, component.Type);
                     plans[component] = plan;
                     rebuilt.Add(component.CodeName);
                     continue;
@@ -128,7 +128,7 @@ public static partial class DesignTreeWriter
             }
             else if (hasBase)
             {
-                objects[component] = Build(Bases.Value[component.Type]);
+                objects[component] = Build(BaseOf(component)!.Value, component.Type);
                 added.Add(component.CodeName);
             }
             else
@@ -366,8 +366,8 @@ public static partial class DesignTreeWriter
         AppDesign design, DesignComponent component, McosObject o, Plan plan, Dictionary<DesignComponent, McosObject> objects,
         DesignCodeStyle style, string? appFolder, List<string> problems)
     {
-        JsonElement recorded = Bases.Value[component.Type];
-        var fresh = Build(recorded);
+        JsonElement recorded = BaseOf(component)!.Value;
+        var fresh = Build(recorded, component.Type);
         var setBy = new Dictionary<string, List<string>>(StringComparer.Ordinal);
         Fill(design, component, fresh, objects, style, appFolder, problems, setBy);
         foreach (string property in plan.Changed!)

@@ -70,6 +70,12 @@ public sealed partial class DesignDocument
             return listed;
         }
 
+        // A custom component's are its described class's: its events' callbacks, then SizeChangedFcn (DS7b).
+        if (component.Class.IsUserComponent && Runtime.UserClassOf(component.Type) is { } user)
+        {
+            return user.CallbackProperties;
+        }
+
         return component.Class.Properties.Select(static p => DesignCallbacks.PropertyName(p.Name))
             .Where(static n => n.EndsWith("Fcn", StringComparison.Ordinal) || n.EndsWith("Callback", StringComparison.Ordinal))
             .ToArray();
@@ -85,8 +91,9 @@ public sealed partial class DesignDocument
             return groups;
         }
 
+        // A custom component's one group is titled by its class's full name (CallbackSection, DS7b).
         IReadOnlyList<string> properties = CallbackPropertiesOf(component);
-        return properties.Count == 0 ? [] : [new DesignCallbackGroup(null, properties)];
+        return properties.Count == 0 ? [] : [new DesignCallbackGroup(component.Class is { IsUserComponent: true } ? component.Type : null, properties)];
     }
 
     /// <summary>The callback bound to <paramref name="property"/> of <paramref name="component"/>, or null.</summary>

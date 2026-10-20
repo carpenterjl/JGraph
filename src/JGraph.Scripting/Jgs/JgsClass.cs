@@ -386,6 +386,12 @@ internal sealed class JgsClass
     /// <summary>The property of that name, the class's own or an inherited one, or null.</summary>
     public ClassProperty? Property(string name) => _propertyByName.GetValueOrDefault(name);
 
+    /// <summary>Whether the class, or one it derives from, has a <c>get.</c> method for <paramref name="name"/>.</summary>
+    internal bool HasGetter(string name) => _getters.ContainsKey(name) || _supers.Exists(s => s.HasGetter(name));
+
+    /// <summary>Whether the class, or one it derives from, has a <c>set.</c> method for <paramref name="name"/>.</summary>
+    internal bool HasSetter(string name) => _setters.ContainsKey(name) || _supers.Exists(s => s.HasSetter(name));
+
     /// <summary>
     /// The method of that name, the class's own or an inherited one, or false when the class has
     /// none. A superclass's private method is found too: whether the caller may have it is

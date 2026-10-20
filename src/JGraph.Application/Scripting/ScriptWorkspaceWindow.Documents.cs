@@ -329,6 +329,11 @@ public partial class ScriptWorkspaceWindow
 
         if (OpenInAppDesigner(path) is { } refused)
         {
+            if (refused == AppDesignerWindow.Cancelled)
+            {
+                return; // the user declined to open the app without its custom components (DS7b)
+            }
+
             SetStatus($"Could not open '{path}' in App Designer: {refused}");
             MessageBox.Show(this, refused, "App Designer", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
@@ -348,7 +353,11 @@ public partial class ScriptWorkspaceWindow
     {
         if (_appDesigner is null)
         {
-            _appDesigner = new AppDesignerWindow();
+            _appDesigner = new AppDesignerWindow
+            {
+                // A custom component's class is found as the MATLAB session finds it (designer plan DS7b).
+                PathFolders = () => _sessions.TryGetValue("MATLAB", out IScriptSession? matlab) ? matlab.PathFolders : [],
+            };
             _appDesigner.AppSaved += ReloadSavedApp;
             _appDesigner.Closed += (_, _) => _appDesigner = null;
         }

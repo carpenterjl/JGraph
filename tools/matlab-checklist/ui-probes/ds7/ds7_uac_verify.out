@@ -1,0 +1,28 @@
+UacDesigned read: no warnings
+UacDesigned read: components UIFigure:matlab.ui.Figure,GoButton:matlab.ui.control.Button,Gauge:SpinnerGauge
+UacDesigned read gauge: class SpinnerGauge, Value 40, Limits [0 100], Position [20 20 220 80], ValueChangedFcn 'GaugeValueChanged', SetupCalls 1, UpdateCalls 0
+UacDesigned read gauge: ComponentCode app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad); || app.ad_CODENAME_ad.Value = 40; || app.ad_CODENAME_ad.ValueChangedFcn = 'GaugeValueChanged'; || app.ad_CODENAME_ad.Position = [20 20 220 80];
+UacDesigned read callback GaugeValueChanged -> {"CodeName":"Gauge","CallbackPropertyName":"ValueChangedFcn","ComponentType":"SpinnerGauge"}
+UacDesigned read callback GoButtonPushed -> {"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}
+UacDesigned userComponents element: <userComponents><userComponent class="SpinnerGauge"/></userComponents>
+UacDesigned load: children matlab.ui.control.Button,SpinnerGauge
+UacDesigned load gauge: same as a control made in MATLAB (Value 40, Position [20 20 220 80], callback GaugeValueChanged)
+UacDesigned run: UacDesigned, Gauge SpinnerGauge Value 40, ValueChangedFcn function_handle
+UacDesigned run: callback ran
+UacDesigned run: deleted
+UacEdited read: no warnings
+UacEdited read: components UIFigure:matlab.ui.Figure,GoButton:matlab.ui.control.Button,Gauge:SpinnerGauge
+UacEdited read gauge: class SpinnerGauge, Value 55, Limits [0 100], Position [30 40 200 70], ValueChangedFcn 'GoButtonPushed', SetupCalls 1, UpdateCalls 0
+UacEdited read gauge: ComponentCode app.ad_CODENAME_ad = SpinnerGauge(app.ad_PARENTCODENAME_ad); || app.ad_CODENAME_ad.Value = 55; || app.ad_CODENAME_ad.ValueChangedFcn = 'GoButtonPushed'; || app.ad_CODENAME_ad.Position = [30 40 200 70];
+UacEdited read callback GaugeValueChanged -> []
+UacEdited read callback GoButtonPushed -> [{"CodeName":"GoButton","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"},{"CodeName":"Gauge","CallbackPropertyName":"ValueChangedFcn","ComponentType":"SpinnerGauge"}]
+UacEdited userComponents element: <userComponents><userComponent class="SpinnerGauge"/></userComponents>
+UacEdited load: children matlab.ui.control.Button,SpinnerGauge
+UacEdited load gauge: same as a control made in MATLAB (Value 55, Position [30 40 200 70], callback GoButtonPushed)
+UacEdited run: UacEdited, Gauge SpinnerGauge Value 55, ValueChangedFcn function_handle
+UacEdited run: callback ran
+UacEdited run: deleted
+plain read: components UIFigure:matlab.ui.Figure,GoButton:matlab.ui.control.Button,Gauge:SpinnerGauge
+plain read gauge: Value 40, Position [20 20 220 80], ValueChangedFcn 'GaugeValueChanged'
+plain run: Gauge SpinnerGauge Value 40, ValueChangedFcn function_handle
+done

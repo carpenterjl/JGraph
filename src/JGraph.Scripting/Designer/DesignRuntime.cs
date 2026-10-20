@@ -45,26 +45,42 @@ public sealed class DesignRuntime : IDisposable
 
     private readonly JgsEnvironment _environment;
     private readonly Interpreter _interpreter;
+    private readonly JGraphScriptGlobals _globals;
     private readonly Dictionary<DesignComponent, GraphObject> _objects = new(ReferenceEqualityComparer.Instance);
     private readonly Dictionary<GraphObject, DesignComponent> _components = new(ReferenceEqualityComparer.Instance);
     private readonly List<string> _problems = [];
+    private readonly Dictionary<string, DesignUserClass?> _userClasses = new(StringComparer.Ordinal);
     private UiLayoutResult? _layout;
     private bool _disposed;
 
-    private DesignRuntime(AppDesign design, string? appFolder)
+    private DesignRuntime(AppDesign design, string? appFolder, IReadOnlyList<string> pathFolders)
     {
         Design = design;
         AppFolder = appFolder;
+        PathFolders = pathFolders;
         var context = new ScriptContext(new DesignOutput(_problems), static (_, _) => { }, appFolder);
         var globals = new JGraphScriptGlobals(context);
+        _globals = globals;
         _environment = JgsBuiltins.CreateGlobals(globals, CancellationToken.None, JgsDialect.Matlab);
         _interpreter = new Interpreter(_environment, CancellationToken.None, hook: null, echo: null, JgsDialect.Matlab)
         {
             Host = globals,
         };
 
-        // The makers that resolve handles through the interpreter (uitreenode among them), as a session has them.
+        // The makers that resolve handles through the interpreter (uitreenode among them), as a
+        // session has them; the path builtins among them give the interpreter its path.
         JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, globals);
+
+        // A custom component's class is found as the session finds it: in the app's folder (the
+        // runtime's current folder), and on the session's path (designer plan DS7b).
+        if (pathFolders.Count > 0)
+        {
+            JgsFunctionPath path = _interpreter.FunctionPath ??= new JgsFunctionPath(_interpreter, globals);
+            foreach (string folder in pathFolders)
+            {
+                path.Add(folder, atEnd: true);
+            }
+        }
         _environment.Builtins.Seal();
         Figure = JgsBuiltins.NewUiFigureModel();
         Figure.IsDesignTime = true;
@@ -85,6 +101,9 @@ public sealed class DesignRuntime : IDisposable
     /// <summary>The app's folder, where its images are; null for an app not yet saved.</summary>
     public string? AppFolder { get; }
 
+    /// <summary>The session's path folders, which a custom component's class is found on besides the app's folder (designer plan DS7b).</summary>
+    public IReadOnlyList<string> PathFolders { get; }
+
     /// <summary>The figure the components are in.</summary>
     public FigureModel Figure { get; }
 
@@ -98,13 +117,267 @@ public sealed class DesignRuntime : IDisposable
     /// <param name="design">The design.</param>
     /// <param name="appFolder">The app's folder, which an image beside the app is read from.</param>
     /// <param name="theme">The theme the design's code is written under.</param>
-    public static DesignRuntime Build(AppDesign design, string? appFolder, DesignTheme theme = DesignTheme.Light)
+    /// <param name="pathFolders">The session's path folders, which a custom component's class is found on; none when null.</param>
+    public static DesignRuntime Build(AppDesign design, string? appFolder, DesignTheme theme = DesignTheme.Light, IReadOnlyList<string>? pathFolders = null)
     {
         ArgumentNullException.ThrowIfNull(design);
-        var runtime = new DesignRuntime(design, appFolder) { Theme = theme };
+        var runtime = new DesignRuntime(design, appFolder, pathFolders ?? []) { Theme = theme };
         runtime.Make();
         return runtime;
     }
+
+    // --- custom components (designer plan DS7b) --------------------------------------------------
+
+    private const string UserVariable = "designer__uac";
+
+    /// <summary>What the generator never writes for any class (<c>CommonPropertiesThatDoNotGenerateCode</c> and <c>UserComponentAdapter</c>'s own list); <c>Layout</c> is the design's row and column.</summary>
+    private static readonly HashSet<string> NeverGenerated = new(StringComparer.Ordinal)
+    {
+        "Children", "CreateFcn", "DeleteFcn", "DesignTimeProperties", "InnerPosition", "OuterPosition", "Parent", "UserData",
+        "Interactions", "ContextMenuId", "ContextMenu", "ButtonDownFcn", "Clipping", "Units", "Layout",
+    };
+
+    /// <summary>The inherited properties whose hidden <c>Mode</c> sibling App Designer reads: written only once set (probe <c>ds7_uac</c>, the mode siblings).</summary>
+    private static readonly HashSet<string> Moded = new(StringComparer.Ordinal) { "Visible", "BackgroundColor", "SizeChangedFcn", "HandleVisibility", "Tag" };
+
+    /// <summary>
+    /// The class of the custom component <paramref name="className"/> as the designer knows it,
+    /// described from the running class the first time it is asked for (designer plan DS7b; App
+    /// Designer's <c>UserComponentAdapter</c>, <c>UserComponentPropertyView</c> and
+    /// <c>getCallbackPropertyNames</c>, measured by the probe <c>ds7_uac</c>): a fresh instance is
+    /// made in the design's figure and read - its <c>properties()</c> in order, less what the
+    /// generator never writes and the properties only the class may set, <c>Position</c> last, each
+    /// with the fresh instance's value as its default (the background colour by theme, as App
+    /// Designer's defaults have it); the inspector's groups; the callback properties - and deleted.
+    /// Null when the name is no custom component's class the runtime can make: not a class on the
+    /// app's folder or the path, not a <c>ComponentContainer</c>, or one whose construction fails.
+    /// </summary>
+    public DesignUserClass? UserClassOf(string className)
+    {
+        ArgumentNullException.ThrowIfNull(className);
+        if (_userClasses.TryGetValue(className, out DesignUserClass? known))
+        {
+            return known;
+        }
+
+        using Scope scope = Enter();
+        DesignUserClass? described = Describe(className);
+        _userClasses[className] = described;
+        return described;
+    }
+
+    /// <summary>Whether the runtime finds a class named <paramref name="className"/> at all (on the app's folder or the path), whatever it is.</summary>
+    public bool KnowsClass(string className)
+    {
+        ArgumentNullException.ThrowIfNull(className);
+        using Scope scope = Enter();
+        try
+        {
+            return _interpreter.FindClass(className) is not null;
+        }
+        catch (JgsException)
+        {
+            return true; // a class file that does not load is a class found (MATLAB's "errored" case)
+        }
+    }
+
+    private DesignUserClass? Describe(string className)
+    {
+        JgsClass? cls;
+        try
+        {
+            cls = _interpreter.FindClass(className);
+        }
+        catch (JgsException ex)
+        {
+            _problems.Add($"{className}: {ex.Message}");
+            return null;
+        }
+
+        if (cls is not { IsComponentContainer: true })
+        {
+            return null;
+        }
+
+        // What the figure holds before: a construction that fails part way (a setup that refuses)
+        // leaves its parts in the figure, which R2025b's design-time controller marks and this
+        // runtime deletes, so the canvas does not show them.
+        UiObject[] before = [.. Figure.Components];
+        if (Run($"{UserVariable} = {className}({App}.{Design.Figure.CodeName});") is not null)
+        {
+            RemoveStrays(before);
+            return null;
+        }
+
+        try
+        {
+            if (Run($"{ValueVariable} = properties({UserVariable});") is not null
+                || !_environment.TryGet(ValueVariable, out JgsValue listed) || JgsBuiltins.ClassOf(listed, JgsDialect.Matlab) != "cell")
+            {
+                return null;
+            }
+
+            string[] names = listed.AsCell.Select(static v => v.Type == JgsType.String ? v.AsString : string.Empty).Where(static n => n.Length > 0).ToArray();
+
+            // The callback properties: each HasCallbackProperty event's, in the class's order, then the container's.
+            var callbacks = new List<string>();
+            foreach (string name in names)
+            {
+                if (name.EndsWith("Fcn", StringComparison.Ordinal) && FindProperty(cls, name) is { Dependent: true }
+                    && cls.Event(name[..^3]) is { HasCallbackProperty: true }
+                    && !JgsBuiltinClasses.ComponentContainerProperties.Contains(name, StringComparer.Ordinal))
+                {
+                    callbacks.Add(name);
+                }
+            }
+
+            callbacks.Add("SizeChangedFcn");
+
+            // The generator's list: public to set, not a dependent property with a getter alone,
+            // none of the never-written ones; Position last.
+            var generated = new List<string>();
+            foreach (string name in names)
+            {
+                if (name == "Position" || NeverGenerated.Contains(name))
+                {
+                    continue;
+                }
+
+                ClassProperty? property = FindProperty(cls, name);
+                if (property is not null && (!property.SetAccess.IsPublic || (property.Dependent && cls.HasGetter(name) && !cls.HasSetter(name))))
+                {
+                    continue;
+                }
+
+                generated.Add(name);
+            }
+
+            generated.Add("Position");
+
+            var properties = new List<DesignProperty>();
+            foreach (string name in generated)
+            {
+                Dictionary<DesignTheme, DesignValue> defaults = name == "BackgroundColor" ? BackgroundDefaults() : [];
+                if (name != "BackgroundColor" && ReadValue($"{UserVariable}.{name}") is { } value)
+                {
+                    defaults[DesignTheme.Unthemed] = value;
+                }
+
+                properties.Add(new DesignProperty(name, Moded.Contains(name), defaults));
+            }
+
+            var designClass = new DesignComponentClass(className, className, null, takesParent: true, valueProperty: null, properties) { IsUserComponent = true };
+            return new DesignUserClass(designClass, InspectorGroups(cls, className, names, callbacks), callbacks);
+        }
+        finally
+        {
+            Run($"delete({UserVariable});");
+            RemoveStrays(before);
+        }
+    }
+
+    /// <summary>Deletes what the figure holds beyond <paramref name="before"/>: the parts a custom component left in it.</summary>
+    private void RemoveStrays(UiObject[] before)
+    {
+        foreach (UiObject stray in Figure.Components.ToArray())
+        {
+            if (!before.Contains(stray))
+            {
+                JgsBuiltins.TryDeleteGraphics(JgsHandleRegistry.For(stray), _globals);
+            }
+        }
+    }
+
+    /// <summary>The default background colour by theme: the fresh instance's own when its setup set one, else App Designer's per theme.</summary>
+    private Dictionary<DesignTheme, DesignValue> BackgroundDefaults()
+    {
+        NumericValue light = NumericValue.Row(0.96078431372549, 0.96078431372549, 0.96078431372549);
+        NumericValue dark = NumericValue.Row(0.129411764705882, 0.129411764705882, 0.129411764705882);
+        if (ReadValue($"{UserVariable}.BackgroundColor") is NumericValue { Data.Count: 3 } own
+            && !(own.Data.Zip(light.Data).All(static p => System.Math.Abs(p.First - p.Second) < 1e-6) || own.Data.Zip(dark.Data).All(static p => System.Math.Abs(p.First - p.Second) < 1e-6)))
+        {
+            return new Dictionary<DesignTheme, DesignValue> { [DesignTheme.Unthemed] = own, [DesignTheme.Light] = own, [DesignTheme.Dark] = own };
+        }
+
+        return new Dictionary<DesignTheme, DesignValue> { [DesignTheme.Unthemed] = light, [DesignTheme.Light] = light, [DesignTheme.Dark] = dark };
+    }
+
+    /// <summary>
+    /// The inspector's groups for a custom component (<c>UserComponentPropertyView</c>, the
+    /// design-time controller's editor filter): the class's own public properties that the view
+    /// shows - with a non-empty default or a declared class; not a callback; a cell only as a
+    /// vector, a char only as a row, a string only as a scalar - each edited by what it holds and
+    /// shown without editing when only the class may set it, those the inspector has no editor for
+    /// (a struct, a date, an object, an enumeration) left out; under the class's short name,
+    /// expanded; then the six groups every component shows.
+    /// </summary>
+    private IReadOnlyList<DesignInspectorGroup> InspectorGroups(JgsClass cls, string className, IReadOnlyList<string> names, IReadOnlyList<string> callbacks)
+    {
+        var own = new List<DesignInspectorRow>();
+        foreach (string name in names)
+        {
+            if (JgsBuiltinClasses.ComponentContainerProperties.Contains(name, StringComparer.Ordinal) || callbacks.Contains(name, StringComparer.Ordinal)
+                || FindProperty(cls, name) is not { } property)
+            {
+                continue;
+            }
+
+            DesignValue? value = ReadValue($"{UserVariable}.{name}");
+            bool shown = (property.Spec.Default is not null && value is { IsEmpty: false }) || property.Spec.ClassName is not null;
+            DesignEditorKind? kind = value switch
+            {
+                NumericValue { IsLogical: true } => DesignEditorKind.Logical,
+                NumericValue => DesignEditorKind.Value,
+                CharValue or StringValue => DesignEditorKind.Text,
+                CellValue cell when cell.Rows == 1 || cell.Cols == 1 => DesignEditorKind.Value,
+                _ => null,
+            };
+            if (!shown || kind is null)
+            {
+                continue;
+            }
+
+            own.Add(new DesignInspectorRow([new DesignEditor(name, property.SetAccess.IsPublic ? kind.Value : DesignEditorKind.ReadOnly, [])]));
+        }
+
+        var groups = new List<DesignInspectorGroup>();
+        if (own.Count > 0)
+        {
+            groups.Add(new DesignInspectorGroup(className[(className.LastIndexOf('.') + 1)..], true, own));
+        }
+
+        static DesignInspectorRow Row(string name, DesignEditorKind kind, params string[] choices) => new([new DesignEditor(name, kind, choices)]);
+        groups.Add(new DesignInspectorGroup("Color", true, [Row("BackgroundColor", DesignEditorKind.Color)]));
+        groups.Add(new DesignInspectorGroup("Interactivity", false, [Row("Visible", DesignEditorKind.OnOff), Row("ContextMenu", DesignEditorKind.Component)]));
+        groups.Add(new DesignInspectorGroup("Position", false, [Row("Position", DesignEditorKind.Value)]));
+        groups.Add(new DesignInspectorGroup("Callback Execution Control", false, [Row("Interruptible", DesignEditorKind.OnOff), Row("BusyAction", DesignEditorKind.Choice, "queue", "cancel")]));
+        groups.Add(new DesignInspectorGroup("Parent / Child", false, [Row("HandleVisibility", DesignEditorKind.Choice, "on", "callback", "off")]));
+        groups.Add(new DesignInspectorGroup("Identifiers", false, [Row("Tag", DesignEditorKind.Text)]));
+        return groups;
+    }
+
+    /// <summary>A property of <paramref name="cls"/> or of a class it derives from; null when none declares it.</summary>
+    private static ClassProperty? FindProperty(JgsClass cls, string name)
+    {
+        if (cls.Property(name) is { } own)
+        {
+            return own;
+        }
+
+        foreach (JgsClass super in cls.Supers)
+        {
+            if (FindProperty(super, name) is { } inherited)
+            {
+                return inherited;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>What <paramref name="expression"/> holds, as a design value; null when it cannot be read or is no design value. Within a scope already entered.</summary>
+    private DesignValue? ReadValue(string expression) =>
+        Run($"{ValueVariable} = {expression};") is null && _environment.TryGet(ValueVariable, out JgsValue value) ? ValueOf(value, null) : null;
 
     /// <summary>The object made for <paramref name="component"/>, or null when it could not be made.</summary>
     public GraphObject? ObjectOf(DesignComponent component) => _objects.GetValueOrDefault(component);
@@ -247,7 +520,8 @@ public sealed class DesignRuntime : IDisposable
                 return new CharValue(string.Empty);
             case "string" when value.ArrayLength == 1:
                 return new StringValue(value.ElementAt(0).AsString);
-            case "double" or "logical":
+            case "double" or "logical" or "single" or "int8" or "uint8" or "int16" or "uint16" or "int32" or "uint32" or "int64" or "uint64":
+                // A custom component's typed numbers are design numbers too (DS7b): the class's setter types them again.
                 bool logical = JgsBuiltins.IsLogicalValue(value);
                 switch (value.Type)
                 {
@@ -541,8 +815,11 @@ public sealed class DesignRuntime : IDisposable
     /// <summary>Takes a frame of the components, as a flush takes one: for the canvas to draw.</summary>
     public UiFrame TakeFrame()
     {
-        // A container told it was resized runs no callback of the console's session.
+        // A container told it was resized runs no callback of the console's session. A custom
+        // component's owed update runs first, as a drawnow runs it (DS7b): the canvas shows the
+        // component as its own update leaves it.
         using Scope scope = Enter();
+        JgsComponentContainers.RunUpdates(_globals);
         return ScriptComponentFrames.TakeFrame(Figure);
     }
 
@@ -626,14 +903,24 @@ public sealed class DesignRuntime : IDisposable
     /// <summary>Sets the theme the design's code is written under; the components already made keep what they hold.</summary>
     public void SetTheme(DesignTheme theme) => Theme = theme;
 
+    /// <summary>Forgets what the runtime refused for the component named <paramref name="codeName"/>, once the component is gone from the design (DS7b).</summary>
+    internal void ForgetProblemsOf(string codeName) => _problems.RemoveAll(p => p.StartsWith(codeName + ":", StringComparison.Ordinal));
+
     private void MakeOne(DesignComponent component, List<string> problems)
     {
         if (!ReferenceEquals(component, Design.Figure))
         {
+            // A custom component whose construction fails part way leaves its parts in the figure (DS7b).
+            UiObject[] before = DesignUserComponents.IsUserComponent(component) ? [.. Figure.Components] : [];
             string creation = DesignCodeWriter.ComponentCode(component)[0];
             if (Run(creation) is { } refused)
             {
                 problems.Add($"{component.CodeName}: {refused}");
+                if (before.Length > 0 || DesignUserComponents.IsUserComponent(component))
+                {
+                    RemoveStrays(before);
+                }
+
                 return;
             }
 
@@ -710,7 +997,27 @@ public sealed class DesignRuntime : IDisposable
         }
         catch (JgsException ex)
         {
-            return ex.Message;
+            // A refusal wrapping the class's own error (a custom component's setup) names it too.
+            return ex is JgsRuntimeException { Carried: JgsValue thrown } && CauseOf(thrown) is { } cause
+                ? ex.Message + " Caused by: " + cause
+                : ex.Message;
+        }
+    }
+
+    /// <summary>The message of the first cause an exception value carries; null when it carries none.</summary>
+    private static string? CauseOf(JgsValue exception)
+    {
+        try
+        {
+            return exception.Type == JgsType.Struct && exception.AsStruct.TryGetValue("cause", out JgsValue? causes)
+                && causes.Type == JgsType.Cell && causes.AsCell is [JgsValue first, ..]
+                && first.Type == JgsType.Struct && first.AsStruct.TryGetValue("message", out JgsValue? message) && message.Type == JgsType.String
+                ? message.AsString
+                : null;
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
         }
     }
 

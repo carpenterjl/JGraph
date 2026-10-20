@@ -34,6 +34,10 @@
     <!-- Designer plan DS1b (ADR 0244): what a fresh component of each class stores in App Designer's
          saved tree, as the probe ds1b_base records it from R2025b. Read by DesignTreeWriter. -->
     <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds1b\ds1b_base.json" LogicalName="JGraph.Scripting.designer-base.json" />
+    <!-- Designer plan DS7b: what a custom component (a ComponentContainer subclass) stores in App
+         Designer's saved tree besides its own properties, as the probe ds7_base records it from the
+         SpinnerGauge the probe ds7_uac saved. Read by DesignTreeWriter. -->
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds7\ds7_uac_base.json" LogicalName="JGraph.Scripting.designer-uac-base.json" />
     <!-- Designer plan DS3: App Designer's inspector per class (probe ds3_inspector) and what its
          palette's design-time component of each class holds (probe ds3_palette). Read by
          DesignInspector and DesignPalette. -->

@@ -30,6 +30,11 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
     /// <summary>The session's interpreter — for tests that read its counters (M5's scopes).</summary>
     internal Interpreter Interpreter => _interpreter;
 
+    /// <inheritdoc />
+    /// <remarks>The session's current folder and workspace root first, which it finds files in before the path's folders.</remarks>
+    public IReadOnlyList<string> PathFolders =>
+        [.. (_interpreter.Host as JGraphScriptGlobals)?.ImplicitCodeFolders ?? [], .. _interpreter.FunctionPath?.Folders ?? []];
+
     /// <summary>1 while a statement or an event-pump run owns the interpreter (the two must not
     /// overlap — callbacks themselves run nested inside whichever of the two holds this).</summary>
     private int _busy;

@@ -49,6 +49,22 @@ public sealed partial class DesignCallbacks
     /// <summary>R2025b's table.</summary>
     public static DesignCallbacks R2025b { get; } = Load();
 
+    /// <summary>
+    /// The code a callback starts with for a class App Designer has no table for, by the property's
+    /// name alone (<c>_CodeGeneration.getDefaultCallbackCode</c>'s generic cases; a custom
+    /// component's, DS7b); any other property starts empty.
+    /// </summary>
+    private static readonly Dictionary<string, IReadOnlyList<string>> GenericDefaultCode = new(StringComparer.Ordinal)
+    {
+        ["ValueChangedFcn"] = ["value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;", string.Empty],
+        ["ValueChangingFcn"] = ["changingValue = event.Value;", string.Empty],
+        ["SizeChangedFcn"] = ["position = ad_OBJECTNAME_ad.ad_CODENAME_ad.Position;", string.Empty],
+        ["DataChangedFcn"] = ["data = ad_OBJECTNAME_ad.ad_CODENAME_ad.Data;", string.Empty],
+        ["HTMLEventReceivedFcn"] = ["eventName = event.HTMLEventName;", "eventData = event.HTMLEventData;", string.Empty],
+        ["KeyPressFcn"] = ["key = event.Key;", string.Empty],
+        ["KeyReleaseFcn"] = ["key = event.Key;", string.Empty],
+    };
+
     /// <summary>The callback properties of <paramref name="type"/> in their groups, as App Designer's inspector lists them; empty for a class with none.</summary>
     public IReadOnlyList<DesignCallbackGroup> GroupsOf(string type) =>
         _classes.TryGetValue(type, out ClassCallbacks? c) ? c.Groups : [];
@@ -76,7 +92,14 @@ public sealed partial class DesignCallbacks
         ArgumentNullException.ThrowIfNull(property);
         if (!_classes.TryGetValue(component.Type, out ClassCallbacks? c) || !c.DefaultCode.TryGetValue(property, out IReadOnlyList<string>? code))
         {
-            return [string.Empty];
+            // A custom component's callback starts with App Designer's generic code for the
+            // property's name (_CodeGeneration.getDefaultCallbackCode, designer plan DS7b): a
+            // handful of names have a line, the rest an empty body.
+            code = component.Class is { IsUserComponent: true } ? GenericDefaultCode.GetValueOrDefault(property) : null;
+            if (code is null)
+            {
+                return [string.Empty];
+            }
         }
 
         return code.Select(l => l.Replace("ad_OBJECTNAME_ad", DesignValueText.AppObjectName, StringComparison.Ordinal)
@@ -305,7 +328,8 @@ public sealed partial class DesignCallbacks
 
     /// <summary>The class's default code name (<c>CodeNameGeneration.DefaultCodeName</c>): what a new component of it is called before a number.</summary>
     public string? DefaultCodeNameOf(string type) =>
-        _classes.TryGetValue(type, out ClassCallbacks? c) ? c.DefaultCodeName : DesignNames.Of(type)?.CodeName;
+        _classes.TryGetValue(type, out ClassCallbacks? c) ? c.DefaultCodeName
+        : DesignNames.Of(type)?.CodeName ?? type[(type.LastIndexOf('.') + 1)..]; // a custom component's is its class's short name (UserComponentDefaults)
 
     /// <summary>
     /// <paramref name="name"/> made unique among <paramref name="namesInUse"/> as App Designer makes a

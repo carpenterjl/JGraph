@@ -274,11 +274,15 @@ public static partial class DesignPlainText
         // list is the design's now, not the file's: an image taken out of the app leaves it.
         List<string> images = [.. ImagesOf(design)];
 
+        // The custom component classes are the design's too, as App Designer's class tracker keeps
+        // them (DS7b); the products are the file's.
+        List<string> userComponents = [.. DesignUserComponents.ClassesOf(design)];
+
         // Every list is written as Product elements, one per entry, whatever its length: the form
         // a saved file shows once App Designer's trackers have set the lists again after the
         // engine is built (the builder's one-element form is never reached).
         foreach ((string name, List<string> items) in (ReadOnlySpan<(string, List<string>)>)
-            [("ImageRelativePaths", images), ("RequiredProducts", details.RequiredProducts), ("UserComponents", details.UserComponents)])
+            [("ImageRelativePaths", images), ("RequiredProducts", details.RequiredProducts), ("UserComponents", userComponents)])
         {
             if (items.Count > 0)
             {

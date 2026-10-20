@@ -130,7 +130,7 @@ public sealed class DesignInspectorView : UserControl
         header.Children.Add(_name);
         _panel.Children.Add(header);
 
-        foreach (DesignInspectorGroup group in DesignInspector.R2025b.GroupsOf(component.Type))
+        foreach (DesignInspectorGroup group in _document?.InspectorGroupsOf(component) ?? DesignInspector.R2025b.GroupsOf(component.Type))
         {
             var grid = new Grid { Margin = new Thickness(2, 2, 2, 6) };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto), MinWidth = 90 });

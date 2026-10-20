@@ -108,7 +108,7 @@ public static partial class JgsMlapp
                 + "<MLAPPVersion>2</MLAPPVersion><minimumSupportedMATLABRelease>" + minimum + "</minimumSupportedMATLABRelease>"
                 + "<screenshotMode>auto</screenshotMode><uuid>" + uuid + "</uuid>"
                 + "<AppType>" + (design.IsResponsive ? "Responsive" : "Standard") + "</AppType>"
-                + "<componentProducts/><imageRelativePaths/><userComponents/></metadata>"),
+                + "<componentProducts/><imageRelativePaths/>" + UserComponentsElement(DesignUserComponents.ClassesOf(design)) + "</metadata>"),
             Xml("metadata/coreProperties.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
                 + "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" "
                 + "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcmitype=\"http://purl.org/dc/dcmitype/\" "
@@ -129,6 +129,15 @@ public static partial class JgsMlapp
         Replace(path, parts, null);
         return new MlappWriteResult(true, problems);
     }
+
+    /// <summary>
+    /// The <c>userComponents</c> element of <c>appMetadata.xml</c> for the custom component
+    /// <paramref name="classes"/> an app uses (designer plan DS7b; probe <c>ds7_uac</c>): one
+    /// <c>userComponent</c> per class, or the empty element.
+    /// </summary>
+    internal static string UserComponentsElement(IReadOnlyList<string> classes) => classes.Count == 0
+        ? "<userComponents/>"
+        : "<userComponents>" + string.Concat(classes.Select(static c => "<userComponent class=\"" + System.Security.SecurityElement.Escape(c) + "\"/>")) + "</userComponents>";
 
     /// <summary>
     /// The details the package <paramref name="path"/> keeps (<see cref="MlappMetadata"/>); each

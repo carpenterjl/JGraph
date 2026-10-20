@@ -104,8 +104,12 @@ public sealed class DesignComponent
     /// <summary>The component's class, as <c>matlab.ui.control.Button</c>.</summary>
     public string Type { get; }
 
-    /// <summary>What App Designer's generator knows of the class; null for a class it does not know.</summary>
-    public DesignComponentClass? Class { get; }
+    /// <summary>
+    /// What App Designer's generator knows of the class; null for a class it does not know. A
+    /// custom component read as a call of its class is given its class once the runtime has
+    /// described it (designer plan DS7b).
+    /// </summary>
+    public DesignComponentClass? Class { get; internal set; }
 
     /// <summary>The function that makes the component.</summary>
     public string Function { get; }

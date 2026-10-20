@@ -267,16 +267,70 @@ internal static class AppDesignerDialogs
         return dialog.ShowDialog() == true && nameBox.Text.Trim() != current ? nameBox.Text.Trim() : null;
     }
 
+    /// <summary>
+    /// App Designer's dialog for an app whose custom components could not be loaded (designer plan
+    /// DS7b, <c>DeleteComponentsDialog</c> with <c>LicenseMissingDialogConfig</c>): the classes with
+    /// an error, the missing classes with the word to put them on the path, and the warning that
+    /// opening removes them; Open Anyway or Cancel.
+    /// </summary>
+    /// <returns>True to open the app without those components; false to leave it closed.</returns>
+    public static bool ConfirmUnavailableUserComponents(Window owner, IReadOnlyList<string> errored, IReadOnlyList<string> missing)
+    {
+        var dialog = Dialog(owner, "App Designer");
+        var body = new StackPanel { Margin = new Thickness(12), MaxWidth = 460 };
+        body.Children.Add(new TextBlock { Text = "Some components in this file could not be loaded.", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 8) });
+        if (errored.Count > 0)
+        {
+            body.Children.Add(new TextBlock { Text = "Custom UI components with error:", Margin = new Thickness(0, 0, 0, 2) });
+            foreach (string name in errored)
+            {
+                body.Children.Add(new TextBlock { Text = name, Margin = new Thickness(10, 0, 0, 2) });
+            }
+        }
+
+        if (missing.Count > 0)
+        {
+            body.Children.Add(new TextBlock { Text = "Missing custom UI components:", Margin = new Thickness(0, 4, 0, 2) });
+            foreach (string name in missing)
+            {
+                body.Children.Add(new TextBlock { Text = name, Margin = new Thickness(10, 0, 0, 2) });
+            }
+
+            body.Children.Add(new TextBlock
+            {
+                Text = "Make sure these components are on your MATLAB path and are configured for use in App Designer.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 4, 0, 0),
+            });
+        }
+
+        body.Children.Add(new TextBlock
+        {
+            Text = "Opening this file will remove these components and will cause loss of functionality or errors.",
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 8, 0, 0),
+        });
+        var grid = new Grid();
+        grid.Children.Add(body);
+        Button open = Buttons(dialog, grid, "Open Anyway");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(open, "UnavailableComponents.OpenAnyway");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(dialog, "UnavailableComponents");
+        return dialog.ShowDialog() == true;
+    }
+
     private static Window Dialog(Window owner, string title)
     {
+        // A dialog raised before the designer's window is shown (an app opened by appdesigner(...)
+        // whose custom components could not be loaded, DS7b) cannot be owned by it: WPF refuses an
+        // owner not yet shown, so it stands on its own in the screen's centre.
         var dialog = new Window
         {
             Title = title,
-            Owner = owner,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Owner = owner.IsVisible ? owner : null,
+            WindowStartupLocation = owner.IsVisible ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen,
             SizeToContent = SizeToContent.WidthAndHeight,
             ResizeMode = ResizeMode.NoResize,
-            ShowInTaskbar = false,
+            ShowInTaskbar = !owner.IsVisible,
         };
         dialog.SetResourceReference(Control.BackgroundProperty, ThemeKeys.Window);
         dialog.SetResourceReference(Control.ForegroundProperty, ThemeKeys.Text);
