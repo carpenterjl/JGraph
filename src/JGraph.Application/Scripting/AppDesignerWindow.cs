@@ -81,6 +81,9 @@ internal sealed class AppDesignerWindow : Window
         var toolbar = new ToolBar();
         toolbar.Items.Add(new Button { Content = "Open…", Command = ApplicationCommands.Open, ToolTip = "Open an app (Ctrl+O)" });
         toolbar.Items.Add(new Button { Content = "Save", Command = ApplicationCommands.Save, ToolTip = "Save the app (Ctrl+S)" });
+        var saveAs = new Button { Content = "Save As…", Command = WorkspaceCommands.SaveAs, ToolTip = "Save the app under another name, as an .mlapp or as a plain-text .m app (Ctrl+Shift+S)" };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(saveAs, "SaveAs");
+        toolbar.Items.Add(saveAs);
         toolbar.Items.Add(new Separator());
         toolbar.Items.Add(new Button { Content = "Undo", Command = ApplicationCommands.Undo, ToolTip = "Undo (Ctrl+Z)" });
         toolbar.Items.Add(new Button { Content = "Redo", Command = ApplicationCommands.Redo, ToolTip = "Redo (Ctrl+Y)" });
@@ -194,6 +197,8 @@ internal sealed class AppDesignerWindow : Window
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (_, _) => PromptOpen()));
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, (_, _) => Save(Active),
             (_, e) => e.CanExecute = Active is { Document.CanSave: true }));
+        CommandBindings.Add(new CommandBinding(WorkspaceCommands.SaveAs, (_, _) => PromptSaveAs(Active),
+            (_, e) => e.CanExecute = Active is { Document.CanSaveAs: true }));
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (_, _) => Active?.Document.Undo(),
             (_, e) => e.CanExecute = Active is { Document.CanUndo: true }));
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (_, _) => Active?.Document.Redo(),
@@ -342,7 +347,7 @@ internal sealed class AppDesignerWindow : Window
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
             Title = "Open app",
-            Filter = "MATLAB App (*.mlapp)|*.mlapp",
+            Filter = "MATLAB Apps (*.mlapp;*.m)|*.mlapp;*.m|MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
             InitialDirectory = Active?.Document.Path is { } current ? Path.GetDirectoryName(current) : null,
         };
         if (dialog.ShowDialog(this) == true && Open(dialog.FileName) is { } refused)
@@ -644,7 +649,7 @@ internal sealed class AppDesignerWindow : Window
         }
 
         string note = !document.CanSave && document.ReadProblems.Count > 0
-            ? $"  View only: createComponents has {document.ReadProblems.Count} line(s) the designer cannot place, so a save would lose them."
+            ? "  View only: " + document.SaveRefusal
             : document.Code is null ? "  View only: " + document.CodeProblem
             : document.Runtime.Problems.Count > 0
                 ? $"  The canvas could not make everything: {string.Join(" ", document.Runtime.Problems)}"
@@ -652,6 +657,57 @@ internal sealed class AppDesignerWindow : Window
         _status.Text = selected + note;
 
         static string Whole(double v) => v.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>Save As: the app under another name, as an <c>.mlapp</c> or as a plain-text <c>.m</c> app (designer plan DS7a).</summary>
+    private void PromptSaveAs(AppTab? app)
+    {
+        if (app is null)
+        {
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "Save app as",
+            Filter = "MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
+            FilterIndex = app.Document.Format == DesignFileFormat.PlainText ? 2 : 1,
+            FileName = app.Document.Path is { } current ? Path.GetFileName(current) : app.Document.Code?.ClassName,
+            InitialDirectory = app.Document.Path is { } here ? Path.GetDirectoryName(here) : null,
+            AddExtension = true,
+        };
+        if (dialog.ShowDialog(this) != true || dialog.FileName is not { Length: > 0 } chosen)
+        {
+            return;
+        }
+
+        // A file open in another tab is not written over from this one: the two tabs would then be
+        // one file's, and the other's design would write over this save on its next Save.
+        string full = Path.GetFullPath(chosen);
+        if (Apps.FirstOrDefault(a => !ReferenceEquals(a, app) && string.Equals(a.Document.Path, full, StringComparison.OrdinalIgnoreCase)) is { } other)
+        {
+            MessageBox.Show(this, $"{Path.GetFileName(full)} is open in another tab. Close that tab first, then save as this name.",
+                "App Designer", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        try
+        {
+            if (!app.CodeView.Push())
+            {
+                return;
+            }
+
+            _status.Text = app.Document.SaveAs(chosen);
+            app.Item.ToolTip = app.Document.Path;
+            app.Item.Header = app.Header;
+            AppSaved?.Invoke(app.Document.Path!, app.Document.Text);
+            ShowState();
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException or InvalidDataException)
+        {
+            MessageBox.Show(this, ex.Message, "App Designer", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
     }
 
     private bool Save(AppTab? app)

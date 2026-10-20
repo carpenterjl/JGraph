@@ -164,6 +164,13 @@ public sealed partial class DesignCode
     public DesignCallback? Startup => Callbacks.FirstOrDefault(static c => c.IsStartup);
 
     /// <summary>
+    /// The startup function a plain-text app's run configuration names when no function of the
+    /// callbacks block is it (the function stands in the user's code, designer plan DS7a): the name
+    /// is kept and written again, since the app runs it from there. Null otherwise.
+    /// </summary>
+    public string? UnplacedStartup { get; set; }
+
+    /// <summary>
     /// The app's input parameters as the startup function's parameters after <c>app</c>, written
     /// <c>a, b</c> (App Designer's <c>InputParameters</c>); empty when it takes none.
     /// </summary>
@@ -203,6 +210,7 @@ public sealed partial class DesignCode
         {
             InputParameters = layout.InputParameters,
             SingleInstance = layout.SingleInstance,
+            UnplacedStartup = layout.UnplacedStartup,
         };
 
         IReadOnlyList<string> lines = layout.Lines;

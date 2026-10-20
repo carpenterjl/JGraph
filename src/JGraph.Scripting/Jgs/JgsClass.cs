@@ -650,8 +650,13 @@ internal sealed class JgsClass
         // object being made and the arguments.
         if (_own.TryGetValue(Name, out ClassMethod? native) && native.Native is { } body && native.Function.Outputs.Count == 1)
         {
-            body.Call([built, .. arguments], line, col);
-            return built;
+            // The constructor may answer another object of its class in place of the one being made:
+            // matlab.apps.App's hands back the instance already running (DS7a).
+            JgsValue made = body.Call([built, .. arguments], line, col);
+            return made.Type == JgsType.Object && !ReferenceEquals(made.AsObject, built.AsObject)
+                && string.Equals(made.AsObject.Class.Name, built.AsObject.Class.Name, StringComparison.Ordinal)
+                ? made
+                : built;
         }
 
         if (!_own.TryGetValue(Name, out ClassMethod? constructor) || constructor.Native is not null)

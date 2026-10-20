@@ -73,6 +73,20 @@ internal sealed partial class Interpreter
     internal string FileOfClass(JgsClass definition) => definition.Declaration.SourceId;
 
     /// <summary>A class this build supplies for a user class to inherit from (<c>matlab.mixin.Copyable</c>), or null.</summary>
+    /// <summary>
+    /// Whether <paramref name="name"/> is a class this interpreter can make an instance of: one
+    /// defined so far, one its file on the path defines, or one this build supplies.
+    /// </summary>
+    internal bool KnowsClass(string name)
+    {
+        if (!_classes.ContainsKey(name))
+        {
+            _ = TryResolveOnPath(name, out _);
+        }
+
+        return _classes.ContainsKey(name) || BuiltinClass(name) is not null;
+    }
+
     internal JgsClass? BuiltinClass(string name)
     {
         if (_builtinClasses.TryGetValue(name, out JgsClass? made))

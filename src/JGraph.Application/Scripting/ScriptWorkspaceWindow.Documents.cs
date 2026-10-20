@@ -179,7 +179,7 @@ public partial class ScriptWorkspaceWindow
         {
             ScriptLanguage = model.Language,
             ScriptText = model.Text,
-            ShadeGeneratedCode = model.IsAppDesignerFile || model.IsNewApp,
+            ShadeGeneratedCode = model.IsAppDesignerFile || model.IsNewApp || model.IsPlainTextApp,
         };
         var document = new LayoutDocument
         {
@@ -322,7 +322,7 @@ public partial class ScriptWorkspaceWindow
     /// </summary>
     private void OpenActiveInAppDesigner()
     {
-        if (ActiveDocument is not { Model: { IsAppDesignerFile: true, FilePath: { } path } } entry)
+        if (ActiveDocument is not { Model: { FilePath: { } path } } entry || !(entry.Model.IsAppDesignerFile || entry.Model.IsPlainTextApp))
         {
             return;
         }
@@ -445,7 +445,7 @@ public partial class ScriptWorkspaceWindow
         // An app is saved under a new name as an app, the way App Designer's Save As does it; its
         // class alone is saved through Export, or by picking the .m type here. A MATLAB class that
         // never was an app can be saved as a new .mlapp holding the code alone (open item 58).
-        bool app = entry.Model.IsAppDesignerFile || entry.Model.IsNewApp;
+        bool app = entry.Model.IsAppDesignerFile || entry.Model.IsNewApp || entry.Model.IsPlainTextApp;
         var types = new List<(string Filter, string Language)>();
         if (app || entry.Model.Language == "MATLAB")
         {
@@ -457,7 +457,7 @@ public partial class ScriptWorkspaceWindow
         types.Add(("C# script (*.csx)|*.csx", "C#"));
         types.Add(("Python script (*.py)|*.py", "Python"));
         types.Add(("All files (*.*)|*.*", string.Empty));
-        int chosen = types.FindIndex(t => t.Language == (app ? "App" : entry.Model.Language));
+        int chosen = types.FindIndex(t => t.Language == (app && !entry.Model.IsPlainTextApp ? "App" : entry.Model.Language));
         var dialog = new SaveFileDialog
         {
             Title = "Save script",
@@ -491,7 +491,7 @@ public partial class ScriptWorkspaceWindow
 
         entry.Model.SetFilePath(dialog.FileName);
         entry.Editor.ScriptLanguage = entry.Model.Language;
-        entry.Editor.ShadeGeneratedCode = entry.Model.IsAppDesignerFile;
+        entry.Editor.ShadeGeneratedCode = entry.Model.IsAppDesignerFile || entry.Model.IsPlainTextApp;
         entry.Document.ContentId = dialog.FileName;
         entry.Document.Title = entry.Model.FileName;
         return true;
@@ -540,7 +540,23 @@ public partial class ScriptWorkspaceWindow
             string text = entry.Editor.ScriptText;
             JGraph.Scripting.Jgs.MlappSaveResult? saved = null;
             JGraph.Scripting.Jgs.MlappWriteResult? created = null;
-            if (newPackage)
+            bool plainApp = entry.Model.IsPlainTextApp
+                && (intoApp || !string.Equals(Path.GetFullPath(path), entry.Model.FilePath, StringComparison.OrdinalIgnoreCase));
+            if (plainApp)
+            {
+                // A plain-text app saved under another name is saved as an app (designer plan DS7a):
+                // the class renamed for its file, its details kept, and an .mlapp written whole with
+                // App Designer's model, as the designer's Save As writes them.
+                using var document = JGraph.Scripting.Designer.DesignDocument.FromPlainText(text, entry.Model.FilePath);
+                if (!document.CanSaveAs)
+                {
+                    throw new InvalidDataException(document.Code is null ? document.CodeProblem! : document.SaveRefusal);
+                }
+
+                SetStatus(document.SaveAs(path));
+                text = document.Text;
+            }
+            else if (newPackage)
             {
                 (text, created) = AppDesignerDocument.SaveNew(path, text);
             }
@@ -566,8 +582,11 @@ public partial class ScriptWorkspaceWindow
             entry.Model.SetText(text);
             entry.Model.MarkSaved();
             entry.Document.Title = entry.Model.FileName;
-            SetStatus(created is not null ? $"Saved {path}.{AppDesignerDocument.NewFileNote(created)}"
-                : saved is null ? $"Saved {path}" : $"Saved {path}.{AppDesignerDocument.StatusNote(saved)}");
+            if (!plainApp)
+            {
+                SetStatus(created is not null ? $"Saved {path}.{AppDesignerDocument.NewFileNote(created)}"
+                    : saved is null ? $"Saved {path}" : $"Saved {path}.{AppDesignerDocument.StatusNote(saved)}");
+            }
             if (saved is { HasDesignCopy: true, DesignCopyInStep: true, GeneratedCodeChanged: true } && !_generatedCodeNoticeShown)
             {
                 _generatedCodeNoticeShown = true;

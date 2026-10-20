@@ -31,13 +31,15 @@ public sealed partial class DesignDocument : IDisposable
     private Gesture? _gesture;
     private int _version;
     private int _savedVersion;
-    private readonly string _newline;
-    private readonly bool _trailingNewline;
+    private string _newline;
+    private bool _trailingNewline;
 
-    private DesignDocument(string text, string? path, DesignReadResult read)
+    private DesignDocument(string text, string? path, DesignReadResult read, DesignFileFormat format = DesignFileFormat.Mlapp, DesignPlainTextDetails? details = null)
     {
         Text = text;
         Path = path;
+        Format = format;
+        Details = details;
         Style = read.Style;
         Design = read.Design!;
         ReadProblems = read.Problems;
@@ -48,14 +50,31 @@ public sealed partial class DesignDocument : IDisposable
         LayOutRegions();
     }
 
+    /// <summary>The format the app is kept in: the <c>.mlapp</c> package, or App Designer's plain-text <c>.m</c> file (designer plan DS7a).</summary>
+    public DesignFileFormat Format { get; private set; }
+
+    /// <summary>
+    /// A plain-text app's details - its App Details, internal data and thumbnail - as read from the
+    /// file and written back; null for an app kept as an <c>.mlapp</c>, which holds them in its
+    /// package. Made for an app saved as plain text for the first time.
+    /// </summary>
+    public DesignPlainTextDetails? Details { get; private set; }
+
+    /// <summary>The format a path's extension names: <c>.m</c> is the plain-text format, anything else the package.</summary>
+    public static DesignFileFormat FormatOf(string path)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        return System.IO.Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) ? DesignFileFormat.PlainText : DesignFileFormat.Mlapp;
+    }
+
     /// <summary>Raised after the design, the selection or the saved state changed: the canvas draws again.</summary>
     public event EventHandler? Changed;
 
     /// <summary>The app's class, as it was read or last saved.</summary>
     public string Text { get; private set; }
 
-    /// <summary>The <c>.mlapp</c> the app is in; null for one that is not saved.</summary>
-    public string? Path { get; }
+    /// <summary>The <c>.mlapp</c> or plain-text <c>.m</c> the app is in; null for one that is not saved.</summary>
+    public string? Path { get; private set; }
 
     /// <summary>How the app's code is laid out, which the save keeps, and the theme it is written under (the figure's).</summary>
     public DesignCodeStyle Style { get; private set; }
@@ -93,12 +112,32 @@ public sealed partial class DesignDocument : IDisposable
     /// <summary>Whether there is an edit to redo.</summary>
     public bool CanRedo => _redo.Count > 0 && _gesture is null && !_regionPreview;
 
-    /// <summary>Opens the App Designer file <paramref name="path"/>.</summary>
+    /// <summary>Opens the App Designer file <paramref name="path"/>: an <c>.mlapp</c> package, or a plain-text <c>.m</c> app.</summary>
     /// <exception cref="System.IO.InvalidDataException">The file is not an app App Designer lays out.</exception>
     public static DesignDocument Open(string path)
     {
         ArgumentNullException.ThrowIfNull(path);
-        return FromText(JgsMlapp.ReadCode(path), path);
+        return FormatOf(path) == DesignFileFormat.PlainText
+            ? FromPlainText(System.IO.File.ReadAllText(path), path)
+            : FromText(JgsMlapp.ReadCode(path), path);
+    }
+
+    /// <summary>
+    /// Opens a plain-text app's <paramref name="text"/> (designer plan DS7a): its components from the
+    /// appendix, its code from the class; <paramref name="path"/> is the <c>.m</c> it saves into, if any.
+    /// </summary>
+    /// <exception cref="System.IO.InvalidDataException">The text is not a plain-text app.</exception>
+    public static DesignDocument FromPlainText(string text, string? path)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        DesignPlainTextReadResult read = DesignPlainText.Read(text);
+        if (read.Read.Design is null)
+        {
+            throw new System.IO.InvalidDataException(
+                $"The app's components cannot be read: {string.Join(" ", read.Read.Problems)}");
+        }
+
+        return new DesignDocument(text, path, read.Read, DesignFileFormat.PlainText, read.Details);
     }
 
     /// <summary>Opens an app's class text; <paramref name="path"/> is the <c>.mlapp</c> it saves into, if any.</summary>
@@ -1123,11 +1162,18 @@ public sealed partial class DesignDocument : IDisposable
     {
         if (!CanSave)
         {
-            throw new InvalidOperationException(Path is null
-                ? "The app has no file to save into."
-                : Code is null ? CodeProblem!
-                : "The app's createComponents has lines the designer cannot place, so a save would lose them: "
-                    + string.Join(" ", ReadProblems));
+            throw new InvalidOperationException(Path is null ? "The app has no file to save into." : Code is null ? CodeProblem! : SaveRefusal);
+        }
+
+        if (Format == DesignFileFormat.PlainText)
+        {
+            string text = CurrentText;
+            WriteWhole(Path!, text);
+            Text = text;
+            _savedVersion = _version;
+            _textDirty = false;
+            OnChanged();
+            return $"Saved {Path}.";
         }
 
         (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText);
@@ -1135,7 +1181,217 @@ public sealed partial class DesignDocument : IDisposable
         _savedVersion = _version;
         _textDirty = false;
         OnChanged();
-        return $"Saved {Path}.{AppDesignerDocument.StatusNote(result)}";
+        return $"Saved {Path}.{AppSaveNote(result)}";
+    }
+
+    /// <summary>Whether the design can be saved under another name: it holds everything its code does, and its code can be worked on.</summary>
+    public bool CanSaveAs => ReadProblems.Count == 0 && Code is not null;
+
+    /// <summary>
+    /// Why a save is refused when the design does not hold everything its file does
+    /// (<see cref="ReadProblems"/>): lines of <c>createComponents</c> the designer cannot place, or
+    /// entries of a plain-text app's appendix it cannot read. For the status line and the refusal.
+    /// </summary>
+    public string SaveRefusal => Format == DesignFileFormat.PlainText
+        ? $"The app's appendix has {ReadProblems.Count} entr{(ReadProblems.Count == 1 ? "y" : "ies")} the designer cannot read, so a save would lose them: {string.Join(" ", ReadProblems)}"
+        : $"The app's createComponents has {ReadProblems.Count} line(s) the designer cannot place, so a save would lose them: {string.Join(" ", ReadProblems)}";
+
+    /// <summary>
+    /// Saves the app as <paramref name="target"/>, in the format its extension names (designer plan
+    /// DS7a): as an <c>.mlapp</c>, written whole with App Designer's model when the app was not one
+    /// (<see cref="AppDesignerDocument.SaveNew(string, string, MlappMetadata?)"/>), copied as App Designer's Save As copies it when
+    /// it was; as a plain-text <c>.m</c>, the class and its appendix. The class takes the file's
+    /// name, as a class file must, and the App Details name follows it when it was the class's
+    /// (<c>PlainTextSerializationModel.save</c>). The document then is that file's.
+    /// The App Details go with the app across the formats: into a plain-text file from the package's
+    /// metadata, as App Designer's loader carries them when it converts an app (then the oldest
+    /// release the file opens in is R2025a, the first with the format), and into a package from the
+    /// plain-text details. An image kept beside the app is copied beside the new file when that is
+    /// another folder, so the file written names what is there. The document is the new file's only
+    /// once it is written: a write that fails leaves the document as it was, so the next Save goes
+    /// to the file it came from, in its format.
+    /// </summary>
+    /// <returns>What the save did, for the status line.</returns>
+    /// <exception cref="InvalidOperationException">The design cannot be saved (<see cref="CanSaveAs"/>).</exception>
+    /// <exception cref="System.IO.IOException">The file could not be written, or the name is not one a class can have.</exception>
+    public string SaveAs(string target)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        if (!CanSaveAs)
+        {
+            throw new InvalidOperationException(Code is null ? CodeProblem! : SaveRefusal);
+        }
+
+        target = System.IO.Path.GetFullPath(target);
+        string name = AppDesignerDocument.ClassNameFor(target);
+        DesignFileFormat format = FormatOf(target);
+        DesignCode code = Code!;
+
+        // What a failed write puts back.
+        string classWas = code.ClassName;
+        DesignFileFormat formatWas = Format;
+        DesignPlainTextDetails? detailsWere = Details;
+        string? detailsNameWas = Details?.Name;
+        (string newlineWas, bool trailingWas) = (_newline, _trailingNewline);
+        string? source = Path;
+
+        string note = string.Empty;
+        string saved;
+        try
+        {
+            // The App Details name follows the class's while it still is the class's.
+            if (Details is { } named && named.Name == code.ClassName)
+            {
+                named.Name = name;
+            }
+
+            if (format == DesignFileFormat.PlainText)
+            {
+                DesignPlainTextDetails details = Details ?? DetailsOf(source, name);
+                code.ClassName = name;
+                Details = details;
+                Format = format;
+                (_newline, _trailingNewline) = formatWas == format ? (_newline, _trailingNewline) : ("\n", false);
+                _renderedText = null;
+                saved = CurrentText;
+                WriteWhole(target, saved);
+            }
+            else if (formatWas == DesignFileFormat.Mlapp && source is not null && System.IO.File.Exists(source))
+            {
+                _renderedText = null;
+                (saved, MlappSaveResult result) = AppDesignerDocument.Save(source, target, CurrentText);
+                code.ClassName = name;
+                note = AppSaveNote(result);
+            }
+            else
+            {
+                Format = format;
+                (_newline, _trailingNewline) = ("\n", true);
+                _renderedText = null;
+                (saved, MlappWriteResult result) = AppDesignerDocument.SaveNew(target, CurrentText, MetadataOf(Details));
+                code.ClassName = name;
+                note = AppDesignerDocument.NewFileNote(result);
+            }
+        }
+        catch
+        {
+            code.ClassName = classWas;
+            Format = formatWas;
+            Details = detailsWere;
+            if (detailsWere is not null && detailsNameWas is not null)
+            {
+                detailsWere.Name = detailsNameWas;
+            }
+
+            (_newline, _trailingNewline) = (newlineWas, trailingWas);
+            _renderedText = null;
+            throw;
+        }
+
+        note += CopyImages(source, target);
+        Path = target;
+        Text = saved;
+        _renderedText = null;
+        _savedVersion = _version;
+        _textDirty = false;
+        OnChanged();
+        return $"Saved {Path}.{note}";
+    }
+
+    private static string AppSaveNote(MlappSaveResult result) => AppDesignerDocument.StatusNote(result);
+
+    /// <summary>
+    /// The details a plain-text file gets for an app that had none: the package's metadata when the
+    /// app came from an <c>.mlapp</c> on disk (<c>AppLoader</c>'s conversion: the details kept, the
+    /// oldest release R2025a), else a new app's.
+    /// </summary>
+    private DesignPlainTextDetails DetailsOf(string? source, string name)
+    {
+        if (Format != DesignFileFormat.Mlapp || source is null || !System.IO.File.Exists(source))
+        {
+            return DesignPlainTextDetails.NewApp(name, Design.IsResponsive);
+        }
+
+        MlappMetadata metadata = JgsMlapp.ReadMetadata(source);
+        var details = DesignPlainTextDetails.NewApp(name, Design.IsResponsive);
+        details.Author = metadata.Author;
+        details.Summary = metadata.Summary;
+        details.Description = metadata.Description;
+        details.MinimumSupportedMatlabRelease = "R2025a";
+        if (metadata.Version.Length > 0)
+        {
+            details.Version = metadata.Version;
+        }
+
+        if (metadata.Uuid.Length > 0)
+        {
+            details.AppId = metadata.Uuid;
+        }
+
+        if (metadata.Name.Length > 0 && metadata.Name != Code!.ClassName)
+        {
+            details.Name = metadata.Name; // a name of its own; the class's follows the file
+        }
+
+        return details;
+    }
+
+    /// <summary>The package metadata a plain-text app's details become; null for an app that has none.</summary>
+    private static MlappMetadata? MetadataOf(DesignPlainTextDetails? details) => details is null ? null
+        : new MlappMetadata(details.Name, details.Author, details.Summary, details.Description, details.Version, details.AppId);
+
+    /// <summary>
+    /// Copies the images the design keeps beside the app from the folder of <paramref name="source"/>
+    /// to the folder of <paramref name="target"/> when that is another folder, those that are there
+    /// and not yet beside the new file; what to add to the status line about it.
+    /// </summary>
+    private string CopyImages(string? source, string target)
+    {
+        string? from = source is null ? Runtime.AppFolder : System.IO.Path.GetDirectoryName(source);
+        string? to = System.IO.Path.GetDirectoryName(target);
+        if (from is null || to is null || string.Equals(System.IO.Path.GetFullPath(from), System.IO.Path.GetFullPath(to), StringComparison.OrdinalIgnoreCase))
+        {
+            return string.Empty;
+        }
+
+        int copied = 0;
+        foreach (string relative in DesignPlainText.ImagesOf(Design))
+        {
+            string image = System.IO.Path.Combine(from, relative);
+            string beside = System.IO.Path.Combine(to, relative);
+            if (System.IO.File.Exists(image) && !System.IO.File.Exists(beside))
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(beside)!);
+                System.IO.File.Copy(image, beside);
+                copied++;
+            }
+        }
+
+        return copied == 0 ? string.Empty : $"  {copied} image(s) copied beside it.";
+    }
+
+    /// <summary>Writes a whole file, replacing what was at <paramref name="path"/> only once the new text is written; a write that fails leaves nothing behind.</summary>
+    private static void WriteWhole(string path, string text)
+    {
+        string copy = path + ".saving";
+        try
+        {
+            System.IO.File.WriteAllText(copy, text, new System.Text.UTF8Encoding(false));
+            System.IO.File.Move(copy, path, overwrite: true);
+        }
+        catch
+        {
+            try
+            {
+                System.IO.File.Delete(copy);
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+            {
+                // the write's own error is the one to report
+            }
+
+            throw;
+        }
     }
 
     /// <inheritdoc />

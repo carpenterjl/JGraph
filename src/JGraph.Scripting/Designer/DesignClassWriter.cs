@@ -44,14 +44,21 @@ public static class DesignClassWriter
     /// <param name="code">The app's code around them.</param>
     /// <param name="style">The code's indentation and theme; App Designer's own when null.</param>
     /// <param name="sizeOf">A responsive region's size as the canvas lays it out, for its layout callback; null when there is no canvas.</param>
-    public static IReadOnlyList<string> Lines(AppDesign design, DesignCode code, DesignCodeStyle? style = null, Func<DesignComponent, Size2D?>? sizeOf = null)
+    /// <param name="format">
+    /// The file format the class is written for: an <c>.mlapp</c>'s class carries
+    /// <c>createComponents</c> and the lifecycle block; a plain-text app's (designer plan DS7a,
+    /// <c>PlainTextClassBehavior</c>) derives from <c>matlab.apps.App</c>, carries neither, and its
+    /// callbacks block is a <c>methods</c> block with no access clause.
+    /// </param>
+    public static IReadOnlyList<string> Lines(AppDesign design, DesignCode code, DesignCodeStyle? style = null, Func<DesignComponent, Size2D?>? sizeOf = null, DesignFileFormat format = DesignFileFormat.Mlapp)
     {
         ArgumentNullException.ThrowIfNull(design);
         ArgumentNullException.ThrowIfNull(code);
         style ??= DesignCodeStyle.Default;
+        bool plain = format == DesignFileFormat.PlainText;
         string i1 = style.Indent(1);
         string i2 = style.Indent(2);
-        var lines = new List<string> { $"classdef {code.ClassName} < {AppBase}" };
+        var lines = new List<string> { $"classdef {code.ClassName} < {(plain ? DesignPlainText.Superclass : AppBase)}" };
         lines.AddRange(code.HeadComments);
         lines.Add(string.Empty);
 
@@ -95,7 +102,7 @@ public static class DesignClassWriter
         if (code.Callbacks.Count > 0)
         {
             lines.Add(i1 + CallbacksComment);
-            lines.Add(i1 + "methods (Access = private)");
+            lines.Add(i1 + (plain ? "methods" : "methods (Access = private)"));
             foreach (DesignCallback function in code.Callbacks)
             {
                 lines.Add(string.Empty);
@@ -104,6 +111,12 @@ public static class DesignClassWriter
 
             lines.Add(i1 + "end");
             lines.Add(string.Empty);
+        }
+
+        if (plain)
+        {
+            lines.Add("end");
+            return lines;
         }
 
         lines.Add(i1 + InitializationComment);

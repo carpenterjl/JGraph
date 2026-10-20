@@ -71,6 +71,12 @@ public sealed partial class JgsMlappLayout
     private const string StartupComment = "% Code that executes after component creation";
     private const string LayoutCallbackComment = "% Changes arrangement of the app based on UIFigure width";
 
+    /// <summary>The line a plain-text app's appendix begins with (<c>SectionInfo.appendixStartGrammar</c>).</summary>
+    public const string AppendixMarker = "%[appendix]";
+
+    /// <summary>The grammar line of the run configuration section (<c>SectionInfo.runConfig.grammar</c>).</summary>
+    public const string RunConfigurationMarker = "%[app:runConfiguration]";
+
     private readonly List<MlappRegion> _regions = [];
     private int _componentPropertiesEnd;
 
@@ -84,6 +90,14 @@ public sealed partial class JgsMlappLayout
 
     /// <summary>Whether the text is laid out as App Designer lays out an app.</summary>
     public bool IsAppLayout { get; private set; }
+
+    /// <summary>
+    /// Whether the app is in App Designer's plain-text format (designer plan DS7a): a class under
+    /// <c>matlab.apps.App</c> with no <c>createComponents</c>, constructor or <c>delete</c>, its
+    /// components in the <c>%[appendix]</c> after the class. Everything from the class's <c>end</c>
+    /// on is generated.
+    /// </summary>
+    public bool IsPlainText { get; private set; }
 
     /// <summary>
     /// Whether every function in the callbacks block is closed. Text caught mid-edit may not be,
@@ -109,6 +123,12 @@ public sealed partial class JgsMlappLayout
 
     /// <summary>The startup function's body, or null when the app has no startup function.</summary>
     public MlappRegion? Startup => _regions.FirstOrDefault(static r => r.Kind == MlappRegionKind.Startup);
+
+    /// <summary>
+    /// The startup function a plain-text app's run configuration names when no function of the
+    /// callbacks block carries that name (it stands in the user's code); null otherwise.
+    /// </summary>
+    public string? UnplacedStartup { get; private set; }
 
     /// <summary>The callbacks, generated ones included, in text order.</summary>
     public IEnumerable<MlappRegion> Callbacks =>
@@ -279,10 +299,31 @@ public sealed partial class JgsMlappLayout
             }
         }
 
-        int initialization = IndexOfLine(ComponentInitialization, head + 1);
+        // A plain-text app (designer plan DS7a, App Designer's PlainTextClassBehavior) is told by
+        // its class line: it has no createComponents, constructor or delete, and ends at its own
+        // `end` before the appendix; which function is the startup one, and whether the app runs
+        // as a single instance, the appendix's run configuration says. Its user's code may hold
+        // the .mlapp cutter's marker comment without being cut by it.
+        bool plain = PlainTextClassLine().IsMatch(Lines.FirstOrDefault(static l => ClassLine().IsMatch(l)) ?? string.Empty);
+        int initialization = plain ? -1 : IndexOfLine(ComponentInitialization, head + 1);
+        string? plainStartup = null;
         if (initialization < 0)
         {
-            return;
+            if (!plain)
+            {
+                return;
+            }
+
+            int appendix = IndexOfLine(AppendixMarker, head + 1);
+            int classEnd = LastLineAt(string.Empty, head + 1, appendix < 0 ? Lines.Count : appendix);
+            if (classEnd < 0)
+            {
+                return;
+            }
+
+            IsPlainText = true;
+            initialization = classEnd;
+            (plainStartup, SingleInstance) = ReadRunConfiguration(appendix);
         }
 
         int callbacks = IndexOfLine(CallbacksBlock, head + 1);
@@ -295,7 +336,92 @@ public sealed partial class JgsMlappLayout
         IsAppLayout = true;
         _regions.Add(new MlappRegion(MlappRegionKind.EditableSection, string.Empty, head + 1, anchor - head - 1));
         IsComplete = callbacks < 0 || ReadCallbacks(callbacks, initialization);
-        SingleInstance = ReadSingleInstance(initialization);
+        if (!IsPlainText)
+        {
+            SingleInstance = ReadSingleInstance(initialization);
+        }
+        else if (plainStartup is not null && Startup?.Name != plainStartup)
+        {
+            // The run configuration's word outranks the comment over a function: the app runs the
+            // function it names (initializeMApp, the loader). The commented one is a callback like
+            // any other; the named one is the startup function when the callbacks block has it,
+            // else it stands in the user's code and its name alone is kept.
+            int commented = _regions.FindIndex(static r => r.Kind == MlappRegionKind.Startup);
+            if (commented >= 0)
+            {
+                _regions[commented] = _regions[commented] with { Kind = MlappRegionKind.Callback };
+                InputParameters = string.Empty;
+            }
+
+            int at = _regions.FindIndex(r => r.Kind == MlappRegionKind.Callback && r.Name == plainStartup);
+            if (at >= 0)
+            {
+                MlappRegion named = _regions[at];
+                _regions[at] = named with { Kind = MlappRegionKind.Startup };
+                InputParameters = StartupParameters(named.FirstLine - 1);
+            }
+            else
+            {
+                UnplacedStartup = plainStartup;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The startup function's name and the single-instance setting from a plain-text app's run
+    /// configuration section (<c>%[app:runConfiguration]</c>: <c>StartupFcn</c> and
+    /// <c>SingleRunningInstance</c> elements, as <c>AppAppendixParser</c> reads them); the app has
+    /// neither when the section is absent.
+    /// </summary>
+    private (string? Startup, bool SingleInstance) ReadRunConfiguration(int appendix)
+    {
+        if (appendix < 0)
+        {
+            return (null, false);
+        }
+
+        int section = IndexOfLine(RunConfigurationMarker, appendix + 1);
+        if (section < 0)
+        {
+            return (null, false);
+        }
+
+        string? startup = null;
+        bool singleton = false;
+        for (int i = section + 1; i < Lines.Count && Lines[i].Trim() != "%}"; i++)
+        {
+            Match m = RunConfigurationElement().Match(Lines[i]);
+            if (!m.Success)
+            {
+                continue;
+            }
+
+            string value = m.Groups[2].Value.Trim();
+            if (m.Groups[1].Value == "StartupFcn" && value.Length > 0)
+            {
+                startup = value;
+            }
+            else if (m.Groups[1].Value == "SingleRunningInstance")
+            {
+                singleton = value == "true";
+            }
+        }
+
+        return (startup, singleton);
+    }
+
+    /// <summary>The last line in [<paramref name="from"/>, <paramref name="limit"/>) that is an <c>end</c> standing at exactly <paramref name="indent"/>, or -1.</summary>
+    private int LastLineAt(string indent, int from, int limit)
+    {
+        for (int i = Math.Min(limit, Lines.Count) - 1; i >= from; i--)
+        {
+            if (IsEndAt(Lines[i], indent))
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /// <summary>
@@ -441,12 +567,19 @@ public sealed partial class JgsMlappLayout
 
         if (kind == MlappRegionKind.Startup && match.Success)
         {
-            string parameters = match.Groups[2].Value;
-            int comma = parameters.IndexOf(',', StringComparison.Ordinal);
-            InputParameters = comma < 0 ? string.Empty : parameters[(comma + 1)..].Trim();
+            InputParameters = StartupParameters(signature);
         }
 
         return new MlappRegion(kind, name, signature + 1, Math.Max(0, close - signature - 1));
+    }
+
+    /// <summary>What follows <c>app</c> in the startup function's signature at line <paramref name="signature"/>: the app's input parameters as written.</summary>
+    private string StartupParameters(int signature)
+    {
+        Match match = FunctionLine().Match(Lines[signature]);
+        string parameters = match.Success ? match.Groups[2].Value : string.Empty;
+        int comma = parameters.IndexOf(',', StringComparison.Ordinal);
+        return comma < 0 ? string.Empty : parameters[(comma + 1)..].Trim();
     }
 
     [GeneratedRegex(@"^\s*%.*[Pp]roperties that correspond to ")]
@@ -460,6 +593,14 @@ public sealed partial class JgsMlappLayout
 
     [GeneratedRegex(@"^\s*classdef\s+(?:\(.*?\)\s*)?(\w+)")]
     private static partial Regex ClassLine();
+
+    /// <summary>A class line naming <c>matlab.apps.App</c>, the superclass of a plain-text app (<c>PlainTextStrategy.getSuperClassNames</c>), as its only superclass.</summary>
+    [GeneratedRegex(@"^\s*classdef\s+(?:\(.*?\)\s*)?\w+\s*<\s*matlab\.apps\.App\s*(?:%.*)?$")]
+    private static partial Regex PlainTextClassLine();
+
+    /// <summary>One element of the run configuration section: <c>&lt;StartupFcn&gt;name&lt;/StartupFcn&gt;</c>.</summary>
+    [GeneratedRegex(@"^\s*<(StartupFcn|SingleRunningInstance)>(.*?)</\1>\s*$")]
+    private static partial Regex RunConfigurationElement();
 
     [GeneratedRegex(@"^\s*function\s+(?:(?:\[[^\]]*\]|\w+)\s*=\s*)?(\w+)\s*(?:\((.*)\))?")]
     private static partial Regex FunctionLine();

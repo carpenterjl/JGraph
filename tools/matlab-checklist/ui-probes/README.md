@@ -41,6 +41,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `ds2/` | Stage DS2 of the designer plan (ADR 0246): headless. `ds2_sizes` makes one component of each class App Designer offers and records its default `Position` and the `Position` it keeps after a set to `[10 10 200 50]` into `ds2_sizes.json` (the round components, switches and semicircular gauge keep their proportions, the sliders their height - the runtime's rule from `u9_extra`); `ds2_appdesigner` records what R2025b's `appdesigner` says before it opens anything - its web-window check under `-batch`, its file-name validator on each kind of name, its arity - without ever calling it where it would open App Designer. `rt/` (ignored) holds the copy of a shipped app it names. |
 | `ds3/` | Stage DS3 of the designer plan (ADR 0247): headless. `ds3_inspector` builds, for each class App Designer offers, the property view its inspector shows (`inspector.internal.<Class>PropertyView`) and records its groups in order - id, title, opened or not, rows (a property, an editor group, a sub-group) - and each row's property's class and members or enumerated values into `ds3_inspector.json`; `ds3_palette` asks each class's adapter for its design-time component and records R2025b's generated lines for it and its `Position` into `ds3_palette.json`. Both are embedded in JGraph.Scripting. |
 | `ds6/` | Stage DS6 of the designer plan (ADR 0245): headless. `ds6_verify` opens, through App Designer's own reader, the files the local test `AppDesignerModelSaveTests` leaves in `rt/` when run with `JGRAPH_DS6_OUT`: each shipped app as R2025b ships it and as JGraph saved it after an edit (`rt/edits`), and apps JGraph wrote whole (`rt/new`) against a control saved by App Designer's serializer from the code's own tree (`rt/control`). `DS6_PART` (`edits` or `new`), `DS6_ONLY` and `DS6_SHARD` pick what runs (`ds6_new1`-`ds6_new3` run the new apps in three shards); `ds6_verify_edits.out` and `ds6_verify_new.out` keep the results. `rt/` (ignored) holds the files. |
+| `ds7/` | Stage DS7a of the designer plan (ADR 0251): node and headless. `oracle/appendix.js` runs App Designer's own plain-text file writer - `PlainTextClassBehavior`, `XMLAppendixBehavior` and the XML builders, unmodified from the bundle through `amd.js` and `stubs.js` - over stub view models and writes `appendix.json` (34 cases: the sections, escaping, indentation, lists, whole files), which the tests' expected texts were taken from. `ds7_plain` opens, through App Designer's own reader (not gated by the feature), the plain-text apps the local test `AppDesignerPlainTextTests.TheProbesAppsAreWrittenWhenAsked` leaves in `rt/plain/` with `JGRAPH_DS7_OUT`, holds each against the `.mlapp` of the same design, then switches the feature `AppDesignerPlainTextFileFormat` on for the session and runs each app through `matlab.apps.App`. `DS7_ONLY` picks one app. `rt/` (ignored) holds the files. |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -1154,6 +1155,82 @@ app's folder. The part takes about three minutes an app, so it runs in three sha
 grid child's position is whatever its tree holds: for a new component, its base's placeholder,
 which the canvas replaces. The comparison leaves a grid child's position family out. App
 Designer's window over these files is open item 149.
+
+## DS7a findings (designer plan, R2025b; node and headless)
+
+The plain-text app format (ADR 0251). App Designer's writer of it is JavaScript in the canvas
+bundle, so the oracle is again the bundle's own modules under node (`ds7/oracle/appendix.js` over
+`amd.js` and `stubs.js`, copied from `ds5/oracle`): `appendix.json` holds 34 cases - the class part,
+each section, escaping, indentation, lists, whole files - whose texts the tests hold the writer to.
+The loader and the runtime are MATLAB (`appdesigner.internal.artifactgenerator`, `PlainTextDeserializer`,
+`matlab.apps.App`), read for the rules and run by `ds7_plain` over the apps the local test leaves in
+`rt/plain/` (`JGRAPH_DS7_OUT`): each as the `.m` written here and as the `.mlapp` of the same design.
+
+- **The format, as the bundle writes it.** The class under `matlab.apps.App` with the component
+  properties, the editable section and a bare `methods` callbacks block (the text format's access
+  control is undefined); one blank line; `%[appendix]`; the layout section at once (`%---`,
+  `%[app:layout]`, `%{`, the XML declaration, `<Components>`, the figure as `<UIFigure name='...'>`
+  with its set properties as child elements sorted by name in ordinal order, `<Children>` after them,
+  `</Components>`, `%}`); then each other section after a blank line, only when it has content: the
+  run configuration (`SingleRunningInstance` only ever `true`, `StartupFcn` the name alone), the app
+  details (the five, those set), the internal data (`AppId` for the uuid, `AppType`, the releases,
+  the lists as `Product` children whatever the list). MATLAB's save appends two line endings and
+  the thumbnail section (its comment line before its own declaration) and writes no final newline.
+  Indentation is the class's unit per depth; `& < >` are escaped always, inner quotes as `&apos;`
+  and line breaks as `\n` only inside a quote-wrapped value; a component with nothing inside still
+  takes two lines; attributes are not escaped.
+- **What `DirtyProps` holds.** `getComponentDirtyProps` is the `.mlapp` generator's list
+  (`getCodeGenPropertyNames` + `ContextMenu`; a grid child's `Layout.Row`/`Layout.Column` in place
+  of `Layout`, no `Position`), each kept by `shouldShowPropertySetCode`, aliased properties under
+  their user-facing names (`Title.String`, `Toolbar.Visible`, `Colormap`, `ThemeChangedFcn`), valued
+  by `getPropertyValueString`: a name ending `Fcn` as the bare function name, `ContextMenu` as the
+  code name, `Colormap` as the map's name, a char wrapped in quotes with its inner quotes left single
+  (the loader's `sanitizeComponentPropertyValue` doubles them), a one-char cell unwrapped (but
+  `Items`, `RowHeight`, `ColumnWidth`), the rest `propertyValueToString`. The client sorts by name.
+- **How R2025b runs one.** `matlab.apps.App`'s constructor refuses unless the feature is on, then
+  `initializeMApp` reads the file, cuts the layout and run configuration by `getAppendixByGrammarName`
+  (the first `%{` after the grammar line to the `%}` after the last root close tag), answers the
+  running instance of a single-instance app (any `SingleRunningInstance` element, whatever its text),
+  generates a function into its cache (`tempdir/matlab_<user>/R2025b/.../cache/<sha1 of path + xml>/server/ad_<sha1>.m`)
+  - each component by its informal interface with name-value arguments, callbacks wired as
+  `@(src,e)ad_ams.executeCallback(app, @(obj, event)app.Name(event), true, e)`, every component given
+  a transient `AD_CodeName` - runs it, registers the app and runs the startup function with every
+  constructor argument (no name-value parsing at all). The components are assigned and the callbacks
+  called from outside the class, so the class's members must be public: that is why the callbacks
+  block has no access clause.
+- **How it loads one.** `DeserializerFactory...getAppData()` is not gated by the feature: the same
+  generator with `isLoad` (the figure `Visible='off'`, `DesignTimeProperties` with the code name,
+  callbacks as char-valued constructor arguments), then `PlainTextCodeParser` cuts the class with
+  `mtree` under stated assumptions (the components block first, one blank line, the editable section,
+  one blank line, the comment, the callbacks block last).
+- **R2025b's own defects, met here**: the parser drops the editable section's first line
+  (`findEditableSectionCode` cuts from the properties block's `end` keyword and removes three lines);
+  a component bound to two callbacks cannot load (`buildCallbackData` hands `strcmp` a comma list:
+  `MATLAB:maxrhs`); an axes' `Subtitle.String` and `Toolbar.Visible`, which its own writer emits,
+  become constructor arguments MATLAB cannot parse; a quoted `...Callback` name, which its writer
+  emits, cannot be parsed at load; a callback whose body is empty - how its own template starts one -
+  stops the load (`getCallbackCode` takes the body's last statement: `MATLAB:string:InvalidArgumentSize`);
+  `readMATLABCodeText` searches the text for a number instead of
+  slicing, so code formatting and help comments fall back to defaults; the exception wrapper of a
+  failed load uses the file's path as a format string and loses the message; the run configuration
+  is written twice when an app opens with both a startup function and a single instance, and the
+  reader then fails on the file. The writer sets `label='...'` on a labelled component while the
+  loader reads `labelName`; the loader's `autoReflow` attribute is never written.
+- **Results** (`ds7_plain.out`): `DsPlain.m` loads the same as its `.mlapp` (4 components, the
+  callback, startup and single instance) and runs: 4 components by code name, the callback bound and
+  run, a second construction the running one, `delete(app)` taking the figure; `CallbacksApp` runs
+  so (3 callbacks) and cannot load (two callbacks on its edit field, R2025b's own); `DesignerSpecApp`
+  runs with its 55 components and 8 callbacks bound (its fixture has no callback code but an empty
+  `ButtonPushed`), and the component function R2025b generates from its appendix runs on its own
+  (55 components) while `getAppData` stops after it on that empty body.
+- **The run half runs the `.m` from a folder of its own.** Beside its `.mlapp`, `feval(app)`
+  resolves the name to the package (U7's rule), so a run from the pair's folder is the control's,
+  not the plain-text file's - the review caught the first version of this probe doing that. The
+  probe copies the `.m` to `tempname/<App>`, puts that folder alone on the path, and checks
+  `which(app)` before it counts a run.
+- **R2025b's run-side component map lacks a tree's `ClickedFcn` and `DoubleClickedFcn`** while
+  its writer writes them like any callback: an app with either cannot run there (the generator
+  evaluates `ClickedFcn=TreeClicked` as a call). This build writes and binds them (ADR 0251).
 
 ## DS5 findings (designer plan, R2025b; node and headless)
 

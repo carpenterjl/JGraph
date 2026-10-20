@@ -48,8 +48,9 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// The full path of the app <paramref name="value"/> names: a char row or a string scalar, its
-    /// name a valid one, <c>.mlapp</c> added when it has no extension and exactly that extension
-    /// otherwise, found in the current folder or on the path, and spelled as the file is on disk.
+    /// name a valid one, <c>.mlapp</c> added when it has no extension and exactly <c>.mlapp</c> or
+    /// <c>.m</c> (a plain-text app, designer plan DS7a) otherwise, in that case, found in the
+    /// current folder or on the path, and spelled as the file is on disk.
     /// </summary>
     private static string ValidatedAppFile(Interpreter interpreter, JGraphScriptGlobals host, JgsValue value, int line, int col)
     {
@@ -75,10 +76,12 @@ internal static partial class JgsBuiltins
                 $"File name '{name}' must start with a letter, contain only letters, numbers and underscores, and be shorter than {AppNameLengthMax} characters.");
         }
 
+        // A plain-text app (designer plan DS7a) opens here as it is; R2025b admits .m only with its
+        // AppDesignerPlainTextFileFormat feature on (validateAppFileExtension).
         string candidate = extension.Length == 0 ? typed + ".mlapp" : typed;
-        if (extension.Length > 0 && extension != ".mlapp")
+        if (extension.Length > 0 && extension != ".mlapp" && extension != ".m")
         {
-            bool caseOnly = extension.Equals(".mlapp", StringComparison.OrdinalIgnoreCase);
+            bool caseOnly = extension.Equals(".mlapp", StringComparison.OrdinalIgnoreCase) || extension.Equals(".m", StringComparison.OrdinalIgnoreCase);
             throw new JgsRuntimeException(line, col,
                 caseOnly ? "MATLAB:appdesigner:appdesigner:InvalidFileExtensionCase" : "MATLAB:appdesigner:appdesigner:InvalidFileExtension",
                 $"'{candidate}' file type must be a MATLAB App (*.mlapp)." + (caseOnly ? "  The extension is case sensitive." : string.Empty));
@@ -95,7 +98,7 @@ internal static partial class JgsBuiltins
 
         // The name as the folder spells it: 'borrowcopy.mlapp' opens BorrowCopy.mlapp.
         string folder = Path.GetDirectoryName(found)!;
-        string? spelled = Directory.EnumerateFiles(folder, "*.mlapp")
+        string? spelled = Directory.EnumerateFiles(folder, "*" + Path.GetExtension(found))
             .FirstOrDefault(f => string.Equals(Path.GetFileName(f), Path.GetFileName(found), StringComparison.OrdinalIgnoreCase));
         return spelled ?? found;
     }

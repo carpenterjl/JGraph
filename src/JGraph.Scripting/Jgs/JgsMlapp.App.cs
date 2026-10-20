@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.IO.Compression;
 using System.Text;
 using JGraph.Scripting.Designer;
 using JGraph.Scripting.MatFile;
@@ -13,6 +14,19 @@ namespace JGraph.Scripting.Jgs;
 /// </param>
 /// <param name="Problems">What the tree could not hold, one line each; empty when it holds the whole design.</param>
 public sealed record MlappWriteResult(bool HasDesign, IReadOnlyList<string> Problems);
+
+/// <summary>
+/// An app's details as its <c>.mlapp</c> package keeps them (designer plan DS7a): App Designer's
+/// App Details in <c>metadata/coreProperties.xml</c> (the name as <c>dc:title</c>, the author as
+/// <c>dc:creator</c>, the summary as <c>dc:description</c>, the version as <c>cp:version</c>), the
+/// description and the app's id in <c>metadata/appMetadata.xml</c> (<c>description</c>, <c>uuid</c>).
+/// Each empty when the package has none.
+/// </summary>
+public sealed record MlappMetadata(string Name, string Author, string Summary, string Description, string Version, string Uuid)
+{
+    /// <summary>No details at all.</summary>
+    public static MlappMetadata Empty { get; } = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+}
 
 /// <content>Writing a whole App Designer file, and its component tree on a save (designer plan DS6, ADR 0245).</content>
 public static partial class JgsMlapp
@@ -35,10 +49,22 @@ public static partial class JgsMlapp
     /// file is replaced only once the new one is complete.
     /// </summary>
     /// <exception cref="IOException">The file could not be written or replaced.</exception>
-    public static MlappWriteResult WriteApp(string path, string text)
+    public static MlappWriteResult WriteApp(string path, string text) => WriteApp(path, text, null);
+
+    /// <summary>
+    /// <see cref="WriteApp(string, string)"/> with the app's details written into the package's
+    /// metadata (<paramref name="metadata"/>: an app converted from its plain-text file keeps
+    /// them, designer plan DS7a); a new id and empty details when null.
+    /// </summary>
+    /// <exception cref="IOException">The file could not be written or replaced.</exception>
+    public static MlappWriteResult WriteApp(string path, string text, MlappMetadata? metadata)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(text);
+        metadata ??= MlappMetadata.Empty;
+        string uuid = metadata.Uuid.Length > 0 ? metadata.Uuid : Guid.NewGuid().ToString();
+        string version = metadata.Version.Length > 0 ? metadata.Version : "1.0";
+        static string X(string value) => System.Security.SecurityElement.Escape(value);
         string code = text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
         DesignReadResult read = DesignCodeReader.Read(code);
         byte[]? copy = JgsMlappModel.NewCode(JgsMlappLayout.Of(code));
@@ -78,9 +104,9 @@ public static partial class JgsMlapp
             Xml(DocumentPart, document),
             new() { Name = ModelPart, Bytes = model, Written = now, Stored = false, Attributes = 0 },
             Xml("metadata/appMetadata.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>"
-                + "<metadata xmlns=\"http://schemas.mathworks.com/appDesigner/app/2017/appMetadata\"><description></description>"
+                + "<metadata xmlns=\"http://schemas.mathworks.com/appDesigner/app/2017/appMetadata\"><description>" + X(metadata.Description) + "</description>"
                 + "<MLAPPVersion>2</MLAPPVersion><minimumSupportedMATLABRelease>" + minimum + "</minimumSupportedMATLABRelease>"
-                + "<screenshotMode>auto</screenshotMode><uuid>" + Guid.NewGuid().ToString() + "</uuid>"
+                + "<screenshotMode>auto</screenshotMode><uuid>" + uuid + "</uuid>"
                 + "<AppType>" + (design.IsResponsive ? "Responsive" : "Standard") + "</AppType>"
                 + "<componentProducts/><imageRelativePaths/><userComponents/></metadata>"),
             Xml("metadata/coreProperties.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
@@ -88,9 +114,9 @@ public static partial class JgsMlapp
                 + "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcmitype=\"http://purl.org/dc/dcmitype/\" "
                 + "xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"
                 + "  <dcterms:created xsi:type=\"dcterms:W3CDTF\">" + stamp + "</dcterms:created>\n"
-                + "  <dc:creator></dc:creator>\n  <dc:description></dc:description>\n"
+                + "  <dc:creator>" + X(metadata.Author) + "</dc:creator>\n  <dc:description>" + X(metadata.Summary) + "</dc:description>\n"
                 + "  <dcterms:modified xsi:type=\"dcterms:W3CDTF\">" + stamp + "</dcterms:modified>\n"
-                + "  <dc:title></dc:title>\n  <cp:version>1.0</cp:version>\n</cp:coreProperties>\n"),
+                + "  <dc:title>" + X(metadata.Name) + "</dc:title>\n  <cp:version>" + X(version) + "</cp:version>\n</cp:coreProperties>\n"),
             Xml("metadata/mwcoreProperties.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
                 + "<mwcoreProperties xmlns=\"http://schemas.mathworks.com/package/2012/coreProperties\">\n"
                 + "  <contentType>application/vnd.mathworks.matlab.app</contentType>\n"
@@ -102,6 +128,43 @@ public static partial class JgsMlapp
         ];
         Replace(path, parts, null);
         return new MlappWriteResult(true, problems);
+    }
+
+    /// <summary>
+    /// The details the package <paramref name="path"/> keeps (<see cref="MlappMetadata"/>); each
+    /// empty when the package has no such part, or the part no such element.
+    /// </summary>
+    /// <exception cref="InvalidDataException">The file is not a package.</exception>
+    public static MlappMetadata ReadMetadata(string path)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        try
+        {
+            using ZipArchive package = ZipFile.OpenRead(path);
+            System.Xml.Linq.XElement? core = Root(package, "metadata/coreProperties.xml");
+            System.Xml.Linq.XElement? app = Root(package, "metadata/appMetadata.xml");
+            return new MlappMetadata(
+                Local(core, "title"), Local(core, "creator"), Local(core, "description"),
+                Local(app, "description"), Local(core, "version"), Local(app, "uuid"));
+        }
+        catch (Exception ex) when (ex is System.Xml.XmlException or NotSupportedException or InvalidDataException)
+        {
+            throw new InvalidDataException(ex.Message, ex);
+        }
+
+        static System.Xml.Linq.XElement? Root(ZipArchive package, string name)
+        {
+            if (package.GetEntry(name) is not { } entry)
+            {
+                return null;
+            }
+
+            using Stream stream = entry.Open();
+            return System.Xml.Linq.XDocument.Load(stream).Root;
+        }
+
+        static string Local(System.Xml.Linq.XElement? root, string name) =>
+            root?.Elements().FirstOrDefault(e => e.Name.LocalName == name)?.Value.Trim() ?? string.Empty;
     }
 
     /// <summary>

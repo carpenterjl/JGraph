@@ -66,7 +66,7 @@ public static partial class DesignCodeReader
 {
     internal const string ComponentPropertiesComment = "% Properties that correspond to app components";
 
-    private const string ResponsivePropertiesComment = "% Properties that correspond to apps with auto-reflow";
+    internal const string ResponsivePropertiesComment = "% Properties that correspond to apps with auto-reflow";
 
     /// <summary>The axes label functions and the aliases App Designer's generator holds their text under.</summary>
     internal static readonly IReadOnlyDictionary<string, string> LabelAliases = new Dictionary<string, string>(StringComparer.Ordinal)
@@ -264,7 +264,7 @@ public static partial class DesignCodeReader
     }
 
     /// <summary>The component properties block's names and classes.</summary>
-    private static Dictionary<string, string> DeclaredTypes(string[] lines)
+    internal static Dictionary<string, string> DeclaredTypes(string[] lines)
     {
         var declared = new Dictionary<string, string>(StringComparer.Ordinal);
         int comment = Array.FindIndex(lines, static l => l.Trim() == ComponentPropertiesComment);

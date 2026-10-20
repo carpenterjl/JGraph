@@ -71,7 +71,8 @@ public sealed class AppDesignerCommandTests : IAsyncLifetime
     [InlineData("appdesigner('NoSuchApp.mlapp')", "MATLAB:appdesigner:appdesigner:InvalidFileName | File 'NoSuchApp.mlapp' not found.")]
     [InlineData("appdesigner('NotAnApp.txt')", "MATLAB:appdesigner:appdesigner:InvalidFileExtension | 'NotAnApp.txt' file type must be a MATLAB App (*.mlapp).")]
     [InlineData("appdesigner('BorrowCopy.MLAPP')", "MATLAB:appdesigner:appdesigner:InvalidFileExtensionCase | 'BorrowCopy.MLAPP' file type must be a MATLAB App (*.mlapp).  The extension is case sensitive.")]
-    [InlineData("appdesigner('BorrowCopy.m')", "MATLAB:appdesigner:appdesigner:InvalidFileExtension | 'BorrowCopy.m' file type must be a MATLAB App (*.mlapp).")]
+    [InlineData("appdesigner('BorrowCopy.m')", "MATLAB:appdesigner:appdesigner:InvalidFileName | File 'BorrowCopy.m' not found.")]
+    [InlineData("appdesigner('BorrowCopy.M')", "MATLAB:appdesigner:appdesigner:InvalidFileExtensionCase | 'BorrowCopy.M' file type must be a MATLAB App (*.mlapp).  The extension is case sensitive.")]
     [InlineData("appdesigner('NoSuchApp', 2)", "MATLAB:TooManyInputs | Too many input arguments.")]
     [InlineData("x = appdesigner('BorrowCopy')", "MATLAB:TooManyOutputs | Too many output arguments.")]
     public async Task ANameIsRefusedInR2025bsWords(string statement, string expected)
@@ -97,6 +98,15 @@ public sealed class AppDesignerCommandTests : IAsyncLifetime
 
         Assert.Equal("ok", await Outcome("appdesigner"));
         Assert.Null(_designer.Opened[^1]);
+
+        // A plain-text app (designer plan DS7a) reaches the window by its .m name, as the file spells it.
+        string plain = Path.Combine(_folder, "PlainApp.m");
+        File.WriteAllText(plain, AppDesignerPlainTextRunTests.AppSource.Replace("classdef DsPlain", "classdef PlainApp", StringComparison.Ordinal));
+        foreach (string named in (string[])["'PlainApp.m'", "'plainapp.m'", $"'{plain.Replace('\\', '/')}'"])
+        {
+            Assert.Equal("ok", await Outcome($"appdesigner({named})"));
+            Assert.Equal(plain, _designer.Opened[^1]);
+        }
     }
 
     /// <summary>What the window could not open is the call's error.</summary>

@@ -1,0 +1,18 @@
+feature AppDesignerPlainTextFileFormat: 0
+DsPlain: loads the same as its .mlapp (4 components, 1 callbacks)
+DsPlain: runs: DsPlain with 1 running-app figure(s); 4 components by their code names; 1 callbacks bound, 1 ran; single instance: a second construction is the running app; delete(app): app valid 0, figure valid 0
+CallbacksApp: R2025b's plain-text parser cannot load it: a component bound to two callbacks (MATLAB:maxrhs)
+CallbacksApp: runs: CallbacksApp with 1 running-app figure(s); 4 components by their code names; 3 callbacks bound, 3 ran; single instance: a second construction is the running app; delete(app): app valid 0, figure valid 0
+[Warning: File 'logo.png' is not on the MATLAB or specified path.] 
+[Warning: File 'logo.png' is not on the MATLAB or specified path.] 
+DesignerSpecApp: load failed MATLAB:string:InvalidArgumentSize: Dimensions of position argument must match the dimensions of the text argument or be 1.
+   at openApp:177
+   at ds7_plain:48
+[Warning: File 'logo.png' is not on the MATLAB or specified path.] 
+DesignerSpecApp: runs: DesignerSpecApp with 1 running-app figure(s); 55 components by their code names; 8 callbacks bound, 1 ran; UIFigure.CloseRequestFcn: Unrecognized method, property, or field 'UIFigureCloseRequest' for class 'DesignerSpecApp'.; PushTool.ClickedCallback: Unrecognized method, property, or field 'PushToolClicked' for class 'DesignerSpecApp'.; OpenMenu.MenuSelectedFcn: Unrecognized method, property, or field 'OpenMenuSelected' for class 'DesignerSpecApp'.; Tree.SelectionChangedFcn: Unrecognized method, property, or field 'TreeSelectionChanged' for class 'DesignerSpecApp'.; ButtonGroup.SelectionChangedFcn: Unrecognized method, property, or field 'ButtonGroupSelectionChanged' for class 'DesignerSpecApp'.; EditField.ValueChangingFcn: Unrecognized method, property, or field 'EditFieldValueChanging' for class 'DesignerSpecApp'.; CheckBox.ValueChangedFcn: Unrecognized method, property, or field 'CheckBoxValueChanged' for class 'DesignerSpecApp'.; delete(app): app valid 0, figure valid 0
+       apps: 3
+       same: 1
+    differs: 0
+       runs: 3
+     failed: 2
+

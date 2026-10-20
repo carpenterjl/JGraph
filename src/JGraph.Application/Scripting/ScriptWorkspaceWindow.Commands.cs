@@ -26,7 +26,7 @@ public partial class ScriptWorkspaceWindow
         Bind(WorkspaceCommands.ExportAppCode, (_, _) => ExportActiveAppCode(),
             (_, e) => e.CanExecute = ActiveDocument?.Model.IsAppDesignerFile == true);
         Bind(WorkspaceCommands.OpenInAppDesigner, (_, _) => OpenActiveInAppDesigner(),
-            (_, e) => e.CanExecute = ActiveDocument is { Model: { IsAppDesignerFile: true, FilePath: not null } });
+            (_, e) => e.CanExecute = ActiveDocument is { Model: { FilePath: not null } model } && (model.IsAppDesignerFile || model.IsPlainTextApp));
         Bind(WorkspaceCommands.CloseTab, (_, _) => ActiveDocument?.Document.Close(), CanCloseTab);
         Bind(WorkspaceCommands.Exit, (_, _) => Close());
 

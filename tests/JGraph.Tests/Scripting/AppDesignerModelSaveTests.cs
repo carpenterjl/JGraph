@@ -432,7 +432,7 @@ public class AppDesignerModelSaveTests(ITestOutputHelper output)
     /// parameters, a single running instance, and a property and a function of the user's; what the
     /// probe <c>ds5_run</c> runs in R2025b.
     /// </summary>
-    private static string CallbacksAppText()
+    internal static string CallbacksAppText()
     {
         static DesignComponent Make(string type, string name, params double[] position)
         {

@@ -42,7 +42,9 @@ public sealed partial class DesignDocument
             }
 
             // Rendered once per state: every edit, undo and redo (Settled) and every text taken back clears it.
-            return _renderedText ??= DesignClassWriter.Render(Design, Code, Style, SizeOfRegion, _newline, _trailingNewline);
+            return _renderedText ??= Format == DesignFileFormat.PlainText
+                ? DesignPlainText.Render(Design, Code, Details ??= DesignPlainTextDetails.NewApp(Code.ClassName, Design.IsResponsive), Style, SizeOfRegion, _newline, _trailingNewline)
+                : DesignClassWriter.Render(Design, Code, Style, SizeOfRegion, _newline, _trailingNewline);
         }
     }
 

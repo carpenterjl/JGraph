@@ -100,12 +100,16 @@ public static partial class AppDesignerDocument
     /// exported <c>.m</c> app, a class written by hand - as the new <c>.mlapp</c>
     /// <paramref name="target"/>. An app App Designer lays out is written whole, with the component
     /// tree and App Designer's copy of the code, so that App Designer opens it (designer plan DS6,
-    /// <see cref="JgsMlapp.WriteApp"/>); any other class as its code alone (open item 58). The class
+    /// <see cref="JgsMlapp.WriteApp(string, string, MlappMetadata?)"/>); any other class as its code alone (open item 58). The class
     /// takes the file's name, since a class file must carry the name of its class.
     /// </summary>
     /// <returns>The text as saved, which differs from <paramref name="text"/> when the class was renamed, and what was written.</returns>
     /// <exception cref="IOException">The text is not a class, the name is not one a class can have, or the file could not be written.</exception>
-    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text)
+    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text) => SaveNew(target, text, null);
+
+    /// <summary><see cref="SaveNew(string, string)"/> with the app's details written into the package (<paramref name="metadata"/>; a plain-text app's, designer plan DS7a).</summary>
+    /// <exception cref="IOException">The text is not a class, the name is not one a class can have, or the file could not be written.</exception>
+    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text, MlappMetadata? metadata)
     {
         ArgumentNullException.ThrowIfNull(target);
         ArgumentNullException.ThrowIfNull(text);
@@ -118,10 +122,10 @@ public static partial class AppDesignerDocument
         }
 
         string saved = JgsMlapp.ExportedCode(text, name);
-        return (saved, JgsMlapp.WriteApp(target, saved));
+        return (saved, JgsMlapp.WriteApp(target, saved, metadata));
     }
 
-    /// <summary>What to add to "Saved ..." after <see cref="SaveNew"/>.</summary>
+    /// <summary>What to add to "Saved ..." after <see cref="SaveNew(string, string, MlappMetadata?)"/>.</summary>
     public static string NewFileNote(MlappWriteResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
@@ -221,7 +225,9 @@ public static partial class AppDesignerDocument
     }
 
     /// <summary>The class a code file at <paramref name="path"/> must define: its name, when that is a name a class can have.</summary>
-    private static string ClassNameFor(string path)
+    /// <summary>The class name a file's name gives, which a class file must carry.</summary>
+    /// <exception cref="IOException">The name is not one a class can have.</exception>
+    internal static string ClassNameFor(string path)
     {
         string name = Path.GetFileNameWithoutExtension(path);
         return Identifier().IsMatch(name)

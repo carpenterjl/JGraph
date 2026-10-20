@@ -92,6 +92,15 @@ public sealed class ScriptDocumentModel
     public bool IsAppDesignerFile => FilePath is not null && Jgs.JgsMlapp.IsMlapp(FilePath);
 
     /// <summary>
+    /// Whether the document is an app in App Designer's plain-text format (designer plan DS7a): a
+    /// <c>.m</c> file whose class carries an <c>%[appendix]</c> with its components. It is saved as
+    /// any other file is, and opens on the designer's canvas as an <c>.mlapp</c> does.
+    /// </summary>
+    public bool IsPlainTextApp =>
+        FilePath is not null && Path.GetExtension(FilePath).Equals(".m", StringComparison.OrdinalIgnoreCase)
+        && Designer.DesignPlainText.IsPlainTextApp(_text);
+
+    /// <summary>
     /// The text a document shows for a file: an <c>.mlapp</c>'s class file, any other file's text.
     /// </summary>
     /// <exception cref="InvalidDataException">An <c>.mlapp</c> that holds no code document.</exception>

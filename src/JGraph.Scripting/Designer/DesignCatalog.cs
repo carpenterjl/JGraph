@@ -52,6 +52,16 @@ public sealed partial class DesignCatalog
     public DesignComponentClass? ByType(string type) => _byType.GetValueOrDefault(type);
 
     /// <summary>
+    /// The class whose type ends in <paramref name="shortName"/> after the last dot - the element
+    /// name a plain-text app's appendix gives a component (designer plan DS7a) - or null.
+    /// </summary>
+    public DesignComponentClass? ByShortName(string shortName)
+    {
+        ArgumentNullException.ThrowIfNull(shortName);
+        return Classes.FirstOrDefault(c => string.Equals(c.ShortName, shortName, StringComparison.Ordinal));
+    }
+
+    /// <summary>
     /// The class a creation call makes: <c>uibutton</c> with the style <c>'push'</c>, <c>uilabel</c>
     /// with none. Null when no class is made that way.
     /// </summary>
