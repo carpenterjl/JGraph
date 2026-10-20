@@ -1,0 +1,4279 @@
+{
+"comments": [
+{
+"indentSize": 4,
+"key": "Button.ButtonPushedFcn",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button"
+],
+"generatedComment": [
+"% Button pushed function: Button"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Button",
+"        function Button_ButtonPushedFcn(app, event)"
+],
+"method": [
+"        % Button pushed function: Button",
+"        function Button_ButtonPushedFcn(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "UIFigure.CloseRequestFcn",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "CloseRequestFcn",
+"type": "matlab.ui.Figure"
+}
+],
+"comment": [
+"% Close request function: UIFigure"
+],
+"generatedComment": [
+"% Close request function: UIFigure"
+],
+"defaultCode": [
+"delete(app)",
+""
+],
+"code": [
+"            delete(app)",
+"            "
+],
+"methodStartLines": [
+"        % Close request function: UIFigure",
+"        function UIFigure_CloseRequestFcn(app, event)"
+],
+"method": [
+"        % Close request function: UIFigure",
+"        function UIFigure_CloseRequestFcn(app, event)",
+"            delete(app)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "UIFigure.KeyPressFcn",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "KeyPressFcn",
+"type": "matlab.ui.Figure"
+}
+],
+"comment": [
+"% Key press function: UIFigure"
+],
+"generatedComment": [
+"% Key press function: UIFigure"
+],
+"defaultCode": [
+"key = event.Key;",
+""
+],
+"code": [
+"            key = event.Key;",
+"            "
+],
+"methodStartLines": [
+"        % Key press function: UIFigure",
+"        function UIFigure_KeyPressFcn(app, event)"
+],
+"method": [
+"        % Key press function: UIFigure",
+"        function UIFigure_KeyPressFcn(app, event)",
+"            key = event.Key;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "UIFigure.WindowScrollWheelFcn",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "WindowScrollWheelFcn",
+"type": "matlab.ui.Figure"
+}
+],
+"comment": [
+"% Window scroll wheel function: UIFigure"
+],
+"generatedComment": [
+"% Window scroll wheel function: UIFigure"
+],
+"defaultCode": [
+"verticalScrollAmount = event.VerticalScrollAmount;",
+"verticalScrollCount = event.VerticalScrollCount;",
+""
+],
+"code": [
+"            verticalScrollAmount = event.VerticalScrollAmount;",
+"            verticalScrollCount = event.VerticalScrollCount;",
+"            "
+],
+"methodStartLines": [
+"        % Window scroll wheel function: UIFigure",
+"        function UIFigure_WindowScrollWheelFcn(app, event)"
+],
+"method": [
+"        % Window scroll wheel function: UIFigure",
+"        function UIFigure_WindowScrollWheelFcn(app, event)",
+"            verticalScrollAmount = event.VerticalScrollAmount;",
+"            verticalScrollCount = event.VerticalScrollCount;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "UIFigure.SizeChangedFcn",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.Figure"
+}
+],
+"comment": [
+"% Size changed function: UIFigure"
+],
+"generatedComment": [
+"% Size changed function: UIFigure"
+],
+"defaultCode": [
+"position = app.UIFigure.Position;",
+""
+],
+"code": [
+"            position = app.UIFigure.Position;",
+"            "
+],
+"methodStartLines": [
+"        % Size changed function: UIFigure",
+"        function UIFigure_SizeChangedFcn(app, event)"
+],
+"method": [
+"        % Size changed function: UIFigure",
+"        function UIFigure_SizeChangedFcn(app, event)",
+"            position = app.UIFigure.Position;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "EditField.ValueChangedFcn",
+"bindings": [
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"% Value changed function: EditField"
+],
+"generatedComment": [
+"% Value changed function: EditField"
+],
+"defaultCode": [
+"value = app.EditField.Value;",
+""
+],
+"code": [
+"            value = app.EditField.Value;",
+"            "
+],
+"methodStartLines": [
+"        % Value changed function: EditField",
+"        function EditField_ValueChangedFcn(app, event)"
+],
+"method": [
+"        % Value changed function: EditField",
+"        function EditField_ValueChangedFcn(app, event)",
+"            value = app.EditField.Value;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "EditField.ValueChangingFcn",
+"bindings": [
+{
+"codeName": "EditField",
+"prop": "ValueChangingFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"% Value changing function: EditField"
+],
+"generatedComment": [
+"% Value changing function: EditField"
+],
+"defaultCode": [
+"changingValue = event.Value;",
+""
+],
+"code": [
+"            changingValue = event.Value;",
+"            "
+],
+"methodStartLines": [
+"        % Value changing function: EditField",
+"        function EditField_ValueChangingFcn(app, event)"
+],
+"method": [
+"        % Value changing function: EditField",
+"        function EditField_ValueChangingFcn(app, event)",
+"            changingValue = event.Value;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "UITable.CellEditCallback",
+"bindings": [
+{
+"codeName": "UITable",
+"prop": "CellEditCallback",
+"type": "matlab.ui.control.Table"
+}
+],
+"comment": [
+"% Cell edit callback: UITable"
+],
+"generatedComment": [
+"% Cell edit callback: UITable"
+],
+"defaultCode": [
+"indices = event.Indices;",
+"newData = event.NewData;",
+""
+],
+"code": [
+"            indices = event.Indices;",
+"            newData = event.NewData;",
+"            "
+],
+"methodStartLines": [
+"        % Cell edit callback: UITable",
+"        function UITable_CellEditCallback(app, event)"
+],
+"method": [
+"        % Cell edit callback: UITable",
+"        function UITable_CellEditCallback(app, event)",
+"            indices = event.Indices;",
+"            newData = event.NewData;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "UITable.SelectionChangedFcn",
+"bindings": [
+{
+"codeName": "UITable",
+"prop": "SelectionChangedFcn",
+"type": "matlab.ui.control.Table"
+}
+],
+"comment": [
+"% Selection changed function: UITable"
+],
+"generatedComment": [
+"% Selection changed function: UITable"
+],
+"defaultCode": [
+"selection = app.UITable.Selection;",
+""
+],
+"code": [
+"            selection = app.UITable.Selection;",
+"            "
+],
+"methodStartLines": [
+"        % Selection changed function: UITable",
+"        function UITable_SelectionChangedFcn(app, event)"
+],
+"method": [
+"        % Selection changed function: UITable",
+"        function UITable_SelectionChangedFcn(app, event)",
+"            selection = app.UITable.Selection;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "Tab.SizeChangedFcn",
+"bindings": [
+{
+"codeName": "Tab",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.container.Tab"
+}
+],
+"comment": [
+"% Size changed function: Tab"
+],
+"generatedComment": [
+"% Size changed function: Tab"
+],
+"defaultCode": [
+"position = app.Tab.Position;",
+""
+],
+"code": [
+"            position = app.Tab.Position;",
+"            "
+],
+"methodStartLines": [
+"        % Size changed function: Tab",
+"        function Tab_SizeChangedFcn(app, event)"
+],
+"method": [
+"        % Size changed function: Tab",
+"        function Tab_SizeChangedFcn(app, event)",
+"            position = app.Tab.Position;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "TabGroup.SelectionChangedFcn",
+"bindings": [
+{
+"codeName": "TabGroup",
+"prop": "SelectionChangedFcn",
+"type": "matlab.ui.container.TabGroup"
+}
+],
+"comment": [
+"% Selection change function: TabGroup"
+],
+"generatedComment": [
+"% Selection change function: TabGroup"
+],
+"defaultCode": [
+"selectedTab = app.TabGroup.SelectedTab;",
+""
+],
+"code": [
+"            selectedTab = app.TabGroup.SelectedTab;",
+"            "
+],
+"methodStartLines": [
+"        % Selection change function: TabGroup",
+"        function TabGroup_SelectionChangedFcn(app, event)"
+],
+"method": [
+"        % Selection change function: TabGroup",
+"        function TabGroup_SelectionChangedFcn(app, event)",
+"            selectedTab = app.TabGroup.SelectedTab;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "ButtonGroup.SelectionChangedFcn",
+"bindings": [
+{
+"codeName": "ButtonGroup",
+"prop": "SelectionChangedFcn",
+"type": "matlab.ui.container.ButtonGroup"
+}
+],
+"comment": [
+"% Selection changed function: ButtonGroup"
+],
+"generatedComment": [
+"% Selection changed function: ButtonGroup"
+],
+"defaultCode": [
+"selectedButton = app.ButtonGroup.SelectedObject;",
+""
+],
+"code": [
+"            selectedButton = app.ButtonGroup.SelectedObject;",
+"            "
+],
+"methodStartLines": [
+"        % Selection changed function: ButtonGroup",
+"        function ButtonGroup_SelectionChangedFcn(app, event)"
+],
+"method": [
+"        % Selection changed function: ButtonGroup",
+"        function ButtonGroup_SelectionChangedFcn(app, event)",
+"            selectedButton = app.ButtonGroup.SelectedObject;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "Menu.MenuSelectedFcn",
+"bindings": [
+{
+"codeName": "Menu",
+"prop": "MenuSelectedFcn",
+"type": "matlab.ui.container.Menu"
+}
+],
+"comment": [
+"% Menu selected function: Menu"
+],
+"generatedComment": [
+"% Menu selected function: Menu"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Menu selected function: Menu",
+"        function Menu_MenuSelectedFcn(app, event)"
+],
+"method": [
+"        % Menu selected function: Menu",
+"        function Menu_MenuSelectedFcn(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "PushTool.ClickedCallback",
+"bindings": [
+{
+"codeName": "PushTool",
+"prop": "ClickedCallback",
+"type": "matlab.ui.container.toolbar.PushTool"
+}
+],
+"comment": [
+"Callback function: PushTool"
+],
+"generatedComment": [
+"Callback function: PushTool"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Callback function: PushTool",
+"        function PushTool_ClickedCallback(app, event)"
+],
+"method": [
+"        % Callback function: PushTool",
+"        function PushTool_ClickedCallback(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "HTML.HTMLEventReceivedFcn",
+"bindings": [
+{
+"codeName": "HTML",
+"prop": "HTMLEventReceivedFcn",
+"type": "matlab.ui.control.HTML"
+}
+],
+"comment": [
+"% Event received function: HTML"
+],
+"generatedComment": [
+"% Event received function: HTML"
+],
+"defaultCode": [
+"eventName = event.HTMLEventName;",
+"eventData = event.HTMLEventData;",
+""
+],
+"code": [
+"            eventName = event.HTMLEventName;",
+"            eventData = event.HTMLEventData;",
+"            "
+],
+"methodStartLines": [
+"        % Event received function: HTML",
+"        function HTML_HTMLEventReceivedFcn(app, event)"
+],
+"method": [
+"        % Event received function: HTML",
+"        function HTML_HTMLEventReceivedFcn(app, event)",
+"            eventName = event.HTMLEventName;",
+"            eventData = event.HTMLEventData;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "HTML.DataChangedFcn",
+"bindings": [
+{
+"codeName": "HTML",
+"prop": "DataChangedFcn",
+"type": "matlab.ui.control.HTML"
+}
+],
+"comment": [
+"% Data changed function: HTML"
+],
+"generatedComment": [
+"% Data changed function: HTML"
+],
+"defaultCode": [
+"data = app.HTML.Data;",
+""
+],
+"code": [
+"            data = app.HTML.Data;",
+"            "
+],
+"methodStartLines": [
+"        % Data changed function: HTML",
+"        function HTML_DataChangedFcn(app, event)"
+],
+"method": [
+"        % Data changed function: HTML",
+"        function HTML_DataChangedFcn(app, event)",
+"            data = app.HTML.Data;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "Slider.ValueChangingFcn",
+"bindings": [
+{
+"codeName": "Slider",
+"prop": "ValueChangingFcn",
+"type": "matlab.ui.control.Slider"
+}
+],
+"comment": [
+"% Value changing function: Slider"
+],
+"generatedComment": [
+"% Value changing function: Slider"
+],
+"defaultCode": [
+"changingValue = event.Value;",
+""
+],
+"code": [
+"            changingValue = event.Value;",
+"            "
+],
+"methodStartLines": [
+"        % Value changing function: Slider",
+"        function Slider_ValueChangingFcn(app, event)"
+],
+"method": [
+"        % Value changing function: Slider",
+"        function Slider_ValueChangingFcn(app, event)",
+"            changingValue = event.Value;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "DropDown.ValueChangedFcn",
+"bindings": [
+{
+"codeName": "DropDown",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.DropDown"
+}
+],
+"comment": [
+"% Value changed function: DropDown"
+],
+"generatedComment": [
+"% Value changed function: DropDown"
+],
+"defaultCode": [
+"value = app.DropDown.Value;",
+""
+],
+"code": [
+"            value = app.DropDown.Value;",
+"            "
+],
+"methodStartLines": [
+"        % Value changed function: DropDown",
+"        function DropDown_ValueChangedFcn(app, event)"
+],
+"method": [
+"        % Value changed function: DropDown",
+"        function DropDown_ValueChangedFcn(app, event)",
+"            value = app.DropDown.Value;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "Image.ImageClickedFcn",
+"bindings": [
+{
+"codeName": "Image",
+"prop": "ImageClickedFcn",
+"type": "matlab.ui.control.Image"
+}
+],
+"comment": [
+"% Image clicked function: Image"
+],
+"generatedComment": [
+"% Image clicked function: Image"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Image clicked function: Image",
+"        function Image_ImageClickedFcn(app, event)"
+],
+"method": [
+"        % Image clicked function: Image",
+"        function Image_ImageClickedFcn(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "Tree.NodeExpandedFcn",
+"bindings": [
+{
+"codeName": "Tree",
+"prop": "NodeExpandedFcn",
+"type": "matlab.ui.container.Tree"
+}
+],
+"comment": [
+"% Node expanded function: Tree"
+],
+"generatedComment": [
+"% Node expanded function: Tree"
+],
+"defaultCode": [
+"node = event.Node;",
+""
+],
+"code": [
+"            node = event.Node;",
+"            "
+],
+"methodStartLines": [
+"        % Node expanded function: Tree",
+"        function Tree_NodeExpandedFcn(app, event)"
+],
+"method": [
+"        % Node expanded function: Tree",
+"        function Tree_NodeExpandedFcn(app, event)",
+"            node = event.Node;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "ContextMenu.ContextMenuOpeningFcn",
+"bindings": [
+{
+"codeName": "ContextMenu",
+"prop": "ContextMenuOpeningFcn",
+"type": "matlab.ui.container.ContextMenu"
+}
+],
+"comment": [
+"% Context menu opening function: ContextMenu"
+],
+"generatedComment": [
+"% Context menu opening function: ContextMenu"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Context menu opening function: ContextMenu",
+"        function ContextMenu_ContextMenuOpeningFcn(app, event)"
+],
+"method": [
+"        % Context menu opening function: ContextMenu",
+"        function ContextMenu_ContextMenuOpeningFcn(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "two same property",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button2"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button2"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Button, Button2",
+"        function two_same_property(app, event)"
+],
+"method": [
+"        % Button pushed function: Button, Button2",
+"        function two_same_property(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "two different properties",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: Button, EditField"
+],
+"generatedComment": [
+"Callback function: Button, EditField"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Callback function: Button, EditField",
+"        function two_different_properties(app, event)"
+],
+"method": [
+"        % Callback function: Button, EditField",
+"        function two_different_properties(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "same property different classes",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.Figure"
+},
+{
+"codeName": "Panel",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.container.Panel"
+}
+],
+"comment": [
+"% Size changed function: Panel, UIFigure"
+],
+"generatedComment": [
+"% Size changed function: Panel, UIFigure"
+],
+"defaultCode": [
+"position = app.UIFigure.Position;",
+""
+],
+"code": [
+"            position = app.UIFigure.Position;",
+"            "
+],
+"methodStartLines": [
+"        % Size changed function: Panel, UIFigure",
+"        function same_property_different_classes(app, event)"
+],
+"method": [
+"        % Size changed function: Panel, UIFigure",
+"        function same_property_different_classes(app, event)",
+"            position = app.UIFigure.Position;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "one component two properties",
+"bindings": [
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+},
+{
+"codeName": "EditField",
+"prop": "ValueChangingFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: EditField, EditField"
+],
+"generatedComment": [
+"Callback function: EditField, EditField"
+],
+"defaultCode": [
+"value = app.EditField.Value;",
+""
+],
+"code": [
+"            value = app.EditField.Value;",
+"            "
+],
+"methodStartLines": [
+"        % Callback function: EditField, EditField",
+"        function one_component_two_properties(app, event)"
+],
+"method": [
+"        % Callback function: EditField, EditField",
+"        function one_component_two_properties(app, event)",
+"            value = app.EditField.Value;",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "three short",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button3",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button2, Button3"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button2, Button3"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Button, Button2, Button3",
+"        function three_short(app, event)"
+],
+"method": [
+"        % Button pushed function: Button, Button2, Button3",
+"        function three_short(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "five moderate",
+"bindings": [
+{
+"codeName": "ComputeResultsButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "ExportDataToExcelButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "LoadConfigurationButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "ResetAllFieldsButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "StartSimulationButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: ComputeResultsButton, ",
+"% ...and 4 other components"
+],
+"generatedComment": [
+"% Button pushed function: ComputeResultsButton, ",
+"% ...and 4 other components"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: ComputeResultsButton, ",
+"        % ...and 4 other components",
+"        function five_moderate(app, event)"
+],
+"method": [
+"        % Button pushed function: ComputeResultsButton, ",
+"        % ...and 4 other components",
+"        function five_moderate(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "eight short",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button3",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button4",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button5",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button6",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button7",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button8",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button2, Button3, Button4, ",
+"% ...and 4 other components"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button2, Button3, Button4, ",
+"% ...and 4 other components"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Button, Button2, Button3, Button4, ",
+"        % ...and 4 other components",
+"        function eight_short(app, event)"
+],
+"method": [
+"        % Button pushed function: Button, Button2, Button3, Button4, ",
+"        % ...and 4 other components",
+"        function eight_short(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "eight unsorted insertion",
+"bindings": [
+{
+"codeName": "Button8",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button3",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button5",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button7",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button4",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button6",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button2, Button3, Button4, ",
+"% ...and 4 other components"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button2, Button3, Button4, ",
+"% ...and 4 other components"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Button, Button2, Button3, Button4, ",
+"        % ...and 4 other components",
+"        function eight_unsorted_insertion(app, event)"
+],
+"method": [
+"        % Button pushed function: Button, Button2, Button3, Button4, ",
+"        % ...and 4 other components",
+"        function eight_unsorted_insertion(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "first name fits exactly (39 chars + comma)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"generatedComment": [
+"% Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"        % ...and 1 other component",
+"        function first_name_fits_exactly_39_chars_comma_(app, event)"
+],
+"method": [
+"        % Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"        % ...and 1 other component",
+"        function first_name_fits_exactly_39_chars_comma_(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "first name one too long (40 chars + comma)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, Button2"
+],
+"generatedComment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, Button2"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, Button2",
+"        function first_name_one_too_long_40_chars_comma_(app, event)"
+],
+"method": [
+"        % Button pushed function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, Button2",
+"        function first_name_one_too_long_40_chars_comma_(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "single name fits exactly (41 chars, no comma)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+"generatedComment": [
+"% Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"        function single_name_fits_exactly_41_chars_no_comma_(app, event)"
+],
+"method": [
+"        % Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"        function single_name_fits_exactly_41_chars_no_comma_(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "single name one too long (42 chars)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+"generatedComment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"        function single_name_one_too_long_42_chars_(app, event)"
+],
+"method": [
+"        % Button pushed function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"        function single_name_one_too_long_42_chars_(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "first name too long for a whole line (80)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"generatedComment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,",
+"        % ",
+"        % ...and 1 other component",
+"        function first_name_too_long_for_a_whole_line_80_(app, event)"
+],
+"method": [
+"        % Button pushed function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,",
+"        % ",
+"        % ...and 1 other component",
+"        function first_name_too_long_for_a_whole_line_80_(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "second name too long after first",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button3",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button3, ",
+"% ...and 1 other component"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button3, ",
+"% ...and 1 other component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Button, Button3, ",
+"        % ...and 1 other component",
+"        function second_name_too_long_after_first(app, event)"
+],
+"method": [
+"        % Button pushed function: Button, Button3, ",
+"        % ...and 1 other component",
+"        function second_name_too_long_after_first(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "second line fills then truncates",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Cxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button4",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button4, ",
+"% ...and 2 other components"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button4, ",
+"% ...and 2 other components"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Button, Button4, ",
+"        % ...and 2 other components",
+"        function second_line_fills_then_truncates(app, event)"
+],
+"method": [
+"        % Button pushed function: Button, Button4, ",
+"        % ...and 2 other components",
+"        function second_line_fills_then_truncates(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "ordinal sort alpha Beta gamma Delta",
+"bindings": [
+{
+"codeName": "alpha",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Beta",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "gamma",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Delta",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Beta, Delta, alpha, gamma"
+],
+"generatedComment": [
+"% Button pushed function: Beta, Delta, alpha, gamma"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: Beta, Delta, alpha, gamma",
+"        function ordinal_sort_alpha_Beta_gamma_Delta(app, event)"
+],
+"method": [
+"        % Button pushed function: Beta, Delta, alpha, gamma",
+"        function ordinal_sort_alpha_Beta_gamma_Delta(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "ordinal sort underscore digits",
+"bindings": [
+{
+"codeName": "b_1",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "b1",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "B2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "a10",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "a9",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: B2, a10, a9, b1, b_1"
+],
+"generatedComment": [
+"% Button pushed function: B2, a10, a9, b1, b_1"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Button pushed function: B2, a10, a9, b1, b_1",
+"        function ordinal_sort_underscore_digits(app, event)"
+],
+"method": [
+"        % Button pushed function: B2, a10, a9, b1, b_1",
+"        function ordinal_sort_underscore_digits(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "mixed comment long (no % in base string)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"generatedComment": [
+"Callback function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Callback function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,",
+"        % ",
+"        % ...and 1 other component",
+"        function mixed_comment_long_no_in_base_string_(app, event)"
+],
+"method": [
+"        % Callback function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,",
+"        % ",
+"        % ...and 1 other component",
+"        function mixed_comment_long_no_in_base_string_(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "mixed comment 66 chars",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "E",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E"
+],
+"generatedComment": [
+"Callback function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Callback function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E",
+"        function mixed_comment_66_chars(app, event)"
+],
+"method": [
+"        % Callback function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E",
+"        function mixed_comment_66_chars(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "mixed comment 67 chars",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "E",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E"
+],
+"generatedComment": [
+"Callback function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Callback function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E",
+"        function mixed_comment_67_chars(app, event)"
+],
+"method": [
+"        % Callback function: ",
+"        % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E",
+"        function mixed_comment_67_chars(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "zero bindings",
+"bindings": [],
+"comment": [
+"Callback function"
+],
+"generatedComment": [
+"Callback function: not associated with a component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Callback function",
+"        function zero_bindings(app, event)"
+],
+"method": [
+"        % Callback function",
+"        function zero_bindings(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "zero bindings custom name",
+"bindings": [],
+"comment": [
+"Callback function"
+],
+"generatedComment": [
+"Callback function: not associated with a component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Callback function",
+"        function helperCallback(app, event)"
+],
+"method": [
+"        % Callback function",
+"        function helperCallback(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "UseCustomComment",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"My own comment"
+],
+"generatedComment": [
+"% Button pushed function: Button"
+],
+"defaultCode": [
+""
+],
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % My own comment",
+"        function UseCustomComment(app, event)"
+],
+"method": [
+"        % My own comment",
+"        function UseCustomComment(app, event)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 2,
+"key": "Button.ButtonPushedFcn",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button"
+],
+"generatedComment": [
+"% Button pushed function: Button"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Button",
+"    function Button_ButtonPushedFcn(app, event)"
+],
+"method": [
+"    % Button pushed function: Button",
+"    function Button_ButtonPushedFcn(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "UIFigure.CloseRequestFcn",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "CloseRequestFcn",
+"type": "matlab.ui.Figure"
+}
+],
+"comment": [
+"% Close request function: UIFigure"
+],
+"generatedComment": [
+"% Close request function: UIFigure"
+],
+"defaultCode": [
+"delete(app)",
+""
+],
+"code": [
+"      delete(app)",
+"      "
+],
+"methodStartLines": [
+"    % Close request function: UIFigure",
+"    function UIFigure_CloseRequestFcn(app, event)"
+],
+"method": [
+"    % Close request function: UIFigure",
+"    function UIFigure_CloseRequestFcn(app, event)",
+"      delete(app)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "UIFigure.KeyPressFcn",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "KeyPressFcn",
+"type": "matlab.ui.Figure"
+}
+],
+"comment": [
+"% Key press function: UIFigure"
+],
+"generatedComment": [
+"% Key press function: UIFigure"
+],
+"defaultCode": [
+"key = event.Key;",
+""
+],
+"code": [
+"      key = event.Key;",
+"      "
+],
+"methodStartLines": [
+"    % Key press function: UIFigure",
+"    function UIFigure_KeyPressFcn(app, event)"
+],
+"method": [
+"    % Key press function: UIFigure",
+"    function UIFigure_KeyPressFcn(app, event)",
+"      key = event.Key;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "UIFigure.WindowScrollWheelFcn",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "WindowScrollWheelFcn",
+"type": "matlab.ui.Figure"
+}
+],
+"comment": [
+"% Window scroll wheel function: UIFigure"
+],
+"generatedComment": [
+"% Window scroll wheel function: UIFigure"
+],
+"defaultCode": [
+"verticalScrollAmount = event.VerticalScrollAmount;",
+"verticalScrollCount = event.VerticalScrollCount;",
+""
+],
+"code": [
+"      verticalScrollAmount = event.VerticalScrollAmount;",
+"      verticalScrollCount = event.VerticalScrollCount;",
+"      "
+],
+"methodStartLines": [
+"    % Window scroll wheel function: UIFigure",
+"    function UIFigure_WindowScrollWheelFcn(app, event)"
+],
+"method": [
+"    % Window scroll wheel function: UIFigure",
+"    function UIFigure_WindowScrollWheelFcn(app, event)",
+"      verticalScrollAmount = event.VerticalScrollAmount;",
+"      verticalScrollCount = event.VerticalScrollCount;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "UIFigure.SizeChangedFcn",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.Figure"
+}
+],
+"comment": [
+"% Size changed function: UIFigure"
+],
+"generatedComment": [
+"% Size changed function: UIFigure"
+],
+"defaultCode": [
+"position = app.UIFigure.Position;",
+""
+],
+"code": [
+"      position = app.UIFigure.Position;",
+"      "
+],
+"methodStartLines": [
+"    % Size changed function: UIFigure",
+"    function UIFigure_SizeChangedFcn(app, event)"
+],
+"method": [
+"    % Size changed function: UIFigure",
+"    function UIFigure_SizeChangedFcn(app, event)",
+"      position = app.UIFigure.Position;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "EditField.ValueChangedFcn",
+"bindings": [
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"% Value changed function: EditField"
+],
+"generatedComment": [
+"% Value changed function: EditField"
+],
+"defaultCode": [
+"value = app.EditField.Value;",
+""
+],
+"code": [
+"      value = app.EditField.Value;",
+"      "
+],
+"methodStartLines": [
+"    % Value changed function: EditField",
+"    function EditField_ValueChangedFcn(app, event)"
+],
+"method": [
+"    % Value changed function: EditField",
+"    function EditField_ValueChangedFcn(app, event)",
+"      value = app.EditField.Value;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "EditField.ValueChangingFcn",
+"bindings": [
+{
+"codeName": "EditField",
+"prop": "ValueChangingFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"% Value changing function: EditField"
+],
+"generatedComment": [
+"% Value changing function: EditField"
+],
+"defaultCode": [
+"changingValue = event.Value;",
+""
+],
+"code": [
+"      changingValue = event.Value;",
+"      "
+],
+"methodStartLines": [
+"    % Value changing function: EditField",
+"    function EditField_ValueChangingFcn(app, event)"
+],
+"method": [
+"    % Value changing function: EditField",
+"    function EditField_ValueChangingFcn(app, event)",
+"      changingValue = event.Value;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "UITable.CellEditCallback",
+"bindings": [
+{
+"codeName": "UITable",
+"prop": "CellEditCallback",
+"type": "matlab.ui.control.Table"
+}
+],
+"comment": [
+"% Cell edit callback: UITable"
+],
+"generatedComment": [
+"% Cell edit callback: UITable"
+],
+"defaultCode": [
+"indices = event.Indices;",
+"newData = event.NewData;",
+""
+],
+"code": [
+"      indices = event.Indices;",
+"      newData = event.NewData;",
+"      "
+],
+"methodStartLines": [
+"    % Cell edit callback: UITable",
+"    function UITable_CellEditCallback(app, event)"
+],
+"method": [
+"    % Cell edit callback: UITable",
+"    function UITable_CellEditCallback(app, event)",
+"      indices = event.Indices;",
+"      newData = event.NewData;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "UITable.SelectionChangedFcn",
+"bindings": [
+{
+"codeName": "UITable",
+"prop": "SelectionChangedFcn",
+"type": "matlab.ui.control.Table"
+}
+],
+"comment": [
+"% Selection changed function: UITable"
+],
+"generatedComment": [
+"% Selection changed function: UITable"
+],
+"defaultCode": [
+"selection = app.UITable.Selection;",
+""
+],
+"code": [
+"      selection = app.UITable.Selection;",
+"      "
+],
+"methodStartLines": [
+"    % Selection changed function: UITable",
+"    function UITable_SelectionChangedFcn(app, event)"
+],
+"method": [
+"    % Selection changed function: UITable",
+"    function UITable_SelectionChangedFcn(app, event)",
+"      selection = app.UITable.Selection;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "Tab.SizeChangedFcn",
+"bindings": [
+{
+"codeName": "Tab",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.container.Tab"
+}
+],
+"comment": [
+"% Size changed function: Tab"
+],
+"generatedComment": [
+"% Size changed function: Tab"
+],
+"defaultCode": [
+"position = app.Tab.Position;",
+""
+],
+"code": [
+"      position = app.Tab.Position;",
+"      "
+],
+"methodStartLines": [
+"    % Size changed function: Tab",
+"    function Tab_SizeChangedFcn(app, event)"
+],
+"method": [
+"    % Size changed function: Tab",
+"    function Tab_SizeChangedFcn(app, event)",
+"      position = app.Tab.Position;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "TabGroup.SelectionChangedFcn",
+"bindings": [
+{
+"codeName": "TabGroup",
+"prop": "SelectionChangedFcn",
+"type": "matlab.ui.container.TabGroup"
+}
+],
+"comment": [
+"% Selection change function: TabGroup"
+],
+"generatedComment": [
+"% Selection change function: TabGroup"
+],
+"defaultCode": [
+"selectedTab = app.TabGroup.SelectedTab;",
+""
+],
+"code": [
+"      selectedTab = app.TabGroup.SelectedTab;",
+"      "
+],
+"methodStartLines": [
+"    % Selection change function: TabGroup",
+"    function TabGroup_SelectionChangedFcn(app, event)"
+],
+"method": [
+"    % Selection change function: TabGroup",
+"    function TabGroup_SelectionChangedFcn(app, event)",
+"      selectedTab = app.TabGroup.SelectedTab;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "ButtonGroup.SelectionChangedFcn",
+"bindings": [
+{
+"codeName": "ButtonGroup",
+"prop": "SelectionChangedFcn",
+"type": "matlab.ui.container.ButtonGroup"
+}
+],
+"comment": [
+"% Selection changed function: ButtonGroup"
+],
+"generatedComment": [
+"% Selection changed function: ButtonGroup"
+],
+"defaultCode": [
+"selectedButton = app.ButtonGroup.SelectedObject;",
+""
+],
+"code": [
+"      selectedButton = app.ButtonGroup.SelectedObject;",
+"      "
+],
+"methodStartLines": [
+"    % Selection changed function: ButtonGroup",
+"    function ButtonGroup_SelectionChangedFcn(app, event)"
+],
+"method": [
+"    % Selection changed function: ButtonGroup",
+"    function ButtonGroup_SelectionChangedFcn(app, event)",
+"      selectedButton = app.ButtonGroup.SelectedObject;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "Menu.MenuSelectedFcn",
+"bindings": [
+{
+"codeName": "Menu",
+"prop": "MenuSelectedFcn",
+"type": "matlab.ui.container.Menu"
+}
+],
+"comment": [
+"% Menu selected function: Menu"
+],
+"generatedComment": [
+"% Menu selected function: Menu"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Menu selected function: Menu",
+"    function Menu_MenuSelectedFcn(app, event)"
+],
+"method": [
+"    % Menu selected function: Menu",
+"    function Menu_MenuSelectedFcn(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "PushTool.ClickedCallback",
+"bindings": [
+{
+"codeName": "PushTool",
+"prop": "ClickedCallback",
+"type": "matlab.ui.container.toolbar.PushTool"
+}
+],
+"comment": [
+"Callback function: PushTool"
+],
+"generatedComment": [
+"Callback function: PushTool"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Callback function: PushTool",
+"    function PushTool_ClickedCallback(app, event)"
+],
+"method": [
+"    % Callback function: PushTool",
+"    function PushTool_ClickedCallback(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "HTML.HTMLEventReceivedFcn",
+"bindings": [
+{
+"codeName": "HTML",
+"prop": "HTMLEventReceivedFcn",
+"type": "matlab.ui.control.HTML"
+}
+],
+"comment": [
+"% Event received function: HTML"
+],
+"generatedComment": [
+"% Event received function: HTML"
+],
+"defaultCode": [
+"eventName = event.HTMLEventName;",
+"eventData = event.HTMLEventData;",
+""
+],
+"code": [
+"      eventName = event.HTMLEventName;",
+"      eventData = event.HTMLEventData;",
+"      "
+],
+"methodStartLines": [
+"    % Event received function: HTML",
+"    function HTML_HTMLEventReceivedFcn(app, event)"
+],
+"method": [
+"    % Event received function: HTML",
+"    function HTML_HTMLEventReceivedFcn(app, event)",
+"      eventName = event.HTMLEventName;",
+"      eventData = event.HTMLEventData;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "HTML.DataChangedFcn",
+"bindings": [
+{
+"codeName": "HTML",
+"prop": "DataChangedFcn",
+"type": "matlab.ui.control.HTML"
+}
+],
+"comment": [
+"% Data changed function: HTML"
+],
+"generatedComment": [
+"% Data changed function: HTML"
+],
+"defaultCode": [
+"data = app.HTML.Data;",
+""
+],
+"code": [
+"      data = app.HTML.Data;",
+"      "
+],
+"methodStartLines": [
+"    % Data changed function: HTML",
+"    function HTML_DataChangedFcn(app, event)"
+],
+"method": [
+"    % Data changed function: HTML",
+"    function HTML_DataChangedFcn(app, event)",
+"      data = app.HTML.Data;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "Slider.ValueChangingFcn",
+"bindings": [
+{
+"codeName": "Slider",
+"prop": "ValueChangingFcn",
+"type": "matlab.ui.control.Slider"
+}
+],
+"comment": [
+"% Value changing function: Slider"
+],
+"generatedComment": [
+"% Value changing function: Slider"
+],
+"defaultCode": [
+"changingValue = event.Value;",
+""
+],
+"code": [
+"      changingValue = event.Value;",
+"      "
+],
+"methodStartLines": [
+"    % Value changing function: Slider",
+"    function Slider_ValueChangingFcn(app, event)"
+],
+"method": [
+"    % Value changing function: Slider",
+"    function Slider_ValueChangingFcn(app, event)",
+"      changingValue = event.Value;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "DropDown.ValueChangedFcn",
+"bindings": [
+{
+"codeName": "DropDown",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.DropDown"
+}
+],
+"comment": [
+"% Value changed function: DropDown"
+],
+"generatedComment": [
+"% Value changed function: DropDown"
+],
+"defaultCode": [
+"value = app.DropDown.Value;",
+""
+],
+"code": [
+"      value = app.DropDown.Value;",
+"      "
+],
+"methodStartLines": [
+"    % Value changed function: DropDown",
+"    function DropDown_ValueChangedFcn(app, event)"
+],
+"method": [
+"    % Value changed function: DropDown",
+"    function DropDown_ValueChangedFcn(app, event)",
+"      value = app.DropDown.Value;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "Image.ImageClickedFcn",
+"bindings": [
+{
+"codeName": "Image",
+"prop": "ImageClickedFcn",
+"type": "matlab.ui.control.Image"
+}
+],
+"comment": [
+"% Image clicked function: Image"
+],
+"generatedComment": [
+"% Image clicked function: Image"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Image clicked function: Image",
+"    function Image_ImageClickedFcn(app, event)"
+],
+"method": [
+"    % Image clicked function: Image",
+"    function Image_ImageClickedFcn(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "Tree.NodeExpandedFcn",
+"bindings": [
+{
+"codeName": "Tree",
+"prop": "NodeExpandedFcn",
+"type": "matlab.ui.container.Tree"
+}
+],
+"comment": [
+"% Node expanded function: Tree"
+],
+"generatedComment": [
+"% Node expanded function: Tree"
+],
+"defaultCode": [
+"node = event.Node;",
+""
+],
+"code": [
+"      node = event.Node;",
+"      "
+],
+"methodStartLines": [
+"    % Node expanded function: Tree",
+"    function Tree_NodeExpandedFcn(app, event)"
+],
+"method": [
+"    % Node expanded function: Tree",
+"    function Tree_NodeExpandedFcn(app, event)",
+"      node = event.Node;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "ContextMenu.ContextMenuOpeningFcn",
+"bindings": [
+{
+"codeName": "ContextMenu",
+"prop": "ContextMenuOpeningFcn",
+"type": "matlab.ui.container.ContextMenu"
+}
+],
+"comment": [
+"% Context menu opening function: ContextMenu"
+],
+"generatedComment": [
+"% Context menu opening function: ContextMenu"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Context menu opening function: ContextMenu",
+"    function ContextMenu_ContextMenuOpeningFcn(app, event)"
+],
+"method": [
+"    % Context menu opening function: ContextMenu",
+"    function ContextMenu_ContextMenuOpeningFcn(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "two same property",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button2"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button2"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Button, Button2",
+"    function two_same_property(app, event)"
+],
+"method": [
+"    % Button pushed function: Button, Button2",
+"    function two_same_property(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "two different properties",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: Button, EditField"
+],
+"generatedComment": [
+"Callback function: Button, EditField"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Callback function: Button, EditField",
+"    function two_different_properties(app, event)"
+],
+"method": [
+"    % Callback function: Button, EditField",
+"    function two_different_properties(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "same property different classes",
+"bindings": [
+{
+"codeName": "UIFigure",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.Figure"
+},
+{
+"codeName": "Panel",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.container.Panel"
+}
+],
+"comment": [
+"% Size changed function: Panel, UIFigure"
+],
+"generatedComment": [
+"% Size changed function: Panel, UIFigure"
+],
+"defaultCode": [
+"position = app.UIFigure.Position;",
+""
+],
+"code": [
+"      position = app.UIFigure.Position;",
+"      "
+],
+"methodStartLines": [
+"    % Size changed function: Panel, UIFigure",
+"    function same_property_different_classes(app, event)"
+],
+"method": [
+"    % Size changed function: Panel, UIFigure",
+"    function same_property_different_classes(app, event)",
+"      position = app.UIFigure.Position;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "one component two properties",
+"bindings": [
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+},
+{
+"codeName": "EditField",
+"prop": "ValueChangingFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: EditField, EditField"
+],
+"generatedComment": [
+"Callback function: EditField, EditField"
+],
+"defaultCode": [
+"value = app.EditField.Value;",
+""
+],
+"code": [
+"      value = app.EditField.Value;",
+"      "
+],
+"methodStartLines": [
+"    % Callback function: EditField, EditField",
+"    function one_component_two_properties(app, event)"
+],
+"method": [
+"    % Callback function: EditField, EditField",
+"    function one_component_two_properties(app, event)",
+"      value = app.EditField.Value;",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "three short",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button3",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button2, Button3"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button2, Button3"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Button, Button2, Button3",
+"    function three_short(app, event)"
+],
+"method": [
+"    % Button pushed function: Button, Button2, Button3",
+"    function three_short(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "five moderate",
+"bindings": [
+{
+"codeName": "ComputeResultsButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "ExportDataToExcelButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "LoadConfigurationButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "ResetAllFieldsButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "StartSimulationButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: ComputeResultsButton, ",
+"% ...and 4 other components"
+],
+"generatedComment": [
+"% Button pushed function: ComputeResultsButton, ",
+"% ...and 4 other components"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: ComputeResultsButton, ",
+"    % ...and 4 other components",
+"    function five_moderate(app, event)"
+],
+"method": [
+"    % Button pushed function: ComputeResultsButton, ",
+"    % ...and 4 other components",
+"    function five_moderate(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "eight short",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button3",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button4",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button5",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button6",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button7",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button8",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button2, Button3, Button4, ",
+"% ...and 4 other components"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button2, Button3, Button4, ",
+"% ...and 4 other components"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Button, Button2, Button3, Button4, ",
+"    % ...and 4 other components",
+"    function eight_short(app, event)"
+],
+"method": [
+"    % Button pushed function: Button, Button2, Button3, Button4, ",
+"    % ...and 4 other components",
+"    function eight_short(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "eight unsorted insertion",
+"bindings": [
+{
+"codeName": "Button8",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button3",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button5",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button7",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button4",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button6",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button2, Button3, Button4, ",
+"% ...and 4 other components"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button2, Button3, Button4, ",
+"% ...and 4 other components"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Button, Button2, Button3, Button4, ",
+"    % ...and 4 other components",
+"    function eight_unsorted_insertion(app, event)"
+],
+"method": [
+"    % Button pushed function: Button, Button2, Button3, Button4, ",
+"    % ...and 4 other components",
+"    function eight_unsorted_insertion(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "first name fits exactly (39 chars + comma)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"generatedComment": [
+"% Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"    % ...and 1 other component",
+"    function first_name_fits_exactly_39_chars_comma_(app, event)"
+],
+"method": [
+"    % Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"    % ...and 1 other component",
+"    function first_name_fits_exactly_39_chars_comma_(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "first name one too long (40 chars + comma)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, Button2"
+],
+"generatedComment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, Button2"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, Button2",
+"    function first_name_one_too_long_40_chars_comma_(app, event)"
+],
+"method": [
+"    % Button pushed function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, Button2",
+"    function first_name_one_too_long_40_chars_comma_(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "single name fits exactly (41 chars, no comma)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+"generatedComment": [
+"% Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"    function single_name_fits_exactly_41_chars_no_comma_(app, event)"
+],
+"method": [
+"    % Button pushed function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"    function single_name_fits_exactly_41_chars_no_comma_(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "single name one too long (42 chars)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+"generatedComment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"    function single_name_one_too_long_42_chars_(app, event)"
+],
+"method": [
+"    % Button pushed function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"    function single_name_one_too_long_42_chars_(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "first name too long for a whole line (80)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"generatedComment": [
+"% Button pushed function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,",
+"    % ",
+"    % ...and 1 other component",
+"    function first_name_too_long_for_a_whole_line_80_(app, event)"
+],
+"method": [
+"    % Button pushed function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,",
+"    % ",
+"    % ...and 1 other component",
+"    function first_name_too_long_for_a_whole_line_80_(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "second name too long after first",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button3",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button3, ",
+"% ...and 1 other component"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button3, ",
+"% ...and 1 other component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Button, Button3, ",
+"    % ...and 1 other component",
+"    function second_name_too_long_after_first(app, event)"
+],
+"method": [
+"    % Button pushed function: Button, Button3, ",
+"    % ...and 1 other component",
+"    function second_name_too_long_after_first(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "second line fills then truncates",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Cxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Button4",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Button, Button4, ",
+"% ...and 2 other components"
+],
+"generatedComment": [
+"% Button pushed function: Button, Button4, ",
+"% ...and 2 other components"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Button, Button4, ",
+"    % ...and 2 other components",
+"    function second_line_fills_then_truncates(app, event)"
+],
+"method": [
+"    % Button pushed function: Button, Button4, ",
+"    % ...and 2 other components",
+"    function second_line_fills_then_truncates(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "ordinal sort alpha Beta gamma Delta",
+"bindings": [
+{
+"codeName": "alpha",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Beta",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "gamma",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "Delta",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: Beta, Delta, alpha, gamma"
+],
+"generatedComment": [
+"% Button pushed function: Beta, Delta, alpha, gamma"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: Beta, Delta, alpha, gamma",
+"    function ordinal_sort_alpha_Beta_gamma_Delta(app, event)"
+],
+"method": [
+"    % Button pushed function: Beta, Delta, alpha, gamma",
+"    function ordinal_sort_alpha_Beta_gamma_Delta(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "ordinal sort underscore digits",
+"bindings": [
+{
+"codeName": "b_1",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "b1",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "B2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "a10",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "a9",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"% Button pushed function: B2, a10, a9, b1, b_1"
+],
+"generatedComment": [
+"% Button pushed function: B2, a10, a9, b1, b_1"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Button pushed function: B2, a10, a9, b1, b_1",
+"    function ordinal_sort_underscore_digits(app, event)"
+],
+"method": [
+"    % Button pushed function: B2, a10, a9, b1, b_1",
+"    function ordinal_sort_underscore_digits(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "mixed comment long (no % in base string)",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"generatedComment": [
+"Callback function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"% ...and 1 other component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Callback function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"    % ...and 1 other component",
+"    function mixed_comment_long_no_in_base_string_(app, event)"
+],
+"method": [
+"    % Callback function: Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, ",
+"    % ...and 1 other component",
+"    function mixed_comment_long_no_in_base_string_(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "mixed comment 66 chars",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "E",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E"
+],
+"generatedComment": [
+"Callback function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Callback function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E",
+"    function mixed_comment_66_chars(app, event)"
+],
+"method": [
+"    % Callback function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E",
+"    function mixed_comment_66_chars(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "mixed comment 67 chars",
+"bindings": [
+{
+"codeName": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+},
+{
+"codeName": "E",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField"
+}
+],
+"comment": [
+"Callback function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E"
+],
+"generatedComment": [
+"Callback function: ",
+"% Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Callback function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E",
+"    function mixed_comment_67_chars(app, event)"
+],
+"method": [
+"    % Callback function: ",
+"    % Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, E",
+"    function mixed_comment_67_chars(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "zero bindings",
+"bindings": [],
+"comment": [
+"Callback function"
+],
+"generatedComment": [
+"Callback function: not associated with a component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Callback function",
+"    function zero_bindings(app, event)"
+],
+"method": [
+"    % Callback function",
+"    function zero_bindings(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "zero bindings custom name",
+"bindings": [],
+"comment": [
+"Callback function"
+],
+"generatedComment": [
+"Callback function: not associated with a component"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Callback function",
+"    function helperCallback(app, event)"
+],
+"method": [
+"    % Callback function",
+"    function helperCallback(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "UseCustomComment",
+"bindings": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button"
+}
+],
+"comment": [
+"My own comment"
+],
+"generatedComment": [
+"% Button pushed function: Button"
+],
+"defaultCode": [
+""
+],
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % My own comment",
+"    function UseCustomComment(app, event)"
+],
+"method": [
+"    % My own comment",
+"    function UseCustomComment(app, event)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 4,
+"key": "startupFcn()",
+"bindings": [],
+"comment": "Code that executes after component creation",
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Code that executes after component creation",
+"        function startupFcn(app)"
+],
+"method": [
+"        % Code that executes after component creation",
+"        function startupFcn(app)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 4,
+"key": "startupFcn(a, b)",
+"bindings": [],
+"comment": "Code that executes after component creation",
+"code": [
+"            "
+],
+"methodStartLines": [
+"        % Code that executes after component creation",
+"        function startupFcn(app, a, b)"
+],
+"method": [
+"        % Code that executes after component creation",
+"        function startupFcn(app, a, b)",
+"            ",
+"        end"
+]
+},
+{
+"indentSize": 2,
+"key": "startupFcn()",
+"bindings": [],
+"comment": "Code that executes after component creation",
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Code that executes after component creation",
+"    function startupFcn(app)"
+],
+"method": [
+"    % Code that executes after component creation",
+"    function startupFcn(app)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 2,
+"key": "startupFcn(a, b)",
+"bindings": [],
+"comment": "Code that executes after component creation",
+"code": [
+"      "
+],
+"methodStartLines": [
+"    % Code that executes after component creation",
+"    function startupFcn(app, a, b)"
+],
+"method": [
+"    % Code that executes after component creation",
+"    function startupFcn(app, a, b)",
+"      ",
+"    end"
+]
+},
+{
+"indentSize": 4,
+"key": "callback group: startupFcn + ButtonPushed + UIFigureCloseRequest",
+"orders": [
+[
+"startupFcn",
+0
+],
+[
+"ButtonPushed",
+1
+],
+[
+"UIFigureCloseRequest",
+2
+]
+],
+"method": [
+"    % Callbacks that handle component events",
+"    methods (Access = private)",
+"",
+"        % Code that executes after component creation",
+"        function startupFcn(app)",
+"            ",
+"        end",
+"",
+"        % Button pushed function: Button",
+"        function ButtonPushed(app, event)",
+"            ",
+"        end",
+"",
+"        % Close request function: UIFigure",
+"        function UIFigureCloseRequest(app, event)",
+"            ",
+"        end",
+"    end",
+""
+]
+},
+{
+"indentSize": 2,
+"key": "callback group: startupFcn + ButtonPushed + UIFigureCloseRequest",
+"orders": [
+[
+"startupFcn",
+0
+],
+[
+"ButtonPushed",
+1
+],
+[
+"UIFigureCloseRequest",
+2
+]
+],
+"method": [
+"  % Callbacks that handle component events",
+"  methods (Access = private)",
+"",
+"    % Code that executes after component creation",
+"    function startupFcn(app)",
+"      ",
+"    end",
+"",
+"    % Button pushed function: Button",
+"    function ButtonPushed(app, event)",
+"      ",
+"    end",
+"",
+"    % Close request function: UIFigure",
+"    function UIFigureCloseRequest(app, event)",
+"      ",
+"    end",
+"  end",
+""
+]
+}
+],
+"defaultCallbackNames": [
+{
+"codeName": "Button",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button",
+"name": "ButtonPushed"
+},
+{
+"codeName": "StartButton",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button",
+"name": "StartButtonPushed"
+},
+{
+"codeName": "UIFigure",
+"prop": "CloseRequestFcn",
+"type": "matlab.ui.Figure",
+"name": "UIFigureCloseRequest"
+},
+{
+"codeName": "EditField",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.EditField",
+"name": "EditFieldValueChanged"
+},
+{
+"codeName": "NameEditField",
+"prop": "ValueChangingFcn",
+"type": "matlab.ui.control.EditField",
+"name": "NameEditFieldValueChanging"
+},
+{
+"codeName": "Table",
+"prop": "CellEditCallback",
+"type": "matlab.ui.control.Table",
+"name": "TableCellEdit"
+},
+{
+"codeName": "UITable",
+"prop": "CellEditCallback",
+"type": "matlab.ui.control.Table",
+"name": "UITableCellEdit"
+},
+{
+"codeName": "PushTool",
+"prop": "ClickedCallback",
+"type": "matlab.ui.container.toolbar.PushTool",
+"name": "PushToolClicked"
+},
+{
+"codeName": "Tab",
+"prop": "SizeChangedFcn",
+"type": "matlab.ui.container.Tab",
+"name": "TabSizeChanged"
+},
+{
+"codeName": "Menu",
+"prop": "MenuSelectedFcn",
+"type": "matlab.ui.container.Menu",
+"name": "MenuSelected"
+},
+{
+"codeName": "Button2",
+"prop": "ButtonPushedFcn",
+"type": "matlab.ui.control.Button",
+"name": "Button2Pushed"
+},
+{
+"codeName": "UIFigure",
+"prop": "WindowButtonDownFcn",
+"type": "matlab.ui.Figure",
+"name": "UIFigureWindowButtonDown"
+},
+{
+"codeName": "MyUIFigure2",
+"prop": "KeyPressFcn",
+"type": "matlab.ui.Figure",
+"name": "MyUIFigure2KeyPress"
+},
+{
+"codeName": "Slider",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.Slider",
+"name": "SliderValueChanged"
+},
+{
+"codeName": "DropDown",
+"prop": "DropDownOpeningFcn",
+"type": "matlab.ui.control.DropDown",
+"name": "DropDownOpening"
+},
+{
+"codeName": "Image",
+"prop": "ImageClickedFcn",
+"type": "matlab.ui.control.Image",
+"name": "ImageClicked"
+},
+{
+"codeName": "ToggleTool",
+"prop": "OnCallback",
+"type": "matlab.ui.container.toolbar.ToggleTool",
+"name": "ToggleToolOn"
+},
+{
+"codeName": "HTML",
+"prop": "HTMLEventReceivedFcn",
+"type": "matlab.ui.control.HTML",
+"name": "HTMLEventReceived"
+},
+{
+"codeName": "TabGroup",
+"prop": "SelectionChangedFcn",
+"type": "matlab.ui.container.TabGroup",
+"name": "TabGroupSelectionChanged"
+},
+{
+"codeName": "ButtonGroup",
+"prop": "SelectionChangedFcn",
+"type": "matlab.ui.container.ButtonGroup",
+"name": "ButtonGroupSelectionChanged"
+},
+{
+"codeName": "ContextMenu",
+"prop": "ContextMenuOpeningFcn",
+"type": "matlab.ui.container.ContextMenu",
+"name": "ContextMenuOpening"
+},
+{
+"codeName": "CheckBox",
+"prop": "ValueChangedFcn",
+"type": "matlab.ui.control.CheckBox",
+"name": "CheckBoxValueChanged"
+}
+],
+"uniqueNames": [
+{
+"existing": [],
+"base": "ButtonPushed",
+"name": "ButtonPushed"
+},
+{
+"existing": [
+"ButtonPushed"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed2"
+},
+{
+"existing": [
+"ButtonPushed",
+"ButtonPushed2"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed3"
+},
+{
+"existing": [
+"ButtonPushed3"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed4"
+},
+{
+"existing": [
+"ButtonPushedX"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed"
+},
+{
+"existing": [
+"ButtonPushed 1"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed2"
+},
+{
+"existing": [
+"ButtonPushed",
+"ButtonPushed3"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed4"
+},
+{
+"existing": [
+"ButtonPushed2"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed3"
+},
+{
+"existing": [
+"ButtonPushed_2"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed"
+},
+{
+"existing": [
+"buttonpushed"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed"
+},
+{
+"existing": [
+"XButtonPushed"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed"
+},
+{
+"existing": [
+"ButtonPushed10"
+],
+"base": "ButtonPushed",
+"name": "ButtonPushed11"
+},
+{
+"existing": [],
+"base": "func",
+"name": "func"
+},
+{
+"existing": [
+"func"
+],
+"base": "func",
+"name": "func2"
+},
+{
+"existing": [
+"func",
+"func2"
+],
+"base": "func",
+"name": "func3"
+},
+{
+"existing": [
+"Property"
+],
+"base": "Property",
+"name": "Property2"
+},
+{
+"existing": [
+"Property",
+"Property2"
+],
+"base": "Property",
+"name": "Property3"
+},
+{
+"existing": [
+"Button"
+],
+"base": "Button",
+"note": "exact=true (code names)",
+"name": "Button2"
+}
+],
+"isVarName": [
+{
+"input": "Button",
+"max63": {
+"ok": true,
+"result": null
+},
+"defaultMax": {
+"ok": true,
+"result": null
+}
+},
+{
+"input": "if",
+"max63": {
+"ok": false,
+"message": "Name cannot be a MATLAB keyword."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name cannot be a MATLAB keyword."
+}
+},
+{
+"input": "end",
+"max63": {
+"ok": false,
+"message": "Name cannot be a MATLAB keyword."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name cannot be a MATLAB keyword."
+}
+},
+{
+"input": "properties",
+"max63": {
+"ok": false,
+"message": "Name cannot be a MATLAB keyword."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name cannot be a MATLAB keyword."
+}
+},
+{
+"input": "methods",
+"max63": {
+"ok": false,
+"message": "Name cannot be a MATLAB keyword."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name cannot be a MATLAB keyword."
+}
+},
+{
+"input": "1abc",
+"max63": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+}
+},
+{
+"input": "a-b",
+"max63": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+}
+},
+{
+"input": "a_b",
+"max63": {
+"ok": true,
+"result": null
+},
+"defaultMax": {
+"ok": true,
+"result": null
+}
+},
+{
+"input": "_a",
+"max63": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+}
+},
+{
+"input": "a b",
+"max63": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+}
+},
+{
+"input": "",
+"max63": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+}
+},
+{
+"input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"max63": {
+"ok": true,
+"result": null
+},
+"defaultMax": {
+"ok": true,
+"result": null
+}
+},
+{
+"input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"max63": {
+"ok": false,
+"message": "Name must be shorter than 64 characters."
+},
+"defaultMax": {
+"ok": true,
+"result": null
+}
+},
+{
+"input": "abc$",
+"max63": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+}
+},
+{
+"input": "r\u00e9sum\u00e9",
+"max63": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+},
+"defaultMax": {
+"ok": false,
+"message": "Name must start with a letter and contain only letters, numbers or underscores."
+}
+},
+{
+"input": "startupFcn",
+"max63": {
+"ok": true,
+"result": null
+},
+"defaultMax": {
+"ok": true,
+"result": null
+}
+},
+{
+"input": "ButtonPushed",
+"max63": {
+"ok": true,
+"result": null
+},
+"defaultMax": {
+"ok": true,
+"result": null
+}
+}
+],
+"validateInputArguments": [
+{
+"input": "",
+"error": null,
+"sanitized": ""
+},
+{
+"input": "a",
+"error": null,
+"sanitized": "a"
+},
+{
+"input": "a, b",
+"error": null,
+"sanitized": "a, b"
+},
+{
+"input": "a,b",
+"error": null,
+"sanitized": "a, b"
+},
+{
+"input": "a,,b",
+"error": "Name must start with a letter and contain only letters, numbers or underscores.",
+"sanitized": "a, b"
+},
+{
+"input": "a b",
+"error": "Name must start with a letter and contain only letters, numbers or underscores.",
+"sanitized": "a, b"
+},
+{
+"input": "a, a",
+"error": "Names must be unique.",
+"sanitized": "a, a"
+},
+{
+"input": ", a,",
+"error": "Name must start with a letter and contain only letters, numbers or underscores.",
+"sanitized": "a"
+},
+{
+"input": "a,",
+"error": null,
+"sanitized": "a"
+},
+{
+"input": " a , b ",
+"error": null,
+"sanitized": "a, b"
+},
+{
+"input": "a, 1b",
+"error": "Name must start with a letter and contain only letters, numbers or underscores.",
+"sanitized": "a, 1b"
+},
+{
+"input": "a, if",
+"error": "Name cannot be a MATLAB keyword.",
+"sanitized": "a, if"
+},
+{
+"input": "a, xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"error": "Name must be shorter than 64 characters.",
+"sanitized": "a, xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+},
+{
+"input": "a;b",
+"error": "Name must start with a letter and contain only letters, numbers or underscores.",
+"sanitized": "a;b"
+},
+{
+"input": "varargin",
+"error": null,
+"sanitized": "varargin"
+},
+{
+"input": "app",
+"error": null,
+"sanitized": "app"
+},
+{
+"input": ",",
+"error": "Name must start with a letter and contain only letters, numbers or underscores.",
+"sanitized": ""
+}
+],
+"isNameUniqueInArray": [
+{
+"array": [
+"a",
+"b"
+],
+"name": "a",
+"result": {
+"ok": true,
+"result": null
+}
+},
+{
+"array": [
+"a",
+"a"
+],
+"name": "a",
+"result": {
+"ok": false,
+"message": "Names must be unique."
+}
+},
+{
+"array": [
+"a",
+" a"
+],
+"name": "a",
+"result": {
+"ok": false,
+"message": "Names must be unique."
+}
+},
+{
+"array": [
+"a",
+"b"
+],
+"name": "c",
+"result": {
+"ok": true,
+"result": null
+}
+}
+]
+}

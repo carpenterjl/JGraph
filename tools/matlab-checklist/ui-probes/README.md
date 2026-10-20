@@ -1154,3 +1154,47 @@ app's folder. The part takes about three minutes an app, so it runs in three sha
 grid child's position is whatever its tree holds: for a new component, its base's placeholder,
 which the canvas replaces. The comparison leaves a grid child's position family out. App
 Designer's window over these files is open item 149.
+
+## DS5 findings (designer plan, R2025b; node and headless)
+
+The code view (ADR 0250). App Designer's class code generation lives in its canvas bundle, not in
+MATLAB, so the oracle is the bundle's own modules run under node (`ds5/oracle`: `amd.js` loads them
+raw from `bundle.mwBundle.appdesigner.js`, `stubs.js` the smallest host stubs, `lifecycle.js`,
+`callbacks.js`, `templates.js` the cases); the JSON they write is kept in the tests
+(`CodeLifecycleOracle.json`, `CodeCallbacksOracle.json`, `CodeTemplatesOracle.json`) and the
+per-class table they read from the component models is embedded (`ds5_callbacks.json`: callback
+properties in the inspector's groups, the comment per property with its sign, the default code
+with its tokens). `ds5_run` runs the app the designer's edits built (`CallbacksApp`, left in
+`ds6/rt/new/` by `ANewAppHoldsAppDesignersWholeModel` with `JGRAPH_DS6_OUT`) and reads it with App
+Designer's reader; `ds6_verify DS6_PART=new DS6_ONLY=CallbacksApp` holds its tree against the code's.
+
+- **The startup function keeps its place in the callbacks block.** `CodeController._formatCallbackData`
+  gives a loaded startup function Order 0 only when its data carries no Order; App Designer's files
+  hold it wherever it stood, and 33 of the 44 shipped apps have it after other callbacks.
+- **A callback's comment is measured twice.** `CallbackModel._getGeneratedComment` budgets 75 columns
+  with eight counted used by a fresh `CodeFormatter` (four-space indents whatever the file's); then
+  `MethodBuilder` wraps each line again by words at 75 less the method's own indentation. The
+  per-class comment strings (`uicomponents` `nls/CodeGeneration`) carry their `% `, the mixed
+  `Callback function` does not, so the two forms fill a line differently. Five properties name a
+  resource R2025b does not have (`PushTool`/`ToggleTool.ClickedCallback`,
+  `CheckBoxTree.CheckedNodesChangedFcn`, `ColorPicker.ValueChangedFcn`, `Hyperlink.HyperlinkClickedFcn`)
+  and take the mixed comment.
+- **A callback no component names reads bare `Callback function`** when loaded so: the model's
+  constructor generates the comment before its own listeners exist, and `not associated with a
+  component` is written only after a binding is added or removed. Six shipped apps show the bare form.
+- **A fresh callback's body is one line of the function's indentation** (12 spaces); one loaded with
+  no code is a truly empty line and never takes its property's default code (`LoadedFromDisk`).
+  The editable section's templates hold whitespace-only lines (`"    "` around a block) and the
+  section is followed by one real blank line.
+- **R2025b binds callbacks from the tree on load** (`restoreCallbackComponentData`): the code
+  copy's `Callbacks` hold `Name` and `Code` alone; the component's callback property holding the
+  function's name is the binding. `SingletonMode` is `'FOCUS'` or absent; `InputParameters` the text `a, b`.
+- `ds6_verify`'s `sourceOf` lists JGraph's own apps by name; a new designer-built app is added there.
+- **App Designer's editor never parses a body.** `RTCUserEditManager` cuts the user's blocks by the lines it marked
+  read-only and hands each callback its lines as typed, so an `if` with no `end` yet is a body line. The layout's
+  cut (`JgsMlappLayout.ReadCallbacks`) follows: a function runs from its `function` line, at the first function's
+  indentation, to the last `end` at that indentation before the next function or the block's `end` (found in the
+  review of DS5; the old cut by block balance made the typed line vanish 70 ms later).
+- **`_reOrderProperties` (read in the bundle):** on a move, the component's builder and its descendants' are marked
+  removed and re-inserted after the previous component in `componentViewOrder`, each child at its parent's index
+  plus one (so a moved container's children come out last first); `_padNames` pads every name again.

@@ -25,8 +25,43 @@ public sealed class DesignBrowserView : UserControl
         _tree.SetResourceReference(ForegroundProperty, ThemeKeys.Text);
         System.Windows.Automation.AutomationProperties.SetAutomationId(_tree, "ComponentBrowser");
         _tree.SelectedItemChanged += (_, _) => Picked();
+        _tree.KeyDown += (_, e) =>
+        {
+            if (e.Key == System.Windows.Input.Key.F2 && _tree.SelectedItem is TreeViewItem { Tag: DesignComponent component })
+            {
+                RenameRequested?.Invoke(this, component);
+                e.Handled = true;
+            }
+        };
+        // A right-click selects the node under the mouse before its menu opens, as App Designer's trees do.
+        _tree.PreviewMouseRightButtonDown += (_, e) =>
+        {
+            for (DependencyObject? node = e.OriginalSource as DependencyObject; node is not null; node = System.Windows.Media.VisualTreeHelper.GetParent(node))
+            {
+                if (node is TreeViewItem item)
+                {
+                    item.IsSelected = true;
+                    item.Focus();
+                    break;
+                }
+            }
+        };
+        var menu = new ContextMenu();
+        var rename = new MenuItem { Header = "Rename...", InputGestureText = "F2" };
+        rename.Click += (_, _) =>
+        {
+            if (_tree.SelectedItem is TreeViewItem { Tag: DesignComponent component })
+            {
+                RenameRequested?.Invoke(this, component);
+            }
+        };
+        menu.Items.Add(rename);
+        _tree.ContextMenu = menu;
         Content = _tree;
     }
+
+    /// <summary>Raised for Rename (F2, the menu) on a component: the window asks for the name and shows what changes (DS5).</summary>
+    public event EventHandler<DesignComponent>? RenameRequested;
 
     /// <summary>The app shown.</summary>
     public DesignDocument? Document

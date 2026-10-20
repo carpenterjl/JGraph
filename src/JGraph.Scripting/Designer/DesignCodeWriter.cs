@@ -56,28 +56,27 @@ public static class DesignCodeWriter
     public static IReadOnlyList<string> PropertiesBlock(AppDesign design, DesignCodeStyle? style = null)
     {
         ArgumentNullException.ThrowIfNull(design);
+        return PropertiesBlock(ViewOrder(design), style);
+    }
+
+    /// <summary>
+    /// The component properties block declaring <paramref name="components"/> in that order: what
+    /// App Designer's block reads once its builders were put in some other order than the browser's
+    /// (a component moved; a file of an older release). The names are padded as
+    /// <c>_padNames</c> pads them: up to 30 characters, two spaces past the longest; longer, two of their own.
+    /// </summary>
+    public static IReadOnlyList<string> PropertiesBlock(IEnumerable<DesignComponent> components, DesignCodeStyle? style = null)
+    {
+        ArgumentNullException.ThrowIfNull(components);
         style ??= DesignCodeStyle.Default;
-        var components = new List<DesignComponent>();
-        Walk(design.Figure);
-
-        void Walk(DesignComponent component)
-        {
-            components.Add(component);
-            foreach (DesignComponent child in BrowserOrder(design, component))
-            {
-                Walk(child);
-            }
-        }
-
-        // Names up to 30 characters line their classes up two spaces past the longest of them;
-        // a longer name takes two spaces of its own.
-        int longest = components.Select(static c => c.CodeName.Length).Where(static n => n <= 30).DefaultIfEmpty(int.MinValue).Max();
+        DesignComponent[] declared = components.ToArray();
+        int longest = declared.Select(static c => c.CodeName.Length).Where(static n => n <= 30).DefaultIfEmpty(int.MinValue).Max();
         var lines = new List<string>
         {
             style.Indent(1) + DesignCodeReader.ComponentPropertiesComment,
             style.Indent(1) + "properties (Access = public)",
         };
-        foreach (DesignComponent c in components)
+        foreach (DesignComponent c in declared)
         {
             int padding = c.CodeName.Length <= 30 ? 2 + longest - c.CodeName.Length : 2;
             lines.Add(style.Indent(2) + c.CodeName + new string(' ', padding) + c.Type);
@@ -85,6 +84,25 @@ public static class DesignCodeWriter
 
         lines.Add(style.Indent(1) + "end");
         return lines;
+    }
+
+    /// <summary>Every component in the order App Designer's component browser lists them (its <c>componentViewOrder</c>): the figure, then each container's children in <see cref="BrowserOrder"/>, depth first.</summary>
+    public static IEnumerable<DesignComponent> ViewOrder(AppDesign design)
+    {
+        ArgumentNullException.ThrowIfNull(design);
+        return Walk(design.Figure);
+
+        IEnumerable<DesignComponent> Walk(DesignComponent component)
+        {
+            yield return component;
+            foreach (DesignComponent child in BrowserOrder(design, component))
+            {
+                foreach (DesignComponent c in Walk(child))
+                {
+                    yield return c;
+                }
+            }
+        }
     }
 
     /// <summary>

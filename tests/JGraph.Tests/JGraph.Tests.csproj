@@ -101,6 +101,9 @@
        pointer moves (designer plan DS4b): its own LayoutResizeEngine, run unaltered under node. -->
   <ItemGroup>
     <Content Include="Scripting\Designer\ResponsiveSplitterOracle.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Designer\CodeLifecycleOracle.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Designer\CodeCallbacksOracle.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Designer\CodeTemplatesOracle.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

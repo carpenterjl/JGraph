@@ -39,6 +39,10 @@
          DesignInspector and DesignPalette. -->
     <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds3\ds3_inspector.json" LogicalName="JGraph.Scripting.designer-inspector.json" />
     <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds3\ds3_palette.json" LogicalName="JGraph.Scripting.designer-palette.json" />
+    <!-- Designer plan DS5: per class, App Designer's callback properties, the comment it writes over a
+         callback bound to each, and the code a new callback starts with, read from its bundle's
+         component models under node (ds5/). Read by DesignCallbacks. -->
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds5\ds5_callbacks.json" LogicalName="JGraph.Scripting.designer-callbacks.json" />
   </ItemGroup>
 
   <ItemGroup>

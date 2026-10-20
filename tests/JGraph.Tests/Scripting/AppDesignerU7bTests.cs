@@ -184,16 +184,26 @@ public class AppDesignerU7bTests : IAsyncLifetime
         Assert.Equal(4, layout.Regions.Single(static r => r.Name == "ClearButtonPushed").LineCount);
     }
 
+    /// <summary>
+    /// A function is open when it has no <c>end</c> of its own before the block's (here the block's
+    /// <c>end</c> comes right after the signature); a block the user is still typing inside a body
+    /// (<c>while true</c> with no end yet) leaves the function whole, as App Designer's editor keeps
+    /// its lines by what it generated, not by what the body says (ADR 0250).
+    /// </summary>
     [Fact]
     public void AFunctionLeftOpen_LeavesNoCallbacksToTell()
     {
-        string text = Insert(_text, "function GoButtonPushed", "            while true");
+        string text = Insert(_text, "function GoButtonPushed", "    end");
 
         JgsMlappLayout layout = JgsMlappLayout.Of(text);
 
         Assert.True(layout.IsAppLayout);
         Assert.False(layout.IsComplete);
         Assert.Equal([MlappRegionKind.EditableSection], layout.Regions.Select(static r => r.Kind));
+
+        JgsMlappLayout typing = JgsMlappLayout.Of(Insert(_text, "function GoButtonPushed", "            while true"));
+        Assert.True(typing.IsComplete);
+        Assert.Contains("            while true", typing.CodeOf(typing.Regions.Single(static r => r.Name == "GoButtonPushed")));
     }
 
     [Fact]
@@ -408,7 +418,7 @@ public class AppDesignerU7bTests : IAsyncLifetime
     public void TextTheLayoutCannotBeReadFrom_IsSavedAndRuns_AndTheCopyIsLeftAndSaidToBeBehind()
     {
         byte[] model = Parts(_app)[Model];
-        string open = Insert(_text, "function GoButtonPushed", "            while true");
+        string open = Insert(_text, "function GoButtonPushed", "    end");
 
         MlappSaveResult result = JgsMlapp.WriteCode(_app, open);
 

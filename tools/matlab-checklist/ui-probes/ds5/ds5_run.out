@@ -1,0 +1,15 @@
+ok    startupFcn(app, a, b) ran with the input arguments: the label reads '5'
+ok    the button's callback ran and called func: the label reads '60'
+ok    the edit field's ValueChangingFcn is bound
+ok    the shared callback ran from the edit field: the label reads '70'
+ok    a second CallbacksApp(1, 1) is the running instance, its startup not run again
+ok    delete(app) deleted it
+ok    code copy: class CallbacksApp
+ok    code copy: callbacks ButtonPushed, EditFieldValueChanged
+ok    code copy: startup startupFcn(a, b)
+ok    code copy: SingletonMode FOCUS
+ok    code copy: the editable section holds the property
+ok    tree: the button names its callback
+ok    tree: the edit field names both callbacks
+ok    reader: callbacks bound to [2 1] components
+14 checks, 0 failed

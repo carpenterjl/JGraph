@@ -456,9 +456,12 @@ public class AppDesignerPaletteTests(ITestOutputHelper output)
     [Fact]
     public void ARenameTakesAFreeNameAndTheCodeFollows()
     {
+        // A startup function in the callbacks block, where App Designer keeps it (DS5): a function
+        // put anywhere else is in a block App Designer writes again from the design.
         string text = AppDesignerDocument.NewAppText().Replace(
-            "        % Code that executes before app deletion",
-            "        function startupFcn(app)\n            app.UIFigure.Name = 'x';\n        end\n\n        % Code that executes before app deletion",
+            "    % Component initialization",
+            "    % Callbacks that handle component events\n    methods (Access = private)\n\n        % Code that executes after component creation\n"
+            + "        function startupFcn(app)\n            app.UIFigure.Name = 'x';\n        end\n    end\n\n    % Component initialization",
             StringComparison.Ordinal);
         using DesignDocument document = DesignDocument.FromText(text, null);
         Assert.Contains("startupFcn", document.NamesInUse());
@@ -467,10 +470,10 @@ public class AppDesignerPaletteTests(ITestOutputHelper output)
         Assert.NotNull(document.Rename(document.Design.Figure, "for"));
         Assert.NotNull(document.Rename(document.Design.Figure, "My Figure"));
         Assert.Null(document.Rename(document.Design.Figure, "MainFigure"));
-        Assert.Contains("app.MainFigure.Name = 'x';", document.Text, StringComparison.Ordinal);
-        Assert.Contains("registerApp(app, app.MainFigure)", document.Text, StringComparison.Ordinal);
+        Assert.Contains("app.MainFigure.Name = 'x';", document.CurrentText, StringComparison.Ordinal);
+        Assert.Contains("registerApp(app, app.MainFigure)", document.CurrentText, StringComparison.Ordinal);
         document.Undo();
-        Assert.Contains("app.UIFigure.Name = 'x';", document.Text, StringComparison.Ordinal);
+        Assert.Contains("app.UIFigure.Name = 'x';", document.CurrentText, StringComparison.Ordinal);
         Assert.Equal("UIFigure", document.Design.Figure.CodeName);
     }
 

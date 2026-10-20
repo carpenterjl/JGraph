@@ -11,22 +11,46 @@ namespace JGraph.Application.Scripting;
 
 /// <summary>
 /// The visual designer's window (designer plan DS2, decision DD3): like R2025b's App Designer, its own
-/// top-level window beside the desktop, with a tab per open app, each tab the app's canvas. The
-/// toolbar is App Designer's canvas tab: save, undo and redo, the grid (shown, snapped to, its
-/// interval) and the alignment guides. DS3: App Designer's component library on the left, and its
-/// component browser over its inspector on the right, both showing the app in the tab chosen.
+/// top-level window beside the desktop, with a tab per open app. Each tab shows the app in one of
+/// two views, switched by the buttons above it (Shift+F7): the Design View, the app's canvas with
+/// App Designer's component library on the left; and the Code View (DS5), the app's class with the
+/// code browser - callbacks, functions, properties - on the left. The component browser, over the
+/// inspector and the Callbacks tab, is on the right in both. The toolbar is App Designer's canvas
+/// tab (save, undo and redo, the grid, the alignment guides) and the Editor tab's insertions: a
+/// callback, a function, a property, the app's input arguments and the single-instance setting.
 /// </summary>
 internal sealed class AppDesignerWindow : Window
 {
+    /// <summary>Switches the active app between its Design View and its Code View (Shift+F7).</summary>
+    public static readonly RoutedCommand ToggleView = new(nameof(ToggleView), typeof(AppDesignerWindow));
+
+    /// <summary>Opens the Add Callback Function dialog.</summary>
+    public static readonly RoutedCommand AddCallback = new(nameof(AddCallback), typeof(AppDesignerWindow));
+
+    /// <summary>Adds a private function to the editable section.</summary>
+    public static readonly RoutedCommand AddFunction = new(nameof(AddFunction), typeof(AppDesignerWindow));
+
+    /// <summary>Adds a private property to the editable section.</summary>
+    public static readonly RoutedCommand AddProperty = new(nameof(AddProperty), typeof(AppDesignerWindow));
+
+    /// <summary>Opens the App Details' Code Options: input arguments and the single running instance.</summary>
+    public static readonly RoutedCommand CodeOptions = new(nameof(CodeOptions), typeof(AppDesignerWindow));
+
     private readonly TabControl _tabs = new();
     private readonly TextBlock _status = new() { Margin = new Thickness(4, 0, 4, 0) };
     private readonly ToggleButton _showGrid = new() { Content = "Show Grid", ToolTip = "Show a grid on the canvas; moves and resizes snap to it" };
     private readonly ToggleButton _snap = new() { Content = "Snap to Grid", IsChecked = true, ToolTip = "Snap to the grid while it is shown" };
     private readonly ComboBox _interval = new() { Width = 56, ToolTip = "Grid interval, in pixels" };
     private readonly ToggleButton _hints = new() { Content = "Alignment Hints", IsChecked = true, ToolTip = "Show alignment guides and snap to them" };
+    private readonly ToggleButton _singleInstance = new() { Content = "Single Running Instance", ToolTip = "App allows only one running instance at a time." };
     private readonly DesignPaletteView _palette = new();
+    private readonly DesignCodeBrowserView _codeBrowser = new();
+    private readonly ContentControl _left = new();
     private readonly DesignBrowserView _browser = new();
     private readonly DesignInspectorView _inspector = new();
+    private readonly DesignCallbacksView _callbacks = new();
+    private readonly TabControl _right = new();
+    private bool _settingSingleInstance;
 
     public AppDesignerWindow()
     {
@@ -50,6 +74,9 @@ internal sealed class AppDesignerWindow : Window
             toggle.Unchecked += (_, _) => ApplyCanvasOptions();
         }
         _interval.SelectionChanged += (_, _) => ApplyCanvasOptions();
+        _singleInstance.Checked += (_, _) => SetSingleInstance(true);
+        _singleInstance.Unchecked += (_, _) => SetSingleInstance(false);
+        System.Windows.Automation.AutomationProperties.SetAutomationId(_singleInstance, "SingleRunningInstance");
 
         var toolbar = new ToolBar();
         toolbar.Items.Add(new Button { Content = "Open…", Command = ApplicationCommands.Open, ToolTip = "Open an app (Ctrl+O)" });
@@ -65,6 +92,12 @@ internal sealed class AppDesignerWindow : Window
         toolbar.Items.Add(_interval);
         toolbar.Items.Add(new Separator());
         toolbar.Items.Add(_hints);
+        toolbar.Items.Add(new Separator());
+        toolbar.Items.Add(new Button { Content = "Callback", Command = AddCallback, ToolTip = "Add a callback function to respond to user interactions" });
+        toolbar.Items.Add(new Button { Content = "Function", Command = AddFunction, ToolTip = "Add a function to organize your code into helper or utility functions" });
+        toolbar.Items.Add(new Button { Content = "Property", Command = AddProperty, ToolTip = "Add a property to create a variable to store and share data between callbacks and functions" });
+        toolbar.Items.Add(new Button { Content = "App Input Arguments…", Command = CodeOptions, ToolTip = "Allow app to take in input arguments" });
+        toolbar.Items.Add(_singleInstance);
 
         // The toolbar's commands are the window's: routed from the focused element, Undo would reach
         // an inspector text box's own (empty) undo instead of the design's.
@@ -76,20 +109,24 @@ internal sealed class AppDesignerWindow : Window
         var statusBar = new StatusBar();
         statusBar.Items.Add(new StatusBarItem { Content = _status });
 
-        // The library, the canvases, and the browser over the inspector, as App Designer lays them out.
+        // The library or the code browser, the apps, and the browser over the inspector's two tabs, as App Designer lays them out.
+        _left.Content = _palette;
+        _right.Items.Add(new TabItem { Header = "Inspector", Content = _inspector });
+        _right.Items.Add(new TabItem { Header = "Callbacks", Content = _callbacks });
+        System.Windows.Automation.AutomationProperties.SetAutomationId(_right, "PropertiesPanel");
         var right = new Grid();
         right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         right.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Star) });
         var rowSplitter = new GridSplitter { Height = 4, HorizontalAlignment = HorizontalAlignment.Stretch };
         Grid.SetRow(rowSplitter, 1);
-        Grid.SetRow(_inspector, 2);
+        Grid.SetRow(_right, 2);
         right.Children.Add(_browser);
         right.Children.Add(rowSplitter);
-        right.Children.Add(_inspector);
+        right.Children.Add(_right);
 
         var body = new Grid();
-        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(190) });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(220) });
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -100,7 +137,7 @@ internal sealed class AppDesignerWindow : Window
         Grid.SetColumn(_tabs, 2);
         Grid.SetColumn(rightSplitter, 3);
         Grid.SetColumn(right, 4);
-        body.Children.Add(_palette);
+        body.Children.Add(_left);
         body.Children.Add(leftSplitter);
         body.Children.Add(_tabs);
         body.Children.Add(rightSplitter);
@@ -127,6 +164,17 @@ internal sealed class AppDesignerWindow : Window
             }
         };
         _inspector.Problem += (_, problem) => _status.Text = problem;
+        _callbacks.Problem += (_, problem) => _status.Text = problem;
+        _callbacks.GoTo += (_, name) => GoToFunction(name);
+        _browser.RenameRequested += (_, component) => RenameComponent(component);
+        _codeBrowser.Problem += (_, problem) => _status.Text = problem;
+        _codeBrowser.Picked += (_, item) => Picked(item);
+        _codeBrowser.GoToRequested += (_, item) => GoTo(item);
+        _codeBrowser.RenameRequested += (_, item) => RenameCodeItem(item);
+        _codeBrowser.InsertRequested += (_, text) => InsertAtCursor(text);
+        _codeBrowser.AddCallbackRequested += (_, _) => ShowAddCallback();
+        _codeBrowser.InputArgumentsRequested += (_, _) => ShowCodeOptions();
+        _codeBrowser.Added += (_, item) => Declared(item.Name, item.Kind == DesignCodeItemKind.Function);
 
         _tabs.SelectionChanged += (_, e) =>
         {
@@ -136,6 +184,9 @@ internal sealed class AppDesignerWindow : Window
                 _palette.Chosen = null;
                 _browser.Document = Active?.Document;
                 _inspector.Document = Active?.Document;
+                _callbacks.Document = Active?.Document;
+                _codeBrowser.Document = Active?.Document;
+                ShowView();
                 ShowState();
             }
         };
@@ -151,8 +202,19 @@ internal sealed class AppDesignerWindow : Window
             (_, e) => e.CanExecute = Active is { } a && a.Document.Selection.Any(a.Document.CanDelete)));
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (_, _) => CloseTab(Active),
             (_, e) => e.CanExecute = Active is not null));
+        CommandBindings.Add(new CommandBinding(ToggleView, (_, _) => SetView(Active, Active?.InCodeView == false),
+            (_, e) => e.CanExecute = Active is not null));
+        CommandBindings.Add(new CommandBinding(AddCallback, (_, _) => ShowAddCallback(),
+            (_, e) => e.CanExecute = Active is { Document.Code: not null }));
+        CommandBindings.Add(new CommandBinding(AddFunction, (_, _) => Declared(Active?.Document.InsertUserFunction("private"), function: true),
+            (_, e) => e.CanExecute = Active is { Document.Code: not null }));
+        CommandBindings.Add(new CommandBinding(AddProperty, (_, _) => Declared(Active?.Document.InsertUserProperty("private"), function: false),
+            (_, e) => e.CanExecute = Active is { Document.Code: not null }));
+        CommandBindings.Add(new CommandBinding(CodeOptions, (_, _) => ShowCodeOptions(),
+            (_, e) => e.CanExecute = Active is { Document.Code: not null }));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Close, Key.W, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
+        InputBindings.Add(new KeyBinding(ToggleView, Key.F7, ModifierKeys.Shift));
     }
 
     /// <summary>Raised after an app was saved, with its file and its class's new text, for an editor tab showing it.</summary>
@@ -188,9 +250,30 @@ internal sealed class AppDesignerWindow : Window
         }
 
         var canvas = new DesignCanvas { Document = document };
-        var item = new TabItem { Content = canvas, ToolTip = path };
-        var app = new AppTab(document, canvas, item);
+        var codeView = new DesignCodeView { Document = document, Visibility = Visibility.Collapsed };
+        var designButton = new ToggleButton { Content = "Design View", IsChecked = true, Margin = new Thickness(0, 0, 2, 0), Padding = new Thickness(10, 2, 10, 2) };
+        var codeButton = new ToggleButton { Content = "Code View", Padding = new Thickness(10, 2, 10, 2), ToolTip = "Switch to Code View (Shift + F7)" };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(designButton, "DesignView");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(codeButton, "CodeView.Switch");
+        var band = new StackPanel { Orientation = Orientation.Horizontal, Height = 36, Margin = new Thickness(6, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center };
+        band.Children.Add(designButton);
+        band.Children.Add(codeButton);
+        var content = new Grid();
+        content.RowDefinitions.Add(new RowDefinition { Height = new GridLength(36) });
+        content.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        Grid.SetRow(canvas, 1);
+        Grid.SetRow(codeView, 1);
+        content.Children.Add(band);
+        content.Children.Add(canvas);
+        content.Children.Add(codeView);
+        var item = new TabItem { Content = content, ToolTip = path };
+        var app = new AppTab(document, canvas, codeView, designButton, codeButton, item);
         item.Tag = app;
+        // The state, not the click: a toggle set by the keyboard or through automation raises no Click.
+        designButton.Checked += (_, _) => SetView(app, code: false);
+        codeButton.Checked += (_, _) => SetView(app, code: true);
+        designButton.Unchecked += (_, _) => { if (codeButton.IsChecked != true) { designButton.IsChecked = true; } };
+        codeButton.Unchecked += (_, _) => { if (designButton.IsChecked != true) { codeButton.IsChecked = true; } };
         canvas.DesignChanged += (_, _) =>
         {
             item.Header = app.Header;
@@ -215,12 +298,32 @@ internal sealed class AppDesignerWindow : Window
                 _status.Text = problem;
             }
         };
+        codeView.Problem += (_, problem) =>
+        {
+            if (ReferenceEquals(Active, app))
+            {
+                _status.Text = problem;
+            }
+        };
+        document.Changed += (_, _) =>
+        {
+            item.Header = app.Header;
+            if (ReferenceEquals(Active, app))
+            {
+                // The toolbar's single-instance toggle follows the document through an undo too.
+                ShowView();
+                ShowState();
+            }
+        };
         item.Header = app.Header;
         _tabs.Items.Add(item);
         _tabs.SelectedItem = item;
         _browser.Document = document;
         _inspector.Document = document;
+        _callbacks.Document = document;
+        _codeBrowser.Document = document;
         ApplyCanvasOptions();
+        ShowView();
         ShowState();
         Bring();
         canvas.Focus();
@@ -275,6 +378,243 @@ internal sealed class AppDesignerWindow : Window
         }
     }
 
+    // --- the two views (DS5) -----------------------------------------------------------------------
+
+    /// <summary>Shows <paramref name="app"/> in its Code View (<paramref name="code"/>) or its Design View.</summary>
+    private void SetView(AppTab? app, bool code)
+    {
+        if (app is null)
+        {
+            return;
+        }
+
+        app.InCodeView = code;
+        app.Canvas.Visibility = code ? Visibility.Collapsed : Visibility.Visible;
+        app.CodeView.Visibility = code ? Visibility.Visible : Visibility.Collapsed;
+        app.DesignButton.IsChecked = !code;
+        app.CodeButton.IsChecked = code;
+        app.DesignButton.ToolTip = code ? "Switch to Design View (Shift + F7)" : null;
+        app.CodeButton.ToolTip = code ? null : "Switch to Code View (Shift + F7)";
+        if (code)
+        {
+            app.CodeView.Editor.FocusEditor();
+        }
+        else
+        {
+            app.CodeView.Push();
+            app.Canvas.Focus();
+        }
+
+        if (ReferenceEquals(Active, app))
+        {
+            ShowView();
+        }
+    }
+
+    /// <summary>The left pane follows the active app's view: the library in the Design View, the code browser in the Code View.</summary>
+    private void ShowView()
+    {
+        bool code = Active?.InCodeView == true;
+        _left.Content = code ? _codeBrowser : _palette;
+        _settingSingleInstance = true;
+        _singleInstance.IsChecked = Active?.Document.SingleInstance == true;
+        _singleInstance.IsEnabled = Active is { Document.Code: not null };
+        _settingSingleInstance = false;
+    }
+
+    private void SetSingleInstance(bool on)
+    {
+        if (_settingSingleInstance || Active is not { Document: { Code: not null } document })
+        {
+            return;
+        }
+
+        document.SetSingleInstance(on);
+    }
+
+    /// <summary>Shows the Code View with the caret in the function <paramref name="name"/>.</summary>
+    private void GoToFunction(string name)
+    {
+        if (Active is not { } app)
+        {
+            return;
+        }
+
+        SetView(app, code: true);
+        if (!app.CodeView.GoToFunction(name))
+        {
+            _status.Text = $"The code has no function {name}.";
+        }
+    }
+
+    /// <summary>A code browser row picked: the Code View scrolls to its code, without taking the caret (App Designer's "selection" go-to).</summary>
+    private void Picked(DesignCodeItem item)
+    {
+        if (Active is not { InCodeView: true } app)
+        {
+            return;
+        }
+
+        if (item.Kind == DesignCodeItemKind.Property)
+        {
+            app.CodeView.GoToProperty(item.Name, selectionOnly: true);
+        }
+        else
+        {
+            app.CodeView.GoToFunction(item.Name, selectionOnly: true);
+        }
+    }
+
+    private void GoTo(DesignCodeItem item)
+    {
+        if (Active is not { } app)
+        {
+            return;
+        }
+
+        SetView(app, code: true);
+        bool found = item.Kind == DesignCodeItemKind.Property ? app.CodeView.GoToProperty(item.Name) : app.CodeView.GoToFunction(item.Name);
+        if (!found)
+        {
+            _status.Text = $"The code has no {item.Name}.";
+        }
+    }
+
+    /// <summary>After Add Function (<paramref name="function"/>) or Add Property: the Code View, with the new name selected so that typing replaces it.</summary>
+    private void Declared(string? name, bool function)
+    {
+        if (name is null || Active is not { } app)
+        {
+            return;
+        }
+
+        SetView(app, code: true);
+        app.CodeView.SelectDeclaration(name, function);
+    }
+
+    private void InsertAtCursor(string text)
+    {
+        if (Active is not { } app)
+        {
+            return;
+        }
+
+        SetView(app, code: true);
+        if (!app.CodeView.InsertAtCaret(text))
+        {
+            _status.Text = "The cursor is on a line App Designer generates; put it in your code to insert there.";
+        }
+    }
+
+    private void ShowAddCallback()
+    {
+        if (Active is not { Document: { Code: not null } document } app)
+        {
+            return;
+        }
+
+        app.CodeView.Push();
+        if (AppDesignerDialogs.AddCallback(this, document, document.Selection is [var one] ? one : null) is { } name)
+        {
+            SetView(app, code: true);
+            _codeBrowser.ShowCallback(name);
+            app.CodeView.GoToFunction(name);
+        }
+    }
+
+    private void ShowCodeOptions()
+    {
+        if (Active is not { Document: { Code: not null } document } app)
+        {
+            return;
+        }
+
+        app.CodeView.Push();
+        if (AppDesignerDialogs.CodeOptions(this, document).Arguments)
+        {
+            // App Designer lands in the Code View, at the startup function, after a change of the input
+            // arguments alone (InputArgumentsCommand); the single-instance setting switches nothing.
+            SetView(app, code: true);
+            if (document.Callbacks.FirstOrDefault(static c => c.IsStartup) is { } startup)
+            {
+                app.CodeView.GoToFunction(startup.Name);
+            }
+        }
+    }
+
+    /// <summary>Renames a component after showing what changes with it: the lines of the user's code that name it, and the callbacks named after it.</summary>
+    private void RenameComponent(DesignComponent component)
+    {
+        if (Active is not { Document: var document } app || !document.IsEditable(component, "CodeName") && document.IsRegion(component))
+        {
+            return;
+        }
+
+        app.CodeView.Push();
+        string? name = AppDesignerDialogs.Rename(this, $"Rename {component.CodeName}", component.CodeName,
+            candidate => DesignNames.WhyNotName(candidate, component.CodeName, document.NamesInUse()),
+            candidate => Preview(document.RenamePreview(component, Probe(component.CodeName, candidate)), component.CodeName, candidate));
+        if (name is not null && document.Rename(component, name) is { } refused)
+        {
+            _status.Text = refused;
+        }
+    }
+
+    /// <summary>Renames a callback, function or property from the code browser after showing what changes.</summary>
+    private void RenameCodeItem(DesignCodeItem item)
+    {
+        if (Active is not { Document: var document } app || document.Code is null)
+        {
+            return;
+        }
+
+        app.CodeView.Push();
+        DesignCallback? callback = item.Kind == DesignCodeItemKind.Callback ? document.Callbacks.FirstOrDefault(c => c.Name == item.Name) : null;
+        if (item.Kind == DesignCodeItemKind.Callback && callback is null)
+        {
+            return;
+        }
+
+        string? name = AppDesignerDialogs.Rename(this, $"Rename {item.Name}", item.Name,
+            candidate => document.WhyNotFunctionName(candidate, item.Name),
+            candidate => Preview(document.RenamePreview(item.Name, Probe(item.Name, candidate), item.Kind == DesignCodeItemKind.Property), item.Name, candidate));
+        if (name is null)
+        {
+            return;
+        }
+
+        string? refused = item.Kind switch
+        {
+            DesignCodeItemKind.Callback => document.RenameCallback(callback!, name),
+            DesignCodeItemKind.Function => document.RenameUserFunction(item.Name, name),
+            _ => document.RenameUserProperty(item.Name, name),
+        };
+        if (refused is not null)
+        {
+            _status.Text = refused;
+        }
+        else
+        {
+            SetView(app, code: true);
+            if (item.Kind == DesignCodeItemKind.Property)
+            {
+                app.CodeView.GoToProperty(name);
+            }
+            else
+            {
+                app.CodeView.GoToFunction(name);
+            }
+        }
+    }
+
+    /// <summary>The name a preview is worked out for: <paramref name="candidate"/> once it is a name of its own; before that, one that changes every line the rename would, so the lines show.</summary>
+    private static string Probe(string current, string candidate) =>
+        candidate.Length > 0 && candidate != current ? candidate : current + "_";
+
+    /// <summary>The preview's lines: each line the rename changes, with its number, and as it would read once <paramref name="to"/> is a name of its own.</summary>
+    private static IReadOnlyList<string> Preview(IReadOnlyList<(int Line, string Before, string After)> changes, string from, string to) =>
+        changes.Select(c => $"{c.Line}: {c.Before.Trim()}" + (to.Length > 0 && to != from ? $"  →  {c.After.Trim()}" : string.Empty)).ToArray();
+
     /// <summary>What is selected, and what the app's state allows, on the status line.</summary>
     private void ShowState()
     {
@@ -305,6 +645,7 @@ internal sealed class AppDesignerWindow : Window
 
         string note = !document.CanSave && document.ReadProblems.Count > 0
             ? $"  View only: createComponents has {document.ReadProblems.Count} line(s) the designer cannot place, so a save would lose them."
+            : document.Code is null ? "  View only: " + document.CodeProblem
             : document.Runtime.Problems.Count > 0
                 ? $"  The canvas could not make everything: {string.Join(" ", document.Runtime.Problems)}"
                 : string.Empty;
@@ -322,6 +663,12 @@ internal sealed class AppDesignerWindow : Window
 
         try
         {
+            // Text the document would not take is not saved over: the status line says what to put right.
+            if (!app.CodeView.Push())
+            {
+                return false;
+            }
+
             _status.Text = app.Document.Save();
             AppSaved?.Invoke(app.Document.Path!, app.Document.Text);
             app.Item.Header = app.Header;
@@ -334,9 +681,20 @@ internal sealed class AppDesignerWindow : Window
         }
     }
 
-    /// <summary>Asks about unsaved edits; false when the user cancels.</summary>
+    /// <summary>Asks about unsaved edits, and about code the document would not take; false when the user cancels.</summary>
     private bool ConfirmClose(AppTab app)
     {
+        if (!app.CodeView.Push())
+        {
+            MessageBoxResult keep = MessageBox.Show(this,
+                $"The code typed into {Path.GetFileName(app.Document.Path)} no longer matches the app's structure, so it cannot be kept. Close anyway and lose it?",
+                "App Designer", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (keep != MessageBoxResult.Yes)
+            {
+                return false;
+            }
+        }
+
         if (!app.Document.IsDirty)
         {
             return true;
@@ -362,10 +720,13 @@ internal sealed class AppDesignerWindow : Window
 
         _tabs.Items.Remove(app.Item);
         app.Canvas.Document = null;
+        app.CodeView.Document = null;
         if (ReferenceEquals(_inspector.Document, app.Document))
         {
             _inspector.Document = null;
+            _callbacks.Document = null;
             _browser.Document = null;
+            _codeBrowser.Document = null;
         }
 
         app.Document.Dispose();
@@ -389,18 +750,23 @@ internal sealed class AppDesignerWindow : Window
         }
 
         _inspector.Document = null;
+        _callbacks.Document = null;
         _browser.Document = null;
+        _codeBrowser.Document = null;
         foreach (AppTab app in Apps.ToList())
         {
             app.Canvas.Document = null;
+            app.CodeView.Document = null;
             app.Document.Dispose();
         }
 
         _tabs.Items.Clear();
     }
 
-    private sealed record AppTab(DesignDocument Document, DesignCanvas Canvas, TabItem Item)
+    private sealed record AppTab(DesignDocument Document, DesignCanvas Canvas, DesignCodeView CodeView, ToggleButton DesignButton, ToggleButton CodeButton, TabItem Item)
     {
+        public bool InCodeView { get; set; }
+
         public string Header => Path.GetFileName(Document.Path) + (Document.IsDirty ? " *" : string.Empty);
     }
 }

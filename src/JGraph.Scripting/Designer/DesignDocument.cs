@@ -31,6 +31,8 @@ public sealed partial class DesignDocument : IDisposable
     private Gesture? _gesture;
     private int _version;
     private int _savedVersion;
+    private readonly string _newline;
+    private readonly bool _trailingNewline;
 
     private DesignDocument(string text, string? path, DesignReadResult read)
     {
@@ -39,6 +41,9 @@ public sealed partial class DesignDocument : IDisposable
         Style = read.Style;
         Design = read.Design!;
         ReadProblems = read.Problems;
+        Code = ReadCode(text, Design);
+        _newline = text.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+        _trailingNewline = text.EndsWith('\n');
         Runtime = DesignRuntime.Build(Design, path is null ? null : System.IO.Path.GetDirectoryName(path), Style.Theme);
         LayOutRegions();
     }
@@ -73,11 +78,11 @@ public sealed partial class DesignDocument : IDisposable
     /// </summary>
     public IReadOnlyList<string> ReadProblems { get; }
 
-    /// <summary>Whether the design can be saved: it holds everything its code does.</summary>
-    public bool CanSave => ReadProblems.Count == 0 && Path is not null;
+    /// <summary>Whether the design can be saved: it holds everything its code does, and the code around the components can be told from the user's (<see cref="Code"/>).</summary>
+    public bool CanSave => ReadProblems.Count == 0 && Path is not null && Code is not null;
 
     /// <summary>Whether there are edits not saved.</summary>
-    public bool IsDirty => _version != _savedVersion;
+    public bool IsDirty => _version != _savedVersion || _textDirty;
 
     /// <summary>The selected components, all in one container; the figure is selected alone.</summary>
     public IReadOnlyList<DesignComponent> Selection => _selection;
@@ -518,8 +523,16 @@ public sealed partial class DesignDocument : IDisposable
     private void Settled(Edit[] step)
     {
         _boxes = null;
-        DesignComponent[] touched = step.Where(static e => e.Selects).Select(static e => e.Component)
+        _renderedText = null;
+        DesignComponent[] touched = step.Where(static e => e.Selects && !e.KeepsSelection).Select(static e => e.Component)
             .Where(c => IsInDesign(c)).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
+        if (touched.Length == 0 && step.Any(static e => e.KeepsSelection) && step.All(static e => e.KeepsSelection || !e.Selects))
+        {
+            // An edit of the code around the components (DS5) leaves the selection where it was - the
+            // properties it unbinds along the way select nothing either.
+            touched = _selection.Where(IsInDesign).ToArray();
+        }
+
         _selection = touched.Length > 0 ? touched : [Design.Figure];
         DesignTheme theme = DesignCodeStyle.ThemeOf(Design);
         if (theme != Style.Theme)
@@ -724,6 +737,29 @@ public sealed partial class DesignDocument : IDisposable
             edits.Add(new DeleteEdit(component, parent, IndexIn(parent, component)));
         }
 
+        // A callback the deleted components alone were bound to, whose code is still what it was made
+        // with, goes with them (CallbackBindingCollection.removeBinding without keepOrphan, DS5); one
+        // with code of its own stays, no longer associated with a component. Taken out last to first,
+        // so that an undo, which replays the step backwards, puts each back at its own index.
+        if (Code is not null)
+        {
+            var deleted = new HashSet<DesignComponent>(gone.SelectMany(static g => Walk(g)), ReferenceEqualityComparer.Instance);
+            for (int i = Code.Callbacks.Count - 1; i >= 0; i--)
+            {
+                DesignCallback callback = Code.Callbacks[i];
+                if (callback.IsGenerated || callback.IsStartup)
+                {
+                    continue;
+                }
+
+                IReadOnlyList<DesignCallbackBinding> bindings = DesignCallbacks.BindingsOf(Design, callback.Name);
+                if (bindings.Count > 0 && bindings.All(b => deleted.Contains(b.Component)) && callback.IsDefaultOrEmpty)
+                {
+                    edits.Add(new CallbackListEdit(Design.Figure, callback, i, Add: false));
+                }
+            }
+        }
+
         return edits;
     }
 
@@ -879,15 +915,18 @@ public sealed partial class DesignDocument : IDisposable
     // --- names (DS3) -----------------------------------------------------------------------------
 
     /// <summary>
-    /// The names a component's code name may not take: every component's, and
-    /// every function, property and the class the app's code declares.
+    /// The names a component's code name may not take (App Designer's <c>getCodeNameTypeHashmap</c>):
+    /// every component's, every function, property and the class the app's code declares, and the
+    /// members every app inherits from <c>matlab.apps.AppBase</c>.
     /// </summary>
     public IReadOnlyList<string> NamesInUse()
     {
         var names = new List<string>(Design.Components.Select(static c => c.CodeName));
+        names.AddRange(DesignNames.AppDesignerKeywords);
         names.AddRange(Design.Components.SelectMany(static c => c.Properties).Select(static p => p.Value).OfType<CallbackValue>().Select(static c => c.Method));
+        names.AddRange(Callbacks.Select(static c => c.Name));
         bool inProperties = false;
-        foreach (string raw in Text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n'))
+        foreach (string raw in CurrentText.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n'))
         {
             string line = raw.Trim();
             if (ClassLine().Match(line) is { Success: true } cls)
@@ -935,8 +974,40 @@ public sealed partial class DesignDocument : IDisposable
         }
 
         EndGesture(commit: false);
-        Do([new RenameEdit(component, component.CodeName, name)]);
+        Do([new RenameEdit(component, component.CodeName, name), .. CallbackRenames(component, component.CodeName, name)]);
         return null;
+    }
+
+    /// <summary>
+    /// The callbacks renamed with their component (<c>CodeController.renameComponent</c>): a callback
+    /// bound to the component alone, still named as App Designer named it (every callback counts as
+    /// named so once an app is loaded; one the user renamed no longer does), whose name holds the old
+    /// code name, takes the new one in its place, made unique.
+    /// </summary>
+    private IEnumerable<Edit> CallbackRenames(DesignComponent component, string from, string to)
+    {
+        if (Code is null)
+        {
+            yield break;
+        }
+
+        var inUse = NamesInUse().ToList();
+        foreach (DesignCallback callback in Code.Callbacks.Where(static c => !c.IsGenerated && !c.IsStartup && c.Name == c.GeneratedName))
+        {
+            IReadOnlyList<DesignCallbackBinding> bindings = DesignCallbacks.BindingsOf(Design, callback.Name);
+            int at = callback.Name.IndexOf(from, StringComparison.Ordinal);
+            if (bindings.Count != 1 || !ReferenceEquals(bindings[0].Component, component) || at < 0)
+            {
+                continue;
+            }
+
+            string renamed = DesignCallbacks.Unique(callback.Name.Remove(at, from.Length).Insert(at, to), inUse);
+            if (renamed != callback.Name)
+            {
+                inUse.Add(renamed);
+                yield return new RenameCallbackEdit(Design.Figure, callback, callback.Name, renamed, Generated: true);
+            }
+        }
     }
 
     /// <summary>
@@ -1005,7 +1076,7 @@ public sealed partial class DesignDocument : IDisposable
         return at < 0 ? text : text[..at] + with + text[(at + find.Length)..];
     }
 
-    /// <summary>Renames every reference to <paramref name="from"/> in the design and every <c>app.from</c> in the code.</summary>
+    /// <summary>Renames every reference to <paramref name="from"/> in the design and every <c>app.from</c> in the user's code.</summary>
     private void RenameReferences(string from, string to)
     {
         foreach (DesignComponent c in Design.Components)
@@ -1019,7 +1090,14 @@ public sealed partial class DesignDocument : IDisposable
             }
         }
 
-        Text = Regex.Replace(Text, @"\b" + DesignValueText.AppObjectName + @"\." + Regex.Escape(from) + @"\b", DesignValueText.AppObjectName + "." + to);
+        if (Code is not null)
+        {
+            RenameComponentInUserCode(from, to);
+        }
+        else
+        {
+            Text = Regex.Replace(Text, @"\b" + DesignValueText.AppObjectName + @"\." + Regex.Escape(from) + @"\b", DesignValueText.AppObjectName + "." + to);
+        }
     }
 
     [GeneratedRegex(@"^classdef\s+(?:\([^)]*\)\s*)?(\w+)")]
@@ -1034,9 +1112,9 @@ public sealed partial class DesignDocument : IDisposable
     // --- saving ----------------------------------------------------------------------------------
 
     /// <summary>
-    /// Saves the design into its app: the component properties block and <c>createComponents</c>
-    /// written again, every other line kept, and App Designer's component tree brought up to date
-    /// with them (DS6).
+    /// Saves the design into its app: the class as the design and its code now stand
+    /// (<see cref="CurrentText"/>: every generated part written again, the user's code as it is), and
+    /// App Designer's component tree brought up to date with it (DS6).
     /// </summary>
     /// <returns>What the save did, for the status line.</returns>
     /// <exception cref="InvalidOperationException">The design cannot be saved (<see cref="CanSave"/>).</exception>
@@ -1047,18 +1125,15 @@ public sealed partial class DesignDocument : IDisposable
         {
             throw new InvalidOperationException(Path is null
                 ? "The app has no file to save into."
+                : Code is null ? CodeProblem!
                 : "The app's createComponents has lines the designer cannot place, so a save would lose them: "
                     + string.Join(" ", ReadProblems));
         }
 
-        string text = DesignCodeWriter.Splice(Text, Design, Style)
-            ?? throw new System.IO.IOException("The app's code does not have its component properties and createComponents where App Designer puts them.");
-
-        // A responsive app's generated callback and widths, as App Designer writes them again on every save (DS4b).
-        text = DesignResponsive.Splice(text, Design, Style, c => BoxOf(c) is { } box ? box.Box.Size : null);
-        (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, text);
+        (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText);
         Text = saved;
         _savedVersion = _version;
+        _textDirty = false;
         OnChanged();
         return $"Saved {Path}.{AppDesignerDocument.StatusNote(result)}";
     }
@@ -1097,6 +1172,9 @@ public sealed partial class DesignDocument : IDisposable
     {
         /// <summary>Whether the component is selected once the edit is done or undone (not a sibling that followed it).</summary>
         public bool Selects { get; init; } = true;
+
+        /// <summary>Whether the edit, selecting nothing itself, leaves the selection as it was (an edit of the code, DS5).</summary>
+        public virtual bool KeepsSelection => false;
 
         public abstract void Do(DesignDocument document);
 
@@ -1148,6 +1226,7 @@ public sealed partial class DesignDocument : IDisposable
             document.Runtime.SetParent(Component, To);
             From.Remove(Component);
             To.Add(Component);
+            document.NoteMoved(Component);
         }
 
         public override void Undo(DesignDocument document)
@@ -1155,6 +1234,7 @@ public sealed partial class DesignDocument : IDisposable
             document.Runtime.SetParent(Component, From);
             To.Remove(Component);
             From.Insert(System.Math.Min(_at >= 0 ? _at : Index, From.Children.Count), Component);
+            document.NoteMoved(Component);
         }
     }
 
@@ -1174,6 +1254,7 @@ public sealed partial class DesignDocument : IDisposable
             }
 
             Put(After);
+            document.NoteBinding(Component, Name, Before, After);
         }
 
         public override void Undo(DesignDocument document)
@@ -1184,6 +1265,7 @@ public sealed partial class DesignDocument : IDisposable
             }
 
             Put(Before);
+            document.NoteBinding(Component, Name, After, Before);
         }
 
         private void Put(DesignValue? value)
@@ -1199,6 +1281,60 @@ public sealed partial class DesignDocument : IDisposable
         }
     }
 
+    /// <summary>
+    /// A binding put on or taken off a callback (<c>CallbackBindingCollection</c>'s <c>bindingAdded</c>
+    /// and <c>bindingRemoved</c>, DS5): App Designer generates the callback's comment again; the
+    /// callback's bindings keep the order they were made in; and the first binding of a callback
+    /// made with no code gives it its default code (<c>CallbackModel._onGenerateDefaultCode</c>).
+    /// </summary>
+    /// <param name="component">The component whose property changed.</param>
+    /// <param name="designProperty">The property, by the design's name for it.</param>
+    /// <param name="before">What the property held before; a callback value is a binding taken off.</param>
+    /// <param name="after">What it holds now; a callback value is a binding put on.</param>
+    private void NoteBinding(DesignComponent component, string designProperty, DesignValue? before, DesignValue? after)
+    {
+        if (Code is null)
+        {
+            return;
+        }
+
+        var binding = new DesignCallbackBinding(component, DesignCallbacks.PropertyName(designProperty));
+        if (before is CallbackValue was && Code.Find(was.Method) is { } lost)
+        {
+            lost.BindingsChanged = true;
+            lost.Bindings.Remove(binding);
+        }
+
+        if (after is CallbackValue now && Code.Find(now.Method) is { } got)
+        {
+            got.BindingsChanged = true;
+            if (!got.Bindings.Contains(binding))
+            {
+                got.Bindings.Add(binding);
+            }
+
+            if (got.Bindings.Count == 1 && got.DefaultBody is [""])
+            {
+                got.DefaultBody = DesignCallbacks.R2025b.DefaultBody(component, binding.Property);
+            }
+        }
+    }
+
+    /// <summary>Every binding on <paramref name="component"/> and the components inside it noted as put on (<paramref name="added"/>) or taken off: a component added, deleted, or back.</summary>
+    private void NoteBindings(DesignComponent component, bool added)
+    {
+        foreach (DesignComponent c in Walk(component))
+        {
+            foreach ((string property, DesignValue value) in c.Properties.ToArray())
+            {
+                if (value is CallbackValue)
+                {
+                    NoteBinding(c, property, added ? null : value, added ? value : null);
+                }
+            }
+        }
+    }
+
     /// <summary>A component added to a container (DS3): at <paramref name="Index"/> among its children, or last.</summary>
     private sealed record AddEdit(DesignComponent Component, DesignComponent Parent, int? Index) : Edit(Component)
     {
@@ -1206,12 +1342,14 @@ public sealed partial class DesignDocument : IDisposable
         {
             Parent.Insert(System.Math.Min(Index ?? Parent.Children.Count, Parent.Children.Count), Component);
             document.Runtime.MakeNew(Component);
+            document.NoteBindings(Component, added: true);
         }
 
         public override void Undo(DesignDocument document)
         {
             document.Runtime.Remove(Component);
             Parent.Remove(Component);
+            document.NoteBindings(Component, added: false);
         }
     }
 
@@ -1225,12 +1363,14 @@ public sealed partial class DesignDocument : IDisposable
             _at = IndexIn(Parent, Component);
             document.Runtime.Remove(Component);
             Parent.Remove(Component);
+            document.NoteBindings(Component, added: false);
         }
 
         public override void Undo(DesignDocument document)
         {
             Parent.Insert(System.Math.Min(_at >= 0 ? _at : Index, Parent.Children.Count), Component);
             document.Runtime.MakeNew(Component);
+            document.NoteBindings(Component, added: true);
         }
     }
 

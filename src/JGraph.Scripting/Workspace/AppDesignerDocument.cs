@@ -148,44 +148,7 @@ public static partial class AppDesignerDocument
         figure.Set("Position", NumericValue.Row(100, 100, 640, 480));
         figure.Set("Name", new CharValue("MATLAB App"));
         var design = new AppDesign(figure);
-        var lines = new List<string> { "classdef app1 < matlab.apps.AppBase", string.Empty };
-        lines.AddRange(DesignCodeWriter.PropertiesBlock(design));
-        lines.Add(string.Empty);
-        lines.Add("    % Component initialization");
-        lines.Add("    methods (Access = private)");
-        lines.Add(string.Empty);
-        lines.AddRange(DesignCodeWriter.Method(design));
-        lines.AddRange(
-        [
-            "    end",
-            string.Empty,
-            "    % App creation and deletion",
-            "    methods (Access = public)",
-            string.Empty,
-            "        % Construct app",
-            "        function app = app1",
-            string.Empty,
-            "            % Create UIFigure and components",
-            "            createComponents(app)",
-            string.Empty,
-            "            % Register the app with App Designer",
-            "            registerApp(app, app.UIFigure)",
-            string.Empty,
-            "            if nargout == 0",
-            "                clear app",
-            "            end",
-            "        end",
-            string.Empty,
-            "        % Code that executes before app deletion",
-            "        function delete(app)",
-            string.Empty,
-            "            % Delete UIFigure when app is deleted",
-            "            delete(app.UIFigure)",
-            "        end",
-            "    end",
-            "end",
-        ]);
-        return string.Join('\n', lines) + "\n";
+        return DesignClassWriter.Render(design, new DesignCode("app1"));
     }
 
     /// <summary>

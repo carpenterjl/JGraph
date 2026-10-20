@@ -427,6 +427,47 @@ public class AppDesignerModelSaveTests(ITestOutputHelper output)
     }
 
     /// <summary>
+    /// An app built with the designer's code edits (DS5): a button with its callback, an edit field
+    /// bound to a second callback and to the button's as well, a startup function taking two input
+    /// parameters, a single running instance, and a property and a function of the user's; what the
+    /// probe <c>ds5_run</c> runs in R2025b.
+    /// </summary>
+    private static string CallbacksAppText()
+    {
+        static DesignComponent Make(string type, string name, params double[] position)
+        {
+            var component = new DesignComponent(name, DesignCatalog.R2025b.ByType(type)!);
+            component.Set("Position", NumericValue.Row(position));
+            return component;
+        }
+
+        DesignComponent figure = Make("matlab.ui.Figure", "UIFigure", 100, 100, 640, 480);
+        figure.Set("Name", new CharValue("MATLAB App"));
+        var design = new AppDesign(figure);
+        figure.Add(Make("matlab.ui.control.Button", "Button", 20, 420, 100, 23));
+        figure.Add(Make("matlab.ui.control.EditField", "EditField", 20, 380, 100, 22));
+        figure.Add(Make("matlab.ui.control.Label", "Label", 140, 420, 200, 22));
+        using var document = DesignDocument.FromText(DesignClassWriter.Render(design, new DesignCode("CallbacksApp")), null);
+        DesignComponent button = document.Design.Find("Button")!;
+        DesignComponent field = document.Design.Find("EditField")!;
+        Assert.Null(document.AddCallback(button, "ButtonPushedFcn"));
+        Assert.Null(document.AddCallback(field, "ValueChangedFcn"));
+        Assert.Null(document.BindCallback(field, "ValueChangingFcn", "ButtonPushed"));
+        Assert.Null(document.SetInputParameters("a, b"));
+        document.SetSingleInstance(true);
+        Assert.Equal("Property", document.InsertUserProperty("private"));
+        Assert.Equal("func", document.InsertUserFunction("private"));
+        string text = document.CurrentText
+            .Replace("        Property % Description", "        Count = 0 % how often the button was pushed", StringComparison.Ordinal)
+            .Replace("        function results = func(app)\n            \n", "        function results = func(app)\n            results = app.Count * 10;\n", StringComparison.Ordinal)
+            .Replace("        function startupFcn(app, a, b)\n            \n", "        function startupFcn(app, a, b)\n            app.Count = a + b;\n            app.Label.Text = sprintf('%d', app.Count);\n", StringComparison.Ordinal)
+            .Replace("        function ButtonPushed(app, event)\n            \n", "        function ButtonPushed(app, event)\n            app.Count = app.Count + 1;\n            app.Label.Text = sprintf('%d', func(app));\n", StringComparison.Ordinal);
+        Assert.True(document.ApplyEditedText(text));
+        Assert.Equal(text, document.CurrentText);
+        return text;
+    }
+
+    /// <summary>
     /// A new app written here holds App Designer's whole model: the tree, the copy of the code App
     /// Designer reads (class name, editable section, callbacks, startup function) and the app data,
     /// with the metadata parts; brought to its own design again, nothing in its tree changes. Every
@@ -442,6 +483,7 @@ public class AppDesignerModelSaveTests(ITestOutputHelper output)
         {
             ("DesignerSpecApp", File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Scripting", "Designer", "DesignerSpecApp.m"))),
             ("NewApp", JGraph.Scripting.Workspace.AppDesignerDocument.NewAppText().Replace("app1", "NewApp", StringComparison.Ordinal)),
+            ("CallbacksApp", CallbacksAppText()),
         };
         sources.AddRange(ShippedApps().Select(static a => (Path.GetFileNameWithoutExtension(a), JgsMlapp.ReadCode(a))));
         int written = 0;

@@ -399,56 +399,10 @@ public static class DesignResponsive
             grid.Add(panel);
         }
 
-        DesignCodeStyle style = DesignCodeStyle.Default;
-        var lines = new List<string> { "classdef app1 < matlab.apps.AppBase", string.Empty };
-        lines.AddRange(DesignCodeWriter.PropertiesBlock(design, style));
-        lines.Add(string.Empty);
-        lines.AddRange(PropertiesBlock(panels, style));
-        lines.Add(string.Empty);
-        lines.Add(style.Indent(1) + "% Callbacks that handle component events");
-        lines.Add(style.Indent(1) + "methods (Access = private)");
-        lines.Add(string.Empty);
-        lines.Add(style.Indent(2) + CallbackComment);
-        lines.Add(style.Indent(2) + $"function {Callback}(app, event)");
-        lines.AddRange(Body(design)!.Select(l => style.Indent(3) + l));
-        lines.Add(style.Indent(2) + "end");
-        lines.Add(style.Indent(1) + "end");
-        lines.Add(string.Empty);
-        lines.Add(style.Indent(1) + "% Component initialization");
-        lines.Add(style.Indent(1) + "methods (Access = private)");
-        lines.Add(string.Empty);
-        lines.AddRange(DesignCodeWriter.Method(design, style));
-        lines.AddRange(
-        [
-            "    end",
-            string.Empty,
-            "    % App creation and deletion",
-            "    methods (Access = public)",
-            string.Empty,
-            "        % Construct app",
-            "        function app = app1",
-            string.Empty,
-            "            % Create UIFigure and components",
-            "            createComponents(app)",
-            string.Empty,
-            "            % Register the app with App Designer",
-            "            registerApp(app, app.UIFigure)",
-            string.Empty,
-            "            if nargout == 0",
-            "                clear app",
-            "            end",
-            "        end",
-            string.Empty,
-            "        % Code that executes before app deletion",
-            "        function delete(app)",
-            string.Empty,
-            "            % Delete UIFigure when app is deleted",
-            "            delete(app.UIFigure)",
-            "        end",
-            "    end",
-            "end",
-        ]);
-        return string.Join('\n', lines) + "\n";
+        // The widths block and the layout callback are the class writer's to write for a template (DS5).
+        var code = new DesignCode("app1");
+        code.Callbacks.Add(new DesignCallback(Callback, isGenerated: true));
+        return DesignClassWriter.Render(design, code);
     }
 
     /// <summary>A number as App Designer's code engine prints one (JavaScript's <c>String(n)</c>): 220, 220.5.</summary>

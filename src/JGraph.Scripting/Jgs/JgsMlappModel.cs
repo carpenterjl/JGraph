@@ -192,7 +192,10 @@ internal static partial class JgsMlappModel
             }
             else
             {
-                fields.Add((name, value));
+                // Where the serializer would have put it: before the first field that comes after it.
+                int rank = Array.IndexOf(FieldOrder, name);
+                int before = rank < 0 ? -1 : fields.FindIndex(f => Array.IndexOf(FieldOrder, f.Name) > rank);
+                fields.Insert(before < 0 ? fields.Count : before, (name, value));
             }
         }
     }
@@ -263,8 +266,24 @@ internal static partial class JgsMlappModel
             changed = true;
         }
 
+        // SingletonMode is 'FOCUS' when the constructor runs the app as a single instance, and absent
+        // otherwise (designer plan DS5); the constructor is App Designer's, so the field follows it.
+        string? mode = code.Get("SingletonMode") is { } kept ? TextOf(kept) : string.Empty;
+        if (mode is not null && (!told || (mode == SingletonFocus) == before.SingleInstance) && (mode == SingletonFocus) != now.SingleInstance)
+        {
+            code.Set("SingletonMode", now.SingleInstance ? new TextValue(SingletonFocus, null) : null);
+            changed = true;
+        }
+
         return changed;
     }
+
+    /// <summary>The one value App Designer's <c>SingletonMode</c> takes when the app runs as a single instance.</summary>
+    private const string SingletonFocus = "FOCUS";
+
+    /// <summary>The order <c>MLAPPSerializer</c> writes the fields in; a field added goes where it belongs among those present.</summary>
+    private static readonly string[] FieldOrder =
+        ["ClassName", "EditableSectionCode", "Callbacks", "StartupCallback", "InputParameters", "SingletonMode", "AppTypeData", "Bindings"];
 
     private static bool RewriteCallbacks(CodeFields code, JgsMlappLayout? before, JgsMlappLayout now)
     {

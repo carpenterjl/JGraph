@@ -14,6 +14,13 @@ public sealed record DesignCodeStyle(string IndentUnit = "    ", DesignTheme The
     public string Indent(int depth) => string.Concat(Enumerable.Repeat(IndentUnit, depth));
 
     /// <summary>
+    /// The columns one level of indentation counts for (App Designer's <c>IndentSize</c> setting):
+    /// the unit's width in spaces, and four for a tab, which the setting keeps whether or not it
+    /// inserts spaces.
+    /// </summary>
+    public int IndentSize => IndentUnit == "\t" ? 4 : IndentUnit.Length;
+
+    /// <summary>
     /// The theme <paramref name="design"/>'s code is written under (designer plan DS3): its figure's
     /// <c>Theme</c> when set, as App Designer's design-time controller takes the figure's theme for
     /// its generator; else the light theme, R2025b's usual one.

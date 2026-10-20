@@ -1,0 +1,326 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using JGraph.Controls.Themes;
+using JGraph.Scripting.Designer;
+
+namespace JGraph.Application.Scripting;
+
+/// <summary>
+/// App Designer's dialogs in the designer's window (designer plan DS5): Add Callback Function, the
+/// App Details' Code Options (input arguments, single running instance), and a rename that shows
+/// what will change before it does.
+/// </summary>
+internal static class AppDesignerDialogs
+{
+    /// <summary>
+    /// App Designer's "Add Callback Function" dialog: a component with an unbound callback property
+    /// (the app itself, for its startup function, while it has none; the figure; then every component
+    /// below it), the property, and the function's name - App Designer's default, or an existing
+    /// callback to bind the property to. Nothing when every property is bound, as App Designer says.
+    /// </summary>
+    /// <returns>The function's name when one was added or bound; null when the dialog was cancelled or nothing could be added.</returns>
+    public static string? AddCallback(Window owner, DesignDocument document, DesignComponent? selected)
+    {
+        var candidates = new List<(string Label, DesignComponent? Component)>();
+        if (document.Callbacks.All(static c => !c.IsStartup))
+        {
+            candidates.Add((document.Code?.ClassName ?? "app", null));
+        }
+
+        foreach (DesignComponent component in document.Design.Components)
+        {
+            if (document.CallbackPropertiesOf(component).Any(p => document.CallbackOf(component, p) is null))
+            {
+                candidates.Add((component.CodeName, component));
+            }
+        }
+
+        if (candidates.Count == 0)
+        {
+            MessageBox.Show(owner, "Callbacks have been defined for all available components.\nTo add additional callbacks, add more components.", "App Designer", MessageBoxButton.OK, MessageBoxImage.Information);
+            return null;
+        }
+
+        var dialog = Dialog(owner, "Add Callback Function");
+        var grid = Form();
+        var componentBox = new ComboBox { ItemsSource = candidates.Select(static c => c.Label).ToArray(), MinWidth = 220 };
+        var callbackBox = new ComboBox { MinWidth = 220 };
+        var nameBox = new ComboBox { IsEditable = true, MinWidth = 220 };
+        var error = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 0) };
+        error.SetResourceReference(TextBlock.ForegroundProperty, ThemeKeys.Error);
+        Row(grid, 0, "Component:", componentBox);
+        Row(grid, 1, "Callback:", callbackBox);
+        Row(grid, 2, "Name:", nameBox);
+        Grid.SetRow(error, 3);
+        Grid.SetColumnSpan(error, 2);
+        grid.Children.Add(error);
+        Button add = Buttons(dialog, grid, "Add Callback");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(componentBox, "AddCallback.Component");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(callbackBox, "AddCallback.Callback");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(nameBox, "AddCallback.Name");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(add, "AddCallback.Add");
+
+        DesignComponent? Component() => componentBox.SelectedIndex < 0 ? null : candidates[componentBox.SelectedIndex].Component;
+        bool IsApp() => componentBox.SelectedIndex >= 0 && candidates[componentBox.SelectedIndex].Component is null;
+
+        void Validate()
+        {
+            string name = nameBox.Text.Trim();
+            string? why = name.Length == 0 ? "A name is needed."
+                : IsApp() ? (document.Callbacks.Any(c => c.Name == name) ? "Startup function name must be unique." : document.WhyNotFunctionName(name))
+                : document.Callbacks.Any(c => c.Name == name && c.IsStartup) ? "Name cannot be the same as the startup function."
+                : document.Callbacks.Any(c => c.Name == name && !c.IsGenerated) ? null
+                : document.WhyNotFunctionName(name);
+            error.Text = why ?? string.Empty;
+            add.IsEnabled = why is null;
+        }
+
+        void FillName()
+        {
+            string property = callbackBox.SelectedItem as string ?? string.Empty;
+            DesignComponent? component = Component();
+            string suggested = component is null ? DesignCallbacks.Unique(DesignCode.StartupName, document.NamesInUse()) : property.Length == 0 ? string.Empty : document.DefaultCallbackName(component, property);
+            nameBox.ItemsSource = component is null ? [] : document.Callbacks.Where(static c => !c.IsStartup && !c.IsGenerated).Select(static c => c.Name).OrderBy(static n => n, StringComparer.Ordinal).ToArray();
+            nameBox.Text = suggested;
+            Validate();
+        }
+
+        void FillCallbacks()
+        {
+            DesignComponent? component = Component();
+            callbackBox.ItemsSource = component is null ? ["StartupFcn"] : document.CallbackPropertiesOf(component).Where(p => document.CallbackOf(component, p) is null).ToArray();
+            callbackBox.SelectedIndex = 0;
+            FillName();
+        }
+
+        componentBox.SelectionChanged += (_, _) => FillCallbacks();
+        callbackBox.SelectionChanged += (_, _) => FillName();
+        nameBox.AddHandler(TextBoxBase.TextChangedEvent, new TextChangedEventHandler((_, _) => Validate()));
+        nameBox.SelectionChanged += (_, _) => dialog.Dispatcher.BeginInvoke(Validate);
+
+        int initial = selected is null ? 0 : candidates.FindIndex(c => ReferenceEquals(c.Component, selected));
+        if (initial < 0 && selected?.Parent is { } parent)
+        {
+            initial = candidates.FindIndex(c => ReferenceEquals(c.Component, parent));
+        }
+
+        componentBox.SelectedIndex = Math.Max(0, initial);
+        if (dialog.ShowDialog() != true)
+        {
+            return null;
+        }
+
+        string chosen = nameBox.Text.Trim();
+        string? refused;
+        if (Component() is { } target)
+        {
+            string property = (string)callbackBox.SelectedItem;
+            refused = document.Callbacks.Any(c => c.Name == chosen && !c.IsStartup && !c.IsGenerated)
+                ? document.BindCallback(target, property, chosen)
+                : document.AddCallback(target, property, chosen);
+        }
+        else
+        {
+            refused = document.AddStartup(chosen);
+        }
+
+        if (refused is not null)
+        {
+            MessageBox.Show(owner, refused, "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Error);
+            return null;
+        }
+
+        return chosen;
+    }
+
+    /// <summary>What App Details' Code Options set: the input arguments, the single-instance setting, both or neither.</summary>
+    public readonly record struct CodeOptionsResult(bool Arguments, bool SingleInstance)
+    {
+        /// <summary>Whether anything was set.</summary>
+        public bool Any => Arguments || SingleInstance;
+    }
+
+    /// <summary>
+    /// App Designer's App Details > Code Options: Single Running Instance, and the Input Arguments
+    /// (<c>arg1, arg2, ...</c>), tidied and checked as typed. OK sets what changed.
+    /// </summary>
+    /// <returns>What was set.</returns>
+    public static CodeOptionsResult CodeOptions(Window owner, DesignDocument document)
+    {
+        var dialog = Dialog(owner, "App Details");
+        var grid = Form();
+        var single = new CheckBox { Content = "Single Running Instance", IsChecked = document.SingleInstance, ToolTip = "App allows only one running instance at a time.", VerticalAlignment = VerticalAlignment.Center };
+        var arguments = new TextBox { Text = document.InputParameters, MinWidth = 240, ToolTip = "arg1, arg2, ..." };
+        var error = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 0) };
+        error.SetResourceReference(TextBlock.ForegroundProperty, ThemeKeys.Error);
+        var hint = new TextBlock { Text = "Code Options", FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 0, 0, 6) };
+        Grid.SetRow(hint, 0);
+        Grid.SetColumnSpan(hint, 2);
+        grid.Children.Add(hint);
+        Grid.SetRow(single, 1);
+        Grid.SetColumnSpan(single, 2);
+        grid.Children.Add(single);
+        Row(grid, 2, "Input Arguments", arguments);
+        Grid.SetRow(error, 3);
+        Grid.SetColumnSpan(error, 2);
+        grid.Children.Add(error);
+        Button ok = Buttons(dialog, grid, "OK");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(single, "CodeOptions.SingleInstance");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(arguments, "CodeOptions.InputArguments");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(ok, "CodeOptions.OK");
+
+        arguments.TextChanged += (_, _) =>
+        {
+            string? why = DesignDocument.WhyNotInputParameters(arguments.Text);
+            error.Text = why ?? string.Empty;
+            ok.IsEnabled = why is null;
+        };
+        arguments.LostKeyboardFocus += (_, _) =>
+        {
+            string tidy = DesignDocument.SanitizeInputParameters(arguments.Text);
+            if (tidy != arguments.Text)
+            {
+                arguments.Text = tidy;
+            }
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return default;
+        }
+
+        bool argumentsChanged = false;
+        bool singleChanged = false;
+        string parameters = DesignDocument.SanitizeInputParameters(arguments.Text);
+        if (parameters != document.InputParameters)
+        {
+            if (document.SetInputParameters(parameters) is { } refused)
+            {
+                MessageBox.Show(owner, refused, "App Designer", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                argumentsChanged = true;
+            }
+        }
+
+        if ((single.IsChecked == true) != document.SingleInstance)
+        {
+            document.SetSingleInstance(single.IsChecked == true);
+            singleChanged = true;
+        }
+
+        return new CodeOptionsResult(argumentsChanged, singleChanged);
+    }
+
+    /// <summary>
+    /// A rename with a preview: the new name, checked as typed, over the lines of the user's code
+    /// that will change with it. App Designer renames in place and shows nothing beforehand; the
+    /// preview is the designer's own.
+    /// </summary>
+    /// <param name="owner">The window.</param>
+    /// <param name="title">The dialog's title.</param>
+    /// <param name="current">The name now.</param>
+    /// <param name="validate">Why a name cannot be taken; null when it can.</param>
+    /// <param name="preview">The lines that would change for a name, each with its line number.</param>
+    /// <returns>The new name, or null when cancelled or unchanged.</returns>
+    public static string? Rename(Window owner, string title, string current, Func<string, string?> validate, Func<string, IReadOnlyList<string>> preview)
+    {
+        var dialog = Dialog(owner, title);
+        var grid = Form();
+        var nameBox = new TextBox { Text = current, MinWidth = 240 };
+        var error = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 0) };
+        error.SetResourceReference(TextBlock.ForegroundProperty, ThemeKeys.Error);
+        var changes = new ListBox { MinHeight = 80, MaxHeight = 240, MinWidth = 360, FontFamily = (System.Windows.Media.FontFamily)owner.FindResource(ThemeKeys.FontMono) };
+        var caption = new TextBlock { Margin = new Thickness(0, 8, 0, 2) };
+        Row(grid, 0, "Name:", nameBox);
+        Grid.SetRow(error, 1);
+        Grid.SetColumnSpan(error, 2);
+        grid.Children.Add(error);
+        Grid.SetRow(caption, 2);
+        Grid.SetColumnSpan(caption, 2);
+        grid.Children.Add(caption);
+        Grid.SetRow(changes, 3);
+        Grid.SetColumnSpan(changes, 2);
+        grid.Children.Add(changes);
+        Button ok = Buttons(dialog, grid, "Rename");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(nameBox, "Rename.Name");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(changes, "Rename.Preview");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(ok, "Rename.OK");
+
+        void Refresh()
+        {
+            string name = nameBox.Text.Trim();
+            string? why = name == current ? "The name is unchanged." : validate(name);
+            error.Text = why ?? string.Empty;
+            ok.IsEnabled = why is null;
+            IReadOnlyList<string> lines = preview(name);
+            changes.ItemsSource = lines;
+            caption.Text = lines.Count == 0 ? "No code of yours names it." : lines.Count == 1 ? "This line of your code changes with it:" : $"These {lines.Count} lines of your code change with it:";
+        }
+
+        nameBox.TextChanged += (_, _) => Refresh();
+        Refresh();
+        nameBox.SelectAll();
+        nameBox.Focus();
+        return dialog.ShowDialog() == true && nameBox.Text.Trim() != current ? nameBox.Text.Trim() : null;
+    }
+
+    private static Window Dialog(Window owner, string title)
+    {
+        var dialog = new Window
+        {
+            Title = title,
+            Owner = owner,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            ResizeMode = ResizeMode.NoResize,
+            ShowInTaskbar = false,
+        };
+        dialog.SetResourceReference(Control.BackgroundProperty, ThemeKeys.Window);
+        dialog.SetResourceReference(Control.ForegroundProperty, ThemeKeys.Text);
+        return dialog;
+    }
+
+    private static Grid Form()
+    {
+        var grid = new Grid { Margin = new Thickness(12) };
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        for (int i = 0; i < 4; i++)
+        {
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        }
+
+        return grid;
+    }
+
+    private static void Row(Grid grid, int row, string label, FrameworkElement control)
+    {
+        var text = new TextBlock { Text = label, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 4) };
+        control.Margin = new Thickness(0, 0, 0, 4);
+        Grid.SetRow(text, row);
+        Grid.SetRow(control, row);
+        Grid.SetColumn(control, 1);
+        grid.Children.Add(text);
+        grid.Children.Add(control);
+    }
+
+    /// <summary>The dialog's body over its OK and Cancel; the OK button is returned, to be enabled as the entries allow.</summary>
+    private static Button Buttons(Window dialog, Grid body, string okLabel)
+    {
+        var ok = new Button { Content = okLabel, MinWidth = 90, Margin = new Thickness(0, 0, 8, 0), IsDefault = true };
+        var cancel = new Button { Content = "Cancel", MinWidth = 90, IsCancel = true };
+        ok.Click += (_, _) => dialog.DialogResult = true;
+        var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(12, 0, 12, 12) };
+        buttons.Children.Add(ok);
+        buttons.Children.Add(cancel);
+        var root = new DockPanel();
+        DockPanel.SetDock(buttons, Dock.Bottom);
+        root.Children.Add(buttons);
+        root.Children.Add(body);
+        dialog.Content = root;
+        return ok;
+    }
+}

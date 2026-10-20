@@ -38,6 +38,17 @@ public static partial class DesignNames
         "for", "function", "global", "if", "otherwise", "parfor", "persistent", "return", "spmd", "switch", "try", "while",
     };
 
+    /// <summary>
+    /// The names every app has from <c>matlab.apps.AppBase</c> and its own initialization, which no
+    /// component, callback, function or property may take (the <c>AppBaseProperty</c> and
+    /// <c>AppBaseMethod</c> entries of App Designer's name map; <c>AppDesignerInitializationData</c>).
+    /// </summary>
+    public static IReadOnlySet<string> AppDesignerKeywords { get; } = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "AppBase", "saveobj", "delete", "loadobj", "getRunningApp", "setAutoResize", "registerApp", "runStartupFcn",
+        "createCallbackFcn", "empty", "TimingFields", "createBindings",
+    };
+
     private static readonly Dictionary<string, DesignNaming> ByType = new(StringComparer.Ordinal)
     {
         ["matlab.ui.Figure"] = new("UIFigure", "MATLAB App", "Name"),
@@ -230,6 +241,11 @@ public static partial class DesignNames
         if (Keywords.Contains(name))
         {
             return $"'{name}' is a MATLAB keyword.";
+        }
+
+        if (AppDesignerKeywords.Contains(name))
+        {
+            return "Name cannot be an App Designer keyword.";
         }
 
         if (!VarName().IsMatch(name))

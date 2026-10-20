@@ -279,9 +279,10 @@ function [folder, appType] = sourceOf(app, here)
     appType = 'Standard';
     % JGraph's own apps (PaletteApp: every library entry added in the designer, DS3; GridApp:
     % grids laid out, nested, spanned and given rows in the designer, DS4; ResponsiveApp: a new
-    % 3-panel app with components in its regions and a splitter dragged, DS4b).
+    % 3-panel app with components in its regions and a splitter dragged, DS4b; CallbacksApp:
+    % callbacks, a startup function with input parameters and a single instance, DS5).
     if strcmp(app, 'ResponsiveApp'), appType = 'Responsive'; end
-    if any(strcmp(app, {'DesignerSpecApp', 'NewApp', 'PaletteApp', 'GridApp', 'ResponsiveApp'}))
+    if any(strcmp(app, {'DesignerSpecApp', 'NewApp', 'PaletteApp', 'GridApp', 'ResponsiveApp', 'CallbacksApp'}))
         folder = fullfile(here, '..', 'ds1b', 'rt', 'spec');
         if ~isfolder(fullfile(folder, 'img')), mkdir(fullfile(folder, 'img')); end
         if ~isfile(fullfile(folder, 'img', 'logo.png'))

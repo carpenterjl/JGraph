@@ -1,0 +1,4712 @@
+{
+ "editable": [
+  {
+   "key": "empty: add private property",
+   "indentSize": 4,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: add public property",
+   "indentSize": 4,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: add private function",
+   "indentSize": 4,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: add public function",
+   "indentSize": 4,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: private property, then private function, then second of each",
+   "indentSize": 4,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: private property then public property then public function then private function",
+   "indentSize": 4,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "existing private blocks: add private property and private function",
+   "indentSize": 4,
+   "existing": [
+    "    ",
+    "    properties (Access = private)",
+    "        Property % Description",
+    "    end",
+    "    ",
+    "    methods (Access = private)",
+    "        ",
+    "        function results = func(app)",
+    "            ",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "existing private blocks: add public property and public function",
+   "indentSize": 4,
+   "existing": [
+    "    ",
+    "    properties (Access = private)",
+    "        Property % Description",
+    "    end",
+    "    ",
+    "    methods (Access = private)",
+    "        ",
+    "        function results = func(app)",
+    "            ",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = public)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "existing public blocks: add private property and private function",
+   "indentSize": 4,
+   "existing": [
+    "    ",
+    "    properties (Access = public)",
+    "        Property % Description",
+    "    end",
+    "    ",
+    "    methods (Access = public)",
+    "        ",
+    "        function results = func(app)",
+    "            ",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = private)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = private)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = private)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = private)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = private)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    properties (Access = private)",
+      "        Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    properties (Access = public)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = public)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    properties (Access = public)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = public)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    properties (Access = public)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = public)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "existing bare methods: add public function then private function",
+   "indentSize": 4,
+   "existing": [
+    "    ",
+    "    methods",
+    "        ",
+    "        function results = func(app)",
+    "            ",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func3",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func3(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func3(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func3(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    methods",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    methods",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    methods",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "existing without trailing blank: add private function",
+   "indentSize": 4,
+   "existing": [
+    "    ",
+    "    properties (Access = private)",
+    "        Property % Description",
+    "    end"
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end"
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end"
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end"
+    ],
+    "rendered": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end"
+    ]
+   }
+  },
+  {
+   "key": "existing nested ends and comments: add private function",
+   "indentSize": 4,
+   "existing": [
+    "    ",
+    "    methods (Access = private)",
+    "        ",
+    "        function results = func(app)",
+    "            if true",
+    "                x = 1; % end",
+    "            end",
+    "            s = 'end';",
+    "            %{",
+    "            end",
+    "            %}",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            if true",
+      "                x = 1; % end",
+      "            end",
+      "            s = 'end';",
+      "            %{",
+      "            end",
+      "            %}",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            if true",
+      "                x = 1; % end",
+      "            end",
+      "            s = 'end';",
+      "            %{",
+      "            end",
+      "            %}",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            if true",
+      "                x = 1; % end",
+      "            end",
+      "            s = 'end';",
+      "            %{",
+      "            end",
+      "            %}",
+      "        end",
+      "        ",
+      "        function results = func2(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            if true",
+     "                x = 1; % end",
+     "            end",
+     "            s = 'end';",
+     "            %{",
+     "            end",
+     "            %}",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            if true",
+     "                x = 1; % end",
+     "            end",
+     "            s = 'end';",
+     "            %{",
+     "            end",
+     "            %}",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            if true",
+     "                x = 1; % end",
+     "            end",
+     "            s = 'end';",
+     "            %{",
+     "            end",
+     "            %}",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "empty: add private property",
+   "indentSize": 2,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property",
+      "access": "private"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: add public property",
+   "indentSize": 2,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property",
+      "access": "public"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = public)",
+      "    Property % Description",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = public)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = public)",
+      "    Property % Description",
+      "  end",
+      "  "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: add private function",
+   "indentSize": 2,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "private"
+     },
+     "codeLines": [
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: add public function",
+   "indentSize": 2,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "public"
+     },
+     "codeLines": [
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: private property, then private function, then second of each",
+   "indentSize": 2,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property",
+      "access": "private"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "private"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ]
+    },
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "private"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "empty: private property then public property then public function then private function",
+   "indentSize": 2,
+   "existing": [],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property",
+      "access": "private"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  "
+     ]
+    },
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "public"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "public"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ],
+     "rendered": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      ""
+     ],
+     "customCodeModel": [
+      "  ",
+      "  properties (Access = private)",
+      "    Property % Description",
+      "  end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "  "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [],
+    "rendered": [
+     ""
+    ],
+    "customCodeModel": []
+   }
+  },
+  {
+   "key": "existing private blocks: add private property and private function",
+   "indentSize": 2,
+   "existing": [
+    "    ",
+    "    properties (Access = private)",
+    "        Property % Description",
+    "    end",
+    "    ",
+    "    methods (Access = private)",
+    "        ",
+    "        function results = func(app)",
+    "            ",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    Property2 % Description",
+      "    end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "existing private blocks: add public property and public function",
+   "indentSize": 2,
+   "existing": [
+    "    ",
+    "    properties (Access = private)",
+    "        Property % Description",
+    "    end",
+    "    ",
+    "    methods (Access = private)",
+    "        ",
+    "        function results = func(app)",
+    "            ",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = public)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "  ",
+      "  methods (Access = public)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "existing public blocks: add private property and private function",
+   "indentSize": 2,
+   "existing": [
+    "    ",
+    "    properties (Access = public)",
+    "        Property % Description",
+    "    end",
+    "    ",
+    "    methods (Access = public)",
+    "        ",
+    "        function results = func(app)",
+    "            ",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "property",
+      "name": "Property2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = private)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = private)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = private)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = private)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = private)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = public)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  properties (Access = private)",
+      "    Property2 % Description",
+      "  end",
+      "    ",
+      "    methods (Access = public)",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    properties (Access = public)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = public)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    properties (Access = public)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = public)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    properties (Access = public)",
+     "        Property % Description",
+     "    end",
+     "    ",
+     "    methods (Access = public)",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "existing bare methods: add public function then private function",
+   "indentSize": 2,
+   "existing": [
+    "    ",
+    "    methods",
+    "        ",
+    "        function results = func(app)",
+    "            ",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "public"
+     },
+     "codeLines": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    "
+     ]
+    },
+    {
+     "step": {
+      "kind": "method",
+      "name": "func3",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func3(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func3(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    methods",
+      "        ",
+      "        function results = func(app)",
+      "            ",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func3(app)",
+      "      ",
+      "    end",
+      "  end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    methods",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    methods",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    methods",
+     "        ",
+     "        function results = func(app)",
+     "            ",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  },
+  {
+   "key": "existing without trailing blank: add private function",
+   "indentSize": 2,
+   "existing": [
+    "    ",
+    "    properties (Access = private)",
+    "        Property % Description",
+    "    end"
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end"
+     ],
+     "rendered": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    properties (Access = private)",
+      "        Property % Description",
+      "    end",
+      "  ",
+      "  methods (Access = private)",
+      "    ",
+      "    function results = func(app)",
+      "      ",
+      "    end",
+      "  end"
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end"
+    ],
+    "rendered": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    properties (Access = private)",
+     "        Property % Description",
+     "    end"
+    ]
+   }
+  },
+  {
+   "key": "existing nested ends and comments: add private function",
+   "indentSize": 2,
+   "existing": [
+    "    ",
+    "    methods (Access = private)",
+    "        ",
+    "        function results = func(app)",
+    "            if true",
+    "                x = 1; % end",
+    "            end",
+    "            s = 'end';",
+    "            %{",
+    "            end",
+    "            %}",
+    "        end",
+    "    end",
+    "    "
+   ],
+   "steps": [
+    {
+     "step": {
+      "kind": "method",
+      "name": "func2",
+      "access": "private"
+     },
+     "codeLines": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            if true",
+      "                x = 1; % end",
+      "            end",
+      "            s = 'end';",
+      "            %{",
+      "            end",
+      "            %}",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    "
+     ],
+     "rendered": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            if true",
+      "                x = 1; % end",
+      "            end",
+      "            s = 'end';",
+      "            %{",
+      "            end",
+      "            %}",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    ",
+      ""
+     ],
+     "customCodeModel": [
+      "    ",
+      "    methods (Access = private)",
+      "        ",
+      "        function results = func(app)",
+      "            if true",
+      "                x = 1; % end",
+      "            end",
+      "            s = 'end';",
+      "            %{",
+      "            end",
+      "            %}",
+      "        end",
+      "    ",
+      "    function results = func2(app)",
+      "      ",
+      "    end",
+      "    end",
+      "    "
+     ]
+    }
+   ],
+   "initial": {
+    "codeLines": [
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            if true",
+     "                x = 1; % end",
+     "            end",
+     "            s = 'end';",
+     "            %{",
+     "            end",
+     "            %}",
+     "        end",
+     "    end",
+     "    "
+    ],
+    "rendered": [
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            if true",
+     "                x = 1; % end",
+     "            end",
+     "            s = 'end';",
+     "            %{",
+     "            end",
+     "            %}",
+     "        end",
+     "    end",
+     "    ",
+     ""
+    ],
+    "customCodeModel": [
+     "    ",
+     "    methods (Access = private)",
+     "        ",
+     "        function results = func(app)",
+     "            if true",
+     "                x = 1; % end",
+     "            end",
+     "            s = 'end';",
+     "            %{",
+     "            end",
+     "            %}",
+     "        end",
+     "    end",
+     "    "
+    ]
+   }
+  }
+ ],
+ "callbackCode": [
+  {
+   "key": "fresh, Button.ButtonPushedFcn",
+   "indentSize": 4,
+   "modelProps": {},
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 13,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "            "
+   ],
+   "modelCodeAfter": [
+    "            "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, UIFigure.CloseRequestFcn",
+   "indentSize": 4,
+   "modelProps": {},
+   "binding": {
+    "codeName": "UIFigure",
+    "type": "matlab.ui.Figure",
+    "prop": "CloseRequestFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "delete(app)",
+     ""
+    ],
+    "defaultCode": [
+     "delete(app)",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            delete(app)",
+     "tabDepth": 0
+    },
+    {
+     "text": "            ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 13,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "            delete(app)",
+    "            "
+   ],
+   "modelCodeAfter": [
+    "            delete(app)",
+    "            "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, UITable.CellEditCallback",
+   "indentSize": 4,
+   "modelProps": {},
+   "binding": {
+    "codeName": "UITable",
+    "type": "matlab.ui.control.Table",
+    "prop": "CellEditCallback"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "indices = event.Indices;",
+     "newData = event.NewData;",
+     ""
+    ],
+    "defaultCode": [
+     "indices = event.Indices;",
+     "newData = event.NewData;",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            indices = event.Indices;",
+     "tabDepth": 0
+    },
+    {
+     "text": "            newData = event.NewData;",
+     "tabDepth": 0
+    },
+    {
+     "text": "            ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 13,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "            indices = event.Indices;",
+    "            newData = event.NewData;",
+    "            "
+   ],
+   "modelCodeAfter": [
+    "            indices = event.Indices;",
+    "            newData = event.NewData;",
+    "            "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, EditField.ValueChangedFcn",
+   "indentSize": 4,
+   "modelProps": {},
+   "binding": {
+    "codeName": "EditField",
+    "type": "matlab.ui.control.EditField",
+    "prop": "ValueChangedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "value = app.EditField.Value;",
+     ""
+    ],
+    "defaultCode": [
+     "value = app.EditField.Value;",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            value = app.EditField.Value;",
+     "tabDepth": 0
+    },
+    {
+     "text": "            ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 13,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "            value = app.EditField.Value;",
+    "            "
+   ],
+   "modelCodeAfter": [
+    "            value = app.EditField.Value;",
+    "            "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, TabGroup.SelectionChangedFcn",
+   "indentSize": 4,
+   "modelProps": {},
+   "binding": {
+    "codeName": "TabGroup",
+    "type": "matlab.ui.container.TabGroup",
+    "prop": "SelectionChangedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "selectedTab = app.TabGroup.SelectedTab;",
+     ""
+    ],
+    "defaultCode": [
+     "selectedTab = app.TabGroup.SelectedTab;",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            selectedTab = app.TabGroup.SelectedTab;",
+     "tabDepth": 0
+    },
+    {
+     "text": "            ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 13,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "            selectedTab = app.TabGroup.SelectedTab;",
+    "            "
+   ],
+   "modelCodeAfter": [
+    "            selectedTab = app.TabGroup.SelectedTab;",
+    "            "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, no binding",
+   "indentSize": 4,
+   "modelProps": {},
+   "binding": null,
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 13,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "            "
+   ],
+   "modelCodeAfter": [
+    "            "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, startup",
+   "indentSize": 4,
+   "modelProps": {
+    "CallbackType": "AppStartupFunction",
+    "GeneratedName": "startupFcn",
+    "Arguments": [
+     "app"
+    ]
+   },
+   "binding": null,
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 13,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "            "
+   ],
+   "modelCodeAfter": [
+    "            "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "loaded from disk, Code []",
+   "indentSize": 4,
+   "modelProps": {
+    "LoadedFromDisk": true,
+    "Code": [],
+    "Name": "ButtonPushed"
+   },
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    ""
+   ],
+   "modelCodeAfter": [
+    ""
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "loaded from disk, Code [\"\"]",
+   "indentSize": 4,
+   "modelProps": {
+    "LoadedFromDisk": true,
+    "Code": [
+     ""
+    ],
+    "Name": "ButtonPushed"
+   },
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    ""
+   ],
+   "modelCodeAfter": [
+    ""
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "loaded from disk, Code [\"            x = 1;\"]",
+   "indentSize": 4,
+   "modelProps": {
+    "LoadedFromDisk": true,
+    "Code": [
+     "            x = 1;"
+    ],
+    "Name": "ButtonPushed"
+   },
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     "            x = 1;"
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "            x = 1;"
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            x = 1;",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    "            x = 1;"
+   ],
+   "modelCodeAfter": [
+    "            x = 1;"
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "loaded from disk, CloseRequestFcn Code []",
+   "indentSize": 4,
+   "modelProps": {
+    "LoadedFromDisk": true,
+    "Code": [],
+    "Name": "UIFigureCloseRequest"
+   },
+   "binding": {
+    "codeName": "UIFigure",
+    "type": "matlab.ui.Figure",
+    "prop": "CloseRequestFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     "delete(app)",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    ""
+   ],
+   "modelCodeAfter": [
+    ""
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, user already typed (Code differs from default)",
+   "indentSize": 4,
+   "modelProps": {
+    "Code": [
+     "            y = 2;"
+    ]
+   },
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     "            y = 2;"
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "            y = 2;"
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            y = 2;",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    "            y = 2;"
+   ],
+   "modelCodeAfter": [
+    "            y = 2;"
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, Button.ButtonPushedFcn",
+   "indentSize": 2,
+   "modelProps": {},
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "      ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 7,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "      "
+   ],
+   "modelCodeAfter": [
+    "      "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, UIFigure.CloseRequestFcn",
+   "indentSize": 2,
+   "modelProps": {},
+   "binding": {
+    "codeName": "UIFigure",
+    "type": "matlab.ui.Figure",
+    "prop": "CloseRequestFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "delete(app)",
+     ""
+    ],
+    "defaultCode": [
+     "delete(app)",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "      delete(app)",
+     "tabDepth": 0
+    },
+    {
+     "text": "      ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 7,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "      delete(app)",
+    "      "
+   ],
+   "modelCodeAfter": [
+    "      delete(app)",
+    "      "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, UITable.CellEditCallback",
+   "indentSize": 2,
+   "modelProps": {},
+   "binding": {
+    "codeName": "UITable",
+    "type": "matlab.ui.control.Table",
+    "prop": "CellEditCallback"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "indices = event.Indices;",
+     "newData = event.NewData;",
+     ""
+    ],
+    "defaultCode": [
+     "indices = event.Indices;",
+     "newData = event.NewData;",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "      indices = event.Indices;",
+     "tabDepth": 0
+    },
+    {
+     "text": "      newData = event.NewData;",
+     "tabDepth": 0
+    },
+    {
+     "text": "      ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 7,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "      indices = event.Indices;",
+    "      newData = event.NewData;",
+    "      "
+   ],
+   "modelCodeAfter": [
+    "      indices = event.Indices;",
+    "      newData = event.NewData;",
+    "      "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, EditField.ValueChangedFcn",
+   "indentSize": 2,
+   "modelProps": {},
+   "binding": {
+    "codeName": "EditField",
+    "type": "matlab.ui.control.EditField",
+    "prop": "ValueChangedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "value = app.EditField.Value;",
+     ""
+    ],
+    "defaultCode": [
+     "value = app.EditField.Value;",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "      value = app.EditField.Value;",
+     "tabDepth": 0
+    },
+    {
+     "text": "      ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 7,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "      value = app.EditField.Value;",
+    "      "
+   ],
+   "modelCodeAfter": [
+    "      value = app.EditField.Value;",
+    "      "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, TabGroup.SelectionChangedFcn",
+   "indentSize": 2,
+   "modelProps": {},
+   "binding": {
+    "codeName": "TabGroup",
+    "type": "matlab.ui.container.TabGroup",
+    "prop": "SelectionChangedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "selectedTab = app.TabGroup.SelectedTab;",
+     ""
+    ],
+    "defaultCode": [
+     "selectedTab = app.TabGroup.SelectedTab;",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "      selectedTab = app.TabGroup.SelectedTab;",
+     "tabDepth": 0
+    },
+    {
+     "text": "      ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 7,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "      selectedTab = app.TabGroup.SelectedTab;",
+    "      "
+   ],
+   "modelCodeAfter": [
+    "      selectedTab = app.TabGroup.SelectedTab;",
+    "      "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, no binding",
+   "indentSize": 2,
+   "modelProps": {},
+   "binding": null,
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "      ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 7,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "      "
+   ],
+   "modelCodeAfter": [
+    "      "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, startup",
+   "indentSize": 2,
+   "modelProps": {
+    "CallbackType": "AppStartupFunction",
+    "GeneratedName": "startupFcn",
+    "Arguments": [
+     "app"
+    ]
+   },
+   "binding": null,
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "      ",
+     "tabDepth": 0,
+     "postRender": {
+      "cursor": 7,
+      "focusEditor": true
+     }
+    }
+   ],
+   "rendered": [
+    "      "
+   ],
+   "modelCodeAfter": [
+    "      "
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "loaded from disk, Code []",
+   "indentSize": 2,
+   "modelProps": {
+    "LoadedFromDisk": true,
+    "Code": [],
+    "Name": "ButtonPushed"
+   },
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    ""
+   ],
+   "modelCodeAfter": [
+    ""
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "loaded from disk, Code [\"\"]",
+   "indentSize": 2,
+   "modelProps": {
+    "LoadedFromDisk": true,
+    "Code": [
+     ""
+    ],
+    "Name": "ButtonPushed"
+   },
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    ""
+   ],
+   "modelCodeAfter": [
+    ""
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "loaded from disk, Code [\"            x = 1;\"]",
+   "indentSize": 2,
+   "modelProps": {
+    "LoadedFromDisk": true,
+    "Code": [
+     "            x = 1;"
+    ],
+    "Name": "ButtonPushed"
+   },
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     "            x = 1;"
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "            x = 1;"
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            x = 1;",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    "            x = 1;"
+   ],
+   "modelCodeAfter": [
+    "            x = 1;"
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "loaded from disk, CloseRequestFcn Code []",
+   "indentSize": 2,
+   "modelProps": {
+    "LoadedFromDisk": true,
+    "Code": [],
+    "Name": "UIFigureCloseRequest"
+   },
+   "binding": {
+    "codeName": "UIFigure",
+    "type": "matlab.ui.Figure",
+    "prop": "CloseRequestFcn"
+   },
+   "before": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     ""
+    ],
+    "defaultCode": [
+     "delete(app)",
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    ""
+   ],
+   "modelCodeAfter": [
+    ""
+   ],
+   "loadedFromDiskAfter": null
+  },
+  {
+   "key": "fresh, user already typed (Code differs from default)",
+   "indentSize": 2,
+   "modelProps": {
+    "Code": [
+     "            y = 2;"
+    ]
+   },
+   "binding": {
+    "codeName": "Button",
+    "type": "matlab.ui.control.Button",
+    "prop": "ButtonPushedFcn"
+   },
+   "before": {
+    "code": [
+     "            y = 2;"
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "afterBinding": {
+    "code": [
+     "            y = 2;"
+    ],
+    "defaultCode": [
+     ""
+    ]
+   },
+   "builderTabDepth": 3,
+   "builderLines": [
+    {
+     "text": "            y = 2;",
+     "tabDepth": 0
+    }
+   ],
+   "rendered": [
+    "            y = 2;"
+   ],
+   "modelCodeAfter": [
+    "            y = 2;"
+   ],
+   "loadedFromDiskAfter": null
+  }
+ ],
+ "modules": {
+  "real": [
+   "appdesigner/codegen/behaviors/AppPropertyBehavior",
+   "appdesigner/codegen/behaviors/BindingBehavior",
+   "appdesigner/codegen/behaviors/BindingsBlockBehavior",
+   "appdesigner/codegen/behaviors/CallbackBehavior",
+   "appdesigner/codegen/behaviors/CallbackCodeBehavior",
+   "appdesigner/codegen/behaviors/CallbackMethodsBlockBehavior",
+   "appdesigner/codegen/behaviors/ComponentPropertiesBlockBehavior",
+   "appdesigner/codegen/behaviors/ComponentPropertyBehavior",
+   "appdesigner/codegen/behaviors/ContextMenuAssignmentBehavior",
+   "appdesigner/codegen/behaviors/ContextMenuAssignmentBlockBehavior",
+   "appdesigner/codegen/behaviors/ContextMenuComponentInitBehavior",
+   "appdesigner/codegen/behaviors/CreateBindingsMethodBehavior",
+   "appdesigner/codegen/behaviors/CreateBindingsMethodBlockBehavior",
+   "appdesigner/codegen/behaviors/MatlabComponentInitBehavior",
+   "appdesigner/codegen/behaviors/UserEditableBlockBehavior",
+   "appdesigner/codegen/behaviors/_Behavior",
+   "appdesigner/codegen/behaviors/_ClassBehavior",
+   "appdesigner/codegen/behaviors/_ComponentCreationMethodBehavior",
+   "appdesigner/codegen/behaviors/app/ConstructorBehavior",
+   "appdesigner/codegen/behaviors/app/ConstructorCodeBehavior",
+   "appdesigner/codegen/behaviors/app/ConstructorSingletonCodeBehavior",
+   "appdesigner/codegen/behaviors/app/CreateComponentsBehavior",
+   "appdesigner/codegen/behaviors/app/CreateComponentsMethodBlockBehavior",
+   "appdesigner/codegen/behaviors/app/DeleteBehavior",
+   "appdesigner/codegen/behaviors/app/DeleteCodeBehavior",
+   "appdesigner/codegen/behaviors/app/LifecycleMethodsBlockBehavior",
+   "appdesigner/codegen/behaviors/app/MlappClassBehavior",
+   "appdesigner/codegen/behaviors/app/PathToMLAPPVariableBehavior",
+   "appdesigner/codegen/behaviors/app/PlainTextClassBehavior",
+   "appdesigner/codegen/behaviors/app/ReadonlyCallbackCodeBehavior",
+   "appdesigner/codegen/behaviors/app/_ConstructorCodeBehavior",
+   "appdesigner/codegen/behaviors/app/_DeleteCodeBehavior",
+   "appdesigner/codegen/behaviors/appendix/XMLAppendixBehavior",
+   "appdesigner/codegen/behaviors/appendix/XMLCanvasGroupBehavior",
+   "appdesigner/codegen/behaviors/appendix/XMLCanvasGroupMemberBehavior",
+   "appdesigner/codegen/behaviors/appendix/XMLComponentBlockBehavior",
+   "appdesigner/codegen/behaviors/appendix/XMLComponentChildrenBehavior",
+   "appdesigner/codegen/behaviors/appendix/XMLComponentInitBehavior",
+   "appdesigner/codegen/behaviors/appendix/XMLPropertyBehavior",
+   "appdesigner/codegen/behaviors/appendix/sections/SectionInfo",
+   "appdesigner/codegen/behaviors/appendix/sections/XMLAppDetailsSectionBehavior",
+   "appdesigner/codegen/behaviors/appendix/sections/XMLAppInternalDetailsSectionBehavior",
+   "appdesigner/codegen/behaviors/appendix/sections/XMLCanvasGroupsSectionBehavior",
+   "appdesigner/codegen/behaviors/appendix/sections/XMLLayoutRootBehavior",
+   "appdesigner/codegen/behaviors/appendix/sections/XMLLayoutSectionBehavior",
+   "appdesigner/codegen/behaviors/appendix/sections/XMLRunConfigurationsSectionBehavior",
+   "appdesigner/codegen/behaviors/appendix/sections/XMLSectionRootBehavior",
+   "appdesigner/codegen/behaviors/appendix/sections/_XMLDynamicSectionBehavior",
+   "appdesigner/codegen/behaviors/groups/AppLifecycleGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/AppMethodsGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/AppPropertyGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/CallbackGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/CustomCodeGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/MlappFileContentGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/PlainTextFileContentGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/XMLAppDetailsPropertiesGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/XMLAppInternalDetailsPropertiesGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/XMLCanvasGroupsBlockBehavior",
+   "appdesigner/codegen/behaviors/groups/XMLComponentPropertiesGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/XMLRunConfigPropertiesGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/_FileContentGroupBehavior",
+   "appdesigner/codegen/behaviors/groups/_XMLAlphaSortedPropertiesGroupBehavior",
+   "appdesigner/codegen/builders/AppendixBuilder",
+   "appdesigner/codegen/builders/AppendixSectionBuilder",
+   "appdesigner/codegen/builders/BindingBuilder",
+   "appdesigner/codegen/builders/ClassBuilder",
+   "appdesigner/codegen/builders/CodeBuilder",
+   "appdesigner/codegen/builders/GroupBuilder",
+   "appdesigner/codegen/builders/MethodBlockBuilder",
+   "appdesigner/codegen/builders/MethodBuilder",
+   "appdesigner/codegen/builders/PropertyBlockBuilder",
+   "appdesigner/codegen/builders/PropertyBuilder",
+   "appdesigner/codegen/builders/WhitespaceBuilder",
+   "appdesigner/codegen/builders/XMLElementBuilder",
+   "appdesigner/codegen/builders/XMLRootBuilder",
+   "appdesigner/codegen/builders/XMLSectionBuilder",
+   "appdesigner/codegen/builders/_BlockBuilder",
+   "appdesigner/codegen/builders/_Builder",
+   "appdesigner/codegen/configurations/AppCodeEngineConfig",
+   "appdesigner/codegen/configurations/_CodeEngineConfig",
+   "appdesigner/codegen/util/BuilderState",
+   "appdesigner/codegen/util/CodeFormatter",
+   "appdesigner/componentreplacement/ComponentFamilyTypes",
+   "appdesigner/model/AppTypes",
+   "appdesigner/model/SingletonModeEnum",
+   "appdesigner/model/_Defaults",
+   "appdesigner/model/codegen/CallbackBinding",
+   "appdesigner/model/codegen/CallbackBindingCollection",
+   "appdesigner/model/codegen/CallbackCollection",
+   "appdesigner/model/codegen/CallbackModel",
+   "appdesigner/model/codegen/CodeItem",
+   "appdesigner/model/codegen/CustomCodeModel",
+   "appdesigner/model/codegen/FunctionTypes",
+   "appdesigner/model/codegen/isuperclass/MLappStrategy",
+   "appdesigner/model/codegen/isuperclass/_SuperClass",
+   "appdesigner/model/fileformat/BinaryFileFormat",
+   "appdesigner/model/fileformat/_FileFormat",
+   "appdesigner/resources/appdesigner/application_js/nls/AppDesigner",
+   "appdesigner/resources/appdesigner/application_js/nls/AppDesigner_notranslation",
+   "appdesigner/resources/appdesigner/application_js/nls/CodeGeneration",
+   "appdesigner/resources/appdesigner/application_js/nls/ContextMenus",
+   "appdesigner/resources/appdesigner/application_js/nls/Dialogs",
+   "appdesigner/util/CallbackUtil",
+   "appdesigner/util/CodeEditUtil",
+   "appdesigner/util/CopyPasteUtil",
+   "appdesigner/util/DesignGesturesUtil",
+   "appdesigner/util/FigureUtil",
+   "appdesigner/util/GroupUtil",
+   "appdesigner/util/MenuUtil",
+   "appdesigner/util/MutualExclusiveButtonUtil",
+   "appdesigner/util/PositionUtil",
+   "appdesigner/util/TabsUtil",
+   "appdesigner/util/ToolbarUtil",
+   "appdesigner/util/TreeUtil",
+   "appdesigner/util/UserComponentUtil",
+   "appdesigner_interface/behavior/canvas/placement/bridges/layoutcreator/LayoutConstants",
+   "appdesigner_interface/model/ApplicationComponentModel",
+   "appdesigner_interface/model/_CodeGeneration",
+   "appdesigner_interface/model/_CodeNameGeneration",
+   "appdesigner_interface/model/_ComponentContextMenuInfo",
+   "appdesigner_interface/model/_ComponentTabBehavior",
+   "appdesigner_interface/model/_ComponentTreeBehavior",
+   "appdesigner_interface/model/_ContextSensitiveHelp",
+   "appdesigner_interface/model/_Creation",
+   "appdesigner_interface/model/_Deletion",
+   "appdesigner_interface/model/_DesignGestures",
+   "appdesigner_interface/model/_DragFromPalette",
+   "appdesigner_interface/model/_InPlaceEditing",
+   "appdesigner_interface/model/_Licensing",
+   "appdesigner_interface/model/_PreferredSizing",
+   "appdesigner_interface/model/_PropertyEditing",
+   "appdesigner_interface/resources/appdesigner/interface_js/nls/PropertySheet",
+   "hmishared/util/UniqueNameGenerator",
+   "mw-deprecation-utils/deprecation",
+   "mw-log/Log",
+   "mw-log/impl/Backlog",
+   "mw-log/impl/Levels",
+   "mw-log/impl/Modes",
+   "mw-log/impl/Type",
+   "mw-log/util/LogForwardingUtils",
+   "mw-log/util/LogUtils",
+   "mw-utils/Utils",
+   "uicomponents_appdesigner_plugin/init/derived/ComponentDefaultsProduction",
+   "uicomponents_appdesigner_plugin/model/ButtonGroupModel",
+   "uicomponents_appdesigner_plugin/model/CheckBoxModel",
+   "uicomponents_appdesigner_plugin/model/CheckBoxTreeModel",
+   "uicomponents_appdesigner_plugin/model/CircularGaugeModel",
+   "uicomponents_appdesigner_plugin/model/ColorPickerModel",
+   "uicomponents_appdesigner_plugin/model/ContextMenuModel",
+   "uicomponents_appdesigner_plugin/model/ContinuousKnobModel",
+   "uicomponents_appdesigner_plugin/model/DatePickerModel",
+   "uicomponents_appdesigner_plugin/model/DiscreteKnobModel",
+   "uicomponents_appdesigner_plugin/model/DropDownModel",
+   "uicomponents_appdesigner_plugin/model/GridLayoutModel",
+   "uicomponents_appdesigner_plugin/model/HTMLModel",
+   "uicomponents_appdesigner_plugin/model/HyperlinkModel",
+   "uicomponents_appdesigner_plugin/model/ImageModel",
+   "uicomponents_appdesigner_plugin/model/LabelModel",
+   "uicomponents_appdesigner_plugin/model/LampModel",
+   "uicomponents_appdesigner_plugin/model/LinearGaugeModel",
+   "uicomponents_appdesigner_plugin/model/ListBoxModel",
+   "uicomponents_appdesigner_plugin/model/MenuModel",
+   "uicomponents_appdesigner_plugin/model/NinetyDegreeGaugeModel",
+   "uicomponents_appdesigner_plugin/model/NumberFieldModel",
+   "uicomponents_appdesigner_plugin/model/PanelModel",
+   "uicomponents_appdesigner_plugin/model/PushButtonModel",
+   "uicomponents_appdesigner_plugin/model/PushToolModel",
+   "uicomponents_appdesigner_plugin/model/RadioButtonModel",
+   "uicomponents_appdesigner_plugin/model/RangeSliderModel",
+   "uicomponents_appdesigner_plugin/model/RockerSwitchModel",
+   "uicomponents_appdesigner_plugin/model/SemicircularGaugeModel",
+   "uicomponents_appdesigner_plugin/model/SliderModel",
+   "uicomponents_appdesigner_plugin/model/SliderSwitchModel",
+   "uicomponents_appdesigner_plugin/model/SpinnerModel",
+   "uicomponents_appdesigner_plugin/model/StateButtonModel",
+   "uicomponents_appdesigner_plugin/model/TabGroupModel",
+   "uicomponents_appdesigner_plugin/model/TabModel",
+   "uicomponents_appdesigner_plugin/model/TableModel",
+   "uicomponents_appdesigner_plugin/model/TextAreaModel",
+   "uicomponents_appdesigner_plugin/model/TextFieldModel",
+   "uicomponents_appdesigner_plugin/model/ToggleButtonModel",
+   "uicomponents_appdesigner_plugin/model/ToggleSwitchModel",
+   "uicomponents_appdesigner_plugin/model/ToggleToolModel",
+   "uicomponents_appdesigner_plugin/model/ToolbarModel",
+   "uicomponents_appdesigner_plugin/model/TreeModel",
+   "uicomponents_appdesigner_plugin/model/TreeNodeModel",
+   "uicomponents_appdesigner_plugin/model/UIAxesModel",
+   "uicomponents_appdesigner_plugin/model/UIFigureModel",
+   "uicomponents_appdesigner_plugin/model/_ContainerModel",
+   "uicomponents_appdesigner_plugin/model/_MutualExclusiveButtonModel",
+   "uicomponents_appdesigner_plugin/model/_PanelModel",
+   "uicomponents_appdesigner_plugin/resources/uicomponents/appdesigner_plugin_js/nls/CodeGeneration",
+   "uicomponents_appdesigner_plugin/resources/uicomponents/appdesigner_plugin_js/nls/ComponentLibrary",
+   "uicomponents_appdesigner_plugin/resources/uicomponents/appdesigner_plugin_js/nls/ContextMenu",
+   "uicomponents_appdesigner_plugin/resources/uicomponents/appdesigner_plugin_js/nls/ContextSensitiveHelp",
+   "uicomponents_appdesigner_plugin/resources/uicomponents/appdesigner_plugin_js/nls/PropertySheet"
+  ],
+  "stubbed": [
+   "MW/toolstrip/constants/TypeConstants",
+   "appdesigner/application/AppDesignerServiceProvider",
+   "appdesigner/command/AddAndAssignContextMenuCommand",
+   "appdesigner/command/AddComponentCommand",
+   "appdesigner/command/AssignContextMenuCommand",
+   "appdesigner/command/CommandController",
+   "appdesigner/command/OpenDocumentationCommand",
+   "appdesigner/command/UnassignContextMenuCommand",
+   "appdesigner/flux/intent/AppIntentCreator",
+   "appdesigner/model/codenamegenerator/CodeNameGeneratorFactory",
+   "appdesigner/util/AppDetailsUtil",
+   "appdesigner/util/CanvasUtil",
+   "appdesigner/util/GridUtil",
+   "appdesigner/view/ViewConstants",
+   "appdesigner/view/canvas/layouttemplate/LayoutTemplateConstants",
+   "appdesigner/view/contextmenu/ContextMenu",
+   "appdesigner/view/contextmenu/Criteria/ConditionTypeEnum",
+   "appdesigner/view/contextmenu/Criteria/ConditionalCriteria",
+   "appdesigner/view/dialogs/callback/SharedCallbackDialog",
+   "appdesigner/view/propertyview/callback/CallbackSection",
+   "appdesigner_interface/propertysheet/BasePropertySheetModel",
+   "appdesigner_interface/propertysheet/BasePropertySheetSection",
+   "dojo/NodeList-traverse",
+   "dojo/_base/declare",
+   "dojo/_base/lang",
+   "dojo/on",
+   "dojo/query",
+   "dojo/string",
+   "dojo/topic",
+   "mw-event-emitter/Evented",
+   "mw-filename-utils/FileNameUtil",
+   "mw-remote/Remote",
+   "uicomponents_appdesigner_plugin/componentlibrary/ButtonEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/CheckBoxEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/ColorPickerEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/ContextMenuEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/DatePickerEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/DiscreteKnobEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/DropDownEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/EditFieldEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/GaugeEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/HTMLEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/HyperlinkEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/ImageEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/KnobEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/LabelEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/LampEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/LinearGaugeEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/ListBoxEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/MenuBarEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/NinetyDegreeGaugeEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/NumericEditFieldEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/PanelEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/RadioButtonGroupEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/RockerSwitchEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/SemicircularGaugeEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/SliderEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/SpinnerEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/StateButtonEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/SwitchEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/TabGroupEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/TableEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/TextAreaEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/ToggleSwitchEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/ToolbarEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/TreeEntryDefinition",
+   "uicomponents_appdesigner_plugin/componentlibrary/UIAxesEntryDefinition",
+   "uicomponents_appdesigner_plugin/propertysheet/model/PropertyEditorModelFactory",
+   "uicomponents_appdesigner_plugin/propertysheet/section/BackgroundColorSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/ButtonGroupSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/ButtonTableSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/ContinuousKnobRangeSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/DiscreteKnobSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/DisplaySection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/DropDownSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/EditableEnabledBackgroundColorSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/EditableEnabledSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/EnabledBackgroundColorSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/EnabledBackgroundColorWithTransparencySection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/EnabledSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/FontColorBackgroundColorSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/FontWithColorSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/FontWithoutColorSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/GaugeSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/LabelSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/LampSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/LinearGaugeSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/ListBoxSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/MenuFirstSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/NinetyDegreeGaugeSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/NumberFieldSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/PanelSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/PushButtonSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/ScaleTicksSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/SemicircularGaugeSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/SliderSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/SpinnerSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/StateButtonSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/SwitchSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TabGroupSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TabTitleSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TableColumnSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TextAreaSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TextFieldSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TextSelectedSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TicksSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TreeNodeSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/TreeSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/UIAxesLabelSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/UIFigureAppearanceSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/UIFigureResizingSection",
+   "uicomponents_appdesigner_plugin/propertysheet/section/mixins/DefaultSwatchColorsForFont",
+   "uicomponents_appdesigner_plugin/propertysheet/section/mixins/EnabledControlMixin",
+   "uicomponents_appdesigner_plugin/propertysheet/toolstrip/ToolstripUtils"
+  ]
+ }
+}

@@ -273,7 +273,7 @@ public class AppDesignerV73ModelTests : IAsyncLifetime
     public void TextTheLayoutCannotBeReadFrom_LeavesTheModel_AndTheNextSaveBringsTheCopyToTheText()
     {
         byte[] model = Parts(_app)[Model];
-        string open = Insert(_text, "function GoButtonPushed", "            while true");
+        string open = Insert(_text, "function GoButtonPushed", "    end");
 
         MlappSaveResult result = JgsMlapp.WriteCode(_app, open);
 

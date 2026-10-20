@@ -100,6 +100,13 @@ public sealed partial class JgsMlappLayout
     /// <summary>The startup function's parameters after <c>app</c>, as written; empty when it has none.</summary>
     public string InputParameters { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// Whether the app runs as a single instance (App Designer's <c>SingletonMode</c> FOCUS, designer
+    /// plan DS5): its constructor asks <c>getRunningApp</c> for an instance already running before it
+    /// makes its components. Read from the constructor, which App Designer generates.
+    /// </summary>
+    public bool SingleInstance { get; private set; }
+
     /// <summary>The startup function's body, or null when the app has no startup function.</summary>
     public MlappRegion? Startup => _regions.FirstOrDefault(static r => r.Kind == MlappRegionKind.Startup);
 
@@ -287,7 +294,41 @@ public sealed partial class JgsMlappLayout
         int anchor = callbacks < 0 ? initialization : callbacks;
         IsAppLayout = true;
         _regions.Add(new MlappRegion(MlappRegionKind.EditableSection, string.Empty, head + 1, anchor - head - 1));
-        IsComplete = callbacks < 0 || ReadCallbacks(text, callbacks, initialization);
+        IsComplete = callbacks < 0 || ReadCallbacks(callbacks, initialization);
+        SingleInstance = ReadSingleInstance(initialization);
+    }
+
+    /// <summary>
+    /// Whether the constructor - the function after <c>createComponents</c> that returns the class's
+    /// name - calls <c>getRunningApp</c> before <c>delete</c>'s function begins.
+    /// </summary>
+    private bool ReadSingleInstance(int initialization)
+    {
+        var constructor = new Regex(@"^\s*function\s+\w+\s*=\s*" + Regex.Escape(ClassName) + @"\s*(\(|$)");
+        int at = -1;
+        for (int i = initialization + 1; i < Lines.Count; i++)
+        {
+            if (constructor.IsMatch(Lines[i]))
+            {
+                at = i;
+                break;
+            }
+        }
+
+        for (int i = at + 1; at >= 0 && i < Lines.Count; i++)
+        {
+            if (DeleteFunction().IsMatch(Lines[i]))
+            {
+                break;
+            }
+
+            if (GetRunningApp().IsMatch(Lines[i]))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>The first line at or after <paramref name="from"/> that is <paramref name="text"/> once trimmed, or -1.</summary>
@@ -306,108 +347,84 @@ public sealed partial class JgsMlappLayout
 
     /// <summary>
     /// Finds each function of the callbacks block and the lines between its signature and its
-    /// <c>end</c>. False when a function is left open.
+    /// <c>end</c>, by the lines App Designer generates rather than by the balance of the blocks in
+    /// between, as App Designer's editor tells its generated lines apart from the user's (its
+    /// <c>RTCUserEditManager</c> cuts by the lines it marked read-only, and never parses a body): the
+    /// block's <c>end</c> stands at its <c>methods</c> line's indentation; a function begins at a
+    /// <c>function</c> line at the first function's indentation and ends at the last <c>end</c> at that
+    /// indentation before the next function or the block's <c>end</c>. A body the user is typing an
+    /// <c>if</c> or a <c>for</c> into is still a body, and a function nested in a body is part of it.
+    /// False when the block is not closed or a function has no <c>end</c> of its own.
     /// </summary>
-    private bool ReadCallbacks(string text, int callbacks, int initialization)
+    private bool ReadCallbacks(int callbacks, int initialization)
     {
-        IReadOnlyList<Token> tokens = Lexer.Tokenize(text, tolerant: true, JgsDialect.Matlab);
-        var found = new List<MlappRegion>();
-        int depth = 0;
-        int brackets = 0;
-        int opened = -1;
-        bool closed = false;
-
         // The block's own `methods` line follows the comment; its functions start below that.
-        int firstLine = callbacks + 3;
-        for (int i = 0; i < tokens.Count; i++)
+        int methods = callbacks + 1;
+        if (methods >= initialization)
         {
-            Token token = tokens[i];
-            if (token.Line < firstLine)
-            {
-                continue;
-            }
+            return false;
+        }
 
-            if (token.Line > initialization || token.Type == TokenType.Eof)
+        string blockIndent = IndentOf(Lines[methods]);
+        string? functionIndent = null;
+        int blockEnd = -1;
+        var signatures = new List<int>();
+        for (int i = methods + 1; i < initialization; i++)
+        {
+            string line = Lines[i];
+            if (IsEndAt(line, blockIndent))
             {
+                blockEnd = i;
                 break;
             }
 
-            switch (token.Type)
+            if (FunctionStart().IsMatch(line))
             {
-                case TokenType.LParen or TokenType.LBracket or TokenType.LBrace:
-                    brackets++;
-                    continue;
-                case TokenType.RParen or TokenType.RBracket or TokenType.RBrace:
-                    brackets = Math.Max(0, brackets - 1);
-                    continue;
-                default:
-                    break;
-            }
-
-            if (brackets > 0 || (i > 0 && tokens[i - 1].Type == TokenType.Dot))
-            {
-                continue; // `end` inside an index is the last element; a name after a dot is a field
-            }
-
-            if (Opens(tokens, i))
-            {
-                if (depth == 0)
+                string indent = IndentOf(line);
+                if (indent.Length > blockIndent.Length && (functionIndent ??= indent) == indent)
                 {
-                    opened = token.Line - 1;
-                }
-
-                depth++;
-            }
-            else if (token.Type == TokenType.End)
-            {
-                depth--;
-                if (depth < 0)
-                {
-                    closed = true; // the end of the methods block
-                    break;
-                }
-
-                if (depth == 0)
-                {
-                    found.Add(RegionOf(opened, token.Line - 1));
-                    opened = -1;
+                    signatures.Add(i);
                 }
             }
         }
 
-        // A function left open takes the block's own end for its own, and the block is never closed.
-        if (!closed)
+        if (blockEnd < 0)
         {
             return false;
+        }
+
+        var found = new List<MlappRegion>();
+        for (int s = 0; s < signatures.Count; s++)
+        {
+            int signature = signatures[s];
+            int limit = s + 1 < signatures.Count ? signatures[s + 1] : blockEnd;
+            int close = -1;
+            for (int i = signature + 1; i < limit; i++)
+            {
+                if (IsEndAt(Lines[i], functionIndent!))
+                {
+                    close = i;
+                }
+            }
+
+            if (close < 0)
+            {
+                return false;
+            }
+
+            found.Add(RegionOf(signature, close));
         }
 
         _regions.AddRange(found);
         return true;
     }
 
-    /// <summary>Whether the token begins a block that an <c>end</c> closes.</summary>
-    private static bool Opens(IReadOnlyList<Token> tokens, int at)
-    {
-        Token token = tokens[at];
-        switch (token.Type)
-        {
-            case TokenType.If or TokenType.For or TokenType.While or TokenType.Switch or TokenType.Try or TokenType.Function:
-                return true;
-            case TokenType.Identifier:
-                bool startsStatement = at == 0
-                    || tokens[at - 1].Type is TokenType.Newline or TokenType.Semicolon or TokenType.Comma;
-                if (!startsStatement)
-                {
-                    return false;
-                }
+    /// <summary>The whitespace a line begins with.</summary>
+    private static string IndentOf(string line) => line[..(line.Length - line.TrimStart().Length)];
 
-                // `arguments` is a block only as a line by itself; anything else of that name is a variable.
-                return token.Text is "parfor" or "spmd"
-                    || (token.Text == "arguments" && at + 1 < tokens.Count && tokens[at + 1].Type == TokenType.Newline);
-            default:
-                return false;
-        }
-    }
+    /// <summary>Whether <paramref name="line"/> is an <c>end</c> standing at exactly <paramref name="indent"/>, with nothing after it but spaces, a semicolon or a comment.</summary>
+    private static bool IsEndAt(string line, string indent) =>
+        line.StartsWith(indent, StringComparison.Ordinal) && EndLine().IsMatch(line[indent.Length..]);
 
     /// <summary>The body between a function's signature line and its closing line, and what the function is.</summary>
     private MlappRegion RegionOf(int signature, int close)
@@ -435,9 +452,21 @@ public sealed partial class JgsMlappLayout
     [GeneratedRegex(@"^\s*%.*[Pp]roperties that correspond to ")]
     private static partial Regex GeneratedPropertiesComment();
 
+    [GeneratedRegex(@"^end\b\s*;?\s*(?:%.*)?$")]
+    private static partial Regex EndLine();
+
+    [GeneratedRegex(@"^\s*function\b")]
+    private static partial Regex FunctionStart();
+
     [GeneratedRegex(@"^\s*classdef\s+(?:\(.*?\)\s*)?(\w+)")]
     private static partial Regex ClassLine();
 
     [GeneratedRegex(@"^\s*function\s+(?:(?:\[[^\]]*\]|\w+)\s*=\s*)?(\w+)\s*(?:\((.*)\))?")]
     private static partial Regex FunctionLine();
+
+    [GeneratedRegex(@"^\s*function\s+delete\s*\(")]
+    private static partial Regex DeleteFunction();
+
+    [GeneratedRegex(@"\bgetRunningApp\s*\(")]
+    private static partial Regex GetRunningApp();
 }

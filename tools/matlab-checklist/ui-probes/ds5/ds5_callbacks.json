@@ -1,0 +1,909 @@
+{
+ "release": "R2025b",
+ "note": "App Designer's per-class callback data, read from its bundle's component models under node (ds5_callbacks.js): the callback properties as the inspector's Callbacks tab lists them, in their groups (the figure's are titled); the comment written over a callback bound to one property alone (CodeGeneration.CallbackComments, with its comment sign, as the nls holds it; absent where R2025b's model names an nls key that does not exist, so the mixed comment is used); and the code a new callback starts with (CodeGeneration.getDefaultCallbackCode, with the tokens ad_OBJECTNAME_ad and ad_CODENAME_ad), where it is not one empty line.",
+ "startup": {
+  "name": "startupFcn",
+  "property": "StartupFcn",
+  "comment": "Code that executes after component creation"
+ },
+ "classes": {
+  "matlab.ui.Figure": {
+   "defaultCodeName": "UIFigure",
+   "groups": [
+    {
+     "title": "COMMON",
+     "properties": [
+      "CloseRequestFcn",
+      "ButtonDownFcn",
+      "ThemeChangedFcn"
+     ]
+    },
+    {
+     "title": "KEYBOARD",
+     "properties": [
+      "KeyPressFcn",
+      "KeyReleaseFcn"
+     ]
+    },
+    {
+     "title": "WINDOW",
+     "properties": [
+      "SizeChangedFcn",
+      "WindowButtonDownFcn",
+      "WindowButtonMotionFcn",
+      "WindowButtonUpFcn",
+      "WindowKeyPressFcn",
+      "WindowKeyReleaseFcn",
+      "WindowScrollWheelFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "CloseRequestFcn": "% Close request function",
+    "SizeChangedFcn": "% Size changed function",
+    "ThemeChangedFcn": "% Theme changed function",
+    "WindowButtonDownFcn": "% Window button down function",
+    "WindowButtonUpFcn": "% Window button up function",
+    "WindowButtonMotionFcn": "% Window button motion function",
+    "WindowScrollWheelFcn": "% Window scroll wheel function",
+    "ButtonDownFcn": "% Button down function",
+    "WindowKeyPressFcn": "% Window key press function",
+    "WindowKeyReleaseFcn": "% Window key release function",
+    "KeyPressFcn": "% Key press function",
+    "KeyReleaseFcn": "% Key release function"
+   },
+   "defaultCode": {
+    "CloseRequestFcn": [
+     "delete(ad_OBJECTNAME_ad)",
+     ""
+    ],
+    "KeyPressFcn": [
+     "key = event.Key;",
+     ""
+    ],
+    "KeyReleaseFcn": [
+     "key = event.Key;",
+     ""
+    ],
+    "SizeChangedFcn": [
+     "position = ad_OBJECTNAME_ad.ad_CODENAME_ad.Position;",
+     ""
+    ],
+    "WindowKeyPressFcn": [
+     "key = event.Key;",
+     ""
+    ],
+    "WindowKeyReleaseFcn": [
+     "key = event.Key;",
+     ""
+    ],
+    "WindowScrollWheelFcn": [
+     "verticalScrollAmount = event.VerticalScrollAmount;",
+     "verticalScrollCount = event.VerticalScrollCount;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.container.ButtonGroup": {
+   "defaultCodeName": "ButtonGroup",
+   "groups": [
+    {
+     "title": "Button Group",
+     "properties": [
+      "SelectionChangedFcn",
+      "SizeChangedFcn",
+      "ButtonDownFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "SelectionChangedFcn": "% Selection changed function",
+    "SizeChangedFcn": "% Size changed function",
+    "ButtonDownFcn": "% Button down function"
+   },
+   "defaultCode": {
+    "SelectionChangedFcn": [
+     "selectedButton = ad_OBJECTNAME_ad.ad_CODENAME_ad.SelectedObject;",
+     ""
+    ],
+    "SizeChangedFcn": [
+     "position = ad_OBJECTNAME_ad.ad_CODENAME_ad.Position;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.container.CheckBoxTree": {
+   "defaultCodeName": "Tree",
+   "groups": [
+    {
+     "title": "Tree",
+     "properties": [
+      "CheckedNodesChangedFcn",
+      "SelectionChangedFcn",
+      "NodeExpandedFcn",
+      "NodeCollapsedFcn",
+      "NodeTextChangedFcn"
+     ]
+    },
+    {
+     "title": "Mouse",
+     "properties": [
+      "ClickedFcn",
+      "DoubleClickedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "SelectionChangedFcn": "% Selection changed function",
+    "NodeExpandedFcn": "% Node expanded function",
+    "NodeCollapsedFcn": "% Node collapsed function",
+    "NodeTextChangedFcn": "% Node text changed function",
+    "ClickedFcn": "% Clicked callback",
+    "DoubleClickedFcn": "% Double-clicked callback"
+   },
+   "defaultCode": {
+    "CheckedNodesChangedFcn": [
+     "checkedNodes = ad_OBJECTNAME_ad.ad_CODENAME_ad.CheckedNodes;",
+     ""
+    ],
+    "SelectionChangedFcn": [
+     "selectedNodes = ad_OBJECTNAME_ad.ad_CODENAME_ad.SelectedNodes;",
+     ""
+    ],
+    "NodeExpandedFcn": [
+     "node = event.Node;",
+     ""
+    ],
+    "NodeCollapsedFcn": [
+     "node = event.Node;",
+     ""
+    ],
+    "NodeTextChangedFcn": [
+     "node = event.Node;",
+     ""
+    ],
+    "ClickedFcn": [
+     "node = event.InteractionInformation.Node;",
+     ""
+    ],
+    "DoubleClickedFcn": [
+     "node = event.InteractionInformation.Node;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.container.ContextMenu": {
+   "defaultCodeName": "ContextMenu",
+   "groups": [
+    {
+     "title": "Context Menu",
+     "properties": [
+      "ContextMenuOpeningFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ContextMenuOpeningFcn": "% Context menu opening function"
+   },
+   "defaultCode": {}
+  },
+  "matlab.ui.container.Menu": {
+   "defaultCodeName": "Menu",
+   "groups": [
+    {
+     "title": "Menu",
+     "properties": [
+      "MenuSelectedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "MenuSelectedFcn": "% Menu selected function"
+   },
+   "defaultCode": {}
+  },
+  "matlab.ui.container.Panel": {
+   "defaultCodeName": "Panel",
+   "groups": [
+    {
+     "title": "Panel",
+     "properties": [
+      "SizeChangedFcn",
+      "ButtonDownFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "SizeChangedFcn": "% Size changed function",
+    "ButtonDownFcn": "% Button down function"
+   },
+   "defaultCode": {
+    "SizeChangedFcn": [
+     "position = ad_OBJECTNAME_ad.ad_CODENAME_ad.Position;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.container.Tab": {
+   "defaultCodeName": "Tab",
+   "groups": [
+    {
+     "title": "Tab",
+     "properties": [
+      "SizeChangedFcn",
+      "ButtonDownFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "SizeChangedFcn": "% Size changed function",
+    "ButtonDownFcn": "% Button down function"
+   },
+   "defaultCode": {
+    "SizeChangedFcn": [
+     "position = ad_OBJECTNAME_ad.ad_CODENAME_ad.Position;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.container.TabGroup": {
+   "defaultCodeName": "TabGroup",
+   "groups": [
+    {
+     "title": "TabGroup",
+     "properties": [
+      "SelectionChangedFcn",
+      "ButtonDownFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "SelectionChangedFcn": "% Selection change function",
+    "ButtonDownFcn": "% Button down function"
+   },
+   "defaultCode": {
+    "SelectionChangedFcn": [
+     "selectedTab = ad_OBJECTNAME_ad.ad_CODENAME_ad.SelectedTab;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.container.Tree": {
+   "defaultCodeName": "Tree",
+   "groups": [
+    {
+     "title": "Tree",
+     "properties": [
+      "SelectionChangedFcn",
+      "NodeExpandedFcn",
+      "NodeCollapsedFcn",
+      "NodeTextChangedFcn"
+     ]
+    },
+    {
+     "title": "Mouse",
+     "properties": [
+      "ClickedFcn",
+      "DoubleClickedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "SelectionChangedFcn": "% Selection changed function",
+    "NodeExpandedFcn": "% Node expanded function",
+    "NodeCollapsedFcn": "% Node collapsed function",
+    "NodeTextChangedFcn": "% Node text changed function",
+    "ClickedFcn": "% Clicked callback",
+    "DoubleClickedFcn": "% Double-clicked callback"
+   },
+   "defaultCode": {
+    "SelectionChangedFcn": [
+     "selectedNodes = ad_OBJECTNAME_ad.ad_CODENAME_ad.SelectedNodes;",
+     ""
+    ],
+    "NodeExpandedFcn": [
+     "node = event.Node;",
+     ""
+    ],
+    "NodeCollapsedFcn": [
+     "node = event.Node;",
+     ""
+    ],
+    "NodeTextChangedFcn": [
+     "node = event.Node;",
+     ""
+    ],
+    "ClickedFcn": [
+     "node = event.InteractionInformation.Node;",
+     ""
+    ],
+    "DoubleClickedFcn": [
+     "node = event.InteractionInformation.Node;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.container.toolbar.PushTool": {
+   "defaultCodeName": "PushTool",
+   "groups": [
+    {
+     "title": "PushTool",
+     "properties": [
+      "ClickedCallback"
+     ]
+    }
+   ],
+   "comments": {},
+   "defaultCode": {}
+  },
+  "matlab.ui.container.toolbar.ToggleTool": {
+   "defaultCodeName": "ToggleTool",
+   "groups": [
+    {
+     "title": "ToggleTool",
+     "properties": [
+      "ClickedCallback",
+      "OnCallback",
+      "OffCallback"
+     ]
+    }
+   ],
+   "comments": {
+    "OnCallback": "% On callback",
+    "OffCallback": "% Off callback"
+   },
+   "defaultCode": {}
+  },
+  "matlab.ui.control.Button": {
+   "defaultCodeName": "Button",
+   "groups": [
+    {
+     "title": "Button",
+     "properties": [
+      "ButtonPushedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ButtonPushedFcn": "% Button pushed function"
+   },
+   "defaultCode": {}
+  },
+  "matlab.ui.control.CheckBox": {
+   "defaultCodeName": "CheckBox",
+   "groups": [
+    {
+     "title": "Check Box",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.ColorPicker": {
+   "defaultCodeName": "ColorPicker",
+   "groups": [
+    {
+     "title": "Color Picker",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {},
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.DatePicker": {
+   "defaultCodeName": "DatePicker",
+   "groups": [
+    {
+     "title": "Date Picker",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.DiscreteKnob": {
+   "defaultCodeName": "Knob",
+   "groups": [
+    {
+     "title": "Knob",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.DropDown": {
+   "defaultCodeName": "DropDown",
+   "groups": [
+    {
+     "title": "Drop Down",
+     "properties": [
+      "ValueChangedFcn",
+      "DropDownOpeningFcn",
+      "ClickedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function",
+    "DropDownOpeningFcn": "% Drop down opening function",
+    "ClickedFcn": "% Clicked callback"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ],
+    "ClickedFcn": [
+     "item = event.InteractionInformation.Item;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.EditField": {
+   "defaultCodeName": "EditField",
+   "groups": [
+    {
+     "title": "Edit Field",
+     "properties": [
+      "ValueChangedFcn",
+      "ValueChangingFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function",
+    "ValueChangingFcn": "% Value changing function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ],
+    "ValueChangingFcn": [
+     "changingValue = event.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.HTML": {
+   "defaultCodeName": "HTML",
+   "groups": [
+    {
+     "title": "HTML",
+     "properties": [
+      "DataChangedFcn",
+      "HTMLEventReceivedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "DataChangedFcn": "% Data changed function",
+    "HTMLEventReceivedFcn": "% Event received function"
+   },
+   "defaultCode": {
+    "DataChangedFcn": [
+     "data = ad_OBJECTNAME_ad.ad_CODENAME_ad.Data;",
+     ""
+    ],
+    "HTMLEventReceivedFcn": [
+     "eventName = event.HTMLEventName;",
+     "eventData = event.HTMLEventData;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.Hyperlink": {
+   "defaultCodeName": "Hyperlink",
+   "groups": [
+    {
+     "title": "Hyperlink",
+     "properties": [
+      "HyperlinkClickedFcn"
+     ]
+    }
+   ],
+   "comments": {},
+   "defaultCode": {}
+  },
+  "matlab.ui.control.Image": {
+   "defaultCodeName": "Image",
+   "groups": [
+    {
+     "title": "Image",
+     "properties": [
+      "ImageClickedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ImageClickedFcn": "% Image clicked function"
+   },
+   "defaultCode": {}
+  },
+  "matlab.ui.control.Knob": {
+   "defaultCodeName": "Knob",
+   "groups": [
+    {
+     "title": "Knob",
+     "properties": [
+      "ValueChangedFcn",
+      "ValueChangingFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function",
+    "ValueChangingFcn": "% Value changing function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ],
+    "ValueChangingFcn": [
+     "changingValue = event.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.ListBox": {
+   "defaultCodeName": "ListBox",
+   "groups": [
+    {
+     "title": "ListBox",
+     "properties": [
+      "ValueChangedFcn",
+      "ClickedFcn",
+      "DoubleClickedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function",
+    "ClickedFcn": "% Clicked callback",
+    "DoubleClickedFcn": "% Double-clicked callback"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ],
+    "ClickedFcn": [
+     "item = event.InteractionInformation.Item;",
+     ""
+    ],
+    "DoubleClickedFcn": [
+     "item = event.InteractionInformation.Item;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.NumericEditField": {
+   "defaultCodeName": "EditField",
+   "groups": [
+    {
+     "title": "Edit Field",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.RangeSlider": {
+   "defaultCodeName": "Slider",
+   "groups": [
+    {
+     "title": "Slider",
+     "properties": [
+      "ValueChangedFcn",
+      "ValueChangingFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function",
+    "ValueChangingFcn": "% Value changing function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ],
+    "ValueChangingFcn": [
+     "changingValue = event.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.RockerSwitch": {
+   "defaultCodeName": "Switch",
+   "groups": [
+    {
+     "title": "Switch",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.Slider": {
+   "defaultCodeName": "Slider",
+   "groups": [
+    {
+     "title": "Slider",
+     "properties": [
+      "ValueChangedFcn",
+      "ValueChangingFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function",
+    "ValueChangingFcn": "% Value changing function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ],
+    "ValueChangingFcn": [
+     "changingValue = event.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.Spinner": {
+   "defaultCodeName": "Spinner",
+   "groups": [
+    {
+     "title": "Spinner",
+     "properties": [
+      "ValueChangedFcn",
+      "ValueChangingFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function",
+    "ValueChangingFcn": "% Value changing function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ],
+    "ValueChangingFcn": [
+     "changingValue = event.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.StateButton": {
+   "defaultCodeName": "Button",
+   "groups": [
+    {
+     "title": "Button",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.Switch": {
+   "defaultCodeName": "Switch",
+   "groups": [
+    {
+     "title": "Switch",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.Table": {
+   "defaultCodeName": "UITable",
+   "groups": [
+    {
+     "title": "Table",
+     "properties": [
+      "CellEditCallback",
+      "SelectionChangedFcn",
+      "DisplayDataChangedFcn",
+      "CellSelectionCallback"
+     ]
+    },
+    {
+     "title": "Mouse and Keyboard",
+     "properties": [
+      "ButtonDownFcn",
+      "KeyPressFcn",
+      "KeyReleaseFcn",
+      "ClickedFcn",
+      "DoubleClickedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "CellEditCallback": "% Cell edit callback",
+    "CellSelectionCallback": "% Cell selection callback",
+    "SelectionChangedFcn": "% Selection changed function",
+    "ButtonDownFcn": "% Button down function",
+    "DisplayDataChangedFcn": "% Display data changed function",
+    "KeyPressFcn": "% Key press function",
+    "KeyReleaseFcn": "% Key release function",
+    "ClickedFcn": "% Clicked callback",
+    "DoubleClickedFcn": "% Double-clicked callback"
+   },
+   "defaultCode": {
+    "CellEditCallback": [
+     "indices = event.Indices;",
+     "newData = event.NewData;",
+     ""
+    ],
+    "SelectionChangedFcn": [
+     "selection = ad_OBJECTNAME_ad.ad_CODENAME_ad.Selection;",
+     ""
+    ],
+    "DisplayDataChangedFcn": [
+     "newDisplayData = ad_OBJECTNAME_ad.ad_CODENAME_ad.DisplayData;",
+     ""
+    ],
+    "CellSelectionCallback": [
+     "indices = event.Indices;",
+     ""
+    ],
+    "KeyPressFcn": [
+     "key = event.Key;",
+     ""
+    ],
+    "KeyReleaseFcn": [
+     "key = event.Key;",
+     ""
+    ],
+    "ClickedFcn": [
+     "displayRow = event.InteractionInformation.DisplayRow;",
+     "displayColumn = event.InteractionInformation.DisplayColumn;",
+     ""
+    ],
+    "DoubleClickedFcn": [
+     "displayRow = event.InteractionInformation.DisplayRow;",
+     "displayColumn = event.InteractionInformation.DisplayColumn;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.TextArea": {
+   "defaultCodeName": "TextArea",
+   "groups": [
+    {
+     "title": "Text Area",
+     "properties": [
+      "ValueChangedFcn",
+      "ValueChangingFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function",
+    "ValueChangingFcn": "% Value changing function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ],
+    "ValueChangingFcn": [
+     "changingValue = event.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.ToggleSwitch": {
+   "defaultCodeName": "Switch",
+   "groups": [
+    {
+     "title": "Switch",
+     "properties": [
+      "ValueChangedFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ValueChangedFcn": "% Value changed function"
+   },
+   "defaultCode": {
+    "ValueChangedFcn": [
+     "value = ad_OBJECTNAME_ad.ad_CODENAME_ad.Value;",
+     ""
+    ]
+   }
+  },
+  "matlab.ui.control.UIAxes": {
+   "defaultCodeName": "UIAxes",
+   "groups": [
+    {
+     "title": "UIAxes",
+     "properties": [
+      "ButtonDownFcn"
+     ]
+    }
+   ],
+   "comments": {
+    "ButtonDownFcn": "% Button down function"
+   },
+   "defaultCode": {}
+  }
+ }
+}

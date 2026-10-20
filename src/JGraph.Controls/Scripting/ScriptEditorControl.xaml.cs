@@ -18,6 +18,7 @@ public partial class ScriptEditorControl : UserControl
     private readonly BreakpointMargin _breakpointMargin = new();
     private readonly CurrentLineRenderer _currentLineRenderer = new();
     private readonly GeneratedCodeRenderer _generatedCodeRenderer = new();
+    private readonly LineReadOnlySectionProvider _readOnlyLines;
     private readonly CompletionSupport _completion;
     private readonly MenuItem _openSymbolItem = new() { InputGestureText = "Ctrl+D" };
     private ToolTip? _datatip;
@@ -54,6 +55,7 @@ public partial class ScriptEditorControl : UserControl
     {
         InitializeComponent();
         _completion = new CompletionSupport(Editor);
+        _readOnlyLines = new LineReadOnlySectionProvider(Editor.Document);
         SetResourceReference(CurrentLineBrushProperty, Themes.ThemeKeys.CurrentLineHighlight);
         SetResourceReference(SyntaxIsDarkProperty, Themes.ThemeKeys.ThemeIsDark);
         SetResourceReference(GeneratedCodeBrushProperty, Themes.ThemeKeys.GeneratedCode);
@@ -233,6 +235,114 @@ public partial class ScriptEditorControl : UserControl
         Editor.CaretOffset = Editor.Document.GetLineByNumber(target).Offset;
         Editor.ScrollToLine(target);
         FocusEditor();
+    }
+
+    // --- the designer's code view (designer plan DS5) ---------------------------------------------
+
+    /// <summary>
+    /// Which lines of the text may be edited, asked of the text whenever it changed; null lets every
+    /// line be edited. The designer's code view keeps the lines App Designer generates read-only.
+    /// </summary>
+    public Func<string, IReadOnlySet<int>>? EditableLines
+    {
+        get => _readOnlyLines.EditableLines;
+        set
+        {
+            // The provider lets every line be edited while it has no lines to keep, so it stays installed.
+            _readOnlyLines.EditableLines = value;
+            _readOnlyLines.Invalidate();
+            Editor.TextArea.ReadOnlySectionProvider = _readOnlyLines;
+        }
+    }
+
+    /// <summary>Says what decides the editable lines changed, though the text did not: they are asked for again.</summary>
+    public void InvalidateEditableLines() => _readOnlyLines.Invalidate();
+
+    /// <summary>The caret's line, one-based.</summary>
+    public int CaretLine => Editor.TextArea.Caret.Line;
+
+    /// <summary>Whether the caret is on a line that may be edited.</summary>
+    public bool CaretIsEditable => EditableLines is null || _readOnlyLines.CanInsert(Editor.CaretOffset);
+
+    /// <summary>
+    /// Replaces the text with <paramref name="text"/> by the one stretch that differs - between what
+    /// the two have in common at the start and at the end - so that the caret, the selection and the
+    /// view keep their place in the text around it, as they do through App Designer's line-wise
+    /// renders: what the designer does when the design changed the code around the user's. The
+    /// editor's undo history is cleared: it would undo into text the design no longer has.
+    /// </summary>
+    public void ReplaceText(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        string old = Editor.Document.Text;
+        if (old == text)
+        {
+            return;
+        }
+
+        double offset = Editor.VerticalOffset;
+        int prefix = 0;
+        int limit = Math.Min(old.Length, text.Length);
+        while (prefix < limit && old[prefix] == text[prefix])
+        {
+            prefix++;
+        }
+
+        int suffix = 0;
+        while (suffix < limit - prefix && old[old.Length - 1 - suffix] == text[text.Length - 1 - suffix])
+        {
+            suffix++;
+        }
+
+        Editor.Document.Replace(prefix, old.Length - prefix - suffix, text.Substring(prefix, text.Length - prefix - suffix));
+        Editor.Document.UndoStack.ClearAll();
+        Editor.ScrollToVerticalOffset(offset);
+    }
+
+    /// <summary>Scrolls <paramref name="line"/> (one-based) into view without moving the caret.</summary>
+    public void ScrollToLine(int line) => Editor.ScrollToLine(Math.Clamp(line, 1, Math.Max(1, Editor.Document.LineCount)));
+
+    /// <summary>Puts the caret at <paramref name="line"/> and <paramref name="column"/> (one-based), scrolls there and focuses the editor.</summary>
+    public void PlaceCaret(int line, int column)
+    {
+        int target = Math.Clamp(line, 1, Math.Max(1, Editor.Document.LineCount));
+        ICSharpCode.AvalonEdit.Document.DocumentLine at = Editor.Document.GetLineByNumber(target);
+        Editor.TextArea.Caret.Line = target;
+        Editor.TextArea.Caret.Column = Math.Clamp(column, 1, at.Length + 1);
+        Editor.ScrollToLine(target);
+        FocusEditor();
+    }
+
+    /// <summary>Selects the last <paramref name="text"/> on <paramref name="line"/> (one-based), scrolls there and focuses the editor; the caret goes to the line when the text is not on it.</summary>
+    public void SelectText(int line, string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        int target = Math.Clamp(line, 1, Math.Max(1, Editor.Document.LineCount));
+        ICSharpCode.AvalonEdit.Document.DocumentLine at = Editor.Document.GetLineByNumber(target);
+        int index = text.Length == 0 ? -1 : Editor.Document.GetText(at).LastIndexOf(text, StringComparison.Ordinal);
+        if (index < 0)
+        {
+            PlaceCaret(target, 1);
+            return;
+        }
+
+        Editor.Select(at.Offset + index, text.Length);
+        Editor.ScrollToLine(target);
+        FocusEditor();
+    }
+
+    /// <summary>Inserts <paramref name="text"/> at the caret and focuses the editor; nothing when the caret is on a line that may not be edited.</summary>
+    public bool InsertAtCaret(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        if (!CaretIsEditable)
+        {
+            return false;
+        }
+
+        Editor.Document.Insert(Editor.CaretOffset, text);
+        FocusEditor();
+        return true;
     }
 
     private static bool IsIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
@@ -442,6 +552,7 @@ public partial class ScriptEditorControl : UserControl
         // An edit can move a line from the user's code into generated code or back; a redraw of
         // the lines on screen follows every edit, and reads the spans again.
         _generatedCodeRenderer.Invalidate();
+        _readOnlyLines.Invalidate();
         TextChanged?.Invoke(this, EventArgs.Empty);
     }
 }
