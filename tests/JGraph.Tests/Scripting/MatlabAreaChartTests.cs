@@ -143,15 +143,16 @@ public class MatlabAreaChartTests : IDisposable
     }
 
     [Fact]
-    public async Task AnOptionThatIsNotOneNamesTheOnesThatAre()
+    public async Task AnOptionThatIsNotOneIsRefusedInR2025bsWords()
     {
         string message = await RunExpectingFailure("""
             figure(1);
             area(1:3, [1 2 3], 'FaceAlfa', 0.5);
             """);
 
-        Assert.Contains("FaceAlfa", message, StringComparison.Ordinal);
-        Assert.Contains("FaceAlpha", message, StringComparison.Ordinal);
+        // Any property of the area is an option (open item 136, ADR 0255), so a name that is none
+        // is refused as R2025b refuses it.
+        Assert.Contains("Unrecognized property FaceAlfa for class Area.", message, StringComparison.Ordinal);
     }
 
     [Fact]

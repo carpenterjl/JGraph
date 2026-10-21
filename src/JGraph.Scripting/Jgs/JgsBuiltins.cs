@@ -1962,13 +1962,13 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        DefineSilent("light", OnNamedAxes((args, line, col) =>
+        DefineSilent("light", Making(LightMade, OnNamedAxes((args, line, col) =>
         {
             var light = new LightModel();
             ApplyLightOptions("light", light, args, 0, line, col);
             JG.Gca().Lights.Add(light);
             return JgsHandleRegistry.For(light);
-        }));
+        })));
 
         // lightangle(az, el) places a light on the same spherical convention view() uses, so the two
         // read the same way: azimuth about the vertical axis, elevation toward the viewer.
@@ -2203,10 +2203,10 @@ internal static partial class JgsBuiltins
         // MATLAB's rule: `plot(x, y)` on its own draws, and only `h = plot(x, y)` keeps the handle.
         // Registering them with Define instead would echo `ans = 1000000.5` at every unsuppressed
         // call — which is what `plot` did before M54, the one verb that already returned a handle.
-        DefineSilent("plot", (args, line, col) => Plot(args, dialect, line, col));
-        DefineSilent("scatter", (args, line, col) => Scatter(args, line, col));
-        DefineSilent("stem", OnNamedAxes((args, line, col) => Stem(args, dialect, line, col)));
-        DefineSilent("histogram", OnNamedAxes((args, line, col) => Histogram(args, line, col))); // histogram(ax, x)
+        DefineSilent("plot", Making(PlotMade, (args, line, col) => Plot(args, dialect, line, col)));
+        DefineSilent("scatter", Making(ScatterMade, (args, line, col) => Scatter(args, line, col)));
+        DefineSilent("stem", Making(StemMade, OnNamedAxes((args, line, col) => Stem(args, dialect, line, col))));
+        DefineSilent("histogram", Making(HistogramMade, OnNamedAxes((args, line, col) => Histogram(args, line, col)))); // histogram(ax, x)
 
         // hist draws when nobody wanted the numbers and counts when somebody did, which is why it
         // is told when its answer is thrown away (M53 wave J's rule for ecdf).
@@ -2217,7 +2217,7 @@ internal static partial class JgsBuiltins
             KnowsWhenDiscarded = true,
             BindsAnsAsStatement = false,
         }));
-        DefineSilent("errorbar", OnNamedAxes((args, line, col) => ErrorBar(args, line, col)));
+        DefineSilent("errorbar", Making(ErrorBarMade, OnNamedAxes((args, line, col) => ErrorBar(args, line, col))));
 
         // --- 3D surfaces, contours, and images -----------------------------------------------
         Define("meshgrid", (args, line, col) => Grids("meshgrid", args, line, col));
@@ -2245,10 +2245,10 @@ internal static partial class JgsBuiltins
         // later and wins. The pair that stood here was shadowed and never ran — found by M70 when
         // the target-form verifier reported a failure whose message came from the other body.
 
-        DefineSilent("imagesc", OnNamedAxes(
-            (args, line, col) => DrawImage("imagesc", args, scaled: true, line, col)));
+        DefineSilent("imagesc", Making(ImageMade, OnNamedAxes(
+            (args, line, col) => DrawImage("imagesc", args, scaled: true, line, col))));
 
-        DefineSilent("pcolor", OnNamedAxes((args, line, col) =>
+        DefineSilent("pcolor", Making(PcolorMade, OnNamedAxes((args, line, col) =>
         {
             ArityRange("pcolor", args, 1, 3, line, col);
             if (args.Count == 1)
@@ -2265,7 +2265,7 @@ internal static partial class JgsBuiltins
                 DoubleArray("pcolor", args, 0, line, col),
                 DoubleArray("pcolor", args, 1, line, col),
                 Matrix("pcolor", args, 2, line, col)));
-        }));
+        })));
 
         Define("zlabel", (args, line, col) => { Arity("zlabel", args, 1, line, col); JG.ZLabel(Str("zlabel", args, 0, line, col)); return JgsValue.Null; });
         // [az, el] = view(…) answers the two angles apart (open item 110).
@@ -2400,9 +2400,9 @@ internal static partial class JgsBuiltins
             BindsAnsAsStatement = false,
         }));
 
-        DefineSilent("semilogy", OnNamedAxes((args, line, col) => Semilog("semilogy", args, dialect, line, col, logX: false, logY: true)));
-        DefineSilent("semilogx", OnNamedAxes((args, line, col) => Semilog("semilogx", args, dialect, line, col, logX: true, logY: false)));
-        DefineSilent("loglog", OnNamedAxes((args, line, col) => Semilog("loglog", args, dialect, line, col, logX: true, logY: true)));
+        DefineSilent("semilogy", Making(PlotMade, OnNamedAxes((args, line, col) => Semilog("semilogy", args, dialect, line, col, logX: false, logY: true))));
+        DefineSilent("semilogx", Making(PlotMade, OnNamedAxes((args, line, col) => Semilog("semilogx", args, dialect, line, col, logX: true, logY: false))));
+        DefineSilent("loglog", Making(PlotMade, OnNamedAxes((args, line, col) => Semilog("loglog", args, dialect, line, col, logX: true, logY: true))));
 
         // Every axes-facing verb accepts a leading axes handle, MATLAB's title(ax, '…') form. The
         // named axes is made current only for the call, so gca does not move (M51).
@@ -2977,7 +2977,7 @@ internal static partial class JgsBuiltins
                     break;
                 case 2 when args[1].Type == JgsType.String:
                     PlotColumns(
-                        created, x: null, args[0], Str(verb, args, 1, line, col),
+                        created, x: null, args[0], PlotSpecAt(verb, args, 1, line, col),
                         dialect, verb, implicitX, line, col);
                     break;
                 case 2:
@@ -2985,7 +2985,7 @@ internal static partial class JgsBuiltins
                     break;
                 case 3:
                     PlotColumns(
-                        created, args[0], args[1], Str(verb, args, 2, line, col),
+                        created, args[0], args[1], PlotSpecAt(verb, args, 2, line, col),
                         dialect, verb, implicitX, line, col);
                     break;
                 default:
@@ -3283,6 +3283,20 @@ internal static partial class JgsBuiltins
 
         return (data, options);
     }
+
+    /// <summary>
+    /// The line spec at <paramref name="index"/>: in a MATLAB-dialect script a word a spec cannot be
+    /// is refused in R2025b's words (<c>plot(x, y, 'Tag')</c>, probe oi136_options), where
+    /// <see cref="LineSpec.Parse"/> would skip the letters it does not know and draw.
+    /// </summary>
+    private static string PlotSpecAt(string verb, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    {
+        string spec = Str(verb, args, index, line, col);
+        return JgsRunningDialect.ThreadIsMatlab && !IsLineSpecWord(spec) ? throw NotALineSpec(line, col) : spec;
+    }
+
+    private static JgsRuntimeException NotALineSpec(int line, int col) =>
+        new(line, col, "MATLAB:plot:UnrecognizedLineStyleParameter", "Invalid color, marker, or line style.");
 
     /// <summary>
     /// Whether a word opens <c>plot</c>'s option tail: one of its names, or in the MATLAB dialect the

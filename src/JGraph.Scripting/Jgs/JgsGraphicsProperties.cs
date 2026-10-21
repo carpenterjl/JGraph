@@ -270,13 +270,18 @@ internal static partial class JgsGraphicsProperties
     }
 
     /// <summary>The group holding <paramref name="target"/>, or null when nothing does.</summary>
-    private static JgsGraphicsGroup? GroupOwning(GraphObject target)
+    internal static JgsGraphicsGroup? GroupOwning(GraphObject target)
     {
+        if (target is JgsGraphicsGroup)
+        {
+            return null; // a group's own parent is the group or axes it was made in
+        }
+
         lock (Groups)
         {
             foreach (JgsGraphicsGroup group in Groups)
             {
-                if (target is PlotObject plot && group.Members.Contains(plot))
+                if (group.Members.Contains(target))
                 {
                     return group;
                 }
@@ -463,31 +468,67 @@ internal static partial class JgsGraphicsProperties
                 };
         }
 
-        if (entry.Target is not PlotObject plot)
+        // A text or a light in an axes joins a group as a drawn object does (open item 137).
+        if (entry.Target is not (PlotObject or JGraph.Objects.Annotations.TextAnnotation { Parent: AxesModel } or LightModel))
         {
             throw new JgsRuntimeException(line, col,
                 $"Only a drawn object can be given a new parent, and this handle names a {entry.TypeName}.");
         }
 
+        GraphObject member = entry.Target;
         switch (owner.Target)
         {
             case JgsGraphicsGroup group:
-                group.Adopt(plot);
-                return;
-            case AxesModel axes when !ReferenceEquals(plot.Parent, axes):
-                // A move, not a deletion: the removal half must not run the plot's DeleteFcn.
-                using (GraphObjectLifecycle.SuppressNotifications())
+                if (group.Home is { } home)
                 {
-                    (plot.Parent as AxesModel)?.Plots.Remove(plot);
-                    axes.Plots.Add(plot);
+                    MoveToAxes(member, home); // a group's members are in its axes
                 }
 
+                if (GroupOwning(member) is { } left && !ReferenceEquals(left, group))
+                {
+                    left.Release(member);
+                }
+
+                group.Admit(member);
                 return;
-            case AxesModel:
+            case AxesModel axes:
+                GroupOwning(member)?.Release(member);
+                MoveToAxes(member, axes);
                 return;
             default:
                 throw new JgsRuntimeException(line, col,
                     $"A drawn object belongs to an axes or a group, not to a {owner.TypeName}.");
+        }
+    }
+
+    /// <summary>
+    /// Moves a drawn object, a text or a light into <paramref name="axes"/>. A move, not a deletion:
+    /// the removal half must not run the object's DeleteFcn.
+    /// </summary>
+    private static void MoveToAxes(GraphObject member, AxesModel axes)
+    {
+        if (ReferenceEquals(member.Parent, axes))
+        {
+            return;
+        }
+
+        using (GraphObjectLifecycle.SuppressNotifications())
+        {
+            switch (member)
+            {
+                case PlotObject plot:
+                    (plot.Parent as AxesModel)?.Plots.Remove(plot);
+                    axes.Plots.Add(plot);
+                    break;
+                case JGraph.Objects.Annotations.TextAnnotation text:
+                    (text.Parent as AxesModel)?.Annotations.Remove(text);
+                    axes.Annotations.Add(text);
+                    break;
+                case LightModel light:
+                    (light.Parent as AxesModel)?.Lights.Remove(light);
+                    axes.Lights.Add(light);
+                    break;
+            }
         }
     }
 
@@ -543,7 +584,8 @@ internal static partial class JgsGraphicsProperties
         switch (target)
         {
             case JgsGraphicsGroup group:
-                children.AddRange(group.Members);
+                // A member deleted since it joined has left its axes, and the group with it.
+                children.AddRange(group.Members.Where(member => member is JgsGraphicsGroup || member.Parent is not null));
                 break;
             case JgsGraphicsRoot:
                 // Every figure; a search or a listing leaves out the ones whose handles are hidden.
@@ -1074,12 +1116,12 @@ internal static partial class JgsGraphicsProperties
         // property table understands works for every drawn object at once, where a construction
         // option would have to be taught to each of the drawing verbs one at a time.
         Put(table, "Parent",
-            entry => JgsDetachedComponents.IsHolder(ParentOf(entry.Target))
+            entry => GroupOwning(entry.Target) is { } group
+                ? JgsHandleRegistry.For(group) // a member's parent is its group, not the group's axes (open item 137)
+                : JgsDetachedComponents.IsHolder(ParentOf(entry.Target))
                 ? JgsValue.Array([]) // made with 'Parent', [] and not placed yet (open item 48)
                 : ParentOf(entry.Target) is { } parent
-                ? JgsComponentContainers.ValueFor(parent) // inside a custom component, the component (U10)
-                : GroupOwning(entry.Target) is { } group
-                    ? JgsHandleRegistry.For(group)
+                    ? JgsComponentContainers.ValueFor(parent) // inside a custom component, the component (U10)
                     : JgsValue.Array([]),
             (entry, value, line, col) => Reparent(entry, value, line, col));
         Put(table, "Children",

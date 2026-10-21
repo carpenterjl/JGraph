@@ -1,0 +1,51 @@
+--- a refused option, axes held
+Unrecognized property Foo for class Line.
+children after plot Foo: 1
+Unrecognized property Foo for class Bar.
+children after bar Foo: 1
+Unrecognized property Foo for class Line.
+children after line Foo: 1
+Unrecognized property Foo for class Scatter.
+children after scatter Tag Foo: 1
+--- a refused option, axes not held
+Unrecognized property Foo for class Line.
+children after plot Foo: 1
+--- one name twice
+Color twice: [0 0 1]
+Tag twice: b
+spec then Color: [0 1 0]
+LineWidth around Tag: 4
+BarWidth around Tag: 0.4
+--- Parent as an option
+plot Parent g: hggroup
+bar Parent g: hggroup
+scatter Parent g: hggroup
+plot Parent ax: axes
+plot ax then Parent ax2: 1
+line ax then Parent ax2: 1
+--- a group first, axes not held
+plot g: MATLAB:hg:InvalidHandle | Invalid handle., g valid 0
+line g: parent hggroup, children of ax 2
+plot Parent g unheld: parent hggroup, g valid 1, children of ax 2
+bar t unheld: parent hgtransform, t valid 1, children of ax 1
+--- a group first for verbs that are not makers
+title g: MATLAB:Chart:UnsupportedConvenienceFunction | Using title with Group is not supported.
+hold g: MATLAB:hold:UnsupportedCurrentAxes | Using hold with hggroup is not supported.
+plot g g: MATLAB:index:expected_one_output_from_intermediate_indexing | Intermediate dot '.' indexing produced a comma-separated list with 3 values, but it must produce a single value when followed by subsequent indexing operations.
+histogram g: hggroup
+errorbar g: hggroup
+area g: hggroup
+stem g: hggroup
+plot3 g: hggroup
+quiver g: MATLAB:quiver:InvalidAutoScaleFactor | Scale argument must be a scalar double or 'off'.
+contour g: MATLAB:contour:InputsMustBeReal | Input arguments must be real. Use the function REAL to get the real part of the inputs.
+mesh g: MATLAB:surfchk:NonMatrixData | Z must be a matrix, not a scalar or vector.
+surf g: MATLAB:surfchk:NonMatrixData | Z must be a matrix, not a scalar or vector.
+scatter3 g: MATLAB:index:expected_one_output_from_intermediate_indexing | Intermediate dot '.' indexing produced a comma-separated list with 3 values, but it must produce a single value when followed by subsequent indexing operations.
+barh g: hggroup
+semilogy g: hggroup
+pcolor g: MATLAB:badsubscript | Index exceeds the number of array elements. Index must not exceed 2.
+image g props: hggroup
+stem3 g: hggroup
+fill3 g: hggroup
+done

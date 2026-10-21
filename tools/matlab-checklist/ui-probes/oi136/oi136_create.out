@@ -1,0 +1,7 @@
+plot create: tag=after ud=5
+bar create: tag=before
+line create: tag=lineafter
+group children: fourth third second first
+after text left: fourth third first, text parent axes
+after line moved in: fourth third; inner first; line parent third
+done

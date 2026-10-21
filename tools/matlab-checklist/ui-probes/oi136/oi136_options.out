@@ -1,0 +1,122 @@
+--- makers, axes first, Tag and UserData
+plot                       ok n=1 type=line tag=t ud=7 parent=axes
+plot spec                  ok n=1 type=line tag=t ud=7 parent=axes
+plot y                     ok n=1 type=line tag=t ud=7 parent=axes
+plot y spec                ok n=1 type=line tag=t ud=7 parent=axes
+plot groups                ok n=2 type=line tag=t ud=7 parent=axes
+plot groups nospec         ok n=2 type=line tag=t ud=7 parent=axes
+plot3                      ok n=1 type=line tag=t ud=7 parent=axes
+plot3 spec                 ok n=1 type=line tag=t ud=7 parent=axes
+line                       ok n=1 type=line tag=t ud=7 parent=axes
+line 3                     ok n=1 type=line tag=t ud=7 parent=axes
+stairs                     ok n=1 type=stair tag=t ud=7 parent=axes
+stairs spec                ok n=1 type=stair tag=t ud=7 parent=axes
+stem                       ok n=1 type=stem tag=t ud=7 parent=axes
+stem filled                ok n=1 type=stem tag=t ud=7 parent=axes
+stem3                      ok n=1 type=stem tag=t ud=7 parent=axes
+scatter                    ok n=1 type=scatter tag=t ud=7 parent=axes
+scatter sz c               ok n=1 type=scatter tag=t ud=7 parent=axes
+scatter filled             ok n=1 type=scatter tag=t ud=7 parent=axes
+scatter3                   ok n=1 type=scatter tag=t ud=7 parent=axes
+bar                        ok n=1 type=bar tag=t ud=7 parent=axes
+bar xy                     ok n=1 type=bar tag=t ud=7 parent=axes
+bar width                  ok n=1 type=bar tag=t ud=7 parent=axes
+bar stacked                ok n=3 type=bar tag=t ud=7 parent=axes
+barh                       ok n=1 type=bar tag=t ud=7 parent=axes
+area                       ok n=1 type=area tag=t ud=7 parent=axes
+errorbar                   ok n=1 type=errorbar tag=t ud=7 parent=axes
+fill                       ok n=1 type=patch tag=t ud=7 parent=axes
+patch                      ok n=1 type=patch tag=t ud=7 parent=axes
+patch c                    err MATLAB:hg:ColorBase:BadColorValue | Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.
+patch xyz                  ok n=1 type=patch tag=t ud=7 parent=axes
+rectangle                  ok n=1 type=rectangle tag=t ud=7 parent=axes
+light                      ok n=1 type=light tag=t ud=7 parent=axes
+text                       ok n=1 type=text tag=t ud=7 parent=axes
+surface                    ok n=1 type=surface tag=t ud=7 parent=axes
+surf                       ok n=1 type=surface tag=t ud=7 parent=axes
+mesh                       ok n=1 type=surface tag=t ud=7 parent=axes
+image                      ok n=1 type=image tag=t ud=7 parent=axes
+imagesc                    ok n=1 type=image tag=t ud=7 parent=axes
+contour                    err MATLAB:class:InvalidHandle | Invalid or deleted object.
+contourf                   err MATLAB:class:InvalidHandle | Invalid or deleted object.
+quiver                     ok n=1 type=quiver tag=t ud=7 parent=axes
+histogram                  ok n=1 type=histogram tag=t ud=7 parent=axes
+semilogy                   ok n=1 type=line tag=t ud=7 parent=axes
+pcolor                     ok n=1 type=surface tag=t ud=7 parent=axes
+--- makers, no axes, Tag and UserData
+plot                       ok n=1 type=line tag=t ud=7 parent=axes
+line                       ok n=1 type=line tag=t ud=7 parent=axes
+scatter                    ok n=1 type=scatter tag=t ud=7 parent=axes
+bar                        ok n=1 type=bar tag=t ud=7 parent=axes
+patch                      ok n=1 type=patch tag=t ud=7 parent=axes
+rectangle                  ok n=1 type=rectangle tag=t ud=7 parent=axes
+light                      ok n=1 type=light tag=t ud=7 parent=axes
+stairs                     ok n=1 type=stair tag=t ud=7 parent=axes
+stem                       ok n=1 type=stem tag=t ud=7 parent=axes
+area                       ok n=1 type=area tag=t ud=7 parent=axes
+--- other properties as options
+plot Visible Clipping      ok n=1 type=line tag=v ud=[] parent=axes
+plot SeriesIndex           ok n=1 type=line tag=si ud=[] parent=axes
+plot XData                 ok n=1 type=line tag=xd ud=[] parent=axes
+scatter MarkerFaceAlpha    ok n=1 type=scatter tag=mfa ud=[] parent=axes
+bar FaceColor              ok n=1 type=bar tag=fc ud=[] parent=axes
+bar BarWidth               ok n=1 type=bar tag=bw ud=[] parent=axes
+stem BaseValue             ok n=1 type=stem tag=bv ud=[] parent=axes
+patch FaceAlpha            ok n=1 type=patch tag=fa ud=[] parent=axes
+rectangle Curvature        ok n=1 type=rectangle tag=cu ud=[] parent=axes
+light Visible              ok n=1 type=light tag=lv ud=[] parent=axes
+line Parent                ok n=1 type=line tag=lp ud=[] parent=axes
+plot SeriesIndex value: 3
+plot XData value: [5 6 7]
+plot Visible Clipping: off off
+scatter MarkerFaceAlpha: 0.5
+bar BarWidth: 0.3
+stem BaseValue: 1
+patch FaceAlpha: 0.5
+rectangle Curvature: 1
+--- names that are not right
+plot unknown               err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Line.
+plot partial               ok n=1 type=line tag=pt ud=[] parent=axes
+plot partial2              ok n=1 type=line tag= ud=3 parent=axes
+plot ambiguous             err MATLAB:hg:InvalidProperty | Unrecognized property Mark for class Line.
+plot odd                   err MATLAB:plot:UnrecognizedLineStyleParameter | Invalid color, marker, or line style.
+plot readonly              err MATLAB:plot:InvalidPropertyValue | Unable to set the 'Type' property of class ''Line'' because it is read-only.
+plot bad value             ok n=1 type=line tag= ud=[] parent=axes
+plot spec after            err MATLAB:hg:InvalidProperty | Unrecognized property a for class Line.
+plot group after           err MATLAB:plot:InvalidFirstInput | Invalid data argument.
+line unknown               err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Line.
+scatter unknown            err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Scatter.
+bar unknown                err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Bar.
+patch unknown              err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Patch.
+rectangle unknown          err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Rectangle.
+light unknown              err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Light.
+stem unknown               err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Stem.
+stairs unknown             err MATLAB:hg:InvalidProperty | Unrecognized property Foo for class Stair.
+--- a group or a transform first
+line g                     ok n=1 type=line tag=lg ud=[] parent=hggroup
+line g 3                   ok n=1 type=line tag=lg3 ud=[] parent=hggroup
+line g props               ok n=1 type=line tag=lgp ud=[] parent=hggroup
+line t                     ok n=1 type=line tag=lt ud=[] parent=hgtransform
+text g                     ok n=1 type=text tag=tg ud=[] parent=hggroup
+text t 3                   ok n=1 type=text tag=tt ud=[] parent=hgtransform
+patch g                    ok n=1 type=patch tag=pg ud=[] parent=hggroup
+patch t                    ok n=1 type=patch tag=pt ud=[] parent=hgtransform
+surface g                  ok n=1 type=surface tag=sg ud=[] parent=hggroup
+surface t Z                ok n=1 type=surface tag=st ud=[] parent=hgtransform
+rectangle g                ok n=1 type=rectangle tag=rg ud=[] parent=hggroup
+rectangle t                ok n=1 type=rectangle tag=rt ud=[] parent=hgtransform
+image g                    ok n=1 type=image tag=ig ud=[] parent=hggroup
+image t                    ok n=1 type=image tag=it ud=[] parent=hgtransform
+light g                    ok n=1 type=light tag=lig ud=[] parent=hggroup
+light t                    ok n=1 type=light tag=lit ud=[] parent=hgtransform
+hggroup g                  ok n=1 type=hggroup tag=gg ud=[] parent=hggroup
+hgtransform g              ok n=1 type=hgtransform tag=tg2 ud=[] parent=hggroup
+plot g                     ok n=1 type=line tag= ud=[] parent=hggroup
+scatter g                  ok n=1 type=scatter tag= ud=[] parent=hggroup
+bar g                      ok n=1 type=bar tag= ud=[] parent=hggroup
+surf g                     err MATLAB:surfchk:NonMatrixData | Z must be a matrix, not a scalar or vector.
+fill g                     ok n=1 type=patch tag= ud=[] parent=hggroup
+imagesc g                  ok n=1 type=image tag= ud=[] parent=hggroup
+stairs g                   ok n=1 type=stair tag= ud=[] parent=hggroup
+children of g: 17, of t: 7
+done

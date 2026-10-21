@@ -193,15 +193,15 @@ public class MatlabBarAndStairsTests : IDisposable
     }
 
     [Fact]
-    public async Task AnOptionThatIsNotOneNamesTheOnesThatAre()
+    public async Task AnOptionThatIsNotOneIsRefusedInR2025bsWords()
     {
         string message = await RunExpectingFailure("""
             figure(1);
             bar(1:3, [1 2 3], 'BarWith', 0.5);
             """);
 
-        Assert.Contains("BarWith", message, StringComparison.Ordinal);
-        Assert.Contains("BarWidth", message, StringComparison.Ordinal);
+        // Any property of the bar is an option (open item 136, ADR 0255).
+        Assert.Contains("Unrecognized property BarWith for class Bar.", message, StringComparison.Ordinal);
     }
 
     /// <summary>

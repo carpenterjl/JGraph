@@ -55,19 +55,19 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        Define("plot3", OnNamedAxes((args, line, col) => Plot3(args, line, col)));
-        Define("scatter3", OnNamedAxes((args, line, col) => Scatter3(args, line, col)));
+        Define("plot3", Making(Plot3Made, OnNamedAxes((args, line, col) => Plot3(args, line, col))));
+        Define("scatter3", Making(Scatter3Made, OnNamedAxes((args, line, col) => Scatter3(args, line, col))));
 
-        Define("fill", OnNamedAxes((args, line, col) => FillPatch("fill", args, line, col, Dimensions.Two)));
-        Define("fill3", OnNamedAxes((args, line, col) => FillPatch("fill3", args, line, col, Dimensions.Three)));
-        Define("patch", OnNamedAxes((args, line, col) => FillPatch("patch", args, line, col, Dimensions.Either)));
+        Define("fill", Making(PatchMade, OnNamedAxes((args, line, col) => FillPatch("fill", args, line, col, Dimensions.Two))));
+        Define("fill3", Making(PatchMade, OnNamedAxes((args, line, col) => FillPatch("fill3", args, line, col, Dimensions.Three))));
+        Define("patch", Making(PatchMade, OnNamedAxes((args, line, col) => FillPatch("patch", args, line, col, Dimensions.Either))));
 
-        Define("line", OnNamedAxes((args, line, col) => LinePrimitive(args, line, col)));
-        Define("text", OnNamedAxes((args, line, col) => TextPrimitive(args, line, col)));
+        Define("line", Making(LineMade, OnNamedAxes((args, line, col) => LinePrimitive(args, line, col))));
+        Define("text", Making(TextMade, OnNamedAxes((args, line, col) => TextPrimitive(args, line, col))));
 
         // MATLAB's low-level `surface` is `surf` without the axes reset. It shares the dispatcher, so
         // the meshgrid collapse and the parametric path behave identically.
-        Define("surface", OnNamedAxes((args, line, col) =>
+        Define("surface", Making(SurfaceMade, OnNamedAxes((args, line, col) =>
         {
             if (!AddsWithoutReplace("surface"))
             {
@@ -82,7 +82,7 @@ internal static partial class JgsBuiltins
             axes.Is3D = was3D;
             axes.Grid.ShowMajor = grid;
             return made;
-        }));
+        })));
     }
 
     /// <summary>Which coordinate forms a fill/patch verb accepts.</summary>

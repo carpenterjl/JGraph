@@ -26,9 +26,9 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        DefineSilent("area", (args, line, col) => Area(args, line, col));
-        DefineSilent("bar", (args, line, col) => BarChart("bar", horizontal: false, args, line, col));
-        DefineSilent("barh", (args, line, col) => BarChart("barh", horizontal: true, args, line, col));
+        DefineSilent("area", Making(AreaMade, (args, line, col) => Area(args, line, col)));
+        DefineSilent("bar", Making(BarMade, (args, line, col) => BarChart("bar", horizontal: false, args, line, col)));
+        DefineSilent("barh", Making(BarMade, (args, line, col) => BarChart("barh", horizontal: true, args, line, col)));
 
         DefineSilent("pie", (args, line, col) => Pie(args, host, line, col));
         DefineSilent("bubblechart", (args, line, col) => BubbleChart(args, line, col));
@@ -48,8 +48,8 @@ internal static partial class JgsBuiltins
         // stairs is the one verb here that can answer with data instead of drawing: asked for two
         // outputs it hands back the stairstep path, which is what a script wants when it means to
         // draw the steps itself or measure them.
-        env.Builtins.Register("stairs", JgsValue.Function(new BuiltinFunction("stairs", (args, line, col) =>
-            Stairs(args, dialect, line, col))
+        env.Builtins.Register("stairs", JgsValue.Function(new BuiltinFunction("stairs", Making(PlotMade, (args, line, col) =>
+            Stairs(args, dialect, line, col)))
         {
             BindsAnsAsStatement = false,
             MultiOutput = (args, wanted, line, col) => wanted >= 2

@@ -88,8 +88,8 @@ public class MatlabChart3DTests : IDisposable
     public async Task AMisspelledStemOptionIsRefusedRatherThanReadAsALineSpec()
     {
         string error = await RunExpectingFailure("stem3([1 2], [1 2], [1 2], 'Colour', 'r');");
-        Assert.Contains("stem3 has no option 'Colour'", error);
-        Assert.Contains("MarkerFaceColor", error);
+        // Refused as R2025b refuses a name a stem does not have (open item 136, ADR 0255).
+        Assert.Contains("Unrecognized property Colour for class Stem.", error);
     }
 
     [Fact]

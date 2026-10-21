@@ -26,9 +26,9 @@ namespace JGraph.Scripting.Jgs;
 internal sealed class JgsGraphicsGroup : GraphObject
 {
     /// <summary>What one member looked like before any matrix was applied to it.</summary>
-    private readonly Dictionary<PlotObject, (double[] X, double[] Y, double[] Z)> _original = new();
+    private readonly Dictionary<GraphObject, (double[] X, double[] Y, double[] Z)> _original = new();
 
-    private readonly List<PlotObject> _members = new();
+    private readonly List<GraphObject> _members = new();
 
     public JgsGraphicsGroup(bool transforms, AxesModel? home = null, JgsGraphicsGroup? outer = null)
     {
@@ -36,6 +36,7 @@ internal sealed class JgsGraphicsGroup : GraphObject
         Home = home;
         Outer = outer;
         Name = transforms ? "Transform" : "Group";
+        outer?._members.Add(this); // a child of the group it was made in (open item 137)
     }
 
     /// <summary>The group this one was made in, when it was made in a group rather than an axes.</summary>
@@ -75,8 +76,11 @@ internal sealed class JgsGraphicsGroup : GraphObject
 
     private PlotAnnotationModel? _annotation;
 
-    /// <summary>The members, in the order they joined.</summary>
-    public IReadOnlyList<PlotObject> Members => _members;
+    /// <summary>
+    /// The members, in the order they joined: drawn objects, text and lights, and the groups made in
+    /// this one (open item 137).
+    /// </summary>
+    public IReadOnlyList<GraphObject> Members => _members;
 
     /// <summary>The transform, as a 4-by-4 matrix in row-major order; the identity until one is set.</summary>
     public double[,] Matrix { get; private set; } = Identity();
@@ -93,7 +97,7 @@ internal sealed class JgsGraphicsGroup : GraphObject
     }
 
     /// <summary>Takes <paramref name="member"/> into the group, remembering where it started.</summary>
-    public void Adopt(PlotObject member)
+    public void Admit(GraphObject member)
     {
         if (_original.ContainsKey(member))
         {
@@ -105,11 +109,21 @@ internal sealed class JgsGraphicsGroup : GraphObject
         Apply(member);
     }
 
+    /// <summary>
+    /// Lets <paramref name="member"/> go when it is given another parent; it keeps where the matrix
+    /// put it, as an object taken out of an hgtransform in R2025b keeps its own data.
+    /// </summary>
+    public void Release(GraphObject member)
+    {
+        _members.Remove(member);
+        _original.Remove(member);
+    }
+
     /// <summary>Sets the transform and moves every member to where it says.</summary>
     public void SetMatrix(double[,] matrix)
     {
         Matrix = matrix;
-        foreach (PlotObject member in _members)
+        foreach (GraphObject member in _members)
         {
             Apply(member);
         }
@@ -119,14 +133,21 @@ internal sealed class JgsGraphicsGroup : GraphObject
     public void ShowMembers(bool visible)
     {
         Visible = visible;
-        foreach (PlotObject member in _members)
+        foreach (GraphObject member in _members)
         {
-            member.Visible = visible;
+            if (member is JgsGraphicsGroup inner)
+            {
+                inner.ShowMembers(visible);
+            }
+            else
+            {
+                member.Visible = visible;
+            }
         }
     }
 
     /// <summary>Moves one member from where it started to where the matrix puts it.</summary>
-    private void Apply(PlotObject member)
+    private void Apply(GraphObject member)
     {
         if (!Transforms || !_original.TryGetValue(member, out (double[] X, double[] Y, double[] Z) start))
         {
@@ -154,10 +175,12 @@ internal sealed class JgsGraphicsGroup : GraphObject
         WriteCoordinates(member, x, y, z);
     }
 
-    private static (double[] X, double[] Y, double[] Z) ReadCoordinates(PlotObject member)
+    private static (double[] X, double[] Y, double[] Z) ReadCoordinates(GraphObject member)
     {
         switch (member)
         {
+            case JGraph.Objects.Annotations.TextAnnotation text:
+                return ([text.Position.X], [text.Position.Y], [text.Z]);
             case Line3DPlot spatial:
                 return ([.. spatial.X], [.. spatial.Y], [.. spatial.Z]);
             case Scatter3DPlot cloud:
@@ -179,10 +202,14 @@ internal sealed class JgsGraphicsGroup : GraphObject
         }
     }
 
-    private static void WriteCoordinates(PlotObject member, double[] x, double[] y, double[] z)
+    private static void WriteCoordinates(GraphObject member, double[] x, double[] y, double[] z)
     {
         switch (member)
         {
+            case JGraph.Objects.Annotations.TextAnnotation text:
+                text.Position = new JGraph.Core.Primitives.Point2D(x[0], y[0]);
+                text.Z = z[0];
+                break;
             case Line3DPlot spatial:
                 spatial.SetData(x, y, z);
                 break;

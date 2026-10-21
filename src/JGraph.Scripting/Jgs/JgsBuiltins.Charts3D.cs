@@ -23,7 +23,7 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        DefineSilent("stem3", (args, line, col) => Stem3(args, line, col));
+        DefineSilent("stem3", Making(Stem3Made, (args, line, col) => Stem3(args, line, col)));
         DefineSilent("bar3", (args, line, col) => Bar3("bar3", horizontal: false, args, line, col));
         DefineSilent("bar3h", (args, line, col) => Bar3("bar3h", horizontal: true, args, line, col));
         DefineSilent("pie3", (args, line, col) => Pie3(args, host, line, col));

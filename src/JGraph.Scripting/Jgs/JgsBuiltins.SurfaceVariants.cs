@@ -48,7 +48,7 @@ internal static partial class JgsBuiltins
         // contour3 lives with contour and contourf in RegisterDecorationBuiltins, which runs later
         // and wins. The registration that stood here was shadowed and never ran.
 
-        DefineSilent("quiver", OnNamedAxes((args, line, col) => Quiver("quiver", args, line, col, three: false)));
+        DefineSilent("quiver", Making(QuiverMade, OnNamedAxes((args, line, col) => Quiver("quiver", args, line, col, three: false))));
         DefineSilent("quiver3", OnNamedAxes((args, line, col) => Quiver("quiver3", args, line, col, three: true)));
 
         DefineSilent("trisurf", OnNamedAxes((args, line, col) => Triangulated("trisurf", args, line, col, wireframe: false)));

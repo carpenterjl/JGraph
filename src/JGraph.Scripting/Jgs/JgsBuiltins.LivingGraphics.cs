@@ -34,7 +34,7 @@ internal static partial class JgsBuiltins
         Define("getpoints", (args, line, col) => GetPoints(args, line, col)[0]);
         DefineSilent("clearpoints", ClearPoints);
 
-        DefineBare("rectangle", Rectangle);
+        DefineBare("rectangle", Making(RectangleMade, Rectangle));
         DefineBare("groot", (args, line, col) =>
         {
             Arity("groot", args, 0, line, col);
@@ -44,8 +44,8 @@ internal static partial class JgsBuiltins
         DefineSilent("reset", Reset);
         DefineBare("axes", Axes);
 
-        DefineBare("hggroup", (args, line, col) => Group("hggroup", args, line, col));
-        DefineBare("hgtransform", (args, line, col) => Group("hgtransform", args, line, col));
+        DefineBare("hggroup", Making(GroupMade, (args, line, col) => Group("hggroup", args, line, col)));
+        DefineBare("hgtransform", Making(GroupMade, (args, line, col) => Group("hgtransform", args, line, col)));
 
         Define("frame2im", Frame2Im);
         Define("im2frame", Im2Frame);

@@ -93,7 +93,7 @@ internal static partial class JgsBuiltins
 
         // image draws, so its handle does not echo as `ans` — the rule plot has always had.
         env.Builtins.Register("image", JgsValue.Function(new BuiltinFunction(
-            "image", OnNamedAxes((args, line, col) =>
+            "image", Making(ImageMade, OnNamedAxes((args, line, col) =>
             {
                 if (args.Count == 1 && args[0].Type == JgsType.Image && !JgsRunningDialect.ThreadIsMatlab)
                 {
@@ -105,7 +105,7 @@ internal static partial class JgsBuiltins
                 }
 
                 return DrawImage("image", args, scaled: false, line, col);
-            }))
+            })))
         { BindsAnsAsStatement = false }));
 
         // imshow answers its picture to MATLAB-dialect code and sets up its axes as R2025b's does
