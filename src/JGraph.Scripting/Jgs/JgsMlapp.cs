@@ -58,6 +58,33 @@ public static partial class JgsMlapp
     }
 
     /// <summary>
+    /// The component groups an <c>.mlapp</c>'s model holds (open item 150,
+    /// <see cref="JGraph.Scripting.Designer.DesignTreeWriter.ReadGroups(byte[])"/>): empty for a
+    /// package with no model, a model this cannot read, or no groups.
+    /// </summary>
+    public static IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord> ReadGroups(string path)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        try
+        {
+            using ZipArchive package = ZipFile.OpenRead(path);
+            if (TargetOf(package, ModelRelationship) is not { } named || package.GetEntry(named) is not { } entry)
+            {
+                return [];
+            }
+
+            using Stream stream = entry.Open();
+            using var bytes = new MemoryStream();
+            stream.CopyTo(bytes);
+            return JGraph.Scripting.Designer.DesignTreeWriter.ReadGroups(bytes.ToArray());
+        }
+        catch (Exception ex) when (ex is XmlException or NotSupportedException or InvalidDataException)
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
     /// The part the package's relationships name as its code document. Null when the package has
     /// no relationships or they name none, which MATLAB cannot open either.
     /// </summary>

@@ -128,6 +128,7 @@ public static partial class DesignPlainText
     private const string InternalDataGrammar = "app:internalData";
     private const string ThumbnailGrammar = "app:thumbnail";
     private const string LayoutRoot = "Components";
+    private const string GroupsRoot = "ComponentGroups";
     private const string RunConfigurationRoot = "RunConfiguration";
     private const string AppDetailsRoot = "AppDetails";
     private const string InternalDataRoot = "InternalData";
@@ -198,8 +199,9 @@ public static partial class DesignPlainText
     /// (<c>PlainTextFileContentGroupBehavior</c>, <c>XMLAppendixBehavior</c>): the layout section
     /// always; the run configuration when the app has a startup function or runs as a single
     /// instance; the app details when any is set; the internal data when any is set; the thumbnail
-    /// when the file carries one (every file App Designer saves does). Component groups are App
-    /// Designer's own (open item 150) and are not written.
+    /// when the file carries one (every file App Designer saves does); the component groups
+    /// between the layout and the run configuration, when the design has any that are not
+    /// labelled components (open item 150).
     /// </summary>
     public static IReadOnlyList<string> AppendixLines(AppDesign design, DesignCode code, DesignPlainTextDetails details, DesignCodeStyle? style = null)
     {
@@ -218,6 +220,27 @@ public static partial class DesignPlainText
         Component(lines, design, design.Figure, 1, style);
         lines.Add($"</{LayoutRoot}>");
         lines.Add("%}");
+
+        // The component groups (XMLCanvasGroupsSectionBehavior, open item 150): the top groups that
+        // are not labelled components, each a Group of its members - a component as a Member by
+        // code name, a labelled component as a Member by its field's, a group as a Group inside.
+        DesignGroup[] top = design.Groups.Where(static g => g.Parent is null && !g.IsLabeled).ToArray();
+        if (top.Length > 0)
+        {
+            lines.Add(string.Empty);
+            lines.Add(SectionDelimiter);
+            lines.Add($"%[{GroupsGrammar}]");
+            lines.Add("%{");
+            lines.Add(XmlPreamble);
+            lines.Add($"<{GroupsRoot}>");
+            foreach (DesignGroup group in top)
+            {
+                Group(lines, group, 1, style);
+            }
+
+            lines.Add($"</{GroupsRoot}>");
+            lines.Add("%}");
+        }
 
         // The run configuration (XMLRunConfigPropertiesGroupBehavior): its two elements by name.
         var run = new List<(string Name, string Value)>();
@@ -309,11 +332,40 @@ public static partial class DesignPlainText
         return lines;
     }
 
+    /// <summary>One group's element (<c>XMLCanvasGroupBehavior</c>, <c>XMLCanvasGroupMemberBehavior</c>): its members in order.</summary>
+    private static void Group(List<string> lines, DesignGroup group, int depth, DesignCodeStyle style)
+    {
+        lines.Add(style.Indent(depth) + "<Group>");
+        foreach (DesignGroupMember member in group.Members)
+        {
+            if (member.Component is { } component)
+            {
+                Element(lines, "Member", component.CodeName, depth + 1, style);
+            }
+            else if (member.Group is { IsLabeled: true, Field: { } field })
+            {
+                Element(lines, "Member", field.CodeName, depth + 1, style);
+            }
+            else if (member.Group is { } inner)
+            {
+                Group(lines, inner, depth + 1, style);
+            }
+        }
+
+        lines.Add(style.Indent(depth) + "</Group>");
+    }
+
     /// <summary>One component's element and, inside it, its properties by name and its children (<c>XMLComponentInitBehavior</c>).</summary>
     private static void Component(List<string> lines, AppDesign design, DesignComponent component, int depth, DesignCodeStyle style)
     {
         string tag = ReferenceEquals(component, design.Figure) ? FigureTag : ShortName(component.Type);
-        lines.Add(style.Indent(depth) + $"<{tag} name='{component.CodeName}'>");
+
+        // A labelled component's field names its label (XMLComponentInitBehavior; open item 150);
+        // the label itself gets no attribute. R2025b's own loader reads 'labelName', never this.
+        string label = design.LabeledGroupOf(component) is { Field: { } field, Label: { } labelOf } && ReferenceEquals(field, component)
+            ? $" label='{labelOf.CodeName}'"
+            : string.Empty;
+        lines.Add(style.Indent(depth) + $"<{tag} name='{component.CodeName}'{label}>");
         foreach ((string name, string value) in AppendixProperties(component, style.Theme).OrderBy(static p => p.Name, StringComparer.Ordinal))
         {
             Element(lines, name, value, depth + 1, style);
@@ -544,11 +596,112 @@ public static partial class DesignPlainText
         var images = new HashSet<string>(details.ImageRelativePaths, StringComparer.Ordinal);
         ReadProperties(figureElement, figure, design, images, problems);
         ReadChildren(figureElement, figure, design, byName, declared, images, catalog, problems);
+        ReadGroups(root, sections, design, byName, problems);
 
         // Responsive when the class says so, as the code reader decides it (DS4b).
         design.IsResponsive = Array.Exists(lines, static l => l.Trim() == DesignCodeReader.ResponsivePropertiesComment);
         style = style with { Theme = DesignCodeStyle.ThemeOf(design) };
         return new DesignPlainTextReadResult(new DesignReadResult(design, style, problems), details);
+    }
+
+    /// <summary>
+    /// The component groups (open item 150), as the writer here writes them (R2025b's own loader
+    /// reads neither): a field's <c>label</c> attribute makes it and its label a labelled component,
+    /// and the <c>app:componentGroups</c> section's <c>Group</c> elements make the other groups, a
+    /// <c>Member</c> naming a component or a labelled component's field. A label that is not a
+    /// label of the same container, a member the layout does not have, one in a group already, or a
+    /// group left with one member is recorded as a problem and left out.
+    /// </summary>
+    private static void ReadGroups(XElement layout, Dictionary<string, string> sections, AppDesign design, Dictionary<string, DesignComponent> byName, List<string> problems)
+    {
+        foreach (XElement element in layout.Descendants())
+        {
+            if (element.Attribute("label")?.Value is not { Length: > 0 } labelName || element.Attribute("name")?.Value is not { Length: > 0 } fieldName)
+            {
+                continue;
+            }
+
+            if (!byName.TryGetValue(fieldName, out DesignComponent? field) || !byName.TryGetValue(labelName, out DesignComponent? label))
+            {
+                problems.Add($"<{element.Name.LocalName} name='{fieldName}' label='{labelName}'>: the layout has no such label.");
+                continue;
+            }
+
+            if (label.Type != DesignGroup.LabelType || field.Type == DesignGroup.LabelType || !ReferenceEquals(label.Parent, field.Parent)
+                || design.GroupOf(label) is not null || design.GroupOf(field) is not null)
+            {
+                problems.Add($"<{element.Name.LocalName} name='{fieldName}' label='{labelName}'>: not a label beside its field, or one of them is in a group already.");
+                continue;
+            }
+
+            design.AddGroup([DesignGroupMember.Of(label), DesignGroupMember.Of(field)]);
+        }
+
+        if (!sections.TryGetValue(GroupsGrammar, out string? xml) || ParseXml(xml, "component groups", problems) is not { } root)
+        {
+            return;
+        }
+
+        foreach (XElement element in root.Elements())
+        {
+            if (element.Name.LocalName == "Group")
+            {
+                ReadGroup(element, null, design, byName, problems);
+            }
+        }
+
+        static DesignGroup? ReadGroup(XElement element, DesignGroup? parent, AppDesign design, Dictionary<string, DesignComponent> byName, List<string> problems)
+        {
+            var members = new List<DesignGroupMember>();
+            var made = new List<DesignGroup>();
+            foreach (XElement child in element.Elements())
+            {
+                switch (child.Name.LocalName)
+                {
+                    case "Member":
+                        string name = child.Value.Trim();
+                        if (!byName.TryGetValue(name, out DesignComponent? component))
+                        {
+                            problems.Add($"<Member>{name}</Member>: the layout has no such component.");
+                        }
+                        else if (design.LabeledGroupOf(component) is { Field: { } field, Parent: null } labeled && ReferenceEquals(field, component))
+                        {
+                            members.Add(DesignGroupMember.Of(labeled));
+                        }
+                        else if (design.GroupOf(component) is not null)
+                        {
+                            problems.Add($"<Member>{name}</Member>: the component is in a group already.");
+                        }
+                        else
+                        {
+                            members.Add(DesignGroupMember.Of(component));
+                        }
+
+                        break;
+                    case "Group":
+                        if (ReadGroup(child, null, design, byName, problems) is { } inner)
+                        {
+                            members.Add(DesignGroupMember.Of(inner));
+                            made.Add(inner);
+                        }
+
+                        break;
+                }
+            }
+
+            if (members.Count < 2)
+            {
+                problems.Add("<Group>: a group of fewer than two members.");
+                foreach (DesignGroup orphan in made)
+                {
+                    design.RemoveGroup(orphan); // a labelled component the layout declared stays
+                }
+
+                return null;
+            }
+
+            return design.AddGroup(members, parent: parent);
+        }
     }
 
     private static void ReadChildren(XElement element, DesignComponent parent, AppDesign design, Dictionary<string, DesignComponent> byName, Dictionary<string, string> declared, HashSet<string> images, DesignCatalog catalog, List<string> problems)

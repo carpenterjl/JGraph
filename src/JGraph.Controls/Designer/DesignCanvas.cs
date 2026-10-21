@@ -452,6 +452,8 @@ public sealed class DesignCanvas : UserControl
             Key.Escape => DesignKey.Escape,
             Key.A when (Keyboard.Modifiers & ModifierKeys.Control) != 0 => DesignKey.SelectAll,
             Key.Delete or Key.Back => DesignKey.Delete,
+            Key.G when Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) => DesignKey.Ungroup,
+            Key.G when Keyboard.Modifiers == ModifierKeys.Control => DesignKey.Group,
             _ => null,
         };
         if (!e.Handled && key is { } pressed && _gestures?.KeyDown(pressed, Modifiers()) == true)
@@ -580,8 +582,29 @@ public sealed class DesignCanvas : UserControl
             dc.DrawRectangle(stopped ? SplitterAlertBrush : SplitterBrush, null, Wpf(splitter.Box));
         }
 
-        foreach (DesignComponent selected in document.Selection)
+        // A component selected on its own is outlined; a group selected whole has its outline 4
+        // pixels outside its box (GROUP_SELECTION_BORDER_OFFSET_PX) and its members marked (open item 150).
+        foreach (DesignPick pick in document.Picks)
         {
+            if (pick.Group is { } group)
+            {
+                if (document.BoxOfGroup(group) is { } gb)
+                {
+                    dc.DrawRectangle(null, outline, Inset(new Rect(gb.X - 4, gb.Y - 4, gb.Width + 8, gb.Height + 8)));
+                }
+
+                foreach (DesignComponent member in group.AllComponents())
+                {
+                    if (document.BoxOf(member) is { Shown: true } mb)
+                    {
+                        dc.DrawRectangle(null, dashed, Inset(Wpf(document.CellBoxOf(member) ?? mb.Box)));
+                    }
+                }
+
+                continue;
+            }
+
+            DesignComponent selected = pick.Component!;
             if (selected.Parent is null)
             {
                 dc.DrawRectangle(null, outline, Inset(new Rect(0, 0, size.Width, size.Height)));
@@ -707,6 +730,11 @@ public sealed class DesignCanvas : UserControl
         if (gestures.SpanPreview is { } preview)
         {
             dc.DrawRectangle(BandBrush, outline, Inset(Wpf(preview.Box)));
+        }
+
+        if (gestures.LabelSpanPreview is { } labelPreview)
+        {
+            dc.DrawRectangle(BandBrush, dashed, Inset(Wpf(labelPreview.Box)));
         }
 
         if (gestures.Configuring is { } configure && document.BoxOf(configure.Grid) is { } configured)

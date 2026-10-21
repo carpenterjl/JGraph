@@ -39,6 +39,18 @@ internal sealed class AppDesignerWindow : Window
     /// <summary>Run (F5): saves the app and runs it in the MATLAB session, as App Designer's Run does (designer plan DS8).</summary>
     public static readonly RoutedCommand RunApp = new(nameof(RunApp), typeof(AppDesignerWindow));
 
+    /// <summary>Groups the selection (App Designer's Group, Ctrl+G; open item 150).</summary>
+    public static readonly RoutedCommand GroupSelection = new(nameof(GroupSelection), typeof(AppDesignerWindow));
+
+    /// <summary>Puts the other selected components into the selected group (Add to Group).</summary>
+    public static readonly RoutedCommand AddToGroup = new(nameof(AddToGroup), typeof(AppDesignerWindow));
+
+    /// <summary>Takes the selected members out of their group (Remove from Group).</summary>
+    public static readonly RoutedCommand RemoveFromGroup = new(nameof(RemoveFromGroup), typeof(AppDesignerWindow));
+
+    /// <summary>Takes the selected groups apart (Ungroup, Ctrl+Shift+G).</summary>
+    public static readonly RoutedCommand UngroupSelection = new(nameof(UngroupSelection), typeof(AppDesignerWindow));
+
     private readonly TabControl _tabs = new();
     private readonly TextBlock _status = new() { Margin = new Thickness(4, 0, 4, 0) };
     private readonly ToggleButton _showGrid = new() { Content = "Show Grid", ToolTip = "Show a grid on the canvas; moves and resizes snap to it" };
@@ -102,6 +114,17 @@ internal sealed class AppDesignerWindow : Window
         toolbar.Items.Add(_interval);
         toolbar.Items.Add(new Separator());
         toolbar.Items.Add(_hints);
+        toolbar.Items.Add(new Separator());
+        // App Designer's Grouping split button (open item 150): the four actions under one menu.
+        var grouping = new Menu { Background = System.Windows.Media.Brushes.Transparent, VerticalAlignment = VerticalAlignment.Center };
+        var groupingItem = new MenuItem { Header = "Grouping", ToolTip = "Group selected components" };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(groupingItem, "Grouping");
+        groupingItem.Items.Add(new MenuItem { Header = "Group", InputGestureText = "Ctrl+G", Command = GroupSelection, CommandTarget = this });
+        groupingItem.Items.Add(new MenuItem { Header = "Add to Group", Command = AddToGroup, CommandTarget = this });
+        groupingItem.Items.Add(new MenuItem { Header = "Remove from Group", Command = RemoveFromGroup, CommandTarget = this });
+        groupingItem.Items.Add(new MenuItem { Header = "Ungroup", InputGestureText = "Ctrl+Shift+G", Command = UngroupSelection, CommandTarget = this });
+        grouping.Items.Add(groupingItem);
+        toolbar.Items.Add(grouping);
         toolbar.Items.Add(new Separator());
         toolbar.Items.Add(new Button { Content = "Callback", Command = AddCallback, ToolTip = "Add a callback function to respond to user interactions" });
         toolbar.Items.Add(new Button { Content = "Function", Command = AddFunction, ToolTip = "Add a function to organize your code into helper or utility functions" });
@@ -230,6 +253,14 @@ internal sealed class AppDesignerWindow : Window
         InputBindings.Add(new KeyBinding(ToggleView, Key.F7, ModifierKeys.Shift));
         CommandBindings.Add(new CommandBinding(RunApp, (_, _) => RunActive(), (_, e) => e.CanExecute = Active is not null));
         InputBindings.Add(new KeyBinding(RunApp, Key.F5, ModifierKeys.None));
+
+        // The grouping actions (GroupingAction, open item 150).
+        CommandBindings.Add(new CommandBinding(GroupSelection, (_, _) => Active?.Document.Group(), (_, e) => e.CanExecute = Active is { Document.CanGroup: true }));
+        CommandBindings.Add(new CommandBinding(AddToGroup, (_, _) => Active?.Document.AddToGroup(), (_, e) => e.CanExecute = Active is { Document.CanAddToGroup: true }));
+        CommandBindings.Add(new CommandBinding(RemoveFromGroup, (_, _) => Active?.Document.RemoveFromGroup(), (_, e) => e.CanExecute = Active is { Document.CanRemoveFromGroup: true }));
+        CommandBindings.Add(new CommandBinding(UngroupSelection, (_, _) => Active?.Document.Ungroup(), (_, e) => e.CanExecute = Active is { Document.CanUngroup: true }));
+        InputBindings.Add(new KeyBinding(GroupSelection, Key.G, ModifierKeys.Control));
+        InputBindings.Add(new KeyBinding(UngroupSelection, Key.G, ModifierKeys.Control | ModifierKeys.Shift));
     }
 
     /// <summary>Raised after an app was saved, with its file and its class's new text, for an editor tab showing it.</summary>
@@ -669,9 +700,12 @@ internal sealed class AppDesignerWindow : Window
             return;
         }
 
-        string selected = document.Selection switch
+        string selected = document.Picks switch
         {
-            [var one] => $"{one.CodeName} ({one.Type})" + (document.Runtime.PositionOf(one) is { } p && one.Parent is not null
+            [{ Group: { IsLabeled: true, Field: { } field, Label: { } label } }] => $"{field.CodeName} ({field.Type}) with its label {label.CodeName}"
+                + (document.Runtime.PositionOf(field) is { } fp ? $"  Position [{Whole(fp.X)} {Whole(fp.Y)} {Whole(fp.Width)} {Whole(fp.Height)}]" : string.Empty),
+            [{ Group: { } group }] => $"A group of {group.AllComponents().Count()} components",
+            [{ Component: { } one }] => $"{one.CodeName} ({one.Type})" + (document.Runtime.PositionOf(one) is { } p && one.Parent is not null
                 ? $"  Position [{Whole(p.X)} {Whole(p.Y)} {Whole(p.Width)} {Whole(p.Height)}]"
                 : string.Empty),
             { Count: var n } => $"{n} components selected",

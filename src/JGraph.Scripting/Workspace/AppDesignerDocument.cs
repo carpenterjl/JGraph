@@ -41,7 +41,10 @@ public static partial class AppDesignerDocument
     /// <returns>The text as saved, which differs from <paramref name="text"/> when the class was renamed, and what the save did.</returns>
     /// <exception cref="InvalidDataException">The source is not a package with a code document.</exception>
     /// <exception cref="IOException">A file could not be read or written, or the new name is not one a class can have.</exception>
-    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text)
+    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text) => Save(source, target, text, null);
+
+    /// <summary><see cref="Save(string, string, string)"/> with the designer's component groups (<paramref name="groups"/>, open item 150) written into the tree; null keeps the file's.</summary>
+    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text, IReadOnlyList<DesignGroupRecord>? groups)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
@@ -49,7 +52,7 @@ public static partial class AppDesignerDocument
 
         if (string.Equals(Path.GetFullPath(source), Path.GetFullPath(target), StringComparison.OrdinalIgnoreCase))
         {
-            return (text, JgsMlapp.WriteCode(target, text));
+            return (text, JgsMlapp.WriteCode(target, text, groups));
         }
 
         // The new name is App Designer's to write, not an edit to its code: what the save changed
@@ -65,7 +68,7 @@ public static partial class AppDesignerDocument
         {
             File.Copy(source, copy, overwrite: true);
             File.SetAttributes(copy, FileAttributes.Normal);
-            MlappSaveResult result = JgsMlapp.WriteCode(copy, text);
+            MlappSaveResult result = JgsMlapp.WriteCode(copy, text, groups);
             bool generated = !before.SameGeneratedCode(JgsMlappLayout.Of(text));
             result = result with { GeneratedCodeChanged = generated, Tree = generated ? result.Tree : null };
             File.Move(copy, target, overwrite: true);
@@ -109,7 +112,11 @@ public static partial class AppDesignerDocument
 
     /// <summary><see cref="SaveNew(string, string)"/> with the app's details written into the package (<paramref name="metadata"/>; a plain-text app's, designer plan DS7a).</summary>
     /// <exception cref="IOException">The text is not a class, the name is not one a class can have, or the file could not be written.</exception>
-    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text, MlappMetadata? metadata)
+    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text, MlappMetadata? metadata) => SaveNew(target, text, metadata, null);
+
+    /// <summary><see cref="SaveNew(string, string, MlappMetadata?)"/> with the designer's component groups (<paramref name="groups"/>, open item 150) written into the tree.</summary>
+    /// <exception cref="IOException">The text is not a class, the name is not one a class can have, or the file could not be written.</exception>
+    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text, MlappMetadata? metadata, IReadOnlyList<DesignGroupRecord>? groups)
     {
         ArgumentNullException.ThrowIfNull(target);
         ArgumentNullException.ThrowIfNull(text);
@@ -122,7 +129,7 @@ public static partial class AppDesignerDocument
         }
 
         string saved = JgsMlapp.ExportedCode(text, name);
-        return (saved, JgsMlapp.WriteApp(target, saved, metadata));
+        return (saved, JgsMlapp.WriteApp(target, saved, metadata, groups));
     }
 
     /// <summary>What to add to "Saved ..." after <see cref="SaveNew(string, string, MlappMetadata?)"/>.</summary>

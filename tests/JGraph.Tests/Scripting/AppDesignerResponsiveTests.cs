@@ -658,8 +658,9 @@ public class AppDesignerResponsiveTests(ITestOutputHelper output)
         Assert.Equal(start.Left - centred.Left, centred.Right - start.Right, 6);
 
         // A knob keeps its ratio: dragged by its corner past the region's bottom, it stops inside.
+        // The knob on its own (a labelled component resizes by its sides, open item 150), by its corner.
         DesignComponent knob = document.Add(Entry("Knob"), left, new Point2D(60, 200)).Single(static c => c.Type == "matlab.ui.control.Knob");
-        document.Select([knob]);
+        document.SelectPicks([DesignPick.Of(knob)]);
         Rect2D knobStart = document.BoxOf(knob)!.Value.Box;
         Resize(ResizeEdges.South | ResizeEdges.East, 40, 1000, DesignModifiers.None);
         Rect2D knobEnd = document.BoxOf(knob)!.Value.Box;

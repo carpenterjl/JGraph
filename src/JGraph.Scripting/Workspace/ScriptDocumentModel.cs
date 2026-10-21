@@ -87,7 +87,7 @@ public sealed class ScriptDocumentModel
     /// Whether the document is the code of an App Designer file (app-building plan, U7). Its text
     /// is read out of the package and is never written over it: the file is a zip that holds the
     /// code twice, and a save puts the text back into both places
-    /// (<see cref="AppDesignerDocument.Save"/>, U7b).
+    /// (<see cref="AppDesignerDocument.Save(string, string, string)"/>, U7b).
     /// </summary>
     public bool IsAppDesignerFile => FilePath is not null && Jgs.JgsMlapp.IsMlapp(FilePath);
 

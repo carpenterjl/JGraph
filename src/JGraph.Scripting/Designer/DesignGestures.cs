@@ -34,6 +34,12 @@ public enum DesignKey
 
     /// <summary>Delete or Backspace: deletes the selection (DS3).</summary>
     Delete,
+
+    /// <summary>Ctrl+G: groups the selection (open item 150).</summary>
+    Group,
+
+    /// <summary>Ctrl+Shift+G: takes the selected groups apart.</summary>
+    Ungroup,
 }
 
 /// <summary>The pointer the canvas shows where the mouse is.</summary>
@@ -51,7 +57,7 @@ public enum DesignCursor
 }
 
 /// <summary>A resize handle of a selected component: its edges, and its square on the surface.</summary>
-public readonly record struct DesignHandle(DesignComponent Component, ResizeEdges Edges, Rect2D Box);
+public readonly record struct DesignHandle(DesignComponent Component, ResizeEdges Edges, Rect2D Box, DesignGroup? Group = null);
 
 /// <summary>
 /// The canvas's gestures (designer plan DS2), as R2025b's App Designer makes them, apart from any
@@ -96,7 +102,8 @@ public sealed class DesignGestures
     private Point2D _drawFrom;
     private DesignComponent? _anchor;
     private ResizeEdges _edges;
-    private IReadOnlyList<DesignComponent>? _clickSelects;
+    private IReadOnlyList<DesignPick>? _clickSelects;
+    private DesignGroup? _resizeGroup;
     private bool _keyMoving;
     private double _keyDX;
     private double _keyDY;
@@ -188,6 +195,9 @@ public sealed class DesignGestures
     /// </summary>
     public (DesignComponent Child, Rect2D Box, GridSpan Span)? SpanPreview { get; private set; }
 
+    /// <summary>A labelled component's label where a span resize of the pair has it (open item 150), beside <see cref="SpanPreview"/>'s field; null otherwise.</summary>
+    public (DesignComponent Child, Rect2D Box, GridSpan Span)? LabelSpanPreview { get; private set; }
+
     /// <summary>
     /// The grid being configured (App Designer's grid edit mode, DS4); null when none. Configuring
     /// ends when it is ended, when the grid is gone, or when the selection it began with changes - App
@@ -260,8 +270,6 @@ public sealed class DesignGestures
 
         EndKeyMove();
         Refusal = null;
-        bool control = modifiers.HasFlag(DesignModifiers.Control);
-        bool shift = modifiers.HasFlag(DesignModifiers.Shift);
         _down = at;
         _lastDrag = at;
         _pressAt = at;
@@ -342,9 +350,11 @@ public sealed class DesignGestures
             return Begin(Intent.Split, document.Design.Figure, ResizeEdges.None);
         }
 
-        // A handle of a selected component resizes the selection; a grid child's spans it over cells.
+        // A handle of a selected component resizes the selection; a grid child's spans it over cells;
+        // a labelled component's resizes its field with the label following (open item 150).
         if (button == DesignButton.Left && HandleAt(at) is { } handle)
         {
+            _resizeGroup = handle.Group;
             return Begin(document.IsGridChild(handle.Component) ? Intent.Span : Intent.Resize, handle.Component, handle.Edges);
         }
 
@@ -356,42 +366,40 @@ public sealed class DesignGestures
             return false;
         }
 
+        // What is pressed: the component there, or a group's own area (open item 150); App
+        // Designer's selection rules decide what is selected, now or on a click's release.
         DesignComponent hit = document.ComponentAt(at);
-        IReadOnlyList<DesignComponent> selection = document.Selection;
-        bool selected = selection.Contains(hit);
+        DesignPick pick = document.PickAt(at);
+        IReadOnlyList<DesignPick> picks = document.Picks;
+        bool selected = pick.Component is { } pc ? document.Selection.Contains(pc) : DesignGroupRules.IsSelected(picks, pick);
         if (button != DesignButton.Left)
         {
-            if (!selected)
+            // A right press selects what is under it: a member's group, unless a group around it is
+            // selected already (_processMemberRightClick, _processGroupRightClick).
+            if (!selected && DesignGroupRules.Press(document.Design, picks, pick, DesignModifiers.None) is { Now: { } chosen })
             {
-                document.Select([hit]);
+                document.SelectPicks(chosen);
             }
 
             return false;
         }
 
-        if (IsBody(hit, at))
+        DesignGroupRules.PressResult result = DesignGroupRules.Press(document.Design, picks, pick, modifiers);
+        if (IsBody(hit, at) && pick.Group is null)
         {
-            _clickSelects = DesignGeometry.Click(selection, hit, control, shift);
+            _clickSelects = result.Now ?? result.OnRelease;
             return Begin(Intent.Band, hit, ResizeEdges.None);
         }
 
-        if (control || shift)
+        if (result.Now is { } now)
         {
-            IReadOnlyList<DesignComponent> next = DesignGeometry.Click(selection, hit, control, shift);
-            document.Select(next);
-            return Begin(next.Contains(hit) ? Intent.Move : Intent.Nothing, hit, ResizeEdges.None);
+            document.SelectPicks(now);
         }
 
-        if (selected && selection.Count > 1)
-        {
-            _clickSelects = [hit];
-        }
-        else if (!selected)
-        {
-            document.Select([hit]);
-        }
-
-        return Begin(Intent.Move, hit, ResizeEdges.None);
+        _clickSelects = result.OnRelease;
+        bool inSelection = pick.Component is { } c ? document.Selection.Contains(c) : DesignGroupRules.IsSelected(document.Picks, pick);
+        DesignComponent anchor = pick.Component ?? pick.Group!.AllComponents().First();
+        return Begin(inSelection ? Intent.Move : Intent.Nothing, anchor, ResizeEdges.None);
     }
 
     private bool Begin(Intent intent, DesignComponent anchor, ResizeEdges edges)
@@ -442,9 +450,20 @@ public sealed class DesignGestures
                     break;
                 case Intent.Span when _anchor is { Parent: { } grid } child && document.SpanOf(child) is { } span
                     && document.CellsOf(grid) is { } cells && document.CellBoxOf(child) is { } box:
-                    // Only the component whose handle was grabbed spans (GridChildResizeServiceModel).
+                    // Only the component whose handle was grabbed spans (GridChildResizeServiceModel) -
+                    // or a labelled component's pair, its label following its side (open item 150).
                     _clickSelects = null;
-                    _spanResize = new GridSpanResize(cells, _edges, [new GridResizeEntry(span, box, CanResize: true, IsLabel: false)]);
+                    if (_resizeGroup is { IsLabeled: true, Label: { } label, Field: { } field } && ReferenceEquals(field, child)
+                        && document.SpanOf(label) is { } labelSpan && document.CellBoxOf(label) is { } labelBox && document.BoxOfGroup(_resizeGroup) is { } pairBox)
+                    {
+                        _spanResize = new GridSpanResize(cells, _edges, GridSpanResize.LabeledEntries(labelSpan, labelBox, span, box, pairBox));
+                    }
+                    else
+                    {
+                        _resizeGroup = null;
+                        _spanResize = new GridSpanResize(cells, _edges, [new GridResizeEntry(span, box, CanResize: true, IsLabel: false)]);
+                    }
+
                     _press = PressState.Spanning;
                     break;
                 case Intent.Band:
@@ -482,7 +501,19 @@ public sealed class DesignGestures
 
                 break;
             case PressState.Spanning when _spanResize is { } resize && _anchor is { } spanned:
-                SpanPreview = (spanned, resize.LiveBoxes(dx, dy)[0], resize.Spans(dx, dy)[0]);
+                IReadOnlyList<Rect2D> live = resize.LiveBoxes(dx, dy);
+                IReadOnlyList<GridSpan> spans = resize.Spans(dx, dy);
+                if (_resizeGroup is { IsLabeled: true, Label: { } label } && live.Count == 3)
+                {
+                    // The entries are the pair, its label and its field.
+                    LabelSpanPreview = (label, live[1], spans[1]);
+                    SpanPreview = (spanned, live[2], spans[2]);
+                }
+                else
+                {
+                    SpanPreview = (spanned, live[0], spans[0]);
+                }
+
                 break;
             case PressState.Band:
                 Rect2D band = new(System.Math.Min(at.X, _down.X), System.Math.Min(at.Y, _down.Y), System.Math.Abs(dx), System.Math.Abs(dy));
@@ -504,7 +535,7 @@ public sealed class DesignGestures
         switch (press)
         {
             case PressState.Pending when _clickSelects is { } selects:
-                document.Select(selects);
+                document.SelectPicks(selects);
                 break;
             case PressState.Moving:
                 DesignPlacement? placement = Placement;
@@ -515,6 +546,7 @@ public sealed class DesignGestures
                 break;
             case PressState.Resizing:
                 Guides = [];
+                _resizeGroup = null;
                 document.EndGesture(commit: true);
                 break;
             case PressState.Splitting:
@@ -528,11 +560,21 @@ public sealed class DesignGestures
                 break;
             case PressState.Spanning:
                 (DesignComponent Child, Rect2D Box, GridSpan Span)? spanned = SpanPreview;
+                (DesignComponent Child, Rect2D Box, GridSpan Span)? labelSpanned = LabelSpanPreview;
                 SpanPreview = null;
+                LabelSpanPreview = null;
                 _spanResize = null;
+                _resizeGroup = null;
                 if (spanned is { } s)
                 {
-                    document.SetGridSpan(s.Child, s.Span);
+                    if (labelSpanned is { } l)
+                    {
+                        document.SetGridSpans([(l.Child, l.Span), (s.Child, s.Span)]);
+                    }
+                    else
+                    {
+                        document.SetGridSpan(s.Child, s.Span);
+                    }
                 }
 
                 break;
@@ -565,7 +607,9 @@ public sealed class DesignGestures
         DropTarget = null;
         Placement = null;
         SpanPreview = null;
+        LabelSpanPreview = null;
         _spanResize = null;
+        _resizeGroup = null;
         _clickSelects = null;
         if (_regionResize is not null)
         {
@@ -650,6 +694,24 @@ public sealed class DesignGestures
         dx = System.Math.Round(dx, MidpointRounding.AwayFromZero);
         dy = System.Math.Round(dy, MidpointRounding.AwayFromZero);
         Guides = [];
+
+        // A labelled component: its field by the dragged side, the label following where it stands
+        // (LabeledComponentResizeCalculator, open item 150); no alignment hints.
+        if (_resizeGroup is { IsLabeled: true, Label: { } label, Field: { } field }
+            && start.TryGetValue(field, out Rect2D fieldStart) && start.TryGetValue(label, out Rect2D labelStart) && field.Parent is { } holder)
+        {
+            Rect2D inner = document.Runtime.InnerOnSurface(holder);
+            DesignGroupRules.LabeledBoxes sized = DesignGroupRules.ResizeLabeled(
+                fieldStart, labelStart, _edges, dx, dy, document.ShapeOf(field), fromCentre, Grid, new Point2D(inner.X, inner.Y));
+            var pair = new Dictionary<DesignComponent, Rect2D>(ReferenceEqualityComparer.Instance)
+            {
+                [field] = sized.Field,
+                [label] = sized.Label,
+            };
+            document.Preview(pair);
+            return;
+        }
+
         if (Grid is null && ShowAlignmentHints)
         {
             Rect2D sized = DesignGeometry.Resize(start[anchor], _edges, dx, dy, document.ShapeOf(anchor), fromCentre, keepAspect);
@@ -914,8 +976,43 @@ public sealed class DesignGestures
             yield break;
         }
 
-        foreach (DesignComponent component in document.Selection)
+        // A labelled component selected whole has side handles on its box, by how its field resizes
+        // (GroupController._updateLabeledComponentResizeHandles, open item 150); any other group has none.
+        foreach (DesignGroup group in document.SelectedGroups)
         {
+            if (group is not { IsLabeled: true, Field: { } field } || document.BoxOfGroup(group) is not { } gb)
+            {
+                continue;
+            }
+
+            DesignShape fieldShape = document.ShapeOf(field);
+            (bool across, bool along) = DesignGroupRules.ResizeOf(field.Type) switch
+            {
+                LabeledResize.Horizontal => (true, false),
+                LabeledResize.Fixed => fieldShape.FixedHeight && !fieldShape.FixedWidth ? (true, false) : fieldShape.FixedWidth && !fieldShape.FixedHeight ? (false, true) : (false, false),
+                _ => (true, true),
+            };
+            double hh = HandleSize / 2;
+            if (across)
+            {
+                yield return new DesignHandle(field, ResizeEdges.West, new Rect2D(gb.X - hh, gb.Y + (gb.Height / 2) - hh, HandleSize, HandleSize), group);
+                yield return new DesignHandle(field, ResizeEdges.East, new Rect2D(gb.X + gb.Width - hh, gb.Y + (gb.Height / 2) - hh, HandleSize, HandleSize), group);
+            }
+
+            if (along)
+            {
+                yield return new DesignHandle(field, ResizeEdges.North, new Rect2D(gb.X + (gb.Width / 2) - hh, gb.Y - hh, HandleSize, HandleSize), group);
+                yield return new DesignHandle(field, ResizeEdges.South, new Rect2D(gb.X + (gb.Width / 2) - hh, gb.Y + gb.Height - hh, HandleSize, HandleSize), group);
+            }
+        }
+
+        foreach (DesignPick pick in document.Picks)
+        {
+            if (pick.Component is not { } component)
+            {
+                continue;
+            }
+
             bool inGrid = document.IsGridChild(component);
             if ((!document.IsMovable(component) && !inGrid) || document.BoxOf(component) is not { Shown: true } box)
             {
@@ -991,6 +1088,12 @@ public sealed class DesignGestures
         }
 
         DesignComponent hit = Document.ComponentAt(at);
+        DesignPick pick = Document.PickAt(at);
+        if (pick.Group is { } group)
+        {
+            return DesignGroupRules.IsSelected(Document.Picks, pick) && group.AllComponents().All(Document.CanDrag) ? DesignCursor.Move : DesignCursor.Arrow;
+        }
+
         return Document.Selection.Contains(hit) && Document.CanDrag(hit) && !IsBody(hit, at) ? DesignCursor.Move : DesignCursor.Arrow;
     }
 
@@ -1016,6 +1119,12 @@ public sealed class DesignGestures
                 EndKeyMove();
                 document.Delete(document.Selection);
                 return true;
+            case DesignKey.Group when _press == PressState.None:
+                EndKeyMove();
+                return document.Group() is not null;
+            case DesignKey.Ungroup when _press == PressState.None:
+                EndKeyMove();
+                return document.Ungroup();
             case DesignKey.Left or DesignKey.Right or DesignKey.Up or DesignKey.Down
                 when (modifiers & ~DesignModifiers.Shift) == DesignModifiers.None && _press == PressState.None:
                 double step = modifiers.HasFlag(DesignModifiers.Shift) ? DesignGeometry.ShiftNudge : DesignGeometry.Nudge;
@@ -1412,6 +1521,20 @@ public sealed class DesignGestures
             }
 
             items.Add(new DesignMenuItem("Delete", true, () => document.Delete(document.Selection)));
+        }
+
+        // The grouping actions (GroupingAction, open item 150), each when it applies.
+        if (document.Selection.Any(static c => c.Parent is not null))
+        {
+            if (items.Count > 0)
+            {
+                items.Add(DesignMenuItem.Separator);
+            }
+
+            items.Add(new DesignMenuItem("Group", document.CanGroup, () => document.Group()));
+            items.Add(new DesignMenuItem("Add to Group", document.CanAddToGroup, () => document.AddToGroup()));
+            items.Add(new DesignMenuItem("Remove from Group", document.CanRemoveFromGroup, () => document.RemoveFromGroup()));
+            items.Add(new DesignMenuItem("Ungroup", document.CanUngroup, () => document.Ungroup()));
         }
 
         if (document.Selection is [var container, ..] && document.CanGridify(container))

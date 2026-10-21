@@ -34,7 +34,7 @@ public sealed partial class DesignDocument : IDisposable
     private string _newline;
     private bool _trailingNewline;
 
-    private DesignDocument(string text, string? path, DesignReadResult read, DesignFileFormat format = DesignFileFormat.Mlapp, DesignPlainTextDetails? details = null, IReadOnlyList<string>? pathFolders = null)
+    private DesignDocument(string text, string? path, DesignReadResult read, DesignFileFormat format = DesignFileFormat.Mlapp, DesignPlainTextDetails? details = null, IReadOnlyList<string>? pathFolders = null, IReadOnlyList<DesignGroupRecord>? groups = null)
     {
         Text = text;
         Path = path;
@@ -42,6 +42,11 @@ public sealed partial class DesignDocument : IDisposable
         Details = details;
         Style = read.Style;
         Design = read.Design!;
+        if (groups is not null)
+        {
+            Design.AttachGroups(groups); // the file's component groups (open item 150); a plain-text app's reader makes its own
+        }
+
         ReadProblems = read.Problems;
         Code = ReadCode(text, Design);
         _newline = text.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
@@ -161,7 +166,7 @@ public sealed partial class DesignDocument : IDisposable
                 Runtime.ForgetProblemsOf(name);
             }
 
-            Settled(step);
+            Settled(step, done: true);
         }
 
         MissingUserComponents = [];
@@ -235,9 +240,21 @@ public sealed partial class DesignDocument : IDisposable
     public static DesignDocument Open(string path, IReadOnlyList<string>? pathFolders = null)
     {
         ArgumentNullException.ThrowIfNull(path);
-        return FormatOf(path) == DesignFileFormat.PlainText
-            ? FromPlainText(System.IO.File.ReadAllText(path), path, pathFolders)
-            : FromText(JgsMlapp.ReadCode(path), path, pathFolders);
+        if (FormatOf(path) == DesignFileFormat.PlainText)
+        {
+            return FromPlainText(System.IO.File.ReadAllText(path), path, pathFolders);
+        }
+
+        string text = JgsMlapp.ReadCode(path);
+        DesignReadResult read = DesignCodeReader.Read(text);
+        if (read.Design is null)
+        {
+            throw new System.IO.InvalidDataException(
+                $"The app's components cannot be read: {string.Join(" ", read.Problems)}");
+        }
+
+        // The package's component groups come with the code (open item 150).
+        return new DesignDocument(text, path, read, pathFolders: pathFolders, groups: JgsMlapp.ReadGroups(path));
     }
 
     /// <summary>
@@ -322,16 +339,14 @@ public sealed partial class DesignDocument : IDisposable
         OnChanged();
     }
 
-    /// <summary>Selects <paramref name="components"/>; an empty selection selects the figure, as App Designer's does.</summary>
+    /// <summary>
+    /// Selects <paramref name="components"/> - a member of a group as its group (open item 150); an
+    /// empty selection selects the figure, as App Designer's does.
+    /// </summary>
     public void Select(IReadOnlyList<DesignComponent> components)
     {
         ArgumentNullException.ThrowIfNull(components);
-        IReadOnlyList<DesignComponent> selection = components.Count == 0 ? [Design.Figure] : components.ToArray();
-        if (!selection.SequenceEqual(_selection, ReferenceEqualityComparer.Instance))
-        {
-            _selection = selection;
-            OnChanged();
-        }
+        SetPicks(components.Count == 0 ? [DesignPick.Of(Design.Figure)] : Promoted(components));
     }
 
     /// <summary>
@@ -627,7 +642,7 @@ public sealed partial class DesignDocument : IDisposable
 
         _redo.Add(step);
         _version--;
-        Settled(step);
+        Settled(step, done: false);
     }
 
     /// <summary>Does again the last edit undone.</summary>
@@ -647,7 +662,7 @@ public sealed partial class DesignDocument : IDisposable
 
         _undo.Add(step);
         _version++;
-        Settled(step);
+        Settled(step, done: true);
     }
 
     private void Do(Edit[] step)
@@ -671,14 +686,16 @@ public sealed partial class DesignDocument : IDisposable
         }
 
         _version++;
-        Settled(step);
+        Settled(step, done: true);
     }
 
     /// <summary>
     /// After an edit: the components it touched and still in the design are selected (the figure when
-    /// none is), the theme follows the figure's, and the canvas draws again.
+    /// none is) - a group's as the group, and the picks as they were when the edit touched just what
+    /// was selected (a member moved on its own stays selected on its own); an edit that sets the
+    /// picks itself has its way (open item 150). The theme follows the figure's, and the canvas draws again.
     /// </summary>
-    private void Settled(Edit[] step)
+    private void Settled(Edit[] step, bool done)
     {
         _boxes = null;
         _renderedText = null;
@@ -691,7 +708,33 @@ public sealed partial class DesignDocument : IDisposable
             touched = _selection.Where(IsInDesign).ToArray();
         }
 
-        _selection = touched.Length > 0 ? touched : [Design.Figure];
+        // Every edit's picks together (several groups taken apart select every one's members).
+        List<DesignPick> gathered = [];
+        foreach (DesignPick pick in step.SelectMany(e => e.PicksAfter(done) ?? []))
+        {
+            if (pick.Leaves().All(IsInDesign) && !DesignGroupRules.IsSelected(gathered, pick))
+            {
+                gathered.Add(pick);
+            }
+        }
+
+        IReadOnlyList<DesignPick>? picks = step.Any(e => e.PicksAfter(done) is not null) ? gathered : null;
+        if (picks is { Count: > 0 })
+        {
+            _picks = picks;
+            _selection = picks.SelectMany(static p => p.Leaves()).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
+        }
+        else if (touched.Length > 0 && touched.Length == _selection.Count && touched.All(t => _selection.Contains(t, ReferenceEqualityComparer.Instance))
+            && _picks.All(p => p.Leaves().All(IsInDesign)))
+        {
+            // The same components as before: the picks stay as they were.
+        }
+        else
+        {
+            _picks = touched.Length > 0 ? Promoted(touched) : [DesignPick.Of(Design.Figure)];
+            _selection = _picks.SelectMany(static p => p.Leaves()).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
+        }
+
         DesignTheme theme = DesignCodeStyle.ThemeOf(Design);
         if (theme != Style.Theme)
         {
@@ -796,9 +839,19 @@ public sealed partial class DesignDocument : IDisposable
         IReadOnlyList<(DesignComponent Component, int? Index)> made = MakeFromEntry(entry, parent, size);
         Place(parent, made.Select(static m => m.Component).ToArray(), topLeft);
 
-        Edit[] step = made.Select(m => (Edit)new AddEdit(m.Component, parent, m.Index)).ToArray();
-        Do(step);
+        List<Edit> step = made.Select(m => (Edit)new AddEdit(m.Component, parent, m.Index)).ToList();
+        AddLabeledGroup(entry, made, step);
+        Do([.. step]);
         return made.Select(static m => m.Component).ToArray();
+    }
+
+    /// <summary>A labelled entry's label and field are a labelled component: grouped as they are made (open item 150).</summary>
+    private static void AddLabeledGroup(DesignPaletteEntry entry, IReadOnlyList<(DesignComponent Component, int? Index)> made, List<Edit> step)
+    {
+        if (entry.Label != DesignLabelPlace.None && made.Count == 2 && made[0].Component.Type == DesignGroup.LabelType)
+        {
+            step.Add(LabeledGroupEdit(made[0].Component, made[1].Component));
+        }
     }
 
     /// <summary>What <paramref name="entry"/> makes for <paramref name="parent"/>: App Designer's palette's components, or a custom component (DS7b).</summary>
@@ -884,6 +937,8 @@ public sealed partial class DesignDocument : IDisposable
     /// <summary>The edits that delete <paramref name="components"/>: references to them taken off, then each deleted.</summary>
     private List<Edit> DeleteEdits(IReadOnlyList<DesignComponent> components)
     {
+        // Only labelled components' fields: the labelled components whole (open item 150).
+        components = WithLabels(components);
         DesignComponent[] deletable = components.Where(CanDelete).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
         DesignComponent[] gone = deletable.Where(c => !deletable.Any(other => !ReferenceEquals(other, c) && IsWithin(c, other))).ToArray();
         if (gone.Length == 0)
@@ -911,6 +966,8 @@ public sealed partial class DesignDocument : IDisposable
             }
         }
 
+        // Out of their groups first (undone last), then gone.
+        edits.AddRange(GroupEditsForDelete(gone));
         foreach (DesignComponent component in gone)
         {
             DesignComponent parent = component.Parent!;
@@ -1191,20 +1248,13 @@ public sealed partial class DesignDocument : IDisposable
     }
 
     /// <summary>
-    /// The component <paramref name="label"/> labels: one named as App Designer names a labelled
-    /// component's label, its own code name with <c>Label</c> after it, beside it in its container.
-    /// App Designer keeps the two as a group; until the designer does (open item 150), the names pair them.
+    /// The component <paramref name="label"/> labels: the field of the labelled component it is the
+    /// label of (open item 150: App Designer pairs them by the group, never by name).
     /// </summary>
     public DesignComponent? LabelledBy(DesignComponent label)
     {
         ArgumentNullException.ThrowIfNull(label);
-        if (label.Type != "matlab.ui.control.Label" || !label.CodeName.EndsWith("Label", StringComparison.Ordinal) || label.Parent is not { } parent)
-        {
-            return null;
-        }
-
-        string name = label.CodeName[..^"Label".Length];
-        return parent.Children.FirstOrDefault(c => c.CodeName == name && !ReferenceEquals(c, label));
+        return Design.LabeledGroupOf(label) is { Label: { } l, Field: { } field } && ReferenceEquals(l, label) ? field : null;
     }
 
     /// <summary>
@@ -1317,7 +1367,7 @@ public sealed partial class DesignDocument : IDisposable
             return $"Saved {Path}.";
         }
 
-        (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText);
+        (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText, Design.GroupRecords());
         Text = saved;
         _savedVersion = _version;
         _textDirty = false;
@@ -1400,7 +1450,7 @@ public sealed partial class DesignDocument : IDisposable
             else if (formatWas == DesignFileFormat.Mlapp && source is not null && System.IO.File.Exists(source))
             {
                 _renderedText = null;
-                (saved, MlappSaveResult result) = AppDesignerDocument.Save(source, target, CurrentText);
+                (saved, MlappSaveResult result) = AppDesignerDocument.Save(source, target, CurrentText, Design.GroupRecords());
                 code.ClassName = name;
                 note = AppSaveNote(result);
             }
@@ -1409,7 +1459,7 @@ public sealed partial class DesignDocument : IDisposable
                 Format = format;
                 (_newline, _trailingNewline) = ("\n", true);
                 _renderedText = null;
-                (saved, MlappWriteResult result) = AppDesignerDocument.SaveNew(target, CurrentText, MetadataOf(Details));
+                (saved, MlappWriteResult result) = AppDesignerDocument.SaveNew(target, CurrentText, MetadataOf(Details), Design.GroupRecords());
                 code.ClassName = name;
                 note = AppDesignerDocument.NewFileNote(result);
             }
@@ -1572,6 +1622,9 @@ public sealed partial class DesignDocument : IDisposable
 
         /// <summary>Whether the edit, selecting nothing itself, leaves the selection as it was (an edit of the code, DS5).</summary>
         public virtual bool KeepsSelection => false;
+
+        /// <summary>The picks the edit selects once done (<paramref name="done"/>) or undone, as App Designer's commands set the selection (groups, open item 150); null leaves it to the step.</summary>
+        public virtual IReadOnlyList<DesignPick>? PicksAfter(bool done) => null;
 
         public abstract void Do(DesignDocument document);
 

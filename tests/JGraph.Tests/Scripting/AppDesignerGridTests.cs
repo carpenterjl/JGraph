@@ -459,7 +459,7 @@ public class AppDesignerGridTests(ITestOutputHelper output)
             GridCells cells = document.CellsOf(grid)!;
             IReadOnlyList<DesignMenuItem> menu = gestures.MenuAt(Centre(cells.Cell(2, 2)));
             Assert.Equal(
-                ["Configure Grid Layout", "Add Row", "Add Column", "Delete Row", "Delete Column", "Remove Grid Layout", "-", "Delete"],
+                ["Configure Grid Layout", "Add Row", "Add Column", "Delete Row", "Delete Column", "Remove Grid Layout", "-", "Delete", "-", "Group", "Add to Group", "Remove from Group", "Ungroup"],
                 menu.Select(static i => i.Label));
             DesignMenuItem addRow = menu.Single(static i => i.Label == "Add Row");
             Assert.Equal([2, 3], addRow.Items!.Select(static i => i.Hint!.Value.Index));

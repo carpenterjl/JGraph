@@ -1,0 +1,4 @@
+rt/
+*.err
+*.log
+__pycache__/

@@ -412,6 +412,184 @@ public static class DesignGridRules
         double Centre(int index) => at(index) + (size(index) / 2);
     }
 
+    // --- group members moved in a grid (open item 150) ---------------------------------------------
+
+    /// <summary>What a group's move in its grid comes to (<c>CellLocationValidator</c>).</summary>
+    /// <param name="InContainer">Whether the grid holds the drop at all: the moving box touches it.</param>
+    /// <param name="CanDrop">Whether the cells can be taken.</param>
+    /// <param name="Row">The row the moving box's top row lands on (1-based) when it can drop.</param>
+    /// <param name="Column">The column its left column lands on (1-based) when it can drop.</param>
+    public readonly record struct GroupMoveResult(bool InContainer, bool CanDrop, int Row, int Column)
+    {
+        /// <summary>Over the grid, but nowhere to drop.</summary>
+        public static GroupMoveResult Held => new(true, false, 0, 0);
+
+        /// <summary>Not over the grid.</summary>
+        public static GroupMoveResult Outside => new(false, false, 0, 0);
+    }
+
+    /// <summary>
+    /// Where a selection holding a group member lands in its grid, moved as one (<c>CellLocationValidator</c>,
+    /// placement spec section 7): the anchor is the cell under the moving box's top-left corner,
+    /// found through a window of 5 pixels round each track; the box moves to the next cell when its
+    /// leading edge is past the cell's centre and less than half the box's size is left in it - for
+    /// columns, not while its right edge still falls in the box's last column; a box above the
+    /// first track by less than half of it takes the first; the whole box of cells
+    /// (<paramref name="box"/>: the members' cells together, rows by columns) must fit, else nothing
+    /// can be dropped; a box over the padding only, or past the grid's outer box, cannot.
+    /// </summary>
+    public static GroupMoveResult GroupMove(Rect2D moving, GridSpan box, GridCells cells)
+    {
+        ArgumentNullException.ThrowIfNull(cells);
+        int rows = cells.Rows;
+        int columns = cells.Columns;
+        int spanColumns = box.ColumnEnd - box.ColumnStart + 1;
+        int spanRows = box.RowEnd - box.RowStart + 1;
+        if (rows == 0 || columns == 0 || rows < spanRows || columns < spanColumns)
+        {
+            return GroupMoveResult.Outside;
+        }
+
+        double top = moving.Y;
+        double left = moving.X;
+        double right = moving.Right;
+        double bottom = moving.Bottom;
+        Rect2D first = cells.Cell(1, 1);
+        Rect2D lastRow = cells.Cell(rows, 1);
+        Rect2D lastColumn = cells.Cell(1, columns);
+        Rect2D outer = cells.Box;
+        if (top >= outer.Bottom || right <= outer.Left || left >= outer.Right || bottom <= outer.Top)
+        {
+            return GroupMoveResult.Outside;
+        }
+
+        bool outsideCells = bottom <= first.Y || top >= lastRow.Bottom || left >= lastColumn.Right || right <= first.X;
+        if (outsideCells)
+        {
+            return GroupMoveResult.Held;
+        }
+
+        bool heightBigger = top <= first.Y && bottom >= lastRow.Bottom;
+        bool widthBigger = left <= first.X && right >= lastColumn.Right;
+        int row;
+        if (heightBigger)
+        {
+            row = 0;
+        }
+        else if (top >= first.Y)
+        {
+            row = RowAt(top, moving.Height, cells);
+        }
+        else if (top >= first.Y - (first.Height / 2))
+        {
+            row = 0;
+        }
+        else
+        {
+            return GroupMoveResult.Outside;
+        }
+
+        if (row < 0 || row + spanRows - 1 >= rows)
+        {
+            return GroupMoveResult.Held;
+        }
+
+        int column;
+        if (widthBigger)
+        {
+            column = 0;
+        }
+        else if (left >= first.X)
+        {
+            column = ColumnAt(left, moving.Width, spanColumns, cells);
+        }
+        else if (left >= first.X - (first.Width / 2))
+        {
+            column = 0;
+        }
+        else
+        {
+            return GroupMoveResult.Outside;
+        }
+
+        if (column < 0 || column + spanColumns - 1 >= columns)
+        {
+            return GroupMoveResult.Held;
+        }
+
+        return new GroupMoveResult(true, true, row + 1, column + 1);
+
+        // The searches step by one from the middle, as App Designer's do (transcribed literally).
+        static int RowAt(double u, double g, GridCells cells)
+        {
+            int rows = cells.Rows;
+            int d = 0;
+            int m = rows - 1;
+            while (d <= m)
+            {
+                int s = (int)System.Math.Floor((d + m) / 2.0);
+                Rect2D y = cells.Cell(s + 1, 1);
+                if (u >= y.Y + y.Height + 5)
+                {
+                    d++;
+                }
+                else if (u < y.Y - 5)
+                {
+                    m--;
+                }
+                else
+                {
+                    return u < y.Y + (y.Height / 2) || y.Y + y.Height - u >= g / 2 ? s : s + 1 < rows ? s + 1 : -1;
+                }
+            }
+
+            return -1;
+        }
+
+        static int ColumnAt(double u, double g, int spanColumns, GridCells cells)
+        {
+            int columns = cells.Columns;
+            int m = 0;
+            int s = columns - 1;
+            while (m <= s)
+            {
+                int y = (int)System.Math.Floor((m + s) / 2.0);
+                Rect2D t = cells.Cell(1, y + 1);
+                if (u >= t.X + t.Width + 5)
+                {
+                    m++;
+                }
+                else if (u < t.X - 5)
+                {
+                    s--;
+                }
+                else
+                {
+                    int i = y + spanColumns - 1;
+                    return u < t.X + (t.Width / 2) || t.X + t.Width - u >= g / 2 || (i < columns && u + g < cells.Cell(1, i + 1).X + cells.Cell(1, i + 1).Width)
+                        ? y
+                        : y + 1 < columns ? y + 1 : -1;
+                }
+            }
+
+            return -1;
+        }
+    }
+
+    /// <summary>The cells a group of members takes together: the least rows and columns holding every span (<c>calculateGridLocationBox</c>).</summary>
+    public static GridSpan Union(IEnumerable<GridSpan> spans)
+    {
+        ArgumentNullException.ThrowIfNull(spans);
+        GridSpan[] all = [.. spans];
+        return all.Length == 0
+            ? new GridSpan(1, 1, 1, 1)
+            : new GridSpan(all.Min(static s => s.RowStart), all.Max(static s => s.RowEnd), all.Min(static s => s.ColumnStart), all.Max(static s => s.ColumnEnd));
+    }
+
+    /// <summary><paramref name="span"/> moved by whole rows and columns.</summary>
+    public static GridSpan Shifted(GridSpan span, int rows, int columns) =>
+        new(span.RowStart + rows, span.RowEnd + rows, span.ColumnStart + columns, span.ColumnEnd + columns);
+
     // --- labelled components -----------------------------------------------------------------------
 
     /// <summary>

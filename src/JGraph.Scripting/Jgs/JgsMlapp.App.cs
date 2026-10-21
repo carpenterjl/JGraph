@@ -57,7 +57,11 @@ public static partial class JgsMlapp
     /// them, designer plan DS7a); a new id and empty details when null.
     /// </summary>
     /// <exception cref="IOException">The file could not be written or replaced.</exception>
-    public static MlappWriteResult WriteApp(string path, string text, MlappMetadata? metadata)
+    public static MlappWriteResult WriteApp(string path, string text, MlappMetadata? metadata) => WriteApp(path, text, metadata, null);
+
+    /// <summary><see cref="WriteApp(string, string, MlappMetadata?)"/> with the designer's component groups (<paramref name="groups"/>, open item 150) written into the tree.</summary>
+    /// <exception cref="IOException">The file could not be written or replaced.</exception>
+    public static MlappWriteResult WriteApp(string path, string text, MlappMetadata? metadata, IReadOnlyList<DesignGroupRecord>? groups)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(text);
@@ -76,6 +80,7 @@ public static partial class JgsMlapp
 
         var problems = new List<string>(read.Problems);
         string folder = Path.GetDirectoryName(Path.GetFullPath(path)) ?? string.Empty;
+        design.AttachGroups(groups ?? []);
         McosObject figure = DesignTreeWriter.Tree(design, read.Style, folder, problems);
         var appData = new McosObject(AppDataClass);
         foreach (string empty in (string[])["UIFigure", "CodeData", "Metadata"])
@@ -87,7 +92,7 @@ public static partial class JgsMlapp
         appData.Set("MinimumSupportedVersion", new McosValue.Value(MatData.Text(minimum)));
         byte[] model = MatMcosWriter.WriteFile(
         [
-            (DesignTreeWriter.Variable, MatData.Struct((DesignTreeWriter.FigureField, new MatData.Object(figure)))),
+            (DesignTreeWriter.Variable, DesignTreeWriter.ComponentsVariable(figure, design.GroupRecords())),
             ("code", new MatData.Kept(copy, [])),
             ("appData", new MatData.Object(appData)),
         ], null, compress: true);
@@ -182,7 +187,7 @@ public static partial class JgsMlapp
     /// Designer saved it (<see cref="DesignTreeWriter.Update"/>). <paramref name="appFolder"/> is
     /// where the app is saved, where its images are.
     /// </summary>
-    internal static DesignTreeUpdate UpdateTree(byte[] model, string text, string? appFolder)
+    internal static DesignTreeUpdate UpdateTree(byte[] model, string text, string? appFolder, IReadOnlyList<DesignGroupRecord>? groups = null)
     {
         DesignReadResult read = DesignCodeReader.Read(text);
         if (read.Design is not { } design)
@@ -196,7 +201,9 @@ public static partial class JgsMlapp
             return new DesignTreeUpdate(null, [], [], [], [], [], ["Lines of its createComponents could not be read:", .. read.Problems]);
         }
 
-        return DesignTreeWriter.Update(model, design, read.Style, appFolder);
+        // The component groups (open item 150): the designer's when it saved, else the file's own as
+        // they are, over the components the code still has.
+        return DesignTreeWriter.Update(model, design, read.Style, appFolder, groups ?? DesignTreeWriter.ReadGroups(model));
     }
 
     private const string AppContentTypes = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"

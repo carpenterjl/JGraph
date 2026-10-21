@@ -92,7 +92,7 @@ public static partial class DesignTreeWriter
         style ??= DesignCodeStyle.Default;
         var problems = new List<string>();
         McosObject root = Tree(design, style, appFolder, problems);
-        return new DesignTreeResult(MatMcosWriter.Write(root, Variable, FigureField), problems);
+        return new DesignTreeResult(MatMcosWriter.WriteFile([(Variable, ComponentsVariable(root, design.GroupRecords()))], null, compress: false), problems);
     }
 
     /// <summary>The figure's object, every component made and filled in.</summary>
@@ -335,7 +335,7 @@ public static partial class DesignTreeWriter
         var fields = new List<(string, MatData)>
         {
             ("CodeName", MatData.Text(component.CodeName)),
-            ("GroupId", MatData.Text(string.Empty)),
+            ("GroupId", MatData.Text(design.GroupOf(component)?.Id ?? string.Empty)), // its group (open item 150); Update writes the record's over it
             ("ComponentCode", Column(DesignCodeWriter.StoredComponentCode(component, style, appFolder))),
         };
         if (image is not null || ImageClasses.Contains(component.Type))

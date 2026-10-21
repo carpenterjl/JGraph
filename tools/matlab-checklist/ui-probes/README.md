@@ -43,6 +43,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `ds6/` | Stage DS6 of the designer plan (ADR 0245): headless. `ds6_verify` opens, through App Designer's own reader, the files the local test `AppDesignerModelSaveTests` leaves in `rt/` when run with `JGRAPH_DS6_OUT`: each shipped app as R2025b ships it and as JGraph saved it after an edit (`rt/edits`), and apps JGraph wrote whole (`rt/new`) against a control saved by App Designer's serializer from the code's own tree (`rt/control`). `DS6_PART` (`edits` or `new`), `DS6_ONLY` and `DS6_SHARD` pick what runs (`ds6_new1`-`ds6_new3` run the new apps in three shards); `ds6_verify_edits.out` and `ds6_verify_new.out` keep the results. `rt/` (ignored) holds the files. |
 | `ds7/` | Stage DS7a of the designer plan (ADR 0251): node and headless. `oracle/appendix.js` runs App Designer's own plain-text file writer - `PlainTextClassBehavior`, `XMLAppendixBehavior` and the XML builders, unmodified from the bundle through `amd.js` and `stubs.js` - over stub view models and writes `appendix.json` (34 cases: the sections, escaping, indentation, lists, whole files), which the tests' expected texts were taken from. `ds7_plain` opens, through App Designer's own reader (not gated by the feature), the plain-text apps the local test `AppDesignerPlainTextTests.TheProbesAppsAreWrittenWhenAsked` leaves in `rt/plain/` with `JGRAPH_DS7_OUT`, holds each against the `.mlapp` of the same design, then switches the feature `AppDesignerPlainTextFileFormat` on for the session and runs each app through `matlab.apps.App`. `DS7_ONLY` picks one app. Stage DS7b (ADR 0252): `ds7_uac` drives App Designer's MATLAB side over four custom component classes it writes (metadata registration, the adapter's class model, the inspector, apps saved with a gauge and their reader, an errored class, plain text, a missing class; `ds7_inflate.py` and `ds7_rename.py` beside it); `ds7_base.py` records the `ComponentContainer` base into `ds7_uac_base.json` (embedded); `ds7_uac_verify` reads, loads and runs the app this build saves with a gauge (`rt/uac/jgraph`, left by `AppDesignerUserComponentTests.TheProbesAppIsWrittenWhenAsked`). `rt/` (ignored) holds the files. |
 | `ds8/` | Stage DS8 of the designer plan (ADR 0253): headless, in both engines. `ds8_accept` runs the acceptance apps the local test `AppDesignerAcceptanceTests.TheAcceptanceAppsAreBuiltSavedAndOpenedWhole` leaves in `rt/accept` with `JGRAPH_DS8_OUT` (`AcceptForm.mlapp`, `AcceptGrid.mlapp`, `AcceptPanels.mlapp`, `AcceptFormPlain.m`, each built through the designer's own edits) in R2025b's `-batch` (`run-probe.ps1`, `ds8_accept.out`) and in JGraph's (`src\JGraph.Cli\bin\Debug\net8.0\jgraph.exe -batch ds8_accept.m > ds8_accept.jgraph.out`): each app constructed, its callbacks called as its window would call them, its state printed, the app deleted; the two outputs are held line for line. `rt/` (ignored) holds the apps. |
+| `oi150/` | Open item 150 (component groups, the designer leftovers plan's stage G1, ADR 0254): headless. `oi150_groups` reads every shipped `.mlapp` with R2025b's own loader and prints `components.Groups` (its class, shape and fields), each group's `Id` and `ParentGroupId`, and each grouped component's code name, class, parent and `GroupId`; then saves a labelled pair grouped by hand through `MLAPPSerializer` and loads it back. `oi150_verify` loads the files the local tests `AppDesignerGroupTests` leave in `rt/grouped` and `rt/new` with `JGRAPH_OI150_OUT` (a shipped app regrouped in the designer, a new file with groups) and prints the same. `rt/` (ignored) holds the files. |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -1384,3 +1385,32 @@ Designer's reader; `ds6_verify DS6_PART=new DS6_ONLY=CallbacksApp` holds its tre
 - **`_reOrderProperties` (read in the bundle):** on a move, the component's builder and its descendants' are marked
   removed and re-inserted after the previous component in `componentViewOrder`, each child at its parent's index
   plus one (so a moved container's children come out last first); `_padNames` pads every name again.
+
+## Open item 150 findings (designer leftovers plan, stage G1; R2025b headless)
+
+Component groups, which the designer plan's stages found and did not build (ADR 0254). `oi150_groups`
+reads every shipped `.mlapp` with App Designer's own loader; `oi150_verify` reads back what JGraph wrote.
+
+**What the file holds.** 27 of the 44 shipped apps have groups: 293 grouped components in 143
+groups (133 of them a label with one field, 3 inside another group; SignalIntegrityLink's 7 are in
+its version 7.3 model). `components.Groups` is a 1-by-N **cell** of structs with `Id` (a lowercase
+hyphenated GUID, the peer node's id) and `ParentGroupId` (`''` at the top, a group's `Id` inside
+one), as `GroupsModel.getGroupHierarchy` builds it; a member's `DesignTimeProperties.GroupId` names
+its group. Nothing marks a labelled component: the client works it out from the members
+(`GroupWidgetData._setLabeledComponentProperty`: two members, neither a group, one a Label and one
+not, the label put first). A group's members may be a labelled pair and more without a sub-group
+(DataExport's five). `MLAPPSerializer` accepts a struct array too and the loader hands back what
+was saved (`loaded back: Groups struct [1 1]` for the pair the probe grouped by hand).
+
+**What R2025b reads back.** The files the local tests leave (`AppDesignerGroupTests`): DataExport
+regrouped in the designer (its labelled pair taken apart, two buttons grouped) loads with `2 groups
+(cell)`, the two buttons' `GroupId` the new group's and the pair's members' empty; a new file written
+whole with a labelled pair and a group of two loads with both; one written with none has no `Groups`
+field.
+
+**The window** (`oi150w.ps1`, UI Automation patterns only, the Release app on a copy of DataExport):
+the Grouping menu's four items are off with the figure selected; a member chosen in the component
+browser selects its group ("A group of 5 components", Ungroup on); Ungroup leaves "5 components
+selected" with Group on; Undo brings the group back; the labelled drop-down's field chosen selects
+the pair ("ExporttoDropDown ... with its label ExporttoDropDownLabel"), the inspector showing the
+label's text ("Export to") over the drop-down's groups. The file was not rewritten; workspace.json unchanged.

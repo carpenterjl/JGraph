@@ -213,15 +213,42 @@ public sealed partial class DesignDocument
         DesignComponent from = moving[0].Parent ?? Design.Figure;
         bool fromGrid = IsGrid(from);
         bool movingGrid = moving.Any(static m => m.Type == GridType);
+        bool groupMembers = moving.Any(m => Design.GroupOf(m) is not null);
+        bool labeled = moving.Any(m => Design.LabeledGroupOf(m) is not null);
         Rect2D union = Union(boxes);
         GridAnswer InGrid(GridCells cells)
         {
-            IReadOnlyList<GridSpan>? spans = DesignGridRules.SpansOfBounds(boxes, cells);
             if (!moving.All(m => CanBeInGrid(m.Type)))
             {
-                return spans is null ? GridAnswer.None : GridAnswer.Refused;
+                return DesignGridRules.SpansOfBounds(boxes, cells) is null ? GridAnswer.None : GridAnswer.Refused;
             }
 
+            // A selection holding a group member moves as one, its cells together, into a grid
+            // (CellLocationValidator, open item 150); a labelled component from elsewhere cannot go in.
+            if (groupMembers && fromGrid)
+            {
+                GridSpan[] own = moving.Select(m => SpanOf(m) ?? GridSpan.Cell(1, 1)).ToArray();
+                GridSpan box = DesignGridRules.Union(own);
+                DesignGridRules.GroupMoveResult result = DesignGridRules.GroupMove(union, box, cells);
+                if (!result.InContainer)
+                {
+                    return GridAnswer.None;
+                }
+
+                if (!result.CanDrop)
+                {
+                    return GridAnswer.Refused;
+                }
+
+                return new GridAnswer(own.Select(s => DesignGridRules.Shifted(s, result.Row - box.RowStart, result.Column - box.ColumnStart)).ToArray(), Holds: true);
+            }
+
+            if (groupMembers || labeled)
+            {
+                return DesignGridRules.SpansOfBounds(boxes, cells) is null ? GridAnswer.None : GridAnswer.Refused;
+            }
+
+            IReadOnlyList<GridSpan>? spans = DesignGridRules.SpansOfBounds(boxes, cells);
             return spans is null || (moving.Count > 1 && !fromGrid) ? GridAnswer.None : new GridAnswer(spans, Holds: true);
         }
 
@@ -502,7 +529,9 @@ public sealed partial class DesignDocument
             component.Set("Layout.Column", spans[i].ColumnValue);
         }
 
-        Do(made.Select(m => (Edit)new AddEdit(m.Component, grid, null)).ToArray());
+        List<Edit> step = made.Select(m => (Edit)new AddEdit(m.Component, grid, null)).ToList();
+        AddLabeledGroup(entry, made, step);
+        Do([.. step]);
         return made.Select(static m => m.Component).ToArray();
     }
 
@@ -521,6 +550,29 @@ public sealed partial class DesignDocument
         }
 
         Do([.. IntoGrid(child, grid, span)]);
+    }
+
+    /// <summary>
+    /// Puts several children of one grid in their spans as one edit (a labelled component's label and
+    /// field spanned together, open item 150). Nothing changes when every one is there already.
+    /// </summary>
+    public void SetGridSpans(IReadOnlyList<(DesignComponent Child, GridSpan Span)> spans)
+    {
+        ArgumentNullException.ThrowIfNull(spans);
+        EndGesture(commit: false);
+        var edits = new List<Edit>();
+        foreach ((DesignComponent child, GridSpan span) in spans)
+        {
+            if (SpanOf(child) != span && child.Parent is { } grid && IsGrid(grid))
+            {
+                edits.AddRange(IntoGrid(child, grid, span));
+            }
+        }
+
+        if (edits.Count > 0)
+        {
+            Do([.. edits]);
+        }
     }
 
     /// <summary>

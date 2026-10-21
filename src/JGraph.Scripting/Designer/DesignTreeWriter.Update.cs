@@ -39,7 +39,8 @@ public static partial class DesignTreeWriter
     /// <summary>
     /// Brings the component tree of the App Designer model <paramref name="model"/> (the bytes of an
     /// <c>appModel.mat</c>) to <paramref name="design"/>, keeping everything App Designer saved that
-    /// the design did not change.
+    /// the design did not change; <paramref name="groups"/> are the component groups to write (open
+    /// item 150), the design's when null.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -60,11 +61,21 @@ public static partial class DesignTreeWriter
     /// is not a level-5 MAT-file with the subsystem this reads - a version 7.3 model is one.
     /// </para>
     /// </remarks>
-    public static DesignTreeUpdate Update(byte[] model, AppDesign design, DesignCodeStyle? style = null, string? appFolder = null)
+    public static DesignTreeUpdate Update(byte[] model, AppDesign design, DesignCodeStyle? style = null, string? appFolder = null, IReadOnlyList<DesignGroupRecord>? groups = null)
     {
         ArgumentNullException.ThrowIfNull(model);
         ArgumentNullException.ThrowIfNull(design);
         style ??= DesignCodeStyle.Default;
+        groups ??= design.GroupRecords();
+        var groupOfName = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (DesignGroupRecord record in groups)
+        {
+            foreach (string member in record.Members)
+            {
+                groupOfName.TryAdd(member, record.Id);
+            }
+        }
+
         var problems = new List<string>();
         if (MatMcosFile.Read(model) is not { } file)
         {
@@ -168,11 +179,6 @@ public static partial class DesignTreeWriter
             if (!plans.TryGetValue(component, out Plan? plan) || plan.Rebuild)
             {
                 Fill(design, component, o, objects, style, appFolder, problems);
-                if (plan is not null)
-                {
-                    KeepGroup(o, plan.Saved);
-                }
-
                 ListRenamed(o, file);
             }
             else if (plan.Changed is not null)
@@ -204,8 +210,22 @@ public static partial class DesignTreeWriter
             }
         }
 
-        // The variable names the figure itself; a figure made anew takes the old one's place there.
-        if (!allSaved.Contains(figure))
+        // Each component's group (open item 150): the designer's, or on a save of the code alone the
+        // file's own as they were, each record's GroupId following.
+        foreach ((DesignComponent component, McosObject o) in objects)
+        {
+            touched |= SetGroupId(file, o, groupOfName.GetValueOrDefault(component.CodeName, string.Empty));
+        }
+
+        // The groups themselves (components.Groups), written again when they differ; the variable
+        // names the figure itself, and a figure made anew takes the old one's place there.
+        if (!SameGroups(ReadGroups(file, components), groups))
+        {
+            int at = file.Variables.IndexOf(components);
+            file.Variables[at] = MatMcosWriter.Keep(Variable, ComponentsVariable(figure, groups));
+            touched = true;
+        }
+        else if (!allSaved.Contains(figure))
         {
             int at = file.Variables.IndexOf(components);
             file.Variables[at] = components with
@@ -451,25 +471,6 @@ public static partial class DesignTreeWriter
             {
                 o.Renamed.Add(storage);
             }
-        }
-    }
-
-    /// <summary>A component made anew in a saved one's place keeps the component group the saved one was in.</summary>
-    private static void KeepGroup(McosObject o, Saved saved)
-    {
-        if (saved.Fields.Find(static f => f.Name == "GroupId").Value is not MatData.Chars { Characters.Length: > 0 } group
-            || o.Dynamic.Find(static d => d.Get("DynamicName_") is McosValue.Value { Data: MatData.Chars { Characters: "DesignTimeProperties" } }) is not { } designTime
-            || designTime.Get("DynamicValue_") is not McosValue.Value { Data: MatData.Structs { Elements: [var values] } record })
-        {
-            return;
-        }
-
-        int at = Array.IndexOf(record.Fields, "GroupId");
-        if (at >= 0)
-        {
-            MatData[] copy = [.. values];
-            copy[at] = group;
-            designTime.Set("DynamicValue_", new McosValue.Value(record with { Elements = [copy] }));
         }
     }
 

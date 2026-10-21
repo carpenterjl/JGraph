@@ -37,13 +37,23 @@ public static partial class JgsMlapp
     /// </summary>
     /// <exception cref="InvalidDataException">The file is not a package with a code document.</exception>
     /// <exception cref="IOException">The file could not be read or replaced.</exception>
-    public static MlappSaveResult WriteCode(string path, string text) => WriteCode(path, text, null);
+    public static MlappSaveResult WriteCode(string path, string text) => WriteCode(path, text, null, null);
+
+    /// <summary>
+    /// <see cref="WriteCode(string, string)"/> with the designer's component groups
+    /// (<paramref name="groups"/>, open item 150) written into the tree with the code: the tree is
+    /// brought to the code when the groups differ from the file's, as when the generated code
+    /// changed. Null keeps the file's groups over the components it still has.
+    /// </summary>
+    public static MlappSaveResult WriteCode(string path, string text, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups) => WriteCode(path, text, null, groups);
 
     /// <summary>
     /// <see cref="WriteCode(string, string)"/> with a hook called once the new file is written and
     /// before it replaces the old one, which is where a test makes a save fail.
     /// </summary>
-    internal static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace)
+    internal static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace) => WriteCode(path, text, beforeReplace, null);
+
+    internal static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(text);
@@ -91,10 +101,13 @@ public static partial class JgsMlapp
 
             // The component tree follows createComponents (DS6): what the edit changed is written
             // into it, and every component it did not change stays as App Designer saved it. Text
-            // that cannot be read as an app leaves the tree, as it leaves the copy of the code.
-            if (generated && now.IsAppLayout && now.IsComplete)
+            // that cannot be read as an app leaves the tree, as it leaves the copy of the code. The
+            // designer's groups go the same way (open item 150), and bring the tree up on their own.
+            bool groupsChanged = groups is not null
+                && !JGraph.Scripting.Designer.DesignGroupRecord.Same(JGraph.Scripting.Designer.DesignTreeWriter.ReadGroups(design.Bytes), groups);
+            if ((generated || groupsChanged) && now.IsAppLayout && now.IsComplete)
             {
-                tree = UpdateTree(design.Bytes, written, Path.GetDirectoryName(Path.GetFullPath(path)));
+                tree = UpdateTree(design.Bytes, written, Path.GetDirectoryName(Path.GetFullPath(path)), groups);
                 if (tree.Bytes is { } bytes)
                 {
                     design.Bytes = bytes;

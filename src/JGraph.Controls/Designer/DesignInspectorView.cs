@@ -24,6 +24,15 @@ public sealed class DesignInspectorView : UserControl
     private DesignDocument? _document;
     private DesignComponent? _shown;
     private bool _shownInGrid;
+    private DesignGroup? _labeled;
+    private TextBox? _labelText;
+    private string? _labelShown;
+
+    /// <summary>The properties set on a labelled component's label along with its field (<c>LabeledComponentInDesignViewStrategy.LabelMassEditableProperties</c>).</summary>
+    private static readonly HashSet<string> LabelMassEditable = new(StringComparer.Ordinal)
+    {
+        "FontName", "FontAngle", "FontSize", "FontWeight", "FontColor", "BackgroundColor", "Enable", "Visible",
+    };
     private bool _refreshing;
     private bool _queued;
     private TextBox? _name;
@@ -79,7 +88,8 @@ public sealed class DesignInspectorView : UserControl
         {
             _queued = false;
             // The same component, unless it went into or out of a grid, which changes what is edited.
-            if (_document?.Selection is [var one] && ReferenceEquals(one, _shown) && one.IsInGrid == _shownInGrid)
+            if (_document is { } d && Shown(d) is { } one && ReferenceEquals(one, _shown) && one.IsInGrid == _shownInGrid
+                && ReferenceEquals(d.SelectedLabeled, _labeled))
             {
                 RefreshValues();
             }
@@ -92,26 +102,63 @@ public sealed class DesignInspectorView : UserControl
 
     // --- building ----------------------------------------------------------------------------------
 
+    /// <summary>
+    /// The component the inspector shows for <paramref name="document"/>'s selection: the one
+    /// component selected on its own, or a labelled component's field when the labelled component is
+    /// selected whole (<c>LabeledComponentInDesignViewStrategy._determineComponentsToShow</c>, open item 150); null for anything else.
+    /// </summary>
+    private static DesignComponent? Shown(DesignDocument document) =>
+        document.SelectedLabeled?.Field ?? (document.Picks is [{ Component: { } one }] ? one : null);
+
     private void Rebuild()
     {
         _panel.Children.Clear();
         _rows.Clear();
         _name = null;
         _shown = null;
+        _labeled = null;
+        _labelText = null;
         if (_document is not { } document)
         {
             return;
         }
 
-        if (document.Selection is not [var component])
+        if (Shown(document) is not { } component)
         {
-            _panel.Children.Add(new TextBlock { Text = $"{document.Selection.Count} components selected.", Margin = new Thickness(2) });
+            _panel.Children.Add(new TextBlock
+            {
+                Text = document.Picks is [{ Group: { } group }] ? $"A group of {group.AllComponents().Count()} components." : $"{document.Selection.Count} components selected.",
+                Margin = new Thickness(2),
+            });
             return;
         }
 
         _shown = component;
         _shownInGrid = component.IsInGrid;
+        _labeled = document.SelectedLabeled;
         var header = new DockPanel { Margin = new Thickness(0, 0, 0, 6) };
+
+        // A labelled component's label text, over the field's inspector (LabeledComponentTemplate).
+        if (_labeled is { Label: { } pairLabel })
+        {
+            var labelRow = new DockPanel { Margin = new Thickness(0, 0, 0, 4) };
+            var caption = new TextBlock { Text = "Label", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 6, 0) };
+            DockPanel.SetDock(caption, Dock.Left);
+            _labelText = new TextBox { Text = (pairLabel.Get("Text") as CharValue)?.Text ?? string.Empty, ToolTip = "The label's text: app." + pairLabel.CodeName + ".Text" };
+            _labelShown = _labelText.Text;
+            Identify(_labelText, "Inspector.LabelText", "Label text");
+            Commits(_labelText, () => _labelShown ?? string.Empty, text =>
+            {
+                if (_document is { } d && _labeled is { Label: { } l } && d.SetProperty(l, "Text", new CharValue(text)) is { } why)
+                {
+                    Problem?.Invoke(this, $"{l.CodeName}.Text: {why}");
+                }
+            });
+            labelRow.Children.Add(caption);
+            labelRow.Children.Add(_labelText);
+            _panel.Children.Add(labelRow);
+        }
+
         _name = new TextBox { Text = component.CodeName, FontWeight = FontWeights.SemiBold, ToolTip = "The component's code name: app." + component.CodeName };
         _nameShown = component.CodeName;
         System.Windows.Automation.AutomationProperties.SetAutomationId(_name, "Inspector.CodeName");
@@ -384,6 +431,13 @@ public sealed class DesignInspectorView : UserControl
         {
             Problem?.Invoke(this, $"{component.CodeName}.{name}: {refused}");
             RefreshValues();
+            return;
+        }
+
+        // A labelled component's font, colours, Enable and Visible are the label's too.
+        if (_labeled is { Label: { } label } && LabelMassEditable.Contains(name) && document.SetProperty(label, name, value) is { } refusedLabel)
+        {
+            Problem?.Invoke(this, $"{label.CodeName}.{name}: {refusedLabel}");
         }
     }
 
@@ -401,6 +455,17 @@ public sealed class DesignInspectorView : UserControl
         else
         {
             _nameShown = component.CodeName;
+        }
+
+        if (_labelText is not null && _labeled is { Label: { } label })
+        {
+            string text = (label.Get("Text") as CharValue)?.Text ?? string.Empty;
+            if (_labelText.Text == _labelShown || !_labelText.IsKeyboardFocusWithin)
+            {
+                _labelText.Text = text;
+            }
+
+            _labelShown = text;
         }
 
         foreach (Row row in _rows.Where(static r => r.Visible))
