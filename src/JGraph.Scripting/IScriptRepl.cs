@@ -77,6 +77,23 @@ public interface IScriptSession : IAsyncDisposable
 }
 
 /// <summary>
+/// A session that runs a saved app as App Designer's Run does (designer plan DS8): the app's folder
+/// put on the path, its running instance closed, the app constructed in the base workspace as a call
+/// of its name, and App Designer's refusals - a missing file, a same-named app running from another
+/// file, a name shadowed by the current folder or by precedence - answered as a failed result. A
+/// capability hosts feature-detect with <c>is IScriptAppRunner</c>, as for <see cref="IGraphicsEventSession"/>.
+/// </summary>
+public interface IScriptAppRunner
+{
+    /// <summary>
+    /// Runs the app saved at <paramref name="fullFileName"/>, an <c>.mlapp</c> or a plain-text <c>.m</c>
+    /// app; <paramref name="singleInstance"/> says the app's code allows one running instance, so that
+    /// one started elsewhere is closed when the designer has none of its own.
+    /// </summary>
+    Task<ScriptRunResult> RunAppAsync(string fullFileName, bool singleInstance, CancellationToken cancellationToken);
+}
+
+/// <summary>
 /// A session that can deliver queued graphics events (<see cref="ScriptEventQueue"/>) to script
 /// callbacks while it is otherwise idle. A capability, not part of <see cref="IScriptSession"/> —
 /// hosts feature-detect with <c>is IGraphicsEventSession</c>, the way they do for

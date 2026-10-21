@@ -1,5 +1,6 @@
 using JGraph.Api;
 using JGraph.Core.Model;
+using JGraph.Scripting.Designer;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -15,7 +16,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>figure(1)</c> at the prompt must keep meaning the window it already opened), releasing packed
 /// buffers (live variables still point at them), and rebuilding the built-in scope. See ADR 0035.
 /// </remarks>
-internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource
+internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource
 {
     private readonly ScriptContext _context;
     private readonly JgsDialect _dialect;
@@ -249,23 +250,79 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
         }
     }
 
+    /// <summary>The app the designer's last Run of each file made (App Designer's <c>RunningApp</c>), by the file's full name.</summary>
+    private readonly Dictionary<string, JgsValue> _designerApps = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <inheritdoc />
+    public Task<ScriptRunResult> RunAppAsync(string fullFileName, bool singleInstance, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(fullFileName);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        string key = System.IO.Path.GetFullPath(fullFileName);
+        return ScriptThread.Run(() => Execute(
+            () => DesignRun.Run(_interpreter, key, singleInstance, _designerApps.GetValueOrDefault(key),
+                made =>
+                {
+                    if (made is null)
+                    {
+                        _designerApps.Remove(key);
+                    }
+                    else
+                    {
+                        _designerApps[key] = made;
+                    }
+                }),
+            cancellationToken));
+    }
+
+    /// <summary>
+    /// Runs <paramref name="work"/> on the interpreter under the prompt's ceremony (designer plan DS8:
+    /// App Designer's Run): the busy flag, the statement's token, figures shown after, and a failure
+    /// reported to the console and answered as a result, as a typed statement's is.
+    /// </summary>
+    private ScriptRunResult Execute(Action work, CancellationToken cancellationToken)
+    {
+        Interlocked.Exchange(ref _busy, 1);
+        _dispatcher.StatementThreadId = Environment.CurrentManagedThreadId;
+        try
+        {
+            _globals.BeginRun(null, null);
+            return Guarded(work, string.Empty, cancellationToken);
+        }
+        finally
+        {
+            _dispatcher.StatementThreadId = null;
+            Interlocked.Exchange(ref _busy, 0);
+        }
+    }
+
     private ScriptRunResult ExecuteCore(string code, string sourceId, CancellationToken cancellationToken, bool asFile)
     {
         _globals.BeginRun(asFile ? ScriptDirectoryOf(sourceId) : null, asFile ? sourceId : null);
+        return Guarded(
+            () =>
+            {
+                IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, _dialect);
+                _interpreter.AtPrompt = !asFile; // where 'clear import' is allowed (ADR 0176)
+                _interpreter.Run(program);
+                if (asFile)
+                {
+                    // A file that is nothing but function definitions is a MATLAB function file: running
+                    // it means calling its main function. Prompt input never takes this branch.
+                    JgsRunner.InvokeMainIfFunctionFile(program, _interpreter);
+                }
+            },
+            sourceId, cancellationToken);
+    }
+
+    /// <summary>Runs <paramref name="work"/> as one statement: its errors are the console's and the result's.</summary>
+    private ScriptRunResult Guarded(Action work, string sourceId, CancellationToken cancellationToken)
+    {
         _interpreter.BeginStatement(cancellationToken);
         _dispatcher.StatementToken = cancellationToken;
         try
         {
-            IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, _dialect);
-            _interpreter.AtPrompt = !asFile; // where 'clear import' is allowed (ADR 0176)
-            _interpreter.Run(program);
-            if (asFile)
-            {
-                // A file that is nothing but function definitions is a MATLAB function file: running
-                // it means calling its main function. Prompt input never takes this branch.
-                JgsRunner.InvokeMainIfFunctionFile(program, _interpreter);
-            }
-
+            work();
             _globals.ShowTouchedFigures();
             return ScriptRunResult.Ok(_globals.FiguresShown, GetVariables());
         }

@@ -1,0 +1,13 @@
+form: field 5, spinner 4, drop-down Add, check box 0, label -
+form: add -> 9
+form: multiply, doubled -> 40
+form: disabled dates 2x1 datetime: 2026-12-25, 2027-01-01
+form: checked nodes Node2
+form: figure Accept Form, 12 children
+grid: 8 rows, 3 columns; slider columns [2 3]; gauge rows [2 4]; axes rows [2 8], columns [1 2]
+grid: gauge 40, 1 line(s), last y 400
+panels: AutoResizeChildren off, 2 columns, left panel column 1, right panel column 2, label waiting
+panels: pushed -> 2 columns
+panels: narrow -> 2 rows, 1 columns, right panel row 2 column 1
+plain: class AcceptFormPlain, field 7, add -> 11
+done

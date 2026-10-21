@@ -36,6 +36,9 @@ internal sealed class AppDesignerWindow : Window
     /// <summary>Opens the App Details' Code Options: input arguments and the single running instance.</summary>
     public static readonly RoutedCommand CodeOptions = new(nameof(CodeOptions), typeof(AppDesignerWindow));
 
+    /// <summary>Run (F5): saves the app and runs it in the MATLAB session, as App Designer's Run does (designer plan DS8).</summary>
+    public static readonly RoutedCommand RunApp = new(nameof(RunApp), typeof(AppDesignerWindow));
+
     private readonly TabControl _tabs = new();
     private readonly TextBlock _status = new() { Margin = new Thickness(4, 0, 4, 0) };
     private readonly ToggleButton _showGrid = new() { Content = "Show Grid", ToolTip = "Show a grid on the canvas; moves and resizes snap to it" };
@@ -79,6 +82,10 @@ internal sealed class AppDesignerWindow : Window
         System.Windows.Automation.AutomationProperties.SetAutomationId(_singleInstance, "SingleRunningInstance");
 
         var toolbar = new ToolBar();
+        var run = new Button { Content = "Run", Command = RunApp, ToolTip = "Save the app and run it (F5)" };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(run, "Run");
+        toolbar.Items.Add(run);
+        toolbar.Items.Add(new Separator());
         toolbar.Items.Add(new Button { Content = "Open…", Command = ApplicationCommands.Open, ToolTip = "Open an app (Ctrl+O)" });
         toolbar.Items.Add(new Button { Content = "Save", Command = ApplicationCommands.Save, ToolTip = "Save the app (Ctrl+S)" });
         var saveAs = new Button { Content = "Save As…", Command = WorkspaceCommands.SaveAs, ToolTip = "Save the app under another name, as an .mlapp or as a plain-text .m app (Ctrl+Shift+S)" };
@@ -221,6 +228,8 @@ internal sealed class AppDesignerWindow : Window
         InputBindings.Add(new KeyBinding(ApplicationCommands.Close, Key.W, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
         InputBindings.Add(new KeyBinding(ToggleView, Key.F7, ModifierKeys.Shift));
+        CommandBindings.Add(new CommandBinding(RunApp, (_, _) => RunActive(), (_, e) => e.CanExecute = Active is not null));
+        InputBindings.Add(new KeyBinding(RunApp, Key.F5, ModifierKeys.None));
     }
 
     /// <summary>Raised after an app was saved, with its file and its class's new text, for an editor tab showing it.</summary>
@@ -237,6 +246,13 @@ internal sealed class AppDesignerWindow : Window
     /// Null when the host has no session.
     /// </summary>
     public Func<IReadOnlyList<string>>? PathFolders { get; set; }
+
+    /// <summary>
+    /// Runs the saved app at a path in the MATLAB session as App Designer's Run does (designer plan
+    /// DS8), told whether the app's code allows one running instance; answers null when it ran, else
+    /// why not. Null when there is no session to run it in.
+    /// </summary>
+    public Func<string, bool, Task<string?>>? Runner { get; set; }
 
     private IEnumerable<AppTab> Apps => _tabs.Items.OfType<TabItem>().Select(static t => (AppTab)t.Tag);
 
@@ -732,6 +748,66 @@ internal sealed class AppDesignerWindow : Window
         {
             MessageBox.Show(this, ex.Message, "App Designer", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
+    }
+
+    /// <summary>
+    /// Run (designer plan DS8): the app is saved first when it has changes - a new app through Save As,
+    /// as App Designer asks for a file before its first run - then run in the MATLAB session as a call
+    /// of its name would run it, and the status line says what the session answered.
+    /// </summary>
+    private async void RunActive()
+    {
+        if (Active is not { } app)
+        {
+            return;
+        }
+
+        if (Runner is not { } runner)
+        {
+            _status.Text = "There is no MATLAB session to run the app in.";
+            return;
+        }
+
+        if (app.Document.Path is null)
+        {
+            PromptSaveAs(app);
+            if (app.Document.Path is null)
+            {
+                return;
+            }
+        }
+        else
+        {
+            // Text typed into the Code View is taken first, so that the save sees every change.
+            if (!app.CodeView.Push() || (app.Document.IsDirty && !Save(app)))
+            {
+                return;
+            }
+        }
+
+        string path = app.Document.Path;
+        if (!File.Exists(path))
+        {
+            // AppModel.runApp: an app whose file was deleted or renamed on disk is saved again,
+            // silently, before it is run; a save that fails is the run's refusal.
+            try
+            {
+                app.Document.SaveAs(path);
+                app.Item.Header = app.Header;
+                AppSaved?.Invoke(path, app.Document.Text);
+            }
+            catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException or InvalidDataException)
+            {
+                _status.Text = $"Error running '{Path.GetFileName(path)}'. {path} not found.";
+                return;
+            }
+        }
+
+        _status.Text = $"Running {Path.GetFileName(path)}…";
+        string? refused = await runner(path, app.Document.SingleInstance);
+        // The status line has one line: the message's first; the console has the whole of it.
+        _status.Text = refused is null ? $"Running {Path.GetFileNameWithoutExtension(path)}."
+            : refused.Split('\n').Select(static l => l.Trim()).FirstOrDefault(static l => l.Length > 0) ?? refused;
     }
 
     private bool Save(AppTab? app)

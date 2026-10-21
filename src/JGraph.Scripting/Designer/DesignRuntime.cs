@@ -432,7 +432,18 @@ public sealed class DesignRuntime : IDisposable
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentNullException.ThrowIfNull(name);
-        if (!_objects.ContainsKey(component) || ReadExpression(component, name, like) is not { } expression)
+        if (!_objects.ContainsKey(component))
+        {
+            return null;
+        }
+
+        if (IsEnd(component, name))
+        {
+            using Scope checkedScope = Enter();
+            return CheckedNodes(component, like as ComponentsValue);
+        }
+
+        if (ReadExpression(component, name, like) is not { } expression)
         {
             return null;
         }
@@ -479,6 +490,35 @@ public sealed class DesignRuntime : IDisposable
     }
 
     /// <summary>A datetime array as its dates, <c>NaT</c> as null; null when it is not one.</summary>
+    /// <summary>
+    /// A check-box tree's checked nodes as the component keeps them (designer plan DS8, the coercion
+    /// DS1 left to the inspector: the nodes written, their descendants, then the parents whose children
+    /// are all checked, as R2025b keeps them - probe <c>u9</c>), by code name in the component's order;
+    /// null when none is checked or a node is not the design's. Within a scope already entered.
+    /// </summary>
+    private ComponentsValue? CheckedNodes(DesignComponent tree, ComponentsValue? like)
+    {
+        if (Run($"{ValueVariable} = {App}.{tree.CodeName}.CheckedNodes;") is not null
+            || !_environment.TryGet(ValueVariable, out JgsValue value) || value.ArrayLength == 0)
+        {
+            return null;
+        }
+
+        var names = new List<string>();
+        for (int i = 0; i < value.ArrayLength; i++)
+        {
+            if (!JgsHandleRegistry.TryGet(value.ElementAt(i), out JgsHandleEntry? entry) || ComponentOf(entry.Target) is not { } node)
+            {
+                return null;
+            }
+
+            names.Add(node.CodeName);
+        }
+
+        // Several nodes are a bracketed list whatever form the one node set came in (a comma list is no value).
+        return new ComponentsValue(names, names.Count > 1 || like?.Bracketed == true);
+    }
+
     private DatetimeValue? Dates(string expression)
     {
         if (Run($"{ValueVariable} = {expression}; {ValueVariable} = [size({ValueVariable}), "

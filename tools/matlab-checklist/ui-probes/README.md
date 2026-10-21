@@ -42,6 +42,7 @@ recorded with). Scratch paths in them are shortened to `<u0>`, `<research>` and 
 | `ds3/` | Stage DS3 of the designer plan (ADR 0247): headless. `ds3_inspector` builds, for each class App Designer offers, the property view its inspector shows (`inspector.internal.<Class>PropertyView`) and records its groups in order - id, title, opened or not, rows (a property, an editor group, a sub-group) - and each row's property's class and members or enumerated values into `ds3_inspector.json`; `ds3_palette` asks each class's adapter for its design-time component and records R2025b's generated lines for it and its `Position` into `ds3_palette.json`. Both are embedded in JGraph.Scripting. |
 | `ds6/` | Stage DS6 of the designer plan (ADR 0245): headless. `ds6_verify` opens, through App Designer's own reader, the files the local test `AppDesignerModelSaveTests` leaves in `rt/` when run with `JGRAPH_DS6_OUT`: each shipped app as R2025b ships it and as JGraph saved it after an edit (`rt/edits`), and apps JGraph wrote whole (`rt/new`) against a control saved by App Designer's serializer from the code's own tree (`rt/control`). `DS6_PART` (`edits` or `new`), `DS6_ONLY` and `DS6_SHARD` pick what runs (`ds6_new1`-`ds6_new3` run the new apps in three shards); `ds6_verify_edits.out` and `ds6_verify_new.out` keep the results. `rt/` (ignored) holds the files. |
 | `ds7/` | Stage DS7a of the designer plan (ADR 0251): node and headless. `oracle/appendix.js` runs App Designer's own plain-text file writer - `PlainTextClassBehavior`, `XMLAppendixBehavior` and the XML builders, unmodified from the bundle through `amd.js` and `stubs.js` - over stub view models and writes `appendix.json` (34 cases: the sections, escaping, indentation, lists, whole files), which the tests' expected texts were taken from. `ds7_plain` opens, through App Designer's own reader (not gated by the feature), the plain-text apps the local test `AppDesignerPlainTextTests.TheProbesAppsAreWrittenWhenAsked` leaves in `rt/plain/` with `JGRAPH_DS7_OUT`, holds each against the `.mlapp` of the same design, then switches the feature `AppDesignerPlainTextFileFormat` on for the session and runs each app through `matlab.apps.App`. `DS7_ONLY` picks one app. Stage DS7b (ADR 0252): `ds7_uac` drives App Designer's MATLAB side over four custom component classes it writes (metadata registration, the adapter's class model, the inspector, apps saved with a gauge and their reader, an errored class, plain text, a missing class; `ds7_inflate.py` and `ds7_rename.py` beside it); `ds7_base.py` records the `ComponentContainer` base into `ds7_uac_base.json` (embedded); `ds7_uac_verify` reads, loads and runs the app this build saves with a gauge (`rt/uac/jgraph`, left by `AppDesignerUserComponentTests.TheProbesAppIsWrittenWhenAsked`). `rt/` (ignored) holds the files. |
+| `ds8/` | Stage DS8 of the designer plan (ADR 0253): headless, in both engines. `ds8_accept` runs the acceptance apps the local test `AppDesignerAcceptanceTests.TheAcceptanceAppsAreBuiltSavedAndOpenedWhole` leaves in `rt/accept` with `JGRAPH_DS8_OUT` (`AcceptForm.mlapp`, `AcceptGrid.mlapp`, `AcceptPanels.mlapp`, `AcceptFormPlain.m`, each built through the designer's own edits) in R2025b's `-batch` (`run-probe.ps1`, `ds8_accept.out`) and in JGraph's (`src\JGraph.Cli\bin\Debug\net8.0\jgraph.exe -batch ds8_accept.m > ds8_accept.jgraph.out`): each app constructed, its callbacks called as its window would call them, its state printed, the app deleted; the two outputs are held line for line. `rt/` (ignored) holds the apps. |
 | `oi77/` | Open item 77 (ADR 0240): headless. `oi77_shapes` has R2025b's `hgsave` write a battery of figures, strips each to its struct tree and reopens it; `oi77_hand` opens trees built by hand (what the loader needs, tolerates and crashes on; `OI77_ONLY`/`OI77_FROM` pick cases after a crash); `oi77_fh` shows how R2025b writes function handles; `oi77_make` (run in JGraph: `jgraph.exe -batch oi77_make.m -sd <this folder>`) writes the `.fig` files `oi77_verify` opens, lists and prints in R2025b. `rt/` (ignored) holds what they write. |
 
 ## U0 findings (R2025b, `-batch -noFigureWindows`)
@@ -1295,6 +1296,50 @@ plain-text format with such components, and a missing class. `ds7_base.py` recor
   the way (the struct was written only when the class was known; a save writes from the code
   alone) and would have stored the recorded base's position for a component at its class default:
   the edited app is what tells.
+
+## DS8 findings (designer plan, R2025b and JGraph; headless)
+
+The designer plan's last stage (ADR 0253): the acceptance apps and App Designer's Run. `ds8_accept`
+runs, in R2025b (`-noFigureWindows -batch`) and under `jgraph.exe -batch`, the four apps the local
+test `TheAcceptanceAppsAreBuiltSavedAndOpenedWhole` builds through the designer's own edits and
+leaves in `rt/accept`: `AcceptForm.mlapp` (absolute layout: a numeric edit field, a spinner that
+rounds, a drop-down of two operations, a check box, a date picker with two disabled dates, a check-box
+tree, a Compute button and a result label; `startupFcn(app, n)` puts the argument in the field, the
+button's callback computes into the label), `AcceptGrid.mlapp` (Apply Grid Layout on the blank
+figure, a slider, a gauge and an axes in its cells, the slider's callback moving the gauge and
+plotting), `AcceptPanels.mlapp` (the two-panel responsive template with a button and a label) and
+`AcceptFormPlain.m` (the form saved as plain text). Each app is constructed, its callbacks called as
+its window would call them (`app.X.Fcn(app.X, event)`), its state printed, and the app deleted so
+that neither engine has a window left to note.
+
+- **Results** (`ds8_accept.out` against `ds8_accept.jgraph.out`): the 13 printed lines are the same
+  in both engines. The startup argument reaches the field (5); the spinner holds 4 for the 3.5 the
+  designer set; Add gives 9, Multiply doubled 40; the disabled dates are a 2-by-1 `datetime` column;
+  the checked nodes are `Node2` alone (its parent has other children, so it is not checked); the
+  figure has 12 children. The grid has 8 rows and 3 columns with the spans the designer wrote
+  (`[2 3]`, `[2 4]`, `[2 8]`, `[1 2]`); the slider's callback sets the gauge to 40 and plots one line
+  whose last y is 400. The panels app has `AutoResizeChildren` off and 2 columns, the button writes
+  `2 columns`, and narrowed to 500 px with its `SizeChangedFcn` run (`updateAppLayout`) it has 2 rows
+  and 1 column with the right panel in row 2. The plain-text form runs with 7 and adds to 11.
+- **Two misses in the driver before the lines matched, both identical in the two engines**: App
+  Designer's naming rules had renamed the check box from its text (`DoubleitCheckBox`) and the
+  figure from its title (`AcceptFormUIFigure`), so a callback typed against `app.CheckBox` failed the
+  same way in R2025b ("Unrecognized method, property, or field"). The test names those by hand.
+- **Run**, read from R2025b's App Designer sources rather than probed (its window alone runs it):
+  `AppModel.runApp`/`runAppHelper`, `AppManagementService.runApp`/`runMApp`/`prepareCommand`,
+  `DesktopAppRunner.fireAppError`/`isBadNumberOfArguments`, `AppInstanceCloser`,
+  `isSameNameAppRunning`, `isAppNameShadowed` (`mdbfileonpath`), the texts in
+  `resources/MATLAB/en/appdesigner/appdesigner.xml`. The file must exist
+  (`RunFailedFileNotFound`); an app of the same class running from another file refuses
+  (`SameNameAppRunning`); `clear(name)` then `addpath(folder)`; the name must then resolve to the
+  file (`AppNameShadowedByCWD` for the current folder, `AppNameShadowedByPrecedence` otherwise);
+  the app's previous running instance is deleted; then `evalin('base', 'Name();')` (a plain-text app
+  by `feval` with its options); a startup function wanting arguments Run did not give has the
+  half-made app deleted and `TooFewAppArgumentsError` raised over the cause. Window check
+  (scratch `ds8w/ds8w.ps1`, Release app, UI Automation patterns only): Run on the grid app brings up
+  its window, a second Run leaves one window; Run on the form (whose startup takes `n`) leaves no
+  window and the status line says `Cannot run with provided input arguments.`; neither rewrites the
+  file (the apps had no changes); `workspace.json` unchanged.
 
 ## DS5 findings (designer plan, R2025b; node and headless)
 

@@ -357,6 +357,8 @@ public partial class ScriptWorkspaceWindow
             {
                 // A custom component's class is found as the MATLAB session finds it (designer plan DS7b).
                 PathFolders = () => _sessions.TryGetValue("MATLAB", out IScriptSession? matlab) ? matlab.PathFolders : [],
+                // Run goes to the MATLAB session, as App Designer's Run goes to the base workspace (designer plan DS8).
+                Runner = RunAppFromDesignerAsync,
             };
             _appDesigner.AppSaved += ReloadSavedApp;
             _appDesigner.Closed += (_, _) => _appDesigner = null;

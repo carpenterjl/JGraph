@@ -170,6 +170,49 @@ public partial class ScriptWorkspaceWindow
     }
 
     /// <summary>
+    /// App Designer's Run (designer plan DS8): the saved app at <paramref name="path"/> run in the
+    /// MATLAB session as a call of its name would run it, under the prompt's ceremony - the session
+    /// taken while it is idle, the result shown in the console as a statement's is.
+    /// </summary>
+    /// <returns>Null when the app ran, else why not.</returns>
+    private async Task<string?> RunAppFromDesignerAsync(string path, bool singleInstance)
+    {
+        if (SessionFor("MATLAB") is not IScriptAppRunner runner)
+        {
+            return "There is no MATLAB session to run the app in.";
+        }
+
+        await YieldPumpAsync().ConfigureAwait(true);
+        if (!_session.TryBeginRun("MATLAB"))
+        {
+            return "MATLAB is busy; wait for the prompt before running the app.";
+        }
+
+        _runOutputLines = 0;
+        _runOutputTruncated = false;
+        _cts = new System.Threading.CancellationTokenSource();
+        ScriptRunResult result;
+        try
+        {
+            result = await runner.RunAppAsync(path, singleInstance, _cts.Token).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException)
+        {
+            result = ScriptRunResult.Failed(ex.Message);
+        }
+        finally
+        {
+            _cts.Dispose();
+            _cts = null;
+            _session.EndRun();
+        }
+
+        ShowRunResult(result, announceSuccess: false, "MATLAB");
+        PumpGraphicsEventsWhenIdle();
+        return result.Success ? null : result.Message;
+    }
+
+    /// <summary>
     /// Runs the <c>-r</c> statement: an existing file opens as a document, anything else becomes an
     /// unsaved JGS scratch document, and either way it runs immediately. The session then stays open,
     /// which is the whole point of <c>-r</c> — the script is a starting point, not the whole job.
