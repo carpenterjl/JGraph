@@ -1,0 +1,6 @@
+CASE	exit_quitforce
+RUN	k0_exit.exe quitforce
+beep.default	on
+mode	quitforce
+EXIT	5
+SECONDS	0.3

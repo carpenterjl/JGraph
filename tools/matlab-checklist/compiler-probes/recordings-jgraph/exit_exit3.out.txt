@@ -1,0 +1,6 @@
+CASE	exit_exit3
+RUN	k0_exit.exe exit3
+beep.default	on
+mode	exit3
+EXIT	3
+SECONDS	0.3

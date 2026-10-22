@@ -1885,10 +1885,11 @@ internal sealed partial class Interpreter
 
             // Evaluating them can load the session's first class, whose method may be the answer:
             // area_of(holder_obj()) as the first line to name holder_obj (ADR 0220).
+            // Arguments that expand to nothing (f(varargin{:}) with none) leave no class to name.
             early = EvaluateAll(call.Arguments, env);
             if (!AnyClasses && !AnyNet)
             {
-                throw UndefinedForArguments(name, early[0], call.Callee);
+                throw early.Length == 0 ? UndefinedError(name, call.Callee) : UndefinedForArguments(name, early[0], call.Callee);
             }
         }
 

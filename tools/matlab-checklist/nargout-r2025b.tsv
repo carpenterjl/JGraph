@@ -370,6 +370,7 @@ cscd	1	2
 csch	1	2
 csd	3	2
 csvwrite	0	2
+ctfroot	1	2
 ctranspose	1	5
 cummax	1	5
 cummin	1	5
@@ -717,6 +718,7 @@ getappdata	ERR:MATLAB:narginout:doesNotApply	5
 getenv	1	5
 getfield	1	2
 getframe	2	2
+getmcruserdata	1	5
 getpixelposition	1	2
 getpoints	ERR:MATLAB:nargin:isScript	2
 gevcdf	ERR:MATLAB:narginout:notValidMfile	0
@@ -1005,6 +1007,7 @@ iscola	3	2
 iscolumn	1	5
 isConfigured	ERR:MATLAB:narginout:notValidMfile	0
 isdatetime	1	2
+isdeployed	1	5
 isdiag	1	5
 isdouble	ERR:MATLAB:narginout:notValidMfile	0
 isdst	1	0
@@ -1036,6 +1039,7 @@ islogical	1	5
 ismac	1	5
 ismatrix	1	5
 ismaxphase	1	2
+ismcc	1	5
 ismember	2	2
 ismembertol	2	5
 isminphase	1	2
@@ -1213,6 +1217,8 @@ maxflat	6	2
 maxhessiannorm	1	2
 maxk	2	5
 maxNumCompThreads	1	5
+mcrcachedir	ERR:MATLAB:narginout:doesNotApply	3
+mcrversion	-1	2
 mean	1	2
 mean2	1	2
 meanfreq	2	2
@@ -1797,6 +1803,7 @@ setappdata	0	5
 setdiff	-1	2
 setenv	0	2
 setfield	1	2
+setmcruserdata	0	5
 setpixelposition	0	2
 setstr	1	5
 settlingtime	3	2

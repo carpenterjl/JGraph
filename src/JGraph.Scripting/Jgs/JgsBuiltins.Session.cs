@@ -60,6 +60,39 @@ internal static partial class JgsBuiltins
 
         RegisterConsoleSession(Define, Command, Query, host, state);
         RegisterInstallationQueries(Query, state);
+
+        // beep sounds, beep('on'|'off') switches it, and s = beep answers the switch without
+        // sounding, 'on' or 'off', as R2025b's does (stage K1: every K0 probe starts s = beep).
+        JgsValue[] Beep(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+        {
+            ArityRange("beep", args, 0, 1, line, col);
+            if (args.Count == 1)
+            {
+                state.Beep = Switched("beep", args, state.Beep, line, col);
+                return [JgsValue.Null];
+            }
+
+            if (wanted > 0)
+            {
+                return [JgsValue.Str(state.Beep ? "on" : "off")];
+            }
+
+            if (state.Beep)
+            {
+                host.WriteOut("\a");
+            }
+
+            return [JgsValue.Null];
+        }
+
+        env.Builtins.Register("beep", JgsValue.Function(new BuiltinFunction("beep",
+            (args, line, col) => Beep(args, 1, line, col) is [JgsValue answer, ..] ? answer : JgsValue.Null)
+        {
+            BindsAnsAsStatement = false,
+            AutoCallsBare = true,
+            KnowsWhenDiscarded = true,
+            MultiOutput = Beep,
+        }));
     }
 
     // --- The console session ----------------------------------------------------------------------
@@ -207,23 +240,6 @@ internal static partial class JgsBuiltins
                 ["packages"] = FoldersIn(folder, "+*"),
                 ["jgs"] = NamesIn(folder, "*.jgs"),
             });
-        });
-
-        Command("beep", (args, line, col) =>
-        {
-            ArityRange("beep", args, 0, 1, line, col);
-            if (args.Count == 1)
-            {
-                state.Beep = Switched("beep", args, state.Beep, line, col);
-                return JgsValue.Null;
-            }
-
-            if (state.Beep)
-            {
-                host.WriteOut("\a");
-            }
-
-            return JgsValue.Null;
         });
 
         Command("pack", (args, line, col) =>

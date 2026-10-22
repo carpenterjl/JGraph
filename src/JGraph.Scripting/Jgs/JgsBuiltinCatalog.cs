@@ -244,6 +244,15 @@ public static class JgsBuiltinCatalog
         Add("maxNumCompThreads", "The computation thread count; an argument sets it and returns the old one.", Opt("count"));
         Add("fftw", "Reports or sets the FFT planner mode; JGraph's transform has no plan to tune.", P("what"), Opt("mode"));
 
+        // --- Deployment (compiler and SDK plan, stage K1) ---------------------------------------------
+        Add("isdeployed", "True when the code runs as a compiled program or component.");
+        Add("ismcc", "True only while the compiler itself runs the code; always false here.");
+        Add("ctfroot", "The folder a compiled program's archive was extracted to; matlabroot outside one.");
+        Add("mcrversion", "The runtime version the dialect follows, R2025b's 25.2.0: major, then minor and update as more outputs.");
+        Add("mcrcachedir", "The folder compiled programs' archives are extracted to (MCR_CACHE_ROOT moves it).");
+        Add("getmcruserdata", "The runtime user data stored under a key, or a 1-by-0 double when none is.", P("key"));
+        Add("setmcruserdata", "Stores runtime user data under a key, as -mcruserdata key:value does at start.", P("key"), P("value"));
+
         // --- Files, folders, and the machine --------------------------------------------------------
         Add("pwd", "The working directory relative paths resolve against.");
         Add("cd", "Moves to a folder; with no argument it reports where it is.", Opt("folder"));

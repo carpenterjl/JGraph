@@ -7,11 +7,11 @@ pause.query	char [1 2] 'on'
 pause.on	ok
 clc	ok
 home	ok
-k0 number? k0 number? input.number	double [0 0] []
+k0 number? input.number	double [0 0] []
 k0 text? input.s	char [0 0] ''
 keyboard	ERR MATLAB:services:MissingRequiredCapability | Debugging is not supported in this configuration.
 before.pause.noargs
 Paused: Press any key and returnpause.noargs	ok
 end
 EXIT	0
-SECONDS	2.5
+SECONDS	2.1

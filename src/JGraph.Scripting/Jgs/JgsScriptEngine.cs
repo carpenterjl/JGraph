@@ -81,6 +81,7 @@ public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable, IScriptRepl
         names.AddRange(JgsBuiltins.OperatorFunctionNames);
         names.AddRange(JgsBuiltins.EvalBuiltinNames);
         names.AddRange(JgsBuiltins.SessionBuiltinNames);
+        names.AddRange(JgsBuiltins.DeploymentBuiltinNames);
         names.Sort(StringComparer.Ordinal);
         return names;
     }

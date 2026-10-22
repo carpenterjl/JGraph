@@ -626,6 +626,15 @@ internal static partial class JgsBuiltins
                 return packaged;
             }
 
+            // R2025b's words for a name nothing answers, as a written call of it gets them (K0,
+            // feval_nopragma: the function a deployed program was not built with).
+            if (interpreter.Dialect.IsMatlab && IsValidVariableName(name))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction", args.Count > 1
+                    ? $"Undefined function '{name}' for input arguments of type '{ClassOf(args[1], JgsDialect.Matlab)}'."
+                    : $"Unrecognized function or variable '{name}'.");
+            }
+
             throw new JgsRuntimeException(line, col, $"feval: '{name}' is not a function.");
         }
 
@@ -883,14 +892,16 @@ internal static partial class JgsBuiltins
 
             // Not a function at all: a data file the name spells out, when there is one - a code
             // file named with its extension is looked for on the path as well (U7).
+            // A deployed session's which looks on its frozen path alone, so a data file in the
+            // current folder, which exist and fileread still find, is not one it names (K0, path).
             if (where.Count == 0)
             {
                 string resolved = host.Resolve(name);
-                if (File.Exists(resolved))
+                if (host.Deployment is null && File.Exists(resolved))
                 {
                     where.Add(resolved);
                 }
-                else if (interpreter.FunctionPath?.FindFile(name) is { } onPath)
+                else if ((interpreter.FunctionPath?.FindFile(name) ?? host.FindOnFrozenPath(name)) is { } onPath)
                 {
                     where.Add(onPath);
                 }

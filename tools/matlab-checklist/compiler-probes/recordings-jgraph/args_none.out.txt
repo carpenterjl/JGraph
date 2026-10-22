@@ -1,0 +1,7 @@
+CASE	args_none
+RUN	k0_args.exe 
+beep.default	on
+nargin	0
+isdeployed	1
+EXIT	0
+SECONDS	0.3

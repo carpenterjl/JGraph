@@ -1,0 +1,158 @@
+CASE	env_plain
+RUN	k0_env.exe 
+beep.default	on
+nargin	0
+isdeployed	logical [1 1] true
+ismcc	logical [1 1] false
+ctfroot	char [1 131] '<BUILD>\k0_env\ctf'
+mcrversion.2	double [1 2] [25 2]
+mcrversion.3	double [1 3] [25 2 0]
+mcrcachedir	char [1 54] '<CACHE>\0.2.3'
+matlabroot	char [1 60] '<MATLABROOT>'
+prefdir	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'prefdir'.
+userpath	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'userpath'.
+tempdir	char [1 34] '<TEMP>\'
+pwd	char [1 135] '<RUN>'
+mfilename	char [1 6] 'k0_env'
+mfilename.fullpath	char [1 145] '<BUILD>\k0_env\ctf\k0_env\k0_env'
+version	char [1 14] '0.2.3 (JGraph)'
+version.release	char [1 5] '0.2.3'
+ver.matlab	ERR MATLAB:UndefinedFunction | Undefined function 'ver' for input arguments of type 'char'.
+computer	char [1 7] 'PCWIN64'
+usejava.jvm	ERR MATLAB:UndefinedFunction | Undefined function 'usejava' for input arguments of type 'char'.
+usejava.desktop	ERR MATLAB:UndefinedFunction | Undefined function 'usejava' for input arguments of type 'char'.
+license	char [1 7] 'unknown'
+license.test.MATLAB	double [1 1] 1
+license.test.Signal_Toolbox	double [1 1] 1
+feature.numcores	ERR JGraph:feature:unsupported | JGraph answers feature('getpid') and no other feature key.
+maxNumCompThreads	double [1 1] 20
+getenv.MCR_CACHE_ROOT	char [0 0] ''
+path.count	double [1 1] 2
+path.first	cell [1 2] {char [1 138] '<BUILD>\k0_env\ctf\k0_env'; char [1 138] '<BUILD>\k0_env\ctf\assets'}
+getmcruserdata.ParallelProfile	double [1 0] zeros(1,0)
+setmcruserdata	ok
+getmcruserdata.k0key	char [1 7] 'k0value'
+getmcruserdata.missing	double [1 0] zeros(1,0)
+exist.k0_env	double [1 1] 2
+which.k0_env	char [1 27] 'k0_env is a local function.'
+exist.k0_show	double [1 1] 2
+which.k0_show	char [1 148] '<BUILD>\k0_env\ctf\k0_env\k0_show.m'
+exist.data.mat	double [1 1] 2
+which.data.mat	char [1 147] '<BUILD>\k0_env\ctf\assets\data.mat'
+exist.edit	double [1 1] 0
+which.edit	char [0 0] ''
+exist.help	double [1 1] 0
+which.help	char [0 0] ''
+exist.doc	double [1 1] 0
+which.doc	char [0 0] ''
+exist.lookfor	double [1 1] 0
+which.lookfor	char [0 0] ''
+exist.dbstop	double [1 1] 5
+which.dbstop	char [1 30] 'dbstop is a built-in function.'
+exist.dbstack	double [1 1] 0
+which.dbstack	char [0 0] ''
+exist.keyboard	double [1 1] 5
+which.keyboard	char [1 32] 'keyboard is a built-in function.'
+exist.input	double [1 1] 5
+which.input	char [1 29] 'input is a built-in function.'
+exist.profile	double [1 1] 0
+which.profile	char [0 0] ''
+exist.publish	double [1 1] 0
+which.publish	char [0 0] ''
+exist.checkcode	double [1 1] 0
+which.checkcode	char [0 0] ''
+exist.pcode	double [1 1] 0
+which.pcode	char [0 0] ''
+exist.mex	double [1 1] 5
+which.mex	char [1 27] 'mex is a built-in function.'
+exist.savepath	double [1 1] 0
+which.savepath	char [0 0] ''
+exist.more	double [1 1] 5
+which.more	char [1 28] 'more is a built-in function.'
+exist.echo	double [1 1] 5
+which.echo	char [1 28] 'echo is a built-in function.'
+exist.commandwindow	double [1 1] 0
+which.commandwindow	char [0 0] ''
+exist.clc	double [1 1] 5
+which.clc	char [1 27] 'clc is a built-in function.'
+exist.home	double [1 1] 5
+which.home	char [1 28] 'home is a built-in function.'
+exist.guide	double [1 1] 5
+which.guide	char [1 29] 'guide is a built-in function.'
+exist.inspect	double [1 1] 0
+which.inspect	char [0 0] ''
+exist.deployprint	double [1 1] 0
+which.deployprint	char [0 0] ''
+exist.isstandalone	double [1 1] 0
+which.isstandalone	char [0 0] ''
+exist.deploypcode	double [1 1] 0
+which.deploypcode	char [0 0] ''
+exist.mcrinstaller	double [1 1] 0
+which.mcrinstaller	char [0 0] ''
+exist.figure	double [1 1] 5
+which.figure	char [1 30] 'figure is a built-in function.'
+exist.uifigure	double [1 1] 5
+which.uifigure	char [1 32] 'uifigure is a built-in function.'
+exist.exportgraphics	double [1 1] 5
+which.exportgraphics	char [1 38] 'exportgraphics is a built-in function.'
+exist.jsondecode	double [1 1] 5
+which.jsondecode	char [1 34] 'jsondecode is a built-in function.'
+exist.getSecret	double [1 1] 0
+which.getSecret	char [0 0] ''
+exist.setSecret	double [1 1] 0
+which.setSecret	char [0 0] ''
+exist.restoredefaultpath	double [1 1] 5
+which.restoredefaultpath	char [1 42] 'restoredefaultpath is a built-in function.'
+exist.rehash	double [1 1] 5
+which.rehash	char [1 30] 'rehash is a built-in function.'
+exist.inmem	double [1 1] 0
+which.inmem	char [0 0] ''
+exist.mlock	double [1 1] 0
+which.mlock	char [0 0] ''
+exist.run	double [1 1] 5
+which.run	char [1 27] 'run is a built-in function.'
+exist.open	double [1 1] 5
+which.open	char [1 28] 'open is a built-in function.'
+exist.type	double [1 1] 5
+which.type	char [1 28] 'type is a built-in function.'
+exist.which	double [1 1] 5
+which.which	char [1 29] 'which is a built-in function.'
+exist.waitforallfiguresclosed	double [1 1] 5
+which.waitforallfiguresclosed	char [1 47] 'waitforallfiguresclosed is a built-in function.'
+exist.mainFuncForNumericStandaloneApplication	double [1 1] 0
+which.mainFuncForNumericStandaloneApplication	char [0 0] ''
+call.edit	ERR MATLAB:UndefinedFunction | Undefined function 'edit' for input arguments of type 'char'.
+call.help	ERR MATLAB:UndefinedFunction | Undefined function 'help' for input arguments of type 'char'.
+call.help.out	ERR MATLAB:UndefinedFunction | Undefined function 'help' for input arguments of type 'char'.
+call.doc	ERR MATLAB:UndefinedFunction | Undefined function 'doc' for input arguments of type 'char'.
+call.lookfor	ERR MATLAB:UndefinedFunction | Undefined function 'lookfor' for input arguments of type 'char'.
+call.dbstop	ERR MATLAB:services:MissingRequiredCapability | Debugging is not supported in this configuration.
+call.dbstack	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'dbstack'.
+call.profile	ERR MATLAB:UndefinedFunction | Undefined function 'profile' for input arguments of type 'char'.
+call.pcode	ERR MATLAB:UndefinedFunction | Undefined function 'pcode' for input arguments of type 'char'.
+call.mex	ERR MATLAB:mex:DEPLOYMENT_MODE_NOTSUPPORTED | Building MEX files is not supported in deployed environment.
+call.savepath	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'savepath'.
+call.more	ok
+call.echo	ok
+call.echo.off.output	char [0 0] ''
+call.commandwindow	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'commandwindow'.
+call.checkcode	ERR MATLAB:UndefinedFunction | Undefined function 'checkcode' for input arguments of type 'char'.
+call.publish	ERR MATLAB:UndefinedFunction | Undefined function 'publish' for input arguments of type 'char'.
+call.restoredefaultpath	ERR MATLAB:mpath:PathAlterationNotSupported | Modifying the search path is not supported by MATLAB Compiler. Remove functions that modify the search path from your MATLAB code. To make files visible to your deployed application, add the parent folder to your MATLAB session.
+call.rehash	ok
+call.inmem	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'inmem'.
+call.mlock	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'mlock'.
+call.clc	ok
+call.home	ok
+call.evalc.clc	char [0 0] ''
+call.type	char [1 811] 'function s = k0_show(v) / %K0_SHOW A one-line description of a value: class, size and contents where short. / sz = mat2str(size(v)); / if ischar(v) /     s = sprintf('char %s ''%s''', sz, k0_flat(v)); / elseif isstring(v) /     s = sprintf('string %s [%s]', sz, strjoin(cellstr(v(:)'), ', ')); / elseif islogical(v) || isnumeric(v) /     if numel(v) <= 12 /         s = sprintf('%s %s %s', class(v), sz, mat2str(v)); /     else /         s = sprintf('%s %s', class(v), sz); /     end / elseif iscell(v) /     parts = cellfun(@(e) k0_show(e), v(:)', 'UniformOutput', false); /     if numel(v) > 6, parts = [parts(1:6), {'...'}]; end /     s = sprintf('cell %s {%s}', sz, strjoin(parts, '; ')); / elseif isstruct(v) /     s = sprintf('struct %s fields [%s]', sz, strjoin(fieldnames(v)', ', ')); / else /     s = sprintf('%s %s', class(v), sz); / end / end /  / '
+call.getSecret	ERR MATLAB:UndefinedFunction | Undefined function 'getSecret' for input arguments of type 'char'.
+call.setSecret	ERR MATLAB:UndefinedFunction | Undefined function 'setSecret' for input arguments of type 'char'.
+call.eval	double [1 1] 3
+call.evalc.disp	char [1 3] '42 / '
+call.str2func	double [1 1] 2
+call.evalin.base	double [1 1] 9
+call.assignin.base	ok
+call.evalin.base.k0v	double [1 1] 4
+EXIT	0
+SECONDS	0.6

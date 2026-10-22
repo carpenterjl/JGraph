@@ -124,6 +124,7 @@ internal static class JgsRunner
                 .Where(p => !pristine.TryGetValue(p.Key, out JgsValue? original) || !ReferenceEquals(original, p.Value))
                 .Select(static p => (p.Key, p.Value)), () => interpreter.CurrentFrame);
             DefineWorkspaceBuiltins(environment, interpreter, context.Output, () => pristine);
+            JgsBuiltins.RegisterDeploymentBuiltins(environment, interpreter, globals); // last: a deployed session replaces some of the above (K1)
             environment.Builtins.Seal(); // the last registrar has run; nothing else may land in built-in storage
             hook?.RunStarting(interpreter, environment);
 
@@ -133,8 +134,21 @@ internal static class JgsRunner
             pristine = environment.Locals.ToDictionary(
                 static p => p.Key, static p => p.Value, StringComparer.Ordinal);
 
-            interpreter.Run(program);
-            InvokeMainIfFunctionFile(program, interpreter);
+            // A deployed program runs the startup it was built with, then its main with the
+            // command line's arguments (K1).
+            IReadOnlyList<JgsValue>? arguments = null;
+            if (context.Deployment is { } deployment)
+            {
+                JgsDeployedMain.RunStartup(interpreter, deployment);
+                interpreter.Run(program);
+                arguments = JgsDeployedMain.Arguments(interpreter, deployment);
+            }
+            else
+            {
+                interpreter.Run(program);
+            }
+
+            InvokeMainIfFunctionFile(program, interpreter, arguments);
 
             // The run's workspace dies with the run (V10, ADR 0171): what the last statement
             // dropped is destroyed, then the base workspace's own handles, by name - as R2025b's
@@ -155,6 +169,14 @@ internal static class JgsRunner
             // out on the result for the host to act on.
             globals.ShowTouchedFigures();
             return ScriptRunResult.Exited(exit.ExitCode, globals.FiguresShown);
+        }
+        catch (JgsException ex) when (context.Deployment is not null)
+        {
+            // A deployed program ends on an uncaught error the way R2025b's does: its report on
+            // standard error, and exit code 249 whatever the error was (K0).
+            context.Output.WriteError(JgsDeployedMain.Report(ex));
+            globals.ShowTouchedFigures();
+            return ScriptRunResult.Exited(ScriptDeployment.UncaughtErrorExitCode, globals.FiguresShown);
         }
         catch (JgsException ex)
         {
@@ -183,7 +205,9 @@ internal static class JgsRunner
                 $"Internal error: {ex.GetType().Name}: {ex.Message}", IsError: true);
             context.Output.WriteError(diagnostic.ToString());
             globals.ShowTouchedFigures();
-            return ScriptRunResult.Failed(diagnostic.Message, new[] { diagnostic });
+            return context.Deployment is not null
+                ? ScriptRunResult.Exited(ScriptDeployment.UncaughtErrorExitCode, globals.FiguresShown)
+                : ScriptRunResult.Failed(diagnostic.Message, new[] { diagnostic });
         }
         finally
         {
@@ -207,12 +231,16 @@ internal static class JgsRunner
         program.Count > 0 && program.All(static s => s is FnStmt);
 
     /// <summary>
-    /// Invokes the main function of a function file with no arguments, discarding any result —
-    /// MATLAB dispatches on the file name, and the first function in the file is that function.
-    /// Arity and runtime errors surface as ordinary diagnostics from the call site of the file.
+    /// Invokes the main function of a function file, discarding any result — MATLAB dispatches on
+    /// the file name, and the first function in the file is that function. It is called with
+    /// <paramref name="arguments"/>, or with none: a deployed program's main gets its command line
+    /// (K1). Arity and runtime errors surface as ordinary diagnostics from the call site of the file.
     /// </summary>
-    internal static void InvokeMainIfFunctionFile(IReadOnlyList<Stmt> program, Interpreter interpreter)
+    internal static void InvokeMainIfFunctionFile(
+        IReadOnlyList<Stmt> program, Interpreter interpreter, IReadOnlyList<JgsValue>? arguments = null)
     {
+        arguments ??= System.Array.Empty<JgsValue>();
+
         // A class file run as a file is its constructor called with nothing (U7): what MATLAB's Run
         // does with a classdef, and how an App Designer app is started from its .mlapp or its .m.
         // Only a file named for its class is one; classdef text run from anywhere else defines the
@@ -224,7 +252,7 @@ internal static class JgsRunner
                 classFile.Name, StringComparison.Ordinal)
             && interpreter.Classes.TryGetValue(classFile.Name, out JgsClass? definition) && !definition.IsAbstract)
         {
-            JgsCallbacks.Invoke(definition.ConstructorValue.AsCallable, System.Array.Empty<JgsValue>(), classFile.Line, classFile.Column);
+            JgsCallbacks.Invoke(definition.ConstructorValue.AsCallable, arguments, classFile.Line, classFile.Column);
             return;
         }
 
@@ -236,7 +264,7 @@ internal static class JgsRunner
         var main = (FnStmt)program[0];
         if (interpreter.TryGetHoisted(main.SourceId, main.Name, main.Dialect, out JgsValue value) && value.Type == JgsType.Function)
         {
-            JgsCallbacks.Invoke(value.AsCallable, System.Array.Empty<JgsValue>(), main.Line, main.Column); // run as a statement: nargout 0 (V9.1)
+            JgsCallbacks.Invoke(value.AsCallable, arguments, main.Line, main.Column); // run as a statement: nargout 0 (V9.1)
         }
     }
 

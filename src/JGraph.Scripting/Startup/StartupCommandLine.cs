@@ -26,10 +26,22 @@ public static class StartupCommandLine
         string? startDirectory = null;
         bool showFigures = false;
         bool help = false;
+        string? deployedRoot = null;
+        bool numeric = false;
+        IReadOnlyList<string> programArguments = [];
 
         for (int i = 0; i < args.Count; i++)
         {
             string arg = args[i];
+
+            // Everything after a lone -- is the deployed program's own command line, passed on as
+            // it is, flags included (K1).
+            if (arg == "--")
+            {
+                programArguments = [.. args.Skip(i + 1)];
+                break;
+            }
+
             if (Normalize(arg) is not { } flag)
             {
                 return StartupOptions.Invalid(
@@ -86,6 +98,26 @@ public static class StartupCommandLine
                     showFigures = true;
                     break;
 
+                // Hidden (compiler and SDK plan, stage K1): run the -batch file as a compiled
+                // program's main over a folder standing in for its extracted archive, until stage
+                // K3's archive and K6's launcher make the real thing. Not in the usage text.
+                case "deployed":
+                    if (deployedRoot is not null)
+                    {
+                        return StartupOptions.Invalid("--deployed was given more than once.");
+                    }
+
+                    if (!TryTakeValue(args, ref i, out deployedRoot))
+                    {
+                        return StartupOptions.Invalid("--deployed requires the folder that stands in for the archive.");
+                    }
+
+                    break;
+
+                case "deployed-numeric":
+                    numeric = true;
+                    break;
+
                 case "h":
                 case "help":
                 case "?":
@@ -110,6 +142,16 @@ public static class StartupCommandLine
                 "-showfigures only applies to -batch; an interactive session already shows its figures.");
         }
 
+        if ((deployedRoot is not null || numeric || programArguments.Count > 0) && mode != StartupMode.Batch)
+        {
+            return StartupOptions.Invalid("--deployed, --deployed-numeric and -- only apply to -batch.");
+        }
+
+        if ((numeric || programArguments.Count > 0) && deployedRoot is null)
+        {
+            return StartupOptions.Invalid("--deployed-numeric and -- need --deployed.");
+        }
+
         if (mode is null)
         {
             return logFile is null && startDirectory is null
@@ -117,7 +159,12 @@ public static class StartupCommandLine
                 : new StartupOptions(StartupMode.Interactive, LogFile: logFile, StartDirectory: startDirectory);
         }
 
-        return new StartupOptions(mode.Value, statement, logFile, startDirectory, showFigures);
+        return new StartupOptions(mode.Value, statement, logFile, startDirectory, showFigures)
+        {
+            DeployedRoot = deployedRoot,
+            NumericArguments = numeric,
+            ProgramArguments = programArguments,
+        };
     }
 
     /// <summary>

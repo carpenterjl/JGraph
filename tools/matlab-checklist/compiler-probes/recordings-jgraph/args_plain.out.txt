@@ -1,0 +1,15 @@
+CASE	args_plain
+RUN	k0_args.exe 1 two 'three four' 'a"b' c:\x\ '' -x '[1 2]'
+beep.default	on
+nargin	8
+arg1	char [1 1] '1'
+arg2	char [1 3] 'two'
+arg3	char [1 10] 'three four'
+arg4	char [1 3] 'a"b'
+arg5	char [1 5] 'c:\x\'
+arg6	char [0 0] ''
+arg7	char [1 2] '-x'
+arg8	char [1 5] '[1 2]'
+isdeployed	1
+EXIT	0
+SECONDS	0.4

@@ -304,12 +304,22 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
             {
                 IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, _dialect);
                 _interpreter.AtPrompt = !asFile; // where 'clear import' is allowed (ADR 0176)
+
+                // A deployed program's file runs the startup it was built with first, and its main
+                // gets the command line's arguments (K1).
+                ScriptDeployment? deployment = asFile ? _context.Deployment : null;
+                if (deployment is not null)
+                {
+                    JgsDeployedMain.RunStartup(_interpreter, deployment);
+                }
+
                 _interpreter.Run(program);
                 if (asFile)
                 {
                     // A file that is nothing but function definitions is a MATLAB function file: running
                     // it means calling its main function. Prompt input never takes this branch.
-                    JgsRunner.InvokeMainIfFunctionFile(program, _interpreter);
+                    JgsRunner.InvokeMainIfFunctionFile(program, _interpreter,
+                        deployment is null ? null : JgsDeployedMain.Arguments(_interpreter, deployment));
                 }
             },
             sourceId, cancellationToken);
@@ -330,6 +340,13 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
         {
             _globals.ShowTouchedFigures();
             return ScriptRunResult.Exited(exit.ExitCode, _globals.FiguresShown, GetVariables());
+        }
+        catch (JgsException ex) when (_context.Deployment is not null)
+        {
+            // A deployed program's uncaught error: R2025b's report and exit code (K1).
+            _context.Output.WriteError(JgsDeployedMain.Report(ex));
+            _globals.ShowTouchedFigures();
+            return ScriptRunResult.Exited(ScriptDeployment.UncaughtErrorExitCode, _globals.FiguresShown, GetVariables());
         }
         catch (JgsException ex)
         {
@@ -386,6 +403,7 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
             () => ReferenceEquals(_interpreter.CurrentFrame, _environment) ? UserVariables() : _interpreter.CurrentFrame.Variables.Where(p => !_interpreter.CurrentFrame.IsFunctionBinding(p.Key)).Select(p => (p.Key,p.Value)),
             () => _interpreter.CurrentFrame);
         JgsRunner.DefineWorkspaceBuiltins(_environment, _interpreter, _context.Output, () => _pristine);
+        JgsBuiltins.RegisterDeploymentBuiltins(_environment, _interpreter, _globals); // last: a deployed session replaces some of the above (K1)
         _environment.Builtins.Seal();
 
         _pristine = _environment.Locals.ToDictionary(

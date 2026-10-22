@@ -38,6 +38,19 @@ public sealed record StartupOptions(
     bool ShowFigures = false,
     string? UsageError = null)
 {
+    /// <summary>
+    /// The hidden <c>--deployed &lt;folder&gt;</c> switch (compiler and SDK plan, stage K1): run the
+    /// <c>-batch</c> file as a compiled program's main, with the folder standing in for its
+    /// extracted archive. Null for an ordinary run.
+    /// </summary>
+    public string? DeployedRoot { get; init; }
+
+    /// <summary>The hidden <c>--deployed-numeric</c> switch: the program behaves as one built with <c>mcc -n</c>.</summary>
+    public bool NumericArguments { get; init; }
+
+    /// <summary>What followed <c>--</c>: the deployed program's command line.</summary>
+    public IReadOnlyList<string> ProgramArguments { get; init; } = [];
+
     /// <summary>The default: launch the interactive application.</summary>
     public static StartupOptions Interactive { get; } = new(StartupMode.Interactive);
 

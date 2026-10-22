@@ -188,13 +188,19 @@ public sealed class JGraphScriptGlobals
 
     /// <summary>The working directory as <c>pwd</c> reports it.</summary>
     internal string CurrentDirectory =>
-        _currentDirectory ?? _runScriptDirectory ?? _context.WorkingDirectory ?? Directory.GetCurrentDirectory();
+        _currentDirectory ?? RunFolder ?? _context.WorkingDirectory ?? Directory.GetCurrentDirectory();
 
     /// <summary>
     /// The working directory when the session has one of its own, or null when <c>pwd</c> is the
     /// process's — which is what a .NET call moves the process to first (ADR 0176).
     /// </summary>
-    internal string? OwnDirectory => _currentDirectory ?? _runScriptDirectory ?? _context.WorkingDirectory;
+    internal string? OwnDirectory => _currentDirectory ?? RunFolder ?? _context.WorkingDirectory;
+
+    /// <summary>
+    /// The running file's folder as the working directory: a file run's, except in a deployed
+    /// session, whose program starts in the folder it was started from (K0: pwd is the caller's).
+    /// </summary>
+    private string? RunFolder => Deployment is null ? _runScriptDirectory : null;
 
     /// <summary>Moves to <paramref name="path"/>, which must already exist.</summary>
     internal void ChangeDirectory(string path)
@@ -272,6 +278,13 @@ public sealed class JGraphScriptGlobals
     {
         get
         {
+            // A deployed session finds code on its frozen path alone: R2025b's never finds a
+            // function in the current folder, before a cd or after one (K0, path).
+            if (Deployment is not null)
+            {
+                yield break;
+            }
+
             if (_currentDirectory is { Length: > 0 } moved)
             {
                 yield return moved;
@@ -301,8 +314,50 @@ public sealed class JGraphScriptGlobals
             return;
         }
 
+        // A deployed program's warnings go to standard output with the rest of what it prints
+        // (K0, exit_warning).
+        if (Deployment is not null)
+        {
+            print(text);
+            return;
+        }
+
         WriteErr(text);
     }
+
+    /// <summary>The compiled component this session runs, or null for an ordinary session (stage K1).</summary>
+    internal ScriptDeployment? Deployment => _context.Deployment;
+
+    /// <summary>The first file named <paramref name="name"/> in a folder of the deployment's frozen path, or null.</summary>
+    internal string? FindOnFrozenPath(string name)
+    {
+        if (Deployment is not { } deployment || Path.IsPathRooted(name))
+        {
+            return null;
+        }
+
+        foreach (string folder in deployment.FrozenPath)
+        {
+            string candidate = Path.Combine(folder, name);
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private Dictionary<string, JgsValue>? _runtimeUserData;
+
+    /// <summary>
+    /// What <c>setmcruserdata</c> stored, by key: the session's, starting from what the deployment's
+    /// <c>-mcruserdata</c> switches set.
+    /// </summary>
+    internal Dictionary<string, JgsValue> RuntimeUserData =>
+        _runtimeUserData ??= Deployment?.UserData.ToDictionary(
+            static pair => pair.Key, static pair => JgsValue.Str(pair.Value), StringComparer.Ordinal)
+            ?? new Dictionary<string, JgsValue>(StringComparer.Ordinal);
 
     // --- Table readers ----------------------------------------------------------------------------
 
@@ -796,6 +851,22 @@ public sealed class JGraphScriptGlobals
     internal string Resolve(string path)
     {
         ArgumentNullException.ThrowIfNull(path);
+
+        // A deployed program reads a relative name in the current folder, then on its frozen path,
+        // where the files it was built with are (K0, path: fileread('inside.txt') read an -a file).
+        if (!Path.IsPathRooted(path) && Deployment is not null)
+        {
+            string here = Path.Combine(CurrentDirectory, path);
+            if (File.Exists(here) || Directory.Exists(here))
+            {
+                return here;
+            }
+
+            if (FindOnFrozenPath(path) is { } packaged)
+            {
+                return packaged;
+            }
+        }
 
         // Where cd has moved to comes first: a script that changed folder means files there.
         if (!Path.IsPathRooted(path) && _currentDirectory is { Length: > 0 } moved)

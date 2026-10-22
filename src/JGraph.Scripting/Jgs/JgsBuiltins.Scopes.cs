@@ -64,6 +64,10 @@ internal static partial class JgsBuiltins
         "fcontour", "fimplicit", "fimplicit3", "fmesh", "fplot", "fplot3", "fsurf",
         "groupfilter", "grouptransform", "kstest", "nlinfit", "nlpredci",
         "midiid", "loadlibrary", "executeCallback",
+
+        // K1: a deployed session's input evaluates the line it reads, and waitforallfiguresclosed
+        // delivers callbacks while it waits.
+        "input", "waitforallfiguresclosed",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code

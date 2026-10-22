@@ -1,0 +1,8 @@
+CASE	exit_warning
+RUN	k0_exit.exe warning
+beep.default	on
+mode	warning
+Warning: Careful with that
+after	warning
+EXIT	0
+SECONDS	0.3

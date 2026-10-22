@@ -1,0 +1,13 @@
+CASE	figure_invisible
+RUN	k0_figure.exe 
+beep.default	on
+exportgraphics	ok
+exported.bytes.positive	logical [1 1] true
+print	ok
+figure.Visible	char [1 3] 'off'
+groot.Children.count	double [1 1] 1
+waitforallfiguresclosed	cell [1 1] {char [0 0] ''}
+groot.Children.after	double [1 1] 0
+end
+EXIT	0
+SECONDS	0.5

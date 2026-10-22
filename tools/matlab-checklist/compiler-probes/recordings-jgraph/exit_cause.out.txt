@@ -1,0 +1,13 @@
+CASE	exit_cause
+RUN	k0_exit.exe cause
+beep.default	on
+mode	cause
+STDERR	Error using k0_exit (line 18)
+STDERR	Outer failure
+STDERR	
+STDERR	Caused by:
+STDERR	    Inner reason
+STDERR	
+STDERR	k0:outer
+EXIT	249
+SECONDS	0.3

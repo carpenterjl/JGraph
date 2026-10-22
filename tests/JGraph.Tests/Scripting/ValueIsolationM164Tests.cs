@@ -317,7 +317,9 @@ public class ValueIsolationM164Tests : IDisposable
                 $"'{name}' is on JgsBuiltins.ScriptRunningBuiltins but its builtin does not carry RunsScript");
         }
 
-        Assert.True(reached >= JgsBuiltins.ScriptRunningBuiltins.Count - 2, $"only {reached} of the list are reachable by name");
+        // waitforallfiguresclosed is the third that cannot be reached here: only a deployed session
+        // registers it (compiler and SDK plan, stage K1).
+        Assert.True(reached >= JgsBuiltins.ScriptRunningBuiltins.Count - 3, $"only {reached} of the list are reachable by name");
     }
 
     private static JgsValue Global(JgsReplSession session, string name)

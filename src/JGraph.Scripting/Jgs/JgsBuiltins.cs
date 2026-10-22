@@ -6200,8 +6200,18 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue Exit(string name, IReadOnlyList<JgsValue> args, int line, int col)
     {
-        ArityRange(name, args, 0, 1, line, col);
-        int code = args.Count == 0 ? 0 : (int)Num(name, args, 0, line, col);
+        // exit(code), exit('force') and exit(code, 'force'): 'force' skips a finish script, which
+        // JGraph has none of, so it changes nothing here (K0, exit_quitforce: quit(5, 'force') ends 5).
+        ArityRange(name, args, 0, 2, line, col);
+        bool forced = args.Count > 0 && IsTextScalar(args[^1])
+            && string.Equals(TextOf(args[^1]), "force", StringComparison.OrdinalIgnoreCase);
+        int numbered = forced ? args.Count - 1 : args.Count;
+        if (numbered > 1 || (args.Count == 2 && !forced))
+        {
+            throw new JgsRuntimeException(line, col, $"{name}: the second argument can only be 'force'.");
+        }
+
+        int code = numbered == 0 ? 0 : (int)Num(name, args, 0, line, col);
         throw new ScriptExitException(code);
     }
 

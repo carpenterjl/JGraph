@@ -1,0 +1,10 @@
+CASE	exit_disp
+RUN	k0_exit.exe disp
+beep.default	on
+mode	disp
+s = struct(a: 1, b: two)
+c = {1, 'x'}
+3.141592653589793
+after	disp
+EXIT	0
+SECONDS	0.3

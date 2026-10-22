@@ -1,0 +1,55 @@
+CHK|isdeployed|logical [1 1] 0|exact
+CHK|isdeployed_class|logical|exact
+CHK|ismcc|logical [1 1] 0|exact
+CHK|isdeployed_arg|MATLAB:maxrhs|exact
+CHK|isdeployed_arg_msg|Too many input arguments.|exact
+CHK|ismcc_arg|MATLAB:maxrhs|exact
+CHK|ismcc_arg_msg|Too many input arguments.|exact
+CHK|ctfroot_is_matlabroot|logical [1 1] 1|exact
+CHK|ctfroot_arg|MATLAB:TooManyInputs|exact
+CHK|ctfroot_arg_msg|Too many input arguments.|exact
+CHK|mcrversion_bare|25|exact
+CHK|mcrversion_1|25|exact
+CHK|mcrversion_2|[25 2]|exact
+CHK|mcrversion_3|[25 2 0]|exact
+CHK|mcrversion_5|[25 2 0 0 0]|exact
+CHK|mcrversion_class|double|exact
+CHK|mcrversion_arg|MATLAB:TooManyInputs|exact
+CHK|mcrversion_arg_msg|Too many input arguments.|exact
+CHK|mcrcachedir_class|char|exact
+CHK|mcrcachedir_local|logical [1 1] 1|exact
+CHK|mcrcachedir_arg|MATLAB:mcrcachedir:tooManyInputArgs|exact
+CHK|mcrcachedir_arg_msg|Too many input arguments.|exact
+CHK|get_missing_size|[1 0]|exact
+CHK|get_missing_class|double|exact
+CHK|get_missing_string_key|[1 0]|exact
+CHK|get_noargs|MATLAB:minrhs|exact
+CHK|get_noargs_msg|Not enough input arguments.|exact
+CHK|get_two|MATLAB:maxrhs|exact
+CHK|get_two_msg|Too many input arguments.|exact
+CHK|get_number_key|MCR:mclinstancedata:MCLMCR_WRONG_USER_DATA_KEY_TYPE|exact
+CHK|get_number_key_msg|Wrong type of data used as MATLAB Runtime user data key. Keys must be scalar strings or character vectors. Actual key type: 'double'.|exact
+CHK|get_char|k1value|exact
+CHK|get_double|[1 2 3]|exact
+CHK|get_struct|double [1 1] 1|exact
+CHK|get_replaced|double [1 1] 7|exact
+CHK|get_other_case|[1 0]|exact
+CHK|get_set_empty|[0 0]|exact
+CHK|set_one|MATLAB:minrhs|exact
+CHK|set_one_msg|Not enough input arguments.|exact
+CHK|set_three|MATLAB:maxrhs|exact
+CHK|set_three_msg|Too many input arguments.|exact
+CHK|set_number_key|MCR:mclinstancedata:MCLMCR_WRONG_USER_DATA_KEY_TYPE|exact
+CHK|set_number_key_msg|Wrong type of data used as MATLAB Runtime user data key. Keys must be scalar strings or character vectors. Actual key type: 'double'.|exact
+CHK|get_string_key|double [1 1] 3|exact
+CHK|set_output|MATLAB:maxlhs|exact
+CHK|set_output_msg|Too many output arguments.|exact
+CHK|waitforallfiguresclosed|MATLAB:UndefinedFunction|exact
+CHK|waitforallfiguresclosed_msg|Unrecognized function or variable 'waitforallfiguresclosed'.|exact
+CHK|beep_off|off|exact
+CHK|undefined_expanded_none|MATLAB:UndefinedFunction|exact
+CHK|undefined_expanded_none_msg|Unrecognized function or variable 'k1_nosuch_fn'.|exact
+CHK|feval_undefined_arg|MATLAB:UndefinedFunction|exact
+CHK|feval_undefined_arg_msg|Undefined function 'k1_nosuch_fn' for input arguments of type 'double'.|exact
+CHK|feval_undefined_bare|MATLAB:UndefinedFunction|exact
+CHK|feval_undefined_bare_msg|Unrecognized function or variable 'k1_nosuch_fn'.|exact

@@ -80,6 +80,17 @@ internal sealed class JgsBuiltinLayer
         _root.Declare(name, value);
     }
 
+    /// <summary>
+    /// Takes a built-in back out, leaving its name as undefined as one never registered: what a
+    /// deployed session does with the functions R2025b's runtime does not ship (stage K1).
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The layer is sealed.</exception>
+    public void Withdraw(string name)
+    {
+        ThrowIfSealed(name);
+        _root.WithdrawBuiltin(name);
+    }
+
     /// <summary>Whether a built-in named <paramref name="name"/> is registered, and which value it is.</summary>
     public bool TryGet(string name, out JgsValue value) => _root.Locals.TryGetValue(name, out value!);
 

@@ -285,8 +285,15 @@ $psi.RedirectStandardError = $true
 $psi.EnvironmentVariables['PATH'] = $childPath
 foreach ($k in $Environment.Keys) { $psi.EnvironmentVariables[$k] = [string]$Environment[$k] }
 
+# Windows PowerShell's Process.Start opens the child's stdin with a writer in Console.InputEncoding
+# and flushes that encoding's byte order mark into the pipe at once, so the child's stdin would not
+# be empty: R2025b's input and JGraph's both read EF BB BF as a line (found in stage K1). The writer
+# takes the encoding at Start, so one with no preamble is put in place for that call only.
+$savedInput = $null
+try { $savedInput = [Console]::InputEncoding; [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false) } catch { $savedInput = $null }
 $watch = [System.Diagnostics.Stopwatch]::StartNew()
-$proc = [System.Diagnostics.Process]::Start($psi)
+try { $proc = [System.Diagnostics.Process]::Start($psi) }
+finally { if ($savedInput) { try { [Console]::InputEncoding = $savedInput } catch { } } }
 # The child runs for a moment before it joins the job; the error mode covers the loader's part.
 $job = [JGraphQuiet.Native]::QuietJob($proc.Handle)
 $proc.StandardInput.Close()

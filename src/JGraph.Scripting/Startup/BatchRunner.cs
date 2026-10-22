@@ -93,6 +93,23 @@ public static class BatchRunner
             return (StartupExitCodes.UsageError, null);
         }
 
+        // --deployed (K1): the file is a compiled program's main, over a folder standing in for its
+        // extracted archive.
+        ScriptDeployment? deployment = null;
+        if (options.DeployedRoot is { } root)
+        {
+            string folder = Path.GetFullPath(Path.Combine(workingDirectory, root));
+            if (resolved.SourcePath is not { } main || !Directory.Exists(folder))
+            {
+                output.WriteError(resolved.SourcePath is null
+                    ? "jgraph: --deployed needs -batch to name the main function's file."
+                    : $"jgraph: the folder '{folder}' does not exist.");
+                return (StartupExitCodes.UsageError, null);
+            }
+
+            deployment = ScriptDeployment.FromFolder(folder, Path.GetFullPath(main), options.ProgramArguments, options.NumericArguments);
+        }
+
         var context = new ScriptContext(
             output,
             showFigure,
@@ -103,6 +120,7 @@ public static class BatchRunner
             closeFigure)
         {
             ScriptPath = resolved.SourcePath,
+            Deployment = deployment,
         };
 
         IScriptSession? session = inSession && engine is IScriptRepl repl ? repl.CreateSession(context) : null;

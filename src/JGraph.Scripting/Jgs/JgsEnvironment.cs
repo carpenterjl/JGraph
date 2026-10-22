@@ -332,6 +332,15 @@ internal sealed class JgsEnvironment
         _functionDefinitions[name] = value;
     }
 
+    /// <summary>Removes a built-in from the layer, through <see cref="JgsBuiltinLayer.Withdraw"/> alone.</summary>
+    internal void WithdrawBuiltin(string name)
+    {
+        ThrowIfSealedLayer(name);
+        Drop(name);
+        _functionBindings.Remove(name);
+        _functionDefinitions.Remove(name);
+    }
+
     // The layer takes declarations only through JgsBuiltinLayer.Register, and only until it is
     // sealed. A declaration reaching it any other way is a walk that went one scope too far.
     private void ThrowIfSealedLayer(string name)

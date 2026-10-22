@@ -86,6 +86,13 @@ public sealed class ScriptContext
     /// </summary>
     public IScriptAppDesigner? AppDesigner { get; init; }
 
+    /// <summary>
+    /// The compiled component this session runs, or null for an ordinary session. A deployed
+    /// session answers <c>isdeployed</c> true, keeps its search path frozen, and calls its main
+    /// function with the deployment's arguments (compiler and SDK plan, stage K1).
+    /// </summary>
+    public ScriptDeployment? Deployment { get; init; }
+
     /// <summary>The directory relative file paths resolve against, or null for the process directory.</summary>
     public string? WorkingDirectory { get; }
 

@@ -1,0 +1,18 @@
+CASE	exit_nested
+RUN	k0_exit.exe nested
+beep.default	on
+mode	nested
+STDERR	Error using k0_exit>k0_exit_inner (line 42)
+STDERR	Deep error at depth zero
+STDERR	
+STDERR	Error in k0_exit>k0_exit_inner (line 40)
+STDERR	
+STDERR	Error in k0_exit>k0_exit_inner (line 40)
+STDERR	
+STDERR	Error in k0_exit>k0_exit_inner (line 40)
+STDERR	
+STDERR	Error in k0_exit (line 12)
+STDERR	
+STDERR	k0:deep
+EXIT	249
+SECONDS	0.3

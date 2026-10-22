@@ -33,6 +33,10 @@ and runs them only when they are named; tell the user before running one.
 | `record-build-side.ps1` | Runs both `.m` files under `matlab -batch -noFigureWindows` and writes `recordings/build_k0.out.txt` and `recordings/build_side.out.txt`. |
 | `run-k0.ps1` | Runs each case (program, arguments, environment) through `run-quiet.ps1` in a fresh run folder and writes `recordings/<case>.out.txt`. |
 | `probe_k0_numeric.m` | Which strings `mcc -n` accepts (the `mclisnumerictype` rule), with `matlab -batch`. |
+| `probe_k1_numeric.m` | 108 more strings through `mclisnumerictype`, the answer only (stage K1). |
+| `probe_k1_session.m` | The deployment builtins in an ordinary R2025b session, their refusals, and the text of the messages a deployed session raises (stage K1). |
+| `run-k1.ps1` | Runs K0's cases in JGraph's deployed session (`jgraph -batch main.m --deployed <folder> -- args`), each program laid out as R2025b extracted it, and writes `recordings-jgraph/<case>.out.txt` and `recordings-jgraph/differences.txt` (stage K1, ADR 0256). |
+| `recordings-jgraph/` | JGraph's recordings of K0's cases, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
 | `research-2026-10-21/` | Sources from the plan's research session: the SDK client programs (C, C++, .NET MWArray, .NET Data API, Python) for stages K8-K13, the `mps.json` probes and their output for K14, and the options probes. |
@@ -42,7 +46,11 @@ and runs them only when they are named; tell the user before running one.
 ```
 powershell -File record-build-side.ps1 -BuildRoot <scratch>
 powershell -File run-k0.ps1 -BuildRoot <scratch>
+powershell -File run-k1.ps1 -WorkRoot <another scratch>
 ```
+
+`run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,
+which Windows PowerShell's `Process.Start` writes into the pipe; `stubs` was re-recorded without it.
 
 Builds take about 10 s each (20 s for the first in a session). A run takes about 2-3 s, and the
 invisible-figure case about 25 s.

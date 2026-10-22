@@ -1,0 +1,11 @@
+CASE	exit_builtin
+RUN	k0_exit.exe builtin
+beep.default	on
+mode	builtin
+STDERR	Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.
+STDERR	
+STDERR	Error in k0_exit (line 14)
+STDERR	
+STDERR	MATLAB:innerdim
+EXIT	249
+SECONDS	0.3

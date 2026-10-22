@@ -409,6 +409,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Function introspection | M39 | `func2str` `functions` `mfilename` `inputname` |
 | Console session | M39 | `diary` `echo` `home` `more` `input` `lookfor` `what` `beep` `pack` `recycle` `rehash` `display` |
 | The installation | M39 | `version` `computer` `matlabroot` `matlabdrive` `license` `isstudent` `memory` `maxNumCompThreads` `fftw` |
+| Deployment | K1 (ADR 0256) | `isdeployed` `ismcc` `ctfroot` `mcrversion` `mcrcachedir` `getmcruserdata` `setmcruserdata` — MATLAB Compiler's, outside the 2,024, so the total does not move; a deployed session also has `waitforallfiguresclosed`, the runtime's own |
 | Stress-test numerics and sparse | M42 | `sparse` `sprand` `eigs` `spy` `hilb` `polyval` `peaks` `cond` `sqrtm` `logm` `ode45` `int8`…`uint64` (with `.empty` statics) — plus complex `det`/`inv`/`trace`/`eig`/`svd`/`exp`/`log`/`sqrt` and the parallel dense product |
 | Stress-test data types and verbs | M43 | `table` `timetable` `seconds` `categorical` `summary` `string` `cellstr` `compose` `missing` `ismissing` `tiledlayout` `nexttile` `axis` `shading` `lighting` `camlight` `rotate3d` — plus sprintf format cycling, element-wise `~`, and `colormap turbo` |
 | Drawing primitives | M45 | `plot3` `line` `text` `fill` `fill3` `patch` `surface` `light` |

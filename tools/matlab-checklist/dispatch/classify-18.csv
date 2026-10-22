@@ -1,0 +1,8 @@
+name,kind,method_classes
+isdeployed,builtin,
+ismcc,builtin,
+ctfroot,mfile,
+mcrversion,mfile,
+mcrcachedir,other,
+getmcruserdata,builtin,
+setmcruserdata,builtin,

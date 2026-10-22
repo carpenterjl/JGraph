@@ -77,17 +77,22 @@ internal static class Program
     private static async Task<int> RunHeadlessAsync(StartupOptions options)
     {
         // The same preferences the application reads, so a batch run behaves like an interactive one:
-        // the user's plugin choices and their JGS language options.
-        UserSettingsDto settings = LoadUserSettings();
+        // the user's plugin choices and their JGS language options. A deployed program reads
+        // neither: it runs as it was built, on whatever machine it is run (K1).
+        bool deployed = options.DeployedRoot is not null;
+        UserSettingsDto settings = deployed ? new UserSettingsDto() : LoadUserSettings();
 
         // The C compiler chosen in the application's Options, for loadlibrary's header route (ADR 0181).
         LoadLibraryCompilers.Preferred = settings.CCompiler;
 
         // The theme and colormap plugins the application loads (minus any the user disabled), so a
         // batch-rendered figure matches what the same script draws interactively.
-        PluginLoader.LoadDefault(
-            Path.Combine(AppContext.BaseDirectory, "plugins"),
-            plugin => !settings.DisabledPlugins.Contains(plugin.GetType().FullName ?? plugin.GetType().Name, StringComparer.Ordinal));
+        if (!deployed)
+        {
+            PluginLoader.LoadDefault(
+                Path.Combine(AppContext.BaseDirectory, "plugins"),
+                plugin => !settings.DisabledPlugins.Contains(plugin.GetType().FullName ?? plugin.GetType().Name, StringComparer.Ordinal));
+        }
 
         IScriptOutput console = ConsoleScriptOutput.Instance;
         TeeScriptOutput? tee = options.LogFile is { Length: > 0 } log
@@ -119,7 +124,15 @@ internal static class Program
                 options,
                 engines,
                 output,
-                (number, figure) => SuppressFigure(output, number, figure),
+                (number, figure) =>
+                {
+                    // A deployed program's output is its own; the note about -showfigures is the
+                    // development launcher's (K1).
+                    if (!deployed)
+                    {
+                        SuppressFigure(output, number, figure);
+                    }
+                },
                 new CliFigureFiles(),
                 audio: null,
                 cancellation.Token).ConfigureAwait(false);

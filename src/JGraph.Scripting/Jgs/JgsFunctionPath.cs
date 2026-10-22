@@ -214,7 +214,8 @@ internal sealed class JgsFunctionPath
         // The current folder and the running script's own folder come first, exactly as they do for
         // every other file a script names — Resolve already knows that order, so it is not repeated.
         // In one folder an .mlapp is found before an .m of the same name (U7, measured in R2025b).
-        foreach (string extension in CodeExtensions)
+        // A deployed session's code is on its frozen path alone (stage K1).
+        foreach (string extension in _host.Deployment is null ? CodeExtensions : [])
         {
             string beside = _host.Resolve(name + extension);
             if (File.Exists(beside))
@@ -257,8 +258,9 @@ internal sealed class JgsFunctionPath
             return null;
         }
 
+        // The current folder holds data, not code, in a deployed session (stage K1).
         string beside = _host.Resolve(asked);
-        if (File.Exists(beside))
+        if (_host.Deployment is null && File.Exists(beside))
         {
             return Path.GetFullPath(beside);
         }
