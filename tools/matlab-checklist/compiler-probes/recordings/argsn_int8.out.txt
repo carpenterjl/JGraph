@@ -1,0 +1,12 @@
+CASE	argsn_int8
+RUN	k0_argsn.exe 1 int8(4)
+STDERR	Error using mainFuncForNumericStandaloneApplication>findArgType (line 21)
+STDERR	The input argument 
+STDERR	  'int8(4)'
+STDERR	is not recognized as a numeric type.
+STDERR	
+STDERR	Error in mainFuncForNumericStandaloneApplication (line 11)
+STDERR	
+STDERR	MCR:mainFuncForNumericStandaloneApplication:COM_ERROR_INPUT_ARGUMENT_TYPE
+EXIT	249
+SECONDS	1.8

@@ -1,0 +1,278 @@
+ENC [small] double scalar            : 5
+    DEC -> class=double size=[1 1] isequal=1 isreal=1
+ENC [large] double scalar            : {"mwdata":[5],"mwsize":[1,1],"mwtype":"double"}
+    DEC -> class=double size=[1 1] isequal=1 isreal=1
+ENC [small] double 2.5               : 2.5
+    DEC -> class=double size=[1 1] isequal=1 isreal=1
+ENC [large] double 2.5               : {"mwdata":[2.5],"mwsize":[1,1],"mwtype":"double"}
+    DEC -> class=double size=[1 1] isequal=1 isreal=1
+ENC [small] double row               : [[1,2,3]]
+    DEC -> class=double size=[1 3] isequal=1 isreal=1
+ENC [large] double row               : {"mwdata":[1,2,3],"mwsize":[1,3],"mwtype":"double"}
+    DEC -> class=double size=[1 3] isequal=1 isreal=1
+ENC [small] double col               : [1,2,3]
+    DEC -> class=double size=[3 1] isequal=1 isreal=1
+ENC [large] double col               : {"mwdata":[1,2,3],"mwsize":[3,1],"mwtype":"double"}
+    DEC -> class=double size=[3 1] isequal=1 isreal=1
+ENC [small] double 2x3               : [[1,2,3],[4,5,6]]
+    DEC -> class=double size=[2 3] isequal=1 isreal=1
+ENC [large] double 2x3               : {"mwdata":[1,4,2,5,3,6],"mwsize":[2,3],"mwtype":"double"}
+    DEC -> class=double size=[2 3] isequal=1 isreal=1
+ENC [small] double 2x2x2             : [[[1,5],[3,7]],[[2,6],[4,8]]]
+    DEC -> class=double size=[2 2 2] isequal=1 isreal=1
+ENC [large] double 2x2x2             : {"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"double"}
+    DEC -> class=double size=[2 2 2] isequal=1 isreal=1
+ENC [small] double 0x0               : []
+    DEC -> class=double size=[0 0] isequal=1 isreal=1
+ENC [large] double 0x0               : {"mwdata":[],"mwsize":[0,0],"mwtype":"double"}
+    DEC -> class=double size=[0 0] isequal=1 isreal=1
+ENC [small] double 1x0               : {"mwdata":[],"mwsize":[1,0],"mwtype":"double"}
+    DEC -> class=double size=[1 0] isequal=1 isreal=1
+ENC [large] double 1x0               : {"mwdata":[],"mwsize":[1,0],"mwtype":"double"}
+    DEC -> class=double size=[1 0] isequal=1 isreal=1
+ENC [small] double 0x3               : {"mwdata":[],"mwsize":[0,3],"mwtype":"double"}
+    DEC -> class=double size=[0 3] isequal=1 isreal=1
+ENC [large] double 0x3               : {"mwdata":[],"mwsize":[0,3],"mwtype":"double"}
+    DEC -> class=double size=[0 3] isequal=1 isreal=1
+ENC [small] NaN Inf row              : [[{"mwdata":"NaN"},{"mwdata":"Inf"},{"mwdata":"-Inf"}]]
+    DEC -> class=double size=[1 3] isequal=1 isreal=1
+ENC [large] NaN Inf row              : {"mwdata":["NaN","Inf","-Inf"],"mwsize":[1,3],"mwtype":"double"}
+    DEC -> class=double size=[1 3] isequal=1 isreal=1
+ENC [small] complex scalar           : {"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"double"}
+    DEC -> class=double size=[1 1] isequal=1 isreal=0
+ENC [large] complex scalar           : {"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"double"}
+    DEC -> class=double size=[1 1] isequal=1 isreal=0
+ENC [small] complex row              : {"mwcomplex":true,"mwdata":[1,2,3,-4],"mwsize":[1,2],"mwtype":"double"}
+    DEC -> class=double size=[1 2] isequal=1 isreal=0
+ENC [large] complex row              : {"mwcomplex":true,"mwdata":[1,2,3,-4],"mwsize":[1,2],"mwtype":"double"}
+    DEC -> class=double size=[1 2] isequal=1 isreal=0
+ENC [small] complex with zero imag   : {"mwcomplex":true,"mwdata":[1,0],"mwsize":[1,1],"mwtype":"double"}
+    DEC -> class=double size=[1 1] isequal=1 isreal=0
+ENC [large] complex with zero imag   : {"mwcomplex":true,"mwdata":[1,0],"mwsize":[1,1],"mwtype":"double"}
+    DEC -> class=double size=[1 1] isequal=1 isreal=0
+ENC [small] single                   : {"mwdata":[1.5,2],"mwsize":[1,2],"mwtype":"single"}
+    DEC -> class=single size=[1 2] isequal=1 isreal=1
+ENC [large] single                   : {"mwdata":[1.5,2],"mwsize":[1,2],"mwtype":"single"}
+    DEC -> class=single size=[1 2] isequal=1 isreal=1
+ENC [small] int8                     : {"mwdata":[-1,2],"mwsize":[1,2],"mwtype":"int8"}
+    DEC -> class=int8 size=[1 2] isequal=1 isreal=1
+ENC [large] int8                     : {"mwdata":[-1,2],"mwsize":[1,2],"mwtype":"int8"}
+    DEC -> class=int8 size=[1 2] isequal=1 isreal=1
+ENC [small] uint8                    : {"mwdata":[200],"mwsize":[1,1],"mwtype":"uint8"}
+    DEC -> class=uint8 size=[1 1] isequal=1 isreal=1
+ENC [large] uint8                    : {"mwdata":[200],"mwsize":[1,1],"mwtype":"uint8"}
+    DEC -> class=uint8 size=[1 1] isequal=1 isreal=1
+ENC [small] int16                    : {"mwdata":[7],"mwsize":[1,1],"mwtype":"int16"}
+    DEC -> class=int16 size=[1 1] isequal=1 isreal=1
+ENC [large] int16                    : {"mwdata":[7],"mwsize":[1,1],"mwtype":"int16"}
+    DEC -> class=int16 size=[1 1] isequal=1 isreal=1
+ENC [small] uint16                   : {"mwdata":[7],"mwsize":[1,1],"mwtype":"uint16"}
+    DEC -> class=uint16 size=[1 1] isequal=1 isreal=1
+ENC [large] uint16                   : {"mwdata":[7],"mwsize":[1,1],"mwtype":"uint16"}
+    DEC -> class=uint16 size=[1 1] isequal=1 isreal=1
+ENC [small] int32                    : {"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"int32"}
+    DEC -> class=int32 size=[2 2] isequal=1 isreal=1
+ENC [large] int32                    : {"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"int32"}
+    DEC -> class=int32 size=[2 2] isequal=1 isreal=1
+ENC [small] uint32                   : {"mwdata":[7],"mwsize":[1,1],"mwtype":"uint32"}
+    DEC -> class=uint32 size=[1 1] isequal=1 isreal=1
+ENC [large] uint32                   : {"mwdata":[7],"mwsize":[1,1],"mwtype":"uint32"}
+    DEC -> class=uint32 size=[1 1] isequal=1 isreal=1
+ENC [small] int64 big                : {"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}
+    DEC -> class=int64 size=[1 1] isequal=1 isreal=1
+ENC [large] int64 big                : {"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}
+    DEC -> class=int64 size=[1 1] isequal=1 isreal=1
+ENC [small] uint64 max               : {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}
+    DEC -> class=uint64 size=[1 1] isequal=1 isreal=1
+ENC [large] uint64 max               : {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}
+    DEC -> class=uint64 size=[1 1] isequal=1 isreal=1
+ENC [small] logical scalar           : true
+    DEC -> class=logical size=[1 1] isequal=1
+ENC [large] logical scalar           : {"mwdata":[true],"mwsize":[1,1],"mwtype":"logical"}
+    DEC -> class=logical size=[1 1] isequal=1
+ENC [small] logical row              : [[true,false,true]]
+    DEC -> class=logical size=[1 3] isequal=1
+ENC [large] logical row              : {"mwdata":[true,false,true],"mwsize":[1,3],"mwtype":"logical"}
+    DEC -> class=logical size=[1 3] isequal=1
+ENC [small] logical 2x2              : [[true,false],[false,true]]
+    DEC -> class=logical size=[2 2] isequal=1
+ENC [large] logical 2x2              : {"mwdata":[true,false,false,true],"mwsize":[2,2],"mwtype":"logical"}
+    DEC -> class=logical size=[2 2] isequal=1
+ENC [small] char row                 : "hello"
+    DEC -> class=char size=[1 5] isequal=1
+ENC [large] char row                 : {"mwdata":["hello"],"mwsize":[1,5],"mwtype":"char"}
+    DEC -> class=char size=[1 5] isequal=1
+ENC [small] char 2x3                 : {"mwdata":["adbecf"],"mwsize":[2,3],"mwtype":"char"}
+    DEC -> class=char size=[2 3] isequal=1
+ENC [large] char 2x3                 : {"mwdata":["adbecf"],"mwsize":[2,3],"mwtype":"char"}
+    DEC -> class=char size=[2 3] isequal=1
+ENC [small] char empty               : ""
+    DEC -> class=char size=[0 0] isequal=1
+ENC [large] char empty               : {"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}
+    DEC -> class=char size=[0 0] isequal=1
+ENC [small] char 1x0                 : {"mwdata":[""],"mwsize":[1,0],"mwtype":"char"}
+    DEC -> class=char size=[1 0] isequal=1
+ENC [large] char 1x0                 : {"mwdata":[""],"mwsize":[1,0],"mwtype":"char"}
+    DEC -> class=char size=[1 0] isequal=1
+ENC [small] char quote               : "a\"b\\c"
+    DEC -> class=char size=[1 5] isequal=1
+ENC [large] char quote               : {"mwdata":["a\"b\\c"],"mwsize":[1,5],"mwtype":"char"}
+    DEC -> class=char size=[1 5] isequal=1
+ENC [small] char unicode             : "à"
+    DEC -> class=char size=[1 2] isequal=1
+ENC [large] char unicode             : {"mwdata":["à"],"mwsize":[1,2],"mwtype":"char"}
+    DEC -> class=char size=[1 2] isequal=1
+ENC [small] string scalar            : {"mwdata":["abc"],"mwsize":[1,1],"mwtype":"string"}
+    DEC -> class=string size=[1 1] isequal=1
+ENC [large] string scalar            : {"mwdata":["abc"],"mwsize":[1,1],"mwtype":"string"}
+    DEC -> class=string size=[1 1] isequal=1
+ENC [small] string row               : {"mwdata":["a","bc"],"mwsize":[1,2],"mwtype":"string"}
+    DEC -> class=string size=[1 2] isequal=1
+ENC [large] string row               : {"mwdata":["a","bc"],"mwsize":[1,2],"mwtype":"string"}
+    DEC -> class=string size=[1 2] isequal=1
+ENC [small] string 2x2               : {"mwdata":["a","c","b","d"],"mwsize":[2,2],"mwtype":"string"}
+    DEC -> class=string size=[2 2] isequal=1
+ENC [large] string 2x2               : {"mwdata":["a","c","b","d"],"mwsize":[2,2],"mwtype":"string"}
+    DEC -> class=string size=[2 2] isequal=1
+ENC [small] string missing           : {"mwdata":[{"mwdata":"missing"}],"mwsize":[1,1],"mwtype":"string"}
+    DEC -> class=string size=[1 1] isequal=1
+ENC [large] string missing           : {"mwdata":[{"mwdata":"missing"}],"mwsize":[1,1],"mwtype":"string"}
+    DEC -> class=string size=[1 1] isequal=1
+ENC [small] string empty 0x0         : {"mwdata":[],"mwsize":[0,0],"mwtype":"string"}
+    DEC -> class=string size=[0 0] isequal=1
+ENC [large] string empty 0x0         : {"mwdata":[],"mwsize":[0,0],"mwtype":"string"}
+    DEC -> class=string size=[0 0] isequal=1
+ENC [small] cell row                 : {"mwdata":[1,"a",true],"mwsize":[1,3],"mwtype":"cell"}
+    DEC -> class=cell size=[1 3] isequal=1
+ENC [large] cell row                 : {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["a"],"mwsize":[1,1],"mwtype":"char"},{"mwdata":[true],"mwsize":[1,1],"mwtype":"logical"}],"mwsize":[1,3],"mwtype":"cell"}
+    DEC -> class=cell size=[1 3] isequal=1
+ENC [small] cell col                 : {"mwdata":[1,"a"],"mwsize":[2,1],"mwtype":"cell"}
+    DEC -> class=cell size=[2 1] isequal=1
+ENC [large] cell col                 : {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["a"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[2,1],"mwtype":"cell"}
+    DEC -> class=cell size=[2 1] isequal=1
+ENC [small] cell 2x2                 : {"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"cell"}
+    DEC -> class=cell size=[2 2] isequal=1
+ENC [large] cell 2x2                 : {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[4],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[2,2],"mwtype":"cell"}
+    DEC -> class=cell size=[2 2] isequal=1
+ENC [small] cell empty               : {"mwdata":[],"mwsize":[0,0],"mwtype":"cell"}
+    DEC -> class=cell size=[0 0] isequal=1
+ENC [large] cell empty               : {"mwdata":[],"mwsize":[0,0],"mwtype":"cell"}
+    DEC -> class=cell size=[0 0] isequal=1
+ENC [small] cell nested              : {"mwdata":[{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"cell"},{"mwdata":["x"],"mwsize":[1,1],"mwtype":"cell"}],"mwsize":[1,2],"mwtype":"cell"}
+    DEC -> class=cell size=[1 2] isequal=1
+ENC [large] cell nested              : {"mwdata":[{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,2],"mwtype":"cell"},{"mwdata":[{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[1,1],"mwtype":"cell"}],"mwsize":[1,2],"mwtype":"cell"}
+    DEC -> class=cell size=[1 2] isequal=1
+ENC [small] struct scalar            : {"a":1,"b":"x"}
+    DEC -> class=struct size=[1 1] isequal=1
+ENC [large] struct scalar            : {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"b":[{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}
+    DEC -> class=struct size=[1 1] isequal=1
+ENC [small] struct 1x2               : {"mwdata":{"a":[1,2]},"mwsize":[1,2],"mwtype":"struct"}
+    DEC -> class=struct size=[1 2] isequal=1
+ENC [large] struct 1x2               : {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,2],"mwtype":"struct"}
+    DEC -> class=struct size=[1 2] isequal=1
+ENC [small] struct 2x1               : {"mwdata":{"a":[1,2]},"mwsize":[2,1],"mwtype":"struct"}
+    DEC -> class=struct size=[2 1] isequal=1
+ENC [large] struct 2x1               : {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[2,1],"mwtype":"struct"}
+    DEC -> class=struct size=[2 1] isequal=1
+ENC [small] struct empty fields      : {}
+    DEC -> class=struct size=[1 1] isequal=1
+ENC [large] struct empty fields      : {"mwdata":{},"mwsize":[1,1],"mwtype":"struct"}
+    DEC -> class=struct size=[1 1] isequal=1
+ENC [small] struct 0x0               : {}
+    DEC -> class=struct size=[1 1] isequal=0
+ENC [large] struct 0x0               : {"mwdata":{},"mwsize":[0,0],"mwtype":"struct"}
+    DEC -> class=struct size=[0 0] isequal=1
+ENC [small] struct nested            : {"s":{"t":[[1,2]]}}
+    DEC -> class=struct size=[1 1] isequal=1
+ENC [large] struct nested            : {"mwdata":{"s":[{"mwdata":{"t":[{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}]},"mwsize":[1,1],"mwtype":"struct"}
+    DEC -> class=struct size=[1 1] isequal=1
+ENC [small] sparse                   : {"mwdata":[[0,1],[0,1],[1,2]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+    DEC -> class=double size=[2 2] isequal=1 isreal=1
+ENC [large] sparse                   : {"mwdata":[[0,1],[0,1],[1,2]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+    DEC -> class=double size=[2 2] isequal=1 isreal=1
+ENC [small] function handle          : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : function_handle objects not supported
+ENC [large] function handle          : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : function_handle objects not supported
+ENC [small] table                    : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : table objects not supported
+ENC [large] table                    : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : table objects not supported
+ENC [small] datetime                 : {"mwdata":{"TimeStamp":1.5779232E+12},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}
+    DEC -> class=datetime size=[1 1] isequal=1
+ENC [large] datetime                 : {"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}
+    DEC -> class=datetime size=[1 1] isequal=1
+ENC [small] containers.Map           : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : containers.Map objects not supported
+ENC [large] containers.Map           : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : containers.Map objects not supported
+ENC [small] categorical              : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : categorical objects not supported
+ENC [large] categorical              : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : categorical objects not supported
+ENC [small] enumeration              : {"mwdata":["on"],"mwsize":[1,1],"mwtype":"matlab.lang.OnOffSwitchState"}
+    DEC -> class=matlab.lang.OnOffSwitchState size=[1 1] isequal=1
+ENC [large] enumeration              : {"mwdata":["on"],"mwsize":[1,1],"mwtype":"matlab.lang.OnOffSwitchState"}
+    DEC -> class=matlab.lang.OnOffSwitchState size=[1 1] isequal=1
+ENC [small] dictionary               : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : dictionary objects not supported
+ENC [large] dictionary               : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : dictionary objects not supported
+
+--- NaNInfType object
+[[1,{"mwdata":"NaN"},{"mwdata":"Inf"},{"mwdata":"-Inf"}]]
+{"mwdata":[1,{"mwdata":"NaN"},{"mwdata":"Inf"},{"mwdata":"-Inf"}],"mwsize":[1,4],"mwtype":"double"}
+{"mwdata":"NaN"}
+{"mwdata":["Inf"],"mwsize":[1,1],"mwtype":"single"}
+
+--- PrettyPrint
+{
+    "a":[
+        [
+            1,
+            2
+        ]
+    ]
+}
+
+--- decode of hand JSON
+DEC 5                                                            -> class=double size=[1 1]  reenc={"mwdata":[5],"mwsize":[1,1],"mwtype":"double"}
+DEC [1,2,3]                                                      -> class=double size=[3 1]  reenc={"mwdata":[1,2,3],"mwsize":[3,1],"mwtype":"double"}
+DEC [[1,2,3]]                                                    -> class=double size=[1 3]  reenc={"mwdata":[1,2,3],"mwsize":[1,3],"mwtype":"double"}
+DEC [[1],[2],[3]]                                                -> class=double size=[3 1]  reenc={"mwdata":[1,2,3],"mwsize":[3,1],"mwtype":"double"}
+DEC [[1,2],[3,4]]                                                -> class=double size=[2 2]  reenc={"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"double"}
+DEC [[[1,2],[3,4]],[[5,6],[7,8]]]                                -> class=double size=[2 2 2]  reenc={"mwdata":[1,5,3,7,2,6,4,8],"mwsize":[2,2,2],"mwtype":"double"}
+DEC []                                                           -> class=double size=[0 0]  reenc={"mwdata":[],"mwsize":[0,0],"mwtype":"double"}
+DEC [[]]                                                         -> ERR MPS:MATLAB:JSON:DecodeMismatchedMWSize : Number of elements in "mwdata" does not match "mwsize" specified.
+DEC {}                                                           -> class=struct size=[1 1]  reenc={"mwdata":{},"mwsize":[1,1],"mwtype":"struct"}
+DEC true                                                         -> class=logical size=[1 1]  reenc={"mwdata":[true],"mwsize":[1,1],"mwtype":"logical"}
+DEC [true,false]                                                 -> class=logical size=[2 1]  reenc={"mwdata":[true,false],"mwsize":[2,1],"mwtype":"logical"}
+DEC "abc"                                                        -> class=char size=[1 3]  reenc={"mwdata":["abc"],"mwsize":[1,3],"mwtype":"char"}
+DEC ["a","bc"]                                                   -> ERR MPS:MATLAB:JSON:DecodeInvalidArrayElemType : Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}
+DEC [1,"a"]                                                      -> ERR MPS:MATLAB:JSON:DecodeArrayInconsistentTypes : Array in small notation cannot have multiple types. Use only double or only char values.
+DEC [1,[2,3]]                                                    -> ERR MPS:MATLAB:JSON:DecodeArrayInconsistentDepths : Nested arrays in small notation must have consistent depths.
+DEC {"a":1,"b":"x"}                                              -> class=struct size=[1 1]  reenc={"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"b":[{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}
+DEC [{"a":1},{"a":2}]                                            -> ERR MPS:MATLAB:JSON:DecodeInvalidArrayElemType : Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}
+DEC [{"a":1},{"b":2}]                                            -> ERR MPS:MATLAB:JSON:DecodeInvalidArrayElemType : Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}
+DEC null                                                         -> ERR MPS:MATLAB:JSON:DecodeInvalidMWType : Unsupported "mwtype": "Input value is either foundation::json::Undefined or foundation::json::Null. The value cannot be converted to MATLAB Data Array.".
+DEC [null]                                                       -> ERR MPS:MATLAB:JSON:DecodeInvalidArrayElemType : Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}
+DEC "NaN"                                                        -> class=char size=[1 3]  reenc={"mwdata":["NaN"],"mwsize":[1,3],"mwtype":"char"}
+DEC {"mwdata":"NaN"}                                             -> class=double size=[1 1]  reenc={"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}
+DEC {"mwdata":[1,2,3,4],"mwsize":[2,2],"mwtype":"double"}        -> class=double size=[2 2]  reenc={"mwdata":[1,2,3,4],"mwsize":[2,2],"mwtype":"double"}
+DEC {"mwdata":[1],"mwsize":[1,1],"mwtype":"int8"}                -> class=int8 size=[1 1]  reenc={"mwdata":[1],"mwsize":[1,1],"mwtype":"int8"}
+DEC {"mwdata":["ab","cd"],"mwsize":[2,2],"mwtype":"char"}        -> ERR MPS:MATLAB:JSON:DecodeInvalidCharArrayMWData : "mwdata" for char array must be in the format '["..."]'.
+DEC {"mwdata":["ab"],"mwsize":[1,2],"mwtype":"char"}             -> class=char size=[1 2]  reenc={"mwdata":["ab"],"mwsize":[1,2],"mwtype":"char"}
+DEC {"mwdata":[true,false],"mwsize":[1,2],"mwtype":"logical"}    -> class=logical size=[1 2]  reenc={"mwdata":[true,false],"mwsize":[1,2],"mwtype":"logical"}
+DEC {"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double","mwcomplex":true} -> ERR MPS:MATLAB:JSON:DecodeMismatchedMWSize : Number of elements in "mwdata" does not match "mwsize" specified.
+DEC {"mwcomplex":true,"mwdata":[{"real":1,"imag":2}],"mwsize":[1,1],"mwtype":"double"} -> ERR MPS:MATLAB:JSON:DecodeIncompleteComplexData : Unexpected end of complex number data
+DEC {"mwdata":{"real":[1],"imag":[2]},"mwsize":[1,1],"mwtype":"double","mwcomplex":true} -> ERR MPS:MATLAB:JSON:DecodeInvalidMWDataType : "mwdata" for double arrays must be a JSON array.
+DEC {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[1,2],"mwtype":"cell"} -> class=cell size=[1 2]  reenc={"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[1,2],"mwtype":"cell"}
+DEC {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"} -> class=struct size=[1 1]  reenc={"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}
+DEC {"mwdata":["a","b"],"mwsize":[1,2],"mwtype":"string"}        -> class=string size=[1 2]  reenc={"mwdata":["a","b"],"mwsize":[1,2],"mwtype":"string"}
+DEC 1e400                                                        -> class=double size=[1 1]  reenc={"mwdata":["Inf"],"mwsize":[1,1],"mwtype":"double"}
+DEC -0                                                           -> class=double size=[1 1]  reenc={"mwdata":[-0],"mwsize":[1,1],"mwtype":"double"}
+DEC 1.5                                                          -> class=double size=[1 1]  reenc={"mwdata":[1.5],"mwsize":[1,1],"mwtype":"double"}
+DEC [1.5,2]                                                      -> class=double size=[2 1]  reenc={"mwdata":[1.5,2],"mwsize":[2,1],"mwtype":"double"}
+DEC 12345678901234567890                                         -> class=double size=[1 1]  reenc={"mwdata":[1.2345678901234567E+19],"mwsize":[1,1],"mwtype":"double"}
+
+--- encoderequest/decoderesponse
+{"rhs":[[[1,2,3]],"abc"],"nargout":2,"outputFormat":{"mode":"small","nanType":"string"}}
+{"rhs":[{"mwdata":[1,4,3,2],"mwsize":[2,2],"mwtype":"double"}],"nargout":1,"outputFormat":{"mode":"large","nanType":"object"}}
+    {[1 2 3 4]}
+    {'abc'    }
+
+       type: 'matlaberror'
+         id: 'a:b'
+    message: 'boom'
+      stack: [11 struct]
+

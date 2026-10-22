@@ -1,0 +1,123 @@
+k0_args	ok	6.0	mcc -m k0_args.m
+k0_argsn	ok	2.9	mcc -m k0_args.m -n -o k0_argsn
+k0_exit	ok	3.1	mcc -m k0_exit.m
+k0_env	ok	3.3	mcc -m k0_env.m -a <BUILD>\assets\data.mat
+    [Warning: Excluded "<MATLABROOT>/toolbox/compiler/mcrcachedir.mexw64"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/authnz/secretapis/publicBuiltins/setSecret.m"; reason: The file or function is non-deployable and has been
+    excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed
+    component. Then you can suppress this warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/checkcode.m"; reason: The file or function is non-deployable and has been excluded from packaging.
+    Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress
+    this warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/commandwindow.m"; reason: The file or function is non-deployable and has been excluded from packaging.
+    Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress
+    this warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/profile.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/publish.p"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/general/pcode.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/general/savepath.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/helptools/doc.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Your app may be unable to access secret keys when using MATLAB Secret API functions such as 'getSecret' unless you follow one of the options below depending on your
+    scenario:
+    Embed secret keys within the 'k0_env_secrets_manifest.json' file and recompile your app. Use the 'mcc' command with the '-J' option and supply the JSON file as an argument. This
+    procedure embeds secrets into the code archive (.ctf file). Alternatively, set up environment variables on the host machine for the applications or libraries created using 'mcc'.
+    ] 
+    [> In build_k0 (line 44)]
+    warning Compiler:compiler:COM_WARN_CONFIG_SECRETS_FOR_DESKTOP | Your app may be unable to access secret keys when using MATLAB Secret API functions such as 'getSecret' unless you follow one of the options below depending on your scenario: /  / Embed secret keys within the 'k0_env_secrets_manifest.json' file and recompile your app. Use the 'mcc' command with the '-J' option and supply the JSON file as an argument. This procedure embeds secrets into the code archive (.ctf file). Alternatively, set up environment variables on the host machine for the applications or libraries created using 'mcc'. / 
+k0_env_sep	ok	3.3	mcc -m k0_env.m -C -o k0_env_sep -a <BUILD>\assets\data.mat
+    [Warning: Excluded "<MATLABROOT>/toolbox/compiler/mcrcachedir.mexw64"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/authnz/secretapis/publicBuiltins/setSecret.m"; reason: The file or function is non-deployable and has been
+    excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed
+    component. Then you can suppress this warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/checkcode.m"; reason: The file or function is non-deployable and has been excluded from packaging.
+    Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress
+    this warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/commandwindow.m"; reason: The file or function is non-deployable and has been excluded from packaging.
+    Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress
+    this warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/profile.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/publish.p"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/general/pcode.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/general/savepath.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/helptools/doc.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Excluded "<MATLABROOT>/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+    remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+    warning by using the %#exclude pragma.] 
+    [> In build_k0 (line 44)] 
+    [Warning: Your app may be unable to access secret keys when using MATLAB Secret API functions such as 'getSecret' unless you follow one of the options below depending on your
+    scenario:
+    Embed secret keys within the 'k0_env_sep_secrets_manifest.json' file and recompile your app. Use the 'mcc' command with the '-J' option and supply the JSON file as an argument.
+    This procedure embeds secrets into the code archive (.ctf file). Alternatively, set up environment variables on the host machine for the applications or libraries created using
+    'mcc'.
+    ] 
+    [> In build_k0 (line 44)]
+    warning Compiler:compiler:COM_WARN_CONFIG_SECRETS_FOR_DESKTOP | Your app may be unable to access secret keys when using MATLAB Secret API functions such as 'getSecret' unless you follow one of the options below depending on your scenario: /  / Embed secret keys within the 'k0_env_sep_secrets_manifest.json' file and recompile your app. Use the 'mcc' command with the '-J' option and supply the JSON file as an argument. This procedure embeds secrets into the code archive (.ctf file). Alternatively, set up environment variables on the host machine for the applications or libraries created using 'mcc'. / 
+k0_path	ok	3.2	mcc -m k0_path.m -a <BUILD>\assets\inside.txt -a <REPO>\tools\matlab-checklist\compiler-probes\src\k0_inside_helper.m
+k0_feval	ok	2.8	mcc -m k0_feval.m
+k0_fevalp	ok	3.2	mcc -m k0_fevalp.m
+k0_stubs	ok	3.1	mcc -m k0_stubs.m
+k0_figure	ok	3.2	mcc -m k0_figure.m
+k0_ropts	ok	2.9	mcc -m k0_ropts.m -R -startmsg,K0 starting -R -completemsg,K0 complete -R -logfile,k0_ropts.log -R -singleCompThread
+k0_startup	ok	3.0	mcc -m k0_startup.m
+    [Warning: Your deployed application may fail because file or folder paths
+    not present in the deployed environment may be included in your MATLAB startup
+    file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+    determine the appropriate execution environment when including file and folder
+    paths, and recompile your application.
+    ] 
+    [> In build_k0 (line 44)]
+    warning Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 

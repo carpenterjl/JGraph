@@ -1,0 +1,16 @@
+DEC {"mwdata":[{"mwdata":"NaN"}],"mwsize":[1,1],"mwtype":"single"}                   -> class=single size=[1 1] val=NaN
+DEC {"mwdata":[1,2,3],"mwsize":[1,3],"mwtype":"double","extra":5}                    -> class=double size=[1 3] val=1 2 3
+DEC {"mwdata":[1],"mwsize":[1,1]}                                                    -> class=struct size=[1 1] val=mwdata: 1 mwsize: [21 double]
+DEC {"mwtype":"double","mwsize":[2,1],"mwdata":[1,2]}                                -> class=double size=[2 1] val=1 2
+DEC {"mwdata":[300],"mwsize":[1,1],"mwtype":"uint8"}                                 -> ERR MPS:MATLAB:JSON:DecodeInvalidIntegralElem : Invalid value for type uint8. Value must be an integral number.
+DEC {"mwdata":[1.7],"mwsize":[1,1],"mwtype":"int32"}                                 -> ERR MPS:MATLAB:JSON:DecodeInvalidIntegralElem : Invalid value for type int or uint. Value must be an integral number.
+DEC {"mwdata":["\u03b1"],"mwsize":[1,1],"mwtype":"char"}                             -> class=char size=[1 1] val=à
+DEC {"a":[1,2],"b":{"c":true}}                                                       -> class=struct size=[1 1] val=a: [21 double] b: [11 struct]
+DEC [[1,2],[3]]                                                                      -> ERR MPS:MATLAB:JSON:DecodeArrayInconsistentSizes : Nested arrays in small notation of the same depth must have consistent sizes.
+DEC [[true,1]]                                                                       -> ERR MPS:MATLAB:JSON:DecodeArrayInconsistentTypes : Array in small notation cannot have multiple types. Use only logical or only double values.
+DEC {"mwdata":[],"mwsize":[0,0],"mwtype":"struct"}                                   -> ERR MPS:MATLAB:JSON:DecodeInvalidMWDataType : "mwdata" for struct arrays must be a JSON object.
+DEC {"mwdata":{"a":[1,2]},"mwsize":[1,2],"mwtype":"struct"}                          -> class=struct size=[1 2] val=12 <a href="matlab:helpPopup('struct')" style="font-weight:bold">struct</a> array with fields: a
+DEC {"mwdata":[1,2],"mwsize":[1,2],"mwtype":"cell"}                                  -> class=cell size=[1 2] val={[1]} {[2]}
+DEC {"mwdata":["ab"],"mwsize":[1,1],"mwtype":"string"}                               -> class=string size=[1 1] val=ab
+DEC [[{"mwdata":"Inf"},2]]                                                           -> class=double size=[1 2] val=Inf 2
+DEC {"mwdata":[[0],[0],[1]],"mwsize":[1,1],"mwsparse":true,"mwtype":"double"}        -> class=double size=[1 1] val=(1,1) 1

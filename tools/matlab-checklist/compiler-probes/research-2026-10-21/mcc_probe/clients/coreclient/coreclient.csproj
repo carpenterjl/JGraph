@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+    <CETCompat>false</CETCompat>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MWArray">
+      <HintPath>C:\Program Files\MATLAB\R2025b\toolbox\dotnetbuilder\bin\win64\netstandard2.0\MWArray.dll</HintPath>
+    </Reference>
+    <Reference Include="JgProbeCore">
+      <HintPath>..\..\out\api_dotnet_core\JgProbeCore.dll</HintPath>
+    </Reference>
+    <Reference Include="JgProbeCoreNative">
+      <HintPath>..\..\out\api_dotnet_core\JgProbeCoreNative.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

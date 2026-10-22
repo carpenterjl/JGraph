@@ -1,0 +1,6 @@
+CASE	exit_quit4
+RUN	k0_exit.exe quit4
+beep.default	on
+mode	quit4
+EXIT	4
+SECONDS	1.8

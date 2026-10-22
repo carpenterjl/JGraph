@@ -1,0 +1,17 @@
+CASE	argsn_ok
+RUN	k0_argsn.exe 1 2.5 '[1 2;3 4]' -3 1e3 1+2i 0x1F 'txt' (1) ' 7'
+beep.default	on
+nargin	10
+arg1	double [1 1] 1
+arg2	double [1 1] 2.5
+arg3	double [2 2] [1 2;3 4]
+arg4	double [1 1] -3
+arg5	double [1 1] 1000
+arg6	double [1 1] 1+2i
+arg7	uint8 [1 1] 31
+arg8	char [1 3] 'txt'
+arg9	double [1 1] 1
+arg10	double [1 1] 7
+isdeployed	1
+EXIT	0
+SECONDS	2.6

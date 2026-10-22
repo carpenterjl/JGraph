@@ -1,0 +1,316 @@
+
+######## compiler.build.CSharedLibraryOptions
+  CSharedLibraryOptions with properties:
+
+             EmbedArchive: on
+           LibraryVersion: '1.0.0.0'
+            FunctionFiles: {'<SCRATCH>\sdk_research\probe\addme.m'}
+               DebugBuild: off
+              LibraryName: 'addme'
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmecSharedLibrary'
+
+  PROP EmbedArchive (Dependent=0)
+  PROP LibraryVersion (Dependent=0)
+  PROP FunctionFiles (Dependent=0)
+  PROP DebugBuild (Dependent=0)
+  PROP LibraryName (Dependent=1)
+  PROP AdditionalFiles (Dependent=0)
+  PROP AutoDetectDataFiles (Dependent=0)
+  PROP ExternalEncryptionKey (Dependent=0)
+  PROP ObfuscateArchive (Dependent=0)
+  PROP SecretsManifest (Dependent=0)
+  PROP SupportPackages (Dependent=0)
+  PROP Verbose (Dependent=0)
+  PROP OutputDir (Dependent=1)
+
+######## compiler.build.CppSharedLibraryOptions
+  CppSharedLibraryOptions with properties:
+
+                Interface: 'matlab-data'
+           LibraryVersion: ''
+    SampleGenerationFiles: {}
+            FunctionFiles: {'<SCRATCH>\sdk_research\probe\addme.m'}
+               DebugBuild: off
+              LibraryName: 'addme'
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmecppSharedLibrary'
+
+  PROP Interface (Dependent=1)
+  PROP LibraryVersion (Dependent=1)
+  PROP SampleGenerationFiles (Dependent=0)
+  PROP FunctionFiles (Dependent=0)
+  PROP DebugBuild (Dependent=0)
+  PROP LibraryName (Dependent=1)
+  PROP AdditionalFiles (Dependent=0)
+  PROP AutoDetectDataFiles (Dependent=0)
+  PROP ExternalEncryptionKey (Dependent=0)
+  PROP ObfuscateArchive (Dependent=0)
+  PROP SecretsManifest (Dependent=0)
+  PROP SupportPackages (Dependent=0)
+  PROP Verbose (Dependent=0)
+  PROP OutputDir (Dependent=1)
+
+######## compiler.build.DotNETAssemblyOptions
+  DotNETAssemblyOptions with properties:
+
+                 ClassMap: [11 containers.Map]
+               DebugBuild: off
+           EnableRemoting: off
+         FrameworkVersion: '4.0'
+    SampleGenerationFiles: {}
+        StrongNameKeyFile: ''
+             AssemblyName: 'example.addme'
+          AssemblyVersion: '1.0.0.0'
+             EmbedArchive: on
+                Interface: 'mwarray'
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmedotNETAssembly'
+
+   Class Map Information
+               addmeClass: {'<SCRATCH>\sdk_research\probe\addme.m'}
+
+  PROP ClassMap (Dependent=0)
+  PROP DebugBuild (Dependent=0)
+  PROP EnableRemoting (Dependent=0)
+  PROP FrameworkVersion (Dependent=0)
+  PROP SampleGenerationFiles (Dependent=0)
+  PROP StrongNameKeyFile (Dependent=0)
+  PROP AssemblyName (Dependent=1)
+  PROP AssemblyVersion (Dependent=1)
+  PROP EmbedArchive (Dependent=1)
+  PROP Interface (Dependent=1)
+  PROP AdditionalFiles (Dependent=0)
+  PROP AutoDetectDataFiles (Dependent=0)
+  PROP ExternalEncryptionKey (Dependent=0)
+  PROP ObfuscateArchive (Dependent=0)
+  PROP SecretsManifest (Dependent=0)
+  PROP SupportPackages (Dependent=0)
+  PROP Verbose (Dependent=0)
+  PROP OutputDir (Dependent=1)
+
+######## compiler.build.JavaPackageOptions
+  JavaPackageOptions with properties:
+
+                 ClassMap: [11 containers.Map]
+               DebugBuild: off
+    SampleGenerationFiles: {}
+              PackageName: 'example.addme'
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmejavaPackage'
+
+   Class Map Information
+               addmeClass: {'<SCRATCH>\sdk_research\probe\addme.m'}
+
+  PROP ClassMap (Dependent=0)
+  PROP DebugBuild (Dependent=0)
+  PROP SampleGenerationFiles (Dependent=0)
+  PROP PackageName (Dependent=1)
+  PROP AdditionalFiles (Dependent=0)
+  PROP AutoDetectDataFiles (Dependent=0)
+  PROP ExternalEncryptionKey (Dependent=0)
+  PROP ObfuscateArchive (Dependent=0)
+  PROP SecretsManifest (Dependent=0)
+  PROP SupportPackages (Dependent=0)
+  PROP Verbose (Dependent=0)
+  PROP OutputDir (Dependent=1)
+
+######## compiler.build.PythonPackageOptions
+  PythonPackageOptions with properties:
+
+            FunctionFiles: {'<SCRATCH>\sdk_research\probe\addme.m'}
+    SampleGenerationFiles: {}
+              PackageName: 'example.addme'
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmepythonPackage'
+
+  PROP FunctionFiles (Dependent=0)
+  PROP SampleGenerationFiles (Dependent=0)
+  PROP PackageName (Dependent=1)
+  PROP AdditionalFiles (Dependent=0)
+  PROP AutoDetectDataFiles (Dependent=0)
+  PROP ExternalEncryptionKey (Dependent=0)
+  PROP ObfuscateArchive (Dependent=0)
+  PROP SecretsManifest (Dependent=0)
+  PROP SupportPackages (Dependent=0)
+  PROP Verbose (Dependent=0)
+  PROP OutputDir (Dependent=1)
+
+######## compiler.build.ProductionServerArchiveOptions
+  ProductionServerArchiveOptions with properties:
+
+              ArchiveName: 'addme'
+            FunctionFiles: {'<SCRATCH>\sdk_research\probe\addme.m'}
+       FunctionSignatures: ''
+               RoutesFile: ''
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmeproductionServerArchive'
+
+  PROP ArchiveName (Dependent=1)
+  PROP FunctionFiles (Dependent=0)
+  PROP FunctionSignatures (Dependent=0)
+  PROP RoutesFile (Dependent=0)
+  PROP AdditionalFiles (Dependent=0)
+  PROP AutoDetectDataFiles (Dependent=0)
+  PROP ExternalEncryptionKey (Dependent=0)
+  PROP ObfuscateArchive (Dependent=0)
+  PROP SecretsManifest (Dependent=0)
+  PROP SupportPackages (Dependent=0)
+  PROP Verbose (Dependent=0)
+  PROP OutputDir (Dependent=1)
+
+######## compiler.build.ExcelClientForProductionServerOptions
+ERR Not enough input arguments.
+
+######## compiler.build.COMComponentOptions
+  COMComponentOptions with properties:
+
+            ComponentName: 'addme'
+                 ClassMap: [11 containers.Map]
+         ComponentVersion: '1.0.0.0'
+               DebugBuild: off
+             EmbedArchive: on
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmecomComponent'
+
+   Class Map Information
+               addmeClass: {'<SCRATCH>\sdk_research\probe\addme.m'}
+
+  PROP ComponentName (Dependent=1)
+  PROP ClassMap (Dependent=0)
+  PROP ComponentVersion (Dependent=0)
+  PROP DebugBuild (Dependent=0)
+  PROP EmbedArchive (Dependent=0)
+  PROP AdditionalFiles (Dependent=0)
+  PROP AutoDetectDataFiles (Dependent=0)
+  PROP ExternalEncryptionKey (Dependent=0)
+  PROP ObfuscateArchive (Dependent=0)
+  PROP SecretsManifest (Dependent=0)
+  PROP SupportPackages (Dependent=0)
+  PROP Verbose (Dependent=0)
+  PROP OutputDir (Dependent=1)
+
+######## CppSharedLibraryOptions mwarray
+  CppSharedLibraryOptions with properties:
+
+                Interface: 'mwarray'
+           LibraryVersion: ''
+    SampleGenerationFiles: {}
+            FunctionFiles: {'<SCRATCH>\sdk_research\probe\addme.m'}
+               DebugBuild: off
+              LibraryName: 'addme'
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmecppSharedLibrary'
+
+
+######## DotNETAssemblyOptions matlab-data
+[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+'mwarray' for the "Interface" property.] 
+[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+In compiler.internal.validate.parseClassMapInputs (line 66)
+In compiler.build/DotNETAssemblyOptions (line 192)
+In probe_opts (line 22)
+In run (line 112)] 
+  DotNETAssemblyOptions with properties:
+
+                 ClassMap: [11 containers.Map]
+               DebugBuild: off
+           EnableRemoting: off
+         FrameworkVersion: '4.0'
+    SampleGenerationFiles: {}
+        StrongNameKeyFile: ''
+             AssemblyName: 'example.addme'
+          AssemblyVersion: ''
+             EmbedArchive: on
+                Interface: 'matlab-data'
+          AdditionalFiles: {}
+      AutoDetectDataFiles: on
+    ExternalEncryptionKey: [00 struct]
+         ObfuscateArchive: off
+          SecretsManifest: ''
+          SupportPackages: {'autodetect'}
+                  Verbose: off
+                OutputDir: '.\addmedotNETAssembly'
+
+   Class Map Information
+               addmeClass: {'<SCRATCH>\sdk_research\probe\addme.m'}
+
+
+######## package options
+  InstallerOptions with properties:
+
+           RuntimeDelivery: 'web'
+           InstallerSplash: 'C:\Program Files\MATLAB\R2025b\toolbox\compiler\packagingResources\default_splash.png'
+             InstallerIcon: 'C:\Program Files\MATLAB\R2025b\toolbox\compiler\packagingResources\default_icon_48.png'
+             InstallerLogo: 'C:\Program Files\MATLAB\R2025b\toolbox\compiler\packagingResources\default_logo.png'
+               PackageType: 'auto'
+           AdditionalFiles: {}
+     AddRemoveProgramsIcon: ''
+                AuthorName: ''
+               AuthorEmail: ''
+             AuthorCompany: ''
+                   Summary: ''
+               Description: ''
+         InstallationNotes: ''
+      OptionalDependencies: 'all'
+                  Shortcut: ''
+                   Verbose: off
+                   Version: '1.0'
+           ApplicationName: 'x'
+             InstallerName: 'MyAppInstaller'
+                 OutputDir: '.\xinstaller'
+    DefaultInstallationDir: '%ProgramFiles%\x'
+
+Not enough input arguments.
+    {'C:\Program Files\MATLAB\R2025b\toolbox\compiler\cli\build\+compiler\+build\Results.m'}
+

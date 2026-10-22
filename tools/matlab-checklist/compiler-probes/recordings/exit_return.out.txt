@@ -1,0 +1,12 @@
+CASE	exit_return
+RUN	k0_exit.exe return
+beep.default	on
+mode	return
+
+x =
+
+     5
+
+after	return
+EXIT	0
+SECONDS	1.8

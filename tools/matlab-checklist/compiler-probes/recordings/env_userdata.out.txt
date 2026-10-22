@@ -1,0 +1,159 @@
+CASE	env_userdata
+RUN	k0_env.exe -mcruserdata ParallelProfile:k0.mlsettings after
+beep.default	on
+nargin	1
+arg1	char [1 5] 'after'
+isdeployed	logical [1 1] true
+ismcc	logical [1 1] false
+ctfroot	char [1 72] '<CACHE>\R2025b\k0_env1'
+mcrversion.2	double [1 2] [25 2]
+mcrversion.3	double [1 3] [25 2 0]
+mcrcachedir	char [1 64] '<CACHE>\R2025b'
+matlabroot	char [1 30] '<MATLABROOT>'
+prefdir	char [1 80] '<CACHE>\R2025b\k0_env1\.matlab'
+userpath	char [1 40] '<HOME>\OneDrive\Documents\MATLAB'
+tempdir	char [1 34] '<TEMP>\'
+pwd	char [1 144] '<RUN>'
+mfilename	char [1 6] 'k0_env'
+mfilename.fullpath	char [1 86] '<CACHE>\R2025b\k0_env1\k0_env\k0_env'
+version	char [1 23] '25.2.0.2998904 (R2025b)'
+version.release	char [1 5] '2025b'
+ver.matlab	cell [1 3] {char [1 6] 'MATLAB'; char [1 4] '25.2'; char [1 8] '(R2025b)'}
+computer	char [1 7] 'PCWIN64'
+usejava.jvm	logical [1 1] true
+usejava.desktop	logical [1 1] false
+license	char [1 7] 'unknown'
+license.test.MATLAB	double [1 1] 1
+license.test.Signal_Toolbox	double [1 1] 1
+feature.numcores	double [1 1] 14
+maxNumCompThreads	double [1 1] 6
+getenv.MCR_CACHE_ROOT	char [0 0] ''
+path.count	double [1 1] 226
+path.first	cell [1 6] {char [1 58] '<MATLABROOT>\mcr\toolbox\compiler\deploy'; char [1 59] '<MATLABROOT>\mcr\toolbox\compiler\runtime'; char [1 203] '<CACHE>\R2025b\k0_env1\<BUILD-NODRIVE>\assets'; char [1 79] '<CACHE>\R2025b\k0_env1\k0_env'; char [1 80] '<MATLABROOT>\mcr\toolbox\matlab\addons_install_location\matlab'; char [1 62] '<MATLABROOT>\mcr\toolbox\matlab\appcontainer'}
+getmcruserdata.ParallelProfile	char [1 13] 'k0.mlsettings'
+setmcruserdata	ok
+getmcruserdata.k0key	char [1 7] 'k0value'
+getmcruserdata.missing	double [1 0] zeros(1,0)
+exist.k0_env	double [1 1] 2
+which.k0_env	char [1 88] '<CACHE>\R2025b\k0_env1\k0_env\k0_env.m'
+exist.k0_show	double [1 1] 2
+which.k0_show	char [1 89] '<CACHE>\R2025b\k0_env1\k0_env\k0_show.m'
+exist.data.mat	double [1 1] 2
+which.data.mat	char [1 212] '<CACHE>\R2025b\k0_env1\<BUILD-NODRIVE>\assets\data.mat'
+exist.edit	double [1 1] 0
+which.edit	char [1 81] '<MATLABROOT>\mcr\toolbox\matlab\general\@function_handle\edit.m'
+exist.help	double [1 1] 7
+which.help	char [0 0] ''
+exist.doc	double [1 1] 0
+which.doc	char [0 0] ''
+exist.lookfor	double [1 1] 0
+which.lookfor	char [0 0] ''
+exist.dbstop	double [1 1] 5
+which.dbstop	char [1 73] 'built-in (<MATLABROOT>\toolbox\matlab\codetools\dbstop)'
+exist.dbstack	double [1 1] 5
+which.dbstack	char [1 74] 'built-in (<MATLABROOT>\toolbox\matlab\codetools\dbstack)'
+exist.keyboard	double [1 1] 5
+which.keyboard	char [1 70] 'built-in (<MATLABROOT>\toolbox\matlab\lang\keyboard)'
+exist.input	double [1 1] 5
+which.input	char [1 67] 'built-in (<MATLABROOT>\toolbox\matlab\lang\input)'
+exist.profile	double [1 1] 0
+which.profile	char [0 0] ''
+exist.publish	double [1 1] 0
+which.publish	char [0 0] ''
+exist.checkcode	double [1 1] 0
+which.checkcode	char [0 0] ''
+exist.pcode	double [1 1] 0
+which.pcode	char [0 0] ''
+exist.mex	double [1 1] 5
+which.mex	char [1 68] 'built-in (<MATLABROOT>\toolbox\matlab\general\mex)'
+exist.savepath	double [1 1] 0
+which.savepath	char [0 0] ''
+exist.more	double [1 1] 5
+which.more	char [1 69] 'built-in (<MATLABROOT>\toolbox\matlab\general\more)'
+exist.echo	double [1 1] 5
+which.echo	char [1 69] 'built-in (<MATLABROOT>\toolbox\matlab\general\echo)'
+exist.commandwindow	double [1 1] 0
+which.commandwindow	char [0 0] ''
+exist.clc	double [1 1] 5
+which.clc	char [1 69] '<MATLABROOT>\mcr\toolbox\compiler\deploy\clc.mexw64'
+exist.home	double [1 1] 5
+which.home	char [1 70] '<MATLABROOT>\mcr\toolbox\compiler\deploy\home.mexw64'
+exist.guide	double [1 1] 7
+which.guide	char [0 0] ''
+exist.inspect	double [1 1] 0
+which.inspect	char [0 0] ''
+exist.deployprint	double [1 1] 0
+which.deployprint	char [0 0] ''
+exist.isstandalone	double [1 1] 0
+which.isstandalone	char [0 0] ''
+exist.deploypcode	double [1 1] 0
+which.deploypcode	char [0 0] ''
+exist.mcrinstaller	double [1 1] 0
+which.mcrinstaller	char [0 0] ''
+exist.figure	double [1 1] 5
+which.figure	char [1 81] 'built-in (<MATLABROOT>\toolbox\matlab\graphics\graphics\figure)'
+exist.uifigure	double [1 1] 2
+which.uifigure	char [1 92] '<MATLABROOT>\mcr\toolbox\matlab\uitools\uicomponents\components\uifigure.m'
+exist.exportgraphics	double [1 1] 6
+which.exportgraphics	char [1 93] '<MATLABROOT>\mcr\toolbox\matlab\graphics\graphics\printing\exportgraphics.p'
+exist.jsondecode	double [1 1] 5
+which.jsondecode	char [1 92] 'built-in (<MATLABROOT>\toolbox\matlab\external\interfaces\json\jsondecode)'
+exist.getSecret	double [1 1] 2
+which.getSecret	char [1 94] '<MATLABROOT>\mcr\toolbox\matlab\authnz\secretapis\publicBuiltins\getSecret.m'
+exist.setSecret	double [1 1] 0
+which.setSecret	char [0 0] ''
+exist.restoredefaultpath	double [1 1] 2
+which.restoredefaultpath	char [1 107] '<CACHE>\R2025b\k0_env1\toolbox\local\restoredefaultpath.m'
+exist.rehash	double [1 1] 5
+which.rehash	char [1 71] 'built-in (<MATLABROOT>\toolbox\matlab\general\rehash)'
+exist.inmem	double [1 1] 5
+which.inmem	char [1 70] 'built-in (<MATLABROOT>\toolbox\matlab\general\inmem)'
+exist.mlock	double [1 1] 5
+which.mlock	char [1 67] 'built-in (<MATLABROOT>\toolbox\matlab\lang\mlock)'
+exist.run	double [1 1] 2
+which.run	char [1 60] '<MATLABROOT>\mcr\toolbox\matlab\lang\run.m'
+exist.open	double [1 1] 2
+which.open	char [1 64] '<MATLABROOT>\mcr\toolbox\matlab\general\open.m'
+exist.type	double [1 1] 5
+which.type	char [1 69] 'built-in (<MATLABROOT>\toolbox\matlab\general\type)'
+exist.which	double [1 1] 5
+which.which	char [1 70] 'built-in (<MATLABROOT>\toolbox\matlab\general\which)'
+exist.waitforallfiguresclosed	double [1 1] 2
+which.waitforallfiguresclosed	char [1 85] '<MATLABROOT>\mcr\toolbox\compiler\runtime\waitforallfiguresclosed.m'
+exist.mainFuncForNumericStandaloneApplication	double [1 1] 2
+which.mainFuncForNumericStandaloneApplication	char [1 101] '<MATLABROOT>\mcr\toolbox\compiler\runtime\mainFuncForNumericStandaloneApplication.m'
+call.edit	ERR MATLAB:UndefinedFunction | Undefined function 'edit' for input arguments of type 'char'.
+call.help	ERR MATLAB:UndefinedFunction | Undefined function 'help' for input arguments of type 'char'.
+call.help.out	ERR MATLAB:UndefinedFunction | Undefined function 'help' for input arguments of type 'char'.
+call.doc	ERR MATLAB:UndefinedFunction | Undefined function 'doc' for input arguments of type 'char'.
+call.lookfor	ERR MATLAB:UndefinedFunction | Undefined function 'lookfor' for input arguments of type 'char'.
+call.dbstop	ERR MATLAB:services:MissingRequiredCapability | Debugging is not supported in this configuration.
+call.dbstack	double [1 1] 3
+call.profile	ERR MATLAB:UndefinedFunction | Undefined function 'profile' for input arguments of type 'char'.
+call.pcode	ERR MATLAB:UndefinedFunction | Undefined function 'pcode' for input arguments of type 'char'.
+call.mex	ERR MATLAB:mex:DEPLOYMENT_MODE_NOTSUPPORTED | Building MEX files is not supported in deployed environment.
+call.savepath	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'savepath'.
+call.more	ok
+call.echo	ok
+call.echo.off.output	char [0 0] ''
+call.commandwindow	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'commandwindow'.
+call.checkcode	ERR MATLAB:UndefinedFunction | Undefined function 'checkcode' for input arguments of type 'char'.
+call.publish	ERR MATLAB:UndefinedFunction | Undefined function 'publish' for input arguments of type 'char'.
+call.restoredefaultpath	ERR MATLAB:mpath:PathAlterationNotSupported | Modifying the search path is not supported by MATLAB Compiler. Remove functions that modify the search path from your MATLAB code. To make files visible to your deployed application, add the parent folder to your MATLAB session.
+call.rehash	ok
+call.inmem	double [1 1] 45
+call.mlock	ok
+call.clc	ok
+call.home	ok
+call.evalc.clc	char [0 0] ''
+call.type	char [1 1270] ' / V2MCC8000MEC2000MCR2000  ,}Ät™·|šhªÜPÐ%wï:·0¬]§ÃÂ‰w]òêi4Çë?.Å@EŽ“¹9¾q,áÇÈ46§_4Wþ“ñ…øø.çU„ÈW¼mŽÔþ_hY…a˜§ô‚ºïÎÓ‰tg;YðúH£_r:—éÐ†#Dõ¸¦BÇk/ª / h”Ÿ«é’þžzäÑÎ¹Ä~ˆ^rüVÌ¥·šwþéßÉ†¤LO¶©NÉ9	ÿ©`ôÕ?JM¥ÊœŠêl«úC‡þµ˜7¯Ã(ƒ>^äÔ9K·`ðQÆFcâ‹?' 9>rawž¬LaÑÈxº˜ü	ywu€{Zk®P÷¦„'†fÝœÛ>`L^¤·x(Ôä/yƒßåÿ5b27<3¶7 ZáhŒ^Fr?"“ˆ3MøæNS¸±zOÛ’@aoöëO¥øy<·Ìç4˜Ž¡Æ / Ðp1:™­°×oŠÏâÜŠWkô®z™”0mòÏ_[7dˆñžCjYÎ(° YêUØp?Õå{r«t*ç	;…Ñ*ÿq› X.r#"Ëkð^W¸ûÂÃ’4?èàN C$ÎŸÛ²/úT*† / µppðÁkËYñÎbþ8Ñf¬Ád¶0Õ±6ëèú-Y,§¡X« ‹3oÞÆ¡”mÑ`VhD6ó‚IëÈL˜ý'xË~¤'#IÌ^=§ô¤òŸÚ      %ýÜÆ²ÎÈ`h¥kÇ6sØi Ó‡.~´B(‰ŒDÜUžŠÊ¯œ«‘‹gÖä’,[•¸î-¸oŒ4jç`b§Ð>¢c›eEtÛ­©í†3`ª‚6¥ˆ]µÚ„lZ)ds¶h³`'çuf‚8«[òü†G©\þ•ÛøÅZÑÖM]ýv(úG	fE¾›tàõÏ§6[p}ÃÅ$úna$§zÖseDsßâø=Á Ä@ËöCU7ÚÉNèõmï·ÿŸë¯Š<ÿ3¾tŒ9›h3,ÆßmÞT¨vµõžÏv³¿ìÔ*o“\5 yR¨´Ë„®×fàü¹E•òí¯ågJoÚ^>‚6ºîFiùØ­UGµÖ¨Êz}þ@gÖ–—Ï¤"f`uIö4A½Ü<mí†W$qº†'PðwZ%Šî2¤wå7êÓV¼0P8 ïû¨Å¢ºèº—©—Ò‰Þ³ê(ý"¹Hâ2öbòÍèÂÅ%Œü­Œ4'Xô7ÊàfUßµKY”GeÄ0¢ÖÎ[C–‹[?>'kßÊÔ–+Z[½¨s[ojÃá˜CãžÌÝÝ¦Ìý]CÊÚåÂÃ"5ùÙÐ³*ÔA=…ˆÐ+[ÈûÖ_ˆªÅiµ“[³à,	‰ôø¥zÏ|³É/HÝ¡y]¶ÒËûÞ§¥…f˜¥·¡âú»¬lê¶:!‡`i*\°µ‚ìaÑÍßEÌ–íÇ“w­¾‹"¬î£°›ÉGé / O‡Y°¾v8&xDžqß\Ãæbñ»³æ¸‚xÝéÚ2®Qt®Y(*ó<Ö´ùä¹½;J_ÚŽ^-¬G6ß4nµÆM#"”(Ît&"ë:îEtòÄ÷p}ß›Ÿˆe|íœ…i!ËWfõ}·ËÝT[ÞU¸OÑ÷VzàŠÿ÷'Â#5 / '
+call.getSecret	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'k0nosuch' in the vault. Use setSecret to set up the secret.
+call.setSecret	ERR MATLAB:UndefinedFunction | Undefined function 'setSecret' for input arguments of type 'char'.
+call.eval	double [1 1] 3
+call.evalc.disp	char [1 8] '    42 /  / '
+call.str2func	double [1 1] 2
+call.evalin.base	double [1 1] 9
+call.assignin.base	ok
+call.evalin.base.k0v	double [1 1] 4
+EXIT	0
+SECONDS	2.5

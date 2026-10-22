@@ -1,0 +1,10 @@
+CASE	exit_error
+RUN	k0_exit.exe error
+beep.default	on
+mode	error
+STDERR	Error using k0_exit (line 10)
+STDERR	Boom 7 happened
+STDERR	
+STDERR	k0:boom
+EXIT	249
+SECONDS	1.9

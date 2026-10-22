@@ -1,0 +1,12 @@
+CASE	exit_noargs
+RUN	k0_exit.exe 
+beep.default	on
+mode	return
+
+x =
+
+     5
+
+after	return
+EXIT	0
+SECONDS	1.8

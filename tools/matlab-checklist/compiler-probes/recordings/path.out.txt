@@ -1,0 +1,44 @@
+CASE	path
+RUN	k0_path.exe 
+beep.default	on
+pwd	char [1 136] '<RUN>'
+exist.k0_outside	double [1 1] 0
+which.k0_outside	char [0 0] ''
+call.k0_outside	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'k0_outside'.
+exist.outside.txt	double [1 1] 2
+which.outside.txt	char [0 0] ''
+fileread.outside.txt	char [1 12] 'outside text'
+fileread.inside.txt	char [1 11] 'inside text'
+fileread.ctfroot.inside.txt	ERR MATLAB:fileread:cannotOpenFile | Could not open file <CACHE>\R2025b\k0_pat1\k0_path\inside.txt. No such file or directory.
+exist.inside.txt	double [1 1] 2
+which.inside.txt	char [1 214] '<CACHE>\R2025b\k0_pat1\<BUILD-NODRIVE>\assets\inside.txt'
+addpath.here	ERR MATLAB:mpath:PathAlterationNotSupported | Modifying the search path is not supported by MATLAB Compiler. Remove functions that modify the search path from your MATLAB code. To make files visible to your deployed application, add the parent folder to your MATLAB session.
+path.changed.after.addpath	logical [1 1] false
+which.k0_outside.after.addpath	char [0 0] ''
+call.k0_outside.after.addpath	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'k0_outside'.
+Warning: "<RUN>" not found in path.
+> In rmpath (line 78)
+In k0_path>@()rmpath(here) (line 24)
+In k0_do (line 5)
+In k0_path (line 24)
+rmpath.here	ok
+rmpath.here.warn	MATLAB:rmpath:DirNotFound | "<RUN>" not found in path.
+rmpath.first	ERR MATLAB:mpath:PathAlterationNotSupported | Modifying the search path is not supported by MATLAB Compiler. Remove functions that modify the search path from your MATLAB code. To make files visible to your deployed application, add the parent folder to your MATLAB session.
+path.changed.after.rmpath	logical [1 1] false
+path.set	ERR MATLAB:mpath:PathAlterationNotSupported | Modifying the search path is not supported by MATLAB Compiler. Remove functions that modify the search path from your MATLAB code. To make files visible to your deployed application, add the parent folder to your MATLAB session.
+path.changed.after.path2	logical [1 1] false
+cd.tempdir	ok
+pwd.after.cd	char [1 33] '<TEMP>'
+which.k0_show.after.cd	char [1 90] '<CACHE>\R2025b\k0_pat1\k0_path\k0_show.m'
+cd.back	ok
+call.run.outside_script	ERR MATLAB:run:FileNotFound | outside_script.m not found.
+call.run.inside_script	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'k0_inside_script'.
+call.eval.defines	ERR MATLAB:m_invalid_lhs_of_assignment | Incorrect use of '=' operator. Assign a value to a variable using '=' and compare values for equality using '=='.
+call.str2func.outside	char [1 10] 'k0_outside'
+call.str2func.outside.call	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'k0_outside'.
+call.feval.k0_show	char [1 14] 'double [1 1] 1'
+exist.k0_inside_helper	double [1 1] 2
+call.feval.k0_inside_helper	char [1 17] 'inside helper ran'
+ls.ctfroot	cell [1 10] {char [1 1] '.'; char [1 2] '..'; char [1 7] 'k0_do.m'; char [1 9] 'k0_flat.m'; char [1 18] 'k0_inside_helper.m'; char [1 9] 'k0_path.m'; ...}
+EXIT	0
+SECONDS	2.5

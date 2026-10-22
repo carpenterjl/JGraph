@@ -1,0 +1,10 @@
+CASE	startup
+RUN	k0_startup.exe 
+startup.m ran (isdeployed=1)
+beep.default	on
+k0_startup_ran	logical [1 1] true
+exist.startup	double [1 1] 2
+which.startup	char [1 93] '<CACHE>\R2025b\k0_sta0\k0_startup\startup.m'
+isdeployed	logical [1 1] true
+EXIT	0
+SECONDS	3.5

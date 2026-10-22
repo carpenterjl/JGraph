@@ -1,0 +1,9 @@
+CASE	feval_pragma
+RUN	k0_fevalp.exe 
+beep.default	on
+exist.k0_target	double [1 1] 2
+feval.k0_target	double [1 1] 20
+str2func.k0_target	double [1 1] 30
+eval.k0_target	double [1 1] 40
+EXIT	0
+SECONDS	2.9

@@ -1,0 +1,92 @@
+mcc.obsolete.F	ERR Compiler:compiler:COM_ERR_OPTION_F_MUST_BE_ALONE | Error: The -F <file name> option must occur with no other options on the command line.
+mcc.obsolete.x	ERR Compiler:compiler:COM_ERR_NO_MORE_MEX | Error: -x is no longer supported. The MATLAB Compiler no longer generates  /   MEX files because there is no longer any performance advantage to doing so: the  /   MATLAB JIT accelerates MATLAB files by default.  /   To hide proprietary algorithms, use the PCODE function.
+mcc.obsolete.L	ERR Compiler:compiler:COM_ERR_MISSING_WRAPPER | Unable to determine application type, since no wrapper function was specified.  / Please use the -W switch or specify application type via -m or -l.  / Type 'mcc -?' for further assistance.
+mcc.obsolete.t	ERR Compiler:compiler:COM_ERR_MISSING_WRAPPER | Unable to determine application type, since no wrapper function was specified.  / Please use the -W switch or specify application type via -m or -l.  / Type 'mcc -?' for further assistance.
+mcc.missing.file	ERR Compiler:compiler:COM_ERR_M_FILE_NOT_FOUND | Could not find the MATLAB file 'k0_nosuchfile.m' on the MATLAB path.
+mcc.no.file	ERR Compiler:compiler:COM_ERR_NO_FILES_SPECIFIED | Error: No source files were specified (-? for help).
+mcc.bad.W	ERR Compiler:compiler:COM_ERR_INVALID_WRAPPER_OPTION | Error: 'bogus' is not a valid -W option.
+mcc.mismatch.WT	ERR Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH | Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.
+mcc.bad.T	ERR Compiler:compiler:COM_ERR_INVALID_OPTION | Error: "link:nothing" is not a valid -T option argument.
+mcc.unknown.flag	ERR Compiler:compiler:COM_ERR_UNRECOGNIZED_OPTION | Error: Unrecognized option: -Q.
+mcc.bad.version	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "1.2.3.4.5" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+mcc.bad.version.big	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "70000" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+mcc.a.missing	ERR Compiler:compiler:REQ_UNEXPECTED_ERROR | Error while determining required deployable files. Compilation terminated. Details: / Error using matlab.depfun.internal.MatFileInspector/determineType (line 32) / File, function or class "k0_nosuch_data.mat" may not exist. Neither WHICH nor EXIST could find an exact, case-sensitive match. Please check the spelling of the name, and that any / required directories are on the MATLAB path. / 
+mcc.e.and.m	ok ()
+mcc.script.main	ok ()
+mcc.help	char [1 1567] 'mcc Compile MATLAB functions for deployment outside MATLAB.  /  mcc [-options] fun [fun2...]  /   / Options applicable across all deployment targets:  /  -?  Display help for the mcc command  /  -a  Add additional files or directories to be included in the build  /  -d  Build output directory  /  -g  Include debugging symbol information  /  -I  Add a directory to be searched for MATLAB files  /  -v  Verbose display of build  /   / MATLAB Compiler  /  Standalone Application (MATLAB|Hadoop|Spark) /  mcc -m <matlabFile.m>  /   /  Excel Add-In  /  mcc -W 'excel:<addinName>,<className>' -b <matlabFile.m>  /   /  Hadoop Deployable Archive  /  mcc -H -W 'hadoop:<archiveName>,CONFIG:<configFile.txt>' <mapperFile.m> <reducerFile.m> <datastoreInfo.mat>  /   /  Spark Application  /  mcc -C -W 'spark:<appName>,<sparkMajorVersion>' <matlabFile.m>  /   / MATLAB Compiler SDK  /  C Shared Library  /  mcc -W lib:<libraryName> <matlabFile.m>  /   /  C++ Shared Library  /  mcc -W cpplib:<libraryName> <matlabFile.m>  /   /  .NET Assembly  /  mcc -W 'dotnet:<assemblyName>,<className>' <matlabFile.m>  /   /  Java Package  /  mcc -W 'java:<packageName>,<className>' <matlabFile.m>  /   /  Python Package  /  mcc -W python:<pythonPackageName> <matlabFile.m>  /   /  COM Component  /  mcc -W com:<componentName> <matlabFile.m>  /   / MATLAB Production Server  /  Deployable Archive  /  mcc -W CTF:<archiveName> -U <matlabFile.m>  /   /  Deployable Archive for Excel Add-In  /  mcc -W mpsxl:<addinName> <matlabFile.m>  /   / Replace single quotes with double when executing the mcc command from a Windows Command Prompt.  /   / For more details, execute "doc mcc" from MATLAB. /   / '
+mcc.duplicate.names	char [0 0] ''
+opts.display
+    StandaloneApplicationOptions with properties:
+              ExecutableName: 'k0_args'
+          CustomHelpTextFile: ''
+                EmbedArchive: on
+              ExecutableIcon: '<MATLABROOT>\toolbox\compiler\packagingResources\default_icon_48.png'
+      ExecutableSplashScreen: '<MATLABROOT>\toolbox\compiler\packagingResources\default_splash.png'
+           ExecutableVersion: '1.0.0.0'
+                     AppFile: '<REPO>\tools\matlab-checklist\compiler-probes\src\k0_args.m'
+        TreatInputsAsNumeric: off
+             AdditionalFiles: {}
+         AutoDetectDataFiles: on
+       ExternalEncryptionKey: [0×0 struct]
+            ObfuscateArchive: off
+             SecretsManifest: ''
+             SupportPackages: {'autodetect'}
+                     Verbose: off
+                   OutputDir: '.\k0_argsstandaloneApplication'
+opts.set.ExecutableVersion.char_19__1_2_3_4_5_	ok char [1 9] '1.2.3.4.5'
+opts.set.ExecutableVersion.char_15__70000_	ok char [1 5] '70000'
+opts.set.ExecutableVersion.char_13__abc_	ok char [1 3] 'abc'
+opts.set.ExecutableVersion.char_11__2_	ok char [1 1] '2'
+opts.set.ExecutableName.char_13__a_b_	ERR Compiler:clishared:badProperty | Invalid 'ExecutableName': 'a/b'
+opts.set.ExecutableName.char_19__twoWords_	ok char [1 9] 'two words'
+opts.set.ExecutableName.char_00___	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+opts.set.OutputDir.char_13__a_b_	ERR Compiler:clishared:badProperty | Invalid 'OutputDir': 'a|b'
+opts.set.TreatInputsAsNumeric.char_15__maybe_	ERR MATLAB:validation:UnableToConvert | Error setting property 'TreatInputsAsNumeric' of class 'compiler.build.StandaloneApplicationOptions'. 'maybe' is invalid. Value must be 'off' or 'on'.
+opts.set.TreatInputsAsNumeric.logical_11_True	ok matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+opts.set.EmbedArchive.double_11_0	ok matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.off
+opts.set.AdditionalFiles.char_118__k0_nosuch_data_mat_	ERR Compiler:utils:shared:cannotFindFileOrFolder | Cannot find file or folder: /  / k0_nosuch_data.mat
+opts.set.AdditionalFiles.cell_11__char_19__k0_show_m__	ok cell [1 1] {char [1 81] '<REPO>\tools\matlab-checklist\compiler-probes\src\k0_show.m'}
+opts.set.SupportPackages.cell_00___	ok cell [1 1] {char [1 4] 'none'}
+opts.set.ExternalEncryptionKey.struct_11_Fields_EncryptionKeyFile_	ERR Compiler:build:externalencryptionkey:badFields | "ExternalEncryptionKey" must be a struct with exactly two fields named "EncryptionKeyFile" and "RuntimeKeyLoaderFile".
+opts.set.ObfuscateArchive.char_12__on_	ok matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+opts.set.ExecutableIcon.char_113__k0_nosuch_png_	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / k0_nosuch.png
+opts.set.CustomHelpTextFile.char_113__k0_nosuch_txt_	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / k0_nosuch.txt
+opts.set.Verbose.char_14__loud_	ERR MATLAB:validation:UnableToConvert | Error setting property 'Verbose' of class 'compiler.internal.build.AllOptions'. 'loud' is invalid. Value must be 'off' or 'on'.
+opts.ctor.missing	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / k0_nosuch.m
+opts.ctor.txt	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / inside.txt
+opts.ctor.nv	compiler.build.StandaloneApplicationOptions [1 1]
+opts.ctor.badname	ERR MATLAB:InputParser:UnmatchedParameter | 'NoSuchOption' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+build.opts.and.nv	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+build.missing	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / k0_nosuch.m
+results.display
+    Results with properties:
+                    BuildType: 'standaloneApplication'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.StandaloneApplicationOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+results.BuildType	char [1 21] 'standaloneApplication'
+results.Files.names	cell [1 2] {char [1 18] '<BASE>\k0_args.exe'; char [1 17] '<BASE>\readme.txt'}
+results.IncludedSupportPackages	cell [0 0] {}
+results.RuntimeDependencies
+    Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+results.Required
+            <strong>DisplayName</strong>           <strong>ID</strong>  
+      <strong>_______________________</strong>    <strong>_____</strong>
+      {'MATLAB Base Runtime'}    35010
+results.class.Options	char [1 43] 'compiler.build.StandaloneApplicationOptions'
+results.hidden.BuildID.class	char [1 6] 'string'
+results.hidden.BuildDuration.class	char [1 6] 'double'
+apibuild.files	cell [1 7] {char [1 16] 'buildresult.json'; char [1 27] 'includedSupportPackages.txt'; char [1 11] 'k0_args.exe'; char [1 20] 'mccExcludedFiles.log'; char [1 10] 'readme.txt'; char [1 23] 'requiredMCRProducts.txt'; ...}
+file.buildresult.json	char [1 107] '{ / 	"RuntimeDependencies": [ / 		{"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"} / 	] / } / '
+file.requiredMCRProducts.txt	char [1 6] '35010	'
+file.unresolvedSymbols.txt	char [1 20] 'Path	Symbol	Reason / '
+file.mccExcludedFiles.log	char [1 90] 'Excluded Files / Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule / '
+file.includedSupportPackages.txt	char [0 0] ''
+file.readme.txt.sections	cell [1 3] {char [1 32] '1. Prerequisites for Deployment '; char [1 30] '2. Files to Deploy and Package'; char [1 14] '3. Definitions'}
+opts.default.OutputDir	char [1 30] '.\k0_argsstandaloneApplication'
+opts.default.ExecutableName	char [1 7] 'k0_args'
+opts.default.ExecutableIcon	char [1 62] '<BASE>\toolbox\compiler\packagingResources\default_icon_48.png'
+opts.default.ExecutableSplashScreen	char [1 61] '<BASE>\toolbox\compiler\packagingResources\default_splash.png'

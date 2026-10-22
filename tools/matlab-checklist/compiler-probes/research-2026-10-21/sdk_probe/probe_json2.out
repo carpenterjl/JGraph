@@ -1,0 +1,129 @@
+ENC [small] sparse 3x4 (2,3)=7     : {"mwdata":[[1],[2],[7]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}
+    DEC class=double size=[3 4] isequal=1
+ENC [large] sparse 3x4 (2,3)=7     : {"mwdata":[[1],[2],[7]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}
+    DEC class=double size=[3 4] isequal=1
+ENC [small] sparse 3x4 two         : {"mwdata":[[0,2],[1,3],[5,6]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}
+    DEC class=double size=[3 4] isequal=1
+ENC [large] sparse 3x4 two         : {"mwdata":[[0,2],[1,3],[5,6]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}
+    DEC class=double size=[3 4] isequal=1
+ENC [small] sparse logical         : {"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}
+    DEC class=logical size=[2 2] isequal=1
+ENC [large] sparse logical         : {"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}
+    DEC class=logical size=[2 2] isequal=1
+ENC [small] sparse complex         : {"mwcomplex":true,"mwdata":[[0,1],[0,1],[1,2,3,0]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+    DEC class=double size=[2 2] isequal=1
+ENC [large] sparse complex         : {"mwcomplex":true,"mwdata":[[0,1],[0,1],[1,2,3,0]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+    DEC class=double size=[2 2] isequal=1
+ENC [small] sparse empty           : {"mwdata":[[],[],[]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+    DEC class=double size=[2 2] isequal=1
+ENC [large] sparse empty           : {"mwdata":[[],[],[]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+    DEC class=double size=[2 2] isequal=1
+ENC [small] value object           : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : PtVal objects not supported
+ENC [large] value object           : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : PtVal objects not supported
+ENC [small] value object array     : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : PtVal objects not supported
+ENC [large] value object array     : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : PtVal objects not supported
+ENC [small] duration               : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : duration objects not supported
+ENC [large] duration               : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : duration objects not supported
+ENC [small] datetime row           : {"mwdata":{"TimeStamp":[[1.5778368E+12,1.5779232E+12]]},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":""},"mwsize":[1,2],"mwtype":"datetime"}
+    DEC class=datetime size=[1 2] isequal=1
+ENC [large] datetime row           : {"mwdata":{"TimeStamp":{"mwdata":[1.5778368E+12,1.5779232E+12],"mwsize":[1,2],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,2],"mwtype":"datetime"}
+    DEC class=datetime size=[1 2] isequal=1
+ENC [small] NaT                    : {"mwdata":{"TimeStamp":{"mwdata":"NaN"}},"mwmetadata":{"Format":"dd-MMM-uuuu HH:mm:ss","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}
+    DEC class=datetime size=[1 1] isequal=1
+ENC [large] NaT                    : {"mwdata":{"TimeStamp":{"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu HH:mm:ss"],"mwsize":[1,20],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}
+    DEC class=datetime size=[1 1] isequal=1
+ENC [small] datetime tz            : {"mwdata":{"TimeStamp":1.5778368E+12},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":"UTC"},"mwsize":[1,1],"mwtype":"datetime"}
+    DEC class=datetime size=[1 1] isequal=1
+ENC [large] datetime tz            : {"mwdata":{"TimeStamp":{"mwdata":[1.5778368E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":["UTC"],"mwsize":[1,3],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}
+    DEC class=datetime size=[1 1] isequal=1
+ENC [small] enum row               : {"mwdata":["on","off"],"mwsize":[1,2],"mwtype":"matlab.lang.OnOffSwitchState"}
+    DEC class=matlab.lang.OnOffSwitchState size=[1 2] isequal=1
+ENC [large] enum row               : {"mwdata":["on","off"],"mwsize":[1,2],"mwtype":"matlab.lang.OnOffSwitchState"}
+    DEC class=matlab.lang.OnOffSwitchState size=[1 2] isequal=1
+ENC [small] char 2x2x2             : {"mwdata":["abcdefgh"],"mwsize":[2,2,2],"mwtype":"char"}
+    DEC class=char size=[2 2 2] isequal=1
+ENC [large] char 2x2x2             : {"mwdata":["abcdefgh"],"mwsize":[2,2,2],"mwtype":"char"}
+    DEC class=char size=[2 2 2] isequal=1
+ENC [small] struct with matrix     : {"m":[[1,2],[3,4]]}
+    DEC class=struct size=[1 1] isequal=1
+ENC [large] struct with matrix     : {"mwdata":{"m":[{"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}
+    DEC class=struct size=[1 1] isequal=1
+ENC [small] cell with struct       : {"mwdata":[{"a":1}],"mwsize":[1,1],"mwtype":"cell"}
+    DEC class=cell size=[1 1] isequal=1
+ENC [large] cell with struct       : {"mwdata":[{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}],"mwsize":[1,1],"mwtype":"cell"}
+    DEC class=cell size=[1 1] isequal=1
+ENC [small] struct array nested    : {"mwdata":{"a":[{"b":1},{"b":2}]},"mwsize":[1,2],"mwtype":"struct"}
+    DEC class=struct size=[1 2] isequal=1
+ENC [large] struct array nested    : {"mwdata":{"a":[{"mwdata":{"b":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"},{"mwdata":{"b":[{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}]},"mwsize":[1,2],"mwtype":"struct"}
+    DEC class=struct size=[1 2] isequal=1
+ENC [small] empty string ""        : {"mwdata":[""],"mwsize":[1,1],"mwtype":"string"}
+    DEC class=string size=[1 1] isequal=1
+ENC [large] empty string ""        : {"mwdata":[""],"mwsize":[1,1],"mwtype":"string"}
+    DEC class=string size=[1 1] isequal=1
+ENC [small] int8 scalar            : {"mwdata":[5],"mwsize":[1,1],"mwtype":"int8"}
+    DEC class=int8 size=[1 1] isequal=1
+ENC [large] int8 scalar            : {"mwdata":[5],"mwsize":[1,1],"mwtype":"int8"}
+    DEC class=int8 size=[1 1] isequal=1
+ENC [small] single scalar          : {"mwdata":[2.5],"mwsize":[1,1],"mwtype":"single"}
+    DEC class=single size=[1 1] isequal=1
+ENC [large] single scalar          : {"mwdata":[2.5],"mwsize":[1,1],"mwtype":"single"}
+    DEC class=single size=[1 1] isequal=1
+ENC [small] double 1e-300          : 1E-300
+    DEC class=double size=[1 1] isequal=1
+ENC [large] double 1e-300          : {"mwdata":[1E-300],"mwsize":[1,1],"mwtype":"double"}
+    DEC class=double size=[1 1] isequal=1
+ENC [small] double pi              : 3.1415926535897931
+    DEC class=double size=[1 1] isequal=1
+ENC [large] double pi              : {"mwdata":[3.1415926535897931],"mwsize":[1,1],"mwtype":"double"}
+    DEC class=double size=[1 1] isequal=1
+ENC [small] double 0.1             : 0.1
+    DEC class=double size=[1 1] isequal=1
+ENC [large] double 0.1             : {"mwdata":[0.1],"mwsize":[1,1],"mwtype":"double"}
+    DEC class=double size=[1 1] isequal=1
+ENC [small] double 1e21            : 1.0E+21
+    DEC class=double size=[1 1] isequal=1
+ENC [large] double 1e21            : {"mwdata":[1.0E+21],"mwsize":[1,1],"mwtype":"double"}
+    DEC class=double size=[1 1] isequal=1
+ENC [small] double 123456789       : 1.23456789E+8
+    DEC class=double size=[1 1] isequal=1
+ENC [large] double 123456789       : {"mwdata":[1.23456789E+8],"mwsize":[1,1],"mwtype":"double"}
+    DEC class=double size=[1 1] isequal=1
+ENC [small] logical 0x0            : {"mwdata":[],"mwsize":[0,0],"mwtype":"logical"}
+    DEC class=logical size=[0 0] isequal=1
+ENC [large] logical 0x0            : {"mwdata":[],"mwsize":[0,0],"mwtype":"logical"}
+    DEC class=logical size=[0 0] isequal=1
+ENC [small] uint8 emptyrow         : {"mwdata":[],"mwsize":[1,0],"mwtype":"uint8"}
+    DEC class=uint8 size=[1 0] isequal=1
+ENC [large] uint8 emptyrow         : {"mwdata":[],"mwsize":[1,0],"mwtype":"uint8"}
+    DEC class=uint8 size=[1 0] isequal=1
+ENC [small] char col               : {"mwdata":["ab"],"mwsize":[2,1],"mwtype":"char"}
+    DEC class=char size=[2 1] isequal=1
+ENC [large] char col               : {"mwdata":["ab"],"mwsize":[2,1],"mwtype":"char"}
+    DEC class=char size=[2 1] isequal=1
+ENC [small] handle object          : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : containers.Map objects not supported
+ENC [large] handle object          : ERR MPS:MATLAB:JSON:EncodeUnsupportedType : containers.Map objects not supported
+ENC [small] string 2x1             : {"mwdata":["a","b"],"mwsize":[2,1],"mwtype":"string"}
+    DEC class=string size=[2 1] isequal=1
+ENC [large] string 2x1             : {"mwdata":["a","b"],"mwsize":[2,1],"mwtype":"string"}
+    DEC class=string size=[2 1] isequal=1
+ENC [small] unicode                : "à"
+    DEC class=char size=[1 3] isequal=1
+ENC [large] unicode                : {"mwdata":["à"],"mwsize":[1,3],"mwtype":"char"}
+    DEC class=char size=[1 3] isequal=1
+ENC [small] complex single         : {"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"single"}
+    DEC class=single size=[1 1] isequal=1
+ENC [large] complex single         : {"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"single"}
+    DEC class=single size=[1 1] isequal=1
+ENC [small] complex int16          : {"mwcomplex":true,"mwdata":[3,4],"mwsize":[1,1],"mwtype":"int16"}
+    DEC class=int16 size=[1 1] isequal=1
+ENC [large] complex int16          : {"mwcomplex":true,"mwdata":[3,4],"mwsize":[1,1],"mwtype":"int16"}
+    DEC class=int16 size=[1 1] isequal=1
+ENC [small] cell of empty          : {"mwdata":[[]],"mwsize":[1,1],"mwtype":"cell"}
+    DEC class=cell size=[1 1] isequal=1
+ENC [large] cell of empty          : {"mwdata":[{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}
+    DEC class=cell size=[1 1] isequal=1
+unicode bytes: [34 945 946 8364 34]
+DEC {"mwdata":[[1],[2],[7]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}        -> class=double size=[3 4] val=(2,3)        7
+Caught "std::exception" Exception message is:
+Object creation not supported.
+ERROR: MATLAB error Exit Status: 0x00000001

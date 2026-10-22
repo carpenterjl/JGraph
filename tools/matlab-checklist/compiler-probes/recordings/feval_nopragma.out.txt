@@ -1,0 +1,9 @@
+CASE	feval_nopragma
+RUN	k0_feval.exe 
+beep.default	on
+exist.k0_target	double [1 1] 0
+feval.k0_target	ERR MATLAB:UndefinedFunction | Undefined function 'k0_target' for input arguments of type 'double'.
+str2func.k0_target	ERR MATLAB:UndefinedFunction | Undefined function 'k0_target' for input arguments of type 'double'.
+eval.k0_target	ERR MATLAB:UndefinedFunction | Undefined function 'k0_target' for input arguments of type 'double'.
+EXIT	0
+SECONDS	2.5

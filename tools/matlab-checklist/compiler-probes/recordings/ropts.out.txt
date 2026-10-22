@@ -1,0 +1,20 @@
+CASE	ropts
+RUN	k0_ropts.exe 
+Initializing MATLAB Runtime version 25.2
+K0 starting
+K0 complete
+beep.default	on
+main	started
+maxNumCompThreads	double [1 1] 1
+usejava.jvm	logical [1 1] false
+k0_ropts disp line
+main	done
+EXIT	0
+SECONDS	2.5
+FILE	k0_ropts.log
+  beep.default	on
+  main	started
+  maxNumCompThreads	double [1 1] 1
+  usejava.jvm	logical [1 1] false
+  k0_ropts disp line
+  main	done
