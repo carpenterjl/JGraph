@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The JGraph Runtime's public face (compiler and SDK plan, stage K4): the runtime a process starts
+    once, the components it opens from archives, the calls into them on one engine thread, and the
+    values that cross. Headless and free of WPF, so the libraries and the server built on it stay
+    possible off Windows (decision KO5). The SDK mirrors of later stages (MWArray, the MATLAB Data
+    API, the native bridge) are built over this.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Runtime</RootNamespace>
+    <Description>The JGraph Runtime: opens deployable archives and calls their functions from .NET, on one engine thread, with a lossless value model.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="JGraph.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
+    <ProjectReference Include="..\JGraph.Deploy\JGraph.Deploy.csproj" />
+  </ItemGroup>
+
+</Project>

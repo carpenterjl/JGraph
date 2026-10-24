@@ -84,6 +84,7 @@ public static class BatchRunner
         // --deployed with no -batch (K3): an archive, extracted into the runtime cache, whose
         // manifest names the main function. The cache's entry is held until the run ends.
         ScriptDeployment? deployment = null;
+        DeployedLogOutput? log = null;
         string? statement = options.Statement;
         if (options.DeployedRoot is { } archive && statement is null)
         {
@@ -108,6 +109,9 @@ public static class BatchRunner
             }
 
             statement = mainFile;
+
+            // The runtime options the program was built with (mcc -R, stage K4).
+            output = StartRuntime(deployment.RuntimeOptions, output, workingDirectory, out log);
         }
 
         try
@@ -122,8 +126,44 @@ public static class BatchRunner
             if (!inSession)
             {
                 deployment?.Dispose();
+                log?.Dispose();
             }
         }
+    }
+
+    /// <summary>
+    /// Starts the runtime under a deployed program's options, as R2025b's does before the main runs
+    /// (<c>k4_ropts</c>): the start lines on standard output, one computation thread for the
+    /// process under <c>-singleCompThread</c>, and the output that writes the <c>-logfile</c> too,
+    /// read against the current folder.
+    /// </summary>
+    internal static IScriptOutput StartRuntime(
+        JGraph.Deploy.RuntimeOptions runtime, IScriptOutput output, string workingDirectory, out DeployedLogOutput? log)
+    {
+        foreach (string line in runtime.StartLines())
+        {
+            output.WriteLine(line);
+        }
+
+        if (runtime.SingleCompThread)
+        {
+            ScriptDeployment.UseOneComputationThread();
+        }
+
+        log = null;
+        if (runtime.LogFile is { } file)
+        {
+            try
+            {
+                log = new DeployedLogOutput(output, Path.Combine(workingDirectory, file));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+            {
+                output.WriteError($"jgraph: cannot write the log file '{file}': {ex.Message}");
+            }
+        }
+
+        return log ?? output;
     }
 
     private static async Task<(int Code, IScriptSession? Session)> RunResolvedAsync(

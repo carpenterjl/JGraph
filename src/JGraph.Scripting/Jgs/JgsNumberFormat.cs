@@ -35,6 +35,20 @@ internal static class JgsNumberFormat
     /// <summary>MATLAB temporal text defaults to short precision, independently of JGraph's numeric console default.</summary>
     internal static Mode Temporal => _explicit ? _current : Mode.Short;
 
+    /// <summary>
+    /// The mode, moved out and reset: R2025b's <c>format</c> is per component (<c>k4_client</c>), so
+    /// the runtime holds one component's while another's call runs (stage K4).
+    /// </summary>
+    internal static (Mode Current, bool Explicit) Take()
+    {
+        (Mode, bool) state = (_current, _explicit);
+        Reset();
+        return state;
+    }
+
+    /// <summary>Puts back the mode <see cref="Take"/> moved out.</summary>
+    internal static void Put((Mode Current, bool Explicit) state) => (_current, _explicit) = state;
+
     /// <summary>Back to the default, as a fresh session (or bare <c>format</c>) asks.</summary>
     internal static void Reset() { _current = Mode.Long; _explicit = false; }
 

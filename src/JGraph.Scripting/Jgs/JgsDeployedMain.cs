@@ -153,8 +153,25 @@ internal static class JgsDeployedMain
         return report.ToString().TrimEnd('\n');
     }
 
+    /// <summary>
+    /// Writes <see cref="Report"/> to standard error, or hands it to a sink that keeps a log
+    /// (<c>-logfile</c>, stage K4): R2025b's log takes the report without its identifier line.
+    /// </summary>
+    internal static void WriteReport(IScriptOutput output, JgsException error)
+    {
+        string report = Report(error);
+        if (output is JGraph.Scripting.Startup.IDeployedReportSink sink)
+        {
+            sink.WriteReport(report, (error as JgsRuntimeException)?.Identifier);
+        }
+        else
+        {
+            output.WriteError(report);
+        }
+    }
+
     /// <summary>A frame as the report names it: a local function of a file as <c>file&gt;local</c>.</summary>
-    private static string Shown((string Name, string File, int Line) frame)
+    internal static string Shown((string Name, string File, int Line) frame)
     {
         string stem = Path.GetFileNameWithoutExtension(frame.File);
         return stem.Length > 0 && stem != frame.Name && !frame.Name.Contains('>', StringComparison.Ordinal)

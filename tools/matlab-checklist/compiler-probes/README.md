@@ -1,4 +1,4 @@
-# Compiler and SDK probes (stages K0-K3b)
+# Compiler and SDK probes (stages K0-K4)
 
 Recordings of what R2025b's MATLAB Compiler builds and what the programs it builds do when run,
 for the compiler and SDK plan (`docs/plans/compiler-and-sdk-plan.md`, stage K0). Later stages
@@ -47,6 +47,10 @@ and runs them only when they are named; tell the user before running one.
 | `probe_k3b_build.m` | `mcc -m -C` plain and with `-s`, `-j`, `-s -j`, `-k` and `-J`, each archive's entries and manifest, and `compiler.build`'s `ObfuscateArchive`, `SecretsManifest` and `ExternalEncryptionKey` validation. `-J` fails under `-batch` (no vault). |
 | `probe_k3b_secrets_build.m` | Builds a program that calls every secret function; `record-k3b.ps1` runs it with and without `K3B_SECRET` set. |
 | `record-k3b.ps1` | Runs the four K3b probes and the built programs through `run-quiet.ps1`, and writes `recordings/k3b_pcode.out.txt`, `k3b_secrets.out.txt`, `k3b_build.out.txt`, `k3b_run.out.txt`, `k3b_secrets_build.out.txt` and `k3b_secrets_run.out.txt` (`-Skip` leaves steps out). |
+| `src/k4/k4r_main.m`, `src/k4/k4.m` | Stage K4's programs: a main built once per `-R` option, and the function two .NET components run. |
+| `probe_k4_build.m` | Builds `k4r_main` with no option, `-startmsg`, `-completemsg`, both in one `-R`, `-logfile`, `-singleCompThread`, `-nojvm`, an unknown option and a bare `-startmsg`, and `k4.m` as the .NET assemblies K4A and K4B (`ClassMap` cannot be passed by name, so the class is `k4Class`) (stage K4, ADR 0260). |
+| `src/k4client/` | A C# client of K4A and K4B: two instances of K4A and one of K4B in one process, what each sees of the others' globals, persistents, base workspace, current folder, random stream, format, warning state, user data and figures, two calls from two threads, an error, and disposal. |
+| `record-k4.ps1` | Runs `probe_k4_build`, each `k4r_main` from a current folder not its own (the `-logfile` build twice, the second ending on an error), and the client built with `dotnet`, all through `run-quiet.ps1`; writes `recordings/k4_build.out.txt`, `k4_ropts.out.txt` and `k4_client.out.txt`. |
 | `recordings-jgraph/` | JGraph's recordings of K0's cases, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
@@ -63,6 +67,7 @@ matlab -batch "probe_k2_rules('<scratch>')" -noFigureWindows > recordings/k2_rul
 matlab -batch "probe_k2_names('<repo>/tools/matlab-checklist/matlab-r2025b-dispatch.csv')" -noFigureWindows > recordings/k2_names.out.txt
 powershell -File record-k3-cache.ps1 -BuildRoot <the K0 build scratch> -WorkRoot <a fourth scratch>
 powershell -File record-k3b.ps1 -WorkRoot <a fifth scratch>
+powershell -File record-k4.ps1 -WorkRoot <a sixth scratch>
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

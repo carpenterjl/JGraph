@@ -32,6 +32,7 @@ coverage*.xml
 
 ## Installer build output (see installer/build-installer.ps1)
 installer/staging/
+installer/runtime-staging/
 
 ## NuGet
 *.nupkg

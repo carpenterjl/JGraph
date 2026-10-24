@@ -101,6 +101,9 @@ internal sealed class JgsCallbackDispatcher
 
     public static void Install(JgsCallbackDispatcher? dispatcher) => Current = dispatcher;
 
+    /// <summary>The dispatcher installed, whatever this thread isolates (stage K4's state swap).</summary>
+    internal static JgsCallbackDispatcher? Installed => _current;
+
     /// <summary>
     /// Hides the live dispatcher from this thread while the scope is held: code run here reaches no
     /// session - no <c>CreateFcn</c> fires into it, no warning is written to its console, no relative

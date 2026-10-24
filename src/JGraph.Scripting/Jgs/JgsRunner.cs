@@ -179,7 +179,7 @@ internal static class JgsRunner
         {
             // A deployed program ends on an uncaught error the way R2025b's does: its report on
             // standard error, and exit code 249 whatever the error was (K0).
-            context.Output.WriteError(JgsDeployedMain.Report(ex));
+            JgsDeployedMain.WriteReport(context.Output, ex);
             globals.ShowTouchedFigures();
             return ScriptRunResult.Exited(ScriptDeployment.UncaughtErrorExitCode, globals.FiguresShown);
         }

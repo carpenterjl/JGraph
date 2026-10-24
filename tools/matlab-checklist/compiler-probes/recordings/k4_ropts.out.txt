@@ -1,0 +1,192 @@
+RUN	none
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	2.8
+RUN	start
+  Initializing MATLAB Runtime version 25.2
+  K4 start
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	2.4
+RUN	complete
+  K4 complete
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	2.9
+RUN	both
+  Initializing MATLAB Runtime version 25.2
+  K4 start
+  K4 complete
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	2.6
+RUN	log
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	2.5
+RUN	log err
+  beep.default	on
+  main	started 1
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  STDERR	k4r stderr line
+  STDERR	Error using k4r_main (line 16)
+  STDERR	k4r uncaught
+  STDERR	
+  STDERR	k4:boom
+  EXIT	249
+  SECONDS	1.9
+RUN	single
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 1
+  maxNumCompThreads.set4	ERR MATLAB:Multicore:MultithreadingDisabled | MATLAB has computational multithreading disabled. / To enable multithreading please restart MATLAB without singleCompThread option.
+  maxNumCompThreads.after	double [1 1] 1
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	2.8
+RUN	nojvm
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	3.0
+RUN	bogus
+  Warning: Unrecognized command line option: bogus.
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	2.6
+RUN	startbare
+  Initializing MATLAB Runtime version 25.2
+  beep.default	on
+  main	started 0
+  maxNumCompThreads	double [1 1] 6
+  maxNumCompThreads.set4	double [1 1] 6
+  maxNumCompThreads.after	double [1 1] 4
+  usejava.jvm	logical [1 1] false
+  k4r disp line
+  x =
+       5
+  Warning: k4r warning
+  > In k4r_main (line 14)
+  main	done
+  STDERR	k4r stderr line
+  EXIT	0
+  SECONDS	3.1
+LOG	<W>\cwd_log\k4r.log
+  |beep.default	on
+  |main	started 1
+  |maxNumCompThreads	double [1 1] 6
+  |maxNumCompThreads.set4	double [1 1] 6
+  |maxNumCompThreads.after	double [1 1] 4
+  |usejava.jvm	logical [1 1] false
+  |k4r disp line
+  |
+  |x =
+  |
+  |     5
+  |
+  |k4r stderr line
+  |Warning: k4r warning
+  |> In k4r_main (line 14)
+  |Error using k4r_main (line 16)
+  |k4r uncaught
+  |
+  |
+NOLOG	<W>\b\r_log\k4r.log

@@ -246,6 +246,25 @@ internal static partial class JgsGraphicsProperties
         }
     }
 
+    /// <summary>The groups, for a deployed component's state held aside (stage K4).</summary>
+    internal static object TakeGroups()
+    {
+        lock (Groups)
+        {
+            return Groups.ToList();
+        }
+    }
+
+    /// <summary>Puts back the groups <see cref="TakeGroups"/> took.</summary>
+    internal static void PutGroups(object groups)
+    {
+        lock (Groups)
+        {
+            Groups.Clear();
+            Groups.AddRange((List<JgsGraphicsGroup>)groups);
+        }
+    }
+
     /// <summary>Forgets every group — what a fresh run means.</summary>
     public static void ForgetGroups()
     {

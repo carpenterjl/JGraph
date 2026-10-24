@@ -49,6 +49,13 @@ internal static class JgsGraphicsCallbackState
     /// </summary>
     public static void RecordClick(GraphObject? clicked) => CurrentObject = clicked;
 
+    /// <summary>The callback and click history, for a deployed component's state held aside (stage K4).</summary>
+    public static (GraphObject? CallbackObject, GraphObject? CurrentObject) Take() => (CallbackObject, CurrentObject);
+
+    /// <summary>Puts back what <see cref="Take"/> answered.</summary>
+    public static void Put((GraphObject? CallbackObject, GraphObject? CurrentObject) state) =>
+        (CallbackObject, CurrentObject) = state;
+
     /// <summary>Forgets everything — a cleared workspace has no click history.</summary>
     public static void Clear()
     {

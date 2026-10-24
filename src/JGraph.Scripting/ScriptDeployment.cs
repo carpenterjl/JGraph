@@ -83,8 +83,25 @@ public sealed class ScriptDeployment : IDisposable
     /// <summary>The archive's manifest, when the deployment came from an archive.</summary>
     public CtfManifest? Manifest { get; private init; }
 
+    /// <summary>
+    /// The runtime options the session runs under: the archive's <c>mcc -R</c> options, or the ones
+    /// the runtime was started with (stage K4). Only <see cref="RuntimeOptions.SingleCompThread"/>
+    /// reaches the session; the host prints the start lines and keeps the log.
+    /// </summary>
+    public RuntimeOptions RuntimeOptions { get; init; } = RuntimeOptions.None;
+
     /// <summary>The runtime cache's entry the archive was extracted to, held while the program runs.</summary>
     private CacheEntry? Entry { get; init; }
+
+    /// <summary>
+    /// Holds the process's arithmetic to one thread, native and managed, as <c>-R -singleCompThread</c>
+    /// asks (stage K4). It cannot be undone: R2025b refuses to raise the count until a restart.
+    /// </summary>
+    internal static void UseOneComputationThread()
+    {
+        JGraph.Numerics.LinearAlgebra.Native.OpenBlasLoader.LimitToOneThread();
+        JGraph.Numerics.ParallelKernels.MaxDegree = 1;
+    }
 
     /// <summary>Lets the runtime cache's entry go, so a later start may evict it.</summary>
     public void Dispose() => Entry?.Dispose();
@@ -99,8 +116,10 @@ public sealed class ScriptDeployment : IDisposable
     /// <param name="archivePath">The archive.</param>
     /// <param name="commandLine">The program's command line, <c>-mcruserdata</c> pairs included.</param>
     /// <param name="cacheDirectory">The runtime cache's folder; <see cref="CacheDirectory"/> when not given.</param>
+    /// <param name="runtimeOptions">The options the runtime runs under; the archive's own when not given.</param>
     /// <exception cref="InvalidDataException">The file holds no JGraph archive, or a damaged one.</exception>
-    public static ScriptDeployment FromArchive(string archivePath, IReadOnlyList<string> commandLine, string? cacheDirectory = null)
+    public static ScriptDeployment FromArchive(
+        string archivePath, IReadOnlyList<string> commandLine, string? cacheDirectory = null, RuntimeOptions? runtimeOptions = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(archivePath);
         ArgumentNullException.ThrowIfNull(commandLine);
@@ -128,6 +147,7 @@ public sealed class ScriptDeployment : IDisposable
             {
                 MainFile = main,
                 Manifest = manifest,
+                RuntimeOptions = runtimeOptions ?? RuntimeOptions.Parse(manifest.RuntimeOptions),
                 Entry = entry,
                 CacheFolder = Path.GetFullPath(cache),
             };

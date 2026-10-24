@@ -6392,7 +6392,7 @@ internal static partial class JgsBuiltins
     /// N-D arrays report all of theirs, images report height-width-channels, a table reports its rows
     /// and its variable count, and everything else is a plain 2-D value.
     /// </remarks>
-    private static int[] SizeDims(JgsValue value) => value.Type switch
+    internal static int[] SizeDims(JgsValue value) => value.Type switch
     {
         JgsType.Image when value.AsImage.Channels > 1 =>
             [value.AsImage.Height, value.AsImage.Width, value.AsImage.Channels],

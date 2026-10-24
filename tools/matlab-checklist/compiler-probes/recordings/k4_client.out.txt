@@ -1,0 +1,72 @@
+BUILD	exit 0
+  time.a1	48.6
+  time.a2	0.0
+  time.b	1.0
+  quiet.a1	on
+  quiet.a2	off
+  quiet.b	on
+  deployed.a1	1 0
+  ctfroot.a1	<W>\cache_client\R2025b\K4A_f80
+  ctfroot.a2	<W>\cache_client\R2025b\K4A_f80
+  ctfroot.b	<W>\cache_client\R2025b\K4B_340
+  setg.a1	7
+  getg.a1	7
+  getg.a2	7
+  getg.b	[] double
+  count.a1	9
+  count.a2	10
+  count.b	4
+  pwd.before.a1	<W>\client
+  dotnet.cwd.before	<W>\client
+  cd.a1	<TEMP>\k4client_cd
+  pwd.a2	<TEMP>\k4client_cd
+  pwd.b	<W>\client
+  dotnet.cwd.after	<TEMP>\k4client_cd
+  rng.a1	seeded
+  rand.b	0.814723686393179
+  rand.a2	0.417022004702574
+  rand.a1	0.720324493442158
+  format.a1	long
+  show.a1	3.141592653589793
+  show.a2	3.141592653589793
+  show.b	3.1416
+  warnoff.a1	off
+  Warning: k4 warning
+  > In k4 (line 50)
+  warn.b	k4:w | k4 warning
+  warn.a2	k4:w | k4 warning
+  warn.a1	k4:w | k4 warning
+  setud.a1	set
+  getud.a2	v1
+  getud.b	[] double
+  base.a1	assigned
+  getbase.a2	5
+  getbase.b	ERR MATLAB:UndefinedFunction
+  threads.a1	6
+  k4 disp line
+  k4 fprintf line
+  say.a1	said
+  fail.a1	System.Exception: /  / ... MWMCR::EvaluateFunction error ...  / k4 failure 3 / Error in => k4.m at line 37. /  / ... Matlab M-code Stack Trace ... /     at / file <W>\cache_client\R2025b\K4A_f80\Users\Carpe\AppData\Local\Temp\claude\D--EE-Projects-JGraph-JGraph\<UUID>\scratchpad\k4\b\dnsrc\k4.m, name deeper, line 88. /     at / file <W>\cache_client\R2025b\K4A_f80\Users\Carpe\AppData\Local\Temp\claude\D--EE-Projects-JGraph-JGraph\<UUID>\scratchpad\k4\b\dnsrc\k4.m, name k4, line 37. /  /
+  fail.a1.stack	(not an MWException)
+  fail.a1.data	
+  other.thread.a1	1 0
+  overlap.a1+b	1.0 1.0 total 2.0
+  overlap.a1+a2	1.0 1.0 total 2.0
+  figure.a1	1
+  figures.a2	1
+  figures.b	0
+  disposed.a1	7
+  after.a2	7
+  new.a3	7
+  count.a3	39
+  after.b	[] double
+  mcr.initialized	True
+  done	ok
+  STDERR	k4 stderr line
+  STDERR	
+  STDERR	Error using k4>deeper (line 88)
+  STDERR	k4 failure 3
+  STDERR	
+  STDERR	Error in k4 (line 37)
+  EXIT	0
+  SECONDS	75.7

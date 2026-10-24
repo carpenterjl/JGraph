@@ -530,7 +530,7 @@ internal static partial class JgsBuiltins
     /// #79). A pending call that is not this feval — the handle came through another road — hands
     /// the target no site.
     /// </summary>
-    private static JgsValue[] Feval(
+    internal static JgsValue[] Feval(
         Interpreter interpreter, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         IJgsCallable target = FevalTarget(interpreter, args, line, col);

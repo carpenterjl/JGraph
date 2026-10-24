@@ -28,7 +28,15 @@ internal static partial class JgsBuiltins
 
         public string Planner { get; set; } = "estimate";
 
-        public int ComputationThreads { get; set; } = Environment.ProcessorCount;
+        // R2025b's maxNumCompThreads starts at the performance-core count: 6 on a machine with 20
+        // logical processors (K4, k4_ropts), which is what OpenBLAS's ceiling here counts too.
+        private static readonly int PerformanceCores =
+            JGraph.Numerics.LinearAlgebra.Native.ProcessorTopology.PerformanceCoreCount() ?? Environment.ProcessorCount;
+
+        public int ComputationThreads { get; set; } = PerformanceCores;
+
+        // A program built with -R -singleCompThread keeps one thread and refuses another count (K4).
+        public bool SingleCompThread { get; init; }
     }
 
     /// <summary>Every name <see cref="RegisterSessionBuiltins"/> declares.</summary>
@@ -43,7 +51,11 @@ internal static partial class JgsBuiltins
     /// <summary>Declares the session and installation builtins into <paramref name="env"/> (M39).</summary>
     internal static void RegisterSessionBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
-        var state = new SessionState();
+        var state = new SessionState { SingleCompThread = host.Deployment?.RuntimeOptions.SingleCompThread == true };
+        if (state.SingleCompThread)
+        {
+            state.ComputationThreads = 1;
+        }
 
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -448,6 +460,12 @@ internal static partial class JgsBuiltins
         {
             ArityRange("maxNumCompThreads", args, 0, 1, line, col);
             int previous = state.ComputationThreads;
+            if (args.Count == 1 && state.SingleCompThread)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:Multicore:MultithreadingDisabled",
+                    "MATLAB has computational multithreading disabled.\nTo enable multithreading please restart MATLAB without singleCompThread option.");
+            }
+
             if (args.Count == 1)
             {
                 state.ComputationThreads = args[0].Type == JgsType.String

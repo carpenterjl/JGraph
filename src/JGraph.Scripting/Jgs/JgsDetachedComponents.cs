@@ -65,6 +65,13 @@ internal static class JgsDetachedComponents
         value.Type == JgsType.Array && value.ArrayLength == 0 && !value.IsStringArray && !value.IsCharMatrix;
 
     /// <summary>Forgets every component still waiting (a new run's).</summary>
+    /// <summary>The holders, for a deployed component's state held aside (stage K4).</summary>
+    public static object Take() => (Holder, HolderFigure, _holderToolbar);
+
+    /// <summary>Puts back the holders <see cref="Take"/> answered.</summary>
+    public static void Put(object state) =>
+        (Holder, HolderFigure, _holderToolbar) = ((UiPanelModel, FigureModel, UiToolbarModel?))state;
+
     public static void Clear()
     {
         Holder = new UiPanelModel();

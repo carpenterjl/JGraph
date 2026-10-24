@@ -310,6 +310,25 @@ internal static class JgsComponentContainers
         }
     }
 
+    /// <summary>The owed updates, for a deployed component's state held aside (stage K4).</summary>
+    internal static object TakeOwed()
+    {
+        lock (Gate)
+        {
+            return Owed.ToList();
+        }
+    }
+
+    /// <summary>Puts back the owed updates <see cref="TakeOwed"/> took.</summary>
+    internal static void PutOwed(object owed)
+    {
+        lock (Gate)
+        {
+            Owed.Clear();
+            Owed.AddRange((List<JgsComponentContainerState>)owed);
+        }
+    }
+
     /// <summary>Forgets the owed updates - a fresh run, or a cleared figure registry.</summary>
     public static void Clear()
     {

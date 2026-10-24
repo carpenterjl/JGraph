@@ -1,0 +1,14 @@
+build.none	ok
+build.start	ok
+build.complete	ok
+build.both	ok
+build.log	ok
+build.single	ok
+build.nojvm	ok
+  [Warning: You have specified '-R -nojvm', which may restrict or eliminate MATLAB graphics functionality at runtime.] 
+  [> In ropts', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k4_build.m', 45)" style="font-weight:bold">probe_k4_build>ropts (line 45)
+  In probe_k4_build (line 15)]
+build.bogus	ok
+build.startbare	ok
+dotnet.K4A	ok GettingStarted.html, K4A.dll, K4ANative.dll, K4A_overview.html
+dotnet.K4B	ok GettingStarted.html, K4B.dll, K4BNative.dll, K4B_overview.html

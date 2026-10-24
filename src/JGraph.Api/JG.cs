@@ -1790,6 +1790,53 @@ public static class JG
         _currentAxes = null; // hold lives on the axes, so dropping them drops it
     }
 
+    /// <summary>
+    /// Moves the figure registry out and leaves it as <see cref="Reset"/> does. A deployed component's
+    /// figures are its own (R2025b, <c>k4_client</c>: a second component counts none of the first's),
+    /// so the runtime moves one component's figures out before another component's call and puts
+    /// them back with <see cref="PutState"/> (compiler and SDK plan, stage K4).
+    /// </summary>
+    internal static object TakeState()
+    {
+        RegistryState state;
+        lock (Registry)
+        {
+            state = new RegistryState(
+                new Dictionary<int, FigureModel>(Figures), new Dictionary<int, long>(TouchStamps),
+                _currentFigure, _currentNumber, _currentAxes);
+        }
+
+        Reset();
+        return state;
+    }
+
+    /// <summary>Replaces the figure registry with one <see cref="TakeState"/> moved out.</summary>
+    internal static void PutState(object state)
+    {
+        var held = (RegistryState)state;
+        lock (Registry)
+        {
+            Figures.Clear();
+            TouchStamps.Clear();
+            foreach ((int number, FigureModel figure) in held.Figures)
+            {
+                Figures[number] = figure;
+            }
+
+            foreach ((int number, long stamp) in held.TouchStamps)
+            {
+                TouchStamps[number] = stamp;
+            }
+        }
+
+        _currentFigure = held.Current;
+        _currentNumber = held.Number;
+        _currentAxes = held.Axes;
+    }
+
+    private sealed record RegistryState(
+        Dictionary<int, FigureModel> Figures, Dictionary<int, long> TouchStamps, FigureModel? Current, int Number, AxesModel? Axes);
+
     private static FigureModel CreateFigure()
     {
         var figure = new FigureModel();

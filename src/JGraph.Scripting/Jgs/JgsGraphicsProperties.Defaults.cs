@@ -122,6 +122,24 @@ internal static partial class JgsGraphicsProperties
         _ => false,
     };
 
+    /// <summary>The root's defaults, for a deployed component's state held aside (stage K4).</summary>
+    internal static object TakeDefaults() =>
+        (new Dictionary<string, (string Class, string Property, JgsValue Value)>(RootDefaults, StringComparer.Ordinal), s_anyDefaults);
+
+    /// <summary>Puts back the defaults <see cref="TakeDefaults"/> took.</summary>
+    internal static void PutDefaults(object defaults)
+    {
+        (Dictionary<string, (string Class, string Property, JgsValue Value)> held, bool any) =
+            ((Dictionary<string, (string Class, string Property, JgsValue Value)>, bool))defaults;
+        RootDefaults.Clear();
+        foreach ((string key, (string Class, string Property, JgsValue Value) value) in held)
+        {
+            RootDefaults[key] = value;
+        }
+
+        s_anyDefaults = any;
+    }
+
     /// <summary>Forgets every default the root holds (a new run's root has none).</summary>
     internal static void ForgetDefaults()
     {

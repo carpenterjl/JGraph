@@ -250,6 +250,42 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
         }
     }
 
+    /// <summary>
+    /// Calls the function <paramref name="name"/> with <paramref name="nargout"/> outputs, as a
+    /// deployed component's client does (compiler and SDK plan, stage K4): resolved from the base
+    /// workspace as <c>feval</c> resolves a name, under a statement's ceremony, on the calling thread,
+    /// which is the runtime's engine thread. An error is thrown as the <see cref="JgsException"/> it
+    /// was, for the runtime to hand its client; nothing is written to the console for it.
+    /// </summary>
+    internal JgsValue[] CallFunction(string name, IReadOnlyList<JgsValue> arguments, int nargout, CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(name);
+        ArgumentNullException.ThrowIfNull(arguments);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        Interlocked.Exchange(ref _busy, 1);
+        _dispatcher.StatementThreadId = Environment.CurrentManagedThreadId;
+        try
+        {
+            _globals.BeginRun(null, null);
+            _interpreter.BeginStatement(cancellationToken);
+            _dispatcher.StatementToken = cancellationToken;
+            _interpreter.AtPrompt = false;
+            try
+            {
+                return JgsBuiltins.Feval(_interpreter, [JgsValue.Str(name), .. arguments], nargout, 0, 0);
+            }
+            finally
+            {
+                _globals.ShowTouchedFigures();
+            }
+        }
+        finally
+        {
+            _dispatcher.StatementThreadId = null;
+            Interlocked.Exchange(ref _busy, 0);
+        }
+    }
+
     /// <summary>The app the designer's last Run of each file made (App Designer's <c>RunningApp</c>), by the file's full name.</summary>
     private readonly Dictionary<string, JgsValue> _designerApps = new(StringComparer.OrdinalIgnoreCase);
 
@@ -346,7 +382,7 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
         catch (JgsException ex) when (_context.Deployment is not null)
         {
             // A deployed program's uncaught error: R2025b's report and exit code (K1).
-            _context.Output.WriteError(JgsDeployedMain.Report(ex));
+            JgsDeployedMain.WriteReport(_context.Output, ex);
             _globals.ShowTouchedFigures();
             return ScriptRunResult.Exited(ScriptDeployment.UncaughtErrorExitCode, _globals.FiguresShown, GetVariables());
         }

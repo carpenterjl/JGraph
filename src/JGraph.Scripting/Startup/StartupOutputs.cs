@@ -125,3 +125,79 @@ public sealed class TeeScriptOutput : IScriptOutput, IDisposable
         }
     }
 }
+
+/// <summary>
+/// A deployed program's <c>-R -logfile</c> (compiler and SDK plan, stage K4): everything the program
+/// writes reaches the console as usual, and a copy of it, standard error included and in the order
+/// written, goes to the log file, which every run replaces (R2025b's runtime, <c>k4_ropts</c>). The
+/// uncaught error's report goes in without its identifier line, as R2025b's does.
+/// </summary>
+public sealed class DeployedLogOutput : IScriptOutput, IDeployedReportSink, IDisposable
+{
+    private readonly IScriptOutput _console;
+    private readonly StreamWriter _log;
+    private readonly object _gate = new();
+
+    /// <summary>Opens the log at <paramref name="path"/>, replacing any there, beside <paramref name="console"/>.</summary>
+    public DeployedLogOutput(IScriptOutput console, string path)
+    {
+        ArgumentNullException.ThrowIfNull(console);
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        _console = console;
+        string full = Path.GetFullPath(path);
+        if (Path.GetDirectoryName(full) is { Length: > 0 } directory)
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        _log = new StreamWriter(full, append: false, new System.Text.UTF8Encoding(false)) { AutoFlush = true, NewLine = "\n" };
+    }
+
+    /// <inheritdoc />
+    public void Write(string text)
+    {
+        _console.Write(text);
+        Log(text);
+    }
+
+    /// <inheritdoc />
+    public void WriteLine(string text)
+    {
+        _console.WriteLine(text);
+        Log(text + "\n");
+    }
+
+    /// <inheritdoc />
+    public void WriteError(string text)
+    {
+        _console.WriteError(text);
+        Log(text.EndsWith('\n') ? text : text + "\n"); // fprintf(2, ...) brings its own line end
+    }
+
+    /// <inheritdoc />
+    void IDeployedReportSink.WriteReport(string report, string? identifier)
+    {
+        _console.WriteError(report);
+        Log(identifier is { Length: > 0 } && report.EndsWith("\n" + identifier, StringComparison.Ordinal)
+            ? report[..^identifier.Length]
+            : report + "\n");
+    }
+
+    /// <inheritdoc />
+    public void Dispose() => _log.Dispose();
+
+    private void Log(string text)
+    {
+        lock (_gate)
+        {
+            _log.Write(text);
+        }
+    }
+}
+
+/// <summary>A sink that writes a deployed program's uncaught error report in its own way (stage K4).</summary>
+public interface IDeployedReportSink
+{
+    /// <summary>Writes the report; <paramref name="identifier"/> is its last line when the error had one.</summary>
+    void WriteReport(string report, string? identifier);
+}

@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The figure registry's state swap a deployed component's call makes (compiler and SDK plan, stage K4). -->
+    <InternalsVisibleTo Include="JGraph.Scripting" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
     <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />

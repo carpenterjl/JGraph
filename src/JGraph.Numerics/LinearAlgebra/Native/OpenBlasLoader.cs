@@ -25,6 +25,23 @@ internal static class OpenBlasLoader
     /// <summary>Whether the count came from the environment, in which case every call takes it as given.</summary>
     internal static bool PinnedByEnvironment { get; private set; }
 
+    /// <summary>Whether the process runs its arithmetic on one thread (<c>-R -singleCompThread</c>, stage K4).</summary>
+    private static volatile bool _single;
+
+    /// <summary>
+    /// Holds every native call to one thread from now on, loaded or not: what a program built with
+    /// <c>-R -singleCompThread</c> asks of the whole process.
+    /// </summary>
+    internal static void LimitToOneThread()
+    {
+        _single = true;
+        if (Load.IsValueCreated && Load.Value.Loaded)
+        {
+            MaxThreads = 1;
+            PinnedByEnvironment = true;
+        }
+    }
+
     internal sealed record LoadStatus(bool Loaded, string Description);
 
     private static LoadStatus Initialize()
@@ -47,7 +64,7 @@ internal static class OpenBlasLoader
 
             NativeLibrary.SetDllImportResolver(typeof(OpenBlasLoader).Assembly, Resolve);
 
-            int? asked = ThreadCountFromEnvironment();
+            int? asked = _single ? 1 : ThreadCountFromEnvironment();
             PinnedByEnvironment = asked is not null;
             MaxThreads = asked ?? DefaultThreadCount();
             OpenBlasNative.SetNumThreads(MaxThreads);

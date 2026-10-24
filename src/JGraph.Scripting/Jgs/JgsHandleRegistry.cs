@@ -574,6 +574,86 @@ internal static class JgsHandleRegistry
         }
     }
 
+    /// <summary>
+    /// Moves every handle out, with what <see cref="Clear"/> forgets alongside them, and leaves the
+    /// registry as <see cref="Clear"/> does: one deployed component's handles, groups, root defaults
+    /// and detached components, held while another component runs (stage K4). The designer's kept
+    /// figures are the process's and stay.
+    /// </summary>
+    internal static object TakeState()
+    {
+        lock (Gate)
+        {
+            var state = new RegistryState(
+                new Dictionary<double, JgsHandleEntry>(Entries),
+                new Dictionary<double, string>(RetiredClasses),
+                new Dictionary<GraphObject, double>(Handles, ReferenceEquality.Instance),
+                new Dictionary<FigureModel, JgsHandleEntry>(FigureEntries, FigureEquality.Instance),
+                [.. IssuedFigureNumbers],
+                _next,
+                ShowHiddenHandles,
+                JgsComponentContainers.TakeOwed(),
+                JgsGraphicsCallbackState.Take(),
+                JgsGraphicsProperties.TakeGroups(),
+                JgsGraphicsProperties.TakeDefaults(),
+                JgsDetachedComponents.Take());
+            Clear();
+            return state;
+        }
+    }
+
+    /// <summary>Replaces the registry with one <see cref="TakeState"/> moved out.</summary>
+    internal static void PutState(object state)
+    {
+        var held = (RegistryState)state;
+        lock (Gate)
+        {
+            Clear();
+            foreach ((double handle, JgsHandleEntry entry) in held.Entries)
+            {
+                Entries[handle] = entry;
+            }
+
+            foreach ((double handle, string cls) in held.RetiredClasses)
+            {
+                RetiredClasses[handle] = cls;
+            }
+
+            foreach ((GraphObject target, double handle) in held.Handles)
+            {
+                Handles[target] = handle;
+            }
+
+            foreach ((FigureModel figure, JgsHandleEntry entry) in held.FigureEntries)
+            {
+                FigureEntries[figure] = entry;
+            }
+
+            IssuedFigureNumbers.UnionWith(held.IssuedFigureNumbers);
+            _next = held.Next;
+            ShowHiddenHandles = held.ShowHiddenHandles;
+            JgsComponentContainers.PutOwed(held.Owed);
+            JgsGraphicsCallbackState.Put(held.Callback);
+            JgsGraphicsProperties.PutGroups(held.Groups);
+            JgsGraphicsProperties.PutDefaults(held.Defaults);
+            JgsDetachedComponents.Put(held.Detached);
+        }
+    }
+
+    private sealed record RegistryState(
+        Dictionary<double, JgsHandleEntry> Entries,
+        Dictionary<double, string> RetiredClasses,
+        Dictionary<GraphObject, double> Handles,
+        Dictionary<FigureModel, JgsHandleEntry> FigureEntries,
+        HashSet<int> IssuedFigureNumbers,
+        double Next,
+        bool ShowHiddenHandles,
+        object Owed,
+        (GraphObject? CallbackObject, GraphObject? CurrentObject) Callback,
+        object Groups,
+        object Defaults,
+        object Detached);
+
     private static readonly HashSet<FigureModel> Kept = new(ReferenceEquality.Instance);
 
     private static FigureModel[] KeptFigures()

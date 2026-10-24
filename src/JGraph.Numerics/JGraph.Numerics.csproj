@@ -15,6 +15,8 @@
     <!-- The stiff solvers' machinery - the numerical Jacobian and its column grouping - is not
          part of the public surface but is exactly what a parity test has to be able to read. -->
     <InternalsVisibleTo Include="JGraph.Tests" />
+    <!-- maxNumCompThreads starts at the performance-core count OpenBLAS is sized by (stage K4). -->
+    <InternalsVisibleTo Include="JGraph.Scripting" />
   </ItemGroup>
 
   <ItemGroup>

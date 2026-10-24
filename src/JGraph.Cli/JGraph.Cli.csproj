@@ -22,6 +22,8 @@
     <ProjectReference Include="..\JGraph.Export\JGraph.Export.csproj" />
     <ProjectReference Include="..\JGraph.Plugins\JGraph.Plugins.csproj" />
     <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
+    <!-- The JGraph Runtime's facade ships beside the engine in the runtime layout's bin (stage K4). -->
+    <ProjectReference Include="..\JGraph.Runtime\JGraph.Runtime.csproj" />
     <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />
 
     <!-- Build order only: the launcher starts the WPF application as a separate process for the

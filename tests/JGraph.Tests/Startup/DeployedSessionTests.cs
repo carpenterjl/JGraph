@@ -555,12 +555,27 @@ public sealed class DeployedSessionTests : IDisposable
     /// K6's mcc will make it) and runs it as <c>jgraph --deployed app.ctf -- args</c>, with the
     /// runtime cache under the test's folder.
     /// </summary>
-    private async Task<int> Archived(string main, string[]? arguments = null, Action<JGraph.Deploy.CtfBuild>? check = null, bool pcode = false)
+    private async Task<int> Archived(
+        string main, string[]? arguments = null, Action<JGraph.Deploy.CtfBuild>? check = null, bool pcode = false, string[]? runtimeOptions = null)
     {
         var files = Directory.EnumerateFiles(Ctf, "*", SearchOption.AllDirectories).Order(StringComparer.Ordinal)
             .Select(f => new JGraph.Deploy.DependencyFile(f, f == main ? JGraph.Deploy.DependencyReason.Root : JGraph.Deploy.DependencyReason.Code, null))
             .ToList();
         JGraph.Deploy.CtfBuild build = JGraph.Deploy.CtfLayout.FromReport("app", main, new JGraph.Deploy.DependencyReport(files, [], [], []));
+        if (runtimeOptions is not null)
+        {
+            // mcc -R (stage K4), as K6's mcc will write them into the manifest.
+            build = new JGraph.Deploy.CtfBuild
+            {
+                ComponentName = build.ComponentName,
+                Files = build.Files,
+                MatlabPath = build.MatlabPath,
+                MainFunction = build.MainFunction,
+                PublicFunctions = build.PublicFunctions,
+                RuntimeOptions = runtimeOptions,
+            };
+        }
+
         if (pcode)
         {
             build = JgsPcode.PcodeBuild(build); // mcc -j (K3b)
@@ -747,4 +762,71 @@ public sealed class DeployedSessionTests : IDisposable
         Assert.Equal(["app.ctf", "out"], extract.ProgramArguments);
         Assert.True(StartupCommandLine.Parse(["-batch", "1", "-extractCTF", "app.ctf"]).HasUsageError);
     }
+
+    // --- Runtime options (stage K4) ------------------------------------------------------------
+
+    [Fact]
+    public async Task RuntimeOptions_StartLinesComeFirst_AndTheLogTakesEveryStream_ReplacedEachRun_AsR2025bsRuntime()
+    {
+        // k4_ropts: the start lines before main, the log read against the current folder and
+        // replaced by the second run, standard error in it, and the report without its identifier.
+        string main = Main("""
+            fprintf('main\tstarted %d\n', nargin);
+            disp('k4r disp line');
+            fprintf(2, 'k4r stderr line\n');
+            if nargin > 0 && strcmp(varargin{1}, 'err')
+                error('k4:boom', 'k4r uncaught');
+            end
+            fprintf('main\tdone\n');
+            """);
+        string[] options = ["-startmsg,K4 start,-completemsg,K4 complete", "-logfile,k4r.log", "-bogus"];
+
+        Assert.Equal(0, await Archived(main, runtimeOptions: options));
+        Assert.Equal(
+            [
+                "Warning: Unrecognized command line option: bogus.", "Initializing JGraph Runtime version 25.2", "K4 start",
+                "K4 complete", "main\tstarted 0", "k4r disp line", "main\tdone",
+            ],
+            _output.NormalLines);
+        string log = Path.Combine(Run, "k4r.log");
+        Assert.Equal("main\tstarted 0\nk4r disp line\nk4r stderr line\nmain\tdone\n", File.ReadAllText(log));
+
+        Assert.Equal(ScriptDeployment.UncaughtErrorExitCode, await Archived(main, ["err"], runtimeOptions: options));
+        Assert.Equal(
+            "main\tstarted 1\nk4r disp line\nk4r stderr line\nError using app (line 6)\nk4r uncaught\n\n",
+            File.ReadAllText(log));
+        Assert.EndsWith("k4r uncaught\n\nk4:boom", _output.ErrorText);
+        Assert.False(File.Exists(Path.Combine(_root, "k4r.log")));
+    }
+
+    [Fact]
+    public async Task RuntimeOptions_SingleCompThread_HoldsMaxNumCompThreadsAtOne_AsR2025bsRuntime()
+    {
+        // k4_ropts 'single': 1, and setting another count refused. The process-wide half
+        // (ScriptDeployment.UseOneComputationThread) is not run here, where it would stay for every test.
+        Main("");
+        var deployment = new ScriptDeployment(Ctf, "app", [Component], [])
+        {
+            RuntimeOptions = JGraph.Deploy.RuntimeOptions.Parse(["-singleCompThread"]),
+        };
+        await using IScriptSession session = Assert.IsAssignableFrom<IScriptRepl>(new MatlabScriptEngine())
+            .CreateSession(new ScriptContext(_output, static (_, _) => { }) { Deployment = deployment });
+        ScriptRunResult result = await session.ExecuteAsync("""
+            assert(maxNumCompThreads == 1);
+            try
+                maxNumCompThreads(4);
+                error('k4:test', 'not refused');
+            catch e
+                assert(strcmp(e.identifier, 'MATLAB:Multicore:MultithreadingDisabled'), e.identifier);
+                assert(strcmp(e.message, sprintf('MATLAB has computational multithreading disabled.\nTo enable multithreading please restart MATLAB without singleCompThread option.')));
+            end
+            assert(maxNumCompThreads == 1);
+            """, sourceId: "", CancellationToken.None);
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+    }
+
+    [Fact]
+    public Task MaxNumCompThreads_StartsAtThePerformanceCoreCount_AsR2025bsDoes() => Ordinary($"""
+        assert(maxNumCompThreads == {JGraph.Numerics.LinearAlgebra.Native.ProcessorTopology.PerformanceCoreCount() ?? Environment.ProcessorCount});
+        """);
 }
