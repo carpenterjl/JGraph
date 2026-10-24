@@ -302,7 +302,9 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
         return Guarded(
             () =>
             {
-                IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, _dialect);
+                IReadOnlyList<Stmt> program = asFile && JgsPcode.IsPcode(sourceId)
+                    ? JgsPcode.Load(sourceId) // an mcc -j program's main (K3b)
+                    : Parser.Parse(code, sourceId, _dialect);
                 _interpreter.AtPrompt = !asFile; // where 'clear import' is allowed (ADR 0176)
 
                 // A deployed program's file runs the startup it was built with first, and its main

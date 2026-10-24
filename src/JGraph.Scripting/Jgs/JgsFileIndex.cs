@@ -28,6 +28,9 @@ internal sealed class JgsFileIndex
     internal sealed class Folder
     {
         public readonly HashSet<string> Stems = new(StringComparer.Ordinal);
+
+        /// <summary>The stems of the folder's P-files (stage K3b), so a lookup probes for a .p only where one is.</summary>
+        public readonly HashSet<string> PcodeStems = new(StringComparer.Ordinal);
         public string Path = "";
         public DateTime Written;
         public bool Dirty = true;
@@ -91,9 +94,9 @@ internal sealed class JgsFileIndex
         _warn = warn;
     }
 
-    /// <summary>How a folder is listed; a test can stand in for a folder that cannot be read.</summary>
+    /// <summary>How a folder is listed - its code files and P-files; a test can stand in for a folder that cannot be read.</summary>
     internal Func<string, IEnumerable<string>> EnumerateFiles { get; set; } =
-        static folder => Directory.EnumerateFiles(folder, "*.m");
+        static folder => Directory.EnumerateFiles(folder, "*.m").Concat(Directory.EnumerateFiles(folder, "*" + JgsPcode.Extension));
 
     /// <summary>How a folder's write time is read; a test can freeze it.</summary>
     internal Func<string, DateTime> LastWrite { get; set; } = Directory.GetLastWriteTimeUtc;
@@ -137,6 +140,33 @@ internal sealed class JgsFileIndex
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Whether some search folder holds <c><paramref name="stem"/>.p</c>: asked before every lookup
+    /// probes the disk for a P-file, which would otherwise cost each call of a file's function one
+    /// more probe per folder (stage K3b).
+    /// </summary>
+    public bool HoldsPcode(string stem)
+    {
+        Refresh();
+        foreach (string folder in _lastSearched)
+        {
+            if (_folders.TryGetValue(folder, out Folder? entry) && entry.PcodeStems.Contains(stem))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>Whether the folder given as a full path (a <c>private/</c> folder) holds <c><paramref name="stem"/>.p</c>.</summary>
+    internal bool HoldsPcodeIn(string fullFolder, string stem)
+    {
+        Folder entry = EntryFor(fullFolder);
+        StemsOf(entry);
+        return entry.PcodeStems.Contains(stem);
     }
 
     /// <summary>The <c>.m</c> stems <paramref name="folder"/> holds, read now if it has not been.</summary>
@@ -196,7 +226,7 @@ internal sealed class JgsFileIndex
             return; // not a path the file system will accept either; the write itself will say so
         }
 
-        // Only a .m file or an .mlapp can change what a name means. A write with any other
+        // Only a .m file, a P-file or an .mlapp can change what a name means. A write with any other
         // extension — an image in a loop, a diary, a .mat — leaves the stems alone, unless the path
         // names a folder the index knows (a folder called v1.2 has an "extension" too).
         string extension = Path.GetExtension(full);
@@ -216,6 +246,7 @@ internal sealed class JgsFileIndex
     /// <summary>Whether a file of this extension answers to its name: a code file, or an App Designer file (U7).</summary>
     private static bool IsCodeExtension(string extension) =>
         extension.Equals(".m", StringComparison.OrdinalIgnoreCase)
+        || extension.Equals(JgsPcode.Extension, StringComparison.OrdinalIgnoreCase)
         || extension.Equals(JgsMlapp.Extension, StringComparison.OrdinalIgnoreCase);
 
     private void MarkDirty(string? folder)
@@ -354,6 +385,7 @@ internal sealed class JgsFileIndex
     private void ReadFolder(string folder, Folder entry)
     {
         var stems = new HashSet<string>(StringComparer.Ordinal);
+        var pcodeStems = new HashSet<string>(StringComparer.Ordinal);
         DateTime written;
         try
         {
@@ -362,9 +394,14 @@ internal sealed class JgsFileIndex
             written = LastWrite(folder);
             foreach (string file in EnumerateFiles(folder))
             {
-                if (IsCodeExtension(Path.GetExtension(file)))
+                string extension = Path.GetExtension(file);
+                if (IsCodeExtension(extension))
                 {
                     stems.Add(Path.GetFileNameWithoutExtension(file));
+                    if (extension.Equals(JgsPcode.Extension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        pcodeStems.Add(Path.GetFileNameWithoutExtension(file));
+                    }
                 }
             }
         }
@@ -376,6 +413,7 @@ internal sealed class JgsFileIndex
             entry.Written = MissingFolderTime(folder);
             entry.Racy = false;
             entry.Stems.Clear();
+            entry.PcodeStems.Clear();
             entry.Dirty = false;
             entry.Read = true;
             return;
@@ -398,6 +436,8 @@ internal sealed class JgsFileIndex
         entry.Racy = UtcNow() - written < RacyWindow;
         entry.Stems.Clear();
         entry.Stems.UnionWith(stems);
+        entry.PcodeStems.Clear();
+        entry.PcodeStems.UnionWith(pcodeStems);
         entry.Dirty = false;
         entry.Read = true;
         entry.Warned = false;

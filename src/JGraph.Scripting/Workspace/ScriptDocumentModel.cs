@@ -65,7 +65,7 @@ public sealed class ScriptDocumentModel
         : Path.GetExtension(path).ToLowerInvariant() switch
         {
             ".jgs" => "JGS",
-            ".m" or ".mlapp" => "MATLAB", // an App Designer file holds a MATLAB class file (U7)
+            ".m" or ".mlapp" or ".p" => "MATLAB", // an App Designer file holds a MATLAB class file (U7), a P-file its tokens (K3b)
             ".csx" or ".cs" => "C#",
             ".py" => "Python",
             _ => "Text",

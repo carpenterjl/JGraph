@@ -299,9 +299,12 @@ internal sealed class JgsDependencyAnalyzer
         var pragmas = new List<SourcePragma>();
         try
         {
-            program = Parser.Parse(JgsMlapp.ReadSource(file), file, JgsDialect.Matlab, pragmas);
+            // A P-file is walked as the tokens it holds (stage K3b; it has no pragmas left).
+            program = JgsPcode.IsPcode(file)
+                ? JgsPcode.Load(file)
+                : Parser.Parse(JgsMlapp.ReadSource(file), file, JgsDialect.Matlab, pragmas);
         }
-        catch (Exception ex) when (ex is JgsSyntaxException or IOException or InvalidDataException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is JgsSyntaxException or JgsRuntimeException or IOException or InvalidDataException or UnauthorizedAccessException)
         {
             return; // a file that does not read or parse is taken as it is; running it reports why
         }

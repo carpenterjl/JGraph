@@ -21,6 +21,12 @@ public sealed class CtfBuild
     /// <summary>Each file's source on disk and its place under the file root (forward slashes).</summary>
     public required IReadOnlyList<(string Source, string ArchivePath)> Files { get; init; }
 
+    /// <summary>Files the build made rather than read (a P-file for <c>mcc -j</c>), by their place under the file root.</summary>
+    public IReadOnlyList<(byte[] Contents, string ArchivePath)> MadeFiles { get; init; } = [];
+
+    /// <summary>How the archive's code is stored; <see cref="CtfProtection.PCode"/> when the code files are P-files.</summary>
+    public CtfProtection Protection { get; init; } = CtfProtection.Open;
+
     /// <summary>The folders on the frozen path, relative to the file root, in order.</summary>
     public IReadOnlyList<string> MatlabPath { get; init; } = [];
 
@@ -155,6 +161,11 @@ public static class CtfArchiveWriter
             Add(contents, archivePath, File.ReadAllBytes(source));
         }
 
+        foreach ((byte[] made, string archivePath) in build.MadeFiles)
+        {
+            Add(contents, archivePath, made);
+        }
+
         string uuid = build.Uuid ?? CtfManifest.NewUuid(build.ComponentName);
         var manifest = new CtfManifest(
             build.ComponentName, uuid, build.TargetType, build.MatlabPath, build.PublicFunctions,
@@ -163,6 +174,7 @@ public static class CtfArchiveWriter
             MainFunction = build.MainFunction,
             NumericArguments = build.NumericArguments,
             RuntimeOptions = build.RuntimeOptions,
+            Protection = build.Protection,
         };
 
         using var zip = new ZipArchive(output, ZipArchiveMode.Create, leaveOpen: true, Encoding.UTF8);

@@ -1,0 +1,271 @@
+RUN	plain
+  beep.default	on
+  which.helper	<CTF>\k3b_main\k3b_helper.m
+  exist.helper	2
+  call.helper	double [1 1] 6
+  mfilename	<CTF>\k3b_main\k3b_main
+  fileread.helper	992 bytes, starts V2MCC8000MEC
+  fileread.data	data line / 
+  getSecret	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_SECRET' in the vault. Use setSecret to set up the secret.
+  isSecret	0
+  getSecret.other	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_OTHER' in the vault. Use setSecret to set up the secret.
+  listSecrets	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'listSecrets'.
+  error.helper	k3b:neg | negative input | k3b_helper line 4
+  file	<CTF>\.META\buildresult.json	269	{..."Run
+  file	<CTF>\.META\includedSupportPackages.txt	0	
+  file	<CTF>\.META\manifest.xml	46059	<?xml ve
+  file	<CTF>\.META\requiredMCRProducts.txt	18	35002.35
+  file	<CTF>\.META\unresolvedSymbols.txt	20	Path.Sym
+  file	<CTF>\.matlab\matlab.mlsettings	159186	PK......
+  file	<CTF>\.matlab\matlab.prf	241	#MATLAB 
+  file	<CTF>\.matlab\matlabprefs.mat	826	MATLAB 5
+  file	<CTF>\k3b_main\k0_flat.m	1015	V2MCC800
+  file	<CTF>\k3b_main\k0_quiet.m	982	V2MCC800
+  file	<CTF>\k3b_main\k0_show.m	1264	V2MCC800
+  file	<CTF>\k3b_main\k3b_data.txt	10	data lin
+  file	<CTF>\k3b_main\k3b_helper.m	992	V2MCC800
+  file	<CTF>\k3b_main\k3b_main.m	1555	V2MCC800
+  file	<CTF>\toolbox\compiler\Contents.m	54	% MATLAB
+  file	<CTF>\toolbox\compiler\ctfroot.m	1163	V2MCC800
+  file	<CTF>\toolbox\compiler\get_features_at_compile_time.m	1986	V2MCC800
+  file	<CTF>\toolbox\local\Contents.m	55	% Genera
+  file	<CTF>\toolbox\local\matlabrc.m	1294	V2MCC800
+  file	<CTF>\toolbox\local\printopt.m	1267	V2MCC800
+  EXIT	0
+  SECONDS	2.8
+RUN	plain K3B_SECRET=from-environment
+  beep.default	on
+  which.helper	<CTF>\k3b_main\k3b_helper.m
+  exist.helper	2
+  call.helper	double [1 1] 6
+  mfilename	<CTF>\k3b_main\k3b_main
+  fileread.helper	992 bytes, starts V2MCC8000MEC
+  fileread.data	data line / 
+  getSecret	string from-environment
+  isSecret	1
+  getSecret.other	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_OTHER' in the vault. Use setSecret to set up the secret.
+  listSecrets	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'listSecrets'.
+  error.helper	k3b:neg | negative input | k3b_helper line 4
+  file	<CTF>\.META\buildresult.json	269	{..."Run
+  file	<CTF>\.META\includedSupportPackages.txt	0	
+  file	<CTF>\.META\manifest.xml	46059	<?xml ve
+  file	<CTF>\.META\requiredMCRProducts.txt	18	35002.35
+  file	<CTF>\.META\unresolvedSymbols.txt	20	Path.Sym
+  file	<CTF>\.matlab\matlab.mlsettings	159186	PK......
+  file	<CTF>\.matlab\matlab.prf	241	#MATLAB 
+  file	<CTF>\.matlab\matlabprefs.mat	826	MATLAB 5
+  file	<CTF>\k3b_main\k0_flat.m	1015	V2MCC800
+  file	<CTF>\k3b_main\k0_quiet.m	982	V2MCC800
+  file	<CTF>\k3b_main\k0_show.m	1264	V2MCC800
+  file	<CTF>\k3b_main\k3b_data.txt	10	data lin
+  file	<CTF>\k3b_main\k3b_helper.m	992	V2MCC800
+  file	<CTF>\k3b_main\k3b_main.m	1555	V2MCC800
+  file	<CTF>\toolbox\compiler\Contents.m	54	% MATLAB
+  file	<CTF>\toolbox\compiler\ctfroot.m	1163	V2MCC800
+  file	<CTF>\toolbox\compiler\get_features_at_compile_time.m	1986	V2MCC800
+  file	<CTF>\toolbox\local\Contents.m	55	% Genera
+  file	<CTF>\toolbox\local\matlabrc.m	1294	V2MCC800
+  file	<CTF>\toolbox\local\printopt.m	1267	V2MCC800
+  EXIT	0
+  SECONDS	2.4
+RUN	s
+  beep.default	on
+  which.helper	opcfs:file:///<W>/bw/b_s/k3b_main_mcr/k3b_main_<UUID>/k3b_main!/k3b_main/k3b_helper.m
+  exist.helper	2
+  call.helper	double [1 1] 6
+  mfilename	opcfs:file:///<W>/bw/b_s/k3b_main_mcr/k3b_main_<UUID>/k3b_main!/k3b_main/k3b_main
+  fileread.helper	132 bytes, starts function r =
+  fileread.data	data line / 
+  getSecret	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_SECRET' in the vault. Use setSecret to set up the secret.
+  isSecret	0
+  getSecret.other	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_OTHER' in the vault. Use setSecret to set up the secret.
+  listSecrets	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'listSecrets'.
+  error.helper	k3b:neg | negative input | k3b_helper line 4
+  file	<CTF>\.META\buildresult.json	269	{..."Run
+  file	<CTF>\.META\includedSupportPackages.txt	0	
+  file	<CTF>\.META\manifest.xml	46095	<?xml ve
+  file	<CTF>\.META\requiredMCRProducts.txt	18	35002.35
+  file	<CTF>\.matlab\matlab.mlsettings	159201	PK......
+  file	<CTF>\.matlab\matlab.prf	241	#MATLAB 
+  file	<CTF>\.matlab\matlabprefs.mat	826	MATLAB 5
+  file	<CTF>\k3b_main\k3b_data.txt	10	data lin
+  file	<CTF>\k3b_main_<UUID>\k3b_main	10584	PK......
+  file	<CTF>\toolbox\compiler\Contents.m	54	% MATLAB
+  file	<CTF>\toolbox\compiler\ctfroot.m	1162	V2MCC800
+  file	<CTF>\toolbox\compiler\get_features_at_compile_time.m	1994	V2MCC800
+  file	<CTF>\toolbox\local\Contents.m	55	% Genera
+  file	<CTF>\toolbox\local\matlabrc.m	1295	V2MCC800
+  file	<CTF>\toolbox\local\printopt.m	1266	V2MCC800
+  EXIT	0
+  SECONDS	4.0
+RUN	j
+  beep.default	on
+  which.helper	<CTF>\k3b_main\k3b_helper.p
+  exist.helper	6
+  call.helper	double [1 1] 6
+  mfilename	<CTF>\k3b_main\k3b_main
+  fileread.helper	2049 bytes, starts V2MCC8000MEC
+  fileread.data	data line / 
+  getSecret	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_SECRET' in the vault. Use setSecret to set up the secret.
+  isSecret	0
+  getSecret.other	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_OTHER' in the vault. Use setSecret to set up the secret.
+  listSecrets	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'listSecrets'.
+  error.helper	k3b:neg | negative input | k3b_helper line 0
+  file	<CTF>\.META\buildresult.json	269	{..."Run
+  file	<CTF>\.META\includedSupportPackages.txt	0	
+  file	<CTF>\.META\manifest.xml	46059	<?xml ve
+  file	<CTF>\.META\requiredMCRProducts.txt	18	35002.35
+  file	<CTF>\.META\unresolvedSymbols.txt	20	Path.Sym
+  file	<CTF>\.matlab\matlab.mlsettings	159181	PK......
+  file	<CTF>\.matlab\matlab.prf	241	#MATLAB 
+  file	<CTF>\.matlab\matlabprefs.mat	826	MATLAB 5
+  file	<CTF>\k3b_main\k0_flat.p	2092	V2MCC800
+  file	<CTF>\k3b_main\k0_quiet.p	2054	V2MCC800
+  file	<CTF>\k3b_main\k0_show.p	2815	V2MCC800
+  file	<CTF>\k3b_main\k3b_data.txt	10	data lin
+  file	<CTF>\k3b_main\k3b_helper.p	2049	V2MCC800
+  file	<CTF>\k3b_main\k3b_main.p	3893	V2MCC800
+  file	<CTF>\toolbox\compiler\Contents.m	54	% MATLAB
+  file	<CTF>\toolbox\compiler\ctfroot.p	2409	V2MCC800
+  file	<CTF>\toolbox\compiler\get_features_at_compile_time.m	1991	V2MCC800
+  file	<CTF>\toolbox\local\Contents.m	55	% Genera
+  file	<CTF>\toolbox\local\matlabrc.p	2730	V2MCC800
+  file	<CTF>\toolbox\local\printopt.p	2555	V2MCC800
+  EXIT	0
+  SECONDS	2.7
+RUN	sj
+  beep.default	on
+  which.helper	opcfs:file:///<W>/bw/b_sj/k3b_main_mcr/k3b_main_<UUID>/k3b_main!/k3b_main/k3b_helper.p
+  exist.helper	6
+  call.helper	double [1 1] 6
+  mfilename	opcfs:file:///<W>/bw/b_sj/k3b_main_mcr/k3b_main_<UUID>/k3b_main!/k3b_main/k3b_main
+  fileread.helper	1383 bytes, starts v02.02v02.02
+  fileread.data	data line / 
+  getSecret	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_SECRET' in the vault. Use setSecret to set up the secret.
+  isSecret	0
+  getSecret.other	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_OTHER' in the vault. Use setSecret to set up the secret.
+  listSecrets	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'listSecrets'.
+  error.helper	k3b:neg | negative input | k3b_helper line 0
+  file	<CTF>\.META\buildresult.json	269	{..."Run
+  file	<CTF>\.META\includedSupportPackages.txt	0	
+  file	<CTF>\.META\manifest.xml	46095	<?xml ve
+  file	<CTF>\.META\requiredMCRProducts.txt	18	35002.35
+  file	<CTF>\.matlab\matlab.mlsettings	159207	PK......
+  file	<CTF>\.matlab\matlab.prf	241	#MATLAB 
+  file	<CTF>\.matlab\matlabprefs.mat	826	MATLAB 5
+  file	<CTF>\k3b_main\k3b_data.txt	10	data lin
+  file	<CTF>\k3b_main_<UUID>\k3b_main	17464	PK......
+  file	<CTF>\toolbox\compiler\Contents.m	54	% MATLAB
+  file	<CTF>\toolbox\compiler\ctfroot.p	2411	V2MCC800
+  file	<CTF>\toolbox\compiler\get_features_at_compile_time.m	1991	V2MCC800
+  file	<CTF>\toolbox\local\Contents.m	55	% Genera
+  file	<CTF>\toolbox\local\matlabrc.p	2730	V2MCC800
+  file	<CTF>\toolbox\local\printopt.p	2556	V2MCC800
+  EXIT	0
+  SECONDS	3.7
+RUN	k
+  beep.default	on
+  which.helper	<CTF>\k3b_main\k3b_helper.m
+  exist.helper	2
+  call.helper	double [1 1] 6
+  mfilename	<CTF>\k3b_main\k3b_main
+  fileread.helper	992 bytes, starts V2MCC8000MEC
+  fileread.data	data line / 
+  getSecret	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_SECRET' in the vault. Use setSecret to set up the secret.
+  isSecret	0
+  getSecret.other	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_OTHER' in the vault. Use setSecret to set up the secret.
+  listSecrets	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'listSecrets'.
+  error.helper	k3b:neg | negative input | k3b_helper line 4
+  file	<CTF>\.META\buildresult.json	269	{..."Run
+  file	<CTF>\.META\includedSupportPackages.txt	0	
+  file	<CTF>\.META\manifest.xml	46074	<?xml ve
+  file	<CTF>\.META\requiredMCRProducts.txt	18	35002.35
+  file	<CTF>\.META\unresolvedSymbols.txt	20	Path.Sym
+  file	<CTF>\.matlab\matlab.mlsettings	159187	PK......
+  file	<CTF>\.matlab\matlab.prf	241	#MATLAB 
+  file	<CTF>\.matlab\matlabprefs.mat	826	MATLAB 5
+  file	<CTF>\k3b_main\k0_flat.m	1014	V2MCC800
+  file	<CTF>\k3b_main\k0_quiet.m	982	V2MCC800
+  file	<CTF>\k3b_main\k0_show.m	1267	V2MCC800
+  file	<CTF>\k3b_main\k3b_data.txt	10	data lin
+  file	<CTF>\k3b_main\k3b_helper.m	992	V2MCC800
+  file	<CTF>\k3b_main\k3b_main.m	1557	V2MCC800
+  file	<CTF>\k3b_main_<UUID>\k3b_main.mexw64	14864	/.q$.^.u
+  file	<CTF>\toolbox\compiler\Contents.m	54	% MATLAB
+  file	<CTF>\toolbox\compiler\ctfroot.m	1165	V2MCC800
+  file	<CTF>\toolbox\compiler\get_features_at_compile_time.m	1987	V2MCC800
+  file	<CTF>\toolbox\local\Contents.m	55	% Genera
+  file	<CTF>\toolbox\local\matlabrc.m	1296	V2MCC800
+  file	<CTF>\toolbox\local\printopt.m	1267	V2MCC800
+  EXIT	0
+  SECONDS	2.8
+RUN	Jnone
+  beep.default	on
+  which.helper	<CTF>\k3b_main\k3b_helper.m
+  exist.helper	2
+  call.helper	double [1 1] 6
+  mfilename	<CTF>\k3b_main\k3b_main
+  fileread.helper	992 bytes, starts V2MCC8000MEC
+  fileread.data	data line / 
+  getSecret	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_SECRET' in the vault. Use setSecret to set up the secret.
+  isSecret	0
+  getSecret.other	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_OTHER' in the vault. Use setSecret to set up the secret.
+  listSecrets	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'listSecrets'.
+  error.helper	k3b:neg | negative input | k3b_helper line 4
+  file	<CTF>\.META\buildresult.json	269	{..."Run
+  file	<CTF>\.META\includedSupportPackages.txt	0	
+  file	<CTF>\.META\manifest.xml	46059	<?xml ve
+  file	<CTF>\.META\requiredMCRProducts.txt	18	35002.35
+  file	<CTF>\.META\unresolvedSymbols.txt	20	Path.Sym
+  file	<CTF>\.matlab\matlab.mlsettings	159204	PK......
+  file	<CTF>\.matlab\matlab.prf	241	#MATLAB 
+  file	<CTF>\.matlab\matlabprefs.mat	826	MATLAB 5
+  file	<CTF>\k3b_main\k0_flat.m	1016	V2MCC800
+  file	<CTF>\k3b_main\k0_quiet.m	982	V2MCC800
+  file	<CTF>\k3b_main\k0_show.m	1266	V2MCC800
+  file	<CTF>\k3b_main\k3b_data.txt	10	data lin
+  file	<CTF>\k3b_main\k3b_helper.m	992	V2MCC800
+  file	<CTF>\k3b_main\k3b_main.m	1548	V2MCC800
+  file	<CTF>\toolbox\compiler\Contents.m	54	% MATLAB
+  file	<CTF>\toolbox\compiler\ctfroot.m	1161	V2MCC800
+  file	<CTF>\toolbox\compiler\get_features_at_compile_time.m	1994	V2MCC800
+  file	<CTF>\toolbox\local\Contents.m	55	% Genera
+  file	<CTF>\toolbox\local\matlabrc.m	1296	V2MCC800
+  file	<CTF>\toolbox\local\printopt.m	1267	V2MCC800
+  EXIT	0
+  SECONDS	2.9
+RUN	Jempty
+  beep.default	on
+  which.helper	<CTF>\k3b_main\k3b_helper.m
+  exist.helper	2
+  call.helper	double [1 1] 6
+  mfilename	<CTF>\k3b_main\k3b_main
+  fileread.helper	992 bytes, starts V2MCC8000MEC
+  fileread.data	data line / 
+  getSecret	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_SECRET' in the vault. Use setSecret to set up the secret.
+  isSecret	0
+  getSecret.other	ERR MATLAB:authnz:secretapis:SecretValueNotFound | No secret value found for secret name 'K3B_OTHER' in the vault. Use setSecret to set up the secret.
+  listSecrets	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'listSecrets'.
+  error.helper	k3b:neg | negative input | k3b_helper line 4
+  file	<CTF>\.META\buildresult.json	269	{..."Run
+  file	<CTF>\.META\includedSupportPackages.txt	0	
+  file	<CTF>\.META\manifest.xml	46059	<?xml ve
+  file	<CTF>\.META\requiredMCRProducts.txt	18	35002.35
+  file	<CTF>\.META\unresolvedSymbols.txt	20	Path.Sym
+  file	<CTF>\.matlab\matlab.mlsettings	159206	PK......
+  file	<CTF>\.matlab\matlab.prf	241	#MATLAB 
+  file	<CTF>\.matlab\matlabprefs.mat	826	MATLAB 5
+  file	<CTF>\k3b_main\k0_flat.m	1014	V2MCC800
+  file	<CTF>\k3b_main\k0_quiet.m	982	V2MCC800
+  file	<CTF>\k3b_main\k0_show.m	1267	V2MCC800
+  file	<CTF>\k3b_main\k3b_data.txt	10	data lin
+  file	<CTF>\k3b_main\k3b_helper.m	992	V2MCC800
+  file	<CTF>\k3b_main\k3b_main.m	1559	V2MCC800
+  file	<CTF>\toolbox\compiler\Contents.m	54	% MATLAB
+  file	<CTF>\toolbox\compiler\ctfroot.m	1163	V2MCC800
+  file	<CTF>\toolbox\compiler\get_features_at_compile_time.m	1996	V2MCC800
+  file	<CTF>\toolbox\local\Contents.m	55	% Genera
+  file	<CTF>\toolbox\local\matlabrc.m	1295	V2MCC800
+  file	<CTF>\toolbox\local\printopt.m	1266	V2MCC800
+  EXIT	0
+  SECONDS	2.7

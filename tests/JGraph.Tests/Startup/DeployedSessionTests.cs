@@ -555,12 +555,17 @@ public sealed class DeployedSessionTests : IDisposable
     /// K6's mcc will make it) and runs it as <c>jgraph --deployed app.ctf -- args</c>, with the
     /// runtime cache under the test's folder.
     /// </summary>
-    private async Task<int> Archived(string main, string[]? arguments = null, Action<JGraph.Deploy.CtfBuild>? check = null)
+    private async Task<int> Archived(string main, string[]? arguments = null, Action<JGraph.Deploy.CtfBuild>? check = null, bool pcode = false)
     {
         var files = Directory.EnumerateFiles(Ctf, "*", SearchOption.AllDirectories).Order(StringComparer.Ordinal)
             .Select(f => new JGraph.Deploy.DependencyFile(f, f == main ? JGraph.Deploy.DependencyReason.Root : JGraph.Deploy.DependencyReason.Code, null))
             .ToList();
         JGraph.Deploy.CtfBuild build = JGraph.Deploy.CtfLayout.FromReport("app", main, new JGraph.Deploy.DependencyReport(files, [], [], []));
+        if (pcode)
+        {
+            build = JgsPcode.PcodeBuild(build); // mcc -j (K3b)
+        }
+
         check?.Invoke(build);
         string archive = Path.Combine(_root, "app.ctf");
         JGraph.Deploy.CtfArchiveWriter.Write(archive, build);
@@ -649,6 +654,82 @@ public sealed class DeployedSessionTests : IDisposable
         options = StartupCommandLine.Parse(["--deployed", Path.Combine(_root, "missing.ctf")]);
         Assert.Equal(StartupExitCodes.UsageError, await BatchRunner.RunAsync(options, Engines, _output, static (_, _) => { }));
         Assert.Contains("does not exist", _output.ErrorText);
+    }
+
+    // --- P-code and secrets (stage K3b) --------------------------------------------------------
+
+    [Fact]
+    public async Task Pcode_AnMccJProgramRunsItsP_Files_AsR2025bsDoes()
+    {
+        // k3b_run's 'j' build: the helper's P-file is what which finds, exist answers 6, an error
+        // in it reports line 0, and a file of comments stays an .m.
+        Put(Component, "helper.m", "function r = helper(a)\nif a < 0\n    error('k3b:neg', 'negative input');\nend\nr = a * 2;\nend\n");
+        Put(Component, "Contents.m", "% app\n");
+        string main = Main("""
+            fprintf('which=%s\n', which('helper'));
+            fprintf('exist=%d\n', exist('helper'));
+            fprintf('call=%d\n', helper(3));
+            fprintf('mfilename=%s\n', mfilename('fullpath'));
+            try
+                helper(-1);
+            catch e
+                fprintf('error=%s %s line %d\n', e.identifier, e.stack(1).name, e.stack(1).line);
+            end
+            """);
+
+        int code = await Archived(main, check: b => Assert.Equal(JGraph.Deploy.CtfProtection.PCode, b.Protection), pcode: true);
+        Assert.True(code == 0, _output.ErrorText);
+        string entry = Directory.GetDirectories(Directory.GetDirectories(CacheRoot).Single()).Single();
+        Assert.Equal(
+            [
+                "which=" + Path.Combine(entry, "app", "helper.p"), "exist=6", "call=6",
+                "mfilename=" + Path.Combine(entry, "app", "app"), "error=k3b:neg helper line 0",
+            ],
+            _output.NormalLines);
+        Assert.Equal(["Contents.m", "app.p", "helper.p"], Directory.GetFiles(Path.Combine(entry, "app")).Select(Path.GetFileName).Order(StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public async Task Secrets_ADeployedProgramReadsThemFromTheEnvironment_AsR2025bsRuntimeDoes()
+    {
+        // k3b_run and k3b_secrets_run: the variable's value as a string, the name's case not
+        // mattering; a name the environment lacks refused; the vault's writers and listSecrets absent.
+        string main = Main("""
+            v = getSecret('JGRAPH_K3B_SECRET');
+            fprintf('get=%s %s\n', class(v), v);
+            fprintf('lower=%s\n', getSecret('jgraph_k3b_secret'));
+            fprintf('is=%d %d\n', isSecret('JGRAPH_K3B_SECRET'), isSecret('JGRAPH_K3B_NOSUCH'));
+            fprintf('metadata=%s %d\n', class(getSecretMetadata('JGRAPH_K3B_SECRET')), numEntries(getSecretMetadata('JGRAPH_K3B_SECRET')));
+            names = {'getSecret', 'listSecrets', 'setSecret', 'removeSecret', 'setSecretMetadata'};
+            for i = 1:numel(names)
+                try
+                    feval(names{i}, 'JGRAPH_K3B_NOSUCH');
+                catch e
+                    fprintf('%s=%s\n', names{i}, e.identifier);
+                end
+            end
+            getSecret('JGRAPH_K3B_SECRET')
+            """);
+
+        string? before = Environment.GetEnvironmentVariable("JGRAPH_K3B_SECRET");
+        Environment.SetEnvironmentVariable("JGRAPH_K3B_SECRET", "from-environment");
+        try
+        {
+            Assert.Equal(0, await Archived(main));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("JGRAPH_K3B_SECRET", before);
+        }
+
+        Assert.Equal(
+            [
+                "get=string from-environment", "lower=from-environment", "is=1 0", "metadata=dictionary 0",
+                "getSecret=MATLAB:authnz:secretapis:SecretValueNotFound", "listSecrets=MATLAB:UndefinedFunction",
+                "setSecret=MATLAB:UndefinedFunction", "removeSecret=MATLAB:UndefinedFunction",
+                "setSecretMetadata=MATLAB:UndefinedFunction", "****************",
+            ],
+            _output.NormalLines);
     }
 
     [Fact]

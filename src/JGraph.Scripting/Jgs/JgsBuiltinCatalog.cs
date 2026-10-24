@@ -261,6 +261,16 @@ public static class JgsBuiltinCatalog
         Add("zip", "Writes files, folders and wildcard matches into a .zip archive; entries = zip(zipfile, files, rootfolder) names each entry relative to rootfolder (the current folder when omitted).", P("zipfile"), P("files"), Opt("rootfolder"));
         Add("unzip", "Extracts a .zip archive into a folder (the current one when omitted), replacing files already there; files = unzip(zipfile, folder) lists what it wrote.", P("zipfile"), Opt("folder"));
 
+        // --- P-code and secrets (compiler and SDK plan, stage K3b) -----------------------------------
+        Add("pcode", "Writes a P-file (JGraph's own format: the tokens, without comments or line numbers, and not encrypted) for each .m file, folder or wildcard named, into the current folder, or beside the source with -inplace; a P-file is found before the .m beside it.", P("item"), Opt("-inplace"));
+        Add("getSecret", "A secret's value as a string: in a compiled program, the environment variable of that name; JGraph has no vault, so elsewhere it refuses as R2025b does without one.", P("name"));
+        Add("isSecret", "Whether a secret is set: in a compiled program, whether the environment holds a variable of that name.", P("name"));
+        Add("getSecretMetadata", "A secret's metadata dictionary; a secret from the environment has none.", P("name"));
+        Add("setSecret", "Adds a secret to the vault; JGraph has no vault, so it refuses after checking its arguments.", P("name"), Opt("Overwrite"));
+        Add("removeSecret", "Removes a secret from the vault; JGraph has no vault, so it refuses after checking its argument.", P("name"));
+        Add("setSecretMetadata", "Sets a secret's metadata from a dictionary of string keys and cell values; JGraph has no vault, so it refuses after checking its arguments.", P("name"), P("metadata"), Opt("WriteMode"));
+        Add("listSecrets", "A table of the vault's secrets; JGraph has no vault, so it refuses.");
+
         // --- Files, folders, and the machine --------------------------------------------------------
         Add("pwd", "The working directory relative paths resolve against.");
         Add("cd", "Moves to a folder; with no argument it reports where it is.", Opt("folder"));

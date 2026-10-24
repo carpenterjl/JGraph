@@ -93,7 +93,12 @@ internal static class JgsRunner
 
         try
         {
-            IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, dialect);
+            // A P-file (an mcc -j program's main, stage K3b) runs the tokens it holds, not its text;
+            // the launcher names it on the context, as it names a -batch file.
+            string file = sourceId.Length > 0 ? sourceId : context.ScriptPath ?? string.Empty;
+            IReadOnlyList<Stmt> program = JgsPcode.IsPcode(file)
+                ? JgsPcode.Load(file)
+                : Parser.Parse(code, sourceId, dialect);
             JgsEnvironment environment = JgsBuiltins.CreateGlobals(globals, cancellationToken, dialect);
             // The echo goes where disp's text goes, so evalc captures it and the diary records it,
             // as MATLAB's do (ADR 0174).
@@ -362,19 +367,24 @@ internal static class JgsRunner
             string resolved = globals.Resolve(args[0].AsString);
             if (!File.Exists(resolved) && Path.GetExtension(resolved).Length == 0)
             {
-                string withExtension = globals.Resolve(args[0].AsString + ".m");
-                if (File.Exists(withExtension))
+                // A P-file before the .m beside it, as a call finds them (stage K3b).
+                foreach (string extension in (string[])[JgsPcode.Extension, ".m"])
                 {
-                    resolved = withExtension;
+                    string withExtension = globals.Resolve(args[0].AsString + extension);
+                    if (File.Exists(withExtension))
+                    {
+                        resolved = withExtension;
+                        break;
+                    }
                 }
             }
 
             string fullPath;
-            string source;
+            string? source;
             try
             {
                 fullPath = Path.GetFullPath(resolved);
-                source = JgsMlapp.ReadSource(fullPath); // an .mlapp runs the class file it holds (U7)
+                source = JgsPcode.IsPcode(fullPath) ? null : JgsMlapp.ReadSource(fullPath); // an .mlapp runs the class file it holds (U7)
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException or InvalidDataException)
             {
@@ -407,7 +417,9 @@ internal static class JgsRunner
                 // that opens with `function f` calls f), which is what a legacy script that wraps
                 // itself in a function expects; the batch launcher and the console have always done
                 // this, and run() had only hoisted the functions and returned.
-                IReadOnlyList<Stmt> program = Parser.Parse(source, fullPath, included);
+                IReadOnlyList<Stmt> program = source is null
+                    ? JgsPcode.Load(fullPath)
+                    : Parser.Parse(source, fullPath, included);
                 interpreter.Run(program);
                 InvokeMainIfFunctionFile(program, interpreter);
             }
@@ -426,7 +438,9 @@ internal static class JgsRunner
     /// file has to mean the same thing however it was reached.
     /// </summary>
     internal static JgsDialect DialectOfFile(string path, JgsDialect caller) =>
-        Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) || JgsMlapp.IsMlapp(path) ? JgsDialect.Matlab : caller;
+        Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) || JgsMlapp.IsMlapp(path) || JgsPcode.IsPcode(path)
+            ? JgsDialect.Matlab
+            : caller;
 
     /// <summary>
     /// Declares the workspace-management builtins — <c>clear</c>, <c>clearvars</c>, <c>whos</c> —

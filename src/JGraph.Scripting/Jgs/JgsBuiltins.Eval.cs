@@ -24,6 +24,9 @@ internal static partial class JgsBuiltins
         // M145: feval resolves the name it is handed through the interpreter, so it moved here.
         "feval",
         "nargin", "nargout",
+
+        // K3b: pcode reads names where a call would find them.
+        "pcode",
         "lasterr", "lasterror", "lastwarn", "refreshdata",
 
         // M62: the error objects — error is re-declared over its plain form, the rest are new.
@@ -130,6 +133,7 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterPathBuiltins(env, interpreter, host);
+        RegisterPcodeBuiltins(env, interpreter, host); // pcode (stage K3b)
         RegisterEvaluation(Define, env, interpreter, host);
         RegisterWorkspaceQuestions(Define, env, interpreter, host);
         RegisterErrorHistory(Define, env, interpreter, host);
@@ -771,15 +775,16 @@ internal static partial class JgsBuiltins
                 answers = interpreter.FunctionPath?.Find(name) is not null;
             }
 
+            // A P-file is 6, a file that does not load included (stage K3b, measured).
             if (answers)
             {
-                return JgsValue.Number(2);
+                return JgsValue.Number(interpreter.FunctionPath?.Find(name) is { } file && JgsPcode.IsPcode(file) ? 6 : 2);
             }
 
             string resolved = host.Resolve(name);
-            if (wantFile && (File.Exists(resolved) || interpreter.FunctionPath?.FindFile(name) is not null))
+            if (wantFile && (File.Exists(resolved) ? resolved : interpreter.FunctionPath?.FindFile(name)) is { } found)
             {
-                return JgsValue.Number(2); // a code file named with its extension is looked for on the path too (U7)
+                return JgsValue.Number(JgsPcode.IsPcode(found) ? 6 : 2); // a code file named with its extension is looked for on the path too (U7)
             }
 
             if (wantFolder && Directory.Exists(resolved))

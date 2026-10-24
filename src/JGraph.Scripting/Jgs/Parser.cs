@@ -131,6 +131,17 @@ internal sealed class Parser
         return parser.ParseProgram();
     }
 
+    /// <summary>
+    /// Parses tokens the lexer made earlier (stage K3b: what a P-code file holds), each statement
+    /// stamped with <paramref name="sourceId"/>.
+    /// </summary>
+    /// <exception cref="JgsSyntaxException">On any parsing error.</exception>
+    internal static IReadOnlyList<Stmt> Parse(IReadOnlyList<Token> tokens, string sourceId, JgsDialect dialect)
+    {
+        var parser = new Parser(tokens, sourceId, dialect);
+        return parser.ParseProgram();
+    }
+
     private Token Current => _tokens[_pos];
 
     private TokenType NextType => _pos + 1 < _tokens.Count ? _tokens[_pos + 1].Type : TokenType.Eof;

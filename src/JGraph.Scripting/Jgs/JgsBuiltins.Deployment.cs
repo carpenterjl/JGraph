@@ -24,9 +24,11 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// What a deployed session leaves out that this build would otherwise answer: R2025b's runtime
-    /// does not ship them, and calling one is an undefined function (K0, env_plain).
+    /// does not ship them, and calling one is an undefined function (K0, env_plain; the vault's
+    /// writers and listSecrets, K3b's k3b_secrets_run).
     /// </summary>
-    private static readonly string[] DeployedOmissions = ["help", "lookfor"];
+    private static readonly string[] DeployedOmissions =
+        ["help", "lookfor", "listSecrets", "setSecret", "removeSecret", "setSecretMetadata"];
 
     private const string PathAlterationId = "MATLAB:mpath:PathAlterationNotSupported";
 

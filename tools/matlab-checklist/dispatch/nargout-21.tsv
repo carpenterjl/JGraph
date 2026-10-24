@@ -1,0 +1,8 @@
+pcode	0	2
+getSecret	1	2
+isSecret	1	2
+getSecretMetadata	1	2
+setSecret	0	2
+removeSecret	0	2
+setSecretMetadata	0	2
+listSecrets	1	2

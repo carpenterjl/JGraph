@@ -722,6 +722,8 @@ getframe	2	2
 getmcruserdata	1	5
 getpixelposition	1	2
 getpoints	ERR:MATLAB:nargin:isScript	2
+getSecret	1	2
+getSecretMetadata	1	2
 gevcdf	ERR:MATLAB:narginout:notValidMfile	0
 gevfit	ERR:MATLAB:narginout:notValidMfile	0
 gevinv	ERR:MATLAB:narginout:notValidMfile	0
@@ -1060,6 +1062,7 @@ isprop	1	6
 isreal	1	5
 isrow	1	5
 isscalar	1	5
+isSecret	1	2
 issingle	ERR:MATLAB:narginout:notValidMfile	0
 issorted	1	5
 issortedrows	1	5
@@ -1152,6 +1155,7 @@ linspace	1	2
 listdlg	2	2
 listener	ERR:MATLAB:narginout:notValidMfile	0
 listfonts	1	2
+listSecrets	1	2
 load	1	5
 loadfigure	ERR:MATLAB:narginout:notValidMfile	0
 log	1	5
@@ -1502,6 +1506,7 @@ pcacov	ERR:MATLAB:narginout:notValidMfile	0
 pcares	ERR:MATLAB:narginout:notValidMfile	0
 pcg	5	2
 pchip	1	2
+pcode	0	2
 pcolor	1	2
 pcov	-1	2
 pdepe	-1	2
@@ -1693,6 +1698,7 @@ rem	1	5
 remez	3	2
 remezord	4	2
 remove	ERR:MATLAB:narginout:notValidMfile	0
+removeSecret	0	2
 removeStyle	ERR:MATLAB:narginout:notValidMfile	0
 removeToolbarExplorationButtons	0	6
 rendererinfo	1	6
@@ -1807,6 +1813,8 @@ setenv	0	2
 setfield	1	2
 setmcruserdata	0	5
 setpixelposition	0	2
+setSecret	0	2
+setSecretMetadata	0	2
 setstr	1	5
 settlingtime	3	2
 setxor	3	2

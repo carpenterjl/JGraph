@@ -1,0 +1,164 @@
+pcode.one	ok
+pcode.one.written	char [1 6] 'k3pf.p'
+pcode.one.src	char [1 60] 'k3pbad.m k3pboth.m k3pc.m k3pdeep.m k3pf.m k3plocal.m k3ps.m'
+pcode.noext	ok
+pcode.noext.written	char [1 13] 'k3pf.p k3ps.p'
+pcode.inplace	ok
+pcode.inplace.src	char [1 67] 'k3pbad.m k3pboth.m k3pc.m k3pc.p k3pdeep.m k3pf.m k3plocal.m k3ps.m'
+pcode.inplace.out	char [1 13] 'k3pf.p k3ps.p'
+pcode.syntax	ERR MATLAB:m_improper_grouping | Error: File: <W>\pw\src\k3pbad.m Line: 2 Column: 7 / Unexpected ';' in parentheses. When creating a matrix, use square brackets [].
+pcode.syntax.written	char [1 13] 'k3pf.p k3ps.p'
+[Warning: Unable to find file with '.m' extension for argument
+'<W>\pw\src\nosuch.m'. Check that a matching file exists
+and that you have permission to read it.] 
+[> In pcode (line 221)
+In probe_k3b_pcode>@()pcode(fullfile(src,'nosuch.m')) (line 52)
+In k0_do (line 5)
+In probe_k3b_pcode (line 52)] 
+pcode.missing	ok
+pcode.missing.warn	MATLAB:pcode:FileNotFound | Unable to find file with '.m' extension for argument '<W>\pw\src\nosuch.m'. Check that a matching file exists and that you have permission to read it.
+[Warning: Unable to find file with '.m' extension for argument 'k3nosuchfile'. Check that a matching file exists and that you have permission to read it.] 
+[> In pcode (line 221)
+In probe_k3b_pcode>@()pcode('k3nosuchfile') (line 53)
+In k0_do (line 5)
+In probe_k3b_pcode (line 53)] 
+pcode.missing.noext	ok
+pcode.missing.noext.warn	MATLAB:pcode:FileNotFound | Unable to find file with '.m' extension for argument 'k3nosuchfile'. Check that a matching file exists and that you have permission to read it.
+pcode.noargs	ok
+pcode.nargout	ERR MATLAB:TooManyOutputs | Too many output arguments.
+pcode.number	ERR MATLAB:pcode:ArgMustBeString | Input argument must be a nonempty string or character vector.
+pcode.string	ok
+pcode.two	ok
+pcode.two.written	char [1 44] 'k3pboth.p k3pdeep.p k3pf.p k3plocal.p k3ps.p'
+pcode.badopt	ERR MATLAB:pcode:UnknownFlag | Unknown flag '-nosuch'.
+pcode.r2022a	ok
+pcode.r2007b	ok
+pcode.folder	ERR MATLAB:m_improper_grouping | Error: File: <W>\pw\src\k3pbad.m Line: 2 Column: 7 / Unexpected ';' in parentheses. When creating a matrix, use square brackets [].
+pcode.folder.written	char [1 44] 'k3pboth.p k3pdeep.p k3pf.p k3plocal.p k3ps.p'
+pcode.wild	ok
+[Warning: Unable to generate P-code file for argument
+'<W>\pw\src\notes.txt'. File must have a '.m' extension.] 
+[> In pcode (line 201)
+In probe_k3b_pcode>@()pcode(fullfile(src,'notes.txt')) (line 66)
+In k0_do (line 5)
+In probe_k3b_pcode (line 66)] 
+pcode.txt	ok
+pcode.txt.warn	MATLAB:pcode:FileUnsupported | Unable to generate P-code file for argument '<W>\pw\src\notes.txt'. File must have a '.m' extension.
+[Warning: Unable to generate P-code file for argument
+'<W>\pw\src\notes.txt'. File must have a '.m' extension.] 
+[> In pcode (line 201)
+In probe_k3b_pcode>@()pcode(fullfile(src,'notes.txt')) (line 68)
+In k0_do (line 5)
+In probe_k3b_pcode (line 68)] 
+pcode.txt.exists	ok
+pcode.txt.exists.warn	MATLAB:pcode:FileUnsupported | Unable to generate P-code file for argument '<W>\pw\src\notes.txt'. File must have a '.m' extension.
+pcode.cellarg	ERR MATLAB:pcode:ArgMustBeString | Input argument must be a nonempty string or character vector.
+pfile.head	char [1 49] '7630312e30307630302e3030000a901c v01.00v00.00....'
+pfile.length.vs.source	double [1 2] [189 214]
+pfile.r2007b.head	char [1 49] '7630312e30307630302e3030000a901c v01.00v00.00....'
+pfile.r2007b.length	double [1 1] 189
+pfile.same.twice	logical [1 1] true
+exist.pfile	double [1 1] 6
+exist.pfile.file	double [1 1] 6
+which.pfile	char [1 14] '<W>\out\k3pf.p'
+call.pfile	double [1 1] 2
+call.pfile.mfilename	char [1 4] 'k3pf'
+call.pfile.fullpath	char [1 12] '<W>\out\k3pf'
+nargin.pfile	double [1 1] 2
+nargout.pfile	double [1 1] 2
+error.pfile	char [1 248] 'k3b:neg | negative -2 | <W>\out\k3pf.p:k3pf:0 ; <REPO>\tools\matlab-checklist\compiler-probes\probe_k3b_pcode.m:@()k3pf(-2):91 ; <REPO>\tools\matlab-checklist\compiler-probes\probe_k3b_pcode.m:errinfo:250'
+error.pfile.deep	char [1 185] 'k3b:deep | deep failure | <W>\out\k3pdeep.p:k3pdeep:0 ; <W>\out\k3pdeep.p:k3pdeep:0 ; <REPO>\tools\matlab-checklist\compiler-probes\probe_k3b_pcode.m:@()k3pdeep:92'
+help.pfile.nosource	char [1 36] '<strong>k3pf</strong> is a function.'
+type.pfile	char [1 21] ''k3pf.p' is a P-file.'
+type.pfile.p	char [1 189] 'v01.00v00.00  / wNß±   =      ¹´Yÿ }¬™ñë]æ>‹÷ÌÎMƒ×¿Â¶ÏãoÒúd¢aQÌ·s‹«ƒ;W«'±”Õ}îè‹\„Ÿ0íç¼¶u30Ü–5„^Bõkuû«^_—…ï¨Ü¸Að„î³Œ"^ÒE+..te`·ýVEÑÁyÔ°³œ9"P?7.Žûƒ¥N¯Åÿem*ëZÎØ28Ú›yÞîZÐ¥¸'Ð9‰Ä›Tû'
+fileread.pfile.head	double [1 8] [118 48 49 46 48 48 118 48]
+script.pfile	ERR MATLAB:err_static_workspace_violation | Attempt to add "k3ps_v" to a static workspace.
+local.pfile	double [1 1] 20
+func2str.pfile	char [1 4] 'k3pf'
+functions.pfile	char [1 14] '<W>\out\k3pf.p'
+dbtype.pfile	char [1 21] ''k3pf.p' is a P-file.'
+which.all.pfile	char [1 14] '<W>\out\k3pf.p'
+exist.pfile.withext	double [1 1] 6
+exist.pfile.withext.file	double [1 1] 6
+run.pfile	ERR MATLAB:err_static_workspace_violation | Attempt to add "k3ps_v" to a static workspace.
+run.pfile.noext	ERR MATLAB:err_static_workspace_violation | Attempt to add "k3ps_v" to a static workspace.
+feval.pfile.name	double [1 1] 5
+str2func.pfile	double [1 1] 6
+builtin.pfile	ERR MATLAB:dispatcher:CannotFindBuiltinFunction | Cannot find built-in function 'k3pf'
+inmem.pfile	logical [1 1] true
+getReport.pfile	char [1 704] 'Error using k3pf\nnegative -3\n\nError in probe_k3b_pcode>@()k3pf(-3) (line 111)\nk0_try('getReport.pfile', @() strrep(rep(@() k3pf(-3)), work, '<W>'));\n                                             ^^^^^^^^\nError in probe_k3b_pcode>rep (line 261)\n    f();\n    ^^^\nError in probe_k3b_pcode>@()strrep(rep(@()k3pf(-3)),work,'<W>') (line 111)\nk0_try('getReport.pfile', @() strrep(rep(@() k3pf(-3)), work, '<W>'));\n                                     ^^^^^^^^^^^^^^^^^\nError in k0_try (line 5)\n    v = f();\n        ^^^\nError in probe_k3b_pcode (line 111)\nk0_try('getReport.pfile', @() strrep(rep(@() k3pf(-3)), work, '<W>'));\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^'
+class.pfile.both	double [1 1] 6
+which.class.both	char [1 14] '<W>\src\k3pc.p'
+both.names	char [1 19] 'k3pboth.m k3pboth.p'
+both.call	char [1 6] 'from m'
+both.which	char [1 18] '<W>\both\k3pboth.p'
+both.which.all	char [1 37] '<W>\both\k3pboth.p;<W>\both\k3pboth.m'
+both.exist	double [1 1] 6
+[Warning: P-code file
+<W>\pw\both\k3pboth.p
+is older than source code file
+<W>\pw\both\k3pboth.m.
+<W>\pw\both\k3pboth.p
+may be obsolete and may need to be regenerated.
+Type "help pcode" for information about generating P-code.] 
+[> In probe_k3b_pcode>@()k3pboth (line 134)
+In k0_try (line 5)
+In probe_k3b_pcode (line 134)] 
+both.stale.call	char [1 6] 'from m'
+both.stale.call.warn	MATLAB:pfileOlderThanMfile | P-code file <W>\pw\both\k3pboth.p is older than source code file <W>\pw\both\k3pboth.m. / <W>\pw\both\k3pboth.p may be obsolete and may need to be regenerated. / Type "help pcode" for information about generating P-code.
+both.stale.again	char [1 6] 'from m'
+both.help	char [1 76] '<strong>k3pf</strong> The help line of <strong>k3pf</strong>. /     More help.'
+both.which.pf	char [1 15] '<W>\both\k3pf.p'
+both.help.after.delete	char [1 36] '<strong>k3pf</strong> is a function.'
+tampered.call	ERR MATLAB:corruptPfile_3 | Unable to run P-code file. The file is damaged.
+truncated.call	ERR MATLAB:shortPfileFormat | Unable to run P-code file '<W>\pw\out\k3plocal.p'. The file is damaged.
+junk.call	ERR MATLAB:shortPfileFormat | Unable to run P-code file '<W>\pw\out\k3pjunk.p'. The file is damaged.
+junk.exist	double [1 1] 6
+script.pfile.direct	42	42
+pcode.both.flags	ERR MATLAB:pcode:IncompatibleFlags | The -R2007b option may not be used in combination with the -R2022a option.
+pcode.nodebug.alone	ERR MATLAB:pcode:R2022aRequired | The -nodebug option must be used in combination with the -R2022a option.
+pcode.nodebug	ok
+pcode.nocheck.syntax	ERR MATLAB:screen | Internal error. Bad token 119 bypassed precompile screening.
+pcode.nocheck.written	char [1 54] 'k3pboth.p k3pdeep.p k3pf.p k3pjunk.p k3plocal.p k3ps.p'
+nocheck.call	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'k3pbad'.
+[Warning: Unable to resolve argument '..\src\k3pf.m'. Arguments containing '?' and '..' are not supported.] 
+[> In pcode (line 131)
+In probe_k3b_pcode>@()pcode('..\src\k3pf.m') (line 172)
+In k0_do (line 5)
+In probe_k3b_pcode (line 172)] 
+pcode.dotdot	ok
+pcode.dotdot.warn	MATLAB:pcode:BadPath | Unable to resolve argument '..\src\k3pf.m'. Arguments containing '?' and '..' are not supported.
+[Warning: Unable to resolve argument 'k3p?.m'. Arguments containing '?' and '..' are not supported.] 
+[> In pcode (line 131)
+In probe_k3b_pcode>@()pcode('k3p?.m') (line 173)
+In k0_do (line 5)
+In probe_k3b_pcode (line 173)] 
+pcode.qmark	ok
+pcode.qmark.warn	MATLAB:pcode:BadPath | Unable to resolve argument 'k3p?.m'. Arguments containing '?' and '..' are not supported.
+[Warning: Unable to resolve argument
+'<W>\pw\nosuchdir\k3pf.m'.
+Directory does not exist.] 
+[> In pcode (line 175)
+In probe_k3b_pcode>@()pcode(fullfile(work,'nosuchdir','k3pf.m')) (line 174)
+In k0_do (line 5)
+In probe_k3b_pcode (line 174)] 
+pcode.notpath	ok
+pcode.notpath.warn	MATLAB:pcode:NotPath | Unable to resolve argument '<W>\pw\nosuchdir\k3pf.m'. Directory does not exist.
+pcode.dironly	ERR MATLAB:m_improper_grouping | Error: File: <W>\pw\src\k3pbad.m Line: 2 Column: 7 / Unexpected ';' in parentheses. When creating a matrix, use square brackets [].
+pcode.upper.M	ok
+pcode.p.ext	ok
+pcode.private	ok
+pcode.private.written	char [1 9] 'k3ppriv.p'
+msg.MATLAB:pcode:BadPath	char [1 86] 'Unable to resolve argument 'ARG'. Arguments containing '?' and '..' are not supported.'
+msg.MATLAB:pcode:Ambiguous	char [1 50] ''ARG' names both a MATLAB code file and directory.'
+msg.MATLAB:pcode:NotPath	char [1 59] 'Unable to resolve argument 'ARG'. Directory does not exist.'
+msg.MATLAB:pcode:NotFileName	char [1 83] 'Unable to generate P-code file for argument 'ARG'. File must have a '.m' extension.'
+msg.MATLAB:pcode:IncompatibleFlags	char [1 74] 'The -R2007b option may not be used in combination with the -R2022a option.'
+msg.MATLAB:pcode:R2022aRequired	char [1 72] 'The -nodebug option must be used in combination with the -R2022a option.'
+msg.MATLAB:pcode:FileNotFound	char [1 134] 'Unable to find file with '.m' extension for argument 'ARG'. Check that a matching file exists and that you have permission to read it.'
+msg.MATLAB:pcode:FileUnsupported	char [1 83] 'Unable to generate P-code file for argument 'ARG'. File must have a '.m' extension.'
+msg.MATLAB:pcode:UnknownFlag	char [1 19] 'Unknown flag 'ARG'.'
+msg.MATLAB:pcode:ArgMustBeString	char [1 61] 'Input argument must be a nonempty string or character vector.'
+msg.MATLAB:corruptPfile_3	char [1 47] 'Unable to run P-code file. The file is damaged.'
+msg.MATLAB:shortPfileFormat	char [1 53] 'Unable to run P-code file 'ARG'. The file is damaged.'
+msg.MATLAB:pfileOlderThanMfile	char [1 156] 'P-code file P is older than source code file M. / P may be obsolete and may need to be regenerated. / Type "help pcode" for information about generating P-code.'

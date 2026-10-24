@@ -91,6 +91,14 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, $"type: there is no file '{path}'.");
             }
 
+            // A P-file a name found is named, not listed; one asked for by its file name is listed
+            // as the bytes it holds (R2025b, probe_k3b_pcode).
+            if (JgsPcode.IsPcode(path) && Path.GetExtension(asked).Length == 0)
+            {
+                host.print($"'{Path.GetFileName(path)}' is a P-file.");
+                return JgsValue.Null;
+            }
+
             try
             {
                 host.print(JgsMlapp.ReadSource(path));

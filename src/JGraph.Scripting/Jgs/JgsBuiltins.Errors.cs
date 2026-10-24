@@ -46,16 +46,21 @@ internal static partial class JgsBuiltins
         return none;
     }
 
-    /// <summary><c>ME.stack</c>: an n-by-1 struct array of file, name and line - 0-by-1 when there is no frame.</summary>
+    /// <summary>
+    /// <c>ME.stack</c>: an n-by-1 struct array of file, name and line - 0-by-1 when there is no frame.
+    /// A P-file's frame is named after the file whichever of its functions was running, as its line
+    /// is 0 (stage K3b, measured in probe_k3b_pcode).
+    /// </summary>
     internal static JgsValue StackValue(IReadOnlyList<(string Name, string File, int Line)> listed)
     {
         var frames = new Dictionary<string, JgsValue>[listed.Count];
         for (int i = 0; i < frames.Length; i++)
         {
+            string file = listed[i].File;
             frames[i] = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
-                ["file"] = JgsValue.Str(listed[i].File),
-                ["name"] = JgsValue.Str(listed[i].Name),
+                ["file"] = JgsValue.Str(file),
+                ["name"] = JgsValue.Str(JgsPcode.IsPcode(file) ? Path.GetFileNameWithoutExtension(file) : listed[i].Name),
                 ["line"] = JgsValue.Number(listed[i].Line),
             };
         }

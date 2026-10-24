@@ -1,0 +1,9 @@
+name,kind,method_classes
+pcode,mfile,
+getSecret,mfile,
+isSecret,mfile,
+getSecretMetadata,mfile,
+setSecret,mfile,
+removeSecret,mfile,
+setSecretMetadata,mfile,
+listSecrets,mfile,

@@ -215,8 +215,15 @@ internal sealed class JgsFunctionPath
         // every other file a script names — Resolve already knows that order, so it is not repeated.
         // In one folder an .mlapp is found before an .m of the same name (U7, measured in R2025b).
         // A deployed session's code is on its frozen path alone (stage K1).
+        // A P-file is probed for only where the index has seen one (stage K3b).
+        bool pcode = _index.HoldsPcode(name);
         foreach (string extension in _host.Deployment is null ? CodeExtensions : [])
         {
+            if (!pcode && extension == JgsPcode.Extension)
+            {
+                continue;
+            }
+
             string beside = _host.Resolve(name + extension);
             if (File.Exists(beside))
             {
@@ -228,6 +235,11 @@ internal sealed class JgsFunctionPath
         {
             foreach (string extension in CodeExtensions)
             {
+                if (!pcode && extension == JgsPcode.Extension)
+                {
+                    continue;
+                }
+
                 string candidate = Path.Combine(folder, name + extension);
                 if (File.Exists(candidate))
                 {
@@ -277,8 +289,12 @@ internal sealed class JgsFunctionPath
         return null;
     }
 
-    /// <summary>The extensions a name is looked for under, first found first: an App Designer file, then a code file.</summary>
-    internal static readonly string[] CodeExtensions = [JgsMlapp.Extension, ".m"];
+    /// <summary>
+    /// The extensions a name is looked for under, first found first: an App Designer file, a P-code
+    /// file, then a code file. A P-file is found before the .m beside it (R2025b, measured in
+    /// probe_k3b_pcode); an .mlapp before a P-file is MATLAB's documented order, not measured.
+    /// </summary>
+    internal static readonly string[] CodeExtensions = [JgsMlapp.Extension, JgsPcode.Extension, ".m"];
 
     /// <summary>
     /// Every file <paramref name="name"/> names, in the order MATLAB's <c>which -all</c> lists them:
@@ -370,7 +386,8 @@ internal sealed class JgsFunctionPath
             return false;
         }
 
-        string path = Path.Combine(privateFolder, name + ".m");
+        // A P-file is found before the .m beside it here as anywhere (stage K3b).
+        string path = Path.Combine(privateFolder, name + (_index.HoldsPcodeIn(privateFolder, name) ? JgsPcode.Extension : ".m"));
         _private.TryGetValue(path, out Loaded? cached);
         if (!TryLoadCurrent(name, path, cached, out Loaded loaded))
         {
@@ -453,6 +470,22 @@ internal sealed class JgsFunctionPath
     /// </summary>
     private JgsValue Load(string name, string path)
     {
+        IReadOnlyList<Stmt> program;
+        if (JgsPcode.IsPcode(path))
+        {
+            try
+            {
+                program = JgsPcode.Load(path);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                throw new JgsRuntimeException(0, 0, $"'{name}': cannot read '{path}': {ex.Message}");
+            }
+
+            WarnIfOlderThanSource(path);
+            return Define(name, path, program);
+        }
+
         string source;
         try
         {
@@ -468,7 +501,6 @@ internal sealed class JgsFunctionPath
             throw new JgsRuntimeException(0, 0, $"'{name}': cannot read '{path}': {ex.Message}");
         }
 
-        IReadOnlyList<Stmt> program;
         try
         {
             program = Parser.Parse(source, path, JgsDialect.Matlab);
@@ -486,6 +518,35 @@ internal sealed class JgsFunctionPath
             throw load;
         }
 
+        return Define(name, path, program);
+    }
+
+    /// <summary>
+    /// R2025b's warning when a P-file runs with a newer source beside it: the P-file still runs
+    /// (measured, probe_k3b_pcode), once warned for each time it is read.
+    /// </summary>
+    private void WarnIfOlderThanSource(string path)
+    {
+        string source = Path.ChangeExtension(path, ".m");
+        try
+        {
+            if (!File.Exists(source) || File.GetLastWriteTimeUtc(source) <= File.GetLastWriteTimeUtc(path))
+            {
+                return;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return;
+        }
+
+        JgsBuiltins.Warn(_host, "MATLAB:pfileOlderThanMfile",
+            $"P-code file {path} is older than source code file {source}.\n{path} may be obsolete and may need to be regenerated.\nType \"help pcode\" for information about generating P-code.");
+    }
+
+    /// <summary>The callable a file's parsed program defines, whether it came from source or P-code.</summary>
+    private JgsValue Define(string name, string path, IReadOnlyList<Stmt> program)
+    {
         // A class file holds one classdef, followed by nothing but the file's local functions, and
         // the name it answers to is the file's. What the path hands back for it is the constructor,
         // which is what makes `Circle(2)` an ordinary call: the interpreter never learns a new kind

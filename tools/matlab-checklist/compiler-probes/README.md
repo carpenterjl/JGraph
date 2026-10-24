@@ -1,4 +1,4 @@
-# Compiler and SDK probes (stages K0-K3)
+# Compiler and SDK probes (stages K0-K3b)
 
 Recordings of what R2025b's MATLAB Compiler builds and what the programs it builds do when run,
 for the compiler and SDK plan (`docs/plans/compiler-and-sdk-plan.md`, stage K0). Later stages
@@ -42,6 +42,11 @@ and runs them only when they are named; tell the user before running one.
 | `probe_k2_names.m` | Over the dispatch table's names: the products each needs, and the non-deployable files mcc warns about. Its recording is embedded in `JGraph.Deploy` as R2025b's tables. |
 | `record-k2.ps1` | Runs `probe_k2_depend` and writes `recordings/k2_rfp.out.txt` and `k2_mcc.out.txt`, the tree as `<T>`, the work folder as `<OUT>` (and `<OUT-NODRIVE>` where an archive keeps a path without its drive). |
 | `record-k3-cache.ps1` | Runs K0's `k0_env` and `k0_path` under a fresh `MCR_CACHE_ROOT` per case and writes `recordings/k3_cache.out.txt`: what the runtime cache holds after a first and second run, a deleted or changed file, a deleted marker, entry or index, `MCR_CACHE_SIZE`'s forms, and eviction (stage K3, ADR 0258). R2025b's `extractCTF.exe` was measured by hand through `run-quiet.ps1`; the ADR records its messages. |
+| `probe_k3b_pcode.m` | `pcode`'s outputs, flags, refusals and warnings, and how a P-file runs beside and without its source: precedence, `exist`, line 0, the stale warning, damaged files (stage K3b, ADR 0259). |
+| `probe_k3b_secrets.m` | The secret functions under `-batch`, where the vault is unavailable: their argument checks and refusals, and the messages' texts. |
+| `probe_k3b_build.m` | `mcc -m -C` plain and with `-s`, `-j`, `-s -j`, `-k` and `-J`, each archive's entries and manifest, and `compiler.build`'s `ObfuscateArchive`, `SecretsManifest` and `ExternalEncryptionKey` validation. `-J` fails under `-batch` (no vault). |
+| `probe_k3b_secrets_build.m` | Builds a program that calls every secret function; `record-k3b.ps1` runs it with and without `K3B_SECRET` set. |
+| `record-k3b.ps1` | Runs the four K3b probes and the built programs through `run-quiet.ps1`, and writes `recordings/k3b_pcode.out.txt`, `k3b_secrets.out.txt`, `k3b_build.out.txt`, `k3b_run.out.txt`, `k3b_secrets_build.out.txt` and `k3b_secrets_run.out.txt` (`-Skip` leaves steps out). |
 | `recordings-jgraph/` | JGraph's recordings of K0's cases, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
@@ -57,6 +62,7 @@ powershell -File record-k2.ps1 -WorkRoot <a third scratch>
 matlab -batch "probe_k2_rules('<scratch>')" -noFigureWindows > recordings/k2_rules.out.txt
 matlab -batch "probe_k2_names('<repo>/tools/matlab-checklist/matlab-r2025b-dispatch.csv')" -noFigureWindows > recordings/k2_names.out.txt
 powershell -File record-k3-cache.ps1 -BuildRoot <the K0 build scratch> -WorkRoot <a fourth scratch>
+powershell -File record-k3b.ps1 -WorkRoot <a fifth scratch>
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

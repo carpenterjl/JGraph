@@ -35,13 +35,20 @@ public enum CtfTargetType
 }
 
 /// <summary>
-/// How an archive's code is protected (decision KD5). Stage K3 writes only <see cref="Open"/>; K3b
-/// adds the others, each a value of the manifest's <c>protection</c> attribute.
+/// How an archive's code is stored (decision KD5), each a value of the manifest's
+/// <c>protection</c> attribute. Neither is encrypted (decision of 2026-10-24): R2025b's AES
+/// default, <c>-s</c>, <c>-k</c> and <c>-J</c> are not built (ADR 0259).
 /// </summary>
 public enum CtfProtection
 {
-    /// <summary>The code is stored as written (decision KO1's recommendation, R2025b always encrypts).</summary>
+    /// <summary>The code is stored as written (decision KO1, 2026-10-23; R2025b always encrypts).</summary>
     Open,
+
+    /// <summary>
+    /// <c>mcc -j</c>: each code file is stored as JGraph's P-code, its tokens without comments or
+    /// line numbers (stage K3b). A precompiled form, not a protection: it is not encrypted.
+    /// </summary>
+    PCode,
 }
 
 /// <summary>A public function of a component: its name, its file in the archive, and its parameters.</summary>
@@ -280,12 +287,14 @@ public sealed class CtfManifest
     private static string ProtectionName(CtfProtection protection) => protection switch
     {
         CtfProtection.Open => "open",
+        CtfProtection.PCode => "pcode",
         _ => throw new ArgumentOutOfRangeException(nameof(protection)),
     };
 
     private static CtfProtection ParseProtection(string name) => name switch
     {
         "open" => CtfProtection.Open,
+        "pcode" => CtfProtection.PCode,
         _ => throw new InvalidDataException(
             $"The archive's code is protected as '{name}', which this JGraph Runtime cannot read; it is newer than the runtime."),
     };
