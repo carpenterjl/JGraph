@@ -1,0 +1,685 @@
+mcc.plain	ok
+mcc.plain.output.n	10
+mcc.plain.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.plain.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.plain.output[3]	warning by using the %#exclude pragma.] 
+mcc.plain.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.plain.output[5]	In probe_k2_depend (line 71)] 
+mcc.plain.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.plain.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.plain.output[8]	warning by using the %#exclude pragma.] 
+mcc.plain.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.plain.output[10]	In probe_k2_depend (line 71)]
+mcc.plain.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.plain.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.plain.ctf.n	30
+mcc.plain.ctf[1]	fsroot/.META/buildresult.json
+mcc.plain.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.plain.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.plain.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.plain.ctf[5]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libdeep.m
+mcc.plain.ctf[6]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libfn.m
+mcc.plain.ctf[7]	fsroot/k2_main/k2_cellfn.m
+mcc.plain.ctf[8]	fsroot/k2_main/k2_cls.m
+mcc.plain.ctf[9]	fsroot/k2_main/k2_cmd.m
+mcc.plain.ctf[10]	fsroot/k2_main/k2_data.mat
+mcc.plain.ctf[11]	fsroot/k2_main/k2_deep.m
+mcc.plain.ctf[12]	fsroot/k2_main/k2_from_local.m
+mcc.plain.ctf[13]	fsroot/k2_main/k2_from_method.m
+mcc.plain.ctf[14]	fsroot/k2_main/k2_from_script.m
+mcc.plain.ctf[15]	fsroot/k2_main/k2_from_sub.m
+mcc.plain.ctf[16]	fsroot/k2_main/k2_handle.m
+mcc.plain.ctf[17]	fsroot/k2_main/k2_helper.fig
+mcc.plain.ctf[18]	fsroot/k2_main/k2_helper.m
+mcc.plain.ctf[19]	fsroot/k2_main/k2_main.fig
+mcc.plain.ctf[20]	fsroot/k2_main/k2_main.m
+mcc.plain.ctf[21]	fsroot/k2_main/k2_notes.txt
+mcc.plain.ctf[22]	fsroot/k2_main/k2_pragma.m
+mcc.plain.ctf[23]	fsroot/k2_main/k2_script.m
+mcc.plain.ctf[24]	fsroot/k2_main/private/k2_priv.m
+mcc.plain.ctf[25]	fsroot/toolbox/compiler/Contents.m
+mcc.plain.ctf[26]	fsroot/toolbox/compiler/ctfroot.m
+mcc.plain.ctf[27]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.plain.ctf[28]	fsroot/toolbox/local/Contents.m
+mcc.plain.ctf[29]	fsroot/toolbox/local/matlabrc.m
+mcc.plain.ctf[30]	fsroot/toolbox/local/printopt.m
+mcc.plain.manifest.dirs	toolbox/compiler/patch | k2_main | <OUT-NODRIVE>/k2tree/lib | toolbox/local | toolbox/compiler | .matlab
+mcc.plain.manifest.runtimedirs	309
+mcc.plain.mccExcludedFiles.log.n	5
+mcc.plain.mccExcludedFiles.log[1]	Excluded Files
+mcc.plain.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.plain.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.plain.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.plain.mccExcludedFiles.log[5]	
+mcc.plain.unresolvedSymbols.txt.n	2
+mcc.plain.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.plain.unresolvedSymbols.txt[2]	
+mcc.plain.requiredMCRProducts.txt.n	1
+mcc.plain.requiredMCRProducts.txt[1]	35000 <TAB> 35002 <TAB> 35003 <TAB> 35010 <TAB> 35108 <TAB> 
+mcc.plain.includedSupportPackages.txt.n	1
+mcc.plain.includedSupportPackages.txt[1]	
+mcc.plain.buildresult.json.n	10
+mcc.plain.buildresult.json[1]	{
+mcc.plain.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.plain.buildresult.json[3]	 <TAB>  <TAB> {"ID":35000, "DisplayName":"MATLAB Extended Runtime Addon", "Optional":"no"},
+mcc.plain.buildresult.json[4]	 <TAB>  <TAB> {"ID":35002, "DisplayName":"MATLAB Graphics Runtime Addon", "Optional":"no"},
+mcc.plain.buildresult.json[5]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.plain.buildresult.json[6]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+mcc.plain.buildresult.json[7]	 <TAB>  <TAB> {"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"}
+mcc.plain.buildresult.json[8]	 <TAB> ]
+mcc.plain.buildresult.json[9]	}
+mcc.plain.buildresult.json[10]	
+mcc.nolib	ok
+mcc.nolib.output.n	10
+mcc.nolib.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.nolib.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.nolib.output[3]	warning by using the %#exclude pragma.] 
+mcc.nolib.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.nolib.output[5]	In probe_k2_depend (line 71)] 
+mcc.nolib.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.nolib.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.nolib.output[8]	warning by using the %#exclude pragma.] 
+mcc.nolib.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.nolib.output[10]	In probe_k2_depend (line 71)]
+mcc.nolib.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.nolib.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.nolib.ctf.n	28
+mcc.nolib.ctf[1]	fsroot/.META/buildresult.json
+mcc.nolib.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.nolib.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.nolib.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.nolib.ctf[5]	fsroot/k2_main/k2_cellfn.m
+mcc.nolib.ctf[6]	fsroot/k2_main/k2_cls.m
+mcc.nolib.ctf[7]	fsroot/k2_main/k2_cmd.m
+mcc.nolib.ctf[8]	fsroot/k2_main/k2_data.mat
+mcc.nolib.ctf[9]	fsroot/k2_main/k2_deep.m
+mcc.nolib.ctf[10]	fsroot/k2_main/k2_from_local.m
+mcc.nolib.ctf[11]	fsroot/k2_main/k2_from_method.m
+mcc.nolib.ctf[12]	fsroot/k2_main/k2_from_script.m
+mcc.nolib.ctf[13]	fsroot/k2_main/k2_from_sub.m
+mcc.nolib.ctf[14]	fsroot/k2_main/k2_handle.m
+mcc.nolib.ctf[15]	fsroot/k2_main/k2_helper.fig
+mcc.nolib.ctf[16]	fsroot/k2_main/k2_helper.m
+mcc.nolib.ctf[17]	fsroot/k2_main/k2_main.fig
+mcc.nolib.ctf[18]	fsroot/k2_main/k2_main.m
+mcc.nolib.ctf[19]	fsroot/k2_main/k2_notes.txt
+mcc.nolib.ctf[20]	fsroot/k2_main/k2_pragma.m
+mcc.nolib.ctf[21]	fsroot/k2_main/k2_script.m
+mcc.nolib.ctf[22]	fsroot/k2_main/private/k2_priv.m
+mcc.nolib.ctf[23]	fsroot/toolbox/compiler/Contents.m
+mcc.nolib.ctf[24]	fsroot/toolbox/compiler/ctfroot.m
+mcc.nolib.ctf[25]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.nolib.ctf[26]	fsroot/toolbox/local/Contents.m
+mcc.nolib.ctf[27]	fsroot/toolbox/local/matlabrc.m
+mcc.nolib.ctf[28]	fsroot/toolbox/local/printopt.m
+mcc.nolib.manifest.dirs	toolbox/compiler/patch | k2_main | toolbox/local | toolbox/compiler | .matlab
+mcc.nolib.manifest.runtimedirs	309
+mcc.nolib.mccExcludedFiles.log.n	5
+mcc.nolib.mccExcludedFiles.log[1]	Excluded Files
+mcc.nolib.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.nolib.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.nolib.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.nolib.mccExcludedFiles.log[5]	
+mcc.nolib.unresolvedSymbols.txt.n	2
+mcc.nolib.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.nolib.unresolvedSymbols.txt[2]	
+mcc.nolib.requiredMCRProducts.txt.n	1
+mcc.nolib.requiredMCRProducts.txt[1]	35000 <TAB> 35002 <TAB> 35003 <TAB> 35010 <TAB> 35108 <TAB> 
+mcc.nolib.includedSupportPackages.txt.n	1
+mcc.nolib.includedSupportPackages.txt[1]	
+mcc.nolib.buildresult.json.n	10
+mcc.nolib.buildresult.json[1]	{
+mcc.nolib.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.nolib.buildresult.json[3]	 <TAB>  <TAB> {"ID":35000, "DisplayName":"MATLAB Extended Runtime Addon", "Optional":"no"},
+mcc.nolib.buildresult.json[4]	 <TAB>  <TAB> {"ID":35002, "DisplayName":"MATLAB Graphics Runtime Addon", "Optional":"no"},
+mcc.nolib.buildresult.json[5]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.nolib.buildresult.json[6]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+mcc.nolib.buildresult.json[7]	 <TAB>  <TAB> {"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"}
+mcc.nolib.buildresult.json[8]	 <TAB> ]
+mcc.nolib.buildresult.json[9]	}
+mcc.nolib.buildresult.json[10]	
+mcc.X	ok
+mcc.X.output.n	10
+mcc.X.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.X.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.X.output[3]	warning by using the %#exclude pragma.] 
+mcc.X.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.X.output[5]	In probe_k2_depend (line 71)] 
+mcc.X.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.X.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.X.output[8]	warning by using the %#exclude pragma.] 
+mcc.X.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.X.output[10]	In probe_k2_depend (line 71)]
+mcc.X.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.X.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.X.ctf.n	28
+mcc.X.ctf[1]	fsroot/.META/buildresult.json
+mcc.X.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.X.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.X.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.X.ctf[5]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libdeep.m
+mcc.X.ctf[6]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libfn.m
+mcc.X.ctf[7]	fsroot/k2_main/k2_cellfn.m
+mcc.X.ctf[8]	fsroot/k2_main/k2_cls.m
+mcc.X.ctf[9]	fsroot/k2_main/k2_cmd.m
+mcc.X.ctf[10]	fsroot/k2_main/k2_deep.m
+mcc.X.ctf[11]	fsroot/k2_main/k2_from_local.m
+mcc.X.ctf[12]	fsroot/k2_main/k2_from_method.m
+mcc.X.ctf[13]	fsroot/k2_main/k2_from_script.m
+mcc.X.ctf[14]	fsroot/k2_main/k2_from_sub.m
+mcc.X.ctf[15]	fsroot/k2_main/k2_handle.m
+mcc.X.ctf[16]	fsroot/k2_main/k2_helper.fig
+mcc.X.ctf[17]	fsroot/k2_main/k2_helper.m
+mcc.X.ctf[18]	fsroot/k2_main/k2_main.fig
+mcc.X.ctf[19]	fsroot/k2_main/k2_main.m
+mcc.X.ctf[20]	fsroot/k2_main/k2_pragma.m
+mcc.X.ctf[21]	fsroot/k2_main/k2_script.m
+mcc.X.ctf[22]	fsroot/k2_main/private/k2_priv.m
+mcc.X.ctf[23]	fsroot/toolbox/compiler/Contents.m
+mcc.X.ctf[24]	fsroot/toolbox/compiler/ctfroot.m
+mcc.X.ctf[25]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.X.ctf[26]	fsroot/toolbox/local/Contents.m
+mcc.X.ctf[27]	fsroot/toolbox/local/matlabrc.m
+mcc.X.ctf[28]	fsroot/toolbox/local/printopt.m
+mcc.X.manifest.dirs	toolbox/compiler/patch | k2_main | <OUT-NODRIVE>/k2tree/lib | toolbox/local | toolbox/compiler | .matlab
+mcc.X.manifest.runtimedirs	309
+mcc.X.mccExcludedFiles.log.n	5
+mcc.X.mccExcludedFiles.log[1]	Excluded Files
+mcc.X.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.X.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.X.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.X.mccExcludedFiles.log[5]	
+mcc.X.unresolvedSymbols.txt.n	2
+mcc.X.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.X.unresolvedSymbols.txt[2]	
+mcc.X.requiredMCRProducts.txt.n	1
+mcc.X.requiredMCRProducts.txt[1]	35000 <TAB> 35002 <TAB> 35003 <TAB> 35010 <TAB> 35108 <TAB> 
+mcc.X.includedSupportPackages.txt.n	1
+mcc.X.includedSupportPackages.txt[1]	
+mcc.X.buildresult.json.n	10
+mcc.X.buildresult.json[1]	{
+mcc.X.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.X.buildresult.json[3]	 <TAB>  <TAB> {"ID":35000, "DisplayName":"MATLAB Extended Runtime Addon", "Optional":"no"},
+mcc.X.buildresult.json[4]	 <TAB>  <TAB> {"ID":35002, "DisplayName":"MATLAB Graphics Runtime Addon", "Optional":"no"},
+mcc.X.buildresult.json[5]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.X.buildresult.json[6]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+mcc.X.buildresult.json[7]	 <TAB>  <TAB> {"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"}
+mcc.X.buildresult.json[8]	 <TAB> ]
+mcc.X.buildresult.json[9]	}
+mcc.X.buildresult.json[10]	
+mcc.I	ok
+mcc.I.output.n	10
+mcc.I.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.I.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.I.output[3]	warning by using the %#exclude pragma.] 
+mcc.I.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.I.output[5]	In probe_k2_depend (line 71)] 
+mcc.I.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.I.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.I.output[8]	warning by using the %#exclude pragma.] 
+mcc.I.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.I.output[10]	In probe_k2_depend (line 71)]
+mcc.I.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.I.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.I.ctf.n	30
+mcc.I.ctf[1]	fsroot/.META/buildresult.json
+mcc.I.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.I.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.I.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.I.ctf[5]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libdeep.m
+mcc.I.ctf[6]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libfn.m
+mcc.I.ctf[7]	fsroot/k2_main/k2_cellfn.m
+mcc.I.ctf[8]	fsroot/k2_main/k2_cls.m
+mcc.I.ctf[9]	fsroot/k2_main/k2_cmd.m
+mcc.I.ctf[10]	fsroot/k2_main/k2_data.mat
+mcc.I.ctf[11]	fsroot/k2_main/k2_deep.m
+mcc.I.ctf[12]	fsroot/k2_main/k2_from_local.m
+mcc.I.ctf[13]	fsroot/k2_main/k2_from_method.m
+mcc.I.ctf[14]	fsroot/k2_main/k2_from_script.m
+mcc.I.ctf[15]	fsroot/k2_main/k2_from_sub.m
+mcc.I.ctf[16]	fsroot/k2_main/k2_handle.m
+mcc.I.ctf[17]	fsroot/k2_main/k2_helper.fig
+mcc.I.ctf[18]	fsroot/k2_main/k2_helper.m
+mcc.I.ctf[19]	fsroot/k2_main/k2_main.fig
+mcc.I.ctf[20]	fsroot/k2_main/k2_main.m
+mcc.I.ctf[21]	fsroot/k2_main/k2_notes.txt
+mcc.I.ctf[22]	fsroot/k2_main/k2_pragma.m
+mcc.I.ctf[23]	fsroot/k2_main/k2_script.m
+mcc.I.ctf[24]	fsroot/k2_main/private/k2_priv.m
+mcc.I.ctf[25]	fsroot/toolbox/compiler/Contents.m
+mcc.I.ctf[26]	fsroot/toolbox/compiler/ctfroot.m
+mcc.I.ctf[27]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.I.ctf[28]	fsroot/toolbox/local/Contents.m
+mcc.I.ctf[29]	fsroot/toolbox/local/matlabrc.m
+mcc.I.ctf[30]	fsroot/toolbox/local/printopt.m
+mcc.I.manifest.dirs	toolbox/compiler/patch | k2_main | <OUT-NODRIVE>/k2tree/lib | toolbox/local | toolbox/compiler | .matlab
+mcc.I.manifest.runtimedirs	309
+mcc.I.mccExcludedFiles.log.n	5
+mcc.I.mccExcludedFiles.log[1]	Excluded Files
+mcc.I.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.I.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.I.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.I.mccExcludedFiles.log[5]	
+mcc.I.unresolvedSymbols.txt.n	2
+mcc.I.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.I.unresolvedSymbols.txt[2]	
+mcc.I.requiredMCRProducts.txt.n	1
+mcc.I.requiredMCRProducts.txt[1]	35000 <TAB> 35002 <TAB> 35003 <TAB> 35010 <TAB> 35108 <TAB> 
+mcc.I.includedSupportPackages.txt.n	1
+mcc.I.includedSupportPackages.txt[1]	
+mcc.I.buildresult.json.n	10
+mcc.I.buildresult.json[1]	{
+mcc.I.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.I.buildresult.json[3]	 <TAB>  <TAB> {"ID":35000, "DisplayName":"MATLAB Extended Runtime Addon", "Optional":"no"},
+mcc.I.buildresult.json[4]	 <TAB>  <TAB> {"ID":35002, "DisplayName":"MATLAB Graphics Runtime Addon", "Optional":"no"},
+mcc.I.buildresult.json[5]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.I.buildresult.json[6]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+mcc.I.buildresult.json[7]	 <TAB>  <TAB> {"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"}
+mcc.I.buildresult.json[8]	 <TAB> ]
+mcc.I.buildresult.json[9]	}
+mcc.I.buildresult.json[10]	
+mcc.a	ok
+mcc.a.output.n	10
+mcc.a.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.a.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.a.output[3]	warning by using the %#exclude pragma.] 
+mcc.a.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.a.output[5]	In probe_k2_depend (line 71)] 
+mcc.a.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.a.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.a.output[8]	warning by using the %#exclude pragma.] 
+mcc.a.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.a.output[10]	In probe_k2_depend (line 71)]
+mcc.a.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.a.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.a.ctf.n	36
+mcc.a.ctf[1]	fsroot/.META/buildresult.json
+mcc.a.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.a.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.a.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.a.ctf[5]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libdeep.m
+mcc.a.ctf[6]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libfn.m
+mcc.a.ctf[7]	fsroot/<OUT-NODRIVE>/k2tree/pack/deeper/k2_deeper.txt
+mcc.a.ctf[8]	fsroot/<OUT-NODRIVE>/k2tree/pack/deeper/k2_packdeep.m
+mcc.a.ctf[9]	fsroot/<OUT-NODRIVE>/k2tree/pack/k2_pack.txt
+mcc.a.ctf[10]	fsroot/<OUT-NODRIVE>/k2tree/pack/k2_packfn.m
+mcc.a.ctf[11]	fsroot/k2_main/k2_cellfn.m
+mcc.a.ctf[12]	fsroot/k2_main/k2_cls.m
+mcc.a.ctf[13]	fsroot/k2_main/k2_cmd.m
+mcc.a.ctf[14]	fsroot/k2_main/k2_data.mat
+mcc.a.ctf[15]	fsroot/k2_main/k2_deep.m
+mcc.a.ctf[16]	fsroot/k2_main/k2_excl.m
+mcc.a.ctf[17]	fsroot/k2_main/k2_from_local.m
+mcc.a.ctf[18]	fsroot/k2_main/k2_from_method.m
+mcc.a.ctf[19]	fsroot/k2_main/k2_from_script.m
+mcc.a.ctf[20]	fsroot/k2_main/k2_from_sub.m
+mcc.a.ctf[21]	fsroot/k2_main/k2_handle.m
+mcc.a.ctf[22]	fsroot/k2_main/k2_helper.fig
+mcc.a.ctf[23]	fsroot/k2_main/k2_helper.m
+mcc.a.ctf[24]	fsroot/k2_main/k2_main.fig
+mcc.a.ctf[25]	fsroot/k2_main/k2_main.m
+mcc.a.ctf[26]	fsroot/k2_main/k2_notes.txt
+mcc.a.ctf[27]	fsroot/k2_main/k2_pragma.m
+mcc.a.ctf[28]	fsroot/k2_main/k2_script.m
+mcc.a.ctf[29]	fsroot/k2_main/k2_unnamed.txt
+mcc.a.ctf[30]	fsroot/k2_main/private/k2_priv.m
+mcc.a.ctf[31]	fsroot/toolbox/compiler/Contents.m
+mcc.a.ctf[32]	fsroot/toolbox/compiler/ctfroot.m
+mcc.a.ctf[33]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.a.ctf[34]	fsroot/toolbox/local/Contents.m
+mcc.a.ctf[35]	fsroot/toolbox/local/matlabrc.m
+mcc.a.ctf[36]	fsroot/toolbox/local/printopt.m
+mcc.a.manifest.dirs	toolbox/compiler/patch | k2_main | <OUT-NODRIVE>/k2tree/pack | <OUT-NODRIVE>/k2tree/pack/deeper | <OUT-NODRIVE>/k2tree/lib | toolbox/local | toolbox/compiler | .matlab
+mcc.a.manifest.runtimedirs	309
+mcc.a.mccExcludedFiles.log.n	5
+mcc.a.mccExcludedFiles.log[1]	Excluded Files
+mcc.a.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.a.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.a.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.a.mccExcludedFiles.log[5]	
+mcc.a.unresolvedSymbols.txt.n	2
+mcc.a.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.a.unresolvedSymbols.txt[2]	
+mcc.a.requiredMCRProducts.txt.n	1
+mcc.a.requiredMCRProducts.txt[1]	35000 <TAB> 35002 <TAB> 35003 <TAB> 35010 <TAB> 35108 <TAB> 
+mcc.a.includedSupportPackages.txt.n	1
+mcc.a.includedSupportPackages.txt[1]	
+mcc.a.buildresult.json.n	10
+mcc.a.buildresult.json[1]	{
+mcc.a.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.a.buildresult.json[3]	 <TAB>  <TAB> {"ID":35000, "DisplayName":"MATLAB Extended Runtime Addon", "Optional":"no"},
+mcc.a.buildresult.json[4]	 <TAB>  <TAB> {"ID":35002, "DisplayName":"MATLAB Graphics Runtime Addon", "Optional":"no"},
+mcc.a.buildresult.json[5]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.a.buildresult.json[6]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+mcc.a.buildresult.json[7]	 <TAB>  <TAB> {"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"}
+mcc.a.buildresult.json[8]	 <TAB> ]
+mcc.a.buildresult.json[9]	}
+mcc.a.buildresult.json[10]	
+mcc.a.wild	ok
+mcc.a.wild.output.n	10
+mcc.a.wild.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.a.wild.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.a.wild.output[3]	warning by using the %#exclude pragma.] 
+mcc.a.wild.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.a.wild.output[5]	In probe_k2_depend (line 71)] 
+mcc.a.wild.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.a.wild.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.a.wild.output[8]	warning by using the %#exclude pragma.] 
+mcc.a.wild.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.a.wild.output[10]	In probe_k2_depend (line 71)]
+mcc.a.wild.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.a.wild.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.a.wild.ctf.n	31
+mcc.a.wild.ctf[1]	fsroot/.META/buildresult.json
+mcc.a.wild.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.a.wild.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.a.wild.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.a.wild.ctf[5]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libdeep.m
+mcc.a.wild.ctf[6]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libfn.m
+mcc.a.wild.ctf[7]	fsroot/<OUT-NODRIVE>/k2tree/pack/k2_pack.txt
+mcc.a.wild.ctf[8]	fsroot/k2_main/k2_cellfn.m
+mcc.a.wild.ctf[9]	fsroot/k2_main/k2_cls.m
+mcc.a.wild.ctf[10]	fsroot/k2_main/k2_cmd.m
+mcc.a.wild.ctf[11]	fsroot/k2_main/k2_data.mat
+mcc.a.wild.ctf[12]	fsroot/k2_main/k2_deep.m
+mcc.a.wild.ctf[13]	fsroot/k2_main/k2_from_local.m
+mcc.a.wild.ctf[14]	fsroot/k2_main/k2_from_method.m
+mcc.a.wild.ctf[15]	fsroot/k2_main/k2_from_script.m
+mcc.a.wild.ctf[16]	fsroot/k2_main/k2_from_sub.m
+mcc.a.wild.ctf[17]	fsroot/k2_main/k2_handle.m
+mcc.a.wild.ctf[18]	fsroot/k2_main/k2_helper.fig
+mcc.a.wild.ctf[19]	fsroot/k2_main/k2_helper.m
+mcc.a.wild.ctf[20]	fsroot/k2_main/k2_main.fig
+mcc.a.wild.ctf[21]	fsroot/k2_main/k2_main.m
+mcc.a.wild.ctf[22]	fsroot/k2_main/k2_notes.txt
+mcc.a.wild.ctf[23]	fsroot/k2_main/k2_pragma.m
+mcc.a.wild.ctf[24]	fsroot/k2_main/k2_script.m
+mcc.a.wild.ctf[25]	fsroot/k2_main/private/k2_priv.m
+mcc.a.wild.ctf[26]	fsroot/toolbox/compiler/Contents.m
+mcc.a.wild.ctf[27]	fsroot/toolbox/compiler/ctfroot.m
+mcc.a.wild.ctf[28]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.a.wild.ctf[29]	fsroot/toolbox/local/Contents.m
+mcc.a.wild.ctf[30]	fsroot/toolbox/local/matlabrc.m
+mcc.a.wild.ctf[31]	fsroot/toolbox/local/printopt.m
+mcc.a.wild.manifest.dirs	toolbox/compiler/patch | k2_main | <OUT-NODRIVE>/k2tree/pack | <OUT-NODRIVE>/k2tree/lib | toolbox/local | toolbox/compiler | .matlab
+mcc.a.wild.manifest.runtimedirs	309
+mcc.a.wild.mccExcludedFiles.log.n	5
+mcc.a.wild.mccExcludedFiles.log[1]	Excluded Files
+mcc.a.wild.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.a.wild.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.a.wild.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.a.wild.mccExcludedFiles.log[5]	
+mcc.a.wild.unresolvedSymbols.txt.n	2
+mcc.a.wild.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.a.wild.unresolvedSymbols.txt[2]	
+mcc.a.wild.requiredMCRProducts.txt.n	1
+mcc.a.wild.requiredMCRProducts.txt[1]	35000 <TAB> 35002 <TAB> 35003 <TAB> 35010 <TAB> 35108 <TAB> 
+mcc.a.wild.includedSupportPackages.txt.n	1
+mcc.a.wild.includedSupportPackages.txt[1]	
+mcc.a.wild.buildresult.json.n	10
+mcc.a.wild.buildresult.json[1]	{
+mcc.a.wild.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.a.wild.buildresult.json[3]	 <TAB>  <TAB> {"ID":35000, "DisplayName":"MATLAB Extended Runtime Addon", "Optional":"no"},
+mcc.a.wild.buildresult.json[4]	 <TAB>  <TAB> {"ID":35002, "DisplayName":"MATLAB Graphics Runtime Addon", "Optional":"no"},
+mcc.a.wild.buildresult.json[5]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.a.wild.buildresult.json[6]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+mcc.a.wild.buildresult.json[7]	 <TAB>  <TAB> {"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"}
+mcc.a.wild.buildresult.json[8]	 <TAB> ]
+mcc.a.wild.buildresult.json[9]	}
+mcc.a.wild.buildresult.json[10]	
+mcc.dup	ok
+mcc.dup.output.n	10
+mcc.dup.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.dup.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.dup.output[3]	warning by using the %#exclude pragma.] 
+mcc.dup.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.dup.output[5]	In probe_k2_depend (line 71)] 
+mcc.dup.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.dup.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.dup.output[8]	warning by using the %#exclude pragma.] 
+mcc.dup.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.dup.output[10]	In probe_k2_depend (line 71)]
+mcc.dup.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.dup.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.dup.ctf.n	31
+mcc.dup.ctf[1]	fsroot/.META/buildresult.json
+mcc.dup.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.dup.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.dup.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.dup.ctf[5]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libdeep.m
+mcc.dup.ctf[6]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libfn.m
+mcc.dup.ctf[7]	fsroot/<OUT-NODRIVE>/k2tree/other/k2_helper.m
+mcc.dup.ctf[8]	fsroot/k2_main/k2_cellfn.m
+mcc.dup.ctf[9]	fsroot/k2_main/k2_cls.m
+mcc.dup.ctf[10]	fsroot/k2_main/k2_cmd.m
+mcc.dup.ctf[11]	fsroot/k2_main/k2_data.mat
+mcc.dup.ctf[12]	fsroot/k2_main/k2_deep.m
+mcc.dup.ctf[13]	fsroot/k2_main/k2_from_local.m
+mcc.dup.ctf[14]	fsroot/k2_main/k2_from_method.m
+mcc.dup.ctf[15]	fsroot/k2_main/k2_from_script.m
+mcc.dup.ctf[16]	fsroot/k2_main/k2_from_sub.m
+mcc.dup.ctf[17]	fsroot/k2_main/k2_handle.m
+mcc.dup.ctf[18]	fsroot/k2_main/k2_helper.fig
+mcc.dup.ctf[19]	fsroot/k2_main/k2_helper.m
+mcc.dup.ctf[20]	fsroot/k2_main/k2_main.fig
+mcc.dup.ctf[21]	fsroot/k2_main/k2_main.m
+mcc.dup.ctf[22]	fsroot/k2_main/k2_notes.txt
+mcc.dup.ctf[23]	fsroot/k2_main/k2_pragma.m
+mcc.dup.ctf[24]	fsroot/k2_main/k2_script.m
+mcc.dup.ctf[25]	fsroot/k2_main/private/k2_priv.m
+mcc.dup.ctf[26]	fsroot/toolbox/compiler/Contents.m
+mcc.dup.ctf[27]	fsroot/toolbox/compiler/ctfroot.m
+mcc.dup.ctf[28]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.dup.ctf[29]	fsroot/toolbox/local/Contents.m
+mcc.dup.ctf[30]	fsroot/toolbox/local/matlabrc.m
+mcc.dup.ctf[31]	fsroot/toolbox/local/printopt.m
+mcc.dup.manifest.dirs	toolbox/compiler/patch | k2_main | <OUT-NODRIVE>/k2tree/other | <OUT-NODRIVE>/k2tree/lib | toolbox/local | toolbox/compiler | .matlab
+mcc.dup.manifest.runtimedirs	309
+mcc.dup.mccExcludedFiles.log.n	5
+mcc.dup.mccExcludedFiles.log[1]	Excluded Files
+mcc.dup.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.dup.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.dup.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.dup.mccExcludedFiles.log[5]	
+mcc.dup.unresolvedSymbols.txt.n	2
+mcc.dup.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.dup.unresolvedSymbols.txt[2]	
+mcc.dup.requiredMCRProducts.txt.n	1
+mcc.dup.requiredMCRProducts.txt[1]	35000 <TAB> 35002 <TAB> 35003 <TAB> 35010 <TAB> 35108 <TAB> 
+mcc.dup.includedSupportPackages.txt.n	1
+mcc.dup.includedSupportPackages.txt[1]	
+mcc.dup.buildresult.json.n	10
+mcc.dup.buildresult.json[1]	{
+mcc.dup.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.dup.buildresult.json[3]	 <TAB>  <TAB> {"ID":35000, "DisplayName":"MATLAB Extended Runtime Addon", "Optional":"no"},
+mcc.dup.buildresult.json[4]	 <TAB>  <TAB> {"ID":35002, "DisplayName":"MATLAB Graphics Runtime Addon", "Optional":"no"},
+mcc.dup.buildresult.json[5]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.dup.buildresult.json[6]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+mcc.dup.buildresult.json[7]	 <TAB>  <TAB> {"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"}
+mcc.dup.buildresult.json[8]	 <TAB> ]
+mcc.dup.buildresult.json[9]	}
+mcc.dup.buildresult.json[10]	
+mcc.N	ok
+mcc.N.output.n	12
+mcc.N.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.N.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.N.output[3]	warning by using the %#exclude pragma.] 
+mcc.N.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.N.output[5]	In probe_k2_depend (line 71)] 
+mcc.N.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.N.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.N.output[8]	warning by using the %#exclude pragma.] 
+mcc.N.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.N.output[10]	In probe_k2_depend (line 71)] 
+mcc.N.output[11]	[Warning: In "<T>\app\k2_main.m", "butter" could not be found during compilation. Verify that path related flags (-N, -p, -I) are
+mcc.N.output[12]	correctly used.]
+mcc.N.warn	MATLAB:depfun:req:NotOnPathDuringCompilation | In "<OUT>\k2tree\app\k2_main.m", "butter" could not be found during compilation. Verify that path related flags (-N, -p, -I) are correctly used.
+mcc.N.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.N.ctf.n	31
+mcc.N.ctf[1]	fsroot/.META/buildresult.json
+mcc.N.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.N.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.N.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.N.ctf[5]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libdeep.m
+mcc.N.ctf[6]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libfn.m
+mcc.N.ctf[7]	fsroot/k2_main/k2_cellfn.m
+mcc.N.ctf[8]	fsroot/k2_main/k2_cls.m
+mcc.N.ctf[9]	fsroot/k2_main/k2_cmd.m
+mcc.N.ctf[10]	fsroot/k2_main/k2_data.mat
+mcc.N.ctf[11]	fsroot/k2_main/k2_deep.m
+mcc.N.ctf[12]	fsroot/k2_main/k2_from_local.m
+mcc.N.ctf[13]	fsroot/k2_main/k2_from_method.m
+mcc.N.ctf[14]	fsroot/k2_main/k2_from_script.m
+mcc.N.ctf[15]	fsroot/k2_main/k2_from_sub.m
+mcc.N.ctf[16]	fsroot/k2_main/k2_handle.m
+mcc.N.ctf[17]	fsroot/k2_main/k2_helper.fig
+mcc.N.ctf[18]	fsroot/k2_main/k2_helper.m
+mcc.N.ctf[19]	fsroot/k2_main/k2_main.fig
+mcc.N.ctf[20]	fsroot/k2_main/k2_main.m
+mcc.N.ctf[21]	fsroot/k2_main/k2_notes.txt
+mcc.N.ctf[22]	fsroot/k2_main/k2_pragma.m
+mcc.N.ctf[23]	fsroot/k2_main/k2_script.m
+mcc.N.ctf[24]	fsroot/k2_main/private/k2_priv.m
+mcc.N.ctf[25]	fsroot/toolbox/compiler/Contents.m
+mcc.N.ctf[26]	fsroot/toolbox/compiler/ctfroot.m
+mcc.N.ctf[27]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.N.ctf[28]	fsroot/toolbox/compiler/patch/toolbox/matlab/graphics/hg/hgrc.m
+mcc.N.ctf[29]	fsroot/toolbox/local/Contents.m
+mcc.N.ctf[30]	fsroot/toolbox/local/matlabrc.m
+mcc.N.ctf[31]	fsroot/toolbox/local/printopt.m
+mcc.N.manifest.dirs	toolbox/compiler/patch | toolbox/compiler/patch/toolbox/matlab/graphics/hg | k2_main | <OUT-NODRIVE>/k2tree/lib | toolbox/local | toolbox/compiler | .matlab
+mcc.N.manifest.runtimedirs	137
+mcc.N.mccExcludedFiles.log.n	5
+mcc.N.mccExcludedFiles.log[1]	Excluded Files
+mcc.N.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.N.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.N.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.N.mccExcludedFiles.log[5]	
+mcc.N.unresolvedSymbols.txt.n	3
+mcc.N.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.N.unresolvedSymbols.txt[2]	k2_main\k2_main.m <TAB> butter <TAB> mcc_flag
+mcc.N.unresolvedSymbols.txt[3]	
+mcc.N.requiredMCRProducts.txt.n	1
+mcc.N.requiredMCRProducts.txt[1]	35003 <TAB> 35010 <TAB> 
+mcc.N.includedSupportPackages.txt.n	1
+mcc.N.includedSupportPackages.txt[1]	
+mcc.N.buildresult.json.n	7
+mcc.N.buildresult.json[1]	{
+mcc.N.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.N.buildresult.json[3]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.N.buildresult.json[4]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"}
+mcc.N.buildresult.json[5]	 <TAB> ]
+mcc.N.buildresult.json[6]	}
+mcc.N.buildresult.json[7]	
+mcc.N.p	ok
+mcc.N.p.output.n	10
+mcc.N.p.output[1]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.N.p.output[2]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.N.p.output[3]	warning by using the %#exclude pragma.] 
+mcc.N.p.output[4]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.N.p.output[5]	In probe_k2_depend (line 71)] 
+mcc.N.p.output[6]	[Warning: Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+mcc.N.p.output[7]	remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+mcc.N.p.output[8]	warning by using the %#exclude pragma.] 
+mcc.N.p.output[9]	[> In probe_k2_depend>quietMcc (line 111)
+mcc.N.p.output[10]	In probe_k2_depend (line 71)]
+mcc.N.p.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.N.p.out	buildresult.json includedSupportPackages.txt k2_main.ctf k2_main.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.N.p.ctf.n	30
+mcc.N.p.ctf[1]	fsroot/.META/buildresult.json
+mcc.N.p.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.N.p.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.N.p.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.N.p.ctf[5]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libdeep.m
+mcc.N.p.ctf[6]	fsroot/<OUT-NODRIVE>/k2tree/lib/k2_libfn.m
+mcc.N.p.ctf[7]	fsroot/k2_main/k2_cellfn.m
+mcc.N.p.ctf[8]	fsroot/k2_main/k2_cls.m
+mcc.N.p.ctf[9]	fsroot/k2_main/k2_cmd.m
+mcc.N.p.ctf[10]	fsroot/k2_main/k2_data.mat
+mcc.N.p.ctf[11]	fsroot/k2_main/k2_deep.m
+mcc.N.p.ctf[12]	fsroot/k2_main/k2_from_local.m
+mcc.N.p.ctf[13]	fsroot/k2_main/k2_from_method.m
+mcc.N.p.ctf[14]	fsroot/k2_main/k2_from_script.m
+mcc.N.p.ctf[15]	fsroot/k2_main/k2_from_sub.m
+mcc.N.p.ctf[16]	fsroot/k2_main/k2_handle.m
+mcc.N.p.ctf[17]	fsroot/k2_main/k2_helper.fig
+mcc.N.p.ctf[18]	fsroot/k2_main/k2_helper.m
+mcc.N.p.ctf[19]	fsroot/k2_main/k2_main.fig
+mcc.N.p.ctf[20]	fsroot/k2_main/k2_main.m
+mcc.N.p.ctf[21]	fsroot/k2_main/k2_notes.txt
+mcc.N.p.ctf[22]	fsroot/k2_main/k2_pragma.m
+mcc.N.p.ctf[23]	fsroot/k2_main/k2_script.m
+mcc.N.p.ctf[24]	fsroot/k2_main/private/k2_priv.m
+mcc.N.p.ctf[25]	fsroot/toolbox/compiler/Contents.m
+mcc.N.p.ctf[26]	fsroot/toolbox/compiler/ctfroot.m
+mcc.N.p.ctf[27]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.N.p.ctf[28]	fsroot/toolbox/local/Contents.m
+mcc.N.p.ctf[29]	fsroot/toolbox/local/matlabrc.m
+mcc.N.p.ctf[30]	fsroot/toolbox/local/printopt.m
+mcc.N.p.manifest.dirs	toolbox/compiler/patch | k2_main | <OUT-NODRIVE>/k2tree/lib | toolbox/local | toolbox/compiler | .matlab
+mcc.N.p.manifest.runtimedirs	309
+mcc.N.p.mccExcludedFiles.log.n	5
+mcc.N.p.mccExcludedFiles.log[1]	Excluded Files
+mcc.N.p.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.N.p.mccExcludedFiles.log[3]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/codetools/edit.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.N.p.mccExcludedFiles.log[4]	C:/Program Files/MATLAB/R2025b/toolbox/matlab/helptools/help.m <TAB> MATLAB:depfun:req:ExcludedBy <TAB> The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma. <TAB> 
+mcc.N.p.mccExcludedFiles.log[5]	
+mcc.N.p.unresolvedSymbols.txt.n	2
+mcc.N.p.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.N.p.unresolvedSymbols.txt[2]	
+mcc.N.p.requiredMCRProducts.txt.n	1
+mcc.N.p.requiredMCRProducts.txt[1]	35000 <TAB> 35002 <TAB> 35003 <TAB> 35010 <TAB> 35108 <TAB> 
+mcc.N.p.includedSupportPackages.txt.n	1
+mcc.N.p.includedSupportPackages.txt[1]	
+mcc.N.p.buildresult.json.n	10
+mcc.N.p.buildresult.json[1]	{
+mcc.N.p.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.N.p.buildresult.json[3]	 <TAB>  <TAB> {"ID":35000, "DisplayName":"MATLAB Extended Runtime Addon", "Optional":"no"},
+mcc.N.p.buildresult.json[4]	 <TAB>  <TAB> {"ID":35002, "DisplayName":"MATLAB Graphics Runtime Addon", "Optional":"no"},
+mcc.N.p.buildresult.json[5]	 <TAB>  <TAB> {"ID":35003, "DisplayName":"MATLAB Standard Runtime Addon", "Optional":"no"},
+mcc.N.p.buildresult.json[6]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+mcc.N.p.buildresult.json[7]	 <TAB>  <TAB> {"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"}
+mcc.N.p.buildresult.json[8]	 <TAB> ]
+mcc.N.p.buildresult.json[9]	}
+mcc.N.p.buildresult.json[10]	
+mcc.script	ok
+mcc.script.output.n	0
+mcc.script.out	buildresult.json includedSupportPackages.txt k2_helper.ctf k2_helper.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt
+mcc.script.ctf.n	17
+mcc.script.ctf[1]	fsroot/.META/buildresult.json
+mcc.script.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.script.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.script.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.script.ctf[5]	fsroot/k2_helper/k2_from_script.m
+mcc.script.ctf[6]	fsroot/k2_helper/k2_from_sub.m
+mcc.script.ctf[7]	fsroot/k2_helper/k2_helper.fig
+mcc.script.ctf[8]	fsroot/k2_helper/k2_helper.m
+mcc.script.ctf[9]	fsroot/k2_helper/k2_script.m
+mcc.script.ctf[10]	fsroot/k2_helper/private/k2_priv.m
+mcc.script.ctf[11]	fsroot/toolbox/compiler/Contents.m
+mcc.script.ctf[12]	fsroot/toolbox/compiler/ctfroot.m
+mcc.script.ctf[13]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.script.ctf[14]	fsroot/toolbox/compiler/patch/toolbox/matlab/graphics/hg/hgrc.m
+mcc.script.ctf[15]	fsroot/toolbox/local/Contents.m
+mcc.script.ctf[16]	fsroot/toolbox/local/matlabrc.m
+mcc.script.ctf[17]	fsroot/toolbox/local/printopt.m
+mcc.script.manifest.dirs	toolbox/compiler/patch | toolbox/compiler/patch/toolbox/matlab/graphics/hg | k2_helper | toolbox/local | toolbox/compiler | .matlab
+mcc.script.manifest.runtimedirs	81
+mcc.script.mccExcludedFiles.log.n	3
+mcc.script.mccExcludedFiles.log[1]	Excluded Files
+mcc.script.mccExcludedFiles.log[2]	Excluded Files <TAB>  Exclusion Message ID <TAB>  Reason For Exclusion <TAB>  Exclusion Rule
+mcc.script.mccExcludedFiles.log[3]	
+mcc.script.unresolvedSymbols.txt.n	2
+mcc.script.unresolvedSymbols.txt[1]	Path <TAB> Symbol <TAB> Reason
+mcc.script.unresolvedSymbols.txt[2]	
+mcc.script.requiredMCRProducts.txt.n	1
+mcc.script.requiredMCRProducts.txt[1]	35010 <TAB> 
+mcc.script.includedSupportPackages.txt.n	1
+mcc.script.includedSupportPackages.txt[1]	
+mcc.script.buildresult.json.n	6
+mcc.script.buildresult.json[1]	{
+mcc.script.buildresult.json[2]	 <TAB> "RuntimeDependencies": [
+mcc.script.buildresult.json[3]	 <TAB>  <TAB> {"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"}
+mcc.script.buildresult.json[4]	 <TAB> ]
+mcc.script.buildresult.json[5]	}
+mcc.script.buildresult.json[6]	

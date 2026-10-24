@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The build side of the compiler and SDK plan, headless and free of the engine: what R2025b's
+    dependency analysis knows that the code cannot say (which product owns a name, which files the
+    runtime leaves out, which functions read a data file), the report the analyser fills, and the
+    log files a build writes beside its target. Later stages add the archive, the manifest and the
+    target writers. The analyser itself walks JGS syntax trees and lives in JGraph.Scripting, which
+    references this.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Deploy</RootNamespace>
+    <Description>The build side of JGraph's compiler: R2025b's dependency rules and products, the dependency report and the build log files.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="JGraph.Scripting" />
+    <InternalsVisibleTo Include="JGraph.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Stage K2's probe_k2_names: each name's products and file in R2025b, and the files mcc leaves out. -->
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\compiler-probes\recordings\k2_names.out.txt" LogicalName="JGraph.Deploy.r2025b-names.tsv" />
+  </ItemGroup>
+
+</Project>

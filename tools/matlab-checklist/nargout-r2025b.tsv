@@ -306,6 +306,7 @@ comet	0	2
 comet3	0	2
 compan	1	2
 compass	1	2
+compiler.codetools.deployableSupportPackages	1	0
 complex	1	5
 compose	1	2
 computer	3	5
@@ -1210,6 +1211,7 @@ matches	1	5
 matchpairs	3	2
 material	-1	2
 matfile	1	2
+matlab.codetools.requiredFilesAndProducts	2	0
 matlabdrive	ERR:MATLAB:narginout:doesNotApply	5
 matlabroot	1	5
 max	2	5

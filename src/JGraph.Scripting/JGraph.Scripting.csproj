@@ -84,6 +84,10 @@
     <!-- copyobj copies a figure object by writing it out and reading it back, so the one description
          of what a plot is made of stays the document format's rather than becoming a second one. -->
     <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />
+
+    <!-- The compiler's build side (compiler and SDK plan, stage K2): R2025b's dependency rules and
+         products, the report the dependency analyser fills and the build's log files. -->
+    <ProjectReference Include="..\JGraph.Deploy\JGraph.Deploy.csproj" />
   </ItemGroup>
 
   <!-- The Bluetooth backend and its WinRT projection, as copy-to-output items so that every project

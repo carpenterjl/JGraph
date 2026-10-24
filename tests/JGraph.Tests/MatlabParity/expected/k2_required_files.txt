@@ -1,0 +1,45 @@
+CHK|main_files|app\k2f_base.m / app\k2f_cls.m / app\k2f_cmd.m / app\k2f_data.mat / app\k2f_default.m / app\k2f_from_local.m / app\k2f_from_method.m / app\k2f_from_script.m / app\k2f_from_sub.m / app\k2f_handle.m / app\k2f_helper.fig / app\k2f_helper.m / app\k2f_main.fig / app\k2f_main.m / app\k2f_named.txt / app\k2f_notes.txt / app\k2f_pragma.m / app\k2f_script.m / app\private\k2f_priv.m / lib\k2f_libdeep.m / lib\k2f_libfn.m|exact
+CHK|main_products|MATLAB 25.2 1 1 / Signal Processing Toolbox 25.2 8 1|exact
+CHK|toponly_files|app\k2f_cls.m / app\k2f_cmd.m / app\k2f_data.mat / app\k2f_from_local.m / app\k2f_handle.m / app\k2f_helper.fig / app\k2f_helper.m / app\k2f_main.fig / app\k2f_main.m / app\k2f_named.txt / app\k2f_notes.txt / app\k2f_pragma.m / app\k2f_script.m / lib\k2f_libfn.m|exact
+CHK|toponly_upper|app\k2f_cls.m / app\k2f_cmd.m / app\k2f_data.mat / app\k2f_from_local.m / app\k2f_handle.m / app\k2f_helper.fig / app\k2f_helper.m / app\k2f_main.fig / app\k2f_main.m / app\k2f_named.txt / app\k2f_notes.txt / app\k2f_pragma.m / app\k2f_script.m / lib\k2f_libfn.m|exact
+CHK|noext|app\k2f_from_sub.m / app\k2f_helper.fig / app\k2f_helper.m / app\private\k2f_priv.m|exact
+CHK|fullpath|app\k2f_from_sub.m / app\k2f_helper.fig / app\k2f_helper.m / app\private\k2f_priv.m|exact
+CHK|cell_two|app\k2f_from_script.m / app\k2f_from_sub.m / app\k2f_helper.fig / app\k2f_helper.m / app\k2f_script.m / app\private\k2f_priv.m|exact
+CHK|string_array|app\k2f_from_script.m / app\k2f_from_sub.m / app\k2f_helper.fig / app\k2f_helper.m / app\k2f_script.m / app\private\k2f_priv.m|exact
+CHK|class_file|app\k2f_base.m / app\k2f_cls.m / app\k2f_default.m / app\k2f_from_method.m|exact
+CHK|script_file|app\k2f_from_script.m / app\k2f_script.m|exact
+CHK|data_file|app\k2f_notes.txt|exact
+CHK|fig_file|app\k2f_from_sub.m / app\k2f_helper.fig / app\k2f_helper.m / app\private\k2f_priv.m|exact
+CHK|folder|lib\k2f_libdeep.m / lib\k2f_libfn.m|exact
+CHK|builtin_name||exact
+CHK|builtin_products|MATLAB 25.2 1 1|exact
+CHK|toolbox_name_products|MATLAB 25.2 1 1 / Signal Processing Toolbox 25.2 8 1|exact
+CHK|empty_cell||exact
+CHK|empty_cell_size|[0 0]|exact
+CHK|files_shape|[1 2]|exact
+CHK|files_class|cell|exact
+CHK|product_fields|Name,Version,ProductNumber,Certain|exact
+CHK|product_shape|[1 2]|exact
+CHK|product_classes|char,char,double,logical|exact
+CHK|missing|MATLAB:depfun:req:NameNotFound|exact
+CHK|missing_msg|File, function or class "k2f_nosuch.m" may not exist. Neither WHICH nor EXIST could find an exact, case-sensitive match. Please check the spelling of the name, and that any required directories are on the MATLAB path.|exact
+CHK|missing_noext|MATLAB:depfun:req:NameNotFound|exact
+CHK|missing_noext_msg|File, function or class "k2f_nosuch" may not exist. Neither WHICH nor EXIST could find an exact, case-sensitive match. Please check the spelling of the name, and that any required directories are on the MATLAB path.|exact
+CHK|number|MATLAB:matlab:codetools:requiredFilesAndProducts:invalidType|exact
+CHK|number_msg|Expected input number 1, files, to be one of these types: char, cell, string Instead its type was double.|exact
+CHK|cell_number|MATLAB:requiredFilesAndProducts:NameMustBeChar|exact
+CHK|cell_number_msg|Invalid element(s) found in the first input argument: #1. Use strings, a row character vector or a cell array of row character vectors for file names.|exact
+CHK|bad_flag|MATLAB:requiredFilesAndProducts:BadStringFlag|exact
+CHK|bad_flag_msg|Flag "bogus" is not recognized. Use a valid flag.|exact
+CHK|no_args|MATLAB:narginchk:notEnoughInputs|exact
+CHK|no_args_msg|Not enough input arguments.|exact
+CHK|three_args|MATLAB:narginchk:tooManyInputs|exact
+CHK|three_args_msg|Too many input arguments.|exact
+CHK|three_outputs|MATLAB:TooManyOutputs|exact
+CHK|three_outputs_msg|Too many output arguments.|exact
+CHK|main_without_lib|app\k2f_base.m / app\k2f_cls.m / app\k2f_cmd.m / app\k2f_data.mat / app\k2f_default.m / app\k2f_from_local.m / app\k2f_from_method.m / app\k2f_from_script.m / app\k2f_from_sub.m / app\k2f_handle.m / app\k2f_helper.fig / app\k2f_helper.m / app\k2f_main.fig / app\k2f_main.m / app\k2f_named.txt / app\k2f_notes.txt / app\k2f_pragma.m / app\k2f_script.m / app\private\k2f_priv.m|exact
+CHK|off_path|app\k2f_helper.m / app\private\k2f_priv.m|exact
+CHK|dsp_main|[0 0]|exact
+CHK|dsp_class|string|exact
+CHK|dsp_missing|Compiler:utils:shared:cannotFindFile|exact
+CHK|dsp_missing_msg|Cannot find file: k2f_nosuch.m|exact

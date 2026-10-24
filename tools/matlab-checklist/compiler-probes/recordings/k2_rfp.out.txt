@@ -1,0 +1,201 @@
+rfp.main.files	cell [1 20]
+rfp.main.files[1]	<T>\app\k2_cellfn.m
+rfp.main.files[2]	<T>\app\k2_cls.m
+rfp.main.files[3]	<T>\app\k2_cmd.m
+rfp.main.files[4]	<T>\app\k2_data.mat
+rfp.main.files[5]	<T>\app\k2_deep.m
+rfp.main.files[6]	<T>\app\k2_from_local.m
+rfp.main.files[7]	<T>\app\k2_from_method.m
+rfp.main.files[8]	<T>\app\k2_from_script.m
+rfp.main.files[9]	<T>\app\k2_from_sub.m
+rfp.main.files[10]	<T>\app\k2_handle.m
+rfp.main.files[11]	<T>\app\k2_helper.fig
+rfp.main.files[12]	<T>\app\k2_helper.m
+rfp.main.files[13]	<T>\app\k2_main.fig
+rfp.main.files[14]	<T>\app\k2_main.m
+rfp.main.files[15]	<T>\app\k2_notes.txt
+rfp.main.files[16]	<T>\app\k2_pragma.m
+rfp.main.files[17]	<T>\app\k2_script.m
+rfp.main.files[18]	<T>\app\private\k2_priv.m
+rfp.main.files[19]	<T>\lib\k2_libdeep.m
+rfp.main.files[20]	<T>\lib\k2_libfn.m
+rfp.main.products	struct [1 2] fields [Name, Version, ProductNumber, Certain]
+rfp.main.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.main.products[2]	Signal Processing Toolbox | 25.2 | 8 | 1
+rfp.main.toponly.files	cell [1 14]
+rfp.main.toponly.files[1]	<T>\app\k2_cellfn.m
+rfp.main.toponly.files[2]	<T>\app\k2_cls.m
+rfp.main.toponly.files[3]	<T>\app\k2_cmd.m
+rfp.main.toponly.files[4]	<T>\app\k2_data.mat
+rfp.main.toponly.files[5]	<T>\app\k2_from_local.m
+rfp.main.toponly.files[6]	<T>\app\k2_handle.m
+rfp.main.toponly.files[7]	<T>\app\k2_helper.fig
+rfp.main.toponly.files[8]	<T>\app\k2_helper.m
+rfp.main.toponly.files[9]	<T>\app\k2_main.fig
+rfp.main.toponly.files[10]	<T>\app\k2_main.m
+rfp.main.toponly.files[11]	<T>\app\k2_notes.txt
+rfp.main.toponly.files[12]	<T>\app\k2_pragma.m
+rfp.main.toponly.files[13]	<T>\app\k2_script.m
+rfp.main.toponly.files[14]	<T>\lib\k2_libfn.m
+rfp.main.toponly.products	struct [1 2] fields [Name, Version, ProductNumber, Certain]
+rfp.main.toponly.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.main.toponly.products[2]	Signal Processing Toolbox | 25.2 | 8 | 1
+rfp.noext.files	cell [1 4]
+rfp.noext.files[1]	<T>\app\k2_from_sub.m
+rfp.noext.files[2]	<T>\app\k2_helper.fig
+rfp.noext.files[3]	<T>\app\k2_helper.m
+rfp.noext.files[4]	<T>\app\private\k2_priv.m
+rfp.noext.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.noext.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.full.files	cell [1 4]
+rfp.full.files[1]	<T>\app\k2_from_sub.m
+rfp.full.files[2]	<T>\app\k2_helper.fig
+rfp.full.files[3]	<T>\app\k2_helper.m
+rfp.full.files[4]	<T>\app\private\k2_priv.m
+rfp.full.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.full.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.two.files	cell [1 6]
+rfp.two.files[1]	<T>\app\k2_from_script.m
+rfp.two.files[2]	<T>\app\k2_from_sub.m
+rfp.two.files[3]	<T>\app\k2_helper.fig
+rfp.two.files[4]	<T>\app\k2_helper.m
+rfp.two.files[5]	<T>\app\k2_script.m
+rfp.two.files[6]	<T>\app\private\k2_priv.m
+rfp.two.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.two.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.string.files	cell [1 4]
+rfp.string.files[1]	<T>\app\k2_from_sub.m
+rfp.string.files[2]	<T>\app\k2_helper.fig
+rfp.string.files[3]	<T>\app\k2_helper.m
+rfp.string.files[4]	<T>\app\private\k2_priv.m
+rfp.string.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.string.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.stringarray.files	cell [1 6]
+rfp.stringarray.files[1]	<T>\app\k2_from_script.m
+rfp.stringarray.files[2]	<T>\app\k2_from_sub.m
+rfp.stringarray.files[3]	<T>\app\k2_helper.fig
+rfp.stringarray.files[4]	<T>\app\k2_helper.m
+rfp.stringarray.files[5]	<T>\app\k2_script.m
+rfp.stringarray.files[6]	<T>\app\private\k2_priv.m
+rfp.stringarray.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.stringarray.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.class.files	cell [1 3]
+rfp.class.files[1]	<T>\app\k2_cls.m
+rfp.class.files[2]	<T>\app\k2_deep.m
+rfp.class.files[3]	<T>\app\k2_from_method.m
+rfp.class.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.class.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.script.files	cell [1 2]
+rfp.script.files[1]	<T>\app\k2_from_script.m
+rfp.script.files[2]	<T>\app\k2_script.m
+rfp.script.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.script.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.private.files	cell [1 1]
+rfp.private.files[1]	<T>\app\private\k2_priv.m
+rfp.private.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.private.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.data.files	cell [1 1]
+rfp.data.files[1]	<T>\app\k2_notes.txt
+rfp.data.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.data.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.mat.files	cell [1 1]
+rfp.mat.files[1]	<T>\app\k2_data.mat
+rfp.mat.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.mat.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.fig.files	cell [1 20]
+rfp.fig.files[1]	<T>\app\k2_cellfn.m
+rfp.fig.files[2]	<T>\app\k2_cls.m
+rfp.fig.files[3]	<T>\app\k2_cmd.m
+rfp.fig.files[4]	<T>\app\k2_data.mat
+rfp.fig.files[5]	<T>\app\k2_deep.m
+rfp.fig.files[6]	<T>\app\k2_from_local.m
+rfp.fig.files[7]	<T>\app\k2_from_method.m
+rfp.fig.files[8]	<T>\app\k2_from_script.m
+rfp.fig.files[9]	<T>\app\k2_from_sub.m
+rfp.fig.files[10]	<T>\app\k2_handle.m
+rfp.fig.files[11]	<T>\app\k2_helper.fig
+rfp.fig.files[12]	<T>\app\k2_helper.m
+rfp.fig.files[13]	<T>\app\k2_main.fig
+rfp.fig.files[14]	<T>\app\k2_main.m
+rfp.fig.files[15]	<T>\app\k2_notes.txt
+rfp.fig.files[16]	<T>\app\k2_pragma.m
+rfp.fig.files[17]	<T>\app\k2_script.m
+rfp.fig.files[18]	<T>\app\private\k2_priv.m
+rfp.fig.files[19]	<T>\lib\k2_libdeep.m
+rfp.fig.files[20]	<T>\lib\k2_libfn.m
+rfp.fig.products	struct [1 2] fields [Name, Version, ProductNumber, Certain]
+rfp.fig.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.fig.products[2]	Signal Processing Toolbox | 25.2 | 8 | 1
+rfp.missing	ERR MATLAB:depfun:req:NameNotFound | File, function or class "k2_nosuch.m" may not exist. Neither WHICH nor EXIST could find an exact, case-sensitive match. Please check the spelling of the name, and that any required directories are on the MATLAB path.
+rfp.folder.files	cell [1 29]
+rfp.folder.files[1]	<T>\app\k2_byname.m
+rfp.folder.files[2]	<T>\app\k2_cellfn.m
+rfp.folder.files[3]	<T>\app\k2_cls.m
+rfp.folder.files[4]	<T>\app\k2_cmd.m
+rfp.folder.files[5]	<T>\app\k2_data.mat
+rfp.folder.files[6]	<T>\app\k2_deep.m
+rfp.folder.files[7]	<T>\app\k2_excl.m
+rfp.folder.files[8]	<T>\app\k2_field.m
+rfp.folder.files[9]	<T>\app\k2_from_local.m
+rfp.folder.files[10]	<T>\app\k2_from_method.m
+rfp.folder.files[11]	<T>\app\k2_from_script.m
+rfp.folder.files[12]	<T>\app\k2_from_sub.m
+rfp.folder.files[13]	<T>\app\k2_handle.m
+rfp.folder.files[14]	<T>\app\k2_helper.fig
+rfp.folder.files[15]	<T>\app\k2_helper.m
+rfp.folder.files[16]	<T>\app\k2_inquote.m
+rfp.folder.files[17]	<T>\app\k2_main.fig
+rfp.folder.files[18]	<T>\app\k2_main.m
+rfp.folder.files[19]	<T>\app\k2_notes.txt
+rfp.folder.files[20]	<T>\app\k2_pragma.m
+rfp.folder.files[21]	<T>\app\k2_script.m
+rfp.folder.files[22]	<T>\app\k2_shadow.m
+rfp.folder.files[23]	<T>\app\k2_strfn.m
+rfp.folder.files[24]	<T>\app\k2_unnamed.txt
+rfp.folder.files[25]	<T>\app\k2_unused.m
+rfp.folder.files[26]	<T>\app\private\k2_priv.m
+rfp.folder.files[27]	<T>\app\sub\k2_table.csv
+rfp.folder.files[28]	<T>\lib\k2_libdeep.m
+rfp.folder.files[29]	<T>\lib\k2_libfn.m
+rfp.folder.products	struct [1 2] fields [Name, Version, ProductNumber, Certain]
+rfp.folder.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.folder.products[2]	Signal Processing Toolbox | 25.2 | 8 | 1
+rfp.number	ERR MATLAB:matlab:codetools:requiredFilesAndProducts:invalidType | Expected input number 1, files, to be one of these types: /  / char, cell, string /  / Instead its type was double.
+rfp.empty.files	cell [0 0]
+rfp.empty.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.empty.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.bad.option	ERR MATLAB:requiredFilesAndProducts:BadStringFlag | Flag "bogus" is not recognized. Use a valid flag.
+rfp.builtin.files	cell [0 0]
+rfp.builtin.products	struct [1 1] fields [Name, Version, ProductNumber, Certain]
+rfp.builtin.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.toolboxfile.files	cell [0 0]
+rfp.toolboxfile.products	struct [1 2] fields [Name, Version, ProductNumber, Certain]
+rfp.toolboxfile.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.toolboxfile.products[2]	Signal Processing Toolbox | 25.2 | 8 | 1
+rfp.nargout3	ERR MATLAB:TooManyOutputs | Too many output arguments.
+rfp.noargs	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+rfp.main.nolib.files	cell [1 18]
+rfp.main.nolib.files[1]	<T>\app\k2_cellfn.m
+rfp.main.nolib.files[2]	<T>\app\k2_cls.m
+rfp.main.nolib.files[3]	<T>\app\k2_cmd.m
+rfp.main.nolib.files[4]	<T>\app\k2_data.mat
+rfp.main.nolib.files[5]	<T>\app\k2_deep.m
+rfp.main.nolib.files[6]	<T>\app\k2_from_local.m
+rfp.main.nolib.files[7]	<T>\app\k2_from_method.m
+rfp.main.nolib.files[8]	<T>\app\k2_from_script.m
+rfp.main.nolib.files[9]	<T>\app\k2_from_sub.m
+rfp.main.nolib.files[10]	<T>\app\k2_handle.m
+rfp.main.nolib.files[11]	<T>\app\k2_helper.fig
+rfp.main.nolib.files[12]	<T>\app\k2_helper.m
+rfp.main.nolib.files[13]	<T>\app\k2_main.fig
+rfp.main.nolib.files[14]	<T>\app\k2_main.m
+rfp.main.nolib.files[15]	<T>\app\k2_notes.txt
+rfp.main.nolib.files[16]	<T>\app\k2_pragma.m
+rfp.main.nolib.files[17]	<T>\app\k2_script.m
+rfp.main.nolib.files[18]	<T>\app\private\k2_priv.m
+rfp.main.nolib.products	struct [1 2] fields [Name, Version, ProductNumber, Certain]
+rfp.main.nolib.products[1]	MATLAB | 25.2 | 1 | 1
+rfp.main.nolib.products[2]	Signal Processing Toolbox | 25.2 | 8 | 1
+dsp.main	string [0 0] []
+dsp.two	string [0 0] []
+dsp.missing	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / k2_nosuch.m

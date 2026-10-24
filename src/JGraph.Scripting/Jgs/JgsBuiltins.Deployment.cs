@@ -105,6 +105,8 @@ internal static partial class JgsBuiltins
             BindsAnsAsStatement = false,
         }));
 
+        RegisterDependencyBuiltins(env, interpreter, host); // stage K2
+
         if (host.Deployment is { } deployment)
         {
             RegisterDeployedSession(env, interpreter, host, deployment);

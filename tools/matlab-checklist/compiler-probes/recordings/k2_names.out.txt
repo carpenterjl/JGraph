@@ -1,0 +1,2986 @@
+BetaDistribution		
+BinomialDistribution		
+BirnbaumSaundersDistribution		
+BurrDistribution		
+ExhaustiveSearcher		
+ExponentialDistribution		
+ExtremeValueDistribution		
+GammaDistribution		
+GeneralizedExtremeValueDistribution		
+GeneralizedParetoDistribution		
+HalfNormalDistribution		
+Inf	1	toolbox/matlab/elmat/Inf
+InverseGaussianDistribution		
+KDTreeSearcher	1,141,188,127,19,96	toolbox/shared/statslib/@KDTreeSearcher/KDTreeSearcher.m
+KernelDistribution		
+LogisticDistribution		
+LoglogisticDistribution		
+LognormalDistribution		
+LoguniformDistribution		
+MException		<elsewhere>
+MultinomialDistribution		
+NET		
+NaN	1	toolbox/matlab/elmat/NaN
+NaT	1	toolbox/matlab/datatypes/datetime/NaT.m
+NakagamiDistribution		
+NegativeBinomialDistribution		
+NormalDistribution		
+PiecewiseLinearDistribution		
+PoissonDistribution		
+RayleighDistribution		
+RicianDistribution		
+StableDistribution		
+TriangularDistribution		
+UniformDistribution		
+VideoWriter	1	toolbox/matlab/audiovideo/VideoWriter.m
+WeibullDistribution		
+abcd2s	1,86	toolbox/rf/rf/abcd2s.m
+abs	1	toolbox/matlab/elfun/abs
+ac2poly	1,8	toolbox/signal/signal/ac2poly.m
+ac2rc	1,8	toolbox/signal/signal/ac2rc.m
+accumarray	1	toolbox/matlab/elmat/accumarray
+acos	1	toolbox/matlab/elfun/acos
+acosd	1	toolbox/matlab/elfun/acosd
+acosh	1	toolbox/matlab/elfun/acosh
+acot	1	toolbox/matlab/elfun/acot
+acotd	1	toolbox/matlab/elfun/acotd
+acoth	1	toolbox/matlab/elfun/acoth
+acsc	1	toolbox/matlab/elfun/acsc
+acscd	1	toolbox/matlab/elfun/acscd
+acsch	1	toolbox/matlab/elfun/acsch
+activecontour	1,17	toolbox/images/images/activecontour.m
+adapthisteq	1,17	toolbox/images/images/adapthisteq.m
+adaptthresh	1,17	toolbox/images/images/adaptthresh.m
+addCause		<elsewhere>
+addStyle		
+addToolbarExplorationButtons	1	toolbox/matlab/graphics/graphics/plottools/addToolbarExplorationButtons.p
+addcats	1	toolbox/matlab/bigdata/@tall/addcats.m
+addedvarplot		
+addlistener	1	toolbox/matlab/uitools/uitools/addlistener
+addpath	1	toolbox/matlab/general/addpath.m
+addpoints	1	toolbox/matlab/graphics/graphics/addpoints.m
+addtodate	1	toolbox/matlab/timefun/addtodate.m
+addvars	1	toolbox/matlab/bigdata/@tall/addvars.m
+adtest		
+affine2d	1,17	toolbox/images/images/affine2d.m
+affineOutputView	1,17	toolbox/images/images/affineOutputView.m
+airy	1	toolbox/matlab/specfun/airy
+alignsignals	1,8	toolbox/signal/signal/alignsignals.m
+alim	1	toolbox/matlab/graphics/graphics/graph3d/alim.m
+all	1	toolbox/matlab/ops/all
+allchild	1	toolbox/matlab/uitools/uitools/allchild.m
+alpha	1	toolbox/matlab/graphics/graphics/graph3d/alpha.m
+alphamap	1	toolbox/matlab/graphics/graphics/color/alphamap.m
+amd	1	toolbox/matlab/sparfun/amd
+ancestor	1	toolbox/matlab/graphics/graphics/objectsystem/ancestor
+and	1	toolbox/matlab/ops/and
+andrewsplot		
+angle	1	toolbox/matlab/elfun/angle.m
+animatedline	1	toolbox/matlab/graphics/graphics/animatedline
+annotation	1	toolbox/matlab/graphics/graphics/scribe/annotation.m
+anova1		
+anova2		
+anovan		
+ansaribradley		
+any	1	toolbox/matlab/ops/any
+anymissing	1	toolbox/matlab/elmat/anymissing.m
+appdesigner	1	toolbox/matlab/appdesigner/appdesigner/appdesigner.m
+append	1	toolbox/matlab/strfun/append.m
+applylut	1,17	toolbox/images/images/applylut.m
+arburg	1,8	toolbox/signal/signal/arburg.m
+arcov	1,8	toolbox/signal/signal/arcov.m
+area	1	toolbox/matlab/graphics/graphics/specgraph/area.m
+argnames	1	toolbox/matlab/funfun/@inline/argnames.m
+armcov	1,8	toolbox/signal/signal/armcov.m
+array2table	1	toolbox/matlab/datatypes/tabular/array2table.m
+arrayfun	1	toolbox/matlab/datatypes/applyfuns/arrayfun
+aryule	1,8	toolbox/signal/signal/aryule.m
+asec	1	toolbox/matlab/elfun/asec
+asecd	1	toolbox/matlab/elfun/asecd
+asech	1	toolbox/matlab/elfun/asech
+asin	1	toolbox/matlab/elfun/asin
+asind	1	toolbox/matlab/elfun/asind
+asinh	1	toolbox/matlab/elfun/asinh
+assert	1	toolbox/matlab/lang/assert
+assignin	1	toolbox/matlab/lang/assignin
+atan	1	toolbox/matlab/elfun/atan
+atan2	1	toolbox/matlab/elfun/atan2
+atan2d	1	toolbox/matlab/elfun/atan2d
+atand	1	toolbox/matlab/elfun/atand
+atanh	1	toolbox/matlab/elfun/atanh
+audiodevinfo	1	toolbox/matlab/audiovideo/audiodevinfo.m
+audiodevreset	1	toolbox/matlab/audiovideo/audiodevreset.m
+audioplayer	1	toolbox/matlab/audiovideo/audioplayer.m
+audioread	1	toolbox/matlab/audiovideo/audioread.m
+audiorecorder	1	toolbox/matlab/audiovideo/audiorecorder.m
+autumn	1	toolbox/matlab/graphics/graphics/color/autumn.m
+axes	1	toolbox/matlab/graphics/graphics/axis/axes
+axis	1	toolbox/matlab/graphics/graphics/axis/axis.m
+axtoolbar	1	toolbox/matlab/graphics/graphics/plottools/axtoolbar.m
+axtoolbarbtn	1	toolbox/matlab/graphics/graphics/plottools/axtoolbarbtn.m
+balance	1	toolbox/matlab/matfun/balance
+bandpass	1,8	toolbox/signal/signal/bandpass.m
+bandpower	1,8	toolbox/signal/signal/bandpower.m
+bandstop	1,8	toolbox/signal/signal/bandstop.m
+bandwidth	1	toolbox/matlab/matfun/bandwidth
+bar	1	toolbox/matlab/graphics/graphics/specgraph/bar.m
+bar3	1	toolbox/matlab/graphics/graphics/specgraph/bar3.m
+bar3h	1	toolbox/matlab/graphics/graphics/specgraph/bar3h.m
+barh	1	toolbox/matlab/graphics/graphics/specgraph/barh.m
+barthannwin	1,8	toolbox/signal/signal/barthannwin.m
+bartlett	1,8	toolbox/signal/signal/bartlett.m
+barttest		
+base2dec	1	toolbox/matlab/strfun/base2dec.m
+bbdesign		
+beep	1	toolbox/matlab/oss/beep
+besselap	1,8	toolbox/signal/signal/besselap.m
+besself	1,8	toolbox/signal/signal/besself.m
+besselh	1	toolbox/matlab/specfun/besselh
+besseli	1	toolbox/matlab/specfun/besseli
+besselj	1	toolbox/matlab/specfun/besselj
+besselk	1	toolbox/matlab/specfun/besselk
+bessely	1	toolbox/matlab/specfun/bessely
+bestblk	1,17	toolbox/images/images/bestblk.m
+beta	1	toolbox/matlab/specfun/beta.m
+betacdf		
+betafit		
+betainc	1	toolbox/matlab/specfun/betainc
+betaincinv	1	toolbox/matlab/specfun/betaincinv
+betainv		
+betalike		
+betaln	1	toolbox/matlab/specfun/betaln.m
+betapdf		
+betarnd		
+betastat		
+between	1	toolbox/matlab/bigdata/@tall/between.m
+bfscore	1,17	toolbox/images/images/bfscore.m
+bicg	1	toolbox/matlab/sparfun/bicg.m
+bicgstab	1	toolbox/matlab/sparfun/bicgstab.m
+bicgstabl	1	toolbox/matlab/sparfun/bicgstabl.m
+bilinear	1,8	toolbox/signal/signal/bilinear.m
+bin2dec	1	toolbox/matlab/strfun/bin2dec
+binocdf		
+binofit		
+binoinv		
+binopdf		
+binornd		
+binostat		
+binscatter	1	toolbox/matlab/graphics/graphics/specgraph/binscatter.m
+biplot		
+bitand	1	toolbox/matlab/ops/bitand
+bitcmp	1	toolbox/matlab/ops/bitcmp
+bitget	1	toolbox/matlab/ops/bitget
+bitor	1	toolbox/matlab/ops/bitor
+bitrevorder	1,8	toolbox/signal/signal/bitrevorder.m
+bitset	1	toolbox/matlab/ops/bitset
+bitshift	1	toolbox/matlab/ops/bitshift
+bitxor	1	toolbox/matlab/ops/bitxor
+blackman	1,8	toolbox/signal/signal/blackman.m
+blackmanharris	1,8	toolbox/signal/signal/blackmanharris.m
+blanks	1	toolbox/matlab/strfun/blanks.m
+ble	1	toolbox/shared/blelib/ble.m
+blelist	1	toolbox/shared/blelib/blelist.m
+blkdiag	1	toolbox/matlab/elmat/blkdiag.m
+blockproc	1,17	toolbox/images/images/blockproc.m
+bluetooth	1	toolbox/matlab/bluetooth/bluetooth.m
+bluetoothlist	1	toolbox/matlab/bluetooth/bluetoothlist.m
+bohmanwin	1,8	toolbox/signal/signal/bohmanwin.m
+bone	1	toolbox/matlab/graphics/graphics/color/bone.m
+bootci		
+bootstrp		
+boundary	1	toolbox/matlab/polyfun/boundary.m
+boundarymask	1,17	toolbox/images/images/boundarymask.m
+bounds	1	toolbox/matlab/datafun/bounds.m
+box	1	toolbox/matlab/graphics/graphics/graph2d/box.m
+boxcar	1,8	toolbox/signal/signal/boxcar.m
+boxchart	1	toolbox/matlab/graphics/graphics/specgraph/boxchart.m
+boxplot		
+brighten	1	toolbox/matlab/graphics/graphics/graph3d/brighten.m
+bsxfun	1	toolbox/matlab/elmat/bsxfun
+bubblechart	1	toolbox/matlab/graphics/graphics/bubblechart.m
+bubblechart3	1	toolbox/matlab/graphics/graphics/bubblechart3.m
+bubblelegend	1	toolbox/matlab/graphics/graphics/scribe/bubblelegend.m
+bubblelim	1	toolbox/matlab/graphics/graphics/bubblelim.p
+bubblesize	1	toolbox/matlab/graphics/graphics/bubblesize.p
+buffer	1,8	toolbox/signal/signal/buffer.mexw64
+builtin	1	toolbox/matlab/lang/builtin
+buttap	1,8	toolbox/signal/signal/buttap.m
+butter	1,8	toolbox/signal/signal/butter.m
+buttord	1,8	toolbox/signal/signal/buttord.m
+bvp4c	1	toolbox/matlab/funfun/bvp4c.m
+bvp5c	1	toolbox/matlab/funfun/bvp5c.m
+bvpget	1	toolbox/matlab/funfun/bvpget.m
+bvpinit	1	toolbox/matlab/funfun/bvpinit.m
+bvpset	1	toolbox/matlab/funfun/bvpset.m
+bvpxtend	1	toolbox/matlab/funfun/bvpxtend.m
+bwarea	1,17	toolbox/images/images/bwarea.m
+bwareafilt	1,17	toolbox/images/images/bwareafilt.m
+bwareaopen	1,17	toolbox/images/images/bwareaopen.m
+bwboundaries	1,17	toolbox/images/images/bwboundaries.m
+bwconncomp	1,17	toolbox/images/images/bwconncomp.m
+bwconvhull	1,17	toolbox/images/images/bwconvhull.m
+bwdist	1,17	toolbox/images/images/bwdist.m
+bwdistgeodesic	1,17	toolbox/images/images/bwdistgeodesic.m
+bweuler	1,17	toolbox/images/images/bweuler.m
+bwferet	1,17	toolbox/images/images/bwferet.m
+bwhitmiss	1,17	toolbox/images/images/bwhitmiss.m
+bwlabel	1,17	toolbox/images/images/bwlabel.m
+bwlabeln	1,17	toolbox/images/images/bwlabeln.m
+bwlookup	1,17	toolbox/images/images/bwlookup.m
+bwmorph	1,17	toolbox/images/images/bwmorph.m
+bwmorph3	1,17	toolbox/images/images/bwmorph3.m
+bwperim	1,17	toolbox/images/images/bwperim.m
+bwpropfilt	1,17	toolbox/images/images/bwpropfilt.m
+bwselect	1,17	toolbox/images/images/bwselect.m
+bwselect3	1,17	toolbox/images/images/bwselect3.m
+bwskel	1,17	toolbox/images/images/bwskel.m
+bwtraceboundary	1,17	toolbox/images/images/bwtraceboundary.m
+bwulterode	1,17	toolbox/images/images/bwulterode.m
+caldays	1	toolbox/matlab/datatypes/calendarDuration/caldays.m
+caldiff	1	toolbox/matlab/bigdata/@tall/caldiff.m
+calendar	1	toolbox/matlab/timefun/calendar.m
+calendarDuration	1	toolbox/matlab/datatypes/calendarDuration/@calendarDuration/calendarDuration.m
+calllib	1	toolbox/matlab/general/calllib
+calmonths	1	toolbox/matlab/datatypes/calendarDuration/calmonths.m
+calquarters	1	toolbox/matlab/datatypes/calendarDuration/calquarters.m
+calweeks	1	toolbox/matlab/datatypes/calendarDuration/calweeks.m
+calyears	1	toolbox/matlab/datatypes/calendarDuration/calyears.m
+camdolly	1	toolbox/matlab/graphics/graphics/graph3d/camdolly.m
+camlight	1	toolbox/matlab/graphics/graphics/graph3d/camlight.m
+camlookat	1	toolbox/matlab/graphics/graphics/graph3d/camlookat.m
+camorbit	1	toolbox/matlab/graphics/graphics/graph3d/camorbit.m
+campan	1	toolbox/matlab/graphics/graphics/graph3d/campan.m
+campos	1	toolbox/matlab/graphics/graphics/graph3d/campos.m
+camproj	1	toolbox/matlab/graphics/graphics/graph3d/camproj.m
+camroll	1	toolbox/matlab/graphics/graphics/graph3d/camroll.m
+camtarget	1	toolbox/matlab/graphics/graphics/graph3d/camtarget.m
+camup	1	toolbox/matlab/graphics/graphics/graph3d/camup.m
+camva	1	toolbox/matlab/graphics/graphics/graph3d/camva.m
+camzoom	1	toolbox/matlab/graphics/graphics/graph3d/camzoom.m
+canoncorr		
+capability		
+capaplot		
+cart2pol	1	toolbox/matlab/specfun/cart2pol.m
+cart2sph	1	toolbox/matlab/specfun/cart2sph.m
+cascadesparams	1,86	toolbox/rf/rf/cascadesparams.m
+caseread		
+casewrite		
+cast	1	toolbox/matlab/datatypes/cast
+cat	1	toolbox/matlab/elmat/cat
+categorical	1	toolbox/matlab/datatypes/categorical/@categorical/categorical.m
+categories	1	toolbox/matlab/bigdata/@tall/categories.m
+caxis	1	toolbox/matlab/graphics/graphics/graph3d/caxis.m
+ccdesign		
+cceps	1,8	toolbox/signal/signal/cceps.m
+cconv	1,8	toolbox/signal/signal/cconv.m
+cd	1	toolbox/matlab/general/cd
+cdf		
+cdf2rdf	1	toolbox/matlab/matfun/cdf2rdf.m
+cdfplot		
+ceil	1	toolbox/matlab/elfun/ceil
+cell	1	toolbox/matlab/datatypes/cell/cell
+cell2mat	1	toolbox/matlab/datatypes/cell/cell2mat.m
+cell2sos	1,8	toolbox/signal/signal/cell2sos.m
+cell2struct	1	toolbox/matlab/datatypes/cell/cell2struct
+cellfun	1	toolbox/matlab/datatypes/applyfuns/cellfun
+cellstr	1	toolbox/matlab/strfun/cellstr.m
+cgs	1	toolbox/matlab/sparfun/cgs.m
+char	1	toolbox/matlab/strfun/char
+cheb1ap	1,8	toolbox/signal/signal/cheb1ap.m
+cheb1ord	1,8	toolbox/signal/signal/cheb1ord.m
+cheb2ap	1,8	toolbox/signal/signal/cheb2ap.m
+cheb2ord	1,8	toolbox/signal/signal/cheb2ord.m
+chebwin	1,8	toolbox/signal/signal/chebwin.m
+cheby1	1,8	toolbox/signal/signal/cheby1.m
+cheby2	1,8	toolbox/signal/signal/cheby2.m
+checkerboard	1,17	toolbox/images/images/checkerboard.m
+chi2cdf		
+chi2gof		
+chi2inv		
+chi2pdf		
+chi2rnd		
+chi2stat		
+chirp	1,141,179,132,91,157,17,135,176,86,142,8,2,38,35	toolbox/shared/siglib/chirp.m
+chol	1	toolbox/matlab/matfun/chol
+cholcov		
+cholupdate	1	toolbox/matlab/matfun/cholupdate
+chromadapt	1,17	toolbox/images/colorspaces/chromadapt.m
+circshift	1	toolbox/matlab/elmat/circshift.m
+cla	1	toolbox/matlab/graphics/graphics/cla.m
+clabel	1	toolbox/matlab/graphics/graphics/specgraph/clabel.m
+class	1	toolbox/matlab/datatypes/class
+clc	1	toolbox/matlab/iofun/clc
+clear	1	toolbox/matlab/general/clear
+clearpoints	1	toolbox/matlab/graphics/graphics/clearpoints.m
+clearvars	1	toolbox/matlab/general/clearvars.m
+clf	1	toolbox/matlab/graphics/graphics/clf.m
+clim	1	toolbox/matlab/graphics/graphics/clim.m
+clip	1	toolbox/matlab/datafun/clip.m
+clock	1	toolbox/matlab/timefun/clock
+close	1	toolbox/matlab/graphics/graphics/close.p
+closereq	1	toolbox/matlab/graphics/graphics/closereq.m
+cluster	ERR MATLAB:depfun:req:NameNotFound	toolbox/bioinfo/bioinfo/@phytree/cluster.m
+clusterdata		
+cmap2gray	1	toolbox/matlab/images/cmap2gray.m
+cmdscale		
+cmpermute	1	toolbox/matlab/graphics/graphics/graph3d/cmpermute.m
+cmunique	1	toolbox/matlab/graphics/graphics/graph3d/cmunique.m
+cohere	1,8	toolbox/signal/signal/cohere.m
+col2im	1,17	toolbox/images/images/col2im.m
+colfilt	1,17	toolbox/images/images/colfilt.m
+collapse		
+colnames		
+colon	1	toolbox/matlab/ops/colon
+colorangle	1,17	toolbox/images/colorspaces/colorangle.m
+colorbar	1	toolbox/matlab/graphics/graphics/scribe/colorbar.m
+colorcube	1	toolbox/matlab/graphics/graphics/color/colorcube.m
+colordef	1	toolbox/matlab/graphics/graphics/graph3d/colordef.m
+colormap	1	toolbox/matlab/graphics/graphics/color/colormap.m
+colororder	1	toolbox/matlab/graphics/graphics/color/colororder.m
+colperm	1	toolbox/matlab/sparfun/colperm.m
+column		
+combnk		
+comet	1	toolbox/matlab/graphics/graphics/specgraph/comet.m
+comet3	1	toolbox/matlab/graphics/graphics/specgraph/comet3.m
+compan	1	toolbox/matlab/elmat/compan.m
+compass	1	toolbox/matlab/graphics/graphics/specgraph/compass.m
+complex	1	toolbox/matlab/elfun/complex
+compose	1	toolbox/matlab/strfun/compose.m
+computer	1	toolbox/matlab/oss/computer
+concat	ERR MATLAB:depfun:req:NameNotFound	toolbox/mbc/mbctools/@sweepset/concat.m
+cond	1	toolbox/matlab/matfun/cond.m
+condeig	1	toolbox/matlab/matfun/condeig.m
+condest	1	toolbox/matlab/matfun/condest.m
+coneplot	1	toolbox/matlab/graphics/graphics/specgraph/coneplot.m
+confusionmat	1,12,19	toolbox/shared/mlearnlib/core/confusionmat.m
+conj	1	toolbox/matlab/elfun/conj
+conndef	1,17	toolbox/images/images/conndef.m
+containers		
+contains	1	toolbox/matlab/strfun/contains
+contour	1	toolbox/matlab/graphics/graphics/specgraph/contour.m
+contour3	1	toolbox/matlab/graphics/graphics/specgraph/contour3.m
+contourc	1	toolbox/matlab/graphics/graphics/specgraph/contourc
+contourf	1	toolbox/matlab/graphics/graphics/specgraph/contourf.m
+contourslice	1	toolbox/matlab/graphics/graphics/specgraph/contourslice.m
+contrast	1	toolbox/matlab/graphics/graphics/specgraph/contrast.m
+conv	1	toolbox/matlab/datafun/conv.m
+conv2	1	toolbox/matlab/datafun/conv2
+convertCharsToStrings	1	toolbox/matlab/strfun/convertCharsToStrings
+convertContainedStringsToChars	1	toolbox/matlab/strfun/convertContainedStringsToChars
+convertStringsToChars	1	toolbox/matlab/strfun/convertStringsToChars
+convertvars	1	toolbox/matlab/datatypes/tabular/@tabular/convertvars.m
+convhull	1	toolbox/matlab/polyfun/convhull
+convhulln	1	toolbox/matlab/polyfun/convhulln.m
+convmtx	1,8	toolbox/signal/signal/convmtx.m
+convmtx2	1,17	toolbox/images/images/convmtx2.m
+convn	1	toolbox/matlab/datafun/convn.m
+cool	1	toolbox/matlab/graphics/graphics/color/cool.m
+cophenet		
+copper	1	toolbox/matlab/graphics/graphics/color/copper.m
+copulacdf		
+copulafit		
+copulaparam		
+copulapdf		
+copularnd		
+copulastat		
+copyfile	1	toolbox/matlab/io/filesystem/copyfile
+copygraphics	1	toolbox/matlab/graphics/graphics/printing/copygraphics.p
+copyobj	1	toolbox/matlab/graphics/graphics/objectsystem/copyobj
+corr	ERR MATLAB:depfun:req:NameNotFound	toolbox/econ/econ/@ssm/corr.m
+corr2	1,17	toolbox/images/images/corr2.m
+corrcoef	1	toolbox/matlab/datafun/corrcoef.m
+corrcov		
+corrmtx	1,8	toolbox/signal/signal/corrmtx.m
+cos	1	toolbox/matlab/elfun/cos
+cosd	1	toolbox/matlab/elfun/cosd
+cosh	1	toolbox/matlab/elfun/cosh
+cot	1	toolbox/matlab/elfun/cot.m
+cotd	1	toolbox/matlab/elfun/cotd.m
+coth	1	toolbox/matlab/elfun/coth.m
+count	1	toolbox/matlab/strfun/count
+countcats	1	toolbox/matlab/bigdata/@tall/countcats.m
+cov	1	toolbox/matlab/datafun/cov.m
+coxphfit		
+cplxpair	1	toolbox/matlab/elfun/cplxpair.m
+cpsd	1,8	toolbox/signal/signal/cpsd.m
+cputime	1	toolbox/matlab/timefun/cputime
+createns		
+cross	1	toolbox/matlab/specfun/cross.m
+crosstab		
+csc	1	toolbox/matlab/elfun/csc.m
+cscd	1	toolbox/matlab/elfun/cscd.m
+csch	1	toolbox/matlab/elfun/csch.m
+csd	1,8	toolbox/signal/signal/csd.m
+csvwrite	1	toolbox/matlab/io/legacy/text/iofun/csvwrite.m
+ctfroot	1	toolbox/compiler/ctfroot.m
+ctranspose	1	toolbox/matlab/ops/ctranspose
+cummax	1	toolbox/matlab/datafun/cummax
+cummin	1	toolbox/matlab/datafun/cummin
+cumprod	1	toolbox/matlab/datafun/cumprod
+cumsum	1	toolbox/matlab/datafun/cumsum
+cumtrapz	1	toolbox/matlab/datafun/cumtrapz.m
+curl	1	toolbox/matlab/graphics/graphics/specgraph/curl.m
+cusum	1,8	toolbox/signal/signal/cusum.m
+cylinder	1	toolbox/matlab/graphics/graphics/specgraph/cylinder.m
+czt	1,8	toolbox/signal/signal/czt.m
+daspect	1	toolbox/matlab/graphics/graphics/graph3d/daspect.m
+dataTipInteraction	1	toolbox/matlab/graphics/graphics/dataTipInteraction.m
+datacursormode	1	toolbox/matlab/graphics/graphics/datacursormode.m
+datasample		
+datawrap	1,8	toolbox/signal/signal/datawrap.m
+date	1	toolbox/matlab/timefun/date.m
+datenum	1	toolbox/matlab/timefun/datenum.m
+dateshift	1	toolbox/matlab/bigdata/@tall/dateshift.m
+datestr	1	toolbox/matlab/timefun/datestr.m
+datetime	1	toolbox/matlab/datatypes/datetime/@datetime/datetime.m
+datevec	1	toolbox/matlab/timefun/datevec.m
+day	1	toolbox/matlab/timefun/day.m
+days	1	toolbox/matlab/datatypes/duration/days.m
+db	1,8	toolbox/signal/signal/db.m
+db2mag	1	toolbox/shared/controllib/general/db2mag.m
+db2pow	1,8	toolbox/signal/signal/db2pow.m
+dblquad	1	toolbox/matlab/funfun/dblquad.m
+dbscan		
+dct	1,8	toolbox/signal/signal/dct.m
+dct2	1,17	toolbox/images/images/dct2.m
+dctmtx	1,17	toolbox/images/images/dctmtx.m
+dde23	1	toolbox/matlab/funfun/dde23.m
+ddeget	1	toolbox/matlab/funfun/ddeget.m
+ddensd	1	toolbox/matlab/funfun/ddensd.m
+ddesd	1	toolbox/matlab/funfun/ddesd.m
+ddeset	1	toolbox/matlab/funfun/ddeset.m
+deal	1	toolbox/matlab/indexing/deal.m
+deblank	1	toolbox/matlab/strfun/deblank
+dec2base	1	toolbox/matlab/strfun/dec2base.m
+dec2bin	1	toolbox/matlab/strfun/dec2bin
+dec2hex	1	toolbox/matlab/strfun/dec2hex
+decic	1	toolbox/matlab/funfun/decic.m
+decimate	1,8	toolbox/signal/signal/decimate.m
+decomposition	1	toolbox/matlab/matfun/decomposition.m
+deconv	1	toolbox/matlab/datafun/deconv.m
+deconvblind	1,17	toolbox/images/images/deconvblind.m
+deconvlucy	1,17	toolbox/images/images/deconvlucy.m
+deconvreg	1,17	toolbox/images/images/deconvreg.m
+deconvwnr	1,17	toolbox/images/images/deconvwnr.m
+decorrstretch	1,17	toolbox/images/images/decorrstretch.m
+deg2rad	1	toolbox/matlab/elfun/deg2rad.m
+del2	1	toolbox/matlab/datafun/del2.m
+delaunay	1	toolbox/matlab/polyfun/delaunay
+delaunayn	1	toolbox/matlab/polyfun/delaunayn.m
+delete	1	toolbox/matlab/io/filesystem/delete
+deltaE	1,17	toolbox/images/colorspaces/deltaE.m
+demod	1,8	toolbox/signal/signal/demod.m
+demosaic	1,17	toolbox/images/images/demosaic.m
+dendrogram		
+designfilt	1,8	toolbox/signal/signal/designfilt.m
+det	1	toolbox/matlab/matfun/det
+detrend	1	toolbox/matlab/datafun/detrend.m
+deval	1	toolbox/matlab/funfun/deval.m
+dftmtx	1,8	toolbox/signal/signal/dftmtx.m
+diag	1	toolbox/matlab/elmat/diag
+dialog	1	toolbox/matlab/uitools/uitools/dialog.m
+diary	1	toolbox/matlab/general/diary
+dice	1,17	toolbox/images/images/dice.m
+dictionary		<elsewhere>
+diff	1	toolbox/matlab/datafun/diff
+diffuse	1	toolbox/matlab/graphics/graphics/graph3d/diffuse.m
+digitalFilter	1,8	toolbox/signal/signal/digitalFilter.m
+digitrevorder	1,8	toolbox/signal/signal/digitrevorder.m
+dir	1	toolbox/matlab/io/filesystem/dir
+diric	1,8	toolbox/signal/signal/diric.m
+disableDefaultInteractivity	1	toolbox/matlab/graphics/graphics/disableDefaultInteractivity.m
+discretize	1	toolbox/matlab/datafun/discretize.m
+disp	1	toolbox/matlab/lang/disp
+display	1	toolbox/matlab/lang/display
+dissect	1	toolbox/matlab/sparfun/dissect
+dither	1	toolbox/matlab/graphics/graphics/specgraph/dither.m
+divergence	1	toolbox/matlab/graphics/graphics/specgraph/divergence.m
+dlmwrite	1	toolbox/matlab/io/legacy/text/iofun/dlmwrite.m
+dmperm	1	toolbox/matlab/sparfun/dmperm
+dot	1	toolbox/matlab/specfun/dot.m
+dotnetenv	1	toolbox/matlab/external/interfaces/dotnet/dotnetenv
+double	1	toolbox/matlab/datatypes/double
+downsample	1,8	toolbox/signal/signal/downsample.m
+dpss	1,8	toolbox/signal/signal/dpss.m
+drawnow	1	toolbox/matlab/graphics/graphics/drawnow
+dsearchn	1	toolbox/matlab/polyfun/dsearchn.m
+dtw	1,8	toolbox/signal/signal/dtw.m
+dummyvar		
+duration	1	toolbox/matlab/datatypes/duration/@duration/duration.m
+dutycycle	1,8	toolbox/signal/signal/dutycycle.m
+dwtest		
+e		
+ecdf		
+ecdfhist		
+echo	1	toolbox/matlab/general/echo
+echotcpip	1	toolbox/matlab/networklib/interface/echotcpip.m
+echoudp	1,62	toolbox/instrument/instrument/echoudp.m
+edge	1,17	toolbox/images/images/edge.m
+edge3	1,17	toolbox/images/images/edge3.m
+edgetaper	1,17	toolbox/images/images/edgetaper.m
+edr	1,8	toolbox/signal/signal/edr.m
+eig	1	toolbox/matlab/matfun/eig
+eigs	1	toolbox/matlab/sparfun/eigs.m
+ellip	1,8	toolbox/signal/signal/ellip.m
+ellipap	1,141,179,132,91,157,17,135,176,86,142,8,2,38,35	toolbox/shared/siglib/ellipap.m
+ellipj	1	toolbox/matlab/specfun/ellipj.m
+ellipke	1	toolbox/matlab/specfun/ellipke.m
+ellipord	1,8	toolbox/signal/signal/ellipord.m
+ellipsoid	1	toolbox/matlab/graphics/graphics/specgraph/ellipsoid.m
+enableDefaultInteractivity	1	toolbox/matlab/graphics/graphics/enableDefaultInteractivity.m
+enableLegacyExplorationModes	1	toolbox/matlab/graphics/graphics/enableLegacyExplorationModes.m
+enbw	1,8	toolbox/signal/signal/enbw.m
+endsWith	1	toolbox/matlab/strfun/endsWith
+entries		<elsewhere>
+entropy	1,17	toolbox/images/images/entropy.m
+entropyfilt	1,17	toolbox/images/images/entropyfilt.m
+enumeration	1	toolbox/matlab/datatypes/enumeration
+envelope	1,8	toolbox/signal/signal/envelope.m
+envspectrum	1,8	toolbox/signal/signal/envspectrum.m
+eomday	1	toolbox/matlab/timefun/eomday.m
+eps	1	toolbox/matlab/elmat/eps
+eq	1	toolbox/matlab/ops/eq
+eqtflength	1,8	toolbox/signal/signal/eqtflength.m
+erase	1	toolbox/matlab/strfun/erase.m
+eraseBetween	1	toolbox/matlab/strfun/eraseBetween.m
+erf	1	toolbox/matlab/specfun/erf
+erfc	1	toolbox/matlab/specfun/erfc
+erfcinv	1	toolbox/matlab/specfun/erfcinv
+erfcx	1	toolbox/matlab/specfun/erfcx
+erfinv	1	toolbox/matlab/specfun/erfinv
+error	1	toolbox/matlab/lang/error
+errorbar	1	toolbox/matlab/graphics/graphics/specgraph/errorbar.m
+errordlg	1	toolbox/matlab/uitools/uitools/errordlg.m
+etime	1	toolbox/matlab/timefun/etime.m
+etree	1	toolbox/matlab/sparfun/etree
+etreeplot	1	toolbox/matlab/graphics/math/etreeplot.m
+eval	1	toolbox/matlab/lang/eval
+evalc	1	toolbox/matlab/lang/evalc
+evalin	1	toolbox/matlab/lang/evalin
+evcdf		
+events	1	toolbox/matlab/datatypes/events
+evfit		
+evinv		
+evlike		
+evpdf		
+evrnd		
+evstat		
+exceltime	1	toolbox/matlab/bigdata/@tall/exceltime.m
+exist	1	toolbox/matlab/lang/exist
+exit	1	toolbox/matlab/general/exit
+exp	1	toolbox/matlab/elfun/exp
+expand	ERR MATLAB:depfun:req:NameNotFound	toolbox/mbc/mbctools/@sweepset/expand.m
+expcdf		
+expfit		
+expint	1	toolbox/matlab/specfun/expint.m
+expinv		
+explike		
+expm	1	toolbox/matlab/matfun/expm.m
+expm1	1	toolbox/matlab/elfun/expm1
+exportapp	1	toolbox/matlab/graphics/graphics/printing/exportapp.p
+exportfigure		
+exportgraphics	1	toolbox/matlab/graphics/graphics/printing/exportgraphics.p
+exportsetupdlg	1	toolbox/matlab/graphics/graphics/printing/exportsetupdlg.m
+exppdf		
+exprnd		
+expstat		
+extract	1	toolbox/matlab/strfun/extract.m
+extractAfter	1	toolbox/matlab/strfun/extractAfter.m
+extractBefore	1	toolbox/matlab/strfun/extractBefore.m
+extractBetween	1	toolbox/matlab/strfun/extractBetween.m
+eye	1	toolbox/matlab/elmat/eye
+ezcontour	1	toolbox/matlab/graphics/graphics/specgraph/ezcontour.m
+ezcontourf	1	toolbox/matlab/graphics/graphics/specgraph/ezcontourf.m
+ezmesh	1	toolbox/matlab/graphics/graphics/specgraph/ezmesh.m
+ezmeshc	1	toolbox/matlab/graphics/graphics/specgraph/ezmeshc.m
+ezplot	1	toolbox/matlab/graphics/graphics/specgraph/ezplot.m
+ezplot3	1	toolbox/matlab/graphics/graphics/specgraph/ezplot3.m
+ezpolar	1	toolbox/matlab/graphics/graphics/specgraph/ezpolar.m
+ezsurf	1	toolbox/matlab/graphics/graphics/specgraph/ezsurf.m
+ezsurfc	1	toolbox/matlab/graphics/graphics/specgraph/ezsurfc.m
+factor	1	toolbox/matlab/specfun/factor.m
+factorial	1	toolbox/matlab/specfun/factorial.m
+falltime	1,8	toolbox/signal/signal/falltime.m
+false	1	toolbox/matlab/elmat/false
+fan2para	1,17	toolbox/images/images/fan2para.m
+fanbeam	1,17	toolbox/images/images/fanbeam.m
+fcdf		
+fclose	1	toolbox/matlab/io/filesystem/fclose
+fcnchk	1	toolbox/matlab/funfun/fcnchk.m
+fcontour	1	toolbox/matlab/charts/functionplots/fcontour.m
+feather	1	toolbox/matlab/graphics/graphics/specgraph/feather.m
+feature		<elsewhere>
+feof	1	toolbox/matlab/io/filesystem/feof
+ferror	1	toolbox/matlab/io/filesystem/ferror
+feval	1	toolbox/matlab/lang/feval
+ff2n		
+fft	1	toolbox/matlab/datafun/fft
+fft2	1	toolbox/matlab/datafun/fft2.m
+fftfilt	1,8	toolbox/signal/signal/fftfilt.m
+fftn	1	toolbox/matlab/datafun/fftn
+fftshift	1	toolbox/matlab/datafun/fftshift.m
+fftw	1	toolbox/matlab/datafun/fftw
+fgetl	1	toolbox/matlab/io/filesystem/fgetl.m
+fgets	1	toolbox/matlab/io/filesystem/fgets
+fibermetric	1,17	toolbox/images/images/fibermetric.m
+fieldnames	1	toolbox/matlab/datatypes/struct/fieldnames
+figure	1	toolbox/matlab/graphics/graphics/figure
+fileattrib	1	toolbox/matlab/io/filesystem/fileattrib
+filemarker	1	toolbox/matlab/iofun/filemarker
+fileparts	1	toolbox/matlab/io/filesystem/fileparts.m
+fileread	1	toolbox/matlab/io/filesystem/fileread.m
+filesep	1	toolbox/matlab/io/filesystem/filesep
+fill	1	toolbox/matlab/graphics/graphics/specgraph/fill
+fill3	1	toolbox/matlab/graphics/graphics/graph3d/fill3
+fillgaps	1,8	toolbox/signal/signal/fillgaps.m
+fillmissing	1	toolbox/matlab/datafun/fillmissing.m
+filloutliers	1	toolbox/matlab/datafun/filloutliers.m
+filter	1	toolbox/matlab/datafun/filter
+filter2	1	toolbox/matlab/datafun/filter2.m
+filternorm	1,8	toolbox/signal/signal/filternorm.m
+filtfilt	1,8	toolbox/signal/signal/filtfilt.m
+filtic	1,8	toolbox/signal/signal/filtic.m
+filtord	1,8	toolbox/signal/signal/filtord.m
+filtstates		
+fimplicit	1	toolbox/matlab/charts/functionplots/fimplicit.m
+fimplicit3	1	toolbox/matlab/charts/functionplots/fimplicit3.m
+find	1	toolbox/matlab/elmat/find
+findall	1	toolbox/matlab/graphics/graphics/objectsystem/findall.m
+findchangepts	1,8	toolbox/signal/signal/findchangepts.m
+finddelay	1,8	toolbox/signal/signal/finddelay.m
+findgroups	1	toolbox/matlab/datafun/findgroups.m
+findobj	1	toolbox/matlab/graphics/graphics/objectsystem/findobj
+findpeaks	1,8	toolbox/signal/signal/findpeaks.m
+findprop		<elsewhere>
+findsignal	1,8	toolbox/signal/signal/findsignal.m
+findstr	1	toolbox/matlab/strfun/findstr
+finv		
+fir1	1,8	toolbox/signal/signal/fir1.m
+fir2	1,8	toolbox/signal/signal/fir2.m
+fircls	1,8	toolbox/signal/signal/fircls.m
+fircls1	1,8	toolbox/signal/signal/fircls1.m
+firgauss	1,8	toolbox/signal/signal/firgauss.m
+firls	1,8	toolbox/signal/signal/firls.m
+firpm	1,8	toolbox/signal/signal/firpm.m
+firpmord	1,8	toolbox/signal/signal/firpmord.m
+firrcos	1,8	toolbox/signal/signal/firrcos.m
+firtype	1,8	toolbox/signal/signal/firtype.m
+fishertest		
+fitdist		
+fitgeotrans	1,17	toolbox/images/images/fitgeotrans.m
+fix	1	toolbox/matlab/elfun/fix
+flag	1	toolbox/matlab/graphics/graphics/color/flag.m
+flattopwin	1,8	toolbox/signal/signal/flattopwin.m
+flintmax	1	toolbox/matlab/elmat/flintmax
+flip	1	toolbox/matlab/elmat/flip.m
+flipdim	1	toolbox/matlab/elmat/flipdim.m
+fliplr	1	toolbox/matlab/elmat/fliplr.m
+flipud	1	toolbox/matlab/elmat/flipud.m
+floor	1	toolbox/matlab/elfun/floor
+fmesh	1	toolbox/matlab/charts/functionplots/fmesh.m
+fminbnd	1	toolbox/matlab/optimfun/optimfun/fminbnd.m
+fminsearch	1	toolbox/matlab/optimfun/optimfun/fminsearch.m
+focus		
+fopen	1	toolbox/matlab/io/filesystem/fopen
+format	1	toolbox/matlab/general/format
+formula	1	toolbox/matlab/funfun/@inline/formula.m
+fpdf		
+fplot	1	toolbox/matlab/charts/functionplots/fplot.m
+fplot3	1	toolbox/matlab/charts/functionplots/fplot3.m
+fprintf	1	toolbox/matlab/io/filesystem/fprintf
+fracfact		
+fracfactgen		
+frame2im	1	toolbox/matlab/graphics/graphics/specgraph/frame2im
+framesig	1,8	toolbox/signal/signal/framesig.m
+fread	1	toolbox/matlab/io/filesystem/fread
+freqs	1,8	toolbox/signal/signal/freqs.m
+freqspace	1	toolbox/matlab/elmat/freqspace.m
+freqz	1,8	toolbox/signal/signal/freqz.m
+freqz2	1,17	toolbox/images/images/freqz2.m
+frewind	1	toolbox/matlab/io/filesystem/frewind.m
+friedman		
+frnd		
+fsamp2	1,17	toolbox/images/images/fsamp2.m
+fscanf	1	toolbox/matlab/io/filesystem/fscanf
+fseek	1	toolbox/matlab/io/filesystem/fseek
+fspecial	1,17	toolbox/images/images/fspecial.m
+fspecial3	1,17	toolbox/images/images/fspecial3.m
+fsst	1,8	toolbox/signal/signal/fsst.m
+fstat		
+fsurf	1	toolbox/matlab/charts/functionplots/fsurf.m
+ftell	1	toolbox/matlab/io/filesystem/ftell
+ftrans2	1,17	toolbox/images/images/ftrans2.m
+full	1	toolbox/matlab/sparfun/full
+fullfact		
+fullfile	1	toolbox/matlab/io/filesystem/fullfile.m
+func2str	1	toolbox/matlab/datatypes/@function_handle/func2str
+functions	1	toolbox/matlab/datatypes/@function_handle/functions
+funm	1	toolbox/matlab/matfun/funm.m
+fwht	1,8	toolbox/signal/signal/fwht.m
+fwind1	1,17	toolbox/images/images/fwind1.m
+fwind2	1,17	toolbox/images/images/fwind2.m
+fwrite	1	toolbox/matlab/io/filesystem/fwrite
+fzero	1	toolbox/matlab/optimfun/optimfun/fzero.m
+gabor	1,17	toolbox/images/images/gabor.m
+gagerr		
+gallery	1	toolbox/matlab/elmat/gallery.m
+gamcdf		
+gamfit		
+gaminv		
+gamlike		
+gamma	1	toolbox/matlab/specfun/gamma
+gammain	1,86	toolbox/rf/rf/gammain.m
+gammainc	1	toolbox/matlab/specfun/gammainc
+gammaincinv	1	toolbox/matlab/specfun/gammaincinv
+gammaln	1	toolbox/matlab/specfun/gammaln
+gammaout	1,86	toolbox/rf/rf/gammaout.m
+gampdf		
+gamrnd		
+gamstat		
+gauspuls	1,8	toolbox/signal/signal/gauspuls.m
+gaussdesign	1,8	toolbox/signal/signal/gaussdesign.m
+gaussfir	1,8	toolbox/signal/signal/gaussfir.m
+gausswin	1,8	toolbox/signal/signal/gausswin.m
+gca	1	toolbox/matlab/graphics/graphics/gca
+gcbf	1	toolbox/matlab/graphics/graphics/gcbf.m
+gcbo	1	toolbox/matlab/graphics/graphics/gcbo
+gcd	1	toolbox/matlab/specfun/gcd.m
+gcf	1	toolbox/matlab/graphics/graphics/gcf
+gco	1	toolbox/matlab/graphics/graphics/gco
+ge	1	toolbox/matlab/ops/ge
+genpath	1	toolbox/matlab/general/genpath.m
+geocdf		
+geoinv		
+geomean		
+geopdf		
+geornd		
+geostat		
+get	1	toolbox/matlab/graphics/graphics/objectsystem/get
+getappdata	1	toolbox/matlab/graphics/graphics/objectsystem/getappdata
+getenv		<elsewhere>
+getfield	1	toolbox/matlab/datatypes/struct/getfield.m
+getframe	1	toolbox/matlab/graphics/graphics/printing/getframe.m
+getmcruserdata	1	toolbox/matlab/general/getmcruserdata
+getpixelposition	1	toolbox/matlab/uitools/uitools/getpixelposition.m
+getpoints	1	toolbox/matlab/graphics/graphics/getpoints.m
+gevcdf		
+gevfit		
+gevinv		
+gevlike		
+gevpdf		
+gevrnd		
+gevstat		
+ginput	1	toolbox/matlab/uitools/uitools/ginput.m
+glmfit		
+glmval		
+glyphplot		
+gmonopuls	1,8	toolbox/signal/signal/gmonopuls.m
+gmres	1	toolbox/matlab/sparfun/gmres.m
+gobjects	1	toolbox/matlab/graphics/graphics/objectsystem/gobjects.m
+goertzel	1,8	toolbox/signal/signal/goertzel.m
+gpcdf		
+gpfit		
+gpinv		
+gplike		
+gplot	1	toolbox/matlab/graphics/math/gplot.m
+gplotmatrix		
+gppdf		
+gprnd		
+gpstat		
+gradient	1	toolbox/matlab/datafun/gradient.m
+gradientweight	1,17	toolbox/images/images/gradientweight.m
+gray	1	toolbox/matlab/graphics/graphics/color/gray.m
+gray2ind	1,17	toolbox/images/images/gray2ind.m
+graycomatrix	1,17	toolbox/images/images/graycomatrix.m
+grayconnected	1,17	toolbox/images/images/grayconnected.m
+graycoprops	1,17	toolbox/images/images/graycoprops.m
+graydiffweight	1,17	toolbox/images/images/graydiffweight.m
+graydist	1,17	toolbox/images/images/graydist.m
+grayslice	1,17	toolbox/images/images/grayslice.m
+graythresh	1,17	toolbox/images/images/graythresh.m
+grid	1	toolbox/matlab/graphics/graphics/axis/grid.m
+griddata	1	toolbox/matlab/polyfun/griddata.m
+griddatan	1	toolbox/matlab/polyfun/griddatan.m
+griddedInterpolant		<elsewhere>
+groot	1	toolbox/matlab/graphics/graphics/objectsystem/groot
+groupcounts	1	toolbox/matlab/datafun/groupcounts.m
+groupfilter	1	toolbox/matlab/datafun/groupfilter.m
+groupsummary	1	toolbox/matlab/datafun/groupsummary.m
+grouptransform	1	toolbox/matlab/datafun/grouptransform.m
+grp2idx		
+grpdelay	1,8	toolbox/signal/signal/grpdelay.m
+grpstats		
+gscatter		
+gsvd	1	toolbox/matlab/matfun/gsvd.m
+gt	1	toolbox/matlab/ops/gt
+gtext	1	toolbox/matlab/graphics/graphics/graph2d/gtext.m
+gui_mainfcn	1	toolbox/matlab/guide/gui_mainfcn.m
+guidata	1	toolbox/matlab/uitools/uitools/guidata.m
+guide	1	toolbox/matlab/guide/guide.m
+guihandles	1	toolbox/matlab/uitools/uitools/guihandles.m
+hadamard	1	toolbox/matlab/elmat/hadamard.m
+hamming	1,8	toolbox/signal/signal/hamming.m
+hampel	1,8	toolbox/signal/signal/hampel.m
+hankel	1	toolbox/matlab/elmat/hankel.m
+hann	1,8	toolbox/signal/signal/hann.m
+hanning	1,8	toolbox/signal/signal/hanning.m
+harmmean		
+head	1	toolbox/matlab/datafun/head.m
+heatmap	1	toolbox/matlab/graphics/graphics/specgraph/heatmap.m
+height	1	toolbox/matlab/elmat/height.m
+help	1	toolbox/matlab/helptools/help.m
+helpdlg	1	toolbox/matlab/uitools/uitools/helpdlg.m
+hess	1	toolbox/matlab/matfun/hess
+hex2dec	1	toolbox/matlab/strfun/hex2dec
+hex2num	1	toolbox/matlab/strfun/hex2num.m
+hgexport	1	toolbox/matlab/graphics/graphics/printing/hgexport.p
+hggroup	1	toolbox/matlab/graphics/graphics/primitive/hggroup
+hgload	1	toolbox/matlab/graphics/graphics/objectsystem/hgload.m
+hgsave	1	toolbox/matlab/graphics/graphics/objectsystem/hgsave.m
+hgtransform	1	toolbox/matlab/graphics/graphics/primitive/hgtransform
+hidden	1	toolbox/matlab/graphics/graphics/graph3d/hidden.m
+highpass	1,8	toolbox/signal/signal/highpass.m
+hilb	1	toolbox/matlab/elmat/hilb.m
+hilbert	1,8	toolbox/signal/signal/hilbert.m
+hist	1	toolbox/matlab/graphics/math/hist.m
+hist3		
+histc	1	toolbox/matlab/datafun/histc
+histcounts	1	toolbox/matlab/datafun/histcounts.m
+histcounts2	1	toolbox/matlab/datafun/histcounts2.m
+histeq	1,17	toolbox/images/images/histeq.m
+histfit		
+histogram	1	toolbox/matlab/graphics/math/histogram.m
+histogram2	1	toolbox/matlab/graphics/math/histogram2.m
+hmmdecode		
+hmmestimate		
+hmmgenerate		
+hmmtrain		
+hmmviterbi		
+hms	1	toolbox/matlab/bigdata/@tall/hms.m
+hold	1	toolbox/matlab/graphics/graphics/axis/hold.m
+home	1	toolbox/matlab/iofun/home
+horzcat	1	toolbox/matlab/ops/horzcat
+hot	1	toolbox/matlab/graphics/graphics/color/hot.m
+hougen		
+hough	1,17	toolbox/images/images/hough.m
+houghlines	1,17	toolbox/images/images/houghlines.m
+houghpeaks	1,17	toolbox/images/images/houghpeaks.m
+hour	1	toolbox/matlab/timefun/hour.m
+hours	1	toolbox/matlab/datatypes/duration/hours.m
+hsv	1	toolbox/matlab/graphics/graphics/color/hsv.m
+hsv2rgb	1	toolbox/matlab/images/hsv2rgb.m
+hygecdf		
+hygeinv		
+hygepdf		
+hygernd		
+hygestat		
+hypot	1	toolbox/matlab/elfun/hypot
+i	1	toolbox/matlab/elmat/i
+icceps	1,8	toolbox/signal/signal/icceps.m
+icdf		
+ichol	1	toolbox/matlab/sparfun/ichol
+idct	1,8	toolbox/signal/signal/idct.m
+idct2	1,17	toolbox/images/images/idct2.m
+idivide	1	toolbox/matlab/ops/idivide.m
+ifanbeam	1,17	toolbox/images/images/ifanbeam.m
+ifft	1	toolbox/matlab/datafun/ifft
+ifft2	1	toolbox/matlab/datafun/ifft2.m
+ifftn	1	toolbox/matlab/datafun/ifftn
+ifftshift	1	toolbox/matlab/datafun/ifftshift.m
+ifsst	1,8	toolbox/signal/signal/ifsst.m
+ifwht	1,8	toolbox/signal/signal/ifwht.m
+illumgray	1,17	toolbox/images/colorspaces/illumgray.m
+illumpca	1,17	toolbox/images/colorspaces/illumpca.m
+illumwhite	1,17	toolbox/images/colorspaces/illumwhite.m
+ilu	1	toolbox/matlab/sparfun/ilu
+im2col	1,17	toolbox/images/images/im2col.m
+im2double	1	toolbox/matlab/images/im2double.m
+im2frame	1	toolbox/matlab/graphics/graphics/specgraph/im2frame
+im2gray	1	toolbox/matlab/images/im2gray.m
+im2int16	1,17	toolbox/images/images/im2int16.m
+im2mat		
+im2single	1,17	toolbox/images/images/im2single.m
+im2uint16	1,17	toolbox/images/images/im2uint16.m
+im2uint8	1,17	toolbox/images/images/im2uint8.m
+imabsdiff	1,17	toolbox/images/images/imabsdiff.m
+imadd	1,17	toolbox/images/images/imadd.m
+imadjust	1,17	toolbox/images/images/imadjust.m
+imadjustn	1,17	toolbox/images/images/imadjustn.m
+imag	1	toolbox/matlab/elfun/imag
+image	1	toolbox/matlab/graphics/graphics/specgraph/image
+imagesc	1	toolbox/matlab/graphics/graphics/specgraph/imagesc.m
+imapplymatrix	1,17	toolbox/images/images/imapplymatrix.m
+imapprox	1	toolbox/matlab/graphics/graphics/graph3d/imapprox.m
+imbilatfilt	1,17	toolbox/images/images/imbilatfilt.m
+imbinarize	1,17	toolbox/images/images/imbinarize.m
+imbothat	1,17	toolbox/images/images/imbothat.m
+imboxfilt	1,17	toolbox/images/images/imboxfilt.m
+imboxfilt3	1,17	toolbox/images/images/imboxfilt3.m
+imcentroid		
+imclearborder	1,17	toolbox/images/images/imclearborder.m
+imclose	1,17	toolbox/images/images/imclose.m
+imcolordiff	1,17	toolbox/images/colorspaces/imcolordiff.m
+imcomplement	1,17	toolbox/images/images/imcomplement.m
+imcontour	1,17	toolbox/images/images/imcontour.m
+imcrop	1,17	toolbox/images/images/imcrop.m
+imcrop3	1,17	toolbox/images/images/imcrop3.m
+imdiffuseest	1,17	toolbox/images/images/imdiffuseest.m
+imdiffusefilt	1,17	toolbox/images/images/imdiffusefilt.m
+imdilate	1,17	toolbox/images/images/imdilate.m
+imdivide	1,17	toolbox/images/images/imdivide.m
+imerode	1,17	toolbox/images/images/imerode.m
+imextendedmax	1,17	toolbox/images/images/imextendedmax.m
+imextendedmin	1,17	toolbox/images/images/imextendedmin.m
+imfill	1,17	toolbox/images/images/imfill.m
+imfilter	1,17	toolbox/images/images/imfilter.m
+imfindcircles	1,17	toolbox/images/images/imfindcircles.m
+imfinfo	1	toolbox/matlab/matlab_im/imfinfo.m
+imflatfield	1,17	toolbox/images/images/imflatfield.m
+imfuse	1,17	toolbox/images/images/imfuse.m
+imgaborfilt	1,17	toolbox/images/images/imgaborfilt.m
+imgaussfilt	1,17	toolbox/images/images/imgaussfilt.m
+imgaussfilt3	1,17	toolbox/images/images/imgaussfilt3.m
+imgradient	1,17	toolbox/images/images/imgradient.m
+imgradient3	1,17	toolbox/images/images/imgradient3.m
+imgradientxy	1,17	toolbox/images/images/imgradientxy.m
+imgradientxyz	1,17	toolbox/images/images/imgradientxyz.m
+imguidedfilter	1,17	toolbox/images/images/imguidedfilter.m
+imhist	1,17	toolbox/images/images/imhist.m
+imhistmatch	1,17	toolbox/images/images/imhistmatch.m
+imhistmatchn	1,17	toolbox/images/images/imhistmatchn.m
+imhmax	1,17	toolbox/images/images/imhmax.m
+imhmin	1,17	toolbox/images/images/imhmin.m
+imimposemin	1,17	toolbox/images/images/imimposemin.m
+imlincomb	1,17	toolbox/images/images/imlincomb.m
+imlocalbrighten	1,17	toolbox/images/images/imlocalbrighten.m
+immse	1,17	toolbox/images/images/immse.m
+immultiply	1,17	toolbox/images/images/immultiply.m
+imnlmfilt	1,17	toolbox/images/images/imnlmfilt.m
+imnoise	1,17	toolbox/images/images/imnoise.m
+imopen	1,17	toolbox/images/images/imopen.m
+imoverlay	1,17	toolbox/images/images/imoverlay.m
+impinvar	1,8	toolbox/signal/signal/impinvar.m
+impixel	1,17	toolbox/images/images/impixel.m
+import	1	toolbox/matlab/general/import
+improfile	1,17	toolbox/images/images/improfile.m
+impyramid	1,17	toolbox/images/images/impyramid.m
+impz	1,8	toolbox/signal/signal/impz.m
+impzlength	1,8	toolbox/signal/signal/impzlength.m
+imquantize	1,17	toolbox/images/images/imquantize.m
+imread	1	toolbox/matlab/matlab_im/imread.m
+imreconstruct	1,17	toolbox/images/images/imreconstruct.m
+imreducehaze	1,17	toolbox/images/images/imreducehaze.m
+imref2d	1,17	toolbox/images/images/imref2d.m
+imregcorr	1,17	toolbox/images/images/imregcorr.m
+imregionalmax	1,17	toolbox/images/images/imregionalmax.m
+imregionalmin	1,17	toolbox/images/images/imregionalmin.m
+imresize	1	toolbox/matlab/images/imresize.m
+imresize3	1,17	toolbox/images/images/imresize3.m
+imrotate	1,17	toolbox/images/images/imrotate.m
+imrotate3	1,17	toolbox/images/images/imrotate3.m
+imsegfmm	1,17	toolbox/images/images/imsegfmm.m
+imsegkmeans	1,17	toolbox/images/images/imsegkmeans.m
+imsegkmeans3	1,17	toolbox/images/images/imsegkmeans3.m
+imsharpen	1,17	toolbox/images/images/imsharpen.m
+imshow	1	toolbox/matlab/images/imshow.m
+imshowpair	1,17	toolbox/images/imuitools/imshowpair.m
+imsplit	1,17	toolbox/images/images/imsplit.m
+imsubtract	1,17	toolbox/images/images/imsubtract.m
+imtile	1	toolbox/matlab/images/imtile.m
+imtophat	1,17	toolbox/images/images/imtophat.m
+imtranslate	1,17	toolbox/images/images/imtranslate.m
+imwarp	1,17	toolbox/images/images/imwarp.m
+imwrite	1	toolbox/matlab/matlab_im/imwrite.m
+inconsistent		
+ind2gray	1,17	toolbox/images/images/ind2gray.m
+ind2rgb	1	toolbox/matlab/images/ind2rgb.m
+ind2sub	1	toolbox/matlab/elmat/ind2sub.m
+indexof		
+inf	1	toolbox/matlab/elmat/inf
+info	1	toolbox/matlab/helptools/info.m
+inline	1	toolbox/matlab/funfun/@inline/inline.m
+inlineeval	1	toolbox/matlab/funfun/inlineeval.m
+innerjoin	1	toolbox/matlab/bigdata/@tall/innerjoin.m
+inpolygon	1	toolbox/matlab/polyfun/inpolygon.m
+input	1	toolbox/matlab/lang/input
+inputdlg	1	toolbox/matlab/uitools/uitools/inputdlg.m
+inputname	1	toolbox/matlab/lang/inputname
+insert		<elsewhere>
+insertAfter	1	toolbox/matlab/strfun/insertAfter.m
+insertBefore	1	toolbox/matlab/strfun/insertBefore.m
+int2str	1	toolbox/matlab/strfun/int2str.m
+integral	1	toolbox/matlab/funfun/integral.m
+integral2	1	toolbox/matlab/funfun/integral2.m
+integral3	1	toolbox/matlab/funfun/integral3.m
+integralBoxFilter	1,17	toolbox/images/images/integralBoxFilter.m
+integralBoxFilter3	1,17	toolbox/images/images/integralBoxFilter3.m
+integralImage	1,17	toolbox/images/images/integralImage.m
+integralImage3	1,17	toolbox/images/images/integralImage3.m
+interactionplot		
+internal		
+interp	1,8	toolbox/signal/signal/interp.m
+interp1	1	toolbox/matlab/polyfun/interp1.m
+interp1q	1	toolbox/matlab/polyfun/interp1q.m
+interp2	1	toolbox/matlab/polyfun/interp2.m
+interp3	1	toolbox/matlab/polyfun/interp3.m
+interpft	1	toolbox/matlab/polyfun/interpft.m
+interpn	1	toolbox/matlab/polyfun/interpn.m
+interpstreamspeed	1	toolbox/matlab/graphics/graphics/specgraph/interpstreamspeed.m
+intersect	1	toolbox/matlab/ops/intersect.m
+intfilt	1,8	toolbox/signal/signal/intfilt.m
+intlut	1,17	toolbox/images/images/intlut.m
+intmax	1	toolbox/matlab/elmat/intmax
+intmin	1	toolbox/matlab/elmat/intmin
+inv	1	toolbox/matlab/matfun/inv
+invfreqs	1,8	toolbox/signal/signal/invfreqs.m
+invfreqz	1,8	toolbox/signal/signal/invfreqz.m
+invhilb	1	toolbox/matlab/elmat/invhilb.m
+invpred		
+ipermute	1	toolbox/matlab/elmat/ipermute.m
+iptcheckconn	1,17	toolbox/images/iptutils/iptcheckconn.m
+iptgetpref	1,17	toolbox/images/iptutils/iptgetpref.m
+iptsetpref	1,17	toolbox/images/iptutils/iptsetpref.m
+iqr	1	toolbox/matlab/datafun/iqr.m
+iradon	1,17	toolbox/images/images/iradon.m
+is2rc	1,8	toolbox/signal/signal/is2rc.m
+isConfigured		<elsewhere>
+isIllConditioned		
+isKey		<elsewhere>
+isStringScalar	1	toolbox/matlab/strfun/isStringScalar.m
+isa	1	toolbox/matlab/datatypes/isa
+isallpass	1,8	toolbox/signal/signal/isallpass.m
+isappdata	1	toolbox/matlab/graphics/graphics/objectsystem/isappdata
+isbanded	1	toolbox/matlab/matfun/isbanded
+isbetween	1	toolbox/matlab/datafun/isbetween.m
+iscalendarduration	1	toolbox/matlab/datatypes/calendarDuration/iscalendarduration.m
+iscategorical	1	toolbox/matlab/datatypes/categorical/iscategorical.m
+iscategory	1	toolbox/matlab/bigdata/@tall/iscategory.m
+iscell	1	toolbox/matlab/datatypes/cell/iscell
+iscellstr	1	toolbox/matlab/strfun/iscellstr
+ischange	1	toolbox/matlab/datafun/ischange.m
+ischar	1	toolbox/matlab/strfun/ischar
+iscola	1,8	toolbox/signal/signal/iscola.m
+iscolumn	1	toolbox/matlab/elmat/iscolumn
+isdatetime	1	toolbox/matlab/datatypes/datetime/isdatetime.m
+isdeployed	1	toolbox/matlab/general/isdeployed
+isdiag	1	toolbox/matlab/matfun/isdiag
+isdouble	ERR MATLAB:depfun:req:NameNotFound	toolbox/signal/signal/digitalFilter.m
+isdst	1	toolbox/matlab/bigdata/@tall/isdst.m
+isduration	1	toolbox/matlab/datatypes/duration/isduration.m
+isempty	1	toolbox/matlab/elmat/isempty
+isenum	1	toolbox/matlab/datatypes/isenum
+isequal	1	toolbox/matlab/elmat/isequal
+isequaln	1	toolbox/matlab/elmat/isequaln
+isequalwithequalnans	1	toolbox/matlab/elmat/isequalwithequalnans.m
+isfield	1	toolbox/matlab/datatypes/struct/isfield
+isfile	1	toolbox/matlab/io/filesystem/isfile
+isfinite	1	toolbox/matlab/elmat/isfinite
+isfir	ERR MATLAB:depfun:req:NameNotFound	toolbox/signal/signal/digitalFilter.m
+isfloat	1	toolbox/matlab/datatypes/isfloat
+isfolder	1	toolbox/matlab/io/filesystem/isfolder
+isgraphics	1	toolbox/matlab/graphics/graphics/objectsystem/isgraphics
+ishandle	1	toolbox/matlab/graphics/graphics/objectsystem/ishandle
+ishermitian	1	toolbox/matlab/matfun/ishermitian
+ishghandle	1	toolbox/matlab/graphics/graphics/objectsystem/ishghandle
+ishold	1	toolbox/matlab/graphics/graphics/axis/ishold.m
+isinf	1	toolbox/matlab/elmat/isinf
+isinteger	1	toolbox/matlab/datatypes/isinteger
+isjava	1	toolbox/matlab/datatypes/isjava
+isletter	1	toolbox/matlab/strfun/isletter
+islinphase	1,8	toolbox/signal/signal/islinphase.m
+islocalmax	1	toolbox/matlab/datafun/islocalmax.m
+islocalmin	1	toolbox/matlab/datafun/islocalmin.m
+islogical	1	toolbox/matlab/datatypes/islogical
+ismac	1	toolbox/matlab/oss/ismac
+ismatrix	1	toolbox/matlab/elmat/ismatrix
+ismaxphase	1,8	toolbox/signal/signal/ismaxphase.m
+ismcc	1	toolbox/matlab/general/ismcc
+ismember	1	toolbox/matlab/ops/ismember.m
+ismembertol	1	toolbox/matlab/ops/ismembertol
+ismethod	1	toolbox/matlab/datatypes/ismethod.m
+isminphase	1,8	toolbox/signal/signal/isminphase.m
+ismissing	1	toolbox/matlab/datafun/ismissing.m
+isnan	1	toolbox/matlab/elmat/isnan
+isnat	1	toolbox/matlab/bigdata/@tall/isnat.m
+isnumeric	1	toolbox/matlab/datatypes/isnumeric
+isobject	1	toolbox/matlab/datatypes/isobject
+isocaps	1	toolbox/matlab/graphics/graphics/specgraph/isocaps.m
+isocolors	1	toolbox/matlab/graphics/graphics/specgraph/isocolors.m
+isonormals	1	toolbox/matlab/graphics/graphics/specgraph/isonormals.m
+isordinal	1	toolbox/matlab/datatypes/categorical/isordinal.m
+isosurface	1	toolbox/matlab/graphics/graphics/specgraph/isosurface.m
+isoutlier	1	toolbox/matlab/datafun/isoutlier.m
+ispc	1	toolbox/matlab/oss/ispc
+isprime	1	toolbox/matlab/specfun/isprime.m
+isprop	1	toolbox/matlab/datatypes/isprop.p
+isprotected	1	toolbox/matlab/bigdata/@tall/isprotected.m
+isreal	1	toolbox/matlab/elfun/isreal
+isrow	1	toolbox/matlab/elmat/isrow
+isscalar	1	toolbox/matlab/elmat/isscalar
+issingle	ERR MATLAB:depfun:req:NameNotFound	toolbox/signal/signal/digitalFilter.m
+issorted	1	toolbox/matlab/datafun/issorted
+issortedrows	1	toolbox/matlab/datafun/issortedrows
+isspace	1	toolbox/matlab/strfun/isspace
+issparse	1	toolbox/matlab/sparfun/issparse
+isstable	1,8	toolbox/signal/signal/isstable.m
+isstr	1	toolbox/matlab/strfun/isstr
+isstring	1	toolbox/matlab/strfun/isstring
+isstrprop	1	toolbox/matlab/strfun/isstrprop
+isstruct	1	toolbox/matlab/datatypes/struct/isstruct
+isstudent	1	toolbox/matlab/general/isstudent
+issymmetric	1	toolbox/matlab/matfun/issymmetric
+istable	1	toolbox/matlab/datatypes/tabular/istable.m
+istabular	1	toolbox/matlab/datatypes/tabular/istabular.m
+istft	1,8	toolbox/signal/signal/istft.m
+istimetable	1	toolbox/matlab/datatypes/tabular/istimetable.m
+istril	1	toolbox/matlab/matfun/istril
+istriu	1	toolbox/matlab/matfun/istriu
+isundefined	1	toolbox/matlab/bigdata/@tall/isundefined.m
+isuniform	1	toolbox/matlab/datafun/isuniform.m
+isunix	1	toolbox/matlab/oss/isunix
+isvalid		<elsewhere>
+isvarname	1	toolbox/matlab/lang/isvarname
+isvector	1	toolbox/matlab/elmat/isvector
+iwishrnd		
+j		<elsewhere>
+jaccard	1,17	toolbox/images/images/jaccard.m
+jackknife		
+jbtest		
+jet	1	toolbox/matlab/graphics/graphics/color/jet.m
+jgraph		
+johnsrnd		
+join	1	toolbox/matlab/strfun/join.m
+jsondecode	1	toolbox/matlab/external/interfaces/json/jsondecode
+jsonencode	1	toolbox/matlab/external/interfaces/json/jsonencode
+juliandate	1,108	toolbox/aero/aero/juliandate.m
+kaiser	1,8	toolbox/signal/signal/kaiser.m
+kaiserord	1,8	toolbox/signal/signal/kaiserord.m
+keys		<elsewhere>
+kmeans		
+kmedoids		
+knnsearch	ERR MATLAB:depfun:req:NameNotFound	toolbox/shared/statslib/@hnswSearcher/knnsearch.m
+kron	1	toolbox/matlab/ops/kron.m
+kruskalwallis		
+ksdensity		
+kstest		
+kstest2		
+kurtogram	1,8	toolbox/signal/signal/kurtogram.m
+kurtosis		
+lab2double	1,17	toolbox/images/colorspaces/lab2double.m
+lab2rgb	1,17	toolbox/images/colorspaces/lab2rgb.m
+lab2uint16	1,17	toolbox/images/colorspaces/lab2uint16.m
+lab2uint8	1,17	toolbox/images/colorspaces/lab2uint8.m
+lab2xyz	1,17	toolbox/images/colorspaces/lab2xyz.m
+label2idx	1,17	toolbox/images/images/label2idx.m
+label2rgb	1,17	toolbox/images/images/label2rgb.m
+labelmatrix	1,17	toolbox/images/images/labelmatrix.m
+labeloverlay	1,17	toolbox/images/images/labeloverlay.m
+lar2rc	1,8	toolbox/signal/signal/lar2rc.m
+lasso		
+lassoPlot		
+lassoglm		
+lasterr	1	toolbox/matlab/lang/lasterr
+lasterror	1	toolbox/matlab/lang/lasterror
+lastwarn	1	toolbox/matlab/lang/lastwarn
+latc2tf	1,8	toolbox/signal/signal/latc2tf.m
+latcfilt	1,8	toolbox/signal/signal/latcfilt.m
+lcm	1	toolbox/matlab/specfun/lcm.m
+ldivide	1	toolbox/matlab/ops/ldivide
+ldl	1	toolbox/matlab/matfun/ldl
+le	1	toolbox/matlab/ops/le
+legend	1	toolbox/matlab/graphics/graphics/scribe/legend.m
+legendre	1	toolbox/matlab/specfun/legendre.m
+length	1	toolbox/matlab/elmat/length
+leverage		
+levinson	1,8	toolbox/signal/signal/levinson.m
+lhsdesign		
+lhsnorm		
+libfunctions	1	toolbox/matlab/general/libfunctions.m
+libfunctionsview	1	toolbox/matlab/general/libfunctionsview.m
+libisloaded	1	toolbox/matlab/general/libisloaded
+libpointer	1	toolbox/matlab/general/libpointer.m
+libstruct	1	toolbox/matlab/general/libstruct.m
+license	1	toolbox/local/license
+light	1	toolbox/matlab/graphics/graphics/primitive/light
+lightangle	1	toolbox/matlab/graphics/graphics/graph3d/lightangle.m
+lighting	1	toolbox/matlab/graphics/graphics/graph3d/lighting.m
+lillietest		
+lin2rgb	1,17	toolbox/images/colorspaces/lin2rgb.m
+line	1	toolbox/matlab/graphics/graphics/primitive/line
+lines	1	toolbox/matlab/graphics/graphics/color/lines.m
+linhyptest		
+linkage		
+linkaxes	1	toolbox/matlab/graphics/graphics/linkaxes.m
+linkprop	1	toolbox/matlab/graphics/graphics/linkprop.m
+linsolve	1	toolbox/matlab/matfun/linsolve
+linspace	1	toolbox/matlab/elmat/linspace.m
+listdlg	1	toolbox/matlab/uitools/uitools/listdlg.m
+listener		<elsewhere>
+listfonts	1	toolbox/matlab/uitools/uitools/listfonts.m
+load	1	toolbox/matlab/general/load
+loadfigure		
+loadlibrary	1	toolbox/matlab/general/loadlibrary.p
+log	1	toolbox/matlab/elfun/log
+log10	1	toolbox/matlab/elfun/log10
+log1p	1	toolbox/matlab/elfun/log1p
+log2	1	toolbox/matlab/elfun/log2
+logical	1	toolbox/matlab/datatypes/logical
+loglog	1	toolbox/matlab/graphics/graphics/graph2d/loglog
+logm	1	toolbox/matlab/matfun/logm.m
+logncdf		
+lognfit		
+logninv		
+lognlike		
+lognpdf		
+lognrnd		
+lognstat		
+logspace	1	toolbox/matlab/elmat/logspace.m
+lookfor	1	toolbox/matlab/helptools/lookfor.m
+lookup		<elsewhere>
+lower	1	toolbox/matlab/strfun/lower
+lowpass	1,8	toolbox/signal/signal/lowpass.m
+lp2bp	1,8	toolbox/signal/signal/lp2bp.m
+lp2bs	1,8	toolbox/signal/signal/lp2bs.m
+lp2hp	1,8	toolbox/signal/signal/lp2hp.m
+lp2lp	1,8	toolbox/signal/signal/lp2lp.m
+lpc	1,8	toolbox/signal/signal/lpc.m
+ls	1	toolbox/matlab/io/filesystem/ls.m
+lscov	1	toolbox/matlab/matfun/lscov.m
+lsf2poly	1,8	toolbox/signal/signal/lsf2poly.m
+lsline		
+lsqminnorm	1	toolbox/matlab/matfun/lsqminnorm.m
+lsqnonneg	1	toolbox/matlab/optimfun/optimfun/lsqnonneg.m
+lsqr	1	toolbox/matlab/sparfun/lsqr.m
+lt	1	toolbox/matlab/ops/lt
+lu	1	toolbox/matlab/matfun/lu
+mad		
+mag2db	1	toolbox/shared/controllib/general/mag2db.m
+magic	1	toolbox/matlab/elmat/magic.m
+mahal		
+maineffectsplot		
+makedist	1,141,188,127,19,96	toolbox/shared/statslib/makedist.m
+makehgtform	1	toolbox/matlab/graphics/graphics/primitive/makehgtform.m
+makelut	1,17	toolbox/images/images/makelut.m
+makima	1	toolbox/matlab/polyfun/makima.m
+manova1		
+manovacluster		
+mape	1	toolbox/matlab/datafun/mape.m
+marcumq	1,8	toolbox/signal/signal/marcumq.m
+mat2gray	1,17	toolbox/images/images/mat2gray.m
+mat2im		
+mat2str	1	toolbox/matlab/strfun/mat2str.m
+matches	1	toolbox/matlab/strfun/matches
+matchpairs	1	toolbox/matlab/specfun/matchpairs.m
+material	1	toolbox/matlab/graphics/graphics/graph3d/material.m
+matfile	1	toolbox/matlab/iofun/matfile.m
+matlab.ui.layout.GridLayoutOptions	1	toolbox/matlab/uicomponents/uicomponents/+matlab/+ui/+layout/GridLayoutOptions.m
+matlabdrive	1	toolbox/matlab/storage/matlabdrive/matlabdrive
+matlabroot	1	toolbox/matlab/iofun/matlabroot
+max	1	toolbox/matlab/datafun/max
+maxNumCompThreads	1	toolbox/matlab/elmat/maxNumCompThreads
+maxflat	1,8	toolbox/signal/signal/maxflat.m
+maxhessiannorm	1,17	toolbox/images/images/maxhessiannorm.m
+maxk	1	toolbox/matlab/datafun/maxk
+mcrcachedir	1	toolbox/compiler/mcrcachedir.mexw64
+mcrversion	1	toolbox/compiler/mcrversion.m
+mean	1	toolbox/matlab/datafun/mean.m
+mean2	1,17	toolbox/images/images/mean2.m
+meanfreq	1,8	toolbox/signal/signal/meanfreq.m
+medfilt1	1,8	toolbox/signal/signal/medfilt1.m
+medfilt2	1,17	toolbox/images/images/medfilt2.m
+medfilt3	1,17	toolbox/images/images/medfilt3.m
+medfreq	1,8	toolbox/signal/signal/medfreq.m
+median	1	toolbox/matlab/datafun/median.m
+membrane	1	toolbox/matlab/general/membrane.m
+memory	1	toolbox/matlab/oss/memory
+mergecats	1	toolbox/matlab/bigdata/@tall/mergecats.m
+mesh	1	toolbox/matlab/graphics/graphics/graph3d/mesh.m
+meshc	1	toolbox/matlab/graphics/graphics/specgraph/meshc.m
+meshgrid	1	toolbox/matlab/elmat/meshgrid.m
+meshz	1	toolbox/matlab/graphics/graphics/specgraph/meshz.m
+meta		
+metaclass	1	toolbox/matlab/datatypes/metaclass
+methods	1	toolbox/matlab/datatypes/methods
+methodsview	1	toolbox/matlab/datatypes/methodsview.m
+mex	1	toolbox/matlab/general/mex
+mexext	1	toolbox/matlab/general/mexext
+mfilename	1	toolbox/matlab/lang/mfilename
+mhsample		
+microseconds		
+microstrip		
+microstripw		
+midcross	1,8	toolbox/signal/signal/midcross.m
+midicallback	1,151	toolbox/audio/audio/midicallback.m
+midicontrols	1,151	toolbox/audio/audio/midicontrols.m
+mididevice	1,151	toolbox/audio/audio/mididevice.m
+mididevinfo	1,151	toolbox/audio/audio/mididevinfo.m
+midiid	1,151	toolbox/audio/audio/midiid.m
+midimsg	1,151	toolbox/audio/audio/midimsg.m
+midimsgtype	1,151	toolbox/audio/audio/midimsgtype.m
+midiread	1,151	toolbox/audio/audio/midiread.m
+midireceive	1,151	toolbox/audio/audio/midireceive.m
+midisend	1,151	toolbox/audio/audio/midisend.m
+midisync	1,151	toolbox/audio/audio/midisync.m
+milliseconds	1	toolbox/matlab/datatypes/duration/milliseconds.m
+min	1	toolbox/matlab/datafun/min
+mink	1	toolbox/matlab/datafun/mink
+minres	1	toolbox/matlab/sparfun/minres.m
+minus	1	toolbox/matlab/ops/minus
+minute	1	toolbox/matlab/timefun/minute.m
+minutes	1	toolbox/matlab/datatypes/duration/minutes.m
+missing	1	toolbox/matlab/datatypes/missing/missing.m
+mkdir	1	toolbox/matlab/io/filesystem/mkdir
+mkpp	1	toolbox/matlab/polyfun/mkpp.m
+mldivide	1	toolbox/matlab/ops/mldivide
+mle	ERR MATLAB:depfun:req:NameNotFound	toolbox/mbc/mbcmodels/@xregtwostage/mle.m
+mlecov		
+mnpdf		
+mnrfit		
+mnrnd		
+mnrval		
+mod	1	toolbox/matlab/elfun/mod
+modalfit	1,8	toolbox/signal/signal/modalfit.m
+modalfrf	1,8	toolbox/signal/signal/modalfrf.m
+modalsd	1,8	toolbox/signal/signal/modalsd.m
+mode	1	toolbox/matlab/datafun/mode.m
+modefilt	1,17	toolbox/images/images/modefilt.m
+modulate	1,8	toolbox/signal/signal/modulate.m
+moment		
+montage	1,17	toolbox/images/imuitools/montage.m
+month	1	toolbox/matlab/timefun/month.m
+more	1	toolbox/matlab/general/more
+move	1	toolbox/matlab/depfun/+matlab/+depfun/+internal/Schema.m
+movefile	1	toolbox/matlab/io/filesystem/movefile
+movegui	1	toolbox/matlab/uitools/uitools/movegui.m
+movie	1	toolbox/matlab/graphics/graphics/specgraph/movie.p
+movmad	1	toolbox/matlab/datafun/movmad.m
+movmax	1	toolbox/matlab/datafun/movmax.m
+movmean	1	toolbox/matlab/datafun/movmean.m
+movmedian	1	toolbox/matlab/datafun/movmedian.m
+movmin	1	toolbox/matlab/datafun/movmin.m
+movprod	1	toolbox/matlab/datafun/movprod.m
+movstd	1	toolbox/matlab/datafun/movstd.m
+movsum	1	toolbox/matlab/datafun/movsum.m
+movvar	1	toolbox/matlab/datafun/movvar.m
+mpower	1	toolbox/matlab/matfun/mpower.m
+mrdivide	1	toolbox/matlab/ops/mrdivide
+mscohere	1,8	toolbox/signal/signal/mscohere.m
+msgbox	1	toolbox/matlab/uitools/uitools/msgbox.m
+mtimes	1	toolbox/matlab/ops/mtimes
+multcompare		
+multissim	1,17	toolbox/images/images/multissim.m
+multissim3	1,17	toolbox/images/images/multissim3.m
+multithresh	1,17	toolbox/images/images/multithresh.m
+multivarichart		
+mustBeA	1	toolbox/matlab/validators/mustBeA
+mustBeFile	1	toolbox/matlab/validators/mustBeFile.m
+mustBeFinite	1	toolbox/matlab/validators/mustBeFinite.m
+mustBeFloat	1	toolbox/matlab/validators/mustBeFloat.m
+mustBeFolder	1	toolbox/matlab/validators/mustBeFolder.m
+mustBeGreaterThan	1	toolbox/matlab/validators/mustBeGreaterThan.m
+mustBeGreaterThanOrEqual	1	toolbox/matlab/validators/mustBeGreaterThanOrEqual.m
+mustBeInRange	1	toolbox/matlab/validators/mustBeInRange.m
+mustBeInteger	1	toolbox/matlab/validators/mustBeInteger.m
+mustBeLessThan	1	toolbox/matlab/validators/mustBeLessThan.m
+mustBeLessThanOrEqual	1	toolbox/matlab/validators/mustBeLessThanOrEqual.m
+mustBeMember	1	toolbox/matlab/validators/mustBeMember.m
+mustBeNegative	1	toolbox/matlab/validators/mustBeNegative.m
+mustBeNonNan	1	toolbox/matlab/validators/mustBeNonNan.m
+mustBeNonempty	1	toolbox/matlab/validators/mustBeNonempty.m
+mustBeNonnegative	1	toolbox/matlab/validators/mustBeNonnegative.m
+mustBeNonpositive	1	toolbox/matlab/validators/mustBeNonpositive.m
+mustBeNonsparse	1	toolbox/matlab/validators/mustBeNonsparse.m
+mustBeNonzero	1	toolbox/matlab/validators/mustBeNonzero.m
+mustBeNumeric	1	toolbox/matlab/validators/mustBeNumeric.m
+mustBeNumericOrLogical	1	toolbox/matlab/validators/mustBeNumericOrLogical.m
+mustBePositive	1	toolbox/matlab/validators/mustBePositive.m
+mustBeReal	1	toolbox/matlab/validators/mustBeReal.m
+mustBeScalarOrEmpty	1	toolbox/matlab/validators/mustBeScalarOrEmpty.m
+mustBeText	1	toolbox/matlab/strfun/validators/mustBeText.m
+mustBeTextScalar	1	toolbox/matlab/strfun/validators/mustBeTextScalar.m
+mustBeValidVariableName	1	toolbox/matlab/validators/mustBeValidVariableName.m
+mustBeVector	1	toolbox/matlab/validators/mustBeVector.m
+mvksdensity		
+mvncdf		
+mvnpdf		
+mvnrnd		
+mvregress		
+mvregresslike		
+mvtcdf		
+mvtpdf		
+mvtrnd		
+namelengthmax	1	toolbox/matlab/general/namelengthmax
+nan	1	toolbox/matlab/elmat/nan
+nancov		
+nanmax		
+nanmean		
+nanmedian		
+nanmin		
+nanoseconds		
+nanstd		
+nansum		
+nanvar		
+nargchk	1	toolbox/matlab/lang/nargchk
+nargin	1	toolbox/matlab/lang/nargin
+narginchk	1	toolbox/matlab/lang/narginchk
+nargout	1	toolbox/matlab/lang/nargout
+nargoutchk	1	toolbox/matlab/lang/nargoutchk
+native2unicode	1	toolbox/matlab/strfun/native2unicode
+nbincdf		
+nbinfit		
+nbininv		
+nbinpdf		
+nbinrnd		
+nbinstat		
+ncfcdf		
+ncfinv		
+ncfpdf		
+ncfrnd		
+ncfstat		
+nchoosek	1	toolbox/matlab/specfun/nchoosek.m
+nctcdf		
+nctinv		
+nctpdf		
+nctrnd		
+nctstat		
+ncx2cdf		
+ncx2inv		
+ncx2pdf		
+ncx2rnd		
+ncx2stat		
+ndgrid	1	toolbox/matlab/elmat/ndgrid.m
+ndims	1	toolbox/matlab/elmat/ndims
+ne	1	toolbox/matlab/ops/ne
+nearcorr		
+negloglik		
+newline	1	toolbox/matlab/strfun/newline
+newplot	1	toolbox/matlab/graphics/graphics/axis/newplot.m
+nextpow2	1	toolbox/matlab/elfun/nextpow2.m
+nexttile	1	toolbox/matlab/graphics/graphics/nexttile.p
+nlfilter	1,17	toolbox/images/images/nlfilter.m
+nlinfit		
+nlparci		
+nlpredci		
+nnmf		
+nnz	1	toolbox/matlab/sparfun/nnz
+nonzeros	1	toolbox/matlab/sparfun/nonzeros
+norm	1	toolbox/matlab/matfun/norm
+normalize	1	toolbox/matlab/datafun/normalize.m
+normcdf		
+normest	1	toolbox/matlab/matfun/normest.m
+normest1	1	toolbox/matlab/matfun/normest1.m
+normfit		
+norminv		
+normlike		
+normpdf		
+normplot	ERR MATLAB:depfun:req:NameNotFound	toolbox/mbc/mbcmodels/@xregmodel/normplot.m
+normrnd		
+normspec		
+normstat		
+normxcorr2	1,17	toolbox/images/images/normxcorr2.m
+not	1	toolbox/matlab/ops/not
+notify		<elsewhere>
+now	1	toolbox/matlab/timefun/now.m
+nthroot	1	toolbox/matlab/elfun/nthroot.m
+ntsc2rgb	1,17	toolbox/images/colorspaces/ntsc2rgb.m
+null	1	toolbox/matlab/matfun/null.m
+num		
+num2cell	1	toolbox/matlab/datatypes/cell/num2cell.m
+num2hex	1	toolbox/matlab/strfun/num2hex.m
+num2ruler	1	toolbox/matlab/graphics/graphics/axis/num2ruler.m
+num2str	1	toolbox/matlab/strfun/num2str.m
+numEntries		<elsewhere>
+numel	1	toolbox/matlab/elmat/numel
+nuttallwin	1,8	toolbox/signal/signal/nuttallwin.m
+nzmax	1	toolbox/matlab/sparfun/nzmax
+obliqueslice	1,17	toolbox/images/images/obliqueslice.m
+obw	1,8	toolbox/signal/signal/obw.m
+ode113	1	toolbox/matlab/funfun/ode113.m
+ode15i	1	toolbox/matlab/funfun/ode15i.m
+ode15s	1	toolbox/matlab/funfun/ode15s.m
+ode23	1	toolbox/matlab/funfun/ode23.m
+ode23s	1	toolbox/matlab/funfun/ode23s.m
+ode23t	1	toolbox/matlab/funfun/ode23t.m
+ode23tb	1	toolbox/matlab/funfun/ode23tb.m
+ode45	1	toolbox/matlab/funfun/ode45.m
+ode78	1	toolbox/matlab/funfun/ode78.m
+ode89	1	toolbox/matlab/funfun/ode89.m
+odeget	1	toolbox/matlab/funfun/odeget.m
+odephas2	1	toolbox/matlab/funfun/odephas2.m
+odephas3	1	toolbox/matlab/funfun/odephas3.m
+odeplot	1	toolbox/matlab/funfun/odeplot.m
+odeprint	1	toolbox/matlab/funfun/odeprint.m
+odeset	1	toolbox/matlab/funfun/odeset.m
+odextend	1	toolbox/matlab/funfun/odextend.m
+offsetstrel	1,17	toolbox/images/images/offsetstrel.m
+onCleanup	1	toolbox/matlab/lang/onCleanup.m
+onehotdecode	1,12,19	toolbox/shared/mlearnlib/core/onehotdecode.m
+onehotencode	1,12,19	toolbox/shared/mlearnlib/core/onehotencode.m
+ones	1	toolbox/matlab/elmat/ones
+open	1	toolbox/matlab/general/open.m
+openfig	1	toolbox/matlab/graphics/graphics/objectsystem/openfig.m
+opengl	1	toolbox/matlab/graphics/graphics/opengl
+optimalleaforder		
+optimget	1	toolbox/matlab/optimfun/optimfun/optimget.m
+optimplotfunccount	1	toolbox/matlab/optimfun/graphics/optimplotfunccount.m
+optimplotfval	1	toolbox/matlab/optimfun/graphics/optimplotfval.m
+optimplotx	1	toolbox/matlab/optimfun/graphics/optimplotx.m
+optimset	1	toolbox/matlab/optimfun/optimfun/optimset.m
+or	1	toolbox/matlab/ops/or
+ordeig	1	toolbox/matlab/matfun/ordeig
+orderfields	1	toolbox/matlab/datatypes/struct/orderfields.m
+orderspectrum	1,8	toolbox/signal/signal/orderspectrum.m
+ordertrack	1,8	toolbox/signal/signal/ordertrack.m
+orderwaveform	1,8	toolbox/signal/signal/orderwaveform.m
+ordfilt2	1,17	toolbox/images/images/ordfilt2.m
+ordqz	1	toolbox/matlab/matfun/ordqz
+ordschur	1	toolbox/matlab/matfun/ordschur
+orient	1	toolbox/matlab/graphics/graphics/printing/orient.m
+orth	1	toolbox/matlab/matfun/orth.m
+otf2psf	1,17	toolbox/images/images/otf2psf.m
+otsuthresh	1,17	toolbox/images/images/otsuthresh.m
+overshoot	1,8	toolbox/signal/signal/overshoot.m
+pack		
+pad	1	toolbox/matlab/strfun/pad.m
+padarray	1,17	toolbox/images/images/padarray.m
+pagesetupdlg	1	toolbox/matlab/graphics/graphics/printing/pagesetupdlg.m
+pan	1	toolbox/matlab/graphics/graphics/graph2d/pan.m
+panInteraction	1	toolbox/matlab/graphics/graphics/panInteraction.m
+para2fan	1,17	toolbox/images/images/para2fan.m
+parallelcoords		
+paramci		
+pareto	1	toolbox/matlab/graphics/graphics/specgraph/pareto.m
+paretotails		
+partialcorr		
+partialcorri		
+parula	1	toolbox/matlab/graphics/graphics/color/parula.m
+parzenwin	1,8	toolbox/signal/signal/parzenwin.m
+pascal	1	toolbox/matlab/elmat/pascal.m
+patch	1	toolbox/matlab/graphics/graphics/primitive/patch
+path	1	toolbox/matlab/general/path.m
+pathsep	1	toolbox/matlab/iofun/pathsep.m
+pause	1	toolbox/matlab/timefun/pause
+pbaspect	1	toolbox/matlab/graphics/graphics/graph3d/pbaspect.m
+pburg	1,8	toolbox/signal/signal/pburg.m
+pca		
+pcacov		
+pcares		
+pcg	1	toolbox/matlab/sparfun/pcg.m
+pchip	1	toolbox/matlab/polyfun/pchip.m
+pcolor	1	toolbox/matlab/graphics/graphics/specgraph/pcolor.m
+pcov	1,8	toolbox/signal/signal/pcov.m
+pdepe	1	toolbox/matlab/funfun/pdepe.m
+pdeval	1	toolbox/matlab/funfun/pdeval.m
+pdf		
+pdist	ERR MATLAB:depfun:req:NameNotFound	toolbox/bioinfo/bioinfo/@phytree/pdist.m
+pdist2		
+peak2peak	1,8	toolbox/signal/signal/peak2peak.m
+peak2rms	1,8	toolbox/signal/signal/peak2rms.m
+peaks	1	toolbox/matlab/graphics/graphics/specgraph/peaks.m
+pearsrnd		
+peig	1,8	toolbox/signal/signal/peig.m
+percentile		
+perfcurve	1,12,19	toolbox/shared/mlearnlib/core/perfcurve.m
+periodogram	1,8	toolbox/signal/signal/periodogram.m
+perms	1	toolbox/matlab/specfun/perms.m
+permute	1	toolbox/matlab/elmat/permute
+phantom	1,17	toolbox/images/images/phantom.m
+phasedelay	1,8	toolbox/signal/signal/phasedelay.m
+phasez	1,8	toolbox/signal/signal/phasez.m
+pi	1	toolbox/matlab/elmat/pi
+pie	1	toolbox/matlab/graphics/graphics/specgraph/pie.m
+pie3	1	toolbox/matlab/graphics/graphics/specgraph/pie3.m
+pink	1	toolbox/matlab/graphics/graphics/color/pink.m
+pinv	1	toolbox/matlab/matfun/pinv.m
+planerot	1	toolbox/matlab/matfun/planerot.m
+plomb	1,8	toolbox/signal/signal/plomb.m
+plot	1	toolbox/matlab/graphics/graphics/graph2d/plot
+plot3	1	toolbox/matlab/graphics/graphics/graph3d/plot3
+plotmatrix	1	toolbox/matlab/graphics/graphics/specgraph/plotmatrix.m
+plotyy	1	toolbox/matlab/graphics/graphics/graph2d/plotyy.m
+plsregress		
+plus	1	toolbox/matlab/ops/plus
+pmcov	1,8	toolbox/signal/signal/pmcov.m
+pmem	1,8	toolbox/signal/signal/pmem.m
+pmtm	1,8	toolbox/signal/signal/pmtm.m
+pmusic	1,8	toolbox/signal/signal/pmusic.m
+poisscdf		
+poissfit		
+poissinv		
+poisspdf		
+poissrnd		
+poisstat		
+pol2cart	1	toolbox/matlab/specfun/pol2cart.m
+polar	1	toolbox/matlab/graphics/graphics/graph2d/polar.m
+polaraxes	1	toolbox/matlab/graphics/graphics/axis/polaraxes
+polarbubblechart	1	toolbox/matlab/graphics/graphics/polarbubblechart.m
+polarhistogram	1	toolbox/matlab/graphics/graphics/specgraph/polarhistogram.m
+polarplot	1	toolbox/matlab/graphics/graphics/specgraph/polarplot.m
+polarscatter	1	toolbox/matlab/graphics/graphics/polarscatter.m
+poly	1	toolbox/matlab/polyfun/poly.m
+poly2ac	1,8	toolbox/signal/signal/poly2ac.m
+poly2label	1,17	toolbox/images/images/poly2label.m
+poly2lsf	1,8	toolbox/signal/signal/poly2lsf.m
+poly2mask	1,17	toolbox/images/images/poly2mask.m
+poly2rc	1,8	toolbox/signal/signal/poly2rc.m
+polyarea	1	toolbox/matlab/polyfun/polyarea.m
+polyconf		
+polyder	1	toolbox/matlab/polyfun/polyder.m
+polyeig	1	toolbox/matlab/matfun/polyeig.m
+polyfit	1	toolbox/matlab/polyfun/polyfit.m
+polyint	1	toolbox/matlab/polyfun/polyint.m
+polyscale	1,8	toolbox/signal/signal/polyscale.m
+polystab	1,8	toolbox/signal/signal/polystab.m
+polyval	1	toolbox/matlab/polyfun/polyval.m
+polyvalm	1	toolbox/matlab/polyfun/polyvalm.m
+posixtime	1	toolbox/matlab/bigdata/@tall/posixtime.m
+pow		
+pow2	1	toolbox/matlab/elfun/pow2
+pow2db	1,8	toolbox/signal/signal/pow2db.m
+power	1	toolbox/matlab/ops/power
+powerbw	1,8	toolbox/signal/signal/powerbw.m
+ppca		
+ppval	1	toolbox/matlab/polyfun/ppval.m
+prctile	1	toolbox/matlab/datafun/prctile.m
+primes	1	toolbox/matlab/specfun/primes.m
+print	1	toolbox/matlab/graphics/graphics/printing/print.m
+printdlg	1	toolbox/matlab/graphics/graphics/printing/printdlg.m
+printpreview	1	toolbox/matlab/graphics/graphics/printing/printpreview.m
+prism	1	toolbox/matlab/graphics/graphics/color/prism.m
+probplot		
+procrustes		
+prod	1	toolbox/matlab/datafun/prod
+proflik		
+projective2d	1,17	toolbox/images/images/projective2d.m
+prony	1,8	toolbox/signal/signal/prony.m
+properties	1	toolbox/matlab/datatypes/properties
+psd	1,8	toolbox/signal/signal/psd.m
+psf2otf	1,17	toolbox/images/images/psf2otf.m
+psi	1	toolbox/matlab/specfun/psi
+psnr	1,17	toolbox/images/images/psnr.m
+pulseperiod	1,8	toolbox/signal/signal/pulseperiod.m
+pulsesep	1,8	toolbox/signal/signal/pulsesep.m
+pulsewidth	1,8	toolbox/signal/signal/pulsewidth.m
+pulstran	1,8	toolbox/signal/signal/pulstran.m
+pwd	1	toolbox/matlab/general/pwd.m
+pwelch	1,8	toolbox/signal/signal/pwelch.m
+pyulear	1,8	toolbox/signal/signal/pyulear.m
+qmr	1	toolbox/matlab/sparfun/qmr.m
+qqplot		
+qr	1	toolbox/matlab/matfun/qr
+qrdelete	1	toolbox/matlab/matfun/qrdelete.m
+qrinsert	1	toolbox/matlab/matfun/qrinsert.m
+qrupdate	1	toolbox/matlab/matfun/qrupdate
+qtdecomp	1,17	toolbox/images/images/qtdecomp.m
+qtgetblk	1,17	toolbox/images/images/qtgetblk.m
+qtsetblk	1,17	toolbox/images/images/qtsetblk.m
+quad	1	toolbox/matlab/funfun/quad.m
+quad2d	1	toolbox/matlab/funfun/quad2d.m
+quadgk	1	toolbox/matlab/funfun/quadgk.m
+quadl	1	toolbox/matlab/funfun/quadl.m
+quadv	1	toolbox/matlab/funfun/quadv.m
+quantile	1	toolbox/matlab/datafun/quantile.m
+quarter	1	toolbox/matlab/timefun/quarter.m
+questdlg	1	toolbox/matlab/uitools/uitools/questdlg.m
+quit	1	toolbox/matlab/general/quit
+quiver	1	toolbox/matlab/graphics/graphics/specgraph/quiver.m
+quiver3	1	toolbox/matlab/graphics/graphics/specgraph/quiver3.m
+qz	1	toolbox/matlab/matfun/qz
+rad2deg	1	toolbox/matlab/elfun/rad2deg.m
+radon	1,17	toolbox/images/images/radon.m
+rainflow	1,8	toolbox/signal/signal/rainflow.m
+rand	1	toolbox/matlab/randfun/rand
+randg	1	toolbox/stats/builtins/randg
+randi	1	toolbox/matlab/randfun/randi
+randn	1	toolbox/matlab/randfun/randn
+random		
+randperm	1	toolbox/matlab/randfun/randperm
+randsample		
+range	ERR MATLAB:depfun:req:NameNotFound	toolbox/mbc/mbcmodels/@xregexportmodel/range.m
+rangefilt	1,17	toolbox/images/images/rangefilt.m
+rangesearch	ERR MATLAB:depfun:req:NameNotFound	toolbox/shared/statslib/@KDTreeSearcher/rangesearch.m
+rank	1	toolbox/matlab/matfun/rank.m
+ranksum		
+rat	1	toolbox/matlab/specfun/rat.m
+rats	1	toolbox/matlab/specfun/rats.m
+raylcdf		
+raylfit		
+raylinv		
+raylpdf		
+raylrnd		
+raylstat		
+rc2ac	1,8	toolbox/signal/signal/rc2ac.m
+rc2is	1,8	toolbox/signal/signal/rc2is.m
+rc2lar	1,8	toolbox/signal/signal/rc2lar.m
+rc2poly	1,8	toolbox/signal/signal/rc2poly.m
+rceps	1,8	toolbox/signal/signal/rceps.m
+rcond	1	toolbox/matlab/matfun/rcond
+rcoplot		
+rcosdesign	1,8	toolbox/signal/signal/rcosdesign.m
+rdivide	1	toolbox/matlab/ops/rdivide
+readcell	1	toolbox/matlab/io/tabular/iofun/readcell.m
+readcsv		
+readlines	1	toolbox/matlab/io/interface/readlines.m
+readmatrix	1	toolbox/matlab/io/tabular/iofun/readmatrix.m
+readtable	1	toolbox/matlab/io/tabular/iofun/readtable.m
+readtimetable	1	toolbox/matlab/io/tabular/iofun/readtimetable.m
+readxlsx		
+real	1	toolbox/matlab/elfun/real
+reallog	1	toolbox/matlab/elfun/reallog.m
+realmax	1	toolbox/matlab/elmat/realmax
+realmin	1	toolbox/matlab/elmat/realmin
+realpow	1	toolbox/matlab/elfun/realpow.m
+realsqrt	1	toolbox/matlab/elfun/realsqrt.m
+rectangle	1	toolbox/matlab/graphics/graphics/primitive/rectangle
+rectint	1	toolbox/matlab/polyfun/rectint.m
+rectpuls	1,8	toolbox/signal/signal/rectpuls.m
+rectwin	1,8	toolbox/signal/signal/rectwin.m
+recycle	1	toolbox/matlab/io/filesystem/recycle
+reducepatch	1	toolbox/matlab/graphics/graphics/specgraph/reducepatch.m
+reducepoly	1,17	toolbox/images/imuitools/reducepoly.m
+reducevolume	1	toolbox/matlab/graphics/graphics/specgraph/reducevolume.m
+refcurve		
+refline		
+refresh	1	toolbox/matlab/graphics/graphics/refresh.m
+refreshdata	1	toolbox/matlab/graphics/graphics/refreshdata.m
+regexp	1	toolbox/matlab/strfun/regexp
+regexpi	1	toolbox/matlab/strfun/regexpi
+regexprep	1	toolbox/matlab/strfun/regexprep
+regexptranslate	1	toolbox/matlab/strfun/regexptranslate
+regionZoomInteraction	1	toolbox/matlab/graphics/graphics/regionZoomInteraction.m
+regionfill	1,17	toolbox/images/images/regionfill.m
+regionprops	1,17	toolbox/images/images/regionprops.m
+regionprops3	1,17	toolbox/images/images/regionprops3.m
+regress		
+regstats		
+rehash	1	toolbox/matlab/general/rehash
+rem	1	toolbox/matlab/elfun/rem
+remez	1,8	toolbox/signal/signal/remez.m
+remezord	1,8	toolbox/signal/signal/remezord.m
+remove		<elsewhere>
+removeStyle		
+removeToolbarExplorationButtons	1	toolbox/matlab/graphics/graphics/plottools/removeToolbarExplorationButtons.p
+removecats	1	toolbox/matlab/bigdata/@tall/removecats.m
+renamecats	1	toolbox/matlab/bigdata/@tall/renamecats.m
+rendererinfo	1	toolbox/matlab/graphics/graphics/rendererinfo.p
+reordercats	1	toolbox/matlab/bigdata/@tall/reordercats.m
+repelem	1	toolbox/matlab/elmat/repelem.m
+replace	1	toolbox/matlab/strfun/replace.m
+replaceBetween	1	toolbox/matlab/strfun/replaceBetween.m
+repmat	1	toolbox/matlab/elmat/repmat.m
+resample	1,8	toolbox/signal/signal/resample.m
+rescale	1	toolbox/matlab/datafun/rescale.m
+reset	1	toolbox/matlab/graphics/graphics/objectsystem/reset
+reshape	1	toolbox/matlab/elmat/reshape
+residue	1	toolbox/shared/controllib/general/residue.m
+residuez	1,8	toolbox/signal/signal/residuez.m
+resolvehost	1,62	toolbox/instrument/instrument/resolvehost.m
+rethrow	1	toolbox/matlab/lang/rethrow
+reverse	1	toolbox/matlab/strfun/reverse.m
+rffreq		
+rfparam	1,141,86,162	toolbox/shared/rflib/rfparam.m
+rfplot	1,141,86,162	toolbox/shared/rflib/rfplot.m
+rgb2gray	1	toolbox/matlab/images/rgb2gray.m
+rgb2hsv	1	toolbox/matlab/images/rgb2hsv.m
+rgb2ind	1	toolbox/matlab/images/rgb2ind.m
+rgb2lab	1,17	toolbox/images/colorspaces/rgb2lab.m
+rgb2lightness	1,17	toolbox/images/colorspaces/rgb2lightness.m
+rgb2lin	1,17	toolbox/images/colorspaces/rgb2lin.m
+rgb2ntsc	1,17	toolbox/images/colorspaces/rgb2ntsc.m
+rgb2xyz	1,17	toolbox/images/colorspaces/rgb2xyz.m
+rgb2ycbcr	1,17	toolbox/images/colorspaces/rgb2ycbcr.m
+rgbplot	1	toolbox/matlab/graphics/graphics/specgraph/rgbplot.m
+ribbon	1	toolbox/matlab/graphics/graphics/specgraph/ribbon.m
+ridge		
+rigid2d	1,17	toolbox/images/images/rigid2d.m
+risetime	1,8	toolbox/signal/signal/risetime.m
+rlevinson	1,8	toolbox/signal/signal/rlevinson.m
+rlim	1	toolbox/matlab/graphics/graphics/graph3d/rlim.m
+rmappdata	1	toolbox/matlab/graphics/graphics/objectsystem/rmappdata
+rmdir	1	toolbox/matlab/io/filesystem/rmdir
+rmfield	1	toolbox/matlab/datatypes/struct/rmfield.m
+rmmissing	1	toolbox/matlab/datafun/rmmissing.m
+rmoutliers	1	toolbox/matlab/datafun/rmoutliers.m
+rmpath	1	toolbox/matlab/general/rmpath.m
+rms	1	toolbox/matlab/datafun/rms.m
+rmse	1	toolbox/matlab/datafun/rmse.m
+rng	1	toolbox/matlab/randfun/rng.m
+robustcov		
+robustfit		
+roicolor	1,17	toolbox/images/images/roicolor.m
+roifilt2	1,17	toolbox/images/images/roifilt2.m
+roipoly	1,17	toolbox/images/images/roipoly.m
+rooteig	1,8	toolbox/signal/signal/rooteig.m
+rootmusic	1,8	toolbox/signal/signal/rootmusic.m
+roots	1	toolbox/matlab/polyfun/roots.m
+rose	1	toolbox/matlab/graphics/graphics/specgraph/rose.m
+rosser	1	toolbox/matlab/elmat/rosser.m
+rot90	1	toolbox/matlab/elmat/rot90.m
+rotate	1	toolbox/matlab/graphics/graphics/specgraph/rotate.m
+rotate3d	1	toolbox/matlab/graphics/graphics/graph3d/rotate3d.m
+rotateInteraction	1	toolbox/matlab/graphics/graphics/rotateInteraction.m
+rotatefactors		
+round	1	toolbox/matlab/elfun/round
+rowcount		
+rowfun	1	toolbox/matlab/datatypes/tabular/@tabular/rowfun.m
+rpmfreqmap	1,8	toolbox/signal/signal/rpmfreqmap.m
+rpmordermap	1,8	toolbox/signal/signal/rpmordermap.m
+rref	1	toolbox/matlab/matfun/rref.m
+rsf2csf	1	toolbox/matlab/matfun/rsf2csf.m
+rssq	1,8	toolbox/signal/signal/rssq.m
+rtickangle	1	toolbox/matlab/graphics/graphics/graph3d/rtickangle.m
+rtickformat	1	toolbox/matlab/graphics/graphics/graph3d/rtickformat.m
+rticklabels	1	toolbox/matlab/graphics/graphics/graph3d/rticklabels.m
+rticks	1	toolbox/matlab/graphics/graphics/graph3d/rticks.m
+ruler2num	1	toolbox/matlab/graphics/graphics/axis/ruler2num.m
+rulerPanInteraction	1	toolbox/matlab/graphics/graphics/rulerPanInteraction.m
+run	1	toolbox/matlab/lang/run.m
+runstest		
+s2abcd	1,86	toolbox/rf/rf/s2abcd.m
+s2y	1,141,86,162	toolbox/shared/rflib/s2y.m
+s2z	1,141,86,162	toolbox/shared/rflib/s2z.m
+sampsizepwr		
+save	1	toolbox/matlab/general/save
+saveas	1	toolbox/matlab/general/saveas.m
+savefig	1	toolbox/matlab/graphics/graphics/objectsystem/savefig.m
+savefigure	1	toolbox/matlab/graphics/graphics/objectsystem/saveFigure.m
+sawtooth	1,8	toolbox/signal/signal/sawtooth.m
+scaleFilterSections	1,8	toolbox/signal/signal/scaleFilterSections.m
+scatter	1	toolbox/matlab/graphics/graphics/scatter.m
+scatter3	1	toolbox/matlab/graphics/graphics/scatter3.m
+scatteredInterpolant		<elsewhere>
+scatterhist		
+scatterhistogram	1	toolbox/matlab/graphics/graphics/specgraph/scatterhistogram.m
+schur	1	toolbox/matlab/matfun/schur.m
+schurrc	1,8	toolbox/signal/signal/schurrc.m
+scroll		
+sec	1	toolbox/matlab/elfun/sec.m
+secd	1	toolbox/matlab/elfun/secd.m
+sech	1	toolbox/matlab/elfun/sech.m
+second	1	toolbox/matlab/timefun/second.m
+seconds	1	toolbox/matlab/datatypes/duration/seconds.m
+semilogx	1	toolbox/matlab/graphics/graphics/graph2d/semilogx
+semilogy	1	toolbox/matlab/graphics/graphics/graph2d/semilogy
+sendEventToHTMLSource		
+seqperiod	1,8	toolbox/signal/signal/seqperiod.mexw64
+serialExplorer	1	toolbox/matlab/serialport/apps/serialportapp/serialExplorer.m
+serialport	1	toolbox/matlab/serialport/interface/serialport.m
+serialportfind	1	toolbox/matlab/serialport/interface/serialportfind.m
+serialportlist	1	toolbox/matlab/serialport/interface/serialportlist.p
+set	1	toolbox/matlab/graphics/graphics/objectsystem/set
+setappdata	1	toolbox/matlab/graphics/graphics/objectsystem/setappdata
+setcats	1	toolbox/matlab/bigdata/@tall/setcats.m
+setdiff	1	toolbox/matlab/ops/setdiff.m
+setenv	1	toolbox/matlab/oss/setenv.m
+setfield	1	toolbox/matlab/datatypes/struct/setfield.m
+setmcruserdata	1	toolbox/matlab/general/setmcruserdata
+setpixelposition	1	toolbox/matlab/uitools/uitools/setpixelposition.m
+setstr	1	toolbox/matlab/strfun/setstr
+settlingtime	1,8	toolbox/signal/signal/settlingtime.m
+setxor	1	toolbox/matlab/ops/setxor.m
+sfdr	1,8	toolbox/signal/signal/sfdr.m
+sgolay	1,8	toolbox/signal/signal/sgolay.m
+sgolayfilt	1,8	toolbox/signal/signal/sgolayfilt.m
+sgtitle	1	toolbox/matlab/graphics/graphics/graph2d/sgtitle.m
+shading	1	toolbox/matlab/graphics/graphics/graph3d/shading.m
+shg	1	toolbox/matlab/graphics/graphics/shg.m
+shiftdata	1,8	toolbox/signal/signal/shiftdata.m
+shiftdim	1	toolbox/matlab/elmat/shiftdim.m
+show	1	toolbox/matlab/codetools/@mtree/show.m
+shrinkfaces	1	toolbox/matlab/graphics/graphics/specgraph/shrinkfaces.m
+sign	1	toolbox/matlab/elfun/sign
+signrank		
+signtest		
+silhouette		
+sin	1	toolbox/matlab/elfun/sin
+sinad	1,8	toolbox/signal/signal/sinad.m
+sinc	1,8	toolbox/signal/signal/sinc.m
+sind	1	toolbox/matlab/elfun/sind
+single	1	toolbox/matlab/datatypes/single
+sinh	1	toolbox/matlab/elfun/sinh
+size	1	toolbox/matlab/elmat/size
+skewness		
+slewrate	1,8	toolbox/signal/signal/slewrate.m
+slice	1	toolbox/matlab/graphics/graphics/specgraph/slice.m
+slicesample		
+smithplot	1,141,86,162	toolbox/shared/rflib/smithplot.m
+smooth3	1	toolbox/matlab/graphics/graphics/specgraph/smooth3.m
+smoothdata	1	toolbox/matlab/datafun/smoothdata.m
+snr	1,8	toolbox/signal/signal/snr.m
+sort	1	toolbox/matlab/datafun/sort
+sortrows	1	toolbox/matlab/datafun/sortrows.m
+sos2cell	1,8	toolbox/signal/signal/sos2cell.m
+sos2ctf	1,8	toolbox/signal/signal/sos2ctf.m
+sos2ss	1,8	toolbox/signal/signal/sos2ss.m
+sos2tf	1,8	toolbox/signal/signal/sos2tf.m
+sos2zp	1,8	toolbox/signal/signal/sos2zp.m
+sosfilt	1,8	toolbox/signal/signal/sosfilt.m
+sound	1	toolbox/matlab/audiovideo/sound.m
+soundsc	1	toolbox/matlab/audiovideo/soundsc.m
+spalloc	1	toolbox/matlab/sparfun/spalloc.m
+sparameters	1,141,86,162	toolbox/shared/rflib/@sparameters/sparameters.m
+sparse	1	toolbox/matlab/sparfun/sparse
+spaugment	1	toolbox/matlab/sparfun/spaugment.m
+spconvert	1	toolbox/matlab/sparfun/spconvert.m
+spdiags	1	toolbox/matlab/sparfun/spdiags.m
+specgram	1,8	toolbox/signal/signal/specgram.m
+spectralCrest	1,8	toolbox/signal/signal/spectralCrest.m
+spectralEntropy	1,8	toolbox/signal/signal/spectralEntropy.m
+spectralFlatness	1,8	toolbox/signal/signal/spectralFlatness.m
+spectralKurtosis	1,8	toolbox/signal/signal/spectralKurtosis.m
+spectralSkewness	1,8	toolbox/signal/signal/spectralSkewness.m
+spectralcluster		
+spectrogram	1,8	toolbox/signal/signal/spectrogram.m
+spectrum	1,8	toolbox/signal/signal/spectrum.m
+specular	1	toolbox/matlab/graphics/graphics/graph3d/specular.m
+speye	1	toolbox/matlab/sparfun/speye
+spfun	1	toolbox/matlab/sparfun/spfun.m
+sph2cart	1	toolbox/matlab/specfun/sph2cart.m
+sphere	1	toolbox/matlab/graphics/graphics/specgraph/sphere.m
+spline	1	toolbox/matlab/polyfun/spline.m
+split	1	toolbox/matlab/strfun/split.m
+splitapply	1	toolbox/matlab/datafun/splitapply.m
+splitlines	1	toolbox/matlab/strfun/splitlines.m
+spones	1	toolbox/matlab/sparfun/spones.m
+sprand	1	toolbox/matlab/sparfun/sprand.m
+sprandn	1	toolbox/matlab/sparfun/sprandn.m
+sprandsym	1	toolbox/matlab/sparfun/sprandsym.m
+sprank	1	toolbox/matlab/sparfun/sprank.m
+spring	1	toolbox/matlab/graphics/graphics/color/spring.m
+sprintf	1	toolbox/matlab/strfun/sprintf
+spy	1	toolbox/matlab/graphics/math/spy.m
+sqrt	1	toolbox/matlab/elfun/sqrt
+sqrtm	1	toolbox/matlab/matfun/sqrtm.m
+square	1,8	toolbox/signal/signal/square.m
+squareform		
+squeeze	1	toolbox/matlab/elmat/squeeze.m
+ss	1,3	toolbox/control/ctrlmodels/@ss/ss.m
+ss2sos	1,8	toolbox/signal/signal/ss2sos.m
+ss2tf	1	toolbox/shared/controllib/general/ss2tf.m
+ss2zp	1	toolbox/shared/controllib/general/ss2zp.m
+sscanf	1	toolbox/matlab/strfun/sscanf
+ssim	1,17	toolbox/images/images/ssim.m
+stack	1	toolbox/matlab/bigdata/@tall/stack.m
+stackedplot	1	toolbox/matlab/graphics/graphics/specgraph/stackedplot.m
+stairs	1	toolbox/matlab/graphics/graphics/specgraph/stairs.m
+standardizeMissing	1	toolbox/matlab/datafun/standardizeMissing.m
+start	1	toolbox/matlab/timerfun/@timer/start.m
+startsWith	1	toolbox/matlab/strfun/startsWith
+statelevels	1,8	toolbox/signal/signal/statelevels.m
+statget		
+statset		
+std	1	toolbox/matlab/datafun/std.m
+std2	1,17	toolbox/images/images/std2.m
+stdfilt	1,17	toolbox/images/images/stdfilt.m
+stem	1	toolbox/matlab/graphics/graphics/specgraph/stem.m
+stem3	1	toolbox/matlab/graphics/graphics/specgraph/stem3.m
+stepwisefit		
+stepz	1,8	toolbox/signal/signal/stepz.m
+stft	1,8	toolbox/signal/signal/stft.m
+stftmag2sig	1,8	toolbox/signal/signal/stftmag2sig.m
+stlread	1	toolbox/matlab/polyfun/stlread.m
+stlwrite	1	toolbox/matlab/polyfun/stlwrite.m
+stmcb	1,8	toolbox/signal/signal/stmcb.m
+stop	1	toolbox/matlab/timerfun/@timer/stop.m
+str		
+str2double	1	toolbox/matlab/strfun/str2double.m
+str2func	1	toolbox/matlab/datatypes/str2func
+str2mat	1	toolbox/matlab/strfun/str2mat.m
+str2num	1	toolbox/matlab/strfun/str2num.m
+strcat	1	toolbox/matlab/strfun/strcat.m
+strcmp	1	toolbox/matlab/strfun/strcmp
+strcmpi	1	toolbox/matlab/strfun/strcmpi
+stream2	1	toolbox/matlab/graphics/graphics/specgraph/stream2.m
+stream3	1	toolbox/matlab/graphics/graphics/specgraph/stream3.m
+streamline	1	toolbox/matlab/graphics/graphics/specgraph/streamline.m
+streamparticles	1	toolbox/matlab/graphics/graphics/specgraph/streamparticles.m
+streamribbon	1	toolbox/matlab/graphics/graphics/specgraph/streamribbon.m
+streamslice	1	toolbox/matlab/graphics/graphics/specgraph/streamslice.m
+streamtube	1	toolbox/matlab/graphics/graphics/specgraph/streamtube.m
+strel	1,17	toolbox/images/images/strel.m
+stretchlim	1,17	toolbox/images/images/stretchlim.m
+strfind	1	toolbox/matlab/strfun/strfind
+string		<elsewhere>
+strings	1	toolbox/matlab/strfun/strings
+strip	1	toolbox/matlab/strfun/strip.m
+stripline	ERR MATLAB:depfun:req:NameNotFound	toolbox/rfpcb/rfpcb/stripLine.m
+striplinew		
+strips	1,8	toolbox/signal/signal/strips.m
+strjoin	1	toolbox/matlab/strfun/strjoin.m
+strjust	1	toolbox/matlab/strfun/strjust.m
+strlength	1	toolbox/matlab/strfun/strlength
+strmatch	1	toolbox/matlab/strfun/strmatch.m
+strncmp	1	toolbox/matlab/strfun/strncmp
+strncmpi	1	toolbox/matlab/strfun/strncmpi
+strrep	1	toolbox/matlab/strfun/strrep
+strsplit	1	toolbox/matlab/strfun/strsplit.m
+strtok	1	toolbox/matlab/strfun/strtok.m
+strtrim	1	toolbox/matlab/strfun/strtrim
+struct	1	toolbox/matlab/datatypes/struct/struct
+struct2cell	1	toolbox/matlab/datatypes/struct/@struct/struct2cell
+struct2table	1	toolbox/matlab/datatypes/tabular/struct2table.m
+structfun	1	toolbox/matlab/datatypes/applyfuns/structfun
+strvcat	1	toolbox/matlab/strfun/strvcat.m
+sub2ind	1	toolbox/matlab/elmat/sub2ind.m
+subplot	1	toolbox/matlab/graphics/graphics/graph2d/subplot.m
+subspace	1	toolbox/matlab/datafun/subspace.m
+subtitle	1	toolbox/matlab/graphics/graphics/axis/subtitle.m
+subvolume	1	toolbox/matlab/graphics/graphics/specgraph/subvolume.m
+sum	1	toolbox/matlab/datafun/sum
+summary	1	toolbox/matlab/datafun/summary.m
+summer	1	toolbox/matlab/graphics/graphics/color/summer.m
+superclasses	1	toolbox/matlab/datatypes/superclasses
+superpixels	1,17	toolbox/images/images/superpixels.m
+superpixels3	1,17	toolbox/images/images/superpixels3.m
+surf	1	toolbox/matlab/graphics/graphics/graph3d/surf.m
+surf2patch	1	toolbox/matlab/graphics/graphics/primitive/surf2patch.m
+surface	1	toolbox/matlab/graphics/graphics/primitive/surface
+surfc	1	toolbox/matlab/graphics/graphics/specgraph/surfc.m
+surfl	1	toolbox/matlab/graphics/graphics/graph3d/surfl.m
+surfnorm	1	toolbox/matlab/graphics/graphics/graph3d/surfnorm.m
+svd	1	toolbox/matlab/matfun/svd
+svds	1	toolbox/matlab/sparfun/svds.m
+swarmchart	1	toolbox/matlab/graphics/graphics/swarmchart.m
+swarmchart3	1	toolbox/matlab/graphics/graphics/swarmchart3.m
+sylvester	1	toolbox/matlab/matfun/sylvester.m
+symamd	1	toolbox/matlab/sparfun/symamd.m
+symbfact	1	toolbox/matlab/sparfun/symbfact
+symmlq	1	toolbox/matlab/sparfun/symmlq.m
+symrcm	1	toolbox/matlab/sparfun/symrcm
+symvar	1	toolbox/matlab/funfun/symvar.m
+tLocationScaleDistribution		
+table	1	toolbox/matlab/datatypes/tabular/@table/table.m
+table2array	1	toolbox/matlab/datatypes/tabular/table2array.m
+table2cell	1	toolbox/matlab/datatypes/tabular/table2cell.m
+table2struct	1	toolbox/matlab/datatypes/tabular/table2struct.m
+tabulate		
+tachorpm	1,8	toolbox/signal/signal/tachorpm.m
+tail	1	toolbox/matlab/datafun/tail.m
+tan	1	toolbox/matlab/elfun/tan
+tand	1	toolbox/matlab/elfun/tand
+tanh	1	toolbox/matlab/elfun/tanh
+taylorwin	1,8	toolbox/signal/signal/taylorwin.m
+tblread		
+tblwrite		
+tcdf		
+tcpclient	1	toolbox/matlab/networklib/interface/tcpclient.m
+tcpclientfind	1	toolbox/matlab/networklib/interface/tcpclientfind.m
+tcpserver	1,62	toolbox/instrument/interface/tcpserver/tcpserver.m
+tcpserverfind	1,62	toolbox/instrument/interface/tcpserver/tcpserverfind.m
+tdfread		
+tempdir	1	toolbox/matlab/io/filesystem/tempdir.m
+tempname	1	toolbox/matlab/io/filesystem/tempname.m
+tetramesh	1	toolbox/matlab/graphics/graphics/specgraph/tetramesh.m
+texlabel	1	toolbox/matlab/graphics/graphics/graph2d/texlabel.m
+text	1	toolbox/matlab/graphics/graphics/primitive/text
+textcolumn		
+textscan	1	toolbox/matlab/iofun/textscan
+textwrap	1	toolbox/matlab/uitools/uitools/textwrap.m
+tf	1,3	toolbox/control/ctrlmodels/@tf/tf.m
+tf2latc	1,8	toolbox/signal/signal/tf2latc.m
+tf2sos	1,8	toolbox/signal/signal/tf2sos.m
+tf2ss	1	toolbox/shared/controllib/general/tf2ss.m
+tf2zp	1	toolbox/shared/controllib/general/tf2zp.m
+tf2zpk	1,8	toolbox/signal/signal/tf2zpk.m
+tfe	1,8	toolbox/signal/signal/tfe.m
+tfestimate	1,8	toolbox/signal/signal/tfestimate.m
+tfqmr	1	toolbox/matlab/sparfun/tfqmr.m
+tfridge	1,8	toolbox/signal/signal/tfridge.m
+thd	1,8	toolbox/signal/signal/thd.m
+thetalim	1	toolbox/matlab/graphics/graphics/graph3d/thetalim.m
+thetatickformat	1	toolbox/matlab/graphics/graphics/graph3d/thetatickformat.m
+thetaticklabels	1	toolbox/matlab/graphics/graphics/graph3d/thetaticklabels.m
+thetaticks	1	toolbox/matlab/graphics/graphics/graph3d/thetaticks.m
+throw		<elsewhere>
+throwAsCaller		<elsewhere>
+tic	1	toolbox/matlab/timefun/tic
+tiedrank	1,141,188,127,19,96	toolbox/shared/statslib/tiedrank.m
+tiledlayout	1	toolbox/matlab/graphics/graphics/tiledlayout.p
+time	1	toolbox/matlab/bigdata/@tall/time.m
+timeofday	1	toolbox/matlab/bigdata/@tall/timeofday.m
+timer	1	toolbox/matlab/timerfun/@timer/timer.m
+times	1	toolbox/matlab/ops/times
+timetable	1	toolbox/matlab/datatypes/tabular/@timetable/timetable.m
+timezones	1	toolbox/matlab/datatypes/datetime_nonlibmatlab/timezones.m
+tinv		
+title	1	toolbox/matlab/graphics/graphics/axis/title.m
+toc	1	toolbox/matlab/timefun/toc
+toeplitz	1	toolbox/matlab/elmat/toeplitz.m
+toi	1,8	toolbox/signal/signal/toi.m
+topkrows	1	toolbox/matlab/datafun/topkrows.m
+tpdf		
+trace	1	toolbox/matlab/matfun/trace.m
+transformPointsForward	ERR MATLAB:depfun:req:NameNotFound	toolbox/images/images/affine2d.m
+transformPointsInverse	ERR MATLAB:depfun:req:NameNotFound	toolbox/images/images/affine2d.m
+transpose	1	toolbox/matlab/ops/transpose
+trapz	1	toolbox/matlab/datafun/trapz.m
+treelayout	1	toolbox/matlab/sparfun/treelayout.m
+treeplot	1	toolbox/matlab/graphics/math/treeplot.m
+triang	1,8	toolbox/signal/signal/triang.m
+tril	1	toolbox/matlab/elmat/tril
+trim	1,2,56,38	toolbox/simulink/core/general/trim.p
+trimesh	1	toolbox/matlab/graphics/graphics/specgraph/trimesh.m
+trimmean		
+triplequad	1	toolbox/matlab/funfun/triplequad.m
+triplot	1	toolbox/matlab/graphics/graphics/specgraph/triplot.m
+tripuls	1,8	toolbox/signal/signal/tripuls.m
+trisurf	1	toolbox/matlab/graphics/graphics/specgraph/trisurf.m
+triu	1	toolbox/matlab/elmat/triu
+trnd		
+true	1	toolbox/matlab/elmat/true
+truncate		
+tsa	1,8	toolbox/signal/signal/tsa.m
+tsearchn	1	toolbox/matlab/polyfun/tsearchn.m
+tsne		
+tstat		
+ttest		
+ttest2		
+tukeywin	1,8	toolbox/signal/signal/tukeywin.m
+turbo	1	toolbox/matlab/graphics/graphics/color/turbo.m
+type	1	toolbox/matlab/general/type
+typecast	1	toolbox/matlab/datatypes/typecast
+tzoffset	1	toolbox/matlab/bigdata/@tall/tzoffset.m
+udecode	1,8	toolbox/signal/signal/udecode.m
+udpport	1,62	toolbox/instrument/interface/udpport/udpport.m
+udpportfind	1,62	toolbox/instrument/interface/udpport/udpportfind.m
+uencode	1,8	toolbox/signal/signal/uencode.m
+uialert	1	toolbox/matlab/uitools/uicomponents/components/uialert.m
+uiaxes	1	toolbox/matlab/graphics/graphics/axis/uiaxes.m
+uibutton	1	toolbox/matlab/uicomponents/uicomponents/uibutton.m
+uibuttongroup	1	toolbox/matlab/uitools/uitools/uibuttongroup.m
+uicheckbox	1	toolbox/matlab/uicomponents/uicomponents/uicheckbox.m
+uicolorpicker	1	toolbox/matlab/uicomponents/uicomponents/uicolorpicker.m
+uiconfirm	1	toolbox/matlab/uitools/uicomponents/components/uiconfirm.m
+uicontextmenu	1	toolbox/matlab/graphics/graphics/uicontextmenu
+uicontrol	1	toolbox/matlab/graphics/graphics/uicontrol
+uidatepicker	1	toolbox/matlab/uicomponents/uicomponents/uidatepicker.m
+uidropdown	1	toolbox/matlab/uicomponents/uicomponents/uidropdown.m
+uieditfield	1	toolbox/matlab/uicomponents/uicomponents/uieditfield.m
+uifigure	1	toolbox/matlab/uitools/uicomponents/components/uifigure.m
+uigauge	1	toolbox/matlab/uicomponents/uicomponents/uigauge.m
+uigetdir	1	toolbox/matlab/uitools/uitools/uigetdir.m
+uigetfile	1	toolbox/matlab/uitools/uitools/uigetfile.m
+uigridlayout	1	toolbox/matlab/uicomponents/uicomponents/uigridlayout.m
+uihtml	1	toolbox/matlab/uicomponents/uicomponents/uihtml.m
+uihyperlink	1	toolbox/matlab/uicomponents/uicomponents/uihyperlink.m
+uiimage	1	toolbox/matlab/uicomponents/uicomponents/uiimage.m
+uiknob	1	toolbox/matlab/uicomponents/uicomponents/uiknob.m
+uilabel	1	toolbox/matlab/uicomponents/uicomponents/uilabel.m
+uilamp	1	toolbox/matlab/uicomponents/uicomponents/uilamp.m
+uilistbox	1	toolbox/matlab/uicomponents/uicomponents/uilistbox.m
+uiload	1	toolbox/matlab/uitools/uitools/uiload.m
+uimenu	1	toolbox/matlab/graphics/graphics/uimenu
+uiopen	1	toolbox/matlab/uitools/uitools/uiopen.m
+uipanel	1	toolbox/matlab/uitools/uitools/uipanel
+uiprogressdlg	1	toolbox/matlab/uitools/uicomponents/components/uiprogressdlg.m
+uipushtool	1	toolbox/matlab/uitools/uitools/uipushtool
+uiputfile	1	toolbox/matlab/uitools/uitools/uiputfile.m
+uiradiobutton	1	toolbox/matlab/uicomponents/uicomponents/uiradiobutton.m
+uiresume	1	toolbox/matlab/uitools/uitools/uiresume.m
+uisave	1	toolbox/matlab/uitools/uitools/uisave.m
+uisetcolor	1	toolbox/matlab/uitools/uitools/uisetcolor.m
+uisetfont	1	toolbox/matlab/uitools/uitools/uisetfont.m
+uislider	1	toolbox/matlab/uicomponents/uicomponents/uislider.m
+uispinner	1	toolbox/matlab/uicomponents/uicomponents/uispinner.m
+uistack	1	toolbox/matlab/uitools/uitools/uistack.m
+uistyle	1	toolbox/matlab/uicomponents/uicomponents/style/uistyle.m
+uiswitch	1	toolbox/matlab/uicomponents/uicomponents/uiswitch.m
+uitab	1	toolbox/matlab/uitools/uitools/uitab.m
+uitabgroup	1	toolbox/matlab/uitools/uitools/uitabgroup.m
+uitable	1	toolbox/matlab/uitools/uitools/uitable.m
+uitextarea	1	toolbox/matlab/uicomponents/uicomponents/uitextarea.m
+uitogglebutton	1	toolbox/matlab/uicomponents/uicomponents/uitogglebutton.m
+uitoggletool	1	toolbox/matlab/uitools/uitools/uitoggletool
+uitoolbar	1	toolbox/matlab/uitools/uitools/uitoolbar
+uitree	1	toolbox/matlab/uicomponents/uicomponents/uitree.m
+uitreenode	1	toolbox/matlab/uicomponents/uicomponents/uitreenode.m
+uiwait	1	toolbox/matlab/uitools/uitools/uiwait.m
+uminus	1	toolbox/matlab/ops/uminus
+undershoot	1,8	toolbox/signal/signal/undershoot.m
+unicode2native	1	toolbox/matlab/strfun/unicode2native
+unidcdf		
+unidinv		
+unidpdf		
+unidrnd		
+unidstat		
+unifcdf		
+unifinv		
+unifit		
+unifpdf		
+unifrnd		
+unifstat		
+union	1	toolbox/matlab/ops/union.m
+unique	1	toolbox/matlab/ops/unique.m
+uniquetol	1	toolbox/matlab/ops/uniquetol
+unloadlibrary	1	toolbox/matlab/general/unloadlibrary
+unmesh	1	toolbox/matlab/sparfun/unmesh.m
+unmkpp	1	toolbox/matlab/polyfun/unmkpp.m
+unshiftdata	1,8	toolbox/signal/signal/unshiftdata.m
+unwrap	1	toolbox/matlab/elfun/unwrap.m
+upfirdn	1,8	toolbox/signal/signal/upfirdn.m
+uplus	1	toolbox/matlab/ops/uplus
+upper	1	toolbox/matlab/strfun/upper
+upsample	1,8	toolbox/signal/signal/upsample.m
+validateattributes	1	toolbox/matlab/lang/validateattributes
+validatecolor	1	toolbox/matlab/graphics/graphics/color/validatecolor.m
+values		<elsewhere>
+vander	1	toolbox/matlab/elmat/vander.m
+var	1	toolbox/matlab/datafun/var.m
+varfun	1	toolbox/matlab/bigdata/@tall/varfun.m
+variance		
+vartest		
+vartest2		
+vartestn		
+vartype	1	toolbox/matlab/datatypes/tabular/vartype.m
+vco	1,8	toolbox/signal/signal/vco.m
+vecnorm	1	toolbox/matlab/matfun/vecnorm
+vectorize	1	toolbox/matlab/funfun/vectorize.m
+version	1	toolbox/local/version
+vertcat	1	toolbox/matlab/ops/vertcat
+view	1	toolbox/matlab/graphics/graphics/graph3d/view.m
+viewmtx	1	toolbox/matlab/graphics/graphics/graph3d/viewmtx.m
+viridis		
+visadev	1,62	toolbox/instrument/interface/visalib/visadev.m
+visadevfind	1,62	toolbox/instrument/interface/visalib/visadevfind.m
+visadevlist	1,62	toolbox/instrument/interface/visalib/visadevlist.m
+visboundaries	1,17	toolbox/images/imuitools/visboundaries.m
+viscircles	1,17	toolbox/images/imuitools/viscircles.m
+volumebounds	1	toolbox/matlab/graphics/graphics/specgraph/volumebounds.m
+voronoi	1	toolbox/matlab/graphics/graphics/specgraph/voronoi.m
+voronoin	1	toolbox/matlab/polyfun/voronoin.m
+vrjoystick	1,2,66	toolbox/sl3d/sl3d/@vrjoystick/vrjoystick.p
+vswr	1,86	toolbox/rf/rf/vswr.m
+wait	1	toolbox/matlab/timerfun/@timer/wait.m
+waitbar	1	toolbox/matlab/uitools/uitools/waitbar.m
+waitfor	1	toolbox/matlab/uitools/uitools/waitfor
+waitforbuttonpress	1	toolbox/matlab/uitools/uitools/waitforbuttonpress
+warndlg	1	toolbox/matlab/uitools/uitools/warndlg.m
+warning	1	toolbox/matlab/lang/warning
+warp	1,17	toolbox/images/imuitools/warp.m
+waterfall	1	toolbox/matlab/graphics/graphics/specgraph/waterfall.m
+watershed	1,17	toolbox/images/images/watershed.m
+wavelength		
+wblcdf		
+wblfit		
+wblinv		
+wbllike		
+wblpdf		
+wblplot		
+wblrnd		
+wblstat		
+webcam		
+webcamlist		
+week	1	toolbox/matlab/bigdata/@tall/week.m
+weekday	1	toolbox/matlab/timefun/weekday.m
+what	1	toolbox/matlab/io/filesystem/what
+which	1	toolbox/matlab/general/which
+whitebg	1	toolbox/matlab/graphics/graphics/graph3d/whitebg.m
+whitepoint	1,17	toolbox/images/colorspaces/whitepoint.m
+who	1	toolbox/matlab/general/who
+whos	1	toolbox/matlab/general/whos
+width	1	toolbox/matlab/elmat/width.m
+wiener2	1,17	toolbox/images/images/wiener2.m
+wilkinson	1	toolbox/matlab/elmat/wilkinson.m
+window	1,8	toolbox/signal/signal/window.m
+winter	1	toolbox/matlab/graphics/graphics/color/winter.m
+wishrnd		
+writeVideo		
+writecell	1	toolbox/matlab/io/tabular/iofun/writecell.m
+writelines	1	toolbox/matlab/io/tabular/iofun/writelines.m
+writematrix	1	toolbox/matlab/io/tabular/iofun/writematrix.m
+writetable	1	toolbox/matlab/io/tabular/iofun/writetable.m
+x2fx	ERR MATLAB:depfun:req:NameNotFound	toolbox/mbc/mbcmodels/@localpoly/x2fx.m
+xcorr	1	toolbox/matlab/datafun/xcorr.m
+xcorr2	1,8	toolbox/signal/signal/xcorr2.m
+xcov	1	toolbox/matlab/datafun/xcov.m
+xlabel	1	toolbox/matlab/graphics/graphics/axis/xlabel.m
+xlim	1	toolbox/matlab/graphics/graphics/graph3d/xlim.m
+xline	1	toolbox/matlab/graphics/graphics/specgraph/xline.m
+xor	1	toolbox/matlab/ops/xor
+xptread	1,141,188,127,19,96	toolbox/shared/statslib/xptread.m
+xregion	1	toolbox/matlab/graphics/graphics/specgraph/xregion.m
+xspectrogram	1,8	toolbox/signal/signal/xspectrogram.m
+xtickangle	1	toolbox/matlab/graphics/graphics/graph3d/xtickangle.m
+xtickformat	1	toolbox/matlab/graphics/graphics/graph3d/xtickformat.m
+xticklabels	1	toolbox/matlab/graphics/graphics/graph3d/xticklabels.m
+xticks	1	toolbox/matlab/graphics/graphics/graph3d/xticks.m
+xyz2double	1,17	toolbox/images/colorspaces/xyz2double.m
+xyz2lab	1,17	toolbox/images/colorspaces/xyz2lab.m
+xyz2rgb	1,17	toolbox/images/colorspaces/xyz2rgb.m
+xyz2uint16	1,17	toolbox/images/colorspaces/xyz2uint16.m
+y2s	1,141,86,162	toolbox/shared/rflib/y2s.m
+ycbcr2rgb	1,17	toolbox/images/colorspaces/ycbcr2rgb.m
+year	1	toolbox/matlab/timefun/year.m
+years	1	toolbox/matlab/datatypes/duration/years.m
+ylabel	1	toolbox/matlab/graphics/graphics/axis/ylabel.m
+ylim	1	toolbox/matlab/graphics/graphics/graph3d/ylim.m
+yline	1	toolbox/matlab/graphics/graphics/specgraph/yline.m
+ymd	1	toolbox/matlab/bigdata/@tall/ymd.m
+yregion	1	toolbox/matlab/graphics/graphics/specgraph/yregion.m
+ytickangle	1	toolbox/matlab/graphics/graphics/graph3d/ytickangle.m
+ytickformat	1	toolbox/matlab/graphics/graphics/graph3d/ytickformat.m
+yticklabels	1	toolbox/matlab/graphics/graphics/graph3d/yticklabels.m
+yticks	1	toolbox/matlab/graphics/graphics/graph3d/yticks.m
+yulewalk	1,8	toolbox/signal/signal/yulewalk.m
+yyaxis	1	toolbox/matlab/graphics/graphics/axis/yyaxis.p
+yyyymmdd	1	toolbox/matlab/bigdata/@tall/yyyymmdd.m
+z2s	1,141,86,162	toolbox/shared/rflib/z2s.m
+zerocrossrate	1,8	toolbox/signal/signal/zerocrossrate.m
+zerophase	1,8	toolbox/signal/signal/zerophase.m
+zeros	1	toolbox/matlab/elmat/zeros
+zlabel	1	toolbox/matlab/graphics/graphics/axis/zlabel.m
+zlim	1	toolbox/matlab/graphics/graphics/graph3d/zlim.m
+zoomInteraction	1	toolbox/matlab/graphics/graphics/zoomInteraction.m
+zp2ctf	1,8	toolbox/signal/signal/zp2ctf.m
+zp2sos	1,8	toolbox/signal/signal/zp2sos.m
+zp2ss	1	toolbox/shared/controllib/general/zp2ss.m
+zp2tf	1	toolbox/shared/controllib/general/zp2tf.m
+zpk	1,3	toolbox/control/ctrlmodels/@zpk/zpk.m
+zplane	1,8	toolbox/signal/signal/zplane.m
+zplaneplot	1,8	toolbox/signal/signal/zplaneplot.m
+zscore		
+ztest		
+ztickangle	1	toolbox/matlab/graphics/graphics/graph3d/ztickangle.m
+ztickformat	1	toolbox/matlab/graphics/graphics/graph3d/ztickformat.m
+zticklabels	1	toolbox/matlab/graphics/graphics/graph3d/zticklabels.m
+zticks	1	toolbox/matlab/graphics/graphics/graph3d/zticks.m
+product	1	MATLAB	25.2
+product	2	Simulink	25.2
+product	3	Control System Toolbox	25.2
+product	8	Signal Processing Toolbox	25.2
+product	12	Deep Learning Toolbox	25.2
+product	17	Image Processing Toolbox	25.2
+product	19	Statistics and Machine Learning Toolbox	25.2
+product	35	Wavelet Toolbox	25.2
+product	38	Stateflow	25.2
+product	56	Simulink Real-Time	25.2
+product	62	Instrument Control Toolbox	25.2
+product	66	Simulink 3D Animation	25.2
+product	86	RF Toolbox	25.2
+product	91	Fixed-Point Designer	25.2
+product	96	Computer Vision Toolbox	25.2
+product	108	Aerospace Toolbox	25.2
+product	127	Simulink Design Optimization	25.2
+product	132	HDL Verifier	25.2
+product	135	MATLAB Coder	25.2
+product	141	Antenna Toolbox	25.2
+product	142	Robotics System Toolbox	25.2
+product	151	Audio Toolbox	25.2
+product	157	Sensor Fusion and Tracking Toolbox	25.2
+product	162	SerDes Toolbox	25.2
+product	176	Navigation Toolbox	25.2
+product	179	Deep Learning HDL Toolbox	25.2
+product	188	RF PCB Toolbox	25.2
+excluded	audioLabeler	toolbox/audio/audio/audioLabeler.m
+excluded	audioTestBench	toolbox/audio/audio/audioTestBench.m
+excluded	generateAudioPlugin	toolbox/audio/audio/compiled/generateAudioPlugin.p
+excluded	loadAudioPlugin	toolbox/audio/audio/compiled/loadAudioPlugin.p
+excluded	validateAudioPlugin	toolbox/audio/audio/compiled/validateAudioPlugin.p
+excluded	impulseResponseMeasurer	toolbox/audio/audio/impulseResponseMeasurer.m
+excluded	audioPluginBlockHelper	toolbox/audio/audioutilities/audioPluginBlockHelper.m
+excluded	audioblkEvalParameter	toolbox/audio/audioutilities/audioinit/audioblkEvalParameter.m
+excluded	audioblkauditory	toolbox/audio/audioutilities/audioinit/audioblkauditory.m
+excluded	audioblkclassifysound	toolbox/audio/audioutilities/audioinit/audioblkclassifysound.m
+excluded	audioblkcompression	toolbox/audio/audioutilities/audioinit/audioblkcompression.m
+excluded	audioblkcrepe	toolbox/audio/audioutilities/audioinit/audioblkcrepe.m
+excluded	audioblkcrossover	toolbox/audio/audioutilities/audioinit/audioblkcrossover.m
+excluded	audioblkgraphicEQ	toolbox/audio/audioutilities/audioinit/audioblkgraphicEQ.m
+excluded	audioblkmfcc	toolbox/audio/audioutilities/audioinit/audioblkmfcc.m
+excluded	audioblkmidisrc	toolbox/audio/audioutilities/audioinit/audioblkmidisrc.m
+excluded	audioblkmultibandEQ	toolbox/audio/audioutilities/audioinit/audioblkmultibandEQ.m
+excluded	audioblkoctave	toolbox/audio/audioutilities/audioinit/audioblkoctave.m
+excluded	audioblkopenl3	toolbox/audio/audioutilities/audioinit/audioblkopenl3.m
+excluded	audioblkopenl3preprocess	toolbox/audio/audioutilities/audioinit/audioblkopenl3preprocess.m
+excluded	audioblkparametriceqfilter	toolbox/audio/audioutilities/audioinit/audioblkparametriceqfilter.m
+excluded	audioblkreverberator	toolbox/audio/audioutilities/audioinit/audioblkreverberator.m
+excluded	audioblkshelving	toolbox/audio/audioutilities/audioinit/audioblkshelving.m
+excluded	audioblkweighting	toolbox/audio/audioutilities/audioinit/audioblkweighting.m
+excluded	msviewer	toolbox/bioinfo/bioinfo/mass_spec/msviewer.m
+excluded	phytreeviewer	toolbox/bioinfo/bioinfo/phytreeviewer.m
+excluded	evalrasmolscript	toolbox/bioinfo/bioinfo/proteins/evalrasmolscript.m
+excluded	molviewer	toolbox/bioinfo/bioinfo/proteins/molviewer.m
+excluded	proteinplot	toolbox/bioinfo/bioinfo/proteins/proteinplot.m
+excluded	seqalignviewer	toolbox/bioinfo/bioinfo/seqalignviewer.m
+excluded	HDLRSGenPoly	toolbox/comm/commhdloptimized/commutilities/HDLRSGenPoly.m
+excluded	mcrcachedir	toolbox/compiler/mcrcachedir.mexw64
+excluded	controlSystemDesigner	toolbox/control/ctrlguis/controlSystemDesigner.m
+excluded	controlSystemTuner	toolbox/control/ctrlguis/controlSystemTuner.m
+excluded	linearSystemAnalyzer	toolbox/control/ctrlguis/linearSystemAnalyzer.m
+excluded	modelReducer	toolbox/control/ctrlguis/modelReducer.m
+excluded	pidTuner	toolbox/control/ctrlguis/pidTuner.m
+excluded	ltiview	toolbox/control/ctrlobsolete/ltiview.m
+excluded	pidtool	toolbox/control/ctrlobsolete/pidtool.m
+excluded	sisotool	toolbox/control/ctrlobsolete/sisotool.m
+excluded	bspline	toolbox/curvefit/splines/bspline.m
+excluded	getcurve	toolbox/curvefit/splines/getcurve.m
+excluded	splinetool	toolbox/curvefit/splines/splinetool.m
+excluded	daqhelp	toolbox/daq/core/daq/daqhelp.m
+excluded	databaseExplorer	toolbox/database/database/databaseExplorer.m
+excluded	dexplore	toolbox/database/database/dexplore.m
+excluded	BloombergDataLicenseWorkflow	toolbox/datafeed/datafeeddemos/BloombergDataLicenseWorkflow.m
+excluded	BloombergWorkflow	toolbox/datafeed/datafeeddemos/BloombergWorkflow.m
+excluded	CQGHistoricalDataRequestWorkflow	toolbox/datafeed/datafeeddemos/CQGHistoricalDataRequestWorkflow.m
+excluded	CQGIntradayTickDataRequestWorkflow	toolbox/datafeed/datafeeddemos/CQGIntradayTickDataRequestWorkflow.m
+excluded	CQGOrderWorkflow	toolbox/datafeed/datafeeddemos/CQGOrderWorkflow.m
+excluded	CQGRealtimeRequestWorkflow	toolbox/datafeed/datafeeddemos/CQGRealtimeRequestWorkflow.m
+excluded	EMSXOrderAndRouteManagementWorkflow	toolbox/datafeed/datafeeddemos/EMSXOrderAndRouteManagementWorkflow.m
+excluded	EMSXOrderManagementWorkflow	toolbox/datafeed/datafeeddemos/EMSXOrderManagementWorkflow.m
+excluded	EMSXRouteManagementWorkflow	toolbox/datafeed/datafeeddemos/EMSXRouteManagementWorkflow.m
+excluded	EnterprisePlatformWorkflow	toolbox/datafeed/datafeeddemos/EnterprisePlatformWorkflow.m
+excluded	FREDWorkflow	toolbox/datafeed/datafeeddemos/FREDWorkflow.m
+excluded	HaverAnalyticsWorkflow	toolbox/datafeed/datafeeddemos/HaverAnalyticsWorkflow.m
+excluded	HaverToolWorkflow	toolbox/datafeed/datafeeddemos/HaverToolWorkflow.m
+excluded	KRGBackTestingExample	toolbox/datafeed/datafeeddemos/KRGBackTestingExample.m
+excluded	KRGBasketAnalysisExample	toolbox/datafeed/datafeeddemos/KRGBasketAnalysisExample.m
+excluded	KRGCostIndexExample	toolbox/datafeed/datafeeddemos/KRGCostIndexExample.m
+excluded	KRGLiquidityOptimizationExample	toolbox/datafeed/datafeeddemos/KRGLiquidityOptimizationExample.m
+excluded	KRGPortfolioLiquidityExample	toolbox/datafeed/datafeeddemos/KRGPortfolioLiquidityExample.m
+excluded	KRGPortfolioOptimizationExample	toolbox/datafeed/datafeeddemos/KRGPortfolioOptimizationExample.m
+excluded	KRGPostTradeAnalysisExample	toolbox/datafeed/datafeeddemos/KRGPostTradeAnalysisExample.m
+excluded	KRGSensitivityAnalysisExample	toolbox/datafeed/datafeeddemos/KRGSensitivityAnalysisExample.m
+excluded	KRGSingleStockOptimizationExample	toolbox/datafeed/datafeeddemos/KRGSingleStockOptimizationExample.m
+excluded	KRGStressTestingExample	toolbox/datafeed/datafeeddemos/KRGStressTestingExample.m
+excluded	KRGTradeOptimizationExample	toolbox/datafeed/datafeeddemos/KRGTradeOptimizationExample.m
+excluded	KRGTradePerformanceRankingExample	toolbox/datafeed/datafeeddemos/KRGTradePerformanceRankingExample.m
+excluded	MoneyNetDataWorkflowExample	toolbox/datafeed/datafeeddemos/MoneyNetDataWorkflowExample.m
+excluded	MoneyNetNewsWorkflowExample	toolbox/datafeed/datafeeddemos/MoneyNetNewsWorkflowExample.m
+excluded	TTOrderSubmitExample	toolbox/datafeed/datafeeddemos/TTOrderSubmitExample.m
+excluded	TTPriceListUpdateExample	toolbox/datafeed/datafeeddemos/TTPriceListUpdateExample.m
+excluded	TTPriceUpdateDepthExample	toolbox/datafeed/datafeeddemos/TTPriceUpdateDepthExample.m
+excluded	TTPriceUpdateExample	toolbox/datafeed/datafeeddemos/TTPriceUpdateExample.m
+excluded	TwitterExample	toolbox/datafeed/datafeeddemos/TwitterExample.m
+excluded	cqgconnectioneventhandler	toolbox/datafeed/datafeeddemos/cqgconnectioneventhandler.m
+excluded	cqgexpressioneventhandler	toolbox/datafeed/datafeeddemos/cqgexpressioneventhandler.m
+excluded	cqgintradayeventhandler	toolbox/datafeed/datafeeddemos/cqgintradayeventhandler.m
+excluded	cqgordereventhandler	toolbox/datafeed/datafeeddemos/cqgordereventhandler.m
+excluded	cqgrealtimeeventhandler	toolbox/datafeed/datafeeddemos/cqgrealtimeeventhandler.m
+excluded	emsxOrderBlotter	toolbox/datafeed/datafeeddemos/emsxOrderBlotter.m
+excluded	krgLiquidityConstraint	toolbox/datafeed/datafeeddemos/krgLiquidityConstraint.m
+excluded	krgLiquidityFunction	toolbox/datafeed/datafeeddemos/krgLiquidityFunction.m
+excluded	krgNonLinearConstraint	toolbox/datafeed/datafeeddemos/krgNonLinearConstraint.m
+excluded	krgPortfolioOptimizer	toolbox/datafeed/datafeeddemos/krgPortfolioOptimizer.m
+excluded	krgSingleStockOptimizer	toolbox/datafeed/datafeeddemos/krgSingleStockOptimizer.m
+excluded	mnNewsStreamEventHandler	toolbox/datafeed/datafeeddemos/mnNewsStreamEventHandler.m
+excluded	mnRealTimeEventHandler	toolbox/datafeed/datafeeddemos/mnRealTimeEventHandler.m
+excluded	mnWSRealTimeEventHandler	toolbox/datafeed/datafeeddemos/mnWSRealTimeEventHandler.m
+excluded	ttinstrumentdepthupdate	toolbox/datafeed/datafeeddemos/ttinstrumentdepthupdate.m
+excluded	ttinstrumentfound	toolbox/datafeed/datafeeddemos/ttinstrumentfound.m
+excluded	ttinstrumentnotfound	toolbox/datafeed/datafeeddemos/ttinstrumentnotfound.m
+excluded	ttinstrumentupdate	toolbox/datafeed/datafeeddemos/ttinstrumentupdate.m
+excluded	ttorderevent	toolbox/datafeed/datafeeddemos/ttorderevent.m
+excluded	ttorderserverstatus	toolbox/datafeed/datafeeddemos/ttorderserverstatus.m
+excluded	ttpricelistupdate	toolbox/datafeed/datafeeddemos/ttpricelistupdate.m
+excluded	windEventHandler	toolbox/datafeed/datafeeddemos/windEventHandler.m
+excluded	hereHDLMConfiguration	toolbox/driving/core/driving/hereHDLMConfiguration.m
+excluded	hereHDLMCredentials	toolbox/driving/core/driving/hereHDLMCredentials.m
+excluded	hereHDLMReader	toolbox/driving/core/driving/hereHDLMReader.m
+excluded	EnumActionStatus	toolbox/driving/core/drivingdata/EnumActionStatus.m
+excluded	EnumActorCoordinateSystemType	toolbox/driving/core/drivingdata/EnumActorCoordinateSystemType.m
+excluded	EnumDistanceComparison	toolbox/driving/core/drivingdata/EnumDistanceComparison.m
+excluded	EnumDistanceDimensionType	toolbox/driving/core/drivingdata/EnumDistanceDimensionType.m
+excluded	EnumDistanceType	toolbox/driving/core/drivingdata/EnumDistanceType.m
+excluded	EnumLongitudinalDisplacementType	toolbox/driving/core/drivingdata/EnumLongitudinalDisplacementType.m
+excluded	EnumLongitudinalHeadwayType	toolbox/driving/core/drivingdata/EnumLongitudinalHeadwayType.m
+excluded	EnumMeasureFrom	toolbox/driving/core/drivingdata/EnumMeasureFrom.m
+excluded	EnumParameterType	toolbox/driving/core/drivingdata/EnumParameterType.m
+excluded	dspunfold	toolbox/dsp/dsp/dspunfold.p
+excluded	DFDRegisterCompileCheck	toolbox/dsp/dsp/dsputilities/dspupgrade/DFDRegisterCompileCheck.m
+excluded	DSPMatrixSumRegisterCompileCheck	toolbox/dsp/dsp/dsputilities/dspupgrade/DSPMatrixSumRegisterCompileCheck.m
+excluded	FromMultimediaFileRegisterCompileCheck	toolbox/dsp/dsp/dsputilities/dspupgrade/FromMultimediaFileRegisterCompileCheck.m
+excluded	RemoveFFTWarnForNormalizeCB	toolbox/dsp/dsp/dsputilities/dspupgrade/RemoveFFTWarnForNormalizeCB.m
+excluded	ReplaceDSPConstant	toolbox/dsp/dsp/dsputilities/dspupgrade/ReplaceDSPConstant.m
+excluded	SPCDelayRegisterCompileCheck	toolbox/dsp/dsp/dsputilities/dspupgrade/SPCDelayRegisterCompileCheck.m
+excluded	SPCVariableIntegerDelayRegisterCompileCheck	toolbox/dsp/dsp/dsputilities/dspupgrade/SPCVariableIntegerDelayRegisterCompileCheck.m
+excluded	UpdateZeroLatencyCICFilter	toolbox/dsp/dsp/dsputilities/dspupgrade/UpdateZeroLatencyCICFilter.m
+excluded	digitalFilterRegisterCompileCheck	toolbox/dsp/dsp/dsputilities/dspupgrade/digitalFilterRegisterCompileCheck.m
+excluded	registerCompiledFixedPointInfo	toolbox/dsp/dsp/dsputilities/dspupgrade/registerCompiledFixedPointInfo.m
+excluded	spblksUpdateModel	toolbox/dsp/dsp/dsputilities/dspupgrade/spblksUpdateModel.m
+excluded	econometricModeler	toolbox/econ/econ/econometricModeler.m
+excluded	Example_DieboldLi	toolbox/econ/econdata/Example_DieboldLi.m
+excluded	Example_RegDisp	toolbox/econ/econdata/Example_RegDisp.m
+excluded	Example_StepwiseTrace	toolbox/econ/econdata/Example_StepwiseTrace.m
+excluded	Example_USEconData	toolbox/econ/econdata/Example_USEconData.m
+excluded	Example_YieldsExogenous	toolbox/econ/econdata/Example_YieldsExogenous.m
+excluded	Example_YieldsMacro	toolbox/econ/econdata/Example_YieldsMacro.m
+excluded	treeviewer	toolbox/fininst/fininst/treeviewer.m
+excluded	NumericTypeScope	toolbox/fixedpoint/fixedpoint/NumericTypeScope.m
+excluded	buildInstrumentedMex	toolbox/fixedpoint/fixedpoint/buildInstrumentedMex.m
+excluded	clearInstrumentationResults	toolbox/fixedpoint/fixedpoint/clearInstrumentationResults.m
+excluded	fiaccel	toolbox/fixedpoint/fixedpoint/fiaccel.m
+excluded	fimathdialog	toolbox/fixedpoint/fixedpoint/fimathdialog.m
+excluded	numerictypedialog	toolbox/fixedpoint/fixedpoint/numerictypedialog.m
+excluded	showInstrumentationResults	toolbox/fixedpoint/fixedpoint/showInstrumentationResults.m
+excluded	trackingFilterTuner	toolbox/fusion/core/fusion/trackingFilterTuner.m
+excluded	trackingScenarioDesigner	toolbox/fusion/core/fusion/trackingScenarioDesigner.p
+excluded	anfisedit	toolbox/fuzzy/fuzzy/anfisedit.m
+excluded	findcluster	toolbox/fuzzy/fuzzy/findcluster.m
+excluded	fuzzy	toolbox/fuzzy/fuzzy/fuzzy.m
+excluded	getFISCodeGenerationData	toolbox/fuzzy/fuzzy/getFISCodeGenerationData.m
+excluded	mfedit	toolbox/fuzzy/fuzzy/mfedit.m
+excluded	ruleedit	toolbox/fuzzy/fuzzy/ruleedit.m
+excluded	ruleview	toolbox/fuzzy/fuzzy/ruleview.m
+excluded	surfview	toolbox/fuzzy/fuzzy/surfview.m
+excluded	anfisOutputFcn	toolbox/fuzzy/fuzzyutil/anfisOutputFcn.m
+excluded	evaluateCustomAggMethod	toolbox/fuzzy/fuzzyutil/evaluateCustomAggMethod.m
+excluded	evaluateCustomAndMethod	toolbox/fuzzy/fuzzyutil/evaluateCustomAndMethod.m
+excluded	evaluateCustomDefuzzMethod	toolbox/fuzzy/fuzzyutil/evaluateCustomDefuzzMethod.m
+excluded	evaluateCustomImpMethod	toolbox/fuzzy/fuzzyutil/evaluateCustomImpMethod.m
+excluded	evaluateCustomMF	toolbox/fuzzy/fuzzyutil/evaluateCustomMF.m
+excluded	evaluateCustomOrMethod	toolbox/fuzzy/fuzzyutil/evaluateCustomOrMethod.m
+excluded	evaluateCustomTRMethod	toolbox/fuzzy/fuzzyutil/evaluateCustomTRMethod.m
+excluded	fuzzyBlocksSlupdateHelper	toolbox/fuzzy/fuzzyutil/fuzzyBlocksSlupdateHelper.m
+excluded	fuzzyWatchOff	toolbox/fuzzy/fuzzyutil/fuzzyWatchOff.m
+excluded	fuzzyWatchOn	toolbox/fuzzy/fuzzyutil/fuzzyWatchOn.m
+excluded	fuzzychecktoolboxinstalled	toolbox/fuzzy/fuzzyutil/fuzzychecktoolboxinstalled.m
+excluded	opcblkitemlist	toolbox/icomm/opc/opcblks/opcmasks/opcblkitemlist.p
+excluded	opcslconfigcb	toolbox/icomm/opc/opcblks/opcmasks/opcslconfigcb.p
+excluded	opcslreadcb	toolbox/icomm/opc/opcblks/opcmasks/opcslreadcb.p
+excluded	opcslwritecb	toolbox/icomm/opc/opcblks/opcmasks/opcslwritecb.p
+excluded	opcUARead	toolbox/icomm/opc/opcblks/opcuablks/opcUARead.p
+excluded	opcUAWrite	toolbox/icomm/opc/opcblks/opcuablks/opcUAWrite.p
+excluded	aboutidenttbx	toolbox/ident/ident/aboutidenttbx.m
+excluded	advice	toolbox/ident/ident/advice.m
+excluded	systemIdentification	toolbox/ident/ident/systemIdentification.m
+excluded	ident	toolbox/ident/idguis/ident.m
+excluded	aero_c	toolbox/ident/idhelp/aero_c.mexw64
+excluded	aero_m	toolbox/ident/idhelp/aero_m.m
+excluded	createPredictor	toolbox/ident/idhelp/createPredictor.m
+excluded	cstr_c	toolbox/ident/idhelp/cstr_c.mexw64
+excluded	cstr_m	toolbox/ident/idhelp/cstr_m.m
+excluded	dcmotor_c	toolbox/ident/idhelp/dcmotor_c.mexw64
+excluded	dcmotor_m	toolbox/ident/idhelp/dcmotor_m.m
+excluded	friction_c	toolbox/ident/idhelp/friction_c.mexw64
+excluded	friction_m	toolbox/ident/idhelp/friction_m.m
+excluded	gaussunit	toolbox/ident/idhelp/gaussunit.m
+excluded	motorDynamics	toolbox/ident/idhelp/motorDynamics.m
+excluded	narendrali_c	toolbox/ident/idhelp/narendrali_c.mexw64
+excluded	narendrali_m	toolbox/ident/idhelp/narendrali_m.m
+excluded	pendulum_c	toolbox/ident/idhelp/pendulum_c.mexw64
+excluded	pendulum_m	toolbox/ident/idhelp/pendulum_m.m
+excluded	predprey1_c	toolbox/ident/idhelp/predprey1_c.mexw64
+excluded	predprey1_m	toolbox/ident/idhelp/predprey1_m.m
+excluded	predprey2_c	toolbox/ident/idhelp/predprey2_c.mexw64
+excluded	predprey2_m	toolbox/ident/idhelp/predprey2_m.m
+excluded	preys_c	toolbox/ident/idhelp/preys_c.mexw64
+excluded	preys_m	toolbox/ident/idhelp/preys_m.m
+excluded	robot_c	toolbox/ident/idhelp/robot_c.mexw64
+excluded	robot_m	toolbox/ident/idhelp/robot_m.m
+excluded	robotarm_c	toolbox/ident/idhelp/robotarm_c.mexw64
+excluded	robotarm_m	toolbox/ident/idhelp/robotarm_m.m
+excluded	signaltransmission_c	toolbox/ident/idhelp/signaltransmission_c.mexw64
+excluded	signaltransmission_m	toolbox/ident/idhelp/signaltransmission_m.m
+excluded	twobodies_c	toolbox/ident/idhelp/twobodies_c.mexw64
+excluded	twobodies_m	toolbox/ident/idhelp/twobodies_m.m
+excluded	twotanks_c	toolbox/ident/idhelp/twotanks_c.mexw64
+excluded	twotanks_m	toolbox/ident/idhelp/twotanks_m.m
+excluded	vehicle_c	toolbox/ident/idhelp/vehicle_c.mexw64
+excluded	vehicle_m	toolbox/ident/idhelp/vehicle_m.m
+excluded	zpkestODE	toolbox/ident/idhelp/zpkestODE.m
+excluded	colorThresholder	toolbox/images/imuitools/colorThresholder.m
+excluded	cpselect	toolbox/images/imuitools/cpselect.m
+excluded	dicomBrowser	toolbox/images/imuitools/dicomBrowser.m
+excluded	hyperspectralViewer	toolbox/images/imuitools/hyperspectralViewer.m
+excluded	imageBatchProcessor	toolbox/images/imuitools/imageBatchProcessor.m
+excluded	imageBrowser	toolbox/images/imuitools/imageBrowser.m
+excluded	imageRegionAnalyzer	toolbox/images/imuitools/imageRegionAnalyzer.m
+excluded	imageSegmenter	toolbox/images/imuitools/imageSegmenter.m
+excluded	imageViewer	toolbox/images/imuitools/imageViewer.m
+excluded	implay	toolbox/images/imuitools/implay.m
+excluded	imtool	toolbox/images/imuitools/imtool.m
+excluded	imview	toolbox/images/imuitools/imview.m
+excluded	registrationEstimator	toolbox/images/imuitools/registrationEstimator.m
+excluded	volumeSegmenter	toolbox/images/imuitools/volumeSegmenter.m
+excluded	volumeViewer	toolbox/images/imuitools/volumeViewer.m
+excluded	iptprefs	toolbox/images/iptutils/iptprefs.m
+excluded	imaqhelp	toolbox/imaq/imaq/imaqhelp.m
+excluded	imaqtool	toolbox/imaq/imaq/imaqtool.m
+excluded	imaqblksmaskedcaps	toolbox/imaq/imaqblks/imaqmasks/imaqblksmaskedcaps.p
+excluded	imaqcreatedialog	toolbox/imaq/imaqblks/imaqmasks/imaqcreatedialog.p
+excluded	imaqgetdisplaystring	toolbox/imaq/imaqblks/imaqmasks/imaqgetdisplaystring.p
+excluded	imaqinitlib	toolbox/imaq/imaqblks/imaqmasks/imaqinitlib.p
+excluded	imaqparsehwinfo	toolbox/imaq/imaqblks/imaqmasks/imaqparsehwinfo.p
+excluded	imaqpreapply	toolbox/imaq/imaqblks/imaqmasks/imaqpreapply.p
+excluded	imaqslcallback	toolbox/imaq/imaqblks/imaqmasks/imaqslcallback.p
+excluded	imaqslcbclosedialog	toolbox/imaq/imaqblks/imaqmasks/imaqslcbclosedialog.p
+excluded	imaqslcblistener	toolbox/imaq/imaqblks/imaqmasks/imaqslcblistener.p
+excluded	imaqslcbpreapply	toolbox/imaq/imaqblks/imaqmasks/imaqslcbpreapply.p
+excluded	imaqslgate	toolbox/imaq/imaqblks/imaqmasks/imaqslgate.p
+excluded	simaqfvd	toolbox/imaq/imaqblks/imaqmex/simaqfvd.mexw64
+excluded	midedit	toolbox/instrument/instrument/midedit.m
+excluded	midtest	toolbox/instrument/instrument/midtest.m
+excluded	tmtool	toolbox/instrument/instrument/tmtool.m
+excluded	icbgate	toolbox/instrument/instrumentblks/instrumentblks/icbgate.m
+excluded	icbhelp	toolbox/instrument/instrumentblks/instrumentblks/icbhelp.m
+excluded	TransformationQBAgilentToKeysight	toolbox/instrument/instrumentblks/instrumentmasks/TransformationQBAgilentToKeysight.m
+excluded	TransformationUDPLocalAddressField	toolbox/instrument/instrumentblks/instrumentmasks/TransformationUDPLocalAddressField.m
+excluded	instrumentblksmaskedcaps	toolbox/instrument/instrumentblks/instrumentmasks/instrumentblksmaskedcaps.m
+excluded	instrumentcreatedialog	toolbox/instrument/instrumentblks/instrumentmasks/instrumentcreatedialog.m
+excluded	instrumentslcallback	toolbox/instrument/instrumentblks/instrumentmasks/instrumentslcallback.m
+excluded	instrumentslcbclosedialog	toolbox/instrument/instrumentblks/instrumentmasks/instrumentslcbclosedialog.m
+excluded	instrumentslcbpreapply	toolbox/instrument/instrumentblks/instrumentmasks/instrumentslcbpreapply.m
+excluded	instrumentslgate	toolbox/instrument/instrumentblks/instrumentmasks/instrumentslgate.m
+excluded	QueryInstrument	toolbox/instrument/instrumentblks/instrumentmex/QueryInstrument.mexw64
+excluded	SendInstrument	toolbox/instrument/instrumentblks/instrumentmex/SendInstrument.mexw64
+excluded	stcpiprb	toolbox/instrument/instrumentblks/instrumentmex/stcpiprb.m
+excluded	stcpipsb	toolbox/instrument/instrumentblks/instrumentmex/stcpipsb.m
+excluded	sudprb	toolbox/instrument/instrumentblks/instrumentmex/sudprb.m
+excluded	sudpsb	toolbox/instrument/instrumentblks/instrumentmex/sudpsb.m
+excluded	detectRectangularPlanePoints	toolbox/lidar/lidar/detectRectangularPlanePoints.m
+excluded	estimateCheckerboardCorners3d	toolbox/lidar/lidar/estimateCheckerboardCorners3d.m
+excluded	estimateLidarCameraTransform	toolbox/lidar/lidar/estimateLidarCameraTransform.m
+excluded	trainPointNetPlusClassifier	toolbox/lidar/lidar/trainPointNetPlusClassifier.m
+excluded	trainPointPillarsObjectDetector	toolbox/lidar/lidar/trainPointPillarsObjectDetector.m
+excluded	trainRandlanet	toolbox/lidar/lidar/trainRandlanet.m
+excluded	saLteDLConformanceTestBenchGUI	toolbox/lte/lte/saLteDLConformanceTestBenchGUI.m
+excluded	listSecrets	toolbox/matlab/authnz/secretapis/publicBuiltins/listSecrets.m
+excluded	removeSecret	toolbox/matlab/authnz/secretapis/publicBuiltins/removeSecret.m
+excluded	setSecret	toolbox/matlab/authnz/secretapis/publicBuiltins/setSecret.m
+excluded	setSecretMetadata	toolbox/matlab/authnz/secretapis/publicBuiltins/setSecretMetadata.m
+excluded	FilePathState	toolbox/matlab/codetools/FilePathState.m
+excluded	checkcode	toolbox/matlab/codetools/checkcode.m
+excluded	code2html	toolbox/matlab/codetools/code2html.m
+excluded	codetoolsswitchyard	toolbox/matlab/codetools/codetoolsswitchyard.m
+excluded	commandhistory	toolbox/matlab/codetools/commandhistory.m
+excluded	commandwindow	toolbox/matlab/codetools/commandwindow.m
+excluded	commonplotfunc	toolbox/matlab/codetools/commonplotfunc.m
+excluded	dbmex	toolbox/matlab/codetools/dbmex.m
+excluded	debug	toolbox/matlab/codetools/debug.m
+excluded	edit	toolbox/matlab/codetools/edit.m
+excluded	export	toolbox/matlab/codetools/export.m
+excluded	fixquote	toolbox/matlab/codetools/fixquote.m
+excluded	functionhintsfunc	toolbox/matlab/codetools/functionhintsfunc.m
+excluded	generateProfilerSelect	toolbox/matlab/codetools/generateProfilerSelect.m
+excluded	getcallinfo	toolbox/matlab/codetools/getcallinfo.m
+excluded	grabcode	toolbox/matlab/codetools/grabcode.m
+excluded	imageview	toolbox/matlab/codetools/imageview.m
+excluded	initdesktoputils	toolbox/matlab/codetools/initdesktoputils.m
+excluded	m2struct	toolbox/matlab/codetools/m2struct.m
+excluded	makemcode	toolbox/matlab/codetools/makemcode.m
+excluded	mdbfileonpath	toolbox/matlab/codetools/mdbfileonpath.m
+excluded	mdbpublish	toolbox/matlab/codetools/mdbpublish.m
+excluded	mdbstatus	toolbox/matlab/codetools/mdbstatus.m
+excluded	mlint	toolbox/matlab/codetools/mlint.m
+excluded	movieview	toolbox/matlab/codetools/movieview.m
+excluded	notebook	toolbox/matlab/codetools/notebook.m
+excluded	opentoline	toolbox/matlab/codetools/opentoline.m
+excluded	openvar	toolbox/matlab/codetools/openvar.m
+excluded	plotpickerfunc	toolbox/matlab/codetools/plotpickerfunc.m
+excluded	profile	toolbox/matlab/codetools/profile.m
+excluded	profreport	toolbox/matlab/codetools/profreport.m
+excluded	profsave	toolbox/matlab/codetools/profsave.m
+excluded	profview	toolbox/matlab/codetools/profview.m
+excluded	projdumpmat	toolbox/matlab/codetools/projdumpmat.m
+excluded	publish	toolbox/matlab/codetools/publish.p
+excluded	renameStructField	toolbox/matlab/codetools/renameStructField.m
+excluded	runreport	toolbox/matlab/codetools/runreport.m
+excluded	setProfilerHtmlText	toolbox/matlab/codetools/setProfilerHtmlText.m
+excluded	sharedplotfunc	toolbox/matlab/codetools/sharedplotfunc.m
+excluded	snapnow	toolbox/matlab/codetools/snapnow.m
+excluded	soundview	toolbox/matlab/codetools/soundview.m
+excluded	urldecode	toolbox/matlab/codetools/urldecode.m
+excluded	urlencode	toolbox/matlab/codetools/urlencode.m
+excluded	validateFunctionSignaturesJSON	toolbox/matlab/codetools/validateFunctionSignaturesJSON.m
+excluded	value2CustomFcn	toolbox/matlab/codetools/value2CustomFcn.m
+excluded	workspace	toolbox/matlab/codetools/workspace.m
+excluded	depfunprophelper	toolbox/matlab/general/depfunprophelper.m
+excluded	mexdebug	toolbox/matlab/general/mexdebug.m
+excluded	pcode	toolbox/matlab/general/pcode.m
+excluded	savepath	toolbox/matlab/general/savepath.m
+excluded	cmapeditor	toolbox/matlab/graphics/graphics/graph3d/cmapeditor.m
+excluded	colormapeditor	toolbox/matlab/graphics/graphics/graph3d/colormapeditor.m
+excluded	figurepalette	toolbox/matlab/graphics/graphics/plottools/figurepalette.m
+excluded	plotbrowser	toolbox/matlab/graphics/graphics/plottools/plotbrowser.m
+excluded	plottools	toolbox/matlab/graphics/graphics/plottools/plottools.m
+excluded	propertyeditor	toolbox/matlab/graphics/graphics/plottools/propertyeditor.m
+excluded	showplottool	toolbox/matlab/graphics/graphics/plottools/showplottool.m
+excluded	guide	toolbox/matlab/guide/guide.m
+excluded	guidefunc	toolbox/matlab/guide/guidefunc.m
+excluded	guideopts	toolbox/matlab/guide/guideopts.m
+excluded	builddocsearchdb	toolbox/matlab/helptools/builddocsearchdb.m
+excluded	cleanAndOpenExample	toolbox/matlab/helptools/cleanAndOpenExample.m
+excluded	demo	toolbox/matlab/helptools/demo.m
+excluded	demos	toolbox/matlab/helptools/demos.m
+excluded	demowin	toolbox/matlab/helptools/demowin.m
+excluded	doc	toolbox/matlab/helptools/doc.m
+excluded	docpath	toolbox/matlab/helptools/docpath.m
+excluded	docroot	toolbox/matlab/helptools/docroot.m
+excluded	docsearch	toolbox/matlab/helptools/docsearch.m
+excluded	echodemo	toolbox/matlab/helptools/echodemo.m
+excluded	findExample	toolbox/matlab/helptools/findExample.m
+excluded	help	toolbox/matlab/helptools/help.m
+excluded	helpPopup	toolbox/matlab/helptools/helpPopup.m
+excluded	helpbrowser	toolbox/matlab/helptools/helpbrowser.m
+excluded	helpdesk	toolbox/matlab/helptools/helpdesk.m
+excluded	helpview	toolbox/matlab/helptools/helpview.m
+excluded	helpwin	toolbox/matlab/helptools/helpwin.m
+excluded	indexhelper	toolbox/matlab/helptools/indexhelper.m
+excluded	info	toolbox/matlab/helptools/info.m
+excluded	isExampleOpened	toolbox/matlab/helptools/isExampleOpened.m
+excluded	lookfor	toolbox/matlab/helptools/lookfor.m
+excluded	openExample	toolbox/matlab/helptools/openExample.m
+excluded	patchdemoxmlfile	toolbox/matlab/helptools/patchdemoxmlfile.m
+excluded	playshow	toolbox/matlab/helptools/playshow.m
+excluded	setupExample	toolbox/matlab/helptools/setupExample.m
+excluded	showAddonExplorer	toolbox/matlab/helptools/showAddonExplorer.m
+excluded	showAddonExplorerForHardwareSupportPackages	toolbox/matlab/helptools/showAddonExplorerForHardwareSupportPackages.m
+excluded	showExample	toolbox/matlab/helptools/showExample.m
+excluded	showHelpPreferences	toolbox/matlab/helptools/showHelpPreferences.m
+excluded	showdemo	toolbox/matlab/helptools/showdemo.m
+excluded	support	toolbox/matlab/helptools/support.m
+excluded	updateHelpPopup	toolbox/matlab/helptools/updateHelpPopup.m
+excluded	whatsnew	toolbox/matlab/helptools/whatsnew.m
+excluded	inspect	toolbox/matlab/uitools/uitools/inspect.m
+excluded	propedit	toolbox/matlab/uitools/uitools/propedit.m
+excluded	MultipleStageBlockSystem	toolbox/mpc/mpcguis/MultipleStageBlockSystem.m
+excluded	mpcCSHelp	toolbox/mpc/mpcguis/mpcCSHelp.m
+excluded	mpcDesigner	toolbox/mpc/mpcguis/mpcDesigner.m
+excluded	nctool	toolbox/nnet/nnguis/nctool.m
+excluded	nftool	toolbox/nnet/nnguis/nftool.m
+excluded	nnstart	toolbox/nnet/nnguis/nnstart.m
+excluded	nntool	toolbox/nnet/nnguis/nntool.m
+excluded	nprtool	toolbox/nnet/nnguis/nprtool.m
+excluded	ntstool	toolbox/nnet/nnguis/ntstool.m
+excluded	pmode	toolbox/parallel/parallel/pmode.m
+excluded	circleb1	toolbox/pde/pde/circleb1.m
+excluded	circleb2	toolbox/pde/pde/circleb2.m
+excluded	circlef	toolbox/pde/pde/circlef.m
+excluded	circleg	toolbox/pde/pde/circleg.m
+excluded	circlepick	toolbox/pde/pde/circlepick.m
+excluded	cirsb	toolbox/pde/pde/cirsb.m
+excluded	cirsg	toolbox/pde/pde/cirsg.m
+excluded	crackb	toolbox/pde/pde/crackb.m
+excluded	crackg	toolbox/pde/pde/crackg.m
+excluded	drum1	toolbox/pde/pde/drum1.m
+excluded	drum2	toolbox/pde/pde/drum2.m
+excluded	lshapeb	toolbox/pde/pde/lshapeb.m
+excluded	lshapec	toolbox/pde/pde/lshapec.m
+excluded	lshapeg	toolbox/pde/pde/lshapeg.m
+excluded	pdeModeler	toolbox/pde/pde/pdeModeler.m
+excluded	pdebddlg	toolbox/pde/pde/pdebddlg.m
+excluded	pdebddsp	toolbox/pde/pde/pdebddsp.m
+excluded	pdebsplit	toolbox/pde/pde/pdebsplit.m
+excluded	pdecchk	toolbox/pde/pde/pdecchk.m
+excluded	pdecirc	toolbox/pde/pde/pdecirc.m
+excluded	pdedlg	toolbox/pde/pde/pdedlg.m
+excluded	pdeellip	toolbox/pde/pde/pdeellip.m
+excluded	pdeframe	toolbox/pde/pde/pdeframe.m
+excluded	pdeinfclk	toolbox/pde/pde/pdeinfclk.m
+excluded	pdeinfo	toolbox/pde/pde/pdeinfo.m
+excluded	pdeinit	toolbox/pde/pde/pdeinit.m
+excluded	pdemhdlg	toolbox/pde/pde/pdemhdlg.m
+excluded	pdemtncb	toolbox/pde/pde/pdemtncb.m
+excluded	pdemvdlg	toolbox/pde/pde/pdemvdlg.m
+excluded	pdeobdlg	toolbox/pde/pde/pdeobdlg.m
+excluded	pdeonax	toolbox/pde/pde/pdeonax.m
+excluded	pdepoly	toolbox/pde/pde/pdepoly.m
+excluded	pdepsdlg	toolbox/pde/pde/pdepsdlg.m
+excluded	pdeptdata	toolbox/pde/pde/pdeptdata.m
+excluded	pdeptdlg	toolbox/pde/pde/pdeptdlg.m
+excluded	pdequote	toolbox/pde/pde/pdequote.m
+excluded	pderect	toolbox/pde/pde/pderect.m
+excluded	pdertdlg	toolbox/pde/pde/pdertdlg.m
+excluded	pdeselect	toolbox/pde/pde/pdeselect.m
+excluded	pdesetbd	toolbox/pde/pde/pdesetbd.m
+excluded	pdeseteq	toolbox/pde/pde/pdeseteq.m
+excluded	pdesetlb	toolbox/pde/pde/pdesetlb.m
+excluded	pdesldlg	toolbox/pde/pde/pdesldlg.m
+excluded	pdesnap	toolbox/pde/pde/pdesnap.m
+excluded	pdespdlg	toolbox/pde/pde/pdespdlg.m
+excluded	pdet2str	toolbox/pde/pde/pdet2str.m
+excluded	pdetool	toolbox/pde/pde/pdetool.m
+excluded	pdetrans	toolbox/pde/pde/pdetrans.m
+excluded	pdetrdlg	toolbox/pde/pde/pdetrdlg.m
+excluded	pdezoom	toolbox/pde/pde/pdezoom.m
+excluded	scatterb	toolbox/pde/pde/scatterb.m
+excluded	scatterg	toolbox/pde/pde/scatterg.m
+excluded	squareb1	toolbox/pde/pde/squareb1.m
+excluded	squareb2	toolbox/pde/pde/squareb2.m
+excluded	squareb3	toolbox/pde/pde/squareb3.m
+excluded	squareb4	toolbox/pde/pde/squareb4.m
+excluded	squareb5	toolbox/pde/pde/squareb5.m
+excluded	squareg	toolbox/pde/pde/squareg.m
+excluded	pulseWaveformAnalyzer	toolbox/phased/phasedapps/pulseWaveformAnalyzer.m
+excluded	radarWaveformAnalyzer	toolbox/phased/phasedapps/radarWaveformAnalyzer.m
+excluded	sensorArrayAnalyzer	toolbox/phased/phasedapps/sensorArrayAnalyzer.m
+excluded	sonarEquationCalculator	toolbox/phased/phasedapps/sonarEquationCalculator.m
+excluded	radarDesigner	toolbox/radar/radar/radarDesigner.m
+excluded	radarEquationCalculator	toolbox/radar/radarapps/radarEquationCalculator.m
+excluded	rfBudgetAnalyzer	toolbox/rf/rf/rfBudgetAnalyzer.m
+excluded	binningExplorer	toolbox/risk/risk/binningExplorer.m
+excluded	inspectTrainingResult	toolbox/rl/rl/inspectTrainingResult.m
+excluded	reinforcementLearningDesigner	toolbox/rl/rl/reinforcementLearningDesigner.m
+excluded	rlDataViewer	toolbox/rl/rl/rlDataViewer.m
+excluded	ros2genmsg	toolbox/ros/mlros2/ros2genmsg.m
+excluded	rosgenmsg	toolbox/ros/mlroscpp/rosgenmsg.m
+excluded	rptlist	toolbox/rptgen/rptgen/rptlist.m
+excluded	setedit	toolbox/rptgen/rptgen/setedit.m
+excluded	cgxe	toolbox/shared/cgxe/cgxe/cgxe.mexw64
+excluded	cgxeprivate	toolbox/shared/cgxe/cgxe/cgxeprivate.p
+excluded	dspModifyBuildInfo	toolbox/shared/spc/src_ml/dspModifyBuildInfo.m
+excluded	dspsharedModifyBuildInfo	toolbox/shared/spc/src_ml/dspsharedModifyBuildInfo.m
+excluded	getLegacyDigitalFilterParameter	toolbox/shared/spc/src_sl/simulink/dsp/getLegacyDigitalFilterParameter.m
+excluded	setLegacyDigitalFilterParameter	toolbox/shared/spc/src_sl/simulink/dsp/setLegacyDigitalFilterParameter.m
+excluded	ekfukfCheckSignals	toolbox/shared/tracking/trackinglib/blocks/ekfukfCheckSignals.mexw64
+excluded	pfCheckSignals	toolbox/shared/tracking/trackinglib/blocks/pfCheckSignals.mexw64
+excluded	sxcpcanconfig	toolbox/shared/xcp/xcpmex/sxcpcanconfig.mexw64
+excluded	sxcpcanconfig_makecfg	toolbox/shared/xcp/xcpmex/sxcpcanconfig_makecfg.m
+excluded	sxcpcantlrx	toolbox/shared/xcp/xcpmex/sxcpcantlrx.mexw64
+excluded	sxcpcantltx	toolbox/shared/xcp/xcpmex/sxcpcantltx.mexw64
+excluded	sxcpdaq	toolbox/shared/xcp/xcpmex/sxcpdaq.mexw64
+excluded	sxcpipbypass	toolbox/shared/xcp/xcpmex/sxcpipbypass.mexw64
+excluded	sxcpipconfig	toolbox/shared/xcp/xcpmex/sxcpipconfig.mexw64
+excluded	sxcpstim	toolbox/shared/xcp/xcpmex/sxcpstim.mexw64
+excluded	dspfwiz	toolbox/signal/sigtools/dspfwiz.m
+excluded	exportcoeffgen	toolbox/signal/sigtools/exportcoeffgen.m
+excluded	fdatool	toolbox/signal/sigtools/fdatool.m
+excluded	filterDesigner	toolbox/signal/sigtools/filterDesigner.m
+excluded	fvtool	toolbox/signal/sigtools/fvtool.m
+excluded	windowDesigner	toolbox/signal/sigtools/windowDesigner.m
+excluded	wintool	toolbox/signal/sigtools/wintool.m
+excluded	sptool	toolbox/signal/sptoolgui/sptool.m
+excluded	sbioabstractkineticlaw	toolbox/simbio/simbio/sbioabstractkineticlaw.m
+excluded	sbioaccelerate	toolbox/simbio/simbio/sbioaccelerate.m
+excluded	sbioaddtolibrary	toolbox/simbio/simbio/sbioaddtolibrary.m
+excluded	sbioconsmoiety	toolbox/simbio/simbio/sbioconsmoiety.m
+excluded	sbioconvertunits	toolbox/simbio/simbio/sbioconvertunits.m
+excluded	sbiocopylibrary	toolbox/simbio/simbio/sbiocopylibrary.m
+excluded	sbioensemblerun	toolbox/simbio/simbio/sbioensemblerun.m
+excluded	sbiofit	toolbox/simbio/simbio/sbiofit.m
+excluded	sbiofitmixed	toolbox/simbio/simbio/sbiofitmixed.m
+excluded	sbiofittool	toolbox/simbio/simbio/sbiofittool.m
+excluded	sbiogetmodel	toolbox/simbio/simbio/sbiogetmodel.m
+excluded	sbioloadproject	toolbox/simbio/simbio/sbioloadproject.m
+excluded	sbiomodel	toolbox/simbio/simbio/sbiomodel.m
+excluded	sbionlinfit	toolbox/simbio/simbio/sbionlinfit.m
+excluded	sbionlmefit	toolbox/simbio/simbio/sbionlmefit.m
+excluded	sbionlmefitsa	toolbox/simbio/simbio/sbionlmefitsa.m
+excluded	sbioparamestim	toolbox/simbio/simbio/sbioparamestim.m
+excluded	sbioremovefromlibrary	toolbox/simbio/simbio/sbioremovefromlibrary.m
+excluded	sbioreset	toolbox/simbio/simbio/sbioreset.m
+excluded	sbioroot	toolbox/simbio/simbio/sbioroot.m
+excluded	sbiosaveproject	toolbox/simbio/simbio/sbiosaveproject.m
+excluded	sbioselect	toolbox/simbio/simbio/sbioselect.m
+excluded	sbioshowunitprefixes	toolbox/simbio/simbio/sbioshowunitprefixes.m
+excluded	sbioshowunits	toolbox/simbio/simbio/sbioshowunits.m
+excluded	sbiosimulate	toolbox/simbio/simbio/sbiosimulate.m
+excluded	sbiounit	toolbox/simbio/simbio/sbiounit.m
+excluded	sbiounitprefix	toolbox/simbio/simbio/sbiounitprefix.m
+excluded	sbmlexport	toolbox/simbio/simbio/sbmlexport.m
+excluded	sbmlimport	toolbox/simbio/simbio/sbmlimport.m
+excluded	simBiologyModelAnalyzer	toolbox/simbio/simbio/simBiologyModelAnalyzer.m
+excluded	simBiologyModelBuilder	toolbox/simbio/simbio/simBiologyModelBuilder.m
+excluded	simbiology	toolbox/simbio/simbio/simbiology.m
+excluded	getActiveConfigSet	toolbox/simulink/configset/m/getActiveConfigSet.p
+excluded	setActiveConfigSet	toolbox/simulink/configset/m/setActiveConfigSet.p
+excluded	slparamestim	toolbox/sldo/sldo/slparamestim.m
+excluded	utFindLog	toolbox/sldo/sldo/utFindLog.m
+excluded	utRemapOptimOptions	toolbox/sldo/sldo/utRemapOptimOptions.m
+excluded	utSimChangesParameters	toolbox/sldo/sldo/utSimChangesParameters.m
+excluded	sdotool	toolbox/sldo/sldoguis/sdotool.m
+excluded	ssatool	toolbox/sldo/sldoguis/ssatool.m
+excluded	spetool	toolbox/sldo/slestim/slestim/spetool.m
+excluded	isSLDOInstalledAndLicensed	toolbox/sldo/slestim/slestutil/isSLDOInstalledAndLicensed.m
+excluded	sldomenus	toolbox/sldo/slestim/slestutil/sldomenus.m
+excluded	utAssignParams	toolbox/sldo/sloptim/sloptguis/utAssignParams.m
+excluded	utEvalModelVar	toolbox/sldo/sloptim/sloptguis/utEvalModelVar.m
+excluded	utEvalParams	toolbox/sldo/sloptim/sloptguis/utEvalParams.m
+excluded	utFindParams	toolbox/sldo/sloptim/sloptguis/utFindParams.m
+excluded	utFindProject	toolbox/sldo/sloptim/sloptguis/utFindProject.m
+excluded	utGetSimInterval	toolbox/sldo/sloptim/sloptguis/utGetSimInterval.m
+excluded	utLoadProject	toolbox/sldo/sloptim/sloptguis/utLoadProject.m
+excluded	utRefBy	toolbox/sldo/sloptim/sloptguis/utRefBy.m
+excluded	utSROCopyFcn	toolbox/sldo/sloptim/sloptguis/utSROCopyFcn.m
+excluded	utSloptimGUIHelp	toolbox/sldo/sloptim/sloptguis/utSloptimGUIHelp.m
+excluded	getsro	toolbox/sldo/sloptim/sloptim/getsro.m
+excluded	gridunc	toolbox/sldo/sloptim/sloptim/gridunc.m
+excluded	newsro	toolbox/sldo/sloptim/sloptim/newsro.m
+excluded	randunc	toolbox/sldo/sloptim/sloptim/randunc.m
+excluded	sroproject	toolbox/sldo/sloptim/sloptim/sroproject.m
+excluded	utGetLogData	toolbox/sldo/sloptim/sloptim/utGetLogData.m
+excluded	isNCDStruct	toolbox/sldo/sloptim/sloptobsolete/isNCDStruct.m
+excluded	ncdglob	toolbox/sldo/sloptim/sloptobsolete/ncdglob.m
+excluded	ncdupdate	toolbox/sldo/sloptim/sloptobsolete/ncdupdate.m
+excluded	nlinopt	toolbox/sldo/sloptim/sloptobsolete/nlinopt.m
+excluded	optblock	toolbox/sldo/sloptim/sloptobsolete/optblock.m
+excluded	sdoupdate	toolbox/sldo/sloptim/sloptobsolete/sdoupdate.m
+excluded	slrealtimeTCPClient	toolbox/slrealtime/simulink/blocks/IP/slrealtimeTCPClient.mexw64
+excluded	slrealtimeTCPReceive	toolbox/slrealtime/simulink/blocks/IP/slrealtimeTCPReceive.mexw64
+excluded	slrealtimeTCPSend	toolbox/slrealtime/simulink/blocks/IP/slrealtimeTCPSend.mexw64
+excluded	slrealtimeTCPServer	toolbox/slrealtime/simulink/blocks/IP/slrealtimeTCPServer.mexw64
+excluded	slrealtimeUDPReceive	toolbox/slrealtime/simulink/blocks/IP/slrealtimeUDPReceive.mexw64
+excluded	slrealtimeUDPSend	toolbox/slrealtime/simulink/blocks/IP/slrealtimeUDPSend.mexw64
+excluded	overloadoptions	toolbox/slrealtime/simulink/blocks/mex/overloadoptions.mexw64
+excluded	ptpReadParam	toolbox/slrealtime/simulink/blocks/mex/ptpReadParam.mexw64
+excluded	slany2dword	toolbox/slrealtime/simulink/blocks/mex/slany2dword.mexw64
+excluded	slasciidecode	toolbox/slrealtime/simulink/blocks/mex/slasciidecode.mexw64
+excluded	slasciidecodev2	toolbox/slrealtime/simulink/blocks/mex/slasciidecodev2.mexw64
+excluded	slasciiencode	toolbox/slrealtime/simulink/blocks/mex/slasciiencode.mexw64
+excluded	sldword2any	toolbox/slrealtime/simulink/blocks/mex/sldword2any.mexw64
+excluded	slecatasyncsdoread	toolbox/slrealtime/simulink/blocks/mex/slecatasyncsdoread.mexw64
+excluded	slecatasyncsdowrite	toolbox/slrealtime/simulink/blocks/mex/slecatasyncsdowrite.mexw64
+excluded	slecatasyncsoeread	toolbox/slrealtime/simulink/blocks/mex/slecatasyncsoeread.mexw64
+excluded	slecatasyncsoewrite	toolbox/slrealtime/simulink/blocks/mex/slecatasyncsoewrite.mexw64
+excluded	slecatcoeread	toolbox/slrealtime/simulink/blocks/mex/slecatcoeread.mexw64
+excluded	slecatcoewrite	toolbox/slrealtime/simulink/blocks/mex/slecatcoewrite.mexw64
+excluded	slecatgetemgcy	toolbox/slrealtime/simulink/blocks/mex/slecatgetemgcy.mexw64
+excluded	slecatgetnotify	toolbox/slrealtime/simulink/blocks/mex/slecatgetnotify.mexw64
+excluded	slecatgetsbdata	toolbox/slrealtime/simulink/blocks/mex/slecatgetsbdata.mexw64
+excluded	slecatgetslavestate	toolbox/slrealtime/simulink/blocks/mex/slecatgetslavestate.mexw64
+excluded	slecatgetstate	toolbox/slrealtime/simulink/blocks/mex/slecatgetstate.mexw64
+excluded	slecatinit	toolbox/slrealtime/simulink/blocks/mex/slecatinit.mexw64
+excluded	slecatpdorx	toolbox/slrealtime/simulink/blocks/mex/slecatpdorx.mexw64
+excluded	slecatpdotx	toolbox/slrealtime/simulink/blocks/mex/slecatpdotx.mexw64
+excluded	slecatsetslavestate	toolbox/slrealtime/simulink/blocks/mex/slecatsetslavestate.mexw64
+excluded	slecatsetstate	toolbox/slrealtime/simulink/blocks/mex/slecatsetstate.mexw64
+excluded	slecatsoeread	toolbox/slrealtime/simulink/blocks/mex/slecatsoeread.mexw64
+excluded	slecatsoewrite	toolbox/slrealtime/simulink/blocks/mex/slecatsoewrite.mexw64
+excluded	slfiforead	toolbox/slrealtime/simulink/blocks/mex/slfiforead.mexw64
+excluded	slfiforeadbinhdr	toolbox/slrealtime/simulink/blocks/mex/slfiforeadbinhdr.mexw64
+excluded	slfiforeadhdr	toolbox/slrealtime/simulink/blocks/mex/slfiforeadhdr.mexw64
+excluded	slfifowrite	toolbox/slrealtime/simulink/blocks/mex/slfifowrite.mexw64
+excluded	slhwinterrupt	toolbox/slrealtime/simulink/blocks/mex/slhwinterrupt.mexw64
+excluded	slhwintlinux	toolbox/slrealtime/simulink/blocks/mex/slhwintlinux.mexw64
+excluded	slmodemcontrolbase	toolbox/slrealtime/simulink/blocks/mex/slmodemcontrolbase.mexw64
+excluded	slmodemstatusbase	toolbox/slrealtime/simulink/blocks/mex/slmodemstatusbase.mexw64
+excluded	slrealtimeG29Data	toolbox/slrealtime/simulink/blocks/mex/slrealtimeG29Data.mexw64
+excluded	slrealtimeG29Data_makecfg	toolbox/slrealtime/simulink/blocks/mex/slrealtimeG29Data_makecfg.m
+excluded	slrealtimeObsolete	toolbox/slrealtime/simulink/blocks/mex/slrealtimeObsolete.mexw64
+excluded	slrealtimePerVarRead	toolbox/slrealtime/simulink/blocks/mex/slrealtimePerVarRead.mexw64
+excluded	slrealtimePerVarWrite	toolbox/slrealtime/simulink/blocks/mex/slrealtimePerVarWrite.mexw64
+excluded	slrealtimebitpacking	toolbox/slrealtime/simulink/blocks/mex/slrealtimebitpacking.mexw64
+excluded	slrealtimebytepacking	toolbox/slrealtime/simulink/blocks/mex/slrealtimebytepacking.mexw64
+excluded	slrealtimeenablelogging	toolbox/slrealtime/simulink/blocks/mex/slrealtimeenablelogging.mexw64
+excluded	slrealtimelinpack	toolbox/slrealtime/simulink/blocks/mex/slrealtimelinpack.mexw64
+excluded	slrealtimelinunpack	toolbox/slrealtime/simulink/blocks/mex/slrealtimelinunpack.mexw64
+excluded	slrealtimelogevent	toolbox/slrealtime/simulink/blocks/mex/slrealtimelogevent.mexw64
+excluded	slrealtimereverseendian	toolbox/slrealtime/simulink/blocks/mex/slrealtimereverseendian.mexw64
+excluded	slrealtimestartstoptracing	toolbox/slrealtime/simulink/blocks/mex/slrealtimestartstoptracing.mexw64
+excluded	slreverseendian	toolbox/slrealtime/simulink/blocks/mex/slreverseendian.mexw64
+excluded	slserialread	toolbox/slrealtime/simulink/blocks/mex/slserialread.mexw64
+excluded	slserialsetupbase	toolbox/slrealtime/simulink/blocks/mex/slserialsetupbase.mexw64
+excluded	slserialwrite	toolbox/slrealtime/simulink/blocks/mex/slserialwrite.mexw64
+excluded	slswinterrupt	toolbox/slrealtime/simulink/blocks/mex/slswinterrupt.mexw64
+excluded	UDPBinReceiveBlockTransformationFcn	toolbox/slrealtime/simulink/blocks/obsolete/forwarding/UDPBinReceiveBlockTransformationFcn.m
+excluded	UDPBinSendBlockTransformationFcn	toolbox/slrealtime/simulink/blocks/obsolete/forwarding/UDPBinSendBlockTransformationFcn.m
+excluded	UDPConfigureBlockTransformation	toolbox/slrealtime/simulink/blocks/obsolete/forwarding/UDPConfigureBlockTransformation.m
+excluded	UDPReceiveBlockTransformationFcn	toolbox/slrealtime/simulink/blocks/obsolete/forwarding/UDPReceiveBlockTransformationFcn.m
+excluded	UDPSendBlockTransformationFcn	toolbox/slrealtime/simulink/blocks/obsolete/forwarding/UDPSendBlockTransformationFcn.m
+excluded	packconvert	toolbox/slrealtime/simulink/blocks/obsolete/forwarding/packconvert.m
+excluded	resetpos	toolbox/slrealtime/simulink/blocks/obsolete/forwarding/resetpos.m
+excluded	slrealtimedoc	toolbox/slrealtime/simulink/blocks/slrealtimedoc.m
+excluded	systemcomposer	toolbox/systemcomposer/systemcomposer/systemcomposer.p
+excluded	cameraCalibrator	toolbox/vision/vision/cameraCalibrator.m
+excluded	detectPatternPoints	toolbox/vision/vision/detectPatternPoints.m
+excluded	estimateCameraRobotTransform	toolbox/vision/vision/estimateCameraRobotTransform.m
+excluded	estimateMultiCameraParameters	toolbox/vision/vision/estimateMultiCameraParameters.m
+excluded	mplay	toolbox/vision/vision/mplay.m
+excluded	stereoCameraCalibrator	toolbox/vision/vision/stereoCameraCalibrator.m
+excluded	trainingImageLabeler	toolbox/vision/vision/trainingImageLabeler.m
+excluded	showvipblockdatatypetable	toolbox/vision/visionutilities/showvipblockdatatypetable.m
+excluded	vipblksBrokenLinksMapping	toolbox/vision/visionutilities/vipblksBrokenLinksMapping.m
+excluded	vipblksUpdateModel	toolbox/vision/visionutilities/vipblksUpdateModel.m
+excluded	vipmaskedcaps	toolbox/vision/visionutilities/vipmaskedcaps.p
+excluded	visionmenus	toolbox/vision/visionutilities/visionmenus.m
+excluded	vntblksmaskedcaps	toolbox/vnt/vntblks/vntmasks/vntblksmaskedcaps.m
+excluded	vntcreatedialog	toolbox/vnt/vntblks/vntmasks/vntcreatedialog.m
+excluded	vntslgate	toolbox/vnt/vntblks/vntmasks/vntslgate.m

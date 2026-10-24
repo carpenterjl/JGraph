@@ -1,4 +1,4 @@
-# Compiler and SDK probes (stage K0)
+# Compiler and SDK probes (stages K0-K2)
 
 Recordings of what R2025b's MATLAB Compiler builds and what the programs it builds do when run,
 for the compiler and SDK plan (`docs/plans/compiler-and-sdk-plan.md`, stage K0). Later stages
@@ -36,6 +36,11 @@ and runs them only when they are named; tell the user before running one.
 | `probe_k1_numeric.m` | 108 more strings through `mclisnumerictype`, the answer only (stage K1). |
 | `probe_k1_session.m` | The deployment builtins in an ordinary R2025b session, their refusals, and the text of the messages a deployed session raises (stage K1). |
 | `run-k1.ps1` | Runs K0's cases in JGraph's deployed session (`jgraph -batch main.m --deployed <folder> -- args`), each program laid out as R2025b extracted it, and writes `recordings-jgraph/<case>.out.txt` and `recordings-jgraph/differences.txt` (stage K1, ADR 0256). |
+| `k2_make_tree.m` | Writes stage K2's tree: a main and one file per dependency question, a library folder, a second file of one name, a folder to add whole. |
+| `probe_k2_depend.m` | Over that tree, `matlab.codetools.requiredFilesAndProducts` (`rfp`) and ten `mcc -m -C` builds (`mcc`): each archive's user files, the five log files and the warnings. Nothing built is run (stage K2, ADR 0257). |
+| `probe_k2_rules.m` | 65 small mains, one per rule: which literals the data rule takes, the pragmas' forms, variables, dots, scripts, classes. |
+| `probe_k2_names.m` | Over the dispatch table's names: the products each needs, and the non-deployable files mcc warns about. Its recording is embedded in `JGraph.Deploy` as R2025b's tables. |
+| `record-k2.ps1` | Runs `probe_k2_depend` and writes `recordings/k2_rfp.out.txt` and `k2_mcc.out.txt`, the tree as `<T>`, the work folder as `<OUT>` (and `<OUT-NODRIVE>` where an archive keeps a path without its drive). |
 | `recordings-jgraph/` | JGraph's recordings of K0's cases, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
@@ -47,6 +52,9 @@ and runs them only when they are named; tell the user before running one.
 powershell -File record-build-side.ps1 -BuildRoot <scratch>
 powershell -File run-k0.ps1 -BuildRoot <scratch>
 powershell -File run-k1.ps1 -WorkRoot <another scratch>
+powershell -File record-k2.ps1 -WorkRoot <a third scratch>
+matlab -batch "probe_k2_rules('<scratch>')" -noFigureWindows > recordings/k2_rules.out.txt
+matlab -batch "probe_k2_names('<repo>/tools/matlab-checklist/matlab-r2025b-dispatch.csv')" -noFigureWindows > recordings/k2_names.out.txt
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

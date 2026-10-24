@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,231 of
-2,024** as of the designer plan's stage DS2 (ADR 0246), which added `appdesigner`; 1,230 as of
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,232 of
+2,024** as of the compiler and SDK plan's stage K2 (ADR 0257), which added
+`matlab.codetools.requiredFilesAndProducts`; 1,231 as of the designer plan's stage DS2 (ADR 0246), which added `appdesigner`; 1,230 as of
 open-items batch 20 (ADR 0233), which added `isenum`, `istabular`, `vartype`,
 `convertvars`, `table2cell` and `innerjoin` (`stack` is not among the 2,024); 1,224 as of open-items batch 19 (ADR 0232), which added `iscategorical` (the twelve other categorical verbs it
 added — `categories`, `isordinal`, `isprotected`, `isundefined`, `iscategory`, `countcats`, `addcats`,
@@ -410,6 +411,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Console session | M39 | `diary` `echo` `home` `more` `input` `lookfor` `what` `beep` `pack` `recycle` `rehash` `display` |
 | The installation | M39 | `version` `computer` `matlabroot` `matlabdrive` `license` `isstudent` `memory` `maxNumCompThreads` `fftw` |
 | Deployment | K1 (ADR 0256) | `isdeployed` `ismcc` `ctfroot` `mcrversion` `mcrcachedir` `getmcruserdata` `setmcruserdata` — MATLAB Compiler's, outside the 2,024, so the total does not move; a deployed session also has `waitforallfiguresclosed`, the runtime's own |
+| Dependency analysis | K2 (ADR 0257) | `matlab.codetools.requiredFilesAndProducts` `compiler.codetools.deployableSupportPackages` — the first is one of the 2,024 (the total moves to 1,232); the support-package stub is MATLAB Compiler's, outside them |
 | Stress-test numerics and sparse | M42 | `sparse` `sprand` `eigs` `spy` `hilb` `polyval` `peaks` `cond` `sqrtm` `logm` `ode45` `int8`…`uint64` (with `.empty` statics) — plus complex `det`/`inv`/`trace`/`eig`/`svd`/`exp`/`log`/`sqrt` and the parallel dense product |
 | Stress-test data types and verbs | M43 | `table` `timetable` `seconds` `categorical` `summary` `string` `cellstr` `compose` `missing` `ismissing` `tiledlayout` `nexttile` `axis` `shading` `lighting` `camlight` `rotate3d` — plus sprintf format cycling, element-wise `~`, and `colormap turbo` |
 | Drawing primitives | M45 | `plot3` `line` `text` `fill` `fill3` `patch` `surface` `light` |

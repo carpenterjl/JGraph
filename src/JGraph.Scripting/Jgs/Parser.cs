@@ -120,6 +120,17 @@ internal sealed class Parser
         return parser.ParseProgram();
     }
 
+    /// <summary>
+    /// Parses as <see cref="Parse(string, string, JgsDialect?)"/> does, adding the source's
+    /// <c>%#word</c> pragmas to <paramref name="pragmas"/> (stage K2: what the compiler reads).
+    /// </summary>
+    /// <exception cref="JgsSyntaxException">On any lexing or parsing error.</exception>
+    public static IReadOnlyList<Stmt> Parse(string source, string sourceId, JgsDialect dialect, ICollection<SourcePragma> pragmas)
+    {
+        var parser = new Parser(Lexer.Tokenize(source, tolerant: false, dialect, pragmas), sourceId, dialect);
+        return parser.ParseProgram();
+    }
+
     private Token Current => _tokens[_pos];
 
     private TokenType NextType => _pos + 1 < _tokens.Count ? _tokens[_pos + 1].Type : TokenType.Eof;

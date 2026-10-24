@@ -253,6 +253,10 @@ public static class JgsBuiltinCatalog
         Add("getmcruserdata", "The runtime user data stored under a key, or a 1-by-0 double when none is.", P("key"));
         Add("setmcruserdata", "Stores runtime user data under a key, as -mcruserdata key:value does at start.", P("key"), P("value"));
 
+        // --- Dependency analysis (compiler and SDK plan, stage K2) ----------------------------------
+        Add("matlab.codetools.requiredFilesAndProducts", "The user files the named files need, and the products: [fList, pList] = matlab.codetools.requiredFilesAndProducts(files) follows calls, handles, classes, %#function and the data files literals name; 'toponly' stops at what the files themselves name.", P("files"), Opt("'toponly'"));
+        Add("compiler.codetools.deployableSupportPackages", "The support packages the named files need to deploy; JGraph has none, so the answer is always empty.", P("files"));
+
         // --- Files, folders, and the machine --------------------------------------------------------
         Add("pwd", "The working directory relative paths resolve against.");
         Add("cd", "Moves to a folder; with no argument it reports where it is.", Opt("folder"));

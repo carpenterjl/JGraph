@@ -74,9 +74,12 @@ internal static class Lexer
     /// end of the line and an unexpected character is skipped. Used by the completion engine, whose input is
     /// a buffer mid-keystroke and therefore routinely broken.</param>
     /// <param name="dialect">The language variant to lex, or null for <see cref="JgsDialect.Jgs"/>.</param>
+    /// <param name="pragmas">When given, receives every MATLAB <c>%#word</c> comment the source holds
+    /// (stage K2: the compiler's <c>%#function</c> and <c>%#exclude</c>).</param>
     /// <exception cref="JgsSyntaxException">On an unterminated string or an unexpected character (only when
     /// <paramref name="tolerant"/> is false).</exception>
-    public static IReadOnlyList<Token> Tokenize(string source, bool tolerant = false, JgsDialect? dialect = null)
+    public static IReadOnlyList<Token> Tokenize(
+        string source, bool tolerant = false, JgsDialect? dialect = null, ICollection<SourcePragma>? pragmas = null)
     {
         ArgumentNullException.ThrowIfNull(source);
 
@@ -166,9 +169,26 @@ internal static class Lexer
             if (c == '#' || (c == '%' && dialect.PercentComment)
                 || (c == '/' && i + 1 < source.Length && source[i + 1] == '/'))
             {
+                int commentStart = i;
                 while (i < source.Length && source[i] != '\n')
                 {
                     i++;
+                }
+
+                // A pragma is a comment whose '%' is followed at once by '#' and a word (%#function).
+                if (pragmas is not null && matlab && c == '%' && commentStart + 1 < i && source[commentStart + 1] == '#')
+                {
+                    string text = source[(commentStart + 2)..i].TrimEnd('\r');
+                    int word = 0;
+                    while (word < text.Length && char.IsLetter(text[word]))
+                    {
+                        word++;
+                    }
+
+                    if (word > 0)
+                    {
+                        pragmas.Add(new SourcePragma(line, text[..word], text[word..].Trim()));
+                    }
                 }
 
                 continue;
@@ -573,3 +593,12 @@ internal static class Lexer
         return sb.ToString();
     }
 }
+
+/// <summary>
+/// A MATLAB <c>%#word</c> comment: <c>%#function fa fb</c> is the word <c>function</c> and the text
+/// <c>fa fb</c>. The compiler's <c>%#function</c> and <c>%#exclude</c> are read from these (stage K2).
+/// </summary>
+/// <param name="Line">The 1-based line the comment is on.</param>
+/// <param name="Word">The word after <c>%#</c>.</param>
+/// <param name="Text">The rest of the comment, trimmed.</param>
+internal readonly record struct SourcePragma(int Line, string Word, string Text);
