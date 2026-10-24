@@ -1,0 +1,90 @@
+CHK|one_file|a.txt|exact
+CHK|one_file_class|cell|exact
+CHK|one_file_size|[1 1]|exact
+CHK|two_files_size|[1 2]|exact
+CHK|adds_zip|1 0 0 1|exact
+CHK|cell_files|b.txt / a.txt|exact
+CHK|string_files|a.txt / c.m|exact
+CHK|string_zipname|a.txt|exact
+CHK|wildcard|a.txt / b.txt|exact
+CHK|wildcard_sub|sub/s.txt|exact
+CHK|folder|sub/s.txt / sub/deep/d.txt|exact
+CHK|empty_folder|empty|exact
+CHK|empty_folder_list|1 outputs; on disk: empty|exact
+CHK|dot|a.txt / b.txt / c.m / empty / sub/s.txt / sub/deep/d.txt|exact
+CHK|folder_and_file|a.txt / sub/s.txt / sub/deep/d.txt|exact
+CHK|duplicate|a.txt|exact
+CHK|rootfolder|s.txt / deep/d.txt|exact
+CHK|rootfolder_rel|s.txt|exact
+CHK|fullpath_inside|a.txt|exact
+CHK|fullpath_rootfolder|s.txt|exact
+CHK|order_mixed|mix/Q.txt / mix/m.txt / mix/z.txt / mix/aa/x.txt|exact
+CHK|order_mixed_root|Q.txt / m.txt / z.txt / aa/x.txt|exact
+CHK|order_given|c.m / a.txt / sub/s.txt / sub/deep/d.txt|exact
+CHK|star|a.txt / b.txt / c.m / empty / sub/s.txt / sub/deep/d.txt|exact
+CHK|relative_subpath|sub/s.txt|exact
+CHK|dotdot|ok: ../outside.txt|exact
+CHK|fullpath_outside|ok: outside.txt|exact
+CHK|fullpath_outside_unzip|ok: poout\outside.txt|exact
+CHK|relative_zipname|1|exact
+CHK|duplicate_names|MATLAB:zip:duplicateEntry / Function ZIP tried to add two files as "a.txt".|exact
+CHK|self_zip|a.txt / b.txt / c.m / empty / sub/s.txt / sub/deep/d.txt ; MATLAB:zip:archiveName ; ZIP cannot add the archive file: <root>\src\self.zip to the archive file itself.|exact
+CHK|zip_is_dir|MATLAB:zip:isDirectory / ZIP filename "<root>\dir.zip" is a directory.|exact
+CHK|zip_is_dir_noext|MATLAB:zip:isDirectory / ZIP filename "<root>\dir.zip" is a directory.|exact
+CHK|zip_empty_name|MATLAB:validators:mustBeNonzeroLengthText / Invalid argument at position 1. Value must be text with one or more characters.|exact
+CHK|zip_empty_file|MATLAB:validators:mustBeNonzeroLengthText / Invalid argument at position 2. Value must be text with one or more characters.|exact
+CHK|zip_cell_number|MATLAB:validators:mustBeText / Invalid argument at position 2. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|zip_root_number|MATLAB:io:archive:checkFilesDirInputs:nonExistDir / ROOTDIR directory "5" does not exist.|exact
+CHK|zip_wild_folder|MATLAB:io:archive:getArchiveEntries:FilepathHasWildcard / Wildcards are not supported in the paths of the filenames input.|exact
+CHK|overwrite|owout\c.m|exact
+CHK|no_output|[]|exact
+CHK|unzip_names|out1\sub\s.txt / out1\sub\deep\d.txt|exact
+CHK|unzip_class|cell|exact
+CHK|unzip_size|[1 2]|exact
+CHK|unzip_content|deeper |exact
+CHK|unzip_dot|out2\a.txt / out2\b.txt / out2\c.m / out2\empty\ / out2\sub\s.txt / out2\sub\deep\d.txt|exact
+CHK|unzip_empty_folder|1 outputs [eout\empty\]; folder made 1|exact
+CHK|unzip_noext|out3\a.txt|exact
+CHK|unzip_cwd|a.txt|exact
+CHK|unzip_new_nested|n1\n2\a.txt|exact
+CHK|unzip_string|out4\a.txt|exact
+CHK|unzip_overwrite|alpha|exact
+CHK|roundtrip_bytes|260 1|exact
+CHK|unzip_no_output|[]|exact
+CHK|unzip_relative_out|relout\a.txt|exact
+CHK|unzip_dot_out|a.txt|exact
+CHK|unzip_empty_out|a.txt|exact
+CHK|unzip_dotdot|ok: <root>\dd\inner\..\outside.txt ; in dd 1 ; in inner 0|div=ADR0258|diverges|JGraph:unzip:entryOutsideFolder / The entry "../outside.txt" in "<root>\dd\inner\dd.zip" would be written outside "<root>\dd\inner", so nothing was extracted. ; in dd 0 ; in inner 0
+CHK|unzip_empty_name|MATLAB:validators:mustBeNonzeroLengthText / Invalid argument at position 1. Value must be text with one or more characters.|exact
+CHK|unzip_out_number|MATLAB:validators:mustBeTextScalar / Invalid argument at position 2. Value must be a character vector or string scalar.|exact
+CHK|unzip_folder|MATLAB:unzip:isDirectory / ZIPFILENAME "<root>\twin" is a directory.|exact
+CHK|unzip_password|ok: <root>\pw\a.txt|exact
+CHK|zip_missing|MATLAB:zip:fileDoesNotExist|exact
+CHK|zip_missing_msg|File "nosuch.txt" does not exist.|exact
+CHK|zip_missing_wild|MATLAB:zip:noEntries|exact
+CHK|zip_missing_wild_msg|Nothing to zip.|exact
+CHK|zip_one_missing|MATLAB:zip:fileDoesNotExist|exact
+CHK|zip_one_missing_msg|File "nosuch.txt" does not exist.|exact
+CHK|zip_no_args|MATLAB:minrhs|exact
+CHK|zip_no_args_msg|Invalid argument list. Function requires 2 more input(s).|exact
+CHK|zip_one_arg|MATLAB:minrhs|exact
+CHK|zip_one_arg_msg|Invalid argument list. Function requires 1 more input(s).|exact
+CHK|zip_number|MATLAB:validators:mustBeText|exact
+CHK|zip_number_msg|Invalid argument at position 2. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|zip_number_name|MATLAB:validators:mustBeTextScalar|exact
+CHK|zip_number_name_msg|Invalid argument at position 1. Value must be a character vector or string scalar.|exact
+CHK|zip_empty_cell|MATLAB:zip:noEntries|exact
+CHK|zip_empty_cell_msg|Nothing to zip.|exact
+CHK|zip_bad_root|MATLAB:io:archive:checkFilesDirInputs:nonExistDir / ROOTDIR directory "<root>\nosuchdir" does not exist.|exact
+CHK|zip_four_args|MATLAB:TooManyInputs|exact
+CHK|zip_four_args_msg|Invalid argument at position 4. Function requires 2 to 3 positional input(s).|exact
+CHK|zip_two_outputs|MATLAB:nargoutchk:tooManyOutputs|exact
+CHK|zip_two_outputs_msg|Too many output arguments.|exact
+CHK|unzip_missing|MATLAB:io:archive:checkfilename:invalidFilename / Function UNZIP was unable to find file ''<root>\nosuch.zip''.|exact
+CHK|unzip_not_zip|MATLAB:io:archive:unzip:invalidZipFile / Invalid ZIP file "<root>\src\a.txt".|exact
+CHK|unzip_no_args|MATLAB:minrhs|exact
+CHK|unzip_no_args_msg|Invalid argument list. Function requires 1 more input(s).|exact
+CHK|unzip_number|MATLAB:validators:mustBeTextScalar|exact
+CHK|unzip_number_msg|Invalid argument at position 1. Value must be a character vector or string scalar.|exact
+CHK|unzip_three_args|MATLAB:TooManyInputs|exact
+CHK|unzip_three_args_msg|Invalid argument at position 3. Function requires 1 to 2 positional input(s).|exact

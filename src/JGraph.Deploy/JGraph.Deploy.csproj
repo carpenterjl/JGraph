@@ -4,14 +4,15 @@
     The build side of the compiler and SDK plan, headless and free of the engine: what R2025b's
     dependency analysis knows that the code cannot say (which product owns a name, which files the
     runtime leaves out, which functions read a data file), the report the analyser fills, and the
-    log files a build writes beside its target. Later stages add the archive, the manifest and the
-    target writers. The analyser itself walks JGS syntax trees and lives in JGraph.Scripting, which
+    log files a build writes beside its target (stage K2); the archive, its manifest, the runtime
+    cache it is extracted into and the extractCTF utility (stage K3). Later stages add the target
+    writers. The analyser itself walks JGS syntax trees and lives in JGraph.Scripting, which
     references this.
   -->
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>JGraph.Deploy</RootNamespace>
-    <Description>The build side of JGraph's compiler: R2025b's dependency rules and products, the dependency report and the build log files.</Description>
+    <Description>The build side of JGraph's compiler: R2025b's dependency rules and products, the dependency report, the build log files, the archive and the runtime cache.</Description>
   </PropertyGroup>
 
   <ItemGroup>

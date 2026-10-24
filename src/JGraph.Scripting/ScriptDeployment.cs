@@ -1,3 +1,5 @@
+using JGraph.Deploy;
+
 namespace JGraph.Scripting;
 
 /// <summary>
@@ -8,11 +10,12 @@ namespace JGraph.Scripting;
 /// behaving in stage K0 (<c>tools/matlab-checklist/compiler-probes/recordings</c>).
 /// </summary>
 /// <remarks>
-/// Until the archive exists (stage K3) the only host that makes one is the hidden
-/// <c>jgraph -batch main.m --deployed &lt;folder&gt;</c> switch, through <see cref="FromFolder"/>,
-/// which stands a plain folder in for the extracted archive.
+/// <see cref="FromArchive"/> makes one from a JGraph archive (stage K3), extracted into the runtime
+/// cache, and holds the cache's entry until the deployment is disposed. <see cref="FromFolder"/>, for
+/// the hidden <c>jgraph -batch main.m --deployed &lt;folder&gt;</c> switch, stands a plain folder in
+/// for the extracted archive.
 /// </remarks>
-public sealed class ScriptDeployment
+public sealed class ScriptDeployment : IDisposable
 {
     /// <summary>
     /// The exit code of a deployed program that ended on an uncaught error: R2025b's, whatever the
@@ -70,6 +73,71 @@ public sealed class ScriptDeployment
 
     /// <summary>What <c>-mcruserdata</c> set before the program started, by key (case-sensitive).</summary>
     public IReadOnlyDictionary<string, string> UserData { get; }
+
+    /// <summary>The runtime cache's folder, which <c>mcrcachedir</c> answers.</summary>
+    public string CacheFolder { get; private init; } = CacheDirectory();
+
+    /// <summary>The main function's file, when the deployment came from an archive that names one.</summary>
+    public string? MainFile { get; private init; }
+
+    /// <summary>The archive's manifest, when the deployment came from an archive.</summary>
+    public CtfManifest? Manifest { get; private init; }
+
+    /// <summary>The runtime cache's entry the archive was extracted to, held while the program runs.</summary>
+    private CacheEntry? Entry { get; init; }
+
+    /// <summary>Lets the runtime cache's entry go, so a later start may evict it.</summary>
+    public void Dispose() => Entry?.Dispose();
+
+    /// <summary>
+    /// A deployment from a JGraph archive (a <c>.ctf</c>, or a program carrying one): the archive is
+    /// extracted into the runtime cache at <see cref="CacheDirectory"/> unless the cache already holds
+    /// a complete, unchanged copy (<c>MCR_CACHE_SIZE</c> sets its limit), <c>ctfroot</c> is that copy,
+    /// the frozen path is the manifest's, and the main function is the manifest's, called as
+    /// <c>mcc -n</c> built it when the manifest says so.
+    /// </summary>
+    /// <param name="archivePath">The archive.</param>
+    /// <param name="commandLine">The program's command line, <c>-mcruserdata</c> pairs included.</param>
+    /// <param name="cacheDirectory">The runtime cache's folder; <see cref="CacheDirectory"/> when not given.</param>
+    /// <exception cref="InvalidDataException">The file holds no JGraph archive, or a damaged one.</exception>
+    public static ScriptDeployment FromArchive(string archivePath, IReadOnlyList<string> commandLine, string? cacheDirectory = null)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(archivePath);
+        ArgumentNullException.ThrowIfNull(commandLine);
+        string cache = cacheDirectory ?? CacheDirectory();
+        using CtfArchiveReader archive = CtfArchiveReader.Open(archivePath);
+        CacheEntry entry = new RuntimeCache(cache).Open(archive, Environment.GetEnvironmentVariable("MCR_CACHE_SIZE"));
+        try
+        {
+            CtfManifest manifest = archive.Manifest;
+            string? main = manifest.Main is { } function
+                ? CtfArchiveReader.Within(entry.Folder, function.File)
+                    ?? throw new InvalidDataException($"The archive's main function file '{function.File}' leaves the archive.")
+                : null;
+            var path = new List<string>();
+            foreach (string folder in manifest.MatlabPath)
+            {
+                path.Add(folder.Length == 0
+                    ? entry.Folder
+                    : CtfArchiveReader.Within(entry.Folder, folder)
+                        ?? throw new InvalidDataException($"The archive's path folder '{folder}' leaves the archive."));
+            }
+
+            (IReadOnlyList<string> arguments, IReadOnlyDictionary<string, string> userData) = TakeUserData(commandLine);
+            return new ScriptDeployment(entry.Folder, manifest.ComponentName, path, arguments, manifest.NumericArguments, userData)
+            {
+                MainFile = main,
+                Manifest = manifest,
+                Entry = entry,
+                CacheFolder = Path.GetFullPath(cache),
+            };
+        }
+        catch
+        {
+            entry.Dispose();
+            throw;
+        }
+    }
 
     /// <summary>
     /// The folder <c>mcrcachedir</c> answers, where archives are extracted: a folder per runtime

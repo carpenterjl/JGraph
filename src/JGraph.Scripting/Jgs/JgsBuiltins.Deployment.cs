@@ -77,7 +77,7 @@ internal static partial class JgsBuiltins
         Query("mcrcachedir", (args, line, col) =>
         {
             TooManyInputs(args, 0, "MATLAB:mcrcachedir:tooManyInputArgs", line, col);
-            return JgsValue.Str(ScriptDeployment.CacheDirectory());
+            return JgsValue.Str(host.Deployment?.CacheFolder ?? ScriptDeployment.CacheDirectory());
         });
 
         env.Builtins.Register("getmcruserdata", JgsValue.Function(new BuiltinFunction("getmcruserdata", (args, line, col) =>

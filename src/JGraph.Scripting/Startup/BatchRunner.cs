@@ -80,7 +80,67 @@ public static class BatchRunner
         }
 
         workingDirectory = Path.GetFullPath(workingDirectory);
-        ResolvedStatement resolved = StartupStatement.Resolve(options.Statement, workingDirectory);
+
+        // --deployed with no -batch (K3): an archive, extracted into the runtime cache, whose
+        // manifest names the main function. The cache's entry is held until the run ends.
+        ScriptDeployment? deployment = null;
+        string? statement = options.Statement;
+        if (options.DeployedRoot is { } archive && statement is null)
+        {
+            string archivePath = Path.GetFullPath(Path.Combine(workingDirectory, archive));
+            try
+            {
+                deployment = ScriptDeployment.FromArchive(archivePath, options.ProgramArguments);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+            {
+                output.WriteError(File.Exists(archivePath)
+                    ? $"jgraph: cannot run '{archivePath}': {ex.Message}"
+                    : $"jgraph: the archive '{archivePath}' does not exist.");
+                return (StartupExitCodes.UsageError, null);
+            }
+
+            if (deployment.MainFile is not { } mainFile)
+            {
+                deployment.Dispose();
+                output.WriteError($"jgraph: the archive '{archivePath}' has no main function; it is a library.");
+                return (StartupExitCodes.UsageError, null);
+            }
+
+            statement = mainFile;
+        }
+
+        try
+        {
+            return await RunResolvedAsync(
+                options, statement, deployment, workingDirectory, engines, output, showFigure, figureFiles, audio, inSession,
+                cancellationToken, closeFigure).ConfigureAwait(false);
+        }
+        finally
+        {
+            // A session handed back alive keeps running the program; the process's end lets the entry go then.
+            if (!inSession)
+            {
+                deployment?.Dispose();
+            }
+        }
+    }
+
+    private static async Task<(int Code, IScriptSession? Session)> RunResolvedAsync(
+        StartupOptions options,
+        string? statement,
+        ScriptDeployment? deployment,
+        string workingDirectory,
+        IReadOnlyList<IScriptEngine> engines,
+        IScriptOutput output,
+        Action<int, FigureModel> showFigure,
+        IScriptFigureFiles? figureFiles,
+        IScriptAudio? audio,
+        bool inSession,
+        CancellationToken cancellationToken,
+        Action<int>? closeFigure)
+    {
+        ResolvedStatement resolved = StartupStatement.Resolve(statement, workingDirectory);
         if (resolved.Error is { } error)
         {
             output.WriteError("jgraph: " + error);
@@ -93,10 +153,9 @@ public static class BatchRunner
             return (StartupExitCodes.UsageError, null);
         }
 
-        // --deployed (K1): the file is a compiled program's main, over a folder standing in for its
-        // extracted archive.
-        ScriptDeployment? deployment = null;
-        if (options.DeployedRoot is { } root)
+        // --deployed with -batch (K1): the file is a compiled program's main, over a folder standing
+        // in for its extracted archive.
+        if (deployment is null && options.DeployedRoot is { } root)
         {
             string folder = Path.GetFullPath(Path.Combine(workingDirectory, root));
             if (resolved.SourcePath is not { } main || !Directory.Exists(folder))

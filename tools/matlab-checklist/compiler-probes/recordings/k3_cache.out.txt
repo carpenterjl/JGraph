@@ -1,0 +1,214 @@
+CASE	twice
+run	k0_env	EXIT	0
+  ctfroot	char [1 152] '<WORK>\twice\R2025b\k0_env0'
+  which.k0_show	char [1 169] '<WORK>\twice\R2025b\k0_env0\k0_env\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	10	1073741824
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:05:41.627417\r\n
+  entry	k0_env0	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+run	k0_env	EXIT	0
+  ctfroot	char [1 152] '<WORK>\twice\R2025b\k0_env0'
+  which.k0_show	char [1 169] '<WORK>\twice\R2025b\k0_env0\k0_env\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	10	1073741824
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:05:47.184232\r\n
+  entry	k0_env0	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+CASE	deleted_file
+run	k0_env	EXIT	0
+  ctfroot	char [1 159] '<WORK>\deleted_file\R2025b\k0_env0'
+  which.k0_show	char [1 176] '<WORK>\deleted_file\R2025b\k0_env0\k0_env\k0_show.m'
+  deleted k0_env\k0_show.m
+run	k0_env	EXIT	0
+  ctfroot	ERR MATLAB:UndefinedFunction | Undefined function 'k0_show' for input arguments of type 'char'.
+  which.k0_show	ERR MATLAB:UndefinedFunction | Undefined function 'k0_show' for input arguments of type 'char'.
+  file	.deploy_lock	0	
+  file	.max_size	10	1073741824
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:05:54.224703\r\n
+  entry	k0_env0	files 26	bytes 225398	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+  k0_show.m present: False
+CASE	changed_file
+run	k0_env	EXIT	0
+  ctfroot	char [1 159] '<WORK>\changed_file\R2025b\k0_env0'
+  which.k0_show	char [1 176] '<WORK>\changed_file\R2025b\k0_env0\k0_env\k0_show.m'
+  appended to k0_env\k0_show.m (1267 bytes)
+run	k0_env	EXIT	249
+  STDERR	An error occurred while trying to determine whether "k0_show" is a function name.
+  STDERR	
+  STDERR	Caused by:
+  STDERR	    Previously accessible file "<WORK>\changed_file\R2025b\k0_env0\k0_env\k0_show.m" is now inaccessible.
+  STDERR	
+  STDERR	MATLAB:err_while_looking_up_function
+  file	.deploy_lock	0	
+  file	.max_size	10	1073741824
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:06:00.854854\r\n
+  entry	k0_env0	files 27	bytes 226673	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+  k0_show.m length now: 1275
+CASE	no_created_ts
+run	k0_env	EXIT	0
+  ctfroot	char [1 160] '<WORK>\no_created_ts\R2025b\k0_env0'
+  which.k0_show	char [1 177] '<WORK>\no_created_ts\R2025b\k0_env0\k0_env\k0_show.m'
+  deleted .created.ts
+run	k0_env	EXIT	0
+  ctfroot	char [1 160] '<WORK>\no_created_ts\R2025b\k0_env0'
+  which.k0_show	char [1 177] '<WORK>\no_created_ts\R2025b\k0_env0\k0_env\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	10	1073741824
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:06:07.541959\r\n
+  entry	k0_env0	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+CASE	no_entry
+run	k0_env	EXIT	0
+  ctfroot	char [1 155] '<WORK>\no_entry\R2025b\k0_env0'
+  which.k0_show	char [1 172] '<WORK>\no_entry\R2025b\k0_env0\k0_env\k0_show.m'
+  deleted the entry folder
+run	k0_env	EXIT	0
+  ctfroot	char [1 155] '<WORK>\no_entry\R2025b\k0_env0'
+  which.k0_show	char [1 172] '<WORK>\no_entry\R2025b\k0_env0\k0_env\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	10	1073741824
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:06:14.297924\r\n
+  entry	k0_env0	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+CASE	no_index
+run	k0_env	EXIT	0
+  ctfroot	char [1 155] '<WORK>\no_index\R2025b\k0_env0'
+  which.k0_show	char [1 172] '<WORK>\no_index\R2025b\k0_env0\k0_env\k0_show.m'
+  deleted .mcr_cache_index
+run	k0_env	EXIT	0
+  ctfroot	char [1 155] '<WORK>\no_index\R2025b\k0_env1'
+  which.k0_show	char [1 172] '<WORK>\no_index\R2025b\k0_env1\k0_env\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	10	1073741824
+  file	.mcr_cache_index	138	\r\nk0_env0\r\n226434\r\n2026-Oct-24 02:06:18.808873\r\nk0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env1\r\n66393\r\n2026-Oct-24 02:06:21.342479\r\n
+  entry	k0_env0	files 28	bytes 226671	.bytes_used(6) .created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+  entry	k0_env1	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+CASE	size_150M
+  MCR_CACHE_SIZE=[150M]
+run	k0_env	EXIT	0
+  ctfroot	char [1 156] '<WORK>\size_150M\R2025b\k0_env0'
+  which.k0_show	char [1 173] '<WORK>\size_150M\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 150
+CASE	size_150m
+  MCR_CACHE_SIZE=[150m]
+run	k0_env	EXIT	0
+  ctfroot	char [1 156] '<WORK>\size_150m\R2025b\k0_env0'
+  which.k0_show	char [1 173] '<WORK>\size_150m\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 150
+CASE	size_2G
+  MCR_CACHE_SIZE=[2G]
+run	k0_env	EXIT	0
+  ctfroot	char [1 154] '<WORK>\size_2G\R2025b\k0_env0'
+  which.k0_show	char [1 171] '<WORK>\size_2G\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 2
+CASE	size_64K
+  MCR_CACHE_SIZE=[64K]
+run	k0_env	EXIT	0
+  ctfroot	char [1 155] '<WORK>\size_64K\R2025b\k0_env0'
+  which.k0_show	char [1 172] '<WORK>\size_64K\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 64
+CASE	size_500000
+  MCR_CACHE_SIZE=[500000]
+run	k0_env	EXIT	0
+  ctfroot	char [1 158] '<WORK>\size_500000\R2025b\k0_env0'
+  which.k0_show	char [1 175] '<WORK>\size_500000\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 500000
+CASE	size_0
+  MCR_CACHE_SIZE=[0]
+run	k0_env	EXIT	0
+  ctfroot	char [1 153] '<WORK>\size_0\R2025b\k0_env0'
+  which.k0_show	char [1 170] '<WORK>\size_0\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 0
+CASE	size_abc
+  MCR_CACHE_SIZE=[abc]
+run	k0_env	EXIT	0
+  ctfroot	char [1 155] '<WORK>\size_abc\R2025b\k0_env0'
+  which.k0_show	char [1 172] '<WORK>\size_abc\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 0
+CASE	size_10MB
+  MCR_CACHE_SIZE=[10MB]
+run	k0_env	EXIT	0
+  ctfroot	char [1 156] '<WORK>\size_10MB\R2025b\k0_env0'
+  which.k0_show	char [1 173] '<WORK>\size_10MB\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 10
+CASE	size_20M
+  MCR_CACHE_SIZE=[ 20M]
+run	k0_env	EXIT	0
+  ctfroot	char [1 155] '<WORK>\size_20M\R2025b\k0_env0'
+  which.k0_show	char [1 172] '<WORK>\size_20M\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 20
+CASE	size_1_5M
+  MCR_CACHE_SIZE=[1.5M]
+run	k0_env	EXIT	0
+  ctfroot	char [1 156] '<WORK>\size_1_5M\R2025b\k0_env0'
+  which.k0_show	char [1 173] '<WORK>\size_1_5M\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 1
+CASE	evict
+run	k0_env	EXIT	0
+  ctfroot	char [1 152] '<WORK>\evict\R2025b\k0_env0'
+  which.k0_show	char [1 169] '<WORK>\evict\R2025b\k0_env0\k0_env\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	3	300
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:06:58.718402\r\n
+  entry	k0_env0	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+run	k0_path	EXIT	0
+  which.k0_show.after.cd	char [1 170] '<WORK>\evict\R2025b\k0_pat0\k0_path\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	3	300
+  file	.mcr_cache_index	91	k0_path_aee0634b-848c-4331-b2cc-70ed592a6409\r\nk0_pat0\r\n33617\r\n2026-Oct-24 02:07:02.862245\r\n
+  entry	k0_pat0	files 29	bytes 128163	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_path/ k0_path_aee0634b-848c-4331-b2cc-70ed592a6409/ toolbox/ Users/
+run	k0_env	EXIT	0
+  ctfroot	char [1 152] '<WORK>\evict\R2025b\k0_env0'
+  which.k0_show	char [1 169] '<WORK>\evict\R2025b\k0_env0\k0_env\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	3	300
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:07:06.109948\r\n
+  entry	k0_env0	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+CASE	evict_unset
+run	k0_env	EXIT	0
+  ctfroot	char [1 158] '<WORK>\evict_unset\R2025b\k0_env0'
+  which.k0_show	char [1 175] '<WORK>\evict_unset\R2025b\k0_env0\k0_env\k0_show.m'
+run	k0_path	EXIT	0
+  which.k0_show.after.cd	char [1 176] '<WORK>\evict_unset\R2025b\k0_pat0\k0_path\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	3	300
+  file	.mcr_cache_index	91	k0_path_aee0634b-848c-4331-b2cc-70ed592a6409\r\nk0_pat0\r\n33617\r\n2026-Oct-24 02:07:16.309182\r\n
+  entry	k0_pat0	files 29	bytes 128163	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_path/ k0_path_aee0634b-848c-4331-b2cc-70ed592a6409/ toolbox/ Users/
+CASE	evict_units
+run	k0_env	EXIT	0
+  ctfroot	char [1 158] '<WORK>\evict_units\R2025b\k0_env0'
+  which.k0_show	char [1 175] '<WORK>\evict_units\R2025b\k0_env0\k0_env\k0_show.m'
+run	k0_path	EXIT	0
+  which.k0_show.after.cd	char [1 176] '<WORK>\evict_units\R2025b\k0_pat0\k0_path\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	4	1000
+  file	.mcr_cache_index	91	k0_path_aee0634b-848c-4331-b2cc-70ed592a6409\r\nk0_pat0\r\n33617\r\n2026-Oct-24 02:07:22.873883\r\n
+  entry	k0_pat0	files 29	bytes 128164	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_path/ k0_path_aee0634b-848c-4331-b2cc-70ed592a6409/ toolbox/ Users/
+CASE	evict_bytes
+run	k0_env	EXIT	0
+  ctfroot	char [1 158] '<WORK>\evict_bytes\R2025b\k0_env0'
+  which.k0_show	char [1 175] '<WORK>\evict_bytes\R2025b\k0_env0\k0_env\k0_show.m'
+run	k0_path	EXIT	0
+  which.k0_show.after.cd	char [1 176] '<WORK>\evict_bytes\R2025b\k0_pat0\k0_path\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	6	400000
+  file	.mcr_cache_index	181	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:07:26.065933\r\nk0_path_aee0634b-848c-4331-b2cc-70ed592a6409\r\nk0_pat0\r\n33617\r\n2026-Oct-24 02:07:29.150147\r\n
+  entry	k0_env0	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/
+  entry	k0_pat0	files 29	bytes 128164	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_path/ k0_path_aee0634b-848c-4331-b2cc-70ed592a6409/ toolbox/ Users/
+CASE	size_rewrite
+run	k0_env	EXIT	0
+  ctfroot	char [1 159] '<WORK>\size_rewrite\R2025b\k0_env0'
+  which.k0_show	char [1 176] '<WORK>\size_rewrite\R2025b\k0_env0\k0_env\k0_show.m'
+run	k0_env	EXIT	0
+  ctfroot	char [1 159] '<WORK>\size_rewrite\R2025b\k0_env0'
+  which.k0_show	char [1 176] '<WORK>\size_rewrite\R2025b\k0_env0\k0_env\k0_show.m'
+  .max_size: 300
+CASE	no_created_ts_file
+run	k0_env	EXIT	0
+  ctfroot	char [1 165] '<WORK>\no_created_ts_file\R2025b\k0_env0'
+  which.k0_show	char [1 182] '<WORK>\no_created_ts_file\R2025b\k0_env0\k0_env\k0_show.m'
+  deleted .created.ts and k0_env\k0_show.m
+run	k0_env	EXIT	0
+  ctfroot	char [1 165] '<WORK>\no_created_ts_file\R2025b\k0_env0'
+  which.k0_show	char [1 182] '<WORK>\no_created_ts_file\R2025b\k0_env0\k0_env\k0_show.m'
+  file	.deploy_lock	0	
+  file	.max_size	10	1073741824
+  file	.mcr_cache_index	90	k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549\r\nk0_env0\r\n66393\r\n2026-Oct-24 02:07:42.417258\r\n
+  entry	k0_env0	files 27	bytes 226665	.created.ts(0) .deploy_lock(0) .matlab/ .META/ k0_env/ k0_env_47cac3d5-9d1e-4a18-a4a9-f37116cf8549/ toolbox/ Users/

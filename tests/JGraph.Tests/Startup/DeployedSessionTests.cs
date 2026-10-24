@@ -191,7 +191,7 @@ public sealed class DeployedSessionTests : IDisposable
         Assert.True(options.NumericArguments);
         Assert.Equal(["1", "-x", "--"], options.ProgramArguments);
 
-        Assert.True(StartupCommandLine.Parse(["--deployed", "ctf"]).HasUsageError);
+        Assert.True(StartupCommandLine.Parse(["-r", "1", "--deployed", "ctf"]).HasUsageError);
         Assert.True(StartupCommandLine.Parse(["-batch", "app.m", "--deployed-numeric"]).HasUsageError);
         Assert.True(StartupCommandLine.Parse(["-batch", "app.m", "--", "1"]).HasUsageError);
         Assert.DoesNotContain("deployed", StartupHelp.UsageText, StringComparison.Ordinal);
@@ -546,5 +546,124 @@ public sealed class DeployedSessionTests : IDisposable
 
         Assert.Equal(0, await BatchRunner.RunAsync(options, Engines, _output, static (_, _) => { }));
         Assert.Equal(["deployed=0"], _output.NormalLines);
+    }
+
+    // --- An archive (stage K3) ----------------------------------------------------------------
+
+    /// <summary>
+    /// Builds <see cref="Component"/>'s files into a JGraph archive (the layout from a report, as
+    /// K6's mcc will make it) and runs it as <c>jgraph --deployed app.ctf -- args</c>, with the
+    /// runtime cache under the test's folder.
+    /// </summary>
+    private async Task<int> Archived(string main, string[]? arguments = null, Action<JGraph.Deploy.CtfBuild>? check = null)
+    {
+        var files = Directory.EnumerateFiles(Ctf, "*", SearchOption.AllDirectories).Order(StringComparer.Ordinal)
+            .Select(f => new JGraph.Deploy.DependencyFile(f, f == main ? JGraph.Deploy.DependencyReason.Root : JGraph.Deploy.DependencyReason.Code, null))
+            .ToList();
+        JGraph.Deploy.CtfBuild build = JGraph.Deploy.CtfLayout.FromReport("app", main, new JGraph.Deploy.DependencyReport(files, [], [], []));
+        check?.Invoke(build);
+        string archive = Path.Combine(_root, "app.ctf");
+        JGraph.Deploy.CtfArchiveWriter.Write(archive, build);
+
+        Directory.CreateDirectory(Run);
+        string? before = Environment.GetEnvironmentVariable("MCR_CACHE_ROOT");
+        Environment.SetEnvironmentVariable("MCR_CACHE_ROOT", CacheRoot);
+        try
+        {
+            StartupOptions options = StartupCommandLine.Parse(["--deployed", archive, "-sd", Run, "--", .. arguments ?? []]);
+            Assert.False(options.HasUsageError, options.UsageError);
+            return await BatchRunner.RunAsync(options, Engines, _output, static (_, _) => { });
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("MCR_CACHE_ROOT", before);
+        }
+    }
+
+    private string CacheRoot => Path.Combine(_root, "cache");
+
+    [Fact]
+    public async Task Archive_RunsItsMainFromTheExtractedCopy_WithCtfrootTheCachesEntry()
+    {
+        Put(Component, "helper.m", "function r = helper(a)\nr = a * 2;\nend\n");
+        Put(Assets, "inside.txt", "packaged");
+        string main = Main("""
+            fprintf('deployed=%d nargin=%d %s\n', isdeployed, nargin, varargin{1});
+            fprintf('helper=%d\n', helper(21));
+            fprintf('data=%s\n', fileread('inside.txt'));
+            fprintf('ctfroot=%s\n', ctfroot);
+            fprintf('cache=%s\n', mcrcachedir);
+            fprintf('which=%s\n', which('helper'));
+            """);
+
+        Assert.Equal(0, await Archived(main, ["first"]));
+        string cache = Directory.GetDirectories(CacheRoot).Single();
+        string entry = Directory.GetDirectories(cache).Single();
+        Assert.Matches("^app_[0-9a-f]{2}0$", Path.GetFileName(entry));
+        Assert.Equal(
+            [
+                "deployed=1 nargin=1 first", "helper=42", "data=packaged", "ctfroot=" + entry, "cache=" + cache,
+                "which=" + Path.Combine(entry, "app", "helper.m"),
+            ],
+            _output.NormalLines);
+    }
+
+    [Fact]
+    public async Task Archive_ASecondRunReusesTheCachesCopy()
+    {
+        string main = Main("fprintf('%s\\n', ctfroot);");
+        Assert.Equal(0, await Archived(main));
+        string first = _output.NormalLines[^1];
+        string archive = Path.Combine(_root, "app.ctf");
+        Environment.SetEnvironmentVariable("MCR_CACHE_ROOT", CacheRoot);
+        try
+        {
+            StartupOptions options = StartupCommandLine.Parse(["--deployed", archive, "-sd", Run]);
+            Assert.Equal(0, await BatchRunner.RunAsync(options, Engines, _output, static (_, _) => { }));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("MCR_CACHE_ROOT", null);
+        }
+
+        Assert.Equal(first, _output.NormalLines[^1]);
+        Assert.Single(Directory.GetDirectories(Directory.GetDirectories(CacheRoot).Single()));
+    }
+
+    [Fact]
+    public async Task Archive_AnUncaughtErrorEndsTheProgramWith249()
+    {
+        string main = Main("error('k3:boom', 'Boom');");
+        Assert.Equal(ScriptDeployment.UncaughtErrorExitCode, await Archived(main));
+        Assert.EndsWith("k3:boom", _output.ErrorText);
+    }
+
+    [Fact]
+    public async Task Archive_ThatIsNotOneIsRefusedBeforeAnythingRuns()
+    {
+        string notArchive = Put(_root, "app.ctf", "not an archive");
+        StartupOptions options = StartupCommandLine.Parse(["--deployed", notArchive]);
+        Assert.Equal(StartupExitCodes.UsageError, await BatchRunner.RunAsync(options, Engines, _output, static (_, _) => { }));
+        Assert.Contains("holds no archive", _output.ErrorText);
+
+        options = StartupCommandLine.Parse(["--deployed", Path.Combine(_root, "missing.ctf")]);
+        Assert.Equal(StartupExitCodes.UsageError, await BatchRunner.RunAsync(options, Engines, _output, static (_, _) => { }));
+        Assert.Contains("does not exist", _output.ErrorText);
+    }
+
+    [Fact]
+    public void CommandLine_TakesAnArchiveWithoutBatch_AndExtractCtfFirst()
+    {
+        StartupOptions archive = StartupCommandLine.Parse(["--deployed", "app.ctf", "--", "a", "-b"]);
+        Assert.Equal(StartupMode.Batch, archive.Mode);
+        Assert.Null(archive.Statement);
+        Assert.Equal("app.ctf", archive.DeployedRoot);
+        Assert.Equal(["a", "-b"], archive.ProgramArguments);
+        Assert.True(StartupCommandLine.Parse(["--deployed", "app.ctf", "--deployed-numeric"]).HasUsageError);
+
+        StartupOptions extract = StartupCommandLine.Parse(["-extractCTF", "app.ctf", "out"]);
+        Assert.Equal(StartupMode.ExtractCtf, extract.Mode);
+        Assert.Equal(["app.ctf", "out"], extract.ProgramArguments);
+        Assert.True(StartupCommandLine.Parse(["-batch", "1", "-extractCTF", "app.ctf"]).HasUsageError);
     }
 }

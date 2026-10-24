@@ -2146,6 +2146,7 @@ unmesh	2	2
 unmkpp	5	2
 unshiftdata	1	2
 unwrap	1	2
+unzip	-1	2
 upfirdn	1	2
 uplus	1	5
 upper	1	5
@@ -2254,6 +2255,7 @@ z2s	1	2
 zerocrossrate	-1	2
 zerophase	-1	2
 zeros	1	5
+zip	-1	2
 zlabel	1	2
 zlim	-1	2
 zoomInteraction	1	2

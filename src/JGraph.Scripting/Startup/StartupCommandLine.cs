@@ -109,10 +109,19 @@ public static class StartupCommandLine
 
                     if (!TryTakeValue(args, ref i, out deployedRoot))
                     {
-                        return StartupOptions.Invalid("--deployed requires the folder that stands in for the archive.");
+                        return StartupOptions.Invalid("--deployed requires an archive, or with -batch the folder that stands in for one.");
                     }
 
                     break;
+
+                // Hidden (stage K3): R2025b's extractCTF utility; everything after it is its own.
+                case "extractctf":
+                    if (i != 0)
+                    {
+                        return StartupOptions.Invalid("-extractCTF must come first; what follows it is the archive and the folder.");
+                    }
+
+                    return new StartupOptions(StartupMode.ExtractCtf) { ProgramArguments = [.. args.Skip(1)] };
 
                 case "deployed-numeric":
                     numeric = true;
@@ -142,9 +151,25 @@ public static class StartupCommandLine
                 "-showfigures only applies to -batch; an interactive session already shows its figures.");
         }
 
+        // --deployed with no -batch runs an archive, whose manifest names the main and says whether
+        // it was built with mcc -n (K3).
+        if (deployedRoot is not null && mode is null && !showFigures)
+        {
+            if (numeric)
+            {
+                return StartupOptions.Invalid("--deployed-numeric only applies with -batch: an archive says whether it was built with mcc -n.");
+            }
+
+            return new StartupOptions(StartupMode.Batch, null, logFile, startDirectory)
+            {
+                DeployedRoot = deployedRoot,
+                ProgramArguments = programArguments,
+            };
+        }
+
         if ((deployedRoot is not null || numeric || programArguments.Count > 0) && mode != StartupMode.Batch)
         {
-            return StartupOptions.Invalid("--deployed, --deployed-numeric and -- only apply to -batch.");
+            return StartupOptions.Invalid("--deployed, --deployed-numeric and -- only apply to -batch, or to --deployed with an archive.");
         }
 
         if ((numeric || programArguments.Count > 0) && deployedRoot is null)

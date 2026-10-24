@@ -257,6 +257,10 @@ public static class JgsBuiltinCatalog
         Add("matlab.codetools.requiredFilesAndProducts", "The user files the named files need, and the products: [fList, pList] = matlab.codetools.requiredFilesAndProducts(files) follows calls, handles, classes, %#function and the data files literals name; 'toponly' stops at what the files themselves name.", P("files"), Opt("'toponly'"));
         Add("compiler.codetools.deployableSupportPackages", "The support packages the named files need to deploy; JGraph has none, so the answer is always empty.", P("files"));
 
+        // --- Archives (compiler and SDK plan, stage K3) ---------------------------------------------
+        Add("zip", "Writes files, folders and wildcard matches into a .zip archive; entries = zip(zipfile, files, rootfolder) names each entry relative to rootfolder (the current folder when omitted).", P("zipfile"), P("files"), Opt("rootfolder"));
+        Add("unzip", "Extracts a .zip archive into a folder (the current one when omitted), replacing files already there; files = unzip(zipfile, folder) lists what it wrote.", P("zipfile"), Opt("folder"));
+
         // --- Files, folders, and the machine --------------------------------------------------------
         Add("pwd", "The working directory relative paths resolve against.");
         Add("cd", "Moves to a folder; with no argument it reports where it is.", Opt("folder"));

@@ -14,6 +14,12 @@ public enum StartupMode
 
     /// <summary>Show the startup-option documentation (<c>-h</c>/<c>-help</c>).</summary>
     Help,
+
+    /// <summary>
+    /// The hidden <c>-extractCTF archive [folder]</c> (compiler and SDK plan, stage K3): R2025b's
+    /// <c>extractCTF</c> utility over a JGraph archive; its arguments are <see cref="StartupOptions.ProgramArguments"/>.
+    /// </summary>
+    ExtractCtf,
 }
 
 /// <summary>
@@ -39,9 +45,10 @@ public sealed record StartupOptions(
     string? UsageError = null)
 {
     /// <summary>
-    /// The hidden <c>--deployed &lt;folder&gt;</c> switch (compiler and SDK plan, stage K1): run the
-    /// <c>-batch</c> file as a compiled program's main, with the folder standing in for its
-    /// extracted archive. Null for an ordinary run.
+    /// The hidden <c>--deployed</c> switch (compiler and SDK plan): with <c>-batch</c>, a folder
+    /// standing in for the extracted archive of the program whose main is the <c>-batch</c> file
+    /// (stage K1); without it, a JGraph archive, or a program carrying one, run as a compiled program
+    /// runs, its main named by its manifest (stage K3). Null for an ordinary run.
     /// </summary>
     public string? DeployedRoot { get; init; }
 
