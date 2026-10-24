@@ -1,0 +1,23 @@
+mcc.m_plain	ok
+mcc.e_plain	ok
+mcc.m_named	ok
+mcc.m_version	ok
+mcc.e_winmain	ok
+mcc.m_help	ok
+mcc.m_separate	ok
+mcc.m_fig	ok
+mcc.e_fig	ok
+mcc.m_err	ok
+mcc.e_err	ok
+mcc.e_wait	ok
+mcc.e_app_m	ok
+mcc.e_app_mlapp	ok
+mcc.m_app_mlapp	ok
+api_m	ok standaloneApplication | <OUT>\k6_api.exe | <OUT>\readme.txt
+api_e	ok standaloneWindowsApplication | <OUT>\k6_wait.exe | <OUT>\splash.png | <OUT>\readme.txt
+api_e_default	ok standaloneWindowsApplication | <OUT>\k6_hello.exe | <OUT>\splash.png | <OUT>\readme.txt
+api_e_app	ok standaloneWindowsApplication | <OUT>\k6_app.exe | <OUT>\splash.png | <OUT>\readme.txt
+api_m_separate	ok standaloneApplication | <OUT>\k6_hello.exe | <OUT>\readme.txt | <OUT>\k6_hello.ctf
+api_m_numeric	ok standaloneApplication | <OUT>\k6_hello.exe | <OUT>\readme.txt
+
+EXIT	0

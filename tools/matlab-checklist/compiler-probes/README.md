@@ -1,4 +1,4 @@
-# Compiler and SDK probes (stages K0-K4)
+# Compiler and SDK probes (stages K0-K6)
 
 Recordings of what R2025b's MATLAB Compiler builds and what the programs it builds do when run,
 for the compiler and SDK plan (`docs/plans/compiler-and-sdk-plan.md`, stage K0). Later stages
@@ -54,7 +54,12 @@ and runs them only when they are named; tell the user before running one.
 | `src/k5/k5.m`, `probe_k5_build.m` | Stage K5's function and its build as the .NET assembly K5: a timer one call starts and the ticks it counts and prints, a pause, a busy loop, invisible figures (stage K5, ADR 0261). No window is shown. |
 | `src/k5client/` | A C# client of K5: whether the timer ticks while the client sleeps between calls, inside a call that pauses and inside one that computes; `WaitForFiguresToDie` with nothing and with an invisible figure open; and one invisible figure left for the runtime's warning when the process ends. |
 | `record-k5.ps1` | Runs `probe_k5_build` and the client built with `dotnet`, through `run-quiet.ps1`; writes `recordings/k5_build.out.txt` and `k5_client.out.txt`. |
-| `recordings-jgraph/` | JGraph's recordings of K0's cases, with the same tokens, and the lines that differ from R2025b's. |
+| `src/k6/`, `probe_k6_build.m` | Stage K6's mains (`k6_hello`, `k6_fig`, `k6_err`, `k6_wait`, the app class `k6_app` and the help text) and their builds: `mcc -m` and `-e` with `-o`, `-W main:`/`WinMain:` and versions, `-r` (an `.ico` and a `.png`), `-h`, `-C`, the `.mlapp` R2025b's serializer saves from `k6_app.m`, refused output names, and `compiler.build.standaloneApplication`/`standaloneWindowsApplication` with an icon, a splash, verbose, a separate archive and `-n`; each build's files, readme, splash and results, and the options' refusals (stage K6, ADR 0262). |
+| `probe_k6_roots.m` | Whether mcc searches its main's own folder when the main is built from elsewhere (it does, where `requiredFilesAndProducts` does not), and where an archive places the files by the folder mcc runs in. |
+| `pe-resources.py` | What a Windows program carries: subsystem, sections, imports, icon groups and images, the version block, the manifest, the archive appended. Reads R2025b's builds and JGraph's alike. |
+| `record-k6.ps1`, `k6-windows.ps1` | Runs the two probes, the PE reports and the console programs through `run-quiet.ps1`, and - with the user's leave, given 2026-10-24 - the windowed ones, each watched by `k6-windows.ps1`'s window timeline and closed through UI Automation patterns; writes `recordings/k6_build.out.txt`, `k6_roots.out.txt`, `k6_pe.out.txt`, `k6_console.out.txt` and `k6_windows.out.txt`. |
+| `run-k6.ps1`, `build_k6_jgraph.m` | The same programs built by JGraph's `mcc` and `compiler.build` under a published JGraph Runtime's `jgraph -batch`, then the same reports, runs and window timelines; writes `recordings-jgraph/k6_*.out.txt` and `k6_differences.txt`, the console lines that differ from R2025b's. JGraph windows only. |
+| `recordings-jgraph/` | JGraph's recordings of K0's cases and K6's, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
 | `research-2026-10-21/` | Sources from the plan's research session: the SDK client programs (C, C++, .NET MWArray, .NET Data API, Python) for stages K8-K13, the `mps.json` probes and their output for K14, and the options probes. |
@@ -72,6 +77,9 @@ powershell -File record-k3-cache.ps1 -BuildRoot <the K0 build scratch> -WorkRoot
 powershell -File record-k3b.ps1 -WorkRoot <a fifth scratch>
 powershell -File record-k4.ps1 -WorkRoot <a sixth scratch>
 powershell -File record-k5.ps1 -WorkRoot <a seventh scratch>
+powershell -File record-k6.ps1 -WorkRoot <an eighth scratch>            # -Skip windows without the user's leave
+powershell -File ..\..\..\installer\publish-runtime.ps1 -Output <a runtime scratch>
+powershell -File run-k6.ps1 -WorkRoot <a ninth scratch> -Runtime <the runtime scratch> -Mlapp <eighth>\b\src\mlapp\k6_app.mlapp
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

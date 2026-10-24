@@ -34,6 +34,9 @@ internal static partial class JgsBuiltinClasses
         AppClass => AppDeclaration(interpreter),
         Style => StyleDeclaration(),
         ComponentContainer => ComponentContainerDeclaration(interpreter),
+        StandaloneOptions => StandaloneOptionsDeclaration(interpreter),
+        BuildResults => BuildResultsDeclaration(),
+        RuntimeDependencies => RuntimeDependenciesDeclaration(),
         _ => null,
     };
 

@@ -1,0 +1,4 @@
+mcc	ERR:MATLAB:narginout:doesNotApply	3
+compiler.build.standaloneApplication	-1	0
+compiler.build.standaloneWindowsApplication	-1	0
+compiler.build.StandaloneApplicationOptions	1	8

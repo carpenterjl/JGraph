@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace JGraph.Runtime;
+namespace JGraph.Deploy;
 
 /// <summary>Where a JGraph Runtime was found.</summary>
 public enum RuntimeLocationSource
@@ -27,6 +27,8 @@ public enum RuntimeLocationSource
 /// <item><term><c>python</c></term><description>The <c>matlab</c> array module and the package runtime (stage K13).</description></item>
 /// <item><term><c>launchers\win64</c></term><description>The console and windowed launcher templates <c>mcc -m</c> and <c>-e</c> copy (stage K6).</description></item>
 /// </list>
+/// It lives with the build side (moved from <c>JGraph.Runtime</c> in stage K6): a build looks here
+/// for the runtime a program carries with it, and the runtime looks here for itself.
 /// </summary>
 public sealed class RuntimeLayout
 {
@@ -144,7 +146,7 @@ public sealed class RuntimeLayout
 
     /// <summary>The marker's text for a runtime of <paramref name="version"/>, as the layout's publish writes it.</summary>
     public static string MarkerText(string version) =>
-        JsonSerializer.Serialize(new { version, release = JGraph.Deploy.RuntimeOptions.Release }, new JsonSerializerOptions { WriteIndented = true });
+        JsonSerializer.Serialize(new { version, release = RuntimeOptions.Release }, new JsonSerializerOptions { WriteIndented = true });
 
     private static IEnumerable<string> RegisteredRoots(string version)
     {

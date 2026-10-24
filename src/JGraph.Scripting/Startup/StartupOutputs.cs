@@ -183,6 +183,9 @@ public sealed class DeployedLogOutput : IScriptOutput, IDeployedReportSink, IDis
             : report + "\n");
     }
 
+    /// <summary>The output the program's text reaches besides the log.</summary>
+    public IScriptOutput Console => _console;
+
     /// <inheritdoc />
     public void Dispose() => _log.Dispose();
 
@@ -193,6 +196,16 @@ public sealed class DeployedLogOutput : IScriptOutput, IDeployedReportSink, IDis
             _log.Write(text);
         }
     }
+}
+
+/// <summary>
+/// The output of a windowed program (<c>mcc -e</c>, stage K6), which has no console: R2025b shows the
+/// uncaught error that ends one in a dialog titled <c>Error</c> and exits once it is dismissed.
+/// </summary>
+public interface IDeployedErrorDialog
+{
+    /// <summary>Shows <paramref name="text"/> and returns when the dialog is dismissed.</summary>
+    void ShowError(string text);
 }
 
 /// <summary>A sink that writes a deployed program's uncaught error report in its own way (stage K4).</summary>

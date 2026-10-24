@@ -1,0 +1,226 @@
+CASE	e_plain
+RUN	e_plain\k6_hello.exe a b c
+ACTION	none
+  t=  0.85 + 2e089e k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  0.96 - 2e089e
+  t=  1.07 runner exited
+  EXIT	0
+  SECONDS	0.4
+  LOG t=  1.11 nargin	2
+  LOG t=  1.11 arg1	a
+  LOG t=  1.11 arg2	b c
+  LOG t=  1.11 isdeployed	1
+  LOG t=  1.11 end
+CASE	e_wait
+RUN	e_wait\k6_wait.exe 
+ACTION	none
+  t=  0.85 + 2f089e k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  4.00 runner exited
+  EXIT	0
+  SECONDS	3.4
+  LOG t=  0.89 start
+  LOG t=  3.90 end
+CASE	api_e_wait
+RUN	api_e\k6_wait.exe 
+ACTION	none
+  t=  0.73 + 30089e k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  0.73 + 300a64 k6_wait.exe JGraphSplash '' shown 400x400
+  t=  0.73 + fd090c k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  0.73 + 4d03fe k6_wait.exe GDI+ Hook Window Class 'GDI+ Window (k6_wait.exe)' hidden 1x1
+  t=  0.84 + 8f098e k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  4.00 runner exited
+  EXIT	0
+  SECONDS	3.5
+  LOG t=  0.91 start
+  LOG t=  3.93 end
+CASE	api_e_default
+RUN	api_e_default\k6_hello.exe 
+ACTION	none
+  t=  0.71 + 4b08a8 k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  0.71 + fe090c k6_hello.exe JGraphSplash '' shown 400x400
+  t=  0.71 + 4e03fe k6_hello.exe GDI+ Hook Window Class 'GDI+ Window (k6_hello.exe)' hidden 1x1
+  t=  0.71 + 310a64 k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  0.95 + 90098e k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  1.05 runner exited
+  EXIT	0
+  SECONDS	0.5
+  LOG t=  0.96 nargin	0
+  LOG t=  0.96 isdeployed	1
+  LOG t=  0.96 end
+CASE	e_fig
+RUN	e_fig\k6_fig.exe 
+ACTION	close:k6 figure
+  t=  0.92 + ff090c k6_fig.exe IME 'Default IME' hidden 0x0
+  t=  1.03 + 320a64 k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'MediaContextNotificationWindow' hidden 0x0
+  t=  1.15 + 3a0936 k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'SystemResourceNotifyWindow' hidden 0x0
+  t=  1.15 + 1d4024a k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'k6 figure' hidden 1440x843
+  t=  1.27 + 5b06da k6_fig.exe IME 'Default IME' hidden 0x0
+  t=  1.27 + 990922 k6_fig.exe TabletPenServiceHelperClass 'WISPTIS' hidden 0x0
+  t=  1.27 + 1d4024a k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'k6 figure' hidden 1200x720
+  t=  1.38 + 1d4024a k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'k6 figure' shown 1200x720
+  t=  1.51 + 6a0868 k6_fig.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 0x0
+  t=  1.51 + 460966 k6_fig.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  1.51 + ea0a30 k6_fig.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 200x200
+  t=  2.95 ACTION WindowPattern.Close 'k6 figure'
+  t=  3.10 runner exited
+  EXIT	0
+  SECONDS	2.5
+  LOG t=  0.92 start
+  LOG t=  1.48 shown 1
+  LOG t=  1.48 end
+CASE	m_fig
+RUN	m_fig\k6_fig.exe 
+ACTION	close:k6 figure
+  t=  0.83 + 1106a2 k6_fig.exe IME 'Default IME' hidden 0x0
+  t=  1.06 + 5003fe k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'MediaContextNotificationWindow' hidden 0x0
+  t=  1.18 + 4d08a8 k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'SystemResourceNotifyWindow' hidden 0x0
+  t=  1.18 + 18065e k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'k6 figure' hidden 1200x720
+  t=  1.18 + eb0a30 k6_fig.exe TabletPenServiceHelperClass 'WISPTIS' hidden 0x0
+  t=  1.18 + 3b0936 k6_fig.exe IME 'Default IME' hidden 0x0
+  t=  1.30 + 33089e k6_fig.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  1.30 + 18065e k6_fig.exe HwndWrapper[jglaunch;;<UUID>] 'k6 figure' shown 1200x720
+  t=  1.42 + 92098e k6_fig.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 200x200
+  t=  1.42 + 1d5024a k6_fig.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 0x0
+  t=  2.83 ACTION WindowPattern.Close 'k6 figure'
+  t=  2.96 runner exited
+  beep.default	on
+  start
+  shown 1
+  end
+  EXIT	0
+  SECONDS	2.4
+  LOG t=  0.93 start
+  LOG t=  1.36 shown 1
+  LOG t=  1.36 end
+CASE	e_err
+RUN	e_err\k6_err.exe 
+ACTION	dismiss
+  t=  0.84 + 6109d2 k6_err.exe IME 'Default IME' hidden 0x0
+  t=  0.96 + 1206a2 k6_err.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  0.96 + 9b0922 k6_err.exe IME 'Default IME' hidden 0x0
+  t=  0.96 + e0a90 k6_err.exe #32770 'Error' shown 261x159
+  t=  4.99 ACTION dismiss 'Error': Pane:OK | Pane:k6 failed on purpose
+Error in => k6_err.m at line 12
+  t=  5.11 runner exited
+  EXIT	249
+  SECONDS	4.5
+  LOG t=  0.92 before
+CASE	e_app_m
+RUN	e_app_m\k6_app.exe 
+ACTION	press:k6 app:Close
+  t=  0.82 + 6209d2 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  0.93 + 98098e k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'MediaContextNotificationWindow' hidden 0x0
+  t=  1.04 + f0a90 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'SystemResourceNotifyWindow' hidden 0x0
+  t=  1.16 + 9c0922 k6_app.exe TabletPenServiceHelperClass 'WISPTIS' hidden 0x0
+  t=  1.16 + 490864 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' hidden 1200x720
+  t=  1.16 + 4f08a8 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  1.27 + 490864 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' shown 276x159
+  t=  1.27 + 6c0868 k6_app.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 200x200
+  t=  1.27 + 19065e k6_app.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 0x0
+  t=  1.27 + 5d06da k6_app.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  2.84 ACTION InvokePattern 'Close' in 'k6 app'
+  t=  2.98 - f0a90
+  t=  2.98 - 98098e
+  t=  2.98 - 9c0922
+  t=  2.98 - 490864
+  t=  2.98 - 4f08a8
+  t=  2.98 - 6c0868
+  t=  2.98 - 19065e
+  t=  2.98 - 6209d2
+  t=  2.98 - 5d06da
+  t=  3.09 runner exited
+  EXIT	0
+  SECONDS	2.5
+  LOG none
+CASE	e_app_mlapp
+RUN	e_app_mlapp\k6_app.exe 
+ACTION	press:k6 app:Close
+  t=  0.92 + 4a0966 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  1.02 + 360a64 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'MediaContextNotificationWindow' hidden 0x0
+  t=  1.14 + ee0a30 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'SystemResourceNotifyWindow' hidden 0x0
+  t=  1.26 + 35089e k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' shown 1200x720
+  t=  1.26 + 100a90 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  1.26 + 6d0868 k6_app.exe TabletPenServiceHelperClass 'WISPTIS' hidden 0x0
+  t=  1.38 + 35089e k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' shown 276x159
+  t=  1.38 + 4a0864 k6_app.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 0x0
+  t=  1.38 + 3e0936 k6_app.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  1.38 + 1d8024a k6_app.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 200x200
+  t=  2.83 ACTION InvokePattern 'Close' in 'k6 app'
+  t=  2.97 - 35089e
+  t=  2.97 - 4a0966
+  t=  2.97 - 4a0864
+  t=  2.97 - 360a64
+  t=  2.97 - ee0a30
+  t=  2.97 - 3e0936
+  t=  2.97 - 1d8024a
+  t=  2.97 - 100a90
+  t=  2.97 - 6d0868
+  t=  3.08 runner exited
+  EXIT	0
+  SECONDS	2.4
+  LOG none
+CASE	m_app_mlapp
+RUN	m_app_mlapp\k6_app_console.exe 
+ACTION	close:k6 app
+  t=  0.82 + 103090c k6_app_console.exe IME 'Default IME' hidden 0x0
+  t=  1.06 + 5303fe k6_app_console.exe HwndWrapper[jglaunch;;<UUID>] 'MediaContextNotificationWindow' hidden 0x0
+  t=  1.17 + 9e0922 k6_app_console.exe HwndWrapper[jglaunch;;<UUID>] 'SystemResourceNotifyWindow' hidden 0x0
+  t=  1.17 + 5f06da k6_app_console.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' hidden 1200x720
+  t=  1.17 + ef0a30 k6_app_console.exe IME 'Default IME' hidden 0x0
+  t=  1.17 + 1d9024a k6_app_console.exe TabletPenServiceHelperClass 'WISPTIS' hidden 0x0
+  t=  1.29 + 36089e k6_app_console.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 0x0
+  t=  1.29 + 5f06da k6_app_console.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' shown 276x720
+  t=  1.29 + 1b065e k6_app_console.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 200x200
+  t=  1.29 + 5108a8 k6_app_console.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  1.41 + 5f06da k6_app_console.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' shown 276x159
+  t=  2.88 ACTION WindowPattern.Close 'k6 app'
+  t=  2.99 - 36089e
+  t=  2.99 - 9e0922
+  t=  2.99 - 5f06da
+  t=  2.99 - ef0a30
+  t=  2.99 - 1b065e
+  t=  2.99 - 1d9024a
+  t=  2.99 - 103090c
+  t=  2.99 - 5108a8
+  t=  2.99 - 5303fe
+  t=  3.10 runner exited
+  k6_app	started
+  EXIT	0
+  SECONDS	2.5
+  LOG none
+CASE	api_e_app
+RUN	api_e_app\k6_app.exe 
+ACTION	press:k6 app:Close
+  t=  0.71 + 1606a2 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  0.71 + 1da024a k6_app.exe IME 'Default IME' hidden 0x0
+  t=  0.71 + f00a30 k6_app.exe JGraphSplash '' shown 400x400
+  t=  0.71 + 380a64 k6_app.exe GDI+ Hook Window Class 'GDI+ Window (k6_app.exe)' hidden 1x1
+  t=  0.83 + 37089e k6_app.exe IME 'Default IME' hidden 0x0
+  t=  1.05 + 6609d2 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'MediaContextNotificationWindow' hidden 0x0
+  t=  1.18 + 1c065e k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'SystemResourceNotifyWindow' hidden 0x0
+  t=  1.18 + 9f0922 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' hidden 1200x720
+  t=  1.18 + 120a90 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  1.18 + 5403fe k6_app.exe TabletPenServiceHelperClass 'WISPTIS' hidden 0x0
+  t=  1.30 + 210452 k6_app.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  1.30 + 9f0922 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' shown 276x720
+  t=  1.30 + 4c07b4 k6_app.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 0x0
+  t=  1.30 + eb0946 k6_app.exe CiceroUIWndFrame 'CiceroUIWndFrame' hidden 200x200
+  t=  1.42 + 9f0922 k6_app.exe HwndWrapper[jglaunch;;<UUID>] 'k6 app' shown 276x159
+  t=  1.42 - 380a64
+  t=  1.42 - 1606a2
+  t=  1.42 - 1da024a
+  t=  1.42 - f00a30
+  t=  2.90 ACTION InvokePattern 'Close' in 'k6 app'
+  t=  3.04 - 1c065e
+  t=  3.04 - 6609d2
+  t=  3.04 - 4c07b4
+  t=  3.04 - 9f0922
+  t=  3.04 - eb0946
+  t=  3.04 - 37089e
+  t=  3.04 - 120a90
+  t=  3.04 - 5403fe
+  t=  3.04 - 210452
+  t=  3.15 runner exited
+  EXIT	0
+  SECONDS	2.5
+  LOG none

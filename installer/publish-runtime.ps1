@@ -3,8 +3,9 @@
 # runtime's installer will write (stage K18), or an application's own folder.
 #
 #   <root>\jgraph-runtime.json   the marker: the JGraph version and the release it follows
-#   <root>\bin\win64\            the engine, jgraph.exe and JGraph.Runtime.dll, published ReadyToRun, and
-#                                the window host, JGraph.Runtime.Desktop.dll (stage K5)
+#   <root>\bin\win64\            the engine, jgraph.exe and JGraph.Runtime.dll, published ReadyToRun, the
+#                                window host, JGraph.Runtime.Desktop.dll (stage K5), and jglaunch.dll, what
+#                                a standalone program's launcher starts (stage K6)
 #   <root>\runtime\win64\        the native bridge (stage K10)
 #   <root>\include\              the C and C++ headers (stages K11, K12)
 #   <root>\python\               the matlab module (stage K13)
@@ -47,8 +48,19 @@ dotnet publish (Join-Path $root "src\JGraph.Runtime.Desktop") -c $Configuration 
     -p:PublishReadyToRun=$readyToRun -o $bin --nologo
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish of the window host failed." }
 
+# A standalone program's managed entry (stage K6), which its launcher starts through hostfxr: jglaunch.dll,
+# on the Windows desktop framework so a program can show its windows. It publishes no apphost.
+dotnet publish (Join-Path $root "src\JGraph.Runtime.Launch") -c $Configuration -r win-x64 --self-contained false `
+    -p:PublishReadyToRun=$readyToRun -o $bin --nologo
+if ($LASTEXITCODE -ne 0) { throw "dotnet publish of the program entry failed." }
+
 foreach ($folder in "runtime\win64", "include", "python", "launchers\win64") {
     New-Item -ItemType Directory -Force (Join-Path $Output $folder) | Out-Null
+}
+
+# The launcher templates mcc -m and -e copy (stage K6; native\jglaunch, checked in prebuilt).
+foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
+    Copy-Item (Join-Path $root "native\win-x64\launchers\$template") (Join-Path $Output "launchers\win64\$template")
 }
 
 $marker = @{ version = $version; release = "25.2" } | ConvertTo-Json
@@ -56,10 +68,14 @@ $marker = @{ version = $version; release = "25.2" } | ConvertTo-Json
 
 # What the runtime cannot work without; a missing one means the publish layout changed.
 foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.dll", "JGraph.Controls.dll", "JGraph.Scripting.dll",
-    "JGraph.Deploy.dll", "native\libopenblas.dll") {
+    "JGraph.Deploy.dll", "native\libopenblas.dll", "jglaunch.dll", "jglaunch.runtimeconfig.json",
+    "launchers\win64\jglaunch-console.exe", "toolbox\compiler\packagingResources\default_splash.png") {
     if (-not (Test-Path (Join-Path $bin $anchor))) {
         throw "The runtime is missing 'bin\win64\$anchor' - the publish layout changed; fix before shipping."
     }
+}
+foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
+    if (-not (Test-Path (Join-Path $Output "launchers\win64\$template"))) { throw "The runtime is missing 'launchers\win64\$template'." }
 }
 
 # WPF itself must stay out (decision KO5): it comes from the Windows desktop framework of a process

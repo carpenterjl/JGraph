@@ -1,0 +1,1358 @@
+CASE	api_e\k6_wait.exe
+file	k6_wait.exe
+bytes	346614
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	342528
+overlay.bytes	4086
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 41893 bytes
+resource	ICON 2 lang 0: 13649 bytes
+resource	ICON 3 lang 0: 2261 bytes
+resource	ICON 4 lang 0: 1634 bytes
+resource	ICON 5 lang 0: 1219 bytes
+resource	ICON 6 lang 0: 743 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	api_e_app\k6_app.exe
+file	k6_app.exe
+bytes	355143
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	342528
+overlay.bytes	12615
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 41893 bytes
+resource	ICON 2 lang 0: 13649 bytes
+resource	ICON 3 lang 0: 2261 bytes
+resource	ICON 4 lang 0: 1634 bytes
+resource	ICON 5 lang 0: 1219 bytes
+resource	ICON 6 lang 0: 743 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	api_e_default\k6_hello.exe
+file	k6_hello.exe
+bytes	346737
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	342528
+overlay.bytes	4209
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 41893 bytes
+resource	ICON 2 lang 0: 13649 bytes
+resource	ICON 3 lang 0: 2261 bytes
+resource	ICON 4 lang 0: 1634 bytes
+resource	ICON 5 lang 0: 1219 bytes
+resource	ICON 6 lang 0: 743 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	api_m\k6_api.exe
+file	k6_api.exe
+bytes	466028
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	461824
+overlay.bytes	4204
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 134067 bytes
+resource	ICON 2 lang 0: 42611 bytes
+resource	ICON 3 lang 0: 5017 bytes
+resource	ICON 4 lang 0: 2046 bytes
+resource	ICON 5 lang 0: 1117 bytes
+resource	ICON 6 lang 0: 494 bytes
+resource	RCDATA JGRAPH_HELP lang 0: 51 bytes
+  starts	6b 36 20 63 75 73 74 6f 6d 20 68 65 6c 70 2c 20
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	0x0 colors 0 planes 1 bits 32 bytes 134067 id 1: png 256x256
+  icon	128x128 colors 0 planes 1 bits 32 bytes 42611 id 2: png 128x128
+  icon	48x48 colors 0 planes 1 bits 32 bytes 5017 id 3: png 48x48
+  icon	32x32 colors 0 planes 1 bits 32 bytes 2046 id 4: png 32x32
+  icon	24x24 colors 0 planes 1 bits 32 bytes 1117 id 5: png 24x24
+  icon	16x16 colors 0 planes 1 bits 32 bytes 494 id 6: png 16x16
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	3.4.0.0
+  fixed.ProductVersion	3.4.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	3.4.0.0
+  string.ProductVersion	3.4.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	api_m_numeric\k6_hello.exe
+file	k6_hello.exe
+bytes	342131
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	337920
+overlay.bytes	4211
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 41893 bytes
+resource	ICON 2 lang 0: 13649 bytes
+resource	ICON 3 lang 0: 2261 bytes
+resource	ICON 4 lang 0: 1634 bytes
+resource	ICON 5 lang 0: 1219 bytes
+resource	ICON 6 lang 0: 743 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	api_m_separate\k6_hello.exe
+file	k6_hello.exe
+bytes	337920
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	337920
+overlay.bytes	0
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 41893 bytes
+resource	ICON 2 lang 0: 13649 bytes
+resource	ICON 3 lang 0: 2261 bytes
+resource	ICON 4 lang 0: 1634 bytes
+resource	ICON 5 lang 0: 1219 bytes
+resource	ICON 6 lang 0: 743 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	e_app_m\k6_app.exe
+file	k6_app.exe
+bytes	306240
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	302080
+overlay.bytes	4160
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	e_app_mlapp\k6_app.exe
+file	k6_app.exe
+bytes	314697
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	302080
+overlay.bytes	12617
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	e_err\k6_err.exe
+file	k6_err.exe
+bytes	306154
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	302080
+overlay.bytes	4074
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	e_fig\k6_fig.exe
+file	k6_fig.exe
+bytes	306286
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	302080
+overlay.bytes	4206
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	e_plain\k6_hello.exe
+file	k6_hello.exe
+bytes	306291
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	302080
+overlay.bytes	4211
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	e_wait\k6_wait.exe
+file	k6_wait.exe
+bytes	306167
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	302080
+overlay.bytes	4087
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	e_winmain\k6_hello.exe
+file	k6_hello.exe
+bytes	306280
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	302080
+overlay.bytes	4200
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	USER32.dll
+import	SHELL32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	4.5.6.7
+  fixed.ProductVersion	4.5.6.7
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	4.5.6.7
+  string.ProductVersion	4.5.6.7
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	m_app_mlapp\k6_app_console.exe
+file	k6_app_console.exe
+bytes	310088
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	297472
+overlay.bytes	12616
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	m_err\k6_err.exe
+file	k6_err.exe
+bytes	301544
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	297472
+overlay.bytes	4072
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	m_fig\k6_fig.exe
+file	k6_fig.exe
+bytes	301677
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	297472
+overlay.bytes	4205
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	m_help\k6_helped.exe
+file	k6_helped.exe
+bytes	301682
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	297472
+overlay.bytes	4210
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_HELP lang 0: 51 bytes
+  starts	6b 36 20 63 75 73 74 6f 6d 20 68 65 6c 70 2c 20
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	m_named\k6_named.exe
+file	k6_named.exe
+bytes	301684
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	297472
+overlay.bytes	4212
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	m_plain\k6_hello.exe
+file	k6_hello.exe
+bytes	301681
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	297472
+overlay.bytes	4209
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	m_separate\k6_sep.exe
+file	k6_sep.exe
+bytes	297472
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	297472
+overlay.bytes	0
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>
+CASE	m_version\k6_hello.exe
+file	k6_hello.exe
+bytes	301678
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+image.bytes	297472
+overlay.bytes	4206
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	SHELL32.dll
+import	KERNEL32.dll
+resource	ICON 1 lang 0: 1128 bytes
+resource	ICON 2 lang 0: 4264 bytes
+resource	ICON 3 lang 0: 9640 bytes
+resource	ICON 4 lang 0: 5882 bytes
+resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
+  starts	30 2e 32 2e 33
+resource	GROUP_ICON 1 lang 0: 62 bytes
+  icon	16x16 colors 0 planes 1 bits 32 bytes 1128 id 1: dib 16x16 32bpp
+  icon	32x32 colors 0 planes 1 bits 32 bytes 4264 id 2: dib 32x32 32bpp
+  icon	48x48 colors 0 planes 1 bits 32 bytes 9640 id 3: dib 48x48 32bpp
+  icon	0x0 colors 0 planes 1 bits 32 bytes 5882 id 4: png 256x256
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	2.3.0.0
+  fixed.ProductVersion	2.3.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x1
+  table	000004b0
+  string.FileVersion	2.3.0.0
+  string.ProductVersion	2.3.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 0: 1274 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+  manifest	<security>
+  manifest	<requestedPrivileges>
+  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+  manifest	</requestedPrivileges>
+  manifest	</security>
+  manifest	</trustInfo>
+  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+  manifest	<application>
+  manifest	<supportedOS Id="{<UUID>}" />
+  manifest	</application>
+  manifest	</compatibility>
+  manifest	<asmv3:application>
+  manifest	<asmv3:windowsSettings>
+  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+  manifest	</asmv3:windowsSettings>
+  manifest	</asmv3:application>
+  manifest	<dependency>
+  manifest	<dependentAssembly>
+  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+  manifest	</dependentAssembly>
+  manifest	</dependency>
+  manifest	</assembly>

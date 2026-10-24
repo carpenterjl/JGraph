@@ -7,7 +7,7 @@ using System.Xml.Linq;
 namespace JGraph.Deploy;
 
 /// <summary>What goes into an archive: the component, its files and where each one goes, its path and functions.</summary>
-public sealed class CtfBuild
+public sealed record CtfBuild
 {
     /// <summary>The component's name.</summary>
     public required string ComponentName { get; init; }
@@ -77,18 +77,25 @@ public static class CtfLayout
     /// <param name="mainFile">The main function's file, one of the report's roots.</param>
     /// <param name="report">What the dependency analysis took.</param>
     /// <param name="signature">The inputs and outputs of a code file's function, when known.</param>
+    /// <param name="rootFolder">
+    /// The folder whose files go under the component's folder: the one mcc runs in (stage K6,
+    /// k6_roots: a main built from its parent folder went to <c>fsroot/k6r_main/app/</c>, and one built
+    /// from elsewhere under its full path); the main's own folder when not given.
+    /// </param>
     public static CtfBuild FromReport(
         string componentName,
         string mainFile,
         DependencyReport report,
-        Func<string, (IReadOnlyList<string> Inputs, IReadOnlyList<string> Outputs)?>? signature = null)
+        Func<string, (IReadOnlyList<string> Inputs, IReadOnlyList<string> Outputs)?>? signature = null,
+        string? rootFolder = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(componentName);
         ArgumentNullException.ThrowIfNull(report);
         string main = Path.GetFullPath(mainFile);
-        string mainFolder = Path.GetDirectoryName(main) ?? main;
+        string mainFolder = rootFolder is null ? Path.GetDirectoryName(main) ?? main : Path.GetFullPath(rootFolder);
         var files = report.Files.Select(f => (f.Path, ArchivePath(f.Path, mainFolder, componentName))).ToList();
-        var path = new List<string> { componentName };
+        string mainPlace = ArchivePath(main, mainFolder, componentName);
+        var path = new List<string> { mainPlace.Contains('/') ? mainPlace[..mainPlace.LastIndexOf('/')] : componentName };
         foreach ((_, string archivePath) in files)
         {
             string folder = archivePath.Contains('/') ? archivePath[..archivePath.LastIndexOf('/')] : "";
@@ -106,7 +113,7 @@ public static class CtfLayout
             Files = files,
             MatlabPath = path,
             MainFunction = mainName,
-            PublicFunctions = [new CtfFunction(mainName, ArchivePath(main, mainFolder, componentName), parameters.Inputs, parameters.Outputs)],
+            PublicFunctions = [new CtfFunction(mainName, mainPlace, parameters.Inputs, parameters.Outputs)],
         };
     }
 

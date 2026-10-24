@@ -1,0 +1,33 @@
+// The launcher's resources. Every one is language-neutral, so the build that turns a copy of the
+// launcher into a program (JGraph.Deploy.StandaloneProgram) replaces each in place: the icon group
+// and its images, the version block, and the RCDATA it adds (JGRAPH_RUNTIME, JGRAPH_HELP).
+#include <windows.h>
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+1 ICON "..\\..\\src\\JGraph.Application\\Assets\\jgraph.ico"
+
+1 RT_MANIFEST "jglaunch.manifest"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END

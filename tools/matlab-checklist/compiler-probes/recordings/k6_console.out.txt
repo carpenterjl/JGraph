@@ -1,0 +1,165 @@
+CASE	hello.args
+RUN	m_plain\k6_hello.exe a b c
+  beep.default	on
+  nargin	2
+  arg1	a
+  arg2	b c
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	2.4
+CASE	hello.question
+RUN	m_plain\k6_hello.exe -?
+  Usage:<B>\m_plain\k6_hello.exe <optional arguments>
+  EXIT	0
+  SECONDS	0.4
+CASE	hello.dash_h
+RUN	m_plain\k6_hello.exe -h
+  beep.default	on
+  nargin	1
+  arg1	-h
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	1.9
+CASE	hello.question_then_arg
+RUN	m_plain\k6_hello.exe -? x
+  Usage:<B>\m_plain\k6_hello.exe <optional arguments>
+  EXIT	0
+  SECONDS	0.4
+CASE	hello.slash_question_upper
+RUN	m_plain\k6_hello.exe /?
+  Usage:<B>\m_plain\k6_hello.exe <optional arguments>
+  EXIT	0
+  SECONDS	0.4
+CASE	named
+RUN	m_named\k6_named.exe 
+  beep.default	on
+  nargin	0
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	2.8
+CASE	helped.question
+RUN	m_help\k6_helped.exe -?
+  k6 custom help, first line
+    second line, indented
+  EXIT	0
+  SECONDS	0.6
+CASE	helped.dash_h
+RUN	m_help\k6_helped.exe -h
+  beep.default	on
+  nargin	1
+  arg1	-h
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	2.6
+CASE	helped.slash_question
+RUN	m_help\k6_helped.exe /?
+  k6 custom help, first line
+    second line, indented
+  EXIT	0
+  SECONDS	0.4
+CASE	helped.dash_help
+RUN	m_help\k6_helped.exe -help
+  beep.default	on
+  nargin	1
+  arg1	-help
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	1.9
+CASE	helped.dashdash_help
+RUN	m_help\k6_helped.exe --help
+  beep.default	on
+  nargin	1
+  arg1	--help
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	1.9
+CASE	helped.after_arg
+RUN	m_help\k6_helped.exe x -?
+  beep.default	on
+  nargin	2
+  arg1	x
+  arg2	-?
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	1.9
+CASE	helped.plain
+RUN	m_help\k6_helped.exe x
+  beep.default	on
+  nargin	1
+  arg1	x
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	1.9
+CASE	api_m.question
+RUN	api_m\k6_api.exe -?
+  k6 custom help, first line
+    second line, indented
+  EXIT	0
+  SECONDS	0.6
+CASE	api_m.args
+RUN	api_m\k6_api.exe 1
+  beep.default	on
+  nargin	1
+  arg1	1
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	3.0
+CASE	api_numeric.args
+RUN	api_m_numeric\k6_hello.exe 1 [2 3]
+  beep.default	on
+  nargin	2
+  arg1	
+  arg2	
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	2.6
+CASE	separate
+RUN	m_separate\k6_sep.exe s
+  beep.default	on
+  nargin	1
+  arg1	s
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	2.6
+CASE	api_separate
+RUN	api_m_separate\k6_hello.exe s
+  beep.default	on
+  nargin	1
+  arg1	s
+  isdeployed	1
+  end
+  STDERR	stderr	line
+  EXIT	0
+  SECONDS	2.5
+CASE	m_err
+RUN	m_err\k6_err.exe 
+  beep.default	on
+  before
+  STDERR	Error using k6_err (line 12)
+  STDERR	k6 failed on purpose
+  STDERR	
+  STDERR	k6:boom
+  EXIT	249
+  SECONDS	2.6

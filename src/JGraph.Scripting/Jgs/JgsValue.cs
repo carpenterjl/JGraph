@@ -1612,7 +1612,9 @@ internal sealed class JgsValue
             return "  handle to deleted " + ShortClassName(instance.Class.Name) + "\n"; // R2025b's line (probe_116b)
         }
 
-        var sb = new StringBuilder(instance.Class.Name);
+        // The class without its package, as R2025b heads the display (compiler.build.Results shows
+        // "Results with properties:", stage K6's fixture).
+        var sb = new StringBuilder(ShortClassName(instance.Class.Name));
         sb.Append(" with properties:");
 
         // A custom component shows its class's own properties and its Position, then offers the
@@ -1637,9 +1639,9 @@ internal sealed class JgsValue
             string shown = held.Type == JgsType.Object
                 ? held.IsObjectArray
                     ? $"[{held.Rows}×{held.Cols} {held.ObjectClass.Name}]" // an array of objects inside one (open item 116)
-                    : $"[1x1 {held.AsObject.Class.Name}]"
+                    : $"[1×1 {held.AsObject.Class.Name}]"
                 : held.Type == JgsType.String ? "'" + Truncate(held.AsString) + "'" // a char row, as R2025b shows one
-                : Truncate(held.Display());
+                : Summary(held) ?? Truncate(held.Display());
             sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(shown);
         }
 
@@ -1649,6 +1651,26 @@ internal sealed class JgsValue
         }
 
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// How R2025b's object display sums up a cell, a struct or a table held by a property (stage
+    /// K6's fixture: <c>{}</c>, <c>{'autodetect'}</c>, <c>{2×1 cell}</c>, <c>[0×0 struct]</c>,
+    /// <c>[1×2 table]</c>); null for anything shown as itself.
+    /// </summary>
+    private static string? Summary(JgsValue held)
+    {
+        int[] dims = held.Type is JgsType.Cell or JgsType.Struct or JgsType.Table ? JgsBuiltins.SizeDims(held) : [];
+        string size = string.Join("×", dims);
+        return held.Type switch
+        {
+            JgsType.Cell when dims is [0, 0] => "{}",
+            JgsType.Cell when dims is [1, 1] && held.AsCell[0] is { Type: JgsType.String } only && !only.IsCharMatrix => "{'" + Truncate(only.AsString) + "'}",
+            JgsType.Cell => "{" + size + " cell}",
+            JgsType.Struct => "[" + size + " struct]",
+            JgsType.Table => "[" + size + " table]",
+            _ => null,
+        };
     }
 
     /// <summary>One line of a property's value, shortened when it is longer than a display wants.</summary>

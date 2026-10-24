@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JGraph.Runtime", "src\JGrap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JGraph.Runtime.Desktop", "src\JGraph.Runtime.Desktop\JGraph.Runtime.Desktop.csproj", "{9124D073-9D36-4287-9925-96BED5B4DB41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JGraph.Runtime.Launch", "src\JGraph.Runtime.Launch\JGraph.Runtime.Launch.csproj", "{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -465,6 +467,18 @@ Global
 		{9124D073-9D36-4287-9925-96BED5B4DB41}.Release|x64.Build.0 = Release|Any CPU
 		{9124D073-9D36-4287-9925-96BED5B4DB41}.Release|x86.ActiveCfg = Release|Any CPU
 		{9124D073-9D36-4287-9925-96BED5B4DB41}.Release|x86.Build.0 = Release|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Debug|x64.Build.0 = Debug|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Debug|x86.Build.0 = Debug|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Release|x64.ActiveCfg = Release|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Release|x64.Build.0 = Release|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Release|x86.ActiveCfg = Release|Any CPU
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -502,5 +516,6 @@ Global
 		{8FBA25BD-9EE7-493C-9EB2-6EB6CBA02BB4} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{7ED0B681-AAE8-4D96-9927-43D8FA603FEE} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{9124D073-9D36-4287-9925-96BED5B4DB41} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{D825A2F8-B74E-4F79-A8B6-A3E0FD1F1887} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

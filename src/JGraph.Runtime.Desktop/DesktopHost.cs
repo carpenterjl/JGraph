@@ -57,10 +57,7 @@ internal sealed class DesktopHost : IRuntimeDesktop
             System.Windows.Application app;
             try
             {
-                // Its resources are the IDE's: the theme-independent styles and the light theme.
-                app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-                app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(ThemeBase + "Shared.xaml") });
-                new ThemeManager(new AppThemeCatalog(), app.Resources).Apply(AppThemeCatalog.LightId);
+                app = NewApplication();
                 ui = Dispatcher.CurrentDispatcher;
             }
             catch (Exception ex)
@@ -149,16 +146,31 @@ internal sealed class DesktopHost : IRuntimeDesktop
         return service;
     }
 
-    private FigureWindow NewWindow()
+    /// <summary>
+    /// The runtime's own WPF application, on the calling thread: its resources are the IDE's, the
+    /// theme-independent styles and the light theme, and it ends only when told to.
+    /// </summary>
+    internal static System.Windows.Application NewApplication()
     {
-        var model = new FigureViewModel(
+        var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(ThemeBase + "Shared.xaml") });
+        new ThemeManager(new AppThemeCatalog(), app.Resources).Apply(AppThemeCatalog.LightId);
+        return app;
+    }
+
+    /// <summary>A deployed program's figure window: the figure's toolbar without the IDE's Script… and Options….</summary>
+    internal static FigureWindow DeployedWindow(PluginRegistry plugins) =>
+        new(new FigureViewModel(
             new SampleFigureFactory(),
             new FigureExportService(),
             new FigureDocumentService(),
             new DataImportService(),
-            _plugins,
-            DeployedFigureWindowShell.Instance);
-        var window = new FigureWindow(model);
+            plugins,
+            DeployedFigureWindowShell.Instance));
+
+    private FigureWindow NewWindow()
+    {
+        FigureWindow window = DeployedWindow(_plugins);
         if (!_ownsApplication)
         {
             // The host's application is not ours to restyle: the window carries the theme itself.

@@ -109,6 +109,12 @@ internal static partial class JgsBuiltins
 
         RegisterDependencyBuiltins(env, interpreter, host); // stage K2
 
+        // mcc and compiler.build (stage K6); a deployed session has neither, as R2025b's runtime ships neither.
+        if (host.Deployment is null)
+        {
+            RegisterCompilerBuiltins(env, interpreter, host);
+        }
+
         if (host.Deployment is { } deployment)
         {
             RegisterDeployedSession(env, interpreter, host, deployment);

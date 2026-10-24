@@ -1,0 +1,408 @@
+mlapp	saved
+default_splash	400x400 png 24 bits
+default_icon_48	48x48 png 24 bits
+mcc.m_plain	ok ()
+mcc.m_plain.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1278982) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.e_plain	ok ()
+mcc.e_plain.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1316355) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.m_named	ok ()
+mcc.m_named.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_named.exe (1278964) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.m_version	ok ()
+mcc.m_version.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1279001) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.m_version4	ok ()
+mcc.m_version4.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1278980) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.e_winmain	ok ()
+mcc.e_winmain.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1316377) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.m_icon_ico	ok ()
+mcc.m_icon_ico.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1280967) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.m_icon_png	ERR Compiler:compiler:EMBED_ICON_FAILED | Failed to embed icon file "<B>\src\k6_icon.png" - Error reading icon file.
+mcc.m_icon_missing	ERR Compiler:compiler:EMBED_ICON_FAILED | Failed to embed icon file "<B>\src\k6_nosuch.ico" - Failed to open file ReadIconFromICOFile with error File not found..
+mcc.m_help	ok ()
+mcc.m_help.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_helped.exe (1279388) | mccExcludedFiles.log (90) | readme.txt (1399) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.m_help_missing	ERR Compiler:compiler:COM_ERR_HELP_FILE_NOT_EXIST | The help file  /   '<B>\src\k6_nosuch.txt' / does not exist.
+mcc.m_separate	ok ()
+mcc.m_separate.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_sep.ctf (155642) | k6_sep.exe (1123328) | mccExcludedFiles.log (90) | readme.txt (1434) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.m_fig	ok ()
+mcc.m_fig.files	buildresult.json (269) | includedSupportPackages.txt (0) | k6_fig.exe (1280289) | mccExcludedFiles.log (90) | readme.txt (1393) | requiredMCRProducts.txt (18) | unresolvedSymbols.txt (20)
+mcc.e_fig	ok ()
+mcc.e_fig.files	buildresult.json (269) | includedSupportPackages.txt (0) | k6_fig.exe (1317638) | mccExcludedFiles.log (90) | readme.txt (1393) | requiredMCRProducts.txt (18) | unresolvedSymbols.txt (20)
+mcc.m_err	ok ()
+mcc.m_err.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_err.exe (1278880) | mccExcludedFiles.log (90) | readme.txt (1393) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.e_err	ok ()
+mcc.e_err.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_err.exe (1316255) | mccExcludedFiles.log (90) | readme.txt (1393) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.e_wait	ok ()
+mcc.e_wait.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_wait.exe (1316152) | mccExcludedFiles.log (90) | readme.txt (1395) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.e_app_m	ok ()
+mcc.e_app_m.files	buildresult.json (269) | includedSupportPackages.txt (0) | k6_app.exe (1316393) | mccExcludedFiles.log (90) | readme.txt (1393) | requiredMCRProducts.txt (18) | unresolvedSymbols.txt (20)
+mcc.e_app_mlapp	ok ()
+mcc.e_app_mlapp.files	buildresult.json (269) | includedSupportPackages.txt (0) | k6_app.exe (1319287) | mccExcludedFiles.log (90) | readme.txt (1393) | requiredMCRProducts.txt (18) | unresolvedSymbols.txt (20)
+mcc.m_app_mlapp	ok ()
+mcc.m_app_mlapp.files	buildresult.json (269) | includedSupportPackages.txt (0) | k6_app_console.exe (1281925) | mccExcludedFiles.log (90) | readme.txt (1409) | requiredMCRProducts.txt (18) | unresolvedSymbols.txt (20)
+mcc.o_spaced	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: 'k6 spaced'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.o_slash	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: 'k6/sub'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.o_ext	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: 'k6_ext.exe'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.m_and_W	ok ()
+mcc.m_and_W.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1278939) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.e_and_W_main	ok ()
+mcc.e_and_W_main.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1278989) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.winmain_lib	ERR Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH | Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.
+mcc.d.missing	char [0 0] ''
+readme.m_plain	1397 chars, CRLF 47, ends with newline 1
+  |k6_hello Executable
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.   
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |  
+  |    >>mcrinstaller
+  |      
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer. 
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b 
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |   
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
+  |"Distribute Applications" in the MATLAB Compiler documentation  
+  |in the MathWorks Documentation Center.
+  |
+  |2. Files to Deploy and Package
+  |
+  |Files to Package for Standalone 
+  |================================
+  |-k6_hello.exe
+  |-MCRInstaller.exe 
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your 
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file 
+  |
+  |
+  |
+  |3. Definitions
+  |
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+  |
+  |
+  |
+  |
+readme.e_plain	1397 chars, CRLF 47, ends with newline 1
+  |k6_hello Executable
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.   
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |  
+  |    >>mcrinstaller
+  |      
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer. 
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b 
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |   
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
+  |"Distribute Applications" in the MATLAB Compiler documentation  
+  |in the MathWorks Documentation Center.
+  |
+  |2. Files to Deploy and Package
+  |
+  |Files to Package for Standalone 
+  |================================
+  |-k6_hello.exe
+  |-MCRInstaller.exe 
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your 
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file 
+  |
+  |
+  |
+  |3. Definitions
+  |
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+  |
+  |
+  |
+  |
+readme.m_help	1399 chars, CRLF 47, ends with newline 1
+  |k6_helped Executable
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.   
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |  
+  |    >>mcrinstaller
+  |      
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer. 
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b 
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |   
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
+  |"Distribute Applications" in the MATLAB Compiler documentation  
+  |in the MathWorks Documentation Center.
+  |
+  |2. Files to Deploy and Package
+  |
+  |Files to Package for Standalone 
+  |================================
+  |-k6_helped.exe
+  |-MCRInstaller.exe 
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your 
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file 
+  |
+  |
+  |
+  |3. Definitions
+  |
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+  |
+  |
+  |
+  |
+api_m.options
+    StandaloneApplicationOptions with properties:
+              ExecutableName: 'k6_api'
+          CustomHelpTextFile: '<B>\src\k6_help.txt'
+                EmbedArchive: on
+              ExecutableIcon: '<B>\src\k6_icon.png'
+      ExecutableSplashScreen: '<MATLABROOT>\toolbox\compiler\packagingResources\default_splash.png'
+           ExecutableVersion: '3.4'
+                     AppFile: '<B>\src\k6_hello.m'
+        TreatInputsAsNumeric: off
+             AdditionalFiles: {}
+         AutoDetectDataFiles: on
+       ExternalEncryptionKey: [0×0 struct]
+            ObfuscateArchive: off
+             SecretsManifest: ''
+             SupportPackages: {'autodetect'}
+                     Verbose: on
+                   OutputDir: '<B>\api_m'
+api_m.printed
+  |mcc -W 'main:k6_api,version=3.4' -T link:exe -d <B>\api_m -v -Z autodetect -o k6_api -h <B>\src\k6_help.txt -r <TEMP>\tp82aed90a_f451_40e0_b2cb_7668bdb2f6e9\icon.ico <B>\src\k6_hello.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<B>\src\k6_hello.m"
+  |	(referenced from command line).
+  |Generating file "<B>\api_m\readme.txt".
+api_m.results
+    Results with properties:
+                    BuildType: 'standaloneApplication'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.StandaloneApplicationOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_m.BuildType	standaloneApplication
+api_m.Files	<OUT>\k6_api.exe | <OUT>\readme.txt
+api_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_api.exe (1281351) | mccExcludedFiles.log (90) | readme.txt (1393) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+readme.api_m	1393 chars, CRLF 47, ends with newline 1
+  |k6_api Executable
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.   
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |  
+  |    >>mcrinstaller
+  |      
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer. 
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b 
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |   
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
+  |"Distribute Applications" in the MATLAB Compiler documentation  
+  |in the MathWorks Documentation Center.
+  |
+  |2. Files to Deploy and Package
+  |
+  |Files to Package for Standalone 
+  |================================
+  |-k6_api.exe
+  |-MCRInstaller.exe 
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your 
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file 
+  |
+  |
+  |
+  |3. Definitions
+  |
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+  |
+  |
+  |
+  |
+api_e.printed
+  |mcc -W 'winmain:k6_wait,version=1.0.0.0' -T link:exe -d <B>\api_e -v -Z autodetect -o k6_wait -r <TEMP>\tp98972d97_5746_48bf_980a_a441e77f7932\icon.ico <B>\src\k6_wait.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<B>\src\k6_wait.m"
+  |	(referenced from command line).
+  |Generating file "<B>\api_e\readme.txt".
+api_e.results
+    Results with properties:
+                    BuildType: 'standaloneWindowsApplication'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.StandaloneApplicationOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_e.BuildType	standaloneWindowsApplication
+api_e.Files	<OUT>\k6_wait.exe | <OUT>\splash.png | <OUT>\readme.txt
+api_e.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_wait.exe (1377720) | mccExcludedFiles.log (90) | readme.txt (1395) | requiredMCRProducts.txt (6) | splash.png (1514) | unresolvedSymbols.txt (20)
+api_e.splash	400x400 png 24 bits truecolor
+api_e.warn	MATLAB:FILEATTRIB:SyntaxWarning | File user characters ignored on Windows.
+api_e_default.results
+    Results with properties:
+                    BuildType: 'standaloneWindowsApplication'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.StandaloneApplicationOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_e_default.BuildType	standaloneWindowsApplication
+api_e_default.Files	<OUT>\k6_hello.exe | <OUT>\splash.png | <OUT>\readme.txt
+api_e_default.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1377793) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | splash.png (33961) | unresolvedSymbols.txt (20)
+api_e_default.splash	400x400 png 24 bits truecolor
+api_e_default.warn	MATLAB:FILEATTRIB:SyntaxWarning | File user characters ignored on Windows.
+readme.api_e_default	1397 chars, CRLF 47, ends with newline 1
+  |k6_hello Executable
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.   
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |  
+  |    >>mcrinstaller
+  |      
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer. 
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b 
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |   
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
+  |"Distribute Applications" in the MATLAB Compiler documentation  
+  |in the MathWorks Documentation Center.
+  |
+  |2. Files to Deploy and Package
+  |
+  |Files to Package for Standalone 
+  |================================
+  |-k6_hello.exe
+  |-MCRInstaller.exe 
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your 
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file 
+  |
+  |
+  |
+  |3. Definitions
+  |
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+  |
+  |
+  |
+  |
+api_e_app.results
+    Results with properties:
+                    BuildType: 'standaloneWindowsApplication'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.StandaloneApplicationOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_e_app.BuildType	standaloneWindowsApplication
+api_e_app.Files	<OUT>\k6_app.exe | <OUT>\splash.png | <OUT>\readme.txt
+api_e_app.files	buildresult.json (269) | includedSupportPackages.txt (0) | k6_app.exe (1380685) | mccExcludedFiles.log (90) | readme.txt (1393) | requiredMCRProducts.txt (18) | splash.png (33961) | unresolvedSymbols.txt (20)
+api_e_app.splash	400x400 png 24 bits truecolor
+api_e_app.warn	MATLAB:FILEATTRIB:SyntaxWarning | File user characters ignored on Windows.
+api_m_separate.results
+    Results with properties:
+                    BuildType: 'standaloneApplication'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.StandaloneApplicationOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_m_separate.BuildType	standaloneApplication
+api_m_separate.Files	<OUT>\k6_hello.exe | <OUT>\readme.txt | <OUT>\k6_hello.ctf
+api_m_separate.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.ctf (155610) | k6_hello.exe (1184768) | mccExcludedFiles.log (90) | readme.txt (1440) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+api_m_separate.warn	MATLAB:FILEATTRIB:SyntaxWarning | File user characters ignored on Windows.
+api_m_numeric.printed
+  |mcc -W 'main:k6_hello,version=1.0.0.0' -T link:exe -d <B>\api_m_numeric -v -Z autodetect -o k6_hello -n -r <TEMP>\tpd39b19af_3844_4bfb_9324_e3372920f7c8\icon.ico <B>\src\k6_hello.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<B>\src\k6_hello.m"
+  |	(referenced from command line).
+  |Generating file "<B>\api_m_numeric\readme.txt".
+api_m_numeric.results
+    Results with properties:
+                    BuildType: 'standaloneApplication'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.StandaloneApplicationOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_m_numeric.BuildType	standaloneApplication
+api_m_numeric.Files	<OUT>\k6_hello.exe | <OUT>\readme.txt
+api_m_numeric.files	buildresult.json (107) | includedSupportPackages.txt (0) | k6_hello.exe (1340427) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+api_m_numeric.warn	MATLAB:FILEATTRIB:SyntaxWarning | File user characters ignored on Windows.
+api.icon.ico.set	ERR MATLAB:imagesci:imfinfo:freadError | Unable to read COLORMAP:  'At end-of-file.'.
+api_icon_ico	ERR MATLAB:imagesci:imfinfo:freadError | Unable to read COLORMAP:  'At end-of-file.'.
+api_splash_txt	ERR Compiler:utils:shared:notAnImage | The file: /  / <B>\src\k6_help.txt /  / is not an image file.
+api.wrong.options	ERR Compiler:clishared:wrongOptionsObject | 'compiler.build.DotNETAssemblyOptions' is not a valid options object for this function. Use 'compiler.build.StandaloneApplicationOptions' instead.
+api.two.options	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+api.no.args	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+api.nargout2	ERR MATLAB:TooManyOutputs | Too many output arguments.
+api.mlx	ERR Compiler:clishared:badExtension | Expected 'AppFile' to have one of the following extensions: /  / .mexw64 / .mlapp / .mlx / .p / .m
+opts.ExecutableName.default	char [1 8] 'k6_hello'
+opts.OutputDir.default	char [1 31] '.\k6_hellostandaloneApplication'
+opts.mlapp.ExecutableName	char [1 6] 'k6_app'
+opts.spaced.OutputDir	char [1 35] '.\k6_two_wordsstandaloneApplication'

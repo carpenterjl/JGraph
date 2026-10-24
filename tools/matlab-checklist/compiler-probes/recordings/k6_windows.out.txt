@@ -1,0 +1,252 @@
+CASE	e_plain
+RUN	e_plain\k6_hello.exe a b c
+ACTION	none
+  t=  0.83 + 1806ca k6_hello.exe GDI+ Hook Window Class 'GDI+ Window (k6_hello.exe)' hidden 1x1
+  t=  0.83 + 290814 k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  2.25 + 4908be k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  3.18 - 4908be
+  t=  3.41 - 1806ca
+  t=  3.41 - 290814
+  t=  3.52 runner exited
+  EXIT	0
+  SECONDS	2.9
+  LOG t=  3.07 nargin	2
+  LOG t=  3.08 arg1	a
+  LOG t=  3.10 arg2	b c
+  LOG t=  3.12 isdeployed	1
+  LOG t=  3.14 end
+CASE	e_wait
+RUN	e_wait\k6_wait.exe 
+ACTION	none
+  t=  0.69 + 1906ca k6_wait.exe GDI+ Hook Window Class 'GDI+ Window (k6_wait.exe)' hidden 1x1
+  t=  0.69 + 2a0814 k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  2.09 + 4a08be k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  5.81 - 4a08be
+  t=  6.05 - 1906ca
+  t=  6.05 - 2a0814
+  t=  6.16 runner exited
+  EXIT	0
+  SECONDS	5.6
+  LOG t=  2.73 start
+  LOG t=  5.75 end
+CASE	api_e_wait
+RUN	api_e\k6_wait.exe 
+ACTION	none
+  t=  0.82 + 2b0814 k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  0.82 + 1a06ca k6_wait.exe GDI+ Hook Window Class 'GDI+ Window (k6_wait.exe)' hidden 1x1
+  t=  0.82 + 7e077c k6_wait.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  0.82 + 420852 k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  0.82 + 510458 k6_wait.exe Name '' shown 400x400
+  t=  2.09 + 3409aa k6_wait.exe IME 'Default IME' hidden 0x0
+  t=  5.80 - 3409aa
+  t=  6.03 - 2b0814
+  t=  6.03 - 1a06ca
+  t=  6.03 - 7e077c
+  t=  6.03 - 420852
+  t=  6.03 - 510458
+  t=  6.14 runner exited
+  EXIT	0
+  SECONDS	5.5
+  LOG t=  2.66 start
+  LOG t=  5.67 end
+CASE	api_e_default
+RUN	api_e_default\k6_hello.exe 
+ACTION	none
+  t=  0.72 + 430852 k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  0.72 + 520458 k6_hello.exe Name '' shown 400x400
+  t=  0.72 + 2c0814 k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  0.72 + 1b06ca k6_hello.exe GDI+ Hook Window Class 'GDI+ Window (k6_hello.exe)' hidden 1x1
+  t=  0.84 + e60906 k6_hello.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  2.03 + 3509aa k6_hello.exe IME 'Default IME' hidden 0x0
+  t=  2.85 - 3509aa
+  t=  3.08 - e60906
+  t=  3.08 - 430852
+  t=  3.08 - 520458
+  t=  3.08 - 2c0814
+  t=  3.08 - 1b06ca
+  t=  3.19 runner exited
+  EXIT	0
+  SECONDS	2.6
+  LOG t=  2.72 nargin	0
+  LOG t=  2.72 isdeployed	1
+  LOG t=  2.73 end
+CASE	e_fig
+RUN	e_fig\k6_fig.exe 
+ACTION	close:k6 figure
+  t=  0.82 + 1c06ca k6_fig.exe GDI+ Hook Window Class 'GDI+ Window (k6_fig.exe)' hidden 1x1
+  t=  0.82 + 2d0814 k6_fig.exe IME 'Default IME' hidden 0x0
+  t=  2.33 + 440852 k6_fig.exe IME 'Default IME' hidden 0x0
+  t=  4.80 + 160a68 MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  5.15 + 6207e6 MATLABWindow.exe Client_TempWindow 'tempWindow' hidden 136x39
+  t=  5.15 + 540386 MATLABWindow.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  6.81 + d8090c MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  6.93 + 175086c MATLABWindow.exe WindowClass '127.0.0.1:31515/toolbox/matlab/graphics/core/textextentservice/index.html?websocket=on&snc=CWYIEL' hidden 616x439
+  t=  8.58 + 87098e MATLABWindow.exe WindowClass 'k6 figure' hidden 1210x758
+  t= 10.35 + 87098e MATLABWindow.exe WindowClass 'k6 figure' hidden 1210x785
+  t= 10.46 + 87098e MATLABWindow.exe WindowClass 'k6 figure' hidden 1210x807
+  t= 10.70 + 87098e MATLABWindow.exe WindowClass 'k6 figure' shown 1210x807
+  t= 12.23 ACTION WindowPattern.Close 'k6 figure'
+  t= 13.33 - 87098e
+  t= 13.68 - d8090c
+  t= 13.68 - 175086c
+  t= 13.68 - 440852
+  t= 26.18 - 1c06ca
+  t= 26.18 - 2d0814
+  t= 26.29 runner exited
+  EXIT	0
+  SECONDS	25.7
+  LOG t=  2.98 start
+  LOG t= 10.79 shown 1
+  LOG t= 10.81 end
+CASE	m_fig
+RUN	m_fig\k6_fig.exe 
+ACTION	close:k6 figure
+  t=  2.23 + b0a5c k6_fig.exe IME 'Default IME' hidden 0x0
+  t=  4.22 + 63086a MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  4.59 + 2e0814 MATLABWindow.exe Client_TempWindow 'tempWindow' hidden 136x39
+  t=  4.59 + 4f09b2 MATLABWindow.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  5.54 + 3809aa MATLABWindow.exe WindowClass '127.0.0.1:31515/toolbox/matlab/graphics/core/textextentservice/index.html?websocket=on&snc=HP6EFF' hidden 616x439
+  t=  5.54 + 176086c MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  6.25 + 1707e4 MATLABWindow.exe WindowClass 'k6 figure' hidden 1210x758
+  t=  7.56 + 1707e4 MATLABWindow.exe WindowClass 'k6 figure' hidden 1210x785
+  t=  7.69 + 1707e4 MATLABWindow.exe WindowClass 'k6 figure' hidden 1210x807
+  t=  8.06 + 1707e4 MATLABWindow.exe WindowClass 'k6 figure' shown 1210x807
+  t=  9.62 ACTION WindowPattern.Close 'k6 figure'
+  t=  9.85 - 1707e4
+  t= 10.23 - 3809aa
+  t= 10.23 - 176086c
+  t= 10.23 - b0a5c
+  t= 23.41 - 2e0814
+  t= 23.41 - 4f09b2
+  t= 23.41 - 63086a
+  t= 23.52 runner exited
+  beep.default	on
+  start
+  shown 1
+  end
+  EXIT	0
+  SECONDS	22.9
+  LOG t=  2.99 start
+  LOG t=  7.82 shown 1
+  LOG t=  7.84 end
+CASE	e_err
+RUN	e_err\k6_err.exe 
+ACTION	dismiss
+  t=  0.83 + 470852 k6_err.exe IME 'Default IME' hidden 0x0
+  t=  0.83 + 560458 k6_err.exe GDI+ Hook Window Class 'GDI+ Window (k6_err.exe)' hidden 1x1
+  t=  2.36 + 83077c k6_err.exe IME 'Default IME' hidden 0x0
+  t=  3.18 - 83077c
+  t=  3.43 + 210a3c k6_err.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  3.43 + 1606ba k6_err.exe #32770 'Error' shown 261x159
+  t=  3.43 + 1f06ca k6_err.exe IME 'Default IME' hidden 0x0
+  t=  7.46 ACTION dismiss 'Error': Pane:OK | Pane:k6 failed on purpose
+Error in => k6_err.m at line 12
+  t=  7.60 - 210a3c
+  t=  7.60 - 470852
+  t=  7.60 - 560458
+  t=  7.60 - 1606ba
+  t=  7.60 - 1f06ca
+  t=  7.71 runner exited
+  EXIT	249
+  SECONDS	7.0
+  LOG t=  3.04 before
+CASE	e_app_m
+RUN	e_app_m\k6_app.exe 
+ACTION	press:k6 app:Close
+  t=  0.72 + 18094a k6_app.exe GDI+ Hook Window Class 'GDI+ Window (k6_app.exe)' hidden 1x1
+  t=  0.72 + 570458 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  2.39 + 300814 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  5.52 + 950922 MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  5.88 + 2e029a MATLABWindow.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  5.88 + c0ab2 MATLABWindow.exe Client_TempWindow 'tempWindow' hidden 136x39
+  t=  7.42 + 1a0880 MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  7.53 + 3c0422 MATLABWindow.exe WindowClass 'k6 app' hidden 276x159
+  t=  8.26 + 3c0422 MATLABWindow.exe WindowClass 'k6 app' shown 276x159
+  t= 16.29 ACTION no 'Close' found: Pane:Chrome Legacy Window; WindowPattern.Close
+  t= 16.42 - 3c0422
+  t= 16.42 - 1a0880
+  t= 16.54 - 300814
+  t= 36.96 - 950922
+  t= 36.96 - 2e029a
+  t= 36.96 - 18094a
+  t= 36.96 - 570458
+  t= 36.96 - c0ab2
+  t= 37.07 runner exited
+  EXIT	0
+  SECONDS	36.5
+  LOG none
+CASE	e_app_mlapp
+RUN	e_app_mlapp\k6_app.exe 
+ACTION	press:k6 app:Close
+  t=  0.72 + 430864 k6_app.exe GDI+ Hook Window Class 'GDI+ Window (k6_app.exe)' hidden 1x1
+  t=  0.72 + 5806da k6_app.exe IME 'Default IME' hidden 0x0
+  t=  2.14 + 4c062a k6_app.exe IME 'Default IME' hidden 0x0
+  t=  4.48 + 230a3c MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  4.83 + 2106ca MATLABWindow.exe Client_TempWindow 'tempWindow' hidden 136x39
+  t=  4.96 + d06a2 MATLABWindow.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  5.91 + 2e0704 MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  5.91 + 30029a MATLABWindow.exe WindowClass 'k6 app' hidden 276x159
+  t=  6.72 + 30029a MATLABWindow.exe WindowClass 'k6 app' shown 276x159
+  t= 14.73 ACTION no 'Close' found: Pane:Chrome Legacy Window; WindowPattern.Close
+  t= 14.86 - 2e0704
+  t= 14.86 - 30029a
+  t= 14.97 - 4c062a
+  t= 35.33 - 5806da
+  t= 35.33 - 430864
+  t= 35.44 runner exited
+  EXIT	0
+  SECONDS	34.9
+  LOG none
+CASE	m_app_mlapp
+RUN	m_app_mlapp\k6_app_console.exe 
+ACTION	close:k6 app
+  t=  2.12 + e0ab2 k6_app_console.exe IME 'Default IME' hidden 0x0
+  t=  5.06 + 1a094a MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  5.42 + 5906da MATLABWindow.exe Client_TempWindow 'tempWindow' hidden 136x39
+  t=  5.53 + 67086a MATLABWindow.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  5.78 + 87077c MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  5.90 + 250a3c MATLABWindow.exe WindowClass 'k6 app' hidden 276x159
+  t=  7.10 + 250a3c MATLABWindow.exe WindowClass 'k6 app' shown 276x159
+  t=  8.63 ACTION WindowPattern.Close 'k6 app'
+  t=  8.77 - 87077c
+  t=  8.77 - 250a3c
+  t=  9.03 - e0ab2
+  t= 29.39 - 1a094a
+  t= 29.39 - 67086a
+  t= 29.39 - 5906da
+  t= 29.50 runner exited
+  k6_app	started
+  EXIT	0
+  SECONDS	28.9
+  LOG none
+CASE	api_e_app
+RUN	api_e_app\k6_app.exe 
+ACTION	press:k6 app:Close
+  t=  0.83 + f06a2 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  0.83 + 8d098e k6_app.exe Name '' shown 400x400
+  t=  0.83 + b0a90 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  0.83 + 980922 k6_app.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  0.83 + 16065e k6_app.exe GDI+ Hook Window Class 'GDI+ Window (k6_app.exe)' hidden 1x1
+  t=  2.26 + 5409b2 k6_app.exe IME 'Default IME' hidden 0x0
+  t=  4.74 + 33029a MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  5.11 + 1b0880 MATLABWindow.exe Client_TempWindow 'tempWindow' hidden 136x39
+  t=  5.23 + 46035a MATLABWindow.exe MSCTFIME UI 'MSCTFIME UI' hidden 0x0
+  t=  6.20 + 190a64 MATLABWindow.exe IME 'Default IME' hidden 0x0
+  t=  6.20 + 340814 MATLABWindow.exe WindowClass 'k6 app' hidden 276x159
+  t=  6.20 - f06a2
+  t=  6.20 - b0a90
+  t=  6.20 - 980922
+  t=  6.20 - 16065e
+  t=  6.20 - 8d098e
+  t=  7.28 + 340814 MATLABWindow.exe WindowClass 'k6 app' shown 276x159
+  t= 15.35 ACTION no 'Close' found: Pane:Chrome Legacy Window; WindowPattern.Close
+  t= 15.48 - 190a64
+  t= 15.48 - 340814
+  t= 15.59 - 5409b2
+  t= 22.37 - 33029a
+  t= 22.37 - 1b0880
+  t= 22.37 - 46035a
+  t= 22.49 runner exited
+  EXIT	0
+  SECONDS	21.9
+  LOG none

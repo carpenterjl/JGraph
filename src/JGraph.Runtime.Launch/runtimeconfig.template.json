@@ -1,0 +1,6 @@
+{
+  "//": "Server GC, as jgraph.exe's headless runner has: a deployed program's arithmetic is the same engine's, and its collector settings should not change with the way the program was started.",
+  "configProperties": {
+    "System.GC.Server": true
+  }
+}

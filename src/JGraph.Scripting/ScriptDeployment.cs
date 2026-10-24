@@ -124,8 +124,12 @@ public sealed class ScriptDeployment : IDisposable
         ArgumentException.ThrowIfNullOrEmpty(archivePath);
         ArgumentNullException.ThrowIfNull(commandLine);
         string cache = cacheDirectory ?? CacheDirectory();
-        using CtfArchiveReader archive = CtfArchiveReader.Open(archivePath);
-        CacheEntry entry = new RuntimeCache(cache).Open(archive, Environment.GetEnvironmentVariable("MCR_CACHE_SIZE"));
+        string? beside = SeparateArchive(archivePath);
+        using CtfArchiveReader archive = CtfArchiveReader.Open(beside ?? archivePath);
+        CacheEntry entry = beside is null
+            ? new RuntimeCache(cache).Open(archive, Environment.GetEnvironmentVariable("MCR_CACHE_SIZE"))
+            : RuntimeCache.OpenBeside(archive, Path.Combine(
+                Path.GetDirectoryName(Path.GetFullPath(archivePath))!, Path.GetFileNameWithoutExtension(archivePath) + "_mcr"));
         try
         {
             CtfManifest manifest = archive.Manifest;
@@ -157,6 +161,37 @@ public sealed class ScriptDeployment : IDisposable
             entry.Dispose();
             throw;
         }
+    }
+
+    /// <summary>The archive a program runs: the one appended to it, or the <c>mcc -C</c> archive beside it.</summary>
+    public static string ArchiveOf(string program)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(program);
+        return SeparateArchive(program) ?? program;
+    }
+
+    /// <summary>
+    /// The archive <c>mcc -C</c> wrote beside a program that carries none (<c>&lt;name&gt;.ctf</c> in
+    /// its folder), which R2025b extracts to <c>&lt;name&gt;_mcr</c> there rather than into the cache
+    /// (K0, env_separate_ctf); null when the file carries its archive, is one, or has none beside it.
+    /// </summary>
+    private static string? SeparateArchive(string path)
+    {
+        if (!path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || !File.Exists(path))
+        {
+            return null;
+        }
+
+        using (FileStream program = File.OpenRead(path))
+        {
+            if (CtfArchiveReader.ZipStart(program) is not null)
+            {
+                return null;
+            }
+        }
+
+        string separate = Path.ChangeExtension(Path.GetFullPath(path), ".ctf");
+        return File.Exists(separate) ? separate : null;
     }
 
     /// <summary>

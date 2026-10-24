@@ -262,6 +262,10 @@ public static class JgsBuiltinCatalog
         Add("unzip", "Extracts a .zip archive into a folder (the current one when omitted), replacing files already there; files = unzip(zipfile, folder) lists what it wrote.", P("zipfile"), Opt("folder"));
 
         // --- P-code and secrets (compiler and SDK plan, stage K3b) -----------------------------------
+        Add("mcc", "Builds a standalone program: mcc -m main.m makes a console program and mcc -e a windowed one, the main and everything it needs in an archive appended to JGraph's launcher (-C writes it beside), with -o, -n, -r icon.ico, -h help.txt, -a, -d and -v as R2025b's mcc reads them; the program runs on the JGraph Runtime.", P("option"), Opt("file"));
+        Add("compiler.build.standaloneApplication", "Builds a console program from an app file and options, as mcc -m does, and answers its compiler.build.Results: results = compiler.build.standaloneApplication(appFile, Name, Value) or (opts).", P("appFile"), Opt("Name, Value"));
+        Add("compiler.build.standaloneWindowsApplication", "Builds a windowed program with its splash.png, as mcc -e does, and answers its compiler.build.Results.", P("appFile"), Opt("Name, Value"));
+        Add("compiler.build.StandaloneApplicationOptions", "The options of a standalone build: ExecutableName, icon, splash, version, help text, EmbedArchive, TreatInputsAsNumeric, AdditionalFiles, OutputDir, and JGraph's hidden RuntimeDelivery ('installed' or 'bundled').", P("appFile"), Opt("Name, Value"));
         Add("pcode", "Writes a P-file (JGraph's own format: the tokens, without comments or line numbers, and not encrypted) for each .m file, folder or wildcard named, into the current folder, or beside the source with -inplace; a P-file is found before the .m beside it.", P("item"), Opt("-inplace"));
         Add("getSecret", "A secret's value as a string: in a compiled program, the environment variable of that name; JGraph has no vault, so elsewhere it refuses as R2025b does without one.", P("name"));
         Add("isSecret", "Whether a secret is set: in a compiled program, whether the environment holds a variable of that name.", P("name"));

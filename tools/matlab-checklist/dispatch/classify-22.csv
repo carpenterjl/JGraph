@@ -1,0 +1,5 @@
+name,kind,method_classes
+mcc,other,
+compiler.build.standaloneApplication,mfile,
+compiler.build.standaloneWindowsApplication,mfile,
+compiler.build.StandaloneApplicationOptions,mfile,

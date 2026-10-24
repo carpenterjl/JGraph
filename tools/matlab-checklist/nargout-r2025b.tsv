@@ -306,6 +306,9 @@ comet	0	2
 comet3	0	2
 compan	1	2
 compass	1	2
+compiler.build.standaloneApplication	-1	0
+compiler.build.StandaloneApplicationOptions	1	8
+compiler.build.standaloneWindowsApplication	-1	0
 compiler.codetools.deployableSupportPackages	1	0
 complex	1	5
 compose	1	2
@@ -1223,6 +1226,7 @@ maxflat	6	2
 maxhessiannorm	1	2
 maxk	2	5
 maxNumCompThreads	1	5
+mcc	ERR:MATLAB:narginout:doesNotApply	3
 mcrcachedir	ERR:MATLAB:narginout:doesNotApply	3
 mcrversion	-1	2
 mean	1	2

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    jglaunch.dll, what a standalone program's native launcher (native/jglaunch) starts through
+    hostfxr (compiler and SDK plan, stage K6). It runs on the Windows desktop framework, which its
+    runtimeconfig names, so a program can show its figures and apps; the work is the window host's
+    StandaloneProgramRun. Published into the JGraph Runtime's bin\win64, beside jgraph.exe, with no
+    apphost of its own: the program is the host.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseAppHost>false</UseAppHost>
+    <AssemblyName>jglaunch</AssemblyName>
+    <RootNamespace>JGraph.Runtime.Launch</RootNamespace>
+    <Description>The managed entry of a JGraph standalone program: runs the archive the program carries on the JGraph Runtime.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Runtime.Desktop\JGraph.Runtime.Desktop.csproj" />
+  </ItemGroup>
+
+</Project>

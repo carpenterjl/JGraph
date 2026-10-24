@@ -1,0 +1,139 @@
+CHK|class|compiler.build.StandaloneApplicationOptions|exact
+CHK|name|k6f|exact
+CHK|outdir|.\k6fstandaloneApplication|exact
+CHK|version|1.0.0.0|exact
+CHK|icon|<M>\toolbox\compiler\packagingResources\default_icon_48.png|exact
+CHK|splash|<M>\toolbox\compiler\packagingResources\default_splash.png|exact
+CHK|appfile|<root>\src\k6f.m|exact
+CHK|help||exact
+CHK|embed|on|exact
+CHK|numeric|off|exact
+CHK|additional|double [1 2] 0 0|exact
+CHK|detect|on|exact
+CHK|key|double [1 2] 0 0|exact
+CHK|key_fields|EncryptionKeyFile RuntimeKeyLoaderFile|exact
+CHK|obfuscate|off|exact
+CHK|secrets||exact
+CHK|packages|autodetect|exact
+CHK|verbose|off|exact
+CHK|props|ExecutableName CustomHelpTextFile EmbedArchive ExecutableIcon ExecutableSplashScreen ExecutableVersion AppFile TreatInputsAsNumeric AdditionalFiles AutoDetectDataFiles ExternalEncryptionKey ObfuscateArchive SecretsManifest SupportPackages Verbose OutputDir|exact
+CHK|digit_name|_9k|exact
+CHK|digit_outdir|.\_9kstandaloneApplication|exact
+CHK|dash_name|k6_dash|exact
+CHK|spaced_outdir|.\k6_two_wordsstandaloneApplication|exact
+CHK|version_unchecked|70000|exact
+CHK|outdir_dot|.\built|exact
+CHK|outdir_abs|<root>\src\built|exact
+CHK|numeric_true|on|exact
+CHK|embed_zero|off|exact
+CHK|packages_none|none|exact
+CHK|additional_two|<root>\src\k6_help.txt / <root>\src\k6f.m|exact
+CHK|additional_size|double [1 2] 2 1|exact
+CHK|help_empty|char|exact
+CHK|nv_name|named|exact
+CHK|nv_partial|on|exact
+CHK|set_name_slash|Compiler:clishared:badProperty|exact
+CHK|set_name_slash_msg|Invalid 'ExecutableName': 'a/b'|exact
+CHK|set_name_empty|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|set_name_empty_msg|Value must be text with one or more characters.|exact
+CHK|set_name_number|MATLAB:invalidType|exact
+CHK|set_name_number_msg|Expected ExecutableName to be one of these types: char, string Instead its type was double.|exact
+CHK|set_name_tab|Compiler:clishared:noWhiteSpaceInProperty|exact
+CHK|set_name_tab_msg|'ExecutableName' cannot contain any white space characters.|exact
+CHK|set_name_bar|Compiler:clishared:badProperty|exact
+CHK|set_name_bar_msg|Invalid 'ExecutableName': 'a/b'|exact
+CHK|set_outdir_bar|Compiler:clishared:badProperty|exact
+CHK|set_outdir_bar_msg|Invalid 'OutputDir': 'a/b'|exact
+CHK|set_version_number|MATLAB:invalidType|exact
+CHK|set_version_number_msg|Expected ExecutableVersion to be one of these types: char, string Instead its type was double.|exact
+CHK|set_numeric_word|MATLAB:validation:UnableToConvert|exact
+CHK|set_numeric_word_msg|Error setting property 'TreatInputsAsNumeric' of class 'compiler.build.StandaloneApplicationOptions'. 'maybe' is invalid. Value must be 'off' or 'on'.|exact
+CHK|set_detect_word|MATLAB:validation:UnableToConvert|exact
+CHK|set_detect_word_msg|Error setting property 'AutoDetectDataFiles' of class 'compiler.internal.build.DependencyOptions'. 'maybe' is invalid. Value must be 'off' or 'on'.|exact
+CHK|set_verbose_word|MATLAB:validation:UnableToConvert|exact
+CHK|set_verbose_word_msg|Error setting property 'Verbose' of class 'compiler.internal.build.AllOptions'. 'loud' is invalid. Value must be 'off' or 'on'.|exact
+CHK|set_additional_missing|Compiler:utils:shared:cannotFindFileOrFolder|exact
+CHK|set_additional_missing_msg|Cannot find file or folder: k0_nosuch_data.mat|exact
+CHK|set_additional_number|MATLAB:invalidType|exact
+CHK|set_additional_number_msg|Expected AdditionalFiles to be one of these types: char, string, cell Instead its type was double.|exact
+CHK|set_key_fields|Compiler:build:externalencryptionkey:badFields|exact
+CHK|set_key_fields_msg|"ExternalEncryptionKey" must be a struct with exactly two fields named "EncryptionKeyFile" and "RuntimeKeyLoaderFile".|exact
+CHK|set_icon_missing|Compiler:utils:shared:cannotFindFile|exact
+CHK|set_icon_missing_msg|Cannot find file: k0_nosuch.png|exact
+CHK|set_splash_text|Compiler:utils:shared:notAnImage / The file: / / <root>\src\k6_help.txt / / is not an image file.|exact
+CHK|set_help_missing|Compiler:utils:shared:cannotFindFile|exact
+CHK|set_help_missing_msg|Cannot find file: k0_nosuch.txt|exact
+CHK|set_secrets_missing|Compiler:utils:shared:cannotFindFile|exact
+CHK|set_secrets_missing_msg|Cannot find file: k0_nosuch.json|exact
+CHK|ctor_missing|Compiler:utils:shared:cannotFindFile|exact
+CHK|ctor_missing_msg|Cannot find file: k0_nosuch.m|exact
+CHK|ctor_text|Compiler:clishared:badExtension|exact
+CHK|ctor_text_msg|Expected 'AppFile' to have one of the following extensions: .mexw64 .mlapp .mlx .p .m|exact
+CHK|ctor_badname|MATLAB:InputParser:UnmatchedParameter|exact
+CHK|ctor_badname_msg|'NoSuchOption' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|ctor_none|MATLAB:narginchk:notEnoughInputs|exact
+CHK|ctor_none_msg|Not enough input arguments.|exact
+CHK|build_none|MATLAB:narginchk:notEnoughInputs|exact
+CHK|build_none_msg|Not enough input arguments.|exact
+CHK|build_opts_and_nv|MATLAB:narginchk:tooManyInputs|exact
+CHK|build_opts_and_nv_msg|Too many input arguments.|exact
+CHK|build_missing|Compiler:utils:shared:cannotFindFile|exact
+CHK|build_missing_msg|Cannot find file: k0_nosuch.m|exact
+CHK|build_two_out|MATLAB:nargoutchk:tooManyOutputs|exact
+CHK|build_two_out_msg|Too many output arguments.|exact
+CHK|mcc_missing|Compiler:compiler:COM_ERR_M_FILE_NOT_FOUND|exact
+CHK|mcc_missing_msg|Could not find the MATLAB file 'k0_nosuchfile.m' on the MATLAB path.|exact
+CHK|mcc_nofile|Compiler:compiler:COM_ERR_NO_FILES_SPECIFIED|exact
+CHK|mcc_nofile_msg|Error: No source files were specified (-? for help).|exact
+CHK|mcc_badW|Compiler:compiler:COM_ERR_INVALID_WRAPPER_OPTION|exact
+CHK|mcc_badW_msg|Error: 'bogus' is not a valid -W option.|exact
+CHK|mcc_mismatch|Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH|exact
+CHK|mcc_mismatch_msg|Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.|exact
+CHK|mcc_badT|Compiler:compiler:COM_ERR_INVALID_OPTION|exact
+CHK|mcc_badT_msg|Error: "link:nothing" is not a valid -T option argument.|exact
+CHK|mcc_unknown|Compiler:compiler:COM_ERR_UNRECOGNIZED_OPTION|exact
+CHK|mcc_unknown_msg|Error: Unrecognized option: -Q.|exact
+CHK|mcc_nowrapper|Compiler:compiler:COM_ERR_MISSING_WRAPPER|exact
+CHK|mcc_nowrapper_msg|Unable to determine application type, since no wrapper function was specified. Please use the -W switch or specify application type via -m or -l. Type 'mcc -?' for further assistance.|exact
+CHK|mcc_version|Compiler:compiler:COM_ERR_INVALID_VERSION|exact
+CHK|mcc_version_msg|Version string "1.2.3.4.5" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.|exact
+CHK|mcc_version_big|Compiler:compiler:COM_ERR_INVALID_VERSION|exact
+CHK|mcc_version_big_msg|Version string "70000" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.|exact
+CHK|mcc_out_spaced|Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME|exact
+CHK|mcc_out_spaced_msg|Illegal output name: 'k6 spaced' (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')|exact
+CHK|mcc_out_ext|Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME|exact
+CHK|mcc_out_ext_msg|Illegal output name: 'k6_ext.exe' (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')|exact
+CHK|mcc_help_missing|Compiler:compiler:COM_ERR_HELP_FILE_NOT_EXIST / The help file / '<root>\src\k6_nosuch.txt' / does not exist.|exact
+CHK|mcc_icon_png|Compiler:compiler:EMBED_ICON_FAILED / Failed to embed icon file "<root>\src\k6_icon.png" - Error reading icon file.|exact
+CHK|mcc_icon_missing|Compiler:compiler:EMBED_ICON_FAILED / Failed to embed icon file "<root>\src\k6_nosuch.ico" - Failed to open file ReadIconFromICOFile with error File not found..|exact
+CHK|mcc_x|Compiler:compiler:COM_ERR_NO_MORE_MEX|exact
+CHK|mcc_x_msg|Error: -x is no longer supported. The MATLAB Compiler no longer generates MEX files because there is no longer any performance advantage to doing so: the MATLAB JIT accelerates MATLAB files by default. To hide proprietary algorithms, use the PCODE function.|exact
+CHK|m_files|buildresult.json includedSupportPackages.txt k6f.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|m_readme_title|k6f Executable|exact
+CHK|m_readme_sections|1. Prerequisites for Deployment / 2. Files to Deploy and Package / 3. Definitions|exact
+CHK|m_readme_crlf|logical [1 1] 1|exact
+CHK|m_products|35010 |exact
+CHK|c_files|buildresult.json includedSupportPackages.txt k6sep.ctf k6sep.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|c_readme_list|-k6sep.ctf (component technology file) / -k6sep.exe / -MCRInstaller.exe / -This readme file |div=ADR0262|diverges|-k6sep.ctf (component technology file) / -k6sep.exe / -The JGraph Runtime installer, when the computer has no JGraph Runtime / -This readme file
+CHK|d_made|buildresult.json includedSupportPackages.txt k6f.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|r_type|standaloneApplication|exact
+CHK|r_files|<root>\api\k6api.exe / <root>\api\readme.txt|exact
+CHK|r_files_size|double [1 2] 2 1|exact
+CHK|r_options|compiler.build.StandaloneApplicationOptions|exact
+CHK|r_packages|double [1 2] 0 0|exact
+CHK|r_deps|compiler.runtime.Dependencies|exact
+CHK|r_required_size|double [1 2] 1 2|exact
+CHK|r_required_id|double [1 1] 35010|exact
+CHK|r_required_name|MATLAB Base Runtime|div=ADR0257|diverges|JGraph Runtime
+CHK|r_optional|double [1 2] 0 0|exact
+CHK|r_id|string|exact
+CHK|r_duration|double|exact
+CHK|r_props|BuildType Files IncludedSupportPackages Options RuntimeDependencies|exact
+CHK|r_display|Results with properties: / BuildType: 'standaloneApplication' / Files: {2×1 cell} / IncludedSupportPackages: {} / Options: [1×1 compiler.build.StandaloneApplicationOptions] / RuntimeDependencies: [1×1 compiler.runtime.Dependencies]|exact
+CHK|api_files|buildresult.json includedSupportPackages.txt k6api.exe mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|verbose_command|mcc -W 'main:k6f,version=1.0.0.0' -T link:exe -d <root>\verbose -v -Z autodetect -o k6f -n -r <ICON> <root>\src\k6f.m|exact
+CHK|verbose_compiler|Compiler version: 25.2 (R2025b)|div=ADR0262|diverges|Compiler version: JGraph 0.2.3 (R2025b)
+CHK|verbose_rest|Analyzing file dependencies. / Parsing file "<root>\src\k6f.m" / (referenced from command line). / Generating file "<root>\verbose\readme.txt".|exact
+CHK|w_type|standaloneWindowsApplication|exact
+CHK|w_files|<root>\win\k6f.exe / <root>\win\splash.png / <root>\win\readme.txt|exact
+CHK|w_splash|double [1 2] 400 400|exact

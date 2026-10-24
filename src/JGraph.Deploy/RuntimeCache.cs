@@ -137,6 +137,42 @@ public sealed class RuntimeCache
     }
 
     /// <summary>
+    /// The extracted copy of an archive kept beside its program rather than in a cache: <c>mcc -C</c>'s
+    /// <c>&lt;name&gt;.ctf</c>, which R2025b extracts to <c>&lt;name&gt;_mcr</c> in the program's folder
+    /// (K0, env_separate_ctf). It is extracted again when it is incomplete or changed, as a cache
+    /// entry is, or when it holds another build of the archive (its uuid differs).
+    /// </summary>
+    public static CacheEntry OpenBeside(CtfArchiveReader archive, string folder)
+    {
+        ArgumentNullException.ThrowIfNull(archive);
+        folder = Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder));
+        string uuidFile = Path.Combine(folder, UuidFile);
+        bool extracted = false;
+        if (!IsComplete(folder) || !File.Exists(uuidFile) || File.ReadAllText(uuidFile) != archive.Manifest.Uuid)
+        {
+            if (System.IO.Directory.Exists(folder))
+            {
+                System.IO.Directory.Delete(folder, recursive: true);
+            }
+
+            System.IO.Directory.CreateDirectory(folder);
+            File.WriteAllBytes(Path.Combine(folder, LockFile), []);
+            IReadOnlyList<(string Path, long Length, DateTime Written)> written = archive.ExtractTo(folder);
+            File.WriteAllText(Path.Combine(folder, ExtractedFile), string.Concat(written.Select(w => string.Create(
+                CultureInfo.InvariantCulture, $"{w.Path}\t{w.Length}\t{w.Written.Ticks}\n"))), new UTF8Encoding(false));
+            File.WriteAllText(uuidFile, archive.Manifest.Uuid, new UTF8Encoding(false));
+            File.WriteAllBytes(Path.Combine(folder, CreatedFile), []);
+            extracted = true;
+        }
+
+        FileStream entryLock = new(Path.Combine(folder, LockFile), FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        return new CacheEntry(folder, extracted, entryLock);
+    }
+
+    /// <summary>The uuid of the archive a folder beside its program was extracted from (<see cref="OpenBeside"/>).</summary>
+    public const string UuidFile = ".jgraph_uuid";
+
+    /// <summary>
     /// The limit: <paramref name="sizeSetting"/> when it is a size (written to <c>.max_size</c>), else
     /// what <c>.max_size</c> holds, else <see cref="DefaultMaxSize"/> (written when the cache has none).
     /// </summary>

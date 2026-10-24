@@ -1,0 +1,1279 @@
+CASE	api_e\k6_wait.exe
+file	k6_wait.exe
+bytes	1377720
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1222144
+overlay.bytes	155576
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 0: 38701 bytes
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 0: 15182 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 0: 3214 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 0: 2085 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 0: 1370 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 0: 749 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	api_e_app\k6_app.exe
+file	k6_app.exe
+bytes	1380685
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1222144
+overlay.bytes	158541
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 0: 38701 bytes
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 0: 15182 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 0: 3214 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 0: 2085 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 0: 1370 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 0: 749 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	api_e_default\k6_hello.exe
+file	k6_hello.exe
+bytes	1377793
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1222144
+overlay.bytes	155649
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 0: 38701 bytes
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 0: 15182 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 0: 3214 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 0: 2085 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 0: 1370 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 0: 749 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	api_m\k6_api.exe
+file	k6_api.exe
+bytes	1281351
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1125376
+overlay.bytes	155975
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 0: 838 bytes
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 0: 412 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 0: 214 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 0: 149 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 0: 157 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 0: 124 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 838 id 1: png 256x256
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 412 id 2: png 128x128
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 214 id 3: png 48x48
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 149 id 4: png 32x32
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 157 id 5: png 24x24
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 124 id 6: png 16x16
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	3.4.0.0
+  fixed.ProductVersion	3.4.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	3.4.0.0
+  string.ProductVersion	3.4.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	api_m_numeric\k6_hello.exe
+file	k6_hello.exe
+bytes	1340427
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1184768
+overlay.bytes	155659
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 0: 38701 bytes
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 0: 15182 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 0: 3214 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 0: 2085 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 0: 1370 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 0: 749 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	api_m_separate\k6_hello.exe
+file	k6_hello.exe
+bytes	1184768
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1184768
+overlay.bytes	0
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 0: 38701 bytes
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 0: 15182 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 0: 3214 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 0: 2085 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 0: 1370 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 0: 749 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	e_and_W_main\k6_hello.exe
+file	k6_hello.exe
+bytes	1278989
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	155661
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	e_app_m\k6_app.exe
+file	k6_app.exe
+bytes	1316393
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1160704
+overlay.bytes	155689
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	e_app_mlapp\k6_app.exe
+file	k6_app.exe
+bytes	1319287
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1160704
+overlay.bytes	158583
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	e_err\k6_err.exe
+file	k6_err.exe
+bytes	1316255
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1160704
+overlay.bytes	155551
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	e_fig\k6_fig.exe
+file	k6_fig.exe
+bytes	1317638
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1160704
+overlay.bytes	156934
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	e_plain\k6_hello.exe
+file	k6_hello.exe
+bytes	1316355
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1160704
+overlay.bytes	155651
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	e_wait\k6_wait.exe
+file	k6_wait.exe
+bytes	1316152
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1160704
+overlay.bytes	155448
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	e_winmain\k6_hello.exe
+file	k6_hello.exe
+bytes	1316377
+machine	0x8664
+subsystem	windows-gui
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1160704
+overlay.bytes	155673
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	gdiplus.dll
+import	GDI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	4.5.6.7
+  fixed.ProductVersion	4.5.6.7
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	4.5.6.7
+  string.ProductVersion	4.5.6.7
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1388 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"></assemblyIdentity></dependentAssembly></dependency><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_and_W\k6_hello.exe
+file	k6_hello.exe
+bytes	1278939
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	155611
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_app_mlapp\k6_app_console.exe
+file	k6_app_console.exe
+bytes	1281925
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	158597
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_err\k6_err.exe
+file	k6_err.exe
+bytes	1278880
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	155552
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_fig\k6_fig.exe
+file	k6_fig.exe
+bytes	1280289
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	156961
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_help\k6_helped.exe
+file	k6_helped.exe
+bytes	1279388
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	156060
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_icon_ico\k6_hello.exe
+file	k6_hello.exe
+bytes	1280967
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1125376
+overlay.bytes	155591
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 0: 838 bytes
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 0: 412 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 0: 214 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 0: 149 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 0: 157 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 0: 124 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 0: 90 bytes
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 838 id 1: png 256x256
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 412 id 2: png 128x128
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 214 id 3: png 48x48
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 149 id 4: png 32x32
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 157 id 5: png 24x24
+  icon	13x0 colors 100 planes 18505 bits 21060 bytes 124 id 6: png 16x16
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_named\k6_named.exe
+file	k6_named.exe
+bytes	1278964
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	155636
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_plain\k6_hello.exe
+file	k6_hello.exe
+bytes	1278982
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	155654
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_separate\k6_sep.exe
+file	k6_sep.exe
+bytes	1123328
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	0
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_version\k6_hello.exe
+file	k6_hello.exe
+bytes	1279001
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	155673
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	2.3.0.0
+  fixed.ProductVersion	2.3.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	2.3.0.0
+  string.ProductVersion	2.3.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	m_version4\k6_hello.exe
+file	k6_hello.exe
+bytes	1278980
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	155652
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	2.3.4.5
+  fixed.ProductVersion	2.3.4.5
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	2.3.4.5
+  string.ProductVersion	2.3.4.5
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>
+CASE	no\such\k6_hello.exe
+file	k6_hello.exe
+bytes	1278991
+machine	0x8664
+subsystem	windows-console
+sections	.text .rdata .data .pdata _RDATA .rsrc .reloc
+image.bytes	1123328
+overlay.bytes	155663
+overlay.starts	PK zip
+certificate	no
+import	ADVAPI32.dll
+import	KERNEL32.dll
+import	USER32.dll
+import	OLEAUT32.dll
+import	launchermain.dll (delay)
+resource	ICON 1 lang 1033: 296 bytes
+resource	ICON 2 lang 1033: 744 bytes
+resource	ICON 3 lang 1033: 1640 bytes
+resource	ICON 4 lang 1033: 41064 bytes
+resource	ICON 5 lang 1033: 1384 bytes
+resource	ICON 6 lang 1033: 2216 bytes
+resource	ICON 7 lang 1033: 3752 bytes
+resource	ICON 8 lang 1033: 74792 bytes
+resource	GROUP_ICON 1 lang 1033: 118 bytes
+  icon	16x16 colors 16 planes 1 bits 4 bytes 296 id 1: dib 16x16 4bpp
+  icon	32x32 colors 16 planes 1 bits 4 bytes 744 id 2: dib 32x32 4bpp
+  icon	48x48 colors 16 planes 1 bits 4 bytes 1640 id 3: dib 48x48 4bpp
+  icon	0x0 colors 16 planes 1 bits 4 bytes 41064 id 4: dib 256x256 4bpp
+  icon	16x16 colors 0 planes 1 bits 8 bytes 1384 id 5: dib 16x16 8bpp
+  icon	32x32 colors 0 planes 1 bits 8 bytes 2216 id 6: dib 32x32 8bpp
+  icon	48x48 colors 0 planes 1 bits 8 bytes 3752 id 7: dib 48x48 8bpp
+  icon	0x0 colors 0 planes 1 bits 8 bytes 74792 id 8: dib 256x256 8bpp
+resource	VERSION 1 lang 0: 320 bytes
+  fixed.FileVersion	1.0.0.0
+  fixed.ProductVersion	1.0.0.0
+  fixed.FileFlags	0x0
+  fixed.FileOS	0x40004
+  fixed.FileType	0x0
+  table	000004B0
+  string.FileVersion	1.0.0.0
+  string.ProductVersion	1.0.0.0
+  var.Translation	000004b0
+resource	MANIFEST 1 lang 1033: 1142 bytes
+  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  manifest	<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"><security><requestedPrivileges><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv1:application xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><ms_asmv1:windowsSettings xmlns:ms_asmv1="urn:schemas-microsoft-com:asm.v1"><activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage></ms_asmv1:windowsSettings></ms_asmv1:application><ms_compatibility:compatibility xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" xmlns="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:application xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1"><ms_compatibility:supportedOS xmlns:ms_compatibility="urn:schemas-microsoft-com:compatibility.v1" Id="{<UUID>}"></ms_compatibility:supportedOS></ms_compatibility:application></ms_compatibility:compatibility></assembly>

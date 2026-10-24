@@ -159,6 +159,14 @@ internal static class JgsDeployedMain
     /// </summary>
     internal static void WriteReport(IScriptOutput output, JgsException error)
     {
+        // A windowed program (mcc -e) has nowhere to write: R2025b shows the error in a dialog
+        // instead, and exits when it is dismissed (stage K6, k6_windows: e_err).
+        IScriptOutput shown = output is JGraph.Scripting.Startup.DeployedLogOutput log ? log.Console : output;
+        if (shown is JGraph.Scripting.Startup.IDeployedErrorDialog dialog)
+        {
+            dialog.ShowError(DialogText(error));
+        }
+
         string report = Report(error);
         if (output is JGraph.Scripting.Startup.IDeployedReportSink sink)
         {
@@ -168,6 +176,18 @@ internal static class JgsDeployedMain
         {
             output.WriteError(report);
         }
+    }
+
+    /// <summary>
+    /// The text of the dialog a windowed program's uncaught error shows (k6_windows, e_err): the
+    /// message, then <c>Error in =&gt; k6_err.m at line 12</c> for the frame that raised it.
+    /// </summary>
+    internal static string DialogText(JgsException error)
+    {
+        IReadOnlyList<(string Name, string File, int Line)> frames = (error as JgsRuntimeException)?.Frames ?? [];
+        return frames.Count > 0 && Path.GetFileName(frames[0].File) is { Length: > 0 } file
+            ? $"{error.Message}\nError in => {file} at line {frames[0].Line}"
+            : error.Message;
     }
 
     /// <summary>A frame as the report names it: a local function of a file as <c>file&gt;local</c>.</summary>

@@ -25,4 +25,14 @@
     <EmbeddedResource Include="..\..\tools\matlab-checklist\compiler-probes\recordings\k2_names.out.txt" LogicalName="JGraph.Deploy.r2025b-names.tsv" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Stage K6: the launcher templates mcc -m and -e copy (native/jglaunch, built by its build.ps1
+         and checked in), beside every program that can build one. -->
+    <None Include="..\..\native\win-x64\launchers\jglaunch-console.exe;..\..\native\win-x64\launchers\jglaunch-gui.exe"
+          Link="launchers\win64\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <!-- compiler.build's default icon and splash, where R2025b keeps its own under matlabroot. -->
+    <None Include="PackagingResources\default_icon_48.png;PackagingResources\default_splash.png"
+          Link="toolbox\compiler\packagingResources\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
