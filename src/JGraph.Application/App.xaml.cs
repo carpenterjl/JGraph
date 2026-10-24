@@ -2,15 +2,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
-using JGraph.Application.Mvvm;
 using JGraph.Application.Scripting;
 using JGraph.Application.Services;
 using JGraph.Application.Startup;
-using JGraph.Application.Theming;
-using JGraph.Core.Model;
 using JGraph.Numerics;
 using JGraph.Plugins;
 using JGraph.Reporting;
+using JGraph.Runtime.Desktop;
+using JGraph.Runtime.Desktop.Mvvm;
+using JGraph.Runtime.Desktop.Services;
+using JGraph.Runtime.Desktop.Theming;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
 using JGraph.Scripting.Startup;
@@ -28,7 +29,7 @@ namespace JGraph.Application;
 public partial class App : System.Windows.Application
 {
     private ServiceProvider? _services;
-    private int? _pendingExitCode;
+    private WindowedBatchRun? _batchRun;
     private int _alerted;
     private bool _headless;
 
@@ -271,11 +272,11 @@ public partial class App : System.Windows.Application
     {
         // The batch session's run ends here, after its last window: its workspace, files and native
         // host go now, as a one-shot run's go when its script returns.
-        if (_batchSession is not null)
+        if (_batchRun is { HoldsSession: true } run)
         {
             try
             {
-                EndBatchSessionAsync().Wait(TimeSpan.FromSeconds(5));
+                run.EndAsync().Wait(TimeSpan.FromSeconds(5));
             }
             catch (AggregateException)
             {
@@ -283,7 +284,7 @@ public partial class App : System.Windows.Application
             }
         }
 
-        if (_pendingExitCode is { } code)
+        if (_batchRun?.PendingExitCode is { } code)
         {
             // A batch run that ended while its figure windows were still open: the process exits when
             // the user closes the last one, but with the code the script earned.
@@ -313,149 +314,9 @@ public partial class App : System.Windows.Application
             : null;
         IScriptOutput output = tee ?? console;
 
-        var figureWindows = _services!.GetRequiredService<IFigureWindowService>();
         IScriptEngine[] engines = _services!.GetServices<IScriptEngine>().ToArray();
-
-        _ = RunBatchAsync(options, engines, output, figureWindows, tee);
-    }
-
-    private async Task RunBatchAsync(
-        StartupOptions options,
-        IScriptEngine[] engines,
-        IScriptOutput output,
-        IFigureWindowService figureWindows,
-        TeeScriptOutput? tee)
-    {
-        // This mode has a real dispatcher, so drawnow can be a real render barrier here too.
-        ScriptRenderPump.SetFlusher(() => Dispatcher.Invoke(
-            static () => { }, System.Windows.Threading.DispatcherPriority.Render));
-
-        // The script runs in a session that outlives it (app-building plan, U1): a GUI it leaves on
-        // screen keeps answering its user, in the workspace that built it, until the last window
-        // closes — then the session ends, and with it the run's files and native host.
-        // The windows answer their user from the first statement on, so a wait inside the script
-        // (uiwait, waitfor, a blocking dialog) is a real one: the pump is what says somebody can
-        // answer. While the script runs there is no session to drain and the pump does nothing;
-        // the script's own waits and drawnow deliver the events.
-        ScriptEventQueue.InstallPump(() => Dispatcher.BeginInvoke(new Action(PumpBatchSession)));
-
-        int code;
-        try
-        {
-            (code, _batchSession) = await BatchRunner.RunInSessionAsync(
-                options,
-                engines,
-                output,
-                (number, figure) => Dispatcher.Invoke(() => figureWindows.ShowScriptFigure(number, figure)),
-                new AppScriptFigureFiles(),
-                audio: null,
-                closeFigure: number => Dispatcher.Invoke(() => figureWindows.CloseScriptFigure(number)));
-        }
-        catch (Exception ex)
-        {
-            // Nothing above this can report a failure any more, so say it plainly and fail the run.
-            output.WriteError("jgraph: " + ex.Message);
-            code = StartupExitCodes.ScriptError;
-        }
-        finally
-        {
-            // The log stays open while windows are up: their callbacks print to it (U9).
-            if (Windows.Count == 0)
-            {
-                tee?.Dispose();
-            }
-            else
-            {
-                _batchLog = tee;
-            }
-        }
-
-        if (Windows.Count == 0)
-        {
-            await EndBatchSessionAsync();
-            Shutdown(code);
-            return;
-        }
-
-        // Figures are on screen: hand control back to the user and keep the code for the way out.
-        // Their callbacks are delivered by the pump below, the IDE's idle pump in miniature.
-        _pendingExitCode = code;
-        ShutdownMode = ShutdownMode.OnLastWindowClose;
-        ScriptUiTrace.Write($"batch: run ended with {code}, {Windows.Count} window(s), session {_batchSession is not null}");
-        PumpBatchSession();
-    }
-
-    /// <summary>The session a <c>-batch -showfigures</c> run keeps for its windows' callbacks.</summary>
-    private IScriptSession? _batchSession;
-
-    /// <summary>The run's <c>-logfile</c>, kept open with the session for what the callbacks print.</summary>
-    private TeeScriptOutput? _batchLog;
-
-    /// <summary>
-    /// Whether a pump run is under way. A flag set before the run starts, never the run's task: a
-    /// drain that finishes before its first await completes the task synchronously, and assigning
-    /// that finished task after its own finally had cleared the field left the pump looking busy for
-    /// ever, so no event was delivered again (found by the U1 window check).
-    /// </summary>
-    private bool _batchPumping;
-    private readonly CancellationTokenSource _batchPumpStop = new();
-
-    /// <summary>
-    /// Delivers queued callbacks to the batch session when it is idle. UI thread; called when an
-    /// event is queued and again when a pump run ends, so an event that arrived mid-run is not missed.
-    /// </summary>
-    private void PumpBatchSession()
-    {
-        if (_batchPumping || _batchSession is not IGraphicsEventSession session || !ScriptEventQueue.HasWork)
-        {
-            ScriptUiTrace.Write($"pump: not started (running {_batchPumping}, session {_batchSession is not null}, work {ScriptEventQueue.HasWork})");
-            return;
-        }
-
-        ScriptUiTrace.Write("pump: started");
-        _batchPumping = true;
-        _ = PumpOnceAsync(session);
-    }
-
-    private async Task PumpOnceAsync(IGraphicsEventSession session)
-    {
-        try
-        {
-            await session.DrainGraphicsEventsAsync(null, _batchPumpStop.Token).ConfigureAwait(true);
-        }
-        catch (Exception ex) when (ScriptExitException.Unwrap(ex) is { } exit)
-        {
-            // A callback called exit: the run ends with the code it gave, windows or no windows.
-            _pendingExitCode = exit.ExitCode;
-            Shutdown(exit.ExitCode);
-            return;
-        }
-        catch (Exception ex) when (ex is InvalidOperationException or OperationCanceledException or ObjectDisposedException)
-        {
-            // A callback's own errors were already reported; only the pump itself lands here.
-            ScriptUiTrace.Write("pump: " + ex.GetType().Name + " " + ex.Message);
-        }
-        finally
-        {
-            _batchPumping = false;
-            ScriptUiTrace.Write("pump: ended");
-        }
-
-        PumpBatchSession();
-    }
-
-    private async Task EndBatchSessionAsync()
-    {
-        ScriptEventQueue.InstallPump(null);
-        _batchPumpStop.Cancel();
-        if (_batchSession is { } session)
-        {
-            _batchSession = null;
-            await session.DisposeAsync();
-        }
-
-        _batchLog?.Dispose();
-        _batchLog = null;
+        _batchRun = new WindowedBatchRun(this, _services!.GetRequiredService<IFigureWindowService>());
+        _ = _batchRun.RunAsync(options, engines, output, tee);
     }
 
     /// <summary>Opens the HTML scripting guide, falling back to the flag reference in a dialog.</summary>
@@ -507,7 +368,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IDataImportService, DataImportService>();
 
         // The print and page dialogs (M84), beside the export and document services they sit with.
-        services.AddSingleton<IFigurePrintService, Printing.FigurePrintService>();
+        services.AddSingleton<IFigurePrintService, JGraph.Runtime.Desktop.Printing.FigurePrintService>();
 
         // Scripting engines: MATLAB, JGS and C# are always available; Python is available when a
         // CPython runtime is found. JGS reads the user's language options on each run. The order is
@@ -518,9 +379,12 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IScriptEngine, CSharpScriptEngine>();
         services.AddSingleton<IScriptEngine, PythonScriptEngine>();
         services.AddSingleton<IWorkspaceStateService, WorkspaceStateService>();
-        services.AddSingleton<IFigureWindowService, FigureWindowService>();
+        services.AddSingleton<IFigureWindowService>(sp => new FigureWindowService(sp.GetRequiredService<FigureWindow>));
         services.AddSingleton<IScriptingService, ScriptingService>();
         services.AddSingleton<IOptionsService, OptionsService>();
+
+        // What a figure window's toolbar offers here and a deployed program's does not (K5).
+        services.AddSingleton<IFigureWindowShell, IdeFigureWindowShell>();
 
         // Bug reports (ADR 0116): the product's one outbound network call. The transport aims at
         // the deployed relay; the environment variable exists so a test relay can be tried without

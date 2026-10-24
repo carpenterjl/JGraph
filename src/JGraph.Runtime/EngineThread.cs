@@ -85,6 +85,31 @@ internal sealed class EngineThread : IDisposable
     public T Invoke<T>(Func<T> work, CancellationToken cancellationToken = default) =>
         Run(work, cancellationToken).GetAwaiter().GetResult();
 
+    /// <summary>
+    /// Queues <paramref name="work"/> that nobody waits for (stage K5): a window's report about a
+    /// component that is not the live one, or a poke for <see cref="Idle"/>. Nothing runs once the
+    /// runtime has terminated; an exception is reported on standard error.
+    /// </summary>
+    public void Post(Action work)
+    {
+        ArgumentNullException.ThrowIfNull(work);
+        try
+        {
+            _queue.Add(work);
+        }
+        catch (InvalidOperationException)
+        {
+            // The runtime has terminated: there is no session left to run it in.
+        }
+    }
+
+    /// <summary>
+    /// What the engine does between calls (stage K5): called on the engine thread after each item of
+    /// work, and again when the time it answered has passed. It answers how long the engine may
+    /// sleep before it is wanted again, or null for until work arrives.
+    /// </summary>
+    public Func<TimeSpan?>? Idle { get; set; }
+
     /// <summary>Lets the work already queued finish, then ends the thread.</summary>
     public void Dispose()
     {
@@ -98,9 +123,56 @@ internal sealed class EngineThread : IDisposable
 
     private void Pump()
     {
-        foreach (Action work in _queue.GetConsumingEnumerable())
+        TimeSpan? sleep = null;
+        while (true)
+        {
+            Action? work;
+            try
+            {
+                if (!_queue.TryTake(out work, sleep ?? Timeout.InfiniteTimeSpan))
+                {
+                    if (_queue.IsCompleted)
+                    {
+                        return;
+                    }
+
+                    work = null; // the idle hook's time has come
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+
+            if (work is not null)
+            {
+                Guarded(work);
+            }
+
+            // After every item, not only when the queue runs dry: a client calling without pause
+            // must not starve its windows' callbacks, and one queued before a call runs before it.
+            sleep = null;
+            if (Idle is { } idle)
+            {
+                Guarded(() => sleep = idle());
+                if (sleep < TimeSpan.Zero)
+                {
+                    sleep = TimeSpan.Zero;
+                }
+            }
+        }
+    }
+
+    /// <summary>Runs posted work, whose failure has nobody to go to but standard error.</summary>
+    private static void Guarded(Action work)
+    {
+        try
         {
             work();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine("JGraph Runtime: " + ex.Message);
         }
     }
 }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Threading;
 using JGraph.Api;
-using JGraph.Application.Services;
 using JGraph.Core.Model;
+using JGraph.Runtime.Desktop.Services;
 using JGraph.Scripting;
 
 namespace JGraph.Application.Scripting;

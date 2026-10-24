@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using JGraph.Application.Services;
+using JGraph.Runtime.Desktop.Services;
 using JGraph.Scripting;
 using JGraph.Scripting.Startup;
 using JGraph.Scripting.Workspace;

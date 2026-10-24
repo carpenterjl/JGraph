@@ -3,7 +3,8 @@
 # runtime's installer will write (stage K18), or an application's own folder.
 #
 #   <root>\jgraph-runtime.json   the marker: the JGraph version and the release it follows
-#   <root>\bin\win64\            the engine, jgraph.exe and JGraph.Runtime.dll, published ReadyToRun
+#   <root>\bin\win64\            the engine, jgraph.exe and JGraph.Runtime.dll, published ReadyToRun, and
+#                                the window host, JGraph.Runtime.Desktop.dll (stage K5)
 #   <root>\runtime\win64\        the native bridge (stage K10)
 #   <root>\include\              the C and C++ headers (stages K11, K12)
 #   <root>\python\               the matlab module (stage K13)
@@ -40,6 +41,12 @@ dotnet publish (Join-Path $root "src\JGraph.Cli") -c $Configuration -r win-x64 -
     -p:PublishReadyToRun=$readyToRun -o $bin --nologo
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed." }
 
+# The window host (stage K5), beside the engine: JGraph.Runtime finds it there the first time a
+# component shows a figure, in a process that runs on the Windows desktop framework.
+dotnet publish (Join-Path $root "src\JGraph.Runtime.Desktop") -c $Configuration -r win-x64 --self-contained false `
+    -p:PublishReadyToRun=$readyToRun -o $bin --nologo
+if ($LASTEXITCODE -ne 0) { throw "dotnet publish of the window host failed." }
+
 foreach ($folder in "runtime\win64", "include", "python", "launchers\win64") {
     New-Item -ItemType Directory -Force (Join-Path $Output $folder) | Out-Null
 }
@@ -48,13 +55,15 @@ $marker = @{ version = $version; release = "25.2" } | ConvertTo-Json
 [System.IO.File]::WriteAllText((Join-Path $Output "jgraph-runtime.json"), $marker, (New-Object System.Text.UTF8Encoding($false)))
 
 # What the runtime cannot work without; a missing one means the publish layout changed.
-foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Scripting.dll", "JGraph.Deploy.dll", "native\libopenblas.dll") {
+foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.dll", "JGraph.Controls.dll", "JGraph.Scripting.dll",
+    "JGraph.Deploy.dll", "native\libopenblas.dll") {
     if (-not (Test-Path (Join-Path $bin $anchor))) {
         throw "The runtime is missing 'bin\win64\$anchor' - the publish layout changed; fix before shipping."
     }
 }
 
-# WPF must stay out (decision KO5): a headless runtime is what keeps Linux possible.
+# WPF itself must stay out (decision KO5): it comes from the Windows desktop framework of a process
+# that has one, and the headless part of the runtime, which keeps Linux possible, never loads it.
 if (Get-ChildItem $bin -Filter "PresentationFramework*.dll") { throw "WPF reached the runtime's bin." }
 
 $size = (Get-ChildItem $Output -Recurse -File | Measure-Object Length -Sum).Sum

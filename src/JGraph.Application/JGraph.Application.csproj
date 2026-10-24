@@ -45,6 +45,8 @@
     <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />
     <ProjectReference Include="..\JGraph.Plugins\JGraph.Plugins.csproj" />
     <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
+    <!-- The figure window host, moved out in the compiler and SDK plan's stage K5. -->
+    <ProjectReference Include="..\JGraph.Runtime.Desktop\JGraph.Runtime.Desktop.csproj" />
   </ItemGroup>
 
   <!-- uihtml's WebView2 host (U9b), copied beside the program. -->

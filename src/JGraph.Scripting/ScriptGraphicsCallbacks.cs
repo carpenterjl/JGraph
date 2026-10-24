@@ -26,6 +26,90 @@ public static class ScriptGraphicsCallbacks
     public static void ReleaseRetiredFigures() => Jgs.JgsHandleRegistry.DropUnreachable();
 
     /// <summary>
+    /// Where the reports below run when more than one session's figures are on screen (stage K5):
+    /// the JGraph Runtime's, which runs a report about one component's figure with that component's
+    /// state in place. Null in JGraph's application, where every report runs where it is made.
+    /// </summary>
+    internal static IScriptGraphicsRouter? Router { get; set; }
+
+    /// <summary>Runs a report through the <see cref="Router"/>; true when it ran now, on this thread.</summary>
+    private static bool Routed(GraphObject anchor, Action body)
+    {
+        if (Router is not { } router)
+        {
+            body();
+            return true;
+        }
+
+        return router.Run(JgsBuiltins.FigureOf(anchor), body);
+    }
+
+    /// <summary>
+    /// A figure's window has closed: the figure numbered <paramref name="number"/> is retired, so
+    /// the engine stops handing scripts a model nothing can display, and the handles only it held
+    /// are let go. The window service calls this from its window's Closed event.
+    /// </summary>
+    public static void NotifyWindowClosed(FigureModel figure, int number)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        Routed(figure, () =>
+        {
+            JGraph.Api.JG.CloseFigure(number);
+
+            // Retiring the figure is what makes its script-side handles unreachable; this is what
+            // lets go of them. Without it the registry keeps the figure, and through it the whole
+            // model subtree and the window that drew it, for the rest of the session.
+            try
+            {
+                ReleaseRetiredFigures();
+            }
+            catch (InvalidOperationException)
+            {
+                // The sweep walks the live model, and a script on its own thread may be adding to it
+                // as this runs. Missing one sweep costs a delayed release; throwing out of a window's
+                // Closed handler would cost the user a dialog.
+            }
+        });
+    }
+
+    /// <summary>
+    /// The title bar's close button on a figure's window. When the figure has a <c>CloseRequestFcn</c>
+    /// the request is queued for the script, which closes the window or, by doing neither, keeps it,
+    /// and the answer is true: the window stays for now. A second click while the first request is
+    /// still undelivered closes outright, the escape when a wedged script never drains its queue.
+    /// </summary>
+    /// <param name="figure">The figure whose window is closing.</param>
+    /// <param name="closeAnyway">Closes the window without asking again; called from another thread
+    /// when the question had to wait for the figure's session (stage K5), and never otherwise.</param>
+    /// <returns>True when the window should stay open.</returns>
+    public static bool RequestClose(FigureModel figure, Action closeAnyway)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        ArgumentNullException.ThrowIfNull(closeAnyway);
+        int caller = Environment.CurrentManagedThreadId;
+        bool stays = true;
+        Routed(figure, () =>
+        {
+            bool asked = HasCallback(figure, GraphicsEventKind.CloseRequest)
+                && !ScriptEventQueue.IsPending(GraphicsEventKind.CloseRequest, figure);
+            if (asked)
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.CloseRequest, figure));
+            }
+
+            if (Environment.CurrentManagedThreadId == caller)
+            {
+                stays = asked;
+            }
+            else if (!asked)
+            {
+                closeAnyway();
+            }
+        });
+        return stays;
+    }
+
+    /// <summary>
     /// Queues a legend's <c>ItemHitFcn</c> for a clicked series. Returns false when that legend was
     /// never given a callback, so the caller can treat the click as an ordinary one.
     /// </summary>
@@ -33,14 +117,17 @@ public static class ScriptGraphicsCallbacks
     {
         ArgumentNullException.ThrowIfNull(axes);
         ArgumentNullException.ThrowIfNull(plot);
-        if (!HasCallback(axes.Legend, GraphicsEventKind.LegendItemHit))
+        bool queued = false;
+        Routed(axes, () =>
         {
-            return false;
-        }
-
-        ScriptEventQueue.Enqueue(new GraphicsEvent(
-            GraphicsEventKind.LegendItemHit, axes.Legend, Clicked: plot));
-        return true;
+            if (HasCallback(axes.Legend, GraphicsEventKind.LegendItemHit))
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(
+                    GraphicsEventKind.LegendItemHit, axes.Legend, Clicked: plot));
+                queued = true;
+            }
+        });
+        return queued;
     }
 
     /// <summary>
@@ -59,7 +146,12 @@ public static class ScriptGraphicsCallbacks
         FigureModel figure, GraphObject? hit, AxesModel? axes, (double X, double Y)? dataPoint, int button)
     {
         ArgumentNullException.ThrowIfNull(figure);
+        Routed(figure, () => ButtonDown(figure, hit, axes, dataPoint, button));
+    }
 
+    private static void ButtonDown(
+        FigureModel figure, GraphObject? hit, AxesModel? axes, (double X, double Y)? dataPoint, int button)
+    {
         GraphObject? target = hit;
         if (target is not null
             && JgsHandleRegistry.TryGetEntry(target, out JgsHandleEntry? picked)
@@ -101,11 +193,14 @@ public static class ScriptGraphicsCallbacks
 
         // A figure with components is told even with no callback of its own: its containers may
         // have one, and AutoResizeChildren moves its children on the script thread (U2).
-        if (HasCallback(figure, GraphicsEventKind.SizeChanged) || figure.Components.Count > 0)
+        Routed(figure, () =>
         {
-            ScriptEventQueue.Enqueue(
-                new GraphicsEvent(GraphicsEventKind.SizeChanged, figure), coalesce: true);
-        }
+            if (HasCallback(figure, GraphicsEventKind.SizeChanged) || figure.Components.Count > 0)
+            {
+                ScriptEventQueue.Enqueue(
+                    new GraphicsEvent(GraphicsEventKind.SizeChanged, figure), coalesce: true);
+            }
+        });
     }
 
     /// <summary>
@@ -139,11 +234,14 @@ public static class ScriptGraphicsCallbacks
     {
         ArgumentNullException.ThrowIfNull(component);
         long seq = Interlocked.Increment(ref _userSeq);
-        if (value is not null || HasCallback(component, GraphicsEventKind.ControlAction))
+        Routed(component, () =>
         {
-            ScriptEventQueue.Enqueue(new GraphicsEvent(
-                GraphicsEventKind.ControlAction, component, Clicked: component, UserValue: value, UserSeq: seq));
-        }
+            if (value is not null || HasCallback(component, GraphicsEventKind.ControlAction))
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(
+                    GraphicsEventKind.ControlAction, component, Clicked: component, UserValue: value, UserSeq: seq));
+            }
+        });
 
         return seq;
     }
@@ -176,14 +274,17 @@ public static class ScriptGraphicsCallbacks
         var raised = new GraphicsEvent(
             GraphicsEventKind.ComponentUser, component, Clicked: component, Location: location,
             UserValue: settles ? value : null, UserSeq: seq, Action: action, Interim: settles ? null : value);
-        if (action == "changing")
+        Routed(component, () =>
         {
-            ScriptEventQueue.EnqueueOverLast(raised);
-        }
-        else
-        {
-            ScriptEventQueue.Enqueue(raised);
-        }
+            if (action == "changing")
+            {
+                ScriptEventQueue.EnqueueOverLast(raised);
+            }
+            else
+            {
+                ScriptEventQueue.Enqueue(raised);
+            }
+        });
 
         return seq;
     }
@@ -195,7 +296,7 @@ public static class ScriptGraphicsCallbacks
     public static void NotifyOverlay(UiOverlayModel overlay, int option)
     {
         ArgumentNullException.ThrowIfNull(overlay);
-        ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.OverlayAnswered, overlay, UserValue: option));
+        Routed(overlay, () => ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.OverlayAnswered, overlay, UserValue: option)));
     }
 
     /// <summary>
@@ -224,6 +325,13 @@ public static class ScriptGraphicsCallbacks
         GraphObject? focused = null)
     {
         ArgumentNullException.ThrowIfNull(figure);
+        Routed(figure, () => Key(figure, pressed, character, keyName, modifiers, focused));
+    }
+
+    private static void Key(
+        FigureModel figure, bool pressed, string character, string keyName, IReadOnlyList<string> modifiers,
+        GraphObject? focused)
+    {
         if (pressed && !string.IsNullOrEmpty(character))
         {
             figure.CurrentCharacter = character;
@@ -274,6 +382,11 @@ public static class ScriptGraphicsCallbacks
         FigureModel figure, bool pressed, SelectionKind selection, (double X, double Y) pixel)
     {
         ArgumentNullException.ThrowIfNull(figure);
+        Routed(figure, () => WindowButton(figure, pressed, selection, pixel));
+    }
+
+    private static void WindowButton(FigureModel figure, bool pressed, SelectionKind selection, (double X, double Y) pixel)
+    {
         figure.CurrentPointPx = new Point2D(pixel.X, pixel.Y);
         if (pressed)
         {
@@ -314,13 +427,16 @@ public static class ScriptGraphicsCallbacks
     public static void NotifyWindowMotion(FigureModel figure, (double X, double Y) pixel)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        figure.CurrentPointPx = new Point2D(pixel.X, pixel.Y);
-        if (HasCallback(figure, GraphicsEventKind.WindowButtonMotion))
+        Routed(figure, () =>
         {
-            ScriptEventQueue.Enqueue(
-                new GraphicsEvent(GraphicsEventKind.WindowButtonMotion, figure, Location: pixel),
-                coalesce: true);
-        }
+            figure.CurrentPointPx = new Point2D(pixel.X, pixel.Y);
+            if (HasCallback(figure, GraphicsEventKind.WindowButtonMotion))
+            {
+                ScriptEventQueue.Enqueue(
+                    new GraphicsEvent(GraphicsEventKind.WindowButtonMotion, figure, Location: pixel),
+                    coalesce: true);
+            }
+        });
     }
 
     /// <summary>Reports the wheel turning over a figure — the figure's <c>WindowScrollWheelFcn</c>.</summary>
@@ -331,11 +447,14 @@ public static class ScriptGraphicsCallbacks
     public static void NotifyScrollWheel(FigureModel figure, int notches)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        if (HasCallback(figure, GraphicsEventKind.WindowScrollWheel))
+        Routed(figure, () =>
         {
-            ScriptEventQueue.Enqueue(new GraphicsEvent(
-                GraphicsEventKind.WindowScrollWheel, figure, ScrollCount: notches));
-        }
+            if (HasCallback(figure, GraphicsEventKind.WindowScrollWheel))
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(
+                    GraphicsEventKind.WindowScrollWheel, figure, ScrollCount: notches));
+            }
+        });
     }
 
     /// <summary>
@@ -374,10 +493,21 @@ public static class ScriptGraphicsCallbacks
     public static ContextMenuModel? ResolveContextMenu(GraphObject target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        return JgsHandleRegistry.TryGetEntry(target, out JgsHandleEntry? entry)
-            && entry.ContextMenu is ContextMenuModel { BeingDeleted: false } menu
-            ? menu
-            : null;
+
+        // A menu is shown now or not at all: where the object's session is not the live one, the
+        // right-click shows the built-in menu (stage K5).
+        ContextMenuModel? found = null;
+        int caller = Environment.CurrentManagedThreadId;
+        Routed(target, () =>
+        {
+            if (Environment.CurrentManagedThreadId == caller
+                && JgsHandleRegistry.TryGetEntry(target, out JgsHandleEntry? entry)
+                && entry.ContextMenu is ContextMenuModel { BeingDeleted: false } menu)
+            {
+                found = menu;
+            }
+        });
+        return found;
     }
 
     /// <summary>
@@ -395,12 +525,15 @@ public static class ScriptGraphicsCallbacks
         // anyone listens to the opening itself (probe u8w_events).
         menu.LastContext = contextObject;
         menu.LastLocation = location;
-        if (HasCallback(menu, GraphicsEventKind.ContextMenuOpening))
+        Routed(menu, () =>
         {
-            ScriptEventQueue.Enqueue(new GraphicsEvent(
-                GraphicsEventKind.ContextMenuOpening, menu,
-                ContextObject: contextObject, Location: location));
-        }
+            if (HasCallback(menu, GraphicsEventKind.ContextMenuOpening))
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(
+                    GraphicsEventKind.ContextMenuOpening, menu,
+                    ContextObject: contextObject, Location: location));
+            }
+        });
     }
 
     /// <summary>
@@ -411,11 +544,14 @@ public static class ScriptGraphicsCallbacks
     public static void NotifyToolbarSelection(AxesToolbarModel toolbar, GraphObject button)
     {
         ArgumentNullException.ThrowIfNull(toolbar);
-        if (HasCallback(toolbar, GraphicsEventKind.ToolbarSelectionChanged))
+        Routed(toolbar, () =>
         {
-            ScriptEventQueue.Enqueue(new GraphicsEvent(
-                GraphicsEventKind.ToolbarSelectionChanged, toolbar, Clicked: button));
-        }
+            if (HasCallback(toolbar, GraphicsEventKind.ToolbarSelectionChanged))
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(
+                    GraphicsEventKind.ToolbarSelectionChanged, toolbar, Clicked: button));
+            }
+        });
     }
 
     /// <summary>
@@ -428,21 +564,27 @@ public static class ScriptGraphicsCallbacks
     {
         ArgumentNullException.ThrowIfNull(button);
         string name = button.Style == ToolbarButtonStyle.State ? "ValueChangedFcn" : "ButtonPushedFcn";
-        if (JgsHandleRegistry.TryGetEntry(button, out JgsHandleEntry? entry) && entry.NamedCallbacks.ContainsKey(name))
+        Routed(button, () =>
         {
-            ScriptEventQueue.Enqueue(new GraphicsEvent(
-                GraphicsEventKind.ComponentUser, button, Clicked: button, Action: name, Interim: previous));
-        }
+            if (JgsHandleRegistry.TryGetEntry(button, out JgsHandleEntry? entry) && entry.NamedCallbacks.ContainsKey(name))
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(
+                    GraphicsEventKind.ComponentUser, button, Clicked: button, Action: name, Interim: previous));
+            }
+        });
     }
 
     /// <summary>Reports that a menu entry was picked — the entry's <c>MenuSelectedFcn</c>.</summary>
     public static void NotifyMenuSelected(MenuItemModel item)
     {
         ArgumentNullException.ThrowIfNull(item);
-        if (HasCallback(item, GraphicsEventKind.MenuSelected))
+        Routed(item, () =>
         {
-            ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.MenuSelected, item));
-        }
+            if (HasCallback(item, GraphicsEventKind.MenuSelected))
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.MenuSelected, item));
+            }
+        });
     }
 
     /// <summary>Whether the object currently has a callback for this kind of event — what an

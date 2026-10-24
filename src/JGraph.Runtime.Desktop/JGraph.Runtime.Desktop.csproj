@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The JGraph Runtime's window host (compiler and SDK plan, stage K5): the figure window, the
+    service that opens one per figure, its binding to the figure's window properties, theming, the
+    native dialogs, printing, and the run that keeps a windowed program alive until its last window
+    closes. Moved out of JGraph.Application, which references it, so that a deployed component in
+    any process can show its figures and uifigure apps (DesktopHost, found by JGraph.Runtime when a
+    component first shows a figure).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>JGraph.Runtime.Desktop</RootNamespace>
+    <Description>The JGraph Runtime's window host: figure windows, uifigure apps and dialogs for deployed components and for JGraph's application.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="JGraph.Application" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Api\JGraph.Api.csproj" />
+    <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
+    <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />
+    <ProjectReference Include="..\JGraph.Interaction\JGraph.Interaction.csproj" />
+    <ProjectReference Include="..\JGraph.Imaging\JGraph.Imaging.csproj" />
+    <ProjectReference Include="..\JGraph.Export\JGraph.Export.csproj" />
+    <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />
+    <ProjectReference Include="..\JGraph.Plugins\JGraph.Plugins.csproj" />
+    <ProjectReference Include="..\JGraph.Controls\JGraph.Controls.csproj" />
+    <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
+    <ProjectReference Include="..\JGraph.Runtime\JGraph.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

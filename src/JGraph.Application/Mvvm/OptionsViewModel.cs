@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using JGraph.Application.Services;
-using JGraph.Application.Theming;
 using JGraph.Core.Drawing;
 using JGraph.Plugins;
+using JGraph.Runtime.Desktop.Mvvm;
+using JGraph.Runtime.Desktop.Theming;
 using JGraph.Scripting;
 
 namespace JGraph.Application.Mvvm;

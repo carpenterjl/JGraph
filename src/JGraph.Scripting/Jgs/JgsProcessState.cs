@@ -6,7 +6,8 @@ namespace JGraph.Scripting.Jgs;
 /// The part of the engine's state that lives in statics but that R2025b keeps per deployed
 /// component (compiler and SDK plan, stage K4): the figure registry, the graphics handles and what
 /// they carry (groups, root defaults, detached components, the callback and click history), the
-/// display <c>format</c>, and the installed callback dispatcher.
+/// display <c>format</c>, the installed callback dispatcher, and (stage K5) the callbacks its windows
+/// queued that have not run yet.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -30,18 +31,24 @@ internal sealed class JgsProcessState
     private readonly object _handles;
     private readonly (JgsNumberFormat.Mode Current, bool Explicit) _format;
     private readonly JgsCallbackDispatcher? _dispatcher;
+    private readonly GraphicsEvent[] _events;
 
-    private JgsProcessState(object figures, object handles, (JgsNumberFormat.Mode, bool) format, JgsCallbackDispatcher? dispatcher)
+    private JgsProcessState(
+        object figures, object handles, (JgsNumberFormat.Mode, bool) format, JgsCallbackDispatcher? dispatcher, GraphicsEvent[] events)
     {
         _figures = figures;
         _handles = handles;
         _format = format;
         _dispatcher = dispatcher;
+        _events = events;
     }
+
+    /// <summary>Whether callbacks were waiting when this state was taken out: they run when it is put back.</summary>
+    public bool HasEvents => _events.Length > 0;
 
     /// <summary>
     /// Moves the state out and leaves the process as a fresh session finds it: no figures, no
-    /// handles, the default format, no dispatcher.
+    /// handles, the default format, no dispatcher, no callbacks waiting.
     /// </summary>
     public static JgsProcessState Take()
     {
@@ -49,7 +56,7 @@ internal sealed class JgsProcessState
         JgsCallbackDispatcher.Install(null);
         object handles = JgsHandleRegistry.TakeState();
         object figures = JG.TakeState();
-        return new JgsProcessState(figures, handles, JgsNumberFormat.Take(), dispatcher);
+        return new JgsProcessState(figures, handles, JgsNumberFormat.Take(), dispatcher, ScriptEventQueue.Take());
     }
 
     /// <summary>Puts this state back in place of the process's, which <see cref="Take"/> should have moved out first.</summary>
@@ -59,5 +66,7 @@ internal sealed class JgsProcessState
         JgsHandleRegistry.PutState(_handles);
         JgsNumberFormat.Put(_format);
         JgsCallbackDispatcher.Install(_dispatcher);
+        ScriptEventQueue.Put(_events);
+        ScriptComponentFrames.Rescan();
     }
 }

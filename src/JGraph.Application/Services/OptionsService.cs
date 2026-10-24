@@ -2,8 +2,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using JGraph.Application.Mvvm;
-using JGraph.Application.Theming;
 using JGraph.Plugins;
+using JGraph.Runtime.Desktop.Theming;
 using JGraph.Scripting;
 
 namespace JGraph.Application.Services;

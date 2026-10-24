@@ -1,6 +1,6 @@
 using System.Windows;
 using JGraph.Application.Mvvm;
-using JGraph.Application.Theming;
+using JGraph.Runtime.Desktop.Theming;
 using Microsoft.Win32;
 
 namespace JGraph.Application;

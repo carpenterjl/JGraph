@@ -106,6 +106,28 @@ internal sealed class JgsTimerScheduler
     /// <summary>Whether any timer is running, so a statement boundary can skip the clock entirely.</summary>
     public bool Armed => _armed.Count > 0;
 
+    /// <summary>
+    /// When the earliest running timer is next due, in <see cref="Environment.TickCount64"/>
+    /// milliseconds, or null when none is running: when the JGraph Runtime's engine thread, idle
+    /// between a component's calls, has to wake for it (stage K5, <c>k5_client</c>).
+    /// </summary>
+    public long? NextDue
+    {
+        get
+        {
+            long? next = null;
+            foreach (JgsTimerState state in _armed)
+            {
+                if (!state.InCallback && (next is null || state.Due < next))
+                {
+                    next = state.Due;
+                }
+            }
+
+            return next;
+        }
+    }
+
     /// <summary>The next default <c>Name</c>: MATLAB's <c>timer-1</c>, <c>timer-2</c>, … for this run.</summary>
     public string NextName() => $"timer-{++_named}";
 

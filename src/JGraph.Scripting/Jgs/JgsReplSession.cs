@@ -191,7 +191,7 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
     /// instead of parsing code. Losing the race to a real statement is fine — the events stay
     /// queued, and the host tries again when that statement finishes.
     /// </summary>
-    private ScriptRunResult DrainGraphicsEvents(Func<bool>? yieldRequested, CancellationToken cancellationToken)
+    private ScriptRunResult DrainGraphicsEvents(Func<bool>? yieldRequested, CancellationToken cancellationToken, bool timers = false)
     {
         if (Interlocked.CompareExchange(ref _busy, 1, 0) != 0)
         {
@@ -207,6 +207,10 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
             try
             {
                 _dispatcher.Drain(yieldRequested);
+                if (timers)
+                {
+                    _interpreter.Timers?.Drain();
+                }
 
                 // .NET's events and delegates from other threads wait for an idle prompt as they do
                 // for pause (ADR 0178).
@@ -284,6 +288,24 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
             _dispatcher.StatementThreadId = null;
             Interlocked.Exchange(ref _busy, 0);
         }
+    }
+
+    /// <summary>
+    /// When the session's earliest running timer is next due, in <see cref="Environment.TickCount64"/>
+    /// milliseconds, or null when none is running (stage K5).
+    /// </summary>
+    internal long? NextTimerDue => _interpreter.Timers?.NextDue;
+
+    /// <summary>
+    /// What a deployed component does between its client's calls (stage K5, <c>k5_client</c>: R2025b's
+    /// runtime ran a component's timer while its client slept): the callbacks its windows queued are
+    /// delivered and the timers that are due run, under a statement's ceremony, on the calling thread,
+    /// which is the runtime's engine thread. A callback's error is reported as at an idle prompt.
+    /// </summary>
+    internal void RunIdle(CancellationToken cancellationToken)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        DrainGraphicsEvents(null, cancellationToken, timers: true);
     }
 
     /// <summary>The app the designer's last Run of each file made (App Designer's <c>RunningApp</c>), by the file's full name.</summary>

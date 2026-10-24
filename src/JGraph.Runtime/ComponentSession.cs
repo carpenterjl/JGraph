@@ -16,13 +16,46 @@ internal sealed class ComponentSession
     {
         Deployment = deployment;
 
-        // Figures are not shown: a component's windows are stage K5's. The current folder is the
-        // process's when the component opens, as R2025b's pwd is (k4_client: the client's folder).
-        var context = new ScriptContext(output, static (_, _) => { }, Environment.CurrentDirectory)
+        // A component's figures are shown in its own windows where the window host is present (stage
+        // K5), and closed with them. The current folder is the process's when the component opens,
+        // as R2025b's pwd is (k4_client: the client's folder).
+        var context = new ScriptContext(
+            output,
+            (number, figure) => JgRuntime.ShowFigure(this, number, figure),
+            Environment.CurrentDirectory,
+            resolvePath: null,
+            figureFiles: new RuntimeFigureFiles(),
+            closeFigure: number => JgRuntime.LoadedDesktop?.Close(this, number))
         {
             Deployment = deployment,
         };
         _session = new JgsReplSession(context, JgsDialect.Matlab, "MATLAB");
+    }
+
+    /// <summary>When the session's earliest running timer is next due (<see cref="Environment.TickCount64"/> milliseconds), or null.</summary>
+    public long? NextTimerDue => _session.NextTimerDue;
+
+    /// <summary>
+    /// Delivers the callbacks the component's windows queued and runs its due timers, as R2025b's
+    /// runtime does between its client's calls (<c>k5_client</c>). Engine thread, this session active.
+    /// </summary>
+    public void RunIdle() => _session.RunIdle(CancellationToken.None);
+
+    /// <summary>The names of the session's invisible figures, for the warning when the runtime ends. Engine thread, this session active.</summary>
+    public IReadOnlyList<string> InvisibleFigureNames()
+    {
+        var names = new List<string>();
+        foreach (int number in JGraph.Api.JG.FigureNumbers)
+        {
+            if (JGraph.Api.JG.TryGetFigure(number, out JGraph.Core.Model.FigureModel figure) && !figure.Visible)
+            {
+                // The Name a script reads, as waitforallfiguresclosed answers it: '' for one never named.
+                JgsValue name = JgsGraphicsProperties.Get(JgsHandleRegistry.EntryFor(figure), "Name", 0, 0);
+                names.Add(name.Type == JgsType.String ? name.AsString : string.Empty);
+            }
+        }
+
+        return names;
     }
 
     /// <summary>The archive's deployment: its extracted copy, manifest and frozen path.</summary>
@@ -58,9 +91,10 @@ internal sealed class ComponentSession
         return [.. outputs.Take(nargout).Select(o => RuntimeValueConversion.FromEngine(o, this))];
     }
 
-    /// <summary>Ends the session: its open files, its native host, and the archive's cache entry.</summary>
+    /// <summary>Ends the session: its windows, its open files, its native host, and the archive's cache entry.</summary>
     public void End()
     {
+        JgRuntime.LoadedDesktop?.Retire(this);
         _session.DisposeAsync().AsTask().GetAwaiter().GetResult();
         Deployment.Dispose();
     }

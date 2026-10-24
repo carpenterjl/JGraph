@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using JGraph.Application.Services;
+using JGraph.Runtime.Desktop.Services;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs.Debug;
 using JGraph.Scripting.Workspace;

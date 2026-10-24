@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using JGraph.Application.Services;
+using JGraph.Runtime.Desktop.Services;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
 using JGraph.Scripting.Jgs.Debug;

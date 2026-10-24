@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Stage K5's window check (compiler and SDK plan): a console client of the JGraph Runtime on the
+       Windows desktop framework, so a component's figures can be shown. run-k5window.ps1 builds and
+       drives it. With no argument the runtime starts its own window thread; with -wpf-host the client
+       runs a WPF application of its own and the windows join it. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\JGraph.Runtime\JGraph.Runtime.csproj" />
+    <ProjectReference Include="..\..\..\src\JGraph.Runtime.Desktop\JGraph.Runtime.Desktop.csproj" />
+  </ItemGroup>
+</Project>

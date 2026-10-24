@@ -32,6 +32,13 @@ public static class ScriptComponentFrames
         FigureModel.FramesAreDelivered = sink is not null;
     }
 
+    /// <summary>
+    /// Makes the next statement boundary look at every figure again: a deployed component's figures
+    /// have just been put back (stage K5), and what the last component's flushes saw says nothing of
+    /// a frame of these left waiting while it ran.
+    /// </summary>
+    internal static void Rescan() => _seenEpoch = -1;
+
     /// <summary>Whether a host is listening — what a flush point asks before doing any work.</summary>
     public static bool HasSink => _sink is not null;
 

@@ -51,6 +51,9 @@ and runs them only when they are named; tell the user before running one.
 | `probe_k4_build.m` | Builds `k4r_main` with no option, `-startmsg`, `-completemsg`, both in one `-R`, `-logfile`, `-singleCompThread`, `-nojvm`, an unknown option and a bare `-startmsg`, and `k4.m` as the .NET assemblies K4A and K4B (`ClassMap` cannot be passed by name, so the class is `k4Class`) (stage K4, ADR 0260). |
 | `src/k4client/` | A C# client of K4A and K4B: two instances of K4A and one of K4B in one process, what each sees of the others' globals, persistents, base workspace, current folder, random stream, format, warning state, user data and figures, two calls from two threads, an error, and disposal. |
 | `record-k4.ps1` | Runs `probe_k4_build`, each `k4r_main` from a current folder not its own (the `-logfile` build twice, the second ending on an error), and the client built with `dotnet`, all through `run-quiet.ps1`; writes `recordings/k4_build.out.txt`, `k4_ropts.out.txt` and `k4_client.out.txt`. |
+| `src/k5/k5.m`, `probe_k5_build.m` | Stage K5's function and its build as the .NET assembly K5: a timer one call starts and the ticks it counts and prints, a pause, a busy loop, invisible figures (stage K5, ADR 0261). No window is shown. |
+| `src/k5client/` | A C# client of K5: whether the timer ticks while the client sleeps between calls, inside a call that pauses and inside one that computes; `WaitForFiguresToDie` with nothing and with an invisible figure open; and one invisible figure left for the runtime's warning when the process ends. |
+| `record-k5.ps1` | Runs `probe_k5_build` and the client built with `dotnet`, through `run-quiet.ps1`; writes `recordings/k5_build.out.txt` and `k5_client.out.txt`. |
 | `recordings-jgraph/` | JGraph's recordings of K0's cases, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
@@ -68,6 +71,7 @@ matlab -batch "probe_k2_names('<repo>/tools/matlab-checklist/matlab-r2025b-dispa
 powershell -File record-k3-cache.ps1 -BuildRoot <the K0 build scratch> -WorkRoot <a fourth scratch>
 powershell -File record-k3b.ps1 -WorkRoot <a fifth scratch>
 powershell -File record-k4.ps1 -WorkRoot <a sixth scratch>
+powershell -File record-k5.ps1 -WorkRoot <a seventh scratch>
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

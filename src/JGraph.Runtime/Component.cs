@@ -139,6 +139,34 @@ public sealed class Component : IDisposable
             cancellationToken);
     }
 
+    /// <summary>
+    /// Waits until none of the component's figures is on screen, as R2025b's
+    /// <c>WaitForFiguresToDie</c> does: at once when the component has shown none, or only invisible
+    /// ones (<c>k5_client</c>). Its windows keep answering their user meanwhile, between calls.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Called on the thread the windows run on, where they could never close.</exception>
+    public void WaitForFiguresToClose(CancellationToken cancellationToken = default)
+    {
+        if (JgRuntime.LoadedDesktop is not { } desktop)
+        {
+            return;
+        }
+
+        if (desktop.IsWindowThread)
+        {
+            throw new InvalidOperationException(
+                "WaitForFiguresToClose cannot be called on the thread that runs the figure windows: they could never close.");
+        }
+
+        while (desktop.AnyVisible(_session))
+        {
+            if (cancellationToken.WaitHandle.WaitOne(50))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+        }
+    }
+
     /// <summary>Retires this handle; the archive's session goes on for any other handle on it.</summary>
     public void Dispose() => _disposed = true;
 }

@@ -15,11 +15,14 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="JGraph.Tests" />
+    <!-- The window host (stage K5) implements IRuntimeDesktop and is found by name at run time. -->
+    <InternalsVisibleTo Include="JGraph.Runtime.Desktop" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
     <ProjectReference Include="..\JGraph.Deploy\JGraph.Deploy.csproj" />
+    <ProjectReference Include="..\JGraph.Export\JGraph.Export.csproj" />
   </ItemGroup>
 
 </Project>

@@ -190,6 +190,29 @@ public static class ScriptEventQueue
     }
 
     /// <summary>
+    /// Moves the waiting events out, leaving the queue empty: a deployed component's events stay its
+    /// own while another component runs (stage K5, <see cref="Jgs.JgsProcessState"/>).
+    /// </summary>
+    internal static GraphicsEvent[] Take()
+    {
+        lock (Gate)
+        {
+            GraphicsEvent[] taken = [.. Events];
+            Events.Clear();
+            return taken;
+        }
+    }
+
+    /// <summary>Puts back what <see cref="Take"/> moved out, ahead of anything queued since.</summary>
+    internal static void Put(IReadOnlyList<GraphicsEvent> events)
+    {
+        lock (Gate)
+        {
+            Events.InsertRange(0, events);
+        }
+    }
+
+    /// <summary>
     /// Queues an event. With <paramref name="coalesce"/>, an event of the same kind for the same
     /// target is replaced in place — earliest position, newest data — so a resize drag queues one
     /// callback rather than a hundred, without reordering it past a click that came after it.

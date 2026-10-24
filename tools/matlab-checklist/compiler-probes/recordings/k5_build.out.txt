@@ -1,0 +1,1 @@
+dotnet.K5	ok GettingStarted.html, K5.dll, K5Native.dll, K5_overview.html
