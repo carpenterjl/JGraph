@@ -110,7 +110,7 @@ internal static class NameMentions
             case ArgumentsStmt arguments:
                 foreach (ArgumentSpec spec in arguments.Arguments)
                 {
-                    names.Add(spec.Name);
+                    names.Add(spec.Variable);
                     if (spec.Default is not null) Visit(spec.Default, names);
                     foreach (Expr validator in spec.Validators) Visit(validator, names);
                 }

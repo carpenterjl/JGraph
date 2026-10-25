@@ -1,0 +1,98 @@
+CHK|nv_none|2/1/none/Scale,Label/1|exact
+CHK|nv_pair|2/3/none/Scale,Label/1|exact
+CHK|nv_equals|2/3/none/Scale,Label/1|exact
+CHK|nv_string_names|2/4/x/Scale,Label/1|exact
+CHK|nv_case|2/3/none/Scale,Label/1|exact
+CHK|nv_partial|2/3/none/Scale,Label/1|exact
+CHK|nv_unknown|MATLAB:TooManyInputs|exact
+CHK|nv_unknown_msg|Invalid argument name 'Bad'. Name must be 'Scale' or 'Label'.|exact
+CHK|nv_odd|MATLAB:TooManyInputs|exact
+CHK|nv_odd_msg|Invalid argument at position 2. Make sure name-value arguments include both the name and the value.|exact
+CHK|nv_class|2/120/none/Scale,Label/1|exact
+CHK|nv_size|MATLAB:validation:IncompatibleSize|exact
+CHK|nv_size_msg|Invalid value for 'Scale' argument. Value must be a scalar.|exact
+CHK|nv_twice|2/5/none/Scale,Label/1|exact
+CHK|nv_number_name|MATLAB:TooManyInputs|exact
+CHK|nv_number_name_msg|Invalid argument at position 2. Function requires exactly 1 positional input(s).|exact
+CHK|nv_missing_positional|MATLAB:minrhs|exact
+CHK|nv_missing_positional_msg|Invalid argument list. Function requires 1 more input(s).|exact
+CHK|nv_struct|MATLAB:TooManyInputs|exact
+CHK|nv_struct_msg|Invalid argument at position 2. Function requires exactly 1 positional input(s).|exact
+CHK|nv_label_convert|2/1/5/Scale,Label/1|exact
+CHK|nv_no_defaults|B|exact
+CHK|nv_no_defaults_given|A,B/char|exact
+CHK|nv_optional_positional|double:1/double:5/double:1|exact
+CHK|nv_optional_positional_name|double:1/double:5/double:2|exact
+CHK|nv_optional_positional_value|double:1/double:7/double:2|exact
+CHK|nv_optional_positional_word|double:1/c:word/double:1|exact
+CHK|nv_default_from_positional|6/fast|exact
+CHK|nv_member|6/slow|exact
+CHK|nv_member_bad|MATLAB:validators:mustBeMember|exact
+CHK|nv_member_bad_msg|Invalid value for 'Mode' argument. Value must be a member of this set: 'fast' 'slow' |exact
+CHK|nv_two_structs|Alpha/Beta/double:6/double:7|exact
+CHK|nv_two_structs_none|Alpha/Beta/double:1/double:2|exact
+CHK|nv_prefix_exact|5/2|exact
+CHK|nv_prefix_ambiguous|MATLAB:functionValidation:AmbiguousInputName|exact
+CHK|nv_prefix_ambiguous_msg|Ambiguous argument name 'Wid'. Name must be 'Width' or 'WidthMax'.|exact
+CHK|nv_prefix_longer|1/5|exact
+CHK|nv_nargin|double [1 1] 1|exact
+CHK|nv_nargin_nodefaults|double [1 1] 0|exact
+CHK|nv_nargin_optional|double [1 1] 2|exact
+CHK|nv_namedargs2cell|cell [1 4] {char 'A', double [1 1] 1, char 'B', char 'two'}|exact
+CHK|nv_namedargs2cell_empty|cell [1 0] {}|exact
+CHK|nv_namedargs2cell_bad|MATLAB:namedargs2cell:nonScalarStruct|exact
+CHK|nv_namedargs2cell_bad_msg|Input must be a scalar structure.|exact
+CHK|nv_forwarded|2/9/f/Scale,Label/1|exact
+CHK|nv_equals_two|2/3/x/Scale,Label/1|exact
+CHK|nv_odd_late|MATLAB:TooManyInputs|exact
+CHK|nv_odd_late_msg|Invalid argument at position 4. Make sure name-value arguments include both the name and the value.|exact
+CHK|nv_cell_value|MATLAB:validation:UnableToConvert|exact
+CHK|nv_cell_value_msg|Invalid value for 'Scale' argument. Value must be of type double or be convertible to double.|exact
+CHK|nv_three_unknown|MATLAB:TooManyInputs|exact
+CHK|nv_three_unknown_msg|Invalid argument name 'Delta'. Name must be 'Alpha', 'Beta', or 'Gamma'.|exact
+CHK|nv_three_ambiguous|MATLAB:functionValidation:AmbiguousInputName|exact
+CHK|nv_three_ambiguous_msg|Ambiguous argument name 'A'. Name must be 'Al', 'Alp', or 'Alpha'.|exact
+CHK|nv_three_prefix|1 2 1|exact
+CHK|nv_three_exact_short|5 2 3|exact
+CHK|nv_one_unknown|MATLAB:TooManyInputs|exact
+CHK|nv_one_unknown_msg|Invalid argument name 'Other'. Use 'Only'.|exact
+CHK|nv_one_prefix|double [1 1] 4|exact
+CHK|nv_name_empty|MATLAB:TooManyInputs|exact
+CHK|nv_name_empty_msg|Invalid argument at position 1. A name is expected.|exact
+CHK|nv_name_string_array|MATLAB:TooManyInputs|exact
+CHK|nv_name_string_array_msg|Invalid argument at position 1. A name is expected.|exact
+CHK|rep_none|cell/[1 0]//0|exact
+CHK|rep_two_sets|cell/[1 2]/double:1,double:2,s:a,s:b/4|exact
+CHK|rep_convert|cell/[1 1]/double:1,s:a/2|exact
+CHK|rep_incomplete|MATLAB:functionValidation:RepeatingInputsNotInGroups|exact
+CHK|rep_incomplete_msg|Invalid argument list. Repeating arguments, if specified, must be in groups of 2.|exact
+CHK|rep_bad_value|MATLAB:validation:IncompatibleSize|exact
+CHK|rep_bad_value_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|rep_varargin|3/double:1,double:2,double:3|exact
+CHK|rep_varargin_none|0/|exact
+CHK|rep_varargin_bad|MATLAB:validators:mustBePositive|exact
+CHK|rep_varargin_bad_msg|Invalid argument at position 2. Value must be positive.|exact
+CHK|rep_mixed|1/a-b|exact
+CHK|rep_mixed_plain|1/a/b|exact
+CHK|rep_nargin|double [1 1] 2|exact
+CHK|rep_nargin_mixed|double [1 1] 2|exact
+CHK|out_ok|double 6 / char 'ok'|exact
+CHK|out_one|double [1 1] 6|exact
+CHK|out_convert|int32 3 / double 1|exact
+CHK|out_convert_class|int32|exact
+CHK|out_size|MATLAB:validation:IncompatibleSize|exact
+CHK|out_size_msg|Invalid output 'a'. Value must be a scalar.|exact
+CHK|out_validator|MATLAB:validators:mustBePositive|exact
+CHK|out_validator_msg|Invalid output 'b'. Value must be positive.|exact
+CHK|out_class|int32 120 / double 1|exact
+CHK|out_unset|MATLAB:unassignedOutputs|exact
+CHK|out_unset_msg|Output argument "b" (and possibly others) not assigned a value in the execution with "out2" function.|exact
+CHK|out_unset_one|int32 [1 1] 1|exact
+CHK|out_unrequested_invalid|MATLAB:validators:mustBePositive|exact
+CHK|out_unrequested_invalid_msg|Invalid output 'b'. Value must be positive.|exact
+CHK|out_column_to_row|double [1 3] 1 2 3|exact
+CHK|out_input_bad|double [1 1] 294|exact
+CHK|out_input_matrix|MATLAB:validation:IncompatibleSize|exact
+CHK|out_input_matrix_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|out_nargin|double [1 1] 1|exact
+CHK|out_nargout|double [1 1] 2|exact

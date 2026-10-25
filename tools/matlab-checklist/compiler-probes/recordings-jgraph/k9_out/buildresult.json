@@ -1,0 +1,5 @@
+{
+	"RuntimeDependencies": [
+		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+	]
+}

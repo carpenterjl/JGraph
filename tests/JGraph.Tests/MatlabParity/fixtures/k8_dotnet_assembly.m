@@ -125,7 +125,7 @@ u2_chk('mcc_badversion', @() build(root, 'mcc_badversion', {'-W', 'dotnet:K8b,K8
 u2_chk('mcc_framework6', @() build(root, 'mcc_framework6', {'-W', 'dotnet:K8x,K8xClass,6.0', '-T', 'link:lib', 'k8f.m'}));
 u2_chk('mcc_badkey', @() build(root, 'mcc_badkey', {'-W', 'dotnet:K8y,K8yClass,5.0,nosuch.snk,local', '-T', 'link:lib', 'k8f.m'}));
 chkdiv('mcc_remote', @() build(root, 'mcc_remote', {'-W', 'dotnet:K8z,K8zClass,5.0,Private,remote', '-T', 'link:lib', 'k8f.m'}), 'ADR0264');
-chkdiv('mcc_mda', @() firstline(build(root, 'mcc_mda', {'-W', 'dotnet:K8g,api=matlab-data,K8gClass,5.0,Private,local', '-T', 'link:lib', 'k8f.m'})), 'ADR0264');
+u2_chk('mcc_mda', @() firstline(build(root, 'mcc_mda', {'-W', 'dotnet:K8g,api=matlab-data,K8gClass,5.0,Private,local', '-T', 'link:lib', 'k8f.m'})));
 chkdiv('api_remoting', @() err(@() compiler.build.dotNETAssembly('k8f.m', 'OutputDir', fullfile(root, 'rem'), 'EnableRemoting', 'on')), 'ADR0264');
 u2_chk('api_wrong_options', @() err(@() compiler.build.dotNETAssembly(compiler.build.StandaloneApplicationOptions('k8f.m'))));
 u2_chk('api_no_args', @() err(@() compiler.build.dotNETAssembly()));

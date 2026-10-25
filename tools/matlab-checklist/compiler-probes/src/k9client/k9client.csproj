@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Stage K9's client of a K9 .NET assembly for the MATLAB Data API. record-k9.ps1 builds it with
+       -p:K9Out=<the folder probe_k9_build wrote> against R2025b's MathWorks.MATLAB.Runtime and
+       MathWorks.MATLAB.Types; run-k9.ps1 builds a copy whose using lines name JGraph's namespaces,
+       with -p:JGraph=true, -p:K9Out=<JGraph's build> and -p:JGraphRuntime=<its dll>. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <CETCompat>false</CETCompat>
+    <NoWarn>$(NoWarn);CS8981</NoWarn>
+    <MatlabRoot Condition="'$(MatlabRoot)' == ''">C:\Program Files\MATLAB\R2025b</MatlabRoot>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(JGraph)' != 'true'">
+    <Reference Include="MathWorks.MATLAB.Runtime">
+      <HintPath>$(MatlabRoot)\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="MathWorks.MATLAB.Types">
+      <HintPath>$(MatlabRoot)\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Types.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(JGraph)' == 'true'">
+    <Reference Include="JGraph.MATLAB.Runtime">
+      <HintPath>$(JGraphRuntime)</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="K9">
+      <HintPath>$(K9Out)\K9.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

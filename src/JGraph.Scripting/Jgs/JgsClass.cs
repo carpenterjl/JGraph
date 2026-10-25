@@ -513,6 +513,12 @@ internal sealed class JgsClass
     /// </summary>
     public bool TryConstant(string name, out JgsValue value)
     {
+        // An enumeration's members are reached as its constants are: k9color.green (stage K9).
+        if (IsEnumeration && TryMember(name, out value))
+        {
+            return true;
+        }
+
         if (Property(name) is not { Constant: true } property)
         {
             value = JgsValue.Null;
@@ -530,6 +536,54 @@ internal sealed class JgsClass
 
     /// <summary>Whether the class has a constant of that name.</summary>
     public bool IsConstant(string name) => Property(name) is { Constant: true };
+
+    /// <summary>Whether the class file declares an <c>enumeration</c> block (stage K9).</summary>
+    public bool IsEnumeration => Declaration.Enumeration.Count > 0;
+
+    /// <summary>The enumeration's member names, in the order the block declares them.</summary>
+    public IReadOnlyList<string> EnumerationNames => [.. Declaration.Enumeration.Select(static m => m.Name)];
+
+    private Dictionary<string, JgsValue>? _members;
+    private bool _buildingMember;
+
+    /// <summary>
+    /// The enumeration member <paramref name="name"/>: an instance built once, the first time it is
+    /// asked for, by the constructor with the arguments its line passes, carrying its name.
+    /// </summary>
+    public bool TryMember(string name, out JgsValue member)
+    {
+        member = JgsValue.Null;
+        EnumerationMember? declared = Declaration.Enumeration.FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.Ordinal));
+        if (declared is null)
+        {
+            return false;
+        }
+
+        _members ??= new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        if (!_members.TryGetValue(name, out JgsValue? built))
+        {
+            JgsValue[] arguments =
+            [
+                .. declared.Arguments.Select(a => _interpreter.EvaluateInContext(
+                    a, DefaultWorkspace(), Declaration.SourceId, $"{Name}.{name}", declared.Line, Declaration.Dialect)),
+            ];
+            _buildingMember = true;
+            try
+            {
+                built = _own.ContainsKey(Name) ? Construct(arguments, declared.Line, 0) : JgsValue.Object(NewDefault(declared.Line, 0));
+            }
+            finally
+            {
+                _buildingMember = false;
+            }
+
+            built.AsObject.EnumerationName = name;
+            _members[name] = built;
+        }
+
+        member = built;
+        return true;
+    }
 
     /// <summary>
     /// Checks a value against a property's declared size, class and validators, answering the value as
@@ -620,6 +674,13 @@ internal sealed class JgsClass
     /// </summary>
     private JgsValue? ConstructAsked(IReadOnlyList<JgsValue> arguments, int wanted, int line, int col)
     {
+        // An enumeration's instances are its members, made by the block alone (stage K9, measured).
+        if (IsEnumeration && !_buildingMember)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:OutsideEnumBlock",
+                $"Input does not correspond to a member of the enumeration class '{Name}'.");
+        }
+
         if (_own.TryGetValue(Name, out ClassMethod? constructor) && !constructor.Access.IsPublic
             && !Allows(constructor.Access, this, _interpreter.ContextClass(), Name))
         {
@@ -693,7 +754,8 @@ internal sealed class JgsClass
         IReadOnlyList<string> parameters = declaration.Parameters;
         bool variadic = parameters.Count > 0 && parameters[^1] == "varargin";
         int fixedCount = variadic ? parameters.Count - 1 : parameters.Count;
-        if (arguments.Count > fixedCount && !variadic)
+        ArgumentsSignature? signature = declaration.Signature is { DeclaresInputs: true } declared ? declared : null;
+        if (arguments.Count > fixedCount && !variadic && signature is null)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
         }
@@ -712,24 +774,32 @@ internal sealed class JgsClass
         // The constructor's parameters bind under the class file's dialect (V11), as a function's do.
         using (_interpreter.EnterDialect(declaration.Dialect))
         {
-            for (int i = 0; i < fixedCount && i < arguments.Count; i++)
+            if (signature is not null)
             {
-                local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
+                // Bound by its arguments blocks as a function is (stage K9).
+                local.Arguments = ArgumentBinder.Bind(signature, arguments, local, _interpreter.CopyForBinding, line, col);
             }
-
-            if (variadic)
+            else
             {
-                var rest = new JgsValue[Math.Max(0, arguments.Count - fixedCount)];
-                for (int i = 0; i < rest.Length; i++)
+                for (int i = 0; i < fixedCount && i < arguments.Count; i++)
                 {
-                    rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+                    local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
                 }
 
-                local.Declare("varargin", JgsValue.Cell(rest));
+                if (variadic)
+                {
+                    var rest = new JgsValue[Math.Max(0, arguments.Count - fixedCount)];
+                    for (int i = 0; i < rest.Length; i++)
+                    {
+                        rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+                    }
+
+                    local.Declare("varargin", JgsValue.Cell(rest));
+                }
             }
         }
 
-        local.Declare("nargin", JgsValue.Number(arguments.Count));
+        local.Declare("nargin", JgsValue.Number(local.Arguments?.BeforeNames ?? arguments.Count));
         local.Declare("nargout", JgsValue.Number(wanted));
         local.Declare(output, built);
 
@@ -1062,6 +1132,9 @@ internal sealed class JgsObject
     /// <summary>What the instance's properties hold, keyed by name.</summary>
     public Dictionary<string, JgsValue> Fields { get; } = new(StringComparer.Ordinal);
 
+    /// <summary>The member this instance is, for an enumeration's (stage K9); null for any other object.</summary>
+    public string? EnumerationName { get; set; }
+
     /// <summary>
     /// Whether <c>delete</c> has been called on this handle object (V6, appendix A #104). Every
     /// alias sees the same instance, so every alias sees it deleted: <c>isvalid</c> answers false and
@@ -1115,7 +1188,7 @@ internal sealed class JgsObject
     /// </summary>
     public JgsObject Copy(Interpreter interpreter)
     {
-        var clone = new JgsObject(Class);
+        var clone = new JgsObject(Class) { EnumerationName = EnumerationName };
         foreach ((string name, JgsValue value) in Fields)
         {
             clone.Fields[name] = interpreter.CopyForBinding(value);

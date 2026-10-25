@@ -77,7 +77,11 @@ $anchors = @(
     # mcc -W dotnet (stage K8, ADR 0264): the MWArray API a client references, and .NET 8's
     # reference assemblies the generated classes compile against where no .NET SDK is installed.
     "JGraph.MATLAB.NET.Arrays.dll",
-    "toolbox\dotnetbuilder\ref\net8.0\System.Runtime.dll"
+    "toolbox\dotnetbuilder\ref\net8.0\System.Runtime.dll",
+
+    # mcc -W dotnet:...,api=matlab-data (stage K9, ADR 0265): the MATLAB Data API the
+    # strongly typed interface compiles against and a client references.
+    "JGraph.MATLAB.Runtime.dll"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

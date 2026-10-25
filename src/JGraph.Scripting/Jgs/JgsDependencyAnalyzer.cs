@@ -797,7 +797,7 @@ internal sealed class JgsDependencyAnalyzer
                             break;
                         case GlobalStmt global: names.UnionWith(global.Names); break;
                         case PersistentStmt persistent: names.UnionWith(persistent.Names); break;
-                        case ArgumentsStmt arguments: names.UnionWith(arguments.Arguments.Select(a => a.Name)); break;
+                        case ArgumentsStmt arguments: names.UnionWith(arguments.Arguments.Select(a => a.Variable)); break;
                     }
                 }
             }

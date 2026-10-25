@@ -124,6 +124,7 @@
     <ProjectReference Include="..\..\src\JGraph.Scripting\JGraph.Scripting.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Runtime\JGraph.Runtime.csproj" />
     <ProjectReference Include="..\..\src\JGraph.MATLAB.NET.Arrays\JGraph.MATLAB.NET.Arrays.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.MATLAB.Runtime\JGraph.MATLAB.Runtime.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Reporting\JGraph.Reporting.csproj" />
   </ItemGroup>
 

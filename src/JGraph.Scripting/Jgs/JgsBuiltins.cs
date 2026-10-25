@@ -623,6 +623,7 @@ internal static partial class JgsBuiltins
             // for a value inside a larger message, not for the whole of what disp was asked to print.
             host.print(args[0].IsCharMatrix
                 ? string.Join(System.Environment.NewLine, args[0].CharMatrixRows())
+                : IsEnumerationValue(args[0]) ? EnumerationDisp(args[0]) // the names alone (stage K9, measured)
                 : args[0].AsExternalOrNull() is IJgsOwnDisp own ? own.Disp() // a class's own disp (device classes plan, stage D10b)
                 : dialect.IsMatlab && IsVartype(args[0]) ? VartypeDisplay(args[0])[..^1] // R2025b's subscript text (open item 128)
                 : args[0].Display());

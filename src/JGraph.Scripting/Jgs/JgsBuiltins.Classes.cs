@@ -37,16 +37,19 @@ internal static partial class JgsBuiltins
         Define("isobject", (args, line, col) =>
         {
             Arity("isobject", args, 1, line, col);
-            return JgsValue.Bool(IsObjectValue(args[0]) || args[0].IsCategorical); // a categorical is an object (open item 115)
+            // A categorical is an object (open item 115), and so are the other classes R2025b writes in
+            // MATLAB code: a string, table, timetable, datetime, duration or calendarDuration (stage K9, measured).
+            return JgsValue.Bool(IsObjectValue(args[0]) || args[0].IsCategorical
+                || BuiltinObjectClasses.Contains(ClassOf(args[0], JgsDialect.Matlab)));
         });
 
         JgsValue Properties(IReadOnlyList<JgsValue> args, int line, int col)
         {
             Arity("properties", args, 1, line, col);
             JgsValue names = CellColumn(PropertyNames("properties", args[0], interpreter, line, col));
-            if (names.AsCell.Length == 0 && IsDeviceValue(args[0].AsExternalOrNull()))
+            if (names.AsCell.Length == 0 && (IsDeviceValue(args[0].AsExternalOrNull()) || IsEnumerationValue(args[0])))
             {
-                names.Reshape(0, 1); // midicontrols: a 0-by-1 cell (probe_midi_controls)
+                names.Reshape(0, 1); // midicontrols and an enumeration with none: a 0-by-1 cell (probe_midi_controls, k9_enumerations)
             }
 
             return names;
@@ -505,6 +508,12 @@ internal static partial class JgsBuiltins
     /// reference types). It is the same question <see cref="IsStructValue"/> answers the other way
     /// round, which is why the two read one property between them.
     /// </summary>
+    /// <summary>The built-in classes <c>isobject</c> is true for though JGraph keeps them as values of its own (k9client: roundtrip.table).</summary>
+    private static readonly HashSet<string> BuiltinObjectClasses = new(StringComparer.Ordinal)
+    {
+        "string", "table", "timetable", "datetime", "duration", "calendarDuration",
+    };
+
     internal static bool IsObjectValue(JgsValue value) =>
         value.Type is JgsType.Object or JgsType.External
         || (value.Type == JgsType.Struct && value.ClassName is not null);

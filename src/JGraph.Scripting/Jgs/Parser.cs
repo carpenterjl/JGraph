@@ -478,38 +478,100 @@ internal sealed class Parser
 
         int mark = _pos;
         SkipSeparators();
-        if (!Check(TokenType.Identifier) || Current.Text != "arguments"
-            || _tokens[_pos + 1].Type is not (TokenType.Newline or TokenType.Semicolon or TokenType.Comma))
+        if (!Check(TokenType.Identifier) || Current.Text != "arguments")
+        {
+            _pos = mark;
+            return null;
+        }
+
+        // The block's attributes, (Input), (Output), (Repeating) or two of them, read only when the
+        // parenthesis holds nothing else and a separator follows it: arguments(2) is still an index.
+        ArgumentsKind kind = ArgumentsKind.Input;
+        int attributesEnd = _pos + 1;
+        if (_tokens[attributesEnd].Type == TokenType.LParen)
+        {
+            var words = new List<string>();
+            int k = attributesEnd + 1;
+            while (_tokens[k].Type == TokenType.Identifier && _tokens[k].Text is "Input" or "Output" or "Repeating")
+            {
+                words.Add(_tokens[k].Text);
+                k++;
+                if (_tokens[k].Type != TokenType.Comma)
+                {
+                    break;
+                }
+
+                k++;
+            }
+
+            if (words.Count == 0 || _tokens[k].Type != TokenType.RParen)
+            {
+                _pos = mark;
+                return null;
+            }
+
+            attributesEnd = k + 1;
+            bool output = words.Contains("Output");
+            bool repeating = words.Contains("Repeating");
+            kind = output ? (repeating ? ArgumentsKind.OutputRepeating : ArgumentsKind.Output)
+                : repeating ? ArgumentsKind.Repeating : ArgumentsKind.Input;
+        }
+
+        if (_tokens[attributesEnd].Type is not (TokenType.Newline or TokenType.Semicolon or TokenType.Comma))
         {
             _pos = mark;
             return null;
         }
 
         Token start = Advance();
+        _pos = attributesEnd;
         var specs = new List<ArgumentSpec>();
         SkipSeparators();
         while (!Check(TokenType.End) && !IsAtEnd)
         {
-            specs.Add(ParseArgumentSpec());
+            specs.Add(ParseArgumentSpec(nameValue: kind == ArgumentsKind.Input));
             SkipSeparators();
         }
 
         Expect(TokenType.End, "'end' to close the arguments block");
-        return new ArgumentsStmt(specs) { Line = start.Line, Column = start.Column };
+        return new ArgumentsStmt(specs, kind) { Line = start.Line, Column = start.Column };
     }
 
-    /// <summary>Parses one <c>name (dims) Class {validators} = default</c> line.</summary>
-    private ArgumentSpec ParseArgumentSpec()
+    /// <summary>
+    /// Parses the <c>arguments</c> blocks that open a function body, one after another: R2025b
+    /// writes inputs, repeating inputs, more inputs and outputs as blocks of their own (stage K9).
+    /// </summary>
+    private List<Stmt> ParseArgumentsBlocks()
+    {
+        var blocks = new List<Stmt>();
+        while (TryParseArgumentsBlock() is { } block)
+        {
+            blocks.Add(block);
+        }
+
+        return blocks;
+    }
+
+    /// <summary>Parses one <c>name (dims) Class {validators} = default</c> line, or <c>opts.Name …</c> for a name-value input.</summary>
+    private ArgumentSpec ParseArgumentSpec(bool nameValue)
     {
         Token name = Expect(TokenType.Identifier, "an argument name");
+        Token first = name;
 
-        // A name-value argument is written 'options.Name'. Refusing it by name beats letting the dot
-        // parse as something else and failing three lines later with a message about a field.
+        // A name-value argument is written 'options.Name': the structure the function receives the
+        // pairs in, and the name a caller passes (stage K9). Only an input block declares them.
+        string? structure = null;
         if (Check(TokenType.Dot))
         {
-            throw new JgsSyntaxException(name.Line, name.Column,
-                $"'{name.Text}.…' declares a name-value argument, which JGraph does not support yet; "
-                + "take the pairs through varargin instead.");
+            if (!nameValue || _tokens[_pos + 1].Type != TokenType.Identifier)
+            {
+                throw new JgsSyntaxException(name.Line, name.Column,
+                    $"'{name.Text}.…' declares a name-value argument, which only an input arguments block may hold.");
+            }
+
+            Advance();
+            structure = name.Text;
+            name = Advance();
         }
 
         List<Expr?>? dims = null;
@@ -557,7 +619,7 @@ internal sealed class Parser
         }
 
         Expr? fallback = Match(TokenType.Assign) ? ParseExpression() : null;
-        return new ArgumentSpec(name.Text, dims, className, validators, fallback);
+        return new ArgumentSpec(name.Text, dims, className, validators, fallback) { Structure = structure, Line = first.Line, Column = first.Column };
     }
 
     /// <summary>Consumes a <c>:</c> that stands for "any length" in a declared size.</summary>
@@ -569,11 +631,11 @@ internal sealed class Parser
 
     /// <summary>
     /// Parses <c>classdef (Attributes) Name &lt; Super &amp; Other … end</c> (M68; superclasses and
-    /// attributes U6, ADR 0203). The blocks it may hold are <c>properties</c>, <c>methods</c> and
-    /// <c>events</c> (V6, #106); every other word MATLAB allows there is refused by name, because a
-    /// class whose <c>enumeration</c> block was quietly skipped is a class that looks like it works
-    /// and does not. Whether a superclass exists, and whether it may be inherited from, is the
-    /// class's own question when it is built: the parser reads one file.
+    /// attributes U6, ADR 0203). The blocks it may hold are <c>properties</c>, <c>methods</c>,
+    /// <c>events</c> (V6, #106) and <c>enumeration</c> (stage K9); every other word is refused by
+    /// name, because a class whose block was quietly skipped is a class that looks like it works and
+    /// does not. Whether a superclass exists, and whether it may be inherited from, is the class's own
+    /// question when it is built: the parser reads one file.
     /// </summary>
     private Stmt ParseClassdef(Token start)
     {
@@ -632,25 +694,30 @@ internal sealed class Parser
         var properties = new List<ClassProperty>();
         var methods = new List<ClassMethod>();
         var events = new List<ClassEvent>();
+        var enumeration = new List<EnumerationMember>();
+        int methodsBlocks = 0;
         SkipSeparators();
         while (!Check(TokenType.End) && !IsAtEnd)
         {
-            Token block = Expect(TokenType.Identifier, "'properties', 'methods' or 'events'");
+            Token block = Expect(TokenType.Identifier, "'properties', 'methods', 'events' or 'enumeration'");
             switch (block.Text)
             {
                 case "properties":
                     ParsePropertiesBlock(name.Text, block, properties);
                     break;
                 case "methods":
-                    ParseMethodsBlock(name.Text, block, methods);
+                    ParseMethodsBlock(name.Text, block, methods, methodsBlocks++);
                     break;
                 case "events":
                     ParseEventsBlock(name.Text, block, events);
                     break;
+                case "enumeration":
+                    ParseEnumerationBlock(enumeration);
+                    break;
                 default:
                     throw Error(block,
                         $"'{block.Text}' is not something a class definition can hold in JGraph — "
-                        + "a class is made of 'properties', 'methods' and 'events' blocks.");
+                        + "a class is made of 'properties', 'methods', 'events' and 'enumeration' blocks.");
             }
 
             SkipSeparators();
@@ -670,7 +737,40 @@ internal sealed class Parser
             HandleCompatible = handleCompatible,
             InferiorClasses = inferior,
             AllowedSubclasses = allowed,
+            Enumeration = enumeration,
         };
+    }
+
+    /// <summary>
+    /// Parses one <c>enumeration … end</c> block (stage K9): a member per line, or several joined by
+    /// commas, each a name with, optionally, the arguments its construction passes: <c>red (1, 0, 0)</c>.
+    /// </summary>
+    private void ParseEnumerationBlock(List<EnumerationMember> into)
+    {
+        SkipSeparators();
+        while (!Check(TokenType.End) && !IsAtEnd)
+        {
+            Token member = Expect(TokenType.Identifier, "an enumeration member's name");
+            var arguments = new List<Expr>();
+            if (Match(TokenType.LParen))
+            {
+                if (!Check(TokenType.RParen))
+                {
+                    do
+                    {
+                        arguments.Add(ParseExpression());
+                    }
+                    while (Match(TokenType.Comma));
+                }
+
+                Expect(TokenType.RParen, "')' to close the member's arguments");
+            }
+
+            into.Add(new EnumerationMember(member.Text, arguments) { Line = member.Line });
+            SkipSeparators();
+        }
+
+        Expect(TokenType.End, "'end' to close the enumeration block");
     }
 
     /// <summary>
@@ -733,7 +833,7 @@ internal sealed class Parser
         SkipSeparators();
         while (!Check(TokenType.End) && !IsAtEnd)
         {
-            into.Add(new ClassProperty(ParseArgumentSpec(), constant, observable, dependent)
+            into.Add(new ClassProperty(ParseArgumentSpec(nameValue: false), constant, observable, dependent)
             {
                 GetAccess = get,
                 SetAccess = set,
@@ -799,8 +899,8 @@ internal sealed class Parser
         Expect(TokenType.End, "'end' to close the events block");
     }
 
-    /// <summary>Parses one <c>methods … end</c> block into <paramref name="into"/>.</summary>
-    private void ParseMethodsBlock(string className, Token block, List<ClassMethod> into)
+    /// <summary>Parses one <c>methods … end</c> block into <paramref name="into"/>, the file's <paramref name="blockIndex"/>th.</summary>
+    private void ParseMethodsBlock(string className, Token block, List<ClassMethod> into, int blockIndex)
     {
         bool isStatic = false, isAbstract = false, isSealed = false, hidden = false;
         MemberAccess access = MemberAccess.Public;
@@ -861,6 +961,7 @@ internal sealed class Parser
                     Abstract = isAbstract,
                     Sealed = isSealed,
                     Hidden = hidden,
+                    Block = blockIndex,
                 });
                 SkipSeparators();
             }
@@ -1082,9 +1183,9 @@ internal sealed class Parser
             // An 'arguments' block may only open a function body, and that restriction is what keeps
             // the word an ordinary identifier anywhere else — including as a variable in this very
             // function, one line further down.
-            ArgumentsStmt? arguments = TryParseArgumentsBlock();
+            List<Stmt> arguments = ParseArgumentsBlocks();
             IReadOnlyList<Stmt> rest = ParseMatlabBody();
-            body = arguments is null ? rest : [arguments, .. rest];
+            body = arguments.Count == 0 ? rest : [.. arguments, .. rest];
         }
         finally
         {

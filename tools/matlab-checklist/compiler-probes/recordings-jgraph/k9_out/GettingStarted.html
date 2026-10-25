@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Getting started with K9</title>
+</head>
+<body>
+<h1>Getting started with K9</h1>
+<ol>
+<li>Install the JGraph Runtime 0.2.3, or set JGRAPH_RUNTIME_ROOT to its folder.</li>
+<li>In a .NET 8 project, reference the runtime's extern\dotnet\net8.0\JGraph.MATLAB.Runtime.dll and, for the strongly typed interface, K9.dll.</li>
+<li>Open the archive with <code>dynamic matlab = MATLABRuntime.StartMATLAB("K9.ctf");</code> and call its functions as members of <code>matlab</code>,
+or through the interface's <code>MATLABFunctions</code> and classes.</li>
+</ol>
+</body>
+</html>

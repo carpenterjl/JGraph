@@ -35,6 +35,9 @@ public sealed record DotNetWrapper(string AssemblyName, string ClassName, string
 {
     /// <summary>The assembly's own name: the last part of a dotted one, as its dll is named.</summary>
     public string ShortName => AssemblyName[(AssemblyName.LastIndexOf('.') + 1)..];
+
+    /// <summary><c>api=matlab-data</c>: an archive and a strongly typed interface for the MATLAB Data API (stage K9), not the MWArray classes.</summary>
+    public bool DataApi { get; init; }
 }
 
 /// <summary>How far a standalone build goes, as <c>-T</c> says (k7_switches).</summary>
@@ -717,8 +720,8 @@ public sealed class MccCommandLine
     }
 
     /// <summary>
-    /// <c>-W dotnet:</c>'s parts once the command line is read (k8_build): the MWArray API built, the
-    /// MATLAB Data API stage K9's, remoting refused, a key file that is not there R2025b's refusal.
+    /// <c>-W dotnet:</c>'s parts once the command line is read (k8_build, k9_build): the MWArray API or
+    /// the MATLAB Data API, remoting refused, a key file that is not there R2025b's refusal.
     /// </summary>
     private void DotNetTarget(string[] parts, string? currentFolder)
     {
@@ -745,12 +748,6 @@ public sealed class MccCommandLine
             }
         }
 
-        if (api == "matlab-data")
-        {
-            throw new MccException("JGraph:mcc:targetNotBuilt",
-                "JGraph's mcc does not build a .NET assembly for the MATLAB Data API (-W dotnet:...,api=matlab-data) yet.");
-        }
-
         if (locality == "remote")
         {
             throw new MccException("JGraph:mcc:targetOutOfScope",
@@ -767,7 +764,7 @@ public sealed class MccCommandLine
             }
         }
 
-        var wrapper = new DotNetWrapper(name, "", framework.Length == 0 ? "4.0" : framework, keyFile);
+        var wrapper = new DotNetWrapper(name, "", framework.Length == 0 ? "4.0" : framework, keyFile) { DataApi = api == "matlab-data" };
         DotNet = wrapper with { ClassName = className.Length == 0 ? wrapper.ShortName : className };
         Target = MccTarget.DotNet;
     }

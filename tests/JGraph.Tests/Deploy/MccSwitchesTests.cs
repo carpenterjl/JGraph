@@ -120,9 +120,9 @@ public sealed class MccSwitchesTests : IDisposable
         // What passes R2025b's checks is a target JGraph builds later, or never.
         Assert.Equal("JGraph:mcc:targetNotBuilt", Refused("-l", "k7_hello.m").Identifier);
         // .NET's MWArray API is stage K8's (ADR 0264): a class named after the assembly, framework 4.0;
-        // the MATLAB Data API is K9's, and remoting is out of scope.
+        // the MATLAB Data API is K9's (ADR 0265), and remoting is out of scope.
         Assert.Equal(new DotNetWrapper("k7asm", "k7asm", "4.0", null), Parse("-W", "dotnet:k7asm", "k7_hello.m").DotNet);
-        Assert.Equal("JGraph:mcc:targetNotBuilt", Refused("-W", "dotnet:k7asm,api=matlab-data", "k7_hello.m").Identifier);
+        Assert.True(Parse("-W", "dotnet:k7asm,api=matlab-data", "k7_hello.m").DotNet!.DataApi);
         Assert.Equal("JGraph:mcc:targetOutOfScope", Refused("-W", "dotnet:k7asm,k7cls,5.0,Private,remote", "k7_hello.m").Identifier);
         Assert.Equal("JGraph:mcc:targetNotBuilt", Refused("-W", "CTF:k7ctf", "-U", "k7_hello.m").Identifier);
         Assert.Equal("JGraph:mcc:targetOutOfScope", Refused("-W", "java:k7pkg,k7cls", "k7_hello.m").Identifier);

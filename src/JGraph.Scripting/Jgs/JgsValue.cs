@@ -520,7 +520,7 @@ internal sealed class JgsValue
 
             case JgsObject instance:
             {
-                var copy = new JgsObject(instance.Class);
+                var copy = new JgsObject(instance.Class) { EnumerationName = instance.EnumerationName };
                 foreach ((string name, JgsValue held) in instance.Fields)
                 {
                     copy.Fields[name] = Share(held);
@@ -1521,6 +1521,20 @@ internal sealed class JgsValue
     private static string FormatObjectArray(JgsObjectArray objects, int[] dims)
     {
         var sb = new StringBuilder();
+        if (objects.Class.IsEnumeration)
+        {
+            // An array of members: its size and class, then the names row by row (stage K9, measured).
+            sb.Append("  ").Append(string.Join('×', dims)).Append(' ').Append(ShortClassName(objects.Class.Name)).Append(" enumeration array\n");
+            int rows = dims[0];
+            int cols = objects.Length / Math.Max(rows, 1);
+            for (int r = 0; r < rows; r++)
+            {
+                sb.Append("\n    ").Append(string.Join("    ", Enumerable.Range(0, cols).Select(c => objects.Elements[r + (c * rows)].EnumerationName)));
+            }
+
+            return sb.Append('\n').ToString();
+        }
+
         sb.Append("  ").Append(string.Join('×', dims)).Append(' ')
             .Append(ShortClassName(objects.Class.Name)).Append(" array with properties:\n");
         foreach (ClassProperty property in objects.Class.ListedProperties)
@@ -1610,6 +1624,12 @@ internal sealed class JgsValue
         if (instance.Class.IsHandle && instance.Deleted)
         {
             return "  handle to deleted " + ShortClassName(instance.Class.Name) + "\n"; // R2025b's line (probe_116b)
+        }
+
+        // A member of an enumeration shows its class and its name (stage K9, measured).
+        if (instance.EnumerationName is { } member)
+        {
+            return ShortClassName(instance.Class.Name) + " enumeration\n\n    " + member + "\n";
         }
 
         // The class without its package, as R2025b heads the display (compiler.build.Results shows

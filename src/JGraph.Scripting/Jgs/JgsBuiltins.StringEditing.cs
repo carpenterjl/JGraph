@@ -49,7 +49,12 @@ internal static partial class JgsBuiltins
     internal static void RegisterStringEditingBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)
+            {
+                // char sees a string scalar as the string it is, so a missing one is refused rather
+                // than read as the text '<missing>' (stage K9, measured).
+                KeepsStringArguments = name == "char",
+            }));
 
         // char is the char-row constructor, and it was missing entirely: nothing declared it before
         // M63, so char('abc') and char(65) both failed on a name rather than on an argument.
@@ -164,6 +169,15 @@ internal static partial class JgsBuiltins
             if (only.IsStringArray)
             {
                 string[] texts = Array.ConvertAll(only.BoxedElements(), static e => e.AsString);
+
+                // A missing element has no characters to give (R2025b, measured in k9_argument_messages).
+                int missing = Array.FindIndex(texts, IsMissingText);
+                if (missing >= 0)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:string:CannotConvertMissingElementToChar",
+                        $"Conversion of element {missing + 1} from <missing> to character vector is not supported.");
+                }
+
                 return texts.Length == 1 ? JgsValue.Str(texts[0]) : PadIntoCharMatrix(texts);
             }
 

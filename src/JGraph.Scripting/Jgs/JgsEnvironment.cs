@@ -275,6 +275,12 @@ internal sealed class JgsEnvironment
     internal FnStmt? Function { get; init; }
 
     /// <summary>
+    /// What binding the call left for the function's <c>arguments</c> blocks - the name-value inputs
+    /// passed and where the repeating groups began (stage K9) - or null for a call bound plainly.
+    /// </summary>
+    internal ArgumentBinding? Arguments { get; set; }
+
+    /// <summary>
     /// The imports this scope's code made (ADR 0176): a function frame's, collected from its body on
     /// entry, or the base workspace's and a script's, made as their <c>import</c> statements run.
     /// Null in nearly every scope.

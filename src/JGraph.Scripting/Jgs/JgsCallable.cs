@@ -438,6 +438,14 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
         bool variadic = parameters.Count > 0 && parameters[^1] == "varargin";
         int fixedCount = variadic ? parameters.Count - 1 : parameters.Count;
 
+        // A MATLAB function whose arguments blocks declare its inputs is bound by them (stage K9):
+        // name-value pairs, repeating groups and R2025b's refusals for missing and extra inputs.
+        ArgumentsSignature? signature = _declaration.Dialect.MatlabFunctions ? _declaration.Signature : null;
+        if (signature is { DeclaresInputs: true })
+        {
+            return CallDeclared(signature, arguments, wanted, line, column);
+        }
+
         if (arguments.Count > fixedCount && !variadic)
         {
             // R2025b's refusal for a function written in MATLAB (U7, measured: a function's is
@@ -505,7 +513,56 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
         }
 
         JgsValue returned = _interpreter.ExecuteFunctionBody(_declaration, local, line);
+        if (signature is { Outputs.Count: > 0 })
+        {
+            _interpreter.CheckOutputs(signature, local, line, column);
+        }
 
+        return Outputs(local, returned, wanted, line, column);
+    }
+
+    /// <summary>
+    /// A call bound by the function's <c>arguments</c> blocks (stage K9): the binder declares the
+    /// positional and repeating parameters and leaves the name-value inputs for the blocks, which
+    /// run as the body's first statements; the output block is checked when the body ends.
+    /// </summary>
+    private JgsValue[] CallDeclared(ArgumentsSignature signature, IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
+    {
+        var local = new JgsEnvironment(_closure)
+        {
+            IsCallBoundary = !IsNested,
+            AccessorOf = AccessorOf,
+            Function = _declaration,
+        };
+
+        // The arguments are bound inside the function's frame, in its dialect: a refusal is the
+        // function's own, at its declaration (R2025b: "Error in k9nv (line 1)").
+        JgsValue returned = _interpreter.ExecuteFunctionBody(_declaration, local, line, () =>
+        {
+            try
+            {
+                local.Arguments = ArgumentBinder.Bind(signature, arguments, local, _interpreter.CopyForBinding, _declaration.Line, _declaration.Column);
+            }
+            catch (JgsRuntimeException refused)
+            {
+                throw refused.AsRaised();
+            }
+
+            // nargin counts what came before the name-value pairs (R2025b: nv1(2, 'Scale', 3) answers 1).
+            local.Declare("nargin", JgsValue.Number(local.Arguments.BeforeNames));
+            local.Declare("nargout", JgsValue.Number(wanted));
+        });
+        if (signature.Outputs.Count > 0)
+        {
+            _interpreter.CheckOutputs(signature, local, line, column);
+        }
+
+        return Outputs(local, returned, wanted, line, column);
+    }
+
+    /// <summary>What a call hands back: a JGS fn's returned value, or a MATLAB function's named outputs and varargout.</summary>
+    private JgsValue[] Outputs(JgsEnvironment local, JgsValue returned, int wanted, int line, int column)
+    {
         // A JGS 'fn' hands back what it returned; a MATLAB 'function' hands back the values its named
         // outputs hold when it ends.
         if (_declaration.Outputs.Count == 0)

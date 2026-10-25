@@ -25,6 +25,9 @@ internal static partial class JgsBuiltins
         "feval",
         "nargin", "nargout",
 
+        // K9: a name-value structure back into its pairs.
+        "namedargs2cell",
+
         // K3b: pcode reads names where a call would find them.
         "pcode",
         "lasterr", "lasterror", "lastwarn", "refreshdata",
@@ -675,6 +678,26 @@ internal static partial class JgsBuiltins
         Define("nargout", (args, line, col) =>
             JgsValue.Number(DeclaredArgumentCount("nargout", args, env, interpreter, line, col)));
 
+        // A name-value structure as the pairs that made it, to pass on to another function's
+        // arguments block (stage K9, measured: a 1-by-2n cell, char names, the fields in order).
+        Define("namedargs2cell", (args, line, col) =>
+        {
+            Arity("namedargs2cell", args, 1, line, col);
+            if (args[0].Type != JgsType.Struct || args[0].IsStructArray)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:namedargs2cell:nonScalarStruct", "Input must be a scalar structure.");
+            }
+
+            var pairs = new List<JgsValue>();
+            foreach ((string name, JgsValue value) in args[0].AsStruct)
+            {
+                pairs.Add(JgsValue.Str(name));
+                pairs.Add(value);
+            }
+
+            return JgsValue.Cell([.. pairs]);
+        });
+
         // exist and which ask Query mode (M145, step 7): every layer that holds the name as a
         // function, in the resolver's order with no argument to dispatch on — a nested or local
         // function, the running file's private/, the current folder, the addpath folders, the
@@ -1045,6 +1068,11 @@ internal static partial class JgsBuiltins
         bool inputs = verb == "nargin";
         switch (given.AsCallable)
         {
+            // Inputs its arguments blocks declare are counted as R2025b counts them (stage K9): the
+            // name-value structures not at all, the repeating parameters as themselves.
+            case UserFunction user when inputs && user.Declaration.Signature is { DeclaresInputs: true } signature:
+                return signature.DeclaredCount;
+
             case UserFunction user:
                 return Counted(inputs ? user.Declaration.Parameters : user.Declaration.Outputs, inputs);
 

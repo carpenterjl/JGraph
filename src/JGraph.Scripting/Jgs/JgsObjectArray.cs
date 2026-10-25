@@ -59,7 +59,7 @@ internal sealed class JgsObjectArray
     /// <summary>A new instance holding a counted share of each of <paramref name="source"/>'s properties.</summary>
     public static JgsObject SharedCopy(JgsObject source)
     {
-        var copy = new JgsObject(source.Class);
+        var copy = new JgsObject(source.Class) { EnumerationName = source.EnumerationName };
         foreach ((string name, JgsValue held) in source.Fields)
         {
             copy.Fields[name] = JgsValue.Share(held);

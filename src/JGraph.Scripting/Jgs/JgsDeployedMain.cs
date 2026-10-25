@@ -194,6 +194,13 @@ internal static class JgsDeployedMain
     internal static string Shown((string Name, string File, int Line) frame)
     {
         string stem = Path.GetFileNameWithoutExtension(frame.File);
+
+        // A method of the file's class is Class/method, as R2025b's report names it (k9client: handle.increment.nargout0).
+        if (stem.Length > 0 && frame.Name.StartsWith(stem + ".", StringComparison.Ordinal))
+        {
+            return stem + "/" + frame.Name[(stem.Length + 1)..];
+        }
+
         return stem.Length > 0 && stem != frame.Name && !frame.Name.Contains('>', StringComparison.Ordinal)
             ? $"{stem}>{frame.Name}"
             : frame.Name;

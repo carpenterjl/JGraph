@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Getting Started with the K9 .NET Assembly</title>
+        <style type="text/css">
+            .rtcContent { padding: 20px; }
+            .S0 {padding:0 61px 2px 0; margin-bottom: 16px; border-bottom: 1px solid #cbcbcb; background-position: right 6px; background-repeat: no-repeat; background-size: 58px; color: #c45400; font: normal normal 22px/1.136 Arial,Helvetica,sans-serif; }
+            .S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-style: normal; font-size: 13px; font-weight: normal; text-align: left;  }
+            .S1 a { width: 100%; padding: 5px 0; color: #0076a8; text-decoration: none; text-indent: 10px; }
+            .S1 a:hover { color: #0C54B6; text-decoration: underline; }
+            .S2 {padding-top: 5px; margin-bottom: 8px; color: #404040; font: normal bold 17px/1.35 Arial, Helvetica, sans-serif; border-bottom: 1px solid #ccc;}
+            .code {padding: 5px; margin: 0 0 5px; border: 1px solid #d3d3d3; background: #f6f6f6;}
+        </style>
+    </head>
+    <body>
+        <div class = rtcContent>
+            <h1  class = 'S0'><span>Getting Started with the K9 .NET Assembly</span></h1>
+                <div  class = 'S1'><span>MATLAB&reg; Compiler SDK&trade; lets you create Microsoft&reg; .NET components from MATLAB code that can be integrated with applications written in C#. While creating .NET components you can optionally generate sample application code in C# that can be used to integrate and test the generated component. You can use this guide to set up your environment and build and run your sample driver application.</span></div>
+                <br>
+            <h2  class = 'S2'><span>Location of Installed .NET Assembly Files</span></h2>
+                <div  class = 'S1'><span><a href=".">View K9 Files</a></span></div>
+                <div  class = 'S1'><span></span></div>
+                <br>
+            <h2  class = 'S2'><span>Location of .NET Project Dependencies</span></h2>
+                <div  class = 'S1'><span>If MATLAB is installed on your system:</span></div>
+                <ul>
+                    <li  class = 'S1'><code>&lt;matlabroot&gt;\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Runtime.dll</code></li>
+                    <li  class = 'S1'><code>&lt;matlabroot&gt;\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Types.dll</code></li>
+                </ul>
+                <div  class = 'S1'><span>If MATLAB Runtime is installed on your system:</span></div>
+                <ul>
+                    <li  class = 'S1'><code>&lt;MATLAB_RUNTIME_INSTALL_DIR&gt;\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Runtime.dll</code></li>
+                    <li  class = 'S1'><code>&lt;MATLAB_RUNTIME_INSTALL_DIR&gt;\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Types.dll</code></li>
+                </ul>
+                <br>
+            <h2  class = 'S2'><span>Prerequisites</span></h2>
+                <ol>
+                    <li  class = 'S1'><span>Verify that you have met all the MATLAB Compiler SDK&trade; .NET target requirements. For details, see <a href="https://www.mathworks.com/help/compiler_sdk/dotnet/matlab-builder-ne-prerequisites.html">MATLAB Compiler SDK .NET Target Requirements.</a></span></li>
+                    <li  class = 'S1'><span>End users must have an installation of MATLAB Runtime to run the application. For details, see <a href="https://www.mathworks.com/help/compiler_sdk/ml_code/install-the-matlab-runtime.html">Install and Configure MATLAB Runtime.</a> For testing purposes, you can use an installation of MATLAB instead of MATLAB Runtime.</span></li>
+                </ol>
+                <br>
+            <h2  class = 'S2'><span>Integrate MATLAB Code Into .NET Application</span></h2>
+                <div  class = 'S1'><span>After creating your .NET component using MATLAB&reg; Compiler SDK&trade;, you can integrate it into any .NET application. This example uses an assumed sample C# application code created during build. If generated, you can use this sample .NET application code as a guide to write your own application.</span></div>
+                <ol>
+                    <li  class = 'S1'><span>At the system command prompt, type:</span></li>
+                    <div  class = 'S1'><code>dotnet new console --name K9</code></div>
+                    <div  class = 'S1'><span>This creates a folder named K9 that has the following contents: </span></div>
+                    <ul>
+                        <li  class = 'S1'>obj folder</li>
+                        <li  class = 'S1'>K9.csproj project file </li>
+                        <li  class = 'S1'>Program.cs C# source file</li>
+                    </ul>
+                    <li  class = 'S1'><span>Open the project file in a text editor and add the following references to the project using the <code>&lt;ItemGroup&gt;</code> tag:</span></li>
+                    <div  class = 'S1'><code>MathWorks.MATLAB.Runtime.dll</code></div>
+                    <div  class = 'S1'><code>MathWorks.MATLAB.Types.dll</code></div>
+                    <div  class = 'S1'><span>Once you add the references, your project file should resemble the following:</span></div>
+                    <div  class = 'code'><pre>&lt;Project Sdk="Microsoft.NET.Sdk"&gt;</pre>
+                    <pre>  &lt;PropertyGroup&gt;</pre>
+                    <pre>    &lt;OutputType&gt;Exe&lt;/OutputType&gt;</pre>
+                    <pre>    &lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;</pre>
+                    <pre>  &lt;/PropertyGroup&gt;</pre>
+                    <pre>  &lt;ItemGroup&gt;</pre>
+                    <pre>    &lt;Reference Include="MathWorks.MATLAB.Runtime"&gt;</pre>
+                    <pre>      &lt;HintPath&gt;C:\Program Files\MATLAB\MATLAB Runtime\R2025b\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Runtime.dll&lt;/HintPath&gt;</pre>
+                    <pre>    &lt;/Reference&gt;</pre>
+                    <pre>    &lt;Reference Include="MathWorks.MATLAB.Types"&gt;</pre>
+                    <pre>      &lt;HintPath&gt;C:\Program Files\MATLAB\MATLAB Runtime\R2025b\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Types.dll&lt;/HintPath&gt;</pre>
+                    <pre>    &lt;/Reference&gt;</pre>
+                    <pre>  &lt;/ItemGroup&gt;</pre>
+                    <pre>&lt;/Project&gt;</pre></div>
+                    <li  class = 'S1'><span>Replace the C# source file <code>Program.cs</code> with the sample file <code>driverApplication.cs</code></span></li>
+                    <li  class = 'S1'><span>At the command line, build your .NET project by typing:</span></li>
+                    <div  class = 'S1'><code>dotnet build K9.csproj</code></div>
+                    <li  class = 'S1'><span>At the command line, run your application by typing:</span></li>
+                    <div  class = 'S1'><code>dotnet run</code></div>
+                </ol>
+            <h2  class = 'S2'><span>Additional Resources</span></h2>
+                <div  class = 'S1'><span><a href="https://www.mathworks.com/help/compiler_sdk/dotnet/deploy-mlcode-in-dotnetapp-using-ml-data-api-for-dotnet.html">Deploy MATLAB Code Within .NET Application Using MATLAB Data API for .NET</a></span></div>
+                <div  class = 'S1'><span></span></div>
+                <div  class = 'S1'><span><a href="https://www.mathworks.com/help/matlab/matlab_external/handle-matlab-data-in-net-applications.html">Handle MATLAB Data in .NET Applications</a></span></div>
+                <div  class = 'S1'><span></span></div>
+        </div>
+    <br>
+    </body>
+</html>
+

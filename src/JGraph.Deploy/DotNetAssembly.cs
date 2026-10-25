@@ -154,8 +154,11 @@ public static class DotNetAssembly
 
         string assembly = Path.Combine(folder, name + ".dll");
         string nativeAssembly = Path.Combine(folder, name + "Native.dll");
-        Compile(options, name, managed, version, archive, arrays, assembly);
-        Compile(options, name + "Native", native, version, archive, arrays, nativeAssembly);
+        ResourceDescription[] resources = options.EmbedArchive
+            ? [new ResourceDescription(ctfName, () => new MemoryStream(archive), isPublic: true)]
+            : [];
+        Compile(name, managed, version, [arrays], assembly, options.Debug, options.Wrapper.KeyFile, resources);
+        Compile(name + "Native", native, version, [arrays], nativeAssembly, options.Debug, options.Wrapper.KeyFile, resources);
 
         string overview = Path.Combine(folder, name + "_overview.html");
         File.WriteAllText(overview, Crlf(Overview(options)), crlf);
@@ -646,9 +649,12 @@ using System.Reflection;
 </Project>
 """.Replace("\r\n", "\n", StringComparison.Ordinal);
 
-    /// <summary>Compiles one assembly in process, writing its documentation and, for a debug build, its symbols.</summary>
-    private static void Compile(DotNetAssemblyOptions options, string assemblyName, IReadOnlyList<(string File, string Text)> sources,
-        string version, byte[] archive, string arrays, string output)
+    /// <summary>
+    /// Compiles one assembly in process against .NET 8's reference assemblies and
+    /// <paramref name="references"/>, writing its documentation and, for a debug build, its symbols.
+    /// </summary>
+    internal static void Compile(string assemblyName, IReadOnlyList<(string File, string Text)> sources, string version,
+        IReadOnlyList<string> references, string output, bool debug, string? keyFile, IReadOnlyList<ResourceDescription> resources)
     {
         var parse = new CSharpParseOptions(LanguageVersion.Latest, preprocessorSymbols: ["__IN_MCC"]);
         var trees = new List<SyntaxTree>();
@@ -666,37 +672,32 @@ using System.Reflection;
             ?? throw new MccException("JGraph:mcc:noReferenceAssemblies",
                 "The .NET 8 reference assemblies were found neither beside JGraph (toolbox\\dotnetbuilder\\ref\\net8.0) nor in a .NET SDK's "
                 + "Microsoft.NETCore.App.Ref 8.0 pack: install the .NET 8 SDK, or reinstall JGraph.");
-        var references = new List<MetadataReference>();
+        var metadata = new List<MetadataReference>();
         foreach (string path in Directory.EnumerateFiles(referenceFolder, "*.dll"))
         {
-            references.Add(MetadataReference.CreateFromFile(path));
+            metadata.Add(MetadataReference.CreateFromFile(path));
         }
 
-        references.Add(MetadataReference.CreateFromFile(arrays));
+        metadata.AddRange(references.Select(static r => MetadataReference.CreateFromFile(r)));
         var compileOptions = new CSharpCompilationOptions(
             OutputKind.DynamicallyLinkedLibrary,
-            optimizationLevel: options.Debug ? OptimizationLevel.Debug : OptimizationLevel.Release,
+            optimizationLevel: debug ? OptimizationLevel.Debug : OptimizationLevel.Release,
             nullableContextOptions: NullableContextOptions.Disable,
             generalDiagnosticOption: ReportDiagnostic.Default,
             deterministic: true);
-        if (options.Wrapper.KeyFile is { } key)
+        if (keyFile is { } key)
         {
             compileOptions = compileOptions.WithCryptoKeyFile(Path.GetFullPath(key)).WithStrongNameProvider(new DesktopStrongNameProvider());
         }
 
-        CSharpCompilation compilation = CSharpCompilation.Create(assemblyName, trees, references, compileOptions);
-        var resources = new List<ResourceDescription>();
-        if (options.EmbedArchive)
-        {
-            resources.Add(new ResourceDescription(options.Wrapper.ShortName + ".ctf", () => new MemoryStream(archive), isPublic: true));
-        }
+        CSharpCompilation compilation = CSharpCompilation.Create(assemblyName, trees, metadata, compileOptions);
 
         string documentation = Path.ChangeExtension(output, ".xml");
         string symbols = Path.ChangeExtension(output, ".pdb");
         EmitResult result;
         using (FileStream dll = File.Create(output + ".partial"))
         using (FileStream xml = File.Create(documentation))
-        using (FileStream? pdb = options.Debug ? File.Create(symbols) : null)
+        using (FileStream? pdb = debug ? File.Create(symbols) : null)
         {
             result = compilation.Emit(dll, pdbStream: pdb, xmlDocumentationStream: xml, manifestResources: resources,
                 options: new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb));
@@ -711,7 +712,7 @@ using System.Reflection;
         }
 
         File.Move(output + ".partial", output, overwrite: true);
-        if (!options.Debug)
+        if (!debug)
         {
             File.Delete(symbols);
         }
@@ -777,13 +778,39 @@ using System.Reflection;
         return s.ToString();
     }
 
-    /// <summary>Writes <c>GettingStarted.html</c> into <paramref name="folder"/> for the assembly <paramref name="name"/>, and answers its path.</summary>
-    public static string WriteGettingStarted(string folder, string name)
+    /// <summary>
+    /// Writes <c>GettingStarted.html</c> into <paramref name="folder"/> for the assembly
+    /// <paramref name="name"/>, for the MWArray API or with <paramref name="dataApi"/> the MATLAB Data
+    /// API, and answers its path.
+    /// </summary>
+    public static string WriteGettingStarted(string folder, string name, bool dataApi = false)
     {
         string path = Path.Combine(folder, "GettingStarted.html");
-        File.WriteAllText(path, Crlf(GettingStarted(name)), new UTF8Encoding(false));
+        File.WriteAllText(path, Crlf(dataApi ? DataGettingStarted(name) : GettingStarted(name)), new UTF8Encoding(false));
         return path;
     }
+
+    /// <summary><c>GettingStarted.html</c> for a MATLAB Data API archive, in JGraph's words.</summary>
+    private static string DataGettingStarted(string name) =>
+        $"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Getting started with {name}</title>
+</head>
+<body>
+<h1>Getting started with {name}</h1>
+<ol>
+<li>Install the JGraph Runtime {RuntimeLayout.CurrentVersion}, or set JGRAPH_RUNTIME_ROOT to its folder.</li>
+<li>In a .NET 8 project, reference the runtime's extern\dotnet\net8.0\{DotNetDataAssembly.RuntimeAssemblyName}.dll and, for the strongly typed interface, {name}.dll.</li>
+<li>Open the archive with <code>dynamic matlab = MATLABRuntime.StartMATLAB("{name}.ctf");</code> and call its functions as members of <code>matlab</code>,
+or through the interface's <code>MATLABFunctions</code> and classes.</li>
+</ol>
+</body>
+</html>
+
+""".Replace("\r\n", "\n", StringComparison.Ordinal);
 
     /// <summary><c>GettingStarted.html</c>, in JGraph's words.</summary>
     private static string GettingStarted(string name) =>

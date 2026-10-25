@@ -202,6 +202,11 @@ internal static partial class JgsBuiltins
             return onOff; // matlab.lang.OnOffSwitchState (open item 129)
         }
 
+        if (UserEnumeration(interpreter, args[0], wanted, line, col) is { } user)
+        {
+            return user; // a classdef's enumeration block (stage K9)
+        }
+
         Type? type = NetTypeNamed(args[0], interpreter);
         if (type is null && args[0].Type is not (JgsType.String or JgsType.External) && !(args[0].IsStringArray && args[0].ArrayLength == 1))
         {

@@ -165,6 +165,121 @@ internal static partial class JgsBuiltins
         return true;
     }
 
+    /// <summary>
+    /// Brings an <c>arguments</c> line's value to its declared class (stage K9): converted as the
+    /// class's constructor converts it, and a value that cannot be refused in R2025b's words after
+    /// <paramref name="prefix"/>. A graphics class keeps its own refusals.
+    /// </summary>
+    internal static JgsValue ConvertDeclaredClass(
+        string className, JgsValue value, string prefix, int line, int col, JgsEnvironment env, Interpreter? interpreter)
+    {
+        if (string.Equals(ClassOf(value, JgsDialect.Matlab), className, StringComparison.Ordinal))
+        {
+            return value;
+        }
+
+        JgsRuntimeException Refused() => new(line, col, "MATLAB:validation:UnableToConvert",
+            $"{prefix}Value must be of type {className} or be convertible to {className}.");
+
+        // An enumeration takes its members and their names (stage K9).
+        if (interpreter?.ClassForLoad(className) is { IsEnumeration: true } enumeration)
+        {
+            return ToEnumerationMember(enumeration, value, prefix, line, col);
+        }
+
+        // The built-in classes convert by R2025b's rules for a declared class (k9_argument_messages),
+        // which are its assignment's rather than its constructors': int8("7") is refused there,
+        // logical('A') is true, char(@sin) is 'sin'.
+        bool numeric = IsNumericValue(value);
+        bool logical = IsLogicalValue(value);
+        bool chars = value.Type == JgsType.String;
+        bool strings = value.IsStringArray;
+        bool complex = value.Type == JgsType.Complex;
+        switch (className)
+        {
+            case "double" or "single" or "int8" or "uint8" or "int16" or "uint16" or "int32" or "uint32" or "int64" or "uint64":
+                if (strings ? className != "double" : !(numeric || logical || chars))
+                {
+                    throw Refused();
+                }
+
+                break;
+            case "logical":
+                if (!(numeric || logical || chars) || complex || (numeric && ToDoubles(className, value, line, col).Any(double.IsNaN)))
+                {
+                    throw Refused();
+                }
+
+                if (chars)
+                {
+                    value = Stamped([.. CodesOf(value).Select(static c => c != 0 ? 1.0 : 0.0)], SizeDims(value), JgsNumericClass.Double);
+                }
+
+                break;
+            case "char":
+                if (value.Type == JgsType.Function)
+                {
+                    return JgsValue.Str(SourceTextOf("char", value, line, col, true));
+                }
+
+                if (logical || complex || !(numeric || strings))
+                {
+                    throw Refused();
+                }
+
+                if (numeric)
+                {
+                    // A negative code or NaN is character 0 in R2025b's conversion.
+                    value = Stamped(ToDoubles(className, value, line, col).Select(static c => double.IsNaN(c) || c < 0 ? 0 : c).ToArray(), SizeDims(value), JgsNumericClass.Double);
+                }
+
+                break;
+            case "string":
+                if (value.Type is JgsType.Struct or JgsType.Function or JgsType.Object)
+                {
+                    throw Refused();
+                }
+
+                break;
+            case "cell" or "struct" or "function_handle":
+                throw Refused();
+        }
+
+        try
+        {
+            return CoerceToClass(className, className, value, line, col, env, interpreter);
+        }
+        catch (JgsRuntimeException failure) when (!failure.Identifier.StartsWith("MATLAB:graphics:", StringComparison.Ordinal))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validation:UnableToConvert",
+                $"{prefix}Value must be of type {className} or be convertible to {className}.");
+        }
+    }
+
+    /// <summary>Column-major <paramref name="values"/> of <paramref name="dims"/> in <paramref name="numericClass"/>.</summary>
+    private static JgsValue Stamped(double[] values, int[] dims, JgsNumericClass numericClass) =>
+        JgsNumericClasses.Stamp(JgsMatrix.FromColumnMajorDims(values, dims), numericClass);
+
+    /// <summary>A scalar tiled to <paramref name="dims"/>, as the session's <c>repmat</c> tiles it, whatever its class.</summary>
+    internal static JgsValue RepeatScalar(JgsValue value, int[] dims, JgsEnvironment env, int line, int col) =>
+        CallSessionBuiltin(env, "repmat", [value, JgsGraphicsProperties.Row([.. dims.Select(static d => (double)d)])], line, col);
+
+    /// <summary>A value laid out as <paramref name="dims"/>, as the session's <c>reshape</c> lays it out, whatever its class.</summary>
+    internal static JgsValue Reshaped(JgsValue value, int[] dims, JgsEnvironment env, int line, int col) =>
+        CallSessionBuiltin(env, "reshape", [value, JgsGraphicsProperties.Row([.. dims.Select(static d => (double)d)])], line, col);
+
+    /// <summary>
+    /// The function <paramref name="name"/> as <paramref name="env"/> binds it: the session's
+    /// builtin with the wrappers that teach it chars, strings and the rest.
+    /// </summary>
+    private static JgsValue CallSessionBuiltin(JgsEnvironment env, string name, JgsValue[] args, int line, int col) =>
+        env.TryGet(name, out JgsValue bound) && bound.Type == JgsType.Function
+            ? bound.AsCallable.Call(args, line, col)
+            : throw new JgsRuntimeException(line, col, $"'{name}' is not available here.");
+
+    /// <summary>The character codes of a char array, column-major.</summary>
+    private static double[] CodesOf(JgsValue value) => [.. value.AsString.Select(static c => (double)c)];
+
     private static string DescribeSize(IReadOnlyList<Expr?> declared) =>
         string.Join("-by-", declared.Select(static d =>
             d is NumberLiteral n ? ((int)System.Math.Round(n.Value)).ToString(System.Globalization.CultureInfo.InvariantCulture) : ":"));
@@ -390,7 +505,7 @@ internal static partial class JgsBuiltins
             return System.Array.Exists(wanted, w => string.Equals(w, actual, StringComparison.Ordinal))
                 ? JgsValue.Null
                 : throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeA",
-                    "Value must be one of the following types: "
+                    "Value must be one of these types: "
                     + string.Join(", ", wanted.Select(static w => $"'{w}'")) + ".");
         });
 

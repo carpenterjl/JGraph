@@ -227,6 +227,13 @@ internal sealed partial class Interpreter
     /// </summary>
     internal void RequireSetAccess(JgsClass definition, ClassProperty property, string field, int line, int col)
     {
+        // An enumeration member's properties are its constructor's to set and nobody else's (stage K9, measured).
+        if (definition.IsEnumeration && !definition.IsConstructor(CurrentFrame.EnclosingFunction))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:class:SetProhibited",
+                $"Unable to set the '{field}' property of class ''{definition.Name}'' because it is read-only.");
+        }
+
         if (property.SetAccess.IsPublic)
         {
             return;
@@ -504,6 +511,13 @@ internal sealed partial class Interpreter
             return true;
         }
 
+        // An enumeration has no instance to make for the dot's other meanings (stage K9, measured).
+        if (definition.IsEnumeration)
+        {
+            throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:subscripting:classHasNoPropertyOrMethod",
+                $"The class {definition.Name} has no Constant property or Static method named '{field}'.");
+        }
+
         value = JgsValue.Null;
         return false;
     }
@@ -666,6 +680,7 @@ internal sealed partial class Interpreter
     internal JgsValue ReadProperty(JgsValue target, string field, int line, int col)
     {
         JgsObject instance = target.AsObject;
+        RequireLive(instance, line, col); // get and set, and a client's property access, on a deleted handle (stage K9)
         JgsClass definition = instance.Class;
         var at = new VariableExpr(field) { Line = line, Column = col };
         ClassProperty property = definition.Property(field) ?? throw NoSuchMember(field, definition, at);
@@ -700,6 +715,7 @@ internal sealed partial class Interpreter
     internal void WriteProperty(JgsValue target, string field, JgsValue value, int line, int col)
     {
         JgsObject instance = target.AsObject;
+        RequireLive(instance, line, col); // get and set, and a client's property access, on a deleted handle (stage K9)
         JgsClass definition = instance.Class;
         ClassProperty property = definition.Property(field)
             ?? throw new JgsRuntimeException(line, col, "MATLAB:noPublicFieldForClass",
@@ -913,7 +929,8 @@ internal sealed partial class Interpreter
         MethodAnswer answer = FindMethod(definition, name, context, contextKnown, out ClassMethod? method);
         if (answer == MethodAnswer.Missing || method is null || method.Static)
         {
-            return false;
+            // An enumeration has char, string, == and the rest without writing them (stage K9).
+            return definition.IsEnumeration && JgsBuiltins.TryEnumerationMethod(this, name, dominant, out callable);
         }
 
         if (answer == MethodAnswer.Refused)
@@ -1084,6 +1101,13 @@ internal sealed partial class Interpreter
                     result = ApplyBinary(op, left.Type == JgsType.Object ? handle : left, right.Type == JgsType.Object ? handle : right, at);
                     return true;
                 }
+            }
+
+            // An enumeration's members compare by name, with each other and with text (stage K9).
+            if (wanted is "eq" or "ne" && JgsBuiltins.EnumerationEquality(left, right, wanted == "eq", at.Line, at.Column) is { } compared)
+            {
+                result = compared;
+                return true;
             }
 
             if (JgsRunningDialect.ThreadIsMatlab && !definition.IsHandle)

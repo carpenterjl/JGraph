@@ -88,6 +88,33 @@ internal static partial class JgsBuiltins
             KeepsStringArguments = true,
         }));
 
+        // configureDictionary(keyType, valueType): an empty dictionary that already knows its types,
+        // so it is configured (stage K9: k9make's dictconfigured, which a .NET client receives).
+        Define("configureDictionary", (args, line, col) =>
+        {
+            Arity("configureDictionary", args, 2, line, col);
+            if (!IsTextScalar(args[0]) || !IsTextScalar(args[1]))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:dictionary:InvalidType", "Key and value types must be specified as text.");
+            }
+
+            string keyType = TextOf(args[0]) is "string" or "char" ? "char" : "double";
+            return NewKeyed(DictionaryClassName,
+                [JgsValue.Str("KeyType"), JgsValue.Str(keyType), JgsValue.Str("ValueType"), JgsValue.Str(TextOf(args[1]))],
+                dialect.CopyOnAssign, line, col);
+        });
+
+        // keyHash(A): the uint64 a dictionary key is filed under. Equal values hash alike, a handle by
+        // its identity; the strongly typed interface's GetHashCode calls it, where R2025b's client
+        // refuses the name (stage K9: typed.point.hash, a divergence). JGraph keeps a uint64 as a
+        // double, so the hash is folded into 53 bits.
+        Define("keyHash", (args, line, col) =>
+        {
+            Arity("keyHash", args, 1, line, col);
+            ulong hash = KeyHashOf(args[0]) & ((1UL << 53) - 1);
+            return JgsNumericClasses.Stamp(JgsValue.Number(hash), JgsNumericClass.UInt64);
+        });
+
         Define("isKey", (args, line, col) =>
         {
             Arity("isKey", args, 2, line, col);
@@ -720,4 +747,118 @@ internal static partial class JgsBuiltins
             ? value
             : throw new JgsRuntimeException(line, col,
                 $"{name} expects a containers.Map or a dictionary, but got a {value.TypeName}.");
+
+    // --- keyHash ---------------------------------------------------------------------------------
+
+    /// <summary><c>keyHash</c>'s 64 bits: FNV-1a over the class, the size and the content.</summary>
+    private static ulong KeyHashOf(JgsValue value)
+    {
+        var hash = new KeyHasher();
+        hash.Add(ClassOf(value, JgsDialect.Matlab));
+        foreach (int d in SizeDims(value))
+        {
+            hash.Add(d);
+        }
+
+        AddKeyContent(ref hash, value);
+        return hash.Value;
+    }
+
+    private static void AddKeyContent(ref KeyHasher hash, JgsValue value)
+    {
+        switch (value.Type)
+        {
+            case JgsType.Number or JgsType.Bool:
+                hash.Add(value.AsNumber);
+                break;
+            case JgsType.Complex:
+                hash.Add(value.AsComplex.Real);
+                hash.Add(value.AsComplex.Imaginary);
+                break;
+            case JgsType.String:
+                hash.Add(value.AsString);
+                break;
+            case JgsType.Array:
+                foreach (JgsValue element in value.BoxedElements())
+                {
+                    AddKeyContent(ref hash, element);
+                }
+
+                break;
+            case JgsType.Cell:
+                foreach (JgsValue element in value.AsCell)
+                {
+                    hash.Add(KeyHashOf(element));
+                }
+
+                break;
+            case JgsType.Struct:
+                IEnumerable<Dictionary<string, JgsValue>> records = value.IsStructArray ? value.AsStructArray.Elements : [value.AsStruct];
+                foreach (Dictionary<string, JgsValue> element in records)
+                {
+                    foreach ((string name, JgsValue field) in element.OrderBy(static f => f.Key, StringComparer.Ordinal))
+                    {
+                        hash.Add(name);
+                        hash.Add(KeyHashOf(field));
+                    }
+                }
+
+                break;
+            case JgsType.Object:
+                IEnumerable<JgsObject> instances = value.IsObjectArray ? value.AsObjectArray.Elements : [value.AsObject];
+                foreach (JgsObject instance in instances)
+                {
+                    if (instance.Class.IsHandle)
+                    {
+                        hash.Add(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(instance)); // a handle is its identity
+                    }
+                    else if (instance.EnumerationName is { } member)
+                    {
+                        hash.Add(member);
+                    }
+                    else
+                    {
+                        foreach ((string name, JgsValue field) in instance.Fields.OrderBy(static f => f.Key, StringComparer.Ordinal))
+                        {
+                            hash.Add(name);
+                            hash.Add(KeyHashOf(field));
+                        }
+                    }
+                }
+
+                break;
+        }
+    }
+
+    /// <summary>FNV-1a, 64 bits; -0 hashes as 0 and every NaN alike, since they compare so as keys.</summary>
+    private struct KeyHasher
+    {
+        public KeyHasher()
+        {
+        }
+
+        public ulong Value { get; private set; } = 14695981039346656037UL;
+
+        public void Add(ulong bits)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                Value = (Value ^ ((bits >> (8 * i)) & 0xFF)) * 1099511628211UL;
+            }
+        }
+
+        public void Add(int number) => Add((ulong)(uint)number);
+
+        public void Add(double number) =>
+            Add((ulong)BitConverter.DoubleToInt64Bits(number == 0 ? 0.0 : double.IsNaN(number) ? double.NaN : number));
+
+        public void Add(string text)
+        {
+            Add(text.Length);
+            foreach (char c in text)
+            {
+                Add((ulong)c);
+            }
+        }
+    }
 }

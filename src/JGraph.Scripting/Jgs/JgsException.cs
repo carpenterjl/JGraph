@@ -135,4 +135,12 @@ public sealed class JgsRuntimeException : JgsException
     /// came from, and a runtime refusal (an index past the end) with nothing (open item 13).
     /// </summary>
     internal bool Raised { get; init; }
+
+    /// <summary>
+    /// This error as one its function raised itself, which is how R2025b reports an arguments
+    /// block's refusal: "Error using k9nv (line 1)" (stage K9). One that already carries frames, or
+    /// was raised, is left as it is.
+    /// </summary>
+    internal JgsRuntimeException AsRaised() =>
+        Raised || Frames.Count > 0 ? this : new JgsRuntimeException(Line, Column, Identifier, Message) { Raised = true };
 }

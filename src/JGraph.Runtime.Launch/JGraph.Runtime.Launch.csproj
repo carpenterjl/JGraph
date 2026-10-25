@@ -21,6 +21,7 @@
     <ProjectReference Include="..\JGraph.Runtime.Desktop\JGraph.Runtime.Desktop.csproj" />
     <!-- The runtime's bin carries the MWArray API a .NET client of a component loads (stage K8). -->
     <ProjectReference Include="..\JGraph.MATLAB.NET.Arrays\JGraph.MATLAB.NET.Arrays.csproj" />
+    <ProjectReference Include="..\JGraph.MATLAB.Runtime\JGraph.MATLAB.Runtime.csproj" />
   </ItemGroup>
 
 </Project>

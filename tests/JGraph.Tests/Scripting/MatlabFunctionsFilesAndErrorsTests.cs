@@ -503,19 +503,23 @@ public class MatlabFunctionsFilesAndErrorsTests : IDisposable
         Assert.Contains("reading", Text(result, "msg"), StringComparison.Ordinal);
     }
 
-    /// <summary>A name-value declaration is refused by name rather than mis-parsed — the M62 deferral.</summary>
+    /// <summary>A name-value declaration takes the pairs a caller passes (stage K9, ADR 0265; deferred since M62).</summary>
     [Fact]
-    public async Task ANameValueArgumentIsRefusedWithItsOwnReason()
+    public async Task ANameValueArgumentTakesThePairsACallerPasses()
     {
         ScriptRunResult result = await RunMatlab("""
-            function f(options)
+            a = f();
+            b = f('width', 3);
+            function w = f(options)
                 arguments
                     options.Width (1,1) double = 1
                 end
+                w = options.Width;
             end
             """);
 
-        Assert.False(result.Success);
-        Assert.Contains("name-value", result.Message, StringComparison.Ordinal);
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal(1.0, Number(result, "a"));
+        Assert.Equal(3.0, Number(result, "b"));
     }
 }

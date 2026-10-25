@@ -1,0 +1,64 @@
+CHK|class|k9shade|exact
+CHK|isenum|logical [1 1] 1|exact
+CHK|isenum_number|logical [1 1] 0|exact
+CHK|isobject|logical [1 1] 1|exact
+CHK|char|green|exact
+CHK|string|string|exact
+CHK|cellstr|cell [1 1] {char 'green'}|exact
+CHK|eq_same|logical [1 1] 1|exact
+CHK|eq_other|logical [1 1] 0|exact
+CHK|ne|logical [1 1] 1|exact
+CHK|eq_char|logical [1 1] 1|exact
+CHK|eq_string|logical [1 1] 0|exact
+CHK|eq_char_unknown|logical [1 1] 0|exact
+CHK|isequal_same|logical [1 1] 1|exact
+CHK|isequal_other|logical [1 1] 0|exact
+CHK|isequal_char|logical [1 1] 1|exact
+CHK|array_class|k9shade|exact
+CHK|array_size|double [1 2] 1 3|exact
+CHK|array_char|1×3 k9shade|div=ADR0265|diverges|char [3 4] red;blue;red
+CHK|array_string|string|exact
+CHK|array_cellstr|cell [1 3] {char 'red', char 'blue', char 'red'}|exact
+CHK|array_eq|logical [1 3] 1 0 1|exact
+CHK|array_eq_char|logical [1 3] 0 1 0|exact
+CHK|array_index|blue|exact
+CHK|ismember|logical [1 1] 1|exact
+CHK|ismember_array|logical [1 3] 1 0 1|exact
+CHK|ismember_char|logical [1 1] 1|exact
+CHK|enumeration_name|3×1 k9shade|div=ADR0265|diverges|char [3 5] red;green;blue
+CHK|enumeration_member|double [1 2] 3 1|exact
+CHK|enumeration_names|cell [3 1] {char 'red', char 'green', char 'blue'}|exact
+CHK|enumeration_print| Enumeration members for class 'k9shade': red green blue |exact
+CHK|display| ans = k9shade enumeration green |exact
+CHK|display_named| h = k9shade enumeration blue |exact
+CHK|disp| green |exact
+CHK|display_array| ans = 1×2 k9shade enumeration array red blue |exact
+CHK|display_column| ans = 2×1 k9shade enumeration array red blue |exact
+CHK|disp_array| red blue |exact
+CHK|switch_red|double [1 1] 1|exact
+CHK|switch_blue|double [1 1] 2|exact
+CHK|switch_char|double [1 1] 1|exact
+CHK|argument_member|blue|exact
+CHK|argument_char|green|exact
+CHK|argument_string|red|exact
+CHK|argument_unknown|MATLAB:validation:UnableToConvert|exact
+CHK|argument_unknown_msg|Invalid argument at position 1. 'purple' is invalid. Value must be 'red', 'green', or 'blue'.|exact
+CHK|argument_number|MATLAB:validation:UnableToConvert|exact
+CHK|argument_number_msg|Invalid argument at position 1. Value must be 'red', 'green', or 'blue'.|exact
+CHK|member_missing|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
+CHK|member_missing_msg|The class k9shade has no Constant property or Static method named 'purple'.|exact
+CHK|construct|MATLAB:class:OutsideEnumBlock|exact
+CHK|construct_msg|Input does not correspond to a member of the enumeration class 'k9shade'.|exact
+CHK|props_member|double [1 1] 5|exact
+CHK|props_method|double [1 1] 20|exact
+CHK|props_char|small|exact
+CHK|props_display| ans = k9size enumeration small |exact
+CHK|props_eq|logical [1 1] 1|exact
+CHK|props_set|MATLAB:class:SetProhibited|exact
+CHK|props_set_msg|Unable to set the 'Width' property of class ''k9size'' because it is read-only.|exact
+CHK|double|MATLAB:invalidConversion|exact
+CHK|double_msg|Conversion to double from k9shade is not possible.|exact
+CHK|mat2str|k9shade.green|exact
+CHK|sort|1×2 k9shade|div=ADR0265|diverges|char [2 4] red;blue
+CHK|fieldnames|cell [0 1] {}|exact
+CHK|properties|cell [0 1] {}|exact

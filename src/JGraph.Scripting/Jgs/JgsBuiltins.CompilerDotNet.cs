@@ -10,8 +10,8 @@ namespace JGraph.Scripting.Jgs;
 /// (parseClassMapInputs.m, classMap.m, cliName.m, InterfaceManager.m), their refusals as
 /// <c>probe_k8_build</c> recorded them: the class map from a <c>containers.Map</c> or the files given,
 /// the derived assembly name (<c>example.&lt;file&gt;</c>) and output folder, the interface and its
-/// warnings, and the mcc command a build writes. The MATLAB Data API interface is stage K9's and
-/// remoting is out of scope, so both are refused at the build.
+/// warnings, and the mcc command a build writes. The MATLAB Data API interface builds its archive
+/// and strongly typed interface (stage K9, ADR 0265); remoting is out of scope and refused at the build.
 /// </summary>
 internal static partial class JgsBuiltins
 {
@@ -480,12 +480,7 @@ internal static partial class JgsBuiltins
 
         string Text(string property) => TextOf(options.Fields[property]);
         bool On(string property) => options.Fields[property].AsExternalOrNull() is OnOffSwitchStateValue { AllOn: true };
-        if (Text(JgsBuiltinClasses.InterfaceValue) == "matlab-data")
-        {
-            throw new JgsRuntimeException(line, col, "JGraph:compiler:targetNotBuilt",
-                "JGraph does not build a .NET assembly for the MATLAB Data API ('Interface', 'matlab-data') yet.");
-        }
-
+        bool dataApi = Text(JgsBuiltinClasses.InterfaceValue) == "matlab-data";
         if (On("EnableRemoting"))
         {
             throw new JgsRuntimeException(line, col, "JGraph:compiler:targetOutOfScope",
@@ -551,7 +546,8 @@ internal static partial class JgsBuiltins
             words.AddRange(["-k", $"file={TextOf(key["EncryptionKeyFile"])};loader={TextOf(key["RuntimeKeyLoaderFile"])}"]);
         }
 
-        if (!(options.Fields[JgsBuiltinClasses.InterfaceEmbed].AsExternalOrNull() is OnOffSwitchStateValue { AllOn: true }))
+        // A MATLAB Data API archive is always beside the assembly, and R2025b writes no -C for it (k9_build: main.printed).
+        if (!dataApi && !(options.Fields[JgsBuiltinClasses.InterfaceEmbed].AsExternalOrNull() is OnOffSwitchStateValue { AllOn: true }))
         {
             words.Add("-C");
         }
@@ -575,7 +571,7 @@ internal static partial class JgsBuiltins
             ?? throw new JgsRuntimeException(line, col, "The build printed mcc's help and built nothing.");
 
         // compiler.build adds the getting-started page, last among the files (k8_build: main.Files).
-        built = built with { Files = [.. built.Files, DotNetAssembly.WriteGettingStarted(folder, DotNetShortName(options))] };
+        built = built with { Files = [.. built.Files, DotNetAssembly.WriteGettingStarted(folder, DotNetShortName(options), dataApi)] };
         return wanted == 0 ? null : DotNetResults(interpreter, built, options, watch.Elapsed.TotalSeconds, line, col);
     }
 

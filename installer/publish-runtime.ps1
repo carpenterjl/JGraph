@@ -72,6 +72,14 @@ foreach ($file in "JGraph.MATLAB.NET.Arrays.dll", "JGraph.MATLAB.NET.Arrays.xml"
     Copy-Item (Join-Path $bin $file) (Join-Path $dotnetbuilder $file)
 }
 
+# The MATLAB Data API a .NET client references (stage K9), alone in extern\dotnet\net8.0 as R2025b
+# keeps MathWorks.MATLAB.Runtime.dll and MathWorks.MATLAB.Types.dll in extern\dotnet\netstandard2.0.
+$dataApi = Join-Path $Output "extern\dotnet\net8.0"
+New-Item -ItemType Directory -Force $dataApi | Out-Null
+foreach ($file in "JGraph.MATLAB.Runtime.dll", "JGraph.MATLAB.Runtime.xml") {
+    Copy-Item (Join-Path $bin $file) (Join-Path $dataApi $file)
+}
+
 $marker = @{ version = $version; release = "25.2" } | ConvertTo-Json
 [System.IO.File]::WriteAllText((Join-Path $Output "jgraph-runtime.json"), $marker, (New-Object System.Text.UTF8Encoding($false)))
 
@@ -80,7 +88,9 @@ foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.
     "JGraph.Deploy.dll", "native\libopenblas.dll", "jglaunch.dll", "jglaunch.runtimeconfig.json",
     "launchers\win64\jglaunch-console.exe", "toolbox\compiler\packagingResources\default_splash.png",
     # The MWArray API a .NET client of a component loads from here (stage K8, ADR 0264).
-    "JGraph.MATLAB.NET.Arrays.dll") {
+    "JGraph.MATLAB.NET.Arrays.dll",
+    # The MATLAB Data API the same client loads from here (stage K9, ADR 0265).
+    "JGraph.MATLAB.Runtime.dll") {
     if (-not (Test-Path (Join-Path $bin $anchor))) {
         throw "The runtime is missing 'bin\win64\$anchor' - the publish layout changed; fix before shipping."
     }
@@ -89,6 +99,7 @@ foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
     if (-not (Test-Path (Join-Path $Output "launchers\win64\$template"))) { throw "The runtime is missing 'launchers\win64\$template'." }
 }
 if (-not (Test-Path (Join-Path $dotnetbuilder "JGraph.MATLAB.NET.Arrays.dll"))) { throw "The runtime is missing the MWArray API for clients." }
+if (-not (Test-Path (Join-Path $dataApi "JGraph.MATLAB.Runtime.dll"))) { throw "The runtime is missing the MATLAB Data API for clients." }
 
 # WPF itself must stay out (decision KO5): it comes from the Windows desktop framework of a process
 # that has one, and the headless part of the runtime, which keeps Linux possible, never loads it.

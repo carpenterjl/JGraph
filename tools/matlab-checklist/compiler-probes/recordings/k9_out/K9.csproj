@@ -1,0 +1,23 @@
+<Project Sdk = "Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<OutputType>library</OutputType>
+		<DebugType>None</DebugType>
+		<Optimize>true</Optimize>
+		<LangVersion>8.0</LangVersion>
+		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+		<CopyReferenceAssemblies>false</CopyReferenceAssemblies>
+		<DefineConstants>$(DefineConstants); __IN_MCC</DefineConstants>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<Version>1.0.0.0</Version>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include = "Microsoft.CSharp" />
+		<PackageReference Include = "Microsoft.CSharp" Version = "4.*" />
+		<Compile Include = "strongly_typed_interface\*.cs" />
+		<Reference Include = "<MATLABROOT>\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Types.dll">
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+</Project>

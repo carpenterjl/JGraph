@@ -171,6 +171,22 @@ public sealed class Component : IDisposable
         }
     }
 
+    /// <summary>
+    /// Runs <paramref name="work"/> on the engine thread with this component's session made live, after
+    /// the calls queued before it (the MATLAB Data API, stage K9: its conversions and calls).
+    /// </summary>
+    internal Task<T> RunOnEngine<T>(Func<ComponentSession, T> work, CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        return _engine.Run(
+            () =>
+            {
+                JgRuntime.Activate(_session);
+                return work(_session);
+            },
+            cancellationToken);
+    }
+
     /// <summary>Whether this handle has been retired.</summary>
     internal bool IsDisposed => _disposed;
 

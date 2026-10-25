@@ -242,6 +242,31 @@ internal static partial class JgsBuiltins
         }
 
         string folder = Within(command.OutputFolder ?? ".");
+
+        // A MATLAB Data API build generates its strongly typed interface first, as R2025b's mcc does
+        // (k9_build: main.printed, the count line before the compiler's version), and makes the
+        // archive alone, saying so, when a function takes varargin or gives varargout (variadic).
+        IReadOnlyList<(string File, string Text)>? typedInterface = null;
+        if (command.DotNet is { DataApi: true } dataApi && !DotNetDataAssembly.StronglyTypedDisabled)
+        {
+            (List<TypedFunction> typedFunctions, List<TypedClass> typedClasses) = TypedInterfaceReader.Read(classes.SelectMany(static c => c.Files));
+            var classNames = new HashSet<string>(typedClasses.Select(static c => c.FullName), StringComparer.Ordinal);
+            try
+            {
+                typedInterface = TypedInterface.Generate(
+                    typedFunctions, typedClasses, dataApi.AssemblyName, DateTime.Now, classNames.Contains, RuntimeLayout.CurrentVersion);
+                if (command.Verbose)
+                {
+                    host.WriteOut($"{typedClasses.Count} class(es) and {typedFunctions.Count} function(s) written to "
+                        + $"{Path.Combine(folder, DotNetDataAssembly.InterfaceFolder)}\n\n");
+                }
+            }
+            catch (TypedInterfaceException)
+            {
+                host.WriteOut(DotNetDataAssembly.NotGeneratedNote + "\n");
+            }
+        }
+
         if (command.Verbose)
         {
             host.WriteOut($"Compiler version: JGraph {RuntimeLayout.CurrentVersion} (R2025b)\nAnalyzing file dependencies. \n");
@@ -293,6 +318,11 @@ internal static partial class JgsBuiltins
             McWarn("Compiler:compiler:COM_WARN_CONFIG_SECRETS_FOR_DESKTOP",
                 $"Your app reads secret keys with '{secret}'. A JGraph program reads each one from the environment variable of the same name "
                 + "on the computer it runs on: set those variables there. JGraph's mcc does not embed secrets in the archive (-J).\n");
+        }
+
+        if (command.DotNet is { DataApi: true } data)
+        {
+            return DotNetDataBuild(command, data, classes, typedInterface, main, report, folder, here, line, col, host);
         }
 
         if (command.DotNet is { } assembly)
@@ -450,6 +480,64 @@ internal static partial class JgsBuiltins
 
         BuildLogs.WriteAll(folder, report, file => CtfLayout.ArchivePath(file, here, wrapper.ShortName).Replace('/', '\\'));
         return new MccBuild(files, manifest.Uuid);
+    }
+
+    /// <summary>
+    /// <c>-W dotnet:...,api=matlab-data</c> (stage K9): the archive with every file's function or class
+    /// public by its package-qualified name, and what <see cref="DotNetDataAssembly"/> writes beside it.
+    /// </summary>
+    private static MccBuild DotNetDataBuild(MccCommandLine command, DotNetWrapper wrapper, List<(string Name, List<string> Files)> classes,
+        IReadOnlyList<(string File, string Text)>? typedInterface, string main, DependencyReport report, string folder, string here,
+        int line, int col, JGraphScriptGlobals host)
+    {
+        CtfBuild build = CtfLayout.FromReport(wrapper.ShortName, main, report, rootFolder: here) with
+        {
+            TargetType = CtfTargetType.DotNetAssembly,
+            RuntimeOptions = command.RuntimeOptions,
+            MainFunction = null,
+            PublicFunctions =
+            [
+                .. classes.SelectMany(static c => c.Files).Distinct(StringComparer.OrdinalIgnoreCase).Select(file =>
+                {
+                    DotNetFunction f = DotNetFunctionOf(file);
+                    return new CtfFunction(TypedInterfaceReader.FullName(file), CtfLayout.ArchivePath(file, here, wrapper.ShortName), f.Inputs, f.Outputs);
+                }),
+            ],
+        };
+        if (command.PCode)
+        {
+            build = JgsPcode.PcodeBuild(build);
+        }
+
+        if (command.Verbose)
+        {
+            host.WriteOut($"Generating file \"{Path.Combine(folder, "readme.txt")}\".\n");
+        }
+
+        DotNetDataBuild built;
+        try
+        {
+            built = DotNetDataAssembly.Write(build, new DotNetDataAssemblyOptions
+            {
+                OutputFolder = folder,
+                Wrapper = wrapper,
+                Interface = typedInterface,
+                Version = command.Version,
+                Debug = command.DebugBuild,
+            });
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or IOException or UnauthorizedAccessException)
+        {
+            throw new JgsRuntimeException(line, col, "JGraph:mcc:buildFailed", $"The archive could not be written: {ex.Message}");
+        }
+
+        if (built.Note is { } note)
+        {
+            host.WriteOut(note + "\n");
+        }
+
+        BuildLogs.WriteAll(folder, report, file => CtfLayout.ArchivePath(file, here, wrapper.ShortName).Replace('/', '\\'));
+        return new MccBuild(built.Files, built.Manifest.Uuid);
     }
 
     /// <summary>A function file's name, inputs, outputs and help line, as the generated classes declare and document it.</summary>

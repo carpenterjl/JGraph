@@ -1,0 +1,1954 @@
+main.options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9'
+            AssemblyVersion: ''
+               EmbedArchive: off
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\dn\K9'
+     Class Map Information
+            k9describeClass: {25×1 cell}
+main.printed
+  |mcc -W 'dotnet:K9,api=matlab-data,k9describeClass,4.0,Private,local' -T link:lib -d <W>\b\dn\K9 -v -Z autodetect 'class{k9describeClass:<W>\b\src\+k9pkg\k9inner.m,<W>\b\src\k9color.m,<W>\b\src\k9counter.m,<W>\b\src\k9describe.m,<W>\b\src\k9echo.m,<W>\b\src\k9err.m,<W>\b\src\k9make.m,<W>\b\src\k9multi.m,<W>\b\src\k9noout.m,<W>\b\src\k9nv.m,<W>\b\src\k9point.m,<W>\b\src\k9print.m,<W>\b\src\k9quiet.m,<W>\b\src\k9slow.m,<W>\b\src\k9t_cplx.m,<W>\b\src\k9t_ints.m,<W>\b\src\k9t_keyword.m,<W>\b\src\k9t_misc.m,<W>\b\src\k9t_multi.m,<W>\b\src\k9t_none.m,<W>\b\src\k9t_objects.m,<W>\b\src\k9t_opt.m,<W>\b\src\k9t_real.m,<W>\b\src\k9t_ref.m,<W>\b\src\k9t_untyped.m}'
+  |3 class(es) and 22 function(s) written to <W>\b\dn\K9\strongly_typed_interface
+  |
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\+k9pkg\k9inner.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9color.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9counter.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9describe.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9echo.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9err.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9make.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9multi.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9noout.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9nv.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9point.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9print.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9quiet.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9slow.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_cplx.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_ints.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_keyword.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_misc.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_multi.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_none.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_objects.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_opt.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_real.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_ref.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9t_untyped.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\dn\K9\readme.txt".
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.12 
+main.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+main.BuildType	dotNETAssembly
+main.Files	<OUT>\K9.ctf | <OUT>\strongly_typed_interface | <OUT>\K9.dll | <OUT>\GettingStarted.html
+main.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9'
+            AssemblyVersion: ''
+               EmbedArchive: off
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\dn\K9'
+     Class Map Information
+            k9describeClass: {25×1 cell}
+main.files	GettingStarted.html | K9.csproj | K9.ctf | K9.deps.json | K9.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9color.cs | strongly_typed_interface\k9counter.cs | strongly_typed_interface\k9describe.cs | strongly_typed_interface\k9echo.cs | strongly_typed_interface\k9err.cs | strongly_typed_interface\k9make.cs | strongly_typed_interface\k9multi.cs | strongly_typed_interface\k9noout.cs | strongly_typed_interface\k9nv.cs | strongly_typed_interface\k9pkg_k9inner.cs | strongly_typed_interface\k9point.cs | strongly_typed_interface\k9print.cs | strongly_typed_interface\k9quiet.cs | strongly_typed_interface\k9slow.cs | strongly_typed_interface\k9t_cplx.cs | strongly_typed_interface\k9t_ints.cs | strongly_typed_interface\k9t_keyword.cs | strongly_typed_interface\k9t_misc.cs | strongly_typed_interface\k9t_multi.cs | strongly_typed_interface\k9t_none.cs | strongly_typed_interface\k9t_objects.cs | strongly_typed_interface\k9t_opt.cs | strongly_typed_interface\k9t_real.cs | strongly_typed_interface\k9t_ref.cs | strongly_typed_interface\k9t_untyped.cs | unresolvedSymbols.txt
+main.seconds	13.4
+main.readme	1547 chars, CRLF 42, ends with newline 1
+  |K9 MATLAB Archive (.NET Component)
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.   
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |  
+  |    >>mcrinstaller
+  |      
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer. 
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b 
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |   
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
+  |"Distribute Applications" in the MATLAB Compiler SDK documentation  
+  |in the MathWorks Documentation Center.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-K9.ctf
+  |   -contains the generated component to be used by MATLAB Compiler SDK's MATLAB Data Array based .NET APIs. 
+  |-strongly_typed_interface folder
+  |   -contains the generated C# files for strongly typed interface to be used by MATLAB Compiler SDK's MATLAB Data Array based .NET APIs. 
+  |-This readme file
+  |
+  |3. Definitions
+  |
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+  |
+  |* NOTE: <mcr_root> is the directory where the MATLAB Runtime is installed on the target 
+  |        machine.
+  |        <matlab_root> is the directory where MATLAB is installed on the target machine.
+  |
+main.csproj	955 chars, CRLF 23, ends with newline 1
+  |<Project Sdk = "Microsoft.NET.Sdk">
+  |	<PropertyGroup>
+  |		<TargetFramework>netstandard2.0</TargetFramework>
+  |		<PlatformTarget>AnyCPU</PlatformTarget>
+  |		<OutputType>library</OutputType>
+  |		<DebugType>None</DebugType>
+  |		<Optimize>true</Optimize>
+  |		<LangVersion>8.0</LangVersion>
+  |		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+  |		<CopyReferenceAssemblies>false</CopyReferenceAssemblies>
+  |		<DefineConstants>$(DefineConstants); __IN_MCC</DefineConstants>
+  |		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  |		<Version>1.0.0.0</Version>
+  |	</PropertyGroup>
+  |	<ItemGroup>
+  |		<Reference Include = "Microsoft.CSharp" />
+  |		<PackageReference Include = "Microsoft.CSharp" Version = "4.*" />
+  |		<Compile Include = "strongly_typed_interface\*.cs" />
+  |		<Reference Include = "<MATLABROOT>\extern\dotnet\netstandard2.0\MathWorks.MATLAB.Types.dll">
+  |			<Private>False</Private>
+  |		</Reference>
+  |	</ItemGroup>
+  |</Project>
+main.deps	1066 chars, CRLF 41, ends with newline 0
+  |{
+  |  "runtimeTarget": {
+  |    "name": ".NETStandard,Version=v2.0/",
+  |    "signature": ""
+  |  },
+  |  "compilationOptions": {},
+  |  "targets": {
+  |    ".NETStandard,Version=v2.0": {},
+  |    ".NETStandard,Version=v2.0/": {
+  |      "K9/1.0.0.0": {
+  |        "dependencies": {
+  |          "Microsoft.CSharp": "4.7.0"
+  |        },
+  |        "runtime": {
+  |          "K9.dll": {}
+  |        }
+  |      },
+  |      "Microsoft.CSharp/4.7.0": {
+  |        "runtime": {
+  |          "lib/netstandard2.0/Microsoft.CSharp.dll": {
+  |            "assemblyVersion": "4.0.5.0",
+  |            "fileVersion": "4.700.19.56404"
+  |          }
+  |        }
+  |      }
+  |    }
+  |  },
+  |  "libraries": {
+  |    "K9/1.0.0.0": {
+  |      "type": "project",
+  |      "serviceable": false,
+  |      "sha512": ""
+  |    },
+  |    "Microsoft.CSharp/4.7.0": {
+  |      "type": "package",
+  |      "serviceable": true,
+  |      "sha512": "sha512-pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+  |      "path": "microsoft.csharp/4.7.0",
+  |      "hashPath": "microsoft.csharp.4.7.0.nupkg.sha512"
+  |    }
+  |  }
+  |}
+variadic.printed
+  |Note: A strongly typed interface for the MATLAB code could not be generated, resulting in the creation of only a .ctf file. You can still integrate the .ctf file with your application without strongly typed support. If a strongly typed interface is not required for your MATLAB code, enable the "STRONGLY_TYPED_DISABLED" environment variable by setting its value to "1" using the setenv function. However, if a strongly typed interface is necessary, please examine and resolve the issues mentioned earlier.
+variadic.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+variadic.BuildType	dotNETAssembly
+variadic.Files	<OUT>\K9V.ctf | <OUT>\GettingStarted.html
+variadic.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9V'
+            AssemblyVersion: ''
+               EmbedArchive: off
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\dn\K9V'
+     Class Map Information
+               k9nargsClass: {3×1 cell}
+variadic.files	GettingStarted.html | K9V.ctf | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+variadic.seconds	4.1
+defaults.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.07 
+defaults.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+defaults.BuildType	dotNETAssembly
+defaults.Files	<OUT>\k9echo.ctf | <OUT>\strongly_typed_interface | <OUT>\k9echo.dll | <OUT>\GettingStarted.html
+defaults.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'example.k9echo'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\defaults'
+     Class Map Information
+                k9echoClass: {'<W>\b\src\k9echo.m'}
+defaults.files	GettingStarted.html | buildresult.json | includedSupportPackages.txt | k9echo.csproj | k9echo.ctf | k9echo.deps.json | k9echo.dll | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+defaults.seconds	5.1
+defaults.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+defaults.typed.k9echo.cs	661 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace example.k9echo{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+varargin.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  |Note: A strongly typed interface for the MATLAB code could not be generated, resulting in the creation of only a .ctf file. You can still integrate the .ctf file with your application without strongly typed support. If a strongly typed interface is not required for your MATLAB code, enable the "STRONGLY_TYPED_DISABLED" environment variable by setting its value to "1" using the setenv function. However, if a strongly typed interface is necessary, please examine and resolve the issues mentioned earlier.
+varargin.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+varargin.BuildType	dotNETAssembly
+varargin.Files	<OUT>\K9va.ctf | <OUT>\GettingStarted.html
+varargin.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9va'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\varargin'
+     Class Map Information
+               k9nargsClass: {'<W>\b\src\k9nargs.m'}
+varargin.files	GettingStarted.html | K9va.ctf | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+varargin.seconds	3.9
+varargin.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+varargout.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  |Note: A strongly typed interface for the MATLAB code could not be generated, resulting in the creation of only a .ctf file. You can still integrate the .ctf file with your application without strongly typed support. If a strongly typed interface is not required for your MATLAB code, enable the "STRONGLY_TYPED_DISABLED" environment variable by setting its value to "1" using the setenv function. However, if a strongly typed interface is necessary, please examine and resolve the issues mentioned earlier.
+varargout.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+varargout.BuildType	dotNETAssembly
+varargout.Files	<OUT>\K9vo.ctf | <OUT>\GettingStarted.html
+varargout.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9vo'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\varargout'
+     Class Map Information
+                k9noutClass: {'<W>\b\src\k9nout.m'}
+varargout.files	GettingStarted.html | K9vo.ctf | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+varargout.seconds	3.8
+varargout.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+mixed.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  |Note: A strongly typed interface for the MATLAB code could not be generated, resulting in the creation of only a .ctf file. You can still integrate the .ctf file with your application without strongly typed support. If a strongly typed interface is not required for your MATLAB code, enable the "STRONGLY_TYPED_DISABLED" environment variable by setting its value to "1" using the setenv function. However, if a strongly typed interface is necessary, please examine and resolve the issues mentioned earlier.
+mixed.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+mixed.BuildType	dotNETAssembly
+mixed.Files	<OUT>\K9mx.ctf | <OUT>\GettingStarted.html
+mixed.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9mx'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\mixed'
+     Class Map Information
+                k9echoClass: {3×1 cell}
+mixed.files	GettingStarted.html | K9mx.ctf | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mixed.seconds	4.0
+mixed.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+dotted.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.08 
+dotted.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+dotted.BuildType	dotNETAssembly
+dotted.Files	<OUT>\K9d.ctf | <OUT>\strongly_typed_interface | <OUT>\K9d.dll | <OUT>\GettingStarted.html
+dotted.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'Org.Group.K9d'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\dotted'
+     Class Map Information
+              k9t_realClass: {'<W>\b\src\k9t_real.m'}
+dotted.files	GettingStarted.html | K9d.csproj | K9d.ctf | K9d.deps.json | K9d.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9t_real.cs | unresolvedSymbols.txt
+dotted.seconds	5.0
+dotted.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+dotted.typed.k9t_real.cs	750 chars, CRLF 0, ends with newline 1
+  |/* File: k9t_real.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace Org.Group.K9d{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9t_real(MATLABProvider _matlab, double a, double [] b, double [,] c, double [,,] d){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9t_real(new RunOptions(nargout:0),a,b,c,d);
+  |    }
+  |    public static void k9t_real(MATLABProvider _matlab, double a, double [] b, double [,] c, double [,,] d,  out dynamic r){
+  |        dynamic _dynMatlab = _matlab;
+  |        r = (MATLABArray)_dynMatlab.k9t_real(new RunOptions(nargout:1),a,b,c,d);
+  |    }
+  |    }
+  |}
+classonly.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.11 
+classonly.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+classonly.BuildType	dotNETAssembly
+classonly.Files	<OUT>\K9c.ctf | <OUT>\strongly_typed_interface | <OUT>\K9c.dll | <OUT>\GettingStarted.html
+classonly.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9c'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\classonly'
+     Class Map Information
+               k9pointClass: {'<W>\b\src\k9point.m'}
+classonly.files	GettingStarted.html | K9c.csproj | K9c.ctf | K9c.deps.json | K9c.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9point.cs | unresolvedSymbols.txt
+classonly.seconds	5.3
+classonly.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+classonly.typed.k9point.cs	3665 chars, CRLF 0, ends with newline 1
+  |/* File: k9point.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9c{
+  |[MATLABClass("k9point")]
+  |public  struct k9point:IEquatable<k9point> { 
+  |    private void ThrowIfDefaultValue()
+  |    {
+  |        if (_matlab == null || _objrep == null)
+  |        {
+  |            throw new UnsupportedTypeException("k9point object is not initialized.");
+  |        }
+  |    }
+  |    private dynamic _objrep;
+  |    private dynamic _matlab;
+  |    public  k9point(MATLABProvider _matlab, dynamic x, dynamic y){
+  |        this._matlab = _matlab;
+  |        _objrep = (MATLABArray)this._matlab.k9point(new RunOptions(nargout:1),x,y);
+  |    }
+  |    public System.Numerics.Complex X {
+  |        get => _matlab.matlab.@internal.engine.getProperty(_objrep, "X");
+  |        set => _objrep = _matlab.matlab.@internal.engine.setProperty(_objrep,"X",value);
+  |    }
+  |    public System.Numerics.Complex Y {
+  |        get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Y");
+  |        set => _objrep = _matlab.matlab.@internal.engine.setProperty(_objrep,"Y",value);
+  |    }
+  |    public string Tag {
+  |        get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Tag");
+  |    }
+  |    public void parts(){
+  |        _objrep.parts(new RunOptions(nargout:0));
+  |    }
+  |    public void parts( out dynamic a){
+  |        a = (MATLABArray)_objrep.parts(new RunOptions(nargout:1));
+  |    }
+  |    public void parts( out dynamic a,  out dynamic b){
+  |        (a,b) = ((MATLABArray,MATLABArray))_objrep.parts(new RunOptions(nargout:2));
+  |    }
+  |    public void scaled(double k){
+  |        _objrep.scaled(new RunOptions(nargout:0),k);
+  |    }
+  |    public void scaled(double k,  out dynamic p){
+  |        p = (MATLABArray)_objrep.scaled(new RunOptions(nargout:1),k);
+  |    }
+  |    public void norm(){
+  |        _objrep.norm(new RunOptions(nargout:0));
+  |    }
+  |    public void norm( out dynamic n){
+  |        n = (MATLABArray)_objrep.norm(new RunOptions(nargout:1));
+  |    }
+  |    public static void origin(MATLABProvider _matlab){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9point.origin(new RunOptions(nargout:0));
+  |    }
+  |    public static void origin(MATLABProvider _matlab,  out dynamic p){
+  |        dynamic _dynMatlab = _matlab;
+  |        p = (MATLABArray)_dynMatlab.k9point.origin(new RunOptions(nargout:1));
+  |    }
+  |    public static bool operator == (k9point obj1, k9point obj2){
+  |        bool ret = obj1._matlab.eq(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public static bool operator != (k9point obj1, k9point obj2){
+  |        bool ret = obj1._matlab.ne(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public override bool Equals (Object obj){
+  |        if (obj == null){
+  |            return false;
+  |        }
+  |
+  |        try{
+  |
+  |            k9point _obj = (k9point)obj;
+  |            return (this == _obj);
+  |        }
+  |
+  |        catch(Exception){
+  |
+  |            return false;
+  |        }
+  |
+  |    }
+  |
+  |    public bool Equals(k9point obj){
+  |        return this == obj;
+  |    }
+  |
+  |    public override int GetHashCode(){
+  |        UInt64 hashcode = _matlab.keyHash(_objrep);
+  |        return hashcode.GetHashCode();
+  |    }
+  |
+  |    public static implicit operator MATLABObject(k9point k9point){
+  |        k9point.ThrowIfDefaultValue();
+  |        return k9point._objrep;
+  |    }
+  |    public static implicit operator k9point(MATLABObject _obj){
+  |        k9point k9point = default;
+  |        k9point._objrep = _obj;
+  |#pragma warning disable CS8601, CS8602
+  |        k9point._matlab = typeof(MATLABObject).GetField("Matlab", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(_obj);
+  |#pragma warning restore
+  |        return k9point;
+  |    }
+  |}
+  |}
+enumonly.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.05 
+enumonly.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+enumonly.BuildType	dotNETAssembly
+enumonly.Files	<OUT>\K9e.ctf | <OUT>\strongly_typed_interface | <OUT>\K9e.dll | <OUT>\GettingStarted.html
+enumonly.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9e'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\enumonly'
+     Class Map Information
+               k9colorClass: {'<W>\b\src\k9color.m'}
+enumonly.files	GettingStarted.html | K9e.csproj | K9e.ctf | K9e.deps.json | K9e.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9color.cs | unresolvedSymbols.txt
+enumonly.seconds	5.0
+enumonly.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+enumonly.typed.k9color.cs	289 chars, CRLF 0, ends with newline 0
+  |/* File: k9color.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9e{
+  |[MATLABEnum("k9color")]
+  |public enum k9color{
+  |    red,
+  |    green,
+  |    blue
+  |}
+  |}
+pkg.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.06 
+pkg.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+pkg.BuildType	dotNETAssembly
+pkg.Files	<OUT>\K9p.ctf | <OUT>\strongly_typed_interface | <OUT>\K9p.dll | <OUT>\GettingStarted.html
+pkg.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9p'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\pkg'
+     Class Map Information
+               k9innerClass: {'<W>\b\src\+k9pkg\k9inner.m'}
+pkg.files	GettingStarted.html | K9p.csproj | K9p.ctf | K9p.deps.json | K9p.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9pkg_k9inner.cs | unresolvedSymbols.txt
+pkg.seconds	5.0
+pkg.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+pkg.typed.k9pkg_k9inner.cs	663 chars, CRLF 0, ends with newline 1
+  |/* File: k9pkg_k9inner.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9p.k9pkg{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9inner(MATLABProvider _matlab, double x){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9pkg.k9inner(new RunOptions(nargout:0),x);
+  |    }
+  |    public static void k9inner(MATLABProvider _matlab, double x,  out dynamic r){
+  |        dynamic _dynMatlab = _matlab;
+  |        r = (MATLABArray)_dynMatlab.k9pkg.k9inner(new RunOptions(nargout:1),x);
+  |    }
+  |    }
+  |}
+version.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.05 
+version.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+version.BuildType	dotNETAssembly
+version.Files	<OUT>\K9v.ctf | <OUT>\strongly_typed_interface | <OUT>\K9v.dll | <OUT>\GettingStarted.html
+version.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9v'
+            AssemblyVersion: '2.3.4'
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\version'
+     Class Map Information
+                k9echoClass: {'<W>\b\src\k9echo.m'}
+version.files	GettingStarted.html | K9v.csproj | K9v.ctf | K9v.deps.json | K9v.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+version.seconds	5.1
+version.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+version.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9v{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+embed.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.06 
+embed.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+embed.BuildType	dotNETAssembly
+embed.Files	<OUT>\K9b.ctf | <OUT>\strongly_typed_interface | <OUT>\K9b.dll | <OUT>\GettingStarted.html
+embed.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9b'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\embed'
+     Class Map Information
+                k9echoClass: {'<W>\b\src\k9echo.m'}
+embed.files	GettingStarted.html | K9b.csproj | K9b.ctf | K9b.deps.json | K9b.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+embed.seconds	5.0
+embed.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+embed.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9b{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+framework.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.06 
+framework.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+framework.BuildType	dotNETAssembly
+framework.Files	<OUT>\K9f.ctf | <OUT>\strongly_typed_interface | <OUT>\K9f.dll | <OUT>\GettingStarted.html
+framework.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '5.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9f'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\framework'
+     Class Map Information
+                k9echoClass: {'<W>\b\src\k9echo.m'}
+framework.files	GettingStarted.html | K9f.csproj | K9f.ctf | K9f.deps.json | K9f.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+framework.seconds	5.0
+framework.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+framework.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9f{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+debug.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.07 
+debug.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+debug.BuildType	dotNETAssembly
+debug.Files	<OUT>\K9g.ctf | <OUT>\strongly_typed_interface | <OUT>\K9g.dll | <OUT>\GettingStarted.html
+debug.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: on
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9g'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\debug'
+     Class Map Information
+                k9echoClass: {'<W>\b\src\k9echo.m'}
+debug.files	GettingStarted.html | K9g.csproj | K9g.ctf | K9g.deps.json | K9g.dll | K9g.pdb | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+debug.seconds	5.0
+debug.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+debug.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9g{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+untyped.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.06 
+untyped.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+untyped.BuildType	dotNETAssembly
+untyped.Files	<OUT>\K9u.ctf | <OUT>\strongly_typed_interface | <OUT>\K9u.dll | <OUT>\GettingStarted.html
+untyped.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9u'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\untyped'
+     Class Map Information
+           k9t_untypedClass: {'<W>\b\src\k9t_untyped.m'}
+untyped.files	GettingStarted.html | K9u.csproj | K9u.ctf | K9u.deps.json | K9u.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9t_untyped.cs | unresolvedSymbols.txt
+untyped.seconds	5.0
+untyped.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+untyped.typed.k9t_untyped.cs	687 chars, CRLF 0, ends with newline 1
+  |/* File: k9t_untyped.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9u{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9t_untyped(MATLABProvider _matlab, dynamic a, dynamic b){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9t_untyped(new RunOptions(nargout:0),a,b);
+  |    }
+  |    public static void k9t_untyped(MATLABProvider _matlab, dynamic a, dynamic b,  out dynamic r){
+  |        dynamic _dynMatlab = _matlab;
+  |        r = (MATLABArray)_dynMatlab.k9t_untyped(new RunOptions(nargout:1),a,b);
+  |    }
+  |    }
+  |}
+optmethod.printed
+  |[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+  |'mwarray' for the "Interface" property.] 
+  |[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+  |In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+  |In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+  |In compiler.internal.validate.parseClassMapInputs (line 66)
+  |In compiler.build/DotNETAssemblyOptions (line 192)
+  |In compiler.internal.build.builder/Generic (line 45)
+  |In compiler.internal.build.builder/SampleGeneration (line 13)
+  |In compiler.internal.build.builder/DotNETAssembly (line 15)
+  |In compiler.build.dotNETAssembly (line 168)
+  |In @()compiler.build.dotNETAssembly(args{:},''OutputDir'',d)', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 59)" style="font-weight:bold">probe_k9_build>@()compiler.build.dotNETAssembly(args{:},'OutputDir',d) (line 59)
+  |In apiBuild', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k9_build.m', 123)" style="font-weight:bold">probe_k9_build>apiBuild (line 123)
+  |In probe_k9_build (line 59)] 
+  |<W>\b\optmethod\strongly_typed_interface\k9opt.cs(36,48): error CS1525: Invalid expression term ')' [<W>\b\optmethod\K9o.csproj] 
+  | 
+  |Build FAILED. 
+  |    1 Warning(s) 
+  |    1 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.15 
+  |Note: A .NET assembly for strongly typed interface to MATLAB code could not be generated. If a strongly typed interface is not required for your MATLAB code, enable the "STRONGLY_TYPED_DISABLED" environment variable by setting its value to "1" using the setenv function.
+optmethod.results
+    Results with properties:
+                    BuildType: 'dotNETAssembly'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+optmethod.BuildType	dotNETAssembly
+optmethod.Files	<OUT>\K9o.ctf | <OUT>\strongly_typed_interface | <OUT>\GettingStarted.html
+optmethod.Options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'K9o'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\optmethod'
+     Class Map Information
+                 k9optClass: {'<W>\b\src\k9opt.m'}
+optmethod.files	GettingStarted.html | K9o.csproj | K9o.ctf | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9opt.cs | unresolvedSymbols.txt
+optmethod.seconds	7.0
+optmethod.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+optmethod.typed.k9opt.cs	3491 chars, CRLF 0, ends with newline 1
+  |/* File: k9opt.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9o{
+  |[MATLABClass("k9opt")]
+  |public  class k9opt:IEquatable<k9opt> { 
+  |    private dynamic _objrep;
+  |    private dynamic _matlab;
+  |    public  k9opt(MATLABProvider _matlab){
+  |        this._matlab = _matlab;
+  |        _objrep = (MATLABArray)this._matlab.k9opt(new RunOptions(nargout:1));
+  |    }
+  |    private k9opt (){}
+  |
+  |    public double Total {
+  |        get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Total");
+  |        set => _objrep = _matlab.matlab.@internal.engine.setProperty(_objrep,"Total",value);
+  |    }
+  |    public dynamic Twice {
+  |        get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Twice");
+  |    }
+  |    public static bool operator < (k9opt obj1, k9opt obj2){
+  |        bool ret = obj1._matlab.lt(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public void bump(double @by){
+  |        _objrep.bump(new RunOptions(nargout:0),@by);
+  |    }
+  |    public void bump(){
+  |        _objrep.bump(new RunOptions(nargout:0),);
+  |    }
+  |    public void eq(dynamic B){
+  |        _objrep.eq(new RunOptions(nargout:0),B);
+  |    }
+  |    public void eq(dynamic B,  out dynamic TF){
+  |        TF = (MATLABArray)_objrep.eq(new RunOptions(nargout:1),B);
+  |    }
+  |    public void ne(dynamic B){
+  |        _objrep.ne(new RunOptions(nargout:0),B);
+  |    }
+  |    public void ne(dynamic B,  out dynamic TF){
+  |        TF = (MATLABArray)_objrep.ne(new RunOptions(nargout:1),B);
+  |    }
+  |    public static bool operator > (k9opt obj1, k9opt obj2){
+  |        bool ret = obj1._matlab.gt(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public static bool operator <= (k9opt obj1, k9opt obj2){
+  |        bool ret = obj1._matlab.le(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public static bool operator >= (k9opt obj1, k9opt obj2){
+  |        bool ret = obj1._matlab.ge(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public void delete(){
+  |        _objrep.delete(new RunOptions(nargout:0));
+  |    }
+  |    public void isvalid(){
+  |        _objrep.isvalid(new RunOptions(nargout:0));
+  |    }
+  |    public void isvalid( out dynamic validity){
+  |        validity = (MATLABArray)_objrep.isvalid(new RunOptions(nargout:1));
+  |    }
+  |    public static bool operator == (k9opt obj1, k9opt obj2){
+  |        bool ret = obj1._matlab.eq(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public static bool operator != (k9opt obj1, k9opt obj2){
+  |        bool ret = obj1._matlab.ne(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public override bool Equals (Object obj){
+  |        if (obj == null){
+  |            return false;
+  |        }
+  |
+  |        try{
+  |
+  |            k9opt _obj = (k9opt)obj;
+  |            return (this == _obj);
+  |        }
+  |
+  |        catch(Exception){
+  |
+  |            return false;
+  |        }
+  |
+  |    }
+  |
+  |    public bool Equals(k9opt obj){
+  |        return this == obj;
+  |    }
+  |
+  |    public override int GetHashCode(){
+  |        UInt64 hashcode = _matlab.keyHash(_objrep);
+  |        return hashcode.GetHashCode();
+  |    }
+  |
+  |    public static implicit operator MATLABObject(k9opt k9opt){
+  |        return k9opt._objrep;
+  |    }
+  |    public static implicit operator k9opt(MATLABObject _obj){
+  |        k9opt k9opt = new k9opt();
+  |        k9opt._objrep = _obj;
+  |#pragma warning disable CS8601, CS8602
+  |        k9opt._matlab = typeof(MATLABObject).GetField("Matlab", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(_obj);
+  |#pragma warning restore
+  |        return k9opt;
+  |    }
+  |}
+  |}
+mcc_min	ok
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.06 
+mcc_min.files	K9m.csproj | K9m.ctf | K9m.deps.json | K9m.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | strongly_typed_interface\k9t_opt.cs | unresolvedSymbols.txt
+mcc_min.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9m{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+mcc_min.typed.k9t_opt.cs	1445 chars, CRLF 0, ends with newline 1
+  |/* File: k9t_opt.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9m{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9t_opt(MATLABProvider _matlab, double a, double b, string c){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9t_opt(new RunOptions(nargout:0),a,b,c);
+  |    }
+  |    public static void k9t_opt(MATLABProvider _matlab, double a, double b, string c,  out dynamic r){
+  |        dynamic _dynMatlab = _matlab;
+  |        r = (MATLABArray)_dynMatlab.k9t_opt(new RunOptions(nargout:1),a,b,c);
+  |    }
+  |    public static void k9t_opt(MATLABProvider _matlab, double a, double b){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9t_opt(new RunOptions(nargout:0),a,b);
+  |    }
+  |    public static void k9t_opt(MATLABProvider _matlab, double a, double b,  out dynamic r){
+  |        dynamic _dynMatlab = _matlab;
+  |        r = (MATLABArray)_dynMatlab.k9t_opt(new RunOptions(nargout:1),a,b);
+  |    }
+  |    public static void k9t_opt(MATLABProvider _matlab, double a){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9t_opt(new RunOptions(nargout:0),a);
+  |    }
+  |    public static void k9t_opt(MATLABProvider _matlab, double a,  out dynamic r){
+  |        dynamic _dynMatlab = _matlab;
+  |        r = (MATLABArray)_dynMatlab.k9t_opt(new RunOptions(nargout:1),a);
+  |    }
+  |    }
+  |}
+mcc_min.seconds	4.5
+mcc_full	ok
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.05 
+mcc_full.files	K9n.csproj | K9n.ctf | K9n.deps.json | K9n.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+mcc_full.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9n{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+mcc_full.seconds	4.4
+mcc_class	ok
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.09 
+mcc_class.files	K9k.csproj | K9k.ctf | K9k.deps.json | K9k.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9color.cs | strongly_typed_interface\k9point.cs | strongly_typed_interface\k9t_objects.cs | unresolvedSymbols.txt
+mcc_class.typed.k9color.cs	289 chars, CRLF 0, ends with newline 0
+  |/* File: k9color.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9k{
+  |[MATLABEnum("k9color")]
+  |public enum k9color{
+  |    red,
+  |    green,
+  |    blue
+  |}
+  |}
+mcc_class.typed.k9point.cs	3665 chars, CRLF 0, ends with newline 1
+  |/* File: k9point.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9k{
+  |[MATLABClass("k9point")]
+  |public  struct k9point:IEquatable<k9point> { 
+  |    private void ThrowIfDefaultValue()
+  |    {
+  |        if (_matlab == null || _objrep == null)
+  |        {
+  |            throw new UnsupportedTypeException("k9point object is not initialized.");
+  |        }
+  |    }
+  |    private dynamic _objrep;
+  |    private dynamic _matlab;
+  |    public  k9point(MATLABProvider _matlab, dynamic x, dynamic y){
+  |        this._matlab = _matlab;
+  |        _objrep = (MATLABArray)this._matlab.k9point(new RunOptions(nargout:1),x,y);
+  |    }
+  |    public System.Numerics.Complex X {
+  |        get => _matlab.matlab.@internal.engine.getProperty(_objrep, "X");
+  |        set => _objrep = _matlab.matlab.@internal.engine.setProperty(_objrep,"X",value);
+  |    }
+  |    public System.Numerics.Complex Y {
+  |        get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Y");
+  |        set => _objrep = _matlab.matlab.@internal.engine.setProperty(_objrep,"Y",value);
+  |    }
+  |    public string Tag {
+  |        get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Tag");
+  |    }
+  |    public void parts(){
+  |        _objrep.parts(new RunOptions(nargout:0));
+  |    }
+  |    public void parts( out dynamic a){
+  |        a = (MATLABArray)_objrep.parts(new RunOptions(nargout:1));
+  |    }
+  |    public void parts( out dynamic a,  out dynamic b){
+  |        (a,b) = ((MATLABArray,MATLABArray))_objrep.parts(new RunOptions(nargout:2));
+  |    }
+  |    public void scaled(double k){
+  |        _objrep.scaled(new RunOptions(nargout:0),k);
+  |    }
+  |    public void scaled(double k,  out dynamic p){
+  |        p = (MATLABArray)_objrep.scaled(new RunOptions(nargout:1),k);
+  |    }
+  |    public void norm(){
+  |        _objrep.norm(new RunOptions(nargout:0));
+  |    }
+  |    public void norm( out dynamic n){
+  |        n = (MATLABArray)_objrep.norm(new RunOptions(nargout:1));
+  |    }
+  |    public static void origin(MATLABProvider _matlab){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9point.origin(new RunOptions(nargout:0));
+  |    }
+  |    public static void origin(MATLABProvider _matlab,  out dynamic p){
+  |        dynamic _dynMatlab = _matlab;
+  |        p = (MATLABArray)_dynMatlab.k9point.origin(new RunOptions(nargout:1));
+  |    }
+  |    public static bool operator == (k9point obj1, k9point obj2){
+  |        bool ret = obj1._matlab.eq(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public static bool operator != (k9point obj1, k9point obj2){
+  |        bool ret = obj1._matlab.ne(obj1,obj2);
+  |        return ret;
+  |    }
+  |
+  |    public override bool Equals (Object obj){
+  |        if (obj == null){
+  |            return false;
+  |        }
+  |
+  |        try{
+  |
+  |            k9point _obj = (k9point)obj;
+  |            return (this == _obj);
+  |        }
+  |
+  |        catch(Exception){
+  |
+  |            return false;
+  |        }
+  |
+  |    }
+  |
+  |    public bool Equals(k9point obj){
+  |        return this == obj;
+  |    }
+  |
+  |    public override int GetHashCode(){
+  |        UInt64 hashcode = _matlab.keyHash(_objrep);
+  |        return hashcode.GetHashCode();
+  |    }
+  |
+  |    public static implicit operator MATLABObject(k9point k9point){
+  |        k9point.ThrowIfDefaultValue();
+  |        return k9point._objrep;
+  |    }
+  |    public static implicit operator k9point(MATLABObject _obj){
+  |        k9point k9point = default;
+  |        k9point._objrep = _obj;
+  |#pragma warning disable CS8601, CS8602
+  |        k9point._matlab = typeof(MATLABObject).GetField("Matlab", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(_obj);
+  |#pragma warning restore
+  |        return k9point;
+  |    }
+  |}
+  |}
+mcc_class.typed.k9t_objects.cs	916 chars, CRLF 0, ends with newline 1
+  |/* File: k9t_objects.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9k{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9t_objects(MATLABProvider _matlab, k9color color){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9t_objects(new RunOptions(nargout:0),color);
+  |    }
+  |    public static void k9t_objects(MATLABProvider _matlab, k9color color,  out k9point p){
+  |        dynamic _dynMatlab = _matlab;
+  |        p = (k9point)_dynMatlab.k9t_objects(new RunOptions(nargout:1),color);
+  |    }
+  |    public static void k9t_objects(MATLABProvider _matlab, k9color color,  out k9point p,  out k9color c){
+  |        dynamic _dynMatlab = _matlab;
+  |        (p,c) = ((k9point,k9color))_dynMatlab.k9t_objects(new RunOptions(nargout:2),color);
+  |    }
+  |    }
+  |}
+mcc_class.seconds	4.7
+mcc_separate	ok
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.08 
+mcc_separate.files	K9s.csproj | K9s.ctf | K9s.deps.json | K9s.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+mcc_separate.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9s{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+mcc_separate.seconds	4.3
+mcc_notarget	ok
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.07 
+mcc_notarget.files	K9t.csproj | K9t.ctf | K9t.deps.json | K9t.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+mcc_notarget.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9t{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+mcc_notarget.seconds	4.4
+mcc_varargin	ok
+  |Note: A strongly typed interface for the MATLAB code could not be generated, resulting in the creation of only a .ctf file. You can still integrate the .ctf file with your application without strongly typed support. If a strongly typed interface is not required for your MATLAB code, enable the "STRONGLY_TYPED_DISABLED" environment variable by setting its value to "1" using the setenv function. However, if a strongly typed interface is necessary, please examine and resolve the issues mentioned earlier.
+mcc_varargin.files	K9w.ctf | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_varargin.seconds	3.1
+mcc_classes	ok
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.08 
+mcc_classes.files	K9x.csproj | K9x.ctf | K9x.deps.json | K9x.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | strongly_typed_interface\k9t_real.cs | unresolvedSymbols.txt
+mcc_classes.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9x{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+mcc_classes.typed.k9t_real.cs	740 chars, CRLF 0, ends with newline 1
+  |/* File: k9t_real.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9x{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9t_real(MATLABProvider _matlab, double a, double [] b, double [,] c, double [,,] d){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9t_real(new RunOptions(nargout:0),a,b,c,d);
+  |    }
+  |    public static void k9t_real(MATLABProvider _matlab, double a, double [] b, double [,] c, double [,,] d,  out dynamic r){
+  |        dynamic _dynMatlab = _matlab;
+  |        r = (MATLABArray)_dynMatlab.k9t_real(new RunOptions(nargout:1),a,b,c,d);
+  |    }
+  |    }
+  |}
+mcc_classes.seconds	4.6
+mcc_verbose	ok
+  |0 class(es) and 1 function(s) written to <W>\b\mcc_verbose\strongly_typed_interface
+  |
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k9echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\mcc_verbose\readme.txt".
+  | 
+  |Build succeeded. 
+  |    1 Warning(s) 
+  |    0 Error(s) 
+  | 
+  |Time Elapsed 00:00:01.07 
+mcc_verbose.files	K9y.csproj | K9y.ctf | K9y.deps.json | K9y.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9echo.cs | unresolvedSymbols.txt
+mcc_verbose.typed.k9echo.cs	650 chars, CRLF 0, ends with newline 1
+  |/* File: k9echo.cs
+  |*
+  |* MATLAB Strongly Typed Interface Version: R2025b
+  |* C# source code generated on: 24-Oct-2026
+  |*/
+  |using System;
+  |using MathWorks.MATLAB.Types;
+  |using MathWorks.MATLAB.Exceptions;
+  |namespace K9y{
+  |
+  |    public static partial class MATLABFunctions { 
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in){
+  |        dynamic _dynMatlab = _matlab;
+  |        _dynMatlab.k9echo(new RunOptions(nargout:0),@in);
+  |    }
+  |    public static void k9echo(MATLABProvider _matlab, dynamic @in,  out dynamic @out){
+  |        dynamic _dynMatlab = _matlab;
+  |        @out = (MATLABArray)_dynMatlab.k9echo(new RunOptions(nargout:1),@in);
+  |    }
+  |    }
+  |}
+mcc_verbose.seconds	4.4
+meta.k9point.methods	parts scaled norm k9point origin empty
+meta.k9point.defining	k9point k9point k9point k9point k9point k9point
+meta.k9point.properties	X Y Tag
+meta.k9counter.methods	current increment k9counter empty eq ne lt gt le ge delete isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj
+meta.k9counter.defining	k9counter k9counter k9counter k9counter handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle
+meta.k9counter.properties	Count Label
+meta.k9opt.methods	lt bump k9opt hidden empty eq ne gt le ge delete isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj
+meta.k9opt.defining	k9opt k9opt k9opt k9opt k9opt handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle
+meta.k9opt.properties	Total Twice Secret
+meta.k9color.methods	k9color empty char eq ne colon cellstr string strcmp strncmp strcmpi strncmpi setdiff setxor union intersect ismember isequal isequaln
+meta.k9color.defining	k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color
+meta.k9color.properties	
+[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+'mwarray' for the "Interface" property.] 
+[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+In compiler.internal.validate.parseClassMapInputs (line 66)
+In compiler.build/DotNETAssemblyOptions (line 192)
+In probe_k9_build (line 103)] 
+mda.options
+    DotNETAssemblyOptions with properties:
+                   ClassMap: [1×1 containers.Map]
+                 DebugBuild: off
+             EnableRemoting: off
+           FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+          StrongNameKeyFile: ''
+               AssemblyName: 'example.k9echo'
+            AssemblyVersion: ''
+               EmbedArchive: on
+                  Interface: 'matlab-data'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '.\k9echodotNETAssembly'
+     Class Map Information
+                k9echoClass: {'<W>\b\src\k9echo.m'}
+mda.ClassMap.keys	cell [1 1] {char [1 11] 'k9echoClass'}
+[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+'mwarray' for the "Interface" property.] 
+[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+In compiler.internal.build/InterfaceManager/set.Interface (line 70)
+In compiler.build/DotNETAssemblyOptions/set.Interface (line 234)
+In compiler.internal.validate.parseClassMapInputs (line 66)
+In compiler.build/DotNETAssemblyOptions (line 192)
+In probe_k9_build>@()compiler.build.DotNETAssemblyOptions(f1,'Interface','matlab-data','ClassName','X').AssemblyName (line 106)
+In k0_try (line 5)
+In probe_k9_build (line 106)] 
+[Warning: The property "ClassName" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either do not specify a "ClassName", or use 'mwarray'
+for the "Interface" property.] 
+[> In compiler.build/DotNETAssemblyOptions (line 204)
+In probe_k9_build>@()compiler.build.DotNETAssemblyOptions(f1,'Interface','matlab-data','ClassName','X').AssemblyName (line 106)
+In k0_try (line 5)
+In probe_k9_build (line 106)] 
+mda.ClassName	char [1 14] 'example.k9echo'
+mda.ClassName.warn	Compiler:build:shared:badInterfaceClassNamePair | The property "ClassName" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either do not specify a "ClassName", or use 'mwarray' for the "Interface" property.
+mda.then.mwarray	char [1 7] 'mwarray'
+[Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use
+'mwarray' for the "Interface" property.] 
+[> In compiler.internal.build/InterfaceManager/set.InterfaceData (line 97)
+In compiler.internal.build/InterfaceManager/set.EmbedArchive (line 53)
+In compiler.build/DotNETAssemblyOptions/set.EmbedArchive (line 229)
+In probe_k9_build>setAndRead (line 115)
+In probe_k9_build>@()setAndRead(o,'EmbedArchive','on') (line 108)
+In k0_try (line 5)
+In probe_k9_build (line 108)] 
+mda.then.embed	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+mda.then.embed.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+mda.then.framework	char [1 3] '5.0'
+mda.then.remoting	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+mda.then.key	char [1 77] '<REPO>\tools\matlab-checklist\compiler-probes\README.md'

@@ -172,9 +172,8 @@ public class MatlabClassdefTests : IDisposable
         Assert.Contains("The class 'ValEv' may not define events because only subclasses of handle may define events.",
             Error("v = ValEv();"), StringComparison.Ordinal);
 
-        Assert.Contains("enumeration", Assert.Throws<JgsSyntaxException>(
-            static () => Parser.Parse("classdef A\n enumeration\n Red\n end\nend", "A.m", JgsDialect.Matlab)).Message,
-            StringComparison.Ordinal);
+        // An enumeration block parses since stage K9 (ADR 0265).
+        Assert.Single(Parser.Parse("classdef A\n enumeration\n Red\n end\nend", "A.m", JgsDialect.Matlab));
 
         // A superclass and an Abstract block parse since U6 (ADR 0203); whether the superclass
         // exists is the class's own question when it is built, in R2025b's words.

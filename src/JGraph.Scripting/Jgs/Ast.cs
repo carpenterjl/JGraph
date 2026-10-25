@@ -438,6 +438,24 @@ internal sealed class FnStmt(
 
     /// <summary>The <c>name@Superclass</c> references written in a method's body, or null (U6).</summary>
     internal IReadOnlyList<SuperRefExpr>? SuperRefs;
+
+    /// <summary>What the body's leading <c>arguments</c> blocks declare (stage K9), read once; null when it has none.</summary>
+    internal ArgumentsSignature? Signature
+    {
+        get
+        {
+            if (!_signatureRead)
+            {
+                _signature = ArgumentsSignature.Of(this);
+                _signatureRead = true;
+            }
+
+            return _signature;
+        }
+    }
+
+    private ArgumentsSignature? _signature;
+    private bool _signatureRead;
 }
 
 /// <summary>
@@ -529,16 +547,46 @@ internal sealed record ArgumentSpec(
     IReadOnlyList<Expr?>? Dims,
     string? ClassName,
     IReadOnlyList<Expr> Validators,
-    Expr? Default);
+    Expr? Default)
+{
+    /// <summary>
+    /// For a name-value line, <c>opts.Name</c>, the structure the name belongs to (<c>opts</c>, one of
+    /// the function's parameters); <see cref="Name"/> is then the name a caller passes. Null for a
+    /// positional, repeating or output line (stage K9, ADR 0265).
+    /// </summary>
+    public string? Structure { get; init; }
+
+    /// <summary>The variable the line declares: the structure of a name-value line, else its own name.</summary>
+    public string Variable => Structure ?? Name;
+
+    /// <summary>The line the declaration is written on, where R2025b reports a value that fails it (k9client: error.validation.size).</summary>
+    public int Line { get; init; }
+
+    /// <summary>The column the declaration starts at.</summary>
+    public int Column { get; init; }
+}
+
+/// <summary>What an <c>arguments</c> block declares (stage K9): <c>arguments</c> and <c>arguments (Input)</c>
+/// the inputs, <c>(Repeating)</c> inputs that repeat in groups, <c>(Output)</c> the outputs.</summary>
+internal enum ArgumentsKind
+{
+    Input,
+    Repeating,
+    Output,
+    OutputRepeating,
+}
 
 /// <summary>
-/// A MATLAB <c>arguments … end</c> block: the declared shape of a function's inputs, checked (and
-/// defaulted) on entry. It may only be the first statement of a function body, which is what lets the
-/// word <c>arguments</c> stay an ordinary name everywhere else.
+/// A MATLAB <c>arguments … end</c> block: the declared shape of a function's inputs or outputs,
+/// checked (and defaulted) on entry, an output block on the way out. The blocks may only open a
+/// function body, which is what lets the word <c>arguments</c> stay an ordinary name everywhere else.
 /// </summary>
-internal sealed class ArgumentsStmt(IReadOnlyList<ArgumentSpec> arguments) : Stmt
+internal sealed class ArgumentsStmt(IReadOnlyList<ArgumentSpec> arguments, ArgumentsKind kind = ArgumentsKind.Input) : Stmt
 {
     public IReadOnlyList<ArgumentSpec> Arguments { get; } = arguments;
+
+    /// <summary>Whether this block declares inputs, repeating inputs or outputs.</summary>
+    public ArgumentsKind Kind { get; } = kind;
 }
 
 /// <summary>
@@ -654,6 +702,9 @@ internal sealed record ClassMethod(FnStmt Function, bool Static)
     /// <summary>The class that defines the method, written once when that class is built.</summary>
     internal JgsClass? Owner { get; set; }
 
+    /// <summary>Which of the file's <c>methods</c> blocks the method is written in, 0 first: R2025b's <c>meta.class</c> lists them by block (stage K9).</summary>
+    public int Block { get; init; }
+
     /// <summary>The property this method is the <c>get.p</c> or <c>set.p</c> of, or null for an ordinary method (V6, #27).</summary>
     public string? AccessorProperty =>
         Function.Name.StartsWith("get.", StringComparison.Ordinal) || Function.Name.StartsWith("set.", StringComparison.Ordinal)
@@ -670,6 +721,13 @@ internal sealed record ClassMethod(FnStmt Function, bool Static)
 /// two attributes that change meaning (<c>Constant</c> and <c>Static</c>), which ride on the members
 /// themselves.
 /// </summary>
+/// <summary>One member an <c>enumeration</c> block names (stage K9), with the arguments its construction passes.</summary>
+internal sealed record EnumerationMember(string Name, IReadOnlyList<Expr> Arguments)
+{
+    /// <summary>The line the member is written on.</summary>
+    public int Line { get; init; }
+}
+
 internal sealed class ClassdefStmt(
     string name,
     bool isHandle,
@@ -710,6 +768,9 @@ internal sealed class ClassdefStmt(
 
     /// <summary>The classes <c>InferiorClasses</c> names: this class's method answers an operator or a call that mixes the two.</summary>
     public IReadOnlyList<string> InferiorClasses { get; init; } = [];
+
+    /// <summary>The members the <c>enumeration</c> blocks name, in order (stage K9); empty for a class that is not an enumeration.</summary>
+    public IReadOnlyList<EnumerationMember> Enumeration { get; init; } = [];
 
     /// <summary>The classes <c>AllowedSubclasses</c> names, or null when any class may inherit.</summary>
     public IReadOnlyList<string>? AllowedSubclasses { get; init; }

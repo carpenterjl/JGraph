@@ -1,0 +1,460 @@
+CHK|size_1x1_scalar|double [1 1] 1|exact
+CHK|size_1x1_row|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_row_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1x1_column|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_column_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1x1_square|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_square_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1x1_two_by_three|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_two_by_three_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1x1_three_by_two|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_three_by_two_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1x1_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_cube_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1x1_empty|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_empty_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1x1_empty03|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_empty03_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1x1_chars|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x1_chars_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|size_1xn_scalar|double [1 1] 1|exact
+CHK|size_1xn_row|double [1 3] [1 2 3]|exact
+CHK|size_1xn_column|double [1 3] [1 2 3]|exact
+CHK|size_1xn_square|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1xn_square_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_1xn_two_by_three|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1xn_two_by_three_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_1xn_three_by_two|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1xn_three_by_two_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_1xn_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1xn_cube_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_1xn_empty|double [1 0] zeros(1,0)|exact
+CHK|size_1xn_empty03|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1xn_empty03_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_1xn_chars|char [1 3] 'abc'|exact
+CHK|size_nx1_scalar|double [1 1] 1|exact
+CHK|size_nx1_row|double [3 1] [1;2;3]|exact
+CHK|size_nx1_column|double [3 1] [1;2;3]|exact
+CHK|size_nx1_square|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx1_square_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_nx1_two_by_three|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx1_two_by_three_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_nx1_three_by_two|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx1_three_by_two_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_nx1_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx1_cube_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_nx1_empty|double [0 1] zeros(0,1)|exact
+CHK|size_nx1_empty03|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx1_empty03_msg|Invalid argument at position 1. Value must be a vector.|exact
+CHK|size_nx1_chars|char [3 1] ['a';'b';'c']|exact
+CHK|size_1x3_scalar|double [1 3] [1 1 1]|exact
+CHK|size_1x3_row|double [1 3] [1 2 3]|exact
+CHK|size_1x3_column|double [1 3] [1 2 3]|exact
+CHK|size_1x3_square|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x3_square_msg|Invalid argument at position 1. Value must be a vector with 3 elements.|exact
+CHK|size_1x3_two_by_three|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x3_two_by_three_msg|Invalid argument at position 1. Value must be a vector with 3 elements.|exact
+CHK|size_1x3_three_by_two|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x3_three_by_two_msg|Invalid argument at position 1. Value must be a vector with 3 elements.|exact
+CHK|size_1x3_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x3_cube_msg|Invalid argument at position 1. Value must be a vector with 3 elements.|exact
+CHK|size_1x3_empty|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x3_empty_msg|Invalid argument at position 1. Value must be a vector with 3 elements.|exact
+CHK|size_1x3_empty03|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x3_empty03_msg|Invalid argument at position 1. Value must be a vector with 3 elements.|exact
+CHK|size_1x3_chars|char [1 3] 'abc'|exact
+CHK|size_2x3_scalar|double [2 3] [1 1 1;1 1 1]|exact
+CHK|size_2x3_row|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2x3_row_msg|Invalid argument at position 1. Value must be a matrix of size 2-by-3.|exact
+CHK|size_2x3_column|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2x3_column_msg|Invalid argument at position 1. Value must be a matrix of size 2-by-3.|exact
+CHK|size_2x3_square|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2x3_square_msg|Invalid argument at position 1. Value must be a matrix of size 2-by-3.|exact
+CHK|size_2x3_two_by_three|double [2 3] [1 1 1;1 1 1]|exact
+CHK|size_2x3_three_by_two|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2x3_three_by_two_msg|Invalid argument at position 1. Value must be a matrix of size 2-by-3.|exact
+CHK|size_2x3_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2x3_cube_msg|Invalid argument at position 1. Value must be a matrix of size 2-by-3.|exact
+CHK|size_2x3_empty|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2x3_empty_msg|Invalid argument at position 1. Value must be a matrix of size 2-by-3.|exact
+CHK|size_2x3_empty03|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2x3_empty03_msg|Invalid argument at position 1. Value must be a matrix of size 2-by-3.|exact
+CHK|size_2x3_chars|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2x3_chars_msg|Invalid argument at position 1. Value must be a matrix of size 2-by-3.|exact
+CHK|size_nxn_scalar|double [1 1] 1|exact
+CHK|size_nxn_row|double [1 3] [1 2 3]|exact
+CHK|size_nxn_column|double [3 1] [1;2;3]|exact
+CHK|size_nxn_square|double [2 2] [1 2;3 4]|exact
+CHK|size_nxn_two_by_three|double [2 3] [1 1 1;1 1 1]|exact
+CHK|size_nxn_three_by_two|double [3 2] [1 1;1 1;1 1]|exact
+CHK|size_nxn_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nxn_cube_msg|Invalid argument at position 1. Value must be a matrix.|exact
+CHK|size_nxn_empty|double [0 0] []|exact
+CHK|size_nxn_empty03|double [0 3] zeros(0,3)|exact
+CHK|size_nxn_chars|char [1 3] 'abc'|exact
+CHK|size_2xn_scalar|double [2 1] [1;1]|exact
+CHK|size_2xn_row|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2xn_row_msg|Invalid argument at position 1. Value must be a matrix with 2 rows.|exact
+CHK|size_2xn_column|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2xn_column_msg|Invalid argument at position 1. Value must be a matrix with 2 rows.|exact
+CHK|size_2xn_square|double [2 2] [1 2;3 4]|exact
+CHK|size_2xn_two_by_three|double [2 3] [1 1 1;1 1 1]|exact
+CHK|size_2xn_three_by_two|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2xn_three_by_two_msg|Invalid argument at position 1. Value must be a matrix with 2 rows.|exact
+CHK|size_2xn_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2xn_cube_msg|Invalid argument at position 1. Value must be a matrix with 2 rows.|exact
+CHK|size_2xn_empty|double [2 0] zeros(2,0)|exact
+CHK|size_2xn_empty03|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2xn_empty03_msg|Invalid argument at position 1. Value must be a matrix with 2 rows.|exact
+CHK|size_2xn_chars|MATLAB:validation:IncompatibleSize|exact
+CHK|size_2xn_chars_msg|Invalid argument at position 1. Value must be a matrix with 2 rows.|exact
+CHK|size_nx3_scalar|double [1 3] [1 1 1]|exact
+CHK|size_nx3_row|double [1 3] [1 2 3]|exact
+CHK|size_nx3_column|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx3_column_msg|Invalid argument at position 1. Value must be a matrix with 3 columns.|exact
+CHK|size_nx3_square|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx3_square_msg|Invalid argument at position 1. Value must be a matrix with 3 columns.|exact
+CHK|size_nx3_two_by_three|double [2 3] [1 1 1;1 1 1]|exact
+CHK|size_nx3_three_by_two|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx3_three_by_two_msg|Invalid argument at position 1. Value must be a matrix with 3 columns.|exact
+CHK|size_nx3_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_nx3_cube_msg|Invalid argument at position 1. Value must be a matrix with 3 columns.|exact
+CHK|size_nx3_empty|double [0 3] zeros(0,3)|exact
+CHK|size_nx3_empty03|double [0 3] zeros(0,3)|exact
+CHK|size_nx3_chars|char [1 3] 'abc'|exact
+CHK|size_1x2x3_scalar|MATLAB:mat2str:TwoDInput|exact
+CHK|size_1x2x3_scalar_msg|Input matrix must be 2-D.|exact
+CHK|size_1x2x3_row|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x2x3_row_msg|Invalid argument at position 1. Value must be an array of size 1-by-2-by-3.|exact
+CHK|size_1x2x3_column|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x2x3_column_msg|Invalid argument at position 1. Value must be an array of size 1-by-2-by-3.|exact
+CHK|size_1x2x3_square|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x2x3_square_msg|Invalid argument at position 1. Value must be an array of size 1-by-2-by-3.|exact
+CHK|size_1x2x3_two_by_three|MATLAB:mat2str:TwoDInput|exact
+CHK|size_1x2x3_two_by_three_msg|Input matrix must be 2-D.|exact
+CHK|size_1x2x3_three_by_two|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x2x3_three_by_two_msg|Invalid argument at position 1. Value must be an array of size 1-by-2-by-3.|exact
+CHK|size_1x2x3_cube|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x2x3_cube_msg|Invalid argument at position 1. Value must be an array of size 1-by-2-by-3.|exact
+CHK|size_1x2x3_empty|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x2x3_empty_msg|Invalid argument at position 1. Value must be an array of size 1-by-2-by-3.|exact
+CHK|size_1x2x3_empty03|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x2x3_empty03_msg|Invalid argument at position 1. Value must be an array of size 1-by-2-by-3.|exact
+CHK|size_1x2x3_chars|MATLAB:validation:IncompatibleSize|exact
+CHK|size_1x2x3_chars_msg|Invalid argument at position 1. Value must be an array of size 1-by-2-by-3.|exact
+CHK|class_double_one|double [1 1] 1|exact
+CHK|class_double_half|double [1 1] 2.5|exact
+CHK|class_double_big|double [1 1] 300|exact
+CHK|class_double_negative|double [1 1] -1|exact
+CHK|class_double_true|double [1 1] 1|exact
+CHK|class_double_char|double [1 1] 65|exact
+CHK|class_double_string7|double [1 1] 7|exact
+CHK|class_double_stringx|double [1 1] NaN|exact
+CHK|class_double_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_double_cell_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_double_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_double_struct_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_double_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_double_handle_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_double_complex|double [1 1] 1+2i|exact
+CHK|class_double_nan|double [1 1] NaN|exact
+CHK|class_double_int8|double [1 1] 5|exact
+CHK|class_double_uint8|double [1 1] 250|exact
+CHK|class_double_single|double [1 1] 1.5|exact
+CHK|class_double_pair|double [1 2] [1 2]|exact
+CHK|class_int8_one|int8 [1 1] 1|exact
+CHK|class_int8_half|int8 [1 1] 3|exact
+CHK|class_int8_big|int8 [1 1] 127|exact
+CHK|class_int8_negative|int8 [1 1] -1|exact
+CHK|class_int8_true|int8 [1 1] 1|exact
+CHK|class_int8_char|int8 [1 1] 65|exact
+CHK|class_int8_string7|MATLAB:validation:UnableToConvert|exact
+CHK|class_int8_string7_msg|Invalid argument at position 1. Value must be of type int8 or be convertible to int8.|exact
+CHK|class_int8_stringx|MATLAB:validation:UnableToConvert|exact
+CHK|class_int8_stringx_msg|Invalid argument at position 1. Value must be of type int8 or be convertible to int8.|exact
+CHK|class_int8_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_int8_cell_msg|Invalid argument at position 1. Value must be of type int8 or be convertible to int8.|exact
+CHK|class_int8_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_int8_struct_msg|Invalid argument at position 1. Value must be of type int8 or be convertible to int8.|exact
+CHK|class_int8_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_int8_handle_msg|Invalid argument at position 1. Value must be of type int8 or be convertible to int8.|exact
+CHK|class_int8_complex|int8 [1 1] 1+2i|div=ADR0265|diverges|MATLAB:validation:UnableToConvert
+CHK|class_int8_nan|int8 [1 1] 0|exact
+CHK|class_int8_int8|int8 [1 1] 5|exact
+CHK|class_int8_uint8|int8 [1 1] 127|exact
+CHK|class_int8_single|int8 [1 1] 2|exact
+CHK|class_int8_pair|int8 [1 2] [1 2]|exact
+CHK|class_logical_one|logical [1 1] true|exact
+CHK|class_logical_half|logical [1 1] true|exact
+CHK|class_logical_big|logical [1 1] true|exact
+CHK|class_logical_negative|logical [1 1] true|exact
+CHK|class_logical_true|logical [1 1] true|exact
+CHK|class_logical_char|logical [1 1] true|exact
+CHK|class_logical_string7|MATLAB:validation:UnableToConvert|exact
+CHK|class_logical_string7_msg|Invalid argument at position 1. Value must be of type logical or be convertible to logical.|exact
+CHK|class_logical_stringx|MATLAB:validation:UnableToConvert|exact
+CHK|class_logical_stringx_msg|Invalid argument at position 1. Value must be of type logical or be convertible to logical.|exact
+CHK|class_logical_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_logical_cell_msg|Invalid argument at position 1. Value must be of type logical or be convertible to logical.|exact
+CHK|class_logical_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_logical_struct_msg|Invalid argument at position 1. Value must be of type logical or be convertible to logical.|exact
+CHK|class_logical_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_logical_handle_msg|Invalid argument at position 1. Value must be of type logical or be convertible to logical.|exact
+CHK|class_logical_complex|MATLAB:validation:UnableToConvert|exact
+CHK|class_logical_complex_msg|Invalid argument at position 1. Value must be of type logical or be convertible to logical.|exact
+CHK|class_logical_nan|MATLAB:validation:UnableToConvert|exact
+CHK|class_logical_nan_msg|Invalid argument at position 1. Value must be of type logical or be convertible to logical.|exact
+CHK|class_logical_int8|logical [1 1] true|exact
+CHK|class_logical_uint8|logical [1 1] true|exact
+CHK|class_logical_single|logical [1 1] true|exact
+CHK|class_logical_pair|logical [1 2] [true true]|exact
+CHK|class_char_one|char [1 1] ''|exact
+CHK|class_char_half|char [1 1] ''|exact
+CHK|class_char_big|char [1 1] 'Ĭ'|exact
+CHK|class_char_negative|char [1 1] ['' char(0) '']|exact
+CHK|class_char_true|MATLAB:validation:UnableToConvert|exact
+CHK|class_char_true_msg|Invalid argument at position 1. Value must be of type char or be convertible to char.|exact
+CHK|class_char_char|char [1 1] 'A'|exact
+CHK|class_char_string7|char [1 1] '7'|exact
+CHK|class_char_stringx|char [1 1] 'x'|exact
+CHK|class_char_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_char_cell_msg|Invalid argument at position 1. Value must be of type char or be convertible to char.|exact
+CHK|class_char_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_char_struct_msg|Invalid argument at position 1. Value must be of type char or be convertible to char.|exact
+CHK|class_char_handle|char [1 3] 'sin'|exact
+CHK|class_char_complex|MATLAB:validation:UnableToConvert|exact
+CHK|class_char_complex_msg|Invalid argument at position 1. Value must be of type char or be convertible to char.|exact
+CHK|class_char_nan|char [1 1] ['' char(0) '']|exact
+CHK|class_char_int8|char [1 1] ''|exact
+CHK|class_char_uint8|char [1 1] 'ú'|exact
+CHK|class_char_single|char [1 1] ''|exact
+CHK|class_char_pair|char [1 2] ''|exact
+CHK|class_string_one|string [1 1] 1|exact
+CHK|class_string_half|string [1 1] 2.5|exact
+CHK|class_string_big|string [1 1] 300|exact
+CHK|class_string_negative|string [1 1] -1|exact
+CHK|class_string_true|string [1 1] true|exact
+CHK|class_string_char|string [1 1] A|exact
+CHK|class_string_string7|string [1 1] 7|exact
+CHK|class_string_stringx|string [1 1] x|exact
+CHK|class_string_cell|string [1 1] 1|exact
+CHK|class_string_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_string_struct_msg|Invalid argument at position 1. Value must be of type string or be convertible to string.|exact
+CHK|class_string_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_string_handle_msg|Invalid argument at position 1. Value must be of type string or be convertible to string.|exact
+CHK|class_string_complex|string [1 1] 1+2i|exact
+CHK|class_string_nan|MATLAB:string:CannotConvertMissingElementToChar|exact
+CHK|class_string_nan_msg|Conversion of element 1 from <missing> to character vector is not supported.|exact
+CHK|class_string_int8|string [1 1] 5|exact
+CHK|class_string_uint8|string [1 1] 250|exact
+CHK|class_string_single|string [1 1] 1.5|exact
+CHK|class_string_pair|string [1 2] 1+2|exact
+CHK|class_cell_one|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_one_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_half|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_half_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_big|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_big_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_negative|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_negative_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_true|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_true_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_char|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_char_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_string7|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_string7_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_stringx|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_stringx_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_cell|cell [1 1] -|exact
+CHK|class_cell_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_struct_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_handle_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_complex|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_complex_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_nan|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_nan_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_int8|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_int8_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_uint8|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_uint8_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_single|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_single_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_cell_pair|MATLAB:validation:UnableToConvert|exact
+CHK|class_cell_pair_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|class_struct_one|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_one_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_half|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_half_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_big|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_big_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_negative|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_negative_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_true|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_true_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_char|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_char_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_string7|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_string7_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_stringx|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_stringx_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_cell_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_struct|struct [1 1] -|exact
+CHK|class_struct_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_handle_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_complex|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_complex_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_nan|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_nan_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_int8|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_int8_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_uint8|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_uint8_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_single|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_single_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_struct_pair|MATLAB:validation:UnableToConvert|exact
+CHK|class_struct_pair_msg|Invalid argument at position 1. Value must be of type struct or be convertible to struct.|exact
+CHK|class_function_handle_one|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_one_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_half|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_half_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_big|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_big_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_negative|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_negative_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_true|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_true_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_char|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_char_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_string7|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_string7_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_stringx|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_stringx_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_cell_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_struct_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_handle|function_handle [1 1] -|exact
+CHK|class_function_handle_complex|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_complex_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_nan|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_nan_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_int8|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_int8_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_uint8|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_uint8_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_single|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_single_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_function_handle_pair|MATLAB:validation:UnableToConvert|exact
+CHK|class_function_handle_pair_msg|Invalid argument at position 1. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|class_single_one|single [1 1] 1|exact
+CHK|class_single_half|single [1 1] 2.5|exact
+CHK|class_single_big|single [1 1] 300|exact
+CHK|class_single_negative|single [1 1] -1|exact
+CHK|class_single_true|single [1 1] 1|exact
+CHK|class_single_char|single [1 1] 65|exact
+CHK|class_single_string7|MATLAB:validation:UnableToConvert|exact
+CHK|class_single_string7_msg|Invalid argument at position 1. Value must be of type single or be convertible to single.|exact
+CHK|class_single_stringx|MATLAB:validation:UnableToConvert|exact
+CHK|class_single_stringx_msg|Invalid argument at position 1. Value must be of type single or be convertible to single.|exact
+CHK|class_single_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_single_cell_msg|Invalid argument at position 1. Value must be of type single or be convertible to single.|exact
+CHK|class_single_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_single_struct_msg|Invalid argument at position 1. Value must be of type single or be convertible to single.|exact
+CHK|class_single_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_single_handle_msg|Invalid argument at position 1. Value must be of type single or be convertible to single.|exact
+CHK|class_single_complex|single [1 1] 1+2i|exact
+CHK|class_single_nan|single [1 1] NaN|exact
+CHK|class_single_int8|single [1 1] 5|exact
+CHK|class_single_uint8|single [1 1] 250|exact
+CHK|class_single_single|single [1 1] 1.5|exact
+CHK|class_single_pair|single [1 2] [1 2]|exact
+CHK|class_uint16_one|uint16 [1 1] 1|exact
+CHK|class_uint16_half|uint16 [1 1] 3|exact
+CHK|class_uint16_big|uint16 [1 1] 300|exact
+CHK|class_uint16_negative|uint16 [1 1] 0|exact
+CHK|class_uint16_true|uint16 [1 1] 1|exact
+CHK|class_uint16_char|uint16 [1 1] 65|exact
+CHK|class_uint16_string7|MATLAB:validation:UnableToConvert|exact
+CHK|class_uint16_string7_msg|Invalid argument at position 1. Value must be of type uint16 or be convertible to uint16.|exact
+CHK|class_uint16_stringx|MATLAB:validation:UnableToConvert|exact
+CHK|class_uint16_stringx_msg|Invalid argument at position 1. Value must be of type uint16 or be convertible to uint16.|exact
+CHK|class_uint16_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_uint16_cell_msg|Invalid argument at position 1. Value must be of type uint16 or be convertible to uint16.|exact
+CHK|class_uint16_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_uint16_struct_msg|Invalid argument at position 1. Value must be of type uint16 or be convertible to uint16.|exact
+CHK|class_uint16_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_uint16_handle_msg|Invalid argument at position 1. Value must be of type uint16 or be convertible to uint16.|exact
+CHK|class_uint16_complex|uint16 [1 1] 1+2i|div=ADR0265|diverges|MATLAB:validation:UnableToConvert
+CHK|class_uint16_nan|uint16 [1 1] 0|exact
+CHK|class_uint16_int8|uint16 [1 1] 5|exact
+CHK|class_uint16_uint8|uint16 [1 1] 250|exact
+CHK|class_uint16_single|uint16 [1 1] 2|exact
+CHK|class_uint16_pair|uint16 [1 2] [1 2]|exact
+CHK|class_real_one|double [1 1] 1|exact
+CHK|class_real_half|double [1 1] 2.5|exact
+CHK|class_real_big|double [1 1] 300|exact
+CHK|class_real_negative|double [1 1] -1|exact
+CHK|class_real_true|double [1 1] 1|exact
+CHK|class_real_char|double [1 1] 65|exact
+CHK|class_real_string7|double [1 1] 7|exact
+CHK|class_real_stringx|double [1 1] NaN|exact
+CHK|class_real_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_real_cell_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_real_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_real_struct_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_real_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_real_handle_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_real_complex|MATLAB:validators:mustBeReal|exact
+CHK|class_real_complex_msg|Invalid argument at position 1. Value must be real.|exact
+CHK|class_real_nan|double [1 1] NaN|exact
+CHK|class_real_int8|double [1 1] 5|exact
+CHK|class_real_uint8|double [1 1] 250|exact
+CHK|class_real_single|double [1 1] 1.5|exact
+CHK|class_real_pair|double [1 2] [1 2]|exact
+CHK|class_scalardouble_one|double [1 1] 1|exact
+CHK|class_scalardouble_half|double [1 1] 2.5|exact
+CHK|class_scalardouble_big|double [1 1] 300|exact
+CHK|class_scalardouble_negative|double [1 1] -1|exact
+CHK|class_scalardouble_true|double [1 1] 1|exact
+CHK|class_scalardouble_char|double [1 1] 65|exact
+CHK|class_scalardouble_string7|double [1 1] 7|exact
+CHK|class_scalardouble_stringx|double [1 1] NaN|exact
+CHK|class_scalardouble_cell|MATLAB:validation:UnableToConvert|exact
+CHK|class_scalardouble_cell_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_scalardouble_struct|MATLAB:validation:UnableToConvert|exact
+CHK|class_scalardouble_struct_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_scalardouble_handle|MATLAB:validation:UnableToConvert|exact
+CHK|class_scalardouble_handle_msg|Invalid argument at position 1. Value must be of type double or be convertible to double.|exact
+CHK|class_scalardouble_complex|double [1 1] 1+2i|exact
+CHK|class_scalardouble_nan|double [1 1] NaN|exact
+CHK|class_scalardouble_int8|double [1 1] 5|exact
+CHK|class_scalardouble_uint8|double [1 1] 250|exact
+CHK|class_scalardouble_single|double [1 1] 1.5|exact
+CHK|class_scalardouble_pair|MATLAB:validation:IncompatibleSize|exact
+CHK|class_scalardouble_pair_msg|Invalid argument at position 1. Value must be a scalar.|exact
+CHK|valid_ok|2/1/on|exact
+CHK|valid_positive|MATLAB:validators:mustBePositive|exact
+CHK|valid_positive_msg|Invalid argument at position 1. Value must be positive.|exact
+CHK|valid_second|MATLAB:validators:mustBeInteger|exact
+CHK|valid_second_msg|Invalid argument at position 2. Value must be integer.|exact
+CHK|valid_second_negative|MATLAB:validators:mustBeNonnegative|exact
+CHK|valid_second_negative_msg|Invalid argument at position 2. Value must be nonnegative.|exact
+CHK|valid_member|MATLAB:validators:mustBeMember|exact
+CHK|valid_member_msg|Invalid argument at position 3. Value must be a member of this set: 'on' 'off' |exact
+CHK|valid_member_char|2/1/off|exact
+CHK|default_invalid|MATLAB:validation:IncompatibleSize|exact
+CHK|default_invalid_msg|Invalid default value for argument 'b'. Value must be a scalar.|exact
+CHK|default_given|double [1 1] 5|exact
+CHK|custom_mustBeA|MATLAB:validators:mustBeA|exact
+CHK|custom_mustBeA_msg|Invalid argument at position 1. Value must be one of these types: 'double'.|exact
+CHK|custom_vector|MATLAB:validators:mustBeVector|exact
+CHK|custom_vector_msg|Invalid argument at position 1. Value must be a 1-by-n vector or an n-by-1 vector.|exact
+CHK|count_missing_one|MATLAB:minrhs|exact
+CHK|count_missing_one_msg|Invalid argument list. Function requires 1 more input(s).|exact
+CHK|count_missing_two|MATLAB:minrhs|exact
+CHK|count_missing_two_msg|Invalid argument list. Function requires 2 more input(s).|exact
+CHK|count_extra|MATLAB:TooManyInputs|exact
+CHK|count_extra_msg|Too many input arguments.|exact
+CHK|count_nargin|double [1 1] 2|exact

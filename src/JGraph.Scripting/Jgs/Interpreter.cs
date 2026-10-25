@@ -1067,7 +1067,15 @@ internal sealed partial class Interpreter
     /// <param name="declaration">The function being invoked (carries its name, body, and source).</param>
     /// <param name="local">The call's local environment with parameters already bound.</param>
     /// <param name="callLine">The 1-based line of the call site, for the debugger's call stack.</param>
-    public JgsValue ExecuteFunctionBody(FnStmt declaration, JgsEnvironment local, int callLine)
+    public JgsValue ExecuteFunctionBody(FnStmt declaration, JgsEnvironment local, int callLine) =>
+        ExecuteFunctionBody(declaration, local, callLine, null);
+
+    /// <summary>
+    /// Runs a function's body in <paramref name="local"/>, <paramref name="enter"/> first inside its
+    /// frame: an <c>arguments</c> block's binding, whose refusals R2025b reports from the function
+    /// itself (k9client: call.nv.named.*, handle.increment.nargout0).
+    /// </summary>
+    internal JgsValue ExecuteFunctionBody(FnStmt declaration, JgsEnvironment local, int callLine, Action? enter)
     {
         if (++_callDepth > MaxCallDepth)
         {
@@ -1124,6 +1132,7 @@ internal sealed partial class Interpreter
             // The body's imports hold wherever they are written (ADR 0176), so the frame takes them
             // before the first line runs.
             EnterImports(declaration, local);
+            enter?.Invoke();
             Completion completion = ExecuteBlock(declaration.Body, local);
             return completion.Kind switch
             {
@@ -1226,32 +1235,167 @@ internal sealed partial class Interpreter
     /// </remarks>
     private void ExecuteArguments(ArgumentsStmt statement, JgsEnvironment env)
     {
+        // Outputs are checked when the function ends (UserFunction), not here.
+        if (statement.Kind is ArgumentsKind.Output or ArgumentsKind.OutputRepeating)
+        {
+            return;
+        }
+
+        int line = statement.Line;
+        int col = statement.Column;
+        if (statement.Kind == ArgumentsKind.Repeating)
+        {
+            CheckRepeating(statement, env);
+            return;
+        }
+
+        IReadOnlyList<string> parameters = env.Function?.Parameters ?? [];
         foreach (ArgumentSpec spec in statement.Arguments)
         {
+            // A value that fails a line is reported at that line, as R2025b reports it.
+            (line, col) = spec.Line > 0 ? (spec.Line, spec.Column) : (statement.Line, statement.Column);
+            if (spec.Structure is { } structure)
+            {
+                CheckNameValue(spec, structure, env, line, col);
+                continue;
+            }
+
             // The frame's own bindings, not the whole chain: a parameter named after a builtin was
             // otherwise found in the global scope and took the builtin's function value instead of
             // its declared default.
+            string prefix;
             if (!env.DeclaresLocally(spec.Name) || !env.TryGet(spec.Name, out JgsValue value))
             {
-                value = JgsValue.Null;
                 if (spec.Default is null)
                 {
-                    throw new JgsRuntimeException(statement.Line, statement.Column,
-                        $"Not enough input arguments: '{spec.Name}' has no default and none was passed.");
+                    // A call bound by its signature has already refused this in R2025b's words.
+                    throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
                 }
 
                 value = Evaluate(spec.Default, env);
-                env.Declare(spec.Name, value);
+                prefix = DeclaredArgument.ForDefault(spec.Name);
             }
-
-            JgsValue checked_ = JgsBuiltins.CheckArgument(
-                spec, value, statement.Line, statement.Column, _globals);
-            if (!ReferenceEquals(checked_, value))
+            else
             {
-                env.Declare(spec.Name, checked_); // a declared class the value did not have yet
+                int index = IndexOf(parameters, spec.Name);
+                prefix = DeclaredArgument.AtPosition(index < 0 ? 1 : index + 1);
             }
 
-            RunValidators(spec.Validators, checked_, env);
+            JgsValue checked_ = DeclaredArgument.Check(spec, value, prefix, line, col, _globals, this);
+            env.Declare(spec.Name, checked_); // a declared class the value did not have yet, or the default
+            RunValidators(spec.Validators, checked_, env, prefix);
+        }
+    }
+
+    private static int IndexOf(IReadOnlyList<string> names, string name)
+    {
+        for (int i = 0; i < names.Count; i++)
+        {
+            if (string.Equals(names[i], name, StringComparison.Ordinal))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// One name-value line (stage K9): the value passed, checked, or the default, or nothing, set as
+    /// a field of the structure the function receives the pairs in. The structure is declared
+    /// after every line, so a default can read an earlier field, and its fields come out in the
+    /// order the lines declare them (R2025b: <c>nv1(2, "Label", "x", "Scale", 4)</c> answers
+    /// <c>Scale,Label</c>).
+    /// </summary>
+    private void CheckNameValue(ArgumentSpec spec, string structure, JgsEnvironment env, int line, int col)
+    {
+        if (!env.DeclaresLocally(structure) || !env.TryGet(structure, out JgsValue holder) || holder.Type != JgsType.Struct)
+        {
+            holder = JgsValue.EmptyStruct();
+        }
+
+        var fields = new Dictionary<string, JgsValue>(holder.AsStruct, StringComparer.Ordinal);
+
+        string prefix;
+        JgsValue value;
+        if (env.Arguments is { } binding
+            && binding.NameValues.TryGetValue(structure, out Dictionary<string, JgsValue>? passed)
+            && passed.TryGetValue(spec.Name, out JgsValue? given))
+        {
+            value = given!;
+            prefix = DeclaredArgument.ForName(spec.Name);
+        }
+        else if (spec.Default is not null)
+        {
+            env.Declare(structure, JgsValue.Struct(fields));
+            value = Evaluate(spec.Default, env);
+            prefix = DeclaredArgument.ForDefault(spec.Name);
+        }
+        else
+        {
+            env.Declare(structure, JgsValue.Struct(fields));
+            return;
+        }
+
+        JgsValue checked_ = DeclaredArgument.Check(spec, value, prefix, line, col, _globals, this);
+        fields[spec.Name] = checked_;
+        env.Declare(structure, JgsValue.Struct(fields));
+        RunValidators(spec.Validators, checked_, env, prefix);
+    }
+
+    /// <summary>
+    /// A <c>(Repeating)</c> block (stage K9): each parameter holds one element per group, checked
+    /// against its line with the position the element had in the call.
+    /// </summary>
+    private void CheckRepeating(ArgumentsStmt statement, JgsEnvironment env)
+    {
+        ArgumentBinding? binding = env.Arguments;
+        int start = binding?.RepeatingStart ?? 0;
+        int size = binding?.GroupSize ?? statement.Arguments.Count;
+        for (int j = 0; j < statement.Arguments.Count; j++)
+        {
+            ArgumentSpec spec = statement.Arguments[j];
+            if (!env.DeclaresLocally(spec.Name) || !env.TryGet(spec.Name, out JgsValue held) || held.Type != JgsType.Cell)
+            {
+                continue;
+            }
+
+            JgsValue[] elements = [.. held.AsCell];
+            for (int k = 0; k < elements.Length; k++)
+            {
+                string prefix = DeclaredArgument.AtPosition(start + (k * size) + j + 1);
+                elements[k] = DeclaredArgument.Check(spec, elements[k], prefix, spec.Line > 0 ? spec.Line : statement.Line, spec.Column, _globals, this);
+                if (spec.Validators.Count > 0)
+                {
+                    // A validator names the parameter, which in the line means this one element.
+                    var element = new JgsEnvironment(env);
+                    element.Declare(spec.Name, elements[k]);
+                    RunValidators(spec.Validators, elements[k], element, prefix);
+                }
+            }
+
+            env.Declare(spec.Name, JgsValue.Cell(elements));
+        }
+    }
+
+    /// <summary>
+    /// The <c>(Output)</c> block's lines applied to the outputs the function assigned (stage K9),
+    /// every one of them whether asked for or not, as R2025b checks them (out2(3) with one output
+    /// asked for still refuses its second); an output never assigned is the caller's refusal.
+    /// </summary>
+    internal void CheckOutputs(ArgumentsSignature signature, JgsEnvironment frame, int line, int col)
+    {
+        foreach (ArgumentSpec spec in signature.Outputs)
+        {
+            if (!frame.DeclaresLocally(spec.Name) || !frame.TryGet(spec.Name, out JgsValue value))
+            {
+                continue;
+            }
+
+            string prefix = DeclaredArgument.ForOutput(spec.Name);
+            JgsValue checked_ = DeclaredArgument.Check(spec, value, prefix, line, col, _globals, this);
+            frame.Declare(spec.Name, checked_);
+            RunValidators(spec.Validators, checked_, frame, prefix);
         }
     }
 
@@ -1260,6 +1404,23 @@ internal sealed partial class Interpreter
     /// <paramref name="env"/>. Shared by the <c>arguments</c> block and by class properties (M68),
     /// because MATLAB writes the two declarations with the same grammar and means the same by them.
     /// </summary>
+    /// <summary>
+    /// Runs an <c>arguments</c> line's validators (stage K9), a refusal carrying R2025b's
+    /// <paramref name="prefix"/> in front of the validator's own sentence: "Invalid argument at
+    /// position 1. Value must be positive."
+    /// </summary>
+    internal void RunValidators(IReadOnlyList<Expr> validators, JgsValue value, JgsEnvironment env, string prefix)
+    {
+        try
+        {
+            RunValidators(validators, value, env);
+        }
+        catch (JgsRuntimeException failure) when (failure.Frames.Count == 0)
+        {
+            throw new JgsRuntimeException(failure.Line, failure.Column, failure.Identifier, prefix + failure.Message);
+        }
+    }
+
     internal void RunValidators(IReadOnlyList<Expr> validators, JgsValue value, JgsEnvironment env)
     {
         foreach (Expr validator in validators)
@@ -1545,7 +1706,15 @@ internal sealed partial class Interpreter
                 return Completion.Normal;
 
             case ArgumentsStmt arguments:
-                ExecuteArguments(arguments, env);
+                try
+                {
+                    ExecuteArguments(arguments, env);
+                }
+                catch (JgsRuntimeException refused)
+                {
+                    throw refused.AsRaised(); // the function's own refusal, at the line it declares (stage K9)
+                }
+
                 return Completion.Normal;
 
             // A classdef defines the class and binds its name to the constructor (M68). Running the
@@ -2287,6 +2456,22 @@ internal sealed partial class Interpreter
     /// </summary>
     private static bool SwitchMatches(JgsValue subject, JgsValue candidate, Node at)
     {
+        // An enumeration member matches its member or its name (stage K9, measured).
+        if (JgsBuiltins.IsEnumerationValue(subject) || JgsBuiltins.IsEnumerationValue(candidate))
+        {
+            return JgsBuiltins.EnumerationEquality(subject, candidate, true, at.Line, at.Column) is { Type: JgsType.Bool } named && named.AsBool;
+        }
+
+        // Text matches text as strcmp says, a string scalar and a char row alike: switch "row" takes
+        // case 'row' (stage K9: every typed client's call of k9make passes a .NET string).
+        if (JgsBuiltins.IsTextScalar(subject) && JgsBuiltins.IsTextScalar(candidate)
+            && (subject.IsStringArray || candidate.IsStringArray))
+        {
+            string these = JgsBuiltins.TextOf(subject);
+            string those = JgsBuiltins.TextOf(candidate);
+            return !JgsBuiltins.IsMissingText(these) && !JgsBuiltins.IsMissingText(those) && string.Equals(these, those, StringComparison.Ordinal);
+        }
+
         if (subject.Type == JgsType.Object && !subject.ObjectClass.IsHandle && !subject.ObjectClass.TryMethod("eq", out _))
         {
             // R2025b refuses a switch on a value object with no eq (open item 116).
@@ -4900,6 +5085,15 @@ internal sealed partial class Interpreter
         if (left.IsCategorical || right.IsCategorical)
         {
             return JgsCategorical.Compare(op, left, right, at.Line, at.Column);
+        }
+
+        // An enumeration compares by name with its members and with text (stage K9), before a char
+        // operand is read as its codes.
+        if (op is TokenType.EqualEqual or TokenType.BangEqual
+            && (JgsBuiltins.IsEnumerationValue(left) || JgsBuiltins.IsEnumerationValue(right))
+            && JgsBuiltins.EnumerationEquality(left, right, op == TokenType.EqualEqual, at.Line, at.Column) is { } named)
+        {
+            return named;
         }
 
         // An operator with a .NET value on either side is the type's own (ADR 0174): == and ~=

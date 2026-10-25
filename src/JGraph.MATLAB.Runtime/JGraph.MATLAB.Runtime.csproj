@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The MATLAB Data API for .NET (compiler and SDK plan, stage K9; decision KD3): MathWorks' class and
+    member names from R2025b's MathWorks.MATLAB.Runtime.dll and MathWorks.MATLAB.Types.dll (reflected
+    in sdk_probe/mlruntime.txt and mltypes.txt, and by k9client) under JGraph's namespaces, in one
+    assembly: JGraph.MATLAB.Runtime holds MATLABRuntime and its attributes, JGraph.MATLAB.Types the
+    dynamic MATLAB values, and JGraph.MATLAB.Exceptions the four exceptions. A client of an assembly
+    R2025b built for the MATLAB Data API ports to JGraph's by changing its using lines, and finds the
+    JGraph Runtime the way a program does (JGRAPH_RUNTIME_ROOT, then the installer's registry key).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.MATLAB.Runtime</RootNamespace>
+    <!-- The API is MathWorks', written before nullable references: its members take and answer null as theirs do. -->
+    <Nullable>disable</Nullable>
+    <Description>The MATLAB Data API for .NET: MATLABRuntime and the dynamic MATLAB types under JGraph namespaces, over the JGraph Runtime.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="JGraph.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Runtime\JGraph.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

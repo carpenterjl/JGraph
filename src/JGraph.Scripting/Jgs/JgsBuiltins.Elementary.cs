@@ -238,8 +238,11 @@ internal static partial class JgsBuiltins
         // A struct is asked by extent like a cell, because since M65 it has one: a struct array is a
         // struct value that is not a 1-by-1, and answering isscalar for it would be the old lie in a
         // new place.
+        // An object array and a table are asked by their size too (stage K9: k9describe of a 1-by-2
+        // k9point array, and of a 2-by-2 table, which R2025b's isscalar calls no scalar).
         Predicate("isscalar", static v =>
             v.Type == JgsType.Array ? !v.IsNd && Extent(v) == 1
+            : v.IsObjectArray || v.Type == JgsType.Table ? SizeDims(v).Aggregate(1, static (a, b) => a * b) == 1
             : v.Type is not (JgsType.Cell or JgsType.Struct) || Extent(v) == 1);
         Predicate("isvector", IsVectorShape);
         Predicate("ismatrix", static v => v.Type switch

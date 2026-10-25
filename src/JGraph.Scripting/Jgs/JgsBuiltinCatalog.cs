@@ -206,6 +206,7 @@ public static class JgsBuiltinCatalog
         Add("builtin", "Calls the built-in of that name past any file or variable that shadows it: builtin('size', A) reaches size while size.m takes every written call.", P("function"), Opt("args..."));
         Add("nargin", "How many inputs a function declares: nargin('name') or nargin(@f), negative when the last is varargin. Inside a function body the bare name is how many the call passed.", P("f"));
         Add("nargout", "How many outputs a function declares: nargout('name') or nargout(@f), negative when the last is varargout. Inside a function body the bare name is how many the caller asked for.", P("f"));
+        Add("namedargs2cell", "A name-value structure as the 1-by-2n cell of name and value pairs that made it, to pass on to another function.", P("s"));
         Add("narginchk", "Fails unless the enclosing function got between low and high arguments.", P("low"), P("high"));
         Add("nargoutchk", "Fails unless the enclosing function was asked for between low and high outputs.", P("low"), P("high"));
         Add("nargchk", "The pre-R2011 spelling of narginchk.", P("low"), P("high"));
@@ -1065,6 +1066,8 @@ public static class JgsBuiltinCatalog
         Add("lookup", "Reads keys from a collection, with an optional 'FallbackValue' for the missing ones.", P("collection"), P("keys"), Opt("'FallbackValue'"), Opt("fallback"));
         Add("insert", "Adds or replaces entries in a collection and hands it back.", P("collection"), P("keys"), P("values"));
         Add("entries", "The collection's entries as a cell of structs with Key and Value fields.", P("collection"));
+        Add("configureDictionary", "An empty dictionary that already knows its key and value types.", P("keyType"), P("valueType"));
+        Add("keyHash", "The uint64 hash a value is filed under as a dictionary key; equal values hash alike.", P("A"));
 
         Add("mod", "Modulo x - floor(x/m)*m, element-wise over arrays (result takes m's sign).", P("x"), P("m"));
         Add("size", "The [rows, cols] of a matrix ([rows, cols, 3] for an RGB image); size(value, dim) returns one dimension.", P("value"), Opt("dim"));

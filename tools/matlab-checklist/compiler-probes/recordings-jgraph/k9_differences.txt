@@ -1,0 +1,1548 @@
+client: 4144 of 4379 cases agree
+printed lines: differ
+standard error: differs
+build: 152 of 174 keys agree
+interface: 24 of 25 files the same
+
+in.long
+  R2025b: "int64 [1 1] [-9007199254740993]"
+  JGraph: THREW System.ArgumentException: -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.
+
+in.ulong
+  R2025b: "uint64 [1 1] [1.844674e+19]"
+  JGraph: THREW System.ArgumentException: 18446744073709551615 cannot be held exactly: JGraph keeps an uint64 as a double, exact to 2^53.
+
+in.structs0
+  R2025b: THREW System.InvalidCastException: All structs in a MATLAB struct array must have the same fields.
+  JGraph: "struct [1 0] fields [] "
+
+in.enums
+  R2025b: THREW Exceptions.MATLABExecutionException: Class K9.k9color not found.
+  JGraph: "k9color [1 2] {red blue}"
+
+out.int64.long
+  R2025b: System.Int64 -9007199254740993
+  JGraph: System.Int64 -9007199254740992
+
+out.int64.decimal
+  R2025b: System.Decimal -9007199254740993
+  JGraph: System.Decimal -9007199254740990
+
+out.uint64
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: THREW System.ArgumentException: 1.8446744073709552E+19 cannot be held exactly: JGraph keeps an uint64 as a double, exact to 2^53.
+
+out.uint64.object
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: (missing)
+
+out.uint64.double
+  R2025b: 1.8446744073709552E+19
+  JGraph: (missing)
+
+out.uint64.float
+  R2025b: 1.8446744E+19
+  JGraph: (missing)
+
+out.uint64.int
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Int32 is not supported.
+  JGraph: (missing)
+
+out.uint64.long
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Int64 is not supported.
+  JGraph: (missing)
+
+out.uint64.ulong
+  R2025b: System.UInt64 18446744073709551615
+  JGraph: (missing)
+
+out.uint64.sbyte
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.SByte is not supported.
+  JGraph: (missing)
+
+out.uint64.byte
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Byte is not supported.
+  JGraph: (missing)
+
+out.uint64.short
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Int16 is not supported.
+  JGraph: (missing)
+
+out.uint64.ushort
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.UInt16 is not supported.
+  JGraph: (missing)
+
+out.uint64.uint
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.UInt32 is not supported.
+  JGraph: (missing)
+
+out.uint64.bool
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Boolean is not supported.
+  JGraph: (missing)
+
+out.uint64.char
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Char is not supported.
+  JGraph: (missing)
+
+out.uint64.string
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.String is not supported.
+  JGraph: (missing)
+
+out.uint64.Complex
+  R2025b: (1.8446744073709552E+19,0i)
+  JGraph: (missing)
+
+out.uint64.decimal
+  R2025b: System.Decimal 18446744073709551615
+  JGraph: (missing)
+
+out.uint64.double[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Double[] is not supported.
+  JGraph: (missing)
+
+out.uint64.double[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Double[,] is not supported.
+  JGraph: (missing)
+
+out.uint64.double[,,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Double[,,] is not supported.
+  JGraph: (missing)
+
+out.uint64.float[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Single[] is not supported.
+  JGraph: (missing)
+
+out.uint64.int[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Int32[] is not supported.
+  JGraph: (missing)
+
+out.uint64.sbyte[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.SByte[] is not supported.
+  JGraph: (missing)
+
+out.uint64.byte[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Byte[,] is not supported.
+  JGraph: (missing)
+
+out.uint64.Complex[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Numerics.Complex[] is not supported.
+  JGraph: (missing)
+
+out.uint64.bool[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Boolean[] is not supported.
+  JGraph: (missing)
+
+out.uint64.bool[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Boolean[,] is not supported.
+  JGraph: (missing)
+
+out.uint64.char[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Char[] is not supported.
+  JGraph: (missing)
+
+out.uint64.char[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Char[,] is not supported.
+  JGraph: (missing)
+
+out.uint64.string[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.String[] is not supported.
+  JGraph: (missing)
+
+out.uint64.string[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.String[,] is not supported.
+  JGraph: (missing)
+
+out.uint64.object[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Object[] is not supported.
+  JGraph: (missing)
+
+out.uint64.object[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Object[,] is not supported.
+  JGraph: (missing)
+
+out.uint64.MATLABArray
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: (missing)
+
+out.uint64.MATLABStruct
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'JGraph.MATLAB.Types.MATLABStruct'.
+  JGraph: (missing)
+
+out.uint64.MATLABStruct[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to JGraph.MATLAB.Types.MATLABStruct[] is not supported.
+  JGraph: (missing)
+
+out.uint64.MATLABObject
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'JGraph.MATLAB.Types.MATLABObject'.
+  JGraph: (missing)
+
+out.uint64.MATLABObject[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to JGraph.MATLAB.Types.MATLABObject[] is not supported.
+  JGraph: (missing)
+
+out.uint64.k9color
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to K9.k9color is not supported.
+  JGraph: (missing)
+
+out.uint64.k9color[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to K9.k9color[] is not supported.
+  JGraph: (missing)
+
+out.uint64.DayOfWeek
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.DayOfWeek is not supported.
+  JGraph: (missing)
+
+out.uint64.Dictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.uint64.Dictionary<double,string>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Collections.Generic.Dictionary`2[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.uint64.Dictionary<string,object>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.uint64.IDictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.Generic.IDictionary`2[System.String,System.Double]'.
+  JGraph: (missing)
+
+out.uint64.IReadOnlyDictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.Generic.IReadOnlyDictionary`2[System.String,System.Double]'.
+  JGraph: (missing)
+
+out.uint64.Dictionary<object,object>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Collections.Generic.Dictionary`2[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.uint64.List<double>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.Collections.Generic.List`1[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.uint64.IEnumerable
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.IEnumerable'.
+  JGraph: (missing)
+
+out.uint64.DateTime
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB uint64 scalar to System.DateTime is not supported.
+  JGraph: (missing)
+
+out.uint64.ValueTuple<double>
+  R2025b: THREW System.InvalidCastException: Unable to convert to System.ValueTuple`1[System.Double] from 1 MATLAB outputs.
+  JGraph: (missing)
+
+out.complexsingle.Complex
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex single scalar to System.Numerics.Complex is not supported.
+  JGraph: (2,3i)
+
+out.complexsingle.Complex[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex single scalar to System.Numerics.Complex[] is not supported.
+  JGraph: System.Numerics.Complex[] [1] {(2,3i)}
+
+out.complexint8
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: THREW Exceptions.MATLABExecutionException: int8 expects a number or numeric array, but got a complex.\nError in k9make (line 30) in file: <cache>\k9make.m
+
+out.complexint8.object
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: (missing)
+
+out.complexint8.double
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Double is not supported.
+  JGraph: (missing)
+
+out.complexint8.float
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Single is not supported.
+  JGraph: (missing)
+
+out.complexint8.int
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Int32 is not supported.
+  JGraph: (missing)
+
+out.complexint8.long
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Int64 is not supported.
+  JGraph: (missing)
+
+out.complexint8.ulong
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.UInt64 is not supported.
+  JGraph: (missing)
+
+out.complexint8.sbyte
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.SByte is not supported.
+  JGraph: (missing)
+
+out.complexint8.byte
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Byte is not supported.
+  JGraph: (missing)
+
+out.complexint8.short
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Int16 is not supported.
+  JGraph: (missing)
+
+out.complexint8.ushort
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.UInt16 is not supported.
+  JGraph: (missing)
+
+out.complexint8.uint
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.UInt32 is not supported.
+  JGraph: (missing)
+
+out.complexint8.bool
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Boolean is not supported.
+  JGraph: (missing)
+
+out.complexint8.char
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Char is not supported.
+  JGraph: (missing)
+
+out.complexint8.string
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.String is not supported.
+  JGraph: (missing)
+
+out.complexint8.Complex
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Numerics.Complex is not supported.
+  JGraph: (missing)
+
+out.complexint8.decimal
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Decimal is not supported.
+  JGraph: (missing)
+
+out.complexint8.double[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Double[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.double[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Double[,] is not supported.
+  JGraph: (missing)
+
+out.complexint8.double[,,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Double[,,] is not supported.
+  JGraph: (missing)
+
+out.complexint8.float[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Single[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.int[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Int32[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.sbyte[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.SByte[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.byte[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Byte[,] is not supported.
+  JGraph: (missing)
+
+out.complexint8.Complex[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Numerics.Complex[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.bool[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Boolean[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.bool[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Boolean[,] is not supported.
+  JGraph: (missing)
+
+out.complexint8.char[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Char[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.char[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Char[,] is not supported.
+  JGraph: (missing)
+
+out.complexint8.string[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.String[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.string[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.String[,] is not supported.
+  JGraph: (missing)
+
+out.complexint8.object[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Object[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.object[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Object[,] is not supported.
+  JGraph: (missing)
+
+out.complexint8.MATLABArray
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: (missing)
+
+out.complexint8.MATLABStruct
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'JGraph.MATLAB.Types.MATLABStruct'.
+  JGraph: (missing)
+
+out.complexint8.MATLABStruct[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to JGraph.MATLAB.Types.MATLABStruct[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.MATLABObject
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'JGraph.MATLAB.Types.MATLABObject'.
+  JGraph: (missing)
+
+out.complexint8.MATLABObject[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to JGraph.MATLAB.Types.MATLABObject[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.k9color
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to K9.k9color is not supported.
+  JGraph: (missing)
+
+out.complexint8.k9color[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to K9.k9color[] is not supported.
+  JGraph: (missing)
+
+out.complexint8.DayOfWeek
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.DayOfWeek is not supported.
+  JGraph: (missing)
+
+out.complexint8.Dictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.complexint8.Dictionary<double,string>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Collections.Generic.Dictionary`2[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.complexint8.Dictionary<string,object>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.complexint8.IDictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.Generic.IDictionary`2[System.String,System.Double]'.
+  JGraph: (missing)
+
+out.complexint8.IReadOnlyDictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.Generic.IReadOnlyDictionary`2[System.String,System.Double]'.
+  JGraph: (missing)
+
+out.complexint8.Dictionary<object,object>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Collections.Generic.Dictionary`2[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.complexint8.List<double>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.Collections.Generic.List`1[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.complexint8.IEnumerable
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.IEnumerable'.
+  JGraph: (missing)
+
+out.complexint8.DateTime
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB complex int8 scalar to System.DateTime is not supported.
+  JGraph: (missing)
+
+out.complexint8.ValueTuple<double>
+  R2025b: THREW System.InvalidCastException: Unable to convert to System.ValueTuple`1[System.Double] from 1 MATLAB outputs.
+  JGraph: (missing)
+
+out.sparselogical.double
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Double is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Double is not supported.
+
+out.sparselogical.float
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Single is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Single is not supported.
+
+out.sparselogical.int
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Int32 is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Int32 is not supported.
+
+out.sparselogical.long
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Int64 is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Int64 is not supported.
+
+out.sparselogical.ulong
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.UInt64 is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.UInt64 is not supported.
+
+out.sparselogical.sbyte
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.SByte is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.SByte is not supported.
+
+out.sparselogical.byte
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Byte is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Byte is not supported.
+
+out.sparselogical.short
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Int16 is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Int16 is not supported.
+
+out.sparselogical.ushort
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.UInt16 is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.UInt16 is not supported.
+
+out.sparselogical.uint
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.UInt32 is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.UInt32 is not supported.
+
+out.sparselogical.bool
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Boolean is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Boolean is not supported.
+
+out.sparselogical.char
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Char is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Char is not supported.
+
+out.sparselogical.string
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.String is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.String is not supported.
+
+out.sparselogical.Complex
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Numerics.Complex is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Numerics.Complex is not supported.
+
+out.sparselogical.decimal
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Decimal is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Decimal is not supported.
+
+out.sparselogical.double[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Double[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Double[] is not supported.
+
+out.sparselogical.double[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Double[,] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Double[,] is not supported.
+
+out.sparselogical.double[,,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Double[,,] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Double[,,] is not supported.
+
+out.sparselogical.float[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Single[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Single[] is not supported.
+
+out.sparselogical.int[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Int32[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Int32[] is not supported.
+
+out.sparselogical.sbyte[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.SByte[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.SByte[] is not supported.
+
+out.sparselogical.byte[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Byte[,] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Byte[,] is not supported.
+
+out.sparselogical.Complex[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Numerics.Complex[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Numerics.Complex[] is not supported.
+
+out.sparselogical.bool[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Boolean[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Boolean[] is not supported.
+
+out.sparselogical.bool[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Boolean[,] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Boolean[,] is not supported.
+
+out.sparselogical.char[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Char[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Char[] is not supported.
+
+out.sparselogical.char[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Char[,] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Char[,] is not supported.
+
+out.sparselogical.string[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.String[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.String[] is not supported.
+
+out.sparselogical.string[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.String[,] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.String[,] is not supported.
+
+out.sparselogical.object[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Object[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Object[] is not supported.
+
+out.sparselogical.object[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Object[,] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Object[,] is not supported.
+
+out.sparselogical.MATLABStruct[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to JGraph.MATLAB.Types.MATLABStruct[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to JGraph.MATLAB.Types.MATLABStruct[] is not supported.
+
+out.sparselogical.MATLABObject[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to JGraph.MATLAB.Types.MATLABObject[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to JGraph.MATLAB.Types.MATLABObject[] is not supported.
+
+out.sparselogical.k9color
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to K9.k9color is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to K9.k9color is not supported.
+
+out.sparselogical.k9color[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to K9.k9color[] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to K9.k9color[] is not supported.
+
+out.sparselogical.DayOfWeek
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.DayOfWeek is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.DayOfWeek is not supported.
+
+out.sparselogical.Dictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+
+out.sparselogical.Dictionary<double,string>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Collections.Generic.Dictionary`2[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Collections.Generic.Dictionary`2[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+
+out.sparselogical.Dictionary<string,object>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+
+out.sparselogical.Dictionary<object,object>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Collections.Generic.Dictionary`2[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Collections.Generic.Dictionary`2[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+
+out.sparselogical.List<double>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.Collections.Generic.List`1[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.Collections.Generic.List`1[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+
+out.sparselogical.DateTime
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse logical array to System.DateTime is not supported.
+  JGraph: THREW System.InvalidCastException: Conversion from MATLAB sparse double array to System.DateTime is not supported.
+
+out.sparsecomplex
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: THREW Exceptions.MATLABExecutionException: sparse needs numbers, but element (0, 0) was a complex.\nError in k9make (line 61) in file: <cache>\k9make.m
+
+out.sparsecomplex.object
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: (missing)
+
+out.sparsecomplex.double
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Double is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.float
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Single is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.int
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Int32 is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.long
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Int64 is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.ulong
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.UInt64 is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.sbyte
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.SByte is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.byte
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Byte is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.short
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Int16 is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.ushort
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.UInt16 is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.uint
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.UInt32 is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.bool
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Boolean is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.char
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Char is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.string
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.String is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.Complex
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Numerics.Complex is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.decimal
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Decimal is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.double[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Double[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.double[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Double[,] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.double[,,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Double[,,] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.float[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Single[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.int[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Int32[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.sbyte[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.SByte[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.byte[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Byte[,] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.Complex[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Numerics.Complex[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.bool[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Boolean[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.bool[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Boolean[,] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.char[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Char[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.char[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Char[,] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.string[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.String[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.string[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.String[,] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.object[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Object[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.object[,]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Object[,] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.MATLABArray
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: (missing)
+
+out.sparsecomplex.MATLABStruct
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'JGraph.MATLAB.Types.MATLABStruct'.
+  JGraph: (missing)
+
+out.sparsecomplex.MATLABStruct[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to JGraph.MATLAB.Types.MATLABStruct[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.MATLABObject
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'JGraph.MATLAB.Types.MATLABObject'.
+  JGraph: (missing)
+
+out.sparsecomplex.MATLABObject[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to JGraph.MATLAB.Types.MATLABObject[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.k9color
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to K9.k9color is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.k9color[]
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to K9.k9color[] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.DayOfWeek
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.DayOfWeek is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.Dictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.Dictionary<double,string>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Collections.Generic.Dictionary`2[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.Dictionary<string,object>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.IDictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.Generic.IDictionary`2[System.String,System.Double]'.
+  JGraph: (missing)
+
+out.sparsecomplex.IReadOnlyDictionary<string,double>
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.Generic.IReadOnlyDictionary`2[System.String,System.Double]'.
+  JGraph: (missing)
+
+out.sparsecomplex.Dictionary<object,object>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Collections.Generic.Dictionary`2[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.List<double>
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.Collections.Generic.List`1[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.IEnumerable
+  R2025b: THREW System.InvalidCastException: Unable to cast object of type 'JGraph.MATLAB.Types.MATLABArray' to type 'System.Collections.IEnumerable'.
+  JGraph: (missing)
+
+out.sparsecomplex.DateTime
+  R2025b: THREW System.InvalidCastException: Conversion from MATLAB sparse complex double array to System.DateTime is not supported.
+  JGraph: (missing)
+
+out.sparsecomplex.ValueTuple<double>
+  R2025b: THREW System.InvalidCastException: Unable to convert to System.ValueTuple`1[System.Double] from 1 MATLAB outputs.
+  JGraph: (missing)
+
+out.datetime.object[]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: System.Object[] [1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+out.datetime.object[,]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: System.Object[,] [1,1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+out.datetime.MATLABObject[]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: Types.MATLABObject[] [1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+out.categorical.object[]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: System.Object[] [1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+out.categorical.object[,]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: System.Object[,] [1,1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+out.categorical.MATLABObject[]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: Types.MATLABObject[] [1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+out.duration.object[]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: System.Object[] [1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+out.duration.object[,]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: System.Object[,] [1,1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+out.duration.MATLABObject[]
+  R2025b: THREW Exceptions.MATLABException: An unmanaged API returned the error code ObjectNotAccessible.
+  JGraph: Types.MATLABObject[] [1] {Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>}
+
+struct.names.type
+  R2025b: THREW System.ArgumentOutOfRangeException: length ('-1') must be a non-negative value. (Parameter 'length')\nActual value was -1.
+  JGraph: "System.String[]"
+
+struct.new.invalid
+  R2025b: MATLABStruct{1x=1}
+  JGraph: THREW System.ArgumentException: Invalid field name 1x.
+
+object.missing
+  R2025b: THREW Exceptions.MATLABExecutionException: MATLAB:noSuchMethodOrField: Unrecognized method, property, or field 'nosuch' for class 'k9point'.\nError in getProperty (line 25) in file: <cache>\getProperty.m
+  JGraph: THREW Exceptions.MATLABExecutionException: MATLAB:noSuchMethodOrField: Unrecognized method, property, or field 'nosuch' for class 'k9point'.
+
+object.static
+  R2025b: THREW Exceptions.MATLABExecutionException: Function k9point.origin not found in the component.
+  JGraph: Types.MATLABObject <<JGraph.MATLAB.Types.MATLABObject>>
+
+object.static.X
+  R2025b: THREW Exceptions.MATLABExecutionException: Function k9point.origin not found in the component.
+  JGraph: 0
+
+handle.after.delete
+  R2025b: THREW Exceptions.MATLABExecutionException: MATLAB:class:InvalidHandle: Invalid or deleted object.\nError in getProperty (line 25) in file: <cache>\getProperty.m
+  JGraph: THREW Exceptions.MATLABExecutionException: MATLAB:class:InvalidHandle: Invalid or deleted object.
+
+call.nargout.negative
+  R2025b: THREW Exceptions.MATLABExecutionException: vector too long
+  JGraph: THREW System.ArgumentOutOfRangeException: The number of outputs must not be negative. (Parameter 'nargout')\nActual value was -1.
+
+call.pkg
+  R2025b: Types.MATLABArray <<JGraph.MATLAB.Types.MATLABArray>>
+  JGraph: THREW Exceptions.MATLABExecutionException: feval: 'k9pkg.k9inner' is not a function.
+
+call.pkg.double
+  R2025b: 101
+  JGraph: THREW Exceptions.MATLABExecutionException: feval: 'k9pkg.k9inner' is not a function.
+
+call.keyHash
+  R2025b: THREW Exceptions.MATLABExecutionException: Function keyHash not found in the component.
+  JGraph: "Types.MATLABArray"
+
+error.builtin.stderr
+  R2025b: <<Error using *\nIncorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.\n\nError in k9err (line 11)\n\n\n>>
+  JGraph: <<Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.\n\nError in k9err (line 11)\n\n\n>>
+
+error.undefined.stderr
+  R2025b: <<Unrecognized function or variable 'k9nosuchfunction'.\n\nError in k9err (line 12)\n\n\n>>
+  JGraph: <<Undefined function 'k9nosuchfunction' for input arguments of type 'double'.\n\nError in k9err (line 12)\n\n\n>>
+
+print.writers.stdout
+  R2025b: <<line \n1\n\n\nline \n2\n\n\n     2\nWarning: a warning about 2\n\n\n\n> In k9print (line 7)\n\n>>
+  JGraph: <<line 1\nline 2\n2\nWarning: a warning about 2\n>>
+
+print.noout.stdout
+  R2025b: <<line \n1\n\n\nline \n2\n\n\n     2\nWarning: a warning about 2\n\n\n\n> In k9print (line 7)\n\nnoout \nstring [1 1] ["z"]\n\n\n>>
+  JGraph: <<line 1\nline 2\n2\nWarning: a warning about 2\nnoout string [1 1] ["z"]\n>>
+
+second.object.from.first
+  R2025b: "k9point [1 1] (X=double [1 1] [1], Y=double [1 1] [2], Tag=string [1 1] ["pt"])"
+  JGraph: THREW Exceptions.UnsupportedTypeException: A MATLAB object can be passed only to the MATLAB runtime instance that returned it.
+
+typed.nv.2
+  R2025b: THREW Exceptions.MATLABExecutionException: MATLAB:TooManyInputs: Invalid argument at position 2. Function requires exactly 1 positional input(s).\nError in k9nv (line 1) in file: <cache>\k9nv.m
+  JGraph: "2 3 none"
+
+typed.nv.3
+  R2025b: THREW Exceptions.MATLABExecutionException: MATLAB:TooManyInputs: Invalid argument at position 2. A name is expected.\nError in k9nv (line 1) in file: <cache>\k9nv.m
+  JGraph: "2 3 x"
+
+typed.pkg
+  R2025b: 101
+  JGraph: THREW Exceptions.MATLABExecutionException: feval: 'k9pkg.k9inner' is not a function.
+
+typed.point.origin
+  R2025b: THREW Exceptions.MATLABExecutionException: Function k9point.origin not found in the component.
+  JGraph: 0
+
+typed.point.hash
+  R2025b: THREW Exceptions.MATLABExecutionException: Function keyHash not found in the component.
+  JGraph: true
+
+typed.counter.op.lt
+  R2025b: false
+  JGraph: true
+
+typed.counter.after.delete
+  R2025b: THREW Exceptions.MATLABExecutionException: MATLAB:class:InvalidHandle: Invalid or deleted object.\nError in getProperty (line 25) in file: <cache>\getProperty.m
+  JGraph: THREW Exceptions.MATLABExecutionException: MATLAB:class:InvalidHandle: Invalid or deleted object.
+
+typed.counter.hash
+  R2025b: THREW Exceptions.MATLABExecutionException: Function keyHash not found in the component.
+  JGraph: true
+
+printed lines
+  R2025b: STDERR| Error using k9counter/increment | STDERR| Too many output arguments. | STDERR|  | STDERR|  | STDERR| Error using k9counter/increment (line 13) | STDERR| Invalid argument list. Function requires 1 more input(s). | STDERR|  | STDERR|  | STDERR| Error using k9multi | STDERR| Too many output arguments. | STDERR|  | STDERR|  | STDERR| Caught "std::exception" Exception message is: | STDERR| vector too long | STDERR|  | STDERR| Error using k9noout | STDERR| Too many output arguments. | STDERR|  | STDERR|  | noout  | double [1 1] [1] | STDERR| Error using k9t_none | STDERR| Too many output arguments. | STDERR|  | STDERR|  | k9t_none ran | STDERR| Not enough input arguments. | STDERR|  | STDERR| Error in k9echo (line 3) | STDERR|  | STDERR|  | STDERR| Error using k9echo | STDERR| Too many input arguments. | STDERR|  | STDERR|  | STDERR| Error using k9nv (line 1) | STDERR| Invalid argument name 'Bad'. Name must be 'Scale' or 'Label'. | STDERR|  | STDERR|  | STDERR| Error using k9nv (line 1) | STDERR| Invalid argument at position 1. Function requires exactly 1 positional input(s) before name 'Scale'. | STDERR|  | STDERR|  | STDERR| Error using k9nv (line 1) | STDERR| Invalid argument at position 2. Function requires exactly 1 positional input(s). | STDERR|  | STDERR|  | STDERR| Error using == | STDERR| Invalid data type. Argument must be numeric, char, or logical. | STDERR|  | STDERR|  | STDERR| Error using k9err (line 4) | STDERR| A plain error. | STDERR|  | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | STDERR| Error using k9err>k9inner (line 18) | STDERR| Raised two calls down. | STDERR|  | STDERR| Error in k9err (line 6) | STDERR|  | STDERR|  | STDERR| Error using k9err (line 10) | STDERR| The outer error. | STDERR|  | STDERR| Caused by: | STDERR|     The cause. | STDERR|  | STDERR|  | STDERR| Error using * | STDERR| Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication. | STDERR|  | STDERR| Error in k9err (line 11) | STDERR|  | STDERR|  | STDERR| Unrecognized function or variable 'k9nosuchfunction'. | STDERR|  | STDERR| Error in k9err (line 12) | STDERR|  | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | STDERR| Error using k9t_real (line 4) | STDERR| Invalid argument at position 1. Value must be a scalar. | STDERR|  | STDERR|  | line  | 1 |      1 | Warning: a warning about 1 | STDERR| to standard error | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | Warning: Property 'X' in class 'k9point' uses an obsolete validation datatype 'k9point: (1,1) double'. | Warning: Property 'Y' in class 'k9point' uses an obsolete validation datatype 'k9point: (1,1) double'. | Warning: Property 'Tag' in class 'k9point' uses an obsolete validation datatype 'k9point: (1,1) string'. | STDERR| Error using k9t_real (line 7) | STDERR| Invalid argument at position 4. Value must be an array of size 2-by-3-by-4. | STDERR|  | STDERR|  | k9t_none ran | STDERR| Error using k9nv (line 1) | STDERR| Invalid argument at position 2. Function requires exactly 1 positional input(s). | STDERR|  | STDERR|  | STDERR| Error using k9nv (line 1) | STDERR| Invalid argument at position 2. A name is expected. | STDERR|  | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | noout  | double [1 1] [3] | STDERR| Error using == | STDERR| Invalid data type. Argument must be numeric, char, or logical. | STDERR|  | STDERR|  | STDERR| Error using ~= | STDERR| Invalid data type. Argument must be numeric, char, or logical. | STDERR|  | STDERR|  | STDERR| Error using == | STDERR| Invalid data type. Argument must be numeric, char, or logical. | STDERR|  | STDERR|  | STDERR| Invalid or deleted object. | STDERR|  | STDERR| Error in matlab.internal.engine.getProperty (line 25) | STDERR|  | STDERR| 
+  JGraph: STDERR| int8 expects a number or numeric array, but got a complex. | STDERR|  | STDERR| Error in k9make (line 30) | STDERR|  | STDERR|  | STDERR| sparse needs numbers, but element (0, 0) was a complex. | STDERR|  | STDERR| Error in k9make (line 61) | STDERR|  | STDERR|  | STDERR| Error using k9counter/increment | STDERR| Too many output arguments. | STDERR|  | STDERR|  | STDERR| Error using k9counter/increment (line 13) | STDERR| Invalid argument list. Function requires 1 more input(s). | STDERR|  | STDERR|  | STDERR| Error using k9multi | STDERR| Too many output arguments. | STDERR|  | STDERR|  | STDERR| Error using k9noout | STDERR| Too many output arguments. | STDERR|  | STDERR|  | noout double [1 1] [1] | STDERR| Error using k9t_none | STDERR| Too many output arguments. | STDERR|  | STDERR|  | k9t_none ran | STDERR| Not enough input arguments. | STDERR|  | STDERR| Error in k9echo (line 3) | STDERR|  | STDERR|  | STDERR| Error using k9echo | STDERR| Too many input arguments. | STDERR|  | STDERR|  | STDERR| Error using k9nv (line 1) | STDERR| Invalid argument name 'Bad'. Name must be 'Scale' or 'Label'. | STDERR|  | STDERR|  | STDERR| Error using k9nv (line 1) | STDERR| Invalid argument at position 1. Function requires exactly 1 positional input(s) before name 'Scale'. | STDERR|  | STDERR|  | STDERR| Error using k9nv (line 1) | STDERR| Invalid argument at position 2. Function requires exactly 1 positional input(s). | STDERR|  | STDERR|  | STDERR| Error using k9pkg.k9inner | STDERR| feval: 'k9pkg.k9inner' is not a function. | STDERR|  | STDERR|  | STDERR| Error using k9pkg.k9inner | STDERR| feval: 'k9pkg.k9inner' is not a function. | STDERR|  | STDERR|  | STDERR| Error using == | STDERR| Invalid data type. Argument must be numeric, char, or logical. | STDERR|  | STDERR|  | STDERR| Error using k9err (line 4) | STDERR| A plain error. | STDERR|  | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | STDERR| Error using k9err>k9inner (line 18) | STDERR| Raised two calls down. | STDERR|  | STDERR| Error in k9err (line 6) | STDERR|  | STDERR|  | STDERR| Error using k9err (line 10) | STDERR| The outer error. | STDERR|  | STDERR| Caused by: | STDERR|     The cause. | STDERR|  | STDERR|  | STDERR| Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication. | STDERR|  | STDERR| Error in k9err (line 11) | STDERR|  | STDERR|  | STDERR| Undefined function 'k9nosuchfunction' for input arguments of type 'double'. | STDERR|  | STDERR| Error in k9err (line 12) | STDERR|  | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | STDERR| Error using k9t_real (line 4) | STDERR| Invalid argument at position 1. Value must be a scalar. | STDERR|  | STDERR|  | line 1 | 1 | Warning: a warning about 1 | STDERR| to standard error | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | STDERR| Error using k9t_real (line 7) | STDERR| Invalid argument at position 4. Value must be an array of size 2-by-3-by-4. | STDERR|  | STDERR|  | k9t_none ran | STDERR| Error using k9pkg.k9inner | STDERR| feval: 'k9pkg.k9inner' is not a function. | STDERR|  | STDERR|  | STDERR| Error using k9err (line 5) | STDERR| An error with an identifier: 7. | STDERR|  | STDERR|  | noout double [1 1] [3] | STDERR| Error using == | STDERR| Invalid data type. Argument must be numeric, char, or logical. | STDERR|  | STDERR|  | STDERR| Error using ~= | STDERR| Invalid data type. Argument must be numeric, char, or logical. | STDERR|  | STDERR|  | STDERR| Error using == | STDERR| Invalid data type. Argument must be numeric, char, or logical. | STDERR|  | STDERR|  | STDERR| Error using matlab.internal.engine.getProperty | STDERR| Invalid or deleted object. | STDERR|  | STDERR| 
+
+standard error
+  R2025b: Error using clear | In definition of enumeration member 'red' in class 'k9color': | Method 'k9color' is not defined for class 'k9color' or is removed from MATLAB's search path.
+  JGraph: 
+
+build main.printed
+  R2025b: 
+|mcc -W 'dotnet:K9,api=matlab-data,k9describeClass,4.0,Private,local' -T link:lib -d <W>\b\dn\K9 -v -Z autodetect 'class{k9describeClass:<W>\b\src\+k9pkg\k9inner.m,<W>\b\src\k9color.m,<W>\b\src\k9counter.m,<W>\b\src\k9describe.m,<W>\b\src\k9echo.m,<W>\b\src\k9err.m,<W>\b\src\k9make.m,<W>\b\src\k9multi.m,<W>\b\src\k9noout.m,<W>\b\src\k9nv.m,<W>\b\src\k9point.m,<W>\b\src\k9print.m,<W>\b\src\k9quiet.m,<W>\b\src\k9slow.m,<W>\b\src\k9t_cplx.m,<W>\b\src\k9t_ints.m,<W>\b\src\k9t_keyword.m,<W>\b\src\k9t_misc.m,<W>\b\src\k9t_multi.m,<W>\b\src\k9t_none.m,<W>\b\src\k9t_objects.m,<W>\b\src\k9t_opt.m,<W>\b\src\k9t_real.m,<W>\b\src\k9t_ref.m,<W>\b\src\k9t_untyped.m}'
+|3 class(es) and 22 function(s) written to <W>\b\dn\K9\strongly_typed_interface
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Generating file "<W>\b\dn\K9\readme.txt".
+  JGraph: 
+|mcc -W 'dotnet:K9,api=matlab-data,k9describeClass,4.0,Private,local' -T link:lib -d <W>\b\dn\K9 -v -Z autodetect 'class{k9describeClass:<W>\b\src\+k9pkg\k9inner.m,<W>\b\src\k9color.m,<W>\b\src\k9counter.m,<W>\b\src\k9describe.m,<W>\b\src\k9echo.m,<W>\b\src\k9err.m,<W>\b\src\k9make.m,<W>\b\src\k9multi.m,<W>\b\src\k9noout.m,<W>\b\src\k9nv.m,<W>\b\src\k9point.m,<W>\b\src\k9print.m,<W>\b\src\k9quiet.m,<W>\b\src\k9slow.m,<W>\b\src\k9t_cplx.m,<W>\b\src\k9t_ints.m,<W>\b\src\k9t_keyword.m,<W>\b\src\k9t_misc.m,<W>\b\src\k9t_multi.m,<W>\b\src\k9t_none.m,<W>\b\src\k9t_objects.m,<W>\b\src\k9t_opt.m,<W>\b\src\k9t_real.m,<W>\b\src\k9t_ref.m,<W>\b\src\k9t_untyped.m}'
+|3 class(es) and 22 function(s) written to <W>\b\dn\K9\strongly_typed_interface
+|Compiler version: JGraph 0.2.3 (R2025b)
+|Analyzing file dependencies.
+|Generating file "<W>\b\dn\K9\readme.txt".
+
+build main.readme
+  R2025b: 1547 chars, CRLF 42, ends with newline 1
+|K9 MATLAB Archive (.NET Component)
+|1. Prerequisites for Deployment
+|Verify that MATLAB Runtime(R2025b) is installed.
+|If not, you can run the MATLAB Runtime installer.
+|To find its location, enter
+| >>mcrinstaller
+|at the MATLAB prompt.
+|NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+|Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+|from the following link on the MathWorks website:
+| https://www.mathworks.com/products/compiler/mcr/index.html
+|For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+|"Distribute Applications" in the MATLAB Compiler SDK documentation
+|in the MathWorks Documentation Center.
+|2. Files to Deploy and Package
+|-K9.ctf
+| -contains the generated component to be used by MATLAB Compiler SDK's MATLAB Data Array based .NET APIs.
+|-strongly_typed_interface folder
+| -contains the generated C# files for strongly typed interface to be used by MATLAB Compiler SDK's MATLAB Data Array based .NET APIs.
+|-This readme file
+|3. Definitions
+|For information on deployment terminology, go to
+|https://www.mathworks.com/help and select MATLAB Compiler >
+|Getting Started > About Application Deployment >
+|Deployment Product Terms in the MathWorks Documentation
+|Center.
+|* NOTE: <mcr_root> is the directory where the MATLAB Runtime is installed on the target
+| machine.
+| <matlab_root> is the directory where MATLAB is installed on the target machine.
+  JGraph: 994 chars, CRLF 24, ends with newline 1
+|K9 MATLAB Archive (.NET Component)
+|1. Prerequisites for Deployment
+|The JGraph Runtime 0.2.3 must be installed on the computer the archive runs on,
+|or its folder named by the JGRAPH_RUNTIME_ROOT environment variable. Clients run on .NET 8 or later.
+|2. Files to Deploy and Package
+|-K9.ctf
+| -the deployable archive a client opens with MATLABRuntime.StartMATLAB.
+|-strongly_typed_interface folder
+| -the C# files of the strongly typed interface, which K9.dll is compiled from.
+|-K9.dll
+| -the strongly typed interface, for a client to reference.
+|-JGraph.MATLAB.Runtime.dll
+| -the MATLAB Data API, from the JGraph Runtime's extern\dotnet\net8.0 folder.
+|-This readme file
+|3. Definitions
+|The JGraph Runtime is the engine a built component runs on, installed once per JGraph version.
+|The MATLAB Data API keeps MathWorks' names under the JGraph.MATLAB namespaces: a client written for
+|MATLAB's runtime changes its using lines from MathWorks.MATLAB to JGraph.MATLAB.
+
+build main.csproj
+  R2025b: 955 chars, CRLF 23, ends with newline 1
+|<Project Sdk = "Microsoft.NET.Sdk">
+| <PropertyGroup>
+| <TargetFramework>netstandard2.0</TargetFramework>
+| <PlatformTarget>AnyCPU</PlatformTarget>
+| <OutputType>library</OutputType>
+| <DebugType>None</DebugType>
+| <Optimize>true</Optimize>
+| <LangVersion>8.0</LangVersion>
+| <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+| <CopyReferenceAssemblies>false</CopyReferenceAssemblies>
+| <DefineConstants>$(DefineConstants); __IN_MCC</DefineConstants>
+| <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+| <Version>1.0.0.0</Version>
+| </PropertyGroup>
+| <ItemGroup>
+| <Reference Include = "Microsoft.CSharp" />
+| <PackageReference Include = "Microsoft.CSharp" Version = "4.*" />
+| <Compile Include = "strongly_typed_interface\*.cs" />
+| <Reference Include = "<MATLABROOT>\extern\dotnet\netstandard2.0\JGraph.MATLAB.Types.dll">
+| <Private>False</Private>
+| </Reference>
+| </ItemGroup>
+|</Project>
+  JGraph: 798 chars, CRLF 20, ends with newline 1
+|<Project Sdk = "Microsoft.NET.Sdk">
+| <PropertyGroup>
+| <TargetFramework>net8.0</TargetFramework>
+| <PlatformTarget>AnyCPU</PlatformTarget>
+| <OutputType>library</OutputType>
+| <DebugType>None</DebugType>
+| <Optimize>true</Optimize>
+| <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+| <CopyReferenceAssemblies>false</CopyReferenceAssemblies>
+| <DefineConstants>$(DefineConstants); __IN_MCC</DefineConstants>
+| <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+| <Version>1.0.0.0</Version>
+| </PropertyGroup>
+| <ItemGroup>
+| <Compile Include = "strongly_typed_interface\*.cs" />
+| <Reference Include = "<REPO>\src\JGraph.Cli\bin\Debug\net8.0\JGraph.MATLAB.Runtime.dll">
+| <Private>False</Private>
+| </Reference>
+| </ItemGroup>
+|</Project>
+
+build main.deps
+  R2025b: 1066 chars, CRLF 41, ends with newline 0
+|{
+| "runtimeTarget": {
+| "name": ".NETStandard,Version=v2.0/",
+| "signature": ""
+| },
+| "compilationOptions": {},
+| "targets": {
+| ".NETStandard,Version=v2.0": {},
+| ".NETStandard,Version=v2.0/": {
+| "K9/1.0.0.0": {
+| "dependencies": {
+| "Microsoft.CSharp": "4.7.0"
+| },
+| "runtime": {
+| "K9.dll": {}
+| }
+| },
+| "Microsoft.CSharp/4.7.0": {
+| "runtime": {
+| "lib/netstandard2.0/Microsoft.CSharp.dll": {
+| "assemblyVersion": "4.0.5.0",
+| "fileVersion": "4.700.19.56404"
+| }
+| }
+| }
+| }
+| },
+| "libraries": {
+| "K9/1.0.0.0": {
+| "type": "project",
+| "serviceable": false,
+| "sha512": ""
+| },
+| "Microsoft.CSharp/4.7.0": {
+| "type": "package",
+| "serviceable": true,
+| "sha512": "sha512-pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+| "path": "microsoft.csharp/4.7.0",
+| "hashPath": "microsoft.csharp.4.7.0.nupkg.sha512"
+| }
+| }
+|}
+  JGraph: 402 chars, CRLF 22, ends with newline 0
+|{
+| "runtimeTarget": {
+| "name": ".NETCoreApp,Version=v8.0",
+| "signature": ""
+| },
+| "compilationOptions": {},
+| "targets": {
+| ".NETCoreApp,Version=v8.0": {
+| "K9/1.0.0.0": {
+| "runtime": {
+| "K9.dll": {}
+| }
+| }
+| }
+| },
+| "libraries": {
+| "K9/1.0.0.0": {
+| "type": "project",
+| "serviceable": false,
+| "sha512": ""
+| }
+| }
+|}
+
+build optmethod.printed
+  R2025b: 
+|<W>\b\optmethod\strongly_typed_interface\k9opt.cs(36,48): error CS1525: Invalid expression term ')' [<W>\b\optmethod\K9o.csproj]
+|Note: A .NET assembly for strongly typed interface to MATLAB code could not be generated. If a strongly typed interface is not required for your MATLAB code, enable the "STRONGLY_TYPED_DISABLED" environment variable by setting its value to "1" using the setenv function.
+  JGraph: 
+
+build optmethod.results
+  R2025b: 
+Results with properties:
+BuildType: 'dotNETAssembly'
+Files: {3×1 cell}
+IncludedSupportPackages: {}
+Options: [1×1 compiler.build.DotNETAssemblyOptions]
+RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: 
+Results with properties:
+BuildType: 'dotNETAssembly'
+Files: {4×1 cell}
+IncludedSupportPackages: {}
+Options: [1×1 compiler.build.DotNETAssemblyOptions]
+RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+
+build optmethod.Files
+  R2025b: <OUT>\K9o.ctf | <OUT>\strongly_typed_interface | <OUT>\GettingStarted.html
+  JGraph: <OUT>\K9o.ctf | <OUT>\strongly_typed_interface | <OUT>\K9o.dll | <OUT>\GettingStarted.html
+
+build optmethod.files
+  R2025b: GettingStarted.html | K9o.csproj | K9o.ctf | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9opt.cs | unresolvedSymbols.txt
+  JGraph: GettingStarted.html | K9o.csproj | K9o.ctf | K9o.deps.json | K9o.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k9opt.cs | unresolvedSymbols.txt
+
+build optmethod.typed.k9opt.cs
+  R2025b: CRLF 0, ends with newline 1
+|/* File: k9opt.cs
+|*
+|* Strongly Typed Interface Version: <VERSION>
+|* C# source code generated on: 24-Oct-2026
+|*/
+|using System;
+|using JGraph.MATLAB.Types;
+|using JGraph.MATLAB.Exceptions;
+|namespace K9o{
+|[MATLABClass("k9opt")]
+|public class k9opt:IEquatable<k9opt> {
+| private dynamic _objrep;
+| private dynamic _matlab;
+| public k9opt(MATLABProvider _matlab){
+| this._matlab = _matlab;
+| _objrep = (MATLABArray)this._matlab.k9opt(new RunOptions(nargout:1));
+| }
+| private k9opt (){}
+| public double Total {
+| get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Total");
+| set => _objrep = _matlab.matlab.@internal.engine.setProperty(_objrep,"Total",value);
+| }
+| public dynamic Twice {
+| get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Twice");
+| }
+| public static bool operator < (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.lt(obj1,obj2);
+| return ret;
+| }
+| public void bump(double @by){
+| _objrep.bump(new RunOptions(nargout:0),@by);
+| }
+| public void bump(){
+| _objrep.bump(new RunOptions(nargout:0),);
+| }
+| public void eq(dynamic B){
+| _objrep.eq(new RunOptions(nargout:0),B);
+| }
+| public void eq(dynamic B, out dynamic TF){
+| TF = (MATLABArray)_objrep.eq(new RunOptions(nargout:1),B);
+| }
+| public void ne(dynamic B){
+| _objrep.ne(new RunOptions(nargout:0),B);
+| }
+| public void ne(dynamic B, out dynamic TF){
+| TF = (MATLABArray)_objrep.ne(new RunOptions(nargout:1),B);
+| }
+| public static bool operator > (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.gt(obj1,obj2);
+| return ret;
+| }
+| public static bool operator <= (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.le(obj1,obj2);
+| return ret;
+| }
+| public static bool operator >= (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.ge(obj1,obj2);
+| return ret;
+| }
+| public void delete(){
+| _objrep.delete(new RunOptions(nargout:0));
+| }
+| public void isvalid(){
+| _objrep.isvalid(new RunOptions(nargout:0));
+| }
+| public void isvalid( out dynamic validity){
+| validity = (MATLABArray)_objrep.isvalid(new RunOptions(nargout:1));
+| }
+| public static bool operator == (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.eq(obj1,obj2);
+| return ret;
+| }
+| public static bool operator != (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.ne(obj1,obj2);
+| return ret;
+| }
+| public override bool Equals (Object obj){
+| if (obj == null){
+| return false;
+| }
+| try{
+| k9opt _obj = (k9opt)obj;
+| return (this == _obj);
+| }
+| catch(Exception){
+| return false;
+| }
+| }
+| public bool Equals(k9opt obj){
+| return this == obj;
+| }
+| public override int GetHashCode(){
+| UInt64 hashcode = _matlab.keyHash(_objrep);
+| return hashcode.GetHashCode();
+| }
+| public static implicit operator MATLABObject(k9opt k9opt){
+| return k9opt._objrep;
+| }
+| public static implicit operator k9opt(MATLABObject _obj){
+| k9opt k9opt = new k9opt();
+| k9opt._objrep = _obj;
+|#pragma warning disable CS8601, CS8602
+| k9opt._matlab = typeof(MATLABObject).GetField("Matlab", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(_obj);
+|#pragma warning restore
+| return k9opt;
+| }
+|}
+|}
+  JGraph: CRLF 0, ends with newline 1
+|/* File: k9opt.cs
+|*
+|* Strongly Typed Interface Version: <VERSION>
+|* C# source code generated on: 24-Oct-2026
+|*/
+|using System;
+|using JGraph.MATLAB.Types;
+|using JGraph.MATLAB.Exceptions;
+|namespace K9o{
+|[MATLABClass("k9opt")]
+|public class k9opt:IEquatable<k9opt> {
+| private dynamic _objrep;
+| private dynamic _matlab;
+| public k9opt(MATLABProvider _matlab){
+| this._matlab = _matlab;
+| _objrep = (MATLABArray)this._matlab.k9opt(new RunOptions(nargout:1));
+| }
+| private k9opt (){}
+| public double Total {
+| get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Total");
+| set => _objrep = _matlab.matlab.@internal.engine.setProperty(_objrep,"Total",value);
+| }
+| public dynamic Twice {
+| get => _matlab.matlab.@internal.engine.getProperty(_objrep, "Twice");
+| }
+| public static bool operator < (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.lt(obj1,obj2);
+| return ret;
+| }
+| public void bump(double @by){
+| _objrep.bump(new RunOptions(nargout:0),@by);
+| }
+| public void bump(){
+| _objrep.bump(new RunOptions(nargout:0));
+| }
+| public void eq(dynamic B){
+| _objrep.eq(new RunOptions(nargout:0),B);
+| }
+| public void eq(dynamic B, out dynamic TF){
+| TF = (MATLABArray)_objrep.eq(new RunOptions(nargout:1),B);
+| }
+| public void ne(dynamic B){
+| _objrep.ne(new RunOptions(nargout:0),B);
+| }
+| public void ne(dynamic B, out dynamic TF){
+| TF = (MATLABArray)_objrep.ne(new RunOptions(nargout:1),B);
+| }
+| public static bool operator > (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.gt(obj1,obj2);
+| return ret;
+| }
+| public static bool operator <= (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.le(obj1,obj2);
+| return ret;
+| }
+| public static bool operator >= (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.ge(obj1,obj2);
+| return ret;
+| }
+| public void delete(){
+| _objrep.delete(new RunOptions(nargout:0));
+| }
+| public void isvalid(){
+| _objrep.isvalid(new RunOptions(nargout:0));
+| }
+| public void isvalid( out dynamic validity){
+| validity = (MATLABArray)_objrep.isvalid(new RunOptions(nargout:1));
+| }
+| public static bool operator == (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.eq(obj1,obj2);
+| return ret;
+| }
+| public static bool operator != (k9opt obj1, k9opt obj2){
+| bool ret = obj1._matlab.ne(obj1,obj2);
+| return ret;
+| }
+| public override bool Equals (Object obj){
+| if (obj == null){
+| return false;
+| }
+| try{
+| k9opt _obj = (k9opt)obj;
+| return (this == _obj);
+| }
+| catch(Exception){
+| return false;
+| }
+| }
+| public bool Equals(k9opt obj){
+| return this == obj;
+| }
+| public override int GetHashCode(){
+| UInt64 hashcode = _matlab.keyHash(_objrep);
+| return hashcode.GetHashCode();
+| }
+| public static implicit operator MATLABObject(k9opt k9opt){
+| return k9opt._objrep;
+| }
+| public static implicit operator k9opt(MATLABObject _obj){
+| k9opt k9opt = new k9opt();
+| k9opt._objrep = _obj;
+|#pragma warning disable CS8601, CS8602
+| k9opt._matlab = typeof(MATLABObject).GetField("Matlab", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(_obj);
+|#pragma warning restore
+| return k9opt;
+| }
+|}
+|}
+
+build mcc_verbose
+  R2025b: ok
+|0 class(es) and 1 function(s) written to <W>\b\mcc_verbose\strongly_typed_interface
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Generating file "<W>\b\mcc_verbose\readme.txt".
+  JGraph: ok
+|0 class(es) and 1 function(s) written to <W>\b\mcc_verbose\strongly_typed_interface
+|Compiler version: JGraph 0.2.3 (R2025b)
+|Analyzing file dependencies.
+|Generating file "<W>\b\mcc_verbose\readme.txt".
+
+build meta.k9point.methods
+  R2025b: parts scaled norm k9point origin empty
+  JGraph: (missing)
+
+build meta.k9point.defining
+  R2025b: k9point k9point k9point k9point k9point k9point
+  JGraph: (missing)
+
+build meta.k9point.properties
+  R2025b: X Y Tag
+  JGraph: (missing)
+
+build meta.k9counter.methods
+  R2025b: current increment k9counter empty eq ne lt gt le ge delete isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj
+  JGraph: (missing)
+
+build meta.k9counter.defining
+  R2025b: k9counter k9counter k9counter k9counter handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle
+  JGraph: (missing)
+
+build meta.k9counter.properties
+  R2025b: Count Label
+  JGraph: (missing)
+
+build meta.k9opt.methods
+  R2025b: lt bump k9opt hidden empty eq ne gt le ge delete isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj
+  JGraph: (missing)
+
+build meta.k9opt.defining
+  R2025b: k9opt k9opt k9opt k9opt k9opt handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle
+  JGraph: (missing)
+
+build meta.k9opt.properties
+  R2025b: Total Twice Secret
+  JGraph: (missing)
+
+build meta.k9color.methods
+  R2025b: k9color empty char eq ne colon cellstr string strcmp strncmp strcmpi strncmpi setdiff setxor union intersect ismember isequal isequaln
+  JGraph: (missing)
+
+build meta.k9color.defining
+  R2025b: k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color k9color
+  JGraph: (missing)
+
+build meta.k9color.properties
+  R2025b: 
+  JGraph: (missing)
+
+build meta.k9point
+  R2025b: (missing)
+  JGraph: ERR  | '.Name' needs a struct, but this is a cell.
+
+build meta.k9counter
+  R2025b: (missing)
+  JGraph: ERR  | '.Name' needs a struct, but this is a cell.
+
+build meta.k9opt
+  R2025b: (missing)
+  JGraph: ERR  | '.Name' needs a struct, but this is a cell.
+
+build meta.k9color
+  R2025b: (missing)
+  JGraph: ERR  | '.Name' needs a struct, but this is a cell.
+
+build 
+  R2025b: (missing)
+  JGraph: 
+STDERR Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+STDERR Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+STDERR Warning: The property "ClassName" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either do not specify a "ClassName", or use 'mwarray' for the "Interface" property.
+STDERR Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+
+interface k9nv.cs
+  R2025b:
+/* File: k9nv.cs
+*
+* Strongly Typed Interface Version: <VERSION>
+* C# source code generated on: <DATE>
+*/
+using System;
+using JGraph.MATLAB.Types;
+using JGraph.MATLAB.Exceptions;
+namespace K9{
+
+    public static partial class MATLABFunctions { 
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x, System.Numerics.Complex Scale, string Label){
+        dynamic _dynMatlab = _matlab;
+        _dynMatlab.k9nv(new RunOptions(nargout:0),x,Scale,Label);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x, System.Numerics.Complex Scale, string Label,  out dynamic r){
+        dynamic _dynMatlab = _matlab;
+        r = (MATLABArray)_dynMatlab.k9nv(new RunOptions(nargout:1),x,Scale,Label);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x, System.Numerics.Complex Scale){
+        dynamic _dynMatlab = _matlab;
+        _dynMatlab.k9nv(new RunOptions(nargout:0),x,Scale);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x, System.Numerics.Complex Scale,  out dynamic r){
+        dynamic _dynMatlab = _matlab;
+        r = (MATLABArray)_dynMatlab.k9nv(new RunOptions(nargout:1),x,Scale);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x){
+        dynamic _dynMatlab = _matlab;
+        _dynMatlab.k9nv(new RunOptions(nargout:0),x);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x,  out dynamic r){
+        dynamic _dynMatlab = _matlab;
+        r = (MATLABArray)_dynMatlab.k9nv(new RunOptions(nargout:1),x);
+    }
+    }
+}
+
+  JGraph:
+/* File: k9nv.cs
+*
+* Strongly Typed Interface Version: <VERSION>
+* C# source code generated on: <DATE>
+*/
+using System;
+using JGraph.MATLAB.Types;
+using JGraph.MATLAB.Exceptions;
+namespace K9{
+
+    public static partial class MATLABFunctions { 
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x, System.Numerics.Complex Scale, string Label){
+        dynamic _dynMatlab = _matlab;
+        _dynMatlab.k9nv(new RunOptions(nargout:0),x,"Scale",Scale,"Label",Label);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x, System.Numerics.Complex Scale, string Label,  out dynamic r){
+        dynamic _dynMatlab = _matlab;
+        r = (MATLABArray)_dynMatlab.k9nv(new RunOptions(nargout:1),x,"Scale",Scale,"Label",Label);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x, System.Numerics.Complex Scale){
+        dynamic _dynMatlab = _matlab;
+        _dynMatlab.k9nv(new RunOptions(nargout:0),x,"Scale",Scale);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x, System.Numerics.Complex Scale,  out dynamic r){
+        dynamic _dynMatlab = _matlab;
+        r = (MATLABArray)_dynMatlab.k9nv(new RunOptions(nargout:1),x,"Scale",Scale);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x){
+        dynamic _dynMatlab = _matlab;
+        _dynMatlab.k9nv(new RunOptions(nargout:0),x);
+    }
+    public static void k9nv(MATLABProvider _matlab, System.Numerics.Complex x,  out dynamic r){
+        dynamic _dynMatlab = _matlab;
+        r = (MATLABArray)_dynMatlab.k9nv(new RunOptions(nargout:1),x);
+    }
+    }
+}
+

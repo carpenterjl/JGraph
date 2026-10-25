@@ -11,16 +11,18 @@ namespace JGraph.Runtime;
 internal sealed class ComponentSession
 {
     private readonly JgsReplSession _session;
+    private readonly RoutedOutput _output;
 
     public ComponentSession(ScriptDeployment deployment, IScriptOutput output)
     {
         Deployment = deployment;
+        _output = new RoutedOutput(output);
 
         // A component's figures are shown in its own windows where the window host is present (stage
         // K5), and closed with them. The current folder is the process's when the component opens,
         // as R2025b's pwd is (k4_client: the client's folder).
         var context = new ScriptContext(
-            output,
+            _output,
             (number, figure) => JgRuntime.ShowFigure(this, number, figure),
             Environment.CurrentDirectory,
             resolvePath: null,
@@ -30,6 +32,47 @@ internal sealed class ComponentSession
             Deployment = deployment,
         };
         _session = new JgsReplSession(context, JgsDialect.Matlab, "MATLAB");
+    }
+
+    /// <summary>The session's interpreter, for the MATLAB Data API's work on the engine thread (stage K9).</summary>
+    internal Interpreter Interpreter => _session.Interpreter;
+
+    /// <summary>
+    /// Calls <paramref name="function"/> as <see cref="Call"/> does, on engine values, with the
+    /// session's output and error text sent to <paramref name="output"/> and <paramref name="error"/>
+    /// for the call when they are given (the MATLAB Data API's <c>RunOptions</c>, stage K9). Engine thread.
+    /// </summary>
+    internal JgsValue[] CallEngine(
+        string function, int nargout, IReadOnlyList<JgsValue> arguments, TextWriter? output, TextWriter? error, CancellationToken cancellationToken)
+    {
+        (TextWriter? Out, TextWriter? Err) previous = _output.Writers;
+        _output.Writers = (output, error);
+        try
+        {
+            return _session.CallFunction(function, arguments, nargout, cancellationToken);
+        }
+        catch (JgsException failure)
+        {
+            throw Deployed(failure);
+        }
+        finally
+        {
+            _output.Writers = previous;
+        }
+    }
+
+    /// <summary>An uncaught error as its client sees it: the MException's identifier, message, stack, causes and report.</summary>
+    internal static DeployedException Deployed(JgsException error)
+    {
+        var runtime = error as JgsRuntimeException;
+        DeployedStackFrame[] stack =
+        [
+            .. (runtime?.Frames ?? []).Select(static f => new DeployedStackFrame(JgsDeployedMain.Shown(f), f.File, f.Line)),
+        ];
+        return new DeployedException(runtime?.Identifier ?? string.Empty, error.Message, stack, JgsDeployedMain.Report(error), error)
+        {
+            Causes = JgsDeployedMain.Causes(runtime),
+        };
     }
 
     /// <summary>When the session's earliest running timer is next due (<see cref="Environment.TickCount64"/> milliseconds), or null.</summary>
@@ -79,15 +122,7 @@ internal sealed class ComponentSession
         }
         catch (JgsException error)
         {
-            var runtime = error as JgsRuntimeException;
-            DeployedStackFrame[] stack =
-            [
-                .. (runtime?.Frames ?? []).Select(static f => new DeployedStackFrame(JgsDeployedMain.Shown(f), f.File, f.Line)),
-            ];
-            throw new DeployedException(runtime?.Identifier ?? string.Empty, error.Message, stack, JgsDeployedMain.Report(error), error)
-            {
-                Causes = JgsDeployedMain.Causes(runtime),
-            };
+            throw Deployed(error);
         }
 
         // A call asked for no outputs answers none, whatever ans the function left.
@@ -100,5 +135,55 @@ internal sealed class ComponentSession
         JgRuntime.LoadedDesktop?.Retire(this);
         _session.DisposeAsync().AsTask().GetAwaiter().GetResult();
         Deployment.Dispose();
+    }
+}
+
+/// <summary>
+/// A component session's output: the runtime's console, or for one call the writers a MATLAB Data API
+/// client gave in its <c>RunOptions</c> (stage K9) - standard output to the first, warnings and
+/// standard error to the second.
+/// </summary>
+internal sealed class RoutedOutput(IScriptOutput console) : IScriptOutput
+{
+    /// <summary>The writers of the call running now, or nulls for the console.</summary>
+    public (TextWriter? Out, TextWriter? Err) Writers { get; set; }
+
+    public void Write(string text)
+    {
+        if (Writers.Out is { } writer)
+        {
+            writer.Write(text);
+            writer.Flush();
+        }
+        else
+        {
+            console.Write(text);
+        }
+    }
+
+    public void WriteLine(string text)
+    {
+        if (Writers.Out is { } writer)
+        {
+            writer.Write(text + "\n");
+            writer.Flush();
+        }
+        else
+        {
+            console.WriteLine(text);
+        }
+    }
+
+    public void WriteError(string text)
+    {
+        if (Writers.Err is { } writer)
+        {
+            writer.Write(text + "\n");
+            writer.Flush();
+        }
+        else
+        {
+            console.WriteError(text);
+        }
     }
 }

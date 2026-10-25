@@ -557,7 +557,7 @@ public class MatlabStringsM104Tests : IDisposable
         assert(strcmp(why(@() mustBeInRange(5, 1, 3)), ...
             'Value must be greater than or equal to 1, and less than or equal to 3.'));
         assert(strcmp(why(@() mustBeA(1, 'char')), ...
-            'Value must be one of the following types: ''char''.'));
+            'Value must be one of these types: ''char''.'));
         """);
 
     // --- the defect this milestone found ------------------------------------------------------
