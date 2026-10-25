@@ -14,6 +14,8 @@
   <ItemGroup>
     <!-- -h opens the scripting guide, so it has to travel with the executable. -->
     <Content Include="..\..\docs\jgs-scripting-guide.html" Link="docs\jgs-scripting-guide.html" CopyToOutputDirectory="PreserveNewest" />
+    <!-- jgraph mcc from a command prompt under the name R2025b's mcc.bat suggests (stage K7). -->
+    <Content Include="jgmcc.cmd" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

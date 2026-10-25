@@ -75,6 +75,12 @@ public sealed record StandaloneProgramOptions
     /// <summary>False for <c>mcc -C</c>: the archive is written beside the program as <c>&lt;name&gt;.ctf</c>.</summary>
     public bool EmbedArchive { get; init; } = true;
 
+    /// <summary>
+    /// <c>mcc -T codegen</c>, and what a failed build keeps under <c>-K</c>: the archive as
+    /// <c>&lt;name&gt;.ctf</c> and the readme, no program (k7_switches: T_codegen_m, K_fail_icon).
+    /// </summary>
+    public bool ArchiveOnly { get; init; }
+
     /// <summary>The icon's images (<c>mcc -r</c>'s icon file), largest first; none keeps the launcher's own.</summary>
     public IReadOnlyList<IconImage> IconImages { get; init; } = [];
 
@@ -153,6 +159,11 @@ public static class StandaloneProgram
     {
         ArgumentNullException.ThrowIfNull(build);
         ArgumentNullException.ThrowIfNull(options);
+        if (options.ArchiveOnly)
+        {
+            return WriteArchiveOnly(build, options);
+        }
+
         if (!OperatingSystem.IsWindows())
         {
             throw new PlatformNotSupportedException("A standalone program can be built only on Windows.");
@@ -220,6 +231,24 @@ public static class StandaloneProgram
         }
 
         return (files, manifest);
+    }
+
+    /// <summary><see cref="StandaloneProgramOptions.ArchiveOnly"/>: the archive as <c>&lt;name&gt;.ctf</c>, then the readme.</summary>
+    private static (IReadOnlyList<string> Files, CtfManifest Manifest) WriteArchiveOnly(CtfBuild build, StandaloneProgramOptions options)
+    {
+        string folder = Path.GetFullPath(options.OutputFolder);
+        Directory.CreateDirectory(folder);
+        string archive = Path.Combine(folder, options.ExecutableName + ".ctf");
+        CtfManifest manifest;
+        using (var stream = new MemoryStream())
+        {
+            manifest = CtfArchiveWriter.Write(stream, build);
+            File.WriteAllBytes(archive, stream.ToArray());
+        }
+
+        string readme = Path.Combine(folder, "readme.txt");
+        File.WriteAllText(readme, Readme(options with { EmbedArchive = false }), new UTF8Encoding(false));
+        return ([archive, readme], manifest);
     }
 
     /// <summary>

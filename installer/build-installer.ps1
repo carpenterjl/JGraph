@@ -68,7 +68,11 @@ $anchors = @(
     # the application folder at run time; without them bluetooth, ble and their lists fail to load.
     "JGraph.Devices.Bluetooth.dll",
     "Microsoft.Windows.SDK.NET.dll",
-    "WinRT.Runtime.dll"
+    "WinRT.Runtime.dll",
+
+    # mcc from a command prompt and mcc -B's bundles (stage K7, ADR 0263).
+    "jgmcc.cmd",
+    "toolbox\compiler\bundles\csharedlib"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

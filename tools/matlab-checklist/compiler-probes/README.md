@@ -1,4 +1,4 @@
-# Compiler and SDK probes (stages K0-K6)
+# Compiler and SDK probes (stages K0-K7)
 
 Recordings of what R2025b's MATLAB Compiler builds and what the programs it builds do when run,
 for the compiler and SDK plan (`docs/plans/compiler-and-sdk-plan.md`, stage K0). Later stages
@@ -59,7 +59,10 @@ and runs them only when they are named; tell the user before running one.
 | `pe-resources.py` | What a Windows program carries: subsystem, sections, imports, icon groups and images, the version block, the manifest, the archive appended. Reads R2025b's builds and JGraph's alike. |
 | `record-k6.ps1`, `k6-windows.ps1` | Runs the two probes, the PE reports and the console programs through `run-quiet.ps1`, and - with the user's leave, given 2026-10-24 - the windowed ones, each watched by `k6-windows.ps1`'s window timeline and closed through UI Automation patterns; writes `recordings/k6_build.out.txt`, `k6_roots.out.txt`, `k6_pe.out.txt`, `k6_console.out.txt` and `k6_windows.out.txt`. |
 | `run-k6.ps1`, `build_k6_jgraph.m` | The same programs built by JGraph's `mcc` and `compiler.build` under a published JGraph Runtime's `jgraph -batch`, then the same reports, runs and window timelines; writes `recordings-jgraph/k6_*.out.txt` and `k6_differences.txt`, the console lines that differ from R2025b's. JGraph windows only. |
-| `recordings-jgraph/` | JGraph's recordings of K0's cases and K6's, with the same tokens, and the lines that differ from R2025b's. |
+| `src/k7/`, `probe_k7_switches.m`, `probe_k7_more.m` | Stage K7's mains (`k7_hello`, `k7_excl` naming an excluded function, `startup/k7_start` with a `startup.m` beside it) and 188 mcc calls, each into a folder of its own: the obsolete switches, the ones a standalone build ignores, letters read as switches, the syntax's refusals, `-T`'s forms, every `-W` target's checks, `-B` bundles, `-w` over the startup, repeated-file and ignored-switch warnings and its table, `-K`, `-I`, `-R`, `-Z`, and MATLAB's own warning state (stage K7, ADR 0263). |
+| `record-k7.ps1` | Runs the two probes under `matlab -batch -noFigureWindows`, then R2025b's `bin\mcc.bat` from cmd.exe in the probe's source folder (standard output, standard error, exit code, time); writes `recordings/k7_switches.out.txt`, `k7_more.out.txt` and `k7_cmd.out.txt`. Nothing built is run and no window is shown. |
+| `run-k7.ps1`, `compare-k7.py` | The same probes under JGraph's `jgraph -batch` and the same command-line cases through `jgmcc.cmd`; writes `recordings-jgraph/k7_*.out.txt` and `k7_differences.txt`, each case whose outcome, warning or files differ (JGraph's files listed from the disk, as its `dir` does not search `**`). |
+| `recordings-jgraph/` | JGraph's recordings of K0's cases, K6's and K7's, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
 | `research-2026-10-21/` | Sources from the plan's research session: the SDK client programs (C, C++, .NET MWArray, .NET Data API, Python) for stages K8-K13, the `mps.json` probes and their output for K14, and the options probes. |
@@ -80,6 +83,8 @@ powershell -File record-k5.ps1 -WorkRoot <a seventh scratch>
 powershell -File record-k6.ps1 -WorkRoot <an eighth scratch>            # -Skip windows without the user's leave
 powershell -File ..\..\..\installer\publish-runtime.ps1 -Output <a runtime scratch>
 powershell -File run-k6.ps1 -WorkRoot <a ninth scratch> -Runtime <the runtime scratch> -Mlapp <eighth>\b\src\mlapp\k6_app.mlapp
+powershell -File record-k7.ps1 -WorkRoot <a tenth scratch>              # about 30 min: 188 builds and refusals
+powershell -File run-k7.ps1 -WorkRoot <an eleventh scratch>             # JGraph's CLI Debug build; about 15 s
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

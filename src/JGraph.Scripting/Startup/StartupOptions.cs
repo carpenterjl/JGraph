@@ -20,6 +20,12 @@ public enum StartupMode
     /// <c>extractCTF</c> utility over a JGraph archive; its arguments are <see cref="StartupOptions.ProgramArguments"/>.
     /// </summary>
     ExtractCtf,
+
+    /// <summary>
+    /// <c>jgraph mcc …</c> (compiler and SDK plan, stage K7): JGraph's mcc from the operating system's
+    /// command line, as R2025b's <c>mcc.bat</c>; its arguments are <see cref="StartupOptions.ProgramArguments"/>.
+    /// </summary>
+    Mcc,
 }
 
 /// <summary>

@@ -32,6 +32,7 @@ public static class StartupHelp
           jgraph -batch "statement"           Run non-interactively, log to stdout, then exit.
           jgraph -r "statement"               Run, then keep the session open until the script calls exit.
           jgraph -h | -help                   Show this text and open the scripting guide.
+          jgraph mcc [-options] main.m        Build a program as MATLAB Compiler's mcc does (also jgmcc).
 
         Options:
           -batch "statement"    Executes the statement without a user interface and exits when it

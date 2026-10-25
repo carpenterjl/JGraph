@@ -1,0 +1,609 @@
+mcc.obs_O	ok (6 s)
+  |The -O switch is no longer supported; the MATLAB JIT accelerator makes 
+  |Compiler optimizations unnecessary. 
+  |
+mcc.obs_O.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277368) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.obs_V	ERR Compiler:compiler:COM_MSG_NO_DASH_V | The -V switch is no longer supported; the MATLAB Compiler does not allow the use of previous compiler versions.
+mcc.obs_V.files	
+mcc.obs_i	ok (3 s)
+  |The -i switch is no longer supported; the "include exported interfaces" behavior 
+  |is applied to every compilation. 
+  |
+mcc.obs_i.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277213) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.obs_z	ok (3 s)
+  |The -z switch is no longer supported. 
+  |
+mcc.obs_z.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277272) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.obs_win32	ERR Compiler:compiler:COM_MSG_NO_DASH_WIN32 | The -win32 switch is no longer supported.  / 
+mcc.obs_win32.files	
+mcc.obs_win64	ERR Compiler:compiler:COM_MSG_NO_DASH_WIN64 | The -win64 switch is no longer supported; 64-bit architecture is assumed.  / 
+mcc.obs_win64.files	
+mcc.obs_y	ERR Compiler:compiler:COM_ERR_NO_DASH_y | Error: -y is no longer supported. The MATLAB Compiler no longer generates  /   Simulink C MEX S functions. See the Simulink documentation for other options /   for embedding M-code in block diagrams.
+mcc.obs_y.files	
+mcc.obs_u	ok (3 s)
+mcc.obs_u.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277306) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.obs_S	ok (3 s)
+mcc.obs_S.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277253) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.obs_L_m	ok (3 s)
+  |The -L switch is no longer supported; the target (-T) and wrapper (-W) 
+  |switches determine the language of the generated code. 
+  |
+mcc.obs_L_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277262) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.obs_t_m	ok (3 s)
+  |The -t switch is no longer supported; the Compiler no longer generates C/C++ 
+  |source code for MATLAB functions (it generates wrapper functions instead, see 
+  |the documentation for -W). 
+  |
+mcc.obs_t_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277185) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.obs_F_alone	ERR Compiler:compiler:COM_ERR_DASH_F_DEPRECATED | Error: The mcc -F option is no longer supported. Use deploytool /build instead. Run deploytool -? for usage.
+mcc.obs_F_alone.files	
+mcc.obs_F_m	ERR Compiler:compiler:COM_ERR_OPTION_F_MUST_BE_ALONE | Error: The -F <file name> option must occur with no other options on the command line.
+mcc.obs_F_m.files	
+mcc.obs_E_alone	ERR Compiler:compiler:COM_ERROR_UNKNOWN | fl:filesystem:PathNotFound
+mcc.obs_E_alone.files	
+mcc.obs_x	ERR Compiler:compiler:COM_ERR_NO_MORE_MEX | Error: -x is no longer supported. The MATLAB Compiler no longer generates  /   MEX files because there is no longer any performance advantage to doing so: the  /   MATLAB JIT accelerates MATLAB files by default.  /   To hide proprietary algorithms, use the PCODE function.
+mcc.obs_x.files	
+mcc.g	ok (3 s)
+  |[Warning: The option -g is ignored in standalone target mode (specify -? for help).
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.g.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -g is ignored in standalone target mode (specify -? for help). / 
+mcc.g.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277285) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+[Warning: Directory already exists.] 
+[> In probe_k7_switches (line 188)] 
+mcc.G	ok (3 s)
+  |[Warning: The option -g is ignored in standalone target mode (specify -? for help).
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.G.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -g is ignored in standalone target mode (specify -? for help). / 
+mcc.G.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277277) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.K_ok	ok (3 s)
+mcc.K_ok.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277252) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.K_fail_a	ERR Compiler:compiler:REQ_UNEXPECTED_ERROR | Error while determining required deployable files. Compilation terminated. Details: / Error using matlab.depfun.internal.MatFileInspector/determineType (line 32) / File, function or class "k7_nosuch.mat" may not exist. Neither WHICH nor EXIST could find an exact, case-sensitive match. Please check the spelling of the name, and that any / required directories are on the MATLAB path. / 
+mcc.K_fail_a.files	
+mcc.noK_fail_a	ERR Compiler:compiler:REQ_UNEXPECTED_ERROR | Error while determining required deployable files. Compilation terminated. Details: / Error using matlab.depfun.internal.MatFileInspector/determineType (line 32) / File, function or class "k7_nosuch.mat" may not exist. Neither WHICH nor EXIST could find an exact, case-sensitive match. Please check the spelling of the name, and that any / required directories are on the MATLAB path. / 
+mcc.noK_fail_a.files	
+mcc.K_fail_icon	ERR Compiler:compiler:EMBED_ICON_FAILED | Failed to embed icon file "k7_bad.ico" - Error reading icon file.
+mcc.K_fail_icon.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.ctf (154009) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.noK_fail_icon	ERR Compiler:compiler:EMBED_ICON_FAILED | Failed to embed icon file "k7_bad.ico" - Error reading icon file.
+mcc.noK_fail_icon.files	
+mcc.M	ok (3 s)
+  |[Warning: The option -M is ignored in standalone target mode (specify -? for help).
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.M.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -M is ignored in standalone target mode (specify -? for help). / 
+mcc.M.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277317) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.M_end	ERR Compiler:compiler:COM_ERR_M_FILE_NOT_FOUND | Could not find the MATLAB file 'M_end' on the MATLAB path.
+mcc.M_end.files	
+mcc.f_missing	ok (3 s)
+  |[Warning: The option -f is ignored in standalone target mode (specify -? for help).
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.f_missing.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -f is ignored in standalone target mode (specify -? for help). / 
+mcc.f_missing.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277265) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.f_file	ok (3 s)
+  |[Warning: The option -f is ignored in standalone target mode (specify -? for help).
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.f_file.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -f is ignored in standalone target mode (specify -? for help). / 
+mcc.f_file.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277306) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.Y	ok (3 s)
+mcc.Y.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277186) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.Y_missing	ok (3 s)
+mcc.Y_missing.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277285) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.Y_end	ERR Compiler:compiler:COM_ERR_M_FILE_NOT_FOUND | Could not find the MATLAB file 'Y_end' on the MATLAB path.
+mcc.Y_end.files	
+mcc.A_all	ok (3 s)
+mcc.A_all.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277250) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.A_bogus	ERR Compiler:compiler:COM_ERR_INVALID_OPTION | Error: "bogus" is not a valid -A option argument.
+mcc.A_bogus.files	
+mcc.A_flag	ERR Compiler:compiler:COM_ERR_INVALID_OPTION | Error: "-m" is not a valid -A option argument.
+mcc.A_flag.files	
+mcc.b_m	ok (3 s)
+mcc.b_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277251) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.c_m	ok (3 s)
+  |[Warning: The option -c is ignored in standalone target mode (specify -? for help).
+  |] 
+  |[> In quietMcc', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k7_switches.m', 244)" style="font-weight:bold">probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.c_m.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -c is ignored in standalone target mode (specify -? for help). / 
+mcc.c_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277253) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.c_alone	ERR Compiler:compiler:COM_ERR_MISSING_WRAPPER_FOR_CODEGEN_ONLY | Unable to determine application type, since no wrapper function was specified.  / Please use the -W or -l switch.  / Type 'mcc -?' for further assistance.
+mcc.c_alone.files	
+mcc.U_m	ok (3 s)
+mcc.U_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.ctf (153943) | k7_hello.exe (1123328) | mccExcludedFiles.log (90) | readme.txt (1440) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.H_m	ok (3 s)
+mcc.H_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277304) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.P_m	ok (3 s)
+mcc.P_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277337) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.D_m	ERR Compiler:compiler:COM_ERR_UNRECOGNIZED_OPTION | Error: Unrecognized option: -D.
+mcc.D_m.files	
+mcc.l	ok (6 s)
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+mcc.l.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.c (3862) | k7_hello.def (151) | k7_hello.dll (166243) | k7_hello.exp (1610) | k7_hello.exports (124) | k7_hello.h (1708) | k7_hello.lib (2858) | mccExcludedFiles.log (90) | readme.txt (1402) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.l_o	ok (5 s)
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+mcc.l_o.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7lo.c (3810) | k7lo.def (131) | k7lo.dll (166171) | k7lo.exp (1548) | k7lo.exports (108) | k7lo.h (1664) | k7lo.lib (2710) | mccExcludedFiles.log (90) | readme.txt (1386) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.T_compile_exe	ok (3 s)
+mcc.T_compile_exe.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.ctf (153813) | k7_hello.exe (1123328) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.T_codegen_W	ok (3 s)
+mcc.T_codegen_W.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.ctf (153880) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.T_codegen_m	ok (3 s)
+mcc.T_codegen_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.ctf (153920) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.T_codegen_alone	ERR Compiler:compiler:COM_ERR_MISSING_WRAPPER | Unable to determine application type, since no wrapper function was specified.  / Please use the -W switch or specify application type via -m or -l.  / Type 'mcc -?' for further assistance.
+mcc.T_codegen_alone.files	
+mcc.T_link_lib_m	ERR Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH | Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.
+mcc.T_link_lib_m.files	
+mcc.T_link_lib_e	ERR Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH | Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.
+mcc.T_link_lib_e.files	
+mcc.T_exe	ok (3 s)
+mcc.T_exe.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277239) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.T_link_empty	ok (3 s)
+mcc.T_link_empty.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277255) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.T_link_exe_only	ERR Compiler:compiler:COM_ERR_MISSING_WRAPPER | Unable to determine application type, since no wrapper function was specified.  / Please use the -W switch or specify application type via -m or -l.  / Type 'mcc -?' for further assistance.
+mcc.T_link_exe_only.files	
+mcc.T_compile_lib	ok (5 s)
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+mcc.T_compile_lib.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7cl.c (3837) | k7cl.def (131) | k7cl.exports (108) | k7cl.h (1691) | k7cl.obj (9914) | mccExcludedFiles.log (90) | readme.txt (1386) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.T_twice	ok (3 s)
+mcc.T_twice.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277229) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_main_only	ok (3 s)
+mcc.W_main_only.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277279) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_lib_noname	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: ''  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.W_lib_noname.files	
+mcc.W_lib_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: ''  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.W_lib_empty.files	
+mcc.W_lib_extra	ok (5 s)
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+mcc.W_lib_extra.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7a.c (3805) | k7a.def (126) | k7a.dll (166191) | k7a.exp (1549) | k7a.exports (104) | k7a.h (1661) | k7a.lib (2670) | mccExcludedFiles.log (90) | readme.txt (1382) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_lib_toomany	ok (5 s)
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+mcc.W_lib_toomany.files	a.c (3781) | a.def (116) | a.dll (166127) | a.exp (1521) | a.exports (96) | a.h (1641) | a.lib (2596) | buildresult.json (107) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1374) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_cpplib_empty	ERR Compiler:compiler:COM_ERR_COMPONENT_NAME_NEEDED_FOR_CPPLIB | Error: A component name must be specified following "cpplib:". / 
+mcc.W_cpplib_empty.files	
+mcc.W_cpplib_bad	ERR Compiler:compiler:COM_ERR_BAD_ARG_FOR_CPPLIB | Error: Option "bogus" is not valid following "cpplib:component_name,". / 
+mcc.W_cpplib_bad.files	
+mcc.W_cpplib_named	ERR Compiler:compiler:COM_ERR_NAMED_CPPLIB_NOT_SUPPORTED_YET | Error: The "named" interface for the C++ Shared Library target is not yet supported. / 
+mcc.W_cpplib_named.files	
+mcc.W_cpplib_api_bad	ERR Compiler:compiler:COM_ERR_BAD_ARG_FOR_CPPLIB | Error: Option "api=bogus" is not valid following "cpplib:component_name,". / 
+mcc.W_cpplib_api_bad.files	
+mcc.W_dotnet_noclass	ok (3 s)
+mcc.W_dotnet_noclass.files	buildresult.json (193) | includedSupportPackages.txt (0) | k7asm.cs (6568) | k7asm.dll (158720) | k7asm.xml (4672) | k7asmNative.cs (7657) | k7asmNative.dll (159232) | k7asmNative.xml (5739) | k7asmVersion.cs (157) | k7asm_overview.html (30834) | mccExcludedFiles.log (90) | readme.txt (3088) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc.W_dotnet_api_bad	ERR Compiler:compiler:COM_ERR_INVALID_API_VALUE | Invalid value for "api=" specified in -W or -B option: bogus. Value must be a member of this set: / 	'matlab-data' / 	'mwarray' / 	''
+mcc.W_dotnet_api_bad.files	
+mcc.W_dotnet_api_late	ERR Compiler:compiler:COM_ERR_INVALID_API_PLACEMENT | Invalid placement of "api=" in -W or -B option. "api=" must be specified immediately after component name.
+mcc.W_dotnet_api_late.files	
+mcc.W_dotnet_ver_bad	ERR Compiler:compiler:COM_ERR_NET_VERSION_INVALID | The .NET version is set to an unsupported value. Set the .NET version to "4.0" if targeting the .NET 4.x Framework. For .NET 5.0 and later, use "5.0".
+mcc.W_dotnet_ver_bad.files	
+mcc.W_java_noclass	ERR Compiler:compiler:COM_SYSTEM_ERROR_WITH_DETAILS | The following command: / "javac -classpath "<MATLABROOT>\toolbox\javabuilder\jar\javabuilder.jar" -d "<W>\b\W_java_noclass\classes" "<W>\b\W_java_noclass\k7pkg\k7pkg.java" "<W>\b\W_java_noclass\k7pkg\K7pkgMCRFactory.java" "<W>\b\W_java_noclass\k7pkg\k7pkgRemote.java" "<W>\b\W_java_noclass\k7pkg\package-info.java"" / failed with error code 1. / This may occur if Java is not installed, or incorrectly installed, or not on the system path, / or if the environment variable JAVA_HOME is set to an incorrect value.
+mcc.W_java_noclass.files	classes\k7pkg\k7pkg.ctf (153912)
+mcc.W_java_badpkg	ERR Compiler:compiler:COM_SYSTEM_ERROR_WITH_DETAILS | The following command: / "javac -classpath "<MATLABROOT>\toolbox\javabuilder\jar\javabuilder.jar" -d "<W>\b\W_java_badpkg\classes" "<W>\b\W_java_badpkg\7pkg\k7cls.java" "<W>\b\W_java_badpkg\7pkg\7pkgMCRFactory.java" "<W>\b\W_java_badpkg\7pkg\k7clsRemote.java" "<W>\b\W_java_badpkg\7pkg\package-info.java"" / failed with error code 1. / This may occur if Java is not installed, or incorrectly installed, or not on the system path, / or if the environment variable JAVA_HOME is set to an incorrect value.
+mcc.W_java_badpkg.files	classes\7pkg\7pkg.ctf (153928)
+mcc.W_python_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc.W_python_empty.files	
+mcc.W_python_bad	ok (3 s)
+mcc.W_python_bad.files	buildresult.json (186) | includedSupportPackages.txt (0) | k7-py\__init__.py (16511) | k7-py\k7-py.ctf (153975) | mccExcludedFiles.log (90) | pyproject.toml (137) | readme.txt (1785) | requiredMCRProducts.txt (12) | setup.py (2711) | unresolvedSymbols.txt (20)
+mcc.W_com_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc.W_com_empty.files	
+mcc.W_CTF_noU	ERR Compiler:compiler:COM_ERROR_MISSING_U_WITH_W_CTF | The "-U" option must be used when "-W CTF:" is specified.
+mcc.W_CTF_noU.files	
+mcc.W_mpsxl_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc.W_mpsxl_empty.files	
+mcc.W_excel_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc.W_excel_empty.files	
+mcc.W_spark_noC	ERR Compiler:compiler:COM_ERR_SPARK_MISSING_OPTION | Error: Missing "-C" option to compile Spark component  / 
+mcc.W_spark_noC.files	
+mcc.W_hadoop_noconf	ok (3 s)
+mcc.W_hadoop_noconf.files	buildresult.json (358) | includedSupportPackages.txt (0) | k7hd.ctf (155295) | mccExcludedFiles.log (90) | readme.txt (883) | requiredMCRProducts.txt (24) | run_k7hd.sh (2471) | unresolvedSymbols.txt (20)
+mcc.W_main_extra	ok (3 s)
+mcc.W_main_extra.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277294) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_main_toomany	ok (3 s)
+mcc.W_main_toomany.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277198) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_main_empty	ok (3 s)
+mcc.W_main_empty.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277256) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_main_digit	ok (3 s)
+mcc.W_main_digit.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277289) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_main_nocolon	ok (3 s)
+mcc.W_main_nocolon.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277273) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_winmain_nocolon	ok (3 s)
+mcc.W_winmain_nocolon.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1314693) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_two	ok (3 s)
+mcc.W_two.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277245) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_main_o	ok (3 s)
+mcc.W_main_o.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7other.exe (1277205) | mccExcludedFiles.log (90) | readme.txt (1395) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_upper	ok (3 s)
+mcc.W_upper.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277262) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_empty_item	ok (3 s)
+mcc.W_empty_item.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277264) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.W_version_twice	ok (3 s)
+mcc.W_version_twice.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277203) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.end_value	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: '-d'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.end_value.files	
+mcc.empty_value	ERR Compiler:compiler:COM_ERR_EXPECTED_ARGUMENT | Error: The -o option requires a nonempty argument (e.g. "-o <output file>").
+mcc.empty_value.files	
+mcc.no_space	ERR Compiler:compiler:COM_ERR_UNRECOGNIZED_OPTION | Error: Unrecognized option: -7.
+mcc.no_space.files	
+mcc.combined_mv	ok (3 s)
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\src\k7_hello.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\combined_mv\readme.txt".
+mcc.combined_mv.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277191) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.combined_vm	ok (3 s)
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\src\k7_hello.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\combined_vm\readme.txt".
+mcc.combined_vm.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277256) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.combined_mC	ok (3 s)
+mcc.combined_mC.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.ctf (153952) | k7_hello.exe (1123328) | mccExcludedFiles.log (90) | readme.txt (1440) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.whitespace	ERR Compiler:compiler:COM_ERR_ILLEGAL_WHITESPACE | Error: Found illegal whitespace character in command line option: " ".  / The strings on the left and right side of the space should be separate arguments  / to MCC.
+mcc.whitespace.files	
+mcc.repeated	ok (3 s)
+  |[Warning: The file "<W>\src\k7_hello.m" was repeated on the command line.
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.repeated.warn	Compiler:compiler:COM_WARN_REPEATED_FILE | The file "<W>\src\k7_hello.m" was repeated on the command line. / 
+mcc.repeated.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277208) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.non_m	ERR Compiler:compiler:COM_ERROR_INCLUDE_FILE_WITHOUT_DASH_A | Error: You specified the file "<W>\src\k7_data.txt" without using the "-a" option.
+mcc.non_m.files	
+mcc.debug_t	ok (3 s)
+  |Processed command line (including mccpath and mccstartup files) is:
+  |"-B""macro_default""-/t""-m""-W""main""-T""link:exe""k7_hello.m""-d""<W>\b\debug_t"Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Reading MATLAB file "<W>\src\k7_hello.m".Parsing file "<W>\src\k7_hello.m"
+  |	(referenced from command line).
+mcc.debug_t.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277287) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.debug_q	ok (0 s)
+  |MCC Debug options:
+  | 
+  | -/t    Trace mode - verbosely describe activities performed. 
+  | -/s    Dump the signatures for all of the functions compiled or referenced. 
+  | -/a    All - all of the above. 
+  | 
+mcc.debug_q.files	
+mcc.no_args	ok (0 s)
+  |mcc Compile MATLAB functions for deployment outside MATLAB. 
+  | mcc [-options] fun [fun2...] 
+  | 
+  |Options applicable across all deployment targets: 
+  | -?  Display help for the mcc command 
+  | -a  Add additional files or directories to be included in the build 
+  | -d  Build output directory 
+  | -g  Include debugging symbol information 
+  | -I  Add a directory to be searched for MATLAB files 
+  | -v  Verbose display of build 
+  | 
+  |MATLAB Compiler 
+  | Standalone Application (MATLAB|Hadoop|Spark)
+  | mcc -m <matlabFile.m> 
+  | 
+  | Excel Add-In 
+  | mcc -W 'excel:<addinName>,<className>' -b <matlabFile.m> 
+  | 
+  | Hadoop Deployable Archive 
+  | mcc -H -W 'hadoop:<archiveName>,CONFIG:<configFile.txt>' <mapperFile.m> <reducerFile.m> <datastoreInfo.mat> 
+  | 
+  | Spark Application 
+  | mcc -C -W 'spark:<appName>,<sparkMajorVersion>' <matlabFile.m> 
+  | 
+  |MATLAB Compiler SDK 
+  | C Shared Library 
+  | mcc -W lib:<libraryName> <matlabFile.m> 
+  | 
+  | C++ Shared Library 
+  | mcc -W cpplib:<libraryName> <matlabFile.m> 
+  | 
+  | .NET Assembly 
+  | mcc -W 'dotnet:<assemblyName>,<className>' <matlabFile.m> 
+  | 
+  | Java Package 
+  | mcc -W 'java:<packageName>,<className>' <matlabFile.m> 
+  | 
+  | Python Package 
+  | mcc -W python:<pythonPackageName> <matlabFile.m> 
+  | 
+  | COM Component 
+  | mcc -W com:<componentName> <matlabFile.m> 
+  | 
+  |MATLAB Production Server 
+  | Deployable Archive 
+  | mcc -W CTF:<archiveName> -U <matlabFile.m> 
+  | 
+  | Deployable Archive for Excel Add-In 
+  | mcc -W mpsxl:<addinName> <matlabFile.m> 
+  | 
+  |Replace single quotes with double when executing the mcc command from a Windows Command Prompt. 
+  | 
+  |For more details, execute "doc mcc" from MATLAB.
+  | 
+mcc.no_args.files	
+mcc.dash_h_end	ERR Compiler:compiler:COM_ERR_HELP_FILE_NOT_EXIST | The help file  /   '-d' / does not exist.
+mcc.dash_h_end.files	
+mcc.help_word	ERR Compiler:compiler:COM_ERR_HELP_FILE_NOT_EXIST | The help file  /   '-e' / does not exist.
+mcc.help_word.files	
+mcc.question_m	ok (0 s)
+  |mcc Compile MATLAB functions for deployment outside MATLAB. 
+  | mcc [-options] fun [fun2...] 
+  | 
+  |Options applicable across all deployment targets: 
+  | -?  Display help for the mcc command 
+  | -a  Add additional files or directories to be included in the build 
+  | -d  Build output directory 
+  | -g  Include debugging symbol information 
+  | -I  Add a directory to be searched for MATLAB files 
+  | -v  Verbose display of build 
+  | 
+  |MATLAB Compiler 
+  | Standalone Application (MATLAB|Hadoop|Spark)
+  | mcc -m <matlabFile.m> 
+  | 
+  | Excel Add-In 
+  | mcc -W 'excel:<addinName>,<className>' -b <matlabFile.m> 
+  | 
+  | Hadoop Deployable Archive 
+  | mcc -H -W 'hadoop:<archiveName>,CONFIG:<configFile.txt>' <mapperFile.m> <reducerFile.m> <datastoreInfo.mat> 
+  | 
+  | Spark Application 
+  | mcc -C -W 'spark:<appName>,<sparkMajorVersion>' <matlabFile.m> 
+  | 
+  |MATLAB Compiler SDK 
+  | C Shared Library 
+  | mcc -W lib:<libraryName> <matlabFile.m> 
+  | 
+  | C++ Shared Library 
+  | mcc -W cpplib:<libraryName> <matlabFile.m> 
+  | 
+  | .NET Assembly 
+  | mcc -W 'dotnet:<assemblyName>,<className>' <matlabFile.m> 
+  | 
+  | Java Package 
+  | mcc -W 'java:<packageName>,<className>' <matlabFile.m> 
+  | 
+  | Python Package 
+  | mcc -W python:<pythonPackageName> <matlabFile.m> 
+  | 
+  | COM Component 
+  | mcc -W com:<componentName> <matlabFile.m> 
+  | 
+  |MATLAB Production Server 
+  | Deployable Archive 
+  | mcc -W CTF:<archiveName> -U <matlabFile.m> 
+  | 
+  | Deployable Archive for Excel Add-In 
+  | mcc -W mpsxl:<addinName> <matlabFile.m> 
+  | 
+  |Replace single quotes with double when executing the mcc command from a Windows Command Prompt. 
+  | 
+  |For more details, execute "doc mcc" from MATLAB.
+  | 
+mcc.question_m.files	
+mcc.p_noN	ok (4 s)
+mcc.p_noN.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277340) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.N_only	ok (4 s)
+mcc.N_only.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277233) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.Np	ok (4 s)
+mcc.Np.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277259) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.p_missing	ok (4 s)
+mcc.p_missing.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277275) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.I_missing	ERR Compiler:compiler:DEPFUN_ERR_INVALID_DIR_NAME | Invalid directory: <W>\src\k7_nosuchdir / 
+mcc.I_missing.files	
+mcc.I_given	ok (3 s)
+mcc.I_given.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277221) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.R_bogus	ok (3 s)
+mcc.R_bogus.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277240) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.R_nojvm	ok (3 s)
+  |[Warning: You have specified '-R -nojvm', which may restrict or eliminate MATLAB graphics functionality at runtime.] 
+  |[> In quietMcc', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k7_switches.m', 244)" style="font-weight:bold">probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.R_nojvm.warn	Compiler:compiler:COM_WARN_OPTION_NOJVM | You have specified '-R -nojvm', which may restrict or eliminate MATLAB graphics functionality at runtime.
+mcc.R_nojvm.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277250) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.R_empty	ERR Compiler:compiler:COM_ERR_EXPECTED_ARGUMENT | Error: The -R option requires a nonempty argument (e.g. "-R -nojvm -nojit").
+mcc.R_empty.files	
+mcc.Z_bogus	ERR Compiler:compiler:REQ_UNEXPECTED_ERROR | Error while determining required deployable files. Compilation terminated. Details: / Error using matlab.depfun.internal.SPMode.validateSupportPackageInputs (line 69) / Unknown support package inputs: /  / k7 no such package /  / The input must be 'autodetect', 'none', or a list of installed support packages. Use the function "compiler.codetools.deployableSupportPackages" to find all installed support / packages. / 
+mcc.Z_bogus.files	
+mcc.Z_none	ok (3 s)
+mcc.Z_none.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277262) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_list	ok (0 s)
+  |Warning table (for use with -w enable:/disable:/error:). Format is as follows: 
+  |
+  |"<WARNING IDENTIFIER>" is <STATUS>, and corresponds to the message: <TEXT> 
+  |
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |Identifier "all_warnings" is enabled.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"specified_file_mismatch" is enabled, and corresponds to the message:
+  |
+  |MATLAB file "%s" was specified on the command line with full path of "%s", 
+  |but was found on the search path in directory "%s" first.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"repeated_file" is enabled, and corresponds to the message:
+  |
+  |The file "%s" was repeated on the command line.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"switch_ignored" is enabled, and corresponds to the message:
+  |
+  |The option -%s is ignored in standalone target mode (specify -? for help).
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"missing_lib_sentinel" is enabled, and corresponds to the message:
+  |
+  |Shared library name "%s" does not begin with "lib".
+  |On Linux and Mac, the linker expects shared library names to begin with "lib".
+  |--------------------------------------------------------------------------------
+  |
+  |"demo_license" is enabled, and corresponds to the message:
+  |
+  |DEMO Compiler license. 
+  |  The generated application will expire 30 days from today, 
+  |  on %s.
+  |
+  |--------------------------------------------------------------------------------
+  |
+mcc.w_list.files	
+mcc.w_list_m	ok (0 s)
+  |Warning table (for use with -w enable:/disable:/error:). Format is as follows: 
+  |
+  |"<WARNING IDENTIFIER>" is <STATUS>, and corresponds to the message: <TEXT> 
+  |
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |Identifier "all_warnings" is enabled.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"specified_file_mismatch" is enabled, and corresponds to the message:
+  |
+  |MATLAB file "%s" was specified on the command line with full path of "%s", 
+  |but was found on the search path in directory "%s" first.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"repeated_file" is enabled, and corresponds to the message:
+  |
+  |The file "%s" was repeated on the command line.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"switch_ignored" is enabled, and corresponds to the message:
+  |
+  |The option -%s is ignored in standalone target mode (specify -? for help).
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"missing_lib_sentinel" is enabled, and corresponds to the message:
+  |
+  |Shared library name "%s" does not begin with "lib".
+  |On Linux and Mac, the linker expects shared library names to begin with "lib".
+  |--------------------------------------------------------------------------------
+  |
+  |"demo_license" is enabled, and corresponds to the message:
+  |
+  |DEMO Compiler license. 
+  |  The generated application will expire 30 days from today, 
+  |  on %s.
+  |
+  |--------------------------------------------------------------------------------
+  |
+mcc.w_list_m.files	
+mcc.w_bogus	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'bogus' is not a valid -w option.
+mcc.w_bogus.files	
+mcc.w_end	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: '-d' is not a valid -w option.
+mcc.w_end.files	
+mcc.w_start	ok (3 s)
+  |[Warning: Your deployed application may fail because file or folder paths
+  |not present in the deployed environment may be included in your MATLAB startup
+  |file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  |determine the appropriate execution environment when including file and folder
+  |paths, and recompile your application.
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.w_start.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_start.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_start.exe (1278313) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_start_dis_short	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'disable:COM_WARN_STARTUP_FILE_INCLUDED' is not a valid -w option.
+mcc.w_start_dis_short.files	
+mcc.w_start_dis_full	ok (3 s)
+mcc.w_start_dis_full.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_start.exe (1278357) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_start_err_short	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'error:COM_WARN_STARTUP_FILE_INCLUDED' is not a valid -w option.
+mcc.w_start_err_short.files	
+mcc.w_start_err_full	ERR Compiler:compiler:COM_ERR_WARNING_TREATED_AS_ERROR | Error: A warning has been issued. Warnings are being treated as errors.
+mcc.w_start_err_full.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_start_err_full.files	
+mcc.w_disable	ok (3 s)
+mcc.w_disable.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_start.exe (1278335) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_error	ERR Compiler:compiler:COM_ERR_WARNING_TREATED_AS_ERROR | Error: A warning has been issued. Warnings are being treated as errors.
+mcc.w_error.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_error.files	
+mcc.w_enable	ok (3 s)
+  |[Warning: Your deployed application may fail because file or folder paths
+  |not present in the deployed environment may be included in your MATLAB startup
+  |file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  |determine the appropriate execution environment when including file and folder
+  |paths, and recompile your application.
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.w_enable.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_enable.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_start.exe (1278377) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_off	ok (3 s)
+  |[Warning: Your deployed application may fail because file or folder paths
+  |not present in the deployed environment may be included in your MATLAB startup
+  |file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  |determine the appropriate execution environment when including file and folder
+  |paths, and recompile your application.
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.w_off.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_off.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_start.exe (1278341) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_on	ok (3 s)
+  |[Warning: Your deployed application may fail because file or folder paths
+  |not present in the deployed environment may be included in your MATLAB startup
+  |file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  |determine the appropriate execution environment when including file and folder
+  |paths, and recompile your application.
+  |] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.w_on.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_on.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_start.exe (1278335) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_dis_unknown	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'disable:k7_nosuch_id' is not a valid -w option.
+mcc.w_dis_unknown.files	
+mcc.w_list_after_dis	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'disable:COM_WARN_STARTUP_FILE_INCLUDED' is not a valid -w option.
+mcc.w_list_after_dis.files	
+mcc.w_excl	ok (3 s)
+  |[Warning: Excluded "<MATLABROOT>/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either
+  |remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this
+  |warning by using the %#exclude pragma.] 
+  |[> In probe_k7_switches>quietMcc (line 244)
+  |In probe_k7_switches (line 193)] 
+mcc.w_excl.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "<MATLABROOT>/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.w_excl.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_excl.exe (1277221) | mccExcludedFiles.log (482) | readme.txt (1395) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_excl_disable	ok (3 s)
+mcc.w_excl_disable.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_excl.exe (1277244) | mccExcludedFiles.log (482) | readme.txt (1395) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.w_excl_error	ERR Compiler:compiler:COM_ERR_WARNING_TREATED_AS_ERROR | Error: A warning has been issued. Warnings are being treated as errors.
+mcc.w_excl_error.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "<MATLABROOT>/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.w_excl_error.files	
+mcc.B_user	ok (3 s)
+mcc.B_user.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_bundled.exe (1277355) | mccExcludedFiles.log (90) | readme.txt (1401) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.B_param	ok (3 s)
+mcc.B_param.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277280) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.B_param_two	ok (3 s)
+mcc.B_param_two.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277263) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.B_param_none	ERR Compiler:compiler:COM_ERR_ILLEGAL_BUNDLE_REPLACEMENT | Error: Illegal bundle file replacement argument.
+mcc.B_param_none.files	
+mcc.B_param_empty	ok (3 s)
+mcc.B_param_empty.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277308) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.B_missing	ERR Compiler:compiler:COM_ERR_UNABLE_TO_OPEN_FILE | Error: Unable to open file "k7_nosuch.bundle": No such file or directory.
+mcc.B_missing.files	
+mcc.B_nested	ok (3 s)
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\src\k7_hello.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\B_nested\readme.txt".
+mcc.B_nested.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_bundled.exe (1277302) | mccExcludedFiles.log (90) | readme.txt (1401) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.B_macro_m	ok (3 s)
+mcc.B_macro_m.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277221) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc.B_csharedlib	ok (5 s)
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+mcc.B_csharedlib.files	buildresult.json (107) | includedSupportPackages.txt (0) | k7blib.c (3890) | k7blib.def (141) | k7blib.dll (166157) | k7blib.exp (1599) | k7blib.exports (116) | k7blib.h (1740) | k7blib.lib (2784) | mccExcludedFiles.log (90) | readme.txt (1394) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)

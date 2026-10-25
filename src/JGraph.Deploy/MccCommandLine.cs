@@ -19,33 +19,92 @@ public enum MccTarget
     Windowed,
 }
 
+/// <summary>How far a standalone build goes, as <c>-T</c> says (k7_switches).</summary>
+public enum MccLink
+{
+    /// <summary><c>-T link:exe</c>, the default: the program with its archive.</summary>
+    Program,
+
+    /// <summary><c>-T compile:exe</c>: the program, its archive written beside it.</summary>
+    ProgramBesideArchive,
+
+    /// <summary><c>-T codegen</c>: the archive alone, no program.</summary>
+    ArchiveOnly,
+}
+
 /// <summary>
-/// <c>mcc</c>'s command line (compiler and SDK plan, stage K6): the standalone switches <c>-m</c>,
-/// <c>-e</c>, <c>-W main|WinMain:name[,version=v][,runtime=bundled]</c>, <c>-T link:exe</c>,
-/// <c>-o</c>, <c>-n</c>, <c>-r</c>, <c>-h</c>, <c>-C</c>, <c>-a</c>, <c>-d</c> and <c>-v</c>, the
-/// dependency switches compiler.build writes (<c>-X</c>, <c>-Z</c>, <c>-I</c>, <c>-N</c>, <c>-p</c>),
-/// <c>-R</c> (stage K4) and <c>-j</c> (stage K3b), read as R2025b's mcc reads them and refused in its
-/// words (stage K0's <c>build_side</c>, K6's <c>k6_build</c>). Every other switch R2025b knows is
-/// refused as one JGraph's mcc does not build yet.
+/// <c>mcc</c>'s command line (compiler and SDK plan, stages K6 and K7), read as R2025b's mcc reads it
+/// and refused in its words (K0's <c>build_side</c>, K6's <c>k6_build</c>, K7's <c>k7_switches</c> and
+/// <c>k7_more</c>):
+/// <list type="bullet">
+/// <item>a switch of several letters is read as that many switches (<c>-mv</c>, and <c>-help</c> as
+/// <c>-h -e -l -p</c>), each taking its value from the arguments that follow in turn;</item>
+/// <item><c>-B file[:a,b]</c> is replaced by the file's switches with <c>%1%</c>, <c>%2%</c> filled in,
+/// read where given or from JGraph's bundle folder (R2025b's bundle names);</item>
+/// <item>the standalone switches, <c>-T</c>'s three forms, <c>-w</c> (<see cref="MccWarnings"/>),
+/// <c>-K</c>, <c>-/t</c>;</item>
+/// <item>the obsolete switches: noted and ignored (<c>-O -i -z -L -t</c>) or refused (<c>-V -win32
+/// -win64 -y -x -F</c>), as R2025b does;</item>
+/// <item>switches a standalone build ignores: with R2025b's warning (<c>-g -G -M -f -c</c>) or without
+/// (<c>-b -S -u -H -P -Y -A all</c>);</item>
+/// <item>every <c>-W</c> target checked as R2025b checks it, then refused as one JGraph does not build
+/// yet, or does not build at all (section 10 of the plan);</item>
+/// <item>the encryption switches <c>-s</c>, <c>-k</c>, <c>-J</c> refused, by the decision of 2026-10-24.</item>
+/// </list>
 /// </summary>
 public sealed class MccCommandLine
 {
     private const string Prefix = "Compiler:compiler:";
 
-    /// <summary>The switches that take the next argument as their value.</summary>
-    private static readonly HashSet<string> Valued = new(StringComparer.Ordinal)
+    /// <summary>The switches that take the next argument as their value, each with R2025b's example of one.</summary>
+    private static readonly Dictionary<string, string> Valued = new(StringComparer.Ordinal)
     {
-        "-a", "-B", "-d", "-f", "-F", "-h", "-I", "-J", "-k", "-L", "-M", "-o", "-p", "-r", "-R", "-T", "-u", "-U", "-w", "-W", "-Y", "-Z",
+        ["-a"] = "data.mat", ["-A"] = "all", ["-B"] = "<option file>", ["-d"] = "<output directory>", ["-E"] = "<file name>",
+        ["-f"] = "<build options file>", ["-F"] = "<file name>", ["-h"] = "<file name>", ["-I"] = "<MATLAB file search directory>",
+        ["-J"] = "<file name>", ["-k"] = "key=<key file>;loader=<mex function name>", ["-L"] = "<language>", ["-M"] = "-D<macro>=<value>",
+        ["-o"] = "<output file>", ["-p"] = "<path-item>", ["-r"] = "<embed icon file>", ["-R"] = "-nojvm -nojit", ["-T"] = "link:lib",
+        ["-w"] = "list", ["-W"] = "cpplib:<library name>", ["-Y"] = "<license.dat file>", ["-Z"] = "autodetect",
     };
 
-    /// <summary>Switches R2025b reads and then does nothing with: <c>-L C</c> and <c>-t</c> leave a build with no wrapper (K0).</summary>
-    private static readonly HashSet<string> Ignored = new(StringComparer.Ordinal) { "-L", "-t" };
-
-    /// <summary>R2025b's switches that JGraph's mcc does not build (the plan's stage K7, and the encryption decided against).</summary>
-    private static readonly HashSet<string> NotBuilt = new(StringComparer.Ordinal)
+    /// <summary>Switches R2025b notes as no longer supported and then ignores, with its note.</summary>
+    private static readonly Dictionary<string, string> Noted = new(StringComparer.Ordinal)
     {
-        "-b", "-B", "-c", "-f", "-F", "-g", "-G", "-J", "-k", "-K", "-l", "-M", "-s", "-S", "-u", "-U", "-w", "-Y",
+        ["-O"] = "The -O switch is no longer supported; the MATLAB JIT accelerator makes \nCompiler optimizations unnecessary. \n",
+        ["-i"] = "The -i switch is no longer supported; the \"include exported interfaces\" behavior \nis applied to every compilation. \n",
+        ["-z"] = "The -z switch is no longer supported. \n",
+        ["-L"] = "The -L switch is no longer supported; the target (-T) and wrapper (-W) \nswitches determine the language of the generated code. \n",
+        ["-t"] = "The -t switch is no longer supported; the Compiler no longer generates C/C++ \nsource code for MATLAB functions (it generates wrapper functions instead, see \nthe documentation for -W). \n",
     };
+
+    /// <summary>Switches R2025b refuses as no longer supported, each with its identifier and text.</summary>
+    private static readonly Dictionary<string, (string Id, string Text)> Obsolete = new(StringComparer.Ordinal)
+    {
+        ["-V"] = ("COM_MSG_NO_DASH_V", "The -V switch is no longer supported; the MATLAB Compiler does not allow the use of previous compiler versions."),
+        ["-win32"] = ("COM_MSG_NO_DASH_WIN32", "The -win32 switch is no longer supported. \n"),
+        ["-win64"] = ("COM_MSG_NO_DASH_WIN64", "The -win64 switch is no longer supported; 64-bit architecture is assumed. \n"),
+        ["-y"] = ("COM_ERR_NO_DASH_y", "Error: -y is no longer supported. The MATLAB Compiler no longer generates \n  Simulink C MEX S functions. See the Simulink documentation for other options\n  for embedding M-code in block diagrams."),
+        ["-x"] = ("COM_ERR_NO_MORE_MEX", "Error: -x is no longer supported. The MATLAB Compiler no longer generates \n  MEX files because there is no longer any performance advantage to doing so: the \n  MATLAB JIT accelerates MATLAB files by default. \n  To hide proprietary algorithms, use the PCODE function."),
+    };
+
+    /// <summary>The library and server targets: what each is called, and the stage that builds it (null: out of scope).</summary>
+    private static readonly Dictionary<string, (string What, string? Stage)> OtherTargets = new(StringComparer.Ordinal)
+    {
+        ["lib"] = ("a C shared library", "K11"),
+        ["cpplib"] = ("a C++ shared library", "K12"),
+        ["dotnet"] = ("a .NET assembly", "K8"),
+        ["python"] = ("a Python package", "K13"),
+        ["CTF"] = ("a Production Server archive", "K14"),
+        ["excel"] = ("an Excel add-in", "K17"),
+        ["mpsxl"] = ("a Production Server archive for Excel", "K17"),
+        ["java"] = ("Java packages", null),
+        ["com"] = ("COM components", null),
+        ["hadoop"] = ("Hadoop archives", null),
+        ["spark"] = ("Spark applications", null),
+        ["webapp"] = ("web app archives", null),
+    };
+
+    /// <summary>The deepest a bundle may name another, so a bundle naming itself ends.</summary>
+    private const int MaxBundleDepth = 32;
 
     private MccCommandLine()
     {
@@ -53,6 +112,9 @@ public sealed class MccCommandLine
 
     /// <summary>What the build makes.</summary>
     public MccTarget Target { get; private set; } = MccTarget.Console;
+
+    /// <summary>How far the build goes, <c>-T</c>.</summary>
+    public MccLink Link { get; private set; }
 
     /// <summary>The component's name, <c>-W main:name</c>; the main file's when not given.</summary>
     public string? ComponentName { get; private set; }
@@ -72,7 +134,7 @@ public sealed class MccCommandLine
     /// <summary><c>-n</c>: the arguments go through R2025b's numeric rule.</summary>
     public bool NumericArguments { get; private set; }
 
-    /// <summary><c>-C</c>: the archive is written beside the program.</summary>
+    /// <summary><c>-C</c>, <c>-U</c> or <c>-T compile:exe</c>: the archive is written beside the program.</summary>
     public bool SeparateArchive { get; private set; }
 
     /// <summary><c>-r</c>: the icon file.</summary>
@@ -93,6 +155,18 @@ public sealed class MccCommandLine
     /// <summary><c>-N</c>: the toolbox folders come off the path.</summary>
     public bool ClearToolboxPath { get; private set; }
 
+    /// <summary><c>-K</c>: what a failed build wrote is kept.</summary>
+    public bool KeepPartialOutput { get; private set; }
+
+    /// <summary><c>-/t</c> (also <c>-/s</c>, <c>-/a</c>): the command line is printed as mcc read it before the build.</summary>
+    public bool Trace { get; private set; }
+
+    /// <summary><c>-/?</c>: the trace switches' help is printed and nothing is built.</summary>
+    public bool ShowTraceHelp { get; private set; }
+
+    /// <summary><c>-w</c>.</summary>
+    public MccWarnings Warnings { get; } = new();
+
     /// <summary><c>-a</c>, in order.</summary>
     public List<string> Additional { get; } = [];
 
@@ -108,33 +182,77 @@ public sealed class MccCommandLine
     /// <summary><c>-R</c>, each one's text.</summary>
     public List<string> RuntimeOptions { get; } = [];
 
-    /// <summary><c>-?</c>: the help is printed and nothing is built.</summary>
+    /// <summary>R2025b's notes for the obsolete switches given, printed before the build.</summary>
+    public List<string> Notes { get; } = [];
+
+    /// <summary>The switches a standalone build ignores with R2025b's warning, each as the warning names it (<c>-G</c> as <c>g</c>).</summary>
+    public List<string> IgnoredSwitches { get; } = [];
+
+    /// <summary>The command line as mcc read it: letters split, bundles in place.</summary>
+    public List<string> Processed { get; } = [];
+
+    /// <summary><c>-?</c>, or no arguments: the help is printed and nothing is built.</summary>
     public bool ShowHelp { get; private set; }
 
     /// <summary>The files, in order: the main first.</summary>
     public List<string> Files { get; } = [];
 
-    /// <summary>Reads <paramref name="args"/> as R2025b's mcc does, or refuses them as it does.</summary>
+    /// <summary>Whether the build only prints something: help, the trace help or the warning table.</summary>
+    public bool PrintsOnly => ShowHelp || ShowTraceHelp || Warnings.List;
+
+    /// <summary>
+    /// Reads <paramref name="args"/> as R2025b's mcc does, or refuses them as it does. A bundle file is
+    /// read against <paramref name="currentFolder"/>, then from <paramref name="bundleFolder"/>
+    /// (<see cref="BundleFolder"/> when null).
+    /// </summary>
     /// <exception cref="MccException">R2025b's refusal.</exception>
-    public static MccCommandLine Parse(IReadOnlyList<string> args)
+    public static MccCommandLine Parse(IReadOnlyList<string> args, string? currentFolder = null, string? bundleFolder = null)
     {
         ArgumentNullException.ThrowIfNull(args);
         var line = new MccCommandLine();
-        bool targetGiven = false;
-        string? wrapper = null;
-        string? link = null;
-        if (args.Contains("-F") && args.Count > 2)
+        if (args.Count == 0)
         {
-            throw Refuse("COM_ERR_OPTION_F_MUST_BE_ALONE", "Error: The -F <file name> option must occur with no other options on the command line.");
+            line.ShowHelp = true;
+            return line;
         }
 
-        for (int i = 0; i < args.Count; i++)
+        if (args.Contains("-F"))
         {
-            string arg = args[i];
+            throw args.Count == 2 && args[0] == "-F"
+                ? Refuse("COM_ERR_DASH_F_DEPRECATED", "Error: The mcc -F option is no longer supported. Use deploytool /build instead. Run deploytool -? for usage.")
+                : Refuse("COM_ERR_OPTION_F_MUST_BE_ALONE", "Error: The -F <file name> option must occur with no other options on the command line.");
+        }
+
+        if (args.Contains("-E"))
+        {
+            throw args.Count == 2 && args[0] == "-E"
+                ? new MccException("JGraph:mcc:optionNotBuilt", "JGraph's mcc does not read -E files.")
+                : Refuse("COM_ERR_OPTION_E_MUST_BE_ALONE", "Error: The -E <file name> option must occur with no other options on the command line.");
+        }
+
+        var words = new List<string>(args);
+        var depth = new List<int>(Enumerable.Repeat(0, words.Count));
+        string? wrapperKind = null;
+        string[] wrapperParts = [];
+        string? link = null;
+        bool codegenSwitch = false;
+        bool mpsSwitch = false;
+        bool separateSwitch = false;
+
+        for (int i = 0; i < words.Count; i++)
+        {
+            string arg = words[i];
             if (arg.Length < 2 || arg[0] != '-')
             {
                 line.Files.Add(arg);
+                line.Processed.Add(arg);
                 continue;
+            }
+
+            if (arg.FirstOrDefault(char.IsWhiteSpace) is var space and not '\0')
+            {
+                throw Refuse("COM_ERR_ILLEGAL_WHITESPACE",
+                    $"Error: Found illegal whitespace character in command line option: \"{space}\". \nThe strings on the left and right side of the space should be separate arguments \nto MCC.");
             }
 
             if (arg == "-?")
@@ -143,57 +261,133 @@ public sealed class MccCommandLine
                 return line;
             }
 
-            if (arg == "-x")
+            if (arg.StartsWith("-/", StringComparison.Ordinal))
             {
-                throw Refuse("COM_ERR_NO_MORE_MEX",
-                    "Error: -x is no longer supported. The MATLAB Compiler no longer generates \n  MEX files because there is no longer any performance advantage to doing so: the \n  MATLAB JIT accelerates MATLAB files by default. \n  To hide proprietary algorithms, use the PCODE function.");
+                switch (arg)
+                {
+                    case "-/?":
+                        line.ShowTraceHelp = true;
+                        return line;
+                    case "-/t" or "-/s" or "-/a":
+                        line.Trace = true;
+                        line.Processed.Add(arg);
+                        continue;
+                    default:
+                        throw Refuse("COM_DBG_ERR_UNRECOGNIZED_OPTION", $"Error: Unrecognized option: -/{arg[2..]}.");
+                }
             }
 
-            string? value = null;
-            if (Valued.Contains(arg))
+            // Several letters are as many switches (k7_switches: -mv, -vm, -mC; -help read as -h -e -l -p).
+            if (arg.Length > 2 && !Obsolete.ContainsKey(arg))
             {
-                if (i + 1 >= args.Count)
+                words.RemoveAt(i);
+                int level = depth[i];
+                depth.RemoveAt(i);
+                for (int c = arg.Length - 1; c >= 1; c--)
                 {
-                    throw new MccException("JGraph:mcc:missingValue", $"The {arg} option needs a value after it.");
+                    words.Insert(i, "-" + arg[c]);
+                    depth.Insert(i, level);
                 }
 
-                value = args[++i];
-            }
-
-            if (Ignored.Contains(arg))
-            {
+                i--;
                 continue;
             }
 
-            if (NotBuilt.Contains(arg))
+            if (Obsolete.TryGetValue(arg, out (string Id, string Text) obsolete))
             {
-                throw new MccException("JGraph:mcc:optionNotBuilt", $"JGraph's mcc does not build the {arg} option.");
+                throw Refuse(obsolete.Id, obsolete.Text);
+            }
+
+            string? value = null;
+            if (Valued.TryGetValue(arg, out string? example))
+            {
+                // The last argument with nothing after it is taken and does nothing (k7_switches:
+                // help_word read -help as -h -e -l -p and went on); an empty value is refused.
+                if (i + 1 >= words.Count)
+                {
+                    line.Processed.Add(arg);
+                    continue;
+                }
+
+                if (words[i + 1].Length == 0)
+                {
+                    throw Refuse("COM_ERR_EXPECTED_ARGUMENT", $"Error: The {arg} option requires a nonempty argument (e.g. \"{arg} {example}\").");
+                }
+
+                value = words[++i];
+            }
+            else if (arg == "-P" && i + 1 < words.Count && !words[i + 1].StartsWith('-'))
+            {
+                // R2025b's undocumented -P takes the next argument unless it is a switch (k7_more).
+                value = words[++i];
+            }
+
+            if (arg == "-B")
+            {
+                int level = depth[i - 1] + 1;
+                if (level > MaxBundleDepth)
+                {
+                    throw new MccException("JGraph:mcc:bundleDepth", $"The bundle '{value}' names bundles more than {MaxBundleDepth} deep.");
+                }
+
+                IReadOnlyList<string> expanded = ReadBundle(value!, currentFolder, bundleFolder ?? BundleFolder);
+                words.RemoveRange(i - 1, 2);
+                depth.RemoveRange(i - 1, 2);
+                words.InsertRange(i - 1, expanded);
+                depth.InsertRange(i - 1, Enumerable.Repeat(level, expanded.Count));
+                i -= 2;
+                continue;
+            }
+
+            line.Processed.Add(arg);
+            if (value is not null)
+            {
+                line.Processed.Add(value);
+            }
+
+            if (Noted.TryGetValue(arg, out string? note))
+            {
+                line.Notes.Add(note);
+                continue;
             }
 
             switch (arg)
             {
                 case "-m":
                     line.Target = MccTarget.Console;
-                    targetGiven = true;
+                    wrapperKind = "main";
+                    wrapperParts = [];
+                    link = "link:exe";
                     break;
                 case "-e":
                     line.Target = MccTarget.Windowed;
-                    targetGiven = true;
+                    wrapperKind = "WinMain";
+                    wrapperParts = [];
+                    link = "link:exe";
+                    break;
+                case "-l":
+                    wrapperKind = "lib";
+                    wrapperParts = [];
+                    link = "link:lib";
                     break;
                 case "-W":
-                    wrapper = value!;
-                    line.Wrapper(value!);
-                    targetGiven = true;
+                    (wrapperKind, wrapperParts) = line.Wrapper(value!);
                     break;
                 case "-T":
                     link = value!;
-                    if (value is not ("link:exe" or "link:lib" or "compile:exe" or "compile:lib" or "codegen"))
+                    if (!IsLinkValue(value!))
                     {
                         throw Refuse("COM_ERR_INVALID_OPTION", $"Error: \"{value}\" is not a valid -T option argument.");
                     }
 
                     break;
                 case "-o":
+                    if (line.OutputName is { } first)
+                    {
+                        throw Refuse("COM_ERR_MULTIPLE_COMPONENT_NAMES",
+                            $"Error: Multiple component names. Processing \"-o\" switch. Component name \"{first}\" already specified via \"-o\".");
+                    }
+
                     line.OutputName = value;
                     break;
                 case "-d":
@@ -203,7 +397,10 @@ public sealed class MccCommandLine
                     line.NumericArguments = true;
                     break;
                 case "-C":
-                    line.SeparateArchive = true;
+                    separateSwitch = true;
+                    break;
+                case "-U":
+                    mpsSwitch = true;
                     break;
                 case "-r":
                     line.IconFile = value;
@@ -223,6 +420,9 @@ public sealed class MccCommandLine
                 case "-N":
                     line.ClearToolboxPath = true;
                     break;
+                case "-K":
+                    line.KeepPartialOutput = true;
+                    break;
                 case "-a":
                     line.Additional.Add(value!);
                     break;
@@ -238,18 +438,61 @@ public sealed class MccCommandLine
                 case "-R":
                     line.RuntimeOptions.Add(value!);
                     break;
+                case "-w":
+                    line.Warnings.Apply(value!);
+                    break;
+                case "-g" or "-G":
+                    line.IgnoredSwitches.Add("g");
+                    break;
+                case "-M" or "-f":
+                    line.IgnoredSwitches.Add(arg[1..]);
+                    break;
+                case "-c":
+                    codegenSwitch = true;
+                    line.IgnoredSwitches.Add("c");
+                    break;
+                case "-A":
+                    if (value != "all")
+                    {
+                        throw Refuse("COM_ERR_INVALID_OPTION", $"Error: \"{value}\" is not a valid -A option argument.");
+                    }
+
+                    break;
+                case "-b" or "-S" or "-u" or "-H" or "-P" or "-Y":
+                    // A standalone build takes these and does nothing with them, as R2025b's does
+                    // (k7_switches: -b, -S, -u, -H, -P, -Y beside -m); -Y names a licence JGraph has no use for.
+                    break;
+                case "-s" or "-k" or "-J":
+                    throw new MccException("JGraph:mcc:optionNotBuilt",
+                        $"JGraph's mcc does not build the {arg} option: JGraph builds no encrypted archives.");
                 default:
-                    throw Refuse("COM_ERR_UNRECOGNIZED_OPTION", $"Error: Unrecognized option: {arg}.");
+                    throw Refuse("COM_ERR_UNRECOGNIZED_OPTION", $"Error: Unrecognized option: -{arg[1..]}.");
             }
         }
 
-        if (!targetGiven)
+        if (line.Warnings.List || line.ShowTraceHelp)
         {
-            throw Refuse("COM_ERR_MISSING_WRAPPER",
-                "Unable to determine application type, since no wrapper function was specified. \nPlease use the -W switch or specify application type via -m or -l. \nType 'mcc -?' for further assistance.");
+            return line;
         }
 
-        if (wrapper is not null && link is not null && !link.EndsWith(":exe", StringComparison.Ordinal))
+        // R2025b looks for -h's file before anything else it checks (k7_switches: dash_h_end, help_word).
+        if (line.HelpFile is { } help && currentFolder is not null
+            && !File.Exists(Path.IsPathRooted(help) ? help : Path.Combine(currentFolder, help)))
+        {
+            throw Refuse("COM_ERR_HELP_FILE_NOT_EXIST", $"The help file \n  '{help}'\ndoes not exist.");
+        }
+
+        if (wrapperKind is null)
+        {
+            throw codegenSwitch
+                ? Refuse("COM_ERR_MISSING_WRAPPER_FOR_CODEGEN_ONLY",
+                    "Unable to determine application type, since no wrapper function was specified. \nPlease use the -W or -l switch. \nType 'mcc -?' for further assistance.")
+                : Refuse("COM_ERR_MISSING_WRAPPER",
+                    "Unable to determine application type, since no wrapper function was specified. \nPlease use the -W switch or specify application type via -m or -l. \nType 'mcc -?' for further assistance.");
+        }
+
+        bool standalone = wrapperKind is "main" or "WinMain";
+        if (standalone && link is not null && link.Split(':').Contains("lib"))
         {
             throw Refuse("COM_ERR_WRAPPER_TARGET_MISMATCH",
                 "Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.");
@@ -259,6 +502,17 @@ public sealed class MccCommandLine
         {
             throw Refuse("COM_ERR_NO_FILES_SPECIFIED", "Error: No source files were specified (-? for help).");
         }
+
+        if (!standalone)
+        {
+            OtherTarget(wrapperKind, wrapperParts, mpsSwitch, separateSwitch);
+        }
+
+        line.Link = link is null ? MccLink.Program
+            : link.Split(':').Contains("codegen") ? MccLink.ArchiveOnly
+            : link.Split(':').Contains("compile") ? MccLink.ProgramBesideArchive
+            : MccLink.Program;
+        line.SeparateArchive = separateSwitch || mpsSwitch || line.Link == MccLink.ProgramBesideArchive;
 
         if (line.OutputName is { } name && !IsOutputName(name))
         {
@@ -270,7 +524,12 @@ public sealed class MccCommandLine
         {
             if (package is not ("autodetect" or "none"))
             {
-                throw new MccException("JGraph:mcc:supportPackage", $"JGraph has no support packages; '{package}' cannot be included.");
+                // R2025b answers this in its analysis (k7_switches: Z_bogus); JGraph has no support packages.
+                throw Refuse("REQ_UNEXPECTED_ERROR",
+                    "Error while determining required deployable files. Compilation terminated. Details:\n"
+                    + "Error using matlab.depfun.internal.SPMode.validateSupportPackageInputs (line 69)\nUnknown support package inputs:\n\n"
+                    + package + "\n\nThe input must be 'autodetect', 'none', or a list of installed support packages. Use the function "
+                    + "\"compiler.codetools.deployableSupportPackages\" to find all installed support\npackages.\n");
             }
         }
 
@@ -280,79 +539,247 @@ public sealed class MccCommandLine
     /// <summary>Whether R2025b takes <paramref name="name"/> for a program's name: a letter or <c>_</c>, then letters, digits and <c>_</c>.</summary>
     public static bool IsOutputName(string name) => Regex.IsMatch(name, "^[A-Za-z_][A-Za-z0-9_]*$");
 
+    /// <summary>Where JGraph's bundle files are: <c>toolbox\compiler\bundles</c> beside JGraph, R2025b's names.</summary>
+    public static string BundleFolder => Path.Combine(AppContext.BaseDirectory, "toolbox", "compiler", "bundles");
+
     /// <summary>
-    /// <c>-W main:name[,version=v]</c> or <c>WinMain:</c> (any case, as compiler.build writes
-    /// <c>winmain</c>), and JGraph's <c>runtime=bundled</c>; a wrapper for another target is one
-    /// JGraph's mcc does not build yet.
+    /// <c>-T</c>'s value: words from link, compile, codegen, exe and lib joined by colons, any of them
+    /// empty (k7_switches took <c>exe</c> and <c>link:</c> and refused <c>link:nothing</c>).
     /// </summary>
-    private void Wrapper(string value)
+    private static bool IsLinkValue(string value) =>
+        value.Split(':').All(static part => part is "" or "link" or "compile" or "codegen" or "exe" or "lib");
+
+    /// <summary>
+    /// <c>-W main:name[,version=v][,runtime=bundled|installed]</c> or <c>WinMain:</c> (any case);
+    /// anything else after the name is taken and ignored, as R2025b's does (k7_switches). Any other
+    /// target is checked where it is given and refused once the command line is read.
+    /// </summary>
+    private (string Kind, string[] Parts) Wrapper(string value)
     {
         int colon = value.IndexOf(':', StringComparison.Ordinal);
         string kind = colon < 0 ? value : value[..colon];
         string[] parts = colon < 0 ? [] : value[(colon + 1)..].Split(',');
-        if (kind.Equals("main", StringComparison.OrdinalIgnoreCase))
+        if (kind.Equals("main", StringComparison.OrdinalIgnoreCase) || kind.Equals("WinMain", StringComparison.OrdinalIgnoreCase))
         {
-            Target = MccTarget.Console;
+            Target = kind.Equals("main", StringComparison.OrdinalIgnoreCase) ? MccTarget.Console : MccTarget.Windowed;
+            if (parts.Length > 0 && parts[0].Length > 0)
+            {
+                ComponentName = parts[0];
+            }
+
+            foreach (string part in parts.Skip(1))
+            {
+                if (part.StartsWith("version=", StringComparison.Ordinal))
+                {
+                    string text = part["version=".Length..];
+                    Version = ProgramVersion.Parse(text) ?? throw Refuse("COM_ERR_INVALID_VERSION", ProgramVersion.Refusal(text));
+                }
+                else if (part.StartsWith("runtime=", StringComparison.Ordinal))
+                {
+                    RuntimeDelivery = part["runtime=".Length..] switch
+                    {
+                        "bundled" => RuntimeDelivery.Bundled,
+                        "installed" => RuntimeDelivery.Installed,
+                        string other => throw new MccException("JGraph:mcc:runtimeDelivery",
+                            $"'{other}' is not a way JGraph delivers its runtime with a program: use runtime=installed or runtime=bundled."),
+                    };
+                }
+            }
+
+            return (Target == MccTarget.Console ? "main" : "WinMain", parts);
         }
-        else if (kind.Equals("WinMain", StringComparison.OrdinalIgnoreCase))
-        {
-            Target = MccTarget.Windowed;
-        }
-        else if (kind is "lib" or "cpplib" or "dotnet" or "java" or "python" or "CTF" or "excel" or "mpsxl" or "com" or "hadoop" or "spark" or "webapp")
-        {
-            throw new MccException("JGraph:mcc:targetNotBuilt", $"JGraph's mcc does not build the -W {kind} target yet.");
-        }
-        else
+
+        if (!OtherTargets.ContainsKey(kind))
         {
             throw Refuse("COM_ERR_INVALID_WRAPPER_OPTION", $"Error: '{kind}' is not a valid -W option.");
         }
 
-        if (parts.Length > 0 && parts[0].Length > 0)
+        string name = parts.Length > 0 ? parts[0] : "";
+        switch (kind)
         {
-            ComponentName = parts[0];
+            case "lib":
+                if (name.Length == 0)
+                {
+                    throw Refuse("COM_ERR_ILLEGAL_OUTPUT_NAME",
+                        "Illegal output name: '' \n (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')");
+                }
+
+                break;
+            case "cpplib":
+                if (name.Length == 0)
+                {
+                    throw Refuse("COM_ERR_COMPONENT_NAME_NEEDED_FOR_CPPLIB", "Error: A component name must be specified following \"cpplib:\".\n");
+                }
+
+                foreach (string part in parts.Skip(1))
+                {
+                    if (part == "named")
+                    {
+                        throw Refuse("COM_ERR_NAMED_CPPLIB_NOT_SUPPORTED_YET", "Error: The \"named\" interface for the C++ Shared Library target is not yet supported.\n");
+                    }
+
+                    if (part is not ("all" or "generic" or "legacy"))
+                    {
+                        throw Refuse("COM_ERR_BAD_ARG_FOR_CPPLIB", $"Error: Option \"{part}\" is not valid following \"cpplib:component_name,\".\n");
+                    }
+                }
+
+                break;
+            case "dotnet":
+                RequireName(name);
+                for (int p = 1; p < parts.Length; p++)
+                {
+                    if (!parts[p].StartsWith("api=", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    if (p != 1)
+                    {
+                        throw Refuse("COM_ERR_INVALID_API_PLACEMENT",
+                            "Invalid placement of \"api=\" in -W or -B option. \"api=\" must be specified immediately after component name.");
+                    }
+
+                    if (parts[p]["api=".Length..] is not ("matlab-data" or "mwarray" or ""))
+                    {
+                        throw Refuse("COM_ERR_INVALID_API_VALUE",
+                            $"Invalid value for \"api=\" specified in -W or -B option: {parts[p]["api=".Length..]}. Value must be a member of this set:\n\t'matlab-data'\n\t'mwarray'\n\t''");
+                    }
+                }
+
+                // name[,api=...],class,version,...: the version after the class.
+                int classAt = parts.Length > 1 && parts[1].StartsWith("api=", StringComparison.Ordinal) ? 2 : 1;
+                if (parts.Length > classAt + 1 && parts[classAt + 1] is not ("" or "4.0" or "5.0"))
+                {
+                    throw Refuse("COM_ERR_NET_VERSION_INVALID",
+                        "The .NET version is set to an unsupported value. Set the .NET version to \"4.0\" if targeting the .NET 4.x Framework. For .NET 5.0 and later, use \"5.0\".");
+                }
+
+                break;
+            case "python" or "com" or "CTF" or "excel" or "mpsxl":
+                RequireName(name);
+                break;
         }
 
-        foreach (string part in parts.Skip(1))
+        return (kind, parts);
+    }
+
+    private static void RequireName(string name)
+    {
+        if (name.Length == 0)
         {
-            if (part.StartsWith("version=", StringComparison.Ordinal))
+            throw Refuse("COM_ERR_ILLEGAL_COMPONENT_NAME", "Error: Component name invalid or unspecified (specify with -n or -W).");
+        }
+    }
+
+    /// <summary>A library or server target, once the command line is read: R2025b's last checks, then JGraph's refusal.</summary>
+    private static void OtherTarget(string kind, string[] parts, bool mpsSwitch, bool separateSwitch)
+    {
+        if (kind == "CTF" && !mpsSwitch)
+        {
+            throw Refuse("COM_ERROR_MISSING_U_WITH_W_CTF", "The \"-U\" option must be used when \"-W CTF:\" is specified.");
+        }
+
+        if (kind == "spark" && !separateSwitch)
+        {
+            throw Refuse("COM_ERR_SPARK_MISSING_OPTION", "Error: Missing \"-C\" option to compile Spark component \n");
+        }
+
+        (string what, string? stage) = OtherTargets[kind];
+        throw stage is null
+            ? new MccException("JGraph:mcc:targetOutOfScope", $"JGraph does not build {what} (-W {kind}).")
+            : new MccException("JGraph:mcc:targetNotBuilt", $"JGraph's mcc does not build {what} (-W {kind}) yet.");
+    }
+
+    /// <summary>
+    /// A bundle's switches: the file read where given (against <paramref name="currentFolder"/>) or
+    /// from <paramref name="bundleFolder"/>, split at white space, each <c>%n%</c> replaced by the n-th
+    /// of the arguments after the name's colon (k7_switches, k7_more: a missing one refused, extra ones
+    /// left unused, an empty list one empty argument).
+    /// </summary>
+    private static List<string> ReadBundle(string value, string? currentFolder, string bundleFolder)
+    {
+        int colon = BundleColon(value);
+        string file = colon < 0 ? value : value[..colon];
+        string[]? arguments = colon < 0 ? null : value[(colon + 1)..].Split(',');
+        string given = Path.IsPathRooted(file) || currentFolder is null ? file : Path.Combine(currentFolder, file);
+        string? path = File.Exists(given) ? given
+            : !Path.IsPathRooted(file) && File.Exists(Path.Combine(bundleFolder, file)) ? Path.Combine(bundleFolder, file)
+            : null;
+        if (path is null)
+        {
+            throw Refuse("COM_ERR_UNABLE_TO_OPEN_FILE", $"Error: Unable to open file \"{file}\": No such file or directory.");
+        }
+
+        var words = new List<string>();
+        foreach (string word in File.ReadAllText(path).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
+        {
+            words.Add(Regex.Replace(word, "%([0-9]+)%", match =>
             {
-                string text = part["version=".Length..];
-                Version = ProgramVersion.Parse(text) ?? throw Refuse("COM_ERR_INVALID_VERSION", ProgramVersion.Refusal(text));
-            }
-            else if (part == "runtime=bundled")
+                int n = int.Parse(match.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture);
+                return arguments is not null && n >= 1 && n <= arguments.Length
+                    ? arguments[n - 1]
+                    : throw Refuse("COM_ERR_ILLEGAL_BUNDLE_REPLACEMENT", "Error: Illegal bundle file replacement argument.");
+            }));
+        }
+
+        return words;
+    }
+
+    /// <summary>The colon that starts a bundle's arguments: not a drive's, nor one a folder separator follows.</summary>
+    private static int BundleColon(string value)
+    {
+        for (int i = 0; i < value.Length; i++)
+        {
+            if (value[i] == ':' && !(i == 1 && char.IsAsciiLetter(value[0]))
+                && !(i + 1 < value.Length && value[i + 1] is '\\' or '/'))
             {
-                RuntimeDelivery = RuntimeDelivery.Bundled;
-            }
-            else if (part == "runtime=installed")
-            {
-                RuntimeDelivery = RuntimeDelivery.Installed;
-            }
-            else
-            {
-                throw Refuse("COM_ERR_INVALID_WRAPPER_OPTION", $"Error: '{part}' is not a valid -W option.");
+                return i;
             }
         }
+
+        return -1;
     }
 
     private static MccException Refuse(string id, string text) => new(Prefix + id, text);
 
     /// <summary>
-    /// <c>mcc -?</c>: JGraph's own help, laid out as R2025b's (its options common to every target, then
-    /// each target's command), naming only what JGraph's mcc builds.
+    /// <c>mcc -?</c> and <c>mcc</c> alone: JGraph's own help, in R2025b's order (the switches every target
+    /// reads, then each target's command), naming what JGraph's mcc builds and what it does not yet.
     /// </summary>
     public const string HelpText =
-        "mcc Compile MATLAB functions for deployment outside MATLAB.\n"
-        + " mcc [-options] fun [fun2...]\n\n"
-        + "Options applicable across all deployment targets:\n"
-        + " -?  Display help for the mcc command\n"
-        + " -a  Add additional files or directories to be included in the build\n"
-        + " -d  Build output directory\n"
-        + " -I  Add a directory to be searched for MATLAB files\n"
-        + " -v  Verbose display of build\n\n"
-        + "JGraph Compiler\n"
-        + " Standalone Application\n"
-        + " mcc -m <matlabFile.m>\n\n"
-        + " Standalone Windows Application\n"
-        + " mcc -e <matlabFile.m>\n\n"
-        + "Replace single quotes with double when executing the mcc command from a Windows Command Prompt.\n";
+        "mcc  Build MATLAB code into a program that runs on the JGraph Runtime.\n"
+        + "  mcc [-options] mainFile [moreFiles...]\n\n"
+        + "Switches every target reads:\n"
+        + "  -?            Print this help\n"
+        + "  -a <path>     Put a file or folder in the archive as well\n"
+        + "  -d <folder>   Write the build into this folder, making it if need be\n"
+        + "  -I <folder>   Look for code in this folder too\n"
+        + "  -v            Report each step of the build\n"
+        + "  -w <what>     Show, hide or fail on mcc's own warnings: list, enable, disable or error,\n"
+        + "                alone or followed by :<identifier>\n"
+        + "  -B <file>     Read more switches from a bundle file, filling %1%, %2%... from <file>:<a>,<b>...\n\n"
+        + "JGraph builds\n"
+        + "  A console program\n"
+        + "  mcc -m <mainFile.m>\n\n"
+        + "  A windowed program, with no console\n"
+        + "  mcc -e <mainFile.m>\n\n"
+        + "  For either: -o <name> names the program, -n passes numbers as numbers, -C writes the archive\n"
+        + "  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code\n"
+        + "  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen\n"
+        + "  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.\n\n"
+        + "JGraph does not build these yet\n"
+        + "  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>\n"
+        + "  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>\n"
+        + "  Python package               mcc -W python:<package> <file.m>\n"
+        + "  Production Server archive    mcc -W CTF:<archive> -U <file.m>\n"
+        + "  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>\n\n"
+        + "From a Windows command prompt, run jgmcc (or jgraph mcc) and use double quotes where these use single.\n";
+
+    /// <summary><c>mcc -/?</c>: the trace switches, in JGraph's words.</summary>
+    public const string TraceHelpText =
+        "mcc's trace switches:\n"
+        + "  -/t   Print the command line as mcc read it (letters apart, bundles in place), then build.\n"
+        + "  -/s   Taken, as -/t: JGraph's mcc has no signature listing.\n"
+        + "  -/a   Both of the above.\n";
 }

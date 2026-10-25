@@ -1,0 +1,235 @@
+CASE	no_args
+RUN	mcc 
+EXIT	0
+SECONDS	3.8
+  OUT|mcc Compile MATLAB functions for deployment outside MATLAB. 
+  OUT| mcc [-options] fun [fun2...] 
+  OUT| 
+  OUT|Options applicable across all deployment targets: 
+  OUT| -?  Display help for the mcc command 
+  OUT| -a  Add additional files or directories to be included in the build 
+  OUT| -d  Build output directory 
+  OUT| -g  Include debugging symbol information 
+  OUT| -I  Add a directory to be searched for MATLAB files 
+  OUT| -v  Verbose display of build 
+  OUT| 
+  OUT|MATLAB Compiler 
+  OUT| Standalone Application (MATLAB|Hadoop|Spark)
+  OUT| mcc -m <matlabFile.m> 
+  OUT| 
+  OUT| Excel Add-In 
+  OUT| mcc -W 'excel:<addinName>,<className>' -b <matlabFile.m> 
+  OUT| 
+  OUT| Hadoop Deployable Archive 
+  OUT| mcc -H -W 'hadoop:<archiveName>,CONFIG:<configFile.txt>' <mapperFile.m> <reducerFile.m> <datastoreInfo.mat> 
+  OUT| 
+  OUT| Spark Application 
+  OUT| mcc -C -W 'spark:<appName>,<sparkMajorVersion>' <matlabFile.m> 
+  OUT| 
+  OUT|MATLAB Compiler SDK 
+  OUT| C Shared Library 
+  OUT| mcc -W lib:<libraryName> <matlabFile.m> 
+  OUT| 
+  OUT| C++ Shared Library 
+  OUT| mcc -W cpplib:<libraryName> <matlabFile.m> 
+  OUT| 
+  OUT| .NET Assembly 
+  OUT| mcc -W 'dotnet:<assemblyName>,<className>' <matlabFile.m> 
+  OUT| 
+  OUT| Java Package 
+  OUT| mcc -W 'java:<packageName>,<className>' <matlabFile.m> 
+  OUT| 
+  OUT| Python Package 
+  OUT| mcc -W python:<pythonPackageName> <matlabFile.m> 
+  OUT| 
+  OUT| COM Component 
+  OUT| mcc -W com:<componentName> <matlabFile.m> 
+  OUT| 
+  OUT|MATLAB Production Server 
+  OUT| Deployable Archive 
+  OUT| mcc -W CTF:<archiveName> -U <matlabFile.m> 
+  OUT| 
+  OUT| Deployable Archive for Excel Add-In 
+  OUT| mcc -W mpsxl:<addinName> <matlabFile.m> 
+  OUT| 
+  OUT|Replace single quotes with double when executing the mcc command from a Windows Command Prompt. 
+  OUT| 
+  OUT|For more details, execute "doc mcc" from MATLAB.
+  OUT| 
+CASE	question
+RUN	mcc -?
+EXIT	0
+SECONDS	3.9
+  OUT|mcc Compile MATLAB functions for deployment outside MATLAB. 
+  OUT| mcc [-options] fun [fun2...] 
+  OUT| 
+  OUT|Options applicable across all deployment targets: 
+  OUT| -?  Display help for the mcc command 
+  OUT| -a  Add additional files or directories to be included in the build 
+  OUT| -d  Build output directory 
+  OUT| -g  Include debugging symbol information 
+  OUT| -I  Add a directory to be searched for MATLAB files 
+  OUT| -v  Verbose display of build 
+  OUT| 
+  OUT|MATLAB Compiler 
+  OUT| Standalone Application (MATLAB|Hadoop|Spark)
+  OUT| mcc -m <matlabFile.m> 
+  OUT| 
+  OUT| Excel Add-In 
+  OUT| mcc -W 'excel:<addinName>,<className>' -b <matlabFile.m> 
+  OUT| 
+  OUT| Hadoop Deployable Archive 
+  OUT| mcc -H -W 'hadoop:<archiveName>,CONFIG:<configFile.txt>' <mapperFile.m> <reducerFile.m> <datastoreInfo.mat> 
+  OUT| 
+  OUT| Spark Application 
+  OUT| mcc -C -W 'spark:<appName>,<sparkMajorVersion>' <matlabFile.m> 
+  OUT| 
+  OUT|MATLAB Compiler SDK 
+  OUT| C Shared Library 
+  OUT| mcc -W lib:<libraryName> <matlabFile.m> 
+  OUT| 
+  OUT| C++ Shared Library 
+  OUT| mcc -W cpplib:<libraryName> <matlabFile.m> 
+  OUT| 
+  OUT| .NET Assembly 
+  OUT| mcc -W 'dotnet:<assemblyName>,<className>' <matlabFile.m> 
+  OUT| 
+  OUT| Java Package 
+  OUT| mcc -W 'java:<packageName>,<className>' <matlabFile.m> 
+  OUT| 
+  OUT| Python Package 
+  OUT| mcc -W python:<pythonPackageName> <matlabFile.m> 
+  OUT| 
+  OUT| COM Component 
+  OUT| mcc -W com:<componentName> <matlabFile.m> 
+  OUT| 
+  OUT|MATLAB Production Server 
+  OUT| Deployable Archive 
+  OUT| mcc -W CTF:<archiveName> -U <matlabFile.m> 
+  OUT| 
+  OUT| Deployable Archive for Excel Add-In 
+  OUT| mcc -W mpsxl:<addinName> <matlabFile.m> 
+  OUT| 
+  OUT|Replace single quotes with double when executing the mcc command from a Windows Command Prompt. 
+  OUT| 
+  OUT|For more details, execute "doc mcc" from MATLAB.
+  OUT| 
+CASE	build
+RUN	mcc -m k7_hello.m {D}
+EXIT	0
+SECONDS	10.3
+FILES	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277285) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+CASE	build_verbose
+RUN	mcc -v -m k7_hello.m {D}
+EXIT	0
+SECONDS	10.3
+  OUT|Compiler version: 25.2 (R2025b)
+  OUT|Analyzing file dependencies. 
+  OUT|Parsing file "<W>\src\k7_hello.m"
+  OUT|	(referenced from command line).
+  OUT|Generating file "<W>\cmd\build_verbose\readme.txt".
+FILES	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277235) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+CASE	missing_file
+RUN	mcc -m k7_nosuch.m {D}
+EXIT	1
+SECONDS	6.9
+  ERR|{Could not find the MATLAB file 'k7_nosuch.m' on the MATLAB path.
+  ERR|} 
+  ERR|ERROR: MATLAB error Exit Status: 0x00000001
+FILES	
+CASE	bad_flag
+RUN	mcc -Q -m k7_hello.m {D}
+EXIT	1
+SECONDS	3.8
+  ERR|{Error: Unrecognized option: -Q.
+  ERR|} 
+  ERR|ERROR: MATLAB error Exit Status: 0x00000001
+FILES	
+CASE	no_wrapper
+RUN	mcc k7_hello.m {D}
+EXIT	1
+SECONDS	4.1
+  ERR|{Unable to determine application type, since no wrapper function was specified.
+  ERR|Please use the -W switch or specify application type via -m or -l.
+  ERR|Type 'mcc -?' for further assistance.
+  ERR|} 
+  ERR|ERROR: MATLAB error Exit Status: 0x00000001
+FILES	
+CASE	single_quotes
+RUN	mcc -W 'main:k7q' -T link:exe k7_hello.m {D}
+EXIT	0
+SECONDS	10.0
+FILES	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277254) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+CASE	double_quotes
+RUN	mcc -W "main:k7dq" -T link:exe k7_hello.m {D}
+EXIT	0
+SECONDS	10.1
+FILES	buildresult.json (107) | includedSupportPackages.txt (0) | k7_hello.exe (1277182) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+CASE	license_Y
+RUN	mcc -Y k7_license.dat -m k7_hello.m {D}
+EXIT	1
+SECONDS	0.9
+  ERR|MathWorks Licensing Error 2
+  ERR|A licensing error occurred while trying to use MATLAB.
+  ERR|Contact your system administrator to get a new license file and activate your license on this machine.
+  ERR|For help with this issue, see this support article: 
+  ERR|https://www.mathworks.com/support/lme/2
+  ERR|Details for Support
+  ERR|Feature: MATLAB
+  ERR|License: k7_license.dat
+  ERR|Error Code: -2.2
+  ERR|ERROR: MATLAB error Exit Status: 0x00000001
+FILES	
+CASE	warn_list
+RUN	mcc -w list
+EXIT	0
+SECONDS	3.8
+  OUT|Warning table (for use with -w enable:/disable:/error:). Format is as follows: 
+  OUT|"<WARNING IDENTIFIER>" is <STATUS>, and corresponds to the message: <TEXT> 
+  OUT|--------------------------------------------------------------------------------
+  OUT|Identifier "all_warnings" is enabled.
+  OUT|--------------------------------------------------------------------------------
+  OUT|"specified_file_mismatch" is enabled, and corresponds to the message:
+  OUT|MATLAB file "%s" was specified on the command line with full path of "%s", 
+  OUT|but was found on the search path in directory "%s" first.
+  OUT|--------------------------------------------------------------------------------
+  OUT|"repeated_file" is enabled, and corresponds to the message:
+  OUT|The file "%s" was repeated on the command line.
+  OUT|--------------------------------------------------------------------------------
+  OUT|"switch_ignored" is enabled, and corresponds to the message:
+  OUT|The option -%s is ignored in standalone target mode (specify -? for help).
+  OUT|--------------------------------------------------------------------------------
+  OUT|"missing_lib_sentinel" is enabled, and corresponds to the message:
+  OUT|Shared library name "%s" does not begin with "lib".
+  OUT|On Linux and Mac, the linker expects shared library names to begin with "lib".
+  OUT|--------------------------------------------------------------------------------
+  OUT|"demo_license" is enabled, and corresponds to the message:
+  OUT|DEMO Compiler license. 
+  OUT|  The generated application will expire 30 days from today, 
+  OUT|  on %s.
+  OUT|--------------------------------------------------------------------------------
+CASE	startup_warn
+RUN	mcc -m startup\k7_start.m {D}
+EXIT	0
+SECONDS	10.4
+  OUT|[Warning: Your deployed application may fail because file or folder paths
+  OUT|not present in the deployed environment may be included in your MATLAB startup
+  OUT|file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  OUT|determine the appropriate execution environment when including file and folder
+  OUT|paths, and recompile your application.
+  OUT|] 
+FILES	buildresult.json (107) | includedSupportPackages.txt (0) | k7_start.exe (1278365) | mccExcludedFiles.log (90) | readme.txt (1397) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+CASE	startup_error
+RUN	mcc -w error -m startup\k7_start.m {D}
+EXIT	1
+SECONDS	9.6
+  OUT|[Warning: Your deployed application may fail because file or folder paths
+  OUT|not present in the deployed environment may be included in your MATLAB startup
+  OUT|file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  OUT|determine the appropriate execution environment when including file and folder
+  OUT|paths, and recompile your application.
+  OUT|] 
+  ERR|{Error: A warning has been issued. Warnings are being treated as errors.
+  ERR|} 
+  ERR|ERROR: MATLAB error Exit Status: 0x00000001
+FILES	

@@ -33,6 +33,8 @@
     <!-- compiler.build's default icon and splash, where R2025b keeps its own under matlabroot. -->
     <None Include="PackagingResources\default_icon_48.png;PackagingResources\default_splash.png"
           Link="toolbox\compiler\packagingResources\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Stage K7: mcc -B's bundle files, under R2025b's names. -->
+    <None Include="Bundles\*" Link="toolbox\compiler\bundles\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,524 @@
+mcc.obs_O	ok (0 s)
+  |The -O switch is no longer supported; the MATLAB JIT accelerator makes 
+  |Compiler optimizations unnecessary. 
+  |
+mcc.obs_O.files	
+mcc.obs_V	ERR Compiler:compiler:COM_MSG_NO_DASH_V | The -V switch is no longer supported; the MATLAB Compiler does not allow the use of previous compiler versions.
+mcc.obs_V.files	
+mcc.obs_i	ok (0 s)
+  |The -i switch is no longer supported; the "include exported interfaces" behavior 
+  |is applied to every compilation. 
+  |
+mcc.obs_i.files	
+mcc.obs_z	ok (0 s)
+  |The -z switch is no longer supported. 
+  |
+mcc.obs_z.files	
+mcc.obs_win32	ERR Compiler:compiler:COM_MSG_NO_DASH_WIN32 | The -win32 switch is no longer supported.  / 
+mcc.obs_win32.files	
+mcc.obs_win64	ERR Compiler:compiler:COM_MSG_NO_DASH_WIN64 | The -win64 switch is no longer supported; 64-bit architecture is assumed.  / 
+mcc.obs_win64.files	
+mcc.obs_y	ERR Compiler:compiler:COM_ERR_NO_DASH_y | Error: -y is no longer supported. The MATLAB Compiler no longer generates  /   Simulink C MEX S functions. See the Simulink documentation for other options /   for embedding M-code in block diagrams.
+mcc.obs_y.files	
+mcc.obs_u	ok (0 s)
+mcc.obs_u.files	
+mcc.obs_S	ok (0 s)
+mcc.obs_S.files	
+mcc.obs_L_m	ok (0 s)
+  |The -L switch is no longer supported; the target (-T) and wrapper (-W) 
+  |switches determine the language of the generated code. 
+  |
+mcc.obs_L_m.files	
+mcc.obs_t_m	ok (0 s)
+  |The -t switch is no longer supported; the Compiler no longer generates C/C++ 
+  |source code for MATLAB functions (it generates wrapper functions instead, see 
+  |the documentation for -W). 
+  |
+mcc.obs_t_m.files	
+mcc.obs_F_alone	ERR Compiler:compiler:COM_ERR_DASH_F_DEPRECATED | Error: The mcc -F option is no longer supported. Use deploytool /build instead. Run deploytool -? for usage.
+mcc.obs_F_alone.files	
+mcc.obs_F_m	ERR Compiler:compiler:COM_ERR_OPTION_F_MUST_BE_ALONE | Error: The -F <file name> option must occur with no other options on the command line.
+mcc.obs_F_m.files	
+mcc.obs_E_alone	ERR JGraph:mcc:optionNotBuilt | JGraph's mcc does not read -E files.
+mcc.obs_E_alone.files	
+mcc.obs_x	ERR Compiler:compiler:COM_ERR_NO_MORE_MEX | Error: -x is no longer supported. The MATLAB Compiler no longer generates  /   MEX files because there is no longer any performance advantage to doing so: the  /   MATLAB JIT accelerates MATLAB files by default.  /   To hide proprietary algorithms, use the PCODE function.
+mcc.obs_x.files	
+mcc.g	ok (0 s)
+  |Warning: The option -g is ignored in standalone target mode (specify -? for help).
+  |
+mcc.g.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -g is ignored in standalone target mode (specify -? for help). / 
+mcc.g.files	
+mcc.G	ok (0 s)
+  |Warning: The option -g is ignored in standalone target mode (specify -? for help).
+  |
+mcc.G.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -g is ignored in standalone target mode (specify -? for help). / 
+mcc.G.files	
+mcc.K_ok	ok (0 s)
+mcc.K_ok.files	
+mcc.K_fail_a	ERR Compiler:compiler:REQ_UNEXPECTED_ERROR | Error while determining required deployable files. Compilation terminated. Details: / Error using matlab.depfun.internal.MatFileInspector/determineType (line 32) / File, function or class "k7_nosuch.mat" may not exist. Neither WHICH nor EXIST could find an exact, case-sensitive match. Please check the spelling of the name, and that any / required directories are on the MATLAB path. / 
+mcc.K_fail_a.files	
+mcc.noK_fail_a	ERR Compiler:compiler:REQ_UNEXPECTED_ERROR | Error while determining required deployable files. Compilation terminated. Details: / Error using matlab.depfun.internal.MatFileInspector/determineType (line 32) / File, function or class "k7_nosuch.mat" may not exist. Neither WHICH nor EXIST could find an exact, case-sensitive match. Please check the spelling of the name, and that any / required directories are on the MATLAB path. / 
+mcc.noK_fail_a.files	
+mcc.K_fail_icon	ERR Compiler:compiler:EMBED_ICON_FAILED | Failed to embed icon file "k7_bad.ico" - Error reading icon file.
+mcc.K_fail_icon.files	
+mcc.noK_fail_icon	ERR Compiler:compiler:EMBED_ICON_FAILED | Failed to embed icon file "k7_bad.ico" - Error reading icon file.
+mcc.noK_fail_icon.files	
+mcc.M	ok (0 s)
+  |Warning: The option -M is ignored in standalone target mode (specify -? for help).
+  |
+mcc.M.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -M is ignored in standalone target mode (specify -? for help). / 
+mcc.M.files	
+mcc.M_end	ERR Compiler:compiler:COM_ERR_M_FILE_NOT_FOUND | Could not find the MATLAB file 'M_end' on the MATLAB path.
+mcc.M_end.files	
+mcc.f_missing	ok (0 s)
+  |Warning: The option -f is ignored in standalone target mode (specify -? for help).
+  |
+mcc.f_missing.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -f is ignored in standalone target mode (specify -? for help). / 
+mcc.f_missing.files	
+mcc.f_file	ok (0 s)
+  |Warning: The option -f is ignored in standalone target mode (specify -? for help).
+  |
+mcc.f_file.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -f is ignored in standalone target mode (specify -? for help). / 
+mcc.f_file.files	
+mcc.Y	ok (0 s)
+mcc.Y.files	
+mcc.Y_missing	ok (0 s)
+mcc.Y_missing.files	
+mcc.Y_end	ERR Compiler:compiler:COM_ERR_M_FILE_NOT_FOUND | Could not find the MATLAB file 'Y_end' on the MATLAB path.
+mcc.Y_end.files	
+mcc.A_all	ok (0 s)
+mcc.A_all.files	
+mcc.A_bogus	ERR Compiler:compiler:COM_ERR_INVALID_OPTION | Error: "bogus" is not a valid -A option argument.
+mcc.A_bogus.files	
+mcc.A_flag	ERR Compiler:compiler:COM_ERR_INVALID_OPTION | Error: "-m" is not a valid -A option argument.
+mcc.A_flag.files	
+mcc.b_m	ok (0 s)
+mcc.b_m.files	
+mcc.c_m	ok (0 s)
+  |Warning: The option -c is ignored in standalone target mode (specify -? for help).
+  |
+mcc.c_m.warn	Compiler:compiler:COM_WARN_SWITCH_IGNORED | The option -c is ignored in standalone target mode (specify -? for help). / 
+mcc.c_m.files	
+mcc.c_alone	ERR Compiler:compiler:COM_ERR_MISSING_WRAPPER_FOR_CODEGEN_ONLY | Unable to determine application type, since no wrapper function was specified.  / Please use the -W or -l switch.  / Type 'mcc -?' for further assistance.
+mcc.c_alone.files	
+mcc.U_m	ok (0 s)
+mcc.U_m.files	
+mcc.H_m	ok (0 s)
+mcc.H_m.files	
+mcc.P_m	ok (0 s)
+mcc.P_m.files	
+mcc.D_m	ERR Compiler:compiler:COM_ERR_UNRECOGNIZED_OPTION | Error: Unrecognized option: -D.
+mcc.D_m.files	
+mcc.l	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+mcc.l.files	
+mcc.l_o	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+mcc.l_o.files	
+mcc.T_compile_exe	ok (0 s)
+mcc.T_compile_exe.files	
+mcc.T_codegen_W	ok (0 s)
+mcc.T_codegen_W.files	
+mcc.T_codegen_m	ok (0 s)
+mcc.T_codegen_m.files	
+mcc.T_codegen_alone	ERR Compiler:compiler:COM_ERR_MISSING_WRAPPER | Unable to determine application type, since no wrapper function was specified.  / Please use the -W switch or specify application type via -m or -l.  / Type 'mcc -?' for further assistance.
+mcc.T_codegen_alone.files	
+mcc.T_link_lib_m	ERR Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH | Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.
+mcc.T_link_lib_m.files	
+mcc.T_link_lib_e	ERR Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH | Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.
+mcc.T_link_lib_e.files	
+mcc.T_exe	ok (0 s)
+mcc.T_exe.files	
+mcc.T_link_empty	ok (0 s)
+mcc.T_link_empty.files	
+mcc.T_link_exe_only	ERR Compiler:compiler:COM_ERR_MISSING_WRAPPER | Unable to determine application type, since no wrapper function was specified.  / Please use the -W switch or specify application type via -m or -l.  / Type 'mcc -?' for further assistance.
+mcc.T_link_exe_only.files	
+mcc.T_compile_lib	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+mcc.T_compile_lib.files	
+mcc.T_twice	ok (0 s)
+mcc.T_twice.files	
+mcc.W_main_only	ok (0 s)
+mcc.W_main_only.files	
+mcc.W_lib_noname	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: ''  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.W_lib_noname.files	
+mcc.W_lib_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: ''  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.W_lib_empty.files	
+mcc.W_lib_extra	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+mcc.W_lib_extra.files	
+mcc.W_lib_toomany	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+mcc.W_lib_toomany.files	
+mcc.W_cpplib_empty	ERR Compiler:compiler:COM_ERR_COMPONENT_NAME_NEEDED_FOR_CPPLIB | Error: A component name must be specified following "cpplib:". / 
+mcc.W_cpplib_empty.files	
+mcc.W_cpplib_bad	ERR Compiler:compiler:COM_ERR_BAD_ARG_FOR_CPPLIB | Error: Option "bogus" is not valid following "cpplib:component_name,". / 
+mcc.W_cpplib_bad.files	
+mcc.W_cpplib_named	ERR Compiler:compiler:COM_ERR_NAMED_CPPLIB_NOT_SUPPORTED_YET | Error: The "named" interface for the C++ Shared Library target is not yet supported. / 
+mcc.W_cpplib_named.files	
+mcc.W_cpplib_api_bad	ERR Compiler:compiler:COM_ERR_BAD_ARG_FOR_CPPLIB | Error: Option "api=bogus" is not valid following "cpplib:component_name,". / 
+mcc.W_cpplib_api_bad.files	
+mcc.W_dotnet_noclass	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a .NET assembly (-W dotnet) yet.
+mcc.W_dotnet_noclass.files	
+mcc.W_dotnet_api_bad	ERR Compiler:compiler:COM_ERR_INVALID_API_VALUE | Invalid value for "api=" specified in -W or -B option: bogus. Value must be a member of this set: / 	'matlab-data' / 	'mwarray' / 	''
+mcc.W_dotnet_api_bad.files	
+mcc.W_dotnet_api_late	ERR Compiler:compiler:COM_ERR_INVALID_API_PLACEMENT | Invalid placement of "api=" in -W or -B option. "api=" must be specified immediately after component name.
+mcc.W_dotnet_api_late.files	
+mcc.W_dotnet_ver_bad	ERR Compiler:compiler:COM_ERR_NET_VERSION_INVALID | The .NET version is set to an unsupported value. Set the .NET version to "4.0" if targeting the .NET 4.x Framework. For .NET 5.0 and later, use "5.0".
+mcc.W_dotnet_ver_bad.files	
+mcc.W_java_noclass	ERR JGraph:mcc:targetOutOfScope | JGraph does not build Java packages (-W java).
+mcc.W_java_noclass.files	
+mcc.W_java_badpkg	ERR JGraph:mcc:targetOutOfScope | JGraph does not build Java packages (-W java).
+mcc.W_java_badpkg.files	
+mcc.W_python_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc.W_python_empty.files	
+mcc.W_python_bad	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a Python package (-W python) yet.
+mcc.W_python_bad.files	
+mcc.W_com_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc.W_com_empty.files	
+mcc.W_CTF_noU	ERR Compiler:compiler:COM_ERROR_MISSING_U_WITH_W_CTF | The "-U" option must be used when "-W CTF:" is specified.
+mcc.W_CTF_noU.files	
+mcc.W_mpsxl_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc.W_mpsxl_empty.files	
+mcc.W_excel_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc.W_excel_empty.files	
+mcc.W_spark_noC	ERR Compiler:compiler:COM_ERR_SPARK_MISSING_OPTION | Error: Missing "-C" option to compile Spark component  / 
+mcc.W_spark_noC.files	
+mcc.W_hadoop_noconf	ERR JGraph:mcc:targetOutOfScope | JGraph does not build Hadoop archives (-W hadoop).
+mcc.W_hadoop_noconf.files	
+mcc.W_main_extra	ok (0 s)
+mcc.W_main_extra.files	
+mcc.W_main_toomany	ok (0 s)
+mcc.W_main_toomany.files	
+mcc.W_main_empty	ok (0 s)
+mcc.W_main_empty.files	
+mcc.W_main_digit	ok (0 s)
+mcc.W_main_digit.files	
+mcc.W_main_nocolon	ok (0 s)
+mcc.W_main_nocolon.files	
+mcc.W_winmain_nocolon	ok (0 s)
+mcc.W_winmain_nocolon.files	
+mcc.W_two	ok (0 s)
+mcc.W_two.files	
+mcc.W_main_o	ok (0 s)
+mcc.W_main_o.files	
+mcc.W_upper	ok (0 s)
+mcc.W_upper.files	
+mcc.W_empty_item	ok (0 s)
+mcc.W_empty_item.files	
+mcc.W_version_twice	ok (0 s)
+mcc.W_version_twice.files	
+mcc.end_value	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: '-d'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+mcc.end_value.files	
+mcc.empty_value	ERR Compiler:compiler:COM_ERR_EXPECTED_ARGUMENT | Error: The -o option requires a nonempty argument (e.g. "-o <output file>").
+mcc.empty_value.files	
+mcc.no_space	ERR Compiler:compiler:COM_ERR_UNRECOGNIZED_OPTION | Error: Unrecognized option: -7.
+mcc.no_space.files	
+mcc.combined_mv	ok (0 s)
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\src\k7_hello.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\combined_mv\readme.txt".
+mcc.combined_mv.files	
+mcc.combined_vm	ok (0 s)
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\src\k7_hello.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\combined_vm\readme.txt".
+mcc.combined_vm.files	
+mcc.combined_mC	ok (0 s)
+mcc.combined_mC.files	
+mcc.whitespace	ERR Compiler:compiler:COM_ERR_ILLEGAL_WHITESPACE | Error: Found illegal whitespace character in command line option: " ".  / The strings on the left and right side of the space should be separate arguments  / to MCC.
+mcc.whitespace.files	
+mcc.repeated	ok (0 s)
+  |Warning: The file "<W>\src\k7_hello.m" was repeated on the command line.
+  |
+mcc.repeated.warn	Compiler:compiler:COM_WARN_REPEATED_FILE | The file "<W>\src\k7_hello.m" was repeated on the command line. / 
+mcc.repeated.files	
+mcc.non_m	ERR Compiler:compiler:COM_ERROR_INCLUDE_FILE_WITHOUT_DASH_A | Error: You specified the file "<W>\src\k7_data.txt" without using the "-a" option.
+mcc.non_m.files	
+mcc.debug_t	ok (0 s)
+  |Processed command line is:
+  |"-/t" "-m" "k7_hello.m" "-d" "<W>\b\debug_t"
+mcc.debug_t.files	
+mcc.debug_q	ok (0 s)
+  |mcc's trace switches:
+  |  -/t   Print the command line as mcc read it (letters apart, bundles in place), then build.
+  |  -/s   Taken, as -/t: JGraph's mcc has no signature listing.
+  |  -/a   Both of the above.
+mcc.debug_q.files	
+mcc.no_args	ok (0 s)
+  |mcc  Build MATLAB code into a program that runs on the JGraph Runtime.
+  |  mcc [-options] mainFile [moreFiles...]
+  |
+  |Switches every target reads:
+  |  -?            Print this help
+  |  -a <path>     Put a file or folder in the archive as well
+  |  -d <folder>   Write the build into this folder, making it if need be
+  |  -I <folder>   Look for code in this folder too
+  |  -v            Report each step of the build
+  |  -w <what>     Show, hide or fail on mcc's own warnings: list, enable, disable or error,
+  |                alone or followed by :<identifier>
+  |  -B <file>     Read more switches from a bundle file, filling %1%, %2%... from <file>:<a>,<b>...
+  |
+  |JGraph builds
+  |  A console program
+  |  mcc -m <mainFile.m>
+  |
+  |  A windowed program, with no console
+  |  mcc -e <mainFile.m>
+  |
+  |  For either: -o <name> names the program, -n passes numbers as numbers, -C writes the archive
+  |  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code
+  |  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen
+  |  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.
+  |
+  |JGraph does not build these yet
+  |  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>
+  |  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>
+  |  Python package               mcc -W python:<package> <file.m>
+  |  Production Server archive    mcc -W CTF:<archive> -U <file.m>
+  |  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>
+  |
+  |From a Windows command prompt, run jgmcc (or jgraph mcc) and use double quotes where these use single.
+mcc.no_args.files	
+mcc.dash_h_end	ERR Compiler:compiler:COM_ERR_HELP_FILE_NOT_EXIST | The help file  /   '-d' / does not exist.
+mcc.dash_h_end.files	
+mcc.help_word	ERR Compiler:compiler:COM_ERR_HELP_FILE_NOT_EXIST | The help file  /   '-e' / does not exist.
+mcc.help_word.files	
+mcc.question_m	ok (0 s)
+  |mcc  Build MATLAB code into a program that runs on the JGraph Runtime.
+  |  mcc [-options] mainFile [moreFiles...]
+  |
+  |Switches every target reads:
+  |  -?            Print this help
+  |  -a <path>     Put a file or folder in the archive as well
+  |  -d <folder>   Write the build into this folder, making it if need be
+  |  -I <folder>   Look for code in this folder too
+  |  -v            Report each step of the build
+  |  -w <what>     Show, hide or fail on mcc's own warnings: list, enable, disable or error,
+  |                alone or followed by :<identifier>
+  |  -B <file>     Read more switches from a bundle file, filling %1%, %2%... from <file>:<a>,<b>...
+  |
+  |JGraph builds
+  |  A console program
+  |  mcc -m <mainFile.m>
+  |
+  |  A windowed program, with no console
+  |  mcc -e <mainFile.m>
+  |
+  |  For either: -o <name> names the program, -n passes numbers as numbers, -C writes the archive
+  |  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code
+  |  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen
+  |  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.
+  |
+  |JGraph does not build these yet
+  |  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>
+  |  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>
+  |  Python package               mcc -W python:<package> <file.m>
+  |  Production Server archive    mcc -W CTF:<archive> -U <file.m>
+  |  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>
+  |
+  |From a Windows command prompt, run jgmcc (or jgraph mcc) and use double quotes where these use single.
+mcc.question_m.files	
+mcc.p_noN	ok (0 s)
+mcc.p_noN.files	
+mcc.N_only	ok (0 s)
+mcc.N_only.files	
+mcc.Np	ok (0 s)
+mcc.Np.files	
+mcc.p_missing	ok (0 s)
+mcc.p_missing.files	
+mcc.I_missing	ERR Compiler:compiler:DEPFUN_ERR_INVALID_DIR_NAME | Invalid directory: <W>\src\k7_nosuchdir / 
+mcc.I_missing.files	
+mcc.I_given	ok (0 s)
+mcc.I_given.files	
+mcc.R_bogus	ok (0 s)
+mcc.R_bogus.files	
+mcc.R_nojvm	ok (0 s)
+mcc.R_nojvm.files	
+mcc.R_empty	ERR Compiler:compiler:COM_ERR_EXPECTED_ARGUMENT | Error: The -R option requires a nonempty argument (e.g. "-R -nojvm -nojit").
+mcc.R_empty.files	
+mcc.Z_bogus	ERR Compiler:compiler:REQ_UNEXPECTED_ERROR | Error while determining required deployable files. Compilation terminated. Details: / Error using matlab.depfun.internal.SPMode.validateSupportPackageInputs (line 69) / Unknown support package inputs: /  / k7 no such package /  / The input must be 'autodetect', 'none', or a list of installed support packages. Use the function "compiler.codetools.deployableSupportPackages" to find all installed support / packages. / 
+mcc.Z_bogus.files	
+mcc.Z_none	ok (0 s)
+mcc.Z_none.files	
+mcc.w_list	ok (0 s)
+  |Warning table (for use with -w enable:/disable:/error:). Format is as follows: 
+  |
+  |"<WARNING IDENTIFIER>" is <STATUS>, and corresponds to the message: <TEXT> 
+  |
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |Identifier "all_warnings" is enabled.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"specified_file_mismatch" is enabled, and corresponds to the message:
+  |
+  |MATLAB file "%s" was specified on the command line with full path of "%s", 
+  |but was found on the search path in directory "%s" first.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"repeated_file" is enabled, and corresponds to the message:
+  |
+  |The file "%s" was repeated on the command line.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"switch_ignored" is enabled, and corresponds to the message:
+  |
+  |The option -%s is ignored in standalone target mode (specify -? for help).
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"missing_lib_sentinel" is enabled, and corresponds to the message:
+  |
+  |Shared library name "%s" does not begin with "lib".
+  |On Linux and Mac, the linker expects shared library names to begin with "lib".
+  |--------------------------------------------------------------------------------
+  |
+  |"demo_license" is enabled, and corresponds to the message:
+  |
+  |DEMO Compiler license. 
+  |  The generated application will expire 30 days from today, 
+  |  on %s.
+  |
+  |--------------------------------------------------------------------------------
+  |
+mcc.w_list.files	
+mcc.w_list_m	ok (0 s)
+  |Warning table (for use with -w enable:/disable:/error:). Format is as follows: 
+  |
+  |"<WARNING IDENTIFIER>" is <STATUS>, and corresponds to the message: <TEXT> 
+  |
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |Identifier "all_warnings" is enabled.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"specified_file_mismatch" is enabled, and corresponds to the message:
+  |
+  |MATLAB file "%s" was specified on the command line with full path of "%s", 
+  |but was found on the search path in directory "%s" first.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"repeated_file" is enabled, and corresponds to the message:
+  |
+  |The file "%s" was repeated on the command line.
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"switch_ignored" is enabled, and corresponds to the message:
+  |
+  |The option -%s is ignored in standalone target mode (specify -? for help).
+  |
+  |--------------------------------------------------------------------------------
+  |
+  |"missing_lib_sentinel" is enabled, and corresponds to the message:
+  |
+  |Shared library name "%s" does not begin with "lib".
+  |On Linux and Mac, the linker expects shared library names to begin with "lib".
+  |--------------------------------------------------------------------------------
+  |
+  |"demo_license" is enabled, and corresponds to the message:
+  |
+  |DEMO Compiler license. 
+  |  The generated application will expire 30 days from today, 
+  |  on %s.
+  |
+  |--------------------------------------------------------------------------------
+  |
+mcc.w_list_m.files	
+mcc.w_bogus	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'bogus' is not a valid -w option.
+mcc.w_bogus.files	
+mcc.w_end	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: '-d' is not a valid -w option.
+mcc.w_end.files	
+mcc.w_start	ok (0 s)
+  |Warning: Your deployed application may fail because file or folder paths
+  |not present in the deployed environment may be included in your MATLAB startup
+  |file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  |determine the appropriate execution environment when including file and folder
+  |paths, and recompile your application.
+  |
+mcc.w_start.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_start.files	
+mcc.w_start_dis_short	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'disable:COM_WARN_STARTUP_FILE_INCLUDED' is not a valid -w option.
+mcc.w_start_dis_short.files	
+mcc.w_start_dis_full	ok (0 s)
+mcc.w_start_dis_full.files	
+mcc.w_start_err_short	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'error:COM_WARN_STARTUP_FILE_INCLUDED' is not a valid -w option.
+mcc.w_start_err_short.files	
+mcc.w_start_err_full	ERR Compiler:compiler:COM_ERR_WARNING_TREATED_AS_ERROR | Error: A warning has been issued. Warnings are being treated as errors.
+mcc.w_start_err_full.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_start_err_full.files	
+mcc.w_disable	ok (0 s)
+mcc.w_disable.files	
+mcc.w_error	ERR Compiler:compiler:COM_ERR_WARNING_TREATED_AS_ERROR | Error: A warning has been issued. Warnings are being treated as errors.
+mcc.w_error.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_error.files	
+mcc.w_enable	ok (0 s)
+  |Warning: Your deployed application may fail because file or folder paths
+  |not present in the deployed environment may be included in your MATLAB startup
+  |file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  |determine the appropriate execution environment when including file and folder
+  |paths, and recompile your application.
+  |
+mcc.w_enable.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_enable.files	
+mcc.w_off	ok (0 s)
+  |Warning: Your deployed application may fail because file or folder paths
+  |not present in the deployed environment may be included in your MATLAB startup
+  |file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  |determine the appropriate execution environment when including file and folder
+  |paths, and recompile your application.
+  |
+mcc.w_off.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_off.files	
+mcc.w_on	ok (0 s)
+  |Warning: Your deployed application may fail because file or folder paths
+  |not present in the deployed environment may be included in your MATLAB startup
+  |file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+  |determine the appropriate execution environment when including file and folder
+  |paths, and recompile your application.
+  |
+mcc.w_on.warn	Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+mcc.w_on.files	
+mcc.w_dis_unknown	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'disable:k7_nosuch_id' is not a valid -w option.
+mcc.w_dis_unknown.files	
+mcc.w_list_after_dis	ERR Compiler:compiler:COM_ERR_INVALID_WARN_OPTION | Error: 'disable:COM_WARN_STARTUP_FILE_INCLUDED' is not a valid -w option.
+mcc.w_list_after_dis.files	
+mcc.w_excl	ok (0 s)
+  |Warning: Excluded "edit"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.w_excl.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "edit"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.w_excl.files	
+mcc.w_excl_disable	ok (0 s)
+mcc.w_excl_disable.files	
+mcc.w_excl_error	ERR Compiler:compiler:COM_ERR_WARNING_TREATED_AS_ERROR | Error: A warning has been issued. Warnings are being treated as errors.
+mcc.w_excl_error.warn	Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "edit"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+mcc.w_excl_error.files	
+mcc.B_user	ok (0 s)
+mcc.B_user.files	
+mcc.B_param	ok (0 s)
+mcc.B_param.files	
+mcc.B_param_two	ok (0 s)
+mcc.B_param_two.files	
+mcc.B_param_none	ERR Compiler:compiler:COM_ERR_ILLEGAL_BUNDLE_REPLACEMENT | Error: Illegal bundle file replacement argument.
+mcc.B_param_none.files	
+mcc.B_param_empty	ok (0 s)
+mcc.B_param_empty.files	
+mcc.B_missing	ERR Compiler:compiler:COM_ERR_UNABLE_TO_OPEN_FILE | Error: Unable to open file "k7_nosuch.bundle": No such file or directory.
+mcc.B_missing.files	
+mcc.B_nested	ok (0 s)
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\src\k7_hello.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\B_nested\readme.txt".
+mcc.B_nested.files	
+mcc.B_macro_m	ok (0 s)
+mcc.B_macro_m.files	
+mcc.B_csharedlib	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+mcc.B_csharedlib.files	

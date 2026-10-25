@@ -97,7 +97,7 @@ internal static partial class JgsBuiltins
             ArityRange("copyfile", args, 2, 3, line, col);
             string source = host.Resolve(Str("copyfile", args, 0, line, col));
             string destination = host.ResolveForWrite(Str("copyfile", args, 1, line, col));
-            return Attempt("copyfile", line, col, () => File.Copy(source, DestinationFor(source, destination), overwrite: true));
+            return Attempt("copyfile", line, col, () => CopyEntries(source, destination));
         });
 
         Define("movefile", (args, line, col) =>
@@ -229,6 +229,62 @@ internal static partial class JgsBuiltins
     /// <summary>Copying onto a folder keeps the source's file name, as every shell does.</summary>
     private static string DestinationFor(string source, string destination) =>
         Directory.Exists(destination) ? Path.Combine(destination, Path.GetFileName(source)) : destination;
+
+    /// <summary>
+    /// <c>copyfile</c>'s sources as MATLAB's: a file, a folder (its contents copied into the destination,
+    /// which is made), or a name with wildcards in its last part (every file and folder it matches copied
+    /// into the destination folder, which is made).
+    /// </summary>
+    private static void CopyEntries(string source, string destination)
+    {
+        string name = Path.GetFileName(source);
+        if (name.IndexOfAny(['*', '?']) >= 0)
+        {
+            string folder = Path.GetDirectoryName(source) is { Length: > 0 } parent ? parent : ".";
+            string[] matches = Directory.Exists(folder) ? Directory.GetFileSystemEntries(folder, name) : [];
+            if (matches.Length == 0)
+            {
+                throw new FileNotFoundException($"No matching files were found for '{source}'.");
+            }
+
+            Directory.CreateDirectory(destination);
+            foreach (string match in matches)
+            {
+                if (Directory.Exists(match))
+                {
+                    CopyFolder(match, Path.Combine(destination, Path.GetFileName(match)));
+                }
+                else
+                {
+                    File.Copy(match, Path.Combine(destination, Path.GetFileName(match)), overwrite: true);
+                }
+            }
+
+            return;
+        }
+
+        if (Directory.Exists(source))
+        {
+            CopyFolder(source, destination);
+            return;
+        }
+
+        File.Copy(source, DestinationFor(source, destination), overwrite: true);
+    }
+
+    private static void CopyFolder(string source, string destination)
+    {
+        Directory.CreateDirectory(destination);
+        foreach (string file in Directory.GetFiles(source))
+        {
+            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), overwrite: true);
+        }
+
+        foreach (string folder in Directory.GetDirectories(source))
+        {
+            CopyFolder(folder, Path.Combine(destination, Path.GetFileName(folder)));
+        }
+    }
 
     // --- Path names -------------------------------------------------------------------------------
 

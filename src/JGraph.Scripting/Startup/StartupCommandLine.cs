@@ -20,6 +20,12 @@ public static class StartupCommandLine
             return StartupOptions.Interactive;
         }
 
+        // jgraph mcc … (stage K7): everything after the word is mcc's own command line.
+        if (args[0] == "mcc")
+        {
+            return new StartupOptions(StartupMode.Mcc) { ProgramArguments = [.. args.Skip(1)] };
+        }
+
         StartupMode? mode = null;
         string? statement = null;
         string? logFile = null;

@@ -1,0 +1,399 @@
+== k7_switches
+CASE	mcc.obs_E_alone
+  status
+    R2025b: ERR Compiler:compiler:COM_ERROR_UNKNOWN | fl:filesystem:PathNotFound
+    JGraph: ERR JGraph:mcc:optionNotBuilt | JGraph's mcc does not read -E files.
+CASE	mcc.l
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+  .files
+    R2025b: buildresult.json | includedSupportPackages.txt | k7_hello.c | k7_hello.def | k7_hello.dll | k7_hello.exp | k7_hello.exports | k7_hello.h | k7_hello.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph: 
+CASE	mcc.l_o
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+  .files
+    R2025b: buildresult.json | includedSupportPackages.txt | k7lo.c | k7lo.def | k7lo.dll | k7lo.exp | k7lo.exports | k7lo.h | k7lo.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph: 
+CASE	mcc.T_compile_lib
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+  .files
+    R2025b: buildresult.json | includedSupportPackages.txt | k7cl.c | k7cl.def | k7cl.exports | k7cl.h | k7cl.obj | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph: 
+CASE	mcc.W_lib_extra
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+  .files
+    R2025b: buildresult.json | includedSupportPackages.txt | k7a.c | k7a.def | k7a.dll | k7a.exp | k7a.exports | k7a.h | k7a.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph: 
+CASE	mcc.W_lib_toomany
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+  .files
+    R2025b: a.c | a.def | a.dll | a.exp | a.exports | a.h | a.lib | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph: 
+CASE	mcc.W_dotnet_noclass
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a .NET assembly (-W dotnet) yet.
+  .files
+    R2025b: buildresult.json | includedSupportPackages.txt | k7asm.cs | k7asm.dll | k7asm.xml | k7asmNative.cs | k7asmNative.dll | k7asmNative.xml | k7asmVersion.cs | k7asm_overview.html | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph: 
+CASE	mcc.W_java_noclass
+  status
+    R2025b: ERR Compiler:compiler:COM_SYSTEM_ERROR_WITH_DETAILS | The following command: / "javac -classpath "<MATLABROOT>\toolbox\javabuilder\jar\javabuilder.jar" -d "<W>\b\W_java_noclass\classes" "<W>\b\W_java_noclass\k7pkg\k7pkg.java" "<W>\b\W_java_noclass\k7pkg\K7pkgMCRFactory.java" "<W>\b\W_java_noclass\k7pkg\k7pkgRemote.java" "<W>\b\W_java_noclass\k7pkg\package-info.java"" / failed with error code 1. / This may occur if Java is not installed, or incorrectly installed, or not on the system path, / or if the environment variable JAVA_HOME is set to an incorrect value.
+    JGraph: ERR JGraph:mcc:targetOutOfScope | JGraph does not build Java packages (-W java).
+  .files
+    R2025b: classes\k7pkg\k7pkg.ctf
+    JGraph: 
+CASE	mcc.W_java_badpkg
+  status
+    R2025b: ERR Compiler:compiler:COM_SYSTEM_ERROR_WITH_DETAILS | The following command: / "javac -classpath "<MATLABROOT>\toolbox\javabuilder\jar\javabuilder.jar" -d "<W>\b\W_java_badpkg\classes" "<W>\b\W_java_badpkg\7pkg\k7cls.java" "<W>\b\W_java_badpkg\7pkg\7pkgMCRFactory.java" "<W>\b\W_java_badpkg\7pkg\k7clsRemote.java" "<W>\b\W_java_badpkg\7pkg\package-info.java"" / failed with error code 1. / This may occur if Java is not installed, or incorrectly installed, or not on the system path, / or if the environment variable JAVA_HOME is set to an incorrect value.
+    JGraph: ERR JGraph:mcc:targetOutOfScope | JGraph does not build Java packages (-W java).
+  .files
+    R2025b: classes\7pkg\7pkg.ctf
+    JGraph: 
+CASE	mcc.W_python_bad
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a Python package (-W python) yet.
+  .files
+    R2025b: buildresult.json | includedSupportPackages.txt | k7-py\__init__.py | k7-py\k7-py.ctf | mccExcludedFiles.log | pyproject.toml | readme.txt | requiredMCRProducts.txt | setup.py | unresolvedSymbols.txt
+    JGraph: 
+CASE	mcc.W_hadoop_noconf
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetOutOfScope | JGraph does not build Hadoop archives (-W hadoop).
+  .files
+    R2025b: buildresult.json | includedSupportPackages.txt | k7hd.ctf | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | run_k7hd.sh | unresolvedSymbols.txt
+    JGraph: 
+CASE	mcc.R_nojvm
+  .warn
+    R2025b: Compiler:compiler:COM_WARN_OPTION_NOJVM | You have specified '-R -nojvm', which may restrict or eliminate MATLAB graphics functionality at runtime.
+    JGraph: None
+CASE	mcc.w_excl
+  .warn
+    R2025b: Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "<MATLABROOT>/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+    JGraph: Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "edit"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+CASE	mcc.w_excl_error
+  .warn
+    R2025b: Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "<MATLABROOT>/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+    JGraph: Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "edit"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
+CASE	mcc.B_csharedlib
+  status
+    R2025b: ok
+    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
+  .files
+    R2025b: buildresult.json | includedSupportPackages.txt | k7blib.c | k7blib.def | k7blib.dll | k7blib.exp | k7blib.exports | k7blib.h | k7blib.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph: 
+15 of 140 cases differ
+== k7_more
+CASE	mcc.matlab_error
+  status
+    R2025b: ERR Compiler:compiler:REQ_RESULTS_UNEXPECTED_ERROR | Error while processing requirements results. Compilation terminated. Details: /  / 
+    JGraph: ok
+  .files
+    R2025b: 
+    JGraph: buildresult.json | includedSupportPackages.txt | k7_start.exe | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  .warn
+    R2025b: None
+    JGraph: Compiler:compiler:COM_WARN_STARTUP_FILE_INCLUDED | Your deployed application may fail because file or folder paths / not present in the deployed environment may be included in your MATLAB startup / file. Use the MATLAB function "isdeployed" in your MATLAB startup file to / determine the appropriate execution environment when including file and folder / paths, and recompile your application. / 
+1 of 48 cases differ
+== k7_cmd
+CASE	no_args
+  R2025b:
+    RUN	mcc 
+    EXIT	0
+      OUT|mcc Compile MATLAB functions for deployment outside MATLAB. 
+      OUT| mcc [-options] fun [fun2...] 
+      OUT| 
+      OUT|Options applicable across all deployment targets: 
+      OUT| -?  Display help for the mcc command 
+      OUT| -a  Add additional files or directories to be included in the build 
+      OUT| -d  Build output directory 
+      OUT| -g  Include debugging symbol information 
+      OUT| -I  Add a directory to be searched for MATLAB files 
+      OUT| -v  Verbose display of build 
+      OUT| 
+      OUT|MATLAB Compiler 
+      OUT| Standalone Application (MATLAB|Hadoop|Spark)
+      OUT| mcc -m <matlabFile.m> 
+      OUT| 
+      OUT| Excel Add-In 
+      OUT| mcc -W 'excel:<addinName>,<className>' -b <matlabFile.m> 
+      OUT| 
+      OUT| Hadoop Deployable Archive 
+      OUT| mcc -H -W 'hadoop:<archiveName>,CONFIG:<configFile.txt>' <mapperFile.m> <reducerFile.m> <datastoreInfo.mat> 
+      OUT| 
+      OUT| Spark Application 
+      OUT| mcc -C -W 'spark:<appName>,<sparkMajorVersion>' <matlabFile.m> 
+      OUT| 
+      OUT|MATLAB Compiler SDK 
+      OUT| C Shared Library 
+      OUT| mcc -W lib:<libraryName> <matlabFile.m> 
+      OUT| 
+      OUT| C++ Shared Library 
+      OUT| mcc -W cpplib:<libraryName> <matlabFile.m> 
+      OUT| 
+      OUT| .NET Assembly 
+      OUT| mcc -W 'dotnet:<assemblyName>,<className>' <matlabFile.m> 
+      OUT| 
+      OUT| Java Package 
+      OUT| mcc -W 'java:<packageName>,<className>' <matlabFile.m> 
+      OUT| 
+      OUT| Python Package 
+      OUT| mcc -W python:<pythonPackageName> <matlabFile.m> 
+      OUT| 
+      OUT| COM Component 
+      OUT| mcc -W com:<componentName> <matlabFile.m> 
+      OUT| 
+      OUT|MATLAB Production Server 
+      OUT| Deployable Archive 
+      OUT| mcc -W CTF:<archiveName> -U <matlabFile.m> 
+      OUT| 
+      OUT| Deployable Archive for Excel Add-In 
+      OUT| mcc -W mpsxl:<addinName> <matlabFile.m> 
+      OUT| 
+      OUT|Replace single quotes with double when executing the mcc command from a Windows Command Prompt. 
+      OUT| 
+      OUT|For more details, execute "doc mcc" from MATLAB.
+      OUT| 
+  JGraph:
+    RUN	mcc 
+    EXIT	0
+      OUT|mcc  Build MATLAB code into a program that runs on the JGraph Runtime.
+      OUT|  mcc [-options] mainFile [moreFiles...]
+      OUT|Switches every target reads:
+      OUT|  -?            Print this help
+      OUT|  -a <path>     Put a file or folder in the archive as well
+      OUT|  -d <folder>   Write the build into this folder, making it if need be
+      OUT|  -I <folder>   Look for code in this folder too
+      OUT|  -v            Report each step of the build
+      OUT|  -w <what>     Show, hide or fail on mcc's own warnings: list, enable, disable or error,
+      OUT|                alone or followed by :<identifier>
+      OUT|  -B <file>     Read more switches from a bundle file, filling %1%, %2%... from <file>:<a>,<b>...
+      OUT|JGraph builds
+      OUT|  A console program
+      OUT|  mcc -m <mainFile.m>
+      OUT|  A windowed program, with no console
+      OUT|  mcc -e <mainFile.m>
+      OUT|  For either: -o <name> names the program, -n passes numbers as numbers, -C writes the archive
+      OUT|  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code
+      OUT|  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen
+      OUT|  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.
+      OUT|JGraph does not build these yet
+      OUT|  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>
+      OUT|  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>
+      OUT|  Python package               mcc -W python:<package> <file.m>
+      OUT|  Production Server archive    mcc -W CTF:<archive> -U <file.m>
+      OUT|  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>
+      OUT|From a Windows command prompt, run jgmcc (or jgraph mcc) and use double quotes where these use single.
+CASE	question
+  R2025b:
+    RUN	mcc -?
+    EXIT	0
+      OUT|mcc Compile MATLAB functions for deployment outside MATLAB. 
+      OUT| mcc [-options] fun [fun2...] 
+      OUT| 
+      OUT|Options applicable across all deployment targets: 
+      OUT| -?  Display help for the mcc command 
+      OUT| -a  Add additional files or directories to be included in the build 
+      OUT| -d  Build output directory 
+      OUT| -g  Include debugging symbol information 
+      OUT| -I  Add a directory to be searched for MATLAB files 
+      OUT| -v  Verbose display of build 
+      OUT| 
+      OUT|MATLAB Compiler 
+      OUT| Standalone Application (MATLAB|Hadoop|Spark)
+      OUT| mcc -m <matlabFile.m> 
+      OUT| 
+      OUT| Excel Add-In 
+      OUT| mcc -W 'excel:<addinName>,<className>' -b <matlabFile.m> 
+      OUT| 
+      OUT| Hadoop Deployable Archive 
+      OUT| mcc -H -W 'hadoop:<archiveName>,CONFIG:<configFile.txt>' <mapperFile.m> <reducerFile.m> <datastoreInfo.mat> 
+      OUT| 
+      OUT| Spark Application 
+      OUT| mcc -C -W 'spark:<appName>,<sparkMajorVersion>' <matlabFile.m> 
+      OUT| 
+      OUT|MATLAB Compiler SDK 
+      OUT| C Shared Library 
+      OUT| mcc -W lib:<libraryName> <matlabFile.m> 
+      OUT| 
+      OUT| C++ Shared Library 
+      OUT| mcc -W cpplib:<libraryName> <matlabFile.m> 
+      OUT| 
+      OUT| .NET Assembly 
+      OUT| mcc -W 'dotnet:<assemblyName>,<className>' <matlabFile.m> 
+      OUT| 
+      OUT| Java Package 
+      OUT| mcc -W 'java:<packageName>,<className>' <matlabFile.m> 
+      OUT| 
+      OUT| Python Package 
+      OUT| mcc -W python:<pythonPackageName> <matlabFile.m> 
+      OUT| 
+      OUT| COM Component 
+      OUT| mcc -W com:<componentName> <matlabFile.m> 
+      OUT| 
+      OUT|MATLAB Production Server 
+      OUT| Deployable Archive 
+      OUT| mcc -W CTF:<archiveName> -U <matlabFile.m> 
+      OUT| 
+      OUT| Deployable Archive for Excel Add-In 
+      OUT| mcc -W mpsxl:<addinName> <matlabFile.m> 
+      OUT| 
+      OUT|Replace single quotes with double when executing the mcc command from a Windows Command Prompt. 
+      OUT| 
+      OUT|For more details, execute "doc mcc" from MATLAB.
+      OUT| 
+  JGraph:
+    RUN	mcc -?
+    EXIT	0
+      OUT|mcc  Build MATLAB code into a program that runs on the JGraph Runtime.
+      OUT|  mcc [-options] mainFile [moreFiles...]
+      OUT|Switches every target reads:
+      OUT|  -?            Print this help
+      OUT|  -a <path>     Put a file or folder in the archive as well
+      OUT|  -d <folder>   Write the build into this folder, making it if need be
+      OUT|  -I <folder>   Look for code in this folder too
+      OUT|  -v            Report each step of the build
+      OUT|  -w <what>     Show, hide or fail on mcc's own warnings: list, enable, disable or error,
+      OUT|                alone or followed by :<identifier>
+      OUT|  -B <file>     Read more switches from a bundle file, filling %1%, %2%... from <file>:<a>,<b>...
+      OUT|JGraph builds
+      OUT|  A console program
+      OUT|  mcc -m <mainFile.m>
+      OUT|  A windowed program, with no console
+      OUT|  mcc -e <mainFile.m>
+      OUT|  For either: -o <name> names the program, -n passes numbers as numbers, -C writes the archive
+      OUT|  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code
+      OUT|  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen
+      OUT|  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.
+      OUT|JGraph does not build these yet
+      OUT|  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>
+      OUT|  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>
+      OUT|  Python package               mcc -W python:<package> <file.m>
+      OUT|  Production Server archive    mcc -W CTF:<archive> -U <file.m>
+      OUT|  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>
+      OUT|From a Windows command prompt, run jgmcc (or jgraph mcc) and use double quotes where these use single.
+CASE	build_verbose
+  R2025b:
+    RUN	mcc -v -m k7_hello.m {D}
+    EXIT	0
+      OUT|Compiler version: 25.2 (R2025b)
+      OUT|Analyzing file dependencies. 
+      OUT|Parsing file "<W>\src\k7_hello.m"
+      OUT|	(referenced from command line).
+      OUT|Generating file "<W>\cmd\build_verbose\readme.txt".
+    FILES buildresult.json | includedSupportPackages.txt | k7_hello.exe | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  JGraph:
+    RUN	mcc -v -m k7_hello.m {D}
+    EXIT	0
+      OUT|Compiler version: JGraph 0.2.3 (R2025b)
+      OUT|Analyzing file dependencies. 
+      OUT|Parsing file "<W>\src\k7_hello.m"
+      OUT|	(referenced from command line).
+      OUT|Generating file "<W>\cmd\build_verbose\readme.txt".
+    FILES buildresult.json | includedSupportPackages.txt | k7_hello.exe | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+CASE	missing_file
+  R2025b:
+    RUN	mcc -m k7_nosuch.m {D}
+    EXIT	1
+      ERR|{Could not find the MATLAB file 'k7_nosuch.m' on the MATLAB path.
+      ERR|} 
+      ERR|ERROR: MATLAB error Exit Status: 0x00000001
+    FILES 
+  JGraph:
+    RUN	mcc -m k7_nosuch.m {D}
+    EXIT	1
+      ERR|{Could not find the MATLAB file 'k7_nosuch.m' on the MATLAB path.
+      ERR|} 
+      ERR|ERROR: JGraph error Exit Status: 0x00000001
+    FILES 
+CASE	bad_flag
+  R2025b:
+    RUN	mcc -Q -m k7_hello.m {D}
+    EXIT	1
+      ERR|{Error: Unrecognized option: -Q.
+      ERR|} 
+      ERR|ERROR: MATLAB error Exit Status: 0x00000001
+    FILES 
+  JGraph:
+    RUN	mcc -Q -m k7_hello.m {D}
+    EXIT	1
+      ERR|{Error: Unrecognized option: -Q.
+      ERR|} 
+      ERR|ERROR: JGraph error Exit Status: 0x00000001
+    FILES 
+CASE	no_wrapper
+  R2025b:
+    RUN	mcc k7_hello.m {D}
+    EXIT	1
+      ERR|{Unable to determine application type, since no wrapper function was specified.
+      ERR|Please use the -W switch or specify application type via -m or -l.
+      ERR|Type 'mcc -?' for further assistance.
+      ERR|} 
+      ERR|ERROR: MATLAB error Exit Status: 0x00000001
+    FILES 
+  JGraph:
+    RUN	mcc k7_hello.m {D}
+    EXIT	1
+      ERR|{Unable to determine application type, since no wrapper function was specified.
+      ERR|Please use the -W switch or specify application type via -m or -l.
+      ERR|Type 'mcc -?' for further assistance.
+      ERR|} 
+      ERR|ERROR: JGraph error Exit Status: 0x00000001
+    FILES 
+CASE	license_Y
+  R2025b:
+    RUN	mcc -Y k7_license.dat -m k7_hello.m {D}
+    EXIT	1
+      ERR|MathWorks Licensing Error 2
+      ERR|A licensing error occurred while trying to use MATLAB.
+      ERR|Contact your system administrator to get a new license file and activate your license on this machine.
+      ERR|For help with this issue, see this support article: 
+      ERR|https://www.mathworks.com/support/lme/2
+      ERR|Details for Support
+      ERR|Feature: MATLAB
+      ERR|License: k7_license.dat
+      ERR|Error Code: -2.2
+      ERR|ERROR: MATLAB error Exit Status: 0x00000001
+    FILES 
+  JGraph:
+    RUN	mcc -Y k7_license.dat -m k7_hello.m {D}
+    EXIT	0
+    FILES buildresult.json | includedSupportPackages.txt | k7_hello.exe | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+CASE	startup_error
+  R2025b:
+    RUN	mcc -w error -m startup\k7_start.m {D}
+    EXIT	1
+      OUT|[Warning: Your deployed application may fail because file or folder paths
+      OUT|not present in the deployed environment may be included in your MATLAB startup
+      OUT|file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+      OUT|determine the appropriate execution environment when including file and folder
+      OUT|paths, and recompile your application.
+      OUT|] 
+      ERR|{Error: A warning has been issued. Warnings are being treated as errors.
+      ERR|} 
+      ERR|ERROR: MATLAB error Exit Status: 0x00000001
+    FILES 
+  JGraph:
+    RUN	mcc -w error -m startup\k7_start.m {D}
+    EXIT	1
+      OUT|[Warning: Your deployed application may fail because file or folder paths
+      OUT|not present in the deployed environment may be included in your MATLAB startup
+      OUT|file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
+      OUT|determine the appropriate execution environment when including file and folder
+      OUT|paths, and recompile your application.
+      OUT|] 
+      ERR|{Error: A warning has been issued. Warnings are being treated as errors.
+      ERR|} 
+      ERR|ERROR: JGraph error Exit Status: 0x00000001
+    FILES 
+8 of 13 command-line cases differ

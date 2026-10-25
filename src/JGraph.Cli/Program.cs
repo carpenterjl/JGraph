@@ -36,6 +36,7 @@ internal static class Program
             StartupMode.Help => ShowHelp(),
             StartupMode.ExtractCtf => JGraph.Deploy.ExtractCtfCommand.Run(
                 options.ProgramArguments, Environment.CurrentDirectory, Console.Out, Console.Error, "extractCTF"),
+            StartupMode.Mcc => MccCommand.Run(options.ProgramArguments, Environment.CurrentDirectory, Console.Out, Console.Error),
             StartupMode.Batch when !options.ShowFigures => await RunHeadlessAsync(options).ConfigureAwait(false),
             StartupMode.Batch => GuiLauncher.RunAndWait(args),
             _ => StartApplication(args),
